@@ -1,83 +1,48 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] drm: tegra: shut up harmless warning on NOMMU
-Date: Thu, 19 Jan 2017 16:09:47 +0100
-Message-ID: <7713814.tr8Zr0Cdrc@wuerfel>
-References: <20170112111425.3228358-1-arnd@arndb.de>
- <20170119110058.GD30182@ulmo.ba.sec>
+From: Paul Kocialkowski <contact@paulk.fr>
+Subject: [PATCH 2/5] ARM: tegra: nyan: Use external control for bq24735 charger
+Date: Sun, 22 Jan 2017 15:44:12 +0100
+Message-ID: <20170122144415.31208-2-contact@paulk.fr>
+References: <20170122144415.31208-1-contact@paulk.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170119110058.GD30182@ulmo.ba.sec>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>, Russell King <rmk+kernel@armlinux.org.uk>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170122144415.31208-1-contact@paulk.fr>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, Stephen Warren <swarren@wwwdotorg.org>, Paul Kocialkowski <contact@paulk.fr>, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1cnNkYXksIEphbnVhcnkgMTksIDIwMTcgMTI6MDA6NTggUE0gQ0VUIFRoaWVycnkgUmVk
-aW5nIHdyb3RlOgo+IE9uIFRodSwgSmFuIDEyLCAyMDE3IGF0IDEyOjEzOjUxUE0gKzAxMDAsIEFy
-bmQgQmVyZ21hbm4gd3JvdGU6Cj4gPiBUaGUgdGVncmEgRFJNIGRyaXZlciBpcyBhbG1vc3Qgb2sg
-d2l0aG91dCBhbiBNTVUsIGJ1dCB0aGVyZQo+ID4gaXMgb25lIHNtYWxsIHdhcm5pbmcgdGhhdCBJ
-IGdldDoKPiA+IAo+ID4gZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jOiBJbiBmdW5jdGlvbiAn
-dGVncmFfZHJtX21tYXAnOgo+ID4gZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jOjUwODoxMjog
-dW51c2VkIHZhcmlhYmxlICdwcm90Jwo+ID4gCj4gPiBUaGlzIG1hcmtzIHRoZSB2YXJpYWJsZSBh
-cyBfX21heWJlX3VudXNlZCBpbnN0ZWFkLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBBcm5kIEJl
-cmdtYW5uIDxhcm5kQGFybmRiLmRlPgo+ID4gLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L2dlbS5jIHwgMiArLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxl
-dGlvbigtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5j
-IGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jCj4gPiBpbmRleCA3ZDg1M2U2YjVmZjAuLjYz
-ZjE0YjdhNTlhMCAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9nZW0uYwo+
-ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jCj4gPiBAQCAtNTA1LDcgKzUwNSw3
-IEBAIGludCB0ZWdyYV9kcm1fbW1hcChzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IHZtX2FyZWFf
-c3RydWN0ICp2bWEpCj4gPiAgCj4gPiAgCQl2bWEtPnZtX3Bnb2ZmID0gdm1fcGdvZmY7Cj4gPiAg
-CX0gZWxzZSB7Cj4gPiAtCQlwZ3Byb3RfdCBwcm90ID0gdm1fZ2V0X3BhZ2VfcHJvdCh2bWEtPnZt
-X2ZsYWdzKTsKPiA+ICsJCXBncHJvdF90IHByb3QgX19tYXliZV91bnVzZWQgPSB2bV9nZXRfcGFn
-ZV9wcm90KHZtYS0+dm1fZmxhZ3MpOwo+IAo+IFRoaXMgc2VlbXMgdG8gbWUgbGlrZSBhIHN1Ym9w
-dGltYWwgc29sdXRpb24uIFRoZSByZWFzb24gd2h5IHRoaXMgZmFpbHMKPiBpcyBiZWNhdXNlIHBn
-cHJvdF93cml0ZWNvbWJpbmUocHJvdCkgZm9yIE5PTU1VIHRyYW5zbGF0ZXMgdG8gX19wZ3Byb3Qo
-MCkKPiB2aWEgYSBtYWNyby4gVGhpcyBhbHNvIG1lYW5zIHRoYXQgd2UgbmVlZCB0byBwb3RlbnRp
-YWxseSBhZGQgYQo+IF9fbWF5YmVfdW51c2VkIGFubm90YXRpb24gdG8gZXZlcnkgbG9jYWwgdmFy
-aWFibGUgdGhhdCBzdG9yZXMgYSB2YWx1ZQo+IHRoYXQgZ2V0cyBwYXNzZWQgdG8gcGdwcm90X3dy
-aXRlY29tYmluZSgpLgo+IAo+IFRoZXJlIGZvcnR1bmF0ZWx5IGFyZW4ndCB2ZXJ5IG1hbnkgb2Yg
-dGhvc2UgY2FzZXMsIGJ1dCBJIHN0aWxsIHRoaW5rCj4gdGhhdCBhIGJldHRlciBzb2x1dGlvbiB3
-b3VsZCBiZSB0byB0dXJuIHBncHJvdF93cml0ZWNvbWJpbmUoKSBpbnRvIGEKPiBzdGF0aWMgaW5s
-aW5lIGZ1bmN0aW9uLCBzbyB0aGF0IHRoZSBwYXJhbWV0ZXIgd291bGQgZ2V0IHNpbGVudGx5Cj4g
-aWdub3JlZC4gT3IgcGVyaGFwcyBpZiBpdCBtdXN0IHJlbWFpbiBhIG1hY3JvLCB0aGVuIGRvaW5n
-IHRoZSBmb2xsb3dpbmcKPiBzaG91bGQgc3RpbGwgYXZvaWQgdGhlIG5lZWQgdG8gbW9kaWZ5IGV2
-ZXJ5IGNhbGwgc2l0ZToKPiAKPiAJI2RlZmluZSBwZ3Byb3Rfd3JpdGVjb21iaW5lKHByb3QpICh7
-ICh2b2lkKXByb3Q7IF9fcGdwcm90KDApOyB9KQo+IAo+IFRoaWVycnkKPiAKCk1ha2VzIHNlbnNl
-LiBIb3cgYWJvdXQgdGhpcyB2ZXJzaW9uPwoKCUFybmQKLS0tCkZyb20gODNhZjZiYzc0NDIzYzkw
-YmU3ZjU4MGE4MjcyNjhiODlmOTRiNWM2YiBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDEKRnJvbTog
-QXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4KRGF0ZTogVGh1LCAxOSBKYW4gMjAxNyAxNjow
-NToyOSArMDEwMApTdWJqZWN0OiBbUEFUQ0hdIEFSTTogaW1wcm92ZSBOT01NVSBkZWZpbml0aW9u
-IG9mIHBncHJvdF8qKCkKClRoZSB0ZWdyYSBEUk0gZHJpdmVyIHByb2R1Y2VzIGEgaGFybWxlc3Mg
-d2FybmluZyB3aGVuIGJ1aWx0IGZvciBOT01NVToKCmRyaXZlcnMvZ3B1L2RybS90ZWdyYS9nZW0u
-YzogSW4gZnVuY3Rpb24gJ3RlZ3JhX2RybV9tbWFwJzoKZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dl
-bS5jOjUwODoxMjogdW51c2VkIHZhcmlhYmxlICdwcm90JwoKVGhpcyBpcyBiZWNhdXNlIHBncHJv
-dF93cml0ZWNvbWJpbmUoKSBvbiBBUk0gcmV0dXJucyBhIGNvbnN0YW50IGFuZAppZ25vcmVzIGl0
-cyBhcmd1bWVudC4gVGhlIHZlcnNpb24gaW4gYXNtLWdlbmVyaWMgZG9lc24ndCBoYXZlIHRoYXQK
-cHJvYmxlbSwgc28gbGV0J3MgdXNlIHRoYXQgb25lIGluc3RlYWQuIFdlIGRvbid0IGFjdHVhbGx5
-IGNhcmUKYWJvdXQgdGhlIHZhbHVlIG9uIE5PTU1VLCBhbmQgdGhpcyBpcyBjb25zaXN0ZW50IHdp
-dGggd2hhdCBzb21lCm90aGVyIGFyY2hpdGVjdHVyZXMgZG8uCgpTaWduZWQtb2ZmLWJ5OiBBcm5k
-IEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2luY2x1ZGUv
-YXNtL3BndGFibGUtbm9tbXUuaCBiL2FyY2gvYXJtL2luY2x1ZGUvYXNtL3BndGFibGUtbm9tbXUu
-aAppbmRleCBhZGQwOTRkMDllM2UuLjMwMjI0MGMxOWE1YSAxMDA2NDQKLS0tIGEvYXJjaC9hcm0v
-aW5jbHVkZS9hc20vcGd0YWJsZS1ub21tdS5oCisrKyBiL2FyY2gvYXJtL2luY2x1ZGUvYXNtL3Bn
-dGFibGUtbm9tbXUuaApAQCAtNjMsOSArNjMsOSBAQCB0eXBlZGVmIHB0ZV90ICpwdGVfYWRkcl90
-OwogLyoKICAqIE1hcmsgdGhlIHByb3QgdmFsdWUgYXMgdW5jYWNoZWFibGUgYW5kIHVuYnVmZmVy
-YWJsZS4KICAqLwotI2RlZmluZSBwZ3Byb3Rfbm9uY2FjaGVkKHByb3QpCV9fcGdwcm90KDApCi0j
-ZGVmaW5lIHBncHJvdF93cml0ZWNvbWJpbmUocHJvdCkgX19wZ3Byb3QoMCkKLSNkZWZpbmUgcGdw
-cm90X2RtYWNvaGVyZW50KHByb3QpIF9fcGdwcm90KDApCisjZGVmaW5lIHBncHJvdF9ub25jYWNo
-ZWQocHJvdCkJKHByb3QpCisjZGVmaW5lIHBncHJvdF93cml0ZWNvbWJpbmUocHJvdCkgKHByb3Qp
-CisjZGVmaW5lIHBncHJvdF9kbWFjb2hlcmVudChwcm90KSAocHJvdCkKIAogCiAvKgoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Nyan boards come with an embedded controller that controls when to
+enable and disable the charge. Thus, it should not be left up to the
+kernel to handle that.
+
+Using the ti,external-control property allows specifying this use-case.
+
+Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+---
+ arch/arm/boot/dts/tegra124-nyan.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index ef430aa30152..5cf987b5401e 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -335,6 +335,7 @@
+ 					ti,ac-detect-gpios = <&gpio
+ 							TEGRA_GPIO(J, 0)
+ 							GPIO_ACTIVE_HIGH>;
++					ti,external-control;
+ 				};
+ 
+ 				battery: sbs-battery@b {
+-- 
+2.11.0
