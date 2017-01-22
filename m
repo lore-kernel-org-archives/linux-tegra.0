@@ -1,49 +1,46 @@
 From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: [PATCH v2 1/6] ARM: tegra: nyan: Use proper IRQ type definitions
-Date: Sun, 22 Jan 2017 16:47:48 +0100
-Message-ID: <20170122154753.31942-1-contact@paulk.fr>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Subject: [PATCH v2 4/6] ARM: tegra: nyan-blaze: Include compatible revisions for proper detection
+Date: Sun, 22 Jan 2017 16:47:51 +0100
+Message-ID: <20170122154753.31942-4-contact@paulk.fr>
+References: <20170122154753.31942-1-contact@paulk.fr>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170122154753.31942-1-contact-W9ppeneeCTY@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This switches a few interrupt definitions that were using
-GPIO_ACTIVE_HIGH as IRQ type, which is invalid.
+Depthcharge (the payload used with cros devices) will attempt to detect
+boards using their revision. This includes all the known revisions for
+the nyan-blaze board so that the dtb can be selected preferably.
 
-This is mostly a cosmetic change, that doesn't affect any driver.
+Defining compatibly revisions allows depthcharge to select the kernel
+via the revision it detects instead of using the default kernel. This
+allows having a FIT image with multiple kernels for multiple devices.
 
 Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124-nyan.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra124-nyan-blaze.dts | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
-index eabfa655a3cd..ef430aa30152 100644
---- a/arch/arm/boot/dts/tegra124-nyan.dtsi
-+++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
-@@ -65,7 +65,7 @@
- 			compatible = "maxim,max98090";
- 			reg = <0x10>;
- 			interrupt-parent = <&gpio>;
--			interrupts = <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
-+			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_FALLING>;
- 		};
+diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+index c9582361c26e..aca0828115eb 100644
+--- a/arch/arm/boot/dts/tegra124-nyan-blaze.dts
++++ b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+@@ -6,7 +6,13 @@
  
- 		temperature-sensor@4c {
-@@ -331,7 +331,7 @@
- 					reg = <0x9>;
- 					interrupt-parent = <&gpio>;
- 					interrupts = <TEGRA_GPIO(J, 0)
--							GPIO_ACTIVE_HIGH>;
-+							IRQ_TYPE_EDGE_BOTH>;
- 					ti,ac-detect-gpios = <&gpio
- 							TEGRA_GPIO(J, 0)
- 							GPIO_ACTIVE_HIGH>;
+ / {
+ 	model = "HP Chromebook 14";
+-	compatible = "google,nyan-blaze", "google,nyan", "nvidia,tegra124";
++	compatible = "google,nyan-blaze-rev10", "google,nyan-blaze-rev9",
++			"google,nyan-blaze-rev8", "google,nyan-blaze-rev7",
++			"google,nyan-blaze-rev6", "google,nyan-blaze-rev5",
++			"google,nyan-blaze-rev4", "google,nyan-blaze-rev3",
++			"google,nyan-blaze-rev2", "google,nyan-blaze-rev1",
++			"google,nyan-blaze-rev0", "google,nyan-blaze",
++			"google,nyan", "nvidia,tegra124";
+ 
+ 	panel: panel {
+ 		compatible = "samsung,ltn140at29-301";
 -- 
 2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
