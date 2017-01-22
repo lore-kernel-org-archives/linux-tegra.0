@@ -1,57 +1,48 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH v2 5/6] ARM: tegra: nyan-big: Proper pinmux for TPM i2c
-Date: Sun, 22 Jan 2017 16:47:52 +0100
-Message-ID: <20170122154753.31942-5-contact@paulk.fr>
-References: <20170122154753.31942-1-contact@paulk.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170122154753.31942-1-contact@paulk.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>, Peter Rosin <peda@axentia.se>, Paul Kocialkowski <contact@paulk.fr>
+From: Rask Ingemann Lambertsen <rask@formelder.dk>
+Subject: [PATCH] ARM: dts: tegra: =?iso-8859-1?Q?Fi?=
+ =?iso-8859-1?Q?x_missing_card_detection_in_Trimslice_=B5SD?= card slot
+Date: Sun, 22 Jan 2017 22:17:48 +0100
+Message-ID: <20170122211747.exirq4nvb2xj6dk6@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-This corrects the pinmux for accessing the TPM over the i2c line.
-Thus, it allows correctly probing the module, that previously failed with i2c
-errors.
+Card insertion and removal currently goes undetected. AFAIK there's no
+way to generate interrupts on card changes in this slot, so use polling.
 
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+Signed-off-by: Rask Ingemann Lambertsen <rask@formelder.dk>
 ---
- arch/arm/boot/dts/tegra124-nyan-big.dts | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/tegra20-trimslice.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
-index f12ece9b76a6..03eedf86dc48 100644
---- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
-@@ -1103,19 +1103,19 @@
- 			};
- 			cam_i2c_scl_pbb1 {
- 				nvidia,pins = "cam_i2c_scl_pbb1";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			cam_i2c_sda_pbb2 {
- 				nvidia,pins = "cam_i2c_sda_pbb2";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			pbb3 {
- 				nvidia,pins = "pbb3";
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index 381747f..87b07fb 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -366,6 +366,7 @@
+ 
+ 	sdhci@c8000000 {
+ 		status = "okay";
++		broken-cd;
+ 		bus-width = <4>;
+ 	};
+ 
 -- 
-2.11.0
+2.10.2
+
+-- 
+Rask Ingemann Lambertsen
