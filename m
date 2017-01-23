@@ -1,114 +1,40 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 0/7] Host1x IOMMU support + VIC support
-Date: Mon, 23 Jan 2017 08:42:08 +0100
-Message-ID: <20170123074207.wj3lziewfhegn5rd@phenom.ffwll.local>
-References: <20161214111617.24548-1-mperttunen@nvidia.com>
- <20161214123004.urnvlqarcnp5rp4a@phenom.ffwll.local>
- <07daf863-1675-a3d8-e1a7-32131c8035d8@kapsi.fi>
- <20161214130545.gfpkosyixr5lfkkf@phenom.ffwll.local>
- <f3d1d69b-2c1f-a0f7-8301-fee26cec35f1@kapsi.fi>
- <20161214141142.jmrofknylonhprbk@phenom.ffwll.local>
- <2456cb5a-846f-7296-e229-cfaac6caa899@kapsi.fi>
+From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: paz00: fix __initdata placement
+Date: Sun, 22 Jan 2017 23:43:47 -0800
+Message-ID: <20170123074347.GA29804@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <2456cb5a-846f-7296-e229-cfaac6caa899@kapsi.fi>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKYW4gMTcsIDIwMTcgYXQgMDY6MjI6MzZQTSArMDIwMCwgTWlra28gUGVydHR1bmVu
-IHdyb3RlOgo+IE9uIDEyLzE0LzIwMTYgMDQ6MTEgUE0sIERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4g
-PiBPbiBXZWQsIERlYyAxNCwgMjAxNiBhdCAwMzozMjoxNlBNICswMjAwLCBNaWtrbyBQZXJ0dHVu
-ZW4gd3JvdGU6Cj4gPiA+IE9uIDE0LjEyLjIwMTYgMTU6MDUsIERhbmllbCBWZXR0ZXIgd3JvdGU6
-Cj4gPiA+ID4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMDI6NDE6MjhQTSArMDIwMCwgTWlra28g
-UGVydHR1bmVuIHdyb3RlOgo+ID4gPiA+ID4gT24gMTQuMTIuMjAxNiAxNDozMCwgRGFuaWVsIFZl
-dHRlciB3cm90ZToKPiA+ID4gPiA+ID4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMDE6MTY6MTBQ
-TSArMDIwMCwgTWlra28gUGVydHR1bmVuIHdyb3RlOgo+ID4gPiA+ID4gPiA+IFRoaXMgc2VyaWVz
-IGFkZHMgSU9NTVUgc3VwcG9ydCB0byBIb3N0MXggYW5kIFRlZ3JhRFJNCj4gPiA+ID4gPiA+ID4g
-YW5kIGFkZHMgc3VwcG9ydCBmb3IgdGhlIFZJQyAoVmlkZW8gSW1hZ2UgQ29tcG9zaXRvcikKPiA+
-ID4gPiA+ID4gPiBob3N0MXggY2xpZW50LiBUaGUgc2VyaWVzIGlzIGF2YWlsYWJsZSBhcyBhIGdp
-dCByZXBvc2l0b3J5IGF0Cj4gPiA+ID4gPiA+ID4gZ2l0Oi8vZ2l0aHViLmNvbS9jeW5kaXMvbGlu
-dXguZ2l0OyBicmFuY2ggdmljLTIuCj4gPiA+ID4gPiA+ID4gCj4gPiA+ID4gPiA+ID4gQSB1c2Vy
-c3BhY2UgdGVzdCBjYXNlIGZvciBWSUMgY2FuIGJlIGZvdW5kIGF0Cj4gPiA+ID4gPiA+ID4gaHR0
-cHM6Ly9naXRodWIuY29tL2N5bmRpcy9kcm0vdHJlZS93b3JrL3RlZ3JhLgo+ID4gPiA+ID4gPiA+
-IFRoZSB0ZXN0Y2FzZSBpcyBpbiB0ZXN0cy90ZWdyYSBhbmQgaXMgY2FsbGVkIHN1Ym1pdF92aWMu
-Cj4gPiA+ID4gPiA+ID4gVGhlIHRlc3RjYXNlL1RSTSBpbmNsdWRlIGZ1bGwgaGVhZGVycyBhbmQg
-ZG9jdW1lbnRhdGlvbgo+ID4gPiA+ID4gPiA+IHRvIHByb2dyYW0gdGhlIHVuaXQuIFRoZSB1bml0
-IGJ5IGl0c2VsZiwgaG93ZXZlciwgZG9lcyBub3QKPiA+ID4gPiA+ID4gPiByZWFkaWx5IG1hcCB0
-byBleGlzdGluZyB1c2Vyc3BhY2UgbGlicmFyeSBpbnRlcmZhY2VzLCBzbwo+ID4gPiA+ID4gPiA+
-IGltcGxlbWVudGF0aW9ucyBmb3IgdGhvc2UgYXJlIG5vdCBwcm92aWRlZC4KPiA+ID4gPiA+ID4g
-Cj4gPiA+ID4gPiA+IEFmYWlrIGxpYnZhIGhhcyBhbiBlbnRpcmUgcGlsZSBvZiBwb3N0LXByb2Nl
-c3Npbmcgc3VwcG9ydC4gUHJldHR5IHN1cmUKPiA+ID4gPiA+ID4gb3RoZXIgdmlkZW8gdHJhbnNj
-b2RlIGxpYnJhcmllcyBoYXZlIHNpbWlsYXIgaW50ZXJmYWNlcywgc28gc2hvdWxkIGFsbCBiZQo+
-ID4gPiA+ID4gPiBwb3NzaWJsZSB0byBpbXBsZW1lbnQgdGhpcy4KPiA+ID4gPiA+IAo+ID4gPiA+
-ID4gV2UgZG9uJ3QgaGF2ZSBhbnkgYWN0dWFsIHZpZGVvIHRyYW5zY29kaW5nIHN1cHBvcnQgdGhv
-dWdoLCBzbyB1bmxlc3MgaXQncwo+ID4gPiA+ID4gcG9zc2libGUgdG8ganVzdCBpbXBsZW1lbnQg
-YSBwYXJ0IG9mIGxpYnZhIGFuZCBkZWZlciB0aGUgcmVzdCB0byBzb21lIENQVQo+ID4gPiA+ID4g
-aW1wbGVtZW50YXRpb24sIEkgZG9uJ3Qgc2VlIGhvdyB0aGlzIGlzIHVzZWZ1bC4gSSBzdXBwb3Nl
-IEkgY291bGQgaW1wbGVtZW50Cj4gPiA+ID4gPiBhIEdTdHJlYW1lciBwbHVnaW4gZm9yIGNvbG9y
-c3BhY2UgY29udmVyc2lvbiBvciByZXNpemluZywgc2luY2UgdGhvc2UgYXJlCj4gPiA+ID4gPiB2
-ZXJ5IG1vZHVsYXIuCj4gPiA+ID4gCj4gPiA+ID4gSG0sIEkgZ3Vlc3MgdGhlIHF1ZXN0aW9uIHRo
-ZW4gaXMsIGhvdyBkaWQgdGhhdCBnZXQgZW5hYmxlZD8KPiA+ID4gCj4gPiA+IFdoYXQgaXMgInRo
-YXQiPyBJJ20gbm90IGV4YWN0bHkgc3VyZS4KPiA+ID4gCj4gPiA+IE91ciBhcmNoaXRlY3R1cmUg
-aXMgc3VjaCB0aGF0IHRoZXJlJ3MgdGhlIFZJQyB0aGF0IGhhbmRsZXMgY29sb3JzcGFjZQo+ID4g
-PiBjb252ZXJzaW9uLCByZXNjYWxpbmcsIGJsaXR0aW5nIGFuZCBjYW4gZG8gc29tZSAyZCBwb3N0
-cHJvY2Vzc2luZyBlZmZlY3RzIGFzCj4gPiA+IHdlbGwuCj4gPiA+IAo+ID4gPiBUaGVuIHRoZXJl
-J3MgdGhlIHNlcGFyYXRlIE5WREVDIHRoYXQgaXMgYSB2aWRlbyBiaXRzdHJlYW0gZGVjb2Rlci4g
-VGhlcmUncwo+ID4gPiBubyBzdXBwb3J0IGZvciB0aGF0IGF0IHRoZSBtb21lbnQuIEkgYW0gd29y
-a2luZyBvbiB0aGUgSVAgc2lkZSBvZiB0aGF0Lgo+ID4gPiAKPiA+ID4gVGhlIHZpZGVvIHByb2Nl
-c3NpbmcgcGlwZWxpbmUgaXMgdGhlbiBzdWNoIHRoYXQgTlZERUMgaXMgZmVkIHRoZSBiaXRzdHJl
-YW07Cj4gPiA+IE5WREVDIG91dHB1dHMgYSBZVVYgcGljdHVyZSBpbiBhIHNwZWNpZmljIGZvcm1h
-dDsgVklDIHRha2VzIHRoYXQgWVVWIHBpY3R1cmUKPiA+ID4gYW5kIGNvbnZlcnRzL3Jlc2NhbGVz
-IGl0IGludG8gdGhlIGRlc2lyZWQgZm9ybWF0LiBPciBpZiB3ZSBhcmUgZW5jb2RpbmcKPiA+ID4g
-dmlkZW8sIFZJQyB0YWtlcyB5b3VyIFJHQiBpbWFnZSwgY29udmVydHMgaXQgaW50byBhIGZvcm1h
-dCB0aGF0IE5WRU5DCj4gPiA+IHVuZGVyc3RhbmRzLCBhbmQgc28gb24uCj4gPiA+IAo+ID4gPiBT
-byB3aXRoIGp1c3QgVklDIHN1cHBvcnQsIEkgY291bGQgaW1wbGVtZW50IHNvbWUgc2ltcGxlIDJE
-IHRoaW5ncy4gSSBkb24ndAo+ID4gPiBrbm93IGlmIGFueW9uZSB3b3VsZCB3YW50IHRvIHNwZWNp
-ZmljYWxseSB1c2UgdGhlIFZJQyBmb3IgdGhvc2Ugc2luY2UKPiA+ID4gYXBwbGljYXRpb25zIGFs
-cmVhZHkgaGF2ZSBmYXN0IENQVSBhbGdvcml0aG1zLiBGb3IgdGhlIHZpZGVvIHBpcGVsaW5lIHVz
-aW5nCj4gPiA+IFZJQyBpcyBuaWNlIHNpbmNlIHRoZXNlIHVuaXRzIGNhbiBzeW5jaHJvbml6ZSB3
-b3JrIHdpdGhvdXQgQ1BVIGludm9sdmVtZW50Cj4gPiA+IGFuZCB3aGVuIHlvdSdyZSBhbHJlYWR5
-IHVzaW5nIE5WREVDIG9yIE5WRU5DIGl0J3MgYmFyZWx5IGFueSBleHRyYSBlZmZvcnQgdG8KPiA+
-ID4gaW52b2x2ZSBWSUMgYXMgd2VsbC4gSXQgY2FuIGFsc28gYmUgdXNlZnVsIGluIHBvd2VyIHVz
-YWdlIHNlbnNpdGl2ZQo+ID4gPiBzaXR1YXRpb25zLCBidXQgd2UgYXJlbid0IHJlYWxseSBmaXQg
-Zm9yIHRob3NlIHNpdHVhdGlvbnMgd2l0aCB0aGUgdXBzdHJlYW0KPiA+ID4ga2VybmVsIGFueXdh
-eSA6KQo+ID4gCj4gPiBBaCBJIHRob3VnaHQgdGhlIG52ZGVjIHdhcyBhbHJlYWR5IGVuYWJsZWQs
-IHNpbmNlIGZvciBpOTE1IHRoYXQncyBob3cgd2UKPiA+IHdlbnQgYWJvdXQgdGhpbmdzICh3ZSBo
-YXZlIGEgcHJldHR5IG11Y2ggZXhhY3RseSBtYXRjaGluZyBzcGxpdCBpbiB0aGUKPiA+IHZhcmlv
-dXMgdmlkZW8gcmVsYXRlZCBlbmdpbmVzKS4gQnV0IGlmIHRoYXQncyBub3QgdGhlcmUgeWV0IHRo
-ZW4gbm8KPiA+IHdvcnJpZXMsIGFsbCBmaW5lLgo+ID4gCj4gPiBTaW5jZSB5b3UgZG8gc2VlbSB0
-byBwbGFuIHRvIGVuYWJsZSBldmVyeXRoaW5nIGFueXdheSwgbWlnaHQgYmUgd29ydGggaXQKPiA+
-IHRvIGdvIGRpcmVjdGx5IHdpdGggc29tZXRoaW5nIGxpa2UgbGlidmEgb3IgbGlidmRwYXUgb3Ig
-d2hhdGV2ZXIgdGhlIGNvb2wKPiA+IHRoaW5nIGlzLiBsaWJ2YSBpcyBteSByZWNvbW1lbmRhdGlv
-biBzaW5jZSBpdCB3b3JrcyBvbiBub24tWDExIHRvbyBhZmFpaywKPiA+IGJ1dCBJIGhhdmUgMCBj
-bHVlLiBBbmQgbWlnaHQgYmUgd29ydGggaXQgdG8gY2hlY2sgb3V0IHdoZXRoZXIgeW91IGNhbid0
-IGRvCj4gPiBhIHN1cGVyLWJhc2ljIGxpYnZhIGRyaXZlciB0aGF0IG9ubHkgZG9lcyB0aGUgcG9z
-dCBwcm9jZXNzaW5nIHN0dWZmLiBXaXRoCj4gPiBsaWJ2YSB5b3UgY2FuIGltcG9ydC9leHBvcnQg
-aW1hZ2VzLCBzbyBpdCBtaWdodCBiZSBwb3NzaWJsZSBldmVuIC4uLiBBbmQKPiA+IGRpcmVjdGx5
-IGRvaW5nIHRoZSBmdWxsIHZpZGVvIGVuZ2luZSBzdXBwb3J0IGluc3RlYWQgb2YgYSBvbmUtb2Zm
-IGluCj4gPiBnc3RyZWFtZXIgc291bmRzIG1vcmUgc2Vuc2libGUgdG8gbWUuCj4gPiAtRGFuaWVs
-Cj4gPiAKPiAKPiBJdCB0b29rIGEgd2hpbGUsIGJ1dCBJIG5vdyBoYXZlIGEgbGlidmEgYmFja2Vu
-ZCB0byBnbyB3aXRoIHRoaXMga2VybmVsCj4gZHJpdmVyOiBodHRwczovL2dpdGh1Yi5jb20vY3lu
-ZGlzL3ZhYXBpLXRlZ3JhLWRyaXZlci4KPiAKPiBJdCBpcyBmYXIgZnJvbSBjb21wbGV0ZSwgYnV0
-IHRoZSBsaWJ2YSBwdXRzdXJmYWNlIHRlc3RjYXNlIHJ1bnMgYW5kIGl0cwo+IG91dHB1dCBsb29r
-cyBjb3JyZWN0IHdoZW4gY29tcGFyZWQgdG8gdGhlIGludGVsIGJhY2tlbmQuIFdvdWxkIHRoaXMg
-YmUKPiBzdWl0YWJsZSBvciBzaG91bGQgc29tZXRoaW5nIG1vcmUgYmUgaW1wbGVtZW50ZWQgYmVm
-b3JlIG1lcmdpbmcgdGhlIGtlcm5lbAo+IGRyaXZlcj8KClNlZW1zIGFsbCByZWFzb25hYmxlIHRv
-IG1vdmUgYWhlYWQgd2l0aCB0aGlzLiBUaGFua3MgZm9yIGRvaW5nIGl0LgotRGFuaWVsCi0tIApE
-YW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8v
-YmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+To have expected effect the __initdata attribute should go after variable
+name and before initializer.`
+
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-paz00.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+index 7478f6fb3664..ea6bff404161 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -23,7 +23,7 @@
+ 
+ #include "board.h"
+ 
+-static struct property_entry __initdata wifi_rfkill_prop[] = {
++static struct property_entry wifi_rfkill_prop[] __initdata = {
+ 	PROPERTY_ENTRY_STRING("name", "wifi_rfkill"),
+ 	PROPERTY_ENTRY_STRING("type", "wlan"),
+ 	{ },
+-- 
+2.11.0.483.g087da7b7c-goog
+
+
+-- 
+Dmitry
