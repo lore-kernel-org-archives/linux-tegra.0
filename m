@@ -1,137 +1,152 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Marc Dietrich <marvin24@gmx.de>
 Subject: Re: [PATCH] ARM: tegra: paz00: fix __initdata placement
-Date: Mon, 23 Jan 2017 17:24:28 +0100
-Message-ID: <20170123162428.GB2043@ulmo.ba.sec>
-References: <20170123074347.GA29804@dtor-ws>
- <4072003.S1IBmddlP7@fb07-iapwap2>
+Date: Tue, 24 Jan 2017 10:08:16 +0100
+Message-ID: <3638459.E7Mh7VRDt6@fb07-iapwap2>
+References: <20170123074347.GA29804@dtor-ws> <4072003.S1IBmddlP7@fb07-iapwap2> <20170123162428.GB2043@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4072003.S1IBmddlP7@fb07-iapwap2>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; boundary="nextPart1811720.MHOpLJvz2D"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170123162428.GB2043@ulmo.ba.sec>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+--nextPart1811720.MHOpLJvz2D
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"
 
---LpQ9ahxlCli8rRTG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Thierry,
 
-On Mon, Jan 23, 2017 at 11:04:22AM +0100, Marc Dietrich wrote:
-> Hello Dmitry,
->=20
-> Am Sonntag, 22. Januar 2017, 23:43:47 CET schrieb Dmitry Torokhov:
-> > To have expected effect the __initdata attribute should go after variab=
-le
-> > name and before initializer.`
-> >=20
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> >  arch/arm/mach-tegra/board-paz00.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/arch/arm/mach-tegra/board-paz00.c
-> > b/arch/arm/mach-tegra/board-paz00.c index 7478f6fb3664..ea6bff404161 10=
-0644
-> > --- a/arch/arm/mach-tegra/board-paz00.c
-> > +++ b/arch/arm/mach-tegra/board-paz00.c
-> > @@ -23,7 +23,7 @@
-> >=20
-> >  #include "board.h"
-> >=20
-> > -static struct property_entry __initdata wifi_rfkill_prop[] =3D {
-> > +static struct property_entry wifi_rfkill_prop[] __initdata =3D {
-> >  	PROPERTY_ENTRY_STRING("name", "wifi_rfkill"),
-> >  	PROPERTY_ENTRY_STRING("type", "wlan"),
-> >  	{ },
->=20
-> you are right according to the documentation, but objdump -s always shows=
- that=20
-> it gets put into the .rodata section. So this patch has no effect, becaus=
-e=20
-> result is always same (and wrong). It's also possible that I'm doing some=
-thing=20
-> wrong :-) Btw, there are hundreds of such __initdata misplacement in the=
-=20
-> kernel.
+Am Montag, 23. Januar 2017, 17:24:28 CET schrieb Thierry Reding:
+> On Mon, Jan 23, 2017 at 11:04:22AM +0100, Marc Dietrich wrote:
+> > Hello Dmitry,
+> > 
+> > Am Sonntag, 22. Januar 2017, 23:43:47 CET schrieb Dmitry Torokhov:
+> > > To have expected effect the __initdata attribute should go after
+> > > variable
+> > > name and before initializer.`
+> > > 
+> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > > ---
+> > > 
+> > >  arch/arm/mach-tegra/board-paz00.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/arm/mach-tegra/board-paz00.c
+> > > b/arch/arm/mach-tegra/board-paz00.c index 7478f6fb3664..ea6bff404161
+> > > 100644
+> > > --- a/arch/arm/mach-tegra/board-paz00.c
+> > > +++ b/arch/arm/mach-tegra/board-paz00.c
+> > > @@ -23,7 +23,7 @@
+> > > 
+> > >  #include "board.h"
+> > > 
+> > > -static struct property_entry __initdata wifi_rfkill_prop[] = {
+> > > +static struct property_entry wifi_rfkill_prop[] __initdata = {
+> > > 
+> > >  	PROPERTY_ENTRY_STRING("name", "wifi_rfkill"),
+> > >  	PROPERTY_ENTRY_STRING("type", "wlan"),
+> > >  	{ },
+> > 
+> > you are right according to the documentation, but objdump -s always shows
+> > that it gets put into the .rodata section. So this patch has no effect,
+> > because result is always same (and wrong). It's also possible that I'm
+> > doing something wrong :-) Btw, there are hundreds of such __initdata
+> > misplacement in the kernel.
+> 
+> Hmm... I get this:
+> 
+> 	$ objdump -t build/tegra20/arch/arm/mach-tegra/board-paz00.o
+> 
+> 	build/tegra20/arch/arm/mach-tegra/board-paz00.o:     file format
+> 	elf32-little
+> 
+> 	SYMBOL TABLE:
+> 	00000000 l    df *ABS*  00000000 board-paz00.c
+> 	00000000 l    d  .text  00000000 .text
+> 	00000000 l    d  .data  00000000 .data
+> 	00000000 l    d  .bss   00000000 .bss
+> 	00000000 l    d  .init.text     00000000 .init.text
+> 	00000000 l       .init.text     00000000 $a
+> 	00000000 l       .data  00000000 .LANCHOR1
+> 	00000000 l       .init.data     00000000 .LANCHOR0
+> 	00000000 l    d  .ARM.extab.init.text   00000000 .ARM.extab.init.text
+> 	00000000 l    d  .ARM.exidx.init.text   00000000 .ARM.exidx.init.text
+> 	00000000 l       .ARM.exidx.init.text   00000000 $d
+> 	00000000 l       .data  00000000 $d
+> 	00000000 l     O .data  000001c8 wifi_rfkill_device
+> 	000001c8 l     O .data  00000048 wifi_gpio_lookup
+> 	00000000 l    d  .rodata.str1.4 00000000 .rodata.str1.4
+> 	00000000 l       .rodata.str1.4 00000000 $d
+> 	00000000 l    d  .init.data     00000000 .init.data
+> 	00000000 l       .init.data     00000000 $d
+> 	00000000 l     O .init.data     00000048 wifi_rfkill_prop
+> 	00000000 l    d  .debug_frame   00000000 .debug_frame
+> 	00000010 l       .debug_frame   00000000 $d
+> 	00000000 l    d  .debug_info    00000000 .debug_info
+> 	00000000 l    d  .debug_abbrev  00000000 .debug_abbrev
+> 	00000000 l    d  .debug_aranges 00000000 .debug_aranges
+> 	00000000 l    d  .debug_ranges  00000000 .debug_ranges
+> 	00000000 l    d  .debug_line    00000000 .debug_line
+> 	00000000 l    d  .debug_str     00000000 .debug_str
+> 	00000000 l    d  .note.GNU-stack        00000000 .note.GNU-stack
+> 	00000000 l    d  .comment       00000000 .comment
+> 	00000000 l    d  .ARM.attributes        00000000 .ARM.attributes
+> 	00000000 g     F .init.text     00000030 tegra_paz00_wifikill_init
+> 	00000000         *UND*  00000000 platform_device_add_properties
+> 	00000000         *UND*  00000000 gpiod_add_lookup_table
+> 	00000000         *UND*  00000000 platform_device_register
+> 	00000000         *UND*  00000000 __aeabi_unwind_cpp_pr0
+> 
+> So it correctly ends up in .init.data for me. And it does so with or
+> without the patch. GCCs documentation doesn't seem to say where exactly
+> these attributes need to be put, though the examples given all have the
+> attribute right before the =.
 
-Hmm... I get this:
+ok, objdump -s is maybe not appropriate to display such things.
 
-	$ objdump -t build/tegra20/arch/arm/mach-tegra/board-paz00.o
+Contents of section .init.data:
+ 0000 2c000000 0c000000 00010000 00000000  ,...............
+ 0010 34000000 00000000 40000000 05000000  4.......@.......
+ 0020 00010000 00000000 48000000 00000000  ........H.......
+ 0030 00000000 00000000 00000000 00000000  ................
+ 0040 00000000 00000000                    ........        
+Contents of section .rodata.str1.4:
+ 0000 72666b69 6c6c5f67 70696f00 74656772  rfkill_gpio.tegr
+ 0010 612d6770 696f0000 72657365 74000000  a-gpio..reset...
+ 0020 73687574 646f776e 00000000 6e616d65  shutdown....name
+ 0030 00000000 77696669 5f72666b 696c6c00  ....wifi_rfkill.
+ 0040 74797065 00000000 776c616e 00        type....wlan.   
 
-	build/tegra20/arch/arm/mach-tegra/board-paz00.o:     file format
-	elf32-little
+In fact, .init.data seems to contain relocations to .rodata.str1.4, which "-s" 
+does not resolve.
+ 
+> Oh... interestingly checkpatch does seem to have a check for this now,
+> and it does recommend that __initdata be placed after wifi_rfkill_prop,
+> so I'm going to apply this.
 
-	SYMBOL TABLE:
-	00000000 l    df *ABS*  00000000 board-paz00.c
-	00000000 l    d  .text  00000000 .text
-	00000000 l    d  .data  00000000 .data
-	00000000 l    d  .bss   00000000 .bss
-	00000000 l    d  .init.text     00000000 .init.text
-	00000000 l       .init.text     00000000 $a
-	00000000 l       .data  00000000 .LANCHOR1
-	00000000 l       .init.data     00000000 .LANCHOR0
-	00000000 l    d  .ARM.extab.init.text   00000000 .ARM.extab.init.text
-	00000000 l    d  .ARM.exidx.init.text   00000000 .ARM.exidx.init.text
-	00000000 l       .ARM.exidx.init.text   00000000 $d
-	00000000 l       .data  00000000 $d
-	00000000 l     O .data  000001c8 wifi_rfkill_device
-	000001c8 l     O .data  00000048 wifi_gpio_lookup
-	00000000 l    d  .rodata.str1.4 00000000 .rodata.str1.4
-	00000000 l       .rodata.str1.4 00000000 $d
-	00000000 l    d  .init.data     00000000 .init.data
-	00000000 l       .init.data     00000000 $d
-	00000000 l     O .init.data     00000048 wifi_rfkill_prop
-	00000000 l    d  .debug_frame   00000000 .debug_frame
-	00000010 l       .debug_frame   00000000 $d
-	00000000 l    d  .debug_info    00000000 .debug_info
-	00000000 l    d  .debug_abbrev  00000000 .debug_abbrev
-	00000000 l    d  .debug_aranges 00000000 .debug_aranges
-	00000000 l    d  .debug_ranges  00000000 .debug_ranges
-	00000000 l    d  .debug_line    00000000 .debug_line
-	00000000 l    d  .debug_str     00000000 .debug_str
-	00000000 l    d  .note.GNU-stack        00000000 .note.GNU-stack
-	00000000 l    d  .comment       00000000 .comment
-	00000000 l    d  .ARM.attributes        00000000 .ARM.attributes
-	00000000 g     F .init.text     00000030 tegra_paz00_wifikill_init
-	00000000         *UND*  00000000 platform_device_add_properties
-	00000000         *UND*  00000000 gpiod_add_lookup_table
-	00000000         *UND*  00000000 platform_device_register
-	00000000         *UND*  00000000 __aeabi_unwind_cpp_pr0
+Btw, where is your tree for 4.11? git.kernel.org shows no action since 
+November. Please also include https://patchwork.ozlabs.org/patch/704367/ if 
+you haven't done yet. I forgot to add a #stable tag for 4.9 and 4.10.
 
-So it correctly ends up in .init.data for me. And it does so with or
-without the patch. GCCs documentation doesn't seem to say where exactly
-these attributes need to be put, though the examples given all have the
-attribute right before the =3D.
+Marc
 
-Oh... interestingly checkpatch does seem to have a check for this now,
-and it does recommend that __initdata be placed after wifi_rfkill_prop,
-so I'm going to apply this.
-
-Thierry
-
---LpQ9ahxlCli8rRTG
+--nextPart1811720.MHOpLJvz2D
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliGLjoACgkQ3SOs138+
-s6EGkxAAtauUln/bOnAtWXBUcwGLB5NbJpDUFXYIgIhmubrmhjnRNKXs7g3UBFYS
-BIyD61XIzrkoZ9U51y+6E+Rc7b+6qxojzWbVzcKtBqulNhQZo2lzCmZ0SMI95JSV
-IJX/mXVLBEnN4hxnz2C12c6FVfjqfx9ELGR7iIElW5HUy2Dj0hJNIlK+GdLZ0+o6
-aA3MmbL/sSpGBk5ifkI+5N9PP7nRmqDif3NmETdcbuPuguF8mkMzSTBMWK10s/wS
-lIfXej1X3jp1KkhYuZr1l9NBVUqHC8ifeFjhIM22VNBv8b06beftwlOh54DKbf6l
-FRf0+NP0Fct1Uz4fmon2OQYqr/38bQNV26XahDGePLjNQqAa/gwB6BGYyQQJU+bV
-EfYt1OQ7YQibkICXraJUR15zGm8Xi/SVVq6P/ltvWKkQH0l1MXA3Nr9FSBTsA9oL
-RK9czxQC+lYPr+9fXBTo07PDzG6OEmtt8yO2l4FHAb5m02HC8rd4i4IFjeeab3FP
-LA9kG3uiv7hyVcr1fetJM6f8760PMvj/QxB+ZdtM3E8ys2AutCSY1OMG8hNgDt8f
-kvh/aNrO6HcXGVgj+DGW0qzHAPSIz6Avi2W3t9v0IFq/z/W4mzKlgVQzXS21ey5J
-CsQWdRDnFONobOUgJQs01NDTaAOeF5VLNO8/3QGJDMB9WH/MIPo=
-=R7P1
+iQEzBAABCAAdFiEEySF+t0C8+8jyqfBvrJ5Hf0cUG2gFAliHGYAACgkQrJ5Hf0cU
+G2g0bQgAi8seLZeDwDlqItVU5RQvRW2gBUhVaE3gkSu6QSHN8TcX0uLqLftBZIpc
+fVkQ5o9GbJpOBmNaesevyzABLCsn188HZ6lKtYikE5ztZdbCM/E+d6FI0lb7KZ8V
+d2cpESs3ypKl0uacGplqfHDbpZQ20tna4+fhqHiUump9XmNYQX380cfT4p+u3s6n
+X1Qp2fkAeOsTv8zD9VfcgUmqby1OuXl6vR6aQvKivGm1jC/PJi6Je1xyMHw7Vz2H
+BPyDu1VM04jGC7zcrjC6gskW5yvv9i74VTqTCt9R0okSV5eEnlJQHrS5FkfZUTTl
+vHcd/+KZUvG/BVPjC0eYw63gwXvNzg==
+=q6p9
 -----END PGP SIGNATURE-----
 
---LpQ9ahxlCli8rRTG--
+--nextPart1811720.MHOpLJvz2D--
