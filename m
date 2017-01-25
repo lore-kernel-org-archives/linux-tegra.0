@@ -1,77 +1,68 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: Re: [PATCH v2 2/6] ARM: tegra: nyan: Use external control for
- bq24735 charger
-Date: Wed, 25 Jan 2017 12:01:55 +0100
-Message-ID: <1485342115.1224.0.camel@paulk.fr>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 4/6] ARM: tegra: nyan-blaze: Include compatible
+ revisions for proper detection
+Date: Wed, 25 Jan 2017 12:04:13 +0100
+Message-ID: <20170125110413.GE9344@ulmo.ba.sec>
 References: <20170122154753.31942-1-contact@paulk.fr>
-         <20170122154753.31942-2-contact@paulk.fr>
-         <20170125105940.GC9344@ulmo.ba.sec>
+ <20170122154753.31942-4-contact@paulk.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-URqawIfcHm2Sglwq67Jn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170125105940.GC9344@ulmo.ba.sec>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>, Peter Rosin <peda@axentia.se>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FN+gV9K+162wdwwF"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170122154753.31942-4-contact-W9ppeneeCTY@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---=-URqawIfcHm2Sglwq67Jn
-Content-Type: text/plain; charset="UTF-8"
+--FN+gV9K+162wdwwF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Le mercredi 25 janvier 2017 =C3=A0 11:59 +0100, Thierry Reding a =C3=A9crit=
-=C2=A0:
-> On Sun, Jan 22, 2017 at 04:47:49PM +0100, Paul Kocialkowski wrote:
-> > Nyan boards come with an embedded controller that controls when to
-> > enable and disable the charge. Thus, it should not be left up to the
-> > kernel to handle that.
-> >=20
-> > Using the ti,external-control property allows specifying this use-case.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> > ---
-> > =C2=A0arch/arm/boot/dts/tegra124-nyan.dtsi | 1 +
-> > =C2=A01 file changed, 1 insertion(+)
+On Sun, Jan 22, 2017 at 04:47:51PM +0100, Paul Kocialkowski wrote:
+> Depthcharge (the payload used with cros devices) will attempt to detect
+> boards using their revision. This includes all the known revisions for
+> the nyan-blaze board so that the dtb can be selected preferably.
 >=20
-> Is the ti,ac-detect-gpios property still useful in that case? I guess it
-> would still allow to monitor whether or not a charger is connected, even
-> if the EC determines that it shouldn't charge.
+> Defining compatibly revisions allows depthcharge to select the kernel
+> via the revision it detects instead of using the default kernel. This
+> allows having a FIT image with multiple kernels for multiple devices.
+>=20
+> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra124-nyan-blaze.dts | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 
-Yes, this is mostly what the bq24735 is used for in nyan devices: reporting
-connection and disconnection events.
+Applied, with the same padding adjustments as 3/6.
 
-> Anyway, I've applied this.
+Thanks,
+Thierry
 
-Thanks!
-
---=20
-Paul Kocialkowski, developer of free digital technology at the lower levels
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-URqawIfcHm2Sglwq67Jn
+--FN+gV9K+162wdwwF
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAliIhaMACgkQhP3B6o/u
-lQyJrhAAkMExufjsKy5vcpWLVAGyemRPyrHlSOZpjHdlTAqeLw3SIXNrIFBU7KhW
-a9lwW93MyQ6XQLsE45hQq92qI9JgNmmbbBoq2i4OLiEyK5r3fGseGE1WQOuQiO8E
-OGSqmEMfZUs3Q1KUcpTpQSmRPVSTe3vmd0KqM5efbCbv7sr0tcrb2Ja0erGjA79e
-VEWEThOY0x2bHYo8rItC/Nu8vhvB7PMH2hBYEBJsWdX7ymT8xpL9Q13Okc+5IHFw
-Trqy80TNAo0f2WbCZ/m2GVBAAG1Citj+5YgErMhKs6eFEfo+UZvX6PJrEs3Jgduj
-tEYQn5vLPXXYwd6miwEzDETvD0HK9DFFiULdPFba09qagZ9QDXXNCZn1ISmji0iD
-WYqW6dyK33ezav0E7EUkV1gRG+DeVw2GdST8IfdR9lYr+7WyBrFU8FI7dEbJnnHk
-6QNtx+2FSYiKcK+LVLC+qI+35OeXgpjEqHAYIoI3jmww5acpV6UJeBPGzWNv8qc6
-s+UjjIydIgE4sahQuNmCEvwqMbjBfd1ggqXLi39+6ye27l+pu2yJLmEZUx9XKD+S
-oMoXnZyfboZyXyNwuUj0Kr2hDq2hvsHZJz96F6fS7Wz6q1dMj7gkmZoQBOr5ydGO
-kOJ7nH+CnFL0cHT0FVZ+qDiU7FYkCeJT3tYx1lq9oFCuhudFOqE=
-=Pb0W
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliIhi0ACgkQ3SOs138+
+s6Ey3w/+L3MYoX8i+6sbo6Akm53AAzfq2XuEKyMU4Bpq2vJKc1cuN9LC7Yo1/kch
+7uteRcgF/wHvY5VlpKnZXbKgXp2rupWLXhuyC0cKVn6FWBjRmq2X3PENkyA2rLaK
+zxv58kTdpOiqLIP6zGnlt+RrVbUOrrN/gMB3T3wGl/kA5EbxIOJQLKNVvh+wI892
+dR9wTxA9r7OOtLUeO02EB8B6qwRVirX3bD77+lAap6JGLqdX+c0nXq76zxj0xn+T
+irdVCHg0XMdqlg0oYRIYlJtzeRcm+ZhLq3D29Ygg00QBN1bvW1s5obg3H+LU9v9K
+OY1Dm5z27RjKSXP1plIINnrYq40U07gvHHTCN3kNAJ2YHMi+Fkot4R2VB41+3VqK
+G5EKMYT6Pyfc10M6ORPpuz34JIfaXO/ZyIJTEnxFkkUeWuW3dkGmNWxBrfUQ++CH
+P0kQZRV3pvC/5FJWSwAO8XUzjT9HMGq5ZyUgiz8xVEJlUFNkx2eK16S9Df1J5ekJ
+dQv1RQe+4uzORTEICubArWU8+6pf2dR0Nrtz+jF/APZcgTyqOyZx+P1KX0fQdSPm
+yjuU7OdzxF1TGzCK4XC7pSF3X3zIMbxTigwKLStXjpZcEW6vq9D7GvM5JsCRNL/h
+5jHM4MY1OtNgmWrI2DoSuPpP4Cw1flWQqbkdpxXMWiqVKHBhZQY=
+=23vW
 -----END PGP SIGNATURE-----
 
---=-URqawIfcHm2Sglwq67Jn--
+--FN+gV9K+162wdwwF--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
