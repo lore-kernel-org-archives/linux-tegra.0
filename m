@@ -1,57 +1,62 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: tegra: =?utf-8?Q?Fix?=
- =?utf-8?Q?_missing_card_detection_in_Trimslice_=C2=B5SD?= card slot
-Date: Wed, 25 Jan 2017 10:31:45 +0100
-Message-ID: <20170125093145.GF13025@ulmo.ba.sec>
-References: <20170122211747.exirq4nvb2xj6dk6@localhost>
+Subject: Re: [PATCH v2 1/6] ARM: tegra: nyan: Use proper IRQ type definitions
+Date: Wed, 25 Jan 2017 11:58:12 +0100
+Message-ID: <20170125105812.GB9344@ulmo.ba.sec>
+References: <20170122154753.31942-1-contact@paulk.fr>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="IvGM3kKqwtniy32b"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="+g7M9IMkV8truYOl"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170122211747.exirq4nvb2xj6dk6@localhost>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rask Ingemann Lambertsen <rask-SivP7zSAdNDZaaYASwVUlg@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20170122154753.31942-1-contact-W9ppeneeCTY@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---IvGM3kKqwtniy32b
+--+g7M9IMkV8truYOl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jan 22, 2017 at 10:17:48PM +0100, Rask Ingemann Lambertsen wrote:
-> Card insertion and removal currently goes undetected. AFAIK there's no
-> way to generate interrupts on card changes in this slot, so use polling.
+On Sun, Jan 22, 2017 at 04:47:48PM +0100, Paul Kocialkowski wrote:
+> This switches a few interrupt definitions that were using
+> GPIO_ACTIVE_HIGH as IRQ type, which is invalid.
 >=20
-> Signed-off-by: Rask Ingemann Lambertsen <rask-SivP7zSAdNDZaaYASwVUlg@public.gmane.org>
+> This is mostly a cosmetic change, that doesn't affect any driver.
+>=20
+> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 > ---
->  arch/arm/boot/dts/tegra20-trimslice.dts | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/boot/dts/tegra124-nyan.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---IvGM3kKqwtniy32b
+--+g7M9IMkV8truYOl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliIcH4ACgkQ3SOs138+
-s6GDxg/9G3A8dYUIN4fpS8OemYkfLeQbJlqPKQ9mkqFyqR6SWcho5wOcJNS5hZ7m
-2jGTXBFYgJlvJr/3qW6pT8pccbFY4gAVRAmqmshpb25bsRkzxALbkboZgtK4Izua
-1znc0BKhLG168wx1J4lJL0g2xoXYNuGVsPRqmx4xMwE15/Ru6U2lTmWxTYj18sIE
-tmNT1DQk+hOTTNTcN69pJuFxMwCjsOXK8VfkBl37Hd+PNxnxWfK2x4kN66WgMvx1
-dpM+7bU6nkvuwKs3SzIBO9o2ftiB2rBPAHDFLZWjqv1n5F5VMbfVRiqaehMc1Omb
-sWKaabrOfi0VUjWqTIhI64Jy0DYd948Am+oGuU6x6uJ8UHz6de5YK7BfMbOcLNA9
-H5H+8O+Ujzu6+4tq0OcY5lVykezM4hdH6+GA/oI6bSzkrQbC1Hmk2qiNMNhKI1ez
-zipLWaI6EB6Rzsr28pJRKB0QAi0pnjZX1wRiMdHcIZzmNDjRmTf03nSIxcyc2RHw
-ta/pFmG2oAgoNCMEf0I+kyeJe/YQhFGpVBfd/iBOeCdbgSdDxwxX8kmyDtS/lHzA
-A170IjTdP0slZTelOZ21YSZXizNUJ6oR8YX3MDszkjeBASv9UvHRXQHgEXNm9UKs
-JgOqpx/tTN8usZy4y6JkGBDYU3Nggewi8eWWFpoOPFruKD1EbF4=
-=eetJ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliIhMMACgkQ3SOs138+
+s6EYww//Qxfao/weYy3A/uZPX/7Uqg2P3cM+X7OtJVUBJoAJGUgLGd7igM5RX/UC
+aQqPMgY2JWHpynJGzjUWNfK3dFH9RrFTvJxG5+phDVKJAEcprrejceOS0157FCeH
+C2W1iZlJQBU0AlujBf3jCtxdpOJ9DQ3T3GTnB3ri8ylQgpYNpkDyWu5o4uCunppM
+LPxXAD0mFf++1kOUNjfOjIe4yyHfCR3vfKpWyJQmk/H40jL7AVEOGxjR/v3MK2AA
+hgj8DgtkeQxpOTAnP0TNIYaeCzlnBXOkeEfsjmeMdPDUoQ2hobqwaW4u41C3nXH0
+swMT/fqPPxJVwPctmL24YlJmkHS9dRKKXn3XKsJIKgk+TFNyDoUjBrXM7/TCLwa/
+IgIvv8qpCpS3GOxjkmXllFaC3f5BNpWhpFNMzhM5c4kcNEkO+BkFipc4h3Lbhs7K
+M9Sibv7CXoP8PpqLZELrm/poeYoxYK7IcX4JzCrLODrfEPn2Yr9EaDIo+tmzt4pg
+SP3WxB8+HVdWo63olBqZcsvNPCpxXsafGh8INa2ZTt3BuYUH7JAV64t9t2hbr+eK
+49h7eYmZPfxCUmgvKhEYCkILSSwA1fX/Rsl4G+2iM/rjoroRH4hCHix/C/0PHAeV
+IIznXd0jqr/i32IYU33SIobyOcJ7tJHupNd7FH4pM7m90yS4+So=
+=2/Rc
 -----END PGP SIGNATURE-----
 
---IvGM3kKqwtniy32b--
+--+g7M9IMkV8truYOl--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
