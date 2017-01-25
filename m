@@ -1,131 +1,78 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: paz00: fix __initdata placement
-Date: Tue, 24 Jan 2017 10:27:01 -0800
-Message-ID: <20170124182701.GD27969@dtor-ws>
-References: <20170123074347.GA29804@dtor-ws> <4072003.S1IBmddlP7@fb07-iapwap2>
- <20170123162428.GB2043@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [1/6] apalis-tk1: remove spurious new lines
+Date: Wed, 25 Jan 2017 07:44:25 +0100
+Message-ID: <20170125064425.GA12626@ulmo.ba.sec>
+References: <1479773647-14726-2-git-send-email-marcel.ziswiler@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170123162428.GB2043@ulmo.ba.sec>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Marc Dietrich <marvin24@gmx.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1479773647-14726-2-git-send-email-marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 23, 2017 at 05:24:28PM +0100, Thierry Reding wrote:
-> On Mon, Jan 23, 2017 at 11:04:22AM +0100, Marc Dietrich wrote:
-> > Hello Dmitry,
-> > 
-> > Am Sonntag, 22. Januar 2017, 23:43:47 CET schrieb Dmitry Torokhov:
-> > > To have expected effect the __initdata attribute should go after variable
-> > > name and before initializer.`
-> > > 
-> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > ---
-> > >  arch/arm/mach-tegra/board-paz00.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm/mach-tegra/board-paz00.c
-> > > b/arch/arm/mach-tegra/board-paz00.c index 7478f6fb3664..ea6bff404161 100644
-> > > --- a/arch/arm/mach-tegra/board-paz00.c
-> > > +++ b/arch/arm/mach-tegra/board-paz00.c
-> > > @@ -23,7 +23,7 @@
-> > > 
-> > >  #include "board.h"
-> > > 
-> > > -static struct property_entry __initdata wifi_rfkill_prop[] = {
-> > > +static struct property_entry wifi_rfkill_prop[] __initdata = {
-> > >  	PROPERTY_ENTRY_STRING("name", "wifi_rfkill"),
-> > >  	PROPERTY_ENTRY_STRING("type", "wlan"),
-> > >  	{ },
-> > 
-> > you are right according to the documentation, but objdump -s always shows that 
-> > it gets put into the .rodata section. So this patch has no effect, because 
-> > result is always same (and wrong). It's also possible that I'm doing something 
-> > wrong :-) Btw, there are hundreds of such __initdata misplacement in the 
-> > kernel.
-> 
-> Hmm... I get this:
-> 
-> 	$ objdump -t build/tegra20/arch/arm/mach-tegra/board-paz00.o
-> 
-> 	build/tegra20/arch/arm/mach-tegra/board-paz00.o:     file format
-> 	elf32-little
-> 
-> 	SYMBOL TABLE:
-> 	00000000 l    df *ABS*  00000000 board-paz00.c
-> 	00000000 l    d  .text  00000000 .text
-> 	00000000 l    d  .data  00000000 .data
-> 	00000000 l    d  .bss   00000000 .bss
-> 	00000000 l    d  .init.text     00000000 .init.text
-> 	00000000 l       .init.text     00000000 $a
-> 	00000000 l       .data  00000000 .LANCHOR1
-> 	00000000 l       .init.data     00000000 .LANCHOR0
-> 	00000000 l    d  .ARM.extab.init.text   00000000 .ARM.extab.init.text
-> 	00000000 l    d  .ARM.exidx.init.text   00000000 .ARM.exidx.init.text
-> 	00000000 l       .ARM.exidx.init.text   00000000 $d
-> 	00000000 l       .data  00000000 $d
-> 	00000000 l     O .data  000001c8 wifi_rfkill_device
-> 	000001c8 l     O .data  00000048 wifi_gpio_lookup
-> 	00000000 l    d  .rodata.str1.4 00000000 .rodata.str1.4
-> 	00000000 l       .rodata.str1.4 00000000 $d
-> 	00000000 l    d  .init.data     00000000 .init.data
-> 	00000000 l       .init.data     00000000 $d
-> 	00000000 l     O .init.data     00000048 wifi_rfkill_prop
-> 	00000000 l    d  .debug_frame   00000000 .debug_frame
-> 	00000010 l       .debug_frame   00000000 $d
-> 	00000000 l    d  .debug_info    00000000 .debug_info
-> 	00000000 l    d  .debug_abbrev  00000000 .debug_abbrev
-> 	00000000 l    d  .debug_aranges 00000000 .debug_aranges
-> 	00000000 l    d  .debug_ranges  00000000 .debug_ranges
-> 	00000000 l    d  .debug_line    00000000 .debug_line
-> 	00000000 l    d  .debug_str     00000000 .debug_str
-> 	00000000 l    d  .note.GNU-stack        00000000 .note.GNU-stack
-> 	00000000 l    d  .comment       00000000 .comment
-> 	00000000 l    d  .ARM.attributes        00000000 .ARM.attributes
-> 	00000000 g     F .init.text     00000030 tegra_paz00_wifikill_init
-> 	00000000         *UND*  00000000 platform_device_add_properties
-> 	00000000         *UND*  00000000 gpiod_add_lookup_table
-> 	00000000         *UND*  00000000 platform_device_register
-> 	00000000         *UND*  00000000 __aeabi_unwind_cpp_pr0
-> 
-> So it correctly ends up in .init.data for me. And it does so with or
-> without the patch. GCCs documentation doesn't seem to say where exactly
-> these attributes need to be put, though the examples given all have the
-> attribute right before the =.
-> 
-> Oh... interestingly checkpatch does seem to have a check for this now,
-> and it does recommend that __initdata be placed after wifi_rfkill_prop,
-> so I'm going to apply this.
 
-Ah, so I mis-remembered the rules and it seems that it does not really
-matter if __initdata goes before or after variable name, it can't go
-between "struct" and its name. From that checkpatch change introducing
-the check:
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    static struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = { 
+On Tue, Nov 22, 2016 at 01:14:02AM +0100, Marcel Ziswiler wrote:
+> Remove some spurious new lines.
+>=20
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+> ---
 
-    does NOT put exynos4_plls in the .initdata section.  The __initdata marker
-    can be virtually anywhere on the line, EXCEPT right after "struct".  The
-    preferred location is before the "=" sign if there is one, or before the
-    trailing ";" otherwise.
+For some reason I can't find any trace of this series in my inbox. It's
+not even been classified as spam, it's just not there. So I had to pull
+this from patchwork in order to reply.
 
-so if you are applying it you might want to change the wording as to the
-effect of "making checkpatch happy" which wasn't my intention, but was
-the outcome ;)
+>  arch/arm/boot/dts/tegra124-apalis-eval.dts |  1 -
+>  arch/arm/boot/dts/tegra124-apalis.dtsi     | 12 ------------
+>  2 files changed, 13 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/d=
+ts/tegra124-apalis-eval.dts
+> index 653044a..2b5a0f3 100644
+> --- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
+> +++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+> @@ -232,7 +232,6 @@
+> =20
+>  	backlight: backlight {
+>  		compatible =3D "pwm-backlight";
+> -
+>  		/* BKL1_PWM */
+>  		pwms =3D <&pwm 3 5000000>;
+>  		brightness-levels =3D <255 231 223 207 191 159 127 0>;
 
-Thanks.
+These newlines were introduced to separate standard properties from the
+not so standard properties for readability, I'd prefer to keep them.
 
--- 
-Dmitry
+Same for the ones below.
+
+Thierry
+
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliISUMACgkQ3SOs138+
+s6GnyQ/+LwqijgDEvfYqX7lGd9u9c40HYwM31piF9TpQMhFlBZ4+gKiPqF+KTx3L
+JvwpkZopIhWG/o9lbPv95JJGNBa5nf4XSxMiOrkcc9h0XCKyaoRGd8RkfNNujv+l
+7TCleyu3bEpK4hxaoR+1DmLWQ+jPFk/UIuZ3QwwNRSNFXmzSGoS9f5bZ0+6aDOEV
+96hPHOUPx0q+/jG1+VS+Dy22ieiZVV8FOsU4xN9QgY0E0tSAUwtnwdvHvwAEvv1T
+PP2cutlnqLX00FzRLbPsVogHvxCEMaFVMr7H9vIgsf1cRc3B+uFf8DoUqfrRuNNU
+NQuBKivCNJwBogokaPOS2urlgZ616e19X6lxEj1J89odcXHEfQio9fsVL6pDx2oe
+/s709gjj6obYY3FbTMVElisfjUvs7FWIvxxuEo/u4+q9kX4cdhHWGEvBLnz0cQCj
+wwXcSAJrNzyd9wAy9RnQpKXoCMa/t1+ToyyeqGHbmiMwqT4U8YRu7XYrfbJSonyl
+knIlFezThkj9KuWHdyUl8h1PKFqWn+0JhlUyq9x1QDmUihDhFmTx93IOXZljD/SW
+4pustyuObCuONFSytRlkx6wCSCT0eBheQjQy70E2Fh5om/PaNB+1uyNnDhySCsnR
+YgbyT+YxnA8VyfZYt4xjwEGjq46TiRX143gOUaO7iDcIWaMj/n4=
+=5xuY
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
