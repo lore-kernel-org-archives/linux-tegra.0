@@ -1,120 +1,79 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: Re: [PATCH v2 3/6] ARM: tegra: nyan-big: Include compatible
- revisions for proper detection
-Date: Wed, 25 Jan 2017 12:19:48 +0100
-Message-ID: <1485343188.1224.4.camel@paulk.fr>
-References: <20170122154753.31942-1-contact@paulk.fr>
-         <20170122154753.31942-3-contact@paulk.fr>
-         <20170125110246.GD9344@ulmo.ba.sec> <1485342488.1224.3.camel@paulk.fr>
-         <20170125111458.GH9344@ulmo.ba.sec>
+From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Subject: Re: [PATCH v3] dt-bindings: power: supply: bq24735: reverse the
+ polarity of ac-detect
+Date: Wed, 25 Jan 2017 13:20:27 +0100
+Message-ID: <c4528a3d-5ff7-8fca-6dbf-18b3792edda7@axentia.se>
+References: <1481804479-8711-1-git-send-email-peda@axentia.se>
+ <5f5fe01a-7c7a-58f7-2171-5f6879392ea7@wwwdotorg.org>
+ <c3e87e2b-5d0d-c1ff-8edf-f4a77de31c1e@axentia.se>
+ <1485275073.1087.10.camel@paulk.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-SMET0+kRFAN8BAZPgXvI"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170125111458.GH9344@ulmo.ba.sec>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>, Peter Rosin <peda@axentia.se>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1485275073.1087.10.camel-W9ppeneeCTY@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 2017-01-24 17:24, Paul Kocialkowski wrote:
+> Le jeudi 15 décembre 2016 à 18:50 +0100, Peter Rosin a écrit :
+>> The bindings are fine.
+>>
+>> The Tegra dts files are buggy, but the driver is also buggy, so those
+>> two bugs cancel each other. So, the option is to either introduce
+>> regressions by fixing the two bugs thus creating a flag day where
+>> the kernel and dt needs to match. Or, just document what is going on
+>> and change the bindings even if they are not wrong.
+> 
+> After reading the discussion, I would rather be in favor of fixing the driver
+> and the tegra dts files, which are both wrong.
+> 
+> Keeping things as-is is very counter-intuitive: the GPIO on nyan boards is
+> active-low and should be described as such (think of other projects, like
+> U-Boot, reusing the dts). It's also very counter-intuitive to require that any
+> new board using that driver use active-low polarity in the GPIO declaration when
+> the line is really active-high.
 
---=-SMET0+kRFAN8BAZPgXvI
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Agreed, it very counter-intuitive. I have a board w/o an invert and it
+does look odd with active-low in the dts. It really should be active-high.
 
-Le mercredi 25 janvier 2017 =C3=A0 12:14 +0100, Thierry Reding a =C3=A9crit=
-=C2=A0:
-> On Wed, Jan 25, 2017 at 12:08:08PM +0100, Paul Kocialkowski wrote:
-> > Le mercredi 25 janvier 2017 =C3=A0 12:02 +0100, Thierry Reding a =C3=A9=
-crit=C2=A0:
-> > > On Sun, Jan 22, 2017 at 04:47:50PM +0100, Paul Kocialkowski wrote:
-> > > > Depthcharge (the payload used with cros devices) will attempt to de=
-tect
-> > > > boards using their revision. This includes all the known revisions =
-for
-> > > > the nyan-big board so that the dtb can be selected preferably.
-> > > >=20
-> > > > Defining compatibly revisions allows depthcharge to select the kern=
-el
-> > > > via the revision it detects instead of using the default kernel. Th=
-is
-> > > > allows having a FIT image with multiple kernels for multiple device=
-s.
-> > > >=20
-> > > > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> > > > ---
-> > > > =C2=A0arch/arm/boot/dts/tegra124-nyan-big.dts | 7 ++++++-
-> > > > =C2=A01 file changed, 6 insertions(+), 1 deletion(-)
-> > >=20
-> > > I've applied this, with a small change, see below.
-> > >=20
-> > > > diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
-> > > > b/arch/arm/boot/dts/tegra124-nyan-big.dts
-> > > > index 67d7cfb32541..f12ece9b76a6 100644
-> > > > --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-> > > > +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
-> > > > @@ -6,7 +6,12 @@
-> > > > =C2=A0
-> > > > =C2=A0/ {
-> > > > =C2=A0	model =3D "Acer Chromebook 13 CB5-311";
-> > > > -	compatible =3D "google,nyan-big", "nvidia,tegra124";
-> > > > +	compatible =3D "google,nyan-big-rev7", "google,nyan-big-rev6",
-> > > > +			"google,nyan-big-rev5", "google,nyan-big-rev4",
-> > > > +			"google,nyan-big-rev3", "google,nyan-big-rev2",
-> > > > +			"google,nyan-big-rev5", "google,nyan-big-rev4",
-> > >=20
-> > > This line is the same as two lines above, so I've removed this one. I=
-'ve
-> > > also used slightly different padding (two tabs and align to the first
-> > > string in the first line with spaces) to make it consistent with othe=
-r
-> > > string lists in the file.
-> >=20
-> > Oops, sorry I missed that last faulty line. Actually, it should have
-> > contained:
-> > "google,nyan-blaze-rev1", "google,nyan-blaze-rev0";
-> >=20
-> > instead so that all revision, from 7 down to 0 are covered.
-> >=20
-> > Should I make another patch on top to fix that?
->=20
-> Here's what I've put into Tegra's for-next, that has all the necessary
-> revisions, doesn't it?
->=20
-> 	https://git.kernel.org/cgit/linux/kernel/git/tegra/linux.git/commit/?h=
-=3Df
-> or-next&id=3Dbfa3c0d4e8ba8eff525d34dbde0e76a98ebfbade
->=20
-> If so, no need for another patch.
+The (new) binding helps a bit though.
 
-Excellent, it's all there! Thanks a bunch.
+But that said, for various reasons I ended up not using that binding anyway
+and instead rely on polling the internal register for the ACOK bit.
 
---=20
-Paul Kocialkowski, developer of free digital technology at the lower levels
+> So yes, it means that older dtbs won't work with new kernels and vice-versa, but
+> as it was pointed out, this is a bug fix, not even a cosmetic change.
+> 
+> Is anyone strongly opposed to that solution? I'd really rather see the issue
+> fixed that way instead of the current proposal (this patch).
 
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-SMET0+kRFAN8BAZPgXvI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+It's a little bit more than a proposal since it is in linux-next. But not set
+in stone of course. I personally do not care as long as it is changed before
+hitting Linus' tree as I have no deployed devices. But docs are just that.
+Docs. Anything that worked before is going to break with the change you are
+proposing. Are you really willing to break who knows how many tegra boards?
 
------BEGIN PGP SIGNATURE-----
+What will you do a few months down the line when the regression reports start
+to creep in??? Argue about it with Linus? And then revert and create an even
+bigger mess? You could skip the arguing step and revert right away, but how
+is that helpful?
 
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAliIidQACgkQhP3B6o/u
-lQxF4Q//cgM1ODs7jyuOqKR2hhEn2kV+2RSKJzFxWRZawYuB3S+LDnaTBXdmne+Y
-pxTrOzR5ATr8QFb0XHR+jZ1SFClICBGyWunjnvC/N9syWow0JdLZQhhY6LUpHj6Q
-WDhOFGknD6cWVZpy6OqyrH1wtuRLurUfYhReADNYULUIbz8v/o2l/dLgy/XVMe/+
-zAsANDAuRC6Ai8qyF4BdBUXIZNFoX3IE6v/TiWNqqS9Favve0AsaxJrx5Woyw6YJ
-gQNYPea33jSw+qsdthJ1g67NlNbTzFWw9jdYBz0/aoRSHspkFrQVruK8G7rhmL7V
-0n6BygRJaeDtYfGTTRcywEmx0CQF2u60ZMZnIrN/p1ek0mqXeZ0Itw9iRktr53iv
-DPuf5B8mPuEoHnAu945Ej7zK2VGsje8WBoyPbqU81CvJbMfY7JMpOm6CwA/iEtDO
-FFIRE/j66INhIVfpn/hHbZti+J5O+x4IhhHMAnY+J1OkXUreUVc1gxxWvLQbDu0k
-t9LsgP6ecTWo1U8gJmDtLKoogtIp3NRwqNllIy/+laqjh/CZzeLQtM/8cko6FLMj
-pdluGcQg96Da4cgoFYzxWGHzl+flTaMbxe5a2ZmRGIXfSe7vM4E1MCoeFfNlLmSk
-bpXe0ojrenxR1fd07lyU/ERDThyfEOsIpzIEZjktwLl+ZTc2cGI=
-=edvh
------END PGP SIGNATURE-----
+Or do you somehow know that *all* tegra users will always update their kernel
+and dtb in sync, so that regressions will not happen?
 
---=-SMET0+kRFAN8BAZPgXvI--
+> I'd also be happy to implement and test that solution on nyans, as I've done
+> other bq24735-related work for nyans recently.
+
+Changing this is trivial. Testing that the change does what it is supposed to
+is not the main obstacle...
+
+Cheers,
+peda
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
