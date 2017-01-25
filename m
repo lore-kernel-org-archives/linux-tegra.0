@@ -1,78 +1,138 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [1/6] apalis-tk1: remove spurious new lines
-Date: Wed, 25 Jan 2017 07:44:25 +0100
-Message-ID: <20170125064425.GA12626@ulmo.ba.sec>
-References: <1479773647-14726-2-git-send-email-marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH] drm: tegra: shut up harmless warning on NOMMU
+Date: Wed, 25 Jan 2017 07:52:49 +0100
+Message-ID: <20170125065249.GA12584@ulmo.ba.sec>
+References: <20170112111425.3228358-1-arnd@arndb.de>
+ <20170119110058.GD30182@ulmo.ba.sec>
+ <7713814.tr8Zr0Cdrc@wuerfel>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+        protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1479773647-14726-2-git-send-email-marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <7713814.tr8Zr0Cdrc@wuerfel>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <rmk+kernel-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---CE+1k2dSO48ffgeK
+--0F1p//8PRICkK4MW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 22, 2016 at 01:14:02AM +0100, Marcel Ziswiler wrote:
-> Remove some spurious new lines.
+On Thu, Jan 19, 2017 at 04:09:47PM +0100, Arnd Bergmann wrote:
+> On Thursday, January 19, 2017 12:00:58 PM CET Thierry Reding wrote:
+> > On Thu, Jan 12, 2017 at 12:13:51PM +0100, Arnd Bergmann wrote:
+> > > The tegra DRM driver is almost ok without an MMU, but there
+> > > is one small warning that I get:
+> > >=20
+> > > drivers/gpu/drm/tegra/gem.c: In function 'tegra_drm_mmap':
+> > > drivers/gpu/drm/tegra/gem.c:508:12: unused variable 'prot'
+> > >=20
+> > > This marks the variable as __maybe_unused instead.
+> > >=20
+> > > Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> > > ---
+> > >  drivers/gpu/drm/tegra/gem.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+> > > index 7d853e6b5ff0..63f14b7a59a0 100644
+> > > --- a/drivers/gpu/drm/tegra/gem.c
+> > > +++ b/drivers/gpu/drm/tegra/gem.c
+> > > @@ -505,7 +505,7 @@ int tegra_drm_mmap(struct file *file, struct vm_a=
+rea_struct *vma)
+> > > =20
+> > >  		vma->vm_pgoff =3D vm_pgoff;
+> > >  	} else {
+> > > -		pgprot_t prot =3D vm_get_page_prot(vma->vm_flags);
+> > > +		pgprot_t prot __maybe_unused =3D vm_get_page_prot(vma->vm_flags);
+> >=20
+> > This seems to me like a suboptimal solution. The reason why this fails
+> > is because pgprot_writecombine(prot) for NOMMU translates to __pgprot(0)
+> > via a macro. This also means that we need to potentially add a
+> > __maybe_unused annotation to every local variable that stores a value
+> > that gets passed to pgprot_writecombine().
+> >=20
+> > There fortunately aren't very many of those cases, but I still think
+> > that a better solution would be to turn pgprot_writecombine() into a
+> > static inline function, so that the parameter would get silently
+> > ignored. Or perhaps if it must remain a macro, then doing the following
+> > should still avoid the need to modify every call site:
+> >=20
+> > 	#define pgprot_writecombine(prot) ({ (void)prot; __pgprot(0); })
+> >=20
+> > Thierry
+> >=20
 >=20
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+> Makes sense. How about this version?
+>=20
+> 	Arnd
 > ---
-
-For some reason I can't find any trace of this series in my inbox. It's
-not even been classified as spam, it's just not there. So I had to pull
-this from patchwork in order to reply.
-
->  arch/arm/boot/dts/tegra124-apalis-eval.dts |  1 -
->  arch/arm/boot/dts/tegra124-apalis.dtsi     | 12 ------------
->  2 files changed, 13 deletions(-)
+> From 83af6bc74423c90be7f580a827268b89f94b5c6b Mon Sep 17 00:00:00 2001
+> From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> Date: Thu, 19 Jan 2017 16:05:29 +0100
+> Subject: [PATCH] ARM: improve NOMMU definition of pgprot_*()
 >=20
-> diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/d=
-ts/tegra124-apalis-eval.dts
-> index 653044a..2b5a0f3 100644
-> --- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-> +++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-> @@ -232,7 +232,6 @@
+> The tegra DRM driver produces a harmless warning when built for NOMMU:
+>=20
+> drivers/gpu/drm/tegra/gem.c: In function 'tegra_drm_mmap':
+> drivers/gpu/drm/tegra/gem.c:508:12: unused variable 'prot'
+>=20
+> This is because pgprot_writecombine() on ARM returns a constant and
+> ignores its argument. The version in asm-generic doesn't have that
+> problem, so let's use that one instead. We don't actually care
+> about the value on NOMMU, and this is consistent with what some
+> other architectures do.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+>=20
+> diff --git a/arch/arm/include/asm/pgtable-nommu.h b/arch/arm/include/asm/=
+pgtable-nommu.h
+> index add094d09e3e..302240c19a5a 100644
+> --- a/arch/arm/include/asm/pgtable-nommu.h
+> +++ b/arch/arm/include/asm/pgtable-nommu.h
+> @@ -63,9 +63,9 @@ typedef pte_t *pte_addr_t;
+>  /*
+>   * Mark the prot value as uncacheable and unbufferable.
+>   */
+> -#define pgprot_noncached(prot)	__pgprot(0)
+> -#define pgprot_writecombine(prot) __pgprot(0)
+> -#define pgprot_dmacoherent(prot) __pgprot(0)
+> +#define pgprot_noncached(prot)	(prot)
+> +#define pgprot_writecombine(prot) (prot)
+> +#define pgprot_dmacoherent(prot) (prot)
 > =20
->  	backlight: backlight {
->  		compatible =3D "pwm-backlight";
-> -
->  		/* BKL1_PWM */
->  		pwms =3D <&pwm 3 5000000>;
->  		brightness-levels =3D <255 231 223 207 191 159 127 0>;
+> =20
+>  /*
+>=20
 
-These newlines were introduced to separate standard properties from the
-not so standard properties for readability, I'd prefer to keep them.
+I remember writing a reply to this, but it seems like I never sent it
+out. The above looks good to me:
 
-Same for the ones below.
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thierry
 
---CE+1k2dSO48ffgeK
+--0F1p//8PRICkK4MW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliISUMACgkQ3SOs138+
-s6GnyQ/+LwqijgDEvfYqX7lGd9u9c40HYwM31piF9TpQMhFlBZ4+gKiPqF+KTx3L
-JvwpkZopIhWG/o9lbPv95JJGNBa5nf4XSxMiOrkcc9h0XCKyaoRGd8RkfNNujv+l
-7TCleyu3bEpK4hxaoR+1DmLWQ+jPFk/UIuZ3QwwNRSNFXmzSGoS9f5bZ0+6aDOEV
-96hPHOUPx0q+/jG1+VS+Dy22ieiZVV8FOsU4xN9QgY0E0tSAUwtnwdvHvwAEvv1T
-PP2cutlnqLX00FzRLbPsVogHvxCEMaFVMr7H9vIgsf1cRc3B+uFf8DoUqfrRuNNU
-NQuBKivCNJwBogokaPOS2urlgZ616e19X6lxEj1J89odcXHEfQio9fsVL6pDx2oe
-/s709gjj6obYY3FbTMVElisfjUvs7FWIvxxuEo/u4+q9kX4cdhHWGEvBLnz0cQCj
-wwXcSAJrNzyd9wAy9RnQpKXoCMa/t1+ToyyeqGHbmiMwqT4U8YRu7XYrfbJSonyl
-knIlFezThkj9KuWHdyUl8h1PKFqWn+0JhlUyq9x1QDmUihDhFmTx93IOXZljD/SW
-4pustyuObCuONFSytRlkx6wCSCT0eBheQjQy70E2Fh5om/PaNB+1uyNnDhySCsnR
-YgbyT+YxnA8VyfZYt4xjwEGjq46TiRX143gOUaO7iDcIWaMj/n4=
-=5xuY
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliIS0EACgkQ3SOs138+
+s6FgCRAAq1phbR0FTmeIH7RpvnPAqYQuiciBhP+GNV12y1JUpxyL+kBq1rmdRTog
+kQCHMrAtuKbGojiwlwNEhR7IFm4nsXbPDMnztxNzdwsTTrzaISdmoqVBNNa9HYOy
+gaNBEHeffPh7243AvpzeWYvVhJpyapf7mbYIXPPacyPCj6SLxD5MxqxnvTmHRWO0
+2hy3vYTlhlY3Ziemz5qNPxAvEJpyCACamkUgSs1JIyO6Hcv2NBXKiFtdHLjj6n30
+0997PFMYHAypF2xEzi2eAo9stPEiN4hwaDHjqJOarWL52PdrOCPgPZ94y/R2+dWY
+uIT29Iv+lhEeYn0febKTJIMZMwxDUxPitSzYP5E7OlMUw3ZOsxaBkSWIsdBjTxsp
+6JJyP9aVKDlbVzm4RxGCmBsbJ5gqN9uw/KfJrQjFiIf0+bH08MYOSvkC8Vin+LV4
+GzZEvY9LTocLA17SgW5THgGZHcBWI1girb+L3zThq/uWnn8LFDRjUMXW4fA8B7ot
+jlj2BVeqznbAXiMO4WQQInaboUCehKM6Lmsmz0o/Ny5DBlu4+Hxvl/RhTwuyua22
+/lBVF6Hmpbybqr/a+ID/GYiRp3+13TJv3M0C1CcmemaTf1rFvQx6HpdOKcaEqwGc
+bxlqWgo41RakR4BdFj/dnzMid1VEigOTYuWihkG419X63PYQXXU=
+=2p2Q
 -----END PGP SIGNATURE-----
 
---CE+1k2dSO48ffgeK--
+--0F1p//8PRICkK4MW--
