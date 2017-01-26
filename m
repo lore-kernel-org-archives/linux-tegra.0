@@ -1,471 +1,155 @@
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] tty: serial: constify uart_ops structures
-Date: Wed, 25 Jan 2017 23:18:52 +0530
-Message-ID: <1485366532-3048-1-git-send-email-bhumirks@gmail.com>
-Return-path: <sparclinux-owner@vger.kernel.org>
-Sender: sparclinux-owner@vger.kernel.org
-To: julia.lawall@lip6.fr, linux@armlinux.org.uk, gregkh@linuxfoundation.org, jslaby@suse.com, macro@linux-mips.org, kernel@pengutronix.de, pfg@sgi.com, vz@mleia.com, slemieux.tyco@gmail.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, ldewangan@nvidia.com, wwwdotorg.org@vger.kernel.org, thierry.reding@gmail.com, gnurou@gmail.com, baohua@kernel.org, davem@davemloft.net, linux@prisktech.co.nz, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org, sparclinux@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: Re: [PATCH v3] dt-bindings: power: supply: bq24735: reverse the
+ polarity of ac-detect
+Date: Thu, 26 Jan 2017 11:09:52 +0100
+Message-ID: <1485425392.1113.0.camel@paulk.fr>
+References: <1481804479-8711-1-git-send-email-peda@axentia.se>
+         <5f5fe01a-7c7a-58f7-2171-5f6879392ea7@wwwdotorg.org>
+         <c3e87e2b-5d0d-c1ff-8edf-f4a77de31c1e@axentia.se>
+         <1485275073.1087.10.camel@paulk.fr>
+         <c4528a3d-5ff7-8fca-6dbf-18b3792edda7@axentia.se>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-/+1SxhgS20g9RA9lNJUJ"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <c4528a3d-5ff7-8fca-6dbf-18b3792edda7-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Declare uart_ops structures as const as they are only stored in the ops
-field of an uart_port structure. This field is of type const, so
-uart_ops structures having this property can be made const too.
 
-File size details before and after patching.
-First line of every .o file shows the file size before patching
-and second line shows the size after patching.
+--=-/+1SxhgS20g9RA9lNJUJ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-   text	   data	    bss	    dec	    hex	filename
+On 25/01/17 13:20, Peter Rosin wrote:
+> On 2017-01-24 17:24, Paul Kocialkowski wrote:
+> > Le jeudi 15 d=C3=A9cembre 2016 =C3=A0 18:50 +0100, Peter Rosin a =C3=A9=
+crit :
+> > > The bindings are fine.
+> > >=C2=A0
+> > > The Tegra dts files are buggy, but the driver is also buggy, so those
+> > > two bugs cancel each other. So, the option is to either introduce
+> > > regressions by fixing the two bugs thus creating a flag day where
+> > > the kernel and dt needs to match. Or, just document what is going on
+> > > and change the bindings even if they are not wrong.
+> >=C2=A0
+> > After reading the discussion, I would rather be in favor of fixing the
+> > driver
+> > and the tegra dts files, which are both wrong.
+> >=C2=A0
+> > Keeping things as-is is very counter-intuitive: the GPIO on nyan boards=
+ is
+> > active-low and should be described as such (think of other projects, li=
+ke
+> > U-Boot, reusing the dts). It's also very counter-intuitive to require t=
+hat
+> > any
+> > new board using that driver use active-low polarity in the GPIO declara=
+tion
+> > when
+> > the line is really active-high.
+>=C2=A0
+> Agreed, it very counter-intuitive. I have a board w/o an invert and it
+> does look odd with active-low in the dts. It really should be active-high=
+.
+>=C2=A0
+> The (new) binding helps a bit though.
 
-   2977	    456	     64	   3497	    da9	drivers/tty/serial/amba-pl010.o
-   3169	    272	     64	   3505	    db1	drivers/tty/serial/amba-pl010.o
+Yeah, it's a solution anyway. I'm mostly worried that it means all other co=
+de
+(especially not in Linux) using the dts will be plagued by this, which seem=
+s a
+bit unfair. I still see this as an error not being fixed.
 
-   3109	    456	      0	   3565	    ded	drivers/tty/serial/efm32-uart.o
-   3301	    272	      0	   3573	    df5	drivers/tty/serial/efm32-uart.o
+> > Is anyone strongly opposed to that solution? I'd really rather see the =
+issue
+> > fixed that way instead of the current proposal (this patch).
+>=C2=A0
+> It's a little bit more than a proposal since it is in linux-next. But not=
+ set
+> in stone of course.
 
-  10668	    753	      1	  11422	   2c9e	drivers/tty/serial/icom.o
-  10860	    561	      1	  11422	   2c9e	drivers/tty/serial/icom.o
+Oh, I thought it was still up for review when sending my previous message.
 
-  23904	    408	      8	  24320	   5f00	drivers/tty/serial/ioc3_serial.o
-  24088	    224	      8	  24320	   5f00	drivers/tty/serial/ioc3_serial.o
+> I personally do not care as long as it is changed before
+> hitting Linus' tree as I have no deployed devices. But docs are just that=
+.
+> Docs. Anything that worked before is going to break with the change you a=
+re
+> proposing. Are you really willing to break who knows how many tegra board=
+s?
 
-  10516	    560	      4	  11080	   2b48	drivers/tty/serial/ioc4_serial.o
-  10709	    368	      4	  11081	   2b49	drivers/tty/serial/ioc4_serial.o
+=46rom my perspective, fixing counter-intuitive behaviour justifies that.
 
-   7853	    648	   1216	   9717	   25f5	drivers/tty/serial/mpsc.o
-   8037	    456	   1216	   9709	   25ed	drivers/tty/serial/mpsc.o
+But you're probably right to point out that others down the line will most
+likely prefer to keep the change you introduced. So I'll put it this way:
+if everyone agrees that it's okay to break support for older device-trees,
+then I'm available to craft a patch. Otherwise, let's just stick with you
+changes you got in.
 
-  10248	    456	      0	  10704	   29d0	drivers/tty/serial/omap-serial.o
-  10440	    272	      0	  10712	   29d8	drivers/tty/serial/omap-serial.o
+> Or do you somehow know that *all* tegra users will always update their ke=
+rnel
+> and dtb in sync, so that regressions will not happen?
 
-   8122	    532	   1984	  10638	   298e	drivers/tty/serial/pmac_zilog.o
-   8306	    340	   1984	  10630	   2986	drivers/tty/serial/pmac_zilog.o
+Frankly I've never understood why kernel maintainers expect this is not the
+case, and this is quite frequently a pain when trying to address issues suc=
+h as
+this one. While I reckon that device-trees shouldn't be tied to the kernel =
+in
+particular (both are independent), I think it's fair to except that users u=
+se
+device-trees matching the release date of the kernel.
 
-   3808	    456	      0	   4264	   10a8	drivers/tty/serial/pxa.o
-   4000	    264	      0	   4264	   10a8	drivers/tty/serial/pxa.o
+It's usually accepted that projects have dependencies on certain versions o=
+f
+libraries and explicitly do not support older versions of these. It would b=
+e
+nice to adopt the same attitude towards device-tree. These are my 2 cents o=
+n the
+issue, of course this isn't up for me to decide.
 
-  21781	   3864	      0	  25645	   642d	drivers/tty/serial/serial-tegra.o
-  22037	   3608	      0	  25645	   642d	drivers/tty/serial/serial-tegra.o
+> > I'd also be happy to implement and test that solution on nyans, as I've=
+ done
+> > other bq24735-related work for nyans recently.
+>=C2=A0
+> Changing this is trivial. Testing that the change does what it is suppose=
+d to
+> is not the main obstacle...
 
-   2481	    456	     96	   3033	    bd9	drivers/tty/serial/sprd_serial.o
-   2673	    272	     96	   3041	    be1	drivers/tty/serial/sprd_serial.o
+Right. Note that I'll be testing your bq24735 patches on nyans soon, so per=
+haps
+I'll have an upcoming series in case I spot any regression.
 
-   5534	    300	    512	   6346	   18ca	drivers/tty/serial/vr41xx_siu.o
-   5630	    204	    512	   6346	   18ca	drivers/tty/serial/vr41xx_siu.o
+Cheers!
 
-   6730	   1576	    128	   8434	   20f2	drivers/tty/serial/vt8500_serial.o
-   6986	   1320	    128	   8434	   20f2	drivers/tty/serial/vt8500_serial.o
+--=20
+Paul Kocialkowski, developer of free digital technology at the lower levels
 
-Cross compiled for mips architecture.
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+--=-/+1SxhgS20g9RA9lNJUJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-   3005	    488	      0	   3493	    da5	drivers/tty/serial/pnx8xxx_uart.o
-   3189	    304	      0	   3493	    da5	drivers/tty/serial/pnx8xxx_uart.o
+-----BEGIN PGP SIGNATURE-----
 
-   4272	    196	   1056	   5524	   1594	drivers/tty/serial/dz.o
-   4368	    100	   1056	   5524	   1594	drivers/tty/serial/dz.o
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAliJyvEACgkQhP3B6o/u
+lQyhOg/5AeP+Bv5pSGYcql1Jk0yGIo1NDZDZukGTKfwwTg37KIYkPZUb4ZlSArCv
+SFn5fKGmKs81SQamQCB4gcTrn5xVmUNY9H0/V5gABwzsAcBoJ2X8Wf7qqS1c0Ohe
+0hQE3lT+9A+3iEhi1xo9PaM1SiBeoA5wn/XzMrdz5m/lupEZLKEycPyW7tVQnT7F
+niBc9ewsv+tVOskVG8vBLBZ8dQW7qUrPycgLVk9BmxHJqZYhAsLiLtrsnv1iup9S
+qM0NmWOYR6dHW+HYrLLmD3iovrtvwZwYlkENQDR+E6mPXSlgxnimZJD0GKh/Nj8c
+ddTNYLqhY9Q9E1o2IQKsEjEiuRJ9iosrM0BCkG6AV7oE3Bz5h4MOxxpRIi9e57ws
+XMLrf5xD/vuqPW3xGF9sWnoeW5zR0Twzj3jaFRGUNY+RbsmQjS2EAz3iYcM6qhbf
+5qh7zkHyg7shGmUb5cBvoxa7qIpRSihh8oJ6/qddfEAmix312hW8zYjCY/qe+ELY
+3V4/Bl/cUjmG7MKCLSXhShMV257rWMvtnFwn+4UEsUWZxkNiHx3RrlDDwIQ8jMB6
+SbfAJJvoGUjdgk+wk9GYBZ6GTlyNtPdI1nLrp57rUTYkVAnCxIw1DbeQiNjK8buG
+mzcLuB9260josdmw4Wj1F4T/edwAxLdfkyTWNS1dyvtRE3bFVZ8=
+=TBCe
+-----END PGP SIGNATURE-----
 
-   6551	    144	     16	   6711	   1a37	drivers/tty/serial/ip22zilog.o
-   6647	     48	     16	   6711	   1a37	drivers/tty/serial/ip22zilog.o
-
-   9612	    428	   1520	  11560	   2d28	drivers/tty/serial/serial_txx9.o
-   9708	    332	   1520	  11560	   2d28	drivers/tty/serial/serial_txx9.o
-
-   4156	    296	     16	   4468	   1174	drivers/tty/serial/ar933x_uart.o
-   4252	    200	     16	   4468	   1174	drivers/tty/serial/ar933x_uart.o
-
-Cross compiled for arm archiecture.
-
-  11716	   1780	     44	  13540	   34e4	drivers/tty/serial/sirfsoc_uart.o
-  11808	   1688	     44	  13540	   34e4	drivers/tty/serial/sirfsoc_uart.o
-
-  13352	    596	     56	  14004	   36b4	drivers/tty/serial/amba-pl011.o
-  13444	    504	     56	  14004	   36b4	drivers/tty/serial/amba-pl011.o
-
-Cross compiled for sparc architecture.
-
-   4664	    528	     32	   5224	   1468	drivers/tty/serial/sunhv.o
-   4848	    344	     32	   5224	   1468	drivers/tty/serial/sunhv.o
-
-   8080	    332	     28	   8440	   20f8	drivers/tty/serial/sunzilog.o
-   8184	    228	     28	   8440	   20f8	drivers/tty/serial/sunzilog.o
-
-Cross compiled for ia64 architecture.
-
-  10226	    549	    472	  11247	   2bef	drivers/tty/serial/sn_console.o
-  10414	    365	    472	  11251	   2bf3	drivers/tty/serial/sn_console.o
-
-The files drivers/tty/serial/zs.o, drivers/tty/serial/lpc32xx_hs.o and
-drivers/tty/serial/lantiq.o did not compile.
-
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/tty/serial/amba-pl010.c    | 2 +-
- drivers/tty/serial/amba-pl011.c    | 2 +-
- drivers/tty/serial/ar933x_uart.c   | 2 +-
- drivers/tty/serial/dz.c            | 2 +-
- drivers/tty/serial/efm32-uart.c    | 2 +-
- drivers/tty/serial/icom.c          | 2 +-
- drivers/tty/serial/ioc3_serial.c   | 2 +-
- drivers/tty/serial/ioc4_serial.c   | 2 +-
- drivers/tty/serial/ip22zilog.c     | 2 +-
- drivers/tty/serial/lantiq.c        | 2 +-
- drivers/tty/serial/lpc32xx_hs.c    | 2 +-
- drivers/tty/serial/mpsc.c          | 2 +-
- drivers/tty/serial/omap-serial.c   | 2 +-
- drivers/tty/serial/pmac_zilog.c    | 2 +-
- drivers/tty/serial/pnx8xxx_uart.c  | 2 +-
- drivers/tty/serial/pxa.c           | 2 +-
- drivers/tty/serial/serial-tegra.c  | 2 +-
- drivers/tty/serial/serial_txx9.c   | 2 +-
- drivers/tty/serial/sirfsoc_uart.c  | 2 +-
- drivers/tty/serial/sn_console.c    | 2 +-
- drivers/tty/serial/sprd_serial.c   | 2 +-
- drivers/tty/serial/sunhv.c         | 2 +-
- drivers/tty/serial/sunzilog.c      | 2 +-
- drivers/tty/serial/vr41xx_siu.c    | 2 +-
- drivers/tty/serial/vt8500_serial.c | 2 +-
- drivers/tty/serial/zs.c            | 2 +-
- 26 files changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/tty/serial/amba-pl010.c b/drivers/tty/serial/amba-pl010.c
-index 5d41d5b..f2f2510 100644
---- a/drivers/tty/serial/amba-pl010.c
-+++ b/drivers/tty/serial/amba-pl010.c
-@@ -554,7 +554,7 @@ static int pl010_verify_port(struct uart_port *port, struct serial_struct *ser)
- 	return ret;
- }
- 
--static struct uart_ops amba_pl010_pops = {
-+static const struct uart_ops amba_pl010_pops = {
- 	.tx_empty	= pl010_tx_empty,
- 	.set_mctrl	= pl010_set_mctrl,
- 	.get_mctrl	= pl010_get_mctrl,
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index d4171d7..d3b3f02 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -2114,7 +2114,7 @@ static int pl011_verify_port(struct uart_port *port, struct serial_struct *ser)
- 	return ret;
- }
- 
--static struct uart_ops amba_pl011_pops = {
-+static const struct uart_ops amba_pl011_pops = {
- 	.tx_empty	= pl011_tx_empty,
- 	.set_mctrl	= pl011_set_mctrl,
- 	.get_mctrl	= pl011_get_mctrl,
-diff --git a/drivers/tty/serial/ar933x_uart.c b/drivers/tty/serial/ar933x_uart.c
-index 73137f4..decc7f3 100644
---- a/drivers/tty/serial/ar933x_uart.c
-+++ b/drivers/tty/serial/ar933x_uart.c
-@@ -493,7 +493,7 @@ static int ar933x_uart_verify_port(struct uart_port *port,
- 	return 0;
- }
- 
--static struct uart_ops ar933x_uart_ops = {
-+static const struct uart_ops ar933x_uart_ops = {
- 	.tx_empty	= ar933x_uart_tx_empty,
- 	.set_mctrl	= ar933x_uart_set_mctrl,
- 	.get_mctrl	= ar933x_uart_get_mctrl,
-diff --git a/drivers/tty/serial/dz.c b/drivers/tty/serial/dz.c
-index c121f16..ff465ff 100644
---- a/drivers/tty/serial/dz.c
-+++ b/drivers/tty/serial/dz.c
-@@ -739,7 +739,7 @@ static int dz_verify_port(struct uart_port *uport, struct serial_struct *ser)
- 	return ret;
- }
- 
--static struct uart_ops dz_ops = {
-+static const struct uart_ops dz_ops = {
- 	.tx_empty	= dz_tx_empty,
- 	.get_mctrl	= dz_get_mctrl,
- 	.set_mctrl	= dz_set_mctrl,
-diff --git a/drivers/tty/serial/efm32-uart.c b/drivers/tty/serial/efm32-uart.c
-index 195acc8..ebd8569 100644
---- a/drivers/tty/serial/efm32-uart.c
-+++ b/drivers/tty/serial/efm32-uart.c
-@@ -487,7 +487,7 @@ static int efm32_uart_verify_port(struct uart_port *port,
- 	return ret;
- }
- 
--static struct uart_ops efm32_uart_pops = {
-+static const struct uart_ops efm32_uart_pops = {
- 	.tx_empty = efm32_uart_tx_empty,
- 	.set_mctrl = efm32_uart_set_mctrl,
- 	.get_mctrl = efm32_uart_get_mctrl,
-diff --git a/drivers/tty/serial/icom.c b/drivers/tty/serial/icom.c
-index d83783c..fe92d74 100644
---- a/drivers/tty/serial/icom.c
-+++ b/drivers/tty/serial/icom.c
-@@ -1286,7 +1286,7 @@ static void icom_config_port(struct uart_port *port, int flags)
- 	port->type = PORT_ICOM;
- }
- 
--static struct uart_ops icom_ops = {
-+static const struct uart_ops icom_ops = {
- 	.tx_empty = icom_tx_empty,
- 	.set_mctrl = icom_set_mctrl,
- 	.get_mctrl = icom_get_mctrl,
-diff --git a/drivers/tty/serial/ioc3_serial.c b/drivers/tty/serial/ioc3_serial.c
-index 27b5fef..2a61dd6 100644
---- a/drivers/tty/serial/ioc3_serial.c
-+++ b/drivers/tty/serial/ioc3_serial.c
-@@ -1873,7 +1873,7 @@ static int ic3_request_port(struct uart_port *port)
- }
- 
- /* Associate the uart functions above - given to serial core */
--static struct uart_ops ioc3_ops = {
-+static const struct uart_ops ioc3_ops = {
- 	.tx_empty = ic3_tx_empty,
- 	.set_mctrl = ic3_set_mctrl,
- 	.get_mctrl = ic3_get_mctrl,
-diff --git a/drivers/tty/serial/ioc4_serial.c b/drivers/tty/serial/ioc4_serial.c
-index 3be051abb..6ad26f8 100644
---- a/drivers/tty/serial/ioc4_serial.c
-+++ b/drivers/tty/serial/ioc4_serial.c
-@@ -2596,7 +2596,7 @@ static int ic4_request_port(struct uart_port *port)
- 
- /* Associate the uart functions above - given to serial core */
- 
--static struct uart_ops ioc4_ops = {
-+static const struct uart_ops ioc4_ops = {
- 	.tx_empty	= ic4_tx_empty,
- 	.set_mctrl	= ic4_set_mctrl,
- 	.get_mctrl	= ic4_get_mctrl,
-diff --git a/drivers/tty/serial/ip22zilog.c b/drivers/tty/serial/ip22zilog.c
-index 991e6dc..7ddddb4 100644
---- a/drivers/tty/serial/ip22zilog.c
-+++ b/drivers/tty/serial/ip22zilog.c
-@@ -930,7 +930,7 @@ static int ip22zilog_verify_port(struct uart_port *port, struct serial_struct *s
- 	return -EINVAL;
- }
- 
--static struct uart_ops ip22zilog_pops = {
-+static const struct uart_ops ip22zilog_pops = {
- 	.tx_empty	=	ip22zilog_tx_empty,
- 	.set_mctrl	=	ip22zilog_set_mctrl,
- 	.get_mctrl	=	ip22zilog_get_mctrl,
-diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-index b88832e..d34398e 100644
---- a/drivers/tty/serial/lantiq.c
-+++ b/drivers/tty/serial/lantiq.c
-@@ -557,7 +557,7 @@ lqasc_verify_port(struct uart_port *port,
- 	return ret;
- }
- 
--static struct uart_ops lqasc_pops = {
-+static const struct uart_ops lqasc_pops = {
- 	.tx_empty =	lqasc_tx_empty,
- 	.set_mctrl =	lqasc_set_mctrl,
- 	.get_mctrl =	lqasc_get_mctrl,
-diff --git a/drivers/tty/serial/lpc32xx_hs.c b/drivers/tty/serial/lpc32xx_hs.c
-index 7eb04ae..cea57ff 100644
---- a/drivers/tty/serial/lpc32xx_hs.c
-+++ b/drivers/tty/serial/lpc32xx_hs.c
-@@ -645,7 +645,7 @@ static int serial_lpc32xx_verify_port(struct uart_port *port,
- 	return ret;
- }
- 
--static struct uart_ops serial_lpc32xx_pops = {
-+static const struct uart_ops serial_lpc32xx_pops = {
- 	.tx_empty	= serial_lpc32xx_tx_empty,
- 	.set_mctrl	= serial_lpc32xx_set_mctrl,
- 	.get_mctrl	= serial_lpc32xx_get_mctrl,
-diff --git a/drivers/tty/serial/mpsc.c b/drivers/tty/serial/mpsc.c
-index 4a3021b..1a60a20 100644
---- a/drivers/tty/serial/mpsc.c
-+++ b/drivers/tty/serial/mpsc.c
-@@ -1670,7 +1670,7 @@ static void mpsc_put_poll_char(struct uart_port *port,
- }
- #endif
- 
--static struct uart_ops mpsc_pops = {
-+static const struct uart_ops mpsc_pops = {
- 	.tx_empty	= mpsc_tx_empty,
- 	.set_mctrl	= mpsc_set_mctrl,
- 	.get_mctrl	= mpsc_get_mctrl,
-diff --git a/drivers/tty/serial/omap-serial.c b/drivers/tty/serial/omap-serial.c
-index a2a5299..96dd99c 100644
---- a/drivers/tty/serial/omap-serial.c
-+++ b/drivers/tty/serial/omap-serial.c
-@@ -1395,7 +1395,7 @@ serial_omap_config_rs485(struct uart_port *port, struct serial_rs485 *rs485)
- 	return 0;
- }
- 
--static struct uart_ops serial_omap_pops = {
-+static const struct uart_ops serial_omap_pops = {
- 	.tx_empty	= serial_omap_tx_empty,
- 	.set_mctrl	= serial_omap_set_mctrl,
- 	.get_mctrl	= serial_omap_get_mctrl,
-diff --git a/drivers/tty/serial/pmac_zilog.c b/drivers/tty/serial/pmac_zilog.c
-index b24b055..0da5294 100644
---- a/drivers/tty/serial/pmac_zilog.c
-+++ b/drivers/tty/serial/pmac_zilog.c
-@@ -1379,7 +1379,7 @@ static void pmz_poll_put_char(struct uart_port *port, unsigned char c)
- 
- #endif /* CONFIG_CONSOLE_POLL */
- 
--static struct uart_ops pmz_pops = {
-+static const struct uart_ops pmz_pops = {
- 	.tx_empty	=	pmz_tx_empty,
- 	.set_mctrl	=	pmz_set_mctrl,
- 	.get_mctrl	=	pmz_get_mctrl,
-diff --git a/drivers/tty/serial/pnx8xxx_uart.c b/drivers/tty/serial/pnx8xxx_uart.c
-index 7a3bb9c..dab2668 100644
---- a/drivers/tty/serial/pnx8xxx_uart.c
-+++ b/drivers/tty/serial/pnx8xxx_uart.c
-@@ -631,7 +631,7 @@ pnx8xxx_verify_port(struct uart_port *port, struct serial_struct *ser)
- 	return ret;
- }
- 
--static struct uart_ops pnx8xxx_pops = {
-+static const struct uart_ops pnx8xxx_pops = {
- 	.tx_empty	= pnx8xxx_tx_empty,
- 	.set_mctrl	= pnx8xxx_set_mctrl,
- 	.get_mctrl	= pnx8xxx_get_mctrl,
-diff --git a/drivers/tty/serial/pxa.c b/drivers/tty/serial/pxa.c
-index 7595281..905631d 100644
---- a/drivers/tty/serial/pxa.c
-+++ b/drivers/tty/serial/pxa.c
-@@ -762,7 +762,7 @@ static struct console serial_pxa_console = {
- #define PXA_CONSOLE	NULL
- #endif
- 
--static struct uart_ops serial_pxa_pops = {
-+static const struct uart_ops serial_pxa_pops = {
- 	.tx_empty	= serial_pxa_tx_empty,
- 	.set_mctrl	= serial_pxa_set_mctrl,
- 	.get_mctrl	= serial_pxa_get_mctrl,
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index 731ac35..d92a150 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -1191,7 +1191,7 @@ static const char *tegra_uart_type(struct uart_port *u)
- 	return TEGRA_UART_TYPE;
- }
- 
--static struct uart_ops tegra_uart_ops = {
-+static const struct uart_ops tegra_uart_ops = {
- 	.tx_empty	= tegra_uart_tx_empty,
- 	.set_mctrl	= tegra_uart_set_mctrl,
- 	.get_mctrl	= tegra_uart_get_mctrl,
-diff --git a/drivers/tty/serial/serial_txx9.c b/drivers/tty/serial/serial_txx9.c
-index f80312e..f80fead 100644
---- a/drivers/tty/serial/serial_txx9.c
-+++ b/drivers/tty/serial/serial_txx9.c
-@@ -845,7 +845,7 @@ serial_txx9_type(struct uart_port *port)
- 	return "txx9";
- }
- 
--static struct uart_ops serial_txx9_pops = {
-+static const struct uart_ops serial_txx9_pops = {
- 	.tx_empty	= serial_txx9_tx_empty,
- 	.set_mctrl	= serial_txx9_set_mctrl,
- 	.get_mctrl	= serial_txx9_get_mctrl,
-diff --git a/drivers/tty/serial/sirfsoc_uart.c b/drivers/tty/serial/sirfsoc_uart.c
-index b186c9c..e03282d 100644
---- a/drivers/tty/serial/sirfsoc_uart.c
-+++ b/drivers/tty/serial/sirfsoc_uart.c
-@@ -1061,7 +1061,7 @@ static void sirfsoc_uart_config_port(struct uart_port *port, int flags)
- 	}
- }
- 
--static struct uart_ops sirfsoc_uart_ops = {
-+static const struct uart_ops sirfsoc_uart_ops = {
- 	.tx_empty	= sirfsoc_uart_tx_empty,
- 	.get_mctrl	= sirfsoc_uart_get_mctrl,
- 	.set_mctrl	= sirfsoc_uart_set_mctrl,
-diff --git a/drivers/tty/serial/sn_console.c b/drivers/tty/serial/sn_console.c
-index d4692d8..9e0e658 100644
---- a/drivers/tty/serial/sn_console.c
-+++ b/drivers/tty/serial/sn_console.c
-@@ -380,7 +380,7 @@ static void snp_config_port(struct uart_port *port, int flags)
- 
- /* Associate the uart functions above - given to serial core */
- 
--static struct uart_ops sn_console_ops = {
-+static const struct uart_ops sn_console_ops = {
- 	.tx_empty = snp_tx_empty,
- 	.set_mctrl = snp_set_mctrl,
- 	.get_mctrl = snp_get_mctrl,
-diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-index 699447a..d98e3dc 100644
---- a/drivers/tty/serial/sprd_serial.c
-+++ b/drivers/tty/serial/sprd_serial.c
-@@ -498,7 +498,7 @@ static int sprd_verify_port(struct uart_port *port,
- 	return 0;
- }
- 
--static struct uart_ops serial_sprd_ops = {
-+static const struct uart_ops serial_sprd_ops = {
- 	.tx_empty = sprd_tx_empty,
- 	.get_mctrl = sprd_get_mctrl,
- 	.set_mctrl = sprd_set_mctrl,
-diff --git a/drivers/tty/serial/sunhv.c b/drivers/tty/serial/sunhv.c
-index 99ef5c6..73abd89 100644
---- a/drivers/tty/serial/sunhv.c
-+++ b/drivers/tty/serial/sunhv.c
-@@ -370,7 +370,7 @@ static int sunhv_verify_port(struct uart_port *port, struct serial_struct *ser)
- 	return -EINVAL;
- }
- 
--static struct uart_ops sunhv_pops = {
-+static const struct uart_ops sunhv_pops = {
- 	.tx_empty	= sunhv_tx_empty,
- 	.set_mctrl	= sunhv_set_mctrl,
- 	.get_mctrl	= sunhv_get_mctrl,
-diff --git a/drivers/tty/serial/sunzilog.c b/drivers/tty/serial/sunzilog.c
-index 8b6ace3..252cea4 100644
---- a/drivers/tty/serial/sunzilog.c
-+++ b/drivers/tty/serial/sunzilog.c
-@@ -1046,7 +1046,7 @@ static void sunzilog_put_poll_char(struct uart_port *port,
- }
- #endif /* CONFIG_CONSOLE_POLL */
- 
--static struct uart_ops sunzilog_pops = {
-+static const struct uart_ops sunzilog_pops = {
- 	.tx_empty	=	sunzilog_tx_empty,
- 	.set_mctrl	=	sunzilog_set_mctrl,
- 	.get_mctrl	=	sunzilog_get_mctrl,
-diff --git a/drivers/tty/serial/vr41xx_siu.c b/drivers/tty/serial/vr41xx_siu.c
-index 485de53..439057e 100644
---- a/drivers/tty/serial/vr41xx_siu.c
-+++ b/drivers/tty/serial/vr41xx_siu.c
-@@ -681,7 +681,7 @@ static int siu_verify_port(struct uart_port *port, struct serial_struct *serial)
- 	return 0;
- }
- 
--static struct uart_ops siu_uart_ops = {
-+static const struct uart_ops siu_uart_ops = {
- 	.tx_empty	= siu_tx_empty,
- 	.set_mctrl	= siu_set_mctrl,
- 	.get_mctrl	= siu_get_mctrl,
-diff --git a/drivers/tty/serial/vt8500_serial.c b/drivers/tty/serial/vt8500_serial.c
-index 6b85adc..435a6f3 100644
---- a/drivers/tty/serial/vt8500_serial.c
-+++ b/drivers/tty/serial/vt8500_serial.c
-@@ -592,7 +592,7 @@ static void vt8500_put_poll_char(struct uart_port *port, unsigned char c)
- }
- #endif
- 
--static struct uart_ops vt8500_uart_pops = {
-+static const struct uart_ops vt8500_uart_pops = {
- 	.tx_empty	= vt8500_tx_empty,
- 	.set_mctrl	= vt8500_set_mctrl,
- 	.get_mctrl	= vt8500_get_mctrl,
-diff --git a/drivers/tty/serial/zs.c b/drivers/tty/serial/zs.c
-index eeefd76..d32bd49 100644
---- a/drivers/tty/serial/zs.c
-+++ b/drivers/tty/serial/zs.c
-@@ -1045,7 +1045,7 @@ static int zs_verify_port(struct uart_port *uport, struct serial_struct *ser)
- }
- 
- 
--static struct uart_ops zs_ops = {
-+static const struct uart_ops zs_ops = {
- 	.tx_empty	= zs_tx_empty,
- 	.set_mctrl	= zs_set_mctrl,
- 	.get_mctrl	= zs_get_mctrl,
--- 
-2.7.4
-
+--=-/+1SxhgS20g9RA9lNJUJ--
