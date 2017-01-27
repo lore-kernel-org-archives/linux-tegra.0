@@ -1,77 +1,37 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 3/4] ARM: tegra: Device tree changes for v4.11-rc1
-Date: Fri, 27 Jan 2017 10:21:20 +0100
-Message-ID: <20170127092121.21570-3-thierry.reding@gmail.com>
-References: <20170127092121.21570-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170127092121.21570-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Shailendra Verma <shailendra.v@samsung.com>
+Subject: [PATCH] Input: tegra-kbc - Fix possible NULL derefrence.
+Date: Fri, 27 Jan 2017 16:12:36 +0530
+Message-ID: <1485513756-1854-1-git-send-email-shailendra.v@samsung.com>
+References: <CGME20170127104250epcas1p4cf918f7e98f557ae65136f027f7556f1@epcas1p4.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, p.shailesh@samsung.com, ashish.kalra@samsung.com, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
+Cc: vidushi.koul@samsung.com
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+of_match_device could return NULL, and so cause a NULL pointer
+dereference later.
 
-The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
+---
+ drivers/input/keyboard/tegra-kbc.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-  Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.11-arm-dt
-
-for you to fetch changes up to 393a33c74554be3c30233907e3aa0f84603fee31:
-
-  ARM: tegra: nyan-blaze: Proper pinmux for TPM I2C (2017-01-25 12:07:21 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-ARM: tegra: Device tree changes for v4.11-rc1
-
-This contains a set of patches that add hardware compatibility for newer
-revisions of the Toradex Apalis TK1. Also included is a fix to the PAZ00
-that stabilizes panel initialization on boot as well as a patch to add
-card detection for the µSD card slot on TrimSlice.
-
-To round things off there are a couple of fixes and changes to the Nyan
-device tree files to fix the battery charger, add compatibility with new
-revisions of Nyan Blaze and Nyan Big, as well as properly support the
-TPM.
-
-----------------------------------------------------------------
-Jerome Coste (1):
-      ARM: tegra: nyan-blaze: Proper pinmux for TPM I2C
-
-Marc Dietrich (1):
-      ARM: tegra: paz00: Mark panel regulator as enabled on boot
-
-Marcel Ziswiler (5):
-      ARM: tegra: apalis-tk1: Pull-up temperature alert
-      ARM: tegra: apalis-tk1: Optional DisplayPort hot-plug detect
-      ARM: tegra: apalis-tk1: Adjust pin muxing for v1.1 HW
-      ARM: tegra: apalis-tk1: Fix SD card detect on v1.1 HW
-      ARM: tegra: apalis-tk1: Update compatibility comment
-
-Paul Kocialkowski (5):
-      ARM: tegra: nyan: Use proper IRQ type definitions
-      ARM: tegra: nyan: Use external control for bq24735 charger
-      ARM: tegra: nyan-big: Include compatible revisions for proper detection
-      ARM: tegra: nyan-blaze: Include compatible revisions for proper detection
-      ARM: tegra: nyan-big: Proper pinmux for TPM I2C
-
-Rask Ingemann Lambertsen (1):
-      ARM: dts: tegra: Fix missing card detection in Trimslice µSD card slot
-
- arch/arm/boot/dts/tegra124-apalis-eval.dts | 10 +----
- arch/arm/boot/dts/tegra124-apalis.dtsi     | 61 +++++++++++++-----------------
- arch/arm/boot/dts/tegra124-nyan-big.dts    | 26 +++++++------
- arch/arm/boot/dts/tegra124-nyan-blaze.dts  | 28 ++++++++------
- arch/arm/boot/dts/tegra124-nyan.dtsi       |  5 ++-
- arch/arm/boot/dts/tegra20-paz00.dts        |  1 +
- arch/arm/boot/dts/tegra20-trimslice.dts    |  1 +
- 7 files changed, 66 insertions(+), 66 deletions(-)
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index 0c07e10..1f213ba 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -617,6 +617,11 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+ 	const struct of_device_id *match;
+ 
+ 	match = of_match_device(tegra_kbc_of_match, &pdev->dev);
++
++	if (!match) {
++		dev_err(&pdev->dev, "Error: No device match found\n");
++		return -ENODEV;
++	}
+ 
+ 	kbc = devm_kzalloc(&pdev->dev, sizeof(*kbc), GFP_KERNEL);
+ 	if (!kbc) {
+-- 
+1.7.9.5
