@@ -1,15 +1,15 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 3/4] ARM: tegra: Device tree changes for v4.11-rc1
-Date: Sun, 29 Jan 2017 20:59:24 -0800
-Message-ID: <20170130045924.GG18943@localhost>
+Subject: Re: [GIT PULL 4/4] arm64: tegra: Device tree changes for v4.11-rc1
+Date: Sun, 29 Jan 2017 21:00:17 -0800
+Message-ID: <20170130050017.GH18943@localhost>
 References: <20170127092121.21570-1-thierry.reding@gmail.com>
- <20170127092121.21570-3-thierry.reding@gmail.com>
+ <20170127092121.21570-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20170127092121.21570-3-thierry.reding@gmail.com>
+In-Reply-To: <20170127092121.21570-4-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,7 +23,7 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter <jonathanh@nvidia.com>, arm@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 27, 2017 at 10:21:20AM +0100, Thierry Reding wrote:
+On Fri, Jan 27, 2017 at 10:21:21AM +0100, Thierry Reding wrote:
 > Hi ARM SoC maintainers,
 > 
 > The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
@@ -32,29 +32,34 @@ On Fri, Jan 27, 2017 at 10:21:20AM +0100, Thierry Reding wrote:
 > 
 > are available in the git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.11-arm-dt
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.11-arm64-dt
 > 
-> for you to fetch changes up to 393a33c74554be3c30233907e3aa0f84603fee31:
+> for you to fetch changes up to 7bcf266462da736ae4b42d5c73cd5dc0da540772:
 > 
->   ARM: tegra: nyan-blaze: Proper pinmux for TPM I2C (2017-01-25 12:07:21 +0100)
+>   arm64: tegra: Use symbolic reset identifiers (2017-01-27 10:13:24 +0100)
 > 
 > Thanks,
 > Thierry
 > 
 > ----------------------------------------------------------------
-> ARM: tegra: Device tree changes for v4.11-rc1
+> arm64: tegra: Device tree changes for v4.11-rc1
 > 
-> This contains a set of patches that add hardware compatibility for newer
-> revisions of the Toradex Apalis TK1. Also included is a fix to the PAZ00
-> that stabilizes panel initialization on boot as well as a patch to add
-> card detection for the ??SD card slot on TrimSlice.
+> This contains three patches that reintroduce symbolic identifiers for
+> clocks, resets and mailboxes. These had been converted to literals in
+> the v4.10 release to avoid complicated dependencies between branches.
 > 
-> To round things off there are a couple of fixes and changes to the Nyan
-> device tree files to fix the battery charger, add compatibility with new
-> revisions of Nyan Blaze and Nyan Big, as well as properly support the
-> TPM.
+> ----------------------------------------------------------------
+> Thierry Reding (3):
+>       arm64: tegra: Use symbolic HSP identifiers
+>       arm64: tegra: Use symbolic clock identifiers
+>       arm64: tegra: Use symbolic reset identifiers
+> 
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 86 +++++++++++++++++---------------
+>  1 file changed, 45 insertions(+), 41 deletions(-)
 
-Thanks, merged!
+Merged, thanks!
+
+No more t186 material than this for 4.11, though? :(
 
 
 -Olof
