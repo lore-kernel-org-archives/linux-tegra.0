@@ -1,35 +1,44 @@
-From: Shailendra Verma <shailendra.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] Usb: host - Fix possible NULL derefrence.
-Date: Mon, 30 Jan 2017 10:36:29 +0530
-Message-ID: <1485752789-30374-1-git-send-email-shailendra.v@samsung.com>
-References: <CGME20170130050640epcas2p1f856bc12df5d1ee6b9e0c66cf9dd6339@epcas2p1.samsung.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL 2/4] ARM: tegra: Core SoC changes for v4.11-rc1
+Date: Sun, 29 Jan 2017 20:58:39 -0800
+Message-ID: <20170130045839.GF18943@localhost>
+References: <20170127092121.21570-1-thierry.reding@gmail.com>
+ <20170127092121.21570-2-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170127092121.21570-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, p.shailesh-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ashish.kalra-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shailendra Verma <shailendra.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shailendra Verma <shailendra.capricorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-of_device_get_match_data could return NULL, and so can cause
-a NULL pointer dereference later.
+On Fri, Jan 27, 2017 at 10:21:19AM +0100, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
+> 
+> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+> 
+>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.11-soc
+> 
+> for you to fetch changes up to ed0a27ef6411b22c75ae596ca2722dd7b621bcd0:
+> 
+>   ARM: tegra: paz00: Fix __initdata placement (2017-01-25 09:09:32 +0100)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> ARM: tegra: Core SoC changes for v4.11-rc1
+> 
+> This contains a single cleanup patch for the placement of the __initdata
+> annotation, as suggested by checkpatch.
 
-Signed-off-by: Shailendra Verma <shailendra.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/usb/host/xhci-tegra.c |    4 ++++
- 1 file changed, 4 insertions(+)
+Merged, thanks.
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index a59fafb..890c778 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -903,6 +903,10 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	tegra->soc = of_device_get_match_data(&pdev->dev);
-+	if (!tegra->soc) {
-+		dev_err(&pdev->dev, "no device match found\n");
-+		return -ENODEV;
-+	}
- 	mutex_init(&tegra->lock);
- 	tegra->dev = &pdev->dev;
- 
--- 
-1.7.9.5
+
+-Olof
