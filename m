@@ -1,45 +1,63 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: Add Tegra186 BPMP I2C binding
-Date: Fri, 27 Jan 2017 22:42:27 -0700
-Message-ID: <8841854b-d058-1a8d-3e40-955bf3546cef@wwwdotorg.org>
-References: <20170127083939.20393-1-thierry.reding@gmail.com>
- <20170127083939.20393-2-thierry.reding@gmail.com>
- <20170127221857.GA15715@mithrandir.ba.sec>
+From: Shailendra Verma <shailendra.v@samsung.com>
+Subject: [PATCH] pwm - Fix possible NULL derefrence.
+Date: Mon, 30 Jan 2017 10:22:33 +0530
+Message-ID: <1485751953-29341-1-git-send-email-shailendra.v@samsung.com>
+References: <CGME20170130045241epcas1p2a5a0625327e4caab59236ec85551f95e@epcas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20170127221857.GA15715@mithrandir.ba.sec>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, p.shailesh@samsung.com, ashish.kalra@samsung.com, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/27/2017 03:19 PM, Thierry Reding wrote:
-> On Fri, Jan 27, 2017 at 09:39:38AM +0100, Thierry Reding wrote:
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> In Tegra186, the BPMP (Boot and Power Management Processor) owns certain
->> HW devices, such as the I2C controller for the power management I2C bus.
->> Software running on other CPUs must perform IPC to the BPMP in order to
->> execute transactions on that I2C bus. This binding describes an I2C bus
->> that is accessed in such a fashion.
->>
->> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->> Reviewed-by: Simon Glass <sjg@chromium.org>
->> Signed-off-by: Tom Warren <twarren@nvidia.com>
->> Acked-by: Jon Hunter <jonathanh@nvidia.com>
->> Signed-off-by: Thierry Reding <treding@nvidia.com>
->> ---
->>  .../bindings/i2c/nvidia,tegra186-bpmp-i2c.txt      | 42 ++++++++++++++++++++++
->>  1 file changed, 42 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
->
-> Rob, sorry for not Cc'ing you earlier on this, but I had thought this
-> binding had already been reviewed and acked since it is merged in
-> U-Boot.
+of_match_device could return NULL, and so can cause a NULL
+pointer dereference later.
 
-I'm pretty sure all the DT binding patches for Tegra186 that I submitted 
-were ack'd by Rob. They were certainly all posted to relevant Linux 
-lists and discussed and ack'd by someone before I pushed them into 
-U-Boot. Probably 2nd quarter last year, or maybe 3rd.
+Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
+---
+ drivers/pwm/pwm-sun4i.c |    4 ++++
+ drivers/pwm/pwm-tegra.c |    5 +++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
+index b0803f6..9b5c6fe 100644
+--- a/drivers/pwm/pwm-sun4i.c
++++ b/drivers/pwm/pwm-sun4i.c
+@@ -321,6 +321,10 @@ static int sun4i_pwm_probe(struct platform_device *pdev)
+ 	const struct of_device_id *match;
+ 
+ 	match = of_match_device(sun4i_pwm_dt_ids, &pdev->dev);
++	if (!match) {
++		dev_err(&pdev->dev, "Error: No device match found\n");
++		return -ENODEV;
++	}
+ 
+ 	pwm = devm_kzalloc(&pdev->dev, sizeof(*pwm), GFP_KERNEL);
+ 	if (!pwm)
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index e464784..a5eb224 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -185,6 +185,11 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	pwm->soc = of_device_get_match_data(&pdev->dev);
++	if (!pwm->soc) {
++		dev_err(&pdev->dev, "no device match found\n");
++		return -ENODEV;
++	}
++
+ 	pwm->dev = &pdev->dev;
+ 
+ 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-- 
+1.7.9.5
