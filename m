@@ -1,94 +1,39 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v2 2/2] i2c: Add Tegra BPMP I2C proxy driver
-Date: Fri, 10 Feb 2017 17:37:15 +0100
-Message-ID: <20170210163715.mmukrlbgfjyyi7qp@ninjato>
-References: <20170127083939.20393-1-thierry.reding@gmail.com>
- <20170127083939.20393-3-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="v6zxsqbvpjpconfy"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170127083939.20393-3-thierry.reding@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Franck Demathieu <fdemathieu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] staging: nvec: Fix incorrect type of i2c address
+Date: Mon, 13 Feb 2017 09:35:19 +0100
+Message-ID: <20170213083519.10309-1-fdemathieu@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: marvin24-Mmb7MZpHnFY@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+Cc: ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Franck Demathieu <franck.demathieu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
---v6zxsqbvpjpconfy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The i2c address is unsigned according to the dt-bindings.
+Fix sparse issue (-Wtypesign):
 
-Hi there,
+  drivers/staging/nvec/nvec.c:781:35: warning: incorrect type in argument 3 (different signedness)
+  drivers/staging/nvec/nvec.c:781:35:    expected unsigned int [usertype] *out_value
+  drivers/staging/nvec/nvec.c:781:35:    got int *<noident>
 
-> +static int tegra_bpmp_i2c_msg_len_check(struct i2c_msg *msgs, unsigned int num)
-> +{
-> +	size_t tx_len = 0, rx_len = 0;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < num; i++)
-> +		if (!(msgs[i].flags & I2C_M_RD))
-> +			tx_len += SERIALI2C_HDR_SIZE + msgs[i].len;
-> +
-> +	if (tx_len > TEGRA_I2C_IPC_MAX_IN_BUF_SIZE)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < num; i++)
-> +		if ((msgs[i].flags & I2C_M_RD))
-> +			rx_len += msgs[i].len;
+Signed-off-by: Franck Demathieu <fdemathieu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/staging/nvec/nvec.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You could have done with iterating over all msgs only once, but no need
-to fix. I think I'll update the i2c core quirks feature to support your
-case and rework that incrementally.
-
-> +	/* TODO: move this somewhere else */
-> +	memset(&request, 0, sizeof(request));
-> +	memset(&response, 0, sizeof(response));
-
-So? :)
-
-> +	i2c->adapter.class = I2C_CLASS_HWMON;
-
-Do you really need that?
-
-> +	err = i2c_add_adapter(&i2c->adapter);
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev, "failed to add I2C adapter: %d\n", err);
-
-No error message here, the core will do that.
-
-> +static int __init tegra_bpmp_i2c_init_driver(void)
-> +{
-> +	return platform_driver_register(&tegra_bpmp_i2c_driver);
-> +}
-> +subsys_initcall(tegra_bpmp_i2c_init_driver);
-
-Have you tried if subsys_initcall is really really necessary?
-
-Thanks,
-
-   Wolfram
-
-
---v6zxsqbvpjpconfy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlid7DUACgkQFA3kzBSg
-KbavMw/8CAE/h0iZri4pSzkNJRinzV92X1g3rIwnyh1Ay9vJrhvtmdptvmIilZ8n
-9Hrbu5HmdIWjUdLEccmoyCVdzRxG9c4ollbWgf9pHza+PGiuBNXAX4dK0TeeQsHq
-n29Y/76Pm8/CmUp4Z9Gh3SLU1rtRAOX/JdipKsXhujgGexiWUJXh8pqeVr9qufMo
-spXQX65GldMhldOHfFzP+DRyH2ho+OyZnkIkbMkajGY9qMww191qSDQbGN7fy2pE
-HENryHOKEnxIe+V+sYjviwRx93QBzK88dg7s7XFSzvmROwZfsGugy1f+fvJrx/B2
-nGs+BfX/6cxTLcoHphjNaeaRkHEsjr9V1Zkvu96XSfdAgOiBP/iqOexrHLCUxsg9
-f0luXBRsW9EOnR+7C6MklNFNfSsTA80nkRySlRISWeBCXZ5IPPZ/KgTV7fxO0PbE
-YS2l5U/Q5ol+YO032KAYRwGk7/ghbe1ZdBoFRxRs56nziFU566EomBVd7UQKDFW4
-j20XdY6bwwJxDusFiUZ7vlA0932tok9dQet0oRt9d/VyaV4E4cXkYcwFXVwjFIvi
-toyy5ZXdDdlmVJTd1KKsQ9raW6NnmWCn7oo86f+H2PKfMXUpEQ7uXKp+3x4eCBph
-T3H5XpPgS4e4HJVMut1xrmtjIu4BTFpBj6HQMte3LHN7JsOkBKE=
-=Xw4M
------END PGP SIGNATURE-----
-
---v6zxsqbvpjpconfy--
+diff --git a/drivers/staging/nvec/nvec.h b/drivers/staging/nvec/nvec.h
+index c03ca8d..aa7c70e 100644
+--- a/drivers/staging/nvec/nvec.h
++++ b/drivers/staging/nvec/nvec.h
+@@ -138,7 +138,7 @@ struct nvec_chip {
+ 	struct device *dev;
+ 	int gpio;
+ 	int irq;
+-	int i2c_addr;
++	u32 i2c_addr;
+ 	void __iomem *base;
+ 	struct clk *i2c_clk;
+ 	struct reset_control *rst;
+-- 
+2.8.1
