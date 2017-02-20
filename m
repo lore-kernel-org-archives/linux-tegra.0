@@ -1,65 +1,84 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH] staging:nvec:nvec_ps2.c: Preferingkzalloc(sizeof(*ser_dev)...) over kzalloc(sizeof(struct serio)...)
-Date: Wed, 15 Feb 2017 13:06:56 +0100
-Message-ID: <2216261.0XPs8u6SRF@fb07-iapwap2>
-References: <20170214170120.GA6501@arushi-HP-Pavilion-Notebook>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart59499477.p2dvfuOhKM"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 1/2] dt-bindings: Add Tegra186 BPMP I2C binding
+Date: Mon, 20 Feb 2017 17:52:33 +0100
+Message-ID: <20170220165234.29299-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170214170120.GA6501@arushi-HP-Pavilion-Notebook>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arushi Singhal <arushisinghal19971997-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---nextPart59499477.p2dvfuOhKM
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Am Dienstag, 14. Februar 2017, 22:31:20 CET schrieb Arushi Singhal:
-> Prefer kzalloc(sizeof(*ser_dev)...) over kzalloc(sizeof(struct
-> serio)...) as reported by checkpatch.pl.
-> 
-> Signed-off-by: Arushi Singhal <arushisinghal19971997-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In Tegra186, the BPMP (Boot and Power Management Processor) owns certain
+HW devices, such as the I2C controller for the power management I2C bus.
+Software running on other CPUs must perform IPC to the BPMP in order to
+execute transactions on that I2C bus. This binding describes an I2C bus
+that is accessed in such a fashion.
 
-looks like we are in a (make everyone) happy week.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v3:
+- add missing Acked-by from Rob, taken from patchwork:
 
-Acked-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+    http://patchwork.ozlabs.org/patch/650385/
 
+ .../bindings/i2c/nvidia,tegra186-bpmp-i2c.txt      | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
 
-> ---
->  drivers/staging/nvec/nvec_ps2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec_ps2.c
-> b/drivers/staging/nvec/nvec_ps2.c index 499952c8ef39..3b7bce3ffd19 100644
-> --- a/drivers/staging/nvec/nvec_ps2.c
-> +++ b/drivers/staging/nvec/nvec_ps2.c
-> @@ -107,7 +107,7 @@ static int nvec_mouse_probe(struct platform_device
-> *pdev) struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
->  	struct serio *ser_dev;
-> 
-> -	ser_dev = kzalloc(sizeof(struct serio), GFP_KERNEL);
-> +	ser_dev = kzalloc(sizeof(*ser_dev), GFP_KERNEL);
->  	if (!ser_dev)
->  		return -ENOMEM;
-
-
---nextPart59499477.p2dvfuOhKM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEySF+t0C8+8jyqfBvrJ5Hf0cUG2gFAlikRGAACgkQrJ5Hf0cU
-G2hoCQf/RaQfwTH1BD8qMhrFhBnuc/ChvwqGWSzDEXZ7CaDZ5FMcfAaeP/+Joppb
-fg5Zf/iJVU4MQQVSZG39hDzH2hhXk2BTkxuTAvNdfTZqMJJZ9s1glOyX8CTNNOAb
-heIG99w35I8tW1JzmsgYLaY7ROXghdg8tc9Hh9v9b+hnaulXjcrixbpDRAlhc47f
-eLpsP49/97iHaFgL0Zho+LQ1oVCGxbhYDw4eQffMxIWoCmiSiZQk5B8DGe7aGIJe
-aADkGF+hBkISexm8O93F/RHQAleS9wp4/TNGo6p76SESBDyKAfxQa1WJwpJB9m/v
-nMZN1Ffge2P3pp74wpnEC+KJxikGww==
-=7g4d
------END PGP SIGNATURE-----
-
---nextPart59499477.p2dvfuOhKM--
+diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
+new file mode 100644
+index 000000000000..ab240e10debc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
+@@ -0,0 +1,42 @@
++NVIDIA Tegra186 BPMP I2C controller
++
++In Tegra186, the BPMP (Boot and Power Management Processor) owns certain HW
++devices, such as the I2C controller for the power management I2C bus. Software
++running on other CPUs must perform IPC to the BPMP in order to execute
++transactions on that I2C bus. This binding describes an I2C bus that is
++accessed in such a fashion.
++
++The BPMP I2C node must be located directly inside the main BPMP node. See
++../firmware/nvidia,tegra186-bpmp.txt for details of the BPMP binding.
++
++This node represents an I2C controller. See ../i2c/i2c.txt for details of the
++core I2C binding.
++
++Required properties:
++- compatible:
++    Array of strings.
++    One of:
++    - "nvidia,tegra186-bpmp-i2c".
++- #address-cells: Address cells for I2C device address.
++    Single-cell integer.
++    Must be <1>.
++- #size-cells:
++    Single-cell integer.
++    Must be <0>.
++- nvidia,bpmp-bus-id:
++    Single-cell integer.
++    Indicates the I2C bus number this DT node represent, as defined by the
++    BPMP firmware.
++
++Example:
++
++bpmp {
++	...
++
++	i2c {
++		compatible = "nvidia,tegra186-bpmp-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		nvidia,bpmp-bus-id = <5>;
++	};
++};
+-- 
+2.11.1
