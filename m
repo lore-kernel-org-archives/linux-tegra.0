@@ -1,120 +1,109 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/7] clk: tegra: don't warn for PLL defaults unnecessarily
-Date: Wed, 22 Feb 2017 17:14:00 +0200
-Message-ID: <1487776444-4701-6-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 2/7] clk: tegra: fix isp clock modelling
+Date: Wed, 22 Feb 2017 17:13:57 +0200
+Message-ID: <1487776444-4701-3-git-send-email-pdeschrijver@nvidia.com>
 References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1487776444-4701-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-If the PLL is on, only warn if the defaults are not yet set. Otherwise be
-silent.
+The 2 isp clocks (ispa and ispb) share a mux/divider control. So model
+this as 1 mux/divider clock and child gate clocks.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ drivers/clk/tegra/clk-id.h               |  1 +
+ drivers/clk/tegra/clk-tegra-periph.c     | 11 +++++++++--
+ drivers/clk/tegra/clk-tegra210.c         |  1 +
+ include/dt-bindings/clock/tegra210-car.h |  4 ++--
+ 4 files changed, 13 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index 5738635..1019eb8 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -307,6 +307,7 @@ enum clk_id {
+ 	tegra_clk_xusb_ssp_src,
+ 	tegra_clk_sclk_mux,
+ 	tegra_clk_sor_safe,
++	tegra_clk_ispa,
+ 	tegra_clk_max,
+ };
+ 
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 4ce4e7f..19b00b7 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -168,6 +168,12 @@
+ 			      0, TEGRA_PERIPH_NO_GATE, _clk_id,\
+ 			      _parents##_idx, 0, _lock)
+ 
++#define MUX8_NOGATE(_name, _parents, _offset, _clk_id)	\
++	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,	\
++			      29, MASK(3), 0, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP,\
++			      0, TEGRA_PERIPH_NO_GATE, _clk_id,\
++			      _parents##_idx, 0, NULL)
++
+ #define INT(_name, _parents, _offset,	\
+ 			    _clk_num, _gate_flags, _clk_id)	\
+ 	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,\
+@@ -739,7 +745,7 @@
+ 	MUX8("soc_therm", mux_clkm_pllc_pllp_plla, CLK_SOURCE_SOC_THERM, 78, TEGRA_PERIPH_ON_APB, tegra_clk_soc_therm_8),
+ 	MUX8("vi_sensor", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI_SENSOR, 164, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_8),
+ 	MUX8("isp", mux_pllm_pllc_pllp_plla_clkm_pllc4, CLK_SOURCE_ISP, 23, TEGRA_PERIPH_ON_APB, tegra_clk_isp_8),
+-	MUX8("isp", mux_pllc_pllp_plla1_pllc2_c3_clkm_pllc4, CLK_SOURCE_ISP, 23, TEGRA_PERIPH_ON_APB, tegra_clk_isp_9),
++	MUX8_NOGATE("isp", mux_pllc_pllp_plla1_pllc2_c3_clkm_pllc4, CLK_SOURCE_ISP, tegra_clk_isp_9),
+ 	MUX8("entropy", mux_pllp_clkm1, CLK_SOURCE_ENTROPY, 149,  0, tegra_clk_entropy),
+ 	MUX8("entropy", mux_pllp_clkm_clk32_plle, CLK_SOURCE_ENTROPY, 149,  0, tegra_clk_entropy_8),
+ 	MUX8("hdmi_audio", mux_pllp3_pllc_clkm, CLK_SOURCE_HDMI_AUDIO, 176, TEGRA_PERIPH_NO_RESET, tegra_clk_hdmi_audio),
+@@ -819,7 +825,8 @@
+ 	GATE("xusb_dev", "xusb_dev_src", 95, 0, tegra_clk_xusb_dev, 0),
+ 	GATE("emc", "emc_mux", 57, 0, tegra_clk_emc, CLK_IGNORE_UNUSED),
+ 	GATE("sata_cold", "clk_m", 129, TEGRA_PERIPH_ON_APB, tegra_clk_sata_cold, 0),
+-	GATE("ispb", "clk_m", 3, 0, tegra_clk_ispb, 0),
++	GATE("ispa", "isp", 23, 0, tegra_clk_ispa, 0),
++	GATE("ispb", "isp", 3, 0, tegra_clk_ispb, 0),
+ 	GATE("vim2_clk", "clk_m", 11, 0, tegra_clk_vim2_clk, 0),
+ 	GATE("pcie", "clk_m", 70, 0, tegra_clk_pcie, 0),
+ 	GATE("gpu", "pll_ref", 184, 0, tegra_clk_gpu, 0),
 diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index b7ef8a7..fe698d2 100644
+index 2ef8d49..7bda8ba 100644
 --- a/drivers/clk/tegra/clk-tegra210.c
 +++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -502,7 +502,7 @@ static void tegra210_pllcx_set_defaults(const char *name,
- 	pllcx->params->defaults_set = true;
+@@ -2210,6 +2210,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	[tegra_clk_pll_c4_out3] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT3, .present = true },
+ 	[tegra_clk_apb2ape] = { .dt_id = TEGRA210_CLK_APB2APE, .present = true },
+ 	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
++	[tegra_clk_ispa] = { .dt_id = TEGRA210_CLK_ISPA, .present = true },
+ };
  
- 	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
--			PLL_ENABLE) {
-+			PLL_ENABLE && !pllcx->params->defaults_set) {
- 		/* PLL is ON: only check if defaults already set */
- 		pllcx_check_defaults(pllcx->params);
- 		pr_warn("%s already enabled. Postponing set full defaults\n",
-@@ -608,7 +608,6 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
- 
- 	if (readl_relaxed(clk_base + plld->params->base_reg) &
- 			PLL_ENABLE) {
--		pr_warn("PLL_D already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -625,6 +624,9 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
- 		_pll_misc_chk_default(clk_base, plld->params, 0, val,
- 				~mask & PLLD_MISC0_WRITE_MASK);
- 
-+		if (!plld->params->defaults_set)
-+			pr_warn("PLL_D already enabled. Postponing set full defaults\n");
-+
- 		/* Enable lock detect */
- 		mask = PLLD_MISC0_LOCK_ENABLE | PLLD_MISC0_LOCK_OVERRIDE;
- 		val = readl_relaxed(clk_base + plld->params->ext_misc_reg[0]);
-@@ -896,7 +898,6 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
- 	val |= step_b << PLLX_MISC2_DYNRAMP_STEPB_SHIFT;
- 
- 	if (readl_relaxed(clk_base + pllx->params->base_reg) & PLL_ENABLE) {
--		pr_warn("PLL_X already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -904,6 +905,8 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
- 		 */
- 		pllx_check_defaults(pllx);
- 
-+		if (!pllx->params->defaults_set)
-+			pr_warn("PLL_X already enabled. Postponing set full defaults\n");
- 		/* Configure dyn ramp, disable lock override */
- 		writel_relaxed(val, clk_base + pllx->params->ext_misc_reg[2]);
- 
-@@ -948,7 +951,6 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
- 	pllmb->params->defaults_set = true;
- 
- 	if (val & PLL_ENABLE) {
--		pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -959,6 +961,8 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
- 		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
- 				~mask & PLLMB_MISC1_WRITE_MASK);
- 
-+		if (!pllmb->params->defaults_set)
-+			pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
- 		val &= ~mask;
-@@ -1008,13 +1012,14 @@ static void tegra210_pllp_set_defaults(struct tegra_clk_pll *pllp)
- 	pllp->params->defaults_set = true;
- 
- 	if (val & PLL_ENABLE) {
--		pr_warn("PLL_P already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
- 		 * that can be updated in flight.
- 		 */
- 		pllp_check_defaults(pllp, true);
-+		if (!pllp->params->defaults_set)
-+			pr_warn("PLL_P already enabled. Postponing set full defaults\n");
- 
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllp->params->ext_misc_reg[0]);
-@@ -1069,13 +1074,14 @@ static void tegra210_pllu_set_defaults(struct tegra_clk_pll *pllu)
- 	pllu->params->defaults_set = true;
- 
- 	if (val & PLL_ENABLE) {
--		pr_warn("PLL_U already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
- 		 * that can be updated in flight.
- 		 */
- 		pllu_check_defaults(pllu, false);
-+		if (!pllu->params->defaults_set)
-+			pr_warn("PLL_U already enabled. Postponing set full defaults\n");
- 
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllu->params->ext_misc_reg[0]);
+ static struct tegra_devclk devclks[] __initdata = {
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 35288b2..f5c6563 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -39,7 +39,7 @@
+ /* 20 (register bit affects vi and vi_sensor) */
+ /* 21 */
+ #define TEGRA210_CLK_USBD 22
+-#define TEGRA210_CLK_ISP 23
++#define TEGRA210_CLK_ISPA 23
+ /* 24 */
+ /* 25 */
+ #define TEGRA210_CLK_DISP2 26
+@@ -349,7 +349,7 @@
+ #define TEGRA210_CLK_PLL_RE_OUT1 319
+ /* 320 */
+ /* 321 */
+-/* 322 */
++#define TEGRA210_CLK_ISP 322
+ /* 323 */
+ /* 324 */
+ /* 325 */
 -- 
 1.9.1
+
