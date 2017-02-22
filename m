@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/7] clk: tegra: fix pll_a1 iddq register, add pll_a1
-Date: Wed, 22 Feb 2017 17:13:56 +0200
-Message-ID: <1487776444-4701-2-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH 5/7] clk: tegra: don't warn for PLL defaults unnecessarily
+Date: Wed, 22 Feb 2017 17:14:00 +0200
+Message-ID: <1487776444-4701-6-git-send-email-pdeschrijver@nvidia.com>
 References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -11,35 +11,110 @@ Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-pll_a1 was using CLK_RST_CONTROLLER_PLLA1_MISC_0 for IDDQ control rather
-than the correct register CLK_RST_CONTROLLER_PLLA1_MISC_1. Also add pll_a1
-to the set of clocks defined for Tegra210.
+If the PLL is on, only warn if the defaults are not yet set. Otherwise be
+silent.
 
 Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra210.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 2896d2e..2ef8d49 100644
+index b7ef8a7..fe698d2 100644
 --- a/drivers/clk/tegra/clk-tegra210.c
 +++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -1772,7 +1772,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 	.misc_reg = PLLA1_MISC0,
- 	.lock_mask = PLLCX_BASE_LOCK,
- 	.lock_delay = 300,
--	.iddq_reg = PLLA1_MISC0,
-+	.iddq_reg = PLLA1_MISC1,
- 	.iddq_bit_idx = PLLCX_IDDQ_BIT,
- 	.reset_reg = PLLA1_MISC0,
- 	.reset_bit_idx = PLLCX_RESET_BIT,
-@@ -2209,6 +2209,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 	[tegra_clk_pll_c4_out2] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT2, .present = true },
- 	[tegra_clk_pll_c4_out3] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT3, .present = true },
- 	[tegra_clk_apb2ape] = { .dt_id = TEGRA210_CLK_APB2APE, .present = true },
-+	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
- };
+@@ -502,7 +502,7 @@ static void tegra210_pllcx_set_defaults(const char *name,
+ 	pllcx->params->defaults_set = true;
  
- static struct tegra_devclk devclks[] __initdata = {
+ 	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
+-			PLL_ENABLE) {
++			PLL_ENABLE && !pllcx->params->defaults_set) {
+ 		/* PLL is ON: only check if defaults already set */
+ 		pllcx_check_defaults(pllcx->params);
+ 		pr_warn("%s already enabled. Postponing set full defaults\n",
+@@ -608,7 +608,6 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
+ 
+ 	if (readl_relaxed(clk_base + plld->params->base_reg) &
+ 			PLL_ENABLE) {
+-		pr_warn("PLL_D already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+@@ -625,6 +624,9 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
+ 		_pll_misc_chk_default(clk_base, plld->params, 0, val,
+ 				~mask & PLLD_MISC0_WRITE_MASK);
+ 
++		if (!plld->params->defaults_set)
++			pr_warn("PLL_D already enabled. Postponing set full defaults\n");
++
+ 		/* Enable lock detect */
+ 		mask = PLLD_MISC0_LOCK_ENABLE | PLLD_MISC0_LOCK_OVERRIDE;
+ 		val = readl_relaxed(clk_base + plld->params->ext_misc_reg[0]);
+@@ -896,7 +898,6 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
+ 	val |= step_b << PLLX_MISC2_DYNRAMP_STEPB_SHIFT;
+ 
+ 	if (readl_relaxed(clk_base + pllx->params->base_reg) & PLL_ENABLE) {
+-		pr_warn("PLL_X already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+@@ -904,6 +905,8 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
+ 		 */
+ 		pllx_check_defaults(pllx);
+ 
++		if (!pllx->params->defaults_set)
++			pr_warn("PLL_X already enabled. Postponing set full defaults\n");
+ 		/* Configure dyn ramp, disable lock override */
+ 		writel_relaxed(val, clk_base + pllx->params->ext_misc_reg[2]);
+ 
+@@ -948,7 +951,6 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+ 	pllmb->params->defaults_set = true;
+ 
+ 	if (val & PLL_ENABLE) {
+-		pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+@@ -959,6 +961,8 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+ 		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
+ 				~mask & PLLMB_MISC1_WRITE_MASK);
+ 
++		if (!pllmb->params->defaults_set)
++			pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
+ 		/* Enable lock detect */
+ 		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
+ 		val &= ~mask;
+@@ -1008,13 +1012,14 @@ static void tegra210_pllp_set_defaults(struct tegra_clk_pll *pllp)
+ 	pllp->params->defaults_set = true;
+ 
+ 	if (val & PLL_ENABLE) {
+-		pr_warn("PLL_P already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+ 		 * that can be updated in flight.
+ 		 */
+ 		pllp_check_defaults(pllp, true);
++		if (!pllp->params->defaults_set)
++			pr_warn("PLL_P already enabled. Postponing set full defaults\n");
+ 
+ 		/* Enable lock detect */
+ 		val = readl_relaxed(clk_base + pllp->params->ext_misc_reg[0]);
+@@ -1069,13 +1074,14 @@ static void tegra210_pllu_set_defaults(struct tegra_clk_pll *pllu)
+ 	pllu->params->defaults_set = true;
+ 
+ 	if (val & PLL_ENABLE) {
+-		pr_warn("PLL_U already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+ 		 * that can be updated in flight.
+ 		 */
+ 		pllu_check_defaults(pllu, false);
++		if (!pllu->params->defaults_set)
++			pr_warn("PLL_U already enabled. Postponing set full defaults\n");
+ 
+ 		/* Enable lock detect */
+ 		val = readl_relaxed(clk_base + pllu->params->ext_misc_reg[0]);
 -- 
 1.9.1
