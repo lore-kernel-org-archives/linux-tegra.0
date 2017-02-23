@@ -1,38 +1,44 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] MAINTAINERS: Replace Stephen with Jon
-Date: Thu, 23 Feb 2017 18:16:18 +0100
-Message-ID: <20170223171618.14360-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 0/7] net: stmmac: Fixes and Tegra186 support
+Date: Thu, 23 Feb 2017 18:24:31 +0100
+Message-ID: <20170223172438.14770-1-thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-For a while now, Stephen's been focussing on other areas of the open
-source community and within NVIDIA. Jon Hunter's been doing a great job
-keeping things working. Replace Stephen's entry with Jon's.
+Hi everyone,
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series of patches start with a few cleanups that I ran across while
+adding Tegra186 support to the stmmac driver. It then adds code for FIFO
+size parsing from feature registers and finally enables support for the
+incarnation of the Synopsys DWC QOS IP found on NVIDIA Tegra186 SoCs.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b9af886ab3a0..58e85100fc2a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12302,9 +12302,9 @@ S:	Maintained
- F:	drivers/media/rc/ttusbir.c
- 
- TEGRA ARCHITECTURE SUPPORT
--M:	Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
- M:	Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
- M:	Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+M:	Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
- L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
- Q:	http://patchwork.ozlabs.org/project/linux-tegra/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git
+This is based on next-20170223.
+
+Thanks,
+Thierry
+
+Thierry Reding (7):
+  net: stmmac: Rename clk_ptp_ref clock to ptp_ref
+  net: stmmac: Balance PTP reference clock enable/disable
+  net: stmmac: Check for DMA mapping errors
+  net: stmmac: Parse FIFO sizes from feature registers
+  net: stmmac: Program RX queue size and flow control
+  net: stmmac: dwc-qos: Split out ->probe() and ->remove()
+  net: stmmac: dwc-qos: Add Tegra186 support
+
+ Documentation/devicetree/bindings/net/stmmac.txt   |   6 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   3 +
+ .../ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c    | 366 +++++++++++++++++++--
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |  12 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   |  45 ++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   9 +
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |   3 +-
+ 7 files changed, 411 insertions(+), 33 deletions(-)
+
 -- 
 2.11.1
