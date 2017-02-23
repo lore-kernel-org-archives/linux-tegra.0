@@ -1,39 +1,124 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 3/7] clk: tegra: correct afi parent
-Date: Thu, 23 Feb 2017 11:01:41 +0200
-Message-ID: <1ad230f2-8e44-fce4-798b-4534d27934c3@kapsi.fi>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH 5/7] clk: tegra: don't warn for PLL defaults unnecessarily
+Date: Thu, 23 Feb 2017 11:06:14 +0200
+Message-ID: <011f63fc-8b49-6574-f319-bdfced82f5cc@kapsi.fi>
 References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
- <1487776444-4701-4-git-send-email-pdeschrijver@nvidia.com>
+ <1487776444-4701-6-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1487776444-4701-4-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1487776444-4701-6-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-On 22.02.2017 17:13, Peter De Schrijver wrote:
-> The parent for afi is actually mselect, not clk_m.
+On 22.02.2017 17:14, Peter De Schrijver wrote:
+> If the PLL is on, only warn if the defaults are not yet set. Otherwise be
+> silent.
 >
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/tegra/clk-tegra210.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
 >
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> index 19b00b7..c9e795b 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -815,7 +815,7 @@
->  	GATE("usb2", "clk_m", 58, 0, tegra_clk_usb2, 0),
->  	GATE("usb3", "clk_m", 59, 0, tegra_clk_usb3, 0),
->  	GATE("csi", "pll_p_out3", 52, 0, tegra_clk_csi, 0),
-> -	GATE("afi", "clk_m", 72, 0, tegra_clk_afi, 0),
-> +	GATE("afi", "mselect", 72, 0, tegra_clk_afi, 0),
->  	GATE("csus", "clk_m", 92, TEGRA_PERIPH_NO_RESET, tegra_clk_csus, 0),
->  	GATE("dds", "clk_m", 150, TEGRA_PERIPH_ON_APB, tegra_clk_dds, 0),
->  	GATE("dp2", "clk_m", 152, TEGRA_PERIPH_ON_APB, tegra_clk_dp2, 0),
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index b7ef8a7..fe698d2 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -502,7 +502,7 @@ static void tegra210_pllcx_set_defaults(const char *name,
+>  	pllcx->params->defaults_set = true;
+>
+>  	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
+> -			PLL_ENABLE) {
+> +			PLL_ENABLE && !pllcx->params->defaults_set) {
+>  		/* PLL is ON: only check if defaults already set */
+>  		pllcx_check_defaults(pllcx->params);
+>  		pr_warn("%s already enabled. Postponing set full defaults\n",
+> @@ -608,7 +608,6 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
+>
+>  	if (readl_relaxed(clk_base + plld->params->base_reg) &
+>  			PLL_ENABLE) {
+> -		pr_warn("PLL_D already enabled. Postponing set full defaults\n");
+>
+>  		/*
+>  		 * PLL is ON: check if defaults already set, then set those
+> @@ -625,6 +624,9 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
+>  		_pll_misc_chk_default(clk_base, plld->params, 0, val,
+>  				~mask & PLLD_MISC0_WRITE_MASK);
+>
+> +		if (!plld->params->defaults_set)
+> +			pr_warn("PLL_D already enabled. Postponing set full defaults\n");
+> +
+>  		/* Enable lock detect */
+>  		mask = PLLD_MISC0_LOCK_ENABLE | PLLD_MISC0_LOCK_OVERRIDE;
+>  		val = readl_relaxed(clk_base + plld->params->ext_misc_reg[0]);
+> @@ -896,7 +898,6 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
+>  	val |= step_b << PLLX_MISC2_DYNRAMP_STEPB_SHIFT;
+>
+>  	if (readl_relaxed(clk_base + pllx->params->base_reg) & PLL_ENABLE) {
+> -		pr_warn("PLL_X already enabled. Postponing set full defaults\n");
+>
+>  		/*
+>  		 * PLL is ON: check if defaults already set, then set those
+> @@ -904,6 +905,8 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
+>  		 */
+>  		pllx_check_defaults(pllx);
+>
+> +		if (!pllx->params->defaults_set)
+> +			pr_warn("PLL_X already enabled. Postponing set full defaults\n");
+>  		/* Configure dyn ramp, disable lock override */
+>  		writel_relaxed(val, clk_base + pllx->params->ext_misc_reg[2]);
+>
+> @@ -948,7 +951,6 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+>  	pllmb->params->defaults_set = true;
+>
+>  	if (val & PLL_ENABLE) {
+> -		pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
+>
+>  		/*
+>  		 * PLL is ON: check if defaults already set, then set those
+> @@ -959,6 +961,8 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+>  		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
+>  				~mask & PLLMB_MISC1_WRITE_MASK);
+>
+> +		if (!pllmb->params->defaults_set)
+> +			pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
+>  		/* Enable lock detect */
+>  		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
+>  		val &= ~mask;
+> @@ -1008,13 +1012,14 @@ static void tegra210_pllp_set_defaults(struct tegra_clk_pll *pllp)
+>  	pllp->params->defaults_set = true;
+>
+>  	if (val & PLL_ENABLE) {
+> -		pr_warn("PLL_P already enabled. Postponing set full defaults\n");
+>
+>  		/*
+>  		 * PLL is ON: check if defaults already set, then set those
+>  		 * that can be updated in flight.
+>  		 */
+>  		pllp_check_defaults(pllp, true);
+> +		if (!pllp->params->defaults_set)
+> +			pr_warn("PLL_P already enabled. Postponing set full defaults\n");
+>
+>  		/* Enable lock detect */
+>  		val = readl_relaxed(clk_base + pllp->params->ext_misc_reg[0]);
+> @@ -1069,13 +1074,14 @@ static void tegra210_pllu_set_defaults(struct tegra_clk_pll *pllu)
+>  	pllu->params->defaults_set = true;
+>
+>  	if (val & PLL_ENABLE) {
+> -		pr_warn("PLL_U already enabled. Postponing set full defaults\n");
+>
+>  		/*
+>  		 * PLL is ON: check if defaults already set, then set those
+>  		 * that can be updated in flight.
+>  		 */
+>  		pllu_check_defaults(pllu, false);
+> +		if (!pllu->params->defaults_set)
+> +			pr_warn("PLL_U already enabled. Postponing set full defaults\n");
+>
+>  		/* Enable lock detect */
+>  		val = readl_relaxed(clk_base + pllu->params->ext_misc_reg[0]);
 >
