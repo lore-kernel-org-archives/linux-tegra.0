@@ -1,155 +1,164 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/5] clk: tegra: add cec clock
-Date: Thu, 23 Feb 2017 14:39:35 +0200
-Message-ID: <1487853585-17934-2-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 4/5] clk: tegra: add super clk mux/div
+Date: Thu, 23 Feb 2017 14:39:38 +0200
+Message-ID: <1487853585-17934-5-git-send-email-pdeschrijver@nvidia.com>
 References: <1487853585-17934-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1487853585-17934-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1487853585-17934-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This clock is used to clock the HDMI CEC interface.
+Add a super clock type which implements both mux and divider. This is used
+for aclk.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-id.h                      | 1 +
- drivers/clk/tegra/clk-tegra-periph.c            | 1 +
- drivers/clk/tegra/clk-tegra114.c                | 1 +
- drivers/clk/tegra/clk-tegra124.c                | 1 +
- drivers/clk/tegra/clk-tegra210.c                | 1 +
- drivers/clk/tegra/clk-tegra30.c                 | 1 +
- include/dt-bindings/clock/tegra114-car.h        | 2 +-
- include/dt-bindings/clock/tegra124-car-common.h | 2 +-
- include/dt-bindings/clock/tegra210-car.h        | 2 +-
- include/dt-bindings/clock/tegra30-car.h         | 2 +-
- 10 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-super.c | 87 +++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/tegra/clk.h       |  7 +++-
+ 2 files changed, 89 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index 1019eb8..fc978b2 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -308,6 +308,7 @@ enum clk_id {
- 	tegra_clk_sclk_mux,
- 	tegra_clk_sor_safe,
- 	tegra_clk_ispa,
-+	tegra_clk_cec,
- 	tegra_clk_max,
+diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+index 131d1b50..7982d41 100644
+--- a/drivers/clk/tegra/clk-super.c
++++ b/drivers/clk/tegra/clk-super.c
+@@ -121,9 +121,50 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
+ 	return err;
+ }
+ 
++const struct clk_ops tegra_clk_super_mux_ops = {
++	.get_parent = clk_super_get_parent,
++	.set_parent = clk_super_set_parent,
++};
++
++static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *parent_rate)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
++
++	__clk_hw_set_clk(div_hw, hw);
++
++	return super->div_ops->round_rate(div_hw, rate, parent_rate);
++}
++
++static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
++
++	__clk_hw_set_clk(div_hw, hw);
++
++	return super->div_ops->recalc_rate(div_hw, parent_rate);
++}
++
++static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
++
++	__clk_hw_set_clk(div_hw, hw);
++
++	return super->div_ops->set_rate(div_hw, rate, parent_rate);
++}
++
+ const struct clk_ops tegra_clk_super_ops = {
+ 	.get_parent = clk_super_get_parent,
+ 	.set_parent = clk_super_set_parent,
++	.set_rate = clk_super_set_rate,
++	.round_rate = clk_super_round_rate,
++	.recalc_rate = clk_super_recalc_rate,
  };
  
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index c9e795b..a2aed27 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -837,6 +837,7 @@
- 	GATE("pll_p_out_cpu", "pll_p", 223, 0, tegra_clk_pll_p_out_cpu, 0),
- 	GATE("pll_p_out_adsp", "pll_p", 187, 0, tegra_clk_pll_p_out_adsp, 0),
- 	GATE("apb2ape", "clk_m", 107, 0, tegra_clk_apb2ape, 0),
-+	GATE("cec", "pclk", 136, 0, tegra_clk_cec, 0),
- };
+ struct clk *tegra_clk_register_super_mux(const char *name,
+@@ -136,13 +177,11 @@ struct clk *tegra_clk_register_super_mux(const char *name,
+ 	struct clk_init_data init;
  
- static struct tegra_periph_init_data div_clks[] = {
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 933b5dd..fd1a99c 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -819,6 +819,7 @@
- 	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA114_CLK_CLK_OUT_3_MUX, .present = true },
- 	[tegra_clk_dsia_mux] = { .dt_id = TEGRA114_CLK_DSIA_MUX, .present = true },
- 	[tegra_clk_dsib_mux] = { .dt_id = TEGRA114_CLK_DSIB_MUX, .present = true },
-+	[tegra_clk_cec] = { .dt_id = TEGRA114_CLK_CEC, .present = true },
- };
+ 	super = kzalloc(sizeof(*super), GFP_KERNEL);
+-	if (!super) {
+-		pr_err("%s: could not allocate super clk\n", __func__);
++	if (!super)
+ 		return ERR_PTR(-ENOMEM);
+-	}
  
- static struct tegra_devclk devclks[] __initdata = {
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index a112d3d..e81ea5b 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -928,6 +928,7 @@
- 	[tegra_clk_clk_out_1_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_1_MUX, .present = true },
- 	[tegra_clk_clk_out_2_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_2_MUX, .present = true },
- 	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_3_MUX, .present = true },
-+	[tegra_clk_cec] = { .dt_id = TEGRA124_CLK_CEC, .present = true },
- };
+ 	init.name = name;
+-	init.ops = &tegra_clk_super_ops;
++	init.ops = &tegra_clk_super_mux_ops;
+ 	init.flags = flags;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+@@ -163,3 +202,43 @@ struct clk *tegra_clk_register_super_mux(const char *name,
  
- static struct tegra_devclk devclks[] __initdata = {
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 58d7f9c..bdb296a 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2222,6 +2222,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 	[tegra_clk_apb2ape] = { .dt_id = TEGRA210_CLK_APB2APE, .present = true },
- 	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
- 	[tegra_clk_ispa] = { .dt_id = TEGRA210_CLK_ISPA, .present = true },
-+	[tegra_clk_cec] = { .dt_id = TEGRA210_CLK_CEC, .present = true },
- };
- 
- static struct tegra_devclk devclks[] __initdata = {
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 8e2db5e..a2d163f 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -817,6 +817,7 @@
- 	[tegra_clk_pll_p_out4] = { .dt_id = TEGRA30_CLK_PLL_P_OUT4, .present = true },
- 	[tegra_clk_pll_a] = { .dt_id = TEGRA30_CLK_PLL_A, .present = true },
- 	[tegra_clk_pll_a_out0] = { .dt_id = TEGRA30_CLK_PLL_A_OUT0, .present = true },
-+	[tegra_clk_cec] = { .dt_id = TEGRA30_CLK_CEC, .present = true },
- };
- 
- static const char *pll_e_parents[] = { "pll_ref", "pll_p" };
-diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
-index 534c03f..ed5ca21 100644
---- a/include/dt-bindings/clock/tegra114-car.h
-+++ b/include/dt-bindings/clock/tegra114-car.h
-@@ -156,7 +156,7 @@
- /* 133 */
- /* 134 */
- /* 135 */
--/* 136 */
-+#define TEGRA114_CLK_CEC 136
- /* 137 */
- /* 138 */
- /* 139 */
-diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
-index a215609..9352c7e 100644
---- a/include/dt-bindings/clock/tegra124-car-common.h
-+++ b/include/dt-bindings/clock/tegra124-car-common.h
-@@ -156,7 +156,7 @@
- /* 133 */
- /* 134 */
- /* 135 */
--/* 136 */
-+#define TEGRA124_CLK_CEC 136
- /* 137 */
- /* 138 */
- /* 139 */
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index f5c6563..e7a2578 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -156,7 +156,7 @@
- /* 133 */
- /* 134 */
- /* 135 */
--/* 136 */
-+#define TEGRA210_CLK_CEC 136
- /* 137 */
- /* 138 */
- /* 139 */
-diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
-index 889e49b..7213354b 100644
---- a/include/dt-bindings/clock/tegra30-car.h
-+++ b/include/dt-bindings/clock/tegra30-car.h
-@@ -156,7 +156,7 @@
- /* 133 */
- /* 134 */
- /* 135 */
--/* 136 */
-+#define TEGRA30_CLK_CEC 136
- /* 137 */
- /* 138 */
- /* 139 */
+ 	return clk;
+ }
++
++struct clk *tegra_clk_register_super_clk(const char *name,
++		const char **parent_names, u8 num_parents,
++		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
++		spinlock_t *lock)
++{
++	struct tegra_clk_super_mux *super;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	super = kzalloc(sizeof(*super), GFP_KERNEL);
++	if (!super)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &tegra_clk_super_ops;
++	init.flags = flags;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++
++	super->reg = reg;
++	super->lock = lock;
++	super->width = 4;
++	super->flags = clk_super_flags;
++	super->frac_div.reg = reg + 4;
++	super->frac_div.shift = 16;
++	super->frac_div.width = 8;
++	super->frac_div.frac_width = 1;
++	super->frac_div.lock = lock;
++	super->div_ops = &tegra_clk_frac_div_ops;
++
++	/* Data in .init is copied by clk_register(), so stack variable OK */
++	super->hw.init = &init;
++
++	clk = clk_register(NULL, &super->hw);
++	if (IS_ERR(clk))
++		kfree(super);
++
++	return clk;
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index a62ea73..6249190 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -686,6 +686,8 @@ struct tegra_periph_init_data {
+ struct tegra_clk_super_mux {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
++	struct tegra_clk_frac_div frac_div;
++	const struct clk_ops	*div_ops;
+ 	u8		width;
+ 	u8		flags;
+ 	u8		div2_index;
+@@ -702,7 +704,10 @@ struct clk *tegra_clk_register_super_mux(const char *name,
+ 		const char **parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+ 		u8 width, u8 pllx_index, u8 div2_index, spinlock_t *lock);
+-
++struct clk *tegra_clk_register_super_clk(const char *name,
++		const char **parent_names, u8 num_parents,
++		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
++		spinlock_t *lock);
+ /**
+  * struct clk_init_table - clock initialization table
+  * @clk_id:	clock id as mentioned in device tree bindings
 -- 
 1.9.1
