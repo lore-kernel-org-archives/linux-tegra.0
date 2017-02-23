@@ -1,121 +1,52 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 5/7] clk: tegra: don't warn for PLL defaults unnecessarily
-Date: Thu, 23 Feb 2017 12:44:42 +0200
-Message-ID: <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 4/7] clk: tegra: remove non-existing pll_m_out1 clock
+Date: Thu, 23 Feb 2017 12:44:41 +0200
+Message-ID: <1487846686-6388-5-git-send-email-pdeschrijver@nvidia.com>
 References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-If the PLL is on, only warn if the defaults are not yet set. Otherwise be
-silent.
+This clock doesn't actually exist, so remove it.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index b7ef8a7..fe698d2 100644
+index 7bda8ba..b7ef8a7 100644
 --- a/drivers/clk/tegra/clk-tegra210.c
 +++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -502,7 +502,7 @@ static void tegra210_pllcx_set_defaults(const char *name,
- 	pllcx->params->defaults_set = true;
+@@ -2115,7 +2115,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	[tegra_clk_pll_c2] = { .dt_id = TEGRA210_CLK_PLL_C2, .present = true },
+ 	[tegra_clk_pll_c3] = { .dt_id = TEGRA210_CLK_PLL_C3, .present = true },
+ 	[tegra_clk_pll_m] = { .dt_id = TEGRA210_CLK_PLL_M, .present = true },
+-	[tegra_clk_pll_m_out1] = { .dt_id = TEGRA210_CLK_PLL_M_OUT1, .present = true },
+ 	[tegra_clk_pll_p] = { .dt_id = TEGRA210_CLK_PLL_P, .present = true },
+ 	[tegra_clk_pll_p_out1] = { .dt_id = TEGRA210_CLK_PLL_P_OUT1, .present = true },
+ 	[tegra_clk_pll_p_out3] = { .dt_id = TEGRA210_CLK_PLL_P_OUT3, .present = true },
+@@ -2229,7 +2228,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	{ .con_id = "pll_p_out3", .dt_id = TEGRA210_CLK_PLL_P_OUT3 },
+ 	{ .con_id = "pll_p_out4", .dt_id = TEGRA210_CLK_PLL_P_OUT4 },
+ 	{ .con_id = "pll_m", .dt_id = TEGRA210_CLK_PLL_M },
+-	{ .con_id = "pll_m_out1", .dt_id = TEGRA210_CLK_PLL_M_OUT1 },
+ 	{ .con_id = "pll_x", .dt_id = TEGRA210_CLK_PLL_X },
+ 	{ .con_id = "pll_x_out0", .dt_id = TEGRA210_CLK_PLL_X_OUT0 },
+ 	{ .con_id = "pll_u", .dt_id = TEGRA210_CLK_PLL_U },
+@@ -2404,9 +2402,6 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 	clk_register_clkdev(clk, "pll_mb", NULL);
+ 	clks[TEGRA210_CLK_PLL_MB] = clk;
  
- 	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
--			PLL_ENABLE) {
-+			PLL_ENABLE && !pllcx->params->defaults_set) {
- 		/* PLL is ON: only check if defaults already set */
- 		pllcx_check_defaults(pllcx->params);
- 		pr_warn("%s already enabled. Postponing set full defaults\n",
-@@ -608,7 +608,6 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
- 
- 	if (readl_relaxed(clk_base + plld->params->base_reg) &
- 			PLL_ENABLE) {
--		pr_warn("PLL_D already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -625,6 +624,9 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
- 		_pll_misc_chk_default(clk_base, plld->params, 0, val,
- 				~mask & PLLD_MISC0_WRITE_MASK);
- 
-+		if (!plld->params->defaults_set)
-+			pr_warn("PLL_D already enabled. Postponing set full defaults\n");
-+
- 		/* Enable lock detect */
- 		mask = PLLD_MISC0_LOCK_ENABLE | PLLD_MISC0_LOCK_OVERRIDE;
- 		val = readl_relaxed(clk_base + plld->params->ext_misc_reg[0]);
-@@ -896,7 +898,6 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
- 	val |= step_b << PLLX_MISC2_DYNRAMP_STEPB_SHIFT;
- 
- 	if (readl_relaxed(clk_base + pllx->params->base_reg) & PLL_ENABLE) {
--		pr_warn("PLL_X already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -904,6 +905,8 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
- 		 */
- 		pllx_check_defaults(pllx);
- 
-+		if (!pllx->params->defaults_set)
-+			pr_warn("PLL_X already enabled. Postponing set full defaults\n");
- 		/* Configure dyn ramp, disable lock override */
- 		writel_relaxed(val, clk_base + pllx->params->ext_misc_reg[2]);
- 
-@@ -948,7 +951,6 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
- 	pllmb->params->defaults_set = true;
- 
- 	if (val & PLL_ENABLE) {
--		pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -959,6 +961,8 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
- 		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
- 				~mask & PLLMB_MISC1_WRITE_MASK);
- 
-+		if (!pllmb->params->defaults_set)
-+			pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
- 		val &= ~mask;
-@@ -1008,13 +1012,14 @@ static void tegra210_pllp_set_defaults(struct tegra_clk_pll *pllp)
- 	pllp->params->defaults_set = true;
- 
- 	if (val & PLL_ENABLE) {
--		pr_warn("PLL_P already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
- 		 * that can be updated in flight.
- 		 */
- 		pllp_check_defaults(pllp, true);
-+		if (!pllp->params->defaults_set)
-+			pr_warn("PLL_P already enabled. Postponing set full defaults\n");
- 
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllp->params->ext_misc_reg[0]);
-@@ -1069,13 +1074,14 @@ static void tegra210_pllu_set_defaults(struct tegra_clk_pll *pllu)
- 	pllu->params->defaults_set = true;
- 
- 	if (val & PLL_ENABLE) {
--		pr_warn("PLL_U already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
- 		 * that can be updated in flight.
- 		 */
- 		pllu_check_defaults(pllu, false);
-+		if (!pllu->params->defaults_set)
-+			pr_warn("PLL_U already enabled. Postponing set full defaults\n");
- 
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllu->params->ext_misc_reg[0]);
+-	clk_register_clkdev(clk, "pll_m_out1", NULL);
+-	clks[TEGRA210_CLK_PLL_M_OUT1] = clk;
+-
+ 	/* PLLM_UD */
+ 	clk = clk_register_fixed_factor(NULL, "pll_m_ud", "pll_m",
+ 					CLK_SET_RATE_PARENT, 1, 1);
 -- 
 1.9.1
-
