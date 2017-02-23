@@ -1,71 +1,39 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 09/11] arm64: tegra: Add GPIO keys on P2771
-Date: Thu, 23 Feb 2017 18:30:51 +0100
-Message-ID: <20170223173053.19701-9-thierry.reding@gmail.com>
-References: <20170223173053.19701-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170223173053.19701-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Changes for v4.11-rc1
+Date: Thu, 23 Feb 2017 18:35:58 +0100
+Message-ID: <20170223173558.20486-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-The P2771 has three keys (power, volume up and volume down) that are
-connected to pins on the AON GPIO controller.
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 0d3c0996d832..1c195d71806d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -1,8 +1,42 @@
- /dts-v1/;
- 
-+#include <dt-bindings/input/linux-event-codes.h>
-+
- #include "tegra186-p3310.dtsi"
- 
- / {
- 	model = "NVIDIA Tegra186 P2771-0000 Development Board";
- 	compatible = "nvidia,p2771-0000", "nvidia,tegra186";
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpio_aon TEGRA_AON_GPIO(FF, 0)
-+					   GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <KEY_POWER>;
-+			debounce-interval = <10>;
-+			wakeup-source;
-+		};
-+
-+		volume-up {
-+			label = "Volume Up";
-+			gpios = <&gpio_aon TEGRA_AON_GPIO(FF, 1)
-+					   GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <KEY_VOLUMEUP>;
-+			debounce-interval = <10>;
-+		};
-+
-+		volume-down {
-+			label = "Volume Down";
-+			gpios = <&gpio_aon TEGRA_AON_GPIO(FF, 2)
-+					   GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			debounce-interval = <10>;
-+		};
-+	};
- };
--- 
-2.11.1
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgN2NlN2Q4OWY0ODgz
+NGNlZmVjZTc4MDRkMzhmYzVkODUzODJlZGY3NzoKCiAgTGludXggNC4xMC1yYzEgKDIwMTYtMTIt
+MjUgMTY6MTM6MDggLTA4MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBh
+dDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0v
+dGVncmEvZm9yLTQuMTEtcmMxCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gN2IxZDQx
+ODUwNTBkMjA0ZDYzODE2NmU2MmI4NWMyNmM4MTMyNmVmZjoKCiAgZ3B1OiBob3N0MXg6IFNldCBP
+RiBub2RlIGZvciBuZXcgaG9zdDF4IGRldmljZXMgKDIwMTctMDEtMzAgMTE6NDc6NDQgKzAxMDAp
+CgpUaGFua3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBDaGFuZ2VzIGZvciB2NC4xMS1y
+YzEKCkp1c3QgYSBzaW5nbGUgY2hhbmdlIHRoYXQgaG9va3MgdXAgdGhlIFRlZ3JhIERSTSBwYXJl
+bnQgZGV2aWNlIHRvIHRoZQpjb3JyZWN0IGRldmljZSB0cmVlIG5vZGUuCgotLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClRoaWVy
+cnkgUmVkaW5nICgxKToKICAgICAgZ3B1OiBob3N0MXg6IFNldCBPRiBub2RlIGZvciBuZXcgaG9z
+dDF4IGRldmljZXMKCiBkcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMgfCAxICsKIDEgZmlsZSBjaGFu
+Z2VkLCAxIGluc2VydGlvbigrKQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
