@@ -1,64 +1,127 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 2/2] i2c: Add Tegra BPMP I2C proxy driver
-Date: Thu, 23 Feb 2017 17:18:50 +0100
-Message-ID: <20170223161850.GA15601@ulmo.ba.sec>
-References: <20170220165234.29299-1-thierry.reding@gmail.com>
- <20170220165234.29299-2-thierry.reding@gmail.com>
- <20170220181747.lykox7o4ik6d5snu@ninjato>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170220181747.lykox7o4ik6d5snu@ninjato>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 1/2] mmc: tegra: Support module reset
+Date: Thu, 23 Feb 2017 17:23:41 +0100
+Message-ID: <20170223162342.15911-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---MGYHOYXEY6WxJCY8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The device tree binding for the SDHCI controller found on Tegra SoCs
+specifies that a reset control can be provided by the device tree. No
+code was ever added to support the module reset, which can cause the
+driver to try and access registers from a module that's in reset. On
+most Tegra SoC generations doing so would cause a hang.
 
-On Mon, Feb 20, 2017 at 07:17:47PM +0100, Wolfram Sang wrote:
-> On Mon, Feb 20, 2017 at 05:52:34PM +0100, Thierry Reding wrote:
-> > From: Shardar Shariff Md <smohammed@nvidia.com>
-> >=20
-> > Add Tegra BPMP I2C driver. The BPMP is the boot and power management
-> > processor embedded in Tegra SoCs. In newer SoC versions, access to one
-> > of the I2C busses goes via the BPMP, requiring a different "proxy" I2C
-> > driver that accesses the bus via the real I2C driver embedded in the
-> > BPMP firmware.
-> >=20
-> > Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> Applied to for-next, thanks (will be in for 4.11)!
+Note that it's unlikely to see this happen because on most platforms
+these resets will have been deasserted by the bootloader. However the
+portability can be improved by making sure the driver deasserts the
+reset before accessing any registers.
 
-Thanks for fast-tracking this!
+Since resets are synchronous on Tegra SoCs, the platform driver needs
+to implement a custom ->remove() callback now to make sure the clock
+is disabled after the reset is asserted.
 
-Thierry
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v2:
+- assert reset in ->probe() error path
+- remove unneeded PCI specific quirk
 
---MGYHOYXEY6WxJCY8
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/mmc/host/sdhci-tegra.c | 43 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlivC2gACgkQ3SOs138+
-s6EVdg//QawdgVW+mjTkZ0KtT4ad1NVDhAssm2buvUQ0EulQpNkfnwgiICLCJyom
-sZk5spjy+ZkVpg2OjGru6Cgahn9YY0NTvoycjkygBAZXMI1ZlfgE/RhF5dpzL9r8
-hZ9ikr+FLM2Jlw5BRvpJrW5pLk/j02GaKVstGqeYLXrtfGEGmMdRZcphhzUnju5K
-KV6gPTTresWpVGZlq6W/ZMQiWqTMzbykxnfdR731Vh7cGLF1qQp4xA0CyaJedW2t
-fZazlI8CZHROAgg1nAzY8tLtqQ+n9NyEDxL7Te3e7srXi5VRGGBuxNckxtRyGW/G
-e4RjvUWp0a0lK9KqmvyeSfqB6rQw4VszfNbxIlyttScoPhXoXLLwV675WBFds5oE
-4Sq2cQsgugdppyGcmmW1vk9sNOFIS49+vHlTXQmDqoa5XI+XaHuKQZ95XaRMppnx
-zsugQZ2N4Bm64YtEjTTE6wciOgn5XvqewsqbIvGRb2PW6FFywCFCQqBH12K5k8KV
-8Zd75fPg1sz3hOuv3tH/0WcI5uluP57gEpqtPO4zcauGwSAx+a//4memkF5I90Oa
-Q+qEC6CD24gGqYS6AS6NVlav27JUIaJv8W5wuTl7Wgh8gN7aoHV/v2PYf/bSp7HH
-2OjEn8aSDAwnr8ogSaIqnOLw+QvF4hkS6f8IOM4ZT47KeLkIE8A=
-=MxH9
------END PGP SIGNATURE-----
-
---MGYHOYXEY6WxJCY8--
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 20b6ff5b4af1..9ae5895678e8 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -21,6 +21,7 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/reset.h>
+ #include <linux/mmc/card.h>
+ #include <linux/mmc/host.h>
+ #include <linux/mmc/mmc.h>
+@@ -65,6 +66,8 @@ struct sdhci_tegra {
+ 	struct gpio_desc *power_gpio;
+ 	bool ddr_signaling;
+ 	bool pad_calib_required;
++
++	struct reset_control *rst;
+ };
+ 
+ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+@@ -489,6 +492,25 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	clk_prepare_enable(clk);
+ 	pltfm_host->clk = clk;
+ 
++	tegra_host->rst = devm_reset_control_get(&pdev->dev, "sdhci");
++	if (IS_ERR(tegra_host->rst)) {
++		rc = PTR_ERR(tegra_host->rst);
++		dev_err(&pdev->dev, "failed to get reset control: %d\n", rc);
++		goto err_rst_get;
++	}
++
++	rc = reset_control_assert(tegra_host->rst);
++	if (rc)
++		goto err_rst_get;
++
++	usleep_range(2000, 4000);
++
++	rc = reset_control_deassert(tegra_host->rst);
++	if (rc)
++		goto err_rst_get;
++
++	usleep_range(2000, 4000);
++
+ 	rc = sdhci_add_host(host);
+ 	if (rc)
+ 		goto err_add_host;
+@@ -496,6 +518,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_add_host:
++	reset_control_assert(tegra_host->rst);
++err_rst_get:
+ 	clk_disable_unprepare(pltfm_host->clk);
+ err_clk_get:
+ err_power_req:
+@@ -504,6 +528,23 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	return rc;
+ }
+ 
++static int sdhci_tegra_remove(struct platform_device *pdev)
++{
++	struct sdhci_host *host = platform_get_drvdata(pdev);
++	struct sdhci_pltfm_host *platform = sdhci_priv(host);
++	struct sdhci_tegra *tegra = sdhci_pltfm_priv(platform);
++
++	sdhci_remove_host(host, 0);
++
++	reset_control_assert(tegra->rst);
++	usleep_range(2000, 4000);
++	clk_disable_unprepare(platform->clk);
++
++	sdhci_pltfm_free(pdev);
++
++	return 0;
++}
++
+ static struct platform_driver sdhci_tegra_driver = {
+ 	.driver		= {
+ 		.name	= "sdhci-tegra",
+@@ -511,7 +552,7 @@ static struct platform_driver sdhci_tegra_driver = {
+ 		.pm	= &sdhci_pltfm_pmops,
+ 	},
+ 	.probe		= sdhci_tegra_probe,
+-	.remove		= sdhci_pltfm_unregister,
++	.remove		= sdhci_tegra_remove,
+ };
+ 
+ module_platform_driver(sdhci_tegra_driver);
+-- 
+2.11.1
