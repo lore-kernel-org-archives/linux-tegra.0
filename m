@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 10/11] arm64: tegra: Add power monitors on P2771
-Date: Thu, 23 Feb 2017 18:30:52 +0100
-Message-ID: <20170223173053.19701-10-thierry.reding@gmail.com>
+Subject: [PATCH 08/11] arm64: tegra: Enable current monitors on P3310
+Date: Thu, 23 Feb 2017 18:30:50 +0100
+Message-ID: <20170223173053.19701-8-thierry.reding@gmail.com>
 References: <20170223173053.19701-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20170223173053.19701-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,36 +12,35 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The P2771 development board comes with two power monitors that can be
-used to determine power consumption in different parts of the board.
+The P3310 processor module contains two current monitors that can be
+used to determine the current flow across various parts of the board
+design.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 1c195d71806d..9485841e3351 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -8,6 +8,18 @@
- 	model = "NVIDIA Tegra186 P2771-0000 Development Board";
- 	compatible = "nvidia,p2771-0000", "nvidia,tegra186";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+index b18e166527d8..a1cb6b35314e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+@@ -56,6 +56,16 @@
  
-+	i2c@3160000 {
-+		power-monitor@42 {
+ 	i2c@3160000 {
+ 		status = "okay";
++
++		power-monitor@40 {
 +			compatible = "ti,ina3221";
-+			reg = <0x42>;
++			reg = <0x40>;
 +		};
 +
-+		power-monitor@43 {
++		power-monitor@41 {
 +			compatible = "ti,ina3221";
-+			reg = <0x43>;
++			reg = <0x41>;
 +		};
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
+ 	};
  
+ 	i2c@3180000 {
 -- 
 2.11.1
