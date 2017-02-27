@@ -1,66 +1,76 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: Remove unnecessary 'out of memory' message
-Date: Mon, 27 Feb 2017 08:26:54 +0100
-Message-ID: <20170227072654.GA27415@ulmo.ba.sec>
-References: <1488021488-17847-1-git-send-email-codrut.cristian.grosu@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ASoC: tegra: Add blank line after
+	declarations
+Date: Mon, 27 Feb 2017 08:27:42 +0100
+Message-ID: <20170227072742.GB27415@ulmo.ba.sec>
+References: <1488049157-6535-1-git-send-email-codrut.cristian.grosu@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1488021488-17847-1-git-send-email-codrut.cristian.grosu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Codrut Grosu <codrut.cristian.grosu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Julia.Lawall-L2FTfq7BK8M@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============1516719786678968770=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1488049157-6535-1-git-send-email-codrut.cristian.grosu@gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Codrut Grosu <codrut.cristian.grosu@gmail.com>
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, tiwai@suse.com, nicoleotsuka@gmail.com, Julia.Lawall@lip6.fr, broonie@kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---AhhlLboLdkugWU4S
+--===============1516719786678968770==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
+Content-Disposition: inline
+
+
+--2B/JsCI69OhZNC5r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 25, 2017 at 01:18:08PM +0200, Codrut Grosu wrote:
+On Sat, Feb 25, 2017 at 08:59:17PM +0200, Codrut Grosu wrote:
 > This was reported by checkpatch.pl
 >=20
-> Signed-off-by: Codrut GROSU <codrut.cristian.grosu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Codrut GROSU <codrut.cristian.grosu@gmail.com>
 > ---
->  sound/soc/tegra/tegra20_ac97.c   | 1 -
->  sound/soc/tegra/tegra20_das.c    | 1 -
->  sound/soc/tegra/tegra20_i2s.c    | 1 -
->  sound/soc/tegra/tegra20_spdif.c  | 5 ++---
->  sound/soc/tegra/tegra30_ahub.c   | 4 +---
->  sound/soc/tegra/tegra30_i2s.c    | 1 -
->  sound/soc/tegra/tegra_alc5632.c  | 4 +---
->  sound/soc/tegra/tegra_max98090.c | 4 +---
->  sound/soc/tegra/tegra_rt5640.c   | 4 +---
->  sound/soc/tegra/tegra_sgtl5000.c | 4 +---
->  sound/soc/tegra/tegra_wm8753.c   | 4 +---
->  sound/soc/tegra/tegra_wm8903.c   | 4 +---
->  sound/soc/tegra/tegra_wm9712.c   | 4 +---
->  sound/soc/tegra/trimslice.c      | 4 +---
->  14 files changed, 11 insertions(+), 34 deletions(-)
+>  sound/soc/tegra/tegra20_das.c  | 1 +
+>  sound/soc/tegra/tegra30_ahub.c | 1 +
+>  2 files changed, 2 insertions(+)
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---AhhlLboLdkugWU4S
+--2B/JsCI69OhZNC5r
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliz1LsACgkQ3SOs138+
-s6EYpw//c7XwHoyhLVtm8TTcbSpNj7J5+XTa4XhF+MbciVFgHFceRny3GDaA7/cV
-WGde1/Ce3KXj+n9RWTVNcMu4MVqBRyEElM+B4t/fpjoB5IX9vcSJkR34lUkFYXcP
-UvT3Kkd25jOvuPWJrpCsk4YX1tKy/WEX1acb3AW2rc+7IltX7S7hPr+8PuZMUj3W
-m6mosrhRDWc7F+pDCBtvnJqaf1uXL3goUc6vGZdIJCYgQ1liePH0fbuXZoOzK+CO
-AQ1h9egce89in2KgSBqr3otf6sNGXGTJckrH/7Qst78ZTRicm8busTDYTVceD4aK
-4EZwWwWMUODD6RqWI7IZcouwQhLosIW1BLOOSYadwEisT+10L1XWyacefgIpUuE3
-FXsCBV1vjY0lqIDof8rcQmwiCNW2txqmefZEY4CKxRQ15G5TLZcD0ME7gjP5/n4l
-J5dNjqevLeNOQgySbJEyj7mQxQhzQMvEtcWSXua7GGCsf5srGFSsUSi5J1rqY+wL
-z0sjs561DjYh6keKWrPB3DJ1Sze/1JshRjVi+BW2JIFyA4a6drLeB7t5k2Z5qBMf
-s6I9v3vvDj65DdvGbPznZZ11xOFkAacdb22VsrR9KDI7s3WyCcbK1eciSTnfWpyo
-U5FrLWmUhw6AaVBCFQRgL1yh6AB4FOpeRMZ325+QewQbHUkvA6Y=
-=6W64
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliz1O4ACgkQ3SOs138+
+s6FkEQ/+Nuxn/b9JrdWj0tZRVTDSu1nvZx1LMLNRBLsS9xwddIoRE7yILBaTh5GJ
+1NBeT6QHrx7W9Vk60WPiVeqhFkNBS7XQZcR4XQpl/mEATa7irpueea+rO77ZkYvH
+N4H/yfOiWYyFihrQl+1iGwBUGpg+lhhnJKBZ1pkhJ02cZvrVmIX2Dq8fufVv5JxN
+vkpbigcy4SO2ngFb7jnJIWqh/KggY334h1/oUtxtvDgpYaQioij1aRFhg2MCS2el
+3zJ80FQUY4qitgXf7eCM7tbX4hfNRNupdEBi3YrHxJqLVap6528zoq/ktbzA4SjO
+aBkQSYMD8KAkgOWRLDGI9Ti8MKaG2NoTMV8xXdypbW52sX5jKGIEWaUOs8eKbq1T
+D2Tp4xbNUyeIPndg5NDOClk/jMnz7fTGiszvOcPHL1U6QWq14vKcU9/JRI1xQ59N
+Xld1vDBAcVWkOYRy6zZ9Xu7F5ZJ036isdjqm+n8UtS1cRpC71LuKyqG21J498lCC
+Zhc1DTOsqAehP2wkuWowBp0QvWoysGbQBuCuuZ3qiMBlBKCrYa4p2zEQXfL3KGYW
+ImveLnQH4DVtKm/8783PN4twrUxtA1lil1zmBPJfhJCX66nPJHrcr8VADlyp0Y7s
+ojRpIzkhGEAy390/7wjLclKhj0HOB7Vo2JWhhFblcSG14XDK2Ig=
+=cZlG
 -----END PGP SIGNATURE-----
 
---AhhlLboLdkugWU4S--
+--2B/JsCI69OhZNC5r--
+
+--===============1516719786678968770==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1516719786678968770==--
