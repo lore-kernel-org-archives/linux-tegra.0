@@ -1,76 +1,57 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ASoC: tegra: Add blank line after
-	declarations
-Date: Mon, 27 Feb 2017 08:27:42 +0100
-Message-ID: <20170227072742.GB27415@ulmo.ba.sec>
-References: <1488049157-6535-1-git-send-email-codrut.cristian.grosu@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/7] net: stmmac: Fixes and Tegra186 support
+Date: Mon, 27 Feb 2017 08:31:18 +0100
+Message-ID: <20170227073118.GD27415@ulmo.ba.sec>
+References: <20170223172438.14770-1-thierry.reding@gmail.com>
+ <20170223.125705.464117483663954788.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1516719786678968770=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1488049157-6535-1-git-send-email-codrut.cristian.grosu@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Codrut Grosu <codrut.cristian.grosu@gmail.com>
-Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, tiwai@suse.com, nicoleotsuka@gmail.com, Julia.Lawall@lip6.fr, broonie@kernel.org, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170223.125705.464117483663954788.davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Cc: peppe.cavallaro-qxv4g6HH51o@public.gmane.org, alexandre.torgue-qxv4g6HH51o@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, Joao.Pinto-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1516719786678968770==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
-Content-Disposition: inline
-
-
---2B/JsCI69OhZNC5r
+--NklN7DEeGtkPCoo3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 25, 2017 at 08:59:17PM +0200, Codrut Grosu wrote:
-> This was reported by checkpatch.pl
+On Thu, Feb 23, 2017 at 12:57:05PM -0500, David Miller wrote:
 >=20
-> Signed-off-by: Codrut GROSU <codrut.cristian.grosu@gmail.com>
-> ---
->  sound/soc/tegra/tegra20_das.c  | 1 +
->  sound/soc/tegra/tegra30_ahub.c | 1 +
->  2 files changed, 2 insertions(+)
+> The net-next tree is closed, therefore it is not appropriate to submit
+> feature patches or cleanups at this time.
+>=20
+> Please wait for the merge window to be finished and the net-next tree
+> to open back up before resubmitting this patch series.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Okay, I'll resend this after the merge window. In the meantime, surely
+it's okay for others to review patches?
 
---2B/JsCI69OhZNC5r
+Thierry
+
+--NklN7DEeGtkPCoo3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliz1O4ACgkQ3SOs138+
-s6FkEQ/+Nuxn/b9JrdWj0tZRVTDSu1nvZx1LMLNRBLsS9xwddIoRE7yILBaTh5GJ
-1NBeT6QHrx7W9Vk60WPiVeqhFkNBS7XQZcR4XQpl/mEATa7irpueea+rO77ZkYvH
-N4H/yfOiWYyFihrQl+1iGwBUGpg+lhhnJKBZ1pkhJ02cZvrVmIX2Dq8fufVv5JxN
-vkpbigcy4SO2ngFb7jnJIWqh/KggY334h1/oUtxtvDgpYaQioij1aRFhg2MCS2el
-3zJ80FQUY4qitgXf7eCM7tbX4hfNRNupdEBi3YrHxJqLVap6528zoq/ktbzA4SjO
-aBkQSYMD8KAkgOWRLDGI9Ti8MKaG2NoTMV8xXdypbW52sX5jKGIEWaUOs8eKbq1T
-D2Tp4xbNUyeIPndg5NDOClk/jMnz7fTGiszvOcPHL1U6QWq14vKcU9/JRI1xQ59N
-Xld1vDBAcVWkOYRy6zZ9Xu7F5ZJ036isdjqm+n8UtS1cRpC71LuKyqG21J498lCC
-Zhc1DTOsqAehP2wkuWowBp0QvWoysGbQBuCuuZ3qiMBlBKCrYa4p2zEQXfL3KGYW
-ImveLnQH4DVtKm/8783PN4twrUxtA1lil1zmBPJfhJCX66nPJHrcr8VADlyp0Y7s
-ojRpIzkhGEAy390/7wjLclKhj0HOB7Vo2JWhhFblcSG14XDK2Ig=
-=cZlG
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliz1cYACgkQ3SOs138+
+s6GeGQ//SunhYiNsjMcQThdC2SOVbNxESbgpThsvAF6bTl4Cy6J/JSguJQPWV2PX
+UAN5hZTJq2izvn7Zm2qN15enK8C5/O/5DZXXpLwenvI4p+k39TyH0xVKIg8gasth
+7km9SgPbz1yMV5GFy6FserA+xAFvUcLZmSPPQLwlB1XYErQoF0C0ZE/Dpon6WrhW
+HJp5Aw/k9+L54xFZ++uUbgO0VdPR0jFXXqBhAY46M3dreGQMoJ+nFCTjLDklyJEI
+GjAW0L6VnKLoZtdyCrYbxiPcYpDuKBBjrddE3+TpXYBs01kSZx4Lzh0faOch1/rV
+hw6IqBuTvfVBfFUo1RD/UgFqrJND9C3PnYLZut1lWeo5zUGtOj1Gvi/eSgoc9OYe
+Vh0IS1AaLos8CmbFPOfQrpLge9dq2XQGTlOFtKujAvRH9Bk3/d5S28TeM87RpIc8
+qkLzwOXD0RFNzFguPlF28MCffbfntVSxsL6h1DH8Bwda53NqIP+F6mhUloC2Il+H
+81yBH8AeXs/Ss+Hk8h8KQ3VzVuJ0w1jk3n4giBNryIdn4SB+A6mCNckz9esy9GGE
+Ur6qQ0rPbeRonvizod1BTH78W/tElRPifUPMgf5kCYueRma6fK0U8BJhAe7siqv/
+CYK0vEWKVMiqacOn/En9Aaun5ov0m/NY7zHv8o3GDXGA/fek6bo=
+=cQu2
 -----END PGP SIGNATURE-----
 
---2B/JsCI69OhZNC5r--
-
---===============1516719786678968770==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============1516719786678968770==--
+--NklN7DEeGtkPCoo3--
