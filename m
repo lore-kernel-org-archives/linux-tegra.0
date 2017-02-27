@@ -1,57 +1,74 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/7] net: stmmac: Fixes and Tegra186 support
-Date: Mon, 27 Feb 2017 08:31:18 +0100
-Message-ID: <20170227073118.GD27415@ulmo.ba.sec>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH 4/7] net: stmmac: Parse FIFO sizes from feature registers
+Date: Mon, 27 Feb 2017 11:51:25 +0200
+Message-ID: <0b40b953-8fde-6351-a571-556943d78ecb@kapsi.fi>
 References: <20170223172438.14770-1-thierry.reding@gmail.com>
- <20170223.125705.464117483663954788.davem@davemloft.net>
+ <20170223172438.14770-5-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170223.125705.464117483663954788.davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
-Cc: peppe.cavallaro-qxv4g6HH51o@public.gmane.org, alexandre.torgue-qxv4g6HH51o@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, Joao.Pinto-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170223172438.14770-5-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, "David S . Miller" <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 23.02.2017 19:24, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> New version of this core encode the FIFO sizes in one of the feature
+> registers. Use these sizes as default, but still allow device tree to
+> override them for backwards compatibility.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/common.h      | 3 +++
+>  drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c  | 2 ++
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 3 +++
+>  3 files changed, 8 insertions(+)
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+> index 144fe84e8a53..6ac653845d82 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/common.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+> @@ -324,6 +324,9 @@ struct dma_features {
+>  	unsigned int number_tx_queues;
+>  	/* Alternate (enhanced) DESC mode */
+>  	unsigned int enh_desc;
+> +	/* TX and RX FIFO sizes */
+> +	unsigned int tx_fifo_size;
+> +	unsigned int rx_fifo_size;
+>  };
+>
+>  /* GMAC TX FIFO is 8K, Rx FIFO is 16K */
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+> index 377d1b44d4f2..8d249f3b34c8 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+> @@ -296,6 +296,8 @@ static void dwmac4_get_hw_feature(void __iomem *ioaddr,
+>  	hw_cap = readl(ioaddr + GMAC_HW_FEATURE1);
+>  	dma_cap->av = (hw_cap & GMAC_HW_FEAT_AVSEL) >> 20;
+>  	dma_cap->tsoen = (hw_cap & GMAC_HW_TSOEN) >> 18;
+> +	dma_cap->tx_fifo_size = 128 << ((hw_cap >> 6) & 0x1f);
+> +	dma_cap->rx_fifo_size = 128 << ((hw_cap >> 0) & 0x1f);
+>  	/* MAC HW feature2 */
+>  	hw_cap = readl(ioaddr + GMAC_HW_FEATURE2);
+>  	/* TX and RX number of channels */
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index d7387919bdb6..291e34f0ca94 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -1281,6 +1281,9 @@ static void stmmac_dma_operation_mode(struct stmmac_priv *priv)
+>  {
+>  	int rxfifosz = priv->plat->rx_fifo_size;
+>
+> +	if (rxfifosz == 0)
+> +		rxfifosz = priv->dma_cap.rx_fifo_size;
+> +
+>  	if (priv->plat->force_thresh_dma_mode)
+>  		priv->hw->dma->dma_mode(priv->ioaddr, tc, tc, rxfifosz);
+>  	else if (priv->plat->force_sf_dma_mode || priv->plat->tx_coe) {
+>
 
---NklN7DEeGtkPCoo3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Feb 23, 2017 at 12:57:05PM -0500, David Miller wrote:
->=20
-> The net-next tree is closed, therefore it is not appropriate to submit
-> feature patches or cleanups at this time.
->=20
-> Please wait for the merge window to be finished and the net-next tree
-> to open back up before resubmitting this patch series.
-
-Okay, I'll resend this after the merge window. In the meantime, surely
-it's okay for others to review patches?
-
-Thierry
-
---NklN7DEeGtkPCoo3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliz1cYACgkQ3SOs138+
-s6GeGQ//SunhYiNsjMcQThdC2SOVbNxESbgpThsvAF6bTl4Cy6J/JSguJQPWV2PX
-UAN5hZTJq2izvn7Zm2qN15enK8C5/O/5DZXXpLwenvI4p+k39TyH0xVKIg8gasth
-7km9SgPbz1yMV5GFy6FserA+xAFvUcLZmSPPQLwlB1XYErQoF0C0ZE/Dpon6WrhW
-HJp5Aw/k9+L54xFZ++uUbgO0VdPR0jFXXqBhAY46M3dreGQMoJ+nFCTjLDklyJEI
-GjAW0L6VnKLoZtdyCrYbxiPcYpDuKBBjrddE3+TpXYBs01kSZx4Lzh0faOch1/rV
-hw6IqBuTvfVBfFUo1RD/UgFqrJND9C3PnYLZut1lWeo5zUGtOj1Gvi/eSgoc9OYe
-Vh0IS1AaLos8CmbFPOfQrpLge9dq2XQGTlOFtKujAvRH9Bk3/d5S28TeM87RpIc8
-qkLzwOXD0RFNzFguPlF28MCffbfntVSxsL6h1DH8Bwda53NqIP+F6mhUloC2Il+H
-81yBH8AeXs/Ss+Hk8h8KQ3VzVuJ0w1jk3n4giBNryIdn4SB+A6mCNckz9esy9GGE
-Ur6qQ0rPbeRonvizod1BTH78W/tElRPifUPMgf5kCYueRma6fK0U8BJhAe7siqv/
-CYK0vEWKVMiqacOn/En9Aaun5ov0m/NY7zHv8o3GDXGA/fek6bo=
-=cQu2
------END PGP SIGNATURE-----
-
---NklN7DEeGtkPCoo3--
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
