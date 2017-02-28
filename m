@@ -1,71 +1,32 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
- require multiple domains
-Date: Tue, 28 Feb 2017 15:18:47 +0000
-Message-ID: <52493231-71f4-1b62-b325-8532e63e4229@nvidia.com>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Date: Tue, 28 Feb 2017 17:19:50 +0200
+Message-ID: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, geert@linux-m68k.org, rnayak@codeaurora.org, stanimir.varbanov@linaro.org, sboyd@codeaurora.org, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi all,
+This is needed to make the JTAG debugging interface work.
 
-On 20/09/16 11:28, Jon Hunter wrote:
-> The Tegra124/210 XUSB subsystem (that consists of both host and device
-> controllers) is partitioned across 3 PM domains which are:
-> - XUSBA: Superspeed logic (for USB 3.0)
-> - XUSBB: Device controller
-> - XUSBC: Host controller
-> 
-> These power domains are not nested and can be powered-up and down
-> independently of one another. In practice different scenarios require
-> different combinations of the power domains, for example:
-> - Superspeed host: XUSBA and XUSBC
-> - Superspeed device: XUSBA and XUSBB
-> 
-> Although it could be possible to logically nest both the XUSBB and XUSBC
-> domains under the XUSBA, superspeed may not always be used/required and
-> so this would keep it on unnecessarily.
-> 
-> Given that Tegra uses device-tree for describing the hardware, it would
-> be ideal that the device-tree 'power-domains' property for generic PM
-> domains could be extended to allow more than one PM domain to be
-> specified. For example, define the following the Tegra210 xHCI device ...
-> 
-> 	usb@70090000 {
-> 		compatible = "nvidia,tegra210-xusb";
-> 		...
-> 		power-domains = <&pd_xusbhost>, <&pd_xusbss>;
-> 	};
-> 
-> This RFC extends the generic PM domain framework to allow a device to
-> define more than one PM domain in the device-tree 'power-domains'
-> property.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I wanted to kick this thread again now in the new year and see if there
-is still some interest in pursuing this?
-
-There is still very much a need from a Tegra perspective. I have put all
-those who responded on TO.
-
-I know that a lot of time has passed since we discuss this and so if you
-are scratching your head wondering what I am harping on about,
-essentially with this RFC I was looking for a way to support devices
-that require multiple power domains where the domains do not have a
-parent-child relationship and so not are nested in anyway.
-
-If you need me to elaborate on the need for this, I am happy to do this.
-My take away from when we discussed this last year, was that there was a
-need for this.
-
-Cheers
-Jon
-
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 9a2512a..708f5f1 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
+ 	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
++	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
+ 	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
+ 	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
 -- 
-nvpublic
+1.9.1
