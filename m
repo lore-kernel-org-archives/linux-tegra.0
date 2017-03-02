@@ -1,199 +1,38 @@
-From: Joao Pinto <Joao.Pinto@synopsys.com>
-Subject: Re: [PATCH 6/7] net: stmmac: dwc-qos: Split out ->probe() and
- ->remove()
-Date: Thu, 2 Mar 2017 16:43:15 +0000
-Message-ID: <b825771b-5be5-7f52-9623-2aaf9a175abc@synopsys.com>
-References: <20170223172438.14770-1-thierry.reding@gmail.com>
- <20170223172438.14770-7-thierry.reding@gmail.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra: fix disable unused for clocks sharing enable bit
+Date: Thu, 2 Mar 2017 15:22:05 +0200
+Message-ID: <1488460925-16793-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170223172438.14770-7-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, "David S . Miller" <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Às 5:24 PM de 2/23/2017, Thierry Reding escreveu:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Split out the binding specific parts of ->probe() and ->remove() to
-> enable the driver to support variants of the binding. This is useful in
-> order to keep backwards-compatibility while making it easy for a sub-
-> driver to deal only with the updated bindings rather than having to add
-> compatibility quirks all over the place.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  .../ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c    | 114 ++++++++++++++++-----
->  1 file changed, 88 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-> index 1a3fa3d9f855..5071d3c15adc 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-> @@ -18,6 +18,7 @@
->  #include <linux/io.h>
->  #include <linux/ioport.h>
->  #include <linux/module.h>
-> +#include <linux/of_device.h>
->  #include <linux/of_net.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/platform_device.h>
-> @@ -106,13 +107,70 @@ static int dwc_eth_dwmac_config_dt(struct platform_device *pdev,
->  	return 0;
->  }
->  
-> +static void *dwc_qos_probe(struct platform_device *pdev,
-> +			   struct plat_stmmacenet_data *plat_dat,
-> +			   struct stmmac_resources *stmmac_res)
-> +{
-> +	int err;
-> +
-> +	plat_dat->stmmac_clk = devm_clk_get(&pdev->dev, "apb_pclk");
-> +	if (IS_ERR(plat_dat->stmmac_clk)) {
-> +		dev_err(&pdev->dev, "apb_pclk clock not found.\n");
-> +		return ERR_CAST(plat_dat->stmmac_clk);
-> +	}
-> +
-> +	clk_prepare_enable(plat_dat->stmmac_clk);
-> +
-> +	plat_dat->pclk = devm_clk_get(&pdev->dev, "phy_ref_clk");
-> +	if (IS_ERR(plat_dat->pclk)) {
-> +		dev_err(&pdev->dev, "phy_ref_clk clock not found.\n");
-> +		err = PTR_ERR(plat_dat->pclk);
-> +		goto disable;
-> +	}
-> +
-> +	clk_prepare_enable(plat_dat->pclk);
-> +
-> +	return NULL;
-> +
-> +disable:
-> +	clk_disable_unprepare(plat_dat->stmmac_clk);
-> +	return ERR_PTR(err);
-> +}
-> +
-> +static int dwc_qos_remove(struct platform_device *pdev)
-> +{
-> +	struct net_device *ndev = platform_get_drvdata(pdev);
-> +	struct stmmac_priv *priv = netdev_priv(ndev);
-> +
-> +	clk_disable_unprepare(priv->plat->pclk);
-> +	clk_disable_unprepare(priv->plat->stmmac_clk);
-> +
-> +	return 0;
-> +}
-> +
-> +struct dwc_eth_dwmac_data {
-> +	void *(*probe)(struct platform_device *pdev,
-> +		       struct plat_stmmacenet_data *data,
-> +		       struct stmmac_resources *res);
-> +	int (*remove)(struct platform_device *pdev);
-> +};
-> +
-> +static const struct dwc_eth_dwmac_data dwc_qos_data = {
-> +	.probe = dwc_qos_probe,
-> +	.remove = dwc_qos_remove,
-> +};
-> +
->  static int dwc_eth_dwmac_probe(struct platform_device *pdev)
->  {
-> +	const struct dwc_eth_dwmac_data *data;
->  	struct plat_stmmacenet_data *plat_dat;
->  	struct stmmac_resources stmmac_res;
->  	struct resource *res;
-> +	void *priv;
->  	int ret;
->  
-> +	data = of_device_get_match_data(&pdev->dev);
-> +
->  	memset(&stmmac_res, 0, sizeof(struct stmmac_resources));
->  
->  	/**
-> @@ -138,39 +196,26 @@ static int dwc_eth_dwmac_probe(struct platform_device *pdev)
->  	if (IS_ERR(plat_dat))
->  		return PTR_ERR(plat_dat);
->  
-> -	plat_dat->stmmac_clk = devm_clk_get(&pdev->dev, "apb_pclk");
-> -	if (IS_ERR(plat_dat->stmmac_clk)) {
-> -		dev_err(&pdev->dev, "apb_pclk clock not found.\n");
-> -		ret = PTR_ERR(plat_dat->stmmac_clk);
-> -		plat_dat->stmmac_clk = NULL;
-> -		goto err_remove_config_dt;
-> -	}
-> -	clk_prepare_enable(plat_dat->stmmac_clk);
-> -
-> -	plat_dat->pclk = devm_clk_get(&pdev->dev, "phy_ref_clk");
-> -	if (IS_ERR(plat_dat->pclk)) {
-> -		dev_err(&pdev->dev, "phy_ref_clk clock not found.\n");
-> -		ret = PTR_ERR(plat_dat->pclk);
-> -		plat_dat->pclk = NULL;
-> -		goto err_out_clk_dis_phy;
-> +	priv = data->probe(pdev, plat_dat, &stmmac_res);
-> +	if (IS_ERR(priv)) {
-> +		ret = PTR_ERR(priv);
-> +		dev_err(&pdev->dev, "failed to probe subdriver: %d\n", ret);
-> +		goto remove_config;
->  	}
-> -	clk_prepare_enable(plat_dat->pclk);
->  
->  	ret = dwc_eth_dwmac_config_dt(pdev, plat_dat);
->  	if (ret)
-> -		goto err_out_clk_dis_aper;
-> +		goto remove;
->  
->  	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
->  	if (ret)
-> -		goto err_out_clk_dis_aper;
-> +		goto remove;
->  
-> -	return 0;
-> +	return ret;
->  
-> -err_out_clk_dis_aper:
-> -	clk_disable_unprepare(plat_dat->pclk);
-> -err_out_clk_dis_phy:
-> -	clk_disable_unprepare(plat_dat->stmmac_clk);
-> -err_remove_config_dt:
-> +remove:
-> +	data->remove(pdev);
-> +remove_config:
->  	stmmac_remove_config_dt(pdev, plat_dat);
->  
->  	return ret;
-> @@ -178,11 +223,28 @@ static int dwc_eth_dwmac_probe(struct platform_device *pdev)
->  
->  static int dwc_eth_dwmac_remove(struct platform_device *pdev)
->  {
-> -	return stmmac_pltfr_remove(pdev);
-> +	struct net_device *ndev = platform_get_drvdata(pdev);
-> +	struct stmmac_priv *priv = netdev_priv(ndev);
-> +	const struct dwc_eth_dwmac_data *data;
-> +	int err;
-> +
-> +	data = of_device_get_match_data(&pdev->dev);
-> +
-> +	err = stmmac_dvr_remove(&pdev->dev);
-> +	if (err < 0)
-> +		dev_err(&pdev->dev, "failed to remove platform: %d\n", err);
-> +
-> +	err = data->remove(pdev);
-> +	if (err < 0)
-> +		dev_err(&pdev->dev, "failed to remove subdriver: %d\n", err);
-> +
-> +	stmmac_remove_config_dt(pdev, priv->plat);
-> +
-> +	return err;
->  }
->  
->  static const struct of_device_id dwc_eth_dwmac_match[] = {
-> -	{ .compatible = "snps,dwc-qos-ethernet-4.10", },
-> +	{ .compatible = "snps,dwc-qos-ethernet-4.10", .data = &dwc_qos_data },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, dwc_eth_dwmac_match);
-> 
+In case 2 clocks share an enable bit and one of them is enabled by a driver
+and the other one is not, CCF will think it's enabled because it will only
+look at the hw state. Therefor it will disable the clock and thus also
+disable the other clock which was enabled. Solve this by reading the
+initial state of the enable bit and incrementing the refcount if it's set.
 
-Reviewed-By: Joao Pinto <jpinto@synopsys.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-periph-gate.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+index 8812782..303ef32 100644
+--- a/drivers/clk/tegra/clk-periph-gate.c
++++ b/drivers/clk/tegra/clk-periph-gate.c
+@@ -159,6 +159,9 @@ struct clk *tegra_clk_register_periph_gate(const char *name,
+ 	gate->enable_refcnt = enable_refcnt;
+ 	gate->regs = pregs;
+ 
++	if (read_enb(gate) & periph_clk_to_bit(gate))
++		enable_refcnt[clk_num]++;
++
+ 	/* Data in .init is copied by clk_register(), so stack variable OK */
+ 	gate->hw.init = &init;
+ 
+-- 
+1.9.1
