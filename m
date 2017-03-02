@@ -1,61 +1,44 @@
-From: simran singhal <singhalsimran0@gmail.com>
-Subject: [PATCH] staging: nvec: Remove unnecessary cast on void pointer
-Date: Fri, 3 Mar 2017 01:45:11 +0530
-Message-ID: <20170302201511.GA5080@singhal-Inspiron-5558>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Date: Thu, 2 Mar 2017 17:56:49 +0000
+Message-ID: <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: marvin24@gmx.de
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The following Coccinelle script was used to detect this:
 
-@r@
-expression x;
-void* e;
-type T;
-identifier f;
-@@
-(
-  *((T *)e)
-|
-  ((T *)x)[...]
-|
-  ((T*)x)->f
-|
-- (T*)
-  e
-)
+On 28/02/17 15:19, Peter De Schrijver wrote:
+> This is needed to make the JTAG debugging interface work.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 9a2512a..708f5f1 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
+>  	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>  	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>  	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> +	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>  	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
+>  	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
+>  	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
 
-Signed-off-by: simran singhal <singhalsimran0@gmail.com>
----
- drivers/staging/nvec/nvec_kbd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
+sure we always want this on for all cases.
 
-diff --git a/drivers/staging/nvec/nvec_kbd.c b/drivers/staging/nvec/nvec_kbd.c
-index e881e6b..a01f486 100644
---- a/drivers/staging/nvec/nvec_kbd.c
-+++ b/drivers/staging/nvec/nvec_kbd.c
-@@ -58,7 +58,7 @@ static int nvec_keys_notifier(struct notifier_block *nb,
- 			      unsigned long event_type, void *data)
- {
- 	int code, state;
--	unsigned char *msg = (unsigned char *)data;
-+	unsigned char *msg = data;
- 
- 	if (event_type == NVEC_KB_EVT) {
- 		int _size = (msg[0] & (3 << 5)) >> 5;
+Cheers
+Jon
+
 -- 
-2.7.4
+nvpublic
