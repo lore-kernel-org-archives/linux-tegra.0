@@ -1,44 +1,60 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-Date: Thu, 2 Mar 2017 17:56:49 +0000
-Message-ID: <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
-References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] mmc: tegra: Add Tegra186 support
+Date: Fri, 3 Mar 2017 09:44:06 +0200
+Message-ID: <7893a54f-08fd-a8e6-308d-a388bb183434@intel.com>
+References: <20170223162342.15911-1-thierry.reding@gmail.com>
+ <20170223162342.15911-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170223162342.15911-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 28/02/17 15:19, Peter De Schrijver wrote:
-> This is needed to make the JTAG debugging interface work.
+On 23/02/17 18:23, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> The SDHCI controller found on NVIDIA Tegra186 SoCs is very similar to
+> the one on prior generations of Tegra and can be supported by the same
+> driver.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Acked-by: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+
 > ---
->  drivers/clk/tegra/clk-tegra210.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/mmc/host/sdhci-tegra.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 9a2512a..708f5f1 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
->  	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
->  	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
->  	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
-> +	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
->  	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
->  	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
->  	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
-
-Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
-sure we always want this on for all cases.
-
-Cheers
-Jon
-
--- 
-nvpublic
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 9ae5895678e8..9ef4afcf312c 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -434,7 +434,23 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+>  	.pdata = &sdhci_tegra210_pdata,
+>  };
+>  
+> +static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+> +	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+> +		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+> +		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+> +		  SDHCI_QUIRK_NO_HISPD_BIT |
+> +		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+> +		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+> +	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+> +	.ops  = &tegra114_sdhci_ops,
+> +};
+> +
+> +static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
+> +	.pdata = &sdhci_tegra186_pdata,
+> +};
+> +
+>  static const struct of_device_id sdhci_tegra_dt_match[] = {
+> +	{ .compatible = "nvidia,tegra186-sdhci", .data = &soc_data_tegra186 },
+>  	{ .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
+>  	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra124 },
+>  	{ .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
+> 
