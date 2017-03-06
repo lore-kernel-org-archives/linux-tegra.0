@@ -1,85 +1,61 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Tegra baseline test results for v4.11-rc1
-Date: Mon, 6 Mar 2017 10:09:10 +0000
-Message-ID: <3cf7a5bd-9cdc-bb08-b41b-91a6d9dc6399@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Date: Mon, 6 Mar 2017 16:28:50 +0200
+Message-ID: <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+ <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+ <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.11-rc1.
-Logs and other details at:
+On Mon, Mar 06, 2017 at 09:58:29AM +0000, Jon Hunter wrote:
+> 
+> On 06/03/17 08:38, Peter De Schrijver wrote:
+> > On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
+> >>
+> >> On 28/02/17 15:19, Peter De Schrijver wrote:
+> >>> This is needed to make the JTAG debugging interface work.
+> >>>
+> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >>> ---
+> >>>  drivers/clk/tegra/clk-tegra210.c | 1 +
+> >>>  1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> >>> index 9a2512a..708f5f1 100644
+> >>> --- a/drivers/clk/tegra/clk-tegra210.c
+> >>> +++ b/drivers/clk/tegra/clk-tegra210.c
+> >>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
+> >>>  	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >>>  	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >>>  	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >>> +	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >>>  	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
+> >>>  	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
+> >>>  	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
+> >>
+> >> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
+> >> sure we always want this on for all cases.
+> > 
+> > Why would you not want it to be always on?
+> 
+> Purely for power reasons. I do not know how much power keeping this
 
-    https://nvtb.github.io//linux/test_v4.11-rc1/20170305133103/
+I don't expect it to be significant but I don't have any numbers.
 
+> clock running consumes, but I don't like the idea of clocks running all
+> the time when they are not needed.
+> 
 
-Test summary
-------------
+Problem is that in this case there is no easy way to determine if the clock
+needs to be on.
 
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.10 (c470abd4fde40ea6a0846a2beab642a578c0b8cd)):
-   text     data      bss    total  kernel
-+244712  +130912    +2280  +377904  defconfig
-+175580  +128192     +488  +304260  multi_v7_defconfig
- +80308   +17632   -66268   +31672  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.10 (c470abd4fde40ea6a0846a2beab642a578c0b8cd))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-    1184k   -1184k        .      64k      qemu-vexpress64            defconfig           __internal
-   -1104k    1104k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-      36k     -36k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-   -1104k    1104k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-      36k     -36k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-   -1104k    1104k        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-      36k     -36k        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-   -1088k    1088k        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-      52k     -52k        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-    5768k   -5768k        .      64k  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-    5768k   -5768k        .      64k       tegra210-smaug            defconfig       tegra210-smaug
-   -1104k    1104k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-      36k     -36k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
---
-nvpublic
+Peter.
