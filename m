@@ -1,78 +1,85 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-Date: Tue, 7 Mar 2017 20:27:23 +0000
-Message-ID: <598a2a7d-6e01-8884-e839-c758b731605a@nvidia.com>
-References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
- <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
- <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
- <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
- <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
- <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+Subject: Re: [PATCH 02/11] arm64: tegra: Add ethernet support for Tegra186
+Date: Tue, 7 Mar 2017 20:42:00 +0000
+Message-ID: <076c74f2-d0ce-a567-74e9-dcc705c75795@nvidia.com>
+References: <20170223173053.19701-1-thierry.reding@gmail.com>
+ <20170223173053.19701-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170223173053.19701-2-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Geert,
 
-On 06/03/17 15:53, Geert Uytterhoeven wrote:
-> Hi Peter,
+On 23/02/17 17:30, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> On Mon, Mar 6, 2017 at 3:28 PM, Peter De Schrijver
-> <pdeschrijver@nvidia.com> wrote:
->> On Mon, Mar 06, 2017 at 09:58:29AM +0000, Jon Hunter wrote:
->>> On 06/03/17 08:38, Peter De Schrijver wrote:
->>>> On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
->>>>> On 28/02/17 15:19, Peter De Schrijver wrote:
->>>>>> This is needed to make the JTAG debugging interface work.
->>>>>>
->>>>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>>>>> ---
->>>>>>  drivers/clk/tegra/clk-tegra210.c | 1 +
->>>>>>  1 file changed, 1 insertion(+)
->>>>>>
->>>>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->>>>>> index 9a2512a..708f5f1 100644
->>>>>> --- a/drivers/clk/tegra/clk-tegra210.c
->>>>>> +++ b/drivers/clk/tegra/clk-tegra210.c
->>>>>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
->>>>>>   { TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
->>>>>>   { TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
->>>>>>   { TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
->>>>>> + { TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
->>>>>>   { TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
->>>>>>   { TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
->>>>>>   { TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
->>>>>
->>>>> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
->>>>> sure we always want this on for all cases.
->>>>
->>>> Why would you not want it to be always on?
->>>
->>> Purely for power reasons. I do not know how much power keeping this
->>
->> I don't expect it to be significant but I don't have any numbers.
->>
->>> clock running consumes, but I don't like the idea of clocks running all
->>> the time when they are not needed.
->>
->> Problem is that in this case there is no easy way to determine if the clock
->> needs to be on.
+> The NVIDIA Tegra186 SoC contains an instance of the Synopsys DWC
+> ethernet QOS IP block, which supports 10, 100 and 1000 Mbps data
+> transfer rates.
 > 
-> I had a similar issue with SH-Mobile AG5, where the power domain containing
-> the JTAG interface is powered down.
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 > 
-> [DEBUG] ARM: dts: sh73a0: Add minimal device node for Coresight-ETM
-> https://patchwork.kernel.org/patch/8151511/
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> index d6955bb46ae0..3ea5e6369bc3 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> @@ -27,6 +27,37 @@
+>  		gpio-controller;
+>  	};
+>  
+> +	ethernet@2490000 {
+> +		compatible = "nvidia,tegra186-eqos",
+> +			     "snps,dwc-qos-ethernet-4.10";
+> +		reg = <0x0 0x02490000 0x0 0x10000>;
+> +		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>, /* common */
+> +			     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>, /* power */
+> +			     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>, /* rx0 */
+> +			     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>, /* tx0 */
+> +			     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>, /* rx1 */
+> +			     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>, /* tx1 */
+> +			     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>, /* rx2 */
+> +			     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>, /* tx2 */
+> +			     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>, /* rx3 */
+> +			     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>; /* tx3 */
+> +		clocks = <&bpmp TEGRA186_CLK_AXI_CBB>,
+> +			 <&bpmp TEGRA186_CLK_EQOS_AXI>,
+> +			 <&bpmp TEGRA186_CLK_EQOS_RX>,
+> +			 <&bpmp TEGRA186_CLK_EQOS_TX>,
+> +			 <&bpmp TEGRA186_CLK_EQOS_PTP_REF>;
+> +		clock-names = "master_bus", "slave_bus", "rx", "tx", "ptp_ref";
+> +		resets = <&bpmp TEGRA186_RESET_EQOS>;
+> +		reset-names = "eqos";
+> +		status = "disabled";
+> +
+> +		snps,write-requests = <1>;
+> +		snps,read-requests = <3>;
+> +		snps,burst-map = <0x7>;
+> +		snps,txpbl = <32>;
+> +		snps,rxpbl = <8>;
+> +	};
+> +
+>  	uarta: serial@3100000 {
+>  		compatible = "nvidia,tegra186-uart", "nvidia,tegra20-uart";
+>  		reg = <0x0 0x03100000 0x0 0x40>;
 > 
-> Want to debug? Apply patch. I know it's not ideal...
 
-Why don't you apply the patch and just keep the node disabled by default?
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
 Cheers
 Jon
