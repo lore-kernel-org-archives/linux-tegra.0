@@ -1,40 +1,81 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH] gpu: host1x: Fix syncpt array index check
-Date: Tue,  7 Mar 2017 17:42:34 +0200
-Message-ID: <20170307154234.6246-1-mperttunen@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Date: Tue, 7 Mar 2017 20:27:23 +0000
+Message-ID: <598a2a7d-6e01-8884-e839-c758b731605a@nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+ <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+ <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+ <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+ <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIGluZGV4IG92ZXJmbG93IGNoZWNrIGluIGhvc3QxeF9zeW5jcHRfZ2V0IHdhcyBpbmNvcnJl
-Y3QsCmFuZCB3b3VsZCByZXR1cm4gYSBwb2ludGVyIHBhc3QgdGhlIHN5bmNwdCBhcnJheSBpZiB0
-aGUKc3luY3B0IGluZGV4IGdpdmVuIHdhcyB0aGUgdG90YWwgbnVtYmVyIG9mIHN5bmNwdHMuIEZp
-eAp0aGlzLgoKU2lnbmVkLW9mZi1ieTogTWlra28gUGVydHR1bmVuIDxtcGVydHR1bmVuQG52aWRp
-YS5jb20+Ci0tLQogZHJpdmVycy9ncHUvaG9zdDF4L3N5bmNwdC5jIHwgNiArKystLS0KIDEgZmls
-ZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvaG9zdDF4L3N5bmNwdC5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L3N5bmNwdC5j
-CmluZGV4IDI1YzExYTg1MDUwYi4uMzIzNmMzZDIxYTE1IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9ob3N0MXgvc3luY3B0LmMKKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L3N5bmNwdC5jCkBAIC00
-ODQsMTAgKzQ4NCwxMCBAQCB1bnNpZ25lZCBpbnQgaG9zdDF4X3N5bmNwdF9uYl9tbG9ja3Moc3Ry
-dWN0IGhvc3QxeCAqaG9zdCkKIAogc3RydWN0IGhvc3QxeF9zeW5jcHQgKmhvc3QxeF9zeW5jcHRf
-Z2V0KHN0cnVjdCBob3N0MXggKmhvc3QsIHVuc2lnbmVkIGludCBpZCkKIHsKLQlpZiAoaG9zdC0+
-aW5mby0+bmJfcHRzIDwgaWQpCisJaWYgKGlkIDwgaG9zdC0+aW5mby0+bmJfcHRzKQorCQlyZXR1
-cm4gaG9zdC0+c3luY3B0ICsgaWQ7CisJZWxzZQogCQlyZXR1cm4gTlVMTDsKLQotCXJldHVybiBo
-b3N0LT5zeW5jcHQgKyBpZDsKIH0KIEVYUE9SVF9TWU1CT0woaG9zdDF4X3N5bmNwdF9nZXQpOwog
-Ci0tIAoyLjExLjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+Hi Geert,
+
+On 06/03/17 15:53, Geert Uytterhoeven wrote:
+> Hi Peter,
+> 
+> On Mon, Mar 6, 2017 at 3:28 PM, Peter De Schrijver
+> <pdeschrijver@nvidia.com> wrote:
+>> On Mon, Mar 06, 2017 at 09:58:29AM +0000, Jon Hunter wrote:
+>>> On 06/03/17 08:38, Peter De Schrijver wrote:
+>>>> On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
+>>>>> On 28/02/17 15:19, Peter De Schrijver wrote:
+>>>>>> This is needed to make the JTAG debugging interface work.
+>>>>>>
+>>>>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>>>> ---
+>>>>>>  drivers/clk/tegra/clk-tegra210.c | 1 +
+>>>>>>  1 file changed, 1 insertion(+)
+>>>>>>
+>>>>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+>>>>>> index 9a2512a..708f5f1 100644
+>>>>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>>>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>>>>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
+>>>>>>   { TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>>   { TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>>   { TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>> + { TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>>   { TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
+>>>>>>   { TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
+>>>>>>   { TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
+>>>>>
+>>>>> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
+>>>>> sure we always want this on for all cases.
+>>>>
+>>>> Why would you not want it to be always on?
+>>>
+>>> Purely for power reasons. I do not know how much power keeping this
+>>
+>> I don't expect it to be significant but I don't have any numbers.
+>>
+>>> clock running consumes, but I don't like the idea of clocks running all
+>>> the time when they are not needed.
+>>
+>> Problem is that in this case there is no easy way to determine if the clock
+>> needs to be on.
+> 
+> I had a similar issue with SH-Mobile AG5, where the power domain containing
+> the JTAG interface is powered down.
+> 
+> [DEBUG] ARM: dts: sh73a0: Add minimal device node for Coresight-ETM
+> https://patchwork.kernel.org/patch/8151511/
+> 
+> Want to debug? Apply patch. I know it's not ideal...
+
+Why don't you apply the patch and just keep the node disabled by default?
+
+Cheers
+Jon
+
+-- 
+nvpublic
