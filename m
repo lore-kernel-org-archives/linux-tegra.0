@@ -1,91 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: tegra: Add blank line after
-	declarations" to the asoc tree
-Date: Tue, 07 Mar 2017 14:33:24 +0100
-Message-ID: <E1clFEy-0005Zf-Hu@finisterre>
-References: <1488049157-6535-1-git-send-email-codrut.cristian.grosu@gmail.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH] gpu: host1x: Fix syncpt array index check
+Date: Tue,  7 Mar 2017 17:42:34 +0200
+Message-ID: <20170307154234.6246-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1488049157-6535-1-git-send-email-codrut.cristian.grosu@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, nicoleotsuka@gmail.com, swarren@wwwdotorg.org, lgirdwood@gmail.com, tiwai@suse.com, Codrut GROSU <codrut.cristian.grosu@gmail.com>, Julia.Lawall@lip6.fr, broonie@kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
-
-   ASoC: tegra: Add blank line after declarations
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From bf3c6ef7f5b1e43739ad0356a5afee5127c86465 Mon Sep 17 00:00:00 2001
-From: Codrut Grosu <codrut.cristian.grosu@gmail.com>
-Date: Sat, 25 Feb 2017 20:59:17 +0200
-Subject: [PATCH] ASoC: tegra: Add blank line after declarations
-
-This was reported by checkpatch.pl
-
-Signed-off-by: Codrut GROSU <codrut.cristian.grosu@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/tegra/tegra20_das.c  | 1 +
- sound/soc/tegra/tegra30_ahub.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/sound/soc/tegra/tegra20_das.c b/sound/soc/tegra/tegra20_das.c
-index 6d4a2774135e..4024e3abbeed 100644
---- a/sound/soc/tegra/tegra20_das.c
-+++ b/sound/soc/tegra/tegra20_das.c
-@@ -41,6 +41,7 @@ static inline void tegra20_das_write(u32 reg, u32 val)
- static inline u32 tegra20_das_read(u32 reg)
- {
- 	u32 val;
-+
- 	regmap_read(das->regmap, reg, &val);
- 	return val;
- }
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index d7494c0e9053..8c10ae7982ba 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -41,6 +41,7 @@ static inline void tegra30_apbif_write(u32 reg, u32 val)
- static inline u32 tegra30_apbif_read(u32 reg)
- {
- 	u32 val;
-+
- 	regmap_read(ahub->regmap_apbif, reg, &val);
- 	return val;
- }
--- 
-2.11.0
+VGhlIGluZGV4IG92ZXJmbG93IGNoZWNrIGluIGhvc3QxeF9zeW5jcHRfZ2V0IHdhcyBpbmNvcnJl
+Y3QsCmFuZCB3b3VsZCByZXR1cm4gYSBwb2ludGVyIHBhc3QgdGhlIHN5bmNwdCBhcnJheSBpZiB0
+aGUKc3luY3B0IGluZGV4IGdpdmVuIHdhcyB0aGUgdG90YWwgbnVtYmVyIG9mIHN5bmNwdHMuIEZp
+eAp0aGlzLgoKU2lnbmVkLW9mZi1ieTogTWlra28gUGVydHR1bmVuIDxtcGVydHR1bmVuQG52aWRp
+YS5jb20+Ci0tLQogZHJpdmVycy9ncHUvaG9zdDF4L3N5bmNwdC5jIHwgNiArKystLS0KIDEgZmls
+ZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvaG9zdDF4L3N5bmNwdC5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L3N5bmNwdC5j
+CmluZGV4IDI1YzExYTg1MDUwYi4uMzIzNmMzZDIxYTE1IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9ob3N0MXgvc3luY3B0LmMKKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L3N5bmNwdC5jCkBAIC00
+ODQsMTAgKzQ4NCwxMCBAQCB1bnNpZ25lZCBpbnQgaG9zdDF4X3N5bmNwdF9uYl9tbG9ja3Moc3Ry
+dWN0IGhvc3QxeCAqaG9zdCkKIAogc3RydWN0IGhvc3QxeF9zeW5jcHQgKmhvc3QxeF9zeW5jcHRf
+Z2V0KHN0cnVjdCBob3N0MXggKmhvc3QsIHVuc2lnbmVkIGludCBpZCkKIHsKLQlpZiAoaG9zdC0+
+aW5mby0+bmJfcHRzIDwgaWQpCisJaWYgKGlkIDwgaG9zdC0+aW5mby0+bmJfcHRzKQorCQlyZXR1
+cm4gaG9zdC0+c3luY3B0ICsgaWQ7CisJZWxzZQogCQlyZXR1cm4gTlVMTDsKLQotCXJldHVybiBo
+b3N0LT5zeW5jcHQgKyBpZDsKIH0KIEVYUE9SVF9TWU1CT0woaG9zdDF4X3N5bmNwdF9nZXQpOwog
+Ci0tIAoyLjExLjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
