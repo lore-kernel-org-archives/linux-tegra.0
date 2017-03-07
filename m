@@ -1,77 +1,61 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-Date: Mon, 6 Mar 2017 16:53:48 +0100
-Message-ID: <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
-References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
- <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com> <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
- <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com> <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 01/11] arm64: tegra: Add PMC controller on Tegra186
+Date: Tue, 7 Mar 2017 09:48:29 +0000
+Message-ID: <e78806d4-f704-8a71-6686-2ca226473e0e@nvidia.com>
+References: <20170223173053.19701-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170306142850.GJ26640-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170223173053.19701-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
 
-On Mon, Mar 6, 2017 at 3:28 PM, Peter De Schrijver
-<pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On Mon, Mar 06, 2017 at 09:58:29AM +0000, Jon Hunter wrote:
->> On 06/03/17 08:38, Peter De Schrijver wrote:
->> > On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
->> >> On 28/02/17 15:19, Peter De Schrijver wrote:
->> >>> This is needed to make the JTAG debugging interface work.
->> >>>
->> >>> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> >>> ---
->> >>>  drivers/clk/tegra/clk-tegra210.c | 1 +
->> >>>  1 file changed, 1 insertion(+)
->> >>>
->> >>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->> >>> index 9a2512a..708f5f1 100644
->> >>> --- a/drivers/clk/tegra/clk-tegra210.c
->> >>> +++ b/drivers/clk/tegra/clk-tegra210.c
->> >>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
->> >>>   { TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
->> >>>   { TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
->> >>>   { TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
->> >>> + { TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
->> >>>   { TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
->> >>>   { TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
->> >>>   { TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
->> >>
->> >> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
->> >> sure we always want this on for all cases.
->> >
->> > Why would you not want it to be always on?
->>
->> Purely for power reasons. I do not know how much power keeping this
->
-> I don't expect it to be significant but I don't have any numbers.
->
->> clock running consumes, but I don't like the idea of clocks running all
->> the time when they are not needed.
->
-> Problem is that in this case there is no easy way to determine if the clock
-> needs to be on.
+On 23/02/17 17:30, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> index 62fa85ae0271..d6955bb46ae0 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> @@ -307,6 +307,15 @@
+>  		#interrupt-cells = <2>;
+>  	};
+>  
+> +	pmc@c360000 {
+> +		compatible = "nvidia,tegra186-pmc";
+> +		reg = <0 0x0c360000 0 0x10000>,
+> +		      <0 0x0c370000 0 0x10000>,
+> +		      <0 0x0c380000 0 0x10000>,
+> +		      <0 0x0c390000 0 0x10000>;
+> +		reg-names = "pmc", "wake", "aotag", "scratch";
+> +	};
+> +
+>  	sysram@30000000 {
+>  		compatible = "nvidia,tegra186-sysram", "mmio-sram";
+>  		reg = <0x0 0x30000000 0x0 0x50000>;
+> 
 
-I had a similar issue with SH-Mobile AG5, where the power domain containing
-the JTAG interface is powered down.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-[DEBUG] ARM: dts: sh73a0: Add minimal device node for Coresight-ETM
-https://patchwork.kernel.org/patch/8151511/
+Cheers
+Jon
 
-Want to debug? Apply patch. I know it's not ideal...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+nvpublic
