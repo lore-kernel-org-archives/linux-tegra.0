@@ -1,14 +1,14 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 08/11] arm64: tegra: Enable current monitors on P3310
-Date: Wed, 8 Mar 2017 11:52:58 +0000
-Message-ID: <7fcedcdb-8841-3afa-c5f3-0581a5350b21@nvidia.com>
+Subject: Re: [PATCH 09/11] arm64: tegra: Add GPIO keys on P2771
+Date: Wed, 8 Mar 2017 12:03:34 +0000
+Message-ID: <6e9043ac-0e3c-6b17-fd76-5792820d55b1@nvidia.com>
 References: <20170223173053.19701-1-thierry.reding@gmail.com>
- <20170223173053.19701-8-thierry.reding@gmail.com>
+ <20170223173053.19701-9-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170223173053.19701-8-thierry.reding@gmail.com>
+In-Reply-To: <20170223173053.19701-9-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,42 +23,73 @@ Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm
 List-Id: linux-tegra@vger.kernel.org
 
 
+
 On 23/02/17 17:30, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> The P3310 processor module contains two current monitors that can be
-> used to determine the current flow across various parts of the board
-> design.
+> The P2771 has three keys (power, volume up and volume down) that are
+> connected to pins on the AON GPIO controller.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 34 ++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> index b18e166527d8..a1cb6b35314e 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> @@ -56,6 +56,16 @@
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> index 0d3c0996d832..1c195d71806d 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> @@ -1,8 +1,42 @@
+>  /dts-v1/;
 >  
->  	i2c@3160000 {
->  		status = "okay";
+> +#include <dt-bindings/input/linux-event-codes.h>
 > +
-> +		power-monitor@40 {
-> +			compatible = "ti,ina3221";
-> +			reg = <0x40>;
+>  #include "tegra186-p3310.dtsi"
+>  
+>  / {
+>  	model = "NVIDIA Tegra186 P2771-0000 Development Board";
+>  	compatible = "nvidia,p2771-0000", "nvidia,tegra186";
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		power {
+> +			label = "Power";
+> +			gpios = <&gpio_aon TEGRA_AON_GPIO(FF, 0)
+> +					   GPIO_ACTIVE_LOW>;
+> +			linux,input-type = <EV_KEY>;
+> +			linux,code = <KEY_POWER>;
+> +			debounce-interval = <10>;
+> +			wakeup-source;
 > +		};
 > +
-> +		power-monitor@41 {
-> +			compatible = "ti,ina3221";
-> +			reg = <0x41>;
+> +		volume-up {
+> +			label = "Volume Up";
+> +			gpios = <&gpio_aon TEGRA_AON_GPIO(FF, 1)
+> +					   GPIO_ACTIVE_LOW>;
+> +			linux,input-type = <EV_KEY>;
+> +			linux,code = <KEY_VOLUMEUP>;
+> +			debounce-interval = <10>;
 > +		};
->  	};
->  
->  	i2c@3180000 {
-> 
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+My schematic shows this pin as 'force-recovery'.
+
+> +
+> +		volume-down {
+> +			label = "Volume Down";
+> +			gpios = <&gpio_aon TEGRA_AON_GPIO(FF, 2)
+> +					   GPIO_ACTIVE_LOW>;
+> +			linux,input-type = <EV_KEY>;
+> +			linux,code = <KEY_VOLUMEDOWN>;
+> +			debounce-interval = <10>;
+> +		};
+> +	};
+>  };
+
+And this one as 'sleep_l'.
+
+Are these being re-used after boot? I did not find any documentation
+about them being used as volume keys.
 
 Cheers
 Jon
