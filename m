@@ -1,48 +1,290 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 16/24] drm/tegra: switch to postclose
-Date: Wed,  8 Mar 2017 15:12:49 +0100
-Message-ID: <20170308141257.12119-17-daniel.vetter@ffwll.ch>
-References: <20170308141257.12119-1-daniel.vetter@ffwll.ch>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2] arm64: tegra: Add initial power tree for P3310
+Date: Wed, 8 Mar 2017 14:24:02 +0000
+Message-ID: <f2bb05d6-076d-698a-2021-17b83f99e203@nvidia.com>
+References: <20170223173053.19701-6-thierry.reding@gmail.com>
+ <20170308132417.30900-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20170308141257.12119-1-daniel.vetter@ffwll.ch>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: DRI Development <dri-devel@lists.freedesktop.org>
-Cc: linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170308132417.30900-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-SSBkaWRuJ3Qgc3BvdCBhbnl0aGluZyB0aGF0IHdvdWxkIHJlcXVpcmUgb3JkZXJpbmcgaGVyZSAo
-d2VsbCBub3QKYW55d2hlcmUgZWxzZSBlaXRoZXIpLCBhbmQgSSdtIHRyeWluZyB0byB1bmlmeSBh
-dCBsZWFzdCBtb2Rlcm4gZHJpdmVycwpvbiBvbmUgY2xvc2UgaG9vay4KCkNjOiBUaGllcnJ5IFJl
-ZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgpDYzogbGludXgtdGVncmFAdmdlci5rZXJu
-ZWwub3JnClNpZ25lZC1vZmYtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAaW50ZWwu
-Y29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyB8IDQgKystLQogMSBmaWxlIGNo
-YW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKaW5k
-ZXggZGJhNGUwOTBkM2RmLi4zYjQxOWY5ZGJmNGQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9kcm0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKQEAgLTgwNCw3
-ICs4MDQsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyB0ZWdyYV9kcm1f
-Zm9wcyA9IHsKIAkubGxzZWVrID0gbm9vcF9sbHNlZWssCiB9OwogCi1zdGF0aWMgdm9pZCB0ZWdy
-YV9kcm1fcHJlY2xvc2Uoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgc3RydWN0IGRybV9maWxlICpm
-aWxlKQorc3RhdGljIHZvaWQgdGVncmFfZHJtX3Bvc3RjbG9zZShzdHJ1Y3QgZHJtX2RldmljZSAq
-ZHJtLCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCiB7CiAJc3RydWN0IHRlZ3JhX2RybV9maWxlICpm
-cHJpdiA9IGZpbGUtPmRyaXZlcl9wcml2OwogCXN0cnVjdCB0ZWdyYV9kcm1fY29udGV4dCAqY29u
-dGV4dCwgKnRtcDsKQEAgLTg2OCw3ICs4NjgsNyBAQCBzdGF0aWMgc3RydWN0IGRybV9kcml2ZXIg
-dGVncmFfZHJtX2RyaXZlciA9IHsKIAkubG9hZCA9IHRlZ3JhX2RybV9sb2FkLAogCS51bmxvYWQg
-PSB0ZWdyYV9kcm1fdW5sb2FkLAogCS5vcGVuID0gdGVncmFfZHJtX29wZW4sCi0JLnByZWNsb3Nl
-ID0gdGVncmFfZHJtX3ByZWNsb3NlLAorCS5wb3N0Y2xvc2UgPSB0ZWdyYV9kcm1fcG9zdGNsb3Nl
-LAogCS5sYXN0Y2xvc2UgPSB0ZWdyYV9kcm1fbGFzdGNsb3NlLAogCiAjaWYgZGVmaW5lZChDT05G
-SUdfREVCVUdfRlMpCi0tIAoyLjExLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2ludGVsLWdmeAo=
+
+On 08/03/17 13:24, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Enable the Maxim MAX77620 PMIC found on P3310 and add some fixed
+> regulators to model the power tree.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v2:
+> - update LDO7 and LDO8 for C03 revision (Jon Hunter)
+> 
+>  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 220 +++++++++++++++++++++++++
+>  1 file changed, 220 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+> index ffbb4be5122e..69553bde7ef7 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+> @@ -1,5 +1,7 @@
+>  #include "tegra186.dtsi"
+>  
+> +#include <dt-bindings/mfd/max77620.h>
+> +
+>  / {
+>  	model = "NVIDIA Tegra186 P3310 Processor Module";
+>  	compatible = "nvidia,p3310", "nvidia,tegra186";
+> @@ -115,6 +117,189 @@
+>  	bpmp {
+>  		i2c {
+>  			status = "okay";
+> +
+> +			pmic: pmic@3c {
+> +				compatible = "maxim,max77620";
+> +				reg = <0x3c>;
+> +
+> +				interrupts = <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
+> +				#interrupt-cells = <2>;
+> +				interrupt-controller;
+> +
+> +				#gpio-cells = <2>;
+> +				gpio-controller;
+> +
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&max77620_default>;
+> +
+> +				max77620_default: pinmux {
+> +					gpio0 {
+> +						pins = "gpio0";
+> +						function = "gpio";
+> +					};
+> +
+> +					gpio1 {
+> +						pins = "gpio1";
+> +						function = "fps-out";
+> +						maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+> +					};
+> +
+> +					gpio2 {
+> +						pins = "gpio2";
+> +						function = "fps-out";
+> +						maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
+> +					};
+> +
+> +					gpio3 {
+> +						pins = "gpio3";
+> +						function = "fps-out";
+> +						maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
+> +					};
+> +
+> +					gpio4 {
+> +						pins = "gpio4";
+> +						function = "32k-out1";
+> +						drive-push-pull = <1>;
+> +					};
+> +
+> +					gpio5 {
+> +						pins = "gpio5";
+> +						function = "gpio";
+> +						drive-push-pull = <0>;
+> +					};
+> +
+> +					gpio6 {
+> +						pins = "gpio6";
+> +						function = "gpio";
+> +						drive-push-pull = <1>;
+> +					};
+> +
+> +					gpio7 {
+> +						pins = "gpio7";
+> +						function = "gpio";
+> +						drive-push-pull = <0>;
+> +					};
+> +				};
+> +
+> +				fps {
+> +					fps0 {
+> +						maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
+> +						maxim,shutdown-fps-time-period-us = <640>;
+> +					};
+> +
+> +					fps1 {
+> +						maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN1>;
+> +						maxim,shutdown-fps-time-period-us = <640>;
+> +					};
+> +
+> +					fps2 {
+> +						maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
+> +						maxim,shutdown-fps-time-period-us = <640>;
+> +					};
+> +				};
+> +
+> +				regulators {
+> +					in-sd0-supply = <&vdd_5v0_sys>;
+> +					in-sd1-supply = <&vdd_5v0_sys>;
+> +					in-sd2-supply = <&vdd_5v0_sys>;
+> +					in-sd3-supply = <&vdd_5v0_sys>;
+> +
+> +					in-ldo0-1-supply = <&vdd_5v0_sys>;
+> +					in-ldo2-supply = <&vdd_5v0_sys>;
+> +					in-ldo3-5-supply = <&vdd_5v0_sys>;
+> +					in-ldo4-6-supply = <&vdd_1v8>;
+> +					in-ldo7-8-supply = <&avdd_dsi_csi>;
+> +
+> +					sd0 {
+> +						regulator-name = "VDD_DDR_1V1_PMIC";
+> +						regulator-min-microvolt = <1100000>;
+> +						regulator-max-microvolt = <1100000>;
+> +						regulator-always-on;
+> +						regulator-boot-on;
+> +					};
+> +
+> +					avdd_dsi_csi: sd1 {
+> +						regulator-name = "AVDD_DSI_CSI_1V2";
+> +						regulator-min-microvolt = <1200000>;
+> +						regulator-max-microvolt = <1200000>;
+> +						/* XXX */
+> +						regulator-always-on;
+> +						regulator-boot-on;
+> +					};
+> +
+> +					vdd_1v8: sd2 {
+> +						regulator-name = "VDD_1V8";
+> +						regulator-min-microvolt = <1800000>;
+> +						regulator-max-microvolt = <1800000>;
+> +						/* XXX */
+> +						regulator-always-on;
+> +						regulator-boot-on;
+> +					};
+> +
+> +					vdd_3v3_sys: sd3 {
+> +						regulator-name = "VDD_3V3_SYS";
+> +						regulator-min-microvolt = <3300000>;
+> +						regulator-max-microvolt = <3300000>;
+> +						/* XXX */
+> +						regulator-always-on;
+> +						regulator-boot-on;
+> +					};
+> +
+> +					ldo0 {
+> +						regulator-name = "VDD_1V8_AP_PLL";
+> +						regulator-min-microvolt = <1800000>;
+> +						regulator-max-microvolt = <1800000>;
+> +						/* XXX */
+> +						regulator-always-on;
+> +						regulator-boot-on;
+> +					};
+> +
+> +					ldo2 {
+> +						regulator-name = "VDDIO_3V3_AOHV";
+> +						regulator-min-microvolt = <3300000>;
+> +						regulator-max-microvolt = <3300000>;
+> +						/* XXX */
+> +						regulator-always-on;
+> +						regulator-boot-on;
+> +					};
+> +
+> +					vddio_sdmmc1: ldo3 {
+> +						regulator-name = "VDDIO_SDMMC1_AP";
+> +						regulator-min-microvolt = <1800000>;
+> +						regulator-max-microvolt = <3300000>;
+> +					};
+> +
+> +					ldo4 {
+> +						regulator-name = "VDD_RTC";
+> +						regulator-min-microvolt = <1000000>;
+> +						regulator-max-microvolt = <1000000>;
+> +					};
+> +
+> +					vddio_sdmmc3: ldo5 {
+> +						regulator-name = "VDDIO_SDMMC3_AP";
+> +						regulator-min-microvolt = <2800000>;
+> +						regulator-max-microvolt = <2800000>;
+> +					};
+> +
+> +					vdd_hdmi: ldo7 {
+> +						regulator-name = "VDD_HDMI_1V05";
+> +						regulator-min-microvolt = <1050000>;
+> +						regulator-max-microvolt = <1050000>;
+> +						/* XXX */
+> +						regulator-always-on;
+> +						regulator-boot-on;
+> +					};
+> +
+> +					vdd_pex: ldo8 {
+> +						regulator-name = "VDD_PEX_1V05";
+> +						regulator-min-microvolt = <1050000>
+> +						regulator-max-microvolt = <1050000>;
+> +						/* XXX */
+> +						regulator-always-on;
+> +						regulator-boot-on;
+> +					};
+> +				};
+> +			};
+>  		};
+>  	};
+>  
+> @@ -123,4 +308,39 @@
+>  		status = "okay";
+>  		method = "smc";
+>  	};
+> +
+> +	regulators {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		vdd_5v0_sys: regulator@0 {
+> +			compatible = "regulator-fixed";
+> +			reg = <0>;
+> +
+> +			regulator-name = "VDD_5V0_SYS";
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <5000000>;
+> +			regulator-always-on;
+> +			regulator-boot-on;
+> +		};
+> +
+> +		vdd_1v8_ap: regulator@1 {
+> +			compatible = "regulator-fixed";
+> +			reg = <1>;
+> +
+> +			regulator-name = "VDD_1V8_AP";
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1800000>;
+> +
+> +			/* XXX */
+> +			regulator-always-on;
+> +			regulator-boot-on;
+> +
+> +			gpio = <&pmic 1 GPIO_ACTIVE_HIGH>;
+> +			enable-active-high;
+> +
+> +			vin-supply = <&vdd_1v8>;
+> +		};
+> +	};
+>  };
+> 
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
