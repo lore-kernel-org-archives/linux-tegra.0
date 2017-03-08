@@ -1,94 +1,54 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 1/2] arm64: tegra: Enable SDHCI controllers on P3110
-Date: Wed, 8 Mar 2017 14:26:13 +0000
-Message-ID: <e105ca4b-1a39-c8e3-7601-b48433628188@nvidia.com>
-References: <20170223173053.19701-7-thierry.reding@gmail.com>
- <20170308133944.32568-1-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 01/11] arm64: tegra: Add PMC controller on Tegra186
+Date: Wed, 8 Mar 2017 19:29:08 +0100
+Message-ID: <20170308182908.GA6166@ulmo.ba.sec>
+References: <20170223173053.19701-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170308133944.32568-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170223173053.19701-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 08/03/17 13:39, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The P3110 processor module wires one of the SDHCI controllers to an on-
-> board eMMC and exposes another set of SD/MMC signals on the connector to
-> support an external SD/MMC card. A third controller is connected to the
-> SDIO pins of an M.2 KEY E connector.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+--0OAP2g/MAC+5xKAE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Feb 23, 2017 at 06:30:43PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
-> Changes in v2:
-> - move SD_CARD_SW_PWR regulator to carrier board (separate patch)
-> - move status = "okay" to carrier board
-> - fix card-detect GPIO for SDMMC1
-> 
->  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> index 69553bde7ef7..847e7db59b47 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> @@ -7,6 +7,8 @@
->  	compatible = "nvidia,p3310", "nvidia,tegra186";
->  
->  	aliases {
-> +		sdhci0 = "/sdhci@3460000";
-> +		sdhci1 = "/sdhci@3400000";
->  		serial0 = &uarta;
->  		i2c0 = "/bpmp/i2c";
->  		i2c1 = "/i2c@3160000";
-> @@ -72,6 +74,29 @@
->  		status = "okay";
->  	};
->  
-> +	/* SDMMC1 (SD/MMC) */
-> +	sdhci@3400000 {
-> +		cd-gpios = <&gpio TEGRA_MAIN_GPIO(P, 5) GPIO_ACTIVE_LOW>;
-> +		wp-gpios = <&gpio TEGRA_MAIN_GPIO(P, 4) GPIO_ACTIVE_LOW>;
-> +
-> +		vqmmc-supply = <&vddio_sdmmc1>;
-> +	};
-> +
-> +	/* SDMMC3 (SDIO) */
-> +	sdhci@3440000 {
-> +		status = "okay";
-> +	};
-> +
-> +	/* SDMMC4 (eMMC) */
-> +	sdhci@3460000 {
-> +		status = "okay";
-> +		bus-width = <8>;
-> +		non-removable;
-> +
-> +		vqmmc-supply = <&vdd_1v8_ap>;
-> +		vmmc-supply = <&vdd_3v3_sys>;
-> +	};
-> +
->  	hsp@3c00000 {
->  		status = "okay";
->  	};
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Applied all of these to for-4.12/arm64/dt.
 
-Cheers
-Jon
+Thierry
 
--- 
-nvpublic
+--0OAP2g/MAC+5xKAE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljATXEACgkQ3SOs138+
+s6Hfxw//Si95Bufq5C2jMk9dvQJg46J3+jLeV+bMjw+/oe89QYN5e/+RKkIeIyU1
+e8LdACMBR0Uk+L/WwM1Fzx/8ZlKouquW/SGkvRM++NI5lJ/aBMsyJlmwCrMeJV56
+qqt/m5lNdY0tDb0eSxu6Rr3Bw2rXstc1nrB4bJUXLPgXx0daiOsxSOzbheWlA4Zu
+MHgRPnrXBqrBB/kgUtBpPfZQJJPGf1vyXReUtFLlqw2ViCMBww3VTlAe2Y3SSTsk
+GZ0eH0tAzl5KHy4I8mPU8FEBezta9vOwTjUBbrXNDHyW0xpOszUMKhhu6yn0eZP1
+rtFtNa1MzH9EgalmJv/oxPXi0NNTC/rF5g70t3xnOQQy1olR9N9ysh3DXiKXBH8k
+r3/Wh1pEN8NGomDTaegUbF+cXidsipwi6rfSyZtrUAOhBnTaROrN/a1UPQd57QIt
+YimG6FWszWee/di1zGeuZSBoVdyB1JUflIaa7p/lWu/6JZiqfBUtggPuekMF7uBs
+j1E9tl9urFLps0WLgn+jwpgsZzWIuDh8V4cqpdncStANMj+AAPvWAu5FV3uFcqc6
+kfRU3EbCxrEMCI4j7Q04nq00u29209KpG8lcTF9ZX3EvK61pqfjOr6dB2q9FOgEZ
+W8d3ntWFes7bf8azdR6po8ABfdUT77BsDX1NiuW5xgWrfcsKbXk=
+=9yHD
+-----END PGP SIGNATURE-----
+
+--0OAP2g/MAC+5xKAE--
