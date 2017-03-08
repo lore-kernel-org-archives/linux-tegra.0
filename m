@@ -1,43 +1,102 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-Date: Wed, 8 Mar 2017 11:48:21 +0000
-Message-ID: <313f1245-02aa-496c-3545-5029ece652af@nvidia.com>
-References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
- <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
- <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
- <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
- <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
- <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
- <f1505f37-cf96-fe04-dfc1-1dd94e20e130@nvidia.com>
- <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
+Subject: Re: [PATCH 09/11] arm64: tegra: Add GPIO keys on P2771
+Date: Wed, 8 Mar 2017 12:15:53 +0000
+Message-ID: <ae214cf3-df2d-1036-b702-c8436471bfe8@nvidia.com>
+References: <20170223173053.19701-1-thierry.reding@gmail.com>
+ <20170223173053.19701-9-thierry.reding@gmail.com>
+ <6e9043ac-0e3c-6b17-fd76-5792820d55b1@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <6e9043ac-0e3c-6b17-fd76-5792820d55b1@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 08/03/17 11:38, Geert Uytterhoeven wrote:
-> Hi Jon,
+On 08/03/17 12:03, Jon Hunter wrote:
 > 
-> On Wed, Mar 8, 2017 at 11:13 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
->>> I had a similar issue with SH-Mobile AG5, where the power domain containing
->>> the JTAG interface is powered down.
+> 
+> On 23/02/17 17:30, Thierry Reding wrote:
+>> From: Thierry Reding <treding@nvidia.com>
 >>
->> This reminds me, does your patch assume that the DFD power domain is
->> enabled? I am guessing that it needs to be for JTAG to work.
+>> The P2771 has three keys (power, volume up and volume down) that are
+>> connected to pins on the AON GPIO controller.
+>>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>> ---
+>>  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 34 ++++++++++++++++++++++
+>>  1 file changed, 34 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+>> index 0d3c0996d832..1c195d71806d 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+>> @@ -1,8 +1,42 @@
+>>  /dts-v1/;
+>>  
+>> +#include <dt-bindings/input/linux-event-codes.h>
+>> +
+>>  #include "tegra186-p3310.dtsi"
+>>  
+>>  / {
+>>  	model = "NVIDIA Tegra186 P2771-0000 Development Board";
+>>  	compatible = "nvidia,p2771-0000", "nvidia,tegra186";
+>> +
+>> +	gpio-keys {
+>> +		compatible = "gpio-keys";
+>> +
+>> +		power {
+>> +			label = "Power";
+>> +			gpios = <&gpio_aon TEGRA_AON_GPIO(FF, 0)
+>> +					   GPIO_ACTIVE_LOW>;
+>> +			linux,input-type = <EV_KEY>;
+>> +			linux,code = <KEY_POWER>;
+>> +			debounce-interval = <10>;
+>> +			wakeup-source;
+>> +		};
+>> +
+>> +		volume-up {
+>> +			label = "Volume Up";
+>> +			gpios = <&gpio_aon TEGRA_AON_GPIO(FF, 1)
+>> +					   GPIO_ACTIVE_LOW>;
+>> +			linux,input-type = <EV_KEY>;
+>> +			linux,code = <KEY_VOLUMEUP>;
+>> +			debounce-interval = <10>;
+>> +		};
 > 
-> Yes. The pm-rmobile driver looks for "arm,coresight-etm3x" devices, and
-> marks the corresponding PM Domain as always-on, as long as the
-> Coresight code doesn't handle runtime PM.
+> My schematic shows this pin as 'force-recovery'.
+> 
+>> +
+>> +		volume-down {
+>> +			label = "Volume Down";
+>> +			gpios = <&gpio_aon TEGRA_AON_GPIO(FF, 2)
+>> +					   GPIO_ACTIVE_LOW>;
+>> +			linux,input-type = <EV_KEY>;
+>> +			linux,code = <KEY_VOLUMEDOWN>;
+>> +			debounce-interval = <10>;
+>> +		};
+>> +	};
+>>  };
+> 
+> And this one as 'sleep_l'.
 
-Sorry Geert, but I was asking Peter specifically about the power-domain
-on Tegra as I have a feeling we may have the same scenario ;-)
+Actually, I do see this as "VOL Down". So ignore that and I assume we
+re-use recovery so ...
 
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
 Jon
 
 -- 
