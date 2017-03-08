@@ -1,83 +1,101 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Remove self from Tegra maintainers
-Date: Wed, 8 Mar 2017 13:33:18 +0100
-Message-ID: <20170308123318.GB29118@ulmo.ba.sec>
-References: <20170306061134.21105-1-acourbot@nvidia.com>
+Subject: Re: [Outreachy kernel] [PATCH] staging: nvec: cleanup
+ USLEEP_RANGEcheckpatch checks
+Date: Wed, 8 Mar 2017 13:46:42 +0100
+Message-ID: <20170308124642.GC29118@ulmo.ba.sec>
+References: <20170302142418.GA16773@singhal-Inspiron-5558>
+ <alpine.DEB.2.20.1703021535500.3414@hadrien>
+ <b90bc602-cf06-4abb-bea2-6386d4976864@googlegroups.com>
+ <1935856.5rv8sDmiv7@fb07-iapwap2>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5313263753324476145=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170306061134.21105-1-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/mixed; boundary="===============6101351976500480550=="
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1935856.5rv8sDmiv7@fb07-iapwap2>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Marc Dietrich <marvin24@gmx.de>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, outreachy-kernel <outreachy-kernel@googlegroups.com>, linux-tegra@vger.kernel.org, SIMRAN SINGHAL <singhalsimran0@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============5313263753324476145==
+--===============6101351976500480550==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
+	protocol="application/pgp-signature"; boundary="bAmEntskrkuBymla"
 Content-Disposition: inline
 
 
---jho1yZJdad60DJr+
-Content-Type: text/plain; charset=us-ascii
+--bAmEntskrkuBymla
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 06, 2017 at 03:11:34PM +0900, Alexandre Courbot wrote:
-> I have not been doing any Tegra maintainance work for a while, and this
-> is unlikely to change in the foreseeable future. Better reflect the
-> actual state of things by removing myself from the list.
+On Thu, Mar 02, 2017 at 03:57:01PM +0100, Marc Dietrich wrote:
+> Hi Simran,
 >=20
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
+> Am Donnerstag, 2. M=C3=A4rz 2017, 15:48:13 CET schrieb SIMRAN SINGHAL:
+> > On Thursday, March 2, 2017 at 8:06:40 PM UTC+5:30, Julia Lawall wrote:
+> > > On Thu, 2 Mar 2017, simran singhal wrote:
+> > > > Resolve strict checkpatch USLEEP_RANGE checks by converting delays =
+and
+> > > > sleeps as described in ./Documentation/timers/timers-howto.txt.
+> > > >=20
+> > > > CHECK: usleep_range is preferred over udelay; see Documentation/
+> > > > timers/timers-howto.txt
+> > > >=20
+> > > > Signed-off-by: simran singhal <singhal...@gmail.com <javascript:>>
+>=20
+> I prefer not to change this. The whole interrupt routine is very wonky, a=
+nd=20
+> changing some delays might break the communication with the i2c master. A=
+lso=20
+> this is in interrupt context, so a change to usleep_range may not by=20
+> justified.
 
-Applied to for-4.12/misc, thanks.
+Yeah, I think this is going to trigger a WARN_ON from somewhere in the
+scheduler because of the interrupt context. I suppose checkpatch could
+be made smarter about this, though I doubt my perl skills would be up
+to it.
 
 Thierry
 
---jho1yZJdad60DJr+
+--bAmEntskrkuBymla
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAli/+g0ACgkQ3SOs138+
-s6GQFA/9F0vkFinswpU2Ta3/8nFqhycvu/DW9etU7AOe5q8rBwZHQYKzd5eVS0Xf
-IxvitROCyGf0AbAxyCbADr64YzwlSkrk2+0isZeR3s1EVNk8gb2NlnSFOz69/C1Q
-w8jKnqC81DwJlWWqdkwGGTNJGnM/6AtluS73RXMT18rejQF3I3Q7srR/zGwVIPFH
-kFTASLctwwra8OhJQsr/X+1oY7BWj9CL16e9hI4ul1P68pL5cfdBBcrhVsONCx6l
-o580tLg9ZUisnaEVhQKuEdkOAIqeg2T/Ph/wysAaX58X6twHwN/5WKy9uxTTGxD7
-Krv+7IJZjK6dJOhLQZHx0DbCEs0/fw4mJRWM1b4r6ceYeHKf1ASUcbbkf0jAdwfx
-hfMvgf4z/7OI2vtzrHQZpKdMTj7w3VMo6R5enkQH4ULMQN1vjxLWW1jg1bOTsfMZ
-H+T3EfLX/UsspgdECDXFvZ4whfkZfDb6AF4rZEp4HSt9e+6d7gxWPQtJXRXVD6Mi
-ki2pA2HOA0b8W0Pvfk5vp4EcGRaRO2r/W/Do4jOF1YnFBhm4aktPvoK0JYZUjNPf
-hTAsxRBkiLhtwXE4wMbWZ1tUYX1BusNNmVPr4bPsEFAxewfLOJHNrTJ9OGggXScv
-EydktuhOW8wS1+vPtChSfvzE/Am/PaGSr1TwpOlor0Gh/MkdRVA=
-=QlgN
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAli//TAACgkQ3SOs138+
+s6H2+w/9GjyvkehnVlfFgHn7KnxHQ3Yo1pH9TC2rui0WcXPQFuNNDBdu454LKPox
+D25qJ3YFaj3YCU9i6p49tphquMStGNDCc06o1rK/JxyMPJar/5+e0xzXAQlT0gIQ
+qc6vCKW9gzCdmuuytCV4OA0f4iwNCOJXBelknTQJJaemcc+Le1JSvuINH1ZJJUlL
+gS/Jbw628+vvOskFNeoIGhK4zKS/MJDMzOl/EtyKuKh8pBc57um3/cV5eaabsq8d
+wGIDRohy4T+JEmyYBskI6wDBedWtRlI2HhzdKmQTzWKQFVzhqEaW8Ka2WtblH33o
+1YDNnvfFqdCwoxYYMZbgq+TPIkHvAJRinYPcasFJH6B2s3ADx//1WrHj4+rEc+KL
+hr83nAmOccF3QX/NMppl9sMoPU0UvI83DDO8yPTVcEFr1CsR26ev5d7Er6fGfzZF
+LwNio5UzYdBqFFZsecsUvVFQpaB2EFIlDAo0B4NJOKtrhT9YEZ8StqInN4OZtzoM
+gYmnrNImVYIYKrQP41zwto2mqfGI2+XK+hdbu/YxIayrhRVXciQgAXUawLKTE7Nn
+XrAedRhSUWP1RRZN2GnVr/cT1jqI1A1Pi0A1ybNfIHpNb6DbQaVeCFgNm0czfCiR
+pWhMEHFDD+PmTeyjIQ9Lk4jvZcKowWamWa9NQaTXgMmFQjGIAaU=
+=9FfQ
 -----END PGP SIGNATURE-----
 
---jho1yZJdad60DJr+--
+--bAmEntskrkuBymla--
 
-
---===============5313263753324476145==
+--===============6101351976500480550==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
 
---===============5313263753324476145==--
+--===============6101351976500480550==--
