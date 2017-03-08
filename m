@@ -1,13 +1,12 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Replace Stephen with Jon
-Date: Wed, 8 Mar 2017 13:32:55 +0100
-Message-ID: <20170308123255.GA29118@ulmo.ba.sec>
-References: <20170223171618.14360-1-thierry.reding@gmail.com>
- <6dd94140-115e-515e-1abe-dc1b1f900a95@wwwdotorg.org>
+Subject: Re: [PATCH] MAINTAINERS: Remove self from Tegra maintainers
+Date: Wed, 8 Mar 2017 13:33:18 +0100
+Message-ID: <20170308123318.GB29118@ulmo.ba.sec>
+References: <20170306061134.21105-1-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6610592161426401033=="
+Content-Type: multipart/mixed; boundary="===============5313263753324476145=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <6dd94140-115e-515e-1abe-dc1b1f900a95@wwwdotorg.org>
+In-Reply-To: <20170306061134.21105-1-acourbot@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,64 +16,60 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============6610592161426401033==
+--===============5313263753324476145==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
+	protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
 Content-Disposition: inline
 
 
---OgqxwSJOaUobr8KG
+--jho1yZJdad60DJr+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 24, 2017 at 10:54:57AM -0700, Stephen Warren wrote:
-> On 02/23/2017 10:16 AM, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > For a while now, Stephen's been focussing on other areas of the open
-> > source community and within NVIDIA. Jon Hunter's been doing a great job
-> > keeping things working. Replace Stephen's entry with Jon's.
+On Mon, Mar 06, 2017 at 03:11:34PM +0900, Alexandre Courbot wrote:
+> I have not been doing any Tegra maintainance work for a while, and this
+> is unlikely to change in the foreseeable future. Better reflect the
+> actual state of things by removing myself from the list.
 >=20
-> Acked-by: Stephen Warren <swarren@nvidia.com>
->=20
-> You're telepathic; I'd been meaning to send this myself:-)
->=20
-> (You might want to mention Tegra in the commit subject?)
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
 
-Done, and applied to for-4.12/misc.
+Applied to for-4.12/misc, thanks.
 
 Thierry
 
---OgqxwSJOaUobr8KG
+--jho1yZJdad60DJr+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAli/+fUACgkQ3SOs138+
-s6HLbw/+NjlU0jIFN/jEq7xkwrs337vnTMDHGrF1FMsMqgZGB9oECVhwrUrQmfJw
-McunkRf+3dafgu7YRAv0M7uHy7k+fk44QrLKNPjSRCgNSdIrULhKytNY9ejICVRW
-Omk9pei8G2DWfhyXa+R74W4+a6modHuXDx3MAKRNKnaRfmaUsSRV7X4sh2bO47iH
-ur+hwDjW2f5eGJReLnMA/DpYmYIzOH9v/VX/frAAqYOvp8dPYQ77owbpaWU4pkZQ
-3+bnq/5lMf/c9mrEk9vGIZRjjwU4zSreAqvJeb18kw/6b8Zjfz0nPLm2KB/CYPHg
-pC9VyI7Z1S4IvF1kqeZ6GbQKLgEtM5XuezE7khfk4o3ca1DnubkdgSMcy9E/y3f+
-SX6HL/pNvosC3tmWg3g5rjC6MZbAIWYQqSviJiC2WOZXjfewKhABJf5U8xlt76JU
-ksFMmpFqBt3rOectstpBpQXQWfqXTiv8CdD4KPLfvVyD53QKm33OtCY/C8Ut9L45
-nmE4Q8AvmMn/AwwFKNwqS7yazG9uVRCnK83NwG9Md2p6fn8Eai5XZjR7V6H4gqnG
-O+dFLvQouWUSQqTV5a8YNUDpAQ7bpdpt0MYzdEfe9g3beCU0rIhXnxXesJ+JKG0i
-pQL7MY7zm0nWFXuhclOwFaUUNj91YMRARO93egW0Y6k0nwI//Pg=
-=3i9T
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAli/+g0ACgkQ3SOs138+
+s6GQFA/9F0vkFinswpU2Ta3/8nFqhycvu/DW9etU7AOe5q8rBwZHQYKzd5eVS0Xf
+IxvitROCyGf0AbAxyCbADr64YzwlSkrk2+0isZeR3s1EVNk8gb2NlnSFOz69/C1Q
+w8jKnqC81DwJlWWqdkwGGTNJGnM/6AtluS73RXMT18rejQF3I3Q7srR/zGwVIPFH
+kFTASLctwwra8OhJQsr/X+1oY7BWj9CL16e9hI4ul1P68pL5cfdBBcrhVsONCx6l
+o580tLg9ZUisnaEVhQKuEdkOAIqeg2T/Ph/wysAaX58X6twHwN/5WKy9uxTTGxD7
+Krv+7IJZjK6dJOhLQZHx0DbCEs0/fw4mJRWM1b4r6ceYeHKf1ASUcbbkf0jAdwfx
+hfMvgf4z/7OI2vtzrHQZpKdMTj7w3VMo6R5enkQH4ULMQN1vjxLWW1jg1bOTsfMZ
+H+T3EfLX/UsspgdECDXFvZ4whfkZfDb6AF4rZEp4HSt9e+6d7gxWPQtJXRXVD6Mi
+ki2pA2HOA0b8W0Pvfk5vp4EcGRaRO2r/W/Do4jOF1YnFBhm4aktPvoK0JYZUjNPf
+hTAsxRBkiLhtwXE4wMbWZ1tUYX1BusNNmVPr4bPsEFAxewfLOJHNrTJ9OGggXScv
+EydktuhOW8wS1+vPtChSfvzE/Am/PaGSr1TwpOlor0Gh/MkdRVA=
+=QlgN
 -----END PGP SIGNATURE-----
 
---OgqxwSJOaUobr8KG--
+--jho1yZJdad60DJr+--
 
 
---===============6610592161426401033==
+--===============5313263753324476145==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -85,4 +80,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============6610592161426401033==--
+--===============5313263753324476145==--
