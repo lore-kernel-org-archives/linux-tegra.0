@@ -1,76 +1,47 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 5/7] net: stmmac: Program RX queue size and flow control
-Date: Thu, 9 Mar 2017 13:18:11 -0700
-Message-ID: <83aaa3b1-a2d4-8ddd-d31a-2fd6c653e3d1@wwwdotorg.org>
-References: <20170223172438.14770-1-thierry.reding@gmail.com>
- <20170223172438.14770-6-thierry.reding@gmail.com>
- <74ee5bff-8893-ebd4-bcf8-bb92c476f581@kapsi.fi>
- <20170309194231.GD5554@ulmo.ba.sec>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [regression] next-20170307: led trigger deferral breaks sdhci
+Date: Thu, 9 Mar 2017 21:30:13 +0100
+Message-ID: <6f75da43-3c26-e744-5ef1-432f18b769b4@gmail.com>
+References: <20246b21-4c00-e22e-232d-49596f5f275e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170309194231.GD5554-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: "David S . Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Giuseppe Cavallaro <peppe.cavallaro-qxv4g6HH51o@public.gmane.org>, Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Joao Pinto <Joao.Pinto-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <20246b21-4c00-e22e-232d-49596f5f275e@nvidia.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Adrian Hunter <adrian.hunter@intel.com>, Heiner Kallweit <hkallweit1@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-mmc@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/09/2017 12:42 PM, Thierry Reding wrote:
-> On Mon, Feb 27, 2017 at 12:09:02PM +0200, Mikko Perttunen wrote:
->> On 23.02.2017 19:24, Thierry Reding wrote:
->>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> Program the receive queue size based on the RX FIFO size and enable
->>> hardware flow control for large FIFOs.
+Hi Joe,
 
->>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+On 03/08/2017 10:17 PM, Jon Hunter wrote:
+> Hello!
+> 
+> I noticed that sdhci is broken for me on yesterday's and today's -next
+> and the bisect is pointing to commit 3f1318e01bb4 ('leds: core: use
+> deferred probing if default trigger isn't available yet').
+> 
+> At first I thought that ok, the problem is that sdhci driver is first
+> registering the led and then the trigger. However, then I looked at the
+> led_trigger_register() function and it appears to allow you to register
+> the led first and the trigger sometime later and populate the default
+> trigger later on. So then I am not sure why the above commit is needed?
+> 
+> It is not clear to me from the commit message for the above commit what
+> actual problem was caused by not registering the trigger first.
 
->>> @@ -252,6 +253,44 @@ static void dwmac4_dma_chan_op_mode(void __iomem *ioaddr, int txmode,
->>>  			mtl_rx_op |= MTL_OP_MODE_RTC_128;
->>>  	}
->>>
->>> +	mtl_rx_op &= ~MTL_OP_MODE_RQS_MASK;
->>> +	mtl_rx_op |= rqs << MTL_OP_MODE_RQS_SHIFT;
->>> +
->>> +	/* enable flow control only if each channel gets 4 KiB or more FIFO */
->>> +	if (rxfifosz >= 4096) {
->>> +		unsigned int rfd, rfa;
->>> +
->>> +		mtl_rx_op |= MTL_OP_MODE_EHFC;
->>> +
->>> +		switch (rxfifosz) {
->>> +		case 4096:
->>> +			rfd = 0x03;
->>> +			rfa = 0x01;
->>> +			break;
->>> +
->>> +		case 8192:
->>> +			rfd = 0x06;
->>> +			rfa = 0x0a;
->>> +			break;
->>> +
->>> +		case 16384:
->>> +			rfd = 0x06;
->>> +			rfa = 0x12;
->>> +			break;
->>> +
->>> +		default:
->>> +			rfd = 0x06;
->>> +			rfa = 0x1e;
->>> +			break;
->>> +		}
->>
->> Are these values correct? In the 4096 case, rfd > rfa, in all other cases
->> the other way around. In any case it would be useful to have a comment
->> clarifying the thresholds in bytes.
->
-> I'll investigate. To be honest I simply took this from Stephen's U-Boot
-> driver since that's already tested. I trust Stephen, so I didn't bother
-> double-checking.
+The problem was the case when the trigger that has been defined as
+"default-trigger" in DT is not registered at the moment of LED class
+driver probing. It is silently ignored by LED core.
 
-I don't recall for sure, but I think these values came directly from 
-either the upstream kernel (the non-stmmac driver) or NV downstream 
-kernel EQoS driver, and I re-used them without investigating. I'm not 
-even sure if the outer if() expression is true; these numbers might not 
-even end up being used?
+It turned out that we accepted the commit too hastily, and in fact
+that case seems not to be critical to the extent justifying preventing
+LED class device registration.
+
+Probably dev_warn() should be enough in this case. I've already dropped
+the commit. Sorry for making confusion.
+
+-- 
+Best regards,
+Jacek Anaszewski
