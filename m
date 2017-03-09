@@ -1,172 +1,124 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 1/3] drm/tegra: Don't leak kernel pointer to userspace
-Date: Thu,  9 Mar 2017 20:04:55 +0100
-Message-ID: <20170309190457.4592-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 2/3] drm/tegra: Protect IOMMU operations by mutex
+Date: Thu,  9 Mar 2017 20:04:56 +0100
+Message-ID: <20170309190457.4592-2-thierry.reding@gmail.com>
+References: <20170309190457.4592-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170309190457.4592-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkVhY2ggb3BlbiBmaWxl
-IGRlc2NyaXB0b3IgY2FuIGhhdmUgYW55IG51bWJlciBvZiBjb250ZXh0cyBhc3NvY2lhdGVkCndp
-dGggaXQuIFRvIGRpZmZlcmVudGlhdGUgYmV0d2VlbiB0aGVzZSBjb250ZXh0cyBhIHVuaXF1ZSBJ
-RCBpcyByZXF1aXJlZAphbmQgYmFjayB3aGVuIHRoZXNlIHVzZXJzcGFjZSBpbnRlcmZhY2VzIHdl
-cmUgaW50cm9kdWNlZCwgaW4gY29tbWl0CmQ0M2Y4MWNiYWY0MyAoImRybS90ZWdyYTogQWRkIGdy
-MmQgZGV2aWNlIiksIHRoZSBwb2ludGVyIHRvIHRoZSBjb250ZXh0CnN0cnVjdHVyZSB3YXMgZGVl
-bWVkIGFkZXF1YXRlLiBIb3dldmVyLCB0aGlzIGxlYWtzIGluZm9ybWF0aW9uIGFib3V0Cmtlcm5l
-bCBpbnRlcm5hbCBtZW1vcnkgdG8gdXNlcnNwYWNlLCB3aGljaCBjYW4gcG90ZW50aWFsbHkgYmUg
-ZXhwbG9pdGVkLgoKU3dpdGNoIHRoZSBjb250ZXh0IHBhcmFtZXRlciB0byBiZSBhbGxvY2F0ZWQg
-ZnJvbSBhbiBJRFIsIHdoaWNoIGhhcyB0aGUKYWRkZWQgYmVuZWZpdCBvZiBwcm92aWRpbmcgYW4g
-ZWFzeSB3YXkgdG8gbG9vayB1cCBhIGNvbnRleHQgZnJvbSBpdHMgSUQuCgpTaWduZWQtb2ZmLWJ5
-OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9kcm0uYyB8IDE2MCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0t
-LS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oIHwgICAyICstCiAyIGZpbGVzIGNo
-YW5nZWQsIDExNCBpbnNlcnRpb25zKCspLCA0OCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMK
-aW5kZXggNzJhNWIxZTdkMmQyLi4xZDdiZTVlYTk3ZWUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9kcm0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKQEAgLTgs
-NiArOCw3IEBACiAgKi8KIAogI2luY2x1ZGUgPGxpbnV4L2hvc3QxeC5oPgorI2luY2x1ZGUgPGxp
-bnV4L2lkci5oPgogI2luY2x1ZGUgPGxpbnV4L2lvbW11Lmg+CiAKICNpbmNsdWRlIDxkcm0vZHJt
-X2F0b21pYy5oPgpAQCAtMjQsNyArMjUsOCBAQAogI2RlZmluZSBEUklWRVJfUEFUQ0hMRVZFTCAw
-CiAKIHN0cnVjdCB0ZWdyYV9kcm1fZmlsZSB7Ci0Jc3RydWN0IGxpc3RfaGVhZCBjb250ZXh0czsK
-KwlzdHJ1Y3QgaWRyIGNvbnRleHRzOworCXN0cnVjdCBtdXRleCBsb2NrOwogfTsKIAogc3RhdGlj
-IHZvaWQgdGVncmFfYXRvbWljX3NjaGVkdWxlKHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhLApAQCAt
-MjQ1LDcgKzI0Nyw4IEBAIHN0YXRpYyBpbnQgdGVncmFfZHJtX29wZW4oc3RydWN0IGRybV9kZXZp
-Y2UgKmRybSwgc3RydWN0IGRybV9maWxlICpmaWxwKQogCWlmICghZnByaXYpCiAJCXJldHVybiAt
-RU5PTUVNOwogCi0JSU5JVF9MSVNUX0hFQUQoJmZwcml2LT5jb250ZXh0cyk7CisJaWRyX2luaXQo
-JmZwcml2LT5jb250ZXh0cyk7CisJbXV0ZXhfaW5pdCgmZnByaXYtPmxvY2spOwogCWZpbHAtPmRy
-aXZlcl9wcml2ID0gZnByaXY7CiAKIAlyZXR1cm4gMDsKQEAgLTQyNCwyMSArNDI3LDE2IEBAIGlu
-dCB0ZWdyYV9kcm1fc3VibWl0KHN0cnVjdCB0ZWdyYV9kcm1fY29udGV4dCAqY29udGV4dCwKIAog
-CiAjaWZkZWYgQ09ORklHX0RSTV9URUdSQV9TVEFHSU5HCi1zdGF0aWMgc3RydWN0IHRlZ3JhX2Ry
-bV9jb250ZXh0ICp0ZWdyYV9kcm1fZ2V0X2NvbnRleHQoX191NjQgY29udGV4dCkKK3N0YXRpYyBz
-dHJ1Y3QgdGVncmFfZHJtX2NvbnRleHQgKgordGVncmFfZHJtX2ZpbGVfZ2V0X2NvbnRleHQoc3Ry
-dWN0IHRlZ3JhX2RybV9maWxlICpmaWxlLCB1MzIgaWQpCiB7Ci0JcmV0dXJuIChzdHJ1Y3QgdGVn
-cmFfZHJtX2NvbnRleHQgKikodWludHB0cl90KWNvbnRleHQ7Ci19Ci0KLXN0YXRpYyBib29sIHRl
-Z3JhX2RybV9maWxlX293bnNfY29udGV4dChzdHJ1Y3QgdGVncmFfZHJtX2ZpbGUgKmZpbGUsCi0J
-CQkJCXN0cnVjdCB0ZWdyYV9kcm1fY29udGV4dCAqY29udGV4dCkKLXsKLQlzdHJ1Y3QgdGVncmFf
-ZHJtX2NvbnRleHQgKmN0eDsKKwlzdHJ1Y3QgdGVncmFfZHJtX2NvbnRleHQgKmNvbnRleHQ7CiAK
-LQlsaXN0X2Zvcl9lYWNoX2VudHJ5KGN0eCwgJmZpbGUtPmNvbnRleHRzLCBsaXN0KQotCQlpZiAo
-Y3R4ID09IGNvbnRleHQpCi0JCQlyZXR1cm4gdHJ1ZTsKKwltdXRleF9sb2NrKCZmaWxlLT5sb2Nr
-KTsKKwljb250ZXh0ID0gaWRyX2ZpbmQoJmZpbGUtPmNvbnRleHRzLCBpZCk7CisJbXV0ZXhfdW5s
-b2NrKCZmaWxlLT5sb2NrKTsKIAotCXJldHVybiBmYWxzZTsKKwlyZXR1cm4gY29udGV4dDsKIH0K
-IAogc3RhdGljIGludCB0ZWdyYV9nZW1fY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHZv
-aWQgKmRhdGEsCkBAIC01MTksNiArNTE3LDI4IEBAIHN0YXRpYyBpbnQgdGVncmFfc3luY3B0X3dh
-aXQoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdm9pZCAqZGF0YSwKIAkJCQkgICZhcmdzLT52YWx1
-ZSk7CiB9CiAKK3N0YXRpYyBpbnQgdGVncmFfY2xpZW50X29wZW4oc3RydWN0IHRlZ3JhX2RybV9m
-aWxlICpmcHJpdiwKKwkJCSAgICAgc3RydWN0IHRlZ3JhX2RybV9jbGllbnQgKmNsaWVudCwKKwkJ
-CSAgICAgc3RydWN0IHRlZ3JhX2RybV9jb250ZXh0ICpjb250ZXh0KQoreworCWludCBlcnI7CisK
-KwllcnIgPSBjbGllbnQtPm9wcy0+b3Blbl9jaGFubmVsKGNsaWVudCwgY29udGV4dCk7CisJaWYg
-KGVyciA8IDApCisJCXJldHVybiBlcnI7CisKKwllcnIgPSBpZHJfYWxsb2MoJmZwcml2LT5jb250
-ZXh0cywgY29udGV4dCwgMCwgMCwgR0ZQX0tFUk5FTCk7CisJaWYgKGVyciA8IDApIHsKKwkJY2xp
-ZW50LT5vcHMtPmNsb3NlX2NoYW5uZWwoY29udGV4dCk7CisJCXJldHVybiBlcnI7CisJfQorCisJ
-Y29udGV4dC0+Y2xpZW50ID0gY2xpZW50OworCWNvbnRleHQtPmlkID0gZXJyOworCisJcmV0dXJu
-IDA7Cit9CisKIHN0YXRpYyBpbnQgdGVncmFfb3Blbl9jaGFubmVsKHN0cnVjdCBkcm1fZGV2aWNl
-ICpkcm0sIHZvaWQgKmRhdGEsCiAJCQkgICAgICBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCiB7CkBA
-IC01MzMsMTkgKzU1MywyMiBAQCBzdGF0aWMgaW50IHRlZ3JhX29wZW5fY2hhbm5lbChzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZHJtLCB2b2lkICpkYXRhLAogCWlmICghY29udGV4dCkKIAkJcmV0dXJuIC1F
-Tk9NRU07CiAKKwltdXRleF9sb2NrKCZmcHJpdi0+bG9jayk7CisKIAlsaXN0X2Zvcl9lYWNoX2Vu
-dHJ5KGNsaWVudCwgJnRlZ3JhLT5jbGllbnRzLCBsaXN0KQogCQlpZiAoY2xpZW50LT5iYXNlLmNs
-YXNzID09IGFyZ3MtPmNsaWVudCkgewotCQkJZXJyID0gY2xpZW50LT5vcHMtPm9wZW5fY2hhbm5l
-bChjbGllbnQsIGNvbnRleHQpOwotCQkJaWYgKGVycikKKwkJCWVyciA9IHRlZ3JhX2NsaWVudF9v
-cGVuKGZwcml2LCBjbGllbnQsIGNvbnRleHQpOworCQkJaWYgKGVyciA8IDApCiAJCQkJYnJlYWs7
-CiAKLQkJCWxpc3RfYWRkKCZjb250ZXh0LT5saXN0LCAmZnByaXYtPmNvbnRleHRzKTsKLQkJCWFy
-Z3MtPmNvbnRleHQgPSAodWludHB0cl90KWNvbnRleHQ7Ci0JCQljb250ZXh0LT5jbGllbnQgPSBj
-bGllbnQ7Ci0JCQlyZXR1cm4gMDsKKwkJCWFyZ3MtPmNvbnRleHQgPSBjb250ZXh0LT5pZDsKKwkJ
-CWJyZWFrOwogCQl9CiAKLQlrZnJlZShjb250ZXh0KTsKKwlpZiAoZXJyIDwgMCkKKwkJa2ZyZWUo
-Y29udGV4dCk7CisKKwltdXRleF91bmxvY2soJmZwcml2LT5sb2NrKTsKIAlyZXR1cm4gZXJyOwog
-fQogCkBAIC01NTUsMTYgKzU3OCwyMiBAQCBzdGF0aWMgaW50IHRlZ3JhX2Nsb3NlX2NoYW5uZWwo
-c3RydWN0IGRybV9kZXZpY2UgKmRybSwgdm9pZCAqZGF0YSwKIAlzdHJ1Y3QgdGVncmFfZHJtX2Zp
-bGUgKmZwcml2ID0gZmlsZS0+ZHJpdmVyX3ByaXY7CiAJc3RydWN0IGRybV90ZWdyYV9jbG9zZV9j
-aGFubmVsICphcmdzID0gZGF0YTsKIAlzdHJ1Y3QgdGVncmFfZHJtX2NvbnRleHQgKmNvbnRleHQ7
-CisJaW50IGVyciA9IDA7CiAKLQljb250ZXh0ID0gdGVncmFfZHJtX2dldF9jb250ZXh0KGFyZ3Mt
-PmNvbnRleHQpOworCW11dGV4X2xvY2soJmZwcml2LT5sb2NrKTsKIAotCWlmICghdGVncmFfZHJt
-X2ZpbGVfb3duc19jb250ZXh0KGZwcml2LCBjb250ZXh0KSkKLQkJcmV0dXJuIC1FSU5WQUw7CisJ
-Y29udGV4dCA9IHRlZ3JhX2RybV9maWxlX2dldF9jb250ZXh0KGZwcml2LCBhcmdzLT5jb250ZXh0
-KTsKKwlpZiAoIWNvbnRleHQpIHsKKwkJZXJyID0gLUVJTlZBTDsKKwkJZ290byB1bmxvY2s7CisJ
-fQogCi0JbGlzdF9kZWwoJmNvbnRleHQtPmxpc3QpOworCWlkcl9yZW1vdmUoJmZwcml2LT5jb250
-ZXh0cywgY29udGV4dC0+aWQpOwogCXRlZ3JhX2RybV9jb250ZXh0X2ZyZWUoY29udGV4dCk7CiAK
-LQlyZXR1cm4gMDsKK3VubG9jazoKKwltdXRleF91bmxvY2soJmZwcml2LT5sb2NrKTsKKwlyZXR1
-cm4gZXJyOwogfQogCiBzdGF0aWMgaW50IHRlZ3JhX2dldF9zeW5jcHQoc3RydWN0IGRybV9kZXZp
-Y2UgKmRybSwgdm9pZCAqZGF0YSwKQEAgLTU3NCwxOSArNjAzLDI3IEBAIHN0YXRpYyBpbnQgdGVn
-cmFfZ2V0X3N5bmNwdChzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCB2b2lkICpkYXRhLAogCXN0cnVj
-dCBkcm1fdGVncmFfZ2V0X3N5bmNwdCAqYXJncyA9IGRhdGE7CiAJc3RydWN0IHRlZ3JhX2RybV9j
-b250ZXh0ICpjb250ZXh0OwogCXN0cnVjdCBob3N0MXhfc3luY3B0ICpzeW5jcHQ7CisJaW50IGVy
-ciA9IDA7CiAKLQljb250ZXh0ID0gdGVncmFfZHJtX2dldF9jb250ZXh0KGFyZ3MtPmNvbnRleHQp
-OworCW11dGV4X2xvY2soJmZwcml2LT5sb2NrKTsKIAotCWlmICghdGVncmFfZHJtX2ZpbGVfb3du
-c19jb250ZXh0KGZwcml2LCBjb250ZXh0KSkKLQkJcmV0dXJuIC1FTk9ERVY7CisJY29udGV4dCA9
-IHRlZ3JhX2RybV9maWxlX2dldF9jb250ZXh0KGZwcml2LCBhcmdzLT5jb250ZXh0KTsKKwlpZiAo
-IWNvbnRleHQpIHsKKwkJZXJyID0gLUVOT0RFVjsKKwkJZ290byB1bmxvY2s7CisJfQogCi0JaWYg
-KGFyZ3MtPmluZGV4ID49IGNvbnRleHQtPmNsaWVudC0+YmFzZS5udW1fc3luY3B0cykKLQkJcmV0
-dXJuIC1FSU5WQUw7CisJaWYgKGFyZ3MtPmluZGV4ID49IGNvbnRleHQtPmNsaWVudC0+YmFzZS5u
-dW1fc3luY3B0cykgeworCQllcnIgPSAtRUlOVkFMOworCQlnb3RvIHVubG9jazsKKwl9CiAKIAlz
-eW5jcHQgPSBjb250ZXh0LT5jbGllbnQtPmJhc2Uuc3luY3B0c1thcmdzLT5pbmRleF07CiAJYXJn
-cy0+aWQgPSBob3N0MXhfc3luY3B0X2lkKHN5bmNwdCk7CiAKLQlyZXR1cm4gMDsKK3VubG9jazoK
-KwltdXRleF91bmxvY2soJmZwcml2LT5sb2NrKTsKKwlyZXR1cm4gZXJyOwogfQogCiBzdGF0aWMg
-aW50IHRlZ3JhX3N1Ym1pdChzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCB2b2lkICpkYXRhLApAQCAt
-NTk1LDEzICs2MzIsMjEgQEAgc3RhdGljIGludCB0ZWdyYV9zdWJtaXQoc3RydWN0IGRybV9kZXZp
-Y2UgKmRybSwgdm9pZCAqZGF0YSwKIAlzdHJ1Y3QgdGVncmFfZHJtX2ZpbGUgKmZwcml2ID0gZmls
-ZS0+ZHJpdmVyX3ByaXY7CiAJc3RydWN0IGRybV90ZWdyYV9zdWJtaXQgKmFyZ3MgPSBkYXRhOwog
-CXN0cnVjdCB0ZWdyYV9kcm1fY29udGV4dCAqY29udGV4dDsKKwlpbnQgZXJyOworCisJbXV0ZXhf
-bG9jaygmZnByaXYtPmxvY2spOwogCi0JY29udGV4dCA9IHRlZ3JhX2RybV9nZXRfY29udGV4dChh
-cmdzLT5jb250ZXh0KTsKKwljb250ZXh0ID0gdGVncmFfZHJtX2ZpbGVfZ2V0X2NvbnRleHQoZnBy
-aXYsIGFyZ3MtPmNvbnRleHQpOworCWlmICghY29udGV4dCkgeworCQllcnIgPSAtRU5PREVWOwor
-CQlnb3RvIHVubG9jazsKKwl9CiAKLQlpZiAoIXRlZ3JhX2RybV9maWxlX293bnNfY29udGV4dChm
-cHJpdiwgY29udGV4dCkpCi0JCXJldHVybiAtRU5PREVWOworCWVyciA9IGNvbnRleHQtPmNsaWVu
-dC0+b3BzLT5zdWJtaXQoY29udGV4dCwgYXJncywgZHJtLCBmaWxlKTsKIAotCXJldHVybiBjb250
-ZXh0LT5jbGllbnQtPm9wcy0+c3VibWl0KGNvbnRleHQsIGFyZ3MsIGRybSwgZmlsZSk7Cit1bmxv
-Y2s6CisJbXV0ZXhfdW5sb2NrKCZmcHJpdi0+bG9jayk7CisJcmV0dXJuIGVycjsKIH0KIAogc3Rh
-dGljIGludCB0ZWdyYV9nZXRfc3luY3B0X2Jhc2Uoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdm9p
-ZCAqZGF0YSwKQEAgLTYxMiwyNCArNjU3LDM0IEBAIHN0YXRpYyBpbnQgdGVncmFfZ2V0X3N5bmNw
-dF9iYXNlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHZvaWQgKmRhdGEsCiAJc3RydWN0IHRlZ3Jh
-X2RybV9jb250ZXh0ICpjb250ZXh0OwogCXN0cnVjdCBob3N0MXhfc3luY3B0X2Jhc2UgKmJhc2U7
-CiAJc3RydWN0IGhvc3QxeF9zeW5jcHQgKnN5bmNwdDsKKwlpbnQgZXJyID0gMDsKIAotCWNvbnRl
-eHQgPSB0ZWdyYV9kcm1fZ2V0X2NvbnRleHQoYXJncy0+Y29udGV4dCk7CisJbXV0ZXhfbG9jaygm
-ZnByaXYtPmxvY2spOwogCi0JaWYgKCF0ZWdyYV9kcm1fZmlsZV9vd25zX2NvbnRleHQoZnByaXYs
-IGNvbnRleHQpKQotCQlyZXR1cm4gLUVOT0RFVjsKKwljb250ZXh0ID0gdGVncmFfZHJtX2ZpbGVf
-Z2V0X2NvbnRleHQoZnByaXYsIGFyZ3MtPmNvbnRleHQpOworCWlmICghY29udGV4dCkgeworCQll
-cnIgPSAtRU5PREVWOworCQlnb3RvIHVubG9jazsKKwl9CiAKLQlpZiAoYXJncy0+c3luY3B0ID49
-IGNvbnRleHQtPmNsaWVudC0+YmFzZS5udW1fc3luY3B0cykKLQkJcmV0dXJuIC1FSU5WQUw7CisJ
-aWYgKGFyZ3MtPnN5bmNwdCA+PSBjb250ZXh0LT5jbGllbnQtPmJhc2UubnVtX3N5bmNwdHMpIHsK
-KwkJZXJyID0gLUVJTlZBTDsKKwkJZ290byB1bmxvY2s7CisJfQogCiAJc3luY3B0ID0gY29udGV4
-dC0+Y2xpZW50LT5iYXNlLnN5bmNwdHNbYXJncy0+c3luY3B0XTsKIAogCWJhc2UgPSBob3N0MXhf
-c3luY3B0X2dldF9iYXNlKHN5bmNwdCk7Ci0JaWYgKCFiYXNlKQotCQlyZXR1cm4gLUVOWElPOwor
-CWlmICghYmFzZSkgeworCQllcnIgPSAtRU5YSU87CisJCWdvdG8gdW5sb2NrOworCX0KIAogCWFy
-Z3MtPmlkID0gaG9zdDF4X3N5bmNwdF9iYXNlX2lkKGJhc2UpOwogCi0JcmV0dXJuIDA7Cit1bmxv
-Y2s6CisJbXV0ZXhfdW5sb2NrKCZmcHJpdi0+bG9jayk7CisJcmV0dXJuIGVycjsKIH0KIAogc3Rh
-dGljIGludCB0ZWdyYV9nZW1fc2V0X3RpbGluZyhzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCB2b2lk
-ICpkYXRhLApAQCAtODA0LDE0ICs4NTksMjUgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBmaWxlX29w
-ZXJhdGlvbnMgdGVncmFfZHJtX2ZvcHMgPSB7CiAJLmxsc2VlayA9IG5vb3BfbGxzZWVrLAogfTsK
-IAorc3RhdGljIGludCB0ZWdyYV9kcm1fY29udGV4dF9jbGVhbnVwKGludCBpZCwgdm9pZCAqcCwg
-dm9pZCAqZGF0YSkKK3sKKwlzdHJ1Y3QgdGVncmFfZHJtX2NvbnRleHQgKmNvbnRleHQgPSBwOwor
-CisJdGVncmFfZHJtX2NvbnRleHRfZnJlZShjb250ZXh0KTsKKworCXJldHVybiAwOworfQorCiBz
-dGF0aWMgdm9pZCB0ZWdyYV9kcm1fcHJlY2xvc2Uoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgc3Ry
-dWN0IGRybV9maWxlICpmaWxlKQogewogCXN0cnVjdCB0ZWdyYV9kcm1fZmlsZSAqZnByaXYgPSBm
-aWxlLT5kcml2ZXJfcHJpdjsKLQlzdHJ1Y3QgdGVncmFfZHJtX2NvbnRleHQgKmNvbnRleHQsICp0
-bXA7CiAKLQlsaXN0X2Zvcl9lYWNoX2VudHJ5X3NhZmUoY29udGV4dCwgdG1wLCAmZnByaXYtPmNv
-bnRleHRzLCBsaXN0KQotCQl0ZWdyYV9kcm1fY29udGV4dF9mcmVlKGNvbnRleHQpOworCW11dGV4
-X2xvY2soJmZwcml2LT5sb2NrKTsKKwlpZHJfZm9yX2VhY2goJmZwcml2LT5jb250ZXh0cywgdGVn
-cmFfZHJtX2NvbnRleHRfY2xlYW51cCwgTlVMTCk7CisJbXV0ZXhfdW5sb2NrKCZmcHJpdi0+bG9j
-ayk7CiAKKwlpZHJfZGVzdHJveSgmZnByaXYtPmNvbnRleHRzKTsKKwltdXRleF9kZXN0cm95KCZm
-cHJpdi0+bG9jayk7CiAJa2ZyZWUoZnByaXYpOwogfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vdGVncmEvZHJtLmggYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmgKaW5kZXggNTc0
-N2FjY2IyMjcxLi5lZGEwZDY5MGZhYWQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9kcm0uaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmgKQEAgLTY3LDcgKzY3LDcg
-QEAgc3RydWN0IHRlZ3JhX2RybV9jbGllbnQ7CiBzdHJ1Y3QgdGVncmFfZHJtX2NvbnRleHQgewog
-CXN0cnVjdCB0ZWdyYV9kcm1fY2xpZW50ICpjbGllbnQ7CiAJc3RydWN0IGhvc3QxeF9jaGFubmVs
-ICpjaGFubmVsOwotCXN0cnVjdCBsaXN0X2hlYWQgbGlzdDsKKwl1bnNpZ25lZCBpbnQgaWQ7CiB9
-OwogCiBzdHJ1Y3QgdGVncmFfZHJtX2NsaWVudF9vcHMgewotLSAKMi4xMi4wCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+IOMMU support is currently not thread-safe, which can cause crashes,
+amongst other things, under certain workloads.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/drm.c |  5 +++++
+ drivers/gpu/drm/tegra/drm.h |  1 +
+ drivers/gpu/drm/tegra/gem.c | 12 ++++++++++--
+ 3 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 1d7be5ea97ee..d2ec16332fe0 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -144,6 +144,7 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+ 		DRM_DEBUG_DRIVER("IOMMU aperture initialized (%#llx-%#llx)\n",
+ 				 start, end);
+ 		drm_mm_init(&tegra->mm, start, end - start + 1);
++		mutex_init(&tegra->mm_lock);
+ 	}
+ 
+ 	mutex_init(&tegra->clients_lock);
+@@ -210,6 +211,7 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+ 	if (tegra->domain) {
+ 		iommu_domain_free(tegra->domain);
+ 		drm_mm_takedown(&tegra->mm);
++		mutex_destroy(&tegra->mm_lock);
+ 	}
+ free:
+ 	kfree(tegra);
+@@ -234,6 +236,7 @@ static void tegra_drm_unload(struct drm_device *drm)
+ 	if (tegra->domain) {
+ 		iommu_domain_free(tegra->domain);
+ 		drm_mm_takedown(&tegra->mm);
++		mutex_destroy(&tegra->mm_lock);
+ 	}
+ 
+ 	kfree(tegra);
+@@ -910,7 +913,9 @@ static int tegra_debugfs_iova(struct seq_file *s, void *data)
+ 	struct tegra_drm *tegra = drm->dev_private;
+ 	struct drm_printer p = drm_seq_file_printer(s);
+ 
++	mutex_lock(&tegra->mm_lock);
+ 	drm_mm_print(&tegra->mm, &p);
++	mutex_unlock(&tegra->mm_lock);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index eda0d690faad..fe2db2afdca6 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -42,6 +42,7 @@ struct tegra_drm {
+ 	struct drm_device *drm;
+ 
+ 	struct iommu_domain *domain;
++	struct mutex mm_lock;
+ 	struct drm_mm mm;
+ 
+ 	struct mutex clients_lock;
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index e9f664990859..94470112ed1f 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -128,12 +128,14 @@ static int tegra_bo_iommu_map(struct tegra_drm *tegra, struct tegra_bo *bo)
+ 	if (!bo->mm)
+ 		return -ENOMEM;
+ 
++	mutex_lock(&tegra->mm_lock);
++
+ 	err = drm_mm_insert_node_generic(&tegra->mm,
+ 					 bo->mm, bo->gem.size, PAGE_SIZE, 0, 0);
+ 	if (err < 0) {
+ 		dev_err(tegra->drm->dev, "out of I/O virtual memory: %zd\n",
+ 			err);
+-		goto free;
++		goto unlock;
+ 	}
+ 
+ 	bo->paddr = bo->mm->start;
+@@ -147,11 +149,14 @@ static int tegra_bo_iommu_map(struct tegra_drm *tegra, struct tegra_bo *bo)
+ 
+ 	bo->size = err;
+ 
++	mutex_unlock(&tegra->mm_lock);
++
+ 	return 0;
+ 
+ remove:
+ 	drm_mm_remove_node(bo->mm);
+-free:
++unlock:
++	mutex_unlock(&tegra->mm_lock);
+ 	kfree(bo->mm);
+ 	return err;
+ }
+@@ -161,8 +166,11 @@ static int tegra_bo_iommu_unmap(struct tegra_drm *tegra, struct tegra_bo *bo)
+ 	if (!bo->mm)
+ 		return 0;
+ 
++	mutex_lock(&tegra->mm_lock);
+ 	iommu_unmap(tegra->domain, bo->paddr, bo->size);
+ 	drm_mm_remove_node(bo->mm);
++	mutex_unlock(&tegra->mm_lock);
++
+ 	kfree(bo->mm);
+ 
+ 	return 0;
+-- 
+2.12.0
