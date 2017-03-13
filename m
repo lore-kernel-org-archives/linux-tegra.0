@@ -1,96 +1,83 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
- require multiple domains
-Date: Mon, 13 Mar 2017 14:09:34 +0000
-Message-ID: <3e88692d-613b-9c25-2554-7d399c45637a@nvidia.com>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
- <52493231-71f4-1b62-b325-8532e63e4229@nvidia.com>
- <CAMuHMdUAN+PHr_GSvyMzA8N6LgzPEXhQyG_rSwFUOvc9_v7JiA@mail.gmail.com>
- <f4b3a93e-e29f-6fc6-6e7f-8c51081cbe15@nvidia.com>
- <CAPDyKFp20tDickB9mF1ZSRUvYBEsfATysENeMzGV9O8KXH2wig@mail.gmail.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Date: Mon, 13 Mar 2017 16:18:50 +0200
+Message-ID: <20170313141850.GX26640@tbergstrom-lnx.Nvidia.com>
+References: <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+ <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+ <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+ <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+ <f1505f37-cf96-fe04-dfc1-1dd94e20e130@nvidia.com>
+ <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
+ <313f1245-02aa-496c-3545-5029ece652af@nvidia.com>
+ <20170313104532.GT26640@tbergstrom-lnx.Nvidia.com>
+ <9e81c653-b6bb-a47c-8891-d7c7d42a7650@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPDyKFp20tDickB9mF1ZSRUvYBEsfATysENeMzGV9O8KXH2wig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <9e81c653-b6bb-a47c-8891-d7c7d42a7650-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rajendra Nayak <rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stanimir Varbanov <stanimir.varbanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Ulf,
-
-On 13/03/17 11:45, Ulf Hansson wrote:
-> +Björn
+On Mon, Mar 13, 2017 at 11:03:27AM +0000, Jon Hunter wrote:
 > 
-> On 13 March 2017 at 10:37, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Hi Rafael, Kevin, Ulf,
->>
->> Looks like there is still some interest/needs in/for this. Any thoughts
->> on how we can move this forward?
+> On 13/03/17 10:45, Peter De Schrijver wrote:
+> > On Wed, Mar 08, 2017 at 11:48:21AM +0000, Jon Hunter wrote:
+> >>
+> >> On 08/03/17 11:38, Geert Uytterhoeven wrote:
+> >>> Hi Jon,
+> >>>
+> >>> On Wed, Mar 8, 2017 at 11:13 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> >>>>> I had a similar issue with SH-Mobile AG5, where the power domain containing
+> >>>>> the JTAG interface is powered down.
+> >>>>
+> >>>> This reminds me, does your patch assume that the DFD power domain is
+> >>>> enabled? I am guessing that it needs to be for JTAG to work.
+> >>>
+> >>> Yes. The pm-rmobile driver looks for "arm,coresight-etm3x" devices, and
+> >>> marks the corresponding PM Domain as always-on, as long as the
+> >>> Coresight code doesn't handle runtime PM.
+> >>
+> >> Sorry Geert, but I was asking Peter specifically about the power-domain
+> >> on Tegra as I have a feeling we may have the same scenario ;-)
+> > 
+> > We don't have a specific power domain for DFD on Tegra210. It's part of the
+> > non-powergateable core domain.
 > 
-> At the Linaro Connect last week, I was talking to Björn, Rajendra and
-> Stephen more about these related issues.
+> Either we are getting our wires crossed or the TRM is wrong :-(
 > 
-> It definitely seems like we need to progress with this somehow,
-> meaning we need a solution for being able to associate a device with
-> more than one PM domain. In that context, I don't think genpd based on
-> its current design, is a good fit to solve the problem.
+>  static const char * const tegra210_powergates[] = {
+>          [TEGRA_POWERGATE_CPU] = "crail",
+>          [TEGRA_POWERGATE_3D] = "3d",
+>          [TEGRA_POWERGATE_VENC] = "venc",
+>          [TEGRA_POWERGATE_PCIE] = "pcie",
+>          [TEGRA_POWERGATE_MPE] = "mpe",
+>          [TEGRA_POWERGATE_SATA] = "sata",
+>          [TEGRA_POWERGATE_CPU1] = "cpu1",
+>          [TEGRA_POWERGATE_CPU2] = "cpu2",
+>          [TEGRA_POWERGATE_CPU3] = "cpu3",
+>          [TEGRA_POWERGATE_CPU0] = "cpu0",
+>          [TEGRA_POWERGATE_C0NC] = "c0nc",
+>          [TEGRA_POWERGATE_SOR] = "sor",
+>          [TEGRA_POWERGATE_DIS] = "dis",
+>          [TEGRA_POWERGATE_DISB] = "disb",
+>          [TEGRA_POWERGATE_XUSBA] = "xusba",
+>          [TEGRA_POWERGATE_XUSBB] = "xusbb",
+>          [TEGRA_POWERGATE_XUSBC] = "xusbc",
+>          [TEGRA_POWERGATE_VIC] = "vic",
+>          [TEGRA_POWERGATE_IRAM] = "iram",
+>          [TEGRA_POWERGATE_NVDEC] = "nvdec",
+>          [TEGRA_POWERGATE_NVJPG] = "nvjpg",
+>          [TEGRA_POWERGATE_AUD] = "aud",
+>          [TEGRA_POWERGATE_DFD] = "dfd",
+>          [TEGRA_POWERGATE_VE2] = "ve2",
+>  };
 > 
-> Instead I think we need something entirely new (perhaps some code can
-> be borrowed from genpd), which is more similar to the clock/regulator
-> framework. In other words, what you also were suggesting in a earlier
-> reply.
-> In this way, the driver/subsystem gains full flexibility of managing
-> its device's PM domains, which seems like the best future-proof
-> solution.
 
-I agree, I think that that would give us the most flexibility to handle
-whatever scenario. However, I was thinking that we could still use the
-genpd core to register pm-domains with and control. My thought was to
-allow devices to have a bindings with multiple pm-domains ...
+This seems to exist indeed. However downstream has never used it, so I wonder
+how well powergating this domain has been tested.
 
-	dev-xyz {
-		...
-		power-domains = <&domain-a>, <&domain-b>;
-	};
-
-Then in the genpd core we do having something like ...
-
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index e697dec9d25b..d1ae6ddf4903 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2026,6 +2026,15 @@ int genpd_dev_pm_attach(struct device *dev)
-                                                "samsung,power-domain", 0);
-                if (!pd_args.np)
-                        return -ENOENT;
-+       } else if (ret > 1) {
-+               /*
-+                * If there are more than one PM domain defined for a device,
-+                * then these need to be manually controlled by the device
-+                * driver because the genpd core cannot bind a device with
-+                * more than one PM domain.
-+                */
-+               dev_dbg(dev, "cannot add PM domains, %d detected!\n", ret);
-+               return 0;
-        }
-
-Then add some new public APIs for getting and controlling the pm-domains ...
-
-struct generic_pm_domain *pm_genpd_get(struct device *dev, char *name);
-- Use 'dev->of_node' to look-up pm-domain if populated, else uses name.
-
-struct generic_pm_domain *of_pm_genpd_get(struct device *dev, int index);
-void pm_genpd_put(struct generic_pm_domain *pd);
-int pm_genpd_power_on(struct generic_pm_domain *pd);
-int pm_genpd_power_off(struct generic_pm_domain *pd);
-- Power on/off APIs would be synchronous types
-
-Are there any potential pitfalls of the above?
-
-Cheers
-Jon
-
--- 
-nvpublic
+Peter.
