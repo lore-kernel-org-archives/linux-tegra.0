@@ -1,63 +1,60 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] clocksource: add missing line break to error messages
-Date: Mon, 13 Mar 2017 18:51:53 +0100
-Message-ID: <20170313175153.GC19679@ulmo.ba.sec>
-References: <20170309094710.31003-1-zajec5@gmail.com>
+From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 16/24] drm/tegra: switch to postclose
+Date: Mon, 13 Mar 2017 15:10:12 -0400
+Message-ID: <20170313191012.GO20329@art_vandelay>
+References: <20170308141257.12119-1-daniel.vetter@ffwll.ch>
+ <20170308141257.12119-17-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="DSayHWYpDlRfCAAQ"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170309094710.31003-1-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20170308141257.12119-17-daniel.vetter-/w4YWyX8dFk@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vineet Gupta <vgupta-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>Ba
+To: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+Cc: DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Mar 08, 2017 at 03:12:49PM +0100, Daniel Vetter wrote:
+> I didn't spot anything that would require ordering here (well not
+> anywhere else either), and I'm trying to unify at least modern drivers
+> on one close hook.
+> 
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
---DSayHWYpDlRfCAAQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-On Thu, Mar 09, 2017 at 10:47:10AM +0100, Rafa=C5=82 Mi=C5=82ecki wrote:
-[...]
-> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/te=
-gra20_timer.c
-> index f960891aa04e..b9990b9c98c5 100644
-> --- a/drivers/clocksource/tegra20_timer.c
-> +++ b/drivers/clocksource/tegra20_timer.c
-> @@ -245,7 +245,7 @@ static int __init tegra20_init_rtc(struct device_node=
- *np)
-> =20
->  	rtc_base =3D of_iomap(np, 0);
->  	if (!rtc_base) {
-> -		pr_err("Can't map RTC registers");
-> +		pr_err("Can't map RTC registers\n");
->  		return -ENXIO;
->  	}
-> =20
-
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---DSayHWYpDlRfCAAQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljG3DkACgkQ3SOs138+
-s6EIiA/8D0Nmav+tFXE1bSX9WvEaVbsDxBMaCfObYCOJ5vmgb0pFT0rwQM4TgrcS
-Oyk8b2/lJ8GgZtibDzq1Gmpr7PeFg7Q1NqO5CpDCcV2+8V4L6ceSq9CVULJh8fcg
-buZyncc+CqFfLru/5NmDqHQu9kYxfk5V9LlmiH2pS7/ZmcPFrtLAVzgi/iOXv46f
-akQ9075pDcLtCWxClavnv3XH7l/PnDVa8Ca0Chl2PtY4U6RhM7JjwsKTNA2t4o/p
-F7P2FOxbKEqjyA6du4p6oIhkliWs9c5gg47qmdiIj/dNNz1RRqEmdWowoyoPEcGz
-G9y1L1V4UojCTWokgML/x29Ev5gRzg4fxR8axEQgwIsjdjn8dStVI3cpBo77/prH
-LvejYeCLB9hg/IDOO8K7ocmJHTAFGstuaE8WouWSwqGtqPgGicDceHGwfdHS2b7I
-RcXtR0maDLccE3idb3HbRXPY1M2/7X6A+acTLjC7BWaluhWsMWFVwmtkVZ62Wgq6
-TLPFhL9phOc0jKTQESj/Jt0Gkq/bznGnndJk86ula5GjYtiqqCZarrCf5qTcx3he
-WiwiEkKxBxIKvL7KiuxB8dU1hTuqHlH1w8YQFrCZzPSlhIUvrrsbnKv+GtOnkVdm
-bpBg5dGFkJ07QQSL8doq3bR+Ulhg4o3R9vSNAMQaN04hh6HxQ6w=
-=IFoR
------END PGP SIGNATURE-----
-
---DSayHWYpDlRfCAAQ--
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index dba4e090d3df..3b419f9dbf4d 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -804,7 +804,7 @@ static const struct file_operations tegra_drm_fops = {
+>  	.llseek = noop_llseek,
+>  };
+>  
+> -static void tegra_drm_preclose(struct drm_device *drm, struct drm_file *file)
+> +static void tegra_drm_postclose(struct drm_device *drm, struct drm_file *file)
+>  {
+>  	struct tegra_drm_file *fpriv = file->driver_priv;
+>  	struct tegra_drm_context *context, *tmp;
+> @@ -868,7 +868,7 @@ static struct drm_driver tegra_drm_driver = {
+>  	.load = tegra_drm_load,
+>  	.unload = tegra_drm_unload,
+>  	.open = tegra_drm_open,
+> -	.preclose = tegra_drm_preclose,
+> +	.postclose = tegra_drm_postclose,
+>  	.lastclose = tegra_drm_lastclose,
+>  
+>  #if defined(CONFIG_DEBUG_FS)
+> -- 
+> 2.11.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
