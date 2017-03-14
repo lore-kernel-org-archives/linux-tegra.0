@@ -1,68 +1,41 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 2/2] mmc: tegra: Add Tegra186 support
-Date: Tue, 14 Mar 2017 17:21:59 +0100
-Message-ID: <CAPDyKFrcywQ_rG7y1pObMuegPKBw9kq_P-TRKPa_c9neRvBO6g@mail.gmail.com>
-References: <20170308190040.28386-1-thierry.reding@gmail.com> <20170308190040.28386-2-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20170308190040.28386-2-thierry.reding@gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 2/2] dt-bindings: mmc: tegra: Document Tegra186 compatible string
+Date: Tue, 14 Mar 2017 20:01:52 +0100
+Message-ID: <20170314190152.9167-2-thierry.reding@gmail.com>
+References: <20170314190152.9167-1-thierry.reding@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170314190152.9167-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 8 March 2017 at 20:00, Thierry Reding <thierry.reding@gmail.com> wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> The SDHCI controller found on NVIDIA Tegra186 SoCs is very similar to
-> the one on prior generations of Tegra and can be supported by the same
-> driver.
->
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks, applied for next!
+The SDHCI controller found on Tegra186 in very similar to the controller
+found on earlier generations of Tegra.
 
-However, the new compatible string must be documented. Please send a
-patch on top to fix that!
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Kind regards
-Uffe
+diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+index c15aa22d4570..9bce57862ed6 100644
+--- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
++++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+@@ -13,6 +13,7 @@ Required properties:
+   - "nvidia,tegra114-sdhci": for Tegra114
+   - "nvidia,tegra124-sdhci": for Tegra124 and Tegra132
+   - "nvidia,tegra210-sdhci": for Tegra210
++  - "nvidia,tegra186-sdhci": for Tegra186
+ - clocks : Must contain one entry, for the module clock.
+   See ../clocks/clock-bindings.txt for details.
+ - resets : Must contain an entry for each entry in reset-names.
+-- 
+2.12.0
 
-
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 9d31ee8988ef..7f93079c7a3a 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -434,7 +434,23 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
->         .pdata = &sdhci_tegra210_pdata,
->  };
->
-> +static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-> +       .quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
-> +                 SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-> +                 SDHCI_QUIRK_SINGLE_POWER_WRITE |
-> +                 SDHCI_QUIRK_NO_HISPD_BIT |
-> +                 SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
-> +                 SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> +       .quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-> +       .ops  = &tegra114_sdhci_ops,
-> +};
-> +
-> +static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
-> +       .pdata = &sdhci_tegra186_pdata,
-> +};
-> +
->  static const struct of_device_id sdhci_tegra_dt_match[] = {
-> +       { .compatible = "nvidia,tegra186-sdhci", .data = &soc_data_tegra186 },
->         { .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
->         { .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra124 },
->         { .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
-> --
-> 2.12.0
->
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
