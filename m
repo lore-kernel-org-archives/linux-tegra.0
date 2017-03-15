@@ -1,457 +1,103 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 3/3] soc/tegra: bpmp: Implement generic PM domains
-Date: Tue, 14 Mar 2017 20:46:52 +0000
-Message-ID: <709fd66d-b8ca-5cb7-ba58-a64ee3363c96@nvidia.com>
-References: <20170314191516.13083-1-thierry.reding@gmail.com>
- <20170314191516.13083-4-thierry.reding@gmail.com>
+From: "Nayak, Rajendra" <rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
+ require multiple domains
+Date: Wed, 15 Mar 2017 09:17:04 +0530
+Message-ID: <e91820bc-1f6c-54c2-842e-f226307a8a62@codeaurora.org>
+References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+ <52493231-71f4-1b62-b325-8532e63e4229@nvidia.com>
+ <CAMuHMdUAN+PHr_GSvyMzA8N6LgzPEXhQyG_rSwFUOvc9_v7JiA@mail.gmail.com>
+ <f4b3a93e-e29f-6fc6-6e7f-8c51081cbe15@nvidia.com>
+ <CAPDyKFp20tDickB9mF1ZSRUvYBEsfATysENeMzGV9O8KXH2wig@mail.gmail.com>
+ <3e88692d-613b-9c25-2554-7d399c45637a@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20170314191516.13083-4-thierry.reding@gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Stefan Kristiansson <stefank@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <3e88692d-613b-9c25-2554-7d399c45637a-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stanimir Varbanov <stanimir.varbanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hey Jon,
 
-On 14/03/17 19:15, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The BPMP firmware, found on Tegra186 and later, provides an ABI that can
-> be used to enable and disable power to several power partitions in Tegra
-> SoCs. The ABI allows for enumeration of the available power partitions,
-> so the driver can be reused on future generations, provided the BPMP ABI
-> remains stable.
-> 
-> Based on work by Stefan Kristiansson <stefank@nvidia.com> and Mikko
-> Perttunen <mperttunen@nvidia.com>.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/firmware/tegra/bpmp.c      |   4 +
->  drivers/soc/tegra/Kconfig          |   5 +
->  drivers/soc/tegra/Makefile         |   1 +
->  drivers/soc/tegra/powergate-bpmp.c | 358 +++++++++++++++++++++++++++++++++++++
->  include/soc/tegra/bpmp.h           |  12 ++
->  5 files changed, 380 insertions(+)
->  create mode 100644 drivers/soc/tegra/powergate-bpmp.c
-> 
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index 84e4c9a58a0c..f11c7025b4a1 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -810,6 +810,10 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
->  	if (err < 0)
->  		goto free_mrq;
->  
-> +	err = tegra_bpmp_init_powergates(bpmp);
-> +	if (err < 0)
-> +		goto free_mrq;
-> +
->  	platform_set_drvdata(pdev, bpmp);
->  
->  	return 0;
-> diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-> index 208d6edb3fdb..e052664439a1 100644
-> --- a/drivers/soc/tegra/Kconfig
-> +++ b/drivers/soc/tegra/Kconfig
-> @@ -106,3 +106,8 @@ config SOC_TEGRA_PMC
->  
->  config SOC_TEGRA_PMC_TEGRA186
->  	bool
-> +
-> +config SOC_TEGRA_POWERGATE_BPMP
-> +	def_bool y
-> +	depends on PM_GENERIC_DOMAINS
-> +	depends on TEGRA_BPMP
-> diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
-> index b4425e4319ff..17f2e25e7954 100644
-> --- a/drivers/soc/tegra/Makefile
-> +++ b/drivers/soc/tegra/Makefile
-> @@ -3,3 +3,4 @@ obj-y += fuse/
->  obj-y += common.o
->  obj-$(CONFIG_SOC_TEGRA_PMC) += pmc.o
->  obj-$(CONFIG_SOC_TEGRA_PMC_TEGRA186) += pmc-tegra186.o
-> +obj-$(CONFIG_SOC_TEGRA_POWERGATE_BPMP) += powergate-bpmp.o
-> diff --git a/drivers/soc/tegra/powergate-bpmp.c b/drivers/soc/tegra/powergate-bpmp.c
-> new file mode 100644
-> index 000000000000..d75144baa3ef
-> --- /dev/null
-> +++ b/drivers/soc/tegra/powergate-bpmp.c
-> @@ -0,0 +1,358 @@
-> +/*
-> + * Copyright (c) 2016-2017, NVIDIA CORPORATION. All rights reserved
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + */
-> +
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/slab.h>
-> +#include <linux/version.h>
-> +
-> +#include <soc/tegra/bpmp.h>
-> +#include <soc/tegra/bpmp-abi.h>
-> +
-> +struct tegra_powergate_info {
-> +	unsigned int id;
-> +	char *name;
-> +};
-> +
-> +struct tegra_powergate {
-> +	struct generic_pm_domain genpd;
-> +	struct tegra_bpmp *bpmp;
-> +	unsigned int id;
-> +};
-> +
-> +static inline struct tegra_powergate *
-> +to_tegra_powergate(struct generic_pm_domain *genpd)
-> +{
-> +	return container_of(genpd, struct tegra_powergate, genpd);
-> +}
-> +
-> +static int tegra_bpmp_powergate_set_state(struct tegra_bpmp *bpmp,
-> +					  unsigned int id, u32 state)
-> +{
-> +	struct mrq_pg_request request;
-> +	struct tegra_bpmp_message msg;
-> +
-> +	memset(&request, 0, sizeof(request));
-> +	request.cmd = CMD_PG_SET_STATE;
-> +	request.id = id;
-> +	request.set_state.state = state;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_PG;
-> +	msg.tx.data = &request;
-> +	msg.tx.size = sizeof(request);
-> +
-> +	return tegra_bpmp_transfer(bpmp, &msg);
-> +}
-> +
-> +static int tegra_bpmp_powergate_get_state(struct tegra_bpmp *bpmp,
-> +					  unsigned int id)
-> +{
-> +	struct mrq_pg_response response;
-> +	struct mrq_pg_request request;
-> +	struct tegra_bpmp_message msg;
-> +	int err;
-> +
-> +	memset(&request, 0, sizeof(request));
-> +	request.cmd = CMD_PG_GET_STATE;
-> +	request.id = id;
-> +
-> +	memset(&response, 0, sizeof(response));
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_PG;
-> +	msg.tx.data = &request;
-> +	msg.tx.size = sizeof(request);
-> +	msg.rx.data = &response;
-> +	msg.rx.size = sizeof(response);
-> +
-> +	err = tegra_bpmp_transfer(bpmp, &msg);
-> +	if (err < 0)
-> +		return PG_STATE_OFF;
-> +
-> +	return response.get_state.state;
-> +}
-> +
-> +static int tegra_bpmp_powergate_get_max_id(struct tegra_bpmp *bpmp)
-> +{
-> +	struct mrq_pg_response response;
-> +	struct mrq_pg_request request;
-> +	struct tegra_bpmp_message msg;
-> +	int err;
-> +
-> +	memset(&request, 0, sizeof(request));
-> +	request.cmd = CMD_PG_GET_MAX_ID;
-> +
-> +	memset(&response, 0, sizeof(response));
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_PG;
-> +	msg.tx.data = &request;
-> +	msg.tx.size = sizeof(request);
-> +	msg.rx.data = &response;
-> +	msg.rx.size = sizeof(response);
-> +
-> +	err = tegra_bpmp_transfer(bpmp, &msg);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	return response.get_max_id.max_id;
-> +}
-> +
-> +static char *tegra_bpmp_powergate_get_name(struct tegra_bpmp *bpmp,
-> +					   unsigned int id)
-> +{
-> +	struct mrq_pg_response response;
-> +	struct mrq_pg_request request;
-> +	struct tegra_bpmp_message msg;
-> +	int err;
-> +
-> +	memset(&request, 0, sizeof(request));
-> +	request.cmd = CMD_PG_GET_NAME;
-> +	request.id = id;
-> +
-> +	memset(&response, 0, sizeof(response));
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_PG;
-> +	msg.tx.data = &request;
-> +	msg.tx.size = sizeof(request);
-> +	msg.rx.data = &response;
-> +	msg.rx.size = sizeof(response);
-> +
-> +	err = tegra_bpmp_transfer(bpmp, &msg);
-> +	if (err < 0)
-> +		return NULL;
-> +
-> +	return kstrdup(response.get_name.name, GFP_KERNEL);
-> +}
-> +
-> +static inline bool tegra_bpmp_powergate_is_powered(struct tegra_bpmp *bpmp,
-> +						   unsigned int id)
-> +{
-> +	return tegra_bpmp_powergate_get_state(bpmp, id) == PG_STATE_ON;
-> +}
-> +
-> +static int tegra_powergate_power_on(struct generic_pm_domain *domain)
-> +{
-> +	struct tegra_powergate *powergate = to_tegra_powergate(domain);
-> +	struct tegra_bpmp *bpmp = powergate->bpmp;
-> +
-> +	return tegra_bpmp_powergate_set_state(bpmp, powergate->id,
-> +					      PG_STATE_ON);
-> +}
-> +
-> +static int tegra_powergate_power_off(struct generic_pm_domain *domain)
-> +{
-> +	struct tegra_powergate *powergate = to_tegra_powergate(domain);
-> +	struct tegra_bpmp *bpmp = powergate->bpmp;
-> +
-> +	return tegra_bpmp_powergate_set_state(bpmp, powergate->id,
-> +					      PG_STATE_OFF);
-> +}
-> +
-> +static struct tegra_powergate *
-> +tegra_powergate_add(struct tegra_bpmp *bpmp,
-> +		    const struct tegra_powergate_info *info)
-> +{
-> +	struct tegra_powergate *powergate;
-> +	bool off;
-> +
-> +	off = !tegra_bpmp_powergate_is_powered(bpmp, info->id);
-> +
-> +	powergate = devm_kzalloc(bpmp->dev, sizeof(*powergate), GFP_KERNEL);
-> +	if (!powergate)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	powergate->id = info->id;
-> +	powergate->bpmp = bpmp;
-> +
-> +	powergate->genpd.name = kstrdup(info->name, GFP_KERNEL);
-> +	powergate->genpd.power_on = tegra_powergate_power_on;
-> +	powergate->genpd.power_off = tegra_powergate_power_off;
-> +
-> +	pm_genpd_init(&powergate->genpd, NULL, off);
+>>> Looks like there is still some interest/needs in/for this. Any thoughts
+>>> on how we can move this forward?
+>>
+>> At the Linaro Connect last week, I was talking to Björn, Rajendra and
+>> Stephen more about these related issues.
+>>
+>> It definitely seems like we need to progress with this somehow,
+>> meaning we need a solution for being able to associate a device with
+>> more than one PM domain. In that context, I don't think genpd based on
+>> its current design, is a good fit to solve the problem.
+>>
+>> Instead I think we need something entirely new (perhaps some code can
+>> be borrowed from genpd), which is more similar to the clock/regulator
+>> framework. In other words, what you also were suggesting in a earlier
+>> reply.
+>> In this way, the driver/subsystem gains full flexibility of managing
+>> its device's PM domains, which seems like the best future-proof
+>> solution.
+>
+> I agree, I think that that would give us the most flexibility to handle
+> whatever scenario. However, I was thinking that we could still use the
+> genpd core to register pm-domains with and control. My thought was to
+> allow devices to have a bindings with multiple pm-domains ...
+>
+> 	dev-xyz {
+> 		...
+> 		power-domains = <&domain-a>, <&domain-b>;
+> 	};
+>
+> Then in the genpd core we do having something like ...
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index e697dec9d25b..d1ae6ddf4903 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2026,6 +2026,15 @@ int genpd_dev_pm_attach(struct device *dev)
+>                                                 "samsung,power-domain", 0);
+>                 if (!pd_args.np)
+>                         return -ENOENT;
+> +       } else if (ret > 1) {
+> +               /*
+> +                * If there are more than one PM domain defined for a device,
+> +                * then these need to be manually controlled by the device
+> +                * driver because the genpd core cannot bind a device with
+> +                * more than one PM domain.
+> +                */
+> +               dev_dbg(dev, "cannot add PM domains, %d detected!\n", ret);
+> +               return 0;
+>         }
+>
+> Then add some new public APIs for getting and controlling the pm-domains ...
+>
+> struct generic_pm_domain *pm_genpd_get(struct device *dev, char *name);
+> - Use 'dev->of_node' to look-up pm-domain if populated, else uses name.
+>
+> struct generic_pm_domain *of_pm_genpd_get(struct device *dev, int index);
+> void pm_genpd_put(struct generic_pm_domain *pd);
+> int pm_genpd_power_on(struct generic_pm_domain *pd);
+> int pm_genpd_power_off(struct generic_pm_domain *pd);
+> - Power on/off APIs would be synchronous types
 
-There was a recent change made so that pm_genpd_init() now returns
-success/failure so we should check it.
+These would also need some kind of usecounting I guess, since genpd
+otherwise relies on runtime PM to do the usecounting.
 
-> +
-> +	return powergate;
-> +}
-> +
-> +static void tegra_powergate_remove(struct tegra_powergate *powergate)
-> +{
-> +	struct generic_pm_domain *genpd = &powergate->genpd;
-> +	struct tegra_bpmp *bpmp = powergate->bpmp;
-> +	int err;
-> +
-> +	err = pm_genpd_remove(genpd);
-> +	if (err < 0)
-> +		dev_err(bpmp->dev, "failed to remove power domain %s: %d\n",
-> +			genpd->name, err);
-> +
-> +	kfree(genpd->name);
+This overall seems like a reasonable approach to solve the problem we
+have. While we discussed this approach at connect, we thought it would
+be a good idea to bring out some RFC on these lines to get the
+discussion going. Do you think you would be able to work on some quick 
+RFC around these lines, else if you think you would be busy in the near 
+term I can help with hacking up the changes as well.
 
-Should we still free the memory here on failure?
+regards,
+Rajendra
 
-> +}
-> +
-> +static int
-> +tegra_bpmp_probe_powergates(struct tegra_bpmp *bpmp,
-> +			    struct tegra_powergate_info **powergatesp)
-> +{
-> +	struct tegra_powergate_info *powergates;
-> +	unsigned int max_id, id, count = 0;
-> +	unsigned int num_holes = 0;
-> +	int err;
-> +
-> +	err = tegra_bpmp_powergate_get_max_id(bpmp);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	max_id = err;
-> +
-> +	dev_dbg(bpmp->dev, "maximum powergate ID: %u\n", max_id);
-> +
-> +	powergates = kcalloc(max_id + 1, sizeof(*powergates), GFP_KERNEL);
-> +	if (!powergates)
-> +		return -ENOMEM;
-> +
-> +	for (id = 0; id <= max_id; id++) {
-> +		struct tegra_powergate_info *info = &powergates[count];
-> +
-> +		info->name = tegra_bpmp_powergate_get_name(bpmp, id);
-> +		if (!info->name || info->name[0] == '\0') {
-> +			num_holes++;
-> +			continue;
-> +		}
-> +
-> +		info->id = id;
-> +		count++;
-> +	}
-> +
-> +	dev_dbg(bpmp->dev, "holes: %u\n", num_holes);
-> +
-> +	*powergatesp = powergates;
-> +
-> +	return count;
-> +}
-> +
-> +static int tegra_bpmp_add_powergates(struct tegra_bpmp *bpmp,
-> +				     struct tegra_powergate_info *powergates,
-> +				     unsigned int count)
-> +{
-> +	struct genpd_onecell_data *genpd = &bpmp->genpd;
-> +	struct generic_pm_domain **domains;
-> +	struct tegra_powergate *powergate;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	domains = kcalloc(count, sizeof(*domains), GFP_KERNEL);
-> +	if (!domains)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < count; i++) {
-> +		powergate = tegra_powergate_add(bpmp, &powergates[i]);
-> +		if (IS_ERR(powergate)) {
-> +			err = PTR_ERR(powergate);
-> +			goto remove;
-> +		}
-> +
-> +		dev_dbg(bpmp->dev, "added power domain %s\n",
-> +			powergate->genpd.name);
-> +		domains[i] = &powergate->genpd;
-> +	}
-> +
-> +	genpd->num_domains = count;
-> +	genpd->domains = domains;
-> +
-> +	return 0;
-> +
-> +remove:
-> +	while (i--) {
-> +		powergate = to_tegra_powergate(domains[i]);
-> +		tegra_powergate_remove(powergate);
-> +	}
-> +
-> +	kfree(genpd->domains);
-> +	return err;
-> +}
-> +
-> +static void tegra_bpmp_remove_powergates(struct tegra_bpmp *bpmp)
-> +{
-> +	struct genpd_onecell_data *genpd = &bpmp->genpd;
-> +	unsigned int i = genpd->num_domains;
-> +	struct tegra_powergate *powergate;
-> +
-> +	while (i--) {
-> +		dev_dbg(bpmp->dev, "removing power domain %s\n",
-> +			genpd->domains[i]->name);
-> +		powergate = to_tegra_powergate(genpd->domains[i]);
-> +		tegra_powergate_remove(powergate);
-> +	}
-> +}
-> +
-> +static struct generic_pm_domain *
-> +tegra_powergate_xlate(struct of_phandle_args *spec, void *data)
-> +{
-> +	struct generic_pm_domain *domain = ERR_PTR(-ENOENT);
-> +	struct genpd_onecell_data *genpd = data;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < genpd->num_domains; i++) {
-> +		struct tegra_powergate *powergate;
-> +
-> +		powergate = to_tegra_powergate(genpd->domains[i]);
-> +		if (powergate->id == spec->args[0]) {
-> +			domain = &powergate->genpd;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return domain;
-> +}
-> +
-> +int tegra_bpmp_init_powergates(struct tegra_bpmp *bpmp)
-> +{
-> +	struct device_node *np = bpmp->dev->of_node;
-> +	struct tegra_powergate_info *powergates;
-> +	struct device *dev = bpmp->dev;
-> +	unsigned int count, i;
-> +	int err;
-> +
-> +	err = tegra_bpmp_probe_powergates(bpmp, &powergates);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	count = err;
-> +
-> +	dev_dbg(dev, "%u power domains probed\n", count);
-> +
-> +	err = tegra_bpmp_add_powergates(bpmp, powergates, count);
-> +	if (err < 0)
-> +		goto free;
-> +
-> +	bpmp->genpd.xlate = tegra_powergate_xlate;
-> +
-> +	err = of_genpd_add_provider_onecell(np, &bpmp->genpd);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to add power domain provider: %d\n", err);
-> +		goto remove;
-> +	}
-> +
-> +free:
-> +	for (i = 0; i < count; i++)
-> +		kfree(powergates[i].name);
-> +
-> +	kfree(powergates);
-> +	return err;
-> +
-> +remove:
-> +	tegra_bpmp_remove_powergates(bpmp);
-> +	goto free;
-
-Nit ... why not move the call to tegra_bpmp_remove_powergates() to where
-we have the 'goto remove' and avoid this extra jump?
-
-Otherwise looks good.
-
-Cheers
-Jon
-
--- 
-nvpublic
+>
+> Are there any potential pitfalls of the above?
+>
+> Cheers
+> Jon
+>
