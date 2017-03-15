@@ -1,32 +1,35 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 3/3] soc/tegra: bpmp: Implement generic PM domains
-Date: Wed, 15 Mar 2017 12:49:47 +0200
-Message-ID: <06005f89-a3fd-ce7d-57f0-e77e866f7e8f@kapsi.fi>
-References: <20170314191516.13083-1-thierry.reding@gmail.com>
- <20170314191516.13083-4-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] i2c: tegra-bpmp: Enable Tegra BPMP I2C adapter
+Date: Wed, 15 Mar 2017 12:20:10 +0000
+Message-ID: <1489580410-9541-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170314191516.13083-4-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stefan Kristiansson <stefank-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14.03.2017 21:15, Thierry Reding wrote:
-> ...
-> +
-> +static inline bool tegra_bpmp_powergate_is_powered(struct tegra_bpmp *bpmp,
-> +						   unsigned int id)
-> +{
-> +	return tegra_bpmp_powergate_get_state(bpmp, id) == PG_STATE_ON;
-> +}
+Enable the Tegra BPMP I2C adapter by default if the Tegra BPMP itself
+is enabled. This adapter is used as the I2C interface for the PMIC on
+the Tegra186 Jetson-TX2 platform.
 
-This should also check for PG_STATE_RUNNING and consider that to be on. 
-There's this tristate thing for legacy reasons..
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/i2c/busses/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ...
-
-Cheers,
-Mikko.
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 8adc0f1d7ad0..9e024ae8a067 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -933,6 +933,7 @@ config I2C_TEGRA
+ config I2C_TEGRA_BPMP
+ 	tristate "NVIDIA Tegra BPMP I2C controller"
+ 	depends on TEGRA_BPMP
++	default y if TEGRA_BPMP
+ 	help
+ 	  If you say yes to this option, support will be included for the I2C
+ 	  controller embedded in NVIDIA Tegra SoCs accessed via the BPMP.
+-- 
+2.7.4
