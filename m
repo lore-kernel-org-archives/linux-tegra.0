@@ -1,63 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 3/3] soc/tegra: bpmp: Implement generic PM domains
-Date: Wed, 15 Mar 2017 16:00:36 +0100
-Message-ID: <20170315150036.GC29259@ulmo.ba.sec>
-References: <20170314191516.13083-1-thierry.reding@gmail.com>
- <20170314191516.13083-4-thierry.reding@gmail.com>
- <06005f89-a3fd-ce7d-57f0-e77e866f7e8f@kapsi.fi>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH] clk: tegra: Add sata seq input control
+Date: Wed, 15 Mar 2017 17:42:05 +0200
+Message-ID: <1489592525-6231-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="V88s5gaDVPzZ0KCq"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <06005f89-a3fd-ce7d-57f0-e77e866f7e8f@kapsi.fi>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, Stefan Kristiansson <stefank@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+This will be used by the powergating driver to ensure proper sequencer
+state when the SATA domain is powergated.
 
---V88s5gaDVPzZ0KCq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 25 +++++++++++++++++++++++++
+ include/linux/clk/tegra.h        |  1 +
+ 2 files changed, 26 insertions(+)
 
-On Wed, Mar 15, 2017 at 12:49:47PM +0200, Mikko Perttunen wrote:
-> On 14.03.2017 21:15, Thierry Reding wrote:
-> > ...
-> > +
-> > +static inline bool tegra_bpmp_powergate_is_powered(struct tegra_bpmp *=
-bpmp,
-> > +						   unsigned int id)
-> > +{
-> > +	return tegra_bpmp_powergate_get_state(bpmp, id) =3D=3D PG_STATE_ON;
-> > +}
->=20
-> This should also check for PG_STATE_RUNNING and consider that to be on.
-> There's this tristate thing for legacy reasons..
-
-Okay, I've made this check for !=3D PG_STATE_OFF to avoid multiple cases.
-
-Thierry
-
---V88s5gaDVPzZ0KCq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljJVxQACgkQ3SOs138+
-s6Hv/Q//Qt/BbrJbqKpbKQGgfuT5vhCTHHghQE+D9MAlUhwRfd3b7G58JsuarVF6
-uSqvLzJELHaBVs+0L13GZfJFPTuRXXUuBgiCqYKNYdHDMOc2mZ11+UH+HG248lM7
-aKjDOwbtmbbd2/zXP+a3Rmkayus/t8OmBYueaw9YdQAkfLd/sGNjjGkCYfeDA1a4
-ZEQ/dB2yoIe5cNPvQJDRxFBCmP5ODEFo14BVke410tDue1b9LTGtncmN8Q0b1JhC
-3pXed1hAqwCc8Lp8+q6+pmTzlmKDGNPfjtC+Dyp5Tbfvh56mggXgb+M6Ug0nbAuj
-O8XLuFtH+w1IzPjeuSp6aYY/K8KjJaF+UqJR/W1eKER9+iM4sBC6rSklCxcHWkY+
-kXv2qzihIB86vvykkcXrAbg6iB+ZzUtH81anI3ZTtVzGfFUW24kpmc3BZ/aArFHW
-u2J9u3gp6Y9s/oUa2v2gX2qCA+KIDLq0ejez3E0qZZHPLrSvhXgaf6JVcwp9cAXa
-XkbjDWBHf3KFUBbXI0+pZKUwlTGwB6JfqE3o0vgFw1woXaM8ZV0R5rtOa4NgnkDy
-6iqXhqpvRpeQuFXwclBl9wIS2MNYLItSNEce3CgsGNo0K+ksNdgMJxbVc0iORfZ3
-m7XWj3j58TvynoQGLuTfhz3rRSVeww+Wgl8dy6tnK8U2U3MUrtU=
-=1PDe
------END PGP SIGNATURE-----
-
---V88s5gaDVPzZ0KCq--
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index a41733d..34b5520 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -181,6 +181,11 @@
+ #define SATA_PLL_CFG0				0x490
+ #define SATA_PLL_CFG0_PADPLL_RESET_SWCTL	BIT(0)
+ #define SATA_PLL_CFG0_PADPLL_USE_LOCKDET	BIT(2)
++#define SATA_PLL_CFG0_SATA_SEQ_IN_SWCTL		BIT(4)
++#define SATA_PLL_CFG0_SATA_SEQ_RESET_INPUT_VALUE	BIT(5)
++#define SATA_PLL_CFG0_SATA_SEQ_LANE_PD_INPUT_VALUE	BIT(6)
++#define SATA_PLL_CFG0_SATA_SEQ_PADPLL_PD_INPUT_VALUE	BIT(7)
++
+ #define SATA_PLL_CFG0_PADPLL_SLEEP_IDDQ		BIT(13)
+ #define SATA_PLL_CFG0_SEQ_ENABLE		BIT(24)
+ 
+@@ -483,6 +488,26 @@ void tegra210_sata_pll_hw_sequence_start(void)
+ }
+ EXPORT_SYMBOL_GPL(tegra210_sata_pll_hw_sequence_start);
+ 
++void tegra210_set_sata_pll_seq_sw(bool state)
++{
++	u32 val;
++
++	val = readl_relaxed(clk_base + SATA_PLL_CFG0);
++	if (state) {
++		val |= SATA_PLL_CFG0_SATA_SEQ_IN_SWCTL;
++		val |= SATA_PLL_CFG0_SATA_SEQ_RESET_INPUT_VALUE;
++		val |= SATA_PLL_CFG0_SATA_SEQ_LANE_PD_INPUT_VALUE;
++		val |= SATA_PLL_CFG0_SATA_SEQ_PADPLL_PD_INPUT_VALUE;
++	} else {
++		val &= ~SATA_PLL_CFG0_SATA_SEQ_IN_SWCTL;
++		val &= ~SATA_PLL_CFG0_SATA_SEQ_RESET_INPUT_VALUE;
++		val &= ~SATA_PLL_CFG0_SATA_SEQ_LANE_PD_INPUT_VALUE;
++		val &= ~SATA_PLL_CFG0_SATA_SEQ_PADPLL_PD_INPUT_VALUE;
++	}
++	writel_relaxed(val, clk_base + SATA_PLL_CFG0);
++}
++EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
++
+ static inline void _pll_misc_chk_default(void __iomem *base,
+ 					struct tegra_clk_pll_params *params,
+ 					u8 misc_num, u32 default_val, u32 mask)
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index e17d328..d23c9cf 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -125,6 +125,7 @@ static inline void tegra_cpu_clock_resume(void)
+ extern void tegra210_xusb_pll_hw_sequence_start(void);
+ extern void tegra210_sata_pll_hw_control_enable(void);
+ extern void tegra210_sata_pll_hw_sequence_start(void);
++extern void tegra210_set_sata_pll_seq_sw(bool state);
+ extern void tegra210_put_utmipll_in_iddq(void);
+ extern void tegra210_put_utmipll_out_iddq(void);
+ 
+-- 
+1.9.1
