@@ -1,21 +1,27 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH] clk: tegra: add Tegra210 special resets
-Date: Wed, 15 Mar 2017 14:41:01 +0200
-Message-ID: <1489581661-15299-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v2] clk: tegra: add Tegra210 special resets
+Date: Wed, 15 Mar 2017 14:59:32 +0200
+Message-ID: <1489582774-22217-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 Tegra210 has 2 special resets which don't follow the normal pattern:
 DVCO and ADSP. Add them in this patch.
 
+Changelog:
+
+v2: add DT bindings file
+
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 85 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c         | 85 ++++++++++++++++++++++++++++++++
+ include/dt-bindings/reset/tegra210-car.h | 13 +++++
+ 2 files changed, 98 insertions(+)
+ create mode 100644 include/dt-bindings/reset/tegra210-car.h
 
 diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
 index 2a84897..a41733d 100644
@@ -134,5 +140,24 @@ index 2a84897..a41733d 100644
  	tegra_add_of_provider(np);
  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
  
+diff --git a/include/dt-bindings/reset/tegra210-car.h b/include/dt-bindings/reset/tegra210-car.h
+new file mode 100644
+index 0000000..296ec6e
+--- /dev/null
++++ b/include/dt-bindings/reset/tegra210-car.h
+@@ -0,0 +1,13 @@
++/*
++ * This header provides Tegra210-specific constants for binding
++ * nvidia,tegra210-car.
++ */
++
++#ifndef _DT_BINDINGS_RESET_TEGRA210_CAR_H
++#define _DT_BINDINGS_RESET_TEGRA210_CAR_H
++
++#define TEGRA210_RESET(x)		(7 * 32 + (x))
++#define TEGRA210_RST_DFLL_DVCO		TEGRA210_RESET(0)
++#define TEGRA210_RST_ADSP		TEGRA210_RESET(1)
++
++#endif	/* _DT_BINDINGS_RESET_TEGRA210_CAR_H */
 -- 
 1.9.1
