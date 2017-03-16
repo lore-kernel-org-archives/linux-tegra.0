@@ -1,46 +1,65 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 2/2] dt-bindings: mmc: tegra: Document Tegra186 compatible string
-Date: Thu, 16 Mar 2017 15:46:37 +0100
-Message-ID: <CAPDyKFpfa0k35r0kS6C+Px_Tu4McUQKTJv7UMuRAvCzoaXnaKA@mail.gmail.com>
-References: <20170314190152.9167-1-thierry.reding@gmail.com> <20170314190152.9167-2-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/2] mmc: sdhci: Add support for setting parent clock
+Date: Thu, 16 Mar 2017 18:00:00 +0000
+Message-ID: <6072f40f-78e1-9c7a-6c9a-8db99f771af1@nvidia.com>
+References: <1489660364-17698-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20170314190152.9167-2-thierry.reding@gmail.com>
+In-Reply-To: <1489660364-17698-1-git-send-email-jonathanh@nvidia.com>
 Sender: linux-mmc-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Ritesh Harjani <riteshh@codeaurora.org>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 14 March 2017 at 20:01, Thierry Reding <thierry.reding@gmail.com> wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> The SDHCI controller found on Tegra186 in very similar to the controller
-> found on earlier generations of Tegra.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Thanks, applied for next!
-
-Kind regards
-Uffe
-
+On 16/03/17 10:32, Jon Hunter wrote:
+> It is common for SD/MMC host controllers to set the parent clock that
+> drives the SD/MMC interface in order to support various operating
+> speeds. Typically, this is performed by calling common clock framework
+> APIs such as clk_set_rate(). The problem is that these APIs may sleep
+> and must not be called from within atomic sections and therefore, these
+> functions cannot be called within the existing 'set_clock' SDHCI
+> operator because they are called from within the context of a spinlock.
+> Add a new 'set_parent_clock' operator for the SDHCI driver that is
+> called early during the SDHCI 'set_ios' before the spinlock is aquire to
+> give the platform driver the opportunity to set the parent clock rate.
+> 
+> Please note that, unfortunately, the Tegra and MSM SDHCI drivers
+> currently appear to mis-use the 'set_clock' operator by calling
+> clk_set_rate(). In the case of Tegra, occasionally but not always,
+> 'scheduling while atomic' errors are reported (so most of the time we
+> are getting lucky). In the of the MSM SDHCI driver, it is releasing and
+> re-acquiring the spinlock which is bad.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> index c15aa22d4570..9bce57862ed6 100644
-> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> @@ -13,6 +13,7 @@ Required properties:
->    - "nvidia,tegra114-sdhci": for Tegra114
->    - "nvidia,tegra124-sdhci": for Tegra124 and Tegra132
->    - "nvidia,tegra210-sdhci": for Tegra210
-> +  - "nvidia,tegra186-sdhci": for Tegra186
->  - clocks : Must contain one entry, for the module clock.
->    See ../clocks/clock-bindings.txt for details.
->  - resets : Must contain an entry for each entry in reset-names.
-> --
-> 2.12.0
->
+> 
+> I have not attempted to fix the MSM driver in this seris, but I am
+> copying hopefully, the right people to fix it.
+> 
+>  drivers/mmc/host/sdhci.c | 3 +++
+>  drivers/mmc/host/sdhci.h | 2 ++
+>  2 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 6fdd7a70f229..b7f1521edbec 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1579,6 +1579,9 @@ static void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	if (ios->power_mode == MMC_POWER_UNDEFINED)
+>  		return;
+>  
+> +	if (host->ops->set_parent_clock)
+> +		host->ops->set_parent_clock(host, ios->power_mode);
+
+Ugh ... not sure what happened here but this should be 'ios->clock'! And
+I did test this!
+
+Sorry will resend.
+
+Jon
+
+-- 
+nvpublic
