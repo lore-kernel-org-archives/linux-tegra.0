@@ -1,77 +1,92 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] soc/tegra: fix link errors with PMC disabled
-Date: Mon, 20 Mar 2017 13:40:56 +0100
-Message-ID: <20170320124056.GA22463@ulmo.ba.sec>
-References: <20170320091405.1041129-1-arnd@arndb.de>
+Subject: Re: [PATCH] ARM: tegra: Select SOC_TEGRA_PMC to fix linking error
+Date: Mon, 20 Mar 2017 13:44:22 +0100
+Message-ID: <20170320124422.GB22463@ulmo.ba.sec>
+References: <20170311202614.6052-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170320091405.1041129-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============7981699059981307315=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170311202614.6052-1-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---AhhlLboLdkugWU4S
+--===============7981699059981307315==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
+Content-Disposition: inline
+
+
+--2B/JsCI69OhZNC5r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 20, 2017 at 10:13:06AM +0100, Arnd Bergmann wrote:
-> With the new Tegra186 PMC driver merged, anything that relies on the prev=
-ious
-> PMC driver fails to link when that is disabled:
+On Sat, Mar 11, 2017 at 10:26:14PM +0200, Krzysztof Kozlowski wrote:
+> It is possible to create a ARMv7 config with ARCH_TEGRA but without any
+> SoC specific flavors.  Such configs fails because mach-tegra/pm.c is
+> compiled always and it references SOC_TEGRA_PMC driver:
 >=20
-> arch/arm/mach-tegra/pm.o: In function `tegra_pm_set':
-> pm.c:(.text.tegra_pm_set+0x3c): undefined reference to `tegra_pmc_enter_s=
-uspend_mode'
-> arch/arm/mach-tegra/pm.o: In function `tegra_suspend_enter':
-> pm.c:(.text.tegra_suspend_enter+0x4): undefined reference to `tegra_pmc_g=
-et_suspend_mode'
-> arch/arm/mach-tegra/pm.o: In function `tegra_init_suspend':
-> pm.c:(.init.text+0x1c): undefined reference to `tegra_pmc_get_suspend_mod=
-e'
-> pm.c:(.init.text+0x74): undefined reference to `tegra_pmc_set_suspend_mod=
-e'
+> 	arch/arm/mach-tegra/built-in.o: In function `tegra_pm_set':
+> 	arch/arm/mach-tegra/pm.c:188: undefined reference to `tegra_pmc_enter_su=
+spend_mode'
 >=20
-> ERROR: tegra_powergate_sequence_power_up [drivers/ata/ahci_tegra.ko] unde=
-fined!
-> ERROR: tegra_powergate_power_off [drivers/ata/ahci_tegra.ko] undefined!
->=20
-> Making the definition depend on the presence of the driver makes it build
-> again, though that might not be the correct fix.
->=20
-> Fixes: 854014236290 ("soc/tegra: Implement Tegra186 PMC support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  include/soc/tegra/pmc.h | 29 +++++++++++++++++++++--------
->  1 file changed, 21 insertions(+), 8 deletions(-)
+>  arch/arm/mach-tegra/Kconfig | 1 +
+>  drivers/soc/tegra/Kconfig   | 4 ----
+>  2 files changed, 1 insertion(+), 4 deletions(-)
 
-Applied, thanks.
+I was going to apply this, when Arnd sent in a variant that fixes this
+in a way that is more in line with how we handle this for other drivers.
 
+I've credited you with a Reported-by, though.
+
+Thanks,
 Thierry
 
---AhhlLboLdkugWU4S
+--2B/JsCI69OhZNC5r
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljPzdUACgkQ3SOs138+
-s6EaqA//RJrs1Eetl7TJD4ByrVMkeAEjv910u6pti4P6v25SJrpRwvnd5sxQXs+U
-RNxcqehBPDlJcipe22nTQp6iCSs7nH6BXT4Wl2cr3KgNaPdnOp72eRqjayE2HAam
-eTUDo6dqyHwfWB2K7k9z2xqwateDdxp/fOmsH9BzCcLnkqLWpAp9frN3xs4Bwipv
-RIXppW1/fq5fybXkAN5hcQlgMN5Z0xlyq5qwOSfuA5xwEA3YDV0MJAoDMDwqDGjo
-zYmUHX4HJpXeDaKlrrtNdlP7wSVLUhsqHvL3WJvG2EjQIEWlZUzRzvXzKyQInQYB
-dE/VyGQGH3eGzZm5jDX6CtN+d2tjarlNmeOsvixMVmgZ0Cstt3ZELw09bjxb5UJv
-yh1op14e+HzuOYNkOOpO0GkymXkLEzvDrhDZpp6pJlhPrySDUejNtFEtreNX7KwI
-XLEPYzQZyrFPG0yJpB0O7CTXqVdzLJeqGTZjOPW9tX2EgM3bKzUoKUCcKFAfHt3J
-o0h/UAiOfVtREtsi4Y0QzPa7bF2yq3mH5m4yC1Boe8bHqGUqOfCITfUVhz5jfEt7
-bcj4iox71kFxDxhWuQywDxWvIZb+zuloJ0+kpWc85qsL1mYpF2e8fy1n5FH+FA4R
-3OV5tJBYExF7r1XOJGj50lMkldQXd7n1s0Y8KyPrA1MumJAhfpg=
-=1bGc
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljPzqYACgkQ3SOs138+
+s6HOhBAApvOHSUUr0YmXQUyDtT3l3e/ddFfriWhA0LJwDhz/D7SwoRPV/Jh7w1i2
+95+J4W3IJQqZEjBReZCuY0gjzBNwzuuO99jZPwd6ijXKP7BDKMBdL7u8vVAb1cbV
+7yoZnZR8BGaB02cfR3+OsPfvBd/PKF0cVZFCOS5AA3uVPv7lVgmZs982lBGOpXXh
+xlZAdHKsFCEPGKHwE8/pv/HgfcP4j3i35CmnJJsMGhXYRXUtZDJsJ4CHvsuMBWXB
+wmq+YE8ORJtVP0I9BwS1RoDT4vFRHnXvYQ9I2/A4xMWCaesQJjRCQ+OLXfk8kK0j
+rbwi9Su0Qxs0LrxTz9FcdJjHY4JnSGq/yN4kYhCArfGrxW3xXT1RX7ujvY0zP2pI
+9krNFeHlQGxGcYi3qXjhECwGiEupwg5Mk6YnvY9tnvFjwClTgxRzSyUrWXX4Hc/3
+C93IFJs0obpAkTHYzQPlbJdSx42T4WEip2SxK9WFkC168rfuao3iusYYKYJEmRX+
+nqw30ClVylUyykfYojS1YC8jeVV5BWUj7Qx72gsf88rmpsOhMtGWdDY3ui4uHuwu
+8xkxQjoKPdWVj+YyYefMM7BBtesTthZmoiUcfXubUTI/6GZxi5TzNjm/wdWVeJ7s
+Ao2lxc1ROJVvtseHjIj4pabrf2lZrTG/dPlfIyx/pc2md9U0O60=
+=/qnz
 -----END PGP SIGNATURE-----
 
---AhhlLboLdkugWU4S--
+--2B/JsCI69OhZNC5r--
+
+
+--===============7981699059981307315==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============7981699059981307315==--
