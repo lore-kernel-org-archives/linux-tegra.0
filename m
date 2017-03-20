@@ -1,92 +1,71 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: Select SOC_TEGRA_PMC to fix linking error
-Date: Mon, 20 Mar 2017 13:44:22 +0100
-Message-ID: <20170320124422.GB22463@ulmo.ba.sec>
-References: <20170311202614.6052-1-krzk@kernel.org>
+Subject: Re: [PATCH v2 0/7] Tegra210 clock bug fixes
+Date: Mon, 20 Mar 2017 13:59:18 +0100
+Message-ID: <20170320125918.GC22463@ulmo.ba.sec>
+References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7981699059981307315=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170311202614.6052-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="OBd5C1Lgu00Gd/Tn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============7981699059981307315==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
-Content-Disposition: inline
-
-
---2B/JsCI69OhZNC5r
+--OBd5C1Lgu00Gd/Tn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 11, 2017 at 10:26:14PM +0200, Krzysztof Kozlowski wrote:
-> It is possible to create a ARMv7 config with ARCH_TEGRA but without any
-> SoC specific flavors.  Such configs fails because mach-tegra/pm.c is
-> compiled always and it references SOC_TEGRA_PMC driver:
+On Thu, Feb 23, 2017 at 12:44:37PM +0200, Peter De Schrijver wrote:
+> A number of bug fixes for the Tegra210 clock implementation.
 >=20
-> 	arch/arm/mach-tegra/built-in.o: In function `tegra_pm_set':
-> 	arch/arm/mach-tegra/pm.c:188: undefined reference to `tegra_pmc_enter_su=
-spend_mode'
+> Changelog:
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/mach-tegra/Kconfig | 1 +
->  drivers/soc/tegra/Kconfig   | 4 ----
->  2 files changed, 1 insertion(+), 4 deletions(-)
+> v2: add better description for 'remove non-existing pll_m_out1 clock'
+>=20
+> Peter De Schrijver (7):
+>   clk: tegra: fix pll_a1 iddq register, add pll_a1
+>   clk: tegra: fix isp clock modelling
+>   clk: tegra: correct afi parent
+>   clk: tegra: remove non-existing pll_m_out1 clock
+>   clk: tegra: don't warn for PLL defaults unnecessarily
+>   clk: tegra: correct tegra210_pll_fixed_mdiv_cfg rate calculation
+>   clk: tegra: fix type for m field
+>=20
+>  drivers/clk/tegra/clk-id.h               |  1 +
+>  drivers/clk/tegra/clk-tegra-periph.c     | 13 +++++++++---
+>  drivers/clk/tegra/clk-tegra210.c         | 35 ++++++++++++++++++++------=
+------
+>  drivers/clk/tegra/clk.h                  |  2 +-
+>  include/dt-bindings/clock/tegra210-car.h |  4 ++--
+>  5 files changed, 36 insertions(+), 19 deletions(-)
 
-I was going to apply this, when Arnd sent in a variant that fixes this
-in a way that is more in line with how we handle this for other drivers.
+Applied to for-4.12/clk, thanks.
 
-I've credited you with a Reported-by, though.
-
-Thanks,
 Thierry
 
---2B/JsCI69OhZNC5r
+--OBd5C1Lgu00Gd/Tn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljPzqYACgkQ3SOs138+
-s6HOhBAApvOHSUUr0YmXQUyDtT3l3e/ddFfriWhA0LJwDhz/D7SwoRPV/Jh7w1i2
-95+J4W3IJQqZEjBReZCuY0gjzBNwzuuO99jZPwd6ijXKP7BDKMBdL7u8vVAb1cbV
-7yoZnZR8BGaB02cfR3+OsPfvBd/PKF0cVZFCOS5AA3uVPv7lVgmZs982lBGOpXXh
-xlZAdHKsFCEPGKHwE8/pv/HgfcP4j3i35CmnJJsMGhXYRXUtZDJsJ4CHvsuMBWXB
-wmq+YE8ORJtVP0I9BwS1RoDT4vFRHnXvYQ9I2/A4xMWCaesQJjRCQ+OLXfk8kK0j
-rbwi9Su0Qxs0LrxTz9FcdJjHY4JnSGq/yN4kYhCArfGrxW3xXT1RX7ujvY0zP2pI
-9krNFeHlQGxGcYi3qXjhECwGiEupwg5Mk6YnvY9tnvFjwClTgxRzSyUrWXX4Hc/3
-C93IFJs0obpAkTHYzQPlbJdSx42T4WEip2SxK9WFkC168rfuao3iusYYKYJEmRX+
-nqw30ClVylUyykfYojS1YC8jeVV5BWUj7Qx72gsf88rmpsOhMtGWdDY3ui4uHuwu
-8xkxQjoKPdWVj+YyYefMM7BBtesTthZmoiUcfXubUTI/6GZxi5TzNjm/wdWVeJ7s
-Ao2lxc1ROJVvtseHjIj4pabrf2lZrTG/dPlfIyx/pc2md9U0O60=
-=/qnz
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP0iQACgkQ3SOs138+
+s6FUpw/+NH+zuao/5qctvhWnaUZNZUbfmAzwjL8WXsk/u+IMg5/xepOrnmFHbe5L
+68CxBowSPC79r8FB2Bc34mo1iU/F+/vz2mfofOuoN7g05aC4Q9Ki4lRupSie+hpu
+Y5i2GV1TEdcMYW2UdMWXKh8R7ptJtryYJW9ZKiuSHV/lOrnKOMRTTQzzPEHX2DBA
+CtqQY9Px2Bc+JZbRNB1jOQbqVWwxgmUfJsZmXVyN3JmsfJO1MOcAfccVAPqjwL9W
+6Ls7pC2GDDwqv39Qd1gIWSL7HCfAf2RSlFYdUBVjk7vJN25csIeqJZPq0SIDd/B/
+jIYL+8zJwumivA1Vs9deGu37WUgGN1MOAe7XDGRmJJG7IOiXxg6idj01S8Uqrp5Q
+okorjohXlAyp1DYzNiPO3J5PeootofoOTqb6hLKOzj1i8gETkIb8MSSqG7Y2oQCw
+xZB/iKG8lzUGiVUnRlzqH6z36tIu4Bbce5L/lAfOKzAlHeb8zLh1x9xIQNjm/sdh
+yf+s0/myROuEwXwzZLoF4tOTX2g5PFWT1xiEqwcttNn5XSQJBMEH5fjIwiaLZtdk
+Dx0BsvQC9Vw1g0UiJWP2HpL6DIEBSf/7wB//gwdDIobT+zpiQHembpyac/TZ5iSC
+oKmE2AXA6/lpHqvo2uINCjVshuWQKkkmv/z3lkCJg0Ncx3PgNyY=
+=LrXj
 -----END PGP SIGNATURE-----
 
---2B/JsCI69OhZNC5r--
-
-
---===============7981699059981307315==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============7981699059981307315==--
+--OBd5C1Lgu00Gd/Tn--
