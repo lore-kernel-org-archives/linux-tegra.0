@@ -1,82 +1,48 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Tegra baseline test results for v4.11-rc3
-Date: Mon, 20 Mar 2017 09:35:40 +0000
-Message-ID: <e5529230-d606-0113-fb7d-7348dda6c002@nvidia.com>
+Subject: Re: [PATCH] soc/tegra: fix link errors with PMC disabled
+Date: Mon, 20 Mar 2017 09:47:39 +0000
+Message-ID: <e17797ae-35db-8254-ed38-c90b9d29ff0d@nvidia.com>
+References: <20170320091405.1041129-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170320091405.1041129-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.11-rc3.
-Logs and other details at:
+Hi Arnd,
 
-    https://nvtb.github.io//linux/test_v4.11-rc3/20170319193104/
+On 20/03/17 09:13, Arnd Bergmann wrote:
+> With the new Tegra186 PMC driver merged, anything that relies on the previous
+> PMC driver fails to link when that is disabled:
+> 
+> arch/arm/mach-tegra/pm.o: In function `tegra_pm_set':
+> pm.c:(.text.tegra_pm_set+0x3c): undefined reference to `tegra_pmc_enter_suspend_mode'
+> arch/arm/mach-tegra/pm.o: In function `tegra_suspend_enter':
+> pm.c:(.text.tegra_suspend_enter+0x4): undefined reference to `tegra_pmc_get_suspend_mode'
+> arch/arm/mach-tegra/pm.o: In function `tegra_init_suspend':
+> pm.c:(.init.text+0x1c): undefined reference to `tegra_pmc_get_suspend_mode'
+> pm.c:(.init.text+0x74): undefined reference to `tegra_pmc_set_suspend_mode'
+> 
+> ERROR: tegra_powergate_sequence_power_up [drivers/ata/ahci_tegra.ko] undefined!
+> ERROR: tegra_powergate_power_off [drivers/ata/ahci_tegra.ko] undefined!
+> 
+> Making the definition depend on the presence of the driver makes it build
+> again, though that might not be the correct fix.
+> 
+> Fixes: 854014236290 ("soc/tegra: Implement Tegra186 PMC support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+A fix was also submitted by Krzysztof [0].
 
-Test summary
-------------
+Thierry, what's your preference? Maybe Arnd's approach is better.
 
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+Jon
 
-Build: Image:
-    Pass: ( 1/ 1): defconfig
+[0] http://marc.info/?l=linux-arm-kernel&m=148926404419311&w=2
 
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.11-rc2 (4495c08e84729385774601b5146d51d9e5849f81)):
-   text     data      bss    total  kernel
-  +3507     +336        0    +3843  defconfig
-  +1447      +64        0    +1511  multi_v7_defconfig
-  +5531      -72        0    +5459  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.11-rc2 (4495c08e84729385774601b5146d51d9e5849f81))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-      -4k       4k        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-      -4k       4k        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+-- 
+nvpublic
