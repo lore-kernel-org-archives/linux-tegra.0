@@ -1,63 +1,79 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra: fix disable unused for clocks sharing enable
- bit
-Date: Mon, 20 Mar 2017 14:27:46 +0100
-Message-ID: <20170320132746.GK22463@ulmo.ba.sec>
-References: <1489587055-23722-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: rework pll_u
+Date: Mon, 20 Mar 2017 14:20:21 +0100
+Message-ID: <20170320132021.GH22463@ulmo.ba.sec>
+References: <1489500769-28694-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="W2ydbIOJmkm74tJ2"
+        protocol="application/pgp-signature"; boundary="CNfT9TXqV7nd4cfk"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1489587055-23722-1-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1489500769-28694-1-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---W2ydbIOJmkm74tJ2
+--CNfT9TXqV7nd4cfk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 15, 2017 at 04:10:54PM +0200, Peter De Schrijver wrote:
-> In case 2 clocks share an enable bit and one of them is enabled by a driv=
-er
-> and the other one is not, CCF will think it's enabled because it will only
-> look at the hw state. Therefor it will disable the clock and thus also
-> disable the other clock which was enabled. Solve this by reading the
-> initial state of the enable bit and incrementing the refcount if it's set.
+On Tue, Mar 14, 2017 at 04:12:49PM +0200, Peter De Schrijver wrote:
+> In normal operation pll_u is under hardware control and has a fixed rate =
+of
+> 480MHz. Hardware will turn on pll_u on whenever any of the XUSB
+> powerdomains is on. From a software point of view we model this is if pll=
+_u
+> is always on using a fixed rate clock. However the bootloader might or
+> might not have configured pll_u this way. So we will check the current
+> state of pll_u at boot and reconfigure it if required.
+>=20
+> There are 3 possiblities at kernel boot:
+> 1) pll_u is under hardware control: do nothing
+> 2) pll_u is under hardware control and enabled: enable hardware control
+> 3) pll_u is disabled: enable pll_u and enable hardware control
+>=20
+> In all cases we also check if UTMIPLL is under hardware control at boot
+> and configure it for hardware control if that is not the case.
+> The same is done during SC7 resume.
+>=20
+> Thanks to Joseph Lo <josephl@nvidia.com> for bug fixes.
 >=20
 > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-periph-gate.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/clk/tegra/clk-pll.c      | 174 -----------------------
+>  drivers/clk/tegra/clk-tegra210.c | 295 +++++++++++++++++++++++++++++++++=
++++---
+>  2 files changed, 272 insertions(+), 197 deletions(-)
 
-I think you had already sent a version of this patch a couple of weeks
-ago. I've applied the first version since I couldn't spot any delta
-between them.
+Applied, thanks.
+
+Do you think this actually fixes a bug? We've had a long standing issue
+with booting Debian on a Jetson TX1 which is due to some USB related PLL
+failing to lock. This sounds like it could fix that particular issue.
 
 Thierry
 
---W2ydbIOJmkm74tJ2
+--CNfT9TXqV7nd4cfk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP2NIACgkQ3SOs138+
-s6FcLg//SdFeBY0XbrqBGl9TvapcK+Vzx5wScC6O8JvE0wNG/Xdpssg88DTwh4zV
-Xr+aMPna7hSmsDlpz/ydULUKblG5dJR8b2TZ+W+cug1qvekiEW/OxG9kK6iaiHXe
-bVv1WWm5PBldaJKLFk6ZDDO4WJw2tzbQhYYSjLRJlATtVEGOr08uiDWeIJXkaiiR
-iojRuDghj0EPw39OTqtCHXnhV8Eq/GdmzxEjD+xsUvFnVCSYFLdNBMEt1SYOlKWd
-T4cLRA34grvwbX62rJRUT3uqIzfRyt4fBTk/LFBQBaCF62UgyMTXmfPNdSh/RinI
-mKLxeFxtFb8ZLijyh7zPA+y4sizefhb5lKw9maJ/QeBR5LQvSitLOQ14sWJnUX8R
-guH7LvFTq0hnGJGOkKAWMLBlYeKKGFD2yFv6Jo/gVUYBAsfqVJf5Qw0Lo/cV97qd
-jVXSccduF3li90EzPKn92ZDPh2W8XK6kIWhLh/6LFHM/chgXo4rD58hPxdkFPCy/
-TomwajNT4q2rhJ3ovTmPl8ijMYQg7CS9jqZJIE0TC6yWDy34oCvaWWVx/QrJbfuD
-gTQPLtE0S6JEf1xa/3jfZ6265wO/h+Pr3sjw3+orHEFj51GecoFdXevimiY6cvWx
-cwt4u2htxKCAESxm+JiEsgXmSzG3cqwGmxq1MyZC7xizUdrlu2I=
-=UuH8
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP1xUACgkQ3SOs138+
+s6HZZxAAnD/+1Srk7zp8ptj3CqI3CZcjH8ESaUhjCsPQB/8tL14sQID42gqq7GJr
+fTZ/CVjKvvVNH4IcNN2IMPm9xBswtH7Cxn6zWE36bEgqRpue78LSGxNtw+JOnsRT
+mhTEezWu+0DDni4+kafiMp+4ugh6upcSZnXussSrMwp7NzBRrBy79Za/upBXVFS7
+qfO20MMuc8OiDIKhCTpyuFjp8tVq4cf2wre1+HGWE2KBiWQkigrHy5fwEdEGdILP
+Ysge7yIoX0tO/5TLxMeOxZHeVfoWXWKlhvm6Kkm1Kf6//xhAhYhInV7EwQkfvJ9s
+4eRAycoxgNWjkYqexoUrJQgAxOj0q310e4noAG/jM5hI7E3HgGgOdLF0FFsUwFwm
+MgYBCCgirUu2U8uDRSpkAx6TMgClFtp6t+Lu88fqqMbPKC6NSeAGp7XvpTmuJtGg
+QIQjj0iBISue/TvuXDCs2TZktTn5qSXuaO9IrxKpLUUT75tlRdGjJSKSwC49Jlxd
+kHcZgvbKSG1Ry6y+zW2VzZdxrpv+0TqNe9Wu7pIKV1YNdsvNDY9VG4SCNa+cJahU
+3np2CKD/Gyw9gziVlY6x8E1TsVFLh78fvXV08TCqjiomgl3kEhVdSaFV7AuexKtR
+kyyJvgD0eFHe96JwlKKc1Qc+R70jqNpSICMSCkf6ZYC4+9BP+s4=
+=faJ3
 -----END PGP SIGNATURE-----
 
---W2ydbIOJmkm74tJ2--
+--CNfT9TXqV7nd4cfk--
