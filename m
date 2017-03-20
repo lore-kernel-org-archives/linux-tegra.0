@@ -1,69 +1,99 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 2/2] mmc: tegra: Fix setting of Tegra SDHCI module
- clock
-Date: Mon, 20 Mar 2017 17:52:50 +0100
-Message-ID: <20170320165250.GB14787@ulmo.ba.sec>
-References: <1489742732-7722-1-git-send-email-jonathanh@nvidia.com>
- <1489742732-7722-2-git-send-email-jonathanh@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/5] soc/tegra: Move Tegra flowctrl driver
+Date: Mon, 20 Mar 2017 18:00:40 +0100
+Message-ID: <20170320170040.GC14787@ulmo.ba.sec>
+References: <1489584715-23138-1-git-send-email-jonathanh@nvidia.com>
+ <1489584715-23138-4-git-send-email-jonathanh@nvidia.com>
+ <20170320141434.GC28203@ulmo.ba.sec>
+ <c0b18931-1377-813d-c8a3-60aea4379aa6@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qcHopEYAB45HaUaB"
-Return-path: <linux-mmc-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="i7F3eY7HS/tUJxUd"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1489742732-7722-2-git-send-email-jonathanh@nvidia.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Ritesh Harjani <riteshh@codeaurora.org>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <c0b18931-1377-813d-c8a3-60aea4379aa6-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---qcHopEYAB45HaUaB
+--i7F3eY7HS/tUJxUd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 17, 2017 at 09:25:32AM +0000, Jon Hunter wrote:
-> Commit a8e326a911d3 ("mmc: tegra: implement module external clock change")
-> implemented the SDHCI 'set_clock' handler for Tegra in order to change
-> the module clock for the Tegra SDHCI controller by using the common
-> clock framework API clk_set_rate(). The problem is the clk_set_rate()
-> may sleep and the 'set_clock' handler is always called from within the
-> context of a spinlock. Hence, occasionally, 'scheduling while atomic'
-> errors are seen. Fix this by moving the setting of the module clock to
-> the new 'set_parent_clock' handler which is not called from within the
-> context of a spinlock.
+On Mon, Mar 20, 2017 at 04:37:58PM +0000, Jon Hunter wrote:
 >=20
-> Fixes: a8e326a911d3 ("mmc: tegra: implement module external clock change")
 >=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
+> On 20/03/17 14:14, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Wed, Mar 15, 2017 at 01:31:53PM +0000, Jon Hunter wrote:
+> > [...]
+> >> +static int __init tegra_flowctrl_init(void)
+> >> +{
+> >> +	/* hardcoded fallback if device tree node is missing */
+> >> +	unsigned long base =3D 0x60007000;
+> >> +	unsigned long size =3D SZ_4K;
+> >> +	struct device_node *np;
+> >> +
+> >> +	if (!soc_is_tegra())
+> >> +		return 0;
+> >> +
+> >> +	np =3D of_find_matching_node(NULL, matches);
+> >> +	if (np) {
+> >> +		struct resource res;
+> >> +
+> >> +		if (of_address_to_resource(np, 0, &res) =3D=3D 0) {
+> >> +			size =3D resource_size(&res);
+> >> +			base =3D res.start;
+> >> +		}
+> >> +
+> >> +		of_node_put(np);
+> >> +	}
+> >> +
+> >> +	tegra_flowctrl_base =3D ioremap_nocache(base, size);
+> >> +
+> >> +	if (!tegra_flowctrl_base)
+> >> +		return -ENXIO;
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +early_initcall(tegra_flowctrl_init);
+> >=20
+> > Do we want to implement a hand-off to a proper driver at some point,
+> > similar to what we have for PMC?
 >=20
-> Changes since V1:
-> - None
->=20
->  drivers/mmc/host/sdhci-tegra.c | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
+> Yes I can add, it won't do much apart from remap the io-space, but at
+> least it is registered as a device then.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Yeah, the same is true for PMC, but I find it quite convenient to have a
+struct device * around. Ideally, of course, we'd be able to somehow have
+deferred probe take care of the dependencies so that we wouldn't have to
+muck about with these initcalls, but I don't think we're there yet. That
+"partial" driver would at least be some way in the right direction.
 
---qcHopEYAB45HaUaB
+Thierry
+
+--i7F3eY7HS/tUJxUd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljQCOIACgkQ3SOs138+
-s6Gb+xAAiwRTpKEy69t6J613MGEJN0uGcdKdFoQqxHliucluCIX/kkIoot80oEXx
-24qfikmACEd2Ud0ZnPD4ULB787/0bmZUDhsjlmMgn8KzCAhGgn9AGCv3F7CeGati
-xGJ75ny0A9oWAWR+UIRWoVdURiszEfS5dn5EjIam92+zKuOdUUqAU4lI7I9o6wUJ
-WaQ6C2P8F47+2ZZPIaBeXXzO2xJeAsQgRxRY6JAZhFsU7FtpOnrEEMiqePrrqPzb
-FqA50dbGqzwHCyqMthbBV9C70CexQVfzVz2H0KXBX+pdVE0nJK8OcmE/MQbsQ3m/
-KKzDFucOoeWNK0CMlbDbUwmQfcQo4PFTH1YOTvIA2zayzNg3WtlJT7mzExfiH/c9
-KXBff3qTFKmbM98rvQGzdLooGCX5vlEMQ0uD/80DUNnqd1VpZqrjlMBAtee6NSY6
-x3qtUfk+wWpauwhvWqYQTKv6GBLfwTJr/iSEB1D7PLa/V4GMN9JkOaG7o28+90z4
-DMUi2bI/ZQVqC74TOFvRjIgnsFGtTL1cs+nMkj0u9WdYl7qP0rugay9JBzHePQUL
-NzgiJ+43A7D/xhbFpKkx/E6bRAqLU598rk2i5kiigsXaJShyIQJ5E2GDDEEzaSco
-BiSJ6jqxtS28KFYNxpx+4N8CUkaSL89Doe8foXzVKOPH9s/9yKc=
-=y1Qa
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljQCrgACgkQ3SOs138+
+s6EOdhAAo5zy/nNi4ghmUT0bVNKEtmFdTY7N313qNlRH16Fq9AsVkGaKbEEGANkZ
+JJWDXXvKdP8x1OSyJCpETYsozhz5Nh90Teht5BvA3u+8nIFOKPVPAjebxbSeyAFY
+RERLTJ5dxnEMMmwgTg9wYAIf2gUEQsPmy1UZlKhOe7gBoDdy9i/L2hxe3pO9W3YJ
+csuQrLnd13qm+mmQTZSRoKw92HFsh/xScwEcCUFUVczcgXBC4/9eTTEn2CNbk+Bf
+eOLfkn1fhcL0a4PA8GAVtQmp4H5Io+sEeVG8FweYoHVZrC5F3oQGKUBxZebOaVKw
+9qHzN6UmtzvFzxIwH9ev5QQY+zxSSXd1tdTWjTXZ9t18iV//Hs/LzCf2mS9ZmQbQ
+ZF+e9tt46Ym9BpM9NdakNLtkACh4KG0LJv4TUnSsO4pAmaK9Zzf+iKxsgaRfSYjq
+D0QK5e5CVX5Jcke5ZjBtZsfZ06rwI694zdw07SCGBt/3EvDJIUN22Ud27aosF4Z8
+htBNL4aMGkfiNerOl6jCxZqEU2qLARyEHef8Xd08yK96Q3axczesBkVz6Ba7ECEK
+azOE0CWQNavfdEySSxzdggNshHoTxMeDD3Dy/x9gpwwqLZckgadUvXyLasuyKqTP
+Ro4JxAz6qakMPv2Aij0JR/VB53UEfzsHp1IsjeB2BDTj0K+qc0w=
+=jq8r
 -----END PGP SIGNATURE-----
 
---qcHopEYAB45HaUaB--
+--i7F3eY7HS/tUJxUd--
