@@ -1,95 +1,82 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] soc/tegra: fix link errors with PMC disabled
-Date: Mon, 20 Mar 2017 10:13:06 +0100
-Message-ID: <20170320091405.1041129-1-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Laxman Dewangan <ldewangan@nvidia.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Tegra baseline test results for v4.11-rc3
+Date: Mon, 20 Mar 2017 09:35:40 +0000
+Message-ID: <e5529230-d606-0113-fb7d-7348dda6c002@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-With the new Tegra186 PMC driver merged, anything that relies on the previous
-PMC driver fails to link when that is disabled:
+Here are some basic Tegra test results for Linux v4.11-rc3.
+Logs and other details at:
 
-arch/arm/mach-tegra/pm.o: In function `tegra_pm_set':
-pm.c:(.text.tegra_pm_set+0x3c): undefined reference to `tegra_pmc_enter_suspend_mode'
-arch/arm/mach-tegra/pm.o: In function `tegra_suspend_enter':
-pm.c:(.text.tegra_suspend_enter+0x4): undefined reference to `tegra_pmc_get_suspend_mode'
-arch/arm/mach-tegra/pm.o: In function `tegra_init_suspend':
-pm.c:(.init.text+0x1c): undefined reference to `tegra_pmc_get_suspend_mode'
-pm.c:(.init.text+0x74): undefined reference to `tegra_pmc_set_suspend_mode'
+    https://nvtb.github.io//linux/test_v4.11-rc3/20170319193104/
 
-ERROR: tegra_powergate_sequence_power_up [drivers/ata/ahci_tegra.ko] undefined!
-ERROR: tegra_powergate_power_off [drivers/ata/ahci_tegra.ko] undefined!
 
-Making the definition depend on the presence of the driver makes it build
-again, though that might not be the correct fix.
+Test summary
+------------
 
-Fixes: 854014236290 ("soc/tegra: Implement Tegra186 PMC support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/soc/tegra/pmc.h | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index 2f271d1b9cea..1c3982bc558f 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -26,12 +26,6 @@
- struct clk;
- struct reset_control;
- 
--#ifdef CONFIG_PM_SLEEP
--enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void);
--void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
--void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
--#endif /* CONFIG_PM_SLEEP */
--
- #ifdef CONFIG_SMP
- bool tegra_pmc_cpu_is_powered(unsigned int cpuid);
- int tegra_pmc_cpu_power_on(unsigned int cpuid);
-@@ -144,7 +138,7 @@ enum tegra_io_pad_voltage {
- 	TEGRA_IO_PAD_3300000UV,
- };
- 
--#ifdef CONFIG_ARCH_TEGRA
-+#ifdef CONFIG_SOC_TEGRA_PMC
- int tegra_powergate_is_powered(unsigned int id);
- int tegra_powergate_power_on(unsigned int id);
- int tegra_powergate_power_off(unsigned int id);
-@@ -163,6 +157,11 @@ int tegra_io_pad_get_voltage(enum tegra_io_pad id);
- /* deprecated, use tegra_io_pad_power_{enable,disable}() instead */
- int tegra_io_rail_power_on(unsigned int id);
- int tegra_io_rail_power_off(unsigned int id);
-+
-+enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void);
-+void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
-+void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
-+
- #else
- static inline int tegra_powergate_is_powered(unsigned int id)
- {
-@@ -221,6 +220,20 @@ static inline int tegra_io_rail_power_off(unsigned int id)
- {
- 	return -ENOSYS;
- }
--#endif /* CONFIG_ARCH_TEGRA */
-+
-+static inline enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
-+{
-+	return TEGRA_SUSPEND_NONE;
-+}
-+
-+static inline void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
-+{
-+}
-+
-+static inline void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
-+{
-+}
-+
-+#endif /* CONFIG_SOC_TEGRA_PMC */
- 
- #endif /* __SOC_TEGRA_PMC_H__ */
--- 
-2.9.0
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.11-rc2 (4495c08e84729385774601b5146d51d9e5849f81)):
+   text     data      bss    total  kernel
+  +3507     +336        0    +3843  defconfig
+  +1447      +64        0    +1511  multi_v7_defconfig
+  +5531      -72        0    +5459  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.11-rc2 (4495c08e84729385774601b5146d51d9e5849f81))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+      -4k       4k        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+      -4k       4k        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
