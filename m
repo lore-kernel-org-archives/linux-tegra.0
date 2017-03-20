@@ -1,86 +1,95 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 2/2] mmc: tegra: Fix setting of Tegra SDHCI module clock
-Date: Fri, 17 Mar 2017 09:25:32 +0000
-Message-ID: <1489742732-7722-2-git-send-email-jonathanh@nvidia.com>
-References: <1489742732-7722-1-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1489742732-7722-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ritesh Harjani <riteshh-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] soc/tegra: fix link errors with PMC disabled
+Date: Mon, 20 Mar 2017 10:13:06 +0100
+Message-ID: <20170320091405.1041129-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Laxman Dewangan <ldewangan@nvidia.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Commit a8e326a911d3 ("mmc: tegra: implement module external clock change")
-implemented the SDHCI 'set_clock' handler for Tegra in order to change
-the module clock for the Tegra SDHCI controller by using the common
-clock framework API clk_set_rate(). The problem is the clk_set_rate()
-may sleep and the 'set_clock' handler is always called from within the
-context of a spinlock. Hence, occasionally, 'scheduling while atomic'
-errors are seen. Fix this by moving the setting of the module clock to
-the new 'set_parent_clock' handler which is not called from within the
-context of a spinlock.
+With the new Tegra186 PMC driver merged, anything that relies on the previous
+PMC driver fails to link when that is disabled:
 
-Fixes: a8e326a911d3 ("mmc: tegra: implement module external clock change")
+arch/arm/mach-tegra/pm.o: In function `tegra_pm_set':
+pm.c:(.text.tegra_pm_set+0x3c): undefined reference to `tegra_pmc_enter_suspend_mode'
+arch/arm/mach-tegra/pm.o: In function `tegra_suspend_enter':
+pm.c:(.text.tegra_suspend_enter+0x4): undefined reference to `tegra_pmc_get_suspend_mode'
+arch/arm/mach-tegra/pm.o: In function `tegra_init_suspend':
+pm.c:(.init.text+0x1c): undefined reference to `tegra_pmc_get_suspend_mode'
+pm.c:(.init.text+0x74): undefined reference to `tegra_pmc_set_suspend_mode'
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+ERROR: tegra_powergate_sequence_power_up [drivers/ata/ahci_tegra.ko] undefined!
+ERROR: tegra_powergate_power_off [drivers/ata/ahci_tegra.ko] undefined!
+
+Making the definition depend on the presence of the driver makes it build
+again, though that might not be the correct fix.
+
+Fixes: 854014236290 ("soc/tegra: Implement Tegra186 PMC support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
+ include/soc/tegra/pmc.h | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
-Changes since V1:
-- None
-
- drivers/mmc/host/sdhci-tegra.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 20b6ff5b4af1..048f84e615d3 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -217,18 +217,25 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
- 	sdhci_writel(host,val, SDHCI_TEGRA_AUTO_CAL_CONFIG);
- }
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index 2f271d1b9cea..1c3982bc558f 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -26,12 +26,6 @@
+ struct clk;
+ struct reset_control;
  
--static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
-+static void tegra_sdhci_set_parent_clock(struct sdhci_host *host,
-+					 unsigned int clock)
+-#ifdef CONFIG_PM_SLEEP
+-enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void);
+-void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
+-void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
+-#endif /* CONFIG_PM_SLEEP */
+-
+ #ifdef CONFIG_SMP
+ bool tegra_pmc_cpu_is_powered(unsigned int cpuid);
+ int tegra_pmc_cpu_power_on(unsigned int cpuid);
+@@ -144,7 +138,7 @@ enum tegra_io_pad_voltage {
+ 	TEGRA_IO_PAD_3300000UV,
+ };
+ 
+-#ifdef CONFIG_ARCH_TEGRA
++#ifdef CONFIG_SOC_TEGRA_PMC
+ int tegra_powergate_is_powered(unsigned int id);
+ int tegra_powergate_power_on(unsigned int id);
+ int tegra_powergate_power_off(unsigned int id);
+@@ -163,6 +157,11 @@ int tegra_io_pad_get_voltage(enum tegra_io_pad id);
+ /* deprecated, use tegra_io_pad_power_{enable,disable}() instead */
+ int tegra_io_rail_power_on(unsigned int id);
+ int tegra_io_rail_power_off(unsigned int id);
++
++enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void);
++void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
++void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
++
+ #else
+ static inline int tegra_powergate_is_powered(unsigned int id)
  {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
- 	unsigned long host_clk;
- 
- 	if (!clock)
--		return sdhci_set_clock(host, clock);
-+		return;
- 
- 	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
--	clk_set_rate(pltfm_host->clk, host_clk);
-+	WARN_ON(clk_set_rate(pltfm_host->clk, host_clk));
- 	host->max_clk = clk_get_rate(pltfm_host->clk);
+@@ -221,6 +220,20 @@ static inline int tegra_io_rail_power_off(unsigned int id)
+ {
+ 	return -ENOSYS;
+ }
+-#endif /* CONFIG_ARCH_TEGRA */
++
++static inline enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
++{
++	return TEGRA_SUSPEND_NONE;
 +}
 +
-+static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
++static inline void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
 +{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
++}
++
++static inline void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
++{
++}
++
++#endif /* CONFIG_SOC_TEGRA_PMC */
  
- 	sdhci_set_clock(host, clock);
- 
-@@ -320,6 +327,7 @@ static const struct sdhci_ops tegra_sdhci_ops = {
- 	.read_w     = tegra_sdhci_readw,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
-+	.set_parent_clock = tegra_sdhci_set_parent_clock,
- 	.set_bus_width = tegra_sdhci_set_bus_width,
- 	.reset      = tegra_sdhci_reset,
- 	.platform_execute_tuning = tegra_sdhci_execute_tuning,
-@@ -368,6 +376,7 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
- 	.write_w    = tegra_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
-+	.set_parent_clock = tegra_sdhci_set_parent_clock,
- 	.set_bus_width = tegra_sdhci_set_bus_width,
- 	.reset      = tegra_sdhci_reset,
- 	.platform_execute_tuning = tegra_sdhci_execute_tuning,
+ #endif /* __SOC_TEGRA_PMC_H__ */
 -- 
-2.7.4
+2.9.0
