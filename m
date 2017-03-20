@@ -1,103 +1,73 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/5] ARM: tegra: WARN if flowctrl is not supported
-Date: Mon, 20 Mar 2017 15:10:23 +0100
-Message-ID: <20170320141023.GB28203@ulmo.ba.sec>
-References: <1489584715-23138-1-git-send-email-jonathanh@nvidia.com>
- <1489584715-23138-2-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH] i2c: tegra-bpmp: Enable Tegra BPMP I2C adapter
+Date: Mon, 20 Mar 2017 15:05:03 +0100
+Message-ID: <20170320140503.GA28203@ulmo.ba.sec>
+References: <1489580410-9541-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8019420590336256617=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1489584715-23138-2-git-send-email-jonathanh@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1489580410-9541-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============8019420590336256617==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+pHx0qQiF2pBVqBT"
-Content-Disposition: inline
-
-
---+pHx0qQiF2pBVqBT
+--IJpNTDwzlM2Ie8A6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 15, 2017 at 01:31:51PM +0000, Jon Hunter wrote:
-> If we fail to map the IO space for the Tegra flowctrl module in
-> tegra_flowctrl_init(), then if any of the public APIs for the Tegra
-> flowctrl driver are called we still still attempt to access the
-> hardware. Fix this by only accessing the hardware if the
-> 'tegra_flowctrl_base' address has not been setup correctly and warn
-> if we attempt to access the hardware when it has not.
+On Wed, Mar 15, 2017 at 12:20:10PM +0000, Jon Hunter wrote:
+> Enable the Tegra BPMP I2C adapter by default if the Tegra BPMP itself
+> is enabled. This adapter is used as the I2C interface for the PMIC on
+> the Tegra186 Jetson-TX2 platform.
 >=20
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  arch/arm/mach-tegra/flowctrl.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  drivers/i2c/busses/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 >=20
-> diff --git a/arch/arm/mach-tegra/flowctrl.c b/arch/arm/mach-tegra/flowctr=
-l.c
-> index 475e783992fd..40b15e39f849 100644
-> --- a/arch/arm/mach-tegra/flowctrl.c
-> +++ b/arch/arm/mach-tegra/flowctrl.c
-> @@ -47,6 +47,9 @@ static void __iomem *tegra_flowctrl_base;
-> =20
->  static void flowctrl_update(u8 offset, u32 value)
->  {
-> +	if (WARN_ONCE(!tegra_flowctrl_base, "Tegra flowctrl not supported!"))
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index 8adc0f1d7ad0..9e024ae8a067 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -933,6 +933,7 @@ config I2C_TEGRA
+>  config I2C_TEGRA_BPMP
+>  	tristate "NVIDIA Tegra BPMP I2C controller"
+>  	depends on TEGRA_BPMP
+> +	default y if TEGRA_BPMP
 
-Technically I think this string needs a terminating "\n" because it is
-eventually passed to printk(), even though the WARN_ONCE() will probably
-format the output correctly even without it.
+I think "if TEGRA_BPMP" in the line above implies "depends on
+TEGRA_BPMP", so it's redundant. "default y" should be equivalent. That
+said, I'm not sure if we really want to always enable this. There could
+be boards with a BPMP that don't use the I2C controller.
 
-Also, "not supported" isn't a very accurate description. This has to do
-with the flow controller not having been initialized yet.
+But that's fairly unlikely, so with the redundant dependency on
+TEGRA_BPMP fixed, this is:
 
-Thierry
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---+pHx0qQiF2pBVqBT
+--IJpNTDwzlM2Ie8A6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP4s8ACgkQ3SOs138+
-s6E44Q//eVR9dqES/AIgJ2hxx0sraRlxZy/2Me9XUGNejR6pczAaFeN2vx8g78hG
-XrHlhXVc5eYeKV9l1LLLfXxk27BDNnndntw8nLf9D2XFkk/oH10Y7KX26C5st+NX
-yV3z/O34huaY3+PvNiKq6WdzUVcEx2SSbH0cGHdTwO7zdFkuuws5RMslbLQT1AMT
-PJFJPdbCF1YfS2baGcusWGLD90rXEJpjt57mFJ/qPMarES1EONpUEYAw1bN+7MQ5
-nqzp/u9eqAQdl8vSXl661c9WFrtnKbF//pldjOMRjFlqloXCf9Z7hcTvg6gwRe0m
-0MwrTVrJDJvsfcXecM2yQHdtRF7tcJDkKnyRC2hcrSjlHV3WeB+DjVJZFl1MsXrm
-9Fbzd+BZ9KW+AN45TMGQC+0viXE1/NFcW/20TSuCmptg1+COSP/4RtsBya1nseAu
-5Z9lYExreYiSOGp3YC1+O2vkQox3tOl4f4DXfvOF2YYBb1BBFcCyQUZT5LXeB1PJ
-FIbBOzIjT8gecUuI10Z9pGaitUbOu1s16cvfqw1/txLscuSeR6LyfweJmRCPrIHS
-R92gCLW2+2IKcKwwLcd1FYf/Xkwdyab/YfxWgKP+st23o0VhyJfYKYDtEShpc6IH
-/0WUy0vP8rSfqMCj+ycPGYqHXAugXPlFraavJriOOSpAyiXTxRs=
-=Udlf
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP4Y8ACgkQ3SOs138+
+s6GLDQ/+M7oA7EXZRn4ckJDRgtCZsrcb3sZ/loNERWCsWjcIeCDepaxnZzMOkjhQ
+R7Gh/H6B4B5QOWLZgvkrMFi3KNi4TPqpOiXqi8z2ShFW/dTeaRJAxRmEdA5ilqOj
+Il5WD4qdfAq23is6raGoyWzU5VIcYsSzKf746X9M43RwUuMDFHuRvFjMJFLfEA+I
+135bKliMZvjnIti1pYm8KUWuLXU0YOymwUY4Q5vq+gOHf5nDDKGxT3LQ5ruhh1xl
+jjailUFpGUNYV1FBsnhaBU6o88A03ithH6SiK2hIch2Xi17XjOcmM02e8Z3DNdgS
+Y+v3X/5QnY61JL6prkU5v5VX42a2yDwOTX9LIzO5stDIxZqkQ2XGXBM71T03ESsS
+kd2La2R4p7/eSwP6twUmKFuAMoXR1u3Zq9lK4cUeGY4f/lMkbDt7KQOuGAypIbWg
+CSHlGkWM4KG06qLOc7tGqW5agD7agKvPAFmxuKJCHq48i0K20leS2a1qISHOyukf
+uhkhUaDlVlKjm0XSbHt3AMWJkLXJeX4Va5VSfJPW63Vgd9Knf+dgCHZwF3NNNu64
+nm2J6BU7WiIYjFKghF0/E9r53sigQsdHv4zfGqe0y3a5euov+xbjXA5omVqL2XrD
+WFEHclzKEVjDA+LuWD4OrFs96TDcueYqv7xXSys9RHf/B4LG8S0=
+=nPDd
 -----END PGP SIGNATURE-----
 
---+pHx0qQiF2pBVqBT--
-
-
---===============8019420590336256617==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============8019420590336256617==--
+--IJpNTDwzlM2Ie8A6--
