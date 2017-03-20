@@ -1,62 +1,63 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra: Implement reset control reset
-Date: Mon, 20 Mar 2017 14:16:37 +0100
-Message-ID: <20170320131637.GG22463@ulmo.ba.sec>
-References: <1488464177-24174-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2] clk: tegra: add Tegra210 special resets
+Date: Mon, 20 Mar 2017 14:21:15 +0100
+Message-ID: <20170320132115.GI22463@ulmo.ba.sec>
+References: <1489582774-22217-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gvF4niNJ+uBMJnEh"
+        protocol="application/pgp-signature"; boundary="MFZs98Tklfu0WsCO"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1488464177-24174-1-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1489582774-22217-1-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---gvF4niNJ+uBMJnEh
+--MFZs98Tklfu0WsCO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 02, 2017 at 04:16:16PM +0200, Peter De Schrijver wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
+On Wed, Mar 15, 2017 at 02:59:32PM +0200, Peter De Schrijver wrote:
+> Tegra210 has 2 special resets which don't follow the normal pattern:
+> DVCO and ADSP. Add them in this patch.
 >=20
-> For completeness, also implement this reset framework API for Tegra.
+> Changelog:
 >=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Reviewed-by: Arto Merilainen <amerilainen@nvidia.com>
+> v2: add DT bindings file
+>=20
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  drivers/clk/tegra/clk.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  drivers/clk/tegra/clk-tegra210.c         | 85 ++++++++++++++++++++++++++=
+++++++
+>  include/dt-bindings/reset/tegra210-car.h | 13 +++++
+>  2 files changed, 98 insertions(+)
+>  create mode 100644 include/dt-bindings/reset/tegra210-car.h
 
-This was missing a Signed-off-by: from you because you forwarded the
-patch. I've added one before applying, under the assumption that you
-merely forgot to add it.
+Applied to for-4.12/clk, thanks.
 
-Thanks,
 Thierry
 
---gvF4niNJ+uBMJnEh
+--MFZs98Tklfu0WsCO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP1jUACgkQ3SOs138+
-s6GuwQ//Vw7KQQUjDQs/Udg7k3KYLsil198NTyN7t1LXrVwPT1RNEt0t3O071rGg
-h3Zz1819cafUzvbJGI1B21G2K884j87WFqxL8sznXarXT8qrmwcS8c14eS9xtOTm
-GMTtZN/kX+R30WVPB47uaT+X4N4bHbHH47ZdRIfvGRDlMtff5v7d3k7y/nN+KjVA
-LyrSh+tQMJn52ZAYo65+icSxgnpYoSmoFGyRA2cRK8I2jPruXIks84ApIcQdCzAo
-NIl8sjSycJXI+BfQZQMvbBZqgT3FZZwAmoPgfIEz2+gJoPZQ4n1EmNn3y3SaMHQB
-RBuvX+a5KfVcTb9yhx42ctnCKTayEeN7Q7yFv9RQfP6TNAUwxvxhVyhj4a3QfPpI
-vovq2e7fZ5MnZEbNWBt3M1PuqJXVr/o6xv5Ww46x3Vp69GII2rwyRzaRhLfAEfrM
-5nS16VnfESNjE9dlLoqAz2XklqlPg7mHq7IIr+cvh6oG8gafDwZHHhW6NREZFPve
-QKvsN9CJM9ZP/TqIBG4j0GUsmAZSsVVDD9V8sZ4Orh17/HSx8lo2qMO8y/C80IJt
-YL0B/VFfFDcZJ7TPHT7/nER2phVM+APMcLn6A9qMCR6LZJtWftHw2cwrv0Z16zM6
-VGmq86W9rkgKnXEpwLCxYdrvDWxSj56w86PWNobL+eTVLHpOoe0=
-=8rfe
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP10sACgkQ3SOs138+
+s6GG3A//bWuGqGDLQcz7JjgQsAIQ584xtwX9xcvsF/aRJYwFyBq7YL+/h3b10Oeo
+7Ggyg0gWdnUKg19wACRS0cJY9efE1stc0HE2PBJb6brWSN6geazoDacvp3zV6w76
+ugjta6zmvd17A150faXamCdlzQGWjOH1/2zOyxOeyWNzfl84+G+lGnXaZtnt75t8
+vTj6uPY2/Rd17PsfC/fsK73iMvlrdAyqSDp232XdyzrgbzUPdWJ7CWz8zf9I75Y5
+QOPXvFrz1NGXvU4mjtatQOVTGjKLCX87e3gnY57PwCiMBY9U7LH7q4pM5wYGoobf
+3MhrjoU31ZWSauOjRASiwI1n2W/r8llLBvZ2NbBKtR2uT5Dd3C6C5xZ3W4OcyRNm
+b4dE78c3VELVkAU3bhTJARpL9kME3L1y6UHCI1ApWJCBJZyWX+QLMisFwDi9BgB5
+xbE2vEuueIbENX9veQKaehPXQCqushfG7THPHK1iMADHGNxalmMhO1VtY9udEvee
+dagiW2SUqWP7GjW14YVDlzfN6poTsDRVLCL+1PAE/ma4JRj1Sa67LV6mRiEXerZN
+4pxDAaztKsnUEQMd6SQjCnQDG5WljWslLWHeJSZbTPko0zHxPs6HOTM6BEIs49RJ
+ZPDMBc2PbxSJ0jLf10fL8tgeqT+aPeRgQSkD7NqYSoR/yjvHLjk=
+=aJ1q
 -----END PGP SIGNATURE-----
 
---gvF4niNJ+uBMJnEh--
+--MFZs98Tklfu0WsCO--
