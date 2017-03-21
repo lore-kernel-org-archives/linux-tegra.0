@@ -1,65 +1,49 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] soc/tegra: pmc: Don't allocate struct tegra_powergate on stack
-Date: Tue, 21 Mar 2017 10:54:53 +0530
-Message-ID: <3fe40fcd427e49cbeac31e14721fea569d230b6e.1490073884.git.viresh.kumar@linaro.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 1/2] gpu: host1x: Sort includes alphabetically
+Date: Tue, 21 Mar 2017 08:54:21 +0100
+Message-ID: <20170321075422.23934-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The size of the struct tegra_powergate is quite big and if any more
-fields are added to the internal genpd structure, following warnings are
-thrown:
-
-drivers/soc/tegra/pmc.c:577:1: warning: the frame size of 1176 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-Avoid such warnings by allocating the structure dynamically.
-
-Signed-off-by: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- drivers/soc/tegra/pmc.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index e233dd5dcab3..c94196b939a4 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -557,22 +557,28 @@ EXPORT_SYMBOL(tegra_powergate_remove_clamping);
- int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
- 				      struct reset_control *rst)
- {
--	struct tegra_powergate pg;
-+	struct tegra_powergate *pg;
- 	int err;
- 
- 	if (!tegra_powergate_is_available(id))
- 		return -EINVAL;
- 
--	pg.id = id;
--	pg.clks = &clk;
--	pg.num_clks = 1;
--	pg.resets = &rst;
--	pg.num_resets = 1;
-+	pg = kzalloc(sizeof(*pg), GFP_KERNEL);
-+	if (!pg)
-+		return -ENOMEM;
-+
-+	pg->id = id;
-+	pg->clks = &clk;
-+	pg->num_clks = 1;
-+	pg->resets = &rst;
-+	pg->num_resets = 1;
- 
--	err = tegra_powergate_power_up(&pg, false);
-+	err = tegra_powergate_power_up(pg, false);
- 	if (err)
- 		pr_err("failed to turn on partition %d: %d\n", id, err);
- 
-+	kfree(pg);
-+
- 	return err;
- }
- EXPORT_SYMBOL(tegra_powergate_sequence_power_up);
--- 
-2.12.0.432.g71c3a4f4ba37
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClNvcnRpbmcgaW5jbHVk
+ZXMgYWxwaGFiZXRpY2FsbHkgbWFrZXMgaXQgZWFzaWVyIGFuZCBsZXNzIGNvbmZsaWN0LXByb25l
+CnRvIGFkZCBuZXcgaW5jbHVkZXMgc3Vic2VxdWVudGx5LgoKU2lnbmVkLW9mZi1ieTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2
+LmMgfCAxMiArKysrKystLS0tLS0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuaCB8ICAyICstCiAy
+IGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMK
+aW5kZXggYTYyMzE3YWY3NmFkLi42YzE3YzQ5MDAxNjYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1
+L2hvc3QxeC9kZXYuYworKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMKQEAgLTE2LDE0ICsx
+NiwxNCBAQAogICogYWxvbmcgd2l0aCB0aGlzIHByb2dyYW0uICBJZiBub3QsIHNlZSA8aHR0cDov
+L3d3dy5nbnUub3JnL2xpY2Vuc2VzLz4uCiAgKi8KIAotI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5o
+PgotI2luY2x1ZGUgPGxpbnV4L2xpc3QuaD4KLSNpbmNsdWRlIDxsaW51eC9zbGFiLmg+Ci0jaW5j
+bHVkZSA8bGludXgvb2YuaD4KLSNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4KICNpbmNsdWRl
+IDxsaW51eC9jbGsuaD4KLSNpbmNsdWRlIDxsaW51eC9pby5oPgogI2luY2x1ZGUgPGxpbnV4L2Rt
+YS1tYXBwaW5nLmg+CisjaW5jbHVkZSA8bGludXgvaW8uaD4KKyNpbmNsdWRlIDxsaW51eC9saXN0
+Lmg+CisjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+CisjaW5jbHVkZSA8bGludXgvb2ZfZGV2aWNl
+Lmg+CisjaW5jbHVkZSA8bGludXgvb2YuaD4KKyNpbmNsdWRlIDxsaW51eC9zbGFiLmg+CiAKICNk
+ZWZpbmUgQ1JFQVRFX1RSQUNFX1BPSU5UUwogI2luY2x1ZGUgPHRyYWNlL2V2ZW50cy9ob3N0MXgu
+aD4KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuaCBiL2RyaXZlcnMvZ3B1L2hv
+c3QxeC9kZXYuaAppbmRleCAwNmRkNGY4NTEyNWYuLjg2MjI4NWYyY2ZiOCAxMDA2NDQKLS0tIGEv
+ZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5oCisrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuaApA
+QCAtMTcsOCArMTcsOCBAQAogI2lmbmRlZiBIT1NUMVhfREVWX0gKICNkZWZpbmUgSE9TVDFYX0RF
+Vl9ICiAKLSNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KICNpbmNsdWRlIDxsaW51
+eC9kZXZpY2UuaD4KKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KIAogI2luY2x1
+ZGUgImNoYW5uZWwuaCIKICNpbmNsdWRlICJzeW5jcHQuaCIKLS0gCjIuMTIuMAoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
