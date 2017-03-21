@@ -1,71 +1,34 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/2] gpu: host1x: Support module reset
-Date: Tue, 21 Mar 2017 08:54:22 +0100
-Message-ID: <20170321075422.23934-2-thierry.reding@gmail.com>
-References: <20170321075422.23934-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] soc/tegra: pmc: Don't allocate struct tegra_powergate on
+ stack
+Date: Tue, 21 Mar 2017 10:37:29 +0000
+Message-ID: <7d0425c1-de9a-cb1a-fde7-71e903579562@nvidia.com>
+References: <3fe40fcd427e49cbeac31e14721fea569d230b6e.1490073884.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170321075422.23934-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <3fe40fcd427e49cbeac31e14721fea569d230b6e.1490073884.git.viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCk5ld2VyIHZlcnNpb25z
-IG9mIFRlZ3JhIGNvbWUgd2l0aCBlYXJseSBib290IHNvZnR3YXJlIHRoYXQgYWdncmVzc2l2ZWx5
-CnB1dHMgdmFyaW91cyBtb2R1bGVzIGluIHJlc2V0LiBBZGQgc3VwcG9ydCB0byB0aGUgaG9zdDF4
-IGRyaXZlciB0byB0YWtlCnRoZSBtb2R1bGUgb3V0IG9mIHJlc2V0IG9uIHByb2JlLCBhbmQgYXNz
-ZXJ0IHJlc2V0IG9uIHJlbW92YWwuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJl
-ZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyB8IDE4ICsrKysr
-KysrKysrKysrKysrLQogZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5oIHwgIDIgKysKIDIgZmlsZXMg
-Y2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwppbmRleCA2
-YzE3YzQ5MDAxNjYuLmY1ZGQ2YTA2Zjc5OCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4
-L2Rldi5jCisrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwpAQCAtMTY4LDYgKzE2OCwxMyBA
-QCBzdGF0aWMgaW50IGhvc3QxeF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQog
-CQlyZXR1cm4gZXJyOwogCX0KIAorCWhvc3QtPnJzdCA9IGRldm1fcmVzZXRfY29udHJvbF9nZXQo
-JnBkZXYtPmRldiwgImhvc3QxeCIpOworCWlmIChJU19FUlIoaG9zdC0+cnN0KSkgeworCQllcnIg
-PSBQVFJfRVJSKGhvc3QtPmNsayk7CisJCWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBn
-ZXQgcmVzZXQ6ICVkXG4iLCBlcnIpOworCQlyZXR1cm4gZXJyOworCX0KKwogCWVyciA9IGhvc3Qx
-eF9jaGFubmVsX2xpc3RfaW5pdChob3N0KTsKIAlpZiAoZXJyKSB7CiAJCWRldl9lcnIoJnBkZXYt
-PmRldiwgImZhaWxlZCB0byBpbml0aWFsaXplIGNoYW5uZWwgbGlzdFxuIik7CkBAIC0xODAsMTAg
-KzE4NywxNiBAQCBzdGF0aWMgaW50IGhvc3QxeF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2KQogCQlyZXR1cm4gZXJyOwogCX0KIAorCWVyciA9IHJlc2V0X2NvbnRyb2xfZGVhc3Nl
-cnQoaG9zdC0+cnN0KTsKKwlpZiAoZXJyIDwgMCkgeworCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJm
-YWlsZWQgdG8gZGVhc3NlcnQgcmVzZXQ6ICVkXG4iLCBlcnIpOworCQlnb3RvIGZhaWxfdW5wcmVw
-YXJlX2Rpc2FibGU7CisJfQorCiAJZXJyID0gaG9zdDF4X3N5bmNwdF9pbml0KGhvc3QpOwogCWlm
-IChlcnIpIHsKIAkJZGV2X2VycigmcGRldi0+ZGV2LCAiZmFpbGVkIHRvIGluaXRpYWxpemUgc3lu
-Y3B0c1xuIik7Ci0JCWdvdG8gZmFpbF91bnByZXBhcmVfZGlzYWJsZTsKKwkJZ290byBmYWlsX3Jl
-c2V0X2Fzc2VydDsKIAl9CiAKIAllcnIgPSBob3N0MXhfaW50cl9pbml0KGhvc3QsIHN5bmNwdF9p
-cnEpOwpAQCAtMjA0LDYgKzIxNyw4IEBAIHN0YXRpYyBpbnQgaG9zdDF4X3Byb2JlKHN0cnVjdCBw
-bGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJaG9zdDF4X2ludHJfZGVpbml0KGhvc3QpOwogZmFpbF9k
-ZWluaXRfc3luY3B0OgogCWhvc3QxeF9zeW5jcHRfZGVpbml0KGhvc3QpOworZmFpbF9yZXNldF9h
-c3NlcnQ6CisJcmVzZXRfY29udHJvbF9hc3NlcnQoaG9zdC0+cnN0KTsKIGZhaWxfdW5wcmVwYXJl
-X2Rpc2FibGU6CiAJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGhvc3QtPmNsayk7CiAJcmV0dXJuIGVy
-cjsKQEAgLTIxNiw2ICsyMzEsNyBAQCBzdGF0aWMgaW50IGhvc3QxeF9yZW1vdmUoc3RydWN0IHBs
-YXRmb3JtX2RldmljZSAqcGRldikKIAlob3N0MXhfdW5yZWdpc3Rlcihob3N0KTsKIAlob3N0MXhf
-aW50cl9kZWluaXQoaG9zdCk7CiAJaG9zdDF4X3N5bmNwdF9kZWluaXQoaG9zdCk7CisJcmVzZXRf
-Y29udHJvbF9kZWFzc2VydChob3N0LT5yc3QpOwogCWNsa19kaXNhYmxlX3VucHJlcGFyZShob3N0
-LT5jbGspOwogCiAJcmV0dXJuIDA7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2
-LmggYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmgKaW5kZXggODYyMjg1ZjJjZmI4Li43NThjZDNm
-ZWI1NDUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuaAorKysgYi9kcml2ZXJz
-L2dwdS9ob3N0MXgvZGV2LmgKQEAgLTE5LDYgKzE5LDcgQEAKIAogI2luY2x1ZGUgPGxpbnV4L2Rl
-dmljZS5oPgogI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgorI2luY2x1ZGUgPGxp
-bnV4L3Jlc2V0Lmg+CiAKICNpbmNsdWRlICJjaGFubmVsLmgiCiAjaW5jbHVkZSAic3luY3B0Lmgi
-CkBAIC0xMDcsNiArMTA4LDcgQEAgc3RydWN0IGhvc3QxeCB7CiAJc3RydWN0IGhvc3QxeF9zeW5j
-cHRfYmFzZSAqYmFzZXM7CiAJc3RydWN0IGRldmljZSAqZGV2OwogCXN0cnVjdCBjbGsgKmNsazsK
-KwlzdHJ1Y3QgcmVzZXRfY29udHJvbCAqcnN0OwogCiAJc3RydWN0IG11dGV4IGludHJfbXV0ZXg7
-CiAJaW50IGludHJfc3luY3B0X2lycTsKLS0gCjIuMTIuMAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+On 21/03/17 05:24, Viresh Kumar wrote:
+> The size of the struct tegra_powergate is quite big and if any more
+> fields are added to the internal genpd structure, following warnings are
+> thrown:
+> 
+> drivers/soc/tegra/pmc.c:577:1: warning: the frame size of 1176 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+Hmmm ... AFAICT the size of the tegra_powergate struct is 312 bytes
+(based upon next-20170321) and so it looks like something massive needs
+to be added to the genpd struct to blow this up to over 1024 bytes. Are
+there some genpd changes in-flight that are causing this?
+
+Cheers
+Jon
+
+-- 
+nvpublic
