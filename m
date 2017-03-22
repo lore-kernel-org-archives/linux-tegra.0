@@ -1,42 +1,58 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] iommu: Add dummy implementations for !IOMMU_IOVA
-Date: Wed, 22 Mar 2017 15:55:30 +0100
-Message-ID: <20170322145530.GC7315@8bytes.org>
-References: <20170320191128.26474-1-thierry.reding@gmail.com>
-	<20170320191128.26474-2-thierry.reding@gmail.com>
-	<20170320191431.GF14787@ulmo.ba.sec>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 0/5] soc/tegra: Enable flowctrl support for Tegra132/210
+Date: Wed, 22 Mar 2017 17:00:51 +0000
+Message-ID: <1490202056-13040-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170320191431.GF14787-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry
+The flowctrl modules is supported by both Tegra132 and Tegra210 devices.
+These devices already have the flowctrl node defined in their respective
+*.dtsi device-tree files. The flowctrl driver is currently located in
+the arch/arm/mach-tegra directory and so can only be used for 32-bit
+Tegra devices. Move this driver into drivers/soc/tegra so that it can
+be used for all Tegra devices that support flowctrl.
 
-On Mon, Mar 20, 2017 at 08:14:31PM +0100, Thierry Reding wrote:
-> I've got a series of patches that I'd like to merge for v4.12 that have
-> a build-time dependency on this patch. It would therefore be great to
-> get your Acked-by on this so that I can merge it through the DRM tree
-> with the rest of the patches. I can provide a stable branch with only
-> this patch for you to pull into the IOMMU tree.
+I have also added a couple clean-up patches.
 
-I applied both patches to my 'core' branch. There is not much in there
-yet besides your patches, so you can easily pull that branch in once it
-is published (later today).
+Changes since V1:
+- Updated warning message per Thierry's feedback
+- Added stub functions for public flowctrl APIs
+- Added patch to register flowctrl driver as a platform driver
+- Updated formatting of DT compatible strings per Thierry's feedback.
 
+Jon Hunter (5):
+  ARM: tegra: Remove unnecessary inclusion of flowctrl header
+  soc/tegra: Move Tegra flowctrl driver
+  soc/tegra: flowctrl: Add basic platform driver
+  dt-bindings: tegra: Update compatible strings for Tegra flowctrl
+  soc/tegra: Add initial flowctrl support for Tegra132/210
 
+ .../bindings/arm/tegra/nvidia,tegra20-flowctrl.txt |   7 +-
+ arch/arm/mach-tegra/Makefile                       |   1 -
+ arch/arm/mach-tegra/cpuidle-tegra20.c              |   3 +-
+ arch/arm/mach-tegra/flowctrl.c                     | 179 ----------------
+ arch/arm/mach-tegra/flowctrl.h                     |  66 ------
+ arch/arm/mach-tegra/platsmp.c                      |   2 +-
+ arch/arm/mach-tegra/pm.c                           |   2 +-
+ arch/arm/mach-tegra/reset-handler.S                |   2 +-
+ arch/arm/mach-tegra/sleep-tegra20.S                |   3 +-
+ arch/arm/mach-tegra/sleep-tegra30.S                |   2 +-
+ arch/arm/mach-tegra/sleep.S                        |   2 -
+ arch/arm/mach-tegra/tegra.c                        |   2 -
+ drivers/soc/tegra/Kconfig                          |   9 +
+ drivers/soc/tegra/Makefile                         |   1 +
+ drivers/soc/tegra/flowctrl.c                       | 224 +++++++++++++++++++++
+ include/soc/tegra/flowctrl.h                       |  82 ++++++++
+ 16 files changed, 330 insertions(+), 257 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/flowctrl.c
+ delete mode 100644 arch/arm/mach-tegra/flowctrl.h
+ create mode 100644 drivers/soc/tegra/flowctrl.c
+ create mode 100644 include/soc/tegra/flowctrl.h
 
-	Joerg
+-- 
+2.7.4
