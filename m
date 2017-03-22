@@ -1,58 +1,104 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 0/5] soc/tegra: Enable flowctrl support for Tegra132/210
-Date: Wed, 22 Mar 2017 17:00:51 +0000
-Message-ID: <1490202056-13040-1-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V2 3/5] soc/tegra: flowctrl: Add basic platform driver
+Date: Wed, 22 Mar 2017 17:00:54 +0000
+Message-ID: <1490202056-13040-4-git-send-email-jonathanh@nvidia.com>
+References: <1490202056-13040-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1490202056-13040-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The flowctrl modules is supported by both Tegra132 and Tegra210 devices.
-These devices already have the flowctrl node defined in their respective
-*.dtsi device-tree files. The flowctrl driver is currently located in
-the arch/arm/mach-tegra directory and so can only be used for 32-bit
-Tegra devices. Move this driver into drivers/soc/tegra so that it can
-be used for all Tegra devices that support flowctrl.
+Add a simple platform driver for the flowctrl module so that it gets
+registered as a proper device.
 
-I have also added a couple clean-up patches.
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/soc/tegra/flowctrl.c | 34 ++++++++++++++++++++++++++++++----
+ 1 file changed, 30 insertions(+), 4 deletions(-)
 
-Changes since V1:
-- Updated warning message per Thierry's feedback
-- Added stub functions for public flowctrl APIs
-- Added patch to register flowctrl driver as a platform driver
-- Updated formatting of DT compatible strings per Thierry's feedback.
-
-Jon Hunter (5):
-  ARM: tegra: Remove unnecessary inclusion of flowctrl header
-  soc/tegra: Move Tegra flowctrl driver
-  soc/tegra: flowctrl: Add basic platform driver
-  dt-bindings: tegra: Update compatible strings for Tegra flowctrl
-  soc/tegra: Add initial flowctrl support for Tegra132/210
-
- .../bindings/arm/tegra/nvidia,tegra20-flowctrl.txt |   7 +-
- arch/arm/mach-tegra/Makefile                       |   1 -
- arch/arm/mach-tegra/cpuidle-tegra20.c              |   3 +-
- arch/arm/mach-tegra/flowctrl.c                     | 179 ----------------
- arch/arm/mach-tegra/flowctrl.h                     |  66 ------
- arch/arm/mach-tegra/platsmp.c                      |   2 +-
- arch/arm/mach-tegra/pm.c                           |   2 +-
- arch/arm/mach-tegra/reset-handler.S                |   2 +-
- arch/arm/mach-tegra/sleep-tegra20.S                |   3 +-
- arch/arm/mach-tegra/sleep-tegra30.S                |   2 +-
- arch/arm/mach-tegra/sleep.S                        |   2 -
- arch/arm/mach-tegra/tegra.c                        |   2 -
- drivers/soc/tegra/Kconfig                          |   9 +
- drivers/soc/tegra/Makefile                         |   1 +
- drivers/soc/tegra/flowctrl.c                       | 224 +++++++++++++++++++++
- include/soc/tegra/flowctrl.h                       |  82 ++++++++
- 16 files changed, 330 insertions(+), 257 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/flowctrl.c
- delete mode 100644 arch/arm/mach-tegra/flowctrl.h
- create mode 100644 drivers/soc/tegra/flowctrl.c
- create mode 100644 include/soc/tegra/flowctrl.h
-
+diff --git a/drivers/soc/tegra/flowctrl.c b/drivers/soc/tegra/flowctrl.c
+index 3a5a1cb9ae90..25eddfc8475d 100644
+--- a/drivers/soc/tegra/flowctrl.c
++++ b/drivers/soc/tegra/flowctrl.c
+@@ -24,6 +24,7 @@
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
+ 
+ #include <soc/tegra/common.h>
+ #include <soc/tegra/flowctrl.h>
+@@ -47,7 +48,7 @@ static void __iomem *tegra_flowctrl_base;
+ 
+ static void flowctrl_update(u8 offset, u32 value)
+ {
+-	if (WARN_ONCE(!tegra_flowctrl_base,
++	if (WARN_ONCE(IS_ERR_OR_NULL(tegra_flowctrl_base),
+ 		      "Tegra flowctrl not initialised!\n"))
+ 		return;
+ 
+@@ -62,7 +63,7 @@ u32 flowctrl_read_cpu_csr(unsigned int cpuid)
+ {
+ 	u8 offset = flowctrl_offset_cpu_csr[cpuid];
+ 
+-	if (WARN_ONCE(!tegra_flowctrl_base,
++	if (WARN_ONCE(IS_ERR_OR_NULL(tegra_flowctrl_base),
+ 		      "Tegra flowctrl not initialised!\n"))
+ 		return 0;
+ 
+@@ -148,7 +149,22 @@ void flowctrl_cpu_suspend_exit(unsigned int cpuid)
+ 	flowctrl_write_cpu_csr(cpuid, reg);
+ }
+ 
+-static const struct of_device_id matches[] __initconst = {
++static int tegra_flowctrl_probe(struct platform_device *pdev)
++{
++	void __iomem *base = tegra_flowctrl_base;
++	struct resource *res;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	tegra_flowctrl_base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(tegra_flowctrl_base))
++		return PTR_ERR(base);
++
++	iounmap(base);
++
++	return 0;
++}
++
++static const struct of_device_id tegra_flowctrl_match[] = {
+ 	{ .compatible = "nvidia,tegra124-flowctrl" },
+ 	{ .compatible = "nvidia,tegra114-flowctrl" },
+ 	{ .compatible = "nvidia,tegra30-flowctrl" },
+@@ -156,6 +172,16 @@ static const struct of_device_id matches[] __initconst = {
+ 	{ }
+ };
+ 
++static struct platform_driver tegra_flowctrl_driver = {
++	.driver = {
++		.name = "tegra-flowctrl",
++		.suppress_bind_attrs = true,
++		.of_match_table = tegra_flowctrl_match,
++	},
++	.probe = tegra_flowctrl_probe,
++};
++builtin_platform_driver(tegra_flowctrl_driver);
++
+ static int __init tegra_flowctrl_init(void)
+ {
+ 	/* hardcoded fallback if device tree node is missing */
+@@ -166,7 +192,7 @@ static int __init tegra_flowctrl_init(void)
+ 	if (!soc_is_tegra())
+ 		return 0;
+ 
+-	np = of_find_matching_node(NULL, matches);
++	np = of_find_matching_node(NULL, tegra_flowctrl_match);
+ 	if (np) {
+ 		struct resource res;
+ 
 -- 
 2.7.4
