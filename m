@@ -1,40 +1,37 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] i2c: tegra-bpmp: Enable Tegra BPMP I2C adapter
-Date: Thu, 23 Mar 2017 11:56:56 +0000
-Message-ID: <1490270216-7234-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 5/7] clk: tegra: don't warn for PLL defaults
+ unnecessarily
+Date: Thu, 23 Mar 2017 14:37:23 +0000
+Message-ID: <d6435129-4c67-1126-429d-ffef52d0b2d4@nvidia.com>
+References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+ <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1487846686-6388-6-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Enable the Tegra BPMP I2C adapter by default if the Tegra BPMP itself
-is enabled. This adapter is used as the I2C interface for the PMIC on
-the Tegra186 Jetson-TX2 platform.
+Hi Peter,
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+On 23/02/17 10:44, Peter De Schrijver wrote:
+> If the PLL is on, only warn if the defaults are not yet set. Otherwise be
+> silent.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Changes since V1:
-- Dropped redundant 'if' condition from 'default' statement.
+This patch is breaking boot for Tegra210 Smaug on -next [0]. Reverting
+this on top of -next allows the board to boot again. I have not had
+chance to dig into this any further yet, but can unless you have some
+thoughts.
 
- drivers/i2c/busses/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Cheers
+Jon
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 8adc0f1d7ad0..39c0ead2a6df 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -933,6 +933,7 @@ config I2C_TEGRA
- config I2C_TEGRA_BPMP
- 	tristate "NVIDIA Tegra BPMP I2C controller"
- 	depends on TEGRA_BPMP
-+	default y
- 	help
- 	  If you say yes to this option, support will be included for the I2C
- 	  controller embedded in NVIDIA Tegra SoCs accessed via the BPMP.
+[0]
+https://nvtb.github.io//linux-next/test_next-20170323/20170323021534/boot/tegra210-smaug/tegra210-smaug/defconfig_log.txt
+
 -- 
-2.7.4
+nvpublic
