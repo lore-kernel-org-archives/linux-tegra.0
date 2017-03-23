@@ -1,62 +1,54 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Only 3.5 GB RAM on Jetson TX1
-Date: Thu, 23 Mar 2017 10:33:43 -0600
-Message-ID: <c23d7953-3778-7c42-3b42-c79f951c8415@wwwdotorg.org>
-References: <20170323001357.GA7546@jirafa.cyrius.com>
- <8453cf91-0b27-9968-59b8-7b697e8cd1f8@wwwdotorg.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH V2] i2c: tegra-bpmp: Enable Tegra BPMP I2C adapter
+Date: Thu, 23 Mar 2017 21:10:44 +0100
+Message-ID: <20170323201044.cpvt4ewjxvwsmo67@ninjato>
+References: <1490270216-7234-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <8453cf91-0b27-9968-59b8-7b697e8cd1f8-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vagrant Cascadian <vagrant-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aylkrus223v636r7"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1490270216-7234-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/23/2017 10:24 AM, Stephen Warren wrote:
-> On 03/22/2017 06:13 PM, Martin Michlmayr wrote:
->> Vagrant Cascadian observed that only 3.5 GB RAM are available on the
->> Jetson TX1 development kit.
->>
->> [    0.000000] Memory: 3501036K/3670016K available (6780K kernel code,
->> 1020K rwdata, 2164K rodata, 3264K init, 634K bss, 168980K reserved, 0K
->> cma-reserved)
->>
->> Interestingly, even u-boot only shows 3.5 GB:
->>
->> DRAM:  3.5 GiB
->>
->> This is with mainline u-boot 2016.11 and R23.2 (2016.03-00633-g3ef9cdb).
->
-> That's expected.
->
-> A portion of the top-of-ram holds various carve-outs, such as for the
-> secure OS and perhaps other purposes like media buffers. Mainline U-Boot
-> currently hard-codes the size of this unusable RAM area to a very
-> conservative size. Ideally, U-Boot would query the size of the RAM from
-> the secure monitor, or retrieve it from information passed by an earlier
-> stage bootloader. However, doing so relies on using interfaces that may
-> not be strict ABIs, so we didn't want to make upstream U-Boot use them
-> at least when we first upstreamed T210 support.
->
->> However, 2015.07-rc2-g78c8468 (from R23.1.1) shows:
->>
->> DRAM:  4 GiB
->>
->> but that u-boot doesn't boot mainline kernels (some DT errors).
->
-> Conversely, the L4T version of U-Boot is expected to work with the
-> specific SW stack shipped with L4T, and hence does determine the
-> carveout size at runtime, and hence allows access to a bit more RAM.
->
-> L4T U-Boot should boot an upstream kernel without issue. You may need to
-> delete a few environment variables to stop U-Boot attempting to copy
-> some data from the NV-bootloader-supplied DTB into the DTB that U-Boot
-> itself loads from "disk" and passes to the kernel.
 
-In particular, I'd expect clearing the following variables to solve any 
-DT related errors:
+--aylkrus223v636r7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-fdt_copy_node_paths
-fdt_del_prop_paths
+On Thu, Mar 23, 2017 at 11:56:56AM +0000, Jon Hunter wrote:
+> Enable the Tegra BPMP I2C adapter by default if the Tegra BPMP itself
+> is enabled. This adapter is used as the I2C interface for the PMIC on
+> the Tegra186 Jetson-TX2 platform.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+
+Applied to for-next, thanks!
+
+
+--aylkrus223v636r7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljUK8QACgkQFA3kzBSg
+Kbba1hAAh/AVrs8B0P7X0oTqkYIiKHQhL0DlTlax8klcUQpLuUjawB4qSU9Gpt9V
+xB9vW/uLnxUb0sSUdHtXrIVKBewdM0ywpwzt8l54z+J2iODpgtJBbX6oRp8f5S+W
++9mFl3wI+rW5mn25I21wncj2LVd20wj49t7pXzimwLF4rJiZAIXAtdOP9rIq6Ai/
+XQYzlDqM3x0geH8YoaPhiLwRUMwoVKO9C3HtAFpUNbMeENDY/UzZsB/PgUZQq2ge
+UdnrmQY5PaFIvKs/d92L+Zf9HHhQ6lLXISPSOJTzV2L8yD28SQiPBT5/i4LMfhzx
+qpRdgQ4jmXpOjcPfhVPKiGwQnoXasrGiaPiMSgKJ647jkK1XVozcLZOKEvV34b77
+xemI6QmYa5+cbUqkvpl9QEOWzEJiOGs0CZW/ybjsMbNbYXZjznsBU4Tj/hQv5+oY
+0X5m/9bdNZ4GgQRZ1TuVdNVQCFoXhTsNmaIJnrGqy0C4Hsm2ePQj1MNtpUnoxeUQ
+yaMZ7nuvCDxSBiZogW926sNVQmhh5pvCgaisBrfs++XF0nhbwjrE4t/67tGj9iji
+HZTNu5kWIvOWFa8Q5Q6bgKpHXAuVwik2kDRyYxdeZeOVNChTJyqE/LTsefI4IKMq
+ZEt2+e4XhdAxLw2owYbfEoHmBqf90rJdGkq8D9LgHI19346Qj3s=
+=wq2Z
+-----END PGP SIGNATURE-----
+
+--aylkrus223v636r7--
