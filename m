@@ -1,33 +1,40 @@
-From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Subject: Only 3.5 GB RAM on Jetson TX1
-Date: Wed, 22 Mar 2017 17:13:57 -0700
-Message-ID: <20170323001357.GA7546@jirafa.cyrius.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] i2c: tegra-bpmp: Enable Tegra BPMP I2C adapter
+Date: Thu, 23 Mar 2017 11:56:56 +0000
+Message-ID: <1490270216-7234-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Vagrant Cascadian <vagrant-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Vagrant Cascadian observed that only 3.5 GB RAM are available on the
-Jetson TX1 development kit.
+Enable the Tegra BPMP I2C adapter by default if the Tegra BPMP itself
+is enabled. This adapter is used as the I2C interface for the PMIC on
+the Tegra186 Jetson-TX2 platform.
 
-[    0.000000] Memory: 3501036K/3670016K available (6780K kernel code, 1020K rwdata, 2164K rodata, 3264K init, 634K bss, 168980K reserved, 0K cma-reserved)
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 
-Interestingly, even u-boot only shows 3.5 GB:
+Changes since V1:
+- Dropped redundant 'if' condition from 'default' statement.
 
-DRAM:  3.5 GiB
+ drivers/i2c/busses/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-This is with mainline u-boot 2016.11 and R23.2 (2016.03-00633-g3ef9cdb).
-
-However, 2015.07-rc2-g78c8468 (from R23.1.1) shows:
-
-DRAM:  4 GiB
-
-but that u-boot doesn't boot mainline kernels (some DT errors).
-
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 8adc0f1d7ad0..39c0ead2a6df 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -933,6 +933,7 @@ config I2C_TEGRA
+ config I2C_TEGRA_BPMP
+ 	tristate "NVIDIA Tegra BPMP I2C controller"
+ 	depends on TEGRA_BPMP
++	default y
+ 	help
+ 	  If you say yes to this option, support will be included for the I2C
+ 	  controller embedded in NVIDIA Tegra SoCs accessed via the BPMP.
 -- 
-Martin Michlmayr
-http://www.cyrius.com/
+2.7.4
