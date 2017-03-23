@@ -1,37 +1,52 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 5/7] clk: tegra: don't warn for PLL defaults
- unnecessarily
-Date: Thu, 23 Mar 2017 14:37:23 +0000
-Message-ID: <d6435129-4c67-1126-429d-ffef52d0b2d4@nvidia.com>
-References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
- <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Only 3.5 GB RAM on Jetson TX1
+Date: Thu, 23 Mar 2017 10:24:56 -0600
+Message-ID: <8453cf91-0b27-9968-59b8-7b697e8cd1f8@wwwdotorg.org>
+References: <20170323001357.GA7546@jirafa.cyrius.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1487846686-6388-6-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20170323001357.GA7546-IRMp5PtgtdoigzW5ZibpNwC/G2K4zDHf@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vagrant Cascadian <vagrant-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
+On 03/22/2017 06:13 PM, Martin Michlmayr wrote:
+> Vagrant Cascadian observed that only 3.5 GB RAM are available on the
+> Jetson TX1 development kit.
+>
+> [    0.000000] Memory: 3501036K/3670016K available (6780K kernel code, 1020K rwdata, 2164K rodata, 3264K init, 634K bss, 168980K reserved, 0K cma-reserved)
+>
+> Interestingly, even u-boot only shows 3.5 GB:
+>
+> DRAM:  3.5 GiB
+>
+> This is with mainline u-boot 2016.11 and R23.2 (2016.03-00633-g3ef9cdb).
 
-On 23/02/17 10:44, Peter De Schrijver wrote:
-> If the PLL is on, only warn if the defaults are not yet set. Otherwise be
-> silent.
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+That's expected.
 
-This patch is breaking boot for Tegra210 Smaug on -next [0]. Reverting
-this on top of -next allows the board to boot again. I have not had
-chance to dig into this any further yet, but can unless you have some
-thoughts.
+A portion of the top-of-ram holds various carve-outs, such as for the 
+secure OS and perhaps other purposes like media buffers. Mainline U-Boot 
+currently hard-codes the size of this unusable RAM area to a very 
+conservative size. Ideally, U-Boot would query the size of the RAM from 
+the secure monitor, or retrieve it from information passed by an earlier 
+stage bootloader. However, doing so relies on using interfaces that may 
+not be strict ABIs, so we didn't want to make upstream U-Boot use them 
+at least when we first upstreamed T210 support.
 
-Cheers
-Jon
+> However, 2015.07-rc2-g78c8468 (from R23.1.1) shows:
+>
+> DRAM:  4 GiB
+>
+> but that u-boot doesn't boot mainline kernels (some DT errors).
 
-[0]
-https://nvtb.github.io//linux-next/test_next-20170323/20170323021534/boot/tegra210-smaug/tegra210-smaug/defconfig_log.txt
+Conversely, the L4T version of U-Boot is expected to work with the 
+specific SW stack shipped with L4T, and hence does determine the 
+carveout size at runtime, and hence allows access to a bit more RAM.
 
--- 
-nvpublic
+L4T U-Boot should boot an upstream kernel without issue. You may need to 
+delete a few environment variables to stop U-Boot attempting to copy 
+some data from the NV-bootloader-supplied DTB into the DTB that U-Boot 
+itself loads from "disk" and passes to the kernel.
