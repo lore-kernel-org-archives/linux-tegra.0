@@ -1,37 +1,73 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 1/6] ARM: tegra: Remove unnecessary inclusion of flowctrl header
-Date: Tue, 28 Mar 2017 13:42:53 +0100
-Message-ID: <1490704978-22906-2-git-send-email-jonathanh@nvidia.com>
-References: <1490704978-22906-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V3 0/6] soc/tegra: Enable flowctrl support for Tegra132/210
+Date: Tue, 28 Mar 2017 13:42:52 +0100
+Message-ID: <1490704978-22906-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1490704978-22906-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Russell King <linux@armlinux.org.uk>, Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra flowctrl.h header is included unnecessarily by the Tegra
-sleep.S source file. Remove this unnecessary inclusion.
+The flowctrl modules is supported by both Tegra132 and Tegra210 devices.
+These devices already have the flowctrl node defined in their respective
+*.dtsi device-tree files. The flowctrl driver is currently located in
+the arch/arm/mach-tegra directory and so can only be used for 32-bit
+Tegra devices. Move this driver into drivers/soc/tegra so that it can
+be used for all Tegra devices that support flowctrl.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/sleep.S | 2 --
- 1 file changed, 2 deletions(-)
+I have also added a couple clean-up patches.
 
-diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-index f024a5109e8e..5e3496753df1 100644
---- a/arch/arm/mach-tegra/sleep.S
-+++ b/arch/arm/mach-tegra/sleep.S
-@@ -30,8 +30,6 @@
- #include <asm/hardware/cache-l2x0.h>
- 
- #include "iomap.h"
--
--#include "flowctrl.h"
- #include "sleep.h"
- 
- #define CLK_RESET_CCLK_BURST	0x20
+Changes since V2:
+- Updated Dt compatible strings per Stephen's feedback
+- Added patch to update Tegra132 compatible string
+
+Changes since V1:
+- Updated warning message per Thierry's feedback
+- Added stub functions for public flowctrl APIs
+- Added patch to register flowctrl driver as a platform driver
+- Updated formatting of DT compatible strings per Thierry's feedback.
+
+Jon Hunter (6):
+  ARM: tegra: Remove unnecessary inclusion of flowctrl header
+  soc/tegra: Move Tegra flowctrl driver
+  soc/tegra: flowctrl: Add basic platform driver
+  dt-bindings: tegra: Update compatible strings for Tegra flowctrl
+  arm64: tegra: Update the Tegra132 flowctrl compatible string
+  soc/tegra: Add initial flowctrl support for Tegra132/210
+
+ .../bindings/arm/tegra/nvidia,tegra20-flowctrl.txt |   8 +-
+ arch/arm/mach-tegra/Makefile                       |   1 -
+ arch/arm/mach-tegra/cpuidle-tegra20.c              |   3 +-
+ arch/arm/mach-tegra/flowctrl.c                     | 179 ----------------
+ arch/arm/mach-tegra/flowctrl.h                     |  66 ------
+ arch/arm/mach-tegra/platsmp.c                      |   2 +-
+ arch/arm/mach-tegra/pm.c                           |   2 +-
+ arch/arm/mach-tegra/reset-handler.S                |   2 +-
+ arch/arm/mach-tegra/sleep-tegra20.S                |   3 +-
+ arch/arm/mach-tegra/sleep-tegra30.S                |   2 +-
+ arch/arm/mach-tegra/sleep.S                        |   2 -
+ arch/arm/mach-tegra/tegra.c                        |   2 -
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   2 +-
+ drivers/soc/tegra/Kconfig                          |   9 +
+ drivers/soc/tegra/Makefile                         |   1 +
+ drivers/soc/tegra/flowctrl.c                       | 224 +++++++++++++++++++++
+ include/soc/tegra/flowctrl.h                       |  82 ++++++++
+ 17 files changed, 332 insertions(+), 258 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/flowctrl.c
+ delete mode 100644 arch/arm/mach-tegra/flowctrl.h
+ create mode 100644 drivers/soc/tegra/flowctrl.c
+ create mode 100644 include/soc/tegra/flowctrl.h
+
 -- 
 2.7.4
