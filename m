@@ -1,53 +1,109 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V3 4/6] dt-bindings: tegra: Update compatible strings for
- Tegra flowctrl
-Date: Tue, 28 Mar 2017 13:42:56 +0100
-Message-ID: <1490704978-22906-5-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 3/6] soc/tegra: flowctrl: Add basic platform driver
+Date: Tue, 28 Mar 2017 13:42:55 +0100
+Message-ID: <1490704978-22906-4-git-send-email-jonathanh@nvidia.com>
 References: <1490704978-22906-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1490704978-22906-1-git-send-email-jonathanh@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Russell King <linux@armlinux.org.uk>, Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1490704978-22906-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Update the compatible strings for Tegra Flow Control driver to match
-the device-tree source files for Tegra.
+Add a simple platform driver for the flowctrl module so that it gets
+registered as a proper device.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt     | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/soc/tegra/flowctrl.c | 34 ++++++++++++++++++++++++++++++----
+ 1 file changed, 30 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt
-index ccf0adddc820..a855c1bffc0f 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt
-@@ -1,7 +1,13 @@
- NVIDIA Tegra Flow Controller
+diff --git a/drivers/soc/tegra/flowctrl.c b/drivers/soc/tegra/flowctrl.c
+index 3a5a1cb9ae90..25eddfc8475d 100644
+--- a/drivers/soc/tegra/flowctrl.c
++++ b/drivers/soc/tegra/flowctrl.c
+@@ -24,6 +24,7 @@
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
  
- Required properties:
--- compatible: Should be "nvidia,tegra<chip>-flowctrl"
-+- compatible: Should contain one of the following:
-+  - "nvidia,tegra20-flowctrl": for Tegra20
-+  - "nvidia,tegra30-flowctrl": for Tegra30
-+  - "nvidia,tegra114-flowctrl": for Tegra114
-+  - "nvidia,tegra124-flowctrl": for Tegra124
-+  - "nvidia,tegra132-flowctrl", "nvidia,tegra124-flowctrl": for Tegra132
-+  - "nvidia,tegra210-flowctrl": for Tegra210
- - reg: Should contain one register range (address and length)
+ #include <soc/tegra/common.h>
+ #include <soc/tegra/flowctrl.h>
+@@ -47,7 +48,7 @@ static void __iomem *tegra_flowctrl_base;
  
- Example:
+ static void flowctrl_update(u8 offset, u32 value)
+ {
+-	if (WARN_ONCE(!tegra_flowctrl_base,
++	if (WARN_ONCE(IS_ERR_OR_NULL(tegra_flowctrl_base),
+ 		      "Tegra flowctrl not initialised!\n"))
+ 		return;
+ 
+@@ -62,7 +63,7 @@ u32 flowctrl_read_cpu_csr(unsigned int cpuid)
+ {
+ 	u8 offset = flowctrl_offset_cpu_csr[cpuid];
+ 
+-	if (WARN_ONCE(!tegra_flowctrl_base,
++	if (WARN_ONCE(IS_ERR_OR_NULL(tegra_flowctrl_base),
+ 		      "Tegra flowctrl not initialised!\n"))
+ 		return 0;
+ 
+@@ -148,7 +149,22 @@ void flowctrl_cpu_suspend_exit(unsigned int cpuid)
+ 	flowctrl_write_cpu_csr(cpuid, reg);
+ }
+ 
+-static const struct of_device_id matches[] __initconst = {
++static int tegra_flowctrl_probe(struct platform_device *pdev)
++{
++	void __iomem *base = tegra_flowctrl_base;
++	struct resource *res;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	tegra_flowctrl_base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(tegra_flowctrl_base))
++		return PTR_ERR(base);
++
++	iounmap(base);
++
++	return 0;
++}
++
++static const struct of_device_id tegra_flowctrl_match[] = {
+ 	{ .compatible = "nvidia,tegra124-flowctrl" },
+ 	{ .compatible = "nvidia,tegra114-flowctrl" },
+ 	{ .compatible = "nvidia,tegra30-flowctrl" },
+@@ -156,6 +172,16 @@ static const struct of_device_id matches[] __initconst = {
+ 	{ }
+ };
+ 
++static struct platform_driver tegra_flowctrl_driver = {
++	.driver = {
++		.name = "tegra-flowctrl",
++		.suppress_bind_attrs = true,
++		.of_match_table = tegra_flowctrl_match,
++	},
++	.probe = tegra_flowctrl_probe,
++};
++builtin_platform_driver(tegra_flowctrl_driver);
++
+ static int __init tegra_flowctrl_init(void)
+ {
+ 	/* hardcoded fallback if device tree node is missing */
+@@ -166,7 +192,7 @@ static int __init tegra_flowctrl_init(void)
+ 	if (!soc_is_tegra())
+ 		return 0;
+ 
+-	np = of_find_matching_node(NULL, matches);
++	np = of_find_matching_node(NULL, tegra_flowctrl_match);
+ 	if (np) {
+ 		struct resource res;
+ 
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
