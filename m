@@ -1,60 +1,59 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Don't reset PLL-CX if it is already enabled
-Date: Wed, 29 Mar 2017 15:49:16 +0300
-Message-ID: <20170329124916.GW22128@tbergstrom-lnx.Nvidia.com>
-References: <1490612465-12454-1-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 0/3] soc/tegra: bpmp: Generic PM domains for Tegra186
+Date: Wed, 29 Mar 2017 18:34:49 +0200
+Message-ID: <20170329163452.10761-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1490612465-12454-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stefan Kristiansson <stefank-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Mon, Mar 27, 2017 at 12:01:05PM +0100, Jon Hunter wrote:
-> Commit 8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessarily")
-> changed the tegra210_pllcx_set_defaults() function causing the PLL to
-> always be reset regardless of whether it is in-use. This function was
-> changed so that resetting of the PLL will only be skipped if the PLL
-> is enabled AND 'pllcx->params->defaults_set' is not true. However, the
-> 'pllcx->params->defaults_set' is always true and hence, the PLL is now
-> always reset. This causes the boot to fail on the Tegra210 Smaug where
-> the PLL is already enabled and in-use. Fix this by only resetting the
-> PLL if not in-use and only printing the warning that the defaults are
-> not set after we have checked the default settings.
-> 
-> Fixes: 8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessarily")
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 9897dc55676b..b56a104328fa 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -555,12 +555,12 @@ static void tegra210_pllcx_set_defaults(const char *name,
->  {
->  	pllcx->params->defaults_set = true;
->  
-> -	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
-> -			PLL_ENABLE && !pllcx->params->defaults_set) {
-> +	if (readl_relaxed(clk_base + pllcx->params->base_reg) & PLL_ENABLE) {
->  		/* PLL is ON: only check if defaults already set */
->  		pllcx_check_defaults(pllcx->params);
-> -		pr_warn("%s already enabled. Postponing set full defaults\n",
-> -			name);
-> +		if (!pllcx->params->defaults_set)
-> +			pr_warn("%s already enabled. Postponing set full defaults\n",
-> +				name);
->  		return;
->  	}
->  
-> -- 
-> 2.7.4
-> 
+Hi Rafael, Kevin, Ulf,
+
+This series implement generic power domains for Tegra186. Since the
+power partitions on Tegra186 have a non-contiguous ID range, the PM
+domain core is enhanced with a way to allow PM domain providers to
+override the default ->xlate() implementation. This is used to look
+up the correct PM domain given the ID read from device tree.
+
+The second patch updates the BPMP ABI header to a version that has
+support for the MRQ_PG request which is used to enumerate available
+power partitions and control them.
+
+An implementation of the generic PM domains using the MRQ_PG request
+is provided in patch 3.
+
+Given the dependency of patch 3 on patch 1 I think it'd be easiest
+to get an Acked-by on patch 1 and take all of these through the Tegra
+tree. If that's okay with you, I can provide a stable branch with the
+first patch that could be pulled into the PM tree to resolve potential
+conflicts.
+
+Thanks,
+Thierry
+
+Changes in v2:
+- take into account PG_STATE_RUNNING in tegra_bpmp_powergate_is_powered()
+- check return value of pm_genpd_init() and clean up on failure
+- simplify error unwinding in tegra_bpmp_init_powergates()
+
+Thierry Reding (3):
+  PM / Domains: Allow overriding the ->xlate() callback
+  soc/tegra: bpmp: Update ABI header
+  soc/tegra: bpmp: Implement generic PM domains
+
+ drivers/base/power/domain.c        |   8 +-
+ drivers/firmware/tegra/bpmp.c      |   4 +
+ drivers/soc/tegra/Kconfig          |   5 +
+ drivers/soc/tegra/Makefile         |   1 +
+ drivers/soc/tegra/powergate-bpmp.c | 359 +++++++++++++++++++++++++++++++
+ include/linux/pm_domain.h          |   4 +
+ include/soc/tegra/bpmp-abi.h       | 418 ++++++++++++++++++++++++++++++++++++-
+ include/soc/tegra/bpmp.h           |  12 ++
+ 8 files changed, 797 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/soc/tegra/powergate-bpmp.c
+
+-- 
+2.12.0
