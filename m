@@ -1,72 +1,82 @@
-From: Vignesh R <vigneshr-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH] serial: Do not treat the IIR register as a bitfield
-Date: Thu, 30 Mar 2017 13:27:19 +0530
-Message-ID: <2faa7420-0a54-e77f-0da2-80f6dfcf9710@ti.com>
-References: <20170329184431.6226-1-oliver@schinagl.nl>
- <6be65e8b-eea4-08ed-0b30-5c0608764a83@ti.com>
- <D694FA74-1F31-4B57-8858-2DBE8DE57D45@schinagl.nl>
-Reply-To: vigneshr-l0cyMroinI0@public.gmane.org
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] dt-bindings: Add documentation for GP10B GPU
+Date: Thu, 30 Mar 2017 18:18:30 +0900
+Message-ID: <20170330091831.18322-1-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDRONT4W5UKRBJHV6LDAKGQEMHCPAMQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <D694FA74-1F31-4B57-8858-2DBE8DE57D45-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "David S . Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
-Cc: "dev-3kdeTeqwOZ9EV1b7eY7vFQ@public.gmane.org" <dev-3kdeTeqwOZ9EV1b7eY7vFQ@public.gmane.org>, Ed Blake <ed.blake-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Alexander Sverdlin <alexander.sverdlin-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>, Yegor Yefremov <yegorslists-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Kefeng Wang <wangkefeng.wang-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Jason Uy <jason.uy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>, David Lechner <david-nq/r/kbU++upp/zk7JDF2g@public.gmane.org>, Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>, "linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+GP10B's definition is mostly similar to GK20A's and GM20B's. The only
+noticeable difference is the use of power domains instead of a regulator
+for power supply.
 
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 25 +++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-On Thursday 30 March 2017 12:13 PM, Olliver Schinagl wrote:
-> 
-> 
-> On March 30, 2017 8:15:29 AM CEST, Vignesh R <vigneshr-l0cyMroinI0@public.gmane.org> wrote:
->> Hi,
->>
->> On Thursday 30 March 2017 12:14 AM, Olliver Schinagl wrote:
->>> diff --git a/include/uapi/linux/serial_reg.h
->> b/include/uapi/linux/serial_reg.h
->>> index 5db76880b4ad..489522389a10 100644
->>> --- a/include/uapi/linux/serial_reg.h
->>> +++ b/include/uapi/linux/serial_reg.h
->>> @@ -31,18 +31,18 @@
->>>  #define UART_IERX_SLEEP		0x10 /* Enable sleep mode */
->>>  
->>>  #define UART_IIR	2	/* In:  Interrupt ID Register */
->>> -#define UART_IIR_NO_INT		0x01 /* No interrupts pending */
->>> -#define UART_IIR_ID		0x0e /* Mask for the interrupt ID */
->>>  #define UART_IIR_MSI		0x00 /* Modem status interrupt */
->>> +#define UART_IIR_NO_INT		0x01 /* No interrupts pending */
->>>  #define UART_IIR_THRI		0x02 /* Transmitter holding register empty */
->>>  #define UART_IIR_RDI		0x04 /* Receiver data interrupt */
->>>  #define UART_IIR_RLSI		0x06 /* Receiver line status interrupt */
->>> -
->>>  #define UART_IIR_BUSY		0x07 /* DesignWare APB Busy Detect */
->>> +#define UART_IIR_RX_TIMEOUT	0x0c /* DesignWare RX Timeout interrupt
->> */
-> It was moved due to sorting. The comment could be changed maybe? I renamed it from omap to dw as i believe the omap also uses the dw ip. But i think it is a defacto standard mapping of the irr register?
-
-AFAIK, OMAP UART does not use DW core, please make these IDs generic to
-avoid confusion.
-
-> 
->>> +#define UART_IIR_MASK		0x0f /* DesignWare IIR mask */
->>>  
->>> -#define UART_IIR_RX_TIMEOUT	0x0c /* OMAP RX Timeout interrupt */
->>
->> You are removing UART_IIR_RX_TIMEOUT? Is this intended?
->>
->>>  #define UART_IIR_XOFF		0x10 /* OMAP XOFF/Special Character */
->>>  #define UART_IIR_CTS_RTS_DSR	0x20 /* OMAP CTS/RTS/DSR Change */
->>> +#define UART_IIR_EXT_MASK	0x30 /* OMAP extended IIR mask */
-> 
-
+diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
+index ff3db65e50de..b7e4c7444510 100644
+--- a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
++++ b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
+@@ -5,6 +5,7 @@ Required properties:
+   Currently recognized values:
+   - nvidia,gk20a
+   - nvidia,gm20b
++  - nvidia,gp10b
+ - reg: Physical base address and length of the controller's registers.
+   Must contain two entries:
+   - first entry for bar0
+@@ -14,7 +15,8 @@ Required properties:
+ - interrupt-names: Must include the following entries:
+   - stall
+   - nonstall
+-- vdd-supply: regulator for supply voltage.
++- vdd-supply: regulator for supply voltage. Only required for GPUs not using
++  power domains.
+ - clocks: Must contain an entry for each entry in clock-names.
+   See ../clocks/clock-bindings.txt for details.
+ - clock-names: Must include the following entries:
+@@ -27,6 +29,8 @@ is also required:
+   See ../reset/reset.txt for details.
+ - reset-names: Must include the following entries:
+   - gpu
++- power-domains: GPUs that make use of power domains can define this property
++  instead of vdd-supply. Currently "nvidia,gp10b" makes use of this.
+ 
+ Optional properties:
+ - iommus: A reference to the IOMMU. See ../iommu/iommu.txt for details.
+@@ -68,3 +72,22 @@ Example for GM20B:
+ 		iommus = <&mc TEGRA_SWGROUP_GPU>;
+ 		status = "disabled";
+ 	};
++
++Example for GP10B:
++
++	gpu@17000000 {
++		compatible = "nvidia,gp10b";
++		reg = <0x0 0x17000000 0x0 0x1000000>,
++		      <0x0 0x18000000 0x0 0x1000000>;
++		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "stall", "nonstall";
++		clocks = <&bpmp TEGRA186_CLK_GPCCLK>,
++			 <&bpmp TEGRA186_CLK_GPU>;
++		clock-names = "gpu", "pwr";
++		resets = <&bpmp TEGRA186_RESET_GPU>;
++		reset-names = "gpu";
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_GPU>;
++		iommus = <&smmu TEGRA186_SID_GPU>;
++		status = "disabled";
++	};
 -- 
-Regards
-Vignesh
+2.12.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
