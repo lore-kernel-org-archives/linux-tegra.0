@@ -1,67 +1,32 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2] dt-bindings: Add documentation for GP10B GPU
-Date: Thu, 30 Mar 2017 18:26:44 +0900
-Message-ID: <20170330092644.11890-1-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] arm64: tegra: Add GPU node for Tegra 186
+Date: Thu, 30 Mar 2017 18:28:28 +0900
+Message-ID: <20170330092828.13336-1-acourbot@nvidia.com>
 References: <20170330091831.18322-2-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170330091831.18322-2-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170330091831.18322-2-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-GP10B's definition is mostly similar to GK20A's and GM20B's. The only
-noticeable difference is the use of power domains instead of a regulator
-for power supply.
+Add the DT node for the GP10B GPU on Tegra 186.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes since v1:
-- It's much better when it compiles.
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
- .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 25 +++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-index ff3db65e50de..b7e4c7444510 100644
---- a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-+++ b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-@@ -5,6 +5,7 @@ Required properties:
-   Currently recognized values:
-   - nvidia,gk20a
-   - nvidia,gm20b
-+  - nvidia,gp10b
- - reg: Physical base address and length of the controller's registers.
-   Must contain two entries:
-   - first entry for bar0
-@@ -14,7 +15,8 @@ Required properties:
- - interrupt-names: Must include the following entries:
-   - stall
-   - nonstall
--- vdd-supply: regulator for supply voltage.
-+- vdd-supply: regulator for supply voltage. Only required for GPUs not using
-+  power domains.
- - clocks: Must contain an entry for each entry in clock-names.
-   See ../clocks/clock-bindings.txt for details.
- - clock-names: Must include the following entries:
-@@ -27,6 +29,8 @@ is also required:
-   See ../reset/reset.txt for details.
- - reset-names: Must include the following entries:
-   - gpu
-+- power-domains: GPUs that make use of power domains can define this property
-+  instead of vdd-supply. Currently "nvidia,gp10b" makes use of this.
- 
- Optional properties:
- - iommus: A reference to the IOMMU. See ../iommu/iommu.txt for details.
-@@ -68,3 +72,22 @@ Example for GM20B:
- 		iommus = <&mc TEGRA_SWGROUP_GPU>;
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index b4c71b519289..9ee6c439fb02 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -660,6 +660,24 @@
+ 		};
  	};
-+
-+Example for GP10B:
-+
+ 
 +	gpu@17000000 {
 +		compatible = "nvidia,gp10b";
 +		reg = <0x0 0x17000000 0x0 0x1000000>,
@@ -69,14 +34,19 @@ index ff3db65e50de..b7e4c7444510 100644
 +		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH
 +			      GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
 +		interrupt-names = "stall", "nonstall";
++
 +		clocks = <&bpmp TEGRA186_CLK_GPCCLK>,
 +			 <&bpmp TEGRA186_CLK_GPU>;
 +		clock-names = "gpu", "pwr";
 +		resets = <&bpmp TEGRA186_RESET_GPU>;
 +		reset-names = "gpu";
-+		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_GPU>;
-+		iommus = <&smmu TEGRA186_SID_GPU>;
 +		status = "disabled";
++
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_GPU>;
 +	};
++
+ 	sysram@30000000 {
+ 		compatible = "nvidia,tegra186-sysram", "mmio-sram";
+ 		reg = <0x0 0x30000000 0x0 0x50000>;
 -- 
 2.12.0
