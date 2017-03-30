@@ -1,52 +1,46 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] arm64: tegra: Add GPU node for Tegra 186
-Date: Thu, 30 Mar 2017 18:28:28 +0900
-Message-ID: <20170330092828.13336-1-acourbot@nvidia.com>
-References: <20170330091831.18322-2-acourbot@nvidia.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] serial: Do not treat the IIR register as a bitfield
+Date: Thu, 30 Mar 2017 12:56:03 +0300
+Message-ID: <1490867763.708.62.camel@linux.intel.com>
+References: <20170329184431.6226-1-oliver@schinagl.nl>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170330091831.18322-2-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170329184431.6226-1-oliver@schinagl.nl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olliver Schinagl <oliver@schinagl.nl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "David S . Miller" <davem@davemloft.net>
+Cc: dev@linux-sunxi.org, Ed Blake <ed.blake@imgtec.com>, Alexander Sverdlin <alexander.sverdlin@nokia.com>, Yegor Yefremov <yegorslists@googlemail.com>, Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Heiko Stuebner <heiko@sntech.de>, Jason Uy <jason.uy@broadcom.com>, Douglas Anderson <dianders@chromium.org>, Peter Hurley <peter@hurleysoftware.com>, Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>, Thor Thayer <tthayer@opensource.altera.com>, David Lechner <david@lechnology.com>, Jan Kiszka <jan.kiszka@siemens.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, sparclinux@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the DT node for the GP10B GPU on Tegra 186.
+On Wed, 2017-03-29 at 20:44 +0200, Olliver Schinagl wrote:
+> It seems that at some point, someone made the assumption that the UART
+> Interrupt ID Register was a bitfield and started to check if certain
+> bits where set.
+> 
+> Actually however the register contains interrupt ID's where only the
+> MSB
+> seems to be used singular and the rest share at least one bit. Thus
+> doing bitfield operations is wrong.
+> 
+> This patch cleans up the serial_reg include file by ordering it and
+> replacing the UART_IIR_ID 'mask' with a proper mask for the register.
+> The OMAP uart appears to have used the two commonly 'reserved' bits 4
+> and 5 and thus get an UART_IIR_EXT_MASK for these two bits.
+> 
+> This patch then goes over all UART_IIR_* users and changes the code
+> from
+> bitfield checking, to ID checking instead.
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index b4c71b519289..9ee6c439fb02 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -660,6 +660,24 @@
- 		};
- 	};
- 
-+	gpu@17000000 {
-+		compatible = "nvidia,gp10b";
-+		reg = <0x0 0x17000000 0x0 0x1000000>,
-+		      <0x0 0x18000000 0x0 0x1000000>;
-+		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "stall", "nonstall";
-+
-+		clocks = <&bpmp TEGRA186_CLK_GPCCLK>,
-+			 <&bpmp TEGRA186_CLK_GPU>;
-+		clock-names = "gpu", "pwr";
-+		resets = <&bpmp TEGRA186_RESET_GPU>;
-+		reset-names = "gpu";
-+		status = "disabled";
-+
-+		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_GPU>;
-+	};
-+
- 	sysram@30000000 {
- 		compatible = "nvidia,tegra186-sysram", "mmio-sram";
- 		reg = <0x0 0x30000000 0x0 0x50000>;
+Looking to implementation I would rather go with some helper like
+
+int serial_in_IIR(port, [additional mask])
+{
+ return port->serial_in(port, UART_IIR) & (_IIR_MASK [| additional
+mask]);
+}
+
 -- 
-2.12.0
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
