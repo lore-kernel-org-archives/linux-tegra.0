@@ -1,60 +1,30 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] serial: tegra: Map the iir register to default defines
-Date: Fri, 31 Mar 2017 15:21:37 +0200
-Message-ID: <20170331132137.GA23510@kroah.com>
-References: <20170329184806.6577-1-oliver@schinagl.nl>
- <9eed3c8e-a7af-1e1f-659a-a092a89d1679@nvidia.com>
- <0DEBCDAD-C7D3-4DB9-B5F5-408951165662@schinagl.nl>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] gpio: Add Tegra186 support
+Date: Fri, 31 Mar 2017 15:36:32 +0200
+Message-ID: <CACRpkdZwb37kSgKDo=6v-G102KGs0NVB1CZg+MEOKDaA8dKuLg@mail.gmail.com>
+References: <20170310162629.31455-1-thierry.reding@gmail.com> <20170331131006.GC29779@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0DEBCDAD-C7D3-4DB9-B5F5-408951165662@schinagl.nl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olliver Schinagl <oliver@schinagl.nl>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jiri Slaby <jslaby@suse.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170331131006.GC29779-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 30, 2017 at 05:37:41PM +0200, Olliver Schinagl wrote:
-> Hey Jon,
-> 
-> On March 30, 2017 3:42:19 PM CEST, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >
-> >On 29/03/17 19:48, Olliver Schinagl wrote:
-> >> The tegra serial IP seems to be following the common layout and the
-> >> interrupt ID's match up nicely. Replace the magic values to match the
-> >> common serial_reg defines, with the addition of the Tegra unique End
-> >of
-> >> Data interrupt.
-> >> 
-> >> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
-> >> ---
-> >> Note I do not own any tegra hardware and just noticed it while
-> >working on my
-> >> somewhat related previous patch,
-> >> "serial: Do not treat the IIR register as a bitfield"
-> >> 
-> >> As such, this patch can only be applied after the aforementioned
-> >patch or the
-> >> iir variable will not have its mask applied yet.
-> >
-> >Nit-pick. If this is the case, then this should really be part of a
-> >patch series so it is obvious to everyone that this should only be
-> >applied after the other patch.
-> Yes, and it was, but I did not want to have the really big list of names in this much smaller group.
+On Fri, Mar 31, 2017 at 3:10 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-Ok, this is a mess, don't send me patches that need to be applied in a
-specific order, yet are not obviously linked together in a single
-series.
+> any objections to merging this for v4.12?
 
-How do you expect a maintainer to handle this type of stuff?  You need
-to make it _OBVIOUS_ as to what I need to do here, otherwise I will get
-it wrong.
+Sorry I should have done a proper review. I'll look at it now.
 
-I'm going to drop all of your patches from my queue and wait for a
-resend with the correct order, and ones that work properly, you can do
-better than this :)
+>I know Laxman has some
+> reservations about the internal numbering, but I hope my explanation in
+> the other subthread shows that this is the simplest way to achieve what
+> we want with the least amount of surprises.
 
-thanks,
+As long as he's not NACKing it it's fine I guess.
 
-greg k-h
+Yours,
+Linus Walleij
