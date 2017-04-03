@@ -1,100 +1,413 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 11/12] gpio: Move irq_base to struct gpio_irq_chip
-Date: Mon,  3 Apr 2017 18:05:31 +0200
-Message-ID: <20170403160532.20282-12-thierry.reding@gmail.com>
-References: <20170403160532.20282-1-thierry.reding@gmail.com>
+From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] reset: Add APIs to manage array of resets
+Date: Mon, 03 Apr 2017 18:36:24 +0200
+Message-ID: <1491237384.2378.128.camel@pengutronix.de>
+References: <1491226922-20307-1-git-send-email-vivek.gautam@codeaurora.org>
+         <1491226922-20307-3-git-send-email-vivek.gautam@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170403160532.20282-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1491226922-20307-3-git-send-email-vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Vivek,
 
-In order to consolidate the multiple ways to associate an IRQ chip with
-a GPIO chip, move more fields into the new struct gpio_irq_chip.
+thank you for the patch series. A few comments below: I'd like to reduce
+the API surface a bit and include the counting and array allocation in
+the _get functions, if possible.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpio/gpio-mockup.c  | 6 +++---
- drivers/gpio/gpiolib.c      | 2 +-
- include/linux/gpio/driver.h | 5 +----
- 3 files changed, 5 insertions(+), 8 deletions(-)
+On Mon, 2017-04-03 at 19:12 +0530, Vivek Gautam wrote:
+> Many devices may want to request a bunch of resets
+> and control them. So it's better to manage them as an
+> array. Add APIs to _get(), _assert(), and _deassert()
+> an array of reset_control.
+> 
+> Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> Signed-off-by: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> ---
+> 
+> Changes since v1:
+>  - New patch added to the series.
+> 
+>  drivers/reset/core.c  | 169 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/reset.h | 108 ++++++++++++++++++++++++++++++++
+>  2 files changed, 277 insertions(+)
+> 
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 66db061165cb..fb908aa4f69e 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -477,3 +477,172 @@ int of_reset_control_get_count(struct device_node *node)
+>  	return count;
+>  }
+>  EXPORT_SYMBOL_GPL(of_reset_control_get_count);
+> +
+> +/*
+> + * APIs to manage an array of reset controllers
+> + */
+> +/**
+> + * reset_control_array_assert: assert a list of resets
+> + *
+> + * @resets: reset control array holding info about a list of resets
+> + * @num_rsts: number of resets to be asserted.
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 04008fadabef..f4179f7420a3 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -139,7 +139,7 @@ static int gpio_mockup_name_lines(struct device *dev,
- 
- static int gpio_mockup_to_irq(struct gpio_chip *chip, unsigned int offset)
- {
--	return chip->irq_base + offset;
-+	return chip->irq.first + offset;
- }
- 
- /*
-@@ -173,7 +173,7 @@ static int gpio_mockup_irqchip_setup(struct device *dev,
- 	if (irq_base < 0)
- 		return irq_base;
- 
--	gc->irq_base = irq_base;
-+	gc->irq.first = irq_base;
- 	gc->irq.chip = &gpio_mockup_irqchip;
- 
- 	for (i = 0; i < gc->ngpio; i++) {
-@@ -217,7 +217,7 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 		return -EINVAL;
- 
- 	gpiod_set_value_cansleep(desc, val);
--	priv->chip->irq_ctx.irq = gc->irq_base + priv->offset;
-+	priv->chip->irq_ctx.irq = gc->irq.first + priv->offset;
- 	irq_work_queue(&priv->chip->irq_ctx.work);
- 
- 	return size;
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 3b251d5c0e1a..55e59d79bfd3 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1955,7 +1955,7 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
- 			 * Store the base into the gpiochip to be used when
- 			 * unmapping the irqs.
- 			 */
--			gpiochip->irq_base = irq_base;
-+			gpiochip->irq.first = irq_base;
- 			irq_base_set = true;
- 		}
- 	}
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 91aa808052f1..96e7aca74ed1 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -24,7 +24,7 @@ struct module;
-  * struct gpio_irq_chip - GPIO interrupt controller
-  * @chip: GPIO IRQ chip implementation, provided by GPIO driver
-  * @first: if not dynamically assigned, the base (first) IRQ to allocate GPIO
-- *         chip IRQs from
-+ *         chip IRQs from (deprecated)
-  * @domain: interrupt translation domain; responsible for mapping
-  *          between GPIO hwirq number and linux irq number
-  * @domain_ops: table of interrupt domain operations for this IRQ chip
-@@ -125,7 +125,6 @@ struct gpio_irq_chip {
-  *	safely.
-  * @bgpio_dir: shadowed direction register for generic GPIO to clear/set
-  *	direction safely.
-- * @irq_base: first linux IRQ number assigned to GPIO IRQ chip (deprecated)
-  *
-  * A gpio_chip can help platforms abstract various sources of GPIOs so
-  * they can all be accessed through a common programing interface.
-@@ -192,8 +191,6 @@ struct gpio_chip {
- 	 * With CONFIG_GPIOLIB_IRQCHIP we get an irqchip inside the gpiolib
- 	 * to handle IRQs for most practical cases.
- 	 */
--	unsigned int		irq_base;
--
- 	struct gpio_irq_chip	irq;
- #endif
- 
--- 
-2.12.0
+This should mention the API doesn't make any guarantees that the reset
+lines controlled by the reset array are asserted or deasserted in any
+particular order.
+
+> + * Returns 0 on success or error number on failure.
+> + */
+> +int reset_control_array_assert(int num_rsts,
+> +				struct reset_control_array *resets)
+
+I'd prefer to mirror the gpiod API a little, and to have the number
+contained in the array structure, similar to struct gpio_descs:
+
+struct reset_control_array {
+	unsigned int num_rstcs;
+	struct reset_control *rstc[];
+};
+
+int reset_control_array_assert(struct reset_control_array *resets)
+{
+	...
+
+> +{
+> +	int ret, i;
+> +
+> +	if (WARN_ON(IS_ERR_OR_NULL(resets)))
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < num_rsts; i++) {
+> +		ret = reset_control_assert(resets[i].rst);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(reset_control_array_assert);
+> +
+> +/**
+> + * reset_control_array_deassert: deassert a list of resets
+> + *
+> + * @resets: reset control array holding info about a list of resets
+> + * @num_rsts: number of resets to be deasserted.
+
+Same here, no guarantees on the order in which the resets are
+deasserted.
+
+> + * Returns 0 on success or error number on failure.
+> + */
+> +int reset_control_array_deassert(int num_rsts,
+> +				struct reset_control_array *resets)
+> +{
+> +	int ret, i;
+> +
+> +	if (WARN_ON(IS_ERR_OR_NULL(resets)))
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < num_rsts; i++)
+> +		ret = reset_control_deassert(resets[i].rst);
+> +		if (ret)
+> +			goto err;
+> +
+> +	return 0;
+> +
+> +err:
+> +	while (--i >= 0)
+> +		reset_control_assert(resets[i].rst);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(reset_control_array_deassert);
+> +
+> +/**
+> + * reset_control_array_get - Get a list of reset controllers
+
+A list of "reset controls".
+
+> + *
+> + * @dev: device that requests the list of reset controllers
+> + * @num_rsts: number of reset controllers requested
+> + * @resets: reset control array holding info about a list of resets
+> + * @shared: whether reset controllers are shared or not
+> + * @optional: whether it is optional to get the reset controllers
+> + *
+
+This should mention that the array API is intended for a list of resets
+that just have to be asserted or deasserted, without any requirements on
+the order.
+
+> + * Returns 0 on success or error number on failure
+> + */
+> +static int reset_control_array_get(struct device *dev, int num_rsts,
+> +				struct reset_control_array *resets,
+> +				bool shared, bool optional)
+
+Can we make this count and return a pointer to the newly created array?
+
+static struct reset_controls *
+reset_control_array_get(struct device *dev, bool shared, bool optional)
+{
+	...
+
+That way the consumer doesn't have to care about counting and array
+allocation.
+
+> +{
+> +	int ret, i;
+> +	struct reset_control *rstc;
+> +
+> +	for (i = 0; i < num_rsts; i++) {
+> +		rstc = __of_reset_control_get(dev ? dev->of_node : NULL,
+> +					resets[i].name, i, shared, optional);
+> +		if (IS_ERR(rstc)) {
+> +			ret = PTR_ERR(rstc);
+> +			goto err_rst;
+> +		}
+> +		resets[i].rst = rstc;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_rst:
+> +	while (--i >= 0)
+> +		reset_control_put(resets[i].rst);
+> +	return ret;
+> +}
+> +
+> +static void devm_reset_control_array_release(struct device *dev, void *res)
+> +{
+> +	struct reset_control_devres *ptr = res;
+> +	int i;
+> +
+> +	for (i = 0; i < ptr->num_resets; i++)
+> +		reset_control_put(ptr->resets[i].rst);
+> +}
+> +
+> +/**
+> + * devm_reset_control_array_get - Resource managed reset_control_array_get
+> + *				  See reset_control_array_get() for more
+> + *				  details
+> + *
+> + * Returns 0 on success or error number on failure
+> + */
+> +int devm_reset_control_array_get(struct device *dev, int num_rsts,
+> +				struct reset_control_array *resets,
+> +				bool shared, bool optional)
+
+Same here.
+
+> +{
+> +	struct reset_control_devres *ptr;
+> +	int ret;
+> +
+> +	ptr = devres_alloc(devm_reset_control_array_release, sizeof(*ptr),
+> +			   GFP_KERNEL);
+> +	if (!ptr)
+> +		return -ENOMEM;
+> +
+> +	ret = reset_control_array_get(dev, num_rsts, resets,
+> +					shared, optional);
+> +	if (ret) {
+> +		ptr->resets = resets;
+> +		ptr->num_resets = num_rsts;
+> +		devres_add(dev, ptr);
+> +	} else {
+> +		devres_free(ptr);
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_reset_control_array_get);
+> +
+> +int of_reset_control_array_get(struct device_node *node, int num_rsts,
+> +				struct reset_control_array *resets,
+> +				bool shared, bool optional)
+
+And here.
+
+> +{
+> +	int ret, i;
+> +	struct reset_control *rstc;
+> +
+> +	for (i = 0; i < num_rsts; i++) {
+> +		rstc = __of_reset_control_get(node, NULL, i, shared, optional);
+> +		if (IS_ERR(rstc)) {
+> +			ret = PTR_ERR(rstc);
+> +			goto err_rst;
+> +		}
+> +		resets[i].rst = rstc;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_rst:
+> +	while (--i >= 0)
+> +		reset_control_put(resets[i].rst);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(of_reset_control_array_get);
+> +
+> +void reset_control_array_put(int num, struct reset_control_array *resets)
+
+This could drop the num then.
+
+> +{
+> +	while (num--)
+> +		reset_control_put(resets[num].rst);
+> +}
+> +EXPORT_SYMBOL_GPL(reset_control_array_put);
+> diff --git a/include/linux/reset.h b/include/linux/reset.h
+> index d89556412ccc..d6ca70b9d634 100644
+> --- a/include/linux/reset.h
+> +++ b/include/linux/reset.h
+> @@ -5,6 +5,16 @@
+>  
+>  struct reset_control;
+>  
+> +struct reset_control_array {
+> +	struct reset_control *rst;
+> +	const char *name;
+
+Drop the name. This interface is only good for a bunch of anonymous
+resets that can all be asserted or deasserted in arbitrary order. If the
+reset lines have to be known individually, this is probably the wrong
+interface.
+
+> +};
+> +
+> +struct reset_control_devres {
+> +	struct reset_control_array *resets;
+> +	int num_resets;
+> +};
+> +
+>  #ifdef CONFIG_RESET_CONTROLLER
+>  
+>  int reset_control_reset(struct reset_control *rstc);
+> @@ -23,6 +33,18 @@ struct reset_control *__devm_reset_control_get(struct device *dev,
+>  int __must_check device_reset(struct device *dev);
+>  int of_reset_control_get_count(struct device_node *node);
+>  
+> +int reset_control_array_assert(int num_rsts,
+> +				struct reset_control_array *resets);
+> +int reset_control_array_deassert(int num_rsts,
+> +				struct reset_control_array *resets);
+> +int devm_reset_control_array_get(struct device *dev, int num_rsts,
+> +				struct reset_control_array *resets,
+> +				bool shared, bool optional);
+> +int of_reset_control_array_get(struct device_node *node, int num_rsts,
+> +				struct reset_control_array *resets,
+> +				bool shared, bool optional);
+> +void reset_control_array_put(int num, struct reset_control_array *resets);
+> +
+>  static inline int device_reset_optional(struct device *dev)
+>  {
+>  	return device_reset(dev);
+> @@ -85,6 +107,39 @@ static inline struct reset_control *__devm_reset_control_get(
+>  	return -ENOTSUPP;
+>  }
+>  
+> +static inline int reset_control_array_assert(int num_rsts,
+> +				struct reset_control_array *resets)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline int reset_control_array_deassert(int num_rsts,
+> +				struct reset_control_array *resets)
+> +{
+> +	return 0;
+> +}
+
+Is this missing a stub for reset_control_array_get?
+
+> +static inline
+> +int devm_reset_control_array_get(struct device *dev, int num_rsts,
+> +				struct reset_control_array *resets,
+> +				bool shared, bool optional)
+> +{
+> +	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+> +}
+> +
+> +static inline
+> +int of_reset_control_array_get(struct device_node *node, int num_rsts,
+> +				struct reset_control_array *resets,
+> +				bool shared, bool optional)
+> +{
+> +	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+> +}
+> +
+> +static inline
+> +void reset_control_array_put(int num, struct reset_control_array *resets)
+> +{
+> +}
+> +
+>  #endif /* CONFIG_RESET_CONTROLLER */
+>  
+>  /**
+> @@ -374,4 +429,57 @@ static inline struct reset_control *devm_reset_control_get_by_index(
+>  {
+>  	return devm_reset_control_get_exclusive_by_index(dev, index);
+>  }
+> +
+> +/*
+> + * APIs to manage a list of reset controllers
+> + */
+> +static inline
+> +int devm_reset_control_array_get_exclusive(struct device *dev, int num_rsts,
+> +					struct reset_control_array *resets)
+> +{
+> +	return devm_reset_control_array_get(dev, num_rsts,
+> +						resets, false, false);
+> +}
+> +
+> +static inline
+> +int devm_reset_control_array_get_shared(struct device *dev, int num_rsts,
+> +					struct reset_control_array *resets)
+> +{
+> +	return devm_reset_control_array_get(dev, num_rsts,
+> +						resets, true, false);
+> +}
+> +
+> +static inline
+> +int devm_reset_control_array_get_optional_exclusive(struct device *dev,
+> +					int num_rsts,
+> +					struct reset_control_array *resets)
+> +{
+> +	return devm_reset_control_array_get(dev, num_rsts,
+> +						resets, false, true);
+> +}
+> +
+> +static inline
+> +int devm_reset_control_array_get_optional_shared(struct device *dev,
+> +					int num_rsts,
+> +					struct reset_control_array *resets)
+> +{
+> +	return devm_reset_control_array_get(dev, num_rsts,
+> +						resets, true, true);
+> +}
+> +
+> +static inline
+> +int of_reset_control_array_get_exclusive(struct device_node *node,
+> +					int num_rsts,
+> +					struct reset_control_array *resets)
+> +{
+> +	return of_reset_control_array_get(node, num_rsts, resets, false, false);
+> +}
+> +
+> +static inline
+> +int of_reset_control_array_get_shared(struct device_node *node,
+> +					int num_rsts,
+> +					struct reset_control_array *resets)
+> +{
+> +	return of_reset_control_array_get(node, num_rsts, resets, true, false);
+> +}
+>  #endif
+
+regards
+Philipp
