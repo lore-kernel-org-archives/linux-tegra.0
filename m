@@ -1,113 +1,56 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
 Subject: Re: [PATCH 1/1] arm64: tegra: fix PPI interrupt flag
-Date: Mon, 3 Apr 2017 13:55:23 +0100
-Message-ID: <6c64238f-a462-9e05-2f04-e989c16553c6@nvidia.com>
+Date: Mon, 3 Apr 2017 14:11:49 +0100
+Message-ID: <c1e1499e-166f-900b-aa45-773274ed73e8@arm.com>
 References: <7fad40fbcaa94c1ea46328e78b46443b@bgmail102.nvidia.com>
+ <6c64238f-a462-9e05-2f04-e989c16553c6@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7fad40fbcaa94c1ea46328e78b46443b-7W72rfoJkVlxWE4FnwvcdlaTQe2KTcn/@public.gmane.org>
+In-Reply-To: <6c64238f-a462-9e05-2f04-e989c16553c6-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Aniruddha Banerjee <aniruddhab-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aniruddha Banerjee <aniruddhab-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexander Van Brunt <avanbrunt-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Adding Marc ...
-
-On 03/04/17 12:19, Aniruddha Banerjee wrote:
-> The interrupt flag for PPI should not be set to any value, since the
-> register is read-only. Fix the flags for the PPI interrupts to
-> IRQ_TYPE_NONE, so that there is no write to the read-only register.
-
-If the below matches the h/w default, does this really cause a problem?
-
-Note, we will not attempt to write the type if it matches the current
-programmed type.
-
-I had thought that the in DT file, the type for the PPI should align
-with the h/w default in the case where it cannot be written. However, I
-guess this is not explicitly stated anywhere I have found, but at the
-same time the binding doc for the arm,gic.txt does not list
-"IRQ_TYPE_NONE" as an option.
-
-Marc, what are your thoughts?
-
-> Signed-off-by: Aniruddha Banerjee <aniruddhab-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra132.dtsi | 8 ++++----
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 8 ++++----
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 8 ++++----
->  3 files changed, 12 insertions(+), 12 deletions(-)
+On 03/04/17 13:55, Jon Hunter wrote:
+> Adding Marc ...
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-> index 3f3a46a4bd01..219fb3c6a273 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-> @@ -1093,13 +1093,13 @@
->  	timer {
->  		compatible = "arm,armv7-timer";
->  		interrupts = <GIC_PPI 13
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
->  			     <GIC_PPI 14
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
->  			     <GIC_PPI 11
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
->  			     <GIC_PPI 10
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
->  		interrupt-parent = <&gic>;
->  	};
->  };
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> index 62fa85ae0271..e602299f7694 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> @@ -390,13 +390,13 @@
->  	timer {
->  		compatible = "arm,armv8-timer";
->  		interrupts = <GIC_PPI 13
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
->  			     <GIC_PPI 14
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
->  			     <GIC_PPI 11
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
->  			     <GIC_PPI 10
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
->  		interrupt-parent = <&gic>;
->  	};
->  };
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> index 2f832df29da8..6f3060b40a40 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> @@ -1214,13 +1214,13 @@
->  	timer {
->  		compatible = "arm,armv8-timer";
->  		interrupts = <GIC_PPI 13
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
->  			     <GIC_PPI 14
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
->  			     <GIC_PPI 11
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
->  			     <GIC_PPI 10
-> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
->  		interrupt-parent = <&gic>;
->  	};
+> On 03/04/17 12:19, Aniruddha Banerjee wrote:
+>> The interrupt flag for PPI should not be set to any value, since the
+>> register is read-only. Fix the flags for the PPI interrupts to
+>> IRQ_TYPE_NONE, so that there is no write to the read-only register.
+> 
+> If the below matches the h/w default, does this really cause a problem?
+> 
+> Note, we will not attempt to write the type if it matches the current
+> programmed type.
+> 
+> I had thought that the in DT file, the type for the PPI should align
+> with the h/w default in the case where it cannot be written. However, I
+> guess this is not explicitly stated anywhere I have found, but at the
+> same time the binding doc for the arm,gic.txt does not list
+> "IRQ_TYPE_NONE" as an option.
+> 
+> Marc, what are your thoughts?
 
-Cheers
-Jon
+My immediate answer is "Why?".
 
+As you pointed out, we don't even try to program the GICD_ICFGR1
+register if what we read from it is the right thing. Also, the GICv2
+spec says in 4.3.13: "For PPIs, it is IMPLEMENTATION DEFINED whether the
+most significant bit of the Int_config field is programmable.".
+
+So NONE is always wrong (because there is no such thing in the HW), and
+the DT should have a setting that matches the HW even GICD_ICFGR1 is RO
+(the OS may need to know how the triggering configuration anyhow).
+
+Aniruddha: what problem are you trying to solve here? The DT you're
+touching seems just fine to me...
+
+Thanks,
+
+	M.
 -- 
-nvpublic
+Jazz is not dead. It just smells funny...
