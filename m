@@ -1,345 +1,113 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 1/3] cpufreq: Add Tegra186 cpufreq driver
-Date: Mon, 3 Apr 2017 15:42:23 +0300
-Message-ID: <1491223345-24386-1-git-send-email-mperttunen@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/1] arm64: tegra: fix PPI interrupt flag
+Date: Mon, 3 Apr 2017 13:55:23 +0100
+Message-ID: <6c64238f-a462-9e05-2f04-e989c16553c6@nvidia.com>
+References: <7fad40fbcaa94c1ea46328e78b46443b@bgmail102.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rjw@rjwysocki.net, viresh.kumar@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <7fad40fbcaa94c1ea46328e78b46443b-7W72rfoJkVlxWE4FnwvcdlaTQe2KTcn/@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Aniruddha Banerjee <aniruddhab-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexander Van Brunt <avanbrunt-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a new cpufreq driver for Tegra186 (and likely later).
-The CPUs are organized into two clusters, Denver and A57,
-with two and four cores respectively. CPU frequency can be
-adjusted by writing the desired rate divisor and a voltage
-hint to a special per-core register.
+Adding Marc ...
 
-The frequency of each core can be set individually; however,
-this is just a hint as all CPUs in a cluster will run at
-the maximum rate of non-idle CPUs in the cluster.
+On 03/04/17 12:19, Aniruddha Banerjee wrote:
+> The interrupt flag for PPI should not be set to any value, since the
+> register is read-only. Fix the flags for the PPI interrupts to
+> IRQ_TYPE_NONE, so that there is no write to the read-only register.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/cpufreq/Kconfig.arm        |   7 +
- drivers/cpufreq/Makefile           |   1 +
- drivers/cpufreq/tegra186-cpufreq.c | 277 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 285 insertions(+)
- create mode 100644 drivers/cpufreq/tegra186-cpufreq.c
+If the below matches the h/w default, does this really cause a problem?
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 74fa5c5904d3..168d36fa4a58 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -247,6 +247,13 @@ config ARM_TEGRA124_CPUFREQ
- 	help
- 	  This adds the CPUFreq driver support for Tegra124 SOCs.
- 
-+config ARM_TEGRA186_CPUFREQ
-+	tristate "Tegra186 CPUFreq support"
-+	depends on ARCH_TEGRA && TEGRA_BPMP
-+	default y
-+	help
-+	  This adds the CPUFreq driver support for Tegra186 SOCs.
-+
- config ARM_TI_CPUFREQ
- 	bool "Texas Instruments CPUFreq support"
- 	depends on ARCH_OMAP2PLUS
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 9f5a8045f36d..b7e78f063c4f 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -77,6 +77,7 @@ obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
- obj-$(CONFIG_ARM_STI_CPUFREQ)		+= sti-cpufreq.o
- obj-$(CONFIG_ARM_TEGRA20_CPUFREQ)	+= tegra20-cpufreq.o
- obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
-+obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
- obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
- obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
- obj-$(CONFIG_ACPI_CPPC_CPUFREQ) += cppc_cpufreq.o
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-new file mode 100644
-index 000000000000..794c1f2d8231
---- /dev/null
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -0,0 +1,277 @@
-+/*
-+ * Copyright (c) 2017, NVIDIA CORPORATION. All rights reserved
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/cpufreq.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include <soc/tegra/bpmp.h>
-+#include <soc/tegra/bpmp-abi.h>
-+
-+#define EDVD_CORE_VOLT_FREQ(core)		(0x20 + (core) * 0x4)
-+#define EDVD_CORE_VOLT_FREQ_F_SHIFT		0
-+#define EDVD_CORE_VOLT_FREQ_F_MASK		0xff
-+#define EDVD_CORE_VOLT_FREQ_V_SHIFT		16
-+#define EDVD_CORE_VOLT_FREQ_V_MASK		0xff
-+
-+#define CLUSTER_DENVER				0
-+#define CLUSTER_A57				1
-+#define NUM_CLUSTERS				2
-+
-+struct tegra186_cpufreq_cluster {
-+	const char *name;
-+	unsigned int num_cores;
-+};
-+
-+static const struct tegra186_cpufreq_cluster CLUSTERS[] = {
-+	{
-+		.name = "denver",
-+		.num_cores = 2,
-+	},
-+	{
-+		.name = "a57",
-+		.num_cores = 4,
-+	}
-+};
-+
-+struct tegra186_cpufreq_data {
-+	void __iomem *regs[NUM_CLUSTERS];
-+	struct cpufreq_frequency_table *tables[NUM_CLUSTERS];
-+};
-+
-+static void get_cluster_core(int cpu, int *cluster, int *core)
-+{
-+	switch (cpu) {
-+	case 0:
-+		*cluster = CLUSTER_A57; *core = 0; break;
-+	case 3:
-+		*cluster = CLUSTER_A57; *core = 1; break;
-+	case 4:
-+		*cluster = CLUSTER_A57; *core = 2; break;
-+	case 5:
-+		*cluster = CLUSTER_A57; *core = 3; break;
-+	case 1:
-+		*cluster = CLUSTER_DENVER; *core = 0; break;
-+	case 2:
-+		*cluster = CLUSTER_DENVER; *core = 1; break;
-+	}
-+}
-+
-+static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
-+{
-+	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-+	struct cpufreq_frequency_table *table;
-+	int cluster, core;
-+
-+	get_cluster_core(policy->cpu, &cluster, &core);
-+
-+	table = data->tables[cluster];
-+	cpufreq_table_validate_and_show(policy, table);
-+
-+	policy->cpuinfo.transition_latency = 300 * 1000;
-+
-+	return 0;
-+}
-+
-+static void write_volt_freq(uint8_t vidx, uint8_t ndiv, void __iomem *regs,
-+			unsigned int core)
-+{
-+	u32 val = 0;
-+
-+	val |= ndiv << EDVD_CORE_VOLT_FREQ_F_SHIFT;
-+	val |= vidx << EDVD_CORE_VOLT_FREQ_V_SHIFT;
-+
-+	writel(val, regs + EDVD_CORE_VOLT_FREQ(core));
-+}
-+
-+static int tegra186_cpufreq_set_target(struct cpufreq_policy *policy,
-+				       unsigned int index)
-+{
-+	struct cpufreq_frequency_table *tbl = policy->freq_table + index;
-+	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-+	uint16_t vidx = tbl->driver_data >> 16;
-+	uint16_t ndiv = tbl->driver_data & 0xffff;
-+	int cluster, core;
-+
-+	get_cluster_core(policy->cpu, &cluster, &core);
-+	write_volt_freq(vidx, ndiv, data->regs[cluster], core);
-+
-+	return 0;
-+}
-+
-+static struct cpufreq_driver tegra186_cpufreq_driver = {
-+	.name = "tegra186",
-+	.flags = CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-+	.verify = cpufreq_generic_frequency_table_verify,
-+	.target_index = tegra186_cpufreq_set_target,
-+	.init = tegra186_cpufreq_init,
-+	.attr = cpufreq_generic_attr,
-+};
-+
-+static int init_vhint_table(struct platform_device *pdev,
-+			    struct tegra_bpmp *bpmp, uint32_t cluster_id,
-+			    struct cpufreq_frequency_table **table)
-+{
-+	struct mrq_cpu_vhint_request req;
-+	struct tegra_bpmp_message msg;
-+	struct cpu_vhint_data *data;
-+	int err, i, j, num_rates;
-+	dma_addr_t phys;
-+	void *virt;
-+
-+	virt = dma_alloc_coherent(bpmp->dev, MSG_DATA_MIN_SZ, &phys,
-+				  GFP_KERNEL | GFP_DMA32);
-+	if (!virt)
-+		return -ENOMEM;
-+
-+	data = (struct cpu_vhint_data *)virt;
-+
-+	memset(&req, 0, sizeof(req));
-+	req.addr = phys;
-+	req.cluster_id = cluster_id;
-+
-+	memset(&msg, 0, sizeof(msg));
-+	msg.mrq = MRQ_CPU_VHINT;
-+	msg.tx.data = &req;
-+	msg.tx.size = sizeof(req);
-+
-+	err = tegra_bpmp_transfer(bpmp, &msg);
-+	if (err)
-+		goto end;
-+
-+	num_rates = 0;
-+
-+	for (i = data->vfloor; i < data->vceil + 1; ++i) {
-+		uint16_t ndiv = data->ndiv[i];
-+
-+		if (ndiv < data->ndiv_min || ndiv > data->ndiv_max)
-+			continue;
-+
-+		/* Only store lowest voltage index for each rate */
-+		if (i > 0 && ndiv == data->ndiv[i-1])
-+			continue;
-+
-+		++num_rates;
-+	}
-+
-+	*table = devm_kcalloc(&pdev->dev, num_rates + 1, sizeof(**table),
-+			      GFP_KERNEL);
-+	if (!*table) {
-+		err = -ENOMEM;
-+		goto end;
-+	}
-+
-+	for (i = data->vfloor, j = 0; i < data->vceil + 1; ++i) {
-+		struct cpufreq_frequency_table *point;
-+		uint16_t ndiv = data->ndiv[i];
-+
-+		if (ndiv < data->ndiv_min || ndiv > data->ndiv_max)
-+			continue;
-+
-+		/* Only store lowest voltage index for each rate */
-+		if (i > 0 && ndiv == data->ndiv[i-1])
-+			continue;
-+
-+		point = &(*table)[j++];
-+		point->driver_data = (i << 16) | (ndiv);
-+		point->frequency = data->ref_clk_hz * ndiv / data->pdiv /
-+			data->mdiv / 1000;
-+	}
-+
-+	(*table)[j].frequency = CPUFREQ_TABLE_END;
-+
-+end:
-+	dma_free_coherent(bpmp->dev, MSG_DATA_MIN_SZ, virt, phys);
-+
-+	return err;
-+}
-+
-+static int tegra186_cpufreq_probe(struct platform_device *pdev)
-+{
-+	struct tegra186_cpufreq_data *data;
-+	struct tegra_bpmp *bpmp;
-+	int i, err;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	bpmp = tegra_bpmp_get(&pdev->dev);
-+	if (IS_ERR(bpmp))
-+		return PTR_ERR(bpmp);
-+
-+	for (i = 0; i < NUM_CLUSTERS; ++i) {
-+		struct resource *res;
-+
-+		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						   CLUSTERS[i].name);
-+		if (!res) {
-+			err = -ENXIO;
-+			goto put_bpmp;
-+		}
-+
-+		data->regs[i] = devm_ioremap_resource(&pdev->dev, res);
-+		if (IS_ERR(data->regs[i])) {
-+			err = PTR_ERR(data->regs[i]);
-+			goto put_bpmp;
-+		}
-+
-+		err = init_vhint_table(pdev, bpmp, i, &data->tables[i]);
-+		if (err)
-+			goto put_bpmp;
-+	}
-+
-+	tegra_bpmp_put(bpmp);
-+
-+	tegra186_cpufreq_driver.driver_data = data;
-+
-+	err = cpufreq_register_driver(&tegra186_cpufreq_driver);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+
-+put_bpmp:
-+	tegra_bpmp_put(bpmp);
-+
-+	return err;
-+}
-+
-+static int tegra186_cpufreq_remove(struct platform_device *pdev)
-+{
-+	cpufreq_unregister_driver(&tegra186_cpufreq_driver);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tegra186_cpufreq_of_match[] = {
-+	{ .compatible = "nvidia,tegra186-ccplex-cluster", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tegra186_cpufreq_of_match);
-+
-+static struct platform_driver tegra186_cpufreq_platform_driver = {
-+	.driver = {
-+		.name = "tegra186-cpufreq",
-+		.of_match_table = tegra186_cpufreq_of_match,
-+	},
-+	.probe = tegra186_cpufreq_probe,
-+	.remove = tegra186_cpufreq_remove,
-+};
-+module_platform_driver(tegra186_cpufreq_platform_driver);
-+
-+MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
-+MODULE_DESCRIPTION("Tegra186 cpufreq driver");
-+MODULE_LICENSE("GPL v2");
+Note, we will not attempt to write the type if it matches the current
+programmed type.
+
+I had thought that the in DT file, the type for the PPI should align
+with the h/w default in the case where it cannot be written. However, I
+guess this is not explicitly stated anywhere I have found, but at the
+same time the binding doc for the arm,gic.txt does not list
+"IRQ_TYPE_NONE" as an option.
+
+Marc, what are your thoughts?
+
+> Signed-off-by: Aniruddha Banerjee <aniruddhab-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra132.dtsi | 8 ++++----
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 8 ++++----
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 8 ++++----
+>  3 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+> index 3f3a46a4bd01..219fb3c6a273 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+> @@ -1093,13 +1093,13 @@
+>  	timer {
+>  		compatible = "arm,armv7-timer";
+>  		interrupts = <GIC_PPI 13
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+>  			     <GIC_PPI 14
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+>  			     <GIC_PPI 11
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+>  			     <GIC_PPI 10
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
+>  		interrupt-parent = <&gic>;
+>  	};
+>  };
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> index 62fa85ae0271..e602299f7694 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> @@ -390,13 +390,13 @@
+>  	timer {
+>  		compatible = "arm,armv8-timer";
+>  		interrupts = <GIC_PPI 13
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+>  			     <GIC_PPI 14
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+>  			     <GIC_PPI 11
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+>  			     <GIC_PPI 10
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
+>  		interrupt-parent = <&gic>;
+>  	};
+>  };
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> index 2f832df29da8..6f3060b40a40 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> @@ -1214,13 +1214,13 @@
+>  	timer {
+>  		compatible = "arm,armv8-timer";
+>  		interrupts = <GIC_PPI 13
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+>  			     <GIC_PPI 14
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+>  			     <GIC_PPI 11
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+>  			     <GIC_PPI 10
+> -				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
+>  		interrupt-parent = <&gic>;
+>  	};
+
+Cheers
+Jon
+
 -- 
-2.1.4
+nvpublic
