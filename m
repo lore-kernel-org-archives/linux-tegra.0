@@ -1,121 +1,78 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] gpio: Add Tegra186 support
-Date: Mon, 3 Apr 2017 07:28:09 +0200
-Message-ID: <20170403052809.GA4203@ulmo.ba.sec>
-References: <20170310162629.31455-1-thierry.reding@gmail.com>
- <CACRpkdZpev7op=4e7DwYfnRpNBPN6U_EXd6G3PqM-XQudLHqow@mail.gmail.com>
- <20170331145437.GA16964@ulmo.ba.sec>
- <CACRpkdZBp1Q=J9QgwegcfqxmnDSjzYnJQg1t2UpbRkemo9aCWg@mail.gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.11-rc5
+Date: Mon, 3 Apr 2017 11:57:34 +0100
+Message-ID: <c48204b1-e30e-00c4-8352-ae81e0fb7219@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZBp1Q=J9QgwegcfqxmnDSjzYnJQg1t2UpbRkemo9aCWg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.11-rc5.
+Logs and other details at:
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    https://nvtb.github.io//linux/test_v4.11-rc5/20170402180103/
 
-On Sat, Apr 01, 2017 at 07:46:24PM +0200, Linus Walleij wrote:
-> On Fri, Mar 31, 2017 at 4:54 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Fri, Mar 31, 2017 at 03:59:40PM +0200, Linus Walleij wrote:
->=20
-> > If I call this multiple times with different parent_irq parameters, then
-> > only the last one will be stored in gpiochip->irq_chained_parent. Later
-> > on, this is used to disconnect the chained handler and data upon GPIO
-> > chip removal, which means that handler and data for all but the last one
-> > end up dangling.
->=20
-> People are using this code already for chained handlers with several
-> parents.
->=20
-> I guess it works so nicely because gpiochips are often just added
-> and seldom removed.
->=20
-> Overall that means this is a bug and should be fixed, not that new
-> drivers should avoid using this approach, or that we should discourage
-> new drivers to use this API.
->=20
-> >>       /* Set the parent IRQ for all affected IRQs */
-> >>       for (offset =3D 0; offset < gpiochip->ngpio; offset++) {
-> >>               if (!gpiochip_irqchip_irq_valid(gpiochip, offset))
-> >>                       continue;
-> >>               irq_set_parent(irq_find_mapping(gpiochip->irqdomain, off=
-set),
-> >>                              parent_irq);
-> >>       }
-> >> }
-> >
-> > Similarly here, we'd be setting the parent IRQ of all associated GPIOs
-> > to the first, second... last parent IRQ. This is completely unnecessary
-> > work and it's also setting the wrong parent. Note that we don't actually
-> > care about that in the driver right now, but it's still wrong.
->=20
-> Is that a way of saying there are bugs in the gpiolib?
->=20
-> I know there are, maintainers working on core code are always
-> lacking. I wrote this code and I admit I make mistakes, please help
-> me fix them instead of trying to make this into a reason not to
-> use this code.
 
-Fair enough. I'll see if I can turn this into something that I can use
-for this particular driver. I suspect it'll be a bit cumbersome because
-of the parent/child relationship, but I have a couple of ideas that I'd
-like to try out.
+Test summary
+------------
 
-> >> Why are you keeping the irqs around after requesting?
-> >> Use devm_*
-> >
-> > First I prefer to keep resource request and driver initialization
-> > separate because it makes error recovery more robust. So this is used to
-> > first store the results from platform_get_irq() and later on to iterate
-> > over when installing the chained handlers.
->=20
-> OK no big deal. But it could be in a local variable rather than
-> in the driver state container, right?
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-Well, I also need the same array of interrupts to remove the handlers
-again, so I don't think local would be enough. But...
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
->=20
-> > Also, devm_* doesn't exist for irq_set_chained_handler_and_data(). So I
-> > need to keep these around in order to properly uninstall the handlers
-> > again on removal.
->=20
-> OK is this something that should be fixed in the irqchip code?
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
 
-=2E.. with this in place it wouldn't be necessary. Cross-subsystem series
-are unlikely to make it for v4.12 at this point, so here go my hopes to
-get this merged sometime soon...
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
-Thierry
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
---2oS5YaxWCcQjTEyO
-Content-Type: application/pgp-signature; name="signature.asc"
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
------BEGIN PGP SIGNATURE-----
+PM: System suspend: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljh3WcACgkQ3SOs138+
-s6EkDA//UevCf84t9XefdBVWtR0GS9zBZh/fLMZSyzYMG7zWxRLCm0GWdcc76VU2
-g0Am1Sl7+xgAijfBACuaT+GkDLb9g/P4zY2qR7XkcgJwDDpAVXgNeV3vlXUt2Vs5
-iXOvdU0BZw1rGthcRVzzvN1jKamdPF7l6W7r9bN6oIyuf0ixFUwroMH06fVgdi8Q
-OjZj0gp0xP03dS+56bOSsdnO7MjPzORt5p5cyDrj2fweQbWbi4ocCGZkNWpMEw45
-35zM7o5876AMqRy1M4/4l9QpQ65+p4DbKtHRpVOggyTaD/DSA0VSkn8TfgYhJXHb
-NnhqAcKReAmNfmWhhy6iS39XmLXzM08ExJPjG1Fmalbcl5wBbN6kHhs3KlbTqYPr
-P8hZw0m/CpHYP5npsnKheIWzZ9dekaTuTdSKMEXEoF7g+QHSak/4MPL3vFgc3j6h
-eI3C4JUz4YG+GkdKyrPXrj9NnejQIVRiFU+xkFaIp8fG6SWKjQWE6IOnO0ADR5NA
-R7zTSxzO/wPsJsDuOlVevFuQHX09z5vpQTUlvDphK4oRMTuhCDhJ8yC25dlu1oUo
-2TAb/kcawZSymk//WtCrLegX5SarS0U36Hg35QTfk/hptLhbfZ68gDaWY1qX7Mxo
-bumq30Kw9BjwefBCciv4kUY3PMmAdAiPTDbJGRIsGsfTU0mD+MY=
-=iOfC
------END PGP SIGNATURE-----
 
---2oS5YaxWCcQjTEyO--
+vmlinux object size
+(delta in bytes from test_v4.11-rc4 (c02ed2e75ef4c74e41e421acb4ef1494671585e8)):
+   text     data      bss    total  kernel
+ +10624    +2080        0   +12704  defconfig
+   +488     +152        0     +640  multi_v7_defconfig
+   +100       -8        0      +92  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.11-rc4 (c02ed2e75ef4c74e41e421acb4ef1494671585e8))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+
+--
+nvpublic
