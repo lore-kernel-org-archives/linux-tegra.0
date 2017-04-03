@@ -1,36 +1,53 @@
-From: Nikolaus Schulz <nikolaus.schulz-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [cbootimage-configs PATCH 1/2] post.mk: Add dependency of emmc image on bct file
-Date: Mon, 3 Apr 2017 14:25:10 +0200
-Message-ID: <20170403122511.7194-1-nikolaus.schulz@avionic-design.de>
-References: <8bf27012-af67-3faf-206b-ebd5cd76b276@wwwdotorg.org>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/3] dt-bindings: Add bindings for nvidia,tegra186-ccplex-cluster
+Date: Mon, 3 Apr 2017 15:42:24 +0300
+Message-ID: <1491223345-24386-2-git-send-email-mperttunen@nvidia.com>
+References: <1491223345-24386-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <8bf27012-af67-3faf-206b-ebd5cd76b276-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1491223345-24386-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Nikolaus Schulz <nikolaus.schulz-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+To: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Creating an emmc image requires the bct file as a prerequisite.
-Add the dependency to post.mk.
+The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
+registers that initiate CPU frequency/voltage transitions.
 
-Signed-off-by: Nikolaus Schulz <nikolaus.schulz-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- build/post.mk | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../arm/tegra/nvidia,tegra186-ccplex-cluster.txt   | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-ccplex-cluster.txt
 
-diff --git a/build/post.mk b/build/post.mk
-index 979d8ce..809fa2b 100644
---- a/build/post.mk
-+++ b/build/post.mk
-@@ -26,6 +26,6 @@ image_deps := $(addprefix .,$(addsuffix .d,$(images)))
- %.bct: %.bct.cfg
- 	cbootimage -gbct -$(soc) $< $@
- 
--%.img: %.img.cfg
-+%.img: %.img.cfg $(bcts)
- 	../../../build/gen-image-deps.sh $< $@ .$@.d
- 	cbootimage -$(soc) $< $@
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-ccplex-cluster.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-ccplex-cluster.txt
+new file mode 100644
+index 000000000000..50cd615219e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-ccplex-cluster.txt
+@@ -0,0 +1,22 @@
++NVIDIA Tegra CCPLEX_CLUSTER area
++
++Required properties:
++- compatible: Should contain one of the following:
++  - "nvidia,tegra186-ccplex-cluster": for Tegra186
++- reg: Must contain an (offset, length) pair of the register set for each
++  entry in reg-names.
++- reg-names: Must include the following entries:
++  - "a57": Public aperture for A57 CPU cluster
++  - "denver": Public aperture for Denver CPU cluster
++- nvidia,bpmp: Phandle to BPMP device that can be queried for OPP tables
++
++Example:
++
++	ccplex@e000000 {
++		compatible = "nvidia,tegra186-ccplex-cluster";
++		reg = <0x0 0x0e060000 0x0 0x1000>,
++		      <0x0 0x0e070000 0x0 0x1000>;
++		reg-names = "a57", "denver";
++
++		nvidia,bpmp = <&bpmp>;
++	};
 -- 
-2.11.0
+2.1.4
