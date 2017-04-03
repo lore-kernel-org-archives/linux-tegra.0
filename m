@@ -1,78 +1,93 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.11-rc5
-Date: Mon, 3 Apr 2017 11:57:34 +0100
-Message-ID: <c48204b1-e30e-00c4-8352-ae81e0fb7219@nvidia.com>
+From: Aniruddha Banerjee <aniruddhab@nvidia.com>
+Subject: [PATCH 1/1] arm64: tegra: fix PPI interrupt flag
+Date: Mon, 3 Apr 2017 11:19:54 +0000
+Message-ID: <7fad40fbcaa94c1ea46328e78b46443b@bgmail102.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexander Van Brunt <avanbrunt@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.11-rc5.
-Logs and other details at:
+The interrupt flag for PPI should not be set to any value, since the
+register is read-only. Fix the flags for the PPI interrupts to
+IRQ_TYPE_NONE, so that there is no write to the read-only register.
 
-    https://nvtb.github.io//linux/test_v4.11-rc5/20170402180103/
+Signed-off-by: Aniruddha Banerjee <aniruddhab@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 8 ++++----
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 8 ++++----
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 8 ++++----
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
-
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.11-rc4 (c02ed2e75ef4c74e41e421acb4ef1494671585e8)):
-   text     data      bss    total  kernel
- +10624    +2080        0   +12704  defconfig
-   +488     +152        0     +640  multi_v7_defconfig
-   +100       -8        0      +92  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.11-rc4 (c02ed2e75ef4c74e41e421acb4ef1494671585e8))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
-
---
-nvpublic
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 3f3a46a4bd01..219fb3c6a273 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -1093,13 +1093,13 @@
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+ 			     <GIC_PPI 14
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+ 			     <GIC_PPI 11
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+ 			     <GIC_PPI 10
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
+ 		interrupt-parent = <&gic>;
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 62fa85ae0271..e602299f7694 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -390,13 +390,13 @@
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts = <GIC_PPI 13
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+ 			     <GIC_PPI 14
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+ 			     <GIC_PPI 11
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+ 			     <GIC_PPI 10
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
+ 		interrupt-parent = <&gic>;
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 2f832df29da8..6f3060b40a40 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1214,13 +1214,13 @@
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts = <GIC_PPI 13
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+ 			     <GIC_PPI 14
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+ 			     <GIC_PPI 11
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
+ 			     <GIC_PPI 10
+-				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
+ 		interrupt-parent = <&gic>;
+ 	};
+ 
+-- 
+2.11.0
