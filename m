@@ -1,93 +1,83 @@
-From: Aniruddha Banerjee <aniruddhab@nvidia.com>
-Subject: [PATCH 1/1] arm64: tegra: fix PPI interrupt flag
-Date: Mon, 3 Apr 2017 11:19:54 +0000
-Message-ID: <7fad40fbcaa94c1ea46328e78b46443b@bgmail102.nvidia.com>
+From: Nikolaus Schulz <nikolaus.schulz-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [cbootimage-configs PATCH v2] post.mk: Create dependency
+ makefile by makefile rule
+Date: Mon, 3 Apr 2017 14:22:15 +0200
+Message-ID: <20170403122214.cqth3myvv6tpysr4@avionic-0071.adnet.avionic-design.de>
+References: <20170331150153.14606-1-nikolaus.schulz@avionic-design.de>
+ <20170331150153.14606-2-nikolaus.schulz@avionic-design.de>
+ <8bf27012-af67-3faf-206b-ebd5cd76b276@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexander Van Brunt <avanbrunt@nvidia.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <8bf27012-af67-3faf-206b-ebd5cd76b276-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The interrupt flag for PPI should not be set to any value, since the
-register is read-only. Fix the flags for the PPI interrupts to
-IRQ_TYPE_NONE, so that there is no write to the read-only register.
+On Fri, Mar 31, 2017 at 09:46:19AM -0600, Stephen Warren wrote:
+> On 03/31/2017 09:01 AM, Nikolaus Schulz wrote:
+> > Creating the emmc image requires creating the bct file and the
+> > bootloader image first.  These dependencies are written to a makefile
+> > snippet that is created by the gen-image-deps.sh script.  But that
+> > script is only invoked when the rule that creates the emmc image is run,
+> > which is too late for creating the dependencies makefile.
+> > 
+> > Add a rule to post.mk that tells make how to create the dependencies
+> > makefile; with that in place, make automatically makes the dependency
+> > makefile before executing any other rules.
+> 
+> I don't think this change is correct, or at least necessary.
+> 
+> The concept here is that:
+> 
+> - If an output file does not exist at all, it will be built for the first
+> time, and a dependency file will be generated for the next time.
+> 
+> - If an output file does exist, the related dependency file is also expected
+> to exist, and specify the dependencies, so that if they change, a rebuild
+> will occur.
+> 
+> In particular, the dependency file is/should-no-be necessary in the case
+> where an output file is to be generated for the first time.
+> 
+> If a known dependency specification is missing, we should specify it
+> directly in the makefile itself. The generated dependency files are intended
+> to represent unknown/unknowable dependencies.
+> 
+> Is it possible to fix this problem that way instead?
 
-Signed-off-by: Aniruddha Banerjee <aniruddhab@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra132.dtsi | 8 ++++----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 8 ++++----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 8 ++++----
- 3 files changed, 12 insertions(+), 12 deletions(-)
+Well, the dependencies in question are hard dependencies: creating the
+emmc image has the bct file and the bootloader image as prerequisites.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-index 3f3a46a4bd01..219fb3c6a273 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-@@ -1093,13 +1093,13 @@
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
- 			     <GIC_PPI 14
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
- 			     <GIC_PPI 11
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
- 			     <GIC_PPI 10
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
- 		interrupt-parent = <&gic>;
- 	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 62fa85ae0271..e602299f7694 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -390,13 +390,13 @@
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
- 			     <GIC_PPI 14
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
- 			     <GIC_PPI 11
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
- 			     <GIC_PPI 10
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
- 		interrupt-parent = <&gic>;
- 	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2f832df29da8..6f3060b40a40 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1214,13 +1214,13 @@
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
- 			     <GIC_PPI 14
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
- 			     <GIC_PPI 11
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>,
- 			     <GIC_PPI 10
--				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_NONE)>;
- 		interrupt-parent = <&gic>;
- 	};
- 
+I just noticed though that specifying the dependency on the bct file
+need not use gen-image-deps.sh at all, since the bct filename is already
+known to make.  I'll send an alternate, trivial patch.
+
+Note that the dependency on the bootloader image can be added to the
+makefiles in a similar way by simply adding a variable for the filename
+to the per-soc Makefiles and make that a prerequisite of the emmc image.
+With that there is no need for a dynamically generated dependency file
+at all, at the slight expense of some (more) duplication of filenames.
+
+I'll send a separate patch doing that as an RFC.
+
+Regards,
+Nikolaus
 -- 
-2.11.0
+Avionic Design GmbH
+Nikolaus Schulz
+Wragekamp 10
+D-22397 Hamburg
+Germany
+
+Tel.:  +49 40 88187-163
+Fax:   +49 40 88187-150
+Email: nikolaus.schulz-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org
+
+Avionic Design GmbH
+Amtsgericht Hamburg HRB 82598
+Geschäftsführung: Cornelis Broers
+Ust.-Ident-Nr.: DE813378254
