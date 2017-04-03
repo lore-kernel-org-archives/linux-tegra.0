@@ -1,85 +1,97 @@
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v2 1/4] reset: Add API to count number of reset available with device
-Date: Mon,  3 Apr 2017 19:11:59 +0530
-Message-ID: <1491226922-20307-2-git-send-email-vivek.gautam@codeaurora.org>
-References: <1491226922-20307-1-git-send-email-vivek.gautam@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1491226922-20307-1-git-send-email-vivek.gautam@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: p.zabel@pengutronix.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, balbi@kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: Add bindings for
+ nvidia,tegra186-ccplex-cluster
+Date: Mon, 3 Apr 2017 16:06:17 +0200
+Message-ID: <20170403140617.GA22966@ulmo.ba.sec>
+References: <1491223345-24386-1-git-send-email-mperttunen@nvidia.com>
+ <1491223345-24386-2-git-send-email-mperttunen@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1491223345-24386-2-git-send-email-mperttunen@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Count number of reset phandles available with the device node
-to know the resets a given device has.
 
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since v1:
- - Handling the error path by returning error code for failures
-   and ENODEV for count equal to 0.
- - Moved the function to drivers instead of putting in the includes.
+On Mon, Apr 03, 2017 at 03:42:24PM +0300, Mikko Perttunen wrote:
+> The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
+> registers that initiate CPU frequency/voltage transitions.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  .../arm/tegra/nvidia,tegra186-ccplex-cluster.txt   | 22 ++++++++++++++++=
+++++++
+>  1 file changed, 22 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,te=
+gra186-ccplex-cluster.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-=
+ccplex-cluster.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,teg=
+ra186-ccplex-cluster.txt
+> new file mode 100644
+> index 000000000000..50cd615219e9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-ccplex-=
+cluster.txt
+> @@ -0,0 +1,22 @@
+> +NVIDIA Tegra CCPLEX_CLUSTER area
+> +
+> +Required properties:
+> +- compatible: Should contain one of the following:
+> +  - "nvidia,tegra186-ccplex-cluster": for Tegra186
+> +- reg: Must contain an (offset, length) pair of the register set for each
+> +  entry in reg-names.
+> +- reg-names: Must include the following entries:
+> +  - "a57": Public aperture for A57 CPU cluster
+> +  - "denver": Public aperture for Denver CPU cluster
+> +- nvidia,bpmp: Phandle to BPMP device that can be queried for OPP tables
 
- drivers/reset/core.c  | 22 ++++++++++++++++++++++
- include/linux/reset.h |  6 ++++++
- 2 files changed, 28 insertions(+)
+"phandle"
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index f1e5e65388bb..66db061165cb 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -455,3 +455,25 @@ int device_reset(struct device *dev)
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(device_reset);
-+
-+/**
-+ * of_reset_control_get_count - Count number of resets available with a device
-+ *
-+ * @node: device node that contains 'resets'.
-+ *
-+ * Returns positive reset count on success, or error number on failure and
-+ * on count being zero.
-+ */
-+int of_reset_control_get_count(struct device_node *node)
-+{
-+	int count;
-+
-+	count = of_count_phandle_with_args(node, "resets", "#reset-cells");
-+	if (count < 0)
-+		return count;
-+	if (count == 0)
-+		return -ENODEV;
-+
-+	return count;
-+}
-+EXPORT_SYMBOL_GPL(of_reset_control_get_count);
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index 96fb139bdd08..d89556412ccc 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -21,6 +21,7 @@ struct reset_control *__devm_reset_control_get(struct device *dev,
- 				     bool optional);
- 
- int __must_check device_reset(struct device *dev);
-+int of_reset_control_get_count(struct device_node *node);
- 
- static inline int device_reset_optional(struct device *dev)
- {
-@@ -79,6 +80,11 @@ static inline struct reset_control *__devm_reset_control_get(
- 	return optional ? NULL : ERR_PTR(-ENOTSUPP);
- }
- 
-+static inline int of_reset_control_get_count(struct device_node *node);
-+{
-+	return -ENOTSUPP;
-+}
-+
- #endif /* CONFIG_RESET_CONTROLLER */
- 
- /**
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +Example:
+> +
+> +	ccplex@e000000 {
+> +		compatible =3D "nvidia,tegra186-ccplex-cluster";
+> +		reg =3D <0x0 0x0e060000 0x0 0x1000>,
+> +		      <0x0 0x0e070000 0x0 0x1000>;
+> +		reg-names =3D "a57", "denver";
+> +
+> +		nvidia,bpmp =3D <&bpmp>;
+> +	};
+
+Where's the information about the register offsets coming from? The TRM
+says that CCPLEX_CLUSTER has a single aperture from 0x0e000000 to
+0x0e3fffff.
+
+Thierry
+
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljiVtUACgkQ3SOs138+
+s6EXWg/+OFksuW+8LtdYGlcR8zVFkAvtfbSt2dMzhPtfiiA6BloS6cKyQZjXShTW
+O9i98bKmR8w1lr6Qu3/YdEdwpXBOseRlGqaZcOatCjqeI1PPI/skFShVlO8hC/5k
+FMJ+xBmVXDLzvsdqKdayLAVScU2giNDcdgjylkmzpMCEBOsOMY6aduxYX9CNjrbg
+NFLaCy5Fb9Y/FAQpjr21AeTZvtmJDss8tlPd8afyZuHngJsW9xisxLZw5bJwQJgC
+aRJK6CKco/BKAWVJDl02UpUgSie3rOKYDSa/naCk/zPUqTbOJ+yilvAa8viRWf0h
+Xn0/yNHMz3b3f8EU5AJ6FoCY1LZbauwS8g0qnfQirTE602DTWBuyin+IdYxAiMyO
+MO4HzIlJJICFLNGoZd5Zgs1mZnX+uhWX3jpM1+hTCrfFaEMYlXjFUrSiXhhvmUVH
+wxfDBX8izhcTiplF42DIalgGdInhVBAFeNLosVNV/xFlGVqtRw3jvqMklJEgka1F
+kh8sLVf1rBiT4/Bi/JEg1PnTSeGx0OxRqUcJKfsBdovVTQb65rG9VailgVA1XIfh
+p/BG1xSbjEscEI3fKGvDGCXDBRYpeOxH+nii4FuAGWG7jYySp53g4sZMNDm6ymyL
+ByMH3eoQlMBOFvdXSL8xf+HWpu0f7wNPB19ujE0+eqJvBrgvW3k=
+=h41V
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
