@@ -1,116 +1,85 @@
-From: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: [PATCH v2 3/4] usb: dwc3: of-simple: Add support to get resets for the device
-Date: Mon,  3 Apr 2017 19:12:01 +0530
-Message-ID: <1491226922-20307-4-git-send-email-vivek.gautam@codeaurora.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v2 1/4] reset: Add API to count number of reset available with device
+Date: Mon,  3 Apr 2017 19:11:59 +0530
+Message-ID: <1491226922-20307-2-git-send-email-vivek.gautam@codeaurora.org>
 References: <1491226922-20307-1-git-send-email-vivek.gautam@codeaurora.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1491226922-20307-1-git-send-email-vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1491226922-20307-1-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: p.zabel@pengutronix.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, balbi@kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support to get a list of resets available for the device.
-These resets must be kept de-asserted until the device is
-in use.
+Count number of reset phandles available with the device node
+to know the resets a given device has.
 
-Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Signed-off-by: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 ---
 
 Changes since v1:
- - Using new APIs for reset control array.
- - Using the *_get_exclusive() API.
- - Added reset_control_array_put() to error and driver removal path.
+ - Handling the error path by returning error code for failures
+   and ENODEV for count equal to 0.
+ - Moved the function to drivers instead of putting in the includes.
 
- drivers/usb/dwc3/dwc3-of-simple.c | 45 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ drivers/reset/core.c  | 22 ++++++++++++++++++++++
+ include/linux/reset.h |  6 ++++++
+ 2 files changed, 28 insertions(+)
 
-diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-index fe414e7a9c78..96786f5ede0b 100644
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -29,13 +29,48 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- 
- struct dwc3_of_simple {
- 	struct device		*dev;
- 	struct clk		**clks;
- 	int			num_clocks;
-+	int			num_resets;
-+	struct reset_control_array *resets;
- };
- 
-+static int dwc3_of_simple_reset_init(struct dwc3_of_simple *simple, int count)
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index f1e5e65388bb..66db061165cb 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -455,3 +455,25 @@ int device_reset(struct device *dev)
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(device_reset);
++
++/**
++ * of_reset_control_get_count - Count number of resets available with a device
++ *
++ * @node: device node that contains 'resets'.
++ *
++ * Returns positive reset count on success, or error number on failure and
++ * on count being zero.
++ */
++int of_reset_control_get_count(struct device_node *node)
 +{
-+	struct device		*dev = simple->dev;
-+	int			ret;
++	int count;
 +
-+	/* Not all platforms have resets, so don't return a failure */
++	count = of_count_phandle_with_args(node, "resets", "#reset-cells");
 +	if (count < 0)
-+		return 0;
++		return count;
++	if (count == 0)
++		return -ENODEV;
 +
-+	simple->num_resets = count;
-+
-+	simple->resets = devm_kcalloc(dev, count, sizeof(simple->resets),
-+							GFP_KERNEL);
-+	if (!simple->resets)
-+		return -ENOMEM;
-+
-+	ret = of_reset_control_array_get_exclusive(dev->of_node, count,
-+							simple->resets);
-+	if (ret) {
-+		dev_err(dev, "failed to get device resets\n");
-+		return ret;
-+	}
-+
-+	ret = reset_control_array_deassert(count, simple->resets);
-+	if (ret) {
-+		reset_control_array_put(count, simple->resets);
-+		return ret;
-+	}
-+
-+	return 0;
++	return count;
++}
++EXPORT_SYMBOL_GPL(of_reset_control_get_count);
+diff --git a/include/linux/reset.h b/include/linux/reset.h
+index 96fb139bdd08..d89556412ccc 100644
+--- a/include/linux/reset.h
++++ b/include/linux/reset.h
+@@ -21,6 +21,7 @@ struct reset_control *__devm_reset_control_get(struct device *dev,
+ 				     bool optional);
+ 
+ int __must_check device_reset(struct device *dev);
++int of_reset_control_get_count(struct device_node *node);
+ 
+ static inline int device_reset_optional(struct device *dev)
+ {
+@@ -79,6 +80,11 @@ static inline struct reset_control *__devm_reset_control_get(
+ 	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+ }
+ 
++static inline int of_reset_control_get_count(struct device_node *node);
++{
++	return -ENOTSUPP;
 +}
 +
- static int dwc3_of_simple_clk_init(struct dwc3_of_simple *simple, int count)
- {
- 	struct device		*dev = simple->dev;
-@@ -100,6 +135,10 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+ #endif /* CONFIG_RESET_CONTROLLER */
  
-+	ret = dwc3_of_simple_reset_init(simple, of_reset_control_get_count(np));
-+	if (ret)
-+		return ret;
-+
- 	ret = of_platform_populate(np, NULL, NULL, dev);
- 	if (ret) {
- 		for (i = 0; i < simple->num_clocks; i++) {
-@@ -107,6 +146,9 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 			clk_put(simple->clks[i]);
- 		}
- 
-+		reset_control_array_assert(simple->num_resets, simple->resets);
-+		reset_control_array_put(simple->num_resets, simple->resets);
-+
- 		return ret;
- 	}
- 
-@@ -128,6 +170,9 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
- 		clk_put(simple->clks[i]);
- 	}
- 
-+	reset_control_array_assert(simple->num_resets, simple->resets);
-+	reset_control_array_put(simple->num_resets, simple->resets);
-+
- 	of_platform_depopulate(dev);
- 
- 	pm_runtime_put_sync(dev);
+ /**
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
