@@ -1,60 +1,72 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] arm64: tegra: Add GPU node for Tegra 186
-Date: Tue, 4 Apr 2017 15:22:16 +0200
-Message-ID: <20170404132216.GB843@ulmo.ba.sec>
-References: <20170330091831.18322-2-acourbot@nvidia.com>
- <20170330092828.13336-1-acourbot@nvidia.com>
+Subject: Re: [PATCH 2/3] soc: tegra: make fuse-tegra explicitly non-modular
+Date: Tue, 4 Apr 2017 15:25:43 +0200
+Message-ID: <20170404132543.GC843@ulmo.ba.sec>
+References: <20161113190302.18099-1-paul.gortmaker@windriver.com>
+ <20161113190302.18099-3-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="yLVHuoLXiP9kZBkt"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170330092828.13336-1-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+In-Reply-To: <20161113190302.18099-3-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---6sX45UoQRIJXqkqR
+--yLVHuoLXiP9kZBkt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 30, 2017 at 06:28:28PM +0900, Alexandre Courbot wrote:
-> Add the DT node for the GP10B GPU on Tegra 186.
+On Sun, Nov 13, 2016 at 02:03:01PM -0500, Paul Gortmaker wrote:
+> The Makefiles currently controlling compilation of this code is:
 >=20
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> drivers/soc/tegra/Makefile:obj-y +=3D fuse/
+> drivers/soc/tegra/fuse/Makefile:obj-y +=3D fuse-tegra.o
+>=20
+> ...meaning that it currently is not being built as a module by anyone.
+>=20
+> Lets remove the couple traces of modularity so that when reading the
+> driver there is no doubt it is builtin-only.
+>=20
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+>=20
+> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to for-4.12/arm64/dt, thanks.
+Applied to for-4.12/soc, thanks.
 
 Thierry
 
---6sX45UoQRIJXqkqR
+--yLVHuoLXiP9kZBkt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjnggACgkQ3SOs138+
-s6HY+Q//QNe/KYydkDCCj8yCHJnJKNysQuFF3glxJN0SS1JR5C4NnsiiwCi/ClMi
-v9jZyAoBV3R2Cs6o8OO4vxey5YLrjNYQ+Ho5rOIUhccMhIvmshfg3A2qH01H2NN+
-aX8T8NwW0MIcDkmPvXx/9NFJFOqJx64EERXWQdwd5g+xqRTLpsdhCDbL67sdMShY
-wX0aGVThJXRwON5nRX0qJpAOQgEq8H+BEByQHqZWb3aTHlCqR97yOSelOqDR3N2Q
-2JScLzolHnhmt6EOHpznVWnr8HKJoLZxoXX3zELpiZ0trq3plQVi6ABayNpldi5L
-2ja1aDMaNM9G28P7YgvpL74OBZ0J7yg0aSlhjTyVjqzehW5FoEpPmqohtopEd1pG
-c3cL/JKNExXjRMyhy5mwzcPQGtXUqhTBG654vyy1X+WKfjIYl6I1TNLmXV+C26nr
-ZDKLcxTOzP2TmIgaMcSpIwGmOZdCLNWfIv0RRpFQOr8zEfnOb6s4qdx28lPURu2X
-zz7uSyWtD+HTMFYkm2RXNdokeqTXbnzz6UhGxJ3UcKj/kmMA61Wzb0WIOD0WMtz3
-vLd+JFvjOnxvlwG0FrCAC5t6h3my3UC3TAKDa19h6K6ZgUvlSaNCY0/jVkDnGmp7
-PhtXvFTEM0STzvl5K3R9NPRXgWV4lyz1VwDT62d6J+OjvnO5uig=
-=5pOL
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjntcACgkQ3SOs138+
+s6EDNxAAjuRQSb2i9wSQ1oSQat0zQaQHm7q1dEhc310r3FE5xCY9TaCgY9gL3FGr
+uxsj5DgaIwSX5WoAda3wiQ4PGcnAi5eftLykrpGOFUSIXTAjho5iQdZc4q3WnuoM
+40eRL5JtcFm00MbjGli6dDiy1cZ6ldKlxvIZ7uVIh53Ts6bIMIXI75IZsZb/0yk2
+qlw+EeNIcCF3xs+jdmbixzhn2OHKJR2oetQB/754B1sx1EaGVdMp1yoN2WzVsmji
+kpGGxZhK52nMbXsGCsfXoFRKeS0MX6e0QIAzMcAia1EpYjG9kRoMxEdtkPsJewjL
+NgUvLcGZqtlLYsGf/EaKl9D0mvnFArT5tzjwoOukGB4g8txanCEUJSqBXvfKlDK3
+VUpVfBaJo4Itl9P4sjJYasiUEgqQHTbBjePZ6raxde85chmmvIt4cmc9JZ4Bv3Sc
+SXqhdWluRk6/qLVxJ9+MjzWYOasL2ApL2/OIunWXXLGpB0kx+zNXVCUl13LlTKo5
+6ww8jcWFNrXS0kJJiyi01yre+TTpZcw8SKzuj90HHTbXJQBMYFCOMKGvXJgKF4if
+yb0k0qKPSTAsphqaIjPYWXWN85bHMZiPU20RndIIoSuL77eSKQiUh0jQnLwVxRmX
+A7RTEBHMbJ1jRm6Csda5Tgm8Jd8n/vGZCmGxdxyeoO0JLji0xdo=
+=Zkfp
 -----END PGP SIGNATURE-----
 
---6sX45UoQRIJXqkqR--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--yLVHuoLXiP9kZBkt--
