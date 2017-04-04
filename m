@@ -1,59 +1,59 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra: Propagate clk_out_x rate to parent
-Date: Tue, 4 Apr 2017 16:02:37 +0200
-Message-ID: <20170404140237.GJ843@ulmo.ba.sec>
-References: <1490189899-19401-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: add missing Tegra210 clocks
+Date: Tue, 4 Apr 2017 16:03:25 +0200
+Message-ID: <20170404140325.GK843@ulmo.ba.sec>
+References: <1490192598-26862-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LG0Ll82vYr46+VA1"
-Return-path: <linux-clk-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="7ArrI7P/b+va1vZ8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1490189899-19401-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1490192598-26862-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Frid <afrid@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mikko Perttunen <mperttunen@nvidia.com>, Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---LG0Ll82vYr46+VA1
+--7ArrI7P/b+va1vZ8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 22, 2017 at 03:38:19PM +0200, Peter De Schrijver wrote:
-> From: Alex Frid <afrid@nvidia.com>
+On Wed, Mar 22, 2017 at 04:23:16PM +0200, Peter De Schrijver wrote:
+> iqc1, iqc2, tegra_clk_pll_a_out_adsp, tegra_clk_pll_a_out0_out_adsp, adsp
+> and adsp neon were not modelled. dp2 wasn't modelled for Tegra210.
 >=20
-> Given that externx can only be used as a parent for clk_out_x, it makes
-> sense to propagate requests to make clk_out_x easier to handle.
->=20
-> Signed-off-by: Alex Frid <afrid@nvidia.com>
 > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-tegra-pmc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/clk/tegra/clk-id.h               |  6 ++++++
+>  drivers/clk/tegra/clk-tegra-periph.c     |  6 ++++++
+>  drivers/clk/tegra/clk-tegra210.c         |  7 +++++++
+>  include/dt-bindings/clock/tegra210-car.h | 16 ++++++++--------
+>  4 files changed, 27 insertions(+), 8 deletions(-)
 
 Applied to for-4.12/clk, thanks.
 
 Thierry
 
---LG0Ll82vYr46+VA1
+--7ArrI7P/b+va1vZ8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjp30ACgkQ3SOs138+
-s6FBPw//UO6MIeqZlfrw7RsRHg3Tlhnw16p0VjCtHHHilXvnt/gScqIHVWZKArqQ
-MsQxeBt3o5CDdpvKfH5Nc4XX4/WfrdMuYJja7r18c5JKZWQZ5A819AUP74gfExlB
-CQAwYKCpvR3rjs9X8CBysi/2ZLPnlj7aiA34sOae+T+N0Z9DgZdBJPSLBJgdSy7O
-uF6q8GzyHQDok5vTnbEjSITYAJkLhmea3fkfIzNGPl6BJanD0Eueiy3kCUWa+YW8
-Lbqhat/JrCq5t4Je1TO0uSnRkYsNtkz5AiB1vV9Db0ZcmBv/n9GBTFhXEaJHcHF4
-PNkTvMJ2bctS0Bar3Yne0GO931EnmD3xRRD63imiMlibU1DmII1BBsSRlSjEj/EM
-drZmLqNbG1TRqmrP2tWWe053BgdC3KEh2kAea7RS+tNGrtdTyiV+q2FDE+tM1T0Y
-ft1TA7y2MkWzZpI6E1g64y0spueyErCiEMPBaLgaL46TS8I6ugb0C6az9u/qdCTo
-LGos3f0FV+EzUFSd2PV73ePJvd9O8koOIgLxFHjI59Eydz+vwZ/xe1IPWB6egZMt
-n1vg7TjqfnWYJHZ/EgvbLsV2Fn0rOkTGmk9bvKiWsvq60uFQ+8lJGiC2nujrmIqM
-PF2xwuoJIAlcPTIWtxScZI4DZ7eqCoRkc9xap/wEVrLbs90vBJY=
-=9vKM
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjp60ACgkQ3SOs138+
+s6Ff6BAAgAs8lgtU6unbMIYgOq6qzmXu6z3uHvHTZMYMDC+XMMd9r885n2gTgEtV
+Njq0cGyCFySlIK2ZXW2lb0lyNP1EaQcdVDufWIbJSxyuMe7y4dZ+lXBBqO0qPBPo
+I7WKpfKhvbBcrQjpdlHQEHYAc2gdn5V6XbuZLDNAGIelm596AxI3vSS4lnz0FIPd
+2SFXRJHib5kMcxeV7NTo2ZyEL8cKSsDQnLYmi/gNcTp07YriuE7Cu/jZrCrCiaDd
+7EQOkrZ3/sdmAwlUvJTcMkuT4dTXNfzY6wgNNJkl4H2Gas2ZYAMlLcUNai95Nduk
+icYIx8ixKpJERmJyyYN0/sx0uYipc/4oK2N2zESN093bWOFkKpw7Wg/d4TWA742U
+rHgzccw6TleWDqBQcgIZ9eGF5iq5LFWlJHm/IJ7RYdzvrWVFAAYGEBK402yZylac
+ipNf40XFr74uc9K/BZ93PJheI60B5Vd+Z7z/qpbFa/Pwb/eZsIL50J/4jhlEeisZ
+B29tof7/ylHcvmi4bzn6wenXJ7jbWgsoCkOQ/uas92AsOJtWLo9rNLE1suSYy3Cj
+ZxBz4Yk/MxmgUz3yLixflyEuP0uYyS96k7yuPmP+xt5EQqqTWFKG6gFp6MTLQ91v
+sXhIyOdLaX/m4Mya4bG9zVK5WWq2gzVfyvIxltLBaGvnRyWhIwI=
+=SOvC
 -----END PGP SIGNATURE-----
 
---LG0Ll82vYr46+VA1--
+--7ArrI7P/b+va1vZ8--
