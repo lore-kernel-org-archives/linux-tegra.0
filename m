@@ -1,105 +1,66 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v2 2/4] reset: Add APIs to manage array of resets
-Date: Tue, 04 Apr 2017 14:47:49 +0200
-Message-ID: <1491310069.2996.17.camel@pengutronix.de>
-References: <1491226922-20307-1-git-send-email-vivek.gautam@codeaurora.org>
-         <1491226922-20307-3-git-send-email-vivek.gautam@codeaurora.org>
-         <1491237384.2378.128.camel@pengutronix.de>
-         <52efd58a-e4f2-d3a7-0145-4c2f60ef6dd6@codeaurora.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] dt-bindings: Add documentation for GP10B GPU
+Date: Tue, 4 Apr 2017 15:21:57 +0200
+Message-ID: <20170404132157.GA843@ulmo.ba.sec>
+References: <20170330091831.18322-2-acourbot@nvidia.com>
+ <20170330092644.11890-1-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52efd58a-e4f2-d3a7-0145-4c2f60ef6dd6@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, swarren@wwwdotorg.org, thierry.reding@gmail.com, balbi@kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170330092644.11890-1-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Vivek,
 
-On Tue, 2017-04-04 at 16:09 +0530, Vivek Gautam wrote:
-[...]
-> > I'd prefer to mirror the gpiod API a little, and to have the number
-> > contained in the array structure, similar to struct gpio_descs:
-[...]
-> Alright, i can update this.
-> I took regulator_bulk interface as the reference, but now i see
-> gpio_descs has a smaller footprint.
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, understood.
-I think the smaller footprint API is more convenient for the user.
+On Thu, Mar 30, 2017 at 06:26:44PM +0900, Alexandre Courbot wrote:
+> GP10B's definition is mostly similar to GK20A's and GM20B's. The only
+> noticeable difference is the use of power domains instead of a regulator
+> for power supply.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes since v1:
+> - It's much better when it compiles.
+>=20
+>  .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 25 ++++++++++++++++=
++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
 
-[...]
-> >> + * Returns 0 on success or error number on failure
-> >> + */
-> >> +static int reset_control_array_get(struct device *dev, int num_rsts,
-> >> +				struct reset_control_array *resets,
-> >> +				bool shared, bool optional)
-> > Can we make this count and return a pointer to the newly created array?
-> >
-> > static struct reset_controls *
-> > reset_control_array_get(struct device *dev, bool shared, bool optional)
-> > {
-> > 	...
-> >
-> > That way the consumer doesn't have to care about counting and array
-> > allocation.
-> 
-> Just trying to think again in line with the regulator bulk APIs.
-> Can't a user provide a list of reset controls as data and thus
-> request reset controls with a "id" and num_resets available.
-> 
-> e.g.
->     const char * const rst_names[] = {
->       "rst1", "rst2" ...
->     };
->     xyz_data = {
->       .resets = rst_names;
->       .num = ARRAY_SIZE(rst_names);
->     };
-> and then the driver making use of reset_control_array APIs
-> to request this list of reset controls and assert/deassert them.
-> 
-> I am assuming this case when one user driver is used across a bunch
-> of platforms with different number of resets available.
-> We may not want to rely solely on the device tree entries, since
-> the resets can be mandatory in few cases and we may want to
-> return failure.
+Applied to for-4.12/arm64/dt, thanks.
 
-The way I understood the array API was as a method of handling a list of
-anonymous resets, specified as
+Thierry
 
-	resets = <&reset 1>, <&reset 2>, <&reset 3>;
-	// reset-names = "rst1", "rst2", "rst3"; /* don't care */
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-in the device tree.
+-----BEGIN PGP SIGNATURE-----
 
-Now if you want to handle a partial list of those as an unordered list,
-with special consideration for others, that could be added as a separate
-API when there is use for it. But I expect that most potential users of
-this array API will not have to make such a distinction.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjnfIACgkQ3SOs138+
+s6Hj3w//SFx+cptfvaQjO18yatBc4RRhRVvaMBL7p3451NYBxf2lLeCcSsx+3epV
+V+2C7w2Qb8ACSor77EvJ/vDfaSGfXNa2eM3b8Y1CQOoBQemZnCBHbZRAU4c8Gg5b
+XVFNZkmrlp8udz5V9fadokmhC22yjfN0MfIV4C5bDgdxS1aR0W1fAg+yPVcehiRT
+vP7bl3sfV5B3bbonReSqvqgzm3tEBdquF6l6ZkO3FUQZ0A7qI9VNMs/Dlcj0cCAL
+9IWFWip4paaVUsmxx06AJsuHV8giV0PobWFldzTYgfLMT+cQCWDRj/um35iPAAuE
+I93nidoBApjHJa3gND37ZgXfry9q88JHL11/ahvYycGLzg5317Tvrnz/gKSWdB+T
+rkv8qmeSkqXshXfle8L0DCSaqBk/UEYODUHbel1mljTup//p6FEhDgobjg9KDyhK
++hW+T1nozYLPeXG6D8wzvViP/ezQ3fCYY4sXEJGGiVmJruZEUv9+GzzXzyrhk71p
+C2+zQcRijiDdf9AAUHQvV1CdKZ8TwI0VKYrQq121dA1sE3xBtKEGxCrdIubtB13Y
+3BuPnQvmAaU5GXce0c94JKtz7jsb7ukosvn8FCB7jAkgfrjejUDFW2NT0T5FKMCm
+LQW255o9g9/Z7iOh2jV+En348e+1KnMevlc50AAU18YKXpvjj8s=
+=KqNX
+-----END PGP SIGNATURE-----
 
-> >> @@ -85,6 +107,39 @@ static inline struct reset_control *__devm_reset_control_get(
-> >>   	return -ENOTSUPP;
-> >>   }
-> >>   
-> >> +static inline int reset_control_array_assert(int num_rsts,
-> >> +				struct reset_control_array *resets)
-> >> +{
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static inline int reset_control_array_deassert(int num_rsts,
-> >> +				struct reset_control_array *resets)
-> >> +{
-> >> +	return 0;
-> >> +}
-> > Is this missing a stub for reset_control_array_get?
-> 
-> No, that's supposed to be a static function.
-
-Oh right, it is static. Please ignore.
-
-regards
-Philipp
+--lrZ03NoBR/3+SXJZ--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
