@@ -1,66 +1,59 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 6/6] soc/tegra: Add initial flowctrl support for
- Tegra132/210
-Date: Tue, 4 Apr 2017 16:02:13 +0200
-Message-ID: <20170404140213.GI843@ulmo.ba.sec>
-References: <1490704978-22906-1-git-send-email-jonathanh@nvidia.com>
- <1490704978-22906-7-git-send-email-jonathanh@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] clk: tegra: Propagate clk_out_x rate to parent
+Date: Tue, 4 Apr 2017 16:02:37 +0200
+Message-ID: <20170404140237.GJ843@ulmo.ba.sec>
+References: <1490189899-19401-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xQR6quUbZ63TTuTU"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="LG0Ll82vYr46+VA1"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1490704978-22906-7-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <1490189899-19401-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Frid <afrid@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---xQR6quUbZ63TTuTU
+--LG0Ll82vYr46+VA1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 28, 2017 at 01:42:58PM +0100, Jon Hunter wrote:
-> Tegra132 and Tegra210 support the flowctrl module and so add initial
-> support for these devices.
+On Wed, Mar 22, 2017 at 03:38:19PM +0200, Peter De Schrijver wrote:
+> From: Alex Frid <afrid@nvidia.com>
 >=20
-> Please note that Tegra186 does not support the flowctrl module, so
-> update the initialisation function such that we do not fall back and
-> attempt to map the 'hardcoded' address range for Tegra186. Furthermore
-> 64-bit Tegra devices have always had the flowctrl node defined in their
-> device-tree and so only use the 'hardcoded' addresses for 32-bit Tegra
-> devices.
+> Given that externx can only be used as a parent for clk_out_x, it makes
+> sense to propagate requests to make clk_out_x easier to handle.
 >=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Alex Frid <afrid@nvidia.com>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  drivers/soc/tegra/Kconfig    |  2 ++
->  drivers/soc/tegra/flowctrl.c | 31 +++++++++++++++++++++----------
->  2 files changed, 23 insertions(+), 10 deletions(-)
+>  drivers/clk/tegra/clk-tegra-pmc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-Applied to for-4.12/soc, thanks.
+Applied to for-4.12/clk, thanks.
 
 Thierry
 
---xQR6quUbZ63TTuTU
+--LG0Ll82vYr46+VA1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjp2UACgkQ3SOs138+
-s6FUthAAu7omkNKYMYWO1dwRjdoQ22CE7bOO5oX7JicPxXbJsayTa0EsagXnON2A
-REm4UnN5kfWEwwW89VimfcUw75D8rY2R5FXaHBf64mM3y3N+Tz6aQvB6f5B9uMUB
-xAx5BuGjG9X5aeAbNFUZWFnClsxqgAO4hbGnBZTRz6/vR28ZketC6eBYRmES+jNH
-FX9MXBXbfgi1Y4qxVtB7VOz44JeTOvAihksbYOHZK+187WXfgfemqevNdYHMtGMV
-6OWzjzgDZM4gOUpIDDVCLjetYxu8o0b648NEr74SShOsQNTy5fHKgDWe5SY5Gdmr
-EibaWTWJGEJ7jjh0CjPTk56rIPjg35lqm3FzUFC7cZPpQ+vb3t13edpShJeD0alu
-bBVw71hG3CkQCKMQH+3k7VEcfzpP3opSNCON8/vqDT+TT7TjC+S5+7fHRu4IIZUK
-+Lz8nV7LcKWUp5mwFgQKHdcSQRVUNr+UcvL0TFGPXC97tk0reJuYbRvnmj0GBCP2
-40aAsiNzi/tfgIoxbBqnHC9NIEBhwX+aPC01xaSyV8Q62WYjUkmfaEzXGs70w/+g
-phDHgqLXelw1exns6UCxKtapfSHT9uBO15zGNhAyhZGLvzZJ1W02sSEfVsX5Us/U
-NvTmKP2WNZpHv3rGu24kwH5fOreLCfEf2b20Ezg1mjzCbQt30gs=
-=yzeu
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjp30ACgkQ3SOs138+
+s6FBPw//UO6MIeqZlfrw7RsRHg3Tlhnw16p0VjCtHHHilXvnt/gScqIHVWZKArqQ
+MsQxeBt3o5CDdpvKfH5Nc4XX4/WfrdMuYJja7r18c5JKZWQZ5A819AUP74gfExlB
+CQAwYKCpvR3rjs9X8CBysi/2ZLPnlj7aiA34sOae+T+N0Z9DgZdBJPSLBJgdSy7O
+uF6q8GzyHQDok5vTnbEjSITYAJkLhmea3fkfIzNGPl6BJanD0Eueiy3kCUWa+YW8
+Lbqhat/JrCq5t4Je1TO0uSnRkYsNtkz5AiB1vV9Db0ZcmBv/n9GBTFhXEaJHcHF4
+PNkTvMJ2bctS0Bar3Yne0GO931EnmD3xRRD63imiMlibU1DmII1BBsSRlSjEj/EM
+drZmLqNbG1TRqmrP2tWWe053BgdC3KEh2kAea7RS+tNGrtdTyiV+q2FDE+tM1T0Y
+ft1TA7y2MkWzZpI6E1g64y0spueyErCiEMPBaLgaL46TS8I6ugb0C6az9u/qdCTo
+LGos3f0FV+EzUFSd2PV73ePJvd9O8koOIgLxFHjI59Eydz+vwZ/xe1IPWB6egZMt
+n1vg7TjqfnWYJHZ/EgvbLsV2Fn0rOkTGmk9bvKiWsvq60uFQ+8lJGiC2nujrmIqM
+PF2xwuoJIAlcPTIWtxScZI4DZ7eqCoRkc9xap/wEVrLbs90vBJY=
+=9vKM
 -----END PGP SIGNATURE-----
 
---xQR6quUbZ63TTuTU--
+--LG0Ll82vYr46+VA1--
