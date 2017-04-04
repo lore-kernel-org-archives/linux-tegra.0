@@ -1,72 +1,58 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/3] soc: tegra: make fuse-tegra explicitly non-modular
-Date: Tue, 4 Apr 2017 15:25:43 +0200
-Message-ID: <20170404132543.GC843@ulmo.ba.sec>
-References: <20161113190302.18099-1-paul.gortmaker@windriver.com>
- <20161113190302.18099-3-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH V3 1/6] ARM: tegra: Remove unnecessary inclusion of
+ flowctrl header
+Date: Tue, 4 Apr 2017 15:41:52 +0200
+Message-ID: <20170404134152.GD843@ulmo.ba.sec>
+References: <1490704978-22906-1-git-send-email-jonathanh@nvidia.com>
+ <1490704978-22906-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yLVHuoLXiP9kZBkt"
+        protocol="application/pgp-signature"; boundary="SO98HVl1bnMOfKZd"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20161113190302.18099-3-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+In-Reply-To: <1490704978-22906-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---yLVHuoLXiP9kZBkt
+--SO98HVl1bnMOfKZd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 13, 2016 at 02:03:01PM -0500, Paul Gortmaker wrote:
-> The Makefiles currently controlling compilation of this code is:
+On Tue, Mar 28, 2017 at 01:42:53PM +0100, Jon Hunter wrote:
+> The Tegra flowctrl.h header is included unnecessarily by the Tegra
+> sleep.S source file. Remove this unnecessary inclusion.
 >=20
-> drivers/soc/tegra/Makefile:obj-y +=3D fuse/
-> drivers/soc/tegra/fuse/Makefile:obj-y +=3D fuse-tegra.o
->=20
-> ...meaning that it currently is not being built as a module by anyone.
->=20
-> Lets remove the couple traces of modularity so that when reading the
-> driver there is no doubt it is builtin-only.
->=20
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->=20
-> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/soc/tegra/fuse/fuse-tegra.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm/mach-tegra/sleep.S | 2 --
+>  1 file changed, 2 deletions(-)
 
-Applied to for-4.12/soc, thanks.
+Applied to for-4.12/arm/soc, thanks.
 
 Thierry
 
---yLVHuoLXiP9kZBkt
+--SO98HVl1bnMOfKZd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjntcACgkQ3SOs138+
-s6EDNxAAjuRQSb2i9wSQ1oSQat0zQaQHm7q1dEhc310r3FE5xCY9TaCgY9gL3FGr
-uxsj5DgaIwSX5WoAda3wiQ4PGcnAi5eftLykrpGOFUSIXTAjho5iQdZc4q3WnuoM
-40eRL5JtcFm00MbjGli6dDiy1cZ6ldKlxvIZ7uVIh53Ts6bIMIXI75IZsZb/0yk2
-qlw+EeNIcCF3xs+jdmbixzhn2OHKJR2oetQB/754B1sx1EaGVdMp1yoN2WzVsmji
-kpGGxZhK52nMbXsGCsfXoFRKeS0MX6e0QIAzMcAia1EpYjG9kRoMxEdtkPsJewjL
-NgUvLcGZqtlLYsGf/EaKl9D0mvnFArT5tzjwoOukGB4g8txanCEUJSqBXvfKlDK3
-VUpVfBaJo4Itl9P4sjJYasiUEgqQHTbBjePZ6raxde85chmmvIt4cmc9JZ4Bv3Sc
-SXqhdWluRk6/qLVxJ9+MjzWYOasL2ApL2/OIunWXXLGpB0kx+zNXVCUl13LlTKo5
-6ww8jcWFNrXS0kJJiyi01yre+TTpZcw8SKzuj90HHTbXJQBMYFCOMKGvXJgKF4if
-yb0k0qKPSTAsphqaIjPYWXWN85bHMZiPU20RndIIoSuL77eSKQiUh0jQnLwVxRmX
-A7RTEBHMbJ1jRm6Csda5Tgm8Jd8n/vGZCmGxdxyeoO0JLji0xdo=
-=Zkfp
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjop4ACgkQ3SOs138+
+s6GWwxAAumgjaXji88L090H2+1tjHb5AxpVfedPNBXcXXHdHcUoMCfYoXUJXHdwV
+pOVVI9BikFfrvnxhaKMWzCaKn9TVswlJuMzsK9HQIujq9HzvhY2MSAn03cJ+Rb8S
+FDgoUGrP5e3mW4TP8QEqhGwZ//PsYcoNLQQCq699UmydqOvqtgSFkjFhF7b4WycM
++oUtcfu+fBobeSGErXdjmxJ2pjsSz8w88LVCzVNJYD0KGPT/oZfDj2laQohqgUz0
+zmiVabKBCza4byqBYJ6gbTyywA78fWi0183XtY5Pn/ULaDDQFtAvK1GblJAhqNcC
+eMtxwBXeLCQbKnegHxTqT7ljGnDVr/NhgPEEAu5ddKli0rRuoybj+MateBPVqftx
+JtkvaCXjaMSCRNiu6iCC9wj4knLR86bC6+Dzyesgy5gmhi0UCDbaA3K6PElmlrlc
+0Lq7L+2XvzyBlqSknTyA5M5CYqWPdiWPlpMamgZfrZTgQsmSFgLl5CudCw3bRQ+W
+dpDUYbJGUHLsAsVobCw33BSvQBZrJMycPXW3zrfUD6uvLOJyuEk25ncA0s4wN1oq
+pYwZnEy5pOQSNLQ4OL8HLalglIiTdf2/Qqwc+C/4NOKG5m0cMU/PYyI+GzRhMvX0
+dVQeO1SHBuciHr2RB2M6Wj28NFr3DiEdFJw7Xd1oId2GAuDuQeU=
+=pWy4
 -----END PGP SIGNATURE-----
 
---yLVHuoLXiP9kZBkt--
+--SO98HVl1bnMOfKZd--
