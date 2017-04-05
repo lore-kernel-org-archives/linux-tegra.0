@@ -1,120 +1,31 @@
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH v2 2/4] reset: Add APIs to manage array of resets
-Date: Wed, 5 Apr 2017 12:20:53 +0530
-Message-ID: <7ecfd2bf-812b-f4c2-0b33-c992333b039c@codeaurora.org>
-References: <1491226922-20307-1-git-send-email-vivek.gautam@codeaurora.org>
- <1491226922-20307-3-git-send-email-vivek.gautam@codeaurora.org>
- <1491237384.2378.128.camel@pengutronix.de>
- <52efd58a-e4f2-d3a7-0145-4c2f60ef6dd6@codeaurora.org>
- <1491310069.2996.17.camel@pengutronix.de>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/4] pwm: tegra: Pin configuration in suspend/resume and cleanups
+Date: Wed, 5 Apr 2017 19:43:42 +0530
+Message-ID: <1491401626-31303-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1491310069.2996.17.camel@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, swarren@wwwdotorg.org, thierry.reding@gmail.com, balbi@kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Philipp,
+This patch series have following fixes:
+- Add more precession in PWM period register value calculation
+  for lower pwm frequency.
+- Add support to configure PWM pins in different state in the
+  suspend/resume.
 
+Laxman Dewangan (4):
+  pwm: tegra: Use DIV_ROUND_CLOSEST_ULL() instead of local
+    implementation
+  pwm: tegra: Increase precision in pwm rate calculation
+  pwm: tegra: Add DT binding details to configure pin in suspends/resume
+  pwm: tegra: Add support to configure pin state in suspends/resume
 
-On 04/04/2017 06:17 PM, Philipp Zabel wrote:
-> Hi Vivek,
->
-> On Tue, 2017-04-04 at 16:09 +0530, Vivek Gautam wrote:
-> [...]
->>> I'd prefer to mirror the gpiod API a little, and to have the number
->>> contained in the array structure, similar to struct gpio_descs:
-> [...]
->> Alright, i can update this.
->> I took regulator_bulk interface as the reference, but now i see
->> gpio_descs has a smaller footprint.
-> Ok, understood.
-> I think the smaller footprint API is more convenient for the user.
->
-> [...]
->>>> + * Returns 0 on success or error number on failure
->>>> + */
->>>> +static int reset_control_array_get(struct device *dev, int num_rsts,
->>>> +				struct reset_control_array *resets,
->>>> +				bool shared, bool optional)
->>> Can we make this count and return a pointer to the newly created array?
->>>
->>> static struct reset_controls *
->>> reset_control_array_get(struct device *dev, bool shared, bool optional)
->>> {
->>> 	...
->>>
->>> That way the consumer doesn't have to care about counting and array
->>> allocation.
->> Just trying to think again in line with the regulator bulk APIs.
->> Can't a user provide a list of reset controls as data and thus
->> request reset controls with a "id" and num_resets available.
->>
->> e.g.
->>      const char * const rst_names[] = {
->>        "rst1", "rst2" ...
->>      };
->>      xyz_data = {
->>        .resets = rst_names;
->>        .num = ARRAY_SIZE(rst_names);
->>      };
->> and then the driver making use of reset_control_array APIs
->> to request this list of reset controls and assert/deassert them.
->>
->> I am assuming this case when one user driver is used across a bunch
->> of platforms with different number of resets available.
->> We may not want to rely solely on the device tree entries, since
->> the resets can be mandatory in few cases and we may want to
->> return failure.
-> The way I understood the array API was as a method of handling a list of
-> anonymous resets, specified as
->
-> 	resets = <&reset 1>, <&reset 2>, <&reset 3>;
-> 	// reset-names = "rst1", "rst2", "rst3"; /* don't care */
->
-> in the device tree.
->
-> Now if you want to handle a partial list of those as an unordered list,
-> with special consideration for others, that could be added as a separate
-> API when there is use for it. But I expect that most potential users of
-> this array API will not have to make such a distinction.
-
-Alright, I will modify the array APIs as suggested to handle an
-unordered list of resets passed from the device tree.
-As you said, we can handle the special cases when the need arise.
-
->
->>>> @@ -85,6 +107,39 @@ static inline struct reset_control *__devm_reset_control_get(
->>>>    	return -ENOTSUPP;
->>>>    }
->>>>    
->>>> +static inline int reset_control_array_assert(int num_rsts,
->>>> +				struct reset_control_array *resets)
->>>> +{
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static inline int reset_control_array_deassert(int num_rsts,
->>>> +				struct reset_control_array *resets)
->>>> +{
->>>> +	return 0;
->>>> +}
->>> Is this missing a stub for reset_control_array_get?
->> No, that's supposed to be a static function.
-> Oh right, it is static. Please ignore.
-
-Thanks
-
-> regards
-> Philipp
->
-
-Best Regards
-Vivek
+ .../devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 43 ++++++++++++
+ drivers/pwm/pwm-tegra.c                            | 77 ++++++++++++++++++++--
+ 2 files changed, 116 insertions(+), 4 deletions(-)
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
