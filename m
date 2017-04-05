@@ -1,68 +1,120 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra: Don't reset PLL-CX if it is already enabled
-Date: Tue, 4 Apr 2017 16:06:38 +0200
-Message-ID: <20170404140638.GL843@ulmo.ba.sec>
-References: <1490612465-12454-1-git-send-email-jonathanh@nvidia.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH v2 2/4] reset: Add APIs to manage array of resets
+Date: Wed, 5 Apr 2017 12:20:53 +0530
+Message-ID: <7ecfd2bf-812b-f4c2-0b33-c992333b039c@codeaurora.org>
+References: <1491226922-20307-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1491226922-20307-3-git-send-email-vivek.gautam@codeaurora.org>
+ <1491237384.2378.128.camel@pengutronix.de>
+ <52efd58a-e4f2-d3a7-0145-4c2f60ef6dd6@codeaurora.org>
+ <1491310069.2996.17.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HBg0C3yr6HVa1ZCc"
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1490612465-12454-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1491310069.2996.17.camel@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, swarren@wwwdotorg.org, thierry.reding@gmail.com, balbi@kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Philipp,
 
---HBg0C3yr6HVa1ZCc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 27, 2017 at 12:01:05PM +0100, Jon Hunter wrote:
-> Commit 8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessari=
-ly")
-> changed the tegra210_pllcx_set_defaults() function causing the PLL to
-> always be reset regardless of whether it is in-use. This function was
-> changed so that resetting of the PLL will only be skipped if the PLL
-> is enabled AND 'pllcx->params->defaults_set' is not true. However, the
-> 'pllcx->params->defaults_set' is always true and hence, the PLL is now
-> always reset. This causes the boot to fail on the Tegra210 Smaug where
-> the PLL is already enabled and in-use. Fix this by only resetting the
-> PLL if not in-use and only printing the warning that the defaults are
-> not set after we have checked the default settings.
->=20
-> Fixes: 8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessari=
-ly")
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+On 04/04/2017 06:17 PM, Philipp Zabel wrote:
+> Hi Vivek,
+>
+> On Tue, 2017-04-04 at 16:09 +0530, Vivek Gautam wrote:
+> [...]
+>>> I'd prefer to mirror the gpiod API a little, and to have the number
+>>> contained in the array structure, similar to struct gpio_descs:
+> [...]
+>> Alright, i can update this.
+>> I took regulator_bulk interface as the reference, but now i see
+>> gpio_descs has a smaller footprint.
+> Ok, understood.
+> I think the smaller footprint API is more convenient for the user.
+>
+> [...]
+>>>> + * Returns 0 on success or error number on failure
+>>>> + */
+>>>> +static int reset_control_array_get(struct device *dev, int num_rsts,
+>>>> +				struct reset_control_array *resets,
+>>>> +				bool shared, bool optional)
+>>> Can we make this count and return a pointer to the newly created array?
+>>>
+>>> static struct reset_controls *
+>>> reset_control_array_get(struct device *dev, bool shared, bool optional)
+>>> {
+>>> 	...
+>>>
+>>> That way the consumer doesn't have to care about counting and array
+>>> allocation.
+>> Just trying to think again in line with the regulator bulk APIs.
+>> Can't a user provide a list of reset controls as data and thus
+>> request reset controls with a "id" and num_resets available.
+>>
+>> e.g.
+>>      const char * const rst_names[] = {
+>>        "rst1", "rst2" ...
+>>      };
+>>      xyz_data = {
+>>        .resets = rst_names;
+>>        .num = ARRAY_SIZE(rst_names);
+>>      };
+>> and then the driver making use of reset_control_array APIs
+>> to request this list of reset controls and assert/deassert them.
+>>
+>> I am assuming this case when one user driver is used across a bunch
+>> of platforms with different number of resets available.
+>> We may not want to rely solely on the device tree entries, since
+>> the resets can be mandatory in few cases and we may want to
+>> return failure.
+> The way I understood the array API was as a method of handling a list of
+> anonymous resets, specified as
+>
+> 	resets = <&reset 1>, <&reset 2>, <&reset 3>;
+> 	// reset-names = "rst1", "rst2", "rst3"; /* don't care */
+>
+> in the device tree.
+>
+> Now if you want to handle a partial list of those as an unordered list,
+> with special consideration for others, that could be added as a separate
+> API when there is use for it. But I expect that most potential users of
+> this array API will not have to make such a distinction.
 
-Applied to for-4.12/clk, thanks.
+Alright, I will modify the array APIs as suggested to handle an
+unordered list of resets passed from the device tree.
+As you said, we can handle the special cases when the need arise.
 
-Thierry
+>
+>>>> @@ -85,6 +107,39 @@ static inline struct reset_control *__devm_reset_control_get(
+>>>>    	return -ENOTSUPP;
+>>>>    }
+>>>>    
+>>>> +static inline int reset_control_array_assert(int num_rsts,
+>>>> +				struct reset_control_array *resets)
+>>>> +{
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static inline int reset_control_array_deassert(int num_rsts,
+>>>> +				struct reset_control_array *resets)
+>>>> +{
+>>>> +	return 0;
+>>>> +}
+>>> Is this missing a stub for reset_control_array_get?
+>> No, that's supposed to be a static function.
+> Oh right, it is static. Please ignore.
 
---HBg0C3yr6HVa1ZCc
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks
 
------BEGIN PGP SIGNATURE-----
+> regards
+> Philipp
+>
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjqG4ACgkQ3SOs138+
-s6H8eg//bUuAwFMISHkp3pvFph2AKEagsskfvUVut2SgPbVb+jk8zmHpvLNR+Ti5
-h0mEwwsqeCHX8vLNQNS5u27+xdG3nsSe/zg3WiDOwoVuY0QYWIXaUGHgtYnO5qLM
-6VCBEeY8sM366NyAjvgXk/57xBF5L0kaEdVbCWmcNQxtmO4qgspbjapluR+2rRZw
-hquDD4wiX4LLtmlS4OxU/Y4crTmWtjVZZlCsA0xjxzkWr76nW2QMnQ5YG1jnOCLu
-Pq+DFwabnGxMhJGR5gGnapc7Mn5OtPv+7jgIyEcvRJKtCPybFulQI+zPkI8+YHuo
-GrnzvzW8WnpuZCBVN8EbiL5+DG/Eb7DJqmIy4G+lLCMcO72TWBX36gfzgl/FLZMo
-3NjpHcrx3iv1EAF0xu8tShHrNAi4VBkjuNK5olx1ragzJPlAH58uPnzAuMH7Foew
-JTsTsomScOZMpATRjowfhIkz953+kk8bSw4duvqM3Gz8+jm4D6yySqZmzaktgyJd
-76gAW6ChKEpbcApXYZ5dtBKn2nYNVOiWmTgHgm89WWOt+N1jfpk3ZqjzqzVhlQdo
-tzvLNDJgmA+05mcWi7KaXY8hBA/yF5UeLsrkGXea+M37lc9qOqkH6Q1yED6mBABG
-8Gnr4J5rdxe+fg3W8eVyiKF6fjIYyWAeWCCJYGC+FNABX3N1OJo=
-=/N2A
------END PGP SIGNATURE-----
+Best Regards
+Vivek
 
---HBg0C3yr6HVa1ZCc--
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
