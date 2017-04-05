@@ -1,69 +1,83 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage-configs PATCH v2] post.mk: Create dependency makefile
- by makefile rule
-Date: Wed, 5 Apr 2017 09:26:01 -0600
-Message-ID: <bcec42e2-e4c4-b6c4-89ce-4406269fb528@wwwdotorg.org>
-References: <20170331150153.14606-1-nikolaus.schulz@avionic-design.de>
- <20170331150153.14606-2-nikolaus.schulz@avionic-design.de>
- <8bf27012-af67-3faf-206b-ebd5cd76b276@wwwdotorg.org>
- <20170403122214.cqth3myvv6tpysr4@avionic-0071.adnet.avionic-design.de>
+From: <sekretariat.mzagorski-40QDpL200RxmR6Xm/wNWPw@public.gmane.org>
+Subject: (unknown)
+Date: Wed, 05 Apr 2017 17:30:28 -0000
+Message-ID: <149141342828.21467.9981954580612479785@48.219.131.37.polevskoynet.ru>
+Reply-To: <sekretariat.mzagorski-40QDpL200RxmR6Xm/wNWPw@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: application/zip; name="89502610884.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170403122214.cqth3myvv6tpysr4-RM9K5IK7kjJNqqvv04100KcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Subject: 
+Content-Disposition: attachment
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nikolaus Schulz <nikolaus.schulz-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/03/2017 06:22 AM, Nikolaus Schulz wrote:
-> On Fri, Mar 31, 2017 at 09:46:19AM -0600, Stephen Warren wrote:
->> On 03/31/2017 09:01 AM, Nikolaus Schulz wrote:
->>> Creating the emmc image requires creating the bct file and the
->>> bootloader image first.  These dependencies are written to a makefile
->>> snippet that is created by the gen-image-deps.sh script.  But that
->>> script is only invoked when the rule that creates the emmc image is run,
->>> which is too late for creating the dependencies makefile.
->>>
->>> Add a rule to post.mk that tells make how to create the dependencies
->>> makefile; with that in place, make automatically makes the dependency
->>> makefile before executing any other rules.
->>
->> I don't think this change is correct, or at least necessary.
->>
->> The concept here is that:
->>
->> - If an output file does not exist at all, it will be built for the first
->> time, and a dependency file will be generated for the next time.
->>
->> - If an output file does exist, the related dependency file is also expected
->> to exist, and specify the dependencies, so that if they change, a rebuild
->> will occur.
->>
->> In particular, the dependency file is/should-no-be necessary in the case
->> where an output file is to be generated for the first time.
->>
->> If a known dependency specification is missing, we should specify it
->> directly in the makefile itself. The generated dependency files are intended
->> to represent unknown/unknowable dependencies.
->>
->> Is it possible to fix this problem that way instead?
->
-> Well, the dependencies in question are hard dependencies: creating the
-> emmc image has the bct file and the bootloader image as prerequisites.
->
-> I just noticed though that specifying the dependency on the bct file
-> need not use gen-image-deps.sh at all, since the bct filename is already
-> known to make.  I'll send an alternate, trivial patch.
->
-> Note that the dependency on the bootloader image can be added to the
-> makefiles in a similar way by simply adding a variable for the filename
-> to the per-soc Makefiles and make that a prerequisite of the emmc image.
-> With that there is no need for a dynamically generated dependency file
-> at all, at the slight expense of some (more) duplication of filenames.
->
-> I'll send a separate patch doing that as an RFC.
-
-As mentioned in response to the followup patches you sent, I've decided 
-to apply this patch instead. It's now applied. Thanks.
+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
+AAAAAQABAE8AAACXDgAAAAA=
