@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 1/4] dt-bindings: Updates for v4.12-rc1
-Date: Fri,  7 Apr 2017 01:10:17 +0200
-Message-ID: <20170406231020.32048-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/4] soc/tegra: Core SoC changes for v4.12-rc1
+Date: Fri,  7 Apr 2017 01:10:19 +0200
+Message-ID: <20170406231020.32048-3-thierry.reding@gmail.com>
+References: <20170406231020.32048-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170406231020.32048-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
@@ -16,29 +18,57 @@ The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.12-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.12-soc
 
-for you to fetch changes up to bf594a896cdbae4a581eb80a2bdbda8df6997d75:
+for you to fetch changes up to 1fd09e5d884a5ff4060948e0cf8f5d7eed16e936:
 
-  dt-bindings: Add documentation for GP10B GPU (2017-04-04 16:08:18 +0200)
+  soc/tegra: Add initial flowctrl support for Tegra132/210 (2017-04-04 15:52:31 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Updates for v4.12-rc1
+soc/tegra: Core SoC changes for v4.12-rc1
 
-This contains an update for the flow controller device tree binding as
-well as the addition of the binding for the GP10B GPU found on the new
-Tegra186 (Parker) SoC.
+This contains PMC support for Tegra186 as well as a proper driver for
+the flow controller found on SoCs up to Tegra210. This also turns the
+fuse driver into an explicitly non-modular driver.
 
 ----------------------------------------------------------------
-Alexandre Courbot (1):
-      dt-bindings: Add documentation for GP10B GPU
+Arnd Bergmann (1):
+      soc/tegra: Fix link errors with PMC disabled
 
-Jon Hunter (1):
-      dt-bindings: tegra: Update compatible strings for Tegra flowctrl
+Jon Hunter (4):
+      ARM: tegra: Remove unnecessary inclusion of flowctrl header
+      soc/tegra: Move Tegra flowctrl driver
+      soc/tegra: flowctrl: Add basic platform driver
+      soc/tegra: Add initial flowctrl support for Tegra132/210
 
- .../bindings/arm/tegra/nvidia,tegra20-flowctrl.txt |  8 ++++++-
- .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 25 +++++++++++++++++++++-
- 2 files changed, 31 insertions(+), 2 deletions(-)
+Paul Gortmaker (1):
+      soc: tegra: make fuse-tegra explicitly non-modular
+
+Thierry Reding (1):
+      soc/tegra: Implement Tegra186 PMC support
+
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  34 +++++
+ arch/arm/mach-tegra/Makefile                       |   1 -
+ arch/arm/mach-tegra/cpuidle-tegra20.c              |   3 +-
+ arch/arm/mach-tegra/platsmp.c                      |   2 +-
+ arch/arm/mach-tegra/pm.c                           |   2 +-
+ arch/arm/mach-tegra/reset-handler.S                |   2 +-
+ arch/arm/mach-tegra/sleep-tegra20.S                |   3 +-
+ arch/arm/mach-tegra/sleep-tegra30.S                |   2 +-
+ arch/arm/mach-tegra/sleep.S                        |   2 -
+ arch/arm/mach-tegra/tegra.c                        |   2 -
+ drivers/soc/tegra/Kconfig                          |  22 +++
+ drivers/soc/tegra/Makefile                         |   4 +-
+ .../mach-tegra => drivers/soc/tegra}/flowctrl.c    |  87 ++++++++---
+ drivers/soc/tegra/fuse/fuse-tegra.c                |   4 +-
+ drivers/soc/tegra/pmc-tegra186.c                   | 169 +++++++++++++++++++++
+ .../mach-tegra => include/soc/tegra}/flowctrl.h    |  32 +++-
+ include/soc/tegra/pmc.h                            |  29 +++-
+ 17 files changed, 353 insertions(+), 47 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+ rename {arch/arm/mach-tegra => drivers/soc/tegra}/flowctrl.c (67%)
+ create mode 100644 drivers/soc/tegra/pmc-tegra186.c
+ rename {arch/arm/mach-tegra => include/soc/tegra}/flowctrl.h (77%)
