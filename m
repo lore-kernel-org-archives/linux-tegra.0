@@ -1,108 +1,90 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] drm/tegra: Changes for v4.12-rc1
-Date: Fri,  7 Apr 2017 00:47:58 +0200
-Message-ID: <20170406224758.29946-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] clk: tegra: Changes for v4.12-rc1
+Date: Fri,  7 Apr 2017 01:09:01 +0200
+Message-ID: <20170406230901.31704-1-thierry.reding@gmail.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dave,
+Hi Michael, Stephen,
 
-The following changes since commit 97da3854c526d3a6ee05c849c96e48d21527606c:
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
-  Linux 4.11-rc3 (2017-03-19 19:09:39 -0700)
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
 
 are available in the git repository at:
 
-  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.12-rc1
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.12-clk
 
-for you to fetch changes up to b0d36daa0ab54714e05164f6e21d22f974a5eec1:
+for you to fetch changes up to 1116d5a7aff205b6d9879a6458788cac20d0cdf3:
 
-  gpu: host1x: Fix host1x driver shutdown (2017-04-05 18:11:50 +0200)
+  clk: tegra: Don't reset PLL-CX if it is already enabled (2017-04-04 16:06:05 +0200)
 
-Note that this pulls in a branch from Joerg's IOMMU tree that is required
-to resolve some build time dependencies. I've included it in the diffstat
-below.
-
+Thanks,
 Thierry
 
 ----------------------------------------------------------------
-drm/tegra: Changes for v4.12-rc1
+clk: tegra: Changes for v4.12-rc1
 
-This contains various fixes to the host1x driver as well as a plug for a
-leak of kernel pointers to userspace.
-
-A fairly big addition this time around is the Video Image Composer (VIC)
-support that can be used to accelerate some 2D and image compositing
-operations.
-
-Furthermore the driver now supports FB modifiers, so we no longer rely
-on a custom IOCTL to set those.
-
-Finally this contains a few preparatory patches for Tegra186 support
-which unfortunately didn't quite make it this time, but will hopefully
-be ready for v4.13.
+This contains a bunch of fixes and cleanups, mostly to the Tegra210
+clock driver.
 
 ----------------------------------------------------------------
-Alexandre Courbot (1):
-      drm/tegra: Add tiling FB modifiers
+Alex Frid (1):
+      clk: tegra: Propagate clk_out_x rate to parent
 
-Arto Merilainen (2):
-      drm/tegra: Add falcon helper library
-      drm/tegra: Add VIC support
+Jon Hunter (1):
+      clk: tegra: Don't reset PLL-CX if it is already enabled
 
-Joerg Roedel (1):
-      iommu/iova: Fix compile error with CONFIG_IOMMU_IOVA=m
+Mikko Perttunen (1):
+      clk: tegra: Implement reset control reset
 
-Marek Szyprowski (1):
-      iommu/iova: Consolidate code for adding new node to iovad domain rbtree
+Peter De Schrijver (20):
+      clk: tegra: Fix pll_a1 iddq register, add pll_a1
+      clk: tegra: Fix ISP clock modelling
+      clk: tegra: Correct afi clock parent
+      clk: tegra: Remove non-existing pll_m_out1 clock
+      clk: tegra: Don't warn for PLL defaults unnecessarily
+      clk: tegra: Correct tegra210_pll_fixed_mdiv_cfg rate calculation
+      clk: tegra: Fix type for m field
+      clk: tegra: Add CEC clock
+      clk: tegra: Define Tegra210 DMIC sync clocks
+      clk: tegra: Fix constness for peripheral clocks
+      clk: tegra: Define Tegra210 DMIC clocks
+      clk: tegra: Add super clock mux/divider
+      clk: tegra: Add aclk
+      clk: tegra: Handle UTMIPLL IDDQ
+      clk: tegra: Fix disable unused for clocks sharing enable bit
+      clk: tegra: Rework pll_u
+      clk: tegra: Add Tegra210 special resets
+      clk: tegra: Add SATA seq input control
+      clk: tegra: Mark TEGRA210_CLK_DBGAPB as always on
+      clk: tegra: Add missing Tegra210 clocks
 
-Mikko Perttunen (3):
-      gpu: host1x: Add IOMMU support
-      drm/tegra: Add Tegra DRM allocation API
-      dt-bindings: Add bindings for the Tegra VIC
+Thierry Reding (1):
+      clk: tegra: Fix build warnings on Tegra20/Tegra30
 
-Thierry Reding (10):
-      MAINTAINERS: Add related headers to IOMMU section
-      iommu: Add dummy implementations for !IOMMU_IOVA
-      Merge branch 'core' of git://git.kernel.org/.../joro/iommu into drm/tegra/for-next
-      gpu: host1x: Fix potential out-of-bounds access
-      drm/tegra: Enable IOVA API when IOMMU support is enabled
-      drm/tegra: Protect IOMMU operations by mutex
-      drm/tegra: Don't leak kernel pointer to userspace
-      gpu: host1x: Sort includes alphabetically
-      gpu: host1x: Support module reset
-      gpu: host1x: Fix host1x driver shutdown
-
- .../display/tegra/nvidia,tegra20-host1x.txt        |  13 +
- MAINTAINERS                                        |   2 +
- drivers/gpu/drm/tegra/Kconfig                      |   1 +
- drivers/gpu/drm/tegra/Makefile                     |   4 +-
- drivers/gpu/drm/tegra/drm.c                        | 283 ++++++++++++---
- drivers/gpu/drm/tegra/drm.h                        |  15 +-
- drivers/gpu/drm/tegra/falcon.c                     | 259 ++++++++++++++
- drivers/gpu/drm/tegra/falcon.h                     | 127 +++++++
- drivers/gpu/drm/tegra/fb.c                         |  23 +-
- drivers/gpu/drm/tegra/gem.c                        |  12 +-
- drivers/gpu/drm/tegra/vic.c                        | 396 +++++++++++++++++++++
- drivers/gpu/drm/tegra/vic.h                        |  31 ++
- drivers/gpu/host1x/bus.c                           |  68 ++--
- drivers/gpu/host1x/cdma.c                          |  74 +++-
- drivers/gpu/host1x/cdma.h                          |   6 +-
- drivers/gpu/host1x/dev.c                           |  76 +++-
- drivers/gpu/host1x/dev.h                           |  14 +-
- drivers/gpu/host1x/hw/cdma_hw.c                    |  16 +-
- drivers/gpu/host1x/job.c                           |  72 +++-
- drivers/gpu/host1x/job.h                           |   1 +
- drivers/gpu/host1x/syncpt.c                        |   2 +-
- drivers/iommu/iova.c                               |  87 ++---
- include/linux/host1x.h                             |   1 +
- include/linux/iova.h                               |  91 +++++
- include/uapi/drm/drm_fourcc.h                      |  45 +++
- 25 files changed, 1517 insertions(+), 202 deletions(-)
- create mode 100644 drivers/gpu/drm/tegra/falcon.c
- create mode 100644 drivers/gpu/drm/tegra/falcon.h
- create mode 100644 drivers/gpu/drm/tegra/vic.c
- create mode 100644 drivers/gpu/drm/tegra/vic.h
+ drivers/clk/tegra/clk-id.h                      |  17 +
+ drivers/clk/tegra/clk-periph-gate.c             |   3 +
+ drivers/clk/tegra/clk-periph.c                  |   6 +-
+ drivers/clk/tegra/clk-pll.c                     | 174 ---------
+ drivers/clk/tegra/clk-super.c                   |  87 ++++-
+ drivers/clk/tegra/clk-tegra-audio.c             |  85 ++--
+ drivers/clk/tegra/clk-tegra-periph.c            |  41 +-
+ drivers/clk/tegra/clk-tegra-pmc.c               |   6 +-
+ drivers/clk/tegra/clk-tegra114.c                |   1 +
+ drivers/clk/tegra/clk-tegra124.c                |   1 +
+ drivers/clk/tegra/clk-tegra210.c                | 499 ++++++++++++++++++++++--
+ drivers/clk/tegra/clk-tegra30.c                 |   1 +
+ drivers/clk/tegra/clk.c                         |  16 +
+ drivers/clk/tegra/clk.h                         |  15 +-
+ include/dt-bindings/clock/tegra114-car.h        |   2 +-
+ include/dt-bindings/clock/tegra124-car-common.h |   2 +-
+ include/dt-bindings/clock/tegra210-car.h        |  33 +-
+ include/dt-bindings/clock/tegra30-car.h         |   2 +-
+ include/dt-bindings/reset/tegra210-car.h        |  13 +
+ include/linux/clk/tegra.h                       |   3 +
+ 20 files changed, 739 insertions(+), 268 deletions(-)
+ create mode 100644 include/dt-bindings/reset/tegra210-car.h
