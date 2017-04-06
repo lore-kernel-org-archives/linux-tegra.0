@@ -1,147 +1,108 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 00/12] gpio: Tight IRQ chip integration and Tegra186
- support
-Date: Fri, 7 Apr 2017 00:34:49 +0200
-Message-ID: <20170406223449.GH27728@ulmo.ba.sec>
-References: <20170403160532.20282-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="G44BJl3Aq1QbV/QL"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170403160532.20282-1-thierry.reding@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] drm/tegra: Changes for v4.12-rc1
+Date: Fri,  7 Apr 2017 00:47:58 +0200
+Message-ID: <20170406224758.29946-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Dave,
 
---G44BJl3Aq1QbV/QL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit 97da3854c526d3a6ee05c849c96e48d21527606c:
 
-On Mon, Apr 03, 2017 at 06:05:20PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> Hi Linus,
->=20
-> here's a first draft of patches to make GPIOLIB_IRQCHIP flexible enough
-> to support the Tegra186 use-case. Instead of just fixing the bugs that I
-> had pointed out earlier, this goes one step further and completely
-> integrates IRQ chip registration into GPIO chip registration. The idea
-> is that drivers will initialize a set of fields (collected in a new
-> struct gpio_irq_chip) before calling gpiochip_add() (or derivatives) and
-> gpiolib will internally set up an IRQ domain and register the IRQ chip.
->=20
-> Currently this makes use of the new infrastructure only in the Tegra186
-> driver, but I plan to convert a couple of others once we can agree that
-> this is a direction that you're comfortable with.
+  Linux 4.11-rc3 (2017-03-19 19:09:39 -0700)
 
-Linus,
+are available in the git repository at:
 
-any comments on this?
+  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.12-rc1
+
+for you to fetch changes up to b0d36daa0ab54714e05164f6e21d22f974a5eec1:
+
+  gpu: host1x: Fix host1x driver shutdown (2017-04-05 18:11:50 +0200)
+
+Note that this pulls in a branch from Joerg's IOMMU tree that is required
+to resolve some build time dependencies. I've included it in the diffstat
+below.
 
 Thierry
 
-> Thierry Reding (12):
->   gpio: Use unsigned int for interrupt numbers
->   gpio: Implement tighter IRQ chip integration
->   gpio: Move irq_nested into struct gpio_irq_chip
->   gpio: Move irqdomain into struct gpio_irq_chip
->   gpio: Move irqchip into struct gpio_irq_chip
->   gpio: Move irq_valid_mask into struct gpio_irq_chip
->   gpio: Move lock_key into struct gpio_irq_chip
->   gpio: Move irq_chained_parent to struct gpio_irq_chip
->   gpio: Move irq_default_type to struct gpio_irq_chip
->   gpio: Move irq_handler to struct gpio_irq_chip
->   gpio: Move irq_base to struct gpio_irq_chip
->   gpio: Add Tegra186 support
->=20
->  Documentation/gpio/driver.txt              |   6 +-
->  drivers/bcma/driver_gpio.c                 |   2 +-
->  drivers/gpio/Kconfig                       |   9 +
->  drivers/gpio/Makefile                      |   1 +
->  drivers/gpio/gpio-104-dio-48e.c            |   2 +-
->  drivers/gpio/gpio-104-idi-48.c             |   2 +-
->  drivers/gpio/gpio-104-idio-16.c            |   2 +-
->  drivers/gpio/gpio-adnp.c                   |   2 +-
->  drivers/gpio/gpio-altera.c                 |   4 +-
->  drivers/gpio/gpio-aspeed.c                 |   6 +-
->  drivers/gpio/gpio-ath79.c                  |   2 +-
->  drivers/gpio/gpio-brcmstb.c                |   2 +-
->  drivers/gpio/gpio-crystalcove.c            |   2 +-
->  drivers/gpio/gpio-dln2.c                   |   2 +-
->  drivers/gpio/gpio-ftgpio010.c              |   2 +-
->  drivers/gpio/gpio-intel-mid.c              |   2 +-
->  drivers/gpio/gpio-lynxpoint.c              |   2 +-
->  drivers/gpio/gpio-max732x.c                |   2 +-
->  drivers/gpio/gpio-mcp23s08.c               |   2 +-
->  drivers/gpio/gpio-merrifield.c             |   2 +-
->  drivers/gpio/gpio-mockup.c                 |  10 +-
->  drivers/gpio/gpio-omap.c                   |   2 +-
->  drivers/gpio/gpio-pca953x.c                |   2 +-
->  drivers/gpio/gpio-pcf857x.c                |   2 +-
->  drivers/gpio/gpio-pci-idio-16.c            |   2 +-
->  drivers/gpio/gpio-pl061.c                  |   2 +-
->  drivers/gpio/gpio-rcar.c                   |   2 +-
->  drivers/gpio/gpio-reg.c                    |   4 +-
->  drivers/gpio/gpio-stmpe.c                  |   6 +-
->  drivers/gpio/gpio-tc3589x.c                |   2 +-
->  drivers/gpio/gpio-tegra186.c               | 625 +++++++++++++++++++++++=
-++++++
->  drivers/gpio/gpio-vf610.c                  |   2 +-
->  drivers/gpio/gpio-wcove.c                  |   2 +-
->  drivers/gpio/gpio-ws16c48.c                |   2 +-
->  drivers/gpio/gpio-xgene-sb.c               |   2 +-
->  drivers/gpio/gpio-xlp.c                    |   2 +-
->  drivers/gpio/gpio-zx.c                     |   2 +-
->  drivers/gpio/gpio-zynq.c                   |   2 +-
->  drivers/gpio/gpiolib.c                     | 232 ++++++++---
->  drivers/pinctrl/bcm/pinctrl-bcm2835.c      |   4 +-
->  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c   |   2 +-
->  drivers/pinctrl/intel/pinctrl-baytrail.c   |   6 +-
->  drivers/pinctrl/intel/pinctrl-cherryview.c |   6 +-
->  drivers/pinctrl/intel/pinctrl-intel.c      |   2 +-
->  drivers/pinctrl/nomadik/pinctrl-nomadik.c  |   4 +-
->  drivers/pinctrl/pinctrl-amd.c              |   2 +-
->  drivers/pinctrl/pinctrl-at91.c             |   2 +-
->  drivers/pinctrl/pinctrl-coh901.c           |   2 +-
->  drivers/pinctrl/pinctrl-oxnas.c            |   2 +-
->  drivers/pinctrl/pinctrl-pic32.c            |   2 +-
->  drivers/pinctrl/pinctrl-pistachio.c        |   2 +-
->  drivers/pinctrl/pinctrl-st.c               |   2 +-
->  drivers/pinctrl/pinctrl-sx150x.c           |   2 +-
->  drivers/pinctrl/qcom/pinctrl-msm.c         |   2 +-
->  drivers/pinctrl/sirf/pinctrl-atlas7.c      |   2 +-
->  drivers/pinctrl/sirf/pinctrl-sirf.c        |   2 +-
->  drivers/pinctrl/spear/pinctrl-plgpio.c     |   2 +-
->  include/linux/gpio/driver.h                |  81 ++--
->  58 files changed, 943 insertions(+), 147 deletions(-)
->  create mode 100644 drivers/gpio/gpio-tegra186.c
->=20
-> --=20
-> 2.12.0
->=20
+----------------------------------------------------------------
+drm/tegra: Changes for v4.12-rc1
 
---G44BJl3Aq1QbV/QL
-Content-Type: application/pgp-signature; name="signature.asc"
+This contains various fixes to the host1x driver as well as a plug for a
+leak of kernel pointers to userspace.
 
------BEGIN PGP SIGNATURE-----
+A fairly big addition this time around is the Video Image Composer (VIC)
+support that can be used to accelerate some 2D and image compositing
+operations.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljmwoYACgkQ3SOs138+
-s6EDig//Zfpk4B0+Hk/jc5WWiaL32hbpfaCYheOxws7xbRR/37Rva6pUypkRlKpt
-A67Ydq/nOl/ZrZw2YVLdn7cfhVaeR8oAP823bD4o5XtY8LDzfZOHQ8Tq0WY8s9V3
-8VnjCtfmwIrKiBoNeKAF4XMPCyEK1WVGzP7xdQZoMJ/1oE+1eUq0OJ2MelCY3P7G
-ku77nGWNUMUTYtIzpLWErR8juXVgVk+NUoCx2rKIxVR8NTMLCUjbG2LXMd346rLm
-nasKjof0wtG06Lsb1ixL1XHVaEp6mFIcRvC7/kLi5Z5gj2wTplEw0Pm5UlrTCNE9
-vv9dTLyF+8DSXA57g2WP/gMac2sh3C11sTcU1fZ/wXjV5B4SwVefiQ2HcWalzpsj
-BuuNYJqI7F0wR+tJZwkqYnsr183BMboWmFgvVf/1v7kCXTfNttYiutw5u2xf7l/D
-zt/XADVzs69yvKWyCqAZ468e25DOG1MNEYkDe0JZeAASNjozKrQZKandTJ2jv1XN
-aHO7M8gwdn8mK1w6PAMwcACeetzIpPHaH0A4rzOldE0CRZhRgzZ1uTL241/qXPLF
-L+HY7kAZ71qqfI5QZguRtnT1WqFL0YS9+fyMmPOqt6ihWD4AmLF9naaOfujNn7Io
-oUOOTs+3oXJ4GPTu7Ghr8S5KUu6FFaAwT/3DiH79FRfc/r8M68E=
-=wy83
------END PGP SIGNATURE-----
+Furthermore the driver now supports FB modifiers, so we no longer rely
+on a custom IOCTL to set those.
 
---G44BJl3Aq1QbV/QL--
+Finally this contains a few preparatory patches for Tegra186 support
+which unfortunately didn't quite make it this time, but will hopefully
+be ready for v4.13.
+
+----------------------------------------------------------------
+Alexandre Courbot (1):
+      drm/tegra: Add tiling FB modifiers
+
+Arto Merilainen (2):
+      drm/tegra: Add falcon helper library
+      drm/tegra: Add VIC support
+
+Joerg Roedel (1):
+      iommu/iova: Fix compile error with CONFIG_IOMMU_IOVA=m
+
+Marek Szyprowski (1):
+      iommu/iova: Consolidate code for adding new node to iovad domain rbtree
+
+Mikko Perttunen (3):
+      gpu: host1x: Add IOMMU support
+      drm/tegra: Add Tegra DRM allocation API
+      dt-bindings: Add bindings for the Tegra VIC
+
+Thierry Reding (10):
+      MAINTAINERS: Add related headers to IOMMU section
+      iommu: Add dummy implementations for !IOMMU_IOVA
+      Merge branch 'core' of git://git.kernel.org/.../joro/iommu into drm/tegra/for-next
+      gpu: host1x: Fix potential out-of-bounds access
+      drm/tegra: Enable IOVA API when IOMMU support is enabled
+      drm/tegra: Protect IOMMU operations by mutex
+      drm/tegra: Don't leak kernel pointer to userspace
+      gpu: host1x: Sort includes alphabetically
+      gpu: host1x: Support module reset
+      gpu: host1x: Fix host1x driver shutdown
+
+ .../display/tegra/nvidia,tegra20-host1x.txt        |  13 +
+ MAINTAINERS                                        |   2 +
+ drivers/gpu/drm/tegra/Kconfig                      |   1 +
+ drivers/gpu/drm/tegra/Makefile                     |   4 +-
+ drivers/gpu/drm/tegra/drm.c                        | 283 ++++++++++++---
+ drivers/gpu/drm/tegra/drm.h                        |  15 +-
+ drivers/gpu/drm/tegra/falcon.c                     | 259 ++++++++++++++
+ drivers/gpu/drm/tegra/falcon.h                     | 127 +++++++
+ drivers/gpu/drm/tegra/fb.c                         |  23 +-
+ drivers/gpu/drm/tegra/gem.c                        |  12 +-
+ drivers/gpu/drm/tegra/vic.c                        | 396 +++++++++++++++++++++
+ drivers/gpu/drm/tegra/vic.h                        |  31 ++
+ drivers/gpu/host1x/bus.c                           |  68 ++--
+ drivers/gpu/host1x/cdma.c                          |  74 +++-
+ drivers/gpu/host1x/cdma.h                          |   6 +-
+ drivers/gpu/host1x/dev.c                           |  76 +++-
+ drivers/gpu/host1x/dev.h                           |  14 +-
+ drivers/gpu/host1x/hw/cdma_hw.c                    |  16 +-
+ drivers/gpu/host1x/job.c                           |  72 +++-
+ drivers/gpu/host1x/job.h                           |   1 +
+ drivers/gpu/host1x/syncpt.c                        |   2 +-
+ drivers/iommu/iova.c                               |  87 ++---
+ include/linux/host1x.h                             |   1 +
+ include/linux/iova.h                               |  91 +++++
+ include/uapi/drm/drm_fourcc.h                      |  45 +++
+ 25 files changed, 1517 insertions(+), 202 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/falcon.c
+ create mode 100644 drivers/gpu/drm/tegra/falcon.h
+ create mode 100644 drivers/gpu/drm/tegra/vic.c
+ create mode 100644 drivers/gpu/drm/tegra/vic.h
