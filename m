@@ -1,74 +1,57 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 3/4] soc/tegra: Core SoC changes for v4.12-rc1
-Date: Fri,  7 Apr 2017 01:10:19 +0200
-Message-ID: <20170406231020.32048-3-thierry.reding@gmail.com>
-References: <20170406231020.32048-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 3/4] pwm: tegra: Add DT binding details to configure
+ pin in suspends/resume
+Date: Fri, 7 Apr 2017 08:49:08 +0100
+Message-ID: <a73bdb48-f424-2b45-ea0f-99781fd832f3@nvidia.com>
+References: <1491488461-24621-1-git-send-email-ldewangan@nvidia.com>
+ <1491488461-24621-4-git-send-email-ldewangan@nvidia.com>
+ <f43c83a9-8ae0-73b0-d41d-97d3bc6c253e@nvidia.com>
+ <58E67152.1080400@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170406231020.32048-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <58E67152.1080400-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
 
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+On 06/04/17 17:48, Laxman Dewangan wrote:
+> 
+> On Thursday 06 April 2017 08:56 PM, Jon Hunter wrote:
+>> On 06/04/17 15:21, Laxman Dewangan wrote:
+>>> In some of NVIDIA Tegra's platform, PWM controller is used to
+>>> control the PWM controlled regulators. PWM signal is connected to
+>>> the VID pin of the regulator where duty cycle of PWM signal decide
+>>> the voltage level of the regulator output.
+>>>
+>>> The tristate (high impedance of PWM pin form Tegra) also define
+>> s/form/from/
+>> s/define/defines/
+>>
+>>> one of the state of PWM regulator which needs to be configure in
+>>> suspend state of system.
+>> It maybe clearer to say that when the system enters suspend the
+>> regulator requires the pwm output to be tristated.
+> 
+> Not necessarily that every PWM regulator interfaces needs it.  It
+> depends on the devices.
 
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+Yes I understand that. I am just saying the description could be a
+little clearer.
 
-are available in the git repository at:
+> So I will say:
+> 
+> When system enters suspend, in some of PWM regulator interface, it is
+> required to to set the PWM output to be tristated.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.12-soc
+Ok, but I think you should say why that is, because from the above
+sentence alone it is not clear. Maybe you should say that some PWM
+client/slave devices require the PWM output to be tristated.
 
-for you to fetch changes up to 1fd09e5d884a5ff4060948e0cf8f5d7eed16e936:
+Jon
 
-  soc/tegra: Add initial flowctrl support for Tegra132/210 (2017-04-04 15:52:31 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-soc/tegra: Core SoC changes for v4.12-rc1
-
-This contains PMC support for Tegra186 as well as a proper driver for
-the flow controller found on SoCs up to Tegra210. This also turns the
-fuse driver into an explicitly non-modular driver.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      soc/tegra: Fix link errors with PMC disabled
-
-Jon Hunter (4):
-      ARM: tegra: Remove unnecessary inclusion of flowctrl header
-      soc/tegra: Move Tegra flowctrl driver
-      soc/tegra: flowctrl: Add basic platform driver
-      soc/tegra: Add initial flowctrl support for Tegra132/210
-
-Paul Gortmaker (1):
-      soc: tegra: make fuse-tegra explicitly non-modular
-
-Thierry Reding (1):
-      soc/tegra: Implement Tegra186 PMC support
-
- .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  34 +++++
- arch/arm/mach-tegra/Makefile                       |   1 -
- arch/arm/mach-tegra/cpuidle-tegra20.c              |   3 +-
- arch/arm/mach-tegra/platsmp.c                      |   2 +-
- arch/arm/mach-tegra/pm.c                           |   2 +-
- arch/arm/mach-tegra/reset-handler.S                |   2 +-
- arch/arm/mach-tegra/sleep-tegra20.S                |   3 +-
- arch/arm/mach-tegra/sleep-tegra30.S                |   2 +-
- arch/arm/mach-tegra/sleep.S                        |   2 -
- arch/arm/mach-tegra/tegra.c                        |   2 -
- drivers/soc/tegra/Kconfig                          |  22 +++
- drivers/soc/tegra/Makefile                         |   4 +-
- .../mach-tegra => drivers/soc/tegra}/flowctrl.c    |  87 ++++++++---
- drivers/soc/tegra/fuse/fuse-tegra.c                |   4 +-
- drivers/soc/tegra/pmc-tegra186.c                   | 169 +++++++++++++++++++++
- .../mach-tegra => include/soc/tegra}/flowctrl.h    |  32 +++-
- include/soc/tegra/pmc.h                            |  29 +++-
- 17 files changed, 353 insertions(+), 47 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
- rename {arch/arm/mach-tegra => drivers/soc/tegra}/flowctrl.c (67%)
- create mode 100644 drivers/soc/tegra/pmc-tegra186.c
- rename {arch/arm/mach-tegra => include/soc/tegra}/flowctrl.h (77%)
+-- 
+nvpublic
