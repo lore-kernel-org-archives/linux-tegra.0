@@ -1,99 +1,36 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 4/4] pwm: tegra: Add support to configure pin state in
- suspends/resume
-Date: Fri, 7 Apr 2017 11:27:03 +0100
-Message-ID: <afc48437-a35c-7074-1f86-b6c29d3dc257@nvidia.com>
-References: <1491557642-15940-1-git-send-email-ldewangan@nvidia.com>
- <1491557642-15940-5-git-send-email-ldewangan@nvidia.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.12-rc1
+Date: Fri, 7 Apr 2017 09:53:04 -0700
+Message-ID: <20170407165304.GV7065@codeaurora.org>
+References: <20170406230901.31704-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1491557642-15940-5-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170406230901.31704-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 04/07, Thierry Reding wrote:
+> Hi Michael, Stephen,
+> 
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.12-clk
+> 
+> for you to fetch changes up to 1116d5a7aff205b6d9879a6458788cac20d0cdf3:
+> 
+>   clk: tegra: Don't reset PLL-CX if it is already enabled (2017-04-04 16:06:05 +0200)
+> 
 
-On 07/04/17 10:34, Laxman Dewangan wrote:
-> In some of NVIDIA Tegra's platform, PWM controller is used to
-> control the PWM controlled regulators. PWM signal is connected to
-> the VID pin of the regulator where duty cycle of PWM signal decide
-> the voltage level of the regulator output.
-> 
-> When system enters suspend, some PWM client/slave regulator devices
-> require the PWM output to be tristated.
-> 
-> Add support to configure the pin state via pinctrl frameworks in
-> suspend and active state of the system.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> ---
-> Changes from v1:
-> - Use standard pinctrl names for sleep and active state.
-> - Use API pinctrl_pm_select_*()
-> 
-> Changes from V2:
-> - Use returns of pinctrl_pm_select_*()
-> - Rephrase commit message.
-> ---
->  drivers/pwm/pwm-tegra.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> index 21518be..9c7f180 100644
-> --- a/drivers/pwm/pwm-tegra.c
-> +++ b/drivers/pwm/pwm-tegra.c
-> @@ -29,6 +29,7 @@
->  #include <linux/of_device.h>
->  #include <linux/pwm.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/reset.h>
->  
-> @@ -255,6 +256,18 @@ static int tegra_pwm_remove(struct platform_device *pdev)
->  	return pwmchip_remove(&pc->chip);
->  }
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +static int tegra_pwm_suspend(struct device *dev)
-> +{
-> +	return pinctrl_pm_select_sleep_state(dev);
-> +}
-> +
-> +static int tegra_pwm_resume(struct device *dev)
-> +{
-> +	return pinctrl_pm_select_default_state(dev);
-> +}
-> +#endif
-> +
->  static const struct tegra_pwm_soc tegra20_pwm_soc = {
->  	.num_channels = 4,
->  };
-> @@ -271,10 +284,15 @@ static const struct of_device_id tegra_pwm_of_match[] = {
->  
->  MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
->  
-> +static const struct dev_pm_ops tegra_pwm_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_pwm_suspend, tegra_pwm_resume)
-> +};
-> +
->  static struct platform_driver tegra_pwm_driver = {
->  	.driver = {
->  		.name = "tegra-pwm",
->  		.of_match_table = tegra_pwm_of_match,
-> +		.pm = &tegra_pwm_pm_ops,
->  	},
->  	.probe = tegra_pwm_probe,
->  	.remove = tegra_pwm_remove,
-
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Cheers
-Jon
+Thanks. Pulled into clk-next.
 
 -- 
-nvpublic
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
