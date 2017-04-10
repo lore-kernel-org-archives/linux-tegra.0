@@ -1,43 +1,36 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V3 3/4] pwm: tegra: Add DT binding details to configure
- pin in suspends/resume
-Date: Mon, 10 Apr 2017 15:13:16 -0500
-Message-ID: <20170410201316.4rlf4bvt5jeagpsn@rob-hp-laptop>
-References: <1491557642-15940-1-git-send-email-ldewangan@nvidia.com>
- <1491557642-15940-4-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1491557642-15940-4-git-send-email-ldewangan@nvidia.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+Subject: [PATCH] gpu: host1x: Fix error handling
+Date: Mon, 10 Apr 2017 22:29:22 +0200
+Message-ID: <20170410202922.17665-1-christophe.jaillet@wanadoo.fr>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 07, 2017 at 03:04:01PM +0530, Laxman Dewangan wrote:
-> In some of NVIDIA Tegra's platform, PWM controller is used to
-> control the PWM controlled regulators. PWM signal is connected to
-> the VID pin of the regulator where duty cycle of PWM signal decide
-> the voltage level of the regulator output.
-> 
-> When system enters suspend, some PWM client/slave regulator devices
-> require the PWM output to be tristated.
-> 
-> Add DT binding details to provide the pin configuration state
-> from PWM and pinctrl DT node in suspend and active state of
-> the system.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> 
-> ---
-> Changes from v1:
-> - Use standard pinctrl names for sleep and active state.
-> 
-> Changes from V2:
-> - Fix the commit message and details
-> ---
->  .../devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 45 ++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
+If 'devm_reset_control_get' returns an error, then we erroneously return
+success because error code is taken from 'host->clk' instead of 
+'host->rst'.
 
-Acked-by: Rob Herring <robh@kernel.org> 
+Fixes: b386c6b73ac6 ("gpu: host1x: Support module reset")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+---
+ drivers/gpu/host1x/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index f05ebb14fa63..ac65f52850a6 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -172,7 +172,7 @@ static int host1x_probe(struct platform_device *pdev)
+ 
+ 	host->rst = devm_reset_control_get(&pdev->dev, "host1x");
+ 	if (IS_ERR(host->rst)) {
+-		err = PTR_ERR(host->clk);
++		err = PTR_ERR(host->rst);
+ 		dev_err(&pdev->dev, "failed to get reset: %d\n", err);
+ 		return err;
+ 	}
+-- 
+2.11.0
