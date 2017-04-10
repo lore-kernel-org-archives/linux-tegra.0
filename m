@@ -1,82 +1,43 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH 2/4] PM / Domains: Add support for explicit control of
- PM domains
-Date: Mon, 10 Apr 2017 20:48:38 +0100
-Message-ID: <578a6dfc-226f-adf0-5405-279e116a821d@nvidia.com>
-References: <1490710443-27425-1-git-send-email-jonathanh@nvidia.com>
- <1490710443-27425-3-git-send-email-jonathanh@nvidia.com>
- <edbd9d3a-d978-6f64-b1aa-3b1ea226a8bd@codeaurora.org>
- <3135e238-48a3-3693-bb59-63bf2a6d8d0e@nvidia.com>
- <673fbd2f-3fcb-453b-be84-668ce659abb4@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V3 3/4] pwm: tegra: Add DT binding details to configure
+ pin in suspends/resume
+Date: Mon, 10 Apr 2017 15:13:16 -0500
+Message-ID: <20170410201316.4rlf4bvt5jeagpsn@rob-hp-laptop>
+References: <1491557642-15940-1-git-send-email-ldewangan@nvidia.com>
+ <1491557642-15940-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <673fbd2f-3fcb-453b-be84-668ce659abb4@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rajendra Nayak <rnayak@codeaurora.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, geert@linux-m68k.org
-Cc: stanimir.varbanov@linaro.org, sboyd@codeaurora.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1491557642-15940-4-git-send-email-ldewangan@nvidia.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 10/04/17 11:02, Rajendra Nayak wrote:
+On Fri, Apr 07, 2017 at 03:04:01PM +0530, Laxman Dewangan wrote:
+> In some of NVIDIA Tegra's platform, PWM controller is used to
+> control the PWM controlled regulators. PWM signal is connected to
+> the VID pin of the regulator where duty cycle of PWM signal decide
+> the voltage level of the regulator output.
 > 
+> When system enters suspend, some PWM client/slave regulator devices
+> require the PWM output to be tristated.
 > 
-> On 04/10/2017 01:54 PM, Jon Hunter wrote:
->>
->> On 10/04/17 05:09, Rajendra Nayak wrote:
->>> Hey Jon,
->>>
->>> On 03/28/2017 07:44 PM, Jon Hunter wrote:
->>>> The current generic PM domain framework (GenDP) only allows a single
->>>> PM domain to be associated with a given device. There are several
->>>> use-cases for various system-on-chip devices where it is necessary for
->>>> a PM domain consumer to control more than one PM domain where the PM
->>>> domains:
->>>> i).  Do not conform to a parent-child relationship so are not nested
->>>> ii). May not be powered on and off at the same time so need independent
->>>>      control.
->>>>
->>>> To support the above, add new APIs for GenPD to allow consumers to get,
->>>> power-on, power-off and put PM domains so that they can be explicitly
->>>> controlled by the consumer.
->>>
->>> thanks for working on this RFC.
->>>
->>> []..
->>>   
->>>> +/**
->>>> + * pm_genpd_get - Get a generic I/O PM domain by name
->>>> + * @name: Name of the PM domain.
->>>> + *
->>>> + * Look-ups a PM domain by name. If found, increment the device
->>>> + * count for PM domain to ensure that the PM domain cannot be
->>>> + * removed, increment the suspended count so that it can still
->>>> + * be turned off (when not in-use) and return a pointer to its
->>>> + * generic_pm_domain structure. If not found return ERR_PTR().
->>>> + */
->>>> +struct generic_pm_domain *pm_genpd_get(const char *name)
->>>> +{
->>>> +	struct generic_pm_domain *gpd, *genpd = ERR_PTR(-EEXIST);
->>>> +
->>>> +	if (!name)
->>>> +		return ERR_PTR(-EINVAL);
->>>> +
->>>> +	mutex_lock(&gpd_list_lock);
->>>> +	list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
->>>> +		if (!strcmp(gpd->name, name)) {
+> Add DT binding details to provide the pin configuration state
+> from PWM and pinctrl DT node in suspend and active state of
+> the system.
 > 
-> Also looking up the powerdomain this way means the consumers need
-> to know the _exact_ name with which the providers have registered
-> the powerdomains?
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> 
+> ---
+> Changes from v1:
+> - Use standard pinctrl names for sleep and active state.
+> 
+> Changes from V2:
+> - Fix the commit message and details
+> ---
+>  .../devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 45 ++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
 
-Yes, this provides a means for someone not using DT to lookup a PM
-domain. How else would you do it?
-
-Patch 3/4 allows you to use DT instead, which I imagine anyone using DT
-would use.
-
-Jon
-
--- 
-nvpublic
+Acked-by: Rob Herring <robh@kernel.org> 
