@@ -1,51 +1,50 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] cpufreq: Add Tegra186 cpufreq driver
-Date: Tue, 11 Apr 2017 09:37:28 +0300
-Message-ID: <ce29c6b7-2942-0054-d014-7b262da6fb6d@kapsi.fi>
-References: <1491313417-25085-1-git-send-email-mperttunen@nvidia.com>
- <20170411063548.GD3670@vireshk-i7>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] soc/tegra: flowctrl: Fix error handling
+Date: Tue, 11 Apr 2017 08:15:02 +0100
+Message-ID: <e5718c3d-e0f7-8a4d-7936-6ecfe6208f31@nvidia.com>
+References: <20170411034041.18662-1-christophe.jaillet@wanadoo.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170411063548.GD3670@vireshk-i7>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170411034041.18662-1-christophe.jaillet@wanadoo.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, thierry.reding@gmail.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/11/2017 09:35 AM, Viresh Kumar wrote:
-> On 04-04-17, 16:43, Mikko Perttunen wrote:
->> Add a new cpufreq driver for Tegra186 (and likely later).
->> The CPUs are organized into two clusters, Denver and A57,
->> with two and four cores respectively. CPU frequency can be
->> adjusted by writing the desired rate divisor and a voltage
->> hint to a special per-core register.
->>
->> The frequency of each core can be set individually; however,
->> this is just a hint as all CPUs in a cluster will run at
->> the maximum rate of non-idle CPUs in the cluster.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> v2:
->> - Many cosmetic / restructuring changes
->> - Only one aperture read from DT now, with a new
->>   structure containing the offset among other details
->>   per cluster.
->> - Don't enable the driver by default.
->>
->>  drivers/cpufreq/Kconfig.arm        |   6 +
->>  drivers/cpufreq/Makefile           |   1 +
->>  drivers/cpufreq/tegra186-cpufreq.c | 275 +++++++++++++++++++++++++++++++++++++
->>  3 files changed, 282 insertions(+)
->>  create mode 100644 drivers/cpufreq/tegra186-cpufreq.c
->
-> For all three patches.
->
-> Acked-by: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->
 
-Thanks!
+On 11/04/17 04:40, Christophe JAILLET wrote:
+> It is likely that returning returned by 'devm_ioremap_resource()' is
+> expected here instead of something related to 'base' which should be a
+> valid pointer at this point.
+> 
+> Fixes: 841fd94c43a4 ("soc/tegra: flowctrl: Add basic platform driver")
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/soc/tegra/flowctrl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/tegra/flowctrl.c b/drivers/soc/tegra/flowctrl.c
+> index 0e345c05fc65..5433cc7a043e 100644
+> --- a/drivers/soc/tegra/flowctrl.c
+> +++ b/drivers/soc/tegra/flowctrl.c
+> @@ -157,7 +157,7 @@ static int tegra_flowctrl_probe(struct platform_device *pdev)
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	tegra_flowctrl_base = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(tegra_flowctrl_base))
+> -		return PTR_ERR(base);
+> +		return PTR_ERR(tegra_flowctrl_base);
+>  
+>  	iounmap(base);
 
-Mikko
+Oops! Thanks for the fix.
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
