@@ -1,62 +1,50 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 0/3] soc/tegra: bpmp: Generic PM domains for Tegra186
-Date: Tue, 11 Apr 2017 21:37:30 +0200
-Message-ID: <CAPDyKFqD+_sShdbo4uGisPO-6DvdcnZnx_bb_ubC9ZKHyTuPyA@mail.gmail.com>
-References: <20170329163452.10761-1-thierry.reding@gmail.com> <20170411152838.GA13819@ulmo.ba.sec>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170411152838.GA13819-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stefan Kristiansson <stefank-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] pwm: tegra: Avoid potential overflow for short periods
+Date: Wed, 12 Apr 2017 18:33:20 +0200
+Message-ID: <20170412163320.11760-1-thierry.reding@gmail.com>
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11 April 2017 at 17:28, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> On Wed, Mar 29, 2017 at 06:34:49PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> > Hi Rafael, Kevin, Ulf,
-> >
-> > This series implement generic power domains for Tegra186. Since the
-> > power partitions on Tegra186 have a non-contiguous ID range, the PM
-> > domain core is enhanced with a way to allow PM domain providers to
-> > override the default ->xlate() implementation. This is used to look
-> > up the correct PM domain given the ID read from device tree.
-> >
-> > The second patch updates the BPMP ABI header to a version that has
-> > support for the MRQ_PG request which is used to enumerate available
-> > power partitions and control them.
-> >
-> > An implementation of the generic PM domains using the MRQ_PG request
-> > is provided in patch 3.
-> >
-> > Given the dependency of patch 3 on patch 1 I think it'd be easiest
-> > to get an Acked-by on patch 1 and take all of these through the Tegra
-> > tree. If that's okay with you, I can provide a stable branch with the
-> > first patch that could be pulled into the PM tree to resolve potential
-> > conflicts.
-> >
-> > Thanks,
-> > Thierry
-> >
-> > Changes in v2:
-> > - take into account PG_STATE_RUNNING in tegra_bpmp_powergate_is_powered()
-> > - check return value of pm_genpd_init() and clean up on failure
-> > - simplify error unwinding in tegra_bpmp_init_powergates()
-> >
-> > Thierry Reding (3):
-> >   PM / Domains: Allow overriding the ->xlate() callback
-> >   soc/tegra: bpmp: Update ABI header
-> >   soc/tegra: bpmp: Implement generic PM domains
->
-> Any comments on this? If not, can we get this into v4.12?
+For very short periods, the result of the division might overflow the
+unsigned long hz variable (on 32-bit architectures). Avoid that by
+making it an unsigned long long. While at it, also remove an unneeded
+local variable whose only purpose is to store a temporary computation.
 
-Thanks for the reminder!
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+---
+ drivers/pwm/pwm-tegra.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Allow me to get a couple of more days for this, I have just catched up
-on mmc, due to travel and sickness.
-
-Kind regards
-Uffe
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index 9c7f180b9f3a..c040f87ee144 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -75,9 +75,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			    int duty_ns, int period_ns)
+ {
+ 	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
+-	unsigned long long c = duty_ns;
+-	unsigned long rate, hz;
+-	unsigned long long ns100 = NSEC_PER_SEC;
++	unsigned long long c = duty_ns, hz;
++	unsigned long rate;
+ 	u32 val = 0;
+ 	int err;
+ 
+@@ -98,9 +97,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	rate = clk_get_rate(pc->clk) >> PWM_DUTY_WIDTH;
+ 
+ 	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
+-	ns100 *= 100;
+-	hz = DIV_ROUND_CLOSEST_ULL(ns100, period_ns);
+-	rate = DIV_ROUND_CLOSEST(rate * 100, hz);
++	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
++	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
+ 
+ 	/*
+ 	 * Since the actual PWM divider is the register's frequency divider
+-- 
+2.12.0
