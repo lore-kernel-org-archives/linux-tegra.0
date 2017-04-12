@@ -1,50 +1,82 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] pwm: tegra: Avoid potential overflow for short periods
-Date: Wed, 12 Apr 2017 18:33:20 +0200
-Message-ID: <20170412163320.11760-1-thierry.reding@gmail.com>
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3 0/4] pwm: tegra: Pin configuration in suspend/resume
+ and cleanups
+Date: Wed, 12 Apr 2017 19:18:09 +0200
+Message-ID: <20170412171809.GD11964@ulmo.ba.sec>
+References: <1491557642-15940-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tEFtbjk+mNEviIIX"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1491557642-15940-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-For very short periods, the result of the division might overflow the
-unsigned long hz variable (on 32-bit architectures). Avoid that by
-making it an unsigned long long. While at it, also remove an unneeded
-local variable whose only purpose is to store a temporary computation.
 
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
----
- drivers/pwm/pwm-tegra.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+--tEFtbjk+mNEviIIX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 9c7f180b9f3a..c040f87ee144 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -75,9 +75,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			    int duty_ns, int period_ns)
- {
- 	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
--	unsigned long long c = duty_ns;
--	unsigned long rate, hz;
--	unsigned long long ns100 = NSEC_PER_SEC;
-+	unsigned long long c = duty_ns, hz;
-+	unsigned long rate;
- 	u32 val = 0;
- 	int err;
- 
-@@ -98,9 +97,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	rate = clk_get_rate(pc->clk) >> PWM_DUTY_WIDTH;
- 
- 	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
--	ns100 *= 100;
--	hz = DIV_ROUND_CLOSEST_ULL(ns100, period_ns);
--	rate = DIV_ROUND_CLOSEST(rate * 100, hz);
-+	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
-+	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
- 
- 	/*
- 	 * Since the actual PWM divider is the register's frequency divider
--- 
-2.12.0
+On Fri, Apr 07, 2017 at 03:03:58PM +0530, Laxman Dewangan wrote:
+> This patch series have following fixes:
+> - Add more precession in PWM period register value calculation
+>   for lower pwm frequency.
+> - Add support to configure PWM pins in different state in the
+>   suspend/resume.
+>=20
+> Changes from v1:
+> - Use standard pinctrl names for sleep and active state.
+> - Use API pinctrl_pm_select_*()
+>=20
+> Changes from V2:
+> - Type fixes, rephrases commit message and use pinctrl_pm_state* return
+>   value.
+>=20
+> Laxman Dewangan (4):
+>   pwm: tegra: Use DIV_ROUND_CLOSEST_ULL() instead of local
+>     implementation
+>   pwm: tegra: Increase precision in pwm rate calculation
+>   pwm: tegra: Add DT binding details to configure pin in suspends/resume
+>   pwm: tegra: Add support to configure pin state in suspends/resume
+>=20
+>  .../devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 43 ++++++++++++
+>  drivers/pwm/pwm-tegra.c                            | 77 ++++++++++++++++=
+++++--
+>  2 files changed, 116 insertions(+), 4 deletions(-)
+
+All four patches applied to for-4.12/drivers, thanks.
+
+I've slightly modified the commit messages of some patches for "pwm" ->
+"PWM".
+
+Thierry
+
+--tEFtbjk+mNEviIIX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljuYVEACgkQ3SOs138+
+s6F8MBAAl3Zxu6de9n5t/fSnwQe7lTmHLAskvAnvVA3AY6aPBfO9Yz+g4wOFxQ/6
+MW+PEiKReT7xKFsb+y8XILtmfXiOJ7ZfpvioZ3iM8AMQ3Oh0WBY5hN1kwt2QS4uY
+61NSwJ8IkyZCstWRY/nmwx45al6Ub3p1GTwc/5WW/Cztydz3M4LG9efZfydyczez
+cL2G1bTxauB6duvrEqaYullUF2ucaFxiq0nO3RKQwtovF0inM/bfno6M/LFrEXpp
+Vj6eb+DE+t2a4j3VpV1iqvy4BKvzvUWyESNFk3ENVk4NqOprOJHxTvk5nj2nWBXu
+BSf3IrFJRYUT7KyB42LZyJoWhSCICLej+B+Jm9yuMzt7JM7d/2Ob/WDNbkZp+POO
+gmAAps/1mxoFdTi2Y+J6L6LUOrDq/KG2joboBzL2beBxWZFvVrcWy2DkiNp51V4x
+GrBcdr1LGONhAWk6doDaHs3gl3W4xLqjyTQS8XA87x714l94D4XP/Sh07LCnUObT
+h2/F+4ZDDGFC0WpliTdtLY/bffV1OUFUlW3jf9V79avkj6sl5NlMkJ6QltiVztuu
+OasyAdfjzKyJ609wL3QDq5LAC8u1MQQ8vWz+PtPphvnDek1cmG7nwaxKEDJvoGmc
+3HR4dycNsLIOvj9Goww5t5fRqEix3S1ssDa2DBq3Xg5ZqnoZJX4=
+=g9Fr
+-----END PGP SIGNATURE-----
+
+--tEFtbjk+mNEviIIX--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
