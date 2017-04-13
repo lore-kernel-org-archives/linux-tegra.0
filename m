@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher scripts PATCH] Remove Whistler support
-Date: Thu, 13 Apr 2017 12:58:19 -0600
-Message-ID: <20170413185819.2094-1-swarren@wwwdotorg.org>
+Subject: [cbootimage-configs PATCH] Remove Whistler support
+Date: Thu, 13 Apr 2017 12:58:44 -0600
+Message-ID: <20170413185845.2193-1-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
@@ -16,35 +16,256 @@ the board hardware. Hence, it makes sense to remove support from software.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- configs/whistler.board  | 4 ----
- configs/whistler.config | 8 --------
- 2 files changed, 12 deletions(-)
- delete mode 100644 configs/whistler.board
- delete mode 100644 configs/whistler.config
+ ...MB_EDB4032B2PB-6D-F_300MHz_40nm_emmc_x8.bct.cfg | 145 ---------------------
+ tegra20/nvidia/whistler/Makefile                   |  29 -----
+ tegra20/nvidia/whistler/build.sh                   |  21 ---
+ tegra20/nvidia/whistler/whistler-emmc.img.cfg      |  22 ----
+ 4 files changed, 217 deletions(-)
+ delete mode 100644 tegra20/nvidia/whistler/E1108_Elpida_512MB_EDB4032B2PB-6D-F_300MHz_40nm_emmc_x8.bct.cfg
+ delete mode 100644 tegra20/nvidia/whistler/Makefile
+ delete mode 100755 tegra20/nvidia/whistler/build.sh
+ delete mode 100644 tegra20/nvidia/whistler/whistler-emmc.img.cfg
 
-diff --git a/configs/whistler.board b/configs/whistler.board
+diff --git a/tegra20/nvidia/whistler/E1108_Elpida_512MB_EDB4032B2PB-6D-F_300MHz_40nm_emmc_x8.bct.cfg b/tegra20/nvidia/whistler/E1108_Elpida_512MB_EDB4032B2PB-6D-F_300MHz_40nm_emmc_x8.bct.cfg
 deleted file mode 100644
-index 7dd4fd8b73cf..000000000000
---- a/configs/whistler.board
+index f4482a682cc1..000000000000
+--- a/tegra20/nvidia/whistler/E1108_Elpida_512MB_EDB4032B2PB-6D-F_300MHz_40nm_emmc_x8.bct.cfg
 +++ /dev/null
-@@ -1,4 +0,0 @@
--board = {
--    'vendor': 'nvidia',
--    'soc': 'tegra20',
--}
-diff --git a/configs/whistler.config b/configs/whistler.config
+@@ -1,145 +0,0 @@
+-# Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+-#
+-# This software is provided 'as-is', without any express or implied
+-# warranty. In no event will the authors be held liable for any damages
+-# arising from the use of this software.
+-#
+-# Permission is granted to anyone to use this software for any purpose,
+-# including commercial applications, and to alter it and redistribute it
+-# freely, subject to the following restrictions:
+-#
+-# 1. The origin of this software must not be misrepresented; you must not
+-#    claim that you wrote the original software. If you use this software
+-#    in a product, an acknowledgment in the product documentation would be
+-#    appreciated but is not required.
+-# 2. Altered source versions must be plainly marked as such, and must not be
+-#    misrepresented as being the original software.
+-# 3. This notice may not be removed or altered from any source distribution.
+-
+-Version       = 0x00020001;
+-BlockSize     = 0x00004000;
+-PageSize      = 0x00000200;
+-PartitionSize = 0x01000000;
+-OdmData       = 0x200c0000;
+-
+-DevType[0] = NvBootDevType_Sdmmc;
+-DeviceParam[0].SdmmcParams.ClockDivider           = 0x0000000c;
+-DeviceParam[0].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_8Bit;
+-DeviceParam[0].SdmmcParams.MaxPowerClassSupported = 0x0000000f;
+-
+-DevType[1] = NvBootDevType_Sdmmc;
+-DeviceParam[1].SdmmcParams.ClockDivider           = 0x0000000c;
+-DeviceParam[1].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_8Bit;
+-DeviceParam[1].SdmmcParams.MaxPowerClassSupported = 0x0000000f;
+-
+-DevType[2] = NvBootDevType_Sdmmc;
+-DeviceParam[2].SdmmcParams.ClockDivider           = 0x0000000c;
+-DeviceParam[2].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_8Bit;
+-DeviceParam[2].SdmmcParams.MaxPowerClassSupported = 0x0000000f;
+-
+-DevType[3] = NvBootDevType_Sdmmc;
+-DeviceParam[3].SdmmcParams.ClockDivider           = 0x0000000c;
+-DeviceParam[3].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_8Bit;
+-DeviceParam[3].SdmmcParams.MaxPowerClassSupported = 0x0000000f;
+-
+-SDRAM[0].MemoryType                 = NvBootMemoryType_LpDdr2;
+-SDRAM[0].PllMChargePumpSetupControl = 0x00000008;
+-SDRAM[0].PllMLoopFilterSetupControl = 0x00000000;
+-SDRAM[0].PllMInputDivider           = 0x0000000c;
+-SDRAM[0].PllMFeedbackDivider        = 0x00000258;
+-SDRAM[0].PllMPostDivider            = 0x00000000;
+-SDRAM[0].PllMStableTime             = 0x0000012c;
+-SDRAM[0].EmcClockDivider            = 0x00000001;
+-SDRAM[0].EmcAutoCalInterval         = 0x00000000;
+-SDRAM[0].EmcAutoCalConfig           = 0xe0a61111;
+-SDRAM[0].EmcAutoCalWait             = 0x00000000;
+-SDRAM[0].EmcPinProgramWait          = 0x00000000;
+-SDRAM[0].EmcRc                      = 0x00000012;
+-SDRAM[0].EmcRfc                     = 0x00000027;
+-SDRAM[0].EmcRas                     = 0x0000000d;
+-SDRAM[0].EmcRp                      = 0x00000006;
+-SDRAM[0].EmcR2w                     = 0x00000007;
+-SDRAM[0].EmcW2r                     = 0x00000005;
+-SDRAM[0].EmcR2p                     = 0x00000003;
+-SDRAM[0].EmcW2p                     = 0x00000009;
+-SDRAM[0].EmcRrd                     = 0x00000003;
+-SDRAM[0].EmcRdRcd                   = 0x00000006;
+-SDRAM[0].EmcWrRcd                   = 0x00000006;
+-SDRAM[0].EmcRext                    = 0x00000003;
+-SDRAM[0].EmcWdv                     = 0x00000002;
+-SDRAM[0].EmcQUseExtra               = 0x00000005;
+-SDRAM[0].EmcQUse                    = 0x00000006;
+-SDRAM[0].EmcQRst                    = 0x00000003;
+-SDRAM[0].EmcQSafe                   = 0x00000009;
+-SDRAM[0].EmcRdv                     = 0x0000000c;
+-SDRAM[0].EmcRefresh                 = 0x0000045f;
+-SDRAM[0].EmcBurstRefreshNum         = 0x00000000;
+-SDRAM[0].EmcPdEx2Wr                 = 0x00000004;
+-SDRAM[0].EmcPdEx2Rd                 = 0x00000004;
+-SDRAM[0].EmcPChg2Pden               = 0x00000006;
+-SDRAM[0].EmcAct2Pden                = 0x00000008;
+-SDRAM[0].EmcAr2Pden                 = 0x00000001;
+-SDRAM[0].EmcRw2Pden                 = 0x0000000e;
+-SDRAM[0].EmcTxsr                    = 0x0000002a;
+-SDRAM[0].EmcTcke                    = 0x00000003;
+-SDRAM[0].EmcTfaw                    = 0x0000000f;
+-SDRAM[0].EmcTrpab                   = 0x00000007;
+-SDRAM[0].EmcTClkStable              = 0x00000005;
+-SDRAM[0].EmcTClkStop                = 0x00000002;
+-SDRAM[0].EmcTRefBw                  = 0x000004e0;
+-SDRAM[0].EmcFbioCfg1                = 0x00000000;
+-SDRAM[0].EmcFbioDqsibDlyMsb         = 0x00000000;
+-SDRAM[0].EmcFbioDqsibDly            = 0x28282828;
+-SDRAM[0].EmcFbioQuseDlyMsb          = 0x00000000;
+-SDRAM[0].EmcFbioQuseDly             = 0x00000000;
+-SDRAM[0].EmcFbioCfg5                = 0x00000282;
+-SDRAM[0].EmcFbioCfg6                = 0x00000002;
+-SDRAM[0].EmcFbioSpare               = 0x00000000;
+-SDRAM[0].EmcMrsResetDllWait         = 0x00000000;
+-SDRAM[0].EmcMrsResetDll             = 0x00000000;
+-SDRAM[0].EmcMrsDdr2DllReset         = 0x00000000;
+-SDRAM[0].EmcMrs                     = 0x00000000;
+-SDRAM[0].EmcEmrsEmr2                = 0x00000000;
+-SDRAM[0].EmcEmrsEmr3                = 0x00000000;
+-SDRAM[0].EmcEmrsDdr2DllEnable       = 0x00000000;
+-SDRAM[0].EmcEmrsDdr2OcdCalib        = 0x00000000;
+-SDRAM[0].EmcEmrs                    = 0x00000000;
+-SDRAM[0].EmcMrw1                    = 0x0001006a;
+-SDRAM[0].EmcMrw2                    = 0x00020003;
+-SDRAM[0].EmcMrw3                    = 0x00030002;
+-SDRAM[0].EmcMrwResetCommand         = 0x003f0000;
+-SDRAM[0].EmcMrwResetNInitWait       = 0x0000000a;
+-SDRAM[0].EmcAdrCfg1                 = 0x00060302;
+-SDRAM[0].EmcAdrCfg                  = 0x01060302;
+-SDRAM[0].McEmemCfg                  = 0x00080000;
+-SDRAM[0].McLowLatencyConfig         = 0x80000003;
+-SDRAM[0].EmcCfg2                    = 0x00000403;
+-SDRAM[0].EmcCfgDigDll               = 0xe0000413;
+-SDRAM[0].EmcCfgClktrim0             = 0x00000000;
+-SDRAM[0].EmcCfgClktrim1             = 0x00000000;
+-SDRAM[0].EmcCfgClktrim2             = 0x00000000;
+-SDRAM[0].EmcCfg                     = 0x0001ff00;
+-SDRAM[0].EmcDbg                     = 0x01000020;
+-SDRAM[0].AhbArbitrationXbarCtrl     = 0x00010000;
+-SDRAM[0].EmcDllXformDqs             = 0x00000010;
+-SDRAM[0].EmcDllXformQUse            = 0x00000008;
+-SDRAM[0].WarmBootWait               = 0x00000001;
+-SDRAM[0].EmcCttTermCtrl             = 0x00000802;
+-SDRAM[0].EmcOdtWrite                = 0x00000000;
+-SDRAM[0].EmcOdtRead                 = 0x00000000;
+-SDRAM[0].EmcZcalRefCnt              = 0x00000000;
+-SDRAM[0].EmcZcalWaitCnt             = 0x0000001b;
+-SDRAM[0].EmcZcalMrwCmd              = 0x000a0056;
+-SDRAM[0].EmcMrwZqInitDev0           = 0x800a00ff;
+-SDRAM[0].EmcMrwZqInitDev1           = 0x400a00ff;
+-SDRAM[0].EmcMrwZqInitWait           = 0x00000001;
+-SDRAM[0].EmcDdr2Wait                = 0x00000000;
+-SDRAM[0].PmcDdrPwr                  = 0x00000000;
+-SDRAM[0].ApbMiscGpXm2CfgAPadCtrl    = 0x77ffc000;
+-SDRAM[0].ApbMiscGpXm2CfgCPadCtrl2   = 0x08080040;
+-SDRAM[0].ApbMiscGpXm2CfgCPadCtrl    = 0x77fffff8;
+-SDRAM[0].ApbMiscGpXm2CfgDPadCtrl2   = 0x00000000;
+-SDRAM[0].ApbMiscGpXm2CfgDPadCtrl    = 0x77fffff8;
+-SDRAM[0].ApbMiscGpXm2ClkCfgPadCtrl  = 0x77ffc000;
+-SDRAM[0].ApbMiscGpXm2CompPadCtrl    = 0x01f1f008;
+-SDRAM[0].ApbMiscGpXm2VttGenPadCtrl  = 0x00005500;
+diff --git a/tegra20/nvidia/whistler/Makefile b/tegra20/nvidia/whistler/Makefile
 deleted file mode 100644
-index e93cd359969e..000000000000
---- a/configs/whistler.config
+index 5d8ff04a29df..000000000000
+--- a/tegra20/nvidia/whistler/Makefile
 +++ /dev/null
-@@ -1,8 +0,0 @@
--config = {
--    'bct': 'E1108_Elpida_512MB_EDB4032B2PB-6D-F_300MHz_40nm_emmc_x8.bct',
--    'board': 'whistler',
--    'dtbfn-extra': '',
--    'flash-id-uboot': 0,
--    'flash-image': 'whistler-emmc.img',
--    'flash-type': 'emmc',
--}
+@@ -1,29 +0,0 @@
+-# Copyright (c) 2012-2013, NVIDIA CORPORATION.  All rights reserved.
+-#
+-# This software is provided 'as-is', without any express or implied
+-# warranty. In no event will the authors be held liable for any damages
+-# arising from the use of this software.
+-#
+-# Permission is granted to anyone to use this software for any purpose,
+-# including commercial applications, and to alter it and redistribute it
+-# freely, subject to the following restrictions:
+-#
+-# 1. The origin of this software must not be misrepresented; you must not
+-#    claim that you wrote the original software. If you use this software
+-#    in a product, an acknowledgment in the product documentation would be
+-#    appreciated but is not required.
+-# 2. Altered source versions must be plainly marked as such, and must not be
+-#    misrepresented as being the original software.
+-# 3. This notice may not be removed or altered from any source distribution.
+-
+-include ../../../build/pre.mk
+-
+-soc := t20
+-
+-bcts := \
+-	E1108_Elpida_512MB_EDB4032B2PB-6D-F_300MHz_40nm_emmc_x8.bct
+-
+-images := \
+-	whistler-emmc.img
+-
+-include ../../../build/post.mk
+diff --git a/tegra20/nvidia/whistler/build.sh b/tegra20/nvidia/whistler/build.sh
+deleted file mode 100755
+index 7dc6a05f81d5..000000000000
+--- a/tegra20/nvidia/whistler/build.sh
++++ /dev/null
+@@ -1,21 +0,0 @@
+-#!/bin/sh
+-
+-# Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
+-#
+-# This software is provided 'as-is', without any express or implied
+-# warranty. In no event will the authors be held liable for any damages
+-# arising from the use of this software.
+-#
+-# Permission is granted to anyone to use this software for any purpose,
+-# including commercial applications, and to alter it and redistribute it
+-# freely, subject to the following restrictions:
+-#
+-# 1. The origin of this software must not be misrepresented; you must not
+-#    claim that you wrote the original software. If you use this software
+-#    in a product, an acknowledgment in the product documentation would be
+-#    appreciated but is not required.
+-# 2. Altered source versions must be plainly marked as such, and must not be
+-#    misrepresented as being the original software.
+-# 3. This notice may not be removed or altered from any source distribution.
+-
+-make
+diff --git a/tegra20/nvidia/whistler/whistler-emmc.img.cfg b/tegra20/nvidia/whistler/whistler-emmc.img.cfg
+deleted file mode 100644
+index 606612c337c6..000000000000
+--- a/tegra20/nvidia/whistler/whistler-emmc.img.cfg
++++ /dev/null
+@@ -1,22 +0,0 @@
+-# Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+-#
+-# This software is provided 'as-is', without any express or implied
+-# warranty. In no event will the authors be held liable for any damages
+-# arising from the use of this software.
+-#
+-# Permission is granted to anyone to use this software for any purpose,
+-# including commercial applications, and to alter it and redistribute it
+-# freely, subject to the following restrictions:
+-#
+-# 1. The origin of this software must not be misrepresented; you must not
+-#    claim that you wrote the original software. If you use this software
+-#    in a product, an acknowledgment in the product documentation would be
+-#    appreciated but is not required.
+-# 2. Altered source versions must be plainly marked as such, and must not be
+-#    misrepresented as being the original software.
+-# 3. This notice may not be removed or altered from any source distribution.
+-
+-Version       = 0x00020001;
+-Bctcopy       = 1;
+-Bctfile       = E1108_Elpida_512MB_EDB4032B2PB-6D-F_300MHz_40nm_emmc_x8.bct;
+-BootLoader    = u-boot.bin,0x00108000,0x00108000,Complete;
 -- 
 2.11.0
