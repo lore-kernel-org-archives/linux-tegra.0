@@ -1,37 +1,39 @@
-From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH -next] gpu: host1x: Fix wrong pointer passed to PTR_ERR()
-Date: Sun, 16 Apr 2017 04:08:10 +0000
-Message-ID: <20170416040810.10476-1-weiyj.lk@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: [PATCH] backlight: pwm_bl: Fix condition to set enable gpio as output
+Date: Sun, 16 Apr 2017 12:35:46 +0200
+Message-ID: <20170416103546.3021-1-contact@paulk.fr>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+The move to a dedicated pwm_backlight_initial_power_state function in
+commit 7613c922315e308a6486d802abed2eb74443dffd modified the condition
+to set the enable gpio as output. This breaks specific use cases using
+that GPIO, such as tegra124-based nyan Chromebooks where backlight
+stopped working.
 
-PTR_ERR should access the value just tested by IS_ERR, otherwise
-the wrong error code will be returned.
+This puts the condition back to the way it was before the move.
 
-Fixes: b386c6b73ac6 ("gpu: host1x: Support module reset")
-Signed-off-by: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 ---
- drivers/gpu/host1x/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/backlight/pwm_bl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index f05ebb1..ac65f52 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -172,7 +172,7 @@ static int host1x_probe(struct platform_device *pdev)
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index d7efcb632f7d..e81b2b55be2b 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -304,7 +304,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	 * early. Leave the decision of the initial backlight state for later.
+ 	 */
+ 	if (pb->enable_gpio &&
+-	    gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_IN)
++	   (gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_IN ||
++	    gpiod_get_value(pb->enable_gpio) != 0))
+ 		gpiod_direction_output(pb->enable_gpio, 1);
  
- 	host->rst = devm_reset_control_get(&pdev->dev, "host1x");
- 	if (IS_ERR(host->rst)) {
--		err = PTR_ERR(host->clk);
-+		err = PTR_ERR(host->rst);
- 		dev_err(&pdev->dev, "failed to get reset: %d\n", err);
- 		return err;
- 	}
+ 	pb->power_supply = devm_regulator_get(&pdev->dev, "power");
+-- 
+2.12.2
