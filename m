@@ -1,66 +1,80 @@
-From: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: [PATCH V3 0/4] reset: APIs to manage a list of resets
-Date: Tue, 18 Apr 2017 16:51:24 +0530
-Message-ID: <1492514488-27385-1-git-send-email-vivek.gautam@codeaurora.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH V3 1/4] reset: Add API to count number of reset available with device
+Date: Tue, 18 Apr 2017 16:51:25 +0530
+Message-ID: <1492514488-27385-2-git-send-email-vivek.gautam@codeaurora.org>
+References: <1492514488-27385-1-git-send-email-vivek.gautam@codeaurora.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1492514488-27385-1-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: p.zabel@pengutronix.de, swarren@wwwdotorg.org, balbi@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, thierry.reding@gmail.com, gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Set of patches to support getting and de/asserting a list (array)
-of reset controllers available with the device.
-This series also contains reset controls patches for dwc3-of-simple
-and tegra pmc drivers.
+Count number of reset phandles available with the device node
+to know the resets a given device has.
 
-This V3 version addresses Philipp's review comments to make the
-APIs inline with gpiod APIs. So, the reset framework does all the
-job of storing the reset controls and their count.
-The users can just pass the device pointer/node along with 'optional'
-'shared' flags.
-The *_reset_control_array_* APIs _assert() and _deassert() required
-'struct reset_control_array' to handle the reset controls.
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ drivers/reset/core.c  | 23 +++++++++++++++++++++++
+ include/linux/reset.h |  6 ++++++
+ 2 files changed, 29 insertions(+)
 
-The series is tested on torvald's master branch with following support -
-a) pza/linux - reset/next
-b) gregkh/usb - usb-next
-c) agross/linux - for-next
-d) device tree patches to enable usb on db820c.
-
-Changes since v2:
- - Addressed comments to make APIs inline with gpiod API.
- - Moved number of reset controls in 'struct reset_control_array'
-   so that the footprint is reduced.
- - of_reset_control_array_get() and devm_reset_control_array_get()
-   now return pointer to the newly created reset control array.
- - Added comments to mention that the reset control array APIs don't
-   guarantee any particular order when handling the reset controls.
- - Dropped 'name' from reset_control_array' since the interface is meant
-   for a bunch of anonymous resets that can all be asserted or deasserted
-   in arbitrary order.
- - Fixed returns for APIs reported by kbuild.
- - Fixed 'for' clause guards reported by kbuild.
-
-Changes since v1:
- - Addressed comment for error handling in of_reset_control_get_count()
- - Added patch to manage reset controller array.
- - Rebased dwc3-of-simple changes based on the new set of APIs
-   for reset control array.
- - Added a patch for soc/tegra/pmc driver to use the new set of
-   reset control array APIs.
-
-Vivek Gautam (4):
-  reset: Add API to count number of reset available with device
-  reset: Add APIs to manage array of resets
-  usb: dwc3: of-simple: Add support to get resets for the device
-  soc/tegra: pmc: Use the new reset APIs to manage reset controllers
-
- drivers/reset/core.c              | 200 ++++++++++++++++++++++++++++++++++++++
- drivers/soc/tegra/pmc.c           |  99 +++++++------------
- drivers/usb/dwc3/dwc3-of-simple.c |  36 +++++++
- include/linux/reset.h             |  99 +++++++++++++++++++
- 4 files changed, 371 insertions(+), 63 deletions(-)
-
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index cd739d2fa160..f0a06a7aca93 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -465,3 +465,26 @@ int device_reset(struct device *dev)
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(device_reset);
++
++/**
++ * of_reset_control_get_count - Count number of resets available with a device
++ *
++ * @node: device node that contains 'resets'.
++ *
++ * Returns positive reset count on success, or error number on failure and
++ * on count being zero.
++ */
++int of_reset_control_get_count(struct device_node *node)
++{
++	int count;
++
++	if (!node)
++		return -EINVAL;
++
++	count = of_count_phandle_with_args(node, "resets", "#reset-cells");
++	if (count == 0)
++		count = -ENOENT;
++
++	return count;
++}
++EXPORT_SYMBOL_GPL(of_reset_control_get_count);
+diff --git a/include/linux/reset.h b/include/linux/reset.h
+index 13d8681210d5..1b5a6aafd3e6 100644
+--- a/include/linux/reset.h
++++ b/include/linux/reset.h
+@@ -24,6 +24,7 @@ struct reset_control *__devm_reset_control_get(struct device *dev,
+ 				     bool optional);
+ 
+ int __must_check device_reset(struct device *dev);
++int of_reset_control_get_count(struct device_node *node);
+ 
+ static inline int device_reset_optional(struct device *dev)
+ {
+@@ -89,6 +90,11 @@ static inline struct reset_control *__devm_reset_control_get(
+ 	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+ }
+ 
++static inline int of_reset_control_get_count(struct device_node *node)
++{
++	return -ENOTSUPP;
++}
++
+ #endif /* CONFIG_RESET_CONTROLLER */
+ 
+ /**
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
