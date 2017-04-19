@@ -1,124 +1,203 @@
-From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH V3 3/4] usb: dwc3: of-simple: Add support to get resets
- for the device
-Date: Wed, 19 Apr 2017 12:32:09 +0200
-Message-ID: <1492597929.2970.66.camel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH V3 4/4] soc/tegra: pmc: Use the new reset APIs to manage
+ reset controllers
+Date: Wed, 19 Apr 2017 12:40:37 +0200
+Message-ID: <1492598437.2970.74.camel@pengutronix.de>
 References: <1492514488-27385-1-git-send-email-vivek.gautam@codeaurora.org>
-         <1492514488-27385-4-git-send-email-vivek.gautam@codeaurora.org>
+         <1492514488-27385-5-git-send-email-vivek.gautam@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1492514488-27385-4-git-send-email-vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1492514488-27385-5-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: swarren@wwwdotorg.org, balbi@kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, thierry.reding@gmail.com, gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 On Tue, 2017-04-18 at 16:51 +0530, Vivek Gautam wrote:
-> Add support to get a list of resets available for the device.
-> These resets must be kept de-asserted until the device is
-> in use.
+> Make use of reset_control_array_*() set of APIs to manage
+> an array of reset controllers available with the device.
 > 
-> Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> Signed-off-by: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 > ---
->  drivers/usb/dwc3/dwc3-of-simple.c | 36 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
+>  drivers/soc/tegra/pmc.c | 99 ++++++++++++++++++-------------------------------
+>  1 file changed, 36 insertions(+), 63 deletions(-)
 > 
-> diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-> index fe414e7a9c78..9116df649f0b 100644
-> --- a/drivers/usb/dwc3/dwc3-of-simple.c
-> +++ b/drivers/usb/dwc3/dwc3-of-simple.c
-> @@ -29,13 +29,39 @@
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
->  
->  struct dwc3_of_simple {
->  	struct device		*dev;
->  	struct clk		**clks;
->  	int			num_clocks;
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index e233dd5dcab3..4d039fa3db1b 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -124,8 +124,7 @@ struct tegra_powergate {
+>  	unsigned int id;
+>  	struct clk **clks;
+>  	unsigned int num_clks;
+> -	struct reset_control **resets;
+> -	unsigned int num_resets;
 > +	struct reset_control_array *resets;
 >  };
 >  
-> +static int dwc3_of_simple_reset_init(struct dwc3_of_simple *simple)
-> +{
-> +	struct device		*dev = simple->dev;
-> +	int			ret;
+>  struct tegra_io_pad_soc {
+> @@ -348,32 +347,14 @@ static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
+>  	return err;
+>  }
+>  
+> -static int tegra_powergate_reset_assert(struct tegra_powergate *pg)
+> +static inline int tegra_powergate_reset_assert(struct tegra_powergate *pg)
+>  {
+> -	unsigned int i;
+> -	int err;
+> -
+> -	for (i = 0; i < pg->num_resets; i++) {
+> -		err = reset_control_assert(pg->resets[i]);
+> -		if (err)
+> -			return err;
+> -	}
+> -
+> -	return 0;
+> +	return reset_control_array_assert(pg->resets);
+>  }
+>  
+> -static int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
+> +static inline int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
+>  {
+> -	unsigned int i;
+> -	int err;
+> -
+> -	for (i = 0; i < pg->num_resets; i++) {
+> -		err = reset_control_deassert(pg->resets[i]);
+> -		if (err)
+> -			return err;
+> -	}
+> -
+> -	return 0;
+> +	return reset_control_array_deassert(pg->resets);
+>  }
+>  
+>  static int tegra_powergate_power_up(struct tegra_powergate *pg,
+> @@ -558,6 +539,7 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+>  				      struct reset_control *rst)
+>  {
+>  	struct tegra_powergate pg;
+> +	struct reset_control_array *resets;
+>  	int err;
+>  
+>  	if (!tegra_powergate_is_available(id))
+> @@ -566,12 +548,25 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+>  	pg.id = id;
+>  	pg.clks = &clk;
+>  	pg.num_clks = 1;
+> -	pg.resets = &rst;
+> -	pg.num_resets = 1;
+
+Oh, I didn't notice that the resets array is often used for a single
+reset. I think in this case instead of wrapping a reset_control_array
+around the passed reset, you could store it as an additional pointer in
+tegra_powergate->reset and add
+	if (pg->reset)
+		return reset_control_(de)assert(pg->resets);
+to the tegra_powergate_reset_(de)assert functions ...
+
 > +
-> +	simple->resets = of_reset_control_array_get_exclusive(dev->of_node);
-> +	if (IS_ERR(simple->resets)) {
-> +		ret = PTR_ERR(simple->resets);
-> +		if (ret == -ENOENT)
-> +			/* not all controllers required resets */
-> +			return 0;
-
-If you use the of_reset_control_array_get_optional_exclusive variant,
-you can remove the three lines directly above.
-
-> +		dev_err(dev, "failed to get device resets\n");
-
-It would be nice to print the error code here.
-
-> +		return ret;
-> +	}
+> +	resets = kzalloc(sizeof(*resets) + sizeof(resets->rstc[0]) * 1,
+> +			 GFP_KERNEL);
+> +	if (!resets)
+> +		return -ENOMEM;
 > +
-> +	ret = reset_control_array_deassert(simple->resets);
-> +	if (ret) {
-> +		reset_control_array_put(simple->resets);
-> +		return ret;
+> +	resets->rstc[0] = rst;
+> +	pg.resets = resets;
+>  
+>  	err = tegra_powergate_power_up(&pg, false);
+> -	if (err)
+> +	if (err) {
+>  		pr_err("failed to turn on partition %d: %d\n", id, err);
+> +		goto free_reset;
 > +	}
 > +
 > +	return 0;
-> +}
 > +
->  static int dwc3_of_simple_clk_init(struct dwc3_of_simple *simple, int count)
+> +free_reset:
+> +	kfree(resets);
+>  
+
+... as having to open code this handling of struct reset_control_array
+internals completely negates its convenience.
+
+>  	return err;
+>  }
+> @@ -755,45 +750,26 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+>  static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
+>  					 struct device_node *np, bool off)
 >  {
->  	struct device		*dev = simple->dev;
-> @@ -100,6 +126,10 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
+> -	struct reset_control *rst;
+> -	unsigned int i, count;
+>  	int err;
 >  
-> +	ret = dwc3_of_simple_reset_init(simple);
-> +	if (ret)
-> +		return ret;
-> +
-
-I would just move the contents of dwc3_of_simple_reset_init here and add
-a goto error path at the end of dwc3_of_simple_clk_init to handle the
-reset control cleanup as needed.
-
->  	ret = of_platform_populate(np, NULL, NULL, dev);
->  	if (ret) {
->  		for (i = 0; i < simple->num_clocks; i++) {
-> @@ -107,6 +137,9 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
->  			clk_put(simple->clks[i]);
->  		}
->  
-> +		reset_control_array_assert(simple->resets);
-> +		reset_control_array_put(simple->resets);
-> +
->  		return ret;
+> -	count = of_count_phandle_with_args(np, "resets", "#reset-cells");
+> -	if (count == 0)
+> -		return -ENODEV;
+> -
+> -	pg->resets = kcalloc(count, sizeof(rst), GFP_KERNEL);
+> -	if (!pg->resets)
+> -		return -ENOMEM;
+> -
+> -	for (i = 0; i < count; i++) {
+> -		pg->resets[i] = of_reset_control_get_by_index(np, i);
+> -		if (IS_ERR(pg->resets[i])) {
+> -			err = PTR_ERR(pg->resets[i]);
+> -			goto error;
+> -		}
+> -
+> -		if (off)
+> -			err = reset_control_assert(pg->resets[i]);
+> -		else
+> -			err = reset_control_deassert(pg->resets[i]);
+> -
+> -		if (err) {
+> -			reset_control_put(pg->resets[i]);
+> -			goto error;
+> -		}
+> +	pg->resets = of_reset_control_array_get_exclusive(np);
+> +	if (IS_ERR(pg->resets)) {
+> +		pr_err("failed to get device resets\n");
+> +		return PTR_ERR(pg->resets);
 >  	}
 >  
-> @@ -128,6 +161,9 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
->  		clk_put(simple->clks[i]);
->  	}
+> -	pg->num_resets = count;
+> +	if (off)
+> +		err = reset_control_array_assert(pg->resets);
+> +	else
+> +		err = reset_control_array_deassert(pg->resets);
 >  
-> +	reset_control_array_assert(simple->resets);
-> +	reset_control_array_put(simple->resets);
-> +
-
-Must the reset be asserted before of_platform_depopulate?
-
->  	of_platform_depopulate(dev);
-
-Given the order above, I'd expect the reset cleanup here.
-
->  	pm_runtime_put_sync(dev);
+> -	return 0;
+> +	if (err)
+> +		goto put_reset;
+>  
+> -error:
+> -	while (i--)
+> -		reset_control_put(pg->resets[i]);
+> +	return 0;
+>  
+> -	kfree(pg->resets);
+> +put_reset:
+> +	reset_control_array_put(pg->resets);
+>  
+>  	return err;
+>  }
+> @@ -885,10 +861,7 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+>  	pm_genpd_remove(&pg->genpd);
+>  
+>  remove_resets:
+> -	while (pg->num_resets--)
+> -		reset_control_put(pg->resets[pg->num_resets]);
+> -
+> -	kfree(pg->resets);
+> +	reset_control_array_put(pg->resets);
+>  
+>  remove_clks:
+>  	while (pg->num_clks--)
 
 regards
 Philipp
