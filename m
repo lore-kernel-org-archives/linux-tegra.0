@@ -1,487 +1,83 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] soc/tegra: bpmp: Implement generic PM domains
-Date: Wed, 19 Apr 2017 16:32:54 +0200
-Message-ID: <CAPDyKFq0mpF8b6n+nY51nHGRdWStJ_4UoKGgSYxN92ED8qN8mA@mail.gmail.com>
-References: <20170329163452.10761-1-thierry.reding@gmail.com> <20170329163452.10761-4-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [GIT PULL 4/4] arm64: tegra: Device tree changes for v4.12-rc1
+Date: Wed, 19 Apr 2017 17:24:11 +0200
+Message-ID: <20170419152411.GA9866@ulmo.ba.sec>
+References: <20170406231020.32048-1-thierry.reding@gmail.com>
+ <20170406231020.32048-4-thierry.reding@gmail.com>
+ <20170419131905.GD29219@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170329163452.10761-4-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170419131905.GD29219@localhost>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stefan Kristiansson <stefank-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 29 March 2017 at 18:34, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> The BPMP firmware, found on Tegra186 and later, provides an ABI that can
-> be used to enable and disable power to several power partitions in Tegra
-> SoCs. The ABI allows for enumeration of the available power partitions,
-> so the driver can be reused on future generations, provided the BPMP ABI
-> remains stable.
->
-> Based on work by Stefan Kristiansson <stefank-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> and Mikko
-> Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
->
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Reviewed-by: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Kind regards
-Uffe
+On Wed, Apr 19, 2017 at 06:19:05AM -0700, Olof Johansson wrote:
+> On Fri, Apr 07, 2017 at 01:10:20AM +0200, Thierry Reding wrote:
+> > Hi ARM SoC maintainers,
+> >=20
+> > The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d=
+9201:
+> >=20
+> >   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> >=20
+> > are available in the git repository at:
+> >=20
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
+gra-for-4.12-arm64-dt
+> >=20
+> > for you to fetch changes up to 18236a14883b718ce973e4c090db6ecb49b38287:
+> >=20
+> >   arm64: tegra: Update the Tegra132 flowctrl compatible string (2017-04=
+-04 17:15:05 +0200)
+> >=20
+> > Thanks,
+> > Thierry
+> >=20
+> > ----------------------------------------------------------------
+> > arm64: tegra: Device tree changes for v4.12-rc1
+> >=20
+> > This adds a bunch of features for Tegra186, such as PMC, ethernet, I2C,
+> > SDHCI and GPIO. It also enables various features on the P2771 devkit.
+> >=20
+> > A small fix is made to the compatible string list for the flow
+> > controller on Tegra132 and the IOMMU is enabled for host1x on Tegra210.
+>=20
+> Nice, merged. Any chance we'll see Jetson TX2 support for 4.13?
 
-> ---
-> Changes in v2:
-> - take into account PG_STATE_RUNNING in tegra_bpmp_powergate_is_powered()
-> - check return value of pm_genpd_init() and clean up on failure
-> - simplify error unwinding in tegra_bpmp_init_powergates()
->
->  drivers/firmware/tegra/bpmp.c      |   4 +
->  drivers/soc/tegra/Kconfig          |   5 +
->  drivers/soc/tegra/Makefile         |   1 +
->  drivers/soc/tegra/powergate-bpmp.c | 359 +++++++++++++++++++++++++++++++++++++
->  include/soc/tegra/bpmp.h           |  12 ++
->  5 files changed, 381 insertions(+)
->  create mode 100644 drivers/soc/tegra/powergate-bpmp.c
->
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index 84e4c9a58a0c..f11c7025b4a1 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -810,6 +810,10 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
->         if (err < 0)
->                 goto free_mrq;
->
-> +       err = tegra_bpmp_init_powergates(bpmp);
-> +       if (err < 0)
-> +               goto free_mrq;
-> +
->         platform_set_drvdata(pdev, bpmp);
->
->         return 0;
-> diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-> index 208d6edb3fdb..e052664439a1 100644
-> --- a/drivers/soc/tegra/Kconfig
-> +++ b/drivers/soc/tegra/Kconfig
-> @@ -106,3 +106,8 @@ config SOC_TEGRA_PMC
->
->  config SOC_TEGRA_PMC_TEGRA186
->         bool
-> +
-> +config SOC_TEGRA_POWERGATE_BPMP
-> +       def_bool y
-> +       depends on PM_GENERIC_DOMAINS
-> +       depends on TEGRA_BPMP
-> diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
-> index b4425e4319ff..17f2e25e7954 100644
-> --- a/drivers/soc/tegra/Makefile
-> +++ b/drivers/soc/tegra/Makefile
-> @@ -3,3 +3,4 @@ obj-y += fuse/
->  obj-y += common.o
->  obj-$(CONFIG_SOC_TEGRA_PMC) += pmc.o
->  obj-$(CONFIG_SOC_TEGRA_PMC_TEGRA186) += pmc-tegra186.o
-> +obj-$(CONFIG_SOC_TEGRA_POWERGATE_BPMP) += powergate-bpmp.o
-> diff --git a/drivers/soc/tegra/powergate-bpmp.c b/drivers/soc/tegra/powergate-bpmp.c
-> new file mode 100644
-> index 000000000000..8fc356039401
-> --- /dev/null
-> +++ b/drivers/soc/tegra/powergate-bpmp.c
-> @@ -0,0 +1,359 @@
-> +/*
-> + * Copyright (c) 2016-2017, NVIDIA CORPORATION. All rights reserved
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + */
-> +
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/slab.h>
-> +#include <linux/version.h>
-> +
-> +#include <soc/tegra/bpmp.h>
-> +#include <soc/tegra/bpmp-abi.h>
-> +
-> +struct tegra_powergate_info {
-> +       unsigned int id;
-> +       char *name;
-> +};
-> +
-> +struct tegra_powergate {
-> +       struct generic_pm_domain genpd;
-> +       struct tegra_bpmp *bpmp;
-> +       unsigned int id;
-> +};
-> +
-> +static inline struct tegra_powergate *
-> +to_tegra_powergate(struct generic_pm_domain *genpd)
-> +{
-> +       return container_of(genpd, struct tegra_powergate, genpd);
-> +}
-> +
-> +static int tegra_bpmp_powergate_set_state(struct tegra_bpmp *bpmp,
-> +                                         unsigned int id, u32 state)
-> +{
-> +       struct mrq_pg_request request;
-> +       struct tegra_bpmp_message msg;
-> +
-> +       memset(&request, 0, sizeof(request));
-> +       request.cmd = CMD_PG_SET_STATE;
-> +       request.id = id;
-> +       request.set_state.state = state;
-> +
-> +       memset(&msg, 0, sizeof(msg));
-> +       msg.mrq = MRQ_PG;
-> +       msg.tx.data = &request;
-> +       msg.tx.size = sizeof(request);
-> +
-> +       return tegra_bpmp_transfer(bpmp, &msg);
-> +}
-> +
-> +static int tegra_bpmp_powergate_get_state(struct tegra_bpmp *bpmp,
-> +                                         unsigned int id)
-> +{
-> +       struct mrq_pg_response response;
-> +       struct mrq_pg_request request;
-> +       struct tegra_bpmp_message msg;
-> +       int err;
-> +
-> +       memset(&request, 0, sizeof(request));
-> +       request.cmd = CMD_PG_GET_STATE;
-> +       request.id = id;
-> +
-> +       memset(&response, 0, sizeof(response));
-> +
-> +       memset(&msg, 0, sizeof(msg));
-> +       msg.mrq = MRQ_PG;
-> +       msg.tx.data = &request;
-> +       msg.tx.size = sizeof(request);
-> +       msg.rx.data = &response;
-> +       msg.rx.size = sizeof(response);
-> +
-> +       err = tegra_bpmp_transfer(bpmp, &msg);
-> +       if (err < 0)
-> +               return PG_STATE_OFF;
-> +
-> +       return response.get_state.state;
-> +}
-> +
-> +static int tegra_bpmp_powergate_get_max_id(struct tegra_bpmp *bpmp)
-> +{
-> +       struct mrq_pg_response response;
-> +       struct mrq_pg_request request;
-> +       struct tegra_bpmp_message msg;
-> +       int err;
-> +
-> +       memset(&request, 0, sizeof(request));
-> +       request.cmd = CMD_PG_GET_MAX_ID;
-> +
-> +       memset(&response, 0, sizeof(response));
-> +
-> +       memset(&msg, 0, sizeof(msg));
-> +       msg.mrq = MRQ_PG;
-> +       msg.tx.data = &request;
-> +       msg.tx.size = sizeof(request);
-> +       msg.rx.data = &response;
-> +       msg.rx.size = sizeof(response);
-> +
-> +       err = tegra_bpmp_transfer(bpmp, &msg);
-> +       if (err < 0)
-> +               return err;
-> +
-> +       return response.get_max_id.max_id;
-> +}
-> +
-> +static char *tegra_bpmp_powergate_get_name(struct tegra_bpmp *bpmp,
-> +                                          unsigned int id)
-> +{
-> +       struct mrq_pg_response response;
-> +       struct mrq_pg_request request;
-> +       struct tegra_bpmp_message msg;
-> +       int err;
-> +
-> +       memset(&request, 0, sizeof(request));
-> +       request.cmd = CMD_PG_GET_NAME;
-> +       request.id = id;
-> +
-> +       memset(&response, 0, sizeof(response));
-> +
-> +       memset(&msg, 0, sizeof(msg));
-> +       msg.mrq = MRQ_PG;
-> +       msg.tx.data = &request;
-> +       msg.tx.size = sizeof(request);
-> +       msg.rx.data = &response;
-> +       msg.rx.size = sizeof(response);
-> +
-> +       err = tegra_bpmp_transfer(bpmp, &msg);
-> +       if (err < 0)
-> +               return NULL;
-> +
-> +       return kstrdup(response.get_name.name, GFP_KERNEL);
-> +}
-> +
-> +static inline bool tegra_bpmp_powergate_is_powered(struct tegra_bpmp *bpmp,
-> +                                                  unsigned int id)
-> +{
-> +       return tegra_bpmp_powergate_get_state(bpmp, id) != PG_STATE_OFF;
-> +}
-> +
-> +static int tegra_powergate_power_on(struct generic_pm_domain *domain)
-> +{
-> +       struct tegra_powergate *powergate = to_tegra_powergate(domain);
-> +       struct tegra_bpmp *bpmp = powergate->bpmp;
-> +
-> +       return tegra_bpmp_powergate_set_state(bpmp, powergate->id,
-> +                                             PG_STATE_ON);
-> +}
-> +
-> +static int tegra_powergate_power_off(struct generic_pm_domain *domain)
-> +{
-> +       struct tegra_powergate *powergate = to_tegra_powergate(domain);
-> +       struct tegra_bpmp *bpmp = powergate->bpmp;
-> +
-> +       return tegra_bpmp_powergate_set_state(bpmp, powergate->id,
-> +                                             PG_STATE_OFF);
-> +}
-> +
-> +static struct tegra_powergate *
-> +tegra_powergate_add(struct tegra_bpmp *bpmp,
-> +                   const struct tegra_powergate_info *info)
-> +{
-> +       struct tegra_powergate *powergate;
-> +       bool off;
-> +       int err;
-> +
-> +       off = !tegra_bpmp_powergate_is_powered(bpmp, info->id);
-> +
-> +       powergate = devm_kzalloc(bpmp->dev, sizeof(*powergate), GFP_KERNEL);
-> +       if (!powergate)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       powergate->id = info->id;
-> +       powergate->bpmp = bpmp;
-> +
-> +       powergate->genpd.name = kstrdup(info->name, GFP_KERNEL);
-> +       powergate->genpd.power_on = tegra_powergate_power_on;
-> +       powergate->genpd.power_off = tegra_powergate_power_off;
-> +
-> +       err = pm_genpd_init(&powergate->genpd, NULL, off);
-> +       if (err < 0) {
-> +               kfree(powergate->genpd.name);
-> +               return ERR_PTR(err);
-> +       }
-> +
-> +       return powergate;
-> +}
-> +
-> +static void tegra_powergate_remove(struct tegra_powergate *powergate)
-> +{
-> +       struct generic_pm_domain *genpd = &powergate->genpd;
-> +       struct tegra_bpmp *bpmp = powergate->bpmp;
-> +       int err;
-> +
-> +       err = pm_genpd_remove(genpd);
-> +       if (err < 0)
-> +               dev_err(bpmp->dev, "failed to remove power domain %s: %d\n",
-> +                       genpd->name, err);
-> +
-> +       kfree(genpd->name);
-> +}
-> +
-> +static int
-> +tegra_bpmp_probe_powergates(struct tegra_bpmp *bpmp,
-> +                           struct tegra_powergate_info **powergatesp)
-> +{
-> +       struct tegra_powergate_info *powergates;
-> +       unsigned int max_id, id, count = 0;
-> +       unsigned int num_holes = 0;
-> +       int err;
-> +
-> +       err = tegra_bpmp_powergate_get_max_id(bpmp);
-> +       if (err < 0)
-> +               return err;
-> +
-> +       max_id = err;
-> +
-> +       dev_dbg(bpmp->dev, "maximum powergate ID: %u\n", max_id);
-> +
-> +       powergates = kcalloc(max_id + 1, sizeof(*powergates), GFP_KERNEL);
-> +       if (!powergates)
-> +               return -ENOMEM;
-> +
-> +       for (id = 0; id <= max_id; id++) {
-> +               struct tegra_powergate_info *info = &powergates[count];
-> +
-> +               info->name = tegra_bpmp_powergate_get_name(bpmp, id);
-> +               if (!info->name || info->name[0] == '\0') {
-> +                       num_holes++;
-> +                       continue;
-> +               }
-> +
-> +               info->id = id;
-> +               count++;
-> +       }
-> +
-> +       dev_dbg(bpmp->dev, "holes: %u\n", num_holes);
-> +
-> +       *powergatesp = powergates;
-> +
-> +       return count;
-> +}
-> +
-> +static int tegra_bpmp_add_powergates(struct tegra_bpmp *bpmp,
-> +                                    struct tegra_powergate_info *powergates,
-> +                                    unsigned int count)
-> +{
-> +       struct genpd_onecell_data *genpd = &bpmp->genpd;
-> +       struct generic_pm_domain **domains;
-> +       struct tegra_powergate *powergate;
-> +       unsigned int i;
-> +       int err;
-> +
-> +       domains = kcalloc(count, sizeof(*domains), GFP_KERNEL);
-> +       if (!domains)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < count; i++) {
-> +               powergate = tegra_powergate_add(bpmp, &powergates[i]);
-> +               if (IS_ERR(powergate)) {
-> +                       err = PTR_ERR(powergate);
-> +                       goto remove;
-> +               }
-> +
-> +               dev_dbg(bpmp->dev, "added power domain %s\n",
-> +                       powergate->genpd.name);
-> +               domains[i] = &powergate->genpd;
-> +       }
-> +
-> +       genpd->num_domains = count;
-> +       genpd->domains = domains;
-> +
-> +       return 0;
-> +
-> +remove:
-> +       while (i--) {
-> +               powergate = to_tegra_powergate(domains[i]);
-> +               tegra_powergate_remove(powergate);
-> +       }
-> +
-> +       kfree(genpd->domains);
-> +       return err;
-> +}
-> +
-> +static void tegra_bpmp_remove_powergates(struct tegra_bpmp *bpmp)
-> +{
-> +       struct genpd_onecell_data *genpd = &bpmp->genpd;
-> +       unsigned int i = genpd->num_domains;
-> +       struct tegra_powergate *powergate;
-> +
-> +       while (i--) {
-> +               dev_dbg(bpmp->dev, "removing power domain %s\n",
-> +                       genpd->domains[i]->name);
-> +               powergate = to_tegra_powergate(genpd->domains[i]);
-> +               tegra_powergate_remove(powergate);
-> +       }
-> +}
-> +
-> +static struct generic_pm_domain *
-> +tegra_powergate_xlate(struct of_phandle_args *spec, void *data)
-> +{
-> +       struct generic_pm_domain *domain = ERR_PTR(-ENOENT);
-> +       struct genpd_onecell_data *genpd = data;
-> +       unsigned int i;
-> +
-> +       for (i = 0; i < genpd->num_domains; i++) {
-> +               struct tegra_powergate *powergate;
-> +
-> +               powergate = to_tegra_powergate(genpd->domains[i]);
-> +               if (powergate->id == spec->args[0]) {
-> +                       domain = &powergate->genpd;
-> +                       break;
-> +               }
-> +       }
-> +
-> +       return domain;
-> +}
-> +
-> +int tegra_bpmp_init_powergates(struct tegra_bpmp *bpmp)
-> +{
-> +       struct device_node *np = bpmp->dev->of_node;
-> +       struct tegra_powergate_info *powergates;
-> +       struct device *dev = bpmp->dev;
-> +       unsigned int count, i;
-> +       int err;
-> +
-> +       err = tegra_bpmp_probe_powergates(bpmp, &powergates);
-> +       if (err < 0)
-> +               return err;
-> +
-> +       count = err;
-> +
-> +       dev_dbg(dev, "%u power domains probed\n", count);
-> +
-> +       err = tegra_bpmp_add_powergates(bpmp, powergates, count);
-> +       if (err < 0)
-> +               goto free;
-> +
-> +       bpmp->genpd.xlate = tegra_powergate_xlate;
-> +
-> +       err = of_genpd_add_provider_onecell(np, &bpmp->genpd);
-> +       if (err < 0) {
-> +               dev_err(dev, "failed to add power domain provider: %d\n", err);
-> +               tegra_bpmp_remove_powergates(bpmp);
-> +       }
-> +
-> +free:
-> +       for (i = 0; i < count; i++)
-> +               kfree(powergates[i].name);
-> +
-> +       kfree(powergates);
-> +       return err;
-> +}
-> diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
-> index 13dcd44e91bb..9ba65222bd3f 100644
-> --- a/include/soc/tegra/bpmp.h
-> +++ b/include/soc/tegra/bpmp.h
-> @@ -15,6 +15,7 @@
->  #define __SOC_TEGRA_BPMP_H
->
->  #include <linux/mailbox_client.h>
-> +#include <linux/pm_domain.h>
->  #include <linux/reset-controller.h>
->  #include <linux/semaphore.h>
->  #include <linux/types.h>
-> @@ -91,6 +92,8 @@ struct tegra_bpmp {
->         unsigned int num_clocks;
->
->         struct reset_controller_dev rstc;
-> +
-> +       struct genpd_onecell_data genpd;
->  };
->
->  struct tegra_bpmp *tegra_bpmp_get(struct device *dev);
-> @@ -138,4 +141,13 @@ static inline int tegra_bpmp_init_resets(struct tegra_bpmp *bpmp)
->  }
->  #endif
->
-> +#if IS_ENABLED(CONFIG_SOC_TEGRA_POWERGATE_BPMP)
-> +int tegra_bpmp_init_powergates(struct tegra_bpmp *bpmp);
-> +#else
-> +static inline int tegra_bpmp_init_powergates(struct tegra_bpmp *bpmp)
-> +{
-> +       return 0;
-> +}
-> +#endif
-> +
->  #endif /* __SOC_TEGRA_BPMP_H */
-> --
-> 2.12.0
->
+P2771 *is* Jetson TX2. I suppose I could go and update the DTS file and
+clarify that in the model string.
+
+Thierry
+
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlj3gRgACgkQ3SOs138+
+s6FBdw//Ysu65RSe53DBLy59ZKhAgcv1T5d7qUaZ0p6Gf/6JG3kHdKghwHbWNuPl
+LvwNPfj3VYsyw4oKeeHjHUiy5ihPWu4/IfgQtUfHeyya8BLmXp7TnuU7OheW3asb
+Kisz7mKaxIQk63qDnwivTgCH6oMRXfuSfYDI/yDdZbjUqxwEuwjinVyyjLNqa4zo
+mVHXuLqtB1e6UrqYSqoq9Bx4BqNdZoqR7c/0FTNGx6f/KF29XGaas4tirJ7xAJtS
+I2l58YKt0WQM7+D3Vq6rORVljn4EmEgrmSC8U5P4F/NF4umacD53NH+5NWvZ2WUl
+PVuTMhUkO0x181GynlYlUuDMBSXOhtTyt9vAKJVgADF8kHflxtMH+YHjQjj+tnHg
+PrWNBxvaf2A2iFkzbWXUk8P7dNG9jyPV5lENr8pzcgKO383h77jQyA0Vi21VHmgz
+pj44Er+uu8xNUo6myWQfWXH3o6lgKR3aC24a/Ys+jhuKUO3fzdCjj7hSGeWxJ47P
+kT4URwyx6CRGSRVGWq1WFGR5rHOKQKq8qL7XkQN9Cgec1EvF43MB78kUFFZT5oDF
+rXFsRkPF9x2Jrrxe+IBviVOhjEVH1IfIekwCriAerbq+Pk55IPc7EeNCSU9natY8
+O7FVGeowq5WKMfTqTgCKR8jRK7/PCuqlMe6pM+7wyGaNfoQ/ZxU=
+=QWrh
+-----END PGP SIGNATURE-----
+
+--wRRV7LY7NUeQGEoC--
