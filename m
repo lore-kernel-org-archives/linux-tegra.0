@@ -1,79 +1,68 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/3] sound: ASoC: tegra: Select tegra30 i2s and ahub for
- tegra124 SoC
-Date: Wed, 19 Apr 2017 16:00:46 -0600
-Message-ID: <41ef55f7-8f17-4ca3-4757-bfefb1fe8321@wwwdotorg.org>
-References: <20170418151159.31843-1-contact@paulk.fr>
- <d18b57d3-a44f-e44b-9bd5-526993dc91e4@wwwdotorg.org>
- <1492533513.3504.2.camel@paulk.fr>
+From: Laura Abbott <labbott-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2] dma-buf: Rename dma-ops to prevent conflict with
+ kunmap_atomic macro
+Date: Wed, 19 Apr 2017 17:28:46 -0700
+Message-ID: <69283988-3a6b-fba3-529a-d5ad70eda32b@redhat.com>
+References: <1492630570-879-1-git-send-email-logang@deltatee.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1492533513.3504.2.camel-W9ppeneeCTY@public.gmane.org>
+In-Reply-To: <1492630570-879-1-git-send-email-logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+To: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Cc: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, Sumit Semwal <sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, VMware Graphics <linux-graphics-maintainer-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>, Sinclair Yeh <syeh-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>, Thomas Hellstrom <thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>, Pawel Osciak <pawel-FA/gS7QP4orQT0dZR+AlfA@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh@linuxfo>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/18/2017 10:38 AM, Paul Kocialkowski wrote:
-> Le mardi 18 avril 2017 à 10:15 -0600, Stephen Warren a écrit :
->> On 04/18/2017 09:11 AM, Paul Kocialkowski wrote:
->>> This selects the tegra30 i2s and ahub controllers for the tegra124 SoC.
->>> These are needed when building without ARCH_TEGRA_3x_SOC set.
->>> diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
->>> index efbe8d4c019e..bcd18d2cf7a7 100644
->>> --- a/sound/soc/tegra/Kconfig
->>> +++ b/sound/soc/tegra/Kconfig
->>> @@ -46,7 +46,7 @@ config SND_SOC_TEGRA20_SPDIF
->>>
->>>  config SND_SOC_TEGRA30_AHUB
->>>  	tristate
->>> -	depends on SND_SOC_TEGRA && ARCH_TEGRA_3x_SOC
->>> +	depends on SND_SOC_TEGRA && (ARCH_TEGRA_3x_SOC ||
->>> ARCH_TEGRA_124_SOC)
->>
->> Is this really a compile-time dependency?
->
-> From a quick look at the code, I doubt this is really a build dependency.
->
->> If so, don't we need to add T210 and T186 entries into that || condition too,
->> since we could be building a kernel with just T210/T186 support and no T124
->> support?
->
-> In the spirit of this patch, adding entries for other tegra platforms would make
-> sense. Would you prefer that we leave out the dependency from SND_SOC_TEGRA30_*
-> and only select the right I2S driver to use in each codec driver?
->
-> If not, we'd have to list all relevant platforms both in the I2S/AHUB drivers
-> and in each codec's rules (which is not necessarily and issue, but there's no
-> need to have artificial platform dependencies).
->
-> What do you think?
+On 04/19/2017 12:36 PM, Logan Gunthorpe wrote:
+> Seeing the kunmap_atomic dma_buf_ops share the same name with a macro
+> in highmem.h, the former can be aliased if any dma-buf user includes
+> that header.
+> 
+> I'm personally trying to include highmem.h inside scatterlist.h and this
+> breaks the dma-buf code proper.
+> 
+> Christoph Hellwig suggested [1] renaming it and pushing this patch ASAP.
+> 
+> To maintain consistency I've renamed all four of kmap* and kunmap* to be
+> map* and unmap*. (Even though only kmap_atomic presently conflicts.)
+> 
+> [1] https://www.spinics.net/lists/target-devel/msg15070.html
+> 
+> Signed-off-by: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+> Reviewed-by: Sinclair Yeh <syeh-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>
+> ---
+> 
+> Changes since v1:
+> 
+> - Added the missing tegra driver (noticed by kbuild robot)
+> - Rebased off of drm-intel-next to get the i915 selftest that is new
+> - Fixed nits Sinclair pointed out.
+> 
+>   drivers/dma-buf/dma-buf.c                      | 16 ++++++++--------
+>   drivers/gpu/drm/armada/armada_gem.c            |  8 ++++----
+>   drivers/gpu/drm/drm_prime.c                    |  8 ++++----
+>   drivers/gpu/drm/i915/i915_gem_dmabuf.c         |  8 ++++----
+>   drivers/gpu/drm/i915/selftests/mock_dmabuf.c   |  8 ++++----
+>   drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c      |  8 ++++----
+>   drivers/gpu/drm/tegra/gem.c                    |  8 ++++----
+>   drivers/gpu/drm/udl/udl_dmabuf.c               |  8 ++++----
+>   drivers/gpu/drm/vmwgfx/vmwgfx_prime.c          |  8 ++++----
+>   drivers/media/v4l2-core/videobuf2-dma-contig.c |  4 ++--
+>   drivers/media/v4l2-core/videobuf2-dma-sg.c     |  4 ++--
+>   drivers/media/v4l2-core/videobuf2-vmalloc.c    |  4 ++--
+>   drivers/staging/android/ion/ion.c              |  8 ++++----
+>   include/linux/dma-buf.h                        | 22 +++++++++++-----------
+>   14 files changed, 61 insertions(+), 61 deletions(-)
+> 
 
-I think we should just remove most of these "depends on" since they're 
-mostly set up to reflect runtime requirements rather than build time 
-requirements. The only points I'd make are:
+For Ion,
 
-1)
+Acked-by: Laura Abbott <labbott-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 
-Everything should "depends on SND_SOC_TEGRA" simply so the options don't 
-show up and clutter menuconfig menus unless SND_SOC_TEGRA is enabled.
+I did some major Ion refactoring but I don't think this
+will conflict.
 
-2)
-
-SND_SOC_TEGRA30_I2S does need the Tegra30 AHUB driver in order to 
-compile/link, since it directly calls functions in that driver. This is 
-already handled by SND_SOC_TEGRA30_I2S doing "select SND_SOC_TEGRA30_AHUB".
-
-3)
-
-The machine drivers all do e.g. "select SND_SOC_TEGRA30_I2S if 
-ARCH_TEGRA_3x_SOC". This was an attempt to make the machine drivers only 
-pull in the relevant drivers for the SoC(s) being compiled for. I'm not 
-sure this still makes sense; this won't work on kernels that only 
-support T124/T210/T186 since ARCH_TEGRA_3x_SOC isn't enabled then. 
-Should we just remove all those and make sure the defconfigs are updated 
-to make sure the relevant I2S/AHUB/SPDIF/AC97 drivers are explicitly 
-enabled? Perhaps we should default all the I2S/AHUB/SPDIF/AC97 to y 
-(which will only apply if SND_SOC_TEGRA is enabled)?
+Thanks,
+Laura
