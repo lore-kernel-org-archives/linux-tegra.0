@@ -1,54 +1,164 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: select IOMMU_IOVA
-Date: Thu, 20 Apr 2017 09:47:35 +0300
-Message-ID: <a94db66f-4e81-396f-58f4-583dd64055ca@kapsi.fi>
-References: <20170419182449.885312-1-arnd@arndb.de>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH] [RFC] gpu: host1x: shut up warning about DMA API misuse
+Date: Thu, 20 Apr 2017 10:02:28 +0300
+Message-ID: <8df7c5a9-c71c-4ee9-9bc2-9c861cf9796c@kapsi.fi>
+References: <20170419182413.866327-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170419182449.885312-1-arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170419182413.866327-1-arnd@arndb.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Ah, had to forget something :)
-
-Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
 On 19.04.2017 21:24, Arnd Bergmann wrote:
-> When IOMMU_IOVA is not built-in but host1x is, we get a link error:
+> When dma_addr_t and phys_addr_t are not the same size, we get a warning
+> from the dma_alloc_wc function:
 >
-> drivers/gpu/host1x/dev.o: In function `host1x_remove':
-> dev.c:(.text.host1x_remove+0x50): undefined reference to `put_iova_domain'
-> drivers/gpu/host1x/dev.o: In function `host1x_probe':
-> dev.c:(.text.host1x_probe+0x31c): undefined reference to `init_iova_domain'
-> dev.c:(.text.host1x_probe+0x38c): undefined reference to `put_iova_domain'
-> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
-> cdma.c:(.text.host1x_cdma_init+0x238): undefined reference to `alloc_iova'
-> cdma.c:(.text.host1x_cdma_init+0x2c0): undefined reference to `__free_iova'
-> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_deinit':
-> cdma.c:(.text.host1x_cdma_deinit+0xb0): undefined reference to `free_iova'
+> drivers/gpu/host1x/cdma.c: In function 'host1x_pushbuffer_init':
+> drivers/gpu/host1x/cdma.c:94:48: error: passing argument 3 of 'dma_alloc_wc' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>    pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
+>                                                 ^
+> In file included from drivers/gpu/host1x/cdma.c:22:0:
+> include/linux/dma-mapping.h:761:37: note: expected 'dma_addr_t * {aka long long unsigned int *}' but argument is of type 'phys_addr_t * {aka unsigned int *}'
+>  static noinline_if_stackbloat void *dma_alloc_wc(struct device *dev, size_t size,
+>                                      ^~~~~~~~~~~~
+> drivers/gpu/host1x/cdma.c:113:48: error: passing argument 3 of 'dma_alloc_wc' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>    pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
+>                                                 ^
+> In file included from drivers/gpu/host1x/cdma.c:22:0:
+> include/linux/dma-mapping.h:761:37: note: expected 'dma_addr_t * {aka long long unsigned int *}' but argument is of type 'phys_addr_t * {aka unsigned int *}'
+>  static noinline_if_stackbloat void *dma_alloc_wc(struct device *dev, size_t size,
+>                                      ^~~~~~~~~~~~
 >
-> This adds the same select statement that we have for drm_tegra.
+> The problem here is that dma_alloc_wc() returns a pointer to a dma_addr_t
+> that may already be translated by an IOMMU, but the driver passes this
+> into iommu_map() as a physical address. This works by accident only when
+> the IOMMU does not get registered with the DMA API and there is a 1:1
+> mapping between physical addresses as seen by the CPU and the device.
 >
+> The fundamental problem here is the lack of a generic API to do what the
+> driver wants: allocating CPU-visible memory for use by a device through
+> user-defined IOMMU settings. Neither the dma-mapping API nor the IOMMU
+> API can do this by itself, and combining the two is not well-defined.
+>
+> This patch addresses the type mismatch by adding a third pointer into the
+> push_buffer structure: in addition to the address as seen from the CPU
+> and the address inside of the local IOMMU domain, the pb->alloc pointer
+> is the token returned by dma_alloc_wc(), and this is what we later need
+> to pass into dma_free_wc().
+>
+> The address we pass into iommu_map() however is the physical address
+> computed from virt_to_phys(), assuming that the pointer we have here
+> is part of the linear mapping (which is also questionable, e.g. when we
+> have a non-coherent device on ARM32 this may be false). Also, when
+> the DMA API uses the IOMMU to allocate the pointer for the default
+> domain, we end up with two IOMMU mappings for the same physical address.
+>
+
+I think we have a "policy" on Tegra that the DMA API will never allocate 
+using the IOMMU (Thierry can elaborate on this), which is why I wrote 
+the code with that assumption. Essentially, we have made the DMA API 
+into the API that allocates CPU-visible memory.
+
+Considering that, I'm wondering if we can just have a temporary local 
+dma_addr_t and then cast that to phys_addr_t, combined with a good comment?
+
+Cheers,
+Mikko.
+
 > Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
-> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/gpu/host1x/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/gpu/host1x/cdma.c | 26 ++++++++++----------------
+>  drivers/gpu/host1x/cdma.h |  1 +
+>  2 files changed, 11 insertions(+), 16 deletions(-)
 >
-> diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
-> index b2fd029d67b3..91916326957f 100644
-> --- a/drivers/gpu/host1x/Kconfig
-> +++ b/drivers/gpu/host1x/Kconfig
-> @@ -1,6 +1,7 @@
->  config TEGRA_HOST1X
->  	tristate "NVIDIA Tegra host1x driver"
->  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
-> +	select IOMMU_IOVA if IOMMU_SUPPORT
->  	help
->  	  Driver for the NVIDIA Tegra host1x hardware.
+> diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+> index 28541b280739..286edeca7ba1 100644
+> --- a/drivers/gpu/host1x/cdma.c
+> +++ b/drivers/gpu/host1x/cdma.c
+> @@ -59,7 +59,7 @@ static void host1x_pushbuffer_destroy(struct push_buffer *pb)
+>  		free_iova(&host1x->iova, iova_pfn(&host1x->iova, pb->dma));
+>  	}
 >
+> -	dma_free_wc(host1x->dev, pb->alloc_size, pb->mapped, pb->phys);
+> +	dma_free_wc(host1x->dev, pb->alloc_size, pb->mapped, pb->alloc);
+>
+>  	pb->mapped = NULL;
+>  	pb->phys = 0;
+> @@ -81,20 +81,21 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
+>  	pb->size = HOST1X_PUSHBUFFER_SLOTS * 8;
+>
+>  	size = pb->size + 4;
+> +	if (host1x->domain)
+> +		size = iova_align(&host1x->iova, size);
+>
+>  	/* initialize buffer pointers */
+>  	pb->fence = pb->size - 8;
+>  	pb->pos = 0;
+>
+> -	if (host1x->domain) {
+> -		unsigned long shift;
+> +	pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->alloc, GFP_KERNEL);
+> +	if (!pb->mapped)
+> +		return -ENOMEM;
+>
+> -		size = iova_align(&host1x->iova, size);
+> +	pb->phys = virt_to_phys(pb->mapped);
+>
+> -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
+> -					  GFP_KERNEL);
+> -		if (!pb->mapped)
+> -			return -ENOMEM;
+> +	if (host1x->domain) {
+> +		unsigned long shift;
+>
+>  		shift = iova_shift(&host1x->iova);
+>  		alloc = alloc_iova(&host1x->iova, size >> shift,
+> @@ -109,13 +110,6 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
+>  				IOMMU_READ);
+>  		if (err)
+>  			goto iommu_free_iova;
+> -	} else {
+> -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
+> -					  GFP_KERNEL);
+> -		if (!pb->mapped)
+> -			return -ENOMEM;
+> -
+> -		pb->dma = pb->phys;
+>  	}
+>
+>  	pb->alloc_size = size;
+> @@ -127,7 +121,7 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
+>  iommu_free_iova:
+>  	__free_iova(&host1x->iova, alloc);
+>  iommu_free_mem:
+> -	dma_free_wc(host1x->dev, pb->alloc_size, pb->mapped, pb->phys);
+> +	dma_free_wc(host1x->dev, pb->alloc_size, pb->mapped, pb->alloc);
+>
+>  	return err;
+>  }
+> diff --git a/drivers/gpu/host1x/cdma.h b/drivers/gpu/host1x/cdma.h
+> index ec170a78f4e1..8479192d4265 100644
+> --- a/drivers/gpu/host1x/cdma.h
+> +++ b/drivers/gpu/host1x/cdma.h
+> @@ -43,6 +43,7 @@ struct host1x_job;
+>
+>  struct push_buffer {
+>  	void *mapped;			/* mapped pushbuffer memory */
+> +	dma_addr_t alloc;		/* device address in root domain */
+>  	dma_addr_t dma;			/* device address of pushbuffer */
+>  	phys_addr_t phys;		/* physical address of pushbuffer */
+>  	u32 fence;			/* index we've written */
 >
