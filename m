@@ -1,79 +1,99 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH] backlight: pwm_bl: Fix condition to set enable gpio as output
-Date: Thu, 20 Apr 2017 12:16:36 +0200
-Message-ID: <CAMuHMdXXHNUjexZ5X+rF4+vFrWbqBJ_2zeTUHJLJ8fsww5xvkg@mail.gmail.com>
-References: <20170416103546.3021-1-contact@paulk.fr> <CAMuHMdV1+caNwbuk=Kw7cRUxcp1iC=YArnQXf2mcn+qnc6+OOQ@mail.gmail.com>
- <1492443526.12267.4.camel@paulk.fr> <CAMuHMdVLUmT_NJt86tspYEZnsFEiEwiNu_19RQu0qhtcyP1SdQ@mail.gmail.com>
- <1492505196.2014.0.camel@paulk.fr> <e5a9e6ce-b1dd-96ae-c051-60be7cbfbe1d@linaro.org>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH] clk: tegra: fix SS control on PLL enable/disable
+Date: Thu, 20 Apr 2017 15:39:49 +0300
+Message-ID: <1492691989-30539-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e5a9e6ce-b1dd-96ae-c051-60be7cbfbe1d-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux PWM List <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Fbdev development list <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Daniel,
+PLL SS was only controlled when setting the PLL rate, not when the PLL
+itself is enabled or disabled. This means that if the PLL rate was set
+before the PLL is enabled, SS will not be enabled, even when configured.
 
-On Thu, Apr 20, 2017 at 11:55 AM, Daniel Thompson
-<daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On 18/04/17 09:46, Paul Kocialkowski wrote:
->> Le lundi 17 avril 2017 =C3=A0 21:36 +0200, Geert Uytterhoeven a =C3=A9cr=
-it :
->>> On Mon, Apr 17, 2017 at 5:38 PM, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
->>> wrote:
->>>> Le dimanche 16 avril 2017 =C3=A0 22:55 +0200, Geert Uytterhoeven a =C3=
-=A9crit :
->>>>> On Sun, Apr 16, 2017 at 12:35 PM, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org=
->
->>>>> wrote:
->>>>>>
->>>>>> The move to a dedicated pwm_backlight_initial_power_state function i=
-n
->>>>>> commit 7613c922315e308a6486d802abed2eb74443dffd modified the conditi=
-on
->>>>>> to set the enable gpio as output. This breaks specific use cases usi=
-ng
->>>>>> that GPIO, such as tegra124-based nyan Chromebooks where backlight
->>>>>> stopped working.
->>>>>>
->>>>>> This puts the condition back to the way it was before the move.
->>>>>>
->>>>>> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
->>>>>
->>>>> Does "[PATCH v2] backlight: pwm_bl: Fix GPIO out for unimplemented
->>>>> .get_direction()"
->>>>> (https://lkml.org/lkml/2017/4/4/225) fix your issue?
->>>>
->>>> This definitely solves the issue!
->>>>
->>>> Since this fixes broken backlight (that, in turn, makes systems
->>>> unusable),
->>>> perhaps this should be included in the next rc cycle?
->>>
->>> You mean v4.11 final, as there probably won't be another rc?
->>> Yes!
->>
->> I'm all for it!
->
-> Thanks for keeping our attention on this. I sent a PR yesterday (and hope=
- my
-> GPG key has attracted enough signatures).
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 44 ++++++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
 
-Thank you, this morning I had already noticed it went upstream.
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 159a854..e9bdb16 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -418,6 +418,26 @@ static void _clk_pll_disable(struct clk_hw *hw)
+ 	}
+ }
+ 
++static void pll_clk_start_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val |= pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
++static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val &= ~pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
+ static int clk_pll_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+@@ -431,6 +451,8 @@ static int clk_pll_enable(struct clk_hw *hw)
+ 
+ 	ret = clk_pll_wait_for_lock(pll);
+ 
++	pll_clk_start_ss(pll);
++
+ 	if (pll->lock)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ 
+@@ -445,6 +467,8 @@ static void clk_pll_disable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
++	pll_clk_stop_ss(pll);
++
+ 	_clk_pll_disable(hw);
+ 
+ 	if (pll->lock)
+@@ -716,26 +740,6 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
+ 	pll_writel_misc(val, pll);
+ }
+ 
+-static void pll_clk_start_ss(struct tegra_clk_pll *pll)
+-{
+-	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
+-		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
+-
+-		val |= pll->params->ssc_ctrl_en_mask;
+-		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
+-	}
+-}
+-
+-static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
+-{
+-	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
+-		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
+-
+-		val &= ~pll->params->ssc_ctrl_en_mask;
+-		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
+-	}
+-}
+-
+ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 			unsigned long rate)
+ {
+-- 
+1.9.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
