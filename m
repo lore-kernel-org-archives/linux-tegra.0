@@ -1,51 +1,54 @@
 From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] arm64: tegra: Add CCPLEX_CLUSTER area in Tegra186
-Date: Thu, 20 Apr 2017 09:44:36 +0300
-Message-ID: <ff583f3a-5289-f34a-114b-5bc0220c7237@kapsi.fi>
-References: <1491313417-25085-1-git-send-email-mperttunen@nvidia.com>
- <1491313417-25085-3-git-send-email-mperttunen@nvidia.com>
+Subject: Re: [PATCH] gpu: host1x: select IOMMU_IOVA
+Date: Thu, 20 Apr 2017 09:47:35 +0300
+Message-ID: <a94db66f-4e81-396f-58f4-583dd64055ca@kapsi.fi>
+References: <20170419182449.885312-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1491313417-25085-3-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170419182449.885312-1-arnd-r2nGTMty4D4@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04.04.2017 16:43, Mikko Perttunen wrote:
-> The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
-> registers that initiate CPU frequency/voltage transitions.
+Ah, had to forget something :)
+
+Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+On 19.04.2017 21:24, Arnd Bergmann wrote:
+> When IOMMU_IOVA is not built-in but host1x is, we get a link error:
 >
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> drivers/gpu/host1x/dev.o: In function `host1x_remove':
+> dev.c:(.text.host1x_remove+0x50): undefined reference to `put_iova_domain'
+> drivers/gpu/host1x/dev.o: In function `host1x_probe':
+> dev.c:(.text.host1x_probe+0x31c): undefined reference to `init_iova_domain'
+> dev.c:(.text.host1x_probe+0x38c): undefined reference to `put_iova_domain'
+> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
+> cdma.c:(.text.host1x_cdma_init+0x238): undefined reference to `alloc_iova'
+> cdma.c:(.text.host1x_cdma_init+0x2c0): undefined reference to `__free_iova'
+> drivers/gpu/host1x/cdma.o: In function `host1x_cdma_deinit':
+> cdma.c:(.text.host1x_cdma_deinit+0xb0): undefined reference to `free_iova'
+>
+> This adds the same select statement that we have for drm_tegra.
+>
+> Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
+> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 > ---
-> v2:
-> - Only one regs entry
+>  drivers/gpu/host1x/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 >
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
+> diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+> index b2fd029d67b3..91916326957f 100644
+> --- a/drivers/gpu/host1x/Kconfig
+> +++ b/drivers/gpu/host1x/Kconfig
+> @@ -1,6 +1,7 @@
+>  config TEGRA_HOST1X
+>  	tristate "NVIDIA Tegra host1x driver"
+>  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
+> +	select IOMMU_IOVA if IOMMU_SUPPORT
+>  	help
+>  	  Driver for the NVIDIA Tegra host1x hardware.
 >
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> index 3ea5e6369bc3..c023af0be43d 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> @@ -347,6 +347,13 @@
->  		reg-names = "pmc", "wake", "aotag", "scratch";
->  	};
 >
-> +	ccplex@e000000 {
-> +		compatible = "nvidia,tegra186-ccplex-cluster";
-> +		reg = <0x0 0x0e000000 0x0 0x3fffff>;
-> +
-> +		nvidia,bpmp = <&bpmp>;
-> +	};
-> +
->  	sysram@30000000 {
->  		compatible = "nvidia,tegra186-sysram", "mmio-sram";
->  		reg = <0x0 0x30000000 0x0 0x50000>;
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
