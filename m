@@ -1,75 +1,79 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH] [RFC] gpu: host1x: shut up warning about DMA API misuse
-Date: Thu, 20 Apr 2017 13:14:04 +0300
-Message-ID: <7cbf20e2-6a81-d555-a635-0db0274d19ff@kapsi.fi>
-References: <20170419182413.866327-1-arnd@arndb.de>
- <8df7c5a9-c71c-4ee9-9bc2-9c861cf9796c@kapsi.fi>
- <CAK8P3a3JJrA_4Zur47ngWmR7VeKBopJLNZCaqOPzzmnFoV3=Ew@mail.gmail.com>
- <46945c47-2e4e-270d-b551-b207c538e5cb@kapsi.fi>
- <CAK8P3a1Xs5XjQ+cPPUEtBE7kC6hs_6ZKKs1kHd608kaO70f6Fg@mail.gmail.com>
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [PATCH] backlight: pwm_bl: Fix condition to set enable gpio as output
+Date: Thu, 20 Apr 2017 12:16:36 +0200
+Message-ID: <CAMuHMdXXHNUjexZ5X+rF4+vFrWbqBJ_2zeTUHJLJ8fsww5xvkg@mail.gmail.com>
+References: <20170416103546.3021-1-contact@paulk.fr> <CAMuHMdV1+caNwbuk=Kw7cRUxcp1iC=YArnQXf2mcn+qnc6+OOQ@mail.gmail.com>
+ <1492443526.12267.4.camel@paulk.fr> <CAMuHMdVLUmT_NJt86tspYEZnsFEiEwiNu_19RQu0qhtcyP1SdQ@mail.gmail.com>
+ <1492505196.2014.0.camel@paulk.fr> <e5a9e6ce-b1dd-96ae-c051-60be7cbfbe1d@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a1Xs5XjQ+cPPUEtBE7kC6hs_6ZKKs1kHd608kaO70f6Fg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Mikko Perttunen <mperttunen@nvidia.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <e5a9e6ce-b1dd-96ae-c051-60be7cbfbe1d-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux PWM List <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Fbdev development list <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.04.2017 13:02, Arnd Bergmann wrote:
-> On Thu, Apr 20, 2017 at 11:44 AM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
->> On 20.04.2017 11:25, Arnd Bergmann wrote:
->>> On Thu, Apr 20, 2017 at 9:02 AM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
->>>> On 19.04.2017 21:24, Arnd Bergmann wrote:
+Hi Daniel,
+
+On Thu, Apr 20, 2017 at 11:55 AM, Daniel Thompson
+<daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On 18/04/17 09:46, Paul Kocialkowski wrote:
+>> Le lundi 17 avril 2017 =C3=A0 21:36 +0200, Geert Uytterhoeven a =C3=A9cr=
+it :
+>>> On Mon, Apr 17, 2017 at 5:38 PM, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+>>> wrote:
+>>>> Le dimanche 16 avril 2017 =C3=A0 22:55 +0200, Geert Uytterhoeven a =C3=
+=A9crit :
+>>>>> On Sun, Apr 16, 2017 at 12:35 PM, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org=
+>
+>>>>> wrote:
+>>>>>>
+>>>>>> The move to a dedicated pwm_backlight_initial_power_state function i=
+n
+>>>>>> commit 7613c922315e308a6486d802abed2eb74443dffd modified the conditi=
+on
+>>>>>> to set the enable gpio as output. This breaks specific use cases usi=
+ng
+>>>>>> that GPIO, such as tegra124-based nyan Chromebooks where backlight
+>>>>>> stopped working.
+>>>>>>
+>>>>>> This puts the condition back to the way it was before the move.
+>>>>>>
+>>>>>> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+>>>>>
+>>>>> Does "[PATCH v2] backlight: pwm_bl: Fix GPIO out for unimplemented
+>>>>> .get_direction()"
+>>>>> (https://lkml.org/lkml/2017/4/4/225) fix your issue?
+>>>>
+>>>> This definitely solves the issue!
+>>>>
+>>>> Since this fixes broken backlight (that, in turn, makes systems
+>>>> unusable),
+>>>> perhaps this should be included in the next rc cycle?
 >>>
->>> I don't think this can be a per-platform policy.
+>>> You mean v4.11 final, as there probably won't be another rc?
+>>> Yes!
 >>
->>
->> Yeah, now that we are using the ARM SMMU on T186 onwards it's more difficult
->> than when we were using the Tegra SMMU, so we'll probably have to change
->> that.
->>
->> The goal of the current code is to allocate memory from the CMA, so one
->> option would be to change it to use dma_alloc_from_contiguous. That way we
->> wouldn't get the double IOMMU mapping, which would be nice.
+>> I'm all for it!
 >
-> Right, also we shouldn't define what a particular API does based on
-> which platform you run on.
+> Thanks for keeping our attention on this. I sent a PR yesterday (and hope=
+ my
+> GPG key has attracted enough signatures).
 
-Indeed.
+Thank you, this morning I had already noticed it went upstream.
 
->
->> The goal of the current code is to allocate memory from the CMA, so one
->> option would be to change it to use dma_alloc_from_contiguous. That way
->> we wouldn't get the double IOMMU mapping, which would be nice.
->
-> dma_alloc_from_contiguous() is intentionally not exported to drivers,
-> and it would result in a page that is not mapped into your kernel
-> address space.
+Gr{oetje,eeting}s,
 
-Ah, sorry, didn't notice that while looking.
+                        Geert
 
->
-> This is probably not the only driver that has this issue, so maybe a
-> better approach would be to fill the API gap and introduce an IOMMU
-> API function that takes a domain/iova/length tuple as its argument
-> and allocates coherent or WC memory that it maps into that address?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-There is definitely space for some API improvement in the whole IOMMU 
-domain memory allocation space. I would prefer keeping the IOMMU mapping 
-and memory allocation separate, though, since otherwise we couldn't map 
-the same physical memory into multiple domains (or have some memory that 
-is temporarily not mapped into any.)
-
-The issue seems to be non-trivial, so I'm fine with your RFC patch - it 
-solves the issue and the double domain mapping thing is not a problem 
-currently as we don't yet support IOMMU on T186. By the time we do 
-support it I hope we'll have the new API or whatever replacement in place.
-
->
->       Arnd
->
-
-Thanks,
-Mikko
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
