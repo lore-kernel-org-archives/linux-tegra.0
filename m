@@ -1,54 +1,53 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 Subject: Re: [PATCH] [RFC] gpu: host1x: shut up warning about DMA API misuse
-Date: Thu, 20 Apr 2017 12:02:42 +0200
-Message-ID: <CAK8P3a1Xs5XjQ+cPPUEtBE7kC6hs_6ZKKs1kHd608kaO70f6Fg@mail.gmail.com>
-References: <20170419182413.866327-1-arnd@arndb.de>
- <8df7c5a9-c71c-4ee9-9bc2-9c861cf9796c@kapsi.fi>
- <CAK8P3a3JJrA_4Zur47ngWmR7VeKBopJLNZCaqOPzzmnFoV3=Ew@mail.gmail.com>
- <46945c47-2e4e-270d-b551-b207c538e5cb@kapsi.fi>
+Date: Thu, 20 Apr 2017 12:05:47 +0200
+Message-ID: <CAK8P3a2u5aDhEj5mSnw=utB4ctGJuPPhNeNTbtA5vqnSLtNv0g@mail.gmail.com>
+References: <20170419182413.866327-1-arnd@arndb.de> <8df7c5a9-c71c-4ee9-9bc2-9c861cf9796c@kapsi.fi>
+ <CAK8P3a3JJrA_4Zur47ngWmR7VeKBopJLNZCaqOPzzmnFoV3=Ew@mail.gmail.com> <20170420094932.GM17774@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <46945c47-2e4e-270d-b551-b207c538e5cb@kapsi.fi>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170420094932.GM17774-l+eeeJia6m9URfEZ8mYm6t73F7V6hmMc@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+Cc: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBBcHIgMjAsIDIwMTcgYXQgMTE6NDQgQU0sIE1pa2tvIFBlcnR0dW5lbiA8Y3luZGlz
-QGthcHNpLmZpPiB3cm90ZToKPiBPbiAyMC4wNC4yMDE3IDExOjI1LCBBcm5kIEJlcmdtYW5uIHdy
-b3RlOgo+PiBPbiBUaHUsIEFwciAyMCwgMjAxNyBhdCA5OjAyIEFNLCBNaWtrbyBQZXJ0dHVuZW4g
-PGN5bmRpc0BrYXBzaS5maT4gd3JvdGU6Cj4+PiBPbiAxOS4wNC4yMDE3IDIxOjI0LCBBcm5kIEJl
-cmdtYW5uIHdyb3RlOgo+Pgo+PiBJIGRvbid0IHRoaW5rIHRoaXMgY2FuIGJlIGEgcGVyLXBsYXRm
-b3JtIHBvbGljeS4KPgo+Cj4gWWVhaCwgbm93IHRoYXQgd2UgYXJlIHVzaW5nIHRoZSBBUk0gU01N
-VSBvbiBUMTg2IG9ud2FyZHMgaXQncyBtb3JlIGRpZmZpY3VsdAo+IHRoYW4gd2hlbiB3ZSB3ZXJl
-IHVzaW5nIHRoZSBUZWdyYSBTTU1VLCBzbyB3ZSdsbCBwcm9iYWJseSBoYXZlIHRvIGNoYW5nZQo+
-IHRoYXQuCj4KPiBUaGUgZ29hbCBvZiB0aGUgY3VycmVudCBjb2RlIGlzIHRvIGFsbG9jYXRlIG1l
-bW9yeSBmcm9tIHRoZSBDTUEsIHNvIG9uZQo+IG9wdGlvbiB3b3VsZCBiZSB0byBjaGFuZ2UgaXQg
-dG8gdXNlIGRtYV9hbGxvY19mcm9tX2NvbnRpZ3VvdXMuIFRoYXQgd2F5IHdlCj4gd291bGRuJ3Qg
-Z2V0IHRoZSBkb3VibGUgSU9NTVUgbWFwcGluZywgd2hpY2ggd291bGQgYmUgbmljZS4KClJpZ2h0
-LCBhbHNvIHdlIHNob3VsZG4ndCBkZWZpbmUgd2hhdCBhIHBhcnRpY3VsYXIgQVBJIGRvZXMgYmFz
-ZWQgb24Kd2hpY2ggcGxhdGZvcm0geW91IHJ1biBvbi4KCj4gVGhlIGdvYWwgb2YgdGhlIGN1cnJl
-bnQgY29kZSBpcyB0byBhbGxvY2F0ZSBtZW1vcnkgZnJvbSB0aGUgQ01BLCBzbyBvbmUKPiBvcHRp
-b24gd291bGQgYmUgdG8gY2hhbmdlIGl0IHRvIHVzZSBkbWFfYWxsb2NfZnJvbV9jb250aWd1b3Vz
-LiBUaGF0IHdheQo+IHdlIHdvdWxkbid0IGdldCB0aGUgZG91YmxlIElPTU1VIG1hcHBpbmcsIHdo
-aWNoIHdvdWxkIGJlIG5pY2UuCgpkbWFfYWxsb2NfZnJvbV9jb250aWd1b3VzKCkgaXMgaW50ZW50
-aW9uYWxseSBub3QgZXhwb3J0ZWQgdG8gZHJpdmVycywKYW5kIGl0IHdvdWxkIHJlc3VsdCBpbiBh
-IHBhZ2UgdGhhdCBpcyBub3QgbWFwcGVkIGludG8geW91ciBrZXJuZWwKYWRkcmVzcyBzcGFjZS4K
-ClRoaXMgaXMgcHJvYmFibHkgbm90IHRoZSBvbmx5IGRyaXZlciB0aGF0IGhhcyB0aGlzIGlzc3Vl
-LCBzbyBtYXliZSBhCmJldHRlciBhcHByb2FjaCB3b3VsZCBiZSB0byBmaWxsIHRoZSBBUEkgZ2Fw
-IGFuZCBpbnRyb2R1Y2UgYW4gSU9NTVUKQVBJIGZ1bmN0aW9uIHRoYXQgdGFrZXMgYSBkb21haW4v
-aW92YS9sZW5ndGggdHVwbGUgYXMgaXRzIGFyZ3VtZW50CmFuZCBhbGxvY2F0ZXMgY29oZXJlbnQg
-b3IgV0MgbWVtb3J5IHRoYXQgaXQgbWFwcyBpbnRvIHRoYXQgYWRkcmVzcz8KCiAgICAgIEFybmQK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Thu, Apr 20, 2017 at 11:49 AM, Russell King - ARM Linux
+<linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org> wrote:
+> On Thu, Apr 20, 2017 at 10:25:01AM +0200, Arnd Bergmann wrote:
+>> On Thu, Apr 20, 2017 at 9:02 AM, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org> wrote:
+>> > I think we have a "policy" on Tegra that the DMA API will never allocate
+>> > using the IOMMU (Thierry can elaborate on this), which is why I wrote the
+>> > code with that assumption. Essentially, we have made the DMA API into the
+>> > API that allocates CPU-visible memory.
+>>
+>> I don't think this can be a per-platform policy.
+>>
+>> > Considering that, I'm wondering if we can just have a temporary local
+>> > dma_addr_t and then cast that to phys_addr_t, combined with a good comment?
+>>
+>> That was my first approach, and it does address the warning, but
+>> I did not send it because it still felt too wrong.
+>
+> Sounds to me like the warning is justified - it's saying that there's
+> something not right here which could be a problem.
+
+Absolutely.
+
+> So I'd say, don't
+> fix the warning, it's doing its job, highlighting a potential problem
+> with the code.
+>
+> (Consider hiding the warning and then running on a platform where the
+> assumptions are broken.)
+
+The problem is that I'm probably the only one who ever sees that
+warning since you don't see it in any defconfig builds that all have
+the same width for dma_addr_t and phys_addr_t.
+
+The other alternative would be to ask for the patch that introduced
+the warning to get reverted before it makes it into v4.12, if we can't
+come up with a proper way to do this.
+
+      Arnd
