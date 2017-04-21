@@ -1,99 +1,37 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH] clk: tegra: fix SS control on PLL enable/disable
-Date: Thu, 20 Apr 2017 15:39:49 +0300
-Message-ID: <1492691989-30539-1-git-send-email-pdeschrijver@nvidia.com>
+From: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Subject: [PATCH][-next] i2c: tegra: fix spelling mistake: "contoller" -> "controller"
+Date: Fri, 21 Apr 2017 07:56:53 +0100
+Message-ID: <20170421065653.16403-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-PLL SS was only controlled when setting the PLL rate, not when the PLL
-itself is enabled or disabled. This means that if the PLL rate was set
-before the PLL is enabled, SS will not be enabled, even when configured.
+From: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+trivial fix to spelling mistake in MODULE_DESCRIPTION text
+
+Signed-off-by: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 ---
- drivers/clk/tegra/clk-pll.c | 44 ++++++++++++++++++++++++--------------------
- 1 file changed, 24 insertions(+), 20 deletions(-)
+ drivers/i2c/busses/i2c-tegra-bpmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 159a854..e9bdb16 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -418,6 +418,26 @@ static void _clk_pll_disable(struct clk_hw *hw)
- 	}
- }
+diff --git a/drivers/i2c/busses/i2c-tegra-bpmp.c b/drivers/i2c/busses/i2c-tegra-bpmp.c
+index 9eed69d5e17e..f6cd35d0a2ac 100644
+--- a/drivers/i2c/busses/i2c-tegra-bpmp.c
++++ b/drivers/i2c/busses/i2c-tegra-bpmp.c
+@@ -340,7 +340,7 @@ static struct platform_driver tegra_bpmp_i2c_driver = {
+ };
+ module_platform_driver(tegra_bpmp_i2c_driver);
  
-+static void pll_clk_start_ss(struct tegra_clk_pll *pll)
-+{
-+	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
-+		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-+
-+		val |= pll->params->ssc_ctrl_en_mask;
-+		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-+	}
-+}
-+
-+static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
-+{
-+	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
-+		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-+
-+		val &= ~pll->params->ssc_ctrl_en_mask;
-+		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-+	}
-+}
-+
- static int clk_pll_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-@@ -431,6 +451,8 @@ static int clk_pll_enable(struct clk_hw *hw)
- 
- 	ret = clk_pll_wait_for_lock(pll);
- 
-+	pll_clk_start_ss(pll);
-+
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
- 
-@@ -445,6 +467,8 @@ static void clk_pll_disable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	pll_clk_stop_ss(pll);
-+
- 	_clk_pll_disable(hw);
- 
- 	if (pll->lock)
-@@ -716,26 +740,6 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
- 	pll_writel_misc(val, pll);
- }
- 
--static void pll_clk_start_ss(struct tegra_clk_pll *pll)
--{
--	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
--		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
--
--		val |= pll->params->ssc_ctrl_en_mask;
--		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
--	}
--}
--
--static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
--{
--	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
--		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
--
--		val &= ~pll->params->ssc_ctrl_en_mask;
--		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
--	}
--}
--
- static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate)
- {
+-MODULE_DESCRIPTION("NVIDIA Tegra BPMP I2C bus contoller driver");
++MODULE_DESCRIPTION("NVIDIA Tegra BPMP I2C bus controller driver");
+ MODULE_AUTHOR("Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+ MODULE_AUTHOR("Juha-Matti Tilli");
+ MODULE_LICENSE("GPL v2");
 -- 
-1.9.1
-
+2.11.0
