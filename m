@@ -1,54 +1,27 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH][-next] i2c: tegra: fix spelling mistake: "contoller" ->
- "controller"
-Date: Fri, 21 Apr 2017 14:05:14 +0200
-Message-ID: <20170421120514.fmppfgekujqnko7i@ninjato>
-References: <20170421065653.16403-1-colin.king@canonical.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] clk: tegra: fix SS control on PLL enable/disable
+Date: Fri, 21 Apr 2017 19:38:48 -0700
+Message-ID: <20170422023848.GJ7065@codeaurora.org>
+References: <1492691989-30539-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jmclwk7uzjlooarr"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170421065653.16403-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1492691989-30539-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 04/20, Peter De Schrijver wrote:
+> PLL SS was only controlled when setting the PLL rate, not when the PLL
+> itself is enabled or disabled. This means that if the PLL rate was set
+> before the PLL is enabled, SS will not be enabled, even when configured.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 
---jmclwk7uzjlooarr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes tag? Or this isn't a problem right now, just future fix?
 
-On Fri, Apr 21, 2017 at 07:56:53AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
->=20
-> trivial fix to spelling mistake in MODULE_DESCRIPTION text
->=20
-> Signed-off-by: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-
-Applied to for-next, thanks!
-
-
---jmclwk7uzjlooarr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlj59XoACgkQFA3kzBSg
-KbbmDw//V1cq/wWI30H7MEkCrlTwoBegeF8mwP5exOEFKCqoEB/NAJrlOffpOi7C
-qzGFDmyzOdIB7QN01EakETNNgwHuEl5t5jjkcxHt9RzNDXh/nJ30FfOGCoQEMwGM
-mj7cQlLQ19QL4+glp7x6DHwJg6Pkvlkc7pbDUEYiVjy22XQo7gHsAz0pfuKmgaM3
-9Rg/tkqS/N+WTAoOsNaVPCemhdfnwZEOVysx7v4lYi5dk+F++wn3EbaKwjMgdrP1
-e/Vzof1jxGcRKhChW1uFC9R63g56c1FFxea+4oVuYAguiQxv6UYKPSnBW+vxMAYn
-FO7gBq99mLyOLCToMY0KuEGR5UOL7n0FGULH63mq6a0v3ikI3slecnkODCBi6BL0
-nf5jDUDRQYEitjlBIQcp6PIOTtFpfF8tTr4YJhtB6g5/4mjbTS9rsellVZyOSpxi
-2wtKZWxkxgflJ/sIiNLrE4DQGkGw6N54TS3qFZeD2EPkIaZTErrU7ekbroZvDzkp
-QFeGUMGxYXD3UV5RrXZ22X8KOMw3LtOAsZKA55gmDb1uCI6g7oy0Y6IYBJiuAr2D
-F5cniOA5Av7IEEtANjKiys+X/5CLX8rl8e9qfAHwYSFJRA+/Fk69f0C+UfPSstA+
-RMjZM7cboeq6PQHWJAvA6jr3IwptPu8NlPJbac+Rrjvy4wOpd7s=
-=WzjZ
------END PGP SIGNATURE-----
-
---jmclwk7uzjlooarr--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
