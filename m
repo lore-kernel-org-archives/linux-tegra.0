@@ -1,47 +1,34 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] pinctrl: tegra: xusb: Silence sparse warnings
-Date: Mon, 24 Apr 2017 13:56:49 +0200
-Message-ID: <20170424115649.17424-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 4/4] soc/tegra: pmc: Use the new reset APIs to manage
+ reset controllers
+Date: Mon, 24 Apr 2017 13:45:20 +0100
+Message-ID: <e87a846b-4bbf-03cf-f3a6-99d5e468425c@nvidia.com>
+References: <1492514488-27385-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1492514488-27385-5-git-send-email-vivek.gautam@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1492514488-27385-5-git-send-email-vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Commit 53d2a715c240 ("phy: Add Tegra XUSB pad controller support") added
-a new driver for the XUSB pad controller that implements a more flexible
-devicetree binding. In order to preserve backwards compatibility the old
-driver can be probed if the obsolete bindings are detected.
+On 18/04/17 12:21, Vivek Gautam wrote:
+> Make use of reset_control_array_*() set of APIs to manage
+> an array of reset controllers available with the device.
 
-In order to hide the legacy code, these prototypes were defined in a
-header private to the new driver. This has the disadvantage of making
-the sparse code checker complain about the missing declarations when
-compiling the old driver and suggesting to make the functions static.
+Before we apply this patch, I need to check to see if the order of the
+resets managed by the PMC driver matter. Today the order of the resets
+is determined by the order they appear in the DT node and although the
+new APIs work in the same way they do not guarantee this. So let me
+check to see if we can any concerns about ordering here. Otherwise would
+be nice to use these APIs.
 
-Avoid these sparse warnings by adding local prototype declarations into
-the compatibility driver.
+Cheers
+Jon
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-index 6f68a9eebc58..ebedc2d32411 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-@@ -873,6 +873,10 @@ static const struct of_device_id tegra_xusb_padctl_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, tegra_xusb_padctl_of_match);
- 
-+/* predeclare these in order to silence sparse */
-+int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
-+int tegra_xusb_padctl_legacy_remove(struct platform_device *pdev);
-+
- int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev)
- {
- 	struct tegra_xusb_padctl *padctl;
 -- 
-2.12.0
+nvpublic
