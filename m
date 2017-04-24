@@ -1,34 +1,49 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 4/4] soc/tegra: pmc: Use the new reset APIs to manage
- reset controllers
-Date: Mon, 24 Apr 2017 13:45:20 +0100
-Message-ID: <e87a846b-4bbf-03cf-f3a6-99d5e468425c@nvidia.com>
-References: <1492514488-27385-1-git-send-email-vivek.gautam@codeaurora.org>
- <1492514488-27385-5-git-send-email-vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH -next] soc/tegra: Fix wrong pointer passed to PTR_ERR()
+Date: Mon, 24 Apr 2017 15:47:39 +0100
+Message-ID: <119b4516-5daa-6827-5f5b-270332c218f3@nvidia.com>
+References: <20170416040655.10237-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1492514488-27385-5-git-send-email-vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+In-Reply-To: <20170416040655.10237-1-weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 18/04/17 12:21, Vivek Gautam wrote:
-> Make use of reset_control_array_*() set of APIs to manage
-> an array of reset controllers available with the device.
+On 16/04/17 05:06, Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+> 
+> PTR_ERR should access the value just tested by IS_ERR, otherwise
+> the wrong error code will be returned.
+> 
+> Fixes: 841fd94c43a4 ("soc/tegra: flowctrl: Add basic platform driver")
+> Signed-off-by: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/soc/tegra/flowctrl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/tegra/flowctrl.c b/drivers/soc/tegra/flowctrl.c
+> index 0e345c0..5433cc7 100644
+> --- a/drivers/soc/tegra/flowctrl.c
+> +++ b/drivers/soc/tegra/flowctrl.c
+> @@ -157,7 +157,7 @@ static int tegra_flowctrl_probe(struct platform_device *pdev)
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	tegra_flowctrl_base = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(tegra_flowctrl_base))
+> -		return PTR_ERR(base);
+> +		return PTR_ERR(tegra_flowctrl_base);
+>  
+>  	iounmap(base);
 
-Before we apply this patch, I need to check to see if the order of the
-resets managed by the PMC driver matter. Today the order of the resets
-is determined by the order they appear in the DT node and although the
-new APIs work in the same way they do not guarantee this. So let me
-check to see if we can any concerns about ordering here. Otherwise would
-be nice to use these APIs.
+Thanks. However, we have already received a fix for this here [0].
 
-Cheers
 Jon
+
+[0] https://patchwork.ozlabs.org/patch/749329/
 
 -- 
 nvpublic
