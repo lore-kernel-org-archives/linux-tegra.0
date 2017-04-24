@@ -1,70 +1,40 @@
-From: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Subject: [PATCH] spi: tegra: fix spelling mistake: "trasfer" -> "transfer"
-Date: Sun, 23 Apr 2017 18:14:36 +0100
-Message-ID: <20170423171436.6717-1-colin.king@canonical.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH 21/29] clocksource: Add missing line break to error
+ messages
+Date: Mon, 24 Apr 2017 09:45:24 +0200
+Message-ID: <20170424074524.2rdxtbi6n6czq6sf@pengutronix.de>
+References: <20170416202542.GV2078@mai>
+ <1492374441-23336-1-git-send-email-daniel.lezcano@linaro.org>
+ <1492374441-23336-21-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1492374441-23336-21-git-send-email-daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "maintainer:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, open list:TEGRA ARCHITECTU
 List-Id: linux-tegra@vger.kernel.org
 
-From: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Hello,
 
-trivial fix to spelling mistake in dbg_err messages
+On Sun, Apr 16, 2017 at 10:27:11PM +0200, Daniel Lezcano wrote:
+>  drivers/clocksource/time-efm32.c          |  2 +-
 
-Signed-off-by: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
----
- drivers/spi/spi-tegra114.c       | 2 +-
- drivers/spi/spi-tegra20-sflash.c | 2 +-
- drivers/spi/spi-tegra20-slink.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+For efm32:
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 73779cecc3bb..08012ae5aa66 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -837,7 +837,7 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
- 						SPI_DMA_TIMEOUT);
- 		if (WARN_ON(ret == 0)) {
- 			dev_err(tspi->dev,
--				"spi trasfer timeout, err %d\n", ret);
-+				"spi transfer timeout, err %d\n", ret);
- 			ret = -EIO;
- 			goto complete_xfer;
- 		}
-diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
-index b6558bb6f9df..2c797ee2664d 100644
---- a/drivers/spi/spi-tegra20-sflash.c
-+++ b/drivers/spi/spi-tegra20-sflash.c
-@@ -341,7 +341,7 @@ static int tegra_sflash_transfer_one_message(struct spi_master *master,
- 						SPI_DMA_TIMEOUT);
- 		if (WARN_ON(ret == 0)) {
- 			dev_err(tsd->dev,
--				"spi trasfer timeout, err %d\n", ret);
-+				"spi transfer timeout, err %d\n", ret);
- 			ret = -EIO;
- 			goto exit;
- 		}
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 85c91f58b42f..0c06ce424210 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -824,7 +824,7 @@ static int tegra_slink_transfer_one(struct spi_master *master,
- 					  SLINK_DMA_TIMEOUT);
- 	if (WARN_ON(ret == 0)) {
- 		dev_err(tspi->dev,
--			"spi trasfer timeout, err %d\n", ret);
-+			"spi transfer timeout, err %d\n", ret);
- 		return -EIO;
- 	}
- 
+	Acked-by: Uwe Kleine-König <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+
+(if it's not too late yet).
+
+For efm32 (and I guess for others, too) this was introduced by the
+"Convert init function to return error" series.
+
+Best regards
+Uwe
+
 -- 
-2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
