@@ -1,32 +1,33 @@
-From: "Ms. Katherine" <ulia-lr1Dud67lTSvSplVBqRQBQ@public.gmane.org>
-Subject: EXTREMELY IMPORTANT
-Date: Mon, 24 Apr 2017 19:52:15 +0100
-Message-ID: <20170424185220.E460351B3353__35880.1012662754$1493062916$gmane$org@mail.distral.ro>
-Reply-To: kathrynnmison-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Select appropriate DMA options for LPAE
+Date: Tue, 25 Apr 2017 00:59:46 +0200
+Message-ID: <20170424225946.19425-1-contact@paulk.fr>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Description: Mail message body
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Recipients <ulia-lr1Dud67lTSvSplVBqRQBQ@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Beloved, Sorry for the inconvenience, I am getting in touch with you regarding an extremely important and urgent matter, Please I need your urgent assistance and idea to finish up a project (Orphanage Home) Due to my health condition, Everything is available to finish up the project, All I need is your idea and trust.
+This automatically selects options for zone DMA and 64 bit DMA addresses
+when LPAE is enabled on ARM Tegra platforms. These options are required
+for proper operation with LPAE enabled.
 
-Sehr geehrte Geliebte, traurig für die Unannehmlichkeiten, ich bin in Kontakt mit Ihnen über eine äußerst wichtige und dringende Angelegenheit, Bitte brauche ich Ihre dringende Hilfe und Idee, um ein Projekt zu beenden (Orphanage Home) Wegen meines Gesundheitszustandes ist alles verfügbar Beenden Sie das Projekt, Alles was ich brauche ist Ihre Idee und Vertrauen.
-
-Please contact me for more details.
-Contact Email: kathrynnmison-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-
-Thanks
-
+Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 ---
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+ arch/arm/mach-tegra/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 329f01c5b6f8..c8368d647741 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -13,5 +13,7 @@ menuconfig ARCH_TEGRA
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select RESET_CONTROLLER
+ 	select SOC_BUS
++	select ZONE_DMA if ARM_LPAE
++	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+ 	help
+ 	  This enables support for NVIDIA Tegra based systems.
 -- 
-This message has been scanned for viruses and
-dangerous content by MailScanner, and is
-believed to be clean.
+2.12.2
