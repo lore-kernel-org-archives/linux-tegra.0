@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.11-rc6
-Date: Tue, 25 Apr 2017 13:03:48 +0100
-Message-ID: <7ef3c6bd-0f47-4277-eff5-940af68c858f@nvidia.com>
+Subject: Tegra baseline test results for v4.11-rc7
+Date: Tue, 25 Apr 2017 13:05:03 +0100
+Message-ID: <22c53f1e-b862-2445-35b5-5c43c1dc8a2e@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -11,10 +11,10 @@ To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29
 Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.11-rc6.
+Here are some basic Tegra test results for Linux v4.11-rc7.
 Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.11-rc6/20170411053103/
+    https://nvtb.github.io//linux/test_v4.11-rc7/20170416133103/
 
 
 Test summary
@@ -43,21 +43,20 @@ PM: System suspend: multi_v7_defconfig:
 		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
 PM: System suspend: tegra_defconfig:
-    FAIL: ( 1/ 5): tegra124-nyan-big
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
 
 vmlinux object size
-(delta in bytes from test_v4.11-rc5 (a71c9a1c779f2499fb2afc0553e543f18aff6edf)):
+(delta in bytes from test_v4.11-rc6 (39da7c509acff13fc8cb12ec1bb20337c988ed36)):
    text     data      bss    total  kernel
-  -2667     +952     -128    -1843  defconfig
-   -647        0        0     -647  multi_v7_defconfig
-   -791      +64        0     -727  tegra_defconfig
+  +7674     +560        0    +8234  defconfig
+  +3046        0        0    +3046  multi_v7_defconfig
+  +1378        0        0    +1378  tegra_defconfig
 
 
 Boot-time memory difference
-(delta in bytes from test_v4.11-rc5 (a71c9a1c779f2499fb2afc0553e543f18aff6edf))
+(delta in bytes from test_v4.11-rc6 (39da7c509acff13fc8cb12ec1bb20337c988ed36))
     avail    rsrvd     high    freed                board              kconfig                  dtb
         .        .        .        .      qemu-vexpress64            defconfig           __internal
         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
