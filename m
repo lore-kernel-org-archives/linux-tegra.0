@@ -1,79 +1,22 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH 2/2] power: supply: sbs-battery: Correct supply status with current draw
-Date: Tue, 25 Apr 2017 17:09:05 +0200
-Message-ID: <20170425150905.4185-2-contact@paulk.fr>
-References: <20170425150905.4185-1-contact@paulk.fr>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20170425150905.4185-1-contact@paulk.fr>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sebastian Reichel <sre@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Paul Kocialkowski <contact@paulk.fr>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [flasher scripts PATCH] Remove Whistler support
+Date: Tue, 25 Apr 2017 10:48:11 -0600
+Message-ID: <fc286bb9-0500-1818-e96a-430e48b11cee@wwwdotorg.org>
+References: <20170413185819.2094-1-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170413185819.2094-1-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The status reported directly by the battery controller is not always
-reliable and should be corrected based on the current draw information.
+On 04/13/2017 12:58 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Whistler is an ancient Tegra 2 reference board. I may have been the only
+> person who ever used it with upstream software, and I've just recycled
+> the board hardware. Hence, it makes sense to remove support from software.
 
-This implements such a correction with a dedicated function, called
-where the supply status is retrieved.
-
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
----
- drivers/power/supply/sbs-battery.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
-index 3e7125c8e4d1..29c4e277abf1 100644
---- a/drivers/power/supply/sbs-battery.c
-+++ b/drivers/power/supply/sbs-battery.c
-@@ -295,6 +295,31 @@ static int sbs_write_word_data(struct i2c_client *client, u8 address,
- 	return 0;
- }
- 
-+static int sbs_status_correct(struct i2c_client *client, int *intval)
-+{
-+	int ret;
-+
-+	ret = sbs_read_word_data(client, sbs_data[REG_CURRENT].addr);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = (s16)ret;
-+
-+	/* Not drawing current means full (cannot be not charging) */
-+	if (ret == 0)
-+		*intval = POWER_SUPPLY_STATUS_FULL;
-+
-+	if (*intval == POWER_SUPPLY_STATUS_FULL) {
-+		/* Drawing or providing current when full */
-+		if (ret > 0)
-+			*intval = POWER_SUPPLY_STATUS_CHARGING;
-+		else if (ret < 0)
-+			*intval = POWER_SUPPLY_STATUS_DISCHARGING;
-+	}
-+
-+	return 0;
-+}
-+
- static int sbs_get_battery_presence_and_health(
- 	struct i2c_client *client, enum power_supply_property psp,
- 	union power_supply_propval *val)
-@@ -401,6 +426,8 @@ static int sbs_get_battery_property(struct i2c_client *client,
- 		else
- 			val->intval = POWER_SUPPLY_STATUS_CHARGING;
- 
-+		sbs_status_correct(client, &val->intval);
-+
- 		if (chip->poll_time == 0)
- 			chip->last_state = val->intval;
- 		else if (chip->last_state != val->intval) {
-@@ -721,6 +748,8 @@ static void sbs_delayed_work(struct work_struct *work)
- 	else
- 		ret = POWER_SUPPLY_STATUS_CHARGING;
- 
-+	sbs_status_correct(chip->client, &ret);
-+
- 	if (chip->last_state != ret) {
- 		chip->poll_time = 0;
- 		power_supply_changed(chip->power_supply);
--- 
-2.12.2
+Applied.
