@@ -1,77 +1,78 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 0/4] PM / Domains: Add support for explicit control of
- PM domains
-Date: Tue, 25 Apr 2017 12:13:27 +0100
-Message-ID: <d2e3ceaa-57e2-033d-ecd1-a3b2bd8ffa26@nvidia.com>
-References: <1490710443-27425-1-git-send-email-jonathanh@nvidia.com>
+Subject: Tegra baseline test results for v4.11-rc6
+Date: Tue, 25 Apr 2017 13:03:48 +0100
+Message-ID: <7ef3c6bd-0f47-4277-eff5-940af68c858f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1490710443-27425-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J . Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org, rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
-Cc: stanimir.varbanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.11-rc6.
+Logs and other details at:
 
-On 28/03/17 15:13, Jon Hunter wrote:
-> The current generic PM domain framework (GenDP) only allows a single
-> PM domain to be associated with a given device. There are several
-> use-cases for various system-on-chip devices where it is necessary for
-> a PM domain consumer to control more than one PM domain where the PM
-> domains:
-> i).  Do not conform to a parent-child relationship so are not nested
-> ii). May not be powered on and off at the same time so need independent
->      control.
-> 
-> The solution proposed in this RFC is to allow consumers to explictly
-> control PM domains, by getting a handle to a PM domain and explicitly
-> making calls to power on and off the PM domain. Note that referencing
-> counting is used to ensure that a PM domain shared between consumers
-> is not powered off incorrectly.
-> 
-> The Tegra124/210 XUSB subsystem (that consists of both host and device
-> controllers) is an example of a consumer that needs to control more than
-> one PM domain because the logic is partitioned across 3 PM domains which
-> are:
-> - XUSBA: Superspeed logic (for USB 3.0)
-> - XUSBB: Device controller
-> - XUSBC: Host controller
-> 
-> These power domains are not nested and can be powered-up and down
-> independently of one another. In practice different scenarios require
-> different combinations of the power domains, for example:
-> - Superspeed host: XUSBA and XUSBC
-> - Superspeed device: XUSBA and XUSBB
-> 
-> Although it could be possible to logically nest both the XUSBB and XUSBC
-> domains under the XUSBA, superspeed may not always be used/required and
-> so this would keep it on unnecessarily.
-> 
-> Given that Tegra uses device-tree for describing the hardware, it would
-> be ideal that the device-tree 'power-domains' property for generic PM
-> domains could be extended to allow more than one PM domain to be
-> specified. For example, define the following the Tegra210 xHCI device ...
-> 
-> 	usb@70090000 {
-> 		compatible = "nvidia,tegra210-xusb";
-> 		...
-> 		power-domains = <&pd_xusbhost>, <&pd_xusbss>;
-> 		power-domain-names = "host", "superspeed";
-> 	};
-> 
-> This RFC extends the generic PM domain framework to allow a device to
-> define more than one PM domain in the device-tree 'power-domains'
-> property. If there is more than one then the assumption is that these
-> PM domains will be controlled explicitly by the consumer and the device
-> will not be automatically bound to any PM domain.
+    https://nvtb.github.io//linux/test_v4.11-rc6/20170411053103/
 
-Any more comments/inputs on this? I can address Rajendra's feedback, but
-before I did I wanted to see if this is along the right lines or not?
 
-Cheers
-Jon
+Test summary
+------------
 
--- 
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.11-rc5 (a71c9a1c779f2499fb2afc0553e543f18aff6edf)):
+   text     data      bss    total  kernel
+  -2667     +952     -128    -1843  defconfig
+   -647        0        0     -647  multi_v7_defconfig
+   -791      +64        0     -727  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.11-rc5 (a71c9a1c779f2499fb2afc0553e543f18aff6edf))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+--
 nvpublic
