@@ -1,33 +1,44 @@
-From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Select appropriate DMA options for LPAE
-Date: Tue, 25 Apr 2017 00:59:46 +0200
-Message-ID: <20170424225946.19425-1-contact@paulk.fr>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH V3 4/4] soc/tegra: pmc: Use the new reset APIs to manage
+ reset controllers
+Date: Tue, 25 Apr 2017 09:45:48 +0530
+Message-ID: <afcddcbe-7086-2739-6de2-84f5c1d34374@codeaurora.org>
+References: <1492514488-27385-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1492514488-27385-5-git-send-email-vivek.gautam@codeaurora.org>
+ <e87a846b-4bbf-03cf-f3a6-99d5e468425c@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <e87a846b-4bbf-03cf-f3a6-99d5e468425c@nvidia.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, p.zabel@pengutronix.de, swarren@wwwdotorg.org, balbi@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, thierry.reding@gmail.com, gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This automatically selects options for zone DMA and 64 bit DMA addresses
-when LPAE is enabled on ARM Tegra platforms. These options are required
-for proper operation with LPAE enabled.
 
-Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
----
- arch/arm/mach-tegra/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 329f01c5b6f8..c8368d647741 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -13,5 +13,7 @@ menuconfig ARCH_TEGRA
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select RESET_CONTROLLER
- 	select SOC_BUS
-+	select ZONE_DMA if ARM_LPAE
-+	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
- 	help
- 	  This enables support for NVIDIA Tegra based systems.
+On 04/24/2017 06:15 PM, Jon Hunter wrote:
+> On 18/04/17 12:21, Vivek Gautam wrote:
+>> Make use of reset_control_array_*() set of APIs to manage
+>> an array of reset controllers available with the device.
+> Before we apply this patch, I need to check to see if the order of the
+> resets managed by the PMC driver matter. Today the order of the resets
+> is determined by the order they appear in the DT node and although the
+> new APIs work in the same way they do not guarantee this. So let me
+> check to see if we can any concerns about ordering here. Otherwise would
+> be nice to use these APIs.
+
+Right, that will be perfect.
+
+Best regards
+Vivek
+
+>
+> Cheers
+> Jon
+>
+
 -- 
-2.12.2
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
