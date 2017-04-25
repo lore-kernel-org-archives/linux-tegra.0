@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.11-rc7
-Date: Tue, 25 Apr 2017 13:05:03 +0100
-Message-ID: <22c53f1e-b862-2445-35b5-5c43c1dc8a2e@nvidia.com>
+Subject: Tegra baseline test results for v4.11-rc8
+Date: Tue, 25 Apr 2017 13:06:17 +0100
+Message-ID: <949551ea-4b73-f460-802f-3e585bee430a@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -11,10 +11,10 @@ To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29
 Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.11-rc7.
+Here are some basic Tegra test results for Linux v4.11-rc8.
 Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.11-rc7/20170416133103/
+    https://nvtb.github.io//linux/test_v4.11-rc8/20170423173102/
 
 
 Test summary
@@ -48,15 +48,15 @@ PM: System suspend: tegra_defconfig:
 
 
 vmlinux object size
-(delta in bytes from test_v4.11-rc6 (39da7c509acff13fc8cb12ec1bb20337c988ed36)):
+(delta in bytes from test_v4.11-rc7 (4f7d029b9bf009fbee76bb10c0c4351a1870d2f3)):
    text     data      bss    total  kernel
-  +7674     +560        0    +8234  defconfig
-  +3046        0        0    +3046  multi_v7_defconfig
-  +1378        0        0    +1378  tegra_defconfig
+   -268     +264        0       -4  defconfig
+   +896      +64        0     +960  multi_v7_defconfig
+   +428        0        0     +428  tegra_defconfig
 
 
 Boot-time memory difference
-(delta in bytes from test_v4.11-rc6 (39da7c509acff13fc8cb12ec1bb20337c988ed36))
+(delta in bytes from test_v4.11-rc7 (4f7d029b9bf009fbee76bb10c0c4351a1870d2f3))
     avail    rsrvd     high    freed                board              kconfig                  dtb
         .        .        .        .      qemu-vexpress64            defconfig           __internal
         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
