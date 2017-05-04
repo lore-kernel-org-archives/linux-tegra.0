@@ -1,96 +1,70 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH 0/4] PM / Domains: Add support for explicit control of
- PM domains
-Date: Thu, 4 May 2017 09:44:50 +0100
-Message-ID: <b1c74af3-1943-51ff-0bc9-009ca6c7f217@nvidia.com>
-References: <1490710443-27425-1-git-send-email-jonathanh@nvidia.com>
- <CAJZ5v0gMzN_zfC_2nnRtYFyFon3-_mnioQhNbDP0wsr91RnagA@mail.gmail.com>
- <ffe13074-9113-0a20-0fa6-76d0209dadfc@nvidia.com>
- <1832647.f77WMLkdQb@aspire.rjw.lan>
- <CAPDyKFokVKZfRAsEAB6ihx1FxW4JjarionyOwCATr3s+QW4aMg@mail.gmail.com>
- <b4e8fd34-e2f0-165d-aa22-32ba43a8dbed@nvidia.com>
- <CAPDyKFo-hfwbrY+AEMt0=fMshiT-BWvYDvGkKGqquTdowUvWHw@mail.gmail.com>
- <107242f1-de90-b8bb-bc2c-feaf014485aa@nvidia.com>
- <CAPDyKFqeAWoy-vfN89j8Yv1HTMpNqwcVk3XrTQoXH5JNrQ9Maw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFqeAWoy-vfN89j8Yv1HTMpNqwcVk3XrTQoXH5JNrQ9Maw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Rajendra Nayak <rnayak@codeaurora.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] PCI: tegra: Support MSI 64-bit addressing
+Date: Thu,  4 May 2017 22:10:31 +0200
+Message-ID: <20170504201032.32633-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On 03/05/17 18:12, Ulf Hansson wrote:
-> [...]
-> 
->>>>
->>>>> What is missing, is how a call to pm_runtime_get_sync() by a driver,
->>>>> can inform the ->start() callback about what exact power resource(s)
->>>>> it shall turn on, because it may not always be all of them. Similar
->>>>> problem exists for pm_runtime_put().
->>>>
->>>> Yes that is missing too, but I still don't see how you bind a device to
->>>> more than one power-domain :-(
->>>
->>> I think this is what Rafael wanted us avoid (because of the complexity
->>> involved). Instead the suggestion is to deal with this on top of the
->>> existing PM domain structure, as "power resources" instead. Unless I
->>> missed his point. :-)
->>>
->>> Then *my* point is: To be able to implement that, still only allowing
->>> one PM domain per device, we would anyway need a new layer in-between
->>> the PM domain (genpd) and the driver controlling the device. Simply
->>> because these two entities, needs to be able to exchange information
->>> about which "power resources" that shall be turned off/on, when the
->>> driver do pm_runtime_get|put().
->>
->> Right, but isn't this similar to what I was suggesting above in my
->> previous email?
-> 
-> Perhaps it was, apologize for my ignorance in that case.
+The MSI target address can reside beyond the 32-bit boundary on devices
+with more than 2 GiB of system memory. The PCI host bridge on Tegra can
+easily support 64-bit addresses, so make sure to pass the upper 32 bits
+of the target address to endpoints when allocating MSI entries.
 
-No problem, sometimes email is not the clearest medium (or maybe it is
-just the author/me who struggles ;-)
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/host/pci-tegra.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-> Then, isn't that quite what you already started hacking on in $subject
-> series? What's the new thing in your previous reply?
-
-Well this series just adds new APIs, but does not partition the
-framework into the two layers we discussed. So it seems we should
-partition the code into layers first, then add these new APIs.
-
-> However, I was under the impression that Rafael preferred another way
-> - but again I might have missed his point.
-> 
->>
->> I was proposing to have such a lower-layer by splitting the existing
->> genpd framework so the drivers would have the option of calling the
->> lower-level power control functions to look-up pm-domains and control
->> them directly from their rpm callbacks (if they need to). Same as we do
->> for clocks. This way you would not need to mess with the genpd ->start()
->> callback and leave it to the driver to handle itself as it knows what
->> needs to be done. This assumes that the device is never bound to the
->> pm-domain by the genpd core.
-> 
-> Yes, agree! To me this is the only solution what would really work.
-
-I agree! :-)
-
-> Perhaps Rafael can confirm that he is fine with a solution like this?
-
-Yes and Rafael, please can you also elaborate on what you meant by
-"allow genpd to use either a list of power resources or the on/off
-callbacks provided by itself to cover different use cases"?
-
-I would like to understand exactly what you meant by allowing genpd to
-use a list of power resources (ie. how you envisioned we could achieve
-this).
-
-Cheers
-Jon
-
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index ecf8b4f1bf05..e69f828a9ab2 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -235,6 +235,7 @@ struct tegra_msi {
+ 	struct irq_domain *domain;
+ 	unsigned long pages;
+ 	struct mutex lock;
++	u64 phys;
+ 	int irq;
+ };
+ 
+@@ -1468,9 +1469,8 @@ static int tegra_msi_setup_irq(struct msi_controller *chip,
+ 
+ 	irq_set_msi_desc(irq, desc);
+ 
+-	msg.address_lo = virt_to_phys((void *)msi->pages);
+-	/* 32 bit address only */
+-	msg.address_hi = 0;
++	msg.address_lo = lower_32_bits(msi->phys);
++	msg.address_hi = upper_32_bits(msi->phys);
+ 	msg.data = hwirq;
+ 
+ 	pci_write_msi_msg(irq, &msg);
+@@ -1519,7 +1519,6 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+ 	const struct tegra_pcie_soc *soc = pcie->soc;
+ 	struct tegra_msi *msi = &pcie->msi;
+ 	struct device *dev = pcie->dev;
+-	unsigned long base;
+ 	int err;
+ 	u32 reg;
+ 
+@@ -1553,10 +1552,10 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+ 
+ 	/* setup AFI/FPCI range */
+ 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
+-	base = virt_to_phys((void *)msi->pages);
++	msi->phys = virt_to_phys((void *)msi->pages);
+ 
+-	afi_writel(pcie, base >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
+-	afi_writel(pcie, base, AFI_MSI_AXI_BAR_ST);
++	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
++	afi_writel(pcie, msi->phys, AFI_MSI_AXI_BAR_ST);
+ 	/* this register is in 4K increments */
+ 	afi_writel(pcie, 1, AFI_MSI_BAR_SZ);
+ 
 -- 
-nvpublic
+2.12.0
