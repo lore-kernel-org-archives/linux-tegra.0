@@ -1,196 +1,302 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/3] sound: ASoC: tegra: Select tegra30 i2s and ahub for
- tegra124 SoC
-Date: Mon, 8 May 2017 09:58:22 -0600
-Message-ID: <6c308e93-7dda-96e1-1be5-64d9f9da6dfe@wwwdotorg.org>
-References: <20170418151159.31843-1-contact@paulk.fr>
- <d18b57d3-a44f-e44b-9bd5-526993dc91e4@wwwdotorg.org>
- <1492533513.3504.2.camel@paulk.fr>
- <41ef55f7-8f17-4ca3-4757-bfefb1fe8321@wwwdotorg.org>
- <1493046446.943.7.camel@paulk.fr>
- <fe76985c-ef66-9870-a616-203b54a93777@wwwdotorg.org>
- <1493059277.1111.1.camel@paulk.fr>
- <a29c4253-48de-7e61-dbc2-b90d68cfa696@wwwdotorg.org>
- <1494180748.13734.6.camel@paulk.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 12/12] gpio: Add Tegra186 support
+Date: Thu, 11 May 2017 10:30:03 +0200
+Message-ID: <CACRpkdbL6y7doZL1Km8B9TF8Dr86mW_+imp-YupLQPprLysKxQ@mail.gmail.com>
+References: <20170403160532.20282-1-thierry.reding@gmail.com>
+ <20170403160532.20282-13-thierry.reding@gmail.com> <CACRpkdaQacEqqW9Vdn7mtnZMH_VvL1B-35VFV=PcORwgtLz2eg@mail.gmail.com>
+ <20170413151944.GA27388@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1494180748.13734.6.camel-W9ppeneeCTY@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20170413151944.GA27388@ulmo.ba.sec>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/07/2017 12:12 PM, Paul Kocialkowski wrote:
-> Hi,
->
-> Le mardi 25 avril 2017 à 10:57 -0600, Stephen Warren a écrit :
->> On 04/24/2017 12:41 PM, Paul Kocialkowski wrote:
->>> Le lundi 24 avril 2017 à 09:35 -0600, Stephen Warren a écrit :
->>>> On 04/24/2017 09:07 AM, Paul Kocialkowski wrote:
->>>>> Le mercredi 19 avril 2017 à 16:00 -0600, Stephen Warren a écrit :
->>>>>> On 04/18/2017 10:38 AM, Paul Kocialkowski wrote:
->>>>>>> Le mardi 18 avril 2017 à 10:15 -0600, Stephen Warren a écrit :
->>>>>>>> On 04/18/2017 09:11 AM, Paul Kocialkowski wrote:
->>>>>>>>> This selects the tegra30 i2s and ahub controllers for the
->>>>>>>>> tegra124
->>>>>>>>> SoC.
->>>>>>>>> These are needed when building without ARCH_TEGRA_3x_SOC set.
->>>>>>>>> diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
->>>>>>>>> index efbe8d4c019e..bcd18d2cf7a7 100644
->>>>>>>>> --- a/sound/soc/tegra/Kconfig
->>>>>>>>> +++ b/sound/soc/tegra/Kconfig
->>>>>>>>> @@ -46,7 +46,7 @@ config SND_SOC_TEGRA20_SPDIF
->>>>>>>>>
->>>>>>>>>  config SND_SOC_TEGRA30_AHUB
->>>>>>>>>  	tristate
->>>>>>>>> -	depends on SND_SOC_TEGRA && ARCH_TEGRA_3x_SOC
->>>>>>>>> +	depends on SND_SOC_TEGRA && (ARCH_TEGRA_3x_SOC ||
->>>>>>>>> ARCH_TEGRA_124_SOC)
->>>>>>>>
->>>>>>>> Is this really a compile-time dependency?
->>>>>>>
->>>>>>> From a quick look at the code, I doubt this is really a build
->>>>>>> dependency.
->>>>>>>
->>>>>>>> If so, don't we need to add T210 and T186 entries into that ||
->>>>>>>> condition
->>>>>>>> too,
->>>>>>>> since we could be building a kernel with just T210/T186 support
->>>>>>>> and no
->>>>>>>> T124
->>>>>>>> support?
->>>>>>>
->>>>>>> In the spirit of this patch, adding entries for other tegra
->>>>>>> platforms
->>>>>>> would
->>>>>>> make
->>>>>>> sense. Would you prefer that we leave out the dependency from
->>>>>>> SND_SOC_TEGRA30_*
->>>>>>> and only select the right I2S driver to use in each codec driver?
->>>>>>>
->>>>>>> If not, we'd have to list all relevant platforms both in the
->>>>>>> I2S/AHUB
->>>>>>> drivers
->>>>>>> and in each codec's rules (which is not necessarily and issue, but
->>>>>>> there's
->>>>>>> no
->>>>>>> need to have artificial platform dependencies).
->>>>>>>
->>>>>>> What do you think?
->>>>>>
->>>>>> I think we should just remove most of these "depends on" since they're
->>>>>> mostly set up to reflect runtime requirements rather than build time
->>>>>> requirements. The only points I'd make are:
->>>>>
->>>>> I definitely agree we should do that for all the codec Kconfig options.
->>>>>
->>>>>> 1)
->>>>>>
->>>>>> Everything should "depends on SND_SOC_TEGRA" simply so the options
->>>>>> don't
->>>>>> show up and clutter menuconfig menus unless SND_SOC_TEGRA is enabled.
->>>>>
->>>>> Agreed.
->>>>>
->>>>>> 2)
->>>>>>
->>>>>> SND_SOC_TEGRA30_I2S does need the Tegra30 AHUB driver in order to
->>>>>> compile/link, since it directly calls functions in that driver. This
->>>>>> is
->>>>>> already handled by SND_SOC_TEGRA30_I2S doing "select
->>>>>> SND_SOC_TEGRA30_AHUB".
->>>>>
->>>>> Agreed.
->>>>>
->>>>>> 3)
->>>>>>
->>>>>> The machine drivers all do e.g. "select SND_SOC_TEGRA30_I2S if
->>>>>> ARCH_TEGRA_3x_SOC". This was an attempt to make the machine drivers
->>>>>> only
->>>>>> pull in the relevant drivers for the SoC(s) being compiled for. I'm
->>>>>> not
->>>>>> sure this still makes sense; this won't work on kernels that only
->>>>>> support T124/T210/T186 since ARCH_TEGRA_3x_SOC isn't enabled then.
->>>>>> Should we just remove all those and make sure the defconfigs are
->>>>>> updated
->>>>>> to make sure the relevant I2S/AHUB/SPDIF/AC97 drivers are explicitly
->>>>>> enabled? Perhaps we should default all the I2S/AHUB/SPDIF/AC97 to y
->>>>>> (which will only apply if SND_SOC_TEGRA is enabled)?
->>>>>
->>>>> I think it would be easier for everyone to just auto-select the machine
->>>>> drivers
->>>>> automatically based on the architecture (so we could have the list of
->>>>> ARCH_TEGRA_*_SOC here) when SND_SOC_TEGRA is selected.
->>>>
->>>> I don't think selecting the machine drivers is the correct approach,
->>>> since then they can't be disabled.
->>>>
->>>> Making certain machine drivers "default y if ARCH_TEGRA_nn_SOC" would
->>>> address that,
->>>
->>> That's right, my mistake. Let's take that as the solution I'm backing then.
->>>
->>>>  but still isn't very scalable since we need to go back and
->>>> edit the Kconfig every time we define a new SoC, in order to add that
->>>> SoC into the default statement.
->>>
->>> Well, that's what platform bringup is all about, isn't it? I think it makes
->>> a
->>> lot more sense to have to add a new platform once (and it's not like one
->>> will
->>> forget to look at the sound part when adding a new platform) rather than
->>> requiring users to hand-pick the option.
->>
->> Personally I'd expect all the Tegra machine drivers to be enabled in the
->> upstream defconfig files all the time, such that we don't need to make
->> the Kconfig options default y, nor have users manually turn the relevant
->> options on, at all.
->
-> I think I was previously mistaken about what the machine drivers are, so I got a
-> good occasion to find out about them an learn something new. Thanks!
->
-> Agreed regarding the machine drivers, they should indeed all be enabled in the
-> defconfig by default.
->
->>>>> Not only does this preserve existing configs (including external ones
->>>>> that
->>>>> aren't part of the kernel tree), it also clearly maps which machine
->>>>> driver
->>>>> to use for which SoC instead of having users do it by hand.
->>>>
->>>> The machine drivers aren't terribly tied to SoCs by design; most of them
->>>> would work on pretty much any SoC. They're only tied to SoCs as a
->>>> side-effect of a machine driver being tied to a certain CODEC, and
->>>> certain CODECS just by chance are only used (so far) on specific boards,
->>>> which have specific SoCs.
->>>
->>> I'm a bit confused: aren't the machine driver (i2s/ahub/spdif/ac97) tied to
->>> specific hardware blocks that are found in specific SoCs and not in others?
->>> I
->>> can see these blocks haven't evolved much across generations, but they're
->>> still
->>> either part of a specific SoC or not, aren't they?
->>>
->>> The compatible strings in the common SoC dts seem to indicate that only one
->>> of
->>> these blocks is found at a time.
->>
->> There are SoC-specific drivers for the components (Tegra20 I2S, Tegra30
->> I2S, etc.), but the *machine* drivers generally don't know anything
->> about that. DT instantiates the correct component drivers for the SoC,
->> and the machine driver just uses whatever it's linked to without caring
->> too-much/at-all about whether it's hooked to a Tegra20 I2S or a Tegra30
->> I2S device.
->
-> That makes sense now. Regarding the SoC-specific components, would you agree
-> with auto-selecting those based on ARCH_TEGRA_xx_SOC so that only the required
-> drivers are pulled-in? Otherwise, I'm also fine with explicitely enabling them
-> in the defconfig at this point.
+Sorry for taking so long before I get back to answering these important
+architecture questions. I am just overburdened by work in the merge
+window time frames. :(
 
-I believe we don't generally "select" Kconfig options that aren't 
-absolutely required for basic system operation, since we don't want to 
-select stuff that's optional. Enabling the options in defconfig seems 
-like the right approach, or perhaps "default y" (in which case anyone 
-who doesn't want them can simply turn them off).
+On Thu, Apr 13, 2017 at 5:19 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Thu, Apr 13, 2017 at 02:38:44PM +0200, Linus Walleij wrote:
+
+>> > +struct tegra_gpio {
+>> > +       struct gpio_chip gpio;
+>> > +       struct irq_chip intc;
+>> > +       unsigned int num_irq;
+>> > +       unsigned int *irq;
+>>
+>> So I find it a bit strange that the array of irq parents is still kept around
+>> when you add so much infrastructure. Could this not just go into the core
+>> so that is natively able to handle multiple parents cleanly?
+>
+> I did this on purpose because I'd like to avoid making this new
+> infrastructure into too much of a midlayer. The mechanism to parse
+> interrupts may depend on the driver. Perhaps a good middle ground
+> would be to provide generic helpers that will parse this, while
+> keeping the possibility to let the driver specify the list?
+
+I don't know honestly, the way I code is usually the most elegant
+solution pops out by itself when I work on the code. We have a bit
+of stuff in the gpiolib (I guess that is what you mean by the midlayer)
+for example the ability to mask off individual IRQ lines as
+non-requestable.
+
+I do not see a problem for gpiolib to keep a list of parents which may
+contain only one item, and special functions like
+gpiochip_set_chained_irqchip_multiparent() and
+gpiochip_set_nested_irqchip_multiparent() with
+gpiochip_set_chained_irqchip() just calling the former with
+a static inline passing a list of just one parent.
+
+And thus we would keep track of all parents inside of gpiolib.
+
+>> > +static int tegra186_gpio_of_xlate(struct gpio_chip *chip,
+>> > +                                 const struct of_phandle_args *spec,
+>> > +                                 u32 *flags)
+>> > +{
+>> > +       struct tegra_gpio *gpio = gpiochip_get_data(chip);
+>> > +       unsigned int port, pin, i, offset = 0;
+>> > +
+>> > +       if (WARN_ON(chip->of_gpio_n_cells < 2))
+>> > +               return -EINVAL;
+>> > +
+>> > +       if (WARN_ON(spec->args_count < chip->of_gpio_n_cells))
+>> > +               return -EINVAL;
+>> > +
+>> > +       port = spec->args[0] / 8;
+>> > +       pin = spec->args[0] % 8;
+>>
+>> Actually modular ports/banks is something we will also see again and
+>> have seen before. Maybe this should be a new core xlate function
+>> just taking some MOD argument.
+>
+> This xlate function uses driver-specific data to compute the hwirq
+> number of the specified GPIO. That's not something I think we can easily
+> turn into a generic helper, not without adding a lot more infrastructure
+> than we already have. One of the problems that I see with adding too
+> much infrastructure is that the core will become completely unwieldy
+> because it has to take care of too many special cases.
+
+I understand that concern.
+
+But the problem I have as a maintainer, and I speak from experience
+doing the job, is that maintaining the core is causing very little
+problems because it solves problems for a lot of drivers in one single
+spot.
+
+What is causing me problems is a lot of duplicated or "almost-the-same"
+code in a lot of drivers, making similar bugs pop out and clog my
+inbox with similar semantic (and valid) patches generated by cocinelle
+because now the bugs are all over the place instead of confined to
+the gpiolib core.
+
+I do not think parametrized xlate functions for 8, 16 and 32 bits of
+MOD on the arg, so that interrupt parent A, B, C is assigned
+depending on whether arg MOD [8, 16, 32] is 0, 1, 2 is very
+extraordinary. It more seems to be what can be expected from
+every chained driver with multiple IRQ parents, and thus
+reusable.
+
+As soon as it is used by more than one driver, it is a win for
+me.
+
+The compiler will not include it in the final zImage if there
+are no users, so it is not a footprint issue.
+
+>> > +static void tegra186_gpio_irq(struct irq_desc *desc)
+>> > +{
+>> > +       struct tegra_gpio *gpio = irq_desc_get_handler_data(desc);
+>> > +       struct irq_domain *domain = gpio->gpio.irq.domain;
+>> > +       struct irq_chip *chip = irq_desc_get_chip(desc);
+>> > +       unsigned int parent = irq_desc_get_irq(desc);
+>> > +       unsigned int i, offset = 0;
+>> > +
+>> > +       chained_irq_enter(chip, desc);
+>> > +
+>> > +       for (i = 0; i < gpio->soc->num_ports; i++) {
+>> > +               const struct tegra_gpio_port *port = &gpio->soc->ports[i];
+>> > +               void __iomem *base = gpio->base + port->offset;
+>> > +               unsigned int pin, irq;
+>> > +               unsigned long value;
+>> > +
+>> > +               /* skip ports that are not associated with this controller */
+>> > +               if (parent != gpio->irq[port->irq])
+>> > +                       goto skip;
+>>
+>> This parent-to-irq lookup I think the core should handle.
+>
+> Again, this is based heavily on data that is highly Tegra-specific. If
+> we wanted to support something like this in the core, we'd have to add
+> some generic version of struct tegra_gpio_port, which has the
+> disadvantage of making it more difficult to support for drivers that
+> have only a single parent interrupt.
+
+This concept:
+
+- The chip has multiple parents
+
+- The multiple parents correspond to multiple "ports" or actually registers,
+  that are n bits wide, and map 1:1 between a parent and a "port".
+
+Is nothing unique at all. I have seen it dozens of times and I see an
+increasing influx of driver doing exactly this.
+
+Normally my gut reaction is to have one driver instance per "port" so that
+each port is its own device, but several times driver writers convinced me
+that they need to have it inside a parent device (like a pin controller
+or so), and that instead complicates these functions.
+
+But I think they are pretty much all the same and something can be
+done to abstract this. I am thinking something like bitmaps that
+map an GPIO interrupt line back to its parent IRQ.
+
+We need to think it through and look at some examples.
+
+For example:
+bcm2835_gpio_irq_handler in bcm/pinctrl-bcm2835.c
+iproc_gpio_irq_handler in bcm/pinctrl-iproc-gpio.c
+adi_gpio_handle_pint_irq in pinctrl-adi2.c
+atlas7_gpio_handle_irq in sirf/pinctrl-atlas7.c
+bcm_kona_gpio_irq_handler in gpio-bcm-kona.c
+mx2_gpio_irq_handler in gpio-mxc.c
+tegra_gpio_irq_handler in gpio-tegra.c
+xlp_gpio_generic_handler in gpio-xlp.c
+zynq_gpio_irqhandler in gpio-zynq.c
+
+They all do some bank-to-parent "magic" in their interrupt handlers.
+I'm suspecting that even pcs_irq_handle() in
+pinctrl-single.c does something similar.
+
+I strongly suspect they could all use some simple bitmap,
+hashmap or similar to associate banks to parent IRQs.
+
+It's not like I'm asking you to upfront clean up this mess
+(because it is a mess) but if you invented something that generalized
+this for just say tegra186 and gpio-tegra that you work on,
+I'd be a happy cow. (And you get to decide what everyone
+else has to do to map children to parents... yeah I can attack
+patch those drivers after that.)
+
+>> > +       gpio->irq = devm_kcalloc(&pdev->dev, gpio->num_irq, sizeof(*gpio->irq),
+>> > +                                GFP_KERNEL);
+>> > +       if (!gpio->irq)
+>> > +               return -ENOMEM;
+>> > +
+>> > +       for (i = 0; i < gpio->num_irq; i++) {
+>> > +               err = platform_get_irq(pdev, i);
+>> > +               if (err < 0)
+>> > +                       return err;
+>> > +
+>> > +               gpio->irq[i] = err;
+>> > +       }
+>>
+>> So this array of parent IRQs I think should be stored in the core
+>> gpio irqchip, not here locally in the driver.
+>
+> Well, it's already stored in the struct gpio_irq_chip, but it is the
+> driver that allocates it, because the mechanism to construct it is
+> driver-specific, hence I prefer it to be in the driver to make it
+> explicit that it is the driver that owns it. That way the array of
+> interrupts stored in struct gpio_irq_chip can be defined as merely a
+> reference, so it is very clear that the core shouldn't touch it.
+
+It's fine if it is only a reference to an interrupt obtained with e.g.
+platform_get_irq() no problem with that. I am not expecting the core
+to *parse* IRQs, just keep track of them, and how they map to
+"banks".
+
+> In
+> fact I had thought about making it even more explicit by making the
+> struct gpio_irq_chip carry a const unsigned int * for these.
+
+That is a good idea.
+
+> If we only store it in the core, it becomes ambiguous who owns it.
+> Should the core be responsible for freeing it? How does the core decide
+> that it is responsible for managing it?
+
+I don't understand what you mean by "freeing it"?
+
+As those are mostly chained handler the drivers never e.g.
+request the IRQs in the first place, that is done by the consumers
+that just let the handler ripple down the chain.
+
+>> > +       for (i = 0, offset = 0; i < gpio->soc->num_ports; i++) {
+>> > +               const struct tegra_gpio_port *port = &gpio->soc->ports[i];
+>> > +               char *name;
+>> > +
+>> > +               for (j = 0; j < port->pins; j++) {
+>> > +                       name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL,
+>> > +                                             "P%s.%02x", port->name, j);
+>> > +                       if (!name)
+>> > +                               return -ENOMEM;
+>> > +
+>> > +                       names[offset + j] = name;
+>> > +               }
+>> > +
+>> > +               offset += port->pins;
+>> > +       }
+>>
+>> Interesting way of using the names array. This will override any names
+>> from the device tree I think, don't you want to use gpio-line-names = ""..
+>> in the device tree instead?
+>
+> I don't think this overrides any names provided in DT. The names are
+> picked up from this arry in gpiochip_set_desc_names(), which is called
+> before of_gpiochip_add() where the names are read from DT. So this will
+> effectively make the driver set default names for the pins, but allow
+> these names to be overridden by DT.
+
+Ah yeah I see. I coded that actually :D
+
+OK fine then, that is actually a design pattern we should encourage,
+it's very helpful to have default names and let the device tree override
+them if it can be more specific.
+
+> Putting these names into DT feels wrong because they can easily be
+> generated from the port and pin numbers.
+
+It's fine, keep it.
+
+> Like I said above, the mapping is highly specific to Tegra. The only way
+> to move this into the core is to provide even more infrastructure. I'm
+> not sure that would be wise at this point. Maybe that can be added at a
+> later point when we have more samples.
+
+We have those samples. Outlined above. gpio-tegra is one of them.
+
+> Similarly I think having the driver specify IRQ domain operations is
+> useful because it increases the flexibility to do what drivers need,
+> rather than restricting the drivers to what the midlayer defines. If we
+> wrap all of this into the core, we're likely going to face situations
+> where we either have to rework or add quirks to the core because some
+> drivers need some extra flexibility.
+
+We already have out-of-core handling with e.g. hierarchical irq domains.
+
+That is fine.
+
+But I feel that this driver is looking familiar to things I've seen before,
+and my grep operation above seems to confirm this.
+
+It is mapping IRQ sources in "banks" to parent IRQs, and
+that is being done all over the place, so we should generalize
+it.
+
+> There are two pieces to this: this series prepares the infrastructure to
+> deal with multiple parent interrupts better and uses that infrastructure
+> in the new Tegra driver. But it also keeps the driver-specific bits in
+> the driver. Certainly there's a possibility to refactor some of that
+> later on, but I think it's premature to do that right away. We'd need to
+> convert a slew of other drivers first to see if the same pattern appears
+> or if these are chip-specific after all.
+
+I kind of like the new struct and all. I just feel it doesn't add enough
+value unless we also deal with this bank-irq-to-parent mapping inside
+the core as well as part of this.
+
+Yours,
+Linus Walleij
