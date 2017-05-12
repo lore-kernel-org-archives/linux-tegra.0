@@ -1,27 +1,73 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/3] drm/tegra: Check size of a submitted command buffer
-Date: Fri, 12 May 2017 22:14:53 +0300
-Message-ID: <1ce8aacd-f183-259b-bb1b-b9ff39584f80@gmail.com>
-References: <20170512190212.17798-1-digetx@gmail.com>
- <CABPQNSa8d+ZUpNFiLFdNhnYiQ+dE9=0GQdouCWxX=6C9je9zcw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2] drm/tegra: Check size of a submitted command buffer
+Date: Fri, 12 May 2017 22:29:03 +0300
+Message-ID: <20170512192903.25491-1-digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CABPQNSa8d+ZUpNFiLFdNhnYiQ+dE9=0GQdouCWxX=6C9je9zcw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12.05.2017 22:06, Erik Faye-Lund wrote:
-> On Fri, May 12, 2017 at 9:02 PM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> +               if (cmdbuf.words * 4 > gem->size) {
-> 
-> Shouldn't this be "cmdbuf.offset + cmdbuf.words * 4 > gem->size"?
-> 
+If command buffer claims a number of words that is higher than its BO can
+fit and a relocation lays past the BO, a kernel OOPS will be fired on that
+relocation address patching. This was triggered by an opentegra Xorg driver
+that erroneously pushed too many commands to the pushbuf.
 
-Seems yes, good catch. Thank you :)
+[   46.829393] Unable to handle kernel paging request at virtual address f09b2000
+...
+[<c04a3ba4>] (host1x_job_pin) from [<c04dfcd0>] (tegra_drm_submit+0x474/0x510)
+[<c04dfcd0>] (tegra_drm_submit) from [<c04deea0>] (tegra_submit+0x50/0x6c)
+[<c04deea0>] (tegra_submit) from [<c04c07c0>] (drm_ioctl+0x1e4/0x3ec)
+[<c04c07c0>] (drm_ioctl) from [<c02541a0>] (do_vfs_ioctl+0x9c/0x8e4)
+[<c02541a0>] (do_vfs_ioctl) from [<c0254a1c>] (SyS_ioctl+0x34/0x5c)
+[<c0254a1c>] (SyS_ioctl) from [<c0107640>] (ret_fast_syscall+0x0/0x3c)
 
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+
+v2: Take into account the cmdbuf.offset
+
+ drivers/gpu/drm/tegra/drm.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 732c8d98044f..9ad4ac7c08d1 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -361,20 +361,30 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 
+ 	while (num_cmdbufs) {
+ 		struct drm_tegra_cmdbuf cmdbuf;
+-		struct host1x_bo *bo;
++		struct drm_gem_object *gem;
++		struct tegra_bo *bo;
+ 
+ 		if (copy_from_user(&cmdbuf, cmdbufs, sizeof(cmdbuf))) {
+ 			err = -EFAULT;
+ 			goto fail;
+ 		}
+ 
+-		bo = host1x_bo_lookup(file, cmdbuf.handle);
+-		if (!bo) {
++		gem = drm_gem_object_lookup(file, cmdbuf.handle);
++		if (!gem) {
+ 			err = -ENOENT;
+ 			goto fail;
+ 		}
+ 
+-		host1x_job_add_gather(job, bo, cmdbuf.words, cmdbuf.offset);
++		drm_gem_object_unreference_unlocked(gem);
++
++		if (cmdbuf.offset + cmdbuf.words * 4 > gem->size) {
++			err = -EINVAL;
++			goto fail;
++		}
++
++		bo = to_tegra_bo(gem);
++		host1x_job_add_gather(job, &bo->base,
++				      cmdbuf.words, cmdbuf.offset);
+ 		num_cmdbufs--;
+ 		cmdbufs++;
+ 	}
 -- 
-Dmitry
+2.12.2
