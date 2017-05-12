@@ -1,67 +1,27 @@
-From: Erik Faye-Lund <kusmabite@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH 3/3] drm/tegra: Check size of a submitted command buffer
-Date: Fri, 12 May 2017 21:06:27 +0200
-Message-ID: <CABPQNSa8d+ZUpNFiLFdNhnYiQ+dE9=0GQdouCWxX=6C9je9zcw@mail.gmail.com>
+Date: Fri, 12 May 2017 22:14:53 +0300
+Message-ID: <1ce8aacd-f183-259b-bb1b-b9ff39584f80@gmail.com>
 References: <20170512190212.17798-1-digetx@gmail.com>
-Reply-To: kusmabite@gmail.com
+ <CABPQNSa8d+ZUpNFiLFdNhnYiQ+dE9=0GQdouCWxX=6C9je9zcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170512190212.17798-1-digetx@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CABPQNSa8d+ZUpNFiLFdNhnYiQ+dE9=0GQdouCWxX=6C9je9zcw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBNYXkgMTIsIDIwMTcgYXQgOTowMiBQTSwgRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhA
-Z21haWwuY29tPiB3cm90ZToKPiBJZiBjb21tYW5kIGJ1ZmZlciBjbGFpbXMgYSBudW1iZXIgb2Yg
-d29yZHMgdGhhdCBpcyBoaWdoZXIgdGhhbiBpdHMgQk8gY2FuCj4gZml0IGFuZCBhIHJlbG9jYXRp
-b24gbGF5cyBwYXN0IHRoZSBCTywgYSBrZXJuZWwgT09QUyB3aWxsIGJlIGZpcmVkIG9uIHRoYXQK
-PiByZWxvY2F0aW9uIGFkZHJlc3MgcGF0Y2hpbmcuIFRoaXMgd2FzIHRyaWdnZXJlZCBieSBhbiBv
-cGVudGVncmEgWG9yZyBkcml2ZXIKPiB0aGF0IGVycm9uZW91c2x5IHB1c2hlZCB0b28gbWFueSBj
-b21tYW5kcyB0byB0aGUgcHVzaGJ1Zi4KPgo+IFsgICA0Ni44MjkzOTNdIFVuYWJsZSB0byBoYW5k
-bGUga2VybmVsIHBhZ2luZyByZXF1ZXN0IGF0IHZpcnR1YWwgYWRkcmVzcyBmMDliMjAwMAo+IC4u
-Lgo+IFs8YzA0YTNiYTQ+XSAoaG9zdDF4X2pvYl9waW4pIGZyb20gWzxjMDRkZmNkMD5dICh0ZWdy
-YV9kcm1fc3VibWl0KzB4NDc0LzB4NTEwKQo+IFs8YzA0ZGZjZDA+XSAodGVncmFfZHJtX3N1Ym1p
-dCkgZnJvbSBbPGMwNGRlZWEwPl0gKHRlZ3JhX3N1Ym1pdCsweDUwLzB4NmMpCj4gWzxjMDRkZWVh
-MD5dICh0ZWdyYV9zdWJtaXQpIGZyb20gWzxjMDRjMDdjMD5dIChkcm1faW9jdGwrMHgxZTQvMHgz
-ZWMpCj4gWzxjMDRjMDdjMD5dIChkcm1faW9jdGwpIGZyb20gWzxjMDI1NDFhMD5dIChkb192ZnNf
-aW9jdGwrMHg5Yy8weDhlNCkKPiBbPGMwMjU0MWEwPl0gKGRvX3Zmc19pb2N0bCkgZnJvbSBbPGMw
-MjU0YTFjPl0gKFN5U19pb2N0bCsweDM0LzB4NWMpCj4gWzxjMDI1NGExYz5dIChTeVNfaW9jdGwp
-IGZyb20gWzxjMDEwNzY0MD5dIChyZXRfZmFzdF9zeXNjYWxsKzB4MC8weDNjKQo+Cj4gU2lnbmVk
-LW9mZi1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgo+IC0tLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgfCAxOCArKysrKysrKysrKysrKy0tLS0KPiAgMSBmaWxl
-IGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
-bS5jCj4gaW5kZXggNzMyYzhkOTgwNDRmLi5lOWM3NGE3NzgwZTcgMTAwNjQ0Cj4gLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
-bS5jCj4gQEAgLTM2MSwyMCArMzYxLDMwIEBAIGludCB0ZWdyYV9kcm1fc3VibWl0KHN0cnVjdCB0
-ZWdyYV9kcm1fY29udGV4dCAqY29udGV4dCwKPgo+ICAgICAgICAgd2hpbGUgKG51bV9jbWRidWZz
-KSB7Cj4gICAgICAgICAgICAgICAgIHN0cnVjdCBkcm1fdGVncmFfY21kYnVmIGNtZGJ1ZjsKPiAt
-ICAgICAgICAgICAgICAgc3RydWN0IGhvc3QxeF9ibyAqYm87Cj4gKyAgICAgICAgICAgICAgIHN0
-cnVjdCBkcm1fZ2VtX29iamVjdCAqZ2VtOwo+ICsgICAgICAgICAgICAgICBzdHJ1Y3QgdGVncmFf
-Ym8gKmJvOwo+Cj4gICAgICAgICAgICAgICAgIGlmIChjb3B5X2Zyb21fdXNlcigmY21kYnVmLCBj
-bWRidWZzLCBzaXplb2YoY21kYnVmKSkpIHsKPiAgICAgICAgICAgICAgICAgICAgICAgICBlcnIg
-PSAtRUZBVUxUOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZmFpbDsKPiAgICAgICAg
-ICAgICAgICAgfQo+Cj4gLSAgICAgICAgICAgICAgIGJvID0gaG9zdDF4X2JvX2xvb2t1cChmaWxl
-LCBjbWRidWYuaGFuZGxlKTsKPiAtICAgICAgICAgICAgICAgaWYgKCFibykgewo+ICsgICAgICAg
-ICAgICAgICBnZW0gPSBkcm1fZ2VtX29iamVjdF9sb29rdXAoZmlsZSwgY21kYnVmLmhhbmRsZSk7
-Cj4gKyAgICAgICAgICAgICAgIGlmICghZ2VtKSB7Cj4gICAgICAgICAgICAgICAgICAgICAgICAg
-ZXJyID0gLUVOT0VOVDsKPiAgICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGZhaWw7Cj4gICAg
-ICAgICAgICAgICAgIH0KPgo+IC0gICAgICAgICAgICAgICBob3N0MXhfam9iX2FkZF9nYXRoZXIo
-am9iLCBibywgY21kYnVmLndvcmRzLCBjbWRidWYub2Zmc2V0KTsKPiArICAgICAgICAgICAgICAg
-ZHJtX2dlbV9vYmplY3RfdW5yZWZlcmVuY2VfdW5sb2NrZWQoZ2VtKTsKPiArCj4gKyAgICAgICAg
-ICAgICAgIGlmIChjbWRidWYud29yZHMgKiA0ID4gZ2VtLT5zaXplKSB7CgpTaG91bGRuJ3QgdGhp
-cyBiZSAiY21kYnVmLm9mZnNldCArIGNtZGJ1Zi53b3JkcyAqIDQgPiBnZW0tPnNpemUiPwpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 12.05.2017 22:06, Erik Faye-Lund wrote:
+> On Fri, May 12, 2017 at 9:02 PM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> +               if (cmdbuf.words * 4 > gem->size) {
+> 
+> Shouldn't this be "cmdbuf.offset + cmdbuf.words * 4 > gem->size"?
+> 
+
+Seems yes, good catch. Thank you :)
+
+-- 
+Dmitry
