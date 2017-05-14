@@ -1,87 +1,45 @@
 From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 1/3] drm/tegra: Fix lockup on a use of staging API
-Date: Sun, 14 May 2017 14:33:03 +0300
-Message-ID: <e0d3210f-7b87-0c51-51f6-4cadf0dca34d@kapsi.fi>
+Subject: Re: [PATCH 2/3] drm/tegra: Correct idr_alloc() minimum id
+Date: Sun, 14 May 2017 14:53:46 +0300
+Message-ID: <b30acd8a-db8c-f43c-7c40-0064444466a0@kapsi.fi>
 References: <20170512190044.17541-1-digetx@gmail.com>
+ <20170512190044.17541-2-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170512190044.17541-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20170512190044.17541-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
 On 05/12/2017 10:00 PM, Dmitry Osipenko wrote:
-> Commit bdd2f9cd ("Don't leak kernel pointer to userspace") added a mutex
-> around staging IOCTL's, some of those mutexes are taken twice.
+> The start = 0 is invalid and causes weird CDMA channel timeouts, presumably
+> some memory misuse/corruption is going on.
+
+What makes you think start = 0 is invalid? I can't see anything pointing 
+to that in the idr code and there are many users in the kernel passing 0 
+as start.
+
 >
 > Fixes: bdd2f9cd10eb ("drm/tegra: Don't leak kernel pointer to userspace")
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/gpu/drm/tegra/drm.c | 20 ++++----------------
->  1 file changed, 4 insertions(+), 16 deletions(-)
+>  drivers/gpu/drm/tegra/drm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index ab2dfd4e4bd9..768750226452 100644
+> index 768750226452..732c8d98044f 100644
 > --- a/drivers/gpu/drm/tegra/drm.c
 > +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -430,18 +430,6 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+> @@ -518,7 +518,7 @@ static int tegra_client_open(struct tegra_drm_file *fpriv,
+>  	if (err < 0)
+>  		return err;
 >
->
->  #ifdef CONFIG_DRM_TEGRA_STAGING
-> -static struct tegra_drm_context *
-> -tegra_drm_file_get_context(struct tegra_drm_file *file, u32 id)
-> -{
-> -	struct tegra_drm_context *context;
-> -
-> -	mutex_lock(&file->lock);
-> -	context = idr_find(&file->contexts, id);
-> -	mutex_unlock(&file->lock);
-> -
-> -	return context;
-> -}
-> -
->  static int tegra_gem_create(struct drm_device *drm, void *data,
->  			    struct drm_file *file)
->  {
-> @@ -585,7 +573,7 @@ static int tegra_close_channel(struct drm_device *drm, void *data,
->
->  	mutex_lock(&fpriv->lock);
->
-> -	context = tegra_drm_file_get_context(fpriv, args->context);
-> +	context = idr_find(&fpriv->contexts, args->context);
->  	if (!context) {
->  		err = -EINVAL;
->  		goto unlock;
-> @@ -610,7 +598,7 @@ static int tegra_get_syncpt(struct drm_device *drm, void *data,
->
->  	mutex_lock(&fpriv->lock);
->
-> -	context = tegra_drm_file_get_context(fpriv, args->context);
-> +	context = idr_find(&fpriv->contexts, args->context);
->  	if (!context) {
->  		err = -ENODEV;
->  		goto unlock;
-> @@ -639,7 +627,7 @@ static int tegra_submit(struct drm_device *drm, void *data,
->
->  	mutex_lock(&fpriv->lock);
->
-> -	context = tegra_drm_file_get_context(fpriv, args->context);
-> +	context = idr_find(&fpriv->contexts, args->context);
->  	if (!context) {
->  		err = -ENODEV;
->  		goto unlock;
-> @@ -664,7 +652,7 @@ static int tegra_get_syncpt_base(struct drm_device *drm, void *data,
->
->  	mutex_lock(&fpriv->lock);
->
-> -	context = tegra_drm_file_get_context(fpriv, args->context);
-> +	context = idr_find(&fpriv->contexts, args->context);
->  	if (!context) {
->  		err = -ENODEV;
->  		goto unlock;
+> -	err = idr_alloc(&fpriv->contexts, context, 0, 0, GFP_KERNEL);
+> +	err = idr_alloc(&fpriv->contexts, context, 1, 0, GFP_KERNEL);
+>  	if (err < 0) {
+>  		client->ops->close_channel(context);
+>  		return err;
 >
