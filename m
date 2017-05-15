@@ -1,34 +1,48 @@
-From: Erik Faye-Lund <kusmabite@gmail.com>
-Subject: Re: [PATCH] gpu: host1x: Forbid RESTART opcode in the firewall
-Date: Mon, 15 May 2017 14:06:12 +0200
-Message-ID: <CABPQNSY0Yns8B9Uj11kfpdRWyxPe_mi35WCKsntRqUGizYbX9A@mail.gmail.com>
-References: <20170515120215.28273-1-digetx@gmail.com>
-Reply-To: kusmabite@gmail.com
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2] pwm: tegra: Set maximum pwm clock source per SoC tapeout
+Date: Mon, 15 May 2017 20:47:16 +0530
+Message-ID: <5919C67C.8070006@nvidia.com>
+References: <1493733937-15822-1-git-send-email-ldewangan@nvidia.com> <908ed0dc-2a75-4348-357c-191fa7348974@nvidia.com> <5908C555.7090204@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170515120215.28273-1-digetx@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mikko Perttunen <cyndis@kapsi.fi>, DRI Development <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5908C555.7090204-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBNYXkgMTUsIDIwMTcgYXQgMjowMiBQTSwgRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhA
-Z21haWwuY29tPiB3cm90ZToKPiBUaGUgUkVTVEFSVCBvcGNvZGUgdGVybWluYXRlcyB0aGUgZ2F0
-aGVyIGFuZCByZXN0YXJ0cyB0aGUgQ0RNQSBmZXRjaCBmcm9tCj4gYSBzcGVjaWZpZWQgd29yZCA8
-PCAyIHJlbGF0aXZlIHRvIHRoZSBDRE1BIHN0YXJ0IGFkZHJlc3MuIFRoYXQgc2hvdWxkbid0Cj4g
-YmUgYWxsb3dlZCB0byBiZSBkb25lIGJ5IHVzZXJzcGFjZS4KPgo+IFNpZ25lZC1vZmYtYnk6IERt
-aXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KCk91dGNoLCB5ZWFoLgoKUmV2aWV3ZWQt
-Ynk6IEVyaWsgRmF5ZS1MdW5kIDxrdXNtYWJpdGVAZ21haWwuY29tPgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+On Tuesday 02 May 2017 11:13 PM, Laxman Dewangan wrote:
+>
+> On Tuesday 02 May 2017 08:53 PM, Jon Hunter wrote:
+>> On 02/05/17 15:05, Laxman Dewangan wrote:
+>>> The PWM hardware IP is taped-out with different maximum frequency
+>>> on different SoCs.
+>>>
+>>>  From HW team:
+>>>     Before Tegra186, it is 38.4MHz.
+>>>     In Tegra186, it is 102MHz.
+>>>
+>>> Add support to limit the clock source frequency to the maximum IP
+>>> supported frequency. Provide these values via SoC chipdata.
+>>>
+>>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> ---
+>>> Changes from V1:
+>>> - Set the 48MHz maximum frequency for Tegra210 and earlier.
+>> I think that your changelog needs to be updated, because it still says
+>> 38.4MHz and not 48MHz.
+>>
+>
+> Oops, thanks for pointing.
+>
+> Thierry,
+> Do I need to recycle the patch or can be corrected when applying?
+> If there is any further review comment in code then I will recycle and 
+> correct it.
+
+Thierry,
+Can you please review?
