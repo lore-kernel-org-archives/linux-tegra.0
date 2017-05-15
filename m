@@ -1,48 +1,24 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2] pwm: tegra: Set maximum pwm clock source per SoC tapeout
-Date: Mon, 15 May 2017 20:47:16 +0530
-Message-ID: <5919C67C.8070006@nvidia.com>
-References: <1493733937-15822-1-git-send-email-ldewangan@nvidia.com> <908ed0dc-2a75-4348-357c-191fa7348974@nvidia.com> <5908C555.7090204@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: remove Whistler support
+Date: Mon, 15 May 2017 10:25:06 -0600
+Message-ID: <dc541285-7868-d0c6-4917-fa1cafc66c00@wwwdotorg.org>
+References: <20170413185559.1939-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5908C555.7090204-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20170413185559.1939-1-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 04/13/2017 12:55 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Whistler is an ancient Tegra 2 reference board. I may have been the only
+> person who ever used it with upstream software, and I've just recycled
+> the board hardware. Hence, it makes sense to remove support from software.
 
-On Tuesday 02 May 2017 11:13 PM, Laxman Dewangan wrote:
->
-> On Tuesday 02 May 2017 08:53 PM, Jon Hunter wrote:
->> On 02/05/17 15:05, Laxman Dewangan wrote:
->>> The PWM hardware IP is taped-out with different maximum frequency
->>> on different SoCs.
->>>
->>>  From HW team:
->>>     Before Tegra186, it is 38.4MHz.
->>>     In Tegra186, it is 102MHz.
->>>
->>> Add support to limit the clock source frequency to the maximum IP
->>> supported frequency. Provide these values via SoC chipdata.
->>>
->>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> ---
->>> Changes from V1:
->>> - Set the 48MHz maximum frequency for Tegra210 and earlier.
->> I think that your changelog needs to be updated, because it still says
->> 38.4MHz and not 48MHz.
->>
->
-> Oops, thanks for pointing.
->
-> Thierry,
-> Do I need to recycle the patch or can be corrected when applying?
-> If there is any further review comment in code then I will recycle and 
-> correct it.
-
-Thierry,
-Can you please review?
+Thierry, now that the merge window is closed, does this series look 
+good? Thanks.
