@@ -1,76 +1,33 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.12-rc1
-Date: Mon, 15 May 2017 09:25:54 +0100
-Message-ID: <3c353038-d001-4560-4185-5d570a7c0839@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] gpu: host1x: Forbid RESTART opcode in the firewall
+Date: Mon, 15 May 2017 15:02:15 +0300
+Message-ID: <20170515120215.28273-1-digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.12-rc1.
-Logs and other details at:
+The RESTART opcode terminates the gather and restarts the CDMA fetch from
+a specified word << 2 relative to the CDMA start address. That shouldn't
+be allowed to be done by userspace.
 
-    https://nvtb.github.io//linux/test_v4.12-rc1/20170513133103/
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/gpu/host1x/job.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.11 (a351e9b9fc24e982ec2f0e76379a49826036da12)):
-   text     data      bss    total  kernel
-+123259  +182072    +9736  +315067  defconfig
-+665814  +536544  -129824  +1072534 multi_v7_defconfig
-+1063940  +609176   +2560  +1675676 tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.11 (a351e9b9fc24e982ec2f0e76379a49826036da12))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-    -328k     328k        .        .      qemu-vexpress64            defconfig           __internal
-    -232k     232k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-   -1436k    1436k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-    -232k     232k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-   -1436k    1436k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-    -232k     232k        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-   -1436k    1436k        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-    -224k     224k        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-   -1428k    1428k        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-    -344k     344k        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-     736k    -736k        .        .       tegra210-smaug            defconfig       tegra210-smaug
-    -232k     232k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-   -1436k    1436k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
---
-nvpublic
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index 8f0d43b8f9a6..d648748b3e74 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -493,7 +493,6 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
+ 				goto out;
+ 			break;
+ 		case 4:
+-		case 5:
+ 		case 14:
+ 			break;
+ 		default:
+-- 
+2.13.0
