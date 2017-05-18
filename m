@@ -1,57 +1,69 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: Refactor/fix channel allocation code
-Date: Thu, 18 May 2017 15:07:04 +0300
-Message-ID: <bd0cb68c-6e74-401c-f091-c98e7349137a@gmail.com>
-References: <20170320184402.32723-1-mperttunen@nvidia.com>
- <71538e6d-f8f5-06e0-ca4e-42c7f33acacc@gmail.com>
- <47f76f18-9940-ec07-0a71-1e53dd8dd08e@kapsi.fi>
+From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH] gpu: host1x: select IOMMU_IOVA
+Date: Thu, 18 May 2017 11:05:20 -0400
+Message-ID: <20170518150519.67fnvefwyfwsvkly@art_vandelay>
+References: <20170419182449.885312-1-arnd@arndb.de>
+ <a94db66f-4e81-396f-58f4-583dd64055ca@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <47f76f18-9940-ec07-0a71-1e53dd8dd08e-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <a94db66f-4e81-396f-58f4-583dd64055ca-/1wQRMveznE@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 18.05.2017 14:55, Mikko Perttunen wrote:
-> On 18.05.2017 14:42, Dmitry Osipenko wrote:
->> On 20.03.2017 21:44, Mikko Perttunen wrote:
->>> ...
->>>  struct host1x_channel *host1x_channel_request(struct device *dev)
->>>  {
->>>      struct host1x *host = dev_get_drvdata(dev->parent);
->>> +    struct host1x_channel_list *chlist = &host->channel_list;
->>>      unsigned int max_channels = host->info->nb_channels;
->>>      struct host1x_channel *channel = NULL;
->>> -    unsigned long index;
->>> +    unsigned int index;
->>>      int err;
->>>
->>> -    mutex_lock(&host->chlist_mutex);
->>> +    down(&chlist->alloc_sema);
->>> +
->>
->> It's a bit hard to follow lockings in the code, could you please explain why
->> you've added this semaphore? What problem it solves?
+On Thu, Apr 20, 2017 at 09:47:35AM +0300, Mikko Perttunen wrote:
+> Ah, had to forget something :)
 > 
-> Sure. The role of the semaphore is to allow the caller to sleep waiting for a
-> free channel, and also to be sure that a channel is available once the down()
-> call finishes. Currently the channel allocation model is such that each unit
-> allocates a single channel for itself, in which case this is not useful, but
-> with later chips with more available channels we can move to a model where a
-> channel is allocated for each userspace client. In this case we can allow the
-> application to sleep if there are no available channels.
-> 
-> Of course, there is also the possibility of just returning -EBUSY if there are
-> no channels - that's probably fine too..
-> 
+> Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Currently, the host1x_channel_request() is only invoked during the drivers probe
-routine, it has nothing to do with userspace. I'd suggest to drop that semaphore
-from the patch since it's unrelated to the current channel allocation model.
+Applied to -misc-fixes, thank you
+
+Sean
+
+
+> 
+> On 19.04.2017 21:24, Arnd Bergmann wrote:
+> > When IOMMU_IOVA is not built-in but host1x is, we get a link error:
+> > 
+> > drivers/gpu/host1x/dev.o: In function `host1x_remove':
+> > dev.c:(.text.host1x_remove+0x50): undefined reference to `put_iova_domain'
+> > drivers/gpu/host1x/dev.o: In function `host1x_probe':
+> > dev.c:(.text.host1x_probe+0x31c): undefined reference to `init_iova_domain'
+> > dev.c:(.text.host1x_probe+0x38c): undefined reference to `put_iova_domain'
+> > drivers/gpu/host1x/cdma.o: In function `host1x_cdma_init':
+> > cdma.c:(.text.host1x_cdma_init+0x238): undefined reference to `alloc_iova'
+> > cdma.c:(.text.host1x_cdma_init+0x2c0): undefined reference to `__free_iova'
+> > drivers/gpu/host1x/cdma.o: In function `host1x_cdma_deinit':
+> > cdma.c:(.text.host1x_cdma_deinit+0xb0): undefined reference to `free_iova'
+> > 
+> > This adds the same select statement that we have for drm_tegra.
+> > 
+> > Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
+> > Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> > ---
+> >  drivers/gpu/host1x/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+> > index b2fd029d67b3..91916326957f 100644
+> > --- a/drivers/gpu/host1x/Kconfig
+> > +++ b/drivers/gpu/host1x/Kconfig
+> > @@ -1,6 +1,7 @@
+> >  config TEGRA_HOST1X
+> >  	tristate "NVIDIA Tegra host1x driver"
+> >  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
+> > +	select IOMMU_IOVA if IOMMU_SUPPORT
+> >  	help
+> >  	  Driver for the NVIDIA Tegra host1x hardware.
+> > 
+> > 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 -- 
-Dmitry
+Sean Paul, Software Engineer, Google / Chromium OS
