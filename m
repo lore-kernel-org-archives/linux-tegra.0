@@ -1,99 +1,169 @@
 From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v4 3/4] usb: dwc3: of-simple: Add support to get resets for the device
-Date: Mon, 22 May 2017 16:53:26 +0530
-Message-ID: <1495452207-6129-4-git-send-email-vivek.gautam@codeaurora.org>
+Subject: [PATCH v4 4/4] soc/tegra: pmc: Use the new reset APIs to manage reset controllers
+Date: Mon, 22 May 2017 16:53:27 +0530
+Message-ID: <1495452207-6129-5-git-send-email-vivek.gautam@codeaurora.org>
 References: <1495452207-6129-1-git-send-email-vivek.gautam@codeaurora.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1495452207-6129-1-git-send-email-vivek.gautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: p.zabel@pengutronix.de, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, jonathanh@nvidia.com, balbi@kernel.org, gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, jonathanh@nvidia.com, balbi@kernel.org, gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support to get a list of resets available for the device.
-These resets must be kept de-asserted until the device is
-in use.
+Make use of reset_control_array_*() set of APIs to manage
+an array of reset controllers available with the device.
 
-Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>
 Cc: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 ---
- drivers/usb/dwc3/dwc3-of-simple.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ drivers/soc/tegra/pmc.c | 91 +++++++++++++++++--------------------------------
+ 1 file changed, 31 insertions(+), 60 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-index a9bac09d3750..463b744d6688 100644
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -29,11 +29,13 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- 
- struct dwc3_of_simple {
- 	struct device		*dev;
- 	struct clk		**clks;
- 	int			num_clocks;
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index e233dd5dcab3..668f5d3d3635 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -124,8 +124,8 @@ struct tegra_powergate {
+ 	unsigned int id;
+ 	struct clk **clks;
+ 	unsigned int num_clks;
+-	struct reset_control **resets;
+-	unsigned int num_resets;
++	struct reset_control *reset;
 +	struct reset_control_array *resets;
  };
  
- static int dwc3_of_simple_clk_init(struct dwc3_of_simple *simple, int count)
-@@ -96,9 +98,20 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, simple);
- 	simple->dev = dev;
- 
-+	simple->resets = of_reset_control_array_get_optional_exclusive(np);
-+	if (IS_ERR(simple->resets)) {
-+		ret = PTR_ERR(simple->resets);
-+		dev_err(dev, "failed to get device resets, err=%d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = reset_control_array_deassert(simple->resets);
-+	if (ret)
-+		goto err_resetc_put;
-+
- 	ret = dwc3_of_simple_clk_init(simple, of_clk_get_parent_count(np));
- 	if (ret)
--		return ret;
-+		goto err_resetc_assert;
- 
- 	ret = of_platform_populate(np, NULL, NULL, dev);
- 	if (ret) {
-@@ -107,7 +120,7 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 			clk_put(simple->clks[i]);
- 		}
- 
--		return ret;
-+		goto err_resetc_assert;
- 	}
- 
- 	pm_runtime_set_active(dev);
-@@ -115,6 +128,13 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 	pm_runtime_get_sync(dev);
- 
- 	return 0;
-+
-+err_resetc_assert:
-+	reset_control_array_assert(simple->resets);
-+
-+err_resetc_put:
-+	reset_control_array_put(simple->resets);
-+	return ret;
+ struct tegra_io_pad_soc {
+@@ -348,32 +348,20 @@ static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
+ 	return err;
  }
  
- static int dwc3_of_simple_remove(struct platform_device *pdev)
-@@ -130,6 +150,9 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
- 		clk_put(simple->clks[i]);
+-static int tegra_powergate_reset_assert(struct tegra_powergate *pg)
++static inline int tegra_powergate_reset_assert(struct tegra_powergate *pg)
+ {
+-	unsigned int i;
+-	int err;
++	if (!IS_ERR_OR_NULL(pg->reset))
++		return reset_control_assert(pg->reset);
+ 
+-	for (i = 0; i < pg->num_resets; i++) {
+-		err = reset_control_assert(pg->resets[i]);
+-		if (err)
+-			return err;
+-	}
+-
+-	return 0;
++	return reset_control_array_assert(pg->resets);
+ }
+ 
+-static int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
++static inline int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
+ {
+-	unsigned int i;
+-	int err;
++	if (!IS_ERR_OR_NULL(pg->reset))
++		return reset_control_deassert(pg->reset);
+ 
+-	for (i = 0; i < pg->num_resets; i++) {
+-		err = reset_control_deassert(pg->resets[i]);
+-		if (err)
+-			return err;
+-	}
+-
+-	return 0;
++	return reset_control_array_deassert(pg->resets);
+ }
+ 
+ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+@@ -566,8 +554,13 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+ 	pg.id = id;
+ 	pg.clks = &clk;
+ 	pg.num_clks = 1;
+-	pg.resets = &rst;
+-	pg.num_resets = 1;
++
++	/*
++	 * Handle the reset control passed from the client separately.
++	 * So, the pmc will either have this single reset control, or,
++	 * have a list of reset controls managed by the driver on its own.
++	 */
++	pg.reset = rst;
+ 
+ 	err = tegra_powergate_power_up(&pg, false);
+ 	if (err)
+@@ -755,45 +748,26 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+ static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
+ 					 struct device_node *np, bool off)
+ {
+-	struct reset_control *rst;
+-	unsigned int i, count;
+ 	int err;
+ 
+-	count = of_count_phandle_with_args(np, "resets", "#reset-cells");
+-	if (count == 0)
+-		return -ENODEV;
+-
+-	pg->resets = kcalloc(count, sizeof(rst), GFP_KERNEL);
+-	if (!pg->resets)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < count; i++) {
+-		pg->resets[i] = of_reset_control_get_by_index(np, i);
+-		if (IS_ERR(pg->resets[i])) {
+-			err = PTR_ERR(pg->resets[i]);
+-			goto error;
+-		}
+-
+-		if (off)
+-			err = reset_control_assert(pg->resets[i]);
+-		else
+-			err = reset_control_deassert(pg->resets[i]);
+-
+-		if (err) {
+-			reset_control_put(pg->resets[i]);
+-			goto error;
+-		}
++	pg->resets = of_reset_control_array_get_exclusive(np);
++	if (IS_ERR(pg->resets)) {
++		pr_err("failed to get device resets\n");
++		return PTR_ERR(pg->resets);
  	}
  
-+	reset_control_array_assert(simple->resets);
-+	reset_control_array_put(simple->resets);
-+
- 	pm_runtime_put_sync(dev);
- 	pm_runtime_disable(dev);
+-	pg->num_resets = count;
++	if (off)
++		err = reset_control_array_assert(pg->resets);
++	else
++		err = reset_control_array_deassert(pg->resets);
  
+-	return 0;
++	if (err)
++		goto put_reset;
+ 
+-error:
+-	while (i--)
+-		reset_control_put(pg->resets[i]);
++	return 0;
+ 
+-	kfree(pg->resets);
++put_reset:
++	reset_control_array_put(pg->resets);
+ 
+ 	return err;
+ }
+@@ -885,10 +859,7 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+ 	pm_genpd_remove(&pg->genpd);
+ 
+ remove_resets:
+-	while (pg->num_resets--)
+-		reset_control_put(pg->resets[pg->num_resets]);
+-
+-	kfree(pg->resets);
++	reset_control_array_put(pg->resets);
+ 
+ remove_clks:
+ 	while (pg->num_clks--)
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
