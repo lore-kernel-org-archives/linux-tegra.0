@@ -1,40 +1,99 @@
-From: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: [PATCH v4 1/4] usb: dwc3: of-simple: Re-order resource handling in remove
-Date: Mon, 22 May 2017 16:53:24 +0530
-Message-ID: <1495452207-6129-2-git-send-email-vivek.gautam@codeaurora.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v4 3/4] usb: dwc3: of-simple: Add support to get resets for the device
+Date: Mon, 22 May 2017 16:53:26 +0530
+Message-ID: <1495452207-6129-4-git-send-email-vivek.gautam@codeaurora.org>
 References: <1495452207-6129-1-git-send-email-vivek.gautam@codeaurora.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1495452207-6129-1-git-send-email-vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1495452207-6129-1-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: p.zabel@pengutronix.de, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, jonathanh@nvidia.com, balbi@kernel.org, gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Move clock handling after of_platform_depopulate to achieve
-a sequence that is reverse of the probe sequence.
+Add support to get a list of resets available for the device.
+These resets must be kept de-asserted until the device is
+in use.
 
-Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 ---
-
- - new patch in this series.
-
- drivers/usb/dwc3/dwc3-of-simple.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/dwc3/dwc3-of-simple.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-index fe414e7a9c78..a9bac09d3750 100644
+index a9bac09d3750..463b744d6688 100644
 --- a/drivers/usb/dwc3/dwc3-of-simple.c
 +++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -123,13 +123,13 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
- 	struct device		*dev = &pdev->dev;
- 	int			i;
+@@ -29,11 +29,13 @@
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
  
-+	of_platform_depopulate(dev);
+ struct dwc3_of_simple {
+ 	struct device		*dev;
+ 	struct clk		**clks;
+ 	int			num_clocks;
++	struct reset_control_array *resets;
+ };
+ 
+ static int dwc3_of_simple_clk_init(struct dwc3_of_simple *simple, int count)
+@@ -96,9 +98,20 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, simple);
+ 	simple->dev = dev;
+ 
++	simple->resets = of_reset_control_array_get_optional_exclusive(np);
++	if (IS_ERR(simple->resets)) {
++		ret = PTR_ERR(simple->resets);
++		dev_err(dev, "failed to get device resets, err=%d\n", ret);
++		return ret;
++	}
 +
- 	for (i = 0; i < simple->num_clocks; i++) {
- 		clk_disable_unprepare(simple->clks[i]);
++	ret = reset_control_array_deassert(simple->resets);
++	if (ret)
++		goto err_resetc_put;
++
+ 	ret = dwc3_of_simple_clk_init(simple, of_clk_get_parent_count(np));
+ 	if (ret)
+-		return ret;
++		goto err_resetc_assert;
+ 
+ 	ret = of_platform_populate(np, NULL, NULL, dev);
+ 	if (ret) {
+@@ -107,7 +120,7 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ 			clk_put(simple->clks[i]);
+ 		}
+ 
+-		return ret;
++		goto err_resetc_assert;
+ 	}
+ 
+ 	pm_runtime_set_active(dev);
+@@ -115,6 +128,13 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ 	pm_runtime_get_sync(dev);
+ 
+ 	return 0;
++
++err_resetc_assert:
++	reset_control_array_assert(simple->resets);
++
++err_resetc_put:
++	reset_control_array_put(simple->resets);
++	return ret;
+ }
+ 
+ static int dwc3_of_simple_remove(struct platform_device *pdev)
+@@ -130,6 +150,9 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
  		clk_put(simple->clks[i]);
  	}
  
--	of_platform_depopulate(dev);
++	reset_control_array_assert(simple->resets);
++	reset_control_array_put(simple->resets);
++
+ 	pm_runtime_put_sync(dev);
+ 	pm_runtime_disable(dev);
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
