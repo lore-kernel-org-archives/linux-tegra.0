@@ -1,79 +1,71 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.12-rc2
-Date: Mon, 22 May 2017 09:03:13 +0100
-Message-ID: <74d0ac0e-c04f-564a-fdf5-63cae593270b@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v4 0/4] reset: APIs to manage a list of resets
+Date: Mon, 22 May 2017 16:53:23 +0530
+Message-ID: <1495452207-6129-1-git-send-email-vivek.gautam@codeaurora.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: p.zabel@pengutronix.de, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, jonathanh@nvidia.com, balbi@kernel.org, gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.12-rc2.
-Logs and other details at:
+Set of patches to support getting and de/asserting a list (array)
+of reset controllers available with the device.
+This series also contains reset controls patches for dwc3-of-simple
+and tegra pmc drivers.
+A small patch is added in this series to correctly re-order the
+resource handling in dwc3_of_simple_remove().
 
-    https://nvtb.github.io//linux/test_v4.12-rc2/20170521200103/
+The series is tested on torvald's master branch the device tree
+patches to enable usb on db820c.
 
+Changes since v3:
+ - Squashed of_reset_control_get_count() patch in the second patch that
+   adds the reset control array APIs.
+ - The error path after getting count through of_reset_control_get_count()
+   now returns NULL pointer in case when 'optional' flag is true.
+ - Added code in reset_control_array_assert() to deassert the
+   already asserted resets in the error case.
+ - Using of_reset_control_array_get_optional_exclusive() in dwc3 patch
+   to request the reset control array.
+ - Added a patch to fix the order in which resources are handled in
+   dwc3_of_simple_remove() path.
+ - Added tegra_powergate->reset to take care of single reset control
+   passed from the client drivers.
 
-Test summary
-------------
+Changes since v2:
+ - Addressed comments to make APIs inline with gpiod API.
+ - Moved number of reset controls in 'struct reset_control_array'
+   so that the footprint is reduced.
+ - of_reset_control_array_get() and devm_reset_control_array_get()
+   now return pointer to the newly created reset control array.
+ - Added comments to mention that the reset control array APIs don't
+   guarantee any particular order when handling the reset controls.
+ - Dropped 'name' from reset_control_array' since the interface is meant
+   for a bunch of anonymous resets that can all be asserted or deasserted
+   in arbitrary order.
+ - Fixed returns for APIs reported by kbuild.
+ - Fixed 'for' clause guards reported by kbuild.
 
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+Changes since v1:
+ - Addressed comment for error handling in of_reset_control_get_count()
+ - Added patch to manage reset controller array.
+ - Rebased dwc3-of-simple changes based on the new set of APIs
+   for reset control array.
+ - Added a patch for soc/tegra/pmc driver to use the new set of
+   reset control array APIs.
 
-Build: Image:
-    Pass: ( 1/ 1): defconfig
+Vivek Gautam (4):
+  usb: dwc3: of-simple: Re-order resource handling in remove
+  reset: Add APIs to manage array of resets
+  usb: dwc3: of-simple: Add support to get resets for the device
+  soc/tegra: pmc: Use the new reset APIs to manage reset controllers
 
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
+ drivers/reset/core.c              | 204 ++++++++++++++++++++++++++++++++++++++
+ drivers/soc/tegra/pmc.c           |  91 ++++++-----------
+ drivers/usb/dwc3/dwc3-of-simple.c |  29 +++++-
+ include/linux/reset.h             |  93 +++++++++++++++++
+ 4 files changed, 354 insertions(+), 63 deletions(-)
 
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.12-rc1 (2ea659a9ef488125eb46da6eb571de5eae5c43f6)):
-   text     data      bss    total  kernel
- +21421   +35672        0   +57093  defconfig
-  +1340        0        0    +1340  multi_v7_defconfig
-   +780        0        0     +780  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.12-rc1 (2ea659a9ef488125eb46da6eb571de5eae5c43f6))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-     -76k      76k        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-     -76k      76k        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-     -76k      76k        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-     -80k      80k        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
-
---
-nvpublic
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
