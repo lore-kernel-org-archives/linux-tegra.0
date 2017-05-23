@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 02/22] drm/tegra: Correct idr_alloc() minimum id
-Date: Tue, 23 May 2017 03:14:17 +0300
-Message-ID: <219202879b494033281563f526a7226843f9d2f8.1495498184.git.digetx@gmail.com>
+Subject: [PATCH 03/22] drm/tegra: Check whether page belongs to BO in tegra_bo_kmap()
+Date: Tue, 23 May 2017 03:14:18 +0300
+Message-ID: <04637a55694493bdd8267a7f19798d7968568087.1495498184.git.digetx@gmail.com>
 References: <cover.1495498184.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,29 +12,27 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The client ID 0 is reserved by the host1x/cdma to mark the timeout timer
-work as already been scheduled and context ID is used as the clients one.
-This fixes spurious CDMA timeouts.
+This fixes an OOPS in case of out-of-bounds accessing of a kmap'ed cmdbuf
+(non-IOMMU allocation) while patching the relocations in do_relocs().
 
-Fixes: bdd2f9cd10eb ("drm/tegra: Don't leak kernel pointer to userspace")
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/drm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/gem.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index b49d32a89f40..f9282da94a1f 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -539,7 +539,7 @@ static int tegra_client_open(struct tegra_drm_file *fpriv,
- 	if (err < 0)
- 		return err;
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 424569b53e57..ca0d4439e97b 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -74,6 +74,9 @@ static void *tegra_bo_kmap(struct host1x_bo *bo, unsigned int page)
+ {
+ 	struct tegra_bo *obj = host1x_to_tegra_bo(bo);
  
--	err = idr_alloc(&fpriv->contexts, context, 0, 0, GFP_KERNEL);
-+	err = idr_alloc(&fpriv->contexts, context, 1, 0, GFP_KERNEL);
- 	if (err < 0) {
- 		client->ops->close_channel(context);
- 		return err;
++	if (page * PAGE_SIZE >= obj->gem.size)
++		return NULL;
++
+ 	if (obj->vaddr)
+ 		return obj->vaddr + page * PAGE_SIZE;
+ 	else if (obj->gem.import_attach)
 -- 
 2.13.0
