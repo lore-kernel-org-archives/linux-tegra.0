@@ -1,84 +1,68 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 0/3] pinctrl: bcm/samsung/tegra: make bool code non-modular
-Date: Mon, 22 May 2017 16:56:45 -0400
-Message-ID: <20170522205648.23545-1-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Alexandre Courbot <gnurou@gmail.com>, Ashwini Ghuge <aghuge@nvidia.com>, bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Jon Mason <jonmason@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Pritesh Raithatha <praithatha@nvidia.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Sherman Yin <syin@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@v
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 00/22] Tegra DRM fixes
+Date: Tue, 23 May 2017 03:14:15 +0300
+Message-ID: <cover.1495498184.git.digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This is the last of the pinctrl cleanups I have in my queue.  So
-hopefully once these are in and any current but out-of-tree drivers
-are submitted, there won't be any more examples of non-modular code
-using modular infrastructure for people to inadvertently copy off of.
+Hello,
 
-Nothing really new here -- if the Kconfig and/or the Makefile does
-not allow building the code as modular, then we don't need to be
-using module_xyz() functions and/or MODULE_XYZ macros.
+I have already sent some of the patches contained in this series and some
+of them got reviews. Later I added couple more patches and the dependencies
+started to form, so please ignore all the patches I sent before this series.
+The patches without r-b signatures require a review.
 
-Here we audit and remove such instances in three subdirectories of
-the pinctrl subsystem: bcm, samsung, and tegra, which allows us
-to have a positive net removal of unused code as per the diffstat.
+Dmitry Osipenko (21):
+  drm/tegra: Fix lockup on a use of staging API
+  drm/tegra: Correct idr_alloc() minimum id
+  drm/tegra: Check whether page belongs to BO in tegra_bo_kmap()
+  drm/tegra: Check for malformed offsets and sizes in the 'submit' IOCTL
+  drm/tegra: Correct copying of waitchecks and disable them in the
+    'submit' IOCTL
+  drm/tegra: Check syncpoint ID in the 'submit' IOCTL
+  drm/tegra: Remove module ownership from the tegra_fb_ops
+  drm/tegra: dc: Drop the reset asserts to workaround a bug
+  drm/tegra: dc: Apply clipping to the plane
+  drm/tegra: Disable plane if it is invisible
+  gpu: host1x: Initialize firewall class to the jobs one
+  gpu: host1x: Correct host1x_job_pin() error handling
+  gpu: host1x: Do not leak BO's phys address to userspace
+  gpu: host1x: Forbid relocation address shifting in the firewall
+  gpu: host1x: Forbid RESTART opcode in the firewall
+  gpu: host1x: Forbid unrelated SETCLASS opcode in the firewall
+  gpu: host1x: Check waits in the firewall
+  gpu: host1x: Remove unused 'struct host1x_cmdbuf'
+  gpu: host1x: Remove unused host1x_cdma_stop() definition
+  drm/tegra: Don't use IOMMU on Tegra20
+  Revert "iommu/tegra: gart: Do not register with bus"
 
-Rather than do one commit per driver, we take advantage of the
-fact that the drivers are grouped already and bundle the changes
-per family, since the changes are not really deeply technical.
+Mikko Perttunen (1):
+  gpu: host1x: Refactor channel allocation code
 
-Build tested for allmodconfig on linux-next for arm, arm64; also
-explicitly compiled each file for both arch to ensure nobody got
-missed on the allmodconfig.  (there are missing renesas_sdhi syms
-in today's linux-next arm but that is not caused by these changes.)
-
-Linus - thanks for your patience in merging all these to date.
-
-Paul.
-
----
-
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Ashwini Ghuge <aghuge@nvidia.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Jon Mason <jonmason@broadcom.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Pritesh Raithatha <praithatha@nvidia.com>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: Sherman Yin <syin@broadcom.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-
-Paul Gortmaker (3):
-  pinctrl: samsung: clean up modular vs. non-modular distinctions
-  pinctrl: tegra: clean up modular vs. non-modular distinctions
-  pinctrl: bcm: clean up modular vs. non-modular distinctions
-
- drivers/pinctrl/bcm/pinctrl-bcm281xx.c       | 16 ++++++++--------
- drivers/pinctrl/bcm/pinctrl-bcm2835.c        | 20 +++-----------------
- drivers/pinctrl/bcm/pinctrl-cygnus-mux.c     | 11 +++++------
- drivers/pinctrl/samsung/pinctrl-exynos.c     |  1 -
- drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 +++------------
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c    |  2 +-
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c    |  2 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c    | 13 +------------
- drivers/pinctrl/tegra/pinctrl-tegra.c        |  1 -
- drivers/pinctrl/tegra/pinctrl-tegra114.c     | 11 ++++-------
- drivers/pinctrl/tegra/pinctrl-tegra124.c     | 11 ++++-------
- drivers/pinctrl/tegra/pinctrl-tegra20.c      | 11 ++++-------
- drivers/pinctrl/tegra/pinctrl-tegra210.c     |  9 ++-------
- drivers/pinctrl/tegra/pinctrl-tegra30.c      | 11 ++++-------
- 14 files changed, 40 insertions(+), 94 deletions(-)
+ drivers/gpu/drm/tegra/dc.c         |  77 ++++++++++---------
+ drivers/gpu/drm/tegra/drm.c        | 145 ++++++++++++++++++++++++++++++------
+ drivers/gpu/drm/tegra/drm.h        |   1 +
+ drivers/gpu/drm/tegra/fb.c         |   1 -
+ drivers/gpu/drm/tegra/gem.c        |   8 +-
+ drivers/gpu/drm/tegra/gem.h        |   5 ++
+ drivers/gpu/drm/tegra/gr2d.c       |  16 +++-
+ drivers/gpu/drm/tegra/gr3d.c       |   4 +-
+ drivers/gpu/drm/tegra/vic.c        |   4 +-
+ drivers/gpu/host1x/cdma.h          |   1 -
+ drivers/gpu/host1x/channel.c       | 147 +++++++++++++++++++++++--------------
+ drivers/gpu/host1x/channel.h       |  21 ++++--
+ drivers/gpu/host1x/debug.c         |  47 +++++-------
+ drivers/gpu/host1x/dev.c           |  12 ++-
+ drivers/gpu/host1x/dev.h           |   6 +-
+ drivers/gpu/host1x/hw/channel_hw.c |   4 -
+ drivers/gpu/host1x/job.c           | 113 ++++++++++++++++++++++------
+ drivers/gpu/host1x/job.h           |  14 ----
+ drivers/iommu/tegra-gart.c         |   2 +-
+ include/linux/host1x.h             |  13 +++-
+ 20 files changed, 426 insertions(+), 215 deletions(-)
 
 -- 
-2.11.0
+2.13.0
