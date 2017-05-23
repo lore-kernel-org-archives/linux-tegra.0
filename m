@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 15/22] gpu: host1x: Forbid RESTART opcode in the firewall
-Date: Tue, 23 May 2017 03:14:30 +0300
-Message-ID: <b214fc1c2e3952511eb97a404795b786c08bdeed.1495498184.git.digetx@gmail.com>
+Subject: [PATCH 14/22] gpu: host1x: Forbid relocation address shifting in the firewall
+Date: Tue, 23 May 2017 03:14:29 +0300
+Message-ID: <15311f1c044c3ff26624e2a980b0c477b1cf33b2.1495498184.git.digetx@gmail.com>
 References: <cover.1495498184.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,27 +12,31 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The RESTART opcode terminates the gather and restarts the CDMA fetching from
-a specified word << 2 relative to the CDMA start address. That shouldn't be
-allowed to be done by userspace.
+Incorrectly shifted relocation address will cause a lower memory corruption
+and likely a hang on a write or a read of an arbitrary data in case of IOMMU
+absent. As of now there is no use for the address shifting (at least on
+Tegra20) and adding a proper shifting / sizes validation is much more work.
+Let's forbid it in the firewall till a proper validation is implemented.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/host1x/job.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/host1x/job.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 1a1568e64ba8..cf335c5979e2 100644
+index 190353944d23..1a1568e64ba8 100644
 --- a/drivers/gpu/host1x/job.c
 +++ b/drivers/gpu/host1x/job.c
-@@ -497,7 +497,6 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
- 				goto out;
- 			break;
- 		case 4:
--		case 5:
- 		case 14:
- 			break;
- 		default:
+@@ -332,6 +332,10 @@ static bool check_reloc(struct host1x_reloc *reloc, struct host1x_bo *cmdbuf,
+ 	if (reloc->cmdbuf.bo != cmdbuf || reloc->cmdbuf.offset != offset)
+ 		return false;
+ 
++	/* relocation shift value validation isn't implemented yet */
++	if (reloc->shift)
++		return false;
++
+ 	return true;
+ }
+ 
 -- 
 2.13.0
