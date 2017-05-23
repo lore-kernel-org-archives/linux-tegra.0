@@ -1,87 +1,80 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 14/22] gpu: host1x: Forbid relocation address shifting in
- the firewall
-Date: Tue, 23 May 2017 14:28:33 +0300
-Message-ID: <22579f7c-ea4b-5a31-2d68-4147754b7f2f@gmail.com>
-References: <cover.1495498184.git.digetx@gmail.com>
- <15311f1c044c3ff26624e2a980b0c477b1cf33b2.1495498184.git.digetx@gmail.com>
- <3c5d7896-6753-78c5-5a74-25061244acff@kapsi.fi>
- <b481d7f3-d82a-407b-4eb0-6ed24ca32199@gmail.com>
- <d5197c08-516b-0687-e2ec-61adda99caa1@kapsi.fi>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] PCI: tegra: Support MSI 64-bit addressing
+Date: Tue, 23 May 2017 14:59:25 -0500
+Message-ID: <20170523195925.GF7241@bhelgaas-glaptop.roam.corp.google.com>
+References: <20170504201032.32633-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d5197c08-516b-0687-e2ec-61adda99caa1-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20170504201032.32633-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 23.05.2017 14:19, Mikko Perttunen wrote:
-> On 23.05.2017 13:58, Dmitry Osipenko wrote:
->> On 23.05.2017 13:14, Mikko Perttunen wrote:
->>> Reloc shifts are implemented (see assignment of u32 reloc_addr in do_relocs),
->>> and they are required for VIC job submissions.
->>>
->>
->> The *validation* is unimplemented. Since VIC uses the shifts, we may add a
->> validation for it in a way it is done for the registers / class checks, i.e.
->> compare the per address register shift value. I suppose those registers are
->> documented somewhere(TRM), could you please point me to them (TRM page, reg
->> name)?
+On Thu, May 04, 2017 at 10:10:31PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Ah, indeed, sorry. I'm not sure if it's worth implementing validation for e.g.
-> VIC, since it would be quite a bit of work and require many per-chip and
-> per-unit tables or ranges in the kernel. I think it's a better solution to just
-> forbid everything in the firewall for VIC (and eventually other units), since on
-> systems with those units the normal configuration will be IOMMU anyway.
+> The MSI target address can reside beyond the 32-bit boundary on devices
+> with more than 2 GiB of system memory. The PCI host bridge on Tegra can
+> easily support 64-bit addresses, so make sure to pass the upper 32 bits
+> of the target address to endpoints when allocating MSI entries.
 > 
-> Anyway, For VIC, everything happens using two registers (method index and method
-> parameter), so you would need to first detect the method index, save that, then
-> wait for a method parameter write and then check that against the written
-> method. The TRM currently has a list methods, but doesn't list their parameter -
-> at least most ones taking a pointer are called *_OFFSET, but not sure if all. In
-> any case, I don't think it's worth implementing.
->
-Yes, in IOMMU case firewall will be only useful as a debug feature. We may check
-for the IOMMU presence and bypass the firewall if it's present, or we may bypass
-the shifts validation only.
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
->>
->>> On 23.05.2017 03:14, Dmitry Osipenko wrote:
->>>> Incorrectly shifted relocation address will cause a lower memory corruption
->>>> and likely a hang on a write or a read of an arbitrary data in case of IOMMU
->>>> absent. As of now there is no use for the address shifting (at least on
->>>> Tegra20) and adding a proper shifting / sizes validation is much more work.
->>>> Let's forbid it in the firewall till a proper validation is implemented.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>> ---
->>>>  drivers/gpu/host1x/job.c | 4 ++++
->>>>  1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
->>>> index 190353944d23..1a1568e64ba8 100644
->>>> --- a/drivers/gpu/host1x/job.c
->>>> +++ b/drivers/gpu/host1x/job.c
->>>> @@ -332,6 +332,10 @@ static bool check_reloc(struct host1x_reloc *reloc,
->>>> struct host1x_bo *cmdbuf,
->>>>      if (reloc->cmdbuf.bo != cmdbuf || reloc->cmdbuf.offset != offset)
->>>>          return false;
->>>>
->>>> +    /* relocation shift value validation isn't implemented yet */
->>>> +    if (reloc->shift)
->>>> +        return false;
->>>> +
->>>>      return true;
->>>>  }
->>>>
->>>>
->>
->>
+Applied both with Stephen's ack to pci/host-tegra for v4.13, thanks!
 
-
--- 
-Dmitry
+> ---
+>  drivers/pci/host/pci-tegra.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index ecf8b4f1bf05..e69f828a9ab2 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -235,6 +235,7 @@ struct tegra_msi {
+>  	struct irq_domain *domain;
+>  	unsigned long pages;
+>  	struct mutex lock;
+> +	u64 phys;
+>  	int irq;
+>  };
+>  
+> @@ -1468,9 +1469,8 @@ static int tegra_msi_setup_irq(struct msi_controller *chip,
+>  
+>  	irq_set_msi_desc(irq, desc);
+>  
+> -	msg.address_lo = virt_to_phys((void *)msi->pages);
+> -	/* 32 bit address only */
+> -	msg.address_hi = 0;
+> +	msg.address_lo = lower_32_bits(msi->phys);
+> +	msg.address_hi = upper_32_bits(msi->phys);
+>  	msg.data = hwirq;
+>  
+>  	pci_write_msi_msg(irq, &msg);
+> @@ -1519,7 +1519,6 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+>  	const struct tegra_pcie_soc *soc = pcie->soc;
+>  	struct tegra_msi *msi = &pcie->msi;
+>  	struct device *dev = pcie->dev;
+> -	unsigned long base;
+>  	int err;
+>  	u32 reg;
+>  
+> @@ -1553,10 +1552,10 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+>  
+>  	/* setup AFI/FPCI range */
+>  	msi->pages = __get_free_pages(GFP_KERNEL, 0);
+> -	base = virt_to_phys((void *)msi->pages);
+> +	msi->phys = virt_to_phys((void *)msi->pages);
+>  
+> -	afi_writel(pcie, base >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
+> -	afi_writel(pcie, base, AFI_MSI_AXI_BAR_ST);
+> +	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
+> +	afi_writel(pcie, msi->phys, AFI_MSI_AXI_BAR_ST);
+>  	/* this register is in 4K increments */
+>  	afi_writel(pcie, 1, AFI_MSI_BAR_SZ);
+>  
+> -- 
+> 2.12.0
+> 
