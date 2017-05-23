@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 10/22] drm/tegra: Disable plane if it is invisible
-Date: Tue, 23 May 2017 03:14:25 +0300
-Message-ID: <3d3369e37dea96ce65430657a0bcec2935befbfb.1495498184.git.digetx@gmail.com>
+Subject: [PATCH 09/22] drm/tegra: dc: Apply clipping to the plane
+Date: Tue, 23 May 2017 03:14:24 +0300
+Message-ID: <197b5a9d91895692edd6b562fb3d22dede0014e5.1495498184.git.digetx@gmail.com>
 References: <cover.1495498184.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,79 +12,66 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra20 if plane has width or height equal to 0, it will be infinitely
-wide or tall. Let's disable the plane if it is invisible on atomic state
-committing to fix the issue. The Rockchip DRM driver does the same.
+On Tegra20 an overlay plane should be clipped, otherwise its output is
+distorted once plane crosses display boundary.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 2e01a2dfc5cd..1f9d8d43bec3 100644
+index 5c9b93981af2..2e01a2dfc5cd 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -558,6 +558,23 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 	return 0;
- }
- 
-+static void tegra_dc_disable_window(struct tegra_dc *dc, int index)
-+{
-+	unsigned long flags;
-+	u32 value;
-+
-+	spin_lock_irqsave(&dc->lock, flags);
-+
-+	value = WINDOW_A_SELECT << index;
-+	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
-+
-+	value = tegra_dc_readl(dc, DC_WIN_WIN_OPTIONS);
-+	value &= ~WIN_ENABLE;
-+	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
-+
-+	spin_unlock_irqrestore(&dc->lock, flags);
-+}
-+
- static void tegra_plane_atomic_update(struct drm_plane *plane,
- 				      struct drm_plane_state *old_state)
+@@ -485,12 +485,25 @@ static int tegra_plane_state_add(struct tegra_plane *plane,
  {
-@@ -572,6 +589,9 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
- 	if (!plane->state->crtc || !plane->state->fb)
+ 	struct drm_crtc_state *crtc_state;
+ 	struct tegra_dc_state *tegra;
++	struct drm_rect clip;
++	int err;
+ 
+ 	/* Propagate errors from allocation or locking failures. */
+ 	crtc_state = drm_atomic_get_crtc_state(state->state, state->crtc);
+ 	if (IS_ERR(crtc_state))
+ 		return PTR_ERR(crtc_state);
+ 
++	clip.x1 = 0;
++	clip.y1 = 0;
++	clip.x2 = crtc_state->mode.hdisplay;
++	clip.y2 = crtc_state->mode.vdisplay;
++
++	/* Check plane state for visibility and calculate clipping bounds */
++	err = drm_plane_helper_check_state(state, &clip, 0, INT_MAX,
++					   true, true);
++	if (err < 0)
++		return err;
++
+ 	tegra = to_dc_state(crtc_state);
+ 
+ 	tegra->planes |= WIN_A_ACT_REQ << plane->index;
+@@ -560,14 +573,14 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
  		return;
  
-+	if (!plane->state->visible)
-+		return tegra_dc_disable_window(dc, p->index);
-+
  	memset(&window, 0, sizeof(window));
- 	window.src.x = plane->state->src.x1 >> 16;
- 	window.src.y = plane->state->src.y1 >> 16;
-@@ -611,8 +631,6 @@ static void tegra_plane_atomic_disable(struct drm_plane *plane,
- {
- 	struct tegra_plane *p = to_tegra_plane(plane);
- 	struct tegra_dc *dc;
--	unsigned long flags;
--	u32 value;
+-	window.src.x = plane->state->src_x >> 16;
+-	window.src.y = plane->state->src_y >> 16;
+-	window.src.w = plane->state->src_w >> 16;
+-	window.src.h = plane->state->src_h >> 16;
+-	window.dst.x = plane->state->crtc_x;
+-	window.dst.y = plane->state->crtc_y;
+-	window.dst.w = plane->state->crtc_w;
+-	window.dst.h = plane->state->crtc_h;
++	window.src.x = plane->state->src.x1 >> 16;
++	window.src.y = plane->state->src.y1 >> 16;
++	window.src.w = drm_rect_width(&plane->state->src) >> 16;
++	window.src.h = drm_rect_height(&plane->state->src) >> 16;
++	window.dst.x = plane->state->dst.x1;
++	window.dst.y = plane->state->dst.y1;
++	window.dst.w = drm_rect_width(&plane->state->dst);
++	window.dst.h = drm_rect_height(&plane->state->dst);
+ 	window.bits_per_pixel = fb->format->cpp[0] * 8;
+ 	window.bottom_up = tegra_fb_is_bottom_up(fb);
  
- 	/* rien ne va plus */
- 	if (!old_state || !old_state->crtc)
-@@ -620,16 +638,7 @@ static void tegra_plane_atomic_disable(struct drm_plane *plane,
- 
- 	dc = to_tegra_dc(old_state->crtc);
- 
--	spin_lock_irqsave(&dc->lock, flags);
--
--	value = WINDOW_A_SELECT << p->index;
--	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
--
--	value = tegra_dc_readl(dc, DC_WIN_WIN_OPTIONS);
--	value &= ~WIN_ENABLE;
--	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
--
--	spin_unlock_irqrestore(&dc->lock, flags);
-+	tegra_dc_disable_window(dc, p->index);
- }
- 
- static const struct drm_plane_helper_funcs tegra_primary_plane_helper_funcs = {
 -- 
 2.13.0
