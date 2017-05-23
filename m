@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 07/22] drm/tegra: Remove module ownership from the tegra_fb_ops
-Date: Tue, 23 May 2017 03:14:22 +0300
-Message-ID: <b90497ec1e9ee182cdd4a19466c516e3b0553939.1495498184.git.digetx@gmail.com>
+Subject: [PATCH 06/22] drm/tegra: Check syncpoint ID in the 'submit' IOCTL
+Date: Tue, 23 May 2017 03:14:21 +0300
+Message-ID: <f116e4fbab1391ed59a7401f2838e95bcc3025d9.1495498184.git.digetx@gmail.com>
 References: <cover.1495498184.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,27 +12,41 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The framebuffers console fbcon_startup() increments the tegra_drm module
-'use' refcount via try_module_get(), causing an interlock of the DRM subsys
-and the tegra_drm modules. In result, the tegra_drm module can't be unloaded
-using rmmod.
+In case of invalid syncpoint ID, the host1x_syncpt_get() returns NULL and
+none of its users perform a check of the returned pointer later. Let's bail
+out until it's too late.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/fb.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/tegra/drm.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 25acb73ee728..75e102ffdc86 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -202,7 +202,6 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index eae0c1512ab0..cdb05d6efde4 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -393,6 +393,8 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 	struct drm_tegra_waitchk __user *waitchks =
+ 		(void __user *)(uintptr_t)args->waitchks;
+ 	struct drm_tegra_syncpt syncpt;
++	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
++	struct host1x_syncpt *sp;
+ 	struct host1x_job *job;
+ 	int err;
  
- #ifdef CONFIG_DRM_FBDEV_EMULATION
- static struct fb_ops tegra_fb_ops = {
--	.owner = THIS_MODULE,
- 	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_fillrect = drm_fb_helper_sys_fillrect,
- 	.fb_copyarea = drm_fb_helper_sys_copyarea,
+@@ -521,6 +523,13 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		goto fail;
+ 	}
+ 
++	/* check whether syncpoint ID is valid */
++	sp = host1x_syncpt_get(host1x, syncpt.id);
++	if (!sp) {
++		err = -ENOENT;
++		goto fail;
++	}
++
+ 	job->is_addr_reg = context->client->ops->is_addr_reg;
+ 	job->syncpt_incrs = syncpt.incrs;
+ 	job->syncpt_id = syncpt.id;
 -- 
 2.13.0
