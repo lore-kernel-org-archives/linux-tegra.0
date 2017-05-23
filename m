@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 09/22] drm/tegra: dc: Apply clipping to the plane
-Date: Tue, 23 May 2017 03:14:24 +0300
-Message-ID: <197b5a9d91895692edd6b562fb3d22dede0014e5.1495498184.git.digetx@gmail.com>
+Subject: [PATCH 11/22] gpu: host1x: Initialize firewall class to the jobs one
+Date: Tue, 23 May 2017 03:14:26 +0300
+Message-ID: <5d5419a312a018503b055c71376499d12321191d.1495498184.git.digetx@gmail.com>
 References: <cover.1495498184.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,66 +12,29 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra20 an overlay plane should be clipped, otherwise its output is
-distorted once plane crosses display boundary.
+The commands stream is prepended by the jobs class on the CDMA submission,
+so that explicitly setting a module class in the commands stream isn't
+necessary. The firewall initializes its class to 0 and the command stream
+that doesn't explicitly specify the class effectively bypasses the firewall.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ drivers/gpu/host1x/job.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 5c9b93981af2..2e01a2dfc5cd 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -485,12 +485,25 @@ static int tegra_plane_state_add(struct tegra_plane *plane,
- {
- 	struct drm_crtc_state *crtc_state;
- 	struct tegra_dc_state *tegra;
-+	struct drm_rect clip;
-+	int err;
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index 5f5f8ee6143d..d9933828fe87 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -504,7 +504,7 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+ 	fw.dev = dev;
+ 	fw.reloc = job->relocarray;
+ 	fw.num_relocs = job->num_relocs;
+-	fw.class = 0;
++	fw.class = job->class;
  
- 	/* Propagate errors from allocation or locking failures. */
- 	crtc_state = drm_atomic_get_crtc_state(state->state, state->crtc);
- 	if (IS_ERR(crtc_state))
- 		return PTR_ERR(crtc_state);
- 
-+	clip.x1 = 0;
-+	clip.y1 = 0;
-+	clip.x2 = crtc_state->mode.hdisplay;
-+	clip.y2 = crtc_state->mode.vdisplay;
-+
-+	/* Check plane state for visibility and calculate clipping bounds */
-+	err = drm_plane_helper_check_state(state, &clip, 0, INT_MAX,
-+					   true, true);
-+	if (err < 0)
-+		return err;
-+
- 	tegra = to_dc_state(crtc_state);
- 
- 	tegra->planes |= WIN_A_ACT_REQ << plane->index;
-@@ -560,14 +573,14 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
- 		return;
- 
- 	memset(&window, 0, sizeof(window));
--	window.src.x = plane->state->src_x >> 16;
--	window.src.y = plane->state->src_y >> 16;
--	window.src.w = plane->state->src_w >> 16;
--	window.src.h = plane->state->src_h >> 16;
--	window.dst.x = plane->state->crtc_x;
--	window.dst.y = plane->state->crtc_y;
--	window.dst.w = plane->state->crtc_w;
--	window.dst.h = plane->state->crtc_h;
-+	window.src.x = plane->state->src.x1 >> 16;
-+	window.src.y = plane->state->src.y1 >> 16;
-+	window.src.w = drm_rect_width(&plane->state->src) >> 16;
-+	window.src.h = drm_rect_height(&plane->state->src) >> 16;
-+	window.dst.x = plane->state->dst.x1;
-+	window.dst.y = plane->state->dst.y1;
-+	window.dst.w = drm_rect_width(&plane->state->dst);
-+	window.dst.h = drm_rect_height(&plane->state->dst);
- 	window.bits_per_pixel = fb->format->cpp[0] * 8;
- 	window.bottom_up = tegra_fb_is_bottom_up(fb);
- 
+ 	for (i = 0; i < job->num_gathers; i++) {
+ 		struct host1x_job_gather *g = &job->gathers[i];
 -- 
 2.13.0
