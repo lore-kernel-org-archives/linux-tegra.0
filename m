@@ -1,43 +1,43 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 22/22] Revert "iommu/tegra: gart: Do not register with bus"
-Date: Tue, 23 May 2017 03:16:33 +0300
-Message-ID: <781477cf9ac61301e639f71236d65a8b31586827.1495498184.git.digetx@gmail.com>
-References: <fb3b357fbbdf61a20609f38a817c3f45ebc238fc.1495498184.git.digetx@gmail.com>
+From: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 03/22] drm/tegra: Check whether page belongs to BO in tegra_bo_kmap()
+Date: Tue, 23 May 2017 02:21:19 +0200
+Message-ID: <CABPQNSZcD=zVxd4ksC_SAbbNhu7Py0WJhXVh+zit=sDgxaZnbg@mail.gmail.com>
+References: <cover.1495498184.git.digetx@gmail.com> <04637a55694493bdd8267a7f19798d7968568087.1495498184.git.digetx@gmail.com>
+Reply-To: kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <fb3b357fbbdf61a20609f38a817c3f45ebc238fc.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-In-Reply-To: <cover.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-References: <cover.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <04637a55694493bdd8267a7f19798d7968568087.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The GART driver was disabled because it was picked by as an IOMMU provider
-for the DRM driver on Tegra20, which is not the purpose of the GART. Now
-DRM driver avoids to use IOMMU on Tegra20, so the GART driver can be
-re-enabled. Potentially there are interesting use cases of the GART for
-Tegra20, like mmap'ing of a fallback memory allocation and using its GART
-aperture for an accelerated graphics operation.
+On Tue, May 23, 2017 at 2:14 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> This fixes an OOPS in case of out-of-bounds accessing of a kmap'ed cmdbuf
+> (non-IOMMU allocation) while patching the relocations in do_relocs().
+>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/gem.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+> index 424569b53e57..ca0d4439e97b 100644
+> --- a/drivers/gpu/drm/tegra/gem.c
+> +++ b/drivers/gpu/drm/tegra/gem.c
+> @@ -74,6 +74,9 @@ static void *tegra_bo_kmap(struct host1x_bo *bo, unsigned int page)
+>  {
+>         struct tegra_bo *obj = host1x_to_tegra_bo(bo);
+>
+> +       if (page * PAGE_SIZE >= obj->gem.size)
+> +               return NULL;
+> +
+>         if (obj->vaddr)
+>                 return obj->vaddr + page * PAGE_SIZE;
+>         else if (obj->gem.import_attach)
+> --
+> 2.13.0
+>
 
-This reverts commit c7e3ca515e784a82223f447b79eb2090bdb91378.
-
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/iommu/tegra-gart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 37e708fdbb5a..430d13bf4f95 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -422,7 +422,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	do_gart_setup(gart, NULL);
- 
- 	gart_handle = gart;
--
-+	bus_set_iommu(&platform_bus_type, &gart_iommu_ops);
- 	return 0;
- }
- 
--- 
-2.13.0
+Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
