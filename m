@@ -1,167 +1,42 @@
-From: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 16/22] gpu: host1x: Forbid unrelated SETCLASS opcode in
- the firewall
-Date: Tue, 23 May 2017 02:39:33 +0200
-Message-ID: <CABPQNSbEXGHUv8kHr2sLjOLrVAiNXdStKUapMZX+CX5RWi0cfg@mail.gmail.com>
-References: <cover.1495498184.git.digetx@gmail.com> <741d3bbfb74b5455e016164a3a30d9e3101bdc24.1495498184.git.digetx@gmail.com>
-Reply-To: kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Erik Faye-Lund <kusmabite@gmail.com>
+Subject: Re: [PATCH 18/22] gpu: host1x: Remove unused 'struct host1x_cmdbuf'
+Date: Tue, 23 May 2017 02:42:47 +0200
+Message-ID: <CABPQNSZCQxJBpBHOkh+vtBrq2aSc-H6YVWrhw_myxGMi3t-3pw@mail.gmail.com>
+References: <cover.1495498184.git.digetx@gmail.com>
+ <f744341274b5749761550d14e37cac57cd0e63fc.1495498184.git.digetx@gmail.com>
+Reply-To: kusmabite@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <741d3bbfb74b5455e016164a3a30d9e3101bdc24.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <f744341274b5749761550d14e37cac57cd0e63fc.1495498184.git.digetx@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mikko Perttunen <cyndis@kapsi.fi>, DRI Development <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 23, 2017 at 2:14 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Several channels could be made to write the same unit concurrently via the
-> SETCLASS opcode, trusting userspace is a bad idea. It should be possible to
-> drop the per-client channel reservation and add a per-unit locking by
-> inserting MLOCK's to the command stream to re-allow the SETCLASS opcode, but
-> it will be much more work. Let's forbid the unit-unrelated class changes for
-> now.
->
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/gpu/drm/tegra/drm.c  |  1 +
->  drivers/gpu/drm/tegra/drm.h  |  1 +
->  drivers/gpu/drm/tegra/gr2d.c | 12 ++++++++++++
->  drivers/gpu/host1x/job.c     | 24 ++++++++++++++++++++----
->  include/linux/host1x.h       |  5 ++++-
->  5 files changed, 38 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index cdb05d6efde4..17416e1c219a 100644
-> --- a/drivers/gpu/drm/tegra/drm.c
-> +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -531,6 +531,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->         }
->
->         job->is_addr_reg = context->client->ops->is_addr_reg;
-> +       job->is_valid_class = context->client->ops->is_valid_class;
->         job->syncpt_incrs = syncpt.incrs;
->         job->syncpt_id = syncpt.id;
->         job->timeout = 10000;
-> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-> index 85aa2e3d9d4e..6d6da01282f3 100644
-> --- a/drivers/gpu/drm/tegra/drm.h
-> +++ b/drivers/gpu/drm/tegra/drm.h
-> @@ -83,6 +83,7 @@ struct tegra_drm_client_ops {
->                             struct tegra_drm_context *context);
->         void (*close_channel)(struct tegra_drm_context *context);
->         int (*is_addr_reg)(struct device *dev, u32 class, u32 offset);
-> +       int (*is_valid_class)(u32 class);
->         int (*submit)(struct tegra_drm_context *context,
->                       struct drm_tegra_submit *args, struct drm_device *drm,
->                       struct drm_file *file);
-> diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-> index 02cd3e37a6ec..782231c41a1a 100644
-> --- a/drivers/gpu/drm/tegra/gr2d.c
-> +++ b/drivers/gpu/drm/tegra/gr2d.c
-> @@ -109,10 +109,22 @@ static int gr2d_is_addr_reg(struct device *dev, u32 class, u32 offset)
->         return 0;
->  }
->
-> +static int gr2d_is_valid_class(u32 class)
-> +{
-> +       switch (class) {
-> +       case HOST1X_CLASS_GR2D:
-> +       case HOST1X_CLASS_GR2D_SB:
-> +               return 1;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static const struct tegra_drm_client_ops gr2d_ops = {
->         .open_channel = gr2d_open_channel,
->         .close_channel = gr2d_close_channel,
->         .is_addr_reg = gr2d_is_addr_reg,
-> +       .is_valid_class = gr2d_is_valid_class,
->         .submit = tegra_drm_submit,
->  };
->
-> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-> index cf335c5979e2..65e12219405a 100644
-> --- a/drivers/gpu/host1x/job.c
-> +++ b/drivers/gpu/host1x/job.c
-> @@ -358,6 +358,9 @@ struct host1x_firewall {
->
->  static int check_register(struct host1x_firewall *fw, unsigned long offset)
->  {
-> +       if (!fw->job->is_addr_reg)
-> +               return 0;
-> +
->         if (fw->job->is_addr_reg(fw->dev, fw->class, offset)) {
->                 if (!fw->num_relocs)
->                         return -EINVAL;
-> @@ -372,6 +375,19 @@ static int check_register(struct host1x_firewall *fw, unsigned long offset)
->         return 0;
->  }
->
-> +static int check_class(struct host1x_firewall *fw, u32 class)
-> +{
-> +       if (!fw->job->is_valid_class) {
-> +               if (fw->class != class)
-> +                       return -EINVAL;
-> +       } else {
-> +               if (!fw->job->is_valid_class(fw->class))
-> +                       return -EINVAL;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static int check_mask(struct host1x_firewall *fw)
->  {
->         u32 mask = fw->mask;
-> @@ -445,11 +461,9 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
->  {
->         u32 *cmdbuf_base = (u32 *)fw->job->gather_copy_mapped +
->                 (g->offset / sizeof(u32));
-> +       u32 job_class = fw->class;
->         int err = 0;
->
-> -       if (!fw->job->is_addr_reg)
-> -               return 0;
-> -
->         fw->words = g->words;
->         fw->cmdbuf = g->bo;
->         fw->offset = 0;
-> @@ -469,7 +483,9 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
->                         fw->class = word >> 6 & 0x3ff;
->                         fw->mask = word & 0x3f;
->                         fw->reg = word >> 16 & 0xfff;
-> -                       err = check_mask(fw);
-> +                       err = check_class(fw, job_class);
-> +                       if (!err)
-> +                               err = check_mask(fw);
->                         if (err)
->                                 goto out;
->                         break;
-> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> index aa323e43ae4e..561d6bb6580d 100644
-> --- a/include/linux/host1x.h
-> +++ b/include/linux/host1x.h
-> @@ -233,7 +233,10 @@ struct host1x_job {
->         u8 *gather_copy_mapped;
->
->         /* Check if register is marked as an address reg */
-> -       int (*is_addr_reg)(struct device *dev, u32 reg, u32 class);
-> +       int (*is_addr_reg)(struct device *dev, u32 class, u32 reg);
-
-This seems like an unrelated fix, you might want to mention it in the
-commit message at least.
-
-> +
-> +       /* Check if class belongs to the unit */
-> +       int (*is_valid_class)(u32 class);
->
->         /* Request a SETCLASS to this class */
->         u32 class;
-> --
-> 2.13.0
->
-
-Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+T24gVHVlLCBNYXkgMjMsIDIwMTcgYXQgMjoxNCBBTSwgRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhA
+Z21haWwuY29tPiB3cm90ZToKPiBUaGUgc3RydWN0IGhvc3QxeF9jbWRidWYgaXMgdW51c2VkLCBs
+ZXQncyByZW1vdmUgaXQuCj4KPiBTaWduZWQtb2ZmLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0
+eEBnbWFpbC5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2hvc3QxeC9qb2IuaCB8IDcgLS0tLS0t
+LQo+ICAxIGZpbGUgY2hhbmdlZCwgNyBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9ob3N0MXgvam9iLmggYi9kcml2ZXJzL2dwdS9ob3N0MXgvam9iLmgKPiBpbmRleCAw
+ZGViZDkzYTE4NDkuLjRiZGE1MWQ1MDNlYyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9ob3N0
+MXgvam9iLmgKPiArKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvam9iLmgKPiBAQCAtMjcsMTMgKzI3
+LDYgQEAgc3RydWN0IGhvc3QxeF9qb2JfZ2F0aGVyIHsKPiAgICAgICAgIGJvb2wgaGFuZGxlZDsK
+PiAgfTsKPgo+IC1zdHJ1Y3QgaG9zdDF4X2NtZGJ1ZiB7Cj4gLSAgICAgICB1MzIgaGFuZGxlOwo+
+IC0gICAgICAgdTMyIG9mZnNldDsKPiAtICAgICAgIHUzMiB3b3JkczsKPiAtICAgICAgIHUzMiBw
+YWQ7Cj4gLX07Cj4gLQo+ICBzdHJ1Y3QgaG9zdDF4X2pvYl91bnBpbl9kYXRhIHsKPiAgICAgICAg
+IHN0cnVjdCBob3N0MXhfYm8gKmJvOwo+ICAgICAgICAgc3RydWN0IHNnX3RhYmxlICpzZ3Q7Cj4g
+LS0KPiAyLjEzLjAKPgoKUmV2aWV3ZWQtYnk6IEVyaWsgRmF5ZS1MdW5kIDxrdXNtYWJpdGVAZ21h
+aWwuY29tPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
