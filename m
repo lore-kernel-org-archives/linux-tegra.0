@@ -1,93 +1,68 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH 2/7] clocksource: Rename CLOCKSOURCE_OF_DECLARE
-Date: Mon, 29 May 2017 12:55:09 +0200
-Message-ID: <20170529105509.GC2192@mai>
+Date: Mon, 29 May 2017 13:21:54 +0200
+Message-ID: <CAK8P3a3MdvWMJyVqE63Ur330mC2wPZO7nFXjd_LukbTjiZtGdg@mail.gmail.com>
 References: <1495879129-28109-1-git-send-email-daniel.lezcano@linaro.org>
  <1495879129-28109-2-git-send-email-daniel.lezcano@linaro.org>
  <CAK8P3a3QACHYqtCO1z_FpW0nXEtx356wCDha_=SNXU872=q1UQ@mail.gmail.com>
  <20170529084809.GA2192@mai>
  <CAK8P3a1Kv_RhKL43ie6co_N5pDXvRHd7Uq8g70qt80WkxuhzLw@mail.gmail.com>
+ <20170529105509.GC2192@mai>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1Kv_RhKL43ie6co_N5pDXvRHd7Uq8g70qt80WkxuhzLw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:RALINK MIPS ARCHITECTURE" <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Santosh Shilimkar <ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, "moderated list:ARM/OXNAS platform support" <linux-oxnas-Xt5XgHjqiBU06sgRBLv0+0B+6BGkLq7r@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:ARM/STI ARCHITECTURE" <kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:H8/300 ARCHITECTURE" <uclinux-h8-devel-5NWGOfrQmneRv+LV9MX5uooqe+aC9MnS@public.gmane.org>, Alexander Shiyan <shc>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170529105509.GC2192@mai>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
+List-Post: <mailto:linux-snps-arc@lists.infradead.org>
+List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
+Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>, Baruch Siach <baruch@tkos.co.il>, Heiko Stuebner <heiko@sntech.de>, Neil Armstrong <narmstrong@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, "moderated list:ARM/OXNAS platform support" <linux-oxnas@lists.tuxfamily.org>, Patrice Chotard <patrice.chotard@st.com>, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Ingo Molnar <mingo@kernel.org>, "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>, Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, "moderated list:H8/300 ARCHITECTURE" <uclinux-h8-devel@lists.sourceforge.jp>, Alexander Shiyan <shc>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBNYXkgMjksIDIwMTcgYXQgMTE6NTc6MjVBTSArMDIwMCwgQXJuZCBCZXJnbWFubiB3
-cm90ZToKPiBPbiBNb24sIE1heSAyOSwgMjAxNyBhdCAxMDo0OCBBTSwgRGFuaWVsIExlemNhbm8K
-PiA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz4gd3JvdGU6Cj4gPiBPbiBNb24sIE1heSAyOSwg
-MjAxNyBhdCAxMDo0MTo1MkFNICswMjAwLCBBcm5kIEJlcmdtYW5uIHdyb3RlOgo+ID4+IE9uIFNh
-dCwgTWF5IDI3LCAyMDE3IGF0IDExOjU4IEFNLCBEYW5pZWwgTGV6Y2Fubwo+ID4+IDxkYW5pZWwu
-bGV6Y2Fub0BsaW5hcm8ub3JnPiB3cm90ZToKPiA+PiA+IFRoZSBDTE9DS1NPVUNFX09GX0RFQ0xB
-UkUgbWFjcm8gaXMgdXNlZCB3aWRlbHkgZm9yIHRoZSB0aW1lcnMgdG8gZGVjbGFyZSB0aGUKPiA+
-PiA+IGNsb2Nrc291cmNlIGF0IGVhcmx5IHN0YWdlLiBIb3dldmVyLCB0aGlzIG1hY3JvIGlzIGFs
-c28gdXNlZCB0byBpbml0aWFsaXplCj4gPj4gPiB0aGUgY2xvY2tldmVudCBpZiBhbnksIG9yIHRo
-ZSBjbG9ja2V2ZW50IG9ubHkuCj4gPj4gPgo+ID4+ID4gSXQgd2FzIG9yaWdpbmFsbHkgc3VnZ2Vz
-dGVkIHRvIGRlY2xhcmUgYW5vdGhlciBtYWNybyB0byBpbml0aWFsaXplIGEKPiA+PiA+IGNsb2Nr
-ZXZlbnQsIHNvIGluIG9yZGVyIHRvIHNlcGFyYXRlIHRoZSB0d28gZW50aXRpZXMgZXZlbiB0aGV5
-IGJlbG9uZyB0byB0aGUKPiA+PiA+IHNhbWUgSVAuIFRoaXMgd2FzIG5vdCBhY2NlcHRlZCBiZWNh
-dXNlIG9mIHRoZSBpbXBhY3Qgb24gdGhlIERUIHdoZXJlIHNwbGl0dGluZwo+ID4+ID4gYSBjbG9j
-a3NvdXJjZS9jbG9ja2V2ZW50IGRlZmluaXRpb24gZG9lcyBub3QgbWFrZSBzZW5zZSBhcyBpdCBp
-cyBhIExpbnV4Cj4gPj4gPiBjb25jZXB0IG5vdCBhIGhhcmR3YXJlIGRlc2NyaXB0aW9uLgo+ID4+
-ID4KPiA+PiA+IE9uIHRoZSBvdGhlciBzaWRlLCB0aGUgY2xvY2tzb3VyY2UgaGFzIG5vdCBpbnRl
-cnJ1cHQgZGVjbGFyZWQgd2hpbGUgdGhlCj4gPj4gPiBjbG9ja2V2ZW50IGhhcywgc28gaXQgaXMg
-ZWFzeSBmcm9tIHRoZSBkcml2ZXIgdG8ga25vdyBpZiB0aGUgZGVzY3JpcHRpb24gaXMKPiA+PiA+
-IGZvciBhIGNsb2NrZXZlbnQgb3IgYSBjbG9ja3NvdXJjZSwgSU9XIGl0IGNvdWxkIGJlIGltcGxl
-bWVudGVkIGF0IHRoZSBkcml2ZXIKPiA+PiA+IGxldmVsLgo+ID4+ID4KPiA+PiA+IFNvIGluc3Rl
-YWQgb2YgZGVhbGluZyB3aXRoIGEgbmFtZWQgY2xvY2tzb3VyY2UgbWFjcm8sIGxldCdzIHVzZSBh
-IG1vcmUgZ2VuZXJpYwo+ID4+ID4gb25lOiBUSU1FUl9PRl9ERUNMQVJFLgo+ID4+ID4KPiA+PiA+
-IFRoZSBwYXRjaCBoYXMgbm90IGZ1bmN0aW9uYWwgY2hhbmdlcy4KPiA+PiA+Cj4gPj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz4KPiA+
-Pgo+ID4+IENvdWxkIHlvdSBlaXRoZXIgbGVhdmUgdGhlIG9sZCBuYW1lIGFzIGFuIGFsaWFzIGZv
-ciBvbmUgcmVsZWFzZSwgb3IgaW50cm9kdWNlCj4gPj4gdGhlIG5ldyBuYW1lIGFzIGFuIGFsaWFz
-IG5vdyBmb3IgNC4xMz8KPiA+Pgo+ID4+IEkgdGhpbmsgdGhhdCB0aGF0IHdvdWxkIG1ha2UgaXQg
-ZWFzaWVyIHRvIG1lcmdlIG5ldyBkcml2ZXJzLiBPdGhlcndpc2UgdGhpcwo+ID4+IGxvb2tzIGdv
-b2QgdG8gbWUsCj4gPgo+ID4KPiA+IE5ldyBkcml2ZXJzIHNob3VsZCBnbyB0aHJvdWdoIG15IHRy
-ZWUsIHNvIEkgY2FuIGNhdGNoIHRoZW0gd2l0aCB0aGUgb2xkIG1hY3JvCj4gPiBuYW1lIGFuZCBk
-byB0aGUgY2hhbmdlLgo+IAo+IFN1cmUsIHRoZXkgc2hvdWxkLCBhbmQgaXQncyBxdWl0ZSBsaWtl
-bHkgdGhhdCB5b3Ugd29uJ3QgZXZlbiBuZWVkIHRoZSBmYWxsYmFjaywKPiBJJ3ZlIGp1c3Qgc2Vl
-biB0b28gbWFueSBjYXNlcyB3aGVyZSBhIHNpbWlsYXIgYXNzdW1wdGlvbiB0dXJuZWQgb3V0IHdy
-b25nLAo+IHRoYXQgSSdkIGp1c3QgcGljayB0aGUgc2FmZXIgb3B0aW9uIGp1c3QgaW4gY2FzZSB3
-aGVuZXZlciBJIGRvIGFuIEFQSSBjaGFuZ2UuCj4gCj4gVGhpbmdzIHRoYXQgY291bGQgZ28gd3Jv
-bmcgaW5jbHVkZToKPiAKPiAtIEEgcGxhdGZvcm0gbWFpbnRhaW5lciB3YW50cyB0byBhZGQgYSBu
-ZXcgcGxhdGZvcm0gYW5kIGhhcyBhIGZvci1uZXh0Cj4gICBicmFuY2ggdGhhdCBnZXRzIG1lcmdl
-ZCBpbnRvIGxpbnV4LW5leHQsIHdpdGggcGFydHMgb2YgaXQgZ29pbmcgdGhyb3VnaAo+ICAgZGlm
-ZmVyZW50IG1haW50YWluZXJzLCBhbmQgbm93IHRoZXkgaGF2ZSB0byBjaG9vc2UgYmV0d2VlbiBh
-IGJyYW5jaAo+ICAgdGhhdCBkb2Vzbid0IGJ1aWxkIHdpdGhvdXQgdGhlIHRpbWVyIGJyYW5jaCwg
-b3Igb25lIHRoYXQgYnJlYWsgZm9yLW5leHQKPiAgIHVubGVzcyBTdGVwaGVuIGFwcGxpZXMgYSBm
-aXh1cAo+IAo+IC0gU29tZSBhcmNoaXRlY3R1cmUgbWFpbnRhaW5lciBkaWRuJ3QgZ2V0IHRoZSBt
-ZW1vIGFuZCBhZGRzIGFuIGluc3RhbmNlIG9mCj4gICBDTE9DS1NPVUNFX09GX0RFQ0xBUkUgaW4g
-YXJjaGl0ZWN0dXJlIHNwZWNpZmljIGNvZGUgd2l0aG91dCBhc2tpbmcKPiAgIGhhdmluZyB0aGUg
-cGF0Y2ggcmV2aWV3ZWQgZmlyc3QKPiAKPiAtIEEgcGxhdGZvcm0gaGFzIGEgYnJhbmNoIHdpdGgg
-Y29tcGxleCBjcm9zcy10cmVlIGRlcGVuZGVuY2llcyBhbmQKPiAgIGl0IG5lZWQgdG8gZ2V0IG1l
-cmdlZCBpbiBhbiB1bmNvbnZlbnRpb25hbCB3YXkuCj4gCj4gLSBZb3UgbWFrZSBhIG1pc3Rha2Ug
-YW5kIGFjY2lkZW50YWxseSBtZXJnZSBvbmUgZHJpdmVyIGZvciBhbiB1bnVzdWFsCj4gICBhcmNo
-aXRlY3R1cmUgdGhhdCBlc2NhcGVzIHlvdXIgdGVzdCBtYXRyaXguCj4gCj4gV2hpbGUgdGhvc2Ug
-YWxsIGFyZSB1bmxpa2VseSB0byBoYXBwZW4gaW4gYSBwYXJ0aWN1bGFyIG1lcmdlIHdpbmRvdywg
-dGhleSBkbwo+IGhhcHBlbiBvY2Nhc2lvbmFsbHkgYW5kIHRlbmQgdG8gY2F1c2UgYSBsb3Qgb2Yg
-cGFpbi4KCkhtbSwgdGhhdCBzb3VuZHMgc2NhcnkgOikKClRoZXJlIGlzIG5vIGd1YXJhbnRlZSwg
-d2hlbiByZW1vdmluZyB0aGUgYWxpYXMsIG5vbmUgb2YgdGhlIGFib3ZlIGhhcHBlbnMsCnJpZ2h0
-PwoKSWYgdGhlIHRpbWVyIGJyYW5jaCBpcyBpbiBsaW51eC1uZXh0LCB0aGF0IGNvdWxkIGJlIGNh
-dWd0aCBiZWZvcmUgYW55IG9mIHRoZQphYm92ZSBoYXBwZW5zLCBubz8KCkknbSBub3QgYWdhaW5z
-dCBhZGRpbmcgYW4gYWxpYXMsIGp1c3QgY2hlY2tpbmcgb3V0IGlmIGl0IGlzIHdvcnRoIHRvLgoK
-LS0gCgogPGh0dHA6Ly93d3cubGluYXJvLm9yZy8+IExpbmFyby5vcmcg4pSCIE9wZW4gc291cmNl
-IHNvZnR3YXJlIGZvciBBUk0gU29DcwoKRm9sbG93IExpbmFybzogIDxodHRwOi8vd3d3LmZhY2Vi
-b29rLmNvbS9wYWdlcy9MaW5hcm8+IEZhY2Vib29rIHwKPGh0dHA6Ly90d2l0dGVyLmNvbS8jIS9s
-aW5hcm9vcmc+IFR3aXR0ZXIgfAo8aHR0cDovL3d3dy5saW5hcm8ub3JnL2xpbmFyby1ibG9nLz4g
-QmxvZwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGlu
-dXgtbWVkaWF0ZWsgbWFpbGluZyBsaXN0CkxpbnV4LW1lZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5v
-cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1tZWRp
-YXRlawo=
+On Mon, May 29, 2017 at 12:55 PM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> On Mon, May 29, 2017 at 11:57:25AM +0200, Arnd Bergmann wrote:
+>> On Mon, May 29, 2017 at 10:48 AM, Daniel Lezcano
+>> <daniel.lezcano@linaro.org> wrote:
+>> Things that could go wrong include:
+>>
+>> - A platform maintainer wants to add a new platform and has a for-next
+>>   branch that gets merged into linux-next, with parts of it going through
+>>   different maintainers, and now they have to choose between a branch
+>>   that doesn't build without the timer branch, or one that break for-next
+>>   unless Stephen applies a fixup
+>>
+>> - Some architecture maintainer didn't get the memo and adds an instance of
+>>   CLOCKSOUCE_OF_DECLARE in architecture specific code without asking
+>>   having the patch reviewed first
+>>
+>> - A platform has a branch with complex cross-tree dependencies and
+>>   it need to get merged in an unconventional way.
+>>
+>> - You make a mistake and accidentally merge one driver for an unusual
+>>   architecture that escapes your test matrix.
+>>
+>> While those all are unlikely to happen in a particular merge window, they do
+>> happen occasionally and tend to cause a lot of pain.
+>
+> Hmm, that sounds scary :)
+>
+> There is no guarantee, when removing the alias, none of the above happens,
+> right?
+
+No, it's just both less likely and easier to work around.
+
+> If the timer branch is in linux-next, that could be caugth before any of the
+> above happens, no?
+
+linux-next will find most of these problems, but it will still be more work
+for the people that run into build failures when testing linux-next.
+
+     Arnd
