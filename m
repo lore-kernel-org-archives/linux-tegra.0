@@ -1,89 +1,76 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH 2/7] clocksource: Rename CLOCKSOURCE_OF_DECLARE
-Date: Mon, 29 May 2017 11:57:25 +0200
-Message-ID: <CAK8P3a1Kv_RhKL43ie6co_N5pDXvRHd7Uq8g70qt80WkxuhzLw@mail.gmail.com>
-References: <1495879129-28109-1-git-send-email-daniel.lezcano@linaro.org>
- <1495879129-28109-2-git-send-email-daniel.lezcano@linaro.org>
- <CAK8P3a3QACHYqtCO1z_FpW0nXEtx356wCDha_=SNXU872=q1UQ@mail.gmail.com>
- <20170529084809.GA2192@mai>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Subject: Re: [RFC PATCH 0/4] PM / Domains: Add support for explicit control of
+ PM domains
+Date: Tue, 30 May 2017 09:11:56 +0530
+Message-ID: <5fcfeda6-f95c-cdaa-73a5-5c7499a3f9f5@codeaurora.org>
+References: <1490710443-27425-1-git-send-email-jonathanh@nvidia.com>
+ <CAJZ5v0gMzN_zfC_2nnRtYFyFon3-_mnioQhNbDP0wsr91RnagA@mail.gmail.com>
+ <ffe13074-9113-0a20-0fa6-76d0209dadfc@nvidia.com>
+ <1832647.f77WMLkdQb@aspire.rjw.lan>
+ <CAPDyKFokVKZfRAsEAB6ihx1FxW4JjarionyOwCATr3s+QW4aMg@mail.gmail.com>
+ <b4e8fd34-e2f0-165d-aa22-32ba43a8dbed@nvidia.com>
+ <CAPDyKFo-hfwbrY+AEMt0=fMshiT-BWvYDvGkKGqquTdowUvWHw@mail.gmail.com>
+ <107242f1-de90-b8bb-bc2c-feaf014485aa@nvidia.com>
+ <CAPDyKFqeAWoy-vfN89j8Yv1HTMpNqwcVk3XrTQoXH5JNrQ9Maw@mail.gmail.com>
+ <b1c74af3-1943-51ff-0bc9-009ca6c7f217@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20170529084809.GA2192@mai>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:RALINK MIPS ARCHITECTURE" <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Santosh Shilimkar <ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, "moderated list:ARM/OXNAS platform support" <linux-oxnas-Xt5XgHjqiBU06sgRBLv0+0B+6BGkLq7r@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:ARM/STI ARCHITECTURE" <kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "moderated list:H8/300 ARCHITECTURE" <uclinux-h8-devel-5NWGOfrQmneRv+LV9MX5uooqe+aC9MnS@public.gmane.org>, Alexander Shiyan <shc>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <b1c74af3-1943-51ff-0bc9-009ca6c7f217@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 29, 2017 at 10:48 AM, Daniel Lezcano
-<daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Mon, May 29, 2017 at 10:41:52AM +0200, Arnd Bergmann wrote:
->> On Sat, May 27, 2017 at 11:58 AM, Daniel Lezcano
->> <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> > The CLOCKSOUCE_OF_DECLARE macro is used widely for the timers to declare the
->> > clocksource at early stage. However, this macro is also used to initialize
->> > the clockevent if any, or the clockevent only.
->> >
->> > It was originally suggested to declare another macro to initialize a
->> > clockevent, so in order to separate the two entities even they belong to the
->> > same IP. This was not accepted because of the impact on the DT where splitting
->> > a clocksource/clockevent definition does not make sense as it is a Linux
->> > concept not a hardware description.
->> >
->> > On the other side, the clocksource has not interrupt declared while the
->> > clockevent has, so it is easy from the driver to know if the description is
->> > for a clockevent or a clocksource, IOW it could be implemented at the driver
->> > level.
->> >
->> > So instead of dealing with a named clocksource macro, let's use a more generic
->> > one: TIMER_OF_DECLARE.
->> >
->> > The patch has not functional changes.
->> >
->> > Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+[]..
+
+>>> I was proposing to have such a lower-layer by splitting the existing
+>>> genpd framework so the drivers would have the option of calling the
+>>> lower-level power control functions to look-up pm-domains and control
+>>> them directly from their rpm callbacks (if they need to). Same as we do
+>>> for clocks. This way you would not need to mess with the genpd ->start()
+>>> callback and leave it to the driver to handle itself as it knows what
+>>> needs to be done. This assumes that the device is never bound to the
+>>> pm-domain by the genpd core.
 >>
->> Could you either leave the old name as an alias for one release, or introduce
->> the new name as an alias now for 4.13?
->>
->> I think that that would make it easier to merge new drivers. Otherwise this
->> looks good to me,
->
->
-> New drivers should go through my tree, so I can catch them with the old macro
-> name and do the change.
+>> Yes, agree! To me this is the only solution what would really work.
+> 
+> I agree! :-)
+> 
+>> Perhaps Rafael can confirm that he is fine with a solution like this?
+> 
+> Yes and Rafael, please can you also elaborate on what you meant by
+> "allow genpd to use either a list of power resources or the on/off
+> callbacks provided by itself to cover different use cases"?
+> 
+> I would like to understand exactly what you meant by allowing genpd to
+> use a list of power resources (ie. how you envisioned we could achieve
+> this).
 
-Sure, they should, and it's quite likely that you won't even need the fallback,
-I've just seen too many cases where a similar assumption turned out wrong,
-that I'd just pick the safer option just in case whenever I do an API change.
+While thinking through the problem of devices associated with multiple Power
+domains (or power resources) and controlling them individually (or together)
+I was wondering if something like a PM domain governor (with PM resource 
+level constraints) could help.
 
-Things that could go wrong include:
+So with just one set of PM domain callbacks, its quite easy to control multiple power
+resources, if they need to be *all* turned on/off together, using something similar to
+what Jon proposed in his RFC [1]
 
-- A platform maintainer wants to add a new platform and has a for-next
-  branch that gets merged into linux-next, with parts of it going through
-  different maintainers, and now they have to choose between a branch
-  that doesn't build without the timer branch, or one that break for-next
-  unless Stephen applies a fixup
+However, there could be instances where in we might need to control them individually
+and in such cases we could hook up a PM domain governor which decides if an individual
+PM resource can be turned on or off while the device is runtime suspended/resumed.
+We can expose some PM resource level QoS APIs which the drivers can use to express their
+needs, which the PM domain governor then takes into account during the decision making.
 
-- Some architecture maintainer didn't get the memo and adds an instance of
-  CLOCKSOUCE_OF_DECLARE in architecture specific code without asking
-  having the patch reviewed first
+if this seems worth pursuing further, I can post some RFCs on these lines and
+get the discussion going.
 
-- A platform has a branch with complex cross-tree dependencies and
-  it need to get merged in an unconventional way.
+thanks,
+Rajendra
 
-- You make a mistake and accidentally merge one driver for an unusual
-  architecture that escapes your test matrix.
+[1] https://lkml.org/lkml/2016/9/20/173
 
-While those all are unlikely to happen in a particular merge window, they do
-happen occasionally and tend to cause a lot of pain.
-
-       Arnd
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
