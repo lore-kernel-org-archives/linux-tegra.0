@@ -1,76 +1,30 @@
-From: Rajendra Nayak <rnayak@codeaurora.org>
-Subject: Re: [RFC PATCH 0/4] PM / Domains: Add support for explicit control of
- PM domains
-Date: Tue, 30 May 2017 09:11:56 +0530
-Message-ID: <5fcfeda6-f95c-cdaa-73a5-5c7499a3f9f5@codeaurora.org>
-References: <1490710443-27425-1-git-send-email-jonathanh@nvidia.com>
- <CAJZ5v0gMzN_zfC_2nnRtYFyFon3-_mnioQhNbDP0wsr91RnagA@mail.gmail.com>
- <ffe13074-9113-0a20-0fa6-76d0209dadfc@nvidia.com>
- <1832647.f77WMLkdQb@aspire.rjw.lan>
- <CAPDyKFokVKZfRAsEAB6ihx1FxW4JjarionyOwCATr3s+QW4aMg@mail.gmail.com>
- <b4e8fd34-e2f0-165d-aa22-32ba43a8dbed@nvidia.com>
- <CAPDyKFo-hfwbrY+AEMt0=fMshiT-BWvYDvGkKGqquTdowUvWHw@mail.gmail.com>
- <107242f1-de90-b8bb-bc2c-feaf014485aa@nvidia.com>
- <CAPDyKFqeAWoy-vfN89j8Yv1HTMpNqwcVk3XrTQoXH5JNrQ9Maw@mail.gmail.com>
- <b1c74af3-1943-51ff-0bc9-009ca6c7f217@nvidia.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 21/22] drm/tegra: Don't use IOMMU on Tegra20
+Date: Tue, 30 May 2017 11:21:09 +0200
+Message-ID: <20170530092109.GA2818@8bytes.org>
+References: <cover.1495498184.git.digetx@gmail.com>
+ <fb3b357fbbdf61a20609f38a817c3f45ebc238fc.1495498184.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <b1c74af3-1943-51ff-0bc9-009ca6c7f217@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <fb3b357fbbdf61a20609f38a817c3f45ebc238fc.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-[]..
-
->>> I was proposing to have such a lower-layer by splitting the existing
->>> genpd framework so the drivers would have the option of calling the
->>> lower-level power control functions to look-up pm-domains and control
->>> them directly from their rpm callbacks (if they need to). Same as we do
->>> for clocks. This way you would not need to mess with the genpd ->start()
->>> callback and leave it to the driver to handle itself as it knows what
->>> needs to be done. This assumes that the device is never bound to the
->>> pm-domain by the genpd core.
->>
->> Yes, agree! To me this is the only solution what would really work.
+On Tue, May 23, 2017 at 03:16:32AM +0300, Dmitry Osipenko wrote:
+> There is no IOMMU on Tegra20, instead a GART would be picked as an IOMMU
+> provider.
 > 
-> I agree! :-)
-> 
->> Perhaps Rafael can confirm that he is fine with a solution like this?
-> 
-> Yes and Rafael, please can you also elaborate on what you meant by
-> "allow genpd to use either a list of power resources or the on/off
-> callbacks provided by itself to cover different use cases"?
-> 
-> I would like to understand exactly what you meant by allowing genpd to
-> use a list of power resources (ie. how you envisioned we could achieve
-> this).
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 5 ++++-
+>  drivers/gpu/host1x/dev.c    | 5 ++++-
+>  2 files changed, 8 insertions(+), 2 deletions(-)
 
-While thinking through the problem of devices associated with multiple Power
-domains (or power resources) and controlling them individually (or together)
-I was wondering if something like a PM domain governor (with PM resource 
-level constraints) could help.
+Not sure what the context here is or if the patches need to merged with
+the rest of the patch-set, so:
 
-So with just one set of PM domain callbacks, its quite easy to control multiple power
-resources, if they need to be *all* turned on/off together, using something similar to
-what Jon proposed in his RFC [1]
-
-However, there could be instances where in we might need to control them individually
-and in such cases we could hook up a PM domain governor which decides if an individual
-PM resource can be turned on or off while the device is runtime suspended/resumed.
-We can expose some PM resource level QoS APIs which the drivers can use to express their
-needs, which the PM domain governor then takes into account during the decision making.
-
-if this seems worth pursuing further, I can post some RFCs on these lines and
-get the discussion going.
-
-thanks,
-Rajendra
-
-[1] https://lkml.org/lkml/2016/9/20/173
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+	Acked-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
