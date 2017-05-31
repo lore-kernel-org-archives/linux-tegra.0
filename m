@@ -1,184 +1,153 @@
 From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 04/22] drm/tegra: Check for malformed offsets and sizes in
- the 'submit' IOCTL
-Date: Wed, 31 May 2017 21:39:59 +0300
-Message-ID: <9228ad8f-79c4-6cd0-4082-3ef137ea9f00@kapsi.fi>
+Subject: Re: [PATCH 05/22] drm/tegra: Correct copying of waitchecks and
+ disable them in the 'submit' IOCTL
+Date: Wed, 31 May 2017 21:43:40 +0300
+Message-ID: <9f21def6-a388-411c-9dcc-711abaf9f164@kapsi.fi>
 References: <cover.1495498184.git.digetx@gmail.com>
- <801e3023e6fe11744c7e675ca7b9c5890e3210f2.1495498184.git.digetx@gmail.com>
+ <380fc14d114ac9abb15e447c90a4363913d34a52.1495498184.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <801e3023e6fe11744c7e675ca7b9c5890e3210f2.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <380fc14d114ac9abb15e447c90a4363913d34a52.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Just some comments on comments (?!). With those fixed,
-
 Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 On 05/23/2017 03:14 AM, Dmitry Osipenko wrote:
-> If commands buffer claims a number of words that is higher than its BO can
-> fit, a kernel OOPS will be fired on the out-of-bounds BO access. This was
-> triggered by an opentegra Xorg driver that erroneously pushed too many
-> commands to the pushbuf.
-> 
-> The CMDA commands buffer address is 4 bytes aligned, so check its alignment.
-
-CDMA
-
-> 
-> The maximum number of the CDMA gather fetches is 16383, add a check for it.
-> 
-> Add a sanity check for the relocations in a same way.
-> 
-> [   46.829393] Unable to handle kernel paging request at virtual address f09b2000
-> ...
-> [<c04a3ba4>] (host1x_job_pin) from [<c04dfcd0>] (tegra_drm_submit+0x474/0x510)
-> [<c04dfcd0>] (tegra_drm_submit) from [<c04deea0>] (tegra_submit+0x50/0x6c)
-> [<c04deea0>] (tegra_submit) from [<c04c07c0>] (drm_ioctl+0x1e4/0x3ec)
-> [<c04c07c0>] (drm_ioctl) from [<c02541a0>] (do_vfs_ioctl+0x9c/0x8e4)
-> [<c02541a0>] (do_vfs_ioctl) from [<c0254a1c>] (SyS_ioctl+0x34/0x5c)
-> [<c0254a1c>] (SyS_ioctl) from [<c0107640>] (ret_fast_syscall+0x0/0x3c)
+> The waitchecks along with multiple syncpoints per submit are not ready for
+> use yet, let's forbid them for now.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->   drivers/gpu/drm/tegra/drm.c | 48 +++++++++++++++++++++++++++++++++++++++++++++
->   drivers/gpu/drm/tegra/gem.c |  5 -----
->   drivers/gpu/drm/tegra/gem.h |  5 +++++
->   3 files changed, 53 insertions(+), 5 deletions(-)
+>   drivers/gpu/drm/tegra/drm.c | 60 ++++++++++++++++++++++++++++++++++++++++++---
+>   drivers/gpu/host1x/job.h    |  7 ------
+>   include/linux/host1x.h      |  7 ++++++
+>   3 files changed, 63 insertions(+), 11 deletions(-)
 > 
 > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index f9282da94a1f..7e4559ec824d 100644
+> index 7e4559ec824d..eae0c1512ab0 100644
 > --- a/drivers/gpu/drm/tegra/drm.c
 > +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -26,6 +26,7 @@
->   #define DRIVER_PATCHLEVEL 0
+> @@ -349,6 +349,36 @@ static int host1x_reloc_copy_from_user(struct host1x_reloc *dest,
+>   	return 0;
+>   }
 >   
->   #define CARVEOUT_SZ SZ_64M
-> +#define CDMA_GATHER_FETCHES_MAX_NB 16383
+> +static int host1x_waitchk_copy_from_user(struct host1x_waitchk *dest,
+> +					 struct drm_tegra_waitchk __user *src,
+> +					 struct drm_file *file)
+> +{
+> +	u32 cmdbuf;
+> +	int err;
+> +
+> +	err = get_user(cmdbuf, &src->handle);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	err = get_user(dest->offset, &src->offset);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	err = get_user(dest->syncpt_id, &src->syncpt);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	err = get_user(dest->thresh, &src->thresh);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	dest->bo = host1x_bo_lookup(file, cmdbuf);
+> +	if (!dest->bo)
+> +		return -ENOENT;
+> +
+> +	return 0;
+> +}
+> +
+>   int tegra_drm_submit(struct tegra_drm_context *context,
+>   		     struct drm_tegra_submit *args, struct drm_device *drm,
+>   		     struct drm_file *file)
+> @@ -370,6 +400,10 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>   	if (args->num_syncpts != 1)
+>   		return -EINVAL;
 >   
->   struct tegra_drm_file {
->   	struct idr contexts;
-> @@ -383,18 +384,41 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->   	while (num_cmdbufs) {
->   		struct drm_tegra_cmdbuf cmdbuf;
->   		struct host1x_bo *bo;
-> +		struct tegra_bo *obj;
-> +		u64 offset;
->   
->   		if (copy_from_user(&cmdbuf, cmdbufs, sizeof(cmdbuf))) {
->   			err = -EFAULT;
->   			goto fail;
+> +	/* We don't yet support waitchks */
+> +	if (args->num_waitchks != 0)
+> +		return -EINVAL;
+> +
+>   	job = host1x_job_alloc(context->channel, args->num_cmdbufs,
+>   			       args->num_relocs, args->num_waitchks);
+>   	if (!job)
+> @@ -457,10 +491,28 @@ int tegra_drm_submit(struct tegra_drm_context *context,
 >   		}
+>   	}
 >   
-> +		/*
-> +		 * The maximum number of CDMA gather fetches is 16383, a higher
-> +		 * value means the words count is malformed.
-> +		 */
-> +		if (cmdbuf.words > CDMA_GATHER_FETCHES_MAX_NB) {
-> +			err = -EINVAL;
-> +			goto fail;
-> +		}
-> +
->   		bo = host1x_bo_lookup(file, cmdbuf.handle);
->   		if (!bo) {
->   			err = -ENOENT;
->   			goto fail;
->   		}
->   
-> +		offset = (u64)cmdbuf.offset + (u64)cmdbuf.words * sizeof(u32);
-> +		obj = host1x_to_tegra_bo(bo);
-> +
-> +		/*
-> +		 * The CDMA base address if 4-bytes aligned, unaligned offset
-
-"Gather buffer base address must be", perhaps, as cmdbufs aren't used 
-directly as CDMA buffers.
-
-> +		 * is malformed.
-> +		 */
-> +		if (offset & 3 || offset >= obj->gem.size) {
-> +			err = -EINVAL;
-> +			goto fail;
-> +		}
-> +
->   		host1x_job_add_gather(job, bo, cmdbuf.words, cmdbuf.offset);
->   		num_cmdbufs--;
->   		cmdbufs++;
-> @@ -402,11 +426,35 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->   
->   	/* copy and resolve relocations from submit */
->   	while (num_relocs--) {
-> +		struct host1x_reloc *reloc;
+> -	if (copy_from_user(job->waitchk, waitchks,
+> -			   sizeof(*waitchks) * num_waitchks)) {
+> -		err = -EFAULT;
+> -		goto fail;
+> +	/* copy and resolve waitchks from submit */
+> +	while (num_waitchks--) {
+> +		struct host1x_waitchk *wait = &job->waitchk[num_waitchks];
 > +		struct tegra_bo *obj;
 > +
->   		err = host1x_reloc_copy_from_user(&job->relocarray[num_relocs],
->   						  &relocs[num_relocs], drm,
->   						  file);
->   		if (err < 0)
->   			goto fail;
+> +		err = host1x_waitchk_copy_from_user(wait,
+> +						    &waitchks[num_waitchks],
+> +						    file);
+> +		if (err < 0)
+> +			goto fail;
 > +
-> +		reloc = &job->relocarray[num_relocs];
-> +		obj = host1x_to_tegra_bo(reloc->cmdbuf.bo);
+> +		obj = host1x_to_tegra_bo(wait->bo);
 > +
 > +		/*
-> +		 * The unaligned cmdbuf offset will cause an unaligned write
-
-"An unaligned ..."
-
-> +		 * during of the relocations patching, corrupting the commands
-> +		 * stream.
+> +		 * The unaligned offset will cause an unaligned write during
+> +		 * of the waitchks patching, corrupting the commands stream.
 > +		 */
-> +		if (reloc->cmdbuf.offset & 3 ||
-> +		    reloc->cmdbuf.offset >= obj->gem.size) {
-> +			err = -EINVAL;
-> +			goto fail;
-> +		}
-> +
-> +		obj = host1x_to_tegra_bo(reloc->target.bo);
-> +
-> +		if (reloc->target.offset >= obj->gem.size) {
+> +		if (wait->offset & 3 ||
+> +		    wait->offset >= obj->gem.size) {
 > +			err = -EINVAL;
 > +			goto fail;
 > +		}
 >   	}
 >   
->   	if (copy_from_user(job->waitchk, waitchks,
-> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> index ca0d4439e97b..6a855b2f07fb 100644
-> --- a/drivers/gpu/drm/tegra/gem.c
-> +++ b/drivers/gpu/drm/tegra/gem.c
-> @@ -20,11 +20,6 @@
->   #include "drm.h"
->   #include "gem.h"
+>   	if (copy_from_user(&syncpt, (void __user *)(uintptr_t)args->syncpts,
+> diff --git a/drivers/gpu/host1x/job.h b/drivers/gpu/host1x/job.h
+> index 878239c476d2..0debd93a1849 100644
+> --- a/drivers/gpu/host1x/job.h
+> +++ b/drivers/gpu/host1x/job.h
+> @@ -34,13 +34,6 @@ struct host1x_cmdbuf {
+>   	u32 pad;
+>   };
 >   
-> -static inline struct tegra_bo *host1x_to_tegra_bo(struct host1x_bo *bo)
-> -{
-> -	return container_of(bo, struct tegra_bo, base);
-> -}
+> -struct host1x_waitchk {
+> -	struct host1x_bo *bo;
+> -	u32 offset;
+> -	u32 syncpt_id;
+> -	u32 thresh;
+> -};
 > -
->   static void tegra_bo_put(struct host1x_bo *bo)
->   {
->   	struct tegra_bo *obj = host1x_to_tegra_bo(bo);
-> diff --git a/drivers/gpu/drm/tegra/gem.h b/drivers/gpu/drm/tegra/gem.h
-> index 6c5f12ac0087..8b32a6fd586d 100644
-> --- a/drivers/gpu/drm/tegra/gem.h
-> +++ b/drivers/gpu/drm/tegra/gem.h
-> @@ -52,6 +52,11 @@ static inline struct tegra_bo *to_tegra_bo(struct drm_gem_object *gem)
->   	return container_of(gem, struct tegra_bo, gem);
->   }
+>   struct host1x_job_unpin_data {
+>   	struct host1x_bo *bo;
+>   	struct sg_table *sgt;
+> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+> index 3d04aa1dc83e..aa323e43ae4e 100644
+> --- a/include/linux/host1x.h
+> +++ b/include/linux/host1x.h
+> @@ -177,6 +177,13 @@ struct host1x_reloc {
+>   	unsigned long shift;
+>   };
 >   
-> +static inline struct tegra_bo *host1x_to_tegra_bo(struct host1x_bo *bo)
-> +{
-> +	return container_of(bo, struct tegra_bo, base);
-> +}
+> +struct host1x_waitchk {
+> +	struct host1x_bo *bo;
+> +	u32 offset;
+> +	u32 syncpt_id;
+> +	u32 thresh;
+> +};
 > +
->   struct tegra_bo *tegra_bo_create(struct drm_device *drm, size_t size,
->   				 unsigned long flags);
->   struct tegra_bo *tegra_bo_create_with_handle(struct drm_file *file,
+>   struct host1x_job {
+>   	/* When refcount goes to zero, job can be freed */
+>   	struct kref ref;
 > 
