@@ -1,84 +1,97 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH v5 0/6] reset: APIs to manage a list of resets
-Date: Thu,  1 Jun 2017 18:51:57 +0200
-Message-ID: <20170601165203.15315-1-p.zabel@pengutronix.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: [PATCH v5 1/6] reset: use kref for reference counting
+Date: Thu,  1 Jun 2017 18:51:58 +0200
+Message-ID: <20170601165203.15315-2-p.zabel@pengutronix.de>
+References: <20170601165203.15315-1-p.zabel@pengutronix.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170601165203.15315-1-p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-A set of patches to allow consumers to get and de/assert or trigger
-a number of resets at the same time. A patch on top of Vivek's original
-API extension is added to hide the reset_control_array behind a struct
-reset_control so that the consumer doesn't have care about the difference
-between a singular reset control and reset control controlling an array
-of resets, except when requesting the control.
+Use kref for reference counting and enjoy the advantages of refcount_t.
 
-This series also contains reset controls patches for dwc3-of-simple
-and tegra pmc drivers.
-A small patch is added in this series to correctly re-order the
-resource handling in dwc3_of_simple_remove().
+Signed-off-by: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+---
+ drivers/reset/core.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
-The series is tested on torvald's master branch the device tree
-patches to enable usb on db820c.
-
-Changes since v4:
- - Added a patch to hide reset control arrays behind struct reset_control
-   and adapted the consumer patches. This could be merged with the reset
-   array API patch if we think this is a good idea.
-
-Changes since v3:
- - Squashed of_reset_control_get_count() patch in the second patch that
-   adds the reset control array APIs.
- - The error path after getting count through of_reset_control_get_count()
-   now returns NULL pointer in case when 'optional' flag is true.
- - Added code in reset_control_array_assert() to deassert the
-   already asserted resets in the error case.
- - Using of_reset_control_array_get_optional_exclusive() in dwc3 patch
-   to request the reset control array.
- - Added a patch to fix the order in which resources are handled in
-   dwc3_of_simple_remove() path.
- - Added tegra_powergate->reset to take care of single reset control
-   passed from the client drivers.
-
-Changes since v2:
- - Addressed comments to make APIs inline with gpiod API.
- - Moved number of reset controls in 'struct reset_control_array'
-   so that the footprint is reduced.
- - of_reset_control_array_get() and devm_reset_control_array_get()
-   now return pointer to the newly created reset control array.
- - Added comments to mention that the reset control array APIs don't
-   guarantee any particular order when handling the reset controls.
- - Dropped 'name' from reset_control_array' since the interface is meant
-   for a bunch of anonymous resets that can all be asserted or deasserted
-   in arbitrary order.
- - Fixed returns for APIs reported by kbuild.
- - Fixed 'for' clause guards reported by kbuild.
-
-Changes since v1:
- - Addressed comment for error handling in of_reset_control_get_count()
- - Added patch to manage reset controller array.
- - Rebased dwc3-of-simple changes based on the new set of APIs
-   for reset control array.
- - Added a patch for soc/tegra/pmc driver to use the new set of
-   reset control array APIs.
-
-Philipp Zabel (2):
-  reset: use kref for reference counting
-  reset: hide reset control arrays behind struct reset_control
-
-Vivek Gautam (4):
-  reset: Add APIs to manage array of resets
-  usb: dwc3: of-simple: Re-order resource handling in remove
-  usb: dwc3: of-simple: Add support to get resets for the device
-  soc/tegra: pmc: Use the new reset APIs to manage reset controllers
-
- drivers/reset/core.c              | 234 ++++++++++++++++++++++++++++++++++++--
- drivers/soc/tegra/pmc.c           |  82 ++++---------
- drivers/usb/dwc3/dwc3-of-simple.c |  29 ++++-
- include/linux/reset.h             |  73 ++++++++++++
- 4 files changed, 344 insertions(+), 74 deletions(-)
-
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index cd739d2fa1603..0090784ff4105 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -13,6 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/export.h>
+ #include <linux/kernel.h>
++#include <linux/kref.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/reset.h>
+@@ -40,7 +41,7 @@ struct reset_control {
+ 	struct reset_controller_dev *rcdev;
+ 	struct list_head list;
+ 	unsigned int id;
+-	unsigned int refcnt;
++	struct kref refcnt;
+ 	bool shared;
+ 	atomic_t deassert_count;
+ 	atomic_t triggered_count;
+@@ -288,7 +289,7 @@ static struct reset_control *__reset_control_get_internal(
+ 			if (WARN_ON(!rstc->shared || !shared))
+ 				return ERR_PTR(-EBUSY);
+ 
+-			rstc->refcnt++;
++			kref_get(&rstc->refcnt);
+ 			return rstc;
+ 		}
+ 	}
+@@ -302,18 +303,18 @@ static struct reset_control *__reset_control_get_internal(
+ 	rstc->rcdev = rcdev;
+ 	list_add(&rstc->list, &rcdev->reset_control_head);
+ 	rstc->id = index;
+-	rstc->refcnt = 1;
++	kref_init(&rstc->refcnt);
+ 	rstc->shared = shared;
+ 
+ 	return rstc;
+ }
+ 
+-static void __reset_control_put_internal(struct reset_control *rstc)
++static void __reset_control_release(struct kref *kref)
+ {
+-	lockdep_assert_held(&reset_list_mutex);
++	struct reset_control *rstc = container_of(kref, struct reset_control,
++						  refcnt);
+ 
+-	if (--rstc->refcnt)
+-		return;
++	lockdep_assert_held(&reset_list_mutex);
+ 
+ 	module_put(rstc->rcdev->owner);
+ 
+@@ -321,6 +322,13 @@ static void __reset_control_put_internal(struct reset_control *rstc)
+ 	kfree(rstc);
+ }
+ 
++static void __reset_control_put_internal(struct reset_control *rstc)
++{
++	lockdep_assert_held(&reset_list_mutex);
++
++	kref_put(&rstc->refcnt, __reset_control_release);
++}
++
+ struct reset_control *__of_reset_control_get(struct device_node *node,
+ 				     const char *id, int index, bool shared,
+ 				     bool optional)
+@@ -400,7 +408,6 @@ EXPORT_SYMBOL_GPL(__reset_control_get);
+  * reset_control_put - free the reset controller
+  * @rstc: reset controller
+  */
+-
+ void reset_control_put(struct reset_control *rstc)
+ {
+ 	if (IS_ERR_OR_NULL(rstc))
 -- 
 2.11.0
