@@ -1,159 +1,52 @@
-From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH v5 6/6] soc/tegra: pmc: Use the new reset APIs to manage reset controllers
-Date: Thu,  1 Jun 2017 18:52:03 +0200
-Message-ID: <20170601165203.15315-7-p.zabel@pengutronix.de>
-References: <20170601165203.15315-1-p.zabel@pengutronix.de>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH 14/22] gpu: host1x: Forbid relocation address shifting in
+ the firewall
+Date: Thu, 1 Jun 2017 20:39:32 +0300
+Message-ID: <56ee62e7-a53b-0270-837a-2ae6f0a848cc@kapsi.fi>
+References: <cover.1495498184.git.digetx@gmail.com>
+ <15311f1c044c3ff26624e2a980b0c477b1cf33b2.1495498184.git.digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170601165203.15315-1-p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+In-Reply-To: <15311f1c044c3ff26624e2a980b0c477b1cf33b2.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Make use of reset_control_array_*() set of APIs to manage
-an array of reset controllers available with the device.
+On 05/23/2017 03:14 AM, Dmitry Osipenko wrote:
+> Incorrectly shifted relocation address will cause a lower memory corruption
+> and likely a hang on a write or a read of an arbitrary data in case of IOMMU
+> absent. As of now there is no use for the address shifting (at least on
+> Tegra20) and adding a proper shifting / sizes validation is much more work.
 
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Signed-off-by: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
----
- drivers/soc/tegra/pmc.c | 82 ++++++++++++-------------------------------------
- 1 file changed, 20 insertions(+), 62 deletions(-)
+Perhaps change to "As of now there is no use for the address shifting on 
+Tegra20" if you post another revision.
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index e233dd5dcab3d..749b218147a19 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -124,8 +124,7 @@ struct tegra_powergate {
- 	unsigned int id;
- 	struct clk **clks;
- 	unsigned int num_clks;
--	struct reset_control **resets;
--	unsigned int num_resets;
-+	struct reset_control *reset;
- };
- 
- struct tegra_io_pad_soc {
-@@ -348,32 +347,14 @@ static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
- 	return err;
- }
- 
--static int tegra_powergate_reset_assert(struct tegra_powergate *pg)
-+static inline int tegra_powergate_reset_assert(struct tegra_powergate *pg)
- {
--	unsigned int i;
--	int err;
--
--	for (i = 0; i < pg->num_resets; i++) {
--		err = reset_control_assert(pg->resets[i]);
--		if (err)
--			return err;
--	}
--
--	return 0;
-+	return reset_control_assert(pg->reset);
- }
- 
--static int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
-+static inline int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
- {
--	unsigned int i;
--	int err;
--
--	for (i = 0; i < pg->num_resets; i++) {
--		err = reset_control_deassert(pg->resets[i]);
--		if (err)
--			return err;
--	}
--
--	return 0;
-+	return reset_control_deassert(pg->reset);
- }
- 
- static int tegra_powergate_power_up(struct tegra_powergate *pg,
-@@ -566,8 +547,7 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
- 	pg.id = id;
- 	pg.clks = &clk;
- 	pg.num_clks = 1;
--	pg.resets = &rst;
--	pg.num_resets = 1;
-+	pg.reset = IS_ERR(rst) ? NULL : rst;
- 
- 	err = tegra_powergate_power_up(&pg, false);
- 	if (err)
-@@ -755,45 +735,26 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
- static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
- 					 struct device_node *np, bool off)
- {
--	struct reset_control *rst;
--	unsigned int i, count;
- 	int err;
- 
--	count = of_count_phandle_with_args(np, "resets", "#reset-cells");
--	if (count == 0)
--		return -ENODEV;
--
--	pg->resets = kcalloc(count, sizeof(rst), GFP_KERNEL);
--	if (!pg->resets)
--		return -ENOMEM;
--
--	for (i = 0; i < count; i++) {
--		pg->resets[i] = of_reset_control_get_by_index(np, i);
--		if (IS_ERR(pg->resets[i])) {
--			err = PTR_ERR(pg->resets[i]);
--			goto error;
--		}
--
--		if (off)
--			err = reset_control_assert(pg->resets[i]);
--		else
--			err = reset_control_deassert(pg->resets[i]);
--
--		if (err) {
--			reset_control_put(pg->resets[i]);
--			goto error;
--		}
-+	pg->reset = of_reset_control_array_get_exclusive(np);
-+	if (IS_ERR(pg->reset)) {
-+		pr_err("failed to get device resets\n");
-+		return PTR_ERR(pg->reset);
- 	}
- 
--	pg->num_resets = count;
-+	if (off)
-+		err = reset_control_assert(pg->reset);
-+	else
-+		err = reset_control_deassert(pg->reset);
- 
--	return 0;
-+	if (err)
-+		goto put_reset;
- 
--error:
--	while (i--)
--		reset_control_put(pg->resets[i]);
-+	return 0;
- 
--	kfree(pg->resets);
-+put_reset:
-+	reset_control_put(pg->reset);
- 
- 	return err;
- }
-@@ -885,10 +846,7 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 	pm_genpd_remove(&pg->genpd);
- 
- remove_resets:
--	while (pg->num_resets--)
--		reset_control_put(pg->resets[pg->num_resets]);
--
--	kfree(pg->resets);
-+	reset_control_put(pg->reset);
- 
- remove_clks:
- 	while (pg->num_clks--)
--- 
-2.11.0
+> Let's forbid it in the firewall till a proper validation is implemented.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>   drivers/gpu/host1x/job.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+> index 190353944d23..1a1568e64ba8 100644
+> --- a/drivers/gpu/host1x/job.c
+> +++ b/drivers/gpu/host1x/job.c
+> @@ -332,6 +332,10 @@ static bool check_reloc(struct host1x_reloc *reloc, struct host1x_bo *cmdbuf,
+>   	if (reloc->cmdbuf.bo != cmdbuf || reloc->cmdbuf.offset != offset)
+>   		return false;
+>   
+> +	/* relocation shift value validation isn't implemented yet */
+> +	if (reloc->shift)
+> +		return false;
+> +
+>   	return true;
+>   }
+>   
+> 
