@@ -1,42 +1,81 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v2 2/2] arm64: tegra: Add CCPLEX_CLUSTER area in Tegra186
-Date: Thu, 1 Jun 2017 11:04:05 +0300
-Message-ID: <1496304245-24024-3-git-send-email-mperttunen@nvidia.com>
-References: <1496304245-24024-1-git-send-email-mperttunen@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 21/22] drm/tegra: Don't use IOMMU on Tegra20
+Date: Thu, 1 Jun 2017 11:36:12 +0300
+Message-ID: <a61919f1-df1f-9cd0-3059-53daa3a88ff7@gmail.com>
+References: <cover.1495498184.git.digetx@gmail.com>
+ <fb3b357fbbdf61a20609f38a817c3f45ebc238fc.1495498184.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1496304245-24024-1-git-send-email-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <fb3b357fbbdf61a20609f38a817c3f45ebc238fc.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
-registers that initiate CPU frequency/voltage transitions.
+On 23.05.2017 03:16, Dmitry Osipenko wrote:
+> There is no IOMMU on Tegra20, instead a GART would be picked as an IOMMU
+> provider.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 5 ++++-
+>  drivers/gpu/host1x/dev.c    | 5 ++++-
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index 17416e1c219a..ac8f76d9475f 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -15,6 +15,8 @@
+>  #include <drm/drm_atomic.h>
+>  #include <drm/drm_atomic_helper.h>
+>  
+> +#include <soc/tegra/fuse.h>
+> +
+>  #include "drm.h"
+>  #include "gem.h"
+>  
+> @@ -131,7 +133,8 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+>  	if (!tegra)
+>  		return -ENOMEM;
+>  
+> -	if (iommu_present(&platform_bus_type)) {
+> +	if (iommu_present(&platform_bus_type) &&
+> +	    tegra_get_chip_id() != TEGRA20) {
+>  		u64 carveout_start, carveout_end, gem_start, gem_end;
+>  		struct iommu_domain_geometry *geometry;
+>  		unsigned long order;
+> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+> index 5c1c711a21af..56b7e6d51894 100644
+> --- a/drivers/gpu/host1x/dev.c
+> +++ b/drivers/gpu/host1x/dev.c
+> @@ -25,6 +25,8 @@
+>  #include <linux/of.h>
+>  #include <linux/slab.h>
+>  
+> +#include <soc/tegra/fuse.h>
+> +
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/host1x.h>
+>  #undef CREATE_TRACE_POINTS
+> @@ -177,7 +179,8 @@ static int host1x_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> -	if (iommu_present(&platform_bus_type)) {
+> +	if (iommu_present(&platform_bus_type) &&
+> +	    tegra_get_chip_id() != TEGRA20) {
+>  		struct iommu_domain_geometry *geometry;
+>  		unsigned long order;
+>  
+> 
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Nicolas noticed that this breaks driver module compilation, as the
+`tegra_get_chip_id` is not an exported symbol. I'll consider alternatives to
+symbol exporting and will fix it in the new revision of the patch.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 3ea5e6369bc3..c023af0be43d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -347,6 +347,13 @@
- 		reg-names = "pmc", "wake", "aotag", "scratch";
- 	};
- 
-+	ccplex@e000000 {
-+		compatible = "nvidia,tegra186-ccplex-cluster";
-+		reg = <0x0 0x0e000000 0x0 0x3fffff>;
-+
-+		nvidia,bpmp = <&bpmp>;
-+	};
-+
- 	sysram@30000000 {
- 		compatible = "nvidia,tegra186-sysram", "mmio-sram";
- 		reg = <0x0 0x30000000 0x0 0x50000>;
 -- 
-2.1.4
+Dmitry
