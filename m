@@ -1,62 +1,84 @@
-From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH v4 4/4] soc/tegra: pmc: Use the new reset APIs to manage
- reset controllers
-Date: Thu, 01 Jun 2017 18:44:00 +0200
-Message-ID: <1496335440.3204.22.camel@pengutronix.de>
-References: <1495452207-6129-1-git-send-email-vivek.gautam@codeaurora.org>
-         <1495452207-6129-5-git-send-email-vivek.gautam@codeaurora.org>
-         <53360973-098e-14fa-88e9-b0864822359a@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53360973-098e-14fa-88e9-b0864822359a-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v5 0/6] reset: APIs to manage a list of resets
+Date: Thu,  1 Jun 2017 18:51:57 +0200
+Message-ID: <20170601165203.15315-1-p.zabel@pengutronix.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+A set of patches to allow consumers to get and de/assert or trigger
+a number of resets at the same time. A patch on top of Vivek's original
+API extension is added to hide the reset_control_array behind a struct
+reset_control so that the consumer doesn't have care about the difference
+between a singular reset control and reset control controlling an array
+of resets, except when requesting the control.
 
-On Wed, 2017-05-31 at 15:23 +0100, Jon Hunter wrote:
-> On 22/05/17 12:23, Vivek Gautam wrote:
-> > Make use of reset_control_array_*() set of APIs to manage
-> > an array of reset controllers available with the device.
-> > 
-> > Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> > Signed-off-by: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> > ---
-> >  drivers/soc/tegra/pmc.c | 91 +++++++++++++++++--------------------------------
-> >  1 file changed, 31 insertions(+), 60 deletions(-)
-> > 
-> > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> > index e233dd5dcab3..668f5d3d3635 100644
-> > --- a/drivers/soc/tegra/pmc.c
-> > +++ b/drivers/soc/tegra/pmc.c
-> > @@ -124,8 +124,8 @@ struct tegra_powergate {
-> >  	unsigned int id;
-> >  	struct clk **clks;
-> >  	unsigned int num_clks;
-> > -	struct reset_control **resets;
-> > -	unsigned int num_resets;
-> > +	struct reset_control *reset;
-> > +	struct reset_control_array *resets;
-> 
-> It's a shame we can't avoid this additional reset pointer, but maybe
-> there is no good alternative for now. So ...
->
-> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This series also contains reset controls patches for dwc3-of-simple
+and tegra pmc drivers.
+A small patch is added in this series to correctly re-order the
+resource handling in dwc3_of_simple_remove().
 
-Thanks.  I don't see a big functional difference between a
-reset_control_array and a reset_control, given that a single reset
-control bit already controls multiple reset lines on some devices.
+The series is tested on torvald's master branch the device tree
+patches to enable usb on db820c.
 
-Maybe it would be preferable to let the reset_control_array_get
-functions return a struct reset_control that hides the array.
-I'll send a v5 to see if that would be sensible.
+Changes since v4:
+ - Added a patch to hide reset control arrays behind struct reset_control
+   and adapted the consumer patches. This could be merged with the reset
+   array API patch if we think this is a good idea.
 
-regards
-Philipp
+Changes since v3:
+ - Squashed of_reset_control_get_count() patch in the second patch that
+   adds the reset control array APIs.
+ - The error path after getting count through of_reset_control_get_count()
+   now returns NULL pointer in case when 'optional' flag is true.
+ - Added code in reset_control_array_assert() to deassert the
+   already asserted resets in the error case.
+ - Using of_reset_control_array_get_optional_exclusive() in dwc3 patch
+   to request the reset control array.
+ - Added a patch to fix the order in which resources are handled in
+   dwc3_of_simple_remove() path.
+ - Added tegra_powergate->reset to take care of single reset control
+   passed from the client drivers.
+
+Changes since v2:
+ - Addressed comments to make APIs inline with gpiod API.
+ - Moved number of reset controls in 'struct reset_control_array'
+   so that the footprint is reduced.
+ - of_reset_control_array_get() and devm_reset_control_array_get()
+   now return pointer to the newly created reset control array.
+ - Added comments to mention that the reset control array APIs don't
+   guarantee any particular order when handling the reset controls.
+ - Dropped 'name' from reset_control_array' since the interface is meant
+   for a bunch of anonymous resets that can all be asserted or deasserted
+   in arbitrary order.
+ - Fixed returns for APIs reported by kbuild.
+ - Fixed 'for' clause guards reported by kbuild.
+
+Changes since v1:
+ - Addressed comment for error handling in of_reset_control_get_count()
+ - Added patch to manage reset controller array.
+ - Rebased dwc3-of-simple changes based on the new set of APIs
+   for reset control array.
+ - Added a patch for soc/tegra/pmc driver to use the new set of
+   reset control array APIs.
+
+Philipp Zabel (2):
+  reset: use kref for reference counting
+  reset: hide reset control arrays behind struct reset_control
+
+Vivek Gautam (4):
+  reset: Add APIs to manage array of resets
+  usb: dwc3: of-simple: Re-order resource handling in remove
+  usb: dwc3: of-simple: Add support to get resets for the device
+  soc/tegra: pmc: Use the new reset APIs to manage reset controllers
+
+ drivers/reset/core.c              | 234 ++++++++++++++++++++++++++++++++++++--
+ drivers/soc/tegra/pmc.c           |  82 ++++---------
+ drivers/usb/dwc3/dwc3-of-simple.c |  29 ++++-
+ include/linux/reset.h             |  73 ++++++++++++
+ 4 files changed, 344 insertions(+), 74 deletions(-)
+
+-- 
+2.11.0
