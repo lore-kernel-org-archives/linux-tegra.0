@@ -1,97 +1,13 @@
-From: Preetham Chandru Ramchandra <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V4 3/3] dt-bindings: tegra: add binding documentation
-Date: Fri, 2 Jun 2017 18:23:20 +0530
-Message-ID: <1496408000-24856-4-git-send-email-pchandru@nvidia.com>
-References: <1496408000-24856-1-git-send-email-pchandru@nvidia.com>
+From: "Seydou Thieba" <seydouthieba-IWqWACnzNjwqdlJmJB21zg@public.gmane.org>
+Subject: Investment Interest & Offer
+Date: Sat, 03 Jun 2017 00:01:51 +0100
+Message-ID: <201706022301.v52MWdAM028763__24899.1625071087$1496579117$gmane$org@www.brfliseberg.se>
+Reply-To: seydouthiebaconsultant-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1496408000-24856-1-git-send-email-pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Description: Mail message body
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cyndis-/1wQRMveznE@public.gmane.org
-Cc: preetham260-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Preetham Chandru R <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Recipients <seydouthieba-IWqWACnzNjwqdlJmJB21zg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
-
-From: Preetham Chandru R <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-This adds bindings documentation for the
-AHCI controller on Tegra210
-
-Signed-off-by: Preetham Chandru R <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v4:
-* changed the commit message
-* changed 'sata-cold' reset to mandatory for t210 and t124
-* Removed the regulators for T210 since these regulators
-  will be enabled in phy driver.
-v3:
-* Add AUX register.
-v2:
-* change cml1, pll_e and phy regulators as optional
-  for T210.
----
- .../bindings/ata/nvidia,tegra124-ahci.txt          | 38 ++++++++++++++--------
- 1 file changed, 25 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt b/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
-index 66c83c3..df4dc2c 100644
---- a/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
-+++ b/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
-@@ -1,20 +1,19 @@
--Tegra124 SoC SATA AHCI controller
-+Tegra SoC SATA AHCI controller
- 
- Required properties :
--- compatible : For Tegra124, must contain "nvidia,tegra124-ahci".  Otherwise,
--  must contain '"nvidia,<chip>-ahci", "nvidia,tegra124-ahci"', where <chip>
--  is tegra132.
--- reg : Should contain 2 entries:
-+- compatible : Must be one of:
-+  - Tegra124 : "nvidia,tegra124-ahci"
-+  - Tegra210 : "nvidia,tegra210-ahci"
-+- reg : Should contain 3 entries:
-   - AHCI register set (SATA BAR5)
-   - SATA register set
-+  - Tegra210 : AUX register set
- - interrupts : Defines the interrupt used by SATA
- - clocks : Must contain an entry for each entry in clock-names.
-   See ../clocks/clock-bindings.txt for details.
- - clock-names : Must include the following entries:
-   - sata
-   - sata-oob
--  - cml1
--  - pll_e
- - resets : Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
- - reset-names : Must include the following entries:
-@@ -24,9 +23,22 @@ Required properties :
- - phys : Must contain an entry for each entry in phy-names.
-   See ../phy/phy-bindings.txt for details.
- - phy-names : Must include the following entries:
--  - sata-phy : XUSB PADCTL SATA PHY
--- hvdd-supply : Defines the SATA HVDD regulator
--- vddio-supply : Defines the SATA VDDIO regulator
--- avdd-supply : Defines the SATA AVDD regulator
--- target-5v-supply : Defines the SATA 5V power regulator
--- target-12v-supply : Defines the SATA 12V power regulator
-+  - For T124:
-+    - sata-phy : XUSB PADCTL SATA PHY
-+  - For T210:
-+    - sata-0
-+- For T124:
-+  - hvdd-supply : Defines the SATA HVDD regulator
-+  - vddio-supply : Defines the SATA VDDIO regulator
-+  - avdd-supply : Defines the SATA AVDD regulator
-+  - target-5v-supply : Defines the SATA 5V power regulator
-+  - target-12v-supply : Defines the SATA 12V power regulator
-+
-+Optional properties:
-+- clock-names :
-+  - cml1 :
-+    cml1 clock is required by phy so it is optional to define
-+    here as phy driver will be enabling this clock.
-+  - pll_e :
-+    pll_e is the parent of cml1 clock so it is optional to define
-+    here as phy driver will be enabling this clock.
--- 
-2.1.4
