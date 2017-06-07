@@ -1,36 +1,35 @@
-From: <Peter.Chubb@data61.csiro.au>
-Subject: Re: u-boot-flasher fails with current u-boot
-Date: Wed, 7 Jun 2017 04:01:15 +0000
-Message-ID: <848tl430qh.wl-Peter.Chubb@data61.csiro.au>
-References: <84tw3sk7sq.wl-Peter.Chubb@data61.csiro.au>
- <CAPnjgZ08jAH7OgTwQj6m5E1R26AqkwBiZEnPxHwWr==K=f9oWQ@mail.gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: Add bindings for
+ nvidia,tegra186-ccplex-cluster
+Date: Wed, 7 Jun 2017 17:11:02 -0500
+Message-ID: <20170607221102.2bctvsdciv7y26lk@rob-hp-laptop>
+References: <1496304245-24024-1-git-send-email-mperttunen@nvidia.com>
+ <1496304245-24024-2-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <CAPnjgZ08jAH7OgTwQj6m5E1R26AqkwBiZEnPxHwWr==K=f9oWQ@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <0A69C23EB1D79B4699B17CABCCE602D7@csiro.au>
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
-To: sjg@chromium.org
-Cc: linux-tegra@vger.kernel.org, swarren@nvidia.com, u-boot@lists.denx.de
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1496304245-24024-2-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Pj4+Pj4gIlNpbW9uIiA9PSBTaW1vbiBHbGFzcyA8c2pnQGNocm9taXVtLm9yZz4gd3JpdGVzOgoK
-OgpTaW1vbj4gT2ggZGVhci4gSSBjYW5ub3QgZmluZCBteSBib2FyZCBidXQgd2lsbCBzZWUgaWYg
-SSBjYW4gcmVwZWF0ClNpbW9uPiB0aGlzIG9uIGEgYmVhdmVyLgpUaGFua3MuCgpJZiB0aGVyZSdz
-IGFueSBhZGRpdGlvbmFsIGxvZ2dpbmcgeW91J2QgbGlrZSBtZSB0byBjb2xsZWN0IG9uIHRoZQpK
-ZXRzb24sIGxldCBtZSBrbm93LgoKUGV0ZXIgQwotLQpEciBQZXRlciBDaHViYiAgICAgICAgIFRl
-bDogKzYxIDIgOTQ5MCA1ODUyICAgICAgaHR0cDovL3RzLmRhdGE2MS5jc2lyby5hdS8KVHJ1c3R3
-b3J0aHkgU3lzdGVtcyBHcm91cCAgICAgICAgICAgICAgICAgICAgICAgICAgIERhdGE2MSAoZm9y
-bWVybHkgTklDVEEpCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fClUtQm9vdCBtYWlsaW5nIGxpc3QKVS1Cb290QGxpc3RzLmRlbnguZGUKaHR0cHM6Ly9saXN0
-cy5kZW54LmRlL2xpc3RpbmZvL3UtYm9vdAo=
+On Thu, Jun 01, 2017 at 11:04:04AM +0300, Mikko Perttunen wrote:
+> The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
+> registers that initiate CPU frequency/voltage transitions.
+
+What the block is should also go in the binding doc. With that,
+
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../arm/tegra/nvidia,tegra186-ccplex-cluster.txt        | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-ccplex-cluster.txt
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
