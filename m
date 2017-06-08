@@ -1,70 +1,123 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 40/44] tile: remove dma_supported and
-	mapping_error methods
-Date: Thu,  8 Jun 2017 15:26:05 +0200
-Message-ID: <20170608132609.32662-41-hch@lst.de>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 06/44] iommu/dma: don't rely on DMA_ERROR_CODE
+Date: Thu, 8 Jun 2017 14:59:07 +0100
+Message-ID: <0bfb0841-f054-78de-628d-a0955336bcb4@arm.com>
 References: <20170608132609.32662-1-hch@lst.de>
+	<20170608132609.32662-7-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <xen-devel-bounces@lists.xen.org>
-In-Reply-To: <20170608132609.32662-1-hch@lst.de>
-List-Unsubscribe: <https://lists.xen.org/cgi-bin/mailman/options/xen-devel>,
- <mailto:xen-devel-request@lists.xen.org?subject=unsubscribe>
-List-Post: <mailto:xen-devel@lists.xen.org>
-List-Help: <mailto:xen-devel-request@lists.xen.org?subject=help>
-List-Subscribe: <https://lists.xen.org/cgi-bin/mailman/listinfo/xen-devel>,
- <mailto:xen-devel-request@lists.xen.org?subject=subscribe>
-Errors-To: xen-devel-bounces@lists.xen.org
-Sender: "Xen-devel" <xen-devel-bounces@lists.xen.org>
-To: x86@kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20170608132609.32662-7-hch-jcswGhMUV9g@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, linux-c6x-dev-jPsnJVOj+W6hPH1hqNUYSQ@public.gmane.org, linux-hexagon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, openrisc-cunTk1MwBs9a3B2Vnqf2dGD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xtensa-PjhNF2WwrV/0Sa2dR60CXw@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlc2UganVzdCBkdXBsaWNhdGUgdGhlIGRlZmF1bHQgYmVoYXZpb3IgaWYgbm8gbWV0aG9kIGlz
-IHByb3ZpZGVkLgoKU2lnbmVkLW9mZi1ieTogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+
-Ci0tLQogYXJjaC90aWxlL2tlcm5lbC9wY2ktZG1hLmMgfCAzMCAtLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAzMCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9hcmNoL3RpbGUva2VybmVsL3BjaS1kbWEuYyBiL2FyY2gvdGlsZS9rZXJuZWwvcGNpLWRtYS5j
-CmluZGV4IDU2OWJiNmRkMTU0YS4uZjJhYmVkYzhhMDgwIDEwMDY0NAotLS0gYS9hcmNoL3RpbGUv
-a2VybmVsL3BjaS1kbWEuYworKysgYi9hcmNoL3RpbGUva2VybmVsL3BjaS1kbWEuYwpAQCAtMzE3
-LDE4ICszMTcsNiBAQCBzdGF0aWMgdm9pZCB0aWxlX2RtYV9zeW5jX3NnX2Zvcl9kZXZpY2Uoc3Ry
-dWN0IGRldmljZSAqZGV2LAogCX0KIH0KIAotc3RhdGljIGlubGluZSBpbnQKLXRpbGVfZG1hX21h
-cHBpbmdfZXJyb3Ioc3RydWN0IGRldmljZSAqZGV2LCBkbWFfYWRkcl90IGRtYV9hZGRyKQotewot
-CXJldHVybiAwOwotfQotCi1zdGF0aWMgaW5saW5lIGludAotdGlsZV9kbWFfc3VwcG9ydGVkKHN0
-cnVjdCBkZXZpY2UgKmRldiwgdTY0IG1hc2spCi17Ci0JcmV0dXJuIDE7Ci19Ci0KIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgZG1hX21hcF9vcHMgdGlsZV9kZWZhdWx0X2RtYV9tYXBfb3BzID0gewogCS5h
-bGxvYyA9IHRpbGVfZG1hX2FsbG9jX2NvaGVyZW50LAogCS5mcmVlID0gdGlsZV9kbWFfZnJlZV9j
-b2hlcmVudCwKQEAgLTM0MCw4ICszMjgsNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRtYV9tYXBf
-b3BzIHRpbGVfZGVmYXVsdF9kbWFfbWFwX29wcyA9IHsKIAkuc3luY19zaW5nbGVfZm9yX2Rldmlj
-ZSA9IHRpbGVfZG1hX3N5bmNfc2luZ2xlX2Zvcl9kZXZpY2UsCiAJLnN5bmNfc2dfZm9yX2NwdSA9
-IHRpbGVfZG1hX3N5bmNfc2dfZm9yX2NwdSwKIAkuc3luY19zZ19mb3JfZGV2aWNlID0gdGlsZV9k
-bWFfc3luY19zZ19mb3JfZGV2aWNlLAotCS5tYXBwaW5nX2Vycm9yID0gdGlsZV9kbWFfbWFwcGlu
-Z19lcnJvciwKLQkuZG1hX3N1cHBvcnRlZCA9IHRpbGVfZG1hX3N1cHBvcnRlZAogfTsKIAogY29u
-c3Qgc3RydWN0IGRtYV9tYXBfb3BzICp0aWxlX2RtYV9tYXBfb3BzID0gJnRpbGVfZGVmYXVsdF9k
-bWFfbWFwX29wczsKQEAgLTUwNCwxOCArNDkwLDYgQEAgc3RhdGljIHZvaWQgdGlsZV9wY2lfZG1h
-X3N5bmNfc2dfZm9yX2RldmljZShzdHJ1Y3QgZGV2aWNlICpkZXYsCiAJfQogfQogCi1zdGF0aWMg
-aW5saW5lIGludAotdGlsZV9wY2lfZG1hX21hcHBpbmdfZXJyb3Ioc3RydWN0IGRldmljZSAqZGV2
-LCBkbWFfYWRkcl90IGRtYV9hZGRyKQotewotCXJldHVybiAwOwotfQotCi1zdGF0aWMgaW5saW5l
-IGludAotdGlsZV9wY2lfZG1hX3N1cHBvcnRlZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHU2NCBtYXNr
-KQotewotCXJldHVybiAxOwotfQotCiBzdGF0aWMgY29uc3Qgc3RydWN0IGRtYV9tYXBfb3BzIHRp
-bGVfcGNpX2RlZmF1bHRfZG1hX21hcF9vcHMgPSB7CiAJLmFsbG9jID0gdGlsZV9wY2lfZG1hX2Fs
-bG9jX2NvaGVyZW50LAogCS5mcmVlID0gdGlsZV9wY2lfZG1hX2ZyZWVfY29oZXJlbnQsCkBAIC01
-MjcsOCArNTAxLDYgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkbWFfbWFwX29wcyB0aWxlX3BjaV9k
-ZWZhdWx0X2RtYV9tYXBfb3BzID0gewogCS5zeW5jX3NpbmdsZV9mb3JfZGV2aWNlID0gdGlsZV9w
-Y2lfZG1hX3N5bmNfc2luZ2xlX2Zvcl9kZXZpY2UsCiAJLnN5bmNfc2dfZm9yX2NwdSA9IHRpbGVf
-cGNpX2RtYV9zeW5jX3NnX2Zvcl9jcHUsCiAJLnN5bmNfc2dfZm9yX2RldmljZSA9IHRpbGVfcGNp
-X2RtYV9zeW5jX3NnX2Zvcl9kZXZpY2UsCi0JLm1hcHBpbmdfZXJyb3IgPSB0aWxlX3BjaV9kbWFf
-bWFwcGluZ19lcnJvciwKLQkuZG1hX3N1cHBvcnRlZCA9IHRpbGVfcGNpX2RtYV9zdXBwb3J0ZWQK
-IH07CiAKIGNvbnN0IHN0cnVjdCBkbWFfbWFwX29wcyAqZ3hfcGNpX2RtYV9tYXBfb3BzID0gJnRp
-bGVfcGNpX2RlZmF1bHRfZG1hX21hcF9vcHM7CkBAIC01NzgsOCArNTUwLDYgQEAgc3RhdGljIGNv
-bnN0IHN0cnVjdCBkbWFfbWFwX29wcyBwY2lfaHlicmlkX2RtYV9vcHMgPSB7CiAJLnN5bmNfc2lu
-Z2xlX2Zvcl9kZXZpY2UgPSB0aWxlX3BjaV9kbWFfc3luY19zaW5nbGVfZm9yX2RldmljZSwKIAku
-c3luY19zZ19mb3JfY3B1ID0gdGlsZV9wY2lfZG1hX3N5bmNfc2dfZm9yX2NwdSwKIAkuc3luY19z
-Z19mb3JfZGV2aWNlID0gdGlsZV9wY2lfZG1hX3N5bmNfc2dfZm9yX2RldmljZSwKLQkubWFwcGlu
-Z19lcnJvciA9IHRpbGVfcGNpX2RtYV9tYXBwaW5nX2Vycm9yLAotCS5kbWFfc3VwcG9ydGVkID0g
-dGlsZV9wY2lfZG1hX3N1cHBvcnRlZAogfTsKIAogY29uc3Qgc3RydWN0IGRtYV9tYXBfb3BzICpn
-eF9sZWdhY3lfcGNpX2RtYV9tYXBfb3BzID0gJnBjaV9zd2lvdGxiX2RtYV9vcHM7Ci0tIAoyLjEx
-LjAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpYZW4t
-ZGV2ZWwgbWFpbGluZyBsaXN0Clhlbi1kZXZlbEBsaXN0cy54ZW4ub3JnCmh0dHBzOi8vbGlzdHMu
-eGVuLm9yZy94ZW4tZGV2ZWwK
+Hi Christoph,
+
+On 08/06/17 14:25, Christoph Hellwig wrote:
+> DMA_ERROR_CODE is not a public API and will go away soon.  dma dma-iommu
+> driver already implements a proper ->mapping_error method, so it's only
+> using the value internally.  Add a new local define using the value
+> that arm64 which is the only current user of dma-iommu.
+
+It would be fine to just use 0, since dma-iommu already makes sure that
+that will never be allocated for a valid DMA address.
+
+Otherwise, looks good!
+
+Robin.
+
+> Signed-off-by: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+> ---
+>  drivers/iommu/dma-iommu.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 62618e77bedc..638aea814b94 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -31,6 +31,8 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/vmalloc.h>
+>  
+> +#define IOMMU_MAPPING_ERROR	(~(dma_addr_t)0)
+> +
+>  struct iommu_dma_msi_page {
+>  	struct list_head	list;
+>  	dma_addr_t		iova;
+> @@ -500,7 +502,7 @@ void iommu_dma_free(struct device *dev, struct page **pages, size_t size,
+>  {
+>  	__iommu_dma_unmap(iommu_get_domain_for_dev(dev), *handle, size);
+>  	__iommu_dma_free_pages(pages, PAGE_ALIGN(size) >> PAGE_SHIFT);
+> -	*handle = DMA_ERROR_CODE;
+> +	*handle = IOMMU_MAPPING_ERROR;
+>  }
+>  
+>  /**
+> @@ -533,7 +535,7 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
+>  	dma_addr_t iova;
+>  	unsigned int count, min_size, alloc_sizes = domain->pgsize_bitmap;
+>  
+> -	*handle = DMA_ERROR_CODE;
+> +	*handle = IOMMU_MAPPING_ERROR;
+>  
+>  	min_size = alloc_sizes & -alloc_sizes;
+>  	if (min_size < PAGE_SIZE) {
+> @@ -627,11 +629,11 @@ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+>  
+>  	iova = iommu_dma_alloc_iova(domain, size, dma_get_mask(dev), dev);
+>  	if (!iova)
+> -		return DMA_ERROR_CODE;
+> +		return IOMMU_MAPPING_ERROR;
+>  
+>  	if (iommu_map(domain, iova, phys - iova_off, size, prot)) {
+>  		iommu_dma_free_iova(cookie, iova, size);
+> -		return DMA_ERROR_CODE;
+> +		return IOMMU_MAPPING_ERROR;
+>  	}
+>  	return iova + iova_off;
+>  }
+> @@ -671,7 +673,7 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
+>  
+>  		s->offset += s_iova_off;
+>  		s->length = s_length;
+> -		sg_dma_address(s) = DMA_ERROR_CODE;
+> +		sg_dma_address(s) = IOMMU_MAPPING_ERROR;
+>  		sg_dma_len(s) = 0;
+>  
+>  		/*
+> @@ -714,11 +716,11 @@ static void __invalidate_sg(struct scatterlist *sg, int nents)
+>  	int i;
+>  
+>  	for_each_sg(sg, s, nents, i) {
+> -		if (sg_dma_address(s) != DMA_ERROR_CODE)
+> +		if (sg_dma_address(s) != IOMMU_MAPPING_ERROR)
+>  			s->offset += sg_dma_address(s);
+>  		if (sg_dma_len(s))
+>  			s->length = sg_dma_len(s);
+> -		sg_dma_address(s) = DMA_ERROR_CODE;
+> +		sg_dma_address(s) = IOMMU_MAPPING_ERROR;
+>  		sg_dma_len(s) = 0;
+>  	}
+>  }
+> @@ -836,7 +838,7 @@ void iommu_dma_unmap_resource(struct device *dev, dma_addr_t handle,
+>  
+>  int iommu_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
+>  {
+> -	return dma_addr == DMA_ERROR_CODE;
+> +	return dma_addr == IOMMU_MAPPING_ERROR;
+>  }
+>  
+>  static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
+> 
