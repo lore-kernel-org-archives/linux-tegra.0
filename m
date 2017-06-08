@@ -1,54 +1,71 @@
-From: <Peter.Chubb@data61.csiro.au>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Subject: Re: u-boot-flasher fails with current u-boot
-Date: Thu, 8 Jun 2017 01:12:30 +0000
-Message-ID: <84vao7uvsz.wl-Peter.Chubb@data61.csiro.au>
-References: <84tw3sk7sq.wl-Peter.Chubb@data61.csiro.au>
- <CAPnjgZ08jAH7OgTwQj6m5E1R26AqkwBiZEnPxHwWr==K=f9oWQ@mail.gmail.com>
- <848tl430qh.wl-Peter.Chubb@data61.csiro.au>
+Date: Wed, 7 Jun 2017 21:11:44 -0600
+Message-ID: <CAPnjgZ3GhGGq8SrtXNOQyh5V7Xm2X_pfKcrrbHkyVNXcfvWCjA@mail.gmail.com>
+References: <84tw3sk7sq.wl-Peter.Chubb@data61.csiro.au> <CAPnjgZ08jAH7OgTwQj6m5E1R26AqkwBiZEnPxHwWr==K=f9oWQ@mail.gmail.com>
+ <848tl430qh.wl-Peter.Chubb@data61.csiro.au> <84vao7uvsz.wl-Peter.Chubb@data61.csiro.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <848tl430qh.wl-Peter.Chubb@data61.csiro.au>
-Content-Language: en-US
-Content-ID: <E3CFDB8F8D241F4E88A18F8185EB8487@csiro.au>
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
-To: Peter.Chubb@data61.csiro.au
-Cc: linux-tegra@vger.kernel.org, u-boot@lists.denx.de, swarren@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <84vao7uvsz.wl-Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Chubb <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Pj4+Pj4gIlBldGVyIiA9PSBQZXRlciBDaHViYiA8UGV0ZXIuQ2h1YmJAZGF0YTYxLmNzaXJvLmF1
-PiB3cml0ZXM6Cj4+Pj4+ICJTaW1vbiIgPT0gU2ltb24gR2xhc3MgPHNqZ0BjaHJvbWl1bS5vcmc+
-IHdyaXRlczoKClNpbW9uPiBPaCBkZWFyLiBJIGNhbm5vdCBmaW5kIG15IGJvYXJkIGJ1dCB3aWxs
-IHNlZSBpZiBJIGNhbiByZXBlYXQKU2ltb24+IHRoaXMgb24gYSBiZWF2ZXIuCgpQZXRlcj4gSWYg
-dGhlcmUncyBhbnkgYWRkaXRpb25hbCBsb2dnaW5nIHlvdSdkIGxpa2UgbWUgdG8gY29sbGVjdCBv
-bgpQZXRlcj4gdGhlIEpldHNvbiwgbGV0IG1lIGtub3cuCgpJIHRyaWVkIHRvIHJlcHJvZHVjZSB0
-aGlzIHRoaXMgbW9ybmluZy4gIFRvZGF5LCBldmVuIHRyeWluZyB0byBleGVjCnRoZSBVLUJvb3Qg
-d2l0aG91dCBmbGFzaGluZyBmYWlscy4KClNvLAoJLi90ZWdyYS11Ym9vdC1mbGFzaGVyIGV4ZWMg
-IGpldHNvbi10azEKd2l0aCBhIGN1cnJlbnQgdS1ib290IGdpdmVzIGFuIGlub3BlcmF0aXZlIGVN
-TUMuCgpJbiB0aGUgYm9vdCBoZWFkZXIgSSBzZWU6CgpVLUJvb3QgMjAxNy4wNS0wMDc2OS1nMGU1
-MTNlNzg4ZiAoSnVuIDA4IDIwMTcgLSAwOToyNjoyNyArMTAwMCkKClRFR1JBMTI0Ck1vZGVsOiBO
-VklESUEgSmV0c29uIFRLMQpCb2FyZDogTlZJRElBIEpldHNvbiBUSzEKRFJBTTogIDIgR2lCCk1N
-QzogICBzZGhjaUA3MDBiMDQwMDogMSwgc2RoY2lANzAwYjA2MDA6IDAKClRoZW46CgpUZWdyYTEy
-NCAoSmV0c29uIFRLMSkgIyBtbWMgcmVzY2FuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIAp0ZWdyYV9tbWNfc2VuZF9jbWRfYm91bmNlZDogTU1DIFRpbWVvdXQg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgSW50ZXJydXB0IHN0
-YXR1cyAgICAgICAgMHgwMDAwMDAwMSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIAogICAgSW50ZXJydXB0IHN0YXR1cyBlbmFibGUgMHhmZmZmMDAzYiAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgSW50ZXJydXB0IHNpZ25hbCBlbmFi
-bGUgMHhmZmZmMDAwMiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAog
-ICAgUHJlc2VudCBzdGF0dXMgICAgICAgICAgMHgwMWZiMDJmNiAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIAptbWNfaW5pdDogLTEsIHRpbWUgODA0MgoKUGV0ZXIgQwot
-LSAKRHIgUGV0ZXIgQ2h1YmIgICAgICAgICBUZWw6ICs2MSAyIDk0OTAgNTg1MiAgICAgIGh0dHA6
-Ly90cy5kYXRhNjEuY3Npcm8uYXUvClRydXN0d29ydGh5IFN5c3RlbXMgR3JvdXAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBEYXRhNjEgKGZvcm1lcmx5IE5JQ1RBKQpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpVLUJvb3QgbWFpbGluZyBsaXN0ClUtQm9v
-dEBsaXN0cy5kZW54LmRlCmh0dHBzOi8vbGlzdHMuZGVueC5kZS9saXN0aW5mby91LWJvb3QK
+Hi Peter,
+
+On 7 June 2017 at 19:12,  <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org> wrote:
+>>>>>> "Peter" == Peter Chubb <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org> writes:
+>>>>>> "Simon" == Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> writes:
+>
+> Simon> Oh dear. I cannot find my board but will see if I can repeat
+> Simon> this on a beaver.
+>
+> Peter> If there's any additional logging you'd like me to collect on
+> Peter> the Jetson, let me know.
+>
+> I tried to reproduce this this morning.  Today, even trying to exec
+> the U-Boot without flashing fails.
+
+The good news is I found my Jetson-TK1 and I can repeat your problem.
+
+>
+> So,
+>         ./tegra-uboot-flasher exec  jetson-tk1
+> with a current u-boot gives an inoperative eMMC.
+>
+> In the boot header I see:
+>
+> U-Boot 2017.05-00769-g0e513e788f (Jun 08 2017 - 09:26:27 +1000)
+>
+> TEGRA124
+> Model: NVIDIA Jetson TK1
+> Board: NVIDIA Jetson TK1
+> DRAM:  2 GiB
+> MMC:   sdhci@700b0400: 1, sdhci@700b0600: 0
+>
+> Then:
+>
+> Tegra124 (Jetson TK1) # mmc rescan
+
+Why are you running 'mmc rescan'? Is this because the MMC has changed?
+
+This command does not seem to work since it does not re-probe the
+driver. It looks like the driver assumes that the controller is reset
+each time. I'll send a patch which seems to fix it for me.
+
+> tegra_mmc_send_cmd_bounced: MMC Timeout
+>     Interrupt status        0x00000001
+>     Interrupt status enable 0xffff003b
+>     Interrupt signal enable 0xffff0002
+>     Present status          0x01fb02f6
+> mmc_init: -1, time 8042
+>
+> Peter C
+> --
+> Dr Peter Chubb         Tel: +61 2 9490 5852      http://ts.data61.csiro.au/
+> Trustworthy Systems Group                           Data61 (formerly NICTA)
+
+Regards,
+Simon
