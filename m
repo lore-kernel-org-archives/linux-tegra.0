@@ -1,35 +1,54 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: Add bindings for
- nvidia,tegra186-ccplex-cluster
-Date: Wed, 7 Jun 2017 17:11:02 -0500
-Message-ID: <20170607221102.2bctvsdciv7y26lk@rob-hp-laptop>
-References: <1496304245-24024-1-git-send-email-mperttunen@nvidia.com>
- <1496304245-24024-2-git-send-email-mperttunen@nvidia.com>
+From: <Peter.Chubb@data61.csiro.au>
+Subject: Re: u-boot-flasher fails with current u-boot
+Date: Thu, 8 Jun 2017 01:12:30 +0000
+Message-ID: <84vao7uvsz.wl-Peter.Chubb@data61.csiro.au>
+References: <84tw3sk7sq.wl-Peter.Chubb@data61.csiro.au>
+ <CAPnjgZ08jAH7OgTwQj6m5E1R26AqkwBiZEnPxHwWr==K=f9oWQ@mail.gmail.com>
+ <848tl430qh.wl-Peter.Chubb@data61.csiro.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1496304245-24024-2-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <u-boot-bounces@lists.denx.de>
+In-Reply-To: <848tl430qh.wl-Peter.Chubb@data61.csiro.au>
+Content-Language: en-US
+Content-ID: <E3CFDB8F8D241F4E88A18F8185EB8487@csiro.au>
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+To: Peter.Chubb@data61.csiro.au
+Cc: linux-tegra@vger.kernel.org, u-boot@lists.denx.de, swarren@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jun 01, 2017 at 11:04:04AM +0300, Mikko Perttunen wrote:
-> The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
-> registers that initiate CPU frequency/voltage transitions.
-
-What the block is should also go in the binding doc. With that,
-
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../arm/tegra/nvidia,tegra186-ccplex-cluster.txt        | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-ccplex-cluster.txt
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Pj4+Pj4gIlBldGVyIiA9PSBQZXRlciBDaHViYiA8UGV0ZXIuQ2h1YmJAZGF0YTYxLmNzaXJvLmF1
+PiB3cml0ZXM6Cj4+Pj4+ICJTaW1vbiIgPT0gU2ltb24gR2xhc3MgPHNqZ0BjaHJvbWl1bS5vcmc+
+IHdyaXRlczoKClNpbW9uPiBPaCBkZWFyLiBJIGNhbm5vdCBmaW5kIG15IGJvYXJkIGJ1dCB3aWxs
+IHNlZSBpZiBJIGNhbiByZXBlYXQKU2ltb24+IHRoaXMgb24gYSBiZWF2ZXIuCgpQZXRlcj4gSWYg
+dGhlcmUncyBhbnkgYWRkaXRpb25hbCBsb2dnaW5nIHlvdSdkIGxpa2UgbWUgdG8gY29sbGVjdCBv
+bgpQZXRlcj4gdGhlIEpldHNvbiwgbGV0IG1lIGtub3cuCgpJIHRyaWVkIHRvIHJlcHJvZHVjZSB0
+aGlzIHRoaXMgbW9ybmluZy4gIFRvZGF5LCBldmVuIHRyeWluZyB0byBleGVjCnRoZSBVLUJvb3Qg
+d2l0aG91dCBmbGFzaGluZyBmYWlscy4KClNvLAoJLi90ZWdyYS11Ym9vdC1mbGFzaGVyIGV4ZWMg
+IGpldHNvbi10azEKd2l0aCBhIGN1cnJlbnQgdS1ib290IGdpdmVzIGFuIGlub3BlcmF0aXZlIGVN
+TUMuCgpJbiB0aGUgYm9vdCBoZWFkZXIgSSBzZWU6CgpVLUJvb3QgMjAxNy4wNS0wMDc2OS1nMGU1
+MTNlNzg4ZiAoSnVuIDA4IDIwMTcgLSAwOToyNjoyNyArMTAwMCkKClRFR1JBMTI0Ck1vZGVsOiBO
+VklESUEgSmV0c29uIFRLMQpCb2FyZDogTlZJRElBIEpldHNvbiBUSzEKRFJBTTogIDIgR2lCCk1N
+QzogICBzZGhjaUA3MDBiMDQwMDogMSwgc2RoY2lANzAwYjA2MDA6IDAKClRoZW46CgpUZWdyYTEy
+NCAoSmV0c29uIFRLMSkgIyBtbWMgcmVzY2FuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIAp0ZWdyYV9tbWNfc2VuZF9jbWRfYm91bmNlZDogTU1DIFRpbWVvdXQg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgSW50ZXJydXB0IHN0
+YXR1cyAgICAgICAgMHgwMDAwMDAwMSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIAogICAgSW50ZXJydXB0IHN0YXR1cyBlbmFibGUgMHhmZmZmMDAzYiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgSW50ZXJydXB0IHNpZ25hbCBlbmFi
+bGUgMHhmZmZmMDAwMiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAog
+ICAgUHJlc2VudCBzdGF0dXMgICAgICAgICAgMHgwMWZiMDJmNiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIAptbWNfaW5pdDogLTEsIHRpbWUgODA0MgoKUGV0ZXIgQwot
+LSAKRHIgUGV0ZXIgQ2h1YmIgICAgICAgICBUZWw6ICs2MSAyIDk0OTAgNTg1MiAgICAgIGh0dHA6
+Ly90cy5kYXRhNjEuY3Npcm8uYXUvClRydXN0d29ydGh5IFN5c3RlbXMgR3JvdXAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBEYXRhNjEgKGZvcm1lcmx5IE5JQ1RBKQpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpVLUJvb3QgbWFpbGluZyBsaXN0ClUtQm9v
+dEBsaXN0cy5kZW54LmRlCmh0dHBzOi8vbGlzdHMuZGVueC5kZS9saXN0aW5mby91LWJvb3QK
