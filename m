@@ -1,73 +1,96 @@
 From: Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH 03/44] dmaengine: ioat: don't use
-	DMA_ERROR_CODE
+Subject: Re: [PATCH 03/44] dmaengine: ioat: don't use DMA_ERROR_CODE
 Date: Thu, 8 Jun 2017 09:32:18 -0700
-Message-ID: <bf0a16a3-75d9-25c9-98d3-f1e7624dc5d7__47625.2593951814$1496941605$gmane$org@intel.com>
+Message-ID: <bf0a16a3-75d9-25c9-98d3-f1e7624dc5d7__24528.3774719157$1496957649$gmane$org@intel.com>
 References: <20170608132609.32662-1-hch@lst.de>
  <20170608132609.32662-4-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <xen-devel-bounces@lists.xen.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
 In-Reply-To: <20170608132609.32662-4-hch@lst.de>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.xen.org/cgi-bin/mailman/options/xen-devel>,
- <mailto:xen-devel-request@lists.xen.org?subject=unsubscribe>
-List-Post: <mailto:xen-devel@lists.xen.org>
-List-Help: <mailto:xen-devel-request@lists.xen.org?subject=help>
-List-Subscribe: <https://lists.xen.org/cgi-bin/mailman/listinfo/xen-devel>,
- <mailto:xen-devel-request@lists.xen.org?subject=subscribe>
-Errors-To: xen-devel-bounces@lists.xen.org
-Sender: "Xen-devel" <xen-devel-bounces@lists.xen.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
 To: Christoph Hellwig <hch@lst.de>, "x86@kernel.org" <x86@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-c6x-dev@linux-c6x.org" <linux-c6x-dev@linux-c6x.org>, "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>, "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>, "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDYvMDgvMjAxNyAwNjoyNSBBTSwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6Cj4gRE1BX0VS
-Uk9SX0NPREUgaXMgbm90IGEgcHVibGljIEFQSSBhbmQgd2lsbCBnbyBhd2F5LiAgSW5zdGVhZCBw
-cm9wZXJseQo+IHVud2luZCBiYXNlZCBvbiB0aGUgbG9vcCBjb3VudGVyLgo+IAo+IFNpZ25lZC1v
-ZmYtYnk6IENocmlzdG9waCBIZWxsd2lnIDxoY2hAbHN0LmRlPgoKQWNrZWQtYnk6IERhdmUgSmlh
-bmcgPGRhdmUuamlhbmdAaW50ZWwuY29tPgoKPiAtLS0KPiAgZHJpdmVycy9kbWEvaW9hdC9pbml0
-LmMgfCAyNCArKysrKysrLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDcgaW5z
-ZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZG1h
-L2lvYXQvaW5pdC5jIGIvZHJpdmVycy9kbWEvaW9hdC9pbml0LmMKPiBpbmRleCA2YWQ0Mzg0YjNm
-YTguLmVkOGVkMTE5Mjc3NSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2RtYS9pb2F0L2luaXQuYwo+
-ICsrKyBiL2RyaXZlcnMvZG1hL2lvYXQvaW5pdC5jCj4gQEAgLTgzOSw4ICs4MzksNiBAQCBzdGF0
-aWMgaW50IGlvYXRfeG9yX3ZhbF9zZWxmX3Rlc3Qoc3RydWN0IGlvYXRkbWFfZGV2aWNlICppb2F0
-X2RtYSkKPiAgCQlnb3RvIGZyZWVfcmVzb3VyY2VzOwo+ICAJfQo+ICAKPiAtCWZvciAoaSA9IDA7
-IGkgPCBJT0FUX05VTV9TUkNfVEVTVDsgaSsrKQo+IC0JCWRtYV9zcmNzW2ldID0gRE1BX0VSUk9S
-X0NPREU7Cj4gIAlmb3IgKGkgPSAwOyBpIDwgSU9BVF9OVU1fU1JDX1RFU1Q7IGkrKykgewo+ICAJ
-CWRtYV9zcmNzW2ldID0gZG1hX21hcF9wYWdlKGRldiwgeG9yX3NyY3NbaV0sIDAsIFBBR0VfU0la
-RSwKPiAgCQkJCQkgICBETUFfVE9fREVWSUNFKTsKPiBAQCAtOTEwLDggKzkwOCw2IEBAIHN0YXRp
-YyBpbnQgaW9hdF94b3JfdmFsX3NlbGZfdGVzdChzdHJ1Y3QgaW9hdGRtYV9kZXZpY2UgKmlvYXRf
-ZG1hKQo+ICAKPiAgCXhvcl92YWxfcmVzdWx0ID0gMTsKPiAgCj4gLQlmb3IgKGkgPSAwOyBpIDwg
-SU9BVF9OVU1fU1JDX1RFU1QgKyAxOyBpKyspCj4gLQkJZG1hX3NyY3NbaV0gPSBETUFfRVJST1Jf
-Q09ERTsKPiAgCWZvciAoaSA9IDA7IGkgPCBJT0FUX05VTV9TUkNfVEVTVCArIDE7IGkrKykgewo+
-ICAJCWRtYV9zcmNzW2ldID0gZG1hX21hcF9wYWdlKGRldiwgeG9yX3ZhbF9zcmNzW2ldLCAwLCBQ
-QUdFX1NJWkUsCj4gIAkJCQkJICAgRE1BX1RPX0RFVklDRSk7Cj4gQEAgLTk2NSw4ICs5NjEsNiBA
-QCBzdGF0aWMgaW50IGlvYXRfeG9yX3ZhbF9zZWxmX3Rlc3Qoc3RydWN0IGlvYXRkbWFfZGV2aWNl
-ICppb2F0X2RtYSkKPiAgCW9wID0gSU9BVF9PUF9YT1JfVkFMOwo+ICAKPiAgCXhvcl92YWxfcmVz
-dWx0ID0gMDsKPiAtCWZvciAoaSA9IDA7IGkgPCBJT0FUX05VTV9TUkNfVEVTVCArIDE7IGkrKykK
-PiAtCQlkbWFfc3Jjc1tpXSA9IERNQV9FUlJPUl9DT0RFOwo+ICAJZm9yIChpID0gMDsgaSA8IElP
-QVRfTlVNX1NSQ19URVNUICsgMTsgaSsrKSB7Cj4gIAkJZG1hX3NyY3NbaV0gPSBkbWFfbWFwX3Bh
-Z2UoZGV2LCB4b3JfdmFsX3NyY3NbaV0sIDAsIFBBR0VfU0laRSwKPiAgCQkJCQkgICBETUFfVE9f
-REVWSUNFKTsKPiBAQCAtMTAxNywxOCArMTAxMSwxNCBAQCBzdGF0aWMgaW50IGlvYXRfeG9yX3Zh
-bF9zZWxmX3Rlc3Qoc3RydWN0IGlvYXRkbWFfZGV2aWNlICppb2F0X2RtYSkKPiAgCWdvdG8gZnJl
-ZV9yZXNvdXJjZXM7Cj4gIGRtYV91bm1hcDoKPiAgCWlmIChvcCA9PSBJT0FUX09QX1hPUikgewo+
-IC0JCWlmIChkZXN0X2RtYSAhPSBETUFfRVJST1JfQ09ERSkKPiAtCQkJZG1hX3VubWFwX3BhZ2Uo
-ZGV2LCBkZXN0X2RtYSwgUEFHRV9TSVpFLAo+IC0JCQkJICAgICAgIERNQV9GUk9NX0RFVklDRSk7
-Cj4gLQkJZm9yIChpID0gMDsgaSA8IElPQVRfTlVNX1NSQ19URVNUOyBpKyspCj4gLQkJCWlmIChk
-bWFfc3Jjc1tpXSAhPSBETUFfRVJST1JfQ09ERSkKPiAtCQkJCWRtYV91bm1hcF9wYWdlKGRldiwg
-ZG1hX3NyY3NbaV0sIFBBR0VfU0laRSwKPiAtCQkJCQkgICAgICAgRE1BX1RPX0RFVklDRSk7Cj4g
-KwkJd2hpbGUgKC0taSA+PSAwKQo+ICsJCQlkbWFfdW5tYXBfcGFnZShkZXYsIGRtYV9zcmNzW2ld
-LCBQQUdFX1NJWkUsCj4gKwkJCQkgICAgICAgRE1BX1RPX0RFVklDRSk7Cj4gKwkJZG1hX3VubWFw
-X3BhZ2UoZGV2LCBkZXN0X2RtYSwgUEFHRV9TSVpFLCBETUFfRlJPTV9ERVZJQ0UpOwo+ICAJfSBl
-bHNlIGlmIChvcCA9PSBJT0FUX09QX1hPUl9WQUwpIHsKPiAtCQlmb3IgKGkgPSAwOyBpIDwgSU9B
-VF9OVU1fU1JDX1RFU1QgKyAxOyBpKyspCj4gLQkJCWlmIChkbWFfc3Jjc1tpXSAhPSBETUFfRVJS
-T1JfQ09ERSkKPiAtCQkJCWRtYV91bm1hcF9wYWdlKGRldiwgZG1hX3NyY3NbaV0sIFBBR0VfU0la
-RSwKPiAtCQkJCQkgICAgICAgRE1BX1RPX0RFVklDRSk7Cj4gKwkJd2hpbGUgKC0taSA+PSAwKQo+
-ICsJCQlkbWFfdW5tYXBfcGFnZShkZXYsIGRtYV9zcmNzW2ldLCBQQUdFX1NJWkUsCj4gKwkJCQkg
-ICAgICAgRE1BX1RPX0RFVklDRSk7Cj4gIAl9Cj4gIGZyZWVfcmVzb3VyY2VzOgo+ICAJZG1hLT5k
-ZXZpY2VfZnJlZV9jaGFuX3Jlc291cmNlcyhkbWFfY2hhbik7Cj4gCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpYZW4tZGV2ZWwgbWFpbGluZyBsaXN0Clhl
-bi1kZXZlbEBsaXN0cy54ZW4ub3JnCmh0dHBzOi8vbGlzdHMueGVuLm9yZy94ZW4tZGV2ZWwK
+On 06/08/2017 06:25 AM, Christoph Hellwig wrote:
+> DMA_ERROR_CODE is not a public API and will go away.  Instead properly
+> unwind based on the loop counter.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Acked-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+>  drivers/dma/ioat/init.c | 24 +++++++-----------------
+>  1 file changed, 7 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
+> index 6ad4384b3fa8..ed8ed1192775 100644
+> --- a/drivers/dma/ioat/init.c
+> +++ b/drivers/dma/ioat/init.c
+> @@ -839,8 +839,6 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
+>  		goto free_resources;
+>  	}
+>  
+> -	for (i = 0; i < IOAT_NUM_SRC_TEST; i++)
+> -		dma_srcs[i] = DMA_ERROR_CODE;
+>  	for (i = 0; i < IOAT_NUM_SRC_TEST; i++) {
+>  		dma_srcs[i] = dma_map_page(dev, xor_srcs[i], 0, PAGE_SIZE,
+>  					   DMA_TO_DEVICE);
+> @@ -910,8 +908,6 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
+>  
+>  	xor_val_result = 1;
+>  
+> -	for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++)
+> -		dma_srcs[i] = DMA_ERROR_CODE;
+>  	for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++) {
+>  		dma_srcs[i] = dma_map_page(dev, xor_val_srcs[i], 0, PAGE_SIZE,
+>  					   DMA_TO_DEVICE);
+> @@ -965,8 +961,6 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
+>  	op = IOAT_OP_XOR_VAL;
+>  
+>  	xor_val_result = 0;
+> -	for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++)
+> -		dma_srcs[i] = DMA_ERROR_CODE;
+>  	for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++) {
+>  		dma_srcs[i] = dma_map_page(dev, xor_val_srcs[i], 0, PAGE_SIZE,
+>  					   DMA_TO_DEVICE);
+> @@ -1017,18 +1011,14 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
+>  	goto free_resources;
+>  dma_unmap:
+>  	if (op == IOAT_OP_XOR) {
+> -		if (dest_dma != DMA_ERROR_CODE)
+> -			dma_unmap_page(dev, dest_dma, PAGE_SIZE,
+> -				       DMA_FROM_DEVICE);
+> -		for (i = 0; i < IOAT_NUM_SRC_TEST; i++)
+> -			if (dma_srcs[i] != DMA_ERROR_CODE)
+> -				dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
+> -					       DMA_TO_DEVICE);
+> +		while (--i >= 0)
+> +			dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
+> +				       DMA_TO_DEVICE);
+> +		dma_unmap_page(dev, dest_dma, PAGE_SIZE, DMA_FROM_DEVICE);
+>  	} else if (op == IOAT_OP_XOR_VAL) {
+> -		for (i = 0; i < IOAT_NUM_SRC_TEST + 1; i++)
+> -			if (dma_srcs[i] != DMA_ERROR_CODE)
+> -				dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
+> -					       DMA_TO_DEVICE);
+> +		while (--i >= 0)
+> +			dma_unmap_page(dev, dma_srcs[i], PAGE_SIZE,
+> +				       DMA_TO_DEVICE);
+>  	}
+>  free_resources:
+>  	dma->device_free_chan_resources(dma_chan);
+> 
