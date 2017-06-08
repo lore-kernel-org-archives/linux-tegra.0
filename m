@@ -1,71 +1,52 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org>
 Subject: Re: u-boot-flasher fails with current u-boot
-Date: Wed, 7 Jun 2017 21:11:44 -0600
-Message-ID: <CAPnjgZ3GhGGq8SrtXNOQyh5V7Xm2X_pfKcrrbHkyVNXcfvWCjA@mail.gmail.com>
-References: <84tw3sk7sq.wl-Peter.Chubb@data61.csiro.au> <CAPnjgZ08jAH7OgTwQj6m5E1R26AqkwBiZEnPxHwWr==K=f9oWQ@mail.gmail.com>
- <848tl430qh.wl-Peter.Chubb@data61.csiro.au> <84vao7uvsz.wl-Peter.Chubb@data61.csiro.au>
+Date: Thu, 8 Jun 2017 04:00:55 +0000
+Message-ID: <84o9tzuo09.wl-Peter.Chubb@data61.csiro.au>
+References: <84tw3sk7sq.wl-Peter.Chubb@data61.csiro.au>
+        <CAPnjgZ08jAH7OgTwQj6m5E1R26AqkwBiZEnPxHwWr==K=f9oWQ@mail.gmail.com>
+        <848tl430qh.wl-Peter.Chubb@data61.csiro.au>
+        <84vao7uvsz.wl-Peter.Chubb@data61.csiro.au>
+        <CAPnjgZ3GhGGq8SrtXNOQyh5V7Xm2X_pfKcrrbHkyVNXcfvWCjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <84vao7uvsz.wl-Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org>
+In-Reply-To: <CAPnjgZ3GhGGq8SrtXNOQyh5V7Xm2X_pfKcrrbHkyVNXcfvWCjA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Content-ID: <9D3DF0FB9DA7574A9EFC2AFD4047F7EE-uXK74I8fpZ0@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Chubb <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
+To: sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+Cc: Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
+>>>>> "Simon" =3D=3D Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> writes:
 
-On 7 June 2017 at 19:12,  <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org> wrote:
->>>>>> "Peter" == Peter Chubb <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org> writes:
->>>>>> "Simon" == Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> writes:
->
-> Simon> Oh dear. I cannot find my board but will see if I can repeat
-> Simon> this on a beaver.
->
-> Peter> If there's any additional logging you'd like me to collect on
-> Peter> the Jetson, let me know.
->
-> I tried to reproduce this this morning.  Today, even trying to exec
-> the U-Boot without flashing fails.
 
-The good news is I found my Jetson-TK1 and I can repeat your problem.
+Simon> The good news is I found my Jetson-TK1 and I can repeat your
+Simon> problem.
 
->
-> So,
->         ./tegra-uboot-flasher exec  jetson-tk1
-> with a current u-boot gives an inoperative eMMC.
->
-> In the boot header I see:
->
-> U-Boot 2017.05-00769-g0e513e788f (Jun 08 2017 - 09:26:27 +1000)
->
-> TEGRA124
-> Model: NVIDIA Jetson TK1
-> Board: NVIDIA Jetson TK1
-> DRAM:  2 GiB
-> MMC:   sdhci@700b0400: 1, sdhci@700b0600: 0
->
-> Then:
->
-> Tegra124 (Jetson TK1) # mmc rescan
+Cool.  So it's not just me (phew)
+>>=20
+>> Tegra124 (Jetson TK1) # mmc rescan
 
-Why are you running 'mmc rescan'? Is this because the MMC has changed?
+Simon> Why are you running 'mmc rescan'? Is this because the MMC has
+Simon> changed?
 
-This command does not seem to work since it does not re-probe the
-driver. It looks like the driver assumes that the controller is reset
-each time. I'll send a patch which seems to fix it for me.
+Any mmc command fails except 'mmc part' and 'mmc list'.  'mmc rescan'
+was just one example that should work.
 
-> tegra_mmc_send_cmd_bounced: MMC Timeout
->     Interrupt status        0x00000001
->     Interrupt status enable 0xffff003b
->     Interrupt signal enable 0xffff0002
->     Present status          0x01fb02f6
-> mmc_init: -1, time 8042
->
-> Peter C
-> --
-> Dr Peter Chubb         Tel: +61 2 9490 5852      http://ts.data61.csiro.au/
-> Trustworthy Systems Group                           Data61 (formerly NICTA)
+Tegra124 (Jetson TK1) # mmc dev
+tegra_mmc_send_cmd_bounced: MMC Timeout
+    Interrupt status        0x00000001
+    Interrupt status enable 0xffff003b
+    Interrupt signal enable 0xffff0002
+    Present status          0x01fb02f6
+mmc_init: -1, time 8042
 
-Regards,
-Simon
+Tegra124 (Jetson TK1) # mmc info                                           =
+    =20
+mmc_init: -1, time 4
+
+--
+Dr Peter Chubb         Tel: +61 2 9490 5852      http://ts.data61.csiro.au/
+Trustworthy Systems Group                           Data61 (formerly NICTA)=
