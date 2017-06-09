@@ -1,42 +1,39 @@
 From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/3] drm/nouveau/tegra: Skip manual unpowergating when not necessary
-Date: Fri,  9 Jun 2017 15:25:39 +0300
-Message-ID: <20170609122541.31118-1-mperttunen@nvidia.com>
+Subject: [PATCH 3/3] drm/nouveau: Skip vga_fini on non-PCI device
+Date: Fri,  9 Jun 2017 15:25:41 +0300
+Message-ID: <20170609122541.31118-3-mperttunen@nvidia.com>
+References: <20170609122541.31118-1-mperttunen@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170609122541.31118-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra186, powergating is handled by the BPMP power domain provider
-and the "legacy" powergating API is not available. Therefore skip
-these calls if we are attached to a power domain.
+As with vga_init, this function doesn't make sense on non-PCI devices,
+and the Thunderbolt check in it dereferences a NULL pointer in that
+case. Add some code to skip this function when the device is not a PCI
+device.
 
 Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_vga.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-index 6474bd2a6d07..3d42cdbbe9c0 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-@@ -51,10 +51,12 @@ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
- 	reset_control_assert(tdev->rst);
- 	udelay(10);
+diff --git a/drivers/gpu/drm/nouveau/nouveau_vga.c b/drivers/gpu/drm/nouveau/nouveau_vga.c
+index a4aacbc0cec8..b19dd4dc7099 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_vga.c
++++ b/drivers/gpu/drm/nouveau/nouveau_vga.c
+@@ -115,6 +115,10 @@ nouveau_vga_fini(struct nouveau_drm *drm)
+ 	struct drm_device *dev = drm->dev;
+ 	bool runtime = false;
  
--	ret = tegra_powergate_remove_clamping(TEGRA_POWERGATE_3D);
--	if (ret)
--		goto err_clamp;
--	udelay(10);
-+	if (!tdev->pdev->dev.pm_domain) {
-+		ret = tegra_powergate_remove_clamping(TEGRA_POWERGATE_3D);
-+		if (ret)
-+			goto err_clamp;
-+		udelay(10);
-+	}
++	/* only relevant for PCI devices */
++	if (!dev->pdev)
++		return;
++
+ 	vga_client_register(dev->pdev, NULL, NULL, NULL);
  
- 	reset_control_deassert(tdev->rst);
- 	udelay(10);
+ 	if (pci_is_thunderbolt_attached(dev->pdev))
 -- 
 2.13.0
