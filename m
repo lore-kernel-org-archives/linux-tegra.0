@@ -1,7 +1,7 @@
 From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/3] drm/nouveau: Skip vga_fini on non-PCI device
-Date: Fri,  9 Jun 2017 15:25:41 +0300
-Message-ID: <20170609122541.31118-3-mperttunen@nvidia.com>
+Subject: [PATCH 2/3] drm/nouveau/tegra: Don't leave GPU in reset
+Date: Fri,  9 Jun 2017 15:25:40 +0300
+Message-ID: <20170609122541.31118-2-mperttunen@nvidia.com>
 References: <20170609122541.31118-1-mperttunen@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20170609122541.31118-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,30 +10,27 @@ To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOB
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-As with vga_init, this function doesn't make sense on non-PCI devices,
-and the Thunderbolt check in it dereferences a NULL pointer in that
-case. Add some code to skip this function when the device is not a PCI
-device.
+On Tegra186 systems with certain firmware revisions, leaving the GPU in
+reset can cause a hang. To prevent this, don't leave the GPU in reset.
 
 Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_vga.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_vga.c b/drivers/gpu/drm/nouveau/nouveau_vga.c
-index a4aacbc0cec8..b19dd4dc7099 100644
---- a/drivers/gpu/drm/nouveau/nouveau_vga.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_vga.c
-@@ -115,6 +115,10 @@ nouveau_vga_fini(struct nouveau_drm *drm)
- 	struct drm_device *dev = drm->dev;
- 	bool runtime = false;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index 3d42cdbbe9c0..189ed80e21ff 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -82,9 +82,6 @@ nvkm_device_tegra_power_down(struct nvkm_device_tegra *tdev)
+ {
+ 	int ret;
  
-+	/* only relevant for PCI devices */
-+	if (!dev->pdev)
-+		return;
-+
- 	vga_client_register(dev->pdev, NULL, NULL, NULL);
- 
- 	if (pci_is_thunderbolt_attached(dev->pdev))
+-	reset_control_assert(tdev->rst);
+-	udelay(10);
+-
+ 	clk_disable_unprepare(tdev->clk_pwr);
+ 	if (tdev->clk_ref)
+ 		clk_disable_unprepare(tdev->clk_ref);
 -- 
 2.13.0
