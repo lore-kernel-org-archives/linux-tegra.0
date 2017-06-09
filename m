@@ -1,74 +1,35 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: u-boot-flasher fails with current u-boot
-Date: Fri, 9 Jun 2017 06:28:13 -0600
-Message-ID: <CAPnjgZ2+1RetR_Qv91nfK180-XyHzViHppe5OOGGGgSaAEH7_g@mail.gmail.com>
-References: <84tw3sk7sq.wl-Peter.Chubb@data61.csiro.au> <CAPnjgZ08jAH7OgTwQj6m5E1R26AqkwBiZEnPxHwWr==K=f9oWQ@mail.gmail.com>
- <848tl430qh.wl-Peter.Chubb@data61.csiro.au> <84vao7uvsz.wl-Peter.Chubb@data61.csiro.au>
- <CAPnjgZ3GhGGq8SrtXNOQyh5V7Xm2X_pfKcrrbHkyVNXcfvWCjA@mail.gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: Add bindings for nvidia,tegra186-ccplex-cluster
+Date: Fri, 9 Jun 2017 15:54:43 -0500
+Message-ID: <CAL_JsqJO2XbYjN2Hon_MJm_KO8HoZkx15ZYyhLRjWnhL9opTZg@mail.gmail.com>
+References: <1496304245-24024-1-git-send-email-mperttunen@nvidia.com>
+ <1496304245-24024-2-git-send-email-mperttunen@nvidia.com> <20170607221102.2bctvsdciv7y26lk@rob-hp-laptop>
+ <782ec765-f949-3023-93e3-a731f8bb524a@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPnjgZ3GhGGq8SrtXNOQyh5V7Xm2X_pfKcrrbHkyVNXcfvWCjA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <782ec765-f949-3023-93e3-a731f8bb524a-/1wQRMveznE@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Chubb <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
+On Thu, Jun 8, 2017 at 2:32 AM, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org> wrote:
+> On 08.06.2017 01:11, Rob Herring wrote:
+>>
+>> On Thu, Jun 01, 2017 at 11:04:04AM +0300, Mikko Perttunen wrote:
+>>>
+>>> The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
+>>> registers that initiate CPU frequency/voltage transitions.
+>>
+>>
+>> What the block is should also go in the binding doc. With that,
+>
+>
+> I don't know how to explain it in more detail; this thing is literally just
+> a few magic registers that route into some CPU control logic to trigger
+> frequency/voltage transitions :)
 
-On 7 June 2017 at 21:11, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Hi Peter,
->
-> On 7 June 2017 at 19:12,  <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org> wrote:
->>>>>>> "Peter" == Peter Chubb <Peter.Chubb-RgbkMxAV74wUb6iz2VnApA@public.gmane.org> writes:
->>>>>>> "Simon" == Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> writes:
->>
->> Simon> Oh dear. I cannot find my board but will see if I can repeat
->> Simon> this on a beaver.
->>
->> Peter> If there's any additional logging you'd like me to collect on
->> Peter> the Jetson, let me know.
->>
->> I tried to reproduce this this morning.  Today, even trying to exec
->> the U-Boot without flashing fails.
->
-> The good news is I found my Jetson-TK1 and I can repeat your problem.
->
->>
->> So,
->>         ./tegra-uboot-flasher exec  jetson-tk1
->> with a current u-boot gives an inoperative eMMC.
->>
->> In the boot header I see:
->>
->> U-Boot 2017.05-00769-g0e513e788f (Jun 08 2017 - 09:26:27 +1000)
->>
->> TEGRA124
->> Model: NVIDIA Jetson TK1
->> Board: NVIDIA Jetson TK1
->> DRAM:  2 GiB
->> MMC:   sdhci@700b0400: 1, sdhci@700b0600: 0
->>
->> Then:
->>
->> Tegra124 (Jetson TK1) # mmc rescan
->
-> Why are you running 'mmc rescan'? Is this because the MMC has changed?
->
-> This command does not seem to work since it does not re-probe the
-> driver. It looks like the driver assumes that the controller is reset
-> each time. I'll send a patch which seems to fix it for me.
->
->> tegra_mmc_send_cmd_bounced: MMC Timeout
->>     Interrupt status        0x00000001
->>     Interrupt status enable 0xffff003b
->>     Interrupt signal enable 0xffff0002
->>     Present status          0x01fb02f6
->> mmc_init: -1, time 8042
+Copy the commit msg text to the binding doc. That's all I'm asking for.
 
-OK thanks for that. Just to close the loop I sent a patch to fix it:
-
-http://patchwork.ozlabs.org/patch/772771/
-
-Regards,
-Simon
+Rob
