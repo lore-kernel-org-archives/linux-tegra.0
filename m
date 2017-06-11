@@ -1,32 +1,26 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: [PATCH 08/44] xen-swiotlb: implement ->mapping_error
-Date: Sat, 10 Jun 2017 22:37:26 -0400
-Message-ID: <20170611023726.GF30966@char.us.oracle.com>
-References: <20170608132609.32662-1-hch@lst.de>
- <20170608132609.32662-9-hch@lst.de>
+From: <"Azim Hash"@correo.hlbm.gob.ec>
+Subject: Congratulation
+Date: Sat, 10 Jun 2017 23:34:55 -0700
+Message-ID: <20170610203507.9AF20EF5ED2__6732.39215179837$1497223048$gmane$org@correo.hlbm.gob.ec>
+Reply-To: azimpremjicharityfoundation-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20170608132609.32662-9-hch@lst.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-mips@linux-mips.org, linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org, linux-c6x-dev@linux-c6x.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org, linux-xtensa@linux-xtensa.org, x86@kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org, openrisc@lists.librecores.org, netdev@vger.kernel.org, sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Description: Mail message body
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Recipients <AzimHash-KHLU9HPj4Z8t4yYV8LOTvz/laDblWjpS@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBKdW4gMDgsIDIwMTcgYXQgMDM6MjU6MzNQTSArMDIwMCwgQ2hyaXN0b3BoIEhlbGx3
-aWcgd3JvdGU6Cj4gRE1BX0VSUk9SX0NPREUgaXMgZ29pbmcgdG8gZ28gYXdheSwgc28gZG9uJ3Qg
-cmVseSBvbiBpdC4KClJldmlld2VkLWJ5OiBLb25yYWQgUnplc3p1dGVrIFdpbGsgPGtvbnJhZC53
-aWxrQG9yYWNsZS5jb20+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+Hello,
+
+I'm Azim Hashim Premji, an Indian business tycoon, investor, and philanthropist. I'm the chairman of Wipro Limited. I gave away 25 per cent of my personal wealth to charity. And I also pledged to give away the rest of 25% this year 2017.. I have decided to donate 750,000.00USD to you. If you are interested in my donation, do contact me for more info. I will also want you to be part of my Charity Foundation once you receive this Cash Donation if you don't mind..
+
+You can also read more about me via the link below
+
+http://en.wikipedia.org/wiki/Azim_Premji
+
+whatsapp:+91-886-718-2831
+
+CEO Wipro Limited
+Azim Hashim Premji
