@@ -1,39 +1,45 @@
-From: Andreas Larsson <andreas@gaisler.com>
-Subject: Re: [PATCH 27/44] sparc: remove leon_dma_ops
-Date: Mon, 12 Jun 2017 10:06:26 +0200
-Message-ID: <593E4B82.70306@gaisler.com>
-References: <20170608132609.32662-1-hch@lst.de> <20170608132609.32662-28-hch@lst.de>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: Add bindings for
+ nvidia,tegra186-ccplex-cluster
+Date: Mon, 12 Jun 2017 11:25:08 +0300
+Message-ID: <2f5be984-eceb-0113-dd3c-4dbd22337062@kapsi.fi>
+References: <1496304245-24024-1-git-send-email-mperttunen@nvidia.com>
+ <1496304245-24024-2-git-send-email-mperttunen@nvidia.com>
+ <20170607221102.2bctvsdciv7y26lk@rob-hp-laptop>
+ <782ec765-f949-3023-93e3-a731f8bb524a@kapsi.fi>
+ <CAL_JsqJO2XbYjN2Hon_MJm_KO8HoZkx15ZYyhLRjWnhL9opTZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20170608132609.32662-28-hch@lst.de>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Christoph Hellwig <hch@lst.de>, x86@kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL_JsqJO2XbYjN2Hon_MJm_KO8HoZkx15ZYyhLRjWnhL9opTZg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2017-06-08 15:25, Christoph Hellwig wrote:
-> We can just use pci32_dma_ops.
+On 09.06.2017 23:54, Rob Herring wrote:
+> On Thu, Jun 8, 2017 at 2:32 AM, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org> wrote:
+>> On 08.06.2017 01:11, Rob Herring wrote:
+>>>
+>>> On Thu, Jun 01, 2017 at 11:04:04AM +0300, Mikko Perttunen wrote:
+>>>>
+>>>> The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
+>>>> registers that initiate CPU frequency/voltage transitions.
+>>>
+>>>
+>>> What the block is should also go in the binding doc. With that,
+>>
+>>
+>> I don't know how to explain it in more detail; this thing is literally just
+>> a few magic registers that route into some CPU control logic to trigger
+>> frequency/voltage transitions :)
 >
-> Btw, given that leon is 32-bit and appears to be PCI based, do even need
-> the special case for it in get_arch_dma_ops at all?
+> Copy the commit msg text to the binding doc. That's all I'm asking for.
+>
+> Rob
+>
 
-Hi!
+I see. Will do, thanks.
 
-Yes, it is needed. LEON systems are AMBA bus based. The common case here 
-is DMA over AMBA buses. Some LEON systems have PCI bridges, but in 
-general CONFIG_PCI is not a given.
-
--- 
-Andreas Larsson
-Software Engineer
-Cobham Gaisler
+Mikko
