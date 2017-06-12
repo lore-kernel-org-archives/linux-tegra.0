@@ -1,26 +1,39 @@
-From: <"Azim Hash"@correo.hlbm.gob.ec>
-Subject: Congratulation
-Date: Sat, 10 Jun 2017 23:34:55 -0700
-Message-ID: <20170610203507.9AF20EF5ED2__6732.39215179837$1497223048$gmane$org@correo.hlbm.gob.ec>
-Reply-To: azimpremjicharityfoundation-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Andreas Larsson <andreas@gaisler.com>
+Subject: Re: [PATCH 27/44] sparc: remove leon_dma_ops
+Date: Mon, 12 Jun 2017 10:06:26 +0200
+Message-ID: <593E4B82.70306@gaisler.com>
+References: <20170608132609.32662-1-hch@lst.de> <20170608132609.32662-28-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Description: Mail message body
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Recipients <AzimHash-KHLU9HPj4Z8t4yYV8LOTvz/laDblWjpS@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20170608132609.32662-28-hch@lst.de>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Christoph Hellwig <hch@lst.de>, x86@kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+On 2017-06-08 15:25, Christoph Hellwig wrote:
+> We can just use pci32_dma_ops.
+>
+> Btw, given that leon is 32-bit and appears to be PCI based, do even need
+> the special case for it in get_arch_dma_ops at all?
 
-I'm Azim Hashim Premji, an Indian business tycoon, investor, and philanthropist. I'm the chairman of Wipro Limited. I gave away 25 per cent of my personal wealth to charity. And I also pledged to give away the rest of 25% this year 2017.. I have decided to donate 750,000.00USD to you. If you are interested in my donation, do contact me for more info. I will also want you to be part of my Charity Foundation once you receive this Cash Donation if you don't mind..
+Hi!
 
-You can also read more about me via the link below
+Yes, it is needed. LEON systems are AMBA bus based. The common case here 
+is DMA over AMBA buses. Some LEON systems have PCI bridges, but in 
+general CONFIG_PCI is not a given.
 
-http://en.wikipedia.org/wiki/Azim_Premji
-
-whatsapp:+91-886-718-2831
-
-CEO Wipro Limited
-Azim Hashim Premji
+-- 
+Andreas Larsson
+Software Engineer
+Cobham Gaisler
