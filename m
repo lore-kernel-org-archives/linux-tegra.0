@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 15/22] gpu: host1x: Forbid RESTART opcode in the firewall
-Date: Wed, 14 Jun 2017 02:15:54 +0300
-Message-ID: <da122d97e8c3249c8014a558dff06c1e2bce3c43.1497394243.git.digetx@gmail.com>
+Subject: [PATCH v2 17/22] gpu: host1x: Correct swapped arguments in the is_addr_reg() definition
+Date: Wed, 14 Jun 2017 02:15:56 +0300
+Message-ID: <d657ec69048052262446544328add1e6d6ae6fcd.1497394243.git.digetx@gmail.com>
 References: <cover.1497394243.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1497394243.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,28 +12,28 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The RESTART opcode terminates the gather and restarts the CDMA fetching from
-a specified word << 2 relative to the CDMA start address. That shouldn't be
-allowed to be done by userspace.
+Arguments of the .is_addr_reg() are swapped in the definition of the
+function, that is quite confusing.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/job.c | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/host1x.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 7825643da324..3680b4b7dce9 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -515,7 +515,6 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
- 				goto out;
- 			break;
- 		case 4:
--		case 5:
- 		case 14:
- 			break;
- 		default:
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 71a34774b56a..561d6bb6580d 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -233,7 +233,7 @@ struct host1x_job {
+ 	u8 *gather_copy_mapped;
+ 
+ 	/* Check if register is marked as an address reg */
+-	int (*is_addr_reg)(struct device *dev, u32 reg, u32 class);
++	int (*is_addr_reg)(struct device *dev, u32 class, u32 reg);
+ 
+ 	/* Check if class belongs to the unit */
+ 	int (*is_valid_class)(u32 class);
 -- 
 2.13.0
