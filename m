@@ -1,68 +1,47 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 08/22] drm/tegra: dc: Drop the reset asserts to
- workaround a bug
-Date: Tue, 13 Jun 2017 15:45:46 +0200
-Message-ID: <20170613134546.GH16758@ulmo.fritz.box>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 07/22] drm/tegra: Remove module ownership from the
+ tegra_fb_ops
+Date: Tue, 13 Jun 2017 17:00:28 +0300
+Message-ID: <827dcffe-b25c-75b1-d988-5977de1dd83f@gmail.com>
 References: <cover.1495498184.git.digetx@gmail.com>
- <35e1ef44da98701b2c507c31ecc0812530303d2d.1495498184.git.digetx@gmail.com>
+ <b90497ec1e9ee182cdd4a19466c516e3b0553939.1495498184.git.digetx@gmail.com>
+ <20170613134340.GG16758@ulmo.fritz.box>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CNfT9TXqV7nd4cfk"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <35e1ef44da98701b2c507c31ecc0812530303d2d.1495498184.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20170613134340.GG16758-m5CkvRiFyV9wFLYp8hBm2A@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 13.06.2017 16:43, Thierry Reding wrote:
+> On Tue, May 23, 2017 at 03:14:22AM +0300, Dmitry Osipenko wrote:
+>> The framebuffers console fbcon_startup() increments the tegra_drm module
+>> 'use' refcount via try_module_get(), causing an interlock of the DRM subsys
+>> and the tegra_drm modules. In result, the tegra_drm module can't be unloaded
+>> using rmmod.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  drivers/gpu/drm/tegra/fb.c | 1 -
+>>  1 file changed, 1 deletion(-)
+> 
+> That's done on purpose because otherwise you could just rip out the
+> driver from under the framebuffer emulation and things would crash.
+> 
+> My understanding is that the right way to unload a module is to unbind
+> the driver first (which will cause the framebuffer to be removed and
+> hence the reference to be dropped) before the rmmod.
+> 
+> Thierry
+> 
 
---CNfT9TXqV7nd4cfk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Aha, interesting. I'll try the unbinding and will drop this patch from the
+series, thank you for the clarification. I haven't observed any crashes on a
+module reloading (framebuffer detached/attached just fine), maybe I was lucky then.
 
-On Tue, May 23, 2017 at 03:14:23AM +0300, Dmitry Osipenko wrote:
-> Commit 33a8eb8 ("Implement runtime PM") introduced HW reset control. It
-> causes a hang on Tegra20 if both display controllers are utilized (RGB
-> panel and HDMI). The TRM suggests that each display controller has its own
-> reset control, apparently it is not correct. Let's remove the interaction
-> with the resets for now as a workaround.
->=20
-> Fixes: 33a8eb8d40ee ("drm/tegra: dc: Implement runtime PM")
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/gpu/drm/tegra/dc.c | 15 ---------------
->  1 file changed, 15 deletions(-)
-
-Do you mind if I parameterize this to restrict omission of the assert
-and deassert to Tegra20? I'm fairly sure that these resets are important
-on later chips in order to properly reset the display controllers.
-
-My proposal would be to add a field to struct tegra_dc_soc_info (maybe
-=2Ebroken_reset) that will be set only on Tegra20 to still allow the DC to
-be reset on later generations.
-
-Thierry
-
---CNfT9TXqV7nd4cfk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/7IoACgkQ3SOs138+
-s6EaNg/+MU7/9PgCkqgh57OzI9bmDZlqt6JiN51dEVpvbpBXgXIVNR5CghC5n8+n
-uXijjPSmKgVRwTslEbW3DGN67TqOKGKNTuf0ya/OoGcN8U0jw1RsVMfi7NPankXm
-9w4CcHI70ubwZ3oMERpstyo/WZEX7XX5BrhrIlsO0eymEeR3VDTVpToP43oGHQQ2
-lm+qIR8yU4C6NCsLDkRPEFfzCNgy6lwgmx1vMmnAwHnDjCvtk7q/le2HFvX5KKxU
-XObhoHKyq6IZ/BE6sonBu5JU9T0w3mbFrY2ZAZBEz+CrRvnUC7sB2/j5NU3A32BI
-hUEzMHOkJKRC7K4w2FniAd7xWqMcbwsfkM3aCy40BiCGzyDyE0QCRicHpef6u7Ba
-csSDVMA1f3+x9D95zBwLYl2EO/v9ZQS/uPRrGeEhehuweEcM0BBA/VCh7bTCFtWy
-KLhXfNSsIUCyO3kIiohkrHu1H3tLyB/711KUaRXDErOyh5XTHbiAFBYFuUA0N9d5
-9uLQGYoZvM5khcCL4FZCuN3xlEjaTJ5+neVAYZCI2spRCIw+xG3D3Uu76u03+4hk
-NON+cq22YjmTjxhMpZOsPgaL0/WWHy9f5ietvTJrEgrdCUoDC226D6FhOLKGM9x6
-pHULySoDO0wm8RRLsqxNRCSeBs6LZ0x8rImI9DKw/8Rux3vlCsk=
-=zI1z
------END PGP SIGNATURE-----
-
---CNfT9TXqV7nd4cfk--
+-- 
+Dmitry
