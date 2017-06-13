@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 19/22] gpu: host1x: Remove unused 'struct host1x_cmdbuf'
-Date: Wed, 14 Jun 2017 02:15:58 +0300
-Message-ID: <2a64556b7d2011443a41ac841dfe3e37c1d2eb03.1497394243.git.digetx@gmail.com>
+Subject: [PATCH v2 20/22] gpu: host1x: Remove unused host1x_cdma_stop() definition
+Date: Wed, 14 Jun 2017 02:15:59 +0300
+Message-ID: <376aaecdbcda29b8a65776f2b1364b8aa40426ab.1497394243.git.digetx@gmail.com>
 References: <cover.1497394243.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1497394243.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,32 +12,27 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The struct host1x_cmdbuf is unused, let's remove it.
+There is no host1x_cdma_stop() in the code, let's remove its definition
+from the header file.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/job.h | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/gpu/host1x/cdma.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/job.h b/drivers/gpu/host1x/job.h
-index 0debd93a1849..4bda51d503ec 100644
---- a/drivers/gpu/host1x/job.h
-+++ b/drivers/gpu/host1x/job.h
-@@ -27,13 +27,6 @@ struct host1x_job_gather {
- 	bool handled;
- };
+diff --git a/drivers/gpu/host1x/cdma.h b/drivers/gpu/host1x/cdma.h
+index ec170a78f4e1..286d49386be9 100644
+--- a/drivers/gpu/host1x/cdma.h
++++ b/drivers/gpu/host1x/cdma.h
+@@ -88,7 +88,6 @@ struct host1x_cdma {
  
--struct host1x_cmdbuf {
--	u32 handle;
--	u32 offset;
--	u32 words;
--	u32 pad;
--};
--
- struct host1x_job_unpin_data {
- 	struct host1x_bo *bo;
- 	struct sg_table *sgt;
+ int host1x_cdma_init(struct host1x_cdma *cdma);
+ int host1x_cdma_deinit(struct host1x_cdma *cdma);
+-void host1x_cdma_stop(struct host1x_cdma *cdma);
+ int host1x_cdma_begin(struct host1x_cdma *cdma, struct host1x_job *job);
+ void host1x_cdma_push(struct host1x_cdma *cdma, u32 op1, u32 op2);
+ void host1x_cdma_end(struct host1x_cdma *cdma, struct host1x_job *job);
 -- 
 2.13.0
