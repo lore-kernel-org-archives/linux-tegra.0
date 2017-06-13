@@ -1,64 +1,91 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/2] ASoC: tegra: remove Whistler machine driver
-Date: Tue, 13 Jun 2017 15:36:44 +0200
-Message-ID: <20170613133644.GF16758@ulmo.fritz.box>
-References: <20170413185559.1939-1-swarren@wwwdotorg.org>
- <20170413185559.1939-2-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 07/22] drm/tegra: Remove module ownership from the
+ tegra_fb_ops
+Date: Tue, 13 Jun 2017 15:43:40 +0200
+Message-ID: <20170613134340.GG16758@ulmo.fritz.box>
+References: <cover.1495498184.git.digetx@gmail.com>
+ <b90497ec1e9ee182cdd4a19466c516e3b0553939.1495498184.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AH+kv8CCoFf6qPuz"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170413185559.1939-2-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============1513790607=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <b90497ec1e9ee182cdd4a19466c516e3b0553939.1495498184.git.digetx@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, DRI Development <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---AH+kv8CCoFf6qPuz
+--===============1513790607==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gvF4niNJ+uBMJnEh"
+Content-Disposition: inline
+
+
+--gvF4niNJ+uBMJnEh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 13, 2017 at 12:55:59PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, May 23, 2017 at 03:14:22AM +0300, Dmitry Osipenko wrote:
+> The framebuffers console fbcon_startup() increments the tegra_drm module
+> 'use' refcount via try_module_get(), causing an interlock of the DRM subs=
+ys
+> and the tegra_drm modules. In result, the tegra_drm module can't be unloa=
+ded
+> using rmmod.
 >=20
-> The previous patch removed Whistler board support. There's no need to
-> keep around a Whistler-specific ASoC machine driver.
->=20
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  .../bindings/sound/nvidia,tegra-audio-wm8753.txt   |  40 ----
->  sound/soc/tegra/Kconfig                            |  10 -
->  sound/soc/tegra/Makefile                           |   4 +-
->  sound/soc/tegra/tegra_wm8753.c                     | 219 ---------------=
-------
->  4 files changed, 1 insertion(+), 272 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-=
-audio-wm8753.txt
->  delete mode 100644 sound/soc/tegra/tegra_wm8753.c
+>  drivers/gpu/drm/tegra/fb.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+That's done on purpose because otherwise you could just rip out the
+driver from under the framebuffer emulation and things would crash.
 
---AH+kv8CCoFf6qPuz
+My understanding is that the right way to unload a module is to unbind
+the driver first (which will cause the framebuffer to be removed and
+hence the reference to be dropped) before the rmmod.
+
+Thierry
+
+--gvF4niNJ+uBMJnEh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/6mwACgkQ3SOs138+
-s6HofBAAjbQefhwb7i7/buofttoEPyr0ssVALYoe3m5BO4y0bag5IrKDW5bLOYpe
-Wk4sUaA/+jYGtemREBI0brr0u2wdZpfLHZN3ZvAztmdkZzfEcxr2XNpXg+2Yu1z2
-CSI2qMdOpr1rL7GExKVDH3ABsyoKDO7a0i90SSK/xBQ7IhbRPJBsZwuyj9/6EK4p
-kvl0Ln663tmCWs9IKxYnqEroq1a5zUlGlEljF/xV9ar1GiVKmOp2R7s7NnGtFF8j
-arEsMPoX92IdMRZBEo9tzdWDJPg6G5540rZGvKrAl4UEA5iAtMYLBio1BgnQdPor
-R6VmtAdi1WSTHVjkAXvH30Q3/bwfgyejnXotakZF5Y0/CcmlSbATwxF/Jh5VPDzG
-Z/k8Ekwx1xNbG0tUHWSkXw7FFPQFssNB/TkaApHRBsbjamZD0lH1QhnOp9oflt1a
-vnKV+7GLXNR/x2WVrE0RbQAKWeCGiMfvTm5u/V+PO4tLpD/coTAUiAw+8n/AEAEx
-IfoAvQLlsJzGHAbVbCoPvqSii7YD9JymoGzajsOeBjrEQPXJyxj55fSa88t0Maib
-o65tqdpj/YVtANmRulvoFRblvmhKtFZK8bPy0YFJotyZzKJhVvZ5k/8mx3yOZQzY
-M2b78xVfabGVscmvXWDEUH7lBVhjJAN1gIh8oGig57Kag4vvnhQ=
-=Ed+8
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/7AwACgkQ3SOs138+
+s6HD1RAApovTajS6LpYQRc+P+INcp6UL/SSsHq1NYy7XosjYWOiU7QKDOatCR4F6
+XG8XnGCkciYXzuOxZax5CXXvY0hkxYBOM3KEjyspqEhAdcq85duSs/+Nbbj2KZT9
+q1FkKWQGPKTP5mFC/KrzC+xLhUp7ldEaFWkPg3NNf670kDW4g/hW9xO1INxrjPRA
+BPR7xlnV1PTowAoZIztnWNi4xgMfrNBJCgthCRk3Wx/ro+ajUcGKYtvU/U2D9X6d
+f5r9LfP8z7I2Kh/UCN1sPwIBnI02bYDLCfxInKiNza46Y4Al/i7qxh6BzO5t+CXJ
+sUogQ3yaUr/TeDtPfSs6xm1KY0xWfqd3GKysPumlFbWKdCWnlVf/IMMLVdy9W+bk
+fr2l05mZq0vIukUORVdVJvpmTHPaTW2j41ueanX/eHY8bNiCY24BetvXGNrp1orD
+FaBGkpZtddwZ2Or70oZvqNaVqu083NQZFgHRDc77nBEFOkOkHObQCLdxiSt1F/CC
+vwvieleWerDqTNaJgvbWq3q3iHFX5FESG6sRlFVQ10KB7/r5NOrsoI8ofAMyd0h5
+OgC5A16TMKcCZ2rmclVYCXnpiXh57l68onAm7u0Fjf3oZ70KrbuIy//hGE5fkTgC
+AjInOD3nlN8+oHqko4Ero11GuPxT2LrAs3qqr1/eX3YW9BYWD+k=
+=Xhaf
 -----END PGP SIGNATURE-----
 
---AH+kv8CCoFf6qPuz--
+--gvF4niNJ+uBMJnEh--
+
+--===============1513790607==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1513790607==--
