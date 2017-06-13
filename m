@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 08/22] drm/tegra: dc: Disable plane if it is invisible
-Date: Wed, 14 Jun 2017 02:15:47 +0300
-Message-ID: <97592f6df0eef08436a4835d2d4b698dc9f99948.1497394243.git.digetx@gmail.com>
+Subject: [PATCH v2 09/22] drm/tegra: Don't use IOMMU on Tegra20
+Date: Wed, 14 Jun 2017 02:15:48 +0300
+Message-ID: <d707bd34e268f9d8fb29bf510a9f17e5f943a635.1497394243.git.digetx@gmail.com>
 References: <cover.1497394243.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1497394243.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,79 +12,43 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra20 if plane has width or height equal to 0, it will be infinitely
-wide or tall. Let's disable the plane if it is invisible on atomic state
-committing to fix the issue. The Rockchip DRM driver does the same.
+There is no IOMMU on Tegra20, instead a GART would be picked as an IOMMU
+provider.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/tegra/drm.c | 3 ++-
+ drivers/gpu/host1x/dev.c    | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index a7a7cce1afd0..c875f11786b9 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -559,6 +559,23 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 	return 0;
- }
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index e999391aedc9..aa7988dcc28f 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -131,7 +131,8 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+ 	if (!tegra)
+ 		return -ENOMEM;
  
-+static void tegra_dc_disable_window(struct tegra_dc *dc, int index)
-+{
-+	unsigned long flags;
-+	u32 value;
-+
-+	spin_lock_irqsave(&dc->lock, flags);
-+
-+	value = WINDOW_A_SELECT << index;
-+	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
-+
-+	value = tegra_dc_readl(dc, DC_WIN_WIN_OPTIONS);
-+	value &= ~WIN_ENABLE;
-+	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
-+
-+	spin_unlock_irqrestore(&dc->lock, flags);
-+}
-+
- static void tegra_plane_atomic_update(struct drm_plane *plane,
- 				      struct drm_plane_state *old_state)
- {
-@@ -573,6 +590,9 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
- 	if (!plane->state->crtc || !plane->state->fb)
- 		return;
+-	if (iommu_present(&platform_bus_type)) {
++	if (iommu_present(&platform_bus_type) &&
++	    !of_machine_is_compatible("nvidia,tegra20")) {
+ 		u64 carveout_start, carveout_end, gem_start, gem_end;
+ 		struct iommu_domain_geometry *geometry;
+ 		unsigned long order;
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index f05ebb14fa63..6a805ed908c3 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -177,7 +177,8 @@ static int host1x_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
  
-+	if (!plane->state->visible)
-+		return tegra_dc_disable_window(dc, p->index);
-+
- 	memset(&window, 0, sizeof(window));
- 	window.src.x = plane->state->src.x1 >> 16;
- 	window.src.y = plane->state->src.y1 >> 16;
-@@ -612,8 +632,6 @@ static void tegra_plane_atomic_disable(struct drm_plane *plane,
- {
- 	struct tegra_plane *p = to_tegra_plane(plane);
- 	struct tegra_dc *dc;
--	unsigned long flags;
--	u32 value;
+-	if (iommu_present(&platform_bus_type)) {
++	if (iommu_present(&platform_bus_type) &&
++	    !of_machine_is_compatible("nvidia,tegra20")) {
+ 		struct iommu_domain_geometry *geometry;
+ 		unsigned long order;
  
- 	/* rien ne va plus */
- 	if (!old_state || !old_state->crtc)
-@@ -621,16 +639,7 @@ static void tegra_plane_atomic_disable(struct drm_plane *plane,
- 
- 	dc = to_tegra_dc(old_state->crtc);
- 
--	spin_lock_irqsave(&dc->lock, flags);
--
--	value = WINDOW_A_SELECT << p->index;
--	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
--
--	value = tegra_dc_readl(dc, DC_WIN_WIN_OPTIONS);
--	value &= ~WIN_ENABLE;
--	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
--
--	spin_unlock_irqrestore(&dc->lock, flags);
-+	tegra_dc_disable_window(dc, p->index);
- }
- 
- static const struct drm_plane_helper_funcs tegra_primary_plane_helper_funcs = {
 -- 
 2.13.0
