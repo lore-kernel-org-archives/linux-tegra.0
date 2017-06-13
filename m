@@ -1,60 +1,61 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 1/3] drm/nouveau/tegra: Skip manual unpowergating when not
- necessary
-Date: Tue, 13 Jun 2017 15:43:01 +0300
-Message-ID: <abc5775b-a74e-7902-91ad-a90f3c1bfce4@kapsi.fi>
-References: <20170609122541.31118-1-mperttunen@nvidia.com>
- <c8569914-3264-bd12-9418-8bdaa4aaa379@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] arm64: tegra: Add CCPLEX_CLUSTER area in Tegra186
+Date: Tue, 13 Jun 2017 14:45:52 +0200
+Message-ID: <20170613124552.GD16758@ulmo.fritz.box>
+References: <1496304245-24024-1-git-send-email-mperttunen@nvidia.com>
+ <1496304245-24024-3-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <c8569914-3264-bd12-9418-8bdaa4aaa379-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1496304245-24024-3-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 13.06.2017 01:52, Ben Skeggs wrote:
-> On 06/09/2017 10:25 PM, Mikko Perttunen wrote:
->> On Tegra186, powergating is handled by the BPMP power domain provider
->> and the "legacy" powergating API is not available. Therefore skip
->> these calls if we are attached to a power domain.
-> Thanks Mikko,
->
-> Taken all 3 patches into my tree.
 
-Thanks!
+--NklN7DEeGtkPCoo3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> Ben.
->
->>
->> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 10 ++++++----
->>  1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
->> index 6474bd2a6d07..3d42cdbbe9c0 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
->> @@ -51,10 +51,12 @@ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
->>  	reset_control_assert(tdev->rst);
->>  	udelay(10);
->>
->> -	ret = tegra_powergate_remove_clamping(TEGRA_POWERGATE_3D);
->> -	if (ret)
->> -		goto err_clamp;
->> -	udelay(10);
->> +	if (!tdev->pdev->dev.pm_domain) {
->> +		ret = tegra_powergate_remove_clamping(TEGRA_POWERGATE_3D);
->> +		if (ret)
->> +			goto err_clamp;
->> +		udelay(10);
->> +	}
->>
->>  	reset_control_deassert(tdev->rst);
->>  	udelay(10);
->>
->
+On Thu, Jun 01, 2017 at 11:04:05AM +0300, Mikko Perttunen wrote:
+> The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
+> registers that initiate CPU frequency/voltage transitions.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+
+Applied, thanks.
+
+Thierry
+
+--NklN7DEeGtkPCoo3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/3oAACgkQ3SOs138+
+s6GR5A/+Pcx4WxrAUF3Z8OLN/7NlEvc3ioOqXw8dMvGHLZ5Mr66Xy4rIcATcZF/Z
+eOKgajWb8VHmVXb5oUnkxsMns3gCNUZT7diM+vb02+94UCUz7mMitPcMnsuHhhXE
+jaMjF540c/6UefF+T7VW/MxpNVOSkFoKSStXMdF9qu6kk6hrJCLBkrojifV9HvCh
+u/4Ylq73Tsg746ICAC5GG3YQeDDpFMf0UjGjMmnbuWwSLM7+Gj7RSC3BpLD6pEAI
+VBrSVOUMnUZZgPpr+rNVrQXwNwADtoWCL8lHfk8UOTyCO3LM7t7EI7WxsXvDSJt0
+UlVIvP79AQ+6+UTK1bSC71aVkEwACRciNvb9wcf1nrXvGm1ndgGRfcMKHRfkmT3z
+71TFfbFvnLaMfpGZjp8qkWW1SaoXzL4NZQcwtH8eyRhRvP5pnl2n7aOQy4sW6GWy
+VzmbMsOc5Wbs4uhPDJGxhANYrmFLxlCBnNX3cmphK+81SjqgtWQEcdvMCT3MXu5o
+s33rkbky/I/IAyNtGuVicOAbkwJx6eejNPALM2lEeHvnVbUPoC6Xuidbsro0hdFz
+ednoX83LFvCEscT1fzm5oDv1jvnRlUDZcIDuKdJuiUIw25LOAf+Wr0+bP/HJR3K7
+CXgMFj5keaIlXBYr6MjQPirzisORUNvw872eZSno+Rqnd7DH8NA=
+=ILxF
+-----END PGP SIGNATURE-----
+
+--NklN7DEeGtkPCoo3--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
