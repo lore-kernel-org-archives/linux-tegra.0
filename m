@@ -1,56 +1,59 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] firmware: tegra: fix locking bugs in bpmp
-Date: Tue, 13 Jun 2017 16:21:56 +0200
-Message-ID: <20170613142156.GA20181@ulmo.fritz.box>
-References: <20170505053723.53qi4ob3df4ri2v4@mwanda>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] soc/tegra: flowctrl: Fix error handling
+Date: Tue, 13 Jun 2017 16:48:23 +0200
+Message-ID: <20170613144823.GA20577@ulmo.fritz.box>
+References: <20170411034041.18662-1-christophe.jaillet@wanadoo.fr>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170505053723.53qi4ob3df4ri2v4@mwanda>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20170411034041.18662-1-christophe.jaillet@wanadoo.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---cNdxnHkX5QqsyA0e
+--k+w/mQv8wyuph6w0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 05, 2017 at 08:37:23AM +0300, Dan Carpenter wrote:
-> There are a bunch of error paths were we don't unlock the bpmp->threaded
-> lock.  Also if __tegra_bpmp_channel_write() fails then we returned
-> success instead of an error code.
+On Tue, Apr 11, 2017 at 05:40:41AM +0200, Christophe JAILLET wrote:
+> It is likely that returning returned by 'devm_ioremap_resource()' is
+> expected here instead of something related to 'base' which should be a
+> valid pointer at this point.
 >=20
-> Fixes: 983de5f97169 ("firmware: tegra: Add BPMP support")
-> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+> Fixes: 841fd94c43a4 ("soc/tegra: flowctrl: Add basic platform driver")
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/soc/tegra/flowctrl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, though I did omit the err_ prefixes from the labels for
-consistency.
+Applied, thanks.
 
 Thierry
 
---cNdxnHkX5QqsyA0e
+--k+w/mQv8wyuph6w0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/9QEACgkQ3SOs138+
-s6GThxAAhjznPNt1rb83yH2UGJtMMR7Plf/AjdPK2ZeZlZ1k1VGfZQZrKRjH9Tp9
-XkMpRzHxx9THDg9TO8JrwSXfN/Pj/8FMXdMJMFYQkhdSyLPTgM5UWp2iwuKr2yQz
-QSQIJdil5p3Quo3W73Ennh7LePUPDk6RfqgaOUrkeJErVfw0ez7wGks9ZlzC1Tsy
-H/kceV6pM+giicNxfobB080dwSA4RF3tfP7GaVRUwf9Dh6+l/Pb7f3GxVckl5nts
-cjM+VJPxbVHjArV3hqrqV3rDUHzhzPCTvjpEwPsw3ODSp1Rtf5o+BCr4CsuEDoqg
-TLd+4yXHpzNrR/UCDIPOzCEgVJDwIu2JKnsL4MsUiQRhze7ffdgjg4zGKcQAdUqI
-N1PzAlGEQZa+uw4D9lyMms9P3ANu3yWk3x04WReqNqa425yAPunEZnEsn2Wjve2K
-18CLAcU6yBrVVmIfCzLlHvvwe/ClvD+9S3Lx6NQK4ntlSCRfpORnJyT6MGbPc1MT
-CjvUfFirKSGv2hqeLJQ12hFV2wJP2t/+E4XLrRxhW6qZAvjtQEN/DUTEj8/TuJcz
-WAnmtKSsMVbxf+eiuLVbQKsIP6KbECc515CsXzHIg9yigkhRQJwS0UcELJ3zwdvP
-QLrkBXs8DYga9LRVclBYkLz2pioYp5WHoNyjc3+F7cg5wKJVCNA=
-=vqu7
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/+zUACgkQ3SOs138+
+s6Eqlg//c4Ucj9KzgESneiTqAPK1es9Kvesl9eckqADNF9vULWwRMA0PCIlbXZyV
+Jy96w9dn1/dugdXgS2QftCYMbmLmI3ikwEsCmUrdXqMyfq7pl80isKju2SkvzToq
+9L9/fpgG+GVYhcK+o6Wh2Ys83htA3WExZffHMVNiAoYmbwq1yPzoy0ztOiIt4XoM
+CIkrMOc8O110KAyOp8KlpIfXUeRwEI4lNE7m/Us0isTiflz4XziXTfvLnXMz54y+
+TMiEpp45NRwd2pA+H6zL1U94TjrdCobV+Coj3JEHwxK3MRsmhljTnPHMr23qetIV
+34z5PZD9/lWNCqmFwnrgLLekSj0BrL/B1WrosmMxssmY1S30BZnwkaLYt8+yq/pe
+gzwoqXFFY3YLVL3OU6Xy7dMlQ1dF3Vc/PHjB/HGKROP5sxNP3UBkI+dkL8JNAxJx
+dtZ5Ib9b9XgZ7Aps85arjtUQfyAB4tD9YDm6sSPSTH3IrWEi5f60Iex1xLVFs4z1
+gn1vwKfZrQoSSB3XtAntjSKiVRchJasmg6e2JJCMGO9EWakPykJTseOaiVW2iPRN
+tycPf46EasB413vN6513SibkwtM1tTUc+MsbfDcL0eXh5epLDQpW5OsQAD1CkWsv
+sOet7AwliEO0UhCUeuHrE8fUrHRwxfyUKzqjzfgXasuGL4DObOU=
+=OQko
 -----END PGP SIGNATURE-----
 
---cNdxnHkX5QqsyA0e--
+--k+w/mQv8wyuph6w0--
