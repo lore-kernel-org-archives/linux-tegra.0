@@ -1,174 +1,47 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 16/22] gpu: host1x: Forbid unrelated SETCLASS opcode in
- the firewall
-Date: Tue, 13 Jun 2017 17:15:05 +0300
-Message-ID: <48a8198e-9bc1-87c0-8960-490e994d1965@gmail.com>
+Subject: Re: [PATCH 08/22] drm/tegra: dc: Drop the reset asserts to workaround
+ a bug
+Date: Tue, 13 Jun 2017 17:18:37 +0300
+Message-ID: <8d131ad2-5d1a-635e-4a6c-73b69cbf8e72@gmail.com>
 References: <cover.1495498184.git.digetx@gmail.com>
- <741d3bbfb74b5455e016164a3a30d9e3101bdc24.1495498184.git.digetx@gmail.com>
- <CABPQNSbEXGHUv8kHr2sLjOLrVAiNXdStKUapMZX+CX5RWi0cfg@mail.gmail.com>
- <20170613140653.GI16758@ulmo.fritz.box>
+ <35e1ef44da98701b2c507c31ecc0812530303d2d.1495498184.git.digetx@gmail.com>
+ <20170613134546.GH16758@ulmo.fritz.box>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170613140653.GI16758-m5CkvRiFyV9wFLYp8hBm2A@public.gmane.org>
+In-Reply-To: <20170613134546.GH16758-m5CkvRiFyV9wFLYp8hBm2A@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 13.06.2017 17:06, Thierry Reding wrote:
-> On Tue, May 23, 2017 at 02:39:33AM +0200, Erik Faye-Lund wrote:
->> On Tue, May 23, 2017 at 2:14 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> Several channels could be made to write the same unit concurrently via the
->>> SETCLASS opcode, trusting userspace is a bad idea. It should be possible to
->>> drop the per-client channel reservation and add a per-unit locking by
->>> inserting MLOCK's to the command stream to re-allow the SETCLASS opcode, but
->>> it will be much more work. Let's forbid the unit-unrelated class changes for
->>> now.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>>  drivers/gpu/drm/tegra/drm.c  |  1 +
->>>  drivers/gpu/drm/tegra/drm.h  |  1 +
->>>  drivers/gpu/drm/tegra/gr2d.c | 12 ++++++++++++
->>>  drivers/gpu/host1x/job.c     | 24 ++++++++++++++++++++----
->>>  include/linux/host1x.h       |  5 ++++-
->>>  5 files changed, 38 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
->>> index cdb05d6efde4..17416e1c219a 100644
->>> --- a/drivers/gpu/drm/tegra/drm.c
->>> +++ b/drivers/gpu/drm/tegra/drm.c
->>> @@ -531,6 +531,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->>>         }
->>>
->>>         job->is_addr_reg = context->client->ops->is_addr_reg;
->>> +       job->is_valid_class = context->client->ops->is_valid_class;
->>>         job->syncpt_incrs = syncpt.incrs;
->>>         job->syncpt_id = syncpt.id;
->>>         job->timeout = 10000;
->>> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
->>> index 85aa2e3d9d4e..6d6da01282f3 100644
->>> --- a/drivers/gpu/drm/tegra/drm.h
->>> +++ b/drivers/gpu/drm/tegra/drm.h
->>> @@ -83,6 +83,7 @@ struct tegra_drm_client_ops {
->>>                             struct tegra_drm_context *context);
->>>         void (*close_channel)(struct tegra_drm_context *context);
->>>         int (*is_addr_reg)(struct device *dev, u32 class, u32 offset);
->>> +       int (*is_valid_class)(u32 class);
->>>         int (*submit)(struct tegra_drm_context *context,
->>>                       struct drm_tegra_submit *args, struct drm_device *drm,
->>>                       struct drm_file *file);
->>> diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
->>> index 02cd3e37a6ec..782231c41a1a 100644
->>> --- a/drivers/gpu/drm/tegra/gr2d.c
->>> +++ b/drivers/gpu/drm/tegra/gr2d.c
->>> @@ -109,10 +109,22 @@ static int gr2d_is_addr_reg(struct device *dev, u32 class, u32 offset)
->>>         return 0;
->>>  }
->>>
->>> +static int gr2d_is_valid_class(u32 class)
->>> +{
->>> +       switch (class) {
->>> +       case HOST1X_CLASS_GR2D:
->>> +       case HOST1X_CLASS_GR2D_SB:
->>> +               return 1;
->>> +       }
->>> +
->>> +       return 0;
->>> +}
->>> +
->>>  static const struct tegra_drm_client_ops gr2d_ops = {
->>>         .open_channel = gr2d_open_channel,
->>>         .close_channel = gr2d_close_channel,
->>>         .is_addr_reg = gr2d_is_addr_reg,
->>> +       .is_valid_class = gr2d_is_valid_class,
->>>         .submit = tegra_drm_submit,
->>>  };
->>>
->>> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
->>> index cf335c5979e2..65e12219405a 100644
->>> --- a/drivers/gpu/host1x/job.c
->>> +++ b/drivers/gpu/host1x/job.c
->>> @@ -358,6 +358,9 @@ struct host1x_firewall {
->>>
->>>  static int check_register(struct host1x_firewall *fw, unsigned long offset)
->>>  {
->>> +       if (!fw->job->is_addr_reg)
->>> +               return 0;
->>> +
->>>         if (fw->job->is_addr_reg(fw->dev, fw->class, offset)) {
->>>                 if (!fw->num_relocs)
->>>                         return -EINVAL;
->>> @@ -372,6 +375,19 @@ static int check_register(struct host1x_firewall *fw, unsigned long offset)
->>>         return 0;
->>>  }
->>>
->>> +static int check_class(struct host1x_firewall *fw, u32 class)
->>> +{
->>> +       if (!fw->job->is_valid_class) {
->>> +               if (fw->class != class)
->>> +                       return -EINVAL;
->>> +       } else {
->>> +               if (!fw->job->is_valid_class(fw->class))
->>> +                       return -EINVAL;
->>> +       }
->>> +
->>> +       return 0;
->>> +}
->>> +
->>>  static int check_mask(struct host1x_firewall *fw)
->>>  {
->>>         u32 mask = fw->mask;
->>> @@ -445,11 +461,9 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
->>>  {
->>>         u32 *cmdbuf_base = (u32 *)fw->job->gather_copy_mapped +
->>>                 (g->offset / sizeof(u32));
->>> +       u32 job_class = fw->class;
->>>         int err = 0;
->>>
->>> -       if (!fw->job->is_addr_reg)
->>> -               return 0;
->>> -
->>>         fw->words = g->words;
->>>         fw->cmdbuf = g->bo;
->>>         fw->offset = 0;
->>> @@ -469,7 +483,9 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
->>>                         fw->class = word >> 6 & 0x3ff;
->>>                         fw->mask = word & 0x3f;
->>>                         fw->reg = word >> 16 & 0xfff;
->>> -                       err = check_mask(fw);
->>> +                       err = check_class(fw, job_class);
->>> +                       if (!err)
->>> +                               err = check_mask(fw);
->>>                         if (err)
->>>                                 goto out;
->>>                         break;
->>> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
->>> index aa323e43ae4e..561d6bb6580d 100644
->>> --- a/include/linux/host1x.h
->>> +++ b/include/linux/host1x.h
->>> @@ -233,7 +233,10 @@ struct host1x_job {
->>>         u8 *gather_copy_mapped;
->>>
->>>         /* Check if register is marked as an address reg */
->>> -       int (*is_addr_reg)(struct device *dev, u32 reg, u32 class);
->>> +       int (*is_addr_reg)(struct device *dev, u32 class, u32 reg);
+On 13.06.2017 16:45, Thierry Reding wrote:
+> On Tue, May 23, 2017 at 03:14:23AM +0300, Dmitry Osipenko wrote:
+>> Commit 33a8eb8 ("Implement runtime PM") introduced HW reset control. It
+>> causes a hang on Tegra20 if both display controllers are utilized (RGB
+>> panel and HDMI). The TRM suggests that each display controller has its own
+>> reset control, apparently it is not correct. Let's remove the interaction
+>> with the resets for now as a workaround.
 >>
->> This seems like an unrelated fix, you might want to mention it in the
->> commit message at least.
+>> Fixes: 33a8eb8d40ee ("drm/tegra: dc: Implement runtime PM")
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  drivers/gpu/drm/tegra/dc.c | 15 ---------------
+>>  1 file changed, 15 deletions(-)
 > 
-> If you're going to rev the series anyway, might be worth splitting this
-> off into a separate commit to make it stand out more.
-> 
-> Either way is fine with me.
-> 
-> Thierry
-> 
+> Do you mind if I parameterize this to restrict omission of the assert
+> and deassert to Tegra20? I'm fairly sure that these resets are important
+> on later chips in order to properly reset the display controllers.
 
-Yes, factoring out that change is reasonable.
+I don't mind at all, I can parameterize it in the next rev myself if you wish.
+
+> My proposal would be to add a field to struct tegra_dc_soc_info (maybe
+> .broken_reset) that will be set only on Tegra20 to still allow the DC to
+> be reset on later generations.
+
+Sounds good.
 
 -- 
 Dmitry
