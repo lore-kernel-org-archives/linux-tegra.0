@@ -1,502 +1,108 @@
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH v5 3/6] reset: hide reset control arrays behind struct
- reset_control
-Date: Tue, 13 Jun 2017 12:16:12 +0530
-Message-ID: <c15af5af-3b30-07eb-52c8-af0aff87f3b4@codeaurora.org>
+From: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH v5 0/6] reset: APIs to manage a list of resets
+Date: Tue, 13 Jun 2017 12:35:26 +0530
+Message-ID: <e11ccef9-ba3f-6349-8343-5e0435033d27@codeaurora.org>
 References: <20170601165203.15315-1-p.zabel@pengutronix.de>
- <20170601165203.15315-4-p.zabel@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170601165203.15315-4-p.zabel@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org
-Cc: Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170601165203.15315-1-p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
+
+
+
+On 06/01/2017 10:21 PM, Philipp Zabel wrote:
+> A set of patches to allow consumers to get and de/assert or trigger
+> a number of resets at the same time. A patch on top of Vivek's original
+> API extension is added to hide the reset_control_array behind a struct
+> reset_control so that the consumer doesn't have care about the difference
+> between a singular reset control and reset control controlling an array
+> of resets, except when requesting the control.
+>
+> This series also contains reset controls patches for dwc3-of-simple
+> and tegra pmc drivers.
+> A small patch is added in this series to correctly re-order the
+> resource handling in dwc3_of_simple_remove().
+>
+> The series is tested on torvald's master branch the device tree
+> patches to enable usb on db820c.
+>
+> Changes since v4:
+>   - Added a patch to hide reset control arrays behind struct reset_control
+>     and adapted the consumer patches. This could be merged with the reset
+>     array API patch if we think this is a good idea.
 
 Hi Philipp,
 
+I tested this series again on my db820c setup. Things work fine.
+We can merge this series after fixing the 3/6 patch in this series.
 
-On 06/01/2017 10:22 PM, Philipp Zabel wrote:
-> Reset controls already may control multiple reset lines with a single
-> hardware bit. So from the user perspective, reset control arrays are not
-> at all different from single reset controls.
-> Therefore, hide reset control arrays behind struct reset_control to
-> avoid having to introduce new API functions for array (de)assert/reset.
->
-> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
->   drivers/reset/core.c  | 225 ++++++++++++++++++++++++++------------------------
->   include/linux/reset.h |  44 +++-------
->   2 files changed, 128 insertions(+), 141 deletions(-)
->
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 1747000757211..c8fb4426b218a 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -43,11 +43,24 @@ struct reset_control {
->   	unsigned int id;
->   	struct kref refcnt;
->   	bool shared;
-> +	bool array;
->   	atomic_t deassert_count;
->   	atomic_t triggered_count;
->   };
->   
->   /**
-> + * struct reset_control_array - an array of reset controls
-> + * @base: reset control for compatibility with reset control API functions
-> + * @num_rstcs: number of reset controls
-> + * @rstc: array of reset controls
-> + */
-> +struct reset_control_array {
-> +	struct reset_control base;
-> +	unsigned int num_rstcs;
-> +	struct reset_control *rstc[];
-> +};
-> +
-> +/**
->    * of_reset_simple_xlate - translate reset_spec to the reset line number
->    * @rcdev: a pointer to the reset controller device
->    * @reset_spec: reset line specifier as found in the device tree
-> @@ -135,6 +148,65 @@ int devm_reset_controller_register(struct device *dev,
->   }
->   EXPORT_SYMBOL_GPL(devm_reset_controller_register);
->   
-> +static inline struct reset_control_array *
-> +rstc_to_array(struct reset_control *rstc) {
-> +	return container_of(rstc, struct reset_control_array, base);
-> +}
-> +
-> +static int reset_control_array_reset(struct reset_control_array *resets)
-> +{
-> +	int ret, i;
-> +
-> +	for (i = 0; i < resets->num_rstcs; i++) {
-> +		ret = reset_control_reset(resets->rstc[i]);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int reset_control_array_assert(struct reset_control_array *resets)
-> +{
-> +	int ret, i;
-> +
-> +	for (i = 0; i < resets->num_rstcs; i++) {
-> +		ret = reset_control_assert(resets->rstc[i]);
-> +		if (ret)
-> +			goto err;
-> +	}
-> +
-> +	return 0;
-> +
-> +err:
-> +	while (i--)
-> +		reset_control_deassert(resets->rstc[i]);
-> +	return ret;
-> +}
-> +
-> +static int reset_control_array_deassert(struct reset_control_array *resets)
-> +{
-> +	int ret, i;
-> +
-> +	for (i = 0; i < resets->num_rstcs; i++) {
-> +		ret = reset_control_deassert(resets->rstc[i]);
-> +		if (ret)
-> +			goto err;
-> +	}
-> +
-> +	return 0;
-> +
-> +err:
-> +	while (i--)
-> +		reset_control_assert(resets->rstc[i]);
-> +	return ret;
-> +}
-> +
-> +static inline bool reset_control_is_array(struct reset_control *rstc)
-> +{
-> +	return rstc->array;
-> +}
-> +
->   /**
->    * reset_control_reset - reset the controlled device
->    * @rstc: reset controller
-> @@ -158,6 +230,9 @@ int reset_control_reset(struct reset_control *rstc)
->   	if (WARN_ON(IS_ERR(rstc)))
->   		return -EINVAL;
->   
-> +	if (reset_control_is_array(rstc))
-> +		return reset_control_array_reset(rstc_to_array(rstc));
-> +
->   	if (!rstc->rcdev->ops->reset)
->   		return -ENOTSUPP;
->   
-> @@ -202,6 +277,9 @@ int reset_control_assert(struct reset_control *rstc)
->   	if (WARN_ON(IS_ERR(rstc)))
->   		return -EINVAL;
->   
-> +	if (reset_control_is_array(rstc))
-> +		return reset_control_array_assert(rstc_to_array(rstc));
-> +
->   	if (!rstc->rcdev->ops->assert)
->   		return -ENOTSUPP;
->   
-> @@ -240,6 +318,9 @@ int reset_control_deassert(struct reset_control *rstc)
->   	if (WARN_ON(IS_ERR(rstc)))
->   		return -EINVAL;
->   
-> +	if (reset_control_is_array(rstc))
-> +		return reset_control_array_deassert(rstc_to_array(rstc));
-> +
->   	if (!rstc->rcdev->ops->deassert)
->   		return -ENOTSUPP;
->   
-> @@ -266,7 +347,7 @@ int reset_control_status(struct reset_control *rstc)
->   	if (!rstc)
->   		return 0;
->   
-> -	if (WARN_ON(IS_ERR(rstc)))
-> +	if (WARN_ON(IS_ERR(rstc)) || reset_control_is_array(rstc))
->   		return -EINVAL;
->   
->   	if (rstc->rcdev->ops->status)
-> @@ -404,6 +485,16 @@ struct reset_control *__reset_control_get(struct device *dev, const char *id,
->   }
->   EXPORT_SYMBOL_GPL(__reset_control_get);
->   
-> +static void reset_control_array_put(struct reset_control_array *resets)
-> +{
-> +	int i;
-> +
-> +	mutex_lock(&reset_list_mutex);
-> +	for (i = 0; i < resets->num_rstcs; i++)
-> +		__reset_control_put_internal(resets->rstc[i]);
-> +	mutex_unlock(&reset_list_mutex);
-> +}
-> +
->   /**
->    * reset_control_put - free the reset controller
->    * @rstc: reset controller
-> @@ -413,6 +504,11 @@ void reset_control_put(struct reset_control *rstc)
->   	if (IS_ERR_OR_NULL(rstc))
->   		return;
->   
-> +	if (reset_control_is_array(rstc)) {
-> +		reset_control_array_put(rstc_to_array(rstc));
-> +		return;
-> +	}
-> +
->   	mutex_lock(&reset_list_mutex);
->   	__reset_control_put_internal(rstc);
->   	mutex_unlock(&reset_list_mutex);
-> @@ -499,81 +595,6 @@ static int of_reset_control_get_count(struct device_node *node)
->   }
->   
->   /**
-> - * reset_control_array_assert: assert a list of resets
-> - *
-> - * @resets: reset control array holding info about the list of resets
-> - *
-> - * This API doesn't guarantee that the reset lines controlled by
-> - * the reset array are asserted in any particular order.
-> - *
-> - * Returns 0 on success or error number on failure.
-> - */
-> -int reset_control_array_assert(struct reset_control_array *resets)
-> -{
-> -	int ret, i;
-> -
-> -	if (!resets)
-> -		return 0;
-> -
-> -	if (IS_ERR(resets))
-> -		return -EINVAL;
-> -
-> -	for (i = 0; i < resets->num_rstcs; i++) {
-> -		ret = reset_control_assert(resets->rstc[i]);
-> -		if (ret)
-> -			goto err;
-> -	}
-> -
-> -	return 0;
-> -
-> -err:
-> -	while (i--)
-> -		reset_control_deassert(resets->rstc[i]);
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL_GPL(reset_control_array_assert);
-> -
-> -/**
-> - * reset_control_array_deassert: deassert a list of resets
-> - *
-> - * @resets: reset control array holding info about the list of resets
-> - *
-> - * This API doesn't guarantee that the reset lines controlled by
-> - * the reset array are deasserted in any particular order.
-> - *
-> - * Returns 0 on success or error number on failure.
-> - */
-> -int reset_control_array_deassert(struct reset_control_array *resets)
-> -{
-> -	int ret, i;
-> -
-> -	if (!resets)
-> -		return 0;
-> -
-> -	if (IS_ERR(resets))
-> -		return -EINVAL;
-> -
-> -	for (i = 0; i < resets->num_rstcs; i++) {
-> -		ret = reset_control_deassert(resets->rstc[i]);
-> -		if (ret)
-> -			goto err;
-> -	}
-> -
-> -	return 0;
-> -
-> -err:
-> -	while (i--)
-> -		reset_control_assert(resets->rstc[i]);
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL_GPL(reset_control_array_deassert);
-> -
-> -static void devm_reset_control_array_release(struct device *dev, void *res)
-> -{
-> -	reset_control_array_put(*(struct reset_control_array **)res);
-> -}
-> -
-> -/**
->    * of_reset_control_array_get - Get a list of reset controls using
->    *				device node.
->    *
-> @@ -584,13 +605,12 @@ static void devm_reset_control_array_release(struct device *dev, void *res)
->    * Returns pointer to allocated reset_control_array on success or
->    * error on failure
->    */
-> -struct reset_control_array *
-> +struct reset_control *
->   of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
->   {
->   	struct reset_control_array *resets;
->   	struct reset_control *rstc;
->   	int num, i;
-> -	void *err;
->   
->   	num = of_reset_control_get_count(np);
->   	if (num < 0)
-> @@ -603,23 +623,24 @@ of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
->   
->   	for (i = 0; i < num; i++) {
->   		rstc = __of_reset_control_get(np, NULL, i, shared, optional);
-> -		if (IS_ERR(rstc)) {
-> -			err = ERR_CAST(rstc);
-> +		if (IS_ERR(rstc))
->   			goto err_rst;
-> -		}
->   		resets->rstc[i] = rstc;
->   	}
->   	resets->num_rstcs = num;
-> +	resets->base.array = true;
->   
-> -	return resets;
-> +	return &resets->base;
->   
->   err_rst:
-> +	mutex_lock(&reset_list_mutex);
->   	while (--i >= 0)
-> -		reset_control_put(resets->rstc[i]);
-> +		__reset_control_put_internal(resets->rstc[i]);
-> +	mutex_unlock(&reset_list_mutex);
->   
->   	kfree(resets);
->   
-> -	return err;
-> +	return rstc;
->   }
->   EXPORT_SYMBOL_GPL(of_reset_control_array_get);
->   
-> @@ -637,40 +658,26 @@ EXPORT_SYMBOL_GPL(of_reset_control_array_get);
->    * Returns pointer to allocated reset_control_array on success or
->    * error on failure
->    */
-> -struct reset_control_array *
-> +struct reset_control *
->   devm_reset_control_array_get(struct device *dev, bool shared, bool optional)
->   {
-> -	struct reset_control_array **devres;
-> -	struct reset_control_array *resets;
-> +	struct reset_control **devres;
-> +	struct reset_control *rstc;
->   
-> -	devres = devres_alloc(devm_reset_control_array_release,
-> -			      sizeof(*devres), GFP_KERNEL);
-> +	devres = devres_alloc(devm_reset_control_release, sizeof(*devres),
-> +			      GFP_KERNEL);
->   	if (!devres)
->   		return ERR_PTR(-ENOMEM);
->   
-> -	resets = of_reset_control_array_get(dev->of_node, shared, optional);
-> -	if (IS_ERR(resets)) {
-> -		devres_free(resets);
-> -		return resets;
-> +	rstc = of_reset_control_array_get(dev->of_node, shared, optional);
-> +	if (IS_ERR(rstc)) {
-> +		devres_free(devres);
-> +		return rstc;
->   	}
->   
-> -	*devres = resets;
-> +	*devres = rstc;
->   	devres_add(dev, devres);
->   
-> -	return resets;
-> +	return rstc;
->   }
->   EXPORT_SYMBOL_GPL(devm_reset_control_array_get);
-> -
-> -void reset_control_array_put(struct reset_control_array *resets)
-> -{
-> -	int i;
-> -
-> -	if (IS_ERR_OR_NULL(resets))
-> -		return;
-> -
-> -	for (i = 0; i < resets->num_rstcs; i++)
-> -		reset_control_put(resets->rstc[i]);
-> -
-> -	kfree(resets);
-> -}
-> -EXPORT_SYMBOL_GPL(reset_control_array_put);
-> diff --git a/include/linux/reset.h b/include/linux/reset.h
-> index df75fe50f765d..0f1be13e66e46 100644
-> --- a/include/linux/reset.h
-> +++ b/include/linux/reset.h
-> @@ -5,11 +5,6 @@
->   
->   struct reset_control;
->   
-> -struct reset_control_array {
-> -	unsigned int num_rstcs;
-> -	struct reset_control *rstc[];
-> -};
-> -
->   #ifdef CONFIG_RESET_CONTROLLER
->   
->   int reset_control_reset(struct reset_control *rstc);
-> @@ -30,13 +25,10 @@ struct reset_control *__devm_reset_control_get(struct device *dev,
->   
->   int __must_check device_reset(struct device *dev);
->   
-> -int reset_control_array_assert(struct reset_control_array *resets);
-> -int reset_control_array_deassert(struct reset_control_array *resets);
-> -struct reset_control_array *devm_reset_control_array_get(struct device *dev,
-> -						bool shared, bool optional);
-> -struct reset_control_array *of_reset_control_array_get(struct device_node *np,
-> -						bool shared, bool optional);
-> -void reset_control_array_put(struct reset_control_array *resets);
-> +struct reset_control *devm_reset_control_array_get(struct device *dev,
-> +						   bool shared, bool optional);
-> +struct reset_control *of_reset_control_array_get(struct device_node *np,
-> +						 bool shared, bool optional);
->   
->   static inline int device_reset_optional(struct device *dev)
->   {
-> @@ -102,18 +94,6 @@ static inline struct reset_control *__devm_reset_control_get(
->   	return optional ? NULL : ERR_PTR(-ENOTSUPP);
->   }
->   
-> -static inline
-> -int reset_control_array_assert(struct reset_control_array *resets)
-> -{
-> -	return 0;
-> -}
-> -
-> -static inline
-> -int reset_control_array_deassert(struct reset_control_array *resets)
-> -{
-> -	return 0;
-> -}
-> -
->   static inline struct reset_control_array *
+Thanks
 
-This has to return just 'struct reset_control *'.
-That should resolve kbuild errors.
+Hi Felipe,
+If you are okay with changes in dwc3, can you kindly consider Ack'ing this
+series. May be Philipp can pull the entire series after fixing.
 
-Rest looks good to me.
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-
-BRs
+Thanks
 Vivek
 
->   devm_reset_control_array_get(struct device *dev, bool shared, bool optional)
->   {
-> @@ -420,49 +400,49 @@ static inline struct reset_control *devm_reset_control_get_by_index(
->   /*
->    * APIs to manage a list of reset controllers
->    */
-> -static inline struct reset_control_array *
-> +static inline struct reset_control *
->   devm_reset_control_array_get_exclusive(struct device *dev)
->   {
->   	return devm_reset_control_array_get(dev, false, false);
->   }
->   
-> -static inline struct reset_control_array *
-> +static inline struct reset_control *
->   devm_reset_control_array_get_shared(struct device *dev)
->   {
->   	return devm_reset_control_array_get(dev, true, false);
->   }
->   
-> -static inline struct reset_control_array *
-> +static inline struct reset_control *
->   devm_reset_control_array_get_optional_exclusive(struct device *dev)
->   {
->   	return devm_reset_control_array_get(dev, false, true);
->   }
->   
-> -static inline struct reset_control_array *
-> +static inline struct reset_control *
->   devm_reset_control_array_get_optional_shared(struct device *dev)
->   {
->   	return devm_reset_control_array_get(dev, true, true);
->   }
->   
-> -static inline struct reset_control_array *
-> +static inline struct reset_control *
->   of_reset_control_array_get_exclusive(struct device_node *node)
->   {
->   	return of_reset_control_array_get(node, false, false);
->   }
->   
-> -static inline struct reset_control_array *
-> +static inline struct reset_control *
->   of_reset_control_array_get_shared(struct device_node *node)
->   {
->   	return of_reset_control_array_get(node, true, false);
->   }
->   
-> -static inline struct reset_control_array *
-> +static inline struct reset_control *
->   of_reset_control_array_get_optional_exclusive(struct device_node *node)
->   {
->   	return of_reset_control_array_get(node, false, true);
->   }
->   
-> -static inline struct reset_control_array *
-> +static inline struct reset_control *
->   of_reset_control_array_get_optional_shared(struct device_node *node)
->   {
->   	return of_reset_control_array_get(node, true, true);
+>
+> Changes since v3:
+>   - Squashed of_reset_control_get_count() patch in the second patch that
+>     adds the reset control array APIs.
+>   - The error path after getting count through of_reset_control_get_count()
+>     now returns NULL pointer in case when 'optional' flag is true.
+>   - Added code in reset_control_array_assert() to deassert the
+>     already asserted resets in the error case.
+>   - Using of_reset_control_array_get_optional_exclusive() in dwc3 patch
+>     to request the reset control array.
+>   - Added a patch to fix the order in which resources are handled in
+>     dwc3_of_simple_remove() path.
+>   - Added tegra_powergate->reset to take care of single reset control
+>     passed from the client drivers.
+>
+> Changes since v2:
+>   - Addressed comments to make APIs inline with gpiod API.
+>   - Moved number of reset controls in 'struct reset_control_array'
+>     so that the footprint is reduced.
+>   - of_reset_control_array_get() and devm_reset_control_array_get()
+>     now return pointer to the newly created reset control array.
+>   - Added comments to mention that the reset control array APIs don't
+>     guarantee any particular order when handling the reset controls.
+>   - Dropped 'name' from reset_control_array' since the interface is meant
+>     for a bunch of anonymous resets that can all be asserted or deasserted
+>     in arbitrary order.
+>   - Fixed returns for APIs reported by kbuild.
+>   - Fixed 'for' clause guards reported by kbuild.
+>
+> Changes since v1:
+>   - Addressed comment for error handling in of_reset_control_get_count()
+>   - Added patch to manage reset controller array.
+>   - Rebased dwc3-of-simple changes based on the new set of APIs
+>     for reset control array.
+>   - Added a patch for soc/tegra/pmc driver to use the new set of
+>     reset control array APIs.
+>
+> Philipp Zabel (2):
+>    reset: use kref for reference counting
+>    reset: hide reset control arrays behind struct reset_control
+>
+> Vivek Gautam (4):
+>    reset: Add APIs to manage array of resets
+>    usb: dwc3: of-simple: Re-order resource handling in remove
+>    usb: dwc3: of-simple: Add support to get resets for the device
+>    soc/tegra: pmc: Use the new reset APIs to manage reset controllers
+>
+>   drivers/reset/core.c              | 234 ++++++++++++++++++++++++++++++++++++--
+>   drivers/soc/tegra/pmc.c           |  82 ++++---------
+>   drivers/usb/dwc3/dwc3-of-simple.c |  29 ++++-
+>   include/linux/reset.h             |  73 ++++++++++++
+>   4 files changed, 344 insertions(+), 74 deletions(-)
+>
 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
