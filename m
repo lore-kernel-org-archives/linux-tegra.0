@@ -1,68 +1,181 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 07/22] drm/tegra: Remove module ownership from the
- tegra_fb_ops
-Date: Tue, 13 Jun 2017 20:39:37 +0300
-Message-ID: <e35c7b67-0011-6e40-e860-67e889d4c951@gmail.com>
+Subject: Re: [PATCH 13/22] gpu: host1x: Do not leak BO's phys address to
+ userspace
+Date: Tue, 13 Jun 2017 21:21:05 +0300
+Message-ID: <5e197807-ef57-604f-879d-7be691785a60@gmail.com>
 References: <cover.1495498184.git.digetx@gmail.com>
- <b90497ec1e9ee182cdd4a19466c516e3b0553939.1495498184.git.digetx@gmail.com>
- <20170613134340.GG16758@ulmo.fritz.box>
- <827dcffe-b25c-75b1-d988-5977de1dd83f@gmail.com>
- <20170613150720.GD20577@ulmo.fritz.box>
+ <0a7594fdecc4298f684ed55fda5c5b1be9c443ec.1495498184.git.digetx@gmail.com>
+ <00e5e6d5-def4-a4f6-df93-9505be13c4be@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170613150720.GD20577-m5CkvRiFyV9wFLYp8hBm2A@public.gmane.org>
+In-Reply-To: <00e5e6d5-def4-a4f6-df93-9505be13c4be-/1wQRMveznE@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 13.06.2017 18:07, Thierry Reding wrote:
-> On Tue, Jun 13, 2017 at 05:00:28PM +0300, Dmitry Osipenko wrote:
->> On 13.06.2017 16:43, Thierry Reding wrote:
->>> On Tue, May 23, 2017 at 03:14:22AM +0300, Dmitry Osipenko wrote:
->>>> The framebuffers console fbcon_startup() increments the tegra_drm module
->>>> 'use' refcount via try_module_get(), causing an interlock of the DRM subsys
->>>> and the tegra_drm modules. In result, the tegra_drm module can't be unloaded
->>>> using rmmod.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>> ---
->>>>  drivers/gpu/drm/tegra/fb.c | 1 -
->>>>  1 file changed, 1 deletion(-)
->>>
->>> That's done on purpose because otherwise you could just rip out the
->>> driver from under the framebuffer emulation and things would crash.
->>>
->>> My understanding is that the right way to unload a module is to unbind
->>> the driver first (which will cause the framebuffer to be removed and
->>> hence the reference to be dropped) before the rmmod.
->>>
->>> Thierry
->>>
+On 13.06.2017 20:31, Mikko Perttunen wrote:
+> On 05/23/2017 03:14 AM, Dmitry Osipenko wrote:
+>> Do gathers coping before patching them, so the original gathers are left
+>> untouched. That's not as bad as leaking a kernel addresses, but still
+>> doesn't feel right.
 >>
->> Aha, interesting. I'll try the unbinding and will drop this patch from the
->> series, thank you for the clarification. I haven't observed any crashes on a
->> module reloading (framebuffer detached/attached just fine), maybe I was lucky then.
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>   drivers/gpu/host1x/job.c | 44 ++++++++++++++++++++++++++++++--------------
+>>   1 file changed, 30 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+>> index 14f3f957ffab..190353944d23 100644
+>> --- a/drivers/gpu/host1x/job.c
+>> +++ b/drivers/gpu/host1x/job.c
+>> @@ -137,8 +137,9 @@ static void host1x_syncpt_patch_offset(struct
+>> host1x_syncpt *sp,
+>>    * avoid a wrap condition in the HW).
+>>    */
+>>   static int do_waitchks(struct host1x_job *job, struct host1x *host,
+>> -               struct host1x_bo *patch)
+>> +               struct host1x_job_gather *g)
+>>   {
+>> +    struct host1x_bo *patch = g->bo;
+>>       int i;
+>>         /* compare syncpt vs wait threshold */
+>> @@ -165,7 +166,8 @@ static int do_waitchks(struct host1x_job *job, struct
+>> host1x *host,
+>>                   wait->syncpt_id, sp->name, wait->thresh,
+>>                   host1x_syncpt_read_min(sp));
+>>   -            host1x_syncpt_patch_offset(sp, patch, wait->offset);
+>> +            host1x_syncpt_patch_offset(sp, patch,
+>> +                           g->offset + wait->offset);
+>>           }
+>>             wait->bo = NULL;
+>> @@ -269,11 +271,12 @@ static unsigned int pin_job(struct host1x *host, struct
+>> host1x_job *job)
+>>       return err;
+>>   }
+>>   -static int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
+>> +static int do_relocs(struct host1x_job *job, struct host1x_job_gather *g)
+>>   {
+>>       int i = 0;
+>>       u32 last_page = ~0;
+>>       void *cmdbuf_page_addr = NULL;
+>> +    struct host1x_bo *cmdbuf = g->bo;
+>>         /* pin & patch the relocs for one gather */
+>>       for (i = 0; i < job->num_relocs; i++) {
+>> @@ -286,7 +289,8 @@ static int do_relocs(struct host1x_job *job, struct
+>> host1x_bo *cmdbuf)
+>>           if (cmdbuf != reloc->cmdbuf.bo)
+>>               continue;
+>>   -        if (last_page != reloc->cmdbuf.offset >> PAGE_SHIFT) {
+>> +        if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL) &&
+>> +            last_page != reloc->cmdbuf.offset >> PAGE_SHIFT) {
+>>               if (cmdbuf_page_addr)
+>>                   host1x_bo_kunmap(cmdbuf, last_page,
+>>                            cmdbuf_page_addr);
+>> @@ -301,11 +305,20 @@ static int do_relocs(struct host1x_job *job, struct
+>> host1x_bo *cmdbuf)
+>>               }
+>>           }
+>>   +        if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL)) {
+>> +            cmdbuf_page_addr = job->gather_copy_mapped;
+>> +            cmdbuf_page_addr += g->offset;
+>> +        }
+>> +
+>>           target = cmdbuf_page_addr + (reloc->cmdbuf.offset & ~PAGE_MASK);
+>> +
+>> +        if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
+>> +            target += (reloc->cmdbuf.offset & PAGE_MASK) >> 2;
+>> +
+>>           *target = reloc_addr;
 > 
-> It's possible that it works by accident. The driver removes the
-> framebuffer as part of the driver removal process, so technically
-> nothing should crash. However, if, for any reason, anyone was holding
-> on to a reference to the framebuffer (not sure if that is even possible)
-> the module needs to stay around long enough as well, otherwise the
-> function pointers would become dangling. The module reference makes sure
-> that this doesn't happen (as long as a framebuffer exists, the ops will
-> stick around).
+> I think this logic would be cleaner like ..
 > 
-> So even if there isn't a way to make it crash today, the code is still
-> correct in taking the reference.
+> if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL)) {
+>   target = job->gather_copy_mapped + g->offset + reloc->cmdbuf.offset;
+>   ...
+> } else {
+>   if (last_page != reloc->cmdbuf.offset >> PAGE_SHIFT) {
+>     ...
+>   }
+>   target = cmdbuf_page_addr + (reloc->cmdbuf.offset & ~PAGE_MASK);
+> }
+> *target = reloc_addr
+> 
 
-Thank you very much for a more detailed explanation. I've successfully unloaded
-the tegra_drm module after unbinding the VT's, the patch is dropped from the series.
+What about this variant?
 
-echo 0 | tee /sys/devices/virtual/vtconsole/vtcon*/bind
+-static int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
++static int do_relocs(struct host1x_job *job, struct host1x_job_gather *g)
+ {
+ 	int i = 0;
+ 	u32 last_page = ~0;
+ 	void *cmdbuf_page_addr = NULL;
++	struct host1x_bo *cmdbuf = g->bo;
+
+ 	/* pin & patch the relocs for one gather */
+ 	for (i = 0; i < job->num_relocs; i++) {
+@@ -286,6 +289,12 @@ static int do_relocs(struct host1x_job *job, struct
+host1x_bo *cmdbuf)
+ 		if (cmdbuf != reloc->cmdbuf.bo)
+ 			continue;
+
++		if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL)) {
++			cmdbuf_page_addr = job->gather_copy_mapped + g->offset;
++			target = cmdbuf_page_addr + reloc->cmdbuf.offset;
++			goto patch_reloc;
++		}
++
+ 		if (last_page != reloc->cmdbuf.offset >> PAGE_SHIFT) {
+ 			if (cmdbuf_page_addr)
+ 				host1x_bo_kunmap(cmdbuf, last_page,
+@@ -302,10 +311,11 @@ static int do_relocs(struct host1x_job *job, struct
+host1x_bo *cmdbuf)
+ 		}
+
+ 		target = cmdbuf_page_addr + (reloc->cmdbuf.offset & ~PAGE_MASK);
++patch_reloc:
+ 		*target = reloc_addr;
+ 	}
+
+-	if (cmdbuf_page_addr)
++	if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL) && cmdbuf_page_addr)
+ 		host1x_bo_kunmap(cmdbuf, last_page, cmdbuf_page_addr);
+
+ 	return 0;
+
+>>       }
+>>   -    if (cmdbuf_page_addr)
+>> +    if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL) && cmdbuf_page_addr)
+>>           host1x_bo_kunmap(cmdbuf, last_page, cmdbuf_page_addr);
+>>         return 0;
+>> @@ -573,6 +586,12 @@ int host1x_job_pin(struct host1x_job *job, struct device
+>> *dev)
+>>       if (err)
+>>           goto out;
+>>   +    if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL)) {
+>> +        err = copy_gathers(job, dev);
+>> +        if (err)
+>> +            goto out;
+>> +    }
+>> +
+>>       /* patch gathers */
+>>       for (i = 0; i < job->num_gathers; i++) {
+>>           struct host1x_job_gather *g = &job->gathers[i];
+>> @@ -581,7 +600,8 @@ int host1x_job_pin(struct host1x_job *job, struct device
+>> *dev)
+>>           if (g->handled)
+>>               continue;
+>>   -        g->base = job->gather_addr_phys[i];
+>> +        if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
+>> +            g->base = job->gather_addr_phys[i];
+> 
+> Perhaps add a comment here like "copy_gathers sets base when firewall is enabled"
+> 
+
+Okay, added. Thank you for the review comments!
 
 -- 
 Dmitry
