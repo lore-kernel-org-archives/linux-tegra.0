@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 05/22] drm/tegra: Check syncpoint ID in the 'submit' IOCTL
-Date: Wed, 14 Jun 2017 02:15:44 +0300
-Message-ID: <746d938d97c43e1b80f448c00e27a04188b01332.1497394243.git.digetx@gmail.com>
+Subject: [PATCH v2 06/22] drm/tegra: dc: Avoid reset asserts on Tegra20
+Date: Wed, 14 Jun 2017 02:15:45 +0300
+Message-ID: <1c7b0c7bf713401073d648f9f228fa152c094a5a.1497394243.git.digetx@gmail.com>
 References: <cover.1497394243.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1497394243.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,42 +12,113 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-In case of invalid syncpoint ID, the host1x_syncpt_get() returns NULL and
-none of its users perform a check of the returned pointer later. Let's bail
-out until it's too late.
+Commit 33a8eb8 ("Implement runtime PM") introduced HW reset control. It
+causes a hang on Tegra20 if both display controllers are utilized (RGB
+panel and HDMI). The TRM suggests that each display controller has its own
+reset control, apparently it is not correct.
 
+Fixes: 33a8eb8d40ee ("drm/tegra: dc: Implement runtime PM")
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/drm.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/tegra/dc.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index b90ed2cd32ce..e999391aedc9 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -393,6 +393,8 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	struct drm_tegra_waitchk __user *waitchks =
- 		(void __user *)(uintptr_t)args->waitchks;
- 	struct drm_tegra_syncpt syncpt;
-+	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
-+	struct host1x_syncpt *sp;
- 	struct host1x_job *job;
- 	int err;
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 95b373f739f2..98ee6abb056c 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -30,6 +30,7 @@ struct tegra_dc_soc_info {
+ 	bool supports_block_linear;
+ 	unsigned int pitch_align;
+ 	bool has_powergate;
++	bool broken_reset;
+ };
  
-@@ -522,6 +524,13 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 		goto fail;
+ struct tegra_plane {
+@@ -1856,6 +1857,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
+ 	.supports_block_linear = false,
+ 	.pitch_align = 8,
+ 	.has_powergate = false,
++	.broken_reset = true,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+@@ -1865,6 +1867,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+ 	.supports_block_linear = false,
+ 	.pitch_align = 8,
+ 	.has_powergate = false,
++	.broken_reset = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+@@ -1874,6 +1877,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+ 	.supports_block_linear = false,
+ 	.pitch_align = 64,
+ 	.has_powergate = true,
++	.broken_reset = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+@@ -1883,6 +1887,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+ 	.supports_block_linear = true,
+ 	.pitch_align = 64,
+ 	.has_powergate = true,
++	.broken_reset = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+@@ -1892,6 +1897,7 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+ 	.supports_block_linear = true,
+ 	.pitch_align = 64,
+ 	.has_powergate = true,
++	.broken_reset = false,
+ };
+ 
+ static const struct of_device_id tegra_dc_of_match[] = {
+@@ -1989,7 +1995,8 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dc->rst);
  	}
  
-+	/* check whether syncpoint ID is valid */
-+	sp = host1x_syncpt_get(host1x, syncpt.id);
-+	if (!sp) {
-+		err = -ENOENT;
-+		goto fail;
-+	}
-+
- 	job->is_addr_reg = context->client->ops->is_addr_reg;
- 	job->syncpt_incrs = syncpt.incrs;
- 	job->syncpt_id = syncpt.id;
+-	reset_control_assert(dc->rst);
++	if (!dc->soc->broken_reset)
++		reset_control_assert(dc->rst);
+ 
+ 	if (dc->soc->has_powergate) {
+ 		if (dc->pipe == 0)
+@@ -2063,10 +2070,12 @@ static int tegra_dc_suspend(struct device *dev)
+ 	struct tegra_dc *dc = dev_get_drvdata(dev);
+ 	int err;
+ 
+-	err = reset_control_assert(dc->rst);
+-	if (err < 0) {
+-		dev_err(dev, "failed to assert reset: %d\n", err);
+-		return err;
++	if (!dc->soc->broken_reset) {
++		err = reset_control_assert(dc->rst);
++		if (err < 0) {
++			dev_err(dev, "failed to assert reset: %d\n", err);
++			return err;
++		}
+ 	}
+ 
+ 	if (dc->soc->has_powergate)
+@@ -2096,10 +2105,13 @@ static int tegra_dc_resume(struct device *dev)
+ 			return err;
+ 		}
+ 
+-		err = reset_control_deassert(dc->rst);
+-		if (err < 0) {
+-			dev_err(dev, "failed to deassert reset: %d\n", err);
+-			return err;
++		if (!dc->soc->broken_reset) {
++			err = reset_control_deassert(dc->rst);
++			if (err < 0) {
++				dev_err(dev,
++					"failed to deassert reset: %d\n", err);
++				return err;
++			}
+ 		}
+ 	}
+ 
 -- 
 2.13.0
