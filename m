@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 12/22] gpu: host1x: Correct host1x_job_pin() error handling
-Date: Wed, 14 Jun 2017 02:15:51 +0300
-Message-ID: <b8b71a6a60a1b751c38627375649c246d3ecf769.1497394243.git.digetx@gmail.com>
+Subject: [PATCH v2 10/22] Revert "iommu/tegra: gart: Do not register with bus"
+Date: Wed, 14 Jun 2017 02:15:49 +0300
+Message-ID: <dab12225c30314fab6b0d57d992c42eace6ab26c.1497394243.git.digetx@gmail.com>
 References: <cover.1497394243.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1497394243.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,50 +12,33 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-In case of relocations / waitchecks patching failure the jobs pins stay
-referenced till DRM file get closed, wasting memory. Add the missed
-unpinning.
+The GART driver was disabled because it was picked by as an IOMMU provider
+for the DRM driver on Tegra20, which is not the purpose of the GART. Now
+DRM driver avoids to use IOMMU on Tegra20, so the GART driver can be
+re-enabled. Potentially there are interesting use cases of the GART for
+Tegra20, like mmap'ing of a fallback memory allocation and using its GART
+aperture for an accelerated graphics operation.
+
+This reverts commit c7e3ca515e784a82223f447b79eb2090bdb91378.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
 ---
- drivers/gpu/host1x/job.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/iommu/tegra-gart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index d9933828fe87..14f3f957ffab 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -592,22 +592,20 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index 37e708fdbb5a..430d13bf4f95 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -422,7 +422,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 	do_gart_setup(gart, NULL);
  
- 		err = do_relocs(job, g->bo);
- 		if (err)
--			break;
-+			goto out;
+ 	gart_handle = gart;
+-
++	bus_set_iommu(&platform_bus_type, &gart_iommu_ops);
+ 	return 0;
+ }
  
- 		err = do_waitchks(job, host, g->bo);
- 		if (err)
--			break;
-+			goto out;
- 	}
- 
--	if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL) && !err) {
--		err = copy_gathers(job, dev);
--		if (err) {
--			host1x_job_unpin(job);
--			return err;
--		}
--	}
-+	if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
-+		goto out;
- 
-+	err = copy_gathers(job, dev);
- out:
-+	if (err)
-+		host1x_job_unpin(job);
- 	wmb();
- 
- 	return err;
 -- 
 2.13.0
