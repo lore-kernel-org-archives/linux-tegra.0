@@ -1,47 +1,56 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 08/22] drm/tegra: dc: Drop the reset asserts to workaround
- a bug
-Date: Tue, 13 Jun 2017 17:18:37 +0300
-Message-ID: <8d131ad2-5d1a-635e-4a6c-73b69cbf8e72@gmail.com>
-References: <cover.1495498184.git.digetx@gmail.com>
- <35e1ef44da98701b2c507c31ecc0812530303d2d.1495498184.git.digetx@gmail.com>
- <20170613134546.GH16758@ulmo.fritz.box>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] firmware: tegra: fix locking bugs in bpmp
+Date: Tue, 13 Jun 2017 16:21:56 +0200
+Message-ID: <20170613142156.GA20181@ulmo.fritz.box>
+References: <20170505053723.53qi4ob3df4ri2v4@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170613134546.GH16758-m5CkvRiFyV9wFLYp8hBm2A@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20170505053723.53qi4ob3df4ri2v4@mwanda>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 13.06.2017 16:45, Thierry Reding wrote:
-> On Tue, May 23, 2017 at 03:14:23AM +0300, Dmitry Osipenko wrote:
->> Commit 33a8eb8 ("Implement runtime PM") introduced HW reset control. It
->> causes a hang on Tegra20 if both display controllers are utilized (RGB
->> panel and HDMI). The TRM suggests that each display controller has its own
->> reset control, apparently it is not correct. Let's remove the interaction
->> with the resets for now as a workaround.
->>
->> Fixes: 33a8eb8d40ee ("drm/tegra: dc: Implement runtime PM")
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/gpu/drm/tegra/dc.c | 15 ---------------
->>  1 file changed, 15 deletions(-)
-> 
-> Do you mind if I parameterize this to restrict omission of the assert
-> and deassert to Tegra20? I'm fairly sure that these resets are important
-> on later chips in order to properly reset the display controllers.
 
-I don't mind at all, I can parameterize it in the next rev myself if you wish.
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> My proposal would be to add a field to struct tegra_dc_soc_info (maybe
-> .broken_reset) that will be set only on Tegra20 to still allow the DC to
-> be reset on later generations.
+On Fri, May 05, 2017 at 08:37:23AM +0300, Dan Carpenter wrote:
+> There are a bunch of error paths were we don't unlock the bpmp->threaded
+> lock.  Also if __tegra_bpmp_channel_write() fails then we returned
+> success instead of an error code.
+>=20
+> Fixes: 983de5f97169 ("firmware: tegra: Add BPMP support")
+> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 
-Sounds good.
+Applied, though I did omit the err_ prefixes from the labels for
+consistency.
 
--- 
-Dmitry
+Thierry
+
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/9QEACgkQ3SOs138+
+s6GThxAAhjznPNt1rb83yH2UGJtMMR7Plf/AjdPK2ZeZlZ1k1VGfZQZrKRjH9Tp9
+XkMpRzHxx9THDg9TO8JrwSXfN/Pj/8FMXdMJMFYQkhdSyLPTgM5UWp2iwuKr2yQz
+QSQIJdil5p3Quo3W73Ennh7LePUPDk6RfqgaOUrkeJErVfw0ez7wGks9ZlzC1Tsy
+H/kceV6pM+giicNxfobB080dwSA4RF3tfP7GaVRUwf9Dh6+l/Pb7f3GxVckl5nts
+cjM+VJPxbVHjArV3hqrqV3rDUHzhzPCTvjpEwPsw3ODSp1Rtf5o+BCr4CsuEDoqg
+TLd+4yXHpzNrR/UCDIPOzCEgVJDwIu2JKnsL4MsUiQRhze7ffdgjg4zGKcQAdUqI
+N1PzAlGEQZa+uw4D9lyMms9P3ANu3yWk3x04WReqNqa425yAPunEZnEsn2Wjve2K
+18CLAcU6yBrVVmIfCzLlHvvwe/ClvD+9S3Lx6NQK4ntlSCRfpORnJyT6MGbPc1MT
+CjvUfFirKSGv2hqeLJQ12hFV2wJP2t/+E4XLrRxhW6qZAvjtQEN/DUTEj8/TuJcz
+WAnmtKSsMVbxf+eiuLVbQKsIP6KbECc515CsXzHIg9yigkhRQJwS0UcELJ3zwdvP
+QLrkBXs8DYga9LRVclBYkLz2pioYp5WHoNyjc3+F7cg5wKJVCNA=
+=vqu7
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
