@@ -1,89 +1,174 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: Add bindings for
- nvidia,tegra186-ccplex-cluster
-Date: Tue, 13 Jun 2017 16:10:44 +0200
-Message-ID: <20170613141044.GJ16758@ulmo.fritz.box>
-References: <1496304245-24024-2-git-send-email-mperttunen@nvidia.com>
- <1497262984-2346-1-git-send-email-mperttunen@nvidia.com>
- <20170613124239.GC16758@ulmo.fritz.box>
- <9ecb973e-ee57-8c89-df21-4ed0bff4bb38@kapsi.fi>
- <a7417c4f-d7d4-e11e-a23c-cd0f2fc4adee@kapsi.fi>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 16/22] gpu: host1x: Forbid unrelated SETCLASS opcode in
+ the firewall
+Date: Tue, 13 Jun 2017 17:15:05 +0300
+Message-ID: <48a8198e-9bc1-87c0-8960-490e994d1965@gmail.com>
+References: <cover.1495498184.git.digetx@gmail.com>
+ <741d3bbfb74b5455e016164a3a30d9e3101bdc24.1495498184.git.digetx@gmail.com>
+ <CABPQNSbEXGHUv8kHr2sLjOLrVAiNXdStKUapMZX+CX5RWi0cfg@mail.gmail.com>
+ <20170613140653.GI16758@ulmo.fritz.box>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HcccYpVZDxQ8hzPO"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <a7417c4f-d7d4-e11e-a23c-cd0f2fc4adee-/1wQRMveznE@public.gmane.org>
+In-Reply-To: <20170613140653.GI16758-m5CkvRiFyV9wFLYp8hBm2A@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 13.06.2017 17:06, Thierry Reding wrote:
+> On Tue, May 23, 2017 at 02:39:33AM +0200, Erik Faye-Lund wrote:
+>> On Tue, May 23, 2017 at 2:14 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> Several channels could be made to write the same unit concurrently via the
+>>> SETCLASS opcode, trusting userspace is a bad idea. It should be possible to
+>>> drop the per-client channel reservation and add a per-unit locking by
+>>> inserting MLOCK's to the command stream to re-allow the SETCLASS opcode, but
+>>> it will be much more work. Let's forbid the unit-unrelated class changes for
+>>> now.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> ---
+>>>  drivers/gpu/drm/tegra/drm.c  |  1 +
+>>>  drivers/gpu/drm/tegra/drm.h  |  1 +
+>>>  drivers/gpu/drm/tegra/gr2d.c | 12 ++++++++++++
+>>>  drivers/gpu/host1x/job.c     | 24 ++++++++++++++++++++----
+>>>  include/linux/host1x.h       |  5 ++++-
+>>>  5 files changed, 38 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+>>> index cdb05d6efde4..17416e1c219a 100644
+>>> --- a/drivers/gpu/drm/tegra/drm.c
+>>> +++ b/drivers/gpu/drm/tegra/drm.c
+>>> @@ -531,6 +531,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>>>         }
+>>>
+>>>         job->is_addr_reg = context->client->ops->is_addr_reg;
+>>> +       job->is_valid_class = context->client->ops->is_valid_class;
+>>>         job->syncpt_incrs = syncpt.incrs;
+>>>         job->syncpt_id = syncpt.id;
+>>>         job->timeout = 10000;
+>>> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+>>> index 85aa2e3d9d4e..6d6da01282f3 100644
+>>> --- a/drivers/gpu/drm/tegra/drm.h
+>>> +++ b/drivers/gpu/drm/tegra/drm.h
+>>> @@ -83,6 +83,7 @@ struct tegra_drm_client_ops {
+>>>                             struct tegra_drm_context *context);
+>>>         void (*close_channel)(struct tegra_drm_context *context);
+>>>         int (*is_addr_reg)(struct device *dev, u32 class, u32 offset);
+>>> +       int (*is_valid_class)(u32 class);
+>>>         int (*submit)(struct tegra_drm_context *context,
+>>>                       struct drm_tegra_submit *args, struct drm_device *drm,
+>>>                       struct drm_file *file);
+>>> diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
+>>> index 02cd3e37a6ec..782231c41a1a 100644
+>>> --- a/drivers/gpu/drm/tegra/gr2d.c
+>>> +++ b/drivers/gpu/drm/tegra/gr2d.c
+>>> @@ -109,10 +109,22 @@ static int gr2d_is_addr_reg(struct device *dev, u32 class, u32 offset)
+>>>         return 0;
+>>>  }
+>>>
+>>> +static int gr2d_is_valid_class(u32 class)
+>>> +{
+>>> +       switch (class) {
+>>> +       case HOST1X_CLASS_GR2D:
+>>> +       case HOST1X_CLASS_GR2D_SB:
+>>> +               return 1;
+>>> +       }
+>>> +
+>>> +       return 0;
+>>> +}
+>>> +
+>>>  static const struct tegra_drm_client_ops gr2d_ops = {
+>>>         .open_channel = gr2d_open_channel,
+>>>         .close_channel = gr2d_close_channel,
+>>>         .is_addr_reg = gr2d_is_addr_reg,
+>>> +       .is_valid_class = gr2d_is_valid_class,
+>>>         .submit = tegra_drm_submit,
+>>>  };
+>>>
+>>> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+>>> index cf335c5979e2..65e12219405a 100644
+>>> --- a/drivers/gpu/host1x/job.c
+>>> +++ b/drivers/gpu/host1x/job.c
+>>> @@ -358,6 +358,9 @@ struct host1x_firewall {
+>>>
+>>>  static int check_register(struct host1x_firewall *fw, unsigned long offset)
+>>>  {
+>>> +       if (!fw->job->is_addr_reg)
+>>> +               return 0;
+>>> +
+>>>         if (fw->job->is_addr_reg(fw->dev, fw->class, offset)) {
+>>>                 if (!fw->num_relocs)
+>>>                         return -EINVAL;
+>>> @@ -372,6 +375,19 @@ static int check_register(struct host1x_firewall *fw, unsigned long offset)
+>>>         return 0;
+>>>  }
+>>>
+>>> +static int check_class(struct host1x_firewall *fw, u32 class)
+>>> +{
+>>> +       if (!fw->job->is_valid_class) {
+>>> +               if (fw->class != class)
+>>> +                       return -EINVAL;
+>>> +       } else {
+>>> +               if (!fw->job->is_valid_class(fw->class))
+>>> +                       return -EINVAL;
+>>> +       }
+>>> +
+>>> +       return 0;
+>>> +}
+>>> +
+>>>  static int check_mask(struct host1x_firewall *fw)
+>>>  {
+>>>         u32 mask = fw->mask;
+>>> @@ -445,11 +461,9 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
+>>>  {
+>>>         u32 *cmdbuf_base = (u32 *)fw->job->gather_copy_mapped +
+>>>                 (g->offset / sizeof(u32));
+>>> +       u32 job_class = fw->class;
+>>>         int err = 0;
+>>>
+>>> -       if (!fw->job->is_addr_reg)
+>>> -               return 0;
+>>> -
+>>>         fw->words = g->words;
+>>>         fw->cmdbuf = g->bo;
+>>>         fw->offset = 0;
+>>> @@ -469,7 +483,9 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
+>>>                         fw->class = word >> 6 & 0x3ff;
+>>>                         fw->mask = word & 0x3f;
+>>>                         fw->reg = word >> 16 & 0xfff;
+>>> -                       err = check_mask(fw);
+>>> +                       err = check_class(fw, job_class);
+>>> +                       if (!err)
+>>> +                               err = check_mask(fw);
+>>>                         if (err)
+>>>                                 goto out;
+>>>                         break;
+>>> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+>>> index aa323e43ae4e..561d6bb6580d 100644
+>>> --- a/include/linux/host1x.h
+>>> +++ b/include/linux/host1x.h
+>>> @@ -233,7 +233,10 @@ struct host1x_job {
+>>>         u8 *gather_copy_mapped;
+>>>
+>>>         /* Check if register is marked as an address reg */
+>>> -       int (*is_addr_reg)(struct device *dev, u32 reg, u32 class);
+>>> +       int (*is_addr_reg)(struct device *dev, u32 class, u32 reg);
+>>
+>> This seems like an unrelated fix, you might want to mention it in the
+>> commit message at least.
+> 
+> If you're going to rev the series anyway, might be worth splitting this
+> off into a separate commit to make it stand out more.
+> 
+> Either way is fine with me.
+> 
+> Thierry
+> 
 
---HcccYpVZDxQ8hzPO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, factoring out that change is reasonable.
 
-On Tue, Jun 13, 2017 at 03:47:39PM +0300, Mikko Perttunen wrote:
->=20
->=20
-> On 13.06.2017 15:46, Mikko Perttunen wrote:
-> > On 13.06.2017 15:42, Thierry Reding wrote:
-> > > On Mon, Jun 12, 2017 at 01:23:04PM +0300, Mikko Perttunen wrote:
-> > > > The Tegra186 CCPLEX_CLUSTER area contains memory-mapped
-> > > > registers that initiate CPU frequency/voltage transitions.
-> > > >=20
-> > > > Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > > > ---
-> > > >  .../arm/tegra/nvidia,tegra186-ccplex-cluster.txt     | 20
-> > > > ++++++++++++++++++++
-> > > >  1 file changed, 20 insertions(+)
-> > > >  create mode 100644
-> > > > Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-ccplex-=
-cluster.txt
-> > > >=20
-> > >=20
-> > > The ARM SoC maintainers don't like to pick up device tree bindings, so
-> > > I'd prefer this to go through the cpufreq tree that also contains the
-> > > driver patches. Presumably this wasn't merged through that tree becau=
-se
-> > > of the missing Acked-by by a device tree maintainer? Given that Rob's
-> > > acked it now, maybe you can resend this to Viresh, who I think had
-> > > picked up the driver?
-> >=20
-> > Sure, I'll do that.
->=20
-> > I guess the .dts change should then also go in that
-> > way?
->=20
-> Or I guess not, since you applied it :)
-
-So the rule of thumb is that .dts changes should go through ARM SoC and
-device tree binding changes should be going through the same tree as the
-driver changes that implement the binding.
-
-Thierry
-
---HcccYpVZDxQ8hzPO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/8mQACgkQ3SOs138+
-s6GzHA/9EyxRCzwqOESOqmN8RCEDYIAe2OBBP6UR9grx9ELwV+1KqLhrUDK22w8h
-F04NUUVHhEMhLMxIVfv62HUV5X69O57GqgVQAa2V/2PNgmAAvFJRmNyAhrmSrDEJ
-rxtBpNq1R6geALKO/2dzJSn8Sgw+sbJrU1KPcwLaZdHjLS+FqGyPz5QbyW5RSHRf
-ntryV3aHQYSrFN3yyzcKZ/HgOac5aHxMzVrOyJwBau8g4a8Fd51qphqHeWPqhmxs
-wjGanQq31XYLlDoFhq54OGEQ4tOqKcepJmQgFSygxiF7rNZxKcsCDC81HnkCn+qF
-/AFIE8f7nWo28ENlJKA2WQwLSKpSn539/AN5Bcc2baEBTtmuEu5KpIZXmAWGukax
-SdG6o6AXIPr7pOZdPu7j+mONpiwovY7I+6svlyWu3sZjaLGF4/hZBZJUgn/J1LyD
-VN1hHBhmcvLtWBzRrpqMfsOgxJ4qQS00FZZjpVXM4PZk5VPorU+kgk2io6bjKhH4
-qq7D1dRm0+lfVBkPlzVUb96HtmGO6HPZcj7gDQyDpEVrTItnmlfiD70Z8SZ6AHxe
-oCdzOC8HQi+zp4lYqjHe6gJSu++kT9fUeXJmvo7ZVVAI8B60Bra+IslbJucU4AR7
-r8QJtGG1zkna4p9WR2azQkjb1vK7pRyeWvArFax55dVK9VRJh0Y=
-=VK7J
------END PGP SIGNATURE-----
-
---HcccYpVZDxQ8hzPO--
+-- 
+Dmitry
