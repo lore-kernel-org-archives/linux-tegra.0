@@ -1,68 +1,32 @@
-From: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 22/22] gpu: host1x: At first try a non-blocking
- allocation for the gather copy
-Date: Wed, 14 Jun 2017 09:56:24 +0200
-Message-ID: <CABPQNSZ8f8QqW4fJYCGfgf3q0pTyQ7NbS_=64x39kvrNDSyhdw@mail.gmail.com>
-References: <cover.1497394243.git.digetx@gmail.com> <036615566011ab4d52190439a12d943df9e704ef.1497394243.git.digetx@gmail.com>
-Reply-To: kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH 03/44] dmaengine: ioat: don't use DMA_ERROR_CODE
+Date: Wed, 14 Jun 2017 14:01:27 +0530
+Message-ID: <20170614083127.GJ13020@localhost>
+References: <20170608132609.32662-1-hch@lst.de>
+ <20170608132609.32662-4-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <036615566011ab4d52190439a12d943df9e704ef.1497394243.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20170608132609.32662-4-hch@lst.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-mips@linux-mips.org, linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org, linux-c6x-dev@linux-c6x.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org, linux-xtensa@linux-xtensa.org, x86@kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org, openrisc@lists.librecores.org, netdev@vger.kernel.org, sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 14, 2017 at 1:16 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> The blocking gather copy allocation is a major performance downside of the
-> Host1x firewall, it may take hundreds milliseconds which is unacceptable
-> for the real-time graphics operations. Let's try a non-blocking allocation
-> first as a least invasive solution, it makes opentegra (Xorg driver)
-> performance indistinguishable with/without the firewall.
->
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->
-> The other much more invasive solution could be: to have a memory pool
-> reserved for the gather copy and performing the firewall checks (and the
-> gather copying) on the actual job submission to the CDMA, not on the job
-> allocation like it is done now. This solution reduces the overhead of a
-> gather copy allocations.
->
->  drivers/gpu/host1x/job.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-> index fc194c676d91..ed0575f14093 100644
-> --- a/drivers/gpu/host1x/job.c
-> +++ b/drivers/gpu/host1x/job.c
-> @@ -594,12 +594,20 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
->                 size += g->words * sizeof(u32);
->         }
->
-> +       /*
-> +        * Try a non-blocking allocation from a higher priority pools first,
-> +        * as awaiting for the allocation here is a major performance hit.
-> +        */
->         job->gather_copy_mapped = dma_alloc_wc(dev, size, &job->gather_copy,
-> -                                              GFP_KERNEL);
-> -       if (!job->gather_copy_mapped) {
-> -               job->gather_copy_mapped = NULL;
-> +                                              GFP_NOWAIT);
-> +
-> +       /* the higher priority allocation failed, try the generic-blocking */
-> +       if (!job->gather_copy_mapped)
-> +               job->gather_copy_mapped = dma_alloc_wc(dev, size,
-> +                                                      &job->gather_copy,
-> +                                                      GFP_KERNEL);
-> +       if (!job->gather_copy_mapped)
->                 return -ENOMEM;
-> -       }
->
->         job->gather_copy_size = size;
-
-Can't we just have a static fixed-size buffer, and validate chunks at
-the time? Or why can't we validate directly on the mapped pointers?
-
-It feels pretty silly to have to allocate memory in the first place here...
+T24gVGh1LCBKdW4gMDgsIDIwMTcgYXQgMDM6MjU6MjhQTSArMDIwMCwgQ2hyaXN0b3BoIEhlbGx3
+aWcgd3JvdGU6Cj4gRE1BX0VSUk9SX0NPREUgaXMgbm90IGEgcHVibGljIEFQSSBhbmQgd2lsbCBn
+byBhd2F5LiAgSW5zdGVhZCBwcm9wZXJseQo+IHVud2luZCBiYXNlZCBvbiB0aGUgbG9vcCBjb3Vu
+dGVyLgoKQWNrZWQtQnk6IFZpbm9kIEtvdWwgPHZpbm9kLmtvdWxAaW50ZWwuY29tPgoKLS0gCn5W
+aW5vZApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
