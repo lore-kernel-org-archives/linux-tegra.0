@@ -1,161 +1,96 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH v2 14/22] gpu: host1x: Forbid relocation address shifting
- in the firewall
-Date: Wed, 14 Jun 2017 17:59:50 +0300
-Message-ID: <75d14a5e-0692-baa2-cd7f-5051b947b5eb@kapsi.fi>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 09/22] drm/tegra: Don't use IOMMU on Tegra20
+Date: Thu, 15 Jun 2017 01:24:40 +0300
+Message-ID: <9ead3385-ef0c-25ac-af16-fda52199b68f@gmail.com>
 References: <cover.1497394243.git.digetx@gmail.com>
- <5e6f06d3e57db40c1c4947282ef7336369c3360f.1497394243.git.digetx@gmail.com>
- <6db57dae-0de7-45a5-2ed5-1ebd84577742@kapsi.fi>
- <3d723511-45f2-3c80-58fe-c9050624ac94@gmail.com>
- <bc4d8ea3-0fd7-85ad-be08-bc869d0e89a6@kapsi.fi>
- <a18ec3c6-0fa1-4daa-3db4-c81124424cec@gmail.com>
+ <d707bd34e268f9d8fb29bf510a9f17e5f943a635.1497394243.git.digetx@gmail.com>
+ <CABPQNSbMQMrahcvWnczywLDYVU0=Ns=FB6Yseisk-5L_8Y=rpQ@mail.gmail.com>
+ <16be88ba-808d-4d3e-533b-7dce4a2765e7@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a18ec3c6-0fa1-4daa-3db4-c81124424cec-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <16be88ba-808d-4d3e-533b-7dce4a2765e7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/14/2017 05:49 PM, Dmitry Osipenko wrote:
-> On 14.06.2017 14:47, Mikko Perttunen wrote:
->>
->>
->> On 14.06.2017 12:06, Dmitry Osipenko wrote:
->>> On 14.06.2017 09:50, Mikko Perttunen wrote:
->>>> On 14.06.2017 02:15, Dmitry Osipenko wrote:
->>>>> Incorrectly shifted relocation address will cause a lower memory corruption
->>>>> and likely a hang on a write or a read of an arbitrary data in case of IOMMU
->>>>> absent. As of now there is no use for the address shifting (at least on
->>>>> Tegra20) and adding a proper shifting / sizes validation is much more work.
->>>>> Let's forbid it in the firewall till a proper validation is implemented.
->>>>>
->>>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>>> Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>>> ---
->>>>>   drivers/gpu/host1x/dev.c |  4 ++++
->>>>>   drivers/gpu/host1x/dev.h |  1 +
->>>>>   drivers/gpu/host1x/job.c | 24 ++++++++++++++++++++++++
->>>>>   3 files changed, 29 insertions(+)
->>>>>
->>>>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
->>>>> index 6a805ed908c3..21da331ce092 100644
->>>>> --- a/drivers/gpu/host1x/dev.c
->>>>> +++ b/drivers/gpu/host1x/dev.c
->>>>> @@ -72,6 +72,7 @@ static const struct host1x_info host1x01_info = {
->>>>>       .init = host1x01_init,
->>>>>       .sync_offset = 0x3000,
->>>>>       .dma_mask = DMA_BIT_MASK(32),
->>>>> +    .version = 1,
->>>>>   };
->>>>>
->>>>>   static const struct host1x_info host1x02_info = {
->>>>> @@ -82,6 +83,7 @@ static const struct host1x_info host1x02_info = {
->>>>>       .init = host1x02_init,
->>>>>       .sync_offset = 0x3000,
->>>>>       .dma_mask = DMA_BIT_MASK(32),
->>>>> +    .version = 2,
->>>>>   };
->>>>>
->>>>>   static const struct host1x_info host1x04_info = {
->>>>> @@ -92,6 +94,7 @@ static const struct host1x_info host1x04_info = {
->>>>>       .init = host1x04_init,
->>>>>       .sync_offset = 0x2100,
->>>>>       .dma_mask = DMA_BIT_MASK(34),
->>>>> +    .version = 4,
->>>>>   };
->>>>>
->>>>>   static const struct host1x_info host1x05_info = {
->>>>> @@ -102,6 +105,7 @@ static const struct host1x_info host1x05_info = {
->>>>>       .init = host1x05_init,
->>>>>       .sync_offset = 0x2100,
->>>>>       .dma_mask = DMA_BIT_MASK(34),
->>>>> +    .version = 5,
->>>>>   };
->>>>>
->>>>>   static const struct of_device_id host1x_of_match[] = {
->>>>> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
->>>>> index 229d08b6a45e..c6997651b336 100644
->>>>> --- a/drivers/gpu/host1x/dev.h
->>>>> +++ b/drivers/gpu/host1x/dev.h
->>>>> @@ -100,6 +100,7 @@ struct host1x_info {
->>>>>       int (*init)(struct host1x *host1x); /* initialize per SoC ops */
->>>>>       unsigned int sync_offset; /* offset of syncpoint registers */
->>>>>       u64 dma_mask; /* mask of addressable memory */
->>>>> +    unsigned int version; /* host1x's version */
->>>>>   };
->>>>>
->>>>>   struct host1x {
->>>>> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
->>>>> index 4208329ca2af..7825643da324 100644
->>>>> --- a/drivers/gpu/host1x/job.c
->>>>> +++ b/drivers/gpu/host1x/job.c
->>>>> @@ -333,6 +333,27 @@ static bool check_reloc(struct host1x_reloc *reloc,
->>>>> struct host1x_bo *cmdbuf,
->>>>>       return true;
->>>>>   }
->>>>>
->>>>> +static bool check_reloc_shift(struct device *dev, struct host1x_reloc *reloc)
->>>>> +{
->>>>> +    struct host1x *host = dev_get_drvdata(dev->parent);
->>>>> +
->>>>> +    /* skip newer Tegra's since IOMMU is supposed to be used by
->>>>> +     * them and not all address registers with their shifts are
->>>>> +     * publicly documented */
->>>>> +    if (host->info->version > 1)
->>>>> +        return true;
->>>>
->>>> I don't like the firewall working differently per SoC - IOMMU can still be
->>>> disabled on later SoCs and in this case there would be a security hole even if
->>>> the firewall is enabled.
->>>>
+On 14.06.2017 13:22, Dmitry Osipenko wrote:
+> On 14.06.2017 10:39, Erik Faye-Lund wrote:
+>> On Wed, Jun 14, 2017 at 1:15 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> There is no IOMMU on Tegra20, instead a GART would be picked as an IOMMU
+>>> provider.
 >>>
->>> Yes, it would be a security hole like it is is right now. Unfortunately we can't
->>> fix it on later SoC's without knowing all the address registers and their shifts.
->>
->> Indeed, we can't fix it, but I was thinking that having the firewall enabled in
->> the kernel should always mean that the system is safe, even if IOMMU is
->> disabled, and even if it means that you cannot really do anything useful with it
->> (at least running host1x_test should be possible without shifts, though). Thus
->> no matter what the hardware revision, we should reject anything we cannot ensure
->> as safe.
->>
+>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> Acked-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+>>> ---
+>>>  drivers/gpu/drm/tegra/drm.c | 3 ++-
+>>>  drivers/gpu/host1x/dev.c    | 3 ++-
+>>>  2 files changed, 4 insertions(+), 2 deletions(-)
 >>>
->>>>> +
->>>>> +    /* skip Tegra30 with IOMMU enabled */
->>>>> +    if (host->domain)
->>>>> +        return true;
->>>>> +
->>>>
->>>> So if we want to be able to test the firewall on all SoCs just having this check
->>>> here for all SoCs would be better.
->>>>
+>>> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+>>> index e999391aedc9..aa7988dcc28f 100644
+>>> --- a/drivers/gpu/drm/tegra/drm.c
+>>> +++ b/drivers/gpu/drm/tegra/drm.c
+>>> @@ -131,7 +131,8 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+>>>         if (!tegra)
+>>>                 return -ENOMEM;
 >>>
->>> I'm not sure what you are meaning here. You'll get a wrong address resolved in
->>> HW if that address needs to be shifted.
+>>> -       if (iommu_present(&platform_bus_type)) {
+>>> +       if (iommu_present(&platform_bus_type) &&
+>>> +           !of_machine_is_compatible("nvidia,tegra20")) {
+>>>                 u64 carveout_start, carveout_end, gem_start, gem_end;
+>>>                 struct iommu_domain_geometry *geometry;
+>>>                 unsigned long order;
+>>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+>>> index f05ebb14fa63..6a805ed908c3 100644
+>>> --- a/drivers/gpu/host1x/dev.c
+>>> +++ b/drivers/gpu/host1x/dev.c
+>>> @@ -177,7 +177,8 @@ static int host1x_probe(struct platform_device *pdev)
+>>>                 return err;
+>>>         }
+>>>
+>>> -       if (iommu_present(&platform_bus_type)) {
+>>> +       if (iommu_present(&platform_bus_type) &&
+>>> +           !of_machine_is_compatible("nvidia,tegra20")) {
+>>>                 struct iommu_domain_geometry *geometry;
+>>>                 unsigned long order;
+>>>
 >>
->> So we have two choices here:
->> a) If IOMMU is enabled, skip the shift check and return true always. This means
->> that we still ensure that the system is safe, since with IOMMU enabled it is
->> safe even if the firewall cannot ensure that the job is proper. This is what I
->> was trying to say above.
->> b) Always return false if there is a shift, on any SoC and even if IOMMU is
->> enabled. This would harmonize the behavior of the firewall across systems.
+>> This doesn't feel great... The commit message says there's no IOMMU,
+>> but iommu_present says otherwise. I know there's some more subtleties
+>> here, and the commit message does hint at this. But...
+>>
+>> If we don't want to treat the GART as an IOMMU, shouldn't we somehow
+>> make sure iommu_present() doesn't return true in these cases (or
+>> perhaps make something like tegra_use_iommu(), with a comment
+>> explaining why we don't want to allow the GART to be treated like a
+>> proper IOMMU)? These seems to be the only Tegra-specific calls to
+>> iommu_present()...
+>>
+>> That being said, the patch seems to have the right effect...
+>>
 > 
-> Okay, I think b) is a better choice, actually that's what V1 of the patch did.
-> Preserving behaviour regardless of the IOMMU state is reasonable and this is an
-> opensource driver that is supposed to be used with the opensource userspace
-> after all.
+> We don't want to treat the GART as an IOMMU right now, but I'd want to change
+> that in the (near?) future, so it's a kinda trivial preparation patch that
+> restores the GART driver and these of_machine_is_compatible() are supposed to go
+> away later. Probably I should mention this in the commit message(?).
 > 
-> Later I'd want to stricter the firewall checks to disallow any unknown register
-> accesses, that will make it a bit more secure on a later SoC's as well. After,
-> we should add a memory access bounds checking for each of HW operations to make
-> it really secure.
+> I think we can add a Tegra20 specific IOCTL for an allocation of GART-able
+> memory and use it for a stuff like opentegra's EXA, its fallback allocations
+> migration is a pita and reserved CMA is never enough =)
 > 
 
-Yep, this sounds good.
+I have hacked the DRM driver to work with GART correctly for the IOMMU
+allocations, the grate tests and opentegra are working fine utilizing the GART,
+CMA is barely utilized and kmsg shows GART's map/unmap debug messages that I've
+enabled in the driver. So I think GART should be really useful for us.
 
-Mikko
+Actually, now I'm thinking that it should be better to postpone the restoring of
+the GART driver till we have a full solution, maybe next merge window. I'll drop
+these two patches from the series in v3 that I'm going to send shortly.
+
+-- 
+Dmitry
