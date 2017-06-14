@@ -1,96 +1,66 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 09/22] drm/tegra: Don't use IOMMU on Tegra20
-Date: Thu, 15 Jun 2017 01:24:40 +0300
-Message-ID: <9ead3385-ef0c-25ac-af16-fda52199b68f@gmail.com>
-References: <cover.1497394243.git.digetx@gmail.com>
- <d707bd34e268f9d8fb29bf510a9f17e5f943a635.1497394243.git.digetx@gmail.com>
- <CABPQNSbMQMrahcvWnczywLDYVU0=Ns=FB6Yseisk-5L_8Y=rpQ@mail.gmail.com>
- <16be88ba-808d-4d3e-533b-7dce4a2765e7@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 00/20] Tegra DRM fixes
+Date: Thu, 15 Jun 2017 02:18:23 +0300
+Message-ID: <cover.1497480751.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <16be88ba-808d-4d3e-533b-7dce4a2765e7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14.06.2017 13:22, Dmitry Osipenko wrote:
-> On 14.06.2017 10:39, Erik Faye-Lund wrote:
->> On Wed, Jun 14, 2017 at 1:15 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> There is no IOMMU on Tegra20, instead a GART would be picked as an IOMMU
->>> provider.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> Acked-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
->>> ---
->>>  drivers/gpu/drm/tegra/drm.c | 3 ++-
->>>  drivers/gpu/host1x/dev.c    | 3 ++-
->>>  2 files changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
->>> index e999391aedc9..aa7988dcc28f 100644
->>> --- a/drivers/gpu/drm/tegra/drm.c
->>> +++ b/drivers/gpu/drm/tegra/drm.c
->>> @@ -131,7 +131,8 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
->>>         if (!tegra)
->>>                 return -ENOMEM;
->>>
->>> -       if (iommu_present(&platform_bus_type)) {
->>> +       if (iommu_present(&platform_bus_type) &&
->>> +           !of_machine_is_compatible("nvidia,tegra20")) {
->>>                 u64 carveout_start, carveout_end, gem_start, gem_end;
->>>                 struct iommu_domain_geometry *geometry;
->>>                 unsigned long order;
->>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
->>> index f05ebb14fa63..6a805ed908c3 100644
->>> --- a/drivers/gpu/host1x/dev.c
->>> +++ b/drivers/gpu/host1x/dev.c
->>> @@ -177,7 +177,8 @@ static int host1x_probe(struct platform_device *pdev)
->>>                 return err;
->>>         }
->>>
->>> -       if (iommu_present(&platform_bus_type)) {
->>> +       if (iommu_present(&platform_bus_type) &&
->>> +           !of_machine_is_compatible("nvidia,tegra20")) {
->>>                 struct iommu_domain_geometry *geometry;
->>>                 unsigned long order;
->>>
->>
->> This doesn't feel great... The commit message says there's no IOMMU,
->> but iommu_present says otherwise. I know there's some more subtleties
->> here, and the commit message does hint at this. But...
->>
->> If we don't want to treat the GART as an IOMMU, shouldn't we somehow
->> make sure iommu_present() doesn't return true in these cases (or
->> perhaps make something like tegra_use_iommu(), with a comment
->> explaining why we don't want to allow the GART to be treated like a
->> proper IOMMU)? These seems to be the only Tegra-specific calls to
->> iommu_present()...
->>
->> That being said, the patch seems to have the right effect...
->>
-> 
-> We don't want to treat the GART as an IOMMU right now, but I'd want to change
-> that in the (near?) future, so it's a kinda trivial preparation patch that
-> restores the GART driver and these of_machine_is_compatible() are supposed to go
-> away later. Probably I should mention this in the commit message(?).
-> 
-> I think we can add a Tegra20 specific IOCTL for an allocation of GART-able
-> memory and use it for a stuff like opentegra's EXA, its fallback allocations
-> migration is a pita and reserved CMA is never enough =)
-> 
+I've dropped the two "GART restoring" patches from the series, postponing
+them till a full solution of GART utilization would be ready.
 
-I have hacked the DRM driver to work with GART correctly for the IOMMU
-allocations, the grate tests and opentegra are working fine utilizing the GART,
-CMA is barely utilized and kmsg shows GART's map/unmap debug messages that I've
-enabled in the driver. So I think GART should be really useful for us.
+The "Forbid relocation address shifting in the firewall" patch has been
+reverted to v1, Mikko and me agreed on that it is a reasonable variant.
 
-Actually, now I'm thinking that it should be better to postpone the restoring of
-the GART driver till we have a full solution, maybe next merge window. I'll drop
-these two patches from the series in v3 that I'm going to send shortly.
+All the patches got a r-b, series should be good to go.
+
+Dmitry Osipenko (19):
+  drm/tegra: Fix lockup on a use of staging API
+  drm/tegra: Correct idr_alloc() minimum id
+  drm/tegra: Check for malformed offsets and sizes in the 'submit' IOCTL
+  drm/tegra: Correct copying of waitchecks and disable them in the
+    'submit' IOCTL
+  drm/tegra: Check syncpoint ID in the 'submit' IOCTL
+  drm/tegra: dc: Avoid reset asserts on Tegra20
+  drm/tegra: dc: Apply clipping to the plane
+  drm/tegra: dc: Disable plane if it is invisible
+  gpu: host1x: Initialize firewall class to the jobs one
+  gpu: host1x: Correct host1x_job_pin() error handling
+  gpu: host1x: Do not leak BO's phys address to userspace
+  gpu: host1x: Forbid relocation address shifting in the firewall
+  gpu: host1x: Forbid RESTART opcode in the firewall
+  gpu: host1x: Forbid unrelated SETCLASS opcode in the firewall
+  gpu: host1x: Correct swapped arguments in the is_addr_reg() definition
+  gpu: host1x: Check waits in the firewall
+  gpu: host1x: Remove unused 'struct host1x_cmdbuf'
+  gpu: host1x: Remove unused host1x_cdma_stop() definition
+  gpu: host1x: At first try a non-blocking allocation for the gather
+    copy
+
+Mikko Perttunen (1):
+  gpu: host1x: Refactor channel allocation code
+
+ drivers/gpu/drm/tegra/dc.c         |  92 +++++++++++++++--------
+ drivers/gpu/drm/tegra/drm.c        | 141 +++++++++++++++++++++++++++++------
+ drivers/gpu/drm/tegra/drm.h        |   1 +
+ drivers/gpu/drm/tegra/gem.c        |   5 --
+ drivers/gpu/drm/tegra/gem.h        |   5 ++
+ drivers/gpu/drm/tegra/gr2d.c       |  11 ++-
+ drivers/gpu/drm/tegra/gr3d.c       |   4 +-
+ drivers/gpu/drm/tegra/vic.c        |   4 +-
+ drivers/gpu/host1x/cdma.h          |   1 -
+ drivers/gpu/host1x/channel.c       | 147 +++++++++++++++++++++++--------------
+ drivers/gpu/host1x/channel.h       |  21 ++++--
+ drivers/gpu/host1x/debug.c         |  47 +++++-------
+ drivers/gpu/host1x/dev.c           |   7 +-
+ drivers/gpu/host1x/dev.h           |   6 +-
+ drivers/gpu/host1x/hw/channel_hw.c |   4 -
+ drivers/gpu/host1x/job.c           | 124 ++++++++++++++++++++++++-------
+ drivers/gpu/host1x/job.h           |  14 ----
+ include/linux/host1x.h             |  13 +++-
+ 18 files changed, 440 insertions(+), 207 deletions(-)
 
 -- 
-Dmitry
+2.13.0
