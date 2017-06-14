@@ -1,66 +1,86 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 00/20] Tegra DRM fixes
-Date: Thu, 15 Jun 2017 02:18:23 +0300
-Message-ID: <cover.1497480751.git.digetx@gmail.com>
+Subject: [PATCH v3 01/20] drm/tegra: Fix lockup on a use of staging API
+Date: Thu, 15 Jun 2017 02:18:24 +0300
+Message-ID: <7b70a506a9d2355ea6ff19a8c4f4d726b67719b3.1497480754.git.digetx@gmail.com>
+References: <cover.1497480751.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1497480751.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <cover.1497480751.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+References: <cover.1497480751.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I've dropped the two "GART restoring" patches from the series, postponing
-them till a full solution of GART utilization would be ready.
+Commit bdd2f9cd ("Don't leak kernel pointer to userspace") added a mutex
+around staging IOCTL's, some of those mutexes are taken twice.
 
-The "Forbid relocation address shifting in the firewall" patch has been
-reverted to v1, Mikko and me agreed on that it is a reasonable variant.
+Fixes: bdd2f9cd10eb ("drm/tegra: Don't leak kernel pointer to userspace")
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/drm.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
 
-All the patches got a r-b, series should be good to go.
-
-Dmitry Osipenko (19):
-  drm/tegra: Fix lockup on a use of staging API
-  drm/tegra: Correct idr_alloc() minimum id
-  drm/tegra: Check for malformed offsets and sizes in the 'submit' IOCTL
-  drm/tegra: Correct copying of waitchecks and disable them in the
-    'submit' IOCTL
-  drm/tegra: Check syncpoint ID in the 'submit' IOCTL
-  drm/tegra: dc: Avoid reset asserts on Tegra20
-  drm/tegra: dc: Apply clipping to the plane
-  drm/tegra: dc: Disable plane if it is invisible
-  gpu: host1x: Initialize firewall class to the jobs one
-  gpu: host1x: Correct host1x_job_pin() error handling
-  gpu: host1x: Do not leak BO's phys address to userspace
-  gpu: host1x: Forbid relocation address shifting in the firewall
-  gpu: host1x: Forbid RESTART opcode in the firewall
-  gpu: host1x: Forbid unrelated SETCLASS opcode in the firewall
-  gpu: host1x: Correct swapped arguments in the is_addr_reg() definition
-  gpu: host1x: Check waits in the firewall
-  gpu: host1x: Remove unused 'struct host1x_cmdbuf'
-  gpu: host1x: Remove unused host1x_cdma_stop() definition
-  gpu: host1x: At first try a non-blocking allocation for the gather
-    copy
-
-Mikko Perttunen (1):
-  gpu: host1x: Refactor channel allocation code
-
- drivers/gpu/drm/tegra/dc.c         |  92 +++++++++++++++--------
- drivers/gpu/drm/tegra/drm.c        | 141 +++++++++++++++++++++++++++++------
- drivers/gpu/drm/tegra/drm.h        |   1 +
- drivers/gpu/drm/tegra/gem.c        |   5 --
- drivers/gpu/drm/tegra/gem.h        |   5 ++
- drivers/gpu/drm/tegra/gr2d.c       |  11 ++-
- drivers/gpu/drm/tegra/gr3d.c       |   4 +-
- drivers/gpu/drm/tegra/vic.c        |   4 +-
- drivers/gpu/host1x/cdma.h          |   1 -
- drivers/gpu/host1x/channel.c       | 147 +++++++++++++++++++++++--------------
- drivers/gpu/host1x/channel.h       |  21 ++++--
- drivers/gpu/host1x/debug.c         |  47 +++++-------
- drivers/gpu/host1x/dev.c           |   7 +-
- drivers/gpu/host1x/dev.h           |   6 +-
- drivers/gpu/host1x/hw/channel_hw.c |   4 -
- drivers/gpu/host1x/job.c           | 124 ++++++++++++++++++++++++-------
- drivers/gpu/host1x/job.h           |  14 ----
- include/linux/host1x.h             |  13 +++-
- 18 files changed, 440 insertions(+), 207 deletions(-)
-
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 51c48a8e00ec..b49d32a89f40 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -451,18 +451,6 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 
+ 
+ #ifdef CONFIG_DRM_TEGRA_STAGING
+-static struct tegra_drm_context *
+-tegra_drm_file_get_context(struct tegra_drm_file *file, u32 id)
+-{
+-	struct tegra_drm_context *context;
+-
+-	mutex_lock(&file->lock);
+-	context = idr_find(&file->contexts, id);
+-	mutex_unlock(&file->lock);
+-
+-	return context;
+-}
+-
+ static int tegra_gem_create(struct drm_device *drm, void *data,
+ 			    struct drm_file *file)
+ {
+@@ -606,7 +594,7 @@ static int tegra_close_channel(struct drm_device *drm, void *data,
+ 
+ 	mutex_lock(&fpriv->lock);
+ 
+-	context = tegra_drm_file_get_context(fpriv, args->context);
++	context = idr_find(&fpriv->contexts, args->context);
+ 	if (!context) {
+ 		err = -EINVAL;
+ 		goto unlock;
+@@ -631,7 +619,7 @@ static int tegra_get_syncpt(struct drm_device *drm, void *data,
+ 
+ 	mutex_lock(&fpriv->lock);
+ 
+-	context = tegra_drm_file_get_context(fpriv, args->context);
++	context = idr_find(&fpriv->contexts, args->context);
+ 	if (!context) {
+ 		err = -ENODEV;
+ 		goto unlock;
+@@ -660,7 +648,7 @@ static int tegra_submit(struct drm_device *drm, void *data,
+ 
+ 	mutex_lock(&fpriv->lock);
+ 
+-	context = tegra_drm_file_get_context(fpriv, args->context);
++	context = idr_find(&fpriv->contexts, args->context);
+ 	if (!context) {
+ 		err = -ENODEV;
+ 		goto unlock;
+@@ -685,7 +673,7 @@ static int tegra_get_syncpt_base(struct drm_device *drm, void *data,
+ 
+ 	mutex_lock(&fpriv->lock);
+ 
+-	context = tegra_drm_file_get_context(fpriv, args->context);
++	context = idr_find(&fpriv->contexts, args->context);
+ 	if (!context) {
+ 		err = -ENODEV;
+ 		goto unlock;
 -- 
 2.13.0
