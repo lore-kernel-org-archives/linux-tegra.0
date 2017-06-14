@@ -1,157 +1,161 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
 Subject: Re: [PATCH v2 14/22] gpu: host1x: Forbid relocation address shifting
  in the firewall
-Date: Wed, 14 Jun 2017 17:49:29 +0300
-Message-ID: <a18ec3c6-0fa1-4daa-3db4-c81124424cec@gmail.com>
+Date: Wed, 14 Jun 2017 17:59:50 +0300
+Message-ID: <75d14a5e-0692-baa2-cd7f-5051b947b5eb@kapsi.fi>
 References: <cover.1497394243.git.digetx@gmail.com>
  <5e6f06d3e57db40c1c4947282ef7336369c3360f.1497394243.git.digetx@gmail.com>
  <6db57dae-0de7-45a5-2ed5-1ebd84577742@kapsi.fi>
  <3d723511-45f2-3c80-58fe-c9050624ac94@gmail.com>
  <bc4d8ea3-0fd7-85ad-be08-bc869d0e89a6@kapsi.fi>
+ <a18ec3c6-0fa1-4daa-3db4-c81124424cec@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <bc4d8ea3-0fd7-85ad-be08-bc869d0e89a6-/1wQRMveznE@public.gmane.org>
+In-Reply-To: <a18ec3c6-0fa1-4daa-3db4-c81124424cec-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14.06.2017 14:47, Mikko Perttunen wrote:
-> 
-> 
-> On 14.06.2017 12:06, Dmitry Osipenko wrote:
->> On 14.06.2017 09:50, Mikko Perttunen wrote:
->>> On 14.06.2017 02:15, Dmitry Osipenko wrote:
->>>> Incorrectly shifted relocation address will cause a lower memory corruption
->>>> and likely a hang on a write or a read of an arbitrary data in case of IOMMU
->>>> absent. As of now there is no use for the address shifting (at least on
->>>> Tegra20) and adding a proper shifting / sizes validation is much more work.
->>>> Let's forbid it in the firewall till a proper validation is implemented.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>> Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>> ---
->>>>  drivers/gpu/host1x/dev.c |  4 ++++
->>>>  drivers/gpu/host1x/dev.h |  1 +
->>>>  drivers/gpu/host1x/job.c | 24 ++++++++++++++++++++++++
->>>>  3 files changed, 29 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
->>>> index 6a805ed908c3..21da331ce092 100644
->>>> --- a/drivers/gpu/host1x/dev.c
->>>> +++ b/drivers/gpu/host1x/dev.c
->>>> @@ -72,6 +72,7 @@ static const struct host1x_info host1x01_info = {
->>>>      .init = host1x01_init,
->>>>      .sync_offset = 0x3000,
->>>>      .dma_mask = DMA_BIT_MASK(32),
->>>> +    .version = 1,
->>>>  };
->>>>
->>>>  static const struct host1x_info host1x02_info = {
->>>> @@ -82,6 +83,7 @@ static const struct host1x_info host1x02_info = {
->>>>      .init = host1x02_init,
->>>>      .sync_offset = 0x3000,
->>>>      .dma_mask = DMA_BIT_MASK(32),
->>>> +    .version = 2,
->>>>  };
->>>>
->>>>  static const struct host1x_info host1x04_info = {
->>>> @@ -92,6 +94,7 @@ static const struct host1x_info host1x04_info = {
->>>>      .init = host1x04_init,
->>>>      .sync_offset = 0x2100,
->>>>      .dma_mask = DMA_BIT_MASK(34),
->>>> +    .version = 4,
->>>>  };
->>>>
->>>>  static const struct host1x_info host1x05_info = {
->>>> @@ -102,6 +105,7 @@ static const struct host1x_info host1x05_info = {
->>>>      .init = host1x05_init,
->>>>      .sync_offset = 0x2100,
->>>>      .dma_mask = DMA_BIT_MASK(34),
->>>> +    .version = 5,
->>>>  };
->>>>
->>>>  static const struct of_device_id host1x_of_match[] = {
->>>> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
->>>> index 229d08b6a45e..c6997651b336 100644
->>>> --- a/drivers/gpu/host1x/dev.h
->>>> +++ b/drivers/gpu/host1x/dev.h
->>>> @@ -100,6 +100,7 @@ struct host1x_info {
->>>>      int (*init)(struct host1x *host1x); /* initialize per SoC ops */
->>>>      unsigned int sync_offset; /* offset of syncpoint registers */
->>>>      u64 dma_mask; /* mask of addressable memory */
->>>> +    unsigned int version; /* host1x's version */
->>>>  };
->>>>
->>>>  struct host1x {
->>>> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
->>>> index 4208329ca2af..7825643da324 100644
->>>> --- a/drivers/gpu/host1x/job.c
->>>> +++ b/drivers/gpu/host1x/job.c
->>>> @@ -333,6 +333,27 @@ static bool check_reloc(struct host1x_reloc *reloc,
->>>> struct host1x_bo *cmdbuf,
->>>>      return true;
->>>>  }
->>>>
->>>> +static bool check_reloc_shift(struct device *dev, struct host1x_reloc *reloc)
->>>> +{
->>>> +    struct host1x *host = dev_get_drvdata(dev->parent);
->>>> +
->>>> +    /* skip newer Tegra's since IOMMU is supposed to be used by
->>>> +     * them and not all address registers with their shifts are
->>>> +     * publicly documented */
->>>> +    if (host->info->version > 1)
->>>> +        return true;
->>>
->>> I don't like the firewall working differently per SoC - IOMMU can still be
->>> disabled on later SoCs and in this case there would be a security hole even if
->>> the firewall is enabled.
->>>
+On 06/14/2017 05:49 PM, Dmitry Osipenko wrote:
+> On 14.06.2017 14:47, Mikko Perttunen wrote:
 >>
->> Yes, it would be a security hole like it is is right now. Unfortunately we can't
->> fix it on later SoC's without knowing all the address registers and their shifts.
-> 
-> Indeed, we can't fix it, but I was thinking that having the firewall enabled in
-> the kernel should always mean that the system is safe, even if IOMMU is
-> disabled, and even if it means that you cannot really do anything useful with it
-> (at least running host1x_test should be possible without shifts, though). Thus
-> no matter what the hardware revision, we should reject anything we cannot ensure
-> as safe.
-> 
 >>
->>>> +
->>>> +    /* skip Tegra30 with IOMMU enabled */
->>>> +    if (host->domain)
->>>> +        return true;
->>>> +
+>> On 14.06.2017 12:06, Dmitry Osipenko wrote:
+>>> On 14.06.2017 09:50, Mikko Perttunen wrote:
+>>>> On 14.06.2017 02:15, Dmitry Osipenko wrote:
+>>>>> Incorrectly shifted relocation address will cause a lower memory corruption
+>>>>> and likely a hang on a write or a read of an arbitrary data in case of IOMMU
+>>>>> absent. As of now there is no use for the address shifting (at least on
+>>>>> Tegra20) and adding a proper shifting / sizes validation is much more work.
+>>>>> Let's forbid it in the firewall till a proper validation is implemented.
+>>>>>
+>>>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>> Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>> ---
+>>>>>   drivers/gpu/host1x/dev.c |  4 ++++
+>>>>>   drivers/gpu/host1x/dev.h |  1 +
+>>>>>   drivers/gpu/host1x/job.c | 24 ++++++++++++++++++++++++
+>>>>>   3 files changed, 29 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+>>>>> index 6a805ed908c3..21da331ce092 100644
+>>>>> --- a/drivers/gpu/host1x/dev.c
+>>>>> +++ b/drivers/gpu/host1x/dev.c
+>>>>> @@ -72,6 +72,7 @@ static const struct host1x_info host1x01_info = {
+>>>>>       .init = host1x01_init,
+>>>>>       .sync_offset = 0x3000,
+>>>>>       .dma_mask = DMA_BIT_MASK(32),
+>>>>> +    .version = 1,
+>>>>>   };
+>>>>>
+>>>>>   static const struct host1x_info host1x02_info = {
+>>>>> @@ -82,6 +83,7 @@ static const struct host1x_info host1x02_info = {
+>>>>>       .init = host1x02_init,
+>>>>>       .sync_offset = 0x3000,
+>>>>>       .dma_mask = DMA_BIT_MASK(32),
+>>>>> +    .version = 2,
+>>>>>   };
+>>>>>
+>>>>>   static const struct host1x_info host1x04_info = {
+>>>>> @@ -92,6 +94,7 @@ static const struct host1x_info host1x04_info = {
+>>>>>       .init = host1x04_init,
+>>>>>       .sync_offset = 0x2100,
+>>>>>       .dma_mask = DMA_BIT_MASK(34),
+>>>>> +    .version = 4,
+>>>>>   };
+>>>>>
+>>>>>   static const struct host1x_info host1x05_info = {
+>>>>> @@ -102,6 +105,7 @@ static const struct host1x_info host1x05_info = {
+>>>>>       .init = host1x05_init,
+>>>>>       .sync_offset = 0x2100,
+>>>>>       .dma_mask = DMA_BIT_MASK(34),
+>>>>> +    .version = 5,
+>>>>>   };
+>>>>>
+>>>>>   static const struct of_device_id host1x_of_match[] = {
+>>>>> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+>>>>> index 229d08b6a45e..c6997651b336 100644
+>>>>> --- a/drivers/gpu/host1x/dev.h
+>>>>> +++ b/drivers/gpu/host1x/dev.h
+>>>>> @@ -100,6 +100,7 @@ struct host1x_info {
+>>>>>       int (*init)(struct host1x *host1x); /* initialize per SoC ops */
+>>>>>       unsigned int sync_offset; /* offset of syncpoint registers */
+>>>>>       u64 dma_mask; /* mask of addressable memory */
+>>>>> +    unsigned int version; /* host1x's version */
+>>>>>   };
+>>>>>
+>>>>>   struct host1x {
+>>>>> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+>>>>> index 4208329ca2af..7825643da324 100644
+>>>>> --- a/drivers/gpu/host1x/job.c
+>>>>> +++ b/drivers/gpu/host1x/job.c
+>>>>> @@ -333,6 +333,27 @@ static bool check_reloc(struct host1x_reloc *reloc,
+>>>>> struct host1x_bo *cmdbuf,
+>>>>>       return true;
+>>>>>   }
+>>>>>
+>>>>> +static bool check_reloc_shift(struct device *dev, struct host1x_reloc *reloc)
+>>>>> +{
+>>>>> +    struct host1x *host = dev_get_drvdata(dev->parent);
+>>>>> +
+>>>>> +    /* skip newer Tegra's since IOMMU is supposed to be used by
+>>>>> +     * them and not all address registers with their shifts are
+>>>>> +     * publicly documented */
+>>>>> +    if (host->info->version > 1)
+>>>>> +        return true;
+>>>>
+>>>> I don't like the firewall working differently per SoC - IOMMU can still be
+>>>> disabled on later SoCs and in this case there would be a security hole even if
+>>>> the firewall is enabled.
+>>>>
 >>>
->>> So if we want to be able to test the firewall on all SoCs just having this check
->>> here for all SoCs would be better.
->>>
+>>> Yes, it would be a security hole like it is is right now. Unfortunately we can't
+>>> fix it on later SoC's without knowing all the address registers and their shifts.
 >>
->> I'm not sure what you are meaning here. You'll get a wrong address resolved in
->> HW if that address needs to be shifted.
+>> Indeed, we can't fix it, but I was thinking that having the firewall enabled in
+>> the kernel should always mean that the system is safe, even if IOMMU is
+>> disabled, and even if it means that you cannot really do anything useful with it
+>> (at least running host1x_test should be possible without shifts, though). Thus
+>> no matter what the hardware revision, we should reject anything we cannot ensure
+>> as safe.
+>>
+>>>
+>>>>> +
+>>>>> +    /* skip Tegra30 with IOMMU enabled */
+>>>>> +    if (host->domain)
+>>>>> +        return true;
+>>>>> +
+>>>>
+>>>> So if we want to be able to test the firewall on all SoCs just having this check
+>>>> here for all SoCs would be better.
+>>>>
+>>>
+>>> I'm not sure what you are meaning here. You'll get a wrong address resolved in
+>>> HW if that address needs to be shifted.
+>>
+>> So we have two choices here:
+>> a) If IOMMU is enabled, skip the shift check and return true always. This means
+>> that we still ensure that the system is safe, since with IOMMU enabled it is
+>> safe even if the firewall cannot ensure that the job is proper. This is what I
+>> was trying to say above.
+>> b) Always return false if there is a shift, on any SoC and even if IOMMU is
+>> enabled. This would harmonize the behavior of the firewall across systems.
 > 
-> So we have two choices here:
-> a) If IOMMU is enabled, skip the shift check and return true always. This means
-> that we still ensure that the system is safe, since with IOMMU enabled it is
-> safe even if the firewall cannot ensure that the job is proper. This is what I
-> was trying to say above.
-> b) Always return false if there is a shift, on any SoC and even if IOMMU is
-> enabled. This would harmonize the behavior of the firewall across systems.
+> Okay, I think b) is a better choice, actually that's what V1 of the patch did.
+> Preserving behaviour regardless of the IOMMU state is reasonable and this is an
+> opensource driver that is supposed to be used with the opensource userspace
+> after all.
+> 
+> Later I'd want to stricter the firewall checks to disallow any unknown register
+> accesses, that will make it a bit more secure on a later SoC's as well. After,
+> we should add a memory access bounds checking for each of HW operations to make
+> it really secure.
+> 
 
-Okay, I think b) is a better choice, actually that's what V1 of the patch did.
-Preserving behaviour regardless of the IOMMU state is reasonable and this is an
-opensource driver that is supposed to be used with the opensource userspace
-after all.
+Yep, this sounds good.
 
-Later I'd want to stricter the firewall checks to disallow any unknown register
-accesses, that will make it a bit more secure on a later SoC's as well. After,
-we should add a memory access bounds checking for each of HW operations to make
-it really secure.
-
--- 
-Dmitry
+Mikko
