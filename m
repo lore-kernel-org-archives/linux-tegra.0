@@ -1,85 +1,152 @@
-From: Erik Faye-Lund <kusmabite@gmail.com>
-Subject: Re: [PATCH v2 22/22] gpu: host1x: At first try a non-blocking
- allocation for the gather copy
-Date: Wed, 14 Jun 2017 10:44:03 +0200
-Message-ID: <CABPQNSbf2_yE1gHVa9VwgoF1HMXwetGkz7ajZGdr=VME7-Uv1A@mail.gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 14/22] gpu: host1x: Forbid relocation address shifting
+ in the firewall
+Date: Wed, 14 Jun 2017 12:06:06 +0300
+Message-ID: <3d723511-45f2-3c80-58fe-c9050624ac94@gmail.com>
 References: <cover.1497394243.git.digetx@gmail.com>
- <036615566011ab4d52190439a12d943df9e704ef.1497394243.git.digetx@gmail.com>
- <CABPQNSZ8f8QqW4fJYCGfgf3q0pTyQ7NbS_=64x39kvrNDSyhdw@mail.gmail.com>
- <20600071-67d9-ca53-1ff4-cd2ad69bfa86@gmail.com>
-Reply-To: kusmabite@gmail.com
+ <5e6f06d3e57db40c1c4947282ef7336369c3360f.1497394243.git.digetx@gmail.com>
+ <6db57dae-0de7-45a5-2ed5-1ebd84577742@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20600071-67d9-ca53-1ff4-cd2ad69bfa86@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>, DRI Development <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6db57dae-0de7-45a5-2ed5-1ebd84577742-/1wQRMveznE@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBKdW4gMTQsIDIwMTcgYXQgMTA6MzIgQU0sIERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4
-QGdtYWlsLmNvbT4gd3JvdGU6Cj4gT24gMTQuMDYuMjAxNyAxMDo1NiwgRXJpayBGYXllLUx1bmQg
-d3JvdGU6Cj4+IE9uIFdlZCwgSnVuIDE0LCAyMDE3IGF0IDE6MTYgQU0sIERtaXRyeSBPc2lwZW5r
-byA8ZGlnZXR4QGdtYWlsLmNvbT4gd3JvdGU6Cj4+PiBUaGUgYmxvY2tpbmcgZ2F0aGVyIGNvcHkg
-YWxsb2NhdGlvbiBpcyBhIG1ham9yIHBlcmZvcm1hbmNlIGRvd25zaWRlIG9mIHRoZQo+Pj4gSG9z
-dDF4IGZpcmV3YWxsLCBpdCBtYXkgdGFrZSBodW5kcmVkcyBtaWxsaXNlY29uZHMgd2hpY2ggaXMg
-dW5hY2NlcHRhYmxlCj4+PiBmb3IgdGhlIHJlYWwtdGltZSBncmFwaGljcyBvcGVyYXRpb25zLiBM
-ZXQncyB0cnkgYSBub24tYmxvY2tpbmcgYWxsb2NhdGlvbgo+Pj4gZmlyc3QgYXMgYSBsZWFzdCBp
-bnZhc2l2ZSBzb2x1dGlvbiwgaXQgbWFrZXMgb3BlbnRlZ3JhIChYb3JnIGRyaXZlcikKPj4+IHBl
-cmZvcm1hbmNlIGluZGlzdGluZ3Vpc2hhYmxlIHdpdGgvd2l0aG91dCB0aGUgZmlyZXdhbGwuCj4+
-Pgo+Pj4gU2lnbmVkLW9mZi1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgo+
-Pj4gLS0tCj4+Pgo+Pj4gVGhlIG90aGVyIG11Y2ggbW9yZSBpbnZhc2l2ZSBzb2x1dGlvbiBjb3Vs
-ZCBiZTogdG8gaGF2ZSBhIG1lbW9yeSBwb29sCj4+PiByZXNlcnZlZCBmb3IgdGhlIGdhdGhlciBj
-b3B5IGFuZCBwZXJmb3JtaW5nIHRoZSBmaXJld2FsbCBjaGVja3MgKGFuZCB0aGUKPj4+IGdhdGhl
-ciBjb3B5aW5nKSBvbiB0aGUgYWN0dWFsIGpvYiBzdWJtaXNzaW9uIHRvIHRoZSBDRE1BLCBub3Qg
-b24gdGhlIGpvYgo+Pj4gYWxsb2NhdGlvbiBsaWtlIGl0IGlzIGRvbmUgbm93LiBUaGlzIHNvbHV0
-aW9uIHJlZHVjZXMgdGhlIG92ZXJoZWFkIG9mIGEKPj4+IGdhdGhlciBjb3B5IGFsbG9jYXRpb25z
-Lgo+Pj4KPj4+ICBkcml2ZXJzL2dwdS9ob3N0MXgvam9iLmMgfCAxNiArKysrKysrKysrKystLS0t
-Cj4+PiAgMSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4+
-Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9qb2IuYyBiL2RyaXZlcnMvZ3B1
-L2hvc3QxeC9qb2IuYwo+Pj4gaW5kZXggZmMxOTRjNjc2ZDkxLi5lZDA1NzVmMTQwOTMgMTAwNjQ0
-Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9ob3N0MXgvam9iLmMKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2hvc3QxeC9qb2IuYwo+Pj4gQEAgLTU5NCwxMiArNTk0LDIwIEBAIHN0YXRpYyBpbmxpbmUgaW50
-IGNvcHlfZ2F0aGVycyhzdHJ1Y3QgaG9zdDF4X2pvYiAqam9iLCBzdHJ1Y3QgZGV2aWNlICpkZXYp
-Cj4+PiAgICAgICAgICAgICAgICAgc2l6ZSArPSBnLT53b3JkcyAqIHNpemVvZih1MzIpOwo+Pj4g
-ICAgICAgICB9Cj4+Pgo+Pj4gKyAgICAgICAvKgo+Pj4gKyAgICAgICAgKiBUcnkgYSBub24tYmxv
-Y2tpbmcgYWxsb2NhdGlvbiBmcm9tIGEgaGlnaGVyIHByaW9yaXR5IHBvb2xzIGZpcnN0LAo+Pj4g
-KyAgICAgICAgKiBhcyBhd2FpdGluZyBmb3IgdGhlIGFsbG9jYXRpb24gaGVyZSBpcyBhIG1ham9y
-IHBlcmZvcm1hbmNlIGhpdC4KPj4+ICsgICAgICAgICovCj4+PiAgICAgICAgIGpvYi0+Z2F0aGVy
-X2NvcHlfbWFwcGVkID0gZG1hX2FsbG9jX3djKGRldiwgc2l6ZSwgJmpvYi0+Z2F0aGVyX2NvcHks
-Cj4+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdGUF9L
-RVJORUwpOwo+Pj4gLSAgICAgICBpZiAoIWpvYi0+Z2F0aGVyX2NvcHlfbWFwcGVkKSB7Cj4+PiAt
-ICAgICAgICAgICAgICAgam9iLT5nYXRoZXJfY29weV9tYXBwZWQgPSBOVUxMOwo+Pj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHRlBfTk9XQUlUKTsKPj4+
-ICsKPj4+ICsgICAgICAgLyogdGhlIGhpZ2hlciBwcmlvcml0eSBhbGxvY2F0aW9uIGZhaWxlZCwg
-dHJ5IHRoZSBnZW5lcmljLWJsb2NraW5nICovCj4+PiArICAgICAgIGlmICgham9iLT5nYXRoZXJf
-Y29weV9tYXBwZWQpCj4+PiArICAgICAgICAgICAgICAgam9iLT5nYXRoZXJfY29weV9tYXBwZWQg
-PSBkbWFfYWxsb2Nfd2MoZGV2LCBzaXplLAo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICZqb2ItPmdhdGhlcl9jb3B5LAo+Pj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdGUF9LRVJO
-RUwpOwo+Pj4gKyAgICAgICBpZiAoIWpvYi0+Z2F0aGVyX2NvcHlfbWFwcGVkKQo+Pj4gICAgICAg
-ICAgICAgICAgIHJldHVybiAtRU5PTUVNOwo+Pj4gLSAgICAgICB9Cj4+Pgo+Pj4gICAgICAgICBq
-b2ItPmdhdGhlcl9jb3B5X3NpemUgPSBzaXplOwo+Pgo+PiBDYW4ndCB3ZSBqdXN0IGhhdmUgYSBz
-dGF0aWMgZml4ZWQtc2l6ZSBidWZmZXIsIGFuZCB2YWxpZGF0ZSBjaHVua3MgYXQKPj4gdGhlIHRp
-bWU/IE9yIHdoeSBjYW4ndCB3ZSB2YWxpZGF0ZSBkaXJlY3RseSBvbiB0aGUgbWFwcGVkIHBvaW50
-ZXJzPwo+Pgo+PiBJdCBmZWVscyBwcmV0dHkgc2lsbHkgdG8gaGF2ZSB0byBhbGxvY2F0ZSBtZW1v
-cnkgaW4gdGhlIGZpcnN0IHBsYWNlIGhlcmUuLi4KPj4KPgo+IFdlIGNhbid0IHZhbGlkYXRlIHRo
-ZSBtYXBwZWQgcG9pbnRlcnMgYmVjYXVzZSB1c2Vyc3BhY2UgbWF5IHdyaXRlIHRvIHRoZSBidWZm
-ZXJzCj4gbWVtb3J5IGF0IGFueSB0aW1lLiBNYXliZSBpdCBzaG91bGQgYmUgcG9zc2libGUgdG8g
-d3JpdGUtcHJvdGVjdCBjbWRidWZmZXJzCj4gbWVtb3J5IGZvciB0aGUgdGltZSBvZiBpdHMgc3Vi
-bWlzc2lvbiBhbmQgZXhlY3V0aW9uLCBidXQgSSdtIG5vdCBzdXJlIHdoZXRoZXIKPiBpdCdzIHdv
-cnRoIHRoZSBlZmZvcnQuIFRoZSBjdXJyZW50LXByb3Bvc2VkIHNvbHV0aW9uIGlzIGVmZmljaWVu
-dCBhbmQgbGVhc3QKPiBpbnZhc2l2ZS4KClJpZ2h0LCBnb29kIHBvaW50LgoKUmV2aWV3ZWQtYnk6
-IEVyaWsgRmF5ZS1MdW5kIDxrdXNtYWJpdGVAZ21haWwuY29tPgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 14.06.2017 09:50, Mikko Perttunen wrote:
+> On 14.06.2017 02:15, Dmitry Osipenko wrote:
+>> Incorrectly shifted relocation address will cause a lower memory corruption
+>> and likely a hang on a write or a read of an arbitrary data in case of IOMMU
+>> absent. As of now there is no use for the address shifting (at least on
+>> Tegra20) and adding a proper shifting / sizes validation is much more work.
+>> Let's forbid it in the firewall till a proper validation is implemented.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  drivers/gpu/host1x/dev.c |  4 ++++
+>>  drivers/gpu/host1x/dev.h |  1 +
+>>  drivers/gpu/host1x/job.c | 24 ++++++++++++++++++++++++
+>>  3 files changed, 29 insertions(+)
+>>
+>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+>> index 6a805ed908c3..21da331ce092 100644
+>> --- a/drivers/gpu/host1x/dev.c
+>> +++ b/drivers/gpu/host1x/dev.c
+>> @@ -72,6 +72,7 @@ static const struct host1x_info host1x01_info = {
+>>      .init = host1x01_init,
+>>      .sync_offset = 0x3000,
+>>      .dma_mask = DMA_BIT_MASK(32),
+>> +    .version = 1,
+>>  };
+>>
+>>  static const struct host1x_info host1x02_info = {
+>> @@ -82,6 +83,7 @@ static const struct host1x_info host1x02_info = {
+>>      .init = host1x02_init,
+>>      .sync_offset = 0x3000,
+>>      .dma_mask = DMA_BIT_MASK(32),
+>> +    .version = 2,
+>>  };
+>>
+>>  static const struct host1x_info host1x04_info = {
+>> @@ -92,6 +94,7 @@ static const struct host1x_info host1x04_info = {
+>>      .init = host1x04_init,
+>>      .sync_offset = 0x2100,
+>>      .dma_mask = DMA_BIT_MASK(34),
+>> +    .version = 4,
+>>  };
+>>
+>>  static const struct host1x_info host1x05_info = {
+>> @@ -102,6 +105,7 @@ static const struct host1x_info host1x05_info = {
+>>      .init = host1x05_init,
+>>      .sync_offset = 0x2100,
+>>      .dma_mask = DMA_BIT_MASK(34),
+>> +    .version = 5,
+>>  };
+>>
+>>  static const struct of_device_id host1x_of_match[] = {
+>> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+>> index 229d08b6a45e..c6997651b336 100644
+>> --- a/drivers/gpu/host1x/dev.h
+>> +++ b/drivers/gpu/host1x/dev.h
+>> @@ -100,6 +100,7 @@ struct host1x_info {
+>>      int (*init)(struct host1x *host1x); /* initialize per SoC ops */
+>>      unsigned int sync_offset; /* offset of syncpoint registers */
+>>      u64 dma_mask; /* mask of addressable memory */
+>> +    unsigned int version; /* host1x's version */
+>>  };
+>>
+>>  struct host1x {
+>> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+>> index 4208329ca2af..7825643da324 100644
+>> --- a/drivers/gpu/host1x/job.c
+>> +++ b/drivers/gpu/host1x/job.c
+>> @@ -333,6 +333,27 @@ static bool check_reloc(struct host1x_reloc *reloc,
+>> struct host1x_bo *cmdbuf,
+>>      return true;
+>>  }
+>>
+>> +static bool check_reloc_shift(struct device *dev, struct host1x_reloc *reloc)
+>> +{
+>> +    struct host1x *host = dev_get_drvdata(dev->parent);
+>> +
+>> +    /* skip newer Tegra's since IOMMU is supposed to be used by
+>> +     * them and not all address registers with their shifts are
+>> +     * publicly documented */
+>> +    if (host->info->version > 1)
+>> +        return true;
+> 
+> I don't like the firewall working differently per SoC - IOMMU can still be
+> disabled on later SoCs and in this case there would be a security hole even if
+> the firewall is enabled.
+> 
+
+Yes, it would be a security hole like it is is right now. Unfortunately we can't
+fix it on later SoC's without knowing all the address registers and their shifts.
+
+>> +
+>> +    /* skip Tegra30 with IOMMU enabled */
+>> +    if (host->domain)
+>> +        return true;
+>> +
+> 
+> So if we want to be able to test the firewall on all SoCs just having this check
+> here for all SoCs would be better.
+> 
+
+I'm not sure what you are meaning here. You'll get a wrong address resolved in
+HW if that address needs to be shifted.
+
+As I wrote before, on later SoC's firewall could be used as a debug feature
+without the shifts being validated.
+
+>> +    /* relocation shift value validation isn't implemented yet */
+>> +    if (reloc->shift)
+>> +        return false;
+>> +
+>> +    return true;
+>> +}
+>> +
+>>  struct host1x_firewall {
+>>      struct host1x_job *job;
+>>      struct device *dev;
+>> @@ -359,6 +380,9 @@ static int check_register(struct host1x_firewall *fw,
+>> unsigned long offset)
+>>          if (!check_reloc(fw->reloc, fw->cmdbuf, fw->offset))
+>>              return -EINVAL;
+>>
+>> +        if (!check_reloc_shift(fw->dev, fw->reloc))
+>> +            return -EINVAL;
+>> +
+>>          fw->num_relocs--;
+>>          fw->reloc++;
+>>      }
+>>
+
+
+-- 
+Dmitry
