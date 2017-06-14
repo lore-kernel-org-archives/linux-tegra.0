@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 11/20] gpu: host1x: Do not leak BO's phys address to userspace
-Date: Thu, 15 Jun 2017 02:18:34 +0300
-Message-ID: <34ee97bf32788b5c6b7adbf961b42d65d757ddb4.1497480757.git.digetx@gmail.com>
+Subject: [PATCH v3 08/20] drm/tegra: dc: Disable plane if it is invisible
+Date: Thu, 15 Jun 2017 02:18:31 +0300
+Message-ID: <413bf65cb0ae08b9acbaf4490713ca848a4cf521.1497480757.git.digetx@gmail.com>
 References: <cover.1497480751.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1497480751.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,124 +12,80 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Perform gathers coping before patching them, so that original gathers are
-left untouched. That's not as bad as leaking kernel addresses, but still
-doesn't feel right.
+On Tegra20 if plane has width or height equal to 0, it will be infinitely
+wide or tall. Let's disable the plane if it is invisible on atomic state
+committing to fix the issue. The Rockchip DRM driver does the same.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/host1x/job.c | 39 +++++++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 14f3f957ffab..4208329ca2af 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -137,8 +137,9 @@ static void host1x_syncpt_patch_offset(struct host1x_syncpt *sp,
-  * avoid a wrap condition in the HW).
-  */
- static int do_waitchks(struct host1x_job *job, struct host1x *host,
--		       struct host1x_bo *patch)
-+		       struct host1x_job_gather *g)
- {
-+	struct host1x_bo *patch = g->bo;
- 	int i;
- 
- 	/* compare syncpt vs wait threshold */
-@@ -165,7 +166,8 @@ static int do_waitchks(struct host1x_job *job, struct host1x *host,
- 				wait->syncpt_id, sp->name, wait->thresh,
- 				host1x_syncpt_read_min(sp));
- 
--			host1x_syncpt_patch_offset(sp, patch, wait->offset);
-+			host1x_syncpt_patch_offset(sp, patch,
-+						   g->offset + wait->offset);
- 		}
- 
- 		wait->bo = NULL;
-@@ -269,11 +271,12 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
- 	return err;
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index a7a7cce1afd0..c875f11786b9 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -559,6 +559,23 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ 	return 0;
  }
  
--static int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
-+static int do_relocs(struct host1x_job *job, struct host1x_job_gather *g)
++static void tegra_dc_disable_window(struct tegra_dc *dc, int index)
++{
++	unsigned long flags;
++	u32 value;
++
++	spin_lock_irqsave(&dc->lock, flags);
++
++	value = WINDOW_A_SELECT << index;
++	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
++
++	value = tegra_dc_readl(dc, DC_WIN_WIN_OPTIONS);
++	value &= ~WIN_ENABLE;
++	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
++
++	spin_unlock_irqrestore(&dc->lock, flags);
++}
++
+ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 				      struct drm_plane_state *old_state)
  {
- 	int i = 0;
- 	u32 last_page = ~0;
- 	void *cmdbuf_page_addr = NULL;
-+	struct host1x_bo *cmdbuf = g->bo;
+@@ -573,6 +590,9 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 	if (!plane->state->crtc || !plane->state->fb)
+ 		return;
  
- 	/* pin & patch the relocs for one gather */
- 	for (i = 0; i < job->num_relocs; i++) {
-@@ -286,6 +289,13 @@ static int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
- 		if (cmdbuf != reloc->cmdbuf.bo)
- 			continue;
- 
-+		if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL)) {
-+			target = (u32 *)job->gather_copy_mapped +
-+					reloc->cmdbuf.offset / sizeof(u32) +
-+						g->offset / sizeof(u32);
-+			goto patch_reloc;
-+		}
++	if (!plane->state->visible)
++		return tegra_dc_disable_window(dc, p->index);
 +
- 		if (last_page != reloc->cmdbuf.offset >> PAGE_SHIFT) {
- 			if (cmdbuf_page_addr)
- 				host1x_bo_kunmap(cmdbuf, last_page,
-@@ -302,6 +312,7 @@ static int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
- 		}
+ 	memset(&window, 0, sizeof(window));
+ 	window.src.x = plane->state->src.x1 >> 16;
+ 	window.src.y = plane->state->src.y1 >> 16;
+@@ -612,8 +632,6 @@ static void tegra_plane_atomic_disable(struct drm_plane *plane,
+ {
+ 	struct tegra_plane *p = to_tegra_plane(plane);
+ 	struct tegra_dc *dc;
+-	unsigned long flags;
+-	u32 value;
  
- 		target = cmdbuf_page_addr + (reloc->cmdbuf.offset & ~PAGE_MASK);
-+patch_reloc:
- 		*target = reloc_addr;
- 	}
+ 	/* rien ne va plus */
+ 	if (!old_state || !old_state->crtc)
+@@ -621,16 +639,7 @@ static void tegra_plane_atomic_disable(struct drm_plane *plane,
  
-@@ -573,6 +584,12 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
- 	if (err)
- 		goto out;
+ 	dc = to_tegra_dc(old_state->crtc);
  
-+	if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL)) {
-+		err = copy_gathers(job, dev);
-+		if (err)
-+			goto out;
-+	}
-+
- 	/* patch gathers */
- 	for (i = 0; i < job->num_gathers; i++) {
- 		struct host1x_job_gather *g = &job->gathers[i];
-@@ -581,7 +598,9 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
- 		if (g->handled)
- 			continue;
- 
--		g->base = job->gather_addr_phys[i];
-+		/* copy_gathers() sets gathers base if firewall is enabled */
-+		if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
-+			g->base = job->gather_addr_phys[i];
- 
- 		for (j = i + 1; j < job->num_gathers; j++) {
- 			if (job->gathers[j].bo == g->bo) {
-@@ -590,19 +609,15 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
- 			}
- 		}
- 
--		err = do_relocs(job, g->bo);
-+		err = do_relocs(job, g);
- 		if (err)
--			goto out;
-+			break;
- 
--		err = do_waitchks(job, host, g->bo);
-+		err = do_waitchks(job, host, g);
- 		if (err)
--			goto out;
-+			break;
- 	}
- 
--	if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
--		goto out;
+-	spin_lock_irqsave(&dc->lock, flags);
 -
--	err = copy_gathers(job, dev);
- out:
- 	if (err)
- 		host1x_job_unpin(job);
+-	value = WINDOW_A_SELECT << p->index;
+-	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
+-
+-	value = tegra_dc_readl(dc, DC_WIN_WIN_OPTIONS);
+-	value &= ~WIN_ENABLE;
+-	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
+-
+-	spin_unlock_irqrestore(&dc->lock, flags);
++	tegra_dc_disable_window(dc, p->index);
+ }
+ 
+ static const struct drm_plane_helper_funcs tegra_primary_plane_helper_funcs = {
 -- 
 2.13.0
