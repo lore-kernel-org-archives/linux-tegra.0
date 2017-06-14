@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 13/20] gpu: host1x: Forbid RESTART opcode in the firewall
-Date: Thu, 15 Jun 2017 02:18:36 +0300
-Message-ID: <a7ddefaaf4ac7d3bdba46043ba31facd76ac607c.1497480757.git.digetx@gmail.com>
+Subject: [PATCH v3 18/20] gpu: host1x: Remove unused host1x_cdma_stop() definition
+Date: Thu, 15 Jun 2017 02:18:41 +0300
+Message-ID: <bafa16a3f8229c3ce2993c50a215943528b83e76.1497480758.git.digetx@gmail.com>
 References: <cover.1497480751.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1497480751.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,28 +12,27 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The RESTART opcode terminates the gather and restarts the CDMA fetching from
-a specified word << 2 relative to the CDMA start address. That shouldn't be
-allowed to be done by userspace.
+There is no host1x_cdma_stop() in the code, let's remove its definition
+from the header file.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/job.c | 1 -
+ drivers/gpu/host1x/cdma.h | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index a911de6386b4..54230ec4f81e 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -495,7 +495,6 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
- 				goto out;
- 			break;
- 		case 4:
--		case 5:
- 		case 14:
- 			break;
- 		default:
+diff --git a/drivers/gpu/host1x/cdma.h b/drivers/gpu/host1x/cdma.h
+index ec170a78f4e1..286d49386be9 100644
+--- a/drivers/gpu/host1x/cdma.h
++++ b/drivers/gpu/host1x/cdma.h
+@@ -88,7 +88,6 @@ struct host1x_cdma {
+ 
+ int host1x_cdma_init(struct host1x_cdma *cdma);
+ int host1x_cdma_deinit(struct host1x_cdma *cdma);
+-void host1x_cdma_stop(struct host1x_cdma *cdma);
+ int host1x_cdma_begin(struct host1x_cdma *cdma, struct host1x_job *job);
+ void host1x_cdma_push(struct host1x_cdma *cdma, u32 op1, u32 op2);
+ void host1x_cdma_end(struct host1x_cdma *cdma, struct host1x_job *job);
 -- 
 2.13.0
