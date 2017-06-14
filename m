@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 06/20] drm/tegra: dc: Avoid reset asserts on Tegra20
-Date: Thu, 15 Jun 2017 02:18:29 +0300
-Message-ID: <d54a60e6308e00f86583a875beafce8f825e0d7e.1497480756.git.digetx@gmail.com>
+Subject: [PATCH v3 07/20] drm/tegra: dc: Apply clipping to the plane
+Date: Thu, 15 Jun 2017 02:18:30 +0300
+Message-ID: <1306db6555e16d0bed85d731d79c05a29fda3bda.1497480757.git.digetx@gmail.com>
 References: <cover.1497480751.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1497480751.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,114 +12,67 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mik
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Commit 33a8eb8 ("Implement runtime PM") introduced HW reset control. It
-causes a hang on Tegra20 if both display controllers are utilized (RGB
-panel and HDMI). The TRM suggests that each display controller has its own
-reset control, apparently it is not correct.
+On Tegra20 an overlay plane should be clipped, otherwise its output is
+distorted once plane crosses display boundary.
 
-Fixes: 33a8eb8d40ee ("drm/tegra: dc: Implement runtime PM")
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 30 +++++++++++++++++++++---------
- 1 file changed, 21 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 95b373f739f2..98ee6abb056c 100644
+index 98ee6abb056c..a7a7cce1afd0 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -30,6 +30,7 @@ struct tegra_dc_soc_info {
- 	bool supports_block_linear;
- 	unsigned int pitch_align;
- 	bool has_powergate;
-+	bool broken_reset;
- };
+@@ -486,12 +486,25 @@ static int tegra_plane_state_add(struct tegra_plane *plane,
+ {
+ 	struct drm_crtc_state *crtc_state;
+ 	struct tegra_dc_state *tegra;
++	struct drm_rect clip;
++	int err;
  
- struct tegra_plane {
-@@ -1856,6 +1857,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
- 	.supports_block_linear = false,
- 	.pitch_align = 8,
- 	.has_powergate = false,
-+	.broken_reset = true,
- };
+ 	/* Propagate errors from allocation or locking failures. */
+ 	crtc_state = drm_atomic_get_crtc_state(state->state, state->crtc);
+ 	if (IS_ERR(crtc_state))
+ 		return PTR_ERR(crtc_state);
  
- static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
-@@ -1865,6 +1867,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
- 	.supports_block_linear = false,
- 	.pitch_align = 8,
- 	.has_powergate = false,
-+	.broken_reset = false,
- };
++	clip.x1 = 0;
++	clip.y1 = 0;
++	clip.x2 = crtc_state->mode.hdisplay;
++	clip.y2 = crtc_state->mode.vdisplay;
++
++	/* Check plane state for visibility and calculate clipping bounds */
++	err = drm_plane_helper_check_state(state, &clip, 0, INT_MAX,
++					   true, true);
++	if (err < 0)
++		return err;
++
+ 	tegra = to_dc_state(crtc_state);
  
- static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
-@@ -1874,6 +1877,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
- 	.supports_block_linear = false,
- 	.pitch_align = 64,
- 	.has_powergate = true,
-+	.broken_reset = false,
- };
+ 	tegra->planes |= WIN_A_ACT_REQ << plane->index;
+@@ -561,14 +574,14 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 		return;
  
- static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
-@@ -1883,6 +1887,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
- 	.supports_block_linear = true,
- 	.pitch_align = 64,
- 	.has_powergate = true,
-+	.broken_reset = false,
- };
- 
- static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
-@@ -1892,6 +1897,7 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
- 	.supports_block_linear = true,
- 	.pitch_align = 64,
- 	.has_powergate = true,
-+	.broken_reset = false,
- };
- 
- static const struct of_device_id tegra_dc_of_match[] = {
-@@ -1989,7 +1995,8 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 		return PTR_ERR(dc->rst);
- 	}
- 
--	reset_control_assert(dc->rst);
-+	if (!dc->soc->broken_reset)
-+		reset_control_assert(dc->rst);
- 
- 	if (dc->soc->has_powergate) {
- 		if (dc->pipe == 0)
-@@ -2063,10 +2070,12 @@ static int tegra_dc_suspend(struct device *dev)
- 	struct tegra_dc *dc = dev_get_drvdata(dev);
- 	int err;
- 
--	err = reset_control_assert(dc->rst);
--	if (err < 0) {
--		dev_err(dev, "failed to assert reset: %d\n", err);
--		return err;
-+	if (!dc->soc->broken_reset) {
-+		err = reset_control_assert(dc->rst);
-+		if (err < 0) {
-+			dev_err(dev, "failed to assert reset: %d\n", err);
-+			return err;
-+		}
- 	}
- 
- 	if (dc->soc->has_powergate)
-@@ -2096,10 +2105,13 @@ static int tegra_dc_resume(struct device *dev)
- 			return err;
- 		}
- 
--		err = reset_control_deassert(dc->rst);
--		if (err < 0) {
--			dev_err(dev, "failed to deassert reset: %d\n", err);
--			return err;
-+		if (!dc->soc->broken_reset) {
-+			err = reset_control_deassert(dc->rst);
-+			if (err < 0) {
-+				dev_err(dev,
-+					"failed to deassert reset: %d\n", err);
-+				return err;
-+			}
- 		}
- 	}
+ 	memset(&window, 0, sizeof(window));
+-	window.src.x = plane->state->src_x >> 16;
+-	window.src.y = plane->state->src_y >> 16;
+-	window.src.w = plane->state->src_w >> 16;
+-	window.src.h = plane->state->src_h >> 16;
+-	window.dst.x = plane->state->crtc_x;
+-	window.dst.y = plane->state->crtc_y;
+-	window.dst.w = plane->state->crtc_w;
+-	window.dst.h = plane->state->crtc_h;
++	window.src.x = plane->state->src.x1 >> 16;
++	window.src.y = plane->state->src.y1 >> 16;
++	window.src.w = drm_rect_width(&plane->state->src) >> 16;
++	window.src.h = drm_rect_height(&plane->state->src) >> 16;
++	window.dst.x = plane->state->dst.x1;
++	window.dst.y = plane->state->dst.y1;
++	window.dst.w = drm_rect_width(&plane->state->dst);
++	window.dst.h = drm_rect_height(&plane->state->dst);
+ 	window.bits_per_pixel = fb->format->cpp[0] * 8;
+ 	window.bottom_up = tegra_fb_is_bottom_up(fb);
  
 -- 
 2.13.0
