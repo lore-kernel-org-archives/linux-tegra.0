@@ -1,533 +1,59 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 19/20] gpu: host1x: Refactor channel allocation code
-Date: Thu, 15 Jun 2017 02:18:42 +0300
-Message-ID: <729f24afd42200dc50917c0ea3c08b71b1875747.1497480758.git.digetx@gmail.com>
-References: <cover.1497480751.git.digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] gpu: host1x: Fix error handling
+Date: Thu, 15 Jun 2017 14:07:24 +0200
+Message-ID: <20170615120724.GA30056@ulmo>
+References: <20170410202922.17665-1-christophe.jaillet@wanadoo.fr>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1497480751.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-In-Reply-To: <cover.1497480751.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-References: <cover.1497480751.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170410202922.17665-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This is largely a rewrite of the Host1x channel allocation code, bringing
-several changes:
+--TB36FDmn/VVEgNH/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- The previous code could deadlock due to an interaction
-  between the 'reflock' mutex and CDMA timeout handling.
-  This gets rid of the mutex.
-- Support for more than 32 channels, required for Tegra186
-- General refactoring, including better encapsulation
-  of channel ownership handling into channel.c
+On Mon, Apr 10, 2017 at 10:29:22PM +0200, Christophe JAILLET wrote:
+> If 'devm_reset_control_get' returns an error, then we erroneously return
+> success because error code is taken from 'host->clk' instead of=20
+> 'host->rst'.
+>=20
+> Fixes: b386c6b73ac6 ("gpu: host1x: Support module reset")
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+> ---
+>  drivers/gpu/host1x/dev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/gpu/drm/tegra/gr2d.c       |   4 +-
- drivers/gpu/drm/tegra/gr3d.c       |   4 +-
- drivers/gpu/drm/tegra/vic.c        |   4 +-
- drivers/gpu/host1x/channel.c       | 147 +++++++++++++++++++++++--------------
- drivers/gpu/host1x/channel.h       |  21 ++++--
- drivers/gpu/host1x/debug.c         |  47 +++++-------
- drivers/gpu/host1x/dev.c           |   7 +-
- drivers/gpu/host1x/dev.h           |   6 +-
- drivers/gpu/host1x/hw/channel_hw.c |   4 -
- include/linux/host1x.h             |   1 -
- 10 files changed, 135 insertions(+), 110 deletions(-)
+Applied to drm-misc-fixes, thanks.
 
-diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-index fbe0b8b25b42..6ea070da7718 100644
---- a/drivers/gpu/drm/tegra/gr2d.c
-+++ b/drivers/gpu/drm/tegra/gr2d.c
-@@ -38,7 +38,7 @@ static int gr2d_init(struct host1x_client *client)
- 
- 	client->syncpts[0] = host1x_syncpt_request(client->dev, flags);
- 	if (!client->syncpts[0]) {
--		host1x_channel_free(gr2d->channel);
-+		host1x_channel_put(gr2d->channel);
- 		return -ENOMEM;
- 	}
- 
-@@ -57,7 +57,7 @@ static int gr2d_exit(struct host1x_client *client)
- 		return err;
- 
- 	host1x_syncpt_free(client->syncpts[0]);
--	host1x_channel_free(gr2d->channel);
-+	host1x_channel_put(gr2d->channel);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index 13f0d1b7cd98..cee2ab645cde 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -48,7 +48,7 @@ static int gr3d_init(struct host1x_client *client)
- 
- 	client->syncpts[0] = host1x_syncpt_request(client->dev, flags);
- 	if (!client->syncpts[0]) {
--		host1x_channel_free(gr3d->channel);
-+		host1x_channel_put(gr3d->channel);
- 		return -ENOMEM;
- 	}
- 
-@@ -67,7 +67,7 @@ static int gr3d_exit(struct host1x_client *client)
- 		return err;
- 
- 	host1x_syncpt_free(client->syncpts[0]);
--	host1x_channel_free(gr3d->channel);
-+	host1x_channel_put(gr3d->channel);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index cd804e404a11..47cb1aaa58b1 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -182,7 +182,7 @@ static int vic_init(struct host1x_client *client)
- free_syncpt:
- 	host1x_syncpt_free(client->syncpts[0]);
- free_channel:
--	host1x_channel_free(vic->channel);
-+	host1x_channel_put(vic->channel);
- detach_device:
- 	if (tegra->domain)
- 		iommu_detach_device(tegra->domain, vic->dev);
-@@ -203,7 +203,7 @@ static int vic_exit(struct host1x_client *client)
- 		return err;
- 
- 	host1x_syncpt_free(client->syncpts[0]);
--	host1x_channel_free(vic->channel);
-+	host1x_channel_put(vic->channel);
- 
- 	if (vic->domain) {
- 		iommu_detach_device(vic->domain, vic->dev);
-diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
-index 8f437d924c10..db9b91d1384c 100644
---- a/drivers/gpu/host1x/channel.c
-+++ b/drivers/gpu/host1x/channel.c
-@@ -24,19 +24,33 @@
- #include "job.h"
- 
- /* Constructor for the host1x device list */
--int host1x_channel_list_init(struct host1x *host)
-+int host1x_channel_list_init(struct host1x_channel_list *chlist,
-+			     unsigned int num_channels)
- {
--	INIT_LIST_HEAD(&host->chlist.list);
--	mutex_init(&host->chlist_mutex);
--
--	if (host->info->nb_channels > BITS_PER_LONG) {
--		WARN(1, "host1x hardware has more channels than supported by the driver\n");
--		return -ENOSYS;
-+	chlist->channels = kcalloc(num_channels, sizeof(struct host1x_channel),
-+				   GFP_KERNEL);
-+	if (!chlist->channels)
-+		return -ENOMEM;
-+
-+	chlist->allocated_channels =
-+		kcalloc(BITS_TO_LONGS(num_channels), sizeof(unsigned long),
-+			GFP_KERNEL);
-+	if (!chlist->allocated_channels) {
-+		kfree(chlist->channels);
-+		return -ENOMEM;
- 	}
- 
-+	bitmap_zero(chlist->allocated_channels, num_channels);
-+
- 	return 0;
- }
- 
-+void host1x_channel_list_free(struct host1x_channel_list *chlist)
-+{
-+	kfree(chlist->allocated_channels);
-+	kfree(chlist->channels);
-+}
-+
- int host1x_job_submit(struct host1x_job *job)
- {
- 	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
-@@ -47,86 +61,107 @@ EXPORT_SYMBOL(host1x_job_submit);
- 
- struct host1x_channel *host1x_channel_get(struct host1x_channel *channel)
- {
--	int err = 0;
-+	kref_get(&channel->refcount);
- 
--	mutex_lock(&channel->reflock);
-+	return channel;
-+}
-+EXPORT_SYMBOL(host1x_channel_get);
- 
--	if (channel->refcount == 0)
--		err = host1x_cdma_init(&channel->cdma);
-+/**
-+ * host1x_channel_get_index() - Attempt to get channel reference by index
-+ * @host: Host1x device object
-+ * @index: Index of channel
-+ *
-+ * If channel number @index is currently allocated, increase its refcount
-+ * and return a pointer to it. Otherwise, return NULL.
-+ */
-+struct host1x_channel *host1x_channel_get_index(struct host1x *host,
-+						unsigned int index)
-+{
-+	struct host1x_channel *ch = &host->channel_list.channels[index];
- 
--	if (!err)
--		channel->refcount++;
-+	if (!kref_get_unless_zero(&ch->refcount))
-+		return NULL;
- 
--	mutex_unlock(&channel->reflock);
-+	return ch;
-+}
-+
-+static void release_channel(struct kref *kref)
-+{
-+	struct host1x_channel *channel =
-+		container_of(kref, struct host1x_channel, refcount);
-+	struct host1x *host = dev_get_drvdata(channel->dev->parent);
-+	struct host1x_channel_list *chlist = &host->channel_list;
-+
-+	host1x_hw_cdma_stop(host, &channel->cdma);
-+	host1x_cdma_deinit(&channel->cdma);
- 
--	return err ? NULL : channel;
-+	clear_bit(channel->id, chlist->allocated_channels);
- }
--EXPORT_SYMBOL(host1x_channel_get);
- 
- void host1x_channel_put(struct host1x_channel *channel)
- {
--	mutex_lock(&channel->reflock);
-+	kref_put(&channel->refcount, release_channel);
-+}
-+EXPORT_SYMBOL(host1x_channel_put);
- 
--	if (channel->refcount == 1) {
--		struct host1x *host = dev_get_drvdata(channel->dev->parent);
-+static struct host1x_channel *acquire_unused_channel(struct host1x *host)
-+{
-+	struct host1x_channel_list *chlist = &host->channel_list;
-+	unsigned int max_channels = host->info->nb_channels;
-+	unsigned int index;
- 
--		host1x_hw_cdma_stop(host, &channel->cdma);
--		host1x_cdma_deinit(&channel->cdma);
-+	index = find_first_zero_bit(chlist->allocated_channels, max_channels);
-+	if (index >= max_channels) {
-+		dev_err(host->dev, "failed to find free channel\n");
-+		return NULL;
- 	}
- 
--	channel->refcount--;
-+	chlist->channels[index].id = index;
- 
--	mutex_unlock(&channel->reflock);
-+	set_bit(index, chlist->allocated_channels);
-+
-+	return &chlist->channels[index];
- }
--EXPORT_SYMBOL(host1x_channel_put);
- 
-+/**
-+ * host1x_channel_request() - Allocate a channel
-+ * @device: Host1x unit this channel will be used to send commands to
-+ *
-+ * Allocates a new host1x channel for @device. If there are no free channels,
-+ * this will sleep until one becomes available. May return NULL if CDMA
-+ * initialization fails.
-+ */
- struct host1x_channel *host1x_channel_request(struct device *dev)
- {
- 	struct host1x *host = dev_get_drvdata(dev->parent);
--	unsigned int max_channels = host->info->nb_channels;
--	struct host1x_channel *channel = NULL;
--	unsigned long index;
-+	struct host1x_channel_list *chlist = &host->channel_list;
-+	struct host1x_channel *channel;
- 	int err;
- 
--	mutex_lock(&host->chlist_mutex);
-+	channel = acquire_unused_channel(host);
-+	if (!channel)
-+		return NULL;
- 
--	index = find_first_zero_bit(&host->allocated_channels, max_channels);
--	if (index >= max_channels)
--		goto fail;
-+	kref_init(&channel->refcount);
-+	mutex_init(&channel->submitlock);
-+	channel->dev = dev;
- 
--	channel = kzalloc(sizeof(*channel), GFP_KERNEL);
--	if (!channel)
-+	err = host1x_hw_channel_init(host, channel, channel->id);
-+	if (err < 0)
- 		goto fail;
- 
--	err = host1x_hw_channel_init(host, channel, index);
-+	err = host1x_cdma_init(&channel->cdma);
- 	if (err < 0)
- 		goto fail;
- 
--	/* Link device to host1x_channel */
--	channel->dev = dev;
--
--	/* Add to channel list */
--	list_add_tail(&channel->list, &host->chlist.list);
--
--	host->allocated_channels |= BIT(index);
--
--	mutex_unlock(&host->chlist_mutex);
- 	return channel;
- 
- fail:
--	dev_err(dev, "failed to init channel\n");
--	kfree(channel);
--	mutex_unlock(&host->chlist_mutex);
--	return NULL;
--}
--EXPORT_SYMBOL(host1x_channel_request);
-+	clear_bit(channel->id, chlist->allocated_channels);
- 
--void host1x_channel_free(struct host1x_channel *channel)
--{
--	struct host1x *host = dev_get_drvdata(channel->dev->parent);
-+	dev_err(dev, "failed to initialize channel\n");
- 
--	host->allocated_channels &= ~BIT(channel->id);
--	list_del(&channel->list);
--	kfree(channel);
-+	return NULL;
- }
--EXPORT_SYMBOL(host1x_channel_free);
-+EXPORT_SYMBOL(host1x_channel_request);
-diff --git a/drivers/gpu/host1x/channel.h b/drivers/gpu/host1x/channel.h
-index df767cf90d51..7068e42d42df 100644
---- a/drivers/gpu/host1x/channel.h
-+++ b/drivers/gpu/host1x/channel.h
-@@ -20,17 +20,21 @@
- #define __HOST1X_CHANNEL_H
- 
- #include <linux/io.h>
-+#include <linux/kref.h>
- 
- #include "cdma.h"
- 
- struct host1x;
-+struct host1x_channel;
- 
--struct host1x_channel {
--	struct list_head list;
-+struct host1x_channel_list {
-+	struct host1x_channel *channels;
-+	unsigned long *allocated_channels;
-+};
- 
--	unsigned int refcount;
-+struct host1x_channel {
-+	struct kref refcount;
- 	unsigned int id;
--	struct mutex reflock;
- 	struct mutex submitlock;
- 	void __iomem *regs;
- 	struct device *dev;
-@@ -38,9 +42,10 @@ struct host1x_channel {
- };
- 
- /* channel list operations */
--int host1x_channel_list_init(struct host1x *host);
--
--#define host1x_for_each_channel(host, channel)				\
--	list_for_each_entry(channel, &host->chlist.list, list)
-+int host1x_channel_list_init(struct host1x_channel_list *chlist,
-+			     unsigned int num_channels);
-+void host1x_channel_list_free(struct host1x_channel_list *chlist);
-+struct host1x_channel *host1x_channel_get_index(struct host1x *host,
-+						unsigned int index);
- 
- #endif
-diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
-index d9330fcc62ad..2aae0e63214c 100644
---- a/drivers/gpu/host1x/debug.c
-+++ b/drivers/gpu/host1x/debug.c
-@@ -43,24 +43,19 @@ void host1x_debug_output(struct output *o, const char *fmt, ...)
- 	o->fn(o->ctx, o->buf, len);
- }
- 
--static int show_channels(struct host1x_channel *ch, void *data, bool show_fifo)
-+static int show_channel(struct host1x_channel *ch, void *data, bool show_fifo)
- {
- 	struct host1x *m = dev_get_drvdata(ch->dev->parent);
- 	struct output *o = data;
- 
--	mutex_lock(&ch->reflock);
-+	mutex_lock(&ch->cdma.lock);
- 
--	if (ch->refcount) {
--		mutex_lock(&ch->cdma.lock);
-+	if (show_fifo)
-+		host1x_hw_show_channel_fifo(m, ch, o);
- 
--		if (show_fifo)
--			host1x_hw_show_channel_fifo(m, ch, o);
-+	host1x_hw_show_channel_cdma(m, ch, o);
- 
--		host1x_hw_show_channel_cdma(m, ch, o);
--		mutex_unlock(&ch->cdma.lock);
--	}
--
--	mutex_unlock(&ch->reflock);
-+	mutex_unlock(&ch->cdma.lock);
- 
- 	return 0;
- }
-@@ -94,28 +89,22 @@ static void show_syncpts(struct host1x *m, struct output *o)
- 	host1x_debug_output(o, "\n");
- }
- 
--static void show_all(struct host1x *m, struct output *o)
-+static void show_all(struct host1x *m, struct output *o, bool show_fifo)
- {
--	struct host1x_channel *ch;
-+	int i;
- 
- 	host1x_hw_show_mlocks(m, o);
- 	show_syncpts(m, o);
- 	host1x_debug_output(o, "---- channels ----\n");
- 
--	host1x_for_each_channel(m, ch)
--		show_channels(ch, o, true);
--}
--
--static void show_all_no_fifo(struct host1x *host1x, struct output *o)
--{
--	struct host1x_channel *ch;
--
--	host1x_hw_show_mlocks(host1x, o);
--	show_syncpts(host1x, o);
--	host1x_debug_output(o, "---- channels ----\n");
-+	for (i = 0; i < m->info->nb_channels; ++i) {
-+		struct host1x_channel *ch = host1x_channel_get_index(m, i);
- 
--	host1x_for_each_channel(host1x, ch)
--		show_channels(ch, o, false);
-+		if (ch) {
-+			show_channel(ch, o, show_fifo);
-+			host1x_channel_put(ch);
-+		}
-+	}
- }
- 
- static int host1x_debug_show_all(struct seq_file *s, void *unused)
-@@ -125,7 +114,7 @@ static int host1x_debug_show_all(struct seq_file *s, void *unused)
- 		.ctx = s
- 	};
- 
--	show_all(s->private, &o);
-+	show_all(s->private, &o, true);
- 
- 	return 0;
- }
-@@ -137,7 +126,7 @@ static int host1x_debug_show(struct seq_file *s, void *unused)
- 		.ctx = s
- 	};
- 
--	show_all_no_fifo(s->private, &o);
-+	show_all(s->private, &o, false);
- 
- 	return 0;
- }
-@@ -216,7 +205,7 @@ void host1x_debug_dump(struct host1x *host1x)
- 		.fn = write_to_printk
- 	};
- 
--	show_all(host1x, &o);
-+	show_all(host1x, &o, true);
- }
- 
- void host1x_debug_dump_syncpts(struct host1x *host1x)
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index f05ebb14fa63..5c1c711a21af 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -198,7 +198,8 @@ static int host1x_probe(struct platform_device *pdev)
- 		host->iova_end = geometry->aperture_end;
- 	}
- 
--	err = host1x_channel_list_init(host);
-+	err = host1x_channel_list_init(&host->channel_list,
-+				       host->info->nb_channels);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to initialize channel list\n");
- 		goto fail_detach_device;
-@@ -207,7 +208,7 @@ static int host1x_probe(struct platform_device *pdev)
- 	err = clk_prepare_enable(host->clk);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to enable clock\n");
--		goto fail_detach_device;
-+		goto fail_free_channels;
- 	}
- 
- 	err = reset_control_deassert(host->rst);
-@@ -244,6 +245,8 @@ static int host1x_probe(struct platform_device *pdev)
- 	reset_control_assert(host->rst);
- fail_unprepare_disable:
- 	clk_disable_unprepare(host->clk);
-+fail_free_channels:
-+	host1x_channel_list_free(&host->channel_list);
- fail_detach_device:
- 	if (host->domain) {
- 		put_iova_domain(&host->iova);
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index 229d08b6a45e..ffdbc15b749b 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -129,10 +129,8 @@ struct host1x {
- 	struct host1x_syncpt *nop_sp;
- 
- 	struct mutex syncpt_mutex;
--	struct mutex chlist_mutex;
--	struct host1x_channel chlist;
--	unsigned long allocated_channels;
--	unsigned int num_allocated_channels;
-+
-+	struct host1x_channel_list channel_list;
- 
- 	struct dentry *debugfs;
- 
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index 5e8df78b7acd..8447a56c41ca 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -181,10 +181,6 @@ static int channel_submit(struct host1x_job *job)
- static int host1x_channel_init(struct host1x_channel *ch, struct host1x *dev,
- 			       unsigned int index)
- {
--	ch->id = index;
--	mutex_init(&ch->reflock);
--	mutex_init(&ch->submitlock);
--
- 	ch->regs = dev->regs + index * HOST1X_CHANNEL_SIZE;
- 	return 0;
- }
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 561d6bb6580d..5dd8df2f8810 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -156,7 +156,6 @@ struct host1x_channel;
- struct host1x_job;
- 
- struct host1x_channel *host1x_channel_request(struct device *dev);
--void host1x_channel_free(struct host1x_channel *channel);
- struct host1x_channel *host1x_channel_get(struct host1x_channel *channel);
- void host1x_channel_put(struct host1x_channel *channel);
- int host1x_job_submit(struct host1x_job *job);
--- 
-2.13.0
+Thierry
+
+--TB36FDmn/VVEgNH/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAllCeHkACgkQ3SOs138+
+s6H6Vw/9FV1MDmcHsT4wsziUxklh7XLsxfcnRcOA7yaIBIaEydwjsK8d/LIJc0j7
+Yyd/JW9KlL/nnO782fXo1e2gStc1P2Iy0GIxM0Lt7bgDFiRUTQIL7Ovq+4zPDOZH
+ZwnqG9LPEh9hsm3zf1lKFv8m+7JgKFAbcaK0Mq4Duls0yyJKjk+uR53M23j74sVE
+h0fmQsoP0uUSAgugItWVhc9qTGTzVWGVM/5jRB/FoeWXRjRdiNVSqMFTz3OSw5Jf
+T0cwQQi5yxGfU2Q/2sqjBVDK3pobJ1UcPVv3BkkiKlg4c4hSKBpZwnVsjQE7CHCM
+j6/tQ1sEIm1iaBVF0HE17XJ16l8EoEHfLiVae3Ap3ywHURSXmSKIRQBvUW7IDYG6
+uNrDbMLz1pMO+JccOpAduXsngw5JSAgIMQ7LjqKpDACGifsQ9DbIiG4XAMPDjtOG
+nzSuWBO3GMhXlfHA1NTMSmBDiE+hHpagIdLQMFJMK6RmC86PaVpqGq33ixaoykBx
+za7D0Z1B0/xO+bErGWbQ/yBZLVNYKiE66oJnvQO7Yq/r880EPLH+FoCtMXrIgEKI
+Zboglj4CV+NbzvEzqsZ4z+AQmG3h7CYTY6Xstcu8OO8oZGzVkbU8gHoR0ZrdwmxF
+am2U4WYU5v/vB80fDxxfn9RWPqAAz+2pW7Us7wmZyjzKylrECTw=
+=JseM
+-----END PGP SIGNATURE-----
+
+--TB36FDmn/VVEgNH/--
