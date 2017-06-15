@@ -1,59 +1,60 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: Fix error handling
-Date: Thu, 15 Jun 2017 14:07:24 +0200
-Message-ID: <20170615120724.GA30056@ulmo>
-References: <20170410202922.17665-1-christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v3 01/20] drm/tegra: Fix lockup on a use of staging API
+Date: Thu, 15 Jun 2017 14:11:40 +0200
+Message-ID: <20170615121140.GB30056@ulmo>
+References: <cover.1497480751.git.digetx@gmail.com>
+ <7b70a506a9d2355ea6ff19a8c4f4d726b67719b3.1497480754.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+        protocol="application/pgp-signature"; boundary="oC1+HKm2/end4ao3"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170410202922.17665-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+In-Reply-To: <7b70a506a9d2355ea6ff19a8c4f4d726b67719b3.1497480754.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---TB36FDmn/VVEgNH/
+--oC1+HKm2/end4ao3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 10, 2017 at 10:29:22PM +0200, Christophe JAILLET wrote:
-> If 'devm_reset_control_get' returns an error, then we erroneously return
-> success because error code is taken from 'host->clk' instead of=20
-> 'host->rst'.
+On Thu, Jun 15, 2017 at 02:18:24AM +0300, Dmitry Osipenko wrote:
+> Commit bdd2f9cd ("Don't leak kernel pointer to userspace") added a mutex
+> around staging IOCTL's, some of those mutexes are taken twice.
 >=20
-> Fixes: b386c6b73ac6 ("gpu: host1x: Support module reset")
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+> Fixes: bdd2f9cd10eb ("drm/tegra: Don't leak kernel pointer to userspace")
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/gpu/host1x/dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/tegra/drm.c | 20 ++++----------------
+>  1 file changed, 4 insertions(+), 16 deletions(-)
 
 Applied to drm-misc-fixes, thanks.
 
 Thierry
 
---TB36FDmn/VVEgNH/
+--oC1+HKm2/end4ao3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAllCeHkACgkQ3SOs138+
-s6H6Vw/9FV1MDmcHsT4wsziUxklh7XLsxfcnRcOA7yaIBIaEydwjsK8d/LIJc0j7
-Yyd/JW9KlL/nnO782fXo1e2gStc1P2Iy0GIxM0Lt7bgDFiRUTQIL7Ovq+4zPDOZH
-ZwnqG9LPEh9hsm3zf1lKFv8m+7JgKFAbcaK0Mq4Duls0yyJKjk+uR53M23j74sVE
-h0fmQsoP0uUSAgugItWVhc9qTGTzVWGVM/5jRB/FoeWXRjRdiNVSqMFTz3OSw5Jf
-T0cwQQi5yxGfU2Q/2sqjBVDK3pobJ1UcPVv3BkkiKlg4c4hSKBpZwnVsjQE7CHCM
-j6/tQ1sEIm1iaBVF0HE17XJ16l8EoEHfLiVae3Ap3ywHURSXmSKIRQBvUW7IDYG6
-uNrDbMLz1pMO+JccOpAduXsngw5JSAgIMQ7LjqKpDACGifsQ9DbIiG4XAMPDjtOG
-nzSuWBO3GMhXlfHA1NTMSmBDiE+hHpagIdLQMFJMK6RmC86PaVpqGq33ixaoykBx
-za7D0Z1B0/xO+bErGWbQ/yBZLVNYKiE66oJnvQO7Yq/r880EPLH+FoCtMXrIgEKI
-Zboglj4CV+NbzvEzqsZ4z+AQmG3h7CYTY6Xstcu8OO8oZGzVkbU8gHoR0ZrdwmxF
-am2U4WYU5v/vB80fDxxfn9RWPqAAz+2pW7Us7wmZyjzKylrECTw=
-=JseM
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAllCeXwACgkQ3SOs138+
+s6Gfrw/+MbPKvPSRt22fxDbVChGRMjCMZDDP5PE5aT+8AbZ6NlX7LF2O8cdsc73u
+ujSAK+EHRd5HKFlS6329uVKrYG1x+waVOwlNAlpH3+fe/tD5nTIINvu38wI2e7Fo
+zzqH+2QDK6CQ1W2/66bTnUwjF0um7743jVvKJmRqt1TD/OSVC9BxDLtLjZBFoJxL
++mr1JskyhMeSnjENlsovWKIZC5PXmQKj6Un4uA3f0A9mwcYe+zYYdyusmo7DhIHx
+i7eYnTYJYx7I2RP1jvFfe1522uIWjRHXLnDy06IYMr7oKREJitDEV7uFb5f4kN89
+nQGJBbm6kYn04l5712VbhAXlUh/AO9FMXU4YZ8gJct3zgvAEmQcuKxQrLRQxWO8t
+/rzdIauqG6eAZ1Fd16R4LZNgvr89qLZJpy0AfFSzDLn7dyn+zPTiTApKJDdgyppI
+E5Z3tbCuwyLUutKuXngm6WMtswid4RmFxLdb1VjFmeTHB7dfxD4yyFc9suk0C4Jg
+JhlIChYUxD5lNH+TtCj6NStJtMQkdu0cNID/tejSNs0kPVyWU7ZrsEuSa3tBYTlR
+jZOErZ2cFpzJ3ifoVFbDZW1+hbeevTjcHH19Y+Xz1nMDjcHyHLuK78Or6h3nmr6r
+D5JthhVVDshrCYtGnjSJrRSTm0KX7V6pEztdyO8DTLaVdW5iIeM=
+=lC9I
 -----END PGP SIGNATURE-----
 
---TB36FDmn/VVEgNH/--
+--oC1+HKm2/end4ao3--
