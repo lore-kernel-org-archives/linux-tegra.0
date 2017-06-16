@@ -1,24 +1,85 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 28/44] sparc: remove arch specific dma_supported
-        implementations
-Date: Fri, 16 Jun 2017 10:47:01 +0200
-Message-ID: <20170616084701.GE10582@lst.de>
-References: <20170608132609.32662-1-hch@lst.de> <20170608132609.32662-29-hch@lst.de> <CAGRGNgUJ3J_LEwhJ1rFHuzZ_J4OnTV9-DekcuT=N5z1pBKcb3A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-hexagon-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAGRGNgUJ3J_LEwhJ1rFHuzZ_J4OnTV9-DekcuT=N5z1pBKcb3A@mail.gmail.com>
-Sender: linux-hexagon-owner@vger.kernel.org
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, x86@kernel.org, "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, netdev <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH 2/4] dt-bindings: Add bindings for nvidia,tegra186-bpmp-thermal
+Date: Fri, 16 Jun 2017 14:28:23 +0300
+Message-ID: <20170616112825.31025-2-mperttunen@nvidia.com>
+References: <20170616112825.31025-1-mperttunen@nvidia.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20170616112825.31025-1-mperttunen@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, rui.zhang@intel.com, edubezval@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 09, 2017 at 12:22:48AM +1000, Julian Calaby wrote:
-> I'm guessing there's a few places that have DMA ops but DMA isn't
-> actually supported. Why not have a common method for this, maybe
-> "dma_not_supported"?
+In Tegra186, the BPMP (Boot and Power Management Processor) implements
+an interface that is used to read system temperatures, including CPU
+cluster and GPU temperatures. This binding describes the thermal sensor
+that is exposed by BPMP.
 
-It's not common at all.  Except for sbus all dma API user first
-call set_dma_mask which ends up in the dma_supported call.  sbus
-is the weird outlier here.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ .../thermal/nvidia,tegra186-bpmp-thermal.txt       | 32 ++++++++++++++++++++++
+ .../dt-bindings/thermal/tegra186-bpmp-thermal.h    | 14 ++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
+ create mode 100644 include/dt-bindings/thermal/tegra186-bpmp-thermal.h
+
+diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
+new file mode 100644
+index 000000000000..276387dd6815
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
+@@ -0,0 +1,32 @@
++NVIDIA Tegra186 BPMP thermal sensor
++
++In Tegra186, the BPMP (Boot and Power Management Processor) implements an
++interface that is used to read system temperatures, including CPU cluster
++and GPU temperatures. This binding describes the thermal sensor that is
++exposed by BPMP.
++
++The BPMP thermal node must be located directly inside the main BPMP node. See
++../firmware/nvidia,tegra186-bpmp.txt for details of the BPMP binding.
++
++This node represents a thermal sensor. See thermal.txt for details of the
++core thermal binding.
++
++Required properties:
++- compatible:
++    Array of strings.
++    One of:
++    - "nvidia,tegra186-bpmp-thermal".
++- #thermal-sensor-cells: Cell for sensor index.
++    Single-cell integer.
++    Must be <1>.
++
++Example:
++
++bpmp {
++	...
++
++	bpmp_thermal: thermal {
++		compatible = "nvidia,tegra186-bpmp-thermal";
++		#thermal-sensor-cells = <1>;
++	};
++};
+diff --git a/include/dt-bindings/thermal/tegra186-bpmp-thermal.h b/include/dt-bindings/thermal/tegra186-bpmp-thermal.h
+new file mode 100644
+index 000000000000..a96b8fa31aab
+--- /dev/null
++++ b/include/dt-bindings/thermal/tegra186-bpmp-thermal.h
+@@ -0,0 +1,14 @@
++/*
++ * This header provides constants for binding nvidia,tegra186-bpmp-thermal.
++ */
++
++#ifndef _DT_BINDINGS_THERMAL_TEGRA186_BPMP_THERMAL_H
++#define _DT_BINDINGS_THERMAL_TEGRA186_BPMP_THERMAL_H
++
++#define TEGRA186_BPMP_THERMAL_ZONE_CPU 2
++#define TEGRA186_BPMP_THERMAL_ZONE_GPU 3
++#define TEGRA186_BPMP_THERMAL_ZONE_AUX 4
++#define TEGRA186_BPMP_THERMAL_ZONE_PLLX 5
++#define TEGRA186_BPMP_THERMAL_ZONE_AO 6
++
++#endif
+-- 
+2.13.1
