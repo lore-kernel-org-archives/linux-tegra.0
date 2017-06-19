@@ -1,90 +1,125 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH v6 0/4] reset: APIs to manage a list of resets
-Date: Mon, 19 Jun 2017 16:34:04 +0200
-Message-ID: <20170619143408.15668-1-p.zabel@pengutronix.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 06/44] iommu/dma: don't rely on DMA_ERROR_CODE
+Date: Mon, 19 Jun 2017 16:12:32 +0100
+Message-ID: <18ff1d49-4a13-3dea-8a4d-fb778aec37dc@arm.com>
+References: <20170616181059.19206-1-hch@lst.de>
+	<20170616181059.19206-7-hch@lst.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20170616181059.19206-7-hch-jcswGhMUV9g@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, linux-c6x-dev-jPsnJVOj+W6hPH1hqNUYSQ@public.gmane.org, linux-hexagon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, openrisc-cunTk1MwBs9a3B2Vnqf2dGD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xtensa-PjhNF2WwrV/0Sa2dR60CXw@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-A set of patches to allow consumers to get and de/assert or trigger
-a number of resets at the same time. A patch on top of Vivek's original
-API extension is added to hide the reset_control_array behind a struct
-reset_control so that the consumer doesn't have to care about the difference
-between a singular reset control and a reset control controlling an array
-of resets, except when requesting it.
+On 16/06/17 19:10, Christoph Hellwig wrote:
+> DMA_ERROR_CODE is not a public API and will go away soon.  dma dma-iommu
+> driver already implements a proper ->mapping_error method, so it's only
+> using the value internally.  Add a new local define using the value
+> that arm64 which is the only current user of dma-iommu.
 
-This series also contains reset controls patches for dwc3-of-simple
-and tegra pmc drivers.
-A small patch is added in this series to correctly re-order the
-resource handling in dwc3_of_simple_remove().
+I was angling at just open-coding 0/!dma_addr/etc. for simplicity rather
+than having anything #defined at all - nothing except the 4th and final
+hunks actually have any relevance to  dma_mapping_error(), and I reckon
+it's plenty clear enough in context. The rest is just proactively
+blatting address arguments with "arbitrary definitely-invalid value",
+which is more paranoia than anything else (and arguably unnecessary).
 
-The series is tested on torvald's master branch the device tree
-patches to enable usb on db820c.
+It's not the biggest deal, though, so either way:
 
-Changes since v5:
- - Fixed devm/of_reset_control_array_get stub return values in the
-   "reset: hide reset control arrays behind struct reset_control" patch.
- - Merged "reset: hide reset control arrays behind struct reset_control" patch
-   into "reset: Add APIs to manage array of resets" patch, to avoid adding
-   new API functions in one patch that are removed in the other.
- - Updated commit message of "soc/tegra: pmc: Use the new reset APIs to manage
-   reset controllers" patch.
- - Dropped already merged "reset: use kref for reference counting" patch.
+Reviewed-by: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 
-Changes since v4:
- - Added a patch to hide reset control arrays behind struct reset_control
-   and adapted the consumer patches. This could be merged with the reset
-   array API patch if we think this is a good idea.
-
-Changes since v3:
- - Squashed of_reset_control_get_count() patch in the second patch that
-   adds the reset control array APIs.
- - The error path after getting count through of_reset_control_get_count()
-   now returns NULL pointer in case when 'optional' flag is true.
- - Added code in reset_control_array_assert() to deassert the
-   already asserted resets in the error case.
- - Using of_reset_control_array_get_optional_exclusive() in dwc3 patch
-   to request the reset control array.
- - Added a patch to fix the order in which resources are handled in
-   dwc3_of_simple_remove() path.
- - Added tegra_powergate->reset to take care of single reset control
-   passed from the client drivers.
-
-Changes since v2:
- - Addressed comments to make APIs inline with gpiod API.
- - Moved number of reset controls in 'struct reset_control_array'
-   so that the footprint is reduced.
- - of_reset_control_array_get() and devm_reset_control_array_get()
-   now return pointer to the newly created reset control array.
- - Added comments to mention that the reset control array APIs don't
-   guarantee any particular order when handling the reset controls.
- - Dropped 'name' from reset_control_array' since the interface is meant
-   for a bunch of anonymous resets that can all be asserted or deasserted
-   in arbitrary order.
- - Fixed returns for APIs reported by kbuild.
- - Fixed 'for' clause guards reported by kbuild.
-
-Changes since v1:
- - Addressed comment for error handling in of_reset_control_get_count()
- - Added patch to manage reset controller array.
- - Rebased dwc3-of-simple changes based on the new set of APIs
-   for reset control array.
- - Added a patch for soc/tegra/pmc driver to use the new set of
-   reset control array APIs.
-
-Vivek Gautam (4):
-  reset: Add APIs to manage array of resets
-  usb: dwc3: of-simple: Re-order resource handling in remove
-  usb: dwc3: of-simple: Add support to get resets for the device
-  soc/tegra: pmc: Use the new reset APIs to manage reset controllers
-
- drivers/reset/core.c              | 211 +++++++++++++++++++++++++++++++++++++-
- drivers/soc/tegra/pmc.c           |  82 ++++-----------
- drivers/usb/dwc3/dwc3-of-simple.c |  29 +++++-
- include/linux/reset.h             |  73 +++++++++++++
- 4 files changed, 329 insertions(+), 66 deletions(-)
-
--- 
-2.11.0
+> Signed-off-by: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+> ---
+>  drivers/iommu/dma-iommu.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 62618e77bedc..9403336f1fa6 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -31,6 +31,8 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/vmalloc.h>
+>  
+> +#define IOMMU_MAPPING_ERROR	0
+> +
+>  struct iommu_dma_msi_page {
+>  	struct list_head	list;
+>  	dma_addr_t		iova;
+> @@ -500,7 +502,7 @@ void iommu_dma_free(struct device *dev, struct page **pages, size_t size,
+>  {
+>  	__iommu_dma_unmap(iommu_get_domain_for_dev(dev), *handle, size);
+>  	__iommu_dma_free_pages(pages, PAGE_ALIGN(size) >> PAGE_SHIFT);
+> -	*handle = DMA_ERROR_CODE;
+> +	*handle = IOMMU_MAPPING_ERROR;
+>  }
+>  
+>  /**
+> @@ -533,7 +535,7 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
+>  	dma_addr_t iova;
+>  	unsigned int count, min_size, alloc_sizes = domain->pgsize_bitmap;
+>  
+> -	*handle = DMA_ERROR_CODE;
+> +	*handle = IOMMU_MAPPING_ERROR;
+>  
+>  	min_size = alloc_sizes & -alloc_sizes;
+>  	if (min_size < PAGE_SIZE) {
+> @@ -627,11 +629,11 @@ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+>  
+>  	iova = iommu_dma_alloc_iova(domain, size, dma_get_mask(dev), dev);
+>  	if (!iova)
+> -		return DMA_ERROR_CODE;
+> +		return IOMMU_MAPPING_ERROR;
+>  
+>  	if (iommu_map(domain, iova, phys - iova_off, size, prot)) {
+>  		iommu_dma_free_iova(cookie, iova, size);
+> -		return DMA_ERROR_CODE;
+> +		return IOMMU_MAPPING_ERROR;
+>  	}
+>  	return iova + iova_off;
+>  }
+> @@ -671,7 +673,7 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
+>  
+>  		s->offset += s_iova_off;
+>  		s->length = s_length;
+> -		sg_dma_address(s) = DMA_ERROR_CODE;
+> +		sg_dma_address(s) = IOMMU_MAPPING_ERROR;
+>  		sg_dma_len(s) = 0;
+>  
+>  		/*
+> @@ -714,11 +716,11 @@ static void __invalidate_sg(struct scatterlist *sg, int nents)
+>  	int i;
+>  
+>  	for_each_sg(sg, s, nents, i) {
+> -		if (sg_dma_address(s) != DMA_ERROR_CODE)
+> +		if (sg_dma_address(s) != IOMMU_MAPPING_ERROR)
+>  			s->offset += sg_dma_address(s);
+>  		if (sg_dma_len(s))
+>  			s->length = sg_dma_len(s);
+> -		sg_dma_address(s) = DMA_ERROR_CODE;
+> +		sg_dma_address(s) = IOMMU_MAPPING_ERROR;
+>  		sg_dma_len(s) = 0;
+>  	}
+>  }
+> @@ -836,7 +838,7 @@ void iommu_dma_unmap_resource(struct device *dev, dma_addr_t handle,
+>  
+>  int iommu_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
+>  {
+> -	return dma_addr == DMA_ERROR_CODE;
+> +	return dma_addr == IOMMU_MAPPING_ERROR;
+>  }
+>  
+>  static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
+> 
