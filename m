@@ -1,53 +1,173 @@
 From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v5 3/6] reset: hide reset control arrays behind struct
- reset_control
-Date: Mon, 19 Jun 2017 14:18:33 +0200
-Message-ID: <1497874713.2993.70.camel@pengutronix.de>
+Subject: Re: [PATCH v5 6/6] soc/tegra: pmc: Use the new reset APIs to manage
+ reset controllers
+Date: Mon, 19 Jun 2017 14:37:38 +0200
+Message-ID: <1497875858.2993.74.camel@pengutronix.de>
 References: <20170601165203.15315-1-p.zabel@pengutronix.de>
-         <20170601165203.15315-4-p.zabel@pengutronix.de>
-         <c15af5af-3b30-07eb-52c8-af0aff87f3b4@codeaurora.org>
+         <20170601165203.15315-7-p.zabel@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c15af5af-3b30-07eb-52c8-af0aff87f3b4@codeaurora.org>
+In-Reply-To: <20170601165203.15315-7-p.zabel@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Vivek,
-
-On Tue, 2017-06-13 at 12:16 +0530, Vivek Gautam wrote:
-[...]
-> > @@ -102,18 +94,6 @@ static inline struct reset_control *__devm_reset_control_get(
-> >   	return optional ? NULL : ERR_PTR(-ENOTSUPP);
-> >   }
-> >   
-> > -static inline
-> > -int reset_control_array_assert(struct reset_control_array *resets)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> > -static inline
-> > -int reset_control_array_deassert(struct reset_control_array *resets)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> >   static inline struct reset_control_array *
+On Thu, 2017-06-01 at 18:52 +0200, Philipp Zabel wrote:
+> From: Vivek Gautam <vivek.gautam@codeaurora.org>
 > 
-> This has to return just 'struct reset_control *'.
-> That should resolve kbuild errors.
->
-> Rest looks good to me.
-> Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Make use of reset_control_array_*() set of APIs to manage
+> an array of reset controllers available with the device.
+> 
+> Cc: Jon Hunter <jonathanh@nvidia.com>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+>  drivers/soc/tegra/pmc.c | 82 ++++++++++++-------------------------------------
+>  1 file changed, 20 insertions(+), 62 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index e233dd5dcab3d..749b218147a19 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -124,8 +124,7 @@ struct tegra_powergate {
+>  	unsigned int id;
+>  	struct clk **clks;
+>  	unsigned int num_clks;
+> -	struct reset_control **resets;
+> -	unsigned int num_resets;
+> +	struct reset_control *reset;
 
-Thanks, I had already fixed this locally, prompted by the kbuild test
-robot. I'll send a v6. I would like to merge this patch into the first
-"reset: Add APIs to manage array of resets" patch, if that's ok with
-you.
+Jon, do you think this changed API is a better fit for the tegra/pmc use
+case? The reset control array is now handled behind the scenes. Except
+for the initial of_reset_control_array_get_exclusive() call, there is no
+difference to the user between single reset controls and reset control
+arrays anymore.
 
 regards
 Philipp
+
+>  };
+>  
+>  struct tegra_io_pad_soc {
+> @@ -348,32 +347,14 @@ static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
+>  	return err;
+>  }
+>  
+> -static int tegra_powergate_reset_assert(struct tegra_powergate *pg)
+> +static inline int tegra_powergate_reset_assert(struct tegra_powergate *pg)
+>  {
+> -	unsigned int i;
+> -	int err;
+> -
+> -	for (i = 0; i < pg->num_resets; i++) {
+> -		err = reset_control_assert(pg->resets[i]);
+> -		if (err)
+> -			return err;
+> -	}
+> -
+> -	return 0;
+> +	return reset_control_assert(pg->reset);
+>  }
+>  
+> -static int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
+> +static inline int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
+>  {
+> -	unsigned int i;
+> -	int err;
+> -
+> -	for (i = 0; i < pg->num_resets; i++) {
+> -		err = reset_control_deassert(pg->resets[i]);
+> -		if (err)
+> -			return err;
+> -	}
+> -
+> -	return 0;
+> +	return reset_control_deassert(pg->reset);
+>  }
+>  
+>  static int tegra_powergate_power_up(struct tegra_powergate *pg,
+> @@ -566,8 +547,7 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+>  	pg.id = id;
+>  	pg.clks = &clk;
+>  	pg.num_clks = 1;
+> -	pg.resets = &rst;
+> -	pg.num_resets = 1;
+> +	pg.reset = IS_ERR(rst) ? NULL : rst;
+>  
+>  	err = tegra_powergate_power_up(&pg, false);
+>  	if (err)
+> @@ -755,45 +735,26 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+>  static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
+>  					 struct device_node *np, bool off)
+>  {
+> -	struct reset_control *rst;
+> -	unsigned int i, count;
+>  	int err;
+>  
+> -	count = of_count_phandle_with_args(np, "resets", "#reset-cells");
+> -	if (count == 0)
+> -		return -ENODEV;
+> -
+> -	pg->resets = kcalloc(count, sizeof(rst), GFP_KERNEL);
+> -	if (!pg->resets)
+> -		return -ENOMEM;
+> -
+> -	for (i = 0; i < count; i++) {
+> -		pg->resets[i] = of_reset_control_get_by_index(np, i);
+> -		if (IS_ERR(pg->resets[i])) {
+> -			err = PTR_ERR(pg->resets[i]);
+> -			goto error;
+> -		}
+> -
+> -		if (off)
+> -			err = reset_control_assert(pg->resets[i]);
+> -		else
+> -			err = reset_control_deassert(pg->resets[i]);
+> -
+> -		if (err) {
+> -			reset_control_put(pg->resets[i]);
+> -			goto error;
+> -		}
+> +	pg->reset = of_reset_control_array_get_exclusive(np);
+> +	if (IS_ERR(pg->reset)) {
+> +		pr_err("failed to get device resets\n");
+> +		return PTR_ERR(pg->reset);
+>  	}
+>  
+> -	pg->num_resets = count;
+> +	if (off)
+> +		err = reset_control_assert(pg->reset);
+> +	else
+> +		err = reset_control_deassert(pg->reset);
+>  
+> -	return 0;
+> +	if (err)
+> +		goto put_reset;
+>  
+> -error:
+> -	while (i--)
+> -		reset_control_put(pg->resets[i]);
+> +	return 0;
+>  
+> -	kfree(pg->resets);
+> +put_reset:
+> +	reset_control_put(pg->reset);
+>  
+>  	return err;
+>  }
+> @@ -885,10 +846,7 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+>  	pm_genpd_remove(&pg->genpd);
+>  
+>  remove_resets:
+> -	while (pg->num_resets--)
+> -		reset_control_put(pg->resets[pg->num_resets]);
+> -
+> -	kfree(pg->resets);
+> +	reset_control_put(pg->reset);
+>  
+>  remove_clks:
+>  	while (pg->num_clks--)
