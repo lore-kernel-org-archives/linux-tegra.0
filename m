@@ -1,75 +1,56 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v6 1/4] reset: Add APIs to manage array of resets
-Date: Tue, 20 Jun 2017 09:02:39 +0200
-Message-ID: <1497942159.2386.1.camel@pengutronix.de>
-References: <201706200445.RVcRobQj%fengguang.wu@intel.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: clean up and modularize arch dma_mapping interface
+Date: Tue, 20 Jun 2017 11:19:02 +0200
+Message-ID: <20170620091902.2dldmf43vhazq6yh@phenom.ffwll.local>
+References: <20170608132609.32662-1-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201706200445.RVcRobQj%fengguang.wu@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20170608132609.32662-1-hch@lst.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-mips@linux-mips.org, linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org, linux-c6x-dev@linux-c6x.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org, linux-xtensa@linux-xtensa.org, x86@kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org, openrisc@lists.librecores.org, netdev@vger.kernel.org, sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2017-06-20 at 04:21 +0800, kbuild test robot wrote:
-> Hi Vivek,
-> 
-> [auto build test WARNING on pza/reset/next]
-> [also build test WARNING on v4.12-rc6 next-20170619]
-> [cannot apply to balbi-usb/next]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Philipp-Zabel/reset-Add-APIs-to-manage-array-of-resets/20170620-021320
-> base:   git://git.pengutronix.de/git/pza/linux reset/next
-> config: i386-randconfig-c0-06200218 (attached as .config)
-> compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    In file included from drivers/gpu//drm/nouveau/include/nvif/os.h:28:0,
->                     from drivers/gpu//drm/nouveau/include/nvkm/core/os.h:3,
->                     from drivers/gpu//drm/nouveau/include/nvkm/core/event.h:3,
->                     from drivers/gpu//drm/nouveau/include/nvkm/core/device.h:3,
->                     from drivers/gpu//drm/nouveau/include/nvkm/core/subdev.h:3,
->                     from drivers/gpu//drm/nouveau/include/nvkm/core/engine.h:4,
->                     from drivers/gpu//drm/nouveau/include/nvkm/engine/fifo.h:3,
->                     from drivers/gpu//drm/nouveau/nvkm/engine/fifo/priv.h:4,
->                     from drivers/gpu//drm/nouveau/nvkm/engine/fifo/chan.h:4,
->                     from drivers/gpu//drm/nouveau/nvkm/engine/fifo/channv50.h:4,
->                     from drivers/gpu//drm/nouveau/nvkm/engine/fifo/chang84.c:24:
-> >> include/linux/reset.h:110:37: warning: 'struct reset_control_array' declared inside parameter list
->     void reset_control_array_put(struct reset_control_array *resets)
->                                         ^
-> >> include/linux/reset.h:110:37: warning: its scope is only this definition or declaration, which is probably not what you want
-> 
-> vim +110 include/linux/reset.h
-> 
->     94		return optional ? NULL : ERR_PTR(-ENOTSUPP);
->     95	}
->     96	
->     97	static inline struct reset_control *
->     98	devm_reset_control_array_get(struct device *dev, bool shared, bool optional)
->     99	{
->    100		return optional ? NULL : ERR_PTR(-ENOTSUPP);
->    101	}
->    102	
->    103	static inline struct reset_control *
->    104	of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
->    105	{
->    106		return optional ? NULL : ERR_PTR(-ENOTSUPP);
->    107	}
->    108	
->    109	static inline
->  > 110	void reset_control_array_put(struct reset_control_array *resets)
->    111	{
->    112	}
-
-reset_control_array_put is static now, I forgot to remove this stub.
-
-regards
-      * Philipp
+T24gVGh1LCBKdW4gMDgsIDIwMTcgYXQgMDM6MjU6MjVQTSArMDIwMCwgQ2hyaXN0b3BoIEhlbGx3
+aWcgd3JvdGU6Cj4gSGkgYWxsLAo+IAo+IGZvciBhIHdoaWxlIHdlIGhhdmUgYSBnZW5lcmljIGlt
+cGxlbWVudGF0aW9uIG9mIHRoZSBkbWEgbWFwcGluZyByb3V0aW5lcwo+IHRoYXQgY2FsbCBpbnRv
+IHBlci1hcmNoIG9yIHBlci1kZXZpY2Ugb3BlcmF0aW9ucy4gIEJ1dCByaWdodCBub3cgdGhlcmUK
+PiBzdGlsbCBhcmUgdmFyaW91cyBiaXRzIGluIHRoZSBpbnRlcmZhY2VzIHdoZXJlIGRvbid0IGNs
+ZWFybHkgb3BlcmF0ZQo+IG9uIHRoZXNlIG9wcy4gIFRoaXMgc2VyaWVzIHRyaWVzIHRvIGNsZWFu
+IHVwIGEgbG90IG9mIHRob3NlIChidXQgbm90IGFsbAo+IHlldCwgYnV0IHRoZSBzZXJpZXMgaXMg
+YmlnIGVub3VnaCkuICBJdCBnZXRzIHJpZCBvZiB0aGUgRE1BX0VSUk9SX0NPREUKPiB3YXkgb2Yg
+c2lnbmFsaW5nIGZhaWx1cmVzIG9mIHRoZSBtYXBwaW5nIHJvdXRpbmVzIGZyb20gdGhlCj4gaW1w
+bGVtZW50YXRpb25zIHRvIHRoZSBnZW5lcmljIGNvZGUgKGFuZCBjbGVhbnMgdXAgdmFyaW91cyBk
+cml2ZXJzIHRoYXQKPiB3ZXJlIGluY29ycmVjdGx5IHVzaW5nIGl0KSwgYW5kIGdldHMgcmlkIG9m
+IHRoZSAtPnNldF9kbWFfbWFzayByb3V0aW5lCj4gaW4gZmF2b3Igb2YgcmVseWluZyBvbiB0aGUg
+LT5kbWFfY2FwYWJsZSBtZXRob2QgdGhhdCBjYW4gYmUgdXNlZCBpbgo+IHRoZSBzYW1lIHdheSwg
+YnV0IHdoaWNoIHJlcXVpcmVzIGxlc3MgY29kZSBkdXBsaWNhdGlvbi4KPiAKPiBCdHcsIHdlIGRv
+bid0IHNlZW0gdG8gaGF2ZSBhIHRyZWUgZXZlcnktZ3Jvd2luZyBhbW91bnQgb2YgY29tbW9uIGRt
+YQo+IG1hcHBpbmcgY29kZSwgYW5kIGdpdmVuIHRoYXQgSSBoYXZlIGEgZmFpciBhbW91bnQgb2Yg
+YWxsIG92ZXIgdGhlIHRyZWUKPiB3b3JrIGluIHRoYXQgYXJlYSBpbiBteSBwbGF0ZSBJJ2QgbGlr
+ZSB0byBzdGFydCBvbmUuICBBbnkgZ29vZCByZWFzb24KPiB0byB0aGF0PyAgQW55b25lIHdpbGxp
+bmcgdG8gdm9sdW50ZWVyIGFzIGNvIG1haW50YWluZXI/Cj4gCj4gVGhlIHdob2xlIHNlcmllcyBp
+cyBhbHNvIGF2YWlsYWJsZSBpbiBnaXQ6Cj4gCj4gICAgIGdpdDovL2dpdC5pbmZyYWRlYWQub3Jn
+L3VzZXJzL2hjaC9taXNjLmdpdCBkbWEtbWFwCgpBY2sgZm9yIHRoZSAyIGRybSBwYXRjaGVzLCBi
+dXQgSSBjYW4gYWxzbyBwaWNrIHRoZW0gdXAgdGhyb3VnaCBkcm0tbWlzYyBpZgp5b3UgcHJlZmVy
+IHRoYXQgKGJ1dCB0aGVuIGl0J2xsIGJlIDQuMTQpLgotRGFuaWVsCgo+IAo+IEdpdHdlYjoKPiAK
+PiAgICAgaHR0cDovL2dpdC5pbmZyYWRlYWQub3JnL3VzZXJzL2hjaC9taXNjLmdpdC9zaG9ydGxv
+Zy9yZWZzL2hlYWRzL2RtYS1tYXAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJ
+bnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
