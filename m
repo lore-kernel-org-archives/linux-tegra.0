@@ -1,49 +1,67 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: new dma-mapping tree,
- was Re: clean up and modularize arch dma_mapping interface V2
-Date: Wed, 21 Jun 2017 15:32:39 +0200
-Message-ID: <5425587c-73e8-e24a-86a3-8a65a7791dcb@samsung.com>
-References: <20170616181059.19206-1-hch@lst.de> <20170620124140.GA27163@lst.de>
- <20170620230400.1a5ae889@canb.auug.org.au>
- <CGME20170620131628epcas1p4f21d821bd414cba7e2d49abcbe414365@epcas1p4.samsung.com>
- <20170620131623.GB30769@lst.de>
+From: jeffy <jeffy.chen@rock-chips.com>
+Subject: Re: [RFC PATCH v3 3/6] ARM/arm64: dts: enable wakeup for cros-ec-spi
+ devices
+Date: Wed, 21 Jun 2017 23:33:29 +0800
+Message-ID: <594A91C9.1090906@rock-chips.com>
+References: <1498039313-24220-1-git-send-email-jeffy.chen@rock-chips.com>
+ <1498039313-24220-4-git-send-email-jeffy.chen@rock-chips.com>
+ <CAJKOXPdL2CB9VWNo=it0dos-4hJYrgHUSZwcG1DS=9c+YxXzhQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170620131623.GB30769@lst.de>
-Content-language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-mips@linux-mips.org, linux-ia64@vger.kernel.org, linux-sh@vger.kernel.org, dri-devel@lists.freedesktop.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, x86@kernel.org, iommu@lists.linux-foundation.org, Linus Torvalds <torvalds@linux-foundation.org>, xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org, openrisc@lists.librecores.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, dmaengine@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAJKOXPdL2CB9VWNo=it0dos-4hJYrgHUSZwcG1DS=9c+YxXzhQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, dmitry.torokhov@gmail.com, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, briannorris@chromium.org, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, dianders@chromium.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgQ2hyaXN0b3BoLAoKT24gMjAxNy0wNi0yMCAxNToxNiwgQ2hyaXN0b3BoIEhlbGx3aWcgd3Jv
-dGU6Cj4gT24gVHVlLCBKdW4gMjAsIDIwMTcgYXQgMTE6MDQ6MDBQTSArMTAwMCwgU3RlcGhlbiBS
-b3Rod2VsbCB3cm90ZToKPj4gZ2l0Oi8vZ2l0LmxpbmFyby5vcmcvcGVvcGxlL21zenlwcm93c2tp
-L2xpbnV4LWRtYS1tYXBwaW5nLmdpdCNkbWEtbWFwcGluZy1uZXh0Cj4+Cj4+IENvbnRhY3RzOiBN
-YXJlayBTenlwcm93c2tpIGFuZCBLeXVuZ21pbiBQYXJrIChjYydkKQo+Pgo+PiBJIGhhdmUgY2Fs
-bGVkIHlvdXIgdHJlZSBkbWEtbWFwcGluZy1oY2ggZm9yIG5vdy4gIFRoZSBvdGhlciB0cmVlIGhh
-cwo+PiBub3QgYmVlbiB1cGRhdGVkIHNpbmNlIDQuOS1yYzEgYW5kIEkgYW0gbm90IHN1cmUgaG93
-IGdlbmVyYWwgaXQgaXMuCj4+IE1hcmVrLCBLeXVuZ21pbiwgYW55IGNvbW1lbnRzPwo+IEknZCBi
-ZSBoYXBweSB0byBqb2luIGVmZm9ydHMgLSBjby1tYWludGFpbmVycyBhbmQgcmV2aWVycyBhcmUg
-YWx3YXlzCj4gd2VsY29tZS4KCkkgZGlkIHNvbWUgZG1hLW1hcHBpbmcgdW5pZmljYXRpb24gd29y
-a3MgaW4gdGhlIHBhc3QgYW5kIG15IHRyZWUgaW4gCmxpbnV4LW5leHQKd2FzIGEgc2lkZSBlZmZl
-Y3Qgb2YgdGhhdC4gSSB0aGluayB0aGF0IGZvciBub3cgaXQgY2FuIGJlIGRyb3BwZWQgaW4gCmZh
-dm9yIG9mCkNocmlzdG9waCdzIHRyZWUuIEkgY2FuIGFsc28gZG8gc29tZSByZXZpZXcgYW5kIGhl
-bHAgaW4gbWFpbnRhaW5lcnMgd29yayBpZgpuZWVkZWQsIGFsdGhvdWdoIEkgd2FzIHJlY2VudGx5
-IGJ1c3kgd2l0aCBvdGhlciBzdHVmZi4KCkNocmlzdG9waDogQ291bGQgeW91IGFkZCBtZSB0byB5
-b3VyIE1BSU5UQUlORVJTIHBhdGNoLCBzbyBmdXJ0aGVyIApkbWEtbWFwcGluZwpyZWxhdGVkIHBh
-dGNoZXMgaG9wZWZ1bGx5IHdpbGwgYmUgYWxzbyBDQzogdG8gbWU/CgpCZXN0IHJlZ2FyZHMKLS0g
-Ck1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9sYW5kCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Krzysztof,
+
+thanx for your comment.
+
+On 06/21/2017 06:45 PM, Krzysztof Kozlowski wrote:
+> On Wed, Jun 21, 2017 at 12:01 PM, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
+>> We used to enable wakeup for cros-ec-spi devices unconditionally.
+>> Now we are using the more generic wakeup-source property to enable it.
+>
+> Using wakeup-source property is still enabling this unconditionally.
+> What  do you exactly mean here?
+i mean the wakeup-source is an optional property, we can disable wakeup 
+by not adding it.
+
+but now i enable it to all exist cros-ec-spi devices for not breaking 
+current stuffs :)
+>
+>>
+>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+>> ---
+>>
+>> Changes in v3: None
+>>
+>>   arch/arm/boot/dts/exynos5420-peach-pit.dts      | 1 +
+>>   arch/arm/boot/dts/exynos5800-peach-pi.dts       | 1 +
+>>   arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi | 1 +
+>>   arch/arm/boot/dts/tegra124-nyan.dtsi            | 1 +
+>>   arch/arm/boot/dts/tegra124-venice2.dts          | 1 +
+>>   arch/arm64/boot/dts/nvidia/tegra132-norrin.dts  | 1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi    | 1 +
+>>   7 files changed, 7 insertions(+)
+>
+> Please split it per arch (arm and arm64) and per machine. I'll take
+> exynos after splitting.
+ok, sounds good, will do it in next version, thanx~
+>
+> Best regards,
+> Krzysztof
+>
+>
+>
