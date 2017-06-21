@@ -1,103 +1,49 @@
-From: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 00/51] rtc: stop using rtc deprecated functions
-Date: Wed, 21 Jun 2017 14:35:35 +0200
-Message-ID: <20170621123535.b5fvwlydfhnhuqll@piout.net>
-References: <20170620213507.urobmtg34vzubrdq@piout.net>
- <alpine.DEB.2.20.1706202343120.2157@nanos>
- <20170621075152.GA15996@amd>
- <20170621083907.y3gadsmsoufa5niv@piout.net>
- <20170621063443.GA4862@localhost>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: new dma-mapping tree,
+ was Re: clean up and modularize arch dma_mapping interface V2
+Date: Wed, 21 Jun 2017 15:32:39 +0200
+Message-ID: <5425587c-73e8-e24a-86a3-8a65a7791dcb@samsung.com>
+References: <20170616181059.19206-1-hch@lst.de> <20170620124140.GA27163@lst.de>
+ <20170620230400.1a5ae889@canb.auug.org.au>
+ <CGME20170620131628epcas1p4f21d821bd414cba7e2d49abcbe414365@epcas1p4.samsung.com>
+ <20170620131623.GB30769@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <rtc-linux+bncBCKYNX7Y3IMBBI6QVHFAKGQEVXY45VQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20170621063443.GA4862@localhost>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, "patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sylvain Lemieux <slemieux.tyco-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TaqPxH82wqD4g@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170620131623.GB30769@lst.de>
+Content-language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-mips@linux-mips.org, linux-ia64@vger.kernel.org, linux-sh@vger.kernel.org, dri-devel@lists.freedesktop.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, x86@kernel.org, iommu@lists.linux-foundation.org, Linus Torvalds <torvalds@linux-foundation.org>, xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org, openrisc@lists.librecores.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, dmaengine@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 21/06/2017 at 08:34:43 +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > > > > I think tglx had a plan for offsetting the time at some point so 32-bit
-> > > > > platform can pass 2038 properly.
-> > > > 
-> > > > Yes, but there are still quite some issues to solve there:
-> > > > 
-> > > >      1) How do you tell the system that it should apply the offset in the
-> > > >      	first place, i.e at boot time before NTP or any other mechanism can
-> > > >      	correct it?
-> > > 
-> > > I'd not do offset. Instead, I'd select a threshold (perhaps year of
-> > > release of given kernel?) and
-> > > 
-> > > 	if (rtc_time < year_of_release_of_kernel)
-> > > 	   rtc_time += 0x100000000;
-> > > 
-> > > Ok, we'll have to move away from "rtc_time == 0 indicates zero", as
-> > > seen in some drivers.
-> > > 
-> > > >      2) Deal with creative vendors who have their own idea about the 'start
-> > > >      	of the epoch'
-> > > 
-> > > If someone uses different threshold, well, there will be
-> > > confusion. But only for users that have their rtc set to the past,
-> > > which is quite unusual.
-> > > 
-> > 
-> > Or not, having an RTC set in the past is actually quite common. I'd find
-> > it weird to have a new device boot and be set to a date in the future.
-> 
-> ...but still better than board stuck in the past, no?
-> 
-> > Also note that the threshold or offset thing may seem like a good idea
-> > but fails with many RTCs because of how they handle leap years.
-> 
-> Well, you can still convert time from rtc to unix time, then do adjustment
-> there.
-> 
-
-You can only if your machine is running when that happens. If that is
-not the case, then you lost and your time is not correct anymore.
-
-There is currently one rtc doing that kind of trick but it is used as a
-simple time counter from the beginning. Transitioning is the difficult
-part.
-
-> Anyway, I guess it would be cool for rtc drivers to annotate what limits
-> underlying storage has to the common code, so that we can do fixups once
-> per class, not once per driver.
-
-Yes, I'm in the middle of the whole rework that allows that.
-
-I don't understand the sudden urgency of fixing that and the amount of
-bikeshedding, seeing that the closest cutoff date is actually 31st of
-december 2069 in the rtc subsystem and that anyway the current 32bit
-userspace will explode in february 2038.
-
-My plan from the beginning was to have something for the next stable. I
-know nobody can read my mind but again, I don't think there is currently
-any urgency to change anything.
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
--- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+SGkgQ2hyaXN0b3BoLAoKT24gMjAxNy0wNi0yMCAxNToxNiwgQ2hyaXN0b3BoIEhlbGx3aWcgd3Jv
+dGU6Cj4gT24gVHVlLCBKdW4gMjAsIDIwMTcgYXQgMTE6MDQ6MDBQTSArMTAwMCwgU3RlcGhlbiBS
+b3Rod2VsbCB3cm90ZToKPj4gZ2l0Oi8vZ2l0LmxpbmFyby5vcmcvcGVvcGxlL21zenlwcm93c2tp
+L2xpbnV4LWRtYS1tYXBwaW5nLmdpdCNkbWEtbWFwcGluZy1uZXh0Cj4+Cj4+IENvbnRhY3RzOiBN
+YXJlayBTenlwcm93c2tpIGFuZCBLeXVuZ21pbiBQYXJrIChjYydkKQo+Pgo+PiBJIGhhdmUgY2Fs
+bGVkIHlvdXIgdHJlZSBkbWEtbWFwcGluZy1oY2ggZm9yIG5vdy4gIFRoZSBvdGhlciB0cmVlIGhh
+cwo+PiBub3QgYmVlbiB1cGRhdGVkIHNpbmNlIDQuOS1yYzEgYW5kIEkgYW0gbm90IHN1cmUgaG93
+IGdlbmVyYWwgaXQgaXMuCj4+IE1hcmVrLCBLeXVuZ21pbiwgYW55IGNvbW1lbnRzPwo+IEknZCBi
+ZSBoYXBweSB0byBqb2luIGVmZm9ydHMgLSBjby1tYWludGFpbmVycyBhbmQgcmV2aWVycyBhcmUg
+YWx3YXlzCj4gd2VsY29tZS4KCkkgZGlkIHNvbWUgZG1hLW1hcHBpbmcgdW5pZmljYXRpb24gd29y
+a3MgaW4gdGhlIHBhc3QgYW5kIG15IHRyZWUgaW4gCmxpbnV4LW5leHQKd2FzIGEgc2lkZSBlZmZl
+Y3Qgb2YgdGhhdC4gSSB0aGluayB0aGF0IGZvciBub3cgaXQgY2FuIGJlIGRyb3BwZWQgaW4gCmZh
+dm9yIG9mCkNocmlzdG9waCdzIHRyZWUuIEkgY2FuIGFsc28gZG8gc29tZSByZXZpZXcgYW5kIGhl
+bHAgaW4gbWFpbnRhaW5lcnMgd29yayBpZgpuZWVkZWQsIGFsdGhvdWdoIEkgd2FzIHJlY2VudGx5
+IGJ1c3kgd2l0aCBvdGhlciBzdHVmZi4KCkNocmlzdG9waDogQ291bGQgeW91IGFkZCBtZSB0byB5
+b3VyIE1BSU5UQUlORVJTIHBhdGNoLCBzbyBmdXJ0aGVyIApkbWEtbWFwcGluZwpyZWxhdGVkIHBh
+dGNoZXMgaG9wZWZ1bGx5IHdpbGwgYmUgYWxzbyBDQzogdG8gbWU/CgpCZXN0IHJlZ2FyZHMKLS0g
+Ck1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9sYW5kCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
