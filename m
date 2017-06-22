@@ -1,74 +1,47 @@
-From: tndave <tushar.n.dave@oracle.com>
-Subject: Re: clean up and modularize arch dma_mapping interface V2
-Date: Wed, 21 Jun 2017 12:24:28 -0700
-Message-ID: <162d7932-5766-4c29-5471-07d1b699190a@oracle.com>
-References: <20170616181059.19206-1-hch@lst.de>
+From: jeffy <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: [RFC PATCH v3 3/6] ARM/arm64: dts: enable wakeup for cros-ec-spi
+ devices
+Date: Thu, 22 Jun 2017 10:33:47 +0800
+Message-ID: <594B2C8B.3000401@rock-chips.com>
+References: <1498039313-24220-1-git-send-email-jeffy.chen@rock-chips.com> <1498039313-24220-4-git-send-email-jeffy.chen@rock-chips.com> <CAJKOXPdL2CB9VWNo=it0dos-4hJYrgHUSZwcG1DS=9c+YxXzhQ@mail.gmail.com> <594A91C9.1090906@rock-chips.com> <20170621153632.7cajs5xwdmhdm2fg@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20170616181059.19206-1-hch@lst.de>
-Content-Language: en-US
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Christoph Hellwig <hch@lst.de>, x86@kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, openrisc@lists.librecores.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170621153632.7cajs5xwdmhdm2fg@kozik-lap>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Krzysztof,
+
+thanx for noting that, will add it to next version :)
 
 
-On 06/16/2017 11:10 AM, Christoph Hellwig wrote:
-> Hi all,
-> 
-> for a while we have a generic implementation of the dma mapping routines
-> that call into per-arch or per-device operations.  But right now there
-> still are various bits in the interfaces where don't clearly operate
-> on these ops.  This series tries to clean up a lot of those (but not all
-> yet, but the series is big enough).  It gets rid of the DMA_ERROR_CODE
-> way of signaling failures of the mapping routines from the
-> implementations to the generic code (and cleans up various drivers that
-> were incorrectly using it), and gets rid of the ->set_dma_mask routine
-> in favor of relying on the ->dma_capable method that can be used in
-> the same way, but which requires less code duplication.
-Chris,
-
-Thanks for doing this.
-So archs can still have their own definition for dma_set_mask() if 
-HAVE_ARCH_DMA_SET_MASK is y?
-(and similarly for dma_set_coherent_mask() when 
-CONFIG_ARCH_HAS_DMA_SET_COHERENT_MASK is y)
-Any plan to change these?
-
-I'm in a process of making some changes to SPARC iommu so it would be 
-good to know. Thanks.
-
--Tushar
-
-> 
-> I've got a good number of reviews last time, but a few are still missing.
-> I'd love to not have to re-spam everyone with this patchbomb, so early
-> ACKs (or complaints) are welcome.
-> 
-> I plan to create a new dma-mapping tree to collect all this work.
-> Any volunteers for co-maintainers, especially from the iommu gang?
-> 
-> The whole series is also available in git:
-> 
->      git://git.infradead.org/users/hch/misc.git dma-map
-> 
-> Gitweb:
-> 
->      http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-map
-> 
-> Changes since V1:
->   - remove two lines of code from arm dmabounce
->   - a few commit message tweaks
->   - lots of ACKs
-> 
+On 06/21/2017 11:36 PM, Krzysztof Kozlowski wrote:
+> On Wed, Jun 21, 2017 at 11:33:29PM +0800, jeffy wrote:
+>> Hi Krzysztof,
+>>
+>> thanx for your comment.
+>>
+>> On 06/21/2017 06:45 PM, Krzysztof Kozlowski wrote:
+>>> On Wed, Jun 21, 2017 at 12:01 PM, Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
+>>>> We used to enable wakeup for cros-ec-spi devices unconditionally.
+>>>> Now we are using the more generic wakeup-source property to enable it.
+>>>
+>>> Using wakeup-source property is still enabling this unconditionally.
+>>> What  do you exactly mean here?
+>> i mean the wakeup-source is an optional property, we can disable wakeup by
+>> not adding it.
+>
+> Maybe mention this in commit msg? This removes any confusion. "Till now
+> the driver always enabled wakeup but now it supports wakeup property so
+> add it to keep same functionality."
+>
+> Best regards,
+> Krzysztof
+>
+>
+>
+>
