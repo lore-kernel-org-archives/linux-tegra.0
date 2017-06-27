@@ -1,25 +1,143 @@
-From: Julian Smith <sinara_group-KN7UnAbNpbg@public.gmane.org>
-Subject: Product Inquiry
-Date: Mon, 26 Jun 2017 17:52:37 -0400 (EDT)
-Message-ID: <20170626215237.2770C2CEE6@mail.dealer.com>
-Reply-To: sinara-group-5URONGGNgjI@public.gmane.org
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2] dmaengine: tegra-apb: Really fix runtime-pm usage
+Date: Tue, 27 Jun 2017 12:44:58 +0100
+Message-ID: <f336e72a-d966-11e4-0885-e324843d5c00@nvidia.com>
+References: <1496753369-5356-1-git-send-email-jonathanh@nvidia.com>
+ <20170606144820.GB21217@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170606144820.GB21217@ulmo>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello, 
 
-My name is Ms Julian Smith and i am from Sinara Group Co.
-We are glad to know about your company from the web and we are interested in
-your products.Please send us your Latest catalog and price list for our
-trial order. 
 
-Julian Smith, 
-Purchasing Manager
-Sinara Group Co.
-7 Krasnogo Znameni Ave.
-Vladivostok,690106,Ukraine
+On 06/06/17 15:48, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Tue, Jun 06, 2017 at 01:49:29PM +0100, Jon Hunter wrote:
+>> Commit edd3bdbe9db1 ("dmaengine: tegra-apb: Correct runtime-pm usage")
+>> added pm_runtime_get/put() calls to the tegra-apb DMA system suspend
+>> callbacks. Runtime PM is disabled during system suspend and so these
+>> APIs cannot be used. Fix the suspend handling for the tegra-apb DMA by
+>> moving the save and restore of the DMA register context into the
+>> runtime PM suspend and resume callbacks, and then use the
+>> pm_runtime_force_suspend/resume() APIs to invoke the runtime PM
+>> callbacks during system suspend.
+>>
+>> Fixes: edd3bdbe9db1 ("dmaengine: tegra-apb: Correct runtime-pm usage")
+>>
+>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>
+>> Changes since V1:
+>> - Drop the custom suspend/resume callbacks and use
+>>   pm_runtime_force_suspend/resume directly in SET_SYSTEM_SLEEP_PM_OPS.
+>>
+>>  drivers/dma/tegra20-apb-dma.c | 50 +++++++++----------------------------------
+>>  1 file changed, 10 insertions(+), 40 deletions(-)
+>>
+>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+>> index 3722b9d8d9fe..b9d75a54c896 100644
+>> --- a/drivers/dma/tegra20-apb-dma.c
+>> +++ b/drivers/dma/tegra20-apb-dma.c
+>> @@ -1494,35 +1494,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
+>>  static int tegra_dma_runtime_suspend(struct device *dev)
+>>  {
+>>  	struct tegra_dma *tdma = dev_get_drvdata(dev);
+>> -
+>> -	clk_disable_unprepare(tdma->dma_clk);
+>> -	return 0;
+>> -}
+>> -
+>> -static int tegra_dma_runtime_resume(struct device *dev)
+>> -{
+>> -	struct tegra_dma *tdma = dev_get_drvdata(dev);
+>> -	int ret;
+>> -
+>> -	ret = clk_prepare_enable(tdma->dma_clk);
+>> -	if (ret < 0) {
+>> -		dev_err(dev, "clk_enable failed: %d\n", ret);
+>> -		return ret;
+>> -	}
+>> -	return 0;
+>> -}
+>> -
+>> -#ifdef CONFIG_PM_SLEEP
+>> -static int tegra_dma_pm_suspend(struct device *dev)
+>> -{
+>> -	struct tegra_dma *tdma = dev_get_drvdata(dev);
+>>  	int i;
+>> -	int ret;
+>> -
+>> -	/* Enable clock before accessing register */
+>> -	ret = pm_runtime_get_sync(dev);
+>> -	if (ret < 0)
+>> -		return ret;
+>>  
+>>  	tdma->reg_gen = tdma_read(tdma, TEGRA_APBDMA_GENERAL);
+>>  	for (i = 0; i < tdma->chip_data->nr_channels; i++) {
+>> @@ -1543,21 +1515,21 @@ static int tegra_dma_pm_suspend(struct device *dev)
+>>  						  TEGRA_APBDMA_CHAN_WCOUNT);
+>>  	}
+>>  
+>> -	/* Disable clock */
+>> -	pm_runtime_put(dev);
+>> +	clk_disable_unprepare(tdma->dma_clk);
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> -static int tegra_dma_pm_resume(struct device *dev)
+>> +static int tegra_dma_runtime_resume(struct device *dev)
+>>  {
+>>  	struct tegra_dma *tdma = dev_get_drvdata(dev);
+>> -	int i;
+>> -	int ret;
+>> +	int i, ret;
+>>  
+>> -	/* Enable clock before accessing register */
+>> -	ret = pm_runtime_get_sync(dev);
+>> -	if (ret < 0)
+>> +	ret = clk_prepare_enable(tdma->dma_clk);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "clk_enable failed: %d\n", ret);
+>>  		return ret;
+>> +	}
+>>  
+>>  	tdma_write(tdma, TEGRA_APBDMA_GENERAL, tdma->reg_gen);
+>>  	tdma_write(tdma, TEGRA_APBDMA_CONTROL, 0);
+>> @@ -1582,16 +1554,14 @@ static int tegra_dma_pm_resume(struct device *dev)
+>>  			(ch_reg->csr & ~TEGRA_APBDMA_CSR_ENB));
+>>  	}
+>>  
+>> -	/* Disable clock */
+>> -	pm_runtime_put(dev);
+>>  	return 0;
+>>  }
+>> -#endif
+>>  
+>>  static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
+>>  	SET_RUNTIME_PM_OPS(tegra_dma_runtime_suspend, tegra_dma_runtime_resume,
+>>  			   NULL)
+>> -	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
+>> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+>> +				pm_runtime_force_resume)
+> 
+> Is that even necessary? I thought runtime PM was going to be triggered
+> for system sleep anyway, but it looks like there are other examples of
+> this usage, so maybe I'm mistaken.
+
+Yes this is necessary. No RPM is not automatically trigger by system
+suspend AFAICT.
+
+Cheers
+Jon
+
+-- 
+nvpublic
