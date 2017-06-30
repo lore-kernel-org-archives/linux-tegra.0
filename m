@@ -1,68 +1,38 @@
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: [PATCH 2/2] drm/atomic: Wait indefinitely and
-	interruptibly for hw_done.
-Date: Wed, 28 Jun 2017 15:28:12 +0200
-Message-ID: <20170628132812.14927-2-maarten.lankhorst@linux.intel.com>
-References: <20170628132812.14927-1-maarten.lankhorst@linux.intel.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2] dmaengine: tegra-apb: Really fix runtime-pm usage
+Date: Fri, 30 Jun 2017 11:12:49 +0530
+Message-ID: <20170630054249.GO19154@localhost>
+References: <1496753369-5356-1-git-send-email-jonathanh@nvidia.com>
+ <20170606144820.GB21217@ulmo>
+ <f336e72a-d966-11e4-0885-e324843d5c00@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20170628132812.14927-1-maarten.lankhorst@linux.intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, nouveau@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ben Skeggs <bskeggs@redhat.com>, CK Hu <ck.hu@mediatek.com>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Jyri Sarha <jsarha@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <f336e72a-d966-11e4-0885-e324843d5c00-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-V2l0aG91dCB3YWl0aW5nIGZvciBod19kb25lLCBwcmV2aW91cyBhdG9taWMgdXBkYXRlcyBtYXkg
-ZGVyZWZlcmVuY2UKdGhlIHdyb25nIHN0YXRlIGFuZCBjYXVzZSBhIGxvdCBvZiBjb25mdXNpb24u
-IFRoZSByZWFsIGZpeCBpcyBmaXhpbmcKYWxsIG9iai0+c3RhdGUgdG8gdXNlIHRoZSBhY2Nlc3Nv
-ciBtYWNyb3MsIGJ1dCBmb3Igbm93IHdhaXQKaW5kZWZpbml0ZWx5IGFuZCBpbnRlcnJ1cHRpYmx5
-LgoKQ2M6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNv
-bT4KQ2M6IERhdmlkIEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT4KQ2M6IERhbmllbCBWZXR0ZXIg
-PGRhbmllbC52ZXR0ZXJAaW50ZWwuY29tPgpDYzogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGxp
-bnV4LmludGVsLmNvbT4KQ2M6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hyb21pdW0ub3JnPgpDYzog
-Q0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4KQ2M6IFBoaWxpcHAgWmFiZWwgPHAuemFiZWxAcGVu
-Z3V0cm9uaXguZGU+CkNjOiBNYXR0aGlhcyBCcnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29t
-PgpDYzogUm9iIENsYXJrIDxyb2JkY2xhcmtAZ21haWwuY29tPgpDYzogQmVuIFNrZWdncyA8YnNr
-ZWdnc0ByZWRoYXQuY29tPgpDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWls
-LmNvbT4KQ2M6IEpvbmF0aGFuIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+CkNjOiBKeXJp
-IFNhcmhhIDxqc2FyaGFAdGkuY29tPgpDYzogVG9taSBWYWxrZWluZW4gPHRvbWkudmFsa2VpbmVu
-QHRpLmNvbT4KQ2M6IEVyaWMgQW5ob2x0IDxlcmljQGFuaG9sdC5uZXQ+CkNjOiBkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCkNjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCkNj
-OiBpbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCkNjOiBsaW51eC1hcm0ta2VybmVsQGxp
-c3RzLmluZnJhZGVhZC5vcmcKQ2M6IGxpbnV4LW1lZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5vcmcK
-Q2M6IGxpbnV4LWFybS1tc21Admdlci5rZXJuZWwub3JnCkNjOiBmcmVlZHJlbm9AbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCkNjOiBub3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpDYzogbGludXgt
-dGVncmFAdmdlci5rZXJuZWwub3JnClNpZ25lZC1vZmYtYnk6IE1hYXJ0ZW4gTGFua2hvcnN0IDxt
-YWFydGVuLmxhbmtob3JzdEBsaW51eC5pbnRlbC5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2Ry
-bV9hdG9taWNfaGVscGVyLmMgfCAxMiArKysrKy0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA1IGlu
-c2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L2RybV9hdG9taWNfaGVscGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIu
-YwppbmRleCBmNjZiNmM0NWNkZDAuLjU2ZTc3MjlkOTkzZCAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9t
-aWNfaGVscGVyLmMKQEAgLTIxNDQsOCArMjE0NCw3IEBAIEVYUE9SVF9TWU1CT0woZHJtX2F0b21p
-Y19oZWxwZXJfY2xlYW51cF9wbGFuZXMpOwogaW50IGRybV9hdG9taWNfaGVscGVyX3N3YXBfc3Rh
-dGUoc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlLAogCQkJCSAgYm9vbCBzdGFsbCkKIHsK
-LQlpbnQgaTsKLQlsb25nIHJldDsKKwlpbnQgaSwgcmV0OwogCXN0cnVjdCBkcm1fY29ubmVjdG9y
-ICpjb25uZWN0b3I7CiAJc3RydWN0IGRybV9jb25uZWN0b3Jfc3RhdGUgKm9sZF9jb25uX3N0YXRl
-LCAqbmV3X2Nvbm5fc3RhdGU7CiAJc3RydWN0IGRybV9jcnRjICpjcnRjOwpAQCAtMjE2OCwxMiAr
-MjE2NywxMSBAQCBpbnQgZHJtX2F0b21pY19oZWxwZXJfc3dhcF9zdGF0ZShzdHJ1Y3QgZHJtX2F0
-b21pY19zdGF0ZSAqc3RhdGUsCiAJCQlpZiAoIWNvbW1pdCkKIAkJCQljb250aW51ZTsKIAotCQkJ
-cmV0ID0gd2FpdF9mb3JfY29tcGxldGlvbl90aW1lb3V0KCZjb21taXQtPmh3X2RvbmUsCi0JCQkJ
-CQkJICAxMCpIWik7Ci0JCQlpZiAocmV0ID09IDApCi0JCQkJRFJNX0VSUk9SKCJbQ1JUQzolZDol
-c10gaHdfZG9uZSB0aW1lZCBvdXRcbiIsCi0JCQkJCSAgY3J0Yy0+YmFzZS5pZCwgY3J0Yy0+bmFt
-ZSk7CisJCQlyZXQgPSB3YWl0X2Zvcl9jb21wbGV0aW9uX2ludGVycnVwdGlibGUoJmNvbW1pdC0+
-aHdfZG9uZSk7CiAJCQlkcm1fY3J0Y19jb21taXRfcHV0KGNvbW1pdCk7CisKKwkJCWlmIChyZXQp
-CisJCQkJcmV0dXJuIHJldDsKIAkJfQogCX0KIAotLSAKMi4xMS4wCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0Cklu
-dGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+On Tue, Jun 27, 2017 at 12:44:58PM +0100, Jon Hunter wrote:
+
+> >>  static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
+> >>  	SET_RUNTIME_PM_OPS(tegra_dma_runtime_suspend, tegra_dma_runtime_resume,
+> >>  			   NULL)
+> >> -	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
+> >> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> >> +				pm_runtime_force_resume)
+> > 
+> > Is that even necessary? I thought runtime PM was going to be triggered
+> > for system sleep anyway, but it looks like there are other examples of
+> > this usage, so maybe I'm mistaken.
+> 
+> Yes this is necessary. No RPM is not automatically trigger by system
+> suspend AFAICT.
+
+Yes I was earlier under the same impression but later did realize that the
+behaviour seems to be arch specific and we don't have guarantee on this
+
+-- 
+~Vinod
