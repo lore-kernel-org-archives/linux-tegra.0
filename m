@@ -1,54 +1,103 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH v2] devfreq: tegra: fix error return code in
- tegra_devfreq_probe()
-Date: Mon, 3 Jul 2017 07:47:38 -0500
-Message-ID: <20170703124738.GA3947@embeddedgus>
-References: <df35dc5e-0a8f-0022-be20-36be38fbf83b@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 1/2] drm/atomic: Change
+ drm_atomic_helper_swap_state to return an error.
+Date: Mon, 3 Jul 2017 18:35:01 +0200
+Message-ID: <20170703163501.cklhozsbj4v5ftev@phenom.ffwll.local>
+References: <20170628132812.14927-1-maarten.lankhorst@linux.intel.com>
+ <20170630135621.c2xlunjaepne2vqt@phenom.ffwll.local>
+ <76319124-3497-f941-73c7-ce6abf084551@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <df35dc5e-0a8f-0022-be20-36be38fbf83b@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+In-Reply-To: <76319124-3497-f941-73c7-ce6abf084551@linux.intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, David Airlie <airlied@linux.ie>, nouveau@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jyri Sarha <jsarha@ti.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-mediatek@lists.infradead.org, Ben Skeggs <bskeggs@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org, CK Hu <ck.hu@mediatek.com>, Daniel Vetter <daniel.vetter@intel.com>, freedreno@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-platform_get_irq() returns an error code, but the tegra-devfreq
-driver ignores it and always returns -ENODEV. This is not correct,
-and prevents -EPROBE_DEFER from being propagated properly.
-
-Notice that platform_get_irq() no longer returns 0 on error:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e330b9a6bb35dc7097a4f02cb1ae7b6f96df92af
-
-Print and propagate the return value of platform_get_irq on failure.
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
-Changes in v2:
- Rewrite commit message.
-
- drivers/devfreq/tegra-devfreq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-index 214fff9..ae71215 100644
---- a/drivers/devfreq/tegra-devfreq.c
-+++ b/drivers/devfreq/tegra-devfreq.c
-@@ -688,9 +688,9 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0) {
--		dev_err(&pdev->dev, "Failed to get IRQ\n");
--		return -ENODEV;
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", irq);
-+		return irq;
- 	}
- 
- 	platform_set_drvdata(pdev, tegra);
--- 
-2.5.0
+T24gTW9uLCBKdWwgMDMsIDIwMTcgYXQgMDE6MDE6NTVQTSArMDIwMCwgTWFhcnRlbiBMYW5raG9y
+c3Qgd3JvdGU6Cj4gT3AgMzAtMDYtMTcgb20gMTU6NTYgc2NocmVlZiBEYW5pZWwgVmV0dGVyOgo+
+ID4gT24gV2VkLCBKdW4gMjgsIDIwMTcgYXQgMDM6Mjg6MTFQTSArMDIwMCwgTWFhcnRlbiBMYW5r
+aG9yc3Qgd3JvdGU6Cj4gPj4gV2Ugd2FudCB0byBjaGFuZ2Ugc3dhcF9zdGF0ZSB0byB3YWl0IGlu
+ZGVmaW5pdGVseSwgYnV0IHRvIGRvIHRoaXMKPiA+PiBzd2FwX3N0YXRlIHNob3VsZCB3YWl0IGlu
+dGVycnVwdGlibHkuIFRoaXMgcmVxdWlyZXMgcHJvcGFnYXRpbmcKPiA+PiB0aGUgZXJyb3IgdG8g
+ZWFjaCBkcml2ZXIuIEFsbCBkcml2ZXJzIGhhdmUgY2hhbmdlcyB0byBkZWFsIHdpdGggdGhlCj4g
+Pj4gY2xlYW4gdXAuIEluIG9yZGVyIHRvIGFsbG93IGVhc3kgcmV2ZXJ0aW5nLCB0aGUgY29tbWl0
+IHRoYXQgY2hhbmdlcwo+ID4+IGJlaGF2aW9yIGlzIHNlcGFyYXRlIHNvIHNvbWVvbmUgb25seSBo
+YXMgdG8gcmV2ZXJ0IHRoYXQgZm9yIHRlc3RpbmcuCj4gPj4KPiA+PiBOb3V2ZWF1IGhhcyBhIHNt
+YWxsIGJ1Z2ZpeCwgaWYgZHJtX2F0b21pY19oZWxwZXJfd2FpdF9mb3JfZmVuY2VzCj4gPj4gZmFp
+bGVkIGNsZWFudXBfcGxhbmVzIHdhcyBub3QgY2FsbGVkLgo+ID4+Cj4gPj4gQ2M6IEJvcmlzIEJy
+ZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KPiA+PiBDYzogRGF2
+aWQgQWlybGllIDxhaXJsaWVkQGxpbnV4LmllPgo+ID4+IENjOiBEYW5pZWwgVmV0dGVyIDxkYW5p
+ZWwudmV0dGVyQGludGVsLmNvbT4KPiA+PiBDYzogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGxp
+bnV4LmludGVsLmNvbT4KPiA+PiBDYzogU2VhbiBQYXVsIDxzZWFucGF1bEBjaHJvbWl1bS5vcmc+
+Cj4gPj4gQ2M6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+Cj4gPj4gQ2M6IFBoaWxpcHAgWmFi
+ZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+Cj4gPj4gQ2M6IE1hdHRoaWFzIEJydWdnZXIgPG1h
+dHRoaWFzLmJnZ0BnbWFpbC5jb20+Cj4gPj4gQ2M6IFJvYiBDbGFyayA8cm9iZGNsYXJrQGdtYWls
+LmNvbT4KPiA+PiBDYzogQmVuIFNrZWdncyA8YnNrZWdnc0ByZWRoYXQuY29tPgo+ID4+IENjOiBU
+aGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgo+ID4+IENjOiBKb25hdGhh
+biBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPgo+ID4+IENjOiBKeXJpIFNhcmhhIDxqc2Fy
+aGFAdGkuY29tPgo+ID4+IENjOiBUb21pIFZhbGtlaW5lbiA8dG9taS52YWxrZWluZW5AdGkuY29t
+Pgo+ID4+IENjOiBFcmljIEFuaG9sdCA8ZXJpY0BhbmhvbHQubmV0Pgo+ID4+IENjOiBkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gPj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmcKPiA+PiBDYzogaW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+ID4+IENjOiBs
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKPiA+PiBDYzogbGludXgtbWVkaWF0
+ZWtAbGlzdHMuaW5mcmFkZWFkLm9yZwo+ID4+IENjOiBsaW51eC1hcm0tbXNtQHZnZXIua2VybmVs
+Lm9yZwo+ID4+IENjOiBmcmVlZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gPj4gQ2M6IG5v
+dXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gPj4gQ2M6IGxpbnV4LXRlZ3JhQHZnZXIua2Vy
+bmVsLm9yZwo+ID4+IFNpZ25lZC1vZmYtYnk6IE1hYXJ0ZW4gTGFua2hvcnN0IDxtYWFydGVuLmxh
+bmtob3JzdEBsaW51eC5pbnRlbC5jb20+Cj4gPiBXZSBraW5kYSBuZWVkIHRvIGJhY2twb3J0IHRo
+aXMgdG8gb2xkZXIga2VybmVscywgYnV0IEkgZG9uJ3QgcmVhbGx5IHNlZQo+ID4gaG93IDooIE1h
+eWJlIHdlIHNob3VsZCBzcGxpdCB0aGlzIHVwOgo+ID4gcGF0Y2ggMTogQ2hhbmdlIHRvIGludCBy
+ZXR1cm4gdHlwZQo+ID4gcGF0Y2hlcyAyLShuLTEpOiBEcml2ZXIgY29udmVyc2lvbnMKPiA+IHBh
+dGNoIG46IF9fbXVzdF9jaGVjayBhZGRpdGlvbgo+ID4KPiA+IFRoYXQgd291bGQgYXQgbGVhc3Qg
+c29tZXdoYXQgbWFrZSB0aGlzIGJhY2twb3J0YWJsZSAuLi4KPiA+Cj4gPj4gLS0tCj4gPj4gIGRy
+aXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5jIHwgMTQgKysrKysrKysr
+KysrLS0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMgICAgICAgICAg
+fCAxOCArKysrKysrKysrKystLS0tLS0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
+ZGlzcGxheS5jICAgICAgICAgfCAxMCArKysrKysrKystCj4gPj4gIGRyaXZlcnMvZ3B1L2RybS9t
+ZWRpYXRlay9tdGtfZHJtX2Rydi5jICAgICAgIHwgIDcgKysrKysrLQo+ID4+ICBkcml2ZXJzL2dw
+dS9kcm0vbXNtL21zbV9hdG9taWMuYyAgICAgICAgICAgICB8IDE0ICsrKysrKysrKy0tLS0tCj4g
+Pj4gIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252NTBfZGlzcGxheS5jICAgICAgIHwgMTAgKysr
+KysrKystLQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAgICAgICAgICAg
+ICB8ICA3ICsrKysrKy0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL3RpbGNkYy90aWxjZGNfZHJ2LmMg
+ICAgICAgICAgfCAgNiArKysrKy0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfa21zLmMg
+ICAgICAgICAgICAgICAgfCAyMSArKysrKysrKysrKysrLS0tLS0tLS0KPiA+PiAgaW5jbHVkZS9k
+cm0vZHJtX2F0b21pY19oZWxwZXIuaCAgICAgICAgICAgICAgfCAgNCArKy0tCj4gPj4gIDEwIGZp
+bGVzIGNoYW5nZWQsIDgyIGluc2VydGlvbnMoKyksIDI5IGRlbGV0aW9ucygtKQo+ID4+Cj4gPj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5j
+IGIvZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMKPiA+PiBpbmRl
+eCA1MTZkOTU0N2QzMzEuLmQ0Zjc4N2JmMWQ0YSAxMDA2NDQKPiA+PiAtLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYwo+ID4+ICsrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5jCj4gPj4gQEAgLTU0NCw5ICs1NDQsMTEg
+QEAgc3RhdGljIGludCBhdG1lbF9obGNkY19kY19hdG9taWNfY29tbWl0KHN0cnVjdCBkcm1fZGV2
+aWNlICpkZXYsCj4gPj4gIAkJZ290byBlcnJvcjsKPiA+PiAgCX0KPiA+PiAgCj4gPj4gLQkvKiBT
+d2FwIHRoZSBzdGF0ZSwgdGhpcyBpcyB0aGUgcG9pbnQgb2Ygbm8gcmV0dXJuLiAqLwo+ID4+IC0J
+ZHJtX2F0b21pY19oZWxwZXJfc3dhcF9zdGF0ZShzdGF0ZSwgdHJ1ZSk7Cj4gPiBQdXNoIHRoZSBz
+d2FwX3N0YXRlIHVwIG92ZXIgdGhlIGNvbW1pdCBzZXR1cCAoYnV0IGFmdGVyIHRoZSBhbGxvY2F0
+aW9uKQo+ID4gYW5kIHRoZXJlJ3Mgbm8gbW9yZSBhIHByb2JsZW0gd2l0aCB1bnJvbGxpbmcuCj4g
+VGhpcyBjYW4ndCBiZSBkb25lIGhpZ2hlciB1cCBiZWNhdXNlIG9mIHRoZSBpbnRlcnJ1cHRpYmxl
+IHdhaXQuCj4gCj4gVW5sZXNzIHdlIGNoYW5nZSB0aGUgcGF0Y2ggc2VyaWVzIHRvIG1vdmUgdGhl
+IHdhaXRpbmcgZm9yIGh3X2RvbmUgdG8gYSBzZXBhcmF0ZSBzdGVwIGFuZCBnZXQgcmlkIG9mIHRo
+ZSBzdGFsbCBhcmd1bWVudCB0byBzd2FwX3N0YXRlIG9uY2UgZXZlcnl0aGluZyBpcyBjb252ZXJ0
+ZWQuIFRoaXMgY291bGQgYmUgdXNlZnVsIGZvciBhbGwgZHJpdmVycyB0aGF0IGhhdmUgc29tZSBr
+aW5kIG9mIHNldHVwLCBiZWNhdXNlIHdlIGNvdWxkIG1vdmUgdGhlIHdhaXQgdXAgc2xpZ2h0bHkg
+dG8gc3VpdCB0aGUgZHJpdmVycyBuZWVkcy4KCnJpZ2h0LCBzd2FwX3N0YXRlICh3ZWxsIHRoZSBz
+d2FwcGluZyBwYXJ0LCBub3QgdGhlIHN0YWxsaW5nIHBhcnQpIG11c3QgYmUKZG9uZSBhcyB0aGUg
+bGFzdCBzdGVwIGFuZCBjYW4ndCBmYWlsLiBNaWdodCBiZSBhIHJlYXNvbiBkbyBzcGxpdCB0aGVt
+LCBidXQKbm90IHN1cmUgdGhhdCdzIGEgZ29vZCBpZGVhIGVpdGhlci4gUGxlYXNlIGRpc3JlZ2Fy
+ZCBteSBjb21tZW50IC4uLgotRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2lu
+ZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0
+CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
