@@ -1,48 +1,47 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH] gpio: drop unnecessary includes from
- include/linux/gpio/driver.h
-Date: Tue, 4 Jul 2017 08:58:51 -0400
-Message-ID: <20170704125851.GA20504@sophia>
-References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Select appropriate DMA options for LPAE
+Date: Tue, 04 Jul 2017 17:29:05 +0300
+Message-ID: <1499178545.12420.4.camel@paulk.fr>
+References: <20170424225946.19425-1-contact@paulk.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ray Jui <rjui@broadcom.com>, =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, David Cohen <david.a.cohen@linux.intel.com>, Scott Branden <sbranden@broadcom.com>, linux-acpi@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, Florian Fainelli <f.fainelli@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alexander Shiyan <shc_work@mail.ru>, Michal Simek <michal.simek@xilinx.com>, Kevin Hilman <khilman@kernel.org>, linux-tegra@vger.kernel.org, Joel Stanley <joel@jms.id.au>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.o
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170424225946.19425-1-contact-W9ppeneeCTY@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 04, 2017 at 12:53:34PM +0900, Masahiro Yamada wrote:
->Some of include directives in include/linux/gpio/driver.h are
->unneeded because the header does not need to know the content of
->struct device, irq_chip, etc.  Just declare they are structures.
->
->On the other hand, <linux/irqhandler.h> and <linux/spinlock_types.h>
->turned out to be necessary for irq_flow_handler_t and spinlock_t,
->respectively.
->
->Each driver should include what it needs without relying on what is
->implicitly included from <linux/gpio/driver.h>.  This will cut down
->unnecessary header parsing.
->
->Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->---
->
-> drivers/gpio/gpio-104-dio-48e.c  |  1 +
-> drivers/gpio/gpio-104-idi-48.c   |  1 +
-> drivers/gpio/gpio-104-idio-16.c  |  1 +
-> drivers/gpio/gpio-pci-idio-16.c  |  2 ++
-> drivers/gpio/gpio-ws16c48.c      |  1 +
+On Tue, 2017-04-25 at 00:59 +0200, Paul Kocialkowski wrote:
+> This automatically selects options for zone DMA and 64 bit DMA addresses
+> when LPAE is enabled on ARM Tegra platforms. These options are required
+> for proper operation with LPAE enabled.
 
-The changes to the above drivers look fine to me:
+Bumping this one since it did not get any review yet.
 
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+It should be a good candidate for inclusion now that the merge window is open.
 
-However, this patch as a whole does too many things; I'd like to see it
-split-up logically similar to how Andy Shevchenko suggested in his
-reply. That should allow ACKs by respective driver maintainers to be
-accounted more properly.
+> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+> index 329f01c5b6f8..c8368d647741 100644
+> --- a/arch/arm/mach-tegra/Kconfig
+> +++ b/arch/arm/mach-tegra/Kconfig
+> @@ -13,5 +13,7 @@ menuconfig ARCH_TEGRA
+>  	select ARCH_HAS_RESET_CONTROLLER
+>  	select RESET_CONTROLLER
+>  	select SOC_BUS
+> +	select ZONE_DMA if ARM_LPAE
+> +	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+>  	help
+>  	  This enables support for NVIDIA Tegra based systems.
+-- 
+Paul Kocialkowski, developer of free digital technology and hardware support
 
-William Breathitt Gray
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
