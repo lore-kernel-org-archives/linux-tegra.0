@@ -1,47 +1,70 @@
-From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Select appropriate DMA options for LPAE
-Date: Tue, 04 Jul 2017 17:29:05 +0300
-Message-ID: <1499178545.12420.4.camel@paulk.fr>
-References: <20170424225946.19425-1-contact@paulk.fr>
+From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Subject: Re: [PATCH] gpio: drop unnecessary includes from include/linux/gpio/driver.h
+Date: Wed, 5 Jul 2017 00:43:08 +0900
+Message-ID: <CAK7LNATRrngmVFPDSKmUm3Td7RXnSZSPGNF9Ds_y+DU=i7mRag@mail.gmail.com>
+References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com> <20170704125851.GA20504@sophia>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170424225946.19425-1-contact-W9ppeneeCTY@public.gmane.org>
+In-Reply-To: <20170704125851.GA20504@sophia>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, David Cohen <david.a.cohen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Broadcom Kernel Feedback List <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel <linux-arm-kerne>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2017-04-25 at 00:59 +0200, Paul Kocialkowski wrote:
-> This automatically selects options for zone DMA and 64 bit DMA addresses
-> when LPAE is enabled on ARM Tegra platforms. These options are required
-> for proper operation with LPAE enabled.
+2017-07-04 21:58 GMT+09:00 William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> On Tue, Jul 04, 2017 at 12:53:34PM +0900, Masahiro Yamada wrote:
+>>Some of include directives in include/linux/gpio/driver.h are
+>>unneeded because the header does not need to know the content of
+>>struct device, irq_chip, etc.  Just declare they are structures.
+>>
+>>On the other hand, <linux/irqhandler.h> and <linux/spinlock_types.h>
+>>turned out to be necessary for irq_flow_handler_t and spinlock_t,
+>>respectively.
+>>
+>>Each driver should include what it needs without relying on what is
+>>implicitly included from <linux/gpio/driver.h>.  This will cut down
+>>unnecessary header parsing.
+>>
+>>Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+>>---
+>>
+>> drivers/gpio/gpio-104-dio-48e.c  |  1 +
+>> drivers/gpio/gpio-104-idi-48.c   |  1 +
+>> drivers/gpio/gpio-104-idio-16.c  |  1 +
+>> drivers/gpio/gpio-pci-idio-16.c  |  2 ++
+>> drivers/gpio/gpio-ws16c48.c      |  1 +
+>
+> The changes to the above drivers look fine to me:
+>
+> Acked-by: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>
+> However, this patch as a whole does too many things; I'd like to see it
+> split-up logically similar to how Andy Shevchenko suggested in his
+> reply. That should allow ACKs by respective driver maintainers to be
+> accounted more properly.
+>
+> William Breathitt Gray
 
-Bumping this one since it did not get any review yet.
 
-It should be a good candidate for inclusion now that the merge window is open.
+I was missing a very important thing.
 
-> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> index 329f01c5b6f8..c8368d647741 100644
-> --- a/arch/arm/mach-tegra/Kconfig
-> +++ b/arch/arm/mach-tegra/Kconfig
-> @@ -13,5 +13,7 @@ menuconfig ARCH_TEGRA
->  	select ARCH_HAS_RESET_CONTROLLER
->  	select RESET_CONTROLLER
->  	select SOC_BUS
-> +	select ZONE_DMA if ARM_LPAE
-> +	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
->  	help
->  	  This enables support for NVIDIA Tegra based systems.
+<linux/gpio/driver.h> is used in various subsystems.
+
+I tested only under drivers/gpio/, but
+drivers/pinctrl/ is one of the biggest source of compile errors.
+
+(Probably I will get reports from kbuild test robot.)
+
+
+So, I need to think about how to merge this (if the basic idea of this is OK).
+
+Maybe,
+
+[1] Send patches to subsystems (gpio, pinctrl, etc.) for v4.14
+[2] Drop unneeded includes from linux/gpio/driver.h for v4.15
+
+
 -- 
-Paul Kocialkowski, developer of free digital technology and hardware support
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+Best Regards
+Masahiro Yamada
