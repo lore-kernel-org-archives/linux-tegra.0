@@ -1,35 +1,92 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] gpio: drop unnecessary includes from include/linux/gpio/driver.h
-Date: Tue, 4 Jul 2017 18:51:36 +0300
-Message-ID: <CAHp75VcfDdSCoU=DZyF1BD0YX9KfmLnptnHU9fgBQY3g-NW7PQ@mail.gmail.com>
-References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
- <20170704125851.GA20504@sophia> <CAK7LNATRrngmVFPDSKmUm3Td7RXnSZSPGNF9Ds_y+DU=i7mRag@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK7LNATRrngmVFPDSKmUm3Td7RXnSZSPGNF9Ds_y+DU=i7mRag@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ray Jui <rjui@broadcom.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, David Cohen <david.a.cohen@linux.intel.com>, Scott Branden <sbranden@broadcom.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alexander Shiyan <shc_work@mail.ru>, Michal Simek <michal.simek@xilinx.com>, Kev
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1 1/4] iommu/tegra: gart: Don't unnecessarily allocate registers context
+Date: Wed,  5 Jul 2017 19:29:45 +0300
+Message-ID: <df570fb6649da6bc3b5f2a68afcb5471e6148269.1499270277.git.digetx@gmail.com>
+References: <cover.1499270277.git.digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1499270277.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <cover.1499270277.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+References: <cover.1499270277.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 4, 2017 at 6:43 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2017-07-04 21:58 GMT+09:00 William Breathitt Gray <vilhelm.gray@gmail.com>:
+GART looses it's state only in case of a deepest suspend level. Let's not
+waste memory if machine doesn't support that suspend level.
 
-> So, I need to think about how to merge this (if the basic idea of this is OK).
->
-> Maybe,
->
-> [1] Send patches to subsystems (gpio, pinctrl, etc.) for v4.14
-> [2] Drop unneeded includes from linux/gpio/driver.h for v4.15
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/iommu/tegra-gart.c | 36 +++++++++++++++++++++++++-----------
+ 1 file changed, 25 insertions(+), 11 deletions(-)
 
-Perhaps, fixing users (drivers!) first. then frameworks / libraries,
-at last header itself (in each case perhaps follow the split I
-proposed earlier).
-
-My wish is to get gpiolib-acpi patch completely separate from the bunch.
-
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index 37e708fdbb5a..1557a6a9a438 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -31,6 +31,8 @@
+ #include <linux/iommu.h>
+ #include <linux/of.h>
+ 
++#include <soc/tegra/pmc.h>
++
+ #include <asm/cacheflush.h>
+ 
+ /* bitmap of the page sizes currently supported */
+@@ -354,10 +356,13 @@ static int tegra_gart_suspend(struct device *dev)
+ 	u32 *data = gart->savedata;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&gart->pte_lock, flags);
+-	for_each_gart_pte(gart, iova)
+-		*(data++) = gart_read_pte(gart, iova);
+-	spin_unlock_irqrestore(&gart->pte_lock, flags);
++	if (gart->savedata != NULL) {
++		spin_lock_irqsave(&gart->pte_lock, flags);
++		for_each_gart_pte(gart, iova)
++			*(data++) = gart_read_pte(gart, iova);
++		spin_unlock_irqrestore(&gart->pte_lock, flags);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -366,9 +371,12 @@ static int tegra_gart_resume(struct device *dev)
+ 	struct gart_device *gart = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&gart->pte_lock, flags);
+-	do_gart_setup(gart, gart->savedata);
+-	spin_unlock_irqrestore(&gart->pte_lock, flags);
++	if (gart->savedata != NULL) {
++		spin_lock_irqsave(&gart->pte_lock, flags);
++		do_gart_setup(gart, gart->savedata);
++		spin_unlock_irqrestore(&gart->pte_lock, flags);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -412,10 +420,16 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 	gart->iovmm_base = (dma_addr_t)res_remap->start;
+ 	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
+ 
+-	gart->savedata = vmalloc(sizeof(u32) * gart->page_count);
+-	if (!gart->savedata) {
+-		dev_err(dev, "failed to allocate context save area\n");
+-		return -ENOMEM;
++	/*
++	 * The registers store/restore is required only in case of a
++	 * deepest sleep state, do not waste memory if it's unnecessary.
++	 */
++	if (tegra_pmc_get_suspend_mode() == TEGRA_SUSPEND_LP0) {
++		gart->savedata = vmalloc(sizeof(u32) * gart->page_count);
++		if (!gart->savedata) {
++			dev_err(dev, "failed to allocate context save area\n");
++			return -ENOMEM;
++		}
+ 	}
+ 
+ 	platform_set_drvdata(pdev, gart);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.13.2
