@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 8/9] ARM: tegra: Enable UDC on AC100
-Date: Wed,  5 Jul 2017 20:19:57 +0300
-Message-ID: <a0923f46a14c27afd7d2595dfb8878c2ebf02230.1499273075.git.digetx@gmail.com>
+Subject: [PATCH v1 9/9] ARM: defconfig: tegra: Enable ChipIdea UDC driver
+Date: Wed,  5 Jul 2017 20:19:58 +0300
+Message-ID: <5eac9306f4049ba51ed8b7f53820d28f294725cb.1499273075.git.digetx@gmail.com>
 References: <cover.1499273075.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1499273075.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,28 +12,67 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fel
 Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Override the compatible string of the first USB controller to enable
-device mode.
+Since NVIDIA Tegra 20/30/40/TK1 are supported now by the ChipIdea driver,
+let's enable this driver in tegra_defconfig.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20-paz00.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/configs/tegra_defconfig | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index b4bfa5586c23..d979153d5a04 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -452,7 +452,9 @@
- 	};
- 
- 	usb@c5000000 {
-+		compatible = "nvidia,tegra20-udc";
- 		status = "okay";
-+		dr_mode = "otg";
- 	};
- 
- 	usb-phy@c5000000 {
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index f0efc854b5a2..b0ebe6631602 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -121,7 +121,6 @@ CONFIG_TOUCHSCREEN_WM97XX=y
+ CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_INPUT_MISC=y
+ # CONFIG_LEGACY_PTYS is not set
+-# CONFIG_DEVKMEM is not set
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+@@ -218,6 +217,9 @@ CONFIG_USB_EHCI_TEGRA=y
+ CONFIG_USB_ACM=y
+ CONFIG_USB_WDM=y
+ CONFIG_USB_STORAGE=y
++CONFIG_USB_CHIPIDEA=m
++CONFIG_USB_CHIPIDEA_UDC=y
++CONFIG_USB_GADGET=m
+ CONFIG_MMC=y
+ CONFIG_MMC_BLOCK_MINORS=16
+ CONFIG_MMC_SDHCI=y
+@@ -247,8 +249,6 @@ CONFIG_RTC_DRV_TEGRA=y
+ CONFIG_DMADEVICES=y
+ CONFIG_TEGRA20_APB_DMA=y
+ CONFIG_STAGING=y
+-CONFIG_SENSORS_ISL29018=y
+-CONFIG_SENSORS_ISL29028=y
+ CONFIG_MFD_NVEC=y
+ CONFIG_KEYBOARD_NVEC=y
+ CONFIG_SERIO_NVEC_PS2=y
+@@ -263,6 +263,8 @@ CONFIG_ARCH_TEGRA_124_SOC=y
+ CONFIG_MEMORY=y
+ CONFIG_IIO=y
+ CONFIG_MPU3050_I2C=y
++CONFIG_SENSORS_ISL29018=y
++CONFIG_SENSORS_ISL29028=y
+ CONFIG_AK8975=y
+ CONFIG_PWM=y
+ CONFIG_PWM_TEGRA=y
+@@ -288,13 +290,11 @@ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ CONFIG_PRINTK_TIME=y
+ CONFIG_DEBUG_INFO=y
+-CONFIG_DEBUG_FS=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_SLAB=y
+ CONFIG_DEBUG_VM=y
+ CONFIG_DETECT_HUNG_TASK=y
+ CONFIG_SCHEDSTATS=y
+-CONFIG_TIMER_STATS=y
+ # CONFIG_DEBUG_PREEMPT is not set
+ CONFIG_DEBUG_MUTEXES=y
+ CONFIG_DEBUG_SG=y
 -- 
 2.13.2
