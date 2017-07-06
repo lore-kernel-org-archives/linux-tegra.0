@@ -1,31 +1,49 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v1 7/9] ARM: tegra: Enable UDC on Jetson TK1
-Date: Thu, 6 Jul 2017 10:44:26 -0600
-Message-ID: <3fc5c1ea-6bad-74f3-b29a-4543c883d26f@wwwdotorg.org>
+Subject: Re: [PATCH v1 4/9] ARM: tegra: Enable UDC on TrimSlice
+Date: Thu, 6 Jul 2017 10:46:54 -0600
+Message-ID: <7717016d-6da4-6933-a36e-4a6bf45646ab@wwwdotorg.org>
 References: <cover.1499273075.git.digetx@gmail.com>
- <c6b78a8d149eb9341f41a6b1181569c4b78df1af.1499273075.git.digetx@gmail.com>
+ <82321d32d968c6b9481a77fbecae8c0756d37f0f.1499273075.git.digetx@gmail.com>
+ <20170706012409.GD24420@b29397-desktop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <c6b78a8d149eb9341f41a6b1181569c4b78df1af.1499273075.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170706012409.GD24420@b29397-desktop>
 Content-Language: en-GB
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/05/2017 11:19 AM, Dmitry Osipenko wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 07/05/2017 07:24 PM, Peter Chen wrote:
+> On Wed, Jul 05, 2017 at 08:19:53PM +0300, Dmitry Osipenko wrote:
+>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Override the compatible string of the first USB controller to enable
+>> device mode.
+>>
+>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   arch/arm/boot/dts/tegra20-trimslice.dts | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+>> index b902ab594afa..96b4f3f9827b 100644
+>> --- a/arch/arm/boot/dts/tegra20-trimslice.dts
+>> +++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+>> @@ -336,7 +336,9 @@
+>>   	};
+>>   
+>>   	usb@c5000000 {
+>> +		compatible = "nvidia,tegra20-udc";
+>>   		status = "okay";
+>> +		dr_mode = "otg";
 > 
-> Override the compatible string of the first USB controller to enable
-> device mode.
+> If this board supports peripheral-only, you need to
+> set dr_mode as "peripheral".
 
-Conceptually I'm fine with this change since the port isn't enabled at 
-all yet and so this doesn't change any existing behaviour.
-
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I agree here. Even if the ports can theoretically do otg, and DT is 
+supposed to represent HW not SW, given we have no SW support for actual 
+OTG, it'd be best not to change the DT to OTG until it's actually useful 
+to do so. This comment applies to the patches I ack'd already too.
