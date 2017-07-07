@@ -1,85 +1,86 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] input: tegra-kbc: add NULL check on of_match_device()
- return value
-Date: Fri, 7 Jul 2017 11:30:41 +0200
-Message-ID: <20170707093041.GC15652@ulmo.fritz.box>
-References: <20170707062758.GA17584@embeddedgus>
- <ec9b399b-ad14-21eb-9a2e-649f0dd1d489@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: regression? no hdmi output on tegra124 (kernel 4.12)
+Date: Fri, 7 Jul 2017 14:28:14 +0100
+Message-ID: <97b04d3a-a969-a23b-9414-4937dd2f2ef6@nvidia.com>
+References: <CAHMsQjVGGF-QFzccok0--22DzOEspULSYRLt+0aatO-0=D1jqw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="V88s5gaDVPzZ0KCq"
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <ec9b399b-ad14-21eb-9a2e-649f0dd1d489@nvidia.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAHMsQjVGGF-QFzccok0--22DzOEspULSYRLt+0aatO-0=D1jqw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anthony Eden <aeden-EfZU8u+QLuPpgkiH4x7ZXw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---V88s5gaDVPzZ0KCq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 05/07/17 21:31, Anthony Eden wrote:
+> I no longer have any HDMI output from either my Jetson TK1
+> (tegra124-jetson-tk1) or Acer Chromebook 13 CB5-311
+> (tegra124-nyan-big) in Linux 4.12. In 4.11 I had no problem starting
+> up X server.
+> 
+> Lightdm tries to start on boot and /var/log/Xorg.0.log contains:
+> 
+> ...
+> 
+> [    10.723] (II) modesetting: Driver for Modesetting Kernel Drivers: kms
+> [    10.723] (II) modeset(0): using drv /dev/dri/card0
+> [    10.724] (II) modeset(0): Creating default Display subsection in
+> Screen section
+>         "Default Screen Section" for depth/fbbpp 24/32
+> [    10.724] (==) modeset(0): Depth 24, (==) framebuffer bpp 32
+> [    10.724] (==) modeset(0): RGB weight 888
+> [    10.724] (==) modeset(0): Default visual is TrueColor
+> [    10.724] (II) Loading sub module "glamoregl"
+> [    10.724] (II) LoadModule: "glamoregl"
+> [    10.724] (II) Loading /usr/lib/xorg/modules/libglamoregl.so
+> [    10.726] (II) Module glamoregl: vendor="X.Org Foundation"
+> [    10.726]    compiled for 1.19.3, module version = 1.0.0
+> [    10.726]    ABI class: X.Org ANSI C Emulation, version 0.4
+> [    10.726] (II) glamor: OpenGL accelerated X.org driver based.
+> [    10.920] (II) glamor: EGL version 1.4 (DRI2):
+> [    10.924] (II) modeset(0): glamor initialized
+> [    10.924] (WW) modeset(0): No outputs definitely connected, trying again...
+> [    10.925] (WW) modeset(0): Unable to find connected outputs -
+> setting 1024x768 initial framebuffer
+> [    10.925] (==) modeset(0): Using gamma correction (1.0, 1.0, 1.0)
+> [    10.925] (EE) modeset(0): No modes.
+> [    10.957] (II) UnloadModule: "modesetting"
+> [    10.957] (II) UnloadSubModule: "glamoregl"
+> [    10.957] (II) Unloading glamoregl
+> [    10.957] (EE) Screen(s) found, but none have a usable configuration.
+> [    10.957] (EE)
+> Fatal server error:
+> [    10.957] (EE) no screens found(EE)
+> [    10.957] (EE)
+> Please consult the The X.Org Foundation support
+>          at http://wiki.x.org
+>  for help.
+> [    10.957] (EE) Please also check the log file at
+> "/var/log/Xorg.0.log" for additional information.
+> [    10.957] (EE)
+> [    10.957] (EE) Server terminated with error (1). Closing log file.
+> 
+> ...
+> 
+> I am running the ArchLinuxARM linux-armv7 kernel (.config is
+> attached), along with the ALARM userspace.
+> 
+> I've attached dmesg's from my Jetson TK1 and Chromebook. How can I
+> help to debug this further?
 
-On Fri, Jul 07, 2017 at 08:42:32AM +0100, Jon Hunter wrote:
->=20
-> On 07/07/17 07:27, Gustavo A. R. Silva wrote:
-> > Check return value from call to of_match_device()
-> > in order to prevent a NULL pointer dereference.
-> >=20
-> > In case of NULL print error message and return -ENODEV
-> >=20
-> > Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-> > ---
-> >  drivers/input/keyboard/tegra-kbc.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >=20
-> > diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboar=
-d/tegra-kbc.c
-> > index 0c07e10..742c5ac 100644
-> > --- a/drivers/input/keyboard/tegra-kbc.c
-> > +++ b/drivers/input/keyboard/tegra-kbc.c
-> > @@ -617,6 +617,10 @@ static int tegra_kbc_probe(struct platform_device =
-*pdev)
-> >  	const struct of_device_id *match;
-> > =20
-> >  	match =3D of_match_device(tegra_kbc_of_match, &pdev->dev);
-> > +	if (!match) {
-> > +		dev_err(&pdev->dev, "failed to match device\n");
-> > +		return -ENODEV;
-> > +	}
->=20
-> Given that Tegra always uses device-tree, I believe that this cannot
-> happen and so this additional check is not needed.
+Thanks for the report. I am seeing this too. Bisect is point to the
+following commit, hopefully, Thierry and Mikko can comment ...
 
-I think you can make it happen if you manually create the platform
-device with a name matching that of the driver. But you really shouldn't
-be doing that, so might as well let it crash and burn so that people
-realize their mistake early.
+commit 404bfb78daf3bedafb0bfab24947059575cbea3d
+Author: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date:   Wed Dec 14 13:16:14 2016 +0200
 
-Errors are easily overlooked, crashes are not.
+    gpu: host1x: Add IOMMU support
 
-Thierry
+Cheers
+Jon
 
---V88s5gaDVPzZ0KCq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAllfVMAACgkQ3SOs138+
-s6HPlQ//V+n0Gg44rZD6xNHx6cUAroHhMD9Cu8mQYgzxBaGLf2O9FinXBVRnRYke
-shWby7xuse/IdvorbU8zUMNCzFIaIPtm8zS095NQIypp0TmYr7v+Jx8b9KzlP/sQ
-2ny1dBnIMnMrFtVXtzG7cb/v67S8yHVbmuW9RCDxRXJUoIsC7sQCTTZpvBEnNRMI
-c/4g7G7FeY17oxJBnsAQZp4L2suCW+iVoCCfNqqXTRVmRnAfDJs56VuQhB5Sikvh
-Xkrc4i0KnVA9NiVGREHJEVQ4RGe2n3aGMB1/II4RpSvtOZMk1eF6d34qLxKCf0Kx
-S/I6ADy0/Yxq3ajzdMLKV+1WjYeOVoUTiYgr2S4XGpEBPZQAai1yA3xK5nucx7aI
-CPa1gldE2a+H5xQtfIHoX7N/E0GeEnfaO6EeLJF7GNiHYS6cgLnKrjqwuXi8Sc84
-h7NR//SWbQ7odsbvIPm1NARbnSM77CrsALRfnv0y/7EM10mBDtxBq9r/Nl90yYAU
-2PtsaDrToddFXncrjldnTHX4Y4BX1berGwZkMfREGGNcuExJaiVo5N+slWhiQagB
-R0wFXU9QWPMNcUagZbUQiJq5WTnYhmUlsyXi32sH5cxFykFKGVGtY+EYymL/zRuD
-51wfijVbKddncB+LAMGZ2HsHKZhD13yZTK9kzFXeL0YhRXIjDWI=
-=WYh6
------END PGP SIGNATURE-----
-
---V88s5gaDVPzZ0KCq--
+-- 
+nvpublic
