@@ -1,8 +1,8 @@
 From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] drm/tegra: sor: add NULL check on of_match_device() return
+Subject: [PATCH] drm/tegra: vic: add NULL check on of_match_device() return
  value
-Date: Fri, 7 Jul 2017 01:11:19 -0500
-Message-ID: <20170707061119.GA12563@embeddedgus>
+Date: Fri, 7 Jul 2017 01:16:26 -0500
+Message-ID: <20170707061626.GA14016@embeddedgus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -19,23 +19,24 @@ In case of NULL print error message and return.
 
 Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 ---
- drivers/gpu/drm/tegra/sor.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/tegra/vic.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index a8f5289..ca3d9b1 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -2538,6 +2538,10 @@ static int tegra_sor_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index 47cb1aa..7e11825 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -283,6 +283,11 @@ static int vic_probe(struct platform_device *pdev)
  	int err;
  
- 	match = of_match_device(tegra_sor_of_match, &pdev->dev);
+ 	match = of_match_device(vic_match, dev);
 +	if (!match) {
 +		dev_err(&pdev->dev, "failed to match device\n");
 +		return -ENODEV;
 +	}
++
+ 	vic_config = (struct vic_config *)match->data;
  
- 	sor = devm_kzalloc(&pdev->dev, sizeof(*sor), GFP_KERNEL);
- 	if (!sor)
+ 	vic = devm_kzalloc(dev, sizeof(*vic), GFP_KERNEL);
 -- 
 2.5.0
