@@ -1,74 +1,85 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drm/tegra: vic: add NULL check on of_match_device()
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] input: tegra-kbc: add NULL check on of_match_device()
  return value
-Date: Fri, 7 Jul 2017 11:25:51 +0200
-Message-ID: <20170707092551.GB15652@ulmo.fritz.box>
-References: <20170707061626.GA14016@embeddedgus>
+Date: Fri, 7 Jul 2017 11:30:41 +0200
+Message-ID: <20170707093041.GC15652@ulmo.fritz.box>
+References: <20170707062758.GA17584@embeddedgus>
+ <ec9b399b-ad14-21eb-9a2e-649f0dd1d489@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="V88s5gaDVPzZ0KCq"
+Return-path: <linux-input-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170707061626.GA14016@embeddedgus>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Gustavo A. R. Silva" <garsilva-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <ec9b399b-ad14-21eb-9a2e-649f0dd1d489@nvidia.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---98e8jtXdkpgskNou
+--V88s5gaDVPzZ0KCq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 07, 2017 at 01:16:26AM -0500, Gustavo A. R. Silva wrote:
-> Check return value from call to of_match_device()
-> in order to prevent a NULL pointer dereference.
+On Fri, Jul 07, 2017 at 08:42:32AM +0100, Jon Hunter wrote:
 >=20
-> In case of NULL print error message and return.
+> On 07/07/17 07:27, Gustavo A. R. Silva wrote:
+> > Check return value from call to of_match_device()
+> > in order to prevent a NULL pointer dereference.
+> >=20
+> > In case of NULL print error message and return -ENODEV
+> >=20
+> > Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> > ---
+> >  drivers/input/keyboard/tegra-kbc.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >=20
+> > diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboar=
+d/tegra-kbc.c
+> > index 0c07e10..742c5ac 100644
+> > --- a/drivers/input/keyboard/tegra-kbc.c
+> > +++ b/drivers/input/keyboard/tegra-kbc.c
+> > @@ -617,6 +617,10 @@ static int tegra_kbc_probe(struct platform_device =
+*pdev)
+> >  	const struct of_device_id *match;
+> > =20
+> >  	match =3D of_match_device(tegra_kbc_of_match, &pdev->dev);
+> > +	if (!match) {
+> > +		dev_err(&pdev->dev, "failed to match device\n");
+> > +		return -ENODEV;
+> > +	}
 >=20
-> Signed-off-by: Gustavo A. R. Silva <garsilva-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
-> ---
->  drivers/gpu/drm/tegra/vic.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-> index 47cb1aa..7e11825 100644
-> --- a/drivers/gpu/drm/tegra/vic.c
-> +++ b/drivers/gpu/drm/tegra/vic.c
-> @@ -283,6 +283,11 @@ static int vic_probe(struct platform_device *pdev)
->  	int err;
-> =20
->  	match =3D of_match_device(vic_match, dev);
-> +	if (!match) {
-> +		dev_err(&pdev->dev, "failed to match device\n");
-> +		return -ENODEV;
-> +	}
+> Given that Tegra always uses device-tree, I believe that this cannot
+> happen and so this additional check is not needed.
 
-Someone would have to go to great lengths to trigger this condition,
-might as well let it crash as a warning that they've done something
-wrong.
+I think you can make it happen if you manually create the platform
+device with a name matching that of the driver. But you really shouldn't
+be doing that, so might as well let it crash and burn so that people
+realize their mistake early.
+
+Errors are easily overlooked, crashes are not.
 
 Thierry
 
---98e8jtXdkpgskNou
+--V88s5gaDVPzZ0KCq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAllfU58ACgkQ3SOs138+
-s6FJyRAAqv2egX6f6nfZMueRCg3e4PR/FO300tqygd6zT0kH/AoHRMRvbtC17n4+
-ZwsmRBi9NmwqrzMnnaxjZ+j1K0h66NCakK59yycrbUaBVHyAJL2N9blVooJsdm1i
-cHzO3j0CDZ1L+FntfXwQDLG5UDtmnXKRvpaFEuUyUIT7zDjNLcsRPl57iOc9Hvpx
-90V7IUDf2cATzhTUhOsENnRFpWzeGKhg7KTFxB+QsVb3kWccKRd07c532xpT9Myi
-8uX7lY7UOHdwJ/9E+hl1y7uf94AmShHJHgS/Nke0SV8iPac6Z2DuI0bv2YOKzNoK
-eLnbRmB48eoNSyPs1jwMolNO3cRgM2z9AKmTEwsuJgocups8x1xvw1TUXzX4tbZs
-7+xIS4KOC8NxomOmr+8m/a4vn+4Xsyq/v8TWhEqhcZZ+r9gqV2aO02sw2kZIw4fW
-TZKvXpHR1zK5HJ0i/TT7rlOO3eFN4mcru3fXNWBe1Q9ZDCC/e1UhbrzBTTEsRueT
-6rr2WkTzy04vLhH5fLTdklynXVge40M0N9/uTc8nsu4w2cvl3oyD9ZndlWrFs83g
-yUbmG1BVlAjGLYs2SEZ+eIHQJXVfiL20KQ5luUpvs/KtraCOTM1Zo9sE01+OwZ8K
-0GzeX2hNCX7m7n/BkquVGWNn1XJkUPTToaCMD8jBMUMQT5tBeHo=
-=QlgR
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAllfVMAACgkQ3SOs138+
+s6HPlQ//V+n0Gg44rZD6xNHx6cUAroHhMD9Cu8mQYgzxBaGLf2O9FinXBVRnRYke
+shWby7xuse/IdvorbU8zUMNCzFIaIPtm8zS095NQIypp0TmYr7v+Jx8b9KzlP/sQ
+2ny1dBnIMnMrFtVXtzG7cb/v67S8yHVbmuW9RCDxRXJUoIsC7sQCTTZpvBEnNRMI
+c/4g7G7FeY17oxJBnsAQZp4L2suCW+iVoCCfNqqXTRVmRnAfDJs56VuQhB5Sikvh
+Xkrc4i0KnVA9NiVGREHJEVQ4RGe2n3aGMB1/II4RpSvtOZMk1eF6d34qLxKCf0Kx
+S/I6ADy0/Yxq3ajzdMLKV+1WjYeOVoUTiYgr2S4XGpEBPZQAai1yA3xK5nucx7aI
+CPa1gldE2a+H5xQtfIHoX7N/E0GeEnfaO6EeLJF7GNiHYS6cgLnKrjqwuXi8Sc84
+h7NR//SWbQ7odsbvIPm1NARbnSM77CrsALRfnv0y/7EM10mBDtxBq9r/Nl90yYAU
+2PtsaDrToddFXncrjldnTHX4Y4BX1berGwZkMfREGGNcuExJaiVo5N+slWhiQagB
+R0wFXU9QWPMNcUagZbUQiJq5WTnYhmUlsyXi32sH5cxFykFKGVGtY+EYymL/zRuD
+51wfijVbKddncB+LAMGZ2HsHKZhD13yZTK9kzFXeL0YhRXIjDWI=
+=WYh6
 -----END PGP SIGNATURE-----
 
---98e8jtXdkpgskNou--
+--V88s5gaDVPzZ0KCq--
