@@ -1,86 +1,62 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: regression? no hdmi output on tegra124 (kernel 4.12)
-Date: Fri, 7 Jul 2017 14:28:14 +0100
-Message-ID: <97b04d3a-a969-a23b-9414-4937dd2f2ef6@nvidia.com>
-References: <CAHMsQjVGGF-QFzccok0--22DzOEspULSYRLt+0aatO-0=D1jqw@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: [RFC/RFT PATCH 0/3] gpiolib: make gpio irqchip compatible with sparse_irq
+Date: Sat, 8 Jul 2017 17:44:10 -0500
+Message-ID: <20170708224413.18281-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHMsQjVGGF-QFzccok0--22DzOEspULSYRLt+0aatO-0=D1jqw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Anthony Eden <aeden-EfZU8u+QLuPpgkiH4x7ZXw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The idea of this changes was inspired by discussion [1].
 
-On 05/07/17 21:31, Anthony Eden wrote:
-> I no longer have any HDMI output from either my Jetson TK1
-> (tegra124-jetson-tk1) or Acer Chromebook 13 CB5-311
-> (tegra124-nyan-big) in Linux 4.12. In 4.11 I had no problem starting
-> up X server.
-> 
-> Lightdm tries to start on boot and /var/log/Xorg.0.log contains:
-> 
-> ...
-> 
-> [    10.723] (II) modesetting: Driver for Modesetting Kernel Drivers: kms
-> [    10.723] (II) modeset(0): using drv /dev/dri/card0
-> [    10.724] (II) modeset(0): Creating default Display subsection in
-> Screen section
->         "Default Screen Section" for depth/fbbpp 24/32
-> [    10.724] (==) modeset(0): Depth 24, (==) framebuffer bpp 32
-> [    10.724] (==) modeset(0): RGB weight 888
-> [    10.724] (==) modeset(0): Default visual is TrueColor
-> [    10.724] (II) Loading sub module "glamoregl"
-> [    10.724] (II) LoadModule: "glamoregl"
-> [    10.724] (II) Loading /usr/lib/xorg/modules/libglamoregl.so
-> [    10.726] (II) Module glamoregl: vendor="X.Org Foundation"
-> [    10.726]    compiled for 1.19.3, module version = 1.0.0
-> [    10.726]    ABI class: X.Org ANSI C Emulation, version 0.4
-> [    10.726] (II) glamor: OpenGL accelerated X.org driver based.
-> [    10.920] (II) glamor: EGL version 1.4 (DRI2):
-> [    10.924] (II) modeset(0): glamor initialized
-> [    10.924] (WW) modeset(0): No outputs definitely connected, trying again...
-> [    10.925] (WW) modeset(0): Unable to find connected outputs -
-> setting 1024x768 initial framebuffer
-> [    10.925] (==) modeset(0): Using gamma correction (1.0, 1.0, 1.0)
-> [    10.925] (EE) modeset(0): No modes.
-> [    10.957] (II) UnloadModule: "modesetting"
-> [    10.957] (II) UnloadSubModule: "glamoregl"
-> [    10.957] (II) Unloading glamoregl
-> [    10.957] (EE) Screen(s) found, but none have a usable configuration.
-> [    10.957] (EE)
-> Fatal server error:
-> [    10.957] (EE) no screens found(EE)
-> [    10.957] (EE)
-> Please consult the The X.Org Foundation support
->          at http://wiki.x.org
->  for help.
-> [    10.957] (EE) Please also check the log file at
-> "/var/log/Xorg.0.log" for additional information.
-> [    10.957] (EE)
-> [    10.957] (EE) Server terminated with error (1). Closing log file.
-> 
-> ...
-> 
-> I am running the ArchLinuxARM linux-armv7 kernel (.config is
-> attached), along with the ALARM userspace.
-> 
-> I've attached dmesg's from my Jetson TK1 and Chromebook. How can I
-> help to debug this further?
+Now IRQ mappings are always created for all (allowed) GPIOs in GPIO irqchip in
+gpiochip_irqchip_add_key() and this goes against the idea of SPARSE_IRQ and,
+as result, leads to:
+ - increasing of memory consumption because of allocated IRQ descriptors most
+of which will never ever be used (especially on platform with a
+high number of GPIOs).
+ - imposibility to use GPIO irqchip APIs by gpio drivers when HW implements
+GPIO IRQ functionality as IRQ crossbar/multiplexer which has only limited
+number of IRQ outputs (example from [1], all GPIOs can be mapped on only 8
+IRQs).
 
-Thanks for the report. I am seeing this too. Bisect is point to the
-following commit, hopefully, Thierry and Mikko can comment ...
+Hence, remove static IRQ mapping code from gpiochip_irqchip_add_key() and
+instead replace irq_find_mapping() with irq_create_mapping() in
+gpiochip_to_irq(). Also add additional gpiochip_irqchip_irq_valid() calls
+in gpiochip_to_irq() and gpiochip_irq_map().
 
-commit 404bfb78daf3bedafb0bfab24947059575cbea3d
-Author: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Date:   Wed Dec 14 13:16:14 2016 +0200
+After this change gpio2irq mapping will happen the following way when GPIO
+irqchip APIs are used by gpio driver:
+ - IRQ mappings will be created statically if driver passes first_irq>0
+vlaue in gpiochip_irqchip_add_key().
+ - IRQ mappings will be created dynamically from gpio_to_irq() or
+of_irq_get().
 
-    gpu: host1x: Add IOMMU support
+Tested on am335x-evm and dra72-evm-revc.
+- dra72-evm-revc: number of created irq mappings decreased from 402 -> 135
+- am335x-evm: number of created irq mappings decreased from 188 -> 63
 
-Cheers
-Jon
+It's good to have more testing feedbacks for these patches 
+(personally I do not expect regressions, but who knows). One possible side 
+effect is "Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n" message
+during boot, but in this case it might be good to take a look on such GPIO
+drivers to understand why they need to allocate IRQ descriptors.
+
+[1] https://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg1435847.html
+
+Grygorii Strashko (3):
+  gpio: tegra: remove gpio_to_irq() from hw irq handlers
+  gpio: pxa: remove gpio_to_irq() from hw irq handlers
+  gpiolib: make gpio irqchip compatible with sparse_irq
+
+ drivers/gpio/gpio-pxa.c     |  8 +++++---
+ drivers/gpio/gpio-tegra.c   |  3 ++-
+ drivers/gpio/gpiolib.c      | 29 ++++++-----------------------
+ include/linux/gpio/driver.h |  1 -
+ 4 files changed, 13 insertions(+), 28 deletions(-)
 
 -- 
-nvpublic
+2.10.1
