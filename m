@@ -1,53 +1,50 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH] drm/tegra: vic: add NULL check on of_match_device()
- return value
-Date: Mon, 10 Jul 2017 14:29:34 -0500
-Message-ID: <20170710142934.Horde.C0p-TxoXKsaCnNgMwoIsfTu@gator4166.hostgator.com>
-References: <20170707061626.GA14016@embeddedgus>
- <20170707092551.GB15652@ulmo.fritz.box>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170707092551.GB15652@ulmo.fritz.box>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: [PATCH] gpu: host1x: Free the IOMMU domain when there is no device to attach
+Date: Mon, 10 Jul 2017 21:33:05 +0200
+Message-ID: <20170710193305.5987-1-contact@paulk.fr>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+When there is no device to attach to the IOMMU domain, as may be the
+case when the device-tree does not contain the proper iommu node, it is
+best to keep going without IOMMU support rather than failing.
+This allows the driver to probe and function instead of taking down
+all of the tegra drm driver, leading to missing display support.
 
-Quoting Thierry Reding <thierry.reding@gmail.com>:
+Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+---
+ drivers/gpu/host1x/dev.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> On Fri, Jul 07, 2017 at 01:16:26AM -0500, Gustavo A. R. Silva wrote:
->> Check return value from call to of_match_device()
->> in order to prevent a NULL pointer dereference.
->>
->> In case of NULL print error message and return.
->>
->> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
->> ---
->>  drivers/gpu/drm/tegra/vic.c | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
->> index 47cb1aa..7e11825 100644
->> --- a/drivers/gpu/drm/tegra/vic.c
->> +++ b/drivers/gpu/drm/tegra/vic.c
->> @@ -283,6 +283,11 @@ static int vic_probe(struct platform_device *pdev)
->>  	int err;
->>
->>  	match = of_match_device(vic_match, dev);
->> +	if (!match) {
->> +		dev_err(&pdev->dev, "failed to match device\n");
->> +		return -ENODEV;
->> +	}
->
-> Someone would have to go to great lengths to trigger this condition,
-> might as well let it crash as a warning that they've done something
-> wrong.
->
-
-Thanks for clarifying.
---
-Gustavo A. R. Silva
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index ac65f52850a6..f296738d0de8 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -186,8 +186,13 @@ static int host1x_probe(struct platform_device *pdev)
+ 			return -ENOMEM;
+ 
+ 		err = iommu_attach_device(host->domain, &pdev->dev);
+-		if (err)
++		if (err == -ENODEV) {
++			iommu_domain_free(host->domain);
++			host->domain = NULL;
++			goto iommu_skip;
++		} else if (err) {
+ 			goto fail_free_domain;
++		}
+ 
+ 		geometry = &host->domain->geometry;
+ 
+@@ -198,6 +203,7 @@ static int host1x_probe(struct platform_device *pdev)
+ 		host->iova_end = geometry->aperture_end;
+ 	}
+ 
++iommu_skip:
+ 	err = host1x_channel_list_init(host);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to initialize channel list\n");
+-- 
+2.13.1
