@@ -1,72 +1,121 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Paul Kocialkowski <contact@paulk.fr>
 Subject: Re: [PATCH] ARM: tegra: Register host1x node with iommu binding on
  tegra124
-Date: Mon, 10 Jul 2017 07:21:40 +0200
-Message-ID: <20170710052140.GA18089@ulmo.fritz.box>
+Date: Mon, 10 Jul 2017 09:05:39 +0300
+Message-ID: <1499666739.1313.1.camel@paulk.fr>
 References: <20170709163614.6746-1-contact@paulk.fr>
+ <20170710052140.GA18089@ulmo.fritz.box>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170709163614.6746-1-contact-W9ppeneeCTY@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============2590625313743231018=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170710052140.GA18089@ulmo.fritz.box>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============2590625313743231018==
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-eAc9fSCsLW+aXj1wRO/0"
+
+
+--=-eAc9fSCsLW+aXj1wRO/0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 09, 2017 at 07:36:14PM +0300, Paul Kocialkowski wrote:
-> This registers the host1x node with the SMMU (as HC swgroup) to allow
-> the host1x code to attach to it. It avoid failing the probe sequence,
-> which resulted in the tegra drm driver not probing and thus nothing
-> being displayed on-screen.
+Le lundi 10 juillet 2017 =C3=A0 07:21 +0200, Thierry Reding a =C3=A9crit :
+> On Sun, Jul 09, 2017 at 07:36:14PM +0300, Paul Kocialkowski wrote:
+> > This registers the host1x node with the SMMU (as HC swgroup) to
+> > allow
+> > the host1x code to attach to it. It avoid failing the probe
+> > sequence,
+> > which resulted in the tegra drm driver not probing and thus nothing
+> > being displayed on-screen.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+> > ---
+> >  arch/arm/boot/dts/tegra124.dtsi | 1 +
+> >  1 file changed, 1 insertion(+)
 >=20
-> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra124.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+> Thanks for tracking this down. However, I don't think this is an
+> appropriate fix for v4.12 because it requires an update to the DTB in
+> order to preserve functionality, which means we've broken DT ABI. The
+> proper fix I think needs to be to make usage of the IOMMU completely
+> optional in the host1x driver.
 
-Thanks for tracking this down. However, I don't think this is an
-appropriate fix for v4.12 because it requires an update to the DTB in
-order to preserve functionality, which means we've broken DT ABI. The
-proper fix I think needs to be to make usage of the IOMMU completely
-optional in the host1x driver.
+I see, that makes sense.
 
-So I think what happens without this DT change is that the call to
-iommu_attach_device() fails and we have no way to recover from that. I
-think what we need to do is to free the domain in that case and make
-sure we can continue without one. It's probably best to add an error
-message, or maybe a warning to make sure people are aware.
+> So I think what happens without this DT change is that the call to
+> iommu_attach_device() fails and we have no way to recover from that.
 
-Do you have the time to address this? If not, perhaps Mikko can take a
-look?
+That is exactly what is happening, indeed.
 
-Thierry
+> I think what we need to do is to free the domain in that case and make
+> sure we can continue without one. It's probably best to add an error
+> message, or maybe a warning to make sure people are aware.
 
---bp/iNruPH9dso1Pn
+By freeing the domain, do you mean continuing without IOMMU support?
+If so, then we should make sure to only behave that way for -ENODEV and
+generally still fail for other errors.
+
+> Do you have the time to address this? If not, perhaps Mikko can take a
+> look?
+
+I can craft a patch this evening, but if someone else wants to work on
+it earlier, they are totally welcome to do it!
+
+--=20
+Paul Kocialkowski,
+
+developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+--=-eAc9fSCsLW+aXj1wRO/0
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlljDuEACgkQ3SOs138+
-s6HAcg//SLJLE9otp1B3haMpLaH3yhcjMr2cb5lowgpAsznO9nE1STwEkASQtdWz
-WOdWYtkdvqRMdgdlreGHkyyqGTU29/bUi6NUOUZwgTeB9fK5wcQMK2MatXY8o2yj
-QE5/OWe0SulVJekncF2WnLLOUPzkdLzqKPtICGGcHCyvV5ekwe2ULdle8kWTnJm7
-hCOaNDNODJmMGcW74tySjXO44H8wTDyXBRso59IHPpQKbMMJLBF9gBfYE4jN2NC9
-Rim/gedBGnhwJi/UKhOj7s8ivLRgwL0OoHFxGujXDSpm7G9st/0oIMRMwzH3OLEF
-VmTHmmHgMRsy/JkaRKPJ32mufS1CDeSrKkAWLS8C7TZXmEQONbI8LDXYBiyTohnC
-AnKOjPAMnR7f06vVKkRX4sj6OtFl90Hk2N9Vw2C9sp+vlaQB2ZxAohHB+UiIZRoE
-HfQ6YxrRHCtuTXg9D5Hnz/SdaIK5z5Tu4EG+JYPKmQO/2bmbBXcjUlBohM0TWAKn
-Gsh3ZI7pJ9/3h59wVJCpC7fCf1i7wXkPliLPfKd6c9Y/6uHgAlrf939OiYAqg7im
-briy50F7uafFcOiR15zzH0JBMvtIipm+oheAulxD6d5hhLH5hXBEj+zgEZW0uWSG
-BYHT+kUqd6i9O+k1D2dlxY/xsrRxX/8opdiydefKxx59ftMnJV8=
-=MZe3
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlljGTUACgkQhP3B6o/u
+lQyBFBAAklfXJFr1Bkh7ynLOmSykIeRAa9I+bFt9BiniZEPhlebT0X/trDqBNSjf
+ZJu1d5LF6KBIHA7+oRHzdVXhXdgn6QC1AzxNYmz2M0AFT1YdSOigUpJhf92383sW
+OBgasBdRxH4f8te8h1KkF6F4VA88jy1spJh1XJIoa29xPWHSHsbcCxBrIEaigO3v
+hTGE6oecO4i22fFoxW6HgN/RHQ0vEEIDOLQhOpFrnDY+WyJwSM8S4PWGuS/GUsLT
+acWOG1XYw6lNFA3g2dITpPYEP1Xiw42QR9snAmI4+e1HVbhngm4uwTbNfZ/+yEK6
+9V7lTRMVh0pwLdpU2fSuuRC4mgfatgGOXm5vc0J5XPcZ7Gze8eiMqHJaImMuyK2F
+QztjwEx95WbQG2xbiGqhDk+lzdy0S6fZ/V821Gsn13nOv/jk1Dy4NhO8nDfbVAbo
+H4llXve8OD65YShzlRA8HsExCattresukm05z/SYOJaS6myXzdbYin5Sxy3KZsXf
+xYSYBZaLZut+y7ZYMtB1irdQmU7PzxDyBwfmQMPX5o5VasJD83I3KTZQhuJ9StfB
+1xFqFs5avVruONP8V0WHhClhxwJSihNAmICU6oNXCKfCTAgYfnTlBoQXY+TbopZ1
+zKd1RKjCWQmsKiaE2wc2tRVoR3jppkqbhevYj7xl6MegakV+QEs=
+=GKKs
 -----END PGP SIGNATURE-----
 
---bp/iNruPH9dso1Pn--
+--=-eAc9fSCsLW+aXj1wRO/0--
+
+
+
+--===============2590625313743231018==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============2590625313743231018==--
