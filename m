@@ -1,107 +1,61 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH 1/4] arm64: tegra: Add BPMP thermal sensor to Tegra186
-Date: Mon, 10 Jul 2017 11:50:33 +0300
-Message-ID: <842a7f8d-e95f-da94-e0a0-f6b458a8212d@kapsi.fi>
-References: <20170616112825.31025-1-mperttunen@nvidia.com>
- <20170630235603.GA2943@localhost.localdomain>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] input: tegra-kbc: add NULL check on of_match_device()
+ return value
+Date: Mon, 10 Jul 2017 10:42:55 -0700
+Message-ID: <20170710174255.GB23984@dtor-ws>
+References: <20170707062758.GA17584@embeddedgus>
+ <ec9b399b-ad14-21eb-9a2e-649f0dd1d489@nvidia.com>
+ <20170707093041.GC15652@ulmo.fritz.box>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20170630235603.GA2943@localhost.localdomain>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, rui.zhang@intel.com, thierry.reding@gmail.com, jonathanh@nvidia.com, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170707093041.GC15652@ulmo.fritz.box>
+Sender: linux-input-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01.07.2017 02:56, Eduardo Valentin wrote:
-> On Fri, Jun 16, 2017 at 02:28:22PM +0300, Mikko Perttunen wrote:
->> This adds the thermal sensor device provided by the BPMP, and the
->> relevant thermal sensors to the Tegra186 device tree.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 48 ++++++++++++++++++++++++++++++++
->>  1 file changed, 48 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->> index 5e62e68ac053..5c19ea74da24 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->> @@ -4,6 +4,7 @@
->>  #include <dt-bindings/mailbox/tegra186-hsp.h>
->>  #include <dt-bindings/power/tegra186-powergate.h>
->>  #include <dt-bindings/reset/tegra186-reset.h>
->> +#include <dt-bindings/thermal/tegra186-bpmp-thermal.h>
->>
->>  / {
->>  	compatible = "nvidia,tegra186";
->> @@ -444,6 +445,53 @@
->>  			#size-cells = <0>;
->>  			status = "disabled";
->>  		};
->> +
->> +		bpmp_thermal: thermal {
->> +			compatible = "nvidia,tegra186-bpmp-thermal";
->> +			#thermal-sensor-cells = <1>;
->> +		};
->> +	};
->> +
->> +	thermal-zones {
->> +		a57 {
->> +			polling-delay = <0>;
->> +			polling-delay-passive = <1000>;
->> +
->> +			thermal-sensors =
->> +				<&bpmp_thermal TEGRA186_BPMP_THERMAL_ZONE_CPU>;
->> +		};
->> +
->> +		denver {
->> +			polling-delay = <0>;
->> +			polling-delay-passive = <1000>;
->> +
->> +			thermal-sensors =
->> +				<&bpmp_thermal TEGRA186_BPMP_THERMAL_ZONE_AUX>;
->> +		};
->> +
->> +		gpu {
->> +			polling-delay = <0>;
->> +			polling-delay-passive = <1000>;
->> +
->> +			thermal-sensors =
->> +				<&bpmp_thermal TEGRA186_BPMP_THERMAL_ZONE_GPU>;
->> +		};
->> +
->> +		pll {
->> +			polling-delay = <0>;
->> +			polling-delay-passive = <1000>;
->> +
->> +			thermal-sensors =
->> +				<&bpmp_thermal TEGRA186_BPMP_THERMAL_ZONE_PLLX>;
->> +		};
->> +
->> +		always_on {
->> +			polling-delay = <0>;
->> +			polling-delay-passive = <1000>;
->> +
->> +			thermal-sensors =
->> +				<&bpmp_thermal TEGRA186_BPMP_THERMAL_ZONE_AO>;
->> +		};
->
-> All the above zones are lacking mandatory fields. Please refer to the
-> thermal binding documentation.
+On Fri, Jul 07, 2017 at 11:30:41AM +0200, Thierry Reding wrote:
+> On Fri, Jul 07, 2017 at 08:42:32AM +0100, Jon Hunter wrote:
+> > 
+> > On 07/07/17 07:27, Gustavo A. R. Silva wrote:
+> > > Check return value from call to of_match_device()
+> > > in order to prevent a NULL pointer dereference.
+> > > 
+> > > In case of NULL print error message and return -ENODEV
+> > > 
+> > > Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> > > ---
+> > >  drivers/input/keyboard/tegra-kbc.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > > 
+> > > diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+> > > index 0c07e10..742c5ac 100644
+> > > --- a/drivers/input/keyboard/tegra-kbc.c
+> > > +++ b/drivers/input/keyboard/tegra-kbc.c
+> > > @@ -617,6 +617,10 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+> > >  	const struct of_device_id *match;
+> > >  
+> > >  	match = of_match_device(tegra_kbc_of_match, &pdev->dev);
+> > > +	if (!match) {
+> > > +		dev_err(&pdev->dev, "failed to match device\n");
+> > > +		return -ENODEV;
+> > > +	}
+> > 
+> > Given that Tegra always uses device-tree, I believe that this cannot
+> > happen and so this additional check is not needed.
+> 
+> I think you can make it happen if you manually create the platform
+> device with a name matching that of the driver. But you really shouldn't
+> be doing that, so might as well let it crash and burn so that people
+> realize their mistake early.
+> 
+> Errors are easily overlooked, crashes are not.
 
-Will fix.
+Agree.
 
->
->>  	};
->>
->>  	timer {
->> --
->> 2.13.1
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Thanks.
+
+-- 
+Dmitry
