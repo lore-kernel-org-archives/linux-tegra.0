@@ -1,86 +1,63 @@
-From: Paul Kocialkowski <contact@paulk.fr>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Subject: Re: [PATCH] ARM: tegra: Register host1x node with iommu binding on
  tegra124
-Date: Tue, 11 Jul 2017 18:05:55 +0300
-Message-ID: <1499785555.1340.15.camel@paulk.fr>
+Date: Tue, 11 Jul 2017 15:17:46 +0000
+Message-ID: <1499786264.1520.22.camel@toradex.com>
 References: <20170709163614.6746-1-contact@paulk.fr>
- <1499763009.1340.11.camel@paulk.fr> <1499784841.1520.20.camel@toradex.com>
+         <1499763009.1340.11.camel@paulk.fr> <1499784841.1520.20.camel@toradex.com>
+         <1499785555.1340.15.camel@paulk.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1499784841.1520.20.camel@toradex.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Cc: "treding@nvidia.com" <treding@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "swarren@nvidia.com" <swarren@nvidia.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1499785555.1340.15.camel@paulk.fr>
+Content-Language: en-US
+Content-ID: <2499C23F2F43614BB3C460FD949086DA@eurprd05.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "contact@paulk.fr" <contact@paulk.fr>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "treding@nvidia.com" <treding@nvidia.com>, "swarren@nvidia.com" <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2017-07-11 at 14:54 +0000, Marcel Ziswiler wrote:
-> On Tue, 2017-07-11 at 11:50 +0300, Paul Kocialkowski wrote:
-> > On Sun, 2017-07-09 at 19:36 +0300, Paul Kocialkowski wrote:
-> > > This registers the host1x node with the SMMU (as HC swgroup) to
-> > > allow
-> > > the host1x code to attach to it. It avoid failing the probe
-> > > sequence,
-> > > which resulted in the tegra drm driver not probing and thus
-> > > nothing
-> > > being displayed on-screen.
-> > 
-> > Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
-> > 
-> > > Signed-off-by: Paul Kocialkowski <contact-
-> > > W9ppeneeCTY@public.gmane.org>
-> 
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Tested-on: Apalis TK1, Jetson-TK1
-> 
-> > > ---
-> > >  arch/arm/boot/dts/tegra124.dtsi | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/tegra124.dtsi
-> > > b/arch/arm/boot/dts/tegra124.dtsi
-> > > index 187a36c6d0fc..b3b89befffeb 100644
-> > > --- a/arch/arm/boot/dts/tegra124.dtsi
-> > > +++ b/arch/arm/boot/dts/tegra124.dtsi
-> > > @@ -85,6 +85,7 @@
-> > >  		clocks = <&tegra_car TEGRA124_CLK_HOST1X>;
-> > >  		resets = <&tegra_car 28>;
-> > >  		reset-names = "host1x";
-> > > +		iommus = <&mc TEGRA_SWGROUP_HC>;
-> > >  
-> > >  		#address-cells = <2>;
-> > >  		#size-cells = <2>;
-> 
-> So I take it we still will need this one moving forward, correct?
-
-Yes, this one actually enables the IOMMU while the other one handles the
-failure to attach the IOMMU without brinding the whole drm driver down.
-
-So it's best to actually make use of the feature!
-
-> How about tegra30, I guess the same applies there, isn't it? Should I
-> send a patch or are you guys doing that?
-
-I don't have any tegra hardware aside of tegra124, so that's all I can
-contribute to. I don't know if others have looked into the same type of
-issue happening on either newer or older platforms.
-
-Cheers,
-
--- 
-Paul Kocialkowski,
-
-developer of free digital technology and hardware support
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+T24gVHVlLCAyMDE3LTA3LTExIGF0IDE4OjA1ICswMzAwLCBQYXVsIEtvY2lhbGtvd3NraSB3cm90
+ZToNCj4gT24gVHVlLCAyMDE3LTA3LTExIGF0IDE0OjU0ICswMDAwLCBNYXJjZWwgWmlzd2lsZXIg
+d3JvdGU6DQo+ID4gT24gVHVlLCAyMDE3LTA3LTExIGF0IDExOjUwICswMzAwLCBQYXVsIEtvY2lh
+bGtvd3NraSB3cm90ZToNCj4gPiA+IE9uIFN1biwgMjAxNy0wNy0wOSBhdCAxOTozNiArMDMwMCwg
+UGF1bCBLb2NpYWxrb3dza2kgd3JvdGU6DQo+ID4gPiA+IFRoaXMgcmVnaXN0ZXJzIHRoZSBob3N0
+MXggbm9kZSB3aXRoIHRoZSBTTU1VIChhcyBIQyBzd2dyb3VwKSB0bw0KPiA+ID4gPiBhbGxvdw0K
+PiA+ID4gPiB0aGUgaG9zdDF4IGNvZGUgdG8gYXR0YWNoIHRvIGl0LiBJdCBhdm9pZCBmYWlsaW5n
+IHRoZSBwcm9iZQ0KPiA+ID4gPiBzZXF1ZW5jZSwNCj4gPiA+ID4gd2hpY2ggcmVzdWx0ZWQgaW4g
+dGhlIHRlZ3JhIGRybSBkcml2ZXIgbm90IHByb2JpbmcgYW5kIHRodXMNCj4gPiA+ID4gbm90aGlu
+Zw0KPiA+ID4gPiBiZWluZyBkaXNwbGF5ZWQgb24tc2NyZWVuLg0KPiA+ID4gDQo+ID4gPiBGaXhl
+czogNDA0YmZiNzhkYWYzICgiZ3B1OiBob3N0MXg6IEFkZCBJT01NVSBzdXBwb3J0IikNCj4gPiA+
+IA0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBQYXVsIEtvY2lhbGtvd3NraSA8Y29udGFjdC0NCj4g
+PiA+ID4gVzlwcGVuZWVDVFlAcHVibGljLmdtYW5lLm9yZz4NCj4gPiANCj4gPiBUZXN0ZWQtYnk6
+IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+IFRlc3Rl
+ZC1vbjogQXBhbGlzIFRLMSwgSmV0c29uLVRLMQ0KPiA+IA0KPiA+ID4gPiAtLS0NCj4gPiA+ID4g
+wqBhcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC5kdHNpIHwgMSArDQo+ID4gPiA+IMKgMSBmaWxl
+IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+ID4gPiA+IA0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEv
+YXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQuZHRzaQ0KPiA+ID4gPiBiL2FyY2gvYXJtL2Jvb3Qv
+ZHRzL3RlZ3JhMTI0LmR0c2kNCj4gPiA+ID4gaW5kZXggMTg3YTM2YzZkMGZjLi5iM2I4OWJlZmZm
+ZWIgMTAwNjQ0DQo+ID4gPiA+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LmR0c2kN
+Cj4gPiA+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQuZHRzaQ0KPiA+ID4gPiBA
+QCAtODUsNiArODUsNyBAQA0KPiA+ID4gPiDCoAkJY2xvY2tzID0gPCZ0ZWdyYV9jYXIgVEVHUkEx
+MjRfQ0xLX0hPU1QxWD47DQo+ID4gPiA+IMKgCQlyZXNldHMgPSA8JnRlZ3JhX2NhciAyOD47DQo+
+ID4gPiA+IMKgCQlyZXNldC1uYW1lcyA9ICJob3N0MXgiOw0KPiA+ID4gPiArCQlpb21tdXMgPSA8
+Jm1jIFRFR1JBX1NXR1JPVVBfSEM+Ow0KPiA+ID4gPiDCoA0KPiA+ID4gPiDCoAkJI2FkZHJlc3Mt
+Y2VsbHMgPSA8Mj47DQo+ID4gPiA+IMKgCQkjc2l6ZS1jZWxscyA9IDwyPjsNCj4gPiANCj4gPiBT
+byBJIHRha2UgaXQgd2Ugc3RpbGwgd2lsbCBuZWVkIHRoaXMgb25lIG1vdmluZyBmb3J3YXJkLCBj
+b3JyZWN0Pw0KPiANCj4gWWVzLCB0aGlzIG9uZSBhY3R1YWxseSBlbmFibGVzIHRoZSBJT01NVSB3
+aGlsZSB0aGUgb3RoZXIgb25lIGhhbmRsZXMNCj4gdGhlDQo+IGZhaWx1cmUgdG8gYXR0YWNoIHRo
+ZSBJT01NVSB3aXRob3V0IGJyaW5kaW5nIHRoZSB3aG9sZSBkcm0gZHJpdmVyDQo+IGRvd24uDQo+
+IA0KPiBTbyBpdCdzIGJlc3QgdG8gYWN0dWFsbHkgbWFrZSB1c2Ugb2YgdGhlIGZlYXR1cmUhDQo+
+IA0KPiA+IEhvdyBhYm91dCB0ZWdyYTMwLCBJIGd1ZXNzIHRoZSBzYW1lIGFwcGxpZXMgdGhlcmUs
+IGlzbid0IGl0PyBTaG91bGQNCj4gPiBJDQo+ID4gc2VuZCBhIHBhdGNoIG9yIGFyZSB5b3UgZ3V5
+cyBkb2luZyB0aGF0Pw0KPiANCj4gSSBkb24ndCBoYXZlIGFueSB0ZWdyYSBoYXJkd2FyZSBhc2lk
+ZSBvZiB0ZWdyYTEyNCwgc28gdGhhdCdzIGFsbCBJDQo+IGNhbg0KPiBjb250cmlidXRlIHRvLiBJ
+IGRvbid0IGtub3cgaWYgb3RoZXJzIGhhdmUgbG9va2VkIGludG8gdGhlIHNhbWUgdHlwZQ0KPiBv
+Zg0KPiBpc3N1ZSBoYXBwZW5pbmcgb24gZWl0aGVyIG5ld2VyIG9yIG9sZGVyIHBsYXRmb3Jtcy4N
+Cg0KT0ssIGFzIHdlIGhhcHBlbiB0byBzdGlsbCBzZWxsaW5nIEFwYWxpcy9Db2xpYnJpIFQzMCBh
+bmQgbWUgaGF2aW5nDQpCZWF2ZXIgYXMgd2VsbCBhcyBDYXJkaHUgYXZhaWxhYmxlIGZvciB0ZXN0
+aW5nIEkgY2FuIGNvb2sgc29tZXRoaW5nIHVwLA0KdGVzdCBhbmQgc2VuZCBpdCBhbG9uZy4gRmly
+c3QgdHJpZXMgaW5kaWNhdGUgaXQgd29ya2luZyBvbiA0LjEyIGJ1dA0Kc29tZWhvdyBjcmFzaGlu
+ZyBkdXJpbmcgbWVtb3J5IGFsbG9jYXRpb24gb24gLW5leHQuIFdlJ2xsIHNlZS4NCg0KPiBDaGVl
+cnMs
