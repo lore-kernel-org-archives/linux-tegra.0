@@ -1,44 +1,56 @@
-From: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: [PATCH v2 08/12] drm/tegra: Handle drm_atomic_helper_swap_state failure
-Date: Tue, 11 Jul 2017 16:33:10 +0200
-Message-ID: <20170711143314.2148-9-maarten.lankhorst@linux.intel.com>
-References: <20170711143314.2148-1-maarten.lankhorst@linux.intel.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170711143314.2148-1-maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH] gpu: host1x: Free the IOMMU domain when there is no
+ device to attach
+Date: Tue, 11 Jul 2017 14:37:35 +0000
+Message-ID: <1499783851.1520.16.camel@toradex.com>
+References: <20170710193305.5987-1-contact@paulk.fr>
+         <1499762987.1340.10.camel@paulk.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1499762987.1340.10.camel@paulk.fr>
+Content-Language: en-US
+Content-ID: <5442AF5CE277F048843A80B61A345BB7@eurprd05.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "contact@paulk.fr" <contact@paulk.fr>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "treding@nvidia.com" <treding@nvidia.com>, "swarren@nvidia.com" <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-drm_atomic_helper_swap_state() will be changed to interruptible waiting
-in the next few commits, so all drivers have to be changed to handling
-failure.
-
-Signed-off-by: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
----
- drivers/gpu/drm/tegra/drm.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index ad3d124a972d..3ba659a5940d 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -100,7 +100,12 @@ static int tegra_atomic_commit(struct drm_device *drm,
- 	 * the software side now.
- 	 */
- 
--	drm_atomic_helper_swap_state(state, true);
-+	err = drm_atomic_helper_swap_state(state, true);
-+	if (err) {
-+		mutex_unlock(&tegra->commit.lock);
-+		drm_atomic_helper_cleanup_planes(drm, state);
-+		return err;
-+	}
- 
- 	drm_atomic_state_get(state);
- 	if (nonblock)
--- 
-2.11.0
+T24gVHVlLCAyMDE3LTA3LTExIGF0IDExOjQ5ICswMzAwLCBQYXVsIEtvY2lhbGtvd3NraSB3cm90
+ZToNCj4gT24gTW9uLCAyMDE3LTA3LTEwIGF0IDIxOjMzICswMjAwLCBQYXVsIEtvY2lhbGtvd3Nr
+aSB3cm90ZToNCj4gPiBXaGVuIHRoZXJlIGlzIG5vIGRldmljZSB0byBhdHRhY2ggdG8gdGhlIElP
+TU1VIGRvbWFpbiwgYXMgbWF5IGJlDQo+ID4gdGhlDQo+ID4gY2FzZSB3aGVuIHRoZSBkZXZpY2Ut
+dHJlZSBkb2VzIG5vdCBjb250YWluIHRoZSBwcm9wZXIgaW9tbXUgbm9kZSwNCj4gPiBpdA0KPiA+
+IGlzDQo+ID4gYmVzdCB0byBrZWVwIGdvaW5nIHdpdGhvdXQgSU9NTVUgc3VwcG9ydCByYXRoZXIg
+dGhhbiBmYWlsaW5nLg0KPiA+IFRoaXMgYWxsb3dzIHRoZSBkcml2ZXIgdG8gcHJvYmUgYW5kIGZ1
+bmN0aW9uIGluc3RlYWQgb2YgdGFraW5nIGRvd24NCj4gPiBhbGwgb2YgdGhlIHRlZ3JhIGRybSBk
+cml2ZXIsIGxlYWRpbmcgdG8gbWlzc2luZyBkaXNwbGF5IHN1cHBvcnQuDQo+IA0KPiBGaXhlczog
+NDA0YmZiNzhkYWYzICgiZ3B1OiBob3N0MXg6IEFkZCBJT01NVSBzdXBwb3J0IikNCj4gDQo+ID4g
+U2lnbmVkLW9mZi1ieTogUGF1bCBLb2NpYWxrb3dza2kgPGNvbnRhY3QtVzlwcGVuZWVDVFlAcHVi
+bGljLmdtYW5lLg0KPiA+IG9yZz4NCj4gPiAtLS0NCj4gPiDCoGRyaXZlcnMvZ3B1L2hvc3QxeC9k
+ZXYuYyB8IDggKysrKysrKy0NCj4gPiDCoDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyks
+IDEgZGVsZXRpb24oLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4
+L2Rldi5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jDQo+ID4gaW5kZXggYWM2NWY1Mjg1MGE2
+Li5mMjk2NzM4ZDBkZTggMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5j
+DQo+ID4gKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jDQo+ID4gQEAgLTE4Niw4ICsxODYs
+MTMgQEAgc3RhdGljIGludCBob3N0MXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZQ0KPiA+
+ICpwZGV2KQ0KPiA+IMKgCQkJcmV0dXJuIC1FTk9NRU07DQo+ID4gwqANCj4gPiDCoAkJZXJyID0g
+aW9tbXVfYXR0YWNoX2RldmljZShob3N0LT5kb21haW4sICZwZGV2LQ0KPiA+ID5kZXYpOw0KPiA+
+IC0JCWlmIChlcnIpDQo+ID4gKwkJaWYgKGVyciA9PSAtRU5PREVWKSB7DQo+ID4gKwkJCWlvbW11
+X2RvbWFpbl9mcmVlKGhvc3QtPmRvbWFpbik7DQo+ID4gKwkJCWhvc3QtPmRvbWFpbiA9IE5VTEw7
+DQo+ID4gKwkJCWdvdG8gaW9tbXVfc2tpcDsNCj4gPiArCQl9IGVsc2UgaWYgKGVycikgew0KPiA+
+IMKgCQkJZ290byBmYWlsX2ZyZWVfZG9tYWluOw0KPiA+ICsJCX0NCj4gPiDCoA0KPiA+IMKgCQln
+ZW9tZXRyeSA9ICZob3N0LT5kb21haW4tPmdlb21ldHJ5Ow0KPiA+IMKgDQo+ID4gQEAgLTE5OCw2
+ICsyMDMsNyBAQCBzdGF0aWMgaW50IGhvc3QxeF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
+DQo+ID4gKnBkZXYpDQo+ID4gwqAJCWhvc3QtPmlvdmFfZW5kID0gZ2VvbWV0cnktPmFwZXJ0dXJl
+X2VuZDsNCj4gPiDCoAl9DQo+ID4gwqANCj4gPiAraW9tbXVfc2tpcDoNCj4gPiDCoAllcnIgPSBo
+b3N0MXhfY2hhbm5lbF9saXN0X2luaXQoaG9zdCk7DQo+ID4gwqAJaWYgKGVycikgew0KPiA+IMKg
+CQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gaW5pdGlhbGl6ZSBjaGFubmVsDQo+ID4g
+bGlzdFxuIik7DQoNClBsZWFzZSBub3RlIHRoYXQgdGhpcyBkb2VzIG5vIGxvbmdlciBjbGVhbmx5
+IGFwcGx5IGFmdGVyIE1pa2tvJ3MgJ2dwdToNCmhvc3QxeDogUmVmYWN0b3IgY2hhbm5lbCBhbGxv
+Y2F0aW9uIGNvZGUnIGNvbW1pdCBmcm9tIEp1bmUgMTUgYWxyZWFkeQ0KYXBwbGllZCB0byBjdXJy
+ZW50IC1uZXh0LiBPdGhlciB0aGFuIHRoYXQNCg0KVGVzdGVkLWJ5OsKgTWFyY2VsIFppc3dpbGVy
+IDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQpUZXN0ZWQtb246IEFwYWxpcyBUSzEsIEFw
+YWxpcyBUMzAsIEJlYXZlciwgQ29saWJyaSBUMzAsIEpldHNvbi1USzENCg0KRmluYWxseSBncmFw
+aGljcyB3b3JraW5nIGFnYWluLCB0aGFua3MgZ3V5cyE=
