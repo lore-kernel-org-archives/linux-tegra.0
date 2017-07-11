@@ -1,50 +1,44 @@
-From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Register host1x node with iommu binding on
- tegra124
-Date: Tue, 11 Jul 2017 11:50:09 +0300
-Message-ID: <1499763009.1340.11.camel@paulk.fr>
-References: <20170709163614.6746-1-contact@paulk.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: [PATCH v2 08/12] drm/tegra: Handle drm_atomic_helper_swap_state failure
+Date: Tue, 11 Jul 2017 16:33:10 +0200
+Message-ID: <20170711143314.2148-9-maarten.lankhorst@linux.intel.com>
+References: <20170711143314.2148-1-maarten.lankhorst@linux.intel.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170709163614.6746-1-contact-W9ppeneeCTY@public.gmane.org>
+In-Reply-To: <20170711143314.2148-1-maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, 2017-07-09 at 19:36 +0300, Paul Kocialkowski wrote:
-> This registers the host1x node with the SMMU (as HC swgroup) to allow
-> the host1x code to attach to it. It avoid failing the probe sequence,
-> which resulted in the tegra drm driver not probing and thus nothing
-> being displayed on-screen.
+drm_atomic_helper_swap_state() will be changed to interruptible waiting
+in the next few commits, so all drivers have to be changed to handling
+failure.
 
-Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
+Signed-off-by: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+---
+ drivers/gpu/drm/tegra/drm.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra124.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi
-> b/arch/arm/boot/dts/tegra124.dtsi
-> index 187a36c6d0fc..b3b89befffeb 100644
-> --- a/arch/arm/boot/dts/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/tegra124.dtsi
-> @@ -85,6 +85,7 @@
->  		clocks = <&tegra_car TEGRA124_CLK_HOST1X>;
->  		resets = <&tegra_car 28>;
->  		reset-names = "host1x";
-> +		iommus = <&mc TEGRA_SWGROUP_HC>;
->  
->  		#address-cells = <2>;
->  		#size-cells = <2>;
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index ad3d124a972d..3ba659a5940d 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -100,7 +100,12 @@ static int tegra_atomic_commit(struct drm_device *drm,
+ 	 * the software side now.
+ 	 */
+ 
+-	drm_atomic_helper_swap_state(state, true);
++	err = drm_atomic_helper_swap_state(state, true);
++	if (err) {
++		mutex_unlock(&tegra->commit.lock);
++		drm_atomic_helper_cleanup_planes(drm, state);
++		return err;
++	}
+ 
+ 	drm_atomic_state_get(state);
+ 	if (nonblock)
 -- 
-Paul Kocialkowski,
-
-developer of free digital technology and hardware support
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+2.11.0
