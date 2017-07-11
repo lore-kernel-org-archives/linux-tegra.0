@@ -1,63 +1,100 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH] ARM: tegra: Register host1x node with iommu binding on
- tegra124
-Date: Tue, 11 Jul 2017 15:17:46 +0000
-Message-ID: <1499786264.1520.22.camel@toradex.com>
-References: <20170709163614.6746-1-contact@paulk.fr>
-         <1499763009.1340.11.camel@paulk.fr> <1499784841.1520.20.camel@toradex.com>
-         <1499785555.1340.15.camel@paulk.fr>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH] gpu: host1x: Free the IOMMU domain when there is no
+ device to attach
+Date: Tue, 11 Jul 2017 20:09:56 +0300
+Message-ID: <1db2411c-c1af-62f5-18b4-55523dc5b56c@kapsi.fi>
+References: <20170710193305.5987-1-contact@paulk.fr>
+ <1499762987.1340.10.camel@paulk.fr> <1499783851.1520.16.camel@toradex.com>
+ <1499784254.1340.13.camel@paulk.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1499785555.1340.15.camel@paulk.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1499784254.1340.13.camel-W9ppeneeCTY@public.gmane.org>
 Content-Language: en-US
-Content-ID: <2499C23F2F43614BB3C460FD949086DA@eurprd05.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "contact@paulk.fr" <contact@paulk.fr>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "treding@nvidia.com" <treding@nvidia.com>, "swarren@nvidia.com" <swarren@nvidia.com>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDE3LTA3LTExIGF0IDE4OjA1ICswMzAwLCBQYXVsIEtvY2lhbGtvd3NraSB3cm90
-ZToNCj4gT24gVHVlLCAyMDE3LTA3LTExIGF0IDE0OjU0ICswMDAwLCBNYXJjZWwgWmlzd2lsZXIg
-d3JvdGU6DQo+ID4gT24gVHVlLCAyMDE3LTA3LTExIGF0IDExOjUwICswMzAwLCBQYXVsIEtvY2lh
-bGtvd3NraSB3cm90ZToNCj4gPiA+IE9uIFN1biwgMjAxNy0wNy0wOSBhdCAxOTozNiArMDMwMCwg
-UGF1bCBLb2NpYWxrb3dza2kgd3JvdGU6DQo+ID4gPiA+IFRoaXMgcmVnaXN0ZXJzIHRoZSBob3N0
-MXggbm9kZSB3aXRoIHRoZSBTTU1VIChhcyBIQyBzd2dyb3VwKSB0bw0KPiA+ID4gPiBhbGxvdw0K
-PiA+ID4gPiB0aGUgaG9zdDF4IGNvZGUgdG8gYXR0YWNoIHRvIGl0LiBJdCBhdm9pZCBmYWlsaW5n
-IHRoZSBwcm9iZQ0KPiA+ID4gPiBzZXF1ZW5jZSwNCj4gPiA+ID4gd2hpY2ggcmVzdWx0ZWQgaW4g
-dGhlIHRlZ3JhIGRybSBkcml2ZXIgbm90IHByb2JpbmcgYW5kIHRodXMNCj4gPiA+ID4gbm90aGlu
-Zw0KPiA+ID4gPiBiZWluZyBkaXNwbGF5ZWQgb24tc2NyZWVuLg0KPiA+ID4gDQo+ID4gPiBGaXhl
-czogNDA0YmZiNzhkYWYzICgiZ3B1OiBob3N0MXg6IEFkZCBJT01NVSBzdXBwb3J0IikNCj4gPiA+
-IA0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBQYXVsIEtvY2lhbGtvd3NraSA8Y29udGFjdC0NCj4g
-PiA+ID4gVzlwcGVuZWVDVFlAcHVibGljLmdtYW5lLm9yZz4NCj4gPiANCj4gPiBUZXN0ZWQtYnk6
-IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+IFRlc3Rl
-ZC1vbjogQXBhbGlzIFRLMSwgSmV0c29uLVRLMQ0KPiA+IA0KPiA+ID4gPiAtLS0NCj4gPiA+ID4g
-wqBhcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC5kdHNpIHwgMSArDQo+ID4gPiA+IMKgMSBmaWxl
-IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+ID4gPiA+IA0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEv
-YXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQuZHRzaQ0KPiA+ID4gPiBiL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL3RlZ3JhMTI0LmR0c2kNCj4gPiA+ID4gaW5kZXggMTg3YTM2YzZkMGZjLi5iM2I4OWJlZmZm
-ZWIgMTAwNjQ0DQo+ID4gPiA+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LmR0c2kN
-Cj4gPiA+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQuZHRzaQ0KPiA+ID4gPiBA
-QCAtODUsNiArODUsNyBAQA0KPiA+ID4gPiDCoAkJY2xvY2tzID0gPCZ0ZWdyYV9jYXIgVEVHUkEx
-MjRfQ0xLX0hPU1QxWD47DQo+ID4gPiA+IMKgCQlyZXNldHMgPSA8JnRlZ3JhX2NhciAyOD47DQo+
-ID4gPiA+IMKgCQlyZXNldC1uYW1lcyA9ICJob3N0MXgiOw0KPiA+ID4gPiArCQlpb21tdXMgPSA8
-Jm1jIFRFR1JBX1NXR1JPVVBfSEM+Ow0KPiA+ID4gPiDCoA0KPiA+ID4gPiDCoAkJI2FkZHJlc3Mt
-Y2VsbHMgPSA8Mj47DQo+ID4gPiA+IMKgCQkjc2l6ZS1jZWxscyA9IDwyPjsNCj4gPiANCj4gPiBT
-byBJIHRha2UgaXQgd2Ugc3RpbGwgd2lsbCBuZWVkIHRoaXMgb25lIG1vdmluZyBmb3J3YXJkLCBj
-b3JyZWN0Pw0KPiANCj4gWWVzLCB0aGlzIG9uZSBhY3R1YWxseSBlbmFibGVzIHRoZSBJT01NVSB3
-aGlsZSB0aGUgb3RoZXIgb25lIGhhbmRsZXMNCj4gdGhlDQo+IGZhaWx1cmUgdG8gYXR0YWNoIHRo
-ZSBJT01NVSB3aXRob3V0IGJyaW5kaW5nIHRoZSB3aG9sZSBkcm0gZHJpdmVyDQo+IGRvd24uDQo+
-IA0KPiBTbyBpdCdzIGJlc3QgdG8gYWN0dWFsbHkgbWFrZSB1c2Ugb2YgdGhlIGZlYXR1cmUhDQo+
-IA0KPiA+IEhvdyBhYm91dCB0ZWdyYTMwLCBJIGd1ZXNzIHRoZSBzYW1lIGFwcGxpZXMgdGhlcmUs
-IGlzbid0IGl0PyBTaG91bGQNCj4gPiBJDQo+ID4gc2VuZCBhIHBhdGNoIG9yIGFyZSB5b3UgZ3V5
-cyBkb2luZyB0aGF0Pw0KPiANCj4gSSBkb24ndCBoYXZlIGFueSB0ZWdyYSBoYXJkd2FyZSBhc2lk
-ZSBvZiB0ZWdyYTEyNCwgc28gdGhhdCdzIGFsbCBJDQo+IGNhbg0KPiBjb250cmlidXRlIHRvLiBJ
-IGRvbid0IGtub3cgaWYgb3RoZXJzIGhhdmUgbG9va2VkIGludG8gdGhlIHNhbWUgdHlwZQ0KPiBv
-Zg0KPiBpc3N1ZSBoYXBwZW5pbmcgb24gZWl0aGVyIG5ld2VyIG9yIG9sZGVyIHBsYXRmb3Jtcy4N
-Cg0KT0ssIGFzIHdlIGhhcHBlbiB0byBzdGlsbCBzZWxsaW5nIEFwYWxpcy9Db2xpYnJpIFQzMCBh
-bmQgbWUgaGF2aW5nDQpCZWF2ZXIgYXMgd2VsbCBhcyBDYXJkaHUgYXZhaWxhYmxlIGZvciB0ZXN0
-aW5nIEkgY2FuIGNvb2sgc29tZXRoaW5nIHVwLA0KdGVzdCBhbmQgc2VuZCBpdCBhbG9uZy4gRmly
-c3QgdHJpZXMgaW5kaWNhdGUgaXQgd29ya2luZyBvbiA0LjEyIGJ1dA0Kc29tZWhvdyBjcmFzaGlu
-ZyBkdXJpbmcgbWVtb3J5IGFsbG9jYXRpb24gb24gLW5leHQuIFdlJ2xsIHNlZS4NCg0KPiBDaGVl
-cnMs
+On 07/11/2017 05:44 PM, Paul Kocialkowski wrote:
+> On Tue, 2017-07-11 at 14:37 +0000, Marcel Ziswiler wrote:
+>> On Tue, 2017-07-11 at 11:49 +0300, Paul Kocialkowski wrote:
+>>> On Mon, 2017-07-10 at 21:33 +0200, Paul Kocialkowski wrote:
+>>>> When there is no device to attach to the IOMMU domain, as may be
+>>>> the
+>>>> case when the device-tree does not contain the proper iommu node,
+>>>> it
+>>>> is
+>>>> best to keep going without IOMMU support rather than failing.
+>>>> This allows the driver to probe and function instead of taking
+>>>> down
+>>>> all of the tegra drm driver, leading to missing display support.
+>>>
+>>> Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
+>>>
+>>>> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY-XMD5yJDbdMToUJ55TTLPZA@public.gmane.org
+>>>> .
+>>>> org>
+>>>> ---
+>>>>   drivers/gpu/host1x/dev.c | 8 +++++++-
+>>>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+>>>> index ac65f52850a6..f296738d0de8 100644
+>>>> --- a/drivers/gpu/host1x/dev.c
+>>>> +++ b/drivers/gpu/host1x/dev.c
+>>>> @@ -186,8 +186,13 @@ static int host1x_probe(struct
+>>>> platform_device
+>>>> *pdev)
+>>>>   			return -ENOMEM;
+>>>>   
+>>>>   		err = iommu_attach_device(host->domain, &pdev-
+>>>>> dev);
+>>>>
+>>>> -		if (err)
+>>>> +		if (err == -ENODEV) {
+>>>> +			iommu_domain_free(host->domain);
+>>>> +			host->domain = NULL;
+>>>> +			goto iommu_skip;
+>>>> +		} else if (err) {
+>>>>   			goto fail_free_domain;
+>>>> +		}
+>>>>   
+>>>>   		geometry = &host->domain->geometry;
+>>>>   
+>>>> @@ -198,6 +203,7 @@ static int host1x_probe(struct platform_device
+>>>> *pdev)
+>>>>   		host->iova_end = geometry->aperture_end;
+>>>>   	}
+>>>>   
+>>>> +iommu_skip:
+>>>>   	err = host1x_channel_list_init(host);
+>>>>   	if (err) {
+>>>>   		dev_err(&pdev->dev, "failed to initialize channel
+>>>> list\n");
+>>
+>> Please note that this does no longer cleanly apply after Mikko's 'gpu:
+>> host1x: Refactor channel allocation code' commit from June 15 already
+>> applied to current -next. Other than that
+> 
+> Good to know! I intended this patch for fixing 4.12 stable, so I'm not
+> even entirely sure it should land in next. The patch that fixes the
+> device-tree to actually enable the iommu should be merged in priority.
+> 
+> If that is the case and anyone wants this patch rebased to next, feel
+> free to let me know and I'll send a rebased version.
+
+We should definitely have this for non-stable kernels too - it would be 
+a bit strange if the driver worked if IOMMU support wasn't built into 
+the kernel but failed if it was :) It can also be helpful for debugging 
+to be able to disable IOMMU just for host1x.
+
+> 
+>> Tested-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+>> Tested-on: Apalis TK1, Apalis T30, Beaver, Colibri T30, Jetson-TK1
+>>
+>> Finally graphics working again, thanks guys!
+> 
+> Yay! :)
+> 
