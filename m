@@ -1,100 +1,37 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: Free the IOMMU domain when there is no
- device to attach
-Date: Tue, 11 Jul 2017 20:09:56 +0300
-Message-ID: <1db2411c-c1af-62f5-18b4-55523dc5b56c@kapsi.fi>
-References: <20170710193305.5987-1-contact@paulk.fr>
- <1499762987.1340.10.camel@paulk.fr> <1499783851.1520.16.camel@toradex.com>
- <1499784254.1340.13.camel@paulk.fr>
+From: "Gustavo A. R. Silva" <garsilva-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
+Subject: [PATCH] ASoC: tegra: constify snd_soc_dai_ops structure
+Date: Thu, 13 Jul 2017 00:47:35 -0500
+Message-ID: <20170713054735.GA18162@embeddedgus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1499784254.1340.13.camel-W9ppeneeCTY@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Gustavo A. R. Silva" <garsilva-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/11/2017 05:44 PM, Paul Kocialkowski wrote:
-> On Tue, 2017-07-11 at 14:37 +0000, Marcel Ziswiler wrote:
->> On Tue, 2017-07-11 at 11:49 +0300, Paul Kocialkowski wrote:
->>> On Mon, 2017-07-10 at 21:33 +0200, Paul Kocialkowski wrote:
->>>> When there is no device to attach to the IOMMU domain, as may be
->>>> the
->>>> case when the device-tree does not contain the proper iommu node,
->>>> it
->>>> is
->>>> best to keep going without IOMMU support rather than failing.
->>>> This allows the driver to probe and function instead of taking
->>>> down
->>>> all of the tegra drm driver, leading to missing display support.
->>>
->>> Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
->>>
->>>> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY-XMD5yJDbdMToUJ55TTLPZA@public.gmane.org
->>>> .
->>>> org>
->>>> ---
->>>>   drivers/gpu/host1x/dev.c | 8 +++++++-
->>>>   1 file changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
->>>> index ac65f52850a6..f296738d0de8 100644
->>>> --- a/drivers/gpu/host1x/dev.c
->>>> +++ b/drivers/gpu/host1x/dev.c
->>>> @@ -186,8 +186,13 @@ static int host1x_probe(struct
->>>> platform_device
->>>> *pdev)
->>>>   			return -ENOMEM;
->>>>   
->>>>   		err = iommu_attach_device(host->domain, &pdev-
->>>>> dev);
->>>>
->>>> -		if (err)
->>>> +		if (err == -ENODEV) {
->>>> +			iommu_domain_free(host->domain);
->>>> +			host->domain = NULL;
->>>> +			goto iommu_skip;
->>>> +		} else if (err) {
->>>>   			goto fail_free_domain;
->>>> +		}
->>>>   
->>>>   		geometry = &host->domain->geometry;
->>>>   
->>>> @@ -198,6 +203,7 @@ static int host1x_probe(struct platform_device
->>>> *pdev)
->>>>   		host->iova_end = geometry->aperture_end;
->>>>   	}
->>>>   
->>>> +iommu_skip:
->>>>   	err = host1x_channel_list_init(host);
->>>>   	if (err) {
->>>>   		dev_err(&pdev->dev, "failed to initialize channel
->>>> list\n");
->>
->> Please note that this does no longer cleanly apply after Mikko's 'gpu:
->> host1x: Refactor channel allocation code' commit from June 15 already
->> applied to current -next. Other than that
-> 
-> Good to know! I intended this patch for fixing 4.12 stable, so I'm not
-> even entirely sure it should land in next. The patch that fixes the
-> device-tree to actually enable the iommu should be merged in priority.
-> 
-> If that is the case and anyone wants this patch rebased to next, feel
-> free to let me know and I'll send a rebased version.
+This structure is only stored in the ops field of a snd_soc_dai_driver
+structure. That field is declared const, so snd_soc_dai_ops structures
+that have this property can be declared as const also.
 
-We should definitely have this for non-stable kernels too - it would be 
-a bit strange if the driver worked if IOMMU support wasn't built into 
-the kernel but failed if it was :) It can also be helpful for debugging 
-to be able to disable IOMMU just for host1x.
+Signed-off-by: Gustavo A. R. Silva <garsilva-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
+---
+ sound/soc/tegra/tegra30_i2s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->> Tested-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
->> Tested-on: Apalis TK1, Apalis T30, Beaver, Colibri T30, Jetson-TK1
->>
->> Finally graphics working again, thanks guys!
-> 
-> Yay! :)
-> 
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index b2b279c..0b176ea 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -275,7 +275,7 @@ static int tegra30_i2s_probe(struct snd_soc_dai *dai)
+ 	return 0;
+ }
+ 
+-static struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
++static const struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
+ 	.set_fmt	= tegra30_i2s_set_fmt,
+ 	.hw_params	= tegra30_i2s_hw_params,
+ 	.trigger	= tegra30_i2s_trigger,
+-- 
+2.5.0
