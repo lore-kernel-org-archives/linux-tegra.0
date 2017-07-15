@@ -1,66 +1,56 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH] thermal: tegra: delete unneeded of_node_put
-Date: Sat, 15 Jul 2017 10:42:32 +0200
-Message-ID: <1500108152-1812-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: [PATCH 1/4] dt-bindings: document the tegra CEC bindings
+Date: Sat, 15 Jul 2017 14:47:50 +0200
+Message-ID: <20170715124753.43714-2-hverkuil@xs4all.nl>
+References: <20170715124753.43714-1-hverkuil@xs4all.nl>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170715124753.43714-1-hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Device node iterators perform an of_node_put on each iteration, so putting
-an of_node_put before a continue results in a double put.
+From: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
 
-The semantic match that finds this problem is as follows
-(http://coccinelle.lip6.fr):
+This documents the binding for the Tegra CEC module.
 
-// <smpl>
-@@
-expression e1;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_child_of_node(e1,child) {
-   ... when != of_node_get(child)
-*  of_node_put(child);
-   ...
-*  continue;
-}
-// </smpl>
-
-Furthermore, the call to thermal_of_cooling_device_register immediately
-calls __thermal_cooling_device_register with the same arguments.  The
-latter function stores the device node argument, which is the second
-argument of for_each_child_of_node, in the returned thermal_cooling_device
-structure.  This returned structure is then stored in the cdev field of
-stc.  Thus it seems that the second argument of for_each_child_of_node
-escapes the scope of the for_each_child_of_node, so an explicit of_node_get
-on success of thermal_of_cooling_device_register is also needed.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
 ---
- drivers/thermal/tegra/soctherm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/media/tegra-cec.txt        | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/tegra-cec.txt
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 7d2db23..10f4fdd 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -1014,7 +1014,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
- 		tcd = thermal_of_cooling_device_register(np_stcc,
- 							 (char *)name, ts,
- 							 &throt_cooling_ops);
--		of_node_put(np_stcc);
- 		if (IS_ERR_OR_NULL(tcd)) {
- 			dev_err(dev,
- 				"throttle-cfg: %s: failed to register cooling device\n",
-@@ -1022,6 +1021,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
- 			continue;
- 		}
- 
-+		of_node_get(np_stcc);
- 		stc->cdev = tcd;
- 		stc->init = true;
- 	}
+diff --git a/Documentation/devicetree/bindings/media/tegra-cec.txt b/Documentation/devicetree/bindings/media/tegra-cec.txt
+new file mode 100644
+index 000000000000..ba0b6071acaa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/tegra-cec.txt
+@@ -0,0 +1,26 @@
++* Tegra HDMI CEC driver
++
++The HDMI CEC module is present in Tegra SoCs and its purpose is to
++handle communication between HDMI connected devices over the CEC bus.
++
++Required properties:
++  - compatible : value should be one of the following:
++	"nvidia,tegra114-cec"
++	"nvidia,tegra124-cec"
++	"nvidia,tegra210-cec"
++  - reg : Physical base address of the IP registers and length of memory
++	  mapped region.
++  - interrupts : HDMI CEC interrupt number to the CPU.
++  - clocks : from common clock binding: handle to HDMI CEC clock.
++  - clock-names : from common clock binding: must contain "cec",
++		  corresponding to ithe entry in the clocks property.
++  - hdmi-phandle : phandle to the HDMI controller, see also cec.txt.
++
++Example:
++
++tegra_cec {
++	compatible = "nvidia,tegra124-cec";
++	reg = <0x0 0x70015000 0x0 0x00001000>;
++	interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&tegra_car TEGRA124_CLK_CEC>;
++	clock-names = "cec";
+-- 
+2.11.0
