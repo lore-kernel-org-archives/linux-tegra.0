@@ -1,63 +1,66 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [Intel-gfx] [PATCH v2 08/12] drm/tegra: Handle
- drm_atomic_helper_swap_state failure
-Date: Fri, 14 Jul 2017 17:03:45 +0200
-Message-ID: <20170714150345.i2itd4pnggnnywbs@phenom.ffwll.local>
-References: <20170711143314.2148-1-maarten.lankhorst@linux.intel.com>
- <20170711143314.2148-9-maarten.lankhorst@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170711143314.2148-9-maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH] thermal: tegra: delete unneeded of_node_put
+Date: Sat, 15 Jul 2017 10:42:32 +0200
+Message-ID: <1500108152-1812-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 11, 2017 at 04:33:10PM +0200, Maarten Lankhorst wrote:
-> drm_atomic_helper_swap_state() will be changed to interruptible waiting
-> in the next few commits, so all drivers have to be changed to handling
-> failure.
-> 
-> Signed-off-by: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Device node iterators perform an of_node_put on each iteration, so putting
+an of_node_put before a continue results in a double put.
 
-Reviewed-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr):
 
-> ---
->  drivers/gpu/drm/tegra/drm.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index ad3d124a972d..3ba659a5940d 100644
-> --- a/drivers/gpu/drm/tegra/drm.c
-> +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -100,7 +100,12 @@ static int tegra_atomic_commit(struct drm_device *drm,
->  	 * the software side now.
->  	 */
->  
-> -	drm_atomic_helper_swap_state(state, true);
-> +	err = drm_atomic_helper_swap_state(state, true);
-> +	if (err) {
-> +		mutex_unlock(&tegra->commit.lock);
-> +		drm_atomic_helper_cleanup_planes(drm, state);
-> +		return err;
-> +	}
->  
->  	drm_atomic_state_get(state);
->  	if (nonblock)
-> -- 
-> 2.11.0
-> 
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+// <smpl>
+@@
+expression e1;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+ for_each_child_of_node(e1,child) {
+   ... when != of_node_get(child)
+*  of_node_put(child);
+   ...
+*  continue;
+}
+// </smpl>
+
+Furthermore, the call to thermal_of_cooling_device_register immediately
+calls __thermal_cooling_device_register with the same arguments.  The
+latter function stores the device node argument, which is the second
+argument of for_each_child_of_node, in the returned thermal_cooling_device
+structure.  This returned structure is then stored in the cdev field of
+stc.  Thus it seems that the second argument of for_each_child_of_node
+escapes the scope of the for_each_child_of_node, so an explicit of_node_get
+on success of thermal_of_cooling_device_register is also needed.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/thermal/tegra/soctherm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 7d2db23..10f4fdd 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -1014,7 +1014,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+ 		tcd = thermal_of_cooling_device_register(np_stcc,
+ 							 (char *)name, ts,
+ 							 &throt_cooling_ops);
+-		of_node_put(np_stcc);
+ 		if (IS_ERR_OR_NULL(tcd)) {
+ 			dev_err(dev,
+ 				"throttle-cfg: %s: failed to register cooling device\n",
+@@ -1022,6 +1021,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+ 			continue;
+ 		}
+ 
++		of_node_get(np_stcc);
+ 		stc->cdev = tcd;
+ 		stc->init = true;
+ 	}
