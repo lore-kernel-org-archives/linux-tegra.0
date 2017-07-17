@@ -1,82 +1,68 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCH 4/4] drm/tegra: add cec-notifier support
-Date: Sat, 15 Jul 2017 14:47:53 +0200
-Message-ID: <20170715124753.43714-5-hverkuil@xs4all.nl>
-References: <20170715124753.43714-1-hverkuil@xs4all.nl>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH v2] devfreq: tegra: fix error return code in
+ tegra_devfreq_probe()
+Date: Sun, 16 Jul 2017 23:52:00 -0500
+Message-ID: <38a5cf39-26a4-8498-add8-423dc39e3219@embeddedor.com>
+References: <20170703124738.GA3947@embeddedgus>
+ <5206e248-a3a7-8cb5-5d8f-a0c84bcb9e40@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170715124753.43714-1-hverkuil@xs4all.nl>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-media@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5206e248-a3a7-8cb5-5d8f-a0c84bcb9e40@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgoKSW4gb3JkZXIgdG8g
-c3VwcG9ydCBDRUMgdGhlIEhETUkgZHJpdmVyIGhhcyB0byBpbmZvcm0gdGhlIENFQyBkcml2ZXIK
-d2hlbmV2ZXIgdGhlIHBoeXNpY2FsIGFkZHJlc3MgY2hhbmdlcy4gU28gd2hlbiB0aGUgRURJRCBp
-cyByZWFkIHRoZQpDRUMgZHJpdmVyIGhhcyB0byBiZSBpbmZvcm1lZCBhbmQgd2hlbmV2ZXIgdGhl
-IGhvdHBsdWcgZGV0ZWN0IGdvZXMKYXdheS4KClRoaXMgaXMgZG9uZSB0aHJvdWdoIHRoZSBjZWMt
-bm90aWZpZXIgZnJhbWV3b3JrLgoKVGhlIGxpbmsgYmV0d2VlbiB0aGUgSERNSSBkcml2ZXIgYW5k
-IHRoZSBDRUMgZHJpdmVyIGlzIGRvbmUgdGhyb3VnaAp0aGUgaGRtaV9waGFuZGxlIGluIHRoZSB0
-ZWdyYS1jZWMgbm9kZSBpbiB0aGUgZGV2aWNlIHRyZWUuCgpTaWduZWQtb2ZmLWJ5OiBIYW5zIFZl
-cmt1aWwgPGhhbnMudmVya3VpbEBjaXNjby5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L2RybS5oICAgIHwgMyArKysKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMgICB8IDkgKysr
-KysrKysrCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvb3V0cHV0LmMgfCA2ICsrKysrKwogMyBmaWxl
-cyBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL2RybS5oIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oCmluZGV4IDZkNmRhMDEy
-ODJmMy4uYzBhMThiNjBjYWYxIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJt
-LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oCkBAIC0yMTIsNiArMjEyLDggQEAg
-aW50IHRlZ3JhX2RjX3N0YXRlX3NldHVwX2Nsb2NrKHN0cnVjdCB0ZWdyYV9kYyAqZGMsCiAJCQkg
-ICAgICAgc3RydWN0IGNsayAqY2xrLCB1bnNpZ25lZCBsb25nIHBjbGssCiAJCQkgICAgICAgdW5z
-aWduZWQgaW50IGRpdik7CiAKK3N0cnVjdCBjZWNfbm90aWZpZXI7CisKIHN0cnVjdCB0ZWdyYV9v
-dXRwdXQgewogCXN0cnVjdCBkZXZpY2Vfbm9kZSAqb2Zfbm9kZTsKIAlzdHJ1Y3QgZGV2aWNlICpk
-ZXY7CkBAIC0yMTksNiArMjIxLDcgQEAgc3RydWN0IHRlZ3JhX291dHB1dCB7CiAJc3RydWN0IGRy
-bV9wYW5lbCAqcGFuZWw7CiAJc3RydWN0IGkyY19hZGFwdGVyICpkZGM7CiAJY29uc3Qgc3RydWN0
-IGVkaWQgKmVkaWQ7CisJc3RydWN0IGNlY19ub3RpZmllciAqbm90aWZpZXI7CiAJdW5zaWduZWQg
-aW50IGhwZF9pcnE7CiAJaW50IGhwZF9ncGlvOwogCWVudW0gb2ZfZ3Bpb19mbGFncyBocGRfZ3Bp
-b19mbGFnczsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCmluZGV4IGNkYTA0OTFlZDZiZi4uZmJmMTRlMWVmZDBl
-IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9oZG1pLmMKQEAgLTIxLDYgKzIxLDggQEAKIAogI2luY2x1ZGUgPHNvdW5k
-L2hkYV92ZXJicy5oPgogCisjaW5jbHVkZSA8bWVkaWEvY2VjLW5vdGlmaWVyLmg+CisKICNpbmNs
-dWRlICJoZG1pLmgiCiAjaW5jbHVkZSAiZHJtLmgiCiAjaW5jbHVkZSAiZGMuaCIKQEAgLTE3MjAs
-NiArMTcyMiwxMCBAQCBzdGF0aWMgaW50IHRlZ3JhX2hkbWlfcHJvYmUoc3RydWN0IHBsYXRmb3Jt
-X2RldmljZSAqcGRldikKIAkJcmV0dXJuIFBUUl9FUlIoaGRtaS0+dmRkKTsKIAl9CiAKKwloZG1p
-LT5vdXRwdXQubm90aWZpZXIgPSBjZWNfbm90aWZpZXJfZ2V0KCZwZGV2LT5kZXYpOworCWlmICho
-ZG1pLT5vdXRwdXQubm90aWZpZXIgPT0gTlVMTCkKKwkJcmV0dXJuIC1FTk9NRU07CisKIAloZG1p
-LT5vdXRwdXQuZGV2ID0gJnBkZXYtPmRldjsKIAogCWVyciA9IHRlZ3JhX291dHB1dF9wcm9iZSgm
-aGRtaS0+b3V0cHV0KTsKQEAgLTE3NzgsNiArMTc4NCw5IEBAIHN0YXRpYyBpbnQgdGVncmFfaGRt
-aV9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAogCXRlZ3JhX291dHB1dF9y
-ZW1vdmUoJmhkbWktPm91dHB1dCk7CiAKKwlpZiAoaGRtaS0+b3V0cHV0Lm5vdGlmaWVyKQorCQlj
-ZWNfbm90aWZpZXJfcHV0KGhkbWktPm91dHB1dC5ub3RpZmllcik7CisKIAlyZXR1cm4gMDsKIH0K
-IApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jIGIvZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL291dHB1dC5jCmluZGV4IDU5NWQxZWMzZTAyZS4uNTdjMDUyNTIxYTQ0IDEw
-MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvb3V0cHV0LmMKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL291dHB1dC5jCkBAIC0xMSw2ICsxMSw4IEBACiAjaW5jbHVkZSA8ZHJtL2Ry
-bV9wYW5lbC5oPgogI2luY2x1ZGUgImRybS5oIgogCisjaW5jbHVkZSA8bWVkaWEvY2VjLW5vdGlm
-aWVyLmg+CisKIGludCB0ZWdyYV9vdXRwdXRfY29ubmVjdG9yX2dldF9tb2RlcyhzdHJ1Y3QgZHJt
-X2Nvbm5lY3RvciAqY29ubmVjdG9yKQogewogCXN0cnVjdCB0ZWdyYV9vdXRwdXQgKm91dHB1dCA9
-IGNvbm5lY3Rvcl90b19vdXRwdXQoY29ubmVjdG9yKTsKQEAgLTMzLDYgKzM1LDcgQEAgaW50IHRl
-Z3JhX291dHB1dF9jb25uZWN0b3JfZ2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25u
-ZWN0b3IpCiAJCWVkaWQgPSBkcm1fZ2V0X2VkaWQoY29ubmVjdG9yLCBvdXRwdXQtPmRkYyk7CiAK
-IAlkcm1fbW9kZV9jb25uZWN0b3JfdXBkYXRlX2VkaWRfcHJvcGVydHkoY29ubmVjdG9yLCBlZGlk
-KTsKKwljZWNfbm90aWZpZXJfc2V0X3BoeXNfYWRkcl9mcm9tX2VkaWQob3V0cHV0LT5ub3RpZmll
-ciwgZWRpZCk7CiAKIAlpZiAoZWRpZCkgewogCQllcnIgPSBkcm1fYWRkX2VkaWRfbW9kZXMoY29u
-bmVjdG9yLCBlZGlkKTsKQEAgLTY4LDYgKzcxLDkgQEAgdGVncmFfb3V0cHV0X2Nvbm5lY3Rvcl9k
-ZXRlY3Qoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwgYm9vbCBmb3JjZSkKIAkJCXN0
-YXR1cyA9IGNvbm5lY3Rvcl9zdGF0dXNfY29ubmVjdGVkOwogCX0KIAorCWlmIChzdGF0dXMgIT0g
-Y29ubmVjdG9yX3N0YXR1c19jb25uZWN0ZWQpCisJCWNlY19ub3RpZmllcl9waHlzX2FkZHJfaW52
-YWxpZGF0ZShvdXRwdXQtPm5vdGlmaWVyKTsKKwogCXJldHVybiBzdGF0dXM7CiB9CiAKLS0gCjIu
-MTEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+
+On 07/04/2017 03:35 AM, Jon Hunter wrote:
+>
+> On 03/07/17 13:47, Gustavo A. R. Silva wrote:
+>> platform_get_irq() returns an error code, but the tegra-devfreq
+>> driver ignores it and always returns -ENODEV. This is not correct,
+>> and prevents -EPROBE_DEFER from being propagated properly.
+>>
+>> Notice that platform_get_irq() no longer returns 0 on error:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e330b9a6bb35dc7097a4f02cb1ae7b6f96df92af
+>>
+>> Print and propagate the return value of platform_get_irq on failure.
+>>
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+>> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+>> ---
+>> Changes in v2:
+>>  Rewrite commit message.
+>>
+>>  drivers/devfreq/tegra-devfreq.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+>> index 214fff9..ae71215 100644
+>> --- a/drivers/devfreq/tegra-devfreq.c
+>> +++ b/drivers/devfreq/tegra-devfreq.c
+>> @@ -688,9 +688,9 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>  	}
+>>
+>>  	irq = platform_get_irq(pdev, 0);
+>> -	if (irq <= 0) {
+>> -		dev_err(&pdev->dev, "Failed to get IRQ\n");
+>> -		return -ENODEV;
+>> +	if (irq < 0) {
+>> +		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", irq);
+>> +		return irq;
+>>  	}
+>>
+>>  	platform_set_drvdata(pdev, tegra);
+>
+> Thanks.
+>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+>
+
+Thank you, Jon.
+
+-- 
+Gustavo A. R. Silva
