@@ -1,114 +1,81 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH V5 3/3] dt-bindings: tegra: add binding documentation
-Date: Mon, 17 Jul 2017 18:08:18 +0300
-Message-ID: <3a334423-9a47-595c-3782-d474d6a960ab@kapsi.fi>
-References: <1498830993-24666-1-git-send-email-pchandru@nvidia.com>
- <1498830993-24666-4-git-send-email-pchandru@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: tegra: constify snd_soc_dai_ops
+	structure" to the asoc tree
+Date: Mon, 17 Jul 2017 17:05:33 +0100
+Message-ID: <E1dX8Wb-0004pc-7M@debutante>
+References: <20170713054735.GA18162@embeddedgus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1498830993-24666-4-git-send-email-pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Preetham Chandru Ramchandra <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: preetham260-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20170713054735.GA18162@embeddedgus>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 30.06.2017 16:56, Preetham Chandru Ramchandra wrote:
-> From: Preetham Chandru R <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> This adds bindings documentation for the
-> AHCI controller on Tegra210
->
-> Signed-off-by: Preetham Chandru R <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v4:
-> * changed the commit message
-> * changed 'sata-cold' reset to mandatory for t210 and t124
-> * Removed the regulators for T210 since these regulators
->   will be enabled in phy driver.
-> v3:
-> * Add AUX register.
-> v2:
-> * change cml1, pll_e and phy regulators as optional
->   for T210.
-> ---
->  .../bindings/ata/nvidia,tegra124-ahci.txt          | 38 ++++++++++++++--------
->  1 file changed, 25 insertions(+), 13 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt b/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
-> index 66c83c3..df4dc2c 100644
-> --- a/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
-> +++ b/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
-> @@ -1,20 +1,19 @@
-> -Tegra124 SoC SATA AHCI controller
-> +Tegra SoC SATA AHCI controller
->
->  Required properties :
-> -- compatible : For Tegra124, must contain "nvidia,tegra124-ahci".  Otherwise,
-> -  must contain '"nvidia,<chip>-ahci", "nvidia,tegra124-ahci"', where <chip>
-> -  is tegra132.
-> -- reg : Should contain 2 entries:
-> +- compatible : Must be one of:
-> +  - Tegra124 : "nvidia,tegra124-ahci"
-> +  - Tegra210 : "nvidia,tegra210-ahci"
-> +- reg : Should contain 3 entries:
->    - AHCI register set (SATA BAR5)
->    - SATA register set
-> +  - Tegra210 : AUX register set
+The patch
 
-Perhaps just drop the Tegra210 since this register set also works on 
-Tegra124, even if it is optional.
+   ASoC: tegra: constify snd_soc_dai_ops structure
 
->  - interrupts : Defines the interrupt used by SATA
->  - clocks : Must contain an entry for each entry in clock-names.
->    See ../clocks/clock-bindings.txt for details.
->  - clock-names : Must include the following entries:
->    - sata
->    - sata-oob
-> -  - cml1
-> -  - pll_e
->  - resets : Must contain an entry for each entry in reset-names.
->    See ../reset/reset.txt for details.
->  - reset-names : Must include the following entries:
-> @@ -24,9 +23,22 @@ Required properties :
->  - phys : Must contain an entry for each entry in phy-names.
->    See ../phy/phy-bindings.txt for details.
->  - phy-names : Must include the following entries:
-> -  - sata-phy : XUSB PADCTL SATA PHY
-> -- hvdd-supply : Defines the SATA HVDD regulator
-> -- vddio-supply : Defines the SATA VDDIO regulator
-> -- avdd-supply : Defines the SATA AVDD regulator
-> -- target-5v-supply : Defines the SATA 5V power regulator
-> -- target-12v-supply : Defines the SATA 12V power regulator
-> +  - For T124:
-> +    - sata-phy : XUSB PADCTL SATA PHY
-> +  - For T210:
-> +    - sata-0
-> +- For T124:
-> +  - hvdd-supply : Defines the SATA HVDD regulator
-> +  - vddio-supply : Defines the SATA VDDIO regulator
-> +  - avdd-supply : Defines the SATA AVDD regulator
-> +  - target-5v-supply : Defines the SATA 5V power regulator
-> +  - target-12v-supply : Defines the SATA 12V power regulator
-> +
-> +Optional properties:
-> +- clock-names :
-> +  - cml1 :
-> +    cml1 clock is required by phy so it is optional to define
-> +    here as phy driver will be enabling this clock.
-> +  - pll_e :
-> +    pll_e is the parent of cml1 clock so it is optional to define
-> +    here as phy driver will be enabling this clock.
+has been applied to the asoc tree at
 
-Perhaps something like "These clocks should be defined here if the PHY 
-driver doesn't manage them. If it does, they should not be."
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Also for next round, please also add robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org and 
-mark.rutland-5wv7dgnIgG8@public.gmane.org to To field and devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org to Cc 
-field. They should review the binding documentation. (Sorry for not 
-mentioning this earlier but I have been a bit fuzzy on the proper 
-procedure myself.)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Cheers,
-Mikko
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 583ac685986963737997d0f6df569a3daab9c097 Mon Sep 17 00:00:00 2001
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Date: Thu, 13 Jul 2017 00:47:35 -0500
+Subject: [PATCH] ASoC: tegra: constify snd_soc_dai_ops structure
+
+This structure is only stored in the ops field of a snd_soc_dai_driver
+structure. That field is declared const, so snd_soc_dai_ops structures
+that have this property can be declared as const also.
+
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/tegra/tegra30_i2s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index b2b279c96029..0b176ea24914 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -275,7 +275,7 @@ static int tegra30_i2s_probe(struct snd_soc_dai *dai)
+ 	return 0;
+ }
+ 
+-static struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
++static const struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
+ 	.set_fmt	= tegra30_i2s_set_fmt,
+ 	.hw_params	= tegra30_i2s_hw_params,
+ 	.trigger	= tegra30_i2s_trigger,
+-- 
+2.13.2
