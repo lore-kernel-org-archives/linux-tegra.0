@@ -1,40 +1,39 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: Free the IOMMU domain when there is no
- device to attach
-Date: Tue, 18 Jul 2017 10:09:45 +0100
-Message-ID: <8db74bfc-e442-dd32-4b24-1c33f3a82d92@nvidia.com>
-References: <20170710193305.5987-1-contact@paulk.fr>
- <09ecbf74-ac5d-a7f5-c6bd-53f4f84a0de5@kapsi.fi>
+From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH] gpio: tegra: fix unbalanced chained_irq_enter/exit
+Date: Tue, 18 Jul 2017 14:35:45 +0200
+Message-ID: <a9c261800dbb662c9c703544817dc103e2937472.1500381146.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <09ecbf74-ac5d-a7f5-c6bd-53f4f84a0de5-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mikko,
+When more than one GPIO IRQs are triggered simultaneously,
+tegra_gpio_irq_handler() called chained_irq_exit() multiple
+times for one chained_irq_enter().
 
-On 11/07/17 07:43, Mikko Perttunen wrote:
-> Thanks for the patch, didn't consider this case. I really need to get
-> together some system to automatically test on multiple platforms.. :)
-We already have the infrastructure in place to do this, however, at the
-moment we are just making sure the platforms boot. Something like this
-we should be able to catch, even if we don't explicitly test display/hdmi.
+Fixes: 3c92db9ac0ca3eee8e46e2424b6c074e2e394ad9
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+---
+ drivers/gpio/gpio-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I was thinking that we could parse the /dev and /sys file-systems to
-ensure that devices for a given platform are present after boot. I am
-not sure if there is a good way to do this, but if you have any
-thoughts, then I am willing to add more testing.
-
-What is interesting about this case, was that there were no specific
-error messages that indicated this had broken AFAICT.
-
-Cheers
-Jon
-
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 88529d3c06c9..4bd99a38cae8 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -384,7 +384,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
+ 			 * before executing the handler so that we don't
+ 			 * miss edges
+ 			 */
+-			if (lvl & (0x100 << pin)) {
++			if (!unmasked && lvl & (0x100 << pin)) {
+ 				unmasked = 1;
+ 				chained_irq_exit(chip, desc);
+ 			}
 -- 
-nvpublic
+2.11.0
+
