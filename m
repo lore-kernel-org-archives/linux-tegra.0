@@ -1,47 +1,45 @@
-From: "Mrs.Meliana Trump" <ugochukwuonuorah12-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Attention To me and get back to me urgent
-Date: Tue, 18 Jul 2017 07:24:53 -0700
-Message-ID: <CAOYsR4hfz2d52khW4AfuD1=vcXCDM7z18SBkgtTCuHGeZVr_Og@mail.gmail.com>
-Reply-To: mrs.melianatrump-/E1597aS9LQAvxtiuMwx3w@public.gmane.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH V5 1/3] ata: ahci_tegra: Add AHCI support for tegra210
+Date: Tue, 18 Jul 2017 18:16:25 +0200
+Message-ID: <2330130.R7nNpdRms5@amdc3058>
+References: <1498830993-24666-1-git-send-email-pchandru@nvidia.com>
+        <1498830993-24666-2-git-send-email-pchandru@nvidia.com>
+        <CGME20170718161627epcas5p16d97b0c718cc9ba1fa7483a727f6c2a3@epcas5p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-reply-to: <1498830993-24666-2-git-send-email-pchandru@nvidia.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Preetham Chandru Ramchandra <pchandru@nvidia.com>
+Cc: thierry.reding@gmail.com, tj@kernel.org, cyndis@kapsi.fi, preetham260@gmail.com, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org, vbyravarasu@nvidia.com, pkunapuli@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Attention:Beneficiary
 
-I am  Meliana Trump, and I am writing to inform you about your Bank
-Check Draft brought back 16/07/2017 by the United Embassy Mr John
-Moore from the government of Benin Republic in the white house
-Washington DC been mandated to be deliver to your home address once
-you reconfirm it with the one we have here with us to avoid wrong
-delivery of your check draft Eighteen million united states dollars
-$18,000,000,00usd that was assigned to be delivered to your humble
-home address by Honorable president Donald Trump the president of this
-great country this week by a delivery agent Mr John Moore
+Hi,
 
-Also reconfirm your details for the check delivery by filling the form
-below and send it immediately to our mrs.melianatrump-/E1597aS9LQAvxtiuMwx3w@public.gmane.org  in
-for verification and for prompt collection of your fund.
+On Friday, June 30, 2017 07:26:31 PM Preetham Chandru Ramchandra wrote:
+> From: Preetham Chandru R <pchandru@nvidia.com>
+> 
+> 1. Move tegra124 specifics to tegra124_ahci_init.
+> 2. Separate the regulators needed for tegra124 and tegra210.
+> 3. Disable DIPM for t210 and t124 as there are known issues.
+> 4. Disable Devslp for t210 since devslp pin is shared with
+> pcie clkreq.
+> 
+> Signed-off-by: Preetham Chandru R <pchandru@nvidia.com>
 
-Fill The Form Below:
+Please consider splitting this combined patch on smaller logical
+parts (adding new initialization code used on both chipsets to
+tegra_ahci_controller_init() should be done in preparatory
+patch before adding T210 support, same for addition of NO_DIPM
+flag) to ease the review, potential handling of regressions and
+backporting of fixes to older kernels.  The code changes itself
+look good to me.
 
-1. Residential Address :
-2. Next of Kin :
-3. Mobile Number:
-4. Fax Number :
-5. Occupation :
-6. Sex :
-7. Age :
-8. Nationality :
-9. Country :
-10. Marital Status :
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-
-Accept my hearty congratulation again!
-
-Yours Sincerely,
-MRS MELIANA TRUMP
-FIRST_LADY
-1600 Pennsylvania Ave NW, Washington, DC 20500, United States
