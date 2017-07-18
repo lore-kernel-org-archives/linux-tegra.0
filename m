@@ -1,39 +1,47 @@
-From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH] gpio: tegra: fix unbalanced chained_irq_enter/exit
-Date: Tue, 18 Jul 2017 14:35:45 +0200
-Message-ID: <a9c261800dbb662c9c703544817dc103e2937472.1500381146.git.mirq-linux@rere.qmqm.pl>
+From: "Mrs.Meliana Trump" <ugochukwuonuorah12-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Attention To me and get back to me urgent
+Date: Tue, 18 Jul 2017 07:24:53 -0700
+Message-ID: <CAOYsR4hfz2d52khW4AfuD1=vcXCDM7z18SBkgtTCuHGeZVr_Og@mail.gmail.com>
+Reply-To: mrs.melianatrump-/E1597aS9LQAvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-When more than one GPIO IRQs are triggered simultaneously,
-tegra_gpio_irq_handler() called chained_irq_exit() multiple
-times for one chained_irq_enter().
+Attention:Beneficiary
 
-Fixes: 3c92db9ac0ca3eee8e46e2424b6c074e2e394ad9
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
- drivers/gpio/gpio-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I am  Meliana Trump, and I am writing to inform you about your Bank
+Check Draft brought back 16/07/2017 by the United Embassy Mr John
+Moore from the government of Benin Republic in the white house
+Washington DC been mandated to be deliver to your home address once
+you reconfirm it with the one we have here with us to avoid wrong
+delivery of your check draft Eighteen million united states dollars
+$18,000,000,00usd that was assigned to be delivered to your humble
+home address by Honorable president Donald Trump the president of this
+great country this week by a delivery agent Mr John Moore
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 88529d3c06c9..4bd99a38cae8 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -384,7 +384,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
- 			 * before executing the handler so that we don't
- 			 * miss edges
- 			 */
--			if (lvl & (0x100 << pin)) {
-+			if (!unmasked && lvl & (0x100 << pin)) {
- 				unmasked = 1;
- 				chained_irq_exit(chip, desc);
- 			}
--- 
-2.11.0
+Also reconfirm your details for the check delivery by filling the form
+below and send it immediately to our mrs.melianatrump-/E1597aS9LQAvxtiuMwx3w@public.gmane.org  in
+for verification and for prompt collection of your fund.
 
+Fill The Form Below:
+
+1. Residential Address :
+2. Next of Kin :
+3. Mobile Number:
+4. Fax Number :
+5. Occupation :
+6. Sex :
+7. Age :
+8. Nationality :
+9. Country :
+10. Marital Status :
+
+
+Accept my hearty congratulation again!
+
+Yours Sincerely,
+MRS MELIANA TRUMP
+FIRST_LADY
+1600 Pennsylvania Ave NW, Washington, DC 20500, United States
