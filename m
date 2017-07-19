@@ -1,25 +1,13 @@
 From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 081/102] staging: nvec: explicitly request exclusive reset
- control
-Date: Wed, 19 Jul 2017 17:26:25 +0200
-Message-ID: <20170719152646.25903-82-p.zabel@pengutronix.de>
+Subject: [PATCH 089/102] usb: host: xhci-tegra: explicitly request exclusive reset control
+Date: Wed, 19 Jul 2017 17:26:33 +0200
+Message-ID: <20170719152646.25903-90-p.zabel@pengutronix.de>
 References: <20170719152646.25903-1-p.zabel@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
@@ -30,27 +18,39 @@ explicit API call so the temporary transition helpers can be removed.
 
 No functional changes.
 
-Cc: Marc Dietrich <marvin24@gmx.de>
+Cc: Mathias Nyman <mathias.nyman@intel.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-usb@vger.kernel.org
 Cc: linux-tegra@vger.kernel.org
-Cc: devel@driverdev.osuosl.org
 Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/staging/nvec/nvec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/xhci-tegra.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index c1feccf8d94af..4ff8f47385dae 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -831,7 +831,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
- 		return -ENODEV;
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 74436f8ca5382..ba53ee63d450c 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -933,14 +933,16 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	if (IS_ERR(tegra->padctl))
+ 		return PTR_ERR(tegra->padctl);
+ 
+-	tegra->host_rst = devm_reset_control_get(&pdev->dev, "xusb_host");
++	tegra->host_rst = devm_reset_control_get_exclusive(&pdev->dev,
++							   "xusb_host");
+ 	if (IS_ERR(tegra->host_rst)) {
+ 		err = PTR_ERR(tegra->host_rst);
+ 		dev_err(&pdev->dev, "failed to get xusb_host reset: %d\n", err);
+ 		goto put_padctl;
  	}
  
--	nvec->rst = devm_reset_control_get(&pdev->dev, "i2c");
-+	nvec->rst = devm_reset_control_get_exclusive(&pdev->dev, "i2c");
- 	if (IS_ERR(nvec->rst)) {
- 		dev_err(nvec->dev, "failed to get controller reset\n");
- 		return PTR_ERR(nvec->rst);
+-	tegra->ss_rst = devm_reset_control_get(&pdev->dev, "xusb_ss");
++	tegra->ss_rst = devm_reset_control_get_exclusive(&pdev->dev,
++							 "xusb_ss");
+ 	if (IS_ERR(tegra->ss_rst)) {
+ 		err = PTR_ERR(tegra->ss_rst);
+ 		dev_err(&pdev->dev, "failed to get xusb_ss reset: %d\n", err);
 -- 
 2.11.0
