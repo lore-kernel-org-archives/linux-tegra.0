@@ -1,656 +1,369 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH] clk: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 11:35:46 +0200
-Message-ID: <8acfb923-f584-49e8-3c76-d514b9dcc457@st.com>
-References: <20170718214339.7774-12-robh@kernel.org>
+From: Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+Subject: Re: [PATCH] irqchip: Convert to using %pOF instead of full_name
+Date: Wed, 19 Jul 2017 11:42:31 +0200
+Message-ID: <d07ba1b0-054e-3c29-4502-f539f9903a5a@st.com>
+References: <20170718214339.7774-30-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170718214339.7774-12-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20170718214339.7774-30-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Russell King <linux@armlinux.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.o
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sylvain Lemieux <slemieux.tyco-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Coquelin <mcoquelin.s>
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 07/18/2017 11:42 PM, Rob Herring wrote:
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@st.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: "Emilio López" <emilio@elopez.com.ar>
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> ---
->   drivers/clk/berlin/bg2.c             |  3 +--
->   drivers/clk/berlin/bg2q.c            |  7 +++----
->   drivers/clk/clk-asm9260.c            |  4 ++--
->   drivers/clk/clk-conf.c               | 16 ++++++++--------
->   drivers/clk/clk-moxart.c             | 12 ++++++------
->   drivers/clk/clk-qoriq.c              |  7 +++----
->   drivers/clk/clk-stm32f4.c            |  4 ++--
->   drivers/clk/clk-xgene.c              | 15 ++++++---------
->   drivers/clk/clk.c                    |  4 ++--
->   drivers/clk/clkdev.c                 |  4 ++--
->   drivers/clk/mediatek/clk-cpumux.c    |  2 +-
->   drivers/clk/mediatek/clk-mtk.c       |  2 +-
->   drivers/clk/mediatek/reset.c         |  2 +-
->   drivers/clk/renesas/clk-mstp.c       |  2 +-
->   drivers/clk/renesas/clk-rcar-gen2.c  |  3 +--
->   drivers/clk/sunxi-ng/ccu-sun5i.c     |  3 +--
->   drivers/clk/sunxi-ng/ccu-sun6i-a31.c |  3 +--
->   drivers/clk/sunxi-ng/ccu-sun8i-a23.c |  3 +--
->   drivers/clk/sunxi-ng/ccu-sun8i-a33.c |  3 +--
->   drivers/clk/sunxi-ng/ccu-sun8i-h3.c  |  3 +--
->   drivers/clk/sunxi-ng/ccu-sun8i-r.c   |  3 +--
->   drivers/clk/sunxi-ng/ccu-sun8i-v3s.c |  3 +--
->   drivers/clk/sunxi/clk-sunxi.c        | 17 +++++++----------
->   drivers/clk/tegra/clk-emc.c          | 12 +++++-------
->   drivers/clk/ti/clockdomain.c         |  4 ++--
->   25 files changed, 61 insertions(+), 80 deletions(-)
-
-For clk/clk-stm32f4.c
-
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-
-Regards
-Alex
-
-> 
-> diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
-> index 1d99292e2039..e7331ace0337 100644
-> --- a/drivers/clk/berlin/bg2.c
-> +++ b/drivers/clk/berlin/bg2.c
-> @@ -679,8 +679,7 @@ static void __init berlin2_clock_setup(struct device_node *np)
->   		if (!IS_ERR(hws[n]))
->   			continue;
-> 
-> -		pr_err("%s: Unable to register leaf clock %d\n",
-> -		       np->full_name, n);
-> +		pr_err("%pOF: Unable to register leaf clock %d\n", np, n);
->   		goto bg2_fail;
->   	}
-> 
-> diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
-> index 3b784b593afd..67c270b143f7 100644
-> --- a/drivers/clk/berlin/bg2q.c
-> +++ b/drivers/clk/berlin/bg2q.c
-> @@ -304,14 +304,14 @@ static void __init berlin2q_clock_setup(struct device_node *np)
-> 
->   	gbase = of_iomap(parent_np, 0);
->   	if (!gbase) {
-> -		pr_err("%s: Unable to map global base\n", np->full_name);
-> +		pr_err("%pOF: Unable to map global base\n", np);
->   		return;
->   	}
-> 
->   	/* BG2Q CPU PLL is not part of global registers */
->   	cpupll_base = of_iomap(parent_np, 1);
->   	if (!cpupll_base) {
-> -		pr_err("%s: Unable to map cpupll base\n", np->full_name);
-> +		pr_err("%pOF: Unable to map cpupll base\n", np);
->   		iounmap(gbase);
->   		return;
->   	}
-> @@ -376,8 +376,7 @@ static void __init berlin2q_clock_setup(struct device_node *np)
->   		if (!IS_ERR(hws[n]))
->   			continue;
-> 
-> -		pr_err("%s: Unable to register leaf clock %d\n",
-> -		       np->full_name, n);
-> +		pr_err("%pOF: Unable to register leaf clock %d\n", np, n);
->   		goto bg2q_fail;
->   	}
-> 
-> diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
-> index ea8568536193..bf0582cbbf38 100644
-> --- a/drivers/clk/clk-asm9260.c
-> +++ b/drivers/clk/clk-asm9260.c
-> @@ -338,8 +338,8 @@ static void __init asm9260_acc_init(struct device_node *np)
->   		if (!IS_ERR(hws[n]))
->   			continue;
-> 
-> -		pr_err("%s: Unable to register leaf clock %d\n",
-> -				np->full_name, n);
-> +		pr_err("%pOF: Unable to register leaf clock %d\n",
-> +				np, n);
->   		goto fail;
->   	}
-> 
-> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-> index 7ec36722f8ab..49819b546134 100644
-> --- a/drivers/clk/clk-conf.c
-> +++ b/drivers/clk/clk-conf.c
-> @@ -23,8 +23,8 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
->   	num_parents = of_count_phandle_with_args(node, "assigned-clock-parents",
->   						 "#clock-cells");
->   	if (num_parents == -EINVAL)
-> -		pr_err("clk: invalid value of clock-parents property at %s\n",
-> -		       node->full_name);
-> +		pr_err("clk: invalid value of clock-parents property at %pOF\n",
-> +		       node);
-> 
->   	for (index = 0; index < num_parents; index++) {
->   		rc = of_parse_phandle_with_args(node, "assigned-clock-parents",
-> @@ -41,8 +41,8 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
->   		pclk = of_clk_get_from_provider(&clkspec);
->   		if (IS_ERR(pclk)) {
->   			if (PTR_ERR(pclk) != -EPROBE_DEFER)
-> -				pr_warn("clk: couldn't get parent clock %d for %s\n",
-> -					index, node->full_name);
-> +				pr_warn("clk: couldn't get parent clock %d for %pOF\n",
-> +					index, node);
->   			return PTR_ERR(pclk);
->   		}
-> 
-> @@ -57,8 +57,8 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
->   		clk = of_clk_get_from_provider(&clkspec);
->   		if (IS_ERR(clk)) {
->   			if (PTR_ERR(clk) != -EPROBE_DEFER)
-> -				pr_warn("clk: couldn't get assigned clock %d for %s\n",
-> -					index, node->full_name);
-> +				pr_warn("clk: couldn't get assigned clock %d for %pOF\n",
-> +					index, node);
->   			rc = PTR_ERR(clk);
->   			goto err;
->   		}
-> @@ -102,8 +102,8 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
->   			clk = of_clk_get_from_provider(&clkspec);
->   			if (IS_ERR(clk)) {
->   				if (PTR_ERR(clk) != -EPROBE_DEFER)
-> -					pr_warn("clk: couldn't get clock %d for %s\n",
-> -						index, node->full_name);
-> +					pr_warn("clk: couldn't get clock %d for %pOF\n",
-> +						index, node);
->   				return PTR_ERR(clk);
->   			}
-> 
-> diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
-> index b86dac851116..2382426346a2 100644
-> --- a/drivers/clk/clk-moxart.c
-> +++ b/drivers/clk/clk-moxart.c
-> @@ -30,7 +30,7 @@ static void __init moxart_of_pll_clk_init(struct device_node *node)
-> 
->   	base = of_iomap(node, 0);
->   	if (!base) {
-> -		pr_err("%s: of_iomap failed\n", node->full_name);
-> +		pr_err("%pOF: of_iomap failed\n", node);
->   		return;
->   	}
-> 
-> @@ -39,13 +39,13 @@ static void __init moxart_of_pll_clk_init(struct device_node *node)
-> 
->   	ref_clk = of_clk_get(node, 0);
->   	if (IS_ERR(ref_clk)) {
-> -		pr_err("%s: of_clk_get failed\n", node->full_name);
-> +		pr_err("%pOF: of_clk_get failed\n", node);
->   		return;
->   	}
-> 
->   	hw = clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mul, 1);
->   	if (IS_ERR(hw)) {
-> -		pr_err("%s: failed to register clock\n", node->full_name);
-> +		pr_err("%pOF: failed to register clock\n", node);
->   		return;
->   	}
-> 
-> @@ -70,7 +70,7 @@ static void __init moxart_of_apb_clk_init(struct device_node *node)
-> 
->   	base = of_iomap(node, 0);
->   	if (!base) {
-> -		pr_err("%s: of_iomap failed\n", node->full_name);
-> +		pr_err("%pOF: of_iomap failed\n", node);
->   		return;
->   	}
-> 
-> @@ -83,13 +83,13 @@ static void __init moxart_of_apb_clk_init(struct device_node *node)
-> 
->   	pll_clk = of_clk_get(node, 0);
->   	if (IS_ERR(pll_clk)) {
-> -		pr_err("%s: of_clk_get failed\n", node->full_name);
-> +		pr_err("%pOF: of_clk_get failed\n", node);
->   		return;
->   	}
-> 
->   	hw = clk_hw_register_fixed_factor(NULL, name, parent_name, 0, 1, div);
->   	if (IS_ERR(hw)) {
-> -		pr_err("%s: failed to register clock\n", node->full_name);
-> +		pr_err("%pOF: failed to register clock\n", node);
->   		return;
->   	}
-> 
-> diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-> index f3931e38fac0..4b7a6e3ba479 100644
-> --- a/drivers/clk/clk-qoriq.c
-> +++ b/drivers/clk/clk-qoriq.c
-> @@ -1348,8 +1348,7 @@ static void __init clockgen_init(struct device_node *np)
->   	}
-> 
->   	if (i == ARRAY_SIZE(chipinfo)) {
-> -		pr_err("%s: unknown clockgen node %s\n", __func__,
-> -		       np->full_name);
-> +		pr_err("%s: unknown clockgen node %pOF\n", __func__, np);
->   		goto err;
->   	}
->   	clockgen.info = chipinfo[i];
-> @@ -1362,8 +1361,8 @@ static void __init clockgen_init(struct device_node *np)
->   		if (guts) {
->   			clockgen.guts = of_iomap(guts, 0);
->   			if (!clockgen.guts) {
-> -				pr_err("%s: Couldn't map %s regs\n", __func__,
-> -				       guts->full_name);
-> +				pr_err("%s: Couldn't map %pOF regs\n", __func__,
-> +				       guts);
->   			}
->   		}
-> 
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> index 68e2a4e499f1..96c6b6bc8f0e 100644
-> --- a/drivers/clk/clk-stm32f4.c
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -1541,8 +1541,8 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->   		    base + gd->offset, gd->bit_idx, 0, &stm32f4_clk_lock);
-> 
->   		if (IS_ERR(clks[idx])) {
-> -			pr_err("%s: Unable to register leaf clock %s\n",
-> -			       np->full_name, gd->name);
-> +			pr_err("%pOF: Unable to register leaf clock %s\n",
-> +			       np, gd->name);
->   			goto fail;
->   		}
->   	}
-> diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-> index bc37030e38ba..4c75821a3933 100644
-> --- a/drivers/clk/clk-xgene.c
-> +++ b/drivers/clk/clk-xgene.c
-> @@ -192,7 +192,7 @@ static void xgene_pllclk_init(struct device_node *np, enum xgene_pll_type pll_ty
-> 
->   	reg = of_iomap(np, 0);
->   	if (reg == NULL) {
-> -		pr_err("Unable to map CSR register for %s\n", np->full_name);
-> +		pr_err("Unable to map CSR register for %pOF\n", np);
->   		return;
->   	}
->   	of_property_read_string(np, "clock-output-names", &clk_name);
-> @@ -409,12 +409,12 @@ static void xgene_pmdclk_init(struct device_node *np)
->   	/* Parse the DTS register for resource */
->   	rc = of_address_to_resource(np, 0, &res);
->   	if (rc != 0) {
-> -		pr_err("no DTS register for %s\n", np->full_name);
-> +		pr_err("no DTS register for %pOF\n", np);
->   		return;
->   	}
->   	csr_reg = of_iomap(np, 0);
->   	if (!csr_reg) {
-> -		pr_err("Unable to map resource for %s\n", np->full_name);
-> +		pr_err("Unable to map resource for %pOF\n", np);
->   		return;
->   	}
->   	of_property_read_string(np, "clock-output-names", &clk_name);
-> @@ -703,16 +703,14 @@ static void __init xgene_devclk_init(struct device_node *np)
->   		rc = of_address_to_resource(np, i, &res);
->   		if (rc != 0) {
->   			if (i == 0) {
-> -				pr_err("no DTS register for %s\n",
-> -					np->full_name);
-> +				pr_err("no DTS register for %pOF\n", np);
->   				return;
->   			}
->   			break;
->   		}
->   		map_res = of_iomap(np, i);
->   		if (map_res == NULL) {
-> -			pr_err("Unable to map resource %d for %s\n",
-> -				i, np->full_name);
-> +			pr_err("Unable to map resource %d for %pOF\n", i, np);
->   			goto err;
->   		}
->   		if (strcmp(res.name, "div-reg") == 0)
-> @@ -747,8 +745,7 @@ static void __init xgene_devclk_init(struct device_node *np)
->   	pr_debug("Add %s clock\n", clk_name);
->   	rc = of_clk_add_provider(np, of_clk_src_simple_get, clk);
->   	if (rc != 0)
-> -		pr_err("%s: could register provider clk %s\n", __func__,
-> -			np->full_name);
-> +		pr_err("%s: could register provider clk %pOF\n", __func__, np);
-> 
->   	return;
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index fc58c52a26b4..c8d83acda006 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3132,7 +3132,7 @@ int of_clk_add_provider(struct device_node *np,
->   	mutex_lock(&of_clk_mutex);
->   	list_add(&cp->link, &of_clk_providers);
->   	mutex_unlock(&of_clk_mutex);
-> -	pr_debug("Added clock from %s\n", np->full_name);
-> +	pr_debug("Added clock from %pOF\n", np);
-> 
->   	ret = of_clk_set_defaults(np, true);
->   	if (ret < 0)
-> @@ -3167,7 +3167,7 @@ int of_clk_add_hw_provider(struct device_node *np,
->   	mutex_lock(&of_clk_mutex);
->   	list_add(&cp->link, &of_clk_providers);
->   	mutex_unlock(&of_clk_mutex);
-> -	pr_debug("Added clk_hw provider from %s\n", np->full_name);
-> +	pr_debug("Added clk_hw provider from %pOF\n", np);
-> 
->   	ret = of_clk_set_defaults(np, true);
->   	if (ret < 0)
-> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> index bb8a77a5985f..6b2f29df3f70 100644
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -77,8 +77,8 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
->   			break;
->   		} else if (name && index >= 0) {
->   			if (PTR_ERR(clk) != -EPROBE_DEFER)
-> -				pr_err("ERROR: could not get clock %s:%s(%i)\n",
-> -					np->full_name, name ? name : "", index);
-> +				pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
-> +					np, name ? name : "", index);
->   			return clk;
->   		}
-> 
-> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-> index edd8e6918050..8ed8c5963c7b 100644
-> --- a/drivers/clk/mediatek/clk-cpumux.c
-> +++ b/drivers/clk/mediatek/clk-cpumux.c
-> @@ -98,7 +98,7 @@ int __init mtk_clk_register_cpumuxes(struct device_node *node,
-> 
->   	regmap = syscon_node_to_regmap(node);
->   	if (IS_ERR(regmap)) {
-> -		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-> +		pr_err("Cannot find regmap for %pOF: %ld\n", node,
->   		       PTR_ERR(regmap));
->   		return PTR_ERR(regmap);
->   	}
-> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-> index 0541df78141c..9c0ae4278a94 100644
-> --- a/drivers/clk/mediatek/clk-mtk.c
-> +++ b/drivers/clk/mediatek/clk-mtk.c
-> @@ -114,7 +114,7 @@ int mtk_clk_register_gates(struct device_node *node,
-> 
->   	regmap = syscon_node_to_regmap(node);
->   	if (IS_ERR(regmap)) {
-> -		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-> +		pr_err("Cannot find regmap for %pOF: %ld\n", node,
->   				PTR_ERR(regmap));
->   		return PTR_ERR(regmap);
->   	}
-> diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-> index 309049d41f1b..d3551d5efef2 100644
-> --- a/drivers/clk/mediatek/reset.c
-> +++ b/drivers/clk/mediatek/reset.c
-> @@ -72,7 +72,7 @@ void mtk_register_reset_controller(struct device_node *np,
-> 
->   	regmap = syscon_node_to_regmap(np);
->   	if (IS_ERR(regmap)) {
-> -		pr_err("Cannot find regmap for %s: %ld\n", np->full_name,
-> +		pr_err("Cannot find regmap for %pOF: %ld\n", np,
->   				PTR_ERR(regmap));
->   		return;
->   	}
-> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-> index f1617dd044cb..500a9e4e03c4 100644
-> --- a/drivers/clk/renesas/clk-mstp.c
-> +++ b/drivers/clk/renesas/clk-mstp.c
-> @@ -335,7 +335,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
->   	u32 ncells;
-> 
->   	if (of_property_read_u32(np, "#power-domain-cells", &ncells)) {
-> -		pr_warn("%s lacks #power-domain-cells\n", np->full_name);
-> +		pr_warn("%pOF lacks #power-domain-cells\n", np);
->   		return;
->   	}
-> 
-> diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
-> index 51a2479ed5d7..0b2e56d0d94b 100644
-> --- a/drivers/clk/renesas/clk-rcar-gen2.c
-> +++ b/drivers/clk/renesas/clk-rcar-gen2.c
-> @@ -407,8 +407,7 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
-> 
->   	if (rcar_rst_read_mode_pins(&cpg_mode)) {
->   		/* Backward-compatibility with old DT */
-> -		pr_warn("%s: failed to obtain mode pins from RST\n",
-> -			np->full_name);
-> +		pr_warn("%pOF: failed to obtain mode pins from RST\n", np);
->   		cpg_mode = rcar_gen2_read_mode_pins();
->   	}
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c b/drivers/clk/sunxi-ng/ccu-sun5i.c
-> index 5372bf8be5e6..194d7bfffa53 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun5i.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
-> @@ -976,8 +976,7 @@ static void __init sun5i_ccu_init(struct device_node *node,
-> 
->   	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
->   	if (IS_ERR(reg)) {
-> -		pr_err("%s: Could not map the clock registers\n",
-> -		       of_node_full_name(node));
-> +		pr_err("%pOF: Could not map the clock registers\n", node);
->   		return;
->   	}
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-> index 4d6078fca9ac..8af434815fba 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-> @@ -1217,8 +1217,7 @@ static void __init sun6i_a31_ccu_setup(struct device_node *node)
-> 
->   	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
->   	if (IS_ERR(reg)) {
-> -		pr_err("%s: Could not map the clock registers\n",
-> -		       of_node_full_name(node));
-> +		pr_err("%pOF: Could not map the clock registers\n", node);
->   		return;
->   	}
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> index 8a753ed0426d..d93b452f0df9 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> @@ -716,8 +716,7 @@ static void __init sun8i_a23_ccu_setup(struct device_node *node)
-> 
->   	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
->   	if (IS_ERR(reg)) {
-> -		pr_err("%s: Could not map the clock registers\n",
-> -		       of_node_full_name(node));
-> +		pr_err("%pOF: Could not map the clock registers\n", node);
->   		return;
->   	}
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-> index 10b38dc46f75..13eb5b23c5e7 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-> @@ -777,8 +777,7 @@ static void __init sun8i_a33_ccu_setup(struct device_node *node)
-> 
->   	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
->   	if (IS_ERR(reg)) {
-> -		pr_err("%s: Could not map the clock registers\n",
-> -		       of_node_full_name(node));
-> +		pr_err("%pOF: Could not map the clock registers\n", node);
->   		return;
->   	}
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> index 62e4f0d2b2fc..d1ab0d713fa6 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> @@ -1118,8 +1118,7 @@ static void __init sunxi_h3_h5_ccu_init(struct device_node *node,
-> 
->   	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
->   	if (IS_ERR(reg)) {
-> -		pr_err("%s: Could not map the clock registers\n",
-> -		       of_node_full_name(node));
-> +		pr_err("%pOF: Could not map the clock registers\n", node);
->   		return;
->   	}
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-> index e54816ec1dbe..71feb7b24e8a 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-> @@ -290,8 +290,7 @@ static void __init sunxi_r_ccu_init(struct device_node *node,
-> 
->   	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
->   	if (IS_ERR(reg)) {
-> -		pr_err("%s: Could not map the clock registers\n",
-> -		       of_node_full_name(node));
-> +		pr_err("%pOF: Could not map the clock registers\n", node);
->   		return;
->   	}
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-> index a34a78d7fb28..621b1cd996db 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-> @@ -575,8 +575,7 @@ static void __init sun8i_v3s_ccu_setup(struct device_node *node)
-> 
->   	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
->   	if (IS_ERR(reg)) {
-> -		pr_err("%s: Could not map the clock registers\n",
-> -		       of_node_full_name(node));
-> +		pr_err("%pOF: Could not map the clock registers\n", node);
->   		return;
->   	}
-> 
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index f2c9274b8bd5..aa4add580516 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -666,15 +666,14 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
-> 
->   	reg = of_iomap(node, 0);
->   	if (!reg) {
-> -		pr_err("Could not map registers for mux-clk: %s\n",
-> -		       of_node_full_name(node));
-> +		pr_err("Could not map registers for mux-clk: %pOF\n", node);
->   		return NULL;
->   	}
-> 
->   	i = of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
->   	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
-> -		pr_err("%s: could not read clock-output-names from \"%s\"\n",
-> -		       __func__, of_node_full_name(node));
-> +		pr_err("%s: could not read clock-output-names from \"%pOF\"\n",
-> +		       __func__, node);
->   		goto out_unmap;
->   	}
-> 
-> @@ -797,16 +796,15 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
-> 
->   	reg = of_iomap(node, 0);
->   	if (!reg) {
-> -		pr_err("Could not map registers for mux-clk: %s\n",
-> -		       of_node_full_name(node));
-> +		pr_err("Could not map registers for mux-clk: %pOF\n", node);
->   		return;
->   	}
-> 
->   	clk_parent = of_clk_get_parent_name(node, 0);
-> 
->   	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
-> -		pr_err("%s: could not read clock-output-names from \"%s\"\n",
-> -		       __func__, of_node_full_name(node));
-> +		pr_err("%s: could not read clock-output-names from \"%pOF\"\n",
-> +		       __func__, node);
->   		goto out_unmap;
->   	}
-> 
-> @@ -1010,8 +1008,7 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
-> 
->   	reg = of_iomap(node, 0);
->   	if (!reg) {
-> -		pr_err("Could not map registers for divs-clk: %s\n",
-> -		       of_node_full_name(node));
-> +		pr_err("Could not map registers for divs-clk: %pOF\n", node);
->   		return NULL;
->   	}
-> 
-> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-> index 74e7544f861b..11a5066e5c27 100644
-> --- a/drivers/clk/tegra/clk-emc.c
-> +++ b/drivers/clk/tegra/clk-emc.c
-> @@ -378,7 +378,7 @@ static int load_one_timing_from_dt(struct tegra_clk_emc *tegra,
-> 
->   	err = of_property_read_u32(node, "clock-frequency", &tmp);
->   	if (err) {
-> -		pr_err("timing %s: failed to read rate\n", node->full_name);
-> +		pr_err("timing %pOF: failed to read rate\n", node);
->   		return err;
->   	}
-> 
-> @@ -386,8 +386,7 @@ static int load_one_timing_from_dt(struct tegra_clk_emc *tegra,
-> 
->   	err = of_property_read_u32(node, "nvidia,parent-clock-frequency", &tmp);
->   	if (err) {
-> -		pr_err("timing %s: failed to read parent rate\n",
-> -		       node->full_name);
-> +		pr_err("timing %pOF: failed to read parent rate\n", node);
->   		return err;
->   	}
-> 
-> @@ -395,8 +394,7 @@ static int load_one_timing_from_dt(struct tegra_clk_emc *tegra,
-> 
->   	timing->parent = of_clk_get_by_name(node, "emc-parent");
->   	if (IS_ERR(timing->parent)) {
-> -		pr_err("timing %s: failed to get parent clock\n",
-> -		       node->full_name);
-> +		pr_err("timing %pOF: failed to get parent clock\n", node);
->   		return PTR_ERR(timing->parent);
->   	}
-> 
-> @@ -409,8 +407,8 @@ static int load_one_timing_from_dt(struct tegra_clk_emc *tegra,
->   		}
->   	}
->   	if (timing->parent_index == 0xff) {
-> -		pr_err("timing %s: %s is not a valid parent\n",
-> -		       node->full_name, __clk_get_name(timing->parent));
-> +		pr_err("timing %pOF: %s is not a valid parent\n",
-> +		       node, __clk_get_name(timing->parent));
->   		clk_put(timing->parent);
->   		return -EINVAL;
->   	}
-> diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
-> index fbedc6a9fed0..07a805125e98 100644
-> --- a/drivers/clk/ti/clockdomain.c
-> +++ b/drivers/clk/ti/clockdomain.c
-> @@ -138,8 +138,8 @@ static void __init of_ti_clockdomain_setup(struct device_node *node)
->   	for (i = 0; i < num_clks; i++) {
->   		clk = of_clk_get(node, i);
->   		if (IS_ERR(clk)) {
-> -			pr_err("%s: Failed get %s' clock nr %d (%ld)\n",
-> -			       __func__, node->full_name, i, PTR_ERR(clk));
-> +			pr_err("%s: Failed get %pOF' clock nr %d (%ld)\n",
-> +			       __func__, node, i, PTR_ERR(clk));
->   			continue;
->   		}
->   		clk_hw = __clk_get_hw(clk);
-> --
-> 2.11.0
-> 
+CgpPbiAwNy8xOC8yMDE3IDExOjQzIFBNLCBSb2IgSGVycmluZyB3cm90ZToKPiBOb3cgdGhhdCB3
+ZSBoYXZlIGEgY3VzdG9tIHByaW50ZiBmb3JtYXQgc3BlY2lmaWVyLCBjb252ZXJ0IHVzZXJzIG9m
+Cj4gZnVsbF9uYW1lIHRvIHVzZSAlcE9GIGluc3RlYWQuIFRoaXMgaXMgcHJlcGFyYXRpb24gdG8g
+cmVtb3ZlIHN0b3JpbmcKPiBvZiB0aGUgZnVsbCBwYXRoIHN0cmluZyBmb3IgZWFjaCBub2RlLgo+
+IAo+IFNpZ25lZC1vZmYtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+Cj4gQ2M6IFRo
+b21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPgo+IENjOiBKYXNvbiBDb29wZXIgPGph
+c29uQGxha2VkYWVtb24ubmV0Pgo+IENjOiBNYXJjIFp5bmdpZXIgPG1hcmMuenluZ2llckBhcm0u
+Y29tPgo+IENjOiBMZWUgSm9uZXMgPGxlZUBrZXJuZWwub3JnPgo+IENjOiBFcmljIEFuaG9sdCA8
+ZXJpY0BhbmhvbHQubmV0Pgo+IENjOiBTdGVmYW4gV2FocmVuIDxzdGVmYW4ud2FocmVuQGkyc2Uu
+Y29tPgo+IENjOiBGbG9yaWFuIEZhaW5lbGxpIDxmLmZhaW5lbGxpQGdtYWlsLmNvbT4KPiBDYzog
+UmF5IEp1aSA8cmp1aUBicm9hZGNvbS5jb20+Cj4gQ2M6IFNjb3R0IEJyYW5kZW4gPHNicmFuZGVu
+QGJyb2FkY29tLmNvbT4KPiBDYzogYmNtLWtlcm5lbC1mZWVkYmFjay1saXN0QGJyb2FkY29tLmNv
+bQo+IENjOiBCYXJ1Y2ggU2lhY2ggPGJhcnVjaEB0a29zLmNvLmlsPgo+IENjOiBWbGFkaW1pciBa
+YXBvbHNraXkgPHZ6QG1sZWlhLmNvbT4KPiBDYzogU3lsdmFpbiBMZW1pZXV4IDxzbGVtaWV1eC50
+eWNvQGdtYWlsLmNvbT4KPiBDYzogTWF0dGhpYXMgQnJ1Z2dlciA8bWF0dGhpYXMuYmdnQGdtYWls
+LmNvbT4KPiBDYzogTWF4aW1lIENvcXVlbGluIDxtY29xdWVsaW4uc3RtMzJAZ21haWwuY29tPgo+
+IENjOiBBbGV4YW5kcmUgVG9yZ3VlIDxhbGV4YW5kcmUudG9yZ3VlQHN0LmNvbT4KPiBDYzogTWF4
+aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+Cj4gQ2M6IENoZW4t
+WXUgVHNhaSA8d2Vuc0Bjc2llLm9yZz4KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVk
+aW5nQGdtYWlsLmNvbT4KPiBDYzogSm9uYXRoYW4gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNv
+bT4KPiBDYzogTWljaGFsIFNpbWVrIDxtaWNoYWwuc2ltZWtAeGlsaW54LmNvbT4KPiBDYzogIlPD
+tnJlbiBCcmlua21hbm4iIDxzb3Jlbi5icmlua21hbm5AeGlsaW54LmNvbT4KPiBDYzogbGludXgt
+cnBpLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlz
+dHMuaW5mcmFkZWFkLm9yZwo+IENjOiBsaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3Jn
+Cj4gQ2M6IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZwo+IC0tLQo+ICAgZHJpdmVycy9pcnFj
+aGlwL2lycS1iY20yODM1LmMgICAgICAgICAgICB8ICA5ICsrKystLS0tLQo+ICAgZHJpdmVycy9p
+cnFjaGlwL2lycS1iY20yODM2LmMgICAgICAgICAgICB8ICA1ICsrLS0tCj4gICBkcml2ZXJzL2ly
+cWNoaXAvaXJxLWNyb3NzYmFyLmMgICAgICAgICAgIHwgIDYgKysrLS0tCj4gICBkcml2ZXJzL2ly
+cWNoaXAvaXJxLWRpZ2ljb2xvci5jICAgICAgICAgIHwgIDggKysrKy0tLS0KPiAgIGRyaXZlcnMv
+aXJxY2hpcC9pcnEtZHctYXBiLWljdGwuYyAgICAgICAgfCAxMiArKysrKystLS0tLS0KPiAgIGRy
+aXZlcnMvaXJxY2hpcC9pcnEtZ2ljLXYzLWl0cy1wY2ktbXNpLmMgfCAgMiArLQo+ICAgZHJpdmVy
+cy9pcnFjaGlwL2lycS1naWMtdjMtaXRzLmMgICAgICAgICB8ICA2ICsrKy0tLQo+ICAgZHJpdmVy
+cy9pcnFjaGlwL2lycS1naWMtdjMuYyAgICAgICAgICAgICB8IDExICsrKystLS0tLS0tCj4gICBk
+cml2ZXJzL2lycWNoaXAvaXJxLWlteC1ncGN2Mi5jICAgICAgICAgIHwgIDQgKystLQo+ICAgZHJp
+dmVycy9pcnFjaGlwL2lycS1scGMzMnh4LmMgICAgICAgICAgICB8ICAyICstCj4gICBkcml2ZXJz
+L2lycWNoaXAvaXJxLW10ay1zeXNpcnEuYyAgICAgICAgIHwgIDMgKy0tCj4gICBkcml2ZXJzL2ly
+cWNoaXAvaXJxLW14cy5jICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ICAgZHJpdmVycy9pcnFj
+aGlwL2lycS1zdG0zMi1leHRpLmMgICAgICAgICB8ICA4ICsrKystLS0tCj4gICBkcml2ZXJzL2ly
+cWNoaXAvaXJxLXN1bjRpLmMgICAgICAgICAgICAgIHwgIDYgKysrLS0tCj4gICBkcml2ZXJzL2ly
+cWNoaXAvaXJxLXRlZ3JhLmMgICAgICAgICAgICAgIHwgMTYgKysrKysrKystLS0tLS0tLQo+ICAg
+ZHJpdmVycy9pcnFjaGlwL2lycS14aWxpbngtaW50Yy5jICAgICAgICB8ICA0ICsrLS0KPiAgIDE2
+IGZpbGVzIGNoYW5nZWQsIDUwIGluc2VydGlvbnMoKyksIDU2IGRlbGV0aW9ucygtKQoKRm9yIGly
+cS1zdG0zMi1leHRpLmM6CgpBY2tlZC1ieTogQWxleGFuZHJlIFRPUkdVRSA8YWxleGFuZHJlLnRv
+cmd1ZUBzdC5jb20+CgpSZWdhcmRzCkFsZXgKCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaXJx
+Y2hpcC9pcnEtYmNtMjgzNS5jIGIvZHJpdmVycy9pcnFjaGlwL2lycS1iY20yODM1LmMKPiBpbmRl
+eCA0NGQ3YzM4ZGRlNDcuLmQyZGE4YTFlNmIxYiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2lycWNo
+aXAvaXJxLWJjbTI4MzUuYwo+ICsrKyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtYmNtMjgzNS5jCj4g
+QEAgLTE0NywxMyArMTQ3LDEyIEBAIHN0YXRpYyBpbnQgX19pbml0IGFybWN0cmxfb2ZfaW5pdChz
+dHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsCj4gCj4gICAJYmFzZSA9IG9mX2lvbWFwKG5vZGUsIDAp
+Owo+ICAgCWlmICghYmFzZSkKPiAtCQlwYW5pYygiJXM6IHVuYWJsZSB0byBtYXAgSUMgcmVnaXN0
+ZXJzXG4iLAo+IC0JCQlub2RlLT5mdWxsX25hbWUpOwo+ICsJCXBhbmljKCIlcE9GOiB1bmFibGUg
+dG8gbWFwIElDIHJlZ2lzdGVyc1xuIiwgbm9kZSk7Cj4gCj4gICAJaW50Yy5kb21haW4gPSBpcnFf
+ZG9tYWluX2FkZF9saW5lYXIobm9kZSwgTUFLRV9IV0lSUShOUl9CQU5LUywgMCksCj4gICAJCQkm
+YXJtY3RybF9vcHMsIE5VTEwpOwo+ICAgCWlmICghaW50Yy5kb21haW4pCj4gLQkJcGFuaWMoIiVz
+OiB1bmFibGUgdG8gY3JlYXRlIElSUSBkb21haW5cbiIsIG5vZGUtPmZ1bGxfbmFtZSk7Cj4gKwkJ
+cGFuaWMoIiVwT0Y6IHVuYWJsZSB0byBjcmVhdGUgSVJRIGRvbWFpblxuIiwgbm9kZSk7Cj4gCj4g
+ICAJZm9yIChiID0gMDsgYiA8IE5SX0JBTktTOyBiKyspIHsKPiAgIAkJaW50Yy5wZW5kaW5nW2Jd
+ID0gYmFzZSArIHJlZ19wZW5kaW5nW2JdOwo+IEBAIC0xNzMsOCArMTcyLDggQEAgc3RhdGljIGlu
+dCBfX2luaXQgYXJtY3RybF9vZl9pbml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSwKPiAgIAkJ
+aW50IHBhcmVudF9pcnEgPSBpcnFfb2ZfcGFyc2VfYW5kX21hcChub2RlLCAwKTsKPiAKPiAgIAkJ
+aWYgKCFwYXJlbnRfaXJxKSB7Cj4gLQkJCXBhbmljKCIlczogdW5hYmxlIHRvIGdldCBwYXJlbnQg
+aW50ZXJydXB0LlxuIiwKPiAtCQkJICAgICAgbm9kZS0+ZnVsbF9uYW1lKTsKPiArCQkJcGFuaWMo
+IiVwT0Y6IHVuYWJsZSB0byBnZXQgcGFyZW50IGludGVycnVwdC5cbiIsCj4gKwkJCSAgICAgIG5v
+ZGUpOwo+ICAgCQl9Cj4gICAJCWlycV9zZXRfY2hhaW5lZF9oYW5kbGVyKHBhcmVudF9pcnEsIGJj
+bTI4MzZfY2hhaW5lZF9oYW5kbGVfaXJxKTsKPiAgIAl9IGVsc2Ugewo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2lycWNoaXAvaXJxLWJjbTI4MzYuYyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtYmNtMjgz
+Ni5jCj4gaW5kZXggZTc0NjNlM2MwODE0Li5kYzhjMWUzZWFmZTcgMTAwNjQ0Cj4gLS0tIGEvZHJp
+dmVycy9pcnFjaGlwL2lycS1iY20yODM2LmMKPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLWJj
+bTI4MzYuYwo+IEBAIC0yODIsOCArMjgyLDcgQEAgc3RhdGljIGludCBfX2luaXQgYmNtMjgzNl9h
+cm1faXJxY2hpcF9sMV9pbnRjX29mX2luaXQoc3RydWN0IGRldmljZV9ub2RlICpub2RlLAo+ICAg
+ewo+ICAgCWludGMuYmFzZSA9IG9mX2lvbWFwKG5vZGUsIDApOwo+ICAgCWlmICghaW50Yy5iYXNl
+KSB7Cj4gLQkJcGFuaWMoIiVzOiB1bmFibGUgdG8gbWFwIGxvY2FsIGludGVycnVwdCByZWdpc3Rl
+cnNcbiIsCj4gLQkJCW5vZGUtPmZ1bGxfbmFtZSk7Cj4gKwkJcGFuaWMoIiVwT0Y6IHVuYWJsZSB0
+byBtYXAgbG9jYWwgaW50ZXJydXB0IHJlZ2lzdGVyc1xuIiwgbm9kZSk7Cj4gICAJfQo+IAo+ICAg
+CWJjbTI4MzVfaW5pdF9sb2NhbF90aW1lcl9mcmVxdWVuY3koKTsKPiBAQCAtMjkyLDcgKzI5MSw3
+IEBAIHN0YXRpYyBpbnQgX19pbml0IGJjbTI4MzZfYXJtX2lycWNoaXBfbDFfaW50Y19vZl9pbml0
+KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSwKPiAgIAkJCQkJICAgICZiY20yODM2X2FybV9pcnFj
+aGlwX2ludGNfb3BzLAo+ICAgCQkJCQkgICAgTlVMTCk7Cj4gICAJaWYgKCFpbnRjLmRvbWFpbikK
+PiAtCQlwYW5pYygiJXM6IHVuYWJsZSB0byBjcmVhdGUgSVJRIGRvbWFpblxuIiwgbm9kZS0+ZnVs
+bF9uYW1lKTsKPiArCQlwYW5pYygiJXBPRjogdW5hYmxlIHRvIGNyZWF0ZSBJUlEgZG9tYWluXG4i
+LCBub2RlKTsKPiAKPiAgIAliY20yODM2X2FybV9pcnFjaGlwX3JlZ2lzdGVyX2lycShMT0NBTF9J
+UlFfQ05UUFNJUlEsCj4gICAJCQkJCSAmYmNtMjgzNl9hcm1faXJxY2hpcF90aW1lcik7Cj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvaXJxY2hpcC9pcnEtY3Jvc3NiYXIuYyBiL2RyaXZlcnMvaXJxY2hp
+cC9pcnEtY3Jvc3NiYXIuYwo+IGluZGV4IGY5NjYwMTI2OGY3MS4uOTlkOTdkN2UzZmQ3IDEwMDY0
+NAo+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEtY3Jvc3NiYXIuYwo+ICsrKyBiL2RyaXZlcnMv
+aXJxY2hpcC9pcnEtY3Jvc3NiYXIuYwo+IEBAIC0zNDEsMTMgKzM0MSwxMyBAQCBzdGF0aWMgaW50
+IF9faW5pdCBpcnFjcm9zc2Jhcl9pbml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSwKPiAgIAlp
+bnQgZXJyOwo+IAo+ICAgCWlmICghcGFyZW50KSB7Cj4gLQkJcHJfZXJyKCIlczogbm8gcGFyZW50
+LCBnaXZpbmcgdXBcbiIsIG5vZGUtPmZ1bGxfbmFtZSk7Cj4gKwkJcHJfZXJyKCIlcE9GOiBubyBw
+YXJlbnQsIGdpdmluZyB1cFxuIiwgbm9kZSk7Cj4gICAJCXJldHVybiAtRU5PREVWOwo+ICAgCX0K
+PiAKPiAgIAlwYXJlbnRfZG9tYWluID0gaXJxX2ZpbmRfaG9zdChwYXJlbnQpOwo+ICAgCWlmICgh
+cGFyZW50X2RvbWFpbikgewo+IC0JCXByX2VycigiJXM6IHVuYWJsZSB0byBvYnRhaW4gcGFyZW50
+IGRvbWFpblxuIiwgbm9kZS0+ZnVsbF9uYW1lKTsKPiArCQlwcl9lcnIoIiVwT0Y6IHVuYWJsZSB0
+byBvYnRhaW4gcGFyZW50IGRvbWFpblxuIiwgbm9kZSk7Cj4gICAJCXJldHVybiAtRU5YSU87Cj4g
+ICAJfQo+IAo+IEBAIC0zNjAsNyArMzYwLDcgQEAgc3RhdGljIGludCBfX2luaXQgaXJxY3Jvc3Ni
+YXJfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsCj4gICAJCQkJCSAgbm9kZSwgJmNyb3Nz
+YmFyX2RvbWFpbl9vcHMsCj4gICAJCQkJCSAgTlVMTCk7Cj4gICAJaWYgKCFkb21haW4pIHsKPiAt
+CQlwcl9lcnIoIiVzOiBmYWlsZWQgdG8gYWxsb2NhdGVkIGRvbWFpblxuIiwgbm9kZS0+ZnVsbF9u
+YW1lKTsKPiArCQlwcl9lcnIoIiVwT0Y6IGZhaWxlZCB0byBhbGxvY2F0ZWQgZG9tYWluXG4iLCBu
+b2RlKTsKPiAgIAkJcmV0dXJuIC1FTk9NRU07Cj4gICAJfQo+IAo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2lycWNoaXAvaXJxLWRpZ2ljb2xvci5jIGIvZHJpdmVycy9pcnFjaGlwL2lycS1kaWdpY29s
+b3IuYwo+IGluZGV4IGRhZDg1ZTc0YzM3Yy4uZGY1NzUyY2ZiYzA5IDEwMDY0NAo+IC0tLSBhL2Ry
+aXZlcnMvaXJxY2hpcC9pcnEtZGlnaWNvbG9yLmMKPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJx
+LWRpZ2ljb2xvci5jCj4gQEAgLTc4LDcgKzc4LDcgQEAgc3RhdGljIGludCBfX2luaXQgZGlnaWNv
+bG9yX29mX2luaXQoc3RydWN0IGRldmljZV9ub2RlICpub2RlLAo+IAo+ICAgCXJlZ19iYXNlID0g
+b2ZfaW9tYXAobm9kZSwgMCk7Cj4gICAJaWYgKCFyZWdfYmFzZSkgewo+IC0JCXByX2VycigiJXM6
+IHVuYWJsZSB0byBtYXAgSUMgcmVnaXN0ZXJzXG4iLCBub2RlLT5mdWxsX25hbWUpOwo+ICsJCXBy
+X2VycigiJXBPRjogdW5hYmxlIHRvIG1hcCBJQyByZWdpc3RlcnNcbiIsIG5vZGUpOwo+ICAgCQly
+ZXR1cm4gLUVOWElPOwo+ICAgCX0KPiAKPiBAQCAtODgsNyArODgsNyBAQCBzdGF0aWMgaW50IF9f
+aW5pdCBkaWdpY29sb3Jfb2ZfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsCj4gCj4gICAJ
+dWNyZWdzID0gc3lzY29uX3JlZ21hcF9sb29rdXBfYnlfcGhhbmRsZShub2RlLCAic3lzY29uIik7
+Cj4gICAJaWYgKElTX0VSUih1Y3JlZ3MpKSB7Cj4gLQkJcHJfZXJyKCIlczogdW5hYmxlIHRvIG1h
+cCBVQyByZWdpc3RlcnNcbiIsIG5vZGUtPmZ1bGxfbmFtZSk7Cj4gKwkJcHJfZXJyKCIlcE9GOiB1
+bmFibGUgdG8gbWFwIFVDIHJlZ2lzdGVyc1xuIiwgbm9kZSk7Cj4gICAJCXJldHVybiBQVFJfRVJS
+KHVjcmVncyk7Cj4gICAJfQo+ICAgCS8qIGNoYW5uZWwgMSwgcmVndWxhciBJUlFzICovCj4gQEAg
+LTk3LDcgKzk3LDcgQEAgc3RhdGljIGludCBfX2luaXQgZGlnaWNvbG9yX29mX2luaXQoc3RydWN0
+IGRldmljZV9ub2RlICpub2RlLAo+ICAgCWRpZ2ljb2xvcl9pcnFfZG9tYWluID0KPiAgIAkJaXJx
+X2RvbWFpbl9hZGRfbGluZWFyKG5vZGUsIDY0LCAmaXJxX2dlbmVyaWNfY2hpcF9vcHMsIE5VTEwp
+Owo+ICAgCWlmICghZGlnaWNvbG9yX2lycV9kb21haW4pIHsKPiAtCQlwcl9lcnIoIiVzOiB1bmFi
+bGUgdG8gY3JlYXRlIElSUSBkb21haW5cbiIsIG5vZGUtPmZ1bGxfbmFtZSk7Cj4gKwkJcHJfZXJy
+KCIlcE9GOiB1bmFibGUgdG8gY3JlYXRlIElSUSBkb21haW5cbiIsIG5vZGUpOwo+ICAgCQlyZXR1
+cm4gLUVOT01FTTsKPiAgIAl9Cj4gCj4gQEAgLTEwNSw3ICsxMDUsNyBAQCBzdGF0aWMgaW50IF9f
+aW5pdCBkaWdpY29sb3Jfb2ZfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsCj4gICAJCQkJ
+CSAgICAgImRpZ2ljb2xvcl9pcnEiLCBoYW5kbGVfbGV2ZWxfaXJxLAo+ICAgCQkJCQkgICAgIGNs
+ciwgMCwgMCk7Cj4gICAJaWYgKHJldCkgewo+IC0JCXByX2VycigiJXM6IHVuYWJsZSB0byBhbGxv
+Y2F0ZSBJUlEgZ2NcbiIsIG5vZGUtPmZ1bGxfbmFtZSk7Cj4gKwkJcHJfZXJyKCIlcE9GOiB1bmFi
+bGUgdG8gYWxsb2NhdGUgSVJRIGdjXG4iLCBub2RlKTsKPiAgIAkJcmV0dXJuIHJldDsKPiAgIAl9
+Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaXJxY2hpcC9pcnEtZHctYXBiLWljdGwuYyBiL2Ry
+aXZlcnMvaXJxY2hpcC9pcnEtZHctYXBiLWljdGwuYwo+IGluZGV4IDA1MmYyNjYzNjRjMC4uMGEx
+OTYxOGNlMmM4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEtZHctYXBiLWljdGwu
+Ywo+ICsrKyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtZHctYXBiLWljdGwuYwo+IEBAIC03OSwyNCAr
+NzksMjQgQEAgc3RhdGljIGludCBfX2luaXQgZHdfYXBiX2ljdGxfaW5pdChzdHJ1Y3QgZGV2aWNl
+X25vZGUgKm5wLAo+ICAgCS8qIE1hcCB0aGUgcGFyZW50IGludGVycnVwdCBmb3IgdGhlIGNoYWlu
+ZWQgaGFuZGxlciAqLwo+ICAgCWlycSA9IGlycV9vZl9wYXJzZV9hbmRfbWFwKG5wLCAwKTsKPiAg
+IAlpZiAoaXJxIDw9IDApIHsKPiAtCQlwcl9lcnIoIiVzOiB1bmFibGUgdG8gcGFyc2UgaXJxXG4i
+LCBucC0+ZnVsbF9uYW1lKTsKPiArCQlwcl9lcnIoIiVwT0Y6IHVuYWJsZSB0byBwYXJzZSBpcnFc
+biIsIG5wKTsKPiAgIAkJcmV0dXJuIC1FSU5WQUw7Cj4gICAJfQo+IAo+ICAgCXJldCA9IG9mX2Fk
+ZHJlc3NfdG9fcmVzb3VyY2UobnAsIDAsICZyKTsKPiAgIAlpZiAocmV0KSB7Cj4gLQkJcHJfZXJy
+KCIlczogdW5hYmxlIHRvIGdldCByZXNvdXJjZVxuIiwgbnAtPmZ1bGxfbmFtZSk7Cj4gKwkJcHJf
+ZXJyKCIlcE9GOiB1bmFibGUgdG8gZ2V0IHJlc291cmNlXG4iLCBucCk7Cj4gICAJCXJldHVybiBy
+ZXQ7Cj4gICAJfQo+IAo+ICAgCWlmICghcmVxdWVzdF9tZW1fcmVnaW9uKHIuc3RhcnQsIHJlc291
+cmNlX3NpemUoJnIpLCBucC0+ZnVsbF9uYW1lKSkgewo+IC0JCXByX2VycigiJXM6IHVuYWJsZSB0
+byByZXF1ZXN0IG1lbSByZWdpb25cbiIsIG5wLT5mdWxsX25hbWUpOwo+ICsJCXByX2VycigiJXBP
+RjogdW5hYmxlIHRvIHJlcXVlc3QgbWVtIHJlZ2lvblxuIiwgbnApOwo+ICAgCQlyZXR1cm4gLUVO
+T01FTTsKPiAgIAl9Cj4gCj4gICAJaW9iYXNlID0gaW9yZW1hcChyLnN0YXJ0LCByZXNvdXJjZV9z
+aXplKCZyKSk7Cj4gICAJaWYgKCFpb2Jhc2UpIHsKPiAtCQlwcl9lcnIoIiVzOiB1bmFibGUgdG8g
+bWFwIHJlc291cmNlXG4iLCBucC0+ZnVsbF9uYW1lKTsKPiArCQlwcl9lcnIoIiVwT0Y6IHVuYWJs
+ZSB0byBtYXAgcmVzb3VyY2VcbiIsIG5wKTsKPiAgIAkJcmV0ID0gLUVOT01FTTsKPiAgIAkJZ290
+byBlcnJfcmVsZWFzZTsKPiAgIAl9Cj4gQEAgLTEyMyw3ICsxMjMsNyBAQCBzdGF0aWMgaW50IF9f
+aW5pdCBkd19hcGJfaWN0bF9pbml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsCj4gICAJZG9tYWlu
+ID0gaXJxX2RvbWFpbl9hZGRfbGluZWFyKG5wLCBucmlycXMsCj4gICAJCQkJICAgICAgICZpcnFf
+Z2VuZXJpY19jaGlwX29wcywgTlVMTCk7Cj4gICAJaWYgKCFkb21haW4pIHsKPiAtCQlwcl9lcnIo
+IiVzOiB1bmFibGUgdG8gYWRkIGlycSBkb21haW5cbiIsIG5wLT5mdWxsX25hbWUpOwo+ICsJCXBy
+X2VycigiJXBPRjogdW5hYmxlIHRvIGFkZCBpcnEgZG9tYWluXG4iLCBucCk7Cj4gICAJCXJldCA9
+IC1FTk9NRU07Cj4gICAJCWdvdG8gZXJyX3VubWFwOwo+ICAgCX0KPiBAQCAtMTMyLDcgKzEzMiw3
+IEBAIHN0YXRpYyBpbnQgX19pbml0IGR3X2FwYl9pY3RsX2luaXQoc3RydWN0IGRldmljZV9ub2Rl
+ICpucCwKPiAgIAkJCQkJICAgICBoYW5kbGVfbGV2ZWxfaXJxLCBjbHIsIDAsCj4gICAJCQkJCSAg
+ICAgSVJRX0dDX0lOSVRfTUFTS19DQUNIRSk7Cj4gICAJaWYgKHJldCkgewo+IC0JCXByX2Vycigi
+JXM6IHVuYWJsZSB0byBhbGxvYyBpcnEgZG9tYWluIGdjXG4iLCBucC0+ZnVsbF9uYW1lKTsKPiAr
+CQlwcl9lcnIoIiVwT0Y6IHVuYWJsZSB0byBhbGxvYyBpcnEgZG9tYWluIGdjXG4iLCBucCk7Cj4g
+ICAJCWdvdG8gZXJyX3VubWFwOwo+ICAgCX0KPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pcnFj
+aGlwL2lycS1naWMtdjMtaXRzLXBjaS1tc2kuYyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtZ2ljLXYz
+LWl0cy1wY2ktbXNpLmMKPiBpbmRleCA3NzkzMTIxNGQ5NTQuLjE0YThjMGE3ZTA5NSAxMDA2NDQK
+PiAtLS0gYS9kcml2ZXJzL2lycWNoaXAvaXJxLWdpYy12My1pdHMtcGNpLW1zaS5jCj4gKysrIGIv
+ZHJpdmVycy9pcnFjaGlwL2lycS1naWMtdjMtaXRzLXBjaS1tc2kuYwo+IEBAIC0xMzgsNyArMTM4
+LDcgQEAgc3RhdGljIGludCBfX2luaXQgaXRzX3BjaV9vZl9tc2lfaW5pdCh2b2lkKQo+ICAgCQlp
+ZiAoaXRzX3BjaV9tc2lfaW5pdF9vbmUob2Zfbm9kZV90b19md25vZGUobnApLCBucC0+ZnVsbF9u
+YW1lKSkKPiAgIAkJCWNvbnRpbnVlOwo+IAo+IC0JCXByX2luZm8oIlBDSS9NU0k6ICVzIGRvbWFp
+biBjcmVhdGVkXG4iLCBucC0+ZnVsbF9uYW1lKTsKPiArCQlwcl9pbmZvKCJQQ0kvTVNJOiAlcE9G
+IGRvbWFpbiBjcmVhdGVkXG4iLCBucCk7Cj4gICAJfQo+IAo+ICAgCXJldHVybiAwOwo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLWdpYy12My1pdHMuYyBiL2RyaXZlcnMvaXJxY2hp
+cC9pcnEtZ2ljLXYzLWl0cy5jCj4gaW5kZXggNjg5MzI4NzNlZWJjLi42MjI5OGVlMzYwYmMgMTAw
+NjQ0Cj4gLS0tIGEvZHJpdmVycy9pcnFjaGlwL2lycS1naWMtdjMtaXRzLmMKPiArKysgYi9kcml2
+ZXJzL2lycWNoaXAvaXJxLWdpYy12My1pdHMuYwo+IEBAIC0xODE2LDEzICsxODE2LDEzIEBAIHN0
+YXRpYyBpbnQgX19pbml0IGl0c19vZl9wcm9iZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUpCj4g
+ICAJZm9yIChucCA9IG9mX2ZpbmRfbWF0Y2hpbmdfbm9kZShub2RlLCBpdHNfZGV2aWNlX2lkKTsg
+bnA7Cj4gICAJICAgICBucCA9IG9mX2ZpbmRfbWF0Y2hpbmdfbm9kZShucCwgaXRzX2RldmljZV9p
+ZCkpIHsKPiAgIAkJaWYgKCFvZl9wcm9wZXJ0eV9yZWFkX2Jvb2wobnAsICJtc2ktY29udHJvbGxl
+ciIpKSB7Cj4gLQkJCXByX3dhcm4oIiVzOiBubyBtc2ktY29udHJvbGxlciBwcm9wZXJ0eSwgSVRT
+IGlnbm9yZWRcbiIsCj4gLQkJCQlucC0+ZnVsbF9uYW1lKTsKPiArCQkJcHJfd2FybigiJXBPRjog
+bm8gbXNpLWNvbnRyb2xsZXIgcHJvcGVydHksIElUUyBpZ25vcmVkXG4iLAo+ICsJCQkJbnApOwo+
+ICAgCQkJY29udGludWU7Cj4gICAJCX0KPiAKPiAgIAkJaWYgKG9mX2FkZHJlc3NfdG9fcmVzb3Vy
+Y2UobnAsIDAsICZyZXMpKSB7Cj4gLQkJCXByX3dhcm4oIiVzOiBubyByZWdzP1xuIiwgbnAtPmZ1
+bGxfbmFtZSk7Cj4gKwkJCXByX3dhcm4oIiVwT0Y6IG5vIHJlZ3M/XG4iLCBucCk7Cj4gICAJCQlj
+b250aW51ZTsKPiAgIAkJfQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLWdp
+Yy12My5jIGIvZHJpdmVycy9pcnFjaGlwL2lycS1naWMtdjMuYwo+IGluZGV4IGRiZmZiN2FiNjIw
+My4uYWZhZTBhOWQwZGY5IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEtZ2ljLXYz
+LmMKPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLWdpYy12My5jCj4gQEAgLTEwNTcsNyArMTA1
+Nyw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBnaWNfcG9wdWxhdGVfcHBpX3BhcnRpdGlvbnMoc3Ry
+dWN0IGRldmljZV9ub2RlICpnaWNfbm9kZSkKPiAgIAkJCWlmIChXQVJOX09OKGNwdSA9PSAtMSkp
+Cj4gICAJCQkJY29udGludWU7Cj4gCj4gLQkJCXByX2NvbnQoIiVzWyVkXSAiLCBjcHVfbm9kZS0+
+ZnVsbF9uYW1lLCBjcHUpOwo+ICsJCQlwcl9jb250KCIlcE9GWyVkXSAiLCBjcHVfbm9kZSwgY3B1
+KTsKPiAKPiAgIAkJCWNwdW1hc2tfc2V0X2NwdShjcHUsICZwYXJ0LT5tYXNrKTsKPiAgIAkJfQo+
+IEBAIC0xMTI1LDE1ICsxMTI1LDEzIEBAIHN0YXRpYyBpbnQgX19pbml0IGdpY19vZl9pbml0KHN0
+cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSwgc3RydWN0IGRldmljZV9ub2RlICpwYXJlCj4gCj4gICAJ
+ZGlzdF9iYXNlID0gb2ZfaW9tYXAobm9kZSwgMCk7Cj4gICAJaWYgKCFkaXN0X2Jhc2UpIHsKPiAt
+CQlwcl9lcnIoIiVzOiB1bmFibGUgdG8gbWFwIGdpYyBkaXN0IHJlZ2lzdGVyc1xuIiwKPiAtCQkJ
+bm9kZS0+ZnVsbF9uYW1lKTsKPiArCQlwcl9lcnIoIiVwT0Y6IHVuYWJsZSB0byBtYXAgZ2ljIGRp
+c3QgcmVnaXN0ZXJzXG4iLCBub2RlKTsKPiAgIAkJcmV0dXJuIC1FTlhJTzsKPiAgIAl9Cj4gCj4g
+ICAJZXJyID0gZ2ljX3ZhbGlkYXRlX2Rpc3RfdmVyc2lvbihkaXN0X2Jhc2UpOwo+ICAgCWlmIChl
+cnIpIHsKPiAtCQlwcl9lcnIoIiVzOiBubyBkaXN0cmlidXRvciBkZXRlY3RlZCwgZ2l2aW5nIHVw
+XG4iLAo+IC0JCQlub2RlLT5mdWxsX25hbWUpOwo+ICsJCXByX2VycigiJXBPRjogbm8gZGlzdHJp
+YnV0b3IgZGV0ZWN0ZWQsIGdpdmluZyB1cFxuIiwgbm9kZSk7Cj4gICAJCWdvdG8gb3V0X3VubWFw
+X2Rpc3Q7Cj4gICAJfQo+IAo+IEBAIC0xMTUzLDggKzExNTEsNyBAQCBzdGF0aWMgaW50IF9faW5p
+dCBnaWNfb2ZfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsIHN0cnVjdCBkZXZpY2Vfbm9k
+ZSAqcGFyZQo+ICAgCQlyZXQgPSBvZl9hZGRyZXNzX3RvX3Jlc291cmNlKG5vZGUsIDEgKyBpLCAm
+cmVzKTsKPiAgIAkJcmRpc3RfcmVnc1tpXS5yZWRpc3RfYmFzZSA9IG9mX2lvbWFwKG5vZGUsIDEg
+KyBpKTsKPiAgIAkJaWYgKHJldCB8fCAhcmRpc3RfcmVnc1tpXS5yZWRpc3RfYmFzZSkgewo+IC0J
+CQlwcl9lcnIoIiVzOiBjb3VsZG4ndCBtYXAgcmVnaW9uICVkXG4iLAo+IC0JCQkgICAgICAgbm9k
+ZS0+ZnVsbF9uYW1lLCBpKTsKPiArCQkJcHJfZXJyKCIlcE9GOiBjb3VsZG4ndCBtYXAgcmVnaW9u
+ICVkXG4iLCBub2RlLCBpKTsKPiAgIAkJCWVyciA9IC1FTk9ERVY7Cj4gICAJCQlnb3RvIG91dF91
+bm1hcF9yZGlzdDsKPiAgIAkJfQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLWlt
+eC1ncGN2Mi5jIGIvZHJpdmVycy9pcnFjaGlwL2lycS1pbXgtZ3BjdjIuYwo+IGluZGV4IGJiMzZm
+NTcyZTMyMi4uNjc1ZWRhNWZmMmI4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEt
+aW14LWdwY3YyLmMKPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLWlteC1ncGN2Mi5jCj4gQEAg
+LTIxNCwxMyArMjE0LDEzIEBAIHN0YXRpYyBpbnQgX19pbml0IGlteF9ncGN2Ml9pcnFjaGlwX2lu
+aXQoc3RydWN0IGRldmljZV9ub2RlICpub2RlLAo+ICAgCWludCBpOwo+IAo+ICAgCWlmICghcGFy
+ZW50KSB7Cj4gLQkJcHJfZXJyKCIlczogbm8gcGFyZW50LCBnaXZpbmcgdXBcbiIsIG5vZGUtPmZ1
+bGxfbmFtZSk7Cj4gKwkJcHJfZXJyKCIlcE9GOiBubyBwYXJlbnQsIGdpdmluZyB1cFxuIiwgbm9k
+ZSk7Cj4gICAJCXJldHVybiAtRU5PREVWOwo+ICAgCX0KPiAKPiAgIAlwYXJlbnRfZG9tYWluID0g
+aXJxX2ZpbmRfaG9zdChwYXJlbnQpOwo+ICAgCWlmICghcGFyZW50X2RvbWFpbikgewo+IC0JCXBy
+X2VycigiJXM6IHVuYWJsZSB0byBnZXQgcGFyZW50IGRvbWFpblxuIiwgbm9kZS0+ZnVsbF9uYW1l
+KTsKPiArCQlwcl9lcnIoIiVwT0Y6IHVuYWJsZSB0byBnZXQgcGFyZW50IGRvbWFpblxuIiwgbm9k
+ZSk7Cj4gICAJCXJldHVybiAtRU5YSU87Cj4gICAJfQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2lycWNoaXAvaXJxLWxwYzMyeHguYyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtbHBjMzJ4eC5jCj4g
+aW5kZXggMTAzNGFlYjJlOThhLi5hNDgzNTdkMzY5YjUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9p
+cnFjaGlwL2lycS1scGMzMnh4LmMKPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLWxwYzMyeHgu
+Ywo+IEBAIC0xOTEsNyArMTkxLDcgQEAgc3RhdGljIGludCBfX2luaXQgbHBjMzJ4eF9vZl9pY19p
+bml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSwKPiAKPiAgIAlpcnFjLT5iYXNlID0gb2ZfaW9t
+YXAobm9kZSwgMCk7Cj4gICAJaWYgKCFpcnFjLT5iYXNlKSB7Cj4gLQkJcHJfZXJyKCIlczogdW5h
+YmxlIHRvIG1hcCByZWdpc3RlcnNcbiIsIG5vZGUtPmZ1bGxfbmFtZSk7Cj4gKwkJcHJfZXJyKCIl
+cE9GOiB1bmFibGUgdG8gbWFwIHJlZ2lzdGVyc1xuIiwgbm9kZSk7Cj4gICAJCWtmcmVlKGlycWMp
+Owo+ICAgCQlyZXR1cm4gLUVJTlZBTDsKPiAgIAl9Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaXJx
+Y2hpcC9pcnEtbXRrLXN5c2lycS5jIGIvZHJpdmVycy9pcnFjaGlwL2lycS1tdGstc3lzaXJxLmMK
+PiBpbmRleCBlZWFjNTEyZWM1YTguLjkwYWFmMTkwMTU3ZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
+L2lycWNoaXAvaXJxLW10ay1zeXNpcnEuYwo+ICsrKyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtbXRr
+LXN5c2lycS5jCj4gQEAgLTE3OCw4ICsxNzgsNyBAQCBzdGF0aWMgaW50IF9faW5pdCBtdGtfc3lz
+aXJxX29mX2luaXQoc3RydWN0IGRldmljZV9ub2RlICpub2RlLAo+ICAgCQljaGlwX2RhdGEtPmlu
+dHBvbF93b3Jkc1tpXSA9IHNpemUgLyA0Owo+ICAgCQljaGlwX2RhdGEtPmludHBvbF9iYXNlc1tp
+XSA9IG9mX2lvbWFwKG5vZGUsIGkpOwo+ICAgCQlpZiAocmV0IHx8ICFjaGlwX2RhdGEtPmludHBv
+bF9iYXNlc1tpXSkgewo+IC0JCQlwcl9lcnIoIiVzOiBjb3VsZG4ndCBtYXAgcmVnaW9uICVkXG4i
+LAo+IC0JCQkgICAgICAgbm9kZS0+ZnVsbF9uYW1lLCBpKTsKPiArCQkJcHJfZXJyKCIlcE9GOiBj
+b3VsZG4ndCBtYXAgcmVnaW9uICVkXG4iLCBub2RlLCBpKTsKPiAgIAkJCXJldCA9IC1FTk9ERVY7
+Cj4gICAJCQlnb3RvIG91dF9mcmVlX2ludHBvbDsKPiAgIAkJfQo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2lycWNoaXAvaXJxLW14cy5jIGIvZHJpdmVycy9pcnFjaGlwL2lycS1teHMuYwo+IGluZGV4
+IDA1ZmE5ZjdhZjUzYy4uZThiMzFmNTJlMDcxIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvaXJxY2hp
+cC9pcnEtbXhzLmMKPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLW14cy5jCj4gQEAgLTE3OSw3
+ICsxNzksNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgaWNvbGxfYWRkX2RvbWFpbihzdHJ1Y3QgZGV2
+aWNlX25vZGUgKm5wLAo+ICAgCQkJCQkgICAgICZpY29sbF9pcnFfZG9tYWluX29wcywgTlVMTCk7
+Cj4gCj4gICAJaWYgKCFpY29sbF9kb21haW4pCj4gLQkJcGFuaWMoIiVzOiB1bmFibGUgdG8gY3Jl
+YXRlIGlycSBkb21haW4iLCBucC0+ZnVsbF9uYW1lKTsKPiArCQlwYW5pYygiJXBPRjogdW5hYmxl
+IHRvIGNyZWF0ZSBpcnEgZG9tYWluIiwgbnApOwo+ICAgfQo+IAo+ICAgc3RhdGljIHZvaWQgX19p
+b21lbSAqIF9faW5pdCBpY29sbF9pbml0X2lvYmFzZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQo+
+IEBAIC0xODgsNyArMTg4LDcgQEAgc3RhdGljIHZvaWQgX19pb21lbSAqIF9faW5pdCBpY29sbF9p
+bml0X2lvYmFzZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQo+IAo+ICAgCWljb2xsX2Jhc2UgPSBv
+Zl9pb19yZXF1ZXN0X2FuZF9tYXAobnAsIDAsIG5wLT5uYW1lKTsKPiAgIAlpZiAoSVNfRVJSKGlj
+b2xsX2Jhc2UpKQo+IC0JCXBhbmljKCIlczogdW5hYmxlIHRvIG1hcCByZXNvdXJjZSIsIG5wLT5m
+dWxsX25hbWUpOwo+ICsJCXBhbmljKCIlcE9GOiB1bmFibGUgdG8gbWFwIHJlc291cmNlIiwgbnAp
+Owo+ICAgCXJldHVybiBpY29sbF9iYXNlOwo+ICAgfQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2lycWNoaXAvaXJxLXN0bTMyLWV4dGkuYyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc3RtMzItZXh0
+aS5jCj4gaW5kZXggNDkxNTY4Yzk1YWE1Li40NTM2M2ZmOGQwNmYgMTAwNjQ0Cj4gLS0tIGEvZHJp
+dmVycy9pcnFjaGlwL2lycS1zdG0zMi1leHRpLmMKPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJx
+LXN0bTMyLWV4dGkuYwo+IEBAIC0xNDAsNyArMTQwLDcgQEAgc3RhdGljIGludCBfX2luaXQgc3Rt
+MzJfZXh0aV9pbml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSwKPiAKPiAgIAliYXNlID0gb2Zf
+aW9tYXAobm9kZSwgMCk7Cj4gICAJaWYgKCFiYXNlKSB7Cj4gLQkJcHJfZXJyKCIlczogVW5hYmxl
+IHRvIG1hcCByZWdpc3RlcnNcbiIsIG5vZGUtPmZ1bGxfbmFtZSk7Cj4gKwkJcHJfZXJyKCIlcE9G
+OiBVbmFibGUgdG8gbWFwIHJlZ2lzdGVyc1xuIiwgbm9kZSk7Cj4gICAJCXJldHVybiAtRU5PTUVN
+Owo+ICAgCX0KPiAKPiBAQCAtMTQ5LDcgKzE0OSw3IEBAIHN0YXRpYyBpbnQgX19pbml0IHN0bTMy
+X2V4dGlfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsCj4gICAJbnJfZXh0aSA9IGZscyhy
+ZWFkbF9yZWxheGVkKGJhc2UgKyBFWFRJX1JUU1IpKTsKPiAgIAl3cml0ZWxfcmVsYXhlZCgwLCBi
+YXNlICsgRVhUSV9SVFNSKTsKPiAKPiAtCXByX2luZm8oIiVzOiAlZCBFeHRlcm5hbCBJUlFzIGRl
+dGVjdGVkXG4iLCBub2RlLT5mdWxsX25hbWUsIG5yX2V4dGkpOwo+ICsJcHJfaW5mbygiJXBPRjog
+JWQgRXh0ZXJuYWwgSVJRcyBkZXRlY3RlZFxuIiwgbm9kZSwgbnJfZXh0aSk7Cj4gCj4gICAJZG9t
+YWluID0gaXJxX2RvbWFpbl9hZGRfbGluZWFyKG5vZGUsIG5yX2V4dGksCj4gICAJCQkJICAgICAg
+ICZpcnFfZXh0aV9kb21haW5fb3BzLCBOVUxMKTsKPiBAQCAtMTYzLDggKzE2Myw4IEBAIHN0YXRp
+YyBpbnQgX19pbml0IHN0bTMyX2V4dGlfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsCj4g
+ICAJcmV0ID0gaXJxX2FsbG9jX2RvbWFpbl9nZW5lcmljX2NoaXBzKGRvbWFpbiwgbnJfZXh0aSwg
+MSwgImV4dGkiLAo+ICAgCQkJCQkgICAgIGhhbmRsZV9lZGdlX2lycSwgY2xyLCAwLCAwKTsKPiAg
+IAlpZiAocmV0KSB7Cj4gLQkJcHJfZXJyKCIlczogQ291bGQgbm90IGFsbG9jYXRlIGdlbmVyaWMg
+aW50ZXJydXB0IGNoaXAuXG4iLAo+IC0JCQlub2RlLT5mdWxsX25hbWUpOwo+ICsJCXByX2Vycigi
+JXBPRjogQ291bGQgbm90IGFsbG9jYXRlIGdlbmVyaWMgaW50ZXJydXB0IGNoaXAuXG4iLAo+ICsJ
+CQlub2RlKTsKPiAgIAkJZ290byBvdXRfZnJlZV9kb21haW47Cj4gICAJfQo+IAo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLXN1bjRpLmMgYi9kcml2ZXJzL2lycWNoaXAvaXJxLXN1
+bjRpLmMKPiBpbmRleCAzNzZiMjgwNzRlMGQuLmUzZTViOTEzMmI3NSAxMDA2NDQKPiAtLS0gYS9k
+cml2ZXJzL2lycWNoaXAvaXJxLXN1bjRpLmMKPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLXN1
+bjRpLmMKPiBAQCAtOTcsOCArOTcsOCBAQCBzdGF0aWMgaW50IF9faW5pdCBzdW40aV9vZl9pbml0
+KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSwKPiAgIHsKPiAgIAlzdW40aV9pcnFfYmFzZSA9IG9m
+X2lvbWFwKG5vZGUsIDApOwo+ICAgCWlmICghc3VuNGlfaXJxX2Jhc2UpCj4gLQkJcGFuaWMoIiVz
+OiB1bmFibGUgdG8gbWFwIElDIHJlZ2lzdGVyc1xuIiwKPiAtCQkJbm9kZS0+ZnVsbF9uYW1lKTsK
+PiArCQlwYW5pYygiJXBPRjogdW5hYmxlIHRvIG1hcCBJQyByZWdpc3RlcnNcbiIsCj4gKwkJCW5v
+ZGUpOwo+IAo+ICAgCS8qIERpc2FibGUgYWxsIGludGVycnVwdHMgKi8KPiAgIAl3cml0ZWwoMCwg
+c3VuNGlfaXJxX2Jhc2UgKyBTVU40SV9JUlFfRU5BQkxFX1JFRygwKSk7Cj4gQEAgLTEyNCw3ICsx
+MjQsNyBAQCBzdGF0aWMgaW50IF9faW5pdCBzdW40aV9vZl9pbml0KHN0cnVjdCBkZXZpY2Vfbm9k
+ZSAqbm9kZSwKPiAgIAlzdW40aV9pcnFfZG9tYWluID0gaXJxX2RvbWFpbl9hZGRfbGluZWFyKG5v
+ZGUsIDMgKiAzMiwKPiAgIAkJCQkJCSAmc3VuNGlfaXJxX29wcywgTlVMTCk7Cj4gICAJaWYgKCFz
+dW40aV9pcnFfZG9tYWluKQo+IC0JCXBhbmljKCIlczogdW5hYmxlIHRvIGNyZWF0ZSBJUlEgZG9t
+YWluXG4iLCBub2RlLT5mdWxsX25hbWUpOwo+ICsJCXBhbmljKCIlcE9GOiB1bmFibGUgdG8gY3Jl
+YXRlIElSUSBkb21haW5cbiIsIG5vZGUpOwo+IAo+ICAgCXNldF9oYW5kbGVfaXJxKHN1bjRpX2hh
+bmRsZV9pcnEpOwo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLXRlZ3JhLmMg
+Yi9kcml2ZXJzL2lycWNoaXAvaXJxLXRlZ3JhLmMKPiBpbmRleCAzOTczYTE0YmIxNWIuLjBhYmMw
+Y2QxYzMyZSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2lycWNoaXAvaXJxLXRlZ3JhLmMKPiArKysg
+Yi9kcml2ZXJzL2lycWNoaXAvaXJxLXRlZ3JhLmMKPiBAQCAtMjkxLDEzICsyOTEsMTMgQEAgc3Rh
+dGljIGludCBfX2luaXQgdGVncmFfaWN0bHJfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUs
+Cj4gICAJaW50IGVycjsKPiAKPiAgIAlpZiAoIXBhcmVudCkgewo+IC0JCXByX2VycigiJXM6IG5v
+IHBhcmVudCwgZ2l2aW5nIHVwXG4iLCBub2RlLT5mdWxsX25hbWUpOwo+ICsJCXByX2VycigiJXBP
+Rjogbm8gcGFyZW50LCBnaXZpbmcgdXBcbiIsIG5vZGUpOwo+ICAgCQlyZXR1cm4gLUVOT0RFVjsK
+PiAgIAl9Cj4gCj4gICAJcGFyZW50X2RvbWFpbiA9IGlycV9maW5kX2hvc3QocGFyZW50KTsKPiAg
+IAlpZiAoIXBhcmVudF9kb21haW4pIHsKPiAtCQlwcl9lcnIoIiVzOiB1bmFibGUgdG8gb2J0YWlu
+IHBhcmVudCBkb21haW5cbiIsIG5vZGUtPmZ1bGxfbmFtZSk7Cj4gKwkJcHJfZXJyKCIlcE9GOiB1
+bmFibGUgdG8gb2J0YWluIHBhcmVudCBkb21haW5cbiIsIG5vZGUpOwo+ICAgCQlyZXR1cm4gLUVO
+WElPOwo+ICAgCX0KPiAKPiBAQCAtMzI5LDI5ICszMjksMjkgQEAgc3RhdGljIGludCBfX2luaXQg
+dGVncmFfaWN0bHJfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsCj4gICAJfQo+IAo+ICAg
+CWlmICghbnVtX2ljdGxycykgewo+IC0JCXByX2VycigiJXM6IG5vIHZhbGlkIHJlZ2lvbnMsIGdp
+dmluZyB1cFxuIiwgbm9kZS0+ZnVsbF9uYW1lKTsKPiArCQlwcl9lcnIoIiVwT0Y6IG5vIHZhbGlk
+IHJlZ2lvbnMsIGdpdmluZyB1cFxuIiwgbm9kZSk7Cj4gICAJCWVyciA9IC1FTk9NRU07Cj4gICAJ
+CWdvdG8gb3V0X2ZyZWU7Cj4gICAJfQo+IAo+ICAgCVdBUk4obnVtX2ljdGxycyAhPSBzb2MtPm51
+bV9pY3RscnMsCj4gLQkgICAgICIlczogRm91bmQgJXUgaW50ZXJydXB0IGNvbnRyb2xsZXJzIGlu
+IERUOyBleHBlY3RlZCAldS5cbiIsCj4gLQkgICAgIG5vZGUtPmZ1bGxfbmFtZSwgbnVtX2ljdGxy
+cywgc29jLT5udW1faWN0bHJzKTsKPiArCSAgICAgIiVwT0Y6IEZvdW5kICV1IGludGVycnVwdCBj
+b250cm9sbGVycyBpbiBEVDsgZXhwZWN0ZWQgJXUuXG4iLAo+ICsJICAgICBub2RlLCBudW1faWN0
+bHJzLCBzb2MtPm51bV9pY3RscnMpOwo+IAo+IAo+ICAgCWRvbWFpbiA9IGlycV9kb21haW5fYWRk
+X2hpZXJhcmNoeShwYXJlbnRfZG9tYWluLCAwLCBudW1faWN0bHJzICogMzIsCj4gICAJCQkJCSAg
+bm9kZSwgJnRlZ3JhX2ljdGxyX2RvbWFpbl9vcHMsCj4gICAJCQkJCSAgbGljKTsKPiAgIAlpZiAo
+IWRvbWFpbikgewo+IC0JCXByX2VycigiJXM6IGZhaWxlZCB0byBhbGxvY2F0ZWQgZG9tYWluXG4i
+LCBub2RlLT5mdWxsX25hbWUpOwo+ICsJCXByX2VycigiJXBPRjogZmFpbGVkIHRvIGFsbG9jYXRl
+ZCBkb21haW5cbiIsIG5vZGUpOwo+ICAgCQllcnIgPSAtRU5PTUVNOwo+ICAgCQlnb3RvIG91dF91
+bm1hcDsKPiAgIAl9Cj4gCj4gICAJdGVncmFfaWN0bHJfc3lzY29yZV9pbml0KCk7Cj4gCj4gLQlw
+cl9pbmZvKCIlczogJWQgaW50ZXJydXB0cyBmb3J3YXJkZWQgdG8gJXNcbiIsCj4gLQkJbm9kZS0+
+ZnVsbF9uYW1lLCBudW1faWN0bHJzICogMzIsIHBhcmVudC0+ZnVsbF9uYW1lKTsKPiArCXByX2lu
+Zm8oIiVwT0Y6ICVkIGludGVycnVwdHMgZm9yd2FyZGVkIHRvICVwT0ZcbiIsCj4gKwkJbm9kZSwg
+bnVtX2ljdGxycyAqIDMyLCBwYXJlbnQpOwo+IAo+ICAgCXJldHVybiAwOwo+IAo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLXhpbGlueC1pbnRjLmMgYi9kcml2ZXJzL2lycWNoaXAv
+aXJxLXhpbGlueC1pbnRjLmMKPiBpbmRleCAzZGI3YWIxYzk3NDEuLmUzMDQzZGVkODk3MyAxMDA2
+NDQKPiAtLS0gYS9kcml2ZXJzL2lycWNoaXAvaXJxLXhpbGlueC1pbnRjLmMKPiArKysgYi9kcml2
+ZXJzL2lycWNoaXAvaXJxLXhpbGlueC1pbnRjLmMKPiBAQCAtMTg2LDggKzE4Niw4IEBAIHN0YXRp
+YyBpbnQgX19pbml0IHhpbGlueF9pbnRjX29mX2luaXQoc3RydWN0IGRldmljZV9ub2RlICppbnRj
+LAo+ICAgCWlmIChpcnFjLT5pbnRyX21hc2sgPj4gbnJfaXJxKQo+ICAgCQlwcl93YXJuKCJpcnEt
+eGlsaW54OiBtaXNtYXRjaCBpbiBraW5kLW9mLWludHIgcGFyYW1cbiIpOwo+IAo+IC0JcHJfaW5m
+bygiaXJxLXhpbGlueDogJXM6IG51bV9pcnE9JWQsIGVkZ2U9MHgleFxuIiwKPiAtCQlpbnRjLT5m
+dWxsX25hbWUsIG5yX2lycSwgaXJxYy0+aW50cl9tYXNrKTsKPiArCXByX2luZm8oImlycS14aWxp
+bng6ICVwT0Y6IG51bV9pcnE9JWQsIGVkZ2U9MHgleFxuIiwKPiArCQlpbnRjLCBucl9pcnEsIGly
+cWMtPmludHJfbWFzayk7Cj4gCj4gCj4gICAJLyoKPiAtLQo+IDIuMTEuMAo+IAoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtbWVkaWF0ZWsgbWFp
+bGluZyBsaXN0CkxpbnV4LW1lZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3Rz
+LmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1tZWRpYXRlawo=
