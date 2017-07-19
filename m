@@ -1,13 +1,13 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 053/102] PCI: tegra: explicitly request exclusive reset control
-Date: Wed, 19 Jul 2017 17:25:57 +0200
-Message-ID: <20170719152646.25903-54-p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: [PATCH 033/102] Input: tegra-kbc - request exclusive reset control
+Date: Wed, 19 Jul 2017 17:25:37 +0200
+Message-ID: <20170719152646.25903-34-p.zabel@pengutronix.de>
 References: <20170719152646.25903-1-p.zabel@pengutronix.de>
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170719152646.25903-1-p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
@@ -18,38 +18,30 @@ explicit API call so the temporary transition helpers can be removed.
 
 No functional changes.
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/input/keyboard/tegra-kbc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index b3722b7709df8..a64bd0a191767 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -1147,15 +1147,15 @@ static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index 0c07e1023a469..c42c825dd982b 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -665,7 +665,7 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(kbc->clk);
+ 	}
  
--	pcie->pex_rst = devm_reset_control_get(dev, "pex");
-+	pcie->pex_rst = devm_reset_control_get_exclusive(dev, "pex");
- 	if (IS_ERR(pcie->pex_rst))
- 		return PTR_ERR(pcie->pex_rst);
- 
--	pcie->afi_rst = devm_reset_control_get(dev, "afi");
-+	pcie->afi_rst = devm_reset_control_get_exclusive(dev, "afi");
- 	if (IS_ERR(pcie->afi_rst))
- 		return PTR_ERR(pcie->afi_rst);
- 
--	pcie->pcie_xrst = devm_reset_control_get(dev, "pcie_x");
-+	pcie->pcie_xrst = devm_reset_control_get_exclusive(dev, "pcie_x");
- 	if (IS_ERR(pcie->pcie_xrst))
- 		return PTR_ERR(pcie->pcie_xrst);
- 
+-	kbc->rst = devm_reset_control_get(&pdev->dev, "kbc");
++	kbc->rst = devm_reset_control_get_exclusive(&pdev->dev, "kbc");
+ 	if (IS_ERR(kbc->rst)) {
+ 		dev_err(&pdev->dev, "failed to get keyboard reset\n");
+ 		return PTR_ERR(kbc->rst);
 -- 
 2.11.0
