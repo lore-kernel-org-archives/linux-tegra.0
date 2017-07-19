@@ -1,47 +1,48 @@
 From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 018/102] dmaengine: tegra-apb: explicitly request exclusive reset control
-Date: Wed, 19 Jul 2017 17:25:22 +0200
-Message-ID: <20170719152646.25903-19-p.zabel@pengutronix.de>
+Subject: [PATCH 026/102] gpu: host1x: explicitly request exclusive reset
+ control
+Date: Wed, 19 Jul 2017 17:25:30 +0200
+Message-ID: <20170719152646.25903-27-p.zabel@pengutronix.de>
 References: <20170719152646.25903-1-p.zabel@pengutronix.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-kernel@vger.kernel.org
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-reset lines") started to transition the reset control request API calls
-to explicitly state whether the driver needs exclusive or shared reset
-control behavior. Convert all drivers requesting exclusive resets to the
-explicit API call so the temporary transition helpers can be removed.
-
-No functional changes.
-
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: dmaengine@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/dma/tegra20-apb-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index b9d75a54c896a..3d4d0241aefed 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1330,7 +1330,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		return PTR_ERR(tdma->dma_clk);
- 	}
- 
--	tdma->rst = devm_reset_control_get(&pdev->dev, "dma");
-+	tdma->rst = devm_reset_control_get_exclusive(&pdev->dev, "dma");
- 	if (IS_ERR(tdma->rst)) {
- 		dev_err(&pdev->dev, "Error: Missing reset\n");
- 		return PTR_ERR(tdma->rst);
--- 
-2.11.0
+Q29tbWl0IGE1M2UzNWRiNzBkMSAoInJlc2V0OiBFbnN1cmUgZHJpdmVycyBhcmUgZXhwbGljaXQg
+d2hlbiByZXF1ZXN0aW5nCnJlc2V0IGxpbmVzIikgc3RhcnRlZCB0byB0cmFuc2l0aW9uIHRoZSBy
+ZXNldCBjb250cm9sIHJlcXVlc3QgQVBJIGNhbGxzCnRvIGV4cGxpY2l0bHkgc3RhdGUgd2hldGhl
+ciB0aGUgZHJpdmVyIG5lZWRzIGV4Y2x1c2l2ZSBvciBzaGFyZWQgcmVzZXQKY29udHJvbCBiZWhh
+dmlvci4gQ29udmVydCBhbGwgZHJpdmVycyByZXF1ZXN0aW5nIGV4Y2x1c2l2ZSByZXNldHMgdG8g
+dGhlCmV4cGxpY2l0IEFQSSBjYWxsIHNvIHRoZSB0ZW1wb3JhcnkgdHJhbnNpdGlvbiBoZWxwZXJz
+IGNhbiBiZSByZW1vdmVkLgoKTm8gZnVuY3Rpb25hbCBjaGFuZ2VzLgoKQ2M6IFRoaWVycnkgUmVk
+aW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+CkNjOiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCkNjOiBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmcKU2lnbmVkLW9mZi1ieTog
+UGhpbGlwcCBaYWJlbCA8cC56YWJlbEBwZW5ndXRyb25peC5kZT4KLS0tCiBkcml2ZXJzL2dwdS9o
+b3N0MXgvZGV2LmMgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVs
+ZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgYi9kcml2ZXJz
+L2dwdS9ob3N0MXgvZGV2LmMKaW5kZXggMmM1OGEzOTAxMjNhMS4uNWFmNzA1NTI4MGM2YyAxMDA2
+NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCisrKyBiL2RyaXZlcnMvZ3B1L2hvc3Qx
+eC9kZXYuYwpAQCAtMTcwLDcgKzE3MCw3IEBAIHN0YXRpYyBpbnQgaG9zdDF4X3Byb2JlKHN0cnVj
+dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJCXJldHVybiBlcnI7CiAJfQogCi0JaG9zdC0+cnN0
+ID0gZGV2bV9yZXNldF9jb250cm9sX2dldCgmcGRldi0+ZGV2LCAiaG9zdDF4Iik7CisJaG9zdC0+
+cnN0ID0gZGV2bV9yZXNldF9jb250cm9sX2dldF9leGNsdXNpdmUoJnBkZXYtPmRldiwgImhvc3Qx
+eCIpOwogCWlmIChJU19FUlIoaG9zdC0+cnN0KSkgewogCQllcnIgPSBQVFJfRVJSKGhvc3QtPnJz
+dCk7CiAJCWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgcmVzZXQ6ICVkXG4iLCBl
+cnIpOwotLSAKMi4xMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
