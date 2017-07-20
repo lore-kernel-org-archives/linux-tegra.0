@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: [PATCH 9/9] ARM: tegra: fix sleeping while atomic in CPU idle
-Date: Thu, 20 Jul 2017 02:14:20 +0200
-Message-ID: <0a0600cdbcc9a71134105043c3e2ace84bab7c5a.1500509346.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 2/9] arm: cache-l2x0: remove duplicate warning
+Date: Thu, 20 Jul 2017 02:14:17 +0200
+Message-ID: <bc96e94b884f06bdd29f2c8c607c3e65a302ca62.1500509346.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1500509346.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -12,44 +12,50 @@ Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This removes unnecessary lock causing following BUG splat:
-
-BUG: sleeping function called from invalid context at /linux/kernel/locking/mutex.c:747
-in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
-no locks held by swapper/0/0.
-CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W 4.13.0-rc1mq-00016-gbf3f627c6b2b #1
-Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-[<b0110a14>] (unwind_backtrace) from [<b010c710>] (show_stack+0x18/0x1c)
-[<b010c710>] (show_stack) from [<b068ada8>] (dump_stack+0x84/0x98)
-[<b068ada8>] (dump_stack) from [<b014ff54>] (___might_sleep+0x158/0x17c)
-[<b014ff54>] (___might_sleep) from [<b06a15c4>] (__mutex_lock+0x34/0x9a0)
-[<b06a15c4>] (__mutex_lock) from [<b06a30dc>] (mutex_lock_nested+0x24/0x2c)
-[<b06a30dc>] (mutex_lock_nested) from [<b041f6d8>] (tegra_powergate_is_powered+0x40/0xa4)
-[<b041f6d8>] (tegra_powergate_is_powered) from [<b04197e8>] (tegra30_cpu_rail_off_ready+0x28/0x6c)
-[<b04197e8>] (tegra30_cpu_rail_off_ready) from [<b011c73c>] (tegra30_idle_lp2+0x70/0x114)
-[<b011c73c>] (tegra30_idle_lp2) from [<b0516080>] (cpuidle_enter_state+0x12c/0x47c)
-[<b0516080>] (cpuidle_enter_state) from [<b0163394>] (do_idle+0x1b4/0x204)
-[<b0163394>] (do_idle) from [<b016368c>] (cpu_startup_entry+0x20/0x24)
-[<b016368c>] (cpu_startup_entry) from [<b0900dd8>] (start_kernel+0x39c/0x3a8)
+Warning abound changing of AUX register in l2x0_of_init() is later
+repeated in __l2c_init().  Move whole thing over to __l2c_init().
 
 Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 ---
- drivers/soc/tegra/pmc.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/mm/cache-l2x0.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index e233dd5dcab3..3e6ec9fdba41 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -526,9 +526,7 @@ int tegra_powergate_is_powered(unsigned int id)
- 	if (!tegra_powergate_is_valid(id))
- 		return -EINVAL;
+diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+index 808efbb89b88..ea1e70ff4568 100644
+--- a/arch/arm/mm/cache-l2x0.c
++++ b/arch/arm/mm/cache-l2x0.c
+@@ -819,6 +819,8 @@ static int __init __l2c_init(const struct l2c_init_data *data,
+ 	if (old_aux != aux)
+ 		pr_warn("L2C: DT/platform modifies aux control register: 0x%08x -> 0x%08x\n",
+ 		        old_aux, aux);
++	else if (aux_mask != ~0U && aux_val != 0)
++		pr_alert("L2C: platform provided aux values match the hardware, so have no effect.  Please remove them.\n");
  
--	mutex_lock(&pmc->powergates_lock);
- 	status = tegra_powergate_state(id);
--	mutex_unlock(&pmc->powergates_lock);
+ 	/* Determine the number of ways */
+ 	switch (cache_id & L2X0_CACHE_ID_PART_MASK) {
+@@ -1755,7 +1757,7 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
+ 	const struct l2c_init_data *data;
+ 	struct device_node *np;
+ 	struct resource res;
+-	u32 cache_id, old_aux;
++	u32 cache_id;
+ 	u32 cache_level = 2;
+ 	bool nosync = false;
  
- 	return status;
- }
+@@ -1778,14 +1780,6 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
+ 	    of_property_read_bool(np, "arm,io-coherent"))
+ 		data = &of_l2c310_coherent_data;
+ 
+-	old_aux = readl_relaxed(l2x0_base + L2X0_AUX_CTRL);
+-	if (old_aux != ((old_aux & aux_mask) | aux_val)) {
+-		pr_warn("L2C: platform modifies aux control register: 0x%08x -> 0x%08x\n",
+-		        old_aux, (old_aux & aux_mask) | aux_val);
+-	} else if (aux_mask != ~0U && aux_val != 0) {
+-		pr_alert("L2C: platform provided aux values match the hardware, so have no effect.  Please remove them.\n");
+-	}
+-
+ 	/* All L2 caches are unified, so this property should be specified */
+ 	if (!of_property_read_bool(np, "cache-unified"))
+ 		pr_err("L2C: device tree omits to specify unified cache\n");
 -- 
 2.11.0
