@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: [PATCH 6/9] ARM: init: update secondary_data register documentation
+Subject: [PATCH 7/9] ARM: tegra: enable cache via TF
 Date: Thu, 20 Jul 2017 02:29:25 +0200
-Message-ID: <a6e5e735ebae32a433e501188a86082efc8b0b52.1500510157.git.mirq-linux@rere.qmqm.pl>
+Message-ID: <6a164b2270a3e996c083e94bf5b1e27028c1135e.1500510157.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -12,42 +12,55 @@ Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix secondary_data pointer register and document other
-occurrences in SMP boot code.
+Cache enable needs to go via firmware call with TF running.
 
 Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 ---
- arch/arm/kernel/head.S | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/mach-tegra/reset-handler.S | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
-index 04286fd9e09c..68b13db86bef 100644
---- a/arch/arm/kernel/head.S
-+++ b/arch/arm/kernel/head.S
-@@ -413,7 +413,7 @@ ENDPROC(secondary_startup)
- ENDPROC(secondary_startup_arm)
+diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+index 805f306fa6f7..aae7f5961563 100644
+--- a/arch/arm/mach-tegra/reset-handler.S
++++ b/arch/arm/mach-tegra/reset-handler.S
+@@ -78,8 +78,20 @@ ENTRY(tegra_resume)
+ 	orr	r1, r1, #1
+ 	str	r1, [r0]
+ #endif
++#ifdef CONFIG_TRUSTED_FOUNDATIONS
++	adr	r3, __tegra_smc_stack
++	stmia	r3, {r4-r12, sp, lr}
  
- 	/*
--	 * r6  = &secondary_data
-+	 * r7  = &secondary_data
- 	 */
- ENTRY(__secondary_switched)
- 	ldr	sp, [r7, #12]			@ get secondary_data.stack
-@@ -443,6 +443,7 @@ __secondary_data:
-  *  r2  = atags or dtb pointer
-  *  r4  = TTBR pointer (low word)
-  *  r5  = TTBR pointer (high word if LPAE)
-+ *  r7  = secondary_data pointer (SMP)
-  *  r9  = processor ID
-  *  r13 = *virtual* address to jump to upon completion
-  */
-@@ -480,6 +481,7 @@ ENDPROC(__enable_mmu)
-  *  r0  = cp#15 control register
-  *  r1  = machine ID
-  *  r2  = atags or dtb pointer
-+ *  r7  = secondary_data pointer (SMP)
-  *  r9  = processor ID
-  *  r13 = *virtual* address to jump to upon completion
-  *
+-#ifdef CONFIG_CACHE_L2X0
++	mov	r0, #3	// local wake
++	mov	r3, #0
++	mov	r4, #0
++	dsb
++	.arch_extension	sec
++	smc	#0
++
++	adr	r3, __tegra_smc_stack
++	ldmia	r3, {r4-r12, sp, pc}
++#elif defined(CONFIG_CACHE_L2X0)
+ 	/* L2 cache resume & re-enable */
+ 	bl	l2c310_early_resume
+ #endif
+@@ -92,6 +104,16 @@ end_ca9_scu_l2_resume:
+ ENDPROC(tegra_resume)
+ #endif
+ 
++#ifdef CONFIG_TRUSTED_FOUNDATIONS
++	.align L1_CACHE_SHIFT
++	.type __tegra_smc_stack, %object
++__tegra_smc_stack:
++	.rept 11
++	.long 0
++	.endr
++	.size __tegra_smc_stack, . - __tegra_smc_stack
++#endif /* CONFIG_TRUSTED_FOUNDATIONS */
++
+ 	.align L1_CACHE_SHIFT
+ ENTRY(__tegra_cpu_reset_handler_start)
+ 
 -- 
 2.11.0
