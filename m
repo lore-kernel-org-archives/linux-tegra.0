@@ -1,119 +1,48 @@
 From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: [PATCH 3/9] arm: cache-l2x0: share l2x0_base
-Date: Thu, 20 Jul 2017 02:14:17 +0200
-Message-ID: <eb104cfdf44ef9bf7b4f271555e1496d2bf781bf.1500509346.git.mirq-linux@rere.qmqm.pl>
-References: <cover.1500509346.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 0/9] Bringing Asus TF300T support to mainline
+Date: Thu, 20 Jul 2017 02:14:16 +0200
+Message-ID: <cover.1500509346.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1500509346.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Share l2x0_base between cache-l2x0 and pmu drivers.  They are duplicates.
+Here is a suprisingly small set of patches that enable Asus TF300T tablet
+to boot and have all cores available. TF300T is one of a consumer devices
+based on NVidia's Cardhu reference tablet.
 
-Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+This series is an arch-dependent part. The rest being driver code - a work
+in progress - is available in branch tf300t at:
+
+	https://rere.qmqm.pl/git/linux
+
+Best Regards,
+Michał Mirosław
+
 ---
- arch/arm/include/asm/hardware/cache-l2x0.h | 5 +++--
- arch/arm/mm/cache-l2x0-pmu.c               | 8 ++------
- arch/arm/mm/cache-l2x0.c                   | 4 ++--
- 3 files changed, 7 insertions(+), 10 deletions(-)
+Michał Mirosław (9):
+  ARM: enable secure platform-only erratas
+  arm: cache-l2x0: remove duplicate warning
+  arm: cache-l2x0: share l2x0_base
+  ARM: trusted_foundations: enable L2x0 cache via firmware_ops
+  ARM: trusted_foundations: announce firmware version
+  ARM: init: update secondary_data register documentation
+  ARM: tegra: enable cache via TF
+  ARM: tegra: avoid touching Secure registers in reset handler
+  ARM: tegra: fix sleeping while atomic in CPU idle
 
-diff --git a/arch/arm/include/asm/hardware/cache-l2x0.h b/arch/arm/include/asm/hardware/cache-l2x0.h
-index 736292b42fca..492de655e4f3 100644
---- a/arch/arm/include/asm/hardware/cache-l2x0.h
-+++ b/arch/arm/include/asm/hardware/cache-l2x0.h
-@@ -167,11 +167,11 @@ static inline int l2x0_of_init(u32 aux_val, u32 aux_mask)
- #endif
- 
- #ifdef CONFIG_CACHE_L2X0_PMU
--void l2x0_pmu_register(void __iomem *base, u32 part);
-+void l2x0_pmu_register(u32 part);
- void l2x0_pmu_suspend(void);
- void l2x0_pmu_resume(void);
- #else
--static inline void l2x0_pmu_register(void __iomem *base, u32 part) {}
-+static inline void l2x0_pmu_register(u32 part) {}
- static inline void l2x0_pmu_suspend(void) {}
- static inline void l2x0_pmu_resume(void) {}
- #endif
-@@ -193,6 +193,7 @@ struct l2x0_regs {
- 	unsigned long aux2_ctrl;
- };
- 
-+extern void __iomem *l2x0_base;
- extern struct l2x0_regs l2x0_saved_regs;
- 
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/arm/mm/cache-l2x0-pmu.c b/arch/arm/mm/cache-l2x0-pmu.c
-index 0a1e2280141f..1f36801d337f 100644
---- a/arch/arm/mm/cache-l2x0-pmu.c
-+++ b/arch/arm/mm/cache-l2x0-pmu.c
-@@ -29,7 +29,6 @@
- 
- #define PMU_NR_COUNTERS 2
- 
--static void __iomem *l2x0_base;
- static struct pmu *l2x0_pmu;
- static cpumask_t pmu_cpu;
- 
-@@ -491,7 +490,7 @@ void l2x0_pmu_resume(void)
- 	l2x0_pmu_enable(l2x0_pmu);
- }
- 
--void __init l2x0_pmu_register(void __iomem *base, u32 part)
-+void __init l2x0_pmu_register(u32 part)
- {
- 	/*
- 	 * Determine whether we support the PMU, and choose the name for sysfs.
-@@ -503,8 +502,7 @@ void __init l2x0_pmu_register(void __iomem *base, u32 part)
- 	 * supported by this driver.
- 	 *
- 	 * We must defer registering the PMU until the perf subsystem is up and
--	 * running, so just stash the name and base, and leave that to another
--	 * initcall.
-+	 * running, so just stash the name, and leave that to another initcall.
- 	 */
- 	switch (part & L2X0_CACHE_ID_PART_MASK) {
- 	case L2X0_CACHE_ID_PART_L220:
-@@ -516,8 +514,6 @@ void __init l2x0_pmu_register(void __iomem *base, u32 part)
- 	default:
- 		return;
- 	}
--
--	l2x0_base = base;
- }
- 
- static __init int l2x0_pmu_init(void)
-diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
-index ea1e70ff4568..bbfbc18399f9 100644
---- a/arch/arm/mm/cache-l2x0.c
-+++ b/arch/arm/mm/cache-l2x0.c
-@@ -48,13 +48,13 @@ struct l2c_init_data {
- 
- #define CACHE_LINE_SIZE		32
- 
--static void __iomem *l2x0_base;
- static const struct l2c_init_data *l2x0_data;
- static DEFINE_RAW_SPINLOCK(l2x0_lock);
- static u32 l2x0_way_mask;	/* Bitmask of active ways */
- static u32 l2x0_size;
- static unsigned long sync_reg_offset = L2X0_CACHE_SYNC;
- 
-+void __iomem *l2x0_base;
- struct l2x0_regs l2x0_saved_regs;
- 
- static bool l2x0_bresp_disable;
-@@ -900,7 +900,7 @@ static int __init __l2c_init(const struct l2c_init_data *data,
- 	pr_info("%s: CACHE_ID 0x%08x, AUX_CTRL 0x%08x\n",
- 		data->type, cache_id, aux);
- 
--	l2x0_pmu_register(l2x0_base, cache_id);
-+	l2x0_pmu_register(cache_id);
- 
- 	return 0;
- }
+ arch/arm/Kconfig                           | 20 +++++++---
+ arch/arm/firmware/trusted_foundations.c    | 63 +++++++++++++++++++++++++++++-
+ arch/arm/include/asm/hardware/cache-l2x0.h |  6 ++-
+ arch/arm/kernel/head.S                     |  4 +-
+ arch/arm/mach-tegra/reset-handler.S        | 27 ++++++++++++-
+ arch/arm/mm/cache-l2x0-pmu.c               |  8 +---
+ arch/arm/mm/cache-l2x0.c                   | 26 ++++++------
+ drivers/soc/tegra/pmc.c                    |  2 -
+ 8 files changed, 125 insertions(+), 31 deletions(-)
+
 -- 
 2.11.0
