@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: [PATCH 7/9] ARM: tegra: enable cache via TF
-Date: Thu, 20 Jul 2017 02:29:25 +0200
-Message-ID: <6a164b2270a3e996c083e94bf5b1e27028c1135e.1500510157.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 2/9] arm: cache-l2x0: remove duplicate warning
+Date: Thu, 20 Jul 2017 02:29:23 +0200
+Message-ID: <bc96e94b884f06bdd29f2c8c607c3e65a302ca62.1500510157.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -12,55 +12,50 @@ Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Cache enable needs to go via firmware call with TF running.
+Warning abound changing of AUX register in l2x0_of_init() is later
+repeated in __l2c_init().  Move whole thing over to __l2c_init().
 
 Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 ---
- arch/arm/mach-tegra/reset-handler.S | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ arch/arm/mm/cache-l2x0.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index 805f306fa6f7..aae7f5961563 100644
---- a/arch/arm/mach-tegra/reset-handler.S
-+++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -78,8 +78,20 @@ ENTRY(tegra_resume)
- 	orr	r1, r1, #1
- 	str	r1, [r0]
- #endif
-+#ifdef CONFIG_TRUSTED_FOUNDATIONS
-+	adr	r3, __tegra_smc_stack
-+	stmia	r3, {r4-r12, sp, lr}
+diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+index 808efbb89b88..ea1e70ff4568 100644
+--- a/arch/arm/mm/cache-l2x0.c
++++ b/arch/arm/mm/cache-l2x0.c
+@@ -819,6 +819,8 @@ static int __init __l2c_init(const struct l2c_init_data *data,
+ 	if (old_aux != aux)
+ 		pr_warn("L2C: DT/platform modifies aux control register: 0x%08x -> 0x%08x\n",
+ 		        old_aux, aux);
++	else if (aux_mask != ~0U && aux_val != 0)
++		pr_alert("L2C: platform provided aux values match the hardware, so have no effect.  Please remove them.\n");
  
--#ifdef CONFIG_CACHE_L2X0
-+	mov	r0, #3	// local wake
-+	mov	r3, #0
-+	mov	r4, #0
-+	dsb
-+	.arch_extension	sec
-+	smc	#0
-+
-+	adr	r3, __tegra_smc_stack
-+	ldmia	r3, {r4-r12, sp, pc}
-+#elif defined(CONFIG_CACHE_L2X0)
- 	/* L2 cache resume & re-enable */
- 	bl	l2c310_early_resume
- #endif
-@@ -92,6 +104,16 @@ end_ca9_scu_l2_resume:
- ENDPROC(tegra_resume)
- #endif
+ 	/* Determine the number of ways */
+ 	switch (cache_id & L2X0_CACHE_ID_PART_MASK) {
+@@ -1755,7 +1757,7 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
+ 	const struct l2c_init_data *data;
+ 	struct device_node *np;
+ 	struct resource res;
+-	u32 cache_id, old_aux;
++	u32 cache_id;
+ 	u32 cache_level = 2;
+ 	bool nosync = false;
  
-+#ifdef CONFIG_TRUSTED_FOUNDATIONS
-+	.align L1_CACHE_SHIFT
-+	.type __tegra_smc_stack, %object
-+__tegra_smc_stack:
-+	.rept 11
-+	.long 0
-+	.endr
-+	.size __tegra_smc_stack, . - __tegra_smc_stack
-+#endif /* CONFIG_TRUSTED_FOUNDATIONS */
-+
- 	.align L1_CACHE_SHIFT
- ENTRY(__tegra_cpu_reset_handler_start)
+@@ -1778,14 +1780,6 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
+ 	    of_property_read_bool(np, "arm,io-coherent"))
+ 		data = &of_l2c310_coherent_data;
  
+-	old_aux = readl_relaxed(l2x0_base + L2X0_AUX_CTRL);
+-	if (old_aux != ((old_aux & aux_mask) | aux_val)) {
+-		pr_warn("L2C: platform modifies aux control register: 0x%08x -> 0x%08x\n",
+-		        old_aux, (old_aux & aux_mask) | aux_val);
+-	} else if (aux_mask != ~0U && aux_val != 0) {
+-		pr_alert("L2C: platform provided aux values match the hardware, so have no effect.  Please remove them.\n");
+-	}
+-
+ 	/* All L2 caches are unified, so this property should be specified */
+ 	if (!of_property_read_bool(np, "cache-unified"))
+ 		pr_err("L2C: device tree omits to specify unified cache\n");
 -- 
 2.11.0
