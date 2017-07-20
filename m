@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: [PATCH 1/9] ARM: enable secure platform-only erratas
-Date: Thu, 20 Jul 2017 02:29:23 +0200
-Message-ID: <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500510157.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 6/9] ARM: init: update secondary_data register documentation
+Date: Thu, 20 Jul 2017 02:29:25 +0200
+Message-ID: <a6e5e735ebae32a433e501188a86082efc8b0b52.1500510157.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -12,85 +12,42 @@ Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Allow secure-only erratas to be used in multiarch kernel.
+Fix secondary_data pointer register and document other
+occurrences in SMP boot code.
 
 Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 ---
- arch/arm/Kconfig | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ arch/arm/kernel/head.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index a208bfe367b5..a1eff866550b 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -696,6 +696,14 @@ config ARCH_MULTI_CPU_AUTO
+diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+index 04286fd9e09c..68b13db86bef 100644
+--- a/arch/arm/kernel/head.S
++++ b/arch/arm/kernel/head.S
+@@ -413,7 +413,7 @@ ENDPROC(secondary_startup)
+ ENDPROC(secondary_startup_arm)
  
- endmenu
- 
-+config ARCH_ASSUME_SECURE_PLATFORM
-+	bool "Enable ERRATAs using secure-only registers"
-+	default !ARCH_MULTIPLATFORM
-+	help
-+	  Allow erratas that need access to secure-only registers.
-+
-+	  Beware: Resulting kernel won't boot on a CPU in non-Secure mode.
-+
- config ARCH_VIRT
- 	bool "Dummy Virtual Machine"
- 	depends on ARCH_MULTI_V7
-@@ -984,7 +992,7 @@ config ARM_ERRATA_430973
- config ARM_ERRATA_458693
- 	bool "ARM errata: Processor deadlock when a false hazard is created"
- 	depends on CPU_V7
--	depends on !ARCH_MULTIPLATFORM
-+	depends on ARCH_ASSUME_SECURE_PLATFORM
- 	help
- 	  This option enables the workaround for the 458693 Cortex-A8 (r2p0)
- 	  erratum. For very specific sequences of memory operations, it is
-@@ -998,7 +1006,7 @@ config ARM_ERRATA_458693
- config ARM_ERRATA_460075
- 	bool "ARM errata: Data written to the L2 cache can be overwritten with stale data"
- 	depends on CPU_V7
--	depends on !ARCH_MULTIPLATFORM
-+	depends on ARCH_ASSUME_SECURE_PLATFORM
- 	help
- 	  This option enables the workaround for the 460075 Cortex-A8 (r2p0)
- 	  erratum. Any asynchronous access to the L2 cache may encounter a
-@@ -1011,7 +1019,7 @@ config ARM_ERRATA_460075
- config ARM_ERRATA_742230
- 	bool "ARM errata: DMB operation may be faulty"
- 	depends on CPU_V7 && SMP
--	depends on !ARCH_MULTIPLATFORM
-+	depends on ARCH_ASSUME_SECURE_PLATFORM
- 	help
- 	  This option enables the workaround for the 742230 Cortex-A9
- 	  (r1p0..r2p2) erratum. Under rare circumstances, a DMB instruction
-@@ -1024,7 +1032,7 @@ config ARM_ERRATA_742230
- config ARM_ERRATA_742231
- 	bool "ARM errata: Incorrect hazard handling in the SCU may lead to data corruption"
- 	depends on CPU_V7 && SMP
--	depends on !ARCH_MULTIPLATFORM
-+	depends on ARCH_ASSUME_SECURE_PLATFORM
- 	help
- 	  This option enables the workaround for the 742231 Cortex-A9
- 	  (r2p0..r2p2) erratum. Under certain conditions, specific to the
-@@ -1062,7 +1070,7 @@ config ARM_ERRATA_720789
- config ARM_ERRATA_743622
- 	bool "ARM errata: Faulty hazard checking in the Store Buffer may lead to data corruption"
- 	depends on CPU_V7
--	depends on !ARCH_MULTIPLATFORM
-+	depends on ARCH_ASSUME_SECURE_PLATFORM
- 	help
- 	  This option enables the workaround for the 743622 Cortex-A9
- 	  (r2p*) erratum. Under very rare conditions, a faulty
-@@ -1076,7 +1084,7 @@ config ARM_ERRATA_743622
- config ARM_ERRATA_751472
- 	bool "ARM errata: Interrupted ICIALLUIS may prevent completion of broadcasted operation"
- 	depends on CPU_V7
--	depends on !ARCH_MULTIPLATFORM
-+	depends on ARCH_ASSUME_SECURE_PLATFORM
- 	help
- 	  This option enables the workaround for the 751472 Cortex-A9 (prior
- 	  to r3p0) erratum. An interrupted ICIALLUIS operation may prevent the
+ 	/*
+-	 * r6  = &secondary_data
++	 * r7  = &secondary_data
+ 	 */
+ ENTRY(__secondary_switched)
+ 	ldr	sp, [r7, #12]			@ get secondary_data.stack
+@@ -443,6 +443,7 @@ __secondary_data:
+  *  r2  = atags or dtb pointer
+  *  r4  = TTBR pointer (low word)
+  *  r5  = TTBR pointer (high word if LPAE)
++ *  r7  = secondary_data pointer (SMP)
+  *  r9  = processor ID
+  *  r13 = *virtual* address to jump to upon completion
+  */
+@@ -480,6 +481,7 @@ ENDPROC(__enable_mmu)
+  *  r0  = cp#15 control register
+  *  r1  = machine ID
+  *  r2  = atags or dtb pointer
++ *  r7  = secondary_data pointer (SMP)
+  *  r9  = processor ID
+  *  r13 = *virtual* address to jump to upon completion
+  *
 -- 
 2.11.0
