@@ -1,50 +1,85 @@
 From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: [PATCH 0/9] Bringing Asus TF300T support to mainline
-Date: Thu, 20 Jul 2017 02:29:22 +0200
-Message-ID: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 5/9] ARM: trusted_foundations: announce firmware version
+Date: Thu, 20 Jul 2017 02:29:24 +0200
+Message-ID: <90ad41ff1b54695154348c0c7f9333ed9e162ce3.1500510157.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1500510157.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here is a suprisingly small set of patches that enable Asus TF300T tablet
-to boot and have all cores available. TF300T is one of a consumer devices
-based on NVidia's Cardhu reference tablet.
+Announce Trusted Foundations version for debugging and documentation.
 
-This series is an arch-dependent part. TF parts were extracted from ASUS's
-GPL code dump.  The rest being driver code - a work in progress - is
-available in branch tf300t at:
-
-        https://rere.qmqm.pl/git/linux
-
-Best Regards,
-Michał Mirosław
-
+Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 ---
+ arch/arm/firmware/trusted_foundations.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-Michał Mirosław (9):
-  ARM: enable secure platform-only erratas
-  arm: cache-l2x0: remove duplicate warning
-  arm: cache-l2x0: share l2x0_base
-  ARM: trusted_foundations: enable L2x0 cache via firmware_ops
-  ARM: trusted_foundations: announce firmware version
-  ARM: init: update secondary_data register documentation
-  ARM: tegra: enable cache via TF
-  ARM: tegra: avoid touching Secure registers in reset handler
-  ARM: tegra: fix sleeping while atomic in CPU idle
-
- arch/arm/Kconfig                           | 20 +++++++---
- arch/arm/firmware/trusted_foundations.c    | 63 +++++++++++++++++++++++++++++-
- arch/arm/include/asm/hardware/cache-l2x0.h |  6 ++-
- arch/arm/kernel/head.S                     |  4 +-
- arch/arm/mach-tegra/reset-handler.S        | 27 ++++++++++++-
- arch/arm/mm/cache-l2x0-pmu.c               |  8 +---
- arch/arm/mm/cache-l2x0.c                   | 26 ++++++------
- drivers/soc/tegra/pmc.c                    |  2 -
- 8 files changed, 125 insertions(+), 31 deletions(-)
-
+diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+index 81ff71b87438..105655802dfd 100644
+--- a/arch/arm/firmware/trusted_foundations.c
++++ b/arch/arm/firmware/trusted_foundations.c
+@@ -30,6 +30,8 @@
+ #define TF_CACHE_FLUSH		2
+ #define TF_CACHE_REENABLE	4
+ 
++#define TF_GET_PROTOCOL_VERSION	0xfffffffb
++
+ #define TF_CPU_PM		0xfffffffc
+ #define TF_CPU_PM_S3		0xffffffe3
+ #define TF_CPU_PM_S2		0xffffffe6
+@@ -39,7 +41,7 @@
+ 
+ static unsigned long cpu_boot_addr;
+ 
+-static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
++static u64 __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
+ {
+ 	asm volatile(
+ 		".arch_extension	sec\n\t"
+@@ -54,6 +56,7 @@ static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
+ 		:
+ 		: "r" (type), "r" (arg1), "r" (arg2)
+ 		: "memory");
++	return 0;  /* silence gcc warning */
+ }
+ 
+ static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+@@ -106,6 +109,11 @@ static int tf_init_cache(void)
+ }
+ #endif /* CONFIG_CACHE_L2X0 */
+ 
++static u32 tf_get_protocol_version(void)
++{
++	return tf_generic_smc(TF_GET_PROTOCOL_VERSION, 0, 0) >> 48;
++}
++
+ static const struct firmware_ops trusted_foundations_ops = {
+ 	.set_cpu_boot_addr = tf_set_cpu_boot_addr,
+ 	.prepare_idle = tf_prepare_idle,
+@@ -116,6 +124,12 @@ static const struct firmware_ops trusted_foundations_ops = {
+ 
+ void register_trusted_foundations(struct trusted_foundations_platform_data *pd)
+ {
++	unsigned int protocol = tf_get_protocol_version();
++
++	pr_info("TF: version %u.%u, protocol %u.%u\n",
++		pd->version_major, pd->version_minor,
++		protocol >> 8, protocol & 0xFF);
++
+ 	/*
+ 	 * we are not using version information for now since currently
+ 	 * supported SMCs are compatible with all TF releases
+@@ -141,5 +155,6 @@ void of_register_trusted_foundations(void)
+ 				   &pdata.version_minor);
+ 	if (err != 0)
+ 		panic("Trusted Foundation: missing version-minor property\n");
++
+ 	register_trusted_foundations(&pdata);
+ }
 -- 
 2.11.0
