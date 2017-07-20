@@ -1,48 +1,53 @@
 From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: [PATCH 0/9] Bringing Asus TF300T support to mainline
-Date: Thu, 20 Jul 2017 02:14:16 +0200
-Message-ID: <cover.1500509346.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 6/9] ARM: init: update secondary_data register documentation
+Date: Thu, 20 Jul 2017 02:14:19 +0200
+Message-ID: <a6e5e735ebae32a433e501188a86082efc8b0b52.1500509346.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1500509346.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1500509346.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here is a suprisingly small set of patches that enable Asus TF300T tablet
-to boot and have all cores available. TF300T is one of a consumer devices
-based on NVidia's Cardhu reference tablet.
+Fix secondary_data pointer register and document other
+occurrences in SMP boot code.
 
-This series is an arch-dependent part. The rest being driver code - a work
-in progress - is available in branch tf300t at:
-
-	https://rere.qmqm.pl/git/linux
-
-Best Regards,
-Michał Mirosław
-
+Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 ---
-Michał Mirosław (9):
-  ARM: enable secure platform-only erratas
-  arm: cache-l2x0: remove duplicate warning
-  arm: cache-l2x0: share l2x0_base
-  ARM: trusted_foundations: enable L2x0 cache via firmware_ops
-  ARM: trusted_foundations: announce firmware version
-  ARM: init: update secondary_data register documentation
-  ARM: tegra: enable cache via TF
-  ARM: tegra: avoid touching Secure registers in reset handler
-  ARM: tegra: fix sleeping while atomic in CPU idle
+ arch/arm/kernel/head.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- arch/arm/Kconfig                           | 20 +++++++---
- arch/arm/firmware/trusted_foundations.c    | 63 +++++++++++++++++++++++++++++-
- arch/arm/include/asm/hardware/cache-l2x0.h |  6 ++-
- arch/arm/kernel/head.S                     |  4 +-
- arch/arm/mach-tegra/reset-handler.S        | 27 ++++++++++++-
- arch/arm/mm/cache-l2x0-pmu.c               |  8 +---
- arch/arm/mm/cache-l2x0.c                   | 26 ++++++------
- drivers/soc/tegra/pmc.c                    |  2 -
- 8 files changed, 125 insertions(+), 31 deletions(-)
-
+diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+index 04286fd9e09c..68b13db86bef 100644
+--- a/arch/arm/kernel/head.S
++++ b/arch/arm/kernel/head.S
+@@ -413,7 +413,7 @@ ENDPROC(secondary_startup)
+ ENDPROC(secondary_startup_arm)
+ 
+ 	/*
+-	 * r6  = &secondary_data
++	 * r7  = &secondary_data
+ 	 */
+ ENTRY(__secondary_switched)
+ 	ldr	sp, [r7, #12]			@ get secondary_data.stack
+@@ -443,6 +443,7 @@ __secondary_data:
+  *  r2  = atags or dtb pointer
+  *  r4  = TTBR pointer (low word)
+  *  r5  = TTBR pointer (high word if LPAE)
++ *  r7  = secondary_data pointer (SMP)
+  *  r9  = processor ID
+  *  r13 = *virtual* address to jump to upon completion
+  */
+@@ -480,6 +481,7 @@ ENDPROC(__enable_mmu)
+  *  r0  = cp#15 control register
+  *  r1  = machine ID
+  *  r2  = atags or dtb pointer
++ *  r7  = secondary_data pointer (SMP)
+  *  r9  = processor ID
+  *  r13 = *virtual* address to jump to upon completion
+  *
 -- 
 2.11.0
