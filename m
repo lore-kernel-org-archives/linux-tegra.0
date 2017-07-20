@@ -1,76 +1,44 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
-Date: Thu, 20 Jul 2017 14:55:12 +0200
-Message-ID: <1500555312.2354.75.camel@pengutronix.de>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
-         <20170719211515.46a1196c@windsurf>
-         <1500543415.2354.37.camel@pengutronix.de>
-         <20170720123640.43c2ce01@windsurf>
+From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Subject: Re: [PATCH 0/9] Bringing Asus TF300T support to mainline
+Date: Thu, 20 Jul 2017 17:07:30 +0200
+Message-ID: <20170720150730.s26awulb345ecwgk@qmqm.qmqm.pl>
+References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <a4149270-561a-4190-4c4e-c164bd91446e@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20170720123640.43c2ce01@windsurf>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Peter Chen <Peter.Chen@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, Marc Dietrich <marvin24@gmx.de>, Rakesh Iyer <riyer@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-clk@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Wolfram Sang <wsa@the-dreams.de>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jiri Slaby <jslaby@suse.com>, Michael Turquette <mturquette@baylibre.com>, Guenter Roeck <linux@roeck-us.net>, Ohad Ben-Cohen <ohad@wizery.com>, linux-pm@vger.kernel.org, Thomas Gleixner <tglx>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <a4149270-561a-4190-4c4e-c164bd91446e-/1wQRMveznE@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thomas,
+On Thu, Jul 20, 2017 at 10:48:31AM +0300, Mikko Perttunen wrote:
+> On 20.07.2017 03:29, Micha³ Miros³aw wrote:
+> > Here is a suprisingly small set of patches that enable Asus TF300T tablet
+> > to boot and have all cores available. TF300T is one of a consumer devices
+> > based on NVidia's Cardhu reference tablet.
+> 
+> This is very cool! How did you debug it, or did it work on the first try? :)
+> I have a TF201 myself, probably quite similar to this, might be worth a try.
 
-On Thu, 2017-07-20 at 12:36 +0200, Thomas Petazzoni wrote:
-> Hello,
-> 
-> On Thu, 20 Jul 2017 11:36:55 +0200, Philipp Zabel wrote:
-> 
-> > > I don't know if it has been discussed in the past, so forgive me if it
-> > > has been. Have you considered adding a "int flags" argument to the
-> > > existing reset_control_get_*() functions, rather than introducing
-> > > separate exclusive variants ?
-> > > 
-> > > Indeed, with a "int flags" argument you could in the future add more
-> > > variants/behaviors without actually multiplying the number of
-> > > functions. Something like the "flags" argument for request_irq() for
-> > > example.  
+Unfortunatelly it worked only after about 300 compile-upload-boot cycles. ;-)
+I hacked an early console using bootloader framebuffer. The code for it is
+a spaghetti monster, but if you would like to try it, I can add a patch.
+
+> > This series is an arch-dependent part. TF parts were extracted from ASUS's
+> > GPL code dump.  The rest being driver code - a work in progress - is
+> > available in branch tf300t at:
 > > 
-> > I can't find the discussion right now, but I remember we had talked
-> > about this in the past.
-> > Behind the scenes, all the inline API functions already call common
-> > entry points with flags (well, currently separate bool parameters for
-> > shared and optional).
-> > One reason against exposing those as an int flags in the user facing API
-> > is the possibility to accidentally provide a wrong value.
-> 
-> This is a quite strange argument. You could also accidentally use the
-> wrong variant of the function, just like you could use the wrong flag.
+> >         https://rere.qmqm.pl/git/linux
 
-You can't accidentally use no flag at all or a completely bogus value
-with the "plethora of inline functions" variant.
+> This URL doesn't work for me at least in the browser, but
+> https://rere.qmqm.pl/git/?p=linux;a=summary works.
+[...]
 
-> Once again, the next time you have another parameter for those reset
-> functions, beyond the exclusive/shared variant, you will multiply again
-> by two the number of functions ? You already have the  exclusive/shared
-> and optional/mandatory variants, so 4 variants. When you'll add a new
-> parameter, you'll have 8 variants. Doesn't seem really good.
+Ah, I should have been more precise: the url is for git clone (read-only).
 
-I'd rather avoid adding more variants, if possible. The complexity
-increases regardless of whether the API is expressed as a bunch of
-functions or as a single function with a bunch of flags.
-
-> What about reset_control_get(struct device *, const char *, int flags)
-> to replace all those variants ?
-
-While I like how this looks, unfortunately (devm_)reset_control_get
-already exists without the flags, so we can't change to that with a
-gentle transition.
-
-regards
-Philipp
+Best Regards,
+Micha³ Miros³aw
