@@ -1,66 +1,102 @@
-From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
-Date: Thu, 20 Jul 2017 12:36:40 +0200
-Message-ID: <20170720123640.43c2ce01@windsurf>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
- <20170719211515.46a1196c@windsurf>
- <1500543415.2354.37.camel@pengutronix.de>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 9/9] ARM: tegra: fix sleeping while atomic in CPU idle
+Date: Thu, 20 Jul 2017 13:45:12 +0100
+Message-ID: <378bf911-147e-f800-2de4-591e160528f0@nvidia.com>
+References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <0a0600cdbcc9a71134105043c3e2ace84bab7c5a.1500510157.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1500543415.2354.37.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Xinliang Liu <z.liuxinliang-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Bin Liu <b-liu-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <0a0600cdbcc9a71134105043c3e2ace84bab7c5a.1500510157.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
 
-On Thu, 20 Jul 2017 11:36:55 +0200, Philipp Zabel wrote:
-
-> > I don't know if it has been discussed in the past, so forgive me if it
-> > has been. Have you considered adding a "int flags" argument to the
-> > existing reset_control_get_*() functions, rather than introducing
-> > separate exclusive variants ?
-> > 
-> > Indeed, with a "int flags" argument you could in the future add more
-> > variants/behaviors without actually multiplying the number of
-> > functions. Something like the "flags" argument for request_irq() for
-> > example.  
+On 20/07/17 01:29, Michał Mirosław wrote:
+> This removes unnecessary lock causing following BUG splat:
 > 
-> I can't find the discussion right now, but I remember we had talked
-> about this in the past.
-> Behind the scenes, all the inline API functions already call common
-> entry points with flags (well, currently separate bool parameters for
-> shared and optional).
-> One reason against exposing those as an int flags in the user facing API
-> is the possibility to accidentally provide a wrong value.
+> BUG: sleeping function called from invalid context at /linux/kernel/locking/mutex.c:747
+> in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
+> no locks held by swapper/0/0.
+> CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W 4.13.0-rc1mq-00016-gbf3f627c6b2b #1
+> Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [<b0110a14>] (unwind_backtrace) from [<b010c710>] (show_stack+0x18/0x1c)
+> [<b010c710>] (show_stack) from [<b068ada8>] (dump_stack+0x84/0x98)
+> [<b068ada8>] (dump_stack) from [<b014ff54>] (___might_sleep+0x158/0x17c)
+> [<b014ff54>] (___might_sleep) from [<b06a15c4>] (__mutex_lock+0x34/0x9a0)
+> [<b06a15c4>] (__mutex_lock) from [<b06a30dc>] (mutex_lock_nested+0x24/0x2c)
+> [<b06a30dc>] (mutex_lock_nested) from [<b041f6d8>] (tegra_powergate_is_powered+0x40/0xa4)
+> [<b041f6d8>] (tegra_powergate_is_powered) from [<b04197e8>] (tegra30_cpu_rail_off_ready+0x28/0x6c)
+> [<b04197e8>] (tegra30_cpu_rail_off_ready) from [<b011c73c>] (tegra30_idle_lp2+0x70/0x114)
+> [<b011c73c>] (tegra30_idle_lp2) from [<b0516080>] (cpuidle_enter_state+0x12c/0x47c)
+> [<b0516080>] (cpuidle_enter_state) from [<b0163394>] (do_idle+0x1b4/0x204)
+> [<b0163394>] (do_idle) from [<b016368c>] (cpu_startup_entry+0x20/0x24)
+> [<b016368c>] (cpu_startup_entry) from [<b0900dd8>] (start_kernel+0x39c/0x3a8)
+> 
+> Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+> ---
+>  drivers/soc/tegra/pmc.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index e233dd5dcab3..3e6ec9fdba41 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -526,9 +526,7 @@ int tegra_powergate_is_powered(unsigned int id)
+>  	if (!tegra_powergate_is_valid(id))
+>  		return -EINVAL;
+>  
+> -	mutex_lock(&pmc->powergates_lock);
+>  	status = tegra_powergate_state(id);
+> -	mutex_unlock(&pmc->powergates_lock);
+>  
+>  	return status;
+>  }
 
-This is a quite strange argument. You could also accidentally use the
-wrong variant of the function, just like you could use the wrong flag.
+Thanks for the fix. However, I would prefer that we fix this the following
+way ...
 
-Once again, the next time you have another parameter for those reset
-functions, beyond the exclusive/shared variant, you will multiply again
-by two the number of functions ? You already have the  exclusive/shared
-and optional/mandatory variants, so 4 variants. When you'll add a new
-parameter, you'll have 8 variants. Doesn't seem really good.
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index a2d163f759b4..546d2b121c39 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1152,9 +1152,9 @@ static bool tegra30_cpu_rail_off_ready(void)
+ 
+        cpu_rst_status = readl(clk_base +
+                                TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
+-       cpu_pwr_status = tegra_powergate_is_powered(TEGRA_POWERGATE_CPU1) ||
+-                        tegra_powergate_is_powered(TEGRA_POWERGATE_CPU2) ||
+-                        tegra_powergate_is_powered(TEGRA_POWERGATE_CPU3);
++       cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
++                        tegra_pmc_cpu_is_powered(2) ||
++                        tegra_pmc_cpu_is_powered(3);
+ 
+        if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
+                return false;
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index e233dd5dcab3..f61371ea3fe0 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -605,7 +605,7 @@ bool tegra_pmc_cpu_is_powered(unsigned int cpuid)
+        if (id < 0)
+                return false;
+ 
+-       return tegra_powergate_is_powered(id);
++       return tegra_powergate_state(id);
+ }
 
-What about reset_control_get(struct device *, const char *, int flags)
-to replace all those variants ?
 
-Best regards,
+Could you try the above and make sure that this works? 
 
-Thomas
+I would prefer to leave the mutex in tegra_powergate_is_powered() so it could
+be used by any driver. Or maybe we could even get rid of
+tegra_powergate_is_powered() if we don't really need it.
+
+Cheers
+Jon
+
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+nvpublic
