@@ -1,53 +1,96 @@
-From: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
-Subject: Re: [PATCH] irqchip: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 12:49:41 -0700
-Message-ID: <87tw28dx62.fsf@eliezer.anholt.net>
-References: <20170718214339.7774-30-robh@kernel.org>
+From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Subject: [PATCH 1/9] ARM: enable secure platform-only erratas
+Date: Thu, 20 Jul 2017 02:14:17 +0200
+Message-ID: <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500509346.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1500509346.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170718214339.7774-30-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>, Sylvain Lemieux <slemieux.tyco-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michal Simek <michal.simek@xilinx.>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1500509346.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Allow secure-only erratas to be used in multiarch kernel.
 
-Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> writes:
+Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+---
+ arch/arm/Kconfig | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
->
-
-For bcm283x:
-
-Acked-by: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAllvt9UACgkQtdYpNtH8
-nuhwQA/+PlDicnq8EVVpUAsGPV3jsdXBJLxEUlDxOCIFEJ5WUUL7oKMt67ShrKPg
-ACAAvMZFx+HBZeeuIvoQANUPvAUk16XJ66Du+VhMfeRMVLUBkZC0MPa6tSHtq/8x
-KdGW2OON4sqFiN2bJ+TCJoAq5e8LLjObOEZpdu42LixoC64OaX1COx2GxXgEcLf3
-lfl5CS5YFZQGLlZOxDxl7+JlUyPxDPEnTwnKy5/awL913QvulJs7PnQreASk1BU8
-mkVqQO6cJhzkFhv5uOmwtflPIanUHhhboLpueeZGpOGBLCSlgj10AmfVW+jwN5As
-yMTeMNhXSIuTK1aqwo4vPswgXNoE7V7c6bGNNdoCvj9EGAAQM8tgs1EI01fAKr4N
-QnUlF2WjE9WiP7Z381SFUtSPqymRB089hiCGQkuJQxuAcTINPNZAdthVOkNiiqU/
-RbneQdb7psI8dJAJLXASGqAHx54+vLjhleIM4Ny5FsmzSQmuVaECpxgi/1VUPK3B
-il4qqM2fFkpG8NMTHiQ9xLjfq/CcT9ehC3/6PMCRJz9Tc/mDyIDmUz6YOaEpADni
-Qtph9/lTh7wB35Nd1A53ffjluvO2Sz2Vs+ko1oRY2pnbDUyZsaxzPBlBOQgbpD5x
-PgqOYZO052GOiet75x5jBbM/tV4LrS2iSzLFV7LtHhVGQppOT48=
-=H3jB
------END PGP SIGNATURE-----
---=-=-=--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a208bfe367b5..a1eff866550b 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -696,6 +696,14 @@ config ARCH_MULTI_CPU_AUTO
+ 
+ endmenu
+ 
++config ARCH_ASSUME_SECURE_PLATFORM
++	bool "Enable ERRATAs using secure-only registers"
++	default !ARCH_MULTIPLATFORM
++	help
++	  Allow erratas that need access to secure-only registers.
++
++	  Beware: Resulting kernel won't boot on a CPU in non-Secure mode.
++
+ config ARCH_VIRT
+ 	bool "Dummy Virtual Machine"
+ 	depends on ARCH_MULTI_V7
+@@ -984,7 +992,7 @@ config ARM_ERRATA_430973
+ config ARM_ERRATA_458693
+ 	bool "ARM errata: Processor deadlock when a false hazard is created"
+ 	depends on CPU_V7
+-	depends on !ARCH_MULTIPLATFORM
++	depends on ARCH_ASSUME_SECURE_PLATFORM
+ 	help
+ 	  This option enables the workaround for the 458693 Cortex-A8 (r2p0)
+ 	  erratum. For very specific sequences of memory operations, it is
+@@ -998,7 +1006,7 @@ config ARM_ERRATA_458693
+ config ARM_ERRATA_460075
+ 	bool "ARM errata: Data written to the L2 cache can be overwritten with stale data"
+ 	depends on CPU_V7
+-	depends on !ARCH_MULTIPLATFORM
++	depends on ARCH_ASSUME_SECURE_PLATFORM
+ 	help
+ 	  This option enables the workaround for the 460075 Cortex-A8 (r2p0)
+ 	  erratum. Any asynchronous access to the L2 cache may encounter a
+@@ -1011,7 +1019,7 @@ config ARM_ERRATA_460075
+ config ARM_ERRATA_742230
+ 	bool "ARM errata: DMB operation may be faulty"
+ 	depends on CPU_V7 && SMP
+-	depends on !ARCH_MULTIPLATFORM
++	depends on ARCH_ASSUME_SECURE_PLATFORM
+ 	help
+ 	  This option enables the workaround for the 742230 Cortex-A9
+ 	  (r1p0..r2p2) erratum. Under rare circumstances, a DMB instruction
+@@ -1024,7 +1032,7 @@ config ARM_ERRATA_742230
+ config ARM_ERRATA_742231
+ 	bool "ARM errata: Incorrect hazard handling in the SCU may lead to data corruption"
+ 	depends on CPU_V7 && SMP
+-	depends on !ARCH_MULTIPLATFORM
++	depends on ARCH_ASSUME_SECURE_PLATFORM
+ 	help
+ 	  This option enables the workaround for the 742231 Cortex-A9
+ 	  (r2p0..r2p2) erratum. Under certain conditions, specific to the
+@@ -1062,7 +1070,7 @@ config ARM_ERRATA_720789
+ config ARM_ERRATA_743622
+ 	bool "ARM errata: Faulty hazard checking in the Store Buffer may lead to data corruption"
+ 	depends on CPU_V7
+-	depends on !ARCH_MULTIPLATFORM
++	depends on ARCH_ASSUME_SECURE_PLATFORM
+ 	help
+ 	  This option enables the workaround for the 743622 Cortex-A9
+ 	  (r2p*) erratum. Under very rare conditions, a faulty
+@@ -1076,7 +1084,7 @@ config ARM_ERRATA_743622
+ config ARM_ERRATA_751472
+ 	bool "ARM errata: Interrupted ICIALLUIS may prevent completion of broadcasted operation"
+ 	depends on CPU_V7
+-	depends on !ARCH_MULTIPLATFORM
++	depends on ARCH_ASSUME_SECURE_PLATFORM
+ 	help
+ 	  This option enables the workaround for the 751472 Cortex-A9 (prior
+ 	  to r3p0) erratum. An interrupted ICIALLUIS operation may prevent the
+-- 
+2.11.0
