@@ -1,78 +1,119 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
-Date: Thu, 20 Jul 2017 13:46:17 -0700
-Message-ID: <CAKdAkRTx8jd8UToz5_EgMmdW3V47i2uo++YvVB_yzytqSA=P1Q@mail.gmail.com>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
- <20170719211515.46a1196c@windsurf> <1500543415.2354.37.camel@pengutronix.de>
- <20170720123640.43c2ce01@windsurf> <1500555312.2354.75.camel@pengutronix.de>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 9/9] ARM: tegra: fix sleeping while atomic in CPU idle
+Date: Fri, 21 Jul 2017 09:15:31 +0100
+Message-ID: <bfb0fab3-da6f-44b9-dfb6-3da4f2715af0@nvidia.com>
+References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <0a0600cdbcc9a71134105043c3e2ace84bab7c5a.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <378bf911-147e-f800-2de4-591e160528f0@nvidia.com>
+ <20170720162852.rh565t5as2tbe6np@qmqm.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1500555312.2354.75.camel@pengutronix.de>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, lkml <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Peter Chen <Peter.Chen@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, DRI <dri-devel@lists.freedesktop.org>, Marc Dietrich <marvin24@gmx.de>, Rakesh Iyer <riyer@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-clk@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Wolfram Sang <wsa@the-dreams.de>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jiri Slaby <jslaby@suse.com>, Michael Turquette <mturquette@baylibre.com>, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170720162852.rh565t5as2tbe6np-cHozx32mtrEEUmgCuDUIdw@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 20, 2017 at 5:55 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> Hi Thomas,
->
-> On Thu, 2017-07-20 at 12:36 +0200, Thomas Petazzoni wrote:
->> Hello,
->>
->> On Thu, 20 Jul 2017 11:36:55 +0200, Philipp Zabel wrote:
->>
->> > > I don't know if it has been discussed in the past, so forgive me if it
->> > > has been. Have you considered adding a "int flags" argument to the
->> > > existing reset_control_get_*() functions, rather than introducing
->> > > separate exclusive variants ?
->> > >
->> > > Indeed, with a "int flags" argument you could in the future add more
->> > > variants/behaviors without actually multiplying the number of
->> > > functions. Something like the "flags" argument for request_irq() for
->> > > example.
->> >
->> > I can't find the discussion right now, but I remember we had talked
->> > about this in the past.
->> > Behind the scenes, all the inline API functions already call common
->> > entry points with flags (well, currently separate bool parameters for
->> > shared and optional).
->> > One reason against exposing those as an int flags in the user facing API
->> > is the possibility to accidentally provide a wrong value.
->>
->> This is a quite strange argument. You could also accidentally use the
->> wrong variant of the function, just like you could use the wrong flag.
->
-> You can't accidentally use no flag at all or a completely bogus value
-> with the "plethora of inline functions" variant.
->
->> Once again, the next time you have another parameter for those reset
->> functions, beyond the exclusive/shared variant, you will multiply again
->> by two the number of functions ? You already have the  exclusive/shared
->> and optional/mandatory variants, so 4 variants. When you'll add a new
->> parameter, you'll have 8 variants. Doesn't seem really good.
->
-> I'd rather avoid adding more variants, if possible. The complexity
-> increases regardless of whether the API is expressed as a bunch of
-> functions or as a single function with a bunch of flags.
->
->> What about reset_control_get(struct device *, const char *, int flags)
->> to replace all those variants ?
->
-> While I like how this looks, unfortunately (devm_)reset_control_get
-> already exists without the flags, so we can't change to that with a
-> gentle transition.
 
-This was done for gpiod_get() and its flags argument with horrifying
-#define-ry, which thankfully was completely hidden from users.
+On 20/07/17 17:28, Micha³ Miros³aw wrote:
+> On Thu, Jul 20, 2017 at 01:45:12PM +0100, Jon Hunter wrote:
+>>
+>> On 20/07/17 01:29, Micha³ Miros³aw wrote:
+>>> This removes unnecessary lock causing following BUG splat:
+>>>
+>>> BUG: sleeping function called from invalid context at /linux/kernel/locking/mutex.c:747
+>>> in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
+>>> no locks held by swapper/0/0.
+>>> CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W 4.13.0-rc1mq-00016-gbf3f627c6b2b #1
+>>> Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>>> [<b0110a14>] (unwind_backtrace) from [<b010c710>] (show_stack+0x18/0x1c)
+>>> [<b010c710>] (show_stack) from [<b068ada8>] (dump_stack+0x84/0x98)
+>>> [<b068ada8>] (dump_stack) from [<b014ff54>] (___might_sleep+0x158/0x17c)
+>>> [<b014ff54>] (___might_sleep) from [<b06a15c4>] (__mutex_lock+0x34/0x9a0)
+>>> [<b06a15c4>] (__mutex_lock) from [<b06a30dc>] (mutex_lock_nested+0x24/0x2c)
+>>> [<b06a30dc>] (mutex_lock_nested) from [<b041f6d8>] (tegra_powergate_is_powered+0x40/0xa4)
+>>> [<b041f6d8>] (tegra_powergate_is_powered) from [<b04197e8>] (tegra30_cpu_rail_off_ready+0x28/0x6c)
+>>> [<b04197e8>] (tegra30_cpu_rail_off_ready) from [<b011c73c>] (tegra30_idle_lp2+0x70/0x114)
+>>> [<b011c73c>] (tegra30_idle_lp2) from [<b0516080>] (cpuidle_enter_state+0x12c/0x47c)
+>>> [<b0516080>] (cpuidle_enter_state) from [<b0163394>] (do_idle+0x1b4/0x204)
+>>> [<b0163394>] (do_idle) from [<b016368c>] (cpu_startup_entry+0x20/0x24)
+>>> [<b016368c>] (cpu_startup_entry) from [<b0900dd8>] (start_kernel+0x39c/0x3a8)
+>>>
+>>> Signed-off-by: Micha³ Miros³aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+>>> ---
+>>>  drivers/soc/tegra/pmc.c | 2 --
+>>>  1 file changed, 2 deletions(-)
+>>>
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>> index e233dd5dcab3..3e6ec9fdba41 100644
+>>> --- a/drivers/soc/tegra/pmc.c
+>>> +++ b/drivers/soc/tegra/pmc.c
+>>> @@ -526,9 +526,7 @@ int tegra_powergate_is_powered(unsigned int id)
+>>>  	if (!tegra_powergate_is_valid(id))
+>>>  		return -EINVAL;
+>>>  
+>>> -	mutex_lock(&pmc->powergates_lock);
+>>>  	status = tegra_powergate_state(id);
+>>> -	mutex_unlock(&pmc->powergates_lock);
+>>>  
+>>>  	return status;
+>>>  }
+>>
+>> Thanks for the fix. However, I would prefer that we fix this the following
+>> way ...
+>>
+>> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+>> index a2d163f759b4..546d2b121c39 100644
+>> --- a/drivers/clk/tegra/clk-tegra30.c
+>> +++ b/drivers/clk/tegra/clk-tegra30.c
+>> @@ -1152,9 +1152,9 @@ static bool tegra30_cpu_rail_off_ready(void)
+>>  
+>>         cpu_rst_status = readl(clk_base +
+>>                                 TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
+>> -       cpu_pwr_status = tegra_powergate_is_powered(TEGRA_POWERGATE_CPU1) ||
+>> -                        tegra_powergate_is_powered(TEGRA_POWERGATE_CPU2) ||
+>> -                        tegra_powergate_is_powered(TEGRA_POWERGATE_CPU3);
+>> +       cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
+>> +                        tegra_pmc_cpu_is_powered(2) ||
+>> +                        tegra_pmc_cpu_is_powered(3);
+>>  
+>>         if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
+>>                 return false;
+>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>> index e233dd5dcab3..f61371ea3fe0 100644
+>> --- a/drivers/soc/tegra/pmc.c
+>> +++ b/drivers/soc/tegra/pmc.c
+>> @@ -605,7 +605,7 @@ bool tegra_pmc_cpu_is_powered(unsigned int cpuid)
+>>         if (id < 0)
+>>                 return false;
+>>  
+>> -       return tegra_powergate_is_powered(id);
+>> +       return tegra_powergate_state(id);
+>>  }
+>>
+>>
+>> Could you try the above and make sure that this works? 
+> 
+> Something ate TABs in your patch, but yes, it works.
+> 
+>> I would prefer to leave the mutex in tegra_powergate_is_powered() so it could
+>> be used by any driver. Or maybe we could even get rid of
+>> tegra_powergate_is_powered() if we don't really need it.
+> 
+> This mutex does not protect anything here, though - there is only one register
+> read inside the locked section, and after unlock other CPU might change
+> it before the read value gets returned.
+> 
+> Code size-wise it would be better to remove tegra_pmc_cpu_is_powered()
+> instead.
+
+Maybe, but tegra_pmc_cpu_is_powered() is needed by
+tegra30_boot_secondary().
+
+Jon
 
 -- 
-Dmitry
+nvpublic
