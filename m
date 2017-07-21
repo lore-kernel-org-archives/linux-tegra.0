@@ -1,119 +1,36 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 9/9] ARM: tegra: fix sleeping while atomic in CPU idle
-Date: Fri, 21 Jul 2017 09:15:31 +0100
-Message-ID: <bfb0fab3-da6f-44b9-dfb6-3da4f2715af0@nvidia.com>
-References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
- <0a0600cdbcc9a71134105043c3e2ace84bab7c5a.1500510157.git.mirq-linux@rere.qmqm.pl>
- <378bf911-147e-f800-2de4-591e160528f0@nvidia.com>
- <20170720162852.rh565t5as2tbe6np@qmqm.qmqm.pl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: 8BIT
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: [PATCH 0/4] IOMMU group cleanup
+Date: Fri, 21 Jul 2017 13:12:34 +0100
+Message-ID: <cover.1500637633.git.robin.murphy@arm.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170720162852.rh565t5as2tbe6np-cHozx32mtrEEUmgCuDUIdw@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, srinivas.kandagatla-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi all,
 
-On 20/07/17 17:28, Micha³ Miros³aw wrote:
-> On Thu, Jul 20, 2017 at 01:45:12PM +0100, Jon Hunter wrote:
->>
->> On 20/07/17 01:29, Micha³ Miros³aw wrote:
->>> This removes unnecessary lock causing following BUG splat:
->>>
->>> BUG: sleeping function called from invalid context at /linux/kernel/locking/mutex.c:747
->>> in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
->>> no locks held by swapper/0/0.
->>> CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W 4.13.0-rc1mq-00016-gbf3f627c6b2b #1
->>> Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->>> [<b0110a14>] (unwind_backtrace) from [<b010c710>] (show_stack+0x18/0x1c)
->>> [<b010c710>] (show_stack) from [<b068ada8>] (dump_stack+0x84/0x98)
->>> [<b068ada8>] (dump_stack) from [<b014ff54>] (___might_sleep+0x158/0x17c)
->>> [<b014ff54>] (___might_sleep) from [<b06a15c4>] (__mutex_lock+0x34/0x9a0)
->>> [<b06a15c4>] (__mutex_lock) from [<b06a30dc>] (mutex_lock_nested+0x24/0x2c)
->>> [<b06a30dc>] (mutex_lock_nested) from [<b041f6d8>] (tegra_powergate_is_powered+0x40/0xa4)
->>> [<b041f6d8>] (tegra_powergate_is_powered) from [<b04197e8>] (tegra30_cpu_rail_off_ready+0x28/0x6c)
->>> [<b04197e8>] (tegra30_cpu_rail_off_ready) from [<b011c73c>] (tegra30_idle_lp2+0x70/0x114)
->>> [<b011c73c>] (tegra30_idle_lp2) from [<b0516080>] (cpuidle_enter_state+0x12c/0x47c)
->>> [<b0516080>] (cpuidle_enter_state) from [<b0163394>] (do_idle+0x1b4/0x204)
->>> [<b0163394>] (do_idle) from [<b016368c>] (cpu_startup_entry+0x20/0x24)
->>> [<b016368c>] (cpu_startup_entry) from [<b0900dd8>] (start_kernel+0x39c/0x3a8)
->>>
->>> Signed-off-by: Micha³ Miros³aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
->>> ---
->>>  drivers/soc/tegra/pmc.c | 2 --
->>>  1 file changed, 2 deletions(-)
->>>
->>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>> index e233dd5dcab3..3e6ec9fdba41 100644
->>> --- a/drivers/soc/tegra/pmc.c
->>> +++ b/drivers/soc/tegra/pmc.c
->>> @@ -526,9 +526,7 @@ int tegra_powergate_is_powered(unsigned int id)
->>>  	if (!tegra_powergate_is_valid(id))
->>>  		return -EINVAL;
->>>  
->>> -	mutex_lock(&pmc->powergates_lock);
->>>  	status = tegra_powergate_state(id);
->>> -	mutex_unlock(&pmc->powergates_lock);
->>>  
->>>  	return status;
->>>  }
->>
->> Thanks for the fix. However, I would prefer that we fix this the following
->> way ...
->>
->> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
->> index a2d163f759b4..546d2b121c39 100644
->> --- a/drivers/clk/tegra/clk-tegra30.c
->> +++ b/drivers/clk/tegra/clk-tegra30.c
->> @@ -1152,9 +1152,9 @@ static bool tegra30_cpu_rail_off_ready(void)
->>  
->>         cpu_rst_status = readl(clk_base +
->>                                 TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
->> -       cpu_pwr_status = tegra_powergate_is_powered(TEGRA_POWERGATE_CPU1) ||
->> -                        tegra_powergate_is_powered(TEGRA_POWERGATE_CPU2) ||
->> -                        tegra_powergate_is_powered(TEGRA_POWERGATE_CPU3);
->> +       cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
->> +                        tegra_pmc_cpu_is_powered(2) ||
->> +                        tegra_pmc_cpu_is_powered(3);
->>  
->>         if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
->>                 return false;
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index e233dd5dcab3..f61371ea3fe0 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -605,7 +605,7 @@ bool tegra_pmc_cpu_is_powered(unsigned int cpuid)
->>         if (id < 0)
->>                 return false;
->>  
->> -       return tegra_powergate_is_powered(id);
->> +       return tegra_powergate_state(id);
->>  }
->>
->>
->> Could you try the above and make sure that this works? 
-> 
-> Something ate TABs in your patch, but yes, it works.
-> 
->> I would prefer to leave the mutex in tegra_powergate_is_powered() so it could
->> be used by any driver. Or maybe we could even get rid of
->> tegra_powergate_is_powered() if we don't really need it.
-> 
-> This mutex does not protect anything here, though - there is only one register
-> read inside the locked section, and after unlock other CPU might change
-> it before the read value gets returned.
-> 
-> Code size-wise it would be better to remove tegra_pmc_cpu_is_powered()
-> instead.
+Prompted by some discussion around the questionable usefulness of
+iommu_present() for SoC topologies, I took a look at what was left to
+finish off the intention of making groups mandatory. Turns out it
+wasn't much, so here it is. As well as the general rationalisation
+aspect, between this and the probe-deferral changes in 4.12, we should
+now be able to rely on the presence of a group unambiguously indicating
+whether a given device is associated with an IOMMU or not.
 
-Maybe, but tegra_pmc_cpu_is_powered() is needed by
-tegra30_boot_secondary().
+Robin.
 
-Jon
+Robin Murphy (4):
+  iommu/msm: Add iommu_group support
+  iommu/tegra-smmu: Add iommu_group support
+  iommu/tegra-gart: Add iommu_group support
+  iommu: Finish making iommu_group support mandatory
+
+ drivers/iommu/iommu.c      | 19 ++++---------------
+ drivers/iommu/msm_iommu.c  | 15 ++++++++++++++-
+ drivers/iommu/tegra-gart.c | 19 +++++++++++++++++++
+ drivers/iommu/tegra-smmu.c |  9 +++++++++
+ 4 files changed, 46 insertions(+), 16 deletions(-)
 
 -- 
-nvpublic
+2.12.2.dirty
