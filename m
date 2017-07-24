@@ -1,81 +1,72 @@
-From: Sricharan R <sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH 1/4] iommu/msm: Add iommu_group support
-Date: Mon, 24 Jul 2017 13:04:23 +0530
-Message-ID: <f5071164-c965-b6bf-c330-90ff6ea0c956@codeaurora.org>
-References: <cover.1500637633.git.robin.murphy@arm.com>
-	<b87d44e09fa18efbb9daf6258c1f8ecbedaac23c.1500637633.git.robin.murphy@arm.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
+Date: Mon, 24 Jul 2017 10:33:41 +0200
+Message-ID: <1500885221.2391.50.camel@pengutronix.de>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+         <20170719211515.46a1196c@windsurf>
+         <1500543415.2354.37.camel@pengutronix.de>
+         <20170720123640.43c2ce01@windsurf>
+         <1500555312.2354.75.camel@pengutronix.de>
+         <CAKdAkRTx8jd8UToz5_EgMmdW3V47i2uo++YvVB_yzytqSA=P1Q@mail.gmail.com>
+         <CACRpkdaXOv7mX+b-q1K34CB5w0SWPXCKa21wHaxL7qjf91PJXQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <b87d44e09fa18efbb9daf6258c1f8ecbedaac23c.1500637633.git.robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, srinivas.kandagatla-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <CACRpkdaXOv7mX+b-q1K34CB5w0SWPXCKa21wHaxL7qjf91PJXQ@mail.gmail.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, lkml <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Peter Chen <Peter.Chen@nxp.com>, DRI <dri-devel@lists.freedesktop.org>, Marc Dietrich <marvin24@gmx.de>, Rakesh Iyer <riyer@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-clk <linux-clk@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Wolfram Sang <wsa@the-dreams.de>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jiri Slaby <jslaby@suse.com>, Michael Turquette <mturquette@baylibre.com>Guenter Roeck <li>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Robin,
-
-> As the last step to making groups mandatory, clean up the remaining
-> drivers by adding basic support. Whilst it may not perfectly reflect the
-> isolation capabilities of the hardware, using generic_device_group()
-> should at least maintain existing behaviour with respect to the API.
+On Sun, 2017-07-23 at 20:41 +0200, Linus Walleij wrote:
+> On Thu, Jul 20, 2017 at 10:46 PM, Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> > On Thu, Jul 20, 2017 at 5:55 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
 > 
-> Signed-off-by: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-> ---
->  drivers/iommu/msm_iommu.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+> >>> What about reset_control_get(struct device *, const char *, int flags)
+> >>> to replace all those variants ?
+> >>
+> >> While I like how this looks, unfortunately (devm_)reset_control_get
+> >> already exists without the flags, so we can't change to that with a
+> >> gentle transition.
+> >
+> > This was done for gpiod_get() and its flags argument with horrifying
+> > #define-ry, which thankfully was completely hidden from users.
 > 
-> diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-> index d0448353d501..04f4d51ffacb 100644
-> --- a/drivers/iommu/msm_iommu.c
-> +++ b/drivers/iommu/msm_iommu.c
-> @@ -393,6 +393,7 @@ static struct msm_iommu_dev *find_iommu_for_dev(struct device *dev)
->  static int msm_iommu_add_device(struct device *dev)
->  {
->  	struct msm_iommu_dev *iommu;
-> +	struct iommu_group *group;
->  	unsigned long flags;
->  	int ret = 0;
->  
-> @@ -406,7 +407,16 @@ static int msm_iommu_add_device(struct device *dev)
->  
->  	spin_unlock_irqrestore(&msm_iommu_lock, flags);
->  
-> -	return ret;
-> +	if (ret)
-> +		return ret;
-> +
-> +	group = iommu_group_get_for_dev(dev);
-> +	if (IS_ERR(group))
-> +		return PTR_ERR(group);
-> +
-> +	iommu_group_put(group);
-> +
-> +	return 0;
->  }
->  
+> For your reference:
+> 
+> commit bae48da237fcedd7ad09569025483b988635efb7
+> "gpiolib: add gpiod_get() and gpiod_put() functions"
+> 
+> commit 39b2bbe3d715cf5013b5c48695ccdd25bd3bf120
+> "gpio: add flags argument to gpiod_get*() functions"
+> 
+> commit 0dbc8b7afef6e4fddcfebcbacbeb269a0a3b06d5
+> "gpio: move varargs hack outside #ifdef GPIOLIB"
+> 
+> commit b17d1bf16cc72a374a48d748940f700009d40ff4
+> "gpio: make flags mandatory for gpiod_get functions"
+> 
+> Retrospectively ... was that really a good idea... it was a LOT
+> of trouble to add a flag, maybe it had been better to try and
+> just slam all users in a single go.
+> 
+> But it worked.
 
- While this is correct for completing the group support, this adds the default domain and
- that might break in the driver while attaching a private domain. The msm_iomm_attach_dev
- needs to be fixed by calling msm_iommu_detach_dev while trying to attach a new domain when
- already connected to a default one. But let me test and confirm this.
+Thanks for the hint and the references. It seems this turned out okay,
+but I wouldn't dare to introduce such macro horror^Wmagic.
+I'd rather have all users converted to the _exclusive/_shared function
+calls and maybe then replace the internal __reset_control_get with
+Thomas' suggestion.
 
-Regards,
- Sricharan
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+regards
+Philipp
