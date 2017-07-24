@@ -1,62 +1,41 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/4] gpio: tegra: Remove unnecessary check
-Date: Mon, 24 Jul 2017 16:55:05 +0200
-Message-ID: <20170724145508.7388-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 2/4] gpio: tegra: Prefer kcalloc() over kzalloc() with multiplies
+Date: Mon, 24 Jul 2017 16:55:06 +0200
+Message-ID: <20170724145508.7388-2-thierry.reding@gmail.com>
+References: <20170724145508.7388-1-thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170724145508.7388-1-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-of_device_get_match_data() can never return NULL, therefore the check
-for NULL values is unnecessary.
+Rather than manually compute the size of an array, pass the number and
+element size to kcalloc().
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpio-tegra.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ drivers/gpio/gpio-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 17725c83821f..63ee221f9be9 100644
+index 63ee221f9be9..1d4df290d7ab 100644
 --- a/drivers/gpio/gpio-tegra.c
 +++ b/drivers/gpio/gpio-tegra.c
-@@ -566,7 +566,6 @@ static struct lock_class_key gpio_lock_class;
- 
- static int tegra_gpio_probe(struct platform_device *pdev)
- {
--	const struct tegra_gpio_soc_config *config;
- 	struct tegra_gpio_info *tgi;
- 	struct resource *res;
- 	struct tegra_gpio_bank *bank;
-@@ -575,17 +574,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	int i;
- 	int j;
- 
--	config = of_device_get_match_data(&pdev->dev);
--	if (!config) {
--		dev_err(&pdev->dev, "Error: No device match found\n");
--		return -ENODEV;
--	}
--
- 	tgi = devm_kzalloc(&pdev->dev, sizeof(*tgi), GFP_KERNEL);
- 	if (!tgi)
- 		return -ENODEV;
- 
--	tgi->soc = config;
-+	tgi->soc = of_device_get_match_data(&pdev->dev);
- 	tgi->dev = &pdev->dev;
- 
- 	ret = platform_irq_count(pdev);
-@@ -625,7 +618,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, tgi);
- 
--	if (config->debounce_supported)
-+	if (tgi->soc->debounce_supported)
+@@ -621,10 +621,10 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	if (tgi->soc->debounce_supported)
  		tgi->gc.set_config = tegra_gpio_set_config;
  
- 	tgi->bank_info = devm_kzalloc(&pdev->dev, tgi->bank_count *
+-	tgi->bank_info = devm_kzalloc(&pdev->dev, tgi->bank_count *
++	tgi->bank_info = devm_kcalloc(&pdev->dev, tgi->bank_count,
+ 				      sizeof(*tgi->bank_info), GFP_KERNEL);
+ 	if (!tgi->bank_info)
+-		return -ENODEV;
++		return -ENOMEM;
+ 
+ 	tgi->irq_domain = irq_domain_add_linear(pdev->dev.of_node,
+ 						tgi->gc.ngpio,
 -- 
 2.13.3
