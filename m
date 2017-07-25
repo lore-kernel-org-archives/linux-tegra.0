@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 05/14] clk: tegra: Init cfg structure in _get_pll_mnp
-Date: Tue, 25 Jul 2017 13:34:06 +0300
-Message-ID: <1500978856-5981-6-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH 06/14] clk: tegra: Fix T210 effective NDIV calculation
+Date: Tue, 25 Jul 2017 13:34:07 +0300
+Message-ID: <1500978856-5981-7-git-send-email-pdeschrijver@nvidia.com>
 References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,31 +9,53 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Alex Frid <afrid@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Not all fields are read from the hw depending on the PLL type. Make sure
-the other fields are 0 by clearing the structure beforehand to prevent
-users such as the rate re-calculation code from using bogus values.
+From: Alex Frid <afrid@nvidia.com>
 
-Based on work by  Alex Frid <afrid@nvidia.com>
+Don't take the fractional part into account to calculate the effective
+NDIV if fractional ndiv is not enabled.
 
+Signed-off-by: Alex Frid <afrid@nvidia.com>
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index fbd8726..1c36b8a 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -690,6 +690,8 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
- 	struct tegra_clk_pll_params *params = pll->params;
- 	struct div_nmp *div_nmp = params->div_nmp;
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index dc4a813..a4d7d94 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -241,6 +241,9 @@
+ #define PLL_SDM_COEFF BIT(13)
+ #define sdin_din_to_data(din)	((u16)((din) ? : 0xFFFFU))
+ #define sdin_data_to_din(dat)	(((dat) == 0xFFFFU) ? 0 : (s16)dat)
++/* This macro returns ndiv effective scaled to SDM range */
++#define sdin_get_n_eff(cfg)	((cfg)->n * PLL_SDM_COEFF + ((cfg)->sdm_data ? \
++		(PLL_SDM_COEFF/2 + sdin_data_to_din((cfg)->sdm_data)) : 0))
  
-+	*cfg = (struct tegra_clk_pll_freq_table) { };
-+
- 	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
- 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+ /* Tegra CPU clock and reset control regs */
+ #define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
+@@ -1288,8 +1291,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
+ 			s -= PLL_SDM_COEFF / 2;
+ 			cfg->sdm_data = sdin_din_to_data(s);
+ 		}
+-		cfg->output_rate *= cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
+-					sdin_data_to_din(cfg->sdm_data);
++		cfg->output_rate *= sdin_get_n_eff(cfg);
+ 		cfg->output_rate /= p * cfg->m * PLL_SDM_COEFF;
+ 	} else {
+ 		cfg->output_rate *= cfg->n;
+@@ -1314,8 +1316,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
+  */
+ static void tegra210_clk_pll_set_gain(struct tegra_clk_pll_freq_table *cfg)
+ {
+-	cfg->n = cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
+-			sdin_data_to_din(cfg->sdm_data);
++	cfg->n = sdin_get_n_eff(cfg);
+ 	cfg->m *= PLL_SDM_COEFF;
+ }
+ 
 -- 
 1.9.1
