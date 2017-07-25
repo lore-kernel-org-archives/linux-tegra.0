@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 09/14] clk: tegra: don't warn for pll_d2 defaults unnecessarily
-Date: Tue, 25 Jul 2017 13:34:10 +0300
-Message-ID: <1500978856-5981-10-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH 03/14] clk: tegra: disable SSC for PLL_D2
+Date: Tue, 25 Jul 2017 13:34:04 +0300
+Message-ID: <1500978856-5981-4-git-send-email-pdeschrijver@nvidia.com>
 References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -11,38 +11,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-If the PLL is on, only warn if the defaults are not yet set. Otherwise be
-silent.
+PLLD2 is used for HDMI which does not allowe Spread Spectrum clocking.
 
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Reviewed-by: Timo Alho <talho@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index a4d7d94..1e470ca 100644
+index 1024e85..facd6ee 100644
 --- a/drivers/clk/tegra/clk-tegra210.c
 +++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -718,8 +718,6 @@ static void plldss_defaults(const char *pll_name, struct tegra_clk_pll *plldss,
- 	plldss->params->defaults_set = true;
+@@ -146,7 +146,7 @@
+ #define PLLD_SDM_EN_MASK BIT(16)
  
- 	if (val & PLL_ENABLE) {
--		pr_warn("%s already enabled. Postponing set full defaults\n",
--			 pll_name);
+ #define PLLD2_SDM_EN_MASK BIT(31)
+-#define PLLD2_SSC_EN_MASK BIT(30)
++#define PLLD2_SSC_EN_MASK 0
  
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -758,6 +756,10 @@ static void plldss_defaults(const char *pll_name, struct tegra_clk_pll *plldss,
- 				(~PLLDSS_MISC1_CFG_EN_SDM));
- 		}
- 
-+		if (!plldss->params->defaults_set)
-+			pr_warn("%s already enabled. Postponing set full defaults\n",
-+				 pll_name);
-+
- 		/* Enable lock detect */
- 		if (val & PLLDSS_BASE_LOCK_OVERRIDE) {
- 			val &= ~PLLDSS_BASE_LOCK_OVERRIDE;
+ #define PLLDP_SS_CFG	0x598
+ #define PLLDP_SDM_EN_MASK BIT(31)
 -- 
 1.9.1
