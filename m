@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 06/14] clk: tegra: Fix T210 effective NDIV calculation
-Date: Tue, 25 Jul 2017 13:34:07 +0300
-Message-ID: <1500978856-5981-7-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH 12/14] clk: tegra: Fix T210 PLLRE registration
+Date: Tue, 25 Jul 2017 13:34:13 +0300
+Message-ID: <1500978856-5981-13-git-send-email-pdeschrijver@nvidia.com>
 References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -14,48 +14,60 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Alex Frid <afrid@nvidia.com>
 
-Don't take the fractional part into account to calculate the effective
-NDIV if fractional ndiv is not enabled.
+Switched Tegra210 PLLRE registration to common PLL ops instead of special
+PLLRE ops used on previous Tegra chips. The latter ops do not follow
+chip specific PLL frequency table, and do not apply chip specific rate
+calculation method.
+
+Removed unnecessary default rate setting that duplicates h/w reset
+state, and is overwritten by clock initialization, anyway.
 
 Signed-off-by: Alex Frid <afrid@nvidia.com>
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Reviewed-by: Jon Mayo <jmayo@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-pll.c | 21 +--------------------
+ 1 file changed, 1 insertion(+), 20 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index dc4a813..a4d7d94 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -241,6 +241,9 @@
- #define PLL_SDM_COEFF BIT(13)
- #define sdin_din_to_data(din)	((u16)((din) ? : 0xFFFFU))
- #define sdin_data_to_din(dat)	(((dat) == 0xFFFFU) ? 0 : (s16)dat)
-+/* This macro returns ndiv effective scaled to SDM range */
-+#define sdin_get_n_eff(cfg)	((cfg)->n * PLL_SDM_COEFF + ((cfg)->sdm_data ? \
-+		(PLL_SDM_COEFF/2 + sdin_data_to_din((cfg)->sdm_data)) : 0))
- 
- /* Tegra CPU clock and reset control regs */
- #define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
-@@ -1288,8 +1291,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
- 			s -= PLL_SDM_COEFF / 2;
- 			cfg->sdm_data = sdin_din_to_data(s);
- 		}
--		cfg->output_rate *= cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
--					sdin_data_to_din(cfg->sdm_data);
-+		cfg->output_rate *= sdin_get_n_eff(cfg);
- 		cfg->output_rate /= p * cfg->m * PLL_SDM_COEFF;
- 	} else {
- 		cfg->output_rate *= cfg->n;
-@@ -1314,8 +1316,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
-  */
- static void tegra210_clk_pll_set_gain(struct tegra_clk_pll_freq_table *cfg)
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index c6bce4a..7c369e2 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -2355,7 +2355,6 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+ 			  struct tegra_clk_pll_params *pll_params,
+ 			  spinlock_t *lock, unsigned long parent_rate)
  {
--	cfg->n = cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
--			sdin_data_to_din(cfg->sdm_data);
-+	cfg->n = sdin_get_n_eff(cfg);
- 	cfg->m *= PLL_SDM_COEFF;
- }
+-	u32 val;
+ 	struct tegra_clk_pll *pll;
+ 	struct clk *clk;
+ 
+@@ -2369,26 +2368,8 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+ 
+-	/* program minimum rate by default */
+-
+-	val = pll_readl_base(pll);
+-	if (val & PLL_BASE_ENABLE)
+-		WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
+-				BIT(pll_params->iddq_bit_idx));
+-	else {
+-		val = 0x4 << divm_shift(pll);
+-		val |= 0x41 << divn_shift(pll);
+-		pll_writel_base(val, pll);
+-	}
+-
+-	/* disable lock override */
+-
+-	val = pll_readl_misc(pll);
+-	val &= ~BIT(29);
+-	pll_writel_misc(val, pll);
+-
+ 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+-				      &tegra_clk_pllre_ops);
++				      &tegra_clk_pll_ops);
+ 	if (IS_ERR(clk))
+ 		kfree(pll);
  
 -- 
 1.9.1
