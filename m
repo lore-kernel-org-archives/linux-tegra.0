@@ -1,35 +1,41 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 03/14] clk: tegra: disable SSC for PLL_D2
-Date: Tue, 25 Jul 2017 13:34:04 +0300
-Message-ID: <1500978856-5981-4-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 07/14] clk: tegra: Add TEGRA_PERIPH_ON_APB flag to I2C
+Date: Tue, 25 Jul 2017 13:34:08 +0300
+Message-ID: <1500978856-5981-8-git-send-email-pdeschrijver@nvidia.com>
 References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PLLD2 is used for HDMI which does not allowe Spread Spectrum clocking.
+From: Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+I2C controllers are also on the APB bus and therefor need this flag to handle
+resets correctly.
+
+Signed-off-by: Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra-periph.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 1024e85..facd6ee 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -146,7 +146,7 @@
- #define PLLD_SDM_EN_MASK BIT(16)
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 294bfe4..848255c 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -216,7 +216,8 @@
+ 			     _clk_num, _clk_id)			\
+ 	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,\
+ 			30, MASK(2), 0, 0, 16, 0, TEGRA_DIVIDER_ROUND_UP,\
+-			_clk_num, 0, _clk_id, _parents##_idx, 0, NULL)
++			_clk_num, TEGRA_PERIPH_ON_APB, _clk_id, \
++			_parents##_idx, 0, NULL)
  
- #define PLLD2_SDM_EN_MASK BIT(31)
--#define PLLD2_SSC_EN_MASK BIT(30)
-+#define PLLD2_SSC_EN_MASK 0
- 
- #define PLLDP_SS_CFG	0x598
- #define PLLDP_SDM_EN_MASK BIT(31)
+ #define XUSB(_name, _parents, _offset, \
+ 			     _clk_num, _gate_flags, _clk_id)	 \
 -- 
 1.9.1
