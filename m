@@ -1,54 +1,160 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/4] gpio: tegra: Prefer kcalloc() over kzalloc() with
- multiplies
-Date: Tue, 25 Jul 2017 09:27:19 +0100
-Message-ID: <c89d51ec-18dc-f5ee-f899-09a0480b56e6@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 3/4] gpio: tegra: Fix checkpatch warnings
+Date: Tue, 25 Jul 2017 09:30:27 +0100
+Message-ID: <d1ba8904-f6a9-70a6-549f-2cba2d2842e3@nvidia.com>
 References: <20170724145508.7388-1-thierry.reding@gmail.com>
- <20170724145508.7388-2-thierry.reding@gmail.com>
+ <20170724145508.7388-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170724145508.7388-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170724145508.7388-3-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
 On 24/07/17 15:55, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Rather than manually compute the size of an array, pass the number and
-> element size to kcalloc().
+> Fix a couple of checkpatch warnings, such as complaints about bare
+> unsigned being used (instead of unsigned int) and missing blank lines
+> after declarations.
 > 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/gpio/gpio-tegra.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/gpio/gpio-tegra.c | 32 ++++++++++++++++++++------------
+>  1 file changed, 20 insertions(+), 12 deletions(-)
 > 
 > diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index 63ee221f9be9..1d4df290d7ab 100644
+> index 1d4df290d7ab..edc1a14557f0 100644
 > --- a/drivers/gpio/gpio-tegra.c
 > +++ b/drivers/gpio/gpio-tegra.c
-> @@ -621,10 +621,10 @@ static int tegra_gpio_probe(struct platform_device *pdev)
->  	if (tgi->soc->debounce_supported)
->  		tgi->gc.set_config = tegra_gpio_set_config;
+> @@ -138,12 +138,12 @@ static void tegra_gpio_disable(struct tegra_gpio_info *tgi, int gpio)
+>  	tegra_gpio_mask_write(tgi, GPIO_MSK_CNF(tgi, gpio), gpio, 0);
+>  }
 >  
-> -	tgi->bank_info = devm_kzalloc(&pdev->dev, tgi->bank_count *
-> +	tgi->bank_info = devm_kcalloc(&pdev->dev, tgi->bank_count,
->  				      sizeof(*tgi->bank_info), GFP_KERNEL);
->  	if (!tgi->bank_info)
-> -		return -ENODEV;
-> +		return -ENOMEM;
+> -static int tegra_gpio_request(struct gpio_chip *chip, unsigned offset)
+> +static int tegra_gpio_request(struct gpio_chip *chip, unsigned int offset)
+>  {
+>  	return pinctrl_request_gpio(offset);
+>  }
 >  
->  	tgi->irq_domain = irq_domain_add_linear(pdev->dev.of_node,
->  						tgi->gc.ngpio,
+> -static void tegra_gpio_free(struct gpio_chip *chip, unsigned offset)
+> +static void tegra_gpio_free(struct gpio_chip *chip, unsigned int offset)
+>  {
+>  	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+>  
+> @@ -151,14 +151,15 @@ static void tegra_gpio_free(struct gpio_chip *chip, unsigned offset)
+>  	tegra_gpio_disable(tgi, offset);
+>  }
+>  
+> -static void tegra_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+> +static void tegra_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> +			   int value)
+>  {
+>  	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+>  
+>  	tegra_gpio_mask_write(tgi, GPIO_MSK_OUT(tgi, offset), offset, value);
+>  }
+>  
+> -static int tegra_gpio_get(struct gpio_chip *chip, unsigned offset)
+> +static int tegra_gpio_get(struct gpio_chip *chip, unsigned int offset)
+>  {
+>  	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+>  	int bval = BIT(GPIO_BIT(offset));
+> @@ -170,7 +171,8 @@ static int tegra_gpio_get(struct gpio_chip *chip, unsigned offset)
+>  	return !!(tegra_gpio_readl(tgi, GPIO_IN(tgi, offset)) & bval);
+>  }
+>  
+> -static int tegra_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+> +static int tegra_gpio_direction_input(struct gpio_chip *chip,
+> +				      unsigned int offset)
+>  {
+>  	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+>  
+> @@ -179,8 +181,9 @@ static int tegra_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+>  	return 0;
+>  }
+>  
+> -static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+> -					int value)
+> +static int tegra_gpio_direction_output(struct gpio_chip *chip,
+> +				       unsigned int offset,
+> +				       int value)
+>  {
+>  	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+>  
+> @@ -190,7 +193,8 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+>  	return 0;
+>  }
+>  
+> -static int tegra_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+> +static int tegra_gpio_get_direction(struct gpio_chip *chip,
+> +				    unsigned int offset)
+>  {
+>  	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+>  	u32 pin_mask = BIT(GPIO_BIT(offset));
+> @@ -250,7 +254,7 @@ static int tegra_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+>  	return tegra_gpio_set_debounce(chip, offset, debounce);
+>  }
+>  
+> -static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+> +static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+>  {
+>  	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+>  
+> @@ -413,7 +417,8 @@ static int tegra_gpio_resume(struct device *dev)
+>  		struct tegra_gpio_bank *bank = &tgi->bank_info[b];
+>  
+>  		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+> -			unsigned int gpio = (b<<5) | (p<<3);
+> +			unsigned int gpio = (b << 5) | (p << 3);
+> +
+>  			tegra_gpio_writel(tgi, bank->cnf[p],
+>  					  GPIO_CNF(tgi, gpio));
+>  
+> @@ -452,7 +457,8 @@ static int tegra_gpio_suspend(struct device *dev)
+>  		struct tegra_gpio_bank *bank = &tgi->bank_info[b];
+>  
+>  		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+> -			unsigned int gpio = (b<<5) | (p<<3);
+> +			unsigned int gpio = (b << 5) | (p << 3);
+> +
+>  			bank->cnf[p] = tegra_gpio_readl(tgi,
+>  							GPIO_CNF(tgi, gpio));
+>  			bank->out[p] = tegra_gpio_readl(tgi,
+> @@ -513,6 +519,7 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
+>  	for (i = 0; i < tgi->bank_count; i++) {
+>  		for (j = 0; j < 4; j++) {
+>  			int gpio = tegra_gpio_compose(i, j, 0);
+> +
+>  			seq_printf(s,
+>  				"%d:%d %02x %02x %02x %02x %02x %02x %06x\n",
+>  				i, j,
+> @@ -542,7 +549,7 @@ static const struct file_operations debug_fops = {
+>  
+>  static void tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
+>  {
+> -	(void) debugfs_create_file("tegra_gpio", S_IRUGO,
+> +	(void) debugfs_create_file("tegra_gpio", 0444,
+>  					NULL, tgi, &debug_fops);
+>  }
+>  
+> @@ -653,6 +660,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>  	for (i = 0; i < tgi->bank_count; i++) {
+>  		for (j = 0; j < 4; j++) {
+>  			int gpio = tegra_gpio_compose(i, j, 0);
+> +
+>  			tegra_gpio_writel(tgi, 0x00, GPIO_INT_ENB(tgi, gpio));
+>  		}
+>  	}
 > 
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
 Cheers
 Jon
