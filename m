@@ -1,112 +1,55 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 11/14] clk: tegra: Update T210 PLLSS (D2/DP) registration
-Date: Tue, 25 Jul 2017 13:34:12 +0300
-Message-ID: <1500978856-5981-12-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] drm: tegra: add CONFIG_OF dependency
+Date: Tue, 25 Jul 2017 13:53:59 +0200
+Message-ID: <CAK8P3a0P_jmGqvbDH2excy+45ojJHO=k1q51ZmzLZzdA+DW=rA@mail.gmail.com>
+References: <20170721161333.3332968-1-arnd@arndb.de>
+ <f383ef43-94a6-07bb-087c-308172948cdc@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Frid <afrid@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <f383ef43-94a6-07bb-087c-308172948cdc@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Alex Frid <afrid@nvidia.com>
-
-Remove from Tegra210 PLLSS registration code sections that
-- attempt to set PLL minimum rate (unnecessary, and dangerous if PLL
-  is already enabled on boot)
-- apply pre-Tegra210 defaults settings
-- check IDDQ setting (duplicated with Tegra210 PLLSS check defaults)
-
-Replaced setting of reference clock with check that default oscillator
-selection is not changed, and failed registration otherwise as validation
-was only done with the oscillator as the reference clock.
-
-Reordered registration, so that PLL initialization is called after
-VCOmin adjustment.
-
-Signed-off-by: Alex Frid <afrid@nvidia.com>
-Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 48 +++++++++------------------------------------
- 1 file changed, 9 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 02f34e6..c6bce4a 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2618,10 +2618,8 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- {
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk, *parent;
--	struct tegra_clk_pll_freq_table cfg;
- 	unsigned long parent_rate;
- 	u32 val;
--	int i;
- 
- 	if (!pll_params->div_nmp)
- 		return ERR_PTR(-EINVAL);
-@@ -2633,13 +2631,11 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
--	if (IS_ERR(pll))
--		return ERR_CAST(pll);
--
--	val = pll_readl_base(pll);
--	val &= ~PLLSS_REF_SRC_SEL_MASK;
--	pll_writel_base(val, pll);
-+	val = readl_relaxed(clk_base + pll_params->base_reg);
-+	if (val & PLLSS_REF_SRC_SEL_MASK) {
-+		WARN(1, "not supported reference clock for %s\n", name);
-+		return ERR_PTR(-EINVAL);
-+	}
- 
- 	parent_rate = clk_get_rate(parent);
- 
-@@ -2649,36 +2645,10 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
- 							     parent_rate);
- 
--	/* initialize PLL to minimum rate */
--
--	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
--	cfg.n = cfg.m * pll_params->vco_min / parent_rate;
--
--	for (i = 0; pll_params->pdiv_tohw[i].pdiv; i++)
--		;
--	if (!i) {
--		kfree(pll);
--		return ERR_PTR(-EINVAL);
--	}
--
--	cfg.p = pll_params->pdiv_tohw[i-1].hw_val;
--
--	_update_pll_mnp(pll, &cfg);
--
--	pll_writel_misc(PLLSS_MISC_DEFAULT, pll);
--
--	val = pll_readl_base(pll);
--	if (val & PLL_BASE_ENABLE) {
--		if (val & BIT(pll_params->iddq_bit_idx)) {
--			WARN(1, "%s is on but IDDQ set\n", name);
--			kfree(pll);
--			return ERR_PTR(-EINVAL);
--		}
--	} else
--		val |= BIT(pll_params->iddq_bit_idx);
--
--	val &= ~PLLSS_LOCK_OVERRIDE;
--	pll_writel_base(val, pll);
-+	pll_params->flags |= TEGRA_PLL_BYPASS;
-+	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
- 
- 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
- 					&tegra_clk_pll_ops);
--- 
-1.9.1
+T24gVHVlLCBKdWwgMjUsIDIwMTcgYXQgMTA6MjUgQU0sIEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBu
+dmlkaWEuY29tPiB3cm90ZToKPgo+IE9uIDIxLzA3LzE3IDE3OjEzLCBBcm5kIEJlcmdtYW5uIHdy
+b3RlOgo+PiBXaXRob3V0IENPTkZJR19PRiwgd2UgY2FuIHJ1biBpbnRvIGEgYnVpbGQgZXJyb3I6
+Cj4+Cj4+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jOjM3ODoyMDogZXJyb3I6ICdwaW5j
+b25mX2dlbmVyaWNfZHRfbm9kZV90b19tYXBfZ3JvdXAnIHVuZGVjbGFyZWQgaGVyZSAobm90IGlu
+IGEgZnVuY3Rpb24pOyBkaWQgeW91IG1lYW4gJ3BpbmNvbmZfZ2VuZXJpY19wYXJhbXMnPwo+PiAg
+IC5kdF9ub2RlX3RvX21hcCA9IHBpbmNvbmZfZ2VuZXJpY19kdF9ub2RlX3RvX21hcF9ncm91cCwK
+Pj4gICAgICAgICAgICAgICAgICAgICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
+fn4KPj4gICAgICAgICAgICAgICAgICAgICBwaW5jb25mX2dlbmVyaWNfcGFyYW1zCj4+IGRyaXZl
+cnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jOjM3OToxNzogZXJyb3I6ICdwaW5jb25mX2dlbmVyaWNf
+ZHRfZnJlZV9tYXAnIHVuZGVjbGFyZWQgaGVyZSAobm90IGluIGEgZnVuY3Rpb24pOyBkaWQgeW91
+IG1lYW4gJ3BpbmNvbmZfZ2VuZXJpY19wYXJhbXMnPwo+Pgo+PiBUaGlzIGFkZHMgYW4gZXhwbGlj
+aXQgZGVwZW5kZW5jeS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJnbWFubiA8YXJuZEBh
+cm5kYi5kZT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvS2NvbmZpZyB8IDEgKwo+
+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vdGVncmEvS2NvbmZpZyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9LY29uZmln
+Cj4+IGluZGV4IDJkYjI5ZDY3MTkzZC4uZGM1OGFiMTQwMTUxIDEwMDY0NAo+PiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vdGVncmEvS2NvbmZpZwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
+S2NvbmZpZwo+PiBAQCAtMyw2ICszLDcgQEAgY29uZmlnIERSTV9URUdSQQo+PiAgICAgICBkZXBl
+bmRzIG9uIEFSQ0hfVEVHUkEgfHwgKEFSTSAmJiBDT01QSUxFX1RFU1QpCj4+ICAgICAgIGRlcGVu
+ZHMgb24gQ09NTU9OX0NMSwo+PiAgICAgICBkZXBlbmRzIG9uIERSTQo+PiArICAgICBkZXBlbmRz
+IG9uIE9GCj4+ICAgICAgIHNlbGVjdCBEUk1fS01TX0hFTFBFUgo+PiAgICAgICBzZWxlY3QgRFJN
+X01JUElfRFNJCj4+ICAgICAgIHNlbGVjdCBEUk1fUEFORUwKPgo+IFRoYW5rcyBBcm5kLiBJIGFt
+IGN1cmlvdXMgaWYgaXQgY2FuIHN0aWxsIGZhaWwgaWYgUElOQ1RSTCBpcyBub3QKPiBzZWxlY3Rl
+ZCBpbiB3aGF0ZXZlciBjb25maWcgeW91IGFyZSB1c2luZz8KCkkgaGF2ZSBub3QgcnVuIGludG8g
+b3RoZXIgdGhvc2UgcHJvYmxlbXMgaW4gbWFueSByYW5kY29uZmlnIGJ1aWxkcy4KTG9va2luZyBh
+dCB0aGUgZHJpdmVyIG5vdywgSSBzZWUgaXQgaGFzIGFuICIjaWZkZWYgQ09ORklHX0dFTkVSSUNf
+UElOQ09ORiIKdG8gaGFuZGxlIHRoYXQgY2FzZS4KCiAgICAgICAgQXJuZApfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
