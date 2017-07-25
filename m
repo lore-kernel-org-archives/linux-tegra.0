@@ -1,41 +1,38 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 07/14] clk: tegra: Add TEGRA_PERIPH_ON_APB flag to I2C
-Date: Tue, 25 Jul 2017 13:34:08 +0300
-Message-ID: <1500978856-5981-8-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 08/14] clk: tegra: change post IDDQ release delay to 5us
+Date: Tue, 25 Jul 2017 13:34:09 +0300
+Message-ID: <1500978856-5981-9-git-send-email-pdeschrijver@nvidia.com>
 References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Increase delay after PLL IDDQ release to 5us per PLL specifications.
 
-I2C controllers are also on the APB bus and therefor need this flag to handle
-resets correctly.
+based on work by Alex Frid <afrid@nvidia.com>
 
-Signed-off-by: Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra-periph.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 294bfe4..848255c 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -216,7 +216,8 @@
- 			     _clk_num, _clk_id)			\
- 	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,\
- 			30, MASK(2), 0, 0, 16, 0, TEGRA_DIVIDER_ROUND_UP,\
--			_clk_num, 0, _clk_id, _parents##_idx, 0, NULL)
-+			_clk_num, TEGRA_PERIPH_ON_APB, _clk_id, \
-+			_parents##_idx, 0, NULL)
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 1c36b8a..695ccb4 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -363,7 +363,7 @@ static void _clk_pll_enable(struct clk_hw *hw)
+ 		val = pll_readl(pll->params->iddq_reg, pll);
+ 		val &= ~BIT(pll->params->iddq_bit_idx);
+ 		pll_writel(val, pll->params->iddq_reg, pll);
+-		udelay(2);
++		udelay(5);
+ 	}
  
- #define XUSB(_name, _parents, _offset, \
- 			     _clk_num, _gate_flags, _clk_id)	 \
+ 	if (pll->params->reset_reg) {
 -- 
 1.9.1
+
