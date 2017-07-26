@@ -1,42 +1,37 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 00/14] Fixes for Tegra clocks
-Date: Wed, 26 Jul 2017 11:27:29 +0300
-Message-ID: <20170726082728.GD26726@tbergstrom-lnx.Nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
- <20170726013746.GM2146@codeaurora.org>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/4] IOMMU group cleanup
+Date: Wed, 26 Jul 2017 13:12:23 +0200
+Message-ID: <20170726111223.GO15833@8bytes.org>
+References: <cover.1500637633.git.robin.murphy@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170726013746.GM2146@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <cover.1500637633.git.robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, srinivas.kandagatla-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 25, 2017 at 06:37:46PM -0700, Stephen Boyd wrote:
-> On 07/25, Peter De Schrijver wrote:
-> > A number of smaller fixes and simplifications for the Tegra clock
-> > implementation.
+Hi Robin,
+
+On Fri, Jul 21, 2017 at 01:12:34PM +0100, Robin Murphy wrote:
+> Robin Murphy (4):
+>   iommu/msm: Add iommu_group support
+>   iommu/tegra-smmu: Add iommu_group support
+>   iommu/tegra-gart: Add iommu_group support
+>   iommu: Finish making iommu_group support mandatory
 > 
-> Any of these need fixes tags so they can be backported to stable
-> trees? Also, everyone is on To: line, so not sure who is supposed
+>  drivers/iommu/iommu.c      | 19 ++++---------------
+>  drivers/iommu/msm_iommu.c  | 15 ++++++++++++++-
+>  drivers/iommu/tegra-gart.c | 19 +++++++++++++++++++
+>  drivers/iommu/tegra-smmu.c |  9 +++++++++
+>  4 files changed, 46 insertions(+), 16 deletions(-)
 
-I will have a look. For some of them a backport might be useful.
+Thanks for this series, much appreciated! I'll wait for the testing
+results and apply them when all looks good.
 
-> to pick these up. Me? That's fine if so.
-> 
 
-That would be the easiest I think.
+Thanks,
 
-Cheers,
-
-Peter.
-
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Joerg
