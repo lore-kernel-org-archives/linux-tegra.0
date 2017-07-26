@@ -1,90 +1,46 @@
-From: Sricharan R <sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH 1/4] iommu/msm: Add iommu_group support
-Date: Wed, 26 Jul 2017 20:59:39 +0530
-Message-ID: <4270d431-2ec7-b3b2-5f13-076da4dba83e@codeaurora.org>
-References: <cover.1500637633.git.robin.murphy@arm.com>
- <b87d44e09fa18efbb9daf6258c1f8ecbedaac23c.1500637633.git.robin.murphy@arm.com>
- <f5071164-c965-b6bf-c330-90ff6ea0c956@codeaurora.org>
- <e148ac58-2fda-454f-c8b1-e01dd1c1347c@arm.com>
+From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Subject: Re: [PATCH 7/8] drm: Nuke drm_atomic_helper_connector_dpms
+Date: Wed, 26 Jul 2017 21:00:53 +0200
+Message-ID: <96fd05d9-6cab-4a40-6a63-d0b9a5872434@tronnes.org>
+References: <20170725080122.20548-1-daniel.vetter@ffwll.ch>
+ <20170725080122.20548-8-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e148ac58-2fda-454f-c8b1-e01dd1c1347c-5wv7dgnIgG8@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, srinivas.kandagatla-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170725080122.20548-8-daniel.vetter@ffwll.ch>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>
+Cc: Martyn Welch <martyn.welch@collabora.co.uk>, Neil Armstrong <narmstrong@baylibre.com>, nouveau@lists.freedesktop.org, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Romain Perier <romain.perier@collabora.com>, Daniel Vetter <daniel.vetter@intel.com>, Jyri Sarha <jsarha@ti.com>, Marek Vasut <marex@denx.de>, linux-renesas-soc@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, Alexey Brodkin <abrodkin@synopsys.com>, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Xinliang Liu <z.liuxinliang@hisilicon.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Peter Senna Tschudin <peter.senna@collabora.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Robin,
-
-On 7/24/2017 3:25 PM, Robin Murphy wrote:
-> On 24/07/17 08:34, Sricharan R wrote:
->> Hi Robin,
->>
->>> As the last step to making groups mandatory, clean up the remaining
->>> drivers by adding basic support. Whilst it may not perfectly reflect the
->>> isolation capabilities of the hardware, using generic_device_group()
->>> should at least maintain existing behaviour with respect to the API.
->>>
->>> Signed-off-by: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
->>> ---
->>>  drivers/iommu/msm_iommu.c | 15 ++++++++++++++-
->>>  1 file changed, 14 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
->>> index d0448353d501..04f4d51ffacb 100644
->>> --- a/drivers/iommu/msm_iommu.c
->>> +++ b/drivers/iommu/msm_iommu.c
->>> @@ -393,6 +393,7 @@ static struct msm_iommu_dev *find_iommu_for_dev(struct device *dev)
->>>  static int msm_iommu_add_device(struct device *dev)
->>>  {
->>>  	struct msm_iommu_dev *iommu;
->>> +	struct iommu_group *group;
->>>  	unsigned long flags;
->>>  	int ret = 0;
->>>  
->>> @@ -406,7 +407,16 @@ static int msm_iommu_add_device(struct device *dev)
->>>  
->>>  	spin_unlock_irqrestore(&msm_iommu_lock, flags);
->>>  
->>> -	return ret;
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	group = iommu_group_get_for_dev(dev);
->>> +	if (IS_ERR(group))
->>> +		return PTR_ERR(group);
->>> +
->>> +	iommu_group_put(group);
->>> +
->>> +	return 0;
->>>  }
->>>  
->>
->>  While this is correct for completing the group support, this adds the default domain and
->>  that might break in the driver while attaching a private domain. The msm_iomm_attach_dev
->>  needs to be fixed by calling msm_iommu_detach_dev while trying to attach a new domain when
->>  already connected to a default one. But let me test and confirm this.
-> 
-> The default domain shouldn't matter, since msm_iommu_domain_alloc() will
-> refuse to create DMA ops or identity domains in the first place. In the
-> absence of a default domain, __iommu_detach_group() will still end up
-> calling ops->detach_dev, so I don't think the ultimate behaviour is any
-> different with this change. Testing is of course welcome, though ;)
-
- Ha, you are right. Sorry, overlooked that only DOMAIN_UNMANAGED is supported here.
- Meanwhile, lost access to the board. So would give test feedback once i get it.
-
- Otherwise, Reviewed-by: sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
-
-Regards,
- Sricharan
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+CkRlbiAyNS4wNy4yMDE3IDEwLjAxLCBza3JldiBEYW5pZWwgVmV0dGVyOgo+IEl0J3MgZGVhZCBj
+b2RlLCB0aGUgY29yZSBoYW5kbGVzIGFsbCB0aGlzIGRpcmVjdGx5IG5vdy4KPgo+IFRoZSBvbmx5
+IHNwZWNpYWwgY2FzZSBpcyBub3V2ZWF1IGFuZCB0ZGE5ODh4IHdoaWNoIHVzZWQgb25lIGZ1bmN0
+aW9uCj4gZm9yIGJvdGggbGVnYWN5IG1vZGVzZXQgY29kZSBhbmQgLW52NTAgYXRvbWljIHdvcmxk
+IGluc3RlYWQgb2YgMgo+IHZ0YWJsZXMuIEJ1dCBhbW91bnRzIHRvIGV4YWN0bHkgdGhlIHNhbWUu
+Cj4KPiB2MjogUmViYXNlIG92ZXIgdGhlIHBhbmVsL2JyaWRlZyByZWZhY3RvcmluZ3MgaW4gc3Rt
+L2x0ZGMuCj4KPiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGlu
+dGVsLmNvbT4KLi4uCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90aW55ZHJtL2NvcmUv
+dGlueWRybS1waXBlLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGlueWRybS9jb3JlL3Rpbnlkcm0tcGlw
+ZS5jCj4gaW5kZXggZWM0M2ZiN2FkOWU0Li43OWI2Njg3OTc3ZDMgMTAwNjQ0Cj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL3Rpbnlkcm0vY29yZS90aW55ZHJtLXBpcGUuYwo+ICsrKyBiL2RyaXZlcnMv
+Z3B1L2RybS90aW55ZHJtL2NvcmUvdGlueWRybS1waXBlLmMKPiBAQCAtNzEsNyArNzEsNiBAQCBz
+dGF0aWMgdm9pZCB0aW55ZHJtX2Nvbm5lY3Rvcl9kZXN0cm95KHN0cnVjdCBkcm1fY29ubmVjdG9y
+ICpjb25uZWN0b3IpCj4gICB9Cj4gICAKPiAgIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2Nvbm5l
+Y3Rvcl9mdW5jcyB0aW55ZHJtX2Nvbm5lY3Rvcl9mdW5jcyA9IHsKPiAtCS5kcG1zID0gZHJtX2F0
+b21pY19oZWxwZXJfY29ubmVjdG9yX2RwbXMsCj4gICAJLnJlc2V0ID0gZHJtX2F0b21pY19oZWxw
+ZXJfY29ubmVjdG9yX3Jlc2V0LAo+ICAgCS5kZXRlY3QgPSB0aW55ZHJtX2Nvbm5lY3Rvcl9kZXRl
+Y3QsCj4gICAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3Byb2JlX3NpbmdsZV9jb25uZWN0b3Jf
+bW9kZXMsCgpBY2tlZC1ieTogTm9yYWxmIFRyw7hubmVzIDxub3JhbGZAdHJvbm5lcy5vcmc+Cgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
