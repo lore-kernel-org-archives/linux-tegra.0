@@ -1,40 +1,40 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 8/8] ARM: tegra: Enable UDC on AC100
-Date: Thu, 27 Jul 2017 19:46:12 +0300
-Message-ID: <9c26f6b66833fb410b40863556c285f9224b3154.1501173271.git.digetx@gmail.com>
-References: <cover.1501173271.git.digetx@gmail.com>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH 00/14] Fixes for Tegra clocks
+Date: Thu, 27 Jul 2017 11:54:06 -0700
+Message-ID: <20170727185406.GN2146@codeaurora.org>
+References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+ <20170726013746.GM2146@codeaurora.org>
+ <20170726082728.GD26726@tbergstrom-lnx.Nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1501173271.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-In-Reply-To: <cover.1501173271.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-References: <cover.1501173271.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170726082728.GD26726-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Override the compatible string of the first USB controller to enable
-device mode.
+On 07/26, Peter De Schrijver wrote:
+> On Tue, Jul 25, 2017 at 06:37:46PM -0700, Stephen Boyd wrote:
+> > On 07/25, Peter De Schrijver wrote:
+> > > A number of smaller fixes and simplifications for the Tegra clock
+> > > implementation.
+> > 
+> > Any of these need fixes tags so they can be backported to stable
+> > trees? Also, everyone is on To: line, so not sure who is supposed
+> 
+> I will have a look. For some of them a backport might be useful.
+> 
+> > to pick these up. Me? That's fine if so.
+> > 
+> 
+> That would be the easiest I think.
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20-paz00.dts | 2 ++
- 1 file changed, 2 insertions(+)
+Ok. I'll wait for you to reply with tags unless you didn't find
+any?
 
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index b4bfa5586c23..bfa9421fcf94 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -452,7 +452,9 @@
- 	};
- 
- 	usb@c5000000 {
-+		compatible = "nvidia,tegra20-udc";
- 		status = "okay";
-+		dr_mode = "peripheral";
- 	};
- 
- 	usb-phy@c5000000 {
 -- 
-2.13.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
