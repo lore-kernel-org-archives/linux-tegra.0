@@ -1,57 +1,58 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v2 1/5] arm64: tegra: Add BPMP thermal sensor to Tegra186
-Date: Thu, 27 Jul 2017 09:52:10 +0300
-Message-ID: <0f9e5f15-c4e2-d897-df3e-5253c3b94007@nvidia.com>
-References: <201707271402.PznRxqSc%fengguang.wu@intel.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 041/102] mmc: tegra: explicitly request exclusive reset control
+Date: Thu, 27 Jul 2017 16:49:05 +0200
+Message-ID: <CAPDyKFqaae9L=H68kFZDXdwLj=ofuorWvpR8w-0ye3k4RPN7nw@mail.gmail.com>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de> <20170719152646.25903-42-p.zabel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <201707271402.PznRxqSc%fengguang.wu@intel.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, rui.zhang@intel.com, edubezval@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170719152646.25903-42-p.zabel@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Good point, so patches 1/5 and 2/5 should be swapped around.
+On 19 July 2017 at 17:25, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+> reset lines") started to transition the reset control request API calls
+> to explicitly state whether the driver needs exclusive or shared reset
+> control behavior. Convert all drivers requesting exclusive resets to the
+> explicit API call so the temporary transition helpers can be removed.
+>
+> No functional changes.
+>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Mikko
 
-On 27.07.2017 09:47, kbuild test robot wrote:
-> Hi Mikko,
->
-> [auto build test ERROR on tegra/for-next]
-> [also build test ERROR on v4.13-rc2 next-20170726]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Mikko-Perttunen/arm64-tegra-Add-BPMP-thermal-sensor-to-Tegra186/20170726-055759
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-> config: arm64-allnoconfig (attached as .config)
-> compiler: aarch64-linux-gnu-gcc (Debian 6.1.1-9) 6.1.1 20160705
-> reproduce:
->         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm64
->
-> Note: the linux-review/Mikko-Perttunen/arm64-tegra-Add-BPMP-thermal-sensor-to-Tegra186/20170726-055759 HEAD 2aebe2225f7f5f03abf6098e07387fa011ec16a8 builds fine.
->       It only hurts bisectibility.
->
-> All errors (new ones prefixed by >>):
->
->    In file included from arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi:1:0,
->                     from arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts:5:
->>> arch/arm64/boot/dts/nvidia/tegra186.dtsi:7:55: fatal error: dt-bindings/thermal/tegra186-bpmp-thermal.h: No such file or directory
->     #include <dt-bindings/thermal/tegra186-bpmp-thermal.h>
->                                                           ^
->    compilation terminated.
->
-> vim +7 arch/arm64/boot/dts/nvidia/tegra186.dtsi
->
->    > 7	#include <dt-bindings/thermal/tegra186-bpmp-thermal.h>
->      8	
->
+Thanks, applied for next!
+
+Kind regards
+Uffe
+
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>  drivers/mmc/host/sdhci-tegra.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 7f93079c7a3ad..f668a6fa17654 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -508,7 +508,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>         clk_prepare_enable(clk);
+>         pltfm_host->clk = clk;
+>
+> -       tegra_host->rst = devm_reset_control_get(&pdev->dev, "sdhci");
+> +       tegra_host->rst = devm_reset_control_get_exclusive(&pdev->dev,
+> +                                                          "sdhci");
+>         if (IS_ERR(tegra_host->rst)) {
+>                 rc = PTR_ERR(tegra_host->rst);
+>                 dev_err(&pdev->dev, "failed to get reset control: %d\n", rc);
+> --
+> 2.11.0
 >
