@@ -1,64 +1,62 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: Free the IOMMU domain when there is no
- device to attach
-Date: Thu, 27 Jul 2017 18:45:41 +0200
-Message-ID: <20170727164541.GA25081@ulmo>
-References: <20170710193305.5987-1-contact@paulk.fr>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 0/8] Support UDC on Tegra 20/30/114/124
+Date: Thu, 27 Jul 2017 19:46:04 +0300
+Message-ID: <cover.1501173271.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170710193305.5987-1-contact-W9ppeneeCTY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Some time ago Thierry Reding sent out patches that enabled UDC on NVIDIA
+Tegra, unfortunately they haven't got enough traction to get into the
+kernel. I've rebased those patches and added a fix for the Ethernet USB
+Gadget on Tegra20, Marc Dietrich tested UDC driver on AC100 and Nicolas
+Chauvet on TK1. Like an original patchset, this series adds support for
+the peripheral mode only.
 
---h31gzZEtNLTqOjlF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changelog:
 
-On Mon, Jul 10, 2017 at 09:33:05PM +0200, Paul Kocialkowski wrote:
-> When there is no device to attach to the IOMMU domain, as may be the
-> case when the device-tree does not contain the proper iommu node, it is
-> best to keep going without IOMMU support rather than failing.
-> This allows the driver to probe and function instead of taking down
-> all of the tegra drm driver, leading to missing display support.
->=20
-> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-> ---
->  drivers/gpu/host1x/dev.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+V2:
+1) Added comments to each of patched USB Ethernet gadget models.
 
-Applied to drm-misc-fixes, thanks.
+2) Added explanatory comment about why usb_phy_set_suspend() invocation
+   is necessary in tegra_udc_probe().
 
-Oh, just noticed now that this didn't actually go to the DRM mailing
-list (dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org). Might be a good idea to do that
-next time to get more visibility.
+3) Dropped TrimSlice from patchset because it turned out that it uses USB1
+   controller for USB-to-SATA.
 
-Thierry
+4) Moved tegra_defconfig patch before DT patches as per Stephen's suggestion.
 
---h31gzZEtNLTqOjlF
-Content-Type: application/pgp-signature; name="signature.asc"
+5) Changed dr_mode to "peripheral" in DT patches since we don't support role
+   mode switching for now.
 
------BEGIN PGP SIGNATURE-----
+Dmitry Osipenko (4):
+  usb: gadget: f_ecm/f_eem/f_rndis: Setup quirk_avoids_skb_reserve
+  usb: chipidea: udc: Support SKB alignment quirk
+  ARM: defconfig: tegra: Enable ChipIdea UDC driver
+  ARM: tegra: Enable UDC on AC100
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAll6GLEACgkQ3SOs138+
-s6Fq7w/9E754kLNAR4xec9kYv7ivnzz3gOSj2B9S/dKVpbn5+hnun72/ruyslh0Q
-r3M6uW2iGbch7XTfeX+hUQIfcd1tl0ZK3h4kHdE5ZQhpj3Gy5yzJTK5OeoDdUGX1
-1oJOVN4CD3UCtoRm6OzvB4viyXftKmR80TB/fg6jLpTfrZZT/nIn7MbI+uHU2q4g
-r6A77qLT1pvirVsg2ctYXjQjHmI284dYbsIqncneyAw7SfPwsFe3lQ+jNWpHh/1U
-8xXPBvqH+FZGex3Gu4EOHaiSuquf0kbLb/xx2uVWQFnhSY6KHoju0HFVPeyHJcNC
-+hjunkQjA/EvA0HftFsrbDjx0ETQGP9/5pxaiw2QXczR8hIBTjgfd1qQQfQB8V33
-53fKWimUS6uAAfiWZxC5bmvOwyno5aReA+b9H1GRdXz+CMg9kty0uyYTqwJBSTqD
-EPRL8cVamlQoITXvs2SSIozfP8esy+ExgtTJev+3nhP7QWDJqWsBIT2PyD/Pcg9F
-q48sP0m6+yPQ8lXJ6YxLGqF6P7Rmg5epHtuyGHHFd/2/O/tkG5VxvAP+sKT2FWzr
-aBRwM1g2PoIzkbYcNJfxmDIajS+o+USzFliT4lVHWgd3eiVEtR6cj5tmLdaimjNU
-i1ZQ1LDWXuswLuvRAkmk8hc/EQEpyE5UmATVal/DcSeKqvgsyC8=
-=OdqX
------END PGP SIGNATURE-----
+Thierry Reding (4):
+  usb: chipidea: Add support for Tegra20/30/114/124
+  ARM: tegra: Enable UDC on Beaver
+  ARM: tegra: Enable UDC on Dalmore
+  ARM: tegra: Enable UDC on Jetson TK1
 
---h31gzZEtNLTqOjlF--
+ arch/arm/boot/dts/tegra114-dalmore.dts    |  10 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts |  12 ++-
+ arch/arm/boot/dts/tegra20-paz00.dts       |   2 +
+ arch/arm/boot/dts/tegra30-beaver.dts      |  10 ++
+ arch/arm/configs/tegra_defconfig          |  10 +-
+ drivers/usb/chipidea/Makefile             |   1 +
+ drivers/usb/chipidea/ci_hdrc_tegra.c      | 160 ++++++++++++++++++++++++++++++
+ drivers/usb/chipidea/udc.c                |   3 +
+ drivers/usb/gadget/function/f_ecm.c       |   7 ++
+ drivers/usb/gadget/function/f_eem.c       |   5 +
+ drivers/usb/gadget/function/f_rndis.c     |   4 +
+ include/linux/usb/chipidea.h              |   1 +
+ 12 files changed, 219 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/usb/chipidea/ci_hdrc_tegra.c
+
+-- 
+2.13.3
