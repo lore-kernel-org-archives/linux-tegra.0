@@ -1,113 +1,63 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: Re: [PATCH v2 3/8] usb: chipidea: Add support for Tegra20/30/114/124
-Date: Fri, 28 Jul 2017 17:51:16 +0200
-Message-ID: <20170728155115.kn2o7iei5yhzmpdq@qmqm.qmqm.pl>
-References: <cover.1501173271.git.digetx@gmail.com>
- <f103baa439a64b517e6c8cb51c30e81987dfedb3.1501173271.git.digetx@gmail.com>
- <20170727223223.ezyzvmum7c773vel@qmqm.qmqm.pl>
- <832adea3-b5f2-a28c-6be4-0f572052821b@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 8bit
+From: Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
+Subject: [PATCH] soc/tegra: Fix bad of_node_put() in powergate init
+Date: Sat, 29 Jul 2017 02:58:43 +0300
+Message-ID: <20170728235843.25298-1-tuomas.tynkkynen@iki.fi>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <832adea3-b5f2-a28c-6be4-0f572052821b-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 28, 2017 at 01:00:32PM +0300, Dmitry Osipenko wrote:
-> On 28.07.2017 01:32, Micha³ Miros³aw wrote:
-> > On Thu, Jul 27, 2017 at 07:46:07PM +0300, Dmitry Osipenko wrote:
-> >> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>
-> >> All of these Tegra SoC generations have a ChipIdea UDC IP block that can
-> >> be used for device mode communication with a host. Implement rudimentary
-> >> support that doesn't allow switching between host and device modes.
-> >>
-> >> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> [digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org: rebased patches and added DMA alignment quirk for Tegra20]
-> >> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> Acked-by: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
-> > 
-> > This works on my Asus TF300T (Tegra3 device). Minor nit below.
-> > 
-> > Tested-by: Micha³ Miros³aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org> (on tf300t)
-> > 
-> 
-> Nice, thank you!
-> 
-> > [...]
-> >> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> >> new file mode 100644
-> >> index 000000000000..7814500e71fa
-> >> --- /dev/null
-> >> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> >> @@ -0,0 +1,160 @@
-> > [...]
-> >> +struct tegra_udc_soc_info {
-> >> +	bool supports_unaligned_dma;
-> >> +};
-> > [...]
-> >> +static const struct tegra_udc_soc_info tegra20_udc_soc_info = {
-> >> +	.supports_unaligned_dma = false,
-> >> +};
-> >> +
-> >> +static const struct tegra_udc_soc_info tegra30_udc_soc_info = {
-> >> +	.supports_unaligned_dma = true,
-> >> +};
-> >> +
-> >> +static const struct tegra_udc_soc_info tegra114_udc_soc_info = {
-> >> +	.supports_unaligned_dma = true,
-> >> +};
-> >> +
-> >> +static const struct tegra_udc_soc_info tegra124_udc_soc_info = {
-> >> +	.supports_unaligned_dma = true,
-> >> +};
-> >> +
-> >> +static const struct of_device_id tegra_udc_of_match[] = {
-> >> +	{
-> >> +		.compatible = "nvidia,tegra20-udc",
-> >> +		.data = &tegra20_udc_soc_info,
-> >> +	}, {
-> >> +		.compatible = "nvidia,tegra30-udc",
-> >> +		.data = &tegra30_udc_soc_info,
-> >> +	}, {
-> >> +		.compatible = "nvidia,tegra114-udc",
-> >> +		.data = &tegra114_udc_soc_info,
-> >> +	}, {
-> >> +		.compatible = "nvidia,tegra124-udc",
-> >> +		.data = &tegra124_udc_soc_info,
-> >> +	}, {
-> >> +		/* sentinel */
-> >> +	}
-> >> +};
-> >> +MODULE_DEVICE_TABLE(of, tegra_udc_of_match);
-> > [...]
-> >> +static int tegra_udc_probe(struct platform_device *pdev)
-> >> +{
-> > [...]
-> >> +	/* setup device specific quirks */
-> >> +	soc = id->data;
-> >> +
-> >> +	if (!soc->supports_unaligned_dma)
-> >> +		udc->data.flags |= CI_HDRC_REQUIRES_ALIGNED_DMA;
-> > [...]
-> > 
-> > Some lines would be saved if this was just:
-> > 
-> > udc->data.flags |= id->data;
-> > 
-> 
-> I think a verbose approach is more preferable and it also more future proof
-> since we may extend soc_info with other stuff later.
+The for_each_child_of_node macro itself maintains the correct reference
+count of the nodes so the explicit of_node_put() call causes a warning:
 
-I would just leave that to be done when it's needed. :-)
+[    0.098960] OF: ERROR: Bad of_node_put() on /pmc@7000e400/powergates/xusba
+[    0.098981] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.11.3 #1-NixOS
+[    0.098996] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
+[    0.099011] Call trace:
+[    0.099034] [<ffff00000808a048>] dump_backtrace+0x0/0x2a0
+[    0.099051] [<ffff00000808a30c>] show_stack+0x24/0x30
+[    0.099069] [<ffff0000084a6494>] dump_stack+0x9c/0xc0
+[    0.099090] [<ffff000008992214>] of_node_release+0xa4/0xa8
+[    0.099107] [<ffff0000084a9270>] kobject_put+0x90/0x1f8
+[    0.099124] [<ffff0000089914ac>] of_node_put+0x24/0x30
+[    0.099140] [<ffff00000898cec4>] __of_get_next_child+0x4c/0x70
+[    0.099155] [<ffff00000898cf28>] of_get_next_child+0x40/0x68
+[    0.099173] [<ffff0000090a099c>] tegra_pmc_early_init+0x4e8/0x5ac
+[    0.099189] [<ffff00000808399c>] do_one_initcall+0x5c/0x168
+[    0.099206] [<ffff000009050c98>] kernel_init_freeable+0xd4/0x240
+[    0.099224] [<ffff000008b2d658>] kernel_init+0x18/0x108
+[    0.099238] [<ffff0000080836c0>] ret_from_fork+0x10/0x50
 
-Or you could just have udc_flags in struct tegra_udc_soc_info, so
-that it would not need to be translated - again saving code, bugs
-and future developers' time.
+(It's not very apparent from the OF documentation that of_node_put() is
+not needed; the macro itself has no docstring and of_get_next_child()
+used in the implementation begins with "Returns a node pointer with
+refcount incremented" but then only at the very end of the docstring
+the crucial part "Decrements the refcount of prev" is mentioned.)
 
-Best Regards,
-Micha³ Miros³aw
+Fixes: a38045121bf42 ("soc/tegra: pmc: Add generic PM domain support")
+Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
+---
+Compile tested only (backtrace received via a distro bug report).
+---
+ drivers/soc/tegra/pmc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index e233dd5dcab3..0453ff6839a7 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -918,10 +918,8 @@ static void tegra_powergate_init(struct tegra_pmc *pmc,
+ 	if (!np)
+ 		return;
+ 
+-	for_each_child_of_node(np, child) {
++	for_each_child_of_node(np, child)
+ 		tegra_powergate_add(pmc, child);
+-		of_node_put(child);
+-	}
+ 
+ 	of_node_put(np);
+ }
+-- 
+2.13.0
