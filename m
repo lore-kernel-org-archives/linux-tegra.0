@@ -1,63 +1,40 @@
-From: Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
-Subject: [PATCH] soc/tegra: Fix bad of_node_put() in powergate init
-Date: Sat, 29 Jul 2017 02:58:43 +0300
-Message-ID: <20170728235843.25298-1-tuomas.tynkkynen@iki.fi>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 0/4] iommu/tegra: gart: Couple corrections
+Date: Sat, 29 Jul 2017 14:04:36 +0300
+Message-ID: <430af3ab-29cd-bbe8-087d-82d8113d2a89@gmail.com>
+References: <cover.1499270277.git.digetx@gmail.com>
+ <20170725144335.GC30429@8bytes.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170725144335.GC30429-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The for_each_child_of_node macro itself maintains the correct reference
-count of the nodes so the explicit of_node_put() call causes a warning:
+On 25.07.2017 17:43, Joerg Roedel wrote:
+> On Wed, Jul 05, 2017 at 07:29:44PM +0300, Dmitry Osipenko wrote:
+>> I've added an experimental support of the GART to the Tegra DRM driver
+>> and it ended up with a very positive result. During the testing of the
+>> GART driver I've noticed couple of its minor shortcomings, so here the
+>> patches to remedy them.
+>>
+>> Dmitry Osipenko (4):
+>>   iommu/tegra: gart: Don't unnecessarily allocate registers context
+>>   iommu/tegra: gart: Check whether page is already mapped
+>>   iommu/tegra: gart: Move PFN validation out of spinlock
+>>   iommu/tegra: gart: Correct number of unmapped bytes
+> 
+> Patches look good to me (except patch 1, which I am not sure about, but
+> maybe only due my limited knowledge about the hardware).
+> 
+> So I take them when Thierry gives his Acked-by.
+> 
 
-[    0.098960] OF: ERROR: Bad of_node_put() on /pmc@7000e400/powergates/xusba
-[    0.098981] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.11.3 #1-NixOS
-[    0.098996] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
-[    0.099011] Call trace:
-[    0.099034] [<ffff00000808a048>] dump_backtrace+0x0/0x2a0
-[    0.099051] [<ffff00000808a30c>] show_stack+0x24/0x30
-[    0.099069] [<ffff0000084a6494>] dump_stack+0x9c/0xc0
-[    0.099090] [<ffff000008992214>] of_node_release+0xa4/0xa8
-[    0.099107] [<ffff0000084a9270>] kobject_put+0x90/0x1f8
-[    0.099124] [<ffff0000089914ac>] of_node_put+0x24/0x30
-[    0.099140] [<ffff00000898cec4>] __of_get_next_child+0x4c/0x70
-[    0.099155] [<ffff00000898cf28>] of_get_next_child+0x40/0x68
-[    0.099173] [<ffff0000090a099c>] tegra_pmc_early_init+0x4e8/0x5ac
-[    0.099189] [<ffff00000808399c>] do_one_initcall+0x5c/0x168
-[    0.099206] [<ffff000009050c98>] kernel_init_freeable+0xd4/0x240
-[    0.099224] [<ffff000008b2d658>] kernel_init+0x18/0x108
-[    0.099238] [<ffff0000080836c0>] ret_from_fork+0x10/0x50
+Okay, Thierry should get to this patchset eventually.
 
-(It's not very apparent from the OF documentation that of_node_put() is
-not needed; the macro itself has no docstring and of_get_next_child()
-used in the implementation begins with "Returns a node pointer with
-refcount incremented" but then only at the very end of the docstring
-the crucial part "Decrements the refcount of prev" is mentioned.)
-
-Fixes: a38045121bf42 ("soc/tegra: pmc: Add generic PM domain support")
-Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
----
-Compile tested only (backtrace received via a distro bug report).
----
- drivers/soc/tegra/pmc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index e233dd5dcab3..0453ff6839a7 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -918,10 +918,8 @@ static void tegra_powergate_init(struct tegra_pmc *pmc,
- 	if (!np)
- 		return;
- 
--	for_each_child_of_node(np, child) {
-+	for_each_child_of_node(np, child)
- 		tegra_powergate_add(pmc, child);
--		of_node_put(child);
--	}
- 
- 	of_node_put(np);
- }
 -- 
-2.13.0
+Dmitry
