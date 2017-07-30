@@ -1,148 +1,189 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: [PATCHv2 4/4] drm/tegra: add cec-notifier support
-Date: Sun, 30 Jul 2017 13:08:30 +0200
-Message-ID: <cd7fa62b-83b9-e94d-66a3-fafae70de1ba@xs4all.nl>
-References: <20170715124753.43714-1-hverkuil@xs4all.nl>
- <20170715124753.43714-5-hverkuil@xs4all.nl>
+From: Paul Kocialkowski <contact@paulk.fr>
+Subject: [PATCH 1/3] sound: ASoC: tegra: Remove SoC-specific
+	Kconfig depends and selects
+Date: Sun, 30 Jul 2017 13:22:18 +0200
+Message-ID: <20170730112220.15525-1-contact@paulk.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170715124753.43714-5-hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: Stephen Warren <swarren@nvidia.com>, Paul Kocialkowski <contact@paulk.fr>, Takashi Iwai <tiwai@suse.com>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-In order to support CEC the HDMI driver has to inform the CEC driver
-whenever the physical address changes. So when the EDID is read the
-CEC driver has to be informed and whenever the hotplug detect goes
-away.
+This removes the SoC-specific dependencies on the platform drivers,
+as well as SoC-specific selections of platform drivers for the
+machine drivers. The rationale behind this change is that the
+dependencies are not actual build dependencies but run-time ones.
 
-This is done through the cec-notifier framework.
+The previously listed SoCs were also incomplete: for instance, tegra124
+uses the tegra30 platform drivers, which could not be built without
+ARCH_TEGRA_3x_SOC set.
 
-The link between the HDMI driver and the CEC driver is done through
-the hdmi_phandle in the tegra-cec node in the device tree.
+Descriptions of the tristates are also added to allow these options
+to be set via defconfig/menuconfig.
 
-Signed-off-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
 ---
-Changes since v1:
+ sound/soc/tegra/Kconfig | 42 ++++++++++++++----------------------------
+ 1 file changed, 14 insertions(+), 28 deletions(-)
 
-Add 'select CEC_CORE if CEC_NOTIFIER' to Kconfig. If the tegra-cec driver
-is a module and the drm tegra driver is built-in, then the CEC core
-will be a module also, causing the CEC notifier to fail (will be
-compiled as empty functions). This select forces the correct dependency.
----
- drivers/gpu/drm/tegra/Kconfig  | 1 +
- drivers/gpu/drm/tegra/drm.h    | 3 +++
- drivers/gpu/drm/tegra/hdmi.c   | 9 +++++++++
- drivers/gpu/drm/tegra/output.c | 6 ++++++
- 4 files changed, 19 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
-index 2db29d67193d..c882918c2024 100644
---- a/drivers/gpu/drm/tegra/Kconfig
-+++ b/drivers/gpu/drm/tegra/Kconfig
-@@ -8,6 +8,7 @@ config DRM_TEGRA
- 	select DRM_PANEL
- 	select TEGRA_HOST1X
- 	select IOMMU_IOVA if IOMMU_SUPPORT
-+	select CEC_CORE if CEC_NOTIFIER
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index efbe8d4c019e..6875fc39a575 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -9,8 +9,8 @@ config SND_SOC_TEGRA
+ 	  Say Y or M here if you want support for SoC audio on Tegra.
+ 
+ config SND_SOC_TEGRA20_AC97
+-	tristate
+-	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
++	tristate "Tegra20 AC97 interface"
++	depends on SND_SOC_TEGRA
+ 	select SND_SOC_AC97_BUS
+ 	select SND_SOC_TEGRA20_DAS
  	help
- 	  Choose this option if you have an NVIDIA Tegra SoC.
-
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 6d6da01282f3..c0a18b60caf1 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -212,6 +212,8 @@ int tegra_dc_state_setup_clock(struct tegra_dc *dc,
- 			       struct clk *clk, unsigned long pclk,
- 			       unsigned int div);
-
-+struct cec_notifier;
-+
- struct tegra_output {
- 	struct device_node *of_node;
- 	struct device *dev;
-@@ -219,6 +221,7 @@ struct tegra_output {
- 	struct drm_panel *panel;
- 	struct i2c_adapter *ddc;
- 	const struct edid *edid;
-+	struct cec_notifier *notifier;
- 	unsigned int hpd_irq;
- 	int hpd_gpio;
- 	enum of_gpio_flags hpd_gpio_flags;
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index cda0491ed6bf..fbf14e1efd0e 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -21,6 +21,8 @@
-
- #include <sound/hda_verbs.h>
-
-+#include <media/cec-notifier.h>
-+
- #include "hdmi.h"
- #include "drm.h"
- #include "dc.h"
-@@ -1720,6 +1722,10 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
- 		return PTR_ERR(hdmi->vdd);
- 	}
-
-+	hdmi->output.notifier = cec_notifier_get(&pdev->dev);
-+	if (hdmi->output.notifier == NULL)
-+		return -ENOMEM;
-+
- 	hdmi->output.dev = &pdev->dev;
-
- 	err = tegra_output_probe(&hdmi->output);
-@@ -1778,6 +1784,9 @@ static int tegra_hdmi_remove(struct platform_device *pdev)
-
- 	tegra_output_remove(&hdmi->output);
-
-+	if (hdmi->output.notifier)
-+		cec_notifier_put(hdmi->output.notifier);
-+
- 	return 0;
- }
-
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index 595d1ec3e02e..57c052521a44 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -11,6 +11,8 @@
- #include <drm/drm_panel.h>
- #include "drm.h"
-
-+#include <media/cec-notifier.h>
-+
- int tegra_output_connector_get_modes(struct drm_connector *connector)
- {
- 	struct tegra_output *output = connector_to_output(connector);
-@@ -33,6 +35,7 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
- 		edid = drm_get_edid(connector, output->ddc);
-
- 	drm_mode_connector_update_edid_property(connector, edid);
-+	cec_notifier_set_phys_addr_from_edid(output->notifier, edid);
-
- 	if (edid) {
- 		err = drm_add_edid_modes(connector, edid);
-@@ -68,6 +71,9 @@ tegra_output_connector_detect(struct drm_connector *connector, bool force)
- 			status = connector_status_connected;
- 	}
-
-+	if (status != connector_status_connected)
-+		cec_notifier_phys_addr_invalidate(output->notifier);
-+
- 	return status;
- }
-
+@@ -19,16 +19,16 @@ config SND_SOC_TEGRA20_AC97
+ 	  machine drivers to support below.
+ 
+ config SND_SOC_TEGRA20_DAS
+-	tristate
+-	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
++	tristate "Tegra20 DAS module"
++	depends on SND_SOC_TEGRA
+ 	help
+ 	  Say Y or M if you want to add support for the Tegra20 DAS module.
+ 	  You will also need to select the individual machine drivers to
+ 	  support below.
+ 
+ config SND_SOC_TEGRA20_I2S
+-	tristate
+-	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
++	tristate "Tegra20 I2S interface"
++	depends on SND_SOC_TEGRA
+ 	select SND_SOC_TEGRA20_DAS
+ 	help
+ 	  Say Y or M if you want to add support for codecs attached to the
+@@ -36,8 +36,8 @@ config SND_SOC_TEGRA20_I2S
+ 	  machine drivers to support below.
+ 
+ config SND_SOC_TEGRA20_SPDIF
+-	tristate
+-	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
++	tristate "Tegra20 SPDIF interface"
++	depends on SND_SOC_TEGRA
+ 	default m
+ 	help
+ 	  Say Y or M if you want to add support for the Tegra20 SPDIF interface.
+@@ -45,16 +45,16 @@ config SND_SOC_TEGRA20_SPDIF
+ 	  below.
+ 
+ config SND_SOC_TEGRA30_AHUB
+-	tristate
+-	depends on SND_SOC_TEGRA && ARCH_TEGRA_3x_SOC
++	tristate "Tegra30 AHUB module"
++	depends on SND_SOC_TEGRA
+ 	help
+-	  Say Y or M if you want to add support for the Tegra20 AHUB module.
++	  Say Y or M if you want to add support for the Tegra30 AHUB module.
+ 	  You will also need to select the individual machine drivers to
+ 	  support below.
+ 
+ config SND_SOC_TEGRA30_I2S
+-	tristate
+-	depends on SND_SOC_TEGRA && ARCH_TEGRA_3x_SOC
++	tristate "Tegra30 I2S interface"
++	depends on SND_SOC_TEGRA
+ 	select SND_SOC_TEGRA30_AHUB
+ 	help
+ 	  Say Y or M if you want to add support for codecs attached to the
+@@ -64,8 +64,6 @@ config SND_SOC_TEGRA30_I2S
+ config SND_SOC_TEGRA_RT5640
+ 	tristate "SoC Audio support for Tegra boards using an RT5640 codec"
+ 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
+-	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+-	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
+ 	select SND_SOC_RT5640
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
+@@ -74,8 +72,6 @@ config SND_SOC_TEGRA_RT5640
+ config SND_SOC_TEGRA_WM8753
+ 	tristate "SoC Audio support for Tegra boards using a WM8753 codec"
+ 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
+-	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+-	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
+ 	select SND_SOC_WM8753
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
+@@ -84,8 +80,6 @@ config SND_SOC_TEGRA_WM8753
+ config SND_SOC_TEGRA_WM8903
+ 	tristate "SoC Audio support for Tegra boards using a WM8903 codec"
+ 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
+-	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+-	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
+ 	select SND_SOC_WM8903
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
+@@ -94,7 +88,7 @@ config SND_SOC_TEGRA_WM8903
+ 
+ config SND_SOC_TEGRA_WM9712
+ 	tristate "SoC Audio support for Tegra boards using a WM9712 codec"
+-	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC && GPIOLIB
++	depends on SND_SOC_TEGRA && GPIOLIB
+ 	select SND_SOC_TEGRA20_AC97
+ 	select SND_SOC_WM9712
+ 	help
+@@ -104,7 +98,6 @@ config SND_SOC_TEGRA_WM9712
+ config SND_SOC_TEGRA_TRIMSLICE
+ 	tristate "SoC Audio support for TrimSlice board"
+ 	depends on SND_SOC_TEGRA && I2C
+-	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+ 	select SND_SOC_TLV320AIC23_I2C
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on the
+@@ -113,7 +106,6 @@ config SND_SOC_TEGRA_TRIMSLICE
+ config SND_SOC_TEGRA_ALC5632
+ 	tristate "SoC Audio support for Tegra boards using an ALC5632 codec"
+ 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
+-	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+ 	select SND_SOC_ALC5632
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on the
+@@ -122,8 +114,6 @@ config SND_SOC_TEGRA_ALC5632
+ config SND_SOC_TEGRA_MAX98090
+ 	tristate "SoC Audio support for Tegra boards using a MAX98090 codec"
+ 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
+-	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+-	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
+ 	select SND_SOC_MAX98090
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
+@@ -132,8 +122,6 @@ config SND_SOC_TEGRA_MAX98090
+ config SND_SOC_TEGRA_RT5677
+ 	tristate "SoC Audio support for Tegra boards using a RT5677 codec"
+ 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
+-	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+-	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
+ 	select SND_SOC_RT5677
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
+@@ -142,8 +130,6 @@ config SND_SOC_TEGRA_RT5677
+ config SND_SOC_TEGRA_SGTL5000
+ 	tristate "SoC Audio support for Tegra boards using a SGTL5000 codec"
+ 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
+-	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+-	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
+ 	select SND_SOC_SGTL5000
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
 -- 
-2.13.1
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.13.3
