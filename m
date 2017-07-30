@@ -1,36 +1,43 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH 3/3] ARM: configs: Add Tegra I2S interfaces to multi_v7_defconfig
-Date: Sun, 30 Jul 2017 13:22:20 +0200
-Message-ID: <20170730112220.15525-3-contact@paulk.fr>
-References: <20170730112220.15525-1-contact@paulk.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170730112220.15525-1-contact@paulk.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Paul Kocialkowski <contact@paulk.fr>
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH] dmaengine: tegra210-adma: fix of_irq_get() error check
+Date: Sun, 30 Jul 2017 21:10:44 +0300
+Message-ID: <20170730181051.733168837@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline; filename=dmaengine-tegra210-adma-fix-of_irq_get-error-check.patch
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This selects both the Tegra20 and Tegra30 I2S interfaces (that were
-previously auto-selected by Kconfig but are not anymore) to
-multi_v7_defconfig, as modules.
+of_irq_get() may return 0 as well as negative error number on failure,
+while the driver only checks for the negative values. The driver would then
+call request_irq(0, ...) in tegra_adma_alloc_chan_resources() and never get
+valid channel interrupt.
 
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+Check for 'tdc->irq <= 0' instead and return -ENXIO from the driver's probe
+iff of_irq_get() returned 0.
+
+Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+
 ---
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/dma/tegra210-adma.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 4d19c1b4b8e7..626cecdada61 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -653,6 +653,8 @@ CONFIG_SND_SOC_RCAR=m
- CONFIG_SND_SOC_RSRC_CARD=m
- CONFIG_SND_SUN4I_CODEC=m
- CONFIG_SND_SOC_TEGRA=m
-+CONFIG_SND_SOC_TEGRA20_I2S=m
-+CONFIG_SND_SOC_TEGRA30_I2S=m
- CONFIG_SND_SOC_TEGRA_RT5640=m
- CONFIG_SND_SOC_TEGRA_WM8753=m
- CONFIG_SND_SOC_TEGRA_WM8903=m
--- 
-2.13.3
+Index: slave-dma/drivers/dma/tegra210-adma.c
+===================================================================
+--- slave-dma.orig/drivers/dma/tegra210-adma.c
++++ slave-dma/drivers/dma/tegra210-adma.c
+@@ -717,8 +717,8 @@ static int tegra_adma_probe(struct platf
+ 		tdc->chan_addr = tdma->base_addr + ADMA_CH_REG_OFFSET(i);
+ 
+ 		tdc->irq = of_irq_get(pdev->dev.of_node, i);
+-		if (tdc->irq < 0) {
+-			ret = tdc->irq;
++		if (tdc->irq <= 0) {
++			ret = tdc->irq ?: -ENXIO;
+ 			goto irq_dispose;
+ 		}
+ 
