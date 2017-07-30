@@ -1,46 +1,148 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1 0/4] iommu/tegra: gart: Couple corrections
-Date: Sat, 29 Jul 2017 14:09:18 +0300
-Message-ID: <78c22aa2-6401-a608-a9c6-ef001fdb3576@gmail.com>
-References: <cover.1499270277.git.digetx@gmail.com>
- <20170725144335.GC30429@8bytes.org>
- <430af3ab-29cd-bbe8-087d-82d8113d2a89@gmail.com>
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: [PATCHv2 4/4] drm/tegra: add cec-notifier support
+Date: Sun, 30 Jul 2017 13:08:30 +0200
+Message-ID: <cd7fa62b-83b9-e94d-66a3-fafae70de1ba@xs4all.nl>
+References: <20170715124753.43714-1-hverkuil@xs4all.nl>
+ <20170715124753.43714-5-hverkuil@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <430af3ab-29cd-bbe8-087d-82d8113d2a89-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170715124753.43714-5-hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 29.07.2017 14:04, Dmitry Osipenko wrote:
-> On 25.07.2017 17:43, Joerg Roedel wrote:
->> On Wed, Jul 05, 2017 at 07:29:44PM +0300, Dmitry Osipenko wrote:
->>> I've added an experimental support of the GART to the Tegra DRM driver
->>> and it ended up with a very positive result. During the testing of the
->>> GART driver I've noticed couple of its minor shortcomings, so here the
->>> patches to remedy them.
->>>
->>> Dmitry Osipenko (4):
->>>   iommu/tegra: gart: Don't unnecessarily allocate registers context
->>>   iommu/tegra: gart: Check whether page is already mapped
->>>   iommu/tegra: gart: Move PFN validation out of spinlock
->>>   iommu/tegra: gart: Correct number of unmapped bytes
->>
->> Patches look good to me (except patch 1, which I am not sure about, but
->> maybe only due my limited knowledge about the hardware).
->>
->> So I take them when Thierry gives his Acked-by.
->>
-> 
-> Okay, Thierry should get to this patchset eventually.
-> 
+In order to support CEC the HDMI driver has to inform the CEC driver
+whenever the physical address changes. So when the EDID is read the
+CEC driver has to be informed and whenever the hotplug detect goes
+away.
 
-BTW, looks like Hiroshi isn't in NVIDIA anymore, his email address isn't valid.
-Probably somebody else should take over maintaining of the affected Tegra drivers.
+This is done through the cec-notifier framework.
+
+The link between the HDMI driver and the CEC driver is done through
+the hdmi_phandle in the tegra-cec node in the device tree.
+
+Signed-off-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+---
+Changes since v1:
+
+Add 'select CEC_CORE if CEC_NOTIFIER' to Kconfig. If the tegra-cec driver
+is a module and the drm tegra driver is built-in, then the CEC core
+will be a module also, causing the CEC notifier to fail (will be
+compiled as empty functions). This select forces the correct dependency.
+---
+ drivers/gpu/drm/tegra/Kconfig  | 1 +
+ drivers/gpu/drm/tegra/drm.h    | 3 +++
+ drivers/gpu/drm/tegra/hdmi.c   | 9 +++++++++
+ drivers/gpu/drm/tegra/output.c | 6 ++++++
+ 4 files changed, 19 insertions(+)
+
+diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
+index 2db29d67193d..c882918c2024 100644
+--- a/drivers/gpu/drm/tegra/Kconfig
++++ b/drivers/gpu/drm/tegra/Kconfig
+@@ -8,6 +8,7 @@ config DRM_TEGRA
+ 	select DRM_PANEL
+ 	select TEGRA_HOST1X
+ 	select IOMMU_IOVA if IOMMU_SUPPORT
++	select CEC_CORE if CEC_NOTIFIER
+ 	help
+ 	  Choose this option if you have an NVIDIA Tegra SoC.
+
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index 6d6da01282f3..c0a18b60caf1 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -212,6 +212,8 @@ int tegra_dc_state_setup_clock(struct tegra_dc *dc,
+ 			       struct clk *clk, unsigned long pclk,
+ 			       unsigned int div);
+
++struct cec_notifier;
++
+ struct tegra_output {
+ 	struct device_node *of_node;
+ 	struct device *dev;
+@@ -219,6 +221,7 @@ struct tegra_output {
+ 	struct drm_panel *panel;
+ 	struct i2c_adapter *ddc;
+ 	const struct edid *edid;
++	struct cec_notifier *notifier;
+ 	unsigned int hpd_irq;
+ 	int hpd_gpio;
+ 	enum of_gpio_flags hpd_gpio_flags;
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index cda0491ed6bf..fbf14e1efd0e 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -21,6 +21,8 @@
+
+ #include <sound/hda_verbs.h>
+
++#include <media/cec-notifier.h>
++
+ #include "hdmi.h"
+ #include "drm.h"
+ #include "dc.h"
+@@ -1720,6 +1722,10 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
+ 		return PTR_ERR(hdmi->vdd);
+ 	}
+
++	hdmi->output.notifier = cec_notifier_get(&pdev->dev);
++	if (hdmi->output.notifier == NULL)
++		return -ENOMEM;
++
+ 	hdmi->output.dev = &pdev->dev;
+
+ 	err = tegra_output_probe(&hdmi->output);
+@@ -1778,6 +1784,9 @@ static int tegra_hdmi_remove(struct platform_device *pdev)
+
+ 	tegra_output_remove(&hdmi->output);
+
++	if (hdmi->output.notifier)
++		cec_notifier_put(hdmi->output.notifier);
++
+ 	return 0;
+ }
+
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index 595d1ec3e02e..57c052521a44 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -11,6 +11,8 @@
+ #include <drm/drm_panel.h>
+ #include "drm.h"
+
++#include <media/cec-notifier.h>
++
+ int tegra_output_connector_get_modes(struct drm_connector *connector)
+ {
+ 	struct tegra_output *output = connector_to_output(connector);
+@@ -33,6 +35,7 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
+ 		edid = drm_get_edid(connector, output->ddc);
+
+ 	drm_mode_connector_update_edid_property(connector, edid);
++	cec_notifier_set_phys_addr_from_edid(output->notifier, edid);
+
+ 	if (edid) {
+ 		err = drm_add_edid_modes(connector, edid);
+@@ -68,6 +71,9 @@ tegra_output_connector_detect(struct drm_connector *connector, bool force)
+ 			status = connector_status_connected;
+ 	}
+
++	if (status != connector_status_connected)
++		cec_notifier_phys_addr_invalidate(output->notifier);
++
+ 	return status;
+ }
 
 -- 
-Dmitry
+2.13.1
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
