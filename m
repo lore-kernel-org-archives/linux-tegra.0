@@ -1,63 +1,65 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/4] gpio: tegra: Remove unnecessary check
-Date: Mon, 31 Jul 2017 13:00:33 +0200
-Message-ID: <20170731110033.GJ26667@ulmo>
-References: <20170724145508.7388-1-thierry.reding@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH] dmaengine: tegra210-adma: fix of_irq_get() error check
+Date: Mon, 31 Jul 2017 15:59:35 +0300
+Message-ID: <49996233-5ccd-58e6-db00-b5d402ff6e74@cogentembedded.com>
+References: <20170730181051.733168837@cogentembedded.com>
+ <20170731093057.GA26667@ulmo>
+ <0102e75c-d1be-e274-808b-f9d3f434924d@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UlxN1C6awaFNesUv"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170724145508.7388-1-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <0102e75c-d1be-e274-808b-f9d3f434924d-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 07/31/2017 12:57 PM, Sergei Shtylyov wrote:
 
---UlxN1C6awaFNesUv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>>> of_irq_get() may return 0 as well as negative error number on failure,
+>>> while the driver only checks for the negative values. The driver would then
+>>> call request_irq(0, ...) in tegra_adma_alloc_chan_resources() and never get
+>>> valid channel interrupt.
+>>>
+>>> Check for 'tdc->irq <= 0' instead and return -ENXIO from the driver's probe
+>>> iff of_irq_get() returned 0.
+>>>
+>>> Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+[...]
 
-On Mon, Jul 24, 2017 at 04:55:05PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> of_device_get_match_data() can never return NULL, therefore the check
-> for NULL values is unnecessary.
->=20
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/gpio/gpio-tegra.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
+>>> Index: slave-dma/drivers/dma/tegra210-adma.c
+>>> ===================================================================
+>>> --- slave-dma.orig/drivers/dma/tegra210-adma.c
+>>> +++ slave-dma/drivers/dma/tegra210-adma.c
+>>> @@ -717,8 +717,8 @@ static int tegra_adma_probe(struct platf
+>>>           tdc->chan_addr = tdma->base_addr + ADMA_CH_REG_OFFSET(i);
+>>>             tdc->irq = of_irq_get(pdev->dev.of_node, i);
+>>> -        if (tdc->irq < 0) {
+>>> -            ret = tdc->irq;
+>>> +        if (tdc->irq <= 0) {
+>>> +            ret = tdc->irq ?: -ENXIO;
+>>>               goto irq_dispose;
+>>>           }
+>>>
+>>
+>> I think in this particular case it would be better to just call
+>> platform_get_irq(), which already implements the equivalent.
 
-Hi Linus,
+    Not that platform_get_irq() was no better (if not worse indeed, as it 
+could return 0 both on failure ad success), until I fixed it back in 2016:
 
-any comments on this? I've got an updated series for the GPIO IRQ chip
-stuff and another set of patches for banked controller support, but I'd
-like to flush out all of these minor patches that are byproducts of the
-other work.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e330b9a6bb35dc7097a4f02cb1ae7b6f96df92af
 
-Thierry
+>
+>    OK, I'll try looking into that...
 
---UlxN1C6awaFNesUv
-Content-Type: application/pgp-signature; name="signature.asc"
+    I've looked at the commit history and no, I don't agree to use 
+platform_get_irq(): my platform_get_irq() fix landed in mainline later than 
+this driver, so fixing this bug in stable kernels would ensue an extra 
+dependency...
 
------BEGIN PGP SIGNATURE-----
+>> Thierry
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAll/DdAACgkQ3SOs138+
-s6Greg//W8Aphr/zl0UQ09JvSSV3e7WeKS/l+F81A17JixwI06zWHViU9Uejf6JU
-JM14XJHxTHkhEWVaVebstN18+5mwX/DM9pyTVpaX7+kZ2UqaPCnWfvfl5n7X6juo
-p+mEivyvQJk9RXs5NP/Hv5hThUjbaCon8x6sJ2FBdKG7XS9u/anyZr708b+LiQcg
-5ntBqGdsHDWKAt1tsOPPj4gWf7FKTrKDdkXsMIVwlOuGroe/lqvwUztegeKqCu2y
-fCNazlNRljZIg9UuJFYS8A+AJ4ZOLitpEgr8uj/Gka3iL3J5R/cepMkMNKIKYzxk
-kLZjaN5dRLQ7hWAkMssjgKB38n0B+KlOotpNf/1dhBP4ufbXarx765lDgjmbcEFR
-R0PCY4dGWIKwhC99MDxrGTi2ve5SjZjDV6qkT3E21pfkgTm6FemAgSNw+LqStFuw
-7AntUvWJLuwSZV5hynsNOBjdYqIY0eyvR6w4tKeykG3d2n2AiOKribRiZfZtmcQY
-xJ+ZtPFc5c9OTaCNzkx/E5uIOM3h5PWuxzJoO46Dno+cAnIBKdSkIh5fWOnmPqKm
-rC1dKVLYAyIZH8Sg/Edr9nMlCXJSWSIyntbDj6VJ7/042/WfGI8pHQqlBhnjzlp0
-CytiM2dFM2LE8YTcUdB+k7wgDyxqodBUxFGMhJpyYH1BwkLM12E=
-=bwkp
------END PGP SIGNATURE-----
-
---UlxN1C6awaFNesUv--
+MBR, Sergei
