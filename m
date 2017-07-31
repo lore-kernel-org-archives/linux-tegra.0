@@ -1,430 +1,87 @@
-From: Joe Kniss <djmk-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH] Add drm ioctl DRM_IOCTL_MODE_GETFB2 & associated helpers.
-Date: Mon, 31 Jul 2017 11:29:13 -0700
-Message-ID: <20170731182913.136758-1-djmk@google.com>
-References: <CAOvnNvYKXsy9dvOB0ge1WxQbwubPpzKofd=OGagKyft-yQJ1xw@mail.gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] dmaengine: tegra210-adma: fix of_irq_get() error check
+Date: Mon, 31 Jul 2017 21:11:50 +0100
+Message-ID: <7f45e718-bf46-fde7-5811-c29221360cfb@nvidia.com>
+References: <20170730181051.733168837@cogentembedded.com>
+ <20170731093057.GA26667@ulmo>
+ <0102e75c-d1be-e274-808b-f9d3f434924d@cogentembedded.com>
+ <49996233-5ccd-58e6-db00-b5d402ff6e74@cogentembedded.com>
+ <20170731165616.GC27815@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOvnNvYKXsy9dvOB0ge1WxQbwubPpzKofd=OGagKyft-yQJ1xw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20170731165616.GC27815@ulmo>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, marcheu-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, alexander.deucher-5C7GfCeVMHo@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, patrik.r.jakobsson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, tomi.valkeinen-l0cyMroinI0@public.gmane.org, mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, funfunctor-dczkZgxz+BNUPWh3PAxdjQ@public.gmane.org, Andrey.Grodzovsky-5C7GfCeVMHo@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, nils.wallmenius-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, michel.daenzer-5C7GfCeVMHo@public.gmane.org, djmk-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-New getfb2 functionality uses drm_mode_fb_cmd2 struct to be symmetric
-with addfb2.   Also modifies *_fb_create_handle() calls to accept a
-format_plane_index so that handles for each plane can be generated.
-Previously, many *_fb_create_handle() calls simply defaulted to plane 0 only.
 
-Signed-off-by: Joe Kniss <djmk-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c |  5 +-
- drivers/gpu/drm/armada/armada_fb.c          |  1 +
- drivers/gpu/drm/drm_crtc_internal.h         |  2 +
- drivers/gpu/drm/drm_fb_cma_helper.c         | 11 ++--
- drivers/gpu/drm/drm_framebuffer.c           | 79 ++++++++++++++++++++++++++++-
- drivers/gpu/drm/drm_ioctl.c                 |  1 +
- drivers/gpu/drm/exynos/exynos_drm_fb.c      |  7 ++-
- drivers/gpu/drm/gma500/framebuffer.c        |  2 +
- drivers/gpu/drm/i915/intel_display.c        |  1 +
- drivers/gpu/drm/mediatek/mtk_drm_fb.c       |  1 +
- drivers/gpu/drm/msm/msm_fb.c                |  5 +-
- drivers/gpu/drm/nouveau/nouveau_display.c   |  1 +
- drivers/gpu/drm/omapdrm/omap_fb.c           |  5 +-
- drivers/gpu/drm/radeon/radeon_display.c     |  5 +-
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c  |  6 ++-
- drivers/gpu/drm/tegra/fb.c                  |  9 +++-
- include/drm/drm_framebuffer.h               |  1 +
- include/uapi/drm/drm.h                      |  2 +
- 18 files changed, 127 insertions(+), 17 deletions(-)
+On 31/07/17 17:56, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Mon, Jul 31, 2017 at 03:59:35PM +0300, Sergei Shtylyov wrote:
+>> On 07/31/2017 12:57 PM, Sergei Shtylyov wrote:
+>>
+>>>>> of_irq_get() may return 0 as well as negative error number on failure,
+>>>>> while the driver only checks for the negative values. The driver would then
+>>>>> call request_irq(0, ...) in tegra_adma_alloc_chan_resources() and never get
+>>>>> valid channel interrupt.
+>>>>>
+>>>>> Check for 'tdc->irq <= 0' instead and return -ENXIO from the driver's probe
+>>>>> iff of_irq_get() returned 0.
+>>>>>
+>>>>> Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
+>>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+>> [...]
+>>
+>>>>> Index: slave-dma/drivers/dma/tegra210-adma.c
+>>>>> ===================================================================
+>>>>> --- slave-dma.orig/drivers/dma/tegra210-adma.c
+>>>>> +++ slave-dma/drivers/dma/tegra210-adma.c
+>>>>> @@ -717,8 +717,8 @@ static int tegra_adma_probe(struct platf
+>>>>>           tdc->chan_addr = tdma->base_addr + ADMA_CH_REG_OFFSET(i);
+>>>>>             tdc->irq = of_irq_get(pdev->dev.of_node, i);
+>>>>> -        if (tdc->irq < 0) {
+>>>>> -            ret = tdc->irq;
+>>>>> +        if (tdc->irq <= 0) {
+>>>>> +            ret = tdc->irq ?: -ENXIO;
+>>>>>               goto irq_dispose;
+>>>>>           }
+>>>>>
+>>>>
+>>>> I think in this particular case it would be better to just call
+>>>> platform_get_irq(), which already implements the equivalent.
+>>
+>>    Not that platform_get_irq() was no better (if not worse indeed, as it
+>> could return 0 both on failure ad success), until I fixed it back in 2016:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e330b9a6bb35dc7097a4f02cb1ae7b6f96df92af
+>>
+>>>
+>>>    OK, I'll try looking into that...
+>>
+>>    I've looked at the commit history and no, I don't agree to use
+>> platform_get_irq(): my platform_get_irq() fix landed in mainline later than
+>> this driver, so fixing this bug in stable kernels would ensue an extra
+>> dependency...
+> 
+> Well, surely the platform_get_irq() function should also be fixed in
+> stable kernels, so that all callers can be fixed at the same time.
+> 
+> That said, this does fix a bug, and it fixes it in the least invasive
+> way, and the damage I'm complaining about is preexisting, so:
+> 
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index 39fc388f222a..c77c1cd265a0 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -566,8 +566,9 @@ static void amdgpu_user_framebuffer_destroy(struct drm_framebuffer *fb)
- }
- 
- static int amdgpu_user_framebuffer_create_handle(struct drm_framebuffer *fb,
--						  struct drm_file *file_priv,
--						  unsigned int *handle)
-+						 unsigned int plane_index,
-+						 struct drm_file *file_priv,
-+						 unsigned int *handle)
- {
- 	struct amdgpu_framebuffer *amdgpu_fb = to_amdgpu_framebuffer(fb);
- 
-diff --git a/drivers/gpu/drm/armada/armada_fb.c b/drivers/gpu/drm/armada/armada_fb.c
-index 2a7eb6817c36..9f237544f6c5 100644
---- a/drivers/gpu/drm/armada/armada_fb.c
-+++ b/drivers/gpu/drm/armada/armada_fb.c
-@@ -23,6 +23,7 @@ static void armada_fb_destroy(struct drm_framebuffer *fb)
- }
- 
- static int armada_fb_create_handle(struct drm_framebuffer *fb,
-+	unsigned int format_plane_index,
- 	struct drm_file *dfile, unsigned int *handle)
- {
- 	struct armada_framebuffer *dfb = drm_fb_to_armada_fb(fb);
-diff --git a/drivers/gpu/drm/drm_crtc_internal.h b/drivers/gpu/drm/drm_crtc_internal.h
-index 955c5690bf64..ec8d913240fe 100644
---- a/drivers/gpu/drm/drm_crtc_internal.h
-+++ b/drivers/gpu/drm/drm_crtc_internal.h
-@@ -170,6 +170,8 @@ int drm_mode_rmfb(struct drm_device *dev,
- 		  void *data, struct drm_file *file_priv);
- int drm_mode_getfb(struct drm_device *dev,
- 		   void *data, struct drm_file *file_priv);
-+int drm_mode_getfb2(struct drm_device *dev,
-+		   void *data, struct drm_file *file_priv);
- int drm_mode_dirtyfb_ioctl(struct drm_device *dev,
- 			   void *data, struct drm_file *file_priv);
- 
-diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
-index 596fabf18c3e..5fd7bcc2c6d1 100644
---- a/drivers/gpu/drm/drm_fb_cma_helper.c
-+++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-@@ -110,13 +110,16 @@ void drm_fb_cma_destroy(struct drm_framebuffer *fb)
- }
- EXPORT_SYMBOL(drm_fb_cma_destroy);
- 
--int drm_fb_cma_create_handle(struct drm_framebuffer *fb,
--	struct drm_file *file_priv, unsigned int *handle)
-+static int drm_fb_cma_create_handle(struct drm_framebuffer *fb,
-+				    unsigned int format_plane_index,
-+				    struct drm_file *file_priv,
-+				    unsigned int *handle)
- {
- 	struct drm_fb_cma *fb_cma = to_fb_cma(fb);
--
-+	if (format_plane_index >= 4 || !fb_dma->obj[format_plane_index])
-+		return -ENOENT;
- 	return drm_gem_handle_create(file_priv,
--			&fb_cma->obj[0]->base, handle);
-+			&fb_cma->obj[format_plane_index]->base, handle);
- }
- EXPORT_SYMBOL(drm_fb_cma_create_handle);
- 
-diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-index 28a0108a1ab8..67b3be1bedbc 100644
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -24,6 +24,7 @@
- #include <drm/drmP.h>
- #include <drm/drm_auth.h>
- #include <drm/drm_framebuffer.h>
-+#include <drm/drm_gem.h>
- 
- #include "drm_crtc_internal.h"
- 
-@@ -438,7 +439,7 @@ int drm_mode_getfb(struct drm_device *dev,
- 	if (fb->funcs->create_handle) {
- 		if (drm_is_current_master(file_priv) || capable(CAP_SYS_ADMIN) ||
- 		    drm_is_control_client(file_priv)) {
--			ret = fb->funcs->create_handle(fb, file_priv,
-+			ret = fb->funcs->create_handle(fb, 0, file_priv,
- 						       &r->handle);
- 		} else {
- 			/* GET_FB() is an unprivileged ioctl so we must not
-@@ -458,6 +459,82 @@ int drm_mode_getfb(struct drm_device *dev,
- 	return ret;
- }
- 
-+/**
-+ * drm_mode_getfb2 - get FB info
-+ * @dev: drm device for the ioctl
-+ * @data: data pointer for the ioctl
-+ * @file_priv: drm file for the ioctl call
-+ *
-+ * Lookup the FB given its ID and return info about it.
-+ *
-+ * Called by the user via ioctl.
-+ *
-+ * Returns:
-+ * Zero on success, negative errno on failure.
-+ */
-+int drm_mode_getfb2(struct drm_device *dev,
-+		   void *data, struct drm_file *file_priv)
-+{
-+	struct drm_mode_fb_cmd2 *r = data;
-+	struct drm_framebuffer *fb;
-+	int ret, i;
-+
-+	if (!drm_core_check_feature(dev, DRIVER_MODESET))
-+		return -EINVAL;
-+
-+	fb = drm_framebuffer_lookup(dev, r->fb_id);
-+	if (!fb)
-+		return -ENOENT;
-+
-+	r->height = fb->height;
-+	r->width = fb->width;
-+	r->pixel_format = fb->format->format;
-+	for (i = 0; i < 4; ++i) {
-+		r->pitches[i] = fb->pitches[i];
-+		r->offsets[i] = fb->offsets[i];
-+		r->modifier[i] = fb->modifier;
-+		r->handles[i] = 0;
-+	}
-+
-+	for (i = 0; i < fb->format->num_planes; ++i) {
-+		if (fb->funcs->create_handle) {
-+			if (drm_is_current_master(file_priv) ||
-+			    capable(CAP_SYS_ADMIN) ||
-+			    drm_is_control_client(file_priv)) {
-+				ret = fb->funcs->create_handle(fb, i, file_priv,
-+							       &r->handles[i]);
-+				if (ret)
-+					break;
-+			} else {
-+				/* GET_FB() is an unprivileged ioctl so we must
-+				 * not return a buffer-handle to non-master
-+				 * processes! For backwards-compatibility
-+				 * reasons, we cannot make GET_FB() privileged,
-+				 * so just return an invalid handle for
-+				 * non-masters. */
-+				r->handles[i] = 0;
-+				ret = 0;
-+			}
-+		} else {
-+			ret = -ENODEV;
-+			break;
-+		}
-+	}
-+
-+	/* If handle creation failed, delete/dereference any that were made. */
-+	if (ret) {
-+		for (i = 0; i < 4; ++i) {
-+			if (r->handles[i])
-+				drm_gem_handle_delete(file_priv, r->handles[i]);
-+			r->handles[i] = 0;
-+		}
-+	}
-+
-+	drm_framebuffer_unreference(fb);
-+
-+	return ret;
-+}
-+
- /**
-  * drm_mode_dirtyfb_ioctl - flush frontbuffer rendering on an FB
-  * @dev: drm device for the ioctl
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index a7c61c23685a..a9b578dc5d17 100644
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -627,6 +627,7 @@ static const struct drm_ioctl_desc drm_ioctls[] = {
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_SETPROPERTY, drm_mode_connector_property_set_ioctl, DRM_MASTER|DRM_CONTROL_ALLOW|DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_GETPROPBLOB, drm_mode_getblob_ioctl, DRM_CONTROL_ALLOW|DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_GETFB, drm_mode_getfb, DRM_CONTROL_ALLOW|DRM_UNLOCKED),
-+	DRM_IOCTL_DEF(DRM_IOCTL_MODE_GETFB2, drm_mode_getfb2, DRM_CONTROL_ALLOW|DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_ADDFB, drm_mode_addfb, DRM_CONTROL_ALLOW|DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_ADDFB2, drm_mode_addfb2, DRM_CONTROL_ALLOW|DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_RMFB, drm_mode_rmfb, DRM_CONTROL_ALLOW|DRM_UNLOCKED),
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index c77a5aced81a..5e8b774dc1af 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -88,13 +88,16 @@ static void exynos_drm_fb_destroy(struct drm_framebuffer *fb)
- }
- 
- static int exynos_drm_fb_create_handle(struct drm_framebuffer *fb,
-+				       unsigned int format_plane_index,
- 					struct drm_file *file_priv,
- 					unsigned int *handle)
- {
- 	struct exynos_drm_fb *exynos_fb = to_exynos_fb(fb);
--
-+	if (format_plane_index >= MAX_FB_BUFFER ||
-+	    !exynos_fb->exynos_gem[format_plane_index])
-+		return -ENOENT;
- 	return drm_gem_handle_create(file_priv,
--				     &exynos_fb->exynos_gem[0]->base, handle);
-+		     &exynos_fb->exynos_gem[format_plane_index]->base, handle);
- }
- 
- static const struct drm_framebuffer_funcs exynos_drm_fb_funcs = {
-diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-index ffe6b4ffa1a8..c221544b4c6a 100644
---- a/drivers/gpu/drm/gma500/framebuffer.c
-+++ b/drivers/gpu/drm/gma500/framebuffer.c
-@@ -42,6 +42,7 @@
- 
- static void psb_user_framebuffer_destroy(struct drm_framebuffer *fb);
- static int psb_user_framebuffer_create_handle(struct drm_framebuffer *fb,
-+					      unsigned int format_plane_index,
- 					      struct drm_file *file_priv,
- 					      unsigned int *handle);
- 
-@@ -619,6 +620,7 @@ static void psbfb_output_poll_changed(struct drm_device *dev)
-  *	the work for us
-  */
- static int psb_user_framebuffer_create_handle(struct drm_framebuffer *fb,
-+					      unsigned int plane_index,
- 					      struct drm_file *file_priv,
- 					      unsigned int *handle)
- {
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index 3282b0f4b134..54fdd30b0598 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -15853,6 +15853,7 @@ static void intel_user_framebuffer_destroy(struct drm_framebuffer *fb)
- }
- 
- static int intel_user_framebuffer_create_handle(struct drm_framebuffer *fb,
-+						unsigned int format_plane_index,
- 						struct drm_file *file,
- 						unsigned int *handle)
- {
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fb.c b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-index d4246c9dceae..8343144ba1cd 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-@@ -44,6 +44,7 @@ struct drm_gem_object *mtk_fb_get_gem_obj(struct drm_framebuffer *fb)
- }
- 
- static int mtk_drm_fb_create_handle(struct drm_framebuffer *fb,
-+				    unsigned int format_plane_index,
- 				    struct drm_file *file_priv,
- 				    unsigned int *handle)
- {
-diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
-index 5cf165c9c3a9..de92fc8a7a1c 100644
---- a/drivers/gpu/drm/msm/msm_fb.c
-+++ b/drivers/gpu/drm/msm/msm_fb.c
-@@ -30,12 +30,15 @@ struct msm_framebuffer {
- 
- 
- static int msm_framebuffer_create_handle(struct drm_framebuffer *fb,
-+		unsigned int format_plane_index,
- 		struct drm_file *file_priv,
- 		unsigned int *handle)
- {
- 	struct msm_framebuffer *msm_fb = to_msm_framebuffer(fb);
-+	if (format_plane_index >= MAX_PLANE)
-+		return -ENOENT;
- 	return drm_gem_handle_create(file_priv,
--			msm_fb->planes[0], handle);
-+			msm_fb->planes[format_plane_index], handle);
- }
- 
- static void msm_framebuffer_destroy(struct drm_framebuffer *fb)
-diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
-index 72fdba1a1c5d..bc30c0d3d9cd 100644
---- a/drivers/gpu/drm/nouveau/nouveau_display.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.c
-@@ -237,6 +237,7 @@ nouveau_user_framebuffer_destroy(struct drm_framebuffer *drm_fb)
- 
- static int
- nouveau_user_framebuffer_create_handle(struct drm_framebuffer *drm_fb,
-+				       unsigned int format_plane_index,
- 				       struct drm_file *file_priv,
- 				       unsigned int *handle)
- {
-diff --git a/drivers/gpu/drm/omapdrm/omap_fb.c b/drivers/gpu/drm/omapdrm/omap_fb.c
-index 29dc677dd4d3..a982c72a773e 100644
---- a/drivers/gpu/drm/omapdrm/omap_fb.c
-+++ b/drivers/gpu/drm/omapdrm/omap_fb.c
-@@ -90,12 +90,15 @@ struct omap_framebuffer {
- };
- 
- static int omap_framebuffer_create_handle(struct drm_framebuffer *fb,
-+		unsigned int format_plane_index,
- 		struct drm_file *file_priv,
- 		unsigned int *handle)
- {
- 	struct omap_framebuffer *omap_fb = to_omap_framebuffer(fb);
-+	if (format_plane_index >= 4 || !omap_fb->planes[format_plane_index])
-+		return -ENOENT;
- 	return drm_gem_handle_create(file_priv,
--			omap_fb->planes[0].bo, handle);
-+			omap_fb->planes[format_plane_index].bo, handle);
- }
- 
- static void omap_framebuffer_destroy(struct drm_framebuffer *fb)
-diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
-index aea8b62835a4..2188e6341cd9 100644
---- a/drivers/gpu/drm/radeon/radeon_display.c
-+++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -1306,8 +1306,9 @@ static void radeon_user_framebuffer_destroy(struct drm_framebuffer *fb)
- }
- 
- static int radeon_user_framebuffer_create_handle(struct drm_framebuffer *fb,
--						  struct drm_file *file_priv,
--						  unsigned int *handle)
-+						 unsigned int plane_index,
-+						 struct drm_file *file_priv,
-+						 unsigned int *handle)
- {
- 	struct radeon_framebuffer *radeon_fb = to_radeon_framebuffer(fb);
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index c9ccdf8f44bb..206d93249519 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -55,13 +55,15 @@ static void rockchip_drm_fb_destroy(struct drm_framebuffer *fb)
- }
- 
- static int rockchip_drm_fb_create_handle(struct drm_framebuffer *fb,
-+					 unsigned int format_plane_index,
- 					 struct drm_file *file_priv,
- 					 unsigned int *handle)
- {
- 	struct rockchip_drm_fb *rockchip_fb = to_rockchip_fb(fb);
--
-+	if (format_plane_index >= ROCKCHIP_MAX_FB_BUFFER)
-+		return -ENOENT;
- 	return drm_gem_handle_create(file_priv,
--				     rockchip_fb->obj[0], handle);
-+				  rockchip_fb->obj[format_plane_index], handle);
- }
- 
- static int rockchip_drm_fb_dirty(struct drm_framebuffer *fb,
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index f142f6a4db25..ff206b143503 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -81,11 +81,16 @@ static void tegra_fb_destroy(struct drm_framebuffer *framebuffer)
- }
- 
- static int tegra_fb_create_handle(struct drm_framebuffer *framebuffer,
-+				  unsigned int format_plane_index,
- 				  struct drm_file *file, unsigned int *handle)
- {
- 	struct tegra_fb *fb = to_tegra_fb(framebuffer);
--
--	return drm_gem_handle_create(file, &fb->planes[0]->gem, handle);
-+	if (format_plane_index >= fb->num_planes ||
-+	    !fb->planes[format_plane_index])
-+		return -ENOENT;
-+	return drm_gem_handle_create(file,
-+				     &fb->planes[format_plane_index]->gem,
-+				     handle);
- }
- 
- static const struct drm_framebuffer_funcs tegra_fb_funcs = {
-diff --git a/include/drm/drm_framebuffer.h b/include/drm/drm_framebuffer.h
-index dd1e3e99dcff..2fb398cb4646 100644
---- a/include/drm/drm_framebuffer.h
-+++ b/include/drm/drm_framebuffer.h
-@@ -66,6 +66,7 @@ struct drm_framebuffer_funcs {
- 	 * 0 on success or a negative error code on failure.
- 	 */
- 	int (*create_handle)(struct drm_framebuffer *fb,
-+			     unsigned int plane_index,
- 			     struct drm_file *file_priv,
- 			     unsigned int *handle);
- 	/**
-diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-index b2c52843bc70..c81c75335cca 100644
---- a/include/uapi/drm/drm.h
-+++ b/include/uapi/drm/drm.h
-@@ -814,6 +814,8 @@ extern "C" {
- #define DRM_IOCTL_MODE_CREATEPROPBLOB	DRM_IOWR(0xBD, struct drm_mode_create_blob)
- #define DRM_IOCTL_MODE_DESTROYPROPBLOB	DRM_IOWR(0xBE, struct drm_mode_destroy_blob)
- 
-+#define DRM_IOCTL_MODE_GETFB2  DRM_IOWR(0xC4, struct drm_mode_fb_cmd2)
-+
- /**
-  * Device specific ioctls should only be in their respective headers
-  * The device specific ioctl range is from 0x40 to 0x9f.
+FWIW ...
+
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Thanks!
+Jon
+
 -- 
-2.14.0.rc0.400.g1c36432dff-goog
+nvpublic
