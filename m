@@ -1,57 +1,63 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] gpio: tegra: Use platform_irq_count()
-Date: Mon, 31 Jul 2017 12:57:13 +0200
-Message-ID: <20170731105713.GG26667@ulmo>
-References: <20170720160057.13483-1-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/4] gpio: tegra: Remove unnecessary check
+Date: Mon, 31 Jul 2017 13:00:33 +0200
+Message-ID: <20170731110033.GJ26667@ulmo>
+References: <20170724145508.7388-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t4apE7yKrX2dGgJC"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="UlxN1C6awaFNesUv"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170720160057.13483-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20170724145508.7388-1-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---t4apE7yKrX2dGgJC
+--UlxN1C6awaFNesUv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 20, 2017 at 06:00:56PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Jul 24, 2017 at 04:55:05PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >=20
-> Use platform_irq_count() instead of open-coding the same code sequence.
+> of_device_get_match_data() can never return NULL, therefore the check
+> for NULL values is unnecessary.
 >=20
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/gpio/gpio-tegra.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
+>  drivers/gpio/gpio-tegra.c | 11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
 
-Ping...
+Hi Linus,
+
+any comments on this? I've got an updated series for the GPIO IRQ chip
+stuff and another set of patches for banked controller support, but I'd
+like to flush out all of these minor patches that are byproducts of the
+other work.
 
 Thierry
 
---t4apE7yKrX2dGgJC
+--UlxN1C6awaFNesUv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAll/DQcACgkQ3SOs138+
-s6Hn6A//QMNvYehJk4wnjA/6E/kFJTSyulSh8fKLt5YWkfzCBCnK6iGTR/O7pCyt
-/TNEx6416/oGWx0MygFnGGHWT9KuTocfH20DhLo+ikETgwCEWUpQks9qqmzRubpN
-b6luRD42d9RU8luKDbcxO3Q3TbelILEJdb4SGOtK8wPSUBvDQpvtq8XakVnJ7llC
-YzOmJ34jcF8tGiqhzUlFu+90WiEdf4oCMkijX+SSjkgNYnqM5QaFZyWDqiy/Hm8m
-/TR8JSpZUOUVKwBDrri1dWc+zUlhsWWr7D8XK3DKwSpCQTVV4/Ic1pCdZcaKZGFr
-g/7+oiK1oDGNRdE2OHfN02QbTU4hpwVW8cWl/lQqVBLam5dcG0OzbcRyNSDtf+MQ
-FoZ5Mr/f0zkP009YGbcB1JTotzpE4t7DtcfBZ2gfA5P48/ee4NzZ+f/P1AUMV1DG
-JrTWs6rvm/xUeXOFMBq3wm9ERIFsjg56gXPU+iUa9ixSkfFyOHPHkJ2Fmx9U8GwU
-C/LVSbmVm8uJRUCl2ArfonLvmr7sYM0MrgSkiTmYue79n/rZOAkFKpHwQ9ru/PdB
-WxqJkOV+w6TkAEpPnmPDP3HfzwAsrXSr8XJ9USPLloz1HpLvz+G0ob0o7rssuxkJ
-H97bk6hSUASKx0+QJOpLvhv+7a2wi0IxYJFV5so2lzJUUBvWot0=
-=YSYp
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAll/DdAACgkQ3SOs138+
+s6Greg//W8Aphr/zl0UQ09JvSSV3e7WeKS/l+F81A17JixwI06zWHViU9Uejf6JU
+JM14XJHxTHkhEWVaVebstN18+5mwX/DM9pyTVpaX7+kZ2UqaPCnWfvfl5n7X6juo
+p+mEivyvQJk9RXs5NP/Hv5hThUjbaCon8x6sJ2FBdKG7XS9u/anyZr708b+LiQcg
+5ntBqGdsHDWKAt1tsOPPj4gWf7FKTrKDdkXsMIVwlOuGroe/lqvwUztegeKqCu2y
+fCNazlNRljZIg9UuJFYS8A+AJ4ZOLitpEgr8uj/Gka3iL3J5R/cepMkMNKIKYzxk
+kLZjaN5dRLQ7hWAkMssjgKB38n0B+KlOotpNf/1dhBP4ufbXarx765lDgjmbcEFR
+R0PCY4dGWIKwhC99MDxrGTi2ve5SjZjDV6qkT3E21pfkgTm6FemAgSNw+LqStFuw
+7AntUvWJLuwSZV5hynsNOBjdYqIY0eyvR6w4tKeykG3d2n2AiOKribRiZfZtmcQY
+xJ+ZtPFc5c9OTaCNzkx/E5uIOM3h5PWuxzJoO46Dno+cAnIBKdSkIh5fWOnmPqKm
+rC1dKVLYAyIZH8Sg/Edr9nMlCXJSWSIyntbDj6VJ7/042/WfGI8pHQqlBhnjzlp0
+CytiM2dFM2LE8YTcUdB+k7wgDyxqodBUxFGMhJpyYH1BwkLM12E=
+=bwkp
 -----END PGP SIGNATURE-----
 
---t4apE7yKrX2dGgJC--
+--UlxN1C6awaFNesUv--
