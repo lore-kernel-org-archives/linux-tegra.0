@@ -1,44 +1,40 @@
-From: Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>
-Subject: Re: [RFC/RFT PATCH 2/3] gpio: pxa: remove gpio_to_irq() from hw irq handlers
-Date: Tue, 01 Aug 2017 20:41:51 +0200
-Message-ID: <871sovqgeo.fsf@belgarion.home>
-References: <20170708224413.18281-1-grygorii.strashko@ti.com>
-        <20170708224413.18281-3-grygorii.strashko@ti.com>
-        <CACRpkdZMgd7hSc6LwO5MbPb3vetd+qZ_5mXB1P9SM-HR+h_Pqg@mail.gmail.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
+Subject: Re: [PATCH] gpio: drop unnecessary includes from
+ include/linux/gpio/driver.h
+Date: Tue, 1 Aug 2017 13:57:59 -0500
+Message-ID: <b79f450d-f4a7-003d-4542-b5d5e4ab4483@linux.intel.com>
+References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
+Reply-To: thor.thayer@linux.intel.com
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZMgd7hSc6LwO5MbPb3vetd+qZ_5mXB1P9SM-HR+h_Pqg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-        (Linus Walleij's message of "Tue, 1 Aug 2017 09:47:56 +0200")
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio@vger.kernel.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra@vger.kernel.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Ray Jui <rjui@broadcom.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, David Cohen <david.a.cohen@linux.intel.com>, Scott Branden <sbranden@broadcom.com>, linux-acpi@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, Florian Fainelli <f.fainelli@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alexander Shiyan <shc_work@mail.ru>, Michal Simek <michal.simek@xilinx.com>, Kevin Hilman <khilman@kernel.org>, linux-tegra@vger.kernel.org, Joel Stanley <joel@jms.id.au>, linux-omap@vger.kernel.org, linux-arm-k
 List-Id: linux-tegra@vger.kernel.org
 
-Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> writes:
+On 07/03/2017 10:53 PM, Masahiro Yamada wrote:
+> Some of include directives in include/linux/gpio/driver.h are
+> unneeded because the header does not need to know the content of
+> struct device, irq_chip, etc.  Just declare they are structures.
+> 
+> On the other hand, <linux/irqhandler.h> and <linux/spinlock_types.h>
+> turned out to be necessary for irq_flow_handler_t and spinlock_t,
+> respectively.
+> 
+> Each driver should include what it needs without relying on what is
+> implicitly included from <linux/gpio/driver.h>.  This will cut down
+> unnecessary header parsing.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>   drivers/gpio/gpio-altera-a10sr.c |  2 ++
+>   drivers/gpio/gpio-altera.c       |  3 +++
 
-> On Sun, Jul 9, 2017 at 12:44 AM, Grygorii Strashko
-> <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
->
->> gpio_to_irq() API expected to be used by GPIO consumers and
->> not drivers and there are no guarantee that its gpiolib implementation
->> is irq safe.
->>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
->
-> Patch applied.
->
-> This is the right thing to do.
->
-> PXA developers: please test.
+For the Altera GPIO files:
 
-Hi Linus,
-
-Currently pxa25x and pxa27x are broken because of a .data section misalignment
-(issue cross arm architectures), so testing is a bit hard for me right now. I'll
-wait to have a working again tree to test, and then report.
-
-Cheers.
-
---
-Robert
+Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
