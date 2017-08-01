@@ -1,63 +1,111 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: drop unnecessary includes from include/linux/gpio/driver.h
-Date: Tue, 1 Aug 2017 09:53:42 +0200
-Message-ID: <CACRpkdZ9q5vub3sQkA2xsQaZ+CGHeAp4RRueposnTPiHoFbSsA@mail.gmail.com>
-References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
- <1499162760.22624.246.camel@linux.intel.com> <CACRpkdaxgxaXV8XjLTzu68JqjyeZ8Jr2YMR3L46wm3zmnMrPsg@mail.gmail.com>
- <1501509867.29303.303.camel@linux.intel.com>
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Register host1x node with iommu binding on
+ tegra124
+Date: Tue, 01 Aug 2017 12:56:17 +0300
+Message-ID: <1501581377.1304.4.camel@paulk.fr>
+References: <20170709163614.6746-1-contact@paulk.fr>
+         <1499763009.1340.11.camel@paulk.fr> <1499784841.1520.20.camel@toradex.com>
+         <1499785555.1340.15.camel@paulk.fr> <1499786264.1520.22.camel@toradex.com>
+         <20170731152306.GB27815@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1501509867.29303.303.camel@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Ray Jui <rjui@broadcom.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, David Cohen <david.a.cohen@linux.intel.com>, Scott Branden <sbranden@broadcom.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alexander Shiyan <shc_work@mail.ru>, Michal Simek <michal.simek@xilinx.com>, Kevin Hilman <khilman@kernel.org>"linux-tegra@vger.kernel.org" <lin>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170731152306.GB27815@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 31, 2017 at 4:04 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Mon, 2017-07-31 at 15:48 +0200, Linus Walleij wrote:
->> On Tue, Jul 4, 2017 at 12:06 PM, Andy Shevchenko
->> <andriy.shevchenko@linux.intel.com> wrote:
->> > On Tue, 2017-07-04 at 12:53 +0900, Masahiro Yamada wrote:
->> > > Some of include directives in include/linux/gpio/driver.h are
->> > > unneeded because the header does not need to know the content of
->> > > struct device, irq_chip, etc.  Just declare they are structures.
->> > >
->> > > On the other hand, <linux/irqhandler.h> and
->> > > <linux/spinlock_types.h>
->> > > turned out to be necessary for irq_flow_handler_t and spinlock_t,
->> > > respectively.
->> > >
->> > > Each driver should include what it needs without relying on what
->> > > is
->> > > implicitly included from <linux/gpio/driver.h>.  This will cut
->> > > down
->> > > unnecessary header parsing.
->> >
->> > If Linus is okay with the following proposal I would rather go with
->> > it,
->> > i.e. logical split the series to
->> >
->> > 1. Fix IRQ related headers inclusion
->> > 2. Fix pinconf-generic.h inclusion
->> > 3. Fix OF headers inclusion (btw, of_gpio.h is not enough there?)
->>
->> That works fine with me, but also one big patch actually, I do not
->> want to make it too much work to refactor obviously incorrect things.
->>
->> As soon as we have rough consensus on this and the build robot
->> are happy I will apply it to GPIO and also pull it into the pinctrl
->> subsystem.
->
-> For me priorities like this:
-> 1) it works after the patch being applied (no regressions);
-> 2) it makes code cleaner at the end;
-> 3) it is presented in logically split parts.
->
-> So, as long as 1) and 2) are satisfied I can neglect on 3).
+On Mon, 2017-07-31 at 17:23 +0200, Thierry Reding wrote:
+> On Tue, Jul 11, 2017 at 03:17:46PM +0000, Marcel Ziswiler wrote:
+> > On Tue, 2017-07-11 at 18:05 +0300, Paul Kocialkowski wrote:
+> > > On Tue, 2017-07-11 at 14:54 +0000, Marcel Ziswiler wrote:
+> > > > On Tue, 2017-07-11 at 11:50 +0300, Paul Kocialkowski wrote:
+> > > > > On Sun, 2017-07-09 at 19:36 +0300, Paul Kocialkowski wrote:
+> > > > > > This registers the host1x node with the SMMU (as HC swgroup)
+> > > > > > to
+> > > > > > allow
+> > > > > > the host1x code to attach to it. It avoid failing the probe
+> > > > > > sequence,
+> > > > > > which resulted in the tegra drm driver not probing and thus
+> > > > > > nothing
+> > > > > > being displayed on-screen.
+> > > > > 
+> > > > > Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
+> > > > > 
+> > > > > > Signed-off-by: Paul Kocialkowski <contact-
+> > > > > > W9ppeneeCTY-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org>
+> > > > 
+> > > > Tested-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+> > > > Tested-on: Apalis TK1, Jetson-TK1
+> > > > 
+> > > > > > ---
+> > > > > >  arch/arm/boot/dts/tegra124.dtsi | 1 +
+> > > > > >  1 file changed, 1 insertion(+)
+> > > > > > 
+> > > > > > diff --git a/arch/arm/boot/dts/tegra124.dtsi
+> > > > > > b/arch/arm/boot/dts/tegra124.dtsi
+> > > > > > index 187a36c6d0fc..b3b89befffeb 100644
+> > > > > > --- a/arch/arm/boot/dts/tegra124.dtsi
+> > > > > > +++ b/arch/arm/boot/dts/tegra124.dtsi
+> > > > > > @@ -85,6 +85,7 @@
+> > > > > >  		clocks = <&tegra_car TEGRA124_CLK_HOST1X>;
+> > > > > >  		resets = <&tegra_car 28>;
+> > > > > >  		reset-names = "host1x";
+> > > > > > +		iommus = <&mc TEGRA_SWGROUP_HC>;
+> > > > > >  
+> > > > > >  		#address-cells = <2>;
+> > > > > >  		#size-cells = <2>;
+> > > > 
+> > > > So I take it we still will need this one moving forward,
+> > > > correct?
+> > > 
+> > > Yes, this one actually enables the IOMMU while the other one
+> > > handles
+> > > the
+> > > failure to attach the IOMMU without brinding the whole drm driver
+> > > down.
+> > > 
+> > > So it's best to actually make use of the feature!
+> > > 
+> > > > How about tegra30, I guess the same applies there, isn't it?
+> > > > Should
+> > > > I
+> > > > send a patch or are you guys doing that?
+> > > 
+> > > I don't have any tegra hardware aside of tegra124, so that's all I
+> > > can
+> > > contribute to. I don't know if others have looked into the same
+> > > type
+> > > of
+> > > issue happening on either newer or older platforms.
+> > 
+> > OK, as we happen to still selling Apalis/Colibri T30 and me having
+> > Beaver as well as Cardhu available for testing I can cook something
+> > up,
+> > test and send it along. First tries indicate it working on 4.12 but
+> > somehow crashing during memory allocation on -next. We'll see.
+> 
+> I think we're going to need the same change on Tegra30 and Tegra114.
+> And
+> Tegra132 and Tegra210 for that matter. With the gpu/host1x fix applied
+> things should keep working on all generations, but we need DT changes
+> if
+> we want to make use of the SMMU.
 
-We are in violent agreement :D
+I don't have any other hardware than tegra124, so I don't really feel
+confident sending out those patches knowing that I won't be able to test
+them.
 
-Yours,
-Linus Walleij
+I could still craft them, but we'd have to make sure that someone can
+test them before they are applied.
+
+-- 
+Paul Kocialkowski,
+
+developer of free digital technology and hardware support
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
