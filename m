@@ -1,75 +1,82 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] gpio: drop unnecessary includes from include/linux/gpio/driver.h
-Date: Wed, 2 Aug 2017 10:19:32 +0900
-Message-ID: <CAK7LNASoNWVxJCRneD1GFo41vw0+9oduzLq1Jep_f3ckABfA1A@mail.gmail.com>
-References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
- <1499162760.22624.246.camel@linux.intel.com> <CACRpkdaxgxaXV8XjLTzu68JqjyeZ8Jr2YMR3L46wm3zmnMrPsg@mail.gmail.com>
- <1501509867.29303.303.camel@linux.intel.com> <CACRpkdZ9q5vub3sQkA2xsQaZ+CGHeAp4RRueposnTPiHoFbSsA@mail.gmail.com>
- <CAHp75VeLwM8Q5vVLeeGz9hL8AWa2J47NTaeX0ogJk6v7y18diw@mail.gmail.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH 2/4] iommu/tegra-smmu: Add iommu_group support
+Date: Wed, 2 Aug 2017 11:12:54 +0300
+Message-ID: <bdaaf96b-e6cd-fd4a-91e4-3212d94afb57@kapsi.fi>
+References: <cover.1500637633.git.robin.murphy@arm.com>
+ <7a6819a5a71c4b85db536169f71a4c087afb60f4.1500637633.git.robin.murphy@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VeLwM8Q5vVLeeGz9hL8AWa2J47NTaeX0ogJk6v7y18diw@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Ray Jui <rjui@broadcom.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, David Cohen <david.a.cohen@linux.intel.com>, Scott Branden <sbranden@broadcom.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alexander Shiyan <shc_work@mail.ru>, Michal Simek <michal.simek@xilinx.com>, Kevin Hilman <khilman@kernel.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <7a6819a5a71c4b85db536169f71a4c087afb60f4.1500637633.git.robin.murphy@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org
+Cc: architt@codeaurora.org, jonathanh@nvidia.com, iommu@lists.linux-foundation.org, thierry.reding@gmail.com, srinivas.kandagatla@linaro.org, linux-tegra@vger.kernel.org, sricharan@codeaurora.org, linux-arm-kernel@lists.infradead.org, hdoyu@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Hi.
+Tested-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-2017-08-01 20:04 GMT+09:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
-> On Tue, Aug 1, 2017 at 10:53 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Mon, Jul 31, 2017 at 4:04 PM, Andy Shevchenko
->> <andriy.shevchenko@linux.intel.com> wrote:
->>> On Mon, 2017-07-31 at 15:48 +0200, Linus Walleij wrote:
->>>> On Tue, Jul 4, 2017 at 12:06 PM, Andy Shevchenko
->>>> <andriy.shevchenko@linux.intel.com> wrote:
+(Jetson TX1 / Tegra210 with Host1x/VIC behind IOMMU)
+
+On 21.07.2017 15:12, Robin Murphy wrote:
+> As the last step to making groups mandatory, clean up the remaining
+> drivers by adding basic support. Whilst it may not perfectly reflect
+> the isolation capabilities of the hardware (tegra_smmu_swgroup sounds
+> suspiciously like something that might warrant representing at the
+> iommu_group level), using generic_device_group() should at least
+> maintain existing behaviour with respect to the API.
 >
->>>> > If Linus is okay with the following proposal I would rather go with
->>>> > it,
->>>> > i.e. logical split the series to
->>>> >
->>>> > 1. Fix IRQ related headers inclusion
->>>> > 2. Fix pinconf-generic.h inclusion
->>>> > 3. Fix OF headers inclusion (btw, of_gpio.h is not enough there?)
->>>>
->>>> That works fine with me, but also one big patch actually, I do not
->>>> want to make it too much work to refactor obviously incorrect things.
->>>>
->>>> As soon as we have rough consensus on this and the build robot
->>>> are happy I will apply it to GPIO and also pull it into the pinctrl
->>>> subsystem.
->>>
->>> For me priorities like this:
->>> 1) it works after the patch being applied (no regressions);
->>> 2) it makes code cleaner at the end;
->>> 3) it is presented in logically split parts.
->>>
->>> So, as long as 1) and 2) are satisfied I can neglect on 3).
->>
->> We are in violent agreement :D
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+>  drivers/iommu/tegra-smmu.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
-> What I would like to say is that is up to you after all :-)
-> For me looks better to split.
-
-
-
-I will split this into sensible chunks.
-
-
-As I mentioned before, linux/gpio/driver.h is included from several sub-systems,
-so I need at least two development cycles to finish this task.
-
-
-Maybe,
-
-[1] Send patches to subsystems (gpio, pinctrl, etc.) for v4.14
-     (splitting into sensible chunks, like per-driver)
-[2] Drop unneeded includes from linux/gpio/driver.h for v4.15
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> index eeb19f560a05..faa9c1e70482 100644
+> --- a/drivers/iommu/tegra-smmu.c
+> +++ b/drivers/iommu/tegra-smmu.c
+> @@ -704,6 +704,7 @@ static struct tegra_smmu *tegra_smmu_find(struct device_node *np)
+>  static int tegra_smmu_add_device(struct device *dev)
+>  {
+>  	struct device_node *np = dev->of_node;
+> +	struct iommu_group *group;
+>  	struct of_phandle_args args;
+>  	unsigned int index = 0;
+>
+> @@ -725,12 +726,19 @@ static int tegra_smmu_add_device(struct device *dev)
+>  		index++;
+>  	}
+>
+> +	group = iommu_group_get_for_dev(dev);
+> +	if (IS_ERR(group))
+> +		return PTR_ERR(group);
+> +
+> +	iommu_group_put(group);
+> +
+>  	return 0;
+>  }
+>
+>  static void tegra_smmu_remove_device(struct device *dev)
+>  {
+>  	dev->archdata.iommu = NULL;
+> +	iommu_group_remove_device(dev);
+>  }
+>
+>  static const struct iommu_ops tegra_smmu_ops = {
+> @@ -741,6 +749,7 @@ static const struct iommu_ops tegra_smmu_ops = {
+>  	.detach_dev = tegra_smmu_detach_dev,
+>  	.add_device = tegra_smmu_add_device,
+>  	.remove_device = tegra_smmu_remove_device,
+> +	.device_group = generic_device_group,
+>  	.map = tegra_smmu_map,
+>  	.unmap = tegra_smmu_unmap,
+>  	.map_sg = default_iommu_map_sg,
+>
