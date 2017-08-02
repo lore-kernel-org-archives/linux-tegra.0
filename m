@@ -1,66 +1,202 @@
-From: <Angela-63XfWfWBA5k@public.gmane.org>
-Subject: (unknown)
-Date: Wed, 02 Aug 2017 18:05:31 -0000
-Message-ID: <150169713112.2727.10639584513109872840@isurgut.ru>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] PCI: Convert to using %pOF instead of full_name
+Date: Wed, 2 Aug 2017 17:39:28 -0500
+Message-ID: <20170802223928.GQ20308@bhelgaas-glaptop.roam.corp.google.com>
+References: <20170718214339.7774-41-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_934736608514_linux-tegra.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: attachment
-Subject: 
+Content-Disposition: inline
+In-Reply-To: <20170718214339.7774-41-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gustafson-bwXX7kNdE64@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-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
-AVBLBQYAAAAAAQABAF8AAAD9CgAAAAA=
+On Tue, Jul 18, 2017 at 04:43:21PM -0500, Rob Herring wrote:
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
+> 
+> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> Cc: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
+> Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
+> Cc: Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+> Cc: Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>
+> Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+
+Applied to pci/misc for v4.14, thanks!
+
+> ---
+>  drivers/pci/host/pci-mvebu.c        | 8 ++++----
+>  drivers/pci/host/pci-tegra.c        | 3 +--
+>  drivers/pci/hotplug/pnv_php.c       | 4 ++--
+>  drivers/pci/hotplug/rpadlpar_core.c | 4 ++--
+>  drivers/pci/hotplug/rpaphp_core.c   | 2 +-
+>  drivers/pci/hotplug/rpaphp_pci.c    | 4 ++--
+>  drivers/pci/hotplug/rpaphp_slot.c   | 4 ++--
+>  drivers/pci/pci-sysfs.c             | 4 ++--
+>  drivers/pci/pci.c                   | 4 ++--
+>  9 files changed, 18 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pci-mvebu.c b/drivers/pci/host/pci-mvebu.c
+> index f353a6eb2f01..424982997eb9 100644
+> --- a/drivers/pci/host/pci-mvebu.c
+> +++ b/drivers/pci/host/pci-mvebu.c
+> @@ -1054,8 +1054,8 @@ static int mvebu_pcie_parse_port(struct mvebu_pcie *pcie,
+>  	port->pcie = pcie;
+> 
+>  	if (of_property_read_u32(child, "marvell,pcie-port", &port->port)) {
+> -		dev_warn(dev, "ignoring %s, missing pcie-port property\n",
+> -			 of_node_full_name(child));
+> +		dev_warn(dev, "ignoring %pOF, missing pcie-port property\n",
+> +			 child);
+>  		goto skip;
+>  	}
+> 
+> @@ -1106,8 +1106,8 @@ static int mvebu_pcie_parse_port(struct mvebu_pcie *pcie,
+>  		}
+> 
+>  		if (flags & OF_GPIO_ACTIVE_LOW) {
+> -			dev_info(dev, "%s: reset gpio is active low\n",
+> -				 of_node_full_name(child));
+> +			dev_info(dev, "%pOF: reset gpio is active low\n",
+> +				 child);
+>  			gpio_flags = GPIOF_ACTIVE_LOW |
+>  				     GPIOF_OUT_INIT_LOW;
+>  		} else {
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index b3722b7709df..7eb9be5ae357 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -1703,8 +1703,7 @@ static int tegra_pcie_get_legacy_regulators(struct tegra_pcie *pcie)
+>  		pcie->num_supplies = 2;
+> 
+>  	if (pcie->num_supplies == 0) {
+> -		dev_err(dev, "device %s not supported in legacy mode\n",
+> -			np->full_name);
+> +		dev_err(dev, "device %pOF not supported in legacy mode\n", np);
+>  		return -ENODEV;
+>  	}
+> 
+> diff --git a/drivers/pci/hotplug/pnv_php.c b/drivers/pci/hotplug/pnv_php.c
+> index 7c203198b582..74f6a17e4614 100644
+> --- a/drivers/pci/hotplug/pnv_php.c
+> +++ b/drivers/pci/hotplug/pnv_php.c
+> @@ -163,8 +163,8 @@ static void pnv_php_detach_device_nodes(struct device_node *parent)
+>  		of_node_put(dn);
+>  		refcount = kref_read(&dn->kobj.kref);
+>  		if (refcount != 1)
+> -			pr_warn("Invalid refcount %d on <%s>\n",
+> -				refcount, of_node_full_name(dn));
+> +			pr_warn("Invalid refcount %d on <%pOF>\n",
+> +				refcount, dn);
+> 
+>  		of_detach_node(dn);
+>  	}
+> diff --git a/drivers/pci/hotplug/rpadlpar_core.c b/drivers/pci/hotplug/rpadlpar_core.c
+> index 3f93a4e79595..a3449d717a99 100644
+> --- a/drivers/pci/hotplug/rpadlpar_core.c
+> +++ b/drivers/pci/hotplug/rpadlpar_core.c
+> @@ -150,8 +150,8 @@ static void dlpar_pci_add_bus(struct device_node *dn)
+>  	/* Add EADS device to PHB bus, adding new entry to bus->devices */
+>  	dev = of_create_pci_dev(dn, phb->bus, pdn->devfn);
+>  	if (!dev) {
+> -		printk(KERN_ERR "%s: failed to create pci dev for %s\n",
+> -				__func__, dn->full_name);
+> +		printk(KERN_ERR "%s: failed to create pci dev for %pOF\n",
+> +				__func__, dn);
+>  		return;
+>  	}
+> 
+> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+> index 8d132024f06e..1e29abaaea08 100644
+> --- a/drivers/pci/hotplug/rpaphp_core.c
+> +++ b/drivers/pci/hotplug/rpaphp_core.c
+> @@ -318,7 +318,7 @@ int rpaphp_add_slot(struct device_node *dn)
+>  	if (!is_php_dn(dn, &indexes, &names, &types, &power_domains))
+>  		return 0;
+> 
+> -	dbg("Entry %s: dn->full_name=%s\n", __func__, dn->full_name);
+> +	dbg("Entry %s: dn=%pOF\n", __func__, dn);
+> 
+>  	/* register PCI devices */
+>  	name = (char *) &names[1];
+> diff --git a/drivers/pci/hotplug/rpaphp_pci.c b/drivers/pci/hotplug/rpaphp_pci.c
+> index ea41ea1d3c00..32aabc533be8 100644
+> --- a/drivers/pci/hotplug/rpaphp_pci.c
+> +++ b/drivers/pci/hotplug/rpaphp_pci.c
+> @@ -95,7 +95,7 @@ int rpaphp_enable_slot(struct slot *slot)
+> 
+>  	bus = pci_find_bus_by_node(slot->dn);
+>  	if (!bus) {
+> -		err("%s: no pci_bus for dn %s\n", __func__, slot->dn->full_name);
+> +		err("%s: no pci_bus for dn %pOF\n", __func__, slot->dn);
+>  		return -EINVAL;
+>  	}
+> 
+> @@ -125,7 +125,7 @@ int rpaphp_enable_slot(struct slot *slot)
+> 
+>  		if (rpaphp_debug) {
+>  			struct pci_dev *dev;
+> -			dbg("%s: pci_devs of slot[%s]\n", __func__, slot->dn->full_name);
+> +			dbg("%s: pci_devs of slot[%pOF]\n", __func__, slot->dn);
+>  			list_for_each_entry(dev, &bus->devices, bus_list)
+>  				dbg("\t%s\n", pci_name(dev));
+>  		}
+> diff --git a/drivers/pci/hotplug/rpaphp_slot.c b/drivers/pci/hotplug/rpaphp_slot.c
+> index 388c4d8fcdd1..489862360f2c 100644
+> --- a/drivers/pci/hotplug/rpaphp_slot.c
+> +++ b/drivers/pci/hotplug/rpaphp_slot.c
+> @@ -122,8 +122,8 @@ int rpaphp_register_slot(struct slot *slot)
+>  	int retval;
+>  	int slotno = -1;
+> 
+> -	dbg("%s registering slot:path[%s] index[%x], name[%s] pdomain[%x] type[%d]\n",
+> -		__func__, slot->dn->full_name, slot->index, slot->name,
+> +	dbg("%s registering slot:path[%pOF] index[%x], name[%s] pdomain[%x] type[%d]\n",
+> +		__func__, slot->dn, slot->index, slot->name,
+>  		slot->power_domain, slot->type);
+> 
+>  	/* should not try to register the same slot twice */
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 2f3780b50723..33d4df7ed591 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -556,9 +556,9 @@ static ssize_t devspec_show(struct device *dev,
+>  	struct pci_dev *pdev = to_pci_dev(dev);
+>  	struct device_node *np = pci_device_to_OF_node(pdev);
+> 
+> -	if (np == NULL || np->full_name == NULL)
+> +	if (np == NULL)
+>  		return 0;
+> -	return sprintf(buf, "%s", np->full_name);
+> +	return sprintf(buf, "%pOF", np);
+>  }
+>  static DEVICE_ATTR_RO(devspec);
+>  #endif
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index af0cc3456dc1..e8e40dea2842 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5363,8 +5363,8 @@ static int of_pci_bus_find_domain_nr(struct device *parent)
+>  		use_dt_domains = 0;
+>  		domain = pci_get_new_domain_nr();
+>  	} else {
+> -		dev_err(parent, "Node %s has inconsistent \"linux,pci-domain\" property in DT\n",
+> -			parent->of_node->full_name);
+> +		dev_err(parent, "Node %pOF has inconsistent \"linux,pci-domain\" property in DT\n",
+> +			parent->of_node);
+>  		domain = -1;
+>  	}
+> 
+> --
+> 2.11.0
+> 
