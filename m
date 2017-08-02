@@ -1,34 +1,25 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 068/102] pinctrl: tegra: explicitly request exclusive
- reset control
-Date: Wed, 2 Aug 2017 13:45:31 +0200
-Message-ID: <CACRpkdbQ-xPM6-9JjO5L9xCTVbtkQ7CBOPQ7n7Zu6J-Dmja2uQ@mail.gmail.com>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de> <20170719152646.25903-69-p.zabel@pengutronix.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: tegra: Use platform_irq_count()
+Date: Wed, 2 Aug 2017 14:02:17 +0200
+Message-ID: <CACRpkdbeR2+SJXJv-j1_C5bNnc-w5-ebkR_vQ7c=eh-whDrwVQ@mail.gmail.com>
+References: <20170720160057.13483-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170719152646.25903-69-p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20170720160057.13483-1-thierry.reding@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 19, 2017 at 5:26 PM, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+On Thu, Jul 20, 2017 at 6:00 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
 
-> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-> reset lines") started to transition the reset control request API calls
-> to explicitly state whether the driver needs exclusive or shared reset
-> control behavior. Convert all drivers requesting exclusive resets to the
-> explicit API call so the temporary transition helpers can be removed.
+> From: Thierry Reding <treding@nvidia.com>
 >
-> No functional changes.
+> Use platform_irq_count() instead of open-coding the same code sequence.
 >
-> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
 Patch applied.
 
