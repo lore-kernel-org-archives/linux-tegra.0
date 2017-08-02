@@ -1,29 +1,66 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/4] gpio: tegra: Fix checkpatch warnings
-Date: Wed, 2 Aug 2017 14:18:13 +0200
-Message-ID: <CACRpkdZK1xM5FVBibxaK=-HzU0EZPe3bb0vrUG55fnY16QjdxQ@mail.gmail.com>
-References: <20170724145508.7388-1-thierry.reding@gmail.com> <20170724145508.7388-3-thierry.reding@gmail.com>
+From: <Angela-63XfWfWBA5k@public.gmane.org>
+Subject: (unknown)
+Date: Wed, 02 Aug 2017 18:05:31 -0000
+Message-ID: <150169713112.2727.10639584513109872840@isurgut.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: application/zip; name="EMAIL_934736608514_linux-tegra.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170724145508.7388-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: attachment
+Subject: 
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Gustafson-bwXX7kNdE64@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 24, 2017 at 4:55 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Fix a couple of checkpatch warnings, such as complaints about bare
-> unsigned being used (instead of unsigned int) and missing blank lines
-> after declarations.
->
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Patch applied with Jon's ACK.
-
-Yours,
-Linus Walleij
+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
+AVBLBQYAAAAAAQABAF8AAAD9CgAAAAA=
