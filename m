@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 6/8] ARM: tegra: Enable UDC on Dalmore
-Date: Sun,  6 Aug 2017 18:10:33 +0300
-Message-ID: <0ab9ecb4f80c3ad1d6039ea07fa4a9fd4d04f7cd.1502031673.git.digetx@gmail.com>
+Subject: [PATCH v3 7/8] ARM: tegra: Enable UDC on Jetson TK1
+Date: Sun,  6 Aug 2017 18:10:34 +0300
+Message-ID: <f2a5c3a29e9859466e1f54181c914f58df130ed9.1502031673.git.digetx@gmail.com>
 References: <cover.1502031673.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1502031673.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -18,20 +18,31 @@ Override the compatible string of the first USB controller to enable
 device mode.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra114-dalmore.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 1444fbd543e7..5af4dd321952 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -1122,6 +1122,16 @@
- 		non-removable;
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 7bacb2954f58..61873d642a45 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1722,7 +1722,7 @@
+ 
+ 				lanes {
+ 					usb2-0 {
+-						nvidia,function = "xusb";
++						nvidia,function = "snps";
+ 						status = "okay";
+ 					};
+ 
+@@ -1829,6 +1829,16 @@
+ 		};
  	};
  
 +	usb@7d000000 {
-+		compatible = "nvidia,tegra114-udc";
++		compatible = "nvidia,tegra124-udc";
 +		status = "okay";
 +		dr_mode = "peripheral";
 +	};
@@ -40,8 +51,8 @@ index 1444fbd543e7..5af4dd321952 100644
 +		status = "okay";
 +	};
 +
- 	usb@7d008000 {
+ 	/* mini-PCIe USB */
+ 	usb@7d004000 {
  		status = "okay";
- 	};
 -- 
 2.13.3
