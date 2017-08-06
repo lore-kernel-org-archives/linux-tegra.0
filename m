@@ -1,11 +1,8 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 3/8] usb: chipidea: Add support for Tegra20/30/114/124
-Date: Sun,  6 Aug 2017 18:10:30 +0300
-Message-ID: <dd37d7f5778b107409829d392554a52b2eec479b.1502031673.git.digetx@gmail.com>
+Subject: [PATCH v3 4/8] ARM: defconfig: tegra: Enable ChipIdea UDC driver
+Date: Sun,  6 Aug 2017 18:10:31 +0300
+Message-ID: <d56d881e1a26c287c31562680a3b8bf4cd09eeb0.1502031673.git.digetx@gmail.com>
 References: <cover.1502031673.git.digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1502031673.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 In-Reply-To: <cover.1502031673.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -15,194 +12,68 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fel
 Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Since NVIDIA Tegra is supported now by the ChipIdea USB driver, let's
+enable this driver in tegra_defconfig.
 
-All of these Tegra SoC generations have a ChipIdea UDC IP block that can
-be used for device mode communication with a host. Implement rudimentary
-support that doesn't allow switching between host and device modes.
-
-Tested-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-[digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org: rebased patches and added DMA alignment quirk for Tegra20]
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Acked-by: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
 ---
- drivers/usb/chipidea/Makefile        |   1 +
- drivers/usb/chipidea/ci_hdrc_tegra.c | 156 +++++++++++++++++++++++++++++++++++
- 2 files changed, 157 insertions(+)
- create mode 100644 drivers/usb/chipidea/ci_hdrc_tegra.c
+ arch/arm/configs/tegra_defconfig | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/chipidea/Makefile b/drivers/usb/chipidea/Makefile
-index 39fca5715ed3..ddcbddf8361a 100644
---- a/drivers/usb/chipidea/Makefile
-+++ b/drivers/usb/chipidea/Makefile
-@@ -15,3 +15,4 @@ obj-$(CONFIG_USB_CHIPIDEA)	+= ci_hdrc_zevio.o
- obj-$(CONFIG_USB_CHIPIDEA_PCI)	+= ci_hdrc_pci.o
- 
- obj-$(CONFIG_USB_CHIPIDEA_OF)	+= usbmisc_imx.o ci_hdrc_imx.o
-+obj-$(CONFIG_USB_CHIPIDEA_OF)	+= ci_hdrc_tegra.o
-diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-new file mode 100644
-index 000000000000..a8a094d3df30
---- /dev/null
-+++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-@@ -0,0 +1,156 @@
-+/*
-+ * Copyright (c) 2016, NVIDIA Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include <linux/usb/chipidea.h>
-+
-+#include "ci.h"
-+
-+struct tegra_udc {
-+	struct ci_hdrc_platform_data data;
-+	struct platform_device *dev;
-+
-+	struct usb_phy *phy;
-+	struct clk *clk;
-+};
-+
-+struct tegra_udc_soc_info {
-+	unsigned long flags;
-+};
-+
-+static const struct tegra_udc_soc_info tegra20_udc_soc_info = {
-+	.flags = CI_HDRC_REQUIRES_ALIGNED_DMA,
-+};
-+
-+static const struct tegra_udc_soc_info tegra30_udc_soc_info = {
-+	.flags = 0,
-+};
-+
-+static const struct tegra_udc_soc_info tegra114_udc_soc_info = {
-+	.flags = 0,
-+};
-+
-+static const struct tegra_udc_soc_info tegra124_udc_soc_info = {
-+	.flags = 0,
-+};
-+
-+static const struct of_device_id tegra_udc_of_match[] = {
-+	{
-+		.compatible = "nvidia,tegra20-udc",
-+		.data = &tegra20_udc_soc_info,
-+	}, {
-+		.compatible = "nvidia,tegra30-udc",
-+		.data = &tegra30_udc_soc_info,
-+	}, {
-+		.compatible = "nvidia,tegra114-udc",
-+		.data = &tegra114_udc_soc_info,
-+	}, {
-+		.compatible = "nvidia,tegra124-udc",
-+		.data = &tegra124_udc_soc_info,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+MODULE_DEVICE_TABLE(of, tegra_udc_of_match);
-+
-+static int tegra_udc_probe(struct platform_device *pdev)
-+{
-+	const struct tegra_udc_soc_info *soc;
-+	const struct of_device_id *id;
-+	struct tegra_udc *udc;
-+	int err;
-+
-+	udc = devm_kzalloc(&pdev->dev, sizeof(*udc), GFP_KERNEL);
-+	if (!udc)
-+		return -ENOMEM;
-+
-+	id = of_match_node(tegra_udc_of_match, pdev->dev.of_node);
-+	if (!id)
-+		return -ENODEV;
-+
-+	soc = id->data;
-+
-+	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
-+	if (IS_ERR(udc->phy)) {
-+		err = PTR_ERR(udc->phy);
-+		dev_err(&pdev->dev, "failed to get PHY: %d\n", err);
-+		return err;
-+	}
-+
-+	udc->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(udc->clk)) {
-+		err = PTR_ERR(udc->clk);
-+		dev_err(&pdev->dev, "failed to get clock: %d\n", err);
-+		return err;
-+	}
-+
-+	err = clk_prepare_enable(udc->clk);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to enable clock: %d\n", err);
-+		return err;
-+	}
-+
-+	/* setup and register ChipIdea HDRC device */
-+	udc->data.name = "tegra-udc";
-+	udc->data.flags = soc->flags;
-+	udc->data.usb_phy = udc->phy;
-+	udc->data.capoffset = DEF_CAPOFFSET;
-+
-+	/*
-+	 * Tegra's USB PHY driver doesn't implement optional phy_init()
-+	 * hook, so we have to power on UDC controller before ChipIdea
-+	 * driver initialization kicks in.
-+	 */
-+	usb_phy_set_suspend(udc->phy, 0);
-+
-+	udc->dev = ci_hdrc_add_device(&pdev->dev, pdev->resource,
-+				      pdev->num_resources, &udc->data);
-+	if (IS_ERR(udc->dev)) {
-+		err = PTR_ERR(udc->dev);
-+		dev_err(&pdev->dev, "failed to add HDRC device: %d\n", err);
-+		goto power_off;
-+	}
-+
-+	platform_set_drvdata(pdev, udc);
-+
-+	return 0;
-+
-+power_off:
-+	usb_phy_set_suspend(udc->phy, 1);
-+	clk_disable_unprepare(udc->clk);
-+	return err;
-+}
-+
-+static int tegra_udc_remove(struct platform_device *pdev)
-+{
-+	struct tegra_udc *udc = platform_get_drvdata(pdev);
-+
-+	usb_phy_set_suspend(udc->phy, 1);
-+	clk_disable_unprepare(udc->clk);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver tegra_udc_driver = {
-+	.driver = {
-+		.name = "tegra-udc",
-+		.of_match_table = tegra_udc_of_match,
-+	},
-+	.probe = tegra_udc_probe,
-+	.remove = tegra_udc_remove,
-+};
-+module_platform_driver(tegra_udc_driver);
-+
-+MODULE_DESCRIPTION("NVIDIA Tegra USB device mode driver");
-+MODULE_AUTHOR("Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-+MODULE_ALIAS("platform:tegra-udc");
-+MODULE_LICENSE("GPL v2");
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index fe1275aa067e..9c9c644ed9d7 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -121,7 +121,6 @@ CONFIG_TOUCHSCREEN_WM97XX=y
+ CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_INPUT_MISC=y
+ # CONFIG_LEGACY_PTYS is not set
+-# CONFIG_DEVKMEM is not set
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+@@ -220,6 +219,9 @@ CONFIG_USB_EHCI_TEGRA=y
+ CONFIG_USB_ACM=y
+ CONFIG_USB_WDM=y
+ CONFIG_USB_STORAGE=y
++CONFIG_USB_CHIPIDEA=m
++CONFIG_USB_CHIPIDEA_UDC=y
++CONFIG_USB_GADGET=m
+ CONFIG_MMC=y
+ CONFIG_MMC_BLOCK_MINORS=16
+ CONFIG_MMC_SDHCI=y
+@@ -249,8 +251,6 @@ CONFIG_RTC_DRV_TEGRA=y
+ CONFIG_DMADEVICES=y
+ CONFIG_TEGRA20_APB_DMA=y
+ CONFIG_STAGING=y
+-CONFIG_SENSORS_ISL29018=y
+-CONFIG_SENSORS_ISL29028=y
+ CONFIG_MFD_NVEC=y
+ CONFIG_KEYBOARD_NVEC=y
+ CONFIG_SERIO_NVEC_PS2=y
+@@ -265,6 +265,8 @@ CONFIG_ARCH_TEGRA_124_SOC=y
+ CONFIG_MEMORY=y
+ CONFIG_IIO=y
+ CONFIG_MPU3050_I2C=y
++CONFIG_SENSORS_ISL29018=y
++CONFIG_SENSORS_ISL29028=y
+ CONFIG_AK8975=y
+ CONFIG_PWM=y
+ CONFIG_PWM_TEGRA=y
+@@ -290,13 +292,11 @@ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ CONFIG_PRINTK_TIME=y
+ CONFIG_DEBUG_INFO=y
+-CONFIG_DEBUG_FS=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_SLAB=y
+ CONFIG_DEBUG_VM=y
+ CONFIG_DETECT_HUNG_TASK=y
+ CONFIG_SCHEDSTATS=y
+-CONFIG_TIMER_STATS=y
+ # CONFIG_DEBUG_PREEMPT is not set
+ CONFIG_DEBUG_MUTEXES=y
+ CONFIG_DEBUG_SG=y
 -- 
 2.13.3
 
