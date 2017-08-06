@@ -1,48 +1,75 @@
-From: Tyrel Datwyler <tyreld-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH] PCI: Convert to using %pOF instead of full_name
-Date: Fri, 4 Aug 2017 09:38:42 -0700
-Message-ID: <dd5a317b-9e72-97bc-0386-8470998421c3@linux.vnet.ibm.com>
-References: <20170718214339.7774-41-robh@kernel.org>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 0/8] Support UDC on Tegra 20/30/114/124
+Date: Sun,  6 Aug 2017 18:10:27 +0300
+Message-ID: <cover.1502031673.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170718214339.7774-41-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Content-Language: en-GB
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/18/2017 02:43 PM, Rob Herring wrote:
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
-> 
-> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> Cc: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
-> Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
-> Cc: Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
-> Cc: Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>
-> Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> ---
->  drivers/pci/host/pci-mvebu.c        | 8 ++++----
->  drivers/pci/host/pci-tegra.c        | 3 +--
->  drivers/pci/hotplug/pnv_php.c       | 4 ++--
->  drivers/pci/hotplug/rpadlpar_core.c | 4 ++--
->  drivers/pci/hotplug/rpaphp_core.c   | 2 +-
->  drivers/pci/hotplug/rpaphp_pci.c    | 4 ++--
->  drivers/pci/hotplug/rpaphp_slot.c   | 4 ++--
->  drivers/pci/pci-sysfs.c             | 4 ++--
->  drivers/pci/pci.c                   | 4 ++--
->  9 files changed, 18 insertions(+), 19 deletions(-)
-> 
+Some time ago Thierry Reding sent out patches that enabled UDC on NVIDIA
+Tegra, unfortunately they haven't got enough traction to get into the
+kernel. I've rebased those patches and added a fix for the Ethernet USB
+Gadget on Tegra20, Marc Dietrich tested UDC driver on AC100 (Tegra20),
+Nicolas Chauvet on TK1 (Tegra124) and Michał Mirosław on TF300T (Tegra30).
+Like an original patchset, this series adds support for the peripheral
+mode only.
 
-Reviewed-by: Tyrel Datwyler <tyreld-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+Changelog:
+
+V3:
+1) Specified platform flags directly in the SoC info as per Michał's
+   suggestion.
+
+V2:
+1) Added comments to each of patched USB Ethernet gadget models.
+
+2) Added explanatory comment about why usb_phy_set_suspend() invocation
+   is necessary in tegra_udc_probe().
+
+3) Dropped TrimSlice from patchset because it turned out that it uses USB1
+   controller for USB-to-SATA.
+
+4) Moved tegra_defconfig patch before DT patches as per Stephen's suggestion.
+
+5) Changed dr_mode to "peripheral" in DT patches since we don't support role
+   mode switching for now.
+
+Dmitry Osipenko (4):
+  usb: gadget: f_ecm/f_eem/f_rndis: Setup quirk_avoids_skb_reserve
+  usb: chipidea: udc: Support SKB alignment quirk
+  ARM: defconfig: tegra: Enable ChipIdea UDC driver
+  ARM: tegra: Enable UDC on AC100
+
+Thierry Reding (4):
+  usb: chipidea: Add support for Tegra20/30/114/124
+  ARM: tegra: Enable UDC on Beaver
+  ARM: tegra: Enable UDC on Dalmore
+  ARM: tegra: Enable UDC on Jetson TK1
+
+ arch/arm/boot/dts/tegra114-dalmore.dts    |  10 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts |  12 ++-
+ arch/arm/boot/dts/tegra20-paz00.dts       |   2 +
+ arch/arm/boot/dts/tegra30-beaver.dts      |  10 ++
+ arch/arm/configs/tegra_defconfig          |  10 +-
+ drivers/usb/chipidea/Makefile             |   1 +
+ drivers/usb/chipidea/ci_hdrc_tegra.c      | 156 ++++++++++++++++++++++++++++++
+ drivers/usb/chipidea/udc.c                |   3 +
+ drivers/usb/gadget/function/f_ecm.c       |   7 ++
+ drivers/usb/gadget/function/f_eem.c       |   5 +
+ drivers/usb/gadget/function/f_rndis.c     |   4 +
+ include/linux/usb/chipidea.h              |   1 +
+ 12 files changed, 215 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/usb/chipidea/ci_hdrc_tegra.c
+
+-- 
+2.13.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
