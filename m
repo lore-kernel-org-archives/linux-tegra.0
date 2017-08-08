@@ -1,48 +1,46 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 5/8] ARM: tegra: Enable UDC on Beaver
-Date: Sun,  6 Aug 2017 18:10:32 +0300
-Message-ID: <b3e0d11e278e7c83952de4061d7f7bfd9fab098e.1502031673.git.digetx@gmail.com>
-References: <cover.1502031673.git.digetx@gmail.com>
+From: "Gustavo A. R. Silva" <gustavo-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
+Subject: [PATCH] gpu: host1x: fix error return code in host1x_probe()
+Date: Tue, 8 Aug 2017 00:08:06 -0500
+Message-ID: <20170808050806.GA21976@embeddedgus>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1502031673.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-In-Reply-To: <cover.1502031673.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-References: <cover.1502031673.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Gustavo A. R. Silva" <gustavo-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+platform_get_irq() returns an error code, but the host1x driver
+ignores it and always returns -ENXIO. This is not correct and,
+prevents -EPROBE_DEFER from being propagated properly.
 
-Override the compatible string of the first USB controller to enable
-device mode.
+Notice that platform_get_irq() no longer returns 0 on error:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e330b9a6bb35dc7097a4f02cb1ae7b6f96df92af
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Print and propagate the return value of platform_get_irq on failure.
+
+This issue was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra30-beaver.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpu/host1x/dev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 4f41b18d9547..3e104ddeb220 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -1927,6 +1927,16 @@
- 		non-removable;
- 	};
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 7782725..7f22c5c 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -134,8 +134,8 @@ static int host1x_probe(struct platform_device *pdev)
  
-+	usb@7d000000 {
-+		compatible = "nvidia,tegra30-udc";
-+		status = "okay";
-+		dr_mode = "peripheral";
-+	};
-+
-+	usb-phy@7d000000 {
-+		status = "okay";
-+	};
-+
- 	usb@7d004000 {
- 		status = "okay";
- 	};
+ 	syncpt_irq = platform_get_irq(pdev, 0);
+ 	if (syncpt_irq < 0) {
+-		dev_err(&pdev->dev, "failed to get IRQ\n");
+-		return -ENXIO;
++		dev_err(&pdev->dev, "failed to get IRQ: %d\n", syncpt_irq);
++		return syncpt_irq;
+ 	}
+ 
+ 	host = devm_kzalloc(&pdev->dev, sizeof(*host), GFP_KERNEL);
 -- 
-2.13.3
+2.5.0
