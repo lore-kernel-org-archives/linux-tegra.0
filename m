@@ -1,46 +1,41 @@
-From: "Gustavo A. R. Silva" <gustavo-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
-Subject: [PATCH] gpu: host1x: fix error return code in host1x_probe()
-Date: Tue, 8 Aug 2017 00:08:06 -0500
-Message-ID: <20170808050806.GA21976@embeddedgus>
+From: Vincent ABRIOU <vincent.abriou@st.com>
+Subject: Re: [PATCH 7/8] drm: Nuke drm_atomic_helper_connector_dpms
+Date: Tue, 8 Aug 2017 10:05:11 +0000
+Message-ID: <462c98df-2633-3c61-9ae6-e567780941c0@st.com>
+References: <20170725080122.20548-1-daniel.vetter@ffwll.ch>
+ <20170725080122.20548-8-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Gustavo A. R. Silva" <gustavo-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170725080122.20548-8-daniel.vetter@ffwll.ch>
+Content-Language: en-US
+Content-ID: <C1D66642F494334E83389CC9FEAF0D3A@st.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>
+Cc: Martyn Welch <martyn.welch@collabora.co.uk>, Neil Armstrong <narmstrong@baylibre.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Romain Perier <romain.perier@collabora.com>, Daniel Vetter <daniel.vetter@intel.com>, Jyri Sarha <jsarha@ti.com>, Marek Vasut <marex@denx.de>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, Alexey Brodkin <abrodkin@synopsys.com>, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Xinliang
 List-Id: linux-tegra@vger.kernel.org
 
-platform_get_irq() returns an error code, but the host1x driver
-ignores it and always returns -ENXIO. This is not correct and,
-prevents -EPROBE_DEFER from being propagated properly.
-
-Notice that platform_get_irq() no longer returns 0 on error:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e330b9a6bb35dc7097a4f02cb1ae7b6f96df92af
-
-Print and propagate the return value of platform_get_irq on failure.
-
-This issue was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
----
- drivers/gpu/host1x/dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 7782725..7f22c5c 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -134,8 +134,8 @@ static int host1x_probe(struct platform_device *pdev)
- 
- 	syncpt_irq = platform_get_irq(pdev, 0);
- 	if (syncpt_irq < 0) {
--		dev_err(&pdev->dev, "failed to get IRQ\n");
--		return -ENXIO;
-+		dev_err(&pdev->dev, "failed to get IRQ: %d\n", syncpt_irq);
-+		return syncpt_irq;
- 	}
- 
- 	host = devm_kzalloc(&pdev->dev, sizeof(*host), GFP_KERNEL);
--- 
-2.5.0
+DQoNCk9uIDA3LzI1LzIwMTcgMTA6MDEgQU0sIERhbmllbCBWZXR0ZXIgd3JvdGU6DQo+IEl0J3Mg
+ZGVhZCBjb2RlLCB0aGUgY29yZSBoYW5kbGVzIGFsbCB0aGlzIGRpcmVjdGx5IG5vdy4NCj4gDQo+
+IFRoZSBvbmx5IHNwZWNpYWwgY2FzZSBpcyBub3V2ZWF1IGFuZCB0ZGE5ODh4IHdoaWNoIHVzZWQg
+b25lIGZ1bmN0aW9uDQo+IGZvciBib3RoIGxlZ2FjeSBtb2Rlc2V0IGNvZGUgYW5kIC1udjUwIGF0
+b21pYyB3b3JsZCBpbnN0ZWFkIG9mIDINCj4gdnRhYmxlcy4gQnV0IGFtb3VudHMgdG8gZXhhY3Rs
+eSB0aGUgc2FtZS4NCj4gDQo+IHYyOiBSZWJhc2Ugb3ZlciB0aGUgcGFuZWwvYnJpZGVnIHJlZmFj
+dG9yaW5ncyBpbiBzdG0vbHRkYy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IERhbmllbCBWZXR0ZXIg
+PGRhbmllbC52ZXR0ZXJAaW50ZWwuY29tPg0KDQpbLi4uXQ0KDQo+ICAgZHJpdmVycy9ncHUvZHJt
+L3N0aS9zdGlfZHZvLmMgICAgICAgICAgICAgICAgICAgICAgfCAgMSAtDQo+ICAgZHJpdmVycy9n
+cHUvZHJtL3N0aS9zdGlfaGRhLmMgICAgICAgICAgICAgICAgICAgICAgfCAgMSAtDQo+ICAgZHJp
+dmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jICAgICAgICAgICAgICAgICAgICAgfCAgMSAtDQoN
+CkFja2VkLWJ5OiBWaW5jZW50IEFicmlvdSA8dmluY2VudC5hYnJpb3VAc3QuY29tPg0KDQpCUg0K
+VmluY2VudApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
