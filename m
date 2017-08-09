@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 8/8] ARM: tegra: Enable UDC on AC100
-Date: Wed,  9 Aug 2017 15:19:34 +0300
-Message-ID: <dac788d9628a5c0bddc9ec2cd35e38520fd8df36.1502280695.git.digetx@gmail.com>
+Subject: [PATCH v5 6/8] ARM: tegra: Enable UDC on Dalmore
+Date: Wed,  9 Aug 2017 15:19:32 +0300
+Message-ID: <edc3239a47f088666848ce4ec9093be9c55b1b73.1502280695.git.digetx@gmail.com>
 References: <cover.1502280694.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1502280694.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,29 +12,36 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fel
 Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
 Override the compatible string of the first USB controller to enable
 device mode.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20-paz00.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/tegra114-dalmore.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index b4bfa5586c23..bfa9421fcf94 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -452,7 +452,9 @@
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 1444fbd543e7..5af4dd321952 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -1122,6 +1122,16 @@
+ 		non-removable;
  	};
  
- 	usb@c5000000 {
-+		compatible = "nvidia,tegra20-udc";
- 		status = "okay";
++	usb@7d000000 {
++		compatible = "nvidia,tegra114-udc";
++		status = "okay";
 +		dr_mode = "peripheral";
++	};
++
++	usb-phy@7d000000 {
++		status = "okay";
++	};
++
+ 	usb@7d008000 {
+ 		status = "okay";
  	};
- 
- 	usb-phy@c5000000 {
 -- 
 2.13.3
