@@ -1,39 +1,37 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] PCI: Convert to using %pOF instead of full_name
-Date: Wed, 9 Aug 2017 17:04:43 -0500
-Message-ID: <CAL_JsqLznQdnWw+A2T8V8CTktYaPDF_800jGHAVa=G-Yhxyn+Q@mail.gmail.com>
-References: <20170718214339.7774-41-robh@kernel.org> <20170802223928.GQ20308@bhelgaas-glaptop.roam.corp.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20170802223928.GQ20308@bhelgaas-glaptop.roam.corp.google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 0/2] iommu/tegra*: Add support for struct iommu_device
+Date: Thu, 10 Aug 2017 00:29:10 +0200
+Message-ID: <1502317752-8792-1-git-send-email-joro@8bytes.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 2, 2017 at 5:39 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Tue, Jul 18, 2017 at 04:43:21PM -0500, Rob Herring wrote:
->> Now that we have a custom printf format specifier, convert users of
->> full_name to use %pOF instead. This is preparation to remove storing
->> of the full path string for each node.
->>
->> Signed-off-by: Rob Herring <robh@kernel.org>
->> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
->> Cc: Jason Cooper <jason@lakedaemon.net>
->> Cc: Bjorn Helgaas <bhelgaas@google.com>
->> Cc: Thierry Reding <thierry.reding@gmail.com>
->> Cc: Jonathan Hunter <jonathanh@nvidia.com>
->> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> Cc: Paul Mackerras <paulus@samba.org>
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: linux-pci@vger.kernel.org
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-tegra@vger.kernel.org
->> Cc: linuxppc-dev@lists.ozlabs.org
->
-> Applied to pci/misc for v4.14, thanks!
+Hi,
 
-This hasn't shown up in -next.
+here are two patches to add support for 'struct iommu_device'
+to the tegra iommu-drivers. This will make the iommu-core
+code aware of the hardware iommus that a driver manages.
 
-Rob
+It will also add the iommus to sysfs and link them to the
+devices managed by them.
+
+The patches apply on-top of Robin's iommu-group patches.
+
+Please review.
+
+Regards,
+
+	Joerg
+
+Joerg Roedel (2):
+  iommu/tegra: Add support for struct iommu_device
+  iommu/tegra-gart: Add support for struct iommu_device
+
+ drivers/iommu/tegra-gart.c | 26 ++++++++++++++++++++++++++
+ drivers/iommu/tegra-smmu.c | 25 +++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
+
+-- 
+2.7.4
