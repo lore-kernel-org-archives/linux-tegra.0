@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH 3/4] mmc/sdhci-pci: use generic sdhci_set_bus_width()
-Date: Wed, 09 Aug 2017 22:36:05 +0200
-Message-ID: <b1a072bfd9f9d7934bef982e4a94734eccf0b8e4.1502310654.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 4/4] mmc/sdhci-s3c: use generic sdhci_set_bus_width()
+Date: Wed, 09 Aug 2017 22:36:06 +0200
+Message-ID: <4323de12fe8bf8c33211a39a5fb14563fb80f2e9.1502310654.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1502310654.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -15,44 +15,26 @@ List-Id: linux-tegra@vger.kernel.org
 
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 ---
- drivers/mmc/host/sdhci-pci-core.c | 30 +++---------------------------
- 1 file changed, 3 insertions(+), 27 deletions(-)
+ drivers/mmc/host/sdhci-s3c.c | 34 +---------------------------------
+ 1 file changed, 1 insertion(+), 33 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index 92fc3f7c538d..dfe217e7fbfe 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -35,7 +35,6 @@
- #include "sdhci-pci-o2micro.h"
- 
- static int sdhci_pci_enable_dma(struct sdhci_host *host);
--static void sdhci_pci_set_bus_width(struct sdhci_host *host, int width);
- static void sdhci_pci_hw_reset(struct sdhci_host *host);
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -547,7 +546,7 @@ static const struct sdhci_ops sdhci_intel_byt_ops = {
- 	.set_clock		= sdhci_set_clock,
- 	.set_power		= sdhci_intel_set_power,
- 	.enable_dma		= sdhci_pci_enable_dma,
--	.set_bus_width		= sdhci_pci_set_bus_width,
-+	.set_bus_width		= sdhci_set_bus_width,
- 	.reset			= sdhci_reset,
- 	.set_uhs_signaling	= sdhci_set_uhs_signaling,
- 	.hw_reset		= sdhci_pci_hw_reset,
-@@ -1159,7 +1158,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
- static const struct sdhci_ops amd_sdhci_pci_ops = {
- 	.set_clock			= sdhci_set_clock,
- 	.enable_dma			= sdhci_pci_enable_dma,
--	.set_bus_width			= sdhci_pci_set_bus_width,
-+	.set_bus_width			= sdhci_set_bus_width,
- 	.reset				= sdhci_reset,
- 	.set_uhs_signaling		= sdhci_set_uhs_signaling,
- 	.platform_execute_tuning	= amd_execute_tuning,
-@@ -1750,29 +1749,6 @@ static int sdhci_pci_enable_dma(struct sdhci_host *host)
- 	return 0;
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index 7c065a70f92b..d328fcf284d1 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -414,43 +414,11 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
  }
  
--static void sdhci_pci_set_bus_width(struct sdhci_host *host, int width)
+-/**
+- * sdhci_s3c_set_bus_width - support 8bit buswidth
+- * @host: The SDHCI host being queried
+- * @width: MMC_BUS_WIDTH_ macro for the bus width being requested
+- *
+- * We have 8-bit width support but is not a v3 controller.
+- * So we add platform_bus_width() and support 8bit width.
+- */
+-static void sdhci_s3c_set_bus_width(struct sdhci_host *host, int width)
 -{
 -	u8 ctrl;
 -
@@ -68,25 +50,23 @@ index 92fc3f7c538d..dfe217e7fbfe 100644
 -		ctrl &= ~SDHCI_CTRL_8BITBUS;
 -		break;
 -	default:
--		ctrl &= ~(SDHCI_CTRL_8BITBUS | SDHCI_CTRL_4BITBUS);
+-		ctrl &= ~SDHCI_CTRL_4BITBUS;
+-		ctrl &= ~SDHCI_CTRL_8BITBUS;
 -		break;
 -	}
 -
 -	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
 -}
 -
- static void sdhci_pci_gpio_hw_reset(struct sdhci_host *host)
- {
- 	struct sdhci_pci_slot *slot = sdhci_priv(host);
-@@ -1799,7 +1775,7 @@ static void sdhci_pci_hw_reset(struct sdhci_host *host)
- static const struct sdhci_ops sdhci_pci_ops = {
- 	.set_clock	= sdhci_set_clock,
- 	.enable_dma	= sdhci_pci_enable_dma,
--	.set_bus_width	= sdhci_pci_set_bus_width,
-+	.set_bus_width	= sdhci_set_bus_width,
- 	.reset		= sdhci_reset,
- 	.set_uhs_signaling = sdhci_set_uhs_signaling,
- 	.hw_reset		= sdhci_pci_hw_reset,
+ static struct sdhci_ops sdhci_s3c_ops = {
+ 	.get_max_clock		= sdhci_s3c_get_max_clk,
+ 	.set_clock		= sdhci_s3c_set_clock,
+ 	.get_min_clock		= sdhci_s3c_get_min_clock,
+-	.set_bus_width		= sdhci_s3c_set_bus_width,
++	.set_bus_width		= sdhci_set_bus_width,
+ 	.reset			= sdhci_reset,
+ 	.set_uhs_signaling	= sdhci_set_uhs_signaling,
+ };
 -- 
 2.11.0
 
