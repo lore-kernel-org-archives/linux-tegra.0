@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 1/8] usb: gadget: f_ecm/f_eem/f_rndis: Setup quirk_avoids_skb_reserve
-Date: Wed,  9 Aug 2017 14:49:02 +0300
-Message-ID: <4c7b3a3b23b44f4115de1745c65d719a3f70c4db.1502278634.git.digetx@gmail.com>
+Subject: [PATCH v4 6/8] ARM: tegra: Enable UDC on Dalmore
+Date: Wed,  9 Aug 2017 14:49:07 +0300
+Message-ID: <a80ad23c71516e956358f34a31762d3725be6307.1502278634.git.digetx@gmail.com>
 References: <cover.1502278634.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1502278634.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,67 +12,36 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fel
 Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This quirk is required to make USB Ethernet gadget working with HW that
-can't cope with unaligned DMA. For some reason only f_ncm handles that
-quirk, let's handle it in the rest of the network models. All models have
-been tested with a ChipIdea UDC driver on NVIDIA Tegra20 SoC that require
-DMA to be aligned.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Override the compatible string of the first USB controller to enable
+device mode.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/usb/gadget/function/f_ecm.c   | 7 +++++++
- drivers/usb/gadget/function/f_eem.c   | 5 +++++
- drivers/usb/gadget/function/f_rndis.c | 4 ++++
- 3 files changed, 16 insertions(+)
+ arch/arm/boot/dts/tegra114-dalmore.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/usb/gadget/function/f_ecm.c b/drivers/usb/gadget/function/f_ecm.c
-index 4c488d15b6f6..1d198055fd74 100644
---- a/drivers/usb/gadget/function/f_ecm.c
-+++ b/drivers/usb/gadget/function/f_ecm.c
-@@ -584,6 +584,13 @@ static int ecm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
- 			 */
- 			ecm->port.is_zlp_ok =
- 				gadget_is_zlp_supported(cdev->gadget);
-+
-+			/* Setup DMA alignment workaround for UDC's that
-+			 * need it.
-+			 */
-+			ecm->port.no_skb_reserve =
-+				gadget_avoids_skb_reserve(cdev->gadget);
-+
- 			ecm->port.cdc_filter = DEFAULT_FILTER;
- 			DBG(cdev, "activate ecm\n");
- 			net = gether_connect(&ecm->port);
-diff --git a/drivers/usb/gadget/function/f_eem.c b/drivers/usb/gadget/function/f_eem.c
-index 007ec6e4a5d4..74e2453d8ac5 100644
---- a/drivers/usb/gadget/function/f_eem.c
-+++ b/drivers/usb/gadget/function/f_eem.c
-@@ -215,6 +215,11 @@ static int eem_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
- 		 */
- 		eem->port.is_zlp_ok = 1;
- 		eem->port.cdc_filter = DEFAULT_FILTER;
-+
-+		/* setup DMA alignment workaround for UDC's that*need it */
-+		eem->port.no_skb_reserve =
-+				gadget_avoids_skb_reserve(cdev->gadget);
-+
- 		DBG(cdev, "activate eem\n");
- 		net = gether_connect(&eem->port);
- 		if (IS_ERR(net))
-diff --git a/drivers/usb/gadget/function/f_rndis.c b/drivers/usb/gadget/function/f_rndis.c
-index 16562e461121..1b379c051a84 100644
---- a/drivers/usb/gadget/function/f_rndis.c
-+++ b/drivers/usb/gadget/function/f_rndis.c
-@@ -593,6 +593,10 @@ static int rndis_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
- 		 */
- 		rndis->port.cdc_filter = 0;
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 1444fbd543e7..5af4dd321952 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -1122,6 +1122,16 @@
+ 		non-removable;
+ 	};
  
-+		/* Setup DMA alignment workaround for UDC's that need it */
-+		rndis->port.no_skb_reserve =
-+				gadget_avoids_skb_reserve(cdev->gadget);
++	usb@7d000000 {
++		compatible = "nvidia,tegra114-udc";
++		status = "okay";
++		dr_mode = "peripheral";
++	};
 +
- 		DBG(cdev, "RNDIS RX/TX early activation ... \n");
- 		net = gether_connect(&rndis->port);
- 		if (IS_ERR(net))
++	usb-phy@7d000000 {
++		status = "okay";
++	};
++
+ 	usb@7d008000 {
+ 		status = "okay";
+ 	};
 -- 
 2.13.3
