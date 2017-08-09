@@ -1,74 +1,78 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 0/8] Support UDC on Tegra 20/30/114/124
-Date: Wed,  9 Aug 2017 14:49:01 +0300
-Message-ID: <cover.1502278634.git.digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v4 1/8] usb: gadget: f_ecm/f_eem/f_rndis: Setup quirk_avoids_skb_reserve
+Date: Wed,  9 Aug 2017 14:49:02 +0300
+Message-ID: <4c7b3a3b23b44f4115de1745c65d719a3f70c4db.1502278634.git.digetx@gmail.com>
+References: <cover.1502278634.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1502278634.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <cover.1502278634.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+References: <cover.1502278634.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some time ago Thierry Reding sent out patches that enabled UDC on NVIDIA
-Tegra, unfortunately they haven't got enough traction to get into the
-kernel. I've rebased those patches and added a fix for the Ethernet USB
-Gadget on Tegra20, Marc Dietrich tested UDC driver on AC100 (Tegra20),
-Nicolas Chauvet on TK1 (Tegra124) and Michał Mirosław on TF300T (Tegra30).
-Like an original patchset, this series adds support for the peripheral
-mode only.
+This quirk is required to make USB Ethernet gadget working with HW that
+can't cope with unaligned DMA. For some reason only f_ncm handles that
+quirk, let's handle it in the rest of the network models. All models have
+been tested with a ChipIdea UDC driver on NVIDIA Tegra20 SoC that require
+DMA to be aligned.
 
-Changelog:
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/usb/gadget/function/f_ecm.c   | 7 +++++++
+ drivers/usb/gadget/function/f_eem.c   | 5 +++++
+ drivers/usb/gadget/function/f_rndis.c | 4 ++++
+ 3 files changed, 16 insertions(+)
 
-V4:
-1) Use of_device_get_match_data() instead of of_match_node() to cleanup
-   code a tad.
-
-V3:
-1) Specified platform flags directly in the SoC info as per Michał's
-   suggestion.
-
-V2:
-1) Added comments to each of patched USB Ethernet gadget models.
-
-2) Added explanatory comment about why usb_phy_set_suspend() invocation
-   is necessary in tegra_udc_probe().
-
-3) Dropped TrimSlice from patchset because it turned out that it uses USB1
-   controller for USB-to-SATA.
-
-4) Moved tegra_defconfig patch before DT patches as per Stephen's suggestion.
-
-5) Changed dr_mode to "peripheral" in DT patches since we don't support role
-   mode switching for now.
-
-Dmitry Osipenko (4):
-  usb: gadget: f_ecm/f_eem/f_rndis: Setup quirk_avoids_skb_reserve
-  usb: chipidea: udc: Support SKB alignment quirk
-  ARM: defconfig: tegra: Enable ChipIdea UDC driver
-  ARM: tegra: Enable UDC on AC100
-
-Thierry Reding (4):
-  usb: chipidea: Add support for Tegra20/30/114/124
-  ARM: tegra: Enable UDC on Beaver
-  ARM: tegra: Enable UDC on Dalmore
-  ARM: tegra: Enable UDC on Jetson TK1
-
- arch/arm/boot/dts/tegra114-dalmore.dts    |  10 ++
- arch/arm/boot/dts/tegra124-jetson-tk1.dts |  12 ++-
- arch/arm/boot/dts/tegra20-paz00.dts       |   2 +
- arch/arm/boot/dts/tegra30-beaver.dts      |  10 ++
- arch/arm/configs/tegra_defconfig          |  10 +-
- drivers/usb/chipidea/Makefile             |   1 +
- drivers/usb/chipidea/ci_hdrc_tegra.c      | 155 ++++++++++++++++++++++++++++++
- drivers/usb/chipidea/udc.c                |   3 +
- drivers/usb/gadget/function/f_ecm.c       |   7 ++
- drivers/usb/gadget/function/f_eem.c       |   5 +
- drivers/usb/gadget/function/f_rndis.c     |   4 +
- include/linux/usb/chipidea.h              |   1 +
- 12 files changed, 214 insertions(+), 6 deletions(-)
- create mode 100644 drivers/usb/chipidea/ci_hdrc_tegra.c
-
+diff --git a/drivers/usb/gadget/function/f_ecm.c b/drivers/usb/gadget/function/f_ecm.c
+index 4c488d15b6f6..1d198055fd74 100644
+--- a/drivers/usb/gadget/function/f_ecm.c
++++ b/drivers/usb/gadget/function/f_ecm.c
+@@ -584,6 +584,13 @@ static int ecm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+ 			 */
+ 			ecm->port.is_zlp_ok =
+ 				gadget_is_zlp_supported(cdev->gadget);
++
++			/* Setup DMA alignment workaround for UDC's that
++			 * need it.
++			 */
++			ecm->port.no_skb_reserve =
++				gadget_avoids_skb_reserve(cdev->gadget);
++
+ 			ecm->port.cdc_filter = DEFAULT_FILTER;
+ 			DBG(cdev, "activate ecm\n");
+ 			net = gether_connect(&ecm->port);
+diff --git a/drivers/usb/gadget/function/f_eem.c b/drivers/usb/gadget/function/f_eem.c
+index 007ec6e4a5d4..74e2453d8ac5 100644
+--- a/drivers/usb/gadget/function/f_eem.c
++++ b/drivers/usb/gadget/function/f_eem.c
+@@ -215,6 +215,11 @@ static int eem_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+ 		 */
+ 		eem->port.is_zlp_ok = 1;
+ 		eem->port.cdc_filter = DEFAULT_FILTER;
++
++		/* setup DMA alignment workaround for UDC's that*need it */
++		eem->port.no_skb_reserve =
++				gadget_avoids_skb_reserve(cdev->gadget);
++
+ 		DBG(cdev, "activate eem\n");
+ 		net = gether_connect(&eem->port);
+ 		if (IS_ERR(net))
+diff --git a/drivers/usb/gadget/function/f_rndis.c b/drivers/usb/gadget/function/f_rndis.c
+index 16562e461121..1b379c051a84 100644
+--- a/drivers/usb/gadget/function/f_rndis.c
++++ b/drivers/usb/gadget/function/f_rndis.c
+@@ -593,6 +593,10 @@ static int rndis_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+ 		 */
+ 		rndis->port.cdc_filter = 0;
+ 
++		/* Setup DMA alignment workaround for UDC's that need it */
++		rndis->port.no_skb_reserve =
++				gadget_avoids_skb_reserve(cdev->gadget);
++
+ 		DBG(cdev, "RNDIS RX/TX early activation ... \n");
+ 		net = gether_connect(&rndis->port);
+ 		if (IS_ERR(net))
 -- 
 2.13.3
