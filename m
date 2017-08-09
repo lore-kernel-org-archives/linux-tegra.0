@@ -1,123 +1,135 @@
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Subject: [PATCH 2/4] phy: samsung: use of_device_get_match_data()
-Date: Wed, 9 Aug 2017 17:17:58 +0800
-Message-ID: <1502270280-13792-2-git-send-email-chunfeng.yun@mediatek.com>
-References: <1502270280-13792-1-git-send-email-chunfeng.yun@mediatek.com>
+From: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH 1/4] phy: rockchip: use of_device_get_match_data()
+Date: Wed, 9 Aug 2017 17:17:57 +0800
+Message-ID: <1502270280-13792-1-git-send-email-chunfeng.yun@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502270280-13792-1-git-send-email-chunfeng.yun@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kamil Debski <kamil@wypas.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Vivek Gautam <vivek.gautam@codeaurora.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Baoyou Xie <baoyou.xie@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Sekhar Nori <nsekhar@ti.com>, Viresh Kumar <viresh.kumar@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kamil Debski <kamil-MZ2JYD8fkKLYtjvyW6yDsg@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, Baoyou Xie <baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 reduce the boilerplate code to get the specific data
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Signed-off-by: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 ---
- drivers/phy/samsung/phy-exynos-dp-video.c |    5 ++---
- drivers/phy/samsung/phy-exynos5-usbdrd.c  |    7 ++++---
- drivers/phy/samsung/phy-samsung-usb2.c    |    9 +++------
- 3 files changed, 9 insertions(+), 12 deletions(-)
+ drivers/phy/rockchip/phy-rockchip-inno-usb2.c |    9 +++------
+ drivers/phy/rockchip/phy-rockchip-pcie.c      |    7 +++----
+ drivers/phy/rockchip/phy-rockchip-usb.c       |   10 +++-------
+ 3 files changed, 9 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/phy/samsung/phy-exynos-dp-video.c b/drivers/phy/samsung/phy-exynos-dp-video.c
-index bb3279d..2dd6dd1 100644
---- a/drivers/phy/samsung/phy-exynos-dp-video.c
-+++ b/drivers/phy/samsung/phy-exynos-dp-video.c
-@@ -16,6 +16,7 @@
- #include <linux/mfd/syscon.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -78,7 +79,6 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
- {
- 	struct exynos_dp_video_phy *state;
- 	struct device *dev = &pdev->dev;
--	const struct of_device_id *match;
- 	struct phy_provider *phy_provider;
- 	struct phy *phy;
- 
-@@ -93,8 +93,7 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
- 		return PTR_ERR(state->regs);
- 	}
- 
--	match = of_match_node(exynos_dp_video_phy_of_match, dev->of_node);
--	state->drvdata = match->data;
-+	state->drvdata = of_device_get_match_data(dev);
- 
- 	phy = devm_phy_create(dev, NULL, &exynos_dp_video_phy_ops);
- 	if (IS_ERR(phy)) {
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 7c41daa..22c68f5 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
+diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+index 626883d..c2379b2 100644
+--- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
++++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+@@ -27,6 +27,7 @@
  #include <linux/mutex.h>
-@@ -662,7 +663,6 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 	struct exynos5_usbdrd_phy *phy_drd;
- 	struct phy_provider *phy_provider;
- 	struct resource *res;
--	const struct of_device_id *match;
- 	const struct exynos5_usbdrd_phy_drvdata *drv_data;
- 	struct regmap *reg_pmu;
- 	u32 pmu_offset;
-@@ -681,9 +681,10 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 	if (IS_ERR(phy_drd->reg_phy))
- 		return PTR_ERR(phy_drd->reg_phy);
- 
--	match = of_match_node(exynos5_usbdrd_phy_of_match, pdev->dev.of_node);
-+	drv_data = of_device_get_match_data(dev);
-+	if (!drv_data)
-+		return -EINVAL;
- 
--	drv_data = match->data;
- 	phy_drd->drv_data = drv_data;
- 
- 	ret = exynos5_usbdrd_phy_clk_handle(phy_drd);
-diff --git a/drivers/phy/samsung/phy-samsung-usb2.c b/drivers/phy/samsung/phy-samsung-usb2.c
-index 1d22d93..ea81886 100644
---- a/drivers/phy/samsung/phy-samsung-usb2.c
-+++ b/drivers/phy/samsung/phy-samsung-usb2.c
-@@ -14,6 +14,7 @@
- #include <linux/module.h>
  #include <linux/of.h>
  #include <linux/of_address.h>
 +#include <linux/of_device.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
  #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
-@@ -142,7 +143,6 @@ static struct phy *samsung_usb2_phy_xlate(struct device *dev,
- 
- static int samsung_usb2_phy_probe(struct platform_device *pdev)
- {
+@@ -1024,7 +1025,6 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+ 	struct phy_provider *provider;
+ 	struct rockchip_usb2phy *rphy;
+ 	const struct rockchip_usb2phy_cfg *phy_cfgs;
 -	const struct of_device_id *match;
- 	const struct samsung_usb2_phy_config *cfg;
- 	struct device *dev = &pdev->dev;
- 	struct phy_provider *phy_provider;
-@@ -155,12 +155,9 @@ static int samsung_usb2_phy_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+ 	unsigned int reg;
+ 	int index, ret;
  
--	match = of_match_node(samsung_usb2_phy_of_match, pdev->dev.of_node);
--	if (!match) {
--		dev_err(dev, "of_match_node() failed\n");
-+	cfg = of_device_get_match_data(dev);
-+	if (!cfg)
+@@ -1032,11 +1032,9 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+ 	if (!rphy)
+ 		return -ENOMEM;
+ 
+-	match = of_match_device(dev->driver->of_match_table, dev);
+-	if (!match || !match->data) {
+-		dev_err(dev, "phy configs are not assigned!\n");
++	phy_cfgs = of_device_get_match_data(dev);
++	if (!phy_cfgs)
  		return -EINVAL;
 -	}
--	cfg = match->data;
  
- 	drv = devm_kzalloc(dev, sizeof(struct samsung_usb2_phy_driver) +
- 		cfg->num_phys * sizeof(struct samsung_usb2_phy_instance),
+ 	if (!dev->parent || !dev->parent->of_node)
+ 		return -EINVAL;
+@@ -1052,7 +1050,6 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	rphy->dev = dev;
+-	phy_cfgs = match->data;
+ 	rphy->chg_state = USB_CHG_STATE_UNDEFINED;
+ 	rphy->chg_type = POWER_SUPPLY_TYPE_UNKNOWN;
+ 	platform_set_drvdata(pdev, rphy);
+diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c b/drivers/phy/rockchip/phy-rockchip-pcie.c
+index 6904633..f7dc0d6 100644
+--- a/drivers/phy/rockchip/phy-rockchip-pcie.c
++++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
+@@ -21,6 +21,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/of_platform.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+@@ -286,7 +287,6 @@ static int rockchip_pcie_phy_probe(struct platform_device *pdev)
+ 	struct phy *generic_phy;
+ 	struct phy_provider *phy_provider;
+ 	struct regmap *grf;
+-	const struct of_device_id *of_id;
+ 
+ 	grf = syscon_node_to_regmap(dev->parent->of_node);
+ 	if (IS_ERR(grf)) {
+@@ -298,11 +298,10 @@ static int rockchip_pcie_phy_probe(struct platform_device *pdev)
+ 	if (!rk_phy)
+ 		return -ENOMEM;
+ 
+-	of_id = of_match_device(rockchip_pcie_phy_dt_ids, &pdev->dev);
+-	if (!of_id)
++	rk_phy->phy_data = of_device_get_match_data(dev);
++	if (!rk_phy->phy_data)
+ 		return -EINVAL;
+ 
+-	rk_phy->phy_data = (struct rockchip_pcie_data *)of_id->data;
+ 	rk_phy->reg_base = grf;
+ 
+ 	rk_phy->phy_rst = devm_reset_control_get(dev, "phy");
+diff --git a/drivers/phy/rockchip/phy-rockchip-usb.c b/drivers/phy/rockchip/phy-rockchip-usb.c
+index 3378eeb..7db1166 100644
+--- a/drivers/phy/rockchip/phy-rockchip-usb.c
++++ b/drivers/phy/rockchip/phy-rockchip-usb.c
+@@ -22,6 +22,7 @@
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/of_platform.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+@@ -417,7 +418,6 @@ static int rockchip_usb_phy_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct rockchip_usb_phy_base *phy_base;
+ 	struct phy_provider *phy_provider;
+-	const struct of_device_id *match;
+ 	struct device_node *child;
+ 	int err;
+ 
+@@ -425,13 +425,9 @@ static int rockchip_usb_phy_probe(struct platform_device *pdev)
+ 	if (!phy_base)
+ 		return -ENOMEM;
+ 
+-	match = of_match_device(dev->driver->of_match_table, dev);
+-	if (!match || !match->data) {
+-		dev_err(dev, "missing phy data\n");
++	phy_base->pdata = of_device_get_match_data(dev);
++	if (!phy_base->pdata)
+ 		return -EINVAL;
+-	}
+-
+-	phy_base->pdata = match->data;
+ 
+ 	phy_base->dev = dev;
+ 	phy_base->reg_base = ERR_PTR(-ENODEV);
 -- 
 1.7.9.5
