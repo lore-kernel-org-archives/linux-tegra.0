@@ -1,72 +1,39 @@
-From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH 4/4] mmc/sdhci-s3c: use generic sdhci_set_bus_width()
-Date: Wed, 09 Aug 2017 22:36:06 +0200
-Message-ID: <4323de12fe8bf8c33211a39a5fb14563fb80f2e9.1502310654.git.mirq-linux@rere.qmqm.pl>
-References: <cover.1502310654.git.mirq-linux@rere.qmqm.pl>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] PCI: Convert to using %pOF instead of full_name
+Date: Wed, 9 Aug 2017 17:04:43 -0500
+Message-ID: <CAL_JsqLznQdnWw+A2T8V8CTktYaPDF_800jGHAVa=G-Yhxyn+Q@mail.gmail.com>
+References: <20170718214339.7774-41-robh@kernel.org> <20170802223928.GQ20308@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <cover.1502310654.git.mirq-linux@rere.qmqm.pl>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ben Dooks <ben-linux@fluff.org>, Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20170802223928.GQ20308@bhelgaas-glaptop.roam.corp.google.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
- drivers/mmc/host/sdhci-s3c.c | 34 +---------------------------------
- 1 file changed, 1 insertion(+), 33 deletions(-)
+On Wed, Aug 2, 2017 at 5:39 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> On Tue, Jul 18, 2017 at 04:43:21PM -0500, Rob Herring wrote:
+>> Now that we have a custom printf format specifier, convert users of
+>> full_name to use %pOF instead. This is preparation to remove storing
+>> of the full path string for each node.
+>>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
+>> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+>> Cc: Jason Cooper <jason@lakedaemon.net>
+>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>> Cc: Thierry Reding <thierry.reding@gmail.com>
+>> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>> Cc: Paul Mackerras <paulus@samba.org>
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: linux-pci@vger.kernel.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-tegra@vger.kernel.org
+>> Cc: linuxppc-dev@lists.ozlabs.org
+>
+> Applied to pci/misc for v4.14, thanks!
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 7c065a70f92b..d328fcf284d1 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -414,43 +414,11 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
- 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
- }
- 
--/**
-- * sdhci_s3c_set_bus_width - support 8bit buswidth
-- * @host: The SDHCI host being queried
-- * @width: MMC_BUS_WIDTH_ macro for the bus width being requested
-- *
-- * We have 8-bit width support but is not a v3 controller.
-- * So we add platform_bus_width() and support 8bit width.
-- */
--static void sdhci_s3c_set_bus_width(struct sdhci_host *host, int width)
--{
--	u8 ctrl;
--
--	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
--
--	switch (width) {
--	case MMC_BUS_WIDTH_8:
--		ctrl |= SDHCI_CTRL_8BITBUS;
--		ctrl &= ~SDHCI_CTRL_4BITBUS;
--		break;
--	case MMC_BUS_WIDTH_4:
--		ctrl |= SDHCI_CTRL_4BITBUS;
--		ctrl &= ~SDHCI_CTRL_8BITBUS;
--		break;
--	default:
--		ctrl &= ~SDHCI_CTRL_4BITBUS;
--		ctrl &= ~SDHCI_CTRL_8BITBUS;
--		break;
--	}
--
--	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
--}
--
- static struct sdhci_ops sdhci_s3c_ops = {
- 	.get_max_clock		= sdhci_s3c_get_max_clk,
- 	.set_clock		= sdhci_s3c_set_clock,
- 	.get_min_clock		= sdhci_s3c_get_min_clock,
--	.set_bus_width		= sdhci_s3c_set_bus_width,
-+	.set_bus_width		= sdhci_set_bus_width,
- 	.reset			= sdhci_reset,
- 	.set_uhs_signaling	= sdhci_set_uhs_signaling,
- };
--- 
-2.11.0
+This hasn't shown up in -next.
 
+Rob
