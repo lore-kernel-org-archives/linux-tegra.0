@@ -1,135 +1,74 @@
-From: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: [PATCH 1/4] phy: rockchip: use of_device_get_match_data()
-Date: Wed, 9 Aug 2017 17:17:57 +0800
-Message-ID: <1502270280-13792-1-git-send-email-chunfeng.yun@mediatek.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v4 0/8] Support UDC on Tegra 20/30/114/124
+Date: Wed,  9 Aug 2017 14:49:01 +0300
+Message-ID: <cover.1502278634.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kamil Debski <kamil-MZ2JYD8fkKLYtjvyW6yDsg@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, Baoyou Xie <baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-reduce the boilerplate code to get the specific data
+Some time ago Thierry Reding sent out patches that enabled UDC on NVIDIA
+Tegra, unfortunately they haven't got enough traction to get into the
+kernel. I've rebased those patches and added a fix for the Ethernet USB
+Gadget on Tegra20, Marc Dietrich tested UDC driver on AC100 (Tegra20),
+Nicolas Chauvet on TK1 (Tegra124) and Michał Mirosław on TF300T (Tegra30).
+Like an original patchset, this series adds support for the peripheral
+mode only.
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
----
- drivers/phy/rockchip/phy-rockchip-inno-usb2.c |    9 +++------
- drivers/phy/rockchip/phy-rockchip-pcie.c      |    7 +++----
- drivers/phy/rockchip/phy-rockchip-usb.c       |   10 +++-------
- 3 files changed, 9 insertions(+), 17 deletions(-)
+Changelog:
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-index 626883d..c2379b2 100644
---- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-+++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-@@ -27,6 +27,7 @@
- #include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/phy/phy.h>
-@@ -1024,7 +1025,6 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
- 	struct phy_provider *provider;
- 	struct rockchip_usb2phy *rphy;
- 	const struct rockchip_usb2phy_cfg *phy_cfgs;
--	const struct of_device_id *match;
- 	unsigned int reg;
- 	int index, ret;
- 
-@@ -1032,11 +1032,9 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
- 	if (!rphy)
- 		return -ENOMEM;
- 
--	match = of_match_device(dev->driver->of_match_table, dev);
--	if (!match || !match->data) {
--		dev_err(dev, "phy configs are not assigned!\n");
-+	phy_cfgs = of_device_get_match_data(dev);
-+	if (!phy_cfgs)
- 		return -EINVAL;
--	}
- 
- 	if (!dev->parent || !dev->parent->of_node)
- 		return -EINVAL;
-@@ -1052,7 +1050,6 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
- 	}
- 
- 	rphy->dev = dev;
--	phy_cfgs = match->data;
- 	rphy->chg_state = USB_CHG_STATE_UNDEFINED;
- 	rphy->chg_type = POWER_SUPPLY_TYPE_UNKNOWN;
- 	platform_set_drvdata(pdev, rphy);
-diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c b/drivers/phy/rockchip/phy-rockchip-pcie.c
-index 6904633..f7dc0d6 100644
---- a/drivers/phy/rockchip/phy-rockchip-pcie.c
-+++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
-@@ -21,6 +21,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/of_platform.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-@@ -286,7 +287,6 @@ static int rockchip_pcie_phy_probe(struct platform_device *pdev)
- 	struct phy *generic_phy;
- 	struct phy_provider *phy_provider;
- 	struct regmap *grf;
--	const struct of_device_id *of_id;
- 
- 	grf = syscon_node_to_regmap(dev->parent->of_node);
- 	if (IS_ERR(grf)) {
-@@ -298,11 +298,10 @@ static int rockchip_pcie_phy_probe(struct platform_device *pdev)
- 	if (!rk_phy)
- 		return -ENOMEM;
- 
--	of_id = of_match_device(rockchip_pcie_phy_dt_ids, &pdev->dev);
--	if (!of_id)
-+	rk_phy->phy_data = of_device_get_match_data(dev);
-+	if (!rk_phy->phy_data)
- 		return -EINVAL;
- 
--	rk_phy->phy_data = (struct rockchip_pcie_data *)of_id->data;
- 	rk_phy->reg_base = grf;
- 
- 	rk_phy->phy_rst = devm_reset_control_get(dev, "phy");
-diff --git a/drivers/phy/rockchip/phy-rockchip-usb.c b/drivers/phy/rockchip/phy-rockchip-usb.c
-index 3378eeb..7db1166 100644
---- a/drivers/phy/rockchip/phy-rockchip-usb.c
-+++ b/drivers/phy/rockchip/phy-rockchip-usb.c
-@@ -22,6 +22,7 @@
- #include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/of_platform.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-@@ -417,7 +418,6 @@ static int rockchip_usb_phy_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct rockchip_usb_phy_base *phy_base;
- 	struct phy_provider *phy_provider;
--	const struct of_device_id *match;
- 	struct device_node *child;
- 	int err;
- 
-@@ -425,13 +425,9 @@ static int rockchip_usb_phy_probe(struct platform_device *pdev)
- 	if (!phy_base)
- 		return -ENOMEM;
- 
--	match = of_match_device(dev->driver->of_match_table, dev);
--	if (!match || !match->data) {
--		dev_err(dev, "missing phy data\n");
-+	phy_base->pdata = of_device_get_match_data(dev);
-+	if (!phy_base->pdata)
- 		return -EINVAL;
--	}
--
--	phy_base->pdata = match->data;
- 
- 	phy_base->dev = dev;
- 	phy_base->reg_base = ERR_PTR(-ENODEV);
+V4:
+1) Use of_device_get_match_data() instead of of_match_node() to cleanup
+   code a tad.
+
+V3:
+1) Specified platform flags directly in the SoC info as per Michał's
+   suggestion.
+
+V2:
+1) Added comments to each of patched USB Ethernet gadget models.
+
+2) Added explanatory comment about why usb_phy_set_suspend() invocation
+   is necessary in tegra_udc_probe().
+
+3) Dropped TrimSlice from patchset because it turned out that it uses USB1
+   controller for USB-to-SATA.
+
+4) Moved tegra_defconfig patch before DT patches as per Stephen's suggestion.
+
+5) Changed dr_mode to "peripheral" in DT patches since we don't support role
+   mode switching for now.
+
+Dmitry Osipenko (4):
+  usb: gadget: f_ecm/f_eem/f_rndis: Setup quirk_avoids_skb_reserve
+  usb: chipidea: udc: Support SKB alignment quirk
+  ARM: defconfig: tegra: Enable ChipIdea UDC driver
+  ARM: tegra: Enable UDC on AC100
+
+Thierry Reding (4):
+  usb: chipidea: Add support for Tegra20/30/114/124
+  ARM: tegra: Enable UDC on Beaver
+  ARM: tegra: Enable UDC on Dalmore
+  ARM: tegra: Enable UDC on Jetson TK1
+
+ arch/arm/boot/dts/tegra114-dalmore.dts    |  10 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts |  12 ++-
+ arch/arm/boot/dts/tegra20-paz00.dts       |   2 +
+ arch/arm/boot/dts/tegra30-beaver.dts      |  10 ++
+ arch/arm/configs/tegra_defconfig          |  10 +-
+ drivers/usb/chipidea/Makefile             |   1 +
+ drivers/usb/chipidea/ci_hdrc_tegra.c      | 155 ++++++++++++++++++++++++++++++
+ drivers/usb/chipidea/udc.c                |   3 +
+ drivers/usb/gadget/function/f_ecm.c       |   7 ++
+ drivers/usb/gadget/function/f_eem.c       |   5 +
+ drivers/usb/gadget/function/f_rndis.c     |   4 +
+ include/linux/usb/chipidea.h              |   1 +
+ 12 files changed, 214 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/usb/chipidea/ci_hdrc_tegra.c
+
 -- 
-1.7.9.5
+2.13.3
