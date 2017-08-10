@@ -1,90 +1,57 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv3 4/4] drm/tegra: add cec-notifier support
-Date: Thu, 10 Aug 2017 10:31:25 +0200
-Message-ID: <20170810083125.36649-5-hverkuil@xs4all.nl>
+Subject: [PATCHv3 1/4] dt-bindings: document the tegra CEC bindings
+Date: Thu, 10 Aug 2017 10:31:22 +0200
+Message-ID: <20170810083125.36649-2-hverkuil@xs4all.nl>
 References: <20170810083125.36649-1-hverkuil@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <20170810083125.36649-1-hverkuil@xs4all.nl>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgoKSW4gb3JkZXIgdG8g
-c3VwcG9ydCBDRUMgdGhlIEhETUkgZHJpdmVyIGhhcyB0byBpbmZvcm0gdGhlIENFQyBkcml2ZXIK
-d2hlbmV2ZXIgdGhlIHBoeXNpY2FsIGFkZHJlc3MgY2hhbmdlcy4gU28gd2hlbiB0aGUgRURJRCBp
-cyByZWFkIHRoZQpDRUMgZHJpdmVyIGhhcyB0byBiZSBpbmZvcm1lZCBhbmQgd2hlbmV2ZXIgdGhl
-IGhvdHBsdWcgZGV0ZWN0IGdvZXMKYXdheS4KClRoaXMgaXMgZG9uZSB0aHJvdWdoIHRoZSBjZWMt
-bm90aWZpZXIgZnJhbWV3b3JrLgoKVGhlIGxpbmsgYmV0d2VlbiB0aGUgSERNSSBkcml2ZXIgYW5k
-IHRoZSBDRUMgZHJpdmVyIGlzIGRvbmUgdGhyb3VnaAp0aGUgaGRtaV9waGFuZGxlIGluIHRoZSB0
-ZWdyYS1jZWMgbm9kZSBpbiB0aGUgZGV2aWNlIHRyZWUuCgpTaWduZWQtb2ZmLWJ5OiBIYW5zIFZl
-cmt1aWwgPGhhbnMudmVya3VpbEBjaXNjby5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L0tjb25maWcgIHwgMSArCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggICAgfCAzICsrKwog
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYyAgIHwgOSArKysrKysrKysKIGRyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9vdXRwdXQuYyB8IDYgKysrKysrCiA0IGZpbGVzIGNoYW5nZWQsIDE5IGluc2Vy
-dGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvS2NvbmZpZyBiL2Ry
-aXZlcnMvZ3B1L2RybS90ZWdyYS9LY29uZmlnCmluZGV4IDJkYjI5ZDY3MTkzZC4uYzg4MjkxOGMy
-MDI0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvS2NvbmZpZworKysgYi9kcml2
-ZXJzL2dwdS9kcm0vdGVncmEvS2NvbmZpZwpAQCAtOCw2ICs4LDcgQEAgY29uZmlnIERSTV9URUdS
-QQogCXNlbGVjdCBEUk1fUEFORUwKIAlzZWxlY3QgVEVHUkFfSE9TVDFYCiAJc2VsZWN0IElPTU1V
-X0lPVkEgaWYgSU9NTVVfU1VQUE9SVAorCXNlbGVjdCBDRUNfQ09SRSBpZiBDRUNfTk9USUZJRVIK
-IAloZWxwCiAJICBDaG9vc2UgdGhpcyBvcHRpb24gaWYgeW91IGhhdmUgYW4gTlZJRElBIFRlZ3Jh
-IFNvQy4KIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oIGIvZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL2RybS5oCmluZGV4IDZkNmRhMDEyODJmMy4uYzBhMThiNjBjYWYxIDEw
-MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmgKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL3RlZ3JhL2RybS5oCkBAIC0yMTIsNiArMjEyLDggQEAgaW50IHRlZ3JhX2RjX3N0YXRlX3Nl
-dHVwX2Nsb2NrKHN0cnVjdCB0ZWdyYV9kYyAqZGMsCiAJCQkgICAgICAgc3RydWN0IGNsayAqY2xr
-LCB1bnNpZ25lZCBsb25nIHBjbGssCiAJCQkgICAgICAgdW5zaWduZWQgaW50IGRpdik7CiAKK3N0
-cnVjdCBjZWNfbm90aWZpZXI7CisKIHN0cnVjdCB0ZWdyYV9vdXRwdXQgewogCXN0cnVjdCBkZXZp
-Y2Vfbm9kZSAqb2Zfbm9kZTsKIAlzdHJ1Y3QgZGV2aWNlICpkZXY7CkBAIC0yMTksNiArMjIxLDcg
-QEAgc3RydWN0IHRlZ3JhX291dHB1dCB7CiAJc3RydWN0IGRybV9wYW5lbCAqcGFuZWw7CiAJc3Ry
-dWN0IGkyY19hZGFwdGVyICpkZGM7CiAJY29uc3Qgc3RydWN0IGVkaWQgKmVkaWQ7CisJc3RydWN0
-IGNlY19ub3RpZmllciAqbm90aWZpZXI7CiAJdW5zaWduZWQgaW50IGhwZF9pcnE7CiAJaW50IGhw
-ZF9ncGlvOwogCWVudW0gb2ZfZ3Bpb19mbGFncyBocGRfZ3Bpb19mbGFnczsKZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRt
-aS5jCmluZGV4IGNkYTA0OTFlZDZiZi4uZmJmMTRlMWVmZDBlIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vdGVncmEvaGRtaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMK
-QEAgLTIxLDYgKzIxLDggQEAKIAogI2luY2x1ZGUgPHNvdW5kL2hkYV92ZXJicy5oPgogCisjaW5j
-bHVkZSA8bWVkaWEvY2VjLW5vdGlmaWVyLmg+CisKICNpbmNsdWRlICJoZG1pLmgiCiAjaW5jbHVk
-ZSAiZHJtLmgiCiAjaW5jbHVkZSAiZGMuaCIKQEAgLTE3MjAsNiArMTcyMiwxMCBAQCBzdGF0aWMg
-aW50IHRlZ3JhX2hkbWlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJcmV0
-dXJuIFBUUl9FUlIoaGRtaS0+dmRkKTsKIAl9CiAKKwloZG1pLT5vdXRwdXQubm90aWZpZXIgPSBj
-ZWNfbm90aWZpZXJfZ2V0KCZwZGV2LT5kZXYpOworCWlmIChoZG1pLT5vdXRwdXQubm90aWZpZXIg
-PT0gTlVMTCkKKwkJcmV0dXJuIC1FTk9NRU07CisKIAloZG1pLT5vdXRwdXQuZGV2ID0gJnBkZXYt
-PmRldjsKIAogCWVyciA9IHRlZ3JhX291dHB1dF9wcm9iZSgmaGRtaS0+b3V0cHV0KTsKQEAgLTE3
-NzgsNiArMTc4NCw5IEBAIHN0YXRpYyBpbnQgdGVncmFfaGRtaV9yZW1vdmUoc3RydWN0IHBsYXRm
-b3JtX2RldmljZSAqcGRldikKIAogCXRlZ3JhX291dHB1dF9yZW1vdmUoJmhkbWktPm91dHB1dCk7
-CiAKKwlpZiAoaGRtaS0+b3V0cHV0Lm5vdGlmaWVyKQorCQljZWNfbm90aWZpZXJfcHV0KGhkbWkt
-Pm91dHB1dC5ub3RpZmllcik7CisKIAlyZXR1cm4gMDsKIH0KIApkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5j
-CmluZGV4IDU5NWQxZWMzZTAyZS4uNTdjMDUyNTIxYTQ0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vdGVncmEvb3V0cHV0LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5j
-CkBAIC0xMSw2ICsxMSw4IEBACiAjaW5jbHVkZSA8ZHJtL2RybV9wYW5lbC5oPgogI2luY2x1ZGUg
-ImRybS5oIgogCisjaW5jbHVkZSA8bWVkaWEvY2VjLW5vdGlmaWVyLmg+CisKIGludCB0ZWdyYV9v
-dXRwdXRfY29ubmVjdG9yX2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9y
-KQogewogCXN0cnVjdCB0ZWdyYV9vdXRwdXQgKm91dHB1dCA9IGNvbm5lY3Rvcl90b19vdXRwdXQo
-Y29ubmVjdG9yKTsKQEAgLTMzLDYgKzM1LDcgQEAgaW50IHRlZ3JhX291dHB1dF9jb25uZWN0b3Jf
-Z2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCiAJCWVkaWQgPSBkcm1f
-Z2V0X2VkaWQoY29ubmVjdG9yLCBvdXRwdXQtPmRkYyk7CiAKIAlkcm1fbW9kZV9jb25uZWN0b3Jf
-dXBkYXRlX2VkaWRfcHJvcGVydHkoY29ubmVjdG9yLCBlZGlkKTsKKwljZWNfbm90aWZpZXJfc2V0
-X3BoeXNfYWRkcl9mcm9tX2VkaWQob3V0cHV0LT5ub3RpZmllciwgZWRpZCk7CiAKIAlpZiAoZWRp
-ZCkgewogCQllcnIgPSBkcm1fYWRkX2VkaWRfbW9kZXMoY29ubmVjdG9yLCBlZGlkKTsKQEAgLTY4
-LDYgKzcxLDkgQEAgdGVncmFfb3V0cHV0X2Nvbm5lY3Rvcl9kZXRlY3Qoc3RydWN0IGRybV9jb25u
-ZWN0b3IgKmNvbm5lY3RvciwgYm9vbCBmb3JjZSkKIAkJCXN0YXR1cyA9IGNvbm5lY3Rvcl9zdGF0
-dXNfY29ubmVjdGVkOwogCX0KIAorCWlmIChzdGF0dXMgIT0gY29ubmVjdG9yX3N0YXR1c19jb25u
-ZWN0ZWQpCisJCWNlY19ub3RpZmllcl9waHlzX2FkZHJfaW52YWxpZGF0ZShvdXRwdXQtPm5vdGlm
-aWVyKTsKKwogCXJldHVybiBzdGF0dXM7CiB9CiAKLS0gCjIuMTMuMgoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Hans Verkuil <hans.verkuil@cisco.com>
+
+This documents the binding for the Tegra CEC module.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ .../devicetree/bindings/media/tegra-cec.txt        | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/tegra-cec.txt
+
+diff --git a/Documentation/devicetree/bindings/media/tegra-cec.txt b/Documentation/devicetree/bindings/media/tegra-cec.txt
+new file mode 100644
+index 000000000000..c503f06f3b84
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/tegra-cec.txt
+@@ -0,0 +1,27 @@
++* Tegra HDMI CEC hardware
++
++The HDMI CEC module is present in Tegra SoCs and its purpose is to
++handle communication between HDMI connected devices over the CEC bus.
++
++Required properties:
++  - compatible : value should be one of the following:
++	"nvidia,tegra114-cec"
++	"nvidia,tegra124-cec"
++	"nvidia,tegra210-cec"
++  - reg : Physical base address of the IP registers and length of memory
++	  mapped region.
++  - interrupts : HDMI CEC interrupt number to the CPU.
++  - clocks : from common clock binding: handle to HDMI CEC clock.
++  - clock-names : from common clock binding: must contain "cec",
++		  corresponding to the entry in the clocks property.
++  - hdmi-phandle : phandle to the HDMI controller, see also cec.txt.
++
++Example:
++
++cec@70015000 {
++	compatible = "nvidia,tegra124-cec";
++	reg = <0x0 0x70015000 0x0 0x00001000>;
++	interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&tegra_car TEGRA124_CLK_CEC>;
++	clock-names = "cec";
++};
+-- 
+2.13.2
