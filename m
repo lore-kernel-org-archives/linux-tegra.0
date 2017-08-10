@@ -1,206 +1,177 @@
 From: Cihangir Akturk <cakturk@gmail.com>
-Subject: [PATCH v2 00/29] DRM API Conversions
-Date: Thu, 10 Aug 2017 15:09:43 +0300
-Message-ID: <1502367012-9417-1-git-send-email-cakturk@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-Cc: devel@driverdev.osuosl.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org, Cihangir Akturk <cakturk@gmail.com>, amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, virtualization@lists.linux-foundation.org, freedreno@lists.freedesktop.org
+Subject: [PATCH v2 22/29] drm/tegra: switch to drm_*_get(), drm_*_put() helpers
+Date: Thu, 10 Aug 2017 15:10:05 +0300
+Message-ID: <1502367012-9417-23-git-send-email-cakturk@gmail.com>
+References: <1502367012-9417-1-git-send-email-cakturk@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1502367012-9417-1-git-send-email-cakturk@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: daniel@ffwll.ch, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Cihangir Akturk <cakturk@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Q2hhbmdlcyBzaW5jZSB2MToKCi0gVGhpcyB0aW1lIHBhdGNoZXMgd2VyZSBnZW5lcmF0ZWQgd2l0
-aCBjb2NjaW5lbGxlIGluc3RlYWQgb2YgbXkgb3duCiAgc2NyaXB0LCBhcyBzdWdnZXN0ZWQgYnkg
-RGFuaWVsIFZldHRlci4KLSBGaXhlZCB0aGUgdHlwbyBpbiBjb21taXQgbWVzc2FnZXMuIHMvYWRu
-L2FuZAoKTm90ZTogSSd2ZSBpbmNsdWRlZCByLWIsIGEtYiB0YWdzLCBhcyB0aGVzZSBwYXRjaGVz
-IGFyZSBpZGVudGljYWwgdG8gdjEKZXhjZXB0IGZvciB0aGUgZmlsZTogZHJpdmVycy9ncHUvZHJt
-L2k5MTUvaTkxNV9nZW1fb2JqZWN0LmgKClRoaXMgcGF0Y2ggc2V0IHJlcGxhY2VzIHRoZSBvY2N1
-cnJlbmNlcyBvZiBkcm1fKl9yZWZlcmVuY2UoKSBhbmQKZHJtXypfdW5yZWZlcmVuY2UoKSB3aXRo
-IHRoZSBuZXcgZHJtXypfZ2V0KCkgYW5kIGRybV8qX3B1dCgpIGZ1bmN0aW9ucy4KQWxsIHBhdGNo
-ZXMgaW4gdGhlIHNlcmllcyBkbyB0aGUgc2FtZSB0aGluZywgY29udmVydGluZyB0byB0aGUgbmV3
-IEFQSXMuCkkgY3JlYXRlZCBwYXRjaGVzIHBlciBEUk0gZHJpdmVyIGFzIHN1Z2dlc3RlZCBieSBE
-YW5pZWwgVmV0dGVyLgoKVGhpcyBwYXRjaCBzZXQgd2FzIGdlbmVyYXRlZCBieSBzY3JpcHRzL2Nv
-Y2NpbmVsbGUvYXBpL2RybS1nZXQtcHV0LmNvY2NpCgpQcmV2aW91cyB0aHJlYWQgY2FuIGJlIHJl
-YWNoZWQgYXQ6Cmh0dHBzOi8vbWFyYy5pbmZvLz9sPWRyaS1kZXZlbCZtPTE1MDE3ODI4ODgxNjA0
-NwoKQmFja2dyb3VuZDoKCkluIHRoZSBrZXJuZWwsIHJlZmVyZW5jZSBjb3VudGluZyBBUElzIHVz
-ZSAqX2dldCgpLCAqX3B1dCgpIHN0eWxlIG5hbWluZwp0byByZWZlcmVuY2UtY291bnQgdGhlIG9i
-amVjdHMuIEJ1dCBEUk0gc3Vic3lzdGVtIHVzZXMgYSBkaWZmZXJlbnQKbmFtaW5nIGZvciB0aGVt
-IHN1Y2ggYXMgKl9yZWZlcmVuY2UoKSwgKl91bnJlZmVyZW5jZSgpIHdoaWNoIGlzCmluY29uc2lz
-dGVudCB3aXRoIHRoZSBvdGhlciByZWZlcmVuY2UgY291bnRpbmcgQVBJcyBpbiB0aGUga2VybmVs
-LiBUbwpzb2x2ZSB0aGlzIGNvbnNpc3RlbmN5IGlzc3VlLCBUaGllcnJ5IFJlZGluZyBpbnRyb2R1
-Y2VkIGEgY291cGxlIG9mCmZ1bmN0aW9ucyBhbmQgY29tcGF0aWJpbGl0eSBhbGlhc2VzIGluIHRo
-ZSBmb2xsb3dpbmcgY29tbWl0cyBmb3IgdGhlbS4KCmNvbW1pdCAwMjBhMjE4Zjk1YmQzY2VmZjdk
-ZDEwMjJmZjdlYmMwNDk3YmM3YmY5CkF1dGhvcjogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZp
-ZGlhLmNvbT4KRGF0ZTogICBUdWUgRmViIDI4IDE1OjQ2OjM4IDIwMTcgKzAxMDAKCiAgICBkcm06
-IEludHJvZHVjZSBkcm1fbW9kZV9vYmplY3Rfe2dldCxwdXR9KCkKCmNvbW1pdCBhZDA5MzYwNzUw
-YWZhMThhMGEwY2UwMjUzZDZlYTYwMzNhYmMyMmU3CkF1dGhvcjogVGhpZXJyeSBSZWRpbmcgPHRy
-ZWRpbmdAbnZpZGlhLmNvbT4KRGF0ZTogICBUdWUgRmViIDI4IDE1OjQ2OjM5IDIwMTcgKzAxMDAK
-CiAgICBkcm06IEludHJvZHVjZSBkcm1fY29ubmVjdG9yX3tnZXQscHV0fSgpCgpjb21taXQgYTRh
-NjlkYTA2YmMxMWE5MzdhNmU0MTc5MzhiMWJiNjk4ZWUxZmE0NgpBdXRob3I6IFRoaWVycnkgUmVk
-aW5nIDx0cmVkaW5nQG52aWRpYS5jb20+CkRhdGU6ICAgVHVlIEZlYiAyOCAxNTo0Njo0MCAyMDE3
-ICswMTAwCgogICAgZHJtOiBJbnRyb2R1Y2UgZHJtX2ZyYW1lYnVmZmVyX3tnZXQscHV0fSgpCgpj
-b21taXQgZTZiNjI3MTRlODdjODgxMWQ1NTY0YjZhMDczOGRjZGU2M2E1MTc3NApBdXRob3I6IFRo
-aWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+CkRhdGU6ICAgVHVlIEZlYiAyOCAxNTo0
-Njo0MSAyMDE3ICswMTAwCgogICAgZHJtOiBJbnRyb2R1Y2UgZHJtX2dlbV9vYmplY3Rfe2dldCxw
-dXR9KCkKCmNvbW1pdCA2NDcyZTUwOTBiZTdjNzg3NDlhM2MyNzliNGZhYWU4N2FiODM1YzQwCkF1
-dGhvcjogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KRGF0ZTogICBUdWUgRmVi
-IDI4IDE1OjQ2OjQyIDIwMTcgKzAxMDAKCiAgICBkcm06IEludHJvZHVjZSBkcm1fcHJvcGVydHlf
-YmxvYl97Z2V0LHB1dH0oKQoKQ2loYW5naXIgQWt0dXJrICgyOSk6CiAgZHJtL2FtZGdwdTogc3dp
-dGNoIHRvIGRybV8qX2dldCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtOiBtYWxpLWRwOiBz
-d2l0Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vYXJtYWRhOiBz
-d2l0Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vYXN0OiBzd2l0
-Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vYXRtZWwtaGxjZGM6
-IHN3aXRjaCB0byBkcm1fKl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9ib2Noczog
-c3dpdGNoIHRvIGRybV8qX2dldCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL2NpcnJ1czog
-c3dpdGNoIHRvIGRybV8qX2dldCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL2V0bmF2aXY6
-IHN3aXRjaCB0byBkcm1fKl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9leHlub3M6
-IHN3aXRjaCB0byBkcm1fKl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9nbWE1MDA6
-IHN3aXRjaCB0byBkcm1fKl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9oaXNpbGlj
-b246IHN3aXRjaCB0byBkcm1fKl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9pOTE1
-OiBzd2l0Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vaW14OiBz
-d2l0Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vbWVkaWF0ZWs6
-IHN3aXRjaCB0byBkcm1fKl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9tZ2FnMjAw
-OiBzd2l0Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vbXNtOiBz
-d2l0Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vbm91dmVhdTog
-c3dpdGNoIHRvIGRybV8qX2dldCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL29tYXA6IHN3
-aXRjaCB0byBkcm1fKl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9xeGw6IHN3aXRj
-aCB0byBkcm1fKl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9yYWRlb246IHN3aXRj
-aCB0byBkcm1fKl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9yb2NrY2hpcDogc3dp
-dGNoIHRvIGRybV8qX2dldCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL3RlZ3JhOiBzd2l0
-Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vdGlsY2RjOiBzd2l0
-Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vdWRsOiBzd2l0Y2gg
-dG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vdmM0OiBzd2l0Y2ggdG8g
-ZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vdmdlbTogc3dpdGNoIHRvIGRy
-bV8qX2dldCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL3ZpcnRpbzogc3dpdGNoIHRvIGRy
-bV8qX2dldCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL3Ztd2dmeDogc3dpdGNoIHRvIGRy
-bV8qX2dldCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgc3RhZ2luZzogdmJveHZpZGVvOiBzd2l0
-Y2ggdG8gZHJtXypfZ2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKCiBkcml2ZXJzL2dwdS9kcm0v
-YW1kL2FtZGdwdS9hbWRncHVfYm9fbGlzdC5jICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2Ry
-bS9hbWQvYW1kZ3B1L2FtZGdwdV9jcy5jICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUv
-ZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Rpc3BsYXkuYyAgICAgICB8ICA2ICsrLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZmIuYyAgICAgICAgICAgIHwgIDQgKy0tCiBkcml2
-ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZ2VtLmMgICAgICAgICAgIHwgMjIgKysrKysr
-KystLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92MTBfMC5jICAgICAg
-ICAgICAgfCAgNiArKy0tLQogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZGNlX3YxMV8wLmMg
-ICAgICAgICAgICB8ICA2ICsrLS0tCiBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9kY2VfdjZf
-MC5jICAgICAgICAgICAgIHwgIDYgKystLS0KIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2Rj
-ZV92OF8wLmMgICAgICAgICAgICAgfCAgNiArKy0tLQogZHJpdmVycy9ncHUvZHJtL2FybS9tYWxp
-ZHBfcGxhbmVzLmMgICAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vYXJtYWRh
-L2FybWFkYV9jcnRjLmMgICAgICAgICAgICAgIHwgMjIgKysrKysrKystLS0tLS0tLS0KIGRyaXZl
-cnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX2Rydi5jICAgICAgICAgICAgICAgfCAgMiArLQogZHJp
-dmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZmIuYyAgICAgICAgICAgICAgICB8ICA4ICsrKy0t
-LQogZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZmJkZXYuYyAgICAgICAgICAgICB8ICA2
-ICsrLS0tCiBkcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyAgICAgICAgICAgICAg
-IHwgMTQgKysrKystLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX292ZXJsYXku
-YyAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS9hc3QvYXN0X2ZiLmMgICAgICAg
-ICAgICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2FzdC9hc3RfbWFpbi5jICAg
-ICAgICAgICAgICAgICAgICB8IDEwICsrKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vYXN0L2FzdF9t
-b2RlLmMgICAgICAgICAgICAgICAgICAgIHwgIDYgKystLS0KIGRyaXZlcnMvZ3B1L2RybS9hdG1l
-bC1obGNkYy9hdG1lbF9obGNkY19wbGFuZS5jICAgfCAgOCArKystLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9ib2Nocy9ib2Noc19mYmRldi5jICAgICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUv
-ZHJtL2JvY2hzL2JvY2hzX21tLmMgICAgICAgICAgICAgICAgICB8IDEwICsrKystLS0tCiBkcml2
-ZXJzL2dwdS9kcm0vY2lycnVzL2NpcnJ1c19mYmRldi5jICAgICAgICAgICAgIHwgIDIgKy0KIGRy
-aXZlcnMvZ3B1L2RybS9jaXJydXMvY2lycnVzX21haW4uYyAgICAgICAgICAgICAgfCAxMCArKysr
-LS0tLQogZHJpdmVycy9ncHUvZHJtL2V0bmF2aXYvZXRuYXZpdl9kcnYuYyAgICAgICAgICAgICB8
-ICA4ICsrKy0tLQogZHJpdmVycy9ncHUvZHJtL2V0bmF2aXYvZXRuYXZpdl9nZW0uYyAgICAgICAg
-ICAgICB8IDIwICsrKysrKystLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V0bmF2aXYvZXRuYXZp
-dl9nZW1fcHJpbWUuYyAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXRuYXZpdi9ldG5h
-dml2X2dlbV9zdWJtaXQuYyAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZmIuYyAgICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZ2VtLmMgICAgICAgICAgIHwgMTIgKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1
-L2RybS9nbWE1MDAvZnJhbWVidWZmZXIuYyAgICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMv
-Z3B1L2RybS9nbWE1MDAvZ2VtLmMgICAgICAgICAgICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZl
-cnMvZ3B1L2RybS9nbWE1MDAvZ21hX2Rpc3BsYXkuYyAgICAgICAgICAgICAgfCAgNiArKy0tLQog
-ZHJpdmVycy9ncHUvZHJtL2hpc2lsaWNvbi9oaWJtYy9oaWJtY19kcm1fZmJkZXYuYyB8ICA0ICst
-LQogZHJpdmVycy9ncHUvZHJtL2hpc2lsaWNvbi9oaWJtYy9oaWJtY190dG0uYyAgICAgICB8ICA4
-ICsrKy0tLQogZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW1fb2JqZWN0LmggICAgICAgICAg
-ICB8ICA0ICstLQogZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5jICAgICAgICAg
-ICAgICB8IDI0ICsrKysrKysrKy0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
-ZHBfbXN0LmMgICAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRl
-bF9mYmRldi5jICAgICAgICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vaW14L2lw
-dXYzLWNydGMuYyAgICAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9tZWRp
-YXRlay9tdGtfZHJtX2ZiLmMgICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS9t
-ZWRpYXRlay9tdGtfZHJtX2dlbS5jICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9tZ2FnMjAwL21nYWcyMDBfY3Vyc29yLmMgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUv
-ZHJtL21nYWcyMDAvbWdhZzIwMF9mYi5jICAgICAgICAgICAgICB8ICA0ICstLQogZHJpdmVycy9n
-cHUvZHJtL21nYWcyMDAvbWdhZzIwMF9tYWluLmMgICAgICAgICAgICB8IDEwICsrKystLS0tCiBk
-cml2ZXJzL2dwdS9kcm0vbXNtL2FkcmVuby9hNXh4X2dwdS5jICAgICAgICAgICAgIHwgMTAgKysr
-Ky0tLS0KIGRyaXZlcnMvZ3B1L2RybS9tc20vYWRyZW5vL2E1eHhfcG93ZXIuYyAgICAgICAgICAg
-fCAgMiArLQogZHJpdmVycy9ncHUvZHJtL21zbS9hZHJlbm8vYWRyZW5vX2dwdS5jICAgICAgICAg
-ICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA0L21kcDRfY3J0Yy5jICAgICAg
-ICAgIHwgIDYgKystLS0KIGRyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21kcDQvbWRwNF9rbXMuYyAg
-ICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X2NydGMu
-YyAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxh
-bmUuYyAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9kcnYuYyAgICAg
-ICAgICAgICAgICAgICAgIHwgIDggKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9mYi5j
-ICAgICAgICAgICAgICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9m
-YmRldi5jICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9tc20vbXNt
-X2dlbS5jICAgICAgICAgICAgICAgICAgICAgfCAgOCArKystLS0KIGRyaXZlcnMvZ3B1L2RybS9t
-c20vbXNtX2dlbV9zdWJtaXQuYyAgICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9tc20vbXNtX2dwdS5jICAgICAgICAgICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1
-L2RybS9tc20vbXNtX3JpbmdidWZmZXIuYyAgICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9n
-cHUvZHJtL25vdXZlYXUvZGlzcG52MDQvY3J0Yy5jICAgICAgICAgICB8ICAyICstCiBkcml2ZXJz
-L2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1X2FiaTE2LmMgICAgICAgICAgIHwgIDIgKy0KIGRyaXZl
-cnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZGlzcGxheS5jICAgICAgICAgfCAgOCArKystLS0K
-IGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZmJjb24uYyAgICAgICAgICAgfCAgMiAr
-LQogZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9nZW0uYyAgICAgICAgICAgICB8IDE0
-ICsrKysrLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udjUwX2Rpc3BsYXkuYyAgICAg
-ICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9vbWFwZHJtL29tYXBfZHJ2LmMgICAgICAg
-ICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9mYi5jICAgICAg
-ICAgICAgICAgICB8ICA0ICstLQogZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9mYmRldi5j
-ICAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2dlbS5j
-ICAgICAgICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2dl
-bV9kbWFidWYuYyAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9xeGwvcXhsX2Rpc3Bs
-YXkuYyAgICAgICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS9xeGwvcXhsX2R1
-bWIuYyAgICAgICAgICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL3F4bC9xeGxf
-ZmIuYyAgICAgICAgICAgICAgICAgICAgICB8ICA2ICsrLS0tCiBkcml2ZXJzL2dwdS9kcm0vcXhs
-L3F4bF9nZW0uYyAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9x
-eGwvcXhsX2lvY3RsLmMgICAgICAgICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9xeGwvcXhsX29iamVjdC5jICAgICAgICAgICAgICAgICAgfCAgNiArKy0tLQogZHJpdmVycy9n
-cHUvZHJtL3JhZGVvbi9yYWRlb25fY3MuYyAgICAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJz
-L2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9jdXJzb3IuYyAgICAgICAgICAgIHwgIDYgKystLS0KIGRy
-aXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2Rpc3BsYXkuYyAgICAgICAgICAgfCAxMiArKysr
-LS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2ZiLmMgICAgICAgICAgICAgICAg
-fCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2dlbS5jICAgICAgICAgICAg
-ICAgfCAzMCArKysrKysrKysrKy0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9y
-YWRlb25fb2JqZWN0LmMgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2No
-aXAvcm9ja2NoaXBfZHJtX2ZiLmMgICAgICAgIHwgIDYgKystLS0KIGRyaXZlcnMvZ3B1L2RybS9y
-b2NrY2hpcC9yb2NrY2hpcF9kcm1fZmJkZXYuYyAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJt
-L3JvY2tjaGlwL3JvY2tjaGlwX2RybV9nZW0uYyAgICAgICB8ICA0ICstLQogZHJpdmVycy9ncHUv
-ZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AuYyAgICAgICB8ICA0ICstLQogZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL2RybS5jICAgICAgICAgICAgICAgICAgICAgICB8IDEyICsrKystLS0tLQog
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMgICAgICAgICAgICAgICAgICAgICAgICB8ICA4ICsr
-Ky0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jICAgICAgICAgICAgICAgICAgICAgICB8
-IDEwICsrKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNkY19jcnRjLmMgICAgICAg
-ICAgICAgIHwgIDYgKystLS0KIGRyaXZlcnMvZ3B1L2RybS91ZGwvdWRsX2ZiLmMgICAgICAgICAg
-ICAgICAgICAgICAgfCAgNiArKy0tLQogZHJpdmVycy9ncHUvZHJtL3VkbC91ZGxfZ2VtLmMgICAg
-ICAgICAgICAgICAgICAgICB8ICA0ICstLQogZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfYm8uYyAg
-ICAgICAgICAgICAgICAgICAgICB8IDEyICsrKystLS0tLQogZHJpdmVycy9ncHUvZHJtL3ZjNC92
-YzRfY3J0Yy5jICAgICAgICAgICAgICAgICAgICB8ICA2ICsrLS0tCiBkcml2ZXJzL2dwdS9kcm0v
-dmM0L3ZjNF9nZW0uYyAgICAgICAgICAgICAgICAgICAgIHwgMTQgKysrKystLS0tLS0KIGRyaXZl
-cnMvZ3B1L2RybS92YzQvdmM0X2ttcy5jICAgICAgICAgICAgICAgICAgICAgfCAgMiArLQogZHJp
-dmVycy9ncHUvZHJtL3ZnZW0vdmdlbV9kcnYuYyAgICAgICAgICAgICAgICAgICB8ICA0ICstLQog
-ZHJpdmVycy9ncHUvZHJtL3ZnZW0vdmdlbV9mZW5jZS5jICAgICAgICAgICAgICAgICB8ICAyICst
-CiBkcml2ZXJzL2dwdS9kcm0vdmlydGlvL3ZpcnRncHVfZGlzcGxheS5jICAgICAgICAgIHwgIDQg
-Ky0tCiBkcml2ZXJzL2dwdS9kcm0vdmlydGlvL3ZpcnRncHVfZ2VtLmMgICAgICAgICAgICAgIHwg
-IDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vdmlydGlvL3ZpcnRncHVfaW9jdGwuYyAgICAgICAgICAg
-IHwgMTQgKysrKystLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2ZiLmMgICAg
-ICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfaW9jdGwu
-YyAgICAgICAgICAgICB8ICA0ICstLQogZHJpdmVycy9zdGFnaW5nL3Zib3h2aWRlby92Ym94X2Zi
-LmMgICAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVvL3Zib3hf
-bWFpbi5jICAgICAgICAgICAgIHwgIDggKysrLS0tCiBkcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVv
-L3Zib3hfbW9kZS5jICAgICAgICAgICAgIHwgIDIgKy0KIDEwNyBmaWxlcyBjaGFuZ2VkLCAzMTYg
-aW5zZXJ0aW9ucygrKSwgMzE2IGRlbGV0aW9ucygtKQoKLS0gCjIuNy40CgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0
-CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+Use drm_*_get() and drm_*_put() helpers instead of drm_*_reference()
+and drm_*_unreference() helpers.
+
+drm_*_reference() and drm_*_unreference() functions are just
+compatibility alias for drm_*_get() and drm_*_put() and should not be
+used by new code. So convert all users of compatibility functions to
+use the new APIs.
+
+Generated by: scripts/coccinelle/api/drm-get-put.cocci
+
+Signed-off-by: Cihangir Akturk <cakturk@gmail.com>
+---
+ drivers/gpu/drm/tegra/drm.c | 12 ++++++------
+ drivers/gpu/drm/tegra/fb.c  |  8 ++++----
+ drivers/gpu/drm/tegra/gem.c | 10 +++++-----
+ 3 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 518f4b6..eddea77 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -304,7 +304,7 @@ host1x_bo_lookup(struct drm_file *file, u32 handle)
+ 	if (!gem)
+ 		return NULL;
+ 
+-	drm_gem_object_unreference_unlocked(gem);
++	drm_gem_object_put_unlocked(gem);
+ 
+ 	bo = to_tegra_bo(gem);
+ 	return &bo->base;
+@@ -591,7 +591,7 @@ static int tegra_gem_mmap(struct drm_device *drm, void *data,
+ 
+ 	args->offset = drm_vma_node_offset_addr(&bo->gem.vma_node);
+ 
+-	drm_gem_object_unreference_unlocked(gem);
++	drm_gem_object_put_unlocked(gem);
+ 
+ 	return 0;
+ }
+@@ -858,7 +858,7 @@ static int tegra_gem_set_tiling(struct drm_device *drm, void *data,
+ 	bo->tiling.mode = mode;
+ 	bo->tiling.value = value;
+ 
+-	drm_gem_object_unreference_unlocked(gem);
++	drm_gem_object_put_unlocked(gem);
+ 
+ 	return 0;
+ }
+@@ -898,7 +898,7 @@ static int tegra_gem_get_tiling(struct drm_device *drm, void *data,
+ 		break;
+ 	}
+ 
+-	drm_gem_object_unreference_unlocked(gem);
++	drm_gem_object_put_unlocked(gem);
+ 
+ 	return err;
+ }
+@@ -923,7 +923,7 @@ static int tegra_gem_set_flags(struct drm_device *drm, void *data,
+ 	if (args->flags & DRM_TEGRA_GEM_BOTTOM_UP)
+ 		bo->flags |= TEGRA_BO_BOTTOM_UP;
+ 
+-	drm_gem_object_unreference_unlocked(gem);
++	drm_gem_object_put_unlocked(gem);
+ 
+ 	return 0;
+ }
+@@ -945,7 +945,7 @@ static int tegra_gem_get_flags(struct drm_device *drm, void *data,
+ 	if (bo->flags & TEGRA_BO_BOTTOM_UP)
+ 		args->flags |= DRM_TEGRA_GEM_BOTTOM_UP;
+ 
+-	drm_gem_object_unreference_unlocked(gem);
++	drm_gem_object_put_unlocked(gem);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index 25acb73..80540c1 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -88,7 +88,7 @@ static void tegra_fb_destroy(struct drm_framebuffer *framebuffer)
+ 			if (bo->pages)
+ 				vunmap(bo->vaddr);
+ 
+-			drm_gem_object_unreference_unlocked(&bo->gem);
++			drm_gem_object_put_unlocked(&bo->gem);
+ 		}
+ 	}
+ 
+@@ -195,7 +195,7 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
+ 
+ unreference:
+ 	while (i--)
+-		drm_gem_object_unreference_unlocked(&planes[i]->gem);
++		drm_gem_object_put_unlocked(&planes[i]->gem);
+ 
+ 	return ERR_PTR(err);
+ }
+@@ -242,7 +242,7 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+ 	info = drm_fb_helper_alloc_fbi(helper);
+ 	if (IS_ERR(info)) {
+ 		dev_err(drm->dev, "failed to allocate framebuffer info\n");
+-		drm_gem_object_unreference_unlocked(&bo->gem);
++		drm_gem_object_put_unlocked(&bo->gem);
+ 		return PTR_ERR(info);
+ 	}
+ 
+@@ -251,7 +251,7 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+ 		err = PTR_ERR(fbdev->fb);
+ 		dev_err(drm->dev, "failed to allocate DRM framebuffer: %d\n",
+ 			err);
+-		drm_gem_object_unreference_unlocked(&bo->gem);
++		drm_gem_object_put_unlocked(&bo->gem);
+ 		return PTR_ERR(fbdev->fb);
+ 	}
+ 
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 7a39a35..fe77bcd 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -24,7 +24,7 @@ static void tegra_bo_put(struct host1x_bo *bo)
+ {
+ 	struct tegra_bo *obj = host1x_to_tegra_bo(bo);
+ 
+-	drm_gem_object_unreference_unlocked(&obj->gem);
++	drm_gem_object_put_unlocked(&obj->gem);
+ }
+ 
+ static dma_addr_t tegra_bo_pin(struct host1x_bo *bo, struct sg_table **sgt)
+@@ -95,7 +95,7 @@ static struct host1x_bo *tegra_bo_get(struct host1x_bo *bo)
+ {
+ 	struct tegra_bo *obj = host1x_to_tegra_bo(bo);
+ 
+-	drm_gem_object_reference(&obj->gem);
++	drm_gem_object_get(&obj->gem);
+ 
+ 	return bo;
+ }
+@@ -325,7 +325,7 @@ struct tegra_bo *tegra_bo_create_with_handle(struct drm_file *file,
+ 		return ERR_PTR(err);
+ 	}
+ 
+-	drm_gem_object_unreference_unlocked(&bo->gem);
++	drm_gem_object_put_unlocked(&bo->gem);
+ 
+ 	return bo;
+ }
+@@ -439,7 +439,7 @@ int tegra_bo_dumb_map_offset(struct drm_file *file, struct drm_device *drm,
+ 
+ 	*offset = drm_vma_node_offset_addr(&bo->gem.vma_node);
+ 
+-	drm_gem_object_unreference_unlocked(gem);
++	drm_gem_object_put_unlocked(gem);
+ 
+ 	return 0;
+ }
+@@ -654,7 +654,7 @@ struct drm_gem_object *tegra_gem_prime_import(struct drm_device *drm,
+ 		struct drm_gem_object *gem = buf->priv;
+ 
+ 		if (gem->dev == drm) {
+-			drm_gem_object_reference(gem);
++			drm_gem_object_get(gem);
+ 			return gem;
+ 		}
+ 	}
+-- 
+2.7.4
