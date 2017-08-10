@@ -1,75 +1,77 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: [PATCHv3 2/4] ARM: tegra: add CEC support to tegra124.dtsi
-Date: Thu, 10 Aug 2017 10:31:23 +0200
-Message-ID: <20170810083125.36649-3-hverkuil@xs4all.nl>
-References: <20170810083125.36649-1-hverkuil@xs4all.nl>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170810083125.36649-1-hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH libdrm] drm: Remove create_handle()
+ drm_framebuffer "virtual".
+Date: Thu, 10 Aug 2017 10:59:14 +0200
+Message-ID: <20170810085914.baxswpiaym5duub6@phenom.ffwll.local>
+References: <20170808234237.62051-1-djmk@google.com>
+ <8a7bf59a-0f58-21ba-8b82-78e6ba873065@tronnes.org>
+ <CAOvnNvbEt=Uyve3cu_+6BB0EepvO=OKC6gpV3isRef+UdVoX-g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CAOvnNvbEt=Uyve3cu_+6BB0EepvO=OKC6gpV3isRef+UdVoX-g@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Joe Kniss <djmk@google.com>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Edward O'Callaghan <funfunctor@folklore1984.net>, Dave Airlie <airlied@linux.ie>, nouveau <nouveau@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:VIRTIO CORE,
+ NET..." <virtualization@lists.linux-foundation.org>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, amd-gfx mailing list <amd-gfx@lists.freedesktop.org>, "Vetter,
+ Daniel" <daniel.vetter@intel.com>, baoyou.xie@linaro.org, Alex Xie <AlexBin.Xie@amd.com>, "StDenis, Tom" <tom.stdenis@amd.com>, zhoucm1 <David1.Zhou@amd.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Russell King <linux@armlinux.org.uk>, krzk@kernel.org, jonathanh@nvidia.com, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Matthi
 List-Id: linux-tegra@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-
-Add support for the Tegra CEC IP to tegra124.dtsi and enable it on the
-Jetson TK1.
-
-Signed-off-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
----
- arch/arm/boot/dts/tegra124-jetson-tk1.dts |  4 ++++
- arch/arm/boot/dts/tegra124.dtsi           | 12 +++++++++++-
- 2 files changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index 7bacb2954f58..7f56de6890c3 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -67,6 +67,10 @@
- 		};
- 	};
- 
-+	cec@70015000 {
-+		status = "okay";
-+	};
-+
- 	gpu@0,57000000 {
- 		/*
- 		 * Node left disabled on purpose - the bootloader will enable
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 1b10b14a6abd..1a21e527fb6e 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -123,7 +123,7 @@
- 			nvidia,head = <1>;
- 		};
- 
--		hdmi@54280000 {
-+		hdmi: hdmi@54280000 {
- 			compatible = "nvidia,tegra124-hdmi";
- 			reg = <0x0 0x54280000 0x0 0x00040000>;
- 			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-@@ -851,6 +851,16 @@
- 		status = "disabled";
- 	};
- 
-+	cec@70015000 {
-+		compatible = "nvidia,tegra124-cec";
-+		reg = <0x0 0x70015000 0x0 0x00001000>;
-+		interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_CEC>;
-+		clock-names = "cec";
-+		hdmi-phandle = <&hdmi>;
-+		status = "disabled";
-+	};
-+
- 	soctherm: thermal-sensor@700e2000 {
- 		compatible = "nvidia,tegra124-soctherm";
- 		reg = <0x0 0x700e2000 0x0 0x600 /* SOC_THERM reg_base */
--- 
-2.13.2
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gV2VkLCBBdWcgMDksIDIwMTcgYXQgMDQ6MTM6MDVQTSAtMDcwMCwgSm9lIEtuaXNzIHdyb3Rl
+Ogo+IE9uIFdlZCwgQXVnIDksIDIwMTcgYXQgMTI6MTQgUE0sIE5vcmFsZiBUcsO4bm5lcyA8bm9y
+YWxmQHRyb25uZXMub3JnPiB3cm90ZToKPiA+Cj4gPiBEZW4gMDkuMDguMjAxNyAwMS40Miwgc2ty
+ZXYgSm9lIEtuaXNzOgo+ID4+Cj4gPj4gQmVjYXVzZSBhbGwgZHJpdmVycyBjdXJyZW50bHkgdXNl
+IGdlbSBvYmplY3RzIGZvciBmcmFtZWJ1ZmZlciBwbGFuZXMsCj4gPj4gdGhlIHZpcnR1YWwgY3Jl
+YXRlX2hhbmRsZSgpIGlzIG5vdCByZXF1aXJlZC4gIFRoaXMgY2hhbmdlIGFkZHMgYQo+ID4+IHN0
+cnVjdCBkcm1fZ2VtX29iamVjdCAqZ2Vtc1s0XSBmaWVsZCB0byBkcm1fZnJhbWVidWZmZXIgYW5k
+IHJlbW92ZXMKPiA+PiBjcmVhdGVfaGFuZGxlKCkgZnVuY3Rpb24gcG9pbnRlciBmcm9tIGRybV9m
+cmFtZWJ1ZmZlcl9mdW5jcy4gIFRoZQo+ID4+IGNvcnJlc3BvbmRpbmcgKl9jcmVhdGVfaGFuZGxl
+KCkgZnVuY3Rpb24gaXMgcmVtb3ZlZCBmcm9tIGVhY2ggZHJpdmVyLgo+ID4+Cj4gPj4gSW4gbWFu
+eSBjYXNlcyB0aGlzIGNoYW5nZSBlbGltaW5hdGVzIGEgc3RydWN0ICpfZnJhbWVidWZmZXIgb2Jq
+ZWN0LAo+ID4+IGFzIHRoZSBvbmx5IG5lZWQgZm9yIHRoZSBkZXJpdmVkIHN0cnVjdCBpcyB0aGUg
+YWRkaXRpb24gb2YgdGhlIGdlbQo+ID4+IG9iamVjdCBwb2ludGVyLgo+ID4+Cj4gPj4gVEVTVEVE
+OiBjb21waWxlZDogYWxseWVzY29uZmlnIEFSQ0g9eDg2LGFybSBwbGF0Zm9ybXM6aTkxNSwgcm9j
+a2NoaXAKPiA+Pgo+ID4+IFNpZ25lZC1vZmYtYnk6IEpvZSBLbmlzcyA8ZGpta0Bnb29nbGUuY29t
+Pgo+ID4+IC0tLQo+ID4KPiA+Cj4gPiBIaSBKb2UsCj4gPgo+ID4gSSdtIGFsc28gbG9va2luZyBp
+bnRvIGFkZGluZyBnZW0gb2JqcyB0byBkcm1fZnJhbWVidWZmZXIgaW4gdGhpcyBwYXRjaDoKPiA+
+IFtQQVRDSCB2MiAwMS8yMl0gZHJtOiBBZGQgR0VNIGJhY2tlZCBmcmFtZWJ1ZmZlciBsaWJyYXJ5
+Cj4gPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZlcy9kcmktZGV2ZWwvMjAx
+Ny1BdWd1c3QvMTQ5NzgyLmh0bWwKPiA+Cj4gCj4gR3JlYXQuICBUaGVyZSdzIG9ubHkgbWluaW1h
+bCBvdmVybGFwIGhlcmUuICBJJ2xsIHJlYmFzZSB0aGlzIGNoYW5nZSBvbiB5b3Vycwo+IG9uY2Ug
+aXQncyBpbi4KCkV2ZW4gYmV0dGVyIHRoYW4gd2FpdGluZzogUmV2aWV3aW5nIGVhY2ggYW5vdGhl
+cidzIHBhdGNoZXMuIE5vcmFsZiBoYXMKY29tbWl0IHJpZ2h0cyBhbmQga25vd3MgaG93IGRyaXZl
+ci13aWRlIHJlZmFjdG9yaW5nIHdvcmtzLCBzbyB5b3UncmUgYWxsCmNvdmVyZWQgdG8gZ2V0IHRo
+aXMgbGFuZGVkLCBpZiB5b3UgcHJvdmlkZSBhIGJpdCBvZiByZXZpZXcgZm9yIHRoZSByZXZpZXcK
+bWFya2V0IDotKQoKQ2hlZXJzLCBEYW5pZWwKCj4gCj4gPiBbLi4uXQo+ID4KPiA+PiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9jbWFfaGVscGVyLmMKPiA+PiBiL2RyaXZlcnMv
+Z3B1L2RybS9kcm1fZmJfY21hX2hlbHBlci5jCj4gPj4gaW5kZXggYWRlMzE5ZDEwZTcwLi5mNWYw
+MTFiOTEwYjEgMTAwNjQ0Cj4gPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9jbWFfaGVs
+cGVyLmMKPiA+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2NtYV9oZWxwZXIuYwo+ID4+
+IEBAIC0zMSwxNCArMzEsOSBAQAo+ID4+ICAgICAjZGVmaW5lIERFRkFVTFRfRkJERUZJT19ERUxB
+WV9NUyA1MAo+ID4+ICAgLXN0cnVjdCBkcm1fZmJfY21hIHsKPiA+PiAtICAgICAgIHN0cnVjdCBk
+cm1fZnJhbWVidWZmZXIgICAgICAgICAgZmI7Cj4gPj4gLSAgICAgICBzdHJ1Y3QgZHJtX2dlbV9j
+bWFfb2JqZWN0ICAgICAgICpvYmpbNF07Cj4gPj4gLX07Cj4gPj4gLQo+ID4+ICAgc3RydWN0IGRy
+bV9mYmRldl9jbWEgewo+ID4+ICAgICAgICAgc3RydWN0IGRybV9mYl9oZWxwZXIgICAgZmJfaGVs
+cGVyOwo+ID4+IC0gICAgICAgc3RydWN0IGRybV9mYl9jbWEgICAgICAgKmZiOwo+ID4+ICsgICAg
+ICAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAgKmZiOwo+ID4KPiA+Cj4gPiBUaGlzIGZiIHBvaW50
+ZXIgaXNuJ3QgbmVjZXNzYXJ5LCBzaW5jZSBmYl9oZWxwZXIgYWxyZWFkeSBoYXMgb25lLgo+ID4K
+PiAKPiBJJ2xsIHJlbW92ZSBpdC4uLiBidXQgSSBhbSBzdXJlIHdoZW4gSSBsb29rIGRlZXBlciB0
+aGVyZSB3aWxsIGJlIG1vcmUKPiBvZiB0aGVzZSBpbiB0aGUgdmFyaW91cyBkcml2ZXJzIHRvby4K
+PiAKPiA+IE5vcmFsZi4KPiA+Cj4gPgo+IAo+IC1qb2UKPiBfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwo+IEludGVsLWdmeCBtYWlsaW5nIGxpc3QKPiBJbnRl
+bC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJl
+IEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGlu
+ZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
