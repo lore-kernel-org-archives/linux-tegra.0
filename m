@@ -1,104 +1,69 @@
-From: Anton Volkov <avolkov@ispras.ru>
-Subject: [PATCH] tegra114: fix to a race condition due to early registration of interrupt handler
-Date: Thu, 10 Aug 2017 15:42:08 +0300
-Message-ID: <1502368928-17280-1-git-send-email-avolkov@ispras.ru>
-References: <20170731104105.GF26667@ulmo>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170731104105.GF26667@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com
-Cc: ldewangan@nvidia.com, jonathanh@nvidia.com, broonie@kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org, khoroshilov@ispras.ru, Anton Volkov <avolkov@ispras.ru>
+From: Joe Kniss <djmk@google.com>
+Subject: Re: [PATCH libdrm] drm: Remove create_handle() drm_framebuffer
+ "virtual".
+Date: Thu, 10 Aug 2017 12:29:30 -0700
+Message-ID: <CAOvnNvbNNtuLFy+7-beF=kGB0qYJckT_MEef3_=t-eWi-NFGXA@mail.gmail.com>
+References: <20170808234237.62051-1-djmk@google.com>
+ <8a7bf59a-0f58-21ba-8b82-78e6ba873065@tronnes.org>
+ <CAOvnNvbEt=Uyve3cu_+6BB0EepvO=OKC6gpV3isRef+UdVoX-g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOvnNvbEt=Uyve3cu_+6BB0EepvO=OKC6gpV3isRef+UdVoX-g@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
+Cc: Michel Daenzer <michel.daenzer@amd.com>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:VIRTIO CORE,
+ NET..." <virtualization@lists.linux-foundation.org>, "Zhang,
+ Jerry" <Jerry.Zhang@amd.com>, Thierry Reding <thierry.reding@gmail.com>, "Vetter, Daniel" <daniel.vetter@intel.com>, baoyou.xie@linaro.org, Alex Xie <AlexBin.Xie@amd.com>, "StDenis, Tom" <tom.stdenis@amd.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, joe@perches.com, linux-mediatek@lists.infradead.org, Russell King <linux@armlinux.org.uk>, krzk@kernel.org, jonathanh@nvidia.com, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ben Skeggs <bskeggs@redhat.com>, nouveau <nouveau@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Xiaojie.Yuan@amd.com, Alexandre Demers <alexandre.f.demers@gmail.com>, Joe Kniss <djmk@chr>
 List-Id: linux-tegra@vger.kernel.org
 
-The early registration of interrupt handler made possible a race
-condition leading to the usage of an incorrect physical address
-obtained by reading uninitialized tspi->tx_dma_phys.
-
-This patch moves the registration of an interrupt handler further
-down the code of tegra_spi_probe to make the race infeasible.
-
-Found by by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Volkov <avolkov@ispras.ru>
----
- drivers/spi/spi-tegra114.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 08012ae..9a88dca 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1065,29 +1065,18 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	}
- 	tspi->phys = r->start;
- 
--	spi_irq = platform_get_irq(pdev, 0);
--	tspi->irq = spi_irq;
--	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
--			tegra_spi_isr_thread, IRQF_ONESHOT,
--			dev_name(&pdev->dev), tspi);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
--					tspi->irq);
--		goto exit_free_master;
--	}
--
- 	tspi->clk = devm_clk_get(&pdev->dev, "spi");
- 	if (IS_ERR(tspi->clk)) {
- 		dev_err(&pdev->dev, "can not get clock\n");
- 		ret = PTR_ERR(tspi->clk);
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	}
- 
- 	tspi->rst = devm_reset_control_get(&pdev->dev, "spi");
- 	if (IS_ERR(tspi->rst)) {
- 		dev_err(&pdev->dev, "can not get reset\n");
- 		ret = PTR_ERR(tspi->rst);
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	}
- 
- 	tspi->max_buf_size = SPI_FIFO_DEPTH << 2;
-@@ -1095,7 +1084,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 
- 	ret = tegra_spi_init_dma_param(tspi, true);
- 	if (ret < 0)
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	ret = tegra_spi_init_dma_param(tspi, false);
- 	if (ret < 0)
- 		goto exit_rx_dma_free;
-@@ -1105,6 +1094,17 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 
- 	init_completion(&tspi->xfer_completion);
- 
-+	spi_irq = platform_get_irq(pdev, 0);
-+	tspi->irq = spi_irq;
-+	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
-+			tegra_spi_isr_thread, IRQF_ONESHOT,
-+			dev_name(&pdev->dev), tspi);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
-+					tspi->irq);
-+		goto exit_rx_dma_free;
-+	}
-+
- 	pm_runtime_enable(&pdev->dev);
- 	if (!pm_runtime_enabled(&pdev->dev)) {
- 		ret = tegra_spi_runtime_resume(&pdev->dev);
-@@ -1133,11 +1133,10 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	if (!pm_runtime_status_suspended(&pdev->dev))
- 		tegra_spi_runtime_suspend(&pdev->dev);
-+	free_irq(spi_irq, tspi);
- 	tegra_spi_deinit_dma_param(tspi, false);
- exit_rx_dma_free:
- 	tegra_spi_deinit_dma_param(tspi, true);
--exit_free_irq:
--	free_irq(spi_irq, tspi);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
--- 
-2.7.4
+T24gV2VkLCBBdWcgOSwgMjAxNyBhdCA0OjEzIFBNLCBKb2UgS25pc3MgPGRqbWtAZ29vZ2xlLmNv
+bT4gd3JvdGU6Cj4gT24gV2VkLCBBdWcgOSwgMjAxNyBhdCAxMjoxNCBQTSwgTm9yYWxmIFRyw7hu
+bmVzIDxub3JhbGZAdHJvbm5lcy5vcmc+IHdyb3RlOgo+Pgo+PiBEZW4gMDkuMDguMjAxNyAwMS40
+Miwgc2tyZXYgSm9lIEtuaXNzOgo+Pj4KPj4+IEJlY2F1c2UgYWxsIGRyaXZlcnMgY3VycmVudGx5
+IHVzZSBnZW0gb2JqZWN0cyBmb3IgZnJhbWVidWZmZXIgcGxhbmVzLAo+Pj4gdGhlIHZpcnR1YWwg
+Y3JlYXRlX2hhbmRsZSgpIGlzIG5vdCByZXF1aXJlZC4gIFRoaXMgY2hhbmdlIGFkZHMgYQo+Pj4g
+c3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW1zWzRdIGZpZWxkIHRvIGRybV9mcmFtZWJ1ZmZlciBh
+bmQgcmVtb3Zlcwo+Pj4gY3JlYXRlX2hhbmRsZSgpIGZ1bmN0aW9uIHBvaW50ZXIgZnJvbSBkcm1f
+ZnJhbWVidWZmZXJfZnVuY3MuICBUaGUKPj4+IGNvcnJlc3BvbmRpbmcgKl9jcmVhdGVfaGFuZGxl
+KCkgZnVuY3Rpb24gaXMgcmVtb3ZlZCBmcm9tIGVhY2ggZHJpdmVyLgo+Pj4KPj4+IEluIG1hbnkg
+Y2FzZXMgdGhpcyBjaGFuZ2UgZWxpbWluYXRlcyBhIHN0cnVjdCAqX2ZyYW1lYnVmZmVyIG9iamVj
+dCwKPj4+IGFzIHRoZSBvbmx5IG5lZWQgZm9yIHRoZSBkZXJpdmVkIHN0cnVjdCBpcyB0aGUgYWRk
+aXRpb24gb2YgdGhlIGdlbQo+Pj4gb2JqZWN0IHBvaW50ZXIuCj4+Pgo+Pj4gVEVTVEVEOiBjb21w
+aWxlZDogYWxseWVzY29uZmlnIEFSQ0g9eDg2LGFybSBwbGF0Zm9ybXM6aTkxNSwgcm9ja2NoaXAK
+Pj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBKb2UgS25pc3MgPGRqbWtAZ29vZ2xlLmNvbT4KPj4+IC0t
+LQo+Pgo+Pgo+PiBIaSBKb2UsCj4+Cj4+IEknbSBhbHNvIGxvb2tpbmcgaW50byBhZGRpbmcgZ2Vt
+IG9ianMgdG8gZHJtX2ZyYW1lYnVmZmVyIGluIHRoaXMgcGF0Y2g6Cj4+IFtQQVRDSCB2MiAwMS8y
+Ml0gZHJtOiBBZGQgR0VNIGJhY2tlZCBmcmFtZWJ1ZmZlciBsaWJyYXJ5Cj4+IGh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE3LUF1Z3VzdC8xNDk3ODIu
+aHRtbAo+Pgo+Cj4gR3JlYXQuICBUaGVyZSdzIG9ubHkgbWluaW1hbCBvdmVybGFwIGhlcmUuICBJ
+J2xsIHJlYmFzZSB0aGlzIGNoYW5nZSBvbiB5b3Vycwo+IG9uY2UgaXQncyBpbi4KPgo+PiBbLi4u
+XQo+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJfY21hX2hlbHBlci5j
+Cj4+PiBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJfY21hX2hlbHBlci5jCj4+PiBpbmRleCBhZGUz
+MTlkMTBlNzAuLmY1ZjAxMWI5MTBiMSAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9k
+cm1fZmJfY21hX2hlbHBlci5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2NtYV9o
+ZWxwZXIuYwo+Pj4gQEAgLTMxLDE0ICszMSw5IEBACj4+PiAgICAgI2RlZmluZSBERUZBVUxUX0ZC
+REVGSU9fREVMQVlfTVMgNTAKPj4+ICAgLXN0cnVjdCBkcm1fZmJfY21hIHsKPj4+IC0gICAgICAg
+c3RydWN0IGRybV9mcmFtZWJ1ZmZlciAgICAgICAgICBmYjsKPj4+IC0gICAgICAgc3RydWN0IGRy
+bV9nZW1fY21hX29iamVjdCAgICAgICAqb2JqWzRdOwo+Pj4gLX07Cj4+PiAtCj4+PiAgIHN0cnVj
+dCBkcm1fZmJkZXZfY21hIHsKPj4+ICAgICAgICAgc3RydWN0IGRybV9mYl9oZWxwZXIgICAgZmJf
+aGVscGVyOwo+Pj4gLSAgICAgICBzdHJ1Y3QgZHJtX2ZiX2NtYSAgICAgICAqZmI7Cj4+PiArICAg
+ICAgIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgICpmYjsKPj4KPj4KPj4gVGhpcyBmYiBwb2ludGVy
+IGlzbid0IG5lY2Vzc2FyeSwgc2luY2UgZmJfaGVscGVyIGFscmVhZHkgaGFzIG9uZS4KPj4KClNv
+LCBsb29raW5nIGRlZXBlciBpbnRvIHRoaXMsIGl0IHNlZW1zIHRoYXQgdGhlIHN0cnVjdApkcm1f
+ZnJhbWVidWZmZXJfZnVuY3MgKmZiX2Z1bmNzIGlzIGFsc28gcmVkdW5kYW50IGhlcmU/ICBJbiB3
+aGljaCBjYXNlCnRoaXMgd2hvbGUgc3RydWN0IGNhbiBnby4uLgoKPgo+IEknbGwgcmVtb3ZlIGl0
+Li4uIGJ1dCBJIGFtIHN1cmUgd2hlbiBJIGxvb2sgZGVlcGVyIHRoZXJlIHdpbGwgYmUgbW9yZQo+
+IG9mIHRoZXNlIGluIHRoZSB2YXJpb3VzIGRyaXZlcnMgdG9vLgo+Cj4+IE5vcmFsZi4KPj4KPj4K
+Pgo+IC1qb2UKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
