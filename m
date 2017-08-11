@@ -1,74 +1,383 @@
-From: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Intel-gfx] [PATCH libdrm] drm: Remove create_handle()
- drm_framebuffer "virtual".
-Date: Fri, 11 Aug 2017 00:52:13 +0100
-Message-ID: <CACvgo53_Xfyaqhqe=+LMKOwJUbBnnoLuJu+gi0P+4AfJmH7Fmg@mail.gmail.com>
-References: <20170808234237.62051-1-djmk@google.com>
- <8a7bf59a-0f58-21ba-8b82-78e6ba873065@tronnes.org>
- <CAOvnNvbEt=Uyve3cu_+6BB0EepvO=OKC6gpV3isRef+UdVoX-g@mail.gmail.com>
- <CAOvnNvbNNtuLFy+7-beF=kGB0qYJckT_MEef3_=t-eWi-NFGXA@mail.gmail.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH v2 5/5] thermal: Add Tegra BPMP thermal sensor driver
+Date: Fri, 11 Aug 2017 10:57:56 +0800
+Message-ID: <1502420276.2598.5.camel@intel.com>
+References: <20170724162918.21050-1-mperttunen@nvidia.com>
+         <20170724162918.21050-5-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAOvnNvbNNtuLFy+7-beF=kGB0qYJckT_MEef3_=t-eWi-NFGXA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Joe Kniss <djmk-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Edward O'Callaghan <funfunctor-dczkZgxz+BNUPWh3PAxdjQ@public.gmane.org>, Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "open list:VIRTIO CORE,
- NET..." <virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, amd-gfx mailing list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "Vetter,
- Daniel" <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Baoyou Xie <baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alex Xie <AlexBin.Xie-5C7GfCeVMHo@public.gmane.org>, "StDenis, Tom" <tom.stdenis-5C7GfCeVMHo@public.gmane.org>, zhoucm1 <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Tomi
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170724162918.21050-5-mperttunen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>, edubezval@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, wni@nvidia.com
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTAgQXVndXN0IDIwMTcgYXQgMjA6MjksIEpvZSBLbmlzcyA8ZGpta0Bnb29nbGUuY29tPiB3
-cm90ZToKPiBPbiBXZWQsIEF1ZyA5LCAyMDE3IGF0IDQ6MTMgUE0sIEpvZSBLbmlzcyA8ZGpta0Bn
-b29nbGUuY29tPiB3cm90ZToKPj4gT24gV2VkLCBBdWcgOSwgMjAxNyBhdCAxMjoxNCBQTSwgTm9y
-YWxmIFRyw7hubmVzIDxub3JhbGZAdHJvbm5lcy5vcmc+IHdyb3RlOgo+Pj4KPj4+IERlbiAwOS4w
-OC4yMDE3IDAxLjQyLCBza3JldiBKb2UgS25pc3M6Cj4+Pj4KPj4+PiBCZWNhdXNlIGFsbCBkcml2
-ZXJzIGN1cnJlbnRseSB1c2UgZ2VtIG9iamVjdHMgZm9yIGZyYW1lYnVmZmVyIHBsYW5lcywKPj4+
-PiB0aGUgdmlydHVhbCBjcmVhdGVfaGFuZGxlKCkgaXMgbm90IHJlcXVpcmVkLiAgVGhpcyBjaGFu
-Z2UgYWRkcyBhCj4+Pj4gc3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW1zWzRdIGZpZWxkIHRvIGRy
-bV9mcmFtZWJ1ZmZlciBhbmQgcmVtb3Zlcwo+Pj4+IGNyZWF0ZV9oYW5kbGUoKSBmdW5jdGlvbiBw
-b2ludGVyIGZyb20gZHJtX2ZyYW1lYnVmZmVyX2Z1bmNzLiAgVGhlCj4+Pj4gY29ycmVzcG9uZGlu
-ZyAqX2NyZWF0ZV9oYW5kbGUoKSBmdW5jdGlvbiBpcyByZW1vdmVkIGZyb20gZWFjaCBkcml2ZXIu
-Cj4+Pj4KPj4+PiBJbiBtYW55IGNhc2VzIHRoaXMgY2hhbmdlIGVsaW1pbmF0ZXMgYSBzdHJ1Y3Qg
-Kl9mcmFtZWJ1ZmZlciBvYmplY3QsCj4+Pj4gYXMgdGhlIG9ubHkgbmVlZCBmb3IgdGhlIGRlcml2
-ZWQgc3RydWN0IGlzIHRoZSBhZGRpdGlvbiBvZiB0aGUgZ2VtCj4+Pj4gb2JqZWN0IHBvaW50ZXIu
-Cj4+Pj4KPj4+PiBURVNURUQ6IGNvbXBpbGVkOiBhbGx5ZXNjb25maWcgQVJDSD14ODYsYXJtIHBs
-YXRmb3JtczppOTE1LCByb2NrY2hpcAo+Pj4+Cj4+Pj4gU2lnbmVkLW9mZi1ieTogSm9lIEtuaXNz
-IDxkam1rQGdvb2dsZS5jb20+Cj4+Pj4gLS0tCj4+Pgo+Pj4KPj4+IEhpIEpvZSwKPj4+Cj4+PiBJ
-J20gYWxzbyBsb29raW5nIGludG8gYWRkaW5nIGdlbSBvYmpzIHRvIGRybV9mcmFtZWJ1ZmZlciBp
-biB0aGlzIHBhdGNoOgo+Pj4gW1BBVENIIHYyIDAxLzIyXSBkcm06IEFkZCBHRU0gYmFja2VkIGZy
-YW1lYnVmZmVyIGxpYnJhcnkKPj4+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hp
-dmVzL2RyaS1kZXZlbC8yMDE3LUF1Z3VzdC8xNDk3ODIuaHRtbAo+Pj4KPj4KPj4gR3JlYXQuICBU
-aGVyZSdzIG9ubHkgbWluaW1hbCBvdmVybGFwIGhlcmUuICBJJ2xsIHJlYmFzZSB0aGlzIGNoYW5n
-ZSBvbiB5b3Vycwo+PiBvbmNlIGl0J3MgaW4uCj4+Cj4+PiBbLi4uXQo+Pj4KPj4+PiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9jbWFfaGVscGVyLmMKPj4+PiBiL2RyaXZlcnMv
-Z3B1L2RybS9kcm1fZmJfY21hX2hlbHBlci5jCj4+Pj4gaW5kZXggYWRlMzE5ZDEwZTcwLi5mNWYw
-MTFiOTEwYjEgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9jbWFfaGVs
-cGVyLmMKPj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2NtYV9oZWxwZXIuYwo+Pj4+
-IEBAIC0zMSwxNCArMzEsOSBAQAo+Pj4+ICAgICAjZGVmaW5lIERFRkFVTFRfRkJERUZJT19ERUxB
-WV9NUyA1MAo+Pj4+ICAgLXN0cnVjdCBkcm1fZmJfY21hIHsKPj4+PiAtICAgICAgIHN0cnVjdCBk
-cm1fZnJhbWVidWZmZXIgICAgICAgICAgZmI7Cj4+Pj4gLSAgICAgICBzdHJ1Y3QgZHJtX2dlbV9j
-bWFfb2JqZWN0ICAgICAgICpvYmpbNF07Cj4+Pj4gLX07Cj4+Pj4gLQo+Pj4+ICAgc3RydWN0IGRy
-bV9mYmRldl9jbWEgewo+Pj4+ICAgICAgICAgc3RydWN0IGRybV9mYl9oZWxwZXIgICAgZmJfaGVs
-cGVyOwo+Pj4+IC0gICAgICAgc3RydWN0IGRybV9mYl9jbWEgICAgICAgKmZiOwo+Pj4+ICsgICAg
-ICAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAgKmZiOwo+Pj4KPj4+Cj4+PiBUaGlzIGZiIHBvaW50
-ZXIgaXNuJ3QgbmVjZXNzYXJ5LCBzaW5jZSBmYl9oZWxwZXIgYWxyZWFkeSBoYXMgb25lLgo+Pj4K
-Pgo+IFNvLCBsb29raW5nIGRlZXBlciBpbnRvIHRoaXMsIGl0IHNlZW1zIHRoYXQgdGhlIHN0cnVj
-dAo+IGRybV9mcmFtZWJ1ZmZlcl9mdW5jcyAqZmJfZnVuY3MgaXMgYWxzbyByZWR1bmRhbnQgaGVy
-ZT8gIEluIHdoaWNoIGNhc2UKPiB0aGlzIHdob2xlIHN0cnVjdCBjYW4gZ28uLi4KPgpJIHRoaW5r
-IHlvdSdyZSBzcG90IG9uLgoKUGVyaGFwcyB0aGUgZ29hbCB3YXMgdG8gYWxsb3cgZHJpdmVycyB0
-byB1c2Ugc2VwYXJhdGUgZnVuY3MgZm9yIGZiIHZzIGZiZGV2PwpOb3Qgc3VyZSBob3cgd2VsbCB0
-aGF0IHdpbGwgZmFpciwgeWV0IGFnYWluLCBhbGwgY3VycmVudCB1c2VycyB1c2UgdGhlCnNhbWUg
-ZnVuY3MgZm9yIGJvdGguCgotRW1pbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwphbWQtZ2Z4IG1haWxpbmcgbGlzdAphbWQtZ2Z4QGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ft
-ZC1nZngK
+On Mon, 2017-07-24 at 19:29 +0300, Mikko Perttunen wrote:
+> On Tegra186, the BPMP (Boot and Power Management Processor) exposes
+> an
+> interface to thermal sensors on the system-on-chip. This driver
+> implements access to the interface. It supports reading the
+> temperature, setting trip points and receiving notification of a
+> tripped trip point.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+
+Wei Ni,
+
+what do you think of this patch?
+
+thanks,
+rui
+> ---
+> v2:
+> - don't allocate space for disabled zones
+> - allow compilation with COMPILE_TEST
+> 
+>  drivers/thermal/Makefile             |   2 +-
+>  drivers/thermal/tegra/Kconfig        |   7 +
+>  drivers/thermal/tegra/Makefile       |   3 +-
+>  drivers/thermal/tegra/bpmp-thermal.c | 263
+> +++++++++++++++++++++++++++++++++++
+>  4 files changed, 273 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/thermal/tegra/bpmp-thermal.c
+> 
+> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+> index 094d7039981c..c03dccdba7b8 100644
+> --- a/drivers/thermal/Makefile
+> +++ b/drivers/thermal/Makefile
+> @@ -54,7 +54,7 @@ obj-$(CONFIG_INTEL_BXT_PMIC_THERMAL) +=
+> intel_bxt_pmic_thermal.o
+>  obj-$(CONFIG_INTEL_PCH_THERMAL)	+= intel_pch_thermal.o
+>  obj-$(CONFIG_ST_THERMAL)	+= st/
+>  obj-$(CONFIG_QCOM_TSENS)	+= qcom/
+> -obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra/
+> +obj-y				+= tegra/
+>  obj-$(CONFIG_HISI_THERMAL)     += hisi_thermal.o
+>  obj-$(CONFIG_MTK_THERMAL)	+= mtk_thermal.o
+>  obj-$(CONFIG_GENERIC_ADC_THERMAL)	+= thermal-generic-adc.o
+> diff --git a/drivers/thermal/tegra/Kconfig
+> b/drivers/thermal/tegra/Kconfig
+> index cec586ec7e4b..f8740f7852e3 100644
+> --- a/drivers/thermal/tegra/Kconfig
+> +++ b/drivers/thermal/tegra/Kconfig
+> @@ -10,4 +10,11 @@ config TEGRA_SOCTHERM
+>  	  zones to manage temperatures. This option is also required
+> for the
+>  	  emergency thermal reset (thermtrip) feature to function.
+>  
+> +config TEGRA_BPMP_THERMAL
+> +	tristate "Tegra BPMP thermal sensing"
+> +	depends on TEGRA_BPMP || COMPILE_TEST
+> +	help
+> +	 Enable this option for support for sensing system
+> temperature of NVIDIA
+> +	 Tegra systems-on-chip with the BPMP coprocessor (Tegra186).
+> +
+>  endmenu
+> diff --git a/drivers/thermal/tegra/Makefile
+> b/drivers/thermal/tegra/Makefile
+> index 1ce1af2cf0f5..757abcd1feaf 100644
+> --- a/drivers/thermal/tegra/Makefile
+> +++ b/drivers/thermal/tegra/Makefile
+> @@ -1,4 +1,5 @@
+> -obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra-soctherm.o
+> +obj-$(CONFIG_TEGRA_SOCTHERM)		+= tegra-soctherm.o
+> +obj-$(CONFIG_TEGRA_BPMP_THERMAL)	+= bpmp-thermal.o
+>  
+>  tegra-soctherm-y				:= soctherm.o
+> soctherm-fuse.o
+>  tegra-soctherm-$(CONFIG_ARCH_TEGRA_124_SOC)	+= tegra124-
+> soctherm.o
+> diff --git a/drivers/thermal/tegra/bpmp-thermal.c
+> b/drivers/thermal/tegra/bpmp-thermal.c
+> new file mode 100644
+> index 000000000000..b0980dbca3b3
+> --- /dev/null
+> +++ b/drivers/thermal/tegra/bpmp-thermal.c
+> @@ -0,0 +1,263 @@
+> +/*
+> + * Copyright (c) 2015-2017, NVIDIA CORPORATION.  All rights
+> reserved.
+> + *
+> + * Author:
+> + *	Mikko Perttunen <mperttunen@nvidia.com>
+> + *	Aapo Vienamo	<avienamo@nvidia.com>
+> + *
+> + * This software is licensed under the terms of the GNU General
+> Public
+> + * License version 2, as published by the Free Software Foundation,
+> and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/thermal.h>
+> +#include <linux/workqueue.h>
+> +
+> +#include <soc/tegra/bpmp.h>
+> +#include <soc/tegra/bpmp-abi.h>
+> +
+> +struct tegra_bpmp_thermal_zone {
+> +	struct tegra_bpmp_thermal *tegra;
+> +	struct thermal_zone_device *tzd;
+> +	struct work_struct tz_device_update_work;
+> +	unsigned int idx;
+> +};
+> +
+> +struct tegra_bpmp_thermal {
+> +	struct device *dev;
+> +	struct tegra_bpmp *bpmp;
+> +	unsigned int num_zones;
+> +	struct tegra_bpmp_thermal_zone **zones;
+> +};
+> +
+> +static int tegra_bpmp_thermal_get_temp(void *data, int *out_temp)
+> +{
+> +	struct tegra_bpmp_thermal_zone *zone = data;
+> +	struct mrq_thermal_host_to_bpmp_request req;
+> +	union mrq_thermal_bpmp_to_host_response reply;
+> +	struct tegra_bpmp_message msg;
+> +	int err;
+> +
+> +	memset(&req, 0, sizeof(req));
+> +	req.type = CMD_THERMAL_GET_TEMP;
+> +	req.get_temp.zone = zone->idx;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.mrq = MRQ_THERMAL;
+> +	msg.tx.data = &req;
+> +	msg.tx.size = sizeof(req);
+> +	msg.rx.data = &reply;
+> +	msg.rx.size = sizeof(reply);
+> +
+> +	err = tegra_bpmp_transfer(zone->tegra->bpmp, &msg);
+> +	if (err)
+> +		return err;
+> +
+> +	*out_temp = reply.get_temp.temp;
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_bpmp_thermal_set_trips(void *data, int low, int
+> high)
+> +{
+> +	struct tegra_bpmp_thermal_zone *zone = data;
+> +	struct mrq_thermal_host_to_bpmp_request req;
+> +	struct tegra_bpmp_message msg;
+> +
+> +	memset(&req, 0, sizeof(req));
+> +	req.type = CMD_THERMAL_SET_TRIP;
+> +	req.set_trip.zone = zone->idx;
+> +	req.set_trip.enabled = true;
+> +	req.set_trip.low = low;
+> +	req.set_trip.high = high;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.mrq = MRQ_THERMAL;
+> +	msg.tx.data = &req;
+> +	msg.tx.size = sizeof(req);
+> +
+> +	return tegra_bpmp_transfer(zone->tegra->bpmp, &msg);
+> +}
+> +
+> +static void tz_device_update_work_fn(struct work_struct *work)
+> +{
+> +	struct tegra_bpmp_thermal_zone *zone;
+> +
+> +	zone = container_of(work, struct tegra_bpmp_thermal_zone,
+> +			    tz_device_update_work);
+> +
+> +	thermal_zone_device_update(zone->tzd,
+> THERMAL_TRIP_VIOLATED);
+> +}
+> +
+> +static void bpmp_mrq_thermal(unsigned int mrq, struct
+> tegra_bpmp_channel *ch,
+> +			     void *data)
+> +{
+> +	struct mrq_thermal_bpmp_to_host_request *req;
+> +	struct tegra_bpmp_thermal *tegra = data;
+> +	int i;
+> +
+> +	req = (struct mrq_thermal_bpmp_to_host_request *)ch->ib-
+> >data;
+> +
+> +	if (req->type != CMD_THERMAL_HOST_TRIP_REACHED) {
+> +		dev_err(tegra->dev, "%s: invalid request type:
+> %d\n",
+> +			__func__, req->type);
+> +		tegra_bpmp_mrq_return(ch, -EINVAL, NULL, 0);
+> +		return;
+> +	}
+> +
+> +	for (i = 0; i < tegra->num_zones; ++i) {
+> +		if (tegra->zones[i]->idx != req-
+> >host_trip_reached.zone)
+> +			continue;
+> +
+> +		schedule_work(&tegra->zones[i]-
+> >tz_device_update_work);
+> +		tegra_bpmp_mrq_return(ch, 0, NULL, 0);
+> +		return;
+> +	}
+> +
+> +	dev_err(tegra->dev, "%s: invalid thermal zone: %d\n",
+> __func__,
+> +		req->host_trip_reached.zone);
+> +	tegra_bpmp_mrq_return(ch, -EINVAL, NULL, 0);
+> +}
+> +
+> +static int tegra_bpmp_thermal_get_num_zones(struct tegra_bpmp *bpmp,
+> +					    int *num_zones)
+> +{
+> +	struct mrq_thermal_host_to_bpmp_request req;
+> +	union mrq_thermal_bpmp_to_host_response reply;
+> +	struct tegra_bpmp_message msg;
+> +	int err;
+> +
+> +	memset(&req, 0, sizeof(req));
+> +	req.type = CMD_THERMAL_GET_NUM_ZONES;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.mrq = MRQ_THERMAL;
+> +	msg.tx.data = &req;
+> +	msg.tx.size = sizeof(req);
+> +	msg.rx.data = &reply;
+> +	msg.rx.size = sizeof(reply);
+> +
+> +	err = tegra_bpmp_transfer(bpmp, &msg);
+> +	if (err)
+> +		return err;
+> +
+> +	*num_zones = reply.get_num_zones.num;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct thermal_zone_of_device_ops
+> tegra_bpmp_of_thermal_ops = {
+> +	.get_temp = tegra_bpmp_thermal_get_temp,
+> +	.set_trips = tegra_bpmp_thermal_set_trips,
+> +};
+> +
+> +static int tegra_bpmp_thermal_probe(struct platform_device *pdev)
+> +{
+> +	struct tegra_bpmp *bpmp = dev_get_drvdata(pdev->dev.parent);
+> +	struct tegra_bpmp_thermal *tegra;
+> +	struct thermal_zone_device *tzd;
+> +	unsigned int i, max_num_zones;
+> +	int err;
+> +
+> +	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra),
+> GFP_KERNEL);
+> +	if (!tegra)
+> +		return -ENOMEM;
+> +
+> +	tegra->dev = &pdev->dev;
+> +	tegra->bpmp = bpmp;
+> +
+> +	err = tegra_bpmp_thermal_get_num_zones(bpmp,
+> &max_num_zones);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "failed to get the number of
+> zones: %d\n",
+> +			err);
+> +		return err;
+> +	}
+> +
+> +	tegra->zones = devm_kcalloc(&pdev->dev, max_num_zones,
+> +				    sizeof(*tegra->zones),
+> GFP_KERNEL);
+> +	if (!tegra->zones)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < max_num_zones; ++i) {
+> +		struct tegra_bpmp_thermal_zone *zone;
+> +		int temp;
+> +
+> +		zone = devm_kzalloc(&pdev->dev, sizeof(*zone),
+> GFP_KERNEL);
+> +		if (!zone)
+> +			return -ENOMEM;
+> +
+> +		zone->idx = i;
+> +		zone->tegra = tegra;
+> +
+> +		err = tegra_bpmp_thermal_get_temp(zone, &temp);
+> +		if (err < 0) {
+> +			devm_kfree(&pdev->dev, zone);
+> +			continue;
+> +		}
+> +
+> +		tzd = devm_thermal_zone_of_sensor_register(
+> +			&pdev->dev, i, zone,
+> &tegra_bpmp_of_thermal_ops);
+> +		if (IS_ERR(tzd)) {
+> +			if (PTR_ERR(tzd) == -EPROBE_DEFER)
+> +				return -EPROBE_DEFER;
+> +			devm_kfree(&pdev->dev, zone);
+> +			continue;
+> +		}
+> +
+> +		zone->tzd = tzd;
+> +		INIT_WORK(&zone->tz_device_update_work,
+> +			  tz_device_update_work_fn);
+> +
+> +		tegra->zones[tegra->num_zones++] = zone;
+> +	}
+> +
+> +	err = tegra_bpmp_request_mrq(bpmp, MRQ_THERMAL,
+> bpmp_mrq_thermal,
+> +				     tegra);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "failed to register mrq handler:
+> %d\n",
+> +			err);
+> +		return err;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, tegra);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_bpmp_thermal_remove(struct platform_device *pdev)
+> +{
+> +	struct tegra_bpmp_thermal *tegra =
+> platform_get_drvdata(pdev);
+> +
+> +	tegra_bpmp_free_mrq(tegra->bpmp, MRQ_THERMAL, tegra);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id tegra_bpmp_thermal_of_match[] = {
+> +	{ .compatible = "nvidia,tegra186-bpmp-thermal" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, tegra_bpmp_thermal_of_match);
+> +
+> +static struct platform_driver tegra_bpmp_thermal_driver = {
+> +	.probe = tegra_bpmp_thermal_probe,
+> +	.remove = tegra_bpmp_thermal_remove,
+> +	.driver = {
+> +		.name = "tegra-bpmp-thermal",
+> +		.of_match_table = tegra_bpmp_thermal_of_match,
+> +	},
+> +};
+> +module_platform_driver(tegra_bpmp_thermal_driver);
+> +
+> +MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
+> +MODULE_DESCRIPTION("NVIDIA Tegra BPMP thermal sensor driver");
+> +MODULE_LICENSE("GPL v2");
