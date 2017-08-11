@@ -1,47 +1,133 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH] PCI: Convert to using %pOF instead of full_name
-Date: Fri, 11 Aug 2017 10:56:58 -0500
-Message-ID: <20170811155658.GA17039@bhelgaas-glaptop.roam.corp.google.com>
-References: <20170718214339.7774-41-robh@kernel.org>
- <20170802223928.GQ20308@bhelgaas-glaptop.roam.corp.google.com>
- <CAL_JsqLznQdnWw+A2T8V8CTktYaPDF_800jGHAVa=G-Yhxyn+Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLznQdnWw+A2T8V8CTktYaPDF_800jGHAVa=G-Yhxyn+Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drm/tegra: Prevent BOs from being freed during job submission
+Date: Fri, 11 Aug 2017 19:59:26 +0200
+Message-ID: <20170811175926.24317-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-[+cc Tyrel]
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-On Wed, Aug 09, 2017 at 05:04:43PM -0500, Rob Herring wrote:
-> On Wed, Aug 2, 2017 at 5:39 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Tue, Jul 18, 2017 at 04:43:21PM -0500, Rob Herring wrote:
-> >> Now that we have a custom printf format specifier, convert users of
-> >> full_name to use %pOF instead. This is preparation to remove storing
-> >> of the full path string for each node.
-> >>
-> >> Signed-off-by: Rob Herring <robh@kernel.org>
-> >> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> >> Cc: Jason Cooper <jason@lakedaemon.net>
-> >> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> >> Cc: Thierry Reding <thierry.reding@gmail.com>
-> >> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> >> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> >> Cc: Paul Mackerras <paulus@samba.org>
-> >> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> >> Cc: linux-pci@vger.kernel.org
-> >> Cc: linux-arm-kernel@lists.infradead.org
-> >> Cc: linux-tegra@vger.kernel.org
-> >> Cc: linuxppc-dev@lists.ozlabs.org
-> >
-> > Applied to pci/misc for v4.14, thanks!
-> 
-> This hasn't shown up in -next.
+Since DRM IOCTL's are lockless, there is a chance that BOs could be
+released while a job submission is in progress. To avoid that, keep the
+GEM reference until the job has been pinned, part of which will be to
+take another reference.
 
-Thanks, it should be in next-20170811.
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/drm.c | 42 +++++++++++++++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 9 deletions(-)
 
-I updated it to add Tyrel's reviewed-by, but that's not in -next yet.
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index f01db33fa20f..e5d19e1c9bc8 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -320,8 +320,6 @@ host1x_bo_lookup(struct drm_file *file, u32 handle)
+ 	if (!gem)
+ 		return NULL;
+ 
+-	drm_gem_object_unreference_unlocked(gem);
+-
+ 	bo = to_tegra_bo(gem);
+ 	return &bo->base;
+ }
+@@ -410,8 +408,10 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		(void __user *)(uintptr_t)args->waitchks;
+ 	struct drm_tegra_syncpt syncpt;
+ 	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
++	struct drm_gem_object **refs;
+ 	struct host1x_syncpt *sp;
+ 	struct host1x_job *job;
++	unsigned int num_refs;
+ 	int err;
+ 
+ 	/* We don't yet support other than one syncpt_incr struct per submit */
+@@ -433,6 +433,26 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 	job->class = context->client->base.class;
+ 	job->serialize = true;
+ 
++	/*
++	 * Track referenced BOs so that they can be unreferenced after the
++	 * submission is complete.
++	 */
++	num_refs = num_cmdbufs + num_relocs * 2 + num_waitchks;
++
++	if (sizeof(*refs) * num_refs > ULONG_MAX) {
++		err = -EINVAL;
++		goto fail;
++	}
++
++	refs = kmalloc_array(num_refs, sizeof(*refs), GFP_KERNEL);
++	if (!refs) {
++		err = -ENOMEM;
++		goto fail;
++	}
++
++	/* reuse as an iterator later */
++	num_refs = 0;
++
+ 	while (num_cmdbufs) {
+ 		struct drm_tegra_cmdbuf cmdbuf;
+ 		struct host1x_bo *bo;
+@@ -461,6 +481,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 
+ 		offset = (u64)cmdbuf.offset + (u64)cmdbuf.words * sizeof(u32);
+ 		obj = host1x_to_tegra_bo(bo);
++		refs[num_refs++] = &obj->gem;
+ 
+ 		/*
+ 		 * Gather buffer base address must be 4-bytes aligned,
+@@ -490,6 +511,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 
+ 		reloc = &job->relocarray[num_relocs];
+ 		obj = host1x_to_tegra_bo(reloc->cmdbuf.bo);
++		refs[num_refs++] = &obj->gem;
+ 
+ 		/*
+ 		 * The unaligned cmdbuf offset will cause an unaligned write
+@@ -503,6 +525,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		}
+ 
+ 		obj = host1x_to_tegra_bo(reloc->target.bo);
++		refs[num_refs++] = &obj->gem;
+ 
+ 		if (reloc->target.offset >= obj->gem.size) {
+ 			err = -EINVAL;
+@@ -522,6 +545,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 			goto fail;
+ 
+ 		obj = host1x_to_tegra_bo(wait->bo);
++		refs[num_refs++] = &obj->gem;
+ 
+ 		/*
+ 		 * The unaligned offset will cause an unaligned write during
+@@ -561,17 +585,17 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		goto fail;
+ 
+ 	err = host1x_job_submit(job);
+-	if (err)
+-		goto fail_submit;
++	if (err) {
++		host1x_job_unpin(job);
++		goto fail;
++	}
+ 
+ 	args->fence = job->syncpt_end;
+ 
+-	host1x_job_put(job);
+-	return 0;
+-
+-fail_submit:
+-	host1x_job_unpin(job);
+ fail:
++	while (num_refs--)
++		drm_gem_object_put_unlocked(refs[num_refs]);
++
+ 	host1x_job_put(job);
+ 	return err;
+ }
+-- 
+2.13.3
