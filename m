@@ -1,383 +1,204 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH v2 5/5] thermal: Add Tegra BPMP thermal sensor driver
-Date: Fri, 11 Aug 2017 10:57:56 +0800
-Message-ID: <1502420276.2598.5.camel@intel.com>
-References: <20170724162918.21050-1-mperttunen@nvidia.com>
-         <20170724162918.21050-5-mperttunen@nvidia.com>
+From: Cihangir Akturk <cakturk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 00/28] DRM API Conversions
+Date: Fri, 11 Aug 2017 15:32:46 +0300
+Message-ID: <1502454794-28558-1-git-send-email-cakturk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170724162918.21050-5-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>, edubezval@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, wni@nvidia.com
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Cihangir Akturk <cakturk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2017-07-24 at 19:29 +0300, Mikko Perttunen wrote:
-> On Tegra186, the BPMP (Boot and Power Management Processor) exposes
-> an
-> interface to thermal sensors on the system-on-chip. This driver
-> implements access to the interface. It supports reading the
-> temperature, setting trip points and receiving notification of a
-> tripped trip point.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-
-Wei Ni,
-
-what do you think of this patch?
-
-thanks,
-rui
-> ---
-> v2:
-> - don't allocate space for disabled zones
-> - allow compilation with COMPILE_TEST
-> 
->  drivers/thermal/Makefile             |   2 +-
->  drivers/thermal/tegra/Kconfig        |   7 +
->  drivers/thermal/tegra/Makefile       |   3 +-
->  drivers/thermal/tegra/bpmp-thermal.c | 263
-> +++++++++++++++++++++++++++++++++++
->  4 files changed, 273 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/thermal/tegra/bpmp-thermal.c
-> 
-> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> index 094d7039981c..c03dccdba7b8 100644
-> --- a/drivers/thermal/Makefile
-> +++ b/drivers/thermal/Makefile
-> @@ -54,7 +54,7 @@ obj-$(CONFIG_INTEL_BXT_PMIC_THERMAL) +=
-> intel_bxt_pmic_thermal.o
->  obj-$(CONFIG_INTEL_PCH_THERMAL)	+= intel_pch_thermal.o
->  obj-$(CONFIG_ST_THERMAL)	+= st/
->  obj-$(CONFIG_QCOM_TSENS)	+= qcom/
-> -obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra/
-> +obj-y				+= tegra/
->  obj-$(CONFIG_HISI_THERMAL)     += hisi_thermal.o
->  obj-$(CONFIG_MTK_THERMAL)	+= mtk_thermal.o
->  obj-$(CONFIG_GENERIC_ADC_THERMAL)	+= thermal-generic-adc.o
-> diff --git a/drivers/thermal/tegra/Kconfig
-> b/drivers/thermal/tegra/Kconfig
-> index cec586ec7e4b..f8740f7852e3 100644
-> --- a/drivers/thermal/tegra/Kconfig
-> +++ b/drivers/thermal/tegra/Kconfig
-> @@ -10,4 +10,11 @@ config TEGRA_SOCTHERM
->  	  zones to manage temperatures. This option is also required
-> for the
->  	  emergency thermal reset (thermtrip) feature to function.
->  
-> +config TEGRA_BPMP_THERMAL
-> +	tristate "Tegra BPMP thermal sensing"
-> +	depends on TEGRA_BPMP || COMPILE_TEST
-> +	help
-> +	 Enable this option for support for sensing system
-> temperature of NVIDIA
-> +	 Tegra systems-on-chip with the BPMP coprocessor (Tegra186).
-> +
->  endmenu
-> diff --git a/drivers/thermal/tegra/Makefile
-> b/drivers/thermal/tegra/Makefile
-> index 1ce1af2cf0f5..757abcd1feaf 100644
-> --- a/drivers/thermal/tegra/Makefile
-> +++ b/drivers/thermal/tegra/Makefile
-> @@ -1,4 +1,5 @@
-> -obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra-soctherm.o
-> +obj-$(CONFIG_TEGRA_SOCTHERM)		+= tegra-soctherm.o
-> +obj-$(CONFIG_TEGRA_BPMP_THERMAL)	+= bpmp-thermal.o
->  
->  tegra-soctherm-y				:= soctherm.o
-> soctherm-fuse.o
->  tegra-soctherm-$(CONFIG_ARCH_TEGRA_124_SOC)	+= tegra124-
-> soctherm.o
-> diff --git a/drivers/thermal/tegra/bpmp-thermal.c
-> b/drivers/thermal/tegra/bpmp-thermal.c
-> new file mode 100644
-> index 000000000000..b0980dbca3b3
-> --- /dev/null
-> +++ b/drivers/thermal/tegra/bpmp-thermal.c
-> @@ -0,0 +1,263 @@
-> +/*
-> + * Copyright (c) 2015-2017, NVIDIA CORPORATION.  All rights
-> reserved.
-> + *
-> + * Author:
-> + *	Mikko Perttunen <mperttunen@nvidia.com>
-> + *	Aapo Vienamo	<avienamo@nvidia.com>
-> + *
-> + * This software is licensed under the terms of the GNU General
-> Public
-> + * License version 2, as published by the Free Software Foundation,
-> and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/thermal.h>
-> +#include <linux/workqueue.h>
-> +
-> +#include <soc/tegra/bpmp.h>
-> +#include <soc/tegra/bpmp-abi.h>
-> +
-> +struct tegra_bpmp_thermal_zone {
-> +	struct tegra_bpmp_thermal *tegra;
-> +	struct thermal_zone_device *tzd;
-> +	struct work_struct tz_device_update_work;
-> +	unsigned int idx;
-> +};
-> +
-> +struct tegra_bpmp_thermal {
-> +	struct device *dev;
-> +	struct tegra_bpmp *bpmp;
-> +	unsigned int num_zones;
-> +	struct tegra_bpmp_thermal_zone **zones;
-> +};
-> +
-> +static int tegra_bpmp_thermal_get_temp(void *data, int *out_temp)
-> +{
-> +	struct tegra_bpmp_thermal_zone *zone = data;
-> +	struct mrq_thermal_host_to_bpmp_request req;
-> +	union mrq_thermal_bpmp_to_host_response reply;
-> +	struct tegra_bpmp_message msg;
-> +	int err;
-> +
-> +	memset(&req, 0, sizeof(req));
-> +	req.type = CMD_THERMAL_GET_TEMP;
-> +	req.get_temp.zone = zone->idx;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_THERMAL;
-> +	msg.tx.data = &req;
-> +	msg.tx.size = sizeof(req);
-> +	msg.rx.data = &reply;
-> +	msg.rx.size = sizeof(reply);
-> +
-> +	err = tegra_bpmp_transfer(zone->tegra->bpmp, &msg);
-> +	if (err)
-> +		return err;
-> +
-> +	*out_temp = reply.get_temp.temp;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_bpmp_thermal_set_trips(void *data, int low, int
-> high)
-> +{
-> +	struct tegra_bpmp_thermal_zone *zone = data;
-> +	struct mrq_thermal_host_to_bpmp_request req;
-> +	struct tegra_bpmp_message msg;
-> +
-> +	memset(&req, 0, sizeof(req));
-> +	req.type = CMD_THERMAL_SET_TRIP;
-> +	req.set_trip.zone = zone->idx;
-> +	req.set_trip.enabled = true;
-> +	req.set_trip.low = low;
-> +	req.set_trip.high = high;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_THERMAL;
-> +	msg.tx.data = &req;
-> +	msg.tx.size = sizeof(req);
-> +
-> +	return tegra_bpmp_transfer(zone->tegra->bpmp, &msg);
-> +}
-> +
-> +static void tz_device_update_work_fn(struct work_struct *work)
-> +{
-> +	struct tegra_bpmp_thermal_zone *zone;
-> +
-> +	zone = container_of(work, struct tegra_bpmp_thermal_zone,
-> +			    tz_device_update_work);
-> +
-> +	thermal_zone_device_update(zone->tzd,
-> THERMAL_TRIP_VIOLATED);
-> +}
-> +
-> +static void bpmp_mrq_thermal(unsigned int mrq, struct
-> tegra_bpmp_channel *ch,
-> +			     void *data)
-> +{
-> +	struct mrq_thermal_bpmp_to_host_request *req;
-> +	struct tegra_bpmp_thermal *tegra = data;
-> +	int i;
-> +
-> +	req = (struct mrq_thermal_bpmp_to_host_request *)ch->ib-
-> >data;
-> +
-> +	if (req->type != CMD_THERMAL_HOST_TRIP_REACHED) {
-> +		dev_err(tegra->dev, "%s: invalid request type:
-> %d\n",
-> +			__func__, req->type);
-> +		tegra_bpmp_mrq_return(ch, -EINVAL, NULL, 0);
-> +		return;
-> +	}
-> +
-> +	for (i = 0; i < tegra->num_zones; ++i) {
-> +		if (tegra->zones[i]->idx != req-
-> >host_trip_reached.zone)
-> +			continue;
-> +
-> +		schedule_work(&tegra->zones[i]-
-> >tz_device_update_work);
-> +		tegra_bpmp_mrq_return(ch, 0, NULL, 0);
-> +		return;
-> +	}
-> +
-> +	dev_err(tegra->dev, "%s: invalid thermal zone: %d\n",
-> __func__,
-> +		req->host_trip_reached.zone);
-> +	tegra_bpmp_mrq_return(ch, -EINVAL, NULL, 0);
-> +}
-> +
-> +static int tegra_bpmp_thermal_get_num_zones(struct tegra_bpmp *bpmp,
-> +					    int *num_zones)
-> +{
-> +	struct mrq_thermal_host_to_bpmp_request req;
-> +	union mrq_thermal_bpmp_to_host_response reply;
-> +	struct tegra_bpmp_message msg;
-> +	int err;
-> +
-> +	memset(&req, 0, sizeof(req));
-> +	req.type = CMD_THERMAL_GET_NUM_ZONES;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_THERMAL;
-> +	msg.tx.data = &req;
-> +	msg.tx.size = sizeof(req);
-> +	msg.rx.data = &reply;
-> +	msg.rx.size = sizeof(reply);
-> +
-> +	err = tegra_bpmp_transfer(bpmp, &msg);
-> +	if (err)
-> +		return err;
-> +
-> +	*num_zones = reply.get_num_zones.num;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct thermal_zone_of_device_ops
-> tegra_bpmp_of_thermal_ops = {
-> +	.get_temp = tegra_bpmp_thermal_get_temp,
-> +	.set_trips = tegra_bpmp_thermal_set_trips,
-> +};
-> +
-> +static int tegra_bpmp_thermal_probe(struct platform_device *pdev)
-> +{
-> +	struct tegra_bpmp *bpmp = dev_get_drvdata(pdev->dev.parent);
-> +	struct tegra_bpmp_thermal *tegra;
-> +	struct thermal_zone_device *tzd;
-> +	unsigned int i, max_num_zones;
-> +	int err;
-> +
-> +	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra),
-> GFP_KERNEL);
-> +	if (!tegra)
-> +		return -ENOMEM;
-> +
-> +	tegra->dev = &pdev->dev;
-> +	tegra->bpmp = bpmp;
-> +
-> +	err = tegra_bpmp_thermal_get_num_zones(bpmp,
-> &max_num_zones);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "failed to get the number of
-> zones: %d\n",
-> +			err);
-> +		return err;
-> +	}
-> +
-> +	tegra->zones = devm_kcalloc(&pdev->dev, max_num_zones,
-> +				    sizeof(*tegra->zones),
-> GFP_KERNEL);
-> +	if (!tegra->zones)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < max_num_zones; ++i) {
-> +		struct tegra_bpmp_thermal_zone *zone;
-> +		int temp;
-> +
-> +		zone = devm_kzalloc(&pdev->dev, sizeof(*zone),
-> GFP_KERNEL);
-> +		if (!zone)
-> +			return -ENOMEM;
-> +
-> +		zone->idx = i;
-> +		zone->tegra = tegra;
-> +
-> +		err = tegra_bpmp_thermal_get_temp(zone, &temp);
-> +		if (err < 0) {
-> +			devm_kfree(&pdev->dev, zone);
-> +			continue;
-> +		}
-> +
-> +		tzd = devm_thermal_zone_of_sensor_register(
-> +			&pdev->dev, i, zone,
-> &tegra_bpmp_of_thermal_ops);
-> +		if (IS_ERR(tzd)) {
-> +			if (PTR_ERR(tzd) == -EPROBE_DEFER)
-> +				return -EPROBE_DEFER;
-> +			devm_kfree(&pdev->dev, zone);
-> +			continue;
-> +		}
-> +
-> +		zone->tzd = tzd;
-> +		INIT_WORK(&zone->tz_device_update_work,
-> +			  tz_device_update_work_fn);
-> +
-> +		tegra->zones[tegra->num_zones++] = zone;
-> +	}
-> +
-> +	err = tegra_bpmp_request_mrq(bpmp, MRQ_THERMAL,
-> bpmp_mrq_thermal,
-> +				     tegra);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "failed to register mrq handler:
-> %d\n",
-> +			err);
-> +		return err;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, tegra);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_bpmp_thermal_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_bpmp_thermal *tegra =
-> platform_get_drvdata(pdev);
-> +
-> +	tegra_bpmp_free_mrq(tegra->bpmp, MRQ_THERMAL, tegra);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id tegra_bpmp_thermal_of_match[] = {
-> +	{ .compatible = "nvidia,tegra186-bpmp-thermal" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, tegra_bpmp_thermal_of_match);
-> +
-> +static struct platform_driver tegra_bpmp_thermal_driver = {
-> +	.probe = tegra_bpmp_thermal_probe,
-> +	.remove = tegra_bpmp_thermal_remove,
-> +	.driver = {
-> +		.name = "tegra-bpmp-thermal",
-> +		.of_match_table = tegra_bpmp_thermal_of_match,
-> +	},
-> +};
-> +module_platform_driver(tegra_bpmp_thermal_driver);
-> +
-> +MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
-> +MODULE_DESCRIPTION("NVIDIA Tegra BPMP thermal sensor driver");
-> +MODULE_LICENSE("GPL v2");
+Q2hhbmdlcyBzaW5jZSB2MjoKCi0gUGF0Y2ggc2VyaWVzIGlzIGJhc2VkIG9uICpkcm0tbWlzYy1u
+ZXh0KiBhcyBzdWdnZXN0ZWQgYnkgU2VhbiBQYXVsLgoKLSBEcm9wcGVkIHBhdGNoIDA1IChkcm0v
+YXRtZWwtaGxjZGMpIGFuZCBwYXRjaCAyNSAoZHJtL3ZjNCkgZnJvbSB2MiwKICBzaW5jZSB0aGV5
+IHdlcmUgYWxyZWFkeSBwdWxsZWQgaW4gdGhlIGRybS1taXNjLW5leHQKCkNoYW5nZXMgc2luY2Ug
+djE6CgotIFRoaXMgdGltZSBwYXRjaGVzIHdlcmUgZ2VuZXJhdGVkIHdpdGggY29jY2luZWxsZSBp
+bnN0ZWFkIG9mIG15IG93bgogIHNjcmlwdCwgYXMgc3VnZ2VzdGVkIGJ5IERhbmllbCBWZXR0ZXIu
+CgotIEZpeGVkIHRoZSB0eXBvIGluIGNvbW1pdCBtZXNzYWdlcy4gcy9hZG4vYW5kCgpOb3RlOiBJ
+J3ZlIGluY2x1ZGVkIHItYiwgYS1iIHRhZ3MsIGFzIHRoZXNlIHBhdGNoZXMgYXJlIGlkZW50aWNh
+bCB0byB2MQpleGNlcHQgZm9yIHRoZSBmaWxlOiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dl
+bV9vYmplY3QuaAoKVGhpcyBwYXRjaCBzZXQgcmVwbGFjZXMgdGhlIG9jY3VycmVuY2VzIG9mIGRy
+bV8qX3JlZmVyZW5jZSgpIGFuZApkcm1fKl91bnJlZmVyZW5jZSgpIHdpdGggdGhlIG5ldyBkcm1f
+Kl9nZXQoKSBhbmQgZHJtXypfcHV0KCkgZnVuY3Rpb25zLgpBbGwgcGF0Y2hlcyBpbiB0aGUgc2Vy
+aWVzIGRvIHRoZSBzYW1lIHRoaW5nLCBjb252ZXJ0aW5nIHRvIHRoZSBuZXcgQVBJcy4KSSBjcmVh
+dGVkIHBhdGNoZXMgcGVyIERSTSBkcml2ZXIgYXMgc3VnZ2VzdGVkIGJ5IERhbmllbCBWZXR0ZXIu
+CgpUaGlzIHBhdGNoIHNldCB3YXMgZ2VuZXJhdGVkIGJ5IHNjcmlwdHMvY29jY2luZWxsZS9hcGkv
+ZHJtLWdldC1wdXQuY29jY2kKClByZXZpb3VzIHRocmVhZCBjYW4gYmUgcmVhY2hlZCBhdDoKaHR0
+cHM6Ly9tYXJjLmluZm8vP2w9ZHJpLWRldmVsJm09MTUwMTc4Mjg4ODE2MDQ3CgpCYWNrZ3JvdW5k
+OgoKSW4gdGhlIGtlcm5lbCwgcmVmZXJlbmNlIGNvdW50aW5nIEFQSXMgdXNlICpfZ2V0KCksICpf
+cHV0KCkgc3R5bGUgbmFtaW5nCnRvIHJlZmVyZW5jZS1jb3VudCB0aGUgb2JqZWN0cy4gQnV0IERS
+TSBzdWJzeXN0ZW0gdXNlcyBhIGRpZmZlcmVudApuYW1pbmcgZm9yIHRoZW0gc3VjaCBhcyAqX3Jl
+ZmVyZW5jZSgpLCAqX3VucmVmZXJlbmNlKCkgd2hpY2ggaXMKaW5jb25zaXN0ZW50IHdpdGggdGhl
+IG90aGVyIHJlZmVyZW5jZSBjb3VudGluZyBBUElzIGluIHRoZSBrZXJuZWwuIFRvCnNvbHZlIHRo
+aXMgY29uc2lzdGVuY3kgaXNzdWUsIFRoaWVycnkgUmVkaW5nIGludHJvZHVjZWQgYSBjb3VwbGUg
+b2YKZnVuY3Rpb25zIGFuZCBjb21wYXRpYmlsaXR5IGFsaWFzZXMgaW4gdGhlIGZvbGxvd2luZyBj
+b21taXRzIGZvciB0aGVtLgoKY29tbWl0IDAyMGEyMThmOTViZDNjZWZmN2RkMTAyMmZmN2ViYzA0
+OTdiYzdiZjkKQXV0aG9yOiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgpEYXRl
+OiAgIFR1ZSBGZWIgMjggMTU6NDY6MzggMjAxNyArMDEwMAoKICAgIGRybTogSW50cm9kdWNlIGRy
+bV9tb2RlX29iamVjdF97Z2V0LHB1dH0oKQoKY29tbWl0IGFkMDkzNjA3NTBhZmExOGEwYTBjZTAy
+NTNkNmVhNjAzM2FiYzIyZTcKQXV0aG9yOiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEu
+Y29tPgpEYXRlOiAgIFR1ZSBGZWIgMjggMTU6NDY6MzkgMjAxNyArMDEwMAoKICAgIGRybTogSW50
+cm9kdWNlIGRybV9jb25uZWN0b3Jfe2dldCxwdXR9KCkKCmNvbW1pdCBhNGE2OWRhMDZiYzExYTkz
+N2E2ZTQxNzkzOGIxYmI2OThlZTFmYTQ2CkF1dGhvcjogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdA
+bnZpZGlhLmNvbT4KRGF0ZTogICBUdWUgRmViIDI4IDE1OjQ2OjQwIDIwMTcgKzAxMDAKCiAgICBk
+cm06IEludHJvZHVjZSBkcm1fZnJhbWVidWZmZXJfe2dldCxwdXR9KCkKCmNvbW1pdCBlNmI2Mjcx
+NGU4N2M4ODExZDU1NjRiNmEwNzM4ZGNkZTYzYTUxNzc0CkF1dGhvcjogVGhpZXJyeSBSZWRpbmcg
+PHRyZWRpbmdAbnZpZGlhLmNvbT4KRGF0ZTogICBUdWUgRmViIDI4IDE1OjQ2OjQxIDIwMTcgKzAx
+MDAKCiAgICBkcm06IEludHJvZHVjZSBkcm1fZ2VtX29iamVjdF97Z2V0LHB1dH0oKQoKY29tbWl0
+IDY0NzJlNTA5MGJlN2M3ODc0OWEzYzI3OWI0ZmFhZTg3YWI4MzVjNDAKQXV0aG9yOiBUaGllcnJ5
+IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgpEYXRlOiAgIFR1ZSBGZWIgMjggMTU6NDY6NDIg
+MjAxNyArMDEwMAoKICAgIGRybTogSW50cm9kdWNlIGRybV9wcm9wZXJ0eV9ibG9iX3tnZXQscHV0
+fSgpCgpDaWhhbmdpciBBa3R1cmsgKDI4KToKICBkcm0vYW1kZ3B1OiBzd2l0Y2ggdG8gZHJtXypf
+Z2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm06IG1hbGktZHA6IHN3aXRjaCB0byBkcm1f
+Kl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9hcm1hZGE6IHN3aXRjaCB0byBkcm1f
+Kl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9hc3Q6IHN3aXRjaCB0byBkcm1fKl9n
+ZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9ib2Noczogc3dpdGNoIHRvIGRybV8qX2dl
+dCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL2NpcnJ1czogc3dpdGNoIHRvIGRybV8qX2dl
+dCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL2V0bmF2aXY6IHN3aXRjaCB0byBkcm1fKl9n
+ZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9leHlub3M6IHN3aXRjaCB0byBkcm1fKl9n
+ZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9nbWE1MDA6IHN3aXRjaCB0byBkcm1fKl9n
+ZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9oaXNpbGljb246IHN3aXRjaCB0byBkcm1f
+Kl9nZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9pOTE1OiBzd2l0Y2ggdG8gZHJtXypf
+Z2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vaW14OiBzd2l0Y2ggdG8gZHJtXypfZ2V0
+KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vbWVkaWF0ZWs6IHN3aXRjaCB0byBkcm1fKl9n
+ZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9tZ2FnMjAwOiBzd2l0Y2ggdG8gZHJtXypf
+Z2V0KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vbXNtOiBzd2l0Y2ggdG8gZHJtXypfZ2V0
+KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vbm91dmVhdTogc3dpdGNoIHRvIGRybV8qX2dl
+dCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL29tYXBkcm06IHN3aXRjaCB0byBkcm1fKl9n
+ZXQoKSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9xeGw6IHN3aXRjaCB0byBkcm1fKl9nZXQo
+KSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9yYWRlb246IHN3aXRjaCB0byBkcm1fKl9nZXQo
+KSwgZHJtXypfcHV0KCkgaGVscGVycwogIGRybS9yb2NrY2hpcDogc3dpdGNoIHRvIGRybV8qX2dl
+dCgpLCBkcm1fKl9wdXQoKSBoZWxwZXJzCiAgZHJtL3RlZ3JhOiBzd2l0Y2ggdG8gZHJtXypfZ2V0
+KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vdGlsY2RjOiBzd2l0Y2ggdG8gZHJtXypfZ2V0
+KCksIGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vdWRsOiBzd2l0Y2ggdG8gZHJtXypfZ2V0KCks
+IGRybV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vdmM0OiBzd2l0Y2ggdG8gZHJtXypfZ2V0KCksIGRy
+bV8qX3B1dCgpIGhlbHBlcnMKICBkcm0vdmdlbTogc3dpdGNoIHRvIGRybV8qX2dldCgpLCBkcm1f
+Kl9wdXQoKSBoZWxwZXJzCiAgZHJtL3ZpcnRpbzogc3dpdGNoIHRvIGRybV8qX2dldCgpLCBkcm1f
+Kl9wdXQoKSBoZWxwZXJzCiAgZHJtL3Ztd2dmeDogc3dpdGNoIHRvIGRybV8qX2dldCgpLCBkcm1f
+Kl9wdXQoKSBoZWxwZXJzCiAgZHJtOiB2Ym94dmlkZW86IHN3aXRjaCB0byBkcm1fKl9nZXQoKSwg
+ZHJtXypfcHV0KCkgaGVscGVycwoKIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9i
+b19saXN0LmMgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1
+X2NzLmMgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRn
+cHVfZGlzcGxheS5jICAgICAgIHwgIDYgKystLS0KIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1
+L2FtZGdwdV9mYi5jICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1k
+Z3B1L2FtZGdwdV9nZW0uYyAgICAgICAgICAgfCAyMiArKysrKysrKy0tLS0tLS0tLQogZHJpdmVy
+cy9ncHUvZHJtL2FtZC9hbWRncHUvZGNlX3YxMF8wLmMgICAgICAgICAgICB8ICA2ICsrLS0tCiBk
+cml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9kY2VfdjExXzAuYyAgICAgICAgICAgIHwgIDYgKyst
+LS0KIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92Nl8wLmMgICAgICAgICAgICAgfCAg
+NiArKy0tLQogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZGNlX3Y4XzAuYyAgICAgICAgICAg
+ICB8ICA2ICsrLS0tCiBkcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9wbGFuZXMuYyAgICAgICAg
+ICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX2NydGMuYyAgICAg
+ICAgICAgICAgfCAyMiArKysrKysrKy0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2FybWFkYS9h
+cm1hZGFfZHJ2LmMgICAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vYXJtYWRh
+L2FybWFkYV9mYi5jICAgICAgICAgICAgICAgIHwgIDggKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0v
+YXJtYWRhL2FybWFkYV9mYmRldi5jICAgICAgICAgICAgIHwgIDYgKystLS0KIGRyaXZlcnMvZ3B1
+L2RybS9hcm1hZGEvYXJtYWRhX2dlbS5jICAgICAgICAgICAgICAgfCAxNCArKysrKy0tLS0tLQog
+ZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfb3ZlcmxheS5jICAgICAgICAgICB8ICA0ICst
+LQogZHJpdmVycy9ncHUvZHJtL2FzdC9hc3RfZmIuYyAgICAgICAgICAgICAgICAgICAgICB8ICAy
+ICstCiBkcml2ZXJzL2dwdS9kcm0vYXN0L2FzdF9tYWluLmMgICAgICAgICAgICAgICAgICAgIHwg
+MTAgKysrKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9hc3QvYXN0X21vZGUuYyAgICAgICAgICAgICAg
+ICAgICAgfCAgNiArKy0tLQogZHJpdmVycy9ncHUvZHJtL2JvY2hzL2JvY2hzX2ZiZGV2LmMgICAg
+ICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vYm9jaHMvYm9jaHNfbW0uYyAgICAg
+ICAgICAgICAgICAgIHwgMTAgKysrKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9jaXJydXMvY2lycnVz
+X2ZiZGV2LmMgICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2NpcnJ1cy9jaXJy
+dXNfbWFpbi5jICAgICAgICAgICAgICB8IDEwICsrKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXRu
+YXZpdi9ldG5hdml2X2Rydi5jICAgICAgICAgICAgIHwgIDggKysrLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vZXRuYXZpdi9ldG5hdml2X2dlbS5jICAgICAgICAgICAgIHwgMjAgKysrKysrKy0tLS0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXRuYXZpdi9ldG5hdml2X2dlbV9wcmltZS5jICAgICAgIHwgIDIg
+Ky0KIGRyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2aXZfZ2VtX3N1Ym1pdC5jICAgICAgfCAg
+NCArLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgICAgICAgICAg
+fCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyAgICAgICAg
+ICAgfCAxMiArKysrLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFu
+ZS5jICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9mcmFtZWJ1ZmZlci5j
+ICAgICAgICAgICAgICB8ICA0ICstLQogZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9nZW0uYyAgICAg
+ICAgICAgICAgICAgICAgICB8ICA0ICstLQogZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9nbWFfZGlz
+cGxheS5jICAgICAgICAgICAgICB8ICA2ICsrLS0tCiBkcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29u
+L2hpYm1jL2hpYm1jX2RybV9mYmRldi5jIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vaGlzaWxp
+Y29uL2hpYm1jL2hpYm1jX3R0bS5jICAgICAgIHwgIDggKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0v
+aTkxNS9pOTE1X2dlbV9vYmplY3QuaCAgICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9k
+cm0vaTkxNS9pbnRlbF9kaXNwbGF5LmMgICAgICAgICAgICAgIHwgMjQgKysrKysrKysrLS0tLS0t
+LS0tCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kcF9tc3QuYyAgICAgICAgICAgICAgIHwg
+IDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2ZiZGV2LmMgICAgICAgICAgICAgICAg
+fCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS9pbXgvaXB1djMtY3J0Yy5jICAgICAgICAgICAgICAg
+ICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZmIuYyAgICAgICAg
+ICAgICB8ICA0ICstLQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZ2VtLmMgICAg
+ICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vbWdhZzIwMC9tZ2FnMjAwX2N1cnNvci5j
+ICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9tZ2FnMjAwL21nYWcyMDBfZmIuYyAg
+ICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS9tZ2FnMjAwL21nYWcyMDBfbWFp
+bi5jICAgICAgICAgICAgfCAxMCArKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL21zbS9hZHJlbm8v
+YTV4eF9ncHUuYyAgICAgICAgICAgICB8IDEwICsrKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vbXNt
+L2FkcmVuby9hNXh4X3Bvd2VyLmMgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9t
+c20vYWRyZW5vL2FkcmVub19ncHUuYyAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJt
+L21zbS9tZHAvbWRwNC9tZHA0X2NydGMuYyAgICAgICAgICB8ICA2ICsrLS0tCiBkcml2ZXJzL2dw
+dS9kcm0vbXNtL21kcC9tZHA0L21kcDRfa21zLmMgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMv
+Z3B1L2RybS9tc20vbWRwL21kcDUvbWRwNV9jcnRjLmMgICAgICAgICAgfCAgMiArLQogZHJpdmVy
+cy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmMgICAgICAgICB8ICA0ICstLQogZHJp
+dmVycy9ncHUvZHJtL21zbS9tc21fZHJ2LmMgICAgICAgICAgICAgICAgICAgICB8ICA4ICsrKy0t
+LQogZHJpdmVycy9ncHUvZHJtL21zbS9tc21fZmIuYyAgICAgICAgICAgICAgICAgICAgICB8ICA0
+ICstLQogZHJpdmVycy9ncHUvZHJtL21zbS9tc21fZmJkZXYuYyAgICAgICAgICAgICAgICAgICB8
+ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9nZW0uYyAgICAgICAgICAgICAgICAgICAg
+IHwgIDggKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9nZW1fc3VibWl0LmMgICAgICAg
+ICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9ncHUuYyAgICAgICAgICAg
+ICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9yaW5nYnVmZmVyLmMg
+ICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2Rpc3BudjA0L2Ny
+dGMuYyAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9h
+YmkxNi5jICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1
+X2Rpc3BsYXkuYyAgICAgICAgIHwgIDggKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9u
+b3V2ZWF1X2ZiY29uLmMgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1
+L25vdXZlYXVfZ2VtLmMgICAgICAgICAgICAgfCAxNCArKysrKy0tLS0tLQogZHJpdmVycy9ncHUv
+ZHJtL25vdXZlYXUvbnY1MF9kaXNwbGF5LmMgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dw
+dS9kcm0vb21hcGRybS9vbWFwX2Rydi5jICAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMv
+Z3B1L2RybS9vbWFwZHJtL29tYXBfZmIuYyAgICAgICAgICAgICAgICAgfCAgNCArLS0KIGRyaXZl
+cnMvZ3B1L2RybS9vbWFwZHJtL29tYXBfZmJkZXYuYyAgICAgICAgICAgICAgfCAgMiArLQogZHJp
+dmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9nZW0uYyAgICAgICAgICAgICAgICB8ICA0ICstLQog
+ZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9nZW1fZG1hYnVmLmMgICAgICAgICB8ICAyICst
+CiBkcml2ZXJzL2dwdS9kcm0vcXhsL3F4bF9kaXNwbGF5LmMgICAgICAgICAgICAgICAgIHwgIDQg
+Ky0tCiBkcml2ZXJzL2dwdS9kcm0vcXhsL3F4bF9kdW1iLmMgICAgICAgICAgICAgICAgICAgIHwg
+IDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9xeGwvcXhsX2ZiLmMgICAgICAgICAgICAgICAgICAgICAg
+fCAgNiArKy0tLQogZHJpdmVycy9ncHUvZHJtL3F4bC9xeGxfZ2VtLmMgICAgICAgICAgICAgICAg
+ICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vcXhsL3F4bF9pb2N0bC5jICAgICAgICAgICAg
+ICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vcXhsL3F4bF9vYmplY3QuYyAgICAgICAg
+ICAgICAgICAgIHwgIDYgKystLS0KIGRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2NzLmMg
+ICAgICAgICAgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fY3Vy
+c29yLmMgICAgICAgICAgICB8ICA2ICsrLS0tCiBkcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVv
+bl9kaXNwbGF5LmMgICAgICAgICAgIHwgMTIgKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vcmFk
+ZW9uL3JhZGVvbl9mYi5jICAgICAgICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0v
+cmFkZW9uL3JhZGVvbl9nZW0uYyAgICAgICAgICAgICAgIHwgMzAgKysrKysrKysrKystLS0tLS0t
+LS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX29iamVjdC5jICAgICAgICAgICAg
+fCAgMiArLQogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9mYi5jICAgICAg
+ICB8ICA2ICsrLS0tCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2ZiZGV2
+LmMgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZ2Vt
+LmMgICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92
+b3AuYyAgICAgICB8ICA0ICstLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgICAgICAg
+ICAgICAgICAgICAgICB8IDEyICsrKystLS0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMg
+ICAgICAgICAgICAgICAgICAgICAgICB8ICA4ICsrKy0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2dlbS5jICAgICAgICAgICAgICAgICAgICAgICB8IDEwICsrKystLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vdGlsY2RjL3RpbGNkY19jcnRjLmMgICAgICAgICAgICAgIHwgIDYgKystLS0KIGRyaXZlcnMv
+Z3B1L2RybS91ZGwvdWRsX2ZiLmMgICAgICAgICAgICAgICAgICAgICAgfCAgNiArKy0tLQogZHJp
+dmVycy9ncHUvZHJtL3VkbC91ZGxfZ2VtLmMgICAgICAgICAgICAgICAgICAgICB8ICA0ICstLQog
+ZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfYm8uYyAgICAgICAgICAgICAgICAgICAgICB8ICAyICst
+CiBkcml2ZXJzL2dwdS9kcm0vdmdlbS92Z2VtX2Rydi5jICAgICAgICAgICAgICAgICAgIHwgIDQg
+Ky0tCiBkcml2ZXJzL2dwdS9kcm0vdmdlbS92Z2VtX2ZlbmNlLmMgICAgICAgICAgICAgICAgIHwg
+IDIgKy0KIGRyaXZlcnMvZ3B1L2RybS92aXJ0aW8vdmlydGdwdV9kaXNwbGF5LmMgICAgICAgICAg
+fCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS92aXJ0aW8vdmlydGdwdV9nZW0uYyAgICAgICAgICAg
+ICAgfCAgNCArLS0KIGRyaXZlcnMvZ3B1L2RybS92aXJ0aW8vdmlydGdwdV9pb2N0bC5jICAgICAg
+ICAgICAgfCAxNCArKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfZmIu
+YyAgICAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9p
+b2N0bC5jICAgICAgICAgICAgIHwgIDQgKy0tCiBkcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVvL3Zi
+b3hfZmIuYyAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8v
+dmJveF9tYWluLmMgICAgICAgICAgICAgfCAgOCArKystLS0KIGRyaXZlcnMvc3RhZ2luZy92Ym94
+dmlkZW8vdmJveF9tb2RlLmMgICAgICAgICAgICAgfCAgMiArLQogMTAzIGZpbGVzIGNoYW5nZWQs
+IDI5NCBpbnNlcnRpb25zKCspLCAyOTQgZGVsZXRpb25zKC0pCgotLSAKMi43LjQKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkZyZWVkcmVubyBtYWlsaW5n
+IGxpc3QKRnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ZyZWVkcmVubwo=
