@@ -1,8 +1,8 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] drm/tegra: Prevent BOs from being freed during job
  submission
-Date: Sat, 12 Aug 2017 18:48:26 +0300
-Message-ID: <b20f9630-a896-e70d-87b6-d404c8af90b6@gmail.com>
+Date: Sat, 12 Aug 2017 19:01:17 +0300
+Message-ID: <301e6612-de3e-93eb-5805-8d4b551d71f5@gmail.com>
 References: <20170811175926.24317-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -47,13 +47,12 @@ On 11.08.2017 20:59, Thierry Reding wrote:
 >  	struct drm_tegra_syncpt syncpt;
 >  	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
 > +	struct drm_gem_object **refs;
+
+Should be "**refs = NULL" in conjunction with a missed kfree() below.
+
 >  	struct host1x_syncpt *sp;
 >  	struct host1x_job *job;
 > +	unsigned int num_refs;
-
-This definition of 'num_refs' could be moved to others "unsigned int"
-definitions for consistency.
-
 >  	int err;
 >  
 >  	/* We don't yet support other than one syncpt_incr struct per submit */
@@ -67,10 +66,6 @@ definitions for consistency.
 > +	 */
 > +	num_refs = num_cmdbufs + num_relocs * 2 + num_waitchks;
 > +
-
-And 'num_refs' could be assigned directly in its definition, solely for
-consistency as well.
-
 > +	if (sizeof(*refs) * num_refs > ULONG_MAX) {
 > +		err = -EINVAL;
 > +		goto fail;
@@ -142,6 +137,9 @@ consistency as well.
 > +	while (num_refs--)
 > +		drm_gem_object_put_unlocked(refs[num_refs]);
 > +
+
+kfree(refs) is missed here.
+
 >  	host1x_job_put(job);
 >  	return err;
 >  }
