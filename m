@@ -1,150 +1,47 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drm/tegra: Prevent BOs from being freed during job
- submission
-Date: Sat, 12 Aug 2017 19:01:17 +0300
-Message-ID: <301e6612-de3e-93eb-5805-8d4b551d71f5@gmail.com>
-References: <20170811175926.24317-1-thierry.reding@gmail.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
+Date: Mon, 14 Aug 2017 09:36:38 +0200
+Message-ID: <1502696198.2287.7.camel@pengutronix.de>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+         <20170719211515.46a1196c@windsurf>
+         <1500543415.2354.37.camel@pengutronix.de>
+         <20170720123640.43c2ce01@windsurf>
+         <1500555312.2354.75.camel@pengutronix.de>
+         <CAKdAkRTx8jd8UToz5_EgMmdW3V47i2uo++YvVB_yzytqSA=P1Q@mail.gmail.com>
+         <CACRpkdaXOv7mX+b-q1K34CB5w0SWPXCKa21wHaxL7qjf91PJXQ@mail.gmail.com>
+         <1500885221.2391.50.camel@pengutronix.de>
+         <20170812114357.v4ru75dw5hq7wemx@ninjato>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170811175926.24317-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20170812114357.v4ru75dw5hq7wemx@ninjato>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, lkml <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Peter Chen <Peter.Chen@nxp.com>, DRI <dri-devel@lists.freedesktop.org>, Marc Dietrich <marvin24@gmx.de>, Rakesh Iyer <riyer@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-clk <linux-clk@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jiri Slaby <jslaby@suse.com>, Michael Turquette <mturquette@baylibre.com>, Guenter
 List-Id: linux-tegra@vger.kernel.org
 
-On 11.08.2017 20:59, Thierry Reding wrote:
-> From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Sat, 2017-08-12 at 13:43 +0200, Wolfram Sang wrote:
+> > Thanks for the hint and the references. It seems this turned out
+> > okay,
+> > but I wouldn't dare to introduce such macro horror^Wmagic.
+> > I'd rather have all users converted to the _exclusive/_shared
+> > function
+> > calls and maybe then replace the internal __reset_control_get with
+> > Thomas' suggestion.
 > 
-> Since DRM IOCTL's are lockless, there is a chance that BOs could be
-> released while a job submission is in progress. To avoid that, keep the
-> GEM reference until the job has been pinned, part of which will be to
-> take another reference.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/drm/tegra/drm.c | 42 +++++++++++++++++++++++++++++++++---------
->  1 file changed, 33 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index f01db33fa20f..e5d19e1c9bc8 100644
-> --- a/drivers/gpu/drm/tegra/drm.c
-> +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -320,8 +320,6 @@ host1x_bo_lookup(struct drm_file *file, u32 handle)
->  	if (!gem)
->  		return NULL;
->  
-> -	drm_gem_object_unreference_unlocked(gem);
-> -
->  	bo = to_tegra_bo(gem);
->  	return &bo->base;
->  }
-> @@ -410,8 +408,10 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->  		(void __user *)(uintptr_t)args->waitchks;
->  	struct drm_tegra_syncpt syncpt;
->  	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
-> +	struct drm_gem_object **refs;
+> I didn't follow the discussion closely. Shall I still apply the i2c
+> patches?
 
-Should be "**refs = NULL" in conjunction with a missed kfree() below.
+Yes, please.
 
->  	struct host1x_syncpt *sp;
->  	struct host1x_job *job;
-> +	unsigned int num_refs;
->  	int err;
->  
->  	/* We don't yet support other than one syncpt_incr struct per submit */
-> @@ -433,6 +433,26 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->  	job->class = context->client->base.class;
->  	job->serialize = true;
->  
-> +	/*
-> +	 * Track referenced BOs so that they can be unreferenced after the
-> +	 * submission is complete.
-> +	 */
-> +	num_refs = num_cmdbufs + num_relocs * 2 + num_waitchks;
-> +
-> +	if (sizeof(*refs) * num_refs > ULONG_MAX) {
-> +		err = -EINVAL;
-> +		goto fail;
-> +	}
-> +
-> +	refs = kmalloc_array(num_refs, sizeof(*refs), GFP_KERNEL);
-> +	if (!refs) {
-> +		err = -ENOMEM;
-> +		goto fail;
-> +	}
-> +
-> +	/* reuse as an iterator later */
-> +	num_refs = 0;
-> +
->  	while (num_cmdbufs) {
->  		struct drm_tegra_cmdbuf cmdbuf;
->  		struct host1x_bo *bo;
-> @@ -461,6 +481,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->  
->  		offset = (u64)cmdbuf.offset + (u64)cmdbuf.words * sizeof(u32);
->  		obj = host1x_to_tegra_bo(bo);
-> +		refs[num_refs++] = &obj->gem;
->  
->  		/*
->  		 * Gather buffer base address must be 4-bytes aligned,
-> @@ -490,6 +511,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->  
->  		reloc = &job->relocarray[num_relocs];
->  		obj = host1x_to_tegra_bo(reloc->cmdbuf.bo);
-> +		refs[num_refs++] = &obj->gem;
->  
->  		/*
->  		 * The unaligned cmdbuf offset will cause an unaligned write
-> @@ -503,6 +525,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->  		}
->  
->  		obj = host1x_to_tegra_bo(reloc->target.bo);
-> +		refs[num_refs++] = &obj->gem;
->  
->  		if (reloc->target.offset >= obj->gem.size) {
->  			err = -EINVAL;
-> @@ -522,6 +545,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->  			goto fail;
->  
->  		obj = host1x_to_tegra_bo(wait->bo);
-> +		refs[num_refs++] = &obj->gem;
->  
->  		/*
->  		 * The unaligned offset will cause an unaligned write during
-> @@ -561,17 +585,17 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->  		goto fail;
->  
->  	err = host1x_job_submit(job);
-> -	if (err)
-> -		goto fail_submit;
-> +	if (err) {
-> +		host1x_job_unpin(job);
-> +		goto fail;
-> +	}
->  
->  	args->fence = job->syncpt_end;
->  
-> -	host1x_job_put(job);
-> -	return 0;
-> -
-> -fail_submit:
-> -	host1x_job_unpin(job);
->  fail:
-> +	while (num_refs--)
-> +		drm_gem_object_put_unlocked(refs[num_refs]);
-> +
-
-kfree(refs) is missed here.
-
->  	host1x_job_put(job);
->  	return err;
->  }
-> 
-
-
--- 
-Dmitry
+regards
+Philipp
