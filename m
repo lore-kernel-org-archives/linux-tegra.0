@@ -1,41 +1,44 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 01/10] drm/tegra: dc: Use unsigned int for register offsets
-Date: Tue, 15 Aug 2017 15:41:05 +0200
-Message-ID: <20170815134114.17547-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 05/10] drm/tegra: sor: Use unsigned int for register offsets
+Date: Tue, 15 Aug 2017 15:41:09 +0200
+Message-ID: <20170815134114.17547-5-thierry.reding@gmail.com>
+References: <20170815134114.17547-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170815134114.17547-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClJlZ2lzdGVyIG9mZnNl
-dHMgYXJlIHVzdWFsbHkgZmFpcmx5IHNtYWxsIG51bWJlcnMsIHNvIGFuIHVuc2lnbmVkIGludCBp
-cwptb3JlIHRoYW4gZW5vdWdoIHRvIHJlcHJlc2VudCB0aGVtLgoKU2lnbmVkLW9mZi1ieTogVGhp
-ZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZGMuaCB8IDQgKystLQogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxl
-dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuaCBiL2RyaXZl
-cnMvZ3B1L2RybS90ZWdyYS9kYy5oCmluZGV4IDNiNDI3NTRjNWI3YS4uNjM0NjFlYjc2OWYwIDEw
-MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuaAorKysgYi9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZGMuaApAQCAtNzAsMTIgKzcwLDEyIEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IHRl
-Z3JhX2RjICp0b190ZWdyYV9kYyhzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCiB9CiAKIHN0YXRpYyBp
-bmxpbmUgdm9pZCB0ZWdyYV9kY193cml0ZWwoc3RydWN0IHRlZ3JhX2RjICpkYywgdTMyIHZhbHVl
-LAotCQkJCSAgIHVuc2lnbmVkIGxvbmcgb2Zmc2V0KQorCQkJCSAgIHVuc2lnbmVkIGludCBvZmZz
-ZXQpCiB7CiAJd3JpdGVsKHZhbHVlLCBkYy0+cmVncyArIChvZmZzZXQgPDwgMikpOwogfQogCi1z
-dGF0aWMgaW5saW5lIHUzMiB0ZWdyYV9kY19yZWFkbChzdHJ1Y3QgdGVncmFfZGMgKmRjLCB1bnNp
-Z25lZCBsb25nIG9mZnNldCkKK3N0YXRpYyBpbmxpbmUgdTMyIHRlZ3JhX2RjX3JlYWRsKHN0cnVj
-dCB0ZWdyYV9kYyAqZGMsIHVuc2lnbmVkIGludCBvZmZzZXQpCiB7CiAJcmV0dXJuIHJlYWRsKGRj
-LT5yZWdzICsgKG9mZnNldCA8PCAyKSk7CiB9Ci0tIAoyLjEzLjMKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Register offsets are usually fairly small numbers, so an unsigned int is
+more than enough to represent them.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/sor.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 0ac845291cb4..020792eb2724 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -235,13 +235,13 @@ static inline struct tegra_sor *to_sor(struct tegra_output *output)
+ 	return container_of(output, struct tegra_sor, output);
+ }
+ 
+-static inline u32 tegra_sor_readl(struct tegra_sor *sor, unsigned long offset)
++static inline u32 tegra_sor_readl(struct tegra_sor *sor, unsigned int offset)
+ {
+ 	return readl(sor->regs + (offset << 2));
+ }
+ 
+ static inline void tegra_sor_writel(struct tegra_sor *sor, u32 value,
+-				    unsigned long offset)
++				    unsigned int offset)
+ {
+ 	writel(value, sor->regs + (offset << 2));
+ }
+-- 
+2.13.3
