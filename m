@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 10/10] drm/tegra: sor: Trace register accesses
-Date: Tue, 15 Aug 2017 15:41:14 +0200
-Message-ID: <20170815134114.17547-10-thierry.reding@gmail.com>
+Subject: [PATCH 07/10] drm/tegra: hdmi: Trace register accesses
+Date: Tue, 15 Aug 2017 15:41:11 +0200
+Message-ID: <20170815134114.17547-7-thierry.reding@gmail.com>
 References: <20170815134114.17547-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20170815134114.17547-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,57 +12,57 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add tracepoint events for SOR controller register accesses.
+Add tracepoint events for HDMI controller register accesses.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/sor.c   | 8 +++++++-
+ drivers/gpu/drm/tegra/hdmi.c  | 8 +++++++-
  drivers/gpu/drm/tegra/trace.h | 7 +++++++
  2 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 020792eb2724..04b3a50deab6 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -27,6 +27,7 @@
- #include "dc.h"
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index aa7525619f3e..5b9d83b71943 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -24,6 +24,7 @@
+ #include "hdmi.h"
  #include "drm.h"
- #include "sor.h"
+ #include "dc.h"
 +#include "trace.h"
  
- #define SOR_REKEY 0x38
+ #define HDMI_ELD_BUFFER_SIZE 96
  
-@@ -237,12 +238,17 @@ static inline struct tegra_sor *to_sor(struct tegra_output *output)
- 
- static inline u32 tegra_sor_readl(struct tegra_sor *sor, unsigned int offset)
+@@ -102,12 +103,17 @@ enum {
+ static inline u32 tegra_hdmi_readl(struct tegra_hdmi *hdmi,
+ 				   unsigned int offset)
  {
--	return readl(sor->regs + (offset << 2));
-+	u32 value = readl(sor->regs + (offset << 2));
+-	return readl(hdmi->regs + (offset << 2));
++	u32 value = readl(hdmi->regs + (offset << 2));
 +
-+	trace_sor_readl(sor->dev, offset, value);
++	trace_hdmi_readl(hdmi->dev, offset, value);
 +
 +	return value;
  }
  
- static inline void tegra_sor_writel(struct tegra_sor *sor, u32 value,
- 				    unsigned int offset)
+ static inline void tegra_hdmi_writel(struct tegra_hdmi *hdmi, u32 value,
+ 				     unsigned int offset)
  {
-+	trace_sor_writel(sor->dev, offset, value);
- 	writel(value, sor->regs + (offset << 2));
++	trace_hdmi_writel(hdmi->dev, offset, value);
+ 	writel(value, hdmi->regs + (offset << 2));
  }
  
 diff --git a/drivers/gpu/drm/tegra/trace.h b/drivers/gpu/drm/tegra/trace.h
-index e497a0258ee4..e9b7cdad5c4c 100644
+index b32d90c967e8..e5c2e431c101 100644
 --- a/drivers/gpu/drm/tegra/trace.h
 +++ b/drivers/gpu/drm/tegra/trace.h
-@@ -52,6 +52,13 @@ DEFINE_EVENT(register_access, dpaux_readl,
+@@ -31,6 +31,13 @@ DEFINE_EVENT(register_access, dc_readl,
  	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
  	TP_ARGS(dev, offset, value));
  
-+DEFINE_EVENT(register_access, sor_writel,
++DEFINE_EVENT(register_access, hdmi_writel,
 +	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
 +	TP_ARGS(dev, offset, value));
-+DEFINE_EVENT(register_access, sor_readl,
++DEFINE_EVENT(register_access, hdmi_readl,
 +	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
 +	TP_ARGS(dev, offset, value));
 +
