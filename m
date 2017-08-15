@@ -1,10 +1,8 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 09/10] drm/tegra: dpaux: Trace register accesses
-Date: Tue, 15 Aug 2017 15:41:13 +0200
-Message-ID: <20170815134114.17547-9-thierry.reding@gmail.com>
-References: <20170815134114.17547-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/2] drm/tegra: Support render node
+Date: Tue, 15 Aug 2017 15:42:39 +0200
+Message-ID: <20170815134240.17770-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170815134114.17547-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -12,62 +10,75 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add tracepoint events for DPAUX controller register accesses.
+None of the driver-specific IOCTLs are privileged, so mark them as such
+and advertise that the driver supports render nodes.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dpaux.c | 8 +++++++-
- drivers/gpu/drm/tegra/trace.h | 7 +++++++
- 2 files changed, 14 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/drm.c | 44 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 29 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index 793cb4ad99c4..d476ab5006bb 100644
---- a/drivers/gpu/drm/tegra/dpaux.c
-+++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -25,6 +25,7 @@
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index a75fbf6c219e..d5c8b15f5fa4 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -991,20 +991,34 @@ static int tegra_gem_get_flags(struct drm_device *drm, void *data,
  
- #include "dpaux.h"
- #include "drm.h"
-+#include "trace.h"
+ static const struct drm_ioctl_desc tegra_drm_ioctls[] = {
+ #ifdef CONFIG_DRM_TEGRA_STAGING
+-	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_gem_create, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_gem_mmap, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_READ, tegra_syncpt_read, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_INCR, tegra_syncpt_incr, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_WAIT, tegra_syncpt_wait, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_OPEN_CHANNEL, tegra_open_channel, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_CLOSE_CHANNEL, tegra_close_channel, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_GET_SYNCPT, tegra_get_syncpt, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_SUBMIT, tegra_submit, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_GET_SYNCPT_BASE, tegra_get_syncpt_base, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_GEM_SET_TILING, tegra_gem_set_tiling, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_GEM_GET_TILING, tegra_gem_get_tiling, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_GEM_SET_FLAGS, tegra_gem_set_flags, 0),
+-	DRM_IOCTL_DEF_DRV(TEGRA_GEM_GET_FLAGS, tegra_gem_get_flags, 0),
++	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_gem_create,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_gem_mmap,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_READ, tegra_syncpt_read,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_INCR, tegra_syncpt_incr,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_WAIT, tegra_syncpt_wait,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_OPEN_CHANNEL, tegra_open_channel,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_CLOSE_CHANNEL, tegra_close_channel,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_GET_SYNCPT, tegra_get_syncpt,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_SUBMIT, tegra_submit,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_GET_SYNCPT_BASE, tegra_get_syncpt_base,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_GEM_SET_TILING, tegra_gem_set_tiling,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_GEM_GET_TILING, tegra_gem_get_tiling,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_GEM_SET_FLAGS, tegra_gem_set_flags,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(TEGRA_GEM_GET_FLAGS, tegra_gem_get_flags,
++			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
+ #endif
+ };
  
- static DEFINE_MUTEX(dpaux_lock);
- static LIST_HEAD(dpaux_list);
-@@ -67,12 +68,17 @@ static inline struct tegra_dpaux *work_to_dpaux(struct work_struct *work)
- static inline u32 tegra_dpaux_readl(struct tegra_dpaux *dpaux,
- 				    unsigned int offset)
- {
--	return readl(dpaux->regs + (offset << 2));
-+	u32 value = readl(dpaux->regs + (offset << 2));
-+
-+	trace_dpaux_readl(dpaux->dev, offset, value);
-+
-+	return value;
- }
+@@ -1093,7 +1107,7 @@ static int tegra_debugfs_init(struct drm_minor *minor)
  
- static inline void tegra_dpaux_writel(struct tegra_dpaux *dpaux,
- 				      u32 value, unsigned int offset)
- {
-+	trace_dpaux_writel(dpaux->dev, offset, value);
- 	writel(value, dpaux->regs + (offset << 2));
- }
- 
-diff --git a/drivers/gpu/drm/tegra/trace.h b/drivers/gpu/drm/tegra/trace.h
-index dd0176ff81eb..e497a0258ee4 100644
---- a/drivers/gpu/drm/tegra/trace.h
-+++ b/drivers/gpu/drm/tegra/trace.h
-@@ -45,6 +45,13 @@ DEFINE_EVENT(register_access, dsi_readl,
- 	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
- 	TP_ARGS(dev, offset, value));
- 
-+DEFINE_EVENT(register_access, dpaux_writel,
-+	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
-+	TP_ARGS(dev, offset, value));
-+DEFINE_EVENT(register_access, dpaux_readl,
-+	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
-+	TP_ARGS(dev, offset, value));
-+
- #endif /* DRM_TEGRA_TRACE_H */
- 
- /* This part must be outside protection */
+ static struct drm_driver tegra_drm_driver = {
+ 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME |
+-			   DRIVER_ATOMIC,
++			   DRIVER_ATOMIC | DRIVER_RENDER,
+ 	.load = tegra_drm_load,
+ 	.unload = tegra_drm_unload,
+ 	.open = tegra_drm_open,
 -- 
 2.13.3
