@@ -1,92 +1,59 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [PATCH 2/2] drm/tegra: gem: Implement mmap() for PRIME buffers
-Date: Tue, 15 Aug 2017 16:19:16 +0100
-Message-ID: <150281035691.29805.13125246304676966835@mail.alporthouse.com>
-References: <20170815134240.17770-1-thierry.reding@gmail.com>
- <20170815134240.17770-2-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 1/8] usb: gadget: f_ecm/f_eem/f_rndis: Setup
+ quirk_avoids_skb_reserve
+Date: Tue, 15 Aug 2017 18:45:11 +0300
+Message-ID: <06f351c4-039e-e3bb-1989-8b99ab4a5584@gmail.com>
+References: <cover.1502280694.git.digetx@gmail.com>
+ <4c7b3a3b23b44f4115de1745c65d719a3f70c4db.1502280695.git.digetx@gmail.com>
+ <87k2256tz0.fsf@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170815134240.17770-2-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <87k2256tz0.fsf-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-UXVvdGluZyBUaGllcnJ5IFJlZGluZyAoMjAxNy0wOC0xNSAxNDo0Mjo0MCkKPiBGcm9tOiBUaGll
-cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFRoZSBtYXBwaW5nIG9mIFBSSU1F
-IGJ1ZmZlcnMgY2FuIHJldXNlIG11Y2ggb2YgdGhlIEdFTSBtYXBwaW5nIGNvZGUsIHNvCj4gZXh0
-cmFjdCB0aGUgY29tbW9uIGJpdHMgaW50byBhIG5ldyB0ZWdyYV9nZW1fbW1hcCgpIGhlbHBlci4K
-PiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+
-IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMgfCA0OCArKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDMzIGluc2Vy
-dGlvbnMoKyksIDE1IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZ2VtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKPiBpbmRleCA3YTM5
-YTM1NTY3OGEuLjg4YjAyNTBlYzZkMCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZ2VtLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKPiBAQCAtNDgxLDMw
-ICs0ODEsMjcgQEAgY29uc3Qgc3RydWN0IHZtX29wZXJhdGlvbnNfc3RydWN0IHRlZ3JhX2JvX3Zt
-X29wcyA9IHsKPiAgICAgICAgIC5jbG9zZSA9IGRybV9nZW1fdm1fY2xvc2UsCj4gIH07Cj4gIAo+
-IC1pbnQgdGVncmFfZHJtX21tYXAoc3RydWN0IGZpbGUgKmZpbGUsIHN0cnVjdCB2bV9hcmVhX3N0
-cnVjdCAqdm1hKQo+ICtpbnQgdGVncmFfZ2VtX21tYXAoc3RydWN0IGRybV9nZW1fb2JqZWN0ICpn
-ZW0sIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKQoKTm93IHN0YXRpYy4KCj4gIHsKPiAtICAg
-ICAgIHN0cnVjdCBkcm1fZ2VtX29iamVjdCAqZ2VtOwo+IC0gICAgICAgc3RydWN0IHRlZ3JhX2Jv
-ICpibzsKPiAtICAgICAgIGludCByZXQ7Cj4gLQo+IC0gICAgICAgcmV0ID0gZHJtX2dlbV9tbWFw
-KGZpbGUsIHZtYSk7Cj4gLSAgICAgICBpZiAocmV0KQo+IC0gICAgICAgICAgICAgICByZXR1cm4g
-cmV0Owo+IC0KPiAtICAgICAgIGdlbSA9IHZtYS0+dm1fcHJpdmF0ZV9kYXRhOwo+IC0gICAgICAg
-Ym8gPSB0b190ZWdyYV9ibyhnZW0pOwo+ICsgICAgICAgc3RydWN0IHRlZ3JhX2JvICpibyA9IHRv
-X3RlZ3JhX2JvKGdlbSk7Cj4gIAo+ICAgICAgICAgaWYgKCFiby0+cGFnZXMpIHsKPiAgICAgICAg
-ICAgICAgICAgdW5zaWduZWQgbG9uZyB2bV9wZ29mZiA9IHZtYS0+dm1fcGdvZmY7Cj4gKyAgICAg
-ICAgICAgICAgIGludCBlcnI7Cj4gIAo+ICsgICAgICAgICAgICAgICAvKgo+ICsgICAgICAgICAg
-ICAgICAgKiBDbGVhciB0aGUgVk1fUEZOTUFQIGZsYWcgdGhhdCB3YXMgc2V0IGJ5IGRybV9nZW1f
-bW1hcCgpLAo+ICsgICAgICAgICAgICAgICAgKiBhbmQgc2V0IHRoZSB2bV9wZ29mZiAodXNlZCBh
-cyBhIGZha2UgYnVmZmVyIG9mZnNldCBieSBEUk0pCj4gKyAgICAgICAgICAgICAgICAqIHRvIDAg
-YXMgd2Ugd2FudCB0byBtYXAgdGhlIHdob2xlIGJ1ZmZlci4KPiArICAgICAgICAgICAgICAgICov
-Cj4gICAgICAgICAgICAgICAgIHZtYS0+dm1fZmxhZ3MgJj0gflZNX1BGTk1BUDsKPiAgICAgICAg
-ICAgICAgICAgdm1hLT52bV9wZ29mZiA9IDA7Cj4gIAo+IC0gICAgICAgICAgICAgICByZXQgPSBk
-bWFfbW1hcF93YyhnZW0tPmRldi0+ZGV2LCB2bWEsIGJvLT52YWRkciwgYm8tPnBhZGRyLAo+ICsg
-ICAgICAgICAgICAgICBlcnIgPSBkbWFfbW1hcF93YyhnZW0tPmRldi0+ZGV2LCB2bWEsIGJvLT52
-YWRkciwgYm8tPnBhZGRyLAo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBnZW0t
-PnNpemUpOwo+IC0gICAgICAgICAgICAgICBpZiAocmV0KSB7Cj4gKyAgICAgICAgICAgICAgIGlm
-IChlcnIgPCAwKSB7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX2dlbV92bV9jbG9zZSh2
-bWEpOwo+IC0gICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByZXQ7Cj4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgcmV0dXJuIGVycjsKPiAgICAgICAgICAgICAgICAgfQo+ICAKPiAgICAgICAg
-ICAgICAgICAgdm1hLT52bV9wZ29mZiA9IHZtX3Bnb2ZmOwo+IEBAIC01MjAsNiArNTE3LDIwIEBA
-IGludCB0ZWdyYV9kcm1fbW1hcChzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IHZtX2FyZWFfc3Ry
-dWN0ICp2bWEpCj4gICAgICAgICByZXR1cm4gMDsKPiAgfQo+ICAKPiAraW50IHRlZ3JhX2RybV9t
-bWFwKHN0cnVjdCBmaWxlICpmaWxlLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkKPiArewo+
-ICsgICAgICAgc3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW07Cj4gKyAgICAgICBpbnQgZXJyOwo+
-ICsKPiArICAgICAgIGVyciA9IGRybV9nZW1fbW1hcChmaWxlLCB2bWEpOwo+ICsgICAgICAgaWYg
-KGVyciA8IDApCj4gKyAgICAgICAgICAgICAgIHJldHVybiBlcnI7Cj4gKwo+ICsgICAgICAgZ2Vt
-ID0gdm1hLT52bV9wcml2YXRlX2RhdGE7Cj4gKwo+ICsgICAgICAgcmV0dXJuIHRlZ3JhX2dlbV9t
-bWFwKGdlbSwgdm1hKTsKCk9rLCBzaW1wbGUgbWVjaGFuaWNhbCBjb2RlIG1vdGlvbi4KCj4gK30K
-PiArCj4gIHN0YXRpYyBzdHJ1Y3Qgc2dfdGFibGUgKgo+ICB0ZWdyYV9nZW1fcHJpbWVfbWFwX2Rt
-YV9idWYoc3RydWN0IGRtYV9idWZfYXR0YWNobWVudCAqYXR0YWNoLAo+ICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBlbnVtIGRtYV9kYXRhX2RpcmVjdGlvbiBkaXIpCj4gQEAgLTYwMyw3ICs2
-MTQsMTQgQEAgc3RhdGljIHZvaWQgdGVncmFfZ2VtX3ByaW1lX2t1bm1hcChzdHJ1Y3QgZG1hX2J1
-ZiAqYnVmLCB1bnNpZ25lZCBsb25nIHBhZ2UsCj4gIAo+ICBzdGF0aWMgaW50IHRlZ3JhX2dlbV9w
-cmltZV9tbWFwKHN0cnVjdCBkbWFfYnVmICpidWYsIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1h
-KQo+ICB7Cj4gLSAgICAgICByZXR1cm4gLUVJTlZBTDsKPiArICAgICAgIHN0cnVjdCBkcm1fZ2Vt
-X29iamVjdCAqZ2VtID0gYnVmLT5wcml2Owo+ICsgICAgICAgaW50IGVycjsKPiArCj4gKyAgICAg
-ICBlcnIgPSBkcm1fZ2VtX21tYXBfb2JqKGdlbSwgZ2VtLT5zaXplLCB2bWEpOwo+ICsgICAgICAg
-aWYgKGVyciA8IDApCj4gKyAgICAgICAgICAgICAgIHJldHVybiBlcnI7Cj4gKwo+ICsgICAgICAg
-cmV0dXJuIHRlZ3JhX2dlbV9tbWFwKGdlbSwgdm1hKTsKPiAgfQo+ICAKCkxndG0sIHdpdGggdGhl
-IG9uZSBzcGFyc2UgZml4dXAKUmV2aWV3ZWQtYnk6IENocmlzIFdpbHNvbiA8Y2hyaXNAY2hyaXMt
-d2lsc29uLmNvLnVrPgoKU28gIWJvLT5wYWdlcyB5b3UgaGF2ZSBhIFdDIHBvaW50ZXIgaW50byBk
-bWEgc3BhY2UsIGJ1dCBmb3IgYm8tPnBhZ2VzCnlvdSBoYXZlIHBoeXNpY2FsIHJhbSB0aGF0IHlv
-dSBjcmVhdGUgYSBuZXcgV0MgbWFwcGluZyBpbnRvLiBBcmUgYWxsCnVzZXJzIG9mIGJvLT5wYWdl
-cyBjYWNoZSBjb2hlcmVudCAoeW91IGFyZSBoYXBweSB0aGF0IHRoZSBjYWNoZSBpcyBvbgpwaHlz
-aWNhbCB0YWdzIGFuZCB3b3VsZCBiZSBmbHVzaGVkIGJ5IHRoZSBXQyBhY2Nlc3MpLCBvciBkbyB5
-b3UgbmVlZCB0aGUKZG1hX2J1Zl9iZWdpbl9jcHVfYWNjZXNzIHRvIGVuc3VyZSB0aGF0IG1lbW9y
-eSBpcyBjYWNoZSBjb2hlcmVudD8KLUNocmlzCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+Hi,
+
+On 15.08.2017 12:49, Felipe Balbi wrote:
+> Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
+>> This quirk is required to make USB Ethernet gadget working with HW that
+>> can't cope with unaligned DMA. For some reason only f_ncm handles that
+>> quirk, let's handle it in the rest of the network models. All models have
+>> been tested with a ChipIdea UDC driver on NVIDIA Tegra20 SoC that require
+>> DMA to be aligned.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  drivers/usb/gadget/function/f_ecm.c   | 7 +++++++
+>>  drivers/usb/gadget/function/f_eem.c   | 5 +++++
+>>  drivers/usb/gadget/function/f_rndis.c | 4 ++++
+>>  3 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/usb/gadget/function/f_ecm.c b/drivers/usb/gadget/function/f_ecm.c
+>> index 4c488d15b6f6..1d198055fd74 100644
+>> --- a/drivers/usb/gadget/function/f_ecm.c
+>> +++ b/drivers/usb/gadget/function/f_ecm.c
+>> @@ -584,6 +584,13 @@ static int ecm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+>>  			 */
+>>  			ecm->port.is_zlp_ok =
+>>  				gadget_is_zlp_supported(cdev->gadget);
+>> +
+>> +			/* Setup DMA alignment workaround for UDC's that
+>> +			 * need it.
+>> +			 */
+>> +			ecm->port.no_skb_reserve =
+>> +				gadget_avoids_skb_reserve(cdev->gadget);
+> 
+> looks like the quirk should be moved to u_ether.c instead.
+> 
+
+Indeed, thank you very much for the suggestion. I'll prepare a new revision of
+the patch.
+
+-- 
+Dmitry
