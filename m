@@ -1,91 +1,92 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] gpu: host1x: Support sub-devices recursively
-Date: Tue, 15 Aug 2017 15:46:22 +0200
-Message-ID: <20170815134622.21289-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Subject: Re: [PATCH 2/2] drm/tegra: gem: Implement mmap() for PRIME buffers
+Date: Tue, 15 Aug 2017 16:19:16 +0100
+Message-ID: <150281035691.29805.13125246304676966835@mail.alporthouse.com>
+References: <20170815134240.17770-1-thierry.reding@gmail.com>
+ <20170815134240.17770-2-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170815134240.17770-2-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-The display architecture in Tegra186 changes slightly compared to
-earlier Tegra generations, which requires that we recursively scan
-host1x sub-devices from device tree.
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/host1x/bus.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 7ece0e9058c6..998139c964f4 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -44,9 +44,14 @@ struct host1x_subdev {
-  * @np: device node
-  */
- static int host1x_subdev_add(struct host1x_device *device,
-+			     struct host1x_driver *driver,
- 			     struct device_node *np)
- {
- 	struct host1x_subdev *subdev;
-+	struct device_node *child;
-+	int err;
-+
-+	dev_info(&device->dev, "adding subdevice %s\n", np->full_name);
- 
- 	subdev = kzalloc(sizeof(*subdev), GFP_KERNEL);
- 	if (!subdev)
-@@ -59,6 +64,19 @@ static int host1x_subdev_add(struct host1x_device *device,
- 	list_add_tail(&subdev->list, &device->subdevs);
- 	mutex_unlock(&device->subdevs_lock);
- 
-+	/* recursively add children */
-+	for_each_child_of_node(np, child) {
-+		if (of_match_node(driver->subdevs, child) &&
-+		    of_device_is_available(child)) {
-+			err = host1x_subdev_add(device, driver, child);
-+			if (err < 0) {
-+				/* XXX cleanup? */
-+				of_node_put(child);
-+				return err;
-+			}
-+		}
-+	}
-+
- 	return 0;
- }
- 
-@@ -87,7 +105,7 @@ static int host1x_device_parse_dt(struct host1x_device *device,
- 	for_each_child_of_node(device->dev.parent->of_node, np) {
- 		if (of_match_node(driver->subdevs, np) &&
- 		    of_device_is_available(np)) {
--			err = host1x_subdev_add(device, np);
-+			err = host1x_subdev_add(device, driver, np);
- 			if (err < 0) {
- 				of_node_put(np);
- 				return err;
-@@ -104,6 +122,8 @@ static void host1x_subdev_register(struct host1x_device *device,
- {
- 	int err;
- 
-+	dev_info(&device->dev, "registering subdevice %s\n", subdev->np->full_name);
-+
- 	/*
- 	 * Move the subdevice to the list of active (registered) subdevices
- 	 * and associate it with a client. At the same time, associate the
-@@ -124,6 +144,10 @@ static void host1x_subdev_register(struct host1x_device *device,
- 			dev_err(&device->dev, "failed to add: %d\n", err);
- 		else
- 			device->registered = true;
-+	} else {
-+		dev_info(&device->dev, "remaining subdevices:\n");
-+		list_for_each_entry(subdev, &device->subdevs, list)
-+			dev_info(&device->dev, "  %s\n", subdev->np->full_name);
- 	}
- }
- 
--- 
-2.13.3
+UXVvdGluZyBUaGllcnJ5IFJlZGluZyAoMjAxNy0wOC0xNSAxNDo0Mjo0MCkKPiBGcm9tOiBUaGll
+cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFRoZSBtYXBwaW5nIG9mIFBSSU1F
+IGJ1ZmZlcnMgY2FuIHJldXNlIG11Y2ggb2YgdGhlIEdFTSBtYXBwaW5nIGNvZGUsIHNvCj4gZXh0
+cmFjdCB0aGUgY29tbW9uIGJpdHMgaW50byBhIG5ldyB0ZWdyYV9nZW1fbW1hcCgpIGhlbHBlci4K
+PiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+
+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMgfCA0OCArKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDMzIGluc2Vy
+dGlvbnMoKyksIDE1IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
+cm0vdGVncmEvZ2VtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKPiBpbmRleCA3YTM5
+YTM1NTY3OGEuLjg4YjAyNTBlYzZkMCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVn
+cmEvZ2VtLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKPiBAQCAtNDgxLDMw
+ICs0ODEsMjcgQEAgY29uc3Qgc3RydWN0IHZtX29wZXJhdGlvbnNfc3RydWN0IHRlZ3JhX2JvX3Zt
+X29wcyA9IHsKPiAgICAgICAgIC5jbG9zZSA9IGRybV9nZW1fdm1fY2xvc2UsCj4gIH07Cj4gIAo+
+IC1pbnQgdGVncmFfZHJtX21tYXAoc3RydWN0IGZpbGUgKmZpbGUsIHN0cnVjdCB2bV9hcmVhX3N0
+cnVjdCAqdm1hKQo+ICtpbnQgdGVncmFfZ2VtX21tYXAoc3RydWN0IGRybV9nZW1fb2JqZWN0ICpn
+ZW0sIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKQoKTm93IHN0YXRpYy4KCj4gIHsKPiAtICAg
+ICAgIHN0cnVjdCBkcm1fZ2VtX29iamVjdCAqZ2VtOwo+IC0gICAgICAgc3RydWN0IHRlZ3JhX2Jv
+ICpibzsKPiAtICAgICAgIGludCByZXQ7Cj4gLQo+IC0gICAgICAgcmV0ID0gZHJtX2dlbV9tbWFw
+KGZpbGUsIHZtYSk7Cj4gLSAgICAgICBpZiAocmV0KQo+IC0gICAgICAgICAgICAgICByZXR1cm4g
+cmV0Owo+IC0KPiAtICAgICAgIGdlbSA9IHZtYS0+dm1fcHJpdmF0ZV9kYXRhOwo+IC0gICAgICAg
+Ym8gPSB0b190ZWdyYV9ibyhnZW0pOwo+ICsgICAgICAgc3RydWN0IHRlZ3JhX2JvICpibyA9IHRv
+X3RlZ3JhX2JvKGdlbSk7Cj4gIAo+ICAgICAgICAgaWYgKCFiby0+cGFnZXMpIHsKPiAgICAgICAg
+ICAgICAgICAgdW5zaWduZWQgbG9uZyB2bV9wZ29mZiA9IHZtYS0+dm1fcGdvZmY7Cj4gKyAgICAg
+ICAgICAgICAgIGludCBlcnI7Cj4gIAo+ICsgICAgICAgICAgICAgICAvKgo+ICsgICAgICAgICAg
+ICAgICAgKiBDbGVhciB0aGUgVk1fUEZOTUFQIGZsYWcgdGhhdCB3YXMgc2V0IGJ5IGRybV9nZW1f
+bW1hcCgpLAo+ICsgICAgICAgICAgICAgICAgKiBhbmQgc2V0IHRoZSB2bV9wZ29mZiAodXNlZCBh
+cyBhIGZha2UgYnVmZmVyIG9mZnNldCBieSBEUk0pCj4gKyAgICAgICAgICAgICAgICAqIHRvIDAg
+YXMgd2Ugd2FudCB0byBtYXAgdGhlIHdob2xlIGJ1ZmZlci4KPiArICAgICAgICAgICAgICAgICov
+Cj4gICAgICAgICAgICAgICAgIHZtYS0+dm1fZmxhZ3MgJj0gflZNX1BGTk1BUDsKPiAgICAgICAg
+ICAgICAgICAgdm1hLT52bV9wZ29mZiA9IDA7Cj4gIAo+IC0gICAgICAgICAgICAgICByZXQgPSBk
+bWFfbW1hcF93YyhnZW0tPmRldi0+ZGV2LCB2bWEsIGJvLT52YWRkciwgYm8tPnBhZGRyLAo+ICsg
+ICAgICAgICAgICAgICBlcnIgPSBkbWFfbW1hcF93YyhnZW0tPmRldi0+ZGV2LCB2bWEsIGJvLT52
+YWRkciwgYm8tPnBhZGRyLAo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBnZW0t
+PnNpemUpOwo+IC0gICAgICAgICAgICAgICBpZiAocmV0KSB7Cj4gKyAgICAgICAgICAgICAgIGlm
+IChlcnIgPCAwKSB7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX2dlbV92bV9jbG9zZSh2
+bWEpOwo+IC0gICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByZXQ7Cj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgcmV0dXJuIGVycjsKPiAgICAgICAgICAgICAgICAgfQo+ICAKPiAgICAgICAg
+ICAgICAgICAgdm1hLT52bV9wZ29mZiA9IHZtX3Bnb2ZmOwo+IEBAIC01MjAsNiArNTE3LDIwIEBA
+IGludCB0ZWdyYV9kcm1fbW1hcChzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IHZtX2FyZWFfc3Ry
+dWN0ICp2bWEpCj4gICAgICAgICByZXR1cm4gMDsKPiAgfQo+ICAKPiAraW50IHRlZ3JhX2RybV9t
+bWFwKHN0cnVjdCBmaWxlICpmaWxlLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkKPiArewo+
+ICsgICAgICAgc3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW07Cj4gKyAgICAgICBpbnQgZXJyOwo+
+ICsKPiArICAgICAgIGVyciA9IGRybV9nZW1fbW1hcChmaWxlLCB2bWEpOwo+ICsgICAgICAgaWYg
+KGVyciA8IDApCj4gKyAgICAgICAgICAgICAgIHJldHVybiBlcnI7Cj4gKwo+ICsgICAgICAgZ2Vt
+ID0gdm1hLT52bV9wcml2YXRlX2RhdGE7Cj4gKwo+ICsgICAgICAgcmV0dXJuIHRlZ3JhX2dlbV9t
+bWFwKGdlbSwgdm1hKTsKCk9rLCBzaW1wbGUgbWVjaGFuaWNhbCBjb2RlIG1vdGlvbi4KCj4gK30K
+PiArCj4gIHN0YXRpYyBzdHJ1Y3Qgc2dfdGFibGUgKgo+ICB0ZWdyYV9nZW1fcHJpbWVfbWFwX2Rt
+YV9idWYoc3RydWN0IGRtYV9idWZfYXR0YWNobWVudCAqYXR0YWNoLAo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBlbnVtIGRtYV9kYXRhX2RpcmVjdGlvbiBkaXIpCj4gQEAgLTYwMyw3ICs2
+MTQsMTQgQEAgc3RhdGljIHZvaWQgdGVncmFfZ2VtX3ByaW1lX2t1bm1hcChzdHJ1Y3QgZG1hX2J1
+ZiAqYnVmLCB1bnNpZ25lZCBsb25nIHBhZ2UsCj4gIAo+ICBzdGF0aWMgaW50IHRlZ3JhX2dlbV9w
+cmltZV9tbWFwKHN0cnVjdCBkbWFfYnVmICpidWYsIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1h
+KQo+ICB7Cj4gLSAgICAgICByZXR1cm4gLUVJTlZBTDsKPiArICAgICAgIHN0cnVjdCBkcm1fZ2Vt
+X29iamVjdCAqZ2VtID0gYnVmLT5wcml2Owo+ICsgICAgICAgaW50IGVycjsKPiArCj4gKyAgICAg
+ICBlcnIgPSBkcm1fZ2VtX21tYXBfb2JqKGdlbSwgZ2VtLT5zaXplLCB2bWEpOwo+ICsgICAgICAg
+aWYgKGVyciA8IDApCj4gKyAgICAgICAgICAgICAgIHJldHVybiBlcnI7Cj4gKwo+ICsgICAgICAg
+cmV0dXJuIHRlZ3JhX2dlbV9tbWFwKGdlbSwgdm1hKTsKPiAgfQo+ICAKCkxndG0sIHdpdGggdGhl
+IG9uZSBzcGFyc2UgZml4dXAKUmV2aWV3ZWQtYnk6IENocmlzIFdpbHNvbiA8Y2hyaXNAY2hyaXMt
+d2lsc29uLmNvLnVrPgoKU28gIWJvLT5wYWdlcyB5b3UgaGF2ZSBhIFdDIHBvaW50ZXIgaW50byBk
+bWEgc3BhY2UsIGJ1dCBmb3IgYm8tPnBhZ2VzCnlvdSBoYXZlIHBoeXNpY2FsIHJhbSB0aGF0IHlv
+dSBjcmVhdGUgYSBuZXcgV0MgbWFwcGluZyBpbnRvLiBBcmUgYWxsCnVzZXJzIG9mIGJvLT5wYWdl
+cyBjYWNoZSBjb2hlcmVudCAoeW91IGFyZSBoYXBweSB0aGF0IHRoZSBjYWNoZSBpcyBvbgpwaHlz
+aWNhbCB0YWdzIGFuZCB3b3VsZCBiZSBmbHVzaGVkIGJ5IHRoZSBXQyBhY2Nlc3MpLCBvciBkbyB5
+b3UgbmVlZCB0aGUKZG1hX2J1Zl9iZWdpbl9jcHVfYWNjZXNzIHRvIGVuc3VyZSB0aGF0IG1lbW9y
+eSBpcyBjYWNoZSBjb2hlcmVudD8KLUNocmlzCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
