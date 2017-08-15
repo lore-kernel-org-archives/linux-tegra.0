@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 06/10] drm/tegra: dc: Trace register accesses
-Date: Tue, 15 Aug 2017 15:41:10 +0200
-Message-ID: <20170815134114.17547-6-thierry.reding@gmail.com>
+Subject: [PATCH 10/10] drm/tegra: sor: Trace register accesses
+Date: Tue, 15 Aug 2017 15:41:14 +0200
+Message-ID: <20170815134114.17547-10-thierry.reding@gmail.com>
 References: <20170815134114.17547-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20170815134114.17547-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,113 +12,62 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add tracepoint events for display controller register accesses.
+Add tracepoint events for SOR controller register accesses.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/Makefile |  2 ++
- drivers/gpu/drm/tegra/dc.h     |  8 +++++++-
- drivers/gpu/drm/tegra/trace.c  |  2 ++
- drivers/gpu/drm/tegra/trace.h  | 40 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 51 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/tegra/trace.c
- create mode 100644 drivers/gpu/drm/tegra/trace.h
+ drivers/gpu/drm/tegra/sor.c   | 8 +++++++-
+ drivers/gpu/drm/tegra/trace.h | 7 +++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index d472006159b7..258c3fde3ea4 100644
---- a/drivers/gpu/drm/tegra/Makefile
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -24,4 +24,6 @@ tegra-drm-$(CONFIG_ARCH_TEGRA_186_SOC) += \
- 	parker/dsi.o \
- 	parker/sor.o
- 
-+tegra-drm-y += trace.o
-+
- obj-$(CONFIG_DRM_TEGRA) += tegra-drm.o
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 63461eb769f0..ed61e35971f8 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -15,6 +15,7 @@
- #include <drm/drm_crtc.h>
- 
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 020792eb2724..04b3a50deab6 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -27,6 +27,7 @@
+ #include "dc.h"
  #include "drm.h"
+ #include "sor.h"
 +#include "trace.h"
  
- struct tegra_dc_soc_info;
- struct tegra_output;
-@@ -72,12 +73,17 @@ static inline struct tegra_dc *to_tegra_dc(struct drm_crtc *crtc)
- static inline void tegra_dc_writel(struct tegra_dc *dc, u32 value,
- 				   unsigned int offset)
- {
-+	trace_dc_writel(dc->dev, offset, value);
- 	writel(value, dc->regs + (offset << 2));
- }
+ #define SOR_REKEY 0x38
  
- static inline u32 tegra_dc_readl(struct tegra_dc *dc, unsigned int offset)
+@@ -237,12 +238,17 @@ static inline struct tegra_sor *to_sor(struct tegra_output *output)
+ 
+ static inline u32 tegra_sor_readl(struct tegra_sor *sor, unsigned int offset)
  {
--	return readl(dc->regs + (offset << 2));
-+	u32 value = readl(dc->regs + (offset << 2));
+-	return readl(sor->regs + (offset << 2));
++	u32 value = readl(sor->regs + (offset << 2));
 +
-+	trace_dc_readl(dc->dev, offset, value);
++	trace_sor_readl(sor->dev, offset, value);
 +
 +	return value;
  }
  
- struct tegra_dc_window {
-diff --git a/drivers/gpu/drm/tegra/trace.c b/drivers/gpu/drm/tegra/trace.c
-new file mode 100644
-index 000000000000..006f65c72a34
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/trace.c
-@@ -0,0 +1,2 @@
-+#define CREATE_TRACE_POINTS
-+#include "trace.h"
+ static inline void tegra_sor_writel(struct tegra_sor *sor, u32 value,
+ 				    unsigned int offset)
+ {
++	trace_sor_writel(sor->dev, offset, value);
+ 	writel(value, sor->regs + (offset << 2));
+ }
+ 
 diff --git a/drivers/gpu/drm/tegra/trace.h b/drivers/gpu/drm/tegra/trace.h
-new file mode 100644
-index 000000000000..b32d90c967e8
---- /dev/null
+index e497a0258ee4..e9b7cdad5c4c 100644
+--- a/drivers/gpu/drm/tegra/trace.h
 +++ b/drivers/gpu/drm/tegra/trace.h
-@@ -0,0 +1,40 @@
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM tegra
-+
-+#if !defined(DRM_TEGRA_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define DRM_TEGRA_TRACE_H 1
-+
-+#include <linux/device.h>
-+#include <linux/tracepoint.h>
-+
-+DECLARE_EVENT_CLASS(register_access,
-+	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
-+	TP_ARGS(dev, offset, value),
-+	TP_STRUCT__entry(
-+		__field(struct device *, dev)
-+		__field(unsigned int, offset)
-+		__field(u32, value)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = dev;
-+		__entry->offset = offset;
-+		__entry->value = value;
-+	),
-+	TP_printk("%s %04x %08x", dev_name(__entry->dev), __entry->offset,
-+		  __entry->value)
-+);
-+
-+DEFINE_EVENT(register_access, dc_writel,
+@@ -52,6 +52,13 @@ DEFINE_EVENT(register_access, dpaux_readl,
+ 	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
+ 	TP_ARGS(dev, offset, value));
+ 
++DEFINE_EVENT(register_access, sor_writel,
 +	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
 +	TP_ARGS(dev, offset, value));
-+DEFINE_EVENT(register_access, dc_readl,
++DEFINE_EVENT(register_access, sor_readl,
 +	TP_PROTO(struct device *dev, unsigned int offset, u32 value),
 +	TP_ARGS(dev, offset, value));
 +
-+#endif /* DRM_TEGRA_TRACE_H */
-+
-+/* This part must be outside protection */
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
-+#define TRACE_INCLUDE_FILE trace
-+#include <trace/define_trace.h>
+ #endif /* DRM_TEGRA_TRACE_H */
+ 
+ /* This part must be outside protection */
 -- 
 2.13.3
