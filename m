@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/2] drm/tegra: Support render node
-Date: Tue, 15 Aug 2017 15:42:39 +0200
-Message-ID: <20170815134240.17770-1-thierry.reding@gmail.com>
+Subject: [PATCH 2/2] drm/tegra: gem: Implement mmap() for PRIME buffers
+Date: Tue, 15 Aug 2017 15:42:40 +0200
+Message-ID: <20170815134240.17770-2-thierry.reding@gmail.com>
+References: <20170815134240.17770-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170815134240.17770-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -10,75 +12,96 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-None of the driver-specific IOCTLs are privileged, so mark them as such
-and advertise that the driver supports render nodes.
+The mapping of PRIME buffers can reuse much of the GEM mapping code, so
+extract the common bits into a new tegra_gem_mmap() helper.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/drm.c | 44 +++++++++++++++++++++++++++++---------------
- 1 file changed, 29 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/tegra/gem.c | 48 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 33 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index a75fbf6c219e..d5c8b15f5fa4 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -991,20 +991,34 @@ static int tegra_gem_get_flags(struct drm_device *drm, void *data,
- 
- static const struct drm_ioctl_desc tegra_drm_ioctls[] = {
- #ifdef CONFIG_DRM_TEGRA_STAGING
--	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_gem_create, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_gem_mmap, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_READ, tegra_syncpt_read, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_INCR, tegra_syncpt_incr, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_WAIT, tegra_syncpt_wait, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_OPEN_CHANNEL, tegra_open_channel, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_CLOSE_CHANNEL, tegra_close_channel, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_GET_SYNCPT, tegra_get_syncpt, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_SUBMIT, tegra_submit, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_GET_SYNCPT_BASE, tegra_get_syncpt_base, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_GEM_SET_TILING, tegra_gem_set_tiling, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_GEM_GET_TILING, tegra_gem_get_tiling, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_GEM_SET_FLAGS, tegra_gem_set_flags, 0),
--	DRM_IOCTL_DEF_DRV(TEGRA_GEM_GET_FLAGS, tegra_gem_get_flags, 0),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_gem_create,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_gem_mmap,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_READ, tegra_syncpt_read,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_INCR, tegra_syncpt_incr,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_WAIT, tegra_syncpt_wait,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_OPEN_CHANNEL, tegra_open_channel,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_CLOSE_CHANNEL, tegra_close_channel,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GET_SYNCPT, tegra_get_syncpt,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_SUBMIT, tegra_submit,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GET_SYNCPT_BASE, tegra_get_syncpt_base,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_SET_TILING, tegra_gem_set_tiling,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_GET_TILING, tegra_gem_get_tiling,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_SET_FLAGS, tegra_gem_set_flags,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_GET_FLAGS, tegra_gem_get_flags,
-+			  DRM_UNLOCKED | DRM_RENDER_ALLOW),
- #endif
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 7a39a355678a..88b0250ec6d0 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -481,30 +481,27 @@ const struct vm_operations_struct tegra_bo_vm_ops = {
+ 	.close = drm_gem_vm_close,
  };
  
-@@ -1093,7 +1107,7 @@ static int tegra_debugfs_init(struct drm_minor *minor)
+-int tegra_drm_mmap(struct file *file, struct vm_area_struct *vma)
++int tegra_gem_mmap(struct drm_gem_object *gem, struct vm_area_struct *vma)
+ {
+-	struct drm_gem_object *gem;
+-	struct tegra_bo *bo;
+-	int ret;
+-
+-	ret = drm_gem_mmap(file, vma);
+-	if (ret)
+-		return ret;
+-
+-	gem = vma->vm_private_data;
+-	bo = to_tegra_bo(gem);
++	struct tegra_bo *bo = to_tegra_bo(gem);
  
- static struct drm_driver tegra_drm_driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME |
--			   DRIVER_ATOMIC,
-+			   DRIVER_ATOMIC | DRIVER_RENDER,
- 	.load = tegra_drm_load,
- 	.unload = tegra_drm_unload,
- 	.open = tegra_drm_open,
+ 	if (!bo->pages) {
+ 		unsigned long vm_pgoff = vma->vm_pgoff;
++		int err;
+ 
++		/*
++		 * Clear the VM_PFNMAP flag that was set by drm_gem_mmap(),
++		 * and set the vm_pgoff (used as a fake buffer offset by DRM)
++		 * to 0 as we want to map the whole buffer.
++		 */
+ 		vma->vm_flags &= ~VM_PFNMAP;
+ 		vma->vm_pgoff = 0;
+ 
+-		ret = dma_mmap_wc(gem->dev->dev, vma, bo->vaddr, bo->paddr,
++		err = dma_mmap_wc(gem->dev->dev, vma, bo->vaddr, bo->paddr,
+ 				  gem->size);
+-		if (ret) {
++		if (err < 0) {
+ 			drm_gem_vm_close(vma);
+-			return ret;
++			return err;
+ 		}
+ 
+ 		vma->vm_pgoff = vm_pgoff;
+@@ -520,6 +517,20 @@ int tegra_drm_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return 0;
+ }
+ 
++int tegra_drm_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	struct drm_gem_object *gem;
++	int err;
++
++	err = drm_gem_mmap(file, vma);
++	if (err < 0)
++		return err;
++
++	gem = vma->vm_private_data;
++
++	return tegra_gem_mmap(gem, vma);
++}
++
+ static struct sg_table *
+ tegra_gem_prime_map_dma_buf(struct dma_buf_attachment *attach,
+ 			    enum dma_data_direction dir)
+@@ -603,7 +614,14 @@ static void tegra_gem_prime_kunmap(struct dma_buf *buf, unsigned long page,
+ 
+ static int tegra_gem_prime_mmap(struct dma_buf *buf, struct vm_area_struct *vma)
+ {
+-	return -EINVAL;
++	struct drm_gem_object *gem = buf->priv;
++	int err;
++
++	err = drm_gem_mmap_obj(gem, gem->size, vma);
++	if (err < 0)
++		return err;
++
++	return tegra_gem_mmap(gem, vma);
+ }
+ 
+ static void *tegra_gem_prime_vmap(struct dma_buf *buf)
 -- 
 2.13.3
