@@ -1,55 +1,83 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6 2/8] usb: chipidea: udc: Support SKB alignment quirk
-Date: Wed, 16 Aug 2017 13:32:39 +0300
-Message-ID: <3f7d24edf499f5795eeef4ef9c1a020cfdc7d002.1502879078.git.digetx@gmail.com>
+Subject: [PATCH v6 4/8] ARM: defconfig: tegra: Enable ChipIdea UDC driver
+Date: Wed, 16 Aug 2017 13:32:41 +0300
+Message-ID: <93aa4023907162ee381269d33c1a35e4a2bd5ab7.1502879078.git.digetx@gmail.com>
 References: <cover.1502879077.git.digetx@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1502879077.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 In-Reply-To: <cover.1502879077.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 References: <cover.1502879077.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA Tegra20 UDC can't cope with unaligned DMA and require a USB gadget
-quirk that avoids SKB buffer alignment to be set in order to make Ethernet
-Gadget working. Later Tegra generations do not require that quirk. Let's
-add a new platform data flag that allows to enable USB gadget quirk for
-platforms that require it.
+Since NVIDIA Tegra is supported now by the ChipIdea USB driver, let's
+enable this driver in tegra_defconfig.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Acked-by: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
 ---
- drivers/usb/chipidea/udc.c   | 3 +++
- include/linux/usb/chipidea.h | 1 +
- 2 files changed, 4 insertions(+)
+ arch/arm/configs/tegra_defconfig | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
-index 6502c13331e8..fe8a90543ea3 100644
---- a/drivers/usb/chipidea/udc.c
-+++ b/drivers/usb/chipidea/udc.c
-@@ -1896,6 +1896,9 @@ static int udc_start(struct ci_hdrc *ci)
- 	ci->gadget.name         = ci->platdata->name;
- 	ci->gadget.otg_caps	= otg_caps;
- 
-+	if (ci->platdata->flags & CI_HDRC_REQUIRES_ALIGNED_DMA)
-+		ci->gadget.quirk_avoids_skb_reserve = 1;
-+
- 	if (ci->is_otg && (otg_caps->hnp_support || otg_caps->srp_support ||
- 						otg_caps->adp_support))
- 		ci->gadget.is_otg = 1;
-diff --git a/include/linux/usb/chipidea.h b/include/linux/usb/chipidea.h
-index c5fdfcf99828..d725cff7268d 100644
---- a/include/linux/usb/chipidea.h
-+++ b/include/linux/usb/chipidea.h
-@@ -58,6 +58,7 @@ struct ci_hdrc_platform_data {
- #define CI_HDRC_OVERRIDE_TX_BURST	BIT(10)
- #define CI_HDRC_OVERRIDE_RX_BURST	BIT(11)
- #define CI_HDRC_OVERRIDE_PHY_CONTROL	BIT(12) /* Glue layer manages phy */
-+#define CI_HDRC_REQUIRES_ALIGNED_DMA	BIT(13)
- 	enum usb_dr_mode	dr_mode;
- #define CI_HDRC_CONTROLLER_RESET_EVENT		0
- #define CI_HDRC_CONTROLLER_STOPPED_EVENT	1
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index fe1275aa067e..9c9c644ed9d7 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -121,7 +121,6 @@ CONFIG_TOUCHSCREEN_WM97XX=y
+ CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_INPUT_MISC=y
+ # CONFIG_LEGACY_PTYS is not set
+-# CONFIG_DEVKMEM is not set
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+@@ -220,6 +219,9 @@ CONFIG_USB_EHCI_TEGRA=y
+ CONFIG_USB_ACM=y
+ CONFIG_USB_WDM=y
+ CONFIG_USB_STORAGE=y
++CONFIG_USB_CHIPIDEA=m
++CONFIG_USB_CHIPIDEA_UDC=y
++CONFIG_USB_GADGET=m
+ CONFIG_MMC=y
+ CONFIG_MMC_BLOCK_MINORS=16
+ CONFIG_MMC_SDHCI=y
+@@ -249,8 +251,6 @@ CONFIG_RTC_DRV_TEGRA=y
+ CONFIG_DMADEVICES=y
+ CONFIG_TEGRA20_APB_DMA=y
+ CONFIG_STAGING=y
+-CONFIG_SENSORS_ISL29018=y
+-CONFIG_SENSORS_ISL29028=y
+ CONFIG_MFD_NVEC=y
+ CONFIG_KEYBOARD_NVEC=y
+ CONFIG_SERIO_NVEC_PS2=y
+@@ -265,6 +265,8 @@ CONFIG_ARCH_TEGRA_124_SOC=y
+ CONFIG_MEMORY=y
+ CONFIG_IIO=y
+ CONFIG_MPU3050_I2C=y
++CONFIG_SENSORS_ISL29018=y
++CONFIG_SENSORS_ISL29028=y
+ CONFIG_AK8975=y
+ CONFIG_PWM=y
+ CONFIG_PWM_TEGRA=y
+@@ -290,13 +292,11 @@ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ CONFIG_PRINTK_TIME=y
+ CONFIG_DEBUG_INFO=y
+-CONFIG_DEBUG_FS=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_SLAB=y
+ CONFIG_DEBUG_VM=y
+ CONFIG_DETECT_HUNG_TASK=y
+ CONFIG_SCHEDSTATS=y
+-CONFIG_TIMER_STATS=y
+ # CONFIG_DEBUG_PREEMPT is not set
+ CONFIG_DEBUG_MUTEXES=y
+ CONFIG_DEBUG_SG=y
 -- 
 2.13.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
