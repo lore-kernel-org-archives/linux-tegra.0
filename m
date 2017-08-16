@@ -1,67 +1,71 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6 1/8] usb: gadget: f_ncm/u_ether: Move 'SKB reserve' quirk setup to u_ether
-Date: Wed, 16 Aug 2017 13:32:38 +0300
-Message-ID: <0057da7d2be650b9b5b2f3248e5c3ae4022b4796.1502879078.git.digetx@gmail.com>
-References: <cover.1502879077.git.digetx@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1502879077.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-In-Reply-To: <cover.1502879077.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-References: <cover.1502879077.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Subject: Re: [patch net-next 0/3] net/sched: Improve getting
+	objects by indexes
+Date: Wed, 16 Aug 2017 10:19:53 +0100
+Message-ID: <150287519355.15499.3124883464555211520__4887.26364351368$1502879656$gmane$org@mail.alporthouse.com>
+References: <1502849538-14284-1-git-send-email-chrism@mellanox.com>
+	<144b87a3-bbe4-a194-ed83-e54840d7c7c2@amd.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <cluster-devel-bounces@redhat.com>
+In-Reply-To: <144b87a3-bbe4-a194-ed83-e54840d7c7c2@amd.com>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/cluster-devel>
+List-Post: <mailto:cluster-devel@redhat.com>
+List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
+Sender: cluster-devel-bounces@redhat.com
+Errors-To: cluster-devel-bounces@redhat.com
+To: =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Chris Mi <chrism@mellanox.com>, netdev@vger.kernel.org
+Cc: lucho@ionkov.net, sergey.senozhatsky.work@gmail.com, snitzer@redhat.com, wsa@the-dreams.de, markb@mellanox.com, tom.leiming@gmail.com, zhi.a.wang@intel.com, nsekhar@ti.com, dri-devel@lists.freedesktop.org, bfields@fieldses.org, linux-sctp@vger.kernel.org, paulus@samba.org, jinpu.wang@profitbricks.com, pshelar@ovn.org, sumit.semwal@linaro.org, AlexBin.Xie@amd.com, david1.zhou@amd.com, linux-samsung-soc@vger.kernel.org, maximlevitsky@gmail.com, sudarsana.kalluru@qlogic.com, marek.vasut@gmail.com, linux-atm-general@lists.sourceforge.net, dtwlin@gmail.com, michel.daenzer@amd.com, dledford@redhat.com, tpmdd-devel@lists.sourceforge.net, stern@rowland.harvard.edu, longman@redhat.com, niranjana.vishwanathapura@intel.com, philipp.reisner@linbit.com, shli@kernel.org, linux@roeck-us.net, ohad@wizery.com, pmladek@suse.com, dick.kennedy@broadcom.com, linux-pm@vger.kernel.org, ericv
 List-Id: linux-tegra@vger.kernel.org
 
-That quirk is required to make USB Ethernet gadget working on HW that
-can't cope with unaligned DMA. For some reason only f_ncm sets up that
-quirk, let's setup it directly in u_ether so other network models would
-have that quirk applied as well. All network models have been tested with
-ChipIdea UDC driver on NVIDIA Tegra20 SoC that require DMA to be aligned.
+Quoting Christian König (2017-08-16 08:49:07)
+> Am 16.08.2017 um 04:12 schrieb Chris Mi:
+> > Using current TC code, it is very slow to insert a lot of rules.
+> >
+> > In order to improve the rules update rate in TC,
+> > we introduced the following two changes:
+> >          1) changed cls_flower to use IDR to manage the filters.
+> >          2) changed all act_xxx modules to use IDR instead of
+> >             a small hash table
+> >
+> > But IDR has a limitation that it uses int. TC handle uses u32.
+> > To make sure there is no regression, we also changed IDR to use
+> > unsigned long. All clients of IDR are changed to use new IDR API.
+> 
+> WOW, wait a second. The idr change is touching a lot of drivers and to 
+> be honest doesn't looks correct at all.
+> 
+> Just look at the first chunk of your modification:
+> > @@ -998,8 +999,9 @@ int bsg_register_queue(struct request_queue *q, struct device *parent,
+> >   
+> >       mutex_lock(&bsg_mutex);
+> >   
+> > -     ret = idr_alloc(&bsg_minor_idr, bcd, 0, BSG_MAX_DEVS, GFP_KERNEL);
+> > -     if (ret < 0) {
+> > +     ret = idr_alloc(&bsg_minor_idr, bcd, &idr_index, 0, BSG_MAX_DEVS,
+> > +                     GFP_KERNEL);
+> > +     if (ret) {
+> >               if (ret == -ENOSPC) {
+> >                       printk(KERN_ERR "bsg: too many bsg devices\n");
+> >                       ret = -EINVAL;
+> The condition "if (ret)" will now always be true after the first 
+> allocation and so we always run into the error handling after that.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/usb/gadget/function/f_ncm.c   | 2 --
- drivers/usb/gadget/function/u_ether.c | 2 +-
- drivers/usb/gadget/function/u_ether.h | 1 -
- 3 files changed, 1 insertion(+), 4 deletions(-)
+ret is now purely the error code, so it doesn't look that suspicious.
 
-diff --git a/drivers/usb/gadget/function/f_ncm.c b/drivers/usb/gadget/function/f_ncm.c
-index 24e34cfcb4bd..45b334ceaf2e 100644
---- a/drivers/usb/gadget/function/f_ncm.c
-+++ b/drivers/usb/gadget/function/f_ncm.c
-@@ -925,8 +925,6 @@ static int ncm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
- 			 */
- 			ncm->port.is_zlp_ok =
- 				gadget_is_zlp_supported(cdev->gadget);
--			ncm->port.no_skb_reserve =
--				gadget_avoids_skb_reserve(cdev->gadget);
- 			ncm->port.cdc_filter = DEFAULT_FILTER;
- 			DBG(cdev, "activate ncm\n");
- 			net = gether_connect(&ncm->port);
-diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-index a8b40d07e927..bdbc3fdc7c4f 100644
---- a/drivers/usb/gadget/function/u_ether.c
-+++ b/drivers/usb/gadget/function/u_ether.c
-@@ -1073,7 +1073,7 @@ struct net_device *gether_connect(struct gether *link)
- 
- 	if (result == 0) {
- 		dev->zlp = link->is_zlp_ok;
--		dev->no_skb_reserve = link->no_skb_reserve;
-+		dev->no_skb_reserve = gadget_avoids_skb_reserve(dev->gadget);
- 		DBG(dev, "qlen %d\n", qlen(dev->gadget, dev->qmult));
- 
- 		dev->header_len = link->header_len;
-diff --git a/drivers/usb/gadget/function/u_ether.h b/drivers/usb/gadget/function/u_ether.h
-index 81d94a7ae4b4..c77145bd6b5b 100644
---- a/drivers/usb/gadget/function/u_ether.h
-+++ b/drivers/usb/gadget/function/u_ether.h
-@@ -64,7 +64,6 @@ struct gether {
- 	struct usb_ep			*out_ep;
- 
- 	bool				is_zlp_ok;
--	bool				no_skb_reserve;
- 
- 	u16				cdc_filter;
- 
--- 
-2.13.3
+> I've never read the bsg code before, but that's certainly not correct. 
+> And that incorrect pattern repeats over and over again in this code.
+> 
+> Apart from that why the heck do you want to allocate more than 1<<31 
+> handles?
+
+And more to the point, arbitrarily changing the maximum to ULONG_MAX
+where the ABI only supports U32_MAX is dangerous. Unless you do the
+analysis otherwise, you have to replace all the end=0 with end=INT_MAX
+to maintain existing behaviour.
+-Chris
