@@ -1,71 +1,78 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 11/13] gpu: host1x: Use sychronized interface of the
- IOMMU-API
-Date: Thu, 17 Aug 2017 15:29:04 +0200
-Message-ID: <20170817132904.GB6854@ulmo>
-References: <1502974596-23835-1-git-send-email-joro@8bytes.org>
- <1502974596-23835-12-git-send-email-joro@8bytes.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 00/14] Fixes for Tegra clocks
+Date: Thu, 17 Aug 2017 15:31:46 +0200
+Message-ID: <20170817133146.GD6854@ulmo>
+References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="a2FkP9tdjPU2nyhF"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1502974596-23835-12-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Suravee Suthikulpanit <Suravee.Suthikulpanit-5C7GfCeVMHo@public.gmane.org>, Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---CUfgB8w4ZwR/yMy5
+--a2FkP9tdjPU2nyhF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 17, 2017 at 02:56:34PM +0200, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+On Tue, Jul 25, 2017 at 01:34:01PM +0300, Peter De Schrijver wrote:
+> A number of smaller fixes and simplifications for the Tegra clock
+> implementation.
 >=20
-> The map and unmap functions of the IOMMU-API changed their
-> semantics: They do no longer guarantee that the hardware
-> TLBs are synchronized with the page-table updates they made.
+> Alex Frid (7):
+>   clk: tegra: Fix T210 effective NDIV calculation
+>   clk: tegra: Add TEGRA_PERIPH_ON_APB flag to I2C
+>   clk: tegra: Re-factor T210 PLLX registration
+>   clk: tegra: Update T210 PLLSS (D2/DP) registration
+>   clk: tegra: Fix T210 PLLRE registration
+>   clk: tegra: Correct Tegra210 UTMIPLL poweron delay
+>   clk: tegra: Fix Tegra210 PLLU initialization
 >=20
-> To make conversion easier, new synchronized functions have
-> been introduced which give these guarantees again until the
-> code is converted to use the new TLB-flush interface of the
-> IOMMU-API, which allows certain optimizations.
+> Peter De Schrijver (7):
+>   clk: tegra: fix SS control on PLL enable/disable
+>   clk: tegra: Enable PLL_SS for Tegra210
+>   clk: tegra: disable SSC for PLL_D2
+>   clk: tegra210: remove non-existing VFIR clock
+>   clk: tegra: Init cfg structure in _get_pll_mnp
+>   clk: tegra: change post IDDQ release delay to 5us
+>   clk: tegra: don't warn for pll_d2 defaults unnecessarily
 >=20
-> But for now, just convert this code to use the synchronized
-> functions so that it will behave as before.
->=20
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
-> ---
->  drivers/gpu/host1x/cdma.c | 6 +++---
->  drivers/gpu/host1x/job.c  | 6 +++---
->  2 files changed, 6 insertions(+), 6 deletions(-)
+>  drivers/clk/tegra/clk-pll.c              | 159 ++++++++-----------------=
+------
+>  drivers/clk/tegra/clk-tegra-periph.c     |   3 +-
+>  drivers/clk/tegra/clk-tegra-super-gen4.c |  11 ++-
+>  drivers/clk/tegra/clk-tegra210.c         |  32 ++++---
+>  drivers/clk/tegra/clk.h                  |   6 --
+>  5 files changed, 67 insertions(+), 144 deletions(-)
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The series:
 
---CUfgB8w4ZwR/yMy5
+Tested-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--a2FkP9tdjPU2nyhF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmVmiAACgkQ3SOs138+
-s6HEmQ//SAxCmzq1ntGkx0hQayS42QtymmlrEcHF1W6h1vf3TcwRoBeuqNh7kAx7
-z51eC5fnbj0B7wTCMrXklGMRESJuPuAmDe5sNkutgLadpJWs+juyggIi0cjLDLfj
-ssGDxcy03wbQt+LRKe1hRhcIWk9mkGV1nVtFQ8K6p3XO6dlFR6jryrGVmsEOuaK3
-ui1JPRBboC86Qq0J1QIwPGxMhlfQOvVFOQ1ItVi8GybCE9siFIMbS4LJV4iuHMOL
-yhBVAe48+1ViO6NTNiVCq2twZILskCnXXTBRUkMe7qLkCgS+XFTDaGRv2FOFod/5
-u8LywV7pdcoGJ9kQboGTf20RJzna8bmqdph1gqs3PrxF+Hr2YqeolQM4fvB7QB2L
-Mln+s5UvXIefro2EjRyJpg7+T2Nq02o7oMfdRke1zGM8rxFw6elsjVdUE9x/WKd1
-VeFvw0Iu+wBQc41JwIxAI85YAblP+ac3mYQiaihH4wM1DBSfi+tjEPvN7xKQTGaS
-oN5fdFTX09+uWACUCTyD7XXbNXJ7pHFfsbq8x9OUyOI/S6JrO0UrFtwa25DA2miJ
-t9BJjZMH99y3J0ejMcQtZBXJr88Cm8/4W1rI12YGOXy5Wk8EalgY0CZKTlfzrKWQ
-Kh7YcbumLicFDK6Rm2CxvJfMWGTBWVzsHLYnsV6nLK1JZJgdA+k=
-=ddw6
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmVmsIACgkQ3SOs138+
+s6Gljg//b4nfJGqb694iH74wfKNHX0s2hm1Iwh1XC1MWcCRFwKMOI6mQEOpvnEy9
+C/r/5NoIZhtMoIqaM+/KSHUaBdcH+mNyh9t8OxtEYSUw9IDxtLE7gNTu/JFwhGBV
+tuQNwIMxDkTm7vqPv40Cra4GkWk7ktX2JQWXYPFYp9wzJFANZ7W+wvYfPEnkDJfr
+yv6/UIuEmBTzasC5AzNFfJ8n4yRcG5is34FvuNq4pch7gt4DWmAr9sKQwnA0eGyg
+VE3Y2+iJ67av0Rwww54f9uL54Zw0mCEc1h+NiMn2BA1ThxIcb5pLwH6sJN0eOsyY
+LMwKlmQ8yNqmbuFQtfmBmcB+ON5UT6JBUK8wDXUMb/GbN9i2dmaqjoXWO1yyXY5x
+5hH7FIvk/Zy/hdQ7Y3YtkpwLQCWYlu/GE7mEEG543g5KiRM+VbTbKJ59FhK1b6fj
+EFpH1WomdCxQI1exueL9bJgv1smL7hyDu2pZUD6HCaeSjgyLBiPk8t2xE34lVyNQ
+a6RQU34tAxeZa4VCmTFoDaCGhWkmHzOepetDmQRA8wafdX0VZOkt5cEttUo3AHsT
+hRLmj6c0QoCqZUcs5sglQ71PEuVenU+85tZ4FMOSAhjRh2EZTqj9QSUccV9Nmkjr
+BWmD2SIDbhiiTeUbvjpDejDM8tNfuccP430XApXxWKiGId27R0g=
+=3xVS
 -----END PGP SIGNATURE-----
 
---CUfgB8w4ZwR/yMy5--
+--a2FkP9tdjPU2nyhF--
