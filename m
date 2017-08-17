@@ -1,172 +1,89 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] soc/tegra: Register SoC device
-Date: Thu, 17 Aug 2017 16:42:17 +0200
-Message-ID: <20170817144217.31346-1-thierry.reding@gmail.com>
+From: jeffy <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: [V6,3/9] irqdomain: Don't set type when mapping an IRQ
+Date: Thu, 17 Aug 2017 22:42:13 +0800
+Message-ID: <5995AB45.6010706@rock-chips.com>
+References: <1465312354-27778-4-git-send-email-jonathanh@nvidia.com> <59959014.9040603@rock-chips.com> <feb4e020-b738-9165-c044-b0e246ee4bd5@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <feb4e020-b738-9165-c044-b0e246ee4bd5-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, briannorris-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Marc,
 
-Move this code from arch/arm/mach-tegra and make it common among 32-bit
-and 64-bit Tegra SoCs. This is slightly complicated by the fact that on
-32-bit Tegra, the SoC device is used as the parent for all devices that
-are instantiated from device tree.
+Thanks for your reply.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/tegra.c         | 29 +---------------------
- drivers/soc/tegra/Kconfig           |  5 ++++
- drivers/soc/tegra/fuse/fuse-tegra.c | 48 +++++++++++++++++++++++++++++++++++--
- include/soc/tegra/fuse.h            |  2 ++
- 4 files changed, 54 insertions(+), 30 deletions(-)
+On 08/17/2017 09:34 PM, Marc Zyngier wrote:
+> On 17/08/17 13:46, jeffy wrote:
+>> Hi guys,
+>>
+>> I hit an problem when testing a level triggered irq with:
+>>
+>> irq = platform_get_irq_byname(pdev, "wake");
+>> ...<-- irq trigger type is correct
+>> irq_set_status_flags(irq, IRQ_NOAUTOEN);
+>> ...<-- irq trigger type become zero
+>> request_threaded_irq(irq, ...)
+>>
+>> the trigger type lost(irqd_get_trigger_type returns zero) after
+>> irq_set_status_flags.
+>>
+>>
+>> it looks like irq_set_status_flags would try to use
+>> irq_settings_is_level to get level trigger type, which would get zero
+>> since we removed set type here...could you help to check this, thanks :)
+>
+> Hmm. That's quite unexpected. Can you please try this?
+>
+> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+> index a3cc37c0c85e..3675c6004f2a 100644
+> --- a/kernel/irq/chip.c
+> +++ b/kernel/irq/chip.c
+> @@ -1000,7 +1000,7 @@ EXPORT_SYMBOL_GPL(irq_set_chip_and_handler_name);
+>
+>   void irq_modify_status(unsigned int irq, unsigned long clr, unsigned long set)
+>   {
+> -	unsigned long flags;
+> +	unsigned long flags, trigger, tmp;
+>   	struct irq_desc *desc = irq_get_desc_lock(irq, &flags, 0);
+>
+>   	if (!desc)
+> @@ -1014,6 +1014,8 @@ void irq_modify_status(unsigned int irq, unsigned long clr, unsigned long set)
+>
+>   	irq_settings_clr_and_set(desc, clr, set);
+>
+> +	trigger = irqd_get_trigger_type(&desc->irq_data);
+> +
+>   	irqd_clear(&desc->irq_data, IRQD_NO_BALANCING | IRQD_PER_CPU |
+>   		   IRQD_TRIGGER_MASK | IRQD_LEVEL | IRQD_MOVE_PCNTXT);
+>   	if (irq_settings_has_no_balance_set(desc))
+> @@ -1025,7 +1027,11 @@ void irq_modify_status(unsigned int irq, unsigned long clr, unsigned long set)
+>   	if (irq_settings_is_level(desc))
+>   		irqd_set(&desc->irq_data, IRQD_LEVEL);
+>
+> -	irqd_set(&desc->irq_data, irq_settings_get_trigger_mask(desc));
+> +	tmp = irq_settings_get_trigger_mask(desc);
+> +	if (tmp != IRQ_TYPE_NONE)
+> +		trigger = tmp;
+> +
+> +	irqd_set(&desc->irq_data, trigger);
+>
+>   	irq_put_desc_unlock(desc, flags);
+>   }
+>
+> Basically, save the trigger info before clearing it. If the interrupt
+> has already been configured, use that. Otherwise restore the previous
+> trigger settings. But I'm slightly confused as to which field is used
+> for what...
 
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 649e9e8c7bcc..02e712d2ea30 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -84,35 +84,8 @@ static void __init tegra_dt_init_irq(void)
- 
- static void __init tegra_dt_init(void)
- {
--	struct soc_device_attribute *soc_dev_attr;
--	struct soc_device *soc_dev;
--	struct device *parent = NULL;
-+	struct device *parent = tegra_soc_device_register();
- 
--	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
--	if (!soc_dev_attr)
--		goto out;
--
--	soc_dev_attr->family = kasprintf(GFP_KERNEL, "Tegra");
--	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d",
--					   tegra_sku_info.revision);
--	soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
--
--	soc_dev = soc_device_register(soc_dev_attr);
--	if (IS_ERR(soc_dev)) {
--		kfree(soc_dev_attr->family);
--		kfree(soc_dev_attr->revision);
--		kfree(soc_dev_attr->soc_id);
--		kfree(soc_dev_attr);
--		goto out;
--	}
--
--	parent = soc_device_to_device(soc_dev);
--
--	/*
--	 * Finished with the static registrations now; fill in the missing
--	 * devices
--	 */
--out:
- 	of_platform_default_populate(NULL, NULL, parent);
- }
- 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index 1beb7c347344..e9e277178c94 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -107,6 +107,11 @@ config ARCH_TEGRA_186_SOC
- endif
- endif
- 
-+config SOC_TEGRA_FUSE
-+	def_bool y
-+	depends on ARCH_TEGRA
-+	select SOC_BUS
-+
- config SOC_TEGRA_FLOWCTRL
- 	bool
- 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 75b38194750f..02686378dfc1 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -19,10 +19,12 @@
- #include <linux/device.h>
- #include <linux/kobject.h>
- #include <linux/init.h>
--#include <linux/platform_device.h>
-+#include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/io.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/sys_soc.h>
- 
- #include <soc/tegra/common.h>
- #include <soc/tegra/fuse.h>
-@@ -213,6 +215,31 @@ static void tegra_enable_fuse_clk(void __iomem *base)
- 	writel(reg, base + 0x14);
- }
- 
-+struct device * __init tegra_soc_device_register(void)
-+{
-+	struct soc_device_attribute *attr;
-+	struct soc_device *dev;
-+
-+	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
-+	if (!attr)
-+		return NULL;
-+
-+	attr->family = kasprintf(GFP_KERNEL, "Tegra");
-+	attr->revision = kasprintf(GFP_KERNEL, "%d", tegra_sku_info.revision);
-+	attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
-+
-+	dev = soc_device_register(attr);
-+	if (IS_ERR(dev)) {
-+		kfree(attr->soc_id);
-+		kfree(attr->revision);
-+		kfree(attr->family);
-+		kfree(attr);
-+		return ERR_CAST(dev);
-+	}
-+
-+	return soc_device_to_device(dev);
-+}
-+
- static int __init tegra_init_fuse(void)
- {
- 	const struct of_device_id *match;
-@@ -314,6 +341,23 @@ static int __init tegra_init_fuse(void)
- 	pr_debug("Tegra CPU Speedo ID %d, SoC Speedo ID %d\n",
- 		 tegra_sku_info.cpu_speedo_id, tegra_sku_info.soc_speedo_id);
- 
-+
- 	return 0;
- }
- early_initcall(tegra_init_fuse);
-+
-+#ifdef CONFIG_ARM64
-+static int __init tegra_init_soc(void)
-+{
-+	struct device *soc;
-+
-+	soc = tegra_soc_device_register();
-+	if (IS_ERR(soc)) {
-+		pr_err("failed to register SoC device: %ld\n", PTR_ERR(soc));
-+		return PTR_ERR(soc);
-+	}
-+
-+	return 0;
-+}
-+device_initcall(tegra_init_soc)
-+#endif
-diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index b4c9219e7f95..9b6ea0c72117 100644
---- a/include/soc/tegra/fuse.h
-+++ b/include/soc/tegra/fuse.h
-@@ -65,6 +65,8 @@ int tegra_fuse_readl(unsigned long offset, u32 *value);
- 
- extern struct tegra_sku_info tegra_sku_info;
- 
-+struct device *tegra_soc_device_register(void);
-+
- #endif /* __ASSEMBLY__ */
- 
- #endif /* __SOC_TEGRA_FUSE_H__ */
--- 
-2.13.3
+Thanks:), this patch works well, so
+
+Tested-by: Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+
+>
+> 	M.
+>
