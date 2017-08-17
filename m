@@ -1,57 +1,51 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 4/6] dt-bindings: host1x: Fix and add Tegra186 information
-Date: Thu, 17 Aug 2017 21:54:11 +0300
-Message-ID: <20170817185413.6324-5-mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/6] arm64: tegra: Add host1x on Tegra186
+Date: Thu, 17 Aug 2017 21:54:09 +0300
+Message-ID: <20170817185413.6324-3-mperttunen@nvidia.com>
 References: <20170817185413.6324-1-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170817185413.6324-1-mperttunen@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, dnibade@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, amerilainen@nvidia.com, linux-tegra@vger.kernel.org, sgurrappadi@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, digetx@gmail.com, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170817185413.6324-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dnibade-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sgurrappadi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-QWRkIG5vdGUgdGhhdCBhZGRyZXNzL3NpemUtY2VsbHMgc2hvdWxkIGJlIDIgb24gNjQtYml0IHN5
-c3RlbXMsCmFuZCBhZGQgVGVncmExODYtc3BlY2lmaWMgcmVnaXN0ZXIgcmFuZ2UgcHJvcGVydGll
-cy4KClNpZ25lZC1vZmYtYnk6IE1pa2tvIFBlcnR0dW5lbiA8bXBlcnR0dW5lbkBudmlkaWEuY29t
-PgotLS0KIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvdGVncmEvbnZpZGlhLHRlZ3Jh
-MjAtaG9zdDF4LnR4dCAgfCA5ICsrKysrKystLQogMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9u
-cygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvZGlzcGxheS90ZWdyYS9udmlkaWEsdGVncmEyMC1ob3N0MXgudHh0IGIvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvdGVncmEvbnZpZGlhLHRlZ3Jh
-MjAtaG9zdDF4LnR4dAppbmRleCA3NGUxZThhZGQ1YTEuLmIzZTc4NWI0NzEwMCAxMDA2NDQKLS0t
-IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvdGVncmEvbnZpZGlh
-LHRlZ3JhMjAtaG9zdDF4LnR4dAorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS90ZWdyYS9udmlkaWEsdGVncmEyMC1ob3N0MXgudHh0CkBAIC0zLDExICszLDE2
-IEBAIE5WSURJQSBUZWdyYSBob3N0MXgKIFJlcXVpcmVkIHByb3BlcnRpZXM6CiAtIGNvbXBhdGli
-bGU6ICJudmlkaWEsdGVncmE8Y2hpcD4taG9zdDF4IgogLSByZWc6IFBoeXNpY2FsIGJhc2UgYWRk
-cmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBjb250cm9sbGVyJ3MgcmVnaXN0ZXJzLgorICBGb3IgcHJl
-LVRlZ3JhMTg2LCBvbmUgZW50cnkgZGVzY3JpYmluZyB0aGUgd2hvbGUgcmVnaXN0ZXIgYXJlYS4K
-KyAgRm9yIFRlZ3JhMTg2LCBvbmUgZW50cnkgZm9yIGVhY2ggZW50cnkgaW4gcmVnLW5hbWVzOgor
-ICAgICJ2bSIgLSBWTSByZWdpb24gYXNzaWduZWQgdG8gTGludXgKKyAgICAiaHlwZXJ2aXNvciIg
-LSBIeXBlcnZpc29yIHJlZ2lvbiAob25seSBpZiBMaW51eCBhY3RzIGFzIGh5cGVydmlzb3IpCiAt
-IGludGVycnVwdHM6IFRoZSBpbnRlcnJ1cHQgb3V0cHV0cyBmcm9tIHRoZSBjb250cm9sbGVyLgog
-LSAjYWRkcmVzcy1jZWxsczogVGhlIG51bWJlciBvZiBjZWxscyB1c2VkIHRvIHJlcHJlc2VudCBw
-aHlzaWNhbCBiYXNlIGFkZHJlc3NlcwotICBpbiB0aGUgaG9zdDF4IGFkZHJlc3Mgc3BhY2UuIFNo
-b3VsZCBiZSAxLgorICBpbiB0aGUgaG9zdDF4IGFkZHJlc3Mgc3BhY2UuIFNob3VsZCBiZSAxIGZv
-ciAzMi1iaXQgYW5kIDIgZm9yIDY0LWJpdCBzeXN0ZW1zLgogLSAjc2l6ZS1jZWxsczogVGhlIG51
-bWJlciBvZiBjZWxscyB1c2VkIHRvIHJlcHJlc2VudCB0aGUgc2l6ZSBvZiBhbiBhZGRyZXNzCi0g
-IHJhbmdlIGluIHRoZSBob3N0MXggYWRkcmVzcyBzcGFjZS4gU2hvdWxkIGJlIDEuCisgIHJhbmdl
-IGluIHRoZSBob3N0MXggYWRkcmVzcyBzcGFjZS4gU2hvdWxkIGJlIDEgZm9yIDMyLWJpdCBhbmQg
-MiBmb3IgNjQtYml0CisgIHN5c3RlbXMuCiAtIHJhbmdlczogVGhlIG1hcHBpbmcgb2YgdGhlIGhv
-c3QxeCBhZGRyZXNzIHNwYWNlIHRvIHRoZSBDUFUgYWRkcmVzcyBzcGFjZS4KIC0gY2xvY2tzOiBN
-dXN0IGNvbnRhaW4gb25lIGVudHJ5LCBmb3IgdGhlIG1vZHVsZSBjbG9jay4KICAgU2VlIC4uL2Ns
-b2Nrcy9jbG9jay1iaW5kaW5ncy50eHQgZm9yIGRldGFpbHMuCi0tIAoyLjE0LjEKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Add the node for Host1x on the Tegra186, without any subdevices
+for now.
+
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index a964d246c0e9..3556f89ddf1d 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -355,6 +355,24 @@
+ 		nvidia,bpmp = <&bpmp>;
+ 	};
+ 
++	host1x@13e00000 {
++		compatible = "nvidia,tegra186-host1x", "simple-bus";
++		reg = <0x0 0x13e00000 0x0 0x10000>,
++		      <0x0 0x13e10000 0x0 0x10000>;
++		reg-names = "hypervisor", "vm";
++		interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
++		             <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&bpmp TEGRA186_CLK_HOST1X>;
++		clock-names = "host1x";
++		resets = <&bpmp TEGRA186_RESET_HOST1X>;
++		reset-names = "host1x";
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++
++		ranges = <0x0 0x15000000 0x0 0x15000000 0x0 0x01000000>;
++	};
++
+ 	gpu@17000000 {
+ 		compatible = "nvidia,gp10b";
+ 		reg = <0x0 0x17000000 0x0 0x1000000>,
+-- 
+2.14.1
