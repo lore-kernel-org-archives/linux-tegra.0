@@ -1,12 +1,15 @@
 From: Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH] ASoC: tegra: Remove SoC-specific Kconfig
-	depends and selects
-Date: Thu, 17 Aug 2017 21:05:52 +0200
-Message-ID: <20170817190552.4404-1-contact@paulk.fr>
+Subject: Re: [PATCH 1/3] sound: ASoC: tegra: Remove
+ SoC-specific Kconfig depends and selects
+Date: Thu, 17 Aug 2017 22:07:56 +0300
+Message-ID: <1502996876.1287.2.camel@paulk.fr>
+References: <20170730112220.15525-1-contact@paulk.fr>
+ <20170731102309.GE26667@ulmo> <20170817142211.GH6854@ulmo>
+ <20170817142639.ixe7pfzpfhwbhz5q@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============6989655100755740901=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20170817142639.ixe7pfzpfhwbhz5q@sirena.org.uk>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -16,175 +19,85 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Cc: Stephen Warren <swarren@nvidia.com>, Paul Kocialkowski <contact@paulk.fr>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-This removes the SoC-specific dependencies on the platform drivers,
-as well as SoC-specific selections of platform drivers for the
-machine drivers. The rationale behind this change is that the
-dependencies are not actual build dependencies but run-time ones.
 
-The previously listed SoCs were also incomplete: for instance, tegra124
-uses the tegra30 platform drivers, which could not be built without
-ARCH_TEGRA_3x_SOC set.
+--===============6989655100755740901==
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-SoSlj/7N600orvPJ/a6m"
 
-Descriptions of the tristates are also added to allow these options
-to be set via defconfig/menuconfig.
 
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
- sound/soc/tegra/Kconfig | 42 ++++++++++++++----------------------------
- 1 file changed, 14 insertions(+), 28 deletions(-)
+--=-SoSlj/7N600orvPJ/a6m
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
-index efbe8d4c019e..6875fc39a575 100644
---- a/sound/soc/tegra/Kconfig
-+++ b/sound/soc/tegra/Kconfig
-@@ -9,8 +9,8 @@ config SND_SOC_TEGRA
- 	  Say Y or M here if you want support for SoC audio on Tegra.
- 
- config SND_SOC_TEGRA20_AC97
--	tristate
--	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
-+	tristate "Tegra20 AC97 interface"
-+	depends on SND_SOC_TEGRA
- 	select SND_SOC_AC97_BUS
- 	select SND_SOC_TEGRA20_DAS
- 	help
-@@ -19,16 +19,16 @@ config SND_SOC_TEGRA20_AC97
- 	  machine drivers to support below.
- 
- config SND_SOC_TEGRA20_DAS
--	tristate
--	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
-+	tristate "Tegra20 DAS module"
-+	depends on SND_SOC_TEGRA
- 	help
- 	  Say Y or M if you want to add support for the Tegra20 DAS module.
- 	  You will also need to select the individual machine drivers to
- 	  support below.
- 
- config SND_SOC_TEGRA20_I2S
--	tristate
--	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
-+	tristate "Tegra20 I2S interface"
-+	depends on SND_SOC_TEGRA
- 	select SND_SOC_TEGRA20_DAS
- 	help
- 	  Say Y or M if you want to add support for codecs attached to the
-@@ -36,8 +36,8 @@ config SND_SOC_TEGRA20_I2S
- 	  machine drivers to support below.
- 
- config SND_SOC_TEGRA20_SPDIF
--	tristate
--	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
-+	tristate "Tegra20 SPDIF interface"
-+	depends on SND_SOC_TEGRA
- 	default m
- 	help
- 	  Say Y or M if you want to add support for the Tegra20 SPDIF interface.
-@@ -45,16 +45,16 @@ config SND_SOC_TEGRA20_SPDIF
- 	  below.
- 
- config SND_SOC_TEGRA30_AHUB
--	tristate
--	depends on SND_SOC_TEGRA && ARCH_TEGRA_3x_SOC
-+	tristate "Tegra30 AHUB module"
-+	depends on SND_SOC_TEGRA
- 	help
--	  Say Y or M if you want to add support for the Tegra20 AHUB module.
-+	  Say Y or M if you want to add support for the Tegra30 AHUB module.
- 	  You will also need to select the individual machine drivers to
- 	  support below.
- 
- config SND_SOC_TEGRA30_I2S
--	tristate
--	depends on SND_SOC_TEGRA && ARCH_TEGRA_3x_SOC
-+	tristate "Tegra30 I2S interface"
-+	depends on SND_SOC_TEGRA
- 	select SND_SOC_TEGRA30_AHUB
- 	help
- 	  Say Y or M if you want to add support for codecs attached to the
-@@ -64,8 +64,6 @@ config SND_SOC_TEGRA30_I2S
- config SND_SOC_TEGRA_RT5640
- 	tristate "SoC Audio support for Tegra boards using an RT5640 codec"
- 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
--	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
--	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
- 	select SND_SOC_RT5640
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Tegra
-@@ -74,8 +72,6 @@ config SND_SOC_TEGRA_RT5640
- config SND_SOC_TEGRA_WM8753
- 	tristate "SoC Audio support for Tegra boards using a WM8753 codec"
- 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
--	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
--	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
- 	select SND_SOC_WM8753
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Tegra
-@@ -84,8 +80,6 @@ config SND_SOC_TEGRA_WM8753
- config SND_SOC_TEGRA_WM8903
- 	tristate "SoC Audio support for Tegra boards using a WM8903 codec"
- 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
--	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
--	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
- 	select SND_SOC_WM8903
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Tegra
-@@ -94,7 +88,7 @@ config SND_SOC_TEGRA_WM8903
- 
- config SND_SOC_TEGRA_WM9712
- 	tristate "SoC Audio support for Tegra boards using a WM9712 codec"
--	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC && GPIOLIB
-+	depends on SND_SOC_TEGRA && GPIOLIB
- 	select SND_SOC_TEGRA20_AC97
- 	select SND_SOC_WM9712
- 	help
-@@ -104,7 +98,6 @@ config SND_SOC_TEGRA_WM9712
- config SND_SOC_TEGRA_TRIMSLICE
- 	tristate "SoC Audio support for TrimSlice board"
- 	depends on SND_SOC_TEGRA && I2C
--	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
- 	select SND_SOC_TLV320AIC23_I2C
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on the
-@@ -113,7 +106,6 @@ config SND_SOC_TEGRA_TRIMSLICE
- config SND_SOC_TEGRA_ALC5632
- 	tristate "SoC Audio support for Tegra boards using an ALC5632 codec"
- 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
--	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
- 	select SND_SOC_ALC5632
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on the
-@@ -122,8 +114,6 @@ config SND_SOC_TEGRA_ALC5632
- config SND_SOC_TEGRA_MAX98090
- 	tristate "SoC Audio support for Tegra boards using a MAX98090 codec"
- 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
--	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
--	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
- 	select SND_SOC_MAX98090
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Tegra
-@@ -132,8 +122,6 @@ config SND_SOC_TEGRA_MAX98090
- config SND_SOC_TEGRA_RT5677
- 	tristate "SoC Audio support for Tegra boards using a RT5677 codec"
- 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
--	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
--	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
- 	select SND_SOC_RT5677
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Tegra
-@@ -142,8 +130,6 @@ config SND_SOC_TEGRA_RT5677
- config SND_SOC_TEGRA_SGTL5000
- 	tristate "SoC Audio support for Tegra boards using a SGTL5000 codec"
- 	depends on SND_SOC_TEGRA && I2C && GPIOLIB
--	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
--	select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
- 	select SND_SOC_SGTL5000
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Tegra
--- 
-2.13.4
+Le jeudi 17 ao=C3=BBt 2017 =C3=A0 15:26 +0100, Mark Brown a =C3=A9crit :
+> On Thu, Aug 17, 2017 at 04:22:11PM +0200, Thierry Reding wrote:
+>=20
+> > do you want to pick this up, or would you rather provide an Acked-by=
+=20
+> > so
+> > that I can take it through the Tegra tree along with the defconfig
+> > changes? I can provide a branch with this patch in case we ever need
+> > it
+> > for conflict resolution.
+>=20
+> I don't know what this patch is, sorry.  I think I probably deleted
+> the
+> mail since the subject line indicates it's not for me.
+>=20
+> Please submit patches using subject lines reflecting the style for the
+> subsystem.  This makes it easier for people to identify relevant
+> patches.  Look at what existing commits in the area you're changing
+> are
+> doing and make sure your subject lines visually resemble what they're
+> doing.
+
+I have just sent out another version with a subject line that matches
+what others have been doing (mainly, dropping the "sound:" prefix).
+
+Cheers,
+
+--=20
+Paul Kocialkowski,
+
+developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+--=-SoSlj/7N600orvPJ/a6m
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlmV6YwACgkQhP3B6o/u
+lQxq2xAAifdHbe7SUy5A6C2rYySg21oYD2uy5ebKOU8/oIhqB1FywBCABKxTKVmJ
+n/DGd2+xgKAMbtlwML3PDBjHS9OUi/PZ82Eo1EkyLowtLrYNEN921wGYyowgi3Bt
+w3BmBaZdW54YFV8kXyXaCJf9Cej3NhSRNxud3spFMcQiIfoXw+G6Oe9YXVBCGUbx
+pT0yTbLyqdY/OO35i7fvkbfHilRat7oxfHvL+a/6xRTjdL00FVOaqL7Ghg23Dw3C
+pbbXP4JjjAwgARXWPkyNqSfD6bvyFsS9ilMcDmYu2NPympfZkcc1DWsEg1DNqgMp
+2bR59j5V9gIScSBJ2wlpzDSEcKeP7UXMLh9bTj5M7wrjdhkhlzqrw+EDvKf+8BoG
+wkYOMwKmm6Wa4rAb+5ap5vASy+270rjiFkMxlgp19UvIVlKSQQ7ok1RlGWRAXKHq
+Sc5o+2G04oFfj4VMyVL+u702o2DB9B2pnvAsPYpKEyM2G8AVuMYLY2J/3DX7nM4I
+uH2YOHpD5Ry5C92h+ZyaCF11fb7LlRREhVHZIPkFIoEUJd+Z8M/EicIHh4SmuBuq
+deBwcAksxGSrTj8zSwyhPD7d0Fu3Cy+fQS3sKrcPJl/jMTpPGp+YI5pwYeIZTWZS
+VRX4eZQippGuE3qfV5BC/poFXu7EMcETbWezW9ZaaR5N0keSMFU=
+=ybiH
+-----END PGP SIGNATURE-----
+
+--=-SoSlj/7N600orvPJ/a6m--
+
+
+--===============6989655100755740901==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============6989655100755740901==--
