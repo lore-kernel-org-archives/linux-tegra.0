@@ -1,73 +1,75 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/2] iommu/tegra*: Add support for struct iommu_device
-Date: Thu, 17 Aug 2017 15:58:03 +0200
-Message-ID: <20170817135803.GG6854@ulmo>
-References: <1502317752-8792-1-git-send-email-joro@8bytes.org>
+Subject: Re: [PATCH 1/3] sound: ASoC: tegra: Remove SoC-specific Kconfig
+ depends and selects
+Date: Thu, 17 Aug 2017 16:22:11 +0200
+Message-ID: <20170817142211.GH6854@ulmo>
+References: <20170730112220.15525-1-contact@paulk.fr>
+ <20170731102309.GE26667@ulmo>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="MiFvc8Vo6wRSORdP"
+        protocol="application/pgp-signature"; boundary="OgApRN/oydYDdnYz"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1502317752-8792-1-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20170731102309.GE26667@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---MiFvc8Vo6wRSORdP
+--OgApRN/oydYDdnYz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 10, 2017 at 12:29:10AM +0200, Joerg Roedel wrote:
-> Hi,
+On Mon, Jul 31, 2017 at 12:23:09PM +0200, Thierry Reding wrote:
+> On Sun, Jul 30, 2017 at 01:22:18PM +0200, Paul Kocialkowski wrote:
+> > This removes the SoC-specific dependencies on the platform drivers,
+> > as well as SoC-specific selections of platform drivers for the
+> > machine drivers. The rationale behind this change is that the
+> > dependencies are not actual build dependencies but run-time ones.
+> >=20
+> > The previously listed SoCs were also incomplete: for instance, tegra124
+> > uses the tegra30 platform drivers, which could not be built without
+> > ARCH_TEGRA_3x_SOC set.
+> >=20
+> > Descriptions of the tristates are also added to allow these options
+> > to be set via defconfig/menuconfig.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+> > ---
+> >  sound/soc/tegra/Kconfig | 42 ++++++++++++++----------------------------
+> >  1 file changed, 14 insertions(+), 28 deletions(-)
 >=20
-> here are two patches to add support for 'struct iommu_device'
-> to the tegra iommu-drivers. This will make the iommu-core
-> code aware of the hardware iommus that a driver manages.
->=20
-> It will also add the iommus to sysfs and link them to the
-> devices managed by them.
->=20
-> The patches apply on-top of Robin's iommu-group patches.
->=20
-> Please review.
->=20
-> Regards,
->=20
-> 	Joerg
->=20
-> Joerg Roedel (2):
->   iommu/tegra: Add support for struct iommu_device
->   iommu/tegra-gart: Add support for struct iommu_device
->=20
->  drivers/iommu/tegra-gart.c | 26 ++++++++++++++++++++++++++
->  drivers/iommu/tegra-smmu.c | 25 +++++++++++++++++++++++++
->  2 files changed, 51 insertions(+)
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The series:
+Hi Mark,
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+do you want to pick this up, or would you rather provide an Acked-by so
+that I can take it through the Tegra tree along with the defconfig
+changes? I can provide a branch with this patch in case we ever need it
+for conflict resolution.
 
---MiFvc8Vo6wRSORdP
+Thierry
+
+--OgApRN/oydYDdnYz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmVoOoACgkQ3SOs138+
-s6FntQ//Sj2bmb18nz79VHIJOgT1md+3bIw/NU+P4VX7Dx1vUpyfHyshbqHDt4tH
-toBXbnHcAOXfQ7wSw92xnLxy5tUBld88kcsRGzl1HiYQf3jmRMyScWi2/Hu6wUL5
-OWJNhkxWtQ3XEC29FRMpW05JSrSeak50zjvteP/Z7S0kKifmhMvB8YceXdLe0RKG
-2Hh1gWm6PBGVhP9Eo56r3ocLg5e2y/xpBOm5QxtHjSpEY5YRCy695srGoAivuoMp
-th2BjowvBLT2zg1J9XRjSUP011C9hb02rWBa14v2ws+xrJwiRHHviMeFwZwB5unZ
-/LijWRVBTr4OZ5cVmSJO3Kbb3xPRbyhuYlPCdr3q/K5qEHMgzm+KAhGK1Y7SYv6J
-GriiRSbWZgkeJU7Lt+pKQwemSebpUttFmovKnP90vMUuhQ+fLyQjtFeLrUznXhxb
-rXiqx434IRfG0hEbnUJqd23QY/p4nEWoO7dy5Dgo5DP9uv9hRR1wRjpBHeOrvk2D
-ntYGGePkMlGShcgq8FUdnhpZ5fhQyXRoKonloD9d/M9Z9EMnWf7jN7uC6m5hWz8x
-T4I8sui+tfayma+SVnsZWYkU0dJvAyRVzmqenLhEfBE9Ka/YyI5l+gTS8592iwTZ
-U/wzzOi2Hu5b703TDDjdPgxAx5wYDR6lXX4rLxmChnrdge1yT5k=
-=Gyme
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmVpo8ACgkQ3SOs138+
+s6FU7xAAjwFfvWqIGrLd9ruDIKqwJ2gc8WBZK51YX9V7m99A/+8ThLLtL1y23Ijr
+x5kJDX7h6El0dxr8Wd9paHkMuQEYXeQ7+xXZxPlU7ivIUMY8xEfrcUMtizRbBagH
+iWiVUGJIS84QCjqXDQYvjjwRYZIH3iA2ZiupcQCLeCpXiL/h9fk8TQywj+YiZeCW
+1QgtjPALcYlLyhcQ5yfn9iPwp9ig5YNk6OgxcLBp9bsLIfKefkIZKOSz6Sdvmm4X
+1W2UYtWBxII0zP6HJdWPLg815cXY+aSFd1smlfE9sSS73PXvkp7gn9aJQ2V1ZG6w
+/z3vowmcskGo985KK3oNADhmOQyaxhSL7ZXIFLAJ5+rF81qOW/pvIU/LlxIeXpas
+fhG+qnTXX7zgc+giY0OT7yS852HnO3cN54p8CrTMXuDs49Pg1Whovj14Hl4W/GV5
+GR+HY+O7Ghb9xtZkp25OM9BJTIrKeqXNaZAMoHhNjp8ub1P+MFXWFp+v704bG1TZ
+1RCznqUD8EkpZoO8xHCdehi43UnPPaIGP1CLijZKqqYnSyQt4WGerLqFeBGKFJKf
+9L0IL3/c//4B/XidyLAzwS/LDPfm0Pgce1htqhQ/pHWpv5K/96mQVzPkspHcM1ZD
+qkS+G+ZXWgEG6yGEqmcZk1GEovs4KZr12HvvxwOX5ZiULNNQtZ0=
+=QSiD
 -----END PGP SIGNATURE-----
 
---MiFvc8Vo6wRSORdP--
+--OgApRN/oydYDdnYz--
