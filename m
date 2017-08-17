@@ -1,58 +1,57 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] firmware: tegra: set drvdata earlier
-Date: Thu, 17 Aug 2017 13:08:32 +0200
-Message-ID: <20170817110832.GB18789@ulmo>
-References: <1502963351-2855-1-git-send-email-talho@nvidia.com>
+Subject: Re: [PATCH v2 1/4] mmc: sdhci: key 8BITBUS bit off MMC_CAP_8_BIT_DATA
+Date: Thu, 17 Aug 2017 13:17:54 +0200
+Message-ID: <20170817111754.GC18789@ulmo>
+References: <cover.1502740497.git.mirq-linux@rere.qmqm.pl>
+ <48d72c32067a8e4ae50c77ee9cc5c077bb2809ae.1502740497.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
+        protocol="application/pgp-signature"; boundary="iFRdW5/EC4oqxDHL"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1502963351-2855-1-git-send-email-talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <48d72c32067a8e4ae50c77ee9cc5c077bb2809ae.1502740497.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---KFztAG8eRSV9hGtP
-Content-Type: text/plain; charset=us-ascii
+--iFRdW5/EC4oqxDHL
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 17, 2017 at 12:49:11PM +0300, Timo Alho wrote:
-> Subdevices of bpmp, such as bpmp-i2c, require the bpmp device's
-> drvdata to be set during their probe. Currently this is not always the
-> case. Fix this by calling platform_set_drvdata() earlier during bpmp's
-> probe.
+On Mon, Aug 14, 2017 at 10:00:24PM +0200, Micha=C5=82 Miros=C5=82aw wrote:
+> Hosts supporting 8-bit bus are marked accordingly. If MMC_CAP_8_BIT_DATA
+> is not among host capabilities, 8BITBUS bit will never be set and it
+> is not cleared in case some non-SDHCI3 host uses it for something else.
 >=20
-> Signed-off-by: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+> Acked-by: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/firmware/tegra/bpmp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/mmc/host/sdhci.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
-Applied to for-4.14/firmware, thanks.
+Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thierry
-
---KFztAG8eRSV9hGtP
+--iFRdW5/EC4oqxDHL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmVeS0ACgkQ3SOs138+
-s6GSJxAAifdgInEUL6AivSQ3TumSjKLdxFfy8fDCmuvNK2chT3Llna4vTiSsUSmm
-dr7MATn5vcmyMaH58WF5WYbdilmr1jDurEX/+hLElLDRQOJC6iGh/RuuqjAwvV1y
-ae/z7sQtcioC34mP05nLK17qWBj/IUkaQJ09qrlY2HaLCMY2yzT86AtzfMLS7045
-XGZ+X33hf+Wt0DX3YakXXd/TslDXAVrTDe2FyH0IGMnJNbM5KYDrZA7H8qbHafGl
-c7OThC4Rg/4/jOP9YPZ8EegcdXZM8pr+14NSek3U97r7AEUO9YPLF+bA0j72nO/k
-4LdL65cvJbWlGzSE6lZpymvZVvEug0z1vIwk3wr+JQnhEJuGd0SB/bhIBZazIGMJ
-oXFgXEU/DurgBv4+bktGwgjC+9CxU5kBSJdbpYCpUz5576SWnwn5w4MAsRFoxw75
-JAay5sXdCkILQLETglT/4mlaHjdBrbuM7t+uyzK6ibnvRUhmS90On7zdoolvWPXa
-xqY5+2P6V0dyS/xBbhIneZ9noeFfY6NrmSXPJGOkWnGUtYRR+lYN+TzVilUW0cVo
-zAqYWsNYEgajza9KeasXOEg7NgL69Zwkic/MoIQxoDBU4J+mUAwnyzfctXoZSM8G
-XgT7mWdLyHt0qFhWNo28e5IQ3l0B59N4uwwbLy7sBZs7Qd8MXAY=
-=Jupm
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmVe2IACgkQ3SOs138+
+s6HcYg//eokHrNZ+jI6FGkdTbZq1F83/BTY+E/LosRaBwmcfYjzHy14yMd8pKxR/
+WiIIELb+8h4+BirCPan2UMRtVR4Z223CC/mRIDIHX9eS6BrVQJm9KdTx9YGuH/Eb
+S31nSr1jRtoehpexykScYNhL2THulO385j3Xze5hgHyPR+i37s3oONj0Ec5qzORB
+eZmDrWTKsE07S350U2vqEwGwGMESahDXwUa4lpxpXEfeY3w51nvQn7jeRNC1M1aj
+dH3NZaNykb3Us+DQO13bQCXkByINg2Fc8PYiKQuMOG9Y2jp+oMVZFPY002OadcXg
+aVmG5QldRq+Nlm7XUwLLlcZ5x+4mtc7Xxo98p2u1VgMOWe5CaGsoVeRlIqCluJ36
+dx385HDjUkLkC6I/R7s8M26/bZH7GOp22SpseKkhQyZPpNsoHtiB4bej+xTSexGi
+1kZG4WzicJ7n7xTM0AeD9VWtIDDXCF27rj6PKsRhYcbxoWBsDX+Od8m3xAFqa+o/
+YNDa7aQGDd2ipexb4sb9WvgFQo7bhnZCenMejh09TBDCcLMx9LuDBFKtuwDOPZO+
+6Ss7/xxhRGt52dFbGThHa8RjKimhjNOHZwaiHzm0hqXc5hYI6NqYwq+fU7e4u2wq
+3dLfUr7iH/Qc8PpHoT5UDt9NZiDfZj7JBzPi2CB4k/Y2eLQAQn0=
+=5bRE
 -----END PGP SIGNATURE-----
 
---KFztAG8eRSV9hGtP--
+--iFRdW5/EC4oqxDHL--
