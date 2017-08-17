@@ -1,51 +1,57 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/6] arm64: tegra: Add host1x on Tegra186
-Date: Thu, 17 Aug 2017 21:54:09 +0300
-Message-ID: <20170817185413.6324-3-mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH 6/6] drm/tegra: Add Tegra186 support for VIC
+Date: Thu, 17 Aug 2017 21:54:13 +0300
+Message-ID: <20170817185413.6324-7-mperttunen@nvidia.com>
 References: <20170817185413.6324-1-mperttunen@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170817185413.6324-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dnibade-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sgurrappadi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170817185413.6324-1-mperttunen@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, dnibade@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, amerilainen@nvidia.com, linux-tegra@vger.kernel.org, sgurrappadi@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, digetx@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the node for Host1x on the Tegra186, without any subdevices
-for now.
-
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index a964d246c0e9..3556f89ddf1d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -355,6 +355,24 @@
- 		nvidia,bpmp = <&bpmp>;
- 	};
- 
-+	host1x@13e00000 {
-+		compatible = "nvidia,tegra186-host1x", "simple-bus";
-+		reg = <0x0 0x13e00000 0x0 0x10000>,
-+		      <0x0 0x13e10000 0x0 0x10000>;
-+		reg-names = "hypervisor", "vm";
-+		interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+		             <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&bpmp TEGRA186_CLK_HOST1X>;
-+		clock-names = "host1x";
-+		resets = <&bpmp TEGRA186_RESET_HOST1X>;
-+		reset-names = "host1x";
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+
-+		ranges = <0x0 0x15000000 0x0 0x15000000 0x0 0x01000000>;
-+	};
-+
- 	gpu@17000000 {
- 		compatible = "nvidia,gp10b";
- 		reg = <0x0 0x17000000 0x0 0x1000000>,
--- 
-2.14.1
+QWRkIFRlZ3JhMTg2IHN1cHBvcnQgZm9yIFZJQyAtIG5vIGNoYW5nZXMgYXJlIHJlcXVpcmVkIGV4
+Y2VwdCBmb3IgbmV3CmZpcm13YXJlIGFuZCBjb21wYXRpYmlsaXR5IHN0cmluZy4KClNpZ25lZC1v
+ZmYtYnk6IE1pa2tvIFBlcnR0dW5lbiA8bXBlcnR0dW5lbkBudmlkaWEuY29tPgotLS0KIGRyaXZl
+cnMvZ3B1L2RybS90ZWdyYS9kcm0uYyB8ICAxICsKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMu
+YyB8IDEwICsrKysrKysrKysKIDIgZmlsZXMgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKQoKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9kcm0uYwppbmRleCAzYmE2NTlhNTk0MGQuLmUzMzMxYTJiYzA4MiAxMDA2NDQKLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
+cm0uYwpAQCAtMTI4MSw2ICsxMjgxLDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2Vf
+aWQgaG9zdDF4X2RybV9zdWJkZXZzW10gPSB7CiAJeyAuY29tcGF0aWJsZSA9ICJudmlkaWEsdGVn
+cmEyMTAtc29yIiwgfSwKIAl7IC5jb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTIxMC1zb3IxIiwg
+fSwKIAl7IC5jb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTIxMC12aWMiLCB9LAorCXsgLmNvbXBh
+dGlibGUgPSAibnZpZGlhLHRlZ3JhMTg2LXZpYyIsIH0sCiAJeyAvKiBzZW50aW5lbCAqLyB9CiB9
+OwogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vdGVncmEvdmljLmMKaW5kZXggMjQ0ODIyOWZhNjUzLi42Njk3YTIxYTI1MGQgMTAwNjQ0
+Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvdmljLmMKQEAgLTI3MCw5ICsyNzAsMTYgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCB2aWNf
+Y29uZmlnIHZpY190MjEwX2NvbmZpZyA9IHsKIAkuZmlybXdhcmUgPSBOVklESUFfVEVHUkFfMjEw
+X1ZJQ19GSVJNV0FSRSwKIH07CiAKKyNkZWZpbmUgTlZJRElBX1RFR1JBXzE4Nl9WSUNfRklSTVdB
+UkUgIm52aWRpYS90ZWdyYTE4Ni92aWMwNF91Y29kZS5iaW4iCisKK3N0YXRpYyBjb25zdCBzdHJ1
+Y3QgdmljX2NvbmZpZyB2aWNfdDE4Nl9jb25maWcgPSB7CisJLmZpcm13YXJlID0gTlZJRElBX1RF
+R1JBXzE4Nl9WSUNfRklSTVdBUkUsCit9OworCiBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldmlj
+ZV9pZCB2aWNfbWF0Y2hbXSA9IHsKIAl7IC5jb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTEyNC12
+aWMiLCAuZGF0YSA9ICZ2aWNfdDEyNF9jb25maWcgfSwKIAl7IC5jb21wYXRpYmxlID0gIm52aWRp
+YSx0ZWdyYTIxMC12aWMiLCAuZGF0YSA9ICZ2aWNfdDIxMF9jb25maWcgfSwKKwl7IC5jb21wYXRp
+YmxlID0gIm52aWRpYSx0ZWdyYTE4Ni12aWMiLCAuZGF0YSA9ICZ2aWNfdDE4Nl9jb25maWcgfSwK
+IAl7IH0sCiB9OwogCkBAIC00MDUsMyArNDEyLDYgQEAgTU9EVUxFX0ZJUk1XQVJFKE5WSURJQV9U
+RUdSQV8xMjRfVklDX0ZJUk1XQVJFKTsKICNpZiBJU19FTkFCTEVEKENPTkZJR19BUkNIX1RFR1JB
+XzIxMF9TT0MpCiBNT0RVTEVfRklSTVdBUkUoTlZJRElBX1RFR1JBXzIxMF9WSUNfRklSTVdBUkUp
+OwogI2VuZGlmCisjaWYgSVNfRU5BQkxFRChDT05GSUdfQVJDSF9URUdSQV8xODZfU09DKQorTU9E
+VUxFX0ZJUk1XQVJFKE5WSURJQV9URUdSQV8xODZfVklDX0ZJUk1XQVJFKTsKKyNlbmRpZgotLSAK
+Mi4xNC4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
