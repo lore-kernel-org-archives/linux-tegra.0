@@ -1,56 +1,172 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/3] sound: ASoC: tegra: Remove SoC-specific Kconfig
- depends and selects
-Date: Thu, 17 Aug 2017 15:26:39 +0100
-Message-ID: <20170817142639.ixe7pfzpfhwbhz5q@sirena.org.uk>
-References: <20170730112220.15525-1-contact@paulk.fr>
- <20170731102309.GE26667@ulmo>
- <20170817142211.GH6854@ulmo>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7nt5ecsxbqvf3jqy"
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] soc/tegra: Register SoC device
+Date: Thu, 17 Aug 2017 16:42:17 +0200
+Message-ID: <20170817144217.31346-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170817142211.GH6854@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---7nt5ecsxbqvf3jqy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Move this code from arch/arm/mach-tegra and make it common among 32-bit
+and 64-bit Tegra SoCs. This is slightly complicated by the fact that on
+32-bit Tegra, the SoC device is used as the parent for all devices that
+are instantiated from device tree.
 
-On Thu, Aug 17, 2017 at 04:22:11PM +0200, Thierry Reding wrote:
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/tegra.c         | 29 +---------------------
+ drivers/soc/tegra/Kconfig           |  5 ++++
+ drivers/soc/tegra/fuse/fuse-tegra.c | 48 +++++++++++++++++++++++++++++++++++--
+ include/soc/tegra/fuse.h            |  2 ++
+ 4 files changed, 54 insertions(+), 30 deletions(-)
 
-> do you want to pick this up, or would you rather provide an Acked-by so
-> that I can take it through the Tegra tree along with the defconfig
-> changes? I can provide a branch with this patch in case we ever need it
-> for conflict resolution.
-
-I don't know what this patch is, sorry.  I think I probably deleted the
-mail since the subject line indicates it's not for me.
-
-Please submit patches using subject lines reflecting the style for the
-subsystem.  This makes it easier for people to identify relevant
-patches.  Look at what existing commits in the area you're changing are
-doing and make sure your subject lines visually resemble what they're
-doing.
-
---7nt5ecsxbqvf3jqy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlmVp58ACgkQJNaLcl1U
-h9Bv/gf/bcH5S9ER0/k2Brp1LeFZlY/Jd3Bwwb0gKl/apct8+5mi3S+tXvYAw04B
-kFzQOQPOvxgNeoH0fhKT5dOCtS6cJEz8bEg6mPaaVfBV4ZCpR3FCC6EqysVg0ZhG
-fVVpc7CZ8bAUlPbSvVVEGUoArRB1s2NhOfB9LiCKGm1G8WL1tqIsP+DllPLZlUS7
-4fpE6H/k5wrQBIeu0/wYy+e4tDpc606wN9Lp/X6IDfvaEoiyp6Q4beT5ZvUCe3jS
-dizcDW5gXWJQmFUsiJyITqV76mpZzy2enyy5surInUb13Jj4rPSSh8CSAWmrsBK4
-6nWamzwpqBQRPsM2vCMkP+Zzlt8mrg==
-=OtRG
------END PGP SIGNATURE-----
-
---7nt5ecsxbqvf3jqy--
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 649e9e8c7bcc..02e712d2ea30 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -84,35 +84,8 @@ static void __init tegra_dt_init_irq(void)
+ 
+ static void __init tegra_dt_init(void)
+ {
+-	struct soc_device_attribute *soc_dev_attr;
+-	struct soc_device *soc_dev;
+-	struct device *parent = NULL;
++	struct device *parent = tegra_soc_device_register();
+ 
+-	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+-	if (!soc_dev_attr)
+-		goto out;
+-
+-	soc_dev_attr->family = kasprintf(GFP_KERNEL, "Tegra");
+-	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d",
+-					   tegra_sku_info.revision);
+-	soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
+-
+-	soc_dev = soc_device_register(soc_dev_attr);
+-	if (IS_ERR(soc_dev)) {
+-		kfree(soc_dev_attr->family);
+-		kfree(soc_dev_attr->revision);
+-		kfree(soc_dev_attr->soc_id);
+-		kfree(soc_dev_attr);
+-		goto out;
+-	}
+-
+-	parent = soc_device_to_device(soc_dev);
+-
+-	/*
+-	 * Finished with the static registrations now; fill in the missing
+-	 * devices
+-	 */
+-out:
+ 	of_platform_default_populate(NULL, NULL, parent);
+ }
+ 
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 1beb7c347344..e9e277178c94 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -107,6 +107,11 @@ config ARCH_TEGRA_186_SOC
+ endif
+ endif
+ 
++config SOC_TEGRA_FUSE
++	def_bool y
++	depends on ARCH_TEGRA
++	select SOC_BUS
++
+ config SOC_TEGRA_FLOWCTRL
+ 	bool
+ 
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index 75b38194750f..02686378dfc1 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -19,10 +19,12 @@
+ #include <linux/device.h>
+ #include <linux/kobject.h>
+ #include <linux/init.h>
+-#include <linux/platform_device.h>
++#include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/io.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/sys_soc.h>
+ 
+ #include <soc/tegra/common.h>
+ #include <soc/tegra/fuse.h>
+@@ -213,6 +215,31 @@ static void tegra_enable_fuse_clk(void __iomem *base)
+ 	writel(reg, base + 0x14);
+ }
+ 
++struct device * __init tegra_soc_device_register(void)
++{
++	struct soc_device_attribute *attr;
++	struct soc_device *dev;
++
++	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
++	if (!attr)
++		return NULL;
++
++	attr->family = kasprintf(GFP_KERNEL, "Tegra");
++	attr->revision = kasprintf(GFP_KERNEL, "%d", tegra_sku_info.revision);
++	attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
++
++	dev = soc_device_register(attr);
++	if (IS_ERR(dev)) {
++		kfree(attr->soc_id);
++		kfree(attr->revision);
++		kfree(attr->family);
++		kfree(attr);
++		return ERR_CAST(dev);
++	}
++
++	return soc_device_to_device(dev);
++}
++
+ static int __init tegra_init_fuse(void)
+ {
+ 	const struct of_device_id *match;
+@@ -314,6 +341,23 @@ static int __init tegra_init_fuse(void)
+ 	pr_debug("Tegra CPU Speedo ID %d, SoC Speedo ID %d\n",
+ 		 tegra_sku_info.cpu_speedo_id, tegra_sku_info.soc_speedo_id);
+ 
++
+ 	return 0;
+ }
+ early_initcall(tegra_init_fuse);
++
++#ifdef CONFIG_ARM64
++static int __init tegra_init_soc(void)
++{
++	struct device *soc;
++
++	soc = tegra_soc_device_register();
++	if (IS_ERR(soc)) {
++		pr_err("failed to register SoC device: %ld\n", PTR_ERR(soc));
++		return PTR_ERR(soc);
++	}
++
++	return 0;
++}
++device_initcall(tegra_init_soc)
++#endif
+diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
+index b4c9219e7f95..9b6ea0c72117 100644
+--- a/include/soc/tegra/fuse.h
++++ b/include/soc/tegra/fuse.h
+@@ -65,6 +65,8 @@ int tegra_fuse_readl(unsigned long offset, u32 *value);
+ 
+ extern struct tegra_sku_info tegra_sku_info;
+ 
++struct device *tegra_soc_device_register(void);
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif /* __SOC_TEGRA_FUSE_H__ */
+-- 
+2.13.3
