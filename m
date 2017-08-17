@@ -1,78 +1,82 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 00/14] Fixes for Tegra clocks
-Date: Thu, 17 Aug 2017 15:31:46 +0200
-Message-ID: <20170817133146.GD6854@ulmo>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [V6,3/9] irqdomain: Don't set type when mapping an IRQ
+Date: Thu, 17 Aug 2017 14:34:37 +0100
+Message-ID: <feb4e020-b738-9165-c044-b0e246ee4bd5@arm.com>
+References: <1465312354-27778-4-git-send-email-jonathanh@nvidia.com>
+ <59959014.9040603@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a2FkP9tdjPU2nyhF"
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <59959014.9040603@rock-chips.com>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: jeffy <jeffy.chen@rock-chips.com>, Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, briannorris@chromium.com
 List-Id: linux-tegra@vger.kernel.org
 
+On 17/08/17 13:46, jeffy wrote:
+> Hi guys,
+> 
+> I hit an problem when testing a level triggered irq with:
+> 
+> irq = platform_get_irq_byname(pdev, "wake");
+> ...<-- irq trigger type is correct
+> irq_set_status_flags(irq, IRQ_NOAUTOEN);
+> ...<-- irq trigger type become zero
+> request_threaded_irq(irq, ...)
+> 
+> the trigger type lost(irqd_get_trigger_type returns zero) after 
+> irq_set_status_flags.
+> 
+> 
+> it looks like irq_set_status_flags would try to use 
+> irq_settings_is_level to get level trigger type, which would get zero 
+> since we removed set type here...could you help to check this, thanks :)
 
---a2FkP9tdjPU2nyhF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hmm. That's quite unexpected. Can you please try this?
 
-On Tue, Jul 25, 2017 at 01:34:01PM +0300, Peter De Schrijver wrote:
-> A number of smaller fixes and simplifications for the Tegra clock
-> implementation.
->=20
-> Alex Frid (7):
->   clk: tegra: Fix T210 effective NDIV calculation
->   clk: tegra: Add TEGRA_PERIPH_ON_APB flag to I2C
->   clk: tegra: Re-factor T210 PLLX registration
->   clk: tegra: Update T210 PLLSS (D2/DP) registration
->   clk: tegra: Fix T210 PLLRE registration
->   clk: tegra: Correct Tegra210 UTMIPLL poweron delay
->   clk: tegra: Fix Tegra210 PLLU initialization
->=20
-> Peter De Schrijver (7):
->   clk: tegra: fix SS control on PLL enable/disable
->   clk: tegra: Enable PLL_SS for Tegra210
->   clk: tegra: disable SSC for PLL_D2
->   clk: tegra210: remove non-existing VFIR clock
->   clk: tegra: Init cfg structure in _get_pll_mnp
->   clk: tegra: change post IDDQ release delay to 5us
->   clk: tegra: don't warn for pll_d2 defaults unnecessarily
->=20
->  drivers/clk/tegra/clk-pll.c              | 159 ++++++++-----------------=
-------
->  drivers/clk/tegra/clk-tegra-periph.c     |   3 +-
->  drivers/clk/tegra/clk-tegra-super-gen4.c |  11 ++-
->  drivers/clk/tegra/clk-tegra210.c         |  32 ++++---
->  drivers/clk/tegra/clk.h                  |   6 --
->  5 files changed, 67 insertions(+), 144 deletions(-)
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index a3cc37c0c85e..3675c6004f2a 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1000,7 +1000,7 @@ EXPORT_SYMBOL_GPL(irq_set_chip_and_handler_name);
+ 
+ void irq_modify_status(unsigned int irq, unsigned long clr, unsigned long set)
+ {
+-	unsigned long flags;
++	unsigned long flags, trigger, tmp;
+ 	struct irq_desc *desc = irq_get_desc_lock(irq, &flags, 0);
+ 
+ 	if (!desc)
+@@ -1014,6 +1014,8 @@ void irq_modify_status(unsigned int irq, unsigned long clr, unsigned long set)
+ 
+ 	irq_settings_clr_and_set(desc, clr, set);
+ 
++	trigger = irqd_get_trigger_type(&desc->irq_data);
++
+ 	irqd_clear(&desc->irq_data, IRQD_NO_BALANCING | IRQD_PER_CPU |
+ 		   IRQD_TRIGGER_MASK | IRQD_LEVEL | IRQD_MOVE_PCNTXT);
+ 	if (irq_settings_has_no_balance_set(desc))
+@@ -1025,7 +1027,11 @@ void irq_modify_status(unsigned int irq, unsigned long clr, unsigned long set)
+ 	if (irq_settings_is_level(desc))
+ 		irqd_set(&desc->irq_data, IRQD_LEVEL);
+ 
+-	irqd_set(&desc->irq_data, irq_settings_get_trigger_mask(desc));
++	tmp = irq_settings_get_trigger_mask(desc);
++	if (tmp != IRQ_TYPE_NONE)
++		trigger = tmp;
++
++	irqd_set(&desc->irq_data, trigger);
+ 
+ 	irq_put_desc_unlock(desc, flags);
+ }
 
-The series:
+Basically, save the trigger info before clearing it. If the interrupt
+has already been configured, use that. Otherwise restore the previous
+trigger settings. But I'm slightly confused as to which field is used
+for what...
 
-Tested-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---a2FkP9tdjPU2nyhF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmVmsIACgkQ3SOs138+
-s6Gljg//b4nfJGqb694iH74wfKNHX0s2hm1Iwh1XC1MWcCRFwKMOI6mQEOpvnEy9
-C/r/5NoIZhtMoIqaM+/KSHUaBdcH+mNyh9t8OxtEYSUw9IDxtLE7gNTu/JFwhGBV
-tuQNwIMxDkTm7vqPv40Cra4GkWk7ktX2JQWXYPFYp9wzJFANZ7W+wvYfPEnkDJfr
-yv6/UIuEmBTzasC5AzNFfJ8n4yRcG5is34FvuNq4pch7gt4DWmAr9sKQwnA0eGyg
-VE3Y2+iJ67av0Rwww54f9uL54Zw0mCEc1h+NiMn2BA1ThxIcb5pLwH6sJN0eOsyY
-LMwKlmQ8yNqmbuFQtfmBmcB+ON5UT6JBUK8wDXUMb/GbN9i2dmaqjoXWO1yyXY5x
-5hH7FIvk/Zy/hdQ7Y3YtkpwLQCWYlu/GE7mEEG543g5KiRM+VbTbKJ59FhK1b6fj
-EFpH1WomdCxQI1exueL9bJgv1smL7hyDu2pZUD6HCaeSjgyLBiPk8t2xE34lVyNQ
-a6RQU34tAxeZa4VCmTFoDaCGhWkmHzOepetDmQRA8wafdX0VZOkt5cEttUo3AHsT
-hRLmj6c0QoCqZUcs5sglQ71PEuVenU+85tZ4FMOSAhjRh2EZTqj9QSUccV9Nmkjr
-BWmD2SIDbhiiTeUbvjpDejDM8tNfuccP430XApXxWKiGId27R0g=
-=3xVS
------END PGP SIGNATURE-----
-
---a2FkP9tdjPU2nyhF--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
