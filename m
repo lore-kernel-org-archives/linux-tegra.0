@@ -1,7 +1,7 @@
 From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 11/13] gpu: host1x: Use sychronized interface of the IOMMU-API
-Date: Thu, 17 Aug 2017 14:56:34 +0200
-Message-ID: <1502974596-23835-12-git-send-email-joro@8bytes.org>
+Subject: [PATCH 10/13] drm/tegra: Use sychronized interface of the IOMMU-API
+Date: Thu, 17 Aug 2017 14:56:33 +0200
+Message-ID: <1502974596-23835-11-git-send-email-joro@8bytes.org>
 References: <1502974596-23835-1-git-send-email-joro@8bytes.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,7 +18,7 @@ List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
 Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
@@ -36,61 +36,63 @@ But for now, just convert this code to use the synchronized
 functions so that it will behave as before.
 
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
 ---
- drivers/gpu/host1x/cdma.c | 6 +++---
- drivers/gpu/host1x/job.c  | 6 +++---
+ drivers/gpu/drm/tegra/drm.c | 6 +++---
+ drivers/gpu/drm/tegra/gem.c | 6 +++---
  2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 28541b2..bdf557e 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -55,7 +55,7 @@ static void host1x_pushbuffer_destroy(struct push_buffer *pb)
- 		return;
- 
- 	if (host1x->domain) {
--		iommu_unmap(host1x->domain, pb->dma, pb->alloc_size);
-+		iommu_unmap_sync(host1x->domain, pb->dma, pb->alloc_size);
- 		free_iova(&host1x->iova, iova_pfn(&host1x->iova, pb->dma));
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 518f4b6..bc4528ee 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1156,8 +1156,8 @@ void *tegra_drm_alloc(struct tegra_drm *tegra, size_t size,
  	}
  
-@@ -105,8 +105,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
- 		}
+ 	*dma = iova_dma_addr(&tegra->carveout.domain, alloc);
+-	err = iommu_map(tegra->domain, *dma, virt_to_phys(virt),
+-			size, IOMMU_READ | IOMMU_WRITE);
++	err = iommu_map_sync(tegra->domain, *dma, virt_to_phys(virt),
++			     size, IOMMU_READ | IOMMU_WRITE);
+ 	if (err < 0)
+ 		goto free_iova;
  
- 		pb->dma = iova_dma_addr(&host1x->iova, alloc);
--		err = iommu_map(host1x->domain, pb->dma, pb->phys, size,
--				IOMMU_READ);
-+		err = iommu_map_sync(host1x->domain, pb->dma, pb->phys, size,
-+				     IOMMU_READ);
- 		if (err)
- 			goto iommu_free_iova;
- 	} else {
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index bee5044..70a029c 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -243,7 +243,7 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
- 				goto unpin;
- 			}
+@@ -1180,7 +1180,7 @@ void tegra_drm_free(struct tegra_drm *tegra, size_t size, void *virt,
+ 		size = PAGE_ALIGN(size);
  
--			err = iommu_map_sg(host->domain,
-+			err = iommu_map_sg_sync(host->domain,
- 					iova_dma_addr(&host->iova, alloc),
- 					sgt->sgl, sgt->nents, IOMMU_READ);
- 			if (err == 0) {
-@@ -695,8 +695,8 @@ void host1x_job_unpin(struct host1x_job *job)
- 		struct host1x_job_unpin_data *unpin = &job->unpins[i];
+ 	if (tegra->domain) {
+-		iommu_unmap(tegra->domain, dma, size);
++		iommu_unmap_sync(tegra->domain, dma, size);
+ 		free_iova(&tegra->carveout.domain,
+ 			  iova_pfn(&tegra->carveout.domain, dma));
+ 	}
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 7a39a35..639bc75 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -135,8 +135,8 @@ static int tegra_bo_iommu_map(struct tegra_drm *tegra, struct tegra_bo *bo)
  
- 		if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL) && host->domain) {
--			iommu_unmap(host->domain, job->addr_phys[i],
--				    unpin->size);
-+			iommu_unmap_sync(host->domain, job->addr_phys[i],
-+					 unpin->size);
- 			free_iova(&host->iova,
- 				iova_pfn(&host->iova, job->addr_phys[i]));
- 		}
+ 	bo->paddr = bo->mm->start;
+ 
+-	err = iommu_map_sg(tegra->domain, bo->paddr, bo->sgt->sgl,
+-			   bo->sgt->nents, prot);
++	err = iommu_map_sg_sync(tegra->domain, bo->paddr, bo->sgt->sgl,
++				bo->sgt->nents, prot);
+ 	if (err < 0) {
+ 		dev_err(tegra->drm->dev, "failed to map buffer: %zd\n", err);
+ 		goto remove;
+@@ -162,7 +162,7 @@ static int tegra_bo_iommu_unmap(struct tegra_drm *tegra, struct tegra_bo *bo)
+ 		return 0;
+ 
+ 	mutex_lock(&tegra->mm_lock);
+-	iommu_unmap(tegra->domain, bo->paddr, bo->size);
++	iommu_unmap_sync(tegra->domain, bo->paddr, bo->size);
+ 	drm_mm_remove_node(bo->mm);
+ 	mutex_unlock(&tegra->mm_lock);
+ 
 -- 
 2.7.4
