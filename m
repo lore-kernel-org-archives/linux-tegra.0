@@ -1,142 +1,83 @@
 From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 1/4] gpu: host1x: Enable Tegra186 syncpoint protection
-Date: Fri, 18 Aug 2017 19:15:50 +0300
-Message-ID: <20170818161553.27597-2-mperttunen@nvidia.com>
+Subject: [PATCH 2/4] gpu: host1x: Enable gather filter
+Date: Fri, 18 Aug 2017 19:15:51 +0300
+Message-ID: <20170818161553.27597-3-mperttunen@nvidia.com>
 References: <20170818161553.27597-1-mperttunen@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <20170818161553.27597-1-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: digetx@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, digetx@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Since Tegra186 the Host1x hardware allows syncpoints to be assigned to
-specific channels, preventing any other channels from incrementing
-them.
-
-Enable this feature where available and assign syncpoints to channels
-when submitting a job. Syncpoints are currently never unassigned from
-channels since that would require extra work and is unnecessary with
-the current channel allocation model.
-
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/dev.h           | 16 ++++++++++++++++
- drivers/gpu/host1x/hw/channel_hw.c |  3 +++
- drivers/gpu/host1x/hw/syncpt_hw.c  | 26 ++++++++++++++++++++++++++
- drivers/gpu/host1x/syncpt.c        |  3 +++
- 4 files changed, 48 insertions(+)
-
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index def802c0a6bf..2432a30ff6e2 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -79,6 +79,9 @@ struct host1x_syncpt_ops {
- 	u32 (*load)(struct host1x_syncpt *syncpt);
- 	int (*cpu_incr)(struct host1x_syncpt *syncpt);
- 	int (*patch_wait)(struct host1x_syncpt *syncpt, void *patch_addr);
-+	void (*assign_channel)(struct host1x_syncpt *syncpt,
-+	                       struct host1x_channel *channel);
-+	void (*set_protection)(struct host1x *host, bool enabled);
- };
- 
- struct host1x_intr_ops {
-@@ -186,6 +189,19 @@ static inline int host1x_hw_syncpt_patch_wait(struct host1x *host,
- 	return host->syncpt_op->patch_wait(sp, patch_addr);
- }
- 
-+static inline void host1x_hw_syncpt_assign_channel(struct host1x *host,
-+						   struct host1x_syncpt *sp,
-+						   struct host1x_channel *ch)
-+{
-+	return host->syncpt_op->assign_channel(sp, ch);
-+}
-+
-+static inline void host1x_hw_syncpt_set_protection(struct host1x *host,
-+						   bool enabled)
-+{
-+	return host->syncpt_op->set_protection(host, enabled);
-+}
-+
- static inline int host1x_hw_intr_init_host_sync(struct host1x *host, u32 cpm,
- 			void (*syncpt_thresh_work)(struct work_struct *))
- {
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index 8447a56c41ca..0161da331702 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -147,6 +147,9 @@ static int channel_submit(struct host1x_job *job)
- 
- 	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
- 
-+	/* assign syncpoint to channel */
-+	host1x_hw_syncpt_assign_channel(host, sp, ch);
-+
- 	job->syncpt_end = syncval;
- 
- 	/* add a setclass for modules that require it */
-diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
-index 7b0270d60742..5d117ab1699e 100644
---- a/drivers/gpu/host1x/hw/syncpt_hw.c
-+++ b/drivers/gpu/host1x/hw/syncpt_hw.c
-@@ -106,6 +106,30 @@ static int syncpt_patch_wait(struct host1x_syncpt *sp, void *patch_addr)
- 	return 0;
- }
- 
-+static void syncpt_assign_channel(struct host1x_syncpt *sp,
-+				  struct host1x_channel *ch)
-+{
-+#if HOST1X_HW >= 6
-+	struct host1x *host = sp->host;
-+
-+	if (!host->hv_regs)
-+		return;
-+
-+	host1x_sync_writel(host,
-+			   HOST1X_SYNC_SYNCPT_CH_APP_CH(ch ? ch->id : 0xff),
-+			   HOST1X_SYNC_SYNCPT_CH_APP(sp->id));
-+#endif
-+}
-+
-+static void syncpt_set_protection(struct host1x *host, bool enabled)
-+{
-+#if HOST1X_HW >= 6
-+	host1x_hypervisor_writel(host,
-+				 enabled ? HOST1X_HV_SYNCPT_PROT_EN_CH_EN : 0,
-+				 HOST1X_HV_SYNCPT_PROT_EN);
-+#endif
-+}
-+
- static const struct host1x_syncpt_ops host1x_syncpt_ops = {
- 	.restore = syncpt_restore,
- 	.restore_wait_base = syncpt_restore_wait_base,
-@@ -113,4 +137,6 @@ static const struct host1x_syncpt_ops host1x_syncpt_ops = {
- 	.load = syncpt_load,
- 	.cpu_incr = syncpt_cpu_incr,
- 	.patch_wait = syncpt_patch_wait,
-+	.assign_channel = syncpt_assign_channel,
-+	.set_protection = syncpt_set_protection,
- };
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 048ac9e344ce..fe4d963b3e2a 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -398,6 +398,8 @@ int host1x_syncpt_init(struct host1x *host)
- 	for (i = 0; i < host->info->nb_pts; i++) {
- 		syncpt[i].id = i;
- 		syncpt[i].host = host;
-+
-+		host1x_hw_syncpt_assign_channel(host, &syncpt[i], NULL);
- 	}
- 
- 	for (i = 0; i < host->info->nb_bases; i++)
-@@ -408,6 +410,7 @@ int host1x_syncpt_init(struct host1x *host)
- 	host->bases = bases;
- 
- 	host1x_syncpt_restore(host);
-+	host1x_hw_syncpt_set_protection(host, true);
- 
- 	/* Allocate sync point to use for clearing waits for expired fences */
- 	host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
--- 
-2.14.1
+VGhlIGdhdGhlciBmaWx0ZXIgaXMgYSBmZWF0dXJlIHByZXNlbnQgb24gVGVncmExMjQgYW5kIG5l
+d2VyIHdoZXJlIHRoZQpoYXJkd2FyZSBwcmV2ZW50cyBHQVRIRVJlZCBjb21tYW5kIGJ1ZmZlcnMg
+ZnJvbSBleGVjdXRpbmcgY29tbWFuZHMKbm9ybWFsbHkgcmVzZXJ2ZWQgZm9yIHRoZSBDRE1BIHB1
+c2hidWZmZXIgd2hpY2ggaXMgbWFpbnRhaW5lZCBieSB0aGUKa2VybmVsIGRyaXZlci4KClRoaXMg
+Y29tbWl0IGVuYWJsZXMgdGhlIGdhdGhlciBmaWx0ZXIgb24gYWxsIHN1cHBvcnRpbmcgaGFyZHdh
+cmUuCgpTaWduZWQtb2ZmLWJ5OiBNaWtrbyBQZXJ0dHVuZW4gPG1wZXJ0dHVuZW5AbnZpZGlhLmNv
+bT4KLS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2hhbm5lbF9ody5jICAgICAgICAgIHwgMjIg
+KysrKysrKysrKysrKysrKysrKysrKwogZHJpdmVycy9ncHUvaG9zdDF4L2h3L2h3X2hvc3QxeDA0
+X2NoYW5uZWwuaCB8IDEyICsrKysrKysrKysrKwogZHJpdmVycy9ncHUvaG9zdDF4L2h3L2h3X2hv
+c3QxeDA1X2NoYW5uZWwuaCB8IDEyICsrKysrKysrKysrKwogMyBmaWxlcyBjaGFuZ2VkLCA0NiBp
+bnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2NoYW5uZWxf
+aHcuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9jaGFubmVsX2h3LmMKaW5kZXggMDE2MWRhMzMx
+NzAyLi41YzBkYzZiYjUxZDEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9jaGFu
+bmVsX2h3LmMKKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2NoYW5uZWxfaHcuYwpAQCAtMTgx
+LDEwICsxODEsMzIgQEAgc3RhdGljIGludCBjaGFubmVsX3N1Ym1pdChzdHJ1Y3QgaG9zdDF4X2pv
+YiAqam9iKQogCXJldHVybiBlcnI7CiB9CiAKK3N0YXRpYyB2b2lkIGVuYWJsZV9nYXRoZXJfZmls
+dGVyKHN0cnVjdCBob3N0MXggKmhvc3QsCisJCQkJIHN0cnVjdCBob3N0MXhfY2hhbm5lbCAqY2gp
+Cit7CisjaWYgSE9TVDFYX0hXID49IDYKKwl1MzIgdmFsOworCisJaWYgKCFob3N0LT5odl9yZWdz
+KQorCQlyZXR1cm47CisKKwl2YWwgPSBob3N0MXhfaHlwZXJ2aXNvcl9yZWFkbCgKKwkJaG9zdCwg
+SE9TVDFYX0hWX0NIX0tFUk5FTF9GSUxURVJfR0JVRkZFUihjaC0+aWQgLyAzMikpOworCXZhbCB8
+PSBCSVQoY2gtPmlkICUgMzIpOworCWhvc3QxeF9oeXBlcnZpc29yX3dyaXRlbCgKKwkJaG9zdCwg
+dmFsLCBIT1NUMVhfSFZfQ0hfS0VSTkVMX0ZJTFRFUl9HQlVGRkVSKGNoLT5pZCAvIDMyKSk7Cisj
+ZWxpZiBIT1NUMVhfSFcgPj0gNAorCWhvc3QxeF9jaF93cml0ZWwoY2gsCisJCQkgSE9TVDFYX0NI
+QU5ORUxfQ0hBTk5FTENUUkxfS0VSTkVMX0ZJTFRFUl9HQlVGRkVSKDEpLAorCQkJIEhPU1QxWF9D
+SEFOTkVMX0NIQU5ORUxDVFJMKTsKKyNlbmRpZgorfQorCiBzdGF0aWMgaW50IGhvc3QxeF9jaGFu
+bmVsX2luaXQoc3RydWN0IGhvc3QxeF9jaGFubmVsICpjaCwgc3RydWN0IGhvc3QxeCAqZGV2LAog
+CQkJICAgICAgIHVuc2lnbmVkIGludCBpbmRleCkKIHsKIAljaC0+cmVncyA9IGRldi0+cmVncyAr
+IGluZGV4ICogSE9TVDFYX0NIQU5ORUxfU0laRTsKKwllbmFibGVfZ2F0aGVyX2ZpbHRlcihkZXYs
+IGNoKTsKIAlyZXR1cm4gMDsKIH0KIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2h3
+L2h3X2hvc3QxeDA0X2NoYW5uZWwuaCBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9od19ob3N0MXgw
+NF9jaGFubmVsLmgKaW5kZXggOTVlNmY5NjE0MmI5Li4yZThiNjM1YWE2NjAgMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9od19ob3N0MXgwNF9jaGFubmVsLmgKKysrIGIvZHJpdmVy
+cy9ncHUvaG9zdDF4L2h3L2h3X2hvc3QxeDA0X2NoYW5uZWwuaApAQCAtMTE3LDUgKzExNywxNyBA
+QCBzdGF0aWMgaW5saW5lIHUzMiBob3N0MXhfY2hhbm5lbF9kbWFjdHJsX2RtYWluaXRnZXQodm9p
+ZCkKIH0KICNkZWZpbmUgSE9TVDFYX0NIQU5ORUxfRE1BQ1RSTF9ETUFJTklUR0VUIFwKIAlob3N0
+MXhfY2hhbm5lbF9kbWFjdHJsX2RtYWluaXRnZXQoKQorc3RhdGljIGlubGluZSB1MzIgaG9zdDF4
+X2NoYW5uZWxfY2hhbm5lbGN0cmxfcih2b2lkKQoreworCXJldHVybiAweDk4OworfQorI2RlZmlu
+ZSBIT1NUMVhfQ0hBTk5FTF9DSEFOTkVMQ1RSTCBcCisJaG9zdDF4X2NoYW5uZWxfY2hhbm5lbGN0
+cmxfcigpCitzdGF0aWMgaW5saW5lIHUzMiBob3N0MXhfY2hhbm5lbF9jaGFubmVsY3RybF9rZXJu
+ZWxfZmlsdGVyX2didWZmZXJfZih1MzIgdikKK3sKKwlyZXR1cm4gKHYgJiAweDEpIDw8IDI7Cit9
+CisjZGVmaW5lIEhPU1QxWF9DSEFOTkVMX0NIQU5ORUxDVFJMX0tFUk5FTF9GSUxURVJfR0JVRkZF
+Uih2KSBcCisJaG9zdDF4X2NoYW5uZWxfY2hhbm5lbGN0cmxfa2VybmVsX2ZpbHRlcl9nYnVmZmVy
+X2YodikKIAogI2VuZGlmCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9z
+dDF4MDVfY2hhbm5lbC5oIGIvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2h3X2hvc3QxeDA1X2NoYW5u
+ZWwuaAppbmRleCBmY2U2ZTJjMWZmNGMuLmFiYmJjMjY0MWNlNiAxMDA2NDQKLS0tIGEvZHJpdmVy
+cy9ncHUvaG9zdDF4L2h3L2h3X2hvc3QxeDA1X2NoYW5uZWwuaAorKysgYi9kcml2ZXJzL2dwdS9o
+b3N0MXgvaHcvaHdfaG9zdDF4MDVfY2hhbm5lbC5oCkBAIC0xMTcsNSArMTE3LDE3IEBAIHN0YXRp
+YyBpbmxpbmUgdTMyIGhvc3QxeF9jaGFubmVsX2RtYWN0cmxfZG1haW5pdGdldCh2b2lkKQogfQog
+I2RlZmluZSBIT1NUMVhfQ0hBTk5FTF9ETUFDVFJMX0RNQUlOSVRHRVQgXAogCWhvc3QxeF9jaGFu
+bmVsX2RtYWN0cmxfZG1haW5pdGdldCgpCitzdGF0aWMgaW5saW5lIHUzMiBob3N0MXhfY2hhbm5l
+bF9jaGFubmVsY3RybF9yKHZvaWQpCit7CisJcmV0dXJuIDB4OTg7Cit9CisjZGVmaW5lIEhPU1Qx
+WF9DSEFOTkVMX0NIQU5ORUxDVFJMIFwKKwlob3N0MXhfY2hhbm5lbF9jaGFubmVsY3RybF9yKCkK
+K3N0YXRpYyBpbmxpbmUgdTMyIGhvc3QxeF9jaGFubmVsX2NoYW5uZWxjdHJsX2tlcm5lbF9maWx0
+ZXJfZ2J1ZmZlcl9mKHUzMiB2KQoreworCXJldHVybiAodiAmIDB4MSkgPDwgMjsKK30KKyNkZWZp
+bmUgSE9TVDFYX0NIQU5ORUxfQ0hBTk5FTENUUkxfS0VSTkVMX0ZJTFRFUl9HQlVGRkVSKHYpIFwK
+Kwlob3N0MXhfY2hhbm5lbF9jaGFubmVsY3RybF9rZXJuZWxfZmlsdGVyX2didWZmZXJfZih2KQog
+CiAjZW5kaWYKLS0gCjIuMTQuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
