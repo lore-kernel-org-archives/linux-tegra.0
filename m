@@ -1,50 +1,26 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 4/4] drm/tegra: Use u64_to_user_ptr helper
-Date: Fri, 18 Aug 2017 19:15:53 +0300
-Message-ID: <20170818161553.27597-5-mperttunen@nvidia.com>
-References: <20170818161553.27597-1-mperttunen@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170818161553.27597-1-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: digetx@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [GIT PULL 5/5] ARM: tegra: Default configuration updates for v4.14-rc1
+Date: Fri, 18 Aug 2017 22:31:00 +0200
+Message-ID: <CAK8P3a25mFaa1XQWteKJ9n8R7kQp_-OtJ2Z92U92Y0WtuUEF-w@mail.gmail.com>
+References: <20170818144806.14252-1-thierry.reding@gmail.com> <20170818144806.14252-5-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170818144806.14252-5-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: arm-soc <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use the u64_to_user_ptr helper macro to cast IOCTL argument u64 values
-to user pointers instead of writing out the cast manually.
+On Fri, Aug 18, 2017 at 4:48 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/drm/tegra/drm.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+> ARM: tegra: Default configuration updates for v4.14-rc1
+>
+> Enables the ChipIdea UDC driver and selects some symbols that were
+> previously being selected by other drivers but will no longer be in
+> v4.14.
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index e3331a2bc082..78c98736b0a5 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -389,11 +389,10 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	unsigned int num_relocs = args->num_relocs;
- 	unsigned int num_waitchks = args->num_waitchks;
- 	struct drm_tegra_cmdbuf __user *cmdbufs =
--		(void __user *)(uintptr_t)args->cmdbufs;
--	struct drm_tegra_reloc __user *relocs =
--		(void __user *)(uintptr_t)args->relocs;
-+		u64_to_user_ptr(args->cmdbufs);
-+	struct drm_tegra_reloc __user *relocs = u64_to_user_ptr(args->relocs);
- 	struct drm_tegra_waitchk __user *waitchks =
--		(void __user *)(uintptr_t)args->waitchks;
-+		u64_to_user_ptr(args->waitchks);
- 	struct drm_tegra_syncpt syncpt;
- 	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
- 	struct host1x_syncpt *sp;
-@@ -520,7 +519,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 		}
- 	}
- 
--	if (copy_from_user(&syncpt, (void __user *)(uintptr_t)args->syncpts,
-+	if (copy_from_user(&syncpt, u64_to_user_ptr(args->syncpts),
- 			   sizeof(syncpt))) {
- 		err = -EFAULT;
- 		goto fail;
--- 
-2.14.1
+Pulled inot next/defconfig, thanks!
+
+           Arnd
