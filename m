@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 08/15] PCI: make device_type const
-Date: Sat, 19 Aug 2017 13:52:19 +0530
-Message-ID: <1503130946-2854-9-git-send-email-bhumirks__49079.7358369038$1503131146$gmane$org@gmail.com>
+Subject: [PATCH 09/15] phy: tegra: make device_type const
+Date: Sat, 19 Aug 2017 13:52:20 +0530
+Message-ID: <1503130946-2854-10-git-send-email-bhumirks__2862.40616483173$1503131171$gmane$org@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -10,35 +10,35 @@ To: julia.lawall-L2FTfq7BK8M@public.gmane.org, bp-Gina5bIWoIWzQB+pC5nmwQ@public.
 Cc: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Make this const as it is only stored in the type field of a device
+Make these const as they are only stored in the type field of a device
 structure, which is const.
 Done using Coccinelle.
 
 Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/pci/endpoint/pci-epf-core.c | 4 ++--
+ drivers/phy/tegra/xusb.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-index 6877d6a..9d0de12 100644
---- a/drivers/pci/endpoint/pci-epf-core.c
-+++ b/drivers/pci/endpoint/pci-epf-core.c
-@@ -27,7 +27,7 @@
- #include <linux/pci-ep-cfs.h>
- 
- static struct bus_type pci_epf_bus_type;
--static struct device_type pci_epf_type;
-+static const struct device_type pci_epf_type;
- 
- /**
-  * pci_epf_linkup() - Notify the function driver that EPC device has
-@@ -275,7 +275,7 @@ static void pci_epf_dev_release(struct device *dev)
- 	kfree(epf);
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 3cbcb25..bd3f1b6 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -155,7 +155,7 @@ static void tegra_xusb_pad_release(struct device *dev)
+ 	pad->soc->ops->remove(pad);
  }
  
--static struct device_type pci_epf_type = {
-+static const struct device_type pci_epf_type = {
- 	.release	= pci_epf_dev_release,
+-static struct device_type tegra_xusb_pad_type = {
++static const struct device_type tegra_xusb_pad_type = {
+ 	.release = tegra_xusb_pad_release,
+ };
+ 
+@@ -512,7 +512,7 @@ static void tegra_xusb_port_release(struct device *dev)
+ {
+ }
+ 
+-static struct device_type tegra_xusb_port_type = {
++static const struct device_type tegra_xusb_port_type = {
+ 	.release = tegra_xusb_port_release,
  };
  
 -- 
