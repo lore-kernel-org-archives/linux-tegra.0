@@ -1,166 +1,52 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 1/4] gpu: host1x: Enable Tegra186 syncpoint protection
-Date: Sat, 19 Aug 2017 11:10:13 +0300
-Message-ID: <5ff98485-e8ac-75e0-ca8f-3887f8593ec4@kapsi.fi>
-References: <20170818161553.27597-1-mperttunen@nvidia.com>
- <20170818161553.27597-2-mperttunen@nvidia.com>
- <d6d10aec-3d2a-99b3-a23d-41147478f412@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 00/15] drivers: make device_type const
+Date: Sat, 19 Aug 2017 13:52:11 +0530
+Message-ID: <1503130946-2854-1-git-send-email-bhumirks__18233.2685486928$1503130991$gmane$org@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d6d10aec-3d2a-99b3-a23d-41147478f412-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: julia.lawall-L2FTfq7BK8M@public.gmane.org, bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, g.liakhovetski-Mmb7MZpHnFY@public.gmane.org, tomas.winkler-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, cyrille.pitchen-yU5RGvR974pGWvitb5QawA@public.gmane.org, peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dvhart-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, andy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org, bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, freude-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, schwidefsky-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, heiko.carstens-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, jth-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jejb-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, martin.petersen-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, lduncan-IBi9RG/b67k@public.gmane.org, cleech-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, elder-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.orgheik
+Cc: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Make device_type const. Done using Coccinelle.
 
+Bhumika Goyal (15):
+  EDAC: make device_type const
+  drm: make device_type const
+  [media] i2c: make device_type const
+  [media] rc: make device_type const
+  mei: make device_type const
+  mtd:  make device_type const
+  mux: make device_type const
+  PCI: make device_type const
+  phy: tegra: make device_type const
+  platform/x86: wmi: make device_type const
+  remoteproc: make device_type const
+  s390/zcrypt: make device_type const
+  scsi: make device_type const
+  staging: greybus: make device_type const
+  usb: make device_type const
 
-On 08/19/2017 01:36 AM, Dmitry Osipenko wrote:
-> On 18.08.2017 19:15, Mikko Perttunen wrote:
->> Since Tegra186 the Host1x hardware allows syncpoints to be assigned to
->> specific channels, preventing any other channels from incrementing
->> them.
->>
->> Enable this feature where available and assign syncpoints to channels
->> when submitting a job. Syncpoints are currently never unassigned from
->> channels since that would require extra work and is unnecessary with
->> the current channel allocation model.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   drivers/gpu/host1x/dev.h           | 16 ++++++++++++++++
->>   drivers/gpu/host1x/hw/channel_hw.c |  3 +++
->>   drivers/gpu/host1x/hw/syncpt_hw.c  | 26 ++++++++++++++++++++++++++
->>   drivers/gpu/host1x/syncpt.c        |  3 +++
->>   4 files changed, 48 insertions(+)
->>
->> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
->> index def802c0a6bf..2432a30ff6e2 100644
->> --- a/drivers/gpu/host1x/dev.h
->> +++ b/drivers/gpu/host1x/dev.h
->> @@ -79,6 +79,9 @@ struct host1x_syncpt_ops {
->>   	u32 (*load)(struct host1x_syncpt *syncpt);
->>   	int (*cpu_incr)(struct host1x_syncpt *syncpt);
->>   	int (*patch_wait)(struct host1x_syncpt *syncpt, void *patch_addr);
->> +	void (*assign_channel)(struct host1x_syncpt *syncpt,
->> +	                       struct host1x_channel *channel);
->> +	void (*set_protection)(struct host1x *host, bool enabled);
->>   };
->>   
->>   struct host1x_intr_ops {
->> @@ -186,6 +189,19 @@ static inline int host1x_hw_syncpt_patch_wait(struct host1x *host,
->>   	return host->syncpt_op->patch_wait(sp, patch_addr);
->>   }
->>   
->> +static inline void host1x_hw_syncpt_assign_channel(struct host1x *host,
->> +						   struct host1x_syncpt *sp,
->> +						   struct host1x_channel *ch)
->> +{
->> +	return host->syncpt_op->assign_channel(sp, ch);
->> +}
->> +
->> +static inline void host1x_hw_syncpt_set_protection(struct host1x *host,
->> +						   bool enabled)
->> +{
->> +	return host->syncpt_op->set_protection(host, enabled);
->> +}
->> +
->>   static inline int host1x_hw_intr_init_host_sync(struct host1x *host, u32 cpm,
->>   			void (*syncpt_thresh_work)(struct work_struct *))
->>   {
->> diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
->> index 8447a56c41ca..0161da331702 100644
->> --- a/drivers/gpu/host1x/hw/channel_hw.c
->> +++ b/drivers/gpu/host1x/hw/channel_hw.c
->> @@ -147,6 +147,9 @@ static int channel_submit(struct host1x_job *job)
->>   
->>   	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
->>   
->> +	/* assign syncpoint to channel */
->> +	host1x_hw_syncpt_assign_channel(host, sp, ch);
->> +
->>   	job->syncpt_end = syncval;
->>   
->>   	/* add a setclass for modules that require it */
->> diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
->> index 7b0270d60742..5d117ab1699e 100644
->> --- a/drivers/gpu/host1x/hw/syncpt_hw.c
->> +++ b/drivers/gpu/host1x/hw/syncpt_hw.c
->> @@ -106,6 +106,30 @@ static int syncpt_patch_wait(struct host1x_syncpt *sp, void *patch_addr)
->>   	return 0;
->>   }
->>   
->> +static void syncpt_assign_channel(struct host1x_syncpt *sp,
->> +				  struct host1x_channel *ch)
->> +{
->> +#if HOST1X_HW >= 6
->> +	struct host1x *host = sp->host;
->> +
->> +	if (!host->hv_regs)
->> +		return;
->> +
->> +	host1x_sync_writel(host,
->> +			   HOST1X_SYNC_SYNCPT_CH_APP_CH(ch ? ch->id : 0xff),
->> +			   HOST1X_SYNC_SYNCPT_CH_APP(sp->id));
->> +#endif
->> +}
->> +
->> +static void syncpt_set_protection(struct host1x *host, bool enabled)
->> +{
->> +#if HOST1X_HW >= 6
->> +	host1x_hypervisor_writel(host,
->> +				 enabled ? HOST1X_HV_SYNCPT_PROT_EN_CH_EN : 0,
->> +				 HOST1X_HV_SYNCPT_PROT_EN);
->> +#endif
->> +}
->> +
->>   static const struct host1x_syncpt_ops host1x_syncpt_ops = {
->>   	.restore = syncpt_restore,
->>   	.restore_wait_base = syncpt_restore_wait_base,
->> @@ -113,4 +137,6 @@ static const struct host1x_syncpt_ops host1x_syncpt_ops = {
->>   	.load = syncpt_load,
->>   	.cpu_incr = syncpt_cpu_incr,
->>   	.patch_wait = syncpt_patch_wait,
->> +	.assign_channel = syncpt_assign_channel,
->> +	.set_protection = syncpt_set_protection,
->>   };
->> diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
->> index 048ac9e344ce..fe4d963b3e2a 100644
->> --- a/drivers/gpu/host1x/syncpt.c
->> +++ b/drivers/gpu/host1x/syncpt.c
->> @@ -398,6 +398,8 @@ int host1x_syncpt_init(struct host1x *host)
->>   	for (i = 0; i < host->info->nb_pts; i++) {
->>   		syncpt[i].id = i;
->>   		syncpt[i].host = host;
->> +
->> +		host1x_hw_syncpt_assign_channel(host, &syncpt[i], NULL);
->>   	}
->>   
->>   	for (i = 0; i < host->info->nb_bases; i++)
->> @@ -408,6 +410,7 @@ int host1x_syncpt_init(struct host1x *host)
->>   	host->bases = bases;
->>   
->>   	host1x_syncpt_restore(host);
->> +	host1x_hw_syncpt_set_protection(host, true);
-> 
-> Is it really okay to force the protection? Maybe protection should be enabled
-> with a respect to CONFIG_TEGRA_HOST1X_FIREWALL? In that case we would have to
-> avoid software jobs validation for Tegra124+.
+ drivers/edac/edac_mc_sysfs.c           | 8 ++++----
+ drivers/edac/i7core_edac.c             | 4 ++--
+ drivers/gpu/drm/drm_sysfs.c            | 2 +-
+ drivers/gpu/drm/ttm/ttm_module.c       | 2 +-
+ drivers/media/i2c/soc_camera/mt9t031.c | 2 +-
+ drivers/media/rc/rc-main.c             | 2 +-
+ drivers/misc/mei/bus.c                 | 2 +-
+ drivers/mtd/mtdcore.c                  | 2 +-
+ drivers/mux/mux-core.c                 | 2 +-
+ drivers/pci/endpoint/pci-epf-core.c    | 4 ++--
+ drivers/phy/tegra/xusb.c               | 4 ++--
+ drivers/platform/x86/wmi.c             | 6 +++---
+ drivers/remoteproc/remoteproc_core.c   | 2 +-
+ drivers/s390/crypto/ap_card.c          | 2 +-
+ drivers/s390/crypto/ap_queue.c         | 2 +-
+ drivers/scsi/fcoe/fcoe_sysfs.c         | 4 ++--
+ drivers/scsi/scsi_transport_iscsi.c    | 4 ++--
+ drivers/staging/greybus/gbphy.c        | 2 +-
+ drivers/usb/common/ulpi.c              | 2 +-
+ 19 files changed, 29 insertions(+), 29 deletions(-)
 
-I don't quite get your comment. The hardware syncpt protection layer 
-being enabled should never hurt - it doesn't mess with any valid jobs. 
-It's also only on Tegra186 so I'm not sure where the Tegra124 comes from.
-
-Cheers,
-Mikko
-
-> 
->>   
->>   	/* Allocate sync point to use for clearing waits for expired fences */
->>   	host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
->>
-> 
-> 
+-- 
+1.9.1
