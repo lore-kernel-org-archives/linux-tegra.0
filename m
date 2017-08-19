@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 10/15] platform/x86: wmi: make device_type const
-Date: Sat, 19 Aug 2017 13:52:21 +0530
-Message-ID: <1503130946-2854-11-git-send-email-bhumirks__7489.20597038722$1503131179$gmane$org@gmail.com>
+Subject: [PATCH 11/15] remoteproc: make device_type const
+Date: Sat, 19 Aug 2017 13:52:22 +0530
+Message-ID: <1503130946-2854-12-git-send-email-bhumirks@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -10,41 +10,27 @@ To: julia.lawall-L2FTfq7BK8M@public.gmane.org, bp-Gina5bIWoIWzQB+pC5nmwQ@public.
 Cc: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Make these const as they are only stored in the type field of a device
+Make this const as it is only stored in the type field of a device
 structure, which is const.
 Done using Coccinelle.
 
 Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/platform/x86/wmi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index e32ba57..a37c253 100644
---- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -810,19 +810,19 @@ static int wmi_dev_remove(struct device *dev)
- 	.remove = wmi_dev_remove,
- };
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 364ef28..48b2c5d 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1360,7 +1360,7 @@ static void rproc_type_release(struct device *dev)
+ 	kfree(rproc);
+ }
  
--static struct device_type wmi_type_event = {
-+static const struct device_type wmi_type_event = {
- 	.name = "event",
- 	.groups = wmi_event_groups,
- 	.release = wmi_dev_release,
+-static struct device_type rproc_type = {
++static const struct device_type rproc_type = {
+ 	.name		= "remoteproc",
+ 	.release	= rproc_type_release,
  };
- 
--static struct device_type wmi_type_method = {
-+static const struct device_type wmi_type_method = {
- 	.name = "method",
- 	.groups = wmi_method_groups,
- 	.release = wmi_dev_release,
- };
- 
--static struct device_type wmi_type_data = {
-+static const struct device_type wmi_type_data = {
- 	.name = "data",
- 	.groups = wmi_data_groups,
- 	.release = wmi_dev_release,
 -- 
 1.9.1
