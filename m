@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 09/15] phy: tegra: make device_type const
-Date: Sat, 19 Aug 2017 13:52:20 +0530
-Message-ID: <1503130946-2854-10-git-send-email-bhumirks__2862.40616483173$1503131171$gmane$org@gmail.com>
+Subject: [PATCH 10/15] platform/x86: wmi: make device_type const
+Date: Sat, 19 Aug 2017 13:52:21 +0530
+Message-ID: <1503130946-2854-11-git-send-email-bhumirks__7489.20597038722$1503131179$gmane$org@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -16,30 +16,35 @@ Done using Coccinelle.
 
 Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/phy/tegra/xusb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/platform/x86/wmi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 3cbcb25..bd3f1b6 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -155,7 +155,7 @@ static void tegra_xusb_pad_release(struct device *dev)
- 	pad->soc->ops->remove(pad);
- }
- 
--static struct device_type tegra_xusb_pad_type = {
-+static const struct device_type tegra_xusb_pad_type = {
- 	.release = tegra_xusb_pad_release,
+diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+index e32ba57..a37c253 100644
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -810,19 +810,19 @@ static int wmi_dev_remove(struct device *dev)
+ 	.remove = wmi_dev_remove,
  };
  
-@@ -512,7 +512,7 @@ static void tegra_xusb_port_release(struct device *dev)
- {
- }
- 
--static struct device_type tegra_xusb_port_type = {
-+static const struct device_type tegra_xusb_port_type = {
- 	.release = tegra_xusb_port_release,
+-static struct device_type wmi_type_event = {
++static const struct device_type wmi_type_event = {
+ 	.name = "event",
+ 	.groups = wmi_event_groups,
+ 	.release = wmi_dev_release,
  };
  
+-static struct device_type wmi_type_method = {
++static const struct device_type wmi_type_method = {
+ 	.name = "method",
+ 	.groups = wmi_method_groups,
+ 	.release = wmi_dev_release,
+ };
+ 
+-static struct device_type wmi_type_data = {
++static const struct device_type wmi_type_data = {
+ 	.name = "data",
+ 	.groups = wmi_data_groups,
+ 	.release = wmi_dev_release,
 -- 
 1.9.1
