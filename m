@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 06/15] mtd:  make device_type const
-Date: Sat, 19 Aug 2017 13:52:17 +0530
-Message-ID: <1503130946-2854-7-git-send-email-bhumirks__39756.25370299$1503131107$gmane$org@gmail.com>
+Subject: [PATCH 07/15] mux: make device_type const
+Date: Sat, 19 Aug 2017 13:52:18 +0530
+Message-ID: <1503130946-2854-8-git-send-email-bhumirks__48367.6313575872$1503131132$gmane$org@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -16,21 +16,21 @@ Done using Coccinelle.
 
 Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/mtd/mtdcore.c | 2 +-
+ drivers/mux/mux-core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index f872a99..e7ea842 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -340,7 +340,7 @@ static ssize_t mtd_bbtblocks_show(struct device *dev,
- };
- ATTRIBUTE_GROUPS(mtd);
+diff --git a/drivers/mux/mux-core.c b/drivers/mux/mux-core.c
+index 2fe96c4..68bd16d 100644
+--- a/drivers/mux/mux-core.c
++++ b/drivers/mux/mux-core.c
+@@ -58,7 +58,7 @@ static void mux_chip_release(struct device *dev)
+ 	kfree(mux_chip);
+ }
  
--static struct device_type mtd_devtype = {
-+static const struct device_type mtd_devtype = {
- 	.name		= "mtd",
- 	.groups		= mtd_groups,
- 	.release	= mtd_release,
+-static struct device_type mux_type = {
++static const struct device_type mux_type = {
+ 	.name = "mux-chip",
+ 	.release = mux_chip_release,
+ };
 -- 
 1.9.1
