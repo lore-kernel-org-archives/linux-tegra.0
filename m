@@ -1,80 +1,166 @@
 From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 4/4] drm/tegra: Use u64_to_user_ptr helper
-Date: Sat, 19 Aug 2017 11:06:31 +0300
-Message-ID: <433b4cb7-8011-fe50-9afb-09e6ead0196e@kapsi.fi>
+Subject: Re: [PATCH 1/4] gpu: host1x: Enable Tegra186 syncpoint protection
+Date: Sat, 19 Aug 2017 11:10:13 +0300
+Message-ID: <5ff98485-e8ac-75e0-ca8f-3887f8593ec4@kapsi.fi>
 References: <20170818161553.27597-1-mperttunen@nvidia.com>
- <20170818161553.27597-5-mperttunen@nvidia.com>
- <f16347d6-991e-4d61-eb55-cca24bcf5625@gmail.com>
+ <20170818161553.27597-2-mperttunen@nvidia.com>
+ <d6d10aec-3d2a-99b3-a23d-41147478f412@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f16347d6-991e-4d61-eb55-cca24bcf5625-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <d6d10aec-3d2a-99b3-a23d-41147478f412-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/19/2017 01:05 AM, Dmitry Osipenko wrote:
+
+
+On 08/19/2017 01:36 AM, Dmitry Osipenko wrote:
 > On 18.08.2017 19:15, Mikko Perttunen wrote:
->> Use the u64_to_user_ptr helper macro to cast IOCTL argument u64 values
->> to user pointers instead of writing out the cast manually.
+>> Since Tegra186 the Host1x hardware allows syncpoints to be assigned to
+>> specific channels, preventing any other channels from incrementing
+>> them.
+>>
+>> Enable this feature where available and assign syncpoints to channels
+>> when submitting a job. Syncpoints are currently never unassigned from
+>> channels since that would require extra work and is unnecessary with
+>> the current channel allocation model.
 >>
 >> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >> ---
->>   drivers/gpu/drm/tegra/drm.c | 9 ++++-----
->>   1 file changed, 4 insertions(+), 5 deletions(-)
+>>   drivers/gpu/host1x/dev.h           | 16 ++++++++++++++++
+>>   drivers/gpu/host1x/hw/channel_hw.c |  3 +++
+>>   drivers/gpu/host1x/hw/syncpt_hw.c  | 26 ++++++++++++++++++++++++++
+>>   drivers/gpu/host1x/syncpt.c        |  3 +++
+>>   4 files changed, 48 insertions(+)
 >>
->> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
->> index e3331a2bc082..78c98736b0a5 100644
->> --- a/drivers/gpu/drm/tegra/drm.c
->> +++ b/drivers/gpu/drm/tegra/drm.c
->> @@ -389,11 +389,10 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->>   	unsigned int num_relocs = args->num_relocs;
->>   	unsigned int num_waitchks = args->num_waitchks;
->>   	struct drm_tegra_cmdbuf __user *cmdbufs =
->> -		(void __user *)(uintptr_t)args->cmdbufs;
->> -	struct drm_tegra_reloc __user *relocs =
->> -		(void __user *)(uintptr_t)args->relocs;
->> +		u64_to_user_ptr(args->cmdbufs);
->> +	struct drm_tegra_reloc __user *relocs = u64_to_user_ptr(args->relocs);
->>   	struct drm_tegra_waitchk __user *waitchks =
->> -		(void __user *)(uintptr_t)args->waitchks;
->> +		u64_to_user_ptr(args->waitchks);
-> 
-> What about to factor out 'u64_to_user_ptr()' assignments to reduce messiness a
-> tad? Like this:
-> 
-> 	struct drm_tegra_waitchk __user *waitchks;
-> 	struct drm_tegra_cmdbuf __user *cmdbufs;
-> 	struct drm_tegra_reloc __user *relocs;
-> ...
-> 	waitchks = u64_to_user_ptr(args->waitchks);
-> 	cmdbufs = u64_to_user_ptr(args->cmdbufs);
-> 	relocs = u64_to_user_ptr(args->relocs);
-> 
-> 
->>   	struct drm_tegra_syncpt syncpt;
->>   	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
->>   	struct host1x_syncpt *sp;
->> @@ -520,7 +519,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
->>   		}
+>> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+>> index def802c0a6bf..2432a30ff6e2 100644
+>> --- a/drivers/gpu/host1x/dev.h
+>> +++ b/drivers/gpu/host1x/dev.h
+>> @@ -79,6 +79,9 @@ struct host1x_syncpt_ops {
+>>   	u32 (*load)(struct host1x_syncpt *syncpt);
+>>   	int (*cpu_incr)(struct host1x_syncpt *syncpt);
+>>   	int (*patch_wait)(struct host1x_syncpt *syncpt, void *patch_addr);
+>> +	void (*assign_channel)(struct host1x_syncpt *syncpt,
+>> +	                       struct host1x_channel *channel);
+>> +	void (*set_protection)(struct host1x *host, bool enabled);
+>>   };
+>>   
+>>   struct host1x_intr_ops {
+>> @@ -186,6 +189,19 @@ static inline int host1x_hw_syncpt_patch_wait(struct host1x *host,
+>>   	return host->syncpt_op->patch_wait(sp, patch_addr);
+>>   }
+>>   
+>> +static inline void host1x_hw_syncpt_assign_channel(struct host1x *host,
+>> +						   struct host1x_syncpt *sp,
+>> +						   struct host1x_channel *ch)
+>> +{
+>> +	return host->syncpt_op->assign_channel(sp, ch);
+>> +}
+>> +
+>> +static inline void host1x_hw_syncpt_set_protection(struct host1x *host,
+>> +						   bool enabled)
+>> +{
+>> +	return host->syncpt_op->set_protection(host, enabled);
+>> +}
+>> +
+>>   static inline int host1x_hw_intr_init_host_sync(struct host1x *host, u32 cpm,
+>>   			void (*syncpt_thresh_work)(struct work_struct *))
+>>   {
+>> diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+>> index 8447a56c41ca..0161da331702 100644
+>> --- a/drivers/gpu/host1x/hw/channel_hw.c
+>> +++ b/drivers/gpu/host1x/hw/channel_hw.c
+>> @@ -147,6 +147,9 @@ static int channel_submit(struct host1x_job *job)
+>>   
+>>   	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
+>>   
+>> +	/* assign syncpoint to channel */
+>> +	host1x_hw_syncpt_assign_channel(host, sp, ch);
+>> +
+>>   	job->syncpt_end = syncval;
+>>   
+>>   	/* add a setclass for modules that require it */
+>> diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
+>> index 7b0270d60742..5d117ab1699e 100644
+>> --- a/drivers/gpu/host1x/hw/syncpt_hw.c
+>> +++ b/drivers/gpu/host1x/hw/syncpt_hw.c
+>> @@ -106,6 +106,30 @@ static int syncpt_patch_wait(struct host1x_syncpt *sp, void *patch_addr)
+>>   	return 0;
+>>   }
+>>   
+>> +static void syncpt_assign_channel(struct host1x_syncpt *sp,
+>> +				  struct host1x_channel *ch)
+>> +{
+>> +#if HOST1X_HW >= 6
+>> +	struct host1x *host = sp->host;
+>> +
+>> +	if (!host->hv_regs)
+>> +		return;
+>> +
+>> +	host1x_sync_writel(host,
+>> +			   HOST1X_SYNC_SYNCPT_CH_APP_CH(ch ? ch->id : 0xff),
+>> +			   HOST1X_SYNC_SYNCPT_CH_APP(sp->id));
+>> +#endif
+>> +}
+>> +
+>> +static void syncpt_set_protection(struct host1x *host, bool enabled)
+>> +{
+>> +#if HOST1X_HW >= 6
+>> +	host1x_hypervisor_writel(host,
+>> +				 enabled ? HOST1X_HV_SYNCPT_PROT_EN_CH_EN : 0,
+>> +				 HOST1X_HV_SYNCPT_PROT_EN);
+>> +#endif
+>> +}
+>> +
+>>   static const struct host1x_syncpt_ops host1x_syncpt_ops = {
+>>   	.restore = syncpt_restore,
+>>   	.restore_wait_base = syncpt_restore_wait_base,
+>> @@ -113,4 +137,6 @@ static const struct host1x_syncpt_ops host1x_syncpt_ops = {
+>>   	.load = syncpt_load,
+>>   	.cpu_incr = syncpt_cpu_incr,
+>>   	.patch_wait = syncpt_patch_wait,
+>> +	.assign_channel = syncpt_assign_channel,
+>> +	.set_protection = syncpt_set_protection,
+>>   };
+>> diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+>> index 048ac9e344ce..fe4d963b3e2a 100644
+>> --- a/drivers/gpu/host1x/syncpt.c
+>> +++ b/drivers/gpu/host1x/syncpt.c
+>> @@ -398,6 +398,8 @@ int host1x_syncpt_init(struct host1x *host)
+>>   	for (i = 0; i < host->info->nb_pts; i++) {
+>>   		syncpt[i].id = i;
+>>   		syncpt[i].host = host;
+>> +
+>> +		host1x_hw_syncpt_assign_channel(host, &syncpt[i], NULL);
 >>   	}
 >>   
->> -	if (copy_from_user(&syncpt, (void __user *)(uintptr_t)args->syncpts,
->> +	if (copy_from_user(&syncpt, u64_to_user_ptr(args->syncpts),
+>>   	for (i = 0; i < host->info->nb_bases; i++)
+>> @@ -408,6 +410,7 @@ int host1x_syncpt_init(struct host1x *host)
+>>   	host->bases = bases;
+>>   
+>>   	host1x_syncpt_restore(host);
+>> +	host1x_hw_syncpt_set_protection(host, true);
 > 
-> What about to define and use 'struct drm_tegra_reloc __user *syncpts' for
-> consistency with other '__user' definitions?
+> Is it really okay to force the protection? Maybe protection should be enabled
+> with a respect to CONFIG_TEGRA_HOST1X_FIREWALL? In that case we would have to
+> avoid software jobs validation for Tegra124+.
+
+I don't quite get your comment. The hardware syncpt protection layer 
+being enabled should never hurt - it doesn't mess with any valid jobs. 
+It's also only on Tegra186 so I'm not sure where the Tegra124 comes from.
+
+Cheers,
+Mikko
+
 > 
->>   			   sizeof(syncpt))) {
->>   		err = -EFAULT;
->>   		goto fail;
+>>   
+>>   	/* Allocate sync point to use for clearing waits for expired fences */
+>>   	host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
 >>
 > 
-
-Yeah, these are good ideas. I'll post a v2 at some point with these 
-changes. Thanks!
-
-Mikko
+> 
