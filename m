@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 07/15] mux: make device_type const
-Date: Sat, 19 Aug 2017 13:52:18 +0530
-Message-ID: <1503130946-2854-8-git-send-email-bhumirks__48367.6313575872$1503131132$gmane$org@gmail.com>
+Subject: [PATCH 08/15] PCI: make device_type const
+Date: Sat, 19 Aug 2017 13:52:19 +0530
+Message-ID: <1503130946-2854-9-git-send-email-bhumirks__49079.7358369038$1503131146$gmane$org@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -16,21 +16,30 @@ Done using Coccinelle.
 
 Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/mux/mux-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/endpoint/pci-epf-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mux/mux-core.c b/drivers/mux/mux-core.c
-index 2fe96c4..68bd16d 100644
---- a/drivers/mux/mux-core.c
-+++ b/drivers/mux/mux-core.c
-@@ -58,7 +58,7 @@ static void mux_chip_release(struct device *dev)
- 	kfree(mux_chip);
+diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+index 6877d6a..9d0de12 100644
+--- a/drivers/pci/endpoint/pci-epf-core.c
++++ b/drivers/pci/endpoint/pci-epf-core.c
+@@ -27,7 +27,7 @@
+ #include <linux/pci-ep-cfs.h>
+ 
+ static struct bus_type pci_epf_bus_type;
+-static struct device_type pci_epf_type;
++static const struct device_type pci_epf_type;
+ 
+ /**
+  * pci_epf_linkup() - Notify the function driver that EPC device has
+@@ -275,7 +275,7 @@ static void pci_epf_dev_release(struct device *dev)
+ 	kfree(epf);
  }
  
--static struct device_type mux_type = {
-+static const struct device_type mux_type = {
- 	.name = "mux-chip",
- 	.release = mux_chip_release,
+-static struct device_type pci_epf_type = {
++static const struct device_type pci_epf_type = {
+ 	.release	= pci_epf_dev_release,
  };
+ 
 -- 
 1.9.1
