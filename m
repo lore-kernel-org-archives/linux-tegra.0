@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 14/15] staging: greybus: make device_type const
-Date: Sat, 19 Aug 2017 13:52:25 +0530
-Message-ID: <1503130946-2854-15-git-send-email-bhumirks@gmail.com>
+Subject: [PATCH 15/15] usb: make device_type const
+Date: Sat, 19 Aug 2017 13:52:26 +0530
+Message-ID: <1503130946-2854-16-git-send-email-bhumirks__9414.75746590204$1503131291$gmane$org@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -16,21 +16,21 @@ Done using Coccinelle.
 
 Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/staging/greybus/gbphy.c | 2 +-
+ drivers/usb/common/ulpi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/greybus/gbphy.c b/drivers/staging/greybus/gbphy.c
-index 603de6f..80c1da8 100644
---- a/drivers/staging/greybus/gbphy.c
-+++ b/drivers/staging/greybus/gbphy.c
-@@ -66,7 +66,7 @@ static int gb_gbphy_idle(struct device *dev)
- 			   gb_gbphy_idle)
- };
+diff --git a/drivers/usb/common/ulpi.c b/drivers/usb/common/ulpi.c
+index 930e8f3..4aa5195 100644
+--- a/drivers/usb/common/ulpi.c
++++ b/drivers/usb/common/ulpi.c
+@@ -135,7 +135,7 @@ static void ulpi_dev_release(struct device *dev)
+ 	kfree(to_ulpi_dev(dev));
+ }
  
--static struct device_type greybus_gbphy_dev_type = {
-+static const struct device_type greybus_gbphy_dev_type = {
- 	.name	 =	"gbphy_device",
- 	.release =	gbphy_dev_release,
- 	.pm	=	&gb_gbphy_pm_ops,
+-static struct device_type ulpi_dev_type = {
++static const struct device_type ulpi_dev_type = {
+ 	.name = "ulpi_device",
+ 	.groups = ulpi_dev_attr_groups,
+ 	.release = ulpi_dev_release,
 -- 
 1.9.1
