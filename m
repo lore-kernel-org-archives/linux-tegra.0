@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 13/15] scsi: make device_type const
-Date: Sat, 19 Aug 2017 13:52:24 +0530
-Message-ID: <1503130946-2854-14-git-send-email-bhumirks__14408.7689965547$1503131244$gmane$org@gmail.com>
+Subject: [PATCH 14/15] staging: greybus: make device_type const
+Date: Sat, 19 Aug 2017 13:52:25 +0530
+Message-ID: <1503130946-2854-15-git-send-email-bhumirks@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -10,57 +10,27 @@ To: julia.lawall-L2FTfq7BK8M@public.gmane.org, bp-Gina5bIWoIWzQB+pC5nmwQ@public.
 Cc: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Make these const as they are only stored in the type field of a device
+Make this const as it is only stored in the type field of a device
 structure, which is const.
 Done using Coccinelle.
 
 Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/scsi/fcoe/fcoe_sysfs.c      | 4 ++--
- drivers/scsi/scsi_transport_iscsi.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/greybus/gbphy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/fcoe/fcoe_sysfs.c b/drivers/scsi/fcoe/fcoe_sysfs.c
-index 9cf3d56..5c8310b 100644
---- a/drivers/scsi/fcoe/fcoe_sysfs.c
-+++ b/drivers/scsi/fcoe/fcoe_sysfs.c
-@@ -659,13 +659,13 @@ static void fcoe_fcf_device_release(struct device *dev)
- 	kfree(fcf);
- }
- 
--static struct device_type fcoe_ctlr_device_type = {
-+static const struct device_type fcoe_ctlr_device_type = {
- 	.name = "fcoe_ctlr",
- 	.groups = fcoe_ctlr_attr_groups,
- 	.release = fcoe_ctlr_device_release,
+diff --git a/drivers/staging/greybus/gbphy.c b/drivers/staging/greybus/gbphy.c
+index 603de6f..80c1da8 100644
+--- a/drivers/staging/greybus/gbphy.c
++++ b/drivers/staging/greybus/gbphy.c
+@@ -66,7 +66,7 @@ static int gb_gbphy_idle(struct device *dev)
+ 			   gb_gbphy_idle)
  };
  
--static struct device_type fcoe_fcf_device_type = {
-+static const struct device_type fcoe_fcf_device_type = {
- 	.name = "fcoe_fcf",
- 	.groups = fcoe_fcf_attr_groups,
- 	.release = fcoe_fcf_device_release,
-diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
-index a424eae..b9513f8 100644
---- a/drivers/scsi/scsi_transport_iscsi.c
-+++ b/drivers/scsi/scsi_transport_iscsi.c
-@@ -1009,7 +1009,7 @@ static void iscsi_flashnode_sess_release(struct device *dev)
- 	kfree(fnode_sess);
- }
- 
--static struct device_type iscsi_flashnode_sess_dev_type = {
-+static const struct device_type iscsi_flashnode_sess_dev_type = {
- 	.name = "iscsi_flashnode_sess_dev_type",
- 	.groups = iscsi_flashnode_sess_attr_groups,
- 	.release = iscsi_flashnode_sess_release,
-@@ -1195,7 +1195,7 @@ static void iscsi_flashnode_conn_release(struct device *dev)
- 	kfree(fnode_conn);
- }
- 
--static struct device_type iscsi_flashnode_conn_dev_type = {
-+static const struct device_type iscsi_flashnode_conn_dev_type = {
- 	.name = "iscsi_flashnode_conn_dev_type",
- 	.groups = iscsi_flashnode_conn_attr_groups,
- 	.release = iscsi_flashnode_conn_release,
+-static struct device_type greybus_gbphy_dev_type = {
++static const struct device_type greybus_gbphy_dev_type = {
+ 	.name	 =	"gbphy_device",
+ 	.release =	gbphy_dev_release,
+ 	.pm	=	&gb_gbphy_pm_ops,
 -- 
 1.9.1
