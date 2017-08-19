@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 01/15] EDAC: make device_type const
-Date: Sat, 19 Aug 2017 13:52:12 +0530
-Message-ID: <1503130946-2854-2-git-send-email-bhumirks__47358.4723579281$1503131011$gmane$org@gmail.com>
+Subject: [PATCH 02/15] drm: make device_type const
+Date: Sat, 19 Aug 2017 13:52:13 +0530
+Message-ID: <1503130946-2854-3-git-send-email-bhumirks__41811.5616812885$1503131043$gmane$org@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -13,74 +13,36 @@ List-Id: linux-tegra@vger.kernel.org
 Make these const as they are only stored in the type field of a device
 structure, which is const.
 Done using Coccinelle.
-
-Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/edac/edac_mc_sysfs.c | 8 ++++----
- drivers/edac/i7core_edac.c   | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_sysfs.c      | 2 +-
+ drivers/gpu/drm/ttm/ttm_module.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-index dbc6446..e4fcfa8 100644
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -304,7 +304,7 @@ static void csrow_attr_release(struct device *dev)
- 	kfree(csrow);
- }
+diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
+index 1c5b5ce..84e4ebe 100644
+--- a/drivers/gpu/drm/drm_sysfs.c
++++ b/drivers/gpu/drm/drm_sysfs.c
+@@ -39,7 +39,7 @@
+  * drm_connector_unregister().
+  */
  
--static struct device_type csrow_attr_type = {
-+static const struct device_type csrow_attr_type = {
- 	.groups		= csrow_attr_groups,
- 	.release	= csrow_attr_release,
+-static struct device_type drm_sysfs_device_minor = {
++static const struct device_type drm_sysfs_device_minor = {
+ 	.name = "drm_minor"
  };
-@@ -644,7 +644,7 @@ static void dimm_attr_release(struct device *dev)
- 	kfree(dimm);
- }
  
--static struct device_type dimm_attr_type = {
-+static const struct device_type dimm_attr_type = {
- 	.groups		= dimm_attr_groups,
- 	.release	= dimm_attr_release,
- };
-@@ -920,7 +920,7 @@ static void mci_attr_release(struct device *dev)
- 	kfree(mci);
- }
+diff --git a/drivers/gpu/drm/ttm/ttm_module.c b/drivers/gpu/drm/ttm/ttm_module.c
+index 66fc639..e6604e0 100644
+--- a/drivers/gpu/drm/ttm/ttm_module.c
++++ b/drivers/gpu/drm/ttm/ttm_module.c
+@@ -37,7 +37,7 @@
+ static DECLARE_WAIT_QUEUE_HEAD(exit_q);
+ static atomic_t device_released;
  
--static struct device_type mci_attr_type = {
-+static const struct device_type mci_attr_type = {
- 	.groups		= mci_attr_groups,
- 	.release	= mci_attr_release,
- };
-@@ -1074,7 +1074,7 @@ static void mc_attr_release(struct device *dev)
- 	kfree(dev);
- }
- 
--static struct device_type mc_attr_type = {
-+static const struct device_type mc_attr_type = {
- 	.release	= mc_attr_release,
- };
- /*
-diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
-index d36cc84..c16c3b9 100644
---- a/drivers/edac/i7core_edac.c
-+++ b/drivers/edac/i7core_edac.c
-@@ -1094,7 +1094,7 @@ static void addrmatch_release(struct device *device)
- 	kfree(device);
- }
- 
--static struct device_type addrmatch_type = {
-+static const struct device_type addrmatch_type = {
- 	.groups		= addrmatch_groups,
- 	.release	= addrmatch_release,
- };
-@@ -1125,7 +1125,7 @@ static void all_channel_counts_release(struct device *device)
- 	kfree(device);
- }
- 
--static struct device_type all_channel_counts_type = {
-+static const struct device_type all_channel_counts_type = {
- 	.groups		= all_channel_counts_groups,
- 	.release	= all_channel_counts_release,
- };
+-static struct device_type ttm_drm_class_type = {
++static const struct device_type ttm_drm_class_type = {
+ 	.name = "ttm",
+ 	/**
+ 	 * Add pm ops here.
 -- 
 1.9.1
