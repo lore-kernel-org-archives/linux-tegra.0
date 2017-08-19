@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 02/15] drm: make device_type const
-Date: Sat, 19 Aug 2017 13:52:13 +0530
-Message-ID: <1503130946-2854-3-git-send-email-bhumirks__41811.5616812885$1503131043$gmane$org@gmail.com>
+Subject: [PATCH 03/15] [media] i2c: make device_type const
+Date: Sat, 19 Aug 2017 13:52:14 +0530
+Message-ID: <1503130946-2854-4-git-send-email-bhumirks__41004.2654177689$1503131055$gmane$org@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -10,39 +10,27 @@ To: julia.lawall-L2FTfq7BK8M@public.gmane.org, bp-Gina5bIWoIWzQB+pC5nmwQ@public.
 Cc: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Make these const as they are only stored in the type field of a device
+Make this const as it is only stored in the type field of a device
 structure, which is const.
 Done using Coccinelle.
----
- drivers/gpu/drm/drm_sysfs.c      | 2 +-
- drivers/gpu/drm/ttm/ttm_module.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
-index 1c5b5ce..84e4ebe 100644
---- a/drivers/gpu/drm/drm_sysfs.c
-+++ b/drivers/gpu/drm/drm_sysfs.c
-@@ -39,7 +39,7 @@
-  * drm_connector_unregister().
-  */
- 
--static struct device_type drm_sysfs_device_minor = {
-+static const struct device_type drm_sysfs_device_minor = {
- 	.name = "drm_minor"
+Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/media/i2c/soc_camera/mt9t031.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/i2c/soc_camera/mt9t031.c b/drivers/media/i2c/soc_camera/mt9t031.c
+index 714fb35..4802d30 100644
+--- a/drivers/media/i2c/soc_camera/mt9t031.c
++++ b/drivers/media/i2c/soc_camera/mt9t031.c
+@@ -592,7 +592,7 @@ static int mt9t031_runtime_resume(struct device *dev)
+ 	.runtime_resume		= mt9t031_runtime_resume,
  };
  
-diff --git a/drivers/gpu/drm/ttm/ttm_module.c b/drivers/gpu/drm/ttm/ttm_module.c
-index 66fc639..e6604e0 100644
---- a/drivers/gpu/drm/ttm/ttm_module.c
-+++ b/drivers/gpu/drm/ttm/ttm_module.c
-@@ -37,7 +37,7 @@
- static DECLARE_WAIT_QUEUE_HEAD(exit_q);
- static atomic_t device_released;
- 
--static struct device_type ttm_drm_class_type = {
-+static const struct device_type ttm_drm_class_type = {
- 	.name = "ttm",
- 	/**
- 	 * Add pm ops here.
+-static struct device_type mt9t031_dev_type = {
++static const struct device_type mt9t031_dev_type = {
+ 	.name	= "MT9T031",
+ 	.pm	= &mt9t031_dev_pm_ops,
+ };
 -- 
 1.9.1
