@@ -1,36 +1,57 @@
-From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 15/15] usb: make device_type const
-Date: Sat, 19 Aug 2017 13:52:26 +0530
-Message-ID: <1503130946-2854-16-git-send-email-bhumirks__9414.75746590204$1503131291$gmane$org@gmail.com>
-References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4] gpu: host1x: Enable Tegra186 syncpoint protection
+Date: Sat, 19 Aug 2017 13:09:59 +0300
+Message-ID: <0c3682ea-3faf-0f36-eec0-3b5cf49c855c@gmail.com>
+References: <20170818161553.27597-1-mperttunen@nvidia.com>
+ <20170818161553.27597-2-mperttunen@nvidia.com>
+ <d6d10aec-3d2a-99b3-a23d-41147478f412@gmail.com>
+ <5ff98485-e8ac-75e0-ca8f-3887f8593ec4@kapsi.fi>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <5ff98485-e8ac-75e0-ca8f-3887f8593ec4-/1wQRMveznE@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: julia.lawall-L2FTfq7BK8M@public.gmane.org, bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, g.liakhovetski-Mmb7MZpHnFY@public.gmane.org, tomas.winkler-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, cyrille.pitchen-yU5RGvR974pGWvitb5QawA@public.gmane.org, peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dvhart-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, andy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org, bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, freude-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, schwidefsky-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, heiko.carstens-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, jth-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jejb-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, martin.petersen-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, lduncan-IBi9RG/b67k@public.gmane.org, cleech-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, elder-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.orgheik
-Cc: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Make this const as it is only stored in the type field of a device
-structure, which is const.
-Done using Coccinelle.
+On 19.08.2017 11:10, Mikko Perttunen wrote:
+[snip]
+>>> +    host1x_hw_syncpt_set_protection(host, true);
+>>
+>> Is it really okay to force the protection? Maybe protection should be enabled
+>> with a respect to CONFIG_TEGRA_HOST1X_FIREWALL? In that case we would have to
+>> avoid software jobs validation for Tegra124+.
+> 
+> I don't quite get your comment. The hardware syncpt protection layer being
+> enabled should never hurt - it doesn't mess with any valid jobs. It's also only
+> on Tegra186 so I'm not sure where the Tegra124 comes from.
 
-Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/usb/common/ulpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Right, it's the gather filter on T124+, my bad. This raises several questions.
 
-diff --git a/drivers/usb/common/ulpi.c b/drivers/usb/common/ulpi.c
-index 930e8f3..4aa5195 100644
---- a/drivers/usb/common/ulpi.c
-+++ b/drivers/usb/common/ulpi.c
-@@ -135,7 +135,7 @@ static void ulpi_dev_release(struct device *dev)
- 	kfree(to_ulpi_dev(dev));
- }
- 
--static struct device_type ulpi_dev_type = {
-+static const struct device_type ulpi_dev_type = {
- 	.name = "ulpi_device",
- 	.groups = ulpi_dev_attr_groups,
- 	.release = ulpi_dev_release,
+1) Why we have CONFIG_TEGRA_HOST1X_FIREWALL? Should it be always enforced or we
+actually want to be a bit more flexible and allow to disable it. Imagine that
+you are making a custom application and want to utilize channels in a different way.
+
+2) Since syncpoint protection is a T186 feature, what about previous
+generations? Should we validate syncpoints in software for them? We have
+'syncpoint validation' patch staged in grate's kernel
+https://github.com/grate-driver/linux/commit/c8b6c82173f2ee9fead23380e8330b8099e7d5e7
+(I'll start sending out this and other patches after a bit more thorough
+testing.) Improperly used syncpoints potentially could allow one program to
+damage others.
+
+3) What exactly does gather filter? Could you list all the commands that it
+filters out, please?
+
+4) What about T30/T114 that do not have gather filter? Should we validate those
+commands for them in a software firewall?
+
+So maybe we should implement several layers of validation in the SW firewall.
+Like all layers for T20 (memory boundaries validation etc), software gather
+filter for T30/114 and software syncpoint validation for T30/114/124/210.
+
 -- 
-1.9.1
+Dmitry
