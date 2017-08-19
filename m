@@ -1,7 +1,7 @@
 From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 11/15] remoteproc: make device_type const
-Date: Sat, 19 Aug 2017 13:52:22 +0530
-Message-ID: <1503130946-2854-12-git-send-email-bhumirks@gmail.com>
+Subject: [PATCH 12/15] s390/zcrypt: make device_type const
+Date: Sat, 19 Aug 2017 13:52:23 +0530
+Message-ID: <1503130946-2854-13-git-send-email-bhumirks__5727.90244264088$1503131224$gmane$org@gmail.com>
 References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -10,27 +10,41 @@ To: julia.lawall-L2FTfq7BK8M@public.gmane.org, bp-Gina5bIWoIWzQB+pC5nmwQ@public.
 Cc: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Make this const as it is only stored in the type field of a device
+Make these const as they are only stored in the type field of a device
 structure, which is const.
 Done using Coccinelle.
 
 Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/crypto/ap_card.c  | 2 +-
+ drivers/s390/crypto/ap_queue.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 364ef28..48b2c5d 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1360,7 +1360,7 @@ static void rproc_type_release(struct device *dev)
- 	kfree(rproc);
- }
+diff --git a/drivers/s390/crypto/ap_card.c b/drivers/s390/crypto/ap_card.c
+index 836efac9..0329148 100644
+--- a/drivers/s390/crypto/ap_card.c
++++ b/drivers/s390/crypto/ap_card.c
+@@ -153,7 +153,7 @@ static ssize_t ap_modalias_show(struct device *dev,
+ 	NULL
+ };
  
--static struct device_type rproc_type = {
-+static const struct device_type rproc_type = {
- 	.name		= "remoteproc",
- 	.release	= rproc_type_release,
+-static struct device_type ap_card_type = {
++static const struct device_type ap_card_type = {
+ 	.name = "ap_card",
+ 	.groups = ap_card_dev_attr_groups,
+ };
+diff --git a/drivers/s390/crypto/ap_queue.c b/drivers/s390/crypto/ap_queue.c
+index 0f1a5d0..e2a85c26 100644
+--- a/drivers/s390/crypto/ap_queue.c
++++ b/drivers/s390/crypto/ap_queue.c
+@@ -577,7 +577,7 @@ static ssize_t ap_interrupt_show(struct device *dev,
+ 	NULL
+ };
+ 
+-static struct device_type ap_queue_type = {
++static const struct device_type ap_queue_type = {
+ 	.name = "ap_queue",
+ 	.groups = ap_queue_dev_attr_groups,
  };
 -- 
 1.9.1
