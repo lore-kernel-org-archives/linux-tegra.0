@@ -1,34 +1,155 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH 01/15] EDAC: make device_type const
-Date: Sun, 20 Aug 2017 13:29:55 +0200
-Message-ID: <20170820112954.bi5oiebbm3i4gtru@pd.tnic>
-References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
- <1503130946-2854-2-git-send-email-bhumirks@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4] gpu: host1x: Enable Tegra186 syncpoint protection
+Date: Sun, 20 Aug 2017 19:18:22 +0300
+Message-ID: <7db4c129-81aa-6f41-1b98-c301d057facf@gmail.com>
+References: <20170818161553.27597-1-mperttunen@nvidia.com>
+ <20170818161553.27597-2-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1503130946-2854-2-git-send-email-bhumirks@gmail.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Bhumika Goyal <bhumirks@gmail.com>
-Cc: julia.lawall@lip6.fr, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.inte
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170818161553.27597-2-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Aug 19, 2017 at 01:52:12PM +0530, Bhumika Goyal wrote:
-> Make these const as they are only stored in the type field of a device
-> structure, which is const.
-> Done using Coccinelle.
+On 18.08.2017 19:15, Mikko Perttunen wrote:
+> Since Tegra186 the Host1x hardware allows syncpoints to be assigned to
+> specific channels, preventing any other channels from incrementing
+> them.
 > 
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> Enable this feature where available and assign syncpoints to channels
+> when submitting a job. Syncpoints are currently never unassigned from
+> channels since that would require extra work and is unnecessary with
+> the current channel allocation model.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/edac/edac_mc_sysfs.c | 8 ++++----
->  drivers/edac/i7core_edac.c   | 4 ++--
->  2 files changed, 6 insertions(+), 6 deletions(-)
+>  drivers/gpu/host1x/dev.h           | 16 ++++++++++++++++
+>  drivers/gpu/host1x/hw/channel_hw.c |  3 +++
+>  drivers/gpu/host1x/hw/syncpt_hw.c  | 26 ++++++++++++++++++++++++++
+>  drivers/gpu/host1x/syncpt.c        |  3 +++
+>  4 files changed, 48 insertions(+)
+> 
+> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+> index def802c0a6bf..2432a30ff6e2 100644
+> --- a/drivers/gpu/host1x/dev.h
+> +++ b/drivers/gpu/host1x/dev.h
+> @@ -79,6 +79,9 @@ struct host1x_syncpt_ops {
+>  	u32 (*load)(struct host1x_syncpt *syncpt);
+>  	int (*cpu_incr)(struct host1x_syncpt *syncpt);
+>  	int (*patch_wait)(struct host1x_syncpt *syncpt, void *patch_addr);
+> +	void (*assign_channel)(struct host1x_syncpt *syncpt,
+> +	                       struct host1x_channel *channel);
+> +	void (*set_protection)(struct host1x *host, bool enabled);
+>  };
+>  
+>  struct host1x_intr_ops {
+> @@ -186,6 +189,19 @@ static inline int host1x_hw_syncpt_patch_wait(struct host1x *host,
+>  	return host->syncpt_op->patch_wait(sp, patch_addr);
+>  }
+>  
+> +static inline void host1x_hw_syncpt_assign_channel(struct host1x *host,
+> +						   struct host1x_syncpt *sp,
+> +						   struct host1x_channel *ch)
+> +{
+> +	return host->syncpt_op->assign_channel(sp, ch);
+> +}
+> +
+> +static inline void host1x_hw_syncpt_set_protection(struct host1x *host,
+> +						   bool enabled)
+> +{
+> +	return host->syncpt_op->set_protection(host, enabled);
+> +}
+> +
+>  static inline int host1x_hw_intr_init_host_sync(struct host1x *host, u32 cpm,
+>  			void (*syncpt_thresh_work)(struct work_struct *))
+>  {
+> diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+> index 8447a56c41ca..0161da331702 100644
+> --- a/drivers/gpu/host1x/hw/channel_hw.c
+> +++ b/drivers/gpu/host1x/hw/channel_hw.c
+> @@ -147,6 +147,9 @@ static int channel_submit(struct host1x_job *job)
+>  
+>  	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
+>  
+> +	/* assign syncpoint to channel */
+> +	host1x_hw_syncpt_assign_channel(host, sp, ch);
+> +
+>  	job->syncpt_end = syncval;
+>  
+>  	/* add a setclass for modules that require it */
+> diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
+> index 7b0270d60742..5d117ab1699e 100644
+> --- a/drivers/gpu/host1x/hw/syncpt_hw.c
+> +++ b/drivers/gpu/host1x/hw/syncpt_hw.c
+> @@ -106,6 +106,30 @@ static int syncpt_patch_wait(struct host1x_syncpt *sp, void *patch_addr)
+>  	return 0;
+>  }
+>  
+> +static void syncpt_assign_channel(struct host1x_syncpt *sp,
+> +				  struct host1x_channel *ch)
+> +{
+> +#if HOST1X_HW >= 6
+> +	struct host1x *host = sp->host;
+> +
+> +	if (!host->hv_regs)
+> +		return;
+> +
+> +	host1x_sync_writel(host,
+> +			   HOST1X_SYNC_SYNCPT_CH_APP_CH(ch ? ch->id : 0xff),
+> +			   HOST1X_SYNC_SYNCPT_CH_APP(sp->id));
+> +#endif
+> +}
+> +
+> +static void syncpt_set_protection(struct host1x *host, bool enabled)
+> +{
+> +#if HOST1X_HW >= 6
+> +	host1x_hypervisor_writel(host,
+> +				 enabled ? HOST1X_HV_SYNCPT_PROT_EN_CH_EN : 0,
+> +				 HOST1X_HV_SYNCPT_PROT_EN);
+> +#endif
+> +}
+> +
+>  static const struct host1x_syncpt_ops host1x_syncpt_ops = {
+>  	.restore = syncpt_restore,
+>  	.restore_wait_base = syncpt_restore_wait_base,
+> @@ -113,4 +137,6 @@ static const struct host1x_syncpt_ops host1x_syncpt_ops = {
+>  	.load = syncpt_load,
+>  	.cpu_incr = syncpt_cpu_incr,
+>  	.patch_wait = syncpt_patch_wait,
+> +	.assign_channel = syncpt_assign_channel,
+> +	.set_protection = syncpt_set_protection,
+>  };
+> diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+> index 048ac9e344ce..fe4d963b3e2a 100644
+> --- a/drivers/gpu/host1x/syncpt.c
+> +++ b/drivers/gpu/host1x/syncpt.c
+> @@ -398,6 +398,8 @@ int host1x_syncpt_init(struct host1x *host)
+>  	for (i = 0; i < host->info->nb_pts; i++) {
+>  		syncpt[i].id = i;
+>  		syncpt[i].host = host;
+> +
+> +		host1x_hw_syncpt_assign_channel(host, &syncpt[i], NULL);
+>  	}
+>  
+>  	for (i = 0; i < host->info->nb_bases; i++)
+> @@ -408,6 +410,7 @@ int host1x_syncpt_init(struct host1x *host)
+>  	host->bases = bases;
+>  
+>  	host1x_syncpt_restore(host);
+> +	host1x_hw_syncpt_set_protection(host, true);
 
-Applied, thanks.
+Since protection is never disabled maybe something like
+host1x_hw_syncpt_enable_protection() would fit a bit better.
+
+>  
+>  	/* Allocate sync point to use for clearing waits for expired fences */
+>  	host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
+> 
+
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Dmitry
