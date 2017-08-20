@@ -1,61 +1,154 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/4] gpu: host1x: Enable gather filter
-Date: Sun, 20 Aug 2017 19:44:43 +0300
-Message-ID: <e9c8124c-fc3a-4f58-db88-3809be2969d9@gmail.com>
+Subject: Re: [PATCH 1/4] gpu: host1x: Enable Tegra186 syncpoint protection
+Date: Sun, 20 Aug 2017 19:59:16 +0300
+Message-ID: <f1b9194a-4b00-34df-7e41-20f57031e700@gmail.com>
 References: <20170818161553.27597-1-mperttunen@nvidia.com>
- <20170818161553.27597-3-mperttunen@nvidia.com>
- <78e11be6-1e4f-18e0-cdc0-13db4bf57bf6@gmail.com>
+ <20170818161553.27597-2-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <78e11be6-1e4f-18e0-cdc0-13db4bf57bf6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20170818161553.27597-2-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.08.2017 19:24, Dmitry Osipenko wrote:
-> On 18.08.2017 19:15, Mikko Perttunen wrote:
->> The gather filter is a feature present on Tegra124 and newer where the
->> hardware prevents GATHERed command buffers from executing commands
->> normally reserved for the CDMA pushbuffer which is maintained by the
->> kernel driver.
->>
->> This commit enables the gather filter on all supporting hardware.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/gpu/host1x/hw/channel_hw.c          | 22 ++++++++++++++++++++++
->>  drivers/gpu/host1x/hw/hw_host1x04_channel.h | 12 ++++++++++++
->>  drivers/gpu/host1x/hw/hw_host1x05_channel.h | 12 ++++++++++++
->>  3 files changed, 46 insertions(+)
->>
->> diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
->> index 0161da331702..5c0dc6bb51d1 100644
->> --- a/drivers/gpu/host1x/hw/channel_hw.c
->> +++ b/drivers/gpu/host1x/hw/channel_hw.c
->> @@ -181,10 +181,32 @@ static int channel_submit(struct host1x_job *job)
->>  	return err;
->>  }
->>  
->> +static void enable_gather_filter(struct host1x *host,
->> +				 struct host1x_channel *ch)
->> +{
->> +#if HOST1X_HW >= 6
->> +	u32 val;
->> +
->> +	if (!host->hv_regs)
->> +		return;
+On 18.08.2017 19:15, Mikko Perttunen wrote:
+> Since Tegra186 the Host1x hardware allows syncpoints to be assigned to
+> specific channels, preventing any other channels from incrementing
+> them.
 > 
-> Is it really possible that gather filter could be not present on HW without
-> hypervisor? Maybe there is other way to enable it in that case?
+> Enable this feature where available and assign syncpoints to channels
+> when submitting a job. Syncpoints are currently never unassigned from
+> channels since that would require extra work and is unnecessary with
+> the current channel allocation model.
 > 
-> Is possible at all that hypervisor could be missed?
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/host1x/dev.h           | 16 ++++++++++++++++
+>  drivers/gpu/host1x/hw/channel_hw.c |  3 +++
+>  drivers/gpu/host1x/hw/syncpt_hw.c  | 26 ++++++++++++++++++++++++++
+>  drivers/gpu/host1x/syncpt.c        |  3 +++
+>  4 files changed, 48 insertions(+)
+> 
+> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+> index def802c0a6bf..2432a30ff6e2 100644
+> --- a/drivers/gpu/host1x/dev.h
+> +++ b/drivers/gpu/host1x/dev.h
+> @@ -79,6 +79,9 @@ struct host1x_syncpt_ops {
+>  	u32 (*load)(struct host1x_syncpt *syncpt);
+>  	int (*cpu_incr)(struct host1x_syncpt *syncpt);
+>  	int (*patch_wait)(struct host1x_syncpt *syncpt, void *patch_addr);
+> +	void (*assign_channel)(struct host1x_syncpt *syncpt,
+> +	                       struct host1x_channel *channel);
+> +	void (*set_protection)(struct host1x *host, bool enabled);
+>  };
+>  
+>  struct host1x_intr_ops {
+> @@ -186,6 +189,19 @@ static inline int host1x_hw_syncpt_patch_wait(struct host1x *host,
+>  	return host->syncpt_op->patch_wait(sp, patch_addr);
+>  }
+>  
+> +static inline void host1x_hw_syncpt_assign_channel(struct host1x *host,
+> +						   struct host1x_syncpt *sp,
+> +						   struct host1x_channel *ch)
+> +{
+> +	return host->syncpt_op->assign_channel(sp, ch);
+> +}
+> +
+> +static inline void host1x_hw_syncpt_set_protection(struct host1x *host,
+> +						   bool enabled)
+> +{
+> +	return host->syncpt_op->set_protection(host, enabled);
+> +}
+> +
+>  static inline int host1x_hw_intr_init_host_sync(struct host1x *host, u32 cpm,
+>  			void (*syncpt_thresh_work)(struct work_struct *))
+>  {
+> diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+> index 8447a56c41ca..0161da331702 100644
+> --- a/drivers/gpu/host1x/hw/channel_hw.c
+> +++ b/drivers/gpu/host1x/hw/channel_hw.c
+> @@ -147,6 +147,9 @@ static int channel_submit(struct host1x_job *job)
+>  
+>  	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
+>  
+> +	/* assign syncpoint to channel */
+> +	host1x_hw_syncpt_assign_channel(host, sp, ch);
+> +
+>  	job->syncpt_end = syncval;
+>  
+>  	/* add a setclass for modules that require it */
+> diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
+> index 7b0270d60742..5d117ab1699e 100644
+> --- a/drivers/gpu/host1x/hw/syncpt_hw.c
+> +++ b/drivers/gpu/host1x/hw/syncpt_hw.c
+> @@ -106,6 +106,30 @@ static int syncpt_patch_wait(struct host1x_syncpt *sp, void *patch_addr)
+>  	return 0;
+>  }
+>  
+> +static void syncpt_assign_channel(struct host1x_syncpt *sp,
+> +				  struct host1x_channel *ch)
+> +{
+> +#if HOST1X_HW >= 6
+> +	struct host1x *host = sp->host;
+> +
+> +	if (!host->hv_regs)
+> +		return;
 
-BTW, this is also incoherent with the 'syncpoint protection' patch which doesn't
-check for hypervisor presence.
+This check should be placed in syncpt_set_protection().
+
+> +
+> +	host1x_sync_writel(host,
+> +			   HOST1X_SYNC_SYNCPT_CH_APP_CH(ch ? ch->id : 0xff),
+> +			   HOST1X_SYNC_SYNCPT_CH_APP(sp->id));
+> +#endif
+> +}
+> +
+> +static void syncpt_set_protection(struct host1x *host, bool enabled)
+> +{
+> +#if HOST1X_HW >= 6
+> +	host1x_hypervisor_writel(host,
+> +				 enabled ? HOST1X_HV_SYNCPT_PROT_EN_CH_EN : 0,
+> +				 HOST1X_HV_SYNCPT_PROT_EN);
+> +#endif
+> +}
+> +
+>  static const struct host1x_syncpt_ops host1x_syncpt_ops = {
+>  	.restore = syncpt_restore,
+>  	.restore_wait_base = syncpt_restore_wait_base,
+> @@ -113,4 +137,6 @@ static const struct host1x_syncpt_ops host1x_syncpt_ops = {
+>  	.load = syncpt_load,
+>  	.cpu_incr = syncpt_cpu_incr,
+>  	.patch_wait = syncpt_patch_wait,
+> +	.assign_channel = syncpt_assign_channel,
+> +	.set_protection = syncpt_set_protection,
+>  };
+> diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+> index 048ac9e344ce..fe4d963b3e2a 100644
+> --- a/drivers/gpu/host1x/syncpt.c
+> +++ b/drivers/gpu/host1x/syncpt.c
+> @@ -398,6 +398,8 @@ int host1x_syncpt_init(struct host1x *host)
+>  	for (i = 0; i < host->info->nb_pts; i++) {
+>  		syncpt[i].id = i;
+>  		syncpt[i].host = host;
+> +
+> +		host1x_hw_syncpt_assign_channel(host, &syncpt[i], NULL);
+>  	}
+>  
+>  	for (i = 0; i < host->info->nb_bases; i++)
+> @@ -408,6 +410,7 @@ int host1x_syncpt_init(struct host1x *host)
+>  	host->bases = bases;
+>  
+>  	host1x_syncpt_restore(host);
+> +	host1x_hw_syncpt_set_protection(host, true);
+>  
+>  	/* Allocate sync point to use for clearing waits for expired fences */
+>  	host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
+> 
+
 
 -- 
 Dmitry
