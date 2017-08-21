@@ -1,155 +1,397 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] gpu: host1x: Enable Tegra186 syncpoint protection
-Date: Sun, 20 Aug 2017 21:13:00 +0300
-Message-ID: <aeef8a7b-d7f1-c9a4-fb7f-acd91bf5d940@gmail.com>
-References: <20170818161553.27597-1-mperttunen@nvidia.com>
- <20170818161553.27597-2-mperttunen@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v2 5/5] thermal: Add Tegra BPMP thermal sensor driver
+Date: Mon, 21 Aug 2017 10:40:44 +0800
+Message-ID: <4315091f-03b1-2df6-b224-6a29d3261371@nvidia.com>
+References: <20170724162918.21050-1-mperttunen@nvidia.com>
+ <20170724162918.21050-5-mperttunen@nvidia.com>
+ <1502420276.2598.5.camel@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170818161553.27597-2-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1502420276.2598.5.camel@intel.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, edubezval@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 18.08.2017 19:15, Mikko Perttunen wrote:
-> Since Tegra186 the Host1x hardware allows syncpoints to be assigned to
-> specific channels, preventing any other channels from incrementing
-> them.
-> 
-> Enable this feature where available and assign syncpoints to channels
-> when submitting a job. Syncpoints are currently never unassigned from
-> channels since that would require extra work and is unnecessary with
-> the current channel allocation model.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/host1x/dev.h           | 16 ++++++++++++++++
->  drivers/gpu/host1x/hw/channel_hw.c |  3 +++
->  drivers/gpu/host1x/hw/syncpt_hw.c  | 26 ++++++++++++++++++++++++++
->  drivers/gpu/host1x/syncpt.c        |  3 +++
->  4 files changed, 48 insertions(+)
-> 
-> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-> index def802c0a6bf..2432a30ff6e2 100644
-> --- a/drivers/gpu/host1x/dev.h
-> +++ b/drivers/gpu/host1x/dev.h
-> @@ -79,6 +79,9 @@ struct host1x_syncpt_ops {
->  	u32 (*load)(struct host1x_syncpt *syncpt);
->  	int (*cpu_incr)(struct host1x_syncpt *syncpt);
->  	int (*patch_wait)(struct host1x_syncpt *syncpt, void *patch_addr);
-> +	void (*assign_channel)(struct host1x_syncpt *syncpt,
-> +	                       struct host1x_channel *channel);
-> +	void (*set_protection)(struct host1x *host, bool enabled);
->  };
->  
->  struct host1x_intr_ops {
-> @@ -186,6 +189,19 @@ static inline int host1x_hw_syncpt_patch_wait(struct host1x *host,
->  	return host->syncpt_op->patch_wait(sp, patch_addr);
->  }
->  
-> +static inline void host1x_hw_syncpt_assign_channel(struct host1x *host,
-> +						   struct host1x_syncpt *sp,
-> +						   struct host1x_channel *ch)
-> +{
-> +	return host->syncpt_op->assign_channel(sp, ch);
-> +}
-> +
-> +static inline void host1x_hw_syncpt_set_protection(struct host1x *host,
-> +						   bool enabled)
-> +{
-> +	return host->syncpt_op->set_protection(host, enabled);
-> +}
-> +
->  static inline int host1x_hw_intr_init_host_sync(struct host1x *host, u32 cpm,
->  			void (*syncpt_thresh_work)(struct work_struct *))
->  {
-> diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-> index 8447a56c41ca..0161da331702 100644
-> --- a/drivers/gpu/host1x/hw/channel_hw.c
-> +++ b/drivers/gpu/host1x/hw/channel_hw.c
-> @@ -147,6 +147,9 @@ static int channel_submit(struct host1x_job *job)
->  
->  	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
->  
-> +	/* assign syncpoint to channel */
-> +	host1x_hw_syncpt_assign_channel(host, sp, ch);
-> +
-
-Since there is one client per channel, it probably would make sense to assign
-client syncpoints on host1x_channel_request().
-
->  	job->syncpt_end = syncval;
->  
->  	/* add a setclass for modules that require it */
-> diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
-> index 7b0270d60742..5d117ab1699e 100644
-> --- a/drivers/gpu/host1x/hw/syncpt_hw.c
-> +++ b/drivers/gpu/host1x/hw/syncpt_hw.c
-> @@ -106,6 +106,30 @@ static int syncpt_patch_wait(struct host1x_syncpt *sp, void *patch_addr)
->  	return 0;
->  }
->  
-> +static void syncpt_assign_channel(struct host1x_syncpt *sp,
-> +				  struct host1x_channel *ch)
-> +{
-> +#if HOST1X_HW >= 6
-> +	struct host1x *host = sp->host;
-> +
-> +	if (!host->hv_regs)
-> +		return;
-> +
-> +	host1x_sync_writel(host,
-> +			   HOST1X_SYNC_SYNCPT_CH_APP_CH(ch ? ch->id : 0xff),
-> +			   HOST1X_SYNC_SYNCPT_CH_APP(sp->id));
-> +#endif
-> +}
-> +
-> +static void syncpt_set_protection(struct host1x *host, bool enabled)
-> +{
-> +#if HOST1X_HW >= 6
-> +	host1x_hypervisor_writel(host,
-> +				 enabled ? HOST1X_HV_SYNCPT_PROT_EN_CH_EN : 0,
-> +				 HOST1X_HV_SYNCPT_PROT_EN);
-> +#endif
-> +}
-> +
->  static const struct host1x_syncpt_ops host1x_syncpt_ops = {
->  	.restore = syncpt_restore,
->  	.restore_wait_base = syncpt_restore_wait_base,
-> @@ -113,4 +137,6 @@ static const struct host1x_syncpt_ops host1x_syncpt_ops = {
->  	.load = syncpt_load,
->  	.cpu_incr = syncpt_cpu_incr,
->  	.patch_wait = syncpt_patch_wait,
-> +	.assign_channel = syncpt_assign_channel,
-> +	.set_protection = syncpt_set_protection,
->  };
-> diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-> index 048ac9e344ce..fe4d963b3e2a 100644
-> --- a/drivers/gpu/host1x/syncpt.c
-> +++ b/drivers/gpu/host1x/syncpt.c
-> @@ -398,6 +398,8 @@ int host1x_syncpt_init(struct host1x *host)
->  	for (i = 0; i < host->info->nb_pts; i++) {
->  		syncpt[i].id = i;
->  		syncpt[i].host = host;
-> +
-> +		host1x_hw_syncpt_assign_channel(host, &syncpt[i], NULL);
->  	}
->  
->  	for (i = 0; i < host->info->nb_bases; i++)
-> @@ -408,6 +410,7 @@ int host1x_syncpt_init(struct host1x *host)
->  	host->bases = bases;
->  
->  	host1x_syncpt_restore(host);
-> +	host1x_hw_syncpt_set_protection(host, true);
->  
->  	/* Allocate sync point to use for clearing waits for expired fences */
->  	host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
-> 
 
 
--- 
-Dmitry
+On Friday, August 11, 2017 10:57 AM, Zhang Rui wrote:
+> On Mon, 2017-07-24 at 19:29 +0300, Mikko Perttunen wrote:
+>> On Tegra186, the BPMP (Boot and Power Management Processor) exposes
+>> an
+>> interface to thermal sensors on the system-on-chip. This driver
+>> implements access to the interface. It supports reading the
+>> temperature, setting trip points and receiving notification of a
+>> tripped trip point.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> 
+> Wei Ni,
+> 
+> what do you think of this patch?
+
+Reviewed this patch, it looked fine to me.
+
+> 
+> thanks,
+> rui
+>> ---
+>> v2:
+>> - don't allocate space for disabled zones
+>> - allow compilation with COMPILE_TEST
+>>
+>>  drivers/thermal/Makefile             |   2 +-
+>>  drivers/thermal/tegra/Kconfig        |   7 +
+>>  drivers/thermal/tegra/Makefile       |   3 +-
+>>  drivers/thermal/tegra/bpmp-thermal.c | 263
+>> +++++++++++++++++++++++++++++++++++
+>>  4 files changed, 273 insertions(+), 2 deletions(-)
+>>  create mode 100644 drivers/thermal/tegra/bpmp-thermal.c
+>>
+>> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+>> index 094d7039981c..c03dccdba7b8 100644
+>> --- a/drivers/thermal/Makefile
+>> +++ b/drivers/thermal/Makefile
+>> @@ -54,7 +54,7 @@ obj-$(CONFIG_INTEL_BXT_PMIC_THERMAL) +=
+>> intel_bxt_pmic_thermal.o
+>>  obj-$(CONFIG_INTEL_PCH_THERMAL)	+= intel_pch_thermal.o
+>>  obj-$(CONFIG_ST_THERMAL)	+= st/
+>>  obj-$(CONFIG_QCOM_TSENS)	+= qcom/
+>> -obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra/
+>> +obj-y				+= tegra/
+>>  obj-$(CONFIG_HISI_THERMAL)     += hisi_thermal.o
+>>  obj-$(CONFIG_MTK_THERMAL)	+= mtk_thermal.o
+>>  obj-$(CONFIG_GENERIC_ADC_THERMAL)	+= thermal-generic-adc.o
+>> diff --git a/drivers/thermal/tegra/Kconfig
+>> b/drivers/thermal/tegra/Kconfig
+>> index cec586ec7e4b..f8740f7852e3 100644
+>> --- a/drivers/thermal/tegra/Kconfig
+>> +++ b/drivers/thermal/tegra/Kconfig
+>> @@ -10,4 +10,11 @@ config TEGRA_SOCTHERM
+>>  	  zones to manage temperatures. This option is also required
+>> for the
+>>  	  emergency thermal reset (thermtrip) feature to function.
+>>  
+>> +config TEGRA_BPMP_THERMAL
+>> +	tristate "Tegra BPMP thermal sensing"
+>> +	depends on TEGRA_BPMP || COMPILE_TEST
+>> +	help
+>> +	 Enable this option for support for sensing system
+>> temperature of NVIDIA
+>> +	 Tegra systems-on-chip with the BPMP coprocessor (Tegra186).
+>> +
+>>  endmenu
+>> diff --git a/drivers/thermal/tegra/Makefile
+>> b/drivers/thermal/tegra/Makefile
+>> index 1ce1af2cf0f5..757abcd1feaf 100644
+>> --- a/drivers/thermal/tegra/Makefile
+>> +++ b/drivers/thermal/tegra/Makefile
+>> @@ -1,4 +1,5 @@
+>> -obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra-soctherm.o
+>> +obj-$(CONFIG_TEGRA_SOCTHERM)		+= tegra-soctherm.o
+>> +obj-$(CONFIG_TEGRA_BPMP_THERMAL)	+= bpmp-thermal.o
+>>  
+>>  tegra-soctherm-y				:= soctherm.o
+>> soctherm-fuse.o
+>>  tegra-soctherm-$(CONFIG_ARCH_TEGRA_124_SOC)	+= tegra124-
+>> soctherm.o
+>> diff --git a/drivers/thermal/tegra/bpmp-thermal.c
+>> b/drivers/thermal/tegra/bpmp-thermal.c
+>> new file mode 100644
+>> index 000000000000..b0980dbca3b3
+>> --- /dev/null
+>> +++ b/drivers/thermal/tegra/bpmp-thermal.c
+>> @@ -0,0 +1,263 @@
+>> +/*
+>> + * Copyright (c) 2015-2017, NVIDIA CORPORATION.  All rights
+>> reserved.
+>> + *
+>> + * Author:
+>> + *	Mikko Perttunen <mperttunen@nvidia.com>
+>> + *	Aapo Vienamo	<avienamo@nvidia.com>
+>> + *
+>> + * This software is licensed under the terms of the GNU General
+>> Public
+>> + * License version 2, as published by the Free Software Foundation,
+>> and
+>> + * may be copied, distributed, and modified under those terms.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + */
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/thermal.h>
+>> +#include <linux/workqueue.h>
+>> +
+>> +#include <soc/tegra/bpmp.h>
+>> +#include <soc/tegra/bpmp-abi.h>
+>> +
+>> +struct tegra_bpmp_thermal_zone {
+>> +	struct tegra_bpmp_thermal *tegra;
+>> +	struct thermal_zone_device *tzd;
+>> +	struct work_struct tz_device_update_work;
+>> +	unsigned int idx;
+>> +};
+>> +
+>> +struct tegra_bpmp_thermal {
+>> +	struct device *dev;
+>> +	struct tegra_bpmp *bpmp;
+>> +	unsigned int num_zones;
+>> +	struct tegra_bpmp_thermal_zone **zones;
+>> +};
+>> +
+>> +static int tegra_bpmp_thermal_get_temp(void *data, int *out_temp)
+>> +{
+>> +	struct tegra_bpmp_thermal_zone *zone = data;
+>> +	struct mrq_thermal_host_to_bpmp_request req;
+>> +	union mrq_thermal_bpmp_to_host_response reply;
+>> +	struct tegra_bpmp_message msg;
+>> +	int err;
+>> +
+>> +	memset(&req, 0, sizeof(req));
+>> +	req.type = CMD_THERMAL_GET_TEMP;
+>> +	req.get_temp.zone = zone->idx;
+>> +
+>> +	memset(&msg, 0, sizeof(msg));
+>> +	msg.mrq = MRQ_THERMAL;
+>> +	msg.tx.data = &req;
+>> +	msg.tx.size = sizeof(req);
+>> +	msg.rx.data = &reply;
+>> +	msg.rx.size = sizeof(reply);
+>> +
+>> +	err = tegra_bpmp_transfer(zone->tegra->bpmp, &msg);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	*out_temp = reply.get_temp.temp;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_bpmp_thermal_set_trips(void *data, int low, int
+>> high)
+>> +{
+>> +	struct tegra_bpmp_thermal_zone *zone = data;
+>> +	struct mrq_thermal_host_to_bpmp_request req;
+>> +	struct tegra_bpmp_message msg;
+>> +
+>> +	memset(&req, 0, sizeof(req));
+>> +	req.type = CMD_THERMAL_SET_TRIP;
+>> +	req.set_trip.zone = zone->idx;
+>> +	req.set_trip.enabled = true;
+>> +	req.set_trip.low = low;
+>> +	req.set_trip.high = high;
+>> +
+>> +	memset(&msg, 0, sizeof(msg));
+>> +	msg.mrq = MRQ_THERMAL;
+>> +	msg.tx.data = &req;
+>> +	msg.tx.size = sizeof(req);
+>> +
+>> +	return tegra_bpmp_transfer(zone->tegra->bpmp, &msg);
+>> +}
+>> +
+>> +static void tz_device_update_work_fn(struct work_struct *work)
+>> +{
+>> +	struct tegra_bpmp_thermal_zone *zone;
+>> +
+>> +	zone = container_of(work, struct tegra_bpmp_thermal_zone,
+>> +			    tz_device_update_work);
+>> +
+>> +	thermal_zone_device_update(zone->tzd,
+>> THERMAL_TRIP_VIOLATED);
+>> +}
+>> +
+>> +static void bpmp_mrq_thermal(unsigned int mrq, struct
+>> tegra_bpmp_channel *ch,
+>> +			     void *data)
+>> +{
+>> +	struct mrq_thermal_bpmp_to_host_request *req;
+>> +	struct tegra_bpmp_thermal *tegra = data;
+>> +	int i;
+>> +
+>> +	req = (struct mrq_thermal_bpmp_to_host_request *)ch->ib-
+>>> data;
+>> +
+>> +	if (req->type != CMD_THERMAL_HOST_TRIP_REACHED) {
+>> +		dev_err(tegra->dev, "%s: invalid request type:
+>> %d\n",
+>> +			__func__, req->type);
+>> +		tegra_bpmp_mrq_return(ch, -EINVAL, NULL, 0);
+>> +		return;
+>> +	}
+>> +
+>> +	for (i = 0; i < tegra->num_zones; ++i) {
+>> +		if (tegra->zones[i]->idx != req-
+>>> host_trip_reached.zone)
+>> +			continue;
+>> +
+>> +		schedule_work(&tegra->zones[i]-
+>>> tz_device_update_work);
+>> +		tegra_bpmp_mrq_return(ch, 0, NULL, 0);
+>> +		return;
+>> +	}
+>> +
+>> +	dev_err(tegra->dev, "%s: invalid thermal zone: %d\n",
+>> __func__,
+>> +		req->host_trip_reached.zone);
+>> +	tegra_bpmp_mrq_return(ch, -EINVAL, NULL, 0);
+>> +}
+>> +
+>> +static int tegra_bpmp_thermal_get_num_zones(struct tegra_bpmp *bpmp,
+>> +					    int *num_zones)
+>> +{
+>> +	struct mrq_thermal_host_to_bpmp_request req;
+>> +	union mrq_thermal_bpmp_to_host_response reply;
+>> +	struct tegra_bpmp_message msg;
+>> +	int err;
+>> +
+>> +	memset(&req, 0, sizeof(req));
+>> +	req.type = CMD_THERMAL_GET_NUM_ZONES;
+>> +
+>> +	memset(&msg, 0, sizeof(msg));
+>> +	msg.mrq = MRQ_THERMAL;
+>> +	msg.tx.data = &req;
+>> +	msg.tx.size = sizeof(req);
+>> +	msg.rx.data = &reply;
+>> +	msg.rx.size = sizeof(reply);
+>> +
+>> +	err = tegra_bpmp_transfer(bpmp, &msg);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	*num_zones = reply.get_num_zones.num;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct thermal_zone_of_device_ops
+>> tegra_bpmp_of_thermal_ops = {
+>> +	.get_temp = tegra_bpmp_thermal_get_temp,
+>> +	.set_trips = tegra_bpmp_thermal_set_trips,
+>> +};
+>> +
+>> +static int tegra_bpmp_thermal_probe(struct platform_device *pdev)
+>> +{
+>> +	struct tegra_bpmp *bpmp = dev_get_drvdata(pdev->dev.parent);
+>> +	struct tegra_bpmp_thermal *tegra;
+>> +	struct thermal_zone_device *tzd;
+>> +	unsigned int i, max_num_zones;
+>> +	int err;
+>> +
+>> +	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra),
+>> GFP_KERNEL);
+>> +	if (!tegra)
+>> +		return -ENOMEM;
+>> +
+>> +	tegra->dev = &pdev->dev;
+>> +	tegra->bpmp = bpmp;
+>> +
+>> +	err = tegra_bpmp_thermal_get_num_zones(bpmp,
+>> &max_num_zones);
+>> +	if (err) {
+>> +		dev_err(&pdev->dev, "failed to get the number of
+>> zones: %d\n",
+>> +			err);
+>> +		return err;
+>> +	}
+>> +
+>> +	tegra->zones = devm_kcalloc(&pdev->dev, max_num_zones,
+>> +				    sizeof(*tegra->zones),
+>> GFP_KERNEL);
+>> +	if (!tegra->zones)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = 0; i < max_num_zones; ++i) {
+>> +		struct tegra_bpmp_thermal_zone *zone;
+>> +		int temp;
+>> +
+>> +		zone = devm_kzalloc(&pdev->dev, sizeof(*zone),
+>> GFP_KERNEL);
+>> +		if (!zone)
+>> +			return -ENOMEM;
+>> +
+>> +		zone->idx = i;
+>> +		zone->tegra = tegra;
+>> +
+>> +		err = tegra_bpmp_thermal_get_temp(zone, &temp);
+>> +		if (err < 0) {
+>> +			devm_kfree(&pdev->dev, zone);
+>> +			continue;
+>> +		}
+>> +
+>> +		tzd = devm_thermal_zone_of_sensor_register(
+>> +			&pdev->dev, i, zone,
+>> &tegra_bpmp_of_thermal_ops);
+>> +		if (IS_ERR(tzd)) {
+>> +			if (PTR_ERR(tzd) == -EPROBE_DEFER)
+>> +				return -EPROBE_DEFER;
+>> +			devm_kfree(&pdev->dev, zone);
+>> +			continue;
+>> +		}
+>> +
+>> +		zone->tzd = tzd;
+>> +		INIT_WORK(&zone->tz_device_update_work,
+>> +			  tz_device_update_work_fn);
+>> +
+>> +		tegra->zones[tegra->num_zones++] = zone;
+>> +	}
+>> +
+>> +	err = tegra_bpmp_request_mrq(bpmp, MRQ_THERMAL,
+>> bpmp_mrq_thermal,
+>> +				     tegra);
+>> +	if (err) {
+>> +		dev_err(&pdev->dev, "failed to register mrq handler:
+>> %d\n",
+>> +			err);
+>> +		return err;
+>> +	}
+>> +
+>> +	platform_set_drvdata(pdev, tegra);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_bpmp_thermal_remove(struct platform_device *pdev)
+>> +{
+>> +	struct tegra_bpmp_thermal *tegra =
+>> platform_get_drvdata(pdev);
+>> +
+>> +	tegra_bpmp_free_mrq(tegra->bpmp, MRQ_THERMAL, tegra);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id tegra_bpmp_thermal_of_match[] = {
+>> +	{ .compatible = "nvidia,tegra186-bpmp-thermal" },
+>> +	{ },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, tegra_bpmp_thermal_of_match);
+>> +
+>> +static struct platform_driver tegra_bpmp_thermal_driver = {
+>> +	.probe = tegra_bpmp_thermal_probe,
+>> +	.remove = tegra_bpmp_thermal_remove,
+>> +	.driver = {
+>> +		.name = "tegra-bpmp-thermal",
+>> +		.of_match_table = tegra_bpmp_thermal_of_match,
+>> +	},
+>> +};
+>> +module_platform_driver(tegra_bpmp_thermal_driver);
+>> +
+>> +MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
+>> +MODULE_DESCRIPTION("NVIDIA Tegra BPMP thermal sensor driver");
+>> +MODULE_LICENSE("GPL v2");
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
