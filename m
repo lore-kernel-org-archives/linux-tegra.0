@@ -1,156 +1,54 @@
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] i2c: busses: make i2c_adapter_quirks const
-Date: Mon, 21 Aug 2017 17:42:04 +0530
-Message-ID: <1503317524-21276-1-git-send-email-bhumirks@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: julia.lawall@lip6.fr, ludovic.desroches@microchip.com, wsa@the-dreams.de, jochen@scram.de, vadimp@mellanox.com, michaelsh@mellanox.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, andy.gross@linaro.org, david.brown@linaro.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] mmc: tegra: suppress errors when probe is deferred
+Date: Mon, 21 Aug 2017 16:05:39 +0300
+Message-ID: <307ce3c1-0a32-9fce-b68f-63aad2118290@intel.com>
+References: <1502970766-23541-1-git-send-email-talho@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1502970766-23541-1-git-send-email-talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Make these const as they are only stored as a reference in the quirks
-field of an i2c_adapter structure, which is const.
+On 17/08/17 14:52, Timo Alho wrote:
+> Don't print error message when clk_get() returns -EPROBE_DEFER. On
+> recent Tegra chips (t186 onwards), the clocks are provided by
+> auxiliary microprocessor (bpmp) and until the driver for it is probed
+> clocks are not available.
+> 
+> While at it, change the real error message more meaningful.
+> 
+> Signed-off-by: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Done using Coccinelle:
-@match disable optional_qualifier@
-identifier s;
-@@
-static struct i2c_adapter_quirks s = {...};
+One comment below, nevertheless:
 
-@ref@
-position p;
-identifier match.s;
-@@
-s@p
+Acked-by: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
-@good1@
-identifier y;
-position ref.p;
-identifier match.s;
-@@
-struct i2c_adapter y = {...,.quirks=&s@p,...};
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index f668a6f..cdde9ff 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -501,8 +501,10 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>  
+>  	clk = devm_clk_get(mmc_dev(host->mmc), NULL);
+>  	if (IS_ERR(clk)) {
+> -		dev_err(mmc_dev(host->mmc), "clk err\n");
+>  		rc = PTR_ERR(clk);
+> +		if (rc != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev,
 
-@good2@
-struct i2c_adapter y;
-identifier match.s;
-position ref.p;
-@@
-y.quirks = &s@p
+Looks a bit weird sometimes using mmc_dev(host->mmc) and sometimes &pdev->dev.
 
-@bad depends on  !good1 && !good2@
-position ref.p;
-identifier match.s;
-@@
-s@p
-
-@depends on forall !bad disable optional_qualifier@
-identifier match.s;
-@@
-static
-+ const
-struct i2c_adapter_quirks s;
-
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/i2c/busses/i2c-at91.c     | 2 +-
- drivers/i2c/busses/i2c-cpm.c      | 2 +-
- drivers/i2c/busses/i2c-mlxcpld.c  | 2 +-
- drivers/i2c/busses/i2c-opal.c     | 2 +-
- drivers/i2c/busses/i2c-powermac.c | 2 +-
- drivers/i2c/busses/i2c-qup.c      | 2 +-
- drivers/i2c/busses/i2c-tegra.c    | 2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
-index 38dd61d..bfd1fdf 100644
---- a/drivers/i2c/busses/i2c-at91.c
-+++ b/drivers/i2c/busses/i2c-at91.c
-@@ -809,7 +809,7 @@ static int at91_twi_xfer(struct i2c_adapter *adap, struct i2c_msg *msg, int num)
-  * The hardware can handle at most two messages concatenated by a
-  * repeated start via it's internal address feature.
-  */
--static struct i2c_adapter_quirks at91_twi_quirks = {
-+static const struct i2c_adapter_quirks at91_twi_quirks = {
- 	.flags = I2C_AQ_COMB | I2C_AQ_COMB_WRITE_FIRST | I2C_AQ_COMB_SAME_ADDR,
- 	.max_comb_1st_msg_len = 3,
- };
-diff --git a/drivers/i2c/busses/i2c-cpm.c b/drivers/i2c/busses/i2c-cpm.c
-index d89bde2..8a8ca94 100644
---- a/drivers/i2c/busses/i2c-cpm.c
-+++ b/drivers/i2c/busses/i2c-cpm.c
-@@ -413,7 +413,7 @@ static u32 cpm_i2c_func(struct i2c_adapter *adap)
- };
- 
- /* CPM_MAX_READ is also limiting writes according to the code! */
--static struct i2c_adapter_quirks cpm_i2c_quirks = {
-+static const struct i2c_adapter_quirks cpm_i2c_quirks = {
- 	.max_num_msgs = CPM_MAXBD,
- 	.max_read_len = CPM_MAX_READ,
- 	.max_write_len = CPM_MAX_READ,
-diff --git a/drivers/i2c/busses/i2c-mlxcpld.c b/drivers/i2c/busses/i2c-mlxcpld.c
-index d271e6a..4c28fa2 100644
---- a/drivers/i2c/busses/i2c-mlxcpld.c
-+++ b/drivers/i2c/busses/i2c-mlxcpld.c
-@@ -433,7 +433,7 @@ static u32 mlxcpld_i2c_func(struct i2c_adapter *adap)
- 	.functionality	= mlxcpld_i2c_func
- };
- 
--static struct i2c_adapter_quirks mlxcpld_i2c_quirks = {
-+static const struct i2c_adapter_quirks mlxcpld_i2c_quirks = {
- 	.flags = I2C_AQ_COMB_WRITE_THEN_READ,
- 	.max_read_len = MLXCPLD_I2C_DATA_REG_SZ - MLXCPLD_I2C_MAX_ADDR_LEN,
- 	.max_write_len = MLXCPLD_I2C_DATA_REG_SZ,
-diff --git a/drivers/i2c/busses/i2c-opal.c b/drivers/i2c/busses/i2c-opal.c
-index 11e2a1f..0aabb7e 100644
---- a/drivers/i2c/busses/i2c-opal.c
-+++ b/drivers/i2c/busses/i2c-opal.c
-@@ -204,7 +204,7 @@ static u32 i2c_opal_func(struct i2c_adapter *adapter)
-  * For two messages, we basically support simple smbus transactions of a
-  * write-then-anything.
-  */
--static struct i2c_adapter_quirks i2c_opal_quirks = {
-+static const struct i2c_adapter_quirks i2c_opal_quirks = {
- 	.flags = I2C_AQ_COMB | I2C_AQ_COMB_WRITE_FIRST | I2C_AQ_COMB_SAME_ADDR,
- 	.max_comb_1st_msg_len = 4,
- };
-diff --git a/drivers/i2c/busses/i2c-powermac.c b/drivers/i2c/busses/i2c-powermac.c
-index ef9c858..f2a2067 100644
---- a/drivers/i2c/busses/i2c-powermac.c
-+++ b/drivers/i2c/busses/i2c-powermac.c
-@@ -197,7 +197,7 @@ static u32 i2c_powermac_func(struct i2c_adapter * adapter)
- 	.functionality	= i2c_powermac_func,
- };
- 
--static struct i2c_adapter_quirks i2c_powermac_quirks = {
-+static const struct i2c_adapter_quirks i2c_powermac_quirks = {
- 	.max_num_msgs = 1,
- };
- 
-diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-index 1902d8a..08f8e01 100644
---- a/drivers/i2c/busses/i2c-qup.c
-+++ b/drivers/i2c/busses/i2c-qup.c
-@@ -1396,7 +1396,7 @@ static u32 qup_i2c_func(struct i2c_adapter *adap)
-  * the end of the read, the length of the read is specified as one byte
-  * which limits the possible read to 256 (QUP_READ_LIMIT) bytes.
-  */
--static struct i2c_adapter_quirks qup_i2c_quirks = {
-+static const struct i2c_adapter_quirks qup_i2c_quirks = {
- 	.max_read_len = QUP_READ_LIMIT,
- };
- 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a238844..60292d2 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -793,7 +793,7 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
- };
- 
- /* payload size is only 12 bit */
--static struct i2c_adapter_quirks tegra_i2c_quirks = {
-+static const struct i2c_adapter_quirks tegra_i2c_quirks = {
- 	.max_read_len = 4096,
- 	.max_write_len = 4096,
- };
--- 
-1.9.1
+> +				"failed to get controller clock: %d\n", rc);
+>  		goto err_clk_get;
+>  	}
+>  	clk_prepare_enable(clk);
+> 
