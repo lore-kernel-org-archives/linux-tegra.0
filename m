@@ -1,48 +1,26 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 06/15] mtd:  make device_type const
-Date: Mon, 21 Aug 2017 22:12:23 +0200
-Message-ID: <20170821221223.0a44fe32@bbrezillon>
-References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-        <1503130946-2854-7-git-send-email-bhumirks@gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 4/6] dt-bindings: host1x: Fix and add Tegra186 information
+Date: Mon, 21 Aug 2017 21:39:23 -0500
+Message-ID: <20170822023923.nr22ujsuiousvt2y@rob-hp-laptop>
+References: <20170817185413.6324-1-mperttunen@nvidia.com>
+ <20170817185413.6324-5-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <1503130946-2854-7-git-send-email-bhumirks@gmail.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Bhumika Goyal <bhumirks@gmail.com>
-Cc: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170817185413.6324-5-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dnibade-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sgurrappadi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Le Sat, 19 Aug 2017 13:52:17 +0530,
-Bhumika Goyal <bhumirks@gmail.com> a écrit :
+On Thu, Aug 17, 2017 at 09:54:11PM +0300, Mikko Perttunen wrote:
+> Add note that address/size-cells should be 2 on 64-bit systems,
+> and add Tegra186-specific register range properties.
 
-> Make this const as it is only stored in the type field of a device
-> structure, which is const.
-> Done using Coccinelle.
-> 
+Generally the cell sizes have nothing to do with the addressing size of 
+the cpu. They should be as small as what fits for the given sub-tree. If 
+all the register space fits into 4GB, then there's no reason for the 
+#size-cells to be 2. The same is true if the sub-tree has a parent bus.
 
-Applied to l2-mtd/master.
-
-Thanks,
-
-Boris
-
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
-> ---
->  drivers/mtd/mtdcore.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-> index f872a99..e7ea842 100644
-> --- a/drivers/mtd/mtdcore.c
-> +++ b/drivers/mtd/mtdcore.c
-> @@ -340,7 +340,7 @@ static ssize_t mtd_bbtblocks_show(struct device *dev,
->  };
->  ATTRIBUTE_GROUPS(mtd);
->  
-> -static struct device_type mtd_devtype = {
-> +static const struct device_type mtd_devtype = {
->  	.name		= "mtd",
->  	.groups		= mtd_groups,
->  	.release	= mtd_release,
+Rob
