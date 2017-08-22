@@ -1,49 +1,46 @@
-From: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] soc/tegra: Register SoC device
-Date: Tue, 22 Aug 2017 11:15:21 +0100
-Message-ID: <61dde661-313f-0b51-233b-ce957c514a55@arm.com>
-References: <20170817144217.31346-1-thierry.reding@gmail.com>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 0/4] mmc: sdhci: sdhci_set_bus_width() cleanup
+Date: Tue, 22 Aug 2017 13:14:28 +0200
+Message-ID: <CAPDyKFoM1jU96y+NfDqJ=Cv=u6dPjCyppXkFY-qw7p1UXq_fMg@mail.gmail.com>
+References: <cover.1502740497.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170817144217.31346-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <cover.1502740497.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 14 August 2017 at 22:00, Micha=C5=82 Miros=C5=82aw <mirq-linux-CoA6ZxLDdyEAvxtiuMwx3w@public.gmane.org=
+.pl> wrote:
+> Some SDHCI drivers are reimplementing sdhci_set_bus_width() just because
+> they support 8-bit bus but don't advertise full SDHCI 3.0 compliance.
+> This unnecessarily duplicates the function. Let's remove those duplicates=
+.
+>
+> v2:
+>         - added commit messages from Adrian Hunter
+>
+> Micha=C5=82 Miros=C5=82aw (4):
+>   mmc: sdhci: key 8BITBUS bit off MMC_CAP_8_BIT_DATA
+>   mmc: sdhci-tegra: use generic sdhci_set_bus_width()
+>   mmc: sdhci-pci: use generic sdhci_set_bus_width()
+>   mmc: sdhci-s3c: use generic sdhci_set_bus_width()
+>
+>  drivers/mmc/host/sdhci-pci-core.c | 30 +++---------------------------
+>  drivers/mmc/host/sdhci-s3c.c      | 34 +--------------------------------=
+-
+>  drivers/mmc/host/sdhci-tegra.c    | 23 ++---------------------
+>  drivers/mmc/host/sdhci.c          |  5 ++---
+>  4 files changed, 8 insertions(+), 84 deletions(-)
+>
+> --
+> 2.11.0
+>
 
+Thanks, applied for next!
 
-On 17/08/17 15:42, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Move this code from arch/arm/mach-tegra and make it common among 32-bit
-> and 64-bit Tegra SoCs. This is slightly complicated by the fact that on
-> 32-bit Tegra, the SoC device is used as the parent for all devices that
-> are instantiated from device tree.
-> 
-
-This seem to be in linux-next and causing the below splat on my platform
-which is not Tegra :)
-
-WARNING: .... at drivers/soc/tegra/fuse/tegra-apbmisc.c:48
-tegra_get_chip_id+0x30/0x40
-Modules linked in:
-CPU: 2 PID: 1 Comm: swapper/0 Not tainted
-4.13.0-rc6-next-20170822-00008-g52a8e57512ae #13
-task: ffff8009768a0000 task.stack: ffff000008038000
-PC is at tegra_get_chip_id+0x30/0x40
-LR is at tegra_get_chip_id+0x30/0x40
- tegra_get_chip_id+0x30/0x40
- tegra_soc_device_register+0x68/0xd0
- tegra_init_soc+0x10/0x44
- do_one_initcall+0x38/0x120
- kernel_init_freeable+0x184/0x224
- kernel_init+0x10/0x100
- ret_from_fork+0x10/0x18
-
--- 
-Regards,
-Sudeep
+Kind regards
+Uffe
