@@ -1,49 +1,79 @@
-From: jeffy <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: Re: [v2] timers: Fix excessive granularity of new timers after a
- nohz idle
-Date: Wed, 23 Aug 2017 16:38:14 +0800
-Message-ID: <599D3EF6.9030000@rock-chips.com>
-References: <20170815134114.17547-6-thierry.reding@gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] soc/tegra: Register SoC device
+Date: Wed, 23 Aug 2017 10:49:36 +0200
+Message-ID: <CAK8P3a0XHobGzSzP4w5zCJNZ-v2bmZ8yFPs0PudD9XMETJDJdg@mail.gmail.com>
+References: <20170817144217.31346-1-thierry.reding@gmail.com>
+ <61dde661-313f-0b51-233b-ce957c514a55@arm.com> <20170822111922.GA15965@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170815134114.17547-6-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20170822111922.GA15965@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-i hit a compile error with this patch:
-
-   CC      drivers/gpu/drm/tegra/trace.o
-In file included from drivers/gpu/drm/tegra/trace.h:68:0,
-                  from drivers/gpu/drm/tegra/trace.c:2:
-./include/trace/define_trace.h:88:43: fatal error: ./trace.h: No such 
-file or directory
-compilation terminated.
-scripts/Makefile.build:311: recipe for target 
-'drivers/gpu/drm/tegra/trace.o' failed
-
-
-On 08/22/2017 04:43 PM, Nicholas Piggin wrote:
-> +++ b/drivers/gpu/drm/tegra/Makefile
-> @@ -24,4 +24,6 @@ tegra-drm-$(CONFIG_ARCH_TEGRA_186_SOC) += \
->   	parker/dsi.o \
->   	parker/sor.o
+On Tue, Aug 22, 2017 at 1:19 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Tue, Aug 22, 2017 at 11:15:21AM +0100, Sudeep Holla wrote:
+>>
+>>
+>> On 17/08/17 15:42, Thierry Reding wrote:
+>> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> >
+>> > Move this code from arch/arm/mach-tegra and make it common among 32-bit
+>> > and 64-bit Tegra SoCs. This is slightly complicated by the fact that on
+>> > 32-bit Tegra, the SoC device is used as the parent for all devices that
+>> > are instantiated from device tree.
+>> >
+>>
+>> This seem to be in linux-next and causing the below splat on my platform
+>> which is not Tegra :)
+>>
+>> WARNING: .... at drivers/soc/tegra/fuse/tegra-apbmisc.c:48
+>> tegra_get_chip_id+0x30/0x40
+>> Modules linked in:
+>> CPU: 2 PID: 1 Comm: swapper/0 Not tainted
+>> 4.13.0-rc6-next-20170822-00008-g52a8e57512ae #13
+>> task: ffff8009768a0000 task.stack: ffff000008038000
+>> PC is at tegra_get_chip_id+0x30/0x40
+>> LR is at tegra_get_chip_id+0x30/0x40
+>>  tegra_get_chip_id+0x30/0x40
+>>  tegra_soc_device_register+0x68/0xd0
+>>  tegra_init_soc+0x10/0x44
+>>  do_one_initcall+0x38/0x120
+>>  kernel_init_freeable+0x184/0x224
+>>  kernel_init+0x10/0x100
+>>  ret_from_fork+0x10/0x18
 >
-> +tegra-drm-y += trace.o
-> +
+> Indeed. Does the below patch fix this?
+>
+> Thierry
+>
+> --- >8 ---
+> From 5706cacc2af5e4ef138d1cd9e1269ca4947a447f Mon Sep 17 00:00:00 2001
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Date: Tue, 22 Aug 2017 13:15:18 +0200
+> Subject: [PATCH] soc/tegra: Restrict SoC device registration to Tegra
+>
+> Commit 8a46828e623c ("soc/tegra: Register SoC device") added an initcall
+> to register the SoC device on Tegra. However, that code is unrestricted
+> and will run on all platforms, causing unwanted warnings.
+>
+> Fix this by first checking that we're running on hardware that supports
+> the fuses block that we use to provide SoC information.
+>
+> Fixes: 8a46828e623c ("soc/tegra: Register SoC device")
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-maybe we need this:
+I just found the same thing by inspection after running into
 
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -19,4 +19,6 @@ tegra-drm-y := \
+drivers/soc/tegra/fuse/fuse-tegra.c:360:0: error: expected ';' at end of input
 
-  tegra-drm-y += trace.o
+Please fix that as well.
 
-+CFLAGS_trace.o := -I$(src)
-+
-  obj-$(CONFIG_DRM_TEGRA) += tegra-drm.o
+Lastly, I believe that tegra_init_fuse() has the same bug, it just doesn't lead
+to an Oops, just to a harmless warning message, but please add another
+check there, or combine the two checks in some form.
+
+     Arnd
