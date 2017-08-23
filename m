@@ -1,103 +1,50 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] soc/tegra: Register SoC device
-Date: Wed, 23 Aug 2017 11:21:02 +0200
-Message-ID: <CAK8P3a3y94FEZb1wpeJseuXCU40gCjTd+3mof1+zofEpg9VJOg@mail.gmail.com>
-References: <20170817144217.31346-1-thierry.reding@gmail.com>
- <61dde661-313f-0b51-233b-ce957c514a55@arm.com> <20170822111922.GA15965@ulmo>
- <CAK8P3a0XHobGzSzP4w5zCJNZ-v2bmZ8yFPs0PudD9XMETJDJdg@mail.gmail.com> <20170823091130.GA4157@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] soc/tegra: Restrict SoC device registration to Tegra
+Date: Wed, 23 Aug 2017 11:25:08 +0200
+Message-ID: <20170823092509.5243-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170823091130.GA4157@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 23, 2017 at 11:11 AM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Wed, Aug 23, 2017 at 10:49:36AM +0200, Arnd Bergmann wrote:
->> On Tue, Aug 22, 2017 at 1:19 PM, Thierry Reding
->> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> > On Tue, Aug 22, 2017 at 11:15:21AM +0100, Sudeep Holla wrote:
->> >>
->> >>
->> >> On 17/08/17 15:42, Thierry Reding wrote:
->> >> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> >> >
->> >> > Move this code from arch/arm/mach-tegra and make it common among 32-bit
->> >> > and 64-bit Tegra SoCs. This is slightly complicated by the fact that on
->> >> > 32-bit Tegra, the SoC device is used as the parent for all devices that
->> >> > are instantiated from device tree.
->> >> >
->> >>
->> >> This seem to be in linux-next and causing the below splat on my platform
->> >> which is not Tegra :)
->> >>
->> >> WARNING: .... at drivers/soc/tegra/fuse/tegra-apbmisc.c:48
->> >> tegra_get_chip_id+0x30/0x40
->> >> Modules linked in:
->> >> CPU: 2 PID: 1 Comm: swapper/0 Not tainted
->> >> 4.13.0-rc6-next-20170822-00008-g52a8e57512ae #13
->> >> task: ffff8009768a0000 task.stack: ffff000008038000
->> >> PC is at tegra_get_chip_id+0x30/0x40
->> >> LR is at tegra_get_chip_id+0x30/0x40
->> >>  tegra_get_chip_id+0x30/0x40
->> >>  tegra_soc_device_register+0x68/0xd0
->> >>  tegra_init_soc+0x10/0x44
->> >>  do_one_initcall+0x38/0x120
->> >>  kernel_init_freeable+0x184/0x224
->> >>  kernel_init+0x10/0x100
->> >>  ret_from_fork+0x10/0x18
->> >
->> > Indeed. Does the below patch fix this?
->> >
->> > Thierry
->> >
->> > --- >8 ---
->> > From 5706cacc2af5e4ef138d1cd9e1269ca4947a447f Mon Sep 17 00:00:00 2001
->> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> > Date: Tue, 22 Aug 2017 13:15:18 +0200
->> > Subject: [PATCH] soc/tegra: Restrict SoC device registration to Tegra
->> >
->> > Commit 8a46828e623c ("soc/tegra: Register SoC device") added an initcall
->> > to register the SoC device on Tegra. However, that code is unrestricted
->> > and will run on all platforms, causing unwanted warnings.
->> >
->> > Fix this by first checking that we're running on hardware that supports
->> > the fuses block that we use to provide SoC information.
->> >
->> > Fixes: 8a46828e623c ("soc/tegra: Register SoC device")
->> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> I just found the same thing by inspection after running into
->>
->> drivers/soc/tegra/fuse/fuse-tegra.c:360:0: error: expected ';' at end of input
->>
->> Please fix that as well.
->
-> Done, though it's strange that I didn't see those errors. Are those
-> compiler errors or sparse errors?
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-It's from the compiler. I just upgraded to gcc-8, which might explain
-it, or it could be configuration (module/built-in) dependent.
+Commit 8a46828e623c ("soc/tegra: Register SoC device") added an initcall
+to register the SoC device on Tegra. However, that code is unrestricted
+and will run on all platforms, causing unwanted warnings.
 
-> I'll be sending out both patches right away.
+Fix this by first checking that we're running on hardware that supports
+the fuses block that we use to provide SoC information.
 
-Thanks!
+Fixes: 8a46828e623c ("soc/tegra: Register SoC device")
+Reported-by: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
+Tested-by: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/soc/tegra/fuse/fuse-tegra.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
->> Lastly, I believe that tegra_init_fuse() has the same bug, it just doesn't lead
->> to an Oops, just to a harmless warning message, but please add another
->> check there, or combine the two checks in some form.
->
-> I don't think that's the case. The of_find_matching_node_and_match()
-> should catch all non-Tegra cases, and the backward-compatibility
-> fallback has an extra check on the SoC compatible. See the comment on
-> lines 295-298.
->
-> That code is fairly old and I haven't seen anybody bring up any errors
-> on non-Tegra platforms for that particular piece.
-
-My mistake, I see how it works now. Thanks for checking.
-
-     Arnd
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index e4f78de8f95f..be003d04383f 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -346,8 +346,16 @@ early_initcall(tegra_init_fuse);
+ #ifdef CONFIG_ARM64
+ static int __init tegra_init_soc(void)
+ {
++	struct device_node *np;
+ 	struct device *soc;
+ 
++	/* make sure we're running on Tegra */
++	np = of_find_matching_node(NULL, tegra_fuse_match);
++	if (!np)
++		return 0;
++
++	of_node_put(np);
++
+ 	soc = tegra_soc_device_register();
+ 	if (IS_ERR(soc)) {
+ 		pr_err("failed to register SoC device: %ld\n", PTR_ERR(soc));
+-- 
+2.13.3
