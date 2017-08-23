@@ -1,48 +1,50 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drm/tegra: trace: Fix path to include
-Date: Wed, 23 Aug 2017 22:56:14 +0300
-Message-ID: <e5f78b7f-68b2-957a-baf9-f69ba704163f@gmail.com>
-References: <20170823171326.23620-1-thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 00/14] Fixes for Tegra clocks
+Date: Wed, 23 Aug 2017 16:07:02 -0700
+Message-ID: <20170823230702.GK21656@codeaurora.org>
+References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+ <20170726013746.GM2146@codeaurora.org>
+ <20170726082728.GD26726@tbergstrom-lnx.Nvidia.com>
+ <20170727185406.GN2146@codeaurora.org>
+ <20170817134803.GE6854@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170823171326.23620-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170817134803.GE6854@ulmo>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 23.08.2017 20:13, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 08/17, Thierry Reding wrote:
+> On Thu, Jul 27, 2017 at 11:54:06AM -0700, Stephen Boyd wrote:
+> > On 07/26, Peter De Schrijver wrote:
+> > > On Tue, Jul 25, 2017 at 06:37:46PM -0700, Stephen Boyd wrote:
+> > > > On 07/25, Peter De Schrijver wrote:
+> > > > > A number of smaller fixes and simplifications for the Tegra clock
+> > > > > implementation.
+> > > > 
+> > > > Any of these need fixes tags so they can be backported to stable
+> > > > trees? Also, everyone is on To: line, so not sure who is supposed
+> > > 
+> > > I will have a look. For some of them a backport might be useful.
+> > > 
+> > > > to pick these up. Me? That's fine if so.
+> > > > 
+> > > 
+> > > That would be the easiest I think.
+> > > 
+> > 
+> > Ok. I'll wait for you to reply with tags unless you didn't find
+> > any?
 > 
-> The TRACE_INCLUDE_FILE macro needs to specify the path relative to the
-> define_trace.h header rather than relative to the file defining it.
-> 
-> Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/drm/tegra/trace.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/trace.h b/drivers/gpu/drm/tegra/trace.h
-> index e9b7cdad5c4c..5a1ab4046e92 100644
-> --- a/drivers/gpu/drm/tegra/trace.h
-> +++ b/drivers/gpu/drm/tegra/trace.h
-> @@ -63,6 +63,6 @@ DEFINE_EVENT(register_access, sor_readl,
->  
->  /* This part must be outside protection */
->  #undef TRACE_INCLUDE_PATH
-> -#define TRACE_INCLUDE_PATH .
-> +#define TRACE_INCLUDE_PATH ../../drivers/gpu/drm/tegra
->  #define TRACE_INCLUDE_FILE trace
->  #include <trace/define_trace.h>
+> I'm not aware of any bugs that these would fix, so I think we can apply
+> these as-is.
 > 
 
-This variant works too!
-
-Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Ok. Applied them all to clk-next.
 
 -- 
-Dmitry
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
