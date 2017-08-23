@@ -1,24 +1,35 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ASoC: tegra: Remove superfluous 'machine' variable
-Date: Wed, 23 Aug 2017 16:28:42 +0200
-Message-ID: <CAK8P3a1qb+uQP3WaAPXesBcW9aXsq1Kif61xjJkykysay1r8VQ@mail.gmail.com>
-References: <20170823134715.1088951-1-arnd@arndb.de> <20170823142138.ps65qu3ohvhrrubl@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170823142138.ps65qu3ohvhrrubl@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, alsa-devel@alsa-project.org, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drm/tegra: trace: Fix path to include
+Date: Wed, 23 Aug 2017 19:13:26 +0200
+Message-ID: <20170823171326.23620-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 23, 2017 at 4:21 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Wed, Aug 23, 2017 at 03:46:30PM +0200, Arnd Bergmann wrote:
->> The last cleanup left behind an unused variable:
->
-> This doesn't apply against current code, please check and resend.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I built against today's linux-next, but you already applied the same fix this
-morning after Stephen reported the problem.
+The TRACE_INCLUDE_FILE macro needs to specify the path relative to the
+define_trace.h header rather than relative to the file defining it.
 
-     Arnd
+Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/trace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/trace.h b/drivers/gpu/drm/tegra/trace.h
+index e9b7cdad5c4c..5a1ab4046e92 100644
+--- a/drivers/gpu/drm/tegra/trace.h
++++ b/drivers/gpu/drm/tegra/trace.h
+@@ -63,6 +63,6 @@ DEFINE_EVENT(register_access, sor_readl,
+ 
+ /* This part must be outside protection */
+ #undef TRACE_INCLUDE_PATH
+-#define TRACE_INCLUDE_PATH .
++#define TRACE_INCLUDE_PATH ../../drivers/gpu/drm/tegra
+ #define TRACE_INCLUDE_FILE trace
+ #include <trace/define_trace.h>
+-- 
+2.13.3
