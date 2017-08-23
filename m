@@ -1,38 +1,41 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/2] soc/tegra: fuse: Add missing semi-colon
-Date: Wed, 23 Aug 2017 11:25:09 +0200
-Message-ID: <20170823092509.5243-2-thierry.reding@gmail.com>
-References: <20170823092509.5243-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170823092509.5243-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH][next] ASoC: tegra: remove unused variable machine, fixes build warning
+Date: Wed, 23 Aug 2017 10:37:41 +0100
+Message-ID: <20170823093741.26739-1-colin.king@canonical.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Codrut Grosu <codrut.cristian.grosu@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Donglin Peng <dolinux.peng@gmail.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-Commit 8a46828e623c ("soc/tegra: Register SoC device") added a new
-initcall, but forgot to terminate the line with a semi-colon. Some
-recent versions of GCC seem to report this as an error.
-
-Fixes: 8a46828e623c ("soc/tegra: Register SoC device")
-Reported-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Remove unused variable 'machine', fixes build warning:
+sound/soc/tegra/tegra_wm8903.c: In function 'tegra_wm8903_remove':
+sound/soc/tegra/tegra_wm8903.c:206:23: warning: unused variable
+  'machine' [-Wunused-variable]
+  struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+                       ^~~~~~~
+Fixes: 2a8bd83af30e ("ASoC: tegra: Remove superfluous snd_soc_jack_free_gpios() call")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/tegra/tegra_wm8903.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index be003d04383f..b7c552e3133c 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -364,5 +364,5 @@ static int __init tegra_init_soc(void)
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index 2384cb9cb95c..18bdae59a4df 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -203,7 +203,6 @@ static int tegra_wm8903_remove(struct snd_soc_card *card)
+ 		snd_soc_get_pcm_runtime(card, card->dai_link[0].name);
+ 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+ 	struct snd_soc_codec *codec = codec_dai->codec;
+-	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
  
- 	return 0;
- }
--device_initcall(tegra_init_soc)
-+device_initcall(tegra_init_soc);
- #endif
+ 	wm8903_mic_detect(codec, NULL, 0, 0);
+ 
 -- 
-2.13.3
+2.14.1
