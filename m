@@ -1,41 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][next] ASoC: tegra: remove unused variable machine, fixes build warning
-Date: Wed, 23 Aug 2017 10:37:41 +0100
-Message-ID: <20170823093741.26739-1-colin.king@canonical.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 2/2] soc/tegra: fuse: Add missing semi-colon
+Date: Wed, 23 Aug 2017 11:55:11 +0200
+Message-ID: <CAK8P3a0YuiyhCE7ar5ZMorvVPOsgvjeqULwRnRFiQeFM271MxA@mail.gmail.com>
+References: <20170823092509.5243-1-thierry.reding@gmail.com> <20170823092509.5243-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Codrut Grosu <codrut.cristian.grosu@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Donglin Peng <dolinux.peng@gmail.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170823092509.5243-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: arm-soc <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Aug 23, 2017 at 11:25 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Commit 8a46828e623c ("soc/tegra: Register SoC device") added a new
+> initcall, but forgot to terminate the line with a semi-colon. Some
+> recent versions of GCC seem to report this as an error.
+>
+> Fixes: 8a46828e623c ("soc/tegra: Register SoC device")
+> Reported-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Remove unused variable 'machine', fixes build warning:
-sound/soc/tegra/tegra_wm8903.c: In function 'tegra_wm8903_remove':
-sound/soc/tegra/tegra_wm8903.c:206:23: warning: unused variable
-  'machine' [-Wunused-variable]
-  struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
-                       ^~~~~~~
-Fixes: 2a8bd83af30e ("ASoC: tegra: Remove superfluous snd_soc_jack_free_gpios() call")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/tegra/tegra_wm8903.c | 1 -
- 1 file changed, 1 deletion(-)
+Applied patches 1 and 2, thanks for addressing this so quickly!
 
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index 2384cb9cb95c..18bdae59a4df 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -203,7 +203,6 @@ static int tegra_wm8903_remove(struct snd_soc_card *card)
- 		snd_soc_get_pcm_runtime(card, card->dai_link[0].name);
- 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
- 	struct snd_soc_codec *codec = codec_dai->codec;
--	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
- 
- 	wm8903_mic_detect(codec, NULL, 0, 0);
- 
--- 
-2.14.1
+       Arnd
