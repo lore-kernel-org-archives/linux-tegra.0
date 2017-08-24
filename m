@@ -1,96 +1,58 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [v2] timers: Fix excessive granularity of new timers after a
- nohz idle
-Date: Thu, 24 Aug 2017 10:36:50 +0200
-Message-ID: <20170824083650.GA25582@ulmo>
-References: <20170815134114.17547-6-thierry.reding@gmail.com>
- <599D3EF6.9030000@rock-chips.com>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 08/15] PCI: make device_type const
+Date: Thu, 24 Aug 2017 11:26:12 -0500
+Message-ID: <20170824162612.GE31858@bhelgaas-glaptop.roam.corp.google.com>
+References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+ <1503130946-2854-9-git-send-email-bhumirks@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <599D3EF6.9030000-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: jeffy <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1503130946-2854-9-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: julia.lawall-L2FTfq7BK8M@public.gmane.org, bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, g.liakhovetski-Mmb7MZpHnFY@public.gmane.org, tomas.winkler-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, cyrille.pitchen-yU5RGvR974pGWvitb5QawA@public.gmane.org, peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dvhart-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, andy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org, bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, freude-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, schwidefsky-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, heiko.carstens-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, jth-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jejb-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, martin.petersen-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, lduncan-IBi9RG/b67k@public.gmane.org, cleech-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, elder-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.orgheik
 List-Id: linux-tegra@vger.kernel.org
 
+On Sat, Aug 19, 2017 at 01:52:19PM +0530, Bhumika Goyal wrote:
+> Make this const as it is only stored in the type field of a device
+> structure, which is const.
+> Done using Coccinelle.
+> 
+> Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to pci/misc for v4.14, thanks!
 
-On Wed, Aug 23, 2017 at 04:38:14PM +0800, jeffy wrote:
-> Hi Thierry,
->=20
-> i hit a compile error with this patch:
->=20
->   CC      drivers/gpu/drm/tegra/trace.o
-> In file included from drivers/gpu/drm/tegra/trace.h:68:0,
->                  from drivers/gpu/drm/tegra/trace.c:2:
-> ./include/trace/define_trace.h:88:43: fatal error: ./trace.h: No such file
-> or directory
-> compilation terminated.
-> scripts/Makefile.build:311: recipe for target
-> 'drivers/gpu/drm/tegra/trace.o' failed
->=20
->=20
-> On 08/22/2017 04:43 PM, Nicholas Piggin wrote:
-> > +++ b/drivers/gpu/drm/tegra/Makefile
-> > @@ -24,4 +24,6 @@ tegra-drm-$(CONFIG_ARCH_TEGRA_186_SOC) +=3D \
-> >   	parker/dsi.o \
-> >   	parker/sor.o
-> >=20
-> > +tegra-drm-y +=3D trace.o
-> > +
->=20
-> maybe we need this:
->=20
-> +++ b/drivers/gpu/drm/tegra/Makefile
-> @@ -19,4 +19,6 @@ tegra-drm-y :=3D \
->=20
->  tegra-drm-y +=3D trace.o
->=20
-> +CFLAGS_trace.o :=3D -I$(src)
-> +
->  obj-$(CONFIG_DRM_TEGRA) +=3D tegra-drm.o
-
-Dmitry had also reported this earlier and I think the right fix is this,
-which is now in today's linux-next:
-
-commit 702800b5d6f45b18db6b6d6b1057af6fd1c75e20
-Author: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Date:   Wed Aug 23 19:13:26 2017 +0200
-
-    drm/tegra: trace: Fix path to include
-
-    The TRACE_INCLUDE_FILE macro needs to specify the path relative to the
-    define_trace.h header rather than relative to the file defining it.
-
-    Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-    Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-    Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmekCIACgkQ3SOs138+
-s6Ek3A/9GlVV5Yu1eG7GKdLNqsdhhgkxxddmN75LH3BR6w5pt3JEXdxPFmJbJ1GJ
-rJHYYnDjlt5Pm3TQM2LA7GTTuw5FxkmHYyO0yQ880pb1Ri9NyNFlEJM6cFG2XKt7
-ofrdazV+zXaoGyQs8JNi35L25+BqmafEr4FUvq4DVtk3l1YUqvBYOSfO73ncbPo/
-NAgrlftnLufd3DhpQczLSjmUh1h5WrzHnJ8Saxr5ss8FXpPygbAmt0I95HRkfYNR
-R8JyY+iubB6vKJseXZnUpjPz6mv+YWXUuBtocmdlbkqWAks/ZGnmEJaTAyHpNLCq
-ZnP7w/+3F6cHUZe/7j0eN3exK5XNIKPzkIAQeRuXLMX/VZqfgimVPhxw/x2N3WkA
-pee2XJA0XugAfOEunc84Mb59yqMNIJi4nxNiUK+HGgaFB2mesSYZwnO27oaBRgmi
-9rvzO9R2nbJEMiY5yZf+FqD1j8xbTwQpOfG6Q8A1pLe3WGgTGKni5hlQ1kqSLMvS
-/331LKwf0WUiRS0XdMB0pCuykq8a+Y+VznvZOMSPHWsLBBIIxvB5uLgcdcVOCBBl
-yWSaYbJPc5Ib68evZp3U9CeETdtPgwpAfGOyGprPZ/HNla82s1q2VEBxO/7pQBRA
-Ze57H+6MOAL6sEKy/TEpOscrKjNMqycHEJfKq5sH5/+3zs9HYN4=
-=Px3M
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
+> ---
+>  drivers/pci/endpoint/pci-epf-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> index 6877d6a..9d0de12 100644
+> --- a/drivers/pci/endpoint/pci-epf-core.c
+> +++ b/drivers/pci/endpoint/pci-epf-core.c
+> @@ -27,7 +27,7 @@
+>  #include <linux/pci-ep-cfs.h>
+>  
+>  static struct bus_type pci_epf_bus_type;
+> -static struct device_type pci_epf_type;
+> +static const struct device_type pci_epf_type;
+>  
+>  /**
+>   * pci_epf_linkup() - Notify the function driver that EPC device has
+> @@ -275,7 +275,7 @@ static void pci_epf_dev_release(struct device *dev)
+>  	kfree(epf);
+>  }
+>  
+> -static struct device_type pci_epf_type = {
+> +static const struct device_type pci_epf_type = {
+>  	.release	= pci_epf_dev_release,
+>  };
+>  
+> -- 
+> 1.9.1
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
