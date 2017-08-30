@@ -1,80 +1,36 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH] PCI: tegra: Use PTR_ERR_OR_ZERO
-Date: Wed, 30 Aug 2017 11:26:13 -0500
-Message-ID: <20170830162613.GB18250@bhelgaas-glaptop.roam.corp.google.com>
-References: <1504013940-16304-1-git-send-email-himanshujha199640@gmail.com>
- <20170829135517.GA30733@ulmo>
- <20170830135931.GA18250@bhelgaas-glaptop.roam.corp.google.com>
- <20170830142547.GC1361@ulmo>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] iommu/tegra: Add support for struct iommu_device
+Date: Wed, 30 Aug 2017 17:53:39 +0100
+Message-ID: <4db80c7b-ddfa-6844-66a9-d22ea10cd154@nvidia.com>
+References: <1502317752-8792-1-git-send-email-joro@8bytes.org>
+ <1502317752-8792-2-git-send-email-joro@8bytes.org>
+ <f857ad53-66ca-0aa9-947a-f517443d114d@nvidia.com>
+ <20170830120902.kqtxh2ls4ob7xpwy@8bytes.org>
+ <c6ee1ce0-7193-be63-c84d-73795c727d26@nvidia.com>
+ <20170830153034.GK19533@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170830142547.GC1361@ulmo>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Himanshu Jha <himanshujha199640@gmail.com>, bhelgaas@google.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170830153034.GK19533-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 30, 2017 at 04:25:47PM +0200, Thierry Reding wrote:
-> On Wed, Aug 30, 2017 at 08:59:31AM -0500, Bjorn Helgaas wrote:
-> > On Tue, Aug 29, 2017 at 03:55:17PM +0200, Thierry Reding wrote:
-> > > On Tue, Aug 29, 2017 at 07:09:00PM +0530, Himanshu Jha wrote:
-> > > > Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> > > > 
-> > > > Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
-> > > > ---
-> > > >  drivers/pci/host/pci-tegra.c | 5 +----
-> > > >  1 file changed, 1 insertion(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> > > > index 9c40da5..90cda5b 100644
-> > > > --- a/drivers/pci/host/pci-tegra.c
-> > > > +++ b/drivers/pci/host/pci-tegra.c
-> > > > @@ -1156,10 +1156,7 @@ static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
-> > > >  		return PTR_ERR(pcie->afi_rst);
-> > > >  
-> > > >  	pcie->pcie_xrst = devm_reset_control_get_exclusive(dev, "pcie_x");
-> > > > -	if (IS_ERR(pcie->pcie_xrst))
-> > > > -		return PTR_ERR(pcie->pcie_xrst);
-> > > > -
-> > > > -	return 0;
-> > > > +	return PTR_ERR_OR_ZERO(pcie->pcie_xrst);
-> > > >  }
-> > > 
-> > > I'm not a big fan of this construct because it's a pain to undo this if
-> > > ever we need to add code to this function. But since we do have scripts
-> > > that will flag this, I guess this would pop up every now and again. The
-> > > driver is unlikely to change in this part, too, so:
-> > 
-> > Thanks for pointing this out.  Do you know what the benefit of
-> > PTR_ERR_OR_ZERO() is?  To me, it makes the following code harder
-> > to read because the error tests are no longer parallel:
-> > 
-> >   ...
-> >   res->ahb_reset = devm_reset_control_get(dev, "ahb");
-> >   if (IS_ERR(res->ahb_reset))
-> >     return PTR_ERR(res->ahb_reset);
-> > 
-> >   res->por_reset = devm_reset_control_get(dev, "por");
-> >   if (IS_ERR(res->por_reset))
-> >     return PTR_ERR(res->por_reset);
-> > 
-> >   res->phy_reset = devm_reset_control_get(dev, "phy");
-> >   return PTR_ERR_OR_ZERO(res->phy_reset);
-> > 
-> > So I'd be inclined to avoid it unless there's some significant benefit.
-> 
-> Yeah, I don't like the optics much either. Aside from the fact that it
-> reduces the line count, I'm not aware of any benefits that this inline
-> function has. It doesn't have any side-effects or anything, just wraps
-> the common pattern into a single line.
-> 
-> Looking at the history of the semantic patch that is the basis for the
-> conversions (scripts/coccinelle/api/ptr_ret.cocci), or the static inline
-> function itself, no rationale is given for why people prefer this. I've
-> certainly seen such patches applied in some cases, but I've also seen
-> other maintainers (including myself) reject them because of personal
-> preference.
 
-OK, I'm going to drop this then.
+On 30/08/17 16:30, Joerg Roedel wrote:
+> Hi Jon,
+> 
+> On Wed, Aug 30, 2017 at 03:22:05PM +0100, Jon Hunter wrote:
+>> Yes I can confirm that this fixes the crash. I assume that you will fix
+>> the error path for bus_set_iommu() above as I believe now it needs to
+>> call iommu_device_sysfs_remove().
+> 
+> Thanks for testing the patch. I updated the error-path and put the
+> commit below into the iommu-tree:
+Great! Thanks, Jon
+
+-- 
+nvpublic
