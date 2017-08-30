@@ -1,109 +1,81 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] PCI: tegra: Use PTR_ERR_OR_ZERO
-Date: Wed, 30 Aug 2017 16:25:47 +0200
-Message-ID: <20170830142547.GC1361@ulmo>
-References: <1504013940-16304-1-git-send-email-himanshujha199640@gmail.com>
- <20170829135517.GA30733@ulmo>
- <20170830135931.GA18250@bhelgaas-glaptop.roam.corp.google.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.13-rc7
+Date: Wed, 30 Aug 2017 15:38:30 +0100
+Message-ID: <8d783221-e7c0-4db1-66e4-4ee31596653e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w7PDEPdKQumQfZlR"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170830135931.GA18250@bhelgaas-glaptop.roam.corp.google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Himanshu Jha <himanshujha199640@gmail.com>, bhelgaas@google.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra baseline test results for v4.13-rc7
 
---w7PDEPdKQumQfZlR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 30, 2017 at 08:59:31AM -0500, Bjorn Helgaas wrote:
-> On Tue, Aug 29, 2017 at 03:55:17PM +0200, Thierry Reding wrote:
-> > On Tue, Aug 29, 2017 at 07:09:00PM +0530, Himanshu Jha wrote:
-> > > Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> > >=20
-> > > Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
-> > > ---
-> > >  drivers/pci/host/pci-tegra.c | 5 +----
-> > >  1 file changed, 1 insertion(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegr=
-a.c
-> > > index 9c40da5..90cda5b 100644
-> > > --- a/drivers/pci/host/pci-tegra.c
-> > > +++ b/drivers/pci/host/pci-tegra.c
-> > > @@ -1156,10 +1156,7 @@ static int tegra_pcie_resets_get(struct tegra_=
-pcie *pcie)
-> > >  		return PTR_ERR(pcie->afi_rst);
-> > > =20
-> > >  	pcie->pcie_xrst =3D devm_reset_control_get_exclusive(dev, "pcie_x");
-> > > -	if (IS_ERR(pcie->pcie_xrst))
-> > > -		return PTR_ERR(pcie->pcie_xrst);
-> > > -
-> > > -	return 0;
-> > > +	return PTR_ERR_OR_ZERO(pcie->pcie_xrst);
-> > >  }
-> >=20
-> > I'm not a big fan of this construct because it's a pain to undo this if
-> > ever we need to add code to this function. But since we do have scripts
-> > that will flag this, I guess this would pop up every now and again. The
-> > driver is unlikely to change in this part, too, so:
->=20
-> Thanks for pointing this out.  Do you know what the benefit of
-> PTR_ERR_OR_ZERO() is?  To me, it makes the following code harder
-> to read because the error tests are no longer parallel:
->=20
->   ...
->   res->ahb_reset =3D devm_reset_control_get(dev, "ahb");
->   if (IS_ERR(res->ahb_reset))
->     return PTR_ERR(res->ahb_reset);
->=20
->   res->por_reset =3D devm_reset_control_get(dev, "por");
->   if (IS_ERR(res->por_reset))
->     return PTR_ERR(res->por_reset);
->=20
->   res->phy_reset =3D devm_reset_control_get(dev, "phy");
->   return PTR_ERR_OR_ZERO(res->phy_reset);
->=20
-> So I'd be inclined to avoid it unless there's some significant benefit.
+Here are some basic Tegra test results for Linux v4.13-rc7.
+Logs and other details at:
 
-Yeah, I don't like the optics much either. Aside from the fact that it
-reduces the line count, I'm not aware of any benefits that this inline
-function has. It doesn't have any side-effects or anything, just wraps
-the common pattern into a single line.
+    https://nvtb.github.io//linux/test_v4.13-rc7/20170827173104/
 
-Looking at the history of the semantic patch that is the basis for the
-conversions (scripts/coccinelle/api/ptr_ret.cocci), or the static inline
-function itself, no rationale is given for why people prefer this. I've
-certainly seen such patches applied in some cases, but I've also seen
-other maintainers (including myself) reject them because of personal
-preference.
 
-Thierry
+Test summary
+------------
 
---w7PDEPdKQumQfZlR
-Content-Type: application/pgp-signature; name="signature.asc"
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
------BEGIN PGP SIGNATURE-----
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmmyukACgkQ3SOs138+
-s6H6mQ//QN7i0CknRoKAjKehKqxks6wjWHpEaSbHMJSoexeQ+AZ4+6UV/cf9iV6i
-jPuk2Z02OP6AxzHJIiDQhnwGJIHwqOpHzsU7fNQO4vIXlNxzGAwb07dddks/jmjg
-Al6dGTpOuHzar/tgALHpJYU+LJ+K9iji6cR9U6MIzHTsTy5LjHSWS0spyWsBfLlD
-yGWL9kui+g4trwBySDTfqNhIFDgDd+HZjRCKdwWA95GqyLtSyAu4ibrx57+Or6vE
-ewpsbfj6KSmirbm+tb+fc1Y4VE+rVzl+Pn40wMYF0XAWvgcSLL25zkiDeuWH3A7I
-6x06LyGKNa5IE/GRzZ+B0XsYEL2ZeO9TRYUYnZ6bAhX/ZjsE07O2F6Y36/1v1h3t
-ruZXm7lLvuEyz6KhwetvPmLZiec+F1t4qT1FtwCaWpHR1aOCQgLB8SbAsjI2G6ys
-VMA8fdRQ1lpDDmabHOupD7isK7bJTxO7G408Npv+y+P32ExrAFYQRSozvXiJMhtt
-H4GFsV4J7eqoQrs1t3OHg46+na7Va1lNp9EcQynE0x4xE5CAXV03TiipG/3PFftQ
-m+2dX1OEi36A3Ojcl7AW3I9H3PlrdrixqMip3sSnuKoDuKuVJhdCQb8NoHGQzK5E
-40qt767vmvyKprRPI6Zo+hTw9n1EekZs3pTl9Z5JRJ6KdXJH32Q=
-=kz+p
------END PGP SIGNATURE-----
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
 
---w7PDEPdKQumQfZlR--
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.13-rc6 (14ccee78fc82f5512908f4424f541549a5705b89)):
+   text     data      bss    total  kernel
+  +4368     -712        0    +3656  defconfig
+  +1332     -576        0     +756  multi_v7_defconfig
+  +1252     -384        0     +868  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.13-rc6 (14ccee78fc82f5512908f4424f541549a5705b89))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+--
+nvpublic
