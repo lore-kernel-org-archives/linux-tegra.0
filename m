@@ -1,97 +1,75 @@
-From: =?ISO-8859-1?Q?J=F6rg_R=F6del?= <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] iommu/tegra: Add support for struct iommu_device
-Date: Thu, 31 Aug 2017 14:24:33 +0200
-Message-ID: <wyqxg14fyh3x8ythr5212oll.1504182273101@email.android.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 5/5] thermal: Add Tegra BPMP thermal sensor driver
+Date: Thu, 31 Aug 2017 14:45:06 +0200
+Message-ID: <20170831124506.GA16437@ulmo.fritz.box>
+References: <20170724162918.21050-1-mperttunen@nvidia.com>
+ <20170724162918.21050-5-mperttunen@nvidia.com>
+ <1502420276.2598.5.camel@intel.com>
+ <4315091f-03b1-2df6-b224-6a29d3261371@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1733674437709079962=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4315091f-03b1-2df6-b224-6a29d3261371-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---===============1733674437709079962==
-Content-Type: multipart/alternative; boundary="--_com.android.email_954445995998650"
 
-----_com.android.email_954445995998650
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-
-CiAgICAKWWVzLCBJIHdhcyBydW5uaW5nIHNvbWUgdGVzdHMgYWdhaW5zdCB0aGUgbmV3IHRyZWUg
-d2hpY2ggZGlkbid0IGZpbmlzaCB5ZXN0ZXJkYXkuIFRvZGF5IEkgYW0gdHJhdmVsaW5nLCBidXQg
-d2lsbCBiZSBiYWNrIGltIHRoZSBldmVuaW5nIGFuZCB0aGVuIEkgcHVzaCB0aGUgdHJlZSBvdXQu
-ClJlZ2FyZHMsIEpvZXJnCgoKU2VudCBmcm9tIGEgR2FsYXh5IENsYXNzIFBob25lCgotLS0tLS0t
-LSBVcnNwcsO8bmdsaWNoZSBOYWNocmljaHQgLS0tLS0tLS0KVm9uOiBKb24gSHVudGVyIDxqb25h
-dGhhbmhAbnZpZGlhLmNvbT4gCkRhdHVtOiAzMS4wOC4xNyAgMTI6MjMgIChHTVQrMDE6MDApIApB
-bjogSm9lcmcgUm9lZGVsIDxqb3JvQDhieXRlcy5vcmc+IApDYzogVGhpZXJyeSBSZWRpbmcgPHRo
-aWVycnkucmVkaW5nQGdtYWlsLmNvbT4sIFJvYmluIE11cnBoeSA8cm9iaW4ubXVycGh5QGFybS5j
-b20+LCBpb21tdUBsaXN0cy5saW51eC1mb3VuZGF0aW9uLm9yZywgbGludXgtdGVncmFAdmdlci5r
-ZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnLCBKb2VyZyBSb2VkZWwgPGpy
-b2VkZWxAc3VzZS5kZT4gCkJldHJlZmY6IFJlOiBbUEFUQ0ggMS8yXSBpb21tdS90ZWdyYTogQWRk
-IHN1cHBvcnQgZm9yIHN0cnVjdCBpb21tdV9kZXZpY2UgCgpIaSBKb2VyZywKCk9uIDMwLzA4LzE3
-IDE2OjMwLCBKb2VyZyBSb2VkZWwgd3JvdGU6Cj4gSGkgSm9uLAo+IAo+IE9uIFdlZCwgQXVnIDMw
-LCAyMDE3IGF0IDAzOjIyOjA1UE0gKzAxMDAsIEpvbiBIdW50ZXIgd3JvdGU6Cj4+IFllcyBJIGNh
-biBjb25maXJtIHRoYXQgdGhpcyBmaXhlcyB0aGUgY3Jhc2guIEkgYXNzdW1lIHRoYXQgeW91IHdp
-bGwgZml4Cj4+IHRoZSBlcnJvciBwYXRoIGZvciBidXNfc2V0X2lvbW11KCkgYWJvdmUgYXMgSSBi
-ZWxpZXZlIG5vdyBpdCBuZWVkcyB0bwo+PiBjYWxsIGlvbW11X2RldmljZV9zeXNmc19yZW1vdmUo
-KS4KPiAKPiBUaGFua3MgZm9yIHRlc3RpbmcgdGhlIHBhdGNoLiBJIHVwZGF0ZWQgdGhlIGVycm9y
-LXBhdGggYW5kIHB1dCB0aGUKPiBjb21taXQgYmVsb3cgaW50byB0aGUgaW9tbXUtdHJlZToKVG9k
-YXkncyAtbmV4dCBpcyBzdGlsbCBmYWlsaW5nIGFuZCBJIGRvbid0IHNlZSB0aGlzIGZpeCBpbiB5
-b3VyIHB1YmxpYwp0cmVlIHlldCBbMF0uIENhbiB5b3UgcHVzaCB0aGlzIG91dD8KCkNoZWVycwpK
-b24KClswXSBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9q
-b3JvL2lvbW11LmdpdC8KCi0tIApudnB1YmxpYwo=
-
-----_com.android.email_954445995998650
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: base64
-
-PGh0bWw+PGhlYWQ+PG1ldGEgaHR0cC1lcXVpdj0iQ29udGVudC1UeXBlIiBjb250ZW50PSJ0ZXh0
-L2h0bWw7IGNoYXJzZXQ9VVRGLTgiPjwvaGVhZD48Ym9keT4KICAgIAo8ZGl2PlllcywgSSB3YXMg
-cnVubmluZyBzb21lIHRlc3RzIGFnYWluc3QgdGhlIG5ldyB0cmVlIHdoaWNoIGRpZG4ndCBmaW5p
-c2ggeWVzdGVyZGF5LiBUb2RheSBJIGFtIHRyYXZlbGluZywgYnV0IHdpbGwgYmUgYmFjayBpbSB0
-aGUgZXZlbmluZyBhbmQgdGhlbiBJIHB1c2ggdGhlIHRyZWUgb3V0LjwvZGl2PjxkaXY+PGJyPjwv
-ZGl2PjxkaXY+UmVnYXJkcywgSm9lcmc8L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2Pjxicj48L2Rp
-dj48ZGl2Pjxicj48L2Rpdj48ZGl2IGlkPSJjb21wb3Nlcl9zaWduYXR1cmUiPjxkaXYgc3R5bGU9
-ImZvbnQtc2l6ZTo5cHgiPlNlbnQgZnJvbSBhIEdhbGF4eSBDbGFzcyBQaG9uZTwvZGl2PjxkaXY+
-PC9kaXY+PC9kaXY+PGJyPjxicj4tLS0tLS0tLSBVcnNwcsO8bmdsaWNoZSBOYWNocmljaHQgLS0t
-LS0tLS08YnI+Vm9uOiBKb24gSHVudGVyICZsdDtqb25hdGhhbmhAbnZpZGlhLmNvbSZndDsgPGJy
-PkRhdHVtOiAzMS4wOC4xNyAgMTI6MjMgIChHTVQrMDE6MDApIDxicj5BbjogSm9lcmcgUm9lZGVs
-ICZsdDtqb3JvQDhieXRlcy5vcmcmZ3Q7IDxicj5DYzogVGhpZXJyeSBSZWRpbmcgJmx0O3RoaWVy
-cnkucmVkaW5nQGdtYWlsLmNvbSZndDssIFJvYmluIE11cnBoeSAmbHQ7cm9iaW4ubXVycGh5QGFy
-bS5jb20mZ3Q7LCBpb21tdUBsaXN0cy5saW51eC1mb3VuZGF0aW9uLm9yZywgbGludXgtdGVncmFA
-dmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnLCBKb2VyZyBSb2Vk
-ZWwgJmx0O2pyb2VkZWxAc3VzZS5kZSZndDsgPGJyPkJldHJlZmY6IFJlOiBbUEFUQ0ggMS8yXSBp
-b21tdS90ZWdyYTogQWRkIHN1cHBvcnQgZm9yIHN0cnVjdCBpb21tdV9kZXZpY2UgPGJyPjxicj5I
-aSBKb2VyZyw8YnI+PGJyPk9uIDMwLzA4LzE3IDE2OjMwLCBKb2VyZyBSb2VkZWwgd3JvdGU6PGJy
-PiZndDsgSGkgSm9uLDxicj4mZ3Q7IDxicj4mZ3Q7IE9uIFdlZCwgQXVnIDMwLCAyMDE3IGF0IDAz
-OjIyOjA1UE0gKzAxMDAsIEpvbiBIdW50ZXIgd3JvdGU6PGJyPiZndDsmZ3Q7IFllcyBJIGNhbiBj
-b25maXJtIHRoYXQgdGhpcyBmaXhlcyB0aGUgY3Jhc2guIEkgYXNzdW1lIHRoYXQgeW91IHdpbGwg
-Zml4PGJyPiZndDsmZ3Q7IHRoZSBlcnJvciBwYXRoIGZvciBidXNfc2V0X2lvbW11KCkgYWJvdmUg
-YXMgSSBiZWxpZXZlIG5vdyBpdCBuZWVkcyB0bzxicj4mZ3Q7Jmd0OyBjYWxsIGlvbW11X2Rldmlj
-ZV9zeXNmc19yZW1vdmUoKS48YnI+Jmd0OyA8YnI+Jmd0OyBUaGFua3MgZm9yIHRlc3RpbmcgdGhl
-IHBhdGNoLiBJIHVwZGF0ZWQgdGhlIGVycm9yLXBhdGggYW5kIHB1dCB0aGU8YnI+Jmd0OyBjb21t
-aXQgYmVsb3cgaW50byB0aGUgaW9tbXUtdHJlZTo8YnI+VG9kYXkncyAtbmV4dCBpcyBzdGlsbCBm
-YWlsaW5nIGFuZCBJIGRvbid0IHNlZSB0aGlzIGZpeCBpbiB5b3VyIHB1YmxpYzxicj50cmVlIHll
-dCBbMF0uIENhbiB5b3UgcHVzaCB0aGlzIG91dD88YnI+PGJyPkNoZWVyczxicj5Kb248YnI+PGJy
-PlswXSBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9qb3Jv
-L2lvbW11LmdpdC88YnI+PGJyPi0tIDxicj5udnB1YmxpYzxicj48L2JvZHk+PC9odG1sPg==
-
-----_com.android.email_954445995998650--
-
-
---===============1733674437709079962==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+--W/nzBZO5zC0uMSeA
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 21, 2017 at 10:40:44AM +0800, Wei Ni wrote:
+>=20
+>=20
+> On Friday, August 11, 2017 10:57 AM, Zhang Rui wrote:
+> > On Mon, 2017-07-24 at 19:29 +0300, Mikko Perttunen wrote:
+> >> On Tegra186, the BPMP (Boot and Power Management Processor) exposes
+> >> an
+> >> interface to thermal sensors on the system-on-chip. This driver
+> >> implements access to the interface. It supports reading the
+> >> temperature, setting trip points and receiving notification of a
+> >> tripped trip point.
+> >>
+> >> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > Wei Ni,
+> >=20
+> > what do you think of this patch?
+>=20
+> Reviewed this patch, it looked fine to me.
 
---===============1733674437709079962==--
+Hi Zhang,
+
+given the build-time dependencies, how about if I take this into the
+Tegra tree with an Acked-by from you? I can provide a stable branch with
+the dependencies included if you want to pull it into your tree in order
+to resolve dependencies.
+
+Thierry
+
+--W/nzBZO5zC0uMSeA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmoBM8ACgkQ3SOs138+
+s6EJ4g//VJAujreJqc5nLiRrjGofj7RIRTYAG6+78gOYcpoQ6CcEtpkOuJaIppbS
+Nyao6tZ0nwxEvRuRzSPW3Z3L8XIfcnhyxtstm+WJnr2UIz02XRBbzH2w7NEHt7W3
+IkEGB1R2iCazx0KhbgJZOOKuGENu6g9HzRS+YRdQiG8+KRBj04KhiBcoGZXyWx4G
+pf/pURzXmORtN7D3Rb01XEVxi0LFhCY9H85cEzJOriy9xyCrHSwXEJLklY1vG/hm
+8W2p17aRJ7WMO4AE7DtIPvJvtNTFOPtTFcBQ3ZSFEY5V9nuL+rh1O79FdhkCzB9O
+zcPxYS0qLiu2F5zc8zWGEtvLlg+YUN/TrHiQcXT4mRRXepwb+HECYwLQsR7bAxC+
+Nc395Gs9LABsyzzwnzi3hK+aLI16hclBLI7xzcgZiN+P+jBtKlwvQT6hI82EBfnk
+8WCSAsoqdbOMKS+0z3hRo/fupqs952tkawzwtvwHQmlff8xMcc4inv/p6no1ENfx
+v3NcieKjxuQ+QDqnnAkQN1hQ2tkTEEbB5w4lIEHlonCBduvor6QaC+MYxnS2j0dA
+Yg5FfTTS6ufUiPIzlFxoNnxYry+1nIP1l+Qi76wKj9z26q4v7Wo7a/R+kBNZU7Jg
+KuOoQFQLy6ogcY7QSR32wPtH0j0Wyk83ifSce3YKJrI+peCapM8=
+=kzv6
+-----END PGP SIGNATURE-----
+
+--W/nzBZO5zC0uMSeA--
