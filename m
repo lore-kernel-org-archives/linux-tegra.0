@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 00/16] gpio: Tight IRQ chip integration and banked infrastructure
-Date: Fri,  1 Sep 2017 20:57:20 +0200
-Message-ID: <20170901185736.28051-1-thierry.reding@gmail.com>
+Subject: [PATCH 08/16] gpio: Move irq_nested into struct gpio_irq_chip
+Date: Fri,  1 Sep 2017 20:57:28 +0200
+Message-ID: <20170901185736.28051-9-thierry.reding@gmail.com>
+References: <20170901185736.28051-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170901185736.28051-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -10,123 +12,100 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Hi Linus,
+In order to consolidate the multiple ways to associate an IRQ chip with
+a GPIO chip, move more fields into the new struct gpio_irq_chip.
 
-here's the latest series of patches that implement the tighter IRQ chip
-integration as well as the banked GPIO infrastructure that we had
-discussed a couple of weeks/months back.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpio/gpiolib.c      | 12 ++++++------
+ include/linux/gpio/driver.h |  9 +++++++--
+ 2 files changed, 13 insertions(+), 8 deletions(-)
 
-The first couple of patches are mostly preparatory work in order to
-consolidate all IRQ chip related fields in a new structure and create
-the base functionality for adding IRQ chips.
-
-After that, I've added the Tegra186 GPIO support patch that makes use of
-the new tight integration.
-
-To round things off the new banked GPIO infrastructure is added (along
-with some more preparatory work), followed by the conversion of the two
-Tegra GPIO drivers to the new infrastructure.
-
-Any thoughts on this? I'd like to target 4.15 with this, unless you'd be
-willing to take this into 4.14, which I doubt at this point. The absence
-of a GPIO driver has been hampering Tegra186 support upstream for a
-while now, so it'd be good to make progress on this.
-
-All of the patches are bisectible, at least to the point where I was
-able to compile (there are a couple of odd users of linux/gpio/driver.h
-that I either couldn't figure out the right Kconfig options to enable or
-didn't have a cross-compiler for). I've carried these patches in my
-development tree for a couple of weeks now, though, and the 0-day
-builder hasn't had any complaints in a while. I also have a local cocci
-patch for the move of fields to struct gpio_irq_chip and it gives an
-empty patch when run on top of these patches on top of linux-next, so I
-am fairly confident that this is all good to go.
-
-Thierry
-
-Thierry Reding (16):
-  gpio: Implement tighter IRQ chip integration
-  gpio: Move irqchip into struct gpio_irq_chip
-  gpio: Move irqdomain into struct gpio_irq_chip
-  gpio: Move irq_base to struct gpio_irq_chip
-  gpio: Move irq_handler to struct gpio_irq_chip
-  gpio: Move irq_default_type to struct gpio_irq_chip
-  gpio: Move irq_chained_parent to struct gpio_irq_chip
-  gpio: Move irq_nested into struct gpio_irq_chip
-  gpio: Move irq_valid_mask into struct gpio_irq_chip
-  gpio: Move lock_key into struct gpio_irq_chip
-  gpio: Add Tegra186 support
-  gpio: omap: Fix checkpatch warnings
-  gpio: omap: Rename struct gpio_bank to struct omap_gpio_bank
-  gpio: Add support for banked GPIO controllers
-  gpio: tegra: Use banked GPIO infrastructure
-  gpio: tegra186: Use banked GPIO infrastructure
-
- Documentation/gpio/driver.txt               |   6 +-
- drivers/bcma/driver_gpio.c                  |   2 +-
- drivers/gpio/Kconfig                        |  10 +
- drivers/gpio/Makefile                       |   1 +
- drivers/gpio/gpio-104-dio-48e.c             |   2 +-
- drivers/gpio/gpio-104-idi-48.c              |   2 +-
- drivers/gpio/gpio-104-idio-16.c             |   2 +-
- drivers/gpio/gpio-adnp.c                    |   2 +-
- drivers/gpio/gpio-altera.c                  |   4 +-
- drivers/gpio/gpio-aspeed.c                  |   6 +-
- drivers/gpio/gpio-ath79.c                   |   2 +-
- drivers/gpio/gpio-brcmstb.c                 |   2 +-
- drivers/gpio/gpio-crystalcove.c             |   2 +-
- drivers/gpio/gpio-dln2.c                    |   2 +-
- drivers/gpio/gpio-ftgpio010.c               |   2 +-
- drivers/gpio/gpio-ingenic.c                 |   2 +-
- drivers/gpio/gpio-intel-mid.c               |   2 +-
- drivers/gpio/gpio-lynxpoint.c               |   2 +-
- drivers/gpio/gpio-max732x.c                 |   2 +-
- drivers/gpio/gpio-merrifield.c              |   2 +-
- drivers/gpio/gpio-omap.c                    | 222 ++++++-----
- drivers/gpio/gpio-pca953x.c                 |   2 +-
- drivers/gpio/gpio-pcf857x.c                 |   2 +-
- drivers/gpio/gpio-pci-idio-16.c             |   2 +-
- drivers/gpio/gpio-pl061.c                   |   2 +-
- drivers/gpio/gpio-rcar.c                    |   2 +-
- drivers/gpio/gpio-reg.c                     |   4 +-
- drivers/gpio/gpio-stmpe.c                   |   6 +-
- drivers/gpio/gpio-tc3589x.c                 |   2 +-
- drivers/gpio/gpio-tegra.c                   | 203 +++++-----
- drivers/gpio/gpio-tegra186.c                | 571 ++++++++++++++++++++++++++++
- drivers/gpio/gpio-vf610.c                   |   2 +-
- drivers/gpio/gpio-wcove.c                   |   2 +-
- drivers/gpio/gpio-ws16c48.c                 |   2 +-
- drivers/gpio/gpio-xgene-sb.c                |   2 +-
- drivers/gpio/gpio-xlp.c                     |   2 +-
- drivers/gpio/gpio-zx.c                      |   2 +-
- drivers/gpio/gpio-zynq.c                    |   2 +-
- drivers/gpio/gpiolib-of.c                   | 101 +++++
- drivers/gpio/gpiolib.c                      | 320 ++++++++++++++--
- drivers/pinctrl/bcm/pinctrl-bcm2835.c       |   4 +-
- drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |   2 +-
- drivers/pinctrl/intel/pinctrl-baytrail.c    |   6 +-
- drivers/pinctrl/intel/pinctrl-cherryview.c  |   6 +-
- drivers/pinctrl/intel/pinctrl-intel.c       |   2 +-
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |   4 +-
- drivers/pinctrl/nomadik/pinctrl-nomadik.c   |   4 +-
- drivers/pinctrl/pinctrl-amd.c               |   2 +-
- drivers/pinctrl/pinctrl-at91.c              |   2 +-
- drivers/pinctrl/pinctrl-coh901.c            |   2 +-
- drivers/pinctrl/pinctrl-mcp23s08.c          |   2 +-
- drivers/pinctrl/pinctrl-oxnas.c             |   2 +-
- drivers/pinctrl/pinctrl-pic32.c             |   2 +-
- drivers/pinctrl/pinctrl-pistachio.c         |   2 +-
- drivers/pinctrl/pinctrl-st.c                |   2 +-
- drivers/pinctrl/pinctrl-sx150x.c            |   2 +-
- drivers/pinctrl/qcom/pinctrl-msm.c          |   2 +-
- drivers/pinctrl/sirf/pinctrl-atlas7.c       |   2 +-
- drivers/pinctrl/sirf/pinctrl-sirf.c         |   2 +-
- drivers/pinctrl/spear/pinctrl-plgpio.c      |   2 +-
- drivers/platform/x86/intel_int0002_vgpio.c  |   6 +-
- include/linux/gpio/driver.h                 | 272 +++++++++++--
- include/linux/of_gpio.h                     |  10 +
- 63 files changed, 1504 insertions(+), 348 deletions(-)
- create mode 100644 drivers/gpio/gpio-tegra186.c
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index f09cc89929f0..f506473f5c70 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1624,7 +1624,7 @@ void gpiochip_set_nested_irqchip(struct gpio_chip *gpiochip,
+ 				 struct irq_chip *irqchip,
+ 				 unsigned int parent_irq)
+ {
+-	if (!gpiochip->irq_nested) {
++	if (!gpiochip->irq.nested) {
+ 		chip_err(gpiochip, "tried to nest a chained gpiochip\n");
+ 		return;
+ 	}
+@@ -1659,7 +1659,7 @@ int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+ 	irq_set_lockdep_class(irq, chip->lock_key);
+ 	irq_set_chip_and_handler(irq, chip->irq.chip, chip->irq.handler);
+ 	/* Chips that use nested thread handlers have them marked */
+-	if (chip->irq_nested)
++	if (chip->irq.nested)
+ 		irq_set_nested_thread(irq, 1);
+ 	irq_set_noprobe(irq);
+ 
+@@ -1678,7 +1678,7 @@ void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
+ {
+ 	struct gpio_chip *chip = d->host_data;
+ 
+-	if (chip->irq_nested)
++	if (chip->irq.nested)
+ 		irq_set_nested_thread(irq, 0);
+ 	irq_set_chip_and_handler(irq, NULL, NULL);
+ 	irq_set_chip_data(irq, NULL);
+@@ -1811,9 +1811,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
+ 							 data);
+ 		}
+ 
+-		gpiochip->irq_nested = false;
++		gpiochip->irq.nested = false;
+ 	} else {
+-		gpiochip->irq_nested = true;
++		gpiochip->irq.nested = true;
+ 	}
+ 
+ 	/*
+@@ -1930,7 +1930,7 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
+ 		pr_err("missing gpiochip .dev parent pointer\n");
+ 		return -EINVAL;
+ 	}
+-	gpiochip->irq_nested = nested;
++	gpiochip->irq.nested = nested;
+ 	of_node = gpiochip->parent->of_node;
+ #ifdef CONFIG_OF_GPIO
+ 	/*
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index c3eafd874884..7d632a8932be 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -107,6 +107,13 @@ struct gpio_irq_chip {
+ 	 * A list of interrupt parents for each line of a GPIO chip.
+ 	 */
+ 	unsigned int *map;
++
++	/**
++	 * @nested:
++	 *
++	 * True if set the interrupt handling is nested.
++	 */
++	bool nested;
+ };
+ 
+ static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
+@@ -176,7 +183,6 @@ static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
+  *	safely.
+  * @bgpio_dir: shadowed direction register for generic GPIO to clear/set
+  *	direction safely.
+- * @irq_nested: True if set the interrupt handling is nested.
+  * @irq_need_valid_mask: If set core allocates @irq_valid_mask with all
+  *	bits set to one
+  * @irq_valid_mask: If not %NULL holds bitmask of GPIOs which are valid to
+@@ -248,7 +254,6 @@ struct gpio_chip {
+ 	 * With CONFIG_GPIOLIB_IRQCHIP we get an irqchip inside the gpiolib
+ 	 * to handle IRQs for most practical cases.
+ 	 */
+-	bool			irq_nested;
+ 	bool			irq_need_valid_mask;
+ 	unsigned long		*irq_valid_mask;
+ 	struct lock_class_key	*lock_key;
 -- 
 2.13.3
