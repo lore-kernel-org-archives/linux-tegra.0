@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 15/16] gpio: tegra: Use banked GPIO infrastructure
-Date: Fri,  1 Sep 2017 20:57:35 +0200
-Message-ID: <20170901185736.28051-16-thierry.reding@gmail.com>
+Subject: [PATCH 16/16] gpio: tegra186: Use banked GPIO infrastructure
+Date: Fri,  1 Sep 2017 20:57:36 +0200
+Message-ID: <20170901185736.28051-17-thierry.reding@gmail.com>
 References: <20170901185736.28051-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170901185736.28051-1-thierry.reding@gmail.com>
@@ -12,409 +12,383 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Convert the Tegra GPIO driver to use the banked GPIO infrastructure,
+Convert the Tegra186 GPIO driver to use the banked GPIO infrastructure,
 which simplifies some parts of the driver.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/Kconfig      |   1 +
- drivers/gpio/gpio-tegra.c | 203 ++++++++++++++++++++++------------------------
- 2 files changed, 98 insertions(+), 106 deletions(-)
+ drivers/gpio/gpio-tegra186.c | 211 ++++++++++++++++---------------------------
+ 1 file changed, 79 insertions(+), 132 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index f9e22c6fdd02..9364f037fe86 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -439,6 +439,7 @@ config GPIO_TEGRA
- 	default ARCH_TEGRA
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on OF_GPIO
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Say yes here to support GPIO pins on NVIDIA Tegra SoCs.
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 162dc6b41ae8..4926b98a05f6 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -13,6 +13,7 @@
+ #include <linux/irq.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
  
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index fbaf974277df..250cebc3ab60 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -67,8 +67,8 @@
- struct tegra_gpio_info;
+ #include <dt-bindings/gpio/tegra186-gpio.h>
+@@ -44,15 +45,27 @@
  
- struct tegra_gpio_bank {
--	unsigned int bank;
--	unsigned int irq;
+ #define TEGRA186_GPIO_INTERRUPT_STATUS(x) (0x100 + (x) * 4)
+ 
+-struct tegra_gpio_port {
++struct tegra_gpio_port_soc {
+ 	const char *name;
+ 	unsigned int offset;
+ 	unsigned int pins;
+ 	unsigned int irq;
+ };
+ 
++struct tegra_gpio_port {
 +	struct gpio_bank bank;
-+	unsigned int index;
- 	spinlock_t lvl_lock[4];
- 	spinlock_t dbc_lock[4];	/* Lock for updating debounce count register */
- #ifdef CONFIG_PM_SLEEP
-@@ -84,6 +84,11 @@ struct tegra_gpio_bank {
- 	struct tegra_gpio_info *tgi;
- };
- 
-+static struct tegra_gpio_bank *to_tegra_gpio_bank(struct gpio_bank *bank)
++	unsigned int offset;
++	const char *name;
++};
++
++static inline struct tegra_gpio_port *
++to_tegra_gpio_port(struct gpio_bank *bank)
 +{
-+	return container_of(bank, struct tegra_gpio_bank, bank);
++	return container_of(bank, struct tegra_gpio_port, bank);
 +}
 +
- struct tegra_gpio_soc_config {
- 	bool debounce_supported;
- 	u32 bank_stride;
-@@ -98,9 +103,14 @@ struct tegra_gpio_info {
- 	const struct tegra_gpio_soc_config	*soc;
- 	struct gpio_chip			gc;
- 	struct irq_chip				ic;
--	u32					bank_count;
+ struct tegra_gpio_soc {
+-	const struct tegra_gpio_port *ports;
++	const struct tegra_gpio_port_soc *ports;
+ 	unsigned int num_ports;
+ 	const char *name;
+ };
+@@ -60,21 +73,21 @@ struct tegra_gpio_soc {
+ struct tegra_gpio {
+ 	struct gpio_chip gpio;
+ 	struct irq_chip intc;
+-	unsigned int num_irq;
+-	unsigned int *irq;
+ 
+ 	const struct tegra_gpio_soc *soc;
+ 
++	struct tegra_gpio_port *ports;
++
+ 	void __iomem *base;
  };
  
-+static inline struct tegra_gpio_info *
-+to_tegra_gpio_info(struct gpio_chip *chip)
-+{
-+	return container_of(chip, struct tegra_gpio_info, gc);
-+}
-+
- static inline void tegra_gpio_writel(struct tegra_gpio_info *tgi,
- 				     u32 val, u32 reg)
+-static const struct tegra_gpio_port *
++static const struct tegra_gpio_port_soc *
+ tegra186_gpio_get_port(struct tegra_gpio *gpio, unsigned int *pin)
  {
-@@ -264,8 +274,8 @@ static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+ 	unsigned int start = 0, i;
  
- static void tegra_gpio_irq_ack(struct irq_data *d)
+ 	for (i = 0; i < gpio->soc->num_ports; i++) {
+-		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
++		const struct tegra_gpio_port_soc *port = &gpio->soc->ports[i];
+ 
+ 		if (*pin >= start && *pin < start + port->pins) {
+ 			*pin -= start;
+@@ -90,7 +103,7 @@ tegra186_gpio_get_port(struct tegra_gpio *gpio, unsigned int *pin)
+ static void __iomem *tegra186_gpio_get_base(struct tegra_gpio *gpio,
+ 					    unsigned int pin)
  {
--	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
--	struct tegra_gpio_info *tgi = bank->tgi;
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct tegra_gpio_info *tgi = to_tegra_gpio_info(chip);
- 	unsigned int gpio = d->hwirq;
+-	const struct tegra_gpio_port *port;
++	const struct tegra_gpio_port_soc *port;
  
- 	tegra_gpio_writel(tgi, 1 << GPIO_BIT(gpio), GPIO_INT_CLR(tgi, gpio));
-@@ -273,8 +283,8 @@ static void tegra_gpio_irq_ack(struct irq_data *d)
- 
- static void tegra_gpio_irq_mask(struct irq_data *d)
- {
--	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
--	struct tegra_gpio_info *tgi = bank->tgi;
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct tegra_gpio_info *tgi = to_tegra_gpio_info(chip);
- 	unsigned int gpio = d->hwirq;
- 
- 	tegra_gpio_mask_write(tgi, GPIO_MSK_INT_ENB(tgi, gpio), gpio, 0);
-@@ -282,8 +292,8 @@ static void tegra_gpio_irq_mask(struct irq_data *d)
- 
- static void tegra_gpio_irq_unmask(struct irq_data *d)
- {
--	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
--	struct tegra_gpio_info *tgi = bank->tgi;
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct tegra_gpio_info *tgi = to_tegra_gpio_info(chip);
- 	unsigned int gpio = d->hwirq;
- 
- 	tegra_gpio_mask_write(tgi, GPIO_MSK_INT_ENB(tgi, gpio), gpio, 1);
-@@ -292,12 +302,15 @@ static void tegra_gpio_irq_unmask(struct irq_data *d)
- static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	unsigned int gpio = d->hwirq, port = GPIO_PORT(gpio), lvl_type;
--	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
--	struct tegra_gpio_info *tgi = bank->tgi;
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct tegra_gpio_info *tgi = to_tegra_gpio_info(chip);
-+	struct tegra_gpio_bank *bank;
- 	unsigned long flags;
- 	u32 val;
- 	int ret;
- 
-+	bank = &tgi->bank_info[GPIO_BANK(gpio)];
-+
- 	switch (type & IRQ_TYPE_SENSE_MASK) {
- 	case IRQ_TYPE_EDGE_RISING:
- 		lvl_type = GPIO_INT_LVL_EDGE_RISING;
-@@ -352,52 +365,27 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 
- static void tegra_gpio_irq_shutdown(struct irq_data *d)
- {
--	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
--	struct tegra_gpio_info *tgi = bank->tgi;
--	unsigned int gpio = d->hwirq;
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
- 
--	gpiochip_unlock_as_irq(&tgi->gc, gpio);
-+	gpiochip_unlock_as_irq(chip, d->hwirq);
+ 	port = tegra186_gpio_get_port(gpio, &pin);
+ 	if (!port)
+@@ -206,39 +219,10 @@ static void tegra186_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	writel(value, base + TEGRA186_GPIO_OUTPUT_VALUE);
  }
  
--static void tegra_gpio_irq_handler(struct irq_desc *desc)
-+static void tegra_gpio_update_bank(struct gpio_bank *bank)
+-static int tegra186_gpio_of_xlate(struct gpio_chip *chip,
+-				  const struct of_phandle_args *spec,
+-				  u32 *flags)
+-{
+-	struct tegra_gpio *gpio = gpiochip_get_data(chip);
+-	unsigned int port, pin, i, offset = 0;
+-
+-	if (WARN_ON(chip->of_gpio_n_cells < 2))
+-		return -EINVAL;
+-
+-	if (WARN_ON(spec->args_count < chip->of_gpio_n_cells))
+-		return -EINVAL;
+-
+-	port = spec->args[0] / 8;
+-	pin = spec->args[0] % 8;
+-
+-	if (port >= gpio->soc->num_ports) {
+-		dev_err(chip->parent, "invalid port number: %u\n", port);
+-		return -EINVAL;
+-	}
+-
+-	for (i = 0; i < port; i++)
+-		offset += gpio->soc->ports[i].pins;
+-
+-	if (flags)
+-		*flags = spec->args[1];
+-
+-	return offset + pin;
+-}
+-
+ static void tegra186_irq_ack(struct irq_data *data)
  {
--	unsigned int port, pin, gpio;
--	bool unmasked = false;
--	u32 lvl;
--	unsigned long sta;
+-	struct tegra_gpio *gpio = irq_data_get_irq_chip_data(data);
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct tegra_gpio *gpio = gpiochip_get_data(chip);
+ 	void __iomem *base;
+ 
+ 	base = tegra186_gpio_get_base(gpio, data->hwirq);
+@@ -250,7 +234,8 @@ static void tegra186_irq_ack(struct irq_data *data)
+ 
+ static void tegra186_irq_mask(struct irq_data *data)
+ {
+-	struct tegra_gpio *gpio = irq_data_get_irq_chip_data(data);
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct tegra_gpio *gpio = gpiochip_get_data(chip);
+ 	void __iomem *base;
+ 	u32 value;
+ 
+@@ -265,7 +250,8 @@ static void tegra186_irq_mask(struct irq_data *data)
+ 
+ static void tegra186_irq_unmask(struct irq_data *data)
+ {
+-	struct tegra_gpio *gpio = irq_data_get_irq_chip_data(data);
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct tegra_gpio *gpio = gpiochip_get_data(chip);
+ 	void __iomem *base;
+ 	u32 value;
+ 
+@@ -280,7 +266,8 @@ static void tegra186_irq_unmask(struct irq_data *data)
+ 
+ static int tegra186_irq_set_type(struct irq_data *data, unsigned int flow)
+ {
+-	struct tegra_gpio *gpio = irq_data_get_irq_chip_data(data);
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct tegra_gpio *gpio = gpiochip_get_data(chip);
+ 	void __iomem *base;
+ 	u32 value;
+ 
+@@ -332,76 +319,22 @@ static int tegra186_irq_set_type(struct irq_data *data, unsigned int flow)
+ 	return 0;
+ }
+ 
+-static void tegra186_gpio_irq(struct irq_desc *desc)
+-{
+-	struct tegra_gpio *gpio = irq_desc_get_handler_data(desc);
+-	struct irq_domain *domain = gpio->gpio.irq.domain;
 -	struct irq_chip *chip = irq_desc_get_chip(desc);
--	struct tegra_gpio_bank *bank = irq_desc_get_handler_data(desc);
--	struct tegra_gpio_info *tgi = bank->tgi;
+-	unsigned int parent = irq_desc_get_irq(desc);
+-	unsigned int i, offset = 0;
 -
 -	chained_irq_enter(chip, desc);
-+	struct tegra_gpio_info *tgi = to_tegra_gpio_info(bank->chip);
-+	struct tegra_gpio_bank *b = to_tegra_gpio_bank(bank);
-+	unsigned int port;
- 
- 	for (port = 0; port < 4; port++) {
--		gpio = tegra_gpio_compose(bank->bank, port, 0);
--		sta = tegra_gpio_readl(tgi, GPIO_INT_STA(tgi, gpio)) &
--			tegra_gpio_readl(tgi, GPIO_INT_ENB(tgi, gpio));
--		lvl = tegra_gpio_readl(tgi, GPIO_INT_LVL(tgi, gpio));
 -
--		for_each_set_bit(pin, &sta, 8) {
--			tegra_gpio_writel(tgi, 1 << pin,
--					  GPIO_INT_CLR(tgi, gpio));
+-	for (i = 0; i < gpio->soc->num_ports; i++) {
+-		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
+-		void __iomem *base = gpio->base + port->offset;
+-		unsigned int pin, irq;
+-		unsigned long value;
 -
--			/* if gpio is edge triggered, clear condition
--			 * before executing the handler so that we don't
--			 * miss edges
--			 */
--			if (!unmasked && lvl & (0x100 << pin)) {
--				unmasked = true;
--				chained_irq_exit(chip, desc);
--			}
-+		unsigned int gpio = tegra_gpio_compose(b->index, port, 0);
-+		u8 *pending = (u8 *)bank->pending;
-+		u32 status, enable;
- 
--			generic_handle_irq(irq_find_mapping(tgi->irq_domain,
--							    gpio + pin));
+-		/* skip ports that are not associated with this controller */
+-		if (parent != gpio->irq[port->irq])
+-			goto skip;
+-
+-		value = readl(base + TEGRA186_GPIO_INTERRUPT_STATUS(1));
+-
+-		for_each_set_bit(pin, &value, port->pins) {
+-			irq = irq_find_mapping(domain, offset + pin);
+-			if (WARN_ON(irq == 0))
+-				continue;
+-
+-			generic_handle_irq(irq);
 -		}
+-
+-skip:
+-		offset += port->pins;
 -	}
 -
--	if (!unmasked)
--		chained_irq_exit(chip, desc);
-+		status = tegra_gpio_readl(tgi, GPIO_INT_STA(tgi, gpio));
-+		enable = tegra_gpio_readl(tgi, GPIO_INT_ENB(tgi, gpio));
- 
-+		pending[port] = status & enable;
-+	}
- }
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -410,7 +398,7 @@ static int tegra_gpio_resume(struct device *dev)
- 
- 	local_irq_save(flags);
- 
--	for (b = 0; b < tgi->bank_count; b++) {
-+	for (b = 0; b < tgi->gc.num_banks; b++) {
- 		struct tegra_gpio_bank *bank = &tgi->bank_info[b];
- 
- 		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
-@@ -449,7 +437,7 @@ static int tegra_gpio_suspend(struct device *dev)
- 	unsigned int b, p;
- 
- 	local_irq_save(flags);
--	for (b = 0; b < tgi->bank_count; b++) {
-+	for (b = 0; b < tgi->gc.num_banks; b++) {
- 		struct tegra_gpio_bank *bank = &tgi->bank_info[b];
- 
- 		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
-@@ -484,20 +472,26 @@ static int tegra_gpio_suspend(struct device *dev)
- 
- static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
+-	chained_irq_exit(chip, desc);
+-}
+-
+-static int tegra186_gpio_irq_domain_xlate(struct irq_domain *domain,
+-					  struct device_node *np,
+-					  const u32 *spec, unsigned int size,
+-					  unsigned long *hwirq,
+-					  unsigned int *type)
++static void tegra186_gpio_update_bank(struct gpio_bank *bank)
  {
--	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
--	unsigned int gpio = d->hwirq;
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	unsigned int gpio = d->hwirq, parent_irq;
-+	struct tegra_gpio_bank *b;
-+	struct gpio_bank *bank;
- 	u32 port, bit, mask;
+-	struct tegra_gpio *gpio = gpiochip_get_data(domain->host_data);
+-	unsigned int port, pin, i, offset = 0;
+-
+-	if (size < 2)
+-		return -EINVAL;
+-
+-	port = spec[0] / 8;
+-	pin = spec[0] % 8;
+-
+-	if (port >= gpio->soc->num_ports) {
+-		dev_err(gpio->gpio.parent, "invalid port number: %u\n", port);
+-		return -EINVAL;
+-	}
+-
+-	for (i = 0; i < port; i++)
+-		offset += gpio->soc->ports[i].pins;
++	struct tegra_gpio_port *port = to_tegra_gpio_port(bank);
++	struct tegra_gpio *gpio = gpiochip_get_data(bank->chip);
++	void __iomem *base = gpio->base + port->offset;
++	u32 value;
  
-+	bank = chip->banks[GPIO_BANK(gpio)];
-+	b = to_tegra_gpio_bank(bank);
- 	port = GPIO_PORT(gpio);
- 	bit = GPIO_BIT(gpio);
- 	mask = BIT(bit);
+-	*type = spec[1] & IRQ_TYPE_SENSE_MASK;
+-	*hwirq = offset + pin;
++	value = readl(base + TEGRA186_GPIO_INTERRUPT_STATUS(1));
  
- 	if (enable)
--		bank->wake_enb[port] |= mask;
-+		b->wake_enb[port] |= mask;
- 	else
--		bank->wake_enb[port] &= ~mask;
-+		b->wake_enb[port] &= ~mask;
-+
-+	parent_irq = chip->irq.parents[bank->parent_irq];
- 
--	return irq_set_irq_wake(bank->irq, enable);
-+	return irq_set_irq_wake(parent_irq, enable);
+-	return 0;
++	bank->pending[0] = value;
  }
- #endif
  
-@@ -511,7 +505,7 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
- 	struct tegra_gpio_info *tgi = s->private;
- 	unsigned int i, j;
- 
--	for (i = 0; i < tgi->bank_count; i++) {
-+	for (i = 0; i < tgi->gc.num_banks; i++) {
- 		for (j = 0; j < 4; j++) {
- 			unsigned int gpio = tegra_gpio_compose(i, j, 0);
- 
-@@ -561,17 +555,18 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+ static const struct irq_domain_ops tegra186_gpio_irq_domain_ops = {
+ 	.map = gpiochip_irq_map,
+ 	.unmap = gpiochip_irq_unmap,
+-	.xlate = tegra186_gpio_irq_domain_xlate,
++	.xlate = gpio_banked_irq_domain_xlate,
  };
  
- /*
-- * This lock class tells lockdep that GPIO irqs are in a different category
-+ * This lock class tells lockdep that GPIO IRQs are in a different category
-  * than their parents, so it won't report false recursion.
-  */
--static struct lock_class_key gpio_lock_class;
-+static struct lock_class_key tegra_gpio_lock_class;
- 
- static int tegra_gpio_probe(struct platform_device *pdev)
- {
- 	struct tegra_gpio_info *tgi;
- 	struct resource *res;
- 	struct tegra_gpio_bank *bank;
--	unsigned int gpio, i, j;
-+	struct gpio_irq_chip *irq;
-+	unsigned int i, j;
- 	int ret;
- 
- 	tgi = devm_kzalloc(&pdev->dev, sizeof(*tgi), GFP_KERNEL);
-@@ -580,14 +575,20 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 
- 	tgi->soc = of_device_get_match_data(&pdev->dev);
- 	tgi->dev = &pdev->dev;
-+	irq = &tgi->gc.irq;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	tgi->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(tgi->regs))
-+		return PTR_ERR(tgi->regs);
- 
- 	ret = platform_irq_count(pdev);
- 	if (ret < 0)
- 		return ret;
- 
--	tgi->bank_count = ret;
-+	tgi->gc.num_banks = ret;
- 
--	if (!tgi->bank_count) {
-+	if (!tgi->gc.num_banks) {
- 		dev_err(&pdev->dev, "Missing IRQ resource\n");
- 		return -ENODEV;
- 	}
-@@ -602,7 +603,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	tgi->gc.get_direction		= tegra_gpio_get_direction;
- 	tgi->gc.to_irq			= tegra_gpio_to_irq;
- 	tgi->gc.base			= 0;
--	tgi->gc.ngpio			= tgi->bank_count * 32;
-+	tgi->gc.ngpio			= tgi->gc.num_banks * 32;
- 	tgi->gc.parent			= &pdev->dev;
- 	tgi->gc.of_node			= pdev->dev.of_node;
- 
-@@ -616,76 +617,66 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	tgi->ic.irq_set_wake		= tegra_gpio_irq_set_wake;
- #endif
- 
-+	irq = &tgi->gc.irq;
-+	irq->chip = &tgi->ic;
-+	irq->handler = handle_simple_irq;
-+	irq->lock_key = &tegra_gpio_lock_class;
-+	irq->default_type = IRQ_TYPE_NONE;
-+	irq->parent_handler = gpio_irq_chip_banked_handler;
-+	irq->update_bank = tegra_gpio_update_bank;
-+
-+	irq->parents = devm_kcalloc(&pdev->dev, tgi->gc.num_banks,
-+				    sizeof(unsigned int), GFP_KERNEL);
-+	if (!irq->parents)
-+		return -ENOMEM;
-+
-+	irq->num_parents = tgi->gc.num_banks;
-+
- 	platform_set_drvdata(pdev, tgi);
- 
- 	if (tgi->soc->debounce_supported)
- 		tgi->gc.set_config = tegra_gpio_set_config;
- 
--	tgi->bank_info = devm_kcalloc(&pdev->dev, tgi->bank_count,
-+	tgi->bank_info = devm_kcalloc(&pdev->dev, tgi->gc.num_banks,
- 				      sizeof(*tgi->bank_info), GFP_KERNEL);
- 	if (!tgi->bank_info)
+ static struct lock_class_key tegra186_gpio_lock_class;
+@@ -420,6 +353,7 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
  		return -ENOMEM;
  
--	tgi->irq_domain = irq_domain_add_linear(pdev->dev.of_node,
--						tgi->gc.ngpio,
--						&irq_domain_simple_ops, NULL);
--	if (!tgi->irq_domain)
--		return -ENODEV;
-+	tgi->gc.banks = devm_kcalloc(&pdev->dev, tgi->gc.num_banks,
-+				     sizeof(struct gpio_bank *),
-+				     GFP_KERNEL);
-+	if (!tgi->gc.banks)
-+		return -ENOMEM;
+ 	gpio->soc = of_device_get_match_data(&pdev->dev);
++	irq = &gpio->gpio.irq;
  
--	for (i = 0; i < tgi->bank_count; i++) {
-+	for (i = 0; i < tgi->gc.num_banks; i++) {
- 		ret = platform_get_irq(pdev, i);
- 		if (ret < 0) {
- 			dev_err(&pdev->dev, "Missing IRQ resource: %d\n", ret);
- 			return ret;
- 		}
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gpio");
+ 	gpio->base = devm_ioremap_resource(&pdev->dev, res);
+@@ -430,21 +364,47 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 	if (err < 0)
+ 		return err;
  
-+		irq->parents[i] = ret;
-+
- 		bank = &tgi->bank_info[i];
--		bank->bank = i;
--		bank->irq = ret;
--		bank->tgi = tgi;
--	}
-+		bank->bank.chip = &tgi->gc;
-+		bank->bank.parent_irq = i;
-+		bank->bank.num_pins = 32;
-+		bank->index = i;
+-	gpio->num_irq = err;
++	irq->num_parents = err;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	tgi->regs = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(tgi->regs))
--		return PTR_ERR(tgi->regs);
-+		tgi->gc.banks[i] = &bank->bank;
+-	gpio->irq = devm_kcalloc(&pdev->dev, gpio->num_irq, sizeof(*gpio->irq),
+-				 GFP_KERNEL);
+-	if (!gpio->irq)
++	irq->parents = devm_kcalloc(&pdev->dev, irq->num_parents,
++				    sizeof(*irq->parents), GFP_KERNEL);
++	if (!irq->parents)
+ 		return -ENOMEM;
  
--	for (i = 0; i < tgi->bank_count; i++) {
- 		for (j = 0; j < 4; j++) {
--			int gpio = tegra_gpio_compose(i, j, 0);
-+			unsigned int gpio = tegra_gpio_compose(i, j, 0);
+-	for (i = 0; i < gpio->num_irq; i++) {
++	for (i = 0; i < irq->num_parents; i++) {
+ 		err = platform_get_irq(pdev, i);
+ 		if (err < 0)
+ 			return err;
  
- 			tegra_gpio_writel(tgi, 0x00, GPIO_INT_ENB(tgi, gpio));
-+			spin_lock_init(&bank->lvl_lock[j]);
-+			spin_lock_init(&bank->dbc_lock[j]);
- 		}
+-		gpio->irq[i] = err;
++		irq->parents[i] = err;
  	}
  
- 	ret = devm_gpiochip_add_data(&pdev->dev, &tgi->gc, tgi);
--	if (ret < 0) {
--		irq_domain_remove(tgi->irq_domain);
-+	if (ret < 0)
- 		return ret;
--	}
--
--	for (gpio = 0; gpio < tgi->gc.ngpio; gpio++) {
--		int irq = irq_create_mapping(tgi->irq_domain, gpio);
--		/* No validity check; all Tegra GPIOs are valid IRQs */
--
--		bank = &tgi->bank_info[GPIO_BANK(gpio)];
--
--		irq_set_lockdep_class(irq, &gpio_lock_class);
--		irq_set_chip_data(irq, bank);
--		irq_set_chip_and_handler(irq, &tgi->ic, handle_simple_irq);
--	}
--
--	for (i = 0; i < tgi->bank_count; i++) {
--		bank = &tgi->bank_info[i];
--
--		irq_set_chained_handler_and_data(bank->irq,
--						 tegra_gpio_irq_handler, bank);
--
--		for (j = 0; j < 4; j++) {
--			spin_lock_init(&bank->lvl_lock[j]);
--			spin_lock_init(&bank->dbc_lock[j]);
--		}
--	}
++	gpio->ports = devm_kcalloc(&pdev->dev, gpio->soc->num_ports,
++				   sizeof(struct tegra_gpio_port),
++				   GFP_KERNEL);
++	if (!gpio->ports)
++		return -ENOMEM;
++
++	gpio->gpio.banks = devm_kcalloc(&pdev->dev, gpio->soc->num_ports,
++					sizeof(struct gpio_bank *),
++					GFP_KERNEL);
++	if (!gpio->gpio.banks)
++		return -ENOMEM;
++
++	for (i = 0; i < gpio->soc->num_ports; i++) {
++		const struct tegra_gpio_port_soc *soc = &gpio->soc->ports[i];
++		struct tegra_gpio_port *port = &gpio->ports[i];
++
++		gpio->gpio.banks[i] = &port->bank;
++		port->bank.parent_irq = soc->irq;
++		port->bank.num_pins = soc->pins;
++
++		port->offset = soc->offset;
++		port->name = soc->name;
++	}
++
++	gpio->gpio.num_banks = gpio->soc->num_ports;
++
+ 	gpio->gpio.label = gpio->soc->name;
+ 	gpio->gpio.parent = &pdev->dev;
  
- 	tegra_gpio_debuginit(tgi);
+@@ -465,7 +425,7 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
+ 	for (i = 0, offset = 0; i < gpio->soc->num_ports; i++) {
+-		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
++		const struct tegra_gpio_port_soc *port = &gpio->soc->ports[i];
+ 		char *name;
+ 
+ 		for (j = 0; j < port->pins; j++) {
+@@ -484,7 +444,11 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 
+ 	gpio->gpio.of_node = pdev->dev.of_node;
+ 	gpio->gpio.of_gpio_n_cells = 2;
+-	gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
++	gpio->gpio.of_gpio_bank_shift = 3;
++	gpio->gpio.of_gpio_bank_mask = 0x1fffffff;
++	gpio->gpio.of_gpio_pin_shift = 0;
++	gpio->gpio.of_gpio_pin_mask = 0x7;
++	gpio->gpio.of_xlate = of_gpio_banked_xlate;
+ 
+ 	gpio->intc.name = pdev->dev.of_node->name;
+ 	gpio->intc.irq_ack = tegra186_irq_ack;
+@@ -492,31 +456,14 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 	gpio->intc.irq_unmask = tegra186_irq_unmask;
+ 	gpio->intc.irq_set_type = tegra186_irq_set_type;
+ 
+-	irq = &gpio->gpio.irq;
+ 	irq->chip = &gpio->intc;
+ 	irq->first = 0;
+ 	irq->domain_ops = &tegra186_gpio_irq_domain_ops;
+ 	irq->handler = handle_simple_irq;
+ 	irq->lock_key = &tegra186_gpio_lock_class;
+ 	irq->default_type = IRQ_TYPE_NONE;
+-	irq->parent_handler = tegra186_gpio_irq;
+-	irq->parent_handler_data = gpio;
+-	irq->num_parents = gpio->num_irq;
+-	irq->parents = gpio->irq;
+-
+-	irq->map = devm_kcalloc(&pdev->dev, gpio->gpio.ngpio,
+-				sizeof(*irq->map), GFP_KERNEL);
+-	if (!irq->map)
+-		return -ENOMEM;
+-
+-	for (i = 0, offset = 0; i < gpio->soc->num_ports; i++) {
+-		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
+-
+-		for (j = 0; j < port->pins; j++)
+-			irq->map[offset + j] = irq->parents[port->irq];
+-
+-		offset += port->pins;
+-	}
++	irq->parent_handler = gpio_irq_chip_banked_handler;
++	irq->update_bank = tegra186_gpio_update_bank;
+ 
+ 	platform_set_drvdata(pdev, gpio);
+ 
+@@ -540,7 +487,7 @@ static int tegra186_gpio_remove(struct platform_device *pdev)
+ 		.irq = controller,				\
+ 	}
+ 
+-static const struct tegra_gpio_port tegra186_main_ports[] = {
++static const struct tegra_gpio_port_soc tegra186_main_ports[] = {
+ 	TEGRA_MAIN_GPIO_PORT( A, 0x2000, 7, 2),
+ 	TEGRA_MAIN_GPIO_PORT( B, 0x3000, 7, 3),
+ 	TEGRA_MAIN_GPIO_PORT( C, 0x3200, 7, 3),
+@@ -580,7 +527,7 @@ static const struct tegra_gpio_soc tegra186_main_soc = {
+ 		.irq = controller,				\
+ 	}
+ 
+-static const struct tegra_gpio_port tegra186_aon_ports[] = {
++static const struct tegra_gpio_port_soc tegra186_aon_ports[] = {
+ 	TEGRA_AON_GPIO_PORT( S, 0x0200, 5, 0),
+ 	TEGRA_AON_GPIO_PORT( U, 0x0400, 6, 0),
+ 	TEGRA_AON_GPIO_PORT( V, 0x0800, 8, 0),
 -- 
 2.13.3
