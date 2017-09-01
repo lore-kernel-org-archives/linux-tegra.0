@@ -1,442 +1,579 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 14/16] gpio: Add support for banked GPIO controllers
-Date: Fri,  1 Sep 2017 20:57:34 +0200
-Message-ID: <20170901185736.28051-15-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 13/16] gpio: omap: Rename struct gpio_bank to struct omap_gpio_bank
+Date: Fri,  1 Sep 2017 20:57:33 +0200
+Message-ID: <20170901185736.28051-14-thierry.reding@gmail.com>
 References: <20170901185736.28051-1-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170901185736.28051-1-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170901185736.28051-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Some GPIO controllers are subdivided into multiple logical blocks called
-banks (or ports). This is often caused by the design assigning separate
-resources, such as register regions or interrupts, to each bank, or some
-set of banks.
+Subsequent patches will want to introduce a struct gpio_bank in core
+code, so rename this to something driver-specific in order to avoid the
+names from clashing.
 
-This commit adds support for describing controllers that have such a
-banked design and provides common code for dealing with them.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpio/gpiolib-of.c   | 101 +++++++++++++++++++++++++++++++++++++++++
- drivers/gpio/gpiolib.c      |  98 ++++++++++++++++++++++++++++++++++++++++
- include/linux/gpio/driver.h | 108 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of_gpio.h     |  10 ++++
- 4 files changed, 317 insertions(+)
+ drivers/gpio/gpio-omap.c | 131 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 68 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index bfcd20699ec8..8b89f03076c2 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -310,6 +310,107 @@ int of_gpio_simple_xlate(struct gpio_chip *gc,
- EXPORT_SYMBOL(of_gpio_simple_xlate);
- 
- /**
-+ * gpio_banked_irq_domain_xlate - decode an IRQ specifier for banked chips
-+ * @domain: IRQ domain
-+ * @np: device tree node
-+ * @spec: IRQ specifier
-+ * @size: number of cells in IRQ specifier
-+ * @hwirq: return location for the hardware IRQ number
-+ * @type: return location for the IRQ type
-+ *
-+ * Translates the IRQ specifier found in device tree into a hardware IRQ
-+ * number and an interrupt type.
-+ *
-+ * Returns:
-+ * 0 on success or a negative error code on failure.
-+ */
-+int gpio_banked_irq_domain_xlate(struct irq_domain *domain,
-+				 struct device_node *np,
-+				 const u32 *spec, unsigned int size,
-+				 unsigned long *hwirq,
-+				 unsigned int *type)
-+{
-+	struct gpio_chip *gc = domain->host_data;
-+	unsigned int bank, pin, i, offset = 0;
-+
-+	if (size < 2)
-+		return -EINVAL;
-+
-+	bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
-+	pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
-+
-+	if (bank >= gc->num_banks) {
-+		dev_err(gc->parent, "invalid bank number: %u\n", bank);
-+		return -EINVAL;
-+	}
-+
-+	if (pin >= gc->banks[bank]->num_pins) {
-+		dev_err(gc->parent, "invalid pin number: %u\n", pin);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < bank; i++)
-+		offset += gc->banks[i]->num_pins;
-+
-+	*type = spec[1] & IRQ_TYPE_SENSE_MASK;
-+	*hwirq = offset + pin;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(gpio_banked_irq_domain_xlate);
-+
-+/**
-+ * of_gpio_banked_xlate - translate GPIO specifier to a GPIO number and flags
-+ * @gc: GPIO chip
-+ * @gpiospec: GPIO specifier
-+ * @flags: return location for flags parsed from the GPIO specifier
-+ *
-+ * This translation function takes into account multiple banks that can make
-+ * up a single controller. Each bank can contain one or more pins. A single
-+ * cell in the specifier is used to represent a (bank, pin) pair, with each
-+ * encoded in different fields. The &gpio_chip.of_gpio_bank_shift and
-+ * &gpio_chip.of_gpio_bank_mask fields, and &gpio_chip.of_gpio_pin_shift and
-+ * &gpio_chip.of_gpio_pin_mask are used to specify the encoding.
-+ *
-+ * Returns:
-+ * The chip-relative index of the pin given by the GPIO specifier.
-+ */
-+int of_gpio_banked_xlate(struct gpio_chip *gc,
-+			 const struct of_phandle_args *gpiospec, u32 *flags)
-+{
-+	unsigned int offset = 0, bank, pin, i;
-+	const u32 *spec = gpiospec->args;
-+
-+	if (WARN_ON(gc->of_gpio_n_cells < 2))
-+		return -EINVAL;
-+
-+	if (WARN_ON(gpiospec->args_count < gc->of_gpio_n_cells))
-+		return -EINVAL;
-+
-+	bank = (spec[0] >> gc->of_gpio_bank_shift) & gc->of_gpio_bank_mask;
-+	pin = (spec[0] >> gc->of_gpio_pin_shift) & gc->of_gpio_pin_mask;
-+
-+	if (bank >= gc->num_banks) {
-+		dev_err(gc->parent, "invalid bank number: %u\n", bank);
-+		return -EINVAL;
-+	}
-+
-+	if (pin >= gc->banks[bank]->num_pins) {
-+		dev_err(gc->parent, "invalid pin number: %u\n", pin);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < bank; i++)
-+		offset += gc->banks[i]->num_pins;
-+
-+	if (flags)
-+		*flags = spec[1];
-+
-+	return offset + pin;
-+}
-+EXPORT_SYMBOL(of_gpio_banked_xlate);
-+
-+/**
-  * of_mm_gpiochip_add_data - Add memory mapped GPIO chip (bank)
-  * @np:		device node of the GPIO chip
-  * @mm_gc:	pointer to the of_mm_gpio_chip allocated structure
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7a16dd37bd3d..306c3a13e814 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1776,6 +1776,57 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
- 	gpiochip->to_irq = gpiochip_to_irq;
- 	gpiochip->irq.default_type = type;
- 
-+	if (gpiochip->num_banks > 0 && !gpiochip->irq.map) {
-+		struct gpio_irq_chip *irq = &gpiochip->irq;
-+		unsigned int i, j, offset = 0;
-+
-+		if (!irq->parents) {
-+			chip_err(gpiochip, "no parent interrupts defined\n");
-+			return -EINVAL;
-+		}
-+
-+		irq->map = devm_kcalloc(gpiochip->parent, gpiochip->ngpio,
-+					sizeof(*irq->map), GFP_KERNEL);
-+		if (!irq->map)
-+			return -ENOMEM;
-+
-+		for (i = 0; i < gpiochip->num_banks; i++) {
-+			struct gpio_bank *bank = gpiochip->banks[i];
-+			unsigned int parent = bank->parent_irq;
-+
-+			for (j = 0; j < bank->num_pins; j++) {
-+				if (parent >= irq->num_parents) {
-+					chip_err(gpiochip,
-+						 "invalid parent interrupt: %u\n",
-+						 parent);
-+					return -EINVAL;
-+				}
-+
-+				irq->map[offset + j] = irq->parents[parent];
-+			}
-+
-+			offset += bank->num_pins;
-+		}
-+	}
-+
-+	if (gpiochip->num_banks > 0) {
-+		unsigned int i;
-+
-+		for (i = 0; i < gpiochip->num_banks; i++) {
-+			struct gpio_bank *bank = gpiochip->banks[i];
-+			unsigned int num_pins = bank->num_pins;
-+
-+			bank->pending = devm_kcalloc(gpiochip->parent,
-+						     BITS_TO_LONGS(num_pins),
-+						     sizeof(unsigned long),
-+						     GFP_KERNEL);
-+			if (!bank->pending)
-+				return -ENOMEM;
-+
-+			bank->chip = gpiochip;
-+		}
-+	}
-+
- 	if (gpiochip->irq.domain_ops)
- 		ops = gpiochip->irq.domain_ops;
- 	else
-@@ -1984,6 +2035,53 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
- }
- EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_key);
- 
-+/**
-+ * gpio_irq_chip_banked_handler - interrupt handler for banked IRQ chips
-+ * @desc: IRQ descriptor
-+ *
-+ * Drivers can use this interrupt handler for banked GPIO controllers. This
-+ * implementation iterates over all banks and handles pending interrupts of
-+ * the pins associated with the bank.
-+ *
-+ * This function uses driver specific parts, split out into the
-+ * &gpio_chip.update_bank() callback, to retrieves the interrupt pending
-+ * state for each of the GPIOs exposed by the given bank.
-+ */
-+void gpio_irq_chip_banked_handler(struct irq_desc *desc)
-+{
-+	struct gpio_chip *gpio = irq_desc_get_handler_data(desc);
-+	struct irq_chip *irq = irq_desc_get_chip(desc);
-+	unsigned int parent = irq_desc_get_irq(desc);
-+	struct gpio_irq_chip *chip = &gpio->irq;
-+	unsigned int i, offset = 0;
-+
-+	chained_irq_enter(irq, desc);
-+
-+	for (i = 0; i < gpio->num_banks; i++) {
-+		struct gpio_bank *bank = gpio->banks[i];
-+		unsigned int pin, virq;
-+
-+		if (parent != chip->parents[bank->parent_irq])
-+			goto skip;
-+
-+		chip->update_bank(bank);
-+
-+		for_each_set_bit(pin, bank->pending, bank->num_pins) {
-+			virq = irq_find_mapping(chip->domain, offset + pin);
-+			if (WARN_ON(virq == 0))
-+				continue;
-+
-+			generic_handle_irq(virq);
-+		}
-+
-+skip:
-+		offset += bank->num_pins;
-+	}
-+
-+	chained_irq_exit(irq, desc);
-+}
-+EXPORT_SYMBOL_GPL(gpio_irq_chip_banked_handler);
-+
- #else /* CONFIG_GPIOLIB_IRQCHIP */
- 
- static inline int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c453e0716228..ecbeb50f8801 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -19,6 +19,47 @@ struct module;
- 
- #ifdef CONFIG_GPIOLIB
- 
-+/**
-+ * struct gpio_bank - GPIO bank
-+ *
-+ * A GPIO bank, sometimes also referred to as port, represents a subset of the
-+ * pins of a GPIO controller. The separation into banks is often caused by the
-+ * sharing of one or more resource (register region, interrupt, ...) for each
-+ * of the pins in the bank.
-+ *
-+ * In many cases the banking is transparent, but when it is not, GPIO drivers
-+ * can use this code, along with some supporting fields in &struct gpio_chip.
-+ */
-+struct gpio_bank {
-+	/**
-+	 * @chip:
-+	 *
-+	 * A pointer to the &struct gpio_chip that this bank belongs to.
-+	 */
-+	struct gpio_chip *chip;
-+
-+	/**
-+	 * @parent_irq:
-+	 *
-+	 * The interrupt parent for this bank.
-+	 */
-+	unsigned int parent_irq;
-+
-+	/**
-+	 * @num_pins:
-+	 *
-+	 * The number of pins provided by this bank.
-+	 */
-+	unsigned int num_pins;
-+
-+	/**
-+	 * @pending:
-+	 *
-+	 * Current interrupt state of each pin in the bank.
-+	 */
-+	unsigned long *pending;
-+};
-+
- #ifdef CONFIG_GPIOLIB_IRQCHIP
- /**
-  * struct gpio_irq_chip - GPIO interrupt controller
-@@ -136,6 +177,15 @@ struct gpio_irq_chip {
- 	 * in IRQ domain of the chip.
- 	 */
- 	unsigned long *valid_mask;
-+
-+	/**
-+	 * @update_bank:
-+	 *
-+	 * Callback used by banked interrupt controllers. The driver updates
-+	 * the &gpio_bank.pending field of the given @bank with the current
-+	 * status for each of the GPIOs that it provides.
-+	 */
-+	void (*update_bank)(struct gpio_bank *bank);
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 7c600cec3e44..0b80d929d892 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -48,7 +48,7 @@ struct gpio_regs {
+ 	u32 debounce_en;
  };
  
- static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
-@@ -281,6 +331,24 @@ struct gpio_chip {
- 	struct gpio_irq_chip irq;
- #endif
+-struct gpio_bank {
++struct omap_gpio_bank {
+ 	struct list_head node;
+ 	void __iomem *base;
+ 	int irq;
+@@ -76,7 +76,7 @@ struct gpio_bank {
+ 	int power_mode;
+ 	bool workaround_enabled;
  
-+	/**
-+	 * @banks:
-+	 *
-+	 * If a GPIO controller is subdivided into multiple banks, the driver
-+	 * can use this field to store information about these banks.
-+	 *
-+	 * Note that the driver owns this field and the core will not modify
-+	 * it, only reference it.
-+	 */
-+	struct gpio_bank **banks;
-+
-+	/**
-+	 * @num_banks:
-+	 *
-+	 * The number of banks described in @banks.
-+	 */
-+	unsigned int num_banks;
-+
- #if defined(CONFIG_OF_GPIO)
- 	/*
- 	 * If CONFIG_OF is enabled, then all GPIO controllers described in the
-@@ -302,6 +370,38 @@ struct gpio_chip {
- 	unsigned int of_gpio_n_cells;
+-	void (*set_dataout)(struct gpio_bank *bank, unsigned int gpio,
++	void (*set_dataout)(struct omap_gpio_bank *bank, unsigned int gpio,
+ 			    int enable);
+ 	int (*get_context_loss_count)(struct device *dev);
  
- 	/**
-+	 * @of_gpio_bank_shift:
-+	 *
-+	 * The offset of the field in the cell denoting the bank number of a
-+	 * specified GPIO.
-+	 */
-+	unsigned int of_gpio_bank_shift;
-+
-+	/**
-+	 * @of_gpio_bank_mask:
-+	 *
-+	 * The mask of the field in the cell denoting the bank number of a
-+	 * specified GPIO.
-+	 */
-+	unsigned int of_gpio_bank_mask;
-+
-+	/**
-+	 * @of_gpio_pin_shift:
-+	 *
-+	 * The offset of the field in the cell denoting the pin number of a
-+	 * specified GPIO within its bank.
-+	 */
-+	unsigned int of_gpio_pin_shift;
-+
-+	/**
-+	 * @of_gpio_pin_mask:
-+	 *
-+	 * The mask of the field in the cell denoting the pin number of a
-+	 * specified GPIO within its bank.
-+	 */
-+	unsigned int of_gpio_pin_mask;
-+
-+	/**
- 	 * @of_xlate:
- 	 *
- 	 * Callback to translate a device tree GPIO specifier into a chip-
-@@ -374,6 +474,12 @@ int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
- 		     irq_hw_number_t hwirq);
- void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq);
+@@ -90,14 +90,14 @@ struct gpio_bank {
  
-+int gpio_banked_irq_domain_xlate(struct irq_domain *domain,
-+				 struct device_node *np,
-+				 const u32 *spec, unsigned int size,
-+				 unsigned long *hwirq,
-+				 unsigned int *type);
-+
- void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
- 		struct irq_chip *irqchip,
- 		unsigned int parent_irq,
-@@ -391,6 +497,8 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
- 			     bool nested,
- 			     struct lock_class_key *lock_key);
+ static void omap_gpio_unmask_irq(struct irq_data *d);
  
-+void gpio_irq_chip_banked_handler(struct irq_desc *desc);
-+
- #ifdef CONFIG_LOCKDEP
+-static inline struct gpio_bank *omap_irq_data_get_bank(struct irq_data *d)
++static inline struct omap_gpio_bank *omap_irq_data_get_bank(struct irq_data *d)
+ {
+ 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
  
- /*
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index ca10f43564de..f85414dc31f4 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -66,6 +66,9 @@ extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
- extern int of_gpio_simple_xlate(struct gpio_chip *gc,
- 				const struct of_phandle_args *gpiospec,
- 				u32 *flags);
-+extern int of_gpio_banked_xlate(struct gpio_chip *gc,
-+				const struct of_phandle_args *gpiospec,
-+				u32 *flags);
- 
- #else /* CONFIG_OF_GPIO */
- 
-@@ -86,6 +89,13 @@ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
- 	return -ENOSYS;
+ 	return gpiochip_get_data(chip);
  }
  
-+static inline int of_gpio_banked_xlate(struct gpio_chip *gc,
-+				       const struct of_phandle_args *gpiospec,
-+				       u32 *flags)
-+{
-+	return -ENOSYS;
-+}
-+
- #endif /* CONFIG_OF_GPIO */
+-static void omap_set_gpio_direction(struct gpio_bank *bank, int gpio,
++static void omap_set_gpio_direction(struct omap_gpio_bank *bank, int gpio,
+ 				    int is_input)
+ {
+ 	void __iomem *reg = bank->base;
+@@ -115,7 +115,7 @@ static void omap_set_gpio_direction(struct gpio_bank *bank, int gpio,
  
- /**
+ 
+ /* set data out value using dedicate set/clear register */
+-static void omap_set_gpio_dataout_reg(struct gpio_bank *bank,
++static void omap_set_gpio_dataout_reg(struct omap_gpio_bank *bank,
+ 				      unsigned int offset, int enable)
+ {
+ 	void __iomem *reg = bank->base;
+@@ -133,7 +133,7 @@ static void omap_set_gpio_dataout_reg(struct gpio_bank *bank,
+ }
+ 
+ /* set data out value using mask register */
+-static void omap_set_gpio_dataout_mask(struct gpio_bank *bank,
++static void omap_set_gpio_dataout_mask(struct omap_gpio_bank *bank,
+ 				       unsigned int offset, int enable)
+ {
+ 	void __iomem *reg = bank->base + bank->regs->dataout;
+@@ -149,14 +149,14 @@ static void omap_set_gpio_dataout_mask(struct gpio_bank *bank,
+ 	bank->context.dataout = l;
+ }
+ 
+-static int omap_get_gpio_datain(struct gpio_bank *bank, int offset)
++static int omap_get_gpio_datain(struct omap_gpio_bank *bank, int offset)
+ {
+ 	void __iomem *reg = bank->base + bank->regs->datain;
+ 
+ 	return (readl_relaxed(reg) & (BIT(offset))) != 0;
+ }
+ 
+-static int omap_get_gpio_dataout(struct gpio_bank *bank, int offset)
++static int omap_get_gpio_dataout(struct omap_gpio_bank *bank, int offset)
+ {
+ 	void __iomem *reg = bank->base + bank->regs->dataout;
+ 
+@@ -176,7 +176,7 @@ static inline void omap_gpio_rmw(void __iomem *base, u32 reg, u32 mask,
+ 	writel_relaxed(l, base + reg);
+ }
+ 
+-static inline void omap_gpio_dbck_enable(struct gpio_bank *bank)
++static inline void omap_gpio_dbck_enable(struct omap_gpio_bank *bank)
+ {
+ 	if (bank->dbck_enable_mask && !bank->dbck_enabled) {
+ 		clk_enable(bank->dbck);
+@@ -187,7 +187,7 @@ static inline void omap_gpio_dbck_enable(struct gpio_bank *bank)
+ 	}
+ }
+ 
+-static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
++static inline void omap_gpio_dbck_disable(struct omap_gpio_bank *bank)
+ {
+ 	if (bank->dbck_enable_mask && bank->dbck_enabled) {
+ 		/*
+@@ -214,8 +214,8 @@ static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
+  *
+  * Return: 0 on success, negative error otherwise.
+  */
+-static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned int offset,
+-				   unsigned int debounce)
++static int omap2_set_gpio_debounce(struct omap_gpio_bank *bank,
++				   unsigned int offset, unsigned int debounce)
+ {
+ 	void __iomem		*reg;
+ 	u32			val;
+@@ -275,7 +275,7 @@ static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned int offset,
+  * time too. The debounce clock will also be disabled when calling this function
+  * if this is the only gpio in the bank using debounce.
+  */
+-static void omap_clear_gpio_debounce(struct gpio_bank *bank,
++static void omap_clear_gpio_debounce(struct omap_gpio_bank *bank,
+ 				     unsigned int offset)
+ {
+ 	u32 gpio_bit = BIT(offset);
+@@ -300,7 +300,7 @@ static void omap_clear_gpio_debounce(struct gpio_bank *bank,
+ 	}
+ }
+ 
+-static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
++static inline void omap_set_gpio_trigger(struct omap_gpio_bank *bank, int gpio,
+ 					 unsigned int trigger)
+ {
+ 	void __iomem *base = bank->base;
+@@ -362,7 +362,8 @@ static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
+  * This only applies to chips that can't do both rising and falling edge
+  * detection at once.  For all other chips, this function is a noop.
+  */
+-static void omap_toggle_gpio_edge_triggering(struct gpio_bank *bank, int gpio)
++static void omap_toggle_gpio_edge_triggering(struct omap_gpio_bank *bank,
++					     int gpio)
+ {
+ 	void __iomem *reg = bank->base;
+ 	u32 l = 0;
+@@ -381,12 +382,13 @@ static void omap_toggle_gpio_edge_triggering(struct gpio_bank *bank, int gpio)
+ 	writel_relaxed(l, reg);
+ }
+ #else
+-static void omap_toggle_gpio_edge_triggering(struct gpio_bank *bank, int gpio)
++static void omap_toggle_gpio_edge_triggering(struct omap_gpio_bank *bank,
++					     int gpio)
+ {
+ }
+ #endif
+ 
+-static int omap_set_gpio_triggering(struct gpio_bank *bank, int gpio,
++static int omap_set_gpio_triggering(struct omap_gpio_bank *bank, int gpio,
+ 				    unsigned int trigger)
+ {
+ 	void __iomem *reg = bank->base;
+@@ -432,7 +434,8 @@ static int omap_set_gpio_triggering(struct gpio_bank *bank, int gpio,
+ 	return 0;
+ }
+ 
+-static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned int offset)
++static void omap_enable_gpio_module(struct omap_gpio_bank *bank,
++				    unsigned int offset)
+ {
+ 	if (bank->regs->pinctrl) {
+ 		void __iomem *reg = bank->base + bank->regs->pinctrl;
+@@ -453,7 +456,7 @@ static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned int offset)
+ 	}
+ }
+ 
+-static void omap_disable_gpio_module(struct gpio_bank *bank,
++static void omap_disable_gpio_module(struct omap_gpio_bank *bank,
+ 				     unsigned int offset)
+ {
+ 	void __iomem *base = bank->base;
+@@ -479,14 +482,14 @@ static void omap_disable_gpio_module(struct gpio_bank *bank,
+ 	}
+ }
+ 
+-static int omap_gpio_is_input(struct gpio_bank *bank, unsigned int offset)
++static int omap_gpio_is_input(struct omap_gpio_bank *bank, unsigned int offset)
+ {
+ 	void __iomem *reg = bank->base + bank->regs->direction;
+ 
+ 	return readl_relaxed(reg) & BIT(offset);
+ }
+ 
+-static void omap_gpio_init_irq(struct gpio_bank *bank, unsigned int offset)
++static void omap_gpio_init_irq(struct omap_gpio_bank *bank, unsigned int offset)
+ {
+ 	if (!LINE_USED(bank->mod_usage, offset)) {
+ 		omap_enable_gpio_module(bank, offset);
+@@ -497,7 +500,7 @@ static void omap_gpio_init_irq(struct gpio_bank *bank, unsigned int offset)
+ 
+ static int omap_gpio_irq_type(struct irq_data *d, unsigned int type)
+ {
+-	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	struct omap_gpio_bank *bank = omap_irq_data_get_bank(d);
+ 	int retval;
+ 	unsigned long flags;
+ 	unsigned int offset = d->hwirq;
+@@ -534,7 +537,7 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned int type)
+ 	return retval;
+ }
+ 
+-static void omap_clear_gpio_irqbank(struct gpio_bank *bank, int gpio_mask)
++static void omap_clear_gpio_irqbank(struct omap_gpio_bank *bank, int gpio_mask)
+ {
+ 	void __iomem *reg = bank->base;
+ 
+@@ -551,13 +554,13 @@ static void omap_clear_gpio_irqbank(struct gpio_bank *bank, int gpio_mask)
+ 	readl_relaxed(reg);
+ }
+ 
+-static inline void omap_clear_gpio_irqstatus(struct gpio_bank *bank,
++static inline void omap_clear_gpio_irqstatus(struct omap_gpio_bank *bank,
+ 					     unsigned int offset)
+ {
+ 	omap_clear_gpio_irqbank(bank, BIT(offset));
+ }
+ 
+-static u32 omap_get_gpio_irqbank_mask(struct gpio_bank *bank)
++static u32 omap_get_gpio_irqbank_mask(struct omap_gpio_bank *bank)
+ {
+ 	void __iomem *reg = bank->base;
+ 	u32 l;
+@@ -571,7 +574,7 @@ static u32 omap_get_gpio_irqbank_mask(struct gpio_bank *bank)
+ 	return l;
+ }
+ 
+-static void omap_enable_gpio_irqbank(struct gpio_bank *bank, int gpio_mask)
++static void omap_enable_gpio_irqbank(struct omap_gpio_bank *bank, int gpio_mask)
+ {
+ 	void __iomem *reg = bank->base;
+ 	u32 l;
+@@ -593,7 +596,8 @@ static void omap_enable_gpio_irqbank(struct gpio_bank *bank, int gpio_mask)
+ 	writel_relaxed(l, reg);
+ }
+ 
+-static void omap_disable_gpio_irqbank(struct gpio_bank *bank, int gpio_mask)
++static void omap_disable_gpio_irqbank(struct omap_gpio_bank *bank,
++				      int gpio_mask)
+ {
+ 	void __iomem *reg = bank->base;
+ 	u32 l;
+@@ -615,7 +619,7 @@ static void omap_disable_gpio_irqbank(struct gpio_bank *bank, int gpio_mask)
+ 	writel_relaxed(l, reg);
+ }
+ 
+-static inline void omap_set_gpio_irqenable(struct gpio_bank *bank,
++static inline void omap_set_gpio_irqenable(struct omap_gpio_bank *bank,
+ 					   unsigned int offset, int enable)
+ {
+ 	if (enable)
+@@ -627,14 +631,14 @@ static inline void omap_set_gpio_irqenable(struct gpio_bank *bank,
+ /* Use disable_irq_wake() and enable_irq_wake() functions from drivers */
+ static int omap_gpio_wake_enable(struct irq_data *d, unsigned int enable)
+ {
+-	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	struct omap_gpio_bank *bank = omap_irq_data_get_bank(d);
+ 
+ 	return irq_set_irq_wake(bank->irq, enable);
+ }
+ 
+ static int omap_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ {
+-	struct gpio_bank *bank = gpiochip_get_data(chip);
++	struct omap_gpio_bank *bank = gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 
+ 	/*
+@@ -654,7 +658,7 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ 
+ static void omap_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
+-	struct gpio_bank *bank = gpiochip_get_data(chip);
++	struct omap_gpio_bank *bank = gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+@@ -688,7 +692,7 @@ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+ 	void __iomem *isr_reg = NULL;
+ 	u32 isr;
+ 	unsigned int bit;
+-	struct gpio_bank *bank = gpiobank;
++	struct omap_gpio_bank *bank = gpiobank;
+ 	unsigned long wa_lock_flags;
+ 	unsigned long lock_flags;
+ 
+@@ -759,7 +763,7 @@ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+ 
+ static unsigned int omap_gpio_irq_startup(struct irq_data *d)
+ {
+-	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	struct omap_gpio_bank *bank = omap_irq_data_get_bank(d);
+ 	unsigned long flags;
+ 	unsigned int offset = d->hwirq;
+ 
+@@ -783,7 +787,7 @@ static unsigned int omap_gpio_irq_startup(struct irq_data *d)
+ 
+ static void omap_gpio_irq_shutdown(struct irq_data *d)
+ {
+-	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	struct omap_gpio_bank *bank = omap_irq_data_get_bank(d);
+ 	unsigned long flags;
+ 	unsigned int offset = d->hwirq;
+ 
+@@ -800,7 +804,7 @@ static void omap_gpio_irq_shutdown(struct irq_data *d)
+ 
+ static void omap_gpio_irq_bus_lock(struct irq_data *data)
+ {
+-	struct gpio_bank *bank = omap_irq_data_get_bank(data);
++	struct omap_gpio_bank *bank = omap_irq_data_get_bank(data);
+ 
+ 	if (!BANK_USED(bank))
+ 		pm_runtime_get_sync(bank->chip.parent);
+@@ -808,7 +812,7 @@ static void omap_gpio_irq_bus_lock(struct irq_data *data)
+ 
+ static void gpio_irq_bus_sync_unlock(struct irq_data *data)
+ {
+-	struct gpio_bank *bank = omap_irq_data_get_bank(data);
++	struct omap_gpio_bank *bank = omap_irq_data_get_bank(data);
+ 
+ 	/*
+ 	 * If this is the last IRQ to be freed in the bank,
+@@ -820,7 +824,7 @@ static void gpio_irq_bus_sync_unlock(struct irq_data *data)
+ 
+ static void omap_gpio_ack_irq(struct irq_data *d)
+ {
+-	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	struct omap_gpio_bank *bank = omap_irq_data_get_bank(d);
+ 	unsigned int offset = d->hwirq;
+ 
+ 	omap_clear_gpio_irqstatus(bank, offset);
+@@ -828,7 +832,7 @@ static void omap_gpio_ack_irq(struct irq_data *d)
+ 
+ static void omap_gpio_mask_irq(struct irq_data *d)
+ {
+-	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	struct omap_gpio_bank *bank = omap_irq_data_get_bank(d);
+ 	unsigned int offset = d->hwirq;
+ 	unsigned long flags;
+ 
+@@ -840,7 +844,7 @@ static void omap_gpio_mask_irq(struct irq_data *d)
+ 
+ static void omap_gpio_unmask_irq(struct irq_data *d)
+ {
+-	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	struct omap_gpio_bank *bank = omap_irq_data_get_bank(d);
+ 	unsigned int offset = d->hwirq;
+ 	u32 trigger = irqd_get_trigger_type(d);
+ 	unsigned long flags;
+@@ -867,7 +871,7 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+ static int omap_mpuio_suspend_noirq(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	struct gpio_bank	*bank = platform_get_drvdata(pdev);
++	struct omap_gpio_bank	*bank = platform_get_drvdata(pdev);
+ 	void __iomem		*mask_reg = bank->base +
+ 					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
+ 	unsigned long		flags;
+@@ -882,7 +886,7 @@ static int omap_mpuio_suspend_noirq(struct device *dev)
+ static int omap_mpuio_resume_noirq(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	struct gpio_bank	*bank = platform_get_drvdata(pdev);
++	struct omap_gpio_bank	*bank = platform_get_drvdata(pdev);
+ 	void __iomem		*mask_reg = bank->base +
+ 					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
+ 	unsigned long		flags;
+@@ -916,7 +920,7 @@ static struct platform_device omap_mpuio_device = {
+ 	/* could list the /proc/iomem resources */
+ };
+ 
+-static inline void omap_mpuio_init(struct gpio_bank *bank)
++static inline void omap_mpuio_init(struct omap_gpio_bank *bank)
+ {
+ 	platform_set_drvdata(&omap_mpuio_device, bank);
+ 
+@@ -928,7 +932,7 @@ static inline void omap_mpuio_init(struct gpio_bank *bank)
+ 
+ static int omap_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+ {
+-	struct gpio_bank *bank;
++	struct omap_gpio_bank *bank;
+ 	unsigned long flags;
+ 	void __iomem *reg;
+ 	int dir;
+@@ -943,7 +947,7 @@ static int omap_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 
+ static int omap_gpio_input(struct gpio_chip *chip, unsigned int offset)
+ {
+-	struct gpio_bank *bank;
++	struct omap_gpio_bank *bank;
+ 	unsigned long flags;
+ 
+ 	bank = gpiochip_get_data(chip);
+@@ -955,7 +959,7 @@ static int omap_gpio_input(struct gpio_chip *chip, unsigned int offset)
+ 
+ static int omap_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ {
+-	struct gpio_bank *bank;
++	struct omap_gpio_bank *bank;
+ 
+ 	bank = gpiochip_get_data(chip);
+ 
+@@ -968,7 +972,7 @@ static int omap_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ static int omap_gpio_output(struct gpio_chip *chip, unsigned int offset,
+ 			    int value)
+ {
+-	struct gpio_bank *bank;
++	struct omap_gpio_bank *bank;
+ 	unsigned long flags;
+ 
+ 	bank = gpiochip_get_data(chip);
+@@ -982,7 +986,7 @@ static int omap_gpio_output(struct gpio_chip *chip, unsigned int offset,
+ static int omap_gpio_debounce(struct gpio_chip *chip, unsigned int offset,
+ 			      unsigned int debounce)
+ {
+-	struct gpio_bank *bank;
++	struct omap_gpio_bank *bank;
+ 	unsigned long flags;
+ 	int ret;
+ 
+@@ -1015,7 +1019,7 @@ static int omap_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+ static void omap_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 			  int value)
+ {
+-	struct gpio_bank *bank;
++	struct omap_gpio_bank *bank;
+ 	unsigned long flags;
+ 
+ 	bank = gpiochip_get_data(chip);
+@@ -1026,7 +1030,7 @@ static void omap_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 
+ /*---------------------------------------------------------------------*/
+ 
+-static void __init omap_gpio_show_rev(struct gpio_bank *bank)
++static void __init omap_gpio_show_rev(struct omap_gpio_bank *bank)
+ {
+ 	static bool called;
+ 	u32 rev;
+@@ -1041,7 +1045,7 @@ static void __init omap_gpio_show_rev(struct gpio_bank *bank)
+ 	called = true;
+ }
+ 
+-static void omap_gpio_mod_init(struct gpio_bank *bank)
++static void omap_gpio_mod_init(struct omap_gpio_bank *bank)
+ {
+ 	void __iomem *base = bank->base;
+ 	u32 l = 0xffffffff;
+@@ -1068,7 +1072,8 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
+ 		writel_relaxed(0, base + bank->regs->ctrl);
+ }
+ 
+-static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
++static int omap_gpio_chip_init(struct omap_gpio_bank *bank,
++			       struct irq_chip *irqc)
+ {
+ 	static int gpio;
+ 	int irq_base = 0;
+@@ -1158,7 +1163,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	const struct of_device_id *match;
+ 	const struct omap_gpio_platform_data *pdata;
+ 	struct resource *res;
+-	struct gpio_bank *bank;
++	struct omap_gpio_bank *bank;
+ 	struct irq_chip *irqc;
+ 	int ret;
+ 
+@@ -1168,7 +1173,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	if (!pdata)
+ 		return -EINVAL;
+ 
+-	bank = devm_kzalloc(dev, sizeof(struct gpio_bank), GFP_KERNEL);
++	bank = devm_kzalloc(dev, sizeof(struct omap_gpio_bank), GFP_KERNEL);
+ 	if (!bank)
+ 		return -ENOMEM;
+ 
+@@ -1276,7 +1281,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 
+ static int omap_gpio_remove(struct platform_device *pdev)
+ {
+-	struct gpio_bank *bank = platform_get_drvdata(pdev);
++	struct omap_gpio_bank *bank = platform_get_drvdata(pdev);
+ 
+ 	list_del(&bank->node);
+ 	gpiochip_remove(&bank->chip);
+@@ -1290,12 +1295,12 @@ static int omap_gpio_remove(struct platform_device *pdev)
+ #ifdef CONFIG_ARCH_OMAP2PLUS
+ 
+ #if defined(CONFIG_PM)
+-static void omap_gpio_restore_context(struct gpio_bank *bank);
++static void omap_gpio_restore_context(struct omap_gpio_bank *bank);
+ 
+ static int omap_gpio_runtime_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	struct gpio_bank *bank = platform_get_drvdata(pdev);
++	struct omap_gpio_bank *bank = platform_get_drvdata(pdev);
+ 	u32 l1 = 0, l2 = 0;
+ 	unsigned long flags;
+ 	u32 wake_low, wake_hi;
+@@ -1358,12 +1363,12 @@ static int omap_gpio_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static void omap_gpio_init_context(struct gpio_bank *p);
++static void omap_gpio_init_context(struct omap_gpio_bank *p);
+ 
+ static int omap_gpio_runtime_resume(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	struct gpio_bank *bank = platform_get_drvdata(pdev);
++	struct omap_gpio_bank *bank = platform_get_drvdata(pdev);
+ 	u32 l = 0, gen, gen0, gen1;
+ 	unsigned long flags;
+ 	int c;
+@@ -1475,7 +1480,7 @@ static int omap_gpio_runtime_resume(struct device *dev)
+ #if IS_BUILTIN(CONFIG_GPIO_OMAP)
+ void omap2_gpio_prepare_for_idle(int pwr_mode)
+ {
+-	struct gpio_bank *bank;
++	struct omap_gpio_bank *bank;
+ 
+ 	list_for_each_entry(bank, &omap_gpio_list, node) {
+ 		if (!BANK_USED(bank) || !bank->loses_context)
+@@ -1489,7 +1494,7 @@ void omap2_gpio_prepare_for_idle(int pwr_mode)
+ 
+ void omap2_gpio_resume_after_idle(void)
+ {
+-	struct gpio_bank *bank;
++	struct omap_gpio_bank *bank;
+ 
+ 	list_for_each_entry(bank, &omap_gpio_list, node) {
+ 		if (!BANK_USED(bank) || !bank->loses_context)
+@@ -1501,7 +1506,7 @@ void omap2_gpio_resume_after_idle(void)
+ #endif
+ 
+ #if defined(CONFIG_PM)
+-static void omap_gpio_init_context(struct gpio_bank *p)
++static void omap_gpio_init_context(struct omap_gpio_bank *p)
+ {
+ 	struct omap_gpio_reg_offs *regs = p->regs;
+ 	void __iomem *base = p->base;
+@@ -1524,7 +1529,7 @@ static void omap_gpio_init_context(struct gpio_bank *p)
+ 	p->context_valid = true;
+ }
+ 
+-static void omap_gpio_restore_context(struct gpio_bank *bank)
++static void omap_gpio_restore_context(struct omap_gpio_bank *bank)
+ {
+ 	writel_relaxed(bank->context.wake_en,
+ 				bank->base + bank->regs->wkup_en);
+@@ -1561,7 +1566,7 @@ static void omap_gpio_restore_context(struct gpio_bank *bank)
+ #else
+ #define omap_gpio_runtime_suspend NULL
+ #define omap_gpio_runtime_resume NULL
+-static inline void omap_gpio_init_context(struct gpio_bank *p) {}
++static inline void omap_gpio_init_context(struct omap_gpio_bank *p) {}
+ #endif
+ 
+ static const struct dev_pm_ops gpio_pm_ops = {
 -- 
 2.13.3
