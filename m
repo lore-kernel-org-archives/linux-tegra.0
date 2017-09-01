@@ -1,42 +1,63 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: [PATCH] thermal: tegra: dereference the pointer after null check
-Date: Thu, 31 Aug 2017 16:52:29 -0700
-Message-ID: <1504223549-4152-1-git-send-email-nicoleotsuka@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rui.zhang@intel.com
-Cc: edubezval@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, wni@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, srikars@nvidia.com
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH v2 5/5] thermal: Add Tegra BPMP thermal sensor driver
+Date: Fri, 01 Sep 2017 09:23:44 +0800
+Message-ID: <1504229024.2638.10.camel@intel.com>
+References: <20170724162918.21050-1-mperttunen@nvidia.com>
+         <20170724162918.21050-5-mperttunen@nvidia.com>
+         <1502420276.2598.5.camel@intel.com>
+         <4315091f-03b1-2df6-b224-6a29d3261371@nvidia.com>
+         <20170831124506.GA16437@ulmo.fritz.box>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20170831124506.GA16437@ulmo.fritz.box>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Wei Ni <wni@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, edubezval@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The dev pointer is going through a null check after a dereference.
-So this patch just reverses that.
+On Thu, 2017-08-31 at 14:45 +0200, Thierry Reding wrote:
+> On Mon, Aug 21, 2017 at 10:40:44AM +0800, Wei Ni wrote:
+> > 
+> > 
+> > 
+> > On Friday, August 11, 2017 10:57 AM, Zhang Rui wrote:
+> > > 
+> > > On Mon, 2017-07-24 at 19:29 +0300, Mikko Perttunen wrote:
+> > > > 
+> > > > On Tegra186, the BPMP (Boot and Power Management Processor)
+> > > > exposes
+> > > > an
+> > > > interface to thermal sensors on the system-on-chip. This driver
+> > > > implements access to the interface. It supports reading the
+> > > > temperature, setting trip points and receiving notification of
+> > > > a
+> > > > tripped trip point.
+> > > > 
+> > > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/thermal/tegra/soctherm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Acked-by: Zhang Rui <rui.zhang@intel.com>
+for this patch and patch 1/5.
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 7d2db23..6718799 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -478,7 +478,7 @@ static int throttrip_program(struct device *dev,
- 			     struct soctherm_throt_cfg *stc,
- 			     int trip_temp)
- {
--	struct tegra_soctherm *ts = dev_get_drvdata(dev);
-+	struct tegra_soctherm *ts;
- 	int temp, cpu_throt, gpu_throt;
- 	unsigned int throt;
- 	u32 r, reg_off;
-@@ -486,6 +486,8 @@ static int throttrip_program(struct device *dev,
- 	if (!dev || !sg || !stc || !stc->init)
- 		return -EINVAL;
- 
-+	ts = dev_get_drvdata(dev);
-+
- 	temp = enforce_temp_range(dev, trip_temp) / ts->soc->thresh_grain;
- 
- 	/* Hardcode LIGHT on LEVEL1 and HEAVY on LEVEL2 */
--- 
-2.1.4
+
+> > > Wei Ni,
+> > > 
+> > > what do you think of this patch?
+> > Reviewed this patch, it looked fine to me.
+> Hi Zhang,
+> 
+> given the build-time dependencies, how about if I take this into the
+> Tegra tree with an Acked-by from you?
+
+Sounds okay to me. Done. :)
+
+thanks,
+rui
+
+>  I can provide a stable branch with
+> the dependencies included if you want to pull it into your tree in
+> order
+> to resolve dependencies.
+> 
+> Thierry
