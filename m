@@ -1,63 +1,40 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH v2 5/5] thermal: Add Tegra BPMP thermal sensor driver
-Date: Fri, 01 Sep 2017 09:23:44 +0800
-Message-ID: <1504229024.2638.10.camel@intel.com>
-References: <20170724162918.21050-1-mperttunen@nvidia.com>
-         <20170724162918.21050-5-mperttunen@nvidia.com>
-         <1502420276.2598.5.camel@intel.com>
-         <4315091f-03b1-2df6-b224-6a29d3261371@nvidia.com>
-         <20170831124506.GA16437@ulmo.fritz.box>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20170831124506.GA16437@ulmo.fritz.box>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Wei Ni <wni@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, edubezval@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/4] dt-bindings: clock: tegra: Add sor1_out clock
+Date: Fri,  1 Sep 2017 16:53:40 +0200
+Message-ID: <20170901145343.19890-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2017-08-31 at 14:45 +0200, Thierry Reding wrote:
-> On Mon, Aug 21, 2017 at 10:40:44AM +0800, Wei Ni wrote:
-> > 
-> > 
-> > 
-> > On Friday, August 11, 2017 10:57 AM, Zhang Rui wrote:
-> > > 
-> > > On Mon, 2017-07-24 at 19:29 +0300, Mikko Perttunen wrote:
-> > > > 
-> > > > On Tegra186, the BPMP (Boot and Power Management Processor)
-> > > > exposes
-> > > > an
-> > > > interface to thermal sensors on the system-on-chip. This driver
-> > > > implements access to the interface. It supports reading the
-> > > > temperature, setting trip points and receiving notification of
-> > > > a
-> > > > tripped trip point.
-> > > > 
-> > > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Acked-by: Zhang Rui <rui.zhang@intel.com>
-for this patch and patch 1/5.
+The sor1_src clock implemented on Tegra210 is modelled the wrong way
+around, which causes some issues with HDMI and DP support. This clock
+implementation is provided by BPMP on Tegra186, which models this in
+a more correct way. Since this introduces incompatibilities between
+the two SoC generations which we want to avoid, the Tegra210 will be
+fixed in subsequent patches.
 
+This change adds sor1_out as an alias for sor1_src.
 
-> > > Wei Ni,
-> > > 
-> > > what do you think of this patch?
-> > Reviewed this patch, it looked fine to me.
-> Hi Zhang,
-> 
-> given the build-time dependencies, how about if I take this into the
-> Tegra tree with an Acked-by from you?
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ include/dt-bindings/clock/tegra210-car.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sounds okay to me. Done. :)
-
-thanks,
-rui
-
->  I can provide a stable branch with
-> the dependencies included if you want to pull it into your tree in
-> order
-> to resolve dependencies.
-> 
-> Thierry
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 46689cd3750b..43c4a8407333 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -309,6 +309,7 @@
+ #define TEGRA210_CLK_BLINK 280
+ /* 281 */
+ #define TEGRA210_CLK_SOR1_SRC 282
++#define TEGRA210_CLK_SOR1_OUT 282
+ /* 283 */
+ #define TEGRA210_CLK_XUSB_HOST_SRC 284
+ #define TEGRA210_CLK_XUSB_FALCON_SRC 285
+-- 
+2.13.3
