@@ -1,64 +1,71 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 6/6] drm/tegra: Use u64_to_user_ptr helper
-Date: Tue,  5 Sep 2017 11:10:29 +0300
-Message-ID: <20170905081029.19769-7-mperttunen@nvidia.com>
-References: <20170905081029.19769-1-mperttunen@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170905081029.19769-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v2 0/6] Miscellaneous improvements to Host1x and TegraDRM
+Date: Tue,  5 Sep 2017 11:10:23 +0300
+Message-ID: <20170905081029.19769-1-mperttunen@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: digetx@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Use the u64_to_user_ptr helper macro to cast IOCTL argument u64 values
-to user pointers instead of writing out the cast manually.
+New in v2:
+- Changes in syncpoint protection and u64_to_user_ptr patches.
+  See the patches for notes.
+- Added patch to support more opcodes in the debug dump 
+  disassembly.
+- Added patch to fix an incorrect comment.
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/drm.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+Thanks,
+Mikko
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index e3331a2bc082..72d5c0021540 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -388,18 +388,21 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	unsigned int num_cmdbufs = args->num_cmdbufs;
- 	unsigned int num_relocs = args->num_relocs;
- 	unsigned int num_waitchks = args->num_waitchks;
--	struct drm_tegra_cmdbuf __user *cmdbufs =
--		(void __user *)(uintptr_t)args->cmdbufs;
--	struct drm_tegra_reloc __user *relocs =
--		(void __user *)(uintptr_t)args->relocs;
--	struct drm_tegra_waitchk __user *waitchks =
--		(void __user *)(uintptr_t)args->waitchks;
-+	struct drm_tegra_cmdbuf __user *cmdbufs;
-+	struct drm_tegra_reloc __user *relocs;
-+	struct drm_tegra_waitchk __user *waitchks;
-+	struct drm_tegra_syncpt __user *user_syncpt;
- 	struct drm_tegra_syncpt syncpt;
- 	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
- 	struct host1x_syncpt *sp;
- 	struct host1x_job *job;
- 	int err;
- 
-+	cmdbufs = u64_to_user_ptr(args->cmdbufs);
-+	relocs = u64_to_user_ptr(args->relocs);
-+	waitchks = u64_to_user_ptr(args->waitchks);
-+	user_syncpt = u64_to_user_ptr(args->syncpts);
-+
- 	/* We don't yet support other than one syncpt_incr struct per submit */
- 	if (args->num_syncpts != 1)
- 		return -EINVAL;
-@@ -520,8 +523,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 		}
- 	}
- 
--	if (copy_from_user(&syncpt, (void __user *)(uintptr_t)args->syncpts,
--			   sizeof(syncpt))) {
-+	if (copy_from_user(&syncpt, user_syncpt, sizeof(syncpt))) {
- 		err = -EFAULT;
- 		goto fail;
- 	}
+Patch v1 notes:
+
+Hi all,
+
+here are some new features and improvements.
+
+Patch 1 enables syncpoint protection which prevents channels from
+touching syncpoints not belonging to them on Tegra186.
+
+Patch 2 enables the gather filter which prevents userspace command
+buffers from using CDMA commands usually reserved for the kernel.
+A test is available at git://github.com/cyndis/host1x_test, branch
+gather-filter.
+
+Patch 3 greatly improves formatting of debug dumps spewed by host1x
+in case of job timeouts. They are now actually readable by humans
+without use of additional scripts.
+
+Patch 4 is a simple aesthetical fix to the TegraDRM submit path.
+
+Everything was tested on TX1 and TX2 and should be applied on the
+previously posted Tegra186 support series.
+
+Cheers,
+Mikko
+
+Mikko Perttunen (6):
+  gpu: host1x: Enable Tegra186 syncpoint protection
+  gpu: host1x: Enable gather filter
+  gpu: host1x: Improve debug disassembly formatting
+  gpu: host1x: Disassemble more instructions
+  gpu: host1x: Fix incorrect comment for channel_request
+  drm/tegra: Use u64_to_user_ptr helper
+
+ drivers/gpu/drm/tegra/drm.c                 |  18 ++---
+ drivers/gpu/host1x/channel.c                |   3 +-
+ drivers/gpu/host1x/debug.c                  |  14 +++-
+ drivers/gpu/host1x/debug.h                  |  14 ++--
+ drivers/gpu/host1x/dev.h                    |  15 +++++
+ drivers/gpu/host1x/hw/channel_hw.c          |  25 +++++++
+ drivers/gpu/host1x/hw/debug_hw.c            | 101 ++++++++++++++++++++++------
+ drivers/gpu/host1x/hw/debug_hw_1x01.c       |  11 +--
+ drivers/gpu/host1x/hw/debug_hw_1x06.c       |  12 ++--
+ drivers/gpu/host1x/hw/hw_host1x04_channel.h |  12 ++++
+ drivers/gpu/host1x/hw/hw_host1x05_channel.h |  12 ++++
+ drivers/gpu/host1x/hw/syncpt_hw.c           |  46 +++++++++++++
+ drivers/gpu/host1x/syncpt.c                 |   8 +++
+ 13 files changed, 246 insertions(+), 45 deletions(-)
+
 -- 
 2.14.1
