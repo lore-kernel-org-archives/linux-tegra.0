@@ -1,39 +1,48 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/6] arm64: tegra: Add #power-domain-cells for BPMP
-Date: Tue,  5 Sep 2017 11:43:01 +0300
-Message-ID: <20170905084306.19318-2-mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v2 2/6] arm64: tegra: Add host1x on Tegra186
+Date: Tue,  5 Sep 2017 11:43:02 +0300
+Message-ID: <20170905084306.19318-3-mperttunen@nvidia.com>
 References: <20170905084306.19318-1-mperttunen@nvidia.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170905084306.19318-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dnibade-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sgurrappadi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170905084306.19318-1-mperttunen@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, dnibade@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, amerilainen@nvidia.com, linux-tegra@vger.kernel.org, sgurrappadi@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, digetx@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add #power-domain-cells for the BPMP node on Tegra186 so that the power
-domain provider may be used.
-
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 0b0552c9f7dd..a964d246c0e9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -443,6 +443,7 @@
- 		shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
-+		#power-domain-cells = <1>;
- 
- 		bpmp_i2c: i2c {
- 			compatible = "nvidia,tegra186-bpmp-i2c";
--- 
-2.14.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+QWRkIHRoZSBub2RlIGZvciBIb3N0MXggb24gdGhlIFRlZ3JhMTg2LCB3aXRob3V0IGFueSBzdWJk
+ZXZpY2VzCmZvciBub3cuCgpTaWduZWQtb2ZmLWJ5OiBNaWtrbyBQZXJ0dHVuZW4gPG1wZXJ0dHVu
+ZW5AbnZpZGlhLmNvbT4KLS0tCnYyOgotIENoYW5nZWQgYWRkcmVzcy1jZWxscyBhbmQgc2l6ZS1j
+ZWxscyB0byAxIGFuZCBmaXhlZCB0aGUgcmFuZ2VzCiAgcHJvcGVydHkgY29ycmVzcG9uZGluZ2x5
+LgoKIGFyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kgfCAxOCArKysrKysr
+KysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0
+IGEvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExODYuZHRzaSBiL2FyY2gvYXJtNjQv
+Ym9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kKaW5kZXggYTk2NGQyNDZjMGU5Li5iMWEzZTQw
+NGM3YmUgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0
+c2kKKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExODYuZHRzaQpAQCAtMzU1
+LDYgKzM1NSwyNCBAQAogCQludmlkaWEsYnBtcCA9IDwmYnBtcD47CiAJfTsKIAorCWhvc3QxeEAx
+M2UwMDAwMCB7CisJCWNvbXBhdGlibGUgPSAibnZpZGlhLHRlZ3JhMTg2LWhvc3QxeCIsICJzaW1w
+bGUtYnVzIjsKKwkJcmVnID0gPDB4MCAweDEzZTAwMDAwIDB4MCAweDEwMDAwPiwKKwkJICAgICAg
+PDB4MCAweDEzZTEwMDAwIDB4MCAweDEwMDAwPjsKKwkJcmVnLW5hbWVzID0gImh5cGVydmlzb3Ii
+LCAidm0iOworCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMjY1IElSUV9UWVBFX0xFVkVMX0hJR0g+
+LAorCQkgICAgICAgICAgICAgPEdJQ19TUEkgMjYzIElSUV9UWVBFX0xFVkVMX0hJR0g+OworCQlj
+bG9ja3MgPSA8JmJwbXAgVEVHUkExODZfQ0xLX0hPU1QxWD47CisJCWNsb2NrLW5hbWVzID0gImhv
+c3QxeCI7CisJCXJlc2V0cyA9IDwmYnBtcCBURUdSQTE4Nl9SRVNFVF9IT1NUMVg+OworCQlyZXNl
+dC1uYW1lcyA9ICJob3N0MXgiOworCisJCSNhZGRyZXNzLWNlbGxzID0gPDE+OworCQkjc2l6ZS1j
+ZWxscyA9IDwxPjsKKworCQlyYW5nZXMgPSA8MHgxNTAwMDAwMCAweDAgMHgxNTAwMDAwMCAweDAx
+MDAwMDAwPjsKKwl9OworCiAJZ3B1QDE3MDAwMDAwIHsKIAkJY29tcGF0aWJsZSA9ICJudmlkaWEs
+Z3AxMGIiOwogCQlyZWcgPSA8MHgwIDB4MTcwMDAwMDAgMHgwIDB4MTAwMDAwMD4sCi0tIAoyLjE0
+LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
