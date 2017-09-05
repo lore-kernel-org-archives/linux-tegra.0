@@ -1,78 +1,79 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.13
-Date: Tue, 5 Sep 2017 13:09:19 +0100
-Message-ID: <becc612c-b297-cf65-6b9a-0697db3d7bef@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 6/6] drm/tegra: Use u64_to_user_ptr helper
+Date: Tue, 5 Sep 2017 15:41:57 +0300
+Message-ID: <915293bc-2651-ede0-96af-4006f9a89e65@gmail.com>
+References: <20170905081029.19769-1-mperttunen@nvidia.com>
+ <20170905081029.19769-7-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170905081029.19769-7-mperttunen@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.13.
-Logs and other details at:
+On 05.09.2017 11:10, Mikko Perttunen wrote:
+> Use the u64_to_user_ptr helper macro to cast IOCTL argument u64 values
+> to user pointers instead of writing out the cast manually.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
 
-    https://nvtb.github.io//linux/test_v4.13/20170903140102/
+This patch doesn't apply to linux-next, you should probably rebase this series.
+
+>  drivers/gpu/drm/tegra/drm.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index e3331a2bc082..72d5c0021540 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -388,18 +388,21 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>  	unsigned int num_cmdbufs = args->num_cmdbufs;
+>  	unsigned int num_relocs = args->num_relocs;
+>  	unsigned int num_waitchks = args->num_waitchks;
+> -	struct drm_tegra_cmdbuf __user *cmdbufs =
+> -		(void __user *)(uintptr_t)args->cmdbufs;
+> -	struct drm_tegra_reloc __user *relocs =
+> -		(void __user *)(uintptr_t)args->relocs;
+> -	struct drm_tegra_waitchk __user *waitchks =
+> -		(void __user *)(uintptr_t)args->waitchks;
+> +	struct drm_tegra_cmdbuf __user *cmdbufs;
+> +	struct drm_tegra_reloc __user *relocs;
+> +	struct drm_tegra_waitchk __user *waitchks;
+> +	struct drm_tegra_syncpt __user *user_syncpt;
+>  	struct drm_tegra_syncpt syncpt;
+>  	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
+>  	struct host1x_syncpt *sp;
+>  	struct host1x_job *job;
+>  	int err;
+>  
+> +	cmdbufs = u64_to_user_ptr(args->cmdbufs);
+> +	relocs = u64_to_user_ptr(args->relocs);
+> +	waitchks = u64_to_user_ptr(args->waitchks);
+
+What about to prefix these variables with 'user_' for consistency?
+
+> +	user_syncpt = u64_to_user_ptr(args->syncpts);
+> +
+>  	/* We don't yet support other than one syncpt_incr struct per submit */
+>  	if (args->num_syncpts != 1)
+>  		return -EINVAL;
+> @@ -520,8 +523,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>  		}
+>  	}
+>  
+> -	if (copy_from_user(&syncpt, (void __user *)(uintptr_t)args->syncpts,
+> -			   sizeof(syncpt))) {
+> +	if (copy_from_user(&syncpt, user_syncpt, sizeof(syncpt))) {
+>  		err = -EFAULT;
+>  		goto fail;
+>  	}
+> 
 
 
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.13-rc7 (cc4a41fe5541a73019a864883297bd5043aa6d98)):
-   text     data      bss    total  kernel
-   -485     +476        0       -9  defconfig
-   +663        0        0     +663  multi_v7_defconfig
-   +899        0        0     +899  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.13-rc7 (cc4a41fe5541a73019a864883297bd5043aa6d98))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
---
-nvpublic
+-- 
+Dmitry
