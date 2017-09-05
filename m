@@ -1,40 +1,89 @@
 From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v2 4/6] dt-bindings: host1x: Add Tegra186 information
-Date: Tue,  5 Sep 2017 11:43:04 +0300
-Message-ID: <20170905084306.19318-5-mperttunen@nvidia.com>
-References: <20170905084306.19318-1-mperttunen@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170905084306.19318-1-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v2 0/6] Host1x and VIC support for Tegra186
+Date: Tue,  5 Sep 2017 11:43:00 +0300
+Message-ID: <20170905084306.19318-1-mperttunen@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: digetx@gmail.com, amerilainen@nvidia.com, dnibade@nvidia.com, sgurrappadi@nvidia.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: devicetree@vger.kernel.org, dnibade@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, amerilainen@nvidia.com, linux-tegra@vger.kernel.org, sgurrappadi@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, digetx@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the Tegra186-specific hypervisor-related register range
-properties.
-
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
-v2:
-- Dropped incorrect note about cells properties.
-
- .../devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt       | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-index 74e1e8add5a1..844e0103fb0d 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-@@ -3,6 +3,10 @@ NVIDIA Tegra host1x
- Required properties:
- - compatible: "nvidia,tegra<chip>-host1x"
- - reg: Physical base address and length of the controller's registers.
-+  For pre-Tegra186, one entry describing the whole register area.
-+  For Tegra186, one entry for each entry in reg-names:
-+    "vm" - VM region assigned to Linux
-+    "hypervisor" - Hypervisor region (only if Linux acts as hypervisor)
- - interrupts: The interrupt outputs from the controller.
- - #address-cells: The number of cells used to represent physical base addresses
-   in the host1x address space. Should be 1.
--- 
-2.14.1
+SGksCgpub3QgbWFueSBjaGFuZ2VzIGluIHYyOgoKQ2hhbmdlZCBhZGRyZXNzLWNlbGxzIGFuZCBz
+aXplLWNlbGxzIGZvciB0aGUgSG9zdDF4IGRldmljZSB0cmVlIG5vZGUKdG8gaGF2ZSB2YWx1ZSAx
+LCBzaW5jZSBhbGwgc3ViZGV2aWNlcyBmaXQgaW4gdGhlIGxvd2VyIDRHLiBBbHNvIGRyb3BwZWQK
+dGhlIGluY29ycmVjdCBjaGFuZ2UgYWJvdXQgdGhpcyBmcm9tIHRoZSBkdC1iaW5kaW5ncyBwYXRj
+aC4gVGhhbmtzIHRvClJvYiBmb3IgcG9pbnRpbmcgdGhpcyBvdXQuCgpNaWtrbwoKTm90ZXMgZm9y
+IHYxOgoKSGkgZXZlcnlvbmUsCgp0aGlzIHNlcmllcyBhZGRzIGJhc2ljIHN1cHBvcnQgZm9yIHRo
+ZSBIb3N0MXggY2hhbm5lbCBlbmdpbmUgYW5kIHRoZQpWSUMgMmQgY29tcG9zaXRvciB1bml0IG9u
+IFRlZ3JhMTg2LiBUaGUgZmlyc3QgdGhyZWUgcGF0Y2hlcyBkbyB0aGUKcmVxdWlyZWQgZGV2aWNl
+IHRyZWUgY2hhbmdlcywgdGhlIGZvdXJ0aCBwYXRjaCB1cGRhdGVzIHRoZSBkZXZpY2UgdHJlZQpi
+aW5kaW5nIGRvY3VtZW50YXRpb24sIGFuZCB0aGUgdHdvIHJlbWFpbmluZyBwYXRjaGVzIGFkZCB0
+aGUgYWN0dWFsCmltcGxlbWVudGF0aW9uLCBhbG1vc3QgYWxsIG9mIHdoaWNoIGlzIGluIEhvc3Qx
+eCBpdHNlbGYuCgpUaGUgVGVncmExODYgSG9zdDF4IGlzIGEgcmVsYXRpdmVseSBsYXJnZSB1cGRh
+dGUgb3ZlciBwcmV2aW91cwpnZW5lcmF0aW9ucywgd2hpY2ggY2FuIGJlIHNlZW4gaW4gdGhlIGRp
+ZmZzdGF0LiBUaGUgYmlnZ2VzdCBjaGFuZ2UgaXMKdGhhdCBIb3N0MXggaXMgbm93IGNvbnRhaW5z
+IHNlcGFyYXRlIGh5cGVydmlzb3IgYW5kIHZtIHJlZ2lzdGVyCmFwZXJ0dXJlcyB0byBzdXBwb3J0
+IHZpcnR1YWxpemF0aW9uIGF0IHRoZSBoYXJkd2FyZSBsZXZlbC4gVGhpcyBkcml2ZXIsCmhvd2V2
+ZXIsIGN1cnJlbnRseSBhc3N1bWVzIHRoYXQgdGhpcyBpbnN0YW5jZSBvZiBMaW51eCBpcyB0aGUg
+c29sZQpvcGVyYXRpbmcgc3lzdGVtIGhhdmluZyBhY2Nlc3MgdG8gdGhlIGhhcmR3YXJlLgoKVGhp
+cyBjb21iaW5lZCB3aXRoIGluY3JlYXNlZCBudW1iZXJzIG9mIHN1cHBvcnRlZCBjaGFubmVscyBh
+bmQKc3luY3BvaW50cyBoYXZlIGNhdXNlZCBhIG51bWJlciBvZiByZWdpc3RlciBzcGFjZSBjaGFu
+Z2VzIHRoYXQgYXJlCnJlc3BvbnNpYmxlIGZvciBtb3N0IG9mIHRoZSB1cGRhdGVkIGNvZGUuCgpU
+aGUgc2VyaWVzIGhhcyBiZWVuIHRlc3RlZCBvbiB0aGUgSmV0c29uIFRYMSAoVDIxMCkgYW5kIFRY
+MiAoVDE4NikKdXNpbmcgdGhlIGhvc3QxeF90ZXN0IHRlc3Qgc3VpdGUgYXZhaWxhYmxlIGF0Cgpo
+dHRwOi8vZ2l0aHViLmNvbS9jeW5kaXMvaG9zdDF4X3Rlc3QKClRoZSBzZXJpZXMgaXRzZWxmIGlz
+IGF2YWlsYWJsZSBhdAoKaHR0cDovL2dpdGh1Yi5jb20vY3luZGlzL2xpbnV4LCBicmFuY2ggaG9z
+dDF4LXQxODYtMQoKQ2hlZXJzLApNaWtrbwoKTWlra28gUGVydHR1bmVuICg2KToKICBhcm02NDog
+dGVncmE6IEFkZCAjcG93ZXItZG9tYWluLWNlbGxzIGZvciBCUE1QCiAgYXJtNjQ6IHRlZ3JhOiBB
+ZGQgaG9zdDF4IG9uIFRlZ3JhMTg2CiAgYXJtNjQ6IHRlZ3JhOiBBZGQgVklDIG9uIFRlZ3JhMTg2
+CiAgZHQtYmluZGluZ3M6IGhvc3QxeDogQWRkIFRlZ3JhMTg2IGluZm9ybWF0aW9uCiAgZ3B1OiBo
+b3N0MXg6IEFkZCBUZWdyYTE4NiBzdXBwb3J0CiAgZHJtL3RlZ3JhOiBBZGQgVGVncmExODYgc3Vw
+cG9ydCBmb3IgVklDCgogLi4uL2Rpc3BsYXkvdGVncmEvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4
+dCAgICAgICAgfCAgIDQgKwogYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExODYuZHRz
+aSAgICAgICAgICAgfCAgMzEgKysrKwogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgICAg
+ICAgICAgICAgICAgICAgICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jICAg
+ICAgICAgICAgICAgICAgICAgICAgfCAgMTAgKysKIGRyaXZlcnMvZ3B1L2hvc3QxeC9NYWtlZmls
+ZSAgICAgICAgICAgICAgICAgICAgICAgIHwgICAzICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2
+LmMgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICA2MCArKysrKystCiBkcml2ZXJzL2dwdS9o
+b3N0MXgvZGV2LmggICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNCArCiBkcml2ZXJzL2dw
+dS9ob3N0MXgvaHcvY2RtYV9ody5jICAgICAgICAgICAgICAgICAgICB8ICA0OSArKystLS0KIGRy
+aXZlcnMvZ3B1L2hvc3QxeC9ody9kZWJ1Z19ody5jICAgICAgICAgICAgICAgICAgIHwgMTM3ICst
+LS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9kZWJ1Z19od18xeDAxLmMgICAg
+ICAgICAgICAgIHwgMTU0ICsrKysrKysrKysrKysrKysrKwogZHJpdmVycy9ncHUvaG9zdDF4L2h3
+L2RlYnVnX2h3XzF4MDYuYyAgICAgICAgICAgICAgfCAxMzMgKysrKysrKysrKysrKysrCiBkcml2
+ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDEuYyAgICAgICAgICAgICAgICAgICB8ICAgMiArCiBk
+cml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDIuYyAgICAgICAgICAgICAgICAgICB8ICAgMiAr
+CiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDQuYyAgICAgICAgICAgICAgICAgICB8ICAg
+MiArCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDUuYyAgICAgICAgICAgICAgICAgICB8
+ICAgMiArCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDYuYyAgICAgICAgICAgICAgICAg
+ICB8ICA0NCArKysrKwogZHJpdmVycy9ncHUvaG9zdDF4L2h3L2hvc3QxeDA2LmggICAgICAgICAg
+ICAgICAgICAgfCAgMjYgKysrCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvaG9zdDF4MDZfaGFyZHdh
+cmUuaCAgICAgICAgICB8IDE0MiArKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9ob3N0MXgv
+aHcvaHdfaG9zdDF4MDZfaHlwZXJ2aXNvci5oICAgICB8ICAzMiArKysrCiBkcml2ZXJzL2dwdS9o
+b3N0MXgvaHcvaHdfaG9zdDF4MDZfdWNsYXNzLmggICAgICAgICB8IDE4MSArKysrKysrKysrKysr
+KysrKysrKysKIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9od19ob3N0MXgwNl92bS5oICAgICAgICAg
+ICAgIHwgIDQ3ICsrKysrKwogZHJpdmVycy9ncHUvaG9zdDF4L2h3L2ludHJfaHcuYyAgICAgICAg
+ICAgICAgICAgICAgfCAgMjkgKystLQogMjIgZmlsZXMgY2hhbmdlZCwgOTI2IGluc2VydGlvbnMo
+KyksIDE2OSBkZWxldGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9ob3N0
+MXgvaHcvZGVidWdfaHdfMXgwMS5jCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvaG9z
+dDF4L2h3L2RlYnVnX2h3XzF4MDYuYwogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2hv
+c3QxeC9ody9ob3N0MXgwNi5jCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvaG9zdDF4
+L2h3L2hvc3QxeDA2LmgKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9ob3N0MXgvaHcv
+aG9zdDF4MDZfaGFyZHdhcmUuaAogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2hvc3Qx
+eC9ody9od19ob3N0MXgwNl9oeXBlcnZpc29yLmgKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJz
+L2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4MDZfdWNsYXNzLmgKIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
+cml2ZXJzL2dwdS9ob3N0MXgvaHcvaHdfaG9zdDF4MDZfdm0uaAoKLS0gCjIuMTQuMQoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
