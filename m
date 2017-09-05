@@ -1,68 +1,44 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 6/6] drm/tegra: Add Tegra186 support for VIC
-Date: Tue,  5 Sep 2017 11:43:06 +0300
-Message-ID: <20170905084306.19318-7-mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v2 3/6] arm64: tegra: Add VIC on Tegra186
+Date: Tue,  5 Sep 2017 11:43:03 +0300
+Message-ID: <20170905084306.19318-4-mperttunen@nvidia.com>
 References: <20170905084306.19318-1-mperttunen@nvidia.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170905084306.19318-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dnibade-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sgurrappadi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170905084306.19318-1-mperttunen@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, dnibade@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, amerilainen@nvidia.com, linux-tegra@vger.kernel.org, sgurrappadi@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, digetx@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add Tegra186 support for VIC - no changes are required except for new
-firmware and compatibility string.
-
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/drm.c |  1 +
- drivers/gpu/drm/tegra/vic.c | 10 ++++++++++
- 2 files changed, 11 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 3ba659a5940d..e3331a2bc082 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1281,6 +1281,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
- 	{ .compatible = "nvidia,tegra210-sor", },
- 	{ .compatible = "nvidia,tegra210-sor1", },
- 	{ .compatible = "nvidia,tegra210-vic", },
-+	{ .compatible = "nvidia,tegra186-vic", },
- 	{ /* sentinel */ }
- };
- 
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index 2448229fa653..6697a21a250d 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -270,9 +270,16 @@ static const struct vic_config vic_t210_config = {
- 	.firmware = NVIDIA_TEGRA_210_VIC_FIRMWARE,
- };
- 
-+#define NVIDIA_TEGRA_186_VIC_FIRMWARE "nvidia/tegra186/vic04_ucode.bin"
-+
-+static const struct vic_config vic_t186_config = {
-+	.firmware = NVIDIA_TEGRA_186_VIC_FIRMWARE,
-+};
-+
- static const struct of_device_id vic_match[] = {
- 	{ .compatible = "nvidia,tegra124-vic", .data = &vic_t124_config },
- 	{ .compatible = "nvidia,tegra210-vic", .data = &vic_t210_config },
-+	{ .compatible = "nvidia,tegra186-vic", .data = &vic_t186_config },
- 	{ },
- };
- 
-@@ -405,3 +412,6 @@ MODULE_FIRMWARE(NVIDIA_TEGRA_124_VIC_FIRMWARE);
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
- MODULE_FIRMWARE(NVIDIA_TEGRA_210_VIC_FIRMWARE);
- #endif
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
-+MODULE_FIRMWARE(NVIDIA_TEGRA_186_VIC_FIRMWARE);
-+#endif
--- 
-2.14.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+QWRkIGEgbm9kZSBmb3IgdGhlIFZpZGVvIEltYWdlIENvbXBvc2l0b3Igb24gdGhlIFRlZ3JhMTg2
+LgoKU2lnbmVkLW9mZi1ieTogTWlra28gUGVydHR1bmVuIDxtcGVydHR1bmVuQG52aWRpYS5jb20+
+Ci0tLQp2MjoKLSBGaXhlZCByZWcgcHJvcGVydHkgaW4gYWNjb3JkYW5jZSB3aXRoIGNoYW5nZWQg
+cGFyZW50IGNlbGxzLgoKIGFyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kg
+fCAxMiArKysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspCgpkaWZm
+IC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExODYuZHRzaSBiL2FyY2gv
+YXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTg2LmR0c2kKaW5kZXggYjFhM2U0MDRjN2JlLi41
+ODRiY2U2NGQ0MWYgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3Jh
+MTg2LmR0c2kKKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExODYuZHRzaQpA
+QCAtMzcxLDYgKzM3MSwxOCBAQAogCQkjc2l6ZS1jZWxscyA9IDwxPjsKIAogCQlyYW5nZXMgPSA8
+MHgxNTAwMDAwMCAweDAgMHgxNTAwMDAwMCAweDAxMDAwMDAwPjsKKworCQl2aWNAMTUzNDAwMDAg
+eworCQkJY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmExODYtdmljIjsKKwkJCXJlZyA9IDwweDE1
+MzQwMDAwIDB4NDAwMDA+OworCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDIwNiBJUlFfVFlQRV9M
+RVZFTF9ISUdIPjsKKwkJCWNsb2NrcyA9IDwmYnBtcCBURUdSQTE4Nl9DTEtfVklDPjsKKwkJCWNs
+b2NrLW5hbWVzID0gInZpYyI7CisJCQlyZXNldHMgPSA8JmJwbXAgVEVHUkExODZfUkVTRVRfVklD
+PjsKKwkJCXJlc2V0LW5hbWVzID0gInZpYyI7CisKKwkJCXBvd2VyLWRvbWFpbnMgPSA8JmJwbXAg
+VEVHUkExODZfUE9XRVJfRE9NQUlOX1ZJQz47CisJCX07CiAJfTsKIAogCWdwdUAxNzAwMDAwMCB7
+Ci0tIAoyLjE0LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
