@@ -1,190 +1,49 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/6] gpu: host1x: Enable Tegra186 syncpoint protection
-Date: Tue, 5 Sep 2017 16:33:13 +0300
-Message-ID: <5cbadb84-31aa-ee3d-7b4b-e83afdfdcf7e@gmail.com>
-References: <20170905081029.19769-1-mperttunen@nvidia.com>
- <20170905081029.19769-2-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Pushkar Jambhlekar <pushkar.iit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drivers/iommu/tegra: Optimize mutex_unlock function call
+Date: Wed,  6 Sep 2017 11:20:37 +0530
+Message-ID: <1504677037-3224-1-git-send-email-pushkar.iit@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170905081029.19769-2-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pushkar Jambhlekar <pushkar.iit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.09.2017 11:10, Mikko Perttunen wrote:
-> Since Tegra186 the Host1x hardware allows syncpoints to be assigned to
-> specific channels, preventing any other channels from incrementing
-> them.
-> 
-> Enable this feature where available and assign syncpoints to channels
-> when submitting a job. Syncpoints are currently never unassigned from
-> channels since that would require extra work and is unnecessary with
-> the current channel allocation model.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> 
-> Notes:
->     v2:
->     - Changed from set_protection(bool) to enable_protection
->     - Added some comments
->     - Added missing check for hv_regs being NULL in
->       enable_protection
-> 
->  drivers/gpu/host1x/dev.h           | 15 +++++++++++++
->  drivers/gpu/host1x/hw/channel_hw.c |  3 +++
->  drivers/gpu/host1x/hw/syncpt_hw.c  | 46 ++++++++++++++++++++++++++++++++++++++
->  drivers/gpu/host1x/syncpt.c        |  8 +++++++
->  4 files changed, 72 insertions(+)
-> 
-> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-> index def802c0a6bf..7497cc5ead9e 100644
-> --- a/drivers/gpu/host1x/dev.h
-> +++ b/drivers/gpu/host1x/dev.h
-> @@ -79,6 +79,9 @@ struct host1x_syncpt_ops {
->  	u32 (*load)(struct host1x_syncpt *syncpt);
->  	int (*cpu_incr)(struct host1x_syncpt *syncpt);
->  	int (*patch_wait)(struct host1x_syncpt *syncpt, void *patch_addr);
-> +	void (*assign_channel)(struct host1x_syncpt *syncpt,
-> +	                       struct host1x_channel *channel);
-> +	void (*enable_protection)(struct host1x *host);
->  };
->  
->  struct host1x_intr_ops {
-> @@ -186,6 +189,18 @@ static inline int host1x_hw_syncpt_patch_wait(struct host1x *host,
->  	return host->syncpt_op->patch_wait(sp, patch_addr);
->  }
->  
-> +static inline void host1x_hw_syncpt_assign_channel(struct host1x *host,
-> +						   struct host1x_syncpt *sp,
-> +						   struct host1x_channel *ch)
-> +{
-> +	return host->syncpt_op->assign_channel(sp, ch);
-> +}
-> +
-> +static inline void host1x_hw_syncpt_enable_protection(struct host1x *host)
-> +{
-> +	return host->syncpt_op->enable_protection(host);
-> +}
-> +
->  static inline int host1x_hw_intr_init_host_sync(struct host1x *host, u32 cpm,
->  			void (*syncpt_thresh_work)(struct work_struct *))
->  {
-> diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-> index 8447a56c41ca..0161da331702 100644
-> --- a/drivers/gpu/host1x/hw/channel_hw.c
-> +++ b/drivers/gpu/host1x/hw/channel_hw.c
-> @@ -147,6 +147,9 @@ static int channel_submit(struct host1x_job *job)
->  
->  	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
->  
-> +	/* assign syncpoint to channel */
-> +	host1x_hw_syncpt_assign_channel(host, sp, ch);
+Code can be optimized more by making single exit point of function and calling mutex_unlock at the end
 
-This function could be renamed to host1x_hw_assign_syncpt_to_channel() and then
-comment to it won't be needed.
+Signed-off-by: Pushkar Jambhlekar <pushkar.iit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/iommu/tegra-smmu.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-It is not very nice that channel would be re-assigned on each submit. Maybe that
-assignment should be done by host1x_syncpt_request() ?
-
-> +
->  	job->syncpt_end = syncval;
->  
->  	/* add a setclass for modules that require it */
-> diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
-> index 7b0270d60742..dc7a44614fef 100644
-> --- a/drivers/gpu/host1x/hw/syncpt_hw.c
-> +++ b/drivers/gpu/host1x/hw/syncpt_hw.c
-> @@ -106,6 +106,50 @@ static int syncpt_patch_wait(struct host1x_syncpt *sp, void *patch_addr)
->  	return 0;
->  }
->  
-> +/**
-> + * syncpt_assign_channel() - Assign syncpoint to channel
-> + * @sp: syncpoint
-> + * @ch: channel
-> + *
-> + * On chips with the syncpoint protection feature (Tegra186+), assign @sp to
-> + * @ch, preventing other channels from incrementing the syncpoints. If @ch is
-> + * NULL, unassigns the syncpoint.
-> + *
-> + * On older chips, do nothing.
-> + */
-> +static void syncpt_assign_channel(struct host1x_syncpt *sp,
-> +				  struct host1x_channel *ch)
-> +{
-> +#if HOST1X_HW >= 6
-> +	struct host1x *host = sp->host;
-> +
-> +	if (!host->hv_regs)
-> +		return;
-> +
-> +	host1x_sync_writel(host,
-> +			   HOST1X_SYNC_SYNCPT_CH_APP_CH(ch ? ch->id : 0xff),
-> +			   HOST1X_SYNC_SYNCPT_CH_APP(sp->id));
-> +#endif
-> +}
-> +
-> +/**
-> + * syncpt_enable_protection() - Enable syncpoint protection
-> + * @host: host1x instance
-> + *
-> + * On chips with the syncpoint protection feature (Tegra186+), enable this
-> + * feature. On older chips, do nothing.
-> + */
-> +static void syncpt_enable_protection(struct host1x *host)
-> +{
-> +#if HOST1X_HW >= 6
-> +	if (!host->hv_regs)
-> +		return;
-> +
-> +	host1x_hypervisor_writel(host, HOST1X_HV_SYNCPT_PROT_EN_CH_EN,
-> +				 HOST1X_HV_SYNCPT_PROT_EN);
-> +#endif
-> +}
-> +
->  static const struct host1x_syncpt_ops host1x_syncpt_ops = {
->  	.restore = syncpt_restore,
->  	.restore_wait_base = syncpt_restore_wait_base,
-> @@ -113,4 +157,6 @@ static const struct host1x_syncpt_ops host1x_syncpt_ops = {
->  	.load = syncpt_load,
->  	.cpu_incr = syncpt_cpu_incr,
->  	.patch_wait = syncpt_patch_wait,
-> +	.assign_channel = syncpt_assign_channel,
-> +	.enable_protection = syncpt_enable_protection,
->  };
-> diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-> index 048ac9e344ce..4c7a4c8b2ad2 100644
-> --- a/drivers/gpu/host1x/syncpt.c
-> +++ b/drivers/gpu/host1x/syncpt.c
-> @@ -398,6 +398,13 @@ int host1x_syncpt_init(struct host1x *host)
->  	for (i = 0; i < host->info->nb_pts; i++) {
->  		syncpt[i].id = i;
->  		syncpt[i].host = host;
-> +
-> +		/*
-> +		 * Unassign syncpt from channels for purposes of Tegra186
-> +		 * syncpoint protection. This prevents any channel from
-> +		 * accessing it until it is reassigned.
-> +		 */
-> +		host1x_hw_syncpt_assign_channel(host, &syncpt[i], NULL);
->  	}
->  
->  	for (i = 0; i < host->info->nb_bases; i++)
-> @@ -408,6 +415,7 @@ int host1x_syncpt_init(struct host1x *host)
->  	host->bases = bases;
->  
->  	host1x_syncpt_restore(host);
-> +	host1x_hw_syncpt_enable_protection(host);
->  
->  	/* Allocate sync point to use for clearing waits for expired fences */
->  	host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
-> 
-
-
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 3b6449e..da38833 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -232,20 +232,22 @@ static inline void smmu_flush(struct tegra_smmu *smmu)
+ static int tegra_smmu_alloc_asid(struct tegra_smmu *smmu, unsigned int *idp)
+ {
+ 	unsigned long id;
++	int ret = 0;
+ 
+ 	mutex_lock(&smmu->lock);
+ 
+ 	id = find_first_zero_bit(smmu->asids, smmu->soc->num_asids);
+ 	if (id >= smmu->soc->num_asids) {
+-		mutex_unlock(&smmu->lock);
+-		return -ENOSPC;
++		ret = -ENOSPC;
++		goto Exit;
+ 	}
+ 
+ 	set_bit(id, smmu->asids);
+ 	*idp = id;
+ 
++Exit:
+ 	mutex_unlock(&smmu->lock);
+-	return 0;
++	return ret;
+ }
+ 
+ static void tegra_smmu_free_asid(struct tegra_smmu *smmu, unsigned int id)
 -- 
-Dmitry
+2.7.4
