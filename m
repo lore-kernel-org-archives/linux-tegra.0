@@ -1,41 +1,77 @@
-From: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/4] firmware: tegra: add checks for BPMP error return code
-Date: Thu, 7 Sep 2017 12:31:00 +0300
-Message-ID: <cover.1504776489.git.talho@nvidia.com>
+From: Timo Alho <talho@nvidia.com>
+Subject: [PATCH 4/4] soc/tegra: bpmp: check BPMP response return code
+Date: Thu, 7 Sep 2017 12:31:04 +0300
+Message-ID: <8be4357544ffb9a60e116bc0a666189b93951c91.1504776489.git.talho@nvidia.com>
+References: <cover.1504776489.git.talho@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1504776489.git.talho@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Timo Alho <talho@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+Add checks for return code in BPMP response message.
 
-There is a bug in the BPMP driver as error code in response message is
-not being checked.
-
-Patch 1 adds the error code as part of tegra_bpmp_message struct and
-propagates that code to callers
-
-Patches 2 through 4 add code to client drivers to check the error code
-appropriately
-
-BR,
-Timo
-
-Timo Alho (4):
-  firmware: tegra: propagate error code to caller
-  clk: tegra: check BPMP response return code
-  reset: tegra: check BPMP response return code
-  soc/tegra: bpmp: check BPMP response return code
-
- drivers/clk/tegra/clk-bpmp.c       | 15 ++++++++++-----
- drivers/firmware/tegra/bpmp.c      | 22 ++++++++++++++++------
- drivers/reset/tegra/reset-bpmp.c   |  9 ++++++++-
+Signed-off-by: Timo Alho <talho@nvidia.com>
+---
  drivers/soc/tegra/powergate-bpmp.c | 15 +++++++++++++--
- include/soc/tegra/bpmp.h           |  1 +
- 5 files changed, 48 insertions(+), 14 deletions(-)
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/soc/tegra/powergate-bpmp.c b/drivers/soc/tegra/powergate-bpmp.c
+index 8fc3560..82c7e27 100644
+--- a/drivers/soc/tegra/powergate-bpmp.c
++++ b/drivers/soc/tegra/powergate-bpmp.c
+@@ -42,6 +42,7 @@ static int tegra_bpmp_powergate_set_state(struct tegra_bpmp *bpmp,
+ {
+ 	struct mrq_pg_request request;
+ 	struct tegra_bpmp_message msg;
++	int err;
+ 
+ 	memset(&request, 0, sizeof(request));
+ 	request.cmd = CMD_PG_SET_STATE;
+@@ -53,7 +54,13 @@ static int tegra_bpmp_powergate_set_state(struct tegra_bpmp *bpmp,
+ 	msg.tx.data = &request;
+ 	msg.tx.size = sizeof(request);
+ 
+-	return tegra_bpmp_transfer(bpmp, &msg);
++	err = tegra_bpmp_transfer(bpmp, &msg);
++	if (err < 0)
++		return err;
++	else if (msg.rx.ret < 0)
++		return -EINVAL;
++
++	return 0;
+ }
+ 
+ static int tegra_bpmp_powergate_get_state(struct tegra_bpmp *bpmp,
+@@ -80,6 +87,8 @@ static int tegra_bpmp_powergate_get_state(struct tegra_bpmp *bpmp,
+ 	err = tegra_bpmp_transfer(bpmp, &msg);
+ 	if (err < 0)
+ 		return PG_STATE_OFF;
++	else if (msg.rx.ret < 0)
++		return -EINVAL;
+ 
+ 	return response.get_state.state;
+ }
+@@ -106,6 +115,8 @@ static int tegra_bpmp_powergate_get_max_id(struct tegra_bpmp *bpmp)
+ 	err = tegra_bpmp_transfer(bpmp, &msg);
+ 	if (err < 0)
+ 		return err;
++	else if (msg.rx.ret < 0)
++		return -EINVAL;
+ 
+ 	return response.get_max_id.max_id;
+ }
+@@ -132,7 +143,7 @@ static char *tegra_bpmp_powergate_get_name(struct tegra_bpmp *bpmp,
+ 	msg.rx.size = sizeof(response);
+ 
+ 	err = tegra_bpmp_transfer(bpmp, &msg);
+-	if (err < 0)
++	if (err < 0 || msg.rx.ret < 0)
+ 		return NULL;
+ 
+ 	return kstrdup(response.get_name.name, GFP_KERNEL);
 -- 
 2.7.4
