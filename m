@@ -1,52 +1,78 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH] mmc: tegra: Mark 64 bit dma broken on Tegra186
-Date: Mon, 11 Sep 2017 08:47:34 +0300
-Message-ID: <17ddf6e8-0f3f-09ab-220a-ae97d8a07c5a@intel.com>
-References: <1504900113-8983-1-git-send-email-vdumpa@nvidia.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCHv4 0/4] tegra-cec: add Tegra HDMI CEC support
+Date: Mon, 11 Sep 2017 14:29:48 +0200
+Message-ID: <20170911122952.33980-1-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1504900113-8983-1-git-send-email-vdumpa@nvidia.com>
-Content-Language: en-US
-Sender: linux-mmc-owner@vger.kernel.org
-To: Krishna Reddy <vdumpa@nvidia.com>, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-media@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, thierry.reding@gmail.com, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/09/17 22:48, Krishna Reddy wrote:
-> SDHCI controllers on Tegra186 support 40 bit addressing.
-> IOVA addresses are 48-bit wide on Tegra186.
-> SDHCI host common code sets dma mask as either 32-bit or 64-bit.
-> To avoid access issues when SMMU is enabled, disable 64-bit dma.
-> 
-> Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 0cd6fa80db66..b877c13184c2 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -422,7 +422,15 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
->  		  SDHCI_QUIRK_NO_HISPD_BIT |
->  		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
->  		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> -	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-> +	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> +		   /* SDHCI controllers on Tegra186 support 40-bit addressing.
-> +		    * IOVA addresses are 48-bit wide on Tegra186.
-> +		    * With 64-bit dma mask used for SDHCI, accesses can
-> +		    * be broken. Disable 64-bit dma, which would fall back
-> +		    * to 32-bit dma mask. Ideally 40-bit dma mask would work,
-> +		    * But it is not supported as of now.
-> +		    */
-> +		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
->  	.ops  = &tegra114_sdhci_ops,
->  };
->  
-> 
-
+RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgoKVGhpcyBwYXRjaCBz
+ZXJpZXMgYWRkcyBzdXBwb3J0IGZvciB0aGUgVGVncmEgQ0VDIGZ1bmN0aW9uYWxpdHkuCgpUaGlz
+IHY0IGhhcyBiZWVuIHJlYmFzZWQgdG8gdGhlIGxhdGVzdCA0LjE0IHByZS1yYzEgbWFpbmxpbmUu
+CgpQbGVhc2UgcmV2aWV3ISBPdGhlciB0aGFuIGZvciB0aGUgYmluZGluZ3MgdGhhdCBhcmUgbm93
+IEFja2VkIEkgaGF2ZSBub3QKcmVjZWl2ZWQgYW55IGZlZWRiYWNrLgoKVGhlIGZpcnN0IHBhdGNo
+IGRvY3VtZW50cyB0aGUgQ0VDIGJpbmRpbmdzLCB0aGUgc2Vjb25kIGFkZHMgc3VwcG9ydApmb3Ig
+dGhpcyB0byB0ZWdyYTEyNC5kdHNpIGFuZCBlbmFibGVzIGl0IGZvciB0aGUgSmV0c29uIFRLMS4K
+ClRoZSB0aGlyZCBwYXRjaCBhZGRzIHRoZSBDRUMgZHJpdmVyIGl0c2VsZiBhbmQgdGhlIGZpbmFs
+IHBhdGNoIGFkZHMKdGhlIGNlYyBub3RpZmllciBzdXBwb3J0IHRvIHRoZSBkcm0vdGVncmEgZHJp
+dmVyIGluIG9yZGVyIHRvIG5vdGlmeQp0aGUgQ0VDIGRyaXZlciB3aGVuZXZlciB0aGUgcGh5c2lj
+YWwgYWRkcmVzcyBjaGFuZ2VzLgoKSSBleHBlY3QgdGhhdCB0aGUgZHRzIGNoYW5nZXMgYXBwbHkg
+YXMgd2VsbCB0byB0aGUgVGVncmEgWDEvWDIgYW5kIHBvc3NpYmx5Cm90aGVyIFRlZ3JhIFNvQ3Ms
+IGJ1dCBJIGNhbiBvbmx5IHRlc3QgdGhpcyB3aXRoIG15IEpldHNvbiBUSzEgYm9hcmQuCgpUaGUg
+ZHQtYmluZGluZ3MgYW5kIHRoZSB0ZWdyYS1jZWMgZHJpdmVyIHdvdWxkIGdvIGluIHRocm91Z2gg
+dGhlIG1lZGlhCnN1YnN5c3RlbSwgdGhlIGRybS90ZWdyYSBwYXJ0IHRocm91Z2ggdGhlIGRybSBz
+dWJzeXN0ZW0gYW5kIHRoZSBkdHMKY2hhbmdlcyB0aHJvdWdoIChJIGd1ZXNzKSB0aGUgbGludXgt
+dGVncmEgZGV2ZWxvcGVycy4gTHVja2lseSB0aGV5IGFyZQphbGwgaW5kZXBlbmRlbnQgb2Ygb25l
+IGFub3RoZXIuCgpUbyB0ZXN0IHRoaXMgeW91IG5lZWQgdGhlIENFQyB1dGlsaXRpZXMgZnJvbSBn
+aXQ6Ly9saW51eHR2Lm9yZy92NGwtdXRpbHMuZ2l0LgoKVG8gYnVpbGQgdGhpczoKCmdpdCBjbG9u
+ZSBnaXQ6Ly9saW51eHR2Lm9yZy92NGwtdXRpbHMuZ2l0CmNkIHY0bC11dGlscwouL2Jvb3RzdHJh
+cC5zaDsgLi9jb25maWd1cmUKbWFrZQpzdWRvIG1ha2UgaW5zdGFsbCAjIG9wdGlvbmFsLCB5b3Ug
+cmVhbGx5IG9ubHkgbmVlZCB1dGlscy9jZWMqCgpUbyB0ZXN0OgoKY2VjLWN0bCAtLXBsYXliYWNr
+ICMgY29uZmlndXJlIGFzIHBsYXliYWNrIGRldmljZQpjZWMtY3RsIC1TICMgZGV0ZWN0IGFsbCBj
+b25uZWN0ZWQgQ0VDIGRldmljZXMKClNlZSBoZXJlIGZvciB0aGUgcHVibGljIENFQyBBUEk6Cgpo
+dHRwczovL2h2ZXJrdWlsLmhvbWUueHM0YWxsLm5sL3NwZWMvdWFwaS9jZWMvY2VjLWFwaS5odG1s
+CgpSZWdhcmRzLAoKCUhhbnMKCkNoYW5nZXMgc2luY2UgdjM6CgotIFVzZSB0aGUgbmV3IENFQ19D
+QVBfREVGQVVMVFMgZGVmaW5lCi0gVXNlIElTX0VSUihjZWMtPmFkYXApIGluc3RlYWQgb2YgSVNf
+RVJSX09SX05VTEwoY2VjLT5hZGFwKQogIChjZWNfYWxsb2NhdGVfYWRhcHRlciBuZXZlciByZXR1
+cm5zIGEgTlVMTCBwb2ludGVyKQotIERyb3AgdGhlIGRldmljZV9pbml0X3dha2V1cDogd2FrZXVw
+IGlzIG5vdCAoeWV0KSBzdXBwb3J0ZWQgYnkKICB0aGUgQ0VDIGZyYW1ld29yayBhbmQgSSBoYXZl
+IG5ldmVyIHRlc3RlZCBpdC4KCkhhbnMgVmVya3VpbCAoNCk6CiAgZHQtYmluZGluZ3M6IGRvY3Vt
+ZW50IHRoZSB0ZWdyYSBDRUMgYmluZGluZ3MKICBBUk06IHRlZ3JhOiBhZGQgQ0VDIHN1cHBvcnQg
+dG8gdGVncmExMjQuZHRzaQogIHRlZ3JhLWNlYzogYWRkIFRlZ3JhIEhETUkgQ0VDIGRyaXZlcgog
+IGRybS90ZWdyYTogYWRkIGNlYy1ub3RpZmllciBzdXBwb3J0CgogLi4uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvbWVkaWEvdGVncmEtY2VjLnR4dCAgICAgICAgfCAgMjcgKysKIE1BSU5UQUlORVJTICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA4ICsKIGFyY2gvYXJtL2Jv
+b3QvZHRzL3RlZ3JhMTI0LWpldHNvbi10azEuZHRzICAgICAgICAgIHwgICA0ICsKIGFyY2gvYXJt
+L2Jvb3QvZHRzL3RlZ3JhMTI0LmR0c2kgICAgICAgICAgICAgICAgICAgIHwgIDEyICstCiBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCiBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAgMyAr
+CiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICAgICAgICAgICB8ICAg
+OSArCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvb3V0cHV0LmMgICAgICAgICAgICAgICAgICAgICB8
+ICAgNiArCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL0tjb25maWcgICAgICAgICAgICAgICAgICAg
+ICB8ICAxMSArCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL01ha2VmaWxlICAgICAgICAgICAgICAg
+ICAgICB8ICAgMiArCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3RlZ3JhLWNlYy9NYWtlZmlsZSAg
+ICAgICAgICB8ICAgMSArCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3RlZ3JhLWNlYy90ZWdyYV9j
+ZWMuYyAgICAgICB8IDUwMSArKysrKysrKysrKysrKysrKysrKysKIGRyaXZlcnMvbWVkaWEvcGxh
+dGZvcm0vdGVncmEtY2VjL3RlZ3JhX2NlYy5oICAgICAgIHwgMTI3ICsrKysrKwogMTMgZmlsZXMg
+Y2hhbmdlZCwgNzExIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKIGNyZWF0ZSBtb2RlIDEw
+MDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdGVncmEtY2VjLnR4
+dAogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vdGVncmEtY2VjL01h
+a2VmaWxlCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS90ZWdyYS1j
+ZWMvdGVncmFfY2VjLmMKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL21lZGlhL3BsYXRmb3Jt
+L3RlZ3JhLWNlYy90ZWdyYV9jZWMuaAoKLS0gCjIuMTQuMQoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
