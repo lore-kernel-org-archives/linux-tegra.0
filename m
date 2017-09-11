@@ -1,55 +1,58 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv4 2/4] ARM: tegra: add CEC support to tegra124.dtsi
-Date: Mon, 11 Sep 2017 14:29:50 +0200
-Message-ID: <20170911122952.33980-3-hverkuil@xs4all.nl>
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: [PATCHv4 1/4] dt-bindings: document the tegra CEC bindings
+Date: Mon, 11 Sep 2017 14:29:49 +0200
+Message-ID: <20170911122952.33980-2-hverkuil@xs4all.nl>
 References: <20170911122952.33980-1-hverkuil@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170911122952.33980-1-hverkuil@xs4all.nl>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-media@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, thierry.reding@gmail.com, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170911122952.33980-1-hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgoKQWRkIHN1cHBvcnQg
-Zm9yIHRoZSBUZWdyYSBDRUMgSVAgdG8gdGVncmExMjQuZHRzaSBhbmQgZW5hYmxlIGl0IG9uIHRo
-ZQpKZXRzb24gVEsxLgoKU2lnbmVkLW9mZi1ieTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxA
-Y2lzY28uY29tPgotLS0KIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWpldHNvbi10azEuZHRz
-IHwgIDQgKysrKwogYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQuZHRzaSAgICAgICAgICAgfCAx
-MiArKysrKysrKysrKy0KIDIgZmlsZXMgY2hhbmdlZCwgMTUgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
-dGlvbigtKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWpldHNvbi10
-azEuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtamV0c29uLXRrMS5kdHMKaW5kZXgg
-N2JhY2IyOTU0ZjU4Li43ZjU2ZGU2ODkwYzMgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRz
-L3RlZ3JhMTI0LWpldHNvbi10azEuZHRzCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0
-LWpldHNvbi10azEuZHRzCkBAIC02Nyw2ICs2NywxMCBAQAogCQl9OwogCX07CiAKKwljZWNANzAw
-MTUwMDAgeworCQlzdGF0dXMgPSAib2theSI7CisJfTsKKwogCWdwdUAwLDU3MDAwMDAwIHsKIAkJ
-LyoKIAkJICogTm9kZSBsZWZ0IGRpc2FibGVkIG9uIHB1cnBvc2UgLSB0aGUgYm9vdGxvYWRlciB3
-aWxsIGVuYWJsZQpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQuZHRzaSBi
-L2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LmR0c2kKaW5kZXggMWIxMGIxNGE2YWJkLi4xYTIx
-ZTUyN2ZiNmUgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LmR0c2kKKysr
-IGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQuZHRzaQpAQCAtMTIzLDcgKzEyMyw3IEBACiAJ
-CQludmlkaWEsaGVhZCA9IDwxPjsKIAkJfTsKIAotCQloZG1pQDU0MjgwMDAwIHsKKwkJaGRtaTog
-aGRtaUA1NDI4MDAwMCB7CiAJCQljb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTEyNC1oZG1pIjsK
-IAkJCXJlZyA9IDwweDAgMHg1NDI4MDAwMCAweDAgMHgwMDA0MDAwMD47CiAJCQlpbnRlcnJ1cHRz
-ID0gPEdJQ19TUEkgNzUgSVJRX1RZUEVfTEVWRUxfSElHSD47CkBAIC04NTEsNiArODUxLDE2IEBA
-CiAJCXN0YXR1cyA9ICJkaXNhYmxlZCI7CiAJfTsKIAorCWNlY0A3MDAxNTAwMCB7CisJCWNvbXBh
-dGlibGUgPSAibnZpZGlhLHRlZ3JhMTI0LWNlYyI7CisJCXJlZyA9IDwweDAgMHg3MDAxNTAwMCAw
-eDAgMHgwMDAwMTAwMD47CisJCWludGVycnVwdHMgPSA8R0lDX1NQSSAzIElSUV9UWVBFX0xFVkVM
-X0hJR0g+OworCQljbG9ja3MgPSA8JnRlZ3JhX2NhciBURUdSQTEyNF9DTEtfQ0VDPjsKKwkJY2xv
-Y2stbmFtZXMgPSAiY2VjIjsKKwkJaGRtaS1waGFuZGxlID0gPCZoZG1pPjsKKwkJc3RhdHVzID0g
-ImRpc2FibGVkIjsKKwl9OworCiAJc29jdGhlcm06IHRoZXJtYWwtc2Vuc29yQDcwMGUyMDAwIHsK
-IAkJY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmExMjQtc29jdGhlcm0iOwogCQlyZWcgPSA8MHgw
-IDB4NzAwZTIwMDAgMHgwIDB4NjAwIC8qIFNPQ19USEVSTSByZWdfYmFzZSAqLwotLSAKMi4xNC4x
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+
+This documents the binding for the Tegra CEC module.
+
+Signed-off-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ .../devicetree/bindings/media/tegra-cec.txt        | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/tegra-cec.txt
+
+diff --git a/Documentation/devicetree/bindings/media/tegra-cec.txt b/Documentation/devicetree/bindings/media/tegra-cec.txt
+new file mode 100644
+index 000000000000..c503f06f3b84
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/tegra-cec.txt
+@@ -0,0 +1,27 @@
++* Tegra HDMI CEC hardware
++
++The HDMI CEC module is present in Tegra SoCs and its purpose is to
++handle communication between HDMI connected devices over the CEC bus.
++
++Required properties:
++  - compatible : value should be one of the following:
++	"nvidia,tegra114-cec"
++	"nvidia,tegra124-cec"
++	"nvidia,tegra210-cec"
++  - reg : Physical base address of the IP registers and length of memory
++	  mapped region.
++  - interrupts : HDMI CEC interrupt number to the CPU.
++  - clocks : from common clock binding: handle to HDMI CEC clock.
++  - clock-names : from common clock binding: must contain "cec",
++		  corresponding to the entry in the clocks property.
++  - hdmi-phandle : phandle to the HDMI controller, see also cec.txt.
++
++Example:
++
++cec@70015000 {
++	compatible = "nvidia,tegra124-cec";
++	reg = <0x0 0x70015000 0x0 0x00001000>;
++	interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&tegra_car TEGRA124_CLK_CEC>;
++	clock-names = "cec";
++};
+-- 
+2.14.1
