@@ -1,132 +1,29 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: [PATCHv4 4/4] drm/tegra: add cec-notifier support
-Date: Mon, 11 Sep 2017 14:29:52 +0200
-Message-ID: <20170911122952.33980-5-hverkuil@xs4all.nl>
-References: <20170911122952.33980-1-hverkuil@xs4all.nl>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 4/6] dt-bindings: host1x: Add Tegra186 information
+Date: Tue, 12 Sep 2017 16:49:23 -0500
+Message-ID: <20170912214923.aqyme6ftykahjuw4@rob-hp-laptop>
+References: <20170905084306.19318-1-mperttunen@nvidia.com>
+ <20170905084306.19318-5-mperttunen@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170911122952.33980-1-hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170905084306.19318-5-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dnibade-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sgurrappadi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+On Tue, Sep 05, 2017 at 11:43:04AM +0300, Mikko Perttunen wrote:
+> Add the Tegra186-specific hypervisor-related register range
+> properties.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v2:
+> - Dropped incorrect note about cells properties.
+> 
+>  .../devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt       | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-In order to support CEC the HDMI driver has to inform the CEC driver
-whenever the physical address changes. So when the EDID is read the
-CEC driver has to be informed and whenever the hotplug detect goes
-away.
-
-This is done through the cec-notifier framework.
-
-The link between the HDMI driver and the CEC driver is done through
-the hdmi_phandle in the tegra-cec node in the device tree.
-
-Signed-off-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
----
- drivers/gpu/drm/tegra/Kconfig  | 1 +
- drivers/gpu/drm/tegra/drm.h    | 3 +++
- drivers/gpu/drm/tegra/hdmi.c   | 9 +++++++++
- drivers/gpu/drm/tegra/output.c | 6 ++++++
- 4 files changed, 19 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
-index 2db29d67193d..c882918c2024 100644
---- a/drivers/gpu/drm/tegra/Kconfig
-+++ b/drivers/gpu/drm/tegra/Kconfig
-@@ -8,6 +8,7 @@ config DRM_TEGRA
- 	select DRM_PANEL
- 	select TEGRA_HOST1X
- 	select IOMMU_IOVA if IOMMU_SUPPORT
-+	select CEC_CORE if CEC_NOTIFIER
- 	help
- 	  Choose this option if you have an NVIDIA Tegra SoC.
- 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 6d6da01282f3..c0a18b60caf1 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -212,6 +212,8 @@ int tegra_dc_state_setup_clock(struct tegra_dc *dc,
- 			       struct clk *clk, unsigned long pclk,
- 			       unsigned int div);
- 
-+struct cec_notifier;
-+
- struct tegra_output {
- 	struct device_node *of_node;
- 	struct device *dev;
-@@ -219,6 +221,7 @@ struct tegra_output {
- 	struct drm_panel *panel;
- 	struct i2c_adapter *ddc;
- 	const struct edid *edid;
-+	struct cec_notifier *notifier;
- 	unsigned int hpd_irq;
- 	int hpd_gpio;
- 	enum of_gpio_flags hpd_gpio_flags;
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index cda0491ed6bf..fbf14e1efd0e 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -21,6 +21,8 @@
- 
- #include <sound/hda_verbs.h>
- 
-+#include <media/cec-notifier.h>
-+
- #include "hdmi.h"
- #include "drm.h"
- #include "dc.h"
-@@ -1720,6 +1722,10 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
- 		return PTR_ERR(hdmi->vdd);
- 	}
- 
-+	hdmi->output.notifier = cec_notifier_get(&pdev->dev);
-+	if (hdmi->output.notifier == NULL)
-+		return -ENOMEM;
-+
- 	hdmi->output.dev = &pdev->dev;
- 
- 	err = tegra_output_probe(&hdmi->output);
-@@ -1778,6 +1784,9 @@ static int tegra_hdmi_remove(struct platform_device *pdev)
- 
- 	tegra_output_remove(&hdmi->output);
- 
-+	if (hdmi->output.notifier)
-+		cec_notifier_put(hdmi->output.notifier);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index 595d1ec3e02e..57c052521a44 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -11,6 +11,8 @@
- #include <drm/drm_panel.h>
- #include "drm.h"
- 
-+#include <media/cec-notifier.h>
-+
- int tegra_output_connector_get_modes(struct drm_connector *connector)
- {
- 	struct tegra_output *output = connector_to_output(connector);
-@@ -33,6 +35,7 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
- 		edid = drm_get_edid(connector, output->ddc);
- 
- 	drm_mode_connector_update_edid_property(connector, edid);
-+	cec_notifier_set_phys_addr_from_edid(output->notifier, edid);
- 
- 	if (edid) {
- 		err = drm_add_edid_modes(connector, edid);
-@@ -68,6 +71,9 @@ tegra_output_connector_detect(struct drm_connector *connector, bool force)
- 			status = connector_status_connected;
- 	}
- 
-+	if (status != connector_status_connected)
-+		cec_notifier_phys_addr_invalidate(output->notifier);
-+
- 	return status;
- }
- 
--- 
-2.14.1
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> 
