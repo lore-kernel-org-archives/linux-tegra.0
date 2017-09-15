@@ -1,51 +1,53 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 00/16] gpio: Tight IRQ chip integration and banked
- infrastructure
-Date: Fri, 15 Sep 2017 09:57:51 -0700
-Message-ID: <20170915165750.GW5024@atomide.com>
-References: <20170901185736.28051-1-thierry.reding@gmail.com>
- <CACRpkdaRsG-9YU2ufb+FxGOO38+x=AAfVUqxH5s56NH2iLw7oA@mail.gmail.com>
- <20170914185233.GA6410@aiwendil>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170914185233.GA6410@aiwendil>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-omap@vger.kernel.org
+From: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in tegra210_clock_init
+Date: Fri, 15 Sep 2017 12:10:13 -0700
+Message-ID: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-* Thierry Reding <thierry.reding@gmail.com> [170915 08:10]:
-> On Thu, Sep 14, 2017 at 03:54:56PM +0200, Linus Walleij wrote:
-> > Sorry about that. Let's move ahead with this now, it is neat and
-> > clean.
-> > 
-> > What I want (as maintainer) is a bit of fingerpointing at the drivers
-> > that need to be converted to use the new banking infrastructure
-> > so they don't stay with their old crappy design pattern. OMAP is
-> > a clear candidate right? (Added Tony to CC...)
-> 
-> OMAP should be able to use this infrastructure, but it may not want to
-> because the semantics would change slightly. Currently OMAP registers a
-> GPIO chip for each bank, whereas this infrastructure exposes multiple
-> banks via a single chip.
+Below is the call trace of tegra210_init_pllu() function:
+  start_kernel()
+  -> time_init()
+  --> of_clk_init()
+  ---> tegra210_clock_init()
+  ----> tegra210_pll_init()
+  -----> tegra210_init_pllu()
 
-Oh so you don't have separate interrupts for the instances?
-Thanks for clarifying that.
+Because the preemption is disabled in the start_kernel before calling
+time_init, tegra210_init_pllu is actually in an atomic context while
+it includes a readl_relaxed_poll_timeout that might sleep.
 
-> There might be some userspace that relies on the existence of multiple
-> chips, but Tony can probably knows that better than I.
+So this patch just changes this readl_relaxed_poll_timeout() to its
+atomic version.
 
-On omaps, each bank is a separate driver instance with it's own
-interrupt. Maybe really all we need to do is get rid of the "bank"
-naming, I think that's left over from 15 years ago when we did not
-have separate driver instances. It seems we should s/bank/ddata/
-on the driver to avoid confusion.
+Signed-off-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changelog
+v2:
+ * Corrected a typo in the commit log
+ * Added Peter's Acked-by.
 
-Grygorii, any comments?
+ drivers/clk/tegra/clk-tegra210.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-
-Tony
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 0b9789a..ea695c4 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2587,8 +2587,8 @@ static int tegra210_enable_pllu(void)
+ 	reg |= PLL_ENABLE;
+ 	writel(reg, clk_base + PLLU_BASE);
+ 
+-	readl_relaxed_poll_timeout(clk_base + PLLU_BASE, reg,
+-				   reg & PLL_BASE_LOCK, 2, 1000);
++	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
++					  reg & PLL_BASE_LOCK, 2, 1000);
+ 	if (!(reg & PLL_BASE_LOCK)) {
+ 		pr_err("Timed out waiting for PLL_U to lock\n");
+ 		return -ETIMEDOUT;
+-- 
+2.1.4
