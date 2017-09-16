@@ -1,95 +1,66 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 00/16] gpio: Tight IRQ chip integration and banked
- infrastructure
-Date: Fri, 15 Sep 2017 17:26:22 -0500
-Message-ID: <edfcb6bd-18bb-175d-e917-e3ce32ba6611@ti.com>
-References: <20170901185736.28051-1-thierry.reding@gmail.com>
- <CACRpkdaRsG-9YU2ufb+FxGOO38+x=AAfVUqxH5s56NH2iLw7oA@mail.gmail.com>
- <20170914185233.GA6410@aiwendil> <20170915165750.GW5024@atomide.com>
+From: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Date: Fri, 15 Sep 2017 22:26:28 -0700
+Message-ID: <20170916052626.GA3704@Asurada>
+References: <1505439374-8666-1-git-send-email-nicoleotsuka@gmail.com>
+ <20170915093145.GD6290@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170915165750.GW5024-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20170915093145.GD6290-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Sep 15, 2017 at 12:31:45PM +0300, Peter De Schrijver wrote:
+> Apart from the typo in the commit message (preemption rather than preemtion):
 
+Sent a v2 to correct it. And included your Acked-by.
 
-On 09/15/2017 11:57 AM, Tony Lindgren wrote:
-> * Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> [170915 08:10]:
->> On Thu, Sep 14, 2017 at 03:54:56PM +0200, Linus Walleij wrote:
->>> Sorry about that. Let's move ahead with this now, it is neat and
->>> clean.
->>>
->>> What I want (as maintainer) is a bit of fingerpointing at the drivers
->>> that need to be converted to use the new banking infrastructure
->>> so they don't stay with their old crappy design pattern. OMAP is
->>> a clear candidate right? (Added Tony to CC...)
->>
->> OMAP should be able to use this infrastructure, but it may not want to
->> because the semantics would change slightly. Currently OMAP registers a
->> GPIO chip for each bank, whereas this infrastructure exposes multiple
->> banks via a single chip.
+Thanks
+
 > 
-> Oh so you don't have separate interrupts for the instances?
-> Thanks for clarifying that.
+> Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
->> There might be some userspace that relies on the existence of multiple
->> chips, but Tony can probably knows that better than I.
-> 
-> On omaps, each bank is a separate driver instance with it's own
-> interrupt. Maybe really all we need to do is get rid of the "bank"
-> naming, I think that's left over from 15 years ago when we did not
-> have separate driver instances. It seems we should s/bank/ddata/
-> on the driver to avoid confusion.
-> 
-> Grygorii, any comments?
-
-Sry, for delayed reply - I've saw this series, but, honestly, it's very big 
-change for review :(
-
-So, can it be split? I think, patches which reorganize gpio irqchip specific fields placement 
-and move them in gpio_irq_chip can be considered separately if they will not introduce
-functional changes. Also, omap changes can be considered separately.
-(Pay attention that new fields introduced in patch 1).  
-
-Regarding OMAP GPIO - right now I do not see how it can be applied for OMAP :(
-Each OMAP GPIO bank is standalone device which can be enabled/disabled, 
-powered on/off in Linux. There are no contiguous MMIO space and each GPIO
-bank have separate MMIO space.
-
-I really, need more time to review this idea and I think that it can be done
-more easily if series size will be reduced.
-
-Few more notes:
-- pay attention on commit dc749a0 "gpiolib: allow gpio irqchip to map irqs dynamically"
-- good to see binding and DT examples
-- not sure if I've got idea of encoding bank&pin in spec[0] :(
-
-+	bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
-+	pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
-
-- irq "mapping" inside gpio_irq_chip is not clear :( does it static?
-does it require one array item/per pin - sry, this is waste of memory?
-
-irq->map[offset + j] = irq->parents[parent];
-
-Potentially, this feature can be applied to Davinci GPIO driver, which
-is GPIO controller divided in multiple logical banks and which also have
-set of common registers for all logical banks. But, again, not sure how
-effective this implementation is - need more time. As of now, we perfectly 
-handle this in Davinci GPIO driver by creating only ONE gpio_chip which hides
-HW details in driver and still uses standard irq DT mappings:
- <&gpio0 140 GPIO_ACTIVE_LOW>;
-
-By the way Patch 14 adds 300 lines, while patch changes 200 lines, so
-in terms of code lines this feature seems is not very efficient.
-(same for Patch 15, 16)
-
--- 
-regards,
--grygorii
+> On Thu, Sep 14, 2017 at 06:36:14PM -0700, Nicolin Chen wrote:
+> > Below is the call trace of tegra210_init_pllu() function:
+> >   start_kernel()
+> >   -> time_init()
+> >   --> of_clk_init()
+> >   ---> tegra210_clock_init()
+> >   ----> tegra210_pll_init()
+> >   -----> tegra210_init_pllu()
+> > 
+> > Because the preemtion is disabled in the start_kernel before calling
+> > time_init, tegra210_init_pllu is actually in an atomic context while
+> > it includes a readl_relaxed_poll_timeout that might sleep.
+> > 
+> > So this patch just changes this readl_relaxed_poll_timeout() to its
+> > atomic version.
+> > 
+> > Signed-off-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > ---
+> >  drivers/clk/tegra/clk-tegra210.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> > index 0b9789a..ea695c4 100644
+> > --- a/drivers/clk/tegra/clk-tegra210.c
+> > +++ b/drivers/clk/tegra/clk-tegra210.c
+> > @@ -2587,8 +2587,8 @@ static int tegra210_enable_pllu(void)
+> >  	reg |= PLL_ENABLE;
+> >  	writel(reg, clk_base + PLLU_BASE);
+> >  
+> > -	readl_relaxed_poll_timeout(clk_base + PLLU_BASE, reg,
+> > -				   reg & PLL_BASE_LOCK, 2, 1000);
+> > +	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
+> > +					  reg & PLL_BASE_LOCK, 2, 1000);
+> >  	if (!(reg & PLL_BASE_LOCK)) {
+> >  		pr_err("Timed out waiting for PLL_U to lock\n");
+> >  		return -ETIMEDOUT;
+> > -- 
+> > 2.1.4
+> > 
