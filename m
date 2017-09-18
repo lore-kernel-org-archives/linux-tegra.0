@@ -1,35 +1,47 @@
-From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: [PATCH] sound: tegra20-spdif: remove "default m"
-Date: Sun, 17 Sep 2017 17:15:04 +0200
-Message-ID: <c765842d4cc6af91ae0d6977922e6ae6f6e1dfa8.1505661134.git.mirq-linux@rere.qmqm.pl>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.14-rc1
+Date: Mon, 18 Sep 2017 12:35:54 +0100
+Message-ID: <78b1e33f-cc9f-85c6-c7ae-3ecf0f1c2da4@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Default != n for drivers is frowned upon. This is the only one among
-tegra sound drivers that was different.
+Here are some basic Tegra test results for Linux v4.14-rc1.
+Logs and other details at:
 
-Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
----
- sound/soc/tegra/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+    https://nvtb.github.io//linux/test_v4.14-rc1/20170916163103/
 
-diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
-index 6875fc39a575..6c893c677110 100644
---- a/sound/soc/tegra/Kconfig
-+++ b/sound/soc/tegra/Kconfig
-@@ -38,7 +38,6 @@ config SND_SOC_TEGRA20_I2S
- config SND_SOC_TEGRA20_SPDIF
- 	tristate "Tegra20 SPDIF interface"
- 	depends on SND_SOC_TEGRA
--	default m
- 	help
- 	  Say Y or M if you want to add support for the Tegra20 SPDIF interface.
- 	  You will also need to select the individual machine drivers to support
--- 
-2.11.0
+
+Test summary
+------------
+
+Build: zImage:
+    FAIL: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
+
+
+vmlinux object size
+(delta in bytes from test_v4.13 (569dbb88e80deb68974ef6fdd6a13edb9d686261)):
+   text     data      bss    total  kernel
++147008  +131988    +1024  +280020  defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.13 (569dbb88e80deb68974ef6fdd6a13edb9d686261))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+    -252k     252k        .        .      qemu-vexpress64            defconfig           __internal
+    -248k     248k        .        .      tegra132-norrin            defconfig      tegra132-norrin
+    -216k     216k        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+    -220k     220k        .        .       tegra210-smaug            defconfig       tegra210-smaug
