@@ -1,54 +1,94 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra30: fix cclk_lp divisor register
-Date: Tue, 19 Sep 2017 11:54:59 +0300
-Message-ID: <20170919085459.GL6290@tbergstrom-lnx.Nvidia.com>
-References: <f54b8ff896d3dcbae51741b817d65a7e9a21987a.1505789180.git.mirq-linux@rere.qmqm.pl>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3] platform/chrome: Use proper protocol transfer function
+Date: Tue, 19 Sep 2017 14:44:36 +0100
+Message-ID: <02aa65e7-e967-055b-2af3-2e9b6ef77935@nvidia.com>
+References: <20170908205011.77986-1-briannorris@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <f54b8ff896d3dcbae51741b817d65a7e9a21987a.1505789180.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+In-Reply-To: <20170908205011.77986-1-briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Enric Balletbo <enric.balletbo-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 19, 2017 at 04:48:10AM +0200, Michał Mirosław wrote:
-> According to comments in code and common sense, cclk_lp uses its
-> own divisor, not cclk_g's.
+Hi Brian,
+
+On 08/09/17 21:50, Brian Norris wrote:
+> From: Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 > 
-
-Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Note that we model multiple clocks which touch the same hw register which
-will likely not work if you would use more than one of them. So probably
-this needs to be refactored somehow. The clock topology is rather odd
-though as the divider only applies to certain inputs for cclk_lp.
-
-> Fixes: b08e8c0ecc42 ("clk: tegra: add clock support for Tegra30")
-> Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+> pkt_xfer should be used for protocol v3, and cmd_xfer otherwise. We had
+> one instance of these functions correct, but not the second, fall-back
+> case. We use the fall-back only when the first command returns an
+> IN_PROGRESS status, which is only used on some EC firmwares where we
+> don't want to constantly poll the bus, but instead back off and
+> sleep/retry for a little while.
+> 
+> Fixes: 2c7589af3c4d ("mfd: cros_ec: add proto v3 skeleton")
+> Signed-off-by: Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Signed-off-by: Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 > ---
->  drivers/clk/tegra/clk-tegra30.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v3:
+>  * Added Javier's reviewed tag
+>  * It's been > 8 months since [1], so why not? And hey, Benson's officially in
+>    MAINTAINERS now! Too bad no one told me.
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index 8f5a3e7c3bf9..95b7df4a8abd 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -964,7 +964,7 @@ static void __init tegra30_super_clk_init(void)
->  	 * U71 divider of cclk_lp.
->  	 */
->  	clk = tegra_clk_register_divider("pll_p_out3_cclklp", "pll_p_out3",
-> -				clk_base + SUPER_CCLKG_DIVIDER, 0,
-> +				clk_base + SUPER_CCLKLP_DIVIDER, 0,
->  				TEGRA_DIVIDER_INT, 16, 8, 1, NULL);
->  	clk_register_clkdev(clk, "pll_p_out3_cclklp", NULL);
+>  [1] https://patchwork.kernel.org/patch/9450633/
+> 
+> 
+> v2:
+>  * Add Benson in 'To:'
+>  * make subject prefix more obvious
+> 
+>  drivers/platform/chrome/cros_ec_proto.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+> index 8dfa7fcb1248..e7bbdf947bbc 100644
+> --- a/drivers/platform/chrome/cros_ec_proto.c
+> +++ b/drivers/platform/chrome/cros_ec_proto.c
+> @@ -60,12 +60,14 @@ static int send_command(struct cros_ec_device *ec_dev,
+>  			struct cros_ec_command *msg)
+>  {
+>  	int ret;
+> +	int (*xfer_fxn)(struct cros_ec_device *ec, struct cros_ec_command *msg);
 >  
-> -- 
-> 2.11.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  	if (ec_dev->proto_version > 2)
+> -		ret = ec_dev->pkt_xfer(ec_dev, msg);
+> +		xfer_fxn = ec_dev->pkt_xfer;
+>  	else
+> -		ret = ec_dev->cmd_xfer(ec_dev, msg);
+> +		xfer_fxn = ec_dev->cmd_xfer;
+>  
+> +	ret = (*xfer_fxn)(ec_dev, msg);
+>  	if (msg->result == EC_RES_IN_PROGRESS) {
+>  		int i;
+>  		struct cros_ec_command *status_msg;
+> @@ -88,7 +90,7 @@ static int send_command(struct cros_ec_device *ec_dev,
+>  		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
+>  			usleep_range(10000, 11000);
+>  
+> -			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
+> +			ret = (*xfer_fxn)(ec_dev, status_msg);
+>  			if (ret < 0)
+>  				break;
+>  
+
+Tegra124 Nyan-Big is currently crashing during boot with -next [0] and
+bisect is pointing to this commit. Reverting the above on top of -next
+does allow the board to boot successfully. Looks like this board is
+proto_version 3 but I have not looked into this any further. Let me know
+if you have any thoughts.
+
+Cheers
+Jon
+
+[0]
+https://nvtb.github.io//linux-next/test_next-20170919/20170918213034/boot/tegra124-nyan-big/tegra124-nyan-big/tegra_defconfig_log.txt
+
+
+-- 
+nvpublic
