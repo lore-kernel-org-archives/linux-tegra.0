@@ -1,60 +1,180 @@
-From: Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3] platform/chrome: Use proper protocol transfer function
-Date: Tue, 19 Sep 2017 23:13:18 -0700
-Message-ID: <20170920061317.GB13616@google.com>
-References: <20170908205011.77986-1-briannorris@chromium.org>
- <02aa65e7-e967-055b-2af3-2e9b6ef77935@nvidia.com>
- <CALaWCOMj0wQk5OfYOYqU_sZUt2SQBhy=HaP-qOiB5aMf9G8inw@mail.gmail.com>
- <c3c5d08b-2df2-2e5b-cb09-bd4b3011e3df@nvidia.com>
- <20170919171401.GA10968@google.com>
- <CALaWCOPzT-BWu-YcMY+xEAWGRmvvVEoA64ceEK3zG3K-wajskQ@mail.gmail.com>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/4] dt-bindings: pci: tegra: Document Tegra186 PCIe DT
+Date: Wed, 20 Sep 2017 12:12:41 +0530
+Message-ID: <1505889764-19397-2-git-send-email-mmaddireddy@nvidia.com>
+References: <1505889764-19397-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CALaWCOPzT-BWu-YcMY+xEAWGRmvvVEoA64ceEK3zG3K-wajskQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1505889764-19397-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shawn N <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Enric Balletbo <enric.balletbo-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Tegra186 PCIe controller DT properties has couple of differences
+wrt Tegra210 PCIe, rest of the DT properties are same.
 
-On Tue, Sep 19, 2017 at 11:05:38PM -0700, Shawn N wrote:
-> This is failing because our EC_CMD_GET_PROTOCOL_INFO host command is
-> getting messed up, or the reply buffer is getting corrupted somehow.
-> 
->                ec_dev->proto_version =
->                         min(EC_HOST_REQUEST_VERSION,
->                                         fls(proto_info->protocol_versions) - 1);
-> 
-> If proto_info->protocol_versions == 0 then ec_dev->proto_version will
-> be assigned 0xffff. The logic here seems strange to me, if the EC is
+Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ .../bindings/pci/nvidia,tegra20-pcie.txt           | 134 ++++++++++++++++++++-
+ 1 file changed, 130 insertions(+), 4 deletions(-)
 
-Whoops...
-
-> successfully replying to our v3 command then obviously it supports v3
-> (maybe it will be useful someday if EC_HOST_REQUEST_VERSION is rev'd).
-> Anyway, we need to figure out what is happening with our
-> EC_HOST_REQUEST_VERSION host command.
-> 
-> On Tue, Sep 19, 2017 at 10:14 AM, Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> > Hi Jon,
-> >
-> > On Tue, Sep 19, 2017 at 05:39:56PM +0100, Jon Hunter wrote:
-> >> On 19/09/17 15:09, Shawn N wrote:
-...
-> > Furthermore, the only assignments to this 'proto_version' field look
-> > like they're only writing one of 0, 2, 3, or
-> >
-> >    min(EC_HOST_REQUEST_VERSION, fls(proto_info->protocol_versions) - 1)
-> >
-> > . I don't see where 0xffff comes from.
-
-...I'm an idiot. While the rvalue (the expression above) is an int (e.g,
--1), it's getting cast into a uint16_t (ec_dev->proto_version). So
-that's where the 0xffff can come from.
-
-Sorry if I misled you Shawn :(
-
-Brian
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+index 982a74ea6df9..753b67327373 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+@@ -1,10 +1,15 @@
+ NVIDIA Tegra PCIe controller
+ 
+ Required properties:
+-- compatible: For Tegra20, must contain "nvidia,tegra20-pcie".  For Tegra30,
+-  "nvidia,tegra30-pcie".  For Tegra124, must contain "nvidia,tegra124-pcie".
+-  Otherwise, must contain "nvidia,<chip>-pcie", plus one of the above, where
+-  <chip> is tegra132 or tegra210.
++- compatible: Must be:
++  - "nvidia,tegra20-pcie": for Tegra20
++  - "nvidia,tegra30-pcie": for Tegra30
++  - "nvidia,tegra124-pcie": for Tegra124 and Tegra132
++  - "nvidia,tegra210-pcie": for Tegra210
++  - "nvidia,tegra186-pcie": for Tegra186
++- power-domains: To ungate power partition by BPMP powergate driver. Must
++contain BPMP phandle and PCIe power partition ID. This is required only
++for Tegra186.
+ - device_type: Must be "pci"
+ - reg: A list of physical base address and length for each set of controller
+   registers. Must contain an entry for each entry in the reg-names property.
+@@ -124,6 +129,16 @@ Power supplies for Tegra210:
+   - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
+     supply 1.8 V.
+ 
++Power supplies for Tegra186:
++- Required:
++  - dvdd-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
++  - hvdd-pex-pll-supply: High-voltage supply for PLLE (shared with USB3). Must
++    supply 1.8 V.
++  - hvdd-pex-supply: High-voltage supply for PCIe I/O and PCIe output clocks.
++    Must supply 1.8 V.
++  - vddio-pexctl-aud-supply: Power supply for PCIe side band signals. Must
++    supply 1.8 V.
++
+ Root ports are defined as subnodes of the PCIe controller node.
+ 
+ Required properties:
+@@ -546,3 +561,114 @@ Board DTS:
+ 			status = "okay";
+ 		};
+ 	};
++
++Tegra186:
++---------
++
++SoC DTSI:
++
++	pcie@10003000 {
++		compatible = "nvidia,tegra186-pcie";
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_PCX>;
++		device_type = "pci";
++		reg = <0x0 0x10003000 0x0 0x00000800   /* PADS registers */
++		       0x0 0x10003800 0x0 0x00000800   /* AFI registers */
++		       0x0 0x40000000 0x0 0x10000000>; /* configuration space */
++		reg-names = "pads", "afi", "cs";
++
++		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
++			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
++		interrupt-names = "intr", "msi";
++
++		#interrupt-cells = <1>;
++		interrupt-map-mask = <0 0 0 0>;
++		interrupt-map = <0 0 0 0 &gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
++
++		bus-range = <0x00 0xff>;
++		#address-cells = <3>;
++		#size-cells = <2>;
++
++		ranges = <0x82000000 0 0x10000000 0x0 0x10000000 0 0x00001000   /* port 0 configuration space */
++			  0x82000000 0 0x10001000 0x0 0x10001000 0 0x00001000   /* port 1 configuration space */
++			  0x82000000 0 0x10004000 0x0 0x10004000 0 0x00001000   /* port 2 configuration space */
++			  0x81000000 0 0x0        0x0 0x50000000 0 0x00010000   /* downstream I/O (64 KiB) */
++			  0x82000000 0 0x50100000 0x0 0x50100000 0 0x07F00000   /* non-prefetchable memory (127 MiB) */
++			  0xc2000000 0 0x58000000 0x0 0x58000000 0 0x28000000>; /* prefetchable memory (640 MiB) */
++
++		clocks = <&bpmp TEGRA186_CLK_AFI>,
++			 <&bpmp TEGRA186_CLK_PCIE>,
++			 <&bpmp TEGRA186_CLK_PLLE>;
++		clock-names = "afi", "pex", "pll_e";
++
++		resets = <&bpmp TEGRA186_RESET_AFI>,
++			 <&bpmp TEGRA186_RESET_PCIE>,
++			 <&bpmp TEGRA186_RESET_PCIEXCLK>;
++		reset-names = "afi", "pex", "pcie_x";
++
++		status = "disabled";
++
++		pci@1,0 {
++			device_type = "pci";
++			assigned-addresses = <0x82000800 0 0x10000000 0 0x1000>;
++			reg = <0x000800 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <2>;
++		};
++
++		pci@2,0 {
++			device_type = "pci";
++			assigned-addresses = <0x82001000 0 0x10001000 0 0x1000>;
++			reg = <0x001000 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <1>;
++		};
++
++		pci@3,0 {
++			device_type = "pci";
++			assigned-addresses = <0x82001800 0 0x10004000 0 0x1000>;
++			reg = <0x001800 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <1>;
++		};
++	};
++
++Board DTS:
++
++	pcie@10003000 {
++		status = "okay";
++
++		dvdd-pex-supply = <&vdd_pex>;
++		hvdd-pex-pll-supply = <&vdd_1v8>;
++		hvdd-pex-supply = <&vdd_1v8>;
++		vddio-pexctl-aud-supply = <&vdd_1v8>;
++
++		pci@1,0 {
++			nvidia,num-lanes = <4>;
++			status = "okay";
++		};
++
++		pci@2,0 {
++			nvidia,num-lanes = <0>;
++			status = "disabled";
++		};
++
++		pci@3,0 {
++			nvidia,num-lanes = <1>;
++			status = "disabled";
++		};
++	};
+-- 
+2.1.4
