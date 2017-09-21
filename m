@@ -1,116 +1,93 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/4] firmware: tegra: propagate error code to caller
-Date: Thu, 21 Sep 2017 12:19:10 +0100
-Message-ID: <639a6e47-fc9e-c05c-8a92-c6198ec37212@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 2/4] clk: tegra: check BPMP response return code
+Date: Thu, 21 Sep 2017 12:21:24 +0100
+Message-ID: <388e07bc-b7b4-cc17-026a-bd08d77942ca@nvidia.com>
 References: <cover.1504776489.git.talho@nvidia.com>
- <c349d38a8cb1d00a4dc11d6aa286fb392017bc8c.1504776489.git.talho@nvidia.com>
+ <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <c349d38a8cb1d00a4dc11d6aa286fb392017bc8c.1504776489.git.talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Timo Alho <talho@nvidia.com>, thierry.reding@gmail.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
+
 On 07/09/17 10:31, Timo Alho wrote:
-> Response messages from Tegra BPMP firmware contain an error return
-> code as the first word of payload. The error code is used to indicate
-> incorrectly formatted request message or use of non-existing resource
-> (clk, reset, powergate) identifier. Current implementation of
-> tegra_bpmp_transfer() ignores this code and does not pass it to
-> caller. Fix this by adding an extra struct member to
-> tegra_bpmp_message and populate that with return code.
+> Check return code in BPMP response message(s). The typical error case
+> is when clock operation is attempted with invalid clock identifier.
 > 
-> Signed-off-by: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Also remove error print from call to clk_get_info() as the
+> implementation loops through range of all possible identifier, but the
+> operation is expected error out when the clock id is unused.
+> 
+> Signed-off-by: Timo Alho <talho@nvidia.com>
 > ---
->  drivers/firmware/tegra/bpmp.c | 22 ++++++++++++++++------
->  include/soc/tegra/bpmp.h      |  1 +
->  2 files changed, 17 insertions(+), 6 deletions(-)
+>  drivers/clk/tegra/clk-bpmp.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index 73ca55b..33683b5 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -194,16 +194,24 @@ static int tegra_bpmp_wait_master_free(struct tegra_bpmp_channel *channel)
->  }
->  
->  static ssize_t __tegra_bpmp_channel_read(struct tegra_bpmp_channel *channel,
-> -					 void *data, size_t size)
-> +					 void *data, size_t size, int *ret)
->  {
-> +	int err;
-> +
->  	if (data && size > 0)
->  		memcpy(data, channel->ib->data, size);
->  
-> -	return tegra_ivc_read_advance(channel->ivc);
-> +	err = tegra_ivc_read_advance(channel->ivc);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	*ret = channel->ib->code;
-> +
-> +	return 0;
->  }
->  
->  static ssize_t tegra_bpmp_channel_read(struct tegra_bpmp_channel *channel,
-> -				       void *data, size_t size)
-> +				       void *data, size_t size, int *ret)
->  {
->  	struct tegra_bpmp *bpmp = channel->bpmp;
->  	unsigned long flags;
-> @@ -217,7 +225,7 @@ static ssize_t tegra_bpmp_channel_read(struct tegra_bpmp_channel *channel,
->  	}
->  
->  	spin_lock_irqsave(&bpmp->lock, flags);
-> -	err = __tegra_bpmp_channel_read(channel, data, size);
-> +	err = __tegra_bpmp_channel_read(channel, data, size, ret);
->  	clear_bit(index, bpmp->threaded.allocated);
->  	spin_unlock_irqrestore(&bpmp->lock, flags);
->  
-> @@ -337,7 +345,8 @@ int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
->  	if (err < 0)
->  		return err;
->  
-> -	return __tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size);
-> +	return __tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size,
-> +					 &msg->rx.ret);
->  }
->  EXPORT_SYMBOL_GPL(tegra_bpmp_transfer_atomic);
->  
-> @@ -371,7 +380,8 @@ int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
->  	if (err == 0)
->  		return -ETIMEDOUT;
->  
-> -	return tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size);
-> +	return tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size,
-> +				       &msg->rx.ret);
->  }
->  EXPORT_SYMBOL_GPL(tegra_bpmp_transfer);
->  
-> diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
-> index 9ba6522..57519f4 100644
-> --- a/include/soc/tegra/bpmp.h
-> +++ b/include/soc/tegra/bpmp.h
-> @@ -110,6 +110,7 @@ struct tegra_bpmp_message {
+> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+> index 638ace6..a896692 100644
+> --- a/drivers/clk/tegra/clk-bpmp.c
+> +++ b/drivers/clk/tegra/clk-bpmp.c
+> @@ -55,6 +55,7 @@ struct tegra_bpmp_clk_message {
 >  	struct {
 >  		void *data;
 >  		size_t size;
 > +		int ret;
 >  	} rx;
 >  };
+>  
+> @@ -64,6 +65,7 @@ static int tegra_bpmp_clk_transfer(struct tegra_bpmp *bpmp,
+>  	struct mrq_clk_request request;
+>  	struct tegra_bpmp_message msg;
+>  	void *req = &request;
+> +	int err;
+>  
+>  	memset(&request, 0, sizeof(request));
+>  	request.cmd_and_id = (clk->cmd << 24) | clk->id;
+> @@ -84,7 +86,13 @@ static int tegra_bpmp_clk_transfer(struct tegra_bpmp *bpmp,
+>  	msg.rx.data = clk->rx.data;
+>  	msg.rx.size = clk->rx.size;
+>  
+> -	return tegra_bpmp_transfer(bpmp, &msg);
+> +	err = tegra_bpmp_transfer(bpmp, &msg);
+> +	if (err < 0)
+> +		return err;
+> +	else if (msg.rx.ret < 0)
+> +		return -EINVAL;
 
-Looks good to me ...
+I assume that the error codes returned do not correlated to the Linux
+error codes here. Is that correct? If not we could just return the
+actual error code. Otherwise would it be useful to print a message with
+the bpmp error code for debug?
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +
+> +	return 0;
+>  }
+>  
+>  static int tegra_bpmp_clk_prepare(struct clk_hw *hw)
+> @@ -414,11 +422,8 @@ static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
+>  		struct tegra_bpmp_clk_info *info = &clocks[count];
+>  
+>  		err = tegra_bpmp_clk_get_info(bpmp, id, info);
+> -		if (err < 0) {
+> -			dev_err(bpmp->dev, "failed to query clock %u: %d\n",
+> -				id, err);
+> +		if (err < 0)
+>  			continue;
+> -		}
+>  
+>  		if (info->num_parents >= U8_MAX) {
+>  			dev_err(bpmp->dev,
+> 
 
 Cheers
 Jon
-
 
 -- 
 nvpublic
