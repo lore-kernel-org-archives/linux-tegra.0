@@ -1,93 +1,34 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 2/4] clk: tegra: check BPMP response return code
-Date: Thu, 21 Sep 2017 12:21:24 +0100
-Message-ID: <388e07bc-b7b4-cc17-026a-bd08d77942ca@nvidia.com>
-References: <cover.1504776489.git.talho@nvidia.com>
- <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 00/16] gpio: Tight IRQ chip integration and banked infrastructure
+Date: Thu, 21 Sep 2017 14:06:35 +0200
+Message-ID: <CACRpkdarDaDtWieC0rfGOQH-Hp9xa3kwhT2fPttU-dOGErE8Pw@mail.gmail.com>
+References: <20170901185736.28051-1-thierry.reding@gmail.com>
+ <CACRpkdaRsG-9YU2ufb+FxGOO38+x=AAfVUqxH5s56NH2iLw7oA@mail.gmail.com>
+ <20170914185233.GA6410@aiwendil> <20170915165750.GW5024@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Timo Alho <talho@nvidia.com>, thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170915165750.GW5024-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Sep 15, 2017 at 6:57 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
 
+> On omaps, each bank is a separate driver instance with it's own
+> interrupt. Maybe really all we need to do is get rid of the "bank"
+> naming, I think that's left over from 15 years ago when we did not
+> have separate driver instances. It seems we should s/bank/ddata/
+> on the driver to avoid confusion.
 
-On 07/09/17 10:31, Timo Alho wrote:
-> Check return code in BPMP response message(s). The typical error case
-> is when clock operation is attempted with invalid clock identifier.
-> 
-> Also remove error print from call to clk_get_info() as the
-> implementation loops through range of all possible identifier, but the
-> operation is expected error out when the clock id is unused.
-> 
-> Signed-off-by: Timo Alho <talho@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-bpmp.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-> index 638ace6..a896692 100644
-> --- a/drivers/clk/tegra/clk-bpmp.c
-> +++ b/drivers/clk/tegra/clk-bpmp.c
-> @@ -55,6 +55,7 @@ struct tegra_bpmp_clk_message {
->  	struct {
->  		void *data;
->  		size_t size;
-> +		int ret;
->  	} rx;
->  };
->  
-> @@ -64,6 +65,7 @@ static int tegra_bpmp_clk_transfer(struct tegra_bpmp *bpmp,
->  	struct mrq_clk_request request;
->  	struct tegra_bpmp_message msg;
->  	void *req = &request;
-> +	int err;
->  
->  	memset(&request, 0, sizeof(request));
->  	request.cmd_and_id = (clk->cmd << 24) | clk->id;
-> @@ -84,7 +86,13 @@ static int tegra_bpmp_clk_transfer(struct tegra_bpmp *bpmp,
->  	msg.rx.data = clk->rx.data;
->  	msg.rx.size = clk->rx.size;
->  
-> -	return tegra_bpmp_transfer(bpmp, &msg);
-> +	err = tegra_bpmp_transfer(bpmp, &msg);
-> +	if (err < 0)
-> +		return err;
-> +	else if (msg.rx.ret < 0)
-> +		return -EINVAL;
+OK sorry maybe OMAP is not a target for this, I just thought so
+since it was one of the platforms that is patches in the patch
+series.
 
-I assume that the error codes returned do not correlated to the Linux
-error codes here. Is that correct? If not we could just return the
-actual error code. Otherwise would it be useful to print a message with
-the bpmp error code for debug?
+But I'm pretty sure we have chips with banking like this: separate
+interrupts but a single device. I would have to read through them
+all I guess.
 
-> +
-> +	return 0;
->  }
->  
->  static int tegra_bpmp_clk_prepare(struct clk_hw *hw)
-> @@ -414,11 +422,8 @@ static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
->  		struct tegra_bpmp_clk_info *info = &clocks[count];
->  
->  		err = tegra_bpmp_clk_get_info(bpmp, id, info);
-> -		if (err < 0) {
-> -			dev_err(bpmp->dev, "failed to query clock %u: %d\n",
-> -				id, err);
-> +		if (err < 0)
->  			continue;
-> -		}
->  
->  		if (info->num_parents >= U8_MAX) {
->  			dev_err(bpmp->dev,
-> 
-
-Cheers
-Jon
-
--- 
-nvpublic
+Yours,
+Linus Walleij
