@@ -1,34 +1,55 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/16] gpio: Tight IRQ chip integration and banked infrastructure
-Date: Thu, 21 Sep 2017 14:06:35 +0200
-Message-ID: <CACRpkdarDaDtWieC0rfGOQH-Hp9xa3kwhT2fPttU-dOGErE8Pw@mail.gmail.com>
-References: <20170901185736.28051-1-thierry.reding@gmail.com>
- <CACRpkdaRsG-9YU2ufb+FxGOO38+x=AAfVUqxH5s56NH2iLw7oA@mail.gmail.com>
- <20170914185233.GA6410@aiwendil> <20170915165750.GW5024@atomide.com>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] mmc: tegra: Mark 64 bit dma broken on Tegra186
+Date: Fri, 22 Sep 2017 11:45:18 +0200
+Message-ID: <CAPDyKFrGMcU5Q=Y8CPinZfqan1NVP4Be-d96FAdV9nEL=N6ohg@mail.gmail.com>
+References: <1504900113-8983-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170915165750.GW5024-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1504900113-8983-1-git-send-email-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 15, 2017 at 6:57 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
+On 8 September 2017 at 21:48, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> SDHCI controllers on Tegra186 support 40 bit addressing.
+> IOVA addresses are 48-bit wide on Tegra186.
+> SDHCI host common code sets dma mask as either 32-bit or 64-bit.
+> To avoid access issues when SMMU is enabled, disable 64-bit dma.
+>
+> Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> On omaps, each bank is a separate driver instance with it's own
-> interrupt. Maybe really all we need to do is get rid of the "bank"
-> naming, I think that's left over from 15 years ago when we did not
-> have separate driver instances. It seems we should s/bank/ddata/
-> on the driver to avoid confusion.
+Thanks, applied for next!
 
-OK sorry maybe OMAP is not a target for this, I just thought so
-since it was one of the platforms that is patches in the patch
-series.
+Kind regards
+Uffe
 
-But I'm pretty sure we have chips with banking like this: separate
-interrupts but a single device. I would have to read through them
-all I guess.
-
-Yours,
-Linus Walleij
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 0cd6fa80db66..b877c13184c2 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -422,7 +422,15 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+>                   SDHCI_QUIRK_NO_HISPD_BIT |
+>                   SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+>                   SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+> -       .quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+> +       .quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+> +                  /* SDHCI controllers on Tegra186 support 40-bit addressing.
+> +                   * IOVA addresses are 48-bit wide on Tegra186.
+> +                   * With 64-bit dma mask used for SDHCI, accesses can
+> +                   * be broken. Disable 64-bit dma, which would fall back
+> +                   * to 32-bit dma mask. Ideally 40-bit dma mask would work,
+> +                   * But it is not supported as of now.
+> +                   */
+> +                  SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
+>         .ops  = &tegra114_sdhci_ops,
+>  };
+>
+> --
+> 2.1.4
+>
