@@ -1,154 +1,45 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/6] gpu: host1x: Enable Tegra186 syncpoint protection
-Date: Sat, 23 Sep 2017 02:17:55 +0300
-Message-ID: <806c8cbc-151f-ee43-13f2-3a5438e93599@gmail.com>
-References: <20170905081029.19769-1-mperttunen@nvidia.com>
- <20170905081029.19769-2-mperttunen@nvidia.com>
- <5cbadb84-31aa-ee3d-7b4b-e83afdfdcf7e@gmail.com>
- <179df5f9-86d5-b373-fda8-8523b4d13fe3@kapsi.fi>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] PCI: tegra: Use different MSI target address for Tegra20
+Date: Fri, 22 Sep 2017 23:17:40 -0700
+Message-ID: <20170923061740.6012-1-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <179df5f9-86d5-b373-fda8-8523b4d13fe3-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 22.09.2017 17:02, Mikko Perttunen wrote:
-> On 09/05/2017 04:33 PM, Dmitry Osipenko wrote:
->> On 05.09.2017 11:10, Mikko Perttunen wrote:
->>> ... >> diff --git a/drivers/gpu/host1x/hw/channel_hw.c 
-> b/drivers/gpu/host1x/hw/channel_hw.c
->>> index 8447a56c41ca..0161da331702 100644
->>> --- a/drivers/gpu/host1x/hw/channel_hw.c
->>> +++ b/drivers/gpu/host1x/hw/channel_hw.c
->>> @@ -147,6 +147,9 @@ static int channel_submit(struct host1x_job *job)
->>>         syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
->>>   +    /* assign syncpoint to channel */
->>> +    host1x_hw_syncpt_assign_channel(host, sp, ch);
->>
->> This function could be renamed to host1x_hw_assign_syncpt_to_channel() and then
->> comment to it won't be needed.
-> 
-> Maybe host1x_hw_syncpt_assign_to_channel? I'd like to keep the current noun_verb
-> format. Though IMHO even the current name is pretty descriptive in itself.
-> 
+The Tegra20 PCIe controller has a different address range for MSI, so
+select a different target address.
 
-That variant sounds good to me as well.
+Fixes: d7bd554f27c9 ("PCI: tegra: Do not allocate MSI target memory")
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/host/pci-tegra.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
->>
->> It is not very nice that channel would be re-assigned on each submit. Maybe that
->> assignment should be done by host1x_syncpt_request() ?
-> 
-> host1x_syncpt_request doesn't know about the channel so we'd have to thread this
-> information there and through each client driver in drm/tegra/, so I decided not
-> to do this at this time. I'm planning a new channel allocation model which will
-> change that side of the code anyway, so I'd like to revisit this at that point.
-> For our current channel model, the current implementation doesn't have any
-> functional downsides anyway.
-> 
-
-Another very minor downside is that it causes an extra dummy invocation on
-pre-Tegra186. Of course that could be changed later in a follow-up patch, not a
-big deal :)
-
->>
->>> +
->>>       job->syncpt_end = syncval;
->>>         /* add a setclass for modules that require it */
->>> diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c
->>> b/drivers/gpu/host1x/hw/syncpt_hw.c
->>> index 7b0270d60742..dc7a44614fef 100644
->>> --- a/drivers/gpu/host1x/hw/syncpt_hw.c
->>> +++ b/drivers/gpu/host1x/hw/syncpt_hw.c
->>> @@ -106,6 +106,50 @@ static int syncpt_patch_wait(struct host1x_syncpt *sp,
->>> void *patch_addr)
->>>       return 0;
->>>   }
->>>   +/**
->>> + * syncpt_assign_channel() - Assign syncpoint to channel
->>> + * @sp: syncpoint
->>> + * @ch: channel
->>> + *
->>> + * On chips with the syncpoint protection feature (Tegra186+), assign @sp to
->>> + * @ch, preventing other channels from incrementing the syncpoints. If @ch is
->>> + * NULL, unassigns the syncpoint.
->>> + *
->>> + * On older chips, do nothing.
->>> + */
->>> +static void syncpt_assign_channel(struct host1x_syncpt *sp,
->>> +                  struct host1x_channel *ch)
->>> +{
->>> +#if HOST1X_HW >= 6
->>> +    struct host1x *host = sp->host;
->>> +
->>> +    if (!host->hv_regs)
->>> +        return;
->>> +
->>> +    host1x_sync_writel(host,
->>> +               HOST1X_SYNC_SYNCPT_CH_APP_CH(ch ? ch->id : 0xff),
->>> +               HOST1X_SYNC_SYNCPT_CH_APP(sp->id));
->>> +#endif
->>> +}
->>> +
->>> +/**
->>> + * syncpt_enable_protection() - Enable syncpoint protection
->>> + * @host: host1x instance
->>> + *
->>> + * On chips with the syncpoint protection feature (Tegra186+), enable this
->>> + * feature. On older chips, do nothing.
->>> + */
->>> +static void syncpt_enable_protection(struct host1x *host)
->>> +{
->>> +#if HOST1X_HW >= 6
->>> +    if (!host->hv_regs)
->>> +        return;
->>> +
->>> +    host1x_hypervisor_writel(host, HOST1X_HV_SYNCPT_PROT_EN_CH_EN,
->>> +                 HOST1X_HV_SYNCPT_PROT_EN);
->>> +#endif
->>> +}
->>> +
->>>   static const struct host1x_syncpt_ops host1x_syncpt_ops = {
->>>       .restore = syncpt_restore,
->>>       .restore_wait_base = syncpt_restore_wait_base,
->>> @@ -113,4 +157,6 @@ static const struct host1x_syncpt_ops host1x_syncpt_ops = {
->>>       .load = syncpt_load,
->>>       .cpu_incr = syncpt_cpu_incr,
->>>       .patch_wait = syncpt_patch_wait,
->>> +    .assign_channel = syncpt_assign_channel,
->>> +    .enable_protection = syncpt_enable_protection,
->>>   };
->>> diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
->>> index 048ac9e344ce..4c7a4c8b2ad2 100644
->>> --- a/drivers/gpu/host1x/syncpt.c
->>> +++ b/drivers/gpu/host1x/syncpt.c
->>> @@ -398,6 +398,13 @@ int host1x_syncpt_init(struct host1x *host)
->>>       for (i = 0; i < host->info->nb_pts; i++) {
->>>           syncpt[i].id = i;
->>>           syncpt[i].host = host;
->>> +
->>> +        /*
->>> +         * Unassign syncpt from channels for purposes of Tegra186
->>> +         * syncpoint protection. This prevents any channel from
->>> +         * accessing it until it is reassigned.
->>> +         */
->>> +        host1x_hw_syncpt_assign_channel(host, &syncpt[i], NULL);
->>>       }
->>>         for (i = 0; i < host->info->nb_bases; i++)
->>> @@ -408,6 +415,7 @@ int host1x_syncpt_init(struct host1x *host)
->>>       host->bases = bases;
->>>         host1x_syncpt_restore(host);
->>> +    host1x_hw_syncpt_enable_protection(host);
->>>         /* Allocate sync point to use for clearing waits for expired fences */
->>>       host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
->>>
->>
->>
-
-
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index e8e1ddbaabc9..5b02ea59524b 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -1563,8 +1563,18 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+ 	 * none of the Tegra SoCs that contain this PCI host bridge can
+ 	 * address more than 16 GiB of system memory, the last 4 KiB of
+ 	 * these 1012 GiB is a good candidate.
++	 *
++	 * Unfortunately, Tegra20 is slightly different in that the physical
++	 * address for this MSI region is limited to the lower 32 bits of the
++	 * address map, so the address that we pick is going to have to be
++	 * located somewhere within the region addressable by the CPU and
++	 * on-SoC controllers. To be on the safe side, we select an address
++	 * from a region that is marked unused (0xf0010000 - 0xfffeffff).
+ 	 */
+-	msi->phys = 0xfcfffff000;
++	if (soc->msi_base_shift > 0)
++		msi->phys = 0xfcfffff000;
++	else
++		msi->phys = 0x00f0010000;
+ 
+ 	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
+ 	afi_writel(pcie, msi->phys, AFI_MSI_AXI_BAR_ST);
 -- 
-Dmitry
+2.14.1
