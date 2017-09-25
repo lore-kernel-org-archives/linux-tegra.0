@@ -1,169 +1,88 @@
-From: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: [PATCH] drm/atomic: Make async plane update checks actually work as
- intended.
-Date: Mon, 25 Sep 2017 08:43:44 +0200
-Message-ID: <a7d5fb04-c2f5-b743-5940-a1bd181d780d@linux.intel.com>
-References: <20170904104838.23822-1-maarten.lankhorst@linux.intel.com>
- <20170904104838.23822-7-maarten.lankhorst@linux.intel.com>
- <54467116-df02-e6ad-ac14-90aa79e164e4@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] drm/tegra: Replace dev_* with DRM_DEV_*
+Date: Mon, 25 Sep 2017 09:38:41 +0200
+Message-ID: <20170925073841.GA12494@ulmo.fritz.box>
+References: <1506271437-23058-1-git-send-email-harshasharmaiitr@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54467116-df02-e6ad-ac14-90aa79e164e4-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1506271437-23058-1-git-send-email-harshasharmaiitr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Harsha Sharma <harshasharmaiitr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, outreachy-kernel-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Op 24-09-17 om 16:33 schreef Dmitry Osipenko:
-> On 04.09.2017 13:48, Maarten Lankhorst wrote:
->> By always keeping track of the last commit in plane_state, we know
->> whether there is an active update on the plane or not. With that
->> information we can reject the fast update, and force the slowpath
->> to be used as was originally intended.
->>
->> We cannot use plane_state->crtc->state here, because this only mentions
->> the most recent commit for the crtc, but not the planes that were part
->> of it. We specifically care about what the last commit involving this
->> plane is, which can only be tracked with a pointer in the plane state.
->>
->> Changes since v1:
->> - Clean up the whole function here, instead of partially earlier.
->> - Add mention in the commit message why we need commit in plane_state.
->> - Swap plane->state in intel_legacy_cursor_update, instead of
->>   reassigning all variables. With this commit We know that the cursor
->>   is not part of any active commits so this hack can be removed.
->>
->> Cc: Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->> Signed-off-by: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
->> Reviewed-by: Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->> Reviewed-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org> #v1
->> ---
->>  drivers/gpu/drm/drm_atomic_helper.c  | 53 ++++++++++--------------------------
->>  drivers/gpu/drm/i915/intel_display.c | 27 +++++++++++-------
->>  include/drm/drm_plane.h              |  5 ++--
->>  3 files changed, 35 insertions(+), 50 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
->> index c81d46927a74..a2cd432d8b2d 100644
->> --- a/drivers/gpu/drm/drm_atomic_helper.c
->> +++ b/drivers/gpu/drm/drm_atomic_helper.c
->> @@ -1388,35 +1388,31 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
->>  {
->>  	struct drm_crtc *crtc;
->>  	struct drm_crtc_state *crtc_state;
->> -	struct drm_crtc_commit *commit;
->> -	struct drm_plane *__plane, *plane = NULL;
->> -	struct drm_plane_state *__plane_state, *plane_state = NULL;
->> +	struct drm_plane *plane;
->> +	struct drm_plane_state *old_plane_state, *new_plane_state;
->>  	const struct drm_plane_helper_funcs *funcs;
->> -	int i, j, n_planes = 0;
->> +	int i, n_planes = 0;
->>  
->>  	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
->>  		if (drm_atomic_crtc_needs_modeset(crtc_state))
->>  			return -EINVAL;
->>  	}
->>  
->> -	for_each_new_plane_in_state(state, __plane, __plane_state, i) {
->> +	for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i)
->>  		n_planes++;
->> -		plane = __plane;
->> -		plane_state = __plane_state;
->> -	}
->>  
->>  	/* FIXME: we support only single plane updates for now */
->> -	if (!plane || n_planes != 1)
->> +	if (n_planes != 1)
->>  		return -EINVAL;
->>  
->> -	if (!plane_state->crtc)
->> +	if (!new_plane_state->crtc)
->>  		return -EINVAL;
->>  
-> Hello,
->
-> It looks like a NULL-checking of new_plane_state is missed here.
->
-> [   70.138947] [<c03dd670>] (drm_atomic_helper_async_check) from [<c03e0424>]
-> (drm_atomic_helper_check+0x4c/0x64)
-> [   70.138958] [<c03e0424>] (drm_atomic_helper_check) from [<c03fb6d4>]
-> (drm_atomic_check_only+0x2f4/0x56c)
-> [   70.138969] [<c03fb6d4>] (drm_atomic_check_only) from [<c03fb95c>]
-> (drm_atomic_commit+0x10/0x50)
-> [   70.138979] [<c03fb95c>] (drm_atomic_commit) from [<c03dde50>]
-> (drm_atomic_helper_update_plane+0xf0/0x100)
-> [   70.138991] [<c03dde50>] (drm_atomic_helper_update_plane) from [<c0403548>]
-> (__setplane_internal+0x178/0x214)
-> [   70.139003] [<c0403548>] (__setplane_internal) from [<c04036fc>]
-> (drm_mode_cursor_universal+0x118/0x1a8)
-> [   70.139014] [<c04036fc>] (drm_mode_cursor_universal) from [<c0403900>]
-> (drm_mode_cursor_common+0x174/0x1ec)
-> [   70.139026] [<c0403900>] (drm_mode_cursor_common) from [<c0403fa4>]
-> (drm_mode_cursor_ioctl+0x58/0x60)
-> [   70.139036] [<c0403fa4>] (drm_mode_cursor_ioctl) from [<c03eb0b4>]
-> (drm_ioctl+0x198/0x368)
-> [   70.139047] [<c03eb0b4>] (drm_ioctl) from [<c015fffc>] (do_vfs_ioctl+0x9c/0x8f0)
-> [   70.139058] [<c015fffc>] (do_vfs_ioctl) from [<c0160884>] (SyS_ioctl+0x34/0x5c)
-> [   70.139071] [<c0160884>] (SyS_ioctl) from [<c000f900>]
-> (ret_fast_syscall+0x0/0x48)
->
-> It's triggered by Tegra DRM driver on Xorg's startup. I also should notice that
-> currently Tegra DRM doesn't have a working HW cursor, I'm going to send out
-> Tegra cursor patches sometime soon.
 
-Oops.. I messed up there.. for_each_new_plane_in_state overwrites the state internally..
------>8-----
-for_each_oldnew_plane_in_state overwrites the iterator values internally, so we cannot rely
-on it being set to the last valid plane. This was causing a NULL pointer deref when someone
-tries to use the code. Save the plane and use the accessor functions to pull out the relevant
-plane state.
+--82I3+IH0IqGh5yIs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Fixes: 669c9215afea ("drm/atomic: Make async plane update checks work as intended, v2.")
-Signed-off-by: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
----
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 32fb61169b4f..8573feaea8c0 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -1388,23 +1388,30 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
- {
- 	struct drm_crtc *crtc;
- 	struct drm_crtc_state *crtc_state;
--	struct drm_plane *plane;
-+	struct drm_plane *plane = NULL, *__plane;
- 	struct drm_plane_state *old_plane_state, *new_plane_state;
- 	const struct drm_plane_helper_funcs *funcs;
--	int i, n_planes = 0;
-+	int i;
- 
- 	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
- 		if (drm_atomic_crtc_needs_modeset(crtc_state))
- 			return -EINVAL;
- 	}
- 
--	for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i)
--		n_planes++;
-+	for_each_new_plane_in_state(state, __plane, new_plane_state, i) {
-+		/* FIXME: we support only single plane updates for now */
-+		if (plane)
-+			return -EINVAL;
-+
-+		plane = __plane;
-+	}
- 
--	/* FIXME: we support only single plane updates for now */
--	if (n_planes != 1)
-+	if (!plane)
- 		return -EINVAL;
- 
-+	old_plane_state = drm_atomic_get_old_plane_state(state, plane);
-+	new_plane_state = drm_atomic_get_new_plane_state(state, plane);
-+
- 	if (!new_plane_state->crtc)
- 		return -EINVAL;
- 
+On Sun, Sep 24, 2017 at 10:13:57PM +0530, Harsha Sharma wrote:
+> Replace all occurences of dev_info/err/dbg with DRM_DEV_INFO/
+> ERROR/DEBUG as we have DRM_DEV_* variants of drm print macros
+> Done using following coccinelle semantic patch
+>=20
+> @r@
+> @@
+>=20
+> (
+> -dev_info
+> +DRM_DEV_INFO
+> |
+> -dev_err
+> +DRM_DEV_ERROR
+> |
+> -dev_dbg
+> +DRM_DEV_DEBUG
+> )
+>=20
+> Signed-off-by: Harsha Sharma <harshasharmaiitr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> Changes in v2:
+>  -Break line over 80 characters
+>  -Changes in comments not required
+
+Please don't do this. Most of the functions that you're trying to
+replace here are not DRM_DEV_*() for a very specific reason: none of
+them have anything to do with DRM/KMS in particular. This is important,
+in my opinion, because these messages are very device-specific and the
+additional information added by the DRM format string aren't useful in
+the context.
+
+Perhaps the only ones I consider to be good candidates for this
+conversion are the ones in drivers/gpu/drm/tegra/fb.c because they deal
+with the DRM fbdev setup and hence are not device specific. And even in
+those cases I'm not sure we gain very much by this conversion,
+especially since most of the replacements now end up having to split up
+argument lists.
+
+Sorry if this isn't documented anywhere. I also suspect other driver
+maintainers will be less picky about this sort of thing, so you might
+have more luck there.
+
+Thierry
+
+--82I3+IH0IqGh5yIs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnIsn4ACgkQ3SOs138+
+s6G/ehAArmURYZKqKKYoGJHDf0BQQXrr5S0e9jC23G2G9Ka3H7wy3vP99NzSubLX
+U0YJXIR0bLK/g/q0GaOCb9KMG3Wdqs3CNbovKPf0s34/lgsSgU7OLhGo78p3mkD1
+JTNgTeaffNvXnmO9tbcsKHYK+A6fVa4F4oxZpSO/zmAxtMsPQUIMqFcVON9g4GPl
+oqvy02477gfCNkdI1ZysxXyI9C8ioKeuGAN8IF0NWroQOkxmu/hQ70DC+lhDNlOU
+3Dep2p5tyfVj2MRXgE5gWl4rxtmSlXg+kYZuQpYH58NbYL7V5cVQlQzWmWa9njiM
+yAdD1V1m1wYA/P5VV8RpVvmMAB5NoPwfXdbgRvRmQdeY/E84Nf33LM83OJo3yFc4
+6ef7T5w0s93BxUGg/BPdpuEUgSCZjMhlxFhN2kaSvF9OO6MKpPkrAHRqvj2LuY9x
+Vi6f/OI8CRRlZ3Gv27FmYb6RKTkjiM+uKswviiw/A35Nw8FdA1X4h7XEiA2/nQSW
+Zbxo4BRhwGzPenn03yw/NQNVRZm39wYC6o2BBV91cBGcSpprtZk8teF/LM8ilLRt
+p5+JSkjVey82k7eOrs1f6PROfWXLngsxUa/lyaIDOdSzRJOqr26nDkDfE+sx2vSs
+kQbtbYy1+GkowenQFOA5ND4eNFCOyUoYDgxapvl4/Rhn+FirNMw=
+=ci1u
+-----END PGP SIGNATURE-----
+
+--82I3+IH0IqGh5yIs--
