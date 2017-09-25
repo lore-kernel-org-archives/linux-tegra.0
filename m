@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB DMA controller
-Date: Tue, 26 Sep 2017 02:22:04 +0300
-Message-ID: <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+Subject: [PATCH v1 5/5] ARM: dts: tegra: Add AHB DMA controller nodes
+Date: Tue, 26 Sep 2017 02:22:06 +0300
+Message-ID: <d6610e316d40e1f9cd3e10d0b41efa24a7d464a1.1506380746.git.digetx@gmail.com>
 References: <cover.1506380746.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1506380746.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,43 +12,53 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
-on Tegra20/30 SoC's.
+Add AHB DMA controller nodes to Tegra20/30 DT's.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+ arch/arm/boot/dts/tegra20.dtsi | 9 +++++++++
+ arch/arm/boot/dts/tegra30.dtsi | 9 +++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
-new file mode 100644
-index 000000000000..2af9aa76ae11
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
-@@ -0,0 +1,23 @@
-+* NVIDIA Tegra AHB DMA controller
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index f1579c9a7ef4..d0c0c26427f7 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -200,6 +200,15 @@
+ 		reg = <0x60007000 0x1000>;
+ 	};
+ 
++	ahbdma: ahbdma@60008000 {
++		compatible = "nvidia,tegra20-ahbdma";
++		reg = <0x60008000 0x2000>;
++		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_AHBDMA>;
++		resets = <&tegra_car 33>;
++		#dma-cells = <1>;
++	};
 +
-+Required properties:
-+- compatible:	Must be "nvidia,tegra20-ahbdma"
-+- reg:		Should contain registers base address and length.
-+- interrupts:	Should contain one entry, DMA controller interrupt.
-+- clocks:	Should contain one entry, DMA controller clock.
-+- resets :	Should contain one entry, DMA controller reset.
-+- #dma-cells:	Should be <1>. The cell represents DMA request select value
-+		for the peripheral. For more details consult the Tegra TRM's
-+		documentation, in particular AHB DMA channel control register
-+		REQ_SEL field.
+ 	apbdma: dma@6000a000 {
+ 		compatible = "nvidia,tegra20-apbdma";
+ 		reg = <0x6000a000 0x1200>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 13960fda7471..0800d9a8c546 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -291,6 +291,15 @@
+ 		reg = <0x60007000 0x1000>;
+ 	};
+ 
++	ahbdma: ahbdma@60008000 {
++		compatible = "nvidia,tegra20-ahbdma";
++		reg = <0x60008000 0x2000>;
++		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA30_CLK_AHBDMA>;
++		resets = <&tegra_car 33>;
++		#dma-cells = <1>;
++	};
 +
-+Example:
-+
-+ahbdma: ahbdma@60008000  {
-+	compatible = "nvidia,tegra20-ahbdma";
-+	reg = <0x60008000 0x2000>;
-+	interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&tegra_car TEGRA20_CLK_AHBDMA>;
-+	resets = <&tegra_car 33>;
-+	#dma-cells = <1>;
-+};
+ 	apbdma: dma@6000a000 {
+ 		compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
+ 		reg = <0x6000a000 0x1400>;
 -- 
 2.14.1
