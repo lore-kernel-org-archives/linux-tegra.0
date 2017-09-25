@@ -1,173 +1,196 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: Use different MSI target address for Tegra20
-Date: Mon, 25 Sep 2017 10:51:25 +0200
-Message-ID: <20170925085125.GC12494@ulmo.fritz.box>
-References: <20170923061740.6012-1-treding@nvidia.com>
- <CAN7O0+JyG3XT5SsWGsiZs0vrk0ha1vQ5N7rjYxs3tM_NvdONdw@mail.gmail.com>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 2/2] of: configure DMA for host1x devices
+Date: Mon, 25 Sep 2017 13:26:46 +0100
+Message-ID: <dd8e9524-1d91-2c8b-a753-086d3ad9f9c9@arm.com>
+References: <20170924090454.28116-1-mperttunen@nvidia.com>
+ <20170924090454.28116-2-mperttunen@nvidia.com>
+ <20170925074448.GB12494@ulmo.fritz.box>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JWEK1jqKZ6MHAcjA"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAN7O0+JyG3XT5SsWGsiZs0vrk0ha1vQ5N7rjYxs3tM_NvdONdw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20170925074448.GB12494-m5CkvRiFyV9wFLYp8hBm2A@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: vidya sagar <sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hch-jcswGhMUV9g@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 25/09/17 08:44, Thierry Reding wrote:
+> On Sun, Sep 24, 2017 at 12:04:54PM +0300, Mikko Perttunen wrote:
+>> Devices in the host1x bus rely on the old behavior of of_dma_configure
+>> to set up DMA ops. Add a check for them into of_dma_configure.
+>>
+>> We must do the check using a string comparison instead of using
+>> pointers since the host1x bus can be compiled into a module.
+>>
+>> Fixes: 723288836628 ("of: restrict DMA configuration")
+>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/of/device.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/of/device.c b/drivers/of/device.c
+>> index 64b710265d39..12368418cd33 100644
+>> --- a/drivers/of/device.c
+>> +++ b/drivers/of/device.c
+>> @@ -104,6 +104,9 @@ int of_dma_configure(struct device *dev, struct device_node *np)
+>>  		if (!dev_is_pci(dev) &&
+>>  #ifdef CONFIG_ARM_AMBA
+>>  		    dev->bus != &amba_bustype &&
+>> +#endif
+>> +#if IS_ENABLED(CONFIG_TEGRA_HOST1X)
+>> +		    !(dev->bus && !strcmp("host1x", dev->bus->name)) &&
+>>  #endif
+>>  		    dev->bus != &platform_bus_type)
+>>  			return ret == -ENODEV ? 0 : ret;
+> 
+> Maybe a slightly better solution would be to add a dev_is_host1x()
+> function that returns dev->bus == &host1x_bus_type if TEGRA_HOST1X is
+> enabled and returns false otherwise. That way we can have a "proper"
+> check for the bus type and avoid the #if in this file.
+> 
+> It's slightly more complicated because of the dependencies between the
+> DT and Tegra DRM trees, but I'm sure we can get Rob to either give his
+> Acked-by on the drivers/of/device.c change or carry the Tegra DRM patch
+> in the DT tree.
 
---JWEK1jqKZ6MHAcjA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Alternatively (and modulo Greg's opinion, obviously) it would arguably be
+neatest to handle this at a slightly lower level as below - I only really
+considered this idea after writing the existing fix, but now that I have
+actually written it up I do rather like it.
 
-On Mon, Sep 25, 2017 at 10:44:29AM +0530, vidya sagar wrote:
-> Inline...
->=20
-> On Sat, Sep 23, 2017 at 11:47 AM, Thierry Reding
-> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> >
-> > The Tegra20 PCIe controller has a different address range for MSI, so
-> > select a different target address.
-> >
-> > Fixes: d7bd554f27c9 ("PCI: tegra: Do not allocate MSI target memory")
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/pci/host/pci-tegra.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> > index e8e1ddbaabc9..5b02ea59524b 100644
-> > --- a/drivers/pci/host/pci-tegra.c
-> > +++ b/drivers/pci/host/pci-tegra.c
-> > @@ -1563,8 +1563,18 @@ static int tegra_pcie_enable_msi(struct tegra_pc=
-ie *pcie)
-> >          * none of the Tegra SoCs that contain this PCI host bridge can
-> >          * address more than 16 GiB of system memory, the last 4 KiB of
-> >          * these 1012 GiB is a good candidate.
-> > +        *
-> > +        * Unfortunately, Tegra20 is slightly different in that the phy=
-sical
-> > +        * address for this MSI region is limited to the lower 32 bits =
-of the
-> > +        * address map, so the address that we pick is going to have to=
- be
-> > +        * located somewhere within the region addressable by the CPU a=
-nd
-> > +        * on-SoC controllers. To be on the safe side, we select an add=
-ress
-> > +        * from a region that is marked unused (0xf0010000 - 0xfffeffff=
-).
-> >          */
-> > -       msi->phys =3D 0xfcfffff000;
-> > +       if (soc->msi_base_shift > 0)
-> > +               msi->phys =3D 0xfcfffff000;
-> > +       else
-> > +               msi->phys =3D 0x00f0010000;
->=20
-> Can we use this for later Tegra chip versions as well?
-> Reason being, if an end point's config space says that it cannot
-> support >32-bit MSI addresses (Marvel SATA controller being one
-> example), with the current code, we still allocate an address of
-> >32-bits, resulting in end point not being able to generate MSI
-> interrupt (as it discards >32-bits where generating upstream memory
-> write transaction for MSI)
+Robin.
 
-I hadn't considered this case. My recollection was that the PCI express
-specification required every endpoint to support 64-bit MSI, but looking
-again, legacy endpoints are allowed to support 32-bit MSI only, and we
-could technically have one of those connected via a PCI-to-PCIe bridge.
+----->8-----
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Date: Mon, 25 Sep 2017 12:45:58 +0100
+Subject: [PATCH] drivers: Flag buses which demand DMA configuration
 
-The reason I chose 0xf0010000 for Tegra20 is because that is part of a
-region that has never been used. For Tegra30 and later that address is
-within the address range of system memory.
+We do not want the common dma_configure() pathway to apply
+indiscriminately to all devices, since there are plenty of buses which
+do not have DMA capability, and if their child devices were used for
+DMA API calls it would only be indicative of a driver bug. However,
+there are a number of buses for which DMA is implicitly expected even
+when not described by firmware, so we currently whitelist those to
+automatically opt in to dma_configure(), assuming a 1:1 mapping between
+the DMA address space and the physical address space.
 
-Testing has shown that the memory at the destination address isn't
-actually written (the PCI host bridge seems to decode the address and
-notice that it is the MSI target address and not commit the data to
-memory), so technically it shouldn't matter what address we use. I'm
-somewhat reluctant to use a random address, though, because having it
-point to something within system memory could get confusing (if that
-address shows up somewhere, how are people supposed to know this has
-to do with MSI?).
+Commit 723288836628 ("of: restrict DMA configuration") introduced a
+short-term fix by comparing explicit bus types, but this approach is far
+from pretty, doesn't scale well, and fails to cope at all with bus
+drivers which may be built as modules. Let's refine things by making
+that opt-in a property of the bus type, which neatly addresses those
+problems and lets the decision of whether firmware description of DMA
+capability should be optional or mandatory stay internal to the bus
+drivers themselves.
 
-Another possibility would be to use some address from within the PCIe
-controller's address space that is unused. We have the following as the
-current mappings:
+Signed-off-by: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+---
+ drivers/amba/bus.c       | 1 +
+ drivers/base/platform.c  | 1 +
+ drivers/gpu/host1x/bus.c | 1 +
+ drivers/of/device.c      | 8 +-------
+ drivers/pci/pci-driver.c | 1 +
+ include/linux/device.h   | 4 ++++
+ 6 files changed, 9 insertions(+), 7 deletions(-)
 
-  Tegra186:
-    0x10000000-0x10000fff  port 0 configuration space
-    0x10001000-0x10001fff  port 1 configuration space
-    0x10003000-0x100037ff  PADS registers
-    0x10003800-0x10003fff  AFI registers
-    0x10004000-0x10004fff  port 2 configuration space
-    0x40000000-0x4fffffff  configuration space
-    0x50000000-0x5000ffff  downstream I/O
-    0x50100000-0x57ffffff  non-prefetchable memory
-    0x58000000-0x7fffffff  prefetchable memory
-
-  Tegra210 and Tegra124:
-    0x01000000-0x01000fff  port 0 configuration space
-    0x01001000-0x01001fff  port 1 configuration space
-    0x01003000-0x010037ff  PADS registers
-    0x01003800-0x01003fff  AFI registers
-    0x02000000-0x11ffffff  configuration space
-    0x12000000-0x1200ffff  downstream I/O
-    0x13000000-0x1fffffff  non-prefetchable memory
-    0x20000000-0x3fffffff  prefetchable memory
-
-  Tegra30:
-    0x00000000-0x00000fff  port 0 configuration space
-    0x00001000-0x00001fff  port 1 configuration space
-    0x00003000-0x000037ff  PADS registers
-    0x00003800-0x00003fff  AFI registers
-    0x00004000-0x00004fff  port 2 configuration space
-    0x02000000-0x0200ffff  downstream I/O
-    0x10000000-0x1fffffff  configuration space
-    0x20000000-0x27ffffff  non-prefetchable memory
-    0x28000000-0x3fffffff  prefetchable memory
-
-  Tegra20:
-    0x80000000-0x80000fff  port 0 configuration space
-    0x80001000-0x80001fff  port 1 configuration space
-    0x80003000-0x800037ff  PADS registers
-    0x80003800-0x80003fff  AFI registers
-    0x82000000-0x8200ffff  downstream I/O
-    0x90000000-0x9fffffff  configuration space
-    0xa0000000-0xa07fffff  non-prefetchable memory
-    0xa8000000-0xbfffffff  prefetchable memory
-
-Something like the following might work as MSI target addresses, though
-I haven't tested that these actually work as expected:
-
-  Tegra186: 0x10fff000-0x10ffffff
-  Tegra210: 0x01fff000-0x01ffffff
-  Tegra124: 0x01fff000-0x01ffffff
-  Tegra30:  0x01fff000-0x01ffffff
-  Tegra20:  0x81fff000-0x81ffffff
-
-Any thought on that?
-
-Thierry
-
---JWEK1jqKZ6MHAcjA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnIw4sACgkQ3SOs138+
-s6FckxAAlfqwjOu6M1Fh765+z6cpFfQZX7U/tSIm7sk9o2X9MxRqY9jQqcQrBrfd
-ajTxS+07iW1I+MSh3T39w9DcxfnvX6iDjf1ZvRUqVXv3eg87hcPwp2uZzFfwf515
-k5luDpt6jZbZmJVEaMKU3cB31hWXWD4YyXU6FIGFcqADN2k2grJFSeXxqpGdZXgk
-vIgnTJdabaoT2Dy5zoLOZGm5q6cYMBB9dFPEGHYLXVRrMRgdR+rs4xRS8OIX5IpW
-nDHgUg3GpBnCQxmAMpaqDOnoPfyTRt2dS3YoKDxcgP4nakSQVMTHPgwZ9/J4cpZP
-7+64s99hlKllIZ8IarHQOkA8VDsy+NKJPAhixL7iVsk4GcskKg/e1aoGLmGGVmCs
-yXoJ195HtMyXZEX/X2k8BxoKKE2UJ6TglKjUu+L6uwqeSkdtTPOGwgxxHaZLif27
-BxYS1qA8d55AWAtfABD/zY7cfHah0MtfnAvrWis16eEsaRECYJaLqwZ0qb9b0e3b
-0o4Vb1iz5iyRqDOvdwQP0lAnqVwR8h63WWermN7eLM9MACky4b3D7bACuVAzA3k/
-KQvhBjTTcvGlaQIb9s57t+aclc4QWedf7oWIMlO5O/EBUWlOqm/bTKT6TuO161ZO
-b4IteAaA2oi5CGs91S9WKxS0xpy2cXqWh29A+vwydaHM5ZSxTjI=
-=SB53
------END PGP SIGNATURE-----
-
---JWEK1jqKZ6MHAcjA--
+diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+index e0f74ddc22b7..594c228d2f02 100644
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -195,6 +195,7 @@ struct bus_type amba_bustype = {
+ 	.match		= amba_match,
+ 	.uevent		= amba_uevent,
+ 	.pm		= &amba_pm,
++	.force_dma	= true,
+ };
+ 
+ static int __init amba_init(void)
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index d1bd99271066..9c95c8db00f8 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1142,6 +1142,7 @@ struct bus_type platform_bus_type = {
+ 	.match		= platform_match,
+ 	.uevent		= platform_uevent,
+ 	.pm		= &platform_dev_pm_ops,
++	.force_dma	= true,
+ };
+ EXPORT_SYMBOL_GPL(platform_bus_type);
+ 
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index f9cde03030fd..ed03b3243195 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -320,6 +320,7 @@ struct bus_type host1x_bus_type = {
+ 	.name = "host1x",
+ 	.match = host1x_device_match,
+ 	.pm = &host1x_device_pm_ops,
++	.force_dma = true,
+ };
+ 
+ static void __host1x_device_del(struct host1x_device *device)
+diff --git a/drivers/of/device.c b/drivers/of/device.c
+index 64b710265d39..25bddf9c9fe1 100644
+--- a/drivers/of/device.c
++++ b/drivers/of/device.c
+@@ -9,9 +9,7 @@
+ #include <linux/module.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/slab.h>
+-#include <linux/pci.h>
+ #include <linux/platform_device.h>
+-#include <linux/amba/bus.h>
+ 
+ #include <asm/errno.h>
+ #include "of_private.h"
+@@ -101,11 +99,7 @@ int of_dma_configure(struct device *dev, struct device_node *np)
+ 		 * DMA configuration regardless of whether "dma-ranges" is
+ 		 * correctly specified or not.
+ 		 */
+-		if (!dev_is_pci(dev) &&
+-#ifdef CONFIG_ARM_AMBA
+-		    dev->bus != &amba_bustype &&
+-#endif
+-		    dev->bus != &platform_bus_type)
++		if (!dev->bus->force_dma)
+ 			return ret == -ENODEV ? 0 : ret;
+ 
+ 		dma_addr = offset = 0;
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index 11bd267fc137..38bdb97b6dc6 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -1466,6 +1466,7 @@ struct bus_type pci_bus_type = {
+ 	.drv_groups	= pci_drv_groups,
+ 	.pm		= PCI_PM_OPS_PTR,
+ 	.num_vf		= pci_bus_num_vf,
++	.force_dma	= true,
+ };
+ EXPORT_SYMBOL(pci_bus_type);
+ 
+diff --git a/include/linux/device.h b/include/linux/device.h
+index c6f27207dbe8..3a1efa56e7c4 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -97,6 +97,8 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
+  * @p:		The private data of the driver core, only the driver core can
+  *		touch this.
+  * @lock_key:	Lock class key for use by the lock validator
++ * @force_dma:	Assume devices on this bus should be set up by dma_configure()
++ * 		even if DMA capability is not explicitly described by firmware.
+  *
+  * A bus is a channel between the processor and one or more devices. For the
+  * purposes of the device model, all devices are connected via a bus, even if
+@@ -135,6 +137,8 @@ struct bus_type {
+ 
+ 	struct subsys_private *p;
+ 	struct lock_class_key lock_key;
++
++	bool force_dma;
+ };
+ 
+ extern int __must_check bus_register(struct bus_type *bus);
+-- 
+2.13.4.dirty
