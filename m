@@ -1,54 +1,50 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 1/3] soc/tegra: fuse: Fix reading registers using DMA on Tegra20
-Date: Tue, 26 Sep 2017 01:35:37 +0300
-Message-ID: <27dadd0335aac71c9d4d613c33a6a1d0a285afa4.1506378772.git.digetx@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v1 1/2] staging: Introduce NVIDIA Tegra20 video decoder
+ driver
+Date: Mon, 25 Sep 2017 17:01:23 -0600
+Message-ID: <38daee0d-0595-a7e4-69bb-5a2ddbd832b5@wwwdotorg.org>
+References: <cover.1506377430.git.digetx@gmail.com>
+ <5c8b83775b982e6ee851c127444a8e839f422ad0.1506377430.git.digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5c8b83775b982e6ee851c127444a8e839f422ad0.1506377430.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-DMA config is incorrect, because of it DMA transfer is never issued and
-tegra20_fuse_read() always returns 0x0.
+On 09/25/2017 04:15 PM, Dmitry Osipenko wrote:
+> Video decoder, found on NVIDIA Tegra20 SoC, supports a standard set of
+> video formats like H.264 / MPEG-4 / WMV / VC1. Currently driver supports
+> decoding of CAVLC H.264 only.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/soc/tegra/fuse/fuse-tegra.c   | 1 +
- drivers/soc/tegra/fuse/fuse-tegra20.c | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Note: I don't know anything much about video decoding on Tegra (just NV 
+desktop GPUs, and that was a while ago), but I had a couple small 
+comments on the DT binding:
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index b7c552e3133c..73a3a2c74021 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -132,6 +132,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 
- 	/* take over the memory region from the early initialization */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	fuse->phys = res->start;
- 	fuse->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(fuse->base))
- 		return PTR_ERR(fuse->base);
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
-index 294413a969a0..a33f48c06771 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra20.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
-@@ -59,7 +59,7 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
- 
- 	mutex_lock(&fuse->apbdma.lock);
- 
--	fuse->apbdma.config.src_addr = fuse->apbdma.phys + FUSE_BEGIN + offset;
-+	fuse->apbdma.config.src_addr = fuse->phys + FUSE_BEGIN + offset;
- 
- 	err = dmaengine_slave_config(fuse->apbdma.chan, &fuse->apbdma.config);
- 	if (err)
-@@ -119,6 +119,7 @@ static int tegra20_fuse_probe(struct tegra_fuse *fuse)
- 	fuse->apbdma.config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 	fuse->apbdma.config.src_maxburst = 1;
- 	fuse->apbdma.config.dst_maxburst = 1;
-+	fuse->apbdma.config.direction = DMA_DEV_TO_MEM;
- 
- 	init_completion(&fuse->apbdma.wait);
- 	mutex_init(&fuse->apbdma.lock);
--- 
-2.14.1
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.txt
+
+> +NVIDIA Tegra Video Decoder Engine
+> +
+> +Required properties:
+> +- compatible : "nvidia,tegra20-vde"
+> +- reg : Must contain 2 register ranges: registers and IRAM area.
+> +- reg-names : Must include the following entries:
+> +  - regs
+> +  - iram
+
+I think the IRAM region needs more explanation: What is the region used 
+for and by what? Can it be moved, and if so does the move need to be 
+co-ordinated with any other piece of SW?
+
+> +- clocks : Must contain one entry, for the module clock.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- resets : Must contain an entry for each entry in reset-names.
+> +  See ../reset/reset.txt for details.
+> +- reset-names : Must include the following entries:
+> +  - vde
+
+Let's require a clock-names property too.
