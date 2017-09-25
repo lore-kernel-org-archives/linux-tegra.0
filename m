@@ -1,202 +1,44 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 2/2] of: configure DMA for host1x devices
-Date: Mon, 25 Sep 2017 21:26:59 +0300
-Message-ID: <e3f62403-361d-9a78-d019-894c68010b67@kapsi.fi>
-References: <20170924090454.28116-1-mperttunen@nvidia.com>
- <20170924090454.28116-2-mperttunen@nvidia.com>
- <20170925074448.GB12494@ulmo.fritz.box>
- <dd8e9524-1d91-2c8b-a753-086d3ad9f9c9@arm.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] sound: tegra20-spdif: remove "default m"
+Date: Mon, 25 Sep 2017 23:37:03 +0300
+Message-ID: <7d0c10d2-f6a9-eec1-131c-eb60a0f428b4@gmail.com>
+References: <c765842d4cc6af91ae0d6977922e6ae6f6e1dfa8.1505661134.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <dd8e9524-1d91-2c8b-a753-086d3ad9f9c9-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <c765842d4cc6af91ae0d6977922e6ae6f6e1dfa8.1505661134.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hch-jcswGhMUV9g@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/25/2017 03:26 PM, Robin Murphy wrote:
-> On 25/09/17 08:44, Thierry Reding wrote:
->> On Sun, Sep 24, 2017 at 12:04:54PM +0300, Mikko Perttunen wrote:
->>> Devices in the host1x bus rely on the old behavior of of_dma_configure
->>> to set up DMA ops. Add a check for them into of_dma_configure.
->>>
->>> We must do the check using a string comparison instead of using
->>> pointers since the host1x bus can be compiled into a module.
->>>
->>> Fixes: 723288836628 ("of: restrict DMA configuration")
->>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>   drivers/of/device.c | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/of/device.c b/drivers/of/device.c
->>> index 64b710265d39..12368418cd33 100644
->>> --- a/drivers/of/device.c
->>> +++ b/drivers/of/device.c
->>> @@ -104,6 +104,9 @@ int of_dma_configure(struct device *dev, struct device_node *np)
->>>   		if (!dev_is_pci(dev) &&
->>>   #ifdef CONFIG_ARM_AMBA
->>>   		    dev->bus != &amba_bustype &&
->>> +#endif
->>> +#if IS_ENABLED(CONFIG_TEGRA_HOST1X)
->>> +		    !(dev->bus && !strcmp("host1x", dev->bus->name)) &&
->>>   #endif
->>>   		    dev->bus != &platform_bus_type)
->>>   			return ret == -ENODEV ? 0 : ret;
->>
->> Maybe a slightly better solution would be to add a dev_is_host1x()
->> function that returns dev->bus == &host1x_bus_type if TEGRA_HOST1X is
->> enabled and returns false otherwise. That way we can have a "proper"
->> check for the bus type and avoid the #if in this file.
->>
->> It's slightly more complicated because of the dependencies between the
->> DT and Tegra DRM trees, but I'm sure we can get Rob to either give his
->> Acked-by on the drivers/of/device.c change or carry the Tegra DRM patch
->> in the DT tree.
+On 17.09.2017 18:15, Michał Mirosław wrote:
+> Default != n for drivers is frowned upon. This is the only one among
+> tegra sound drivers that was different.
 > 
-> Alternatively (and modulo Greg's opinion, obviously) it would arguably be
-> neatest to handle this at a slightly lower level as below - I only really
-> considered this idea after writing the existing fix, but now that I have
-> actually written it up I do rather like it.
-> 
-> Robin.
-
-Yep, this solution seems the cleanest to me as well.
-
-Mikko
-
-> 
-> ----->8-----
-> From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-> Date: Mon, 25 Sep 2017 12:45:58 +0100
-> Subject: [PATCH] drivers: Flag buses which demand DMA configuration
-> 
-> We do not want the common dma_configure() pathway to apply
-> indiscriminately to all devices, since there are plenty of buses which
-> do not have DMA capability, and if their child devices were used for
-> DMA API calls it would only be indicative of a driver bug. However,
-> there are a number of buses for which DMA is implicitly expected even
-> when not described by firmware, so we currently whitelist those to
-> automatically opt in to dma_configure(), assuming a 1:1 mapping between
-> the DMA address space and the physical address space.
-> 
-> Commit 723288836628 ("of: restrict DMA configuration") introduced a
-> short-term fix by comparing explicit bus types, but this approach is far
-> from pretty, doesn't scale well, and fails to cope at all with bus
-> drivers which may be built as modules. Let's refine things by making
-> that opt-in a property of the bus type, which neatly addresses those
-> problems and lets the decision of whether firmware description of DMA
-> capability should be optional or mandatory stay internal to the bus
-> drivers themselves.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+> Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 > ---
->   drivers/amba/bus.c       | 1 +
->   drivers/base/platform.c  | 1 +
->   drivers/gpu/host1x/bus.c | 1 +
->   drivers/of/device.c      | 8 +-------
->   drivers/pci/pci-driver.c | 1 +
->   include/linux/device.h   | 4 ++++
->   6 files changed, 9 insertions(+), 7 deletions(-)
+>  sound/soc/tegra/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index e0f74ddc22b7..594c228d2f02 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -195,6 +195,7 @@ struct bus_type amba_bustype = {
->   	.match		= amba_match,
->   	.uevent		= amba_uevent,
->   	.pm		= &amba_pm,
-> +	.force_dma	= true,
->   };
->   
->   static int __init amba_init(void)
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index d1bd99271066..9c95c8db00f8 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -1142,6 +1142,7 @@ struct bus_type platform_bus_type = {
->   	.match		= platform_match,
->   	.uevent		= platform_uevent,
->   	.pm		= &platform_dev_pm_ops,
-> +	.force_dma	= true,
->   };
->   EXPORT_SYMBOL_GPL(platform_bus_type);
->   
-> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-> index f9cde03030fd..ed03b3243195 100644
-> --- a/drivers/gpu/host1x/bus.c
-> +++ b/drivers/gpu/host1x/bus.c
-> @@ -320,6 +320,7 @@ struct bus_type host1x_bus_type = {
->   	.name = "host1x",
->   	.match = host1x_device_match,
->   	.pm = &host1x_device_pm_ops,
-> +	.force_dma = true,
->   };
->   
->   static void __host1x_device_del(struct host1x_device *device)
-> diff --git a/drivers/of/device.c b/drivers/of/device.c
-> index 64b710265d39..25bddf9c9fe1 100644
-> --- a/drivers/of/device.c
-> +++ b/drivers/of/device.c
-> @@ -9,9 +9,7 @@
->   #include <linux/module.h>
->   #include <linux/mod_devicetable.h>
->   #include <linux/slab.h>
-> -#include <linux/pci.h>
->   #include <linux/platform_device.h>
-> -#include <linux/amba/bus.h>
->   
->   #include <asm/errno.h>
->   #include "of_private.h"
-> @@ -101,11 +99,7 @@ int of_dma_configure(struct device *dev, struct device_node *np)
->   		 * DMA configuration regardless of whether "dma-ranges" is
->   		 * correctly specified or not.
->   		 */
-> -		if (!dev_is_pci(dev) &&
-> -#ifdef CONFIG_ARM_AMBA
-> -		    dev->bus != &amba_bustype &&
-> -#endif
-> -		    dev->bus != &platform_bus_type)
-> +		if (!dev->bus->force_dma)
->   			return ret == -ENODEV ? 0 : ret;
->   
->   		dma_addr = offset = 0;
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index 11bd267fc137..38bdb97b6dc6 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -1466,6 +1466,7 @@ struct bus_type pci_bus_type = {
->   	.drv_groups	= pci_drv_groups,
->   	.pm		= PCI_PM_OPS_PTR,
->   	.num_vf		= pci_bus_num_vf,
-> +	.force_dma	= true,
->   };
->   EXPORT_SYMBOL(pci_bus_type);
->   
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index c6f27207dbe8..3a1efa56e7c4 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -97,6 +97,8 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
->    * @p:		The private data of the driver core, only the driver core can
->    *		touch this.
->    * @lock_key:	Lock class key for use by the lock validator
-> + * @force_dma:	Assume devices on this bus should be set up by dma_configure()
-> + * 		even if DMA capability is not explicitly described by firmware.
->    *
->    * A bus is a channel between the processor and one or more devices. For the
->    * purposes of the device model, all devices are connected via a bus, even if
-> @@ -135,6 +137,8 @@ struct bus_type {
->   
->   	struct subsys_private *p;
->   	struct lock_class_key lock_key;
-> +
-> +	bool force_dma;
->   };
->   
->   extern int __must_check bus_register(struct bus_type *bus);
+> diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+> index 6875fc39a575..6c893c677110 100644
+> --- a/sound/soc/tegra/Kconfig
+> +++ b/sound/soc/tegra/Kconfig
+> @@ -38,7 +38,6 @@ config SND_SOC_TEGRA20_I2S
+>  config SND_SOC_TEGRA20_SPDIF
+>  	tristate "Tegra20 SPDIF interface"
+>  	depends on SND_SOC_TEGRA
+> -	default m
+>  	help
+>  	  Say Y or M if you want to add support for the Tegra20 SPDIF interface.
+>  	  You will also need to select the individual machine drivers to support
 > 
+
+IIUC this driver should be integrated with the Tegra DRM to be useful. Making it
+built-in by default would just increase kernels size.
+
+-- 
+Dmitry
