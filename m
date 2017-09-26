@@ -1,38 +1,83 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1 2/4] iommu/tegra: gart: Check whether page is already
- mapped
-Date: Tue, 26 Sep 2017 16:49:52 +0300
-Message-ID: <e59eb818-4edf-f3a2-947a-bc21507b0b85@gmail.com>
-References: <cover.1499270277.git.digetx@gmail.com>
- <a19ba1ca835aa2526d2c0492e6b0d0b35889596a.1499270277.git.digetx@gmail.com>
- <20170926110636.GA23108@ulmo>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v1 1/3] soc/tegra: fuse: Fix reading registers using DMA
+ on Tegra20
+Date: Tue, 26 Sep 2017 15:08:51 +0100
+Message-ID: <87d33561-d959-7444-552d-7226adf29eb4@nvidia.com>
+References: <27dadd0335aac71c9d4d613c33a6a1d0a285afa4.1506378772.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170926110636.GA23108@ulmo>
+In-Reply-To: <27dadd0335aac71c9d4d613c33a6a1d0a285afa4.1506378772.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 26.09.2017 14:06, Thierry Reding wrote:
-> On Wed, Jul 05, 2017 at 07:29:46PM +0300, Dmitry Osipenko wrote:
->> Due to a bug, multiple devices may try to map the same IOVA region. We can
->> catch that case by checking that 'VALID' bit of the GART's page entry is
->> unset prior to mapping of the page.
-> 
-> Due to what bug? Sounds to me like access to the GART should be
-> exclusive, so that only a single driver can ever access it.
-> 
+Hi Dmitry,
 
-Actually, there are a lot of peripherals behind the GART. But yes, probably we
-would use it exclusively for the GPU allocations.
+On 25/09/17 23:35, Dmitry Osipenko wrote:
+> DMA config is incorrect, because of it DMA transfer is never issued and
+> tegra20_fuse_read() always returns 0x0.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/soc/tegra/fuse/fuse-tegra.c   | 1 +
+>  drivers/soc/tegra/fuse/fuse-tegra20.c | 3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+> index b7c552e3133c..73a3a2c74021 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+> @@ -132,6 +132,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+>  
+>  	/* take over the memory region from the early initialization */
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	fuse->phys = res->start;
+>  	fuse->base = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(fuse->base))
+>  		return PTR_ERR(fuse->base);
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
+> index 294413a969a0..a33f48c06771 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra20.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
+> @@ -59,7 +59,7 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
+>  
+>  	mutex_lock(&fuse->apbdma.lock);
+>  
+> -	fuse->apbdma.config.src_addr = fuse->apbdma.phys + FUSE_BEGIN + offset;
+> +	fuse->apbdma.config.src_addr = fuse->phys + FUSE_BEGIN + offset;
+>  
+>  	err = dmaengine_slave_config(fuse->apbdma.chan, &fuse->apbdma.config);
+>  	if (err)
+> @@ -119,6 +119,7 @@ static int tegra20_fuse_probe(struct tegra_fuse *fuse)
+>  	fuse->apbdma.config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+>  	fuse->apbdma.config.src_maxburst = 1;
+>  	fuse->apbdma.config.dst_maxburst = 1;
+> +	fuse->apbdma.config.direction = DMA_DEV_TO_MEM;
+>  
+>  	init_completion(&fuse->apbdma.wait);
+>  	mutex_init(&fuse->apbdma.lock);
 
-In a case of the GPU allocations there could be a bug in the allocation code
-(drm_mm_scan) that would cause re-mapping of the already mapped pages, we would
-be able to catch such a bug.
+Thanks for the fix.
+
+When booting the mainline on Tegra20 Trimslice, I only see the
+tegra20_fuse_read_early() called and not the tegra20_fuse_read(). That's
+not to say it is not needed, but I am wondering if we really need this
+complex tegra20_fuse_read() using DMA and whether we should just have
+the normal fuse->read() call tegra20_fuse_read_early() as well to
+simplify matters?
+
+Maybe Thierry or Stephen know the history here?
+
+As far as the fix is concerned ...
+
+Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Cheers
+Jon
 
 -- 
-Dmitry
+nvpublic
