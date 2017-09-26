@@ -1,455 +1,112 @@
-From: Harsha Sharma <harshasharmaiitr@gmail.com>
-Subject: Re: [Outreachy kernel] [PATCH v2] drm/tegra: Replace dev_* with
- DRM_DEV_*
-Date: Mon, 25 Sep 2017 02:06:29 +0530
-Message-ID: <CANMOCy0TvwMk2r76-+3jstGfbVG=RXUWDAJ-TQxsh68yh3dR6g@mail.gmail.com>
-References: <1506271437-23058-1-git-send-email-harshasharmaiitr@gmail.com>
- <alpine.DEB.2.20.1709241854120.2366@hadrien>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v1 1/5] clk: tegra: Add AHB DMA clock entry
+Date: Tue, 26 Sep 2017 12:56:11 +0300
+Message-ID: <20170926095611.GW6290@tbergstrom-lnx.Nvidia.com>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <b5fd087892544cd17042a4aa9dc0289fb761352c.1506380746.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0078693032=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <alpine.DEB.2.20.1709241854120.2366@hadrien>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: linux-tegra@vger.kernel.org, outreachy-kernel <outreachy-kernel@googlegroups.com>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <b5fd087892544cd17042a4aa9dc0289fb761352c.1506380746.git.digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
---===============0078693032==
-Content-Type: multipart/alternative; boundary="089e082682b8961d8b0559f56557"
+On Tue, Sep 26, 2017 at 02:22:02AM +0300, Dmitry Osipenko wrote:
+> AHB DMA presents on Tegra20/30. Add missing entries, so that driver
+> for AHB DMA could be implemented.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-id.h           | 1 +
+>  drivers/clk/tegra/clk-tegra-periph.c | 1 +
+>  drivers/clk/tegra/clk-tegra20.c      | 6 ++++++
+>  drivers/clk/tegra/clk-tegra30.c      | 2 ++
+>  4 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+> index 689f344377a7..c1661b47bbda 100644
+> --- a/drivers/clk/tegra/clk-id.h
+> +++ b/drivers/clk/tegra/clk-id.h
+> @@ -12,6 +12,7 @@ enum clk_id {
+>  	tegra_clk_amx,
+>  	tegra_clk_amx1,
+>  	tegra_clk_apb2ape,
+> +	tegra_clk_ahbdma,
+>  	tegra_clk_apbdma,
+>  	tegra_clk_apbif,
+>  	tegra_clk_ape,
+> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+> index 848255cc0209..95a3d8c95f06 100644
+> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> @@ -823,6 +823,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+>  	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, CLK_IS_CRITICAL),
+>  	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
+>  	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
+> +	GATE("ahbdma", "clk_m", 33, 0, tegra_clk_ahbdma, 0),
 
---089e082682b8961d8b0559f56557
-Content-Type: text/plain; charset="UTF-8"
+Parent for this should be hclk on Tegra30 and later chips as well..
 
-Hi,
-Thanks a lot for your feedback.
-I will send another version for this patch.
-Thanks for your time.
+>  	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
+>  	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
+>  	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index 837e5cbd60e9..e76c0d292ca7 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -449,6 +449,7 @@ static struct tegra_devclk devclks[] __initdata = {
+>  	{ .con_id = "audio", .dt_id = TEGRA20_CLK_AUDIO },
+>  	{ .con_id = "audio_2x", .dt_id = TEGRA20_CLK_AUDIO_2X },
+>  	{ .dev_id = "tegra20-ac97", .dt_id = TEGRA20_CLK_AC97 },
+> +	{ .dev_id = "tegra-ahbdma", .dt_id = TEGRA20_CLK_AHBDMA },
 
-Regards,
-Harsha Sharma
+This isn't needed if you use DT bindings to get the clock handle.
 
-On Sun, Sep 24, 2017 at 10:30 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>  	{ .dev_id = "tegra-apbdma", .dt_id = TEGRA20_CLK_APBDMA },
+>  	{ .dev_id = "rtc-tegra", .dt_id = TEGRA20_CLK_RTC },
+>  	{ .dev_id = "timer", .dt_id = TEGRA20_CLK_TIMER },
+> @@ -806,6 +807,11 @@ static void __init tegra20_periph_clk_init(void)
+>  				    clk_base, 0, 3, periph_clk_enb_refcnt);
+>  	clks[TEGRA20_CLK_AC97] = clk;
+>  
+> +	/* ahbdma */
+> +	clk = tegra_clk_register_periph_gate("ahbdma", "hclk", 0, clk_base,
+> +				    0, 33, periph_clk_enb_refcnt);
+> +	clks[TEGRA20_CLK_AHBDMA] = clk;
+> +
 
->
->
-> On Sun, 24 Sep 2017, Harsha Sharma wrote:
->
-> > Replace all occurences of dev_info/err/dbg with DRM_DEV_INFO/
-> > ERROR/DEBUG as we have DRM_DEV_* variants of drm print macros
-> > Done using following coccinelle semantic patch
-> >
-> > @r@
-> > @@
-> >
-> > (
-> > -dev_info
-> > +DRM_DEV_INFO
-> > |
-> > -dev_err
-> > +DRM_DEV_ERROR
-> > |
-> > -dev_dbg
-> > +DRM_DEV_DEBUG
-> > )
-> >
-> > Signed-off-by: Harsha Sharma <harshasharmaiitr@gmail.com>
-> > ---
-> > Changes in v2:
-> >  -Break line over 80 characters
-> >  -Changes in comments not required
-> >
-> >  drivers/gpu/drm/tegra/dc.c     |  53 +++++++-----
-> >  drivers/gpu/drm/tegra/dpaux.c  |  24 +++---
-> >  drivers/gpu/drm/tegra/dsi.c    |  68 ++++++++-------
-> >  drivers/gpu/drm/tegra/falcon.c |  16 ++--
-> >  drivers/gpu/drm/tegra/fb.c     |  22 +++--
-> >  drivers/gpu/drm/tegra/gem.c    |   8 +-
-> >  drivers/gpu/drm/tegra/gr2d.c   |  10 ++-
-> >  drivers/gpu/drm/tegra/gr3d.c   |  20 +++--
-> >  drivers/gpu/drm/tegra/hdmi.c   |  66 +++++++++------
-> >  drivers/gpu/drm/tegra/output.c |   8 +-
-> >  drivers/gpu/drm/tegra/rgb.c    |  12 +--
-> >  drivers/gpu/drm/tegra/sor.c    | 184 +++++++++++++++++++++++++-----
-> -----------
-> >  drivers/gpu/drm/tegra/vic.c    |  15 ++--
-> >  13 files changed, 304 insertions(+), 202 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> > index 4df3911..fbc9cc1 100644
-> > --- a/drivers/gpu/drm/tegra/dc.c
-> > +++ b/drivers/gpu/drm/tegra/dc.c
-> > @@ -1137,7 +1137,7 @@ static void tegra_dc_commit_state(struct tegra_dc
-> *dc,
-> >
-> >       err = clk_set_parent(dc->clk, state->clk);
-> >       if (err < 0)
-> > -             dev_err(dc->dev, "failed to set parent clock: %d\n", err);
-> > +             DRM_DEV_ERROR(dc->dev, "failed to set parent clock: %d\n",
-> err);
-> >
-> >       /*
-> >        * Outputs may not want to change the parent clock rate. This is
-> only
-> > @@ -1150,7 +1150,7 @@ static void tegra_dc_commit_state(struct tegra_dc
-> *dc,
-> >       if (state->pclk > 0) {
-> >               err = clk_set_rate(state->clk, state->pclk);
-> >               if (err < 0)
-> > -                     dev_err(dc->dev,
-> > +                     DRM_DEV_ERROR(dc->dev,
-> >                               "failed to set clock rate to %lu Hz\n",
-> >                               state->pclk);
-> >       }
-> > @@ -1195,7 +1195,7 @@ static int tegra_dc_wait_idle(struct tegra_dc *dc,
-> unsigned long timeout)
-> >               usleep_range(1000, 2000);
-> >       }
-> >
-> > -     dev_dbg(dc->dev, "timeout waiting for DC to become idle\n");
-> > +     DRM_DEV_DEBUG(dc->dev, "timeout waiting for DC to become idle\n");
-> >       return -ETIMEDOUT;
-> >  }
-> >
-> > @@ -1763,7 +1763,8 @@ static int tegra_dc_init(struct host1x_client
-> *client)
-> >       if (tegra->domain) {
-> >               err = iommu_attach_device(tegra->domain, dc->dev);
-> >               if (err < 0) {
-> > -                     dev_err(dc->dev, "failed to attach to domain:
-> %d\n",
-> > +                     DRM_DEV_ERROR(dc->dev,
-> > +                             "failed to attach to domain: %d\n",
-> >                               err);
-> >                       return err;
-> >               }
-> > @@ -1801,7 +1802,8 @@ static int tegra_dc_init(struct host1x_client
-> *client)
-> >
-> >       err = tegra_dc_rgb_init(drm, dc);
-> >       if (err < 0 && err != -ENODEV) {
-> > -             dev_err(dc->dev, "failed to initialize RGB output: %d\n",
-> err);
-> > +             DRM_DEV_ERROR(dc->dev,
-> > +                     "failed to initialize RGB output: %d\n", err);
-> >               goto cleanup;
-> >       }
-> >
-> > @@ -1812,13 +1814,15 @@ static int tegra_dc_init(struct host1x_client
-> *client)
-> >       if (IS_ENABLED(CONFIG_DEBUG_FS)) {
-> >               err = tegra_dc_debugfs_init(dc, drm->primary);
-> >               if (err < 0)
-> > -                     dev_err(dc->dev, "debugfs setup failed: %d\n",
-> err);
-> > +                     DRM_DEV_ERROR(dc->dev,
-> > +                             "debugfs setup failed: %d\n", err);
->
-> The string could be on the same line as the function name.  Just the err
-> could be moved to the next line, and lined up with the right side of the (.
->
-> Overall, looking through the rest, it would probably really be nicer to
-> line the extra arguments up with the right side of the (.
->
->
-> >       }
-> >
-> >       err = devm_request_irq(dc->dev, dc->irq, tegra_dc_irq, 0,
-> >                              dev_name(dc->dev), dc);
-> >       if (err < 0) {
-> > -             dev_err(dc->dev, "failed to request IRQ#%u: %d\n", dc->irq,
-> > +             DRM_DEV_ERROR(dc->dev,
-> > +                     "failed to request IRQ#%u: %d\n", dc->irq,
->
-> Same here.  Try to keep the string on the first line.
->
-> >                       err);
-> >               goto cleanup;
-> >       }
-> > @@ -1850,12 +1854,14 @@ static int tegra_dc_exit(struct host1x_client
-> *client)
-> >       if (IS_ENABLED(CONFIG_DEBUG_FS)) {
-> >               err = tegra_dc_debugfs_exit(dc);
-> >               if (err < 0)
-> > -                     dev_err(dc->dev, "debugfs cleanup failed: %d\n",
-> err);
-> > +                     DRM_DEV_ERROR(dc->dev,
-> > +                             "debugfs cleanup failed: %d\n", err);
->
-> Same here.  And so on.
->
-> [...]
->
-> > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> > index 046649e..f9e4ad3 100644
-> > --- a/drivers/gpu/drm/tegra/dsi.c
-> > +++ b/drivers/gpu/drm/tegra/dsi.c
-> > @@ -854,7 +854,8 @@ static void tegra_dsi_unprepare(struct tegra_dsi
-> *dsi)
-> >
-> >       err = tegra_mipi_disable(dsi->mipi);
-> >       if (err < 0)
-> > -             dev_err(dsi->dev, "failed to disable MIPI calibration:
-> %d\n",
-> > +             DRM_DEV_ERROR(dsi->dev,
-> > +             "failed to disable MIPI calibration: %d\n",
->
-> Here the string is much too far to the left.
->
-> julia
->
+You can use the generic definition here if you correct the entry above.
 
---089e082682b8961d8b0559f56557
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+>  	/* apbdma */
+>  	clk = tegra_clk_register_periph_gate("apbdma", "pclk", 0, clk_base,
+>  				    0, 34, periph_clk_enb_refcnt);
+> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+> index a2d163f759b4..e99701557f29 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -612,6 +612,7 @@ static struct tegra_devclk devclks[] __initdata = {
+>  	{ .con_id = "fuse_burn", .dev_id = "fuse-tegra", .dt_id = TEGRA30_CLK_FUSE_BURN },
+>  	{ .con_id = "apbif", .dev_id = "tegra30-ahub", .dt_id = TEGRA30_CLK_APBIF },
+>  	{ .con_id = "hda2hdmi", .dev_id = "tegra30-hda", .dt_id = TEGRA30_CLK_HDA2HDMI },
+> +	{ .dev_id = "tegra-ahbdma", .dt_id = TEGRA30_CLK_AHBDMA },
 
-<div dir=3D"ltr">Hi,<div>Thanks a lot for your feedback.</div><div>I will s=
-end another version for this patch.</div><div>Thanks for your time.</div><d=
-iv><br></div><div>Regards,</div><div>Harsha Sharma</div></div><div class=3D=
-"gmail_extra"><br><div class=3D"gmail_quote">On Sun, Sep 24, 2017 at 10:30 =
-PM, Julia Lawall <span dir=3D"ltr">&lt;<a href=3D"mailto:julia.lawall@lip6.=
-fr" target=3D"_blank">julia.lawall@lip6.fr</a>&gt;</span> wrote:<br><blockq=
-uote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc =
-solid;padding-left:1ex"><div class=3D"HOEnZb"><div class=3D"h5"><br>
-<br>
-On Sun, 24 Sep 2017, Harsha Sharma wrote:<br>
-<br>
-&gt; Replace all occurences of dev_info/err/dbg with DRM_DEV_INFO/<br>
-&gt; ERROR/DEBUG as we have DRM_DEV_* variants of drm print macros<br>
-&gt; Done using following coccinelle semantic patch<br>
-&gt;<br>
-&gt; @r@<br>
-&gt; @@<br>
-&gt;<br>
-&gt; (<br>
-&gt; -dev_info<br>
-&gt; +DRM_DEV_INFO<br>
-&gt; |<br>
-&gt; -dev_err<br>
-&gt; +DRM_DEV_ERROR<br>
-&gt; |<br>
-&gt; -dev_dbg<br>
-&gt; +DRM_DEV_DEBUG<br>
-&gt; )<br>
-&gt;<br>
-&gt; Signed-off-by: Harsha Sharma &lt;<a href=3D"mailto:harshasharmaiitr@gm=
-ail.com">harshasharmaiitr@gmail.com</a>&gt;<br>
-&gt; ---<br>
-&gt; Changes in v2:<br>
-&gt;=C2=A0 -Break line over 80 characters<br>
-&gt;=C2=A0 -Changes in comments not required<br>
-&gt;<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/dc.c=C2=A0 =C2=A0 =C2=A0|=C2=A0 53 +++++++=
------<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/dpaux.c=C2=A0 |=C2=A0 24 +++---<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/dsi.c=C2=A0 =C2=A0 |=C2=A0 68 ++++++++----=
----<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/falcon.c |=C2=A0 16 ++--<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/fb.c=C2=A0 =C2=A0 =C2=A0|=C2=A0 22 +++--<b=
-r>
-&gt;=C2=A0 drivers/gpu/drm/tegra/gem.c=C2=A0 =C2=A0 |=C2=A0 =C2=A08 +-<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/gr2d.c=C2=A0 =C2=A0|=C2=A0 10 ++-<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/gr3d.c=C2=A0 =C2=A0|=C2=A0 20 +++--<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/hdmi.c=C2=A0 =C2=A0|=C2=A0 66 +++++++++---=
----<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/output.c |=C2=A0 =C2=A08 +-<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/rgb.c=C2=A0 =C2=A0 |=C2=A0 12 +--<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/sor.c=C2=A0 =C2=A0 | 184 +++++++++++++++++=
-++++++++-----<wbr>-----------<br>
-&gt;=C2=A0 drivers/gpu/drm/tegra/vic.c=C2=A0 =C2=A0 |=C2=A0 15 ++--<br>
-&gt;=C2=A0 13 files changed, 304 insertions(+), 202 deletions(-)<br>
-&gt;<br>
-&gt; diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c<b=
-r>
-&gt; index 4df3911..fbc9cc1 100644<br>
-&gt; --- a/drivers/gpu/drm/tegra/dc.c<br>
-&gt; +++ b/drivers/gpu/drm/tegra/dc.c<br>
-&gt; @@ -1137,7 +1137,7 @@ static void tegra_dc_commit_state(struct tegra_d=
-c *dc,<br>
-&gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D clk_set_parent(dc-&gt;clk, state-&gt=
-;clk);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0)<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_err(dc-&gt;dev, &=
-quot;failed to set parent clock: %d\n&quot;, err);<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_DEV_ERROR(dc-&gt;=
-dev, &quot;failed to set parent clock: %d\n&quot;, err);<br>
-&gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0/*<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Outputs may not want to change the parent=
- clock rate. This is only<br>
-&gt; @@ -1150,7 +1150,7 @@ static void tegra_dc_commit_state(struct tegra_d=
-c *dc,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (state-&gt;pclk &gt; 0) {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D clk_set_=
-rate(state-&gt;clk, state-&gt;pclk);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0)<=
-br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0dev_err(dc-&gt;dev,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0DRM_DEV_ERROR(dc-&gt;dev,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;failed to set clock rate to =
-%lu Hz\n&quot;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0state-&gt;pclk);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt; @@ -1195,7 +1195,7 @@ static int tegra_dc_wait_idle(struct tegra_dc *d=
-c, unsigned long timeout)<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0usleep_range(100=
-0, 2000);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0dev_dbg(dc-&gt;dev, &quot;timeout waiting for DC =
-to become idle\n&quot;);<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0DRM_DEV_DEBUG(dc-&gt;dev, &quot;timeout waiting f=
-or DC to become idle\n&quot;);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return -ETIMEDOUT;<br>
-&gt;=C2=A0 }<br>
-&gt;<br>
-&gt; @@ -1763,7 +1763,8 @@ static int tegra_dc_init(struct host1x_client *c=
-lient)<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (tegra-&gt;domain) {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D iommu_at=
-tach_device(tegra-&gt;<wbr>domain, dc-&gt;dev);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0) =
-{<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0dev_err(dc-&gt;dev, &quot;failed to attach to domain: %d\n&quot;,<br=
->
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0DRM_DEV_ERROR(dc-&gt;dev,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;failed to attach to domain: %d\n&q=
-uot;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0err);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0return err;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt; @@ -1801,7 +1802,8 @@ static int tegra_dc_init(struct host1x_client *c=
-lient)<br>
-&gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D tegra_dc_rgb_init(drm, dc);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0 &amp;&amp; err !=3D -ENODEV) =
-{<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_err(dc-&gt;dev, &=
-quot;failed to initialize RGB output: %d\n&quot;, err);<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_DEV_ERROR(dc-&gt;=
-dev,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0&quot;failed to initialize RGB output: %d\n&quot;, err);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto cleanup;<br=
->
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt;<br>
-&gt; @@ -1812,13 +1814,15 @@ static int tegra_dc_init(struct host1x_client =
-*client)<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (IS_ENABLED(CONFIG_DEBUG_FS)) {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D tegra_dc=
-_debugfs_init(dc, drm-&gt;primary);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0)<=
-br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0dev_err(dc-&gt;dev, &quot;debugfs setup failed: %d\n&quot;, err);<br=
->
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0DRM_DEV_ERROR(dc-&gt;dev,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;debugfs setup failed: %d\n&quot;, =
-err);<br>
-<br>
-</div></div>The string could be on the same line as the function name.=C2=
-=A0 Just the err<br>
-could be moved to the next line, and lined up with the right side of the (.=
-<br>
-<br>
-Overall, looking through the rest, it would probably really be nicer to<br>
-line the extra arguments up with the right side of the (.<br>
-<span class=3D""><br>
-<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D devm_request_irq(dc-&gt;dev, dc-&gt;=
-irq, tegra_dc_irq, 0,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_name(dc-&gt;dev), dc);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0) {<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_err(dc-&gt;dev, &=
-quot;failed to request IRQ#%u: %d\n&quot;, dc-&gt;irq,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_DEV_ERROR(dc-&gt;=
-dev,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0&quot;failed to request IRQ#%u: %d\n&quot;, dc-&gt;irq,<br>
-<br>
-</span>Same here.=C2=A0 Try to keep the string on the first line.<br>
-<span class=3D""><br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0err);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto cleanup;<br=
->
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt; @@ -1850,12 +1854,14 @@ static int tegra_dc_exit(struct host1x_client =
-*client)<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (IS_ENABLED(CONFIG_DEBUG_FS)) {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D tegra_dc=
-_debugfs_exit(dc);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0)<=
-br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0dev_err(dc-&gt;dev, &quot;debugfs cleanup failed: %d\n&quot;, err);<=
-br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0DRM_DEV_ERROR(dc-&gt;dev,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;debugfs cleanup failed: %d\n&quot;=
-, err);<br>
-<br>
-</span>Same here.=C2=A0 And so on.<br>
-<br>
-[...]<br>
-<span class=3D""><br>
-&gt; diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c=
-<br>
-&gt; index 046649e..f9e4ad3 100644<br>
-&gt; --- a/drivers/gpu/drm/tegra/dsi.c<br>
-&gt; +++ b/drivers/gpu/drm/tegra/dsi.c<br>
-&gt; @@ -854,7 +854,8 @@ static void tegra_dsi_unprepare(struct tegra_dsi *=
-dsi)<br>
-&gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D tegra_mipi_disable(dsi-&gt;mipi);<br=
->
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0)<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_err(dsi-&gt;dev, =
-&quot;failed to disable MIPI calibration: %d\n&quot;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_DEV_ERROR(dsi-&gt=
-;dev,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;failed to disab=
-le MIPI calibration: %d\n&quot;,<br>
-<br>
-</span>Here the string is much too far to the left.<br>
-<span class=3D"HOEnZb"><font color=3D"#888888"><br>
-julia<br>
-</font></span></blockquote></div><br></div>
+Same as for Tegra20.
 
---089e082682b8961d8b0559f56557--
+>  	{ .dev_id = "tegra-apbdma", .dt_id = TEGRA30_CLK_APBDMA },
+>  	{ .dev_id = "rtc-tegra", .dt_id = TEGRA30_CLK_RTC },
+>  	{ .dev_id = "timer", .dt_id = TEGRA30_CLK_TIMER },
+> @@ -788,6 +789,7 @@ static struct tegra_clk tegra30_clks[tegra_clk_max] __initdata = {
+>  	[tegra_clk_extern3] = { .dt_id = TEGRA30_CLK_EXTERN3, .present = true },
+>  	[tegra_clk_disp1] = { .dt_id = TEGRA30_CLK_DISP1, .present = true },
+>  	[tegra_clk_disp2] = { .dt_id = TEGRA30_CLK_DISP2, .present = true },
+> +	[tegra_clk_ahbdma] = { .dt_id = TEGRA30_CLK_AHBDMA, .present = true },
+>  	[tegra_clk_apbdma] = { .dt_id = TEGRA30_CLK_APBDMA, .present = true },
+>  	[tegra_clk_rtc] = { .dt_id = TEGRA30_CLK_RTC, .present = true },
+>  	[tegra_clk_timer] = { .dt_id = TEGRA30_CLK_TIMER, .present = true },
 
---===============0078693032==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+Cheers,
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0078693032==--
+Peter.
