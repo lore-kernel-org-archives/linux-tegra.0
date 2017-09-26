@@ -1,65 +1,74 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1 0/2] NVIDIA Tegra20 video decoder driver
-Date: Wed, 27 Sep 2017 01:17:10 +0300
-Message-ID: <c89255ca-2492-f29b-8999-b97901f60cb9@gmail.com>
-References: <cover.1506377430.git.digetx@gmail.com>
- <20170926065447.GC6250@kroah.com>
- <d2d4c970-d921-c282-b70e-00247c5de50f@gmail.com>
- <20170926213549.GE3418@kroah.com>
+Subject: Re: [PATCH v1 2/3] ARM: dts: tegra20: Add DMA phandle to 'fuse' node
+Date: Wed, 27 Sep 2017 01:31:42 +0300
+Message-ID: <f8a0e6ab-8485-b60b-64ef-21574395b4d1@gmail.com>
+References: <27dadd0335aac71c9d4d613c33a6a1d0a285afa4.1506378772.git.digetx@gmail.com>
+ <8268404736bd3c254f8516109465bb8db4739c33.1506378772.git.digetx@gmail.com>
+ <c0776324-95e9-9e4c-00ac-a415cb1cd9e3@nvidia.com>
+ <ce5c5242-8530-4b0e-dd2d-0a9ef1ac005e@nvidia.com>
+ <a5db226b-b177-f52f-3a53-5e65f5a27243@gmail.com>
+ <59edd5b4-754a-93eb-8529-a5ff140c1a37@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170926213549.GE3418-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <59edd5b4-754a-93eb-8529-a5ff140c1a37-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 27.09.2017 00:35, Greg Kroah-Hartman wrote:
-> On Tue, Sep 26, 2017 at 03:32:23PM +0300, Dmitry Osipenko wrote:
->> On 26.09.2017 09:54, Greg Kroah-Hartman wrote:
->>> On Tue, Sep 26, 2017 at 01:15:41AM +0300, Dmitry Osipenko wrote:
->>>> This driver provides accelerated video decoding to NVIDIA Tegra20 SoC's,
->>>> it is a result of reverse-engineering efforts. Driver has been tested on
->>>> Toshiba AC100 and Acer A500, it should work on any Tegra20 device.
+On 27.09.2017 01:10, Jon Hunter wrote:
+> 
+> On 26/09/17 22:54, Dmitry Osipenko wrote:
+>> On 27.09.2017 00:25, Jon Hunter wrote:
+>>>
+>>> On 26/09/17 21:54, Jon Hunter wrote:
 >>>>
->>>> In userspace this driver is utilized by libvdpau-tegra [0] that implements
->>>> VDPAU interface, so any video player that supports VDPAU can provide
->>>> accelerated video decoding on Tegra20 on Linux.
+>>>> On 25/09/17 23:35, Dmitry Osipenko wrote:
+>>>>> Currently efuse driver requests DMA channel from an arbitrary DMA device,
+>>>>> it is not a problem since there is only one DMA provider for Tegra20 yet,
+>>>>> but it will become troublesome once another provider would be added.
+>>>>>
+>>>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>> ---
+>>>>>  arch/arm/boot/dts/tegra20.dtsi | 2 ++
+>>>>>  1 file changed, 2 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+>>>>> index fb485a5e63d7..f1579c9a7ef4 100644
+>>>>> --- a/arch/arm/boot/dts/tegra20.dtsi
+>>>>> +++ b/arch/arm/boot/dts/tegra20.dtsi
+>>>>> @@ -600,6 +600,8 @@
+>>>>>  		clock-names = "fuse";
+>>>>>  		resets = <&tegra_car 39>;
+>>>>>  		reset-names = "fuse";
+>>>>> +		dmas = <&apbdma 0>;
+>>>>> +		dma-names = "fuse";
+>>>>>  	};
+>>>>>  
+>>>>>  	pcie@80003000 {
+>>>>>
+>>>>
+>>>> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>>
->>> Why not use the v4l2 api instead?  Doesn't that provide the same needed
->>> user/kernel api here instead of creating yet-another-custom ioctl?
+>>> Actually, request-id '0' is a valid request. Does this work ok?
 >>>
 >>
->> 1) The HW doesn't generalize for the common API. Like for example, it isn't
->> capable of unpacking bitstream encoded with CABAC (Context-adaptive binary
->> arithmetic coding), so unpacking should be done in software and then VDE HW
->> isn't capable of decoding such a stream in a fully-automated manner, software
->> would have to feed engine with a chunks of macroblocks untill the whole frame is
->> decoded. That lameness is partially hidden in the BLOB's firmware, that firmware
->> actually is just a driver BTW.
->>
->> 2) We want to have decoding integrated with the presentation of the decoded
->> video frame. So having v4l interface for decoding would be just an extra
->> unnecessary shim, increasing CPU / memory resources usage and complexity of the
->> code.
->>
->> 3) The decoding and presentation are already implemented using VDPAU API and
->> proven to work decently in that way.
+>> It works fine, I have verified that reading on CPU == reading by DMA. The
+>> REQ_SEL 0 is "Not Assigned" and seems acts as DRQ=1. I know that it is not
+>> entirely correct, but APB DMA driver is hardcoded to the master mode, while we
+>> need slave mode.
 > 
-> This sounds like something you should be talking over with the media
-> driver developers, why are they not even cc:ed on this submission?
-> 
-> I need their ack on this new api before I can take this.
+> Looking at the TRM I see that it is 'CNTR_REQ' so I am not sure if this
+> is a timer/counter that is driving this.
 > 
 
-Indeed, will cc media on V2.
+Oh, wow. Indeed it's TRIG_SEL is NA. Good catch! So it works because counter = 0.
+
+Then APB DMA driver needs to be changed to support master mode. Seems that
+should be simple to change, I'll look into it.
 
 -- 
 Dmitry
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
