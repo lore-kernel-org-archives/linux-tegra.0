@@ -1,82 +1,291 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 0/4] Add Tegra186 PCIe support
-Date: Wed, 27 Sep 2017 17:28:33 +0530
-Message-ID: <1506513517-25870-1-git-send-email-mmaddireddy@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: [PATCH V2 2/4] PCI: tegra: Add Tegra186 PCIe support
+Date: Wed, 27 Sep 2017 17:28:35 +0530
+Message-ID: <1506513517-25870-3-git-send-email-mmaddireddy@nvidia.com>
+References: <1506513517-25870-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1506513517-25870-1-git-send-email-mmaddireddy@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, mperttunen@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra186 has three PCIe controllers which can be operated
-in 401, 211 or 111 lane configurations. Tegra TX2 platform
-has x4 and M.2 Key E PCIe slots, these patches enables
-x4 slot. BPMP programs UPHY lane0 ownership to USB,
-so M.2 Key E PCIe will not work.
+UPHY programming is performed by BPMP, PHY enable calls are
+not required for Tegra186 PCIe. Power partition ungate is
+done by BPMP powergate driver.
 
-Testing: x4 slot is verified with PCIe based USB3.1 card.
-PCIe link up, usb flash drive mounting and file copy are
-verified. These patches are also verified by
-Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> with an Intel 82574L
-ethernet card.
+Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Tested-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+V2: Add soc->program_uphy check for phy_exit call
+ drivers/pci/host/pci-tegra.c | 132 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 108 insertions(+), 24 deletions(-)
 
-Patch V2 adds soc->program_uphy check for phy_exit call.
-
-Pasting PCIe link up logs below.
-
-[    1.452512] tegra-pcie 10003000.pcie: 4x1, 1x1 configuration
-[    1.452723] tegra-pcie 10003000.pcie: Failed to get supply 'dvdd-pex': -517
-[    1.561824] ehci-pci: EHCI PCI platform driver
-[    1.591587] ohci-pci: OHCI PCI platform driver
-[    3.072464] tegra-pcie 10003000.pcie: 4x1, 1x1 configuration
-[    3.078989] tegra-pcie 10003000.pcie: probing port 0, using 4 lanes
-[    3.087272] tegra-pcie 10003000.pcie: Slot present pin change, signature: 00000018
-[    3.128818] tegra-pcie 10003000.pcie: PCI host bridge to bus 0000:00
-[    3.135174] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
-[    3.141352] pci_bus 0000:00: root bus resource [mem 0x50100000-0x57ffffff]
-[    3.148221] pci_bus 0000:00: root bus resource [mem 0x58000000-0x7fffffff pref]
-[    3.155542] pci_bus 0000:00: root bus resource [bus 00-ff]
-[    3.161173] pci 0000:00:01.0: [10de:10e5] type 01 class 0x060400
-[    3.161188] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 offset 0x4 may corrupt adjacent RW1C bits
-[    3.170838] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 offset 0x4 may corrupt adjacent RW1C bits
-[    3.180532] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 offset 0x52 may corrupt adjacent RW1C bits
-[    3.190305] pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot D3cold
-[    3.190312] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 offset 0x4c may corrupt adjacent RW1C bits
-[    3.200158] pci 0000:00:01.0: bridge configuration invalid ([bus 00-00]), reconfiguring
-[    3.208158] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 offset 0x3e may corrupt adjacent RW1C bits
-[    3.217918] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 offset 0x3e may corrupt adjacent RW1C bits
-[    3.227649] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 offset 0x3e may corrupt adjacent RW1C bits
-[    3.237382] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 offset 0x6 may corrupt adjacent RW1C bits
-[    3.247135] pci 0000:01:00.0: [1b21:1242] type 00 class 0x0c0330
-[    3.247157] pci_bus 0000:01: 2-byte config write to 0000:01:00.0 offset 0x4 may corrupt adjacent RW1C bits
-[    3.256807] pci_bus 0000:01: 2-byte config write to 0000:01:00.0 offset 0x4 may corrupt adjacent RW1C bits
-[    3.266477] pci 0000:01:00.0: reg 0x10: [mem 0x00000000-0x00007fff 64bit]
-[    3.266544] pci 0000:01:00.0: enabling Extended Tags
-[    3.271622] pci 0000:01:00.0: PME# supported from D3hot D3cold
-[    3.271775] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
-[    3.271798] pci 0000:00:01.0: BAR 14: assigned [mem 0x50100000-0x501fffff]
-[    3.278671] pci 0000:01:00.0: BAR 0: assigned [mem 0x50100000-0x50107fff 64bit]
-[    3.285993] pci 0000:00:01.0: PCI bridge to [bus 01]
-[    3.290959] pci 0000:00:01.0:   bridge window [mem 0x50100000-0x501fffff]
-[    3.297763] pci 0000:00:01.0: nv_msi_ht_cap_quirk didn't locate host bridge
-[    3.304784] pcieport 0000:00:01.0: enabling device (0000 -> 0002)
-[    3.311014] pcieport 0000:00:01.0: Signaling PME with IRQ 57
-[    3.316768] pci 0000:01:00.0: enabling device (0000 -> 0002)
-
-
-Manikanta Maddireddy (4):
-  dt-bindings: pci: tegra: Document Tegra186 PCIe DT
-  PCI: tegra: Add Tegra186 PCIe support
-  arm64: tegra: Add PCIe node for Tegra186
-  arm64: tegra: Enable PCIe on Jetson TX2
-
- .../bindings/pci/nvidia,tegra20-pcie.txt           | 134 ++++++++++++++++++++-
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |  24 ++++
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  82 +++++++++++++
- drivers/pci/host/pci-tegra.c                       | 132 ++++++++++++++++----
- 4 files changed, 344 insertions(+), 28 deletions(-)
-
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 9c40da54f88a..96e8038c3019 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -159,10 +159,13 @@
+ #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_SINGLE	(0x0 << 20)
+ #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_420	(0x0 << 20)
+ #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_X2_X1	(0x0 << 20)
++#define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_401	(0x0 << 20)
+ #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_DUAL	(0x1 << 20)
+ #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_222	(0x1 << 20)
+ #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_X4_X1	(0x1 << 20)
++#define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_211	(0x1 << 20)
+ #define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_411	(0x2 << 20)
++#define  AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_111	(0x2 << 20)
+ 
+ #define AFI_FUSE			0x104
+ #define  AFI_FUSE_PCIE_T0_GEN2_DIS	(1 << 2)
+@@ -252,6 +255,7 @@ struct tegra_pcie_soc {
+ 	bool has_cml_clk;
+ 	bool has_gen2;
+ 	bool force_pca_enable;
++	bool program_uphy;
+ };
+ 
+ static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
+@@ -1012,10 +1016,12 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+ 		afi_writel(pcie, value, AFI_FUSE);
+ 	}
+ 
+-	err = tegra_pcie_phy_power_on(pcie);
+-	if (err < 0) {
+-		dev_err(dev, "failed to power on PHY(s): %d\n", err);
+-		return err;
++	if (soc->program_uphy) {
++		err = tegra_pcie_phy_power_on(pcie);
++		if (err < 0) {
++			dev_err(dev, "failed to power on PHY(s): %d\n", err);
++			return err;
++		}
+ 	}
+ 
+ 	/* take the PCIe interface module out of reset */
+@@ -1048,19 +1054,23 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+ {
+ 	struct device *dev = pcie->dev;
++	const struct tegra_pcie_soc *soc = pcie->soc;
+ 	int err;
+ 
+ 	/* TODO: disable and unprepare clocks? */
+ 
+-	err = tegra_pcie_phy_power_off(pcie);
+-	if (err < 0)
+-		dev_err(dev, "failed to power off PHY(s): %d\n", err);
++	if (soc->program_uphy) {
++		err = tegra_pcie_phy_power_off(pcie);
++		if (err < 0)
++			dev_err(dev, "failed to power off PHY(s): %d\n", err);
++	}
+ 
+ 	reset_control_assert(pcie->pcie_xrst);
+ 	reset_control_assert(pcie->afi_rst);
+ 	reset_control_assert(pcie->pex_rst);
+ 
+-	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
++	if (!dev->pm_domain)
++		tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+ 
+ 	err = regulator_bulk_disable(pcie->num_supplies, pcie->supplies);
+ 	if (err < 0)
+@@ -1077,19 +1087,29 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
+ 	reset_control_assert(pcie->afi_rst);
+ 	reset_control_assert(pcie->pex_rst);
+ 
+-	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
++	if (!dev->pm_domain)
++		tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+ 
+ 	/* enable regulators */
+ 	err = regulator_bulk_enable(pcie->num_supplies, pcie->supplies);
+ 	if (err < 0)
+ 		dev_err(dev, "failed to enable regulators: %d\n", err);
+ 
+-	err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_PCIE,
+-						pcie->pex_clk,
+-						pcie->pex_rst);
+-	if (err) {
+-		dev_err(dev, "powerup sequence failed: %d\n", err);
+-		return err;
++	if (dev->pm_domain) {
++		err = clk_prepare_enable(pcie->pex_clk);
++		if (err) {
++			dev_err(dev, "failed to enable PEX clock: %d\n", err);
++			return err;
++		}
++		reset_control_deassert(pcie->pex_rst);
++	} else {
++		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_PCIE,
++							pcie->pex_clk,
++							pcie->pex_rst);
++		if (err) {
++			dev_err(dev, "powerup sequence failed: %d\n", err);
++			return err;
++		}
+ 	}
+ 
+ 	reset_control_deassert(pcie->afi_rst);
+@@ -1262,6 +1282,7 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 	struct device *dev = pcie->dev;
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct resource *pads, *afi, *res;
++	const struct tegra_pcie_soc *soc = pcie->soc;
+ 	int err;
+ 
+ 	err = tegra_pcie_clocks_get(pcie);
+@@ -1276,10 +1297,12 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 		return err;
+ 	}
+ 
+-	err = tegra_pcie_phys_get(pcie);
+-	if (err < 0) {
+-		dev_err(dev, "failed to get PHYs: %d\n", err);
+-		return err;
++	if (soc->program_uphy) {
++		err = tegra_pcie_phys_get(pcie);
++		if (err < 0) {
++			dev_err(dev, "failed to get PHYs: %d\n", err);
++			return err;
++		}
+ 	}
+ 
+ 	err = tegra_pcie_power_on(pcie);
+@@ -1341,6 +1364,7 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ static int tegra_pcie_put_resources(struct tegra_pcie *pcie)
+ {
+ 	struct device *dev = pcie->dev;
++	const struct tegra_pcie_soc *soc = pcie->soc;
+ 	int err;
+ 
+ 	if (pcie->irq > 0)
+@@ -1348,9 +1372,11 @@ static int tegra_pcie_put_resources(struct tegra_pcie *pcie)
+ 
+ 	tegra_pcie_power_off(pcie);
+ 
+-	err = phy_exit(pcie->phy);
+-	if (err < 0)
+-		dev_err(dev, "failed to teardown PHY: %d\n", err);
++	if (soc->program_uphy) {
++		err = phy_exit(pcie->phy);
++		if (err < 0)
++			dev_err(dev, "failed to teardown PHY: %d\n", err);
++	}
+ 
+ 	return 0;
+ }
+@@ -1616,7 +1642,31 @@ static int tegra_pcie_get_xbar_config(struct tegra_pcie *pcie, u32 lanes,
+ 	struct device *dev = pcie->dev;
+ 	struct device_node *np = dev->of_node;
+ 
+-	if (of_device_is_compatible(np, "nvidia,tegra124-pcie") ||
++	if (of_device_is_compatible(np, "nvidia,tegra186-pcie")) {
++		switch (lanes) {
++		case 0x010004:
++			dev_info(dev, "4x1, 1x1 configuration\n");
++			*xbar = AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_401;
++			return 0;
++
++		case 0x010102:
++			dev_info(dev, "2x1, 1X1, 1x1 configuration\n");
++			*xbar = AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_211;
++			return 0;
++
++		case 0x010101:
++			dev_info(dev, "1x1, 1x1, 1x1 configuration\n");
++			*xbar = AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_111;
++			return 0;
++
++		default:
++			dev_info(dev, "wrong configuration updated in DT, "
++				 "switching to default 2x1, 1x1, 1x1 "
++				 "configuration\n");
++			*xbar = AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_211;
++			return 0;
++		}
++	} else if (of_device_is_compatible(np, "nvidia,tegra124-pcie") ||
+ 	    of_device_is_compatible(np, "nvidia,tegra210-pcie")) {
+ 		switch (lanes) {
+ 		case 0x0000104:
+@@ -1737,7 +1787,20 @@ static int tegra_pcie_get_regulators(struct tegra_pcie *pcie, u32 lane_mask)
+ 	struct device_node *np = dev->of_node;
+ 	unsigned int i = 0;
+ 
+-	if (of_device_is_compatible(np, "nvidia,tegra210-pcie")) {
++	if (of_device_is_compatible(np, "nvidia,tegra186-pcie")) {
++		pcie->num_supplies = 4;
++
++		pcie->supplies = devm_kcalloc(pcie->dev, pcie->num_supplies,
++					      sizeof(*pcie->supplies),
++					      GFP_KERNEL);
++		if (!pcie->supplies)
++			return -ENOMEM;
++
++		pcie->supplies[i++].supply = "dvdd-pex";
++		pcie->supplies[i++].supply = "hvdd-pex-pll";
++		pcie->supplies[i++].supply = "hvdd-pex";
++		pcie->supplies[i++].supply = "vddio-pexctl-aud";
++	} else if (of_device_is_compatible(np, "nvidia,tegra210-pcie")) {
+ 		pcie->num_supplies = 6;
+ 
+ 		pcie->supplies = devm_kcalloc(pcie->dev, pcie->num_supplies,
+@@ -2076,6 +2139,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+ 	.has_cml_clk = false,
+ 	.has_gen2 = false,
+ 	.force_pca_enable = false,
++	.program_uphy = true,
+ };
+ 
+ static const struct tegra_pcie_soc tegra30_pcie = {
+@@ -2091,6 +2155,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+ 	.has_cml_clk = true,
+ 	.has_gen2 = false,
+ 	.force_pca_enable = false,
++	.program_uphy = true,
+ };
+ 
+ static const struct tegra_pcie_soc tegra124_pcie = {
+@@ -2105,6 +2170,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+ 	.has_cml_clk = true,
+ 	.has_gen2 = true,
+ 	.force_pca_enable = false,
++	.program_uphy = true,
+ };
+ 
+ static const struct tegra_pcie_soc tegra210_pcie = {
+@@ -2119,9 +2185,27 @@ static const struct tegra_pcie_soc tegra210_pcie = {
+ 	.has_cml_clk = true,
+ 	.has_gen2 = true,
+ 	.force_pca_enable = true,
++	.program_uphy = true,
++};
++
++static const struct tegra_pcie_soc tegra186_pcie = {
++	.num_ports = 3,
++	.msi_base_shift = 8,
++	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
++	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
++	.pads_refclk_cfg0 = 0x80b880b8,
++	.pads_refclk_cfg1 = 0x000480b8,
++	.has_pex_clkreq_en = true,
++	.has_pex_bias_ctrl = true,
++	.has_intr_prsnt_sense = true,
++	.has_cml_clk = false,
++	.has_gen2 = true,
++	.force_pca_enable = false,
++	.program_uphy = false,
+ };
+ 
+ static const struct of_device_id tegra_pcie_of_match[] = {
++	{ .compatible = "nvidia,tegra186-pcie", .data = &tegra186_pcie },
+ 	{ .compatible = "nvidia,tegra210-pcie", .data = &tegra210_pcie },
+ 	{ .compatible = "nvidia,tegra124-pcie", .data = &tegra124_pcie },
+ 	{ .compatible = "nvidia,tegra30-pcie", .data = &tegra30_pcie },
 -- 
 2.1.4
