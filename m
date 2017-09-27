@@ -1,59 +1,81 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 4/4] arm64: tegra: Enable PCIe on Jetson TX2
-Date: Wed, 27 Sep 2017 17:28:37 +0530
-Message-ID: <1506513517-25870-5-git-send-email-mmaddireddy@nvidia.com>
-References: <1506513517-25870-1-git-send-email-mmaddireddy@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+Date: Wed, 27 Sep 2017 15:12:50 +0300
+Message-ID: <69ea8dec-db7a-fcfa-6fa7-ea70de4c9ef4@gmail.com>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+ <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+ <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1506513517-25870-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Enable x4 PCIe slot on Jetson TX2.
+On 27.09.2017 11:34, Jon Hunter wrote:
+> 
+> On 27/09/17 02:57, Dmitry Osipenko wrote:
+>> On 26.09.2017 17:50, Jon Hunter wrote:
+>>>
+>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+>>>> on Tegra20/30 SoC's.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
+>>>>  1 file changed, 23 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>> new file mode 100644
+>>>> index 000000000000..2af9aa76ae11
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>> @@ -0,0 +1,23 @@
+>>>> +* NVIDIA Tegra AHB DMA controller
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
+>>>> +- reg:		Should contain registers base address and length.
+>>>> +- interrupts:	Should contain one entry, DMA controller interrupt.
+>>>> +- clocks:	Should contain one entry, DMA controller clock.
+>>>> +- resets :	Should contain one entry, DMA controller reset.
+>>>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
+>>>> +		for the peripheral. For more details consult the Tegra TRM's
+>>>> +		documentation, in particular AHB DMA channel control register
+>>>> +		REQ_SEL field.
+>>>
+>>> What about the TRIG_SEL field? Do we need to handle this here as well?
+>>>
+>>
+>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
+>> software to decide what trigger to select. So it shouldn't be in the binding.
+> 
+> I think it could be, if say a board wanted a GPIO to trigger a transfer.
+> 
 
-Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V2: No change in this patch
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+GPIO isn't a very good example, there is no "GPIO" trigger. To me all triggers
+are software-defined, so that software could create transfer chains.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-index cf84d7046ad5..a4d96b2a23b4 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-@@ -378,4 +378,28 @@
- 			vin-supply = <&vdd_1v8>;
- 		};
- 	};
-+
-+	pcie@10003000 {
-+		status = "okay";
-+
-+		dvdd-pex-supply = <&vdd_pex>;
-+		hvdd-pex-pll-supply = <&vdd_1v8>;
-+		hvdd-pex-supply = <&vdd_1v8>;
-+		vddio-pexctl-aud-supply = <&vdd_1v8>;
-+
-+		pci@1,0 {
-+			nvidia,num-lanes = <4>;
-+			status = "okay";
-+		};
-+
-+		pci@2,0 {
-+			nvidia,num-lanes = <0>;
-+			status = "disabled";
-+		};
-+
-+		pci@3,0 {
-+			nvidia,num-lanes = <1>;
-+			status = "disabled";
-+		};
-+	};
- };
+>> And I think the same applies to requester... any objections?
+> 
+> Well, the REQ_SEL should definitely be in the binding.
+> 
+
+Okay.
+
+> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
+> like we never bothered with it for the APB DMA and so maybe no ones uses
+> this.
+> 
+
 -- 
-2.1.4
+Dmitry
