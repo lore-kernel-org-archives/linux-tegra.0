@@ -1,111 +1,151 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: Use different MSI target address for Tegra20
-Date: Thu, 28 Sep 2017 16:19:12 +0200
-Message-ID: <20170928141912.GB28022@ulmo>
-References: <20170923061740.6012-1-treding@nvidia.com>
- <CAN7O0+JyG3XT5SsWGsiZs0vrk0ha1vQ5N7rjYxs3tM_NvdONdw@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked
+ infrastructure
+Date: Thu, 28 Sep 2017 09:22:17 -0500
+Message-ID: <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com>
+References: <20170928095628.21966-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAN7O0+JyG3XT5SsWGsiZs0vrk0ha1vQ5N7rjYxs3tM_NvdONdw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20170928095628.21966-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: vidya sagar <sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ZoaI/ZTpAVc4A5k6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 25, 2017 at 10:44:29AM +0530, vidya sagar wrote:
-> Inline...
->=20
-> On Sat, Sep 23, 2017 at 11:47 AM, Thierry Reding
-> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> >
-> > The Tegra20 PCIe controller has a different address range for MSI, so
-> > select a different target address.
-> >
-> > Fixes: d7bd554f27c9 ("PCI: tegra: Do not allocate MSI target memory")
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/pci/host/pci-tegra.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> > index e8e1ddbaabc9..5b02ea59524b 100644
-> > --- a/drivers/pci/host/pci-tegra.c
-> > +++ b/drivers/pci/host/pci-tegra.c
-> > @@ -1563,8 +1563,18 @@ static int tegra_pcie_enable_msi(struct tegra_pc=
-ie *pcie)
-> >          * none of the Tegra SoCs that contain this PCI host bridge can
-> >          * address more than 16 GiB of system memory, the last 4 KiB of
-> >          * these 1012 GiB is a good candidate.
-> > +        *
-> > +        * Unfortunately, Tegra20 is slightly different in that the phy=
-sical
-> > +        * address for this MSI region is limited to the lower 32 bits =
-of the
-> > +        * address map, so the address that we pick is going to have to=
- be
-> > +        * located somewhere within the region addressable by the CPU a=
-nd
-> > +        * on-SoC controllers. To be on the safe side, we select an add=
-ress
-> > +        * from a region that is marked unused (0xf0010000 - 0xfffeffff=
-).
-> >          */
-> > -       msi->phys =3D 0xfcfffff000;
-> > +       if (soc->msi_base_shift > 0)
-> > +               msi->phys =3D 0xfcfffff000;
-> > +       else
-> > +               msi->phys =3D 0x00f0010000;
->=20
-> Can we use this for later Tegra chip versions as well?
-> Reason being, if an end point's config space says that it cannot
-> support >32-bit MSI addresses (Marvel SATA controller being one
-> example), with the current code, we still allocate an address of
-> >32-bits, resulting in end point not being able to generate MSI
-> interrupt (as it discards >32-bits where generating upstream memory
-> write transaction for MSI)
+On 09/28/2017 04:56 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Hi Linus,
+> 
+> here's the latest series of patches that implement the tighter IRQ chip
+> integration as well as the banked GPIO infrastructure that we had
+> discussed a couple of weeks/months back.
+> 
+> The first couple of patches are mostly preparatory work in order to
+> consolidate all IRQ chip related fields in a new structure and create
+> the base functionality for adding IRQ chips.
+> 
+> After that, I've added the Tegra186 GPIO support patch that makes use of
+> the new tight integration.
+> 
+> To round things off the new banked GPIO infrastructure is added (along
+> with some more preparatory work), followed by the conversion of the two
+> Tegra GPIO drivers to the new infrastructure.
 
-Looks like the universal fix for this may not be trivial, so perhaps in
-the meantime this one could go in in order to restore MSI for TrimSlice
-(and other Tegra20 boards)?
+Hm. So you've ignored my comments [1].
 
-Bjorn: do you have any objections to taking this into v4.13 via a stable
-backport? 32-bit only MSI were never guaranteed to work because prior to
-this patch the address was taken from an allocated page, which may or
-may not have been > 4 GiB.
+Sry, but I do not agree with this series.
+- no prof that it can be re-used by other drivers than tegra
+ (at least I do not see reasons to re-use it for any TI drivers)
+- no split
+- all GPIO IRQs mapped statically
+- irq->map[offset + j] = irq->parents[parent]; holds IRQs for all pins
+  which is waste of memory
+- DT binding changes not documented and no DT examples
+- below is ugly ;)
++	bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
++	pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
 
-We could then go and fix 32-bit MSI hopefully in time for 4.14, but it'd
-be a shame if v4.13 keeps being broken just because we're trying to
-settle on the right solution for 32-bit MSI.
+[1] https://lkml.org/lkml/2017/9/15/442
 
-Thierry
+> 
+> Changes in v2:
+> - rename pins to lines for consistent terminology
+> - rename gpio_irq_chip_banked_handler() to
+>    gpio_irq_chip_banked_chained_handler()
+> 
+> Thierry
+> 
+> Thierry Reding (16):
+>    gpio: Implement tighter IRQ chip integration
+>    gpio: Move irqchip into struct gpio_irq_chip
+>    gpio: Move irqdomain into struct gpio_irq_chip
+>    gpio: Move irq_base to struct gpio_irq_chip
+>    gpio: Move irq_handler to struct gpio_irq_chip
+>    gpio: Move irq_default_type to struct gpio_irq_chip
+>    gpio: Move irq_chained_parent to struct gpio_irq_chip
+>    gpio: Move irq_nested into struct gpio_irq_chip
+>    gpio: Move irq_valid_mask into struct gpio_irq_chip
+>    gpio: Move lock_key into struct gpio_irq_chip
+>    gpio: Add Tegra186 support
+>    gpio: omap: Fix checkpatch warnings
+>    gpio: omap: Rename struct gpio_bank to struct omap_gpio_bank
+>    gpio: Add support for banked GPIO controllers
+>    gpio: tegra: Use banked GPIO infrastructure
+>    gpio: tegra186: Use banked GPIO infrastructure
+> 
+>   Documentation/gpio/driver.txt               |   6 +-
+>   drivers/bcma/driver_gpio.c                  |   2 +-
+>   drivers/gpio/Kconfig                        |  10 +
+>   drivers/gpio/Makefile                       |   1 +
+>   drivers/gpio/gpio-104-dio-48e.c             |   2 +-
+>   drivers/gpio/gpio-104-idi-48.c              |   2 +-
+>   drivers/gpio/gpio-104-idio-16.c             |   2 +-
+>   drivers/gpio/gpio-adnp.c                    |   2 +-
+>   drivers/gpio/gpio-altera.c                  |   4 +-
+>   drivers/gpio/gpio-aspeed.c                  |   6 +-
+>   drivers/gpio/gpio-ath79.c                   |   2 +-
+>   drivers/gpio/gpio-brcmstb.c                 |   2 +-
+>   drivers/gpio/gpio-crystalcove.c             |   2 +-
+>   drivers/gpio/gpio-dln2.c                    |   2 +-
+>   drivers/gpio/gpio-ftgpio010.c               |   2 +-
+>   drivers/gpio/gpio-ingenic.c                 |   2 +-
+>   drivers/gpio/gpio-intel-mid.c               |   2 +-
+>   drivers/gpio/gpio-lynxpoint.c               |   2 +-
+>   drivers/gpio/gpio-max732x.c                 |   2 +-
+>   drivers/gpio/gpio-merrifield.c              |   2 +-
+>   drivers/gpio/gpio-omap.c                    | 222 ++++++-----
+>   drivers/gpio/gpio-pca953x.c                 |   2 +-
+>   drivers/gpio/gpio-pcf857x.c                 |   2 +-
+>   drivers/gpio/gpio-pci-idio-16.c             |   2 +-
+>   drivers/gpio/gpio-pl061.c                   |   2 +-
+>   drivers/gpio/gpio-rcar.c                    |   2 +-
+>   drivers/gpio/gpio-reg.c                     |   4 +-
+>   drivers/gpio/gpio-stmpe.c                   |   6 +-
+>   drivers/gpio/gpio-tc3589x.c                 |   2 +-
+>   drivers/gpio/gpio-tegra.c                   | 203 +++++-----
+>   drivers/gpio/gpio-tegra186.c                | 571 ++++++++++++++++++++++++++++
+>   drivers/gpio/gpio-vf610.c                   |   2 +-
+>   drivers/gpio/gpio-wcove.c                   |   2 +-
+>   drivers/gpio/gpio-ws16c48.c                 |   2 +-
+>   drivers/gpio/gpio-xgene-sb.c                |   2 +-
+>   drivers/gpio/gpio-xlp.c                     |   2 +-
+>   drivers/gpio/gpio-zx.c                      |   2 +-
+>   drivers/gpio/gpio-zynq.c                    |   2 +-
+>   drivers/gpio/gpiolib-of.c                   | 101 +++++
+>   drivers/gpio/gpiolib.c                      | 320 ++++++++++++++--
+>   drivers/pinctrl/bcm/pinctrl-bcm2835.c       |   5 +-
+>   drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |   2 +-
+>   drivers/pinctrl/intel/pinctrl-baytrail.c    |   6 +-
+>   drivers/pinctrl/intel/pinctrl-cherryview.c  |   6 +-
+>   drivers/pinctrl/intel/pinctrl-intel.c       |   2 +-
+>   drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |   4 +-
+>   drivers/pinctrl/nomadik/pinctrl-nomadik.c   |   4 +-
+>   drivers/pinctrl/pinctrl-amd.c               |   2 +-
+>   drivers/pinctrl/pinctrl-at91.c              |   2 +-
+>   drivers/pinctrl/pinctrl-coh901.c            |   2 +-
+>   drivers/pinctrl/pinctrl-mcp23s08.c          |   2 +-
+>   drivers/pinctrl/pinctrl-oxnas.c             |   2 +-
+>   drivers/pinctrl/pinctrl-pic32.c             |   2 +-
+>   drivers/pinctrl/pinctrl-pistachio.c         |   2 +-
+>   drivers/pinctrl/pinctrl-st.c                |   2 +-
+>   drivers/pinctrl/pinctrl-sx150x.c            |   2 +-
+>   drivers/pinctrl/qcom/pinctrl-msm.c          |   2 +-
+>   drivers/pinctrl/sirf/pinctrl-atlas7.c       |   2 +-
+>   drivers/pinctrl/sirf/pinctrl-sirf.c         |   2 +-
+>   drivers/pinctrl/spear/pinctrl-plgpio.c      |   2 +-
+>   drivers/platform/x86/intel_int0002_vgpio.c  |   6 +-
+>   include/linux/gpio/driver.h                 | 272 +++++++++++--
+>   include/linux/of_gpio.h                     |  10 +
+>   63 files changed, 1505 insertions(+), 348 deletions(-)
+>   create mode 100644 drivers/gpio/gpio-tegra186.c
+> 
 
---ZoaI/ZTpAVc4A5k6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnNBN0ACgkQ3SOs138+
-s6ER9g//VAYNmyvfIpGDGM9/w6J+Tz0hrsaOuOGE/W41pyfzAAr+mCDRIXwAXTMV
-LTRnWBr9xFMJOrHBy2I7HBURke7GdU4yz+L0GvYUbwI5wgyI+GGzNwdlnwN956Yi
-2XsP2UWuj0qs0Sb1xqvPHkzXkehL4NKy48xmu/0lF3tP6Eh9oIKL1ZnXDHlAHVJ3
-5AjUNCpqsHNriLTapc95AGjucaCuu79bx3jQUL84YwfZ/lZF5n7cuGVkOR2567KF
-S7+SoCl9nLPyNQuzHepAr/ixYlXYUFXx0BBclkieY8ERS9shauyyicMg5SeZFo5S
-CqSLhVfG/gidimqzcYvW5PIi+zYPTUrw23cTq4xXKQ2kTUflPRzlJsTfVV2ZVcRY
-khOGaR8WsO1k7GtPCtxuEmERzh+JCYcbmXx43oDAcUojydQ1apSNy5DuikQCk+f5
-SfTAljT6ZnWWTrNKyTPq6YY/mjjruvtKEQzp23SBa+QNKysFnSgrLHTwmCk1+jzU
-On/hYTIIvNAR+HETq7P5n21C+s+G+rVSWoA/Qgw8urrUAnb+QcmCvYDOQ5Qky0LE
-+1t2pdKJ9TyVQejMjUD74YKiW0jD+KMZ+7jGiGMpkWx29eoCEWkjlR+YleUtyI78
-1TuZy+yXO5Kq6mGVy0510JjAwndTp4ZvQzVNUBU+C+tSTDy1UPY=
-=C3fW
------END PGP SIGNATURE-----
-
---ZoaI/ZTpAVc4A5k6--
+-- 
+regards,
+-grygorii
