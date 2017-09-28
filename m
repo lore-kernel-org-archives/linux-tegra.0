@@ -1,106 +1,111 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 6/6] drm/tegra: Use u64_to_user_ptr helper
-Date: Thu, 28 Sep 2017 15:50:44 +0300
-Message-ID: <20170928125044.32516-7-mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v3 4/6] gpu: host1x: Disassemble more instructions
+Date: Thu, 28 Sep 2017 15:50:42 +0300
+Message-ID: <20170928125044.32516-5-mperttunen@nvidia.com>
 References: <20170928125044.32516-1-mperttunen@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170928125044.32516-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170928125044.32516-1-mperttunen@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, digetx@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Use the u64_to_user_ptr helper macro to cast IOCTL argument u64 values
-to user pointers instead of writing out the cast manually. Also do
-some other cleanup with user pointers to make them stand out more
-and look cleaner.
-
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/drm.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 130d193192ee..943bdf88c4a2 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -386,12 +386,10 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	unsigned int num_cmdbufs = args->num_cmdbufs;
- 	unsigned int num_relocs = args->num_relocs;
- 	unsigned int num_waitchks = args->num_waitchks;
--	struct drm_tegra_cmdbuf __user *cmdbufs =
--		(void __user *)(uintptr_t)args->cmdbufs;
--	struct drm_tegra_reloc __user *relocs =
--		(void __user *)(uintptr_t)args->relocs;
--	struct drm_tegra_waitchk __user *waitchks =
--		(void __user *)(uintptr_t)args->waitchks;
-+	struct drm_tegra_cmdbuf __user *user_cmdbufs;
-+	struct drm_tegra_reloc __user *user_relocs;
-+	struct drm_tegra_waitchk __user *user_waitchks;
-+	struct drm_tegra_syncpt __user *user_syncpt;
- 	struct drm_tegra_syncpt syncpt;
- 	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
- 	struct drm_gem_object **refs;
-@@ -400,6 +398,11 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	unsigned int num_refs;
- 	int err;
- 
-+	user_cmdbufs = u64_to_user_ptr(args->cmdbufs);
-+	user_relocs = u64_to_user_ptr(args->relocs);
-+	user_waitchks = u64_to_user_ptr(args->waitchks);
-+	user_syncpt = u64_to_user_ptr(args->syncpts);
-+
- 	/* We don't yet support other than one syncpt_incr struct per submit */
- 	if (args->num_syncpts != 1)
- 		return -EINVAL;
-@@ -440,7 +443,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 		struct tegra_bo *obj;
- 		u64 offset;
- 
--		if (copy_from_user(&cmdbuf, cmdbufs, sizeof(cmdbuf))) {
-+		if (copy_from_user(&cmdbuf, user_cmdbufs, sizeof(cmdbuf))) {
- 			err = -EFAULT;
- 			goto fail;
- 		}
-@@ -476,7 +479,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 
- 		host1x_job_add_gather(job, bo, cmdbuf.words, cmdbuf.offset);
- 		num_cmdbufs--;
--		cmdbufs++;
-+		user_cmdbufs++;
- 	}
- 
- 	/* copy and resolve relocations from submit */
-@@ -485,7 +488,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 		struct tegra_bo *obj;
- 
- 		err = host1x_reloc_copy_from_user(&job->relocarray[num_relocs],
--						  &relocs[num_relocs], drm,
-+						  &user_relocs[num_relocs], drm,
- 						  file);
- 		if (err < 0)
- 			goto fail;
-@@ -519,9 +522,8 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 		struct host1x_waitchk *wait = &job->waitchk[num_waitchks];
- 		struct tegra_bo *obj;
- 
--		err = host1x_waitchk_copy_from_user(wait,
--						    &waitchks[num_waitchks],
--						    file);
-+		err = host1x_waitchk_copy_from_user(
-+			wait, &user_waitchks[num_waitchks], file);
- 		if (err < 0)
- 			goto fail;
- 
-@@ -539,8 +541,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 		}
- 	}
- 
--	if (copy_from_user(&syncpt, (void __user *)(uintptr_t)args->syncpts,
--			   sizeof(syncpt))) {
-+	if (copy_from_user(&syncpt, user_syncpt, sizeof(syncpt))) {
- 		err = -EFAULT;
- 		goto fail;
- 	}
--- 
-2.14.1
+VGhlIGRpc2Fzc2VtYmxlciBmb3IgZGVidWcgZHVtcHMgd2FzIG1pc3Npbmcgc29tZSBuZXdlciBo
+b3N0MXggb3Bjb2Rlcy4KQWRkIGRpc2Fzc2VtYmx5IHN1cHBvcnQgZm9yIHRoZXNlLgoKU2lnbmVk
+LW9mZi1ieTogTWlra28gUGVydHR1bmVuIDxtcGVydHR1bmVuQG52aWRpYS5jb20+Ci0tLQogZHJp
+dmVycy9ncHUvaG9zdDF4L2h3L2RlYnVnX2h3LmMgICAgICB8IDU5ICsrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrLS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvaHcvZGVidWdfaHdfMXgwMS5j
+IHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9kZWJ1Z19od18xeDA2LmMgfCAgMyArLQog
+MyBmaWxlcyBjaGFuZ2VkLCA1OCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQoKZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9kZWJ1Z19ody5jIGIvZHJpdmVycy9ncHUvaG9z
+dDF4L2h3L2RlYnVnX2h3LmMKaW5kZXggMWU2NzY2N2UzMDhjLi45ODk0NzY4MDFmOWQgMTAwNjQ0
+Ci0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9kZWJ1Z19ody5jCisrKyBiL2RyaXZlcnMvZ3B1
+L2hvc3QxeC9ody9kZWJ1Z19ody5jCkBAIC0zMCw2ICszMCwxMyBAQCBlbnVtIHsKIAlIT1NUMVhf
+T1BDT0RFX0lNTQk9IDB4MDQsCiAJSE9TVDFYX09QQ09ERV9SRVNUQVJUCT0gMHgwNSwKIAlIT1NU
+MVhfT1BDT0RFX0dBVEhFUgk9IDB4MDYsCisJSE9TVDFYX09QQ09ERV9TRVRTVFJNSUQgPSAweDA3
+LAorCUhPU1QxWF9PUENPREVfU0VUQVBQSUQgID0gMHgwOCwKKwlIT1NUMVhfT1BDT0RFX1NFVFBZ
+TEQgICA9IDB4MDksCisJSE9TVDFYX09QQ09ERV9JTkNSX1cgICAgPSAweDBhLAorCUhPU1QxWF9P
+UENPREVfTk9OSU5DUl9XID0gMHgwYiwKKwlIT1NUMVhfT1BDT0RFX0dBVEhFUl9XICA9IDB4MGMs
+CisJSE9TVDFYX09QQ09ERV9SRVNUQVJUX1cgPSAweDBkLAogCUhPU1QxWF9PUENPREVfRVhURU5E
+CT0gMHgwZSwKIH07CiAKQEAgLTM4LDExICs0NSwxNiBAQCBlbnVtIHsKIAlIT1NUMVhfT1BDT0RF
+X0VYVEVORF9SRUxFQVNFX01MT0NLCT0gMHgwMSwKIH07CiAKLXN0YXRpYyB1bnNpZ25lZCBpbnQg
+c2hvd19jaGFubmVsX2NvbW1hbmQoc3RydWN0IG91dHB1dCAqbywgdTMyIHZhbCkKKyNkZWZpbmUg
+SU5WQUxJRF9QQVlMT0FECQkJCTB4ZmZmZmZmZmYKKworc3RhdGljIHVuc2lnbmVkIGludCBzaG93
+X2NoYW5uZWxfY29tbWFuZChzdHJ1Y3Qgb3V0cHV0ICpvLCB1MzIgdmFsLAorCQkJCQkgdTMyICpw
+YXlsb2FkKQogewotCXVuc2lnbmVkIGludCBtYXNrLCBzdWJvcCwgbnVtOworCXVuc2lnbmVkIGlu
+dCBtYXNrLCBzdWJvcCwgbnVtLCBvcGNvZGU7CisKKwlvcGNvZGUgPSB2YWwgPj4gMjg7CiAKLQlz
+d2l0Y2ggKHZhbCA+PiAyOCkgeworCXN3aXRjaCAob3Bjb2RlKSB7CiAJY2FzZSBIT1NUMVhfT1BD
+T0RFX1NFVENMQVNTOgogCQltYXNrID0gdmFsICYgMHgzZjsKIAkJaWYgKG1hc2spIHsKQEAgLTk3
+LDYgKzEwOSw0NCBAQCBzdGF0aWMgdW5zaWduZWQgaW50IHNob3dfY2hhbm5lbF9jb21tYW5kKHN0
+cnVjdCBvdXRwdXQgKm8sIHUzMiB2YWwpCiAJCQkJICAgIHZhbCA+PiAxNCAmIDB4MSwgdmFsICYg
+MHgzZmZmKTsKIAkJcmV0dXJuIDE7CiAKKyNpZiBIT1NUMVhfSFcgPj0gNgorCWNhc2UgSE9TVDFY
+X09QQ09ERV9TRVRTVFJNSUQ6CisJCWhvc3QxeF9kZWJ1Z19jb250KG8sICJTRVRTVFJNSUQob2Zm
+c2V0PSUwNngpXG4iLAorCQkJCSAgdmFsICYgMHgzZmZmZmYpOworCQlyZXR1cm4gMDsKKworCWNh
+c2UgSE9TVDFYX09QQ09ERV9TRVRBUFBJRDoKKwkJaG9zdDF4X2RlYnVnX2NvbnQobywgIlNFVEFQ
+UElEKGFwcGlkPSUwMngpXG4iLCB2YWwgJiAweGZmKTsKKwkJcmV0dXJuIDA7CisKKwljYXNlIEhP
+U1QxWF9PUENPREVfU0VUUFlMRDoKKwkJKnBheWxvYWQgPSB2YWwgJiAweGZmZmY7CisJCWhvc3Qx
+eF9kZWJ1Z19jb250KG8sICJTRVRQWUxEKGRhdGE9JTA0eClcbiIsICpwYXlsb2FkKTsKKwkJcmV0
+dXJuIDA7CisKKwljYXNlIEhPU1QxWF9PUENPREVfSU5DUl9XOgorCWNhc2UgSE9TVDFYX09QQ09E
+RV9OT05JTkNSX1c6CisJCWhvc3QxeF9kZWJ1Z19jb250KG8sICIlcyhvZmZzZXQ9JTA2eCwgIiwK
+KwkJCQkgIG9wY29kZSA9PSBIT1NUMVhfT1BDT0RFX0lOQ1JfVyA/CisJCQkJCSJJTkNSX1ciIDog
+Ik5PTklOQ1JfVyIsCisJCQkJICB2YWwgJiAweDNmZmZmZik7CisJCWlmICgqcGF5bG9hZCA9PSAw
+KSB7CisJCQlob3N0MXhfZGVidWdfY29udChvLCAiW10pXG4iKTsKKwkJCXJldHVybiAwOworCQl9
+IGVsc2UgaWYgKCpwYXlsb2FkID09IElOVkFMSURfUEFZTE9BRCkgeworCQkJaG9zdDF4X2RlYnVn
+X2NvbnQobywgInVua25vd24pXG4iKTsKKwkJCXJldHVybiAwOworCQl9IGVsc2UgeworCQkJaG9z
+dDF4X2RlYnVnX2NvbnQobywgIlsiKTsKKwkJCXJldHVybiAqcGF5bG9hZDsKKwkJfQorCisJY2Fz
+ZSBIT1NUMVhfT1BDT0RFX0dBVEhFUl9XOgorCQlob3N0MXhfZGVidWdfY29udChvLCAiR0FUSEVS
+X1coY291bnQ9JTA0eCwgYWRkcj1bIiwKKwkJCQkgIHZhbCAmIDB4M2ZmZik7CisJCXJldHVybiAy
+OworI2VuZGlmCisKIAljYXNlIEhPU1QxWF9PUENPREVfRVhURU5EOgogCQlzdWJvcCA9IHZhbCA+
+PiAyNCAmIDB4ZjsKIAkJaWYgKHN1Ym9wID09IEhPU1QxWF9PUENPREVfRVhURU5EX0FDUVVJUkVf
+TUxPQ0spCkBAIC0xMjIsNiArMTcyLDcgQEAgc3RhdGljIHZvaWQgc2hvd19nYXRoZXIoc3RydWN0
+IG91dHB1dCAqbywgcGh5c19hZGRyX3QgcGh5c19hZGRyLAogCS8qIE1hcCBkbWFnZXQgY3Vyc29y
+IHRvIGNvcnJlc3BvbmRpbmcgbWVtIGhhbmRsZSAqLwogCXUzMiBvZmZzZXQgPSBwaHlzX2FkZHIg
+LSBwaW5fYWRkcjsKIAl1bnNpZ25lZCBpbnQgZGF0YV9jb3VudCA9IDAsIGk7CisJdTMyIHBheWxv
+YWQgPSBJTlZBTElEX1BBWUxPQUQ7CiAKIAkvKgogCSAqIFNvbWV0aW1lcyB3ZSdyZSBnaXZlbiBk
+aWZmZXJlbnQgaGFyZHdhcmUgYWRkcmVzcyB0byB0aGUgc2FtZQpAQCAtMTM5LDcgKzE5MCw3IEBA
+IHN0YXRpYyB2b2lkIHNob3dfZ2F0aGVyKHN0cnVjdCBvdXRwdXQgKm8sIHBoeXNfYWRkcl90IHBo
+eXNfYWRkciwKIAogCQlpZiAoIWRhdGFfY291bnQpIHsKIAkJCWhvc3QxeF9kZWJ1Z19vdXRwdXQo
+bywgIiUwOHg6ICUwOHg6ICIsIGFkZHIsIHZhbCk7Ci0JCQlkYXRhX2NvdW50ID0gc2hvd19jaGFu
+bmVsX2NvbW1hbmQobywgdmFsKTsKKwkJCWRhdGFfY291bnQgPSBzaG93X2NoYW5uZWxfY29tbWFu
+ZChvLCB2YWwsICZwYXlsb2FkKTsKIAkJfSBlbHNlIHsKIAkJCWhvc3QxeF9kZWJ1Z19jb250KG8s
+ICIlMDh4JXMiLCB2YWwsCiAJCQkJCSAgICBkYXRhX2NvdW50ID4gMSA/ICIsICIgOiAiXSlcbiIp
+OwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2RlYnVnX2h3XzF4MDEuYyBiL2Ry
+aXZlcnMvZ3B1L2hvc3QxeC9ody9kZWJ1Z19od18xeDAxLmMKaW5kZXggMDllMWFhN2JiNWRkLi44
+NzkwZDVmZDVmMjAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9ody9kZWJ1Z19od18x
+eDAxLmMKKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2RlYnVnX2h3XzF4MDEuYwpAQCAtMTEy
+LDcgKzExMiw3IEBAIHN0YXRpYyB2b2lkIGhvc3QxeF9kZWJ1Z19zaG93X2NoYW5uZWxfZmlmbyhz
+dHJ1Y3QgaG9zdDF4ICpob3N0LAogCiAJCWlmICghZGF0YV9jb3VudCkgewogCQkJaG9zdDF4X2Rl
+YnVnX291dHB1dChvLCAiJTA4eDogIiwgdmFsKTsKLQkJCWRhdGFfY291bnQgPSBzaG93X2NoYW5u
+ZWxfY29tbWFuZChvLCB2YWwpOworCQkJZGF0YV9jb3VudCA9IHNob3dfY2hhbm5lbF9jb21tYW5k
+KG8sIHZhbCwgTlVMTCk7CiAJCX0gZWxzZSB7CiAJCQlob3N0MXhfZGVidWdfY29udChvLCAiJTA4
+eCVzIiwgdmFsLAogCQkJCQkgIGRhdGFfY291bnQgPiAxID8gIiwgIiA6ICJdKVxuIik7CmRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvZGVidWdfaHdfMXgwNi5jIGIvZHJpdmVycy9n
+cHUvaG9zdDF4L2h3L2RlYnVnX2h3XzF4MDYuYwppbmRleCBiZDg5ZGE1ZGM2NGMuLmI1MDNjNzQw
+YzAyMiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2RlYnVnX2h3XzF4MDYuYwor
+KysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvZGVidWdfaHdfMXgwNi5jCkBAIC02Myw2ICs2Myw3
+IEBAIHN0YXRpYyB2b2lkIGhvc3QxeF9kZWJ1Z19zaG93X2NoYW5uZWxfZmlmbyhzdHJ1Y3QgaG9z
+dDF4ICpob3N0LAogCQkJCQkgICBzdHJ1Y3Qgb3V0cHV0ICpvKQogewogCXUzMiB2YWwsIHJkX3B0
+ciwgd3JfcHRyLCBzdGFydCwgZW5kOworCXUzMiBwYXlsb2FkID0gSU5WQUxJRF9QQVlMT0FEOwog
+CXVuc2lnbmVkIGludCBkYXRhX2NvdW50ID0gMDsKIAogCWhvc3QxeF9kZWJ1Z19vdXRwdXQobywg
+IiV1OiBmaWZvOlxuIiwgY2gtPmlkKTsKQEAgLTEwNyw3ICsxMDgsNyBAQCBzdGF0aWMgdm9pZCBo
+b3N0MXhfZGVidWdfc2hvd19jaGFubmVsX2ZpZm8oc3RydWN0IGhvc3QxeCAqaG9zdCwKIAkJaWYg
+KCFkYXRhX2NvdW50KSB7CiAJCQlob3N0MXhfZGVidWdfb3V0cHV0KG8sICIlMDN4IDB4JTA4eDog
+IiwKIAkJCQkJICAgIHJkX3B0ciAtIHN0YXJ0LCB2YWwpOwotCQkJZGF0YV9jb3VudCA9IHNob3df
+Y2hhbm5lbF9jb21tYW5kKG8sIHZhbCk7CisJCQlkYXRhX2NvdW50ID0gc2hvd19jaGFubmVsX2Nv
+bW1hbmQobywgdmFsLCAmcGF5bG9hZCk7CiAJCX0gZWxzZSB7CiAJCQlob3N0MXhfZGVidWdfY29u
+dChvLCAiJTA4eCVzIiwgdmFsLAogCQkJCQkgIGRhdGFfY291bnQgPiAxID8gIiwgIiA6ICJdKVxu
+Iik7Ci0tIAoyLjE0LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
