@@ -1,42 +1,73 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH v1 1/2] staging: Introduce NVIDIA Tegra20 video decoder
- driver
-Date: Thu, 28 Sep 2017 10:23:08 +0300
-Message-ID: <20170928072308.s7npizjfnhkxh6zb@mwanda>
-References: <cover.1506377430.git.digetx@gmail.com>
- <5c8b83775b982e6ee851c127444a8e839f422ad0.1506377430.git.digetx@gmail.com>
- <20170927094557.yr2fl5arodjnh637@mwanda>
- <2b77bfa7-1272-3d11-9190-326fa0f85f22@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Build error for NVIDIA Tegra DRM since 4.14-rc1
+Date: Thu, 28 Sep 2017 09:30:05 +0100
+Message-ID: <5ebf7a87-4625-aa5d-0351-0db275875ea0@nvidia.com>
+References: <20170928071054.GD6726@otheros>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2b77bfa7-1272-3d11-9190-326fa0f85f22@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170928071054.GD6726@otheros>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?Linus_L=c3=bcssing?= <linus.luessing-djzkFPsfvsizQB+pC5nmwQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Sep 28, 2017 at 02:28:04AM +0300, Dmitry Osipenko wrote:
-> >> +	if (is_baseline_profile)
-> >> +		frame->aux_paddr = 0xF4DEAD00;
-> > 
-> > The handling of is_baseline_profile is strange to me.  It feels like we
-> > should always check it before we use ->aux_paddr but we don't ever do
-> > that.
-> > 
+Hi Linus,
+
+On 28/09/17 08:10, Linus Lüssing wrote:
+> Hi,
 > 
-> In a case of baseline profile, aux buffer isn't needed, HW should't use it. Aux
-> phys address is set to a predefined and invalid address, so that in a case of
-> VDE trying to use it, its invalid memory accesses would be reported in KMSG by
-> memory controller driver and the reported invalid addresses would be known to be
-> associated with the aux buffer. I'm not sure what you are meaning.
+> Sorry, did not search for the exact commit yet, but since v4.14-rc1
+> I get a build error when trying to build the ARM multi_v7_defconfig
+> target:
+> 
+> ~~~~~~~~~~
+> $ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- LOADADDR=0x00208000 zImage uImage modules dtbs
+> [...]
+>   CHK     include/config/kernel.release
+>   CHK     include/generated/uapi/linux/version.h
+>   CHK     include/generated/utsrelease.h
+>   CHK     include/generated/bounds.h
+>   CHK     include/generated/timeconst.h
+>   CHK     include/generated/asm-offsets.h
+>   CALL    scripts/checksyscalls.sh
+>   CHK     scripts/mod/devicetable-offsets.h
+>   CHK     include/generated/compile.h
+>   CHK     include/generated/at91_pm_data-offsets.h
+>   CC      drivers/gpu/drm/tegra/trace.o
+> In file included from drivers/gpu/drm/tegra/trace.h:68:0,
+>                  from drivers/gpu/drm/tegra/trace.c:2:
+> ./include/trace/define_trace.h:88:42: fatal error: ./trace.h: No such file or directory
+>  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+>                                           ^
+> compilation terminated.
+> scripts/Makefile.build:311: recipe for target 'drivers/gpu/drm/tegra/trace.o' failed
+> make[4]: *** [drivers/gpu/drm/tegra/trace.o] Error 1
+> scripts/Makefile.build:570: recipe for target 'drivers/gpu/drm/tegra' failed
+> make[3]: *** [drivers/gpu/drm/tegra] Error 2
+> scripts/Makefile.build:570: recipe for target 'drivers/gpu/drm' failed
+> make[2]: *** [drivers/gpu/drm] Error 2
+> scripts/Makefile.build:570: recipe for target 'drivers/gpu' failed
+> make[1]: *** [drivers/gpu] Error 2
+> Makefile:1019: recipe for target 'drivers' failed
+> make: *** [drivers] Error 2
+> ~~~~~~~~~~
+> 
+> v4.14-rc2 fails, too. v4.13.2 and v4.13.3 worked fine with multi_v7_defconfig.
+> 
+> Setting CONFIG_DRM_TEGRA=n for v4.14-rc1 or v4.14-rc2 helps for
+> the build to succeed, too.
 
-It's not used perhaps, but we do write it to the hardware, right?
+Yes, sorry about this, we are aware [0] and there is a fix on its way
+upstream [1].
 
-	tegra_vde_write_iram_entry(iram_tables, 0, i, value, aux_paddr);
+Cheers
+Jon
 
-It's just strange.
+[0] https://www.spinics.net/lists/linux-tegra/msg30857.html
+[1] https://lkml.org/lkml/2017/9/26/242
 
-regards,
-dan carpenter
+-- 
+nvpublic
