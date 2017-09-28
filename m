@@ -1,78 +1,44 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 0/6] Miscellaneous improvements to Host1x and TegraDRM
-Date: Thu, 28 Sep 2017 15:50:38 +0300
-Message-ID: <20170928125044.32516-1-mperttunen@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v3 5/6] gpu: host1x: Fix incorrect comment for channel_request
+Date: Thu, 28 Sep 2017 15:50:43 +0300
+Message-ID: <20170928125044.32516-6-mperttunen@nvidia.com>
+References: <20170928125044.32516-1-mperttunen@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170928125044.32516-1-mperttunen@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, digetx@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-New in v3:
-- Renamed *syncpt_assign_channel to *syncpt_assign_to_channel
-- Disassembler ignores opcodes not supported on the particular
-  chip
-- Further cleanup in u64_to_user_ptr patch
-
-New in v2:
-- Changes in syncpoint protection and u64_to_user_ptr patches.
-  See the patches for notes.
-- Added patch to support more opcodes in the debug dump
-  disassembly.
-- Added patch to fix an incorrect comment.
-
-Thanks,
-Mikko
-
-Patch v1 notes:
-
-Hi all,
-
-here are some new features and improvements.
-
-Patch 1 enables syncpoint protection which prevents channels from
-touching syncpoints not belonging to them on Tegra186.
-
-Patch 2 enables the gather filter which prevents userspace command
-buffers from using CDMA commands usually reserved for the kernel.
-A test is available at git://github.com/cyndis/host1x_test, branch
-gather-filter.
-
-Patch 3 greatly improves formatting of debug dumps spewed by host1x
-in case of job timeouts. They are now actually readable by humans
-without use of additional scripts.
-
-Patch 4 is a simple aesthetical fix to the TegraDRM submit path.
-
-Everything was tested on TX1 and TX2 and should be applied on the
-previously posted Tegra186 support series.
-
-Cheers,
-Mikko
-
-
-Mikko Perttunen (6):
-  gpu: host1x: Enable Tegra186 syncpoint protection
-  gpu: host1x: Enable gather filter
-  gpu: host1x: Improve debug disassembly formatting
-  gpu: host1x: Disassemble more instructions
-  gpu: host1x: Fix incorrect comment for channel_request
-  drm/tegra: Use u64_to_user_ptr helper
-
- drivers/gpu/drm/tegra/drm.c                 |  29 ++++----
- drivers/gpu/host1x/channel.c                |   3 +-
- drivers/gpu/host1x/debug.c                  |  14 +++-
- drivers/gpu/host1x/debug.h                  |  14 ++--
- drivers/gpu/host1x/dev.h                    |  15 ++++
- drivers/gpu/host1x/hw/channel_hw.c          |  25 +++++++
- drivers/gpu/host1x/hw/debug_hw.c            | 103 ++++++++++++++++++++++------
- drivers/gpu/host1x/hw/debug_hw_1x01.c       |  10 +--
- drivers/gpu/host1x/hw/debug_hw_1x06.c       |  12 ++--
- drivers/gpu/host1x/hw/hw_host1x04_channel.h |  12 ++++
- drivers/gpu/host1x/hw/hw_host1x05_channel.h |  12 ++++
- drivers/gpu/host1x/hw/syncpt_hw.c           |  46 +++++++++++++
- drivers/gpu/host1x/syncpt.c                 |   8 +++
- 13 files changed, 252 insertions(+), 51 deletions(-)
-
--- 
-2.14.1
+VGhpcyBmdW5jdGlvbiBhY3R1YWxseSBkb2Vzbid0IHNsZWVwIGluIHRoZSB2ZXJzaW9uIHRoYXQg
+d2FzIG1lcmdlZC4KClNpZ25lZC1vZmYtYnk6IE1pa2tvIFBlcnR0dW5lbiA8bXBlcnR0dW5lbkBu
+dmlkaWEuY29tPgpSZXZpZXdlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29t
+PgotLS0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9jaGFubmVsLmMgfCAzICstLQogMSBmaWxlIGNoYW5n
+ZWQsIDEgaW5zZXJ0aW9uKCspLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2hvc3QxeC9jaGFubmVsLmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvY2hhbm5lbC5jCmluZGV4
+IGRiOWI5MWQxMzg0Yy4uMmZiOTNjMjdjMWQ5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9ob3N0
+MXgvY2hhbm5lbC5jCisrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9jaGFubmVsLmMKQEAgLTEyOCw4
+ICsxMjgsNyBAQCBzdGF0aWMgc3RydWN0IGhvc3QxeF9jaGFubmVsICphY3F1aXJlX3VudXNlZF9j
+aGFubmVsKHN0cnVjdCBob3N0MXggKmhvc3QpCiAgKiBob3N0MXhfY2hhbm5lbF9yZXF1ZXN0KCkg
+LSBBbGxvY2F0ZSBhIGNoYW5uZWwKICAqIEBkZXZpY2U6IEhvc3QxeCB1bml0IHRoaXMgY2hhbm5l
+bCB3aWxsIGJlIHVzZWQgdG8gc2VuZCBjb21tYW5kcyB0bwogICoKLSAqIEFsbG9jYXRlcyBhIG5l
+dyBob3N0MXggY2hhbm5lbCBmb3IgQGRldmljZS4gSWYgdGhlcmUgYXJlIG5vIGZyZWUgY2hhbm5l
+bHMsCi0gKiB0aGlzIHdpbGwgc2xlZXAgdW50aWwgb25lIGJlY29tZXMgYXZhaWxhYmxlLiBNYXkg
+cmV0dXJuIE5VTEwgaWYgQ0RNQQorICogQWxsb2NhdGVzIGEgbmV3IGhvc3QxeCBjaGFubmVsIGZv
+ciBAZGV2aWNlLiBNYXkgcmV0dXJuIE5VTEwgaWYgQ0RNQQogICogaW5pdGlhbGl6YXRpb24gZmFp
+bHMuCiAgKi8KIHN0cnVjdCBob3N0MXhfY2hhbm5lbCAqaG9zdDF4X2NoYW5uZWxfcmVxdWVzdChz
+dHJ1Y3QgZGV2aWNlICpkZXYpCi0tIAoyLjE0LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
