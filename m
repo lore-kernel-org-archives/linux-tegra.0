@@ -1,135 +1,75 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 02/16] gpio: Move irqchip into struct gpio_irq_chip
-Date: Thu, 28 Sep 2017 11:56:14 +0200
-Message-ID: <20170928095628.21966-3-thierry.reding@gmail.com>
-References: <20170928095628.21966-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 1/2] staging: Introduce NVIDIA Tegra20 video decoder
+ driver
+Date: Thu, 28 Sep 2017 14:37:03 +0300
+Message-ID: <69a019f1-8ce5-6b8b-8eb9-2ce9b8c2759d@gmail.com>
+References: <cover.1506377430.git.digetx@gmail.com>
+ <5c8b83775b982e6ee851c127444a8e839f422ad0.1506377430.git.digetx@gmail.com>
+ <20170927094557.yr2fl5arodjnh637@mwanda>
+ <2b77bfa7-1272-3d11-9190-326fa0f85f22@gmail.com>
+ <20170928072308.s7npizjfnhkxh6zb@mwanda>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170928095628.21966-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20170928072308.s7npizjfnhkxh6zb@mwanda>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 28.09.2017 10:23, Dan Carpenter wrote:
+> On Thu, Sep 28, 2017 at 02:28:04AM +0300, Dmitry Osipenko wrote:
+>>>> +	if (is_baseline_profile)
+>>>> +		frame->aux_paddr = 0xF4DEAD00;
+>>>
+>>> The handling of is_baseline_profile is strange to me.  It feels like we
+>>> should always check it before we use ->aux_paddr but we don't ever do
+>>> that.
+>>>
+>>
+>> In a case of baseline profile, aux buffer isn't needed, HW should't use it. Aux
+>> phys address is set to a predefined and invalid address, so that in a case of
+>> VDE trying to use it, its invalid memory accesses would be reported in KMSG by
+>> memory controller driver and the reported invalid addresses would be known to be
+>> associated with the aux buffer. I'm not sure what you are meaning.
+> 
+> It's not used perhaps, but we do write it to the hardware, right?
+> 
 
-In order to consolidate the multiple ways to associate an IRQ chip with
-a GPIO chip, move more fields into the new struct gpio_irq_chip.
+That's right. I'm pretty sure HW won't use the aux in a case of baseline
+profile, haven't seen an evidence of it. But in order to be on a safe side, the
+addresses are initialized to an invalid value, so HW won't have a chance to
+silently fetch/trash 'arbitrary' main memory and we will know if it tries to do it.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpio/gpiolib.c      | 18 +++++++++---------
- include/linux/gpio/driver.h | 14 ++++++++++++--
- 2 files changed, 21 insertions(+), 11 deletions(-)
+	if (baseline_profile)
+		frame->aux_paddr = 0xF4DEAD00;
+	else {
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index b34d9cbd5809..450007ac1fc0 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1645,7 +1645,7 @@ int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
- 	 * category than their parents, so it won't report false recursion.
- 	 */
- 	irq_set_lockdep_class(irq, chip->lock_key);
--	irq_set_chip_and_handler(irq, chip->irqchip, chip->irq_handler);
-+	irq_set_chip_and_handler(irq, chip->irq.chip, chip->irq_handler);
- 	/* Chips that use nested thread handlers have them marked */
- 	if (chip->irq_nested)
- 		irq_set_nested_thread(irq, 1);
-@@ -1718,7 +1718,7 @@ static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
-  */
- static int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
- {
--	struct irq_chip *irqchip = gpiochip->irqchip;
-+	struct irq_chip *irqchip = gpiochip->irq.chip;
- 	const struct irq_domain_ops *ops;
- 	struct device_node *np;
- 	unsigned int type;
-@@ -1847,7 +1847,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
- 		irq_set_handler_data(gpiochip->irq_chained_parent, NULL);
- 	}
- 
--	if (gpiochip->irqchip) {
-+	if (gpiochip->irq.chip) {
- 		struct gpio_irq_chip *irq = &gpiochip->irq;
- 		unsigned int i;
- 
-@@ -1868,10 +1868,10 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
- 		irq_domain_remove(gpiochip->irqdomain);
- 	}
- 
--	if (gpiochip->irqchip) {
--		gpiochip->irqchip->irq_request_resources = NULL;
--		gpiochip->irqchip->irq_release_resources = NULL;
--		gpiochip->irqchip = NULL;
-+	if (gpiochip->irq.chip) {
-+		gpiochip->irq.chip->irq_request_resources = NULL;
-+		gpiochip->irq.chip->irq_release_resources = NULL;
-+		gpiochip->irq.chip = NULL;
- 	}
- 
- 	gpiochip_irqchip_free_valid_mask(gpiochip);
-@@ -1946,7 +1946,7 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
- 		type = IRQ_TYPE_NONE;
- 	}
- 
--	gpiochip->irqchip = irqchip;
-+	gpiochip->irq.chip = irqchip;
- 	gpiochip->irq_handler = handler;
- 	gpiochip->irq_default_type = type;
- 	gpiochip->to_irq = gpiochip_to_irq;
-@@ -1955,7 +1955,7 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
- 					gpiochip->ngpio, first_irq,
- 					&gpiochip_domain_ops, gpiochip);
- 	if (!gpiochip->irqdomain) {
--		gpiochip->irqchip = NULL;
-+		gpiochip->irq.chip = NULL;
- 		return -EINVAL;
- 	}
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 6100b171817e..974247646886 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -24,6 +24,13 @@ struct module;
-  * struct gpio_irq_chip - GPIO interrupt controller
-  */
- struct gpio_irq_chip {
-+	/**
-+	 * @chip:
-+	 *
-+	 * GPIO IRQ chip implementation, provided by GPIO driver.
-+	 */
-+	struct irq_chip *chip;
-+
- 	/**
- 	 * @domain_ops:
- 	 *
-@@ -69,6 +76,11 @@ struct gpio_irq_chip {
- 	 */
- 	unsigned int *map;
- };
-+
-+static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
-+{
-+	return container_of(chip, struct gpio_irq_chip, chip);
-+}
- #endif
- 
- /**
-@@ -132,7 +144,6 @@ struct gpio_irq_chip {
-  *	safely.
-  * @bgpio_dir: shadowed direction register for generic GPIO to clear/set
-  *	direction safely.
-- * @irqchip: GPIO IRQ chip impl, provided by GPIO driver
-  * @irqdomain: Interrupt translation domain; responsible for mapping
-  *	between GPIO hwirq number and linux irq number
-  * @irq_base: first linux IRQ number assigned to GPIO IRQ chip (deprecated)
-@@ -215,7 +226,6 @@ struct gpio_chip {
- 	 * With CONFIG_GPIOLIB_IRQCHIP we get an irqchip inside the gpiolib
- 	 * to handle IRQs for most practical cases.
- 	 */
--	struct irq_chip		*irqchip;
- 	struct irq_domain	*irqdomain;
- 	unsigned int		irq_base;
- 	irq_flow_handler_t	irq_handler;
+So here ^ all *used* frame entries are being initialized.
+
+> 	tegra_vde_write_iram_entry(iram_tables, 0, i, value, aux_paddr);
+> 
+> It's just strange.
+> 
+
+There up to 16 reference video frames (already decoded) that could be used for
+decoding of a video frame. Addresses of reference frames that shouldn't be used
+for decoding of the current frame are set to an invalid address. Userspace my
+supply wrong frames list or frames list setup code may contain an obscure bug
+and we will know about it.
+
+	} else {
+		aux_paddr = 0xFADEAD00;
+		value = 0;
+	}
+
+Here ^ all *unused* frame entries are being initialized.
+
+	tegra_vde_write_iram_entry(iram_tables, 0, i, value, aux_paddr);
+
+And here ^ these entries are written to the tables that are read by HW.
+
 -- 
-2.14.1
+Dmitry
