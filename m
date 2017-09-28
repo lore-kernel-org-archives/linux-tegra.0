@@ -1,68 +1,44 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v3 3/6] gpu: host1x: Improve debug disassembly formatting
-Date: Thu, 28 Sep 2017 06:29:56 -0700
-Message-ID: <1506605396.29089.22.camel@perches.com>
-References: <20170928125044.32516-1-mperttunen@nvidia.com>
-         <20170928125044.32516-4-mperttunen@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 4/5] dmaengine: Add driver for NVIDIA Tegra AHB DMA
+ controller
+Date: Thu, 28 Sep 2017 17:06:03 +0300
+Message-ID: <b601b829-d87f-99e0-dcf9-ad3f9a7195df@gmail.com>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <0a45e058baba72124b91c663ce1d908d275f4044.1506380746.git.digetx@gmail.com>
+ <20170928092949.GB30097@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170928125044.32516-4-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: digetx@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170928092949.GB30097@localhost>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2017-09-28 at 15:50 +0300, Mikko Perttunen wrote:
-> The host1x driver prints out "disassembly" dumps of the command FIFO
-> and gather contents on submission timeouts. However, the output has
-> been quite difficult to read with unnecessary newlines and occasional
-> missing parentheses.
+On 28.09.2017 12:29, Vinod Koul wrote:
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	ahb_seq  = burst << TEGRA_AHBDMA_CHANNEL_AHB_BURST_SHIFT;
+>> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_ADDR_WRAP;
+>> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_INTR_ENB;
+>> +
+>> +	writel_relaxed(ahb_seq,
+>> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_SEQ);
+>> +
+>> +	writel_relaxed(ahb_addr,
+>> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_PTR);
+> 
+> oh no, you don't write to HW here. This can be called anytime when you have
+> txn running! You should save these and use them in prep_ calls.
+> 
 
-I think it would be cleaner/simpler to change
-this by adding a line initiator with just a
-KERN_<LEVEL> at the few places that actually
-start a newline.
+BTW, some of the DMA drivers have exactly the same problem. I now see that it is
+actually documented explicitly in provider.txt, but that's inconsistent across
+the actual drivers.
 
-Then change the write_to_seqfile to skip any
-output that starts with KERN_<LEVEL>
-
-> diff --git a/drivers/gpu/host1x/hw/debug_hw_1x01.c b/drivers/gpu/host1x/hw/debug_hw_1x01.c
-[]
-> @@ -111,11 +111,11 @@ static void host1x_debug_show_channel_fifo(struct host1x *host,
->  		val = host1x_sync_readl(host, HOST1X_SYNC_CFPEEK_READ);
->  
->  		if (!data_count) {
-> -			host1x_debug_output(o, "%08x:", val);
-> +			host1x_debug_output(o, "%08x: ", val);
-
-ie: change this and the other start of lines to prepend KERN_INFO
-
-			host_x_debug_putput(o, KERN_INFO "%08x ", val);
-
->  			data_count = show_channel_command(o, val);
->  		} else {
-> -			host1x_debug_output(o, "%08x%s", val,
-> -					    data_count > 0 ? ", " : "])\n");
-
-And don't change all the other continuation lines
-
-And change the write_to_ functions to
-
-static inline void write_to_seqfile(void *ctx, const char *str, size_t len)
-{
-	const char *output = printk_skip_level(str);
-
-	seq_write(ctx, output, len - (str - output)); 
-}
-
-static inline void write_to_printk(void *ctx, const char *str, size_t len)
-{
-	const char *output = printk_skip_level(str);
-
-	if (output == str)
-		pr_cont("%s", str);
-	else
-		printk("s", str);
-}
+-- 
+Dmitry
