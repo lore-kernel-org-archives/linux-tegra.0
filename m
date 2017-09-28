@@ -1,44 +1,106 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v3 5/6] gpu: host1x: Fix incorrect comment for channel_request
-Date: Thu, 28 Sep 2017 15:50:43 +0300
-Message-ID: <20170928125044.32516-6-mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 6/6] drm/tegra: Use u64_to_user_ptr helper
+Date: Thu, 28 Sep 2017 15:50:44 +0300
+Message-ID: <20170928125044.32516-7-mperttunen@nvidia.com>
 References: <20170928125044.32516-1-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170928125044.32516-1-mperttunen@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org, digetx@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170928125044.32516-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhpcyBmdW5jdGlvbiBhY3R1YWxseSBkb2Vzbid0IHNsZWVwIGluIHRoZSB2ZXJzaW9uIHRoYXQg
-d2FzIG1lcmdlZC4KClNpZ25lZC1vZmYtYnk6IE1pa2tvIFBlcnR0dW5lbiA8bXBlcnR0dW5lbkBu
-dmlkaWEuY29tPgpSZXZpZXdlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29t
-PgotLS0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9jaGFubmVsLmMgfCAzICstLQogMSBmaWxlIGNoYW5n
-ZWQsIDEgaW5zZXJ0aW9uKCspLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2hvc3QxeC9jaGFubmVsLmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvY2hhbm5lbC5jCmluZGV4
-IGRiOWI5MWQxMzg0Yy4uMmZiOTNjMjdjMWQ5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9ob3N0
-MXgvY2hhbm5lbC5jCisrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9jaGFubmVsLmMKQEAgLTEyOCw4
-ICsxMjgsNyBAQCBzdGF0aWMgc3RydWN0IGhvc3QxeF9jaGFubmVsICphY3F1aXJlX3VudXNlZF9j
-aGFubmVsKHN0cnVjdCBob3N0MXggKmhvc3QpCiAgKiBob3N0MXhfY2hhbm5lbF9yZXF1ZXN0KCkg
-LSBBbGxvY2F0ZSBhIGNoYW5uZWwKICAqIEBkZXZpY2U6IEhvc3QxeCB1bml0IHRoaXMgY2hhbm5l
-bCB3aWxsIGJlIHVzZWQgdG8gc2VuZCBjb21tYW5kcyB0bwogICoKLSAqIEFsbG9jYXRlcyBhIG5l
-dyBob3N0MXggY2hhbm5lbCBmb3IgQGRldmljZS4gSWYgdGhlcmUgYXJlIG5vIGZyZWUgY2hhbm5l
-bHMsCi0gKiB0aGlzIHdpbGwgc2xlZXAgdW50aWwgb25lIGJlY29tZXMgYXZhaWxhYmxlLiBNYXkg
-cmV0dXJuIE5VTEwgaWYgQ0RNQQorICogQWxsb2NhdGVzIGEgbmV3IGhvc3QxeCBjaGFubmVsIGZv
-ciBAZGV2aWNlLiBNYXkgcmV0dXJuIE5VTEwgaWYgQ0RNQQogICogaW5pdGlhbGl6YXRpb24gZmFp
-bHMuCiAgKi8KIHN0cnVjdCBob3N0MXhfY2hhbm5lbCAqaG9zdDF4X2NoYW5uZWxfcmVxdWVzdChz
-dHJ1Y3QgZGV2aWNlICpkZXYpCi0tIAoyLjE0LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Use the u64_to_user_ptr helper macro to cast IOCTL argument u64 values
+to user pointers instead of writing out the cast manually. Also do
+some other cleanup with user pointers to make them stand out more
+and look cleaner.
+
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/drm.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 130d193192ee..943bdf88c4a2 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -386,12 +386,10 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 	unsigned int num_cmdbufs = args->num_cmdbufs;
+ 	unsigned int num_relocs = args->num_relocs;
+ 	unsigned int num_waitchks = args->num_waitchks;
+-	struct drm_tegra_cmdbuf __user *cmdbufs =
+-		(void __user *)(uintptr_t)args->cmdbufs;
+-	struct drm_tegra_reloc __user *relocs =
+-		(void __user *)(uintptr_t)args->relocs;
+-	struct drm_tegra_waitchk __user *waitchks =
+-		(void __user *)(uintptr_t)args->waitchks;
++	struct drm_tegra_cmdbuf __user *user_cmdbufs;
++	struct drm_tegra_reloc __user *user_relocs;
++	struct drm_tegra_waitchk __user *user_waitchks;
++	struct drm_tegra_syncpt __user *user_syncpt;
+ 	struct drm_tegra_syncpt syncpt;
+ 	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
+ 	struct drm_gem_object **refs;
+@@ -400,6 +398,11 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 	unsigned int num_refs;
+ 	int err;
+ 
++	user_cmdbufs = u64_to_user_ptr(args->cmdbufs);
++	user_relocs = u64_to_user_ptr(args->relocs);
++	user_waitchks = u64_to_user_ptr(args->waitchks);
++	user_syncpt = u64_to_user_ptr(args->syncpts);
++
+ 	/* We don't yet support other than one syncpt_incr struct per submit */
+ 	if (args->num_syncpts != 1)
+ 		return -EINVAL;
+@@ -440,7 +443,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		struct tegra_bo *obj;
+ 		u64 offset;
+ 
+-		if (copy_from_user(&cmdbuf, cmdbufs, sizeof(cmdbuf))) {
++		if (copy_from_user(&cmdbuf, user_cmdbufs, sizeof(cmdbuf))) {
+ 			err = -EFAULT;
+ 			goto fail;
+ 		}
+@@ -476,7 +479,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 
+ 		host1x_job_add_gather(job, bo, cmdbuf.words, cmdbuf.offset);
+ 		num_cmdbufs--;
+-		cmdbufs++;
++		user_cmdbufs++;
+ 	}
+ 
+ 	/* copy and resolve relocations from submit */
+@@ -485,7 +488,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		struct tegra_bo *obj;
+ 
+ 		err = host1x_reloc_copy_from_user(&job->relocarray[num_relocs],
+-						  &relocs[num_relocs], drm,
++						  &user_relocs[num_relocs], drm,
+ 						  file);
+ 		if (err < 0)
+ 			goto fail;
+@@ -519,9 +522,8 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		struct host1x_waitchk *wait = &job->waitchk[num_waitchks];
+ 		struct tegra_bo *obj;
+ 
+-		err = host1x_waitchk_copy_from_user(wait,
+-						    &waitchks[num_waitchks],
+-						    file);
++		err = host1x_waitchk_copy_from_user(
++			wait, &user_waitchks[num_waitchks], file);
+ 		if (err < 0)
+ 			goto fail;
+ 
+@@ -539,8 +541,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		}
+ 	}
+ 
+-	if (copy_from_user(&syncpt, (void __user *)(uintptr_t)args->syncpts,
+-			   sizeof(syncpt))) {
++	if (copy_from_user(&syncpt, user_syncpt, sizeof(syncpt))) {
+ 		err = -EFAULT;
+ 		goto fail;
+ 	}
+-- 
+2.14.1
