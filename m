@@ -1,44 +1,111 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1 4/5] dmaengine: Add driver for NVIDIA Tegra AHB DMA
- controller
-Date: Thu, 28 Sep 2017 17:06:03 +0300
-Message-ID: <b601b829-d87f-99e0-dcf9-ad3f9a7195df@gmail.com>
-References: <cover.1506380746.git.digetx@gmail.com>
- <0a45e058baba72124b91c663ce1d908d275f4044.1506380746.git.digetx@gmail.com>
- <20170928092949.GB30097@localhost>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: Use different MSI target address for Tegra20
+Date: Thu, 28 Sep 2017 16:19:12 +0200
+Message-ID: <20170928141912.GB28022@ulmo>
+References: <20170923061740.6012-1-treding@nvidia.com>
+ <CAN7O0+JyG3XT5SsWGsiZs0vrk0ha1vQ5N7rjYxs3tM_NvdONdw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170928092949.GB30097@localhost>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CAN7O0+JyG3XT5SsWGsiZs0vrk0ha1vQ5N7rjYxs3tM_NvdONdw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: vidya sagar <sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 28.09.2017 12:29, Vinod Koul wrote:
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +
->> +	ahb_seq  = burst << TEGRA_AHBDMA_CHANNEL_AHB_BURST_SHIFT;
->> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_ADDR_WRAP;
->> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_INTR_ENB;
->> +
->> +	writel_relaxed(ahb_seq,
->> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_SEQ);
->> +
->> +	writel_relaxed(ahb_addr,
->> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_PTR);
-> 
-> oh no, you don't write to HW here. This can be called anytime when you have
-> txn running! You should save these and use them in prep_ calls.
-> 
 
-BTW, some of the DMA drivers have exactly the same problem. I now see that it is
-actually documented explicitly in provider.txt, but that's inconsistent across
-the actual drivers.
+--ZoaI/ZTpAVc4A5k6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Dmitry
+On Mon, Sep 25, 2017 at 10:44:29AM +0530, vidya sagar wrote:
+> Inline...
+>=20
+> On Sat, Sep 23, 2017 at 11:47 AM, Thierry Reding
+> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> >
+> > The Tegra20 PCIe controller has a different address range for MSI, so
+> > select a different target address.
+> >
+> > Fixes: d7bd554f27c9 ("PCI: tegra: Do not allocate MSI target memory")
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/pci/host/pci-tegra.c | 12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> > index e8e1ddbaabc9..5b02ea59524b 100644
+> > --- a/drivers/pci/host/pci-tegra.c
+> > +++ b/drivers/pci/host/pci-tegra.c
+> > @@ -1563,8 +1563,18 @@ static int tegra_pcie_enable_msi(struct tegra_pc=
+ie *pcie)
+> >          * none of the Tegra SoCs that contain this PCI host bridge can
+> >          * address more than 16 GiB of system memory, the last 4 KiB of
+> >          * these 1012 GiB is a good candidate.
+> > +        *
+> > +        * Unfortunately, Tegra20 is slightly different in that the phy=
+sical
+> > +        * address for this MSI region is limited to the lower 32 bits =
+of the
+> > +        * address map, so the address that we pick is going to have to=
+ be
+> > +        * located somewhere within the region addressable by the CPU a=
+nd
+> > +        * on-SoC controllers. To be on the safe side, we select an add=
+ress
+> > +        * from a region that is marked unused (0xf0010000 - 0xfffeffff=
+).
+> >          */
+> > -       msi->phys =3D 0xfcfffff000;
+> > +       if (soc->msi_base_shift > 0)
+> > +               msi->phys =3D 0xfcfffff000;
+> > +       else
+> > +               msi->phys =3D 0x00f0010000;
+>=20
+> Can we use this for later Tegra chip versions as well?
+> Reason being, if an end point's config space says that it cannot
+> support >32-bit MSI addresses (Marvel SATA controller being one
+> example), with the current code, we still allocate an address of
+> >32-bits, resulting in end point not being able to generate MSI
+> interrupt (as it discards >32-bits where generating upstream memory
+> write transaction for MSI)
+
+Looks like the universal fix for this may not be trivial, so perhaps in
+the meantime this one could go in in order to restore MSI for TrimSlice
+(and other Tegra20 boards)?
+
+Bjorn: do you have any objections to taking this into v4.13 via a stable
+backport? 32-bit only MSI were never guaranteed to work because prior to
+this patch the address was taken from an allocated page, which may or
+may not have been > 4 GiB.
+
+We could then go and fix 32-bit MSI hopefully in time for 4.14, but it'd
+be a shame if v4.13 keeps being broken just because we're trying to
+settle on the right solution for 32-bit MSI.
+
+Thierry
+
+--ZoaI/ZTpAVc4A5k6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnNBN0ACgkQ3SOs138+
+s6ER9g//VAYNmyvfIpGDGM9/w6J+Tz0hrsaOuOGE/W41pyfzAAr+mCDRIXwAXTMV
+LTRnWBr9xFMJOrHBy2I7HBURke7GdU4yz+L0GvYUbwI5wgyI+GGzNwdlnwN956Yi
+2XsP2UWuj0qs0Sb1xqvPHkzXkehL4NKy48xmu/0lF3tP6Eh9oIKL1ZnXDHlAHVJ3
+5AjUNCpqsHNriLTapc95AGjucaCuu79bx3jQUL84YwfZ/lZF5n7cuGVkOR2567KF
+S7+SoCl9nLPyNQuzHepAr/ixYlXYUFXx0BBclkieY8ERS9shauyyicMg5SeZFo5S
+CqSLhVfG/gidimqzcYvW5PIi+zYPTUrw23cTq4xXKQ2kTUflPRzlJsTfVV2ZVcRY
+khOGaR8WsO1k7GtPCtxuEmERzh+JCYcbmXx43oDAcUojydQ1apSNy5DuikQCk+f5
+SfTAljT6ZnWWTrNKyTPq6YY/mjjruvtKEQzp23SBa+QNKysFnSgrLHTwmCk1+jzU
+On/hYTIIvNAR+HETq7P5n21C+s+G+rVSWoA/Qgw8urrUAnb+QcmCvYDOQ5Qky0LE
++1t2pdKJ9TyVQejMjUD74YKiW0jD+KMZ+7jGiGMpkWx29eoCEWkjlR+YleUtyI78
+1TuZy+yXO5Kq6mGVy0510JjAwndTp4ZvQzVNUBU+C+tSTDy1UPY=
+=C3fW
+-----END PGP SIGNATURE-----
+
+--ZoaI/ZTpAVc4A5k6--
