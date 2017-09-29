@@ -1,22 +1,23 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] usb: phy: tegra: Fix phy suspend for UDC
-Date: Fri, 29 Sep 2017 18:04:18 +0300
-Message-ID: <59d45a79-5b6c-5bd5-7c00-c85624a11988@gmail.com>
+Date: Fri, 29 Sep 2017 16:12:02 +0100
+Message-ID: <de96e627-2627-217e-09a9-eb2452116827@nvidia.com>
 References: <1506690388-23112-1-git-send-email-jonathanh@nvidia.com>
  <e97b9710-92c6-7eda-1bc2-0e97be5ded90@nvidia.com>
  <2a496e06-1857-ae2a-4cc5-ebda4965590b@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <2a496e06-1857-ae2a-4cc5-ebda4965590b-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 29.09.2017 17:57, Dmitry Osipenko wrote:
+
+On 29/09/17 15:57, Dmitry Osipenko wrote:
 > On 29.09.2017 16:10, Jon Hunter wrote:
 >> Adding Dmitry ...
 >>
@@ -84,10 +85,49 @@ On 29.09.2017 17:57, Dmitry Osipenko wrote:
 > Adding analogical check to clk_enable fixes "utmi_phy_clk_enable: timeout
 > waiting for phy to stabilize" error message during of kernel boot-up on Tegra20.
 > 
+> What about to incorporate it to this patch?
+> 
+> @@ -354,16 +354,25 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
+>  		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
+>  }
+> 
+>  static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
+>  {
+>  	unsigned long val;
+>  	void __iomem *base = phy->regs;
+> 
+> +	/*
+> +	 * The USB driver may have already initiated the phy clock
+> +	 * enable so wait to see if the clock turns on and if not
+> +	 * then proceed with ungating the clock.
+> +	 */
+> +	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
+> +						     USB_PHY_CLK_VALID) == 0)
+> +		return;
+> +
+>  	if (phy->is_legacy_phy) {
+>  		val = readl(base + USB_SUSP_CTRL);
+>  		val |= USB_SUSP_CLR;
+>  		writel(val, base + USB_SUSP_CTRL);
+> 
+>  		udelay(10);
+> 
+>  		val = readl(base + USB_SUSP_CTRL);
+> 
 
-'During of UDC probe' would me more correct to say and UDC driver still working
-excellent.
+Yes, I see that message as well. However, looks like that has been
+around for a long time (for all v4.x kernels)! I also see the following
+on Tegra20-trimslice (for all v4.x kernels as well) ...
 
+[    1.852474] ulpi_phy_power_on: ulpi write failed
+[    1.857086] tegra-ehci c5004000.usb: Failed to power on the phy
+[    1.863039] tegra-ehci: probe of c5004000.usb failed with error -110
+
+The above is not related to this issue though. Let me take a look at bit
+closer at these messages.
+
+Cheers
+Jon
 
 -- 
-Dmitry
+nvpublic
