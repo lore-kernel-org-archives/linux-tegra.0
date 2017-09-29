@@ -1,88 +1,115 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 2/4] clk: tegra: check BPMP response return code
-Date: Fri, 29 Sep 2017 15:53:31 +0100
-Message-ID: <5dfbbc6d-0dc0-7d92-0bff-8b05ddd272b3@nvidia.com>
-References: <cover.1504776489.git.talho@nvidia.com>
- <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
- <388e07bc-b7b4-cc17-026a-bd08d77942ca@nvidia.com>
- <fc9729a7-53fb-f609-be6a-6454cc69548f@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] usb: phy: tegra: Fix phy suspend for UDC
+Date: Fri, 29 Sep 2017 17:57:50 +0300
+Message-ID: <2a496e06-1857-ae2a-4cc5-ebda4965590b@gmail.com>
+References: <1506690388-23112-1-git-send-email-jonathanh@nvidia.com>
+ <e97b9710-92c6-7eda-1bc2-0e97be5ded90@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fc9729a7-53fb-f609-be6a-6454cc69548f@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <e97b9710-92c6-7eda-1bc2-0e97be5ded90-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Timo Alho <talho@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 29/09/17 14:46, Timo Alho wrote:
-> Hi Jon,
+On 29.09.2017 16:10, Jon Hunter wrote:
+> Adding Dmitry ...
 > 
-> On 21.09.2017 14:21, Jonathan Hunter wrote:
->>
->>
->> On 07/09/17 10:31, Timo Alho wrote:
->>> Check return code in BPMP response message(s). The typical error case
->>> is when clock operation is attempted with invalid clock identifier.
->>>
->>> Also remove error print from call to clk_get_info() as the
->>> implementation loops through range of all possible identifier, but the
->>> operation is expected error out when the clock id is unused.
->>>
->>> Signed-off-by: Timo Alho <talho@nvidia.com>
->>> ---
->>>   drivers/clk/tegra/clk-bpmp.c | 15 ++++++++++-----
->>>   1 file changed, 10 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
->>> index 638ace6..a896692 100644
->>> --- a/drivers/clk/tegra/clk-bpmp.c
->>> +++ b/drivers/clk/tegra/clk-bpmp.c
->>> @@ -55,6 +55,7 @@ struct tegra_bpmp_clk_message {
->>>       struct {
->>>           void *data;
->>>           size_t size;
->>> +        int ret;
->>>       } rx;
->>>   };
->>>   @@ -64,6 +65,7 @@ static int tegra_bpmp_clk_transfer(struct
->>> tegra_bpmp *bpmp,
->>>       struct mrq_clk_request request;
->>>       struct tegra_bpmp_message msg;
->>>       void *req = &request;
->>> +    int err;
->>>         memset(&request, 0, sizeof(request));
->>>       request.cmd_and_id = (clk->cmd << 24) | clk->id;
->>> @@ -84,7 +86,13 @@ static int tegra_bpmp_clk_transfer(struct
->>> tegra_bpmp *bpmp,
->>>       msg.rx.data = clk->rx.data;
->>>       msg.rx.size = clk->rx.size;
->>>   -    return tegra_bpmp_transfer(bpmp, &msg);
->>> +    err = tegra_bpmp_transfer(bpmp, &msg);
->>> +    if (err < 0)
->>> +        return err;
->>> +    else if (msg.rx.ret < 0)
->>> +        return -EINVAL;
->>
->> I assume that the error codes returned do not correlated to the Linux
->> error codes here. Is that correct? If not we could just return the
->> actual error code. Otherwise would it be useful to print a message with
->> the bpmp error code for debug?
+> Felipe, Thierry, this is needed for v4.14-rc because suspend is currently
+> broken for some Tegra devices.
 > 
-> The error codes are not 1:1 match with Linux. Unfortunately, printing
-> message for debug is not either viable as during clock probing we are
-> expecting many of the calls to return -BPMP_EINVAL to indicate that
-> particular clock ID is unused.
+> Jon
+> 
+> On 29/09/17 14:06, Jon Hunter wrote:
+>> Commit dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
+>> added UDC support for Tegra but with UDC support enabled, is was found
+>> that Tegra30, Tegra114 and Tegra124 would hang on entry to suspend.
+>>
+>> The hang occurred during the suspend of the USB PHY when the Tegra PHY
+>> driver attempted to disable the PHY clock. The problem is that before
+>> the Tegra PHY driver is suspended, the chipidea driver already disabled
+>> the PHY clock and when the Tegra PHY driver suspended, it could not read
+>> DEVLC register and caused the device to hang.
+>>
+>> The Tegra USB PHY driver is used by both the Tegra EHCI driver and now
+>> the chipidea UDC driver and so simply removing the disabling of the PHY
+>> clock from the USB PHY driver would not work for the Tegra EHCI driver.
+>> Fortunately, the status of the USB PHY clock can be read from the
+>> USB_SUSP_CTRL register and therefore, to workaround this issue, simply
+>> poll the register prior to disabling the clock in USB PHY driver to see
+>> if clock gating has already been initiated. Please note that it can take
+>> a few uS for the clock to disable and so simply reading this status
+>> register once on entry is not sufficient.
+>>
+>> Please note that no issues are seen with Tegra20 because it has a slightly
+>> different PHY to Tegra30/114/124.
+>>
+> 
+> I forgot the fixes tag ...
+> 
+> Fixes: dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
+>  
+>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/usb/phy/phy-tegra-usb.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+>> index 5fe4a5704bde..c8fff99bd16e 100644
+>> --- a/drivers/usb/phy/phy-tegra-usb.c
+>> +++ b/drivers/usb/phy/phy-tegra-usb.c
+>> @@ -329,6 +329,14 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
+>>  	unsigned long val;
+>>  	void __iomem *base = phy->regs;
+>>  
+>> +	/*
+>> +	 * The USB driver may have already initiated the phy clock
+>> +	 * disable so wait to see if the clock turns off and if not
+>> +	 * then proceed with gating the clock.
+>> +	 */
+>> +	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) == 0)
+>> +		return;
+>> +
+>>  	if (phy->is_legacy_phy) {
+>>  		val = readl(base + USB_SUSP_CTRL);
+>>  		val |= USB_SUSP_SET;
+>>
+> 
 
-OK. Could it return other errors other than BPMP_EINVAL? I am just
-wondering if we need to differentiate between unused and an actual
-error? Maybe that is not possible here?
+Adding analogical check to clk_enable fixes "utmi_phy_clk_enable: timeout
+waiting for phy to stabilize" error message during of kernel boot-up on Tegra20.
 
-Cheers
-Jon
+What about to incorporate it to this patch?
+
+@@ -354,16 +354,25 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
+ 		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
+ }
+
+ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
+ {
+ 	unsigned long val;
+ 	void __iomem *base = phy->regs;
+
++	/*
++	 * The USB driver may have already initiated the phy clock
++	 * enable so wait to see if the clock turns on and if not
++	 * then proceed with ungating the clock.
++	 */
++	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
++						     USB_PHY_CLK_VALID) == 0)
++		return;
++
+ 	if (phy->is_legacy_phy) {
+ 		val = readl(base + USB_SUSP_CTRL);
+ 		val |= USB_SUSP_CLR;
+ 		writel(val, base + USB_SUSP_CTRL);
+
+ 		udelay(10);
+
+ 		val = readl(base + USB_SUSP_CTRL);
 
 -- 
-nvpublic
+Dmitry
