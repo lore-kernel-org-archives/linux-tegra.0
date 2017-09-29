@@ -1,115 +1,173 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: phy: tegra: Fix phy suspend for UDC
-Date: Fri, 29 Sep 2017 17:57:50 +0300
-Message-ID: <2a496e06-1857-ae2a-4cc5-ebda4965590b@gmail.com>
-References: <1506690388-23112-1-git-send-email-jonathanh@nvidia.com>
- <e97b9710-92c6-7eda-1bc2-0e97be5ded90@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] firmware: tegra: add BPMP debugfs support
+Date: Fri, 29 Sep 2017 15:58:11 +0100
+Message-ID: <2a51649c-99d3-4e72-9a81-e93aec8f72de@nvidia.com>
+References: <1503410640-2691-1-git-send-email-talho@nvidia.com>
+ <31191fe9-41d6-5527-2a31-389d113c459e@nvidia.com>
+ <7d3aaba8-13ef-7713-d0a9-726ed5fbde0e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e97b9710-92c6-7eda-1bc2-0e97be5ded90-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <7d3aaba8-13ef-7713-d0a9-726ed5fbde0e-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 29.09.2017 16:10, Jon Hunter wrote:
-> Adding Dmitry ...
-> 
-> Felipe, Thierry, this is needed for v4.14-rc because suspend is currently
-> broken for some Tegra devices.
-> 
-> Jon
-> 
-> On 29/09/17 14:06, Jon Hunter wrote:
->> Commit dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
->> added UDC support for Tegra but with UDC support enabled, is was found
->> that Tegra30, Tegra114 and Tegra124 would hang on entry to suspend.
+
+On 29/09/17 14:41, Timo Alho wrote:> On 21.09.2017 14:10, Jonathan
+Hunter wrote:
+>>> --- a/drivers/firmware/tegra/bpmp.c
+>>> +++ b/drivers/firmware/tegra/bpmp.c
+>>> @@ -824,6 +824,8 @@ static int tegra_bpmp_probe(struct
+>>> platform_device *pdev)
+>>>       if (err < 0)
+>>>           goto free_mrq;
+>>>   +    (void)tegra_bpmp_init_debugfs(bpmp);
+>>> +
 >>
->> The hang occurred during the suspend of the USB PHY when the Tegra PHY
->> driver attempted to disable the PHY clock. The problem is that before
->> the Tegra PHY driver is suspended, the chipidea driver already disabled
->> the PHY clock and when the Tegra PHY driver suspended, it could not read
->> DEVLC register and caused the device to hang.
->>
->> The Tegra USB PHY driver is used by both the Tegra EHCI driver and now
->> the chipidea UDC driver and so simply removing the disabling of the PHY
->> clock from the USB PHY driver would not work for the Tegra EHCI driver.
->> Fortunately, the status of the USB PHY clock can be read from the
->> USB_SUSP_CTRL register and therefore, to workaround this issue, simply
->> poll the register prior to disabling the clock in USB PHY driver to see
->> if clock gating has already been initiated. Please note that it can take
->> a few uS for the clock to disable and so simply reading this status
->> register once on entry is not sufficient.
->>
->> Please note that no issues are seen with Tegra20 because it has a slightly
->> different PHY to Tegra30/114/124.
->>
+>> This looks a bit odd, why not just return the error code here?
 > 
-> I forgot the fixes tag ...
-> 
-> Fixes: dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
->  
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/usb/phy/phy-tegra-usb.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
+> I wanted to avoid failing probe if only debugfs initialization fails.
+> I'll add a error print in next version here, but let probing to complete.
+
+OK, yes that would be better.
+
+>>> diff --git a/drivers/firmware/tegra/bpmp_debugfs.c
+>>> b/drivers/firmware/tegra/bpmp_debugfs.c
+>>> new file mode 100644
+>>> index 0000000..4d0279d
+>>> --- /dev/null
+>>> +++ b/drivers/firmware/tegra/bpmp_debugfs.c
+
+...
+
+>>> +static int mrq_debugfs_read(struct tegra_bpmp *bpmp,
+>>> +                dma_addr_t name, size_t sz_name,
+>>> +                dma_addr_t data, size_t sz_data,
+>>> +                size_t *nbytes)
+>>> +{
+>>> +    struct mrq_debugfs_request req = {
+>>> +        .cmd = cpu_to_le32(CMD_DEBUGFS_READ),
+>>> +        .fop = {
+>>> +            .fnameaddr = cpu_to_le32((uint32_t)name),
+>>> +            .fnamelen = cpu_to_le32((uint32_t)sz_name),
+>>> +            .dataaddr = cpu_to_le32((uint32_t)data),
+>>> +            .datalen = cpu_to_le32((uint32_t)sz_data),
+>>> +        },
+>>> +    };
+>>> +    struct mrq_debugfs_response resp;
+>>> +    struct tegra_bpmp_message msg = {
+>>> +        .mrq = MRQ_DEBUGFS,
+>>> +        .tx = {
+>>> +            .data = &req,
+>>> +            .size = sizeof(req),
+>>> +        },
+>>> +        .rx = {
+>>> +            .data = &resp,
+>>> +            .size = sizeof(resp),
+>>> +        },
+>>> +    };
 >>
->> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
->> index 5fe4a5704bde..c8fff99bd16e 100644
->> --- a/drivers/usb/phy/phy-tegra-usb.c
->> +++ b/drivers/usb/phy/phy-tegra-usb.c
->> @@ -329,6 +329,14 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
->>  	unsigned long val;
->>  	void __iomem *base = phy->regs;
->>  
->> +	/*
->> +	 * The USB driver may have already initiated the phy clock
->> +	 * disable so wait to see if the clock turns off and if not
->> +	 * then proceed with gating the clock.
->> +	 */
->> +	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) == 0)
->> +		return;
->> +
->>  	if (phy->is_legacy_phy) {
->>  		val = readl(base + USB_SUSP_CTRL);
->>  		val |= USB_SUSP_SET;
->>
+>> Not sure if the above would be better in some sub-function to prepare
+>> the message. Looks like such a sub/helper function could be used by some
+>> of the following functions too.
 > 
+> I thought about it but gave up as it would be just generic extra wrapper
+> for existing API (that is not specific to this driver).
 
-Adding analogical check to clk_enable fixes "utmi_phy_clk_enable: timeout
-waiting for phy to stabilize" error message during of kernel boot-up on Tegra20.
+OK.
 
-What about to incorporate it to this patch?
+>>> +static int debugfs_show(struct seq_file *m, void *p)
+>>> +{
+>>> +    struct file *file = m->private;
+>>> +    struct inode *inode = file_inode(file);
+>>> +    struct tegra_bpmp *bpmp = inode->i_private;
+>>> +    const size_t datasize = m->size;
+>>> +    const size_t namesize = SZ_256;
+>>> +    void *datavirt, *namevirt;
+>>> +    dma_addr_t dataphys, namephys;
+>>> +    char buf[256];
+>>> +    const char *filename;
+>>> +    size_t len, nbytes;
+>>> +    int ret;
+>>> +
+>>> +    filename = get_filename(bpmp, file, buf, sizeof(buf));
+>>> +    if (!filename)
+>>> +        return -ENOENT;
+>>
+>> Is it guaranteed that filename is null terminated here? If not then ...
+> 
+> As far as I can tell by looking at get_filename() and the functions it
+> calls, filename should be null terminated.
+> 
+>>> +
+>>> +    namevirt = dma_alloc_coherent(bpmp->dev, namesize, &namephys,
+>>> +                      GFP_KERNEL | GFP_DMA32);
+>>> +    if (!namevirt)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    datavirt = dma_alloc_coherent(bpmp->dev, datasize, &dataphys,
+>>> +                      GFP_KERNEL | GFP_DMA32);
+>>> +    if (!datavirt) {
+>>> +        ret = -ENOMEM;
+>>> +        goto free_namebuf;
+>>> +    }
+>>> +
+>>> +    len = strlen(filename);
+>>> +    strlcpy(namevirt, filename, namesize);
+>>
+>> Although very unlikely a name would be 256 characters long, but if it
+>> was 256 chars then the last character would be truncated.
+> 
+> Yes, will replace this with strncpy(). BPMP does not require this string
+> to be NULL terminated anyway.
+> 
+>>> +static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf
+>>> *seqbuf,
+>>> +                 struct dentry *parent, uint32_t depth)
+>>
+>> Do we need to use uint32_t here?
+>>
+>>> +{
+>>> +    int err;
+>>> +    uint32_t d, t;
+>>
+>> And here?
+> 
+> It's part of the BPMP ABI that the data passed is 32 bit unsigned
+> integer. I wanted to emphasise that with the choice of integer type. Or
+> did you mean why I did not use u32?
 
-@@ -354,16 +354,25 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
- 		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
- }
+Yes why not just u32?
 
- static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
- {
- 	unsigned long val;
- 	void __iomem *base = phy->regs;
+>>> +    const char *name;
+>>> +    struct dentry *dentry;
+>>> +
+>>> +    while (!seqbuf_eof(seqbuf)) {
+>>> +        if (seqbuf_read_u32(seqbuf, &d) < 0)
+>>> +            return -EIO;
+>>
+>> Why not return the actual error code?
+> 
+> Will fix in next patch
+> 
+>>> +                return dentry ? PTR_ERR(dentry) : -ENOMEM;
+>>> +            err = bpmp_populate_dir(bpmp, seqbuf, dentry, depth+1);
+>>> +            if (err < 0)
+>>> +                return err;
+>>
+>> Do we need to remove the directory created here? Or is that handled by
+>> the recursive removal below?
+> 
+> Recursive removal will take care of it.
 
-+	/*
-+	 * The USB driver may have already initiated the phy clock
-+	 * enable so wait to see if the clock turns on and if not
-+	 * then proceed with ungating the clock.
-+	 */
-+	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
-+						     USB_PHY_CLK_VALID) == 0)
-+		return;
-+
- 	if (phy->is_legacy_phy) {
- 		val = readl(base + USB_SUSP_CTRL);
- 		val |= USB_SUSP_CLR;
- 		writel(val, base + USB_SUSP_CTRL);
+OK great.
 
- 		udelay(10);
-
- 		val = readl(base + USB_SUSP_CTRL);
+Cheers
+Jon
 
 -- 
-Dmitry
+nvpublic
