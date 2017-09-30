@@ -1,14 +1,14 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 4/6] gpu: host1x: Disassemble more instructions
-Date: Sat, 30 Sep 2017 05:44:13 +0300
-Message-ID: <0e8d5867-f689-a4fe-9460-cf3642e90545@gmail.com>
+Subject: Re: [PATCH v3 6/6] drm/tegra: Use u64_to_user_ptr helper
+Date: Sat, 30 Sep 2017 05:44:46 +0300
+Message-ID: <23bcc5c9-3706-1200-51c9-a48934254343@gmail.com>
 References: <20170928125044.32516-1-mperttunen@nvidia.com>
- <20170928125044.32516-5-mperttunen@nvidia.com>
+ <20170928125044.32516-7-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170928125044.32516-5-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20170928125044.32516-7-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
@@ -16,156 +16,100 @@ Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79
 List-Id: linux-tegra@vger.kernel.org
 
 On 28.09.2017 15:50, Mikko Perttunen wrote:
-> The disassembler for debug dumps was missing some newer host1x opcodes.
-> Add disassembly support for these.
+> Use the u64_to_user_ptr helper macro to cast IOCTL argument u64 values
+> to user pointers instead of writing out the cast manually. Also do
+> some other cleanup with user pointers to make them stand out more
+> and look cleaner.
 > 
 > Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 
 Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-And for older Tegra's:
-
 Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-
->  drivers/gpu/host1x/hw/debug_hw.c      | 59 ++++++++++++++++++++++++++++++++---
->  drivers/gpu/host1x/hw/debug_hw_1x01.c |  2 +-
->  drivers/gpu/host1x/hw/debug_hw_1x06.c |  3 +-
->  3 files changed, 58 insertions(+), 6 deletions(-)
+>  drivers/gpu/drm/tegra/drm.c | 29 +++++++++++++++--------------
+>  1 file changed, 15 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
-> index 1e67667e308c..989476801f9d 100644
-> --- a/drivers/gpu/host1x/hw/debug_hw.c
-> +++ b/drivers/gpu/host1x/hw/debug_hw.c
-> @@ -30,6 +30,13 @@ enum {
->  	HOST1X_OPCODE_IMM	= 0x04,
->  	HOST1X_OPCODE_RESTART	= 0x05,
->  	HOST1X_OPCODE_GATHER	= 0x06,
-> +	HOST1X_OPCODE_SETSTRMID = 0x07,
-> +	HOST1X_OPCODE_SETAPPID  = 0x08,
-> +	HOST1X_OPCODE_SETPYLD   = 0x09,
-> +	HOST1X_OPCODE_INCR_W    = 0x0a,
-> +	HOST1X_OPCODE_NONINCR_W = 0x0b,
-> +	HOST1X_OPCODE_GATHER_W  = 0x0c,
-> +	HOST1X_OPCODE_RESTART_W = 0x0d,
->  	HOST1X_OPCODE_EXTEND	= 0x0e,
->  };
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index 130d193192ee..943bdf88c4a2 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -386,12 +386,10 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>  	unsigned int num_cmdbufs = args->num_cmdbufs;
+>  	unsigned int num_relocs = args->num_relocs;
+>  	unsigned int num_waitchks = args->num_waitchks;
+> -	struct drm_tegra_cmdbuf __user *cmdbufs =
+> -		(void __user *)(uintptr_t)args->cmdbufs;
+> -	struct drm_tegra_reloc __user *relocs =
+> -		(void __user *)(uintptr_t)args->relocs;
+> -	struct drm_tegra_waitchk __user *waitchks =
+> -		(void __user *)(uintptr_t)args->waitchks;
+> +	struct drm_tegra_cmdbuf __user *user_cmdbufs;
+> +	struct drm_tegra_reloc __user *user_relocs;
+> +	struct drm_tegra_waitchk __user *user_waitchks;
+> +	struct drm_tegra_syncpt __user *user_syncpt;
+>  	struct drm_tegra_syncpt syncpt;
+>  	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
+>  	struct drm_gem_object **refs;
+> @@ -400,6 +398,11 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>  	unsigned int num_refs;
+>  	int err;
 >  
-> @@ -38,11 +45,16 @@ enum {
->  	HOST1X_OPCODE_EXTEND_RELEASE_MLOCK	= 0x01,
->  };
->  
-> -static unsigned int show_channel_command(struct output *o, u32 val)
-> +#define INVALID_PAYLOAD				0xffffffff
+> +	user_cmdbufs = u64_to_user_ptr(args->cmdbufs);
+> +	user_relocs = u64_to_user_ptr(args->relocs);
+> +	user_waitchks = u64_to_user_ptr(args->waitchks);
+> +	user_syncpt = u64_to_user_ptr(args->syncpts);
 > +
-> +static unsigned int show_channel_command(struct output *o, u32 val,
-> +					 u32 *payload)
->  {
-> -	unsigned int mask, subop, num;
-> +	unsigned int mask, subop, num, opcode;
-> +
-> +	opcode = val >> 28;
+>  	/* We don't yet support other than one syncpt_incr struct per submit */
+>  	if (args->num_syncpts != 1)
+>  		return -EINVAL;
+> @@ -440,7 +443,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>  		struct tegra_bo *obj;
+>  		u64 offset;
 >  
-> -	switch (val >> 28) {
-> +	switch (opcode) {
->  	case HOST1X_OPCODE_SETCLASS:
->  		mask = val & 0x3f;
->  		if (mask) {
-> @@ -97,6 +109,44 @@ static unsigned int show_channel_command(struct output *o, u32 val)
->  				    val >> 14 & 0x1, val & 0x3fff);
->  		return 1;
+> -		if (copy_from_user(&cmdbuf, cmdbufs, sizeof(cmdbuf))) {
+> +		if (copy_from_user(&cmdbuf, user_cmdbufs, sizeof(cmdbuf))) {
+>  			err = -EFAULT;
+>  			goto fail;
+>  		}
+> @@ -476,7 +479,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
 >  
-> +#if HOST1X_HW >= 6
-> +	case HOST1X_OPCODE_SETSTRMID:
-> +		host1x_debug_cont(o, "SETSTRMID(offset=%06x)\n",
-> +				  val & 0x3fffff);
-> +		return 0;
-> +
-> +	case HOST1X_OPCODE_SETAPPID:
-> +		host1x_debug_cont(o, "SETAPPID(appid=%02x)\n", val & 0xff);
-> +		return 0;
-> +
-> +	case HOST1X_OPCODE_SETPYLD:
-> +		*payload = val & 0xffff;
-> +		host1x_debug_cont(o, "SETPYLD(data=%04x)\n", *payload);
-> +		return 0;
-> +
-> +	case HOST1X_OPCODE_INCR_W:
-> +	case HOST1X_OPCODE_NONINCR_W:
-> +		host1x_debug_cont(o, "%s(offset=%06x, ",
-> +				  opcode == HOST1X_OPCODE_INCR_W ?
-> +					"INCR_W" : "NONINCR_W",
-> +				  val & 0x3fffff);
-> +		if (*payload == 0) {
-> +			host1x_debug_cont(o, "[])\n");
-> +			return 0;
-> +		} else if (*payload == INVALID_PAYLOAD) {
-> +			host1x_debug_cont(o, "unknown)\n");
-> +			return 0;
-> +		} else {
-> +			host1x_debug_cont(o, "[");
-> +			return *payload;
-> +		}
-> +
-> +	case HOST1X_OPCODE_GATHER_W:
-> +		host1x_debug_cont(o, "GATHER_W(count=%04x, addr=[",
-> +				  val & 0x3fff);
-> +		return 2;
-> +#endif
-> +
->  	case HOST1X_OPCODE_EXTEND:
->  		subop = val >> 24 & 0xf;
->  		if (subop == HOST1X_OPCODE_EXTEND_ACQUIRE_MLOCK)
-> @@ -122,6 +172,7 @@ static void show_gather(struct output *o, phys_addr_t phys_addr,
->  	/* Map dmaget cursor to corresponding mem handle */
->  	u32 offset = phys_addr - pin_addr;
->  	unsigned int data_count = 0, i;
-> +	u32 payload = INVALID_PAYLOAD;
+>  		host1x_job_add_gather(job, bo, cmdbuf.words, cmdbuf.offset);
+>  		num_cmdbufs--;
+> -		cmdbufs++;
+> +		user_cmdbufs++;
+>  	}
 >  
->  	/*
->  	 * Sometimes we're given different hardware address to the same
-> @@ -139,7 +190,7 @@ static void show_gather(struct output *o, phys_addr_t phys_addr,
+>  	/* copy and resolve relocations from submit */
+> @@ -485,7 +488,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>  		struct tegra_bo *obj;
 >  
->  		if (!data_count) {
->  			host1x_debug_output(o, "%08x: %08x: ", addr, val);
-> -			data_count = show_channel_command(o, val);
-> +			data_count = show_channel_command(o, val, &payload);
->  		} else {
->  			host1x_debug_cont(o, "%08x%s", val,
->  					    data_count > 1 ? ", " : "])\n");
-> diff --git a/drivers/gpu/host1x/hw/debug_hw_1x01.c b/drivers/gpu/host1x/hw/debug_hw_1x01.c
-> index 09e1aa7bb5dd..8790d5fd5f20 100644
-> --- a/drivers/gpu/host1x/hw/debug_hw_1x01.c
-> +++ b/drivers/gpu/host1x/hw/debug_hw_1x01.c
-> @@ -112,7 +112,7 @@ static void host1x_debug_show_channel_fifo(struct host1x *host,
+>  		err = host1x_reloc_copy_from_user(&job->relocarray[num_relocs],
+> -						  &relocs[num_relocs], drm,
+> +						  &user_relocs[num_relocs], drm,
+>  						  file);
+>  		if (err < 0)
+>  			goto fail;
+> @@ -519,9 +522,8 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>  		struct host1x_waitchk *wait = &job->waitchk[num_waitchks];
+>  		struct tegra_bo *obj;
 >  
->  		if (!data_count) {
->  			host1x_debug_output(o, "%08x: ", val);
-> -			data_count = show_channel_command(o, val);
-> +			data_count = show_channel_command(o, val, NULL);
->  		} else {
->  			host1x_debug_cont(o, "%08x%s", val,
->  					  data_count > 1 ? ", " : "])\n");
-> diff --git a/drivers/gpu/host1x/hw/debug_hw_1x06.c b/drivers/gpu/host1x/hw/debug_hw_1x06.c
-> index bd89da5dc64c..b503c740c022 100644
-> --- a/drivers/gpu/host1x/hw/debug_hw_1x06.c
-> +++ b/drivers/gpu/host1x/hw/debug_hw_1x06.c
-> @@ -63,6 +63,7 @@ static void host1x_debug_show_channel_fifo(struct host1x *host,
->  					   struct output *o)
->  {
->  	u32 val, rd_ptr, wr_ptr, start, end;
-> +	u32 payload = INVALID_PAYLOAD;
->  	unsigned int data_count = 0;
+> -		err = host1x_waitchk_copy_from_user(wait,
+> -						    &waitchks[num_waitchks],
+> -						    file);
+> +		err = host1x_waitchk_copy_from_user(
+> +			wait, &user_waitchks[num_waitchks], file);
+>  		if (err < 0)
+>  			goto fail;
 >  
->  	host1x_debug_output(o, "%u: fifo:\n", ch->id);
-> @@ -107,7 +108,7 @@ static void host1x_debug_show_channel_fifo(struct host1x *host,
->  		if (!data_count) {
->  			host1x_debug_output(o, "%03x 0x%08x: ",
->  					    rd_ptr - start, val);
-> -			data_count = show_channel_command(o, val);
-> +			data_count = show_channel_command(o, val, &payload);
->  		} else {
->  			host1x_debug_cont(o, "%08x%s", val,
->  					  data_count > 1 ? ", " : "])\n");
+> @@ -539,8 +541,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+>  		}
+>  	}
+>  
+> -	if (copy_from_user(&syncpt, (void __user *)(uintptr_t)args->syncpts,
+> -			   sizeof(syncpt))) {
+> +	if (copy_from_user(&syncpt, user_syncpt, sizeof(syncpt))) {
+>  		err = -EFAULT;
+>  		goto fail;
+>  	}
 > 
