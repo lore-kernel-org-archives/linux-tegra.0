@@ -1,95 +1,42 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-Date: Sat, 30 Sep 2017 06:11:07 +0300
-Message-ID: <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH v3 1/6] gpu: host1x: Enable Tegra186 syncpoint protection
+Date: Sat, 30 Sep 2017 10:01:51 +0300
+Message-ID: <7f1764a7-c41c-3c56-5c7f-5506e6a9fc01@kapsi.fi>
+References: <20170928125044.32516-1-mperttunen@nvidia.com>
+ <20170928125044.32516-2-mperttunen@nvidia.com>
+ <8391dc88-36a1-0b3c-9ffa-42ce0238dc3f@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <8391dc88-36a1-0b3c-9ffa-42ce0238dc3f-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 29.09.2017 22:30, Stephen Warren wrote:
-> On 09/27/2017 02:34 AM, Jon Hunter wrote:
->>
->> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>
->>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>>> on Tegra20/30 SoC's.
->>>>>
->>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>> ---
->>>>>   .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23
->>>>> ++++++++++++++++++++++
->>>>>   1 file changed, 23 insertions(+)
->>>>>   create mode 100644
->>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>> new file mode 100644
->>>>> index 000000000000..2af9aa76ae11
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>> @@ -0,0 +1,23 @@
->>>>> +* NVIDIA Tegra AHB DMA controller
->>>>> +
->>>>> +Required properties:
->>>>> +- compatible:    Must be "nvidia,tegra20-ahbdma"
->>>>> +- reg:        Should contain registers base address and length.
->>>>> +- interrupts:    Should contain one entry, DMA controller interrupt.
->>>>> +- clocks:    Should contain one entry, DMA controller clock.
->>>>> +- resets :    Should contain one entry, DMA controller reset.
->>>>> +- #dma-cells:    Should be <1>. The cell represents DMA request select value
->>>>> +        for the peripheral. For more details consult the Tegra TRM's
->>>>> +        documentation, in particular AHB DMA channel control register
->>>>> +        REQ_SEL field.
->>>>
->>>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>>
->>>
->>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
->>> software to decide what trigger to select. So it shouldn't be in the binding.
->>
->> I think it could be, if say a board wanted a GPIO to trigger a transfer.
->>
->>> And I think the same applies to requester... any objections?
->>
->> Well, the REQ_SEL should definitely be in the binding.
->>
->> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
->> like we never bothered with it for the APB DMA and so maybe no ones uses
->> this.
+On 09/30/2017 05:41 AM, Dmitry Osipenko wrote:
+> On 28.09.2017 15:50, Mikko Perttunen wrote:
+>> ..
+>> diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+>> index 8447a56c41ca..b929d7f1e291 100644
+>> --- a/drivers/gpu/host1x/hw/channel_hw.c
+>> +++ b/drivers/gpu/host1x/hw/channel_hw.c
+>> @@ -147,6 +147,9 @@ static int channel_submit(struct host1x_job *job)
+>>   
+>>   	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
+>>   
+>> +	/* assign syncpoint to channel */
+>> +	host1x_hw_syncpt_assign_to_channel(host, sp, ch);
+>> +
 > 
-> I don't think TRIG_SEL should be in the binding, at least at present. While
-> TRIG_SEL certainly is something used to configure the transfer, I believe the
-> semantics of the current DMA binding only cover DMA transfers that are initiated
-> when SW desires, rather than being a combination of after SW programs the
-> transfer plus some other HW event. So, we always use a default/hard-coded
-> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. There's
-> certainly no known use-case that requires a non-default TRIG_SEL value at
-> present. We could add an extra #dma-cells value later if we find a use for it,
-> and the semantics of that use-case make sense to add it to the DMA specifier,
-> rather than some other separate higher-level property/driver/...
+> Since you've preserved the comment, what about to extend it with a brief
+> explanation of what actually the 'assignment' does? Like that CDMA will stop
+> execution on touching any syncpoint other then the assigned one.
 
-Thank you for the comment. If we'd want to extend the binding further with the
-trigger, how to differentiate trigger from the requester in a case of a single
-#data-cell?
+Whoops, I actually forgot to remove that :) I think the best would be to 
+remove the comment here and have a more proper description of the 
+feature somewhere else.
 
-Of course realistically a chance that the further extension would be needed is
-very-very low, so we may defer the efforts to solve that question and for now
-make driver aware of the potential #dma-cells extension.
+Mikko
