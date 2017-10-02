@@ -1,97 +1,106 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2] usb: phy: tegra: Fix phy suspend for UDC
-Date: Mon, 2 Oct 2017 19:34:27 +0300
-Message-ID: <81c7cabe-a3a4-6140-6b6c-f6f4cf12cc81@gmail.com>
-References: <1506943373-11560-1-git-send-email-jonathanh@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+Date: Mon, 2 Oct 2017 11:05:11 -0600
+Message-ID: <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+ <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+ <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
+ <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
+ <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1506943373-11560-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02.10.2017 14:22, Jon Hunter wrote:
-> Commit dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
-> added UDC support for Tegra but with UDC support enabled, is was found
-> that Tegra30, Tegra114 and Tegra124 would hang on entry to suspend.
+On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
+> On 29.09.2017 22:30, Stephen Warren wrote:
+>> On 09/27/2017 02:34 AM, Jon Hunter wrote:
+>>>
+>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
+>>>> On 26.09.2017 17:50, Jon Hunter wrote:
+>>>>>
+>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+>>>>>> on Tegra20/30 SoC's.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> ---
+>>>>>>    .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23
+>>>>>> ++++++++++++++++++++++
+>>>>>>    1 file changed, 23 insertions(+)
+>>>>>>    create mode 100644
+>>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..2af9aa76ae11
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>> @@ -0,0 +1,23 @@
+>>>>>> +* NVIDIA Tegra AHB DMA controller
+>>>>>> +
+>>>>>> +Required properties:
+>>>>>> +- compatible:    Must be "nvidia,tegra20-ahbdma"
+>>>>>> +- reg:        Should contain registers base address and length.
+>>>>>> +- interrupts:    Should contain one entry, DMA controller interrupt.
+>>>>>> +- clocks:    Should contain one entry, DMA controller clock.
+>>>>>> +- resets :    Should contain one entry, DMA controller reset.
+>>>>>> +- #dma-cells:    Should be <1>. The cell represents DMA request select value
+>>>>>> +        for the peripheral. For more details consult the Tegra TRM's
+>>>>>> +        documentation, in particular AHB DMA channel control register
+>>>>>> +        REQ_SEL field.
+>>>>>
+>>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
+>>>>>
+>>>>
+>>>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
+>>>> software to decide what trigger to select. So it shouldn't be in the binding.
+>>>
+>>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
+>>>
+>>>> And I think the same applies to requester... any objections?
+>>>
+>>> Well, the REQ_SEL should definitely be in the binding.
+>>>
+>>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
+>>> like we never bothered with it for the APB DMA and so maybe no ones uses
+>>> this.
+>>
+>> I don't think TRIG_SEL should be in the binding, at least at present. While
+>> TRIG_SEL certainly is something used to configure the transfer, I believe the
+>> semantics of the current DMA binding only cover DMA transfers that are initiated
+>> when SW desires, rather than being a combination of after SW programs the
+>> transfer plus some other HW event. So, we always use a default/hard-coded
+>> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. There's
+>> certainly no known use-case that requires a non-default TRIG_SEL value at
+>> present. We could add an extra #dma-cells value later if we find a use for it,
+>> and the semantics of that use-case make sense to add it to the DMA specifier,
+>> rather than some other separate higher-level property/driver/...
 > 
-> The hang occurred during the suspend of the USB PHY when the Tegra PHY
-> driver attempted to disable the PHY clock. The problem is that before
-> the Tegra PHY driver is suspended, the chipidea driver already disabled
-> the PHY clock and when the Tegra PHY driver suspended, it could not read
-> DEVLC register and caused the device to hang.
+> Thank you for the comment. If we'd want to extend the binding further with the
+> trigger, how to differentiate trigger from the requester in a case of a single
+> #data-cell?
 > 
-> The Tegra USB PHY driver is used by both the Tegra EHCI driver and now
-> the chipidea UDC driver and so simply removing the disabling of the PHY
-> clock from the USB PHY driver would not work for the Tegra EHCI driver.
-> Fortunately, the status of the USB PHY clock can be read from the
-> USB_SUSP_CTRL register and therefore, to workaround this issue, simply
-> poll the register prior to disabling the clock in USB PHY driver to see
-> if clock gating has already been initiated. Please note that it can take
-> a few uS for the clock to disable and so simply reading this status
-> register once on entry is not sufficient.
-> 
-> Similarly when turning on the PHY clock, it is possible that the clock
-> is already enabled or in the process of being enabled, and so check for
-> this when enabling the PHY.
-> 
-> Please note that no issues are seen with Tegra20 because it has a slightly
-> different PHY to Tegra30/114/124.
-> 
-> Fixes: dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
+> Of course realistically a chance that the further extension would be needed is
+> very-very low, so we may defer the efforts to solve that question and for now
+> make driver aware of the potential #dma-cells extension.
 
-Works on Tegra20 and fixes bogus CLK stabilization error message.
+The request selector cell isn't optional, so is always present. If we 
+later add an optional trig_sel cell, we'll either have:
 
-Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+#dma-cells=<1>: req_sel
 
-> Changes since V1:
-> - Added fixes tag
-> - Added test in PHY enable to see if clock is already on before enabling
-> 
->  drivers/usb/phy/phy-tegra-usb.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-> index 5fe4a5704bde..ccc2bf5274b4 100644
-> --- a/drivers/usb/phy/phy-tegra-usb.c
-> +++ b/drivers/usb/phy/phy-tegra-usb.c
-> @@ -329,6 +329,14 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
->  	unsigned long val;
->  	void __iomem *base = phy->regs;
->  
-> +	/*
-> +	 * The USB driver may have already initiated the phy clock
-> +	 * disable so wait to see if the clock turns off and if not
-> +	 * then proceed with gating the clock.
-> +	 */
-> +	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) == 0)
-> +		return;
-> +
->  	if (phy->is_legacy_phy) {
->  		val = readl(base + USB_SUSP_CTRL);
->  		val |= USB_SUSP_SET;
-> @@ -351,6 +359,15 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
->  	unsigned long val;
->  	void __iomem *base = phy->regs;
->  
-> +	/*
-> +	 * The USB driver may have already initiated the phy clock
-> +	 * enable so wait to see if the clock turns on and if not
-> +	 * then proceed with ungating the clock.
-> +	 */
-> +	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
-> +			       USB_PHY_CLK_VALID) == 0)
-> +		return;
-> +
->  	if (phy->is_legacy_phy) {
->  		val = readl(base + USB_SUSP_CTRL);
->  		val |= USB_SUSP_CLR;
-> 
+or:
+
+#dma-cells=<2>: req_sel, trig_sel
