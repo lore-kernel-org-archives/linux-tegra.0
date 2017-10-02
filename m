@@ -1,106 +1,99 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-Date: Mon, 2 Oct 2017 11:05:11 -0600
-Message-ID: <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
- <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] clk: tegra30: make tegra_clk_pll_params __ro_after_init
+Date: Tue,  3 Oct 2017 01:42:08 +0530
+Message-ID: <1506975128-16514-1-git-send-email-bhumirks@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: julia.lawall-L2FTfq7BK8M@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
-> On 29.09.2017 22:30, Stephen Warren wrote:
->> On 09/27/2017 02:34 AM, Jon Hunter wrote:
->>>
->>> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>>
->>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>>>> on Tegra20/30 SoC's.
->>>>>>
->>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>> ---
->>>>>>    .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23
->>>>>> ++++++++++++++++++++++
->>>>>>    1 file changed, 23 insertions(+)
->>>>>>    create mode 100644
->>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>
->>>>>> diff --git
->>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>> new file mode 100644
->>>>>> index 000000000000..2af9aa76ae11
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>> @@ -0,0 +1,23 @@
->>>>>> +* NVIDIA Tegra AHB DMA controller
->>>>>> +
->>>>>> +Required properties:
->>>>>> +- compatible:    Must be "nvidia,tegra20-ahbdma"
->>>>>> +- reg:        Should contain registers base address and length.
->>>>>> +- interrupts:    Should contain one entry, DMA controller interrupt.
->>>>>> +- clocks:    Should contain one entry, DMA controller clock.
->>>>>> +- resets :    Should contain one entry, DMA controller reset.
->>>>>> +- #dma-cells:    Should be <1>. The cell represents DMA request select value
->>>>>> +        for the peripheral. For more details consult the Tegra TRM's
->>>>>> +        documentation, in particular AHB DMA channel control register
->>>>>> +        REQ_SEL field.
->>>>>
->>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>>>
->>>>
->>>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
->>>> software to decide what trigger to select. So it shouldn't be in the binding.
->>>
->>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
->>>
->>>> And I think the same applies to requester... any objections?
->>>
->>> Well, the REQ_SEL should definitely be in the binding.
->>>
->>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
->>> like we never bothered with it for the APB DMA and so maybe no ones uses
->>> this.
->>
->> I don't think TRIG_SEL should be in the binding, at least at present. While
->> TRIG_SEL certainly is something used to configure the transfer, I believe the
->> semantics of the current DMA binding only cover DMA transfers that are initiated
->> when SW desires, rather than being a combination of after SW programs the
->> transfer plus some other HW event. So, we always use a default/hard-coded
->> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. There's
->> certainly no known use-case that requires a non-default TRIG_SEL value at
->> present. We could add an extra #dma-cells value later if we find a use for it,
->> and the semantics of that use-case make sense to add it to the DMA specifier,
->> rather than some other separate higher-level property/driver/...
-> 
-> Thank you for the comment. If we'd want to extend the binding further with the
-> trigger, how to differentiate trigger from the requester in a case of a single
-> #data-cell?
-> 
-> Of course realistically a chance that the further extension would be needed is
-> very-very low, so we may defer the efforts to solve that question and for now
-> make driver aware of the potential #dma-cells extension.
+These structures are only passed to the functions tegra_clk_register_pll,
+tegra_clk_register_pll{e/u} or tegra_periph_clk_init during the init
+phase. These functions modify the structures only during the init phase
+and after that the structures are never modified. Therefore, make them
+__ro_after_init.
 
-The request selector cell isn't optional, so is always present. If we 
-later add an optional trig_sel cell, we'll either have:
+Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra30.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-#dma-cells=<1>: req_sel
-
-or:
-
-#dma-cells=<2>: req_sel, trig_sel
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index a2d163f..1ce7d76 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -359,7 +359,7 @@
+ };
+ 
+ /* PLL parameters */
+-static struct tegra_clk_pll_params pll_c_params = {
++static struct tegra_clk_pll_params pll_c_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 31000000,
+ 	.cf_min = 1000000,
+@@ -388,7 +388,7 @@
+ 	.override_divp_shift = 15,
+ };
+ 
+-static struct tegra_clk_pll_params pll_m_params = {
++static struct tegra_clk_pll_params pll_m_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 31000000,
+ 	.cf_min = 1000000,
+@@ -409,7 +409,7 @@
+ 		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_FIXED,
+ };
+ 
+-static struct tegra_clk_pll_params pll_p_params = {
++static struct tegra_clk_pll_params pll_p_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 31000000,
+ 	.cf_min = 1000000,
+@@ -444,7 +444,7 @@
+ 		 TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_d_params = {
++static struct tegra_clk_pll_params pll_d_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 40000000,
+ 	.cf_min = 1000000,
+@@ -461,7 +461,7 @@
+ 		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_d2_params = {
++static struct tegra_clk_pll_params pll_d2_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 40000000,
+ 	.cf_min = 1000000,
+@@ -478,7 +478,7 @@
+ 		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_u_params = {
++static struct tegra_clk_pll_params pll_u_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 40000000,
+ 	.cf_min = 1000000,
+@@ -496,7 +496,7 @@
+ 		 TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_x_params = {
++static struct tegra_clk_pll_params pll_x_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 31000000,
+ 	.cf_min = 1000000,
+@@ -513,7 +513,7 @@
+ 		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_e_params = {
++static struct tegra_clk_pll_params pll_e_params __ro_after_init = {
+ 	.input_min = 12000000,
+ 	.input_max = 216000000,
+ 	.cf_min = 12000000,
+-- 
+1.9.1
