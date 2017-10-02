@@ -1,65 +1,87 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra baseline test results for v4.14-rc3
-Date: Mon, 2 Oct 2017 10:39:37 +0100
-Message-ID: <c874cf3e-0f59-6922-fa68-40223cca7c13@nvidia.com>
-References: <39a8ab29-1eda-674a-6f55-d4cf95eff223@nvidia.com>
+Subject: [PATCH V2] usb: phy: tegra: Fix phy suspend for UDC
+Date: Mon, 2 Oct 2017 12:22:53 +0100
+Message-ID: <1506943373-11560-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <39a8ab29-1eda-674a-6f55-d4cf95eff223-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Commit dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
+added UDC support for Tegra but with UDC support enabled, is was found
+that Tegra30, Tegra114 and Tegra124 would hang on entry to suspend.
 
-On 02/10/17 10:34, Jon Hunter wrote:
-> Here are some basic Tegra test results for Linux v4.14-rc3.
-> Logs and other details at:
-> 
->     https://nvtb.github.io//linux/test_v4.14-rc3/20171001153104/
-> 
-> 
-> Test summary
-> ------------
-> 
-> Build: zImage:
->     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-> 
-> Build: Image:
->     Pass: ( 1/ 1): defconfig
-> 
-> Boot to userspace: defconfig:
->     Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-> 		   tegra210-p2371-0000, tegra210-smaug
-> 
-> Boot to userspace: multi_v7_defconfig:
->     Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-> 		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-> 
-> Boot to userspace: tegra_defconfig:
->     Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-> 		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-> 
-> PM: System suspend: multi_v7_defconfig:
->     FAIL: ( 3/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-> 		   tegra30-beaver
->     Pass: ( 2/ 5): tegra124-nyan-big, tegra20-trimslice
-> 
-> PM: System suspend: tegra_defconfig:
->     FAIL: ( 3/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-> 		   tegra30-beaver
->     Pass: ( 2/ 5): tegra124-nyan-big, tegra20-trimslice
+The hang occurred during the suspend of the USB PHY when the Tegra PHY
+driver attempted to disable the PHY clock. The problem is that before
+the Tegra PHY driver is suspended, the chipidea driver already disabled
+the PHY clock and when the Tegra PHY driver suspended, it could not read
+DEVLC register and caused the device to hang.
 
-The cause of the above suspend failure has been identified and a
-candidate for fixing this is under review [0].
+The Tegra USB PHY driver is used by both the Tegra EHCI driver and now
+the chipidea UDC driver and so simply removing the disabling of the PHY
+clock from the USB PHY driver would not work for the Tegra EHCI driver.
+Fortunately, the status of the USB PHY clock can be read from the
+USB_SUSP_CTRL register and therefore, to workaround this issue, simply
+poll the register prior to disabling the clock in USB PHY driver to see
+if clock gating has already been initiated. Please note that it can take
+a few uS for the clock to disable and so simply reading this status
+register once on entry is not sufficient.
 
-Cheers
-Jon
+Similarly when turning on the PHY clock, it is possible that the clock
+is already enabled or in the process of being enabled, and so check for
+this when enabling the PHY.
 
-[0] https://www.spinics.net/lists/linux-usb/msg161139.html
+Please note that no issues are seen with Tegra20 because it has a slightly
+different PHY to Tegra30/114/124.
 
+Fixes: dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
+
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes since V1:
+- Added fixes tag
+- Added test in PHY enable to see if clock is already on before enabling
+
+ drivers/usb/phy/phy-tegra-usb.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 5fe4a5704bde..ccc2bf5274b4 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -329,6 +329,14 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
+ 	unsigned long val;
+ 	void __iomem *base = phy->regs;
+ 
++	/*
++	 * The USB driver may have already initiated the phy clock
++	 * disable so wait to see if the clock turns off and if not
++	 * then proceed with gating the clock.
++	 */
++	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) == 0)
++		return;
++
+ 	if (phy->is_legacy_phy) {
+ 		val = readl(base + USB_SUSP_CTRL);
+ 		val |= USB_SUSP_SET;
+@@ -351,6 +359,15 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
+ 	unsigned long val;
+ 	void __iomem *base = phy->regs;
+ 
++	/*
++	 * The USB driver may have already initiated the phy clock
++	 * enable so wait to see if the clock turns on and if not
++	 * then proceed with ungating the clock.
++	 */
++	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
++			       USB_PHY_CLK_VALID) == 0)
++		return;
++
+ 	if (phy->is_legacy_phy) {
+ 		val = readl(base + USB_SUSP_CTRL);
+ 		val |= USB_SUSP_CLR;
 -- 
-nvpublic
+2.7.4
