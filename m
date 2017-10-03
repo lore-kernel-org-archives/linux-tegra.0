@@ -1,123 +1,548 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-Date: Tue, 3 Oct 2017 02:02:56 +0300
-Message-ID: <795e4b19-b747-74c1-6f92-b961ab4bf822@gmail.com>
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
- <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
- <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
+From: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] firmware: tegra: add BPMP debugfs support
+Date: Tue, 3 Oct 2017 09:12:13 +0300
+Message-ID: <1507011133-21817-1-git-send-email-talho@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02.10.2017 20:05, Stephen Warren wrote:
-> On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
->> On 29.09.2017 22:30, Stephen Warren wrote:
->>> On 09/27/2017 02:34 AM, Jon Hunter wrote:
->>>>
->>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>>>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>>>
->>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>>>>> on Tegra20/30 SoC's.
->>>>>>>
->>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>> ---
->>>>>>>    .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23
->>>>>>> ++++++++++++++++++++++
->>>>>>>    1 file changed, 23 insertions(+)
->>>>>>>    create mode 100644
->>>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>
->>>>>>> diff --git
->>>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>> new file mode 100644
->>>>>>> index 000000000000..2af9aa76ae11
->>>>>>> --- /dev/null
->>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>> @@ -0,0 +1,23 @@
->>>>>>> +* NVIDIA Tegra AHB DMA controller
->>>>>>> +
->>>>>>> +Required properties:
->>>>>>> +- compatible:    Must be "nvidia,tegra20-ahbdma"
->>>>>>> +- reg:        Should contain registers base address and length.
->>>>>>> +- interrupts:    Should contain one entry, DMA controller interrupt.
->>>>>>> +- clocks:    Should contain one entry, DMA controller clock.
->>>>>>> +- resets :    Should contain one entry, DMA controller reset.
->>>>>>> +- #dma-cells:    Should be <1>. The cell represents DMA request select
->>>>>>> value
->>>>>>> +        for the peripheral. For more details consult the Tegra TRM's
->>>>>>> +        documentation, in particular AHB DMA channel control register
->>>>>>> +        REQ_SEL field.
->>>>>>
->>>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>>>>
->>>>>
->>>>> Actually, DMA transfer trigger isn't related a hardware description. It's
->>>>> up to
->>>>> software to decide what trigger to select. So it shouldn't be in the binding.
->>>>
->>>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
->>>>
->>>>> And I think the same applies to requester... any objections?
->>>>
->>>> Well, the REQ_SEL should definitely be in the binding.
->>>>
->>>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
->>>> like we never bothered with it for the APB DMA and so maybe no ones uses
->>>> this.
->>>
->>> I don't think TRIG_SEL should be in the binding, at least at present. While
->>> TRIG_SEL certainly is something used to configure the transfer, I believe the
->>> semantics of the current DMA binding only cover DMA transfers that are initiated
->>> when SW desires, rather than being a combination of after SW programs the
->>> transfer plus some other HW event. So, we always use a default/hard-coded
->>> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. There's
->>> certainly no known use-case that requires a non-default TRIG_SEL value at
->>> present. We could add an extra #dma-cells value later if we find a use for it,
->>> and the semantics of that use-case make sense to add it to the DMA specifier,
->>> rather than some other separate higher-level property/driver/...
->>
->> Thank you for the comment. If we'd want to extend the binding further with the
->> trigger, how to differentiate trigger from the requester in a case of a single
->> #data-cell?
->>
->> Of course realistically a chance that the further extension would be needed is
->> very-very low, so we may defer the efforts to solve that question and for now
->> make driver aware of the potential #dma-cells extension.
-> 
-> The request selector cell isn't optional, so is always present. If we later add
-> an optional trig_sel cell, we'll either have:
-> 
-> #dma-cells=<1>: req_sel
-> 
-> or:
-> 
-> #dma-cells=<2>: req_sel, trig_sel
+Tegra power management firmware running on co-processor (BPMP)
+implements a simple pseudo file system akin to debugfs. The file
+system can be used for debugging purposes to examine and change the
+status of selected resources controlled by the firmware (such as
+clocks, resets, voltages, powergates, ...).
 
-Why request sel. couldn't be optional? Could you please elaborate a bit more?
+Add support to "mirror" the firmware's file system to debugfs. At
+boot, query firmware for a list of all possible files and create
+corresponding debugfs entries. Read/write of individual files is
+implemented by sending a Message ReQuest (MRQ) that passes the full
+file path name and data to firmware via DRAM.
 
-I think possible options are:
+Signed-off-by: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v2:
+ - Address Jonathan's review feedback
+  * restructure error printing and what error codes passed to higher
+    layers
+  * don't use IS_ERR_OR_NULL()
+  * avoid overwriting last-character of filename in one corner case
+    (name length = 255)
+  
+ drivers/firmware/tegra/Makefile       |   4 +-
+ drivers/firmware/tegra/bpmp.c         |   4 +
+ drivers/firmware/tegra/bpmp_debugfs.c | 444 ++++++++++++++++++++++++++++++++++
+ include/soc/tegra/bpmp.h              |  14 ++
+ 4 files changed, 465 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/firmware/tegra/bpmp_debugfs.c
 
-#dma-cells=<1>: req_sel
-#dma-cells=<1>: trig_sel
-#dma-cells=<2>: req_sel, trig_sel
-
-The only difference between request and trigger is that trigger issues the whole
-transfer, while request only a single burst. Isn't it possible to have a case in
-HW for the "trigger-only" option? If not or it's a rareness, then I agree that
-REQ_SEL must be mandatory.
+diff --git a/drivers/firmware/tegra/Makefile b/drivers/firmware/tegra/Makefile
+index e34a2f7..0314568 100644
+--- a/drivers/firmware/tegra/Makefile
++++ b/drivers/firmware/tegra/Makefile
+@@ -1,2 +1,4 @@
+-obj-$(CONFIG_TEGRA_BPMP)	+= bpmp.o
++tegra-bpmp-y			= bpmp.o
++tegra-bpmp-$(CONFIG_DEBUG_FS)	+= bpmp_debugfs.o
++obj-$(CONFIG_TEGRA_BPMP)	+= tegra-bpmp.o
+ obj-$(CONFIG_TEGRA_IVC)		+= ivc.o
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 73ca55b..d29c593 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -824,6 +824,10 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
+ 	if (err < 0)
+ 		goto free_mrq;
+ 
++	err = tegra_bpmp_init_debugfs(bpmp);
++	if (err < 0)
++		dev_err(&pdev->dev, "debugfs initialization failed: %d\n", err);
++
+ 	return 0;
+ 
+ free_mrq:
+diff --git a/drivers/firmware/tegra/bpmp_debugfs.c b/drivers/firmware/tegra/bpmp_debugfs.c
+new file mode 100644
+index 0000000..f7f6a0a
+--- /dev/null
++++ b/drivers/firmware/tegra/bpmp_debugfs.c
+@@ -0,0 +1,444 @@
++/*
++ * Copyright (c) 2017, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ */
++#include <linux/debugfs.h>
++#include <linux/dma-mapping.h>
++#include <linux/uaccess.h>
++
++#include <soc/tegra/bpmp.h>
++#include <soc/tegra/bpmp-abi.h>
++
++struct seqbuf {
++	char *buf;
++	size_t pos;
++	size_t size;
++};
++
++static void seqbuf_init(struct seqbuf *seqbuf, void *buf, size_t size)
++{
++	seqbuf->buf = buf;
++	seqbuf->size = size;
++	seqbuf->pos = 0;
++}
++
++static size_t seqbuf_avail(struct seqbuf *seqbuf)
++{
++	return seqbuf->pos < seqbuf->size ? seqbuf->size - seqbuf->pos : 0;
++}
++
++static size_t seqbuf_status(struct seqbuf *seqbuf)
++{
++	return seqbuf->pos <= seqbuf->size ? 0 : -EOVERFLOW;
++}
++
++static int seqbuf_eof(struct seqbuf *seqbuf)
++{
++	return seqbuf->pos >= seqbuf->size;
++}
++
++static int seqbuf_read(struct seqbuf *seqbuf, void *buf, size_t nbyte)
++{
++	nbyte = min(nbyte, seqbuf_avail(seqbuf));
++	memcpy(buf, seqbuf->buf + seqbuf->pos, nbyte);
++	seqbuf->pos += nbyte;
++	return seqbuf_status(seqbuf);
++}
++
++static int seqbuf_read_u32(struct seqbuf *seqbuf, uint32_t *v)
++{
++	int err;
++
++	err = seqbuf_read(seqbuf, v, 4);
++	*v = le32_to_cpu(*v);
++	return err;
++}
++
++static int seqbuf_read_str(struct seqbuf *seqbuf, const char **str)
++{
++	*str = seqbuf->buf + seqbuf->pos;
++	seqbuf->pos += strnlen(*str, seqbuf_avail(seqbuf));
++	seqbuf->pos++;
++	return seqbuf_status(seqbuf);
++}
++
++static void seqbuf_seek(struct seqbuf *seqbuf, ssize_t offset)
++{
++	seqbuf->pos += offset;
++}
++
++/* map filename in Linux debugfs to corresponding entry in BPMP */
++static const char *get_filename(struct tegra_bpmp *bpmp,
++				const struct file *file, char *buf, int size)
++{
++	char root_path_buf[512];
++	const char *root_path;
++	const char *filename;
++	size_t root_len;
++
++	root_path = dentry_path(bpmp->debugfs_mirror, root_path_buf,
++				sizeof(root_path_buf));
++	if (IS_ERR(root_path))
++		return NULL;
++
++	root_len = strlen(root_path);
++
++	filename = dentry_path(file->f_path.dentry, buf, size);
++	if (IS_ERR(filename))
++		return NULL;
++
++	if (strlen(filename) < root_len ||
++			strncmp(filename, root_path, root_len))
++		return NULL;
++
++	filename += root_len;
++
++	return filename;
++}
++
++static int mrq_debugfs_read(struct tegra_bpmp *bpmp,
++			    dma_addr_t name, size_t sz_name,
++			    dma_addr_t data, size_t sz_data,
++			    size_t *nbytes)
++{
++	struct mrq_debugfs_request req = {
++		.cmd = cpu_to_le32(CMD_DEBUGFS_READ),
++		.fop = {
++			.fnameaddr = cpu_to_le32((uint32_t)name),
++			.fnamelen = cpu_to_le32((uint32_t)sz_name),
++			.dataaddr = cpu_to_le32((uint32_t)data),
++			.datalen = cpu_to_le32((uint32_t)sz_data),
++		},
++	};
++	struct mrq_debugfs_response resp;
++	struct tegra_bpmp_message msg = {
++		.mrq = MRQ_DEBUGFS,
++		.tx = {
++			.data = &req,
++			.size = sizeof(req),
++		},
++		.rx = {
++			.data = &resp,
++			.size = sizeof(resp),
++		},
++	};
++	int err;
++
++	err = tegra_bpmp_transfer(bpmp, &msg);
++	if (err < 0)
++		return err;
++
++	*nbytes = (size_t)resp.fop.nbytes;
++
++	return 0;
++}
++
++static int mrq_debugfs_write(struct tegra_bpmp *bpmp,
++			     dma_addr_t name, size_t sz_name,
++			     dma_addr_t data, size_t sz_data)
++{
++	const struct mrq_debugfs_request req = {
++		.cmd = cpu_to_le32(CMD_DEBUGFS_WRITE),
++		.fop = {
++			.fnameaddr = cpu_to_le32((uint32_t)name),
++			.fnamelen = cpu_to_le32((uint32_t)sz_name),
++			.dataaddr = cpu_to_le32((uint32_t)data),
++			.datalen = cpu_to_le32((uint32_t)sz_data),
++		},
++	};
++	struct tegra_bpmp_message msg = {
++		.mrq = MRQ_DEBUGFS,
++		.tx = {
++			.data = &req,
++			.size = sizeof(req),
++		},
++	};
++
++	return tegra_bpmp_transfer(bpmp, &msg);
++}
++
++static int mrq_debugfs_dumpdir(struct tegra_bpmp *bpmp, dma_addr_t addr,
++			       size_t size, size_t *nbytes)
++{
++	const struct mrq_debugfs_request req = {
++		.cmd = cpu_to_le32(CMD_DEBUGFS_DUMPDIR),
++		.dumpdir = {
++			.dataaddr = cpu_to_le32((uint32_t)addr),
++			.datalen = cpu_to_le32((uint32_t)size),
++		},
++	};
++	struct mrq_debugfs_response resp;
++	struct tegra_bpmp_message msg = {
++		.mrq = MRQ_DEBUGFS,
++		.tx = {
++			.data = &req,
++			.size = sizeof(req),
++		},
++		.rx = {
++			.data = &resp,
++			.size = sizeof(resp),
++		},
++	};
++	int err;
++
++	err = tegra_bpmp_transfer(bpmp, &msg);
++	if (err < 0)
++		return err;
++
++	*nbytes = (size_t)resp.dumpdir.nbytes;
++
++	return 0;
++}
++
++static int debugfs_show(struct seq_file *m, void *p)
++{
++	struct file *file = m->private;
++	struct inode *inode = file_inode(file);
++	struct tegra_bpmp *bpmp = inode->i_private;
++	const size_t datasize = m->size;
++	const size_t namesize = SZ_256;
++	void *datavirt, *namevirt;
++	dma_addr_t dataphys, namephys;
++	char buf[256];
++	const char *filename;
++	size_t len, nbytes;
++	int ret;
++
++	filename = get_filename(bpmp, file, buf, sizeof(buf));
++	if (!filename)
++		return -ENOENT;
++
++	namevirt = dma_alloc_coherent(bpmp->dev, namesize, &namephys,
++				      GFP_KERNEL | GFP_DMA32);
++	if (!namevirt)
++		return -ENOMEM;
++
++	datavirt = dma_alloc_coherent(bpmp->dev, datasize, &dataphys,
++				      GFP_KERNEL | GFP_DMA32);
++	if (!datavirt) {
++		ret = -ENOMEM;
++		goto free_namebuf;
++	}
++
++	len = strlen(filename);
++	strncpy(namevirt, filename, namesize);
++
++	ret = mrq_debugfs_read(bpmp, namephys, len, dataphys, datasize,
++			       &nbytes);
++
++	if (!ret)
++		seq_write(m, datavirt, nbytes);
++
++	dma_free_coherent(bpmp->dev, datasize, datavirt, dataphys);
++free_namebuf:
++	dma_free_coherent(bpmp->dev, namesize, namevirt, namephys);
++
++	return ret;
++}
++
++static int debugfs_open(struct inode *inode, struct file *file)
++{
++	return single_open_size(file, debugfs_show, file, SZ_128K);
++}
++
++static ssize_t debugfs_store(struct file *file, const char __user *buf,
++		size_t count, loff_t *f_pos)
++{
++	struct inode *inode = file_inode(file);
++	struct tegra_bpmp *bpmp = inode->i_private;
++	const size_t datasize = count;
++	const size_t namesize = SZ_256;
++	void *datavirt, *namevirt;
++	dma_addr_t dataphys, namephys;
++	char fnamebuf[256];
++	const char *filename;
++	size_t len;
++	int ret;
++
++	filename = get_filename(bpmp, file, fnamebuf, sizeof(fnamebuf));
++	if (!filename)
++		return -ENOENT;
++
++	namevirt = dma_alloc_coherent(bpmp->dev, namesize, &namephys,
++				      GFP_KERNEL | GFP_DMA32);
++	if (!namevirt)
++		return -ENOMEM;
++
++	datavirt = dma_alloc_coherent(bpmp->dev, datasize, &dataphys,
++				      GFP_KERNEL | GFP_DMA32);
++	if (!datavirt) {
++		ret = -ENOMEM;
++		goto free_namebuf;
++	}
++
++	len = strlen(filename);
++	strncpy(namevirt, filename, namesize);
++
++	if (copy_from_user(datavirt, buf, count)) {
++		ret = -EFAULT;
++		goto free_databuf;
++	}
++
++	ret = mrq_debugfs_write(bpmp, namephys, len, dataphys,
++				count);
++
++free_databuf:
++	dma_free_coherent(bpmp->dev, datasize, datavirt, dataphys);
++free_namebuf:
++	dma_free_coherent(bpmp->dev, namesize, namevirt, namephys);
++
++	return ret ?: count;
++}
++
++static const struct file_operations debugfs_fops = {
++	.open		= debugfs_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.write		= debugfs_store,
++	.release	= single_release,
++};
++
++static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
++			     struct dentry *parent, uint32_t depth)
++{
++	int err;
++	uint32_t d, t;
++	const char *name;
++	struct dentry *dentry;
++
++	while (!seqbuf_eof(seqbuf)) {
++		err = seqbuf_read_u32(seqbuf, &d);
++		if (err < 0)
++			return err;
++
++		if (d < depth) {
++			seqbuf_seek(seqbuf, -4);
++			/* go up a level */
++			return 0;
++		} else if (d != depth) {
++			/* malformed data received from BPMP */
++			return -EIO;
++		}
++
++		err = seqbuf_read_u32(seqbuf, &t);
++		if (err < 0)
++			return err;
++		err = seqbuf_read_str(seqbuf, &name);
++		if (err < 0)
++			return err;
++
++		if (t & DEBUGFS_S_ISDIR) {
++			dentry = debugfs_create_dir(name, parent);
++			if (!dentry)
++				return -ENOMEM;
++			err = bpmp_populate_dir(bpmp, seqbuf, dentry, depth+1);
++			if (err < 0)
++				return err;
++		} else {
++			umode_t mode;
++
++			mode = t & DEBUGFS_S_IRUSR ? S_IRUSR : 0;
++			mode |= t & DEBUGFS_S_IWUSR ? S_IWUSR : 0;
++			dentry = debugfs_create_file(name, mode,
++						     parent, bpmp,
++						     &debugfs_fops);
++			if (!dentry)
++				return -ENOMEM;
++		}
++	}
++
++	return 0;
++}
++
++static int create_debugfs_mirror(struct tegra_bpmp *bpmp, void *buf,
++				 size_t bufsize, struct dentry *root)
++{
++	struct seqbuf seqbuf;
++	int err;
++
++	bpmp->debugfs_mirror = debugfs_create_dir("debug", root);
++	if (!bpmp->debugfs_mirror)
++		return -ENOMEM;
++
++	seqbuf_init(&seqbuf, buf, bufsize);
++	err = bpmp_populate_dir(bpmp, &seqbuf, bpmp->debugfs_mirror, 0);
++	if (err < 0) {
++		debugfs_remove_recursive(bpmp->debugfs_mirror);
++		bpmp->debugfs_mirror = NULL;
++	}
++
++	return err;
++}
++
++static int mrq_is_supported(struct tegra_bpmp *bpmp, unsigned int mrq)
++{
++	struct mrq_query_abi_request req = { .mrq = cpu_to_le32(mrq) };
++	struct mrq_query_abi_response resp;
++	struct tegra_bpmp_message msg = {
++		.mrq = MRQ_QUERY_ABI,
++		.tx = {
++			.data = &req,
++			.size = sizeof(req),
++		},
++		.rx = {
++			.data = &resp,
++			.size = sizeof(resp),
++		},
++	};
++	int ret;
++
++	ret = tegra_bpmp_transfer(bpmp, &msg);
++	if (ret < 0) {
++		/* something went wrong; assume not supported */
++		dev_warn(bpmp->dev, "tegra_bpmp_transfer failed (%d)\n", ret);
++		return 0;
++	}
++
++	return resp.status ? 0 : 1;
++}
++
++int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
++{
++	dma_addr_t phys;
++	void *virt;
++	const size_t sz = SZ_256K;
++	size_t nbytes;
++	int ret;
++	struct dentry *root;
++
++	if (!mrq_is_supported(bpmp, MRQ_DEBUGFS))
++		return 0;
++
++	root = debugfs_create_dir("bpmp", NULL);
++	if (!root)
++		return -ENOMEM;
++
++	virt = dma_alloc_coherent(bpmp->dev, sz, &phys,
++				  GFP_KERNEL | GFP_DMA32);
++	if (!virt) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	ret = mrq_debugfs_dumpdir(bpmp, phys, sz, &nbytes);
++	if (ret < 0)
++		goto free;
++
++	ret = create_debugfs_mirror(bpmp, virt, nbytes, root);
++free:
++	dma_free_coherent(bpmp->dev, sz, virt, phys);
++out:
++	if (ret < 0)
++		debugfs_remove(root);
++
++	return ret;
++}
+diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
+index 9ba6522..21a522a 100644
+--- a/include/soc/tegra/bpmp.h
++++ b/include/soc/tegra/bpmp.h
+@@ -94,6 +94,10 @@ struct tegra_bpmp {
+ 	struct reset_controller_dev rstc;
+ 
+ 	struct genpd_onecell_data genpd;
++
++#ifdef CONFIG_DEBUG_FS
++	struct dentry *debugfs_mirror;
++#endif
+ };
+ 
+ struct tegra_bpmp *tegra_bpmp_get(struct device *dev);
+@@ -150,4 +154,14 @@ static inline int tegra_bpmp_init_powergates(struct tegra_bpmp *bpmp)
+ }
+ #endif
+ 
++#if IS_ENABLED(CONFIG_DEBUG_FS)
++int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp);
++#else
++static inline int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
++{
++	return 0;
++}
++#endif
++
++
+ #endif /* __SOC_TEGRA_BPMP_H */
+-- 
+2.7.4
