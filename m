@@ -1,548 +1,116 @@
-From: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] firmware: tegra: add BPMP debugfs support
-Date: Tue, 3 Oct 2017 09:12:13 +0300
-Message-ID: <1507011133-21817-1-git-send-email-talho@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra30: make tegra_clk_pll_params __ro_after_init
+Date: Tue, 3 Oct 2017 11:32:31 +0300
+Message-ID: <20171003083231.GS6290@tbergstrom-lnx.Nvidia.com>
+References: <1506975128-16514-1-git-send-email-bhumirks@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1506975128-16514-1-git-send-email-bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: julia.lawall-L2FTfq7BK8M@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra power management firmware running on co-processor (BPMP)
-implements a simple pseudo file system akin to debugfs. The file
-system can be used for debugging purposes to examine and change the
-status of selected resources controlled by the firmware (such as
-clocks, resets, voltages, powergates, ...).
+Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add support to "mirror" the firmware's file system to debugfs. At
-boot, query firmware for a list of all possible files and create
-corresponding debugfs entries. Read/write of individual files is
-implemented by sending a Message ReQuest (MRQ) that passes the full
-file path name and data to firmware via DRAM.
+I would assume this also applies to many PLL structs for other Tegra SoCs?
 
-Signed-off-by: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes in v2:
- - Address Jonathan's review feedback
-  * restructure error printing and what error codes passed to higher
-    layers
-  * don't use IS_ERR_OR_NULL()
-  * avoid overwriting last-character of filename in one corner case
-    (name length = 255)
-  
- drivers/firmware/tegra/Makefile       |   4 +-
- drivers/firmware/tegra/bpmp.c         |   4 +
- drivers/firmware/tegra/bpmp_debugfs.c | 444 ++++++++++++++++++++++++++++++++++
- include/soc/tegra/bpmp.h              |  14 ++
- 4 files changed, 465 insertions(+), 1 deletion(-)
- create mode 100644 drivers/firmware/tegra/bpmp_debugfs.c
+Peter.
 
-diff --git a/drivers/firmware/tegra/Makefile b/drivers/firmware/tegra/Makefile
-index e34a2f7..0314568 100644
---- a/drivers/firmware/tegra/Makefile
-+++ b/drivers/firmware/tegra/Makefile
-@@ -1,2 +1,4 @@
--obj-$(CONFIG_TEGRA_BPMP)	+= bpmp.o
-+tegra-bpmp-y			= bpmp.o
-+tegra-bpmp-$(CONFIG_DEBUG_FS)	+= bpmp_debugfs.o
-+obj-$(CONFIG_TEGRA_BPMP)	+= tegra-bpmp.o
- obj-$(CONFIG_TEGRA_IVC)		+= ivc.o
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index 73ca55b..d29c593 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -824,6 +824,10 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		goto free_mrq;
- 
-+	err = tegra_bpmp_init_debugfs(bpmp);
-+	if (err < 0)
-+		dev_err(&pdev->dev, "debugfs initialization failed: %d\n", err);
-+
- 	return 0;
- 
- free_mrq:
-diff --git a/drivers/firmware/tegra/bpmp_debugfs.c b/drivers/firmware/tegra/bpmp_debugfs.c
-new file mode 100644
-index 0000000..f7f6a0a
---- /dev/null
-+++ b/drivers/firmware/tegra/bpmp_debugfs.c
-@@ -0,0 +1,444 @@
-+/*
-+ * Copyright (c) 2017, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ */
-+#include <linux/debugfs.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/uaccess.h>
-+
-+#include <soc/tegra/bpmp.h>
-+#include <soc/tegra/bpmp-abi.h>
-+
-+struct seqbuf {
-+	char *buf;
-+	size_t pos;
-+	size_t size;
-+};
-+
-+static void seqbuf_init(struct seqbuf *seqbuf, void *buf, size_t size)
-+{
-+	seqbuf->buf = buf;
-+	seqbuf->size = size;
-+	seqbuf->pos = 0;
-+}
-+
-+static size_t seqbuf_avail(struct seqbuf *seqbuf)
-+{
-+	return seqbuf->pos < seqbuf->size ? seqbuf->size - seqbuf->pos : 0;
-+}
-+
-+static size_t seqbuf_status(struct seqbuf *seqbuf)
-+{
-+	return seqbuf->pos <= seqbuf->size ? 0 : -EOVERFLOW;
-+}
-+
-+static int seqbuf_eof(struct seqbuf *seqbuf)
-+{
-+	return seqbuf->pos >= seqbuf->size;
-+}
-+
-+static int seqbuf_read(struct seqbuf *seqbuf, void *buf, size_t nbyte)
-+{
-+	nbyte = min(nbyte, seqbuf_avail(seqbuf));
-+	memcpy(buf, seqbuf->buf + seqbuf->pos, nbyte);
-+	seqbuf->pos += nbyte;
-+	return seqbuf_status(seqbuf);
-+}
-+
-+static int seqbuf_read_u32(struct seqbuf *seqbuf, uint32_t *v)
-+{
-+	int err;
-+
-+	err = seqbuf_read(seqbuf, v, 4);
-+	*v = le32_to_cpu(*v);
-+	return err;
-+}
-+
-+static int seqbuf_read_str(struct seqbuf *seqbuf, const char **str)
-+{
-+	*str = seqbuf->buf + seqbuf->pos;
-+	seqbuf->pos += strnlen(*str, seqbuf_avail(seqbuf));
-+	seqbuf->pos++;
-+	return seqbuf_status(seqbuf);
-+}
-+
-+static void seqbuf_seek(struct seqbuf *seqbuf, ssize_t offset)
-+{
-+	seqbuf->pos += offset;
-+}
-+
-+/* map filename in Linux debugfs to corresponding entry in BPMP */
-+static const char *get_filename(struct tegra_bpmp *bpmp,
-+				const struct file *file, char *buf, int size)
-+{
-+	char root_path_buf[512];
-+	const char *root_path;
-+	const char *filename;
-+	size_t root_len;
-+
-+	root_path = dentry_path(bpmp->debugfs_mirror, root_path_buf,
-+				sizeof(root_path_buf));
-+	if (IS_ERR(root_path))
-+		return NULL;
-+
-+	root_len = strlen(root_path);
-+
-+	filename = dentry_path(file->f_path.dentry, buf, size);
-+	if (IS_ERR(filename))
-+		return NULL;
-+
-+	if (strlen(filename) < root_len ||
-+			strncmp(filename, root_path, root_len))
-+		return NULL;
-+
-+	filename += root_len;
-+
-+	return filename;
-+}
-+
-+static int mrq_debugfs_read(struct tegra_bpmp *bpmp,
-+			    dma_addr_t name, size_t sz_name,
-+			    dma_addr_t data, size_t sz_data,
-+			    size_t *nbytes)
-+{
-+	struct mrq_debugfs_request req = {
-+		.cmd = cpu_to_le32(CMD_DEBUGFS_READ),
-+		.fop = {
-+			.fnameaddr = cpu_to_le32((uint32_t)name),
-+			.fnamelen = cpu_to_le32((uint32_t)sz_name),
-+			.dataaddr = cpu_to_le32((uint32_t)data),
-+			.datalen = cpu_to_le32((uint32_t)sz_data),
-+		},
-+	};
-+	struct mrq_debugfs_response resp;
-+	struct tegra_bpmp_message msg = {
-+		.mrq = MRQ_DEBUGFS,
-+		.tx = {
-+			.data = &req,
-+			.size = sizeof(req),
-+		},
-+		.rx = {
-+			.data = &resp,
-+			.size = sizeof(resp),
-+		},
-+	};
-+	int err;
-+
-+	err = tegra_bpmp_transfer(bpmp, &msg);
-+	if (err < 0)
-+		return err;
-+
-+	*nbytes = (size_t)resp.fop.nbytes;
-+
-+	return 0;
-+}
-+
-+static int mrq_debugfs_write(struct tegra_bpmp *bpmp,
-+			     dma_addr_t name, size_t sz_name,
-+			     dma_addr_t data, size_t sz_data)
-+{
-+	const struct mrq_debugfs_request req = {
-+		.cmd = cpu_to_le32(CMD_DEBUGFS_WRITE),
-+		.fop = {
-+			.fnameaddr = cpu_to_le32((uint32_t)name),
-+			.fnamelen = cpu_to_le32((uint32_t)sz_name),
-+			.dataaddr = cpu_to_le32((uint32_t)data),
-+			.datalen = cpu_to_le32((uint32_t)sz_data),
-+		},
-+	};
-+	struct tegra_bpmp_message msg = {
-+		.mrq = MRQ_DEBUGFS,
-+		.tx = {
-+			.data = &req,
-+			.size = sizeof(req),
-+		},
-+	};
-+
-+	return tegra_bpmp_transfer(bpmp, &msg);
-+}
-+
-+static int mrq_debugfs_dumpdir(struct tegra_bpmp *bpmp, dma_addr_t addr,
-+			       size_t size, size_t *nbytes)
-+{
-+	const struct mrq_debugfs_request req = {
-+		.cmd = cpu_to_le32(CMD_DEBUGFS_DUMPDIR),
-+		.dumpdir = {
-+			.dataaddr = cpu_to_le32((uint32_t)addr),
-+			.datalen = cpu_to_le32((uint32_t)size),
-+		},
-+	};
-+	struct mrq_debugfs_response resp;
-+	struct tegra_bpmp_message msg = {
-+		.mrq = MRQ_DEBUGFS,
-+		.tx = {
-+			.data = &req,
-+			.size = sizeof(req),
-+		},
-+		.rx = {
-+			.data = &resp,
-+			.size = sizeof(resp),
-+		},
-+	};
-+	int err;
-+
-+	err = tegra_bpmp_transfer(bpmp, &msg);
-+	if (err < 0)
-+		return err;
-+
-+	*nbytes = (size_t)resp.dumpdir.nbytes;
-+
-+	return 0;
-+}
-+
-+static int debugfs_show(struct seq_file *m, void *p)
-+{
-+	struct file *file = m->private;
-+	struct inode *inode = file_inode(file);
-+	struct tegra_bpmp *bpmp = inode->i_private;
-+	const size_t datasize = m->size;
-+	const size_t namesize = SZ_256;
-+	void *datavirt, *namevirt;
-+	dma_addr_t dataphys, namephys;
-+	char buf[256];
-+	const char *filename;
-+	size_t len, nbytes;
-+	int ret;
-+
-+	filename = get_filename(bpmp, file, buf, sizeof(buf));
-+	if (!filename)
-+		return -ENOENT;
-+
-+	namevirt = dma_alloc_coherent(bpmp->dev, namesize, &namephys,
-+				      GFP_KERNEL | GFP_DMA32);
-+	if (!namevirt)
-+		return -ENOMEM;
-+
-+	datavirt = dma_alloc_coherent(bpmp->dev, datasize, &dataphys,
-+				      GFP_KERNEL | GFP_DMA32);
-+	if (!datavirt) {
-+		ret = -ENOMEM;
-+		goto free_namebuf;
-+	}
-+
-+	len = strlen(filename);
-+	strncpy(namevirt, filename, namesize);
-+
-+	ret = mrq_debugfs_read(bpmp, namephys, len, dataphys, datasize,
-+			       &nbytes);
-+
-+	if (!ret)
-+		seq_write(m, datavirt, nbytes);
-+
-+	dma_free_coherent(bpmp->dev, datasize, datavirt, dataphys);
-+free_namebuf:
-+	dma_free_coherent(bpmp->dev, namesize, namevirt, namephys);
-+
-+	return ret;
-+}
-+
-+static int debugfs_open(struct inode *inode, struct file *file)
-+{
-+	return single_open_size(file, debugfs_show, file, SZ_128K);
-+}
-+
-+static ssize_t debugfs_store(struct file *file, const char __user *buf,
-+		size_t count, loff_t *f_pos)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct tegra_bpmp *bpmp = inode->i_private;
-+	const size_t datasize = count;
-+	const size_t namesize = SZ_256;
-+	void *datavirt, *namevirt;
-+	dma_addr_t dataphys, namephys;
-+	char fnamebuf[256];
-+	const char *filename;
-+	size_t len;
-+	int ret;
-+
-+	filename = get_filename(bpmp, file, fnamebuf, sizeof(fnamebuf));
-+	if (!filename)
-+		return -ENOENT;
-+
-+	namevirt = dma_alloc_coherent(bpmp->dev, namesize, &namephys,
-+				      GFP_KERNEL | GFP_DMA32);
-+	if (!namevirt)
-+		return -ENOMEM;
-+
-+	datavirt = dma_alloc_coherent(bpmp->dev, datasize, &dataphys,
-+				      GFP_KERNEL | GFP_DMA32);
-+	if (!datavirt) {
-+		ret = -ENOMEM;
-+		goto free_namebuf;
-+	}
-+
-+	len = strlen(filename);
-+	strncpy(namevirt, filename, namesize);
-+
-+	if (copy_from_user(datavirt, buf, count)) {
-+		ret = -EFAULT;
-+		goto free_databuf;
-+	}
-+
-+	ret = mrq_debugfs_write(bpmp, namephys, len, dataphys,
-+				count);
-+
-+free_databuf:
-+	dma_free_coherent(bpmp->dev, datasize, datavirt, dataphys);
-+free_namebuf:
-+	dma_free_coherent(bpmp->dev, namesize, namevirt, namephys);
-+
-+	return ret ?: count;
-+}
-+
-+static const struct file_operations debugfs_fops = {
-+	.open		= debugfs_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.write		= debugfs_store,
-+	.release	= single_release,
-+};
-+
-+static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
-+			     struct dentry *parent, uint32_t depth)
-+{
-+	int err;
-+	uint32_t d, t;
-+	const char *name;
-+	struct dentry *dentry;
-+
-+	while (!seqbuf_eof(seqbuf)) {
-+		err = seqbuf_read_u32(seqbuf, &d);
-+		if (err < 0)
-+			return err;
-+
-+		if (d < depth) {
-+			seqbuf_seek(seqbuf, -4);
-+			/* go up a level */
-+			return 0;
-+		} else if (d != depth) {
-+			/* malformed data received from BPMP */
-+			return -EIO;
-+		}
-+
-+		err = seqbuf_read_u32(seqbuf, &t);
-+		if (err < 0)
-+			return err;
-+		err = seqbuf_read_str(seqbuf, &name);
-+		if (err < 0)
-+			return err;
-+
-+		if (t & DEBUGFS_S_ISDIR) {
-+			dentry = debugfs_create_dir(name, parent);
-+			if (!dentry)
-+				return -ENOMEM;
-+			err = bpmp_populate_dir(bpmp, seqbuf, dentry, depth+1);
-+			if (err < 0)
-+				return err;
-+		} else {
-+			umode_t mode;
-+
-+			mode = t & DEBUGFS_S_IRUSR ? S_IRUSR : 0;
-+			mode |= t & DEBUGFS_S_IWUSR ? S_IWUSR : 0;
-+			dentry = debugfs_create_file(name, mode,
-+						     parent, bpmp,
-+						     &debugfs_fops);
-+			if (!dentry)
-+				return -ENOMEM;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int create_debugfs_mirror(struct tegra_bpmp *bpmp, void *buf,
-+				 size_t bufsize, struct dentry *root)
-+{
-+	struct seqbuf seqbuf;
-+	int err;
-+
-+	bpmp->debugfs_mirror = debugfs_create_dir("debug", root);
-+	if (!bpmp->debugfs_mirror)
-+		return -ENOMEM;
-+
-+	seqbuf_init(&seqbuf, buf, bufsize);
-+	err = bpmp_populate_dir(bpmp, &seqbuf, bpmp->debugfs_mirror, 0);
-+	if (err < 0) {
-+		debugfs_remove_recursive(bpmp->debugfs_mirror);
-+		bpmp->debugfs_mirror = NULL;
-+	}
-+
-+	return err;
-+}
-+
-+static int mrq_is_supported(struct tegra_bpmp *bpmp, unsigned int mrq)
-+{
-+	struct mrq_query_abi_request req = { .mrq = cpu_to_le32(mrq) };
-+	struct mrq_query_abi_response resp;
-+	struct tegra_bpmp_message msg = {
-+		.mrq = MRQ_QUERY_ABI,
-+		.tx = {
-+			.data = &req,
-+			.size = sizeof(req),
-+		},
-+		.rx = {
-+			.data = &resp,
-+			.size = sizeof(resp),
-+		},
-+	};
-+	int ret;
-+
-+	ret = tegra_bpmp_transfer(bpmp, &msg);
-+	if (ret < 0) {
-+		/* something went wrong; assume not supported */
-+		dev_warn(bpmp->dev, "tegra_bpmp_transfer failed (%d)\n", ret);
-+		return 0;
-+	}
-+
-+	return resp.status ? 0 : 1;
-+}
-+
-+int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
-+{
-+	dma_addr_t phys;
-+	void *virt;
-+	const size_t sz = SZ_256K;
-+	size_t nbytes;
-+	int ret;
-+	struct dentry *root;
-+
-+	if (!mrq_is_supported(bpmp, MRQ_DEBUGFS))
-+		return 0;
-+
-+	root = debugfs_create_dir("bpmp", NULL);
-+	if (!root)
-+		return -ENOMEM;
-+
-+	virt = dma_alloc_coherent(bpmp->dev, sz, &phys,
-+				  GFP_KERNEL | GFP_DMA32);
-+	if (!virt) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	ret = mrq_debugfs_dumpdir(bpmp, phys, sz, &nbytes);
-+	if (ret < 0)
-+		goto free;
-+
-+	ret = create_debugfs_mirror(bpmp, virt, nbytes, root);
-+free:
-+	dma_free_coherent(bpmp->dev, sz, virt, phys);
-+out:
-+	if (ret < 0)
-+		debugfs_remove(root);
-+
-+	return ret;
-+}
-diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
-index 9ba6522..21a522a 100644
---- a/include/soc/tegra/bpmp.h
-+++ b/include/soc/tegra/bpmp.h
-@@ -94,6 +94,10 @@ struct tegra_bpmp {
- 	struct reset_controller_dev rstc;
- 
- 	struct genpd_onecell_data genpd;
-+
-+#ifdef CONFIG_DEBUG_FS
-+	struct dentry *debugfs_mirror;
-+#endif
- };
- 
- struct tegra_bpmp *tegra_bpmp_get(struct device *dev);
-@@ -150,4 +154,14 @@ static inline int tegra_bpmp_init_powergates(struct tegra_bpmp *bpmp)
- }
- #endif
- 
-+#if IS_ENABLED(CONFIG_DEBUG_FS)
-+int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp);
-+#else
-+static inline int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
-+{
-+	return 0;
-+}
-+#endif
-+
-+
- #endif /* __SOC_TEGRA_BPMP_H */
--- 
-2.7.4
+On Tue, Oct 03, 2017 at 01:42:08AM +0530, Bhumika Goyal wrote:
+> These structures are only passed to the functions tegra_clk_register_pll,
+> tegra_clk_register_pll{e/u} or tegra_periph_clk_init during the init
+> phase. These functions modify the structures only during the init phase
+> and after that the structures are never modified. Therefore, make them
+> __ro_after_init.
+> 
+> Signed-off-by: Bhumika Goyal <bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/clk/tegra/clk-tegra30.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+> index a2d163f..1ce7d76 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -359,7 +359,7 @@
+>  };
+>  
+>  /* PLL parameters */
+> -static struct tegra_clk_pll_params pll_c_params = {
+> +static struct tegra_clk_pll_params pll_c_params __ro_after_init = {
+>  	.input_min = 2000000,
+>  	.input_max = 31000000,
+>  	.cf_min = 1000000,
+> @@ -388,7 +388,7 @@
+>  	.override_divp_shift = 15,
+>  };
+>  
+> -static struct tegra_clk_pll_params pll_m_params = {
+> +static struct tegra_clk_pll_params pll_m_params __ro_after_init = {
+>  	.input_min = 2000000,
+>  	.input_max = 31000000,
+>  	.cf_min = 1000000,
+> @@ -409,7 +409,7 @@
+>  		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_FIXED,
+>  };
+>  
+> -static struct tegra_clk_pll_params pll_p_params = {
+> +static struct tegra_clk_pll_params pll_p_params __ro_after_init = {
+>  	.input_min = 2000000,
+>  	.input_max = 31000000,
+>  	.cf_min = 1000000,
+> @@ -444,7 +444,7 @@
+>  		 TEGRA_PLL_HAS_LOCK_ENABLE,
+>  };
+>  
+> -static struct tegra_clk_pll_params pll_d_params = {
+> +static struct tegra_clk_pll_params pll_d_params __ro_after_init = {
+>  	.input_min = 2000000,
+>  	.input_max = 40000000,
+>  	.cf_min = 1000000,
+> @@ -461,7 +461,7 @@
+>  		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
+>  };
+>  
+> -static struct tegra_clk_pll_params pll_d2_params = {
+> +static struct tegra_clk_pll_params pll_d2_params __ro_after_init = {
+>  	.input_min = 2000000,
+>  	.input_max = 40000000,
+>  	.cf_min = 1000000,
+> @@ -478,7 +478,7 @@
+>  		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
+>  };
+>  
+> -static struct tegra_clk_pll_params pll_u_params = {
+> +static struct tegra_clk_pll_params pll_u_params __ro_after_init = {
+>  	.input_min = 2000000,
+>  	.input_max = 40000000,
+>  	.cf_min = 1000000,
+> @@ -496,7 +496,7 @@
+>  		 TEGRA_PLL_HAS_LOCK_ENABLE,
+>  };
+>  
+> -static struct tegra_clk_pll_params pll_x_params = {
+> +static struct tegra_clk_pll_params pll_x_params __ro_after_init = {
+>  	.input_min = 2000000,
+>  	.input_max = 31000000,
+>  	.cf_min = 1000000,
+> @@ -513,7 +513,7 @@
+>  		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
+>  };
+>  
+> -static struct tegra_clk_pll_params pll_e_params = {
+> +static struct tegra_clk_pll_params pll_e_params __ro_after_init = {
+>  	.input_min = 12000000,
+>  	.input_max = 216000000,
+>  	.cf_min = 12000000,
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
