@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 3/4] clk: tegra20: Use common definition of APBDMA clock gate
-Date: Wed,  4 Oct 2017 02:02:40 +0300
-Message-ID: <92864d5a0b181866153a1cf28425640f3bbe1b17.1507070638.git.digetx@gmail.com>
+Subject: [PATCH v2 1/4] clk: tegra: Add AHB DMA clock entry
+Date: Wed,  4 Oct 2017 02:02:38 +0300
+Message-ID: <a2f03a761de34e8b814049b8dcd9791acbca4d6d.1507070638.git.digetx@gmail.com>
 References: <cover.1507070638.git.digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1507070638.git.digetx@gmail.com>
@@ -12,38 +12,64 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The APBDMA clock is defined in the common clock gates table that is used
-by Tegra30+. Tegra20 can use it too, let's remove the custom definition
-and use the common one.
+AHB DMA engine presents on Tegra20/30. Add missing clock entries, so that
+driver for the AHB DMA controller could be implemented.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/clk/tegra/clk-id.h           | 1 +
+ drivers/clk/tegra/clk-tegra-periph.c | 1 +
+ drivers/clk/tegra/clk-tegra20.c      | 1 +
+ drivers/clk/tegra/clk-tegra30.c      | 1 +
+ 4 files changed, 4 insertions(+)
 
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index 689f344377a7..c1661b47bbda 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -12,6 +12,7 @@ enum clk_id {
+ 	tegra_clk_amx,
+ 	tegra_clk_amx1,
+ 	tegra_clk_apb2ape,
++	tegra_clk_ahbdma,
+ 	tegra_clk_apbdma,
+ 	tegra_clk_apbif,
+ 	tegra_clk_ape,
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 848255cc0209..0bce2bc55f0d 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -823,6 +823,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+ 	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, CLK_IS_CRITICAL),
+ 	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
+ 	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
++	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
+ 	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
+ 	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
+ 	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
 diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 42740aad8791..87511b8892cd 100644
+index 837e5cbd60e9..42740aad8791 100644
 --- a/drivers/clk/tegra/clk-tegra20.c
 +++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -523,6 +523,7 @@ static struct tegra_devclk devclks[] __initdata = {
+@@ -522,6 +522,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ };
  
  static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_ahbdma] = { .dt_id = TEGRA20_CLK_AHBDMA, .present = true },
-+	[tegra_clk_apbdma] = { .dt_id = TEGRA20_CLK_APBDMA, .present = true },
++	[tegra_clk_ahbdma] = { .dt_id = TEGRA20_CLK_AHBDMA, .present = true },
  	[tegra_clk_spdif_out] = { .dt_id = TEGRA20_CLK_SPDIF_OUT, .present = true },
  	[tegra_clk_spdif_in] = { .dt_id = TEGRA20_CLK_SPDIF_IN, .present = true },
  	[tegra_clk_sdmmc1] = { .dt_id = TEGRA20_CLK_SDMMC1, .present = true },
-@@ -807,11 +808,6 @@ static void __init tegra20_periph_clk_init(void)
- 				    clk_base, 0, 3, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_AC97] = clk;
- 
--	/* apbdma */
--	clk = tegra_clk_register_periph_gate("apbdma", "pclk", 0, clk_base,
--				    0, 34, periph_clk_enb_refcnt);
--	clks[TEGRA20_CLK_APBDMA] = clk;
--
- 	/* emc */
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index a2d163f759b4..ee168b0d9023 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -788,6 +788,7 @@ static struct tegra_clk tegra30_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_extern3] = { .dt_id = TEGRA30_CLK_EXTERN3, .present = true },
+ 	[tegra_clk_disp1] = { .dt_id = TEGRA30_CLK_DISP1, .present = true },
+ 	[tegra_clk_disp2] = { .dt_id = TEGRA30_CLK_DISP2, .present = true },
++	[tegra_clk_ahbdma] = { .dt_id = TEGRA30_CLK_AHBDMA, .present = true },
+ 	[tegra_clk_apbdma] = { .dt_id = TEGRA30_CLK_APBDMA, .present = true },
+ 	[tegra_clk_rtc] = { .dt_id = TEGRA30_CLK_RTC, .present = true },
+ 	[tegra_clk_timer] = { .dt_id = TEGRA30_CLK_TIMER, .present = true },
 -- 
 2.14.1
