@@ -1,52 +1,62 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 0/2] NVIDIA Tegra20 video decoder driver
-Date: Wed,  4 Oct 2017 00:51:52 +0300
-Message-ID: <cover.1507063619.git.digetx@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v2 2/2] ARM: dts: tegra20: Add video decoder node
+Date: Wed,  4 Oct 2017 00:51:54 +0300
+Message-ID: <5221e5ea893321d6655cdb136dea3e9294ff8a5d.1507063619.git.digetx@gmail.com>
+References: <cover.1507063619.git.digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <cover.1507063619.git.digetx@gmail.com>
+In-Reply-To: <cover.1507063619.git.digetx@gmail.com>
+References: <cover.1507063619.git.digetx@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This driver provides accelerated video decoding to NVIDIA Tegra20 SoC's,
-it is a result of reverse-engineering efforts. Driver has been tested on
-Toshiba AC100 and Acer A500, it should work on any Tegra20 device.
+Add a device node for the video decoder engine found on Tegra20.
 
-In userspace this driver is utilized by libvdpau-tegra [0] that implements
-VDPAU interface, so any video player that supports VDPAU can provide
-accelerated video decoding on Tegra20 on Linux.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/boot/dts/tegra20.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-[0] https://github.com/grate-driver/libvdpau-tegra
-
-Change log:
-v2:
-	- Addressed v1 review comments from Stephen Warren and Dan Carpenter
-	- Implemented runtime PM
-	- Miscellaneous code cleanups
-	- Changed 'TODO'
-	- CC'd media maintainers for the review as per Greg K-H request,
-	  v1 can be viewed at https://lkml.org/lkml/2017/9/25/606
-
-Dmitry Osipenko (2):
-  staging: Introduce NVIDIA Tegra20 video decoder driver
-  ARM: dts: tegra20: Add video decoder node
-
- .../bindings/arm/tegra/nvidia,tegra20-vde.txt      |   43 +
- arch/arm/boot/dts/tegra20.dtsi                     |   17 +
- drivers/staging/Kconfig                            |    2 +
- drivers/staging/Makefile                           |    1 +
- drivers/staging/tegra-vde/Kconfig                  |    6 +
- drivers/staging/tegra-vde/Makefile                 |    1 +
- drivers/staging/tegra-vde/TODO                     |    5 +
- drivers/staging/tegra-vde/uapi.h                   |  101 ++
- drivers/staging/tegra-vde/vde.c                    | 1105 ++++++++++++++++++++
- 9 files changed, 1281 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.txt
- create mode 100644 drivers/staging/tegra-vde/Kconfig
- create mode 100644 drivers/staging/tegra-vde/Makefile
- create mode 100644 drivers/staging/tegra-vde/TODO
- create mode 100644 drivers/staging/tegra-vde/uapi.h
- create mode 100644 drivers/staging/tegra-vde/vde.c
-
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 7c85f97f72ea..1b5d54b6c0cb 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -249,6 +249,23 @@
+ 		*/
+ 	};
+ 
++	vde@6001a000 {
++		compatible = "nvidia,tegra20-vde";
++		reg = <0x6001a000 0x3D00    /* VDE registers */
++		       0x40000400 0x3FC00>; /* IRAM region */
++		reg-names = "regs", "iram";
++		interrupts = <GIC_SPI  8 IRQ_TYPE_LEVEL_HIGH>, /* UCQ error interrupt */
++			     <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
++			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
++			     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>, /* BSE-A interrupt */
++			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
++		interrupt-names = "ucq-error", "sync-token", "bsev", "bsea", "sxe";
++		clocks = <&tegra_car TEGRA20_CLK_VDE>;
++		clock-names = "vde";
++		resets = <&tegra_car 61>;
++		reset-names = "vde";
++	};
++
+ 	apbmisc@70000800 {
+ 		compatible = "nvidia,tegra20-apbmisc";
+ 		reg = <0x70000800 0x64   /* Chip revision */
 -- 
 2.14.1
