@@ -1,143 +1,122 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-Date: Tue, 3 Oct 2017 20:04:09 +0300
-Message-ID: <93be2eb5-617a-f681-0a55-c2bbef46d08b@gmail.com>
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
- <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
- <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
- <795e4b19-b747-74c1-6f92-b961ab4bf822@gmail.com>
- <4443a8fb-7a4d-922b-2dd3-53236d39a050@nvidia.com>
- <ecf50d7b-59d2-7b98-5d45-e95922e495bf@wwwdotorg.org>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked
+ infrastructure
+Date: Tue, 3 Oct 2017 13:26:38 -0500
+Message-ID: <b583d903-03ea-eb74-e142-02b31ad3ddfb@ti.com>
+References: <20170928095628.21966-1-thierry.reding@gmail.com>
+ <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com>
+ <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <ecf50d7b-59d2-7b98-5d45-e95922e495bf@wwwdotorg.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03.10.2017 18:38, Stephen Warren wrote:
-> On 10/03/2017 04:32 AM, Jon Hunter wrote:
->>
->>
->> On 03/10/17 00:02, Dmitry Osipenko wrote:
->>> On 02.10.2017 20:05, Stephen Warren wrote:
->>>> On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
->>>>> On 29.09.2017 22:30, Stephen Warren wrote:
->>>>>> On 09/27/2017 02:34 AM, Jon Hunter wrote:
->>>>>>>
->>>>>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>>>>>>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>>>>>>
->>>>>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>>>>>>>> on Tegra20/30 SoC's.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>>>> ---
->>>>>>>>>>     .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23
->>>>>>>>>> ++++++++++++++++++++++
->>>>>>>>>>     1 file changed, 23 insertions(+)
->>>>>>>>>>     create mode 100644
->>>>>>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>>>
->>>>>>>>>> diff --git
->>>>>>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>>> new file mode 100644
->>>>>>>>>> index 000000000000..2af9aa76ae11
->>>>>>>>>> --- /dev/null
->>>>>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>>> @@ -0,0 +1,23 @@
->>>>>>>>>> +* NVIDIA Tegra AHB DMA controller
->>>>>>>>>> +
->>>>>>>>>> +Required properties:
->>>>>>>>>> +- compatible:    Must be "nvidia,tegra20-ahbdma"
->>>>>>>>>> +- reg:        Should contain registers base address and length.
->>>>>>>>>> +- interrupts:    Should contain one entry, DMA controller interrupt.
->>>>>>>>>> +- clocks:    Should contain one entry, DMA controller clock.
->>>>>>>>>> +- resets :    Should contain one entry, DMA controller reset.
->>>>>>>>>> +- #dma-cells:    Should be <1>. The cell represents DMA request select
->>>>>>>>>> value
->>>>>>>>>> +        for the peripheral. For more details consult the Tegra TRM's
->>>>>>>>>> +        documentation, in particular AHB DMA channel control register
->>>>>>>>>> +        REQ_SEL field.
->>>>>>>>>
->>>>>>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>>>>>>>
->>>>>>>>
->>>>>>>> Actually, DMA transfer trigger isn't related a hardware description. It's
->>>>>>>> up to
->>>>>>>> software to decide what trigger to select. So it shouldn't be in the
->>>>>>>> binding.
->>>>>>>
->>>>>>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
->>>>>>>
->>>>>>>> And I think the same applies to requester... any objections?
->>>>>>>
->>>>>>> Well, the REQ_SEL should definitely be in the binding.
->>>>>>>
->>>>>>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
->>>>>>> like we never bothered with it for the APB DMA and so maybe no ones uses
->>>>>>> this.
->>>>>>
->>>>>> I don't think TRIG_SEL should be in the binding, at least at present. While
->>>>>> TRIG_SEL certainly is something used to configure the transfer, I believe the
->>>>>> semantics of the current DMA binding only cover DMA transfers that are
->>>>>> initiated
->>>>>> when SW desires, rather than being a combination of after SW programs the
->>>>>> transfer plus some other HW event. So, we always use a default/hard-coded
->>>>>> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. There's
->>>>>> certainly no known use-case that requires a non-default TRIG_SEL value at
->>>>>> present. We could add an extra #dma-cells value later if we find a use for
->>>>>> it,
->>>>>> and the semantics of that use-case make sense to add it to the DMA specifier,
->>>>>> rather than some other separate higher-level property/driver/...
->>>>>
->>>>> Thank you for the comment. If we'd want to extend the binding further with the
->>>>> trigger, how to differentiate trigger from the requester in a case of a single
->>>>> #data-cell?
->>>>>
->>>>> Of course realistically a chance that the further extension would be needed is
->>>>> very-very low, so we may defer the efforts to solve that question and for now
->>>>> make driver aware of the potential #dma-cells extension.
->>>>
->>>> The request selector cell isn't optional, so is always present. If we later add
->>>> an optional trig_sel cell, we'll either have:
->>>>
->>>> #dma-cells=<1>: req_sel
->>>>
->>>> or:
->>>>
->>>> #dma-cells=<2>: req_sel, trig_sel
->>>
->>> Why request sel. couldn't be optional? Could you please elaborate a bit more?
-> 
-> The documentation currently says it's mandatory, and DT bindings must be evolved
-> in a backwards-compatible fashion.
-> 
->>> I think possible options are:
->>>
->>> #dma-cells=<1>: req_sel
->>> #dma-cells=<1>: trig_sel
->>
->> With the above, how would you know that it is the req_sel or trig_sel
->> that is specified?
-> 
-> Also, if req_sel were optional, then it'd be impossible to distinguish between
-> those cases, so we can't design a binding like that. In general, when adding
-> extra optional cells to an #xxx-cells style binding, then whenever cell N is
-> present, all cells before cell N must be present even if optional.
 
-I've checked how extending of #dma-cells looks like and it is indeed a good
-variant since it preserves backward compatibility. Thank you and Jon for the
-comments and suggestions, I'll send out v2 soon.
+
+On 10/02/2017 02:55 AM, Linus Walleij wrote:
+> On Thu, Sep 28, 2017 at 4:22 PM, Grygorii Strashko
+> <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
+> 
+>> Sry, but I do not agree with this series.
+>> - no prof that it can be re-used by other drivers than tegra
+>>   (at least I do not see reasons to re-use it for any TI drivers)
+> 
+> This is not necessarily a blocker if it can be shown that others than
+> TI/OMAP can reuse it.
+
+sure. My point is - this is big change in gpiolib, which is > 1000 lines,
+but current re-usability just 2 drivers (I'm comparing with your work when
+gpio irq infra was introduced - you did it bottom-up, by refactoring
+existing drivers and moving common code in gpiolib, so re usability is great). 
+
+> 
+> I've looked at things like the imagination pistachio:
+> 
+> pinctrl@18101C00 {
+>          compatible = "img,pistachio-system-pinctrl";
+>          reg = <0x18101C00 0x400>;
+> 
+>          gpio0: gpio0 {
+>                  interrupts = <GIC_SHARED 71 IRQ_TYPE_LEVEL_HIGH>;
+> 
+>                  gpio-controller;
+>                  #gpio-cells = <2>;
+> 
+>                  interrupt-controller;
+>                  #interrupt-cells = <2>;
+>          };
+> 
+>          ...
+> 
+>          gpio5: gpio5 {
+>                  interrupts = <GIC_SHARED 76 IRQ_TYPE_LEVEL_HIGH>;
+> 
+>                  gpio-controller;
+>                  #gpio-cells = <2>;
+> 
+>                  interrupt-controller;
+>                  #interrupt-cells = <2>;
+>          };
+> 
+> This looks like a clear candidate.
+> CC: to  Andrew Bresticker, can you look into this?
+> 
+
+[...]
+
+		gpio: gpio@226000 {
+			compatible = "ti,dm6441-gpio";
+			gpio-controller;
+			#gpio-cells = <2>;
+			reg = <0x226000 0x1000>;
+			interrupts = <42 IRQ_TYPE_EDGE_BOTH
+				43 IRQ_TYPE_EDGE_BOTH 44 IRQ_TYPE_EDGE_BOTH
+				45 IRQ_TYPE_EDGE_BOTH 46 IRQ_TYPE_EDGE_BOTH
+				47 IRQ_TYPE_EDGE_BOTH 48 IRQ_TYPE_EDGE_BOTH
+				49 IRQ_TYPE_EDGE_BOTH 50 IRQ_TYPE_EDGE_BOTH>;
+			ti,ngpio = <144>;
+			ti,davinci-gpio-unbanked = <0>;
+			status = "disabled";
+			interrupt-controller;
+			#interrupt-cells = <2>;
+		};
+
+FYI. Above is gpio-dvinci example which defines the same, but without coding
+gpio banks in DT (note 2 IRQ lines per bank, bank 32 pins).
+
+> 
+> CC to Shawn Guo to look into this.
+> 
+> So in short I think there can be others that can make good use of this
+> infrastructure.
+> 
+>> - all GPIO IRQs mapped statically
+> 
+> This really needs to be fixed.
+> 
+>> - irq->map[offset + j] = irq->parents[parent]; holds IRQs for all pins
+>>    which is waste of memory
+>> - DT binding changes not documented and no DT examples
+>> - below is ugly ;)
+>> +       bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
+>> +       pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
+> 
+> These should be fixable quite easily I think. Thierry?
+
+What I'm trying to understand is how GPIO client bindings will look like?
+Now it is: gpios = <&gpio2 14 GPIO_ACTIVE_LOW>; (pistachio_marduk.dts)
+
+But as per of_gpio_banked_xlate() it expected to be
+gpios = <&gpio [Linear gpio num] GPIO_ACTIVE_LOW>;
+Wouldn't this break DT compatibility and prevent re-using of this feature
+for pistachio, for example? (or i'm missing smth).
+
+-- 
+regards,
+-grygorii
