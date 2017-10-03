@@ -1,68 +1,36 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] dmaengine: tegra-apb: Support non-flow controlled slave configuration
-Date: Wed,  4 Oct 2017 01:38:38 +0300
-Message-ID: <20171003223838.31834-1-digetx@gmail.com>
+Subject: [PATCH v2 0/4] Tegra DMA clocks addition / correction
+Date: Wed,  4 Oct 2017 02:02:37 +0300
+Message-ID: <cover.1507070638.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This allows DMA client to issue a non-flow controlled TX. In particular
-it is needed for the fuse driver that reads fuse registers using APBDMA
-to workaround a HW bug that results in hang when CPU and DMA perform
-simultaneous access to fuse peripheral.
+This patchset is factored out from the AHB DMA driver 'introduction' series
+as per drivers/dma/ subsystem maintainer request.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/dma/tegra20-apb-dma.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+Change log:
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index b9d75a54c896..a177039713a7 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -353,7 +353,8 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
- 	}
- 
- 	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
--	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID) {
-+	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID &&
-+	    sconfig->device_fc) {
- 		if (sconfig->slave_id > TEGRA_APBDMA_CSR_REQ_SEL_MASK)
- 			return -EINVAL;
- 		tdc->slave_id = sconfig->slave_id;
-@@ -970,8 +971,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
- 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
- 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
- 
--	csr |= TEGRA_APBDMA_CSR_ONCE | TEGRA_APBDMA_CSR_FLOW;
--	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
-+	csr |= TEGRA_APBDMA_CSR_ONCE ;
-+
-+	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
-+		csr |= TEGRA_APBDMA_CSR_FLOW;
-+		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
-+	}
-+
- 	if (flags & DMA_PREP_INTERRUPT)
- 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
- 
-@@ -1110,10 +1116,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
- 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
- 
--	csr |= TEGRA_APBDMA_CSR_FLOW;
-+	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
-+		csr |= TEGRA_APBDMA_CSR_FLOW;
-+		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
-+	}
-+
- 	if (flags & DMA_PREP_INTERRUPT)
- 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
--	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
- 
- 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
- 
+v2:
+	- Added patch that corrects parent of the APB DMA clock gate in the
+	  'common' clock gate definition.
+
+	- Added patch that makes Tegra20 to utilize the 'common' APB DMA
+	  clock gate definition.
+
+Dmitry Osipenko (4):
+  clk: tegra: Add AHB DMA clock entry
+  clk: tegra: Correct parent of the APBDMA clock
+  clk: tegra20: Use common definition of APBDMA clock gate
+  clk: tegra20: Bump SCLK clock rate to 216MHz
+
+ drivers/clk/tegra/clk-id.h           | 1 +
+ drivers/clk/tegra/clk-tegra-periph.c | 3 ++-
+ drivers/clk/tegra/clk-tegra20.c      | 9 +++------
+ drivers/clk/tegra/clk-tegra30.c      | 1 +
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
 -- 
 2.14.1
