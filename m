@@ -1,60 +1,42 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] soc/tegra: fuse: Explicitly request DMA channel
- from APB DMA driver
-Date: Wed, 4 Oct 2017 14:11:46 +0300
-Message-ID: <71f3dbe4-6de1-c864-18cc-28aa4734a414@gmail.com>
-References: <cover.1507068874.git.digetx@gmail.com>
- <c2b55552d079f47564456ebfcd982116aad32be8.1507068874.git.digetx@gmail.com>
- <a877b502-9c26-d27f-ab29-14918afa030c@nvidia.com>
+From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH 0/9] Bringing Asus TF300T support to mainline
+Date: Wed, 4 Oct 2017 23:25:34 +0200
+Message-ID: <20171004212534.uosfz6757bbds2c5@qmqm.qmqm.pl>
+References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a877b502-9c26-d27f-ab29-14918afa030c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04.10.2017 13:48, Jon Hunter wrote:
-> 
-> 
-> On 03/10/17 23:35, Dmitry Osipenko wrote:
->> Currently fuse driver requests DMA channel from an arbitrary DMA device,
->> it is not a problem since there is only one DMA provider for Tegra20 yet,
->> but it will become troublesome once another provider will be added.
->>
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/soc/tegra/fuse/fuse-tegra20.c | 12 +++++++++++-
->>  1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
->> index a33f48c06771..e9e127a24c70 100644
->> --- a/drivers/soc/tegra/fuse/fuse-tegra20.c
->> +++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
->> @@ -37,6 +37,11 @@
->>  #define FUSE_UID_LOW	0x08
->>  #define FUSE_UID_HIGH	0x0c
->>  
->> +static const struct of_device_id apbdma_of_match[] = {
->> +	{ .compatible = "nvidia,tegra20-apbdma" },
->> +	{ },
->> +};
->> +
->>  static u32 tegra20_fuse_read_early(struct tegra_fuse *fuse, unsigned int offset)
->>  {
->>  	return readl_relaxed(fuse->base + FUSE_BEGIN + offset);
->> @@ -96,6 +101,11 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
->>  	return value;
->>  }
->>  
->> +static bool dma_filter(struct dma_chan *chan, void *filter_param)
->> +{
->> +	return of_match_device(apbdma_of_match, chan->device->dev) != NULL;
-> 
-> Is it simpler just to use of_device_is_compatible() here?
-> 
+On Thu, Jul 20, 2017 at 02:29:22AM +0200, Micha=B3 Miros=B3aw wrote:
+> Here is a suprisingly small set of patches that enable Asus TF300T tablet
+> to boot and have all cores available. TF300T is one of a consumer devices
+> based on NVidia's Cardhu reference tablet.
+> =
 
-Good point! I haven't noticed that function in the OF API.
+> This series is an arch-dependent part. TF parts were extracted from ASUS's
+> GPL code dump.  The rest being driver code - a work in progress - is
+> available in branch tf300t at:
+> =
+
+>         https://rere.qmqm.pl/git/linux
+
+Just a quick note, that I've rebased the branch on v4.14-rc3 and added
+some more patches on top. This includes updated defconfig and devicetree
+with working eMMC and an attempt at making TF300T's dock hot-pluggable.
+
+Best Regards,
+Micha=B3 Miros=B3aw
