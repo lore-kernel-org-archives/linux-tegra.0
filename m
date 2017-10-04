@@ -1,100 +1,70 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] iommu/tegra: gart: Add optional debug checking for
- overwriting of page mappings
-Date: Wed, 4 Oct 2017 04:12:31 +0300
-Message-ID: <21da6e28-c788-0a41-2fa5-a8bc5d99e9a2@gmail.com>
-References: <cover.1507078770.git.digetx@gmail.com>
- <2eadfde76987532354e419ffc98aae44e4af489a.1507078586.git.digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] soc/tegra: fuse: Fix reading registers using DMA
+ on Tegra20
+Date: Wed, 4 Oct 2017 11:47:27 +0100
+Message-ID: <d0e89b75-a223-2509-e8f5-bc38736346aa@nvidia.com>
+References: <cover.1507068874.git.digetx@gmail.com>
+ <1fe535d4655ae00199a8d60768b384e87df3ed51.1507068874.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2eadfde76987532354e419ffc98aae44e4af489a.1507078586.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1fe535d4655ae00199a8d60768b384e87df3ed51.1507068874.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04.10.2017 04:02, Dmitry Osipenko wrote:
-> Due to a bug in IOVA allocator, page mapping could accidentally overwritten.
-> We can catch this case by checking 'VALID' bit of GART's page entry prior to
-> mapping of a page. Since that check introduces a noticeable performance
-> impact, it should be enabled explicitly by a new CONFIG_TEGRA_IOMMU_GART_DEBUG
-> option.
+
+On 03/10/17 23:35, Dmitry Osipenko wrote:
+> DMA config is incorrect, because of it DMA transfer is never issued and
+> tegra20_fuse_read() always returns 0x0.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/iommu/Kconfig      |  9 +++++++++
->  drivers/iommu/tegra-gart.c | 16 +++++++++++++++-
->  2 files changed, 24 insertions(+), 1 deletion(-)
+>  drivers/soc/tegra/fuse/fuse-tegra.c   | 1 +
+>  drivers/soc/tegra/fuse/fuse-tegra20.c | 3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index f3a21343e636..851156a4896d 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -242,6 +242,15 @@ config TEGRA_IOMMU_GART
->  	  space through the GART (Graphics Address Relocation Table)
->  	  hardware included on Tegra SoCs.
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+> index b7c552e3133c..73a3a2c74021 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+> @@ -132,6 +132,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
 >  
-> +config TEGRA_IOMMU_GART_DEBUG
-> +	bool "Debug Tegra GART IOMMU"
-> +	depends on TEGRA_IOMMU_GART
-> +	help
-> +	  Properly unmap pages and check whether page is already mapped
-> +	  during of mapping in expense of performance. This allows to
-> +	  catch double page remappings, caused by a bug in the IOVA
-> +	  allocator for example.
-> +
->  config TEGRA_IOMMU_SMMU
->  	bool "NVIDIA Tegra SMMU Support"
->  	depends on ARCH_TEGRA
-> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-> index b62f790ad1ba..7e5df0ebcdfc 100644
-> --- a/drivers/iommu/tegra-gart.c
-> +++ b/drivers/iommu/tegra-gart.c
-> @@ -271,6 +271,7 @@ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
->  	struct gart_device *gart = gart_domain->gart;
->  	unsigned long flags;
->  	unsigned long pfn;
-> +	unsigned long pte;
+>  	/* take over the memory region from the early initialization */
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	fuse->phys = res->start;
+>  	fuse->base = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(fuse->base))
+>  		return PTR_ERR(fuse->base);
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
+> index 294413a969a0..a33f48c06771 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra20.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
+> @@ -59,7 +59,7 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
 >  
->  	if (!gart_iova_range_valid(gart, iova, bytes))
->  		return -EINVAL;
-> @@ -282,6 +283,14 @@ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
->  		spin_unlock_irqrestore(&gart->pte_lock, flags);
->  		return -EINVAL;
->  	}
-> +	if (IS_ENABLED(TEGRA_IOMMU_GART_DEBUG)) {
-> +		pte = gart_read_pte(gart, iova);
-> +		if (pte & GART_ENTRY_PHYS_ADDR_VALID) {
-> +			spin_unlock_irqrestore(&gart->pte_lock, flags);
-> +			dev_err(gart->dev, "Page entry is used already\n");
-> +			return -EBUSY;
-> +		}
-> +	}
->  	gart_set_pte(gart, iova, GART_PTE(pfn));
->  	FLUSH_GART_REGS(gart);
->  	spin_unlock_irqrestore(&gart->pte_lock, flags);
-> @@ -298,11 +307,16 @@ static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
->  	if (!gart_iova_range_valid(gart, iova, bytes))
->  		return 0;
+>  	mutex_lock(&fuse->apbdma.lock);
 >  
-> +	/* don't unmap page entries to achieve better performance */
-> +	if (!IS_ENABLED(TEGRA_IOMMU_GART_DEBUG))
-> +		return 0;
-> +
->  	spin_lock_irqsave(&gart->pte_lock, flags);
->  	gart_set_pte(gart, iova, 0);
->  	FLUSH_GART_REGS(gart);
->  	spin_unlock_irqrestore(&gart->pte_lock, flags);
-> -	return 0;
-> +
-> +	return bytes;
->  }
+> -	fuse->apbdma.config.src_addr = fuse->apbdma.phys + FUSE_BEGIN + offset;
+> +	fuse->apbdma.config.src_addr = fuse->phys + FUSE_BEGIN + offset;
 >  
->  static phys_addr_t gart_iommu_iova_to_phys(struct iommu_domain *domain,
-> 
+>  	err = dmaengine_slave_config(fuse->apbdma.chan, &fuse->apbdma.config);
+>  	if (err)
+> @@ -119,6 +119,7 @@ static int tegra20_fuse_probe(struct tegra_fuse *fuse)
+>  	fuse->apbdma.config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+>  	fuse->apbdma.config.src_maxburst = 1;
+>  	fuse->apbdma.config.dst_maxburst = 1;
+> +	fuse->apbdma.config.direction = DMA_DEV_TO_MEM;
+>  
+>  	init_completion(&fuse->apbdma.wait);
+>  	mutex_init(&fuse->apbdma.lock);
 
-Please ignore this email, it was sent out by an accident. And please let me know
-if I should re-send the patchset.
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Cheers
+Jon
+
+-- 
+nvpublic
