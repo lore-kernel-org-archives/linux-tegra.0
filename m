@@ -1,76 +1,35 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] soc/tegra: fuse: Fix reading registers using DMA
- on Tegra20
-Date: Thu, 5 Oct 2017 15:41:28 +0300
-Message-ID: <284d012b-1a73-3e2e-7094-f63c413780dc@gmail.com>
-References: <cover.1507068874.git.digetx@gmail.com>
- <1fe535d4655ae00199a8d60768b384e87df3ed51.1507068874.git.digetx@gmail.com>
- <d0e89b75-a223-2509-e8f5-bc38736346aa@nvidia.com>
- <9398d8e6-5a8d-7965-ebf8-9825c1fb3a06@nvidia.com>
+Subject: Re: [PATCH 0/9] Bringing Asus TF300T support to mainline
+Date: Thu, 5 Oct 2017 18:52:30 +0300
+Message-ID: <dcbbc541-60c1-8af5-25ea-927629447a55@gmail.com>
+References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <20171004212534.uosfz6757bbds2c5@qmqm.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9398d8e6-5a8d-7965-ebf8-9825c1fb3a06-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20171004212534.uosfz6757bbds2c5-cHozx32mtrEEUmgCuDUIdw@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.10.2017 15:22, Jon Hunter wrote:
-> 
-> On 04/10/17 11:47, Jon Hunter wrote:
+On 05.10.2017 00:25, Michał Mirosław wrote:
+> On Thu, Jul 20, 2017 at 02:29:22AM +0200, Michał Mirosław wrote:
+>> Here is a suprisingly small set of patches that enable Asus TF300T tablet
+>> to boot and have all cores available. TF300T is one of a consumer devices
+>> based on NVidia's Cardhu reference tablet.
 >>
->> On 03/10/17 23:35, Dmitry Osipenko wrote:
->>> DMA config is incorrect, because of it DMA transfer is never issued and
->>> tegra20_fuse_read() always returns 0x0.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>>  drivers/soc/tegra/fuse/fuse-tegra.c   | 1 +
->>>  drivers/soc/tegra/fuse/fuse-tegra20.c | 3 ++-
->>>  2 files changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
->>> index b7c552e3133c..73a3a2c74021 100644
->>> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
->>> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
->>> @@ -132,6 +132,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
->>>  
->>>  	/* take over the memory region from the early initialization */
->>>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +	fuse->phys = res->start;
->>>  	fuse->base = devm_ioremap_resource(&pdev->dev, res);
->>>  	if (IS_ERR(fuse->base))
->>>  		return PTR_ERR(fuse->base);
->>> diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
->>> index 294413a969a0..a33f48c06771 100644
->>> --- a/drivers/soc/tegra/fuse/fuse-tegra20.c
->>> +++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
->>> @@ -59,7 +59,7 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
->>>  
->>>  	mutex_lock(&fuse->apbdma.lock);
->>>  
->>> -	fuse->apbdma.config.src_addr = fuse->apbdma.phys + FUSE_BEGIN + offset;
->>> +	fuse->apbdma.config.src_addr = fuse->phys + FUSE_BEGIN + offset;
->>>  
->>>  	err = dmaengine_slave_config(fuse->apbdma.chan, &fuse->apbdma.config);
->>>  	if (err)
->>> @@ -119,6 +119,7 @@ static int tegra20_fuse_probe(struct tegra_fuse *fuse)
->>>  	fuse->apbdma.config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
->>>  	fuse->apbdma.config.src_maxburst = 1;
->>>  	fuse->apbdma.config.dst_maxburst = 1;
->>> +	fuse->apbdma.config.direction = DMA_DEV_TO_MEM;
->>>  
->>>  	init_completion(&fuse->apbdma.wait);
->>>  	mutex_init(&fuse->apbdma.lock);
+>> This series is an arch-dependent part. TF parts were extracted from ASUS's
+>> GPL code dump.  The rest being driver code - a work in progress - is
+>> available in branch tf300t at:
 >>
->> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>         https://rere.qmqm.pl/git/linux
 > 
-> BTW, if you do rev this series, then maybe it is worth explicitly
-> setting 'fuse->apbdma.config.device_fc = false'.
+> Just a quick note, that I've rebased the branch on v4.14-rc3 and added
+> some more patches on top. This includes updated defconfig and devicetree
+> with working eMMC and an attempt at making TF300T's dock hot-pluggable.
 > 
 
-I'll make v3 for sure. Setting device_fc isn't strictly needed, but it is good
-to have for expressiveness. I'll add it to v3, thanks.
+Just a small note.. I think you should develop on top of linux-next, since your
+patches would be applied to linux-next first.
