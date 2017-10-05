@@ -1,108 +1,66 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/9] ARM: enable secure platform-only erratas
-Date: Thu, 5 Oct 2017 21:16:12 +0300
-Message-ID: <bdff72b9-8ebd-a426-b27b-fe055d45cfb1@gmail.com>
-References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
- <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500510157.git.mirq-linux@rere.qmqm.pl>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+Date: Thu, 5 Oct 2017 15:33:55 -0500
+Message-ID: <20171005203355.5lftjytx5f6rhe2d@rob-hp-laptop>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500510157.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.07.2017 03:29, Michał Mirosław wrote:
-> Allow secure-only erratas to be used in multiarch kernel.
+On Tue, Sep 26, 2017 at 02:22:04AM +0300, Dmitry Osipenko wrote:
+> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+> on Tegra20/30 SoC's.
 > 
-> Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  arch/arm/Kconfig | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
+>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
 > 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index a208bfe367b5..a1eff866550b 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -696,6 +696,14 @@ config ARCH_MULTI_CPU_AUTO
->  
->  endmenu
->  
-> +config ARCH_ASSUME_SECURE_PLATFORM
-> +	bool "Enable ERRATAs using secure-only registers"
-> +	default !ARCH_MULTIPLATFORM
-
-I think default should always be "Yes" and this option shouldn't affect
-multiplatform kernels. So a multiplatform kernel wouldn't be an option for your
-device.
-
-> +	help
-> +	  Allow erratas that need access to secure-only registers.
+> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+> new file mode 100644
+> index 000000000000..2af9aa76ae11
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+> @@ -0,0 +1,23 @@
+> +* NVIDIA Tegra AHB DMA controller
 > +
-> +	  Beware: Resulting kernel won't boot on a CPU in non-Secure mode.
+> +Required properties:
+> +- compatible:	Must be "nvidia,tegra20-ahbdma"
+> +- reg:		Should contain registers base address and length.
+> +- interrupts:	Should contain one entry, DMA controller interrupt.
+> +- clocks:	Should contain one entry, DMA controller clock.
+> +- resets :	Should contain one entry, DMA controller reset.
+> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
+> +		for the peripheral. For more details consult the Tegra TRM's
+> +		documentation, in particular AHB DMA channel control register
+> +		REQ_SEL field.
 > +
+> +Example:
+> +
+> +ahbdma: ahbdma@60008000  {
 
-Probably better to say here something like that: Disable this option to avoid
-CPU erratas that require access to secure-only registers. This might be needed
-in a case of running under a secure monitor.
+Use standard node names. dma-controller in this case.
 
->  config ARCH_VIRT
->  	bool "Dummy Virtual Machine"
->  	depends on ARCH_MULTI_V7
-> @@ -984,7 +992,7 @@ config ARM_ERRATA_430973
->  config ARM_ERRATA_458693
->  	bool "ARM errata: Processor deadlock when a false hazard is created"
->  	depends on CPU_V7
-> -	depends on !ARCH_MULTIPLATFORM
-> +	depends on ARCH_ASSUME_SECURE_PLATFORM
->  	help
->  	  This option enables the workaround for the 458693 Cortex-A8 (r2p0)
->  	  erratum. For very specific sequences of memory operations, it is
-> @@ -998,7 +1006,7 @@ config ARM_ERRATA_458693
->  config ARM_ERRATA_460075
->  	bool "ARM errata: Data written to the L2 cache can be overwritten with stale data"
->  	depends on CPU_V7
-> -	depends on !ARCH_MULTIPLATFORM
-> +	depends on ARCH_ASSUME_SECURE_PLATFORM
->  	help
->  	  This option enables the workaround for the 460075 Cortex-A8 (r2p0)
->  	  erratum. Any asynchronous access to the L2 cache may encounter a
-> @@ -1011,7 +1019,7 @@ config ARM_ERRATA_460075
->  config ARM_ERRATA_742230
->  	bool "ARM errata: DMB operation may be faulty"
->  	depends on CPU_V7 && SMP
-> -	depends on !ARCH_MULTIPLATFORM
-> +	depends on ARCH_ASSUME_SECURE_PLATFORM
->  	help
->  	  This option enables the workaround for the 742230 Cortex-A9
->  	  (r1p0..r2p2) erratum. Under rare circumstances, a DMB instruction
-> @@ -1024,7 +1032,7 @@ config ARM_ERRATA_742230
->  config ARM_ERRATA_742231
->  	bool "ARM errata: Incorrect hazard handling in the SCU may lead to data corruption"
->  	depends on CPU_V7 && SMP
-> -	depends on !ARCH_MULTIPLATFORM
-> +	depends on ARCH_ASSUME_SECURE_PLATFORM
->  	help
->  	  This option enables the workaround for the 742231 Cortex-A9
->  	  (r2p0..r2p2) erratum. Under certain conditions, specific to the
-> @@ -1062,7 +1070,7 @@ config ARM_ERRATA_720789
->  config ARM_ERRATA_743622
->  	bool "ARM errata: Faulty hazard checking in the Store Buffer may lead to data corruption"
->  	depends on CPU_V7
-> -	depends on !ARCH_MULTIPLATFORM
-> +	depends on ARCH_ASSUME_SECURE_PLATFORM
->  	help
->  	  This option enables the workaround for the 743622 Cortex-A9
->  	  (r2p*) erratum. Under very rare conditions, a faulty
-> @@ -1076,7 +1084,7 @@ config ARM_ERRATA_743622
->  config ARM_ERRATA_751472
->  	bool "ARM errata: Interrupted ICIALLUIS may prevent completion of broadcasted operation"
->  	depends on CPU_V7
-> -	depends on !ARCH_MULTIPLATFORM
-> +	depends on ARCH_ASSUME_SECURE_PLATFORM
->  	help
->  	  This option enables the workaround for the 751472 Cortex-A9 (prior
->  	  to r3p0) erratum. An interrupted ICIALLUIS operation may prevent the
+> +	compatible = "nvidia,tegra20-ahbdma";
+> +	reg = <0x60008000 0x2000>;
+> +	interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
+> +	clocks = <&tegra_car TEGRA20_CLK_AHBDMA>;
+> +	resets = <&tegra_car 33>;
+> +	#dma-cells = <1>;
+> +};
+> -- 
+> 2.14.1
 > 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
