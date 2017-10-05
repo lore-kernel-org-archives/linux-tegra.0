@@ -1,42 +1,128 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: [PATCH 0/9] Bringing Asus TF300T support to mainline
-Date: Wed, 4 Oct 2017 23:25:34 +0200
-Message-ID: <20171004212534.uosfz6757bbds2c5@qmqm.qmqm.pl>
-References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked infrastructure
+Date: Thu, 5 Oct 2017 13:14:19 +0200
+Message-ID: <CACRpkdZb4m=o-XR2iAtp+jh57f5BXbm7Ue2LHZ7Ji7cSGvEQQQ@mail.gmail.com>
+References: <20170928095628.21966-1-thierry.reding@gmail.com>
+ <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com> <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hoan Tran <hotran-qTEPVZfXA3Y@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 20, 2017 at 02:29:22AM +0200, Micha=B3 Miros=B3aw wrote:
-> Here is a suprisingly small set of patches that enable Asus TF300T tablet
-> to boot and have all cores available. TF300T is one of a consumer devices
-> based on NVidia's Cardhu reference tablet.
-> =
+On Mon, Oct 2, 2017 at 9:55 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
 
-> This series is an arch-dependent part. TF parts were extracted from ASUS's
-> GPL code dump.  The rest being driver code - a work in progress - is
-> available in branch tf300t at:
-> =
+> This is not necessarily a blocker if it can be shown that others than
+> TI/OMAP can reuse it.
+>
+> I've looked at things like the imagination pistachio:
+>
+> pinctrl@18101C00 {
+>         compatible = "img,pistachio-system-pinctrl";
+>         reg = <0x18101C00 0x400>;
+>
+>         gpio0: gpio0 {
+>                 interrupts = <GIC_SHARED 71 IRQ_TYPE_LEVEL_HIGH>;
+>
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+>                 interrupt-controller;
+>                 #interrupt-cells = <2>;
+>         };
+>
+>         ...
+>
+>         gpio5: gpio5 {
+>                 interrupts = <GIC_SHARED 76 IRQ_TYPE_LEVEL_HIGH>;
+>
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+>                 interrupt-controller;
+>                 #interrupt-cells = <2>;
+>         };
+>
+> This looks like a clear candidate.
+> CC: to  Andrew Bresticker, can you look into this?
+>
+> Another example would be gpio-tz1090, notably with interrupt optional:
+>
+>        gpios: gpio-controller@02005800 {
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
+>                 compatible = "img,tz1090-gpio";
+>                 reg = <0x02005800 0x90>;
+>
+>                 /* bank 0 with an interrupt */
+>                 gpios0: bank@0 {
+>                         #gpio-cells = <2>;
+>                         #interrupt-cells = <2>;
+>                         reg = <0>;
+>                         interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
+>                         gpio-controller;
+>                         gpio-ranges = <&pinctrl 0 0 30>;
+>                         interrupt-controller;
+>                 };
+>
+>                 /* bank 2 without interrupt */
+>                 gpios2: bank@2 {
+>                         #gpio-cells = <2>;
+>                         reg = <2>;
+>                         gpio-controller;
+>                         gpio-ranges = <&pinctrl 0 60 30>;
+>                 };
+>         };
+>
+> CC to James Hogan to look at the series from this perspective.
+>
+> A third is gpio-mxs.c:
+>
+> pinctrl@80018000 {
+>         compatible = "fsl,imx28-pinctrl", "simple-bus";
+>         reg = <0x80018000 2000>;
+>
+>         gpio0: gpio@0 {
+>                 compatible = "fsl,imx28-gpio";
+>                 interrupts = <127>;
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>                 interrupt-controller;
+>                 #interrupt-cells = <2>;
+>         };
+>
+>         gpio1: gpio@1 {
+>                 compatible = "fsl,imx28-gpio";
+>                 interrupts = <126>;
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>                 interrupt-controller;
+>                 #interrupt-cells = <2>;
+>         };
+>
+>         gpio2: gpio@2 {
+>                 compatible = "fsl,imx28-gpio";
+>                 interrupts = <125>;
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>                 interrupt-controller;
+>                 #interrupt-cells = <2>;
+>         };
+> (...)
+>
+> CC to Shawn Guo to look into this.
+>
+> So in short I think there can be others that can make good use of this
+> infrastructure.
 
->         https://rere.qmqm.pl/git/linux
+It also looks like the "ports" in the gpio-dwapb can be modeled using this
+bank infrastructure, cutting down on per-driver overhead and adding
+good much needed abstraction for these ports/banks.
 
-Just a quick note, that I've rebased the branch on v4.14-rc3 and added
-some more patches on top. This includes updated defconfig and devicetree
-with working eMMC and an attempt at making TF300T's dock hot-pluggable.
+Paging Hoan Tran on this as well, to keep an eye on the series.
 
-Best Regards,
-Micha=B3 Miros=B3aw
+Yours,
+Linus Walleij
