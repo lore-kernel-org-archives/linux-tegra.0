@@ -1,60 +1,108 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 3/9] arm: cache-l2x0: share l2x0_base
-Date: Thu, 5 Oct 2017 17:48:32 +0100
-Message-ID: <20171005164831.GG5235@leverpostej>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/9] ARM: enable secure platform-only erratas
+Date: Thu, 5 Oct 2017 21:16:12 +0300
+Message-ID: <bdff72b9-8ebd-a426-b27b-fe055d45cfb1@gmail.com>
 References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
- <eb104cfdf44ef9bf7b4f271555e1496d2bf781bf.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500510157.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <eb104cfdf44ef9bf7b4f271555e1496d2bf781bf.1500510157.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+In-Reply-To: <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500510157.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 20, 2017 at 02:29:23AM +0200, Michał Mirosław wrote:
-> Share l2x0_base between cache-l2x0 and pmu drivers.  They are duplicates.
+On 20.07.2017 03:29, Michał Mirosław wrote:
+> Allow secure-only erratas to be used in multiarch kernel.
+> 
+> Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+> ---
+>  arch/arm/Kconfig | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index a208bfe367b5..a1eff866550b 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -696,6 +696,14 @@ config ARCH_MULTI_CPU_AUTO
+>  
+>  endmenu
+>  
+> +config ARCH_ASSUME_SECURE_PLATFORM
+> +	bool "Enable ERRATAs using secure-only registers"
+> +	default !ARCH_MULTIPLATFORM
 
-This is not quite true, and this change introduces bugs.
+I think default should always be "Yes" and this option shouldn't affect
+multiplatform kernels. So a multiplatform kernel wouldn't be an option for your
+device.
 
-The l2x0 pmu driver only sets its copy of the base for an l2x0 variant
-it recognises:
+> +	help
+> +	  Allow erratas that need access to secure-only registers.
+> +
+> +	  Beware: Resulting kernel won't boot on a CPU in non-Secure mode.
+> +
 
-> -void __init l2x0_pmu_register(void __iomem *base, u32 part)
-> +void __init l2x0_pmu_register(u32 part)
->  {
->  	/*
->  	 * Determine whether we support the PMU, and choose the name for sysfs.
-> @@ -503,8 +502,7 @@ void __init l2x0_pmu_register(void __iomem *base, u32 part)
->  	 * supported by this driver.
->  	 *
->  	 * We must defer registering the PMU until the perf subsystem is up and
-> -	 * running, so just stash the name and base, and leave that to another
-> -	 * initcall.
-> +	 * running, so just stash the name, and leave that to another initcall.
->  	 */
->  	switch (part & L2X0_CACHE_ID_PART_MASK) {
->  	case L2X0_CACHE_ID_PART_L220:
-> @@ -516,8 +514,6 @@ void __init l2x0_pmu_register(void __iomem *base, u32 part)
->  	default:
->  		return;
->  	}
-> -
-> -	l2x0_base = base;
+Probably better to say here something like that: Disable this option to avoid
+CPU erratas that require access to secure-only registers. This might be needed
+in a case of running under a secure monitor.
 
-... note that we may return *before* setting l2x0_base.
-
-This (deliberately) prevents us from erroneously registering a PMU for
-l2x0 variants for which we don't know how to drive any IMPLEMENTATION
-DEFINED PMU functionality.
-
-This cahnge breaks that, and will result in l2x0_pmu_init() trying to
-register a PMU with a NULL name.
-
-So NAK to this change.
-
-Thanks,
-Mark.
+>  config ARCH_VIRT
+>  	bool "Dummy Virtual Machine"
+>  	depends on ARCH_MULTI_V7
+> @@ -984,7 +992,7 @@ config ARM_ERRATA_430973
+>  config ARM_ERRATA_458693
+>  	bool "ARM errata: Processor deadlock when a false hazard is created"
+>  	depends on CPU_V7
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 458693 Cortex-A8 (r2p0)
+>  	  erratum. For very specific sequences of memory operations, it is
+> @@ -998,7 +1006,7 @@ config ARM_ERRATA_458693
+>  config ARM_ERRATA_460075
+>  	bool "ARM errata: Data written to the L2 cache can be overwritten with stale data"
+>  	depends on CPU_V7
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 460075 Cortex-A8 (r2p0)
+>  	  erratum. Any asynchronous access to the L2 cache may encounter a
+> @@ -1011,7 +1019,7 @@ config ARM_ERRATA_460075
+>  config ARM_ERRATA_742230
+>  	bool "ARM errata: DMB operation may be faulty"
+>  	depends on CPU_V7 && SMP
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 742230 Cortex-A9
+>  	  (r1p0..r2p2) erratum. Under rare circumstances, a DMB instruction
+> @@ -1024,7 +1032,7 @@ config ARM_ERRATA_742230
+>  config ARM_ERRATA_742231
+>  	bool "ARM errata: Incorrect hazard handling in the SCU may lead to data corruption"
+>  	depends on CPU_V7 && SMP
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 742231 Cortex-A9
+>  	  (r2p0..r2p2) erratum. Under certain conditions, specific to the
+> @@ -1062,7 +1070,7 @@ config ARM_ERRATA_720789
+>  config ARM_ERRATA_743622
+>  	bool "ARM errata: Faulty hazard checking in the Store Buffer may lead to data corruption"
+>  	depends on CPU_V7
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 743622 Cortex-A9
+>  	  (r2p*) erratum. Under very rare conditions, a faulty
+> @@ -1076,7 +1084,7 @@ config ARM_ERRATA_743622
+>  config ARM_ERRATA_751472
+>  	bool "ARM errata: Interrupted ICIALLUIS may prevent completion of broadcasted operation"
+>  	depends on CPU_V7
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 751472 Cortex-A9 (prior
+>  	  to r3p0) erratum. An interrupted ICIALLUIS operation may prevent the
+> 
