@@ -1,88 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked infrastructure
-Date: Thu, 5 Oct 2017 13:19:16 +0200
-Message-ID: <CACRpkdb8xRv8sWsKkNidwHQ3QjBvS2VjhkhnUDybXD813POmng@mail.gmail.com>
-References: <20170928095628.21966-1-thierry.reding@gmail.com>
- <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com> <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw@mail.gmail.com>
- <b583d903-03ea-eb74-e142-02b31ad3ddfb@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b583d903-03ea-eb74-e142-02b31ad3ddfb@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Hoan Tran <hotran@apm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: Andrew Bresticker <abrestic@chromium.org>, James Hogan <james.hogan@imgtec.com>, Shawn Guo <shawn.guo@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Ralf Ramsauer <ralf.ramsauer-XqyLlMioih3Nn6Kn0k1nHrNAH6kLmebB@public.gmane.org>
+Subject: [PATCH] spi: tegra114: correct register name in definition
+Date: Thu,  5 Oct 2017 13:22:36 +0200
+Message-ID: <20171005112236.4242-1-ralf.ramsauer@oth-regensburg.de>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ralf Ramsauer <ralf.ramsauer-XqyLlMioih3Nn6Kn0k1nHrNAH6kLmebB@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 3, 2017 at 8:26 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 10/02/2017 02:55 AM, Linus Walleij wrote:
->> On Thu, Sep 28, 2017 at 4:22 PM, Grygorii Strashko
->> <grygorii.strashko@ti.com> wrote:
->>
->>> Sry, but I do not agree with this series.
->>> - no prof that it can be re-used by other drivers than tegra
->>>   (at least I do not see reasons to re-use it for any TI drivers)
->>
->> This is not necessarily a blocker if it can be shown that others than
->> TI/OMAP can reuse it.
->
-> sure. My point is - this is big change in gpiolib, which is > 1000 lines,
-> but current re-usability just 2 drivers (I'm comparing with your work when
-> gpio irq infra was introduced - you did it bottom-up, by refactoring
-> existing drivers and moving common code in gpiolib, so re usability is great).
+According to "Tegra K1 Processor Technical Reference Manual" (p. 2448),
+bit 20 of SPI_COMMAND1 is called CS_SW_VAL and not CS_SS_VAL.
 
-Yes I am leaning toward adding this infrastructure also with switching as many
-candidates as possible over to using the new infrastructure. So I'm trying
-to align a few maintainers to this cause. Maybe OMAP will not be one
-of them as I thought initially :/
+Signed-off-by: Ralf Ramsauer <ralf.ramsauer-XqyLlMioih3Nn6Kn0k1nHrNAH6kLmebB@public.gmane.org>
+---
+ drivers/spi/spi-tegra114.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->                 gpio: gpio@226000 {
->                         compatible = "ti,dm6441-gpio";
->                         gpio-controller;
->                         #gpio-cells = <2>;
->                         reg = <0x226000 0x1000>;
->                         interrupts = <42 IRQ_TYPE_EDGE_BOTH
->                                 43 IRQ_TYPE_EDGE_BOTH 44 IRQ_TYPE_EDGE_BOTH
->                                 45 IRQ_TYPE_EDGE_BOTH 46 IRQ_TYPE_EDGE_BOTH
->                                 47 IRQ_TYPE_EDGE_BOTH 48 IRQ_TYPE_EDGE_BOTH
->                                 49 IRQ_TYPE_EDGE_BOTH 50 IRQ_TYPE_EDGE_BOTH>;
->                         ti,ngpio = <144>;
->                         ti,davinci-gpio-unbanked = <0>;
->                         status = "disabled";
->                         interrupt-controller;
->                         #interrupt-cells = <2>;
->                 };
->
-> FYI. Above is gpio-dvinci example which defines the same, but without coding
-> gpio banks in DT (note 2 IRQ lines per bank, bank 32 pins).
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 44550182a4a3..a76acedd7e2f 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -50,7 +50,7 @@
+ #define SPI_IDLE_SDA_PULL_LOW			(2 << 18)
+ #define SPI_IDLE_SDA_PULL_HIGH			(3 << 18)
+ #define SPI_IDLE_SDA_MASK			(3 << 18)
+-#define SPI_CS_SS_VAL				(1 << 20)
++#define SPI_CS_SW_VAL				(1 << 20)
+ #define SPI_CS_SW_HW				(1 << 21)
+ /* SPI_CS_POL_INACTIVE bits are default high */
+ 						/* n from 0 to 3 */
+@@ -705,9 +705,9 @@ static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
+ 
+ 		command1 |= SPI_CS_SW_HW;
+ 		if (spi->mode & SPI_CS_HIGH)
+-			command1 |= SPI_CS_SS_VAL;
++			command1 |= SPI_CS_SW_VAL;
+ 		else
+-			command1 &= ~SPI_CS_SS_VAL;
++			command1 &= ~SPI_CS_SW_VAL;
+ 
+ 		tegra_spi_writel(tspi, 0, SPI_COMMAND2);
+ 	} else {
+-- 
+2.14.2
 
-Yeah. This case would be nice to cover too.
-
->>> - irq->map[offset + j] = irq->parents[parent]; holds IRQs for all pins
->>>    which is waste of memory
->>> - DT binding changes not documented and no DT examples
->>> - below is ugly ;)
->>> +       bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
->>> +       pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
->>
->> These should be fixable quite easily I think. Thierry?
->
-> What I'm trying to understand is how GPIO client bindings will look like?
-> Now it is: gpios = <&gpio2 14 GPIO_ACTIVE_LOW>; (pistachio_marduk.dts)
->
-> But as per of_gpio_banked_xlate() it expected to be
-> gpios = <&gpio [Linear gpio num] GPIO_ACTIVE_LOW>;
-> Wouldn't this break DT compatibility and prevent re-using of this feature
-> for pistachio, for example? (or i'm missing smth).
-
-I was hoping we could introduce infrastructure that can be used
-by the existing in-tree banked/port GPIO drivers without any
-changes to the consumer side of bindings.
-
-So that is the patch set I'm imagining.
-
-Else we're not really getting reusability.
-
-Yours,
-Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
