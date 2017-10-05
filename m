@@ -1,35 +1,101 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/9] Bringing Asus TF300T support to mainline
-Date: Thu, 5 Oct 2017 18:52:30 +0300
-Message-ID: <dcbbc541-60c1-8af5-25ea-927629447a55@gmail.com>
+Subject: Re: [PATCH 1/9] ARM: enable secure platform-only erratas
+Date: Thu, 5 Oct 2017 18:53:43 +0300
+Message-ID: <3975c5de-9408-2e5b-51f3-9e4be5951ba0@gmail.com>
 References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
- <20171004212534.uosfz6757bbds2c5@qmqm.qmqm.pl>
+ <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500510157.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171004212534.uosfz6757bbds2c5-cHozx32mtrEEUmgCuDUIdw@public.gmane.org>
+In-Reply-To: <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500510157.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.10.2017 00:25, Michał Mirosław wrote:
-> On Thu, Jul 20, 2017 at 02:29:22AM +0200, Michał Mirosław wrote:
->> Here is a suprisingly small set of patches that enable Asus TF300T tablet
->> to boot and have all cores available. TF300T is one of a consumer devices
->> based on NVidia's Cardhu reference tablet.
->>
->> This series is an arch-dependent part. TF parts were extracted from ASUS's
->> GPL code dump.  The rest being driver code - a work in progress - is
->> available in branch tf300t at:
->>
->>         https://rere.qmqm.pl/git/linux
+On 20.07.2017 03:29, Michał Mirosław wrote:
+> Allow secure-only erratas to be used in multiarch kernel.
 > 
-> Just a quick note, that I've rebased the branch on v4.14-rc3 and added
-> some more patches on top. This includes updated defconfig and devicetree
-> with working eMMC and an attempt at making TF300T's dock hot-pluggable.
+> Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+> ---
+>  arch/arm/Kconfig | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 > 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index a208bfe367b5..a1eff866550b 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -696,6 +696,14 @@ config ARCH_MULTI_CPU_AUTO
+>  
+>  endmenu
+>  
+> +config ARCH_ASSUME_SECURE_PLATFORM
 
-Just a small note.. I think you should develop on top of linux-next, since your
-patches would be applied to linux-next first.
+What about ARCH_SECURE_PLATFORM?
+
+> +	bool "Enable ERRATAs using secure-only registers"
+> +	default !ARCH_MULTIPLATFORM
+> +	help
+> +	  Allow erratas that need access to secure-only registers.
+> +
+> +	  Beware: Resulting kernel won't boot on a CPU in non-Secure mode.
+> +
+>  config ARCH_VIRT
+>  	bool "Dummy Virtual Machine"
+>  	depends on ARCH_MULTI_V7
+> @@ -984,7 +992,7 @@ config ARM_ERRATA_430973
+>  config ARM_ERRATA_458693
+>  	bool "ARM errata: Processor deadlock when a false hazard is created"
+>  	depends on CPU_V7
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 458693 Cortex-A8 (r2p0)
+>  	  erratum. For very specific sequences of memory operations, it is
+> @@ -998,7 +1006,7 @@ config ARM_ERRATA_458693
+>  config ARM_ERRATA_460075
+>  	bool "ARM errata: Data written to the L2 cache can be overwritten with stale data"
+>  	depends on CPU_V7
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 460075 Cortex-A8 (r2p0)
+>  	  erratum. Any asynchronous access to the L2 cache may encounter a
+> @@ -1011,7 +1019,7 @@ config ARM_ERRATA_460075
+>  config ARM_ERRATA_742230
+>  	bool "ARM errata: DMB operation may be faulty"
+>  	depends on CPU_V7 && SMP
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 742230 Cortex-A9
+>  	  (r1p0..r2p2) erratum. Under rare circumstances, a DMB instruction
+> @@ -1024,7 +1032,7 @@ config ARM_ERRATA_742230
+>  config ARM_ERRATA_742231
+>  	bool "ARM errata: Incorrect hazard handling in the SCU may lead to data corruption"
+>  	depends on CPU_V7 && SMP
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 742231 Cortex-A9
+>  	  (r2p0..r2p2) erratum. Under certain conditions, specific to the
+> @@ -1062,7 +1070,7 @@ config ARM_ERRATA_720789
+>  config ARM_ERRATA_743622
+>  	bool "ARM errata: Faulty hazard checking in the Store Buffer may lead to data corruption"
+>  	depends on CPU_V7
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 743622 Cortex-A9
+>  	  (r2p*) erratum. Under very rare conditions, a faulty
+> @@ -1076,7 +1084,7 @@ config ARM_ERRATA_743622
+>  config ARM_ERRATA_751472
+>  	bool "ARM errata: Interrupted ICIALLUIS may prevent completion of broadcasted operation"
+>  	depends on CPU_V7
+> -	depends on !ARCH_MULTIPLATFORM
+> +	depends on ARCH_ASSUME_SECURE_PLATFORM
+>  	help
+>  	  This option enables the workaround for the 751472 Cortex-A9 (prior
+>  	  to r3p0) erratum. An interrupted ICIALLUIS operation may prevent the
+> 
