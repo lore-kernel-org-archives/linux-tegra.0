@@ -1,141 +1,133 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 1/2] staging: Introduce NVIDIA Tegra20 video decoder
- driver
-Date: Fri, 6 Oct 2017 13:46:42 +0300
-Message-ID: <b9023559-b41a-9cbb-c0da-b95e3aff5b6f@gmail.com>
-References: <201710061105.oOGaoiDu%fengguang.wu@intel.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked
+ infrastructure
+Date: Fri, 6 Oct 2017 13:07:49 +0200
+Message-ID: <20171006110749.GB22706@ulmo>
+References: <20170928095628.21966-1-thierry.reding@gmail.com>
+ <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <201710061105.oOGaoiDu%fengguang.wu@intel.com>
-Content-Language: en-US
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, kbuild-all@01.org, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb-l0cyMroinI0@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06.10.2017 06:57, kbuild test robot wrote:
-> Hi Dmitry,
-> 
-> [auto build test WARNING on staging/staging-testing]
-> [also build test WARNING on v4.14-rc3 next-20170929]
-> [cannot apply to tegra/for-next]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Dmitry-Osipenko/staging-Introduce-NVIDIA-Tegra20-video-decoder-driver/20171006-101015
-> config: ia64-allmodconfig (attached as .config)
-> compiler: ia64-linux-gcc (GCC) 6.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=ia64 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    In file included from include/linux/kernel.h:13:0,
->                     from include/linux/clk.h:16,
->                     from drivers/staging/tegra-vde/vde.c:11:
->    drivers/staging/tegra-vde/vde.c: In function 'tegra_vde_setup_hw_context':
->>> drivers/staging/tegra-vde/vde.c:51:11: warning: format '%X' expects argument of type 'unsigned int', but argument 5 has type 'long long unsigned int' [-Wformat=]
->      pr_debug("%s: %d: 0x%08X => " #__addr ")\n", \
->               ^
->    include/linux/printk.h:285:21: note: in definition of macro 'pr_fmt'
->     #define pr_fmt(fmt) fmt
->                         ^~~
->    include/linux/printk.h:333:2: note: in expansion of macro 'dynamic_pr_debug'
->      dynamic_pr_debug(fmt, ##__VA_ARGS__)
->      ^~~~~~~~~~~~~~~~
->    drivers/staging/tegra-vde/vde.c:51:2: note: in expansion of macro 'pr_debug'
->      pr_debug("%s: %d: 0x%08X => " #__addr ")\n", \
->      ^~~~~~~~
->    drivers/staging/tegra-vde/vde.c:362:2: note: in expansion of macro 'VDE_WR'
->      VDE_WR(bitstream_data_paddr + bitstream_data_size,
->      ^~~~~~
->>> drivers/staging/tegra-vde/vde.c:51:11: warning: format '%X' expects argument of type 'unsigned int', but argument 5 has type 'phys_addr_t {aka long long unsigned int}' [-Wformat=]
->      pr_debug("%s: %d: 0x%08X => " #__addr ")\n", \
->               ^
->    include/linux/printk.h:285:21: note: in definition of macro 'pr_fmt'
->     #define pr_fmt(fmt) fmt
->                         ^~~
->    include/linux/printk.h:333:2: note: in expansion of macro 'dynamic_pr_debug'
->      dynamic_pr_debug(fmt, ##__VA_ARGS__)
->      ^~~~~~~~~~~~~~~~
->    drivers/staging/tegra-vde/vde.c:51:2: note: in expansion of macro 'pr_debug'
->      pr_debug("%s: %d: 0x%08X => " #__addr ")\n", \
->      ^~~~~~~~
->    drivers/staging/tegra-vde/vde.c:435:2: note: in expansion of macro 'VDE_WR'
->      VDE_WR(bitstream_data_paddr, vde->regs + SXE(0x6C));
->      ^~~~~~
->    drivers/staging/tegra-vde/vde.c: In function 'tegra_vde_attach_dmabuf':
->    drivers/staging/tegra-vde/vde.c:531:40: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
->       dev_err(dev, "Too small dmabuf size %d @0x%lX, "
->                                            ^
->    drivers/staging/tegra-vde/vde.c: In function 'tegra_vde_ioctl_decode_h264':
->    drivers/staging/tegra-vde/vde.c:855:16: warning: format '%X' expects argument of type 'unsigned int', but argument 3 has type 'phys_addr_t {aka long long unsigned int}' [-Wformat=]
->       dev_err(dev, "Decoding failed, "
->                    ^~~~~~~~~~~~~~~~~~~
-> 
-> vim +51 drivers/staging/tegra-vde/vde.c
-> 
->   > 11	#include <linux/clk.h>
->     12	#include <linux/delay.h>
->     13	#include <linux/dma-buf.h>
->     14	#include <linux/interrupt.h>
->     15	#include <linux/io.h>
->     16	#include <linux/iopoll.h>
->     17	#include <linux/miscdevice.h>
->     18	#include <linux/module.h>
->     19	#include <linux/platform_device.h>
->     20	#include <linux/pm_runtime.h>
->     21	#include <linux/reset.h>
->     22	#include <linux/slab.h>
->     23	#include <linux/uaccess.h>
->     24	
->     25	#include <soc/tegra/pmc.h>
->     26	
->     27	#include "uapi.h"
->     28	
->     29	#define SXE(offt)		(0x0000 + (offt)) /* Syntax Engine */
->     30	#define BSEV(offt)		(0x1000 + (offt)) /* Video Bitstream Engine */
->     31	#define MBE(offt)		(0x2000 + (offt)) /* Macroblock Engine */
->     32	#define PPE(offt)		(0x2200 + (offt)) /* Post-processing Engine */
->     33	#define MCE(offt)		(0x2400 + (offt)) /* Motion Compensation Eng. */
->     34	#define TFE(offt)		(0x2600 + (offt)) /* Transform Engine */
->     35	#define VDMA(offt)		(0x2A00 + (offt)) /* Video DMA */
->     36	#define FRAMEID(offt)		(0x3800 + (offt))
->     37	
->     38	#define ICMDQUE_WR		0x00
->     39	#define CMDQUE_CONTROL		0x08
->     40	#define INTR_STATUS		0x18
->     41	#define BSE_INT_ENB		0x40
->     42	#define BSE_CONFIG		0x44
->     43	
->     44	#define BSE_ICMDQUE_EMPTY	BIT(3)
->     45	#define BSE_DMA_BUSY		BIT(23)
->     46	
->     47	#define TEGRA_VDE_TIMEOUT	msecs_to_jiffies(1000)
->     48	
->     49	#define VDE_WR(__data, __addr)				\
->     50	do {							\
->   > 51		pr_debug("%s: %d: 0x%08X => " #__addr ")\n",	\
->     52			  __func__, __LINE__, (__data));	\
->     53		writel_relaxed(__data, __addr);			\
->     54	} while (0)
->     55	
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
 
-I'll silence these warnings in v3.
+--6sX45UoQRIJXqkqR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Sep 28, 2017 at 09:22:17AM -0500, Grygorii Strashko wrote:
+>=20
+>=20
+> On 09/28/2017 04:56 AM, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > Hi Linus,
+> >=20
+> > here's the latest series of patches that implement the tighter IRQ chip
+> > integration as well as the banked GPIO infrastructure that we had
+> > discussed a couple of weeks/months back.
+> >=20
+> > The first couple of patches are mostly preparatory work in order to
+> > consolidate all IRQ chip related fields in a new structure and create
+> > the base functionality for adding IRQ chips.
+> >=20
+> > After that, I've added the Tegra186 GPIO support patch that makes use of
+> > the new tight integration.
+> >=20
+> > To round things off the new banked GPIO infrastructure is added (along
+> > with some more preparatory work), followed by the conversion of the two
+> > Tegra GPIO drivers to the new infrastructure.
+>=20
+> Hm. So you've ignored my comments [1].
+>=20
+> Sry, but I do not agree with this series.
+> - no prof that it can be re-used by other drivers than tegra
+>  (at least I do not see reasons to re-use it for any TI drivers)
+
+I had done some research based on Linus' feedback from an earlier series
+and identified the following potential candidates[0] that could move to
+this new infrastructure:
+
+	- gpio-intel-mid.c
+	- gpio-merrifield.c
+	- gpio-pca953x.c
+	- gpio-stmpe.c
+	- gpio-tc3589x.c
+	- gpio-ws16c48.c
+
+Note that this is based on code inspection rather than DT inspection,
+because that's fundamentally flawed. If you look at this from a DT
+perspective you're going to be tempted to change the DT bindings, but
+you can't do that because of backwards compatiblity. This new framework
+also doesn't address the issues at that level, but rather tries to be
+some common code that is otherwise duplicated in one way or another in
+various drivers and therefore hard to maintain. This is what Linus had
+originally requested, and that's what the series does.
+
+> - no split
+
+What does this mean? The series is nicely split into separate patches,
+so each one individually is easy to review. I've also gone through quite
+some trouble to make sure everything builds fine after each patch, so
+it's possible to apply individual bits of the series. For example we
+could opt to apply everything up to the banked GPIO support if that's
+still contentious.
+
+> - all GPIO IRQs mapped statically
+
+This series predates your work on the dynamic IRQ mapping, so I hadn't
+picked up those changes. This should be easily solved by the attached
+patch, though.
+
+> - irq->map[offset + j] =3D irq->parents[parent]; holds IRQs for all pins
+>   which is waste of memory
+
+It's the only way to generically do this. Also I don't think this wastes
+that much memory. We have one unsigned int per pin, which even for very
+large GPIO controllers is unlikely to exceed one 4 KiB page.
+
+> - DT binding changes not documented and no DT examples
+
+That's because this is completely orthogonal to DT bindings. We can't
+make any changes to the bindings because of ABI stability.
+
+> - below is ugly ;)
+> +	bank =3D (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
+> +	pin =3D (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
+
+If by ugly you mean wrong, then yes, it's actually the wrong way around.
+It should be:
+
+	bank =3D (spec[0] >> gc->of_gpio_bank_shift) & gc->of_gpio_bank_mask;
+	line =3D (spec[0] >> gc->of_gpio_line_shift) & gc->of_gpio_line_mask;
+
+Thierry
+
+--6sX45UoQRIJXqkqR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnXZAMACgkQ3SOs138+
+s6GO+BAAhbgNM4qW74OHehaHu8MZlZRnv818xpC4NWKNe/0Z+R89YP8p0RfKz8mS
+5ZFP0s4qoy69C5MPDFrn09+i6YaTtu4ExTMu+BARLyWYd/t9dyzLY63e3ZBluwAi
+LMtmNmmJVrsbAmjdfzwXZbCWf2xAAG3pi0V5+jO18/5PQ0IwHGwInS+rdzmT5RBH
+yseyV1fC32/1eO1Pf0zDwNKaQLZ5Ej9ebe17+mU8hTsGh0zrDm7mrUd5Zbz0yeU4
+7gB3ZIpJhU9IN43v77+EVJQ+DNQXNT7IOyyB8acuxPFjTLz3BiFmdlSmvpVTsrkV
+bmf7QTYhq+NmL2x+EICE0/nKIJ+M0nLnbPsQYPouTm5w1+3s5rNTOoZtH9Z1DsRS
+5CZznu57r6TwBLrV1Atj7de133puoh63J/B4yhDrhmEeWkYR6erctHZB9K9vHuLu
+RPU1OkmmMOcByc7dJgFxRpJ8CZtL37EcVYwdHUHITT+N2lKUK+7d2l+/yWDeJXkM
+1xKZoma+Tv+8BfOYx/Co1b1V9WS/ib7b42p9oH9/IghNYbVS3MZZHz093AT68ND6
++XftThQ1/ner6Fuk6rxDKnyalO2mdv4spZAs4F52TtMnxCd2rG2Zxu78tYgdhS2K
+NYaGkkx8YrxonXJSolu880u2hROBK4emJjP/gGTqDdxIt7dPAjU=
+=tId/
+-----END PGP SIGNATURE-----
+
+--6sX45UoQRIJXqkqR--
