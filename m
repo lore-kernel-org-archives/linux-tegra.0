@@ -1,95 +1,89 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] Revert "PCI: tegra: Do not allocate MSI target memory"
-Date: Mon,  9 Oct 2017 12:29:35 +0200
-Message-ID: <20171009102935.14515-1-thierry.reding@gmail.com>
-References: <20171002201924.GC5407@bhelgaas-glaptop.roam.corp.google.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] dmaengine: Add driver for NVIDIA Tegra AHB DMA
+ controller
+Date: Mon, 9 Oct 2017 16:09:09 +0530
+Message-ID: <20171009103909.GZ30097@localhost>
+References: <cover.1507073384.git.digetx@gmail.com>
+ <9ef93a0054a6a2e27b72e5bfeebe81e5ab11a224.1507073384.git.digetx@gmail.com>
+ <35dd2e3a-1f97-b82e-4763-a9d064761bc8@gmail.com>
+ <b66c06cb-a63e-b13d-02f4-f7bacfd35112@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171002201924.GC5407-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <b66c06cb-a63e-b13d-02f4-f7bacfd35112-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomasz Maciej Nowak <tmn505-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Oct 09, 2017 at 10:43:54AM +0100, Jon Hunter wrote:
+> 
+> 
+> On 06/10/17 20:11, Dmitry Osipenko wrote:
+> > On 04.10.2017 02:58, Dmitry Osipenko wrote:
+> >> AHB DMA controller presents on Tegra20/30 SoC's, it supports transfers
+> >> memory <-> AHB bus peripherals as well as mem-to-mem transfers. Driver
+> >> doesn't yet implement transfers larger than 64K and scatter-gather
+> >> transfers that have NENT > 1, HW doesn't have native support for these
+> >> cases, mem-to-mem isn't implemented as well.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >> ---
+> >>  drivers/dma/Kconfig           |  10 +
+> >>  drivers/dma/Makefile          |   1 +
+> >>  drivers/dma/tegra20-ahb-dma.c | 630 ++++++++++++++++++++++++++++++++++++++++++
+> >>  3 files changed, 641 insertions(+)
+> >>  create mode 100644 drivers/dma/tegra20-ahb-dma.c
+> 
+> 
+> ...
+> 
+> >> +static struct tegra_ahbdma_tx_desc *tegra_ahbdma_get_next_tx(
+> >> +						struct tegra_ahbdma_chan *chan)
+> >> +{
+> >> +	struct virt_dma_desc *vdesc = vchan_next_desc(&chan->vchan);
+> >> +
+> >> +	if (vdesc)
+> >> +		list_del(&vdesc->node);
+> > 
+> > I just noticed that this is incorrect. Node must be deleted after TX completion,
+> > otherwise vchan_find_desc won't find TX and residual won't be reported by
+> > dmaengine_tx_status.
+> > 
+> > Jon, I think you ADMA driver has the same issue, as well as several other DMA
+> > drivers that use virt-dma.
+> 
+> Actually, I think that the above is correct. If vchan_find_desc() finds
+> the descriptor then this indicates that the transfer has not started yet
+> and so the residual is equal to the transfer size.
 
-This reverts commit d7bd554f27c942e6b8b54100b4044f9be1038edf.
+That is correct, so you can do a quick calculation and find the residue only
+for current one
 
-It turns out that Tegra20 has a bug in the implementation of the MSI
-target address register (which is worked around by the existence of the
-struct tegra_pcie_soc.msi_base_shift parameter) that restricts the MSI
-target memory to the lower 32 bits of physical memory on that particular
-generation. The offending patch causes a regression on TrimSlice, which
-is a Tegra20-based device and has a PCI network interface card.
+> If you look at the adma driver, you will see the if vchan_find_desc()
+> does not find the descriptor, then we check to see if the current
+> transfer is the one we are querying and if so return the bytes
+> remaining. Looking at this driver again, what you have in
+> tegra_ahbdma_tx_status() does not look correct. You should have
+> something like ...
+> 
+> 	vdesc = vchan_find_desc(&ahbdma_chan->vchan, cookie);
+> 	if (vdesc) {
+> 		tx = to_ahbdma_tx_desc(vdesc);
+> 		residual = tx->csr & AHBDMA_CH_WCOUNT_MASK;
+> 	} else if (ahbdma_chan->tx_active && 	
+> 		   ahbdma_chan->tx_active->vd.tx.cookie == cookie) {
+> 		residual = tegra_ahbdma_residual(ahbdma_chan);
+> 	} else {
+> 		residual = 0;
+> 	}
+> 
+> Cheers
+> Jon
+> 
+> -- 
+> nvpublic
 
-An initial, simpler fix was to change the MSI target address for Tegra20
-only, but it was pointed out that the offending commit also prevents the
-use of 32-bit only MSI capable devices, even on later chips. Technically
-this was never guaranteed to work with the prior code in the first place
-because the allocated page could have resided beyond the 4 GiB boundary,
-but it is still possible that this could've introduced a regression.
-
-The proper fix that was settled on is to select a fixed address within
-the lowest 32 bits of physical address space that is otherwise unused,
-but testing of that patch has provided mixed results that are not fully
-understood yet.
-
-Given all of the above and the relative urgency to get this fixed in
-v4.13, revert the offending commit until a universal fix is found.
-
-Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # 4.13.x
-Reported-by: Tomasz Maciej Nowak <tmn505-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reported-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/pci/host/pci-tegra.c | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 9c40da54f88a..1987fec1f126 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -233,6 +233,7 @@ struct tegra_msi {
- 	struct msi_controller chip;
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
- 	struct irq_domain *domain;
-+	unsigned long pages;
- 	struct mutex lock;
- 	u64 phys;
- 	int irq;
-@@ -1529,22 +1530,9 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
- 		goto err;
- 	}
- 
--	/*
--	 * The PCI host bridge on Tegra contains some logic that intercepts
--	 * MSI writes, which means that the MSI target address doesn't have
--	 * to point to actual physical memory. Rather than allocating one 4
--	 * KiB page of system memory that's never used, we can simply pick
--	 * an arbitrary address within an area reserved for system memory
--	 * in the FPCI address map.
--	 *
--	 * However, in order to avoid confusion, we pick an address that
--	 * doesn't map to physical memory. The FPCI address map reserves a
--	 * 1012 GiB region for system memory and memory-mapped I/O. Since
--	 * none of the Tegra SoCs that contain this PCI host bridge can
--	 * address more than 16 GiB of system memory, the last 4 KiB of
--	 * these 1012 GiB is a good candidate.
--	 */
--	msi->phys = 0xfcfffff000;
-+	/* setup AFI/FPCI range */
-+	msi->pages = __get_free_pages(GFP_KERNEL, 0);
-+	msi->phys = virt_to_phys((void *)msi->pages);
- 
- 	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
- 	afi_writel(pcie, msi->phys, AFI_MSI_AXI_BAR_ST);
-@@ -1596,6 +1584,8 @@ static int tegra_pcie_disable_msi(struct tegra_pcie *pcie)
- 	afi_writel(pcie, 0, AFI_MSI_EN_VEC6);
- 	afi_writel(pcie, 0, AFI_MSI_EN_VEC7);
- 
-+	free_pages(msi->pages, 0);
-+
- 	if (msi->irq > 0)
- 		free_irq(msi->irq, pcie);
- 
 -- 
-2.14.1
+~Vinod
