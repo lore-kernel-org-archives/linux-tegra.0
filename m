@@ -1,99 +1,89 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] dmaengine: Add driver for NVIDIA Tegra AHB DMA
- controller
-Date: Mon, 9 Oct 2017 16:28:05 +0300
-Message-ID: <ee748850-71cc-8781-a611-1a277e1b6da5@gmail.com>
-References: <cover.1507073384.git.digetx@gmail.com>
- <9ef93a0054a6a2e27b72e5bfeebe81e5ab11a224.1507073384.git.digetx@gmail.com>
- <58f8c049-4408-d6a7-7452-f5be8041b7b5@nvidia.com>
- <72374a74-f6bd-256f-73c0-fa970a2e1576@gmail.com>
- <d4885545-6af1-b240-a197-1ed530cc4172@nvidia.com>
- <fc684b85-b4a7-c68d-613c-adbe0b154c6c@gmail.com>
- <dd49d752-039a-464d-1638-08323d637f5a@nvidia.com>
+From: Todor Tomov <todor.tomov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: Re: [RFC PATCH 0/4] PM / Domains: Add support for explicit
+ control of PM domains
+Date: Mon, 9 Oct 2017 19:36:49 +0300
+Message-ID: <72397ec8-d169-c5b1-2120-459031b35d48@linaro.org>
+References: <1490710443-27425-1-git-send-email-jonathanh@nvidia.com>
+ <CAJZ5v0gMzN_zfC_2nnRtYFyFon3-_mnioQhNbDP0wsr91RnagA@mail.gmail.com>
+ <ffe13074-9113-0a20-0fa6-76d0209dadfc@nvidia.com>
+ <1832647.f77WMLkdQb@aspire.rjw.lan>
+ <CAPDyKFokVKZfRAsEAB6ihx1FxW4JjarionyOwCATr3s+QW4aMg@mail.gmail.com>
+ <b4e8fd34-e2f0-165d-aa22-32ba43a8dbed@nvidia.com>
+ <CAPDyKFo-hfwbrY+AEMt0=fMshiT-BWvYDvGkKGqquTdowUvWHw@mail.gmail.com>
+ <107242f1-de90-b8bb-bc2c-feaf014485aa@nvidia.com>
+ <CAPDyKFqeAWoy-vfN89j8Yv1HTMpNqwcVk3XrTQoXH5JNrQ9Maw@mail.gmail.com>
+ <b1c74af3-1943-51ff-0bc9-009ca6c7f217@nvidia.com>
+ <5fcfeda6-f95c-cdaa-73a5-5c7499a3f9f5@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <dd49d752-039a-464d-1638-08323d637f5a-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5fcfeda6-f95c-cdaa-73a5-5c7499a3f9f5-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Rajendra Nayak <rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Stanimir Varbanov <stanimir.varbanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09.10.2017 12:51, Jon Hunter wrote:
+Hi,
+
+On 30.05.2017 06:41, Rajendra Nayak wrote:
+> []..
 > 
-> 
-> On 06/10/17 18:23, Dmitry Osipenko wrote:
->> On 06.10.2017 18:50, Jon Hunter wrote:
->>> On 06/10/17 16:26, Dmitry Osipenko wrote:
->>>> On 06.10.2017 16:11, Jon Hunter wrote:
->>>>> On 04/10/17 00:58, Dmitry Osipenko wrote:
-> 
-> ...
-> 
->>>>>> +static struct dma_chan *tegra_ahbdma_of_xlate(struct of_phandle_args *dma_spec,
->>>>>> +					      struct of_dma *ofdma)
->>>>>> +{
->>>>>> +	struct tegra_ahbdma *tdma = ofdma->of_dma_data;
->>>>>> +	struct dma_chan *chan;
->>>>>> +
->>>>>> +	chan = dma_get_any_slave_channel(&tdma->dma_dev);
->>>>>> +	if (!chan)
->>>>>> +		return NULL;
->>>>>> +
->>>>>> +	to_ahbdma_chan(chan)->of_req_sel = dma_spec->args[0];
->>>>>
->>>>> Test for args[0] < TEGRA_AHBDMA_REQ_N_A?
->>>>>
->>>>
->>>> It would duplicate slave_id checking done in tegra_ahbdma_config(), so not
->>>> needed here.
+>>>> I was proposing to have such a lower-layer by splitting the existing
+>>>> genpd framework so the drivers would have the option of calling the
+>>>> lower-level power control functions to look-up pm-domains and control
+>>>> them directly from their rpm callbacks (if they need to). Same as we do
+>>>> for clocks. This way you would not need to mess with the genpd ->start()
+>>>> callback and leave it to the driver to handle itself as it knows what
+>>>> needs to be done. This assumes that the device is never bound to the
+>>>> pm-domain by the genpd core.
 >>>
->>> But surely we should not let them request a channel in the first place?
->>>
+>>> Yes, agree! To me this is the only solution what would really work.
 >>
->> If allowing client to disable flow control is okay, as you mentioned below, then
->> I agree that it is fine. I'll make this change.
+>> I agree! :-)
 >>
->>>>>> +	to_ahbdma_chan(chan)->of_slave = true;
->>>>>
->>>>> Is this really needed? Doesn't a value of 0..TEGRA_AHBDMA_REQ_N_A-1 tell
->>>>> us it is valid?
->>>>>
->>>>
->>>> I think we should enforce channels flow control in a case of OF xlate'd channel,
->>>> no? To avoid abusing channels usage by client. Seems tegra_ahbdma_config isn't
->>>> correct, should be:
->>>
->>> Absolutely. However, I don't see the need for the additional 'of_slave'
->>> variable. If we validate the slave id here, we can get rid of the extra
->>> variable. It does not simplify the code really by adding this IMO.
->>>
+>>> Perhaps Rafael can confirm that he is fine with a solution like this?
 >>
->> 'of_slave' enforces flow control enable. If I understand you correctly, you are
->> suggesting that it is okay to leave ability for clients to override flow
->> control. Well, that's probably is fine indeed, just keep an eye on client drivers.
-> Nope :-)
+>> Yes and Rafael, please can you also elaborate on what you meant by
+>> "allow genpd to use either a list of power resources or the on/off
+>> callbacks provided by itself to cover different use cases"?
+>>
+>> I would like to understand exactly what you meant by allowing genpd to
+>> use a list of power resources (ie. how you envisioned we could achieve
+>> this).
 > 
-> I am simply saying that we do not need this 'of_slave' variable in
-> addition to the 'of_req_sel'. If we verify that 'args[0] <
-> TEGRA_AHBDMA_REQ_N_A' in this xlate function and set 'of_req_sel =
-> args[0]', then in tegra_ahbdma_config() we just have ...
+> While thinking through the problem of devices associated with multiple Power
+> domains (or power resources) and controlling them individually (or together)
+> I was wondering if something like a PM domain governor (with PM resource 
+> level constraints) could help.
 > 
-> 	if (ahbdma_chan->of_req_sel || sconfig->device_fc) {
-> 		if (ahbdma_chan->of_req_sel)
-> 			slave_id = ahbdma_chan->of_req_sel;
-> 		else if (sconfig->slave_id < TEGRA_AHBDMA_REQ_N_A)
-> 			slave_id = sconfig->slave_id;
-> 		else
-> 			return -EINVAL;
+> So with just one set of PM domain callbacks, its quite easy to control multiple power
+> resources, if they need to be *all* turned on/off together, using something similar to
+> what Jon proposed in his RFC [1]
 > 
-> 		ahb_seq |= AHBDMA_CH_ADDR_WRAP;
+> However, there could be instances where in we might need to control them individually
+> and in such cases we could hook up a PM domain governor which decides if an individual
+> PM resource can be turned on or off while the device is runtime suspended/resumed.
+> We can expose some PM resource level QoS APIs which the drivers can use to express their
+> needs, which the PM domain governor then takes into account during the decision making.
 > 
-> 		csr |= slave_id << AHBDMA_CH_REQ_SEL_SHIFT;
-> 		csr |= AHBDMA_CH_FLOW;
-> 	}
+> if this seems worth pursuing further, I can post some RFCs on these lines and
+> get the discussion going.
+> 
+> thanks,
+> Rajendra
+> 
+> [1] https://lkml.org/lkml/2016/9/20/173
 > 
 
-Okay
+I have come to a similar case with multiple power domains on Qualcomm APQ8096 - the
+camera subsystem has two VFE modules (Video Front End - these are image processing modules)
+and each of them has a separate power domain but we might want to control these from
+a single driver.
+
+So I wanted to ask if there have been any news on this topic lately?
+
+Thank you.
+Best regards,
+Todor
