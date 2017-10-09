@@ -1,100 +1,95 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] dmaengine: Add driver for NVIDIA Tegra AHB DMA
- controller
-Date: Mon, 9 Oct 2017 10:51:53 +0100
-Message-ID: <dd49d752-039a-464d-1638-08323d637f5a@nvidia.com>
-References: <cover.1507073384.git.digetx@gmail.com>
- <9ef93a0054a6a2e27b72e5bfeebe81e5ab11a224.1507073384.git.digetx@gmail.com>
- <58f8c049-4408-d6a7-7452-f5be8041b7b5@nvidia.com>
- <72374a74-f6bd-256f-73c0-fa970a2e1576@gmail.com>
- <d4885545-6af1-b240-a197-1ed530cc4172@nvidia.com>
- <fc684b85-b4a7-c68d-613c-adbe0b154c6c@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] Revert "PCI: tegra: Do not allocate MSI target memory"
+Date: Mon,  9 Oct 2017 12:29:35 +0200
+Message-ID: <20171009102935.14515-1-thierry.reding@gmail.com>
+References: <20171002201924.GC5407@bhelgaas-glaptop.roam.corp.google.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <fc684b85-b4a7-c68d-613c-adbe0b154c6c-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <20171002201924.GC5407-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomasz Maciej Nowak <tmn505-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+This reverts commit d7bd554f27c942e6b8b54100b4044f9be1038edf.
 
-On 06/10/17 18:23, Dmitry Osipenko wrote:
-> On 06.10.2017 18:50, Jon Hunter wrote:
->> On 06/10/17 16:26, Dmitry Osipenko wrote:
->>> On 06.10.2017 16:11, Jon Hunter wrote:
->>>> On 04/10/17 00:58, Dmitry Osipenko wrote:
+It turns out that Tegra20 has a bug in the implementation of the MSI
+target address register (which is worked around by the existence of the
+struct tegra_pcie_soc.msi_base_shift parameter) that restricts the MSI
+target memory to the lower 32 bits of physical memory on that particular
+generation. The offending patch causes a regression on TrimSlice, which
+is a Tegra20-based device and has a PCI network interface card.
 
-...
+An initial, simpler fix was to change the MSI target address for Tegra20
+only, but it was pointed out that the offending commit also prevents the
+use of 32-bit only MSI capable devices, even on later chips. Technically
+this was never guaranteed to work with the prior code in the first place
+because the allocated page could have resided beyond the 4 GiB boundary,
+but it is still possible that this could've introduced a regression.
 
->>>>> +static struct dma_chan *tegra_ahbdma_of_xlate(struct of_phandle_args *dma_spec,
->>>>> +					      struct of_dma *ofdma)
->>>>> +{
->>>>> +	struct tegra_ahbdma *tdma = ofdma->of_dma_data;
->>>>> +	struct dma_chan *chan;
->>>>> +
->>>>> +	chan = dma_get_any_slave_channel(&tdma->dma_dev);
->>>>> +	if (!chan)
->>>>> +		return NULL;
->>>>> +
->>>>> +	to_ahbdma_chan(chan)->of_req_sel = dma_spec->args[0];
->>>>
->>>> Test for args[0] < TEGRA_AHBDMA_REQ_N_A?
->>>>
->>>
->>> It would duplicate slave_id checking done in tegra_ahbdma_config(), so not
->>> needed here.
->>
->> But surely we should not let them request a channel in the first place?
->>
-> 
-> If allowing client to disable flow control is okay, as you mentioned below, then
-> I agree that it is fine. I'll make this change.
-> 
->>>>> +	to_ahbdma_chan(chan)->of_slave = true;
->>>>
->>>> Is this really needed? Doesn't a value of 0..TEGRA_AHBDMA_REQ_N_A-1 tell
->>>> us it is valid?
->>>>
->>>
->>> I think we should enforce channels flow control in a case of OF xlate'd channel,
->>> no? To avoid abusing channels usage by client. Seems tegra_ahbdma_config isn't
->>> correct, should be:
->>
->> Absolutely. However, I don't see the need for the additional 'of_slave'
->> variable. If we validate the slave id here, we can get rid of the extra
->> variable. It does not simplify the code really by adding this IMO.
->>
-> 
-> 'of_slave' enforces flow control enable. If I understand you correctly, you are
-> suggesting that it is okay to leave ability for clients to override flow
-> control. Well, that's probably is fine indeed, just keep an eye on client drivers.
-Nope :-)
+The proper fix that was settled on is to select a fixed address within
+the lowest 32 bits of physical address space that is otherwise unused,
+but testing of that patch has provided mixed results that are not fully
+understood yet.
 
-I am simply saying that we do not need this 'of_slave' variable in
-addition to the 'of_req_sel'. If we verify that 'args[0] <
-TEGRA_AHBDMA_REQ_N_A' in this xlate function and set 'of_req_sel =
-args[0]', then in tegra_ahbdma_config() we just have ...
+Given all of the above and the relative urgency to get this fixed in
+v4.13, revert the offending commit until a universal fix is found.
 
-	if (ahbdma_chan->of_req_sel || sconfig->device_fc) {
-		if (ahbdma_chan->of_req_sel)
-			slave_id = ahbdma_chan->of_req_sel;
-		else if (sconfig->slave_id < TEGRA_AHBDMA_REQ_N_A)
-			slave_id = sconfig->slave_id;
-		else
-			return -EINVAL;
+Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # 4.13.x
+Reported-by: Tomasz Maciej Nowak <tmn505-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Reported-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/host/pci-tegra.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-		ahb_seq |= AHBDMA_CH_ADDR_WRAP;
-
-		csr |= slave_id << AHBDMA_CH_REQ_SEL_SHIFT;
-		csr |= AHBDMA_CH_FLOW;
-	}
-
-Cheers
-Jon
-
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 9c40da54f88a..1987fec1f126 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -233,6 +233,7 @@ struct tegra_msi {
+ 	struct msi_controller chip;
+ 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+ 	struct irq_domain *domain;
++	unsigned long pages;
+ 	struct mutex lock;
+ 	u64 phys;
+ 	int irq;
+@@ -1529,22 +1530,9 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+ 		goto err;
+ 	}
+ 
+-	/*
+-	 * The PCI host bridge on Tegra contains some logic that intercepts
+-	 * MSI writes, which means that the MSI target address doesn't have
+-	 * to point to actual physical memory. Rather than allocating one 4
+-	 * KiB page of system memory that's never used, we can simply pick
+-	 * an arbitrary address within an area reserved for system memory
+-	 * in the FPCI address map.
+-	 *
+-	 * However, in order to avoid confusion, we pick an address that
+-	 * doesn't map to physical memory. The FPCI address map reserves a
+-	 * 1012 GiB region for system memory and memory-mapped I/O. Since
+-	 * none of the Tegra SoCs that contain this PCI host bridge can
+-	 * address more than 16 GiB of system memory, the last 4 KiB of
+-	 * these 1012 GiB is a good candidate.
+-	 */
+-	msi->phys = 0xfcfffff000;
++	/* setup AFI/FPCI range */
++	msi->pages = __get_free_pages(GFP_KERNEL, 0);
++	msi->phys = virt_to_phys((void *)msi->pages);
+ 
+ 	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
+ 	afi_writel(pcie, msi->phys, AFI_MSI_AXI_BAR_ST);
+@@ -1596,6 +1584,8 @@ static int tegra_pcie_disable_msi(struct tegra_pcie *pcie)
+ 	afi_writel(pcie, 0, AFI_MSI_EN_VEC6);
+ 	afi_writel(pcie, 0, AFI_MSI_EN_VEC7);
+ 
++	free_pages(msi->pages, 0);
++
+ 	if (msi->irq > 0)
+ 		free_irq(msi->irq, pcie);
+ 
 -- 
-nvpublic
+2.14.1
