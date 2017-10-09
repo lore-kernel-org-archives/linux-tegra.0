@@ -1,89 +1,80 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] dmaengine: Add driver for NVIDIA Tegra AHB DMA
- controller
-Date: Mon, 9 Oct 2017 16:09:09 +0530
-Message-ID: <20171009103909.GZ30097@localhost>
-References: <cover.1507073384.git.digetx@gmail.com>
- <9ef93a0054a6a2e27b72e5bfeebe81e5ab11a224.1507073384.git.digetx@gmail.com>
- <35dd2e3a-1f97-b82e-4763-a9d064761bc8@gmail.com>
- <b66c06cb-a63e-b13d-02f4-f7bacfd35112@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Applied "spi: tegra114: correct register name in definition" to the spi tree
+Date: Mon, 09 Oct 2017 11:44:39 +0100
+Message-ID: <E1e1VY7-0001lb-3m@debutante>
+References: <20171005112236.4242-1-ralf.ramsauer@oth-regensburg.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <b66c06cb-a63e-b13d-02f4-f7bacfd35112-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20171005112236.4242-1-ralf.ramsauer-XqyLlMioih3Nn6Kn0k1nHrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ralf Ramsauer <ralf.ramsauer-XqyLlMioih3Nn6Kn0k1nHrNAH6kLmebB@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 09, 2017 at 10:43:54AM +0100, Jon Hunter wrote:
-> 
-> 
-> On 06/10/17 20:11, Dmitry Osipenko wrote:
-> > On 04.10.2017 02:58, Dmitry Osipenko wrote:
-> >> AHB DMA controller presents on Tegra20/30 SoC's, it supports transfers
-> >> memory <-> AHB bus peripherals as well as mem-to-mem transfers. Driver
-> >> doesn't yet implement transfers larger than 64K and scatter-gather
-> >> transfers that have NENT > 1, HW doesn't have native support for these
-> >> cases, mem-to-mem isn't implemented as well.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> ---
-> >>  drivers/dma/Kconfig           |  10 +
-> >>  drivers/dma/Makefile          |   1 +
-> >>  drivers/dma/tegra20-ahb-dma.c | 630 ++++++++++++++++++++++++++++++++++++++++++
-> >>  3 files changed, 641 insertions(+)
-> >>  create mode 100644 drivers/dma/tegra20-ahb-dma.c
-> 
-> 
-> ...
-> 
-> >> +static struct tegra_ahbdma_tx_desc *tegra_ahbdma_get_next_tx(
-> >> +						struct tegra_ahbdma_chan *chan)
-> >> +{
-> >> +	struct virt_dma_desc *vdesc = vchan_next_desc(&chan->vchan);
-> >> +
-> >> +	if (vdesc)
-> >> +		list_del(&vdesc->node);
-> > 
-> > I just noticed that this is incorrect. Node must be deleted after TX completion,
-> > otherwise vchan_find_desc won't find TX and residual won't be reported by
-> > dmaengine_tx_status.
-> > 
-> > Jon, I think you ADMA driver has the same issue, as well as several other DMA
-> > drivers that use virt-dma.
-> 
-> Actually, I think that the above is correct. If vchan_find_desc() finds
-> the descriptor then this indicates that the transfer has not started yet
-> and so the residual is equal to the transfer size.
+The patch
 
-That is correct, so you can do a quick calculation and find the residue only
-for current one
+   spi: tegra114: correct register name in definition
 
-> If you look at the adma driver, you will see the if vchan_find_desc()
-> does not find the descriptor, then we check to see if the current
-> transfer is the one we are querying and if so return the bytes
-> remaining. Looking at this driver again, what you have in
-> tegra_ahbdma_tx_status() does not look correct. You should have
-> something like ...
-> 
-> 	vdesc = vchan_find_desc(&ahbdma_chan->vchan, cookie);
-> 	if (vdesc) {
-> 		tx = to_ahbdma_tx_desc(vdesc);
-> 		residual = tx->csr & AHBDMA_CH_WCOUNT_MASK;
-> 	} else if (ahbdma_chan->tx_active && 	
-> 		   ahbdma_chan->tx_active->vd.tx.cookie == cookie) {
-> 		residual = tegra_ahbdma_residual(ahbdma_chan);
-> 	} else {
-> 		residual = 0;
-> 	}
-> 
-> Cheers
-> Jon
-> 
-> -- 
-> nvpublic
+has been applied to the spi tree at
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 979a9afe399f7c75e1be9f235fa8bf1a90d2e77d Mon Sep 17 00:00:00 2001
+From: Ralf Ramsauer <ralf.ramsauer-XqyLlMioih3Nn6Kn0k1nHrNAH6kLmebB@public.gmane.org>
+Date: Thu, 5 Oct 2017 13:22:36 +0200
+Subject: [PATCH] spi: tegra114: correct register name in definition
+
+According to "Tegra K1 Processor Technical Reference Manual" (p. 2448),
+bit 20 of SPI_COMMAND1 is called CS_SW_VAL and not CS_SS_VAL.
+
+Signed-off-by: Ralf Ramsauer <ralf.ramsauer-XqyLlMioih3Nn6Kn0k1nHrNAH6kLmebB@public.gmane.org>
+Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ drivers/spi/spi-tegra114.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 44550182a4a3..a76acedd7e2f 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -50,7 +50,7 @@
+ #define SPI_IDLE_SDA_PULL_LOW			(2 << 18)
+ #define SPI_IDLE_SDA_PULL_HIGH			(3 << 18)
+ #define SPI_IDLE_SDA_MASK			(3 << 18)
+-#define SPI_CS_SS_VAL				(1 << 20)
++#define SPI_CS_SW_VAL				(1 << 20)
+ #define SPI_CS_SW_HW				(1 << 21)
+ /* SPI_CS_POL_INACTIVE bits are default high */
+ 						/* n from 0 to 3 */
+@@ -705,9 +705,9 @@ static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
+ 
+ 		command1 |= SPI_CS_SW_HW;
+ 		if (spi->mode & SPI_CS_HIGH)
+-			command1 |= SPI_CS_SS_VAL;
++			command1 |= SPI_CS_SW_VAL;
+ 		else
+-			command1 &= ~SPI_CS_SS_VAL;
++			command1 &= ~SPI_CS_SW_VAL;
+ 
+ 		tegra_spi_writel(tspi, 0, SPI_COMMAND2);
+ 	} else {
 -- 
-~Vinod
+2.14.1
