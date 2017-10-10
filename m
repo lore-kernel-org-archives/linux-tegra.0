@@ -1,249 +1,346 @@
 From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked
- infrastructure
-Date: Tue, 10 Oct 2017 17:56:52 -0500
-Message-ID: <071a6d33-0b0b-3ec0-c2f2-f5d034bce24a@ti.com>
+Subject: Re: [PATCH v2 01/16] gpio: Implement tighter IRQ chip integration
+Date: Tue, 10 Oct 2017 17:56:27 -0500
+Message-ID: <2701b79e-8d96-5805-c9b0-b779ab11757e@ti.com>
 References: <20170928095628.21966-1-thierry.reding@gmail.com>
- <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com> <20171006110749.GB22706@ulmo>
- <2c1abc4e-828e-8cd6-cce7-73050f5322fb@ti.com> <20171010112719.GC24484@ulmo>
+ <20170928095628.21966-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171010112719.GC24484@ulmo>
+In-Reply-To: <20170928095628.21966-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 10/10/2017 06:27 AM, Thierry Reding wrote:
-> On Mon, Oct 09, 2017 at 04:56:57PM -0500, Grygorii Strashko wrote:
->>
->>
->> On 10/06/2017 06:07 AM, Thierry Reding wrote:
->>> On Thu, Sep 28, 2017 at 09:22:17AM -0500, Grygorii Strashko wrote:
->>>>
->>>>
->>>> On 09/28/2017 04:56 AM, Thierry Reding wrote:
->>>>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>
->>>>> Hi Linus,
->>>>>
->>>>> here's the latest series of patches that implement the tighter IRQ chip
->>>>> integration as well as the banked GPIO infrastructure that we had
->>>>> discussed a couple of weeks/months back.
->>>>>
->>>>> The first couple of patches are mostly preparatory work in order to
->>>>> consolidate all IRQ chip related fields in a new structure and create
->>>>> the base functionality for adding IRQ chips.
->>>>>
->>>>> After that, I've added the Tegra186 GPIO support patch that makes use of
->>>>> the new tight integration.
->>>>>
->>>>> To round things off the new banked GPIO infrastructure is added (along
->>>>> with some more preparatory work), followed by the conversion of the two
->>>>> Tegra GPIO drivers to the new infrastructure.
->>>>
->>>> Hm. So you've ignored my comments [1].
->>>>
->>>> Sry, but I do not agree with this series.
->>>> - no prof that it can be re-used by other drivers than tegra
->>>>    (at least I do not see reasons to re-use it for any TI drivers)
->>>
->>> I had done some research based on Linus' feedback from an earlier series
->>> and identified the following potential candidates[0] that could move to
->>> this new infrastructure:
->>>
->>
->> below based on code check:
->>
->>> 	- gpio-intel-mid.c
->>
->> one irq per all gpios in controller
->>
->>> 	- gpio-merrifield.c
->>
->> one irq per all gpios in controller
->>
->>> 	- gpio-pca953x.c
->> one irq per all gpios in controller
->>
->>> 	- gpio-stmpe.c
->> one irq per all gpios in controller
->>> 	- gpio-tc3589x.c
->> one irq per all gpios in controller
->>> 	- gpio-ws16c48.c
->>
->> one irq per all gpios in controller
+On 09/28/2017 04:56 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> I explained in another subthread how we could cater for this particular
-> use-case.
-> 
->>> Note that this is based on code inspection rather than DT inspection,
->>> because that's fundamentally flawed. If you look at this from a DT
->>> perspective you're going to be tempted to change the DT bindings, but
->>> you can't do that because of backwards compatiblity. This new framework
->>> also doesn't address the issues at that level, but rather tries to be
->>> some common code that is otherwise duplicated in one way or another in
->>> various drivers and therefore hard to maintain. This is what Linus had
->>> originally requested, and that's what the series does.
->>
->> I've looked at this again, and again. I've looked on drivers listed above.
->> Sry, I do not see how this change can improve/simplify above drivers :(
->> May be it will clean up my doubts, if it will be possible to convert more
->> drivers?
-> 
-> I'm reluctant to spend more work on this and get Tegra186 GPIO support
-> delayed indefinitely until every other driver has been converted. The
-> Tegra186 GPIO driver is now more than a year old and I've got a few
-> dozen patches that depend on GPIO functionality that we currently can't
-> merge because this unification work has been going on for more than 6
-> months. This has been a very frustrating experience overall.
-> 
-> I think this series is in good enough shape for now. It improves the
-> situation in general. I also don't see anything in here that couldn't be
-> further improved should the need arise.
-> 
-> If this really isn't useful at all, can we please at least get patches
-> 1-11 merged? T hey are independent of the banked infrastructure work in
-> the last couple of patches.
+> Currently GPIO drivers are required to a GPIO chip and the corresponding
+> IRQ chip separately, which can result in a lot of boilerplate. Introduce
+> a new struct gpio_irq_chip, embedded in a struct gpio_chip, that drivers
+> can fill in if they want the GPIO core to automatically register the IRQ
+> chip associated with a GPIO chip.
 
-I agree with patches 10 in general (with comments applied) and, honestly.
-Do not see reasons why 11 can't go (but it any way up to Linus). 
-That why I've proposed split.
+few more comments.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   drivers/gpio/gpiolib.c      | 146 +++++++++++++++++++++++++++++++++++++++++++-
+>   include/linux/gpio/driver.h |  64 +++++++++++++++++++
+>   2 files changed, 207 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index eb80dac4e26a..b34d9cbd5809 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -72,6 +72,7 @@ static LIST_HEAD(gpio_lookup_list);
+>   LIST_HEAD(gpio_devices);
+>   
+>   static void gpiochip_free_hogs(struct gpio_chip *chip);
+> +static int gpiochip_add_irqchip(struct gpio_chip *gpiochip);
+>   static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
+>   static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip);
+>   static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip);
+> @@ -1260,6 +1261,10 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+>   	if (status)
+>   		goto err_remove_from_list;
+>   
+> +	status = gpiochip_add_irqchip(chip);
+> +	if (status)
+> +		goto err_remove_chip;
+> +
 
-> 
->>>> - no split
->>>
->>> What does this mean? The series is nicely split into separate patches,
->>> so each one individually is easy to review. I've also gone through quite
->>> some trouble to make sure everything builds fine after each patch, so
->>> it's possible to apply individual bits of the series. For example we
->>> could opt to apply everything up to the banked GPIO support if that's
->>> still contentious.
->>
->> i've commented it in [1]. copy paste here
->>
->>>>
->> So, can it be split? I think, patches which reorganize gpio irqchip specific fields placement
->> and move them in gpio_irq_chip can be considered separately if they will not introduce
->> functional changes. Also, omap changes can be considered separately.
->> (Pay attention that new fields introduced in patch 1).
->>>>
->>
->> This will reduce size of your series and concentrate review attention on actual functional changes.
->>
->>
->> [1] https://lkml.org/lkml/2017/9/15/442
-> 
-> I could of course split the series into multiple parts, but then it
-> becomes difficult to represent dependencies. The changes you mention are
-> already split into separate commits and I even made sure that they keep
-> bisectibility. I've sent them together primarily to keep them in the
-> order that they need to be applied in to simplify things.
-> 
-> I don't see how splitting up the series any further is going to simplify
-> review. If you want to only review the banked infrastructure change, can
-> you not just focus on that patch and ignore the first ten since they are
-> not actually functional changes?
+lock_key - it better if drivers will not need to define it.
 
-Patch 1 need to be updated as for me. while 2 - 10 are very simple.
-It will allow to get rid 10 patches from your series if
-- first introduce struct gpio_irq_chip
-- second move all current IRQ specific field in it
-- last add gpiochip_add_irqchip() and num_parents, parents, map
+>   	status = of_gpiochip_add(chip);
+>   	if (status)
+>   		goto err_remove_chip;
+> @@ -1626,8 +1631,8 @@ EXPORT_SYMBOL_GPL(gpiochip_set_nested_irqchip);
+>    * gpiochip by assigning the gpiochip as chip data, and using the irqchip
+>    * stored inside the gpiochip.
+>    */
+> -static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+> -			    irq_hw_number_t hwirq)
+> +int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+> +		     irq_hw_number_t hwirq)
+>   {
+>   	struct gpio_chip *chip = d->host_data;
+>   
+> @@ -1655,8 +1660,9 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+>   
+>   	return 0;
+>   }
+> +EXPORT_SYMBOL_GPL(gpiochip_irq_map);
+>   
+> -static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
+> +void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
+>   {
+>   	struct gpio_chip *chip = d->host_data;
+>   
+> @@ -1665,6 +1671,7 @@ static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
+>   	irq_set_chip_and_handler(irq, NULL, NULL);
+>   	irq_set_chip_data(irq, NULL);
+>   }
+> +EXPORT_SYMBOL_GPL(gpiochip_irq_unmap);
+>   
+>   static const struct irq_domain_ops gpiochip_domain_ops = {
+>   	.map	= gpiochip_irq_map,
+> @@ -1705,6 +1712,124 @@ static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+>   	return irq_create_mapping(chip->irqdomain, offset);
+>   }
+>   
+> +/**
+> + * gpiochip_add_irqchip() - adds an IRQ chip to a GPIO chip
+> + * @gpiochip: the GPIO chip to add the IRQ chip to
+> + */
+> +static int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
+> +{
+> +	struct irq_chip *irqchip = gpiochip->irqchip;
+> +	const struct irq_domain_ops *ops;
+> +	struct device_node *np;
+> +	unsigned int type;
+> +	unsigned int i;
+> +
+> +	if (!irqchip)
+> +		return 0;
+> +
+> +	if (gpiochip->irq.parent_handler && gpiochip->can_sleep) {
+> +		chip_err(gpiochip, "you cannot have chained interrupts on a "
+> +			 "chip that may sleep\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	type = gpiochip->irq_default_type;
+> +	np = gpiochip->parent->of_node;
+> +
+> +#ifdef CONFIG_OF_GPIO
+> +	/*
+> +	 * If the gpiochip has an assigned OF node this takes precedence
+> +	 * FIXME: get rid of this and use gpiochip->parent->of_node
+> +	 * everywhere
+> +	 */
+> +	if (gpiochip->of_node)
+> +		np = gpiochip->of_node;
+> +#endif
 
-this will allow to update drivers and drop gpiochip_irqchip_add() by filling
-gpio_irq_chip structure.
+above can be retrieved from gpio_chip->gpiodev
 
-> 
->>
->>>
->>>> - all GPIO IRQs mapped statically
->>>
->>> This series predates your work on the dynamic IRQ mapping, so I hadn't
->>> picked up those changes. This should be easily solved by the attached
->>> patch, though.
->>>
->>>> - irq->map[offset + j] = irq->parents[parent]; holds IRQs for all pins
->>>>     which is waste of memory
->>>
->>> It's the only way to generically do this. Also I don't think this wastes
->>> that much memory. We have one unsigned int per pin, which even for very
->>> large GPIO controllers is unlikely to exceed one 4 KiB page.
->>
->> for system with <128M of memory even 4k is a win.
-> 
-> I suspect that such systems won't have GPIOs where this infrastructure
-> would be used, or where the number of GPIOs would be problematic.
-> 
-> Also, this is supposed to be generic infrastructure and that usually
-> comes at some price. I don't know how to do this without the mapping,
-> but I'm certainly open to suggestions.
-> 
->>>> - DT binding changes not documented and no DT examples
->>>
->>> That's because this is completely orthogonal to DT bindings. We can't
->>> make any changes to the bindings because of ABI stability.
->>>
->>>> - below is ugly ;)
->>>> +	bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
->>>> +	pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
->>>
->>> If by ugly you mean wrong, then yes, it's actually the wrong way around.
->>> It should be:
->>>
->>> 	bank = (spec[0] >> gc->of_gpio_bank_shift) & gc->of_gpio_bank_mask;
->>> 	line = (spec[0] >> gc->of_gpio_line_shift) & gc->of_gpio_line_mask;
->>
->>   
->> Wrong yep. And No. What I do not like is encoding bank & line in the same field.
-> 
-> This is not about liking or disliking the encoding. The encoding is
-> already defined in the bindings for Tegra and Tegra186, so this isn't up
-> for discussion.
-> 
->> It creates some not clear DT standard bindings requirements as for me, comparing to the
->> current well known GPIO bindings
->>   gpios = <&[controller] [line number in controller] [flags]>;
->> line number in controller ::= [0..max lines]
-> 
-> Yes, that's because this is specifically for banked controllers. It
-> seems to me like most other bindings for banked controllers simply use a
-> linear mapping, in which case the simple example above would work.
-> 
-> Tegra seems somewhat of an exception because the DT bindings use the
-> (bank, line) pair encoding to reflect the names given to the lines in
-> technical reference manuals. I like this because it makes the DTS files
-> very easy to read and relate to schematics.
+> +
+> +	/*
+> +	 * Specifying a default trigger is a terrible idea if DT or ACPI is
+> +	 * used to configure the interrupts, as you may end up with
+> +	 * conflicting triggers. Tell the user, and reset to NONE.
+> +	 */
+> +	if (WARN(np && type != IRQ_TYPE_NONE,
+> +		 "%s: Ignoring %u default trigger\n", np->full_name, type))
+> +		type = IRQ_TYPE_NONE;
+> +
+> +	if (has_acpi_companion(gpiochip->parent) && type != IRQ_TYPE_NONE) {
+> +		acpi_handle_warn(ACPI_HANDLE(gpiochip->parent),
+> +				 "Ignoring %u default trigger\n", type);
+> +		type = IRQ_TYPE_NONE;
+> +	}
+> +
+> +	gpiochip->to_irq = gpiochip_to_irq;
+> +	gpiochip->irq_default_type = type;
+> +
+> +	if (gpiochip->irq.domain_ops)
+> +		ops = gpiochip->irq.domain_ops;
+> +	else
+> +		ops = &gpiochip_domain_ops;
+> +
+> +	gpiochip->irqdomain = irq_domain_add_simple(np, gpiochip->ngpio,
+> +						    gpiochip->irq_base,
+> +						    ops, gpiochip);
+> +	if (!gpiochip->irqdomain)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * It is possible for a driver to override this, but only if the
+> +	 * alternative functions are both implemented.
+> +	 */
+> +	if (!irqchip->irq_request_resources &&
+> +	    !irqchip->irq_release_resources) {
+> +		irqchip->irq_request_resources = gpiochip_irq_reqres;
+> +		irqchip->irq_release_resources = gpiochip_irq_relres;
+> +	}
+> +
+> +	if (gpiochip->irq.parent_handler) {
+> +		void *data = gpiochip->irq.parent_handler_data ?: gpiochip;
+> +
+> +		for (i = 0; i < gpiochip->irq.num_parents; i++) {
+> +			/*
+> +			 * The parent IRQ chip is already using the chip_data
+> +			 * for this IRQ chip, so our callbacks simply use the
+> +			 * handler_data.
+> +			 */
+> +			irq_set_chained_handler_and_data(gpiochip->irq.parents[i],
+> +							 gpiochip->irq.parent_handler,
+> +							 data);
+> +		}
+> +
+> +		gpiochip->irq_nested = false;
+> +	} else {
+> +		gpiochip->irq_nested = true;
 
-I did some googling and saw tegra binding accepted already. 
-Juts curious why not to use two cells <bank/port> <pin>
-it as for me much more readable and no masks/shifts 
+GPIO driver might not specify parent_handler, but it doesn't mean it's irq_nested,
+as driver may use request_irq()
 
+> +	}
+> +
+> +	/*
+> +	 * Prepare the mapping since the IRQ chip shall be orthogonal to any
+> +	 * GPIO chip calls.
+> +	 */
+> +	for (i = 0; i < gpiochip->ngpio; i++) {
+> +		unsigned int irq;
+> +
+> +		if (!gpiochip_irqchip_irq_valid(gpiochip, i))
+> +			continue;
+> +
+> +		irq = irq_create_mapping(gpiochip->irqdomain, i);
+> +		if (!irq) {
+> +			chip_err(gpiochip,
+> +				 "failed to create IRQ mapping for GPIO#%u\n",
+> +				 i);
+> +			continue;
+> +		}
+> +
+> +		irq_set_parent(irq, gpiochip->irq.map[i]);
+> +	}
+> +
+> +	acpi_gpiochip_request_interrupts(gpiochip);
+> +
+> +	return 0;
+> +}
+> +
+>   /**
+>    * gpiochip_irqchip_remove() - removes an irqchip added to a gpiochip
+>    * @gpiochip: the gpiochip to remove the irqchip from
+> @@ -1722,6 +1847,16 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
+>   		irq_set_handler_data(gpiochip->irq_chained_parent, NULL);
+>   	}
+>   
+> +	if (gpiochip->irqchip) {
+> +		struct gpio_irq_chip *irq = &gpiochip->irq;
+> +		unsigned int i;
+> +
+> +		for (i = 0; i < irq->num_parents; i++) {
+> +			irq_set_chained_handler(irq->parents[i], NULL);
+> +			irq_set_handler_data(irq->parents[i], NULL);
+> +		}
+> +	}
+> +
+>   	/* Remove all IRQ mappings and delete the domain */
+>   	if (gpiochip->irqdomain) {
+>   		for (offset = 0; offset < gpiochip->ngpio; offset++) {
+> @@ -1842,6 +1977,11 @@ EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_key);
+>   
+>   #else /* CONFIG_GPIOLIB_IRQCHIP */
+>   
+> +static inline int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
+> +{
+> +	return 0;
+> +}
+> +
+>   static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip) {}
+>   static inline int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
+>   {
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index c97f8325e8bf..6100b171817e 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -19,6 +19,58 @@ struct module;
+>   
+>   #ifdef CONFIG_GPIOLIB
+>   
+> +#ifdef CONFIG_GPIOLIB_IRQCHIP
+> +/**
+> + * struct gpio_irq_chip - GPIO interrupt controller
+> + */
+> +struct gpio_irq_chip {
+> +	/**
+> +	 * @domain_ops:
+> +	 *
+> +	 * Table of interrupt domain operations for this IRQ chip.
+> +	 */
+> +	const struct irq_domain_ops *domain_ops;
+> +
+> +	/**
+> +	 * @parent_handler:
+> +	 *
+> +	 * The interrupt handler for the GPIO chip's parent interrupts, may be
+> +	 * NULL if the parent interrupts are nested rather than cascaded.
+> +	 */
+> +	irq_flow_handler_t parent_handler;
+> +
+> +	/**
+> +	 * @parent_handler_data:
+> +	 *
+> +	 * Data associated, and passed to, the handler for the parent
+> +	 * interrupt.
+> +	 */
+> +	void *parent_handler_data;
+> +
+> +	/**
+> +	 * @num_parents:
+> +	 *
+> +	 * The number of interrupt parents of a GPIO chip.
+> +	 */
+> +	unsigned int num_parents;
+> +
+> +	/**
+> +	 * @parents:
+> +	 *
+> +	 * A list of interrupt parents of a GPIO chip. This is owned by the
+> +	 * driver, so the core will only reference this list, not modify it.
+> +	 */
+> +	unsigned int *parents;
+> +
+> +	/**
+> +	 * @map:
+> +	 *
+> +	 * A list of interrupt parents for each line of a GPIO chip.
+> +	 */
+> +	unsigned int *map;
+> +};
+> +#endif
+> +
+>   /**
+>    * struct gpio_chip - abstract a GPIO controller
+>    * @label: a functional name for the GPIO device, such as a part
+> @@ -173,6 +225,14 @@ struct gpio_chip {
+>   	bool			irq_need_valid_mask;
+>   	unsigned long		*irq_valid_mask;
+>   	struct lock_class_key	*lock_key;
+> +
+> +	/**
+> +	 * @irq:
+> +	 *
+> +	 * Integrates interrupt chip functionality with the GPIO chip. Can be
+> +	 * used to handle IRQs for most practical cases.
+> +	 */
+> +	struct gpio_irq_chip irq;
+>   #endif
+>   
+>   #if defined(CONFIG_OF_GPIO)
+> @@ -264,6 +324,10 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+>   
+>   #ifdef CONFIG_GPIOLIB_IRQCHIP
+>   
+> +int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+> +		     irq_hw_number_t hwirq);
+> +void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq);
+> +
+>   void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+>   		struct irq_chip *irqchip,
+>   		unsigned int parent_irq,
 > 
->> Actually, as per gpio.txt:
->> "Note that gpio-specifier length is controller dependent.  In the
->> above example, &gpio1 uses 2 cells to specify a gpio, while &gpio2
->> only uses one.",
->> so, if this going to be part of gpiolib it should be
->>   described in bindings/gpio/gpio.txt (or some other documents), as
->>   above note will not be exactly correct and new "banked" gpio controllers
->> will be expected to use thin new binding.
-> 
-> Yeah, that makes sense. I'll work on a patch that updates the binding
-> documentation to include this particular encoding. Again, this is not
-> intended to replace existing bindings because they may not be
-> compatible. However, bindings for new banked controllers may be able
-> to reuse this if it suits their needs.
-> 
-> Also, note that the rest of the banked infrastructure can be used
-> independently of the ->xlate() callback. Drivers are free to use the
-> of_gpio_simple_xlate() with the rest of the banked infrastructure to
-> simplify the driver code.
 
 -- 
 regards,
