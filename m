@@ -1,168 +1,103 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked
- infrastructure
-Date: Mon, 9 Oct 2017 16:56:57 -0500
-Message-ID: <2c1abc4e-828e-8cd6-cce7-73050f5322fb@ti.com>
-References: <20170928095628.21966-1-thierry.reding@gmail.com>
- <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com> <20171006110749.GB22706@ulmo>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 0/4] PM / Domains: Add support for explicit control of
+ PM domains
+Date: Tue, 10 Oct 2017 10:13:02 +0100
+Message-ID: <1a4f49f0-23f2-a037-c5ca-bbb8b58f0b67@nvidia.com>
+References: <1490710443-27425-1-git-send-email-jonathanh@nvidia.com>
+ <CAJZ5v0gMzN_zfC_2nnRtYFyFon3-_mnioQhNbDP0wsr91RnagA@mail.gmail.com>
+ <ffe13074-9113-0a20-0fa6-76d0209dadfc@nvidia.com>
+ <1832647.f77WMLkdQb@aspire.rjw.lan>
+ <CAPDyKFokVKZfRAsEAB6ihx1FxW4JjarionyOwCATr3s+QW4aMg@mail.gmail.com>
+ <b4e8fd34-e2f0-165d-aa22-32ba43a8dbed@nvidia.com>
+ <CAPDyKFo-hfwbrY+AEMt0=fMshiT-BWvYDvGkKGqquTdowUvWHw@mail.gmail.com>
+ <107242f1-de90-b8bb-bc2c-feaf014485aa@nvidia.com>
+ <CAPDyKFqeAWoy-vfN89j8Yv1HTMpNqwcVk3XrTQoXH5JNrQ9Maw@mail.gmail.com>
+ <b1c74af3-1943-51ff-0bc9-009ca6c7f217@nvidia.com>
+ <5fcfeda6-f95c-cdaa-73a5-5c7499a3f9f5@codeaurora.org>
+ <72397ec8-d169-c5b1-2120-459031b35d48@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20171006110749.GB22706@ulmo>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <72397ec8-d169-c5b1-2120-459031b35d48-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Todor Tomov <todor.tomov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Rajendra Nayak <rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Stanimir Varbanov <stanimir.varbanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-
-On 10/06/2017 06:07 AM, Thierry Reding wrote:
-> On Thu, Sep 28, 2017 at 09:22:17AM -0500, Grygorii Strashko wrote:
+On 09/10/17 17:36, Todor Tomov wrote:
+> Hi,
+> 
+> On 30.05.2017 06:41, Rajendra Nayak wrote:
+>> []..
 >>
->>
->> On 09/28/2017 04:56 AM, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
+>>>>> I was proposing to have such a lower-layer by splitting the existing
+>>>>> genpd framework so the drivers would have the option of calling the
+>>>>> lower-level power control functions to look-up pm-domains and control
+>>>>> them directly from their rpm callbacks (if they need to). Same as we do
+>>>>> for clocks. This way you would not need to mess with the genpd ->start()
+>>>>> callback and leave it to the driver to handle itself as it knows what
+>>>>> needs to be done. This assumes that the device is never bound to the
+>>>>> pm-domain by the genpd core.
+>>>>
+>>>> Yes, agree! To me this is the only solution what would really work.
 >>>
->>> Hi Linus,
+>>> I agree! :-)
 >>>
->>> here's the latest series of patches that implement the tighter IRQ chip
->>> integration as well as the banked GPIO infrastructure that we had
->>> discussed a couple of weeks/months back.
+>>>> Perhaps Rafael can confirm that he is fine with a solution like this?
 >>>
->>> The first couple of patches are mostly preparatory work in order to
->>> consolidate all IRQ chip related fields in a new structure and create
->>> the base functionality for adding IRQ chips.
+>>> Yes and Rafael, please can you also elaborate on what you meant by
+>>> "allow genpd to use either a list of power resources or the on/off
+>>> callbacks provided by itself to cover different use cases"?
 >>>
->>> After that, I've added the Tegra186 GPIO support patch that makes use of
->>> the new tight integration.
->>>
->>> To round things off the new banked GPIO infrastructure is added (along
->>> with some more preparatory work), followed by the conversion of the two
->>> Tegra GPIO drivers to the new infrastructure.
+>>> I would like to understand exactly what you meant by allowing genpd to
+>>> use a list of power resources (ie. how you envisioned we could achieve
+>>> this).
 >>
->> Hm. So you've ignored my comments [1].
+>> While thinking through the problem of devices associated with multiple Power
+>> domains (or power resources) and controlling them individually (or together)
+>> I was wondering if something like a PM domain governor (with PM resource 
+>> level constraints) could help.
 >>
->> Sry, but I do not agree with this series.
->> - no prof that it can be re-used by other drivers than tegra
->>   (at least I do not see reasons to re-use it for any TI drivers)
-> 
-> I had done some research based on Linus' feedback from an earlier series
-> and identified the following potential candidates[0] that could move to
-> this new infrastructure:
-> 
-
-below based on code check:
-
-> 	- gpio-intel-mid.c
-
-one irq per all gpios in controller
-
-> 	- gpio-merrifield.c
-
-one irq per all gpios in controller
-
-> 	- gpio-pca953x.c
-one irq per all gpios in controller
-
-> 	- gpio-stmpe.c
-one irq per all gpios in controller
-> 	- gpio-tc3589x.c
-one irq per all gpios in controller
-> 	- gpio-ws16c48.c
-
-one irq per all gpios in controller
-
-> 
-> Note that this is based on code inspection rather than DT inspection,
-> because that's fundamentally flawed. If you look at this from a DT
-> perspective you're going to be tempted to change the DT bindings, but
-> you can't do that because of backwards compatiblity. This new framework
-> also doesn't address the issues at that level, but rather tries to be
-> some common code that is otherwise duplicated in one way or another in
-> various drivers and therefore hard to maintain. This is what Linus had
-> originally requested, and that's what the series does.
-
-I've looked at this again, and again. I've looked on drivers listed above.
-Sry, I do not see how this change can improve/simplify above drivers :(
-May be it will clean up my doubts, if it will be possible to convert more drivers?
-
-> 
->> - no split
-> 
-> What does this mean? The series is nicely split into separate patches,
-> so each one individually is easy to review. I've also gone through quite
-> some trouble to make sure everything builds fine after each patch, so
-> it's possible to apply individual bits of the series. For example we
-> could opt to apply everything up to the banked GPIO support if that's
-> still contentious.
-
-i've commented it in [1]. copy paste here
-
+>> So with just one set of PM domain callbacks, its quite easy to control multiple power
+>> resources, if they need to be *all* turned on/off together, using something similar to
+>> what Jon proposed in his RFC [1]
 >>
-So, can it be split? I think, patches which reorganize gpio irqchip specific fields placement 
-and move them in gpio_irq_chip can be considered separately if they will not introduce
-functional changes. Also, omap changes can be considered separately.
-(Pay attention that new fields introduced in patch 1). 
+>> However, there could be instances where in we might need to control them individually
+>> and in such cases we could hook up a PM domain governor which decides if an individual
+>> PM resource can be turned on or off while the device is runtime suspended/resumed.
+>> We can expose some PM resource level QoS APIs which the drivers can use to express their
+>> needs, which the PM domain governor then takes into account during the decision making.
 >>
-
-This will reduce size of your series and concentrate review attention on actual functional changes.
-
-
-[1] https://lkml.org/lkml/2017/9/15/442
-
+>> if this seems worth pursuing further, I can post some RFCs on these lines and
+>> get the discussion going.
+>>
+>> thanks,
+>> Rajendra
+>>
+>> [1] https://lkml.org/lkml/2016/9/20/173
+>>
 > 
->> - all GPIO IRQs mapped statically
+> I have come to a similar case with multiple power domains on Qualcomm APQ8096 - the
+> camera subsystem has two VFE modules (Video Front End - these are image processing modules)
+> and each of them has a separate power domain but we might want to control these from
+> a single driver.
 > 
-> This series predates your work on the dynamic IRQ mapping, so I hadn't
-> picked up those changes. This should be easily solved by the attached
-> patch, though.
-> 
->> - irq->map[offset + j] = irq->parents[parent]; holds IRQs for all pins
->>    which is waste of memory
-> 
-> It's the only way to generically do this. Also I don't think this wastes
-> that much memory. We have one unsigned int per pin, which even for very
-> large GPIO controllers is unlikely to exceed one 4 KiB page.
+> So I wanted to ask if there have been any news on this topic lately?
 
-for system with <128M of memory even 4k is a win.
+There has not but there is still clearly a need for this and we need it
+for Tegra. I still plan to get back to this but recently a few items
+have cropped up and I have not had chance. So sorry about that.
 
+My plan was to split the current GPD framework so there is a lower-level
+set of APIs for managing the power-domains as I discussed with Rafael [0].
 
-> 
->> - DT binding changes not documented and no DT examples
-> 
-> That's because this is completely orthogonal to DT bindings. We can't
-> make any changes to the bindings because of ABI stability.
-> 
->> - below is ugly ;)
->> +	bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
->> +	pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
-> 
-> If by ugly you mean wrong, then yes, it's actually the wrong way around.
-> It should be:
-> 
-> 	bank = (spec[0] >> gc->of_gpio_bank_shift) & gc->of_gpio_bank_mask;
-> 	line = (spec[0] >> gc->of_gpio_line_shift) & gc->of_gpio_line_mask;
+Cheers
+Jon
 
- 
-Wrong yep. And No. What I do not like is encoding bank & line in the same field.
-It creates some not clear DT standard bindings requirements as for me, comparing to the
-current well known GPIO bindings 
- gpios = <&[controller] [line number in controller] [flags]>;
-line number in controller ::= [0..max lines]
-
-Actually, as per gpio.txt:
-"Note that gpio-specifier length is controller dependent.  In the
-above example, &gpio1 uses 2 cells to specify a gpio, while &gpio2
-only uses one.", 
-so, if this going to be part of gpiolib it should be
- described in bindings/gpio/gpio.txt (or some other documents), as
- above note will not be exactly correct and new "banked" gpio controllers
-will be expected to use thin new binding.
-
-
+[0] https://lkml.org/lkml/2017/5/2/203
 
 -- 
-regards,
--grygorii
+nvpublic
