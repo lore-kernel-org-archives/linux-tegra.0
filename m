@@ -1,263 +1,130 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked
- infrastructure
-Date: Tue, 10 Oct 2017 13:27:19 +0200
-Message-ID: <20171010112719.GC24484@ulmo>
-References: <20170928095628.21966-1-thierry.reding@gmail.com>
- <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com>
- <20171006110749.GB22706@ulmo>
- <2c1abc4e-828e-8cd6-cce7-73050f5322fb@ti.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3] platform/chrome: Use proper protocol transfer function
+Date: Tue, 10 Oct 2017 14:35:55 +0100
+Message-ID: <6beb7b8c-f602-112b-73b2-22188dcea28e@nvidia.com>
+References: <20170908205011.77986-1-briannorris@chromium.org>
+ <02aa65e7-e967-055b-2af3-2e9b6ef77935@nvidia.com>
+ <CALaWCOMj0wQk5OfYOYqU_sZUt2SQBhy=HaP-qOiB5aMf9G8inw@mail.gmail.com>
+ <c3c5d08b-2df2-2e5b-cb09-bd4b3011e3df@nvidia.com>
+ <20170919171401.GA10968@google.com>
+ <CALaWCOPzT-BWu-YcMY+xEAWGRmvvVEoA64ceEK3zG3K-wajskQ@mail.gmail.com>
+ <20170920061317.GB13616@google.com>
+ <CALaWCOPEiWHMeOb-9_fpbyYuNzGdy0favnPS37u5_zz1AG_86w@mail.gmail.com>
+ <CALaWCOM87ikjzK-zFJ7WT37L_w58AwZwC_nq0hNXuzh5x87n5w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GPJrCs/72TxItFYR"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <2c1abc4e-828e-8cd6-cce7-73050f5322fb-l0cyMroinI0@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CALaWCOM87ikjzK-zFJ7WT37L_w58AwZwC_nq0hNXuzh5x87n5w@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shawn N <shawnn@chromium.org>
+Cc: Olof Johansson <olof@lixom.net>, Benson Leung <bleung@chromium.org>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Brian Norris <computersforpeace@gmail.com>, Brian Norris <briannorris@chromium.org>, Gwendal Grignou <gwendal@chromium.org>, Enric Balletbo <enric.balletbo@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---GPJrCs/72TxItFYR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 26/09/17 00:15, Shawn N wrote:
+> On Wed, Sep 20, 2017 at 1:22 PM, Shawn N <shawnn@google.com> wrote:
+>> On Tue, Sep 19, 2017 at 11:13 PM, Brian Norris <briannorris@chromium.org> wrote:
+>>> Hi,
+>>>
+>>> On Tue, Sep 19, 2017 at 11:05:38PM -0700, Shawn N wrote:
+>>>> This is failing because our EC_CMD_GET_PROTOCOL_INFO host command is
+>>>> getting messed up, or the reply buffer is getting corrupted somehow.
+>>>>
+>>>>                ec_dev->proto_version =
+>>>>                         min(EC_HOST_REQUEST_VERSION,
+>>>>                                         fls(proto_info->protocol_versions) - 1);
+>>>>
+>>
+>> Checking this closer, the first host command we send after we boot the
+>> kernel (EC_CMD_GET_PROTOCOL_INFO) is failing due to protocol error
+>> (see 'SPI rx bad data' / 'SPI not ready' on the EC console). Since
+>> this doesn't seem to happen on the Chromium OS nyan_big release
+>> kernel, I suggest to hook up a logic analyzer and see if the SPI
+>> master is doing something bad.
+>>
+>> The error handling in cros_ec_cmd_xfer_spi() is completely wrong and
+>> we return -EAGAIN / EC_RES_IN_PROGRESS, which the caller interprets
+>> "the host command was received by the EC and is currently being
+>> handled, poll status until completion". So the caller polls status
+>> with EC_CMD_GET_COMMS_STATUS, sees no host command is in progress
+>> (which is interpreted to mean "the host command I sent previously has
+>> now successfully completed"), and returns success. The problem here is
+>> that the initial host command was never received at all, and no reply
+>> was ever received, so our reply data is all zero.
+>>
+>> Two things need to be fixed here:
+>>
+>> 1) Find out why the first host command after boot is failing. Probe
+>> SPI pins and see what's going on.
+>> 2) Fix error handling so we properly return an error (or properly
+>> retry the entire command) when a protocol error occurs (I made some
+>> attempt in https://chromium-review.googlesource.com/385080/, probably
+>> I should revisit that).
+> 
+> The below patch will fix error handling and will make things mostly
+> work on nyan_big, because we'll fall back to V2 protocol after the
+> initial failure. But we should still investigate why we're getting
+> errors on the first host command. We aren't seeing these errors when
+> we send commands from firmware, so I suspect something is wrong in
+> kernel SPI HW initialization that causes the first command to fail.
+I have been looking into this a bit more and it appears to be timing 
+related. I found that enabling some debug in the Tegra SPI driver the
+problem would go away and seems that adding a delay before sending the
+SPI message would also workaround the problem. 
 
-On Mon, Oct 09, 2017 at 04:56:57PM -0500, Grygorii Strashko wrote:
->=20
->=20
-> On 10/06/2017 06:07 AM, Thierry Reding wrote:
-> > On Thu, Sep 28, 2017 at 09:22:17AM -0500, Grygorii Strashko wrote:
-> >>
-> >>
-> >> On 09/28/2017 04:56 AM, Thierry Reding wrote:
-> >>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>>
-> >>> Hi Linus,
-> >>>
-> >>> here's the latest series of patches that implement the tighter IRQ ch=
-ip
-> >>> integration as well as the banked GPIO infrastructure that we had
-> >>> discussed a couple of weeks/months back.
-> >>>
-> >>> The first couple of patches are mostly preparatory work in order to
-> >>> consolidate all IRQ chip related fields in a new structure and create
-> >>> the base functionality for adding IRQ chips.
-> >>>
-> >>> After that, I've added the Tegra186 GPIO support patch that makes use=
- of
-> >>> the new tight integration.
-> >>>
-> >>> To round things off the new banked GPIO infrastructure is added (along
-> >>> with some more preparatory work), followed by the conversion of the t=
-wo
-> >>> Tegra GPIO drivers to the new infrastructure.
-> >>
-> >> Hm. So you've ignored my comments [1].
-> >>
-> >> Sry, but I do not agree with this series.
-> >> - no prof that it can be re-used by other drivers than tegra
-> >>   (at least I do not see reasons to re-use it for any TI drivers)
-> >=20
-> > I had done some research based on Linus' feedback from an earlier series
-> > and identified the following potential candidates[0] that could move to
-> > this new infrastructure:
-> >=20
->=20
-> below based on code check:
->=20
-> > 	- gpio-intel-mid.c
->=20
-> one irq per all gpios in controller
->=20
-> > 	- gpio-merrifield.c
->=20
-> one irq per all gpios in controller
->=20
-> > 	- gpio-pca953x.c
-> one irq per all gpios in controller
->=20
-> > 	- gpio-stmpe.c
-> one irq per all gpios in controller
-> > 	- gpio-tc3589x.c
-> one irq per all gpios in controller
-> > 	- gpio-ws16c48.c
->=20
-> one irq per all gpios in controller
+Looking back at the Tegra Linux test history [0], it appears that after
+v4.10-rc5 [1] I start to see the following message which is the first 
+indication of some SPI issues ...
 
-I explained in another subthread how we could cater for this particular
-use-case.
+ cros-ec-spi spi32766.0: packet too long (249 bytes, expected 4)
 
-> > Note that this is based on code inspection rather than DT inspection,
-> > because that's fundamentally flawed. If you look at this from a DT
-> > perspective you're going to be tempted to change the DT bindings, but
-> > you can't do that because of backwards compatiblity. This new framework
-> > also doesn't address the issues at that level, but rather tries to be
-> > some common code that is otherwise duplicated in one way or another in
-> > various drivers and therefore hard to maintain. This is what Linus had
-> > originally requested, and that's what the series does.
->=20
-> I've looked at this again, and again. I've looked on drivers listed above.
-> Sry, I do not see how this change can improve/simplify above drivers :(
-> May be it will clean up my doubts, if it will be possible to convert more
-> drivers?
+I attempted to bisect this, but I was not successful because each time
+I would ended up somewhere different. I found that even with v4.9 I may
+see the issue 1 in 20 times and so I realised that I am not even sure 
+when the problem really started or if has always been there. It seems
+that for older kernels it is harder to reproduce. I am wondering now if
+some timing has changed somewhere causing us to see the problem more
+frequently with newer kernels?
 
-I'm reluctant to spend more work on this and get Tegra186 GPIO support
-delayed indefinitely until every other driver has been converted. The
-Tegra186 GPIO driver is now more than a year old and I've got a few
-dozen patches that depend on GPIO functionality that we currently can't
-merge because this unification work has been going on for more than 6
-months. This has been a very frustrating experience overall.
+I see the the cros-ec binding defines the following ...
 
-I think this series is in good enough shape for now. It improves the
-situation in general. I also don't see anything in here that couldn't be
-further improved should the need arise.
+"google,cros-ec-spi-pre-delay: Some implementations of the EC need a  
+ little time to wake up from sleep before they can receive SPI transfers 
+ at a high clock rate. This property specifies the delay, in usecs, 
+ between the assertion of the CS to the start of the first clock pulse."
 
-If this really isn't useful at all, can we please at least get patches
-1-11 merged? T hey are independent of the banked infrastructure work in
-the last couple of patches.
+I found that adding the following also worked around the problem ...
 
-> >> - no split
-> >=20
-> > What does this mean? The series is nicely split into separate patches,
-> > so each one individually is easy to review. I've also gone through quite
-> > some trouble to make sure everything builds fine after each patch, so
-> > it's possible to apply individual bits of the series. For example we
-> > could opt to apply everything up to the banked GPIO support if that's
-> > still contentious.
->=20
-> i've commented it in [1]. copy paste here
->=20
-> >>
-> So, can it be split? I think, patches which reorganize gpio irqchip speci=
-fic fields placement=20
-> and move them in gpio_irq_chip can be considered separately if they will =
-not introduce
-> functional changes. Also, omap changes can be considered separately.
-> (Pay attention that new fields introduced in patch 1).=20
-> >>
->=20
-> This will reduce size of your series and concentrate review attention on =
-actual functional changes.
->=20
->=20
-> [1] https://lkml.org/lkml/2017/9/15/442
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index 5cf987b5401e..0baa6bfc0f36 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -317,6 +317,7 @@
+                        interrupts = <TEGRA_GPIO(C, 7) IRQ_TYPE_LEVEL_LOW>;
+                        reg = <0>;
+ 
++                       google,cros-ec-spi-pre-delay = <10>;
+                        google,cros-ec-spi-msg-delay = <2000>;
+ 
+                        i2c-tunnel {
 
-I could of course split the series into multiple parts, but then it
-becomes difficult to represent dependencies. The changes you mention are
-already split into separate commits and I even made sure that they keep
-bisectibility. I've sent them together primarily to keep them in the
-order that they need to be applied in to simplify things.
+I have tried 50 boots with the above and I have seen no SPI failures
+on boot.
 
-I don't see how splitting up the series any further is going to simplify
-review. If you want to only review the banked infrastructure change, can
-you not just focus on that patch and ignore the first ten since they are
-not actually functional changes?
+I did look to see if it is possible to probe the SPI signals with a
+scope but from the schematics I am not sure if they are accessible or
+buried in the PCB.
 
->=20
-> >=20
-> >> - all GPIO IRQs mapped statically
-> >=20
-> > This series predates your work on the dynamic IRQ mapping, so I hadn't
-> > picked up those changes. This should be easily solved by the attached
-> > patch, though.
-> >=20
-> >> - irq->map[offset + j] =3D irq->parents[parent]; holds IRQs for all pi=
-ns
-> >>    which is waste of memory
-> >=20
-> > It's the only way to generically do this. Also I don't think this wastes
-> > that much memory. We have one unsigned int per pin, which even for very
-> > large GPIO controllers is unlikely to exceed one 4 KiB page.
->=20
-> for system with <128M of memory even 4k is a win.
+Is it possible that Tegra is sending the SPI message too soon for the
+EC?
 
-I suspect that such systems won't have GPIOs where this infrastructure
-would be used, or where the number of GPIOs would be problematic.
+Cheers
+Jon
 
-Also, this is supposed to be generic infrastructure and that usually
-comes at some price. I don't know how to do this without the mapping,
-but I'm certainly open to suggestions.
+[0] https://nvtb.github.io/linux/
+[1] https://nvtb.github.io/linux/test_v4.10-rc5/20170123023102/boot/tegra124-nyan-big/tegra124-nyan-big/tegra_defconfig_log.txt
 
-> >> - DT binding changes not documented and no DT examples
-> >=20
-> > That's because this is completely orthogonal to DT bindings. We can't
-> > make any changes to the bindings because of ABI stability.
-> >=20
-> >> - below is ugly ;)
-> >> +	bank =3D (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
-> >> +	pin =3D (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
-> >=20
-> > If by ugly you mean wrong, then yes, it's actually the wrong way around.
-> > It should be:
-> >=20
-> > 	bank =3D (spec[0] >> gc->of_gpio_bank_shift) & gc->of_gpio_bank_mask;
-> > 	line =3D (spec[0] >> gc->of_gpio_line_shift) & gc->of_gpio_line_mask;
->=20
-> =20
-> Wrong yep. And No. What I do not like is encoding bank & line in the same=
- field.
-
-This is not about liking or disliking the encoding. The encoding is
-already defined in the bindings for Tegra and Tegra186, so this isn't up
-for discussion.
-
-> It creates some not clear DT standard bindings requirements as for me, co=
-mparing to the
-> current well known GPIO bindings=20
->  gpios =3D <&[controller] [line number in controller] [flags]>;
-> line number in controller ::=3D [0..max lines]
-
-Yes, that's because this is specifically for banked controllers. It
-seems to me like most other bindings for banked controllers simply use a
-linear mapping, in which case the simple example above would work.
-
-Tegra seems somewhat of an exception because the DT bindings use the
-(bank, line) pair encoding to reflect the names given to the lines in
-technical reference manuals. I like this because it makes the DTS files
-very easy to read and relate to schematics.
-
-> Actually, as per gpio.txt:
-> "Note that gpio-specifier length is controller dependent.  In the
-> above example, &gpio1 uses 2 cells to specify a gpio, while &gpio2
-> only uses one.",=20
-> so, if this going to be part of gpiolib it should be
->  described in bindings/gpio/gpio.txt (or some other documents), as
->  above note will not be exactly correct and new "banked" gpio controllers
-> will be expected to use thin new binding.
-
-Yeah, that makes sense. I'll work on a patch that updates the binding
-documentation to include this particular encoding. Again, this is not
-intended to replace existing bindings because they may not be
-compatible. However, bindings for new banked controllers may be able
-to reuse this if it suits their needs.
-
-Also, note that the rest of the banked infrastructure can be used
-independently of the ->xlate() callback. Drivers are free to use the
-of_gpio_simple_xlate() with the rest of the banked infrastructure to
-simplify the driver code.
-
-Thierry
-
---GPJrCs/72TxItFYR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlncrpQACgkQ3SOs138+
-s6FYlg//fG7tPe0+nk7fuq0P6HAea9UaUSKTAZuj/hbMzY/BR9zW3HMMIqB1spT3
-dl+LiuMDLtB1APPbsn2fPOK9QBNYgILW/amUG//bIMTquKjZPxNmFQGgDF49Asak
-+mmq/8UG6nRRy3M3zB6V6lfCUHcukqE5y9keO9+wGIZDQPyLHDSJPo+Sl20LDJJD
-5qDAjBj6iLe35XNyNg93a/YVp8T7bS44dpwB1XnhbLW6BYOo81NR0kJXCfmratzi
-dFZ6tTSinKX5Vd72GEyzMf+1e9hcBQ+1fxtPF2pZTwvmj6GrmtnprfBXtuJ3znx4
-67+nL6SD86AxDJ7X2HPo1YMiPZfqPSywANRONonLy+Tb2P2KCD7W8nMARnj+0YY7
-eu1WrJvwXwR/LZbx5UdQK4FVzdCNO0FerI1GCyODegeA/lvBUhbd6hhc8FzE2rd7
-OMVXA6Oe//yv8gLhebNN77Oy6DcwkzYJl89enMmqAEVPxdMiPcgeuhgoSG63EfFw
-iLRQDP570HKT0Nm4K5Qn3VBoPcDTTJRHqOGr5oBUiLg0FMkVU+Nu2CKNM6kvGkZ2
-m5608sndPQXMexBPFRKQVXfYgcRiUl6r1U/tVksK3O48I0Y7y8+fAYlzXeauhqY3
-ENdp0BWPmD6kXIzuWh/9njU76sYqyfXAfHrGK1XIqCxmZUs4zMk=
-=5Rut
------END PGP SIGNATURE-----
-
---GPJrCs/72TxItFYR--
+-- 
+nvpublic
