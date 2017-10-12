@@ -1,85 +1,47 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] dmaengine: tegra-apb: Support non-flow controlled slave
- configuration
-Date: Thu, 12 Oct 2017 20:35:44 +0300
-Message-ID: <684802f4-af1f-95b1-fcba-cd4fc58c7fd0@gmail.com>
-References: <20171003223838.31834-1-digetx@gmail.com>
- <20171012165310.GU30097@localhost>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH 0/6] Tegra PCIe end point config space map code refactoring
+Date: Fri, 13 Oct 2017 00:20:05 +0530
+Message-ID: <1507834211-24922-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171012165310.GU30097@localhost>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: treding@nvidia.com, bhelgaas@google.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, Vidya Sagar <vidyas@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12.10.2017 19:53, Vinod Koul wrote:
-> On Wed, Oct 04, 2017 at 01:38:38AM +0300, Dmitry Osipenko wrote:
->> This allows DMA client to issue a non-flow controlled TX. In particular
->> it is needed for the fuse driver that reads fuse registers using APBDMA
->> to workaround a HW bug that results in hang when CPU and DMA perform
->> simultaneous access to fuse peripheral.
->>
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/dma/tegra20-apb-dma.c | 19 ++++++++++++++-----
->>  1 file changed, 14 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->> index b9d75a54c896..a177039713a7 100644
->> --- a/drivers/dma/tegra20-apb-dma.c
->> +++ b/drivers/dma/tegra20-apb-dma.c
->> @@ -353,7 +353,8 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
->>  	}
->>  
->>  	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
->> -	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID) {
->> +	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID &&
->> +	    sconfig->device_fc) {
->>  		if (sconfig->slave_id > TEGRA_APBDMA_CSR_REQ_SEL_MASK)
->>  			return -EINVAL;
->>  		tdc->slave_id = sconfig->slave_id;
->> @@ -970,8 +971,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
->>  					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
->>  	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
->>  
->> -	csr |= TEGRA_APBDMA_CSR_ONCE | TEGRA_APBDMA_CSR_FLOW;
->> -	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
->> +	csr |= TEGRA_APBDMA_CSR_ONCE ;
-> 				    ^^^
-> Checkpatch should have complained here, no space before ; please
-> 
+PCIe host controller in Tegra SoCs has 1GB of aperture available
+for mapping end points config space, IO and BARs. In that, currently
+256MB is being reserved for mapping end points configuration space
+which leaves less memory space available for mapping end points BARs
+on some of the platforms.
+This patch series attempts to use only 4K space from 1GB aperture to
+access end points configuration space.
 
-Yep, sorry.
+Currently, this change benefits T20 and future chips in saving (i.e. repurposed
+to use for BAR mapping) physical space as well as kernel virtual mapping space,
+it saves only kernel virtual address space in T30, T124, T132 and T210.
 
->> +
->> +	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
->> +		csr |= TEGRA_APBDMA_CSR_FLOW;
->> +		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
->> +	}
->> +
->>  	if (flags & DMA_PREP_INTERRUPT)
->>  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
->>  
->> @@ -1110,10 +1116,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
->>  					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
->>  	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
->>  
->> -	csr |= TEGRA_APBDMA_CSR_FLOW;
->> +	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
->> +		csr |= TEGRA_APBDMA_CSR_FLOW;
->> +		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
->> +	}
->> +
->>  	if (flags & DMA_PREP_INTERRUPT)
->>  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
->> -	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
->>  
->>  	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
->>  
->> -- 
->> 2.14.1
->>
+Testing Done on T210:
+ Enumeration is and basic functionality of immediate devices
+ Enumeration of devices behind a PCIe switch
+ Complete 4K configuration space access
+
+Vidya Sagar (6):
+  PCI: tegra: refactor config space mapping code
+  ARM: tegra: limit PCIe config space mapping to 4K for T20
+  ARM: tegra: limit PCIe config space mapping to 4K for T30
+  ARM: tegra: limit PCIe config space mapping to 4K for T124
+  ARM64: tegra: limit PCIe config space mapping to 4K for T132
+  ARM64: tegra: limit PCIe config space mapping to 4K for T210
+
+ arch/arm/boot/dts/tegra124.dtsi          |  2 +-
+ arch/arm/boot/dts/tegra20.dtsi           |  8 +--
+ arch/arm/boot/dts/tegra30.dtsi           |  2 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi |  2 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi |  2 +-
+ drivers/pci/host/pci-tegra.c             | 85 +++++++++-----------------------
+ 6 files changed, 31 insertions(+), 70 deletions(-)
+
+-- 
+2.7.4
