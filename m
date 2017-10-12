@@ -1,71 +1,117 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] staging: Introduce NVIDIA Tegra20 video decoder
- driver
-Date: Thu, 12 Oct 2017 01:37:10 +0300
-Message-ID: <035a188e-23e3-ad10-a4e5-1e7debfbf61a@gmail.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH v3 2/2] ARM: dts: tegra20: Add video decoder node
+Date: Thu, 12 Oct 2017 10:43:42 +0300
+Message-ID: <0b6150a7-5b2b-ca4d-eb34-b6614e4833df@mentor.com>
 References: <cover.1507752381.git.digetx@gmail.com>
- <3d432aa2617977a2b0a8621a1fc2f36f751133e1.1507752381.git.digetx@gmail.com>
- <1507754838.19342.11.camel@ndufresne.ca>
+ <f58be69f6004393711c9ff3cb4b52aed33e2611a.1507752381.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1507754838.19342.11.camel-dDhyB4GVkw9AFePFGvp55w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolas Dufresne <nicolas-dDhyB4GVkw9AFePFGvp55w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f58be69f6004393711c9ff3cb4b52aed33e2611a.1507752381.git.digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11.10.2017 23:47, Nicolas Dufresne wrote:
-> Le mercredi 11 octobre 2017 à 23:08 +0300, Dmitry Osipenko a écrit :
->> diff --git a/drivers/staging/tegra-vde/TODO b/drivers/staging/tegra-
->> vde/TODO
->> new file mode 100644
->> index 000000000000..e98bbc7b3c19
->> --- /dev/null
->> +++ b/drivers/staging/tegra-vde/TODO
->> @@ -0,0 +1,5 @@
->> +TODO:
->> +       - Figure out how generic V4L2 API could be utilized by this
->> driver,
->> +         implement it.
->> +
+Hello Dmitry,
+
+On 10/11/2017 11:08 PM, Dmitry Osipenko wrote:
+> Add a device node for the video decoder engine found on Tegra20.
 > 
-> That is a very interesting effort, I think it's the first time someone
-> is proposing an upstream driver for a Tegra platform.
-
-Thanks!
-
- When I look
-> tegra_vde_h264_decoder_ctx, it looks like the only thing that the HW is
-> not parsing is the media header (pps/sps). Is that correct ?
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/boot/dts/tegra20.dtsi | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 > 
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 7c85f97f72ea..1b5d54b6c0cb 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -249,6 +249,23 @@
+>  		*/
+>  	};
+>  
+> +	vde@6001a000 {
+> +		compatible = "nvidia,tegra20-vde";
+> +		reg = <0x6001a000 0x3D00    /* VDE registers */
+> +		       0x40000400 0x3FC00>; /* IRAM region */
 
-That's correct. I think it's quite common among embedded (mobile) and
-desktop-grade decoders to require some auxiliary info from the media headers.
+this notation of a used region in IRAM is non-standard and potentially it
+may lead to conflicts for IRAM resource between users.
 
-> I wonder how acceptable it would be to parse this inside the driver. It
-> is no more complex then parsing an EDID. If that was possible, wrapping
-> this driver as a v4l2 mem2mem should be rather simple. As a side
-> effect, you'll automatically get some userspace working, notably
-> GStreamer and FFmpeg.
-> 
+My proposal is to add a valid device tree node to describe an IRAM region
+firstly, then reserve a subregion in it by using a new "iram" property.
 
-Parsing bitstream in kernel feels a bit dirty, although it's up to media
-maintainers to decide.
+----8<----
+From: Vladimir Zapolskiy <vz@mleia.com>
+Date: Thu, 12 Oct 2017 10:25:45 +0300
+Subject: [PATCH] ARM: tegra: add device tree node to describe IRAM on Tegra20
 
-> For the case even parsing the headers is too much from a kernel point
-> of view, then I think you should have a look at the following effort.
-> It's a proposal base on yet to be merged Request API. Hugues is also
-> propose a libv4l2 adapter that makes the driver looks like a normal
-> v4l2 m2m, hiding all the userspace parsing and table filling. This
-> though, is long term plan to integrate state-less or parser-less
-> encoders into linux-media. It seems rather overkill for state-full
-> driver that requires parsed headers like PPS/SPS.
-> 
-> https://lwn.net/Articles/720797/
-> 
+All Tegra20 SoCs contain 256KiB IRAM, which is used to store
+resume code and by a video decoder engine.
 
-I'll take a look at the Request API / libv4l2 adapter, thank you very much for
-pointing to it.
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ arch/arm/boot/dts/tegra20.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 7c85f97f72ea..fd2843c90920 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -9,6 +9,14 @@
+ 	compatible = "nvidia,tegra20";
+ 	interrupt-parent = <&lic>;
+ 
++	iram@40000000 {
++		compatible = "mmio-sram";
++		reg = <0x40000000 0x40000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x40000000 0x40000>;
++	};
++
+ 	host1x@50000000 {
+ 		compatible = "nvidia,tegra20-host1x", "simple-bus";
+ 		reg = <0x50000000 0x00024000>;
+----8<----
+
+Please add the change above to your next version of the series, or
+if you wish I can send it separately for review by Thierry.
+
+After applying that change you do define a region in IRAM for the exclusive
+usage by a video decoder engine and add an 'iram' property:
+
+----8<----
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index fd2843c90920..5133fbac2185 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -15,6 +15,11 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0 0x40000000 0x40000>;
++
++		vde_pool: vde {
++			reg = <0x400 0x3fc00>;
++			pool;
++		};
+ 	};
+ 
+ 	host1x@50000000 {
+[snip]
+
++	vde@6001a000 {
++		compatible = "nvidia,tegra20-vde";
++		reg = <0x6001a000 0x3d00>;	/* VDE registers */
++		iram = <&vde_pool>;		/* IRAM region */
+[snip]
+----8<----
+
+And finally in the driver you'll use genalloc API to access the IRAM
+region, for that you can find ready examples in the kernel source code.
+
+--
+With best wishes,
+Vladimir
