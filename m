@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/6] PCI: tegra: refactor config space mapping code
-Date: Fri, 13 Oct 2017 00:20:06 +0530
-Message-ID: <1507834211-24922-2-git-send-email-vidyas@nvidia.com>
+Subject: [PATCH 4/6] ARM: tegra: limit PCIe config space mapping to 4K for T124
+Date: Fri, 13 Oct 2017 00:20:09 +0530
+Message-ID: <1507834211-24922-5-git-send-email-vidyas@nvidia.com>
 References: <1507834211-24922-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,170 +12,27 @@ To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-use only 4K space from available 1GB PCIe aperture to access
-end points configuration space by dynamically moving AFI_AXI_BAR
-base address and always making sure that the desired location
-to be accessed for generating required config space access falls
-in the 4K space reserved for this purpose. This would give more
-space for mapping end point device's BARs on some of Tegra platforms
+reduces PCIe config space mapping size from its current 256MB
+to 4K to have only 4K of virtual memory mapping and to be
+in line with driver implementation
 
 Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c | 85 ++++++++++++--------------------------------
- 1 file changed, 23 insertions(+), 62 deletions(-)
+ arch/arm/boot/dts/tegra124.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 9c40da54f88a..ebdcfca10e17 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -269,6 +269,8 @@ struct tegra_pcie {
- 	struct list_head buses;
- 	struct resource *cs;
- 
-+	void __iomem *cfg_va_base;
-+
- 	struct resource io;
- 	struct resource pio;
- 	struct resource mem;
-@@ -317,7 +319,6 @@ struct tegra_pcie_port {
- };
- 
- struct tegra_pcie_bus {
--	struct vm_struct *area;
- 	struct list_head list;
- 	unsigned int nr;
- };
-@@ -357,34 +358,16 @@ static inline u32 pads_readl(struct tegra_pcie *pcie, unsigned long offset)
-  *
-  * Mapping the whole extended configuration space would require 256 MiB of
-  * virtual address space, only a small part of which will actually be used.
-- * To work around this, a 1 MiB of virtual addresses are allocated per bus
-- * when the bus is first accessed. When the physical range is mapped, the
-- * the bus number bits are hidden so that the extended register number bits
-- * appear as bits [19:16]. Therefore the virtual mapping looks like this:
-- *
-- *    [19:16] extended register number
-- *    [15:11] device number
-- *    [10: 8] function number
-- *    [ 7: 0] register number
-- *
-- * This is achieved by stitching together 16 chunks of 64 KiB of physical
-- * address space via the MMU.
-+ * To work around this, a 4K of region is used to generate required
-+ * configuration transaction with relevant B:D:F values. This is achieved by
-+ * dynamically programming base address and size of AFI_AXI_BAR used for
-+ * end point config space mapping to make sure that the address (access to
-+ * which generates correct config transaction) falls in this 4K region
-  */
--static unsigned long tegra_pcie_conf_offset(unsigned int devfn, int where)
--{
--	return ((where & 0xf00) << 8) | (PCI_SLOT(devfn) << 11) |
--	       (PCI_FUNC(devfn) << 8) | (where & 0xfc);
--}
--
- static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
- 						   unsigned int busnr)
- {
--	struct device *dev = pcie->dev;
--	pgprot_t prot = pgprot_noncached(PAGE_KERNEL);
--	phys_addr_t cs = pcie->cs->start;
- 	struct tegra_pcie_bus *bus;
--	unsigned int i;
--	int err;
- 
- 	bus = kzalloc(sizeof(*bus), GFP_KERNEL);
- 	if (!bus)
-@@ -393,33 +376,16 @@ static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
- 	INIT_LIST_HEAD(&bus->list);
- 	bus->nr = busnr;
- 
--	/* allocate 1 MiB of virtual addresses */
--	bus->area = get_vm_area(SZ_1M, VM_IOREMAP);
--	if (!bus->area) {
--		err = -ENOMEM;
--		goto free;
--	}
--
--	/* map each of the 16 chunks of 64 KiB each */
--	for (i = 0; i < 16; i++) {
--		unsigned long virt = (unsigned long)bus->area->addr +
--				     i * SZ_64K;
--		phys_addr_t phys = cs + i * SZ_16M + busnr * SZ_64K;
--
--		err = ioremap_page_range(virt, virt + SZ_64K, phys, prot);
--		if (err < 0) {
--			dev_err(dev, "ioremap_page_range() failed: %d\n", err);
--			goto unmap;
-+	if (!pcie->cfg_va_base) {
-+		pcie->cfg_va_base = ioremap(pcie->cs->start, SZ_4K);
-+		if (!pcie->cfg_va_base) {
-+			dev_err(pcie->dev, "failed to ioremap config space\n");
-+			kfree(bus);
-+			bus = (struct tegra_pcie_bus *)-ENOMEM;
- 		}
- 	}
- 
- 	return bus;
--
--unmap:
--	vunmap(bus->area->addr);
--free:
--	kfree(bus);
--	return ERR_PTR(err);
- }
- 
- static int tegra_pcie_add_bus(struct pci_bus *bus)
-@@ -445,12 +411,12 @@ static void tegra_pcie_remove_bus(struct pci_bus *child)
- 
- 	list_for_each_entry_safe(bus, tmp, &pcie->buses, list) {
- 		if (bus->nr == child->number) {
--			vunmap(bus->area->addr);
- 			list_del(&bus->list);
- 			kfree(bus);
- 			break;
- 		}
- 	}
-+	iounmap(pcie->cfg_va_base);
- }
- 
- static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
-@@ -459,8 +425,8 @@ static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
- {
- 	struct pci_host_bridge *host = pci_find_host_bridge(bus);
- 	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
--	struct device *dev = pcie->dev;
- 	void __iomem *addr = NULL;
-+	u32 val = 0;
- 
- 	if (bus->number == 0) {
- 		unsigned int slot = PCI_SLOT(devfn);
-@@ -473,19 +439,14 @@ static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
- 			}
- 		}
- 	} else {
--		struct tegra_pcie_bus *b;
--
--		list_for_each_entry(b, &pcie->buses, list)
--			if (b->nr == bus->number)
--				addr = (void __iomem *)b->area->addr;
--
--		if (!addr) {
--			dev_err(dev, "failed to map cfg. space for bus %u\n",
--				bus->number);
--			return NULL;
--		}
--
--		addr += tegra_pcie_conf_offset(devfn, where);
-+		addr = pcie->cfg_va_base;
-+		val = ((((u32)where & 0xf00) >> 8) << 24) |
-+		      (bus->number << 16) | (PCI_SLOT(devfn) << 11) |
-+		      (PCI_FUNC(devfn) << 8) | (where & 0xff);
-+		addr = (val & (SZ_4K - 1)) + addr;
-+		val = val & ~(SZ_4K - 1);
-+		afi_writel(pcie, pcie->cs->start - val, AFI_AXI_BAR0_START);
-+		afi_writel(pcie, (val + SZ_4K) >> 12, AFI_AXI_BAR0_SZ);
- 	}
- 
- 	return addr;
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 8baf00b89efb..e3cd9dca57cb 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -19,7 +19,7 @@
+ 		device_type = "pci";
+ 		reg = <0x0 0x01003000 0x0 0x00000800   /* PADS registers */
+ 		       0x0 0x01003800 0x0 0x00000800   /* AFI registers */
+-		       0x0 0x02000000 0x0 0x10000000>; /* configuration space */
++		       0x0 0x11FFF000 0x0 0x00001000>; /* configuration space */
+ 		reg-names = "pads", "afi", "cs";
+ 		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
+ 			     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
 -- 
 2.7.4
