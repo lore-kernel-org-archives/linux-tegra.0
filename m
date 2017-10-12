@@ -1,92 +1,86 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 2/2] ARM: dts: tegra20: Add video decoder node
-Date: Thu, 12 Oct 2017 18:43:32 +0300
-Message-ID: <22ad307f-99d6-0760-7cc0-adbca25ac7b5@gmail.com>
-References: <cover.1507752381.git.digetx@gmail.com>
- <f58be69f6004393711c9ff3cb4b52aed33e2611a.1507752381.git.digetx@gmail.com>
- <0b6150a7-5b2b-ca4d-eb34-b6614e4833df@mentor.com>
- <81f39096-dc66-c98b-50f6-fc81ee1804ec@gmail.com> <20171012132543.GB4453@ulmo>
- <485a1192-8ef2-5ae1-a45f-d9b7167d8241@nvidia.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] dmaengine: tegra-apb: Support non-flow controlled slave
+ configuration
+Date: Thu, 12 Oct 2017 22:23:11 +0530
+Message-ID: <20171012165310.GU30097@localhost>
+References: <20171003223838.31834-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <485a1192-8ef2-5ae1-a45f-d9b7167d8241@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20171003223838.31834-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12.10.2017 16:45, Jon Hunter wrote:
+On Wed, Oct 04, 2017 at 01:38:38AM +0300, Dmitry Osipenko wrote:
+> This allows DMA client to issue a non-flow controlled TX. In particular
+> it is needed for the fuse driver that reads fuse registers using APBDMA
+> to workaround a HW bug that results in hang when CPU and DMA perform
+> simultaneous access to fuse peripheral.
 > 
-> On 12/10/17 14:25, Thierry Reding wrote:
->> * PGP Signed by an unknown key
->>
->> On Thu, Oct 12, 2017 at 03:06:17PM +0300, Dmitry Osipenko wrote:
->>> Hello Vladimir,
->>>
->>> On 12.10.2017 10:43, Vladimir Zapolskiy wrote:
->>>> Hello Dmitry,
->>>>
->>>> On 10/11/2017 11:08 PM, Dmitry Osipenko wrote:
->>>>> Add a device node for the video decoder engine found on Tegra20.
->>>>>
->>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>> ---
->>>>>  arch/arm/boot/dts/tegra20.dtsi | 17 +++++++++++++++++
->>>>>  1 file changed, 17 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
->>>>> index 7c85f97f72ea..1b5d54b6c0cb 100644
->>>>> --- a/arch/arm/boot/dts/tegra20.dtsi
->>>>> +++ b/arch/arm/boot/dts/tegra20.dtsi
->>>>> @@ -249,6 +249,23 @@
->>>>>  		*/
->>>>>  	};
->>>>>  
->>>>> +	vde@6001a000 {
->>>>> +		compatible = "nvidia,tegra20-vde";
->>>>> +		reg = <0x6001a000 0x3D00    /* VDE registers */
->>>>> +		       0x40000400 0x3FC00>; /* IRAM region */
->>>>
->>>> this notation of a used region in IRAM is non-standard and potentially it
->>>> may lead to conflicts for IRAM resource between users.
->>>>
->>>> My proposal is to add a valid device tree node to describe an IRAM region
->>>> firstly, then reserve a subregion in it by using a new "iram" property.
->>>>
->>>
->>> The defined in DT IRAM region used by VDE isn't exactly correct, actually it
->>> should be much smaller. I don't know exactly what parts of IRAM VDE uses, for
->>> now it is just safer to assign the rest of the IRAM region to VDE.
->>>
->>> I'm not sure whether it really worthy to use a dynamic allocator for a single
->>> static allocation, but maybe it would come handy later.. Stephen / Jon /
->>> Thierry, what do you think?
->>
->> This sounds like a good idea. I agree that this currently doesn't seem
->> to be warranted, but consider what would happen if at some point we have
->> more devices requiring access to the IRAM. Spreading individual reg
->> properties all across the DT will make it very difficult to ensure they
->> don't overlap.
->>
->> Presumably the mmio-sram driver will check that pool don't overlap. Or
->> even if it doesn't it will make it a lot easier to verify because it's
->> all in the same DT node and then consumers only reference it.
->>
->> I like Vladimir's proposal. I also suspect that Rob may want us to stick
->> to a standardized way referencing such external memory.
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
 > 
-> FWIW I agree. Seems like a nice approach and describes the h/w accurately.
-> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index b9d75a54c896..a177039713a7 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -353,7 +353,8 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
+>  	}
+>  
+>  	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
+> -	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID) {
+> +	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID &&
+> +	    sconfig->device_fc) {
+>  		if (sconfig->slave_id > TEGRA_APBDMA_CSR_REQ_SEL_MASK)
+>  			return -EINVAL;
+>  		tdc->slave_id = sconfig->slave_id;
+> @@ -970,8 +971,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>  					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
+>  	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
+>  
+> -	csr |= TEGRA_APBDMA_CSR_ONCE | TEGRA_APBDMA_CSR_FLOW;
+> -	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+> +	csr |= TEGRA_APBDMA_CSR_ONCE ;
+				    ^^^
+Checkpatch should have complained here, no space before ; please
 
-Alright :)
+> +
+> +	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
+> +		csr |= TEGRA_APBDMA_CSR_FLOW;
+> +		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+> +	}
+> +
+>  	if (flags & DMA_PREP_INTERRUPT)
+>  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
+>  
+> @@ -1110,10 +1116,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+>  					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
+>  	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
+>  
+> -	csr |= TEGRA_APBDMA_CSR_FLOW;
+> +	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
+> +		csr |= TEGRA_APBDMA_CSR_FLOW;
+> +		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+> +	}
+> +
+>  	if (flags & DMA_PREP_INTERRUPT)
+>  		csr |= TEGRA_APBDMA_CSR_IE_EOC;
+> -	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+>  
+>  	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+>  
+> -- 
+> 2.14.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe dmaengine" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+~Vinod
