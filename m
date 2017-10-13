@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v5 05/13] gpio: Move irq_handler to struct gpio_irq_chip
-Date: Fri, 13 Oct 2017 17:49:05 +0200
-Message-ID: <20171013154913.29448-6-thierry.reding@gmail.com>
+Subject: [PATCH v5 01/13] gpio: Introduce struct gpio_irq_chip
+Date: Fri, 13 Oct 2017 17:49:01 +0200
+Message-ID: <20171013154913.29448-2-thierry.reding@gmail.com>
 References: <20171013154913.29448-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171013154913.29448-1-thierry.reding@gmail.com>
@@ -12,72 +12,70 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-In order to consolidate the multiple ways to associate an IRQ chip with
-a GPIO chip, move more fields into the new struct gpio_irq_chip.
+This new structure will be used to group all fields related to interrupt
+handling in a GPIO chip. Doing so will properly namespace these fields
+and make it easier to distinguish which fields are used for IRQ support.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpiolib.c      |  4 ++--
- include/linux/gpio/driver.h | 11 ++++++++---
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ include/linux/gpio/driver.h | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 850459a354d5..249db95d6181 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1640,7 +1640,7 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
- 	 * category than their parents, so it won't report false recursion.
- 	 */
- 	irq_set_lockdep_class(irq, chip->lock_key);
--	irq_set_chip_and_handler(irq, chip->irq.chip, chip->irq_handler);
-+	irq_set_chip_and_handler(irq, chip->irq.chip, chip->irq.handler);
- 	/* Chips that use nested thread handlers have them marked */
- 	if (chip->irq_nested)
- 		irq_set_nested_thread(irq, 1);
-@@ -1814,7 +1814,7 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
- 	}
- 
- 	gpiochip->irq.chip = irqchip;
--	gpiochip->irq_handler = handler;
-+	gpiochip->irq.handler = handler;
- 	gpiochip->irq_default_type = type;
- 	gpiochip->to_irq = gpiochip_to_irq;
- 	gpiochip->lock_key = lock_key;
 diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 20a056e13f60..d1ca06bfed3f 100644
+index c97f8325e8bf..8a6407540514 100644
 --- a/include/linux/gpio/driver.h
 +++ b/include/linux/gpio/driver.h
-@@ -54,6 +54,14 @@ struct gpio_irq_chip {
- 	 */
- 	unsigned int first;
+@@ -19,6 +19,36 @@ struct module;
  
+ #ifdef CONFIG_GPIOLIB
+ 
++#ifdef CONFIG_GPIOLIB_IRQCHIP
++/**
++ * struct gpio_irq_chip - GPIO interrupt controller
++ */
++struct gpio_irq_chip {
 +	/**
-+	 * @handler:
++	 * @domain_ops:
 +	 *
-+	 * The IRQ handler to use (often a predefined IRQ core function) for
-+	 * GPIO IRQs, provided by GPIO driver.
++	 * Table of interrupt domain operations for this IRQ chip.
 +	 */
-+	irq_flow_handler_t handler;
++	const struct irq_domain_ops *domain_ops;
 +
- 	/**
- 	 * @parent_handler:
- 	 *
-@@ -138,8 +146,6 @@ static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
-  *	safely.
-  * @bgpio_dir: shadowed direction register for generic GPIO to clear/set
-  *	direction safely.
-- * @irq_handler: the irq handler to use (often a predefined irq core function)
-- *	for GPIO IRQs, provided by GPIO driver
-  * @irq_default_type: default IRQ triggering type applied during GPIO driver
-  *	initialization, provided by GPIO driver
-  * @irq_chained_parent: GPIO IRQ chip parent/bank linux irq number,
-@@ -217,7 +223,6 @@ struct gpio_chip {
- 	 * With CONFIG_GPIOLIB_IRQCHIP we get an irqchip inside the gpiolib
- 	 * to handle IRQs for most practical cases.
- 	 */
--	irq_flow_handler_t	irq_handler;
- 	unsigned int		irq_default_type;
- 	unsigned int		irq_chained_parent;
- 	bool			irq_nested;
++	/**
++	 * @parent_handler:
++	 *
++	 * The interrupt handler for the GPIO chip's parent interrupts, may be
++	 * NULL if the parent interrupts are nested rather than cascaded.
++	 */
++	irq_flow_handler_t parent_handler;
++
++	/**
++	 * @parent_handler_data:
++	 *
++	 * Data associated, and passed to, the handler for the parent
++	 * interrupt.
++	 */
++	void *parent_handler_data;
++};
++#endif
++
+ /**
+  * struct gpio_chip - abstract a GPIO controller
+  * @label: a functional name for the GPIO device, such as a part
+@@ -173,6 +203,14 @@ struct gpio_chip {
+ 	bool			irq_need_valid_mask;
+ 	unsigned long		*irq_valid_mask;
+ 	struct lock_class_key	*lock_key;
++
++	/**
++	 * @irq:
++	 *
++	 * Integrates interrupt chip functionality with the GPIO chip. Can be
++	 * used to handle IRQs for most practical cases.
++	 */
++	struct gpio_irq_chip irq;
+ #endif
+ 
+ #if defined(CONFIG_OF_GPIO)
 -- 
 2.14.1
