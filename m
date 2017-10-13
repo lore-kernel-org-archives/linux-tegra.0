@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v5 04/13] gpio: Move irq_base to struct gpio_irq_chip
-Date: Fri, 13 Oct 2017 17:49:04 +0200
-Message-ID: <20171013154913.29448-5-thierry.reding@gmail.com>
+Subject: [PATCH v5 07/13] gpio: Move irq_chained_parent to struct gpio_irq_chip
+Date: Fri, 13 Oct 2017 17:49:07 +0200
+Message-ID: <20171013154913.29448-8-thierry.reding@gmail.com>
 References: <20171013154913.29448-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171013154913.29448-1-thierry.reding@gmail.com>
@@ -17,57 +17,96 @@ a GPIO chip, move more fields into the new struct gpio_irq_chip.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |  2 +-
- include/linux/gpio/driver.h                 | 10 ++++++++--
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c      | 18 +++++++++++++-----
+ include/linux/gpio/driver.h | 19 +++++++++++++++----
+ 2 files changed, 28 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index c9851bd120b4..500238d898ea 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -627,7 +627,7 @@ static void armada_37xx_irq_handler(struct irq_desc *desc)
- static unsigned int armada_37xx_irq_startup(struct irq_data *d)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 70b33cfebf4f..1ee52070d19d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1564,7 +1564,8 @@ static void gpiochip_set_cascaded_irqchip(struct gpio_chip *gpiochip,
+ 		irq_set_chained_handler_and_data(parent_irq, parent_handler,
+ 						 gpiochip);
+ 
+-		gpiochip->irq_chained_parent = parent_irq;
++		gpiochip->irq.parents = &parent_irq;
++		gpiochip->irq.num_parents = 1;
+ 	}
+ 
+ 	/* Set the parent IRQ for all affected IRQs */
+@@ -1713,17 +1714,24 @@ static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+  */
+ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
  {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
--	int irq = d->hwirq - chip->irq_base;
-+	int irq = d->hwirq - chip->irq.first;
- 	/*
- 	 * The mask field is a "precomputed bitmask for accessing the
- 	 * chip registers" which was introduced for the generic
+-	unsigned int offset, irq;
++	unsigned int offset;
+ 
+ 	acpi_gpiochip_free_interrupts(gpiochip);
+ 
+-	if (gpiochip->irq_chained_parent) {
+-		irq_set_chained_handler(gpiochip->irq_chained_parent, NULL);
+-		irq_set_handler_data(gpiochip->irq_chained_parent, NULL);
++	if (gpiochip->irq.num_parents > 0) {
++		struct gpio_irq_chip *irq = &gpiochip->irq;
++		unsigned int i;
++
++		for (i = 0; i < irq->num_parents; i++) {
++			irq_set_chained_handler(irq->parents[i], NULL);
++			irq_set_handler_data(irq->parents[i], NULL);
++		}
+ 	}
+ 
+ 	/* Remove all IRQ mappings and delete the domain */
+ 	if (gpiochip->irq.domain) {
++		unsigned int irq;
++
+ 		for (offset = 0; offset < gpiochip->ngpio; offset++) {
+ 			if (!gpiochip_irqchip_irq_valid(gpiochip, offset))
+ 				continue;
 diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 794bc6058282..20a056e13f60 100644
+index be856f003895..31785734462a 100644
 --- a/include/linux/gpio/driver.h
 +++ b/include/linux/gpio/driver.h
-@@ -46,6 +46,14 @@ struct gpio_irq_chip {
+@@ -85,6 +85,21 @@ struct gpio_irq_chip {
+ 	 * interrupt.
  	 */
- 	const struct irq_domain_ops *domain_ops;
- 
-+	/**
-+	 * @first:
-+	 *
-+	 * If not dynamically assigned, the base (first) IRQ to allocate GPIO
-+	 * chip IRQs from (deprecated).
-+	 */
-+	unsigned int first;
+ 	void *parent_handler_data;
 +
- 	/**
- 	 * @parent_handler:
- 	 *
-@@ -130,7 +138,6 @@ static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
++	/**
++	 * @num_parents:
++	 *
++	 * The number of interrupt parents of a GPIO chip.
++	 */
++	unsigned int num_parents;
++
++	/**
++	 * @parents:
++	 *
++	 * A list of interrupt parents of a GPIO chip. This is owned by the
++	 * driver, so the core will only reference this list, not modify it.
++	 */
++	unsigned int *parents;
+ };
+ 
+ static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
+@@ -154,9 +169,6 @@ static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
   *	safely.
   * @bgpio_dir: shadowed direction register for generic GPIO to clear/set
   *	direction safely.
-- * @irq_base: first linux IRQ number assigned to GPIO IRQ chip (deprecated)
-  * @irq_handler: the irq handler to use (often a predefined irq core function)
-  *	for GPIO IRQs, provided by GPIO driver
-  * @irq_default_type: default IRQ triggering type applied during GPIO driver
-@@ -210,7 +217,6 @@ struct gpio_chip {
+- * @irq_chained_parent: GPIO IRQ chip parent/bank linux irq number,
+- *	provided by GPIO driver for chained interrupt (not for nested
+- *	interrupts).
+  * @irq_nested: True if set the interrupt handling is nested.
+  * @irq_need_valid_mask: If set core allocates @irq_valid_mask with all
+  *	bits set to one
+@@ -229,7 +241,6 @@ struct gpio_chip {
  	 * With CONFIG_GPIOLIB_IRQCHIP we get an irqchip inside the gpiolib
  	 * to handle IRQs for most practical cases.
  	 */
--	unsigned int		irq_base;
- 	irq_flow_handler_t	irq_handler;
- 	unsigned int		irq_default_type;
- 	unsigned int		irq_chained_parent;
+-	unsigned int		irq_chained_parent;
+ 	bool			irq_nested;
+ 	bool			irq_need_valid_mask;
+ 	unsigned long		*irq_valid_mask;
 -- 
 2.14.1
