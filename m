@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v5 12/13] gpio: Export gpiochip_irq_{map,unmap}()
-Date: Fri, 13 Oct 2017 17:49:12 +0200
-Message-ID: <20171013154913.29448-13-thierry.reding@gmail.com>
+Subject: [PATCH v5 10/13] gpio: Move lock_key into struct gpio_irq_chip
+Date: Fri, 13 Oct 2017 17:49:10 +0200
+Message-ID: <20171013154913.29448-11-thierry.reding@gmail.com>
 References: <20171013154913.29448-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171013154913.29448-1-thierry.reding@gmail.com>
@@ -12,63 +12,70 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Export these functions so that drivers can explicitly use these when
-setting up their IRQ domain.
+In order to consolidate the multiple ways to associate an IRQ chip with
+a GPIO chip, move more fields into the new struct gpio_irq_chip.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpiolib.c      | 8 +++++---
- include/linux/gpio/driver.h | 4 ++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c      | 4 ++--
+ include/linux/gpio/driver.h | 9 +++++++--
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 672b61024413..c7d0637569d1 100644
+index 4407423dc29b..eb487af120d9 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -1632,8 +1632,8 @@ EXPORT_SYMBOL_GPL(gpiochip_set_nested_irqchip);
-  * gpiochip by assigning the gpiochip as chip data, and using the irqchip
-  * stored inside the gpiochip.
-  */
--static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
--			    irq_hw_number_t hwirq)
-+int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
-+		     irq_hw_number_t hwirq)
- {
- 	struct gpio_chip *chip = d->host_data;
- 
-@@ -1661,8 +1661,9 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(gpiochip_irq_map);
- 
--static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
-+void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
- {
- 	struct gpio_chip *chip = d->host_data;
- 
-@@ -1671,6 +1672,7 @@ static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
- 	irq_set_chip_and_handler(irq, NULL, NULL);
- 	irq_set_chip_data(irq, NULL);
- }
-+EXPORT_SYMBOL_GPL(gpiochip_irq_unmap);
- 
- static const struct irq_domain_ops gpiochip_domain_ops = {
- 	.map	= gpiochip_irq_map,
+@@ -1640,7 +1640,7 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+ 	 * This lock class tells lockdep that GPIO irqs are in a different
+ 	 * category than their parents, so it won't report false recursion.
+ 	 */
+-	irq_set_lockdep_class(irq, chip->lock_key);
++	irq_set_lockdep_class(irq, chip->irq.lock_key);
+ 	irq_set_chip_and_handler(irq, chip->irq.chip, chip->irq.handler);
+ 	/* Chips that use nested thread handlers have them marked */
+ 	if (chip->irq.nested)
+@@ -1825,7 +1825,7 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
+ 	gpiochip->irq.handler = handler;
+ 	gpiochip->irq.default_type = type;
+ 	gpiochip->to_irq = gpiochip_to_irq;
+-	gpiochip->lock_key = lock_key;
++	gpiochip->irq.lock_key = lock_key;
+ 	gpiochip->irq.domain = irq_domain_add_simple(of_node,
+ 					gpiochip->ngpio, first_irq,
+ 					&gpiochip_domain_ops, gpiochip);
 diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 6e344ddd4df5..c453e0716228 100644
+index fc25fb070843..4ae8dd945617 100644
 --- a/include/linux/gpio/driver.h
 +++ b/include/linux/gpio/driver.h
-@@ -370,6 +370,10 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+@@ -70,6 +70,13 @@ struct gpio_irq_chip {
+ 	 */
+ 	unsigned int default_type;
  
- #ifdef CONFIG_GPIOLIB_IRQCHIP
- 
-+int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
-+		     irq_hw_number_t hwirq);
-+void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq);
++	/**
++	 * @lock_key:
++	 *
++	 * Per GPIO IRQ chip lockdep class.
++	 */
++	struct lock_class_key *lock_key;
 +
- void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
- 		struct irq_chip *irqchip,
- 		unsigned int parent_irq,
+ 	/**
+ 	 * @parent_handler:
+ 	 *
+@@ -191,7 +198,6 @@ static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
+  *	safely.
+  * @bgpio_dir: shadowed direction register for generic GPIO to clear/set
+  *	direction safely.
+- * @lock_key: per GPIO IRQ chip lockdep class
+  *
+  * A gpio_chip can help platforms abstract various sources of GPIOs so
+  * they can all be accessed through a common programing interface.
+@@ -258,7 +264,6 @@ struct gpio_chip {
+ 	 * With CONFIG_GPIOLIB_IRQCHIP we get an irqchip inside the gpiolib
+ 	 * to handle IRQs for most practical cases.
+ 	 */
+-	struct lock_class_key	*lock_key;
+ 
+ 	/**
+ 	 * @irq:
 -- 
 2.14.1
