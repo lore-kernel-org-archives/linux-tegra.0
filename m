@@ -1,88 +1,151 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCHv4 0/4] tegra-cec: add Tegra HDMI CEC support
-Date: Sat, 14 Oct 2017 14:08:31 +0200
-Message-ID: <9314614a-446d-b76d-640b-033cc74e3879@xs4all.nl>
+Date: Sat, 14 Oct 2017 15:34:10 +0200
+Message-ID: <20171014133410.GA13205@ulmo>
 References: <20170911122952.33980-1-hverkuil@xs4all.nl>
+ <9314614a-446d-b76d-640b-033cc74e3879@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170911122952.33980-1-hverkuil@xs4all.nl>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-media@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, thierry.reding@gmail.com, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <9314614a-446d-b76d-640b-033cc74e3879-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgVGhpZXJyeSwKCk9uIDA5LzExLzIwMTcgMDI6MjkgUE0sIEhhbnMgVmVya3VpbCB3cm90ZToK
-PiBGcm9tOiBIYW5zIFZlcmt1aWwgPGhhbnMudmVya3VpbEBjaXNjby5jb20+Cj4gCj4gVGhpcyBw
-YXRjaCBzZXJpZXMgYWRkcyBzdXBwb3J0IGZvciB0aGUgVGVncmEgQ0VDIGZ1bmN0aW9uYWxpdHku
-Cj4gCj4gVGhpcyB2NCBoYXMgYmVlbiByZWJhc2VkIHRvIHRoZSBsYXRlc3QgNC4xNCBwcmUtcmMx
-IG1haW5saW5lLgo+IAo+IFBsZWFzZSByZXZpZXchIE90aGVyIHRoYW4gZm9yIHRoZSBiaW5kaW5n
-cyB0aGF0IGFyZSBub3cgQWNrZWQgSSBoYXZlIG5vdAo+IHJlY2VpdmVkIGFueSBmZWVkYmFjay4K
-CkNhbiB5b3Ugb3Igc29tZW9uZSBlbHNlIGZyb20gdGhlIFRlZ3JhIG1haW50YWluZXJzIHJldmll
-dyB0aGlzPwoKSSBoYXZlIG5vdCBoZWFyZCBhbnl0aGluZyBhYm91dCB0aGlzIHBhdGNoIHNlcmll
-cywgbm9yIG9mIHRoZSBwcmV2aW91cwp2ZXJzaW9ucyBvZiB0aGlzIHNlcmllcy4gV2hhdCdzIHRo
-ZSBob2xkLXVwPwoKUmVnYXJkcywKCglIYW5zCgo+IAo+IFRoZSBmaXJzdCBwYXRjaCBkb2N1bWVu
-dHMgdGhlIENFQyBiaW5kaW5ncywgdGhlIHNlY29uZCBhZGRzIHN1cHBvcnQKPiBmb3IgdGhpcyB0
-byB0ZWdyYTEyNC5kdHNpIGFuZCBlbmFibGVzIGl0IGZvciB0aGUgSmV0c29uIFRLMS4KPiAKPiBU
-aGUgdGhpcmQgcGF0Y2ggYWRkcyB0aGUgQ0VDIGRyaXZlciBpdHNlbGYgYW5kIHRoZSBmaW5hbCBw
-YXRjaCBhZGRzCj4gdGhlIGNlYyBub3RpZmllciBzdXBwb3J0IHRvIHRoZSBkcm0vdGVncmEgZHJp
-dmVyIGluIG9yZGVyIHRvIG5vdGlmeQo+IHRoZSBDRUMgZHJpdmVyIHdoZW5ldmVyIHRoZSBwaHlz
-aWNhbCBhZGRyZXNzIGNoYW5nZXMuCj4gCj4gSSBleHBlY3QgdGhhdCB0aGUgZHRzIGNoYW5nZXMg
-YXBwbHkgYXMgd2VsbCB0byB0aGUgVGVncmEgWDEvWDIgYW5kIHBvc3NpYmx5Cj4gb3RoZXIgVGVn
-cmEgU29DcywgYnV0IEkgY2FuIG9ubHkgdGVzdCB0aGlzIHdpdGggbXkgSmV0c29uIFRLMSBib2Fy
-ZC4KPiAKPiBUaGUgZHQtYmluZGluZ3MgYW5kIHRoZSB0ZWdyYS1jZWMgZHJpdmVyIHdvdWxkIGdv
-IGluIHRocm91Z2ggdGhlIG1lZGlhCj4gc3Vic3lzdGVtLCB0aGUgZHJtL3RlZ3JhIHBhcnQgdGhy
-b3VnaCB0aGUgZHJtIHN1YnN5c3RlbSBhbmQgdGhlIGR0cwo+IGNoYW5nZXMgdGhyb3VnaCAoSSBn
-dWVzcykgdGhlIGxpbnV4LXRlZ3JhIGRldmVsb3BlcnMuIEx1Y2tpbHkgdGhleSBhcmUKPiBhbGwg
-aW5kZXBlbmRlbnQgb2Ygb25lIGFub3RoZXIuCj4gCj4gVG8gdGVzdCB0aGlzIHlvdSBuZWVkIHRo
-ZSBDRUMgdXRpbGl0aWVzIGZyb20gZ2l0Oi8vbGludXh0di5vcmcvdjRsLXV0aWxzLmdpdC4KPiAK
-PiBUbyBidWlsZCB0aGlzOgo+IAo+IGdpdCBjbG9uZSBnaXQ6Ly9saW51eHR2Lm9yZy92NGwtdXRp
-bHMuZ2l0Cj4gY2QgdjRsLXV0aWxzCj4gLi9ib290c3RyYXAuc2g7IC4vY29uZmlndXJlCj4gbWFr
-ZQo+IHN1ZG8gbWFrZSBpbnN0YWxsICMgb3B0aW9uYWwsIHlvdSByZWFsbHkgb25seSBuZWVkIHV0
-aWxzL2NlYyoKPiAKPiBUbyB0ZXN0Ogo+IAo+IGNlYy1jdGwgLS1wbGF5YmFjayAjIGNvbmZpZ3Vy
-ZSBhcyBwbGF5YmFjayBkZXZpY2UKPiBjZWMtY3RsIC1TICMgZGV0ZWN0IGFsbCBjb25uZWN0ZWQg
-Q0VDIGRldmljZXMKPiAKPiBTZWUgaGVyZSBmb3IgdGhlIHB1YmxpYyBDRUMgQVBJOgo+IAo+IGh0
-dHBzOi8vaHZlcmt1aWwuaG9tZS54czRhbGwubmwvc3BlYy91YXBpL2NlYy9jZWMtYXBpLmh0bWwK
-PiAKPiBSZWdhcmRzLAo+IAo+IAlIYW5zCj4gCj4gQ2hhbmdlcyBzaW5jZSB2MzoKPiAKPiAtIFVz
-ZSB0aGUgbmV3IENFQ19DQVBfREVGQVVMVFMgZGVmaW5lCj4gLSBVc2UgSVNfRVJSKGNlYy0+YWRh
-cCkgaW5zdGVhZCBvZiBJU19FUlJfT1JfTlVMTChjZWMtPmFkYXApCj4gICAoY2VjX2FsbG9jYXRl
-X2FkYXB0ZXIgbmV2ZXIgcmV0dXJucyBhIE5VTEwgcG9pbnRlcikKPiAtIERyb3AgdGhlIGRldmlj
-ZV9pbml0X3dha2V1cDogd2FrZXVwIGlzIG5vdCAoeWV0KSBzdXBwb3J0ZWQgYnkKPiAgIHRoZSBD
-RUMgZnJhbWV3b3JrIGFuZCBJIGhhdmUgbmV2ZXIgdGVzdGVkIGl0Lgo+IAo+IEhhbnMgVmVya3Vp
-bCAoNCk6Cj4gICBkdC1iaW5kaW5nczogZG9jdW1lbnQgdGhlIHRlZ3JhIENFQyBiaW5kaW5ncwo+
-ICAgQVJNOiB0ZWdyYTogYWRkIENFQyBzdXBwb3J0IHRvIHRlZ3JhMTI0LmR0c2kKPiAgIHRlZ3Jh
-LWNlYzogYWRkIFRlZ3JhIEhETUkgQ0VDIGRyaXZlcgo+ICAgZHJtL3RlZ3JhOiBhZGQgY2VjLW5v
-dGlmaWVyIHN1cHBvcnQKPiAKPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdGVncmEt
-Y2VjLnR4dCAgICAgICAgfCAgMjcgKysKPiAgTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgfCAgIDggKwo+ICBhcmNoL2FybS9ib290L2R0cy90ZWdyYTEy
-NC1qZXRzb24tdGsxLmR0cyAgICAgICAgICB8ICAgNCArCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3Rl
-Z3JhMTI0LmR0c2kgICAgICAgICAgICAgICAgICAgIHwgIDEyICstCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKPiAgZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL2RybS5oICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDMgKwo+ICBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICAgICAgICAgICB8ICAgOSArCj4g
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9vdXRwdXQuYyAgICAgICAgICAgICAgICAgICAgIHwgICA2
-ICsKPiAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAg
-fCAgMTEgKwo+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL01ha2VmaWxlICAgICAgICAgICAgICAg
-ICAgICB8ICAgMiArCj4gIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vdGVncmEtY2VjL01ha2VmaWxl
-ICAgICAgICAgIHwgICAxICsKPiAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS90ZWdyYS1jZWMvdGVn
-cmFfY2VjLmMgICAgICAgfCA1MDEgKysrKysrKysrKysrKysrKysrKysrCj4gIGRyaXZlcnMvbWVk
-aWEvcGxhdGZvcm0vdGVncmEtY2VjL3RlZ3JhX2NlYy5oICAgICAgIHwgMTI3ICsrKysrKwo+ICAx
-MyBmaWxlcyBjaGFuZ2VkLCA3MTEgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+ICBjcmVh
-dGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3Rl
-Z3JhLWNlYy50eHQKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0v
-dGVncmEtY2VjL01ha2VmaWxlCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL21lZGlhL3Bs
-YXRmb3JtL3RlZ3JhLWNlYy90ZWdyYV9jZWMuYwo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
-cy9tZWRpYS9wbGF0Zm9ybS90ZWdyYS1jZWMvdGVncmFfY2VjLmgKPiAKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Oct 14, 2017 at 02:08:31PM +0200, Hans Verkuil wrote:
+> Hi Thierry,
+>=20
+> On 09/11/2017 02:29 PM, Hans Verkuil wrote:
+> > From: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+> >=20
+> > This patch series adds support for the Tegra CEC functionality.
+> >=20
+> > This v4 has been rebased to the latest 4.14 pre-rc1 mainline.
+> >=20
+> > Please review! Other than for the bindings that are now Acked I have not
+> > received any feedback.
+>=20
+> Can you or someone else from the Tegra maintainers review this?
+>=20
+> I have not heard anything about this patch series, nor of the previous
+> versions of this series. What's the hold-up?
+
+Sorry about that. I've been meaning to look at this for a while now, but
+never got around to it. From a quick glance this looks good. Let me take
+this for a quick test-drive when I'm back at the office next week and
+I'll report back.
+
+Is there any particular ordering that we need to observe in order to
+merge this? Looks to me like it would be safe to merge patches 1 and 3
+through the CEC (media?) tree and take the others through DRM and Tegra
+separately without breaking anything.
+
+Thierry
+
+> > The first patch documents the CEC bindings, the second adds support
+> > for this to tegra124.dtsi and enables it for the Jetson TK1.
+> >=20
+> > The third patch adds the CEC driver itself and the final patch adds
+> > the cec notifier support to the drm/tegra driver in order to notify
+> > the CEC driver whenever the physical address changes.
+> >=20
+> > I expect that the dts changes apply as well to the Tegra X1/X2 and poss=
+ibly
+> > other Tegra SoCs, but I can only test this with my Jetson TK1 board.
+> >=20
+> > The dt-bindings and the tegra-cec driver would go in through the media
+> > subsystem, the drm/tegra part through the drm subsystem and the dts
+> > changes through (I guess) the linux-tegra developers. Luckily they are
+> > all independent of one another.
+> >=20
+> > To test this you need the CEC utilities from git://linuxtv.org/v4l-util=
+s.git.
+> >=20
+> > To build this:
+> >=20
+> > git clone git://linuxtv.org/v4l-utils.git
+> > cd v4l-utils
+> > ./bootstrap.sh; ./configure
+> > make
+> > sudo make install # optional, you really only need utils/cec*
+> >=20
+> > To test:
+> >=20
+> > cec-ctl --playback # configure as playback device
+> > cec-ctl -S # detect all connected CEC devices
+> >=20
+> > See here for the public CEC API:
+> >=20
+> > https://hverkuil.home.xs4all.nl/spec/uapi/cec/cec-api.html
+> >=20
+> > Regards,
+> >=20
+> > 	Hans
+> >=20
+> > Changes since v3:
+> >=20
+> > - Use the new CEC_CAP_DEFAULTS define
+> > - Use IS_ERR(cec->adap) instead of IS_ERR_OR_NULL(cec->adap)
+> >   (cec_allocate_adapter never returns a NULL pointer)
+> > - Drop the device_init_wakeup: wakeup is not (yet) supported by
+> >   the CEC framework and I have never tested it.
+> >=20
+> > Hans Verkuil (4):
+> >   dt-bindings: document the tegra CEC bindings
+> >   ARM: tegra: add CEC support to tegra124.dtsi
+> >   tegra-cec: add Tegra HDMI CEC driver
+> >   drm/tegra: add cec-notifier support
+> >=20
+> >  .../devicetree/bindings/media/tegra-cec.txt        |  27 ++
+> >  MAINTAINERS                                        |   8 +
+> >  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   4 +
+> >  arch/arm/boot/dts/tegra124.dtsi                    |  12 +-
+> >  drivers/gpu/drm/tegra/Kconfig                      |   1 +
+> >  drivers/gpu/drm/tegra/drm.h                        |   3 +
+> >  drivers/gpu/drm/tegra/hdmi.c                       |   9 +
+> >  drivers/gpu/drm/tegra/output.c                     |   6 +
+> >  drivers/media/platform/Kconfig                     |  11 +
+> >  drivers/media/platform/Makefile                    |   2 +
+> >  drivers/media/platform/tegra-cec/Makefile          |   1 +
+> >  drivers/media/platform/tegra-cec/tegra_cec.c       | 501 +++++++++++++=
+++++++++
+> >  drivers/media/platform/tegra-cec/tegra_cec.h       | 127 ++++++
+> >  13 files changed, 711 insertions(+), 1 deletion(-)
+> >  create mode 100644 Documentation/devicetree/bindings/media/tegra-cec.t=
+xt
+> >  create mode 100644 drivers/media/platform/tegra-cec/Makefile
+> >  create mode 100644 drivers/media/platform/tegra-cec/tegra_cec.c
+> >  create mode 100644 drivers/media/platform/tegra-cec/tegra_cec.h
+> >=20
+>=20
+
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlniElIACgkQ3SOs138+
+s6F6dhAAq1Lgh+s9MXcqzjD3KBI9713BD0n+g8+biXveQ6q1cFrEojiPc6UW9GpA
+VLEaT1T6bTi2p5tzD8TnWnxdXFi5tHLpnKX/t0YGcsXA1eebM2ZY4JcPARlZx9pr
+n16c6NwhGCHDaJwtVquE1TNd8u22Qz03xyEJrZZiXVAX9eQliHz6Qs8XE1AJItq6
+Pu/aT/v/P5KUvYMJsuUqxREVu2SCKWdX/+Hv6Ye9TEH6a7/9HCNW6/flCsonUFtC
+GHQnMhr1g3A0U29iM58q3s1+sUaFPRq3GfB7RXq7bEEGgnvS3YyWhzlZd16EJwX4
+TlcNJ/xJsTHo0HD3vAvTHJJwyOS7FCKYXbjI8AwWALXNJBJVcM51ojrnE37cf6Wb
+Hcavac286WktvU3C4NJUKTdLy7WVwu5TqeUYSW2QsqlCuM27SJl18ZqHQCOQbEDL
+Z09jVcUnzmvQqa3iIbjW2F1nC1Zjo/UEUGSBOMlGFsMjqYCVGtfmZl4r/ucNlGFx
+XgCUhvTReuGF0bPiJKRfbFo4edyT7Ko9LABqTY9fn4unfxDhM2UcbEJlSFK3EiA+
+9KB6LYd3owCJ98l/IbStlj9NOQ+Or0qCjOgAzbFni6kaKo52dLVmqKzaNFo2r9CQ
+kTNlNZtasZrdxELbmXq6X0sHl7iKMLwl9XBSTgaHgNbagfnV0a8=
+=fJV+
+-----END PGP SIGNATURE-----
+
+--tKW2IUtsqtDRztdT--
