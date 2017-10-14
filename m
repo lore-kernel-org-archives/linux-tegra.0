@@ -1,63 +1,88 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 2/4] PCI: tegra: Add Tegra186 PCIe support
-Date: Fri, 13 Oct 2017 18:38:08 +0200
-Message-ID: <20171013163808.GB8761@ulmo>
-References: <1506513517-25870-1-git-send-email-mmaddireddy@nvidia.com>
- <1506513517-25870-3-git-send-email-mmaddireddy@nvidia.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCHv4 0/4] tegra-cec: add Tegra HDMI CEC support
+Date: Sat, 14 Oct 2017 14:08:31 +0200
+Message-ID: <9314614a-446d-b76d-640b-033cc74e3879@xs4all.nl>
+References: <20170911122952.33980-1-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kXdP64Ggrk/fb43R"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1506513517-25870-3-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170911122952.33980-1-hverkuil@xs4all.nl>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-media@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, thierry.reding@gmail.com, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---kXdP64Ggrk/fb43R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 27, 2017 at 05:28:35PM +0530, Manikanta Maddireddy wrote:
-> UPHY programming is performed by BPMP, PHY enable calls are
-> not required for Tegra186 PCIe. Power partition ungate is
-> done by BPMP powergate driver.
->=20
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V2: Add soc->program_uphy check for phy_exit call
->  drivers/pci/host/pci-tegra.c | 132 +++++++++++++++++++++++++++++++++++--=
-------
->  1 file changed, 108 insertions(+), 24 deletions(-)
-
-This works, excellent!
-
-Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---kXdP64Ggrk/fb43R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlng6/AACgkQ3SOs138+
-s6G/9Q/+Mqtt6TeRw54xtAsCf7NlK5K/Tj+pxVpoMxBhF2jdiTdT0aT5cYqQxd42
-OgjDFgJ6RFjBl6sCDMNl9BAKqxI7g9iTpoIa88dmPNt/Wd/cLEd0gpyllysEjeF7
-tybyVNL6Ij/OBep8sCz5WJZjRhTQqjYKzyoJqEV7F51p3cjC0MQEtNGw76zzymse
-CA1g+J4fxNh6pUgGZ8qB5x1DOL9Om8gyC/p2ZcDSNPTWGqMA//iSXxO7BHZ8jA0s
-9NKaWRmgEqhcPUiKzbslVa44dAFXDixpNgIEGW2R0noTpuKzWEeRGkqdgyoOJEfq
-mThzOlmdwxJeo7YiSEI3upcpzlOI8D0JIIBuhsT6NQu5ig1RC1ScpENPpGq8A1Ts
-2sCTnBZnWvE3p5wMav1Wb9UZbyxG2okdk6wWQJFc8cUtkKCZddJfCp0MScbOS9js
-wiCNB3M0pJtsQdnb1fjlJA+qFgolC3QNRbqETCgBID64nNsBUU3NdMJTg90oauVd
-MgGFS7oAh0gsYjloQUjWTfl9gJh7b0D/kcJZQyMRPx9D9FkhAyhWxXdmUYylJqJV
-ZxvgPlNWnJo6tDpgGGwy92QeXvzZR+UXsBijsA2dCwsGJ+S94UB0z93VIk4VkAfR
-aYKxtNCF60mD92s7PTNmROUXKJhXSdAcrUxhcKmJOx1zXzQ8QAg=
-=Rqcm
------END PGP SIGNATURE-----
-
---kXdP64Ggrk/fb43R--
+SGkgVGhpZXJyeSwKCk9uIDA5LzExLzIwMTcgMDI6MjkgUE0sIEhhbnMgVmVya3VpbCB3cm90ZToK
+PiBGcm9tOiBIYW5zIFZlcmt1aWwgPGhhbnMudmVya3VpbEBjaXNjby5jb20+Cj4gCj4gVGhpcyBw
+YXRjaCBzZXJpZXMgYWRkcyBzdXBwb3J0IGZvciB0aGUgVGVncmEgQ0VDIGZ1bmN0aW9uYWxpdHku
+Cj4gCj4gVGhpcyB2NCBoYXMgYmVlbiByZWJhc2VkIHRvIHRoZSBsYXRlc3QgNC4xNCBwcmUtcmMx
+IG1haW5saW5lLgo+IAo+IFBsZWFzZSByZXZpZXchIE90aGVyIHRoYW4gZm9yIHRoZSBiaW5kaW5n
+cyB0aGF0IGFyZSBub3cgQWNrZWQgSSBoYXZlIG5vdAo+IHJlY2VpdmVkIGFueSBmZWVkYmFjay4K
+CkNhbiB5b3Ugb3Igc29tZW9uZSBlbHNlIGZyb20gdGhlIFRlZ3JhIG1haW50YWluZXJzIHJldmll
+dyB0aGlzPwoKSSBoYXZlIG5vdCBoZWFyZCBhbnl0aGluZyBhYm91dCB0aGlzIHBhdGNoIHNlcmll
+cywgbm9yIG9mIHRoZSBwcmV2aW91cwp2ZXJzaW9ucyBvZiB0aGlzIHNlcmllcy4gV2hhdCdzIHRo
+ZSBob2xkLXVwPwoKUmVnYXJkcywKCglIYW5zCgo+IAo+IFRoZSBmaXJzdCBwYXRjaCBkb2N1bWVu
+dHMgdGhlIENFQyBiaW5kaW5ncywgdGhlIHNlY29uZCBhZGRzIHN1cHBvcnQKPiBmb3IgdGhpcyB0
+byB0ZWdyYTEyNC5kdHNpIGFuZCBlbmFibGVzIGl0IGZvciB0aGUgSmV0c29uIFRLMS4KPiAKPiBU
+aGUgdGhpcmQgcGF0Y2ggYWRkcyB0aGUgQ0VDIGRyaXZlciBpdHNlbGYgYW5kIHRoZSBmaW5hbCBw
+YXRjaCBhZGRzCj4gdGhlIGNlYyBub3RpZmllciBzdXBwb3J0IHRvIHRoZSBkcm0vdGVncmEgZHJp
+dmVyIGluIG9yZGVyIHRvIG5vdGlmeQo+IHRoZSBDRUMgZHJpdmVyIHdoZW5ldmVyIHRoZSBwaHlz
+aWNhbCBhZGRyZXNzIGNoYW5nZXMuCj4gCj4gSSBleHBlY3QgdGhhdCB0aGUgZHRzIGNoYW5nZXMg
+YXBwbHkgYXMgd2VsbCB0byB0aGUgVGVncmEgWDEvWDIgYW5kIHBvc3NpYmx5Cj4gb3RoZXIgVGVn
+cmEgU29DcywgYnV0IEkgY2FuIG9ubHkgdGVzdCB0aGlzIHdpdGggbXkgSmV0c29uIFRLMSBib2Fy
+ZC4KPiAKPiBUaGUgZHQtYmluZGluZ3MgYW5kIHRoZSB0ZWdyYS1jZWMgZHJpdmVyIHdvdWxkIGdv
+IGluIHRocm91Z2ggdGhlIG1lZGlhCj4gc3Vic3lzdGVtLCB0aGUgZHJtL3RlZ3JhIHBhcnQgdGhy
+b3VnaCB0aGUgZHJtIHN1YnN5c3RlbSBhbmQgdGhlIGR0cwo+IGNoYW5nZXMgdGhyb3VnaCAoSSBn
+dWVzcykgdGhlIGxpbnV4LXRlZ3JhIGRldmVsb3BlcnMuIEx1Y2tpbHkgdGhleSBhcmUKPiBhbGwg
+aW5kZXBlbmRlbnQgb2Ygb25lIGFub3RoZXIuCj4gCj4gVG8gdGVzdCB0aGlzIHlvdSBuZWVkIHRo
+ZSBDRUMgdXRpbGl0aWVzIGZyb20gZ2l0Oi8vbGludXh0di5vcmcvdjRsLXV0aWxzLmdpdC4KPiAK
+PiBUbyBidWlsZCB0aGlzOgo+IAo+IGdpdCBjbG9uZSBnaXQ6Ly9saW51eHR2Lm9yZy92NGwtdXRp
+bHMuZ2l0Cj4gY2QgdjRsLXV0aWxzCj4gLi9ib290c3RyYXAuc2g7IC4vY29uZmlndXJlCj4gbWFr
+ZQo+IHN1ZG8gbWFrZSBpbnN0YWxsICMgb3B0aW9uYWwsIHlvdSByZWFsbHkgb25seSBuZWVkIHV0
+aWxzL2NlYyoKPiAKPiBUbyB0ZXN0Ogo+IAo+IGNlYy1jdGwgLS1wbGF5YmFjayAjIGNvbmZpZ3Vy
+ZSBhcyBwbGF5YmFjayBkZXZpY2UKPiBjZWMtY3RsIC1TICMgZGV0ZWN0IGFsbCBjb25uZWN0ZWQg
+Q0VDIGRldmljZXMKPiAKPiBTZWUgaGVyZSBmb3IgdGhlIHB1YmxpYyBDRUMgQVBJOgo+IAo+IGh0
+dHBzOi8vaHZlcmt1aWwuaG9tZS54czRhbGwubmwvc3BlYy91YXBpL2NlYy9jZWMtYXBpLmh0bWwK
+PiAKPiBSZWdhcmRzLAo+IAo+IAlIYW5zCj4gCj4gQ2hhbmdlcyBzaW5jZSB2MzoKPiAKPiAtIFVz
+ZSB0aGUgbmV3IENFQ19DQVBfREVGQVVMVFMgZGVmaW5lCj4gLSBVc2UgSVNfRVJSKGNlYy0+YWRh
+cCkgaW5zdGVhZCBvZiBJU19FUlJfT1JfTlVMTChjZWMtPmFkYXApCj4gICAoY2VjX2FsbG9jYXRl
+X2FkYXB0ZXIgbmV2ZXIgcmV0dXJucyBhIE5VTEwgcG9pbnRlcikKPiAtIERyb3AgdGhlIGRldmlj
+ZV9pbml0X3dha2V1cDogd2FrZXVwIGlzIG5vdCAoeWV0KSBzdXBwb3J0ZWQgYnkKPiAgIHRoZSBD
+RUMgZnJhbWV3b3JrIGFuZCBJIGhhdmUgbmV2ZXIgdGVzdGVkIGl0Lgo+IAo+IEhhbnMgVmVya3Vp
+bCAoNCk6Cj4gICBkdC1iaW5kaW5nczogZG9jdW1lbnQgdGhlIHRlZ3JhIENFQyBiaW5kaW5ncwo+
+ICAgQVJNOiB0ZWdyYTogYWRkIENFQyBzdXBwb3J0IHRvIHRlZ3JhMTI0LmR0c2kKPiAgIHRlZ3Jh
+LWNlYzogYWRkIFRlZ3JhIEhETUkgQ0VDIGRyaXZlcgo+ICAgZHJtL3RlZ3JhOiBhZGQgY2VjLW5v
+dGlmaWVyIHN1cHBvcnQKPiAKPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdGVncmEt
+Y2VjLnR4dCAgICAgICAgfCAgMjcgKysKPiAgTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgfCAgIDggKwo+ICBhcmNoL2FybS9ib290L2R0cy90ZWdyYTEy
+NC1qZXRzb24tdGsxLmR0cyAgICAgICAgICB8ICAgNCArCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3Rl
+Z3JhMTI0LmR0c2kgICAgICAgICAgICAgICAgICAgIHwgIDEyICstCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS90ZWdyYS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKPiAgZHJpdmVycy9n
+cHUvZHJtL3RlZ3JhL2RybS5oICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDMgKwo+ICBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICAgICAgICAgICB8ICAgOSArCj4g
+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9vdXRwdXQuYyAgICAgICAgICAgICAgICAgICAgIHwgICA2
+ICsKPiAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAg
+fCAgMTEgKwo+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL01ha2VmaWxlICAgICAgICAgICAgICAg
+ICAgICB8ICAgMiArCj4gIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vdGVncmEtY2VjL01ha2VmaWxl
+ICAgICAgICAgIHwgICAxICsKPiAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS90ZWdyYS1jZWMvdGVn
+cmFfY2VjLmMgICAgICAgfCA1MDEgKysrKysrKysrKysrKysrKysrKysrCj4gIGRyaXZlcnMvbWVk
+aWEvcGxhdGZvcm0vdGVncmEtY2VjL3RlZ3JhX2NlYy5oICAgICAgIHwgMTI3ICsrKysrKwo+ICAx
+MyBmaWxlcyBjaGFuZ2VkLCA3MTEgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+ICBjcmVh
+dGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3Rl
+Z3JhLWNlYy50eHQKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0v
+dGVncmEtY2VjL01ha2VmaWxlCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL21lZGlhL3Bs
+YXRmb3JtL3RlZ3JhLWNlYy90ZWdyYV9jZWMuYwo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
+cy9tZWRpYS9wbGF0Zm9ybS90ZWdyYS1jZWMvdGVncmFfY2VjLmgKPiAKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
