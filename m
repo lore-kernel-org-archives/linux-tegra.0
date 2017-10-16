@@ -1,57 +1,47 @@
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: Re: [PATCH 0/6] Tegra PCIe end point config space map code
- refactoring
-Date: Sun, 15 Oct 2017 11:51:30 +0530
-Message-ID: <545282e4-e702-2839-7ae8-49e309259287@nvidia.com>
-References: <1507834211-24922-1-git-send-email-vidyas@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v5 00/13] gpio: Tight IRQ chip integration
+Date: Mon, 16 Oct 2017 19:09:08 +0100
+Message-ID: <f25cd66f-1382-8007-9744-0dbd72757163@nvidia.com>
+References: <20171013154913.29448-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1507834211-24922-1-git-send-email-vidyas@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171013154913.29448-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>, treding@nvidia.com, bhelgaas@google.com
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-These series of patches are tested on Tegra210
+Hi Linus,
 
-Reviewed-by: Manikanta Maddireddy<mmaddireddy@nvidia.com>
-Tested-by: Manikanta Maddireddy<mmaddireddy@nvidia.com>
+On 13/10/17 16:49, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Hi Linus,
+> 
+> here's the latest series of patches that implement the tighter IRQ chip
+> integration. I've dropped the banked infrastructure for now as per the
+> discussion with Grygorii.
+> 
+> The first couple of patches are mostly preparatory work in order to
+> consolidate all IRQ chip related fields in a new structure and create
+> the base functionality for adding IRQ chips.
+> 
+> After that, I've added the Tegra186 GPIO support patch that makes use of
+> the new tight integration.
 
+I have reviewed this series and tested on Tegra, so for the series ...
 
-On 13-Oct-17 12:20 AM, Vidya Sagar wrote:
-> PCIe host controller in Tegra SoCs has 1GB of aperture available
-> for mapping end points config space, IO and BARs. In that, currently
-> 256MB is being reserved for mapping end points configuration space
-> which leaves less memory space available for mapping end points BARs
-> on some of the platforms.
-> This patch series attempts to use only 4K space from 1GB aperture to
-> access end points configuration space.
-> 
-> Currently, this change benefits T20 and future chips in saving (i.e. repurposed
-> to use for BAR mapping) physical space as well as kernel virtual mapping space,
-> it saves only kernel virtual address space in T30, T124, T132 and T210.
-> 
-> Testing Done on T210:
->  Enumeration is and basic functionality of immediate devices
->  Enumeration of devices behind a PCIe switch
->  Complete 4K configuration space access
-> 
-> Vidya Sagar (6):
->   PCI: tegra: refactor config space mapping code
->   ARM: tegra: limit PCIe config space mapping to 4K for T20
->   ARM: tegra: limit PCIe config space mapping to 4K for T30
->   ARM: tegra: limit PCIe config space mapping to 4K for T124
->   ARM64: tegra: limit PCIe config space mapping to 4K for T132
->   ARM64: tegra: limit PCIe config space mapping to 4K for T210
-> 
->  arch/arm/boot/dts/tegra124.dtsi          |  2 +-
->  arch/arm/boot/dts/tegra20.dtsi           |  8 +--
->  arch/arm/boot/dts/tegra30.dtsi           |  2 +-
->  arch/arm64/boot/dts/nvidia/tegra132.dtsi |  2 +-
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi |  2 +-
->  drivers/pci/host/pci-tegra.c             | 85 +++++++++-----------------------
->  6 files changed, 31 insertions(+), 70 deletions(-)
-> 
+Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+We would really like to get support for Tegra186 GPIO in v4.15, so
+please let us know if you think that this is do-able.
+
+Cheers
+Jon
+
+-- 
+nvpublic
