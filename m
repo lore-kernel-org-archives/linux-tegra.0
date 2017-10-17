@@ -1,67 +1,125 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] staging: Introduce NVIDIA Tegra20 video decoder
- driver
-Date: Tue, 17 Oct 2017 22:24:07 +0200
-Message-ID: <20171017202407.GA10482@ulmo>
-References: <cover.1507752381.git.digetx@gmail.com>
- <3d432aa2617977a2b0a8621a1fc2f36f751133e1.1507752381.git.digetx@gmail.com>
- <20171017201354.efgjrwvakkseyvr7@rob-hp-laptop>
+Subject: Re: [PATCH V2 2/4] PCI: tegra: Add Tegra186 PCIe support
+Date: Tue, 17 Oct 2017 22:27:49 +0200
+Message-ID: <20171017202749.GB10482@ulmo>
+References: <1506513517-25870-1-git-send-email-mmaddireddy@nvidia.com>
+ <1506513517-25870-3-git-send-email-mmaddireddy@nvidia.com>
+ <20171017173428.GE5641@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+        protocol="application/pgp-signature"; boundary="H1spWtNR+x+ondvy"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20171017201354.efgjrwvakkseyvr7@rob-hp-laptop>
+In-Reply-To: <20171017173428.GE5641-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---y0ulUmNC+osPPQO6
+--H1spWtNR+x+ondvy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 17, 2017 at 03:13:54PM -0500, Rob Herring wrote:
-[...]
-> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20=
--vde.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.t=
-xt
-[...]
-> > +- resets : Must contain an entry for each entry in reset-names.
-> > +  See ../reset/reset.txt for details.
-> > +- reset-names : Must include the following entries:
-> > +  - vde
+On Tue, Oct 17, 2017 at 12:34:28PM -0500, Bjorn Helgaas wrote:
+> On Wed, Sep 27, 2017 at 05:28:35PM +0530, Manikanta Maddireddy wrote:
+> > UPHY programming is performed by BPMP, PHY enable calls are
+> > not required for Tegra186 PCIe. Power partition ungate is
+> > done by BPMP powergate driver.
+> >=20
+> > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Tested-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > V2: Add soc->program_uphy check for phy_exit call
+> >  drivers/pci/host/pci-tegra.c | 132 +++++++++++++++++++++++++++++++++++=
+--------
+> >  1 file changed, 108 insertions(+), 24 deletions(-)
 >=20
-> -names is pointless when there is only one.
+> > @@ -1012,10 +1016,12 @@ static int tegra_pcie_enable_controller(struct =
+tegra_pcie *pcie)
+> >  		afi_writel(pcie, value, AFI_FUSE);
+> >  	}
+> > =20
+> > -	err =3D tegra_pcie_phy_power_on(pcie);
+> > -	if (err < 0) {
+> > -		dev_err(dev, "failed to power on PHY(s): %d\n", err);
+> > -		return err;
+> > +	if (soc->program_uphy) {
+> > +		err =3D tegra_pcie_phy_power_on(pcie);
+> > +		if (err < 0) {
+> > +			dev_err(dev, "failed to power on PHY(s): %d\n", err);
+> > +			return err;
+> > +		}
+>=20
+> This looks good: it's obvious that the previously-supported devices
+> continue to work the same way because you set ".program_uphy =3D true"
+> for them.  (It would be even more obvious if you changed the sense so
+> that only the new device had to add this initializaer, but in general
+> I prefer the positive logic as you have here, and I did verify that
+> you added the initializer for all tegra_pcie_soc variants.)
+>=20
+> > @@ -1048,19 +1054,23 @@ static int tegra_pcie_enable_controller(struct =
+tegra_pcie *pcie)
+> >  static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+> >  {
+> >  	struct device *dev =3D pcie->dev;
+> > +	const struct tegra_pcie_soc *soc =3D pcie->soc;
+> >  	int err;
+> > =20
+> >  	/* TODO: disable and unprepare clocks? */
+> > =20
+> > -	err =3D tegra_pcie_phy_power_off(pcie);
+> > -	if (err < 0)
+> > -		dev_err(dev, "failed to power off PHY(s): %d\n", err);
+> > +	if (soc->program_uphy) {
+> > +		err =3D tegra_pcie_phy_power_off(pcie);
+> > +		if (err < 0)
+> > +			dev_err(dev, "failed to power off PHY(s): %d\n", err);
+> > +	}
+> > =20
+> >  	reset_control_assert(pcie->pcie_xrst);
+> >  	reset_control_assert(pcie->afi_rst);
+> >  	reset_control_assert(pcie->pex_rst);
+> > =20
+> > -	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+> > +	if (!dev->pm_domain)
+> > +		tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+>=20
+> But this one isn't obvious because nothing in your patch obviously
+> affects dev->pm_domain, so I can't tell whether this is safe.  It's
+> worth a changelog comment to help justify this.
 
-I'd prefer to keep it. In the past we occasionally had to add clocks or
-resets to a device tree node where only one had been present (and hence
-no -names property) and that caused some awkwardness because verbiage
-had to be added to the bindings that clarified that one particular entry
-(the original one) always had to come first.
+The last sentence in the commit message is what this is about. Maybe it
+should be more verbose:
+
+	Since the BPMP controls the powergates on Tegra186, there is no
+	need to manually power on and off the PCIe power partition. The
+	BPMP generic power domain driver takes care of it instead.
+
+?
 
 Thierry
 
---y0ulUmNC+osPPQO6
+--H1spWtNR+x+ondvy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnmZt8ACgkQ3SOs138+
-s6F7GBAAlryGt57YMC3zYutGNkc9sIbScZ8BauDqsd4DDTt4QGBz0o3IdUY4bvGH
-kMlnaiTUIVkFKrxUJxQiH7dqoLytmvhsgvTjB/u0FHIVbpa93CaAIqgbrtC/blw9
-mVM1t7FJAGoGENq67Z4t8AU6MEu62lVxhHkCcBkyO8JtPk46gvvOwGVPvSlqAqfy
-vsnV3uwkZ12UguHgI+2ruJ58Z1smDdChEjqJjPHZzm3huFiAZARBeIprECA7vUFO
-p8rv3MODxWyz9JZDdlvOnYk+PIgtUjbz5Spymx7mYei8xbHongynEIui5mBC/VOi
-nWeYpNPT2//zU2RC4HOP0X5Dw4LLC9IjSK1JpnLjJ9fAnIF0df1OleuYK7JM3bxd
-/MSElRVCg6aGDc9821bwyNbgoMrOownOROnkPBqyInlO0tAFDaeIrjBuEFHG4WaI
-VNnQZFnWO8YN1+PHGTeYpE6AlpcgxcVhVs0QxnaKVx4oEpK8R4LqHooWQEiqmZ5z
-6FF0/NzrLCDMh+vqmAkzoc/2Zl/+i3qokIEbw+e4EasHrRIzPZQoWhf+GdpmSwCS
-goEBbbr1kw1eeGup8/qoTTjLWlTLTBM7b4V/uvaj/JFv+veP6wbGA6O2sxt7RxPX
-K/NajIAHT7NWAVNw/6HBT/2KRVoyQBCTLXIcL2wQxxCjBLDYTME=
-=a8IM
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnmZ8QACgkQ3SOs138+
+s6HYJxAAtb6cw7AK6M1SmCe/ROsp1SR10Nrc692TeU8XTmUm+Q2UrSemrLi8yWA8
+vim+7gf1FkoaRtzd/5Kl+NdZMc1rlZE7OhgYFZQpisA9qsyasbqlK6slzbv8Uaic
+m4Ti2euzRrzIs3582miHH3AthqgTh4Xh7Du0IhorKpYm4S3GEA+aXx8RbHQ1Mj6N
+pelYjCy3nCcdNck5vYEeZ054jteEwX1vVPoJe6AJTrDjf4qTjgp5Ig1B/sRwU8Rs
+P92Ux8GpQN6xz0asIj5Ff1gO7VypVcz9aySR2txjyPSUii2fla8PRoHlfVr83lYx
+Cl2BtLQg4A5uhRr/iq8HD7fcNcTY9LAPXJXq/XfVZM7Y2NicxHrBQFG+eYhfHQJn
+9veihonWi9NRnFan+8VV2ip8iEr87iNXFmOi3lByFtVroMJQ2HTs/L4kkymCTX48
+OcJ3MZx6Kj5pfV+jIMhbMVB0P2M3ENFGsFOsza/SaigDzSCPrrZDmHaZnvX4D62M
+Tida+w5yeD0BJsd8qDrx77rN7NPQfw8B6Xf3sTCoUG0uTpBkq+BGjqV4cMXIoWbM
+SDzVNp9NVF4HY3hdvWeSziVt0PkzmNbthD4FfCGA9FDBeEtED5a3DekstAKxSKO7
+CgFhf93/8i3zx2RVStb8Gre/rVp2giZmRzTuDCrlzfiEnOzKB9g=
+=TaIQ
 -----END PGP SIGNATURE-----
 
---y0ulUmNC+osPPQO6--
+--H1spWtNR+x+ondvy--
