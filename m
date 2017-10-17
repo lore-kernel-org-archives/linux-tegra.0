@@ -1,63 +1,80 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] firmware: tegra: propagate error code to caller
-Date: Tue, 17 Oct 2017 12:41:24 +0200
-Message-ID: <20171017104124.GD30589@ulmo>
-References: <cover.1504776489.git.talho@nvidia.com>
- <c349d38a8cb1d00a4dc11d6aa286fb392017bc8c.1504776489.git.talho@nvidia.com>
+Subject: Re: [PATCH V2] firmware: tegra: add BPMP debugfs support
+Date: Tue, 17 Oct 2017 12:44:56 +0200
+Message-ID: <20171017104456.GE30589@ulmo>
+References: <1507011133-21817-1-git-send-email-talho@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0IvGJv3f9h+YhkrH"
+        protocol="application/pgp-signature"; boundary="jTMWTj4UTAEmbWeb"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <c349d38a8cb1d00a4dc11d6aa286fb392017bc8c.1504776489.git.talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1507011133-21817-1-git-send-email-talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---0IvGJv3f9h+YhkrH
+--jTMWTj4UTAEmbWeb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 07, 2017 at 12:31:01PM +0300, Timo Alho wrote:
-> Response messages from Tegra BPMP firmware contain an error return
-> code as the first word of payload. The error code is used to indicate
-> incorrectly formatted request message or use of non-existing resource
-> (clk, reset, powergate) identifier. Current implementation of
-> tegra_bpmp_transfer() ignores this code and does not pass it to
-> caller. Fix this by adding an extra struct member to
-> tegra_bpmp_message and populate that with return code.
+On Tue, Oct 03, 2017 at 09:12:13AM +0300, Timo Alho wrote:
+> Tegra power management firmware running on co-processor (BPMP)
+> implements a simple pseudo file system akin to debugfs. The file
+> system can be used for debugging purposes to examine and change the
+> status of selected resources controlled by the firmware (such as
+> clocks, resets, voltages, powergates, ...).
+>=20
+> Add support to "mirror" the firmware's file system to debugfs. At
+> boot, query firmware for a list of all possible files and create
+> corresponding debugfs entries. Read/write of individual files is
+> implemented by sending a Message ReQuest (MRQ) that passes the full
+> file path name and data to firmware via DRAM.
 >=20
 > Signed-off-by: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/firmware/tegra/bpmp.c | 22 ++++++++++++++++------
->  include/soc/tegra/bpmp.h      |  1 +
->  2 files changed, 17 insertions(+), 6 deletions(-)
+> Changes in v2:
+>  - Address Jonathan's review feedback
+>   * restructure error printing and what error codes passed to higher
+>     layers
+>   * don't use IS_ERR_OR_NULL()
+>   * avoid overwriting last-character of filename in one corner case
+>     (name length =3D 255)
+>  =20
+>  drivers/firmware/tegra/Makefile       |   4 +-
+>  drivers/firmware/tegra/bpmp.c         |   4 +
+>  drivers/firmware/tegra/bpmp_debugfs.c | 444 ++++++++++++++++++++++++++++=
+++++++
+>  include/soc/tegra/bpmp.h              |  14 ++
+>  4 files changed, 465 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/firmware/tegra/bpmp_debugfs.c
 
-Applied, thanks.
+I've applied this, though I turned the _ to - in the filename for
+consistency with other files in the above directory.
 
+Thanks,
 Thierry
 
---0IvGJv3f9h+YhkrH
+--jTMWTj4UTAEmbWeb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnl3lQACgkQ3SOs138+
-s6Fonw//XJXceV55oTbZC9lvXeaDE3K1B1NiFFpDxRKUjeIyjHQgfiBlItlg9enW
-E4rXKN2MNdwqltaHuELOjDMj8chPUVKf7KgoVxHxMJfhvyi9Ln5f7kSzNJzX/04C
-iiAfVHxzOhkYaGeMXciHH+rRtH3kDoChWQWn5gYPYhRADAA9lV93/oQ6h1/9SeOe
-euM/6Vyj1abqecUS7f0ZgcESJwtsQKjlEYtJkxY7UwerHvvkSOjZfRv+8V4DaaHu
-E1tCFOWW8ERxLGP77RSR+kRwjBQCMqxgNxY0J52fftnJjtlBPH3G9+AoOleEyTRP
-sr3y94R8y5sHgjP47oKNkKZwCHdZ/I7EOXbg4HjxFVAr9Vddl9gBh5fphoUDpjeX
-ncWbxr2pua1+lfTSD6tuKyEnLa8w9dJGxRI2loEIW9NgeI1MtWB9DOlSk2jx9vUW
-mou8fJn55F6WIVBeXo2tQrws8QcRFZ2Oxgc1TU3rrDN0HGvmQAPr3uAqH6afyM6+
-todzE0srAFW8WOw8htjSGHh8KMOiRdOePhorF882T01hLpLnQ2RFL1BWoFgbgnUW
-GUmLaifcCm55ENrU0cCYcITKzsButDfMiqCgNp/+44yDklCMg7oiC/rQ+kvZ3xNl
-L6aYUXssEIveHPhVeH2YkWn4/E4FJVgu/YR3YFj9ImiaJ8LZQME=
-=tG5M
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnl3ygACgkQ3SOs138+
+s6HY8g//eCDjfeJdhDcG17ZJFQxQeE/aTIqnWoA970X7P0zxCs3ZB+LZCKSwSJsf
+Ll9ReTFKsltaXU7prrVt0I0tGdCnFU0UaHMxDQtNqT30bp5z5oaxH4YY8ooLaxHJ
+RBeCUMDIkp35OCGxn0+ErClf4F3zNQXdK/OtP/gXqhSdGS1cZBxBYe57Ss+vepyG
+RKGdcGQhnpfcEYaMirQr3Cg8bWCQdZ0JZ18SxCMypo3DvCkt8bf/B6RrST5PvJnQ
+V0o6sPpgpZLOmvXHsIPT6k1Oq0q8PIwjVEsNjv7w5GBvUNQHgz0VPxP/BN9uwP89
+3WGG9moTsfiXtwpse3sEagNuyUJPZI5O4zI9OcXR13Zgpzu0LFEe92USQhxXKoRe
+sxmr2W5kKmIdWG4mqZSqqf2LAJR08FCbLSW+3zAgbbsbq20i+KsuJ4Fo+4Xk1Q4e
+PCKYv3k4INhawNizMwrXBO8lU1xOinnWahhuFQEu761Nm9jRvO/1set9okPBiEWY
+JqtZkOXcwKA5877nBju7uD9VFKrxdsNN1U76ZC8I8v4aRPR9hBGmYK/EWIUmY+LR
++D2NS0A5vYY481YKjL8MGWdSdk2lmYG+2pyj7xoIGsA6vWv3rABxa20k1kOH2IPo
+dCh0H1C40gnk/CudoEOPPYHsvhWjWADbJHo/lfE6aiOmaOrDM+Q=
+=ZPG1
 -----END PGP SIGNATURE-----
 
---0IvGJv3f9h+YhkrH--
+--jTMWTj4UTAEmbWeb--
