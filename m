@@ -1,74 +1,63 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/4] clk: tegra: check BPMP response return code
-Date: Tue, 17 Oct 2017 12:37:36 +0200
-Message-ID: <20171017103736.GA30589@ulmo>
+Subject: Re: [PATCH 3/4] reset: tegra: check BPMP response return code
+Date: Tue, 17 Oct 2017 12:40:43 +0200
+Message-ID: <20171017104043.GB30589@ulmo>
 References: <cover.1504776489.git.talho@nvidia.com>
- <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
+ <00e7714871d7568e9fc848dc5f76d14e07984a1e.1504776489.git.talho@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
+        protocol="application/pgp-signature"; boundary="cmJC7u66zC7hs+87"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
+In-Reply-To: <00e7714871d7568e9fc848dc5f76d14e07984a1e.1504776489.git.talho@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Timo Alho <talho@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Timo Alho <talho@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---HlL+5n6rz5pIUxbD
+--cmJC7u66zC7hs+87
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 07, 2017 at 12:31:02PM +0300, Timo Alho wrote:
-> Check return code in BPMP response message(s). The typical error case
-> is when clock operation is attempted with invalid clock identifier.
->=20
-> Also remove error print from call to clk_get_info() as the
-> implementation loops through range of all possible identifier, but the
-> operation is expected error out when the clock id is unused.
+On Thu, Sep 07, 2017 at 12:31:03PM +0300, Timo Alho wrote:
+> Add checks for return code in BPMP response message.
 >=20
 > Signed-off-by: Timo Alho <talho@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-bpmp.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
+>  drivers/reset/tegra/reset-bpmp.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 
-Hi Mike, Stephen,
+Hi Philipp,
 
-do you mind if I pick this up into the Tegra tree? It has a build
-dependency on patch 1/4.
+Would you provide an Acked-by on this so that I can take it into the
+Tegra tree? There's a build dependency on patch 1/4 in the series.
 
-I only now realized that you guys weren't on Cc, hence quoting in
-full.
+Quoting in full since you were not previously on Cc, unfortunately.
+
+Timo, please remember to always Cc the relevant maintainers.
 
 Thierry
 
-> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-> index 638ace6..a896692 100644
-> --- a/drivers/clk/tegra/clk-bpmp.c
-> +++ b/drivers/clk/tegra/clk-bpmp.c
-> @@ -55,6 +55,7 @@ struct tegra_bpmp_clk_message {
->  	struct {
->  		void *data;
->  		size_t size;
-> +		int ret;
->  	} rx;
->  };
-> =20
-> @@ -64,6 +65,7 @@ static int tegra_bpmp_clk_transfer(struct tegra_bpmp *b=
-pmp,
->  	struct mrq_clk_request request;
+> diff --git a/drivers/reset/tegra/reset-bpmp.c b/drivers/reset/tegra/reset=
+-bpmp.c
+> index 5daf2ee..fac2db6 100644
+> --- a/drivers/reset/tegra/reset-bpmp.c
+> +++ b/drivers/reset/tegra/reset-bpmp.c
+> @@ -23,6 +23,7 @@ static int tegra_bpmp_reset_common(struct reset_control=
+ler_dev *rstc,
+>  	struct tegra_bpmp *bpmp =3D to_tegra_bpmp(rstc);
+>  	struct mrq_reset_request request;
 >  	struct tegra_bpmp_message msg;
->  	void *req =3D &request;
 > +	int err;
 > =20
 >  	memset(&request, 0, sizeof(request));
->  	request.cmd_and_id =3D (clk->cmd << 24) | clk->id;
-> @@ -84,7 +86,13 @@ static int tegra_bpmp_clk_transfer(struct tegra_bpmp *=
-bpmp,
->  	msg.rx.data =3D clk->rx.data;
->  	msg.rx.size =3D clk->rx.size;
+>  	request.cmd =3D command;
+> @@ -33,7 +34,13 @@ static int tegra_bpmp_reset_common(struct reset_contro=
+ller_dev *rstc,
+>  	msg.tx.data =3D &request;
+>  	msg.tx.size =3D sizeof(request);
 > =20
 > -	return tegra_bpmp_transfer(bpmp, &msg);
 > +	err =3D tegra_bpmp_transfer(bpmp, &msg);
@@ -80,43 +69,29 @@ bpmp,
 > +	return 0;
 >  }
 > =20
->  static int tegra_bpmp_clk_prepare(struct clk_hw *hw)
-> @@ -414,11 +422,8 @@ static int tegra_bpmp_probe_clocks(struct tegra_bpmp=
- *bpmp,
->  		struct tegra_bpmp_clk_info *info =3D &clocks[count];
-> =20
->  		err =3D tegra_bpmp_clk_get_info(bpmp, id, info);
-> -		if (err < 0) {
-> -			dev_err(bpmp->dev, "failed to query clock %u: %d\n",
-> -				id, err);
-> +		if (err < 0)
->  			continue;
-> -		}
-> =20
->  		if (info->num_parents >=3D U8_MAX) {
->  			dev_err(bpmp->dev,
+>  static int tegra_bpmp_reset_module(struct reset_controller_dev *rstc,
 > --=20
 > 2.7.4
 >=20
 
---HlL+5n6rz5pIUxbD
+--cmJC7u66zC7hs+87
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnl3W0ACgkQ3SOs138+
-s6FHQhAAqx1ar9rM4U5PPIrF5x8HH1qeJr/sL0oYZtKCczrhd71EFdJc42Vr1fj1
-IgUyqOhPOK9isikYVxNzRdq3FPeRP0sg8M2uivUWm2KXMx6LifnpuUe8fwYT4Jl/
-k5BmY7iWxHRmDwkxcQHZHDY/PoAh63N0499lsD71oEOf0Tt1i397GAEvvriSsuIS
-3fUqX6lN7MXHwQCmBhnZM7gkxkavzi1b9OkfocmCtVNKPBGA1nuU5QI8CiXfVYrT
-KqubMLUhFuFa7o7KczQYwHGZtMHzzvksNE9VCfAinADJbFNHwS6E9Ng8+rHXF8bZ
-YfA0AcUu5CpefVtqcFOCmHReSnij4OPNNQcJMxhW0YBNYu44q9hU7JG53Ot/Fjvd
-ll7EecbPVE9PCbGqZ+PYJE87FN7XhPXJ6SFvLgpcckF3mVajEMPEqBOVmLFNabH3
-ZLWsVawB5ZQD8t0jHyQG8nkYkQnitTPRF0FG2iGJYMGST78y/3MPM4WsB94yERzE
-KhTtFpBcfenqEjbfTdBV2KDYFQ2uvK2LAas6HCkwaQraYFxyz6XKx60mA2BoKQuq
-Pt4OURfRKI41UCXsz33MVdQ9lBI4pWRNoYa41wJl8X3g2XXnYGT/7KOtaz1Voy03
-Hsuq7KFVMaqoRAi03Ot0kMrwoYC9XYE+JLLRoPd3tFh/XwRoVck=
-=a3dm
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnl3isACgkQ3SOs138+
+s6F/Sg/+IQ70ShJxvti68Bt1vuFgXEIhO/LtBw55Bp+c8Q1mG1DtTplH9U+sBsqc
+Djp3czOmJwgsYfglgfBdBC3WeDg+FZUl7NVvwXw8mYVtaXXemT07wXBcrEahvSiE
+L6SOElUVakmmV/DbmAO9PFVOL6zgO4QLmFU+9czuoTgF4eTnV9kPCZLAlanCaS+/
+Yh22lKYa8K/M8bC1AH8N2Zs62ZWMLroiGZg1M/PvZW4lT+sqgQhi3D5TROAD7uv7
+WZ4bqrssiVRGzTiZ0UiHX873tFgaFupvRQ7Q4s7uoOVClKcPCBLyvBoxuhNi18OZ
+fWkgDh4GLKa3qmkBI0Ev6Uk7pwtI/HhbGGDQsXLw332Vmj8GlmWi/z7ZJg0KCDDX
+X48hjeVzEsdVEcMWw1Yv9abDSmfG5IvRk8ioxlbMbtw7uzovRiRL0UCF6+4riOi7
+3WNct+j45pCieUfimixlcJnrEGq/ompH3yBS7v6Ak8S+QflP/c++XC0dPRZycuyR
+gU92oUvJyTNM2LlN+ybX+H+oN6leG3Uvp2mn7UaKqJ0afxWDWr519lH17qp6aGIo
+cR7GXKNz5Rc1tmXvGl8z2JCOwxw/4IG/EC3tIHIi9mSE0BtRZq+KAQFl+rUsKchf
+vlF5ti7PItVQVp0nCXkB3AFO3QjAgYIYVwu19whc/rVZFR8IJwU=
+=dT2Y
 -----END PGP SIGNATURE-----
 
---HlL+5n6rz5pIUxbD--
+--cmJC7u66zC7hs+87--
