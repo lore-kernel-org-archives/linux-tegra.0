@@ -1,72 +1,59 @@
-From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH 3/4] reset: tegra: check BPMP response return code
-Date: Tue, 17 Oct 2017 12:52:17 +0200
-Message-ID: <1508237537.6854.8.camel@pengutronix.de>
-References: <cover.1504776489.git.talho@nvidia.com>
-         <00e7714871d7568e9fc848dc5f76d14e07984a1e.1504776489.git.talho@nvidia.com>
-         <20171017104043.GB30589@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] clk: tegra30: make tegra_clk_pll_params __ro_after_init
+Date: Tue, 17 Oct 2017 13:12:49 +0200
+Message-ID: <20171017111249.GA32653@ulmo>
+References: <1506975128-16514-1-git-send-email-bhumirks@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171017104043.GB30589@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1506975128-16514-1-git-send-email-bhumirks@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bhumika Goyal <bhumirks@gmail.com>
+Cc: julia.lawall@lip6.fr, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, jonathanh@nvidia.com, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
 
-On Tue, 2017-10-17 at 12:40 +0200, Thierry Reding wrote:
-> On Thu, Sep 07, 2017 at 12:31:03PM +0300, Timo Alho wrote:
-> > Add checks for return code in BPMP response message.
-> > 
-> > Signed-off-by: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/reset/tegra/reset-bpmp.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> Hi Philipp,
-> 
-> Would you provide an Acked-by on this so that I can take it into the
-> Tegra tree? There's a build dependency on patch 1/4 in the series.
+--UugvWAfsgieZRqgk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+On Tue, Oct 03, 2017 at 01:42:08AM +0530, Bhumika Goyal wrote:
+> These structures are only passed to the functions tegra_clk_register_pll,
+> tegra_clk_register_pll{e/u} or tegra_periph_clk_init during the init
+> phase. These functions modify the structures only during the init phase
+> and after that the structures are never modified. Therefore, make them
+> __ro_after_init.
+>=20
+> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-tegra30.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 
-to take this via the Tegra tree.
+Applied, thanks.
 
-> Quoting in full since you were not previously on Cc, unfortunately.
-> 
-> Timo, please remember to always Cc the relevant maintainers.
-> 
-> Thierry
-> 
-> > diff --git a/drivers/reset/tegra/reset-bpmp.c b/drivers/reset/tegra/reset-bpmp.c
-> > index 5daf2ee..fac2db6 100644
-> > --- a/drivers/reset/tegra/reset-bpmp.c
-> > +++ b/drivers/reset/tegra/reset-bpmp.c
-> > @@ -23,6 +23,7 @@ static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
-> >  	struct tegra_bpmp *bpmp = to_tegra_bpmp(rstc);
-> >  	struct mrq_reset_request request;
-> >  	struct tegra_bpmp_message msg;
-> > +	int err;
-> >  
-> >  	memset(&request, 0, sizeof(request));
-> >  	request.cmd = command;
-> > @@ -33,7 +34,13 @@ static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
-> >  	msg.tx.data = &request;
-> >  	msg.tx.size = sizeof(request);
-> >  
-> > -	return tegra_bpmp_transfer(bpmp, &msg);
-> > +	err = tegra_bpmp_transfer(bpmp, &msg);
-> > +	if (err < 0)
-> > +		return err;
-> > +	else if (msg.rx.ret < 0)
-> > +		return -EINVAL;
+Thierry
 
-I don't really understand why you complicate the call sites like this
-instead of just letting tegra_bmp_transfer return -EINVAL if msg.rx.ret
-< 0, but I haven't seen the other patches.
+--UugvWAfsgieZRqgk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-regards
-Philipp
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnl5a4ACgkQ3SOs138+
+s6Hk/w/+N84Uj4xl9gBsCxlx2RkILST1b4kNGRa/d4TMw/cKnrmjUD06poP2uC7L
+4HI07Lj5nzKTniEF87Vtfxa1675PVDRSP5WG0nbYBZlbnsj903lP1dSGzA2u+Gfx
+TxaH/7FzVza0xrKU5lVqPULxXTKGWndPhC1CwxVGAAFyH9+fvgFH088Ghem3ci3b
+dWISCT2mBtyrEan2Bi3oU5dySLkH/mCy9yVdO/rmPx2tFDSL7BLyKhvlmkgpyXVH
+thqFJRnJ2f6uBMgt5HX/pB071nbcDZdS4hjJuVUzp4tnNwNJpZGQL3yZYqNHbysV
+9WxNGk5VcwE4Lk/wVpdZcZ6C9MiLgqvyvrR/d7MdsRjWRiLR2R5C9/Js9ft2p0Kk
+tqhVwqHz9QLijy3HQGJCqMhr8KmxfGubNmoC8udJek/4MIsCL95sXiNUQEu60sWC
+XYlGHu9NLT9lg6JejB9/RrrcttBeZLkQMPR4sEn67RmJXKjDOzX+EjxNRQfDjQfH
+V8E2aNfh81syBNAWzxSkTsx1xj+SNOetG3YiIOtCUam/HcOMCdlhfHtc0gDhfgAn
+pjuKNyJBhF9jd3y72tZ+y9oEGGodMCtmCxiu78fgIY8O9k9PABKPvfa77v/2V09L
+IBZrsdyWwpT7BRumvc8fhx0lB1kmRXmPDM+bJv7enZ+jI0B1ECo=
+=C8rt
+-----END PGP SIGNATURE-----
+
+--UugvWAfsgieZRqgk--
