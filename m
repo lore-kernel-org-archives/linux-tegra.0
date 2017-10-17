@@ -1,125 +1,136 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 2/4] PCI: tegra: Add Tegra186 PCIe support
-Date: Tue, 17 Oct 2017 22:27:49 +0200
-Message-ID: <20171017202749.GB10482@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 0/4] Add Tegra186 PCIe support
+Date: Tue, 17 Oct 2017 22:28:14 +0200
+Message-ID: <20171017202814.GC10482@ulmo>
 References: <1506513517-25870-1-git-send-email-mmaddireddy@nvidia.com>
- <1506513517-25870-3-git-send-email-mmaddireddy@nvidia.com>
- <20171017173428.GE5641@bhelgaas-glaptop.roam.corp.google.com>
+ <20171017173740.GF5641@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="H1spWtNR+x+ondvy"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="/Uq4LBwYP4y1W6pO"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171017173428.GE5641-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+In-Reply-To: <20171017173740.GF5641@bhelgaas-glaptop.roam.corp.google.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>, bhelgaas@google.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, mperttunen@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---H1spWtNR+x+ondvy
+--/Uq4LBwYP4y1W6pO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 17, 2017 at 12:34:28PM -0500, Bjorn Helgaas wrote:
-> On Wed, Sep 27, 2017 at 05:28:35PM +0530, Manikanta Maddireddy wrote:
-> > UPHY programming is performed by BPMP, PHY enable calls are
-> > not required for Tegra186 PCIe. Power partition ungate is
-> > done by BPMP powergate driver.
+On Tue, Oct 17, 2017 at 12:37:40PM -0500, Bjorn Helgaas wrote:
+> On Wed, Sep 27, 2017 at 05:28:33PM +0530, Manikanta Maddireddy wrote:
+> > Tegra186 has three PCIe controllers which can be operated
+> > in 401, 211 or 111 lane configurations. Tegra TX2 platform
+> > has x4 and M.2 Key E PCIe slots, these patches enables
+> > x4 slot. BPMP programs UPHY lane0 ownership to USB,
+> > so M.2 Key E PCIe will not work.
 > >=20
-> > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Tested-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > V2: Add soc->program_uphy check for phy_exit call
-> >  drivers/pci/host/pci-tegra.c | 132 +++++++++++++++++++++++++++++++++++=
---------
-> >  1 file changed, 108 insertions(+), 24 deletions(-)
+> > Testing: x4 slot is verified with PCIe based USB3.1 card.
+> > PCIe link up, usb flash drive mounting and file copy are
+> > verified. These patches are also verified by
+> > Mikko Perttunen <mperttunen@nvidia.com> with an Intel 82574L
+> > ethernet card.
+> >=20
+> > Patch V2 adds soc->program_uphy check for phy_exit call.
+> >=20
+> > Pasting PCIe link up logs below.
+> >=20
+> > [    1.452512] tegra-pcie 10003000.pcie: 4x1, 1x1 configuration
+> > [    1.452723] tegra-pcie 10003000.pcie: Failed to get supply 'dvdd-pex=
+': -517
+> > [    1.561824] ehci-pci: EHCI PCI platform driver
+> > [    1.591587] ohci-pci: OHCI PCI platform driver
+> > [    3.072464] tegra-pcie 10003000.pcie: 4x1, 1x1 configuration
+> > [    3.078989] tegra-pcie 10003000.pcie: probing port 0, using 4 lanes
+> > [    3.087272] tegra-pcie 10003000.pcie: Slot present pin change, signa=
+ture: 00000018
+> > [    3.128818] tegra-pcie 10003000.pcie: PCI host bridge to bus 0000:00
+> > [    3.135174] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+> > [    3.141352] pci_bus 0000:00: root bus resource [mem 0x50100000-0x57f=
+fffff]
+> > [    3.148221] pci_bus 0000:00: root bus resource [mem 0x58000000-0x7ff=
+fffff pref]
+> > [    3.155542] pci_bus 0000:00: root bus resource [bus 00-ff]
+> > [    3.161173] pci 0000:00:01.0: [10de:10e5] type 01 class 0x060400
+> > [    3.161188] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 off=
+set 0x4 may corrupt adjacent RW1C bits
+> > [    3.170838] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 off=
+set 0x4 may corrupt adjacent RW1C bits
+> > [    3.180532] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 off=
+set 0x52 may corrupt adjacent RW1C bits
+> > [    3.190305] pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot D3c=
+old
+> > [    3.190312] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 off=
+set 0x4c may corrupt adjacent RW1C bits
+> > [    3.200158] pci 0000:00:01.0: bridge configuration invalid ([bus 00-=
+00]), reconfiguring
+> > [    3.208158] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 off=
+set 0x3e may corrupt adjacent RW1C bits
+> > [    3.217918] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 off=
+set 0x3e may corrupt adjacent RW1C bits
+> > [    3.227649] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 off=
+set 0x3e may corrupt adjacent RW1C bits
+> > [    3.237382] pci_bus 0000:00: 2-byte config write to 0000:00:01.0 off=
+set 0x6 may corrupt adjacent RW1C bits
+> > [    3.247135] pci 0000:01:00.0: [1b21:1242] type 00 class 0x0c0330
+> > [    3.247157] pci_bus 0000:01: 2-byte config write to 0000:01:00.0 off=
+set 0x4 may corrupt adjacent RW1C bits
+> > [    3.256807] pci_bus 0000:01: 2-byte config write to 0000:01:00.0 off=
+set 0x4 may corrupt adjacent RW1C bits
+> > [    3.266477] pci 0000:01:00.0: reg 0x10: [mem 0x00000000-0x00007fff 6=
+4bit]
+> > [    3.266544] pci 0000:01:00.0: enabling Extended Tags
+> > [    3.271622] pci 0000:01:00.0: PME# supported from D3hot D3cold
+> > [    3.271775] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to=
+ 01
+> > [    3.271798] pci 0000:00:01.0: BAR 14: assigned [mem 0x50100000-0x501=
+fffff]
+> > [    3.278671] pci 0000:01:00.0: BAR 0: assigned [mem 0x50100000-0x5010=
+7fff 64bit]
+> > [    3.285993] pci 0000:00:01.0: PCI bridge to [bus 01]
+> > [    3.290959] pci 0000:00:01.0:   bridge window [mem 0x50100000-0x501f=
+ffff]
+> > [    3.297763] pci 0000:00:01.0: nv_msi_ht_cap_quirk didn't locate host=
+ bridge
+> > [    3.304784] pcieport 0000:00:01.0: enabling device (0000 -> 0002)
+> > [    3.311014] pcieport 0000:00:01.0: Signaling PME with IRQ 57
+> > [    3.316768] pci 0000:01:00.0: enabling device (0000 -> 0002)
+> >=20
+> >=20
+> > Manikanta Maddireddy (4):
+> >   dt-bindings: pci: tegra: Document Tegra186 PCIe DT
+> >   PCI: tegra: Add Tegra186 PCIe support
 >=20
-> > @@ -1012,10 +1016,12 @@ static int tegra_pcie_enable_controller(struct =
-tegra_pcie *pcie)
-> >  		afi_writel(pcie, value, AFI_FUSE);
-> >  	}
-> > =20
-> > -	err =3D tegra_pcie_phy_power_on(pcie);
-> > -	if (err < 0) {
-> > -		dev_err(dev, "failed to power on PHY(s): %d\n", err);
-> > -		return err;
-> > +	if (soc->program_uphy) {
-> > +		err =3D tegra_pcie_phy_power_on(pcie);
-> > +		if (err < 0) {
-> > +			dev_err(dev, "failed to power on PHY(s): %d\n", err);
-> > +			return err;
-> > +		}
->=20
-> This looks good: it's obvious that the previously-supported devices
-> continue to work the same way because you set ".program_uphy =3D true"
-> for them.  (It would be even more obvious if you changed the sense so
-> that only the new device had to add this initializaer, but in general
-> I prefer the positive logic as you have here, and I did verify that
-> you added the initializer for all tegra_pcie_soc variants.)
->=20
-> > @@ -1048,19 +1054,23 @@ static int tegra_pcie_enable_controller(struct =
-tegra_pcie *pcie)
-> >  static void tegra_pcie_power_off(struct tegra_pcie *pcie)
-> >  {
-> >  	struct device *dev =3D pcie->dev;
-> > +	const struct tegra_pcie_soc *soc =3D pcie->soc;
-> >  	int err;
-> > =20
-> >  	/* TODO: disable and unprepare clocks? */
-> > =20
-> > -	err =3D tegra_pcie_phy_power_off(pcie);
-> > -	if (err < 0)
-> > -		dev_err(dev, "failed to power off PHY(s): %d\n", err);
-> > +	if (soc->program_uphy) {
-> > +		err =3D tegra_pcie_phy_power_off(pcie);
-> > +		if (err < 0)
-> > +			dev_err(dev, "failed to power off PHY(s): %d\n", err);
-> > +	}
-> > =20
-> >  	reset_control_assert(pcie->pcie_xrst);
-> >  	reset_control_assert(pcie->afi_rst);
-> >  	reset_control_assert(pcie->pex_rst);
-> > =20
-> > -	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
-> > +	if (!dev->pm_domain)
-> > +		tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
->=20
-> But this one isn't obvious because nothing in your patch obviously
-> affects dev->pm_domain, so I can't tell whether this is safe.  It's
-> worth a changelog comment to help justify this.
+> I applied these two with Thierry's tested-by and acks to
+> pci/host-tegra for v4.15, thanks!  If you have a changelog update for
+> the pm_domain question, I can fold that in.
 
-The last sentence in the commit message is what this is about. Maybe it
-should be more verbose:
-
-	Since the BPMP controls the powergates on Tegra186, there is no
-	need to manually power on and off the PCIe power partition. The
-	BPMP generic power domain driver takes care of it instead.
-
-?
+Thanks!
 
 Thierry
 
---H1spWtNR+x+ondvy
+--/Uq4LBwYP4y1W6pO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnmZ8QACgkQ3SOs138+
-s6HYJxAAtb6cw7AK6M1SmCe/ROsp1SR10Nrc692TeU8XTmUm+Q2UrSemrLi8yWA8
-vim+7gf1FkoaRtzd/5Kl+NdZMc1rlZE7OhgYFZQpisA9qsyasbqlK6slzbv8Uaic
-m4Ti2euzRrzIs3582miHH3AthqgTh4Xh7Du0IhorKpYm4S3GEA+aXx8RbHQ1Mj6N
-pelYjCy3nCcdNck5vYEeZ054jteEwX1vVPoJe6AJTrDjf4qTjgp5Ig1B/sRwU8Rs
-P92Ux8GpQN6xz0asIj5Ff1gO7VypVcz9aySR2txjyPSUii2fla8PRoHlfVr83lYx
-Cl2BtLQg4A5uhRr/iq8HD7fcNcTY9LAPXJXq/XfVZM7Y2NicxHrBQFG+eYhfHQJn
-9veihonWi9NRnFan+8VV2ip8iEr87iNXFmOi3lByFtVroMJQ2HTs/L4kkymCTX48
-OcJ3MZx6Kj5pfV+jIMhbMVB0P2M3ENFGsFOsza/SaigDzSCPrrZDmHaZnvX4D62M
-Tida+w5yeD0BJsd8qDrx77rN7NPQfw8B6Xf3sTCoUG0uTpBkq+BGjqV4cMXIoWbM
-SDzVNp9NVF4HY3hdvWeSziVt0PkzmNbthD4FfCGA9FDBeEtED5a3DekstAKxSKO7
-CgFhf93/8i3zx2RVStb8Gre/rVp2giZmRzTuDCrlzfiEnOzKB9g=
-=TaIQ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnmZ94ACgkQ3SOs138+
+s6FMUhAAgoD+BPGEVUXULpGAgUFuh8OpnM1W0NLh2Cz5F5CqRCVYo98nuIYmUjd9
+0oIASQnil7GsZkv0STPAkvCh4CKu1cLX7DOEeEDCAkn47+lJYkJtqPSQRSl/QC/G
+03ccknaATAu+oJVdTVZaASucBUE0YvRs5djnLzNKVQtUF2CMCbe9rL0EvvhjaN1S
++/Jbn/ssDE6Yd3GckyqTqHIxMCZDFRaBZry6hZu0H6UNA5EKrgQwPbZYyq8YVewq
+nq6xUPRYYoJjencjFP6EHHWcNWSAUt86ToDHwqL+TcYDVD392q22GroC3zbPrvq3
+0w5aVOhvQcA5ugGguuBOfQmhXV/L8/kA9MCAshWBaZKvFB047gds7Wkdt4YZ7D5R
+g0iVDqSNuOTyzync2adOCmdrMNeSx8ZsMqhtDhiG4P1nspIsx5dL3iEzUI3ZuaOj
+mB1mGDI8F1cjgCBGiuDdWhxwxy0PfkD7kTwN5VDxpdlLcvaIshLcLAn/IkjfCw9J
+/7K57u1rPXCaMv0YFnqBQY8T0s3j9Aq1pMB/zvlCOTe+NWxHUZVUapuGWU7gsfKZ
+4JOy4IPv2DLmJk2C6kH0HzXeO4emNEdCqThxPqCCbukVyazs34zU+rIWYes+awaQ
+z1ouvTsIjSlOxG9MGa73pRgPabSWOpirhKQla9wdEOpbkE7vxiQ=
+=2Krb
 -----END PGP SIGNATURE-----
 
---H1spWtNR+x+ondvy--
+--/Uq4LBwYP4y1W6pO--
