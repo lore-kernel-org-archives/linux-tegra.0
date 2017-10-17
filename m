@@ -1,107 +1,67 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v3 1/2] staging: Introduce NVIDIA Tegra20 video decoder
  driver
-Date: Tue, 17 Oct 2017 15:13:54 -0500
-Message-ID: <20171017201354.efgjrwvakkseyvr7@rob-hp-laptop>
+Date: Tue, 17 Oct 2017 22:24:07 +0200
+Message-ID: <20171017202407.GA10482@ulmo>
 References: <cover.1507752381.git.digetx@gmail.com>
  <3d432aa2617977a2b0a8621a1fc2f36f751133e1.1507752381.git.digetx@gmail.com>
+ <20171017201354.efgjrwvakkseyvr7@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <3d432aa2617977a2b0a8621a1fc2f36f751133e1.1507752381.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20171017201354.efgjrwvakkseyvr7@rob-hp-laptop>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 11, 2017 at 11:08:11PM +0300, Dmitry Osipenko wrote:
-> Video decoder, found on NVIDIA Tegra20 SoC, supports a standard set of
-> video formats like H.264 / MPEG-4 / WMV / VC1. Currently driver supports
-> decoding of CAVLC H.264 only.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  .../bindings/arm/tegra/nvidia,tegra20-vde.txt      |   44 +
 
-It's preferred to split bindings to a separate patch. Also, this doesn't 
-belong under bindings/arm/, but rather bindings/media/.
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  drivers/staging/Kconfig                            |    2 +
->  drivers/staging/Makefile                           |    1 +
->  drivers/staging/tegra-vde/Kconfig                  |    6 +
->  drivers/staging/tegra-vde/Makefile                 |    1 +
->  drivers/staging/tegra-vde/TODO                     |    5 +
->  drivers/staging/tegra-vde/uapi.h                   |  101 ++
->  drivers/staging/tegra-vde/vde.c                    | 1109 ++++++++++++++++++++
->  8 files changed, 1269 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.txt
->  create mode 100644 drivers/staging/tegra-vde/Kconfig
->  create mode 100644 drivers/staging/tegra-vde/Makefile
->  create mode 100644 drivers/staging/tegra-vde/TODO
->  create mode 100644 drivers/staging/tegra-vde/uapi.h
->  create mode 100644 drivers/staging/tegra-vde/vde.c
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.txt
-> new file mode 100644
-> index 000000000000..c3f847db8167
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.txt
-> @@ -0,0 +1,44 @@
-> +NVIDIA Tegra Video Decoder Engine
-> +
-> +Required properties:
-> +- compatible : "nvidia,tegra20-vde"
-> +- reg : Must contain 2 register ranges: registers and IRAM region that
-> +        VDE uses for its internal needs and for passing some of decoding
-> +        parameters.
+On Tue, Oct 17, 2017 at 03:13:54PM -0500, Rob Herring wrote:
+[...]
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20=
+-vde.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.t=
+xt
+[...]
+> > +- resets : Must contain an entry for each entry in reset-names.
+> > +  See ../reset/reset.txt for details.
+> > +- reset-names : Must include the following entries:
+> > +  - vde
+>=20
+> -names is pointless when there is only one.
 
-Is the IRAM shared with other things. If so, use mmio-sram binding and 
-define the codec's region.
+I'd prefer to keep it. In the past we occasionally had to add clocks or
+resets to a device tree node where only one had been present (and hence
+no -names property) and that caused some awkwardness because verbiage
+had to be added to the bindings that clarified that one particular entry
+(the original one) always had to come first.
 
-> +- reg-names : Must include the following entries:
-> +  - regs
-> +  - iram
-> +- interrupts : Must contain an entry for each entry in interrupt-names.
-> +- interrupt-names : Must include the following entries:
-> +  - ucq-error
-> +  - sync-token
-> +  - bsev
-> +  - bsea
-> +  - sxe
-> +- clocks : Must contain an entry for each entry in clock-names.
-> +  See ../clocks/clock-bindings.txt for details.
-> +- clock-names : Must include the following entries:
-> +  - vde
-> +- resets : Must contain an entry for each entry in reset-names.
-> +  See ../reset/reset.txt for details.
-> +- reset-names : Must include the following entries:
-> +  - vde
+Thierry
 
--names is pointless when there is only one.
+--y0ulUmNC+osPPQO6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> +Example:
-> +
-> +vde@6001a000 {
+-----BEGIN PGP SIGNATURE-----
 
-video-codec@...
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnmZt8ACgkQ3SOs138+
+s6F7GBAAlryGt57YMC3zYutGNkc9sIbScZ8BauDqsd4DDTt4QGBz0o3IdUY4bvGH
+kMlnaiTUIVkFKrxUJxQiH7dqoLytmvhsgvTjB/u0FHIVbpa93CaAIqgbrtC/blw9
+mVM1t7FJAGoGENq67Z4t8AU6MEu62lVxhHkCcBkyO8JtPk46gvvOwGVPvSlqAqfy
+vsnV3uwkZ12UguHgI+2ruJ58Z1smDdChEjqJjPHZzm3huFiAZARBeIprECA7vUFO
+p8rv3MODxWyz9JZDdlvOnYk+PIgtUjbz5Spymx7mYei8xbHongynEIui5mBC/VOi
+nWeYpNPT2//zU2RC4HOP0X5Dw4LLC9IjSK1JpnLjJ9fAnIF0df1OleuYK7JM3bxd
+/MSElRVCg6aGDc9821bwyNbgoMrOownOROnkPBqyInlO0tAFDaeIrjBuEFHG4WaI
+VNnQZFnWO8YN1+PHGTeYpE6AlpcgxcVhVs0QxnaKVx4oEpK8R4LqHooWQEiqmZ5z
+6FF0/NzrLCDMh+vqmAkzoc/2Zl/+i3qokIEbw+e4EasHrRIzPZQoWhf+GdpmSwCS
+goEBbbr1kw1eeGup8/qoTTjLWlTLTBM7b4V/uvaj/JFv+veP6wbGA6O2sxt7RxPX
+K/NajIAHT7NWAVNw/6HBT/2KRVoyQBCTLXIcL2wQxxCjBLDYTME=
+=a8IM
+-----END PGP SIGNATURE-----
 
-> +	compatible = "nvidia,tegra20-vde";
-> +	reg = <0x6001a000 0x3D00    /* VDE registers */
-> +		0x40000400 0x3FC00>; /* IRAM region */
-
-Lower case hex please.
-
-> +	reg-names = "regs", "iram";
-> +	interrupts = <GIC_SPI  8 IRQ_TYPE_LEVEL_HIGH>, /* UCQ error interrupt */
-> +			<GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
-> +			<GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
-> +			<GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>, /* BSE-A interrupt */
-> +			<GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
-> +	interrupt-names = "ucq-error", "sync-token", "bsev", "bsea", "sxe";
-> +	clocks = <&tegra_car TEGRA20_CLK_VDE>;
-> +	clock-names = "vde";
-> +	resets = <&tegra_car 61>;
-> +	reset-names = "vde";
-> +};
+--y0ulUmNC+osPPQO6--
