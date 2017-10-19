@@ -1,97 +1,57 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 4/4] arm64: tegra: Enable PCIe on Jetson TX2
-Date: Thu, 19 Oct 2017 12:49:21 +0200
-Message-ID: <20171019104921.GK9005@ulmo>
-References: <1506513517-25870-1-git-send-email-mmaddireddy@nvidia.com>
- <1506513517-25870-5-git-send-email-mmaddireddy@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 1/6] arm64: tegra: Add #power-domain-cells for BPMP
+Date: Thu, 19 Oct 2017 12:49:52 +0200
+Message-ID: <20171019104952.GL9005@ulmo>
+References: <20170905084306.19318-1-mperttunen@nvidia.com>
+ <20170905084306.19318-2-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yr6OvWOSyJed8q4v"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="+svXpSx+RSEd8UhP"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1506513517-25870-5-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+In-Reply-To: <20170905084306.19318-2-mperttunen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com, digetx@gmail.com, amerilainen@nvidia.com, dnibade@nvidia.com, sgurrappadi@nvidia.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---yr6OvWOSyJed8q4v
+--+svXpSx+RSEd8UhP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 27, 2017 at 05:28:37PM +0530, Manikanta Maddireddy wrote:
-> Enable x4 PCIe slot on Jetson TX2.
+On Tue, Sep 05, 2017 at 11:43:01AM +0300, Mikko Perttunen wrote:
+> Add #power-domain-cells for the BPMP node on Tegra186 so that the power
+> domain provider may be used.
 >=20
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
-> V2: No change in this patch
->  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 24 ++++++++++++++++++++=
-++++
->  1 file changed, 24 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra186-p3310.dtsi
-> index cf84d7046ad5..a4d96b2a23b4 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> @@ -378,4 +378,28 @@
->  			vin-supply =3D <&vdd_1v8>;
->  		};
->  	};
-> +
-> +	pcie@10003000 {
-> +		status =3D "okay";
-> +
-> +		dvdd-pex-supply =3D <&vdd_pex>;
-> +		hvdd-pex-pll-supply =3D <&vdd_1v8>;
-> +		hvdd-pex-supply =3D <&vdd_1v8>;
-> +		vddio-pexctl-aud-supply =3D <&vdd_1v8>;
-> +
-> +		pci@1,0 {
-> +			nvidia,num-lanes =3D <4>;
-> +			status =3D "okay";
-> +		};
-> +
-> +		pci@2,0 {
-> +			nvidia,num-lanes =3D <0>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		pci@3,0 {
-> +			nvidia,num-lanes =3D <1>;
-> +			status =3D "disabled";
-> +		};
-> +	};
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 
-I moved this to tegra186-p2771-0000.dts because it exposes connectors
-that are on the carrier board rather than the processor module.
-
-Applied to for-4.15/arm64/dt, thanks.
+Applied, thanks.
 
 Thierry
 
---yr6OvWOSyJed8q4v
+--+svXpSx+RSEd8UhP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnogzEACgkQ3SOs138+
-s6F5sQ//aZJGwodFjaaoLKTd/tAxbiMAbAk87kl0ueseEXBcMPN1Vm8RP5n+3Kjv
-j0dDSvTHhenAdZFm3LK3ExpF7XYbsbOnKGA6wvXmJjbTiiL4X8WbkoyAt3uFnXoS
-Ks0HCwIGBTKr6uAT7Lth/jYy6EGGaQ2dnTGzTS1ja3CVKKytqqhK7/5RZRD3+bNS
-rKgq56MhCvLmM/Jg7M1bzs/+EMhCMBg2l8lH2Kb44roQRa09/Sd8r6VeDE20cOVB
-s7cm02d/AkywzPcnv+yK+H0JUz6KCQm8O9PCofZD1tYv5LGN8cZxPr0/mA5PvcrJ
-aJ+I65c/sKPGrDjXirk07exwqHs83NIywJgWaHxlbcWbwZU761m46EmWVyEDA1AP
-vrMOrph0tuSWHfdvLpekk/7JY3+KrB7BkRewAWs3qoxaSC3bS05VcDrtXevk4eEw
-fnY7HRv1KpxX7STREv6JHrIdVlb+cJqrvE/XtpPdjXgZ1vcpcl1dUguBI7PE57i1
-V5CQGEO6adevW8AF0HSurL3en8X5uwsPN2mA+TNYI8yWXISzez2f4wcEh5jQzd1j
-uJkjLMfDQxw8t2x/+V5OL+E1gU0llSpbEwQnBI9L7uljGbxCeWu9K7/7ysG2WXUl
-Nhxduq/NW1xsBSgKYFtgWCCBMniPbLHQbPR6NOwLevuxaSbNsfg=
-=YZao
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnog1AACgkQ3SOs138+
+s6G8xhAAovInjshP9kEmVnQ6qrtJiWhoROtJmnhreNx0OPg0CpZavSnz+cxHfer1
+yvzDbxd1LX9ESizG/1nv6eKcgYBjY4wbWA/mcJNKUt4fAz0/1NggpPd+22QyxsjA
+e6Qe3G9dxnUOP9LwLsvbc+BBTd95zX/nzbdvRwx5msMumE/MK9PPaWNFKYpa+l9b
+bt2kp1BHZy0VvNAjK+/GfL4pMmLkMACF7lHVYO4AiaRx5VSg9bat1JGDrBFzizDj
+FPNkPSoqWBCEWnFDUgMZ927F8h5lNrDXvqMMcsfnJtBmiRlCK9ffnhNU5G35UO9e
+IGcFn1uPXwT/wy48fKQJdw5BuuZTMwpO1scEJHIqLq3bXzqwhg69YaKEiBNHfv9N
+HKWFzaHlgdVWKeDIFTNb5Tddvc61bQtwznCwh4eK85TuiCyC4t7FBuHpy9XyWUmT
++k4C8Z87ZFnCdU6zbv7hQ1yobysZWlCzRcWJqWmrTIhm0jNTHU0CZfMIalsC8maR
+9GLoO2pbLCLWthiSjgizClp4K373Q6r8hy5wVifxu/GQXn7XimebsA15cMV0DaYp
+zrjdFOUBO9Q1pqoZwzw1gD6Mhn6mSGWQ/BTgB+DX3A+7KeBN6Z0RYt+/1EJVKIUP
+Zi4/C99ft0l6ewM1fBRpAqGtEYr9xpijXMZaJQtzK2zISrIob9g=
+=hcjR
 -----END PGP SIGNATURE-----
 
---yr6OvWOSyJed8q4v--
+--+svXpSx+RSEd8UhP--
