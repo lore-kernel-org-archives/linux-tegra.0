@@ -1,8 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 2/5] media: dt: bindings: Add binding for NVIDIA Tegra
- Video Decoder Engine
-Date: Fri, 20 Oct 2017 00:34:22 +0300
-Message-ID: <bf5b91666229f9e46ed8c73d6ca2e4b65f86b5ab.1508448293.git.digetx@gmail.com>
+Subject: [PATCH v4 5/5] ARM: defconfig: tegra: Enable Video Decoder driver
+Date: Fri, 20 Oct 2017 00:34:25 +0300
+Message-ID: <0d1f231d98019ac0a4a58691e0dcd12b38d9db3c.1508448293.git.digetx@gmail.com>
 References: <cover.1508448293.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -24,75 +23,32 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add binding documentation for the Video Decoder Engine which is found
-on NVIDIA Tegra20/30/114/124/132 SoC's.
+Compile Tegra VDE driver as a module.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../devicetree/bindings/media/nvidia,tegra-vde.txt | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+ arch/arm/configs/tegra_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-new file mode 100644
-index 000000000000..470237ed6fe5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-@@ -0,0 +1,55 @@
-+NVIDIA Tegra Video Decoder Engine
-+
-+Required properties:
-+- compatible : Must contain one of the following values:
-+   - "nvidia,tegra20-vde"
-+   - "nvidia,tegra30-vde"
-+   - "nvidia,tegra114-vde"
-+   - "nvidia,tegra124-vde"
-+   - "nvidia,tegra132-vde"
-+- reg : Must contain an entry for each entry in reg-names.
-+- reg-names : Must include the following entries:
-+  - sxe
-+  - bsev
-+  - mbe
-+  - ppe
-+  - mce
-+  - tfe
-+  - ppb
-+  - vdma
-+  - frameid
-+- iram : Must contain phandle to the mmio-sram device node that represents
-+         IRAM region used by VDE.
-+- interrupts : Must contain an entry for each entry in interrupt-names.
-+- interrupt-names : Must include the following entries:
-+  - sync-token
-+  - bsev
-+  - sxe
-+- clocks : Must include the following entries:
-+  - vde
-+- resets : Must include the following entries:
-+  - vde
-+
-+Example:
-+
-+video-codec@6001a000 {
-+	compatible = "nvidia,tegra20-vde";
-+	reg = <0x6001a000 0x1000 /* Syntax Engine */
-+	       0x6001b000 0x1000 /* Video Bitstream Engine */
-+	       0x6001c000  0x100 /* Macroblock Engine */
-+	       0x6001c200  0x100 /* Post-processing Engine */
-+	       0x6001c400  0x100 /* Motion Compensation Engine */
-+	       0x6001c600  0x100 /* Transform Engine */
-+	       0x6001c800  0x100 /* Pixel prediction block */
-+	       0x6001ca00  0x100 /* Video DMA */
-+	       0x6001d800  0x300 /* Video frame controls */>;
-+	reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
-+		    "tfe", "ppb", "vdma", "frameid";
-+	iram = <&vde_pool>; /* IRAM region */
-+	interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
-+		     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
-+		     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
-+	interrupt-names = "sync-token", "bsev", "sxe";
-+	clocks = <&tegra_car TEGRA20_CLK_VDE>;
-+	resets = <&tegra_car 61>;
-+};
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 6678f2929356..c931bd48f7fd 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -29,7 +29,6 @@ CONFIG_PCI_MSI=y
+ CONFIG_PCI_TEGRA=y
+ CONFIG_SMP=y
+ CONFIG_PREEMPT=y
+-CONFIG_AEABI=y
+ CONFIG_HIGHMEM=y
+ CONFIG_CMA=y
+ CONFIG_ZBOOT_ROM_TEXT=0x0
+@@ -256,6 +255,7 @@ CONFIG_KEYBOARD_NVEC=y
+ CONFIG_SERIO_NVEC_PS2=y
+ CONFIG_NVEC_POWER=y
+ CONFIG_NVEC_PAZ00=y
++CONFIG_TEGRA_VDE=m
+ CONFIG_TEGRA_IOMMU_GART=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
+ CONFIG_ARCH_TEGRA_2x_SOC=y
 -- 
 2.14.2
