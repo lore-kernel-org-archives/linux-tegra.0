@@ -1,79 +1,39 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 4/5] ARM: dts: tegra20: Add video decoder node
-Date: Fri, 20 Oct 2017 00:34:24 +0300
-Message-ID: <75e7f97c65443cdf064ce743070255625e5cd5b6.1508448293.git.digetx@gmail.com>
-References: <cover.1508448293.git.digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <cover.1508448293.git.digetx@gmail.com>
-In-Reply-To: <cover.1508448293.git.digetx@gmail.com>
-References: <cover.1508448293.git.digetx@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Vladimir Zapolskiy <vz@mleia.com>
-Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 0/2] Correct Tegra20 FUSE driver DMA usage
+Date: Fri, 20 Oct 2017 01:08:02 +0300
+Message-ID: <cover.1508450681.git.digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add Video Decoder Engine device node.
+Change log:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+v3:
+	- Addressed v2 review comments: added 'config.device_fc = false'
+	  and utilize of_device_is_compatible() for dma-filter
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index aaf32f96f1e8..6b2d7bf5c707 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -15,6 +15,11 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0 0x40000000 0x40000>;
-+
-+		vde_pool: vde {
-+			reg = <0x400 0x3fc00>;
-+			pool;
-+		};
- 	};
- 
- 	host1x@50000000 {
-@@ -257,6 +262,28 @@
- 		*/
- 	};
- 
-+	vde@6001a000 {
-+		compatible = "nvidia,tegra20-vde";
-+		reg = <0x6001a000 0x1000   /* Syntax Engine */
-+		       0x6001b000 0x1000   /* Video Bitstream Engine */
-+		       0x6001c000  0x100   /* Macroblock Engine */
-+		       0x6001c200  0x100   /* Post-processing Engine */
-+		       0x6001c400  0x100   /* Motion Compensation Engine */
-+		       0x6001c600  0x100   /* Transform Engine */
-+		       0x6001c800  0x100   /* Pixel prediction block */
-+		       0x6001ca00  0x100   /* Video DMA */
-+		       0x6001d800  0x300>; /* Video frame controls */
-+		reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
-+			    "tfe", "ppb", "vdma", "frameid";
-+		iram = <&vde_pool>; /* IRAM region */
-+		interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
-+			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
-+			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
-+		interrupt-names = "sync-token", "bsev", "sxe";
-+		clocks = <&tegra_car TEGRA20_CLK_VDE>;
-+		resets = <&tegra_car 61>;
-+	};
-+
- 	apbmisc@70000800 {
- 		compatible = "nvidia,tegra20-apbmisc";
- 		reg = <0x70000800 0x64   /* Chip revision */
+v2:
+	- Dropped DT patch as turned out it was incorrect and made things
+	  work by luck.
+
+	- Now FUSE driver requests DMA channel from the APB DMA driver
+	  utilizing DMA channel filter.
+
+	- This patchset now depends on the APB DMA driver patch that allows
+	  DMA client to issue a non-flow controlled transfers. I haven't
+	  included that patch to this patchset since DMA usage is broken
+	  anyway right now. It will work once this patchset and APBDMA
+	  patch get applied.
+
+Dmitry Osipenko (2):
+  soc/tegra: fuse: Fix reading registers using DMA on Tegra20
+  soc/tegra: fuse: Explicitly request DMA channel from APB DMA driver
+
+ drivers/soc/tegra/fuse/fuse-tegra.c   |  1 +
+ drivers/soc/tegra/fuse/fuse-tegra20.c | 13 +++++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
 -- 
 2.14.2
