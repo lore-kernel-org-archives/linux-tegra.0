@@ -1,45 +1,59 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v7 1/4] reset: Add APIs to manage array of resets
-Date: Thu, 19 Oct 2017 11:54:00 -0700
-Message-ID: <20171019185400.GZ1165@minitux>
-References: <1500479948-29988-1-git-send-email-p.zabel@pengutronix.de>
- <1500479948-29988-2-git-send-email-p.zabel@pengutronix.de>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 1/2] staging: Introduce NVIDIA Tegra20 video decoder
+ driver
+Date: Thu, 19 Oct 2017 15:52:42 -0500
+Message-ID: <CAL_Jsq+0MwXdmQyxQKG7ZFBbRUnw6xN5=edCSV-YYtRs=oU_dA@mail.gmail.com>
+References: <cover.1507752381.git.digetx@gmail.com>
+ <3d432aa2617977a2b0a8621a1fc2f36f751133e1.1507752381.git.digetx@gmail.com>
+ <20171017201354.efgjrwvakkseyvr7@rob-hp-laptop> <20171017202407.GA10482@ulmo>
+ <CAL_JsqKtFD9OgO2privwfBAZeCn3zg1JienmefPk=X2W-+ahJQ@mail.gmail.com>
+ <ca4fa045-17f0-9142-6bca-bbf472c1f3bb@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1500479948-29988-2-git-send-email-p.zabel@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel@pengutronix.de
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <ca4fa045-17f0-9142-6bca-bbf472c1f3bb@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: devel@driverdev.osuosl.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed 19 Jul 08:59 PDT 2017, Philipp Zabel wrote:
+On Tue, Oct 17, 2017 at 4:26 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
+> On 18.10.2017 00:13, Rob Herring wrote:
+>> On Tue, Oct 17, 2017 at 3:24 PM, Thierry Reding
+>> <thierry.reding@gmail.com> wrote:
+>>> On Tue, Oct 17, 2017 at 03:13:54PM -0500, Rob Herring wrote:
+>>> [...]
+>>>>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-vde.txt
+>>> [...]
+>>>>> +- resets : Must contain an entry for each entry in reset-names.
+>>>>> +  See ../reset/reset.txt for details.
+>>>>> +- reset-names : Must include the following entries:
+>>>>> +  - vde
+>>>>
+>>>> -names is pointless when there is only one.
+>>>
+>>> I'd prefer to keep it. In the past we occasionally had to add clocks or
+>>> resets to a device tree node where only one had been present (and hence
+>>> no -names property) and that caused some awkwardness because verbiage
+>>> had to be added to the bindings that clarified that one particular entry
+>>> (the original one) always had to come first.
+>>
+>> The order should be specified regardless of -names and the original
+>> one has to come first if you add any. That's not awkwardness, but how
+>> bindings work.
+>
+> Probably it would be okay to remove '-names' from the binding doc, but keep them
+> in the actual DT, wouldn't it?
 
-> From: Vivek Gautam <vivek.gautam@codeaurora.org>
-> 
-> Many devices may want to request a bunch of resets and control them. So
-> it's better to manage them as an array. Add APIs to _get() an array of
-> reset_control, reusing the _assert(), _deassert(), and _reset() APIs for
-> single reset controls. Since reset controls already may control multiple
-> reset lines with a single hardware bit, from the user perspective, reset
-> control arrays are not at all different from single reset controls.
-> Note that these APIs don't guarantee that the reset lines managed in the
-> array are handled in any particular order.
-> 
-> Cc: Felipe Balbi <balbi@kernel.org>
-> Cc: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> [p.zabel@pengutronix.de: changed API to hide reset control arrays behind
->  struct reset_control]
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+No. Then where are the names documented?
 
-This looks more or less identical to how regulators and clocks already
-deals with resources in bulk; see regulator_bulk_data and clk_bulk_data
-and their associated functions.
-
-I would really like to see that you follow this model, to make it easier
-for developers to work with and use the various subsystems.
-
-Regards,
-Bjorn
+Rob
