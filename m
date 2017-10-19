@@ -1,108 +1,76 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv4 0/4] tegra-cec: add Tegra HDMI CEC support
-Date: Thu, 19 Oct 2017 11:39:10 +0200
-Message-ID: <20171019093910.GH9005@ulmo>
-References: <20170911122952.33980-1-hverkuil@xs4all.nl>
- <20171019092054.GC9005@ulmo>
- <0f43276f-0a89-8caa-6522-253458e3ad08@xs4all.nl>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Date: Thu, 19 Oct 2017 11:44:22 +0200
+Message-ID: <20171019094422.GI9005@ulmo>
+References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+ <20171019092919.GA7252@Asurada>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9jHkwA2TBA/ec6v+"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="o7gdRJTuwFmWapyH"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <0f43276f-0a89-8caa-6522-253458e3ad08-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+In-Reply-To: <20171019092919.GA7252@Asurada>
+Sender: linux-clk-owner@vger.kernel.org
+To: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: sboyd@codeaurora.org, pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, jonathanh@nvidia.com, mturquette@baylibre.com, pgaikwad@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---9jHkwA2TBA/ec6v+
+--o7gdRJTuwFmWapyH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 19, 2017 at 11:36:14AM +0200, Hans Verkuil wrote:
-> On 10/19/17 11:20, Thierry Reding wrote:
-> > On Mon, Sep 11, 2017 at 02:29:48PM +0200, Hans Verkuil wrote:
-> >> From: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-> >>
-> >> This patch series adds support for the Tegra CEC functionality.
-> >>
-> >> This v4 has been rebased to the latest 4.14 pre-rc1 mainline.
-> >>
-> >> Please review! Other than for the bindings that are now Acked I have n=
-ot
-> >> received any feedback.
-> >>
-> >> The first patch documents the CEC bindings, the second adds support
-> >> for this to tegra124.dtsi and enables it for the Jetson TK1.
-> >>
-> >> The third patch adds the CEC driver itself and the final patch adds
-> >> the cec notifier support to the drm/tegra driver in order to notify
-> >> the CEC driver whenever the physical address changes.
-> >>
-> >> I expect that the dts changes apply as well to the Tegra X1/X2 and pos=
-sibly
-> >> other Tegra SoCs, but I can only test this with my Jetson TK1 board.
-> >>
-> >> The dt-bindings and the tegra-cec driver would go in through the media
-> >> subsystem, the drm/tegra part through the drm subsystem and the dts
-> >> changes through (I guess) the linux-tegra developers. Luckily they are
-> >> all independent of one another.
-> >>
-> >> To test this you need the CEC utilities from git://linuxtv.org/v4l-uti=
-ls.git.
-> >>
-> >> To build this:
-> >>
-> >> git clone git://linuxtv.org/v4l-utils.git
-> >> cd v4l-utils
-> >> ./bootstrap.sh; ./configure
-> >> make
-> >> sudo make install # optional, you really only need utils/cec*
-> >>
-> >> To test:
-> >>
-> >> cec-ctl --playback # configure as playback device
-> >> cec-ctl -S # detect all connected CEC devices
+On Thu, Oct 19, 2017 at 02:29:20AM -0700, Nicolin Chen wrote:
+> On Fri, Sep 15, 2017 at 12:10:13PM -0700, Nicolin Chen wrote:
+> > Below is the call trace of tegra210_init_pllu() function:
+> >   start_kernel()
+> >   -> time_init()
+> >   --> of_clk_init()
+> >   ---> tegra210_clock_init()
+> >   ----> tegra210_pll_init()
+> >   -----> tegra210_init_pllu()
 > >=20
-> > I finally got around to test this. Unfortunately I wasn't able to
-> > properly show connected CEC devices, but I think that may just be
-> > because the monitor I was testing against doesn't support CEC. I
-> > will have to check against a different device eventually to check
-> > that it properly enumerates, though I suspect you've already done
-> > quite extensive testing yourself.
+> > Because the preemption is disabled in the start_kernel before calling
+> > time_init, tegra210_init_pllu is actually in an atomic context while
+> > it includes a readl_relaxed_poll_timeout that might sleep.
+> >=20
+> > So this patch just changes this readl_relaxed_poll_timeout() to its
+> > atomic version.
+> >=20
+> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 >=20
-> Yes, you need a TV with CEC. Most (all?) PC monitors do not support this.
-> I never understood why not.
->=20
-> So just to confirm: you've merged this driver for 4.15?
+> Thierry, can you also take a look at this one? I sent a month ago. Thanks.
 
-I've applied the drm/tegra bits to drm/tegra/for-next and pulled the ARM
-DT changes into the Tegra tree for v4.15. I think we had agreed that you
-would take the DT bindings and CEC driver through your tree?
+I'm wondering why we're not seeing a splat for this. Usually the kernel
+will warn if you sleep during atomic context. Does this mean we're just
+not hitting that case? readx_poll_timeout() has a might_sleep_if(), and
+therefore it should always cause the splat.
+
+Any ideas why this has gone unnoticed for all this time?
 
 Thierry
 
---9jHkwA2TBA/ec6v+
+--o7gdRJTuwFmWapyH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnocr4ACgkQ3SOs138+
-s6F4jRAAqhFfIv/KiO7VYFtGDT7Vl2LkY6hgkIdEFFa39GEVT+VzKg5ttI8ge1bC
-SLsfq41XZurW1TxZzJSec27Jm2ZnpSt0wLhD39BA5SzwQiRFyaOOumVFCfZEHskr
-xIuCT3rbzCwgLpbgSGAYY1A0I3isDQ40hh2S6wi1wce8aJcrE7xPAvTS+B/7017b
-daZ9M7bs4GMViMrVA6AQSyt6m2AOIlAv8/PZ07OceqP3C9egKACzrWebnHhN1PI5
-giQAA9L6h0NzFUgju97DH71RH4xyBTXm2Ph0BMfwgBhYXwGD8967EmMqXa16Jb/I
-7cLjfsNwt2v8vfQD5rAsteyZ1O2BInOHZh2jEQmYztYqKnBL63+hs6+JjgFAA+nC
-gGNhqTVYlNiGDYfV4BffjYTPf/ruBC8gx9XDzzFsw1PDX3tLp6mEV+HdPYJ+t6wD
-ifNGfYQ4l1Qwx2t18xNvpTpNGmRtUv5pF0nZ9X6EVILkBU2YmJXJYNRiwceDW6Yq
-zTIKoE3aF5DrrVGqtWFp4JnFb0aXyVid+z0hczxElMqdsL4rxtdSHmylom4Nk2kn
-SGXtJ7UhJc4tMwcY4Pml8LyonHjNICSqE2C/RjYNsFNevhxIkrXRECPVQCMBKVxb
-42EaF34iWfHrPdg3To84wIYTPp4EFzgCmPePnVOWwQCLguHEL7g=
-=MqOJ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnoc/YACgkQ3SOs138+
+s6GYBBAArS9B7UkWWtCLw/lv625C3fklYG8Cuk5tyXtd6APNjl9mXewlWUqYDshp
+LkdpAfFKeVcFSBVhi0pZISbv9lQxNXil7daZm57qil2G/LZZfAL5rsnPV2g0nvtR
+WWjIcmXPIVuTaQlfFuSFkt/xJtnB9I2K9HPmDeiKrmADld25ZaFnydNXr9uTmAzh
+jHAQz3yslxDP2thOuZrXxRAxdJb263fi3JdAoNF0GI4foAEdoaz+VxCnBBc4wSP1
+ye+HWhKoQEPEGoZGkvTN26wV9tkaTXagPi9Khgh9R18mA/WbWttFgTXc3xLq9SeU
+JFkp45aTv0oHPpSACbeErlMVMKCGKX+yPNjev+gj0MHePAZf8/y/dI7EDghz9Efu
+osbLC713zUGH6f/zFmlarr0OL1ItMn8KxteMRAonQzDoj7rXplmKba32qiTUyFX7
+p4ZH8ofDk7gu4sbXqzJpWJ1OBniyb3G7IBpYip5umf1HiEZ0cpcztleTVTQfJw1j
+SLDCCMgjdELoYH7UE51crw5x6znYSrkxMvV0h+uudrFpm/6P2CwkLrEA8x2emeYk
+UzUkfknbKVqEtbwOfrUlg39xmyUZKrgGtWs0gyUVPthsGIld/N6lWK+K+E+vWQjP
+9wGuBXdjJl35vZui5QrJhMzjlE8etROtJgFuK7dG2ZynFy3ptvw=
+=xRkw
 -----END PGP SIGNATURE-----
 
---9jHkwA2TBA/ec6v+--
+--o7gdRJTuwFmWapyH--
