@@ -1,63 +1,71 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 3/6] arm64: tegra: Add VIC on Tegra186
-Date: Thu, 19 Oct 2017 12:50:17 +0200
-Message-ID: <20171019105017.GN9005@ulmo>
-References: <20170905084306.19318-1-mperttunen@nvidia.com>
- <20170905084306.19318-4-mperttunen@nvidia.com>
+From: Felipe Balbi <balbi@kernel.org>
+Subject: Re: [PATCH v7 3/4] usb: dwc3: of-simple: Add support to get resets for the device
+Date: Thu, 19 Oct 2017 14:30:08 +0300
+Message-ID: <87vajbgytb.fsf@linux.intel.com>
+References: <1500479948-29988-1-git-send-email-p.zabel@pengutronix.de> <1500479948-29988-4-git-send-email-p.zabel@pengutronix.de> <87y3o7h3zu.fsf@linux.intel.com> <1508409939.7665.7.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l3ej7W/Jb2pB3qL2"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170905084306.19318-4-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dnibade-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sgurrappadi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1508409939.7665.7.camel@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-
---l3ej7W/Jb2pB3qL2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 05, 2017 at 11:43:03AM +0300, Mikko Perttunen wrote:
-> Add a node for the Video Image Compositor on the Tegra186.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v2:
-> - Fixed reg property in accordance with changed parent cells.
->=20
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
 
-Applied, thanks.
+Hi,
 
-Thierry
+Philipp Zabel <p.zabel@pengutronix.de> writes:
+> Hi Felipe,
+>
+> On Thu, 2017-10-19 at 12:38 +0300, Felipe Balbi wrote:
+>> Philipp Zabel <p.zabel@pengutronix.de> writes:
+>>=20
+>> > From: Vivek Gautam <vivek.gautam@codeaurora.org>
+>> >=20
+>> > Add support to get a list of resets available for the device.
+>> > These resets must be kept de-asserted until the device is
+>> > in use.
+>> >=20
+>> > Cc: Felipe Balbi <balbi@kernel.org>
+>> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>> > [p.zabel@pengutronix.de: switch to hidden reset control array]
+>> > Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+>>=20
+>> now this seems like it depends on patch 1/4, right? Is the reset API
+>> change going on v4.15?
+>
+> Thank you for the reminder. Patch 1 has made it into v4.14-rc1, commit
+> 17c82e206d2a ("reset: Add APIs to manage array of resets"). The other
+> patches could be picked up for v4.15 without any dependency issues.
 
---l3ej7W/Jb2pB3qL2
+Thanks, I'll put other dwc3 patches in my tree :-)
+
+=2D-=20
+balbi
+
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnog2kACgkQ3SOs138+
-s6HNchAAojlBx9+nXNAecura6zG+2ocQuFUwcXyIOi64m/GnFqbGtU8O8ht7FD9w
-0e1ca8Wj6Ge7e5dTn2TVuw8ZYutcqM0gP3Ixz98MIit3ReYF34PyxZutkgHgvRBf
-dYUWOD8JQBZC5oZaRS6F+4Ocw/YUSymMgnGXqTDI2VnjRjquvytrcsHpHQ0ZKk0G
-xydu3h4/RcBGtHRdzO2ka5Zw4PUACh3yqtOjBUr4wuAf35yOZbKNloVwhbxqgB8H
-GnfuzUQRjgyRweVPGyukv+e9crkoQ3zIzoO7NhYAHULc4eZB2KjQgudF8QR8WYO3
-LG0gcJ7aBgIvc+vXmPnfvFDiSrz9txxPBwf0xjWfJYz57RwdArPkPVY9knCfyJhJ
-jYSXt25uJXkwx5wRzwQQL9qItzj+MuDwPfwzOu02Iu3NaP3Oj9g1I6shzv5d6ioK
-Bv7CJXfBW0x9faGt+Ot00fkeyXpO//20HPXj2uxhbCTsx9j2oJMsWOmn7diEuGGD
-1iOm+Ur5i1nRIzfOvTCk3mPhYAEziOoOqq24stUCg/JfQGvjy08YJTDuEjM5amug
-0AxF0rsk0NC0BO7oSGRq6NSxm6ignxpLX7mK5G7bYGosOXar/c7/0HTgPgRi2sn2
-zTjMgvvl5G0+s2IuDeWhekKb23ETddaAEmuwuxNJnZjUs4/7RBA=
-=0Ilh
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlnojMAACgkQzL64meEa
+mQaYbBAAgk4cpIZHN5EZ2OD8U9GWKyUruTskIsDScpZV/UZnpRrJdfwZO4y3biHH
+IKgGNcXFjyZaQVjzsqMUF6qO+1UcghtoiSgjj3SSRWinQL8THUq6sm8/VrJqAUad
+Ovog06sKcDJkeY/wYde+xp8PMnWU+LGMgoRMD1yMiL3wNgnABiG8rbcZ2w9zWUyC
+ydx6EkeYhLQV5AFytQNSBEcdYE1/WBzTuFYM4B3u3y6cl3EHegXwctbAL7Rb2a1Q
+yXisbpfKG73gAIAgoRlTzdAh39Ocz1OoQzNkTZIsg/2vyZedBaVvLMqCCzOEqVPU
+7k8DruBcccJLBoSbac5Dhq0F3VcHbWnn1JNFCns7BeyEx6R5pJbCtVF/lz7KGSjI
+i9aTCLJvzsiI4IWa16myJSdq/Wr2U4AY4pqS55Jo35PZ2lDs/LInQ2aDn+d/Oog+
+sQUBJrUC0oc/TRNERVGLbRe0wMIyE65/UIoL15sQP9PHgqWXw/eDVCNXmLx+zZmJ
+0Oe8uvQ8AaiOAO5lqmcaTGrqkgJFVQlriEWjlOIbaJiItlTbgs8oSk3w25Vz968f
+8L9yqLpmwFkSEJMjQW4gQkbpVhrBUIkjaJBeUrROvJreYoHUysMfyKb2wPVWOfqI
+DNEvU1HWPj5lzr43UpiqCy21d1LXFv9tOrq4Pz4UdKTxXwde/Mc=
+=yIxs
 -----END PGP SIGNATURE-----
-
---l3ej7W/Jb2pB3qL2--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=-=-=--
