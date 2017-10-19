@@ -1,52 +1,75 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 2/2] soc/tegra: fuse: Explicitly request DMA channel from APB DMA driver
-Date: Fri, 20 Oct 2017 01:08:04 +0300
-Message-ID: <059ca713c7416aedeb0080ab4b8a49da430a30b9.1508450681.git.digetx@gmail.com>
-References: <cover.1508450681.git.digetx@gmail.com>
+Subject: [PATCH v2] dmaengine: tegra-apb: Support non-flow controlled slave configuration
+Date: Fri, 20 Oct 2017 01:13:08 +0300
+Message-ID: <20171019221308.18707-1-digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1508450681.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-In-Reply-To: <cover.1508450681.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-References: <cover.1508450681.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Currently fuse driver requests DMA channel from an arbitrary DMA device,
-it is not a problem since there is only one DMA provider for Tegra20 yet,
-but it may become troublesome if another provider will appear.
+This allows DMA client to issue a non-flow controlled TX. In particular
+it is needed for the fuse driver that reads fuse registers using APBDMA
+to workaround a HW bug that results in hang when CPU and DMA perform
+simultaneous access to fuse peripheral.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/soc/tegra/fuse/fuse-tegra20.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
-index 27e9ac7d3165..49ff017f3ded 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra20.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
-@@ -96,6 +96,13 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
- 	return value;
- }
+Change log:
+
+v2:
+	- Removed trailing whitespace reported by checkpatch
+
+ drivers/dma/tegra20-apb-dma.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index b9d75a54c896..9a558e30c461 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -353,7 +353,8 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
+ 	}
  
-+static bool dma_filter(struct dma_chan *chan, void *filter_param)
-+{
-+	struct device_node *np = chan->device->dev->of_node;
-+
-+	return of_device_is_compatible(np, "nvidia,tegra20-apbdma");
-+}
-+
- static int tegra20_fuse_probe(struct tegra_fuse *fuse)
- {
- 	dma_cap_mask_t mask;
-@@ -103,7 +110,7 @@ static int tegra20_fuse_probe(struct tegra_fuse *fuse)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
+ 	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
+-	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID) {
++	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID &&
++	    sconfig->device_fc) {
+ 		if (sconfig->slave_id > TEGRA_APBDMA_CSR_REQ_SEL_MASK)
+ 			return -EINVAL;
+ 		tdc->slave_id = sconfig->slave_id;
+@@ -970,8 +971,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
+ 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
  
--	fuse->apbdma.chan = dma_request_channel(mask, NULL, NULL);
-+	fuse->apbdma.chan = __dma_request_channel(&mask, dma_filter, NULL);
- 	if (!fuse->apbdma.chan)
- 		return -EPROBE_DEFER;
+-	csr |= TEGRA_APBDMA_CSR_ONCE | TEGRA_APBDMA_CSR_FLOW;
+-	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
++	csr |= TEGRA_APBDMA_CSR_ONCE;
++
++	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
++		csr |= TEGRA_APBDMA_CSR_FLOW;
++		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
++	}
++
+ 	if (flags & DMA_PREP_INTERRUPT)
+ 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
+ 
+@@ -1110,10 +1116,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
+ 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
+ 
+-	csr |= TEGRA_APBDMA_CSR_FLOW;
++	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
++		csr |= TEGRA_APBDMA_CSR_FLOW;
++		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
++	}
++
+ 	if (flags & DMA_PREP_INTERRUPT)
+ 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
+-	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+ 
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
  
 -- 
 2.14.2
