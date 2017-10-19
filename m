@@ -1,73 +1,59 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra: dfll: Fix drvdata overwriting issue
-Date: Thu, 19 Oct 2017 10:23:10 +0200
-Message-ID: <20171019082310.GC4459@ulmo>
-References: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] arm64: defconfig: Enable Tegra PCI controller
+Date: Thu, 19 Oct 2017 10:25:03 +0200
+Message-ID: <20171019082503.GA9005@ulmo>
+References: <20171018144620.4699-1-tuomas.tynkkynen@iki.fi>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="eHhjakXzOLJAF9wJ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, jonathanh@nvidia.com, sboyd@codeaurora.org, mturquette@baylibre.com, pgaikwad@nvidia.com
+In-Reply-To: <20171018144620.4699-1-tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---eHhjakXzOLJAF9wJ
+--cWoXeonUoKmBZSoM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 12, 2017 at 04:09:59PM -0700, Nicolin Chen wrote:
-> Both tegra124-dfll and clk-dfll are using platform_set_drvdata
-> to set drvdata of the exact same pdev while they use different
-> pointers for the drvdata. Once the drvdata has been overwritten
-> by tegra124-dfll, clk-dfll will never get its td pointer as it
-> expects.
+On Wed, Oct 18, 2017 at 05:46:20PM +0300, Tuomas Tynkkynen wrote:
+> The driver has supported the 64-bit Tegra210 for a while now, so enable
+> it in the defconfig.
 >=20
-> Since tegra124-dfll merely needs its soc pointer in its remove
-> function, this patch fixes the bug by removing the overwriting
-> in the tegra124-dfll file and letting the tegra_dfll_unregister
-> return an soc pointer for it.
->=20
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
 > ---
+> I didn't personally test this but got a report from our distro users
+> that it works.
 >=20
-> As I don't have a T124 platform, I can't verify it on a board.
-> If someone could provide a Tested-by, it would be very helpful.
-> The test could be a simple system suspend/resume that activates
-> runtime_suspend/resume() where a platform_get_drvdata() would
-> be called. -- Nicolin
->=20
->  drivers/clk/tegra/clk-dfll.c               | 10 +++++-----
->  drivers/clk/tegra/clk-dfll.h               |  2 +-
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 12 +++++-------
->  3 files changed, 11 insertions(+), 13 deletions(-)
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
 Applied, thanks.
 
 Thierry
 
---eHhjakXzOLJAF9wJ
+--cWoXeonUoKmBZSoM
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnoYO4ACgkQ3SOs138+
-s6GazA/+OmV373+YFeBixNv1qvdheW2czQVb52IwKoiBLLPaa5qgD2udrabKfWTi
-391b94iDR+coqjGURAsRCKPIJdhrYORdrqYvE7VNi8b1BXrrTWNsR0oQr5F3T0Su
-U3uCc51EmMmpARvEkR3/33FLIIdBTkSOHHF/71bWd2c5v9NL+Uni2RFAPeqLPJq0
-Bq5QjpE2B/SCKB/wdZ9Uaf5VjCIW+ViRodrzW6V3HMGUbiR2rsnwcCi169U0/706
-WwVwqshEAu7blP4sLbd/1Fxk34yh22luObv0IFlUI5H47Gog8HXLCarwtUaUAxzg
-MPfV1BxA50G0XdazmJp/BFj99hchqU7cqadHm4rGZ7lO+ZueahuQdHDZ1eBki92H
-sxaJn99Nmi81yfYRO7JeOmLeNRjA1KcfnPrBos+gGEDxuihg6M0sdg0oKJp3hOFr
-AoduSABWmC5xQTvM/jhFGoA3+1mKjAMueFTWSmp0flRKYZUfkV78WrY80cjzGP5K
-Jwsda/0YFPFQgaNsoR25EiweUX67a/nUktDma2JwepPLUbh/nHNxF5/t/EIchE1t
-Pwewf95tZJxlYZz1nZRrThgi10ANzJX+HZMoyv61EURSBWGMtdde/XtKbs0kWoRq
-HKAhfROz9w8/yVNlaxho+6iM1Vr9cDGsR3Qa5d4ctm1ZtiAJjJc=
-=yQYP
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnoYV8ACgkQ3SOs138+
+s6GXUxAAgF4ulqLSQCjrrBxHLiMRkgd/Rhf08etu48xUyvITLhKxXr79Z6SDuB/7
+LQv56q9TOZd3nwvWIIkc8Fr+wHSJ//FeCv0916S5uRJIRblbYqHAXIcvdjPT/xHT
+ixmx05dIHRGKRx3hEjMCWP8akThKfUmo3Xze8PXyk2C3ndPB8tInj3H4096H5pfN
+vb+b2yE5khHi70LUS35bHEA9kudm2zMvH7TMgWDakH2N/009LupPo6505rzdOyY1
+D2bBmBKfc7842/72HaTfpB/jHNPV9NLE/evw8O/PXbB6BhvJtle47WuuSvDbi7yT
+vYHkuB3jg8xiicM7KbnPIzV/s04LLRsHFqG3bhqMkjOn/0KjmzvSoBDki8ZO+cbs
+UbA6gjht6ZNwsSjs8m2+TWZiWcFmcIvEEBbX0fu2VwP5Y1HZiw1cfdJo03r/6WeH
+bDTGQA0L5rShIV2YUIv20O9Z4mItEoqsttPfWpsvDt/Nc/Gr/u8AKeW0+7RGSrzq
+zLumOdfYaE3RScD60FXbuq3vYB9EAVKmJ2GetKz65BnIzB+GEvV0R8IZrH98ZuTO
+ysUexMOgTXqgcMzjdpb3ono259qI5gSR/WgK8BNh5fnl/0lT/S/4YfJOBcj3L2P0
+Cjl3z9yvmjH+FG2LDVDsD/x7KFNUzX1KUuJThu10N16qrKsiMrA=
+=QfEg
 -----END PGP SIGNATURE-----
 
---eHhjakXzOLJAF9wJ--
+--cWoXeonUoKmBZSoM--
