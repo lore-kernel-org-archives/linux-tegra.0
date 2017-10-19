@@ -1,7 +1,8 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 1/5] ARM: tegra: Add device tree node to describe IRAM
-Date: Fri, 20 Oct 2017 00:34:21 +0300
-Message-ID: <8ce696bc2b4b1808f6c7f7a967a3dacd954d2a4e.1508448293.git.digetx@gmail.com>
+Subject: [PATCH v4 2/5] media: dt: bindings: Add binding for NVIDIA Tegra
+ Video Decoder Engine
+Date: Fri, 20 Oct 2017 00:34:22 +0300
+Message-ID: <bf5b91666229f9e46ed8c73d6ca2e4b65f86b5ab.1508448293.git.digetx@gmail.com>
 References: <cover.1508448293.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,94 +24,75 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Vladimir Zapolskiy <vz@mleia.com>
+Add binding documentation for the Video Decoder Engine which is found
+on NVIDIA Tegra20/30/114/124/132 SoC's.
 
-All Tegra SoCs contain 256KiB IRAM, which is used to store CPU resume code
-and by hardware engines like a video decoder.
-
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra114.dtsi | 8 ++++++++
- arch/arm/boot/dts/tegra124.dtsi | 8 ++++++++
- arch/arm/boot/dts/tegra20.dtsi  | 8 ++++++++
- arch/arm/boot/dts/tegra30.dtsi  | 8 ++++++++
- 4 files changed, 32 insertions(+)
+ .../devicetree/bindings/media/nvidia,tegra-vde.txt | 55 ++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 8932ea3afd5f..13f6087790c8 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -10,6 +10,14 @@
- 	compatible = "nvidia,tegra114";
- 	interrupt-parent = <&lic>;
- 
-+	iram@40000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x40000000 0x40000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x40000000 0x40000>;
-+	};
+diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+new file mode 100644
+index 000000000000..470237ed6fe5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+@@ -0,0 +1,55 @@
++NVIDIA Tegra Video Decoder Engine
 +
- 	host1x@50000000 {
- 		compatible = "nvidia,tegra114-host1x", "simple-bus";
- 		reg = <0x50000000 0x00028000>;
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 8baf00b89efb..a3585ed82646 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -14,6 +14,14 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	iram@40000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x0 0x40000000 0x0 0x40000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x0 0x40000000 0x40000>;
-+	};
++Required properties:
++- compatible : Must contain one of the following values:
++   - "nvidia,tegra20-vde"
++   - "nvidia,tegra30-vde"
++   - "nvidia,tegra114-vde"
++   - "nvidia,tegra124-vde"
++   - "nvidia,tegra132-vde"
++- reg : Must contain an entry for each entry in reg-names.
++- reg-names : Must include the following entries:
++  - sxe
++  - bsev
++  - mbe
++  - ppe
++  - mce
++  - tfe
++  - ppb
++  - vdma
++  - frameid
++- iram : Must contain phandle to the mmio-sram device node that represents
++         IRAM region used by VDE.
++- interrupts : Must contain an entry for each entry in interrupt-names.
++- interrupt-names : Must include the following entries:
++  - sync-token
++  - bsev
++  - sxe
++- clocks : Must include the following entries:
++  - vde
++- resets : Must include the following entries:
++  - vde
 +
- 	pcie@1003000 {
- 		compatible = "nvidia,tegra124-pcie";
- 		device_type = "pci";
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 7c85f97f72ea..aaf32f96f1e8 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -9,6 +9,14 @@
- 	compatible = "nvidia,tegra20";
- 	interrupt-parent = <&lic>;
- 
-+	iram@40000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x40000000 0x40000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x40000000 0x40000>;
-+	};
++Example:
 +
- 	host1x@50000000 {
- 		compatible = "nvidia,tegra20-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 13960fda7471..3b447c64bf69 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -10,6 +10,14 @@
- 	compatible = "nvidia,tegra30";
- 	interrupt-parent = <&lic>;
- 
-+	iram@40000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x40000000 0x40000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x40000000 0x40000>;
-+	};
-+
- 	pcie@3000 {
- 		compatible = "nvidia,tegra30-pcie";
- 		device_type = "pci";
++video-codec@6001a000 {
++	compatible = "nvidia,tegra20-vde";
++	reg = <0x6001a000 0x1000 /* Syntax Engine */
++	       0x6001b000 0x1000 /* Video Bitstream Engine */
++	       0x6001c000  0x100 /* Macroblock Engine */
++	       0x6001c200  0x100 /* Post-processing Engine */
++	       0x6001c400  0x100 /* Motion Compensation Engine */
++	       0x6001c600  0x100 /* Transform Engine */
++	       0x6001c800  0x100 /* Pixel prediction block */
++	       0x6001ca00  0x100 /* Video DMA */
++	       0x6001d800  0x300 /* Video frame controls */>;
++	reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
++		    "tfe", "ppb", "vdma", "frameid";
++	iram = <&vde_pool>; /* IRAM region */
++	interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
++		     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
++		     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
++	interrupt-names = "sync-token", "bsev", "sxe";
++	clocks = <&tegra_car TEGRA20_CLK_VDE>;
++	resets = <&tegra_car 61>;
++};
 -- 
 2.14.2
