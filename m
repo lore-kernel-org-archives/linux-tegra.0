@@ -1,74 +1,58 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv4 4/4] drm/tegra: add cec-notifier support
-Date: Thu, 19 Oct 2017 11:38:11 +0200
-Message-ID: <20171019093811.GG9005@ulmo>
-References: <20170911122952.33980-1-hverkuil@xs4all.nl>
- <20170911122952.33980-5-hverkuil@xs4all.nl>
+From: Felipe Balbi <balbi@kernel.org>
+Subject: Re: [PATCH v7 3/4] usb: dwc3: of-simple: Add support to get resets for the device
+Date: Thu, 19 Oct 2017 12:38:13 +0300
+Message-ID: <87y3o7h3zu.fsf@linux.intel.com>
+References: <1500479948-29988-1-git-send-email-p.zabel@pengutronix.de> <1500479948-29988-4-git-send-email-p.zabel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7lMq7vMTJT4tNk0a"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170911122952.33980-5-hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1500479948-29988-4-git-send-email-p.zabel@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-
---7lMq7vMTJT4tNk0a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 11, 2017 at 02:29:52PM +0200, Hans Verkuil wrote:
-> From: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
->=20
-> In order to support CEC the HDMI driver has to inform the CEC driver
-> whenever the physical address changes. So when the EDID is read the
-> CEC driver has to be informed and whenever the hotplug detect goes
-> away.
->=20
-> This is done through the cec-notifier framework.
->=20
-> The link between the HDMI driver and the CEC driver is done through
-> the hdmi_phandle in the tegra-cec node in the device tree.
->=20
-> Signed-off-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/gpu/drm/tegra/Kconfig  | 1 +
->  drivers/gpu/drm/tegra/drm.h    | 3 +++
->  drivers/gpu/drm/tegra/hdmi.c   | 9 +++++++++
->  drivers/gpu/drm/tegra/output.c | 6 ++++++
->  4 files changed, 19 insertions(+)
+Philipp Zabel <p.zabel@pengutronix.de> writes:
 
-I've applied this to drm/tegra/for-next.
+> From: Vivek Gautam <vivek.gautam@codeaurora.org>
+>
+> Add support to get a list of resets available for the device.
+> These resets must be kept de-asserted until the device is
+> in use.
+>
+> Cc: Felipe Balbi <balbi@kernel.org>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> [p.zabel@pengutronix.de: switch to hidden reset control array]
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Thanks,
-Thierry
+now this seems like it depends on patch 1/4, right? Is the reset API
+change going on v4.15?
 
---7lMq7vMTJT4tNk0a
+=2D-=20
+balbi
+
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnocoMACgkQ3SOs138+
-s6GqExAAiTqswpXhw3CJpQRU1QAFmyNrdIV6rQjVoSVbu9mWqg4LkUJrKsDq3wux
-Y9ZQs6mvsIixjO2WeiLzq7zObYTo88dmMwqEi1+LYWYIAoG/SRZnXM1qb7fIIaQO
-JS5w22yz9qe0WOQZvj7W8PEtC+R9hGtaCEOTX80UId9VMHNuu08RKfc9wUf1zT7z
-BKz60Pvg+L/VftC9JxFszxtRku3ntnHlrs1rVCgOaAnIkLDrwS/a4aXwK0lClT0D
-SuGustGTzgngRZOGJa7XW6XORjfOtgdgJrfg+X5oz3DF51O+hrhIWyQYHhQ9bMAs
-YCKgoLu02E+m8ODWKo2SFBWN/OPSM5nA2wxLuJJB/QRjQ2ZDhTB3vCVLrQb2zm30
-eqXiDEs8Fo+mmilNyiWLdWh3m2+7y3/TIX70yQWL4cmyFxNkP+LCXkH3YwiLZBGu
-s7QmvI0FhxGZUD8fGhtg7PkFj8lO1evV2sLqLI0UAcDFnuHUjOIOquOHCptJh8w3
-ZchzkDbJBAVx3ii8Dsk/Ny9sR2bkin9NyhTDdfUwouibQSoZkAoqdcCBzlgsTQou
-Cx1Y3zNhGnFUEUxO0lr5kg/n8T80WxERx9Jd3H9p1TCJn0wyWhCtU4/qArmqrsk7
-dqFFsaloBHXTgMeAjwSBUAYRTSWNVIXtKXykUpgQctM+ybq4UvY=
-=lD6w
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlnocoUACgkQzL64meEa
+mQarzhAA2OqfjvXqtNKGGCG0piflCXtYv9dZEjQGHBzU910V7FGp/nCilqt3/Vh0
+bZpFcw4v8MANM7gm1v58Nb15hSzvvvIkeuhPOkDxAR7QcVoc6AUjkZC5W7CaE3di
+djeCfef8xK5+1neygRZ3m+vZbUYE2GzW9C0kvtHJPgCotxfN4RoYXYgkdgmwhca0
+YXqZn3U2eN1/OOzMiu+fvXFbU96YU2kXYJILuaxuymYUWwheJyFQWg6C5mJ33X4Q
+TfS7itZFXzciDoCbWJG3Kzl2K5/vVtdYHvp3UXLN2l9dohdTAsw2sQ/Q1dofRTqU
+6MfqNL/6t7p9e7XUiyjbyJr4SPVQlazdE1ookJ7ily35+LVsIHE4J275kKan7USu
+dF9SMxzIq1qkIlBFOODXUSMhezt8vXhM6hCEs7SD34jBDhl6dDjElBKc7/faq1Yz
+C0XX7U/clEM+jZwU8Jt+IdPeMecSXEGv+I6wtD0fZWDgeXGD+OwjHZOZr40k86iQ
+hNrEfMY4eUHkd9rxV9ws9a62FkJbFggu9lCM5Tpabt7gg+Su90vSyqdiGWnFHF5Q
+tzW3Nv/LnXRsZtuKh3GsPcwE5MNJWx9dxVWzuZB38/6CyBuJa8C/OqzhrtdQUtyU
+r1R4dQ/RS24h1g25T4LP3gUIetRVV3wyeR589C/hHy8p10ABDZ8=
+=PYYY
 -----END PGP SIGNATURE-----
-
---7lMq7vMTJT4tNk0a--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=-=-=--
