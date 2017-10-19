@@ -1,49 +1,45 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
- tegra210_clock_init
-Date: Thu, 19 Oct 2017 11:42:24 -0700
-Message-ID: <20171019184223.GA7415@Asurada-Nvidia>
-References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
- <20171019092919.GA7252@Asurada>
- <20171019094422.GI9005@ulmo>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v7 1/4] reset: Add APIs to manage array of resets
+Date: Thu, 19 Oct 2017 11:54:00 -0700
+Message-ID: <20171019185400.GZ1165@minitux>
+References: <1500479948-29988-1-git-send-email-p.zabel@pengutronix.de>
+ <1500479948-29988-2-git-send-email-p.zabel@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171019094422.GI9005@ulmo>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: sboyd@codeaurora.org, pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, jonathanh@nvidia.com, mturquette@baylibre.com, pgaikwad@nvidia.com
+In-Reply-To: <1500479948-29988-2-git-send-email-p.zabel@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 19, 2017 at 11:44:22AM +0200, Thierry Reding wrote:
-> > > Below is the call trace of tegra210_init_pllu() function:
-> > >   start_kernel()
-> > >   -> time_init()
-> > >   --> of_clk_init()
-> > >   ---> tegra210_clock_init()
-> > >   ----> tegra210_pll_init()
-> > >   -----> tegra210_init_pllu()
+On Wed 19 Jul 08:59 PDT 2017, Philipp Zabel wrote:
 
-> I'm wondering why we're not seeing a splat for this. Usually the kernel
-> will warn if you sleep during atomic context. Does this mean we're just
-> not hitting that case?
+> From: Vivek Gautam <vivek.gautam@codeaurora.org>
+> 
+> Many devices may want to request a bunch of resets and control them. So
+> it's better to manage them as an array. Add APIs to _get() an array of
+> reset_control, reusing the _assert(), _deassert(), and _reset() APIs for
+> single reset controls. Since reset controls already may control multiple
+> reset lines with a single hardware bit, from the user perspective, reset
+> control arrays are not at all different from single reset controls.
+> Note that these APIs don't guarantee that the reset lines managed in the
+> array are handled in any particular order.
+> 
+> Cc: Felipe Balbi <balbi@kernel.org>
+> Cc: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> [p.zabel@pengutronix.de: changed API to hide reset control arrays behind
+>  struct reset_control]
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Yes.
+This looks more or less identical to how regulators and clocks already
+deals with resources in bulk; see regulator_bulk_data and clk_bulk_data
+and their associated functions.
 
-> readx_poll_timeout() has a might_sleep_if(), and
-> therefore it should always cause the splat.
+I would really like to see that you follow this model, to make it easier
+for developers to work with and use the various subsystems.
 
-That's true as long as CONFIG_DEBUG_ATOMIC_SLEEP is enabled locally.
-
-> Any ideas why this has gone unnoticed for all this time?
-
-We can see in the tegra210_init_pllu() function that it'll not call
-tegra210_enable_pllu() if pllu is already enabled (by bootloader).
-
-You can verify it by adding an irqs_disabled() in this routine. The
-function is called during system-boot and suspend-n-resume. And both
-cases should be irqs_disabled().
-
-Thanks
-Nicolin
+Regards,
+Bjorn
