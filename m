@@ -1,36 +1,73 @@
-From: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
- tegra210_clock_init
-Date: Thu, 19 Oct 2017 02:29:20 -0700
-Message-ID: <20171019092919.GA7252@Asurada>
-References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCHv4 0/4] tegra-cec: add Tegra HDMI CEC support
+Date: Thu, 19 Oct 2017 11:36:14 +0200
+Message-ID: <0f43276f-0a89-8caa-6522-253458e3ad08@xs4all.nl>
+References: <20170911122952.33980-1-hverkuil@xs4all.nl>
+ <20171019092054.GC9005@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1505502613-11801-1-git-send-email-nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20171019092054.GC9005@ulmo>
+Content-Language: en-US
+Sender: linux-media-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 15, 2017 at 12:10:13PM -0700, Nicolin Chen wrote:
-> Below is the call trace of tegra210_init_pllu() function:
->   start_kernel()
->   -> time_init()
->   --> of_clk_init()
->   ---> tegra210_clock_init()
->   ----> tegra210_pll_init()
->   -----> tegra210_init_pllu()
+On 10/19/17 11:20, Thierry Reding wrote:
+> On Mon, Sep 11, 2017 at 02:29:48PM +0200, Hans Verkuil wrote:
+>> From: Hans Verkuil <hans.verkuil@cisco.com>
+>>
+>> This patch series adds support for the Tegra CEC functionality.
+>>
+>> This v4 has been rebased to the latest 4.14 pre-rc1 mainline.
+>>
+>> Please review! Other than for the bindings that are now Acked I have not
+>> received any feedback.
+>>
+>> The first patch documents the CEC bindings, the second adds support
+>> for this to tegra124.dtsi and enables it for the Jetson TK1.
+>>
+>> The third patch adds the CEC driver itself and the final patch adds
+>> the cec notifier support to the drm/tegra driver in order to notify
+>> the CEC driver whenever the physical address changes.
+>>
+>> I expect that the dts changes apply as well to the Tegra X1/X2 and possibly
+>> other Tegra SoCs, but I can only test this with my Jetson TK1 board.
+>>
+>> The dt-bindings and the tegra-cec driver would go in through the media
+>> subsystem, the drm/tegra part through the drm subsystem and the dts
+>> changes through (I guess) the linux-tegra developers. Luckily they are
+>> all independent of one another.
+>>
+>> To test this you need the CEC utilities from git://linuxtv.org/v4l-utils.git.
+>>
+>> To build this:
+>>
+>> git clone git://linuxtv.org/v4l-utils.git
+>> cd v4l-utils
+>> ./bootstrap.sh; ./configure
+>> make
+>> sudo make install # optional, you really only need utils/cec*
+>>
+>> To test:
+>>
+>> cec-ctl --playback # configure as playback device
+>> cec-ctl -S # detect all connected CEC devices
 > 
-> Because the preemption is disabled in the start_kernel before calling
-> time_init, tegra210_init_pllu is actually in an atomic context while
-> it includes a readl_relaxed_poll_timeout that might sleep.
-> 
-> So this patch just changes this readl_relaxed_poll_timeout() to its
-> atomic version.
-> 
-> Signed-off-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> I finally got around to test this. Unfortunately I wasn't able to
+> properly show connected CEC devices, but I think that may just be
+> because the monitor I was testing against doesn't support CEC. I
+> will have to check against a different device eventually to check
+> that it properly enumerates, though I suspect you've already done
+> quite extensive testing yourself.
 
-Thierry, can you also take a look at this one? I sent a month ago. Thanks.
+Yes, you need a TV with CEC. Most (all?) PC monitors do not support this.
+I never understood why not.
+
+So just to confirm: you've merged this driver for 4.15?
+
+Regards,
+
+	Hans
