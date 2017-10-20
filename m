@@ -1,65 +1,69 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v4.15-rc1
-Date: Fri, 20 Oct 2017 17:00:29 +0100
-Message-ID: <6f5cfeeb-cdff-b390-4c09-77e460a9f793@nvidia.com>
-References: <20171020121412.10527-1-thierry.reding@gmail.com>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Date: Fri, 20 Oct 2017 11:24:07 -0700
+Message-ID: <20171020182406.GA12980@Asurada-Nvidia>
+References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+ <20171019092919.GA7252@Asurada>
+ <20171019094422.GI9005@ulmo>
+ <20171019184223.GA7415@Asurada-Nvidia>
+ <731a934a-4e78-b96d-239f-14cf83079605@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171020121412.10527-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <731a934a-4e78-b96d-239f-14cf83079605@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, sboyd@codeaurora.org, pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, pgaikwad@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry,
+On Fri, Oct 20, 2017 at 11:20:24AM +0100, Jon Hunter wrote:
+> 
+> On 19/10/17 19:42, Nicolin Chen wrote:
+> > On Thu, Oct 19, 2017 at 11:44:22AM +0200, Thierry Reding wrote:
+> >>>> Below is the call trace of tegra210_init_pllu() function:
+> >>>>   start_kernel()
+> >>>>   -> time_init()
+> >>>>   --> of_clk_init()
+> >>>>   ---> tegra210_clock_init()
+> >>>>   ----> tegra210_pll_init()
+> >>>>   -----> tegra210_init_pllu()
+> > 
+> >> I'm wondering why we're not seeing a splat for this. Usually the kernel
+> >> will warn if you sleep during atomic context. Does this mean we're just
+> >> not hitting that case?
+> > 
+> > Yes.
+> > 
+> >> readx_poll_timeout() has a might_sleep_if(), and
+> >> therefore it should always cause the splat.
+> > 
+> > That's true as long as CONFIG_DEBUG_ATOMIC_SLEEP is enabled locally.
+> > 
+> >> Any ideas why this has gone unnoticed for all this time?
+> > 
+> > We can see in the tegra210_init_pllu() function that it'll not call
+> > tegra210_enable_pllu() if pllu is already enabled (by bootloader).
+> 
+> I was thinking that same and so I clobbered the PLLU enable bit with
+> u-boot, however, then the kernel appears to hang on boot when enabling
+> the PLL. So although this is probably a separate issue, I am curious if
+> you have booted the mainline with the PLLU disabled?
 
-On 20/10/17 13:14, Thierry Reding wrote:
-> Hi Michael, Stephen,
-> 
-> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
-> 
->   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-clk
-> 
-> for you to fetch changes up to e4e2519df9928ae923205759176599969f344cd4:
-> 
->   clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init() (2017-10-20 13:37:45 +0200)
-> 
-> Note that this pulls in parts from two other tags that are going to go
-> in via the ARM SoC tree. Those are needed to a couple of resolve build
-> dependencies.
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> clk: tegra: Changes for v4.15-rc1
-> 
-> This contains cleanups and minor fixes for the Tegra clock driver.
-> 
-> ----------------------------------------------------------------
-> Bhumika Goyal (1):
->       clk: tegra: Make tegra_clk_pll_params __ro_after_init
-> 
-> Dmitry Osipenko (4):
->       clk: tegra: Add AHB DMA clock entry
->       clk: tegra: Correct parent of the APBDMA clock
+I am not sure if clearing the enable bit only would work. But the test
+below should be able to verify the situation -- setting the PLLU_BASE
+register to its reset value.
 
-I noticed that -next is not currently booting on most Tegra boards and
-it appears that the above commit has exposed a problem where pclk can
-get turned off incorrectly. I have discussed with Peter and he has
-identified a simple fix. I have ran out of time today, but can send a
-patch on Monday. Can we sort this out next week and re-send this pull
-request?
-
-Cheers
-Jon
-
--- 
-nvpublic
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index ea695c4..2279373 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2602,6 +2602,7 @@ static int tegra210_init_pllu(void)
+ 	u32 reg;
+ 	int err;
+ 
++	writel_relaxed(0x1011902, clk_base + PLLU_BASE);
+	tegra210_pllu_set_defaults(&pll_u_vco_params);
+	/* skip initialization when pllu is in hw controlled mode */
+	reg = readl_relaxed(clk_base + PLLU_BASE);
