@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 6/7] arm64: tegra: Device tree changes for v4.15-rc1
-Date: Fri, 20 Oct 2017 13:56:02 +0200
-Message-ID: <20171020115603.9828-6-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/7] thermal: tegra: Changes for v4.15-rc1
+Date: Fri, 20 Oct 2017 13:56:00 +0200
+Message-ID: <20171020115603.9828-4-thierry.reding@gmail.com>
 References: <20171020115603.9828-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20171020115603.9828-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -18,44 +18,49 @@ The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-arm64-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-thermal
 
-for you to fetch changes up to 15274c232131569b9010634a3f4f129c80c027a3:
+for you to fetch changes up to 7afebede62bed77ebae34fc64406984949d2a127:
 
-  arm64: tegra: Add BPMP thermal sensor to Tegra186 (2017-10-19 16:35:50 +0200)
+  thermal: Add Tegra BPMP thermal sensor driver (2017-10-19 16:31:47 +0200)
 
-This pulls in a part of the tegra-for-4.15-dt-bindings tag in order to
-resolve a build time dependency.
+This pulls in parts of both the tegra-for-4.15-dt-bindings and
+tegra-for-4.15-firmware tags in order to resolve a build time
+dependency.
 
-Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Device tree changes for v4.15-rc1
+thermal: tegra: Changes for v4.15-rc1
 
-Enables host1x, VIC, PCIe and the BPMP thermal sensor on Tegra186.
+This contains the Tegra186 BPMP thermal driver. It is used to monitor
+and access several thermal sensors found in the SoC.
 
 ----------------------------------------------------------------
-Manikanta Maddireddy (2):
-      arm64: tegra: Add PCIe node for Tegra186
-      arm64: tegra: Enable PCIe on Jetson TX2
-
-Mikko Perttunen (5):
+Mikko Perttunen (4):
       dt-bindings: Add bindings for nvidia,tegra186-bpmp-thermal
-      arm64: tegra: Add #power-domain-cells for BPMP
-      arm64: tegra: Add host1x on Tegra186
-      arm64: tegra: Add VIC on Tegra186
-      arm64: tegra: Add BPMP thermal sensor to Tegra186
+      firmware: tegra: Expose tegra_bpmp_mrq_return()
+      firmware: tegra: Add stubs when BPMP not enabled
+      thermal: Add Tegra BPMP thermal sensor driver
 
-Thierry Reding (2):
+Thierry Reding (3):
       dt-bindings: clock: tegra: Add sor1_out clock
-      Merge branch 'for-4.15/dt-bindings' into for-4.15/arm64/dt
+      Merge branch 'for-4.15/dt-bindings' into for-4.15/thermal
+      Merge branch 'for-4.15/firmware' into for-4.15/thermal
+
+Timo Alho (1):
+      firmware: tegra: Propagate error code to caller
 
  .../thermal/nvidia,tegra186-bpmp-thermal.txt       |  32 +++
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  24 +++
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 214 +++++++++++++++++++++
+ drivers/firmware/tegra/bpmp.c                      |  27 ++-
+ drivers/thermal/Makefile                           |   2 +-
+ drivers/thermal/tegra/Kconfig                      |   7 +
+ drivers/thermal/tegra/Makefile                     |   3 +-
+ drivers/thermal/tegra/tegra-bpmp-thermal.c         | 263 +++++++++++++++++++++
  include/dt-bindings/clock/tegra210-car.h           |   1 +
  .../dt-bindings/thermal/tegra186-bpmp-thermal.h    |  14 ++
- 5 files changed, 285 insertions(+)
+ include/soc/tegra/bpmp.h                           |  45 +++-
+ 9 files changed, 381 insertions(+), 13 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
+ create mode 100644 drivers/thermal/tegra/tegra-bpmp-thermal.c
  create mode 100644 include/dt-bindings/thermal/tegra186-bpmp-thermal.h
