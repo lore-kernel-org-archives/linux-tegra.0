@@ -1,57 +1,68 @@
-From: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: xhci: tegra: use time64_t for printing timestamp
-Date: Fri, 20 Oct 2017 13:37:18 +0300
-Message-ID: <59E9D1DE.9070407@intel.com>
-References: <20171020072006.4174886-1-arnd@arndb.de>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 2/2] soc/tegra: fuse: Explicitly request DMA channel
+ from APB DMA driver
+Date: Fri, 20 Oct 2017 12:00:12 +0100
+Message-ID: <b9c4b601-e402-faef-61cc-45a7dfe7f8df@nvidia.com>
+References: <cover.1508450681.git.digetx@gmail.com>
+ <059ca713c7416aedeb0080ab4b8a49da430a30b9.1508450681.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171020072006.4174886-1-arnd-r2nGTMty4D4@public.gmane.org>
+In-Reply-To: <059ca713c7416aedeb0080ab4b8a49da430a30b9.1508450681.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.10.2017 10:19, Arnd Bergmann wrote:
-> The time_t type and time_to_tm() function are deprecated because
-> of y2038 problems. In this driver, they are used to pretty-print
-> the timestamp of the firmware build. This is fine as long as
-> we don't get a firmware build past 2038.
->
-> Converting to time64_t and time64_to_tm() avoids the deprecated
-> interfaces and works until 2106, when the firmware-defined
-> data structure overflows.
->
-> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+
+On 19/10/17 23:08, Dmitry Osipenko wrote:
+> Currently fuse driver requests DMA channel from an arbitrary DMA device,
+> it is not a problem since there is only one DMA provider for Tegra20 yet,
+> but it may become troublesome if another provider will appear.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->   drivers/usb/host/xhci-tegra.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 74436f8ca538..39b6e93130d3 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -771,7 +771,7 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
->   	struct device *dev = tegra->dev;
->   	const struct firmware *fw;
->   	unsigned long timeout;
-> -	time_t timestamp;
-> +	time64_t timestamp;
->   	struct tm time;
->   	u64 address;
->   	u32 value;
-> @@ -877,7 +877,7 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
->   	}
->
->   	timestamp = le32_to_cpu(header->fwimg_created_time);
-> -	time_to_tm(timestamp, 0, &time);
-> +	time64_to_tm(timestamp, 0, &time);
->
->   	dev_info(dev, "Firmware timestamp: %ld-%02d-%02d %02d:%02d:%02d UTC\n",
->   		 time.tm_year + 1900, time.tm_mon + 1, time.tm_mday,
->
+>  drivers/soc/tegra/fuse/fuse-tegra20.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
+> index 27e9ac7d3165..49ff017f3ded 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra20.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
+> @@ -96,6 +96,13 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
+>  	return value;
+>  }
+>  
+> +static bool dma_filter(struct dma_chan *chan, void *filter_param)
+> +{
+> +	struct device_node *np = chan->device->dev->of_node;
+> +
+> +	return of_device_is_compatible(np, "nvidia,tegra20-apbdma");
+> +}
+> +
+>  static int tegra20_fuse_probe(struct tegra_fuse *fuse)
+>  {
+>  	dma_cap_mask_t mask;
+> @@ -103,7 +110,7 @@ static int tegra20_fuse_probe(struct tegra_fuse *fuse)
+>  	dma_cap_zero(mask);
+>  	dma_cap_set(DMA_SLAVE, mask);
+>  
+> -	fuse->apbdma.chan = dma_request_channel(mask, NULL, NULL);
+> +	fuse->apbdma.chan = __dma_request_channel(&mask, dma_filter, NULL);
+>  	if (!fuse->apbdma.chan)
+>  		return -EPROBE_DEFER;
+>  
 
-Thanks, adding to queue
+Thanks!
 
--Mathias
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Thierry, these are ready for queuing.
+
+Cheers
+Jon
+
+-- 
+nvpublic
