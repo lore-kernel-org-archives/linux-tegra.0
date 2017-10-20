@@ -1,48 +1,58 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] reset: tegra: Changes for v4.15-rc1
-Date: Fri, 20 Oct 2017 14:17:01 +0200
-Message-ID: <20171020121701.10873-1-thierry.reding@gmail.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v7 1/4] reset: Add APIs to manage array of resets
+Date: Fri, 20 Oct 2017 14:20:22 +0200
+Message-ID: <1508502022.7455.6.camel@pengutronix.de>
+References: <1500479948-29988-1-git-send-email-p.zabel@pengutronix.de>
+         <1500479948-29988-2-git-send-email-p.zabel@pengutronix.de>
+         <20171019185400.GZ1165@minitux>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171019185400.GZ1165@minitux>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Philipp,
+Hi,
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+On Thu, 2017-10-19 at 11:54 -0700, Bjorn Andersson wrote:
+> On Wed 19 Jul 08:59 PDT 2017, Philipp Zabel wrote:
+> 
+> > From: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > 
+> > Many devices may want to request a bunch of resets and control them. So
+> > it's better to manage them as an array. Add APIs to _get() an array of
+> > reset_control, reusing the _assert(), _deassert(), and _reset() APIs for
+> > single reset controls. Since reset controls already may control multiple
+> > reset lines with a single hardware bit, from the user perspective, reset
+> > control arrays are not at all different from single reset controls.
+> > Note that these APIs don't guarantee that the reset lines managed in the
+> > array are handled in any particular order.
+> > 
+> > Cc: Felipe Balbi <balbi@kernel.org>
+> > Cc: Jon Hunter <jonathanh@nvidia.com>
+> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > [p.zabel@pengutronix.de: changed API to hide reset control arrays behind
+> >  struct reset_control]
+> > Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
+> This looks more or less identical to how regulators and clocks already
+> deals with resources in bulk; see regulator_bulk_data and clk_bulk_data
+> and their associated functions.
+> 
+> I would really like to see that you follow this model, to make it easier
+> for developers to work with and use the various subsystems.
 
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+These APIs have two undesirable (in this case) properties; the driver
+has to know the number of resets and their identifiers in advance, and
+singular resets and bulk reset arrays can't be used interchangeably.
+Both are not well suited to this use case, which is "triggering one or
+any number of anonymous resets together".
 
-are available in the git repository at:
+I have nothing against adding a bulk API as well. There are already
+users such as the pcie-qcom driver that could profit from it.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-reset
-
-for you to fetch changes up to cfbf86684733d4501230ff4efdeb3225599df78b:
-
-  reset: tegra: Check BPMP response return code (2017-10-19 16:40:54 +0200)
-
-Note that this pulls in part of the tegra-for-4.15-firmware tag that is
-going in via the ARM SoC tree. This is needed to resolve a build time
-dependency as discussed earlier on the mailing list.
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-reset: tegra: Changes for v4.15-rc1
-
-Contains a fix to properly handle errors propagated by the BPMP.
-
-----------------------------------------------------------------
-Thierry Reding (1):
-      Merge branch 'for-4.15/firmware' into for-4.15/reset
-
-Timo Alho (2):
-      firmware: tegra: Propagate error code to caller
-      reset: tegra: Check BPMP response return code
-
- drivers/firmware/tegra/bpmp.c    | 22 ++++++++++++++++------
- drivers/reset/tegra/reset-bpmp.c |  9 ++++++++-
- include/soc/tegra/bpmp.h         |  1 +
- 3 files changed, 25 insertions(+), 7 deletions(-)
+regards
+Philipp
