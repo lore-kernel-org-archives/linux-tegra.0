@@ -1,68 +1,75 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] soc/tegra: fuse: Explicitly request DMA channel
- from APB DMA driver
-Date: Fri, 20 Oct 2017 12:00:12 +0100
-Message-ID: <b9c4b601-e402-faef-61cc-45a7dfe7f8df@nvidia.com>
-References: <cover.1508450681.git.digetx@gmail.com>
- <059ca713c7416aedeb0080ab4b8a49da430a30b9.1508450681.git.digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Date: Fri, 20 Oct 2017 13:38:57 +0200
+Message-ID: <20171020113857.GA8628@ulmo>
+References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <059ca713c7416aedeb0080ab4b8a49da430a30b9.1508450681.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1505502613-11801-1-git-send-email-nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 19/10/17 23:08, Dmitry Osipenko wrote:
-> Currently fuse driver requests DMA channel from an arbitrary DMA device,
-> it is not a problem since there is only one DMA provider for Tegra20 yet,
-> but it may become troublesome if another provider will appear.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+--YiEDa0DAkWCtVeE4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Sep 15, 2017 at 12:10:13PM -0700, Nicolin Chen wrote:
+> Below is the call trace of tegra210_init_pllu() function:
+>   start_kernel()
+>   -> time_init()
+>   --> of_clk_init()
+>   ---> tegra210_clock_init()
+>   ----> tegra210_pll_init()
+>   -----> tegra210_init_pllu()
+>=20
+> Because the preemption is disabled in the start_kernel before calling
+> time_init, tegra210_init_pllu is actually in an atomic context while
+> it includes a readl_relaxed_poll_timeout that might sleep.
+>=20
+> So this patch just changes this readl_relaxed_poll_timeout() to its
+> atomic version.
+>=20
+> Signed-off-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/soc/tegra/fuse/fuse-tegra20.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
-> index 27e9ac7d3165..49ff017f3ded 100644
-> --- a/drivers/soc/tegra/fuse/fuse-tegra20.c
-> +++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
-> @@ -96,6 +96,13 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
->  	return value;
->  }
->  
-> +static bool dma_filter(struct dma_chan *chan, void *filter_param)
-> +{
-> +	struct device_node *np = chan->device->dev->of_node;
-> +
-> +	return of_device_is_compatible(np, "nvidia,tegra20-apbdma");
-> +}
-> +
->  static int tegra20_fuse_probe(struct tegra_fuse *fuse)
->  {
->  	dma_cap_mask_t mask;
-> @@ -103,7 +110,7 @@ static int tegra20_fuse_probe(struct tegra_fuse *fuse)
->  	dma_cap_zero(mask);
->  	dma_cap_set(DMA_SLAVE, mask);
->  
-> -	fuse->apbdma.chan = dma_request_channel(mask, NULL, NULL);
-> +	fuse->apbdma.chan = __dma_request_channel(&mask, dma_filter, NULL);
->  	if (!fuse->apbdma.chan)
->  		return -EPROBE_DEFER;
->  
+> Changelog
+> v2:
+>  * Corrected a typo in the commit log
+>  * Added Peter's Acked-by.
+>=20
+>  drivers/clk/tegra/clk-tegra210.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks!
+Applied, thanks.
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Thierry
 
-Thierry, these are ready for queuing.
+--YiEDa0DAkWCtVeE4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers
-Jon
+-----BEGIN PGP SIGNATURE-----
 
--- 
-nvpublic
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnp4E4ACgkQ3SOs138+
+s6EAUA//Uf5PEt/fopIegHAJu7He2iVriXbOacqocWsCA+a5ej9QddUNEG2emQ1L
+OYt3lRh7mOgtnWzLBejnUmbsM5lFfCvMxBvQrbMGdY17iSZ9yg8YDDG/DCxJd9xL
+5jVK1OdG6G/OG9Mv/VUAWysLPs4ugyQrezEp1yH8YCI9eDx+ucdpAIhzylILFk7R
+EN6TVjS76r3tVeYRhM45Q3ykGCnqG6BxsTGecDGX3Y5d6xMFfHbUkBosaDLgT+E5
+qxnXNCZ6eVqBFBFS5JFCSWGg5r1MKHPuy2KGIXpA/MSrHyUKmhQAulY55qXHNOZ/
+sV9z2ZwpB+vpQb6/3d4GyUMAxNTBDO6Z11jVLtUqwPoeREutY87ri701OYuO4p+7
+4/8XtOl08ZTmivJDHX7a4BQgIob4lIYN+hfz9LSL8WhXiO8rlf3ZzZhHfG31U1Ll
+DwDl2Z0Vf8Px05gYOVlIt2+s9udhxpU3duvUYRFkTOJ6J0MDVbqu8Exw/zUNUgFz
+Mws/1K25MtSMMqwWxbTZF+32fVD8iLTFicQPfhiJY7s0cCD9uxoJrs5TIcXZUZCz
+zVCl41KBUNHn4ioUbNxO5t3A+Gy6IpTr3/6sTNCmXr49ZLm6b2BvO5y4ceiXyCqx
+57D71fp49mDKfYHbwNQVo+Dq1n8I+geAOGuLVv3QodC09zgn74k=
+=8n1M
+-----END PGP SIGNATURE-----
+
+--YiEDa0DAkWCtVeE4--
