@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 5/7] ARM: tegra: Device tree changes for v4.15-rc1
-Date: Fri, 20 Oct 2017 13:56:01 +0200
-Message-ID: <20171020115603.9828-5-thierry.reding@gmail.com>
+Subject: [GIT PULL 6/7] arm64: tegra: Device tree changes for v4.15-rc1
+Date: Fri, 20 Oct 2017 13:56:02 +0200
+Message-ID: <20171020115603.9828-6-thierry.reding@gmail.com>
 References: <20171020115603.9828-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20171020115603.9828-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -18,26 +18,44 @@ The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-arm64-dt
 
-for you to fetch changes up to 33dfb1e18d534c4b7509de2a68ef1baf83d9710f:
+for you to fetch changes up to 15274c232131569b9010634a3f4f129c80c027a3:
 
-  ARM: tegra: Enable CEC support on Jetson TK1 (2017-10-19 11:45:14 +0200)
+  arm64: tegra: Add BPMP thermal sensor to Tegra186 (2017-10-19 16:35:50 +0200)
+
+This pulls in a part of the tegra-for-4.15-dt-bindings tag in order to
+resolve a build time dependency.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v4.15-rc1
+arm64: tegra: Device tree changes for v4.15-rc1
 
-Adds support for the CEC controller found on Tegra124 and enables it on
-Tegra K1.
+Enables host1x, VIC, PCIe and the BPMP thermal sensor on Tegra186.
 
 ----------------------------------------------------------------
-Hans Verkuil (2):
-      ARM: tegra: Add CEC support for Tegra124
-      ARM: tegra: Enable CEC support on Jetson TK1
+Manikanta Maddireddy (2):
+      arm64: tegra: Add PCIe node for Tegra186
+      arm64: tegra: Enable PCIe on Jetson TX2
 
- arch/arm/boot/dts/tegra124-jetson-tk1.dts |  4 ++++
- arch/arm/boot/dts/tegra124.dtsi           | 12 +++++++++++-
- 2 files changed, 15 insertions(+), 1 deletion(-)
+Mikko Perttunen (5):
+      dt-bindings: Add bindings for nvidia,tegra186-bpmp-thermal
+      arm64: tegra: Add #power-domain-cells for BPMP
+      arm64: tegra: Add host1x on Tegra186
+      arm64: tegra: Add VIC on Tegra186
+      arm64: tegra: Add BPMP thermal sensor to Tegra186
+
+Thierry Reding (2):
+      dt-bindings: clock: tegra: Add sor1_out clock
+      Merge branch 'for-4.15/dt-bindings' into for-4.15/arm64/dt
+
+ .../thermal/nvidia,tegra186-bpmp-thermal.txt       |  32 +++
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  24 +++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 214 +++++++++++++++++++++
+ include/dt-bindings/clock/tegra210-car.h           |   1 +
+ .../dt-bindings/thermal/tegra186-bpmp-thermal.h    |  14 ++
+ 5 files changed, 285 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
+ create mode 100644 include/dt-bindings/thermal/tegra186-bpmp-thermal.h
