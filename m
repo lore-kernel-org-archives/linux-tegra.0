@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 1/7] dt-bindings: Updates for v4.15-rc1
-Date: Fri, 20 Oct 2017 13:55:57 +0200
-Message-ID: <20171020115603.9828-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/7] firmware: tegra: Changes for v4.15-rc1
+Date: Fri, 20 Oct 2017 13:55:58 +0200
+Message-ID: <20171020115603.9828-2-thierry.reding@gmail.com>
+References: <20171020115603.9828-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171020115603.9828-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
@@ -16,34 +18,33 @@ The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-firmware
 
-for you to fetch changes up to 3e09b155d58e44e33a699650128f8c6c833cb320:
+for you to fetch changes up to f2381f652266fabfb7a8f5c4b2a05de36cad3a73:
 
-  dt-bindings: Add bindings for nvidia,tegra186-bpmp-thermal (2017-10-19 16:26:22 +0200)
+  firmware: tegra: Add BPMP debugfs support (2017-10-19 16:27:56 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Updates for v4.15-rc1
+firmware: tegra: Changes for v4.15-rc1
 
-This contains the addition of a clock alias which will be used to fix
-the implementation of the SOR1 clock.
-
-Also included are the bindings for the Tegra186 BPMP thermal driver, a
-prerequisite for both the driver and device tree changes.
+This contains a couple of (non-critical) fixes and improvements for the
+BPMP driver as well as support for debugfs.
 
 ----------------------------------------------------------------
-Mikko Perttunen (1):
-      dt-bindings: Add bindings for nvidia,tegra186-bpmp-thermal
+Mikko Perttunen (2):
+      firmware: tegra: Expose tegra_bpmp_mrq_return()
+      firmware: tegra: Add stubs when BPMP not enabled
 
-Thierry Reding (1):
-      dt-bindings: clock: tegra: Add sor1_out clock
+Timo Alho (2):
+      firmware: tegra: Propagate error code to caller
+      firmware: tegra: Add BPMP debugfs support
 
- .../thermal/nvidia,tegra186-bpmp-thermal.txt       | 32 ++++++++++++++++++++++
- include/dt-bindings/clock/tegra210-car.h           |  1 +
- .../dt-bindings/thermal/tegra186-bpmp-thermal.h    | 14 ++++++++++
- 3 files changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
- create mode 100644 include/dt-bindings/thermal/tegra186-bpmp-thermal.h
+ drivers/firmware/tegra/Makefile       |   4 +-
+ drivers/firmware/tegra/bpmp-debugfs.c | 444 ++++++++++++++++++++++++++++++++++
+ drivers/firmware/tegra/bpmp.c         |  31 ++-
+ include/soc/tegra/bpmp.h              |  59 ++++-
+ 4 files changed, 526 insertions(+), 12 deletions(-)
+ create mode 100644 drivers/firmware/tegra/bpmp-debugfs.c
