@@ -1,110 +1,48 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCH] tegra-cec: fix messy probe() cleanup
-Date: Sat, 21 Oct 2017 10:37:49 +0200
-Message-ID: <001c8577-b77c-6a98-1efa-dc4902940873@xs4all.nl>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 2/4] clk: tegra: check BPMP response return code
+Date: Sat, 21 Oct 2017 07:10:38 -0700
+Message-ID: <20171021141038.GB15990@codeaurora.org>
+References: <cover.1504776489.git.talho@nvidia.com>
+ <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
+ <20171017103736.GA30589@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Linux Media Mailing List <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171017103736.GA30589@ulmo>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Timo Alho <talho@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The probe() cleanup code ('goto foo_error') was very messy. It appears
-that this code wasn't updated when I switched to the devm_ functions
-in an earlier version.
+On 10/17, Thierry Reding wrote:
+> On Thu, Sep 07, 2017 at 12:31:02PM +0300, Timo Alho wrote:
+> > Check return code in BPMP response message(s). The typical error case
+> > is when clock operation is attempted with invalid clock identifier.
+> > 
+> > Also remove error print from call to clk_get_info() as the
+> > implementation loops through range of all possible identifier, but the
+> > operation is expected error out when the clock id is unused.
+> > 
+> > Signed-off-by: Timo Alho <talho@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk-bpmp.c | 15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> Hi Mike, Stephen,
+> 
+> do you mind if I pick this up into the Tegra tree? It has a build
+> dependency on patch 1/4.
+> 
+> I only now realized that you guys weren't on Cc, hence quoting in
+> full.
+> 
 
-Update the code to use 'return error' where it can and do proper cleanup
-where it needs to.
+No worries
 
-Note that the original code wasn't buggy, it was just messy.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
----
-Since I already posted the pull request for this driver and since this is
-just a cleanup I decided to do this as a separate patch on top of the pull
-request code rather than merging this in the pull request.
----
- drivers/media/platform/tegra-cec/tegra_cec.c | 26 ++++++++++----------------
- 1 file changed, 10 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/media/platform/tegra-cec/tegra_cec.c b/drivers/media/platform/tegra-cec/tegra_cec.c
-index b53743f555e8..807c94c70049 100644
---- a/drivers/media/platform/tegra-cec/tegra_cec.c
-+++ b/drivers/media/platform/tegra-cec/tegra_cec.c
-@@ -356,40 +356,34 @@ static int tegra_cec_probe(struct platform_device *pdev)
- 	if (!res) {
- 		dev_err(&pdev->dev,
- 			"Unable to allocate resources for device\n");
--		ret = -EBUSY;
--		goto cec_error;
-+		return -EBUSY;
- 	}
-
- 	if (!devm_request_mem_region(&pdev->dev, res->start, resource_size(res),
- 		pdev->name)) {
- 		dev_err(&pdev->dev,
- 			"Unable to request mem region for device\n");
--		ret = -EBUSY;
--		goto cec_error;
-+		return -EBUSY;
- 	}
-
- 	cec->tegra_cec_irq = platform_get_irq(pdev, 0);
-
--	if (cec->tegra_cec_irq <= 0) {
--		ret = -EBUSY;
--		goto cec_error;
--	}
-+	if (cec->tegra_cec_irq <= 0)
-+		return -EBUSY;
-
- 	cec->cec_base = devm_ioremap_nocache(&pdev->dev, res->start,
--		resource_size(res));
-+					     resource_size(res));
-
- 	if (!cec->cec_base) {
- 		dev_err(&pdev->dev, "Unable to grab IOs for device\n");
--		ret = -EBUSY;
--		goto cec_error;
-+		return -EBUSY;
- 	}
-
- 	cec->clk = devm_clk_get(&pdev->dev, "cec");
-
- 	if (IS_ERR_OR_NULL(cec->clk)) {
- 		dev_err(&pdev->dev, "Can't get clock for CEC\n");
--		ret = -ENOENT;
--		goto clk_error;
-+		return -ENOENT;
- 	}
-
- 	clk_prepare_enable(cec->clk);
-@@ -406,13 +400,13 @@ static int tegra_cec_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev,
- 			"Unable to request interrupt for device\n");
--		goto cec_error;
-+		goto clk_error;
- 	}
-
- 	cec->notifier = cec_notifier_get(&hdmi_dev->dev);
- 	if (!cec->notifier) {
- 		ret = -ENOMEM;
--		goto cec_error;
-+		goto clk_error;
- 	}
-
- 	cec->adap = cec_allocate_adapter(&tegra_cec_ops, cec, TEGRA_CEC_NAME,
-@@ -437,8 +431,8 @@ static int tegra_cec_probe(struct platform_device *pdev)
- 	if (cec->notifier)
- 		cec_notifier_put(cec->notifier);
- 	cec_delete_adapter(cec->adap);
--	clk_disable_unprepare(cec->clk);
- clk_error:
-+	clk_disable_unprepare(cec->clk);
- 	return ret;
- }
 
 -- 
-2.14.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
