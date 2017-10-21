@@ -1,61 +1,110 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v4.15-rc1
-Date: Fri, 20 Oct 2017 22:09:33 +0300
-Message-ID: <8e44a6c1-d632-65f8-6b2d-8a4ef52df6fd@gmail.com>
-References: <20171020121412.10527-1-thierry.reding@gmail.com>
- <6f5cfeeb-cdff-b390-4c09-77e460a9f793@nvidia.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH] tegra-cec: fix messy probe() cleanup
+Date: Sat, 21 Oct 2017 10:37:49 +0200
+Message-ID: <001c8577-b77c-6a98-1efa-dc4902940873@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <6f5cfeeb-cdff-b390-4c09-77e460a9f793@nvidia.com>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Linux Media Mailing List <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.10.2017 19:00, Jon Hunter wrote:
-> Thierry,
-> 
-> On 20/10/17 13:14, Thierry Reding wrote:
->> Hi Michael, Stephen,
->>
->> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
->>
->>   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
->>
->> are available in the git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-clk
->>
->> for you to fetch changes up to e4e2519df9928ae923205759176599969f344cd4:
->>
->>   clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init() (2017-10-20 13:37:45 +0200)
->>
->> Note that this pulls in parts from two other tags that are going to go
->> in via the ARM SoC tree. Those are needed to a couple of resolve build
->> dependencies.
->>
->> Thanks,
->> Thierry
->>
->> ----------------------------------------------------------------
->> clk: tegra: Changes for v4.15-rc1
->>
->> This contains cleanups and minor fixes for the Tegra clock driver.
->>
->> ----------------------------------------------------------------
->> Bhumika Goyal (1):
->>       clk: tegra: Make tegra_clk_pll_params __ro_after_init
->>
->> Dmitry Osipenko (4):
->>       clk: tegra: Add AHB DMA clock entry
->>       clk: tegra: Correct parent of the APBDMA clock
-> 
-> I noticed that -next is not currently booting on most Tegra boards and
-> it appears that the above commit has exposed a problem where pclk can
-> get turned off incorrectly. I have discussed with Peter and he has
-> identified a simple fix.
+The probe() cleanup code ('goto foo_error') was very messy. It appears
+that this code wasn't updated when I switched to the devm_ functions
+in an earlier version.
 
-Good to know that you were able to resolve it quickly!
+Update the code to use 'return error' where it can and do proper cleanup
+where it needs to.
+
+Note that the original code wasn't buggy, it was just messy.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+Since I already posted the pull request for this driver and since this is
+just a cleanup I decided to do this as a separate patch on top of the pull
+request code rather than merging this in the pull request.
+---
+ drivers/media/platform/tegra-cec/tegra_cec.c | 26 ++++++++++----------------
+ 1 file changed, 10 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/media/platform/tegra-cec/tegra_cec.c b/drivers/media/platform/tegra-cec/tegra_cec.c
+index b53743f555e8..807c94c70049 100644
+--- a/drivers/media/platform/tegra-cec/tegra_cec.c
++++ b/drivers/media/platform/tegra-cec/tegra_cec.c
+@@ -356,40 +356,34 @@ static int tegra_cec_probe(struct platform_device *pdev)
+ 	if (!res) {
+ 		dev_err(&pdev->dev,
+ 			"Unable to allocate resources for device\n");
+-		ret = -EBUSY;
+-		goto cec_error;
++		return -EBUSY;
+ 	}
+
+ 	if (!devm_request_mem_region(&pdev->dev, res->start, resource_size(res),
+ 		pdev->name)) {
+ 		dev_err(&pdev->dev,
+ 			"Unable to request mem region for device\n");
+-		ret = -EBUSY;
+-		goto cec_error;
++		return -EBUSY;
+ 	}
+
+ 	cec->tegra_cec_irq = platform_get_irq(pdev, 0);
+
+-	if (cec->tegra_cec_irq <= 0) {
+-		ret = -EBUSY;
+-		goto cec_error;
+-	}
++	if (cec->tegra_cec_irq <= 0)
++		return -EBUSY;
+
+ 	cec->cec_base = devm_ioremap_nocache(&pdev->dev, res->start,
+-		resource_size(res));
++					     resource_size(res));
+
+ 	if (!cec->cec_base) {
+ 		dev_err(&pdev->dev, "Unable to grab IOs for device\n");
+-		ret = -EBUSY;
+-		goto cec_error;
++		return -EBUSY;
+ 	}
+
+ 	cec->clk = devm_clk_get(&pdev->dev, "cec");
+
+ 	if (IS_ERR_OR_NULL(cec->clk)) {
+ 		dev_err(&pdev->dev, "Can't get clock for CEC\n");
+-		ret = -ENOENT;
+-		goto clk_error;
++		return -ENOENT;
+ 	}
+
+ 	clk_prepare_enable(cec->clk);
+@@ -406,13 +400,13 @@ static int tegra_cec_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+ 			"Unable to request interrupt for device\n");
+-		goto cec_error;
++		goto clk_error;
+ 	}
+
+ 	cec->notifier = cec_notifier_get(&hdmi_dev->dev);
+ 	if (!cec->notifier) {
+ 		ret = -ENOMEM;
+-		goto cec_error;
++		goto clk_error;
+ 	}
+
+ 	cec->adap = cec_allocate_adapter(&tegra_cec_ops, cec, TEGRA_CEC_NAME,
+@@ -437,8 +431,8 @@ static int tegra_cec_probe(struct platform_device *pdev)
+ 	if (cec->notifier)
+ 		cec_notifier_put(cec->notifier);
+ 	cec_delete_adapter(cec->adap);
+-	clk_disable_unprepare(cec->clk);
+ clk_error:
++	clk_disable_unprepare(cec->clk);
+ 	return ret;
+ }
+
+-- 
+2.14.1
