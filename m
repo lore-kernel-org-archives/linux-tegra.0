@@ -1,116 +1,46 @@
-From: Philipp Zabel <pza@pengutronix.de>
-Subject: Re: [PATCH v7 4/4] soc/tegra: pmc: Use the new reset APIs to manage
- reset controllers
-Date: Mon, 23 Oct 2017 11:20:58 +0200
-Message-ID: <20171023092058.bdtixzyskncrocwl@pengutronix.de>
-References: <1500479948-29988-1-git-send-email-p.zabel@pengutronix.de>
- <1500479948-29988-5-git-send-email-p.zabel@pengutronix.de>
- <1508426260.7665.24.camel@pengutronix.de>
- <1071671c-9edb-e3b0-a710-843b8644a512@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra: Mark APB clock as critical
+Date: Mon, 23 Oct 2017 12:12:52 +0100
+Message-ID: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1071671c-9edb-e3b0-a710-843b8644a512@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel@pengutronix.de
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 20, 2017 at 04:51:24PM +0100, Jon Hunter wrote:
-> Hi Philipp,
-> 
-> On 19/10/17 16:17, Philipp Zabel wrote:
-> > Hi Jon, Thierry,
-> > 
-> > On Wed, 2017-07-19 at 17:59 +0200, Philipp Zabel wrote:
-> >> From: Vivek Gautam <vivek.gautam@codeaurora.org>
-> >>
-> >> Make use of of_reset_control_array_get_exclusive() to manage
-> >> an array of reset controllers available with the device.
-> >>
-> >> Cc: Jon Hunter <jonathanh@nvidia.com>
-> >> Cc: Thierry Reding <treding@nvidia.com>
-> >> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> >> [p.zabel@pengutronix.de: switch to hidden reset control array]
-> >> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> > 
-> > will you pick this up now that the prerequisite patch 1 is contained in
-> > master?
-> > Please let me know if there are any issues with this patch.
-> > 
-> > regards
-> > Philipp
-> > 
-> >> ---
-> >> No changes since v6.
-> >> ---
-> >>  drivers/soc/tegra/pmc.c | 82 ++++++++++++-------------------------------------
-> >>  1 file changed, 20 insertions(+), 62 deletions(-)
-> >>
-> >> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> >> index e233dd5dcab3d..749b218147a19 100644
-> >> --- a/drivers/soc/tegra/pmc.c
-> >> +++ b/drivers/soc/tegra/pmc.c
-> >> @@ -124,8 +124,7 @@ struct tegra_powergate {
-> >>  	unsigned int id;
-> >>  	struct clk **clks;
-> >>  	unsigned int num_clks;
-> >> -	struct reset_control **resets;
-> >> -	unsigned int num_resets;
-> >> +	struct reset_control *reset;
-> >>  };
-> >>  
-> >>  struct tegra_io_pad_soc {
-> >> @@ -348,32 +347,14 @@ static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
-> >>  	return err;
-> >>  }
-> >>  
-> >> -static int tegra_powergate_reset_assert(struct tegra_powergate *pg)
-> >> +static inline int tegra_powergate_reset_assert(struct tegra_powergate *pg)
-> >>  {
-> >> -	unsigned int i;
-> >> -	int err;
-> >> -
-> >> -	for (i = 0; i < pg->num_resets; i++) {
-> >> -		err = reset_control_assert(pg->resets[i]);
-> >> -		if (err)
-> >> -			return err;
-> >> -	}
-> >> -
-> >> -	return 0;
-> >> +	return reset_control_assert(pg->reset);
-> >>  }
-> >>  
-> >> -static int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
-> >> +static inline int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
-> >>  {
-> >> -	unsigned int i;
-> >> -	int err;
-> >> -
-> >> -	for (i = 0; i < pg->num_resets; i++) {
-> >> -		err = reset_control_deassert(pg->resets[i]);
-> >> -		if (err)
-> >> -			return err;
-> >> -	}
-> >> -
-> >> -	return 0;
-> >> +	return reset_control_deassert(pg->reset);
-> >>  }
-> 
-> Nit-pick ... I think we should just get rid of this inline functions now
-> and just call reset_control_assert/deassert() where these are used.
-> 
-[...]
-> 
-> Otherwise ...
-> 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> 
-> Thierry has just sent out his pull requests for v4.15 so we may have
-> missed this release :-(
+Commit a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
+fixed the parent clock for APBDMA, but the consequence of this that
+after probing the APBDMA device, the APB Clock (or PCLK) is now
+disabled. Disabling the APB clock causes accesses to any other device
+on the APB to hang and prevent Tegra from booting.
 
-Thanks, I'll drop the inline functions and send a new version, then.
+Currently, the APB clock is registered with the flag "CLK_IGNORE_UNUSED"
+to prevent the clock being disabled if unused on boot. However, even
+if it is used, it still needs to be always kept enabled and so update
+the flag for the APB clock to be "CLK_IS_CRITICAL".
 
-regards
-Philipp
+Fixes: a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
+
+Suggested-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra-super-gen4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+index 4f6fd307cb70..10047107c1dc 100644
+--- a/drivers/clk/tegra/clk-tegra-super-gen4.c
++++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+@@ -166,7 +166,7 @@ static void __init tegra_sclk_init(void __iomem *clk_base,
+ 				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
+ 				   &sysrate_lock);
+ 	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
+-				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
++				CLK_IS_CRITICAL, clk_base + SYSTEM_CLK_RATE,
+ 				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
+ 	*dt_clk = clk;
+ }
+-- 
+2.7.4
