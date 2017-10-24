@@ -1,46 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 2/2] drm/tegra: Use an error code directly in
- tegra_output_probe()
-Date: Tue, 24 Oct 2017 19:35:23 +0200
-Message-ID: <b42b5119-55af-88b2-055b-ce5d6a25a8d8@users.sourceforge.net>
-References: <bfac49e0-8948-e62f-1876-567605f1e2c8@users.sourceforge.net>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V3 0/2] Tegra PCIe end point config space map code
+ refactoring
+Date: Tue, 24 Oct 2017 15:15:12 -0500
+Message-ID: <20171024201512.GG21840@bhelgaas-glaptop.roam.corp.google.com>
+References: <1508827489-10842-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <bfac49e0-8948-e62f-1876-567605f1e2c8@users.sourceforge.net>
-Content-Language: en-GB
-Sender: kernel-janitors-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1508827489-10842-1-git-send-email-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 19:21:24 +0200
+On Tue, Oct 24, 2017 at 12:14:47PM +0530, Vidya Sagar wrote:
+> PCIe host controller in Tegra SoCs has 1GB of aperture available
+> for mapping end points config space, IO and BARs. In that, currently
+> 256MB is being reserved for mapping end points configuration space
+> which leaves less memory space available for mapping end points BARs
+> on some of the platforms.
+> This patch series attempts to map only 4K space from 1GB aperture to
+> access end points configuration space.
+> 
+> Currently, this change can benefit T20 and T186 in saving (i.e. repurposed
+> to use for BAR mapping) physical space as well as kernel virtual mapping space,
+> it saves only kernel virtual address space in T30, T124, T132 and T210.
+> 
+> NOTE: Since T186 PCIe DT entry is not yet present in main line (it is currently
+> merged to 'for-4.15/arm64/dt' branch), nothing gets broken with this change for T186.
+> For older platforms (T20, T30, T124, T132, T210), this change works fine without any
+> DT modifications
+> 
+> Testing Done on T124, T210 & T186:
+>  Enumeration and basic functionality of immediate devices
+>  Enumeration of devices behind a PCIe switch
+>  Complete 4K configuration space access
+> 
+> Vidya Sagar (2):
+>   PCI: tegra: refactor config space mapping code
+>   ARM64: tegra: limit PCIe config space mapping to 4K for T186
+> 
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi |   8 +-
+>  drivers/pci/host/pci-tegra.c             | 125 ++++++++++---------------------
+>  2 files changed, 44 insertions(+), 89 deletions(-)
 
-Return the code "-EPROBE_DEFER" directly in one if branch
-without assigning it to the local variable "err" before.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/tegra/output.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index 1e0915e213b4..a9b458f22de6 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -115,9 +115,8 @@ int tegra_output_probe(struct tegra_output *output)
- 	if (ddc) {
- 		output->ddc = of_find_i2c_adapter_by_node(ddc);
- 		if (!output->ddc) {
--			err = -EPROBE_DEFER;
- 			of_node_put(ddc);
--			return err;
-+			return -EPROBE_DEFER;
- 		}
- 
- 		of_node_put(ddc);
--- 
-2.14.3
-
+Seems OK to me; waiting for Thierry's ack.
