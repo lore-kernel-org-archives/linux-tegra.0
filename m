@@ -1,48 +1,142 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V3 0/2] Tegra PCIe end point config space map code
- refactoring
-Date: Tue, 24 Oct 2017 15:15:12 -0500
-Message-ID: <20171024201512.GG21840@bhelgaas-glaptop.roam.corp.google.com>
-References: <1508827489-10842-1-git-send-email-vidyas@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] thermal: tegra: remove forward declarations
+Date: Wed, 25 Oct 2017 00:03:37 -0700
+Message-ID: <1508915017-23234-1-git-send-email-nicoleotsuka@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1508827489-10842-1-git-send-email-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, srikars-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 24, 2017 at 12:14:47PM +0530, Vidya Sagar wrote:
-> PCIe host controller in Tegra SoCs has 1GB of aperture available
-> for mapping end points config space, IO and BARs. In that, currently
-> 256MB is being reserved for mapping end points configuration space
-> which leaves less memory space available for mapping end points BARs
-> on some of the platforms.
-> This patch series attempts to map only 4K space from 1GB aperture to
-> access end points configuration space.
-> 
-> Currently, this change can benefit T20 and T186 in saving (i.e. repurposed
-> to use for BAR mapping) physical space as well as kernel virtual mapping space,
-> it saves only kernel virtual address space in T30, T124, T132 and T210.
-> 
-> NOTE: Since T186 PCIe DT entry is not yet present in main line (it is currently
-> merged to 'for-4.15/arm64/dt' branch), nothing gets broken with this change for T186.
-> For older platforms (T20, T30, T124, T132, T210), this change works fine without any
-> DT modifications
-> 
-> Testing Done on T124, T210 & T186:
->  Enumeration and basic functionality of immediate devices
->  Enumeration of devices behind a PCIe switch
->  Complete 4K configuration space access
-> 
-> Vidya Sagar (2):
->   PCI: tegra: refactor config space mapping code
->   ARM64: tegra: limit PCIe config space mapping to 4K for T186
-> 
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi |   8 +-
->  drivers/pci/host/pci-tegra.c             | 125 ++++++++++---------------------
->  2 files changed, 44 insertions(+), 89 deletions(-)
+This patch just simply moves tegra_thermctl_set_trip_temp() behind
+those function implementations so that it can remove those forward
+declarations.
 
-Seems OK to me; waiting for Thierry's ack.
+Signed-off-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/thermal/tegra/soctherm.c | 103 ++++++++++++++++++---------------------
+ 1 file changed, 47 insertions(+), 56 deletions(-)
+
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 075db1d..455b58c 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -341,62 +341,6 @@ static int tegra_thermctl_get_temp(void *data, int *out_temp)
+ 	return 0;
+ }
+ 
+-static int
+-thermtrip_program(struct device *dev, const struct tegra_tsensor_group *sg,
+-		  int trip_temp);
+-static int
+-throttrip_program(struct device *dev, const struct tegra_tsensor_group *sg,
+-		  struct soctherm_throt_cfg *stc, int trip_temp);
+-static struct soctherm_throt_cfg *
+-find_throttle_cfg_by_name(struct tegra_soctherm *ts, const char *name);
+-
+-static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+-{
+-	struct tegra_thermctl_zone *zone = data;
+-	struct thermal_zone_device *tz = zone->tz;
+-	struct tegra_soctherm *ts = zone->ts;
+-	const struct tegra_tsensor_group *sg = zone->sg;
+-	struct device *dev = zone->dev;
+-	enum thermal_trip_type type;
+-	int ret;
+-
+-	if (!tz)
+-		return -EINVAL;
+-
+-	ret = tz->ops->get_trip_type(tz, trip, &type);
+-	if (ret)
+-		return ret;
+-
+-	if (type == THERMAL_TRIP_CRITICAL) {
+-		return thermtrip_program(dev, sg, temp);
+-	} else if (type == THERMAL_TRIP_HOT) {
+-		int i;
+-
+-		for (i = 0; i < THROTTLE_SIZE; i++) {
+-			struct thermal_cooling_device *cdev;
+-			struct soctherm_throt_cfg *stc;
+-
+-			if (!ts->throt_cfgs[i].init)
+-				continue;
+-
+-			cdev = ts->throt_cfgs[i].cdev;
+-			if (get_thermal_instance(tz, cdev, trip))
+-				stc = find_throttle_cfg_by_name(ts, cdev->type);
+-			else
+-				continue;
+-
+-			return throttrip_program(dev, sg, stc, temp);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
+-	.get_temp = tegra_thermctl_get_temp,
+-	.set_trip_temp = tegra_thermctl_set_trip_temp,
+-};
+-
+ /**
+  * enforce_temp_range() - check and enforce temperature range [min, max]
+  * @trip_temp: the trip temperature to check
+@@ -527,6 +471,53 @@ find_throttle_cfg_by_name(struct tegra_soctherm *ts, const char *name)
+ 	return NULL;
+ }
+ 
++static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
++{
++	struct tegra_thermctl_zone *zone = data;
++	struct thermal_zone_device *tz = zone->tz;
++	struct tegra_soctherm *ts = zone->ts;
++	const struct tegra_tsensor_group *sg = zone->sg;
++	struct device *dev = zone->dev;
++	enum thermal_trip_type type;
++	int ret;
++
++	if (!tz)
++		return -EINVAL;
++
++	ret = tz->ops->get_trip_type(tz, trip, &type);
++	if (ret)
++		return ret;
++
++	if (type == THERMAL_TRIP_CRITICAL) {
++		return thermtrip_program(dev, sg, temp);
++	} else if (type == THERMAL_TRIP_HOT) {
++		int i;
++
++		for (i = 0; i < THROTTLE_SIZE; i++) {
++			struct thermal_cooling_device *cdev;
++			struct soctherm_throt_cfg *stc;
++
++			if (!ts->throt_cfgs[i].init)
++				continue;
++
++			cdev = ts->throt_cfgs[i].cdev;
++			if (get_thermal_instance(tz, cdev, trip))
++				stc = find_throttle_cfg_by_name(ts, cdev->type);
++			else
++				continue;
++
++			return throttrip_program(dev, sg, stc, temp);
++		}
++	}
++
++	return 0;
++}
++
++static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
++	.get_temp = tegra_thermctl_get_temp,
++	.set_trip_temp = tegra_thermctl_set_trip_temp,
++};
++
+ static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
+ {
+ 	int ntrips, i, ret;
+-- 
+2.1.4
