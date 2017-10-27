@@ -1,28 +1,49 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 2/5] media: dt: bindings: Add binding for NVIDIA Tegra
- Video Decoder Engine
-Date: Thu, 26 Oct 2017 20:01:42 -0500
-Message-ID: <20171027010142.2glhx2djupxesnjp@rob-hp-laptop>
-References: <cover.1508448293.git.digetx@gmail.com>
- <bf5b91666229f9e46ed8c73d6ca2e4b65f86b5ab.1508448293.git.digetx@gmail.com>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: [PATCH 00/12] Enable Tegra root port features and apply SW fixups
+Date: Sat, 28 Oct 2017 00:59:17 +0530
+Message-ID: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <bf5b91666229f9e46ed8c73d6ca2e4b65f86b5ab.1508448293.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, vidyas@nvidia.com, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 20, 2017 at 12:34:22AM +0300, Dmitry Osipenko wrote:
-> Add binding documentation for the Video Decoder Engine which is found
-> on NVIDIA Tegra20/30/114/124/132 SoC's.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  .../devicetree/bindings/media/nvidia,tegra-vde.txt | 55 ++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+These series of patches does the following things,
+- Deasserting pcie_xrst after programming root port to make sure that
+  register programming is reflected during LTSSM
+- Apply REFCLK pad settings to make sure P2P amplitude requirement is met
+- Enable Gen2 link speed
+- Advertise AER capability
+- Program UPHY electrical settings for meeting eye diagram requirements
+- Bunch of SW fixups explained in their respective commit log
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Testing done on Tegra124, 210 and 186:
+- PCIe link up, config read, BAR read and basic functionality of Ethernet
+  card
+- Link speed switch to Gen2 after link retrain
+- Link speed stays in Gen1 after retrain if end point is only Gen1 capable
+- Simulated AER errors and verified dmesg logs for them
+- Rest of the programming is verified by dumping the registers after PCIe
+link up
+
+Manikanta Maddireddy (12):
+  PCI: tegra: Start LTSSM after programming root port
+  PCI: tegra: Move REFCLK pad settings out of phy_power_on()
+  PCI: tegra: Retrain link for Gen2 speed
+  PCI: tegra: Advertise AER capability
+  PCI: tegra: Program UPHY electrical settings in Tegra210
+  PCI: tegra: Enable opportunistic update FC and ACK
+  PCI: tegra: Disable AFI dynamic clock gating
+  PCI: tegra: Wait for DLLP to finish before entering L1 or L2
+  PCI: tegra: Enable PCIe xclk clock clamping
+  PCI: tegra: Add SW fixup for RAW violations
+  PCI: tegra: Increase the deskew retry time
+  PCI: tegra: Update flow control threshold in Tegra210
+
+ drivers/pci/host/pci-tegra.c | 306 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 288 insertions(+), 18 deletions(-)
+
+-- 
+2.1.4
