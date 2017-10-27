@@ -1,77 +1,99 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 02/12] PCI: tegra: Move REFCLK pad settings out of phy_power_on()
-Date: Sat, 28 Oct 2017 00:59:19 +0530
-Message-ID: <1509132569-9398-3-git-send-email-mmaddireddy@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: [PATCH 03/12] PCI: tegra: Retrain link for Gen2 speed
+Date: Sat, 28 Oct 2017 00:59:20 +0530
+Message-ID: <1509132569-9398-4-git-send-email-mmaddireddy@nvidia.com>
 References: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1509132569-9398-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, vidyas@nvidia.com, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-In Tegra186 PHY programming is done by BPMP-FW, so PHY calls are skipped
-in driver. REFCLK pad settings are independent of PHY and should be
-programmed by driver. So move REFCLK pad settings out of phy_power_on().
-These pad settings improves REFCLK peak to peak amplitude.
+Tegra124, 132, 210 and 186 supports Gen2 link speed. After the link is up
+in Gen1, set target link speed as Gen2 and retrain link. Link switches to
+Gen2 speed if Gen2 capable end point is connected, else link stays in Gen1.
 
-Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
 ---
- drivers/pci/host/pci-tegra.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/pci/host/pci-tegra.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index b41c60c7414c..2c64eb6cc3cc 100644
+index 2c64eb6cc3cc..15df60e13a14 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -910,7 +910,6 @@ static int tegra_pcie_port_phy_power_off(struct tegra_pcie_port *port)
- static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
--	const struct tegra_pcie_soc *soc = pcie->soc;
- 	struct tegra_pcie_port *port;
- 	int err;
+@@ -232,6 +232,8 @@
+ #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
+ #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
  
-@@ -936,12 +935,6 @@ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
- 		}
++#define LINK_RETRAIN_TIMEOUT HZ
++
+ struct tegra_msi {
+ 	struct msi_controller chip;
+ 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+@@ -2133,6 +2135,42 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
  	}
- 
--	/* Configure the reference clock driver */
--	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
--
--	if (soc->num_ports > 2)
--		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
--
- 	return 0;
  }
  
-@@ -2049,6 +2042,17 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- 	return 0;
- }
- 
-+static void tegra_pcie_apply_pad_settings(struct tegra_pcie *pcie)
++static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
++		struct pci_dev *pci_dev)
 +{
-+	const struct tegra_pcie_soc *soc = pcie->soc;
++	struct device *dev = pcie->dev;
++	unsigned long start_jiffies;
++	unsigned short val;
 +
-+	/* Configure the reference clock driver */
-+	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
++	/* Skip if the current device is not a root port */
++	if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
++		return;
 +
-+	if (soc->num_ports > 2)
-+		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
++	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
++	val &= ~PCI_EXP_LNKSTA_CLS;
++	val |= PCI_EXP_LNKSTA_CLS_5_0GB;
++	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
++
++	/* Retrain the link */
++	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
++	val |= PCI_EXP_LNKCTL_RL;
++	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
++
++	start_jiffies = jiffies;
++	for (;;) {
++		pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &val);
++		if (!(val & PCI_EXP_LNKSTA_LT))
++			break;
++		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
++			break;
++		usleep_range(2000, 3000);
++	}
++
++	if (val & PCI_EXP_LNKSTA_LT)
++		dev_err(dev, "link retrain of PCIe slot %u failed\n",
++				PCI_SLOT(pci_dev->devfn));
 +}
 +
- /*
-  * FIXME: If there are no PCIe cards attached, then calling this function
-  * can result in the increase of the bootup time as there are big timeout
-@@ -2107,6 +2111,7 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
- 	struct device *dev = pcie->dev;
- 	struct tegra_pcie_port *port, *tmp;
+ static const struct tegra_pcie_soc tegra20_pcie = {
+ 	.num_ports = 2,
+ 	.msi_base_shift = 0,
+@@ -2334,6 +2372,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 	struct pci_host_bridge *host;
+ 	struct tegra_pcie *pcie;
+ 	struct pci_bus *child;
++	struct pci_dev *pci_dev = NULL;
+ 	int err;
  
-+	tegra_pcie_apply_pad_settings(pcie);
- 	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
- 		dev_info(dev, "probing port %u, using %u lanes\n",
- 			 port->index, port->lanes);
+ 	host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
+@@ -2399,6 +2438,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 
+ 	pci_bus_add_devices(host->bus);
+ 
++	for_each_pci_dev(pci_dev)
++		tegra_pcie_change_link_speed(pcie, pci_dev);
++
+ 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+ 		err = tegra_pcie_debugfs_init(pcie);
+ 		if (err < 0)
 -- 
 2.1.4
