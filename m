@@ -1,99 +1,70 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 12/12] PCI: tegra: Update flow control threshold in Tegra210
-Date: Sat, 28 Oct 2017 00:59:29 +0530
-Message-ID: <1509132569-9398-13-git-send-email-mmaddireddy@nvidia.com>
-References: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1509132569-9398-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+Subject: [PATCH] thermal: tegra: allow sensor registeration to fail
+Date: Fri, 27 Oct 2017 16:54:13 -0700
+Message-ID: <1509148453-11388-1-git-send-email-nicoleotsuka@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rui.zhang@intel.com, edubezval@gmail.com
+Cc: srikars@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Recommended update FC threshold in Tegra210 is 0x60 for best performance
-of x1 link. Setting this to 0x60 provides the best balance between number
-of UpdateFC and read data sent over the link.
+Not all sensors may be used on a platform. So there could be
+some missing thermal zones in the Device Tree. However, the
+the driver now errors out whenever a sensor fails to register
+the thermal zone.
 
-Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Since the driver could live with other sensors, this change
+allows other sensors to continue the registerations even if
+one sensor fails to register.
+
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 ---
- drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/thermal/tegra/soctherm.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index db1ce74ba64a..da5f4998f149 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -221,6 +221,7 @@
- #define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
- #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
- #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
-+#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_T210	(0x60 << 18)
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 455b58c..73fcd48 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -1280,7 +1280,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 	struct tsensor_shared_calib shared_calib;
+ 	struct resource *res;
+ 	struct tegra_soctherm_soc *soc;
+-	unsigned int i;
++	unsigned int i, e;
+ 	int err;
  
- #define RP_VEND_CTL0	0xf44
- #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
-@@ -321,6 +322,7 @@ struct tegra_pcie_soc {
- 	bool update_clamp_threshold;
- 	bool RAW_violation_fixup;
- 	bool program_deskew_time;
-+	bool updateFC_threshold;
- };
+ 	match = of_match_node(tegra_soctherm_of_match, pdev->dev.of_node);
+@@ -1377,7 +1377,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
  
- static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-@@ -2229,6 +2231,13 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
- 		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
- 		writel(value, port->base + RP_VEND_CTL0);
- 	}
+ 	soctherm_init(pdev);
+ 
+-	for (i = 0; i < soc->num_ttgs; ++i) {
++	for (i = 0, e = 0; i < soc->num_ttgs; ++i) {
+ 		struct tegra_thermctl_zone *zone =
+ 			devm_kzalloc(&pdev->dev, sizeof(*zone), GFP_KERNEL);
+ 		if (!zone) {
+@@ -1397,7 +1397,10 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 			err = PTR_ERR(z);
+ 			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+ 				err);
+-			goto disable_clocks;
++			/* Check if all sensors failed to register */
++			if (++e == soc->num_ttgs)
++				goto disable_clocks;
++			continue;
+ 		}
+ 
+ 		zone->tz = z;
+@@ -1459,6 +1462,9 @@ static int __maybe_unused soctherm_resume(struct device *dev)
+ 		struct thermal_zone_device *tz;
+ 
+ 		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
++		if (!tz)
++			continue;
 +
-+	if (soc->updateFC_threshold) {
-+		value = readl(port->base + RP_VEND_XP);
-+		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
-+		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_T210;
-+		writel(value, port->base + RP_VEND_XP);
-+	}
- }
- /*
-  * FIXME: If there are no PCIe cards attached, then calling this function
-@@ -2368,6 +2377,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
- 	.update_clamp_threshold = false,
- 	.RAW_violation_fixup = false,
- 	.program_deskew_time = false,
-+	.updateFC_threshold = false,
- };
- 
- static const struct tegra_pcie_soc tegra30_pcie = {
-@@ -2388,6 +2398,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
- 	.update_clamp_threshold = false,
- 	.RAW_violation_fixup = false,
- 	.program_deskew_time = false,
-+	.updateFC_threshold = false,
- };
- 
- static const struct tegra_pcie_soc tegra124_pcie = {
-@@ -2407,6 +2418,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
- 	.update_clamp_threshold = true,
- 	.RAW_violation_fixup = true,
- 	.program_deskew_time = false,
-+	.updateFC_threshold = false,
- };
- 
- static const struct tegra_pcie_soc tegra210_pcie = {
-@@ -2434,6 +2446,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
- 	.update_clamp_threshold = true,
- 	.RAW_violation_fixup = false,
- 	.program_deskew_time = true,
-+	.updateFC_threshold = true,
- };
- 
- static const struct tegra_pcie_soc tegra186_pcie = {
-@@ -2454,6 +2467,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
- 	.update_clamp_threshold = false,
- 	.RAW_violation_fixup = false,
- 	.program_deskew_time = false,
-+	.updateFC_threshold = false,
- };
- 
- static const struct of_device_id tegra_pcie_of_match[] = {
+ 		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
+ 		if (err) {
+ 			dev_err(&pdev->dev,
 -- 
 2.1.4
