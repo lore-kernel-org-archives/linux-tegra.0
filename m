@@ -1,58 +1,28 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5 00/13] gpio: Tight IRQ chip integration
-Date: Thu, 26 Oct 2017 08:18:20 +0100
-Message-ID: <42211eed-3996-b968-330c-36c6ca160e0b@nvidia.com>
-References: <20171013154913.29448-1-thierry.reding@gmail.com>
- <f25cd66f-1382-8007-9744-0dbd72757163@nvidia.com>
- <a71b5600-dc22-c53a-7909-48e39c8cf3e6@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 2/5] media: dt: bindings: Add binding for NVIDIA Tegra
+ Video Decoder Engine
+Date: Thu, 26 Oct 2017 20:01:42 -0500
+Message-ID: <20171027010142.2glhx2djupxesnjp@rob-hp-laptop>
+References: <cover.1508448293.git.digetx@gmail.com>
+ <bf5b91666229f9e46ed8c73d6ca2e4b65f86b5ab.1508448293.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <a71b5600-dc22-c53a-7909-48e39c8cf3e6@nvidia.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <bf5b91666229f9e46ed8c73d6ca2e4b65f86b5ab.1508448293.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ping!
+On Fri, Oct 20, 2017 at 12:34:22AM +0300, Dmitry Osipenko wrote:
+> Add binding documentation for the Video Decoder Engine which is found
+> on NVIDIA Tegra20/30/114/124/132 SoC's.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  .../devicetree/bindings/media/nvidia,tegra-vde.txt | 55 ++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
 
-On 23/10/17 09:47, Jon Hunter wrote:
-> Hi Linus,
-> 
-> On 16/10/17 19:09, Jon Hunter wrote:
->> Hi Linus,
->>
->> On 13/10/17 16:49, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> Hi Linus,
->>>
->>> here's the latest series of patches that implement the tighter IRQ chip
->>> integration. I've dropped the banked infrastructure for now as per the
->>> discussion with Grygorii.
->>>
->>> The first couple of patches are mostly preparatory work in order to
->>> consolidate all IRQ chip related fields in a new structure and create
->>> the base functionality for adding IRQ chips.
->>>
->>> After that, I've added the Tegra186 GPIO support patch that makes use of
->>> the new tight integration.
->>
->> I have reviewed this series and tested on Tegra, so for the series ...
->>
->> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->> Tested-by: Jon Hunter <jonathanh@nvidia.com>
->>
->> We would really like to get support for Tegra186 GPIO in v4.15, so
->> please let us know if you think that this is do-able.
-> 
-> Any feedback/comments?
-> 
-> Thanks
-> Jon
-> 
-
--- 
-nvpublic
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
