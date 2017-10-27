@@ -1,7 +1,7 @@
 From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [PATCH 01/12] PCI: tegra: Start LTSSM after programming root port
-Date: Sat, 28 Oct 2017 00:59:18 +0530
-Message-ID: <1509132569-9398-2-git-send-email-mmaddireddy@nvidia.com>
+Subject: [PATCH 07/12] PCI: tegra: Disable AFI dynamic clock gating
+Date: Sat, 28 Oct 2017 00:59:24 +0530
+Message-ID: <1509132569-9398-8-git-send-email-mmaddireddy@nvidia.com>
 References: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,48 +12,51 @@ To: thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com
 Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, vidyas@nvidia.com, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch ensures that LTSSM is started (by deasserting pcie_xrst) only
-after all the required root port register programming is completed.
+When there are 32 outstanding writes from AFI to memory, the outstanding
+write counter overflows and indicates that there are "0" outstanding write
+transactions. This outstanding write counter is used to generate IDLE
+signal to dynamically gate the AFI clock.
+
+When memory controller is under heavy load, its possible that write
+completions will come back to AFI after long delay and AFI write counter
+overflows. AFI clock gets gated even when there are outstanding
+transactions towards memory controller resutling in system hang.
+
+Disable dynamic clock gating of AFI clock to avoid system hang.
 
 Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
 ---
- drivers/pci/host/pci-tegra.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/pci/host/pci-tegra.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 96e8038c3019..b41c60c7414c 100644
+index 27a8211c48b2..b8cac871712b 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -1024,9 +1024,6 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+@@ -103,8 +103,9 @@
+ #define AFI_MSI_EN_VEC6		0xa4
+ #define AFI_MSI_EN_VEC7		0xa8
+ 
+-#define AFI_CONFIGURATION		0xac
+-#define  AFI_CONFIGURATION_EN_FPCI	(1 << 0)
++#define AFI_CONFIGURATION			0xac
++#define  AFI_CONFIGURATION_EN_FPCI		(1 << 0)
++#define  AFI_CONFIGURATION_CLKEN_OVERRIDE	(1 << 31)
+ 
+ #define AFI_FPCI_ERROR_MASKS	0xb0
+ 
+@@ -1057,9 +1058,10 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
  		}
  	}
  
--	/* take the PCIe interface module out of reset */
--	reset_control_deassert(pcie->pcie_xrst);
--
- 	/* finally enable PCIe */
+-	/* finally enable PCIe */
++	/* Disable AFI dynamic clock gating and enable PCIe */
  	value = afi_readl(pcie, AFI_CONFIGURATION);
- 	value |= AFI_CONFIGURATION_EN_FPCI;
-@@ -1065,7 +1062,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
- 			dev_err(dev, "failed to power off PHY(s): %d\n", err);
- 	}
+-	value |= AFI_CONFIGURATION_EN_FPCI;
++	value |= (AFI_CONFIGURATION_EN_FPCI |
++			AFI_CONFIGURATION_CLKEN_OVERRIDE);
+ 	afi_writel(pcie, value, AFI_CONFIGURATION);
  
--	reset_control_assert(pcie->pcie_xrst);
- 	reset_control_assert(pcie->afi_rst);
- 	reset_control_assert(pcie->pex_rst);
- 
-@@ -2116,7 +2112,12 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
- 			 port->index, port->lanes);
- 
- 		tegra_pcie_port_enable(port);
-+	}
- 
-+	/* take the PCIe interface module out of reset */
-+	reset_control_deassert(pcie->pcie_xrst);
-+
-+	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
- 		if (tegra_pcie_port_check_link(port))
- 			continue;
- 
+ 	value = AFI_INTR_EN_INI_SLVERR | AFI_INTR_EN_INI_DECERR |
 -- 
 2.1.4
