@@ -1,7 +1,7 @@
 From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [PATCH 03/12] PCI: tegra: Retrain link for Gen2 speed
-Date: Sat, 28 Oct 2017 00:59:20 +0530
-Message-ID: <1509132569-9398-4-git-send-email-mmaddireddy@nvidia.com>
+Subject: [PATCH 01/12] PCI: tegra: Start LTSSM after programming root port
+Date: Sat, 28 Oct 2017 00:59:18 +0530
+Message-ID: <1509132569-9398-2-git-send-email-mmaddireddy@nvidia.com>
 References: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,88 +12,48 @@ To: thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com
 Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, vidyas@nvidia.com, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra124, 132, 210 and 186 supports Gen2 link speed. After the link is up
-in Gen1, set target link speed as Gen2 and retrain link. Link switches to
-Gen2 speed if Gen2 capable end point is connected, else link stays in Gen1.
+This patch ensures that LTSSM is started (by deasserting pcie_xrst) only
+after all the required root port register programming is completed.
 
 Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
 ---
- drivers/pci/host/pci-tegra.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/pci/host/pci-tegra.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 2c64eb6cc3cc..15df60e13a14 100644
+index 96e8038c3019..b41c60c7414c 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -232,6 +232,8 @@
- #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
- #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
- 
-+#define LINK_RETRAIN_TIMEOUT HZ
-+
- struct tegra_msi {
- 	struct msi_controller chip;
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
-@@ -2133,6 +2135,42 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+@@ -1024,9 +1024,6 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+ 		}
  	}
- }
  
-+static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
-+		struct pci_dev *pci_dev)
-+{
-+	struct device *dev = pcie->dev;
-+	unsigned long start_jiffies;
-+	unsigned short val;
-+
-+	/* Skip if the current device is not a root port */
-+	if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
-+		return;
-+
-+	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
-+	val &= ~PCI_EXP_LNKSTA_CLS;
-+	val |= PCI_EXP_LNKSTA_CLS_5_0GB;
-+	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
-+
-+	/* Retrain the link */
-+	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
-+	val |= PCI_EXP_LNKCTL_RL;
-+	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
-+
-+	start_jiffies = jiffies;
-+	for (;;) {
-+		pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &val);
-+		if (!(val & PCI_EXP_LNKSTA_LT))
-+			break;
-+		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
-+			break;
-+		usleep_range(2000, 3000);
+-	/* take the PCIe interface module out of reset */
+-	reset_control_deassert(pcie->pcie_xrst);
+-
+ 	/* finally enable PCIe */
+ 	value = afi_readl(pcie, AFI_CONFIGURATION);
+ 	value |= AFI_CONFIGURATION_EN_FPCI;
+@@ -1065,7 +1062,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+ 			dev_err(dev, "failed to power off PHY(s): %d\n", err);
+ 	}
+ 
+-	reset_control_assert(pcie->pcie_xrst);
+ 	reset_control_assert(pcie->afi_rst);
+ 	reset_control_assert(pcie->pex_rst);
+ 
+@@ -2116,7 +2112,12 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+ 			 port->index, port->lanes);
+ 
+ 		tegra_pcie_port_enable(port);
 +	}
-+
-+	if (val & PCI_EXP_LNKSTA_LT)
-+		dev_err(dev, "link retrain of PCIe slot %u failed\n",
-+				PCI_SLOT(pci_dev->devfn));
-+}
-+
- static const struct tegra_pcie_soc tegra20_pcie = {
- 	.num_ports = 2,
- 	.msi_base_shift = 0,
-@@ -2334,6 +2372,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 	struct pci_host_bridge *host;
- 	struct tegra_pcie *pcie;
- 	struct pci_bus *child;
-+	struct pci_dev *pci_dev = NULL;
- 	int err;
  
- 	host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
-@@ -2399,6 +2438,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 
- 	pci_bus_add_devices(host->bus);
- 
-+	for_each_pci_dev(pci_dev)
-+		tegra_pcie_change_link_speed(pcie, pci_dev);
++	/* take the PCIe interface module out of reset */
++	reset_control_deassert(pcie->pcie_xrst);
 +
- 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
- 		err = tegra_pcie_debugfs_init(pcie);
- 		if (err < 0)
++	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
+ 		if (tegra_pcie_port_check_link(port))
+ 			continue;
+ 
 -- 
 2.1.4
