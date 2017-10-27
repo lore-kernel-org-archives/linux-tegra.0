@@ -1,7 +1,7 @@
 From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 11/12] PCI: tegra: Increase the deskew retry time
-Date: Sat, 28 Oct 2017 00:59:28 +0530
-Message-ID: <1509132569-9398-12-git-send-email-mmaddireddy@nvidia.com>
+Subject: [PATCH 08/12] PCI: tegra: Wait for DLLP to finish before entering L1 or L2
+Date: Sat, 28 Oct 2017 00:59:25 +0530
+Message-ID: <1509132569-9398-9-git-send-email-mmaddireddy@nvidia.com>
 References: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,94 +12,42 @@ To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlf
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Some times Gen2 to Gen1 link speed switching fails due to instability in
-deskew logic on lane0 in Tegra210. Increase the deskew retry time to
-resolve this issue.
+Set required bit to have LTSSM wait for DLLP to finish before entering L1
+or L2. This avoids truncation of PM messages which results in receiver
+errors.
 
 Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/pci/host/pci-tegra.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 9680bf7d0a95..db1ce74ba64a 100644
+index b8cac871712b..6028d5f3d5bb 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -222,6 +222,10 @@
- #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
- #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
- 
-+#define RP_VEND_CTL0	0xf44
-+#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
-+#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH	(0x9 << 12)
-+
+@@ -217,6 +217,9 @@
  #define RP_VEND_CTL1	0xf48
  #define  RP_VEND_CTL1_ERPT	(1 << 13)
  
-@@ -316,6 +320,7 @@ struct tegra_pcie_soc {
- 	bool program_ectl_settings;
- 	bool update_clamp_threshold;
- 	bool RAW_violation_fixup;
-+	bool program_deskew_time;
- };
- 
- static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-@@ -2214,6 +2219,16 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
- 		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
- 		writel(value, port->base + RP_VEND_XP);
- 	}
++#define RP_VEND_XP_BIST	0xf4c
++#define  RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE	(1 << 28)
 +
-+	/* Tune deskew retry time to take care of Gen2 -> Gen1
-+	 * link speed change error in corner cases
+ #define RP_VEND_CTL2 0x00000fa8
+ #define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
+ 
+@@ -2160,6 +2163,13 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+ 	value |= RP_VEND_XP_OPPORTUNISTIC_ACK;
+ 	value |= RP_VEND_XP_OPPORTUNISTIC_UPDATEFC;
+ 	writel(value, port->base + RP_VEND_XP);
++
++	/* LTSSM will wait for DLLP to finish before entering L1 or L2,
++	 * to avoid truncation of PM messages which results in receiver errors
 +	 */
-+	if (soc->program_deskew_time) {
-+		value = readl(port->base + RP_VEND_CTL0);
-+		value &= ~RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK;
-+		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
-+		writel(value, port->base + RP_VEND_CTL0);
-+	}
++	value = readl(port->base + RP_VEND_XP_BIST);
++	value |= RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE;
++	writel(value, port->base + RP_VEND_XP_BIST);
  }
  /*
   * FIXME: If there are no PCIe cards attached, then calling this function
-@@ -2352,6 +2367,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
- 	.program_ectl_settings = false,
- 	.update_clamp_threshold = false,
- 	.RAW_violation_fixup = false,
-+	.program_deskew_time = false,
- };
- 
- static const struct tegra_pcie_soc tegra30_pcie = {
-@@ -2371,6 +2387,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
- 	.program_ectl_settings = false,
- 	.update_clamp_threshold = false,
- 	.RAW_violation_fixup = false,
-+	.program_deskew_time = false,
- };
- 
- static const struct tegra_pcie_soc tegra124_pcie = {
-@@ -2389,6 +2406,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
- 	.program_ectl_settings = false,
- 	.update_clamp_threshold = true,
- 	.RAW_violation_fixup = true,
-+	.program_deskew_time = false,
- };
- 
- static const struct tegra_pcie_soc tegra210_pcie = {
-@@ -2415,6 +2433,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
- 	.program_ectl_settings = true,
- 	.update_clamp_threshold = true,
- 	.RAW_violation_fixup = false,
-+	.program_deskew_time = true,
- };
- 
- static const struct tegra_pcie_soc tegra186_pcie = {
-@@ -2434,6 +2453,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
- 	.program_ectl_settings = false,
- 	.update_clamp_threshold = false,
- 	.RAW_violation_fixup = false,
-+	.program_deskew_time = false,
- };
- 
- static const struct of_device_id tegra_pcie_of_match[] = {
 -- 
 2.1.4
