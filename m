@@ -1,70 +1,105 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: [PATCH] thermal: tegra: allow sensor registeration to fail
-Date: Fri, 27 Oct 2017 16:54:13 -0700
-Message-ID: <1509148453-11388-1-git-send-email-nicoleotsuka@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rui.zhang@intel.com, edubezval@gmail.com
-Cc: srikars@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 03/12] PCI: tegra: Retrain link for Gen2 speed
+Date: Sun, 29 Oct 2017 15:04:40 +0530
+Message-ID: <c8dc3a6e-21f2-a7bd-6a2f-5e14f7976dbf@nvidia.com>
+References: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
+ <1509132569-9398-4-git-send-email-mmaddireddy@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1509132569-9398-4-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Not all sensors may be used on a platform. So there could be
-some missing thermal zones in the Device Tree. However, the
-the driver now errors out whenever a sensor fails to register
-the thermal zone.
 
-Since the driver could live with other sensors, this change
-allows other sensors to continue the registerations even if
-one sensor fails to register.
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/thermal/tegra/soctherm.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 455b58c..73fcd48 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -1280,7 +1280,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 	struct tsensor_shared_calib shared_calib;
- 	struct resource *res;
- 	struct tegra_soctherm_soc *soc;
--	unsigned int i;
-+	unsigned int i, e;
- 	int err;
- 
- 	match = of_match_node(tegra_soctherm_of_match, pdev->dev.of_node);
-@@ -1377,7 +1377,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 
- 	soctherm_init(pdev);
- 
--	for (i = 0; i < soc->num_ttgs; ++i) {
-+	for (i = 0, e = 0; i < soc->num_ttgs; ++i) {
- 		struct tegra_thermctl_zone *zone =
- 			devm_kzalloc(&pdev->dev, sizeof(*zone), GFP_KERNEL);
- 		if (!zone) {
-@@ -1397,7 +1397,10 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 			err = PTR_ERR(z);
- 			dev_err(&pdev->dev, "failed to register sensor: %d\n",
- 				err);
--			goto disable_clocks;
-+			/* Check if all sensors failed to register */
-+			if (++e == soc->num_ttgs)
-+				goto disable_clocks;
-+			continue;
- 		}
- 
- 		zone->tz = z;
-@@ -1459,6 +1462,9 @@ static int __maybe_unused soctherm_resume(struct device *dev)
- 		struct thermal_zone_device *tz;
- 
- 		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
-+		if (!tz)
-+			continue;
-+
- 		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
- 		if (err) {
- 			dev_err(&pdev->dev,
--- 
-2.1.4
+On Saturday 28 October 2017 12:59 AM, Manikanta Maddireddy wrote:
+> Tegra124, 132, 210 and 186 supports Gen2 link speed. After the link is up
+> in Gen1, set target link speed as Gen2 and retrain link. Link switches to
+> Gen2 speed if Gen2 capable end point is connected, else link stays in Gen1.
+>
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   drivers/pci/host/pci-tegra.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 42 insertions(+)
+>
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 2c64eb6cc3cc..15df60e13a14 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -232,6 +232,8 @@
+>   #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
+>   #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
+>   
+> +#define LINK_RETRAIN_TIMEOUT HZ
+> +
+>   struct tegra_msi {
+>   	struct msi_controller chip;
+>   	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+> @@ -2133,6 +2135,42 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+>   	}
+>   }
+>   
+> +static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
+> +		struct pci_dev *pci_dev)
+> +{
+> +	struct device *dev = pcie->dev;
+> +	unsigned long start_jiffies;
+> +	unsigned short val;
+> +
+> +	/* Skip if the current device is not a root port */
+> +	if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
+> +		return;
+> +
+> +	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
+> +	val &= ~PCI_EXP_LNKSTA_CLS;
+> +	val |= PCI_EXP_LNKSTA_CLS_5_0GB;
+> +	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
+> +
+> +	/* Retrain the link */
+> +	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
+> +	val |= PCI_EXP_LNKCTL_RL;
+> +	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
+> +
+> +	start_jiffies = jiffies;
+> +	for (;;) {
+> +		pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &val);
+> +		if (!(val & PCI_EXP_LNKSTA_LT))
+> +			break;
+> +		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
+> +			break;
+> +		usleep_range(2000, 3000);
+> +	}
+> +
+> +	if (val & PCI_EXP_LNKSTA_LT)
+> +		dev_err(dev, "link retrain of PCIe slot %u failed\n",
+> +				PCI_SLOT(pci_dev->devfn));
+> +}
+> +
+>   static const struct tegra_pcie_soc tegra20_pcie = {
+>   	.num_ports = 2,
+>   	.msi_base_shift = 0,
+> @@ -2334,6 +2372,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>   	struct pci_host_bridge *host;
+>   	struct tegra_pcie *pcie;
+>   	struct pci_bus *child;
+> +	struct pci_dev *pci_dev = NULL;
+>   	int err;
+>   
+>   	host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
+> @@ -2399,6 +2438,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>   
+>   	pci_bus_add_devices(host->bus);
+>   
+> +	for_each_pci_dev(pci_dev)
+> +		tegra_pcie_change_link_speed(pcie, pci_dev);
+> +
+Why can't we loop over only root ports using 'pcie->ports' like how it 
+is done in tegra_pcie_enable_ports() ?
+>   	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+>   		err = tegra_pcie_debugfs_init(pcie);
+>   		if (err < 0)
