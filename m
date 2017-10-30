@@ -1,75 +1,69 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH V2 06/12] PCI: tegra: Enable opportunistic update FC and
- ACK
-Date: Mon, 30 Oct 2017 11:58:04 +0200
-Message-ID: <f3dbdb48-3a3c-399d-de8e-5a9aeda0ac1d@kapsi.fi>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH V2 07/12] PCI: tegra: Disable AFI dynamic clock gating
+Date: Mon, 30 Oct 2017 12:00:01 +0200
+Message-ID: <7414bac3-6643-048d-cc34-77b95681274f@kapsi.fi>
 References: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
- <1509337143-25963-7-git-send-email-mmaddireddy@nvidia.com>
+ <1509337143-25963-8-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1509337143-25963-7-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1509337143-25963-8-git-send-email-mmaddireddy@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>, thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 On 30.10.2017 06:18, Manikanta Maddireddy wrote:
-> This patch ensures that DL sends pending ACKs and update FC packets when
-> link is idle instead of waiting for timers to expire which improves PCIe
-> bandwidth.
+> When there are 32 outstanding writes from AFI to memory, the outstanding
+> write counter overflows and indicates that there are "0" outstanding write
+> transactions. This outstanding write counter is used to generate IDLE
+> signal to dynamically gate the AFI clock.
 >
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> When memory controller is under heavy load, its possible that write
+> completions will come back to AFI after long delay and AFI write counter
+> overflows. AFI clock gets gated even when there are outstanding
+> transactions towards memory controller resutling in system hang.
+>
+> Disable dynamic clock gating of AFI clock to avoid system hang.
+>
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
 > ---
 > V2:
 > * no change in this patch
 >
->  drivers/pci/host/pci-tegra.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+>  drivers/pci/host/pci-tegra.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 >
 > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 51b7821646eb..bf615c5e6b78 100644
+> index bf615c5e6b78..75b408b32b8b 100644
 > --- a/drivers/pci/host/pci-tegra.c
 > +++ b/drivers/pci/host/pci-tegra.c
-> @@ -209,7 +209,9 @@
->  #define  RP_ECTL_6_R2_RX_EQ_CTRL_H_1C_MASK	0xffffffff
+> @@ -103,8 +103,9 @@
+>  #define AFI_MSI_EN_VEC6		0xa4
+>  #define AFI_MSI_EN_VEC7		0xa8
 >
->  #define RP_VEND_XP	0x00000f00
-> -#define  RP_VEND_XP_DL_UP	(1 << 30)
-> +#define  RP_VEND_XP_DL_UP			(1 << 30)
-> +#define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
-> +#define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
+> -#define AFI_CONFIGURATION		0xac
+> -#define  AFI_CONFIGURATION_EN_FPCI	(1 << 0)
+> +#define AFI_CONFIGURATION			0xac
+> +#define  AFI_CONFIGURATION_EN_FPCI		(1 << 0)
+> +#define  AFI_CONFIGURATION_CLKEN_OVERRIDE	(1 << 31)
 >
->  #define RP_VEND_CTL1	0xf48
->  #define  RP_VEND_CTL1_ERPT	(1 << 13)
-> @@ -2147,6 +2149,16 @@ static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
->  	writel(value, port->base + RP_VEND_CTL1);
->  }
+>  #define AFI_FPCI_ERROR_MASKS	0xb0
 >
-> +static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
-> +{
-> +	unsigned long value;
-> +
-> +	/* Optimal settings to enhance bandwidth */
-> +	value = readl(port->base + RP_VEND_XP);
-> +	value |= RP_VEND_XP_OPPORTUNISTIC_ACK;
-> +	value |= RP_VEND_XP_OPPORTUNISTIC_UPDATEFC;
-> +	writel(value, port->base + RP_VEND_XP);
-> +}
->  /*
->   * FIXME: If there are no PCIe cards attached, then calling this function
->   * can result in the increase of the bootup time as there are big timeout
-> @@ -2215,6 +2227,7 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
->  		if (soc->program_ectl_settings)
->  			tegra_pcie_program_ectl_settings(port);
->  		tegra_pcie_enable_rp_features(port);
-> +		tegra_pcie_apply_sw_fixup(port);
-
-As in the AER patch, I think this can be done in-line here. Otherwise 
-looks good.
-
+> @@ -1057,9 +1058,10 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+>  		}
 >  	}
 >
->  	/* take the PCIe interface module out of reset */
+> -	/* finally enable PCIe */
+> +	/* Disable AFI dynamic clock gating and enable PCIe */
+>  	value = afi_readl(pcie, AFI_CONFIGURATION);
+> -	value |= AFI_CONFIGURATION_EN_FPCI;
+> +	value |= (AFI_CONFIGURATION_EN_FPCI |
+> +			AFI_CONFIGURATION_CLKEN_OVERRIDE);
+>  	afi_writel(pcie, value, AFI_CONFIGURATION);
 >
+>  	value = AFI_INTR_EN_INI_SLVERR | AFI_INTR_EN_INI_DECERR |
+>
+
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
