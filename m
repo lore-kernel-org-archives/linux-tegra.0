@@ -1,64 +1,83 @@
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [PATCH V3 01/12] PCI: tegra: Start LTSSM after programming root port
-Date: Mon, 30 Oct 2017 19:27:12 +0530
-Message-ID: <1509371843-22931-2-git-send-email-mmaddireddy@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 02/12] PCI: tegra: Move REFCLK pad settings out of phy_power_on()
+Date: Mon, 30 Oct 2017 19:27:13 +0530
+Message-ID: <1509371843-22931-3-git-send-email-mmaddireddy@nvidia.com>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com, mperttunen@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1509371843-22931-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch ensures that LTSSM is started (by deasserting pcie_xrst) only
-after all the required root port register programming is completed.
+In Tegra186 PHY programming is done by BPMP-FW, so PHY calls are skipped
+in driver. REFCLK pad settings are independent of PHY and should be
+programmed by driver. So move REFCLK pad settings out of phy_power_on().
+These pad settings improve REFCLK peak to peak amplitude.
 
-Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V3:
-* no change in this patch
+* Corrected commit log
 V2:
 * no change in this patch
 
- drivers/pci/host/pci-tegra.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/pci/host/pci-tegra.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 96e8038c3019..b41c60c7414c 100644
+index b41c60c7414c..068510b40c1a 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -1024,9 +1024,6 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+@@ -910,7 +910,6 @@ static int tegra_pcie_port_phy_power_off(struct tegra_pcie_port *port)
+ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
+ {
+ 	struct device *dev = pcie->dev;
+-	const struct tegra_pcie_soc *soc = pcie->soc;
+ 	struct tegra_pcie_port *port;
+ 	int err;
+ 
+@@ -936,12 +935,6 @@ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
  		}
  	}
  
--	/* take the PCIe interface module out of reset */
--	reset_control_deassert(pcie->pcie_xrst);
+-	/* Configure the reference clock driver */
+-	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
 -
- 	/* finally enable PCIe */
- 	value = afi_readl(pcie, AFI_CONFIGURATION);
- 	value |= AFI_CONFIGURATION_EN_FPCI;
-@@ -1065,7 +1062,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
- 			dev_err(dev, "failed to power off PHY(s): %d\n", err);
- 	}
+-	if (soc->num_ports > 2)
+-		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
+-
+ 	return 0;
+ }
  
--	reset_control_assert(pcie->pcie_xrst);
- 	reset_control_assert(pcie->afi_rst);
- 	reset_control_assert(pcie->pex_rst);
+@@ -2049,6 +2042,17 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 	return 0;
+ }
  
-@@ -2116,7 +2112,12 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
- 			 port->index, port->lanes);
- 
- 		tegra_pcie_port_enable(port);
-+	}
- 
-+	/* take the PCIe interface module out of reset */
-+	reset_control_deassert(pcie->pcie_xrst);
++static void tegra_pcie_apply_pad_settings(struct tegra_pcie *pcie)
++{
++	const struct tegra_pcie_soc *soc = pcie->soc;
 +
-+	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
- 		if (tegra_pcie_port_check_link(port))
- 			continue;
++	/* Configure the reference clock driver */
++	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
++
++	if (soc->num_ports > 2)
++		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
++}
++
+ /*
+  * FIXME: If there are no PCIe cards attached, then calling this function
+  * can result in the increase of the bootup time as there are big timeout
+@@ -2107,6 +2111,8 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+ 	struct device *dev = pcie->dev;
+ 	struct tegra_pcie_port *port, *tmp;
  
++	tegra_pcie_apply_pad_settings(pcie);
++
+ 	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
+ 		dev_info(dev, "probing port %u, using %u lanes\n",
+ 			 port->index, port->lanes);
 -- 
 2.1.4
