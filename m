@@ -1,134 +1,112 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH V2 10/12] PCI: tegra: Add SW fixup for RAW violations
-Date: Mon, 30 Oct 2017 12:09:06 +0200
-Message-ID: <00f35628-4205-5dd4-c4ba-45bb709b8c20@kapsi.fi>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH V2 11/12] PCI: tegra: Increase the deskew retry time
+Date: Mon, 30 Oct 2017 12:10:36 +0200
+Message-ID: <f69b8454-0d87-2bb5-fcea-338a106a3c3a@kapsi.fi>
 References: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
- <1509337143-25963-11-git-send-email-mmaddireddy@nvidia.com>
+ <1509337143-25963-12-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1509337143-25963-11-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1509337143-25963-12-git-send-email-mmaddireddy@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>, thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 On 30.10.2017 06:19, Manikanta Maddireddy wrote:
-> The logic which blocks read requests till AFI gets ACK for all outstanding
-> MC writes does not behave correctly when number of outstanding write
-> becomes more than 32.
+> Some times Gen2 to Gen1 link speed switching fails due to instability in
+> deskew logic on lane0 in Tegra210. Increase the deskew retry time to
+> resolve this issue.
 >
-> SW fixup to prevent this issue is to limit outstanding posted writes and
-> tweak updateFC timer threshold.
->
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
 > ---
 > V2:
 > * no change in this patch
 >
->  drivers/pci/host/pci-tegra.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+>  drivers/pci/host/pci-tegra.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 >
 > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 3c625ccfa539..d348f487f5d7 100644
+> index d348f487f5d7..afde9bfb867f 100644
 > --- a/drivers/pci/host/pci-tegra.c
 > +++ b/drivers/pci/host/pci-tegra.c
-> @@ -185,6 +185,13 @@
->
->  #define AFI_PEXBIAS_CTRL_0		0x168
->
-> +#define RP_PRIV_XP_DL	0x494
-> +#define  RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD	(0x1ff << 1)
-> +
-> +#define RP_RX_HDR_LIMIT	0xe00
-> +#define  RP_RX_HDR_LIMIT_PW_MASK	(0xff << 8)
-> +#define  RP_RX_HDR_LIMIT_PW		(0x0e << 8)
-> +
->  #define RP_ECTL_2_R1	0xe84
->  #define  RP_ECTL_2_R1_RX_CTLE_1C_MASK		0xffff
->
-> @@ -213,6 +220,7 @@
->  #define  RP_VEND_XP_DL_UP			(1 << 30)
->  #define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
+> @@ -222,6 +222,10 @@
 >  #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
-> +#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
+>  #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
 >
+> +#define RP_VEND_CTL0	0xf44
+> +#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
+> +#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH	(0x9 << 12)
+> +
 >  #define RP_VEND_CTL1	0xf48
 >  #define  RP_VEND_CTL1_ERPT	(1 << 13)
-> @@ -307,6 +315,7 @@ struct tegra_pcie_soc {
->  	bool program_uphy;
+>
+> @@ -316,6 +320,7 @@ struct tegra_pcie_soc {
 >  	bool program_ectl_settings;
 >  	bool update_clamp_threshold;
-> +	bool RAW_violation_fixup;
-
-This needs to be 'raw_violation_fixup'. Otherwise looks good to me. (To 
-be funny you could call it 'raw_violation_war' ..but maybe not :)
-
+>  	bool RAW_violation_fixup;
+> +	bool program_deskew_time;
 >  };
 >
 >  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-> @@ -2189,6 +2198,22 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->  				RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD);
+> @@ -2214,6 +2219,16 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+>  		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
+>  		writel(value, port->base + RP_VEND_XP);
 >  	}
->  	writel(value, port->base + RP_PRIV_MISC);
 > +
-> +	/* Fixup for read after write violation in T124 & T132 platforms */
-> +	if (soc->RAW_violation_fixup) {
-> +		value = readl(port->base + RP_RX_HDR_LIMIT);
-> +		value &= ~RP_RX_HDR_LIMIT_PW_MASK;
-> +		value |= RP_RX_HDR_LIMIT_PW;
-> +		writel(value, port->base + RP_RX_HDR_LIMIT);
-> +
-> +		value = readl(port->base + RP_PRIV_XP_DL);
-> +		value |= RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD;
-> +		writel(value, port->base + RP_PRIV_XP_DL);
-> +
-> +		value = readl(port->base + RP_VEND_XP);
-> +		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
-> +		writel(value, port->base + RP_VEND_XP);
+> +	/* Tune deskew retry time to take care of Gen2 -> Gen1
+> +	 * link speed change error in corner cases
+> +	 */
+> +	if (soc->program_deskew_time) {
+> +		value = readl(port->base + RP_VEND_CTL0);
+> +		value &= ~RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK;
+> +		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
+> +		writel(value, port->base + RP_VEND_CTL0);
 > +	}
 >  }
 >  /*
 >   * FIXME: If there are no PCIe cards attached, then calling this function
-> @@ -2326,6 +2351,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
->  	.program_uphy = true,
+> @@ -2352,6 +2367,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
 >  	.program_ectl_settings = false,
 >  	.update_clamp_threshold = false,
-> +	.RAW_violation_fixup = false,
+>  	.RAW_violation_fixup = false,
+> +	.program_deskew_time = false,
 >  };
 >
 >  static const struct tegra_pcie_soc tegra30_pcie = {
-> @@ -2344,6 +2370,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
->  	.program_uphy = true,
+> @@ -2371,6 +2387,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
 >  	.program_ectl_settings = false,
 >  	.update_clamp_threshold = false,
-> +	.RAW_violation_fixup = false,
+>  	.RAW_violation_fixup = false,
+> +	.program_deskew_time = false,
 >  };
 >
 >  static const struct tegra_pcie_soc tegra124_pcie = {
-> @@ -2361,6 +2388,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
->  	.program_uphy = true,
+> @@ -2389,6 +2406,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
 >  	.program_ectl_settings = false,
 >  	.update_clamp_threshold = true,
-> +	.RAW_violation_fixup = true,
+>  	.RAW_violation_fixup = true,
+> +	.program_deskew_time = false,
 >  };
 >
 >  static const struct tegra_pcie_soc tegra210_pcie = {
-> @@ -2386,6 +2414,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
->  	.program_uphy = true,
+> @@ -2415,6 +2433,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
 >  	.program_ectl_settings = true,
 >  	.update_clamp_threshold = true,
-> +	.RAW_violation_fixup = false,
+>  	.RAW_violation_fixup = false,
+> +	.program_deskew_time = true,
 >  };
 >
 >  static const struct tegra_pcie_soc tegra186_pcie = {
-> @@ -2404,6 +2433,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
->  	.program_uphy = false,
+> @@ -2434,6 +2453,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
 >  	.program_ectl_settings = false,
 >  	.update_clamp_threshold = false,
-> +	.RAW_violation_fixup = false,
+>  	.RAW_violation_fixup = false,
+> +	.program_deskew_time = false,
 >  };
 >
 >  static const struct of_device_id tegra_pcie_of_match[] = {
 >
+
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
