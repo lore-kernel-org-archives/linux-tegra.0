@@ -1,124 +1,49 @@
 From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 09/12] PCI: tegra: Enable PCIe xclk clock clamping
-Date: Mon, 30 Oct 2017 09:26:59 +0530
-Message-ID: <e961b1b7-9e38-d4c8-ca24-9c3746b5a665@nvidia.com>
-References: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
- <1509132569-9398-10-git-send-email-mmaddireddy@nvidia.com>
- <f5173fb7-1c4a-f3bb-92a6-25034dfb3573@nvidia.com>
+Subject: [PATCH V2 00/12] Enable Tegra root port features and apply SW fixups
+Date: Mon, 30 Oct 2017 09:48:51 +0530
+Message-ID: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f5173fb7-1c4a-f3bb-92a6-25034dfb3573-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+These series of patches does the following things,
+- Deasserting pcie_xrst after programming root port to make sure that
+  register programming is reflected during LTSSM
+- Apply REFCLK pad settings to make sure P2P amplitude requirement is met
+- Enable Gen2 link speed
+- Advertise AER capability
+- Program UPHY electrical settings for meeting eye diagram requirements
+- Bunch of SW fixups explained in their respective commit log
 
+Testing done on Tegra124, 210 and 186:
+- PCIe link up, config read, BAR read and basic functionality of Ethernet
+  card
+- Link speed switch to Gen2 after link retrain
+- Link speed stays in Gen1 after retrain if end point is only Gen1 capable
+- Simulated AER errors and verified dmesg logs for them
+- Rest of the programming is verified by dumping the registers after PCIe
+link up
 
-On 29-Oct-17 3:13 PM, Vidya Sagar wrote:
-> 
-> 
-> On Saturday 28 October 2017 12:59 AM, Manikanta Maddireddy wrote:
->> This patch enables PCIe xlck clock clamping by pad control. Pad control
->> asserts UPHY lane sleep signal when L1 entry signal received from PCIe.
->> UPHY sleep signal assertion is done per lane. Default clamp threshold
->> margin is not enough to assert all UPHY lane sleep signals. Increase
->> the clamp threshold in Tegra124, 132, 210 and 186.
->>
->> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   drivers/pci/host/pci-tegra.c | 28 ++++++++++++++++++++++++++--
->>   1 file changed, 26 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->> index 6028d5f3d5bb..8fbc5950785a 100644
->> --- a/drivers/pci/host/pci-tegra.c
->> +++ b/drivers/pci/host/pci-tegra.c
->> @@ -224,8 +224,14 @@
->>   #define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
->>     #define RP_PRIV_MISC    0x00000fe0
->> -#define  RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT (0xe << 0)
->> -#define  RP_PRIV_MISC_PRSNT_MAP_EP_ABSNT (0xf << 0)
->> +#define  RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT        (0xe << 0)
->> +#define  RP_PRIV_MISC_PRSNT_MAP_EP_ABSNT        (0xf << 0)
->> +#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD_MASK    (0x7f << 16)
->> +#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD        (0xf << 16)
->> +#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE        (1 << 23)
->> +#define  RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD_MASK    (0x7f << 24)
->> +#define  RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD        (0xf << 24)
->> +#define  RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE        (1 << 31)
->>   
-> BIT macro is preferred here.
-Left shift is used everywhere, so to be inline with that I used same format
->>   #define RP_LINK_CONTROL_STATUS            0x00000090
->>   #define  RP_LINK_CONTROL_STATUS_DL_LINK_ACTIVE    0x20000000
->> @@ -300,6 +306,7 @@ struct tegra_pcie_soc {
->>       bool force_pca_enable;
->>       bool program_uphy;
->>       bool program_ectl_settings;
->> +    bool update_clamp_threshold;
->>   };
->>     static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
->> @@ -2156,6 +2163,7 @@ static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
->>     static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->>   {
->> +    const struct tegra_pcie_soc *soc = port->pcie->soc;
->>       unsigned long value;
->>         /* Optimal settings to enhance bandwidth */
->> @@ -2170,6 +2178,17 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->>       value = readl(port->base + RP_VEND_XP_BIST);
->>       value |= RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE;
->>       writel(value, port->base + RP_VEND_XP_BIST);
->> +
->> +    value = readl(port->base + RP_PRIV_MISC);
->> +    value |= (RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE |
->> +             RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE);
->> +    if (soc->update_clamp_threshold) {
->> +        value &= ~(RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD_MASK |
->> +                RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD_MASK);
->> +        value |= (RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD |
->> +                RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD);
->> +    }
->> +    writel(value, port->base + RP_PRIV_MISC);
->>   }
->>   /*
->>    * FIXME: If there are no PCIe cards attached, then calling this function
->> @@ -2306,6 +2325,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
->>       .force_pca_enable = false,
->>       .program_uphy = true,
->>       .program_ectl_settings = false,
->> +    .update_clamp_threshold = false,
->>   };
->>     static const struct tegra_pcie_soc tegra30_pcie = {
->> @@ -2323,6 +2343,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
->>       .force_pca_enable = false,
->>       .program_uphy = true,
->>       .program_ectl_settings = false,
->> +    .update_clamp_threshold = false,
->>   };
->>     static const struct tegra_pcie_soc tegra124_pcie = {
->> @@ -2339,6 +2360,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
->>       .force_pca_enable = false,
->>       .program_uphy = true,
->>       .program_ectl_settings = false,
->> +    .update_clamp_threshold = true,
->>   };
->>     static const struct tegra_pcie_soc tegra210_pcie = {
->> @@ -2363,6 +2385,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
->>       .force_pca_enable = true,
->>       .program_uphy = true,
->>       .program_ectl_settings = true,
->> +    .update_clamp_threshold = true,
->>   };
->>     static const struct tegra_pcie_soc tegra186_pcie = {
->> @@ -2380,6 +2403,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
->>       .force_pca_enable = false,
->>       .program_uphy = false,
->>       .program_ectl_settings = false,
->> +    .update_clamp_threshold = false,
->>   };
->>     static const struct of_device_id tegra_pcie_of_match[] = {
-> 
+Manikanta Maddireddy (12):
+  PCI: tegra: Start LTSSM after programming root port
+  PCI: tegra: Move REFCLK pad settings out of phy_power_on()
+  PCI: tegra: Retrain link for Gen2 speed
+  PCI: tegra: Advertise AER capability
+  PCI: tegra: Program UPHY electrical settings in Tegra210
+  PCI: tegra: Enable opportunistic update FC and ACK
+  PCI: tegra: Disable AFI dynamic clock gating
+  PCI: tegra: Wait for DLLP to finish before entering L1 or L2
+  PCI: tegra: Enable PCIe xclk clock clamping
+  PCI: tegra: Add SW fixup for RAW violations
+  PCI: tegra: Increase the deskew retry time
+  PCI: tegra: Update flow control threshold in Tegra210
+
+ drivers/pci/host/pci-tegra.c | 306 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 288 insertions(+), 18 deletions(-)
+
+-- 
+2.1.4
