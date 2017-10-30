@@ -1,108 +1,69 @@
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [PATCH V2 11/12] PCI: tegra: Increase the deskew retry time
-Date: Mon, 30 Oct 2017 09:49:02 +0530
-Message-ID: <1509337143-25963-12-git-send-email-mmaddireddy@nvidia.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH V2 01/12] PCI: tegra: Start LTSSM after programming root
+ port
+Date: Mon, 30 Oct 2017 11:08:25 +0200
+Message-ID: <5911b4d5-cc54-9fed-f6be-5c9b7ca05c2e@kapsi.fi>
 References: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
+ <1509337143-25963-2-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
+In-Reply-To: <1509337143-25963-2-git-send-email-mmaddireddy@nvidia.com>
 Sender: linux-pci-owner@vger.kernel.org
-To: thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>, thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Some times Gen2 to Gen1 link speed switching fails due to instability in
-deskew logic on lane0 in Tegra210. Increase the deskew retry time to
-resolve this issue.
+On 30.10.2017 06:18, Manikanta Maddireddy wrote:
+> This patch ensures that LTSSM is started (by deasserting pcie_xrst) only
+> after all the required root port register programming is completed.
+>
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> ---
+> V2:
+> * no change in this patch
+>
+>  drivers/pci/host/pci-tegra.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 96e8038c3019..b41c60c7414c 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -1024,9 +1024,6 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+>  		}
+>  	}
+>
+> -	/* take the PCIe interface module out of reset */
+> -	reset_control_deassert(pcie->pcie_xrst);
+> -
+>  	/* finally enable PCIe */
+>  	value = afi_readl(pcie, AFI_CONFIGURATION);
+>  	value |= AFI_CONFIGURATION_EN_FPCI;
+> @@ -1065,7 +1062,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+>  			dev_err(dev, "failed to power off PHY(s): %d\n", err);
+>  	}
+>
+> -	reset_control_assert(pcie->pcie_xrst);
 
-Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
----
-V2:
-* no change in this patch
+Why is this change being made? Is there a reason we cannot leave this 
+reset asserted when the controller is powered off?
 
- drivers/pci/host/pci-tegra.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index d348f487f5d7..afde9bfb867f 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -222,6 +222,10 @@
- #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
- #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
- 
-+#define RP_VEND_CTL0	0xf44
-+#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
-+#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH	(0x9 << 12)
-+
- #define RP_VEND_CTL1	0xf48
- #define  RP_VEND_CTL1_ERPT	(1 << 13)
- 
-@@ -316,6 +320,7 @@ struct tegra_pcie_soc {
- 	bool program_ectl_settings;
- 	bool update_clamp_threshold;
- 	bool RAW_violation_fixup;
-+	bool program_deskew_time;
- };
- 
- static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-@@ -2214,6 +2219,16 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
- 		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
- 		writel(value, port->base + RP_VEND_XP);
- 	}
-+
-+	/* Tune deskew retry time to take care of Gen2 -> Gen1
-+	 * link speed change error in corner cases
-+	 */
-+	if (soc->program_deskew_time) {
-+		value = readl(port->base + RP_VEND_CTL0);
-+		value &= ~RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK;
-+		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
-+		writel(value, port->base + RP_VEND_CTL0);
-+	}
- }
- /*
-  * FIXME: If there are no PCIe cards attached, then calling this function
-@@ -2352,6 +2367,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
- 	.program_ectl_settings = false,
- 	.update_clamp_threshold = false,
- 	.RAW_violation_fixup = false,
-+	.program_deskew_time = false,
- };
- 
- static const struct tegra_pcie_soc tegra30_pcie = {
-@@ -2371,6 +2387,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
- 	.program_ectl_settings = false,
- 	.update_clamp_threshold = false,
- 	.RAW_violation_fixup = false,
-+	.program_deskew_time = false,
- };
- 
- static const struct tegra_pcie_soc tegra124_pcie = {
-@@ -2389,6 +2406,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
- 	.program_ectl_settings = false,
- 	.update_clamp_threshold = true,
- 	.RAW_violation_fixup = true,
-+	.program_deskew_time = false,
- };
- 
- static const struct tegra_pcie_soc tegra210_pcie = {
-@@ -2415,6 +2433,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
- 	.program_ectl_settings = true,
- 	.update_clamp_threshold = true,
- 	.RAW_violation_fixup = false,
-+	.program_deskew_time = true,
- };
- 
- static const struct tegra_pcie_soc tegra186_pcie = {
-@@ -2434,6 +2453,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
- 	.program_ectl_settings = false,
- 	.update_clamp_threshold = false,
- 	.RAW_violation_fixup = false,
-+	.program_deskew_time = false,
- };
- 
- static const struct of_device_id tegra_pcie_of_match[] = {
--- 
-2.1.4
+>  	reset_control_assert(pcie->afi_rst);
+>  	reset_control_assert(pcie->pex_rst);
+>
+> @@ -2116,7 +2112,12 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+>  			 port->index, port->lanes);
+>
+>  		tegra_pcie_port_enable(port);
+> +	}
+>
+> +	/* take the PCIe interface module out of reset */
+> +	reset_control_deassert(pcie->pcie_xrst);
+> +
+> +	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
+>  		if (tegra_pcie_port_check_link(port))
+>  			continue;
+>
+>
