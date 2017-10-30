@@ -1,67 +1,58 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 07/12] PCI: tegra: Disable AFI dynamic clock gating
-Date: Mon, 30 Oct 2017 19:27:18 +0530
-Message-ID: <1509371843-22931-8-git-send-email-mmaddireddy@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: [PATCH V3 08/12] PCI: tegra: Wait for DLLP to finish before entering L1 or L2
+Date: Mon, 30 Oct 2017 19:27:19 +0530
+Message-ID: <1509371843-22931-9-git-send-email-mmaddireddy@nvidia.com>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1509371843-22931-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com, mperttunen@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-When there are 32 outstanding writes from AFI to memory, the outstanding
-write counter overflows and indicates that there are "0" outstanding write
-transactions. This outstanding write counter is used to generate IDLE
-signal to dynamically gate the AFI clock.
+Set required bit to have LTSSM wait for DLLP to finish before entering L1
+or L2. This avoids truncation of PM messages which results in receiver
+errors.
 
-When memory controller is under heavy load, its possible that write
-completions will come back to AFI after long delay and AFI write counter
-overflows. AFI clock gets gated even when there are outstanding
-transactions towards memory controller resutling in system hang.
-
-Disable dynamic clock gating of AFI clock to avoid system hang.
-
-Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
 ---
 V3:
 * no change in this patch
 V2:
 * no change in this patch
 
- drivers/pci/host/pci-tegra.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/pci/host/pci-tegra.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 4562b0c113a8..c264037112cb 100644
+index c264037112cb..34740a7033f7 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -103,8 +103,9 @@
- #define AFI_MSI_EN_VEC6		0xa4
- #define AFI_MSI_EN_VEC7		0xa8
+@@ -219,6 +219,9 @@
+ #define RP_VEND_CTL1	0xf48
+ #define  RP_VEND_CTL1_ERPT	(1 << 13)
  
--#define AFI_CONFIGURATION		0xac
--#define  AFI_CONFIGURATION_EN_FPCI	(1 << 0)
-+#define AFI_CONFIGURATION			0xac
-+#define  AFI_CONFIGURATION_EN_FPCI		(1 << 0)
-+#define  AFI_CONFIGURATION_CLKEN_OVERRIDE	(1 << 31)
++#define RP_VEND_XP_BIST	0xf4c
++#define  RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE	(1 << 28)
++
+ #define RP_VEND_CTL2 0x00000fa8
+ #define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
  
- #define AFI_FPCI_ERROR_MASKS	0xb0
- 
-@@ -1059,9 +1060,10 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
- 		}
- 	}
- 
--	/* finally enable PCIe */
-+	/* Disable AFI dynamic clock gating and enable PCIe */
- 	value = afi_readl(pcie, AFI_CONFIGURATION);
--	value |= AFI_CONFIGURATION_EN_FPCI;
-+	value |= (AFI_CONFIGURATION_EN_FPCI |
-+			AFI_CONFIGURATION_CLKEN_OVERRIDE);
- 	afi_writel(pcie, value, AFI_CONFIGURATION);
- 
- 	value = AFI_INTR_EN_INI_SLVERR | AFI_INTR_EN_INI_DECERR |
+@@ -2162,6 +2165,13 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+ 	value |= RP_VEND_XP_OPPORTUNISTIC_ACK;
+ 	value |= RP_VEND_XP_OPPORTUNISTIC_UPDATEFC;
+ 	writel(value, port->base + RP_VEND_XP);
++
++	/* LTSSM will wait for DLLP to finish before entering L1 or L2,
++	 * to avoid truncation of PM messages which results in receiver errors
++	 */
++	value = readl(port->base + RP_VEND_XP_BIST);
++	value |= RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE;
++	writel(value, port->base + RP_VEND_XP_BIST);
+ }
+ /*
+  * FIXME: If there are no PCIe cards attached, then calling this function
 -- 
 2.1.4
