@@ -1,102 +1,128 @@
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [PATCH V3 12/12] PCI: tegra: Update flow control threshold in Tegra210
-Date: Mon, 30 Oct 2017 19:27:23 +0530
-Message-ID: <1509371843-22931-13-git-send-email-mmaddireddy@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 10/12] PCI: tegra: Add SW fixup for RAW violations
+Date: Mon, 30 Oct 2017 19:27:21 +0530
+Message-ID: <1509371843-22931-11-git-send-email-mmaddireddy@nvidia.com>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com, mperttunen@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1509371843-22931-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Recommended update FC threshold in Tegra210 is 0x60 for best performance
-of x1 link. Setting this to 0x60 provides the best balance between number
-of UpdateFC and read data sent over the link.
+The logic which blocks read requests till AFI gets ACK for all outstanding
+MC writes does not behave correctly when number of outstanding write
+becomes more than 32.
 
-Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+SW fixup to prevent this issue is to limit outstanding posted writes and
+tweak updateFC timer threshold.
+
+Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V3:
 * changed soc parameter name
 V2:
 * no change in this patch
 
- drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/pci/host/pci-tegra.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index b29329226e3d..812d32cfdd0e 100644
+index 9f13e6fcc64e..3993e9221c96 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -223,6 +223,7 @@
+@@ -185,6 +185,13 @@
+ 
+ #define AFI_PEXBIAS_CTRL_0		0x168
+ 
++#define RP_PRIV_XP_DL	0x494
++#define  RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD	(0x1ff << 1)
++
++#define RP_RX_HDR_LIMIT	0xe00
++#define  RP_RX_HDR_LIMIT_PW_MASK	(0xff << 8)
++#define  RP_RX_HDR_LIMIT_PW		(0x0e << 8)
++
+ #define RP_ECTL_2_R1	0xe84
+ #define  RP_ECTL_2_R1_RX_CTLE_1C_MASK		0xffff
+ 
+@@ -215,6 +222,7 @@
+ #define  RP_VEND_XP_DL_UP			(1 << 30)
  #define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
  #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
- #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
-+#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_T210	(0x60 << 18)
++#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
  
- #define RP_VEND_CTL0	0xf44
- #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
-@@ -323,6 +324,7 @@ struct tegra_pcie_soc {
+ #define RP_VEND_CTL1	0xf48
+ #define  RP_VEND_CTL1_ERPT	(1 << 13)
+@@ -309,6 +317,7 @@ struct tegra_pcie_soc {
+ 	bool program_uphy;
+ 	bool program_ectl_settings;
  	bool update_clamp_threshold;
- 	bool raw_violation_fixup;
- 	bool program_deskew_time;
-+	bool update_fc_threshold;
++	bool raw_violation_fixup;
  };
  
  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-@@ -2231,6 +2233,13 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
- 		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
- 		writel(value, port->base + RP_VEND_CTL0);
+@@ -2191,6 +2200,22 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+ 				RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD;
  	}
+ 	writel(value, port->base + RP_PRIV_MISC);
 +
-+	if (soc->update_fc_threshold) {
++	/* Fixup for read after write violation in T124 & T132 platforms */
++	if (soc->raw_violation_fixup) {
++		value = readl(port->base + RP_RX_HDR_LIMIT);
++		value &= ~RP_RX_HDR_LIMIT_PW_MASK;
++		value |= RP_RX_HDR_LIMIT_PW;
++		writel(value, port->base + RP_RX_HDR_LIMIT);
++
++		value = readl(port->base + RP_PRIV_XP_DL);
++		value |= RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD;
++		writel(value, port->base + RP_PRIV_XP_DL);
++
 +		value = readl(port->base + RP_VEND_XP);
-+		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
-+		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_T210;
++		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
 +		writel(value, port->base + RP_VEND_XP);
 +	}
  }
  /*
   * FIXME: If there are no PCIe cards attached, then calling this function
-@@ -2371,6 +2380,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+@@ -2329,6 +2354,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+ 	.program_uphy = true,
+ 	.program_ectl_settings = false,
  	.update_clamp_threshold = false,
- 	.raw_violation_fixup = false,
- 	.program_deskew_time = false,
-+	.update_fc_threshold = false,
++	.raw_violation_fixup = false,
  };
  
  static const struct tegra_pcie_soc tegra30_pcie = {
-@@ -2391,6 +2401,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+@@ -2347,6 +2373,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+ 	.program_uphy = true,
+ 	.program_ectl_settings = false,
  	.update_clamp_threshold = false,
- 	.raw_violation_fixup = false,
- 	.program_deskew_time = false,
-+	.update_fc_threshold = false,
++	.raw_violation_fixup = false,
  };
  
  static const struct tegra_pcie_soc tegra124_pcie = {
-@@ -2410,6 +2421,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+@@ -2364,6 +2391,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+ 	.program_uphy = true,
+ 	.program_ectl_settings = false,
  	.update_clamp_threshold = true,
- 	.raw_violation_fixup = true,
- 	.program_deskew_time = false,
-+	.update_fc_threshold = false,
++	.raw_violation_fixup = true,
  };
  
  static const struct tegra_pcie_soc tegra210_pcie = {
-@@ -2437,6 +2449,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
+@@ -2389,6 +2417,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
+ 	.program_uphy = true,
+ 	.program_ectl_settings = true,
  	.update_clamp_threshold = true,
- 	.raw_violation_fixup = false,
- 	.program_deskew_time = true,
-+	.update_fc_threshold = true,
++	.raw_violation_fixup = false,
  };
  
  static const struct tegra_pcie_soc tegra186_pcie = {
-@@ -2457,6 +2470,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
+@@ -2407,6 +2436,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
+ 	.program_uphy = false,
+ 	.program_ectl_settings = false,
  	.update_clamp_threshold = false,
- 	.raw_violation_fixup = false,
- 	.program_deskew_time = false,
-+	.update_fc_threshold = false,
++	.raw_violation_fixup = false,
  };
  
  static const struct of_device_id tegra_pcie_of_match[] = {
