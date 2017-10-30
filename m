@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/4] PCI: tegra: fixups to avoid unnecessary wakeup from ASPM-L1.2
-Date: Mon, 30 Oct 2017 16:33:05 +0530
-Message-ID: <1509361385-21224-5-git-send-email-vidyas@nvidia.com>
+Subject: [PATCH 1/4] PCI/ASPM: Add API to supply LTR L1.2 threshold
+Date: Mon, 30 Oct 2017 16:33:02 +0530
+Message-ID: <1509361385-21224-2-git-send-email-vidyas@nvidia.com>
 References: <1509361385-21224-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,91 +12,70 @@ To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-sets CLKREQ asserted delay to a higher value to avoid
-unnecessary wake up from L1.2_ENTRY state for Tegra210
+adds API for host controller drivers to specify LTR L1.2
+threshold value if it is different from the default value.
+weak implementation of the API is added to supply default
+value
 
 Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/pci/pcie/aspm.c  | 11 ++++++++---
+ include/linux/pci-aspm.h |  6 ++++++
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 08da67a82a2d..811209dedde2 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -204,6 +204,8 @@
- #define RP_L1_PM_SUBSTATES_1_CTL			0xC04
- #define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK	0x1FFF
- #define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY		0x26
-+#define RP_L1SS_1_CTL_CLKREQ_ASSERTED_DLY_MASK		(0x1FF << 13)
-+#define RP_L1SS_1_CTL_CLKREQ_ASSERTED_DLY		(0x27 << 13)
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index 1dfa10cc566b..c6e8604796e5 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -436,6 +436,11 @@ static struct pci_dev *pci_function_0(struct pci_bus *linkbus)
+ 	return NULL;
+ }
  
- #define RP_L1_PM_SUBSTATES_2_CTL			0xC08
- #define RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY_MASK	0x1FFF
-@@ -354,6 +356,7 @@ struct tegra_pcie_soc {
- 	bool updateFC_threshold;
- 	bool has_aspm_l1;
- 	bool has_aspm_l1ss;
-+	bool l1ss_rp_wake_fixup;
- };
- 
- static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-@@ -2307,6 +2310,16 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
- 			(7 << RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_SHIFT);
- 		writel(value, port->base + RP_L1_PM_SUBSTATES_CTL);
- 
-+		if (soc->l1ss_rp_wake_fixup) {
-+			/* Set CLKREQ asserted delay greater than Power_Off
-+			 * time (2us) to avoid RP wakeup in L1.2_ENTRY
-+			 */
-+			value = readl(port->base + RP_L1_PM_SUBSTATES_1_CTL);
-+			value &= ~RP_L1SS_1_CTL_CLKREQ_ASSERTED_DLY_MASK;
-+			value |= RP_L1SS_1_CTL_CLKREQ_ASSERTED_DLY;
-+			writel(value, port->base + RP_L1_PM_SUBSTATES_1_CTL);
-+		}
++u32 __weak pcie_aspm_get_ltr_l_1_2_threshold(void)
++{
++	return LTR_L1_2_THRESHOLD_BITS;
++}
 +
- 		/* Following is based on clk_m being 19.2 MHz */
- 		value = readl(port->base + RP_L1_PM_SUBSTATES_1_CTL);
- 		value &= ~RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK;
-@@ -2464,6 +2477,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
- 	.updateFC_threshold = false,
- 	.has_aspm_l1 = false,
- 	.has_aspm_l1ss = false,
-+	.l1ss_rp_wake_fixup = false,
- };
+ /* Calculate L1.2 PM substate timing parameters */
+ static void aspm_calc_l1ss_info(struct pcie_link_state *link,
+ 				struct aspm_register_info *upreg,
+@@ -458,10 +463,10 @@ static void aspm_calc_l1ss_info(struct pcie_link_state *link,
+ 	else
+ 		link->l1ss.ctl1 |= val2 << 8;
+ 	/*
+-	 * We currently use LTR L1.2 threshold to be fixed constant picked from
+-	 * Intel's coreboot.
++	 * Get LTR L1.2 threshold value specific to a platform if present
++	 * Otherwise, get a constant value picked from Intel's coreboot.
+ 	 */
+-	link->l1ss.ctl1 |= LTR_L1_2_THRESHOLD_BITS;
++	link->l1ss.ctl1 |= pcie_aspm_get_ltr_l_1_2_threshold();
  
- static const struct tegra_pcie_soc tegra30_pcie = {
-@@ -2487,6 +2501,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
- 	.updateFC_threshold = false,
- 	.has_aspm_l1 = true,
- 	.has_aspm_l1ss = false,
-+	.l1ss_rp_wake_fixup = false,
- };
+ 	/* Choose the greater of the two T_pwr_on */
+ 	val1 = (upreg->l1ss_cap >> 19) & 0x1F;
+diff --git a/include/linux/pci-aspm.h b/include/linux/pci-aspm.h
+index 207c561fb40e..7ffde0f57688 100644
+--- a/include/linux/pci-aspm.h
++++ b/include/linux/pci-aspm.h
+@@ -30,6 +30,7 @@ void pcie_aspm_powersave_config_link(struct pci_dev *pdev);
+ void pci_disable_link_state(struct pci_dev *pdev, int state);
+ void pci_disable_link_state_locked(struct pci_dev *pdev, int state);
+ void pcie_no_aspm(void);
++u32 pcie_aspm_get_ltr_l_1_2_threshold(void);
+ #else
+ static inline void pcie_aspm_init_link_state(struct pci_dev *pdev)
+ {
+@@ -49,6 +50,11 @@ static inline void pci_disable_link_state(struct pci_dev *pdev, int state)
+ static inline void pcie_no_aspm(void)
+ {
+ }
++
++static inline u32 pcie_aspm_get_ltr_l_1_2_threshold(void)
++{
++	return 0;
++}
+ #endif
  
- static const struct tegra_pcie_soc tegra124_pcie = {
-@@ -2509,6 +2524,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
- 	.updateFC_threshold = false,
- 	.has_aspm_l1 = true,
- 	.has_aspm_l1ss = false,
-+	.l1ss_rp_wake_fixup = false,
- };
- 
- static const struct tegra_pcie_soc tegra210_pcie = {
-@@ -2539,6 +2555,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
- 	.updateFC_threshold = true,
- 	.has_aspm_l1 = true,
- 	.has_aspm_l1ss = true,
-+	.l1ss_rp_wake_fixup = true,
- };
- 
- static const struct tegra_pcie_soc tegra186_pcie = {
-@@ -2562,6 +2579,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
- 	.updateFC_threshold = false,
- 	.has_aspm_l1 = true,
- 	.has_aspm_l1ss = true,
-+	.l1ss_rp_wake_fixup = false,
- };
- 
- static const struct of_device_id tegra_pcie_of_match[] = {
+ #ifdef CONFIG_PCIEASPM_DEBUG /* this depends on CONFIG_PCIEASPM */
 -- 
 2.7.4
