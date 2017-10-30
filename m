@@ -1,7 +1,7 @@
 From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 09/12] PCI: tegra: Enable PCIe xclk clock clamping
-Date: Mon, 30 Oct 2017 09:49:00 +0530
-Message-ID: <1509337143-25963-10-git-send-email-mmaddireddy@nvidia.com>
+Subject: [PATCH V2 10/12] PCI: tegra: Add SW fixup for RAW violations
+Date: Mon, 30 Oct 2017 09:49:01 +0530
+Message-ID: <1509337143-25963-11-git-send-email-mmaddireddy@nvidia.com>
 References: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,112 +12,115 @@ To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlf
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch enables PCIe xlck clock clamping by pad control. Pad control
-asserts UPHY lane sleep signal when L1 entry signal received from PCIe.
-UPHY sleep signal assertion is done per lane. Default clamp threshold
-margin is not enough to assert all UPHY lane sleep signals. Increase
-the clamp threshold in Tegra124, 132, 210 and 186.
+The logic which blocks read requests till AFI gets ACK for all outstanding
+MC writes does not behave correctly when number of outstanding write
+becomes more than 32.
+
+SW fixup to prevent this issue is to limit outstanding posted writes and
+tweak updateFC timer threshold.
 
 Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2:
 * no change in this patch
 
- drivers/pci/host/pci-tegra.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ drivers/pci/host/pci-tegra.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 7f1e34e670d7..3c625ccfa539 100644
+index 3c625ccfa539..d348f487f5d7 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -224,8 +224,14 @@
- #define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
+@@ -185,6 +185,13 @@
  
- #define RP_PRIV_MISC	0x00000fe0
--#define  RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT (0xe << 0)
--#define  RP_PRIV_MISC_PRSNT_MAP_EP_ABSNT (0xf << 0)
-+#define  RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT		(0xe << 0)
-+#define  RP_PRIV_MISC_PRSNT_MAP_EP_ABSNT		(0xf << 0)
-+#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD_MASK	(0x7f << 16)
-+#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD		(0xf << 16)
-+#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE		(1 << 23)
-+#define  RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD_MASK	(0x7f << 24)
-+#define  RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD		(0xf << 24)
-+#define  RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE		(1 << 31)
+ #define AFI_PEXBIAS_CTRL_0		0x168
  
- #define RP_LINK_CONTROL_STATUS			0x00000090
- #define  RP_LINK_CONTROL_STATUS_DL_LINK_ACTIVE	0x20000000
-@@ -300,6 +306,7 @@ struct tegra_pcie_soc {
- 	bool force_pca_enable;
++#define RP_PRIV_XP_DL	0x494
++#define  RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD	(0x1ff << 1)
++
++#define RP_RX_HDR_LIMIT	0xe00
++#define  RP_RX_HDR_LIMIT_PW_MASK	(0xff << 8)
++#define  RP_RX_HDR_LIMIT_PW		(0x0e << 8)
++
+ #define RP_ECTL_2_R1	0xe84
+ #define  RP_ECTL_2_R1_RX_CTLE_1C_MASK		0xffff
+ 
+@@ -213,6 +220,7 @@
+ #define  RP_VEND_XP_DL_UP			(1 << 30)
+ #define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
+ #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
++#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
+ 
+ #define RP_VEND_CTL1	0xf48
+ #define  RP_VEND_CTL1_ERPT	(1 << 13)
+@@ -307,6 +315,7 @@ struct tegra_pcie_soc {
  	bool program_uphy;
  	bool program_ectl_settings;
-+	bool update_clamp_threshold;
+ 	bool update_clamp_threshold;
++	bool RAW_violation_fixup;
  };
  
  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-@@ -2156,6 +2163,7 @@ static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
- 
- static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
- {
-+	const struct tegra_pcie_soc *soc = port->pcie->soc;
- 	unsigned long value;
- 
- 	/* Optimal settings to enhance bandwidth */
-@@ -2170,6 +2178,17 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
- 	value = readl(port->base + RP_VEND_XP_BIST);
- 	value |= RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE;
- 	writel(value, port->base + RP_VEND_XP_BIST);
+@@ -2189,6 +2198,22 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+ 				RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD);
+ 	}
+ 	writel(value, port->base + RP_PRIV_MISC);
 +
-+	value = readl(port->base + RP_PRIV_MISC);
-+	value |= (RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE |
-+			 RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE);
-+	if (soc->update_clamp_threshold) {
-+		value &= ~(RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD_MASK |
-+				RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD_MASK);
-+		value |= (RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD |
-+				RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD);
++	/* Fixup for read after write violation in T124 & T132 platforms */
++	if (soc->RAW_violation_fixup) {
++		value = readl(port->base + RP_RX_HDR_LIMIT);
++		value &= ~RP_RX_HDR_LIMIT_PW_MASK;
++		value |= RP_RX_HDR_LIMIT_PW;
++		writel(value, port->base + RP_RX_HDR_LIMIT);
++
++		value = readl(port->base + RP_PRIV_XP_DL);
++		value |= RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD;
++		writel(value, port->base + RP_PRIV_XP_DL);
++
++		value = readl(port->base + RP_VEND_XP);
++		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
++		writel(value, port->base + RP_VEND_XP);
 +	}
-+	writel(value, port->base + RP_PRIV_MISC);
  }
  /*
   * FIXME: If there are no PCIe cards attached, then calling this function
-@@ -2306,6 +2325,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
- 	.force_pca_enable = false,
+@@ -2326,6 +2351,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
  	.program_uphy = true,
  	.program_ectl_settings = false,
-+	.update_clamp_threshold = false,
+ 	.update_clamp_threshold = false,
++	.RAW_violation_fixup = false,
  };
  
  static const struct tegra_pcie_soc tegra30_pcie = {
-@@ -2323,6 +2343,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
- 	.force_pca_enable = false,
+@@ -2344,6 +2370,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
  	.program_uphy = true,
  	.program_ectl_settings = false,
-+	.update_clamp_threshold = false,
+ 	.update_clamp_threshold = false,
++	.RAW_violation_fixup = false,
  };
  
  static const struct tegra_pcie_soc tegra124_pcie = {
-@@ -2339,6 +2360,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
- 	.force_pca_enable = false,
+@@ -2361,6 +2388,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
  	.program_uphy = true,
  	.program_ectl_settings = false,
-+	.update_clamp_threshold = true,
+ 	.update_clamp_threshold = true,
++	.RAW_violation_fixup = true,
  };
  
  static const struct tegra_pcie_soc tegra210_pcie = {
-@@ -2363,6 +2385,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
- 	.force_pca_enable = true,
+@@ -2386,6 +2414,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
  	.program_uphy = true,
  	.program_ectl_settings = true,
-+	.update_clamp_threshold = true,
+ 	.update_clamp_threshold = true,
++	.RAW_violation_fixup = false,
  };
  
  static const struct tegra_pcie_soc tegra186_pcie = {
-@@ -2380,6 +2403,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
- 	.force_pca_enable = false,
+@@ -2404,6 +2433,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
  	.program_uphy = false,
  	.program_ectl_settings = false,
-+	.update_clamp_threshold = false,
+ 	.update_clamp_threshold = false,
++	.RAW_violation_fixup = false,
  };
  
  static const struct of_device_id tegra_pcie_of_match[] = {
