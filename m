@@ -1,109 +1,75 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH V2 12/12] PCI: tegra: Update flow control threshold in
- Tegra210
-Date: Mon, 30 Oct 2017 12:11:24 +0200
-Message-ID: <2ad37b27-efc9-7fd7-7837-31bf6b726b2b@kapsi.fi>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: Re: [PATCH V2 01/12] PCI: tegra: Start LTSSM after programming root
+ port
+Date: Mon, 30 Oct 2017 16:06:24 +0530
+Message-ID: <42a902fb-1481-9fd3-77c7-e18d0d0c306d@nvidia.com>
 References: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
- <1509337143-25963-13-git-send-email-mmaddireddy@nvidia.com>
+ <1509337143-25963-2-git-send-email-mmaddireddy@nvidia.com>
+ <5911b4d5-cc54-9fed-f6be-5c9b7ca05c2e@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1509337143-25963-13-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <5911b4d5-cc54-9fed-f6be-5c9b7ca05c2e@kapsi.fi>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: Mikko Perttunen <cyndis@kapsi.fi>, thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 30.10.2017 06:19, Manikanta Maddireddy wrote:
-> Recommended update FC threshold in Tegra210 is 0x60 for best performance
-> of x1 link. Setting this to 0x60 provides the best balance between number
-> of UpdateFC and read data sent over the link.
->
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V2:
-> * no change in this patch
->
->  drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index afde9bfb867f..1adf9332560a 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -221,6 +221,7 @@
->  #define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
->  #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
->  #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
-> +#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_T210	(0x60 << 18)
->
->  #define RP_VEND_CTL0	0xf44
->  #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
-> @@ -321,6 +322,7 @@ struct tegra_pcie_soc {
->  	bool update_clamp_threshold;
->  	bool RAW_violation_fixup;
->  	bool program_deskew_time;
-> +	bool updateFC_threshold;
 
-This needs to be "update_fc_threshold" or 
-"update_flow_control_threshold". Otherwise looks good.
 
->  };
->
->  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-> @@ -2229,6 +2231,13 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->  		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
->  		writel(value, port->base + RP_VEND_CTL0);
->  	}
-> +
-> +	if (soc->updateFC_threshold) {
-> +		value = readl(port->base + RP_VEND_XP);
-> +		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
-> +		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_T210;
-> +		writel(value, port->base + RP_VEND_XP);
-> +	}
->  }
->  /*
->   * FIXME: If there are no PCIe cards attached, then calling this function
-> @@ -2368,6 +2377,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
->  	.update_clamp_threshold = false,
->  	.RAW_violation_fixup = false,
->  	.program_deskew_time = false,
-> +	.updateFC_threshold = false,
->  };
->
->  static const struct tegra_pcie_soc tegra30_pcie = {
-> @@ -2388,6 +2398,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
->  	.update_clamp_threshold = false,
->  	.RAW_violation_fixup = false,
->  	.program_deskew_time = false,
-> +	.updateFC_threshold = false,
->  };
->
->  static const struct tegra_pcie_soc tegra124_pcie = {
-> @@ -2407,6 +2418,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
->  	.update_clamp_threshold = true,
->  	.RAW_violation_fixup = true,
->  	.program_deskew_time = false,
-> +	.updateFC_threshold = false,
->  };
->
->  static const struct tegra_pcie_soc tegra210_pcie = {
-> @@ -2434,6 +2446,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
->  	.update_clamp_threshold = true,
->  	.RAW_violation_fixup = false,
->  	.program_deskew_time = true,
-> +	.updateFC_threshold = true,
->  };
->
->  static const struct tegra_pcie_soc tegra186_pcie = {
-> @@ -2454,6 +2467,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
->  	.update_clamp_threshold = false,
->  	.RAW_violation_fixup = false,
->  	.program_deskew_time = false,
-> +	.updateFC_threshold = false,
->  };
->
->  static const struct of_device_id tegra_pcie_of_match[] = {
->
+On 30-Oct-17 2:38 PM, Mikko Perttunen wrote:
+> On 30.10.2017 06:18, Manikanta Maddireddy wrote:
+>> This patch ensures that LTSSM is started (by deasserting pcie_xrst) only
+>> after all the required root port register programming is completed.
+>>
+>> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+>> ---
+>> V2:
+>> * no change in this patch
+>>
+>>  drivers/pci/host/pci-tegra.c | 9 +++++----
+>>  1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+>> index 96e8038c3019..b41c60c7414c 100644
+>> --- a/drivers/pci/host/pci-tegra.c
+>> +++ b/drivers/pci/host/pci-tegra.c
+>> @@ -1024,9 +1024,6 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+>>          }
+>>      }
+>>
+>> -    /* take the PCIe interface module out of reset */
+>> -    reset_control_deassert(pcie->pcie_xrst);
+>> -
+>>      /* finally enable PCIe */
+>>      value = afi_readl(pcie, AFI_CONFIGURATION);
+>>      value |= AFI_CONFIGURATION_EN_FPCI;
+>> @@ -1065,7 +1062,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+>>              dev_err(dev, "failed to power off PHY(s): %d\n", err);
+>>      }
+>>
+>> -    reset_control_assert(pcie->pcie_xrst);
+> 
+> Why is this change being made? Is there a reason we cannot leave this reset asserted when the controller is powered off?
+In this change I moved deassert pcie_xrst to tegra_pcie_enable_ports. tegra_pcie_power_off() will not come into picture after deasserting pcie xrst.
+So this asserting pcie xrst redundant now.
+> 
+>>      reset_control_assert(pcie->afi_rst);
+>>      reset_control_assert(pcie->pex_rst);
+>>
+>> @@ -2116,7 +2112,12 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+>>               port->index, port->lanes);
+>>
+>>          tegra_pcie_port_enable(port);
+>> +    }
+>>
+>> +    /* take the PCIe interface module out of reset */
+>> +    reset_control_deassert(pcie->pcie_xrst);
+>> +
+>> +    list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
+>>          if (tegra_pcie_port_check_link(port))
+>>              continue;
+>>
+>>
