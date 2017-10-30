@@ -1,75 +1,50 @@
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: Re: [PATCH V2 01/12] PCI: tegra: Start LTSSM after programming root
- port
-Date: Mon, 30 Oct 2017 16:06:24 +0530
-Message-ID: <42a902fb-1481-9fd3-77c7-e18d0d0c306d@nvidia.com>
-References: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
- <1509337143-25963-2-git-send-email-mmaddireddy@nvidia.com>
- <5911b4d5-cc54-9fed-f6be-5c9b7ca05c2e@kapsi.fi>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/4] Add ASPM-L1 Substates support for Tegra
+Date: Mon, 30 Oct 2017 16:33:01 +0530
+Message-ID: <1509361385-21224-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <5911b4d5-cc54-9fed-f6be-5c9b7ca05c2e@kapsi.fi>
-Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: Mikko Perttunen <cyndis@kapsi.fi>, thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, rajatja-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org, Julia.Lawall-L2FTfq7BK8M@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra chips T210 and T186 support ASPM-L1 Substates (i.e. L1.1 and L1.2)
+This patch series
+- adds a generic API for root port controller drivers to
+  override the default value of LTR L1.2 Threhold which otherwise comes from
+  the same APIs weak implementation in aspm.c file
+- applies fixups to reflect correct capability values for
+  T_cmrt (Common Mode Restore Time) and
+  T_pwr_on (Power On)
+  and adjusts counter values for 19.2 MHz of clk_m
+- applies fixup specific to T210 to avoid unnecessary wake ups from L1.2 state
 
+PCIe - ASPM L1 Sub States spec
+https://pcisig.com/sites/default/files/specification_documents/ECN_L1_PM_Substates_with_CLKREQ_31_May_2013_Rev10a.pdf
 
-On 30-Oct-17 2:38 PM, Mikko Perttunen wrote:
-> On 30.10.2017 06:18, Manikanta Maddireddy wrote:
->> This patch ensures that LTSSM is started (by deasserting pcie_xrst) only
->> after all the required root port register programming is completed.
->>
->> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
->> ---
->> V2:
->> * no change in this patch
->>
->>  drivers/pci/host/pci-tegra.c | 9 +++++----
->>  1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->> index 96e8038c3019..b41c60c7414c 100644
->> --- a/drivers/pci/host/pci-tegra.c
->> +++ b/drivers/pci/host/pci-tegra.c
->> @@ -1024,9 +1024,6 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
->>          }
->>      }
->>
->> -    /* take the PCIe interface module out of reset */
->> -    reset_control_deassert(pcie->pcie_xrst);
->> -
->>      /* finally enable PCIe */
->>      value = afi_readl(pcie, AFI_CONFIGURATION);
->>      value |= AFI_CONFIGURATION_EN_FPCI;
->> @@ -1065,7 +1062,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
->>              dev_err(dev, "failed to power off PHY(s): %d\n", err);
->>      }
->>
->> -    reset_control_assert(pcie->pcie_xrst);
-> 
-> Why is this change being made? Is there a reason we cannot leave this reset asserted when the controller is powered off?
-In this change I moved deassert pcie_xrst to tegra_pcie_enable_ports. tegra_pcie_power_off() will not come into picture after deasserting pcie xrst.
-So this asserting pcie xrst redundant now.
-> 
->>      reset_control_assert(pcie->afi_rst);
->>      reset_control_assert(pcie->pex_rst);
->>
->> @@ -2116,7 +2112,12 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
->>               port->index, port->lanes);
->>
->>          tegra_pcie_port_enable(port);
->> +    }
->>
->> +    /* take the PCIe interface module out of reset */
->> +    reset_control_deassert(pcie->pcie_xrst);
->> +
->> +    list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
->>          if (tegra_pcie_port_check_link(port))
->>              continue;
->>
->>
+Testing Done on T210 and T186
+- ASPM-L1:
+  Verified ASPM-L1 enablement by selecting PCIEASPM_POWERSAVE config
+  With the help of Tegra rootport's internal counter registers, confirmed
+  link entry in and out of ASPM-L1 state using USB3.0 add-on card, NVMe and NIC
+  cards
+- ASPM-L1 SubStates:
+  Verified ASPM-L1 Substates enablement by selecting PCIEASPM_POWER_SUPERSAVE config
+  Confirmed link's entry into L1SS using Westren Digital NVMe card (with Sandisk
+  Controller) using Tegra rootport's internal counter registers
+
+Vidya Sagar (4):
+  PCI/ASPM: Add API to supply LTR L1.2 threshold
+  PCI: tegra: Enable ASPM-L1 capability advertisement
+  PCI: tegra: Apply sw fixups to support ASPM-L1 Sub-States
+  PCI: tegra: fixups to avoid unnecessary wakeup from ASPM-L1.2
+
+ drivers/pci/host/pci-tegra.c | 99 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/pci/pcie/aspm.c      | 11 +++--
+ include/linux/pci-aspm.h     |  6 +++
+ 3 files changed, 113 insertions(+), 3 deletions(-)
+
+-- 
+2.7.4
