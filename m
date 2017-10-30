@@ -1,141 +1,27 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 09/12] PCI: tegra: Enable PCIe xclk clock clamping
-Date: Mon, 30 Oct 2017 17:33:19 +0530
-Message-ID: <0eec4a21-e198-89ca-7aa7-95a6d2c36d96@nvidia.com>
-References: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
- <1509337143-25963-10-git-send-email-mmaddireddy@nvidia.com>
- <61bed209-ec8f-cafb-5214-6f55e68c0610@kapsi.fi>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [GIT PULL 6/7] arm64: tegra: Device tree changes for v4.15-rc1
+Date: Mon, 30 Oct 2017 14:32:14 +0100
+Message-ID: <CAK8P3a3fMCLQa3d9Jq_eqqt+nbYRf4V=ETRJDGPncTveO3uL2w@mail.gmail.com>
+References: <20171020115603.9828-1-thierry.reding@gmail.com> <20171020115603.9828-6-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <61bed209-ec8f-cafb-5214-6f55e68c0610-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <20171020115603.9828-6-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: arm-soc <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Oct 20, 2017 at 1:56 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
+> for you to fetch changes up to 15274c232131569b9010634a3f4f129c80c027a3:
+>
+>   arm64: tegra: Add BPMP thermal sensor to Tegra186 (2017-10-19 16:35:50 +0200)
+>
+> This pulls in a part of the tegra-for-4.15-dt-bindings tag in order to
+> resolve a build time dependency.
 
-On 30-Oct-17 3:36 PM, Mikko Perttunen wrote:
-> 
-> 
-> On 30.10.2017 06:19, Manikanta Maddireddy wrote:
->> This patch enables PCIe xlck clock clamping by pad control. Pad control
->> asserts UPHY lane sleep signal when L1 entry signal received from PCIe.
->> UPHY sleep signal assertion is done per lane. Default clamp threshold
->> margin is not enough to assert all UPHY lane sleep signals. Increase
->> the clamp threshold in Tegra124, 132, 210 and 186.
->>
->> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> V2:
->> * no change in this patch
->>
->>  drivers/pci/host/pci-tegra.c | 28 ++++++++++++++++++++++++++--
->>  1 file changed, 26 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->> index 7f1e34e670d7..3c625ccfa539 100644
->> --- a/drivers/pci/host/pci-tegra.c
->> +++ b/drivers/pci/host/pci-tegra.c
->> @@ -224,8 +224,14 @@
->>  #define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
->>
->>  #define RP_PRIV_MISC    0x00000fe0
->> -#define  RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT (0xe << 0)
->> -#define  RP_PRIV_MISC_PRSNT_MAP_EP_ABSNT (0xf << 0)
->> +#define  RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT        (0xe << 0)
->> +#define  RP_PRIV_MISC_PRSNT_MAP_EP_ABSNT        (0xf << 0)
->> +#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD_MASK    (0x7f << 16)
->> +#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD        (0xf << 16)
->> +#define  RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE        (1 << 23)
->> +#define  RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD_MASK    (0x7f << 24)
->> +#define  RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD        (0xf << 24)
->> +#define  RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE        (1 << 31)
->>
->>  #define RP_LINK_CONTROL_STATUS            0x00000090
->>  #define  RP_LINK_CONTROL_STATUS_DL_LINK_ACTIVE    0x20000000
->> @@ -300,6 +306,7 @@ struct tegra_pcie_soc {
->>      bool force_pca_enable;
->>      bool program_uphy;
->>      bool program_ectl_settings;
->> +    bool update_clamp_threshold;
->>  };
->>
->>  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
->> @@ -2156,6 +2163,7 @@ static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
->>
->>  static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->>  {
->> +    const struct tegra_pcie_soc *soc = port->pcie->soc;
->>      unsigned long value;
->>
->>      /* Optimal settings to enhance bandwidth */
->> @@ -2170,6 +2178,17 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->>      value = readl(port->base + RP_VEND_XP_BIST);
->>      value |= RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE;
->>      writel(value, port->base + RP_VEND_XP_BIST);
->> +
->> +    value = readl(port->base + RP_PRIV_MISC);
->> +    value |= (RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE |
->> +             RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE);
->> +    if (soc->update_clamp_threshold) {
->> +        value &= ~(RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD_MASK |
->> +                RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD_MASK);
->> +        value |= (RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD |
->> +                RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD);
-> 
-> Parentheses not needed in the OR operation.
-> 
-> We're starting to accumulate enough stuff here that maybe a separate function is warranted after all :) However, I'm not sure about the apply_sw_fixup name. It sounds like we're applying a fix for some broken software. So maybe something like tegra_pcie_apply_port_configuration or such?
-Ideally PCIe HW should work fine with default values of these registers.
-However in internal testing HW team found these issues and suggested SW fixups for them, Hence named it as apply_sw_fixup.
-> 
->> +    }
->> +    writel(value, port->base + RP_PRIV_MISC);
->>  }
->>  /*
->>   * FIXME: If there are no PCIe cards attached, then calling this function
->> @@ -2306,6 +2325,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
->>      .force_pca_enable = false,
->>      .program_uphy = true,
->>      .program_ectl_settings = false,
->> +    .update_clamp_threshold = false,
->>  };
->>
->>  static const struct tegra_pcie_soc tegra30_pcie = {
->> @@ -2323,6 +2343,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
->>      .force_pca_enable = false,
->>      .program_uphy = true,
->>      .program_ectl_settings = false,
->> +    .update_clamp_threshold = false,
->>  };
->>
->>  static const struct tegra_pcie_soc tegra124_pcie = {
->> @@ -2339,6 +2360,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
->>      .force_pca_enable = false,
->>      .program_uphy = true,
->>      .program_ectl_settings = false,
->> +    .update_clamp_threshold = true,
->>  };
->>
->>  static const struct tegra_pcie_soc tegra210_pcie = {
->> @@ -2363,6 +2385,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
->>      .force_pca_enable = true,
->>      .program_uphy = true,
->>      .program_ectl_settings = true,
->> +    .update_clamp_threshold = true,
->>  };
->>
->>  static const struct tegra_pcie_soc tegra186_pcie = {
->> @@ -2380,6 +2403,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
->>      .force_pca_enable = false,
->>      .program_uphy = false,
->>      .program_ectl_settings = false,
->> +    .update_clamp_threshold = false,
->>  };
->>
->>  static const struct of_device_id tegra_pcie_of_match[] = {
->>
+Pulled into next/dt, thanks!
+
+     Arnd
