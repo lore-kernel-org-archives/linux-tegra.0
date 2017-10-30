@@ -1,112 +1,109 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH V2 11/12] PCI: tegra: Increase the deskew retry time
-Date: Mon, 30 Oct 2017 12:10:36 +0200
-Message-ID: <f69b8454-0d87-2bb5-fcea-338a106a3c3a@kapsi.fi>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH V2 12/12] PCI: tegra: Update flow control threshold in
+ Tegra210
+Date: Mon, 30 Oct 2017 12:11:24 +0200
+Message-ID: <2ad37b27-efc9-7fd7-7837-31bf6b726b2b@kapsi.fi>
 References: <1509337143-25963-1-git-send-email-mmaddireddy@nvidia.com>
- <1509337143-25963-12-git-send-email-mmaddireddy@nvidia.com>
+ <1509337143-25963-13-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1509337143-25963-12-git-send-email-mmaddireddy@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>, thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1509337143-25963-13-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 30.10.2017 06:19, Manikanta Maddireddy wrote:
-> Some times Gen2 to Gen1 link speed switching fails due to instability in
-> deskew logic on lane0 in Tegra210. Increase the deskew retry time to
-> resolve this issue.
+> Recommended update FC threshold in Tegra210 is 0x60 for best performance
+> of x1 link. Setting this to 0x60 provides the best balance between number
+> of UpdateFC and read data sent over the link.
 >
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 > V2:
 > * no change in this patch
 >
->  drivers/pci/host/pci-tegra.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+>  drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 >
 > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index d348f487f5d7..afde9bfb867f 100644
+> index afde9bfb867f..1adf9332560a 100644
 > --- a/drivers/pci/host/pci-tegra.c
 > +++ b/drivers/pci/host/pci-tegra.c
-> @@ -222,6 +222,10 @@
+> @@ -221,6 +221,7 @@
+>  #define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
 >  #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
 >  #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
+> +#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_T210	(0x60 << 18)
 >
-> +#define RP_VEND_CTL0	0xf44
-> +#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
-> +#define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH	(0x9 << 12)
-> +
->  #define RP_VEND_CTL1	0xf48
->  #define  RP_VEND_CTL1_ERPT	(1 << 13)
->
-> @@ -316,6 +320,7 @@ struct tegra_pcie_soc {
->  	bool program_ectl_settings;
+>  #define RP_VEND_CTL0	0xf44
+>  #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
+> @@ -321,6 +322,7 @@ struct tegra_pcie_soc {
 >  	bool update_clamp_threshold;
 >  	bool RAW_violation_fixup;
-> +	bool program_deskew_time;
+>  	bool program_deskew_time;
+> +	bool updateFC_threshold;
+
+This needs to be "update_fc_threshold" or 
+"update_flow_control_threshold". Otherwise looks good.
+
 >  };
 >
 >  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-> @@ -2214,6 +2219,16 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->  		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
->  		writel(value, port->base + RP_VEND_XP);
+> @@ -2229,6 +2231,13 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+>  		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
+>  		writel(value, port->base + RP_VEND_CTL0);
 >  	}
 > +
-> +	/* Tune deskew retry time to take care of Gen2 -> Gen1
-> +	 * link speed change error in corner cases
-> +	 */
-> +	if (soc->program_deskew_time) {
-> +		value = readl(port->base + RP_VEND_CTL0);
-> +		value &= ~RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK;
-> +		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
-> +		writel(value, port->base + RP_VEND_CTL0);
+> +	if (soc->updateFC_threshold) {
+> +		value = readl(port->base + RP_VEND_XP);
+> +		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
+> +		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_T210;
+> +		writel(value, port->base + RP_VEND_XP);
 > +	}
 >  }
 >  /*
 >   * FIXME: If there are no PCIe cards attached, then calling this function
-> @@ -2352,6 +2367,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
->  	.program_ectl_settings = false,
+> @@ -2368,6 +2377,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
 >  	.update_clamp_threshold = false,
 >  	.RAW_violation_fixup = false,
-> +	.program_deskew_time = false,
+>  	.program_deskew_time = false,
+> +	.updateFC_threshold = false,
 >  };
 >
 >  static const struct tegra_pcie_soc tegra30_pcie = {
-> @@ -2371,6 +2387,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
->  	.program_ectl_settings = false,
+> @@ -2388,6 +2398,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
 >  	.update_clamp_threshold = false,
 >  	.RAW_violation_fixup = false,
-> +	.program_deskew_time = false,
+>  	.program_deskew_time = false,
+> +	.updateFC_threshold = false,
 >  };
 >
 >  static const struct tegra_pcie_soc tegra124_pcie = {
-> @@ -2389,6 +2406,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
->  	.program_ectl_settings = false,
+> @@ -2407,6 +2418,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
 >  	.update_clamp_threshold = true,
 >  	.RAW_violation_fixup = true,
-> +	.program_deskew_time = false,
+>  	.program_deskew_time = false,
+> +	.updateFC_threshold = false,
 >  };
 >
 >  static const struct tegra_pcie_soc tegra210_pcie = {
-> @@ -2415,6 +2433,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
->  	.program_ectl_settings = true,
+> @@ -2434,6 +2446,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
 >  	.update_clamp_threshold = true,
 >  	.RAW_violation_fixup = false,
-> +	.program_deskew_time = true,
+>  	.program_deskew_time = true,
+> +	.updateFC_threshold = true,
 >  };
 >
 >  static const struct tegra_pcie_soc tegra186_pcie = {
-> @@ -2434,6 +2453,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
->  	.program_ectl_settings = false,
+> @@ -2454,6 +2467,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
 >  	.update_clamp_threshold = false,
 >  	.RAW_violation_fixup = false,
-> +	.program_deskew_time = false,
+>  	.program_deskew_time = false,
+> +	.updateFC_threshold = false,
 >  };
 >
 >  static const struct of_device_id tegra_pcie_of_match[] = {
 >
-
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
