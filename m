@@ -1,7 +1,7 @@
 From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 02/12] PCI: tegra: Move REFCLK pad settings out of phy_power_on()
-Date: Mon, 30 Oct 2017 19:27:13 +0530
-Message-ID: <1509371843-22931-3-git-send-email-mmaddireddy@nvidia.com>
+Subject: [PATCH V3 06/12] PCI: tegra: Enable opportunistic update FC and ACK
+Date: Mon, 30 Oct 2017 19:27:17 +0530
+Message-ID: <1509371843-22931-7-git-send-email-mmaddireddy@nvidia.com>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,72 +12,59 @@ To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlf
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-In Tegra186 PHY programming is done by BPMP-FW, so PHY calls are skipped
-in driver. REFCLK pad settings are independent of PHY and should be
-programmed by driver. So move REFCLK pad settings out of phy_power_on().
-These pad settings improve REFCLK peak to peak amplitude.
+This patch ensures that DL sends pending ACKs and update FC packets when
+link is idle instead of waiting for timers to expire which improves PCIe
+bandwidth.
 
 Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V3:
-* Corrected commit log
+* no change in this patch
 V2:
 * no change in this patch
 
- drivers/pci/host/pci-tegra.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ drivers/pci/host/pci-tegra.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index b41c60c7414c..068510b40c1a 100644
+index c862facfd6e9..4562b0c113a8 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -910,7 +910,6 @@ static int tegra_pcie_port_phy_power_off(struct tegra_pcie_port *port)
- static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
--	const struct tegra_pcie_soc *soc = pcie->soc;
- 	struct tegra_pcie_port *port;
- 	int err;
+@@ -211,7 +211,9 @@
+ #define  RP_ECTL_6_R2_RX_EQ_CTRL_H_1C_MASK	0xffffffff
  
-@@ -936,12 +935,6 @@ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
- 		}
- 	}
+ #define RP_VEND_XP	0x00000f00
+-#define  RP_VEND_XP_DL_UP	(1 << 30)
++#define  RP_VEND_XP_DL_UP			(1 << 30)
++#define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
++#define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
  
--	/* Configure the reference clock driver */
--	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
--
--	if (soc->num_ports > 2)
--		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
--
- 	return 0;
+ #define RP_VEND_CTL1	0xf48
+ #define  RP_VEND_CTL1_ERPT	(1 << 13)
+@@ -2149,6 +2151,16 @@ static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
+ 	writel(value, port->base + RP_VEND_CTL1);
  }
  
-@@ -2049,6 +2042,17 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- 	return 0;
- }
- 
-+static void tegra_pcie_apply_pad_settings(struct tegra_pcie *pcie)
++static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
 +{
-+	const struct tegra_pcie_soc *soc = pcie->soc;
++	unsigned long value;
 +
-+	/* Configure the reference clock driver */
-+	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
-+
-+	if (soc->num_ports > 2)
-+		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
++	/* Optimal settings to enhance bandwidth */
++	value = readl(port->base + RP_VEND_XP);
++	value |= RP_VEND_XP_OPPORTUNISTIC_ACK;
++	value |= RP_VEND_XP_OPPORTUNISTIC_UPDATEFC;
++	writel(value, port->base + RP_VEND_XP);
 +}
-+
  /*
   * FIXME: If there are no PCIe cards attached, then calling this function
   * can result in the increase of the bootup time as there are big timeout
-@@ -2107,6 +2111,8 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
- 	struct device *dev = pcie->dev;
- 	struct tegra_pcie_port *port, *tmp;
+@@ -2218,6 +2230,7 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+ 		if (soc->program_ectl_settings)
+ 			tegra_pcie_program_ectl_settings(port);
+ 		tegra_pcie_enable_rp_features(port);
++		tegra_pcie_apply_sw_fixup(port);
+ 	}
  
-+	tegra_pcie_apply_pad_settings(pcie);
-+
- 	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
- 		dev_info(dev, "probing port %u, using %u lanes\n",
- 			 port->index, port->lanes);
+ 	/* take the PCIe interface module out of reset */
 -- 
 2.1.4
