@@ -1,105 +1,69 @@
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: Re: [PATCH 03/12] PCI: tegra: Retrain link for Gen2 speed
-Date: Mon, 30 Oct 2017 09:21:57 +0530
-Message-ID: <84b3fca4-54a0-63bc-fe67-95e73cee0cbf@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 04/12] PCI: tegra: Advertise AER capability
+Date: Mon, 30 Oct 2017 09:24:15 +0530
+Message-ID: <10a9ba6c-7a4d-6eab-2c8c-dbd86de67727@nvidia.com>
 References: <1509132569-9398-1-git-send-email-mmaddireddy@nvidia.com>
- <1509132569-9398-4-git-send-email-mmaddireddy@nvidia.com>
- <c8dc3a6e-21f2-a7bd-6a2f-5e14f7976dbf@nvidia.com>
+ <1509132569-9398-5-git-send-email-mmaddireddy@nvidia.com>
+ <64d00808-9c79-86b5-130d-835e3e5d5c1c@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <c8dc3a6e-21f2-a7bd-6a2f-5e14f7976dbf@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <64d00808-9c79-86b5-130d-835e3e5d5c1c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>, thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 29-Oct-17 3:04 PM, Vidya Sagar wrote:
+On 29-Oct-17 3:09 PM, Vidya Sagar wrote:
 > 
 > 
 > On Saturday 28 October 2017 12:59 AM, Manikanta Maddireddy wrote:
->> Tegra124, 132, 210 and 186 supports Gen2 link speed. After the link is up
->> in Gen1, set target link speed as Gen2 and retrain link. Link switches to
->> Gen2 speed if Gen2 capable end point is connected, else link stays in Gen1.
+>> Default root port settings hide AER capability. This patch enables the
+>> advertisement of AER capability by root port.
 >>
->> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+>> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >> ---
->>   drivers/pci/host/pci-tegra.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 42 insertions(+)
+>>   drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
 >>
 >> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->> index 2c64eb6cc3cc..15df60e13a14 100644
+>> index 15df60e13a14..c0cd88103e9e 100644
 >> --- a/drivers/pci/host/pci-tegra.c
 >> +++ b/drivers/pci/host/pci-tegra.c
->> @@ -232,6 +232,8 @@
->>   #define PADS_REFCLK_CFG_PREDI_SHIFT        8  /* 11:8 */
->>   #define PADS_REFCLK_CFG_DRVI_SHIFT        12 /* 15:12 */
->>   +#define LINK_RETRAIN_TIMEOUT HZ
+>> @@ -187,6 +187,9 @@
+>>   #define RP_VEND_XP    0x00000f00
+>>   #define  RP_VEND_XP_DL_UP    (1 << 30)
+>>   +#define RP_VEND_CTL1    0xf48
+>> +#define  RP_VEND_CTL1_ERPT    (1 << 13)
+> BIT macro is preferred here.
+Left shift is used everywhere, so to be inline with that I used same format
 >> +
->>   struct tegra_msi {
->>       struct msi_controller chip;
->>       DECLARE_BITMAP(used, INT_PCI_MSI_NR);
->> @@ -2133,6 +2135,42 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
->>       }
+>>   #define RP_VEND_CTL2 0x00000fa8
+>>   #define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
+>>   @@ -2055,6 +2058,16 @@ static void tegra_pcie_apply_pad_settings(struct tegra_pcie *pcie)
+>>           pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
 >>   }
->>   +static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
->> +        struct pci_dev *pci_dev)
+>>   +static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
 >> +{
->> +    struct device *dev = pcie->dev;
->> +    unsigned long start_jiffies;
->> +    unsigned short val;
+>> +    unsigned long value;
 >> +
->> +    /* Skip if the current device is not a root port */
->> +    if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
->> +        return;
->> +
->> +    pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
->> +    val &= ~PCI_EXP_LNKSTA_CLS;
->> +    val |= PCI_EXP_LNKSTA_CLS_5_0GB;
->> +    pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
->> +
->> +    /* Retrain the link */
->> +    pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
->> +    val |= PCI_EXP_LNKCTL_RL;
->> +    pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
->> +
->> +    start_jiffies = jiffies;
->> +    for (;;) {
->> +        pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &val);
->> +        if (!(val & PCI_EXP_LNKSTA_LT))
->> +            break;
->> +        if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
->> +            break;
->> +        usleep_range(2000, 3000);
->> +    }
->> +
->> +    if (val & PCI_EXP_LNKSTA_LT)
->> +        dev_err(dev, "link retrain of PCIe slot %u failed\n",
->> +                PCI_SLOT(pci_dev->devfn));
+>> +    /* Enable AER capability */
+>> +    value = readl(port->base + RP_VEND_CTL1);
+>> +    value |= RP_VEND_CTL1_ERPT;
+>> +    writel(value, port->base + RP_VEND_CTL1);
 >> +}
 >> +
->>   static const struct tegra_pcie_soc tegra20_pcie = {
->>       .num_ports = 2,
->>       .msi_base_shift = 0,
->> @@ -2334,6 +2372,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->>       struct pci_host_bridge *host;
->>       struct tegra_pcie *pcie;
->>       struct pci_bus *child;
->> +    struct pci_dev *pci_dev = NULL;
->>       int err;
->>         host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
->> @@ -2399,6 +2438,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->>         pci_bus_add_devices(host->bus);
->>   +    for_each_pci_dev(pci_dev)
->> +        tegra_pcie_change_link_speed(pcie, pci_dev);
->> +
-> Why can't we loop over only root ports using 'pcie->ports' like how it is done in tegra_pcie_enable_ports() ?
-It can be done, but I chose use to pci subsystem calls & register defines so that it is easy understand.
->>       if (IS_ENABLED(CONFIG_DEBUG_FS)) {
->>           err = tegra_pcie_debugfs_init(pcie);
->>           if (err < 0)
+>>   /*
+>>    * FIXME: If there are no PCIe cards attached, then calling this function
+>>    * can result in the increase of the bootup time as there are big timeout
+>> @@ -2119,6 +2132,7 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+>>                port->index, port->lanes);
+>>             tegra_pcie_port_enable(port);
+>> +        tegra_pcie_enable_rp_features(port);
+>>       }
+>>         /* take the PCIe interface module out of reset */
 > 
