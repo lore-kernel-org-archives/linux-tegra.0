@@ -1,78 +1,105 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.14-rc7
-Date: Mon, 30 Oct 2017 13:55:20 +0000
-Message-ID: <8b7ad42d-869c-cb94-4d41-9cdcf164a6f5@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 03/12] PCI: tegra: Retrain link for Gen2 speed
+Date: Mon, 30 Oct 2017 19:27:14 +0530
+Message-ID: <1509371843-22931-4-git-send-email-mmaddireddy@nvidia.com>
+References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1509371843-22931-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.14-rc7.
-Logs and other details at:
+Tegra124, 132, 210 and 186 support Gen2 link speed. After the link is up
+in Gen1, set target link speed as Gen2 and retrain link. Link switches to
+Gen2 speed if Gen2 capable end point is connected, else link stays in Gen1.
 
-    https://nvtb.github.io//linux/test_v4.14-rc7/20171030063104/
+Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+V3:
+* Corrected commit log
+* Replaced jiffies with ktime
+V2:
+* no change in this patch
 
+ drivers/pci/host/pci-tegra.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.14-rc6 (bb176f67090ca54869fc1262c913aa69d2ede070)):
-   text     data      bss    total  kernel
-  +4024      +20        0    +4044  defconfig
-   +712        0        0     +712  multi_v7_defconfig
-  +1048     +128        0    +1176  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.14-rc6 (bb176f67090ca54869fc1262c913aa69d2ede070))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
---
-nvpublic
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 068510b40c1a..ed5e8acfdc32 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -232,6 +232,8 @@
+ #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
+ #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
+ 
++#define LINK_RETRAIN_TIMEOUT 100000
++
+ struct tegra_msi {
+ 	struct msi_controller chip;
+ 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+@@ -2134,6 +2136,42 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+ 	}
+ }
+ 
++static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
++					 struct pci_dev *pci_dev)
++{
++	struct device *dev = pcie->dev;
++	ktime_t deadline;
++	unsigned short val;
++
++	/* Skip if the current device is not a root port */
++	if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
++		return;
++
++	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
++	val &= ~PCI_EXP_LNKSTA_CLS;
++	val |= PCI_EXP_LNKSTA_CLS_5_0GB;
++	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
++
++	/* Retrain the link */
++	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
++	val |= PCI_EXP_LNKCTL_RL;
++	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
++
++	deadline = ktime_add_us(ktime_get(), LINK_RETRAIN_TIMEOUT);
++	for (;;) {
++		pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &val);
++		if (!(val & PCI_EXP_LNKSTA_LT))
++			break;
++		if (ktime_after(ktime_get(), deadline))
++			break;
++		usleep_range(2000, 3000);
++	}
++
++	if (val & PCI_EXP_LNKSTA_LT)
++		dev_err(dev, "link retrain of PCIe slot %u failed\n",
++			PCI_SLOT(pci_dev->devfn));
++}
++
+ static const struct tegra_pcie_soc tegra20_pcie = {
+ 	.num_ports = 2,
+ 	.msi_base_shift = 0,
+@@ -2335,6 +2373,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 	struct pci_host_bridge *host;
+ 	struct tegra_pcie *pcie;
+ 	struct pci_bus *child;
++	struct pci_dev *pci_dev = NULL;
+ 	int err;
+ 
+ 	host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
+@@ -2400,6 +2439,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 
+ 	pci_bus_add_devices(host->bus);
+ 
++	for_each_pci_dev(pci_dev)
++		tegra_pcie_change_link_speed(pcie, pci_dev);
++
+ 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+ 		err = tegra_pcie_debugfs_init(pcie);
+ 		if (err < 0)
+-- 
+2.1.4
