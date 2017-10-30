@@ -1,105 +1,49 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 03/12] PCI: tegra: Retrain link for Gen2 speed
-Date: Mon, 30 Oct 2017 19:27:14 +0530
-Message-ID: <1509371843-22931-4-git-send-email-mmaddireddy@nvidia.com>
-References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: [PATCH V3 00/12] Enable Tegra root port features and apply SW fixups
+Date: Mon, 30 Oct 2017 19:27:11 +0530
+Message-ID: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1509371843-22931-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: thierry.reding@gmail.com, bhelgaas@google.com, jonathanh@nvidia.com, vidyas@nvidia.com, mperttunen@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra124, 132, 210 and 186 support Gen2 link speed. After the link is up
-in Gen1, set target link speed as Gen2 and retrain link. Link switches to
-Gen2 speed if Gen2 capable end point is connected, else link stays in Gen1.
+These series of patches does the following things,
+- Deasserting pcie_xrst after programming root port to make sure that
+  register programming is reflected during LTSSM
+- Apply REFCLK pad settings to make sure P2P amplitude requirement is met
+- Enable Gen2 link speed
+- Advertise AER capability
+- Program UPHY electrical settings for meeting eye diagram requirements
+- Bunch of SW fixups explained in their respective commit log
 
-Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V3:
-* Corrected commit log
-* Replaced jiffies with ktime
-V2:
-* no change in this patch
+Testing done on Tegra124, 210 and 186:
+- PCIe link up, config read, BAR read and basic functionality of Ethernet
+  card
+- Link speed switch to Gen2 after link retrain
+- Link speed stays in Gen1 after retrain if end point is only Gen1 capable
+- Simulated AER errors and verified dmesg logs for them
+- Rest of the programming is verified by dumping the registers after PCIe
+link up
 
- drivers/pci/host/pci-tegra.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Manikanta Maddireddy (12):
+  PCI: tegra: Start LTSSM after programming root port
+  PCI: tegra: Move REFCLK pad settings out of phy_power_on()
+  PCI: tegra: Retrain link for Gen2 speed
+  PCI: tegra: Advertise AER capability
+  PCI: tegra: Program UPHY electrical settings in Tegra210
+  PCI: tegra: Enable opportunistic update FC and ACK
+  PCI: tegra: Disable AFI dynamic clock gating
+  PCI: tegra: Wait for DLLP to finish before entering L1 or L2
+  PCI: tegra: Enable PCIe xclk clock clamping
+  PCI: tegra: Add SW fixup for RAW violations
+  PCI: tegra: Increase the deskew retry time
+  PCI: tegra: Update flow control threshold in Tegra210
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 068510b40c1a..ed5e8acfdc32 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -232,6 +232,8 @@
- #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
- #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
- 
-+#define LINK_RETRAIN_TIMEOUT 100000
-+
- struct tegra_msi {
- 	struct msi_controller chip;
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
-@@ -2134,6 +2136,42 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
- 	}
- }
- 
-+static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
-+					 struct pci_dev *pci_dev)
-+{
-+	struct device *dev = pcie->dev;
-+	ktime_t deadline;
-+	unsigned short val;
-+
-+	/* Skip if the current device is not a root port */
-+	if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
-+		return;
-+
-+	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
-+	val &= ~PCI_EXP_LNKSTA_CLS;
-+	val |= PCI_EXP_LNKSTA_CLS_5_0GB;
-+	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
-+
-+	/* Retrain the link */
-+	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
-+	val |= PCI_EXP_LNKCTL_RL;
-+	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
-+
-+	deadline = ktime_add_us(ktime_get(), LINK_RETRAIN_TIMEOUT);
-+	for (;;) {
-+		pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &val);
-+		if (!(val & PCI_EXP_LNKSTA_LT))
-+			break;
-+		if (ktime_after(ktime_get(), deadline))
-+			break;
-+		usleep_range(2000, 3000);
-+	}
-+
-+	if (val & PCI_EXP_LNKSTA_LT)
-+		dev_err(dev, "link retrain of PCIe slot %u failed\n",
-+			PCI_SLOT(pci_dev->devfn));
-+}
-+
- static const struct tegra_pcie_soc tegra20_pcie = {
- 	.num_ports = 2,
- 	.msi_base_shift = 0,
-@@ -2335,6 +2373,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 	struct pci_host_bridge *host;
- 	struct tegra_pcie *pcie;
- 	struct pci_bus *child;
-+	struct pci_dev *pci_dev = NULL;
- 	int err;
- 
- 	host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
-@@ -2400,6 +2439,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 
- 	pci_bus_add_devices(host->bus);
- 
-+	for_each_pci_dev(pci_dev)
-+		tegra_pcie_change_link_speed(pcie, pci_dev);
-+
- 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
- 		err = tegra_pcie_debugfs_init(pcie);
- 		if (err < 0)
+ drivers/pci/host/pci-tegra.c | 306 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 288 insertions(+), 18 deletions(-)
+
 -- 
 2.1.4
