@@ -1,7 +1,7 @@
 From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 2/4] PCI: tegra: Enable ASPM-L1 capability advertisement
-Date: Tue, 31 Oct 2017 09:52:47 +0530
-Message-ID: <1509423769-10522-3-git-send-email-vidyas@nvidia.com>
+Subject: [PATCH V2 1/4] PCI/ASPM: Add API to supply LTR L1.2 threshold
+Date: Tue, 31 Oct 2017 09:52:46 +0530
+Message-ID: <1509423769-10522-2-git-send-email-vidyas@nvidia.com>
 References: <1509423769-10522-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,92 +12,61 @@ To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Enables advertisement of ASPM-L1 support in capability
-registers of applicable Tegra chips
+adds API for host controller drivers to specify LTR L1.2
+threshold value if it is different from the default value.
+weak implementation of the API is added to supply default
+value
 
 Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2:
-* no change in this patch
+* removed dummy implementation of pcie_aspm_init_link_state() API
 
- drivers/pci/host/pci-tegra.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/pci/pcie/aspm.c  | 11 ++++++++---
+ include/linux/pci-aspm.h |  1 +
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index adae03d671ab..e1526cc5d381 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -226,6 +226,9 @@
- #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
- #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_T210	(0x60 << 18)
- 
-+#define RP_VEND_XP1	0xf04
-+#define RP_VEND_XP1_LINK_PVT_CTL_L1_ASPM_SUPPORT	BIT(21)
-+
- #define RP_VEND_CTL0	0xf44
- #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
- #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH	(0x9 << 12)
-@@ -327,6 +330,7 @@ struct tegra_pcie_soc {
- 	bool RAW_violation_fixup;
- 	bool program_deskew_time;
- 	bool updateFC_threshold;
-+	bool has_aspm_l1;
- };
- 
- static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-@@ -2188,6 +2192,13 @@ static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
- 	value = readl(port->base + RP_VEND_CTL1);
- 	value |= RP_VEND_CTL1_ERPT;
- 	writel(value, port->base + RP_VEND_CTL1);
-+
-+	if (port->pcie->soc->has_aspm_l1) {
-+		/* Advertise ASPM-L1 state capability*/
-+		value = readl(port->base + RP_VEND_XP1);
-+		value |= RP_VEND_XP1_LINK_PVT_CTL_L1_ASPM_SUPPORT;
-+		writel(value, port->base + RP_VEND_XP1);
-+	}
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index 1dfa10cc566b..c6e8604796e5 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -436,6 +436,11 @@ static struct pci_dev *pci_function_0(struct pci_bus *linkbus)
+ 	return NULL;
  }
  
- static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
-@@ -2391,6 +2402,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
- 	.RAW_violation_fixup = false,
- 	.program_deskew_time = false,
- 	.updateFC_threshold = false,
-+	.has_aspm_l1 = false,
- };
++u32 __weak pcie_aspm_get_ltr_l_1_2_threshold(void)
++{
++	return LTR_L1_2_THRESHOLD_BITS;
++}
++
+ /* Calculate L1.2 PM substate timing parameters */
+ static void aspm_calc_l1ss_info(struct pcie_link_state *link,
+ 				struct aspm_register_info *upreg,
+@@ -458,10 +463,10 @@ static void aspm_calc_l1ss_info(struct pcie_link_state *link,
+ 	else
+ 		link->l1ss.ctl1 |= val2 << 8;
+ 	/*
+-	 * We currently use LTR L1.2 threshold to be fixed constant picked from
+-	 * Intel's coreboot.
++	 * Get LTR L1.2 threshold value specific to a platform if present
++	 * Otherwise, get a constant value picked from Intel's coreboot.
+ 	 */
+-	link->l1ss.ctl1 |= LTR_L1_2_THRESHOLD_BITS;
++	link->l1ss.ctl1 |= pcie_aspm_get_ltr_l_1_2_threshold();
  
- static const struct tegra_pcie_soc tegra30_pcie = {
-@@ -2412,6 +2424,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
- 	.RAW_violation_fixup = false,
- 	.program_deskew_time = false,
- 	.updateFC_threshold = false,
-+	.has_aspm_l1 = true,
- };
- 
- static const struct tegra_pcie_soc tegra124_pcie = {
-@@ -2432,6 +2445,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
- 	.RAW_violation_fixup = true,
- 	.program_deskew_time = false,
- 	.updateFC_threshold = false,
-+	.has_aspm_l1 = true,
- };
- 
- static const struct tegra_pcie_soc tegra210_pcie = {
-@@ -2460,6 +2474,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
- 	.RAW_violation_fixup = false,
- 	.program_deskew_time = true,
- 	.updateFC_threshold = true,
-+	.has_aspm_l1 = true,
- };
- 
- static const struct tegra_pcie_soc tegra186_pcie = {
-@@ -2481,6 +2496,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
- 	.RAW_violation_fixup = false,
- 	.program_deskew_time = false,
- 	.updateFC_threshold = false,
-+	.has_aspm_l1 = true,
- };
- 
- static const struct of_device_id tegra_pcie_of_match[] = {
+ 	/* Choose the greater of the two T_pwr_on */
+ 	val1 = (upreg->l1ss_cap >> 19) & 0x1F;
+diff --git a/include/linux/pci-aspm.h b/include/linux/pci-aspm.h
+index 207c561fb40e..3a083f4ffe71 100644
+--- a/include/linux/pci-aspm.h
++++ b/include/linux/pci-aspm.h
+@@ -30,6 +30,7 @@ void pcie_aspm_powersave_config_link(struct pci_dev *pdev);
+ void pci_disable_link_state(struct pci_dev *pdev, int state);
+ void pci_disable_link_state_locked(struct pci_dev *pdev, int state);
+ void pcie_no_aspm(void);
++u32 pcie_aspm_get_ltr_l_1_2_threshold(void);
+ #else
+ static inline void pcie_aspm_init_link_state(struct pci_dev *pdev)
+ {
 -- 
 2.7.4
