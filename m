@@ -1,38 +1,31 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 010/102] clk: tegra: explicitly request exclusive reset
- control
-Date: Thu, 2 Nov 2017 01:15:08 -0700
-Message-ID: <20171102081508.GI11011@codeaurora.org>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
- <20170719152646.25903-11-p.zabel@pengutronix.de>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: tegra: Add sor1_out clock
+Date: Thu, 2 Nov 2017 01:16:48 -0700
+Message-ID: <20171102081648.GJ11011@codeaurora.org>
+References: <20170901145343.19890-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170719152646.25903-11-p.zabel@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <20170901145343.19890-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/19, Philipp Zabel wrote:
-> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-> reset lines") started to transition the reset control request API calls
-> to explicitly state whether the driver needs exclusive or shared reset
-> control behavior. Convert all drivers requesting exclusive resets to the
-> explicit API call so the temporary transition helpers can be removed.
+On 09/01, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> No functional changes.
+> The sor1_src clock implemented on Tegra210 is modelled the wrong way
+> around, which causes some issues with HDMI and DP support. This clock
+> implementation is provided by BPMP on Tegra186, which models this in
+> a more correct way. Since this introduces incompatibilities between
+> the two SoC generations which we want to avoid, the Tegra210 will be
+> fixed in subsequent patches.
 > 
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> This change adds sor1_out as an alias for sor1_src.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 
 Applied to clk-next
