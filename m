@@ -1,32 +1,27 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 4/4] clk: tegra: Fix sor1_out clock implementation
-Date: Thu, 2 Nov 2017 01:16:56 -0700
-Message-ID: <20171102081656.GM11011@codeaurora.org>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH 3/4] clk: tegra: Use tegra_clk_register_periph_data()
+Date: Thu, 2 Nov 2017 01:16:53 -0700
+Message-ID: <20171102081653.GL11011@codeaurora.org>
 References: <20170901145343.19890-1-thierry.reding@gmail.com>
- <20170901145343.19890-4-thierry.reding@gmail.com>
+ <20170901145343.19890-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170901145343.19890-4-thierry.reding@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <20170901145343.19890-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 09/01, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> This clock was previously called sor1_src and was modelled as an input
-> to the sor1 module clock. However, it's really an output clock that can
-> be fed either from the safe, the sor1_pad_clkout or the sor1 module
-> clocks. sor1 itself can take input from either of the display PLLs.
+> Instead of open-coding the same pattern repeatedly, reuse the newly
+> introduced tegra_clk_register_periph_data() helper that will unpack
+> the initialization structure.
 > 
-> The same implementation for the sor1_out clock is used on Tegra186, so
-> this nicely lines up both SoC generations to deal with this clock in a
-> uniform way.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 
 Applied to clk-next
