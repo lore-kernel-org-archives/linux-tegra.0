@@ -1,60 +1,127 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] usb: xhci: tegra: use time64_t for printing timestamp
-Date: Thu, 2 Nov 2017 17:17:19 +0100
-Message-ID: <20171102161719.GA19015@ulmo>
-References: <20171102143435.882290-1-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171102143435.882290-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 00/12] gpio: Tight IRQ chip integration
+Date: Thu,  2 Nov 2017 18:49:29 +0100
+Message-ID: <20171102174941.3461-1-thierry.reding@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---x+6KMIRAuhnl3hBn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-On Thu, Nov 02, 2017 at 03:34:27PM +0100, Arnd Bergmann wrote:
-> The time_t type and time_to_tm() function are deprecated because
-> of y2038 problems. In this driver, they are used to pretty-print
-> the timestamp of the firmware build. This is fine as long as
-> we don't get a firmware build past 2038.
->=20
-> Converting to time64_t and time64_to_tm() avoids the deprecated
-> interfaces and works until 2106, when the firmware-defined
-> data structure overflows.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/usb/host/xhci-tegra.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+here's the latest series of patches that implement the tighter IRQ chip
+integration. I've dropped the banked infrastructure for now as per the
+discussion with Grygorii.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+The first couple of patches are mostly preparatory work in order to
+consolidate all IRQ chip related fields in a new structure and create
+the base functionality for adding IRQ chips.
 
---x+6KMIRAuhnl3hBn
-Content-Type: application/pgp-signature; name="signature.asc"
+After that, I've added the Tegra186 GPIO support patch that makes use of
+the new tight integration.
 
------BEGIN PGP SIGNATURE-----
+Changes in v6:
+- rebased on latest linux-gpio devel branch
+- one patch dropped due to rebase
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAln7RQwACgkQ3SOs138+
-s6EIDQ//Zd+gyXnMMQjPmdsMjYM+Zrsj9zpNCPeRCRsfxpSpp7/M1BMninrIaP6d
-EBTp1uca075nWhCcfjyHqJqEeU/ldbxwx6E3HEyabvgI9OC5ijcOnIM29CRs3E0i
-o6DI4yMBJIJh62/GBtGguH7LCaDgC9o3r4HmDTOo0OwTchfm7CumrUyKmcZ7EP+6
-QQ4c95sEu87LsiM3qycqhZY5abySYSzgbqdYkaRWsDGJ29ax86dvM1/2UdG9Ek25
-hT/pHia+ynOfwibpMs1bRRmpYnLg5pPaKcnGzpYaJIvxyxblfjmHovd5N7Xo7s6D
-IoFnVYYmCKbpN9e3sksr2qvZLDM+KhYDqZ8g4HSSk3aB4qqv6yjOUA6sZsKCn/mG
-0QgSfDSo/mkfUSk1uv8t3ZmowedT3TUtShBBJ5b8tO8t1doIgjvWphBqiD3bEmLY
-RH7owODUQxgZCUcAs/oZj+AkinUgehJ8m88VZTUL+C8T0xOMeJLf7DixxMmoP/Aj
-asJaErKJxWq9nii4dQqtMq2itliekKGM1HjlOYDD7QzvSMTOswamgCk6pVRx5ShW
-g13rcyXJzF+1xE9Ug5JsH6eHIDG0AnLx8TRlzPmJjcZFbFtK0XbwxDH+7uwLrVVx
-2WBtW8O4Uk0xvuDdusLfmAbip47GsJ40uA8XI27nkiCwk9XHcho=
-=GSBe
------END PGP SIGNATURE-----
+Changes in v5:
+- dropped the banked infrastructure patches for now (Grygorii)
+- allocate interrupts on demand, rather than upfront (Grygorii)
+- split up the first patch further as requested by Grygorii
 
---x+6KMIRAuhnl3hBn--
+Not sure what happened in between here. Notes in commit logs indicate
+that this is actually version 5, but I can't find the cover letter for
+v3 and v4.
+
+Changes in v2:
+- rename pins to lines for consistent terminology
+- rename gpio_irq_chip_banked_handler() to
+  gpio_irq_chip_banked_chained_handler()
+
+Thierry
+
+
+*** BLURB HERE ***
+
+Thierry Reding (12):
+  gpio: Introduce struct gpio_irq_chip
+  gpio: Move irqchip into struct gpio_irq_chip
+  gpio: Move irqdomain into struct gpio_irq_chip
+  gpio: Move irq_handler to struct gpio_irq_chip
+  gpio: Move irq_default_type to struct gpio_irq_chip
+  gpio: Move irq_chained_parent to struct gpio_irq_chip
+  gpio: Move irq_nested into struct gpio_irq_chip
+  gpio: Move irq_valid_mask into struct gpio_irq_chip
+  gpio: Move lock_key into struct gpio_irq_chip
+  gpio: Implement tighter IRQ chip integration
+  gpio: Export gpiochip_irq_{map,unmap}()
+  gpio: Add Tegra186 support
+
+ Documentation/gpio/driver.txt               |   6 +-
+ drivers/bcma/driver_gpio.c                  |   2 +-
+ drivers/gpio/Kconfig                        |   9 +
+ drivers/gpio/Makefile                       |   1 +
+ drivers/gpio/gpio-104-dio-48e.c             |   2 +-
+ drivers/gpio/gpio-104-idi-48.c              |   2 +-
+ drivers/gpio/gpio-104-idio-16.c             |   2 +-
+ drivers/gpio/gpio-adnp.c                    |   2 +-
+ drivers/gpio/gpio-altera.c                  |   4 +-
+ drivers/gpio/gpio-aspeed.c                  |   6 +-
+ drivers/gpio/gpio-ath79.c                   |   2 +-
+ drivers/gpio/gpio-crystalcove.c             |   2 +-
+ drivers/gpio/gpio-dln2.c                    |   2 +-
+ drivers/gpio/gpio-ftgpio010.c               |   2 +-
+ drivers/gpio/gpio-ingenic.c                 |   2 +-
+ drivers/gpio/gpio-intel-mid.c               |   2 +-
+ drivers/gpio/gpio-lynxpoint.c               |   2 +-
+ drivers/gpio/gpio-max732x.c                 |   2 +-
+ drivers/gpio/gpio-merrifield.c              |   2 +-
+ drivers/gpio/gpio-omap.c                    |   2 +-
+ drivers/gpio/gpio-pca953x.c                 |   2 +-
+ drivers/gpio/gpio-pcf857x.c                 |   2 +-
+ drivers/gpio/gpio-pci-idio-16.c             |   2 +-
+ drivers/gpio/gpio-pl061.c                   |   2 +-
+ drivers/gpio/gpio-rcar.c                    |   2 +-
+ drivers/gpio/gpio-reg.c                     |   4 +-
+ drivers/gpio/gpio-stmpe.c                   |   6 +-
+ drivers/gpio/gpio-tc3589x.c                 |   2 +-
+ drivers/gpio/gpio-tegra186.c                | 623 ++++++++++++++++++++++++++++
+ drivers/gpio/gpio-vf610.c                   |   2 +-
+ drivers/gpio/gpio-wcove.c                   |   2 +-
+ drivers/gpio/gpio-ws16c48.c                 |   2 +-
+ drivers/gpio/gpio-xgene-sb.c                |   2 +-
+ drivers/gpio/gpio-xlp.c                     |   2 +-
+ drivers/gpio/gpio-zx.c                      |   2 +-
+ drivers/gpio/gpio-zynq.c                    |   2 +-
+ drivers/gpio/gpiolib.c                      | 213 ++++++++--
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c       |   4 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |   2 +-
+ drivers/pinctrl/intel/pinctrl-baytrail.c    |   6 +-
+ drivers/pinctrl/intel/pinctrl-cherryview.c  |   6 +-
+ drivers/pinctrl/intel/pinctrl-intel.c       |   2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |   2 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c   |   4 +-
+ drivers/pinctrl/pinctrl-amd.c               |   2 +-
+ drivers/pinctrl/pinctrl-at91.c              |   2 +-
+ drivers/pinctrl/pinctrl-coh901.c            |   2 +-
+ drivers/pinctrl/pinctrl-mcp23s08.c          |   2 +-
+ drivers/pinctrl/pinctrl-oxnas.c             |   2 +-
+ drivers/pinctrl/pinctrl-pic32.c             |   2 +-
+ drivers/pinctrl/pinctrl-pistachio.c         |   2 +-
+ drivers/pinctrl/pinctrl-st.c                |   2 +-
+ drivers/pinctrl/pinctrl-sx150x.c            |   2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c          |   2 +-
+ drivers/pinctrl/sirf/pinctrl-atlas7.c       |   2 +-
+ drivers/pinctrl/sirf/pinctrl-sirf.c         |   2 +-
+ drivers/pinctrl/spear/pinctrl-plgpio.c      |   2 +-
+ drivers/platform/x86/intel_int0002_vgpio.c  |   6 +-
+ include/linux/gpio/driver.h                 | 154 +++++--
+ 59 files changed, 1004 insertions(+), 136 deletions(-)
+ create mode 100644 drivers/gpio/gpio-tegra186.c
+
+-- 
+2.14.1
+
