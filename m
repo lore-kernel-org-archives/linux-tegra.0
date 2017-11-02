@@ -1,74 +1,80 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: tegra: Add sor1_out clock
-Date: Thu, 2 Nov 2017 09:46:05 +0100
-Message-ID: <20171102084605.GA29341@ulmo>
-References: <20170901145343.19890-1-thierry.reding@gmail.com>
- <20171102081648.GJ11011@codeaurora.org>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v7 1/4] reset: Add APIs to manage array of resets
+Date: Thu, 02 Nov 2017 13:57:59 +0100
+Message-ID: <1509627479.10280.4.camel@pengutronix.de>
+References: <1500479948-29988-1-git-send-email-p.zabel@pengutronix.de>
+         <1500479948-29988-2-git-send-email-p.zabel@pengutronix.de>
+         <20171019185400.GZ1165@minitux> <1508502022.7455.6.camel@pengutronix.de>
+         <20171101222418.GC28761@minitux>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171102081648.GJ11011-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171101222418.GC28761@minitux>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Bjorn,
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2017-11-01 at 15:24 -0700, Bjorn Andersson wrote:
+[...]
+> > > This looks more or less identical to how regulators and clocks already
+> > > deals with resources in bulk; see regulator_bulk_data and clk_bulk_data
+> > > and their associated functions.
+> > > 
+> > > I would really like to see that you follow this model, to make it easier
+> > > for developers to work with and use the various subsystems.
+> > 
+> > These APIs have two undesirable (in this case) properties; the driver
+> > has to know the number of resets and their identifiers in advance, and
+> > singular resets and bulk reset arrays can't be used interchangeably.
+> 
+> As a writer of device drivers as well as dts files I greatly appreciate
+> when this expectations is encoded in the kernel, so that it is clear
+> when the DT node is missing some resource - rather than having random
+> reboots because of spelling mistakes or variations between hardware
+> revisions.
+> 
+> We tend to express these things explicitly in the kernel, as magic
+> interfaces makes things harder to debug.
 
-On Thu, Nov 02, 2017 at 01:16:48AM -0700, Stephen Boyd wrote:
-> On 09/01, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > The sor1_src clock implemented on Tegra210 is modelled the wrong way
-> > around, which causes some issues with HDMI and DP support. This clock
-> > implementation is provided by BPMP on Tegra186, which models this in
-> > a more correct way. Since this introduces incompatibilities between
-> > the two SoC generations which we want to avoid, the Tegra210 will be
-> > fixed in subsequent patches.
-> >=20
-> > This change adds sor1_out as an alias for sor1_src.
-> >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
->=20
-> Applied to clk-next
+I have no control over how most of those bindings are designed. While I
+prefer bindings to explicitly specify resets by identifier where
+possible, there are some generic bindings that just don't have this
+information.
+See for example the ohci/ehci-platform USB host drivers, which are used
+for platform integration on various SoCs, or the Tegra pmc driver, which
+has to handle resets for other peripherals when power gating.
 
-Hi Stephen,
+Also, I currently don't see many drivers that would profit much from a
+bulk API, as many drivers that request multiple reset controls have to
+handle them individually anyway, to guarantee ordering or reset timings.
+One candidate would be the pcie-qcom driver. If you are aware of more
+potential users of a bulk API, please let me know.
 
-sorry for not having been clear about this. This patch and the  2-4 are
-part of the pull request I sent out earlier (and for which I have an
-updated one to fix the regression I mentioned last week). I'd prefer to
-send this to you via pull request because there is a dependency on this
-=66rom the ARM SoC tree (for a DT change).
+> > Both are not well suited to this use case, which is "triggering one or
+> > any number of anonymous resets together".
+> > 
+> 
+> Triggering one is just a special case of N. 
+>
+> But this does not change the fact that the reset framework interface
+> looks and function in a fundamentally different way than the clock and
+> regulator equivalents, which will be confusing - in particular since
+> most drivers will use 2 or 3 of these.
 
-Any chance you could back this out?
+There is no way to make them work all exactly the same, as the resources
+ themselves are used in different ways. Surely we should try to minimize
+the API differences to allow transfer of expectations, but that should
+not be the only goal.
+For example neither clock nor regulator framework have support for
+exclusive clocks/regulators that can be forced-off, and _optional
+requests are handled differently in the gpio and regulator frameworks.
 
-Thierry
+That being said, I'd be happy to add a bulk API if that actually helps
+some drivers.
 
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAln620kACgkQ3SOs138+
-s6FwRQ//TLZepeCnDNtoy1666Wp+GUOZf3mIaQmhvbqaLOFlSNiyKwPJJ2EPdYQb
-PReRLBd0wQ6GQO3HLdMXY4dWyg0LELiQojbGDIBrT1cOniFufVgru08zo1t5zgoB
-H4y5OFFGW2pBilLn6gQm1sKnT4Fv17QFHXlQV2iphVyCjrzCmyDPdFPxOC3KzGce
-m0xVTkdNy4vMeRQyGeMnY1Hq/DdgzL5h+q6Gmcmn3N8WJLjuDV6wlxlZwgSOqTpi
-JXwSrf+RqqRbKOxLWvTru3TbIyThss+UutSYyQKyz90RCs7081mVqdNka32Pi96D
-CNDIuIksb3fPptnQqN5RwMv0CTHGIDQIWv05o38ICgNRGoH2NhjcrqNQOrXolCX5
-72bbeL1DrryL1+sOEFdSIIu0+BnJgreoACF74ueiNvNTtKSFUskVazawqKxy5Uz5
-U4NDWp7k0y2/58m5BZTfUYr2LrY+qpwOpJ46x1yzH2qECicCfQad5NSEY1HSp/Ib
-As8TtpkNAZpRSV2/hizAT8wmlJCVKhj+xXELSLK6UuGdXDX7pysNvBnP8qkrug5o
-h8CWa6zD3cpcRQlKQ+2EVJ2bbFTHmhFfw34HNPy0/74Jh7b9gl6W1xTOLL3niLrU
-342NfOjSOokhSY+GSYLhotnniwb9Onpe3hAFIS4FwVYRboS1glM=
-=i9Z9
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+regards
+Philipp
