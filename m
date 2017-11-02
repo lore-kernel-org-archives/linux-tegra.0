@@ -1,25 +1,28 @@
 From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] clk: tegra30: fix cclk_lp divisor register
-Date: Thu, 2 Nov 2017 01:17:10 -0700
-Message-ID: <20171102081710.GN11011@codeaurora.org>
-References: <f54b8ff896d3dcbae51741b817d65a7e9a21987a.1505789180.git.mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH] clk/tegra: Delete an error message for a failed memory
+ allocation in three functions
+Date: Thu, 2 Nov 2017 01:19:41 -0700
+Message-ID: <20171102081941.GO11011@codeaurora.org>
+References: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <f54b8ff896d3dcbae51741b817d65a7e9a21987a.1505789180.git.mirq-linux@rere.qmqm.pl>
-Sender: linux-clk-owner@vger.kernel.org
-To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/19, Michał Mirosław wrote:
-> According to comments in code and common sense, cclk_lp uses its
-> own divisor, not cclk_g's.
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 18:40:34 +0200
 > 
-> Fixes: b08e8c0ecc42 ("clk: tegra: add clock support for Tegra30")
-> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> Omit extra messages for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
 
 Applied to clk-next
