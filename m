@@ -1,27 +1,60 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL 4/7] thermal: tegra: Changes for v4.15-rc1
-Date: Thu, 2 Nov 2017 16:20:05 +0100
-Message-ID: <CAK8P3a0+b7x_QvbNuFGof27qb6CLWoJpqZ7sgQVW-pQULP6bZA@mail.gmail.com>
-References: <20171020115603.9828-1-thierry.reding@gmail.com> <20171020115603.9828-4-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] usb: xhci: tegra: use time64_t for printing timestamp
+Date: Thu, 2 Nov 2017 17:17:19 +0100
+Message-ID: <20171102161719.GA19015@ulmo>
+References: <20171102143435.882290-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171020115603.9828-4-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: arm-soc <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, ACPI Devel Maling List <linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171102143435.882290-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 20, 2017 at 1:56 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> This pulls in parts of both the tegra-for-4.15-dt-bindings and
-> tegra-for-4.15-firmware tags in order to resolve a build time
-> dependency.
 
-I see that Zhang Rui has provided an Ack for this going through the
-arm-soc tree,
-but is not on Cc. I've added him now for transparency.
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Pulled into next/drivers, thanks!
+On Thu, Nov 02, 2017 at 03:34:27PM +0100, Arnd Bergmann wrote:
+> The time_t type and time_to_tm() function are deprecated because
+> of y2038 problems. In this driver, they are used to pretty-print
+> the timestamp of the firmware build. This is fine as long as
+> we don't get a firmware build past 2038.
+>=20
+> Converting to time64_t and time64_to_tm() avoids the deprecated
+> interfaces and works until 2106, when the firmware-defined
+> data structure overflows.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/usb/host/xhci-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-        Arnd
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAln7RQwACgkQ3SOs138+
+s6EIDQ//Zd+gyXnMMQjPmdsMjYM+Zrsj9zpNCPeRCRsfxpSpp7/M1BMninrIaP6d
+EBTp1uca075nWhCcfjyHqJqEeU/ldbxwx6E3HEyabvgI9OC5ijcOnIM29CRs3E0i
+o6DI4yMBJIJh62/GBtGguH7LCaDgC9o3r4HmDTOo0OwTchfm7CumrUyKmcZ7EP+6
+QQ4c95sEu87LsiM3qycqhZY5abySYSzgbqdYkaRWsDGJ29ax86dvM1/2UdG9Ek25
+hT/pHia+ynOfwibpMs1bRRmpYnLg5pPaKcnGzpYaJIvxyxblfjmHovd5N7Xo7s6D
+IoFnVYYmCKbpN9e3sksr2qvZLDM+KhYDqZ8g4HSSk3aB4qqv6yjOUA6sZsKCn/mG
+0QgSfDSo/mkfUSk1uv8t3ZmowedT3TUtShBBJ5b8tO8t1doIgjvWphBqiD3bEmLY
+RH7owODUQxgZCUcAs/oZj+AkinUgehJ8m88VZTUL+C8T0xOMeJLf7DixxMmoP/Aj
+asJaErKJxWq9nii4dQqtMq2itliekKGM1HjlOYDD7QzvSMTOswamgCk6pVRx5ShW
+g13rcyXJzF+1xE9Ug5JsH6eHIDG0AnLx8TRlzPmJjcZFbFtK0XbwxDH+7uwLrVVx
+2WBtW8O4Uk0xvuDdusLfmAbip47GsJ40uA8XI27nkiCwk9XHcho=
+=GSBe
+-----END PGP SIGNATURE-----
+
+--x+6KMIRAuhnl3hBn--
