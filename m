@@ -1,34 +1,48 @@
-From: "Mr David Williams" <33176930-JVqo/v6+17SELdXlOq2cAlZq95QhYFEm@public.gmane.org>
-Subject: Darlehensangebot
-Date: Thu, 02 Nov 2017 18:30:20 +0530
-Message-ID: <AM6PR0102MB35443F536567FF65C019A575B55C0@AM6PR0102MB3544.eurprd01.prod.exchangelabs.com>
-Reply-To: david.loanfirm09-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: [PATCH] usb: xhci: tegra: use time64_t for printing timestamp
+Date: Thu,  2 Nov 2017 15:34:27 +0100
+Message-ID: <20171102143435.882290-1-arnd@arndb.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Description: Mail message body
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Recipients <33176930-JVqo/v6+17SELdXlOq2cAlZq95QhYFEm@public.gmane.org>
+To: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Sch=C3=B6nen Tag,
- =
+The time_t type and time_to_tm() function are deprecated because
+of y2038 problems. In this driver, they are used to pretty-print
+the timestamp of the firmware build. This is fine as long as
+we don't get a firmware build past 2038.
 
-Sie ben=C3=B6tigen einen echten Kredit online Ihre Rechnungen zu sichern?
-Startet ein neues Unternehmen? Sie ben=C3=B6tigen einen pers=C3=B6nlichen K=
-redit
-oder Business-Darlehen? Wir bieten ein Darlehen von =E2=82=AC 10.000 bis =
-=E2=82=AC
-500,000.000.00 mit 2% Zinsen pro Jahr und auch mit einem
-erschwinglichen R=C3=BCckzahlungsbedingungen und Zustand. Ich suche f=C3=BCr
-Darlehen und Projektinvestmentfonds ? Wir halten professionelle
-Exzellenz, unsere Definition von Exzellenz liegt in hervorragenden
-Kundenservice, erschwingliche Zahlung und R=C3=BCckzahlung Pl=C3=A4ne, schn=
-ell
-und einfach-Prozess.
-Hochachtungsvoll....
- =
+Converting to time64_t and time64_to_tm() avoids the deprecated
+interfaces and works until 2106, when the firmware-defined
+data structure overflows.
 
-Freundliche Gr=C3=BC=C3=9Fe,
-Herr David Williams
+Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+---
+ drivers/usb/host/xhci-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 74436f8ca538..39b6e93130d3 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -771,7 +771,7 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
+ 	struct device *dev = tegra->dev;
+ 	const struct firmware *fw;
+ 	unsigned long timeout;
+-	time_t timestamp;
++	time64_t timestamp;
+ 	struct tm time;
+ 	u64 address;
+ 	u32 value;
+@@ -877,7 +877,7 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
+ 	}
+ 
+ 	timestamp = le32_to_cpu(header->fwimg_created_time);
+-	time_to_tm(timestamp, 0, &time);
++	time64_to_tm(timestamp, 0, &time);
+ 
+ 	dev_info(dev, "Firmware timestamp: %ld-%02d-%02d %02d:%02d:%02d UTC\n",
+ 		 time.tm_year + 1900, time.tm_mon + 1, time.tm_mday,
+-- 
+2.9.0
