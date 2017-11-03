@@ -1,39 +1,57 @@
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Subject: T20 Cpuidle Freeze
-Date: Fri, 3 Nov 2017 13:07:05 +0000
-Message-ID: <1509714423.21320.11.camel@toradex.com>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: tegra: Add sor1_out clock
+Date: Fri, 3 Nov 2017 08:16:44 -0700
+Message-ID: <20171103151644.GT11011@codeaurora.org>
+References: <20170901145343.19890-1-thierry.reding@gmail.com>
+ <20171102081648.GJ11011@codeaurora.org>
+ <20171102084605.GA29341@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
-Content-ID: <9A92D9C5B05D5749A46BFB7E5564A150-wNKe6lTLrGecE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20171102084605.GA29341@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: "digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org" <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgUmFmYWVsLCBkZWFyIGNvbW11bml0eQ0KDQpPbmUgb2Ygb3VyIGN1c3RvbWVycyByZXBvcnRl
-ZCBzZWVpbmcgZnJlZXplcyB3aGVuIHJ1bm5pbmcgdGhlIExUUyBMaW51eA0Ka2VybmVsIDQuOS54
-IG9uIG91ciBUb3JhZGV4IENvbGlicmkgVDIwIG1vZHVsZXMgWzFdLiBJIHdhcyBhYmxlIHRvDQpy
-ZXByb2R1Y2UgYSBjb21wbGV0ZSBTb0MgbG9jay11cCBhZnRlciBhIGZldyBtaW51dGVzIGFsc28g
-cnVubmluZyB0aGUNCmxhdGVzdCA0LjE0LXJjNyB3aGlsZSBMVFMgNC40Lnggc2VlbWVkIHRvIHJ1
-biBzdGFibGUuDQoNCkhhdmluZyBhdHRlbXB0ZWQgYSBtdWx0aS1sZXZlbCBiaXNlY3Rpb24gcG9p
-bnRzIHRvd2FyZHMgdGhlIGZvbGxvd2luZw0KZmlyc3QgYmFkIGNvbW1pdDoNCg0KOWM0YjI4Njdl
-ZDdjOGM4Nzg0ZGQ0MTdmZmQxNmU3MDVlODFlYjE0NQ0KDQpjcHVpZGxlOiBtZW51OiBGaXggbWVu
-dV9zZWxlY3QoKSBmb3IgQ1BVSURMRV9EUklWRVJfU1RBVEVfU1RBUlQgPT0gMA0KDQpVbmZvcnR1
-bmF0ZWx5IGFzIGRyaXZlcnMvY3B1aWRsZS9nb3Zlcm5vcnMvbWVudS5jIGhhcyBnb3R0ZW4gZnVy
-dGhlcg0KZWRpdHMgc2luY2UgaXQgc2VlbXMgbm90IHRyaXZpYWwgdG8ganVzdCByZXZlcnQgaXQu
-DQoNCkhvd2V2ZXIgSSBmb3VuZCBvdXQgdGhhdCBpdCBpbmRlZWQgaGFzIHRvIGRvIHdpdGggQ1BV
-IGlkbGUgYXMgd2hlbiBJDQpkaWQgZGlzYWJsZSB0aGUgQ09ORklHX0NQVV9JRExFIExpbnV4IGtl
-cm5lbCBjb25maWd1cmF0aW9uIG9wdGlvbiBhbHNvDQpMVFMgNC45LjU5IGFzIHdlbGwgYXMgbGF0
-ZXN0IDQuMTQtcmM3IHJ1biBub3cgc3RhYmxlIG92ZXJuaWdodC4NCg0KRG9lcyBhbnlib2R5IGhh
-dmUgYW55IGNsdWUgd2hhdCBleGFjdGx5IG1heSBiZSBoYXBwZW5pbmcgYW5kL29yIHdoeQ0KY3B1
-aWRsZSBtYXkgbm90IHJ1biBzdGFibGUgb24gVDIwPyBPciBpcyBldmVyeWJvZHkgYWx3YXlzIGp1
-c3QNCmRpc2FibGluZyBjcHVpZGxlIG9uIFQyMCBhbnl3YXk/DQoNClRoYW5rcyENCg0KWzFdIGh0
-dHBzOi8vd3d3LnRvcmFkZXguY29tL2NvbW11bml0eS9xdWVzdGlvbnMvMTY4MzgvYWN0dWFsLWx0
-cy1rZXJuZWwNCi00OS1vbi1jb2xpYnJpLXQyMC5odG1sDQoNCkJlc3QgcmVnYXJkcyAtIE1pdCBm
-cmV1bmRsaWNoZW4gR3LDvHNzZW4gLSBNZWlsbGV1cmVzIHNhbHV0YXRpb25zDQoNCk1hcmNlbCBa
-aXN3aWxlcg0KUGxhdGZvcm0gTWFuYWdlciBFbWJlZGRlZCBMaW51eA0KDQpUb3JhZGV4IEFHDQpB
-bHRzYWdlbnN0cmFzc2UgNSB8IDYwNDggSG9ydy9MdXplcm4gfCBTd2l0emVybGFuZCB8IFQ6ICs0
-MSA0MSA1MDAgNDggMDANCihtYWluIGxpbmUpIHwgRGlyZWN0OiArNDEgNDEgNTAwIDQ4IDEw
+On 11/02, Thierry Reding wrote:
+> On Thu, Nov 02, 2017 at 01:16:48AM -0700, Stephen Boyd wrote:
+> > On 09/01, Thierry Reding wrote:
+> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > 
+> > > The sor1_src clock implemented on Tegra210 is modelled the wrong way
+> > > around, which causes some issues with HDMI and DP support. This clock
+> > > implementation is provided by BPMP on Tegra186, which models this in
+> > > a more correct way. Since this introduces incompatibilities between
+> > > the two SoC generations which we want to avoid, the Tegra210 will be
+> > > fixed in subsequent patches.
+> > > 
+> > > This change adds sor1_out as an alias for sor1_src.
+> > > 
+> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > 
+> > Applied to clk-next
+> 
+> Hi Stephen,
+> 
+> sorry for not having been clear about this. This patch and the  2-4 are
+> part of the pull request I sent out earlier (and for which I have an
+> updated one to fix the regression I mentioned last week). I'd prefer to
+> send this to you via pull request because there is a dependency on this
+> from the ARM SoC tree (for a DT change).
+> 
+
+Sure I can back out the changes. Next time please indicate your
+merge path/strategy in some sort of cover letter so I can ignore
+changes in the review queue. Also, if you pick up a patch from
+the list please send a note that you applied it to your tree so I
+know to wait for a PR later.
+
+Is the PR coming soon? I forgot about it because we were waiting
+for the second one.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
