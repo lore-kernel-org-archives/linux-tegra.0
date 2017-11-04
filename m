@@ -1,50 +1,35 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v6 00/12] gpio: Tight IRQ chip integration
-Date: Fri, 3 Nov 2017 18:50:28 -0500
-Message-ID: <0e96761d-a110-ff25-fa2e-319bedf3d8ac@ti.com>
-References: <20171102174941.3461-1-thierry.reding@gmail.com>
- <CACRpkdZaLtpEfx6C5cqHFMk11TXnHxp-sZ+T38PCf+Jh1B2BjQ@mail.gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: T20 Cpuidle Freeze
+Date: Sat, 4 Nov 2017 20:49:22 +0000
+Message-ID: <1509828560.21320.19.camel@toradex.com>
+References: <1509714423.21320.11.camel@toradex.com>
+         <ddd84466-c4db-c2a0-c646-2ce6c2936806@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZaLtpEfx6C5cqHFMk11TXnHxp-sZ+T38PCf+Jh1B2BjQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <ddd84466-c4db-c2a0-c646-2ce6c2936806-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
+Content-ID: <838FC9682BF4E048B1B1EC392BEC1468-wNKe6lTLrGecE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org" <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-hi Linus,
-
-On 11/03/2017 05:50 PM, Linus Walleij wrote:
-> On Thu, Nov 2, 2017 at 6:49 PM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> 
->> here's the latest series of patches that implement the tighter IRQ chip
->> integration. I've dropped the banked infrastructure for now as per the
->> discussion with Grygorii.
-> 
-> And I really liked that part.
-> 
->> The first couple of patches are mostly preparatory work in order to
->> consolidate all IRQ chip related fields in a new structure and create
->> the base functionality for adding IRQ chips.
->>
->> After that, I've added the Tegra186 GPIO support patch that makes use of
->> the new tight integration.
->>
->> Changes in v6:
->> - rebased on latest linux-gpio devel branch
->> - one patch dropped due to rebase
-> 
-> I guess I will consider queueing them already for v4.15 if
-> Torvalds churns out another -rc on sunday, I do not
-> doubt that you will finish it as we have discussed with banks and
-> all. If v4.14 is released on sunday let's queue this early for v4.16.
-
-Can you see my reply?
-https://lkml.org/lkml/2017/11/3/820
-
--- 
-regards,
--grygorii
+T24gRnJpLCAyMDE3LTExLTAzIGF0IDIxOjUyICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
+DQo+IEkgaGF2ZW4ndCBzZWVuIGFueSBwcm9ibGVtcyB3aXRoIHRoZSBjcHVpZGxlIG9uIG5leHQg
+YW5kIDQuMTQtcmM3DQo+IHdvcmtzIGZpbmUuDQo+IA0KPiAjIGNhdCAvc3lzL2RldmljZXMvc3lz
+dGVtL2NwdS9jcHVbMC0xXS9jcHVpZGxlL3N0YXRlWzAtMV0vdXNhZ2UNCj4gMTYyMjgzDQo+IDMy
+OTA1DQo+IDI1NDY2OQ0KPiAzMjkwNQ0KPiANCj4gIyBjYXQgL3N5cy9kZXZpY2VzL3N5c3RlbS9j
+cHUvY3B1WzAtMV0vY3B1aWRsZS9zdGF0ZVswLTFdL3RpbWUNCj4gNDM2OTgxNzYzDQo+IDIxMTA0
+ODQ2NjYNCj4gNDU4MjYwNzA3DQo+IDIxMjE3ODE1MTYNCj4gDQo+ICMgdXB0aW1lDQo+IMKgMTg6
+NTA6MjQgdXAgNDQgbWluLMKgwqAxIHVzZXIswqDCoGxvYWQgYXZlcmFnZTogMC4xNSwgMC4wOCwg
+MC4wNw0KDQpPSywgdGhhbmtzLiBHb29kIHRvIGtub3cuDQoNCj4gSXQgY291bGQgYmUgdGhhdCBj
+cHVpZGxlIHVubWFza3Mgc29tZSBvdGhlciBpc3N1ZSBvbiB0aGUgQ29saWJyaS4NCg0KWWVzLCB0
+aGF0J3MgYWxzbyBteSB0aGlua2luZy4NCg0KV2hhdCBoYXJkd2FyZSBkaWQgeW91IHJ1biB0aGlz
+IG9uPw0KDQpEb2VzIHlvdXIga2VybmVsIGNvbmZpZ3VyYXRpb24gZGlmZmVyIGZyb20gdGhlIHN0
+b2NrIHRlZ3JhX2RlZmNvbmZpZyBJIHVzZWQ/DQoNCldoYXQgZXhhY3QgZGV2aWNlIHRyZWUgc291
+cmNlIGFyZSB5b3UgdXNpbmcgKG9yIGp1c3Qgc3RvY2spPw0KDQpNYXliZSB0aGUgY29tcGlsZXIg
+dmVyc2lvbiB5b3UgYXJlIHVzaW5nIGNvdWxkIGFsc28gaGF2ZSBzb21lIGluZmx1ZW5jZT8NCg0K
+SWYgeW91IGhhdmUgYW55IGFkZGl0aW9uYWwgc3VnZ2VzdGlvbnMgb24gd2hhdCBlbHNlIGNvdWxk
+IGJlIHJlbGV2YW50IHBsZWFzZSBsZXQgbWUga25vdy4=
