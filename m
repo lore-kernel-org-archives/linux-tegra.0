@@ -1,152 +1,108 @@
 From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 10/10] gpu: host1x: Optionally block when acquiring channel
-Date: Sun,  5 Nov 2017 13:01:18 +0200
-Message-ID: <20171105110118.15142-11-mperttunen@nvidia.com>
+Subject: [PATCH 09/10] drm/tegra: Boot VIC in runtime resume
+Date: Sun,  5 Nov 2017 13:01:17 +0200
+Message-ID: <20171105110118.15142-10-mperttunen@nvidia.com>
 References: <20171105110118.15142-1-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171105110118.15142-1-mperttunen@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org, digetx@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: digetx@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-QWRkIGFuIG9wdGlvbiB0byBob3N0MXhfY2hhbm5lbF9yZXF1ZXN0IHRvIGludGVycnVwdGlibHkg
-d2FpdCBmb3IgYQpmcmVlIGNoYW5uZWwuIFRoaXMgYWxsb3dzIElPQ1RMcyB0aGF0IGFjcXVpcmUg
-YSBjaGFubmVsIHRvIGJsb2NrCnRoZSB1c2Vyc3BhY2UuCgpTaWduZWQtb2ZmLWJ5OiBNaWtrbyBQ
-ZXJ0dHVuZW4gPG1wZXJ0dHVuZW5AbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZHJtLmMgIHwgIDkgKysrKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IyZC5jIHwg
-IDYgKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IzZC5jIHwgIDYgKysrLS0tCiBkcml2
-ZXJzL2dwdS9ob3N0MXgvY2hhbm5lbC5jIHwgNDAgKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvaG9zdDF4L2NoYW5uZWwuaCB8ICAxICsKIGluY2x1
-ZGUvbGludXgvaG9zdDF4LmggICAgICAgfCAgMiArLQogNiBmaWxlcyBjaGFuZ2VkLCA0MyBpbnNl
-cnRpb25zKCspLCAyMSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKaW5kZXggNjU4YmM4ODE0
-ZjM4Li4xOWY3N2MxYTc2YzAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0u
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKQEAgLTM4OSw3ICszODksOCBAQCBz
-dGF0aWMgaW50IGhvc3QxeF93YWl0Y2hrX2NvcHlfZnJvbV91c2VyKHN0cnVjdCBob3N0MXhfd2Fp
-dGNoayAqZGVzdCwKICAqIFJlcXVlc3QgYSBmcmVlIGhhcmR3YXJlIGhvc3QxeCBjaGFubmVsIGZv
-ciB0aGlzIHVzZXIgY29udGV4dCwgb3IgaWYgdGhlCiAgKiBjb250ZXh0IGFscmVhZHkgaGFzIG9u
-ZSwgYnVtcCBpdHMgcmVmY291bnQuCiAgKgotICogUmV0dXJucyAwIG9uIHN1Y2Nlc3MsIG9yIC1F
-QlVTWSBpZiB0aGVyZSB3ZXJlIG5vIGZyZWUgaGFyZHdhcmUgY2hhbm5lbHMuCisgKiBSZXR1cm5z
-IDAgb24gc3VjY2VzcywgLUVJTlRSIGlmIHdhaXQgZm9yIGEgZnJlZSBjaGFubmVsIHdhcyBpbnRl
-cnJ1cHRlZCwKKyAqIG9yIG90aGVyIGVycm9yLgogICovCiBpbnQgdGVncmFfZHJtX2NvbnRleHRf
-Z2V0X2NoYW5uZWwoc3RydWN0IHRlZ3JhX2RybV9jb250ZXh0ICpjb250ZXh0KQogewpAQCAtMzk4
-LDEwICszOTksMTAgQEAgaW50IHRlZ3JhX2RybV9jb250ZXh0X2dldF9jaGFubmVsKHN0cnVjdCB0
-ZWdyYV9kcm1fY29udGV4dCAqY29udGV4dCkKIAltdXRleF9sb2NrKCZjb250ZXh0LT5sb2NrKTsK
-IAogCWlmIChjb250ZXh0LT5wZW5kaW5nX2pvYnMgPT0gMCkgewotCQljb250ZXh0LT5jaGFubmVs
-ID0gaG9zdDF4X2NoYW5uZWxfcmVxdWVzdChjbGllbnQtPmRldik7Ci0JCWlmICghY29udGV4dC0+
-Y2hhbm5lbCkgeworCQljb250ZXh0LT5jaGFubmVsID0gaG9zdDF4X2NoYW5uZWxfcmVxdWVzdChj
-bGllbnQtPmRldiwgdHJ1ZSk7CisJCWlmIChJU19FUlIoY29udGV4dC0+Y2hhbm5lbCkpIHsKIAkJ
-CW11dGV4X3VubG9jaygmY29udGV4dC0+bG9jayk7Ci0JCQlyZXR1cm4gLUVCVVNZOworCQkJcmV0
-dXJuIFBUUl9FUlIoY29udGV4dC0+Y2hhbm5lbCk7CiAJCX0KIAl9CiAKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS90ZWdyYS9ncjJkLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IyZC5j
-CmluZGV4IDNkYjNiY2FjNDhiOS4uYzE4NTM0MDJmNjliIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vdGVncmEvZ3IyZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjJkLmMKQEAg
-LTMyLDkgKzMyLDkgQEAgc3RhdGljIGludCBncjJkX2luaXQoc3RydWN0IGhvc3QxeF9jbGllbnQg
-KmNsaWVudCkKIAl1bnNpZ25lZCBsb25nIGZsYWdzID0gSE9TVDFYX1NZTkNQVF9IQVNfQkFTRTsK
-IAlzdHJ1Y3QgZ3IyZCAqZ3IyZCA9IHRvX2dyMmQoZHJtKTsKIAotCWdyMmQtPmNoYW5uZWwgPSBo
-b3N0MXhfY2hhbm5lbF9yZXF1ZXN0KGNsaWVudC0+ZGV2KTsKLQlpZiAoIWdyMmQtPmNoYW5uZWwp
-Ci0JCXJldHVybiAtRU5PTUVNOworCWdyMmQtPmNoYW5uZWwgPSBob3N0MXhfY2hhbm5lbF9yZXF1
-ZXN0KGNsaWVudC0+ZGV2LCBmYWxzZSk7CisJaWYgKElTX0VSUihncjJkLT5jaGFubmVsKSkKKwkJ
-cmV0dXJuIFBUUl9FUlIoZ3IyZC0+Y2hhbm5lbCk7CiAKIAljbGllbnQtPnN5bmNwdHNbMF0gPSBo
-b3N0MXhfc3luY3B0X3JlcXVlc3QoY2xpZW50LT5kZXYsIGZsYWdzKTsKIAlpZiAoIWNsaWVudC0+
-c3luY3B0c1swXSkgewpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dyM2QuYyBi
-L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMKaW5kZXggMjc5NDM4MzQyYzhjLi43OTNhOTFk
-NTc3Y2IgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMKKysrIGIvZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2dyM2QuYwpAQCAtNDIsOSArNDIsOSBAQCBzdGF0aWMgaW50IGdy
-M2RfaW5pdChzdHJ1Y3QgaG9zdDF4X2NsaWVudCAqY2xpZW50KQogCXVuc2lnbmVkIGxvbmcgZmxh
-Z3MgPSBIT1NUMVhfU1lOQ1BUX0hBU19CQVNFOwogCXN0cnVjdCBncjNkICpncjNkID0gdG9fZ3Iz
-ZChkcm0pOwogCi0JZ3IzZC0+Y2hhbm5lbCA9IGhvc3QxeF9jaGFubmVsX3JlcXVlc3QoY2xpZW50
-LT5kZXYpOwotCWlmICghZ3IzZC0+Y2hhbm5lbCkKLQkJcmV0dXJuIC1FTk9NRU07CisJZ3IzZC0+
-Y2hhbm5lbCA9IGhvc3QxeF9jaGFubmVsX3JlcXVlc3QoY2xpZW50LT5kZXYsIGZhbHNlKTsKKwlp
-ZiAoSVNfRVJSKGdyM2QtPmNoYW5uZWwpKQorCQlyZXR1cm4gUFRSX0VSUihncjNkLT5jaGFubmVs
-KTsKIAogCWNsaWVudC0+c3luY3B0c1swXSA9IGhvc3QxeF9zeW5jcHRfcmVxdWVzdChjbGllbnQt
-PmRldiwgZmxhZ3MpOwogCWlmICghY2xpZW50LT5zeW5jcHRzWzBdKSB7CmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9ob3N0MXgvY2hhbm5lbC5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L2NoYW5uZWwu
-YwppbmRleCA5ZDhjYWQxMmY5ZDguLmVlYmNkNTEyNjFkZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
-cHUvaG9zdDF4L2NoYW5uZWwuYworKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvY2hhbm5lbC5jCkBA
-IC00Myw2ICs0Myw3IEBAIGludCBob3N0MXhfY2hhbm5lbF9saXN0X2luaXQoc3RydWN0IGhvc3Qx
-eF9jaGFubmVsX2xpc3QgKmNobGlzdCwKIAliaXRtYXBfemVybyhjaGxpc3QtPmFsbG9jYXRlZF9j
-aGFubmVscywgbnVtX2NoYW5uZWxzKTsKIAogCW11dGV4X2luaXQoJmNobGlzdC0+bG9jayk7CisJ
-c2VtYV9pbml0KCZjaGxpc3QtPnNlbWEsIG51bV9jaGFubmVscyk7CiAKIAlyZXR1cm4gMDsKIH0K
-QEAgLTk5LDYgKzEwMCw4IEBAIHN0YXRpYyB2b2lkIHJlbGVhc2VfY2hhbm5lbChzdHJ1Y3Qga3Jl
-ZiAqa3JlZikKIAlob3N0MXhfY2RtYV9kZWluaXQoJmNoYW5uZWwtPmNkbWEpOwogCiAJY2xlYXJf
-Yml0KGNoYW5uZWwtPmlkLCBjaGxpc3QtPmFsbG9jYXRlZF9jaGFubmVscyk7CisKKwl1cCgmY2hs
-aXN0LT5zZW1hKTsKIH0KIAogdm9pZCBob3N0MXhfY2hhbm5lbF9wdXQoc3RydWN0IGhvc3QxeF9j
-aGFubmVsICpjaGFubmVsKQpAQCAtMTA3LDE5ICsxMTAsMzAgQEAgdm9pZCBob3N0MXhfY2hhbm5l
-bF9wdXQoc3RydWN0IGhvc3QxeF9jaGFubmVsICpjaGFubmVsKQogfQogRVhQT1JUX1NZTUJPTCho
-b3N0MXhfY2hhbm5lbF9wdXQpOwogCi1zdGF0aWMgc3RydWN0IGhvc3QxeF9jaGFubmVsICphY3F1
-aXJlX3VudXNlZF9jaGFubmVsKHN0cnVjdCBob3N0MXggKmhvc3QpCitzdGF0aWMgc3RydWN0IGhv
-c3QxeF9jaGFubmVsICphY3F1aXJlX3VudXNlZF9jaGFubmVsKHN0cnVjdCBob3N0MXggKmhvc3Qs
-CisJCQkJCQkgICAgIGJvb2wgd2FpdCkKIHsKIAlzdHJ1Y3QgaG9zdDF4X2NoYW5uZWxfbGlzdCAq
-Y2hsaXN0ID0gJmhvc3QtPmNoYW5uZWxfbGlzdDsKIAl1bnNpZ25lZCBpbnQgbWF4X2NoYW5uZWxz
-ID0gaG9zdC0+aW5mby0+bmJfY2hhbm5lbHM7CiAJdW5zaWduZWQgaW50IGluZGV4OworCWludCBl
-cnI7CisKKwlpZiAod2FpdCkgeworCQllcnIgPSBkb3duX2ludGVycnVwdGlibGUoJmNobGlzdC0+
-c2VtYSk7CisJCWlmIChlcnIpCisJCQlyZXR1cm4gRVJSX1BUUihlcnIpOworCX0gZWxzZSB7CisJ
-CWlmIChkb3duX3RyeWxvY2soJmNobGlzdC0+c2VtYSkpCisJCQlyZXR1cm4gRVJSX1BUUigtRUJV
-U1kpOworCX0KIAogCW11dGV4X2xvY2soJmNobGlzdC0+bG9jayk7CiAKIAlpbmRleCA9IGZpbmRf
-Zmlyc3RfemVyb19iaXQoY2hsaXN0LT5hbGxvY2F0ZWRfY2hhbm5lbHMsIG1heF9jaGFubmVscyk7
-Ci0JaWYgKGluZGV4ID49IG1heF9jaGFubmVscykgeworCWlmIChXQVJOKGluZGV4ID49IG1heF9j
-aGFubmVscywgImZhaWxlZCB0byBmaW5kIGZyZWUgY2hhbm5lbCIpKSB7CiAJCW11dGV4X3VubG9j
-aygmY2hsaXN0LT5sb2NrKTsKIAkJZGV2X2Vycihob3N0LT5kZXYsICJmYWlsZWQgdG8gZmluZCBm
-cmVlIGNoYW5uZWxcbiIpOwotCQlyZXR1cm4gTlVMTDsKKwkJcmV0dXJuIEVSUl9QVFIoLUVCVVNZ
-KTsKIAl9CiAKIAljaGxpc3QtPmNoYW5uZWxzW2luZGV4XS5pZCA9IGluZGV4OwpAQCAtMTM0LDIw
-ICsxNDgsMjYgQEAgc3RhdGljIHN0cnVjdCBob3N0MXhfY2hhbm5lbCAqYWNxdWlyZV91bnVzZWRf
-Y2hhbm5lbChzdHJ1Y3QgaG9zdDF4ICpob3N0KQogLyoqCiAgKiBob3N0MXhfY2hhbm5lbF9yZXF1
-ZXN0KCkgLSBBbGxvY2F0ZSBhIGNoYW5uZWwKICAqIEBkZXZpY2U6IEhvc3QxeCB1bml0IHRoaXMg
-Y2hhbm5lbCB3aWxsIGJlIHVzZWQgdG8gc2VuZCBjb21tYW5kcyB0bworICogQHdhaXQ6IFdoZXRo
-ZXIgdG8gd2FpdCBmb3IgYSBmcmVlIGNoYW5uZWxzIGlmIGFsbCBhcmUgcmVzZXJ2ZWQKKyAqCisg
-KiBBbGxvY2F0ZXMgYSBuZXcgaG9zdDF4IGNoYW5uZWwgZm9yIEBkZXZpY2UuIElmIGFsbCBjaGFu
-bmVscyBhcmUgaW4gdXNlLAorICogYW5kIEB3YWl0IGlzIHRydWUsIGRvZXMgYW4gaW50ZXJydXB0
-aWJsZSB3YWl0IHVudGlsIG9uZSBpcyBhdmFpbGFibGUuCiAgKgotICogQWxsb2NhdGVzIGEgbmV3
-IGhvc3QxeCBjaGFubmVsIGZvciBAZGV2aWNlLiBNYXkgcmV0dXJuIE5VTEwgaWYgQ0RNQQotICog
-aW5pdGlhbGl6YXRpb24gZmFpbHMuCisgKiBJZiBhIGNoYW5uZWwgd2FzIGFjcXVpcmVkLCByZXR1
-cm5zIGEgcG9pbnRlciB0byBpdC4gT3RoZXJ3aXNlIHJldHVybnMKKyAqIGFuIGVycm9yIHBvaW50
-ZXIgd2l0aCAtRUlOVFIgaWYgdGhlIHdhaXQgd2FzIGludGVycnVwdGVkLCAtRUJVU1kKKyAqIGlm
-IGEgY2hhbm5lbCBjb3VsZCBub3QgYmUgYWNxdWlyZWQgb3IgYW5vdGhlciBlcnJvciBjb2RlIGlm
-IGNoYW5uZWwKKyAqIGluaXRpYWxpemF0aW9uIGZhaWxlZC4KICAqLwotc3RydWN0IGhvc3QxeF9j
-aGFubmVsICpob3N0MXhfY2hhbm5lbF9yZXF1ZXN0KHN0cnVjdCBkZXZpY2UgKmRldikKK3N0cnVj
-dCBob3N0MXhfY2hhbm5lbCAqaG9zdDF4X2NoYW5uZWxfcmVxdWVzdChzdHJ1Y3QgZGV2aWNlICpk
-ZXYsIGJvb2wgd2FpdCkKIHsKIAlzdHJ1Y3QgaG9zdDF4ICpob3N0ID0gZGV2X2dldF9kcnZkYXRh
-KGRldi0+cGFyZW50KTsKIAlzdHJ1Y3QgaG9zdDF4X2NoYW5uZWxfbGlzdCAqY2hsaXN0ID0gJmhv
-c3QtPmNoYW5uZWxfbGlzdDsKIAlzdHJ1Y3QgaG9zdDF4X2NoYW5uZWwgKmNoYW5uZWw7CiAJaW50
-IGVycjsKIAotCWNoYW5uZWwgPSBhY3F1aXJlX3VudXNlZF9jaGFubmVsKGhvc3QpOwotCWlmICgh
-Y2hhbm5lbCkKLQkJcmV0dXJuIE5VTEw7CisJY2hhbm5lbCA9IGFjcXVpcmVfdW51c2VkX2NoYW5u
-ZWwoaG9zdCwgd2FpdCk7CisJaWYgKElTX0VSUihjaGFubmVsKSkKKwkJcmV0dXJuIGNoYW5uZWw7
-CiAKIAlrcmVmX2luaXQoJmNoYW5uZWwtPnJlZmNvdW50KTsKIAltdXRleF9pbml0KCZjaGFubmVs
-LT5zdWJtaXRsb2NrKTsKQEAgLTE2OCw2ICsxODgsNiBAQCBzdHJ1Y3QgaG9zdDF4X2NoYW5uZWwg
-Kmhvc3QxeF9jaGFubmVsX3JlcXVlc3Qoc3RydWN0IGRldmljZSAqZGV2KQogCiAJZGV2X2Vycihk
-ZXYsICJmYWlsZWQgdG8gaW5pdGlhbGl6ZSBjaGFubmVsXG4iKTsKIAotCXJldHVybiBOVUxMOwor
-CXJldHVybiBFUlJfUFRSKGVycik7CiB9CiBFWFBPUlRfU1lNQk9MKGhvc3QxeF9jaGFubmVsX3Jl
-cXVlc3QpOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2NoYW5uZWwuaCBiL2RyaXZl
-cnMvZ3B1L2hvc3QxeC9jaGFubmVsLmgKaW5kZXggZTY4YThhZTlhNjcwLi4xZjVjZjgwMjliNjIg
-MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9jaGFubmVsLmgKKysrIGIvZHJpdmVycy9n
-cHUvaG9zdDF4L2NoYW5uZWwuaApAQCAtMzEsNiArMzEsNyBAQCBzdHJ1Y3QgaG9zdDF4X2NoYW5u
-ZWxfbGlzdCB7CiAJc3RydWN0IGhvc3QxeF9jaGFubmVsICpjaGFubmVsczsKIAogCXN0cnVjdCBt
-dXRleCBsb2NrOworCXN0cnVjdCBzZW1hcGhvcmUgc2VtYTsKIAl1bnNpZ25lZCBsb25nICphbGxv
-Y2F0ZWRfY2hhbm5lbHM7CiB9OwogCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2hvc3QxeC5o
-IGIvaW5jbHVkZS9saW51eC9ob3N0MXguaAppbmRleCBmOTMxZDI4YTY4ZmYuLjJhMzQ5MDVkNDQw
-OCAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9ob3N0MXguaAorKysgYi9pbmNsdWRlL2xpbnV4
-L2hvc3QxeC5oCkBAIC0xNzEsNyArMTcxLDcgQEAgdTMyIGhvc3QxeF9zeW5jcHRfYmFzZV9pZChz
-dHJ1Y3QgaG9zdDF4X3N5bmNwdF9iYXNlICpiYXNlKTsKIHN0cnVjdCBob3N0MXhfY2hhbm5lbDsK
-IHN0cnVjdCBob3N0MXhfam9iOwogCi1zdHJ1Y3QgaG9zdDF4X2NoYW5uZWwgKmhvc3QxeF9jaGFu
-bmVsX3JlcXVlc3Qoc3RydWN0IGRldmljZSAqZGV2KTsKK3N0cnVjdCBob3N0MXhfY2hhbm5lbCAq
-aG9zdDF4X2NoYW5uZWxfcmVxdWVzdChzdHJ1Y3QgZGV2aWNlICpkZXYsIGJvb2wgd2FpdCk7CiBz
-dHJ1Y3QgaG9zdDF4X2NoYW5uZWwgKmhvc3QxeF9jaGFubmVsX2dldChzdHJ1Y3QgaG9zdDF4X2No
-YW5uZWwgKmNoYW5uZWwpOwogdm9pZCBob3N0MXhfY2hhbm5lbF9wdXQoc3RydWN0IGhvc3QxeF9j
-aGFubmVsICpjaGFubmVsKTsKIGludCBob3N0MXhfam9iX3N1Ym1pdChzdHJ1Y3QgaG9zdDF4X2pv
-YiAqam9iKTsKLS0gCjIuMTQuMgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+This ensures that there are no concurrency issues when multiple users
+are trying to use VIC concurrently, and also simplifies the code
+slightly.
+
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/drm/tegra/vic.c | 47 +++++++++++++++++++--------------------------
+ 1 file changed, 20 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index 0cacf023a890..3de20f287112 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -29,7 +29,6 @@ struct vic_config {
+ 
+ struct vic {
+ 	struct falcon falcon;
+-	bool booted;
+ 
+ 	void __iomem *regs;
+ 	struct tegra_drm_client client;
+@@ -51,33 +50,12 @@ static void vic_writel(struct vic *vic, u32 value, unsigned int offset)
+ 	writel(value, vic->regs + offset);
+ }
+ 
+-static int vic_runtime_resume(struct device *dev)
+-{
+-	struct vic *vic = dev_get_drvdata(dev);
+-
+-	return clk_prepare_enable(vic->clk);
+-}
+-
+-static int vic_runtime_suspend(struct device *dev)
+-{
+-	struct vic *vic = dev_get_drvdata(dev);
+-
+-	clk_disable_unprepare(vic->clk);
+-
+-	vic->booted = false;
+-
+-	return 0;
+-}
+-
+ static int vic_boot(struct vic *vic)
+ {
+ 	u32 fce_ucode_size, fce_bin_data_offset;
+ 	void *hdr;
+ 	int err = 0;
+ 
+-	if (vic->booted)
+-		return 0;
+-
+ 	/* setup clockgating registers */
+ 	vic_writel(vic, CG_IDLE_CG_DLY_CNT(4) |
+ 			CG_IDLE_CG_EN |
+@@ -108,7 +86,26 @@ static int vic_boot(struct vic *vic)
+ 		return err;
+ 	}
+ 
+-	vic->booted = true;
++	return 0;
++}
++
++static int vic_runtime_resume(struct device *dev)
++{
++	struct vic *vic = dev_get_drvdata(dev);
++	int err;
++
++	err = clk_prepare_enable(vic->clk);
++	if (err < 0)
++		return err;
++
++	return vic_boot(vic);
++}
++
++static int vic_runtime_suspend(struct device *dev)
++{
++	struct vic *vic = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(vic->clk);
+ 
+ 	return 0;
+ }
+@@ -225,10 +222,6 @@ static int vic_submit(struct tegra_drm_context *context,
+ 	if (err < 0)
+ 		return err;
+ 
+-	err = vic_boot(vic);
+-	if (err < 0)
+-		goto put_vic;
+-
+ 	err = tegra_drm_context_get_channel(context);
+ 	if (err < 0)
+ 		goto put_vic;
+-- 
+2.14.2
