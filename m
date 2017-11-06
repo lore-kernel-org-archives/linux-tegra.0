@@ -1,64 +1,52 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
- untried/unknown (next-20171106)
-Date: Mon, 6 Nov 2017 19:17:13 +0000
-Message-ID: <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
-References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH V3 0/2] Tegra PCIe end point config space map code
+ refactoring
+Date: Mon, 6 Nov 2017 13:51:23 -0600
+Message-ID: <20171106195123.GG31930@bhelgaas-glaptop.roam.corp.google.com>
+References: <1508827489-10842-1-git-send-email-vidyas@nvidia.com>
+ <20171024201512.GG21840@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6pbgeicjjktnrrrs"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <5a0055f1.85a8500a.98d54.a4e4-ATjtLOhZ0NVl57MIdRCFDg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20171024201512.GG21840@bhelgaas-glaptop.roam.corp.google.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: treding@nvidia.com, bhelgaas@google.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Oct 24, 2017 at 03:15:12PM -0500, Bjorn Helgaas wrote:
+> On Tue, Oct 24, 2017 at 12:14:47PM +0530, Vidya Sagar wrote:
+> > PCIe host controller in Tegra SoCs has 1GB of aperture available
+> > for mapping end points config space, IO and BARs. In that, currently
+> > 256MB is being reserved for mapping end points configuration space
+> > which leaves less memory space available for mapping end points BARs
+> > on some of the platforms.
+> > This patch series attempts to map only 4K space from 1GB aperture to
+> > access end points configuration space.
+> > 
+> > Currently, this change can benefit T20 and T186 in saving (i.e. repurposed
+> > to use for BAR mapping) physical space as well as kernel virtual mapping space,
+> > it saves only kernel virtual address space in T30, T124, T132 and T210.
+> > 
+> > NOTE: Since T186 PCIe DT entry is not yet present in main line (it is currently
+> > merged to 'for-4.15/arm64/dt' branch), nothing gets broken with this change for T186.
+> > For older platforms (T20, T30, T124, T132, T210), this change works fine without any
+> > DT modifications
+> > 
+> > Testing Done on T124, T210 & T186:
+> >  Enumeration and basic functionality of immediate devices
+> >  Enumeration of devices behind a PCIe switch
+> >  Complete 4K configuration space access
+> > 
+> > Vidya Sagar (2):
+> >   PCI: tegra: refactor config space mapping code
+> >   ARM64: tegra: limit PCIe config space mapping to 4K for T186
+> > 
+> >  arch/arm64/boot/dts/nvidia/tegra186.dtsi |   8 +-
+> >  drivers/pci/host/pci-tegra.c             | 125 ++++++++++---------------------
+> >  2 files changed, 44 insertions(+), 89 deletions(-)
+> 
+> Seems OK to me; waiting for Thierry's ack.
 
---6pbgeicjjktnrrrs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Nov 06, 2017 at 04:30:41AM -0800, kernelci.org bot wrote:
-
-> Full Boot Summary:
-https://kernelci.org/boot/all/job/next/branch/master/kernel/next-20171106/
-> Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/=
-next-20171106/
-
-Since Friday -next has been failing to boot tegra124-nyan-big in
-kernelci with all configs:
-
-> arm:
-
->     multi_v7_defconfig:
->         tegra124-nyan-big:
->             lab-collabora: failing since 2 days (last pass: next-20171102=
- - first fail: next-20171103)
-
-It's fine in mainline, see:=20
-
-    https://kernelci.org/boot/id/5a0030c959b514aad21cdd1a/
-
-for boot log, history and comparisons with other trees.  Looks like
-output started grinding to a halt at the point where it starts
-requesting firmware but ICBW.
-
---6pbgeicjjktnrrrs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloAtTkACgkQJNaLcl1U
-h9AJJAf/Xl/mxiMj1nmYLq5FWEGHVpFNJD4+xpOCdpji9TAspiLYTWKU7kOtQFS5
-6JInlk0tozObiZaMrzzxplIK4vhhyVMJqV4zgW4pkxZ9EKDvyYCoDmrRT+xUJFSV
-vr2kxxc9cKEFguANCOLqQpUeRhiB0qBkGxsIOdBTOuxpmY6NNsAOu+tf8a4uPfCY
-WWGgRHh5ZZLWK6aJSu0KOrwXkODDS3EMftBcB4HUuSmD7n1InkeFb3iDILJq047R
-mPZasIHGz379ljLCeik7AMhXKAJho2w30Uy4O/DyFRWQ4eE8aGdTKdfS0abVXxEB
-yaSQqvkSrMdsrYDL4YfpxUS7s+cnHA==
-=35nt
------END PGP SIGNATURE-----
-
---6pbgeicjjktnrrrs--
+Dropping for lack of an ack.  Please repost if/when Thierry acks it.
