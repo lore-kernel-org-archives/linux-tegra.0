@@ -1,37 +1,64 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] PCI: tegra: limit MSI target address to 32-bit
-Date: Mon, 6 Nov 2017 23:33:07 +0530
-Message-ID: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
+ untried/unknown (next-20171106)
+Date: Mon, 6 Nov 2017 19:17:13 +0000
+Message-ID: <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
+References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6pbgeicjjktnrrrs"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5a0055f1.85a8500a.98d54.a4e4-ATjtLOhZ0NVl57MIdRCFDg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-limits MSI target address to only 32-bit region to enable
-some of the PCIe end points where only 32-bit MSIs
-are supported work properly.
-One example being Marvel SATA controller
 
-Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/pci/host/pci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--6pbgeicjjktnrrrs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 1987fec1f126..03d3dcdd06c2 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -1531,7 +1531,7 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
- 	}
- 
- 	/* setup AFI/FPCI range */
--	msi->pages = __get_free_pages(GFP_KERNEL, 0);
-+	msi->pages = __get_free_pages(GFP_DMA, 0);
- 	msi->phys = virt_to_phys((void *)msi->pages);
- 
- 	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
--- 
-2.7.4
+On Mon, Nov 06, 2017 at 04:30:41AM -0800, kernelci.org bot wrote:
+
+> Full Boot Summary:
+https://kernelci.org/boot/all/job/next/branch/master/kernel/next-20171106/
+> Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/=
+next-20171106/
+
+Since Friday -next has been failing to boot tegra124-nyan-big in
+kernelci with all configs:
+
+> arm:
+
+>     multi_v7_defconfig:
+>         tegra124-nyan-big:
+>             lab-collabora: failing since 2 days (last pass: next-20171102=
+ - first fail: next-20171103)
+
+It's fine in mainline, see:=20
+
+    https://kernelci.org/boot/id/5a0030c959b514aad21cdd1a/
+
+for boot log, history and comparisons with other trees.  Looks like
+output started grinding to a halt at the point where it starts
+requesting firmware but ICBW.
+
+--6pbgeicjjktnrrrs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloAtTkACgkQJNaLcl1U
+h9AJJAf/Xl/mxiMj1nmYLq5FWEGHVpFNJD4+xpOCdpji9TAspiLYTWKU7kOtQFS5
+6JInlk0tozObiZaMrzzxplIK4vhhyVMJqV4zgW4pkxZ9EKDvyYCoDmrRT+xUJFSV
+vr2kxxc9cKEFguANCOLqQpUeRhiB0qBkGxsIOdBTOuxpmY6NNsAOu+tf8a4uPfCY
+WWGgRHh5ZZLWK6aJSu0KOrwXkODDS3EMftBcB4HUuSmD7n1InkeFb3iDILJq047R
+mPZasIHGz379ljLCeik7AMhXKAJho2w30Uy4O/DyFRWQ4eE8aGdTKdfS0abVXxEB
+yaSQqvkSrMdsrYDL4YfpxUS7s+cnHA==
+=35nt
+-----END PGP SIGNATURE-----
+
+--6pbgeicjjktnrrrs--
