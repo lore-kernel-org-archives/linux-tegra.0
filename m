@@ -1,67 +1,49 @@
 From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH 04/10] gpu: host1x: Lock classes during job submission
-Date: Tue, 7 Nov 2017 14:28:37 +0200
-Message-ID: <ef08d3d8-94a7-8804-c339-5310719333f3@kapsi.fi>
+Subject: Re: [PATCH 08/10] drm/tegra: Implement dynamic channel allocation
+ model
+Date: Tue, 7 Nov 2017 14:29:52 +0200
+Message-ID: <38fcf947-0d5d-e2c7-f49f-9efce5eeb1a3@kapsi.fi>
 References: <20171105110118.15142-1-mperttunen@nvidia.com>
- <20171105110118.15142-5-mperttunen@nvidia.com>
- <97ce4873-fdc1-5197-17bc-74505beadfc4@gmail.com>
+ <20171105110118.15142-9-mperttunen@nvidia.com>
+ <429d9b2b-8797-adc6-c767-d5bcf735c947@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <97ce4873-fdc1-5197-17bc-74505beadfc4@gmail.com>
+In-Reply-To: <429d9b2b-8797-adc6-c767-d5bcf735c947@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.11.2017 18:46, Dmitry Osipenko wrote:
+On 05.11.2017 19:43, Dmitry Osipenko wrote:
 > On 05.11.2017 14:01, Mikko Perttunen wrote:
- >> ...
+>> In the traditional channel allocation model, a single hardware channel
+>> was allocated for each client. This is simple from an implementation
+>> perspective but prevents use of hardware scheduling.
 >>
->> +static int mlock_id_for_class(unsigned int class)
->> +{
->> +#if HOST1X_HW >= 6
->> +	switch (class)
->> +	{
->> +	case HOST1X_CLASS_HOST1X:
->> +		return 0;
->> +	case HOST1X_CLASS_VIC:
->> +		return 17;
+>> This patch implements a channel allocation model where when a user
+>> submits a job for a context, a hardware channel is allocated for
+>> that context. The same channel is kept for as long as there are
+>> incomplete jobs for that context. This way we can use hardware
+>> scheduling and channel isolation between userspace processes, but
+>> also prevent idling contexts from taking up hardware resources.
+>>
 >
-> What is the meaning of returned ID values that you have defined here? Why VIC
-> should have different ID on T186?
+> The dynamic channels resources (pushbuf) allocation is very expensive,
+> neglecting all benefits that this model should bring at least in non-IOMMU case.
+> We could have statically preallocated channels resources or defer resources freeing.
 
-On T186, MLOCKs are not "generic" - the HW knows that each MLOCK 
-corresponds to a specific class. Therefore we must map that correctly.
-
->
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +#else
->> +	switch (class)
->> +	{
->> +	case HOST1X_CLASS_HOST1X:
->> +		return 0;
->> +	case HOST1X_CLASS_GR2D:
->> +		return 1;
->> +	case HOST1X_CLASS_GR2D_SB:
->> +		return 2;
->
-> Note that we are allowing to switch 2d classes in the same jobs context and
-> currently jobs class is somewhat hardcoded to GR2D.
->
-> Even though that GR2D and GR2D_SB use different register banks, is it okay to
-> trigger execution of different classes simultaneously? Would syncpoint
-> differentiate classes on OP_DONE event?
-
-Good point, we might need to use the same lock for these two.
+This is true. I'll try to figure out a nice way to keep the pushbuf 
+allocations.
 
 >
-> I suppose that MLOCK (the module lock) implies the whole module locking,
-> wouldn't it make sense to just use the module ID's defined in the TRM?
+>> For now, this patch only adapts VIC to the new model.
+>>
+>
+> I think VIC's conversion should be a distinct patch.
 
-Can you point out where these are defined?
+Sure.
 
+Cheers,
 Mikko
