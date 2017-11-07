@@ -1,264 +1,89 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 10/10] gpu: host1x: Optionally block when acquiring
- channel
-Date: Tue, 7 Nov 2017 18:29:30 +0300
-Message-ID: <1b35ec93-167b-3436-0ff2-5e2e0886aea7@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 00/10] Dynamic Host1x channel allocation
+Date: Tue, 7 Nov 2017 18:34:16 +0300
+Message-ID: <7b0dc171-0e40-2119-e67a-a3cf5910e16c@gmail.com>
 References: <20171105110118.15142-1-mperttunen@nvidia.com>
- <20171105110118.15142-11-mperttunen@nvidia.com>
- <9c5676eb-ba6f-c187-29e4-7b331bd3962f@gmail.com>
- <38340901-7016-3444-5ace-64159b32f1c7@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <38340901-7016-3444-5ace-64159b32f1c7@kapsi.fi>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171105110118.15142-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <cyndis@kapsi.fi>, Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07.11.2017 16:11, Mikko Perttunen wrote:
-> On 05.11.2017 19:14, Dmitry Osipenko wrote:
->> On 05.11.2017 14:01, Mikko Perttunen wrote:
->>> Add an option to host1x_channel_request to interruptibly wait for a
->>> free channel. This allows IOCTLs that acquire a channel to block
->>> the userspace.
->>>
->>
->> Wouldn't it be more optimal to request channel and block after job's pining,
->> when all patching and checks are completed? Note that right now we have locking
->> around submission in DRM, which I suppose should go away by making locking fine
->> grained.
+On 05.11.2017 14:01, Mikko Perttunen wrote:
+> Hi all,
 > 
-> That would be possible, but I don't think it should matter much since contention
-> here should not be the common case.
+> this adds support for a new model of hardware channel allocation for
+> Host1x/TegraDRM. In the current model, one hardware channel is
+> allocated for each client device at probe time. This is simple but
+> does not allow for optimal use of hardware resources.
 > 
->>
->> Or maybe it would be more optimal to just iterate over channels, like I
->> suggested before [0]?
+> In the new model, we allocate channels dynamically when a
+> "userspace channel", opened using the channel open IOCTL, has pending
+> jobs. However, each userspace channel can only have one assigned
+> channel at a time, ensuring current serialization behavior is kept.
+> As such there is no change in programming model for the userspace.
 > 
-> Somehow I hadn't noticed this before, but this would break the invariant of
-> having one client/class per channel.
+> The patch adapts VIC to use the new model - GR2D and GR3D are not
+> modified, as the older Tegra chips they are found on do not have
+> a large number of hardware channels and therefore it is not clear
+> if the new model is beneficial (and I don't have access to those
+> chips to test it out).
 > 
 
-Yes, currently there is a weak relation of channel and clients device, but seems
-channels device is only used for printing dev_* messages and device could be
-borrowed from the channels job. I don't see any real point of hardwiring channel
-to a specific device or client.
+I think it should be useful regardless of channels number and the main benefit
+is probably that jobs arbitration is done on HW, that should prevent one process
+to block other other for a long time.
 
-> In general since we haven't seen any issues downstream with the model
-> implemented here, I'd like to try to go with this and if we have problems with
-> channel allocation then we could revisit.
+> Tested using the host1x_test test suite, and also by running
+> the performance test of host1x_test in parallel.
 > 
-
-I'd prefer to collect some real numbers first, will test it with our grate /
-mesa stuff. Also, we should have a host1x_test, maybe something similar to
-submission perf test but using multiple contexts.
-
+> Thanks,
+> Mikko
 > 
->>
->> [0]
->> https://github.com/cyndis/linux/commit/9e6d87f40afb01fbe13ba65c73cb617bdfcd80b2#commitcomment-25012960
->>
->>
->>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>> ---
->>>  drivers/gpu/drm/tegra/drm.c  |  9 +++++----
->>>  drivers/gpu/drm/tegra/gr2d.c |  6 +++---
->>>  drivers/gpu/drm/tegra/gr3d.c |  6 +++---
->>>  drivers/gpu/host1x/channel.c | 40 ++++++++++++++++++++++++++++++----------
->>>  drivers/gpu/host1x/channel.h |  1 +
->>>  include/linux/host1x.h       |  2 +-
->>>  6 files changed, 43 insertions(+), 21 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
->>> index 658bc8814f38..19f77c1a76c0 100644
->>> --- a/drivers/gpu/drm/tegra/drm.c
->>> +++ b/drivers/gpu/drm/tegra/drm.c
->>> @@ -389,7 +389,8 @@ static int host1x_waitchk_copy_from_user(struct
->>> host1x_waitchk *dest,
->>>   * Request a free hardware host1x channel for this user context, or if the
->>>   * context already has one, bump its refcount.
->>>   *
->>> - * Returns 0 on success, or -EBUSY if there were no free hardware channels.
->>> + * Returns 0 on success, -EINTR if wait for a free channel was interrupted,
->>> + * or other error.
->>>   */
->>>  int tegra_drm_context_get_channel(struct tegra_drm_context *context)
->>>  {
->>> @@ -398,10 +399,10 @@ int tegra_drm_context_get_channel(struct
->>> tegra_drm_context *context)
->>>      mutex_lock(&context->lock);
->>>
->>>      if (context->pending_jobs == 0) {
->>> -        context->channel = host1x_channel_request(client->dev);
->>> -        if (!context->channel) {
->>> +        context->channel = host1x_channel_request(client->dev, true);
->>> +        if (IS_ERR(context->channel)) {
->>>              mutex_unlock(&context->lock);
->>> -            return -EBUSY;
->>> +            return PTR_ERR(context->channel);
->>>          }
->>>      }
->>>
->>> diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
->>> index 3db3bcac48b9..c1853402f69b 100644
->>> --- a/drivers/gpu/drm/tegra/gr2d.c
->>> +++ b/drivers/gpu/drm/tegra/gr2d.c
->>> @@ -32,9 +32,9 @@ static int gr2d_init(struct host1x_client *client)
->>>      unsigned long flags = HOST1X_SYNCPT_HAS_BASE;
->>>      struct gr2d *gr2d = to_gr2d(drm);
->>>
->>> -    gr2d->channel = host1x_channel_request(client->dev);
->>> -    if (!gr2d->channel)
->>> -        return -ENOMEM;
->>> +    gr2d->channel = host1x_channel_request(client->dev, false);
->>> +    if (IS_ERR(gr2d->channel))
->>> +        return PTR_ERR(gr2d->channel);
->>>
->>>      client->syncpts[0] = host1x_syncpt_request(client->dev, flags);
->>>      if (!client->syncpts[0]) {
->>> diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
->>> index 279438342c8c..793a91d577cb 100644
->>> --- a/drivers/gpu/drm/tegra/gr3d.c
->>> +++ b/drivers/gpu/drm/tegra/gr3d.c
->>> @@ -42,9 +42,9 @@ static int gr3d_init(struct host1x_client *client)
->>>      unsigned long flags = HOST1X_SYNCPT_HAS_BASE;
->>>      struct gr3d *gr3d = to_gr3d(drm);
->>>
->>> -    gr3d->channel = host1x_channel_request(client->dev);
->>> -    if (!gr3d->channel)
->>> -        return -ENOMEM;
->>> +    gr3d->channel = host1x_channel_request(client->dev, false);
->>> +    if (IS_ERR(gr3d->channel))
->>> +        return PTR_ERR(gr3d->channel);
->>>
->>>      client->syncpts[0] = host1x_syncpt_request(client->dev, flags);
->>>      if (!client->syncpts[0]) {
->>> diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
->>> index 9d8cad12f9d8..eebcd51261df 100644
->>> --- a/drivers/gpu/host1x/channel.c
->>> +++ b/drivers/gpu/host1x/channel.c
->>> @@ -43,6 +43,7 @@ int host1x_channel_list_init(struct host1x_channel_list
->>> *chlist,
->>>      bitmap_zero(chlist->allocated_channels, num_channels);
->>>
->>>      mutex_init(&chlist->lock);
->>> +    sema_init(&chlist->sema, num_channels);
->>>
->>>      return 0;
->>>  }
->>> @@ -99,6 +100,8 @@ static void release_channel(struct kref *kref)
->>>      host1x_cdma_deinit(&channel->cdma);
->>>
->>>      clear_bit(channel->id, chlist->allocated_channels);
->>> +
->>> +    up(&chlist->sema);
->>>  }
->>>
->>>  void host1x_channel_put(struct host1x_channel *channel)
->>> @@ -107,19 +110,30 @@ void host1x_channel_put(struct host1x_channel *channel)
->>>  }
->>>  EXPORT_SYMBOL(host1x_channel_put);
->>>
->>> -static struct host1x_channel *acquire_unused_channel(struct host1x *host)
->>> +static struct host1x_channel *acquire_unused_channel(struct host1x *host,
->>> +                             bool wait)
->>>  {
->>>      struct host1x_channel_list *chlist = &host->channel_list;
->>>      unsigned int max_channels = host->info->nb_channels;
->>>      unsigned int index;
->>> +    int err;
->>> +
->>> +    if (wait) {
->>> +        err = down_interruptible(&chlist->sema);
->>> +        if (err)
->>> +            return ERR_PTR(err);
->>> +    } else {
->>> +        if (down_trylock(&chlist->sema))
->>> +            return ERR_PTR(-EBUSY);
->>> +    }
->>>
->>>      mutex_lock(&chlist->lock);
->>>
->>>      index = find_first_zero_bit(chlist->allocated_channels, max_channels);
->>> -    if (index >= max_channels) {
->>> +    if (WARN(index >= max_channels, "failed to find free channel")) {
->>>          mutex_unlock(&chlist->lock);
->>>          dev_err(host->dev, "failed to find free channel\n");
->>> -        return NULL;
->>> +        return ERR_PTR(-EBUSY);
->>>      }
->>>
->>>      chlist->channels[index].id = index;
->>> @@ -134,20 +148,26 @@ static struct host1x_channel
->>> *acquire_unused_channel(struct host1x *host)
->>>  /**
->>>   * host1x_channel_request() - Allocate a channel
->>>   * @device: Host1x unit this channel will be used to send commands to
->>> + * @wait: Whether to wait for a free channels if all are reserved
->>> + *
->>> + * Allocates a new host1x channel for @device. If all channels are in use,
->>> + * and @wait is true, does an interruptible wait until one is available.
->>>   *
->>> - * Allocates a new host1x channel for @device. May return NULL if CDMA
->>> - * initialization fails.
->>> + * If a channel was acquired, returns a pointer to it. Otherwise returns
->>> + * an error pointer with -EINTR if the wait was interrupted, -EBUSY
->>> + * if a channel could not be acquired or another error code if channel
->>> + * initialization failed.
->>>   */
->>> -struct host1x_channel *host1x_channel_request(struct device *dev)
->>> +struct host1x_channel *host1x_channel_request(struct device *dev, bool wait)
->>>  {
->>>      struct host1x *host = dev_get_drvdata(dev->parent);
->>>      struct host1x_channel_list *chlist = &host->channel_list;
->>>      struct host1x_channel *channel;
->>>      int err;
->>>
->>> -    channel = acquire_unused_channel(host);
->>> -    if (!channel)
->>> -        return NULL;
->>> +    channel = acquire_unused_channel(host, wait);
->>> +    if (IS_ERR(channel))
->>> +        return channel;
->>>
->>>      kref_init(&channel->refcount);
->>>      mutex_init(&channel->submitlock);
->>> @@ -168,6 +188,6 @@ struct host1x_channel *host1x_channel_request(struct
->>> device *dev)
->>>
->>>      dev_err(dev, "failed to initialize channel\n");
->>>
->>> -    return NULL;
->>> +    return ERR_PTR(err);
->>>  }
->>>  EXPORT_SYMBOL(host1x_channel_request);
->>> diff --git a/drivers/gpu/host1x/channel.h b/drivers/gpu/host1x/channel.h
->>> index e68a8ae9a670..1f5cf8029b62 100644
->>> --- a/drivers/gpu/host1x/channel.h
->>> +++ b/drivers/gpu/host1x/channel.h
->>> @@ -31,6 +31,7 @@ struct host1x_channel_list {
->>>      struct host1x_channel *channels;
->>>
->>>      struct mutex lock;
->>> +    struct semaphore sema;
->>>      unsigned long *allocated_channels;
->>>  };
->>>
->>> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
->>> index f931d28a68ff..2a34905d4408 100644
->>> --- a/include/linux/host1x.h
->>> +++ b/include/linux/host1x.h
->>> @@ -171,7 +171,7 @@ u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base);
->>>  struct host1x_channel;
->>>  struct host1x_job;
->>>
->>> -struct host1x_channel *host1x_channel_request(struct device *dev);
->>> +struct host1x_channel *host1x_channel_request(struct device *dev, bool wait);
->>>  struct host1x_channel *host1x_channel_get(struct host1x_channel *channel);
->>>  void host1x_channel_put(struct host1x_channel *channel);
->>>  int host1x_job_submit(struct host1x_job *job);
->>>
->>
+> Mikko Perttunen (10):
+>   gpu: host1x: Parameterize channel aperture size
+>   gpu: host1x: Print MLOCK state in debug dumps on T186
+>   gpu: host1x: Add lock around channel allocation
+>   gpu: host1x: Lock classes during job submission
+>   gpu: host1x: Add job done callback
+>   drm/tegra: Deliver job completion callback to client
+>   drm/tegra: Make syncpoints be per-context
+>   drm/tegra: Implement dynamic channel allocation model
+>   drm/tegra: Boot VIC in runtime resume
+>   gpu: host1x: Optionally block when acquiring channel
+> 
+>  drivers/gpu/drm/tegra/drm.c                    |  82 +++++++++++++++--
+>  drivers/gpu/drm/tegra/drm.h                    |  12 ++-
+>  drivers/gpu/drm/tegra/gr2d.c                   |   8 +-
+>  drivers/gpu/drm/tegra/gr3d.c                   |   8 +-
+>  drivers/gpu/drm/tegra/vic.c                    | 120 ++++++++++++------------
+>  drivers/gpu/host1x/cdma.c                      |  45 ++++++---
+>  drivers/gpu/host1x/cdma.h                      |   1 +
+>  drivers/gpu/host1x/channel.c                   |  47 ++++++++--
+>  drivers/gpu/host1x/channel.h                   |   3 +
+>  drivers/gpu/host1x/hw/cdma_hw.c                | 122 +++++++++++++++++++++++++
+>  drivers/gpu/host1x/hw/channel_hw.c             |  74 +++++++++++----
+>  drivers/gpu/host1x/hw/debug_hw_1x06.c          |  18 +++-
+>  drivers/gpu/host1x/hw/host1x01_hardware.h      |  10 ++
+>  drivers/gpu/host1x/hw/host1x02_hardware.h      |  10 ++
+>  drivers/gpu/host1x/hw/host1x04_hardware.h      |  10 ++
+>  drivers/gpu/host1x/hw/host1x05_hardware.h      |  10 ++
+>  drivers/gpu/host1x/hw/host1x06_hardware.h      |  10 ++
+>  drivers/gpu/host1x/hw/hw_host1x01_channel.h    |   2 +
+>  drivers/gpu/host1x/hw/hw_host1x01_sync.h       |   6 ++
+>  drivers/gpu/host1x/hw/hw_host1x02_channel.h    |   2 +
+>  drivers/gpu/host1x/hw/hw_host1x02_sync.h       |   6 ++
+>  drivers/gpu/host1x/hw/hw_host1x04_channel.h    |   2 +
+>  drivers/gpu/host1x/hw/hw_host1x04_sync.h       |   6 ++
+>  drivers/gpu/host1x/hw/hw_host1x05_channel.h    |   2 +
+>  drivers/gpu/host1x/hw/hw_host1x05_sync.h       |   6 ++
+>  drivers/gpu/host1x/hw/hw_host1x06_hypervisor.h |   5 +
+>  drivers/gpu/host1x/hw/hw_host1x06_vm.h         |   2 +
+>  include/linux/host1x.h                         |   6 +-
+>  28 files changed, 517 insertions(+), 118 deletions(-)
+> 
