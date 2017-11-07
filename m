@@ -1,75 +1,209 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 04/10] gpu: host1x: Lock classes during job submission
-Date: Wed, 8 Nov 2017 00:23:45 +0300
-Message-ID: <dc39398b-ea49-6e97-28ba-652f8b49db44@gmail.com>
-References: <20171105110118.15142-1-mperttunen@nvidia.com>
- <20171105110118.15142-5-mperttunen@nvidia.com>
- <97ce4873-fdc1-5197-17bc-74505beadfc4@gmail.com>
- <ef08d3d8-94a7-8804-c339-5310719333f3@kapsi.fi>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 3/4] PCI: tegra: Apply sw fixups to support ASPM-L1
+ Sub-States
+Date: Tue, 7 Nov 2017 16:50:07 -0600
+Message-ID: <20171107225007.GA22847@bhelgaas-glaptop.roam.corp.google.com>
+References: <1509423769-10522-1-git-send-email-vidyas@nvidia.com>
+ <1509423769-10522-4-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <ef08d3d8-94a7-8804-c339-5310719333f3-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1509423769-10522-4-git-send-email-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, rajatja-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org, Julia.Lawall-L2FTfq7BK8M@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07.11.2017 15:28, Mikko Perttunen wrote:
-> On 05.11.2017 18:46, Dmitry Osipenko wrote:
->> On 05.11.2017 14:01, Mikko Perttunen wrote:
->>> ...
->>>
->>> +static int mlock_id_for_class(unsigned int class)
->>> +{
->>> +#if HOST1X_HW >= 6
->>> +    switch (class)
->>> +    {
->>> +    case HOST1X_CLASS_HOST1X:
->>> +        return 0;
->>> +    case HOST1X_CLASS_VIC:
->>> +        return 17;
->>
->> What is the meaning of returned ID values that you have defined here? Why VIC
->> should have different ID on T186?
-> 
-> On T186, MLOCKs are not "generic" - the HW knows that each MLOCK corresponds to
-> a specific class. Therefore we must map that correctly.
-> 
+Hi Vidya,
 
-Okay.
+On Tue, Oct 31, 2017 at 09:52:48AM +0530, Vidya Sagar wrote:
+> Programs T_cmrt (Commmon Mode Restore Time) and T_pwr_on (Power On)
+> values to get them reflected in ASPM-L1 Sub-States capability registers
+> Also adjusts internal counter values according to 19.2 MHz clk_m value
+> 
+> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> V2:
+> * no change in this patch
+> 
+>  drivers/pci/host/pci-tegra.c | 65 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+> 
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index e1526cc5d381..08da67a82a2d 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -40,6 +40,7 @@
+>  #include <linux/of_pci.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/pci.h>
+> +#include <linux/pci-aspm.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/reset.h>
+> @@ -191,6 +192,27 @@
+>  #define RP_PRIV_XP_DL	0x494
+>  #define  RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD	(0x1ff << 1)
+>  
+> +#define RP_L1_PM_SUBSTATES_CTL				0xC00
+> +#define RP_L1_PM_SUBSTATES_CTL_CM_RTIME_MASK		(0xFF << 8)
+> +#define RP_L1_PM_SUBSTATES_CTL_CM_RTIME_SHIFT		8
+> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_MASK		(0x3 << 16)
+> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_SHIFT		16
+> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_MASK		(0x1F << 19)
+> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_SHIFT		19
+> +#define RP_L1_PM_SUBSTATES_CTL_HIDE_CAP			(0x1 << 24)
+> +
+> +#define RP_L1_PM_SUBSTATES_1_CTL			0xC04
+> +#define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK	0x1FFF
+> +#define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY		0x26
+> +
+> +#define RP_L1_PM_SUBSTATES_2_CTL			0xC08
+> +#define RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY_MASK	0x1FFF
+> +#define RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY		0x4D
+> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_MASK	(0xFF << 13)
+> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND		(0x13 << 13)
+> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP_MASK	(0xF << 21)
+> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP	(0x2 << 21)
+> +
+>  #define RP_RX_HDR_LIMIT	0xe00
+>  #define  RP_RX_HDR_LIMIT_PW_MASK	(0xff << 8)
+>  #define  RP_RX_HDR_LIMIT_PW		(0x0e << 8)
+> @@ -331,6 +353,7 @@ struct tegra_pcie_soc {
+>  	bool program_deskew_time;
+>  	bool updateFC_threshold;
+>  	bool has_aspm_l1;
+> +	bool has_aspm_l1ss;
+>  };
+>  
+>  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
+> @@ -423,6 +446,12 @@ static inline u32 pads_readl(struct tegra_pcie *pcie, unsigned long offset)
+>  	return readl(pcie->pads + offset);
+>  }
+>  
+> +u32 pcie_aspm_get_ltr_l_1_2_threshold(void)
+> +{
+> +	/* LTR L1.2 Threshold = 55us for all ports */
+> +	return ((0x37 << 16) | (0x02 << 29));
 
->>
->>> +    default:
->>> +        return -EINVAL;
->>> +    }
->>> +#else
->>> +    switch (class)
->>> +    {
->>> +    case HOST1X_CLASS_HOST1X:
->>> +        return 0;
->>> +    case HOST1X_CLASS_GR2D:
->>> +        return 1;
->>> +    case HOST1X_CLASS_GR2D_SB:
->>> +        return 2;
->>
->> Note that we are allowing to switch 2d classes in the same jobs context and
->> currently jobs class is somewhat hardcoded to GR2D.
->>
->> Even though that GR2D and GR2D_SB use different register banks, is it okay to
->> trigger execution of different classes simultaneously? Would syncpoint
->> differentiate classes on OP_DONE event?
-> 
-> Good point, we might need to use the same lock for these two.
-> 
->>
->> I suppose that MLOCK (the module lock) implies the whole module locking,
->> wouldn't it make sense to just use the module ID's defined in the TRM?
-> 
-> Can you point out where these are defined?
+I know you've already worked through this, but let me think out loud
+to try to figure this out myself.
 
-See INDMODID / REGF_MODULEID fields of HOST1X_CHANNEL_INDOFF2_0 /
-HOST1X_SYNC_REGF_ADDR_0 registers, bit numbers of HOST1X_SYNC_INTSTATUS_0 /
-HOST1X_SYNC_INTC0MASK_0 / HOST1X_SYNC_MOD_TEARDOWN_0.
+ASPM defines Link power states L0, L0s, and L1.  L1 PM Substates
+extend that by adding L1.1 and L1.2.  L1.2 presumably uses less power
+and has a longer exit delay than L1.1 [sec 5.5].
+
+Ports that support L1.2 must support Latency Tolerance Reporting (LTR)
+[sec 6.18].  When LTR is enabled, a device periodically sends LTR
+messages.
+
+When ASPM puts a Link into L1, it chooses either L1.1 or L1.2 based on
+LTR_L1.2_THRESHOLD and recent LTR messages.  If there's no LTR
+information it looks like LTR_L1.2_THRESHOLD doesn't matter and it
+always chooses L1.2 [sec 5.5.1].
+
+I don't see anything that writes PCI_EXP_DEVCTL2_LTR_EN, so I don't
+think Linux ever enables LTR.  Some BIOSes apparently enable it
+(Google for "LTR enabled").
+
+1) It seems like the LTR_L1.2_THRESHOLD value should be computed based
+   on the latency requirements of downstream devices.  How did you
+   come up with 55us?
+
+2) The spec requires [sec 5.5.4] that LTR_L1.2_THRESHOLD at both ends
+   of a Link be the same, but as far as I can see, there's no
+   requirement that it be the same across the whole system, so this
+   interface doesn't seem like quite the right approach.
+
+3) We must support kernels with multiple host bridge drivers compiled
+   in, and the weak/strong symbol approach doesn't support using the
+   correct version, e.g., if we merge this patch, every system
+   containing the tegra driver would use this function, even if the
+   hardware had a different host bridge.  Also, if another driver
+   implemented its own version, we'd have duplicate symbols.
+
+>  /*
+>   * The configuration space mapping on Tegra is somewhat similar to the ECAM
+>   * defined by PCIe. However it deviates a bit in how the 4 bits for extended
+> @@ -2262,6 +2291,37 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+>  		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_T210;
+>  		writel(value, port->base + RP_VEND_XP);
+>  	}
+> +
+> +	if (soc->has_aspm_l1ss) {
+> +		/* Set Common Mode Restore Time to 30us */
+> +		value = readl(port->base + RP_L1_PM_SUBSTATES_CTL);
+> +		value &= ~RP_L1_PM_SUBSTATES_CTL_CM_RTIME_MASK;
+> +		value |= (0x1E << RP_L1_PM_SUBSTATES_CTL_CM_RTIME_SHIFT);
+> +		writel(value, port->base + RP_L1_PM_SUBSTATES_CTL);
+> +
+> +		/* set T_Power_On to 70us */
+> +		value = readl(port->base + RP_L1_PM_SUBSTATES_CTL);
+> +		value &= ~(RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_MASK |
+> +			RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_MASK);
+> +		value |= (1 << RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_SHIFT) |
+> +			(7 << RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_SHIFT);
+> +		writel(value, port->base + RP_L1_PM_SUBSTATES_CTL);
+> +
+> +		/* Following is based on clk_m being 19.2 MHz */
+> +		value = readl(port->base + RP_L1_PM_SUBSTATES_1_CTL);
+> +		value &= ~RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK;
+> +		value |= RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY;
+> +		writel(value, port->base + RP_L1_PM_SUBSTATES_1_CTL);
+> +
+> +		value = readl(port->base + RP_L1_PM_SUBSTATES_2_CTL);
+> +		value &= ~RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY_MASK;
+> +		value |= RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY;
+> +		value &= ~RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_MASK;
+> +		value |= RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND;
+> +		value &= ~RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP_MASK;
+> +		value |= RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP;
+> +		writel(value, port->base + RP_L1_PM_SUBSTATES_2_CTL);
+> +	}
+>  }
+>  /*
+>   * FIXME: If there are no PCIe cards attached, then calling this function
+> @@ -2403,6 +2463,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+>  	.program_deskew_time = false,
+>  	.updateFC_threshold = false,
+>  	.has_aspm_l1 = false,
+> +	.has_aspm_l1ss = false,
+>  };
+>  
+>  static const struct tegra_pcie_soc tegra30_pcie = {
+> @@ -2425,6 +2486,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+>  	.program_deskew_time = false,
+>  	.updateFC_threshold = false,
+>  	.has_aspm_l1 = true,
+> +	.has_aspm_l1ss = false,
+>  };
+>  
+>  static const struct tegra_pcie_soc tegra124_pcie = {
+> @@ -2446,6 +2508,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+>  	.program_deskew_time = false,
+>  	.updateFC_threshold = false,
+>  	.has_aspm_l1 = true,
+> +	.has_aspm_l1ss = false,
+>  };
+>  
+>  static const struct tegra_pcie_soc tegra210_pcie = {
+> @@ -2475,6 +2538,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
+>  	.program_deskew_time = true,
+>  	.updateFC_threshold = true,
+>  	.has_aspm_l1 = true,
+> +	.has_aspm_l1ss = true,
+>  };
+>  
+>  static const struct tegra_pcie_soc tegra186_pcie = {
+> @@ -2497,6 +2561,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
+>  	.program_deskew_time = false,
+>  	.updateFC_threshold = false,
+>  	.has_aspm_l1 = true,
+> +	.has_aspm_l1ss = true,
+>  };
+>  
+>  static const struct of_device_id tegra_pcie_of_match[] = {
+> -- 
+> 2.7.4
+> 
