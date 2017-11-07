@@ -1,89 +1,79 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 00/10] Dynamic Host1x channel allocation
-Date: Tue, 7 Nov 2017 18:34:16 +0300
-Message-ID: <7b0dc171-0e40-2119-e67a-a3cf5910e16c@gmail.com>
-References: <20171105110118.15142-1-mperttunen@nvidia.com>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v6 00/12] gpio: Tight IRQ chip integration
+Date: Tue, 7 Nov 2017 10:49:58 -0600
+Message-ID: <87fd58e7-8f46-5660-9c23-189e656529e0@ti.com>
+References: <20171102174941.3461-1-thierry.reding@gmail.com>
+ <ca8c7138-2e87-0481-ac8c-7077bed749f6@ti.com> <20171106111807.GA6756@ulmo>
+ <e5996910-43a0-a75e-5f7f-a0606e05d914@ti.com> <20171107111344.GA7314@ulmo>
+ <20171107115238.GB7314@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171105110118.15142-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20171107115238.GB7314@ulmo>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.11.2017 14:01, Mikko Perttunen wrote:
-> Hi all,
-> 
-> this adds support for a new model of hardware channel allocation for
-> Host1x/TegraDRM. In the current model, one hardware channel is
-> allocated for each client device at probe time. This is simple but
-> does not allow for optimal use of hardware resources.
-> 
-> In the new model, we allocate channels dynamically when a
-> "userspace channel", opened using the channel open IOCTL, has pending
-> jobs. However, each userspace channel can only have one assigned
-> channel at a time, ensuring current serialization behavior is kept.
-> As such there is no change in programming model for the userspace.
-> 
-> The patch adapts VIC to use the new model - GR2D and GR3D are not
-> modified, as the older Tegra chips they are found on do not have
-> a large number of hardware channels and therefore it is not clear
-> if the new model is beneficial (and I don't have access to those
-> chips to test it out).
-> 
 
-I think it should be useful regardless of channels number and the main benefit
-is probably that jobs arbitration is done on HW, that should prevent one process
-to block other other for a long time.
 
-> Tested using the host1x_test test suite, and also by running
-> the performance test of host1x_test in parallel.
+On 11/07/2017 05:52 AM, Thierry Reding wrote:
+> On Tue, Nov 07, 2017 at 12:13:44PM +0100, Thierry Reding wrote:
+>> On Mon, Nov 06, 2017 at 05:13:33PM -0600, Grygorii Strashko wrote:
+>>> On 11/06/2017 05:18 AM, Thierry Reding wrote:
+>>>> On Fri, Nov 03, 2017 at 05:30:30PM -0500, Grygorii Strashko wrote:
+> [...]
+>>>>> @@ -312,8 +321,29 @@ struct gpio_chip {
+>>>>>    extern const char *gpiochip_is_requested(struct gpio_chip *chip,
+>>>>>    			unsigned offset);
+>>>>>    
+>>>>> +extern int gpiochip_add_data_key(struct gpio_chip *chip, void *data,
+>>>>> +				 struct  *irq_lock_key);
+>>>>> +#ifdef CONFIG_LOCKDEP
+>>>>> +/*
+>>>>> + * Lockdep requires that each irqchip instance be created with a
+>>>>> + * unique key so as to avoid unnecessary warnings. This upfront
+>>>>> + * boilerplate static inlines provides such a key for each
+>>>>> + * unique instance which is created now from inside gpiochip_add_data_key().
+>>>>> + */
+>>>>> +static inline int gpiochip_add_data(struct gpio_chip *chip, void *data)
+>>>>> +{
+>>>>> +	static struct lock_class_key key;
+>>>>> +
+>>>>> +	return gpiochip_add_data_key(chip, data, key);
+>>>>> +}
+>>>>
+>>>> This looks like a neat improvement, but I think it can be done in a
+>>>> follow-up to remove the boilerplate in drivers.
+>>>
+>>> Can't agree here - it better to be considered now.
+>>> Now only two GPIO drivers define lock_class_key:
+>>> ./drivers/gpio/gpio-bcm-kona.c:static struct lock_class_key gpio_lock_class;
+>>> ./drivers/gpio/gpio-brcmstb.c:static struct lock_class_key brcmstb_gpio_irq_lock_class;
+>>>
+>>> and these drivers do not use gpioirq framework (your tegra driver will be the third).
+>>>
+>>> So, if proposed changes will be applied all drivers switched to use it will need to define
+>>> its own lock_class_key again and it will be step back.
+>>
+>> I think this would be a minor, mostly mechanical refactoring to do as
+>> follow-up. But since you feel very strongly about it, I'll add that into
+>> the series.
 > 
-> Thanks,
-> Mikko
-> 
-> Mikko Perttunen (10):
->   gpu: host1x: Parameterize channel aperture size
->   gpu: host1x: Print MLOCK state in debug dumps on T186
->   gpu: host1x: Add lock around channel allocation
->   gpu: host1x: Lock classes during job submission
->   gpu: host1x: Add job done callback
->   drm/tegra: Deliver job completion callback to client
->   drm/tegra: Make syncpoints be per-context
->   drm/tegra: Implement dynamic channel allocation model
->   drm/tegra: Boot VIC in runtime resume
->   gpu: host1x: Optionally block when acquiring channel
-> 
->  drivers/gpu/drm/tegra/drm.c                    |  82 +++++++++++++++--
->  drivers/gpu/drm/tegra/drm.h                    |  12 ++-
->  drivers/gpu/drm/tegra/gr2d.c                   |   8 +-
->  drivers/gpu/drm/tegra/gr3d.c                   |   8 +-
->  drivers/gpu/drm/tegra/vic.c                    | 120 ++++++++++++------------
->  drivers/gpu/host1x/cdma.c                      |  45 ++++++---
->  drivers/gpu/host1x/cdma.h                      |   1 +
->  drivers/gpu/host1x/channel.c                   |  47 ++++++++--
->  drivers/gpu/host1x/channel.h                   |   3 +
->  drivers/gpu/host1x/hw/cdma_hw.c                | 122 +++++++++++++++++++++++++
->  drivers/gpu/host1x/hw/channel_hw.c             |  74 +++++++++++----
->  drivers/gpu/host1x/hw/debug_hw_1x06.c          |  18 +++-
->  drivers/gpu/host1x/hw/host1x01_hardware.h      |  10 ++
->  drivers/gpu/host1x/hw/host1x02_hardware.h      |  10 ++
->  drivers/gpu/host1x/hw/host1x04_hardware.h      |  10 ++
->  drivers/gpu/host1x/hw/host1x05_hardware.h      |  10 ++
->  drivers/gpu/host1x/hw/host1x06_hardware.h      |  10 ++
->  drivers/gpu/host1x/hw/hw_host1x01_channel.h    |   2 +
->  drivers/gpu/host1x/hw/hw_host1x01_sync.h       |   6 ++
->  drivers/gpu/host1x/hw/hw_host1x02_channel.h    |   2 +
->  drivers/gpu/host1x/hw/hw_host1x02_sync.h       |   6 ++
->  drivers/gpu/host1x/hw/hw_host1x04_channel.h    |   2 +
->  drivers/gpu/host1x/hw/hw_host1x04_sync.h       |   6 ++
->  drivers/gpu/host1x/hw/hw_host1x05_channel.h    |   2 +
->  drivers/gpu/host1x/hw/hw_host1x05_sync.h       |   6 ++
->  drivers/gpu/host1x/hw/hw_host1x06_hypervisor.h |   5 +
->  drivers/gpu/host1x/hw/hw_host1x06_vm.h         |   2 +
->  include/linux/host1x.h                         |   6 +-
->  28 files changed, 517 insertions(+), 118 deletions(-)
-> 
+> After implementing this, I'm having second thoughts. We've got a bunch
+> of drivers calling gpiochip_add_data() that never register an IRQ chip
+> but which will each add a struct lock_class_key after this change, and
+> it will never be used. Now, struct lock_class_key is only 8 bytes big,
+> so maybe this isn't a big deal, but it still seems like a waste.
+
+True. And this I've called my approach not ideal, but I do not see other way to do it :(
+- that's price to pay for gpioirq chip initialization integration in
+gpiochip_add_data() which limits APIs variation used by GPIO drivers. 
+
+Any other opinions, thoughts?
+
+-- 
+regards,
+-grygorii
