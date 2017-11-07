@@ -1,130 +1,117 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v7 00/15] gpio: Tight IRQ chip integration
-Date: Tue,  7 Nov 2017 19:15:44 +0100
-Message-ID: <20171107181559.6318-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v7 02/15] gpio: Move irqchip into struct gpio_irq_chip
+Date: Tue,  7 Nov 2017 19:15:46 +0100
+Message-ID: <20171107181559.6318-3-thierry.reding@gmail.com>
+References: <20171107181559.6318-1-thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171107181559.6318-1-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-Hi Linus,
+In order to consolidate the multiple ways to associate an IRQ chip with
+a GPIO chip, move more fields into the new struct gpio_irq_chip.
 
-here's the latest series of patches that implement the tighter IRQ chip
-integration. I've dropped the banked infrastructure for now as per the
-discussion with Grygorii.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpiolib.c      | 14 +++++++-------
+ include/linux/gpio/driver.h | 14 ++++++++++++--
+ 2 files changed, 19 insertions(+), 9 deletions(-)
 
-The first couple of patches are mostly preparatory work in order to
-consolidate all IRQ chip related fields in a new structure and create
-the base functionality for adding IRQ chips.
-
-After that, I've added the Tegra186 GPIO support patch that makes use of
-the new tight integration.
-
-Changes in v7:
-- squashes in a few fixes pointed out by Grygorii
-- adds a couple of patches on top to support driver conversion
-
-Changes in v6:
-- rebased on latest linux-gpio devel branch
-- one patch dropped due to rebase
-
-Changes in v5:
-- dropped the banked infrastructure patches for now (Grygorii)
-- allocate interrupts on demand, rather than upfront (Grygorii)
-- split up the first patch further as requested by Grygorii
-
-Not sure what happened in between here. Notes in commit logs indicate
-that this is actually version 5, but I can't find the cover letter for
-v3 and v4.
-
-Changes in v2:
-- rename pins to lines for consistent terminology
-- rename gpio_irq_chip_banked_handler() to
-  gpio_irq_chip_banked_chained_handler()
-
-Thierry
-
-Thierry Reding (15):
-  gpio: Introduce struct gpio_irq_chip
-  gpio: Move irqchip into struct gpio_irq_chip
-  gpio: Move irqdomain into struct gpio_irq_chip
-  gpio: Move irq_handler to struct gpio_irq_chip
-  gpio: Move irq_default_type to struct gpio_irq_chip
-  gpio: Move irq_chained_parent to struct gpio_irq_chip
-  gpio: Move irq_nested into struct gpio_irq_chip
-  gpio: Move irq_valid_mask into struct gpio_irq_chip
-  gpio: Move lock_key into struct gpio_irq_chip
-  gpio: Implement tighter IRQ chip integration
-  gpio: Export gpiochip_irq_{map,unmap}()
-  gpio: Add Tegra186 support
-  gpio: Disambiguate struct gpio_irq_chip.nested
-  gpio: Introduce struct gpio_irq_chip.first
-  gpio: Automatically add lockdep keys
-
- Documentation/gpio/driver.txt               |   6 +-
- drivers/bcma/driver_gpio.c                  |   2 +-
- drivers/gpio/Kconfig                        |   9 +
- drivers/gpio/Makefile                       |   1 +
- drivers/gpio/gpio-104-dio-48e.c             |   2 +-
- drivers/gpio/gpio-104-idi-48.c              |   2 +-
- drivers/gpio/gpio-104-idio-16.c             |   2 +-
- drivers/gpio/gpio-adnp.c                    |   2 +-
- drivers/gpio/gpio-altera.c                  |   4 +-
- drivers/gpio/gpio-aspeed.c                  |   6 +-
- drivers/gpio/gpio-ath79.c                   |   2 +-
- drivers/gpio/gpio-crystalcove.c             |   2 +-
- drivers/gpio/gpio-dln2.c                    |   2 +-
- drivers/gpio/gpio-ftgpio010.c               |   2 +-
- drivers/gpio/gpio-ingenic.c                 |   2 +-
- drivers/gpio/gpio-intel-mid.c               |   2 +-
- drivers/gpio/gpio-lynxpoint.c               |   2 +-
- drivers/gpio/gpio-max732x.c                 |   2 +-
- drivers/gpio/gpio-merrifield.c              |   2 +-
- drivers/gpio/gpio-omap.c                    |   2 +-
- drivers/gpio/gpio-pca953x.c                 |   2 +-
- drivers/gpio/gpio-pcf857x.c                 |   2 +-
- drivers/gpio/gpio-pci-idio-16.c             |   2 +-
- drivers/gpio/gpio-pl061.c                   |   2 +-
- drivers/gpio/gpio-rcar.c                    |   2 +-
- drivers/gpio/gpio-reg.c                     |   4 +-
- drivers/gpio/gpio-stmpe.c                   |   6 +-
- drivers/gpio/gpio-tc3589x.c                 |   2 +-
- drivers/gpio/gpio-tegra186.c                | 623 ++++++++++++++++++++++++++++
- drivers/gpio/gpio-vf610.c                   |   2 +-
- drivers/gpio/gpio-wcove.c                   |   2 +-
- drivers/gpio/gpio-ws16c48.c                 |   2 +-
- drivers/gpio/gpio-xgene-sb.c                |   2 +-
- drivers/gpio/gpio-xlp.c                     |   2 +-
- drivers/gpio/gpio-zx.c                      |   2 +-
- drivers/gpio/gpio-zynq.c                    |   2 +-
- drivers/gpio/gpiolib.c                      | 241 +++++++----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c       |   5 +-
- drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |   2 +-
- drivers/pinctrl/intel/pinctrl-baytrail.c    |   6 +-
- drivers/pinctrl/intel/pinctrl-cherryview.c  |   6 +-
- drivers/pinctrl/intel/pinctrl-intel.c       |   2 +-
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |   2 +-
- drivers/pinctrl/nomadik/pinctrl-nomadik.c   |   4 +-
- drivers/pinctrl/pinctrl-amd.c               |   2 +-
- drivers/pinctrl/pinctrl-at91.c              |   2 +-
- drivers/pinctrl/pinctrl-coh901.c            |   2 +-
- drivers/pinctrl/pinctrl-mcp23s08.c          |   2 +-
- drivers/pinctrl/pinctrl-oxnas.c             |   2 +-
- drivers/pinctrl/pinctrl-pic32.c             |   2 +-
- drivers/pinctrl/pinctrl-pistachio.c         |   2 +-
- drivers/pinctrl/pinctrl-st.c                |   2 +-
- drivers/pinctrl/pinctrl-sx150x.c            |   2 +-
- drivers/pinctrl/qcom/pinctrl-msm.c          |   2 +-
- drivers/pinctrl/sirf/pinctrl-atlas7.c       |   2 +-
- drivers/pinctrl/sirf/pinctrl-sirf.c         |   2 +-
- drivers/pinctrl/spear/pinctrl-plgpio.c      |   2 +-
- drivers/platform/x86/intel_int0002_vgpio.c  |   6 +-
- include/linux/gpio/driver.h                 | 200 +++++++--
- 59 files changed, 1046 insertions(+), 169 deletions(-)
- create mode 100644 drivers/gpio/gpio-tegra186.c
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 029ad1a0a0d5..741f2e4d7c43 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1646,7 +1646,7 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+ 	 * category than their parents, so it won't report false recursion.
+ 	 */
+ 	irq_set_lockdep_class(irq, chip->lock_key);
+-	irq_set_chip_and_handler(irq, chip->irqchip, chip->irq_handler);
++	irq_set_chip_and_handler(irq, chip->irq.chip, chip->irq_handler);
+ 	/* Chips that use nested thread handlers have them marked */
+ 	if (chip->irq_nested)
+ 		irq_set_nested_thread(irq, 1);
+@@ -1739,10 +1739,10 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
+ 		irq_domain_remove(gpiochip->irqdomain);
+ 	}
+ 
+-	if (gpiochip->irqchip) {
+-		gpiochip->irqchip->irq_request_resources = NULL;
+-		gpiochip->irqchip->irq_release_resources = NULL;
+-		gpiochip->irqchip = NULL;
++	if (gpiochip->irq.chip) {
++		gpiochip->irq.chip->irq_request_resources = NULL;
++		gpiochip->irq.chip->irq_release_resources = NULL;
++		gpiochip->irq.chip = NULL;
+ 	}
+ 
+ 	gpiochip_irqchip_free_valid_mask(gpiochip);
+@@ -1817,7 +1817,7 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
+ 		type = IRQ_TYPE_NONE;
+ 	}
+ 
+-	gpiochip->irqchip = irqchip;
++	gpiochip->irq.chip = irqchip;
+ 	gpiochip->irq_handler = handler;
+ 	gpiochip->irq_default_type = type;
+ 	gpiochip->to_irq = gpiochip_to_irq;
+@@ -1826,7 +1826,7 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
+ 					gpiochip->ngpio, first_irq,
+ 					&gpiochip_domain_ops, gpiochip);
+ 	if (!gpiochip->irqdomain) {
+-		gpiochip->irqchip = NULL;
++		gpiochip->irq.chip = NULL;
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index c25d058e6c71..cc40f1199e63 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -25,6 +25,13 @@ struct module;
+  * struct gpio_irq_chip - GPIO interrupt controller
+  */
+ struct gpio_irq_chip {
++	/**
++	 * @chip:
++	 *
++	 * GPIO IRQ chip implementation, provided by GPIO driver.
++	 */
++	struct irq_chip *chip;
++
+ 	/**
+ 	 * @domain_ops:
+ 	 *
+@@ -48,6 +55,11 @@ struct gpio_irq_chip {
+ 	 */
+ 	void *parent_handler_data;
+ };
++
++static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
++{
++	return container_of(chip, struct gpio_irq_chip, chip);
++}
+ #endif
+ 
+ /**
+@@ -113,7 +125,6 @@ struct gpio_irq_chip {
+  *	safely.
+  * @bgpio_dir: shadowed direction register for generic GPIO to clear/set
+  *	direction safely.
+- * @irqchip: GPIO IRQ chip impl, provided by GPIO driver
+  * @irqdomain: Interrupt translation domain; responsible for mapping
+  *	between GPIO hwirq number and linux irq number
+  * @irq_handler: the irq handler to use (often a predefined irq core function)
+@@ -198,7 +209,6 @@ struct gpio_chip {
+ 	 * With CONFIG_GPIOLIB_IRQCHIP we get an irqchip inside the gpiolib
+ 	 * to handle IRQs for most practical cases.
+ 	 */
+-	struct irq_chip		*irqchip;
+ 	struct irq_domain	*irqdomain;
+ 	irq_flow_handler_t	irq_handler;
+ 	unsigned int		irq_default_type;
 -- 
 2.14.1
