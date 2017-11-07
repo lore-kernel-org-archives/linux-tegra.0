@@ -1,155 +1,130 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3] platform/chrome: Use proper protocol transfer function
-Date: Tue, 7 Nov 2017 09:22:57 -0800
-Message-ID: <CAD=FV=WBKDm5r=7UP0RxYOfC8Uk8oR2xL2iKOLXvZKsBY0YNeg@mail.gmail.com>
-References: <20170908205011.77986-1-briannorris@chromium.org>
- <02aa65e7-e967-055b-2af3-2e9b6ef77935@nvidia.com> <CALaWCOMj0wQk5OfYOYqU_sZUt2SQBhy=HaP-qOiB5aMf9G8inw@mail.gmail.com>
- <c3c5d08b-2df2-2e5b-cb09-bd4b3011e3df@nvidia.com> <20170919171401.GA10968@google.com>
- <CALaWCOPzT-BWu-YcMY+xEAWGRmvvVEoA64ceEK3zG3K-wajskQ@mail.gmail.com>
- <20170920061317.GB13616@google.com> <CALaWCOPEiWHMeOb-9_fpbyYuNzGdy0favnPS37u5_zz1AG_86w@mail.gmail.com>
- <CALaWCOM87ikjzK-zFJ7WT37L_w58AwZwC_nq0hNXuzh5x87n5w@mail.gmail.com>
- <6beb7b8c-f602-112b-73b2-22188dcea28e@nvidia.com> <CALaWCOP=0O7AMobu4YX0z=fJLopcQwv1Vm1_Bbp3XTaty1y6fA@mail.gmail.com>
- <CAD=FV=VobwsHyo96JxAgEPqG2ji5gMoNz6JJxQaQmZ3MD+dxRg@mail.gmail.com> <5ae1292d-14dc-b917-84cc-2758e82c4795@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v7 00/15] gpio: Tight IRQ chip integration
+Date: Tue,  7 Nov 2017 19:15:44 +0100
+Message-ID: <20171107181559.6318-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5ae1292d-14dc-b917-84cc-2758e82c4795-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Shawn N <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Enric Balletbo <enric.balletbo-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandru M Stan <amstan-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Tue, Nov 7, 2017 at 3:28 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
-> On 10/10/17 17:52, Doug Anderson wrote:
->
-> ...
->
->>> I'm still not clear on why we see an error only on the first
->>> transaction after boot. In this case, the embedded controller
->>> previously handled host commands from firmware just fine, and the
->>> handoff between firmware and the kernel shouldn't be significant, from
->>> the EC point of view. If host command timing is consistent from the
->>> master, I would expect to see some constant error rate, eg. some
->>> chance any host command will fail, rather than the first host command
->>> always failing.
->>
->> The AP itself is often quite busy at boot and so the timings for
->> everything change.  That could easily explain the problems.
->
-> Sorry for the delay, but I have finally had some time to look at this a
-> bit closer. I have been able to track down where the additional delay is
-> really needed and seems to explain what is going on.
->
-> For starters, the SPI chip-select is under h/w control and so the
-> software delay has no impact on the timing between the chip-select
-> going active and the transaction starting as I had first thought.
->
-> I found that a delay is needed between completing the probe the Tegra
-> SPI device and the first SPI transaction issued to the EC. In the Tegra
-> SPI probe the SPI controller is programmed for master mode, but at the
-> same time it clears the chip-select inactive polarity bit meaning that
-> initially the SPI chip-select default to active-high (rather that low
-> which seems odd). I believe that this then drives the chip-select low
-> (active for the EC) and until it is then configured when spi_setup() is
-> called which configures it as active-low for the EC.
-> To get the first transaction to work for the EC there needs to be a
-> delay after we program the chip-select polarity when spi_setup() is
-> called. For example ...
->
-> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-> index 584367f3a0ed..c1075c3c60c8 100644
-> --- a/drivers/mfd/cros_ec_spi.c
-> +++ b/drivers/mfd/cros_ec_spi.c
-> @@ -648,6 +648,8 @@ static int cros_ec_spi_probe(struct spi_device *spi)
->         if (err < 0)
->                 return err;
->
-> +       udelay(100);
-> +
+Hi Linus,
 
-This isn't totally crazy, but actually you could probably do this:
+here's the latest series of patches that implement the tighter IRQ chip
+integration. I've dropped the banked infrastructure for now as per the
+discussion with Grygorii.
 
-ec_spi->last_transfer_ns = ktime_get_ns();
+The first couple of patches are mostly preparatory work in order to
+consolidate all IRQ chip related fields in a new structure and create
+the base functionality for adding IRQ chips.
 
-...that will leverage already existing code and constants and also
-will avoid doing a delay if it wasn't needed.  You could also then get
-rid of some "if (ec_spi->last_transfer_ns)" tests in the code.  I'd
-support landing that.
+After that, I've added the Tegra186 GPIO support patch that makes use of
+the new tight integration.
 
+Changes in v7:
+- squashes in a few fixes pointed out by Grygorii
+- adds a couple of patches on top to support driver conversion
 
->         ec_spi = devm_kzalloc(dev, sizeof(*ec_spi), GFP_KERNEL);
->         if (ec_spi == NULL)
->                 return -ENOMEM;
->
->
-> You may say why not put a delay in the tegra_spi_setup() itself, but we
-> have some other SPI devices such as flash devices which are also use an
-> active-low chip-select which don't have any issues with this to date.
-> Furthermore, this delay is also probably device specific.
->
-> From an EC perspective, if the chip-select is asserted is there a
-> turnaround time before it can be asserted again? Or in this case maybe
-> the issue is that the chip-select is asserted but no transaction occurs
-> before it is de-asserted and so is causing a problem. Please note that a
-> delay of around ~50us above still fails but 100us seems to be ok.
+Changes in v6:
+- rebased on latest linux-gpio devel branch
+- one patch dropped due to rebase
 
-Really nice detective work!
+Changes in v5:
+- dropped the banked infrastructure patches for now (Grygorii)
+- allocate interrupts on demand, rather than upfront (Grygorii)
+- split up the first patch further as requested by Grygorii
 
+Not sure what happened in between here. Notes in commit logs indicate
+that this is actually version 5, but I can't find the cover letter for
+v3 and v4.
 
-> Finally, this also works-around the problem by avoiding the chip-select
-> from being pulsed low by defaulting all chip-selects to active-low but
-> maybe this just masks the problem.
->
-> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-> index a76acedd7e2f..7c18204e61d9 100644
-> --- a/drivers/spi/spi-tegra114.c
-> +++ b/drivers/spi/spi-tegra114.c
-> @@ -1117,7 +1117,7 @@ static int tegra_spi_probe(struct platform_device
->                 goto exit_pm_disable;
->         }
-> -       tspi->def_command1_reg  = SPI_M_S;
-> +       tspi->def_command1_reg = SPI_M_S | SPI_CS_POL_INACTIVE_MASK;
+Changes in v2:
+- rename pins to lines for consistent terminology
+- rename gpio_irq_chip_banked_handler() to
+  gpio_irq_chip_banked_chained_handler()
 
-Note that even though I'd support adding some sort of delay to the
-cros_ec driver, I'd also say that it _might_ make sense to mess with
-the SPI driver too, just to avoid glitching the lines at bootup.  As
-you said, you shouldn't just willy nilly change the default but it
-seems like it could make sense to define an initial (board level)
-pinctrl state that's in effect until the first call to setup_bus().
+Thierry
 
-That's a bit like the "init" pinctrl state that exists precisely to
-address these types of glitches, but unfortunately you can't use the
-automatic-ness of the "init" pinctrl state.  That code assumes that by
-the end of probe you know how your pins should be configured.  In your
-case you don't know how your pins should be configured until the first
-setup_bus() is called...
+Thierry Reding (15):
+  gpio: Introduce struct gpio_irq_chip
+  gpio: Move irqchip into struct gpio_irq_chip
+  gpio: Move irqdomain into struct gpio_irq_chip
+  gpio: Move irq_handler to struct gpio_irq_chip
+  gpio: Move irq_default_type to struct gpio_irq_chip
+  gpio: Move irq_chained_parent to struct gpio_irq_chip
+  gpio: Move irq_nested into struct gpio_irq_chip
+  gpio: Move irq_valid_mask into struct gpio_irq_chip
+  gpio: Move lock_key into struct gpio_irq_chip
+  gpio: Implement tighter IRQ chip integration
+  gpio: Export gpiochip_irq_{map,unmap}()
+  gpio: Add Tegra186 support
+  gpio: Disambiguate struct gpio_irq_chip.nested
+  gpio: Introduce struct gpio_irq_chip.first
+  gpio: Automatically add lockdep keys
 
-Presumably you could add your own pinctrl state that mimics "init", or
-you could figure out how to improve the way the "init" pinctrl state
-works to allow a driver to defer the transition to "default".
+ Documentation/gpio/driver.txt               |   6 +-
+ drivers/bcma/driver_gpio.c                  |   2 +-
+ drivers/gpio/Kconfig                        |   9 +
+ drivers/gpio/Makefile                       |   1 +
+ drivers/gpio/gpio-104-dio-48e.c             |   2 +-
+ drivers/gpio/gpio-104-idi-48.c              |   2 +-
+ drivers/gpio/gpio-104-idio-16.c             |   2 +-
+ drivers/gpio/gpio-adnp.c                    |   2 +-
+ drivers/gpio/gpio-altera.c                  |   4 +-
+ drivers/gpio/gpio-aspeed.c                  |   6 +-
+ drivers/gpio/gpio-ath79.c                   |   2 +-
+ drivers/gpio/gpio-crystalcove.c             |   2 +-
+ drivers/gpio/gpio-dln2.c                    |   2 +-
+ drivers/gpio/gpio-ftgpio010.c               |   2 +-
+ drivers/gpio/gpio-ingenic.c                 |   2 +-
+ drivers/gpio/gpio-intel-mid.c               |   2 +-
+ drivers/gpio/gpio-lynxpoint.c               |   2 +-
+ drivers/gpio/gpio-max732x.c                 |   2 +-
+ drivers/gpio/gpio-merrifield.c              |   2 +-
+ drivers/gpio/gpio-omap.c                    |   2 +-
+ drivers/gpio/gpio-pca953x.c                 |   2 +-
+ drivers/gpio/gpio-pcf857x.c                 |   2 +-
+ drivers/gpio/gpio-pci-idio-16.c             |   2 +-
+ drivers/gpio/gpio-pl061.c                   |   2 +-
+ drivers/gpio/gpio-rcar.c                    |   2 +-
+ drivers/gpio/gpio-reg.c                     |   4 +-
+ drivers/gpio/gpio-stmpe.c                   |   6 +-
+ drivers/gpio/gpio-tc3589x.c                 |   2 +-
+ drivers/gpio/gpio-tegra186.c                | 623 ++++++++++++++++++++++++++++
+ drivers/gpio/gpio-vf610.c                   |   2 +-
+ drivers/gpio/gpio-wcove.c                   |   2 +-
+ drivers/gpio/gpio-ws16c48.c                 |   2 +-
+ drivers/gpio/gpio-xgene-sb.c                |   2 +-
+ drivers/gpio/gpio-xlp.c                     |   2 +-
+ drivers/gpio/gpio-zx.c                      |   2 +-
+ drivers/gpio/gpio-zynq.c                    |   2 +-
+ drivers/gpio/gpiolib.c                      | 241 +++++++----
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c       |   5 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |   2 +-
+ drivers/pinctrl/intel/pinctrl-baytrail.c    |   6 +-
+ drivers/pinctrl/intel/pinctrl-cherryview.c  |   6 +-
+ drivers/pinctrl/intel/pinctrl-intel.c       |   2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |   2 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c   |   4 +-
+ drivers/pinctrl/pinctrl-amd.c               |   2 +-
+ drivers/pinctrl/pinctrl-at91.c              |   2 +-
+ drivers/pinctrl/pinctrl-coh901.c            |   2 +-
+ drivers/pinctrl/pinctrl-mcp23s08.c          |   2 +-
+ drivers/pinctrl/pinctrl-oxnas.c             |   2 +-
+ drivers/pinctrl/pinctrl-pic32.c             |   2 +-
+ drivers/pinctrl/pinctrl-pistachio.c         |   2 +-
+ drivers/pinctrl/pinctrl-st.c                |   2 +-
+ drivers/pinctrl/pinctrl-sx150x.c            |   2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c          |   2 +-
+ drivers/pinctrl/sirf/pinctrl-atlas7.c       |   2 +-
+ drivers/pinctrl/sirf/pinctrl-sirf.c         |   2 +-
+ drivers/pinctrl/spear/pinctrl-plgpio.c      |   2 +-
+ drivers/platform/x86/intel_int0002_vgpio.c  |   6 +-
+ include/linux/gpio/driver.h                 | 200 +++++++--
+ 59 files changed, 1046 insertions(+), 169 deletions(-)
+ create mode 100644 drivers/gpio/gpio-tegra186.c
 
-Another option might be to try to use the "idle" state, maybe in
-conjunction with the "init" pinctrl state.  AKA use "init" to avoid
-glitches during probe and then require that by the end of probe that
-the device is Runtime Suspended, which would leave you in "idle"
-state.  Then in setup_bus you make sure you keep track of the polarity
-in such a way that when you Runtime Resume you can come out of "idle"
-state without glitching.  The board would need to define "init" and
-"idle" in a way that won't glitch things.
-
-
-As with my advice always, note that I'm not an expert so feel free to
-call into question my advice if it looks wrong.  :-P
-
-
->         tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
->         pm_runtime_put(&pdev->dev);
->
-> Cheers
-> Jon
->
-> --
-> nvpublic
+-- 
+2.14.1
