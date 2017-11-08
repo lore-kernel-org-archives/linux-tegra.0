@@ -1,221 +1,161 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 3/4] PCI: tegra: Apply sw fixups to support ASPM-L1
- Sub-States
-Date: Wed, 8 Nov 2017 14:15:05 +0530
-Message-ID: <ef7d193c-c114-d0c6-e450-c00ae3ab2d51@nvidia.com>
-References: <1509423769-10522-1-git-send-email-vidyas@nvidia.com>
- <1509423769-10522-4-git-send-email-vidyas@nvidia.com>
- <20171107225007.GA22847@bhelgaas-glaptop.roam.corp.google.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3] platform/chrome: Use proper protocol transfer function
+Date: Wed, 8 Nov 2017 10:20:30 +0000
+Message-ID: <fb73cca6-7760-3360-6061-411dd522839e@nvidia.com>
+References: <20170908205011.77986-1-briannorris@chromium.org>
+ <02aa65e7-e967-055b-2af3-2e9b6ef77935@nvidia.com>
+ <CALaWCOMj0wQk5OfYOYqU_sZUt2SQBhy=HaP-qOiB5aMf9G8inw@mail.gmail.com>
+ <c3c5d08b-2df2-2e5b-cb09-bd4b3011e3df@nvidia.com>
+ <20170919171401.GA10968@google.com>
+ <CALaWCOPzT-BWu-YcMY+xEAWGRmvvVEoA64ceEK3zG3K-wajskQ@mail.gmail.com>
+ <20170920061317.GB13616@google.com>
+ <CALaWCOPEiWHMeOb-9_fpbyYuNzGdy0favnPS37u5_zz1AG_86w@mail.gmail.com>
+ <CALaWCOM87ikjzK-zFJ7WT37L_w58AwZwC_nq0hNXuzh5x87n5w@mail.gmail.com>
+ <6beb7b8c-f602-112b-73b2-22188dcea28e@nvidia.com>
+ <CALaWCOP=0O7AMobu4YX0z=fJLopcQwv1Vm1_Bbp3XTaty1y6fA@mail.gmail.com>
+ <CAD=FV=VobwsHyo96JxAgEPqG2ji5gMoNz6JJxQaQmZ3MD+dxRg@mail.gmail.com>
+ <5ae1292d-14dc-b917-84cc-2758e82c4795@nvidia.com>
+ <CAD=FV=WBKDm5r=7UP0RxYOfC8Uk8oR2xL2iKOLXvZKsBY0YNeg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171107225007.GA22847-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=WBKDm5r=7UP0RxYOfC8Uk8oR2xL2iKOLXvZKsBY0YNeg@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, rajatja-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org, Julia.Lawall-L2FTfq7BK8M@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Shawn N <shawnn@chromium.org>, Olof Johansson <olof@lixom.net>, Benson Leung <bleung@chromium.org>, Lee Jones <lee.jones@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brian Norris <computersforpeace@gmail.com>, Brian Norris <briannorris@chromium.org>, Gwendal Grignou <gwendal@chromium.org>, Enric Balletbo <enric.balletbo@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandru M Stan <amstan@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Doug,
+
+On 07/11/17 17:22, Doug Anderson wrote:
+> On Tue, Nov 7, 2017 at 3:28 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>> On 10/10/17 17:52, Doug Anderson wrote:
+>>
+>> ...
+>>
+>>>> I'm still not clear on why we see an error only on the first
+>>>> transaction after boot. In this case, the embedded controller
+>>>> previously handled host commands from firmware just fine, and the
+>>>> handoff between firmware and the kernel shouldn't be significant, from
+>>>> the EC point of view. If host command timing is consistent from the
+>>>> master, I would expect to see some constant error rate, eg. some
+>>>> chance any host command will fail, rather than the first host command
+>>>> always failing.
+>>>
+>>> The AP itself is often quite busy at boot and so the timings for
+>>> everything change.  That could easily explain the problems.
+>>
+>> Sorry for the delay, but I have finally had some time to look at this a
+>> bit closer. I have been able to track down where the additional delay is
+>> really needed and seems to explain what is going on.
+>>
+>> For starters, the SPI chip-select is under h/w control and so the
+>> software delay has no impact on the timing between the chip-select
+>> going active and the transaction starting as I had first thought.
+>>
+>> I found that a delay is needed between completing the probe the Tegra
+>> SPI device and the first SPI transaction issued to the EC. In the Tegra
+>> SPI probe the SPI controller is programmed for master mode, but at the
+>> same time it clears the chip-select inactive polarity bit meaning that
+>> initially the SPI chip-select default to active-high (rather that low
+>> which seems odd). I believe that this then drives the chip-select low
+>> (active for the EC) and until it is then configured when spi_setup() is
+>> called which configures it as active-low for the EC.
+>> To get the first transaction to work for the EC there needs to be a
+>> delay after we program the chip-select polarity when spi_setup() is
+>> called. For example ...
+>>
+>> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+>> index 584367f3a0ed..c1075c3c60c8 100644
+>> --- a/drivers/mfd/cros_ec_spi.c
+>> +++ b/drivers/mfd/cros_ec_spi.c
+>> @@ -648,6 +648,8 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+>>         if (err < 0)
+>>                 return err;
+>>
+>> +       udelay(100);
+>> +
+> 
+> This isn't totally crazy, but actually you could probably do this:
+> 
+> ec_spi->last_transfer_ns = ktime_get_ns();
+> 
+> ...that will leverage already existing code and constants and also
+> will avoid doing a delay if it wasn't needed.  You could also then get
+> rid of some "if (ec_spi->last_transfer_ns)" tests in the code.  I'd
+> support landing that.
+> 
+> 
+>>         ec_spi = devm_kzalloc(dev, sizeof(*ec_spi), GFP_KERNEL);
+>>         if (ec_spi == NULL)
+>>                 return -ENOMEM;
+>>
 
 
-On Wednesday 08 November 2017 04:20 AM, Bjorn Helgaas wrote:
-> Hi Vidya,
->
-> On Tue, Oct 31, 2017 at 09:52:48AM +0530, Vidya Sagar wrote:
->> Programs T_cmrt (Commmon Mode Restore Time) and T_pwr_on (Power On)
->> values to get them reflected in ASPM-L1 Sub-States capability registers
->> Also adjusts internal counter values according to 19.2 MHz clk_m value
+OK, yes and that does work well too. I will send a patch with the
+following for review.
+
+diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+index 584367f3a0ed..477f8e81dc34 100644
+--- a/drivers/mfd/cros_ec_spi.c
++++ b/drivers/mfd/cros_ec_spi.c
+@@ -671,6 +671,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+                           sizeof(struct ec_response_get_protocol_info);
+        ec_dev->dout_size = sizeof(struct ec_host_request);
+
++       ec_spi->last_transfer_ns = ktime_get_ns();
+
+        err = cros_ec_register(ec_dev);
+        if (err) {
+
+>> You may say why not put a delay in the tegra_spi_setup() itself, but we
+>> have some other SPI devices such as flash devices which are also use an
+>> active-low chip-select which don't have any issues with this to date.
+>> Furthermore, this delay is also probably device specific.
 >>
->> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> V2:
->> * no change in this patch
+>> From an EC perspective, if the chip-select is asserted is there a
+>> turnaround time before it can be asserted again? Or in this case maybe
+>> the issue is that the chip-select is asserted but no transaction occurs
+>> before it is de-asserted and so is causing a problem. Please note that a
+>> delay of around ~50us above still fails but 100us seems to be ok.
+> 
+> Really nice detective work!
+> 
+> 
+>> Finally, this also works-around the problem by avoiding the chip-select
+>> from being pulsed low by defaulting all chip-selects to active-low but
+>> maybe this just masks the problem.
 >>
->>   drivers/pci/host/pci-tegra.c | 65 ++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 65 insertions(+)
->>
->> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->> index e1526cc5d381..08da67a82a2d 100644
->> --- a/drivers/pci/host/pci-tegra.c
->> +++ b/drivers/pci/host/pci-tegra.c
->> @@ -40,6 +40,7 @@
->>   #include <linux/of_pci.h>
->>   #include <linux/of_platform.h>
->>   #include <linux/pci.h>
->> +#include <linux/pci-aspm.h>
->>   #include <linux/phy/phy.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/reset.h>
->> @@ -191,6 +192,27 @@
->>   #define RP_PRIV_XP_DL	0x494
->>   #define  RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD	(0x1ff << 1)
->>   
->> +#define RP_L1_PM_SUBSTATES_CTL				0xC00
->> +#define RP_L1_PM_SUBSTATES_CTL_CM_RTIME_MASK		(0xFF << 8)
->> +#define RP_L1_PM_SUBSTATES_CTL_CM_RTIME_SHIFT		8
->> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_MASK		(0x3 << 16)
->> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_SHIFT		16
->> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_MASK		(0x1F << 19)
->> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_SHIFT		19
->> +#define RP_L1_PM_SUBSTATES_CTL_HIDE_CAP			(0x1 << 24)
->> +
->> +#define RP_L1_PM_SUBSTATES_1_CTL			0xC04
->> +#define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK	0x1FFF
->> +#define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY		0x26
->> +
->> +#define RP_L1_PM_SUBSTATES_2_CTL			0xC08
->> +#define RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY_MASK	0x1FFF
->> +#define RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY		0x4D
->> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_MASK	(0xFF << 13)
->> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND		(0x13 << 13)
->> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP_MASK	(0xF << 21)
->> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP	(0x2 << 21)
->> +
->>   #define RP_RX_HDR_LIMIT	0xe00
->>   #define  RP_RX_HDR_LIMIT_PW_MASK	(0xff << 8)
->>   #define  RP_RX_HDR_LIMIT_PW		(0x0e << 8)
->> @@ -331,6 +353,7 @@ struct tegra_pcie_soc {
->>   	bool program_deskew_time;
->>   	bool updateFC_threshold;
->>   	bool has_aspm_l1;
->> +	bool has_aspm_l1ss;
->>   };
->>   
->>   static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
->> @@ -423,6 +446,12 @@ static inline u32 pads_readl(struct tegra_pcie *pcie, unsigned long offset)
->>   	return readl(pcie->pads + offset);
->>   }
->>   
->> +u32 pcie_aspm_get_ltr_l_1_2_threshold(void)
->> +{
->> +	/* LTR L1.2 Threshold = 55us for all ports */
->> +	return ((0x37 << 16) | (0x02 << 29));
-> I know you've already worked through this, but let me think out loud
-> to try to figure this out myself.
->
-> ASPM defines Link power states L0, L0s, and L1.  L1 PM Substates
-> extend that by adding L1.1 and L1.2.  L1.2 presumably uses less power
-> and has a longer exit delay than L1.1 [sec 5.5].
->
-> Ports that support L1.2 must support Latency Tolerance Reporting (LTR)
-> [sec 6.18].  When LTR is enabled, a device periodically sends LTR
-> messages.
->
-> When ASPM puts a Link into L1, it chooses either L1.1 or L1.2 based on
-> LTR_L1.2_THRESHOLD and recent LTR messages.  If there's no LTR
-> information it looks like LTR_L1.2_THRESHOLD doesn't matter and it
-> always chooses L1.2 [sec 5.5.1].
->
-> I don't see anything that writes PCI_EXP_DEVCTL2_LTR_EN, so I don't
-> think Linux ever enables LTR.  Some BIOSes apparently enable it
-> (Google for "LTR enabled").
-I think this needs to be done in aspm.c file. i.e. whenever sub-system 
-enables L1.2, it should enable
-LTR_EN also.
->
-> 1) It seems like the LTR_L1.2_THRESHOLD value should be computed based
->     on the latency requirements of downstream devices.  How did you
->     come up with 55us?
-This is given by Tegra hardware folks.
->
-> 2) The spec requires [sec 5.5.4] that LTR_L1.2_THRESHOLD at both ends
->     of a Link be the same, but as far as I can see, there's no
->     requirement that it be the same across the whole system, so this
->     interface doesn't seem like quite the right approach.
-Agree that this patch would make 55us applicable to entire system
->
-> 3) We must support kernels with multiple host bridge drivers compiled
->     in, and the weak/strong symbol approach doesn't support using the
->     correct version, e.g., if we merge this patch, every system
->     containing the tegra driver would use this function, even if the
->     hardware had a different host bridge.  Also, if another driver
->     implemented its own version, we'd have duplicate symbols.
-Yes. Agree with this too.
-How about using quirks framework for this?
-Rajat / Thierry / Bjorn, any thoughts on this?
->
->>   /*
->>    * The configuration space mapping on Tegra is somewhat similar to the ECAM
->>    * defined by PCIe. However it deviates a bit in how the 4 bits for extended
->> @@ -2262,6 +2291,37 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->>   		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_T210;
->>   		writel(value, port->base + RP_VEND_XP);
->>   	}
->> +
->> +	if (soc->has_aspm_l1ss) {
->> +		/* Set Common Mode Restore Time to 30us */
->> +		value = readl(port->base + RP_L1_PM_SUBSTATES_CTL);
->> +		value &= ~RP_L1_PM_SUBSTATES_CTL_CM_RTIME_MASK;
->> +		value |= (0x1E << RP_L1_PM_SUBSTATES_CTL_CM_RTIME_SHIFT);
->> +		writel(value, port->base + RP_L1_PM_SUBSTATES_CTL);
->> +
->> +		/* set T_Power_On to 70us */
->> +		value = readl(port->base + RP_L1_PM_SUBSTATES_CTL);
->> +		value &= ~(RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_MASK |
->> +			RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_MASK);
->> +		value |= (1 << RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_SHIFT) |
->> +			(7 << RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_SHIFT);
->> +		writel(value, port->base + RP_L1_PM_SUBSTATES_CTL);
->> +
->> +		/* Following is based on clk_m being 19.2 MHz */
->> +		value = readl(port->base + RP_L1_PM_SUBSTATES_1_CTL);
->> +		value &= ~RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK;
->> +		value |= RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY;
->> +		writel(value, port->base + RP_L1_PM_SUBSTATES_1_CTL);
->> +
->> +		value = readl(port->base + RP_L1_PM_SUBSTATES_2_CTL);
->> +		value &= ~RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY_MASK;
->> +		value |= RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY;
->> +		value &= ~RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_MASK;
->> +		value |= RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND;
->> +		value &= ~RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP_MASK;
->> +		value |= RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP;
->> +		writel(value, port->base + RP_L1_PM_SUBSTATES_2_CTL);
->> +	}
->>   }
->>   /*
->>    * FIXME: If there are no PCIe cards attached, then calling this function
->> @@ -2403,6 +2463,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
->>   	.program_deskew_time = false,
->>   	.updateFC_threshold = false,
->>   	.has_aspm_l1 = false,
->> +	.has_aspm_l1ss = false,
->>   };
->>   
->>   static const struct tegra_pcie_soc tegra30_pcie = {
->> @@ -2425,6 +2486,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
->>   	.program_deskew_time = false,
->>   	.updateFC_threshold = false,
->>   	.has_aspm_l1 = true,
->> +	.has_aspm_l1ss = false,
->>   };
->>   
->>   static const struct tegra_pcie_soc tegra124_pcie = {
->> @@ -2446,6 +2508,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
->>   	.program_deskew_time = false,
->>   	.updateFC_threshold = false,
->>   	.has_aspm_l1 = true,
->> +	.has_aspm_l1ss = false,
->>   };
->>   
->>   static const struct tegra_pcie_soc tegra210_pcie = {
->> @@ -2475,6 +2538,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
->>   	.program_deskew_time = true,
->>   	.updateFC_threshold = true,
->>   	.has_aspm_l1 = true,
->> +	.has_aspm_l1ss = true,
->>   };
->>   
->>   static const struct tegra_pcie_soc tegra186_pcie = {
->> @@ -2497,6 +2561,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
->>   	.program_deskew_time = false,
->>   	.updateFC_threshold = false,
->>   	.has_aspm_l1 = true,
->> +	.has_aspm_l1ss = true,
->>   };
->>   
->>   static const struct of_device_id tegra_pcie_of_match[] = {
->> -- 
->> 2.7.4
->>
+>> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+>> index a76acedd7e2f..7c18204e61d9 100644
+>> --- a/drivers/spi/spi-tegra114.c
+>> +++ b/drivers/spi/spi-tegra114.c
+>> @@ -1117,7 +1117,7 @@ static int tegra_spi_probe(struct platform_device
+>>                 goto exit_pm_disable;
+>>         }
+>> -       tspi->def_command1_reg  = SPI_M_S;
+>> +       tspi->def_command1_reg = SPI_M_S | SPI_CS_POL_INACTIVE_MASK;
+> 
+> Note that even though I'd support adding some sort of delay to the
+> cros_ec driver, I'd also say that it _might_ make sense to mess with
+> the SPI driver too, just to avoid glitching the lines at bootup.  As
+> you said, you shouldn't just willy nilly change the default but it
+> seems like it could make sense to define an initial (board level)
+> pinctrl state that's in effect until the first call to setup_bus().
+
+I am thinking about making that above change as well, because the reset
+value of the chip-select polarity bits default to active-low. For
+active-high devices I don't think that you can ever avoid the
+chip-select asserting for a period after reset as that is the default
+setting, but I don't see why we are clearing these bits in probe.
+
+I will do a bit more testing with this to avoid any regressions, but
+both changes seem worthwhile IMO.
+
+Cheers
+Jon
+
+-- 
+nvpublic
