@@ -1,213 +1,156 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3] platform/chrome: Use proper protocol transfer function
-Date: Wed, 8 Nov 2017 08:45:26 -0800
-Message-ID: <CAD=FV=VphkdzCq6Nfjh=payoMkgjET8bQLOAwUYZ9D+SJNxO0w@mail.gmail.com>
-References: <20170908205011.77986-1-briannorris@chromium.org>
- <02aa65e7-e967-055b-2af3-2e9b6ef77935@nvidia.com> <CALaWCOMj0wQk5OfYOYqU_sZUt2SQBhy=HaP-qOiB5aMf9G8inw@mail.gmail.com>
- <c3c5d08b-2df2-2e5b-cb09-bd4b3011e3df@nvidia.com> <20170919171401.GA10968@google.com>
- <CALaWCOPzT-BWu-YcMY+xEAWGRmvvVEoA64ceEK3zG3K-wajskQ@mail.gmail.com>
- <20170920061317.GB13616@google.com> <CALaWCOPEiWHMeOb-9_fpbyYuNzGdy0favnPS37u5_zz1AG_86w@mail.gmail.com>
- <CALaWCOM87ikjzK-zFJ7WT37L_w58AwZwC_nq0hNXuzh5x87n5w@mail.gmail.com>
- <6beb7b8c-f602-112b-73b2-22188dcea28e@nvidia.com> <CALaWCOP=0O7AMobu4YX0z=fJLopcQwv1Vm1_Bbp3XTaty1y6fA@mail.gmail.com>
- <CAD=FV=VobwsHyo96JxAgEPqG2ji5gMoNz6JJxQaQmZ3MD+dxRg@mail.gmail.com>
- <5ae1292d-14dc-b917-84cc-2758e82c4795@nvidia.com> <CAD=FV=WBKDm5r=7UP0RxYOfC8Uk8oR2xL2iKOLXvZKsBY0YNeg@mail.gmail.com>
- <fb73cca6-7760-3360-6061-411dd522839e@nvidia.com>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
+ untried/unknown (next-20171106)
+Date: Wed, 8 Nov 2017 16:47:25 +0000
+Message-ID: <20462478-b50f-abd1-05b0-26a2fda3a2ad@arm.com>
+References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
+ <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
+ <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
+ <20171107105501.7x74gdqzhr7uulp2@sirena.org.uk>
+ <a384e96c-27c7-782b-75b9-7525714f5831@collabora.com>
+ <613bcd63-a215-acbe-9150-c1495f7604f6@collabora.com>
+ <7ce29bba-485c-b063-961a-3a745718357f@arm.com>
+ <cdac9d47-42ce-b5c2-b325-68726d194888@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fb73cca6-7760-3360-6061-411dd522839e@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Shawn N <shawnn@chromium.org>, Olof Johansson <olof@lixom.net>, Benson Leung <bleung@chromium.org>, Lee Jones <lee.jones@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brian Norris <computersforpeace@gmail.com>, Brian Norris <briannorris@chromium.org>, Gwendal Grignou <gwendal@chromium.org>, Enric Balletbo <enric.balletbo@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandru M Stan <amstan@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cdac9d47-42ce-b5c2-b325-68726d194888-/1wQRMveznE@public.gmane.org>
+Content-Language: en-GB
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Wed, Nov 8, 2017 at 2:20 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
-> Hi Doug,
->
-> On 07/11/17 17:22, Doug Anderson wrote:
->> On Tue, Nov 7, 2017 at 3:28 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
->>> On 10/10/17 17:52, Doug Anderson wrote:
->>>
->>> ...
->>>
->>>>> I'm still not clear on why we see an error only on the first
->>>>> transaction after boot. In this case, the embedded controller
->>>>> previously handled host commands from firmware just fine, and the
->>>>> handoff between firmware and the kernel shouldn't be significant, from
->>>>> the EC point of view. If host command timing is consistent from the
->>>>> master, I would expect to see some constant error rate, eg. some
->>>>> chance any host command will fail, rather than the first host command
->>>>> always failing.
+On 08/11/17 16:23, Mikko Perttunen wrote:
+> On 08.11.2017 17:55, Robin Murphy wrote:
+>>
+>>
+>> On 08/11/17 15:19, Guillaume Tucker wrote:
+>>> On 07/11/17 11:43, Guillaume Tucker wrote:
+>>>> On 07/11/17 10:55, Mark Brown wrote:
+>>>>> On Tue, Nov 07, 2017 at 10:12:59AM +0000, Jon Hunter wrote:
+>>>>>> On 06/11/17 19:17, Mark Brown wrote:
+>>>>>
+>>>>>>>>     multi_v7_defconfig:
+>>>>>>>>         tegra124-nyan-big:
+>>>>>>>>             lab-collabora: failing since 2 days (last pass:
+>>>>>>>> next-20171102 - first fail: next-20171103)
+>>>>>
+>>>>>> Thanks for the report. I have been looking into a failure on nyan-big
+>>>>>> [0], but this one looks like a new failure. I will take a look.
+>>>>>
+>>>>> Guillaume Tucker has been bisecting this with the shiny new bisection
+>>>>> code he's testing, he was saying on IRC he thinks he's found the
+>>>>> offending commit:
+>>>>>
+>>>>>
+>>>>> https://people.collabora.com/~gtucker/tmp/bisect-tegra-4.14.rc8-next-20171106.txt 
+>>>>>
+>>>>>
+>>>>>
+>>>>> (not CCing Johannes yet)
 >>>>
->>>> The AP itself is often quite busy at boot and so the timings for
->>>> everything change.  That could easily explain the problems.
+>>>> Please take this with a pinch of salt, I'm now running some extra
+>>>> boot tests to prove it.  If you look at this log, all the boots
+>>>> passed which is a bit suspicious.  I did build and boot the
+>>>> revision it found with multi_v7_defconfig on tegra124 and it
+>>>> passed, so it looks like this commit may not have anything to do
+>>>> with the boot failure.  The automated bisection is still experimental.
+>>>>
+>>>> Passing LAVA boot test with this revision:
+>>>>
+>>>>   https://lava.collabora.co.uk/scheduler/job/976375
+>>>>
+>>>> I've started a slightly different bisection job now on
+>>>> next-20171107 and the common ancestor between next and mainline,
+>>>> results can take a few hours to come back.
 >>>
->>> Sorry for the delay, but I have finally had some time to look at this a
->>> bit closer. I have been able to track down where the additional delay is
->>> really needed and seems to explain what is going on.
+>>> After a few more automated bisection attempts and a bug fix in
+>>> LAVA, I've now found at least one potentially breaking commit:
 >>>
->>> For starters, the SPI chip-select is under h/w control and so the
->>> software delay has no impact on the timing between the chip-select
->>> going active and the transaction starting as I had first thought.
+>>>    commit d89e2378a97fafdc74cbf997e7c88af75b81610a
+>>>    Author: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+>>>    Date:   Thu Oct 12 16:56:14 2017 +0100
 >>>
->>> I found that a delay is needed between completing the probe the Tegra
->>> SPI device and the first SPI transaction issued to the EC. In the Tegra
->>> SPI probe the SPI controller is programmed for master mode, but at the
->>> same time it clears the chip-select inactive polarity bit meaning that
->>> initially the SPI chip-select default to active-high (rather that low
->>> which seems odd). I believe that this then drives the chip-select low
->>> (active for the EC) and until it is then configured when spi_setup() is
->>> called which configures it as active-low for the EC.
->>> To get the first transaction to work for the EC there needs to be a
->>> delay after we program the chip-select polarity when spi_setup() is
->>> called. For example ...
+>>>        drivers: flag buses which demand DMA configuration
 >>>
->>> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
->>> index 584367f3a0ed..c1075c3c60c8 100644
->>> --- a/drivers/mfd/cros_ec_spi.c
->>> +++ b/drivers/mfd/cros_ec_spi.c
->>> @@ -648,6 +648,8 @@ static int cros_ec_spi_probe(struct spi_device *spi)
->>>         if (err < 0)
->>>                 return err;
 >>>
->>> +       udelay(100);
->>> +
->>
->> This isn't totally crazy, but actually you could probably do this:
->>
->> ec_spi->last_transfer_ns = ktime_get_ns();
->>
->> ...that will leverage already existing code and constants and also
->> will avoid doing a delay if it wasn't needed.  You could also then get
->> rid of some "if (ec_spi->last_transfer_ns)" tests in the code.  I'd
->> support landing that.
->>
->>
->>>         ec_spi = devm_kzalloc(dev, sizeof(*ec_spi), GFP_KERNEL);
->>>         if (ec_spi == NULL)
->>>                 return -ENOMEM;
+>>> I've run some boot tests manually with this revision and then
+>>> also after reverting it in-place, these respectively failed and
+>>> passed:
 >>>
->
->
-> OK, yes and that does work well too. I will send a patch with the
-> following for review.
->
-> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-> index 584367f3a0ed..477f8e81dc34 100644
-> --- a/drivers/mfd/cros_ec_spi.c
-> +++ b/drivers/mfd/cros_ec_spi.c
-> @@ -671,6 +671,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
->                            sizeof(struct ec_response_get_protocol_info);
->         ec_dev->dout_size = sizeof(struct ec_host_request);
->
-> +       ec_spi->last_transfer_ns = ktime_get_ns();
->
->         err = cros_ec_register(ec_dev);
->         if (err) {
-
-That's sufficient to make it work, but now that "last_transfer_ns" can
-never be 0 you should also fix that.  It's hard to paste a patch in
-gmail and the change is trivial so I didn't try to find another way to
-post it, but roughly:
-
-- * @last_transfer_ns: time that we last finished a transfer, or 0 if there
-- *     if no record
-+ * @last_transfer_ns: time that we last finished a transfer.
-
-===
-
-+       unsigned long delay;    /* The delay completed so far */
-
-        len = cros_ec_prepare_tx(ec_dev, ec_msg);
-        dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
-
-        /* If it's too soon to do another transaction, wait */
--       if (ec_spi->last_transfer_ns) {
--               unsigned long delay;    /* The delay completed so far */
--
--               delay = ktime_get_ns() - ec_spi->last_transfer_ns;
--               if (delay < EC_SPI_RECOVERY_TIME_NS)
--                       ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
--       }
-+       delay = ktime_get_ns() - ec_spi->last_transfer_ns;
-+       if (delay < EC_SPI_RECOVERY_TIME_NS)
-+               ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
-
-===
-
-+       unsigned long delay;    /* The delay completed so far */
-
-        len = cros_ec_prepare_tx(ec_dev, ec_msg);
-        dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
-
-        /* If it's too soon to do another transaction, wait */
--       if (ec_spi->last_transfer_ns) {
--               unsigned long delay;    /* The delay completed so far */
--
--               delay = ktime_get_ns() - ec_spi->last_transfer_ns;
--               if (delay < EC_SPI_RECOVERY_TIME_NS)
--                       ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
--       }
-+       delay = ktime_get_ns() - ec_spi->last_transfer_ns;
-+       if (delay < EC_SPI_RECOVERY_TIME_NS)
-+               ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
-
-
->>> You may say why not put a delay in the tegra_spi_setup() itself, but we
->>> have some other SPI devices such as flash devices which are also use an
->>> active-low chip-select which don't have any issues with this to date.
->>> Furthermore, this delay is also probably device specific.
+>>>    * d89e2378, failed:
+>>>      https://lava.collabora.co.uk/scheduler/job/978968
 >>>
->>> From an EC perspective, if the chip-select is asserted is there a
->>> turnaround time before it can be asserted again? Or in this case maybe
->>> the issue is that the chip-select is asserted but no transaction occurs
->>> before it is de-asserted and so is causing a problem. Please note that a
->>> delay of around ~50us above still fails but 100us seems to be ok.
->>
->> Really nice detective work!
->>
->>
->>> Finally, this also works-around the problem by avoiding the chip-select
->>> from being pulsed low by defaulting all chip-selects to active-low but
->>> maybe this just masks the problem.
+>>>    * d89e2378 reverted, passed:
+>>>      https://lava.collabora.co.uk/scheduler/job/978969
 >>>
->>> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
->>> index a76acedd7e2f..7c18204e61d9 100644
->>> --- a/drivers/spi/spi-tegra114.c
->>> +++ b/drivers/spi/spi-tegra114.c
->>> @@ -1117,7 +1117,7 @@ static int tegra_spi_probe(struct platform_device
->>>                 goto exit_pm_disable;
->>>         }
->>> -       tspi->def_command1_reg  = SPI_M_S;
->>> +       tspi->def_command1_reg = SPI_M_S | SPI_CS_POL_INACTIVE_MASK;
+>>>
+>>> I then went on and tried the same but on top of next-20171108 and
+>>> found that they both failed
+>>>
+>>>    * next-20171108, failed:
+>>>      https://lava.collabora.co.uk/scheduler/job/979063
+>>>
+>>>    * next-20171108 with d89e2378 reverted, failed as well:
+>>>      https://lava.collabora.co.uk/scheduler/job/979167
+>>>
+>>>
+>>> So this shows there is almost certainly another offending commit
+>>> in -next.  The errors in both cases are not quite the same, the
+>>> last one is triggered by a BUG whereas the first one is a NULL
+>>> pointer (I haven't looked any further).  Also I don't think
+>>> there's any fix for d89e2378a97fafdc74cbf997e7c88af75b81610a
+>>> which is currently still in next.
 >>
->> Note that even though I'd support adding some sort of delay to the
->> cros_ec driver, I'd also say that it _might_ make sense to mess with
->> the SPI driver too, just to avoid glitching the lines at bootup.  As
->> you said, you shouldn't just willy nilly change the default but it
->> seems like it could make sense to define an initial (board level)
->> pinctrl state that's in effect until the first call to setup_bus().
->
-> I am thinking about making that above change as well, because the reset
-> value of the chip-select polarity bits default to active-low. For
-> active-high devices I don't think that you can ever avoid the
-> chip-select asserting for a period after reset as that is the default
-> setting, but I don't see why we are clearing these bits in probe.
+>> The fix was actually posted before said commit was even written:
+>>
+>> https://patchwork.kernel.org/patch/9967847/
+>>
+>> What is currently queued in the DMA tree fell out of the discussion on
+>> patch 2 of that series, but I kind of assumed the host1x folks would
+>> still take patch 1; I guess that hasn't happened.
+> 
+> I am seeing this patch in linux-next, though:
 
-Is the default muxing option for these pins to be SPI?  If not then
-you'd have to look at the default muxing option and possibly the
-default pull option.
+Phew, great! Perhaps I should have actually looked :)
 
+So for this case it seems it's only the DRM tree being merged into -next 
+after the DMA mapping tree which is hurting Guillaume's bisection. 
+That's unfortunate, but it least it's not an a complete showstopper.
 
-> I will do a bit more testing with this to avoid any regressions, but
-> both changes seem worthwhile IMO.
+Robin.
 
-It does seem slightly risky to change the default for all boards, but
-I'll leave it up to you.  I think you can get this right with all the
-pinctrl stuff I mentioned, but that definitely would be a lot more
-work.  Also: if you land the cros ec change, it's not exactly
-urgent...
-
--Doug
+> commit 2fb0dceb69ce957f01bdb6fddf7baf4c4b9cbc0d
+> Author:     Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> AuthorDate: Sun Sep 24 12:04:53 2017 +0300
+> Commit:     Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> CommitDate: Fri Oct 20 14:19:51 2017 +0200
+> 
+>      gpu: host1x: Call of_dma_configure() after setting bus
+> 
+>      of_dma_configure() now checks the device's bus before configuring 
+> it, so
+>      we need to set the device's bus before calling.
+> 
+>      Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>      Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> 
+> Mikko
+> 
+>>
+>> Robin.
+>>
+>>>
+>>> Note: This happens to be a very good example of running a
+>>> kernelci.org bisection on a real issue, it's quite a bit of a
+>>> pipe cleaner.  I'll now see if there's a way to bisect what looks
+>>> like another breaking change in-between.
+>>>
+>>> Guillaume
+>> -- 
+>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
