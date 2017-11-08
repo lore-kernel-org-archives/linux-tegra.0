@@ -1,156 +1,104 @@
-From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
- untried/unknown (next-20171106)
-Date: Wed, 8 Nov 2017 16:47:25 +0000
-Message-ID: <20462478-b50f-abd1-05b0-26a2fda3a2ad@arm.com>
-References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
- <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
- <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
- <20171107105501.7x74gdqzhr7uulp2@sirena.org.uk>
- <a384e96c-27c7-782b-75b9-7525714f5831@collabora.com>
- <613bcd63-a215-acbe-9150-c1495f7604f6@collabora.com>
- <7ce29bba-485c-b063-961a-3a745718357f@arm.com>
- <cdac9d47-42ce-b5c2-b325-68726d194888@kapsi.fi>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 3/4] PCI: tegra: Apply sw fixups to support ASPM-L1
+ Sub-States
+Date: Wed, 8 Nov 2017 11:48:29 -0600
+Message-ID: <20171108174829.GE28427@bhelgaas-glaptop.roam.corp.google.com>
+References: <1509423769-10522-1-git-send-email-vidyas@nvidia.com>
+ <1509423769-10522-4-git-send-email-vidyas@nvidia.com>
+ <20171107225007.GA22847@bhelgaas-glaptop.roam.corp.google.com>
+ <ef7d193c-c114-d0c6-e450-c00ae3ab2d51@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cdac9d47-42ce-b5c2-b325-68726d194888-/1wQRMveznE@public.gmane.org>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <ef7d193c-c114-d0c6-e450-c00ae3ab2d51-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, rajatja-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org, Julia.Lawall-L2FTfq7BK8M@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/11/17 16:23, Mikko Perttunen wrote:
-> On 08.11.2017 17:55, Robin Murphy wrote:
->>
->>
->> On 08/11/17 15:19, Guillaume Tucker wrote:
->>> On 07/11/17 11:43, Guillaume Tucker wrote:
->>>> On 07/11/17 10:55, Mark Brown wrote:
->>>>> On Tue, Nov 07, 2017 at 10:12:59AM +0000, Jon Hunter wrote:
->>>>>> On 06/11/17 19:17, Mark Brown wrote:
->>>>>
->>>>>>>>     multi_v7_defconfig:
->>>>>>>>         tegra124-nyan-big:
->>>>>>>>             lab-collabora: failing since 2 days (last pass:
->>>>>>>> next-20171102 - first fail: next-20171103)
->>>>>
->>>>>> Thanks for the report. I have been looking into a failure on nyan-big
->>>>>> [0], but this one looks like a new failure. I will take a look.
->>>>>
->>>>> Guillaume Tucker has been bisecting this with the shiny new bisection
->>>>> code he's testing, he was saying on IRC he thinks he's found the
->>>>> offending commit:
->>>>>
->>>>>
->>>>> https://people.collabora.com/~gtucker/tmp/bisect-tegra-4.14.rc8-next-20171106.txt 
->>>>>
->>>>>
->>>>>
->>>>> (not CCing Johannes yet)
->>>>
->>>> Please take this with a pinch of salt, I'm now running some extra
->>>> boot tests to prove it.  If you look at this log, all the boots
->>>> passed which is a bit suspicious.  I did build and boot the
->>>> revision it found with multi_v7_defconfig on tegra124 and it
->>>> passed, so it looks like this commit may not have anything to do
->>>> with the boot failure.  The automated bisection is still experimental.
->>>>
->>>> Passing LAVA boot test with this revision:
->>>>
->>>>   https://lava.collabora.co.uk/scheduler/job/976375
->>>>
->>>> I've started a slightly different bisection job now on
->>>> next-20171107 and the common ancestor between next and mainline,
->>>> results can take a few hours to come back.
->>>
->>> After a few more automated bisection attempts and a bug fix in
->>> LAVA, I've now found at least one potentially breaking commit:
->>>
->>>    commit d89e2378a97fafdc74cbf997e7c88af75b81610a
->>>    Author: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
->>>    Date:   Thu Oct 12 16:56:14 2017 +0100
->>>
->>>        drivers: flag buses which demand DMA configuration
->>>
->>>
->>> I've run some boot tests manually with this revision and then
->>> also after reverting it in-place, these respectively failed and
->>> passed:
->>>
->>>    * d89e2378, failed:
->>>      https://lava.collabora.co.uk/scheduler/job/978968
->>>
->>>    * d89e2378 reverted, passed:
->>>      https://lava.collabora.co.uk/scheduler/job/978969
->>>
->>>
->>> I then went on and tried the same but on top of next-20171108 and
->>> found that they both failed
->>>
->>>    * next-20171108, failed:
->>>      https://lava.collabora.co.uk/scheduler/job/979063
->>>
->>>    * next-20171108 with d89e2378 reverted, failed as well:
->>>      https://lava.collabora.co.uk/scheduler/job/979167
->>>
->>>
->>> So this shows there is almost certainly another offending commit
->>> in -next.  The errors in both cases are not quite the same, the
->>> last one is triggered by a BUG whereas the first one is a NULL
->>> pointer (I haven't looked any further).  Also I don't think
->>> there's any fix for d89e2378a97fafdc74cbf997e7c88af75b81610a
->>> which is currently still in next.
->>
->> The fix was actually posted before said commit was even written:
->>
->> https://patchwork.kernel.org/patch/9967847/
->>
->> What is currently queued in the DMA tree fell out of the discussion on
->> patch 2 of that series, but I kind of assumed the host1x folks would
->> still take patch 1; I guess that hasn't happened.
-> 
-> I am seeing this patch in linux-next, though:
+On Wed, Nov 08, 2017 at 02:15:05PM +0530, Vidya Sagar wrote:
+> On Wednesday 08 November 2017 04:20 AM, Bjorn Helgaas wrote:
+> >On Tue, Oct 31, 2017 at 09:52:48AM +0530, Vidya Sagar wrote:
+> >>Programs T_cmrt (Commmon Mode Restore Time) and T_pwr_on (Power On)
+> >>values to get them reflected in ASPM-L1 Sub-States capability registers
+> >>Also adjusts internal counter values according to 19.2 MHz clk_m value
+> >>
+> >>Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ...
 
-Phew, great! Perhaps I should have actually looked :)
+> >>+u32 pcie_aspm_get_ltr_l_1_2_threshold(void)
+> >>+{
+> >>+	/* LTR L1.2 Threshold = 55us for all ports */
+> >>+	return ((0x37 << 16) | (0x02 << 29));
+>
+> >I know you've already worked through this, but let me think out loud
+> >to try to figure this out myself.
+> >
+> >ASPM defines Link power states L0, L0s, and L1.  L1 PM Substates
+> >extend that by adding L1.1 and L1.2.  L1.2 presumably uses less power
+> >and has a longer exit delay than L1.1 [sec 5.5].
+> >
+> >Ports that support L1.2 must support Latency Tolerance Reporting (LTR)
+> >[sec 6.18].  When LTR is enabled, a device periodically sends LTR
+> >messages.
+> >
+> >When ASPM puts a Link into L1, it chooses either L1.1 or L1.2 based on
+> >LTR_L1.2_THRESHOLD and recent LTR messages.  If there's no LTR
+> >information it looks like LTR_L1.2_THRESHOLD doesn't matter and it
+> >always chooses L1.2 [sec 5.5.1].
+> >
+> >I don't see anything that writes PCI_EXP_DEVCTL2_LTR_EN, so I don't
+> >think Linux ever enables LTR.  Some BIOSes apparently enable it
+> >(Google for "LTR enabled").
+>
+> I think this needs to be done in aspm.c file. i.e. whenever
+> sub-system enables L1.2, it should enable
+> LTR_EN also.
 
-So for this case it seems it's only the DRM tree being merged into -next 
-after the DMA mapping tree which is hurting Guillaume's bisection. 
-That's unfortunate, but it least it's not an a complete showstopper.
+That probably makes sense.
 
-Robin.
+> >1) It seems like the LTR_L1.2_THRESHOLD value should be computed based
+> >    on the latency requirements of downstream devices.  How did you
+> >    come up with 55us?
+>
+> This is given by Tegra hardware folks.
 
-> commit 2fb0dceb69ce957f01bdb6fddf7baf4c4b9cbc0d
-> Author:     Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> AuthorDate: Sun Sep 24 12:04:53 2017 +0300
-> Commit:     Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> CommitDate: Fri Oct 20 14:19:51 2017 +0200
-> 
->      gpu: host1x: Call of_dma_configure() after setting bus
-> 
->      of_dma_configure() now checks the device's bus before configuring 
-> it, so
->      we need to set the device's bus before calling.
-> 
->      Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->      Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> 
-> Mikko
-> 
->>
->> Robin.
->>
->>>
->>> Note: This happens to be a very good example of running a
->>> kernelci.org bisection on a real issue, it's quite a bit of a
->>> pipe cleaner.  I'll now see if there's a way to bisect what looks
->>> like another breaking change in-between.
->>>
->>> Guillaume
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I do not understand why this value should be dependent on the host
+bridge.  Can your hardware folks give more insight into this and how
+they derived 55us?
+
+I'm repeating myself, but the threshold (in combination with LTR
+information) affects whether we enter L1.1 or L1.2.  If I understand
+correctly, this is all about the downstream devices and not at all
+about the host bridge.
+
+> ...
+> >3) We must support kernels with multiple host bridge drivers compiled
+> >    in, and the weak/strong symbol approach doesn't support using the
+> >    correct version, e.g., if we merge this patch, every system
+> >    containing the tegra driver would use this function, even if the
+> >    hardware had a different host bridge.  Also, if another driver
+> >    implemented its own version, we'd have duplicate symbols.
+>
+> Yes. Agree with this too.
+> How about using quirks framework for this?
+
+If my assumption that "the threshold should be based on (a) the
+latency requirements of downstream devices and (b) perhaps some global
+power vs performance tradeoff" is correct, this doesn't really fit
+into any kind of quirks or static computation, including the current
+LTR_L1_2_THRESHOLD_BITS.
+
+What happens if you keep all the Tegra-specific parts of this series,
+i.e., you program the T_cmrt, T_pwr_on, and CLKREQ values, and enable
+advertising of ASPM L1 capability, but leave out the
+pcie_aspm_get_ltr_l_1_2_threshold() parts?  (BTW, I think you should
+reorder the series so you fix up all the delay values *before* you
+advertise ASPM L1.)
+
+I expect that to be functionally equivalent, but it would change the
+L1.1 vs L1.2 tradeoff, so it might have some performance impact,
+depending on what the downstream devices are.
+
+Bjorn
