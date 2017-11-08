@@ -1,62 +1,144 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
 Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
  untried/unknown (next-20171106)
-Date: Wed, 8 Nov 2017 15:57:48 +0000
-Message-ID: <5740b853-4898-2ebc-f67d-0808d1b44c36@nvidia.com>
+Date: Wed, 8 Nov 2017 18:23:00 +0200
+Message-ID: <cdac9d47-42ce-b5c2-b325-68726d194888@kapsi.fi>
 References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
  <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
  <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
  <20171107105501.7x74gdqzhr7uulp2@sirena.org.uk>
  <a384e96c-27c7-782b-75b9-7525714f5831@collabora.com>
  <613bcd63-a215-acbe-9150-c1495f7604f6@collabora.com>
+ <7ce29bba-485c-b063-961a-3a745718357f@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <613bcd63-a215-acbe-9150-c1495f7604f6@collabora.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Guillaume Tucker <guillaume.tucker@collabora.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, "kernelci.org bot" <bot@kernelci.org>, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <7ce29bba-485c-b063-961a-3a745718357f-5wv7dgnIgG8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA4LzExLzE3IDE1OjE5LCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgoKLi4uCgo+IEFmdGVy
-IGEgZmV3IG1vcmUgYXV0b21hdGVkIGJpc2VjdGlvbiBhdHRlbXB0cyBhbmQgYSBidWcgZml4IGlu
-Cj4gTEFWQSwgSSd2ZSBub3cgZm91bmQgYXQgbGVhc3Qgb25lIHBvdGVudGlhbGx5IGJyZWFraW5n
-IGNvbW1pdDoKPiAKPiDCoCBjb21taXQgZDg5ZTIzNzhhOTdmYWZkYzc0Y2JmOTk3ZTdjODhhZjc1
-YjgxNjEwYQo+IMKgIEF1dGhvcjogUm9iaW4gTXVycGh5IDxyb2Jpbi5tdXJwaHlAYXJtLmNvbT4K
-PiDCoCBEYXRlOsKgwqAgVGh1IE9jdCAxMiAxNjo1NjoxNCAyMDE3ICswMTAwCj4gCj4gwqDCoMKg
-wqDCoCBkcml2ZXJzOiBmbGFnIGJ1c2VzIHdoaWNoIGRlbWFuZCBETUEgY29uZmlndXJhdGlvbgo+
-IAo+IAo+IEkndmUgcnVuIHNvbWUgYm9vdCB0ZXN0cyBtYW51YWxseSB3aXRoIHRoaXMgcmV2aXNp
-b24gYW5kIHRoZW4KPiBhbHNvIGFmdGVyIHJldmVydGluZyBpdCBpbi1wbGFjZSwgdGhlc2UgcmVz
-cGVjdGl2ZWx5IGZhaWxlZCBhbmQKPiBwYXNzZWQ6Cj4gCj4gwqAgKiBkODllMjM3OCwgZmFpbGVk
-Ogo+IMKgwqDCoCBodHRwczovL2xhdmEuY29sbGFib3JhLmNvLnVrL3NjaGVkdWxlci9qb2IvOTc4
-OTY4Cj4gCj4gwqAgKiBkODllMjM3OCByZXZlcnRlZCwgcGFzc2VkOgo+IMKgwqDCoCBodHRwczov
-L2xhdmEuY29sbGFib3JhLmNvLnVrL3NjaGVkdWxlci9qb2IvOTc4OTY5Cj4gCj4gCj4gSSB0aGVu
-IHdlbnQgb24gYW5kIHRyaWVkIHRoZSBzYW1lIGJ1dCBvbiB0b3Agb2YgbmV4dC0yMDE3MTEwOCBh
-bmQKPiBmb3VuZCB0aGF0IHRoZXkgYm90aCBmYWlsZWQKPiAKPiDCoCAqIG5leHQtMjAxNzExMDgs
-IGZhaWxlZDoKPiDCoMKgwqAgaHR0cHM6Ly9sYXZhLmNvbGxhYm9yYS5jby51ay9zY2hlZHVsZXIv
-am9iLzk3OTA2Mwo+IAo+IMKgICogbmV4dC0yMDE3MTEwOCB3aXRoIGQ4OWUyMzc4IHJldmVydGVk
-LCBmYWlsZWQgYXMgd2VsbDoKPiDCoMKgwqAgaHR0cHM6Ly9sYXZhLmNvbGxhYm9yYS5jby51ay9z
-Y2hlZHVsZXIvam9iLzk3OTE2Nwo+IAo+IAo+IFNvIHRoaXMgc2hvd3MgdGhlcmUgaXMgYWxtb3N0
-IGNlcnRhaW5seSBhbm90aGVyIG9mZmVuZGluZyBjb21taXQKPiBpbiAtbmV4dC7CoCBUaGUgZXJy
-b3JzIGluIGJvdGggY2FzZXMgYXJlIG5vdCBxdWl0ZSB0aGUgc2FtZSwgdGhlCj4gbGFzdCBvbmUg
-aXMgdHJpZ2dlcmVkIGJ5IGEgQlVHIHdoZXJlYXMgdGhlIGZpcnN0IG9uZSBpcyBhIE5VTEwKPiBw
-b2ludGVyIChJIGhhdmVuJ3QgbG9va2VkIGFueSBmdXJ0aGVyKS7CoCBBbHNvIEkgZG9uJ3QgdGhp
-bmsKPiB0aGVyZSdzIGFueSBmaXggZm9yIGQ4OWUyMzc4YTk3ZmFmZGM3NGNiZjk5N2U3Yzg4YWY3
-NWI4MTYxMGEKPiB3aGljaCBpcyBjdXJyZW50bHkgc3RpbGwgaW4gbmV4dC4KClRoaXMgY3Jhc2gg
-aXMgYSBrbm93biBpc3N1ZSBbMF0gYW5kIHdlIGhhdmUgYmVlbiBkaXNjdXNzaW5nIHRoaXMuIENh
-bgp5b3UgdHJ5IGFwcGx5aW5nIFsxXT8KCkNoZWVycwpKb24KClswXSBodHRwczovL2xrbWwub3Jn
-L2xrbWwvMjAxNy85LzE5LzMwNgpbMV0gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRj
-aC85OTc0ODM1LwotLSAKbnZwdWJsaWMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1r
-ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On 08.11.2017 17:55, Robin Murphy wrote:
+>
+>
+> On 08/11/17 15:19, Guillaume Tucker wrote:
+>> On 07/11/17 11:43, Guillaume Tucker wrote:
+>>> On 07/11/17 10:55, Mark Brown wrote:
+>>>> On Tue, Nov 07, 2017 at 10:12:59AM +0000, Jon Hunter wrote:
+>>>>> On 06/11/17 19:17, Mark Brown wrote:
+>>>>
+>>>>>>>     multi_v7_defconfig:
+>>>>>>>         tegra124-nyan-big:
+>>>>>>>             lab-collabora: failing since 2 days (last pass:
+>>>>>>> next-20171102 - first fail: next-20171103)
+>>>>
+>>>>> Thanks for the report. I have been looking into a failure on nyan-big
+>>>>> [0], but this one looks like a new failure. I will take a look.
+>>>>
+>>>> Guillaume Tucker has been bisecting this with the shiny new bisection
+>>>> code he's testing, he was saying on IRC he thinks he's found the
+>>>> offending commit:
+>>>>
+>>>>
+>>>> https://people.collabora.com/~gtucker/tmp/bisect-tegra-4.14.rc8-next-20171106.txt
+>>>>
+>>>>
+>>>> (not CCing Johannes yet)
+>>>
+>>> Please take this with a pinch of salt, I'm now running some extra
+>>> boot tests to prove it.  If you look at this log, all the boots
+>>> passed which is a bit suspicious.  I did build and boot the
+>>> revision it found with multi_v7_defconfig on tegra124 and it
+>>> passed, so it looks like this commit may not have anything to do
+>>> with the boot failure.  The automated bisection is still experimental.
+>>>
+>>> Passing LAVA boot test with this revision:
+>>>
+>>>   https://lava.collabora.co.uk/scheduler/job/976375
+>>>
+>>> I've started a slightly different bisection job now on
+>>> next-20171107 and the common ancestor between next and mainline,
+>>> results can take a few hours to come back.
+>>
+>> After a few more automated bisection attempts and a bug fix in
+>> LAVA, I've now found at least one potentially breaking commit:
+>>
+>>    commit d89e2378a97fafdc74cbf997e7c88af75b81610a
+>>    Author: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+>>    Date:   Thu Oct 12 16:56:14 2017 +0100
+>>
+>>        drivers: flag buses which demand DMA configuration
+>>
+>>
+>> I've run some boot tests manually with this revision and then
+>> also after reverting it in-place, these respectively failed and
+>> passed:
+>>
+>>    * d89e2378, failed:
+>>      https://lava.collabora.co.uk/scheduler/job/978968
+>>
+>>    * d89e2378 reverted, passed:
+>>      https://lava.collabora.co.uk/scheduler/job/978969
+>>
+>>
+>> I then went on and tried the same but on top of next-20171108 and
+>> found that they both failed
+>>
+>>    * next-20171108, failed:
+>>      https://lava.collabora.co.uk/scheduler/job/979063
+>>
+>>    * next-20171108 with d89e2378 reverted, failed as well:
+>>      https://lava.collabora.co.uk/scheduler/job/979167
+>>
+>>
+>> So this shows there is almost certainly another offending commit
+>> in -next.  The errors in both cases are not quite the same, the
+>> last one is triggered by a BUG whereas the first one is a NULL
+>> pointer (I haven't looked any further).  Also I don't think
+>> there's any fix for d89e2378a97fafdc74cbf997e7c88af75b81610a
+>> which is currently still in next.
+>
+> The fix was actually posted before said commit was even written:
+>
+> https://patchwork.kernel.org/patch/9967847/
+>
+> What is currently queued in the DMA tree fell out of the discussion on
+> patch 2 of that series, but I kind of assumed the host1x folks would
+> still take patch 1; I guess that hasn't happened.
+
+I am seeing this patch in linux-next, though:
+
+commit 2fb0dceb69ce957f01bdb6fddf7baf4c4b9cbc0d
+Author:     Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+AuthorDate: Sun Sep 24 12:04:53 2017 +0300
+Commit:     Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+CommitDate: Fri Oct 20 14:19:51 2017 +0200
+
+     gpu: host1x: Call of_dma_configure() after setting bus
+
+     of_dma_configure() now checks the device's bus before configuring 
+it, so
+     we need to set the device's bus before calling.
+
+     Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+     Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+
+Mikko
+
+>
+> Robin.
+>
+>>
+>> Note: This happens to be a very good example of running a
+>> kernelci.org bisection on a real issue, it's quite a bit of a
+>> pipe cleaner.  I'll now see if there's a way to bisect what looks
+>> like another breaking change in-between.
+>>
+>> Guillaume
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
