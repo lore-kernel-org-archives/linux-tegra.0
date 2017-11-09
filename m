@@ -1,77 +1,75 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
-Date: Thu, 9 Nov 2017 12:48:14 +0530
-Message-ID: <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com>
-References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
- <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
+ untried/unknown (next-20171106)
+Date: Thu, 9 Nov 2017 09:55:36 +0000
+Message-ID: <7cdfa633-d9c6-881a-ae5f-f94f7e6413ee@nvidia.com>
+References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
+ <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
+ <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
+ <20171107105501.7x74gdqzhr7uulp2@sirena.org.uk>
+ <a384e96c-27c7-782b-75b9-7525714f5831@collabora.com>
+ <613bcd63-a215-acbe-9150-c1495f7604f6@collabora.com>
+ <5740b853-4898-2ebc-f67d-0808d1b44c36@nvidia.com>
+ <ab2ee0a8-6584-7436-ca1b-4f1b521279b0@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171108212558.GC21597-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <ab2ee0a8-6584-7436-ca1b-4f1b521279b0@collabora.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Guillaume Tucker <guillaume.tucker@collabora.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, "kernelci.org bot" <bot@kernelci.org>, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On Thursday 09 November 2017 02:55 AM, Bjorn Helgaas wrote:
-> [+cc Michal, Sören, Simon]
->
-> On Mon, Nov 06, 2017 at 11:33:07PM +0530, Vidya Sagar wrote:
->> limits MSI target address to only 32-bit region to enable
->> some of the PCIe end points where only 32-bit MSIs
->> are supported work properly.
->> One example being Marvel SATA controller
->>
->> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   drivers/pci/host/pci-tegra.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->> index 1987fec1f126..03d3dcdd06c2 100644
->> --- a/drivers/pci/host/pci-tegra.c
->> +++ b/drivers/pci/host/pci-tegra.c
->> @@ -1531,7 +1531,7 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
->>   	}
->>   
->>   	/* setup AFI/FPCI range */
->> -	msi->pages = __get_free_pages(GFP_KERNEL, 0);
->> +	msi->pages = __get_free_pages(GFP_DMA, 0);
->>   	msi->phys = virt_to_phys((void *)msi->pages);
-> Should this be GFP_DMA32?  See the comment above the GFP_DMA
-> definition.
-looking at the comments for both GFP_DMA32 and GFP_DMA, I thought GFP_DMA32
-is the correct one to use, but, even with that I got >32-bit addresses.
-GFP_DMA always gives addresses in <4GB boundary (i.e. 32-bit).
-I didn't dig into it to find out why is this the case.
-> Should we be using virt_to_phys() here?  Where exactly is the result
-> ("msi->phys") used, i.e., what bus will that address appear on?  If it
-> appears on the PCI side, this should probably use something like
-> pcibios_resource_to_bus().
-This address is written to two places.
-First, into host's internal register to let it know that when an incoming
-memory write comes with this address, raise an MSI interrupt instead of 
-forwarding it to
-memory subsystem.
-Second, into 'Message Address' field of 'Message Address Register for 
-MSI' register in
-end point's configuration space (this is done by MSI framework) for end 
-point to know
-which address to be used to generate MSI interrupt.
-> Do rcar_pcie_enable_msi() and xilinx_pcie_enable_msi() have a similar
-> problem?  They both use GFP_KERNEL, then virt_to_phys(), then write the
-> result of virt_to_phys() using a 32-bit register write.
-Well, if those systems deal with 64-bit addresses and when an end point 
-is connected which supports
-only 32-bit MSI addresses, this problem will surface when 
-__get_free_pages() returns an address that
-translates to a >32-bit address after virt_to_phys() call on it.
->
->>   	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
->> -- 
->> 2.7.4
->>
+Ck9uIDA4LzExLzE3IDE2OjQyLCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgo+IE9uIDA4LzExLzE3
+IDE1OjU3LCBKb24gSHVudGVyIHdyb3RlOgo+Pgo+PiBPbiAwOC8xMS8xNyAxNToxOSwgR3VpbGxh
+dW1lIFR1Y2tlciB3cm90ZToKPj4KPj4gLi4uCj4+Cj4+PiBBZnRlciBhIGZldyBtb3JlIGF1dG9t
+YXRlZCBiaXNlY3Rpb24gYXR0ZW1wdHMgYW5kIGEgYnVnIGZpeCBpbgo+Pj4gTEFWQSwgSSd2ZSBu
+b3cgZm91bmQgYXQgbGVhc3Qgb25lIHBvdGVudGlhbGx5IGJyZWFraW5nIGNvbW1pdDoKPj4+Cj4+
+PiDCoCBjb21taXQgZDg5ZTIzNzhhOTdmYWZkYzc0Y2JmOTk3ZTdjODhhZjc1YjgxNjEwYQo+Pj4g
+wqAgQXV0aG9yOiBSb2JpbiBNdXJwaHkgPHJvYmluLm11cnBoeUBhcm0uY29tPgo+Pj4gwqAgRGF0
+ZTrCoMKgIFRodSBPY3QgMTIgMTY6NTY6MTQgMjAxNyArMDEwMAo+Pj4KPj4+IMKgwqDCoMKgwqAg
+ZHJpdmVyczogZmxhZyBidXNlcyB3aGljaCBkZW1hbmQgRE1BIGNvbmZpZ3VyYXRpb24KPj4+Cj4+
+Pgo+Pj4gSSd2ZSBydW4gc29tZSBib290IHRlc3RzIG1hbnVhbGx5IHdpdGggdGhpcyByZXZpc2lv
+biBhbmQgdGhlbgo+Pj4gYWxzbyBhZnRlciByZXZlcnRpbmcgaXQgaW4tcGxhY2UsIHRoZXNlIHJl
+c3BlY3RpdmVseSBmYWlsZWQgYW5kCj4+PiBwYXNzZWQ6Cj4+Pgo+Pj4gwqAgKiBkODllMjM3OCwg
+ZmFpbGVkOgo+Pj4gwqDCoMKgIGh0dHBzOi8vbGF2YS5jb2xsYWJvcmEuY28udWsvc2NoZWR1bGVy
+L2pvYi85Nzg5NjgKPj4+Cj4+PiDCoCAqIGQ4OWUyMzc4IHJldmVydGVkLCBwYXNzZWQ6Cj4+PiDC
+oMKgwqAgaHR0cHM6Ly9sYXZhLmNvbGxhYm9yYS5jby51ay9zY2hlZHVsZXIvam9iLzk3ODk2OQo+
+Pj4KPj4+Cj4+PiBJIHRoZW4gd2VudCBvbiBhbmQgdHJpZWQgdGhlIHNhbWUgYnV0IG9uIHRvcCBv
+ZiBuZXh0LTIwMTcxMTA4IGFuZAo+Pj4gZm91bmQgdGhhdCB0aGV5IGJvdGggZmFpbGVkCj4+Pgo+
+Pj4gwqAgKiBuZXh0LTIwMTcxMTA4LCBmYWlsZWQ6Cj4+PiDCoMKgwqAgaHR0cHM6Ly9sYXZhLmNv
+bGxhYm9yYS5jby51ay9zY2hlZHVsZXIvam9iLzk3OTA2Mwo+Pj4KPj4+IMKgICogbmV4dC0yMDE3
+MTEwOCB3aXRoIGQ4OWUyMzc4IHJldmVydGVkLCBmYWlsZWQgYXMgd2VsbDoKPj4+IMKgwqDCoCBo
+dHRwczovL2xhdmEuY29sbGFib3JhLmNvLnVrL3NjaGVkdWxlci9qb2IvOTc5MTY3Cj4+Pgo+Pj4K
+Pj4+IFNvIHRoaXMgc2hvd3MgdGhlcmUgaXMgYWxtb3N0IGNlcnRhaW5seSBhbm90aGVyIG9mZmVu
+ZGluZyBjb21taXQKPj4+IGluIC1uZXh0LsKgIFRoZSBlcnJvcnMgaW4gYm90aCBjYXNlcyBhcmUg
+bm90IHF1aXRlIHRoZSBzYW1lLCB0aGUKPj4+IGxhc3Qgb25lIGlzIHRyaWdnZXJlZCBieSBhIEJV
+RyB3aGVyZWFzIHRoZSBmaXJzdCBvbmUgaXMgYSBOVUxMCj4+PiBwb2ludGVyIChJIGhhdmVuJ3Qg
+bG9va2VkIGFueSBmdXJ0aGVyKS7CoCBBbHNvIEkgZG9uJ3QgdGhpbmsKPj4+IHRoZXJlJ3MgYW55
+IGZpeCBmb3IgZDg5ZTIzNzhhOTdmYWZkYzc0Y2JmOTk3ZTdjODhhZjc1YjgxNjEwYQo+Pj4gd2hp
+Y2ggaXMgY3VycmVudGx5IHN0aWxsIGluIG5leHQuCj4+Cj4+IFRoaXMgY3Jhc2ggaXMgYSBrbm93
+biBpc3N1ZSBbMF0gYW5kIHdlIGhhdmUgYmVlbiBkaXNjdXNzaW5nIHRoaXMuIENhbgo+PiB5b3Ug
+dHJ5IGFwcGx5aW5nIFsxXT8KPiAKPiBTbyB3aXRoIG5leHQtMjAxNzExMDggKyBkODllMjM3OGE5
+IHJldmVydGVkICsgWzFdIGFwcGxpZWQ6Cj4gCj4gwqAgaHR0cHM6Ly9sYXZhLmNvbGxhYm9yYS5j
+by51ay9zY2hlZHVsZXIvam9iLzk3OTE3Mwo+IAo+IE5vIHZpc2libGUga2VybmVsIGNyYXNoIGlu
+IHRoZSBsb2cgYnV0IGl0IGhhbmdzLgo+IAo+IAo+IEkgYWxzbyB0cmllZCBuZXh0LTIwMTcxMTA4
+ICsgWzFdIGFwcGxpZWQgb25seToKPiAKPiDCoCBodHRwczovL2xhdmEuY29sbGFib3JhLmNvLnVr
+L3NjaGVkdWxlci9qb2IvOTc5MTc5Cj4gCj4gd2hpY2ggYWxzbyBhcHBlYXJzIHRvIGhhbmcuCgpU
+aGFua3MgZm9yIHRoZSB1cGRhdGUuIEkgYW0gd29uZGVyaW5nIGlmIGl0IGlzIG9uZSBvZiB0aGUg
+a2VybmVsIG1vZHVsZXMKdGhhdCBpcyBnZXR0aW5nIGxvYWRlZCBiZWNhdXNlIGJvb3RpbmcgbXVs
+dGlfdjdfZGVmY29uZmlnIGFuZCBsb2FkaW5nIG5vCm1vZHVsZXMgZG9lcyBub3QgaGFuZyBmb3Ig
+bWUuIEkgd2lsbCB0YWtlIGEgbG9vayBidXQgSSBtaWdodCBub3QgZ2V0IHRvCml0IHVudGlsIG5l
+eHQgd2Vlay4KCkNoZWVycwpKb24KCi0tIApudnB1YmxpYwoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QK
+bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
+YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
