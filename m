@@ -1,8 +1,8 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
  untried/unknown (next-20171106)
-Date: Thu, 9 Nov 2017 11:29:40 +0000
-Message-ID: <15792a16-6b57-a6ad-92dc-0ffaba0354db@nvidia.com>
+Date: Thu, 9 Nov 2017 12:51:39 +0000
+Message-ID: <1eb4e14f-4728-d4f7-95a6-0a6308760d7a@collabora.com>
 References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
  <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
  <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
@@ -13,44 +13,51 @@ References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
  <ab2ee0a8-6584-7436-ca1b-4f1b521279b0@collabora.com>
  <7cdfa633-d9c6-881a-ae5f-f94f7e6413ee@nvidia.com>
  <5f064e65-ee29-179b-8102-984d12d24d9d@collabora.com>
+ <15792a16-6b57-a6ad-92dc-0ffaba0354db@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5f064e65-ee29-179b-8102-984d12d24d9d@collabora.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Guillaume Tucker <guillaume.tucker@collabora.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, "kernelci.org bot" <bot@kernelci.org>, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <15792a16-6b57-a6ad-92dc-0ffaba0354db-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 09/11/17 11:29, Jon Hunter wrote:
+>
+> On 09/11/17 10:43, Guillaume Tucker wrote:
+>
+> ...
+>
+>> I actually built these kernel revisions with module support
+>> disabled to speed up the builds, and no modules are being
+>> downloaded in the LAVA job.
+>>
+>> If you have a public URL with your known working kernel zImage
+>> and dtb, let me know so I could re-run the same test LAVA boot
+>> test to see if I get the same results as you (i.e. no hang).
+>
+> I don't have a public URL for the zImage but I can definitely email it
+> to you. By the way, when booting I am setting 'init=/bin/bash' so no
+> start-up scripts are running.
 
-On 09/11/17 10:43, Guillaume Tucker wrote:
+Thanks, I tried your binary and it booted fine.  I built
+next-20171109 again with and without loadable module support
+enabled and it fails with it disabled but passes with it
+enabled (even without actually loading any modules):
 
-...
+   * with CONFIG_MODULES disabled (fails):
+     https://lava.collabora.co.uk/scheduler/job/981215
 
-> I actually built these kernel revisions with module support
-> disabled to speed up the builds, and no modules are being
-> downloaded in the LAVA job.
-> 
-> If you have a public URL with your known working kernel zImage
-> and dtb, let me know so I could re-run the same test LAVA boot
-> test to see if I get the same results as you (i.e. no hang).
+   * with plain multi_v7_defconfig and no modules loaded (passes):
+     https://lava.collabora.co.uk/scheduler/job/981217
 
-I don't have a public URL for the zImage but I can definitely email it
-to you. By the way, when booting I am setting 'init=/bin/bash' so no
-start-up scripts are running.
 
-Cheers
-Jon
+So I guess this means disabling loadable modules support has some
+interesting side-effects that cause the kernel to crash.  I think
+the kci builds all leave modules enabled with multi_v7_defconfig,
+so the failing boots must be due to something else.  Taking
+another look at the failing kci boots now...
 
--- 
-nvpublic
+Guillaume
