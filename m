@@ -1,125 +1,112 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
-Date: Fri, 10 Nov 2017 00:11:05 +0530
-Message-ID: <7727b9bc-a44b-4cbe-1839-7e4dd7c2c186@nvidia.com>
-References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
- <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
- <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com>
- <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
+From: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
+ untried/unknown (next-20171106)
+Date: Thu, 9 Nov 2017 19:03:14 +0000
+Message-ID: <bfed6e80-44a7-6e96-c6a6-bc9793a1937a@collabora.com>
+References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
+ <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
+ <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
+ <20171107105501.7x74gdqzhr7uulp2@sirena.org.uk>
+ <a384e96c-27c7-782b-75b9-7525714f5831@collabora.com>
+ <613bcd63-a215-acbe-9150-c1495f7604f6@collabora.com>
+ <5740b853-4898-2ebc-f67d-0808d1b44c36@nvidia.com>
+ <ab2ee0a8-6584-7436-ca1b-4f1b521279b0@collabora.com>
+ <7cdfa633-d9c6-881a-ae5f-f94f7e6413ee@nvidia.com>
+ <5f064e65-ee29-179b-8102-984d12d24d9d@collabora.com>
+ <15792a16-6b57-a6ad-92dc-0ffaba0354db@nvidia.com>
+ <1eb4e14f-4728-d4f7-95a6-0a6308760d7a@collabora.com>
+ <CAK8P3a3iiSgutnHFU7PoLGQyObgyAreQOOtrDhjijoMU5wZ1Eg@mail.gmail.com>
+ <18ef379f-0c23-0cbf-4228-30d5c46c690f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: treding@nvidia.com, bhelgaas@google.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, swarren@nvidia.com, mmaddireddy@nvidia.com, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Simon Horman <horms@verge.net.au>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <18ef379f-0c23-0cbf-4228-30d5c46c690f-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kernel Build Reports Mailman List <kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On Thursday 09 November 2017 11:44 PM, Bjorn Helgaas wrote:
-> [+cc Lorenzo]
+On 09/11/17 15:23, Jon Hunter wrote:
 >
-> On Thu, Nov 09, 2017 at 12:48:14PM +0530, Vidya Sagar wrote:
->> On Thursday 09 November 2017 02:55 AM, Bjorn Helgaas wrote:
->>> On Mon, Nov 06, 2017 at 11:33:07PM +0530, Vidya Sagar wrote:
->>>> limits MSI target address to only 32-bit region to enable
->>>> some of the PCIe end points where only 32-bit MSIs
->>>> are supported work properly.
->>>> One example being Marvel SATA controller
+> On 09/11/17 13:17, Arnd Bergmann wrote:
+>> On Thu, Nov 9, 2017 at 1:51 PM, Guillaume Tucker
+>> <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+>>> On 09/11/17 11:29, Jon Hunter wrote:
 >>>>
->>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->>>> ---
->>>>   drivers/pci/host/pci-tegra.c | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>>>
->>>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->>>> index 1987fec1f126..03d3dcdd06c2 100644
->>>> --- a/drivers/pci/host/pci-tegra.c
->>>> +++ b/drivers/pci/host/pci-tegra.c
->>>> @@ -1531,7 +1531,7 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
->>>>   	}
->>>>   	/* setup AFI/FPCI range */
->>>> -	msi->pages = __get_free_pages(GFP_KERNEL, 0);
->>>> +	msi->pages = __get_free_pages(GFP_DMA, 0);
->>>>   	msi->phys = virt_to_phys((void *)msi->pages);
->>> Should this be GFP_DMA32?  See the comment above the GFP_DMA
->>> definition.
->> looking at the comments for both GFP_DMA32 and GFP_DMA, I thought GFP_DMA32
->> is the correct one to use, but, even with that I got >32-bit addresses.
->> GFP_DMA always gives addresses in <4GB boundary (i.e. 32-bit).
->> I didn't dig into it to find out why is this the case.
-> This sounds worth looking into (but maybe we don't need the
-> __get_free_pages() at all; see below).  Maybe there's some underlying
-> bug.  My laptop shows this, which looks like it might be related:
+>>>> On 09/11/17 10:43, Guillaume Tucker wrote:
+>>>>
+>>>> ...
+>>>>
+>>>>> I actually built these kernel revisions with module support
+>>>>> disabled to speed up the builds, and no modules are being
+>>>>> downloaded in the LAVA job.
+>>>>>
+>>>>> If you have a public URL with your known working kernel zImage
+>>>>> and dtb, let me know so I could re-run the same test LAVA boot
+>>>>> test to see if I get the same results as you (i.e. no hang).
+>>>>
+>>>>
+>>>> I don't have a public URL for the zImage but I can definitely email it
+>>>> to you. By the way, when booting I am setting 'init=/bin/bash' so no
+>>>> start-up scripts are running.
+>>>
+>>>
+>>> Thanks, I tried your binary and it booted fine.  I built
+>>> next-20171109 again with and without loadable module support
+>>> enabled and it fails with it disabled but passes with it
+>>> enabled (even without actually loading any modules):
+>>>
+>>>   * with CONFIG_MODULES disabled (fails):
+>>>     https://lava.collabora.co.uk/scheduler/job/981215
+>>>
+>>>   * with plain multi_v7_defconfig and no modules loaded (passes):
+>>>     https://lava.collabora.co.uk/scheduler/job/981217
+>>>
+>>>
+>>> So I guess this means disabling loadable modules support has some
+>>> interesting side-effects that cause the kernel to crash.  I think
+>>> the kci builds all leave modules enabled with multi_v7_defconfig,
+>>> so the failing boots must be due to something else.  Taking
+>>> another look at the failing kci boots now...
+>>
+>> The one thing that comes to mind that happened recently with
+>> modules is
+>>
+>> 371435f78e9e ("kernel debug: support resetting WARN_ONCE for all architectures")
+>>
+>> Can you try reverting this? It's probably something else, but I'd like
+>> to rule it out.
 >
->    Zone ranges:
->      DMA      [mem 0x0000000000001000-0x0000000000ffffff]
->      DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
->      Normal   [mem 0x0000000100000000-0x00000004217fffff]
->      Device   empty
+> I have been able to reproduce the problem by disabling support for
+> loadable modules on both Tegra124 Nyan-Big and Jetson TK1. Disabling
+> DRM_NOUVEAU appears to avoid the problem.
 >
-> What does your machine show?
-I see following in my linux box
-  Zone ranges:
-    DMA      [mem 0x0000000000001000-0x0000000000ffffff]
-    DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
-    Normal   [mem 0x0000000100000000-0x000000106effffff]
-    Device   empty
+> Guillaume can you try the same?
 
-and following in my T210 Tegra platform
-Zone ranges:
-   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
-   Normal   [mem 0x0000000100000000-0x000000017fffffff]
+Alright, so here's all the results I got all based on
+next-20171109 and running on tegra124-nyan-big:
 
->
->>> Should we be using virt_to_phys() here?  Where exactly is the
->>> result ("msi->phys") used, i.e., what bus will that address appear
->>> on?  If it appears on the PCI side, this should probably use
->>> something like pcibios_resource_to_bus().
->> This address is written to two places.  First, into host's internal
->> register to let it know that when an incoming memory write comes
->> with this address, raise an MSI interrupt instead of forwarding it
->> to memory subsystem.  Second, into 'Message Address' field of
->> 'Message Address Register for MSI' register in end point's
->> configuration space (this is done by MSI framework) for end point to
->> know which address to be used to generate MSI interrupt.
-> Hmmm, ISTR some past discussion about this.  Here's a little: [1, 2].
-> And this commit [3] sounds like it describes a similar hardware
-> situation with Tegra where the host bridge intercepts the MSI target
-> address, so writes to it never reach system memory.  That means that
-> Tegra doesn't need to allocate system memory at all.
->
-> Is your system similar?  Can you just statically allocate a little bus
-> address space, use that for the MSI target address, and skip the
-> __get_free_pages()?
-It is the same system where MSI memory writes don't really make it to
-system memory. But, the addresses mentioned in that patch don't work.
-we are working with hardware folks on understanding the issue better.
-Meanwhile, using GFP_DMA is giving consistent results and thought this
-can be used as a stop gap solution before we figure out a better bus
-address to be used as MSI target address.
->>> Do rcar_pcie_enable_msi() and xilinx_pcie_enable_msi() have a
->>> similar problem?  They both use GFP_KERNEL, then virt_to_phys(),
->>> then write the result of virt_to_phys() using a 32-bit register
->>> write.
->> Well, if those systems deal with 64-bit addresses and when an end
->> point is connected which supports only 32-bit MSI addresses, this
->> problem will surface when __get_free_pages() returns an address that
->> translates to a >32-bit address after virt_to_phys() call on it.
-> I'd like to hear from the R-Car and Xilinx folks about (1) whether
-> there's a potential issue with truncating a 64-bit address, and
-> (2) whether that hardware works like Tegra, where the MSI write never
-> reaches memory so we don't actually need to allocate a page.
->
-> If all we need is to allocate a little bus address space for the MSI
-> target, I'd like to figure out a better way to do that than
-> __get_free_pages().  The current code seems a little buggy, and
-> it's getting propagated through several drivers.
->
->>>>   	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
-> [1] https://lkml.kernel.org/r/20170824134451.GA31858@bhelgaas-glaptop.roam.corp.google.com
-> [2] https://lkml.kernel.org/r/86efs3wesi.fsf@arm.com
-> [3] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=d7bd554f27c9
+   * plain multi_v7_defconfig, passes:
+     https://lava.collabora.co.uk/scheduler/job/981295
+
+   * CONFIG_MODULES disabled, fails:
+     https://lava.collabora.co.uk/scheduler/job/981342
+
+   * CONFIG_MODULES and CONFIG_DRM_NOUVEAU disabled, also fails:
+     https://lava.collabora.co.uk/scheduler/job/981343
+
+   * CONFIG_MODULES disabled and 371435f78 [0] reverted, also fails:
+     https://lava.collabora.co.uk/scheduler/job/981353
+
+
+What I could try to run next is a bisection with CONFIG_MODULES
+disabled between when the DRM branch got merged (so the first
+crash should be fixed) and next-20171109.
+
+
+Guillaume
+
+[0] "kernel debug: support resetting WARN_ONCE for all architectures"
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=371435f78e9e26519763411c2cd20975d2293efe
