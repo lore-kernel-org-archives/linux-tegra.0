@@ -1,8 +1,8 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
  untried/unknown (next-20171106)
-Date: Thu, 9 Nov 2017 09:55:36 +0000
-Message-ID: <7cdfa633-d9c6-881a-ae5f-f94f7e6413ee@nvidia.com>
+Date: Thu, 9 Nov 2017 10:43:31 +0000
+Message-ID: <5f064e65-ee29-179b-8102-984d12d24d9d@collabora.com>
 References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
  <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
  <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
@@ -11,65 +11,91 @@ References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
  <613bcd63-a215-acbe-9150-c1495f7604f6@collabora.com>
  <5740b853-4898-2ebc-f67d-0808d1b44c36@nvidia.com>
  <ab2ee0a8-6584-7436-ca1b-4f1b521279b0@collabora.com>
+ <7cdfa633-d9c6-881a-ae5f-f94f7e6413ee@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <ab2ee0a8-6584-7436-ca1b-4f1b521279b0@collabora.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Guillaume Tucker <guillaume.tucker@collabora.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, "kernelci.org bot" <bot@kernelci.org>, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <7cdfa633-d9c6-881a-ae5f-f94f7e6413ee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA4LzExLzE3IDE2OjQyLCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgo+IE9uIDA4LzExLzE3
-IDE1OjU3LCBKb24gSHVudGVyIHdyb3RlOgo+Pgo+PiBPbiAwOC8xMS8xNyAxNToxOSwgR3VpbGxh
-dW1lIFR1Y2tlciB3cm90ZToKPj4KPj4gLi4uCj4+Cj4+PiBBZnRlciBhIGZldyBtb3JlIGF1dG9t
-YXRlZCBiaXNlY3Rpb24gYXR0ZW1wdHMgYW5kIGEgYnVnIGZpeCBpbgo+Pj4gTEFWQSwgSSd2ZSBu
-b3cgZm91bmQgYXQgbGVhc3Qgb25lIHBvdGVudGlhbGx5IGJyZWFraW5nIGNvbW1pdDoKPj4+Cj4+
-PiDCoCBjb21taXQgZDg5ZTIzNzhhOTdmYWZkYzc0Y2JmOTk3ZTdjODhhZjc1YjgxNjEwYQo+Pj4g
-wqAgQXV0aG9yOiBSb2JpbiBNdXJwaHkgPHJvYmluLm11cnBoeUBhcm0uY29tPgo+Pj4gwqAgRGF0
-ZTrCoMKgIFRodSBPY3QgMTIgMTY6NTY6MTQgMjAxNyArMDEwMAo+Pj4KPj4+IMKgwqDCoMKgwqAg
-ZHJpdmVyczogZmxhZyBidXNlcyB3aGljaCBkZW1hbmQgRE1BIGNvbmZpZ3VyYXRpb24KPj4+Cj4+
-Pgo+Pj4gSSd2ZSBydW4gc29tZSBib290IHRlc3RzIG1hbnVhbGx5IHdpdGggdGhpcyByZXZpc2lv
-biBhbmQgdGhlbgo+Pj4gYWxzbyBhZnRlciByZXZlcnRpbmcgaXQgaW4tcGxhY2UsIHRoZXNlIHJl
-c3BlY3RpdmVseSBmYWlsZWQgYW5kCj4+PiBwYXNzZWQ6Cj4+Pgo+Pj4gwqAgKiBkODllMjM3OCwg
-ZmFpbGVkOgo+Pj4gwqDCoMKgIGh0dHBzOi8vbGF2YS5jb2xsYWJvcmEuY28udWsvc2NoZWR1bGVy
-L2pvYi85Nzg5NjgKPj4+Cj4+PiDCoCAqIGQ4OWUyMzc4IHJldmVydGVkLCBwYXNzZWQ6Cj4+PiDC
-oMKgwqAgaHR0cHM6Ly9sYXZhLmNvbGxhYm9yYS5jby51ay9zY2hlZHVsZXIvam9iLzk3ODk2OQo+
-Pj4KPj4+Cj4+PiBJIHRoZW4gd2VudCBvbiBhbmQgdHJpZWQgdGhlIHNhbWUgYnV0IG9uIHRvcCBv
-ZiBuZXh0LTIwMTcxMTA4IGFuZAo+Pj4gZm91bmQgdGhhdCB0aGV5IGJvdGggZmFpbGVkCj4+Pgo+
-Pj4gwqAgKiBuZXh0LTIwMTcxMTA4LCBmYWlsZWQ6Cj4+PiDCoMKgwqAgaHR0cHM6Ly9sYXZhLmNv
-bGxhYm9yYS5jby51ay9zY2hlZHVsZXIvam9iLzk3OTA2Mwo+Pj4KPj4+IMKgICogbmV4dC0yMDE3
-MTEwOCB3aXRoIGQ4OWUyMzc4IHJldmVydGVkLCBmYWlsZWQgYXMgd2VsbDoKPj4+IMKgwqDCoCBo
-dHRwczovL2xhdmEuY29sbGFib3JhLmNvLnVrL3NjaGVkdWxlci9qb2IvOTc5MTY3Cj4+Pgo+Pj4K
-Pj4+IFNvIHRoaXMgc2hvd3MgdGhlcmUgaXMgYWxtb3N0IGNlcnRhaW5seSBhbm90aGVyIG9mZmVu
-ZGluZyBjb21taXQKPj4+IGluIC1uZXh0LsKgIFRoZSBlcnJvcnMgaW4gYm90aCBjYXNlcyBhcmUg
-bm90IHF1aXRlIHRoZSBzYW1lLCB0aGUKPj4+IGxhc3Qgb25lIGlzIHRyaWdnZXJlZCBieSBhIEJV
-RyB3aGVyZWFzIHRoZSBmaXJzdCBvbmUgaXMgYSBOVUxMCj4+PiBwb2ludGVyIChJIGhhdmVuJ3Qg
-bG9va2VkIGFueSBmdXJ0aGVyKS7CoCBBbHNvIEkgZG9uJ3QgdGhpbmsKPj4+IHRoZXJlJ3MgYW55
-IGZpeCBmb3IgZDg5ZTIzNzhhOTdmYWZkYzc0Y2JmOTk3ZTdjODhhZjc1YjgxNjEwYQo+Pj4gd2hp
-Y2ggaXMgY3VycmVudGx5IHN0aWxsIGluIG5leHQuCj4+Cj4+IFRoaXMgY3Jhc2ggaXMgYSBrbm93
-biBpc3N1ZSBbMF0gYW5kIHdlIGhhdmUgYmVlbiBkaXNjdXNzaW5nIHRoaXMuIENhbgo+PiB5b3Ug
-dHJ5IGFwcGx5aW5nIFsxXT8KPiAKPiBTbyB3aXRoIG5leHQtMjAxNzExMDggKyBkODllMjM3OGE5
-IHJldmVydGVkICsgWzFdIGFwcGxpZWQ6Cj4gCj4gwqAgaHR0cHM6Ly9sYXZhLmNvbGxhYm9yYS5j
-by51ay9zY2hlZHVsZXIvam9iLzk3OTE3Mwo+IAo+IE5vIHZpc2libGUga2VybmVsIGNyYXNoIGlu
-IHRoZSBsb2cgYnV0IGl0IGhhbmdzLgo+IAo+IAo+IEkgYWxzbyB0cmllZCBuZXh0LTIwMTcxMTA4
-ICsgWzFdIGFwcGxpZWQgb25seToKPiAKPiDCoCBodHRwczovL2xhdmEuY29sbGFib3JhLmNvLnVr
-L3NjaGVkdWxlci9qb2IvOTc5MTc5Cj4gCj4gd2hpY2ggYWxzbyBhcHBlYXJzIHRvIGhhbmcuCgpU
-aGFua3MgZm9yIHRoZSB1cGRhdGUuIEkgYW0gd29uZGVyaW5nIGlmIGl0IGlzIG9uZSBvZiB0aGUg
-a2VybmVsIG1vZHVsZXMKdGhhdCBpcyBnZXR0aW5nIGxvYWRlZCBiZWNhdXNlIGJvb3RpbmcgbXVs
-dGlfdjdfZGVmY29uZmlnIGFuZCBsb2FkaW5nIG5vCm1vZHVsZXMgZG9lcyBub3QgaGFuZyBmb3Ig
-bWUuIEkgd2lsbCB0YWtlIGEgbG9vayBidXQgSSBtaWdodCBub3QgZ2V0IHRvCml0IHVudGlsIG5l
-eHQgd2Vlay4KCkNoZWVycwpKb24KCi0tIApudnB1YmxpYwoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QK
-bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
-YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+On 09/11/17 09:55, Jon Hunter wrote:
+>
+> On 08/11/17 16:42, Guillaume Tucker wrote:
+>> On 08/11/17 15:57, Jon Hunter wrote:
+>>>
+>>> On 08/11/17 15:19, Guillaume Tucker wrote:
+>>>
+>>> ...
+>>>
+>>>> After a few more automated bisection attempts and a bug fix in
+>>>> LAVA, I've now found at least one potentially breaking commit:
+>>>>
+>>>>   commit d89e2378a97fafdc74cbf997e7c88af75b81610a
+>>>>   Author: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+>>>>   Date:   Thu Oct 12 16:56:14 2017 +0100
+>>>>
+>>>>       drivers: flag buses which demand DMA configuration
+>>>>
+>>>>
+>>>> I've run some boot tests manually with this revision and then
+>>>> also after reverting it in-place, these respectively failed and
+>>>> passed:
+>>>>
+>>>>   * d89e2378, failed:
+>>>>     https://lava.collabora.co.uk/scheduler/job/978968
+>>>>
+>>>>   * d89e2378 reverted, passed:
+>>>>     https://lava.collabora.co.uk/scheduler/job/978969
+>>>>
+>>>>
+>>>> I then went on and tried the same but on top of next-20171108 and
+>>>> found that they both failed
+>>>>
+>>>>   * next-20171108, failed:
+>>>>     https://lava.collabora.co.uk/scheduler/job/979063
+>>>>
+>>>>   * next-20171108 with d89e2378 reverted, failed as well:
+>>>>     https://lava.collabora.co.uk/scheduler/job/979167
+>>>>
+>>>>
+>>>> So this shows there is almost certainly another offending commit
+>>>> in -next.  The errors in both cases are not quite the same, the
+>>>> last one is triggered by a BUG whereas the first one is a NULL
+>>>> pointer (I haven't looked any further).  Also I don't think
+>>>> there's any fix for d89e2378a97fafdc74cbf997e7c88af75b81610a
+>>>> which is currently still in next.
+>>>
+>>> This crash is a known issue [0] and we have been discussing this. Can
+>>> you try applying [1]?
+>>
+>> So with next-20171108 + d89e2378a9 reverted + [1] applied:
+>>
+>>   https://lava.collabora.co.uk/scheduler/job/979173
+>>
+>> No visible kernel crash in the log but it hangs.
+>>
+>>
+>> I also tried next-20171108 + [1] applied only:
+>>
+>>   https://lava.collabora.co.uk/scheduler/job/979179
+>>
+>> which also appears to hang.
+>
+> Thanks for the update. I am wondering if it is one of the kernel modules
+> that is getting loaded because booting multi_v7_defconfig and loading no
+> modules does not hang for me. I will take a look but I might not get to
+> it until next week.
+
+I actually built these kernel revisions with module support
+disabled to speed up the builds, and no modules are being
+downloaded in the LAVA job.
+
+If you have a public URL with your known working kernel zImage
+and dtb, let me know so I could re-run the same test LAVA boot
+test to see if I get the same results as you (i.e. no hang).
+
+Guillaume
