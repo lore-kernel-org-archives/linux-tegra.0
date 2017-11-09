@@ -1,8 +1,8 @@
-From: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+From: Jon Hunter <jonathanh@nvidia.com>
 Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
  untried/unknown (next-20171106)
-Date: Thu, 9 Nov 2017 19:03:14 +0000
-Message-ID: <bfed6e80-44a7-6e96-c6a6-bc9793a1937a@collabora.com>
+Date: Thu, 9 Nov 2017 21:45:07 +0000
+Message-ID: <2038e32a-de4a-a683-462e-555e991a2111@nvidia.com>
 References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
  <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
  <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
@@ -17,96 +17,49 @@ References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
  <1eb4e14f-4728-d4f7-95a6-0a6308760d7a@collabora.com>
  <CAK8P3a3iiSgutnHFU7PoLGQyObgyAreQOOtrDhjijoMU5wZ1Eg@mail.gmail.com>
  <18ef379f-0c23-0cbf-4228-30d5c46c690f@nvidia.com>
+ <bfed6e80-44a7-6e96-c6a6-bc9793a1937a@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <18ef379f-0c23-0cbf-4228-30d5c46c690f-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kernel Build Reports Mailman List <kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <bfed6e80-44a7-6e96-c6a6-bc9793a1937a@collabora.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Guillaume Tucker <guillaume.tucker@collabora.com>, Arnd Bergmann <arnd@arndb.de>, Robin Murphy <robin.murphy@arm.com>, bskeggs@redhat.com
+Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "kernelci.org bot" <bot@kernelci.org>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/11/17 15:23, Jon Hunter wrote:
->
-> On 09/11/17 13:17, Arnd Bergmann wrote:
->> On Thu, Nov 9, 2017 at 1:51 PM, Guillaume Tucker
->> <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
->>> On 09/11/17 11:29, Jon Hunter wrote:
->>>>
->>>>
->>>> On 09/11/17 10:43, Guillaume Tucker wrote:
->>>>
->>>> ...
->>>>
->>>>> I actually built these kernel revisions with module support
->>>>> disabled to speed up the builds, and no modules are being
->>>>> downloaded in the LAVA job.
->>>>>
->>>>> If you have a public URL with your known working kernel zImage
->>>>> and dtb, let me know so I could re-run the same test LAVA boot
->>>>> test to see if I get the same results as you (i.e. no hang).
->>>>
->>>>
->>>> I don't have a public URL for the zImage but I can definitely email it
->>>> to you. By the way, when booting I am setting 'init=/bin/bash' so no
->>>> start-up scripts are running.
->>>
->>>
->>> Thanks, I tried your binary and it booted fine.  I built
->>> next-20171109 again with and without loadable module support
->>> enabled and it fails with it disabled but passes with it
->>> enabled (even without actually loading any modules):
->>>
->>>   * with CONFIG_MODULES disabled (fails):
->>>     https://lava.collabora.co.uk/scheduler/job/981215
->>>
->>>   * with plain multi_v7_defconfig and no modules loaded (passes):
->>>     https://lava.collabora.co.uk/scheduler/job/981217
->>>
->>>
->>> So I guess this means disabling loadable modules support has some
->>> interesting side-effects that cause the kernel to crash.  I think
->>> the kci builds all leave modules enabled with multi_v7_defconfig,
->>> so the failing boots must be due to something else.  Taking
->>> another look at the failing kci boots now...
->>
->> The one thing that comes to mind that happened recently with
->> modules is
->>
->> 371435f78e9e ("kernel debug: support resetting WARN_ONCE for all architectures")
->>
->> Can you try reverting this? It's probably something else, but I'd like
->> to rule it out.
->
-> I have been able to reproduce the problem by disabling support for
-> loadable modules on both Tegra124 Nyan-Big and Jetson TK1. Disabling
-> DRM_NOUVEAU appears to avoid the problem.
->
-> Guillaume can you try the same?
-
-Alright, so here's all the results I got all based on
-next-20171109 and running on tegra124-nyan-big:
-
-   * plain multi_v7_defconfig, passes:
-     https://lava.collabora.co.uk/scheduler/job/981295
-
-   * CONFIG_MODULES disabled, fails:
-     https://lava.collabora.co.uk/scheduler/job/981342
-
-   * CONFIG_MODULES and CONFIG_DRM_NOUVEAU disabled, also fails:
-     https://lava.collabora.co.uk/scheduler/job/981343
-
-   * CONFIG_MODULES disabled and 371435f78 [0] reverted, also fails:
-     https://lava.collabora.co.uk/scheduler/job/981353
-
-
-What I could try to run next is a bisection with CONFIG_MODULES
-disabled between when the DRM branch got merged (so the first
-crash should be fixed) and next-20171109.
-
-
-Guillaume
-
-[0] "kernel debug: support resetting WARN_ONCE for all architectures"
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=371435f78e9e26519763411c2cd20975d2293efe
+Ck9uIDA5LzExLzE3IDE5OjAzLCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgouLi4KCj4gQWxyaWdo
+dCwgc28gaGVyZSdzIGFsbCB0aGUgcmVzdWx0cyBJIGdvdCBhbGwgYmFzZWQgb24KPiBuZXh0LTIw
+MTcxMTA5IGFuZCBydW5uaW5nIG9uIHRlZ3JhMTI0LW55YW4tYmlnOgo+IAo+IMKgICogcGxhaW4g
+bXVsdGlfdjdfZGVmY29uZmlnLCBwYXNzZXM6Cj4gwqDCoMKgIGh0dHBzOi8vbGF2YS5jb2xsYWJv
+cmEuY28udWsvc2NoZWR1bGVyL2pvYi85ODEyOTUKPiAKPiDCoCAqIENPTkZJR19NT0RVTEVTIGRp
+c2FibGVkLCBmYWlsczoKPiDCoMKgwqAgaHR0cHM6Ly9sYXZhLmNvbGxhYm9yYS5jby51ay9zY2hl
+ZHVsZXIvam9iLzk4MTM0Mgo+IAo+IMKgICogQ09ORklHX01PRFVMRVMgYW5kIENPTkZJR19EUk1f
+Tk9VVkVBVSBkaXNhYmxlZCwgYWxzbyBmYWlsczoKPiDCoMKgwqAgaHR0cHM6Ly9sYXZhLmNvbGxh
+Ym9yYS5jby51ay9zY2hlZHVsZXIvam9iLzk4MTM0MwoKVGhpcyBpcyB0aGUgY3Jhc2ggaW4gdGhl
+IEVDIGRyaXZlciB0aGF0IEkgbWVudGlvbmVkIGJlZm9yZS4gWW91IG5lZWQgdG8KYWRkIHRoZSBm
+aXggZm9yIHRoZSBFQyBkcml2ZXIgdG8gYXZvaWQgdGhpcyBCVUdfT04uCgpJIHdhcyBhYmxlIHRv
+IGJpc2VjdCB0aGlzIG1hbnVhbGx5IGRhbmNpbmcgYXJvdW5kIHRoZSB2YXJpb3VzIGJ1Z3MgYW5k
+Cml0IHBvaW50cyB0byB0aGlzIGNvbW1pdCAuLi4KCmNvbW1pdCA3MzEzY2ZhNGY2ZTMwMzg0ZmEw
+NDA4MzY5OGQxZTg2NWNmODEyYTZhCkF1dGhvcjogQmVuIFNrZWdncyA8YnNrZWdnc0ByZWRoYXQu
+Y29tPgpEYXRlOiAgIFdlZCBOb3YgMSAwMzo1NjoxOSAyMDE3ICsxMDAwCgogICAgZHJtL25vdXZl
+YXUvYmFyOiBtb3ZlIGJhcjEgaW5pdGlhbGlzYXRpb24gaW50byBpdHMgb3duIGZ1bmN0aW9uCgoK
+VW5mb3J0dW5hdGVseSwgSSBjYW5ub3QgcmV2ZXJ0IGNsZWFubHkgb24gdG9wIG9mIG5leHQtMjAx
+NzExMDkgYW5kIHNvIEkKY2Fubm90IGNvbmZpcm0uCgpCZW4sIHdlIGFyZSBzZWVpbmcgYSBoYW5n
+IG9uIFRlZ3JhIHdoZW4gYm9vdGluZyB3aXRoIENPTkZJR19EUk1fTk9VVkVBVQplbmFibGVkLiBB
+cGFydCBmcm9tIHRoZSBhYm92ZSBiaXNlY3QgcmVzdWx0LCBJIGRvbid0IGhhdmUgbXVjaCBlbHNl
+IHRvCmdvIG9uIGF0IHRoZSBtb21lbnQuIExldCBtZSBrbm93IGlmIHlvdSBoYXZlIGFueSB0aG91
+Z2h0cyBvciBhbnl0aGluZyB0bwp0ZXN0LgoKQ2hlZXJzCkpvbgoKLS0gCm52cHVibGljCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2Vy
+bmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
+cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVs
+Cg==
