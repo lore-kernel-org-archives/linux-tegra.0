@@ -1,97 +1,150 @@
-From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm64: mm: Set MAX_PHYSMEM_BITS based on ARM64_VA_BITS
-Date: Thu, 9 Nov 2017 14:58:59 -0800
-Message-ID: <1510268339-21989-1-git-send-email-vdumpa@nvidia.com>
+From: subrahmanya_lingappa <l.subrahmanya-DTHOJn6Rh8lhmhkoCovsdw@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
+Date: Fri, 10 Nov 2017 06:17:16 +0530
+Message-ID: <1686e861-79ac-75eb-b905-769253c6f79e@mobiveil.co.in>
+References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
+ <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
+ <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com>
+ <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
+Reply-To: l.subrahmanya-DTHOJn6Rh8lhmhkoCovsdw@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171109181435.GB7629-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, jglisse-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-MAX_PHYSMEM_BITS greater than ARM64_VA_BITS is causing memory
-access fault, when HMM_DMIRROR test is enabled.
-In the failing case, ARM64_VA_BITS=39 and MAX_PHYSMEM_BITS=48.
-HMM_DMIRROR test selects phys memory range from end based on
-MAX_PHYSMEM_BITS and gets mapped into VA space linearly.
-As VA space is 39-bit and phys space is 48-bit, this has caused
-incorrect mapping and leads to memory access fault.
+Bjorn,
 
-Limiting the MAX_PHYSMEM_BITS to ARM64_VA_BITS fixes the issue and is
-the right thing instead of hard coding it as 48-bit always.
+On 11/9/2017 11:44 PM, Bjorn Helgaas wrote:
+> [+cc Lorenzo]
+>
+> On Thu, Nov 09, 2017 at 12:48:14PM +0530, Vidya Sagar wrote:
+>> On Thursday 09 November 2017 02:55 AM, Bjorn Helgaas wrote:
+>>> On Mon, Nov 06, 2017 at 11:33:07PM +0530, Vidya Sagar wrote:
+>>>> limits MSI target address to only 32-bit region to enable
+>>>> some of the PCIe end points where only 32-bit MSIs
+>>>> are supported work properly.
+>>>> One example being Marvel SATA controller
+>>>>
+>>>> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>> ---
+>>>>  drivers/pci/host/pci-tegra.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+>>>> index 1987fec1f126..03d3dcdd06c2 100644
+>>>> --- a/drivers/pci/host/pci-tegra.c
+>>>> +++ b/drivers/pci/host/pci-tegra.c
+>>>> @@ -1531,7 +1531,7 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+>>>>  	}
+>>>>  	/* setup AFI/FPCI range */
+>>>> -	msi->pages = __get_free_pages(GFP_KERNEL, 0);
+>>>> +	msi->pages = __get_free_pages(GFP_DMA, 0);
+>>>>  	msi->phys = virt_to_phys((void *)msi->pages);
+>>
+>>> Should this be GFP_DMA32?  See the comment above the GFP_DMA
+>>> definition.
+>>
+>> looking at the comments for both GFP_DMA32 and GFP_DMA, I thought GFP_DMA32
+>> is the correct one to use, but, even with that I got >32-bit addresses.
+>> GFP_DMA always gives addresses in <4GB boundary (i.e. 32-bit).
+>> I didn't dig into it to find out why is this the case.
+>
+> This sounds worth looking into (but maybe we don't need the
+> __get_free_pages() at all; see below).  Maybe there's some underlying
+> bug.  My laptop shows this, which looks like it might be related:
+>
+>   Zone ranges:
+>     DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+>     DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+>     Normal   [mem 0x0000000100000000-0x00000004217fffff]
+>     Device   empty
+>
+> What does your machine show?
+>
+>>> Should we be using virt_to_phys() here?  Where exactly is the
+>>> result ("msi->phys") used, i.e., what bus will that address appear
+>>> on?  If it appears on the PCI side, this should probably use
+>>> something like pcibios_resource_to_bus().
+>>
+>> This address is written to two places.  First, into host's internal
+>> register to let it know that when an incoming memory write comes
+>> with this address, raise an MSI interrupt instead of forwarding it
+>> to memory subsystem.  Second, into 'Message Address' field of
+>> 'Message Address Register for MSI' register in end point's
+>> configuration space (this is done by MSI framework) for end point to
+>> know which address to be used to generate MSI interrupt.
+>
+> Hmmm, ISTR some past discussion about this.  Here's a little: [1, 2].
+> And this commit [3] sounds like it describes a similar hardware
+> situation with Tegra where the host bridge intercepts the MSI target
+> address, so writes to it never reach system memory.  That means that
+> Tegra doesn't need to allocate system memory at all.
+>
+> Is your system similar?  Can you just statically allocate a little bus
+> address space, use that for the MSI target address, and skip the
+> __get_free_pages()?
+>
+>>> Do rcar_pcie_enable_msi() and xilinx_pcie_enable_msi() have a
+>>> similar problem?  They both use GFP_KERNEL, then virt_to_phys(),
+>>> then write the result of virt_to_phys() using a 32-bit register
+>>> write.
+>>
+>> Well, if those systems deal with 64-bit addresses and when an end
+>> point is connected which supports only 32-bit MSI addresses, this
+>> problem will surface when __get_free_pages() returns an address that
+>> translates to a >32-bit address after virt_to_phys() call on it.
+>
+> I'd like to hear from the R-Car and Xilinx folks about (1) whether
+> there's a potential issue with truncating a 64-bit address, and
+> (2) whether that hardware works like Tegra, where the MSI write never
+> reaches memory so we don't actually need to allocate a page.
+>
 
-[    3.378655] Unable to handle kernel paging request at virtual address 3befd000000
-[    3.378662] pgd = ffffff800a04b000
-[    3.378900] [3befd000000] *pgd=0000000081fa3003, *pud=0000000081fa3003, *pmd=0060000268200711
-[    3.378933] Internal error: Oops: 96000044 [#1] PREEMPT SMP
-[    3.378938] Modules linked in:
-[    3.378948] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.9.52-tegra-g91402fdc013b-dirty #51
-[    3.378950] Hardware name: quill (DT)
-[    3.378954] task: ffffffc1ebac0000 task.stack: ffffffc1eba64000
-[    3.378967] PC is at __memset+0x1ac/0x1d0
-[    3.378976] LR is at sparse_add_one_section+0xf8/0x174
-[    3.378981] pc : [<ffffff80084c212c>] lr : [<ffffff8008eda17c>] pstate: 404000c5
-[    3.378983] sp : ffffffc1eba67a40
-[    3.378993] x29: ffffffc1eba67a40 x28: 0000000000000000
-[    3.378999] x27: 000000000003ffff x26: 0000000000000040
-[    3.379005] x25: 00000000000003ff x24: ffffffc1e9f6cf80
-[    3.379010] x23: ffffff8009ecb2d4 x22: 000003befd000000
-[    3.379015] x21: ffffffc1e9923ff0 x20: 000000000003ffff
-[    3.379020] x19: 00000000ffffffef x18: ffffffffffffffff
-[    3.379025] x17: 00000000000024d7 x16: 0000000000000000
-[    3.379030] x15: ffffff8009cd8690 x14: ffffffc1e9f6c70c
-[    3.379035] x13: ffffffc1e9f6c70b x12: 0000000000000030
-[    3.379039] x11: 0000000000000040 x10: 0101010101010101
-[    3.379044] x9 : 0000000000000000 x8 : 000003befd000000
-[    3.379049] x7 : 0000000000000000 x6 : 000000000000003f
-[    3.379053] x5 : 0000000000000040 x4 : 0000000000000000
-[    3.379058] x3 : 0000000000000004 x2 : 0000000000ffffc0
-[    3.379063] x1 : 0000000000000000 x0 : 000003befd000000
-[    3.379064]
-[    3.379069] Process swapper/0 (pid: 1, stack limit = 0xffffffc1eba64028)
-[    3.379071] Call trace:
-[    3.379079] [<ffffff80084c212c>] __memset+0x1ac/0x1d0
-[    3.379085] [<ffffff8008ed5100>] __add_pages+0x130/0x2e0
-[    3.379093] [<ffffff8008211cf4>] hmm_devmem_pages_create+0x20c/0x310
-[    3.379100] [<ffffff8008211fcc>] hmm_devmem_add+0x1d4/0x270
-[    3.379128] [<ffffff80087111c8>] dmirror_probe+0x50/0x158
-[    3.379137] [<ffffff8008732590>] platform_drv_probe+0x60/0xc8
-[    3.379143] [<ffffff800872fbf4>] driver_probe_device+0x26c/0x420
-[    3.379149] [<ffffff800872fecc>] __driver_attach+0x124/0x128
-[    3.379155] [<ffffff800872d388>] bus_for_each_dev+0x88/0xe8
-[    3.379166] [<ffffff800872f248>] driver_attach+0x30/0x40
-[    3.379171] [<ffffff800872ec18>] bus_add_driver+0x1f8/0x2b0
-[    3.379177] [<ffffff8008730e38>] driver_register+0x68/0x100
-[    3.379183] [<ffffff80087324d4>] __platform_driver_register+0x5c/0x68
-[    3.379192] [<ffffff800951f918>] hmm_dmirror_init+0x88/0xc4
-[    3.379200] [<ffffff800808359c>] do_one_initcall+0x5c/0x170
-[    3.379208] [<ffffff80094e0dd0>] kernel_init_freeable+0x1b8/0x258
-[    3.379231] [<ffffff8008ed44f0>] kernel_init+0x18/0x108
-[    3.379236] [<ffffff80080832d0>] ret_from_fork+0x10/0x40
-[    3.379246] ---[ end trace 578db63bb139b8b8 ]---
+it is so, at least drivers/pci/host/pcie-xilinx.c driver, MSI data is 
+never read from the msi_pages physical
+memory allocated, data is always intercepted, caught and fed from one of 
+the HW FIFO register XILINX_PCIE_REG_RPIFR2. Here too __get_free_pages 
+was used to allocate msi_pages just to get a real memory address to 
+program in the MSI address in PCIe endpoints config register.
 
-Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/include/asm/sparsemem.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+MSI handling code from pcie-xilinx.c
 
-diff --git a/arch/arm64/include/asm/sparsemem.h b/arch/arm64/include/asm/sparsemem.h
-index 74a9d301819f..19ecd0b0f3a3 100644
---- a/arch/arm64/include/asm/sparsemem.h
-+++ b/arch/arm64/include/asm/sparsemem.h
-@@ -17,7 +17,13 @@
- #define __ASM_SPARSEMEM_H
- 
- #ifdef CONFIG_SPARSEMEM
-+
-+#ifdef CONFIG_ARM64_VA_BITS
-+#define MAX_PHYSMEM_BITS	CONFIG_ARM64_VA_BITS
-+#else
- #define MAX_PHYSMEM_BITS	48
-+#endif
-+
- #define SECTION_SIZE_BITS	30
- #endif
- 
--- 
-2.1.4
+	if (status & (XILINX_PCIE_INTR_INTX | XILINX_PCIE_INTR_MSI)) {
+		.
+		.
+
+		/* Decode the IRQ number */
+		if (val & XILINX_PCIE_RPIFR1_MSI_INTR) {
+			val = pcie_read(port, XILINX_PCIE_REG_RPIFR2) &
+				XILINX_PCIE_RPIFR2_MSG_DATA;
+		} else {
+			val = (val & XILINX_PCIE_RPIFR1_INTR_MASK) >>
+				XILINX_PCIE_RPIFR1_INTR_SHIFT;
+			val = irq_find_mapping(port->leg_domain, val);
+		}
+		
+		.
+		.
+		
+		/* Handle the interrupt */
+		if (IS_ENABLED(CONFIG_PCI_MSI) ||
+		    !(val & XILINX_PCIE_RPIFR1_MSI_INTR))
+			generic_handle_irq(val);
+	}
+
+> If all we need is to allocate a little bus address space for the MSI
+> target, I'd like to figure out a better way to do that than
+> __get_free_pages().  The current code seems a little buggy, and
+> it's getting propagated through several drivers.
+>
+>>>>  	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
+>
+> [1] https://lkml.kernel.org/r/20170824134451.GA31858-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org
+> [2] https://lkml.kernel.org/r/86efs3wesi.fsf-5wv7dgnIgG8@public.gmane.org
+> [3] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=d7bd554f27c9
+>
