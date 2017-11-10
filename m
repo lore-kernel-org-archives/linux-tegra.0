@@ -1,206 +1,110 @@
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
-Date: Fri, 10 Nov 2017 14:07:05 +0100
-Message-ID: <20171110130704.GA31316@ulmo>
-References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
- <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
- <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com>
- <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
- <20171110112201.GA25235@red-moon>
- <3887d62c-98bb-04d5-5b40-96d5b7b43e63@arm.com>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] arm64: mm: Set MAX_PHYSMEM_BITS based on ARM64_VA_BITS
+Date: Fri, 10 Nov 2017 15:11:15 +0000
+Message-ID: <9ff1d720-7137-4a9a-7934-1d01ea2ef208@arm.com>
+References: <1510268339-21989-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3887d62c-98bb-04d5-5b40-96d5b7b43e63-5wv7dgnIgG8@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <1510268339-21989-1-git-send-email-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>
+To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, jglisse-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/11/17 22:58, Krishna Reddy wrote:
+> MAX_PHYSMEM_BITS greater than ARM64_VA_BITS is causing memory
+> access fault, when HMM_DMIRROR test is enabled.
+> In the failing case, ARM64_VA_BITS=39 and MAX_PHYSMEM_BITS=48.
+> HMM_DMIRROR test selects phys memory range from end based on
+> MAX_PHYSMEM_BITS and gets mapped into VA space linearly.
+> As VA space is 39-bit and phys space is 48-bit, this has caused
+> incorrect mapping and leads to memory access fault.
+> 
+> Limiting the MAX_PHYSMEM_BITS to ARM64_VA_BITS fixes the issue and is
+> the right thing instead of hard coding it as 48-bit always.
+> 
+> [    3.378655] Unable to handle kernel paging request at virtual address 3befd000000
+> [    3.378662] pgd = ffffff800a04b000
+> [    3.378900] [3befd000000] *pgd=0000000081fa3003, *pud=0000000081fa3003, *pmd=0060000268200711
+> [    3.378933] Internal error: Oops: 96000044 [#1] PREEMPT SMP
+> [    3.378938] Modules linked in:
+> [    3.378948] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.9.52-tegra-g91402fdc013b-dirty #51
+> [    3.378950] Hardware name: quill (DT)
+> [    3.378954] task: ffffffc1ebac0000 task.stack: ffffffc1eba64000
+> [    3.378967] PC is at __memset+0x1ac/0x1d0
+> [    3.378976] LR is at sparse_add_one_section+0xf8/0x174
+> [    3.378981] pc : [<ffffff80084c212c>] lr : [<ffffff8008eda17c>] pstate: 404000c5
+> [    3.378983] sp : ffffffc1eba67a40
+> [    3.378993] x29: ffffffc1eba67a40 x28: 0000000000000000
+> [    3.378999] x27: 000000000003ffff x26: 0000000000000040
+> [    3.379005] x25: 00000000000003ff x24: ffffffc1e9f6cf80
+> [    3.379010] x23: ffffff8009ecb2d4 x22: 000003befd000000
+> [    3.379015] x21: ffffffc1e9923ff0 x20: 000000000003ffff
+> [    3.379020] x19: 00000000ffffffef x18: ffffffffffffffff
+> [    3.379025] x17: 00000000000024d7 x16: 0000000000000000
+> [    3.379030] x15: ffffff8009cd8690 x14: ffffffc1e9f6c70c
+> [    3.379035] x13: ffffffc1e9f6c70b x12: 0000000000000030
+> [    3.379039] x11: 0000000000000040 x10: 0101010101010101
+> [    3.379044] x9 : 0000000000000000 x8 : 000003befd000000
+> [    3.379049] x7 : 0000000000000000 x6 : 000000000000003f
+> [    3.379053] x5 : 0000000000000040 x4 : 0000000000000000
+> [    3.379058] x3 : 0000000000000004 x2 : 0000000000ffffc0
+> [    3.379063] x1 : 0000000000000000 x0 : 000003befd000000
+> [    3.379064]
+> [    3.379069] Process swapper/0 (pid: 1, stack limit = 0xffffffc1eba64028)
+> [    3.379071] Call trace:
+> [    3.379079] [<ffffff80084c212c>] __memset+0x1ac/0x1d0
 
-On Fri, Nov 10, 2017 at 12:04:21PM +0000, Robin Murphy wrote:
-> On 10/11/17 11:22, Lorenzo Pieralisi wrote:
-> > [+Robin]
-> >=20
-> > On Thu, Nov 09, 2017 at 12:14:35PM -0600, Bjorn Helgaas wrote:
-> > > [+cc Lorenzo]
-> > >=20
-> > > On Thu, Nov 09, 2017 at 12:48:14PM +0530, Vidya Sagar wrote:
-> > > > On Thursday 09 November 2017 02:55 AM, Bjorn Helgaas wrote:
-> > > > > On Mon, Nov 06, 2017 at 11:33:07PM +0530, Vidya Sagar wrote:
-> > > > > > limits MSI target address to only 32-bit region to enable
-> > > > > > some of the PCIe end points where only 32-bit MSIs
-> > > > > > are supported work properly.
-> > > > > > One example being Marvel SATA controller
-> > > > > >=20
-> > > > > > Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > > > ---
-> > > > > >   drivers/pci/host/pci-tegra.c | 2 +-
-> > > > > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > >=20
-> > > > > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pc=
-i-tegra.c
-> > > > > > index 1987fec1f126..03d3dcdd06c2 100644
-> > > > > > --- a/drivers/pci/host/pci-tegra.c
-> > > > > > +++ b/drivers/pci/host/pci-tegra.c
-> > > > > > @@ -1531,7 +1531,7 @@ static int tegra_pcie_enable_msi(struct t=
-egra_pcie *pcie)
-> > > > > >   	}
-> > > > > >   	/* setup AFI/FPCI range */
-> > > > > > -	msi->pages =3D __get_free_pages(GFP_KERNEL, 0);
-> > > > > > +	msi->pages =3D __get_free_pages(GFP_DMA, 0);
-> > > > > >   	msi->phys =3D virt_to_phys((void *)msi->pages);
-> > > >=20
-> > > > > Should this be GFP_DMA32?  See the comment above the GFP_DMA
-> > > > > definition.
-> > > >=20
-> > > > looking at the comments for both GFP_DMA32 and GFP_DMA, I thought G=
-FP_DMA32
-> > > > is the correct one to use, but, even with that I got >32-bit addres=
-ses.
-> > > > GFP_DMA always gives addresses in <4GB boundary (i.e. 32-bit).
-> > > > I didn't dig into it to find out why is this the case.
-> > >=20
-> > > This sounds worth looking into (but maybe we don't need the
-> > > __get_free_pages() at all; see below).  Maybe there's some underlying
-> > > bug.  My laptop shows this, which looks like it might be related:
-> > >=20
-> > >    Zone ranges:
-> > >      DMA      [mem 0x0000000000001000-0x0000000000ffffff]
-> > >      DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
-> > >      Normal   [mem 0x0000000100000000-0x00000004217fffff]
-> > >      Device   empty
-> > >=20
-> > > What does your machine show?
->=20
-> The great thing about ZONE_DMA is that it has completely different meanin=
-gs
-> per platform. ZONE_DMA32 is even worse as it's more or less just an x86
-> thing, and isn't implemented (thus does nothing) on most other
-> architectures, including ARM/arm64 where Tegra is relevant.
->=20
-> Fun.
->=20
-> > > > > Should we be using virt_to_phys() here?  Where exactly is the
-> > > > > result ("msi->phys") used, i.e., what bus will that address appear
-> > > > > on?  If it appears on the PCI side, this should probably use
-> > > > > something like pcibios_resource_to_bus().
-> >=20
-> > I had a quick chat with Robin (CC'ed, who has dealt/is dealing with most
-> > of the work this thread relates to) and I think that as things stand,
-> > for MSI physical addresses, an offset between PCI->host address shift is
-> > not really contemplated (ie 1:1 host<->pci is assumed).
->=20
-> I think the most correct way to generate an address would actually be via
-> the DMA mapping API (i.e. dma_map_page() with the host bridge's PCI devic=
-e),
-> which would take any relevant offsets into account. It's a bit funky, but
-> there's some method in the madness.
->=20
-> > > > This address is written to two places.  First, into host's internal
-> > > > register to let it know that when an incoming memory write comes
-> > > > with this address, raise an MSI interrupt instead of forwarding it
-> > > > to memory subsystem.  Second, into 'Message Address' field of
-> > > > 'Message Address Register for MSI' register in end point's
-> > > > configuration space (this is done by MSI framework) for end point to
-> > > > know which address to be used to generate MSI interrupt.
-> > >=20
-> > > Hmmm, ISTR some past discussion about this.  Here's a little: [1, 2].
-> > > And this commit [3] sounds like it describes a similar hardware
-> > > situation with Tegra where the host bridge intercepts the MSI target
-> > > address, so writes to it never reach system memory.  That means that
-> > > Tegra doesn't need to allocate system memory at all.
-> > >=20
-> > > Is your system similar?  Can you just statically allocate a little bus
-> > > address space, use that for the MSI target address, and skip the
-> > > __get_free_pages()?
-> >=20
-> > IIUC, all these host bridges need is a physical address that is routed
-> > upstream to the host bridge by the PCIe tree (ie it is not part of the
-> > host bridge windows), as long as the host bridge intercepts it (and
-> > endpoints do _not_ reuse it for something else) that should be fine, as
-> > it has been pointed out in this thread, allocating a page is a solution
-> > - there may be others (which are likely to be platform specific).
-> >=20
-> > > > > Do rcar_pcie_enable_msi() and xilinx_pcie_enable_msi() have a
-> > > > > similar problem?  They both use GFP_KERNEL, then virt_to_phys(),
-> > > > > then write the result of virt_to_phys() using a 32-bit register
-> > > > > write.
-> > > >=20
-> > > > Well, if those systems deal with 64-bit addresses and when an end
-> > > > point is connected which supports only 32-bit MSI addresses, this
-> > > > problem will surface when __get_free_pages() returns an address that
-> > > > translates to a >32-bit address after virt_to_phys() call on it.
-> > >=20
-> > > I'd like to hear from the R-Car and Xilinx folks about (1) whether
-> > > there's a potential issue with truncating a 64-bit address, and
-> > > (2) whether that hardware works like Tegra, where the MSI write never
-> > > reaches memory so we don't actually need to allocate a page.
-> > >=20
-> > > If all we need is to allocate a little bus address space for the MSI
-> > > target, I'd like to figure out a better way to do that than
-> > > __get_free_pages().  The current code seems a little buggy, and
-> > > it's getting propagated through several drivers.
->=20
-> The really neat version is to take a known non-memory physical address li=
-ke
-> the host controller's own MMIO region, which has no legitimate reason to
-> ever be used as a DMA address. pcie-mediatek almost gets this right, but =
-by
-> using virt_to_phys() on an ioremapped address they end up with nonsense
-> rather than the correct address (although realistically you would have to=
- be
-> extremely unlucky for said nonsense to collide with a real DMA address gi=
-ven
-> to a PCI endpoint later). Following on from above, dma_map_resource() wou=
-ld
-> be the foolproof way to get that right.
+What's the deal with this memset? AFAICS we're in __add_pages() from 
+hmm_devmem_pages_create() calling add_pages() for private memory which 
+it does not expect to be in the linear map anyway :/
 
-Yes, that was our intention as well. Our initial plan was to use an
-address from the PCI aperture within Tegra that wasn't being used for
-any other purpose. However, we ran into some odd corner cases where this
-wasn't working as expected. As a temporary solution we wanted to move to
-GFP_DMA32 (or GFP_DMA) in order to support 32-bit only MSI endpoints.
+There appears to be a more fundamental problem being papered over here.
 
-Eventually we'll want to get rid of the allocation altogether, we just
-need to find a set of values that work reliably. In the meantime, it
-looks as though GFP_DMA would be the right solution as long as we have
-to stick with __get_free_pages().
+Robin.
 
-Alternatively, since we've already verified that the MSI writes are
-never committed to memory, we could choose some random address pointing
-to system memory as well, but I'm reluctant to do that because it could
-end up being confusing for users (and developers) to see some random
-address showing up somewhere. A physical address such as the beginning
-of system memory should always work and might be unique enough to
-indicate that it is special.
-
-Thierry
-
---82I3+IH0IqGh5yIs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloFpHYACgkQ3SOs138+
-s6E0lQ//eBrr/YR8xVrk7uujpFWccXlrqDVvP+7NP3bmM5BPJcqUXixtmOtEzbjj
-FZSMbuKFq9f26zbNWuPASRYDYjCBDC7VYwJYz7K+caO7GwGUg7VZ3slz7pU8rQp6
-39WPpbKxAsb2DbHUDrnVkwe94k/bDtHvZq8l856YkoQ7T4nfYr5ExYvXgZ/b2DB8
-v/SEvAhcQ8p9xg3+azro+b+gRTR/2xpJz2xkBMyLqfrneETQdODz4UBCMnQze5Xq
-IfYfZdMYLwk3bGxsG5vYMsiHUniPTGu8oKZsdlhlULWuRe14PhB76ucE+Ty0xRFQ
-0SZM+cHjFA4xpRgzo8Zp0bI264ey1gQmciPb6jezQDyvYk1JRTswYGvUGMKktSju
-cLFFWggB9R9fR7Nip6R0EM/wlUb5hJst2IKbjL+qvbU/e60xpZxhvm0QDvhr0ois
-eJJpIbHoBS6vWlqiVtU0zpWQyJyKcIFHgfXrq2V6RjMHE1TJVbqUpXeXdRix83c4
-k2yqQcILUD6DpI66Y8kU0k9/P4wBKd0tPRvouZgLw9X8BekNyuvO9Fy5bq82NxU7
-snUxXVtpiDuzxdv3tO3sLTh9QUDBOHN4hsOnsDUr2V53KT1QzdGwWaJ8sOcOxWzw
-XPhrEFOtVwYEa4rZeIZI8LkSvzkDU9pX6k2IzL5xIIWC2wDJ1O8=
-=RSqs
------END PGP SIGNATURE-----
-
---82I3+IH0IqGh5yIs--
+> [    3.379085] [<ffffff8008ed5100>] __add_pages+0x130/0x2e0
+> [    3.379093] [<ffffff8008211cf4>] hmm_devmem_pages_create+0x20c/0x310
+> [    3.379100] [<ffffff8008211fcc>] hmm_devmem_add+0x1d4/0x270
+> [    3.379128] [<ffffff80087111c8>] dmirror_probe+0x50/0x158
+> [    3.379137] [<ffffff8008732590>] platform_drv_probe+0x60/0xc8
+> [    3.379143] [<ffffff800872fbf4>] driver_probe_device+0x26c/0x420
+> [    3.379149] [<ffffff800872fecc>] __driver_attach+0x124/0x128
+> [    3.379155] [<ffffff800872d388>] bus_for_each_dev+0x88/0xe8
+> [    3.379166] [<ffffff800872f248>] driver_attach+0x30/0x40
+> [    3.379171] [<ffffff800872ec18>] bus_add_driver+0x1f8/0x2b0
+> [    3.379177] [<ffffff8008730e38>] driver_register+0x68/0x100
+> [    3.379183] [<ffffff80087324d4>] __platform_driver_register+0x5c/0x68
+> [    3.379192] [<ffffff800951f918>] hmm_dmirror_init+0x88/0xc4
+> [    3.379200] [<ffffff800808359c>] do_one_initcall+0x5c/0x170
+> [    3.379208] [<ffffff80094e0dd0>] kernel_init_freeable+0x1b8/0x258
+> [    3.379231] [<ffffff8008ed44f0>] kernel_init+0x18/0x108
+> [    3.379236] [<ffffff80080832d0>] ret_from_fork+0x10/0x40
+> [    3.379246] ---[ end trace 578db63bb139b8b8 ]---
+> 
+> Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   arch/arm64/include/asm/sparsemem.h | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/sparsemem.h b/arch/arm64/include/asm/sparsemem.h
+> index 74a9d301819f..19ecd0b0f3a3 100644
+> --- a/arch/arm64/include/asm/sparsemem.h
+> +++ b/arch/arm64/include/asm/sparsemem.h
+> @@ -17,7 +17,13 @@
+>   #define __ASM_SPARSEMEM_H
+>   
+>   #ifdef CONFIG_SPARSEMEM
+> +
+> +#ifdef CONFIG_ARM64_VA_BITS
+> +#define MAX_PHYSMEM_BITS	CONFIG_ARM64_VA_BITS
+> +#else
+>   #define MAX_PHYSMEM_BITS	48
+> +#endif
+> +
+>   #define SECTION_SIZE_BITS	30
+>   #endif
+>   
+> 
