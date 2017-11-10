@@ -1,132 +1,96 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
-Date: Fri, 10 Nov 2017 11:22:01 +0000
-Message-ID: <20171110112201.GA25235@red-moon>
-References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
- <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
- <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com>
- <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
+ untried/unknown (next-20171106)
+Date: Fri, 10 Nov 2017 11:26:28 +0000
+Message-ID: <5321abfb-845b-354e-f3d9-7773cfe175f4@nvidia.com>
+References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
+ <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
+ <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
+ <20171107105501.7x74gdqzhr7uulp2@sirena.org.uk>
+ <a384e96c-27c7-782b-75b9-7525714f5831@collabora.com>
+ <613bcd63-a215-acbe-9150-c1495f7604f6@collabora.com>
+ <5740b853-4898-2ebc-f67d-0808d1b44c36@nvidia.com>
+ <ab2ee0a8-6584-7436-ca1b-4f1b521279b0@collabora.com>
+ <7cdfa633-d9c6-881a-ae5f-f94f7e6413ee@nvidia.com>
+ <5f064e65-ee29-179b-8102-984d12d24d9d@collabora.com>
+ <15792a16-6b57-a6ad-92dc-0ffaba0354db@nvidia.com>
+ <1eb4e14f-4728-d4f7-95a6-0a6308760d7a@collabora.com>
+ <CAK8P3a3iiSgutnHFU7PoLGQyObgyAreQOOtrDhjijoMU5wZ1Eg@mail.gmail.com>
+ <18ef379f-0c23-0cbf-4228-30d5c46c690f@nvidia.com>
+ <bfed6e80-44a7-6e96-c6a6-bc9793a1937a@collabora.com>
+ <2038e32a-de4a-a683-462e-555e991a2111@nvidia.com>
+ <64b117d3-b2ad-037a-b034-78ef1510fbb4@nvidia.com>
+ <5505affd-58a5-857f-051d-5b93257e175d@redhat.com>
+ <1040af29-4d15-4e8a-29ab-40952523535c@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171109181435.GB7629-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
+In-Reply-To: <1040af29-4d15-4e8a-29ab-40952523535c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, robin.murphy-5wv7dgnIgG8@public.gmane.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-[+Robin]
 
-On Thu, Nov 09, 2017 at 12:14:35PM -0600, Bjorn Helgaas wrote:
-> [+cc Lorenzo]
-> 
-> On Thu, Nov 09, 2017 at 12:48:14PM +0530, Vidya Sagar wrote:
-> > On Thursday 09 November 2017 02:55 AM, Bjorn Helgaas wrote:
-> > >On Mon, Nov 06, 2017 at 11:33:07PM +0530, Vidya Sagar wrote:
-> > >>limits MSI target address to only 32-bit region to enable
-> > >>some of the PCIe end points where only 32-bit MSIs
-> > >>are supported work properly.
-> > >>One example being Marvel SATA controller
-> > >>
-> > >>Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >>---
-> > >>  drivers/pci/host/pci-tegra.c | 2 +-
-> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >>
-> > >>diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> > >>index 1987fec1f126..03d3dcdd06c2 100644
-> > >>--- a/drivers/pci/host/pci-tegra.c
-> > >>+++ b/drivers/pci/host/pci-tegra.c
-> > >>@@ -1531,7 +1531,7 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
-> > >>  	}
-> > >>  	/* setup AFI/FPCI range */
-> > >>-	msi->pages = __get_free_pages(GFP_KERNEL, 0);
-> > >>+	msi->pages = __get_free_pages(GFP_DMA, 0);
-> > >>  	msi->phys = virt_to_phys((void *)msi->pages);
-> >
-> > >Should this be GFP_DMA32?  See the comment above the GFP_DMA
-> > >definition.
-> >
-> > looking at the comments for both GFP_DMA32 and GFP_DMA, I thought GFP_DMA32
-> > is the correct one to use, but, even with that I got >32-bit addresses.
-> > GFP_DMA always gives addresses in <4GB boundary (i.e. 32-bit).
-> > I didn't dig into it to find out why is this the case.
-> 
-> This sounds worth looking into (but maybe we don't need the
-> __get_free_pages() at all; see below).  Maybe there's some underlying
-> bug.  My laptop shows this, which looks like it might be related:
-> 
->   Zone ranges:
->     DMA      [mem 0x0000000000001000-0x0000000000ffffff]
->     DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
->     Normal   [mem 0x0000000100000000-0x00000004217fffff]
->     Device   empty
-> 
-> What does your machine show?
-> 
-> > >Should we be using virt_to_phys() here?  Where exactly is the
-> > >result ("msi->phys") used, i.e., what bus will that address appear
-> > >on?  If it appears on the PCI side, this should probably use
-> > >something like pcibios_resource_to_bus().
+On 10/11/17 09:18, Jon Hunter wrote:
 
-I had a quick chat with Robin (CC'ed, who has dealt/is dealing with most
-of the work this thread relates to) and I think that as things stand,
-for MSI physical addresses, an offset between PCI->host address shift is
-not really contemplated (ie 1:1 host<->pci is assumed).
+...
 
-> > This address is written to two places.  First, into host's internal
-> > register to let it know that when an incoming memory write comes
-> > with this address, raise an MSI interrupt instead of forwarding it
-> > to memory subsystem.  Second, into 'Message Address' field of
-> > 'Message Address Register for MSI' register in end point's
-> > configuration space (this is done by MSI framework) for end point to
-> > know which address to be used to generate MSI interrupt.
+> Thanks Ben. However, looking at next-20171109 this one is already in.
+> So maybe the bisect is still not getting me to the current issue. When
+> booting next-20171109 the last thing I see is ...
 > 
-> Hmmm, ISTR some past discussion about this.  Here's a little: [1, 2].
-> And this commit [3] sounds like it describes a similar hardware
-> situation with Tegra where the host bridge intercepts the MSI target
-> address, so writes to it never reach system memory.  That means that
-> Tegra doesn't need to allocate system memory at all.
+> [    2.228178] nouveau 57000000.gpu: NVIDIA GK20A (0ea000a1)
+> [    2.233634] nouveau 57000000.gpu: imem: using IOMMU
+> [    2.238572] nouveau 57000000.gpu: Direct firmware load for nvidia/gk20a/fecs_inst.bin failed with error -2
+> [    2.248295] nouveau 57000000.gpu: Direct firmware load for nouveau/nvea_fuc409c failed with error -2
+> [    2.257479] nouveau 57000000.gpu: Direct firmware load for nouveau/fuc409c failed with error -2
+> [    2.266189] nouveau 57000000.gpu: gr: failed to load fuc409c
 > 
-> Is your system similar?  Can you just statically allocate a little bus
-> address space, use that for the MSI target address, and skip the
-> __get_free_pages()?
+> So no crash. I did see the crash after the bisect, but not in top of
+> tree. It appears to hang after the nouveau probe fails. Any thoughts
+> on how to debug further?
 
-IIUC, all these host bridges need is a physical address that is routed
-upstream to the host bridge by the PCIe tree (ie it is not part of the
-host bridge windows), as long as the host bridge intercepts it (and
-endpoints do _not_ reuse it for something else) that should be fine, as
-it has been pointed out in this thread, allocating a page is a solution
-- there may be others (which are likely to be platform specific).
+So this is probably wrong, but here is a clue about what is happening. 
+It appears that the error code is not being propagated from
+gk20a_gr_new(). gk20a_gr_new is returning -ENODEV due to the firmware
+loading failure...
 
-> > >Do rcar_pcie_enable_msi() and xilinx_pcie_enable_msi() have a
-> > >similar problem?  They both use GFP_KERNEL, then virt_to_phys(),
-> > >then write the result of virt_to_phys() using a 32-bit register
-> > >write.
-> >
-> > Well, if those systems deal with 64-bit addresses and when an end
-> > point is connected which supports only 32-bit MSI addresses, this
-> > problem will surface when __get_free_pages() returns an address that
-> > translates to a >32-bit address after virt_to_phys() call on it.
-> 
-> I'd like to hear from the R-Car and Xilinx folks about (1) whether
-> there's a potential issue with truncating a 64-bit address, and
-> (2) whether that hardware works like Tegra, where the MSI write never
-> reaches memory so we don't actually need to allocate a page.
-> 
-> If all we need is to allocate a little bus address space for the MSI
-> target, I'd like to figure out a better way to do that than
-> __get_free_pages().  The current code seems a little buggy, and
-> it's getting propagated through several drivers.
+342         if (gf100_gr_ctor_fw(gr, "fecs_inst", &gr->fuc409c) ||
+343             gf100_gr_ctor_fw(gr, "fecs_data", &gr->fuc409d) ||
+344             gf100_gr_ctor_fw(gr, "gpccs_inst", &gr->fuc41ac) ||
+345             gf100_gr_ctor_fw(gr, "gpccs_data", &gr->fuc41ad))
+346                 return -ENODEV;
 
-I will look into this with Robin's help.
+... but this is ignored by nvkm_device_ctor() (probably for good
+reason). If I make the following change the hang no longer occurs
+(although I realise this is probably wrong as it has been there for
+ years!) ...
 
-Thanks,
-Lorenzo
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+index e14643615698..a611615d3ce7 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+@@ -2869,7 +2869,7 @@ struct nvkm_engine *
+                        subdev = nvkm_device_subdev(device, (s));              \
+                        nvkm_subdev_del(&subdev);                              \
+                        device->m = NULL;                                      \
+-                       if (ret != -ENODEV) {                                  \
++                       if (ret == -ENODEV) {                                  \
+                                nvdev_error(device, "%s ctor failed, %d\n",    \
+                                            nvkm_subdev_name[s], ret);         \
+                                goto done;                                     \
 
-> > >>  	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
-> 
-> [1] https://lkml.kernel.org/r/20170824134451.GA31858-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org
-> [2] https://lkml.kernel.org/r/86efs3wesi.fsf-5wv7dgnIgG8@public.gmane.org
-> [3] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=d7bd554f27c9
+So is gk20a_gr_new() returning the wrong error code for when the
+firmware load fails? 
+
+I have no gone back to see what has change in this regard, but I
+can, probably next week.
+
+Cheers
+Jon
+
+-- 
+nvpublic
