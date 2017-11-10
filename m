@@ -1,120 +1,132 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 3/4] PCI: tegra: Apply sw fixups to support ASPM-L1
- Sub-States
-Date: Fri, 10 Nov 2017 15:37:10 +0530
-Message-ID: <c387c65f-6e87-639e-0bf5-2324a745ba5a@nvidia.com>
-References: <1509423769-10522-1-git-send-email-vidyas@nvidia.com>
- <1509423769-10522-4-git-send-email-vidyas@nvidia.com>
- <20171107225007.GA22847@bhelgaas-glaptop.roam.corp.google.com>
- <ef7d193c-c114-d0c6-e450-c00ae3ab2d51@nvidia.com>
- <20171108174829.GE28427@bhelgaas-glaptop.roam.corp.google.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
+Date: Fri, 10 Nov 2017 11:22:01 +0000
+Message-ID: <20171110112201.GA25235@red-moon>
+References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
+ <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
+ <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com>
+ <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171108174829.GE28427-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20171109181435.GB7629-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, rajatja-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org, Julia.Lawall-L2FTfq7BK8M@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, robin.murphy-5wv7dgnIgG8@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+[+Robin]
 
+On Thu, Nov 09, 2017 at 12:14:35PM -0600, Bjorn Helgaas wrote:
+> [+cc Lorenzo]
+> 
+> On Thu, Nov 09, 2017 at 12:48:14PM +0530, Vidya Sagar wrote:
+> > On Thursday 09 November 2017 02:55 AM, Bjorn Helgaas wrote:
+> > >On Mon, Nov 06, 2017 at 11:33:07PM +0530, Vidya Sagar wrote:
+> > >>limits MSI target address to only 32-bit region to enable
+> > >>some of the PCIe end points where only 32-bit MSIs
+> > >>are supported work properly.
+> > >>One example being Marvel SATA controller
+> > >>
+> > >>Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >>---
+> > >>  drivers/pci/host/pci-tegra.c | 2 +-
+> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >>
+> > >>diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> > >>index 1987fec1f126..03d3dcdd06c2 100644
+> > >>--- a/drivers/pci/host/pci-tegra.c
+> > >>+++ b/drivers/pci/host/pci-tegra.c
+> > >>@@ -1531,7 +1531,7 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+> > >>  	}
+> > >>  	/* setup AFI/FPCI range */
+> > >>-	msi->pages = __get_free_pages(GFP_KERNEL, 0);
+> > >>+	msi->pages = __get_free_pages(GFP_DMA, 0);
+> > >>  	msi->phys = virt_to_phys((void *)msi->pages);
+> >
+> > >Should this be GFP_DMA32?  See the comment above the GFP_DMA
+> > >definition.
+> >
+> > looking at the comments for both GFP_DMA32 and GFP_DMA, I thought GFP_DMA32
+> > is the correct one to use, but, even with that I got >32-bit addresses.
+> > GFP_DMA always gives addresses in <4GB boundary (i.e. 32-bit).
+> > I didn't dig into it to find out why is this the case.
+> 
+> This sounds worth looking into (but maybe we don't need the
+> __get_free_pages() at all; see below).  Maybe there's some underlying
+> bug.  My laptop shows this, which looks like it might be related:
+> 
+>   Zone ranges:
+>     DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+>     DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+>     Normal   [mem 0x0000000100000000-0x00000004217fffff]
+>     Device   empty
+> 
+> What does your machine show?
+> 
+> > >Should we be using virt_to_phys() here?  Where exactly is the
+> > >result ("msi->phys") used, i.e., what bus will that address appear
+> > >on?  If it appears on the PCI side, this should probably use
+> > >something like pcibios_resource_to_bus().
 
-On Wednesday 08 November 2017 11:18 PM, Bjorn Helgaas wrote:
-> On Wed, Nov 08, 2017 at 02:15:05PM +0530, Vidya Sagar wrote:
->> On Wednesday 08 November 2017 04:20 AM, Bjorn Helgaas wrote:
->>> On Tue, Oct 31, 2017 at 09:52:48AM +0530, Vidya Sagar wrote:
->>>> Programs T_cmrt (Commmon Mode Restore Time) and T_pwr_on (Power On)
->>>> values to get them reflected in ASPM-L1 Sub-States capability registers
->>>> Also adjusts internal counter values according to 19.2 MHz clk_m value
->>>>
->>>> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ...
->>>> +u32 pcie_aspm_get_ltr_l_1_2_threshold(void)
->>>> +{
->>>> +	/* LTR L1.2 Threshold = 55us for all ports */
->>>> +	return ((0x37 << 16) | (0x02 << 29));
->>> I know you've already worked through this, but let me think out loud
->>> to try to figure this out myself.
->>>
->>> ASPM defines Link power states L0, L0s, and L1.  L1 PM Substates
->>> extend that by adding L1.1 and L1.2.  L1.2 presumably uses less power
->>> and has a longer exit delay than L1.1 [sec 5.5].
->>>
->>> Ports that support L1.2 must support Latency Tolerance Reporting (LTR)
->>> [sec 6.18].  When LTR is enabled, a device periodically sends LTR
->>> messages.
->>>
->>> When ASPM puts a Link into L1, it chooses either L1.1 or L1.2 based on
->>> LTR_L1.2_THRESHOLD and recent LTR messages.  If there's no LTR
->>> information it looks like LTR_L1.2_THRESHOLD doesn't matter and it
->>> always chooses L1.2 [sec 5.5.1].
->>>
->>> I don't see anything that writes PCI_EXP_DEVCTL2_LTR_EN, so I don't
->>> think Linux ever enables LTR.  Some BIOSes apparently enable it
->>> (Google for "LTR enabled").
->> I think this needs to be done in aspm.c file. i.e. whenever
->> sub-system enables L1.2, it should enable
->> LTR_EN also.
-> That probably makes sense.
->
->>> 1) It seems like the LTR_L1.2_THRESHOLD value should be computed based
->>>     on the latency requirements of downstream devices.  How did you
->>>     come up with 55us?
->> This is given by Tegra hardware folks.
-> I do not understand why this value should be dependent on the host
-> bridge.  Can your hardware folks give more insight into this and how
-> they derived 55us?
->
-> I'm repeating myself, but the threshold (in combination with LTR
-> information) affects whether we enter L1.1 or L1.2.  If I understand
-> correctly, this is all about the downstream devices and not at all
-> about the host bridge.
-LTR_L1.2_THRESHOLD time is for the device to enter into and exit from 
-L1.2 state.
-55us in case of Tegra is calculated based on the circuit design and 
-different latencies
-involved in putting link through L1.2 entry-exit cycle.
-Spec says in 5.5.4 that , quote "When programming LTR_L1.2_THRESHOLD 
-Value and Scale fields,
-identical values must be programmed in both Ports" and my understanding 
-behind spec saying it explicitly
-is that the end point should be made aware of what is the latency 
-requirement for  L1.2 from root port,
-just like the way end point makes root port aware of its L1.2 latency 
-requirement by sending an LTR message
-upstream. By this, both root port and end point come to the same page 
-while taking a decision
-to keep the link in L1.2 (or L1.1). Otherwise it may so happen that Tx 
-would be in L1.2 and Rx would be in L1.1.
-Also, my understanding is that it is bound to be different on different 
-platforms as it comes from the way hardware
-is designed.
->> ...
->>> 3) We must support kernels with multiple host bridge drivers compiled
->>>     in, and the weak/strong symbol approach doesn't support using the
->>>     correct version, e.g., if we merge this patch, every system
->>>     containing the tegra driver would use this function, even if the
->>>     hardware had a different host bridge.  Also, if another driver
->>>     implemented its own version, we'd have duplicate symbols.
->> Yes. Agree with this too.
->> How about using quirks framework for this?
-> If my assumption that "the threshold should be based on (a) the
-> latency requirements of downstream devices and (b) perhaps some global
-> power vs performance tradeoff" is correct, this doesn't really fit
-> into any kind of quirks or static computation, including the current
-> LTR_L1_2_THRESHOLD_BITS.
->
-> What happens if you keep all the Tegra-specific parts of this series,
-> i.e., you program the T_cmrt, T_pwr_on, and CLKREQ values, and enable
-> advertising of ASPM L1 capability, but leave out the
-> pcie_aspm_get_ltr_l_1_2_threshold() parts?  (BTW, I think you should
-> reorder the series so you fix up all the delay values *before* you
-> advertise ASPM L1.)
->
-> I expect that to be functionally equivalent, but it would change the
-> L1.1 vs L1.2 tradeoff, so it might have some performance impact,
-> depending on what the downstream devices are.
->
-> Bjorn
+I had a quick chat with Robin (CC'ed, who has dealt/is dealing with most
+of the work this thread relates to) and I think that as things stand,
+for MSI physical addresses, an offset between PCI->host address shift is
+not really contemplated (ie 1:1 host<->pci is assumed).
+
+> > This address is written to two places.  First, into host's internal
+> > register to let it know that when an incoming memory write comes
+> > with this address, raise an MSI interrupt instead of forwarding it
+> > to memory subsystem.  Second, into 'Message Address' field of
+> > 'Message Address Register for MSI' register in end point's
+> > configuration space (this is done by MSI framework) for end point to
+> > know which address to be used to generate MSI interrupt.
+> 
+> Hmmm, ISTR some past discussion about this.  Here's a little: [1, 2].
+> And this commit [3] sounds like it describes a similar hardware
+> situation with Tegra where the host bridge intercepts the MSI target
+> address, so writes to it never reach system memory.  That means that
+> Tegra doesn't need to allocate system memory at all.
+> 
+> Is your system similar?  Can you just statically allocate a little bus
+> address space, use that for the MSI target address, and skip the
+> __get_free_pages()?
+
+IIUC, all these host bridges need is a physical address that is routed
+upstream to the host bridge by the PCIe tree (ie it is not part of the
+host bridge windows), as long as the host bridge intercepts it (and
+endpoints do _not_ reuse it for something else) that should be fine, as
+it has been pointed out in this thread, allocating a page is a solution
+- there may be others (which are likely to be platform specific).
+
+> > >Do rcar_pcie_enable_msi() and xilinx_pcie_enable_msi() have a
+> > >similar problem?  They both use GFP_KERNEL, then virt_to_phys(),
+> > >then write the result of virt_to_phys() using a 32-bit register
+> > >write.
+> >
+> > Well, if those systems deal with 64-bit addresses and when an end
+> > point is connected which supports only 32-bit MSI addresses, this
+> > problem will surface when __get_free_pages() returns an address that
+> > translates to a >32-bit address after virt_to_phys() call on it.
+> 
+> I'd like to hear from the R-Car and Xilinx folks about (1) whether
+> there's a potential issue with truncating a 64-bit address, and
+> (2) whether that hardware works like Tegra, where the MSI write never
+> reaches memory so we don't actually need to allocate a page.
+> 
+> If all we need is to allocate a little bus address space for the MSI
+> target, I'd like to figure out a better way to do that than
+> __get_free_pages().  The current code seems a little buggy, and
+> it's getting propagated through several drivers.
+
+I will look into this with Robin's help.
+
+Thanks,
+Lorenzo
+
+> > >>  	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
+> 
+> [1] https://lkml.kernel.org/r/20170824134451.GA31858-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org
+> [2] https://lkml.kernel.org/r/86efs3wesi.fsf-5wv7dgnIgG8@public.gmane.org
+> [3] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=d7bd554f27c9
