@@ -1,74 +1,94 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/4] clk: tegra: Add la clock for Tegra210
-Date: Fri, 10 Nov 2017 13:37:45 +0200
-Message-ID: <1510313868-24810-2-git-send-email-pdeschrijver@nvidia.com>
-References: <1510313868-24810-1-git-send-email-pdeschrijver@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
+Date: Fri, 10 Nov 2017 12:57:34 +0100
+Message-ID: <CAK8P3a1uDqLzEZ9eF9V-e3Uo-frkmVbNw-OXv9dapPGPMP-Ocw@mail.gmail.com>
+References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
+ <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
+ <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com> <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
+ <7727b9bc-a44b-4cbe-1839-7e4dd7c2c186@nvidia.com> <20171110093737.GA25067@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1510313868-24810-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20171110093737.GA25067@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-pci <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This clock is needed by the MBIST WAR.
+On Fri, Nov 10, 2017 at 10:37 AM, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On Fri, Nov 10, 2017 at 12:11:05AM +0530, Vidya Sagar wrote:
+>> On Thursday 09 November 2017 11:44 PM, Bjorn Helgaas wrote:
+>> > [+cc Lorenzo]
+>> > On Thu, Nov 09, 2017 at 12:48:14PM +0530, Vidya Sagar wrote:
+>> > > On Thursday 09 November 2017 02:55 AM, Bjorn Helgaas wrote:
+>> > > > On Mon, Nov 06, 2017 at 11:33:07PM +0530, Vidya Sagar wrote:
+>> > > > > limits MSI target address to only 32-bit region to enable
+>> > > > > some of the PCIe end points where only 32-bit MSIs
+>> > > > > are supported work properly.
+>> > > > > One example being Marvel SATA controller
+>> > > > >
+>> > > > > Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> > > > > ---
+>> > > > >   drivers/pci/host/pci-tegra.c | 2 +-
+>> > > > >   1 file changed, 1 insertion(+), 1 deletion(-)
+>> > > > >
+>> > > > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+>> > > > > index 1987fec1f126..03d3dcdd06c2 100644
+>> > > > > --- a/drivers/pci/host/pci-tegra.c
+>> > > > > +++ b/drivers/pci/host/pci-tegra.c
+>> > > > > @@ -1531,7 +1531,7 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+>> > > > >       }
+>> > > > >       /* setup AFI/FPCI range */
+>> > > > > -     msi->pages = __get_free_pages(GFP_KERNEL, 0);
+>> > > > > +     msi->pages = __get_free_pages(GFP_DMA, 0);
+>> > > > >       msi->phys = virt_to_phys((void *)msi->pages);
+>> > > > Should this be GFP_DMA32?  See the comment above the GFP_DMA
+>> > > > definition.
+>> > > looking at the comments for both GFP_DMA32 and GFP_DMA, I thought GFP_DMA32
+>> > > is the correct one to use, but, even with that I got >32-bit addresses.
+>> > > GFP_DMA always gives addresses in <4GB boundary (i.e. 32-bit).
+>> > > I didn't dig into it to find out why is this the case.
+>> > This sounds worth looking into (but maybe we don't need the
+>> > __get_free_pages() at all; see below).  Maybe there's some underlying
+>> > bug.  My laptop shows this, which looks like it might be related:
+>> >
+>> >    Zone ranges:
+>> >      DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+>> >      DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+>> >      Normal   [mem 0x0000000100000000-0x00000004217fffff]
+>> >      Device   empty
+>> >
+>> > What does your machine show?
+>> I see following in my linux box
+>>  Zone ranges:
+>>    DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+>>    DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+>>    Normal   [mem 0x0000000100000000-0x000000106effffff]
+>>    Device   empty
+>>
+>> and following in my T210 Tegra platform
+>> Zone ranges:
+>>   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+>>   Normal   [mem 0x0000000100000000-0x000000017fffffff]
+>
+> This seems to be happening because 64-bit ARM doesn't have the
+> ZONE_DMA32 Kconfig option, which seems to cause the DMA32 zone
+> to default to the normal zone (see include/linux/gfp.h).
+>
+> That's very confusing in conjunction with the kerneldoc comment
+> for GFP_DMA32 because it isn't actually guaranteed to give you
+> 32-bit addresses for !ZONE_DMA32.
+>
+> Cc'ing Arnd who knows about these things.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra210.c         | 12 ++++++++++++
- include/dt-bindings/clock/tegra210-car.h |  2 +-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+I don't have a good answer unfortunately, but I agree there is clearly
+something wrong with the behavior, AFAICT, ZONE_DMA32 should
+really do what the name says.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 6d7a613..55a5b7f 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -40,6 +40,7 @@
- 
- #define CLK_SOURCE_CSITE 0x1d4
- #define CLK_SOURCE_EMC 0x19c
-+#define CLK_SOURCE_LA 0x1f8
- 
- #define PLLC_BASE 0x80
- #define PLLC_OUT 0x84
-@@ -2628,6 +2629,13 @@ static int tegra210_init_pllu(void)
- 	return 0;
- }
- 
-+static const char * const la_parents[] = {
-+	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
-+};
-+
-+static struct tegra_clk_periph tegra210_la =
-+	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, 0);
-+
- static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					    void __iomem *pmc_base)
- {
-@@ -2667,6 +2675,10 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					     periph_clk_enb_refcnt);
- 	clks[TEGRA210_CLK_DSIB] = clk;
- 
-+	/* la */
-+	clk = tegra_clk_register_periph("la", la_parents,
-+			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
-+			CLK_SOURCE_LA, 0);
- 	/* emc mux */
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index a9dc145..5df857a 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -95,7 +95,7 @@
- #define TEGRA210_CLK_CSITE 73
- /* 74 */
- /* 75 */
--/* 76 */
-+#define TEGRA210_CLK_LA 76
- /* 77 */
- #define TEGRA210_CLK_SOC_THERM 78
- #define TEGRA210_CLK_DTV 79
--- 
-1.9.1
+When you look at the commit that introduced ZONE_DMA32, you
+see that it used to be different, see commit a2f1b4249007
+("[PATCH] x86_64: Add 4GB DMA32 zone"). ZONE_DMA32 used
+to fall back to ZONE_DMA, but this got changed shortly after,
+still in 2006.
+
+      Arnd
