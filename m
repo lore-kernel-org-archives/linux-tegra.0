@@ -1,105 +1,124 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: next/master boot: 273 boots: 63 failed, 209 passed with 1
- untried/unknown (next-20171106)
-Date: Fri, 10 Nov 2017 09:18:55 +0000
-Message-ID: <1040af29-4d15-4e8a-29ab-40952523535c@nvidia.com>
-References: <5a0055f1.85a8500a.98d54.a4e4@mx.google.com>
- <20171106191713.d7jqg2b6zqchythw@sirena.co.uk>
- <d8e21d87-776b-beff-62af-34e5ad1febc3@nvidia.com>
- <20171107105501.7x74gdqzhr7uulp2@sirena.org.uk>
- <a384e96c-27c7-782b-75b9-7525714f5831@collabora.com>
- <613bcd63-a215-acbe-9150-c1495f7604f6@collabora.com>
- <5740b853-4898-2ebc-f67d-0808d1b44c36@nvidia.com>
- <ab2ee0a8-6584-7436-ca1b-4f1b521279b0@collabora.com>
- <7cdfa633-d9c6-881a-ae5f-f94f7e6413ee@nvidia.com>
- <5f064e65-ee29-179b-8102-984d12d24d9d@collabora.com>
- <15792a16-6b57-a6ad-92dc-0ffaba0354db@nvidia.com>
- <1eb4e14f-4728-d4f7-95a6-0a6308760d7a@collabora.com>
- <CAK8P3a3iiSgutnHFU7PoLGQyObgyAreQOOtrDhjijoMU5wZ1Eg@mail.gmail.com>
- <18ef379f-0c23-0cbf-4228-30d5c46c690f@nvidia.com>
- <bfed6e80-44a7-6e96-c6a6-bc9793a1937a@collabora.com>
- <2038e32a-de4a-a683-462e-555e991a2111@nvidia.com>
- <64b117d3-b2ad-037a-b034-78ef1510fbb4@nvidia.com>
- <5505affd-58a5-857f-051d-5b93257e175d@redhat.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
+Date: Fri, 10 Nov 2017 10:37:37 +0100
+Message-ID: <20171110093737.GA25067@ulmo>
+References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
+ <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
+ <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com>
+ <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
+ <7727b9bc-a44b-4cbe-1839-7e4dd7c2c186@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5505affd-58a5-857f-051d-5b93257e175d-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <7727b9bc-a44b-4cbe-1839-7e4dd7c2c186-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+--IJpNTDwzlM2Ie8A6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 09/11/17 22:57, Ben Skeggs wrote:
-> On 11/10/2017 08:54 AM, Jon Hunter wrote:
->>
->> On 09/11/17 21:45, Jon Hunter wrote:
->>>
->>> On 09/11/17 19:03, Guillaume Tucker wrote:
->>> ...
->>>
->>>> Alright, so here's all the results I got all based on
->>>> next-20171109 and running on tegra124-nyan-big:
->>>>
->>>>   * plain multi_v7_defconfig, passes:
->>>>     https://lava.collabora.co.uk/scheduler/job/981295
->>>>
->>>>   * CONFIG_MODULES disabled, fails:
->>>>     https://lava.collabora.co.uk/scheduler/job/981342
->>>>
->>>>   * CONFIG_MODULES and CONFIG_DRM_NOUVEAU disabled, also fails:
->>>>     https://lava.collabora.co.uk/scheduler/job/981343
->>>
->>> This is the crash in the EC driver that I mentioned before. You need to
->>> add the fix for the EC driver to avoid this BUG_ON.
->>>
->>> I was able to bisect this manually dancing around the various bugs and
->>> it points to this commit ...
->>>
->>> commit 7313cfa4f6e30384fa04083698d1e865cf812a6a
->>> Author: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
->>> Date:   Wed Nov 1 03:56:19 2017 +1000
->>>
->>>     drm/nouveau/bar: move bar1 initialisation into its own function
->>>
->>>
->>> Unfortunately, I cannot revert cleanly on top of next-20171109 and so I
->>> cannot confirm.
->>>
->>> Ben, we are seeing a hang on Tegra when booting with CONFIG_DRM_NOUVEAU
->>> enabled. Apart from the above bisect result, I don't have much else to
->>> go on at the moment. Let me know if you have any thoughts or anything to
->>> test.
->>
->> Here is part of the crash dump I see ...
-> 
-> Hey,
-> 
-> Oops, I went to great care to make that series bisectable, but
-> apparently this slipped through the cracks.
-> 
-> 48fe02478a0ddb89930f3595f8217fa2dfd98796 should fix that crash.
+On Fri, Nov 10, 2017 at 12:11:05AM +0530, Vidya Sagar wrote:
+>=20
+>=20
+> On Thursday 09 November 2017 11:44 PM, Bjorn Helgaas wrote:
+> > [+cc Lorenzo]
+> >=20
+> > On Thu, Nov 09, 2017 at 12:48:14PM +0530, Vidya Sagar wrote:
+> > > On Thursday 09 November 2017 02:55 AM, Bjorn Helgaas wrote:
+> > > > On Mon, Nov 06, 2017 at 11:33:07PM +0530, Vidya Sagar wrote:
+> > > > > limits MSI target address to only 32-bit region to enable
+> > > > > some of the PCIe end points where only 32-bit MSIs
+> > > > > are supported work properly.
+> > > > > One example being Marvel SATA controller
+> > > > >=20
+> > > > > Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > > > ---
+> > > > >   drivers/pci/host/pci-tegra.c | 2 +-
+> > > > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >=20
+> > > > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-=
+tegra.c
+> > > > > index 1987fec1f126..03d3dcdd06c2 100644
+> > > > > --- a/drivers/pci/host/pci-tegra.c
+> > > > > +++ b/drivers/pci/host/pci-tegra.c
+> > > > > @@ -1531,7 +1531,7 @@ static int tegra_pcie_enable_msi(struct teg=
+ra_pcie *pcie)
+> > > > >   	}
+> > > > >   	/* setup AFI/FPCI range */
+> > > > > -	msi->pages =3D __get_free_pages(GFP_KERNEL, 0);
+> > > > > +	msi->pages =3D __get_free_pages(GFP_DMA, 0);
+> > > > >   	msi->phys =3D virt_to_phys((void *)msi->pages);
+> > > > Should this be GFP_DMA32?  See the comment above the GFP_DMA
+> > > > definition.
+> > > looking at the comments for both GFP_DMA32 and GFP_DMA, I thought GFP=
+_DMA32
+> > > is the correct one to use, but, even with that I got >32-bit addresse=
+s.
+> > > GFP_DMA always gives addresses in <4GB boundary (i.e. 32-bit).
+> > > I didn't dig into it to find out why is this the case.
+> > This sounds worth looking into (but maybe we don't need the
+> > __get_free_pages() at all; see below).  Maybe there's some underlying
+> > bug.  My laptop shows this, which looks like it might be related:
+> >=20
+> >    Zone ranges:
+> >      DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+> >      DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+> >      Normal   [mem 0x0000000100000000-0x00000004217fffff]
+> >      Device   empty
+> >=20
+> > What does your machine show?
+> I see following in my linux box
+> =C2=A0Zone ranges:
+> =C2=A0=C2=A0 DMA=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [mem 0x0000000000001000-0x=
+0000000000ffffff]
+> =C2=A0=C2=A0 DMA32=C2=A0=C2=A0=C2=A0 [mem 0x0000000001000000-0x00000000ff=
+ffffff]
+> =C2=A0=C2=A0 Normal=C2=A0=C2=A0 [mem 0x0000000100000000-0x000000106efffff=
+f]
+> =C2=A0=C2=A0 Device=C2=A0=C2=A0 empty
+>=20
+> and following in my T210 Tegra platform
+> Zone ranges:
+> =C2=A0 DMA=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [mem 0x0000000080000000-0x000000=
+00ffffffff]
+> =C2=A0 Normal=C2=A0=C2=A0 [mem 0x0000000100000000-0x000000017fffffff]
 
-Thanks Ben. However, looking at next-20171109 this one is already in.
-So maybe the bisect is still not getting me to the current issue. When
-booting next-20171109 the last thing I see is ...
+This seems to be happening because 64-bit ARM doesn't have the
+ZONE_DMA32 Kconfig option, which seems to cause the DMA32 zone
+to default to the normal zone (see include/linux/gfp.h).
 
-[    2.228178] nouveau 57000000.gpu: NVIDIA GK20A (0ea000a1)
-[    2.233634] nouveau 57000000.gpu: imem: using IOMMU
-[    2.238572] nouveau 57000000.gpu: Direct firmware load for nvidia/gk20a/fecs_inst.bin failed with error -2
-[    2.248295] nouveau 57000000.gpu: Direct firmware load for nouveau/nvea_fuc409c failed with error -2
-[    2.257479] nouveau 57000000.gpu: Direct firmware load for nouveau/fuc409c failed with error -2
-[    2.266189] nouveau 57000000.gpu: gr: failed to load fuc409c
+That's very confusing in conjunction with the kerneldoc comment
+for GFP_DMA32 because it isn't actually guaranteed to give you
+32-bit addresses for !ZONE_DMA32.
 
-So no crash. I did see the crash after the bisect, but not in top of
-tree. It appears to hang after the nouveau probe fails. Any thoughts
-on how to debug further?
+Cc'ing Arnd who knows about these things.
 
-Cheers
-Jon
+Thierry
 
--- 
-nvpublic
+--IJpNTDwzlM2Ie8A6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloFc10ACgkQ3SOs138+
+s6EKlRAAn9yBJOqLw30D0WNuNn4I7r5mcXtnDlghqy2ph577cJtJ/1NIBmG6t3cW
+lCVzL4aEt9G24O0NcE10EjDsrk6CX27RUCO/oCfhWxwtIB+j4exH37XzWxZjJEhl
+9FmCDSX4PPzmHSga6wF7NFzEd1NcMaZihWTkrbEVnQpnJqy0RoOBPQ+M63yuJTPf
+8IU93/woFwn2yjVafjJBextEwwjH0BwiWT34Ijiva5iEfnJ8M4IWlML0rfhH6uDX
+nPYDYNEtQsMDPzTkCrXBeDqCkq4cedyNwE6YcicH4CiUCFF6qGYvC9izQme6iF2/
+3uGTbmMgcvS4Cs/2E1sxHgUFakdrDsAqOh6VmOAhG06Y2FcIMsthI8skFZCkhLaf
+tcaj5T9ATiElpo8yzh5/D05AutyM3ds1Sk9d/8YWC+TrmJxmFLSYkqG788BmAHlQ
+++0UAqGWxkFZD+fNmmQDPbn65o0N8PtqAqDzSVvVAqwsF/GTFC0F4QmWgie6myGo
+uB/dQWKqnED/pkvVFPllEVNcHd1NrGaVYXGoBbwLvHkwcxnZHOutzkDdPRM6RK5a
+kJofwHMZrYN6HX13vUugq8Lnt0/1AviPaRp3/qWwPnxyfG3/lywAS70XVaPW5Xw5
+ATlCDtldNak+8+I2QF6qpuKRtChSqmED/7TtrSJObjzXF8YayY4=
+=Obcq
+-----END PGP SIGNATURE-----
+
+--IJpNTDwzlM2Ie8A6--
