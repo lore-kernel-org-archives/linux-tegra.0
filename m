@@ -1,52 +1,90 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] mfd: cros ec: spi: Don't send first message too soon
-Date: Mon, 13 Nov 2017 21:05:39 +0000
-Message-ID: <1510607140-30582-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 2/2] mfd: cros ec: spi: Simplify delay handling between SPI messages
+Date: Mon, 13 Nov 2017 21:05:40 +0000
+Message-ID: <1510607140-30582-2-git-send-email-jonathanh@nvidia.com>
+References: <1510607140-30582-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1510607140-30582-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Brian Norris <briannorris@chromium.org>, Shawn Nematbakhsh <shawnn@chromium.org>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On the Tegra124 Nyan-Big chromebook the very first SPI message sent to
-the EC is failing.
+The EC SPI driver prevents SPI transfers being to rapidly by keeping
+track of the time the last transfer was issued via the
+'last_transfer_ns' variable. Previously, if the 'last_transfer_ns'
+variable was zero, this indicated that no previous transfer had been
+sent and that no delay was needed. However, the EC SPI driver has
+been updated to always initialise the 'last_transfer_ns' variable
+during probe and therefore, it is no longer necessary to test if it
+is zero. Remove the code that checks if this variable is zero.
 
-The Tegra SPI driver configures the SPI chip-selects to be active-high
-by default (and always has for many years). The EC SPI requires an
-active-low chip-select and so the Tegra chip-select is reconfigured to
-be active-low when the EC SPI driver calls spi_setup(). The problem is
-that if the first SPI message to the EC is sent too soon after
-reconfiguring the SPI chip-select, it fails.
-
-The EC SPI driver prevents back-to-back SPI messages being sent too
-soon by keeping track of the time the last transfer was sent via the
-variable 'last_transfer_ns'. To prevent the very first transfer being
-sent too soon, initialise the 'last_transfer_ns' variable after calling
-spi_setup() and before sending the first SPI message.
-
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
-Looks like this issue has been around for several Linux releases now
-and it just depends on timing if this issue is seen or not and so there
-is no specific commit this fixes. However, would be good to include for
-v4.15.
-
- drivers/mfd/cros_ec_spi.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mfd/cros_ec_spi.c | 25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index c9714072e224..a14196e95e9b 100644
+index a14196e95e9b..7849d781c6bb 100644
 --- a/drivers/mfd/cros_ec_spi.c
 +++ b/drivers/mfd/cros_ec_spi.c
-@@ -667,6 +667,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 			   sizeof(struct ec_response_get_protocol_info);
- 	ec_dev->dout_size = sizeof(struct ec_host_request);
+@@ -72,8 +72,7 @@
+  * struct cros_ec_spi - information about a SPI-connected EC
+  *
+  * @spi: SPI device we are connected to
+- * @last_transfer_ns: time that we last finished a transfer, or 0 if there
+- *	if no record
++ * @last_transfer_ns: time that we last finished a transfer.
+  * @start_of_msg_delay: used to set the delay_usecs on the spi_transfer that
+  *      is sent when we want to turn on CS at the start of a transaction.
+  * @end_of_msg_delay: used to set the delay_usecs on the spi_transfer that
+@@ -378,18 +377,15 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
+ 	u8 *rx_buf;
+ 	u8 sum;
+ 	int ret = 0, final_ret;
++	unsigned long delay;
  
-+	ec_spi->last_transfer_ns = ktime_get_ns();
+ 	len = cros_ec_prepare_tx(ec_dev, ec_msg);
+ 	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
  
- 	err = cros_ec_register(ec_dev);
- 	if (err) {
+ 	/* If it's too soon to do another transaction, wait */
+-	if (ec_spi->last_transfer_ns) {
+-		unsigned long delay;	/* The delay completed so far */
+-
+-		delay = ktime_get_ns() - ec_spi->last_transfer_ns;
+-		if (delay < EC_SPI_RECOVERY_TIME_NS)
+-			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
+-	}
++	delay = ktime_get_ns() - ec_spi->last_transfer_ns;
++	if (delay < EC_SPI_RECOVERY_TIME_NS)
++		ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
+ 
+ 	rx_buf = kzalloc(len, GFP_KERNEL);
+ 	if (!rx_buf)
+@@ -510,18 +506,15 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
+ 	u8 *rx_buf;
+ 	int sum;
+ 	int ret = 0, final_ret;
++	unsigned long delay;
+ 
+ 	len = cros_ec_prepare_tx(ec_dev, ec_msg);
+ 	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
+ 
+ 	/* If it's too soon to do another transaction, wait */
+-	if (ec_spi->last_transfer_ns) {
+-		unsigned long delay;	/* The delay completed so far */
+-
+-		delay = ktime_get_ns() - ec_spi->last_transfer_ns;
+-		if (delay < EC_SPI_RECOVERY_TIME_NS)
+-			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
+-	}
++	delay = ktime_get_ns() - ec_spi->last_transfer_ns;
++	if (delay < EC_SPI_RECOVERY_TIME_NS)
++		ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
+ 
+ 	rx_buf = kzalloc(len, GFP_KERNEL);
+ 	if (!rx_buf)
 -- 
 2.7.4
