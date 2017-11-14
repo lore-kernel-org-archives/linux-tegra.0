@@ -1,37 +1,124 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] mfd: cros ec: spi: Simplify delay handling between
- SPI messages
-Date: Tue, 14 Nov 2017 10:47:30 -0800
-Message-ID: <CAD=FV=XS3kuVx7hcGTNYVwxjUj83e7Jo9azEw00PbOQRO8wJ1w@mail.gmail.com>
-References: <1510670608-19594-1-git-send-email-jonathanh@nvidia.com> <1510670608-19594-2-git-send-email-jonathanh@nvidia.com>
+From: Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: next/master boot: 296 boots: 62 failed, 230 passed with 4
+ conflicts (next-20171113)
+Date: Tue, 14 Nov 2017 11:53:17 -0800
+Message-ID: <CAGXu5jJJ6jDSpG+X8CtZEkBoijv27k2p1H=5Y+hEhFyTvYVBZQ@mail.gmail.com>
+References: <5a09ec32.8190df0a.933bb.b974@mx.google.com> <59af2937-78a1-7db6-12e4-28d6719efaed@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1510670608-19594-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <59af2937-78a1-7db6-12e4-28d6719efaed-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+To: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Tue, Nov 14, 2017 at 6:43 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> The EC SPI driver prevents SPI transfers being to rapidly by keeping
-> track of the time the last transfer was issued via the
-> 'last_transfer_ns' variable. Previously, if the 'last_transfer_ns'
-> variable was zero, this indicated that no previous transfer had been
-> sent and that no delay was needed. However, the EC SPI driver has
-> been updated to always initialise the 'last_transfer_ns' variable
-> during probe and therefore, it is no longer necessary to test if it
-> is zero. Remove the code that checks if this variable is zero.
+On Tue, Nov 14, 2017 at 9:10 AM, Guillaume Tucker
+<guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+> On 13/11/17 19:02, kernelci.org bot wrote:
+>>
+>> next/master boot: 296 boots: 62 failed, 230 passed with 4 conflicts
+>> (next-20171113)
+>>
+>> Full Boot Summary:
+>> https://kernelci.org/boot/all/job/next/branch/master/kernel/next-20171113/
+>> Full Build Summary:
+>> https://kernelci.org/build/next/branch/master/kernel/next-20171113/
+>>
+>> Tree: next
+>> Branch: master
+>> Git Describe: next-20171113
+>> Git Commit: c348a99ee55feac43b5b62a5957c6d8e2b6c3abe
+>> Git URL:
+>> http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>> Tested: 52 unique boards, 17 SoC families, 33 builds out of 213
+>>
+>> Boot Regressions Detected:
+>>
+>> arm:
+>>
+> [...]
+>>
+>>     multi_v7_defconfig:
 >
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> ---
-> Changes since V1:
-> - Added Brian's reviewed-by.
+> [...]
+>>
+>>         tegra124-nyan-big:
+>>             lab-collabora: failing since 9 days (last pass: next-20171102
+>> - first fail: next-20171103)
 >
->  drivers/mfd/cros_ec_spi.c | 25 +++++++++----------------
->  1 file changed, 9 insertions(+), 16 deletions(-)
+>
+>
+> There are several things failing on the tegra124-nyan-big, at
+> least I've isolated one with my latest bisection run:
+>
+> 6c78935777d12ead2d32adf3eb525a24faf02d04 is the first bad commit
+> commit 6c78935777d12ead2d32adf3eb525a24faf02d04
+> Author: Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Date:   Fri Nov 10 16:34:52 2017 +0100
+>
+>     video: fbdev: Convert timers to use timer_setup()
+>
+>
+> These boot tests are with multi_v7_defconfig with CONFIG_MODULES
+> and CONFIG_DRM_NOUVEAU disabled:
+>
+> * the first one on the revision mentioned above, fails:
+>   https://lava.collabora.co.uk/scheduler/job/987651
+>
+> * then the same but with the commit reverted, passes:
+>   https://lava.collabora.co.uk/scheduler/job/987652
+>
+> This was found using the still experimental automated bisection
+> tool for kernelci.org, I'm not sure yet how reliable the results
+> are.  I think the manual check with these 2 boots proves it, but
+> I haven't really investigated further than that.
+>
+> So I then did the same tests at the top of the branch, on the
+> next-20171113 tag:
+>
+> * next-20171113, fails but differently:
+>   https://lava.collabora.co.uk/scheduler/job/987653
+>
+> * next-20171113 with the commit reverted, still fails:
+>   https://lava.collabora.co.uk/scheduler/job/987654
+>
+> It's hard to tell whether the commit I mentioned got fixed
+> in-between, I guess it would be best to not have any boot failure
+> in any case.
+>
+> The next thing I'll try is start a bisection for the other
+> failure see on next-20171113 tag, with the commit above reverted
+> and see if it leads anywhere...
+>
+> Hope this helps!
 
-Reviewed-by: Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Thanks for the report! I believe this is fixed with:
+
+https://marc.info/?l=linux-fbdev&m=151056635200583&w=2
+
+and that commit appears in next-20171114. Please let me know if that
+doesn't fix it, though!
+
+-Kees
+
+>
+> Guillaume
+>
+>> ---
+>> For more info write to <info-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>
+>>
+>>
+>>
+>> _______________________________________________
+>> Kernel-build-reports mailing list
+>> Kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+>> https://lists.linaro.org/mailman/listinfo/kernel-build-reports
+>>
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
