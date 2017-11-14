@@ -1,86 +1,119 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 0/2] Correct Tegra20 FUSE driver DMA usage
-Date: Tue, 14 Nov 2017 16:01:11 +0100
-Message-ID: <20171114150111.GA20527@ulmo>
-References: <cover.1508450681.git.digetx@gmail.com>
- <a149fdb0-64ff-fa99-734e-9335605191ce@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3] platform/chrome: Use proper protocol transfer function
+Date: Tue, 14 Nov 2017 15:56:10 +0000
+Message-ID: <4cf2fa5b-f909-1ab1-f743-e1cb9a66c604@nvidia.com>
+References: <20170908205011.77986-1-briannorris@chromium.org>
+ <02aa65e7-e967-055b-2af3-2e9b6ef77935@nvidia.com>
+ <CALaWCOMj0wQk5OfYOYqU_sZUt2SQBhy=HaP-qOiB5aMf9G8inw@mail.gmail.com>
+ <c3c5d08b-2df2-2e5b-cb09-bd4b3011e3df@nvidia.com>
+ <20170919171401.GA10968@google.com>
+ <CALaWCOPzT-BWu-YcMY+xEAWGRmvvVEoA64ceEK3zG3K-wajskQ@mail.gmail.com>
+ <20170920061317.GB13616@google.com>
+ <CALaWCOPEiWHMeOb-9_fpbyYuNzGdy0favnPS37u5_zz1AG_86w@mail.gmail.com>
+ <CALaWCOM87ikjzK-zFJ7WT37L_w58AwZwC_nq0hNXuzh5x87n5w@mail.gmail.com>
+ <d8aff55f-796b-4e8d-edf3-b8d55a65eda0@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <a149fdb0-64ff-fa99-734e-9335605191ce-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <d8aff55f-796b-4e8d-edf3-b8d55a65eda0-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shawn N <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Enric Balletbo <enric.balletbo-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Shawn,
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 26/09/17 16:40, Jon Hunter wrote:
+> On 26/09/17 00:15, Shawn N wrote:
 
-On Tue, Nov 14, 2017 at 02:25:28PM +0300, Dmitry Osipenko wrote:
-> On 20.10.2017 01:08, Dmitry Osipenko wrote:
-> > Change log:
-> >=20
-> > v3:
-> > 	- Addressed v2 review comments: added 'config.device_fc =3D false'
-> > 	  and utilize of_device_is_compatible() for dma-filter
-> >=20
-> > v2:
-> > 	- Dropped DT patch as turned out it was incorrect and made things
-> > 	  work by luck.
-> >=20
-> > 	- Now FUSE driver requests DMA channel from the APB DMA driver
-> > 	  utilizing DMA channel filter.
-> >=20
-> > 	- This patchset now depends on the APB DMA driver patch that allows
-> > 	  DMA client to issue a non-flow controlled transfers. I haven't
-> > 	  included that patch to this patchset since DMA usage is broken
-> > 	  anyway right now. It will work once this patchset and APBDMA
-> > 	  patch get applied.
-> >=20
-> > Dmitry Osipenko (2):
-> >   soc/tegra: fuse: Fix reading registers using DMA on Tegra20
-> >   soc/tegra: fuse: Explicitly request DMA channel from APB DMA driver
-> >=20
-> >  drivers/soc/tegra/fuse/fuse-tegra.c   |  1 +
-> >  drivers/soc/tegra/fuse/fuse-tegra20.c | 13 +++++++++++--
-> >  2 files changed, 12 insertions(+), 2 deletions(-)
-> >=20
->=20
-> Thierry, why this patchset isn't in 'for 4.15' PR?
+...
 
-Looking at the date, this was sent on the same day that I sent out the
-pull requests. For ARM-SoC (and many other trees) the cut-off point is
--rc6 of the prior release cycle. This means that any work you'd like
-to see go into a release needs to be on the list a couple of days
-before that. I usually do pull requests on Thursday or Friday before
-an -rc6 release and by that time I want things to have cooked in -next
-for a day or two at least.
+>> From: Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Date: Mon, 25 Sep 2017 14:32:38 -0700
+>> Subject: [PATCH] mfd: cros ec: spi: Fix "in progress" error signaling
+>>
+>> For host commands that take a long time to process, cros ec can return
+>> early by signaling a EC_RES_IN_PROGRESS result. The host must then poll
+>> status with EC_CMD_GET_COMMS_STATUS until completion of the command.
+>>
+>> None of the above applies when data link errors are encountered. When
+>> errors such as EC_SPI_PAST_END are encountered during command
+>> transmission, it usually means the command was not received by the EC.
+>> Treating such errors as if they were 'EC_RES_IN_PROGRESS' results is
+>> almost always the wrong decision, and can result in host commands
+>> silently being lost.
+>>
+>> Signed-off-by: Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> ---
+>>  drivers/mfd/cros_ec_spi.c | 26 ++++++++++++--------------
+>>  1 file changed, 12 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+>> index c9714072e224..d33e3847e11e 100644
+>> --- a/drivers/mfd/cros_ec_spi.c
+>> +++ b/drivers/mfd/cros_ec_spi.c
+>> @@ -377,6 +377,7 @@ static int cros_ec_pkt_xfer_spi(struct
+>> cros_ec_device *ec_dev,
+>>         u8 *ptr;
+>>         u8 *rx_buf;
+>>         u8 sum;
+>> +       u8 rx_byte;
+>>         int ret = 0, final_ret;
+>>
+>>         len = cros_ec_prepare_tx(ec_dev, ec_msg);
+>> @@ -421,25 +422,22 @@ static int cros_ec_pkt_xfer_spi(struct
+>> cros_ec_device *ec_dev,
+>>         if (!ret) {
+>>                 /* Verify that EC can process command */
+>>                 for (i = 0; i < len; i++) {
+>> -                       switch (rx_buf[i]) {
+>> -                       case EC_SPI_PAST_END:
+>> -                       case EC_SPI_RX_BAD_DATA:
+>> -                       case EC_SPI_NOT_READY:
+>> -                               ret = -EAGAIN;
+>> -                               ec_msg->result = EC_RES_IN_PROGRESS;
+>> -                       default:
+>> +                       rx_byte = rx_buf[i];
+>> +                       if (rx_byte == EC_SPI_PAST_END  ||
+>> +                           rx_byte == EC_SPI_RX_BAD_DATA ||
+>> +                           rx_byte == EC_SPI_NOT_READY) {
+>> +                               ret = -EREMOTEIO;
+>>                                 break;
+>>                         }
+>> -                       if (ret)
+>> -                               break;
+>>                 }
+>> -               if (!ret)
+>> -                       ret = cros_ec_spi_receive_packet(ec_dev,
+>> -                                       ec_msg->insize + sizeof(*response));
+>> -       } else {
+>> -               dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
+>>         }
+>>
+>> +       if (!ret)
+>> +               ret = cros_ec_spi_receive_packet(ec_dev,
+>> +                               ec_msg->insize + sizeof(*response));
+>> +       else
+>> +               dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
+>> +
+>>         final_ret = terminate_request(ec_dev);
+>>
+>>         spi_bus_unlock(ec_spi->spi->master);
+>>
+> 
+> Thanks! Works for me ...
+> 
+> Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thierry
+I can't find the formal patch you sent out for the above, but I have not
+seen it picked up yet. I am guess that Lee did not pick it up because
+there was still an open question. Anyhow we may want to circle back with
+Lee on this so that this does get picked up.
 
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
+Cheers
+Jon
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloLBTQACgkQ3SOs138+
-s6Hlfw/8C79nozvMHFPuVMvTbHAskC8iA9i0uWiou5MQ0xu4Sy0aFOcSXoGFgi24
-O+66QAzmxS523r1kL2b4VLQooYePdUxfwWU+KMvdVp0ehQ/u3QvzCCETlgwVq1lD
-KqxYk+zrxA4lzMFEvEqid887gj8SfT3Z7DSBUhjhB27isvXempsPyoV+qFU0rVgN
-KTDKyvn0i6NXJKewvthbkLc7WHOEvDJ6Cbj/OOm11t0lZzzDHcGvAKrUvzEe3SE6
-wm6yO4TBy3aTkHpRD0A7VtQJVJHPawT0vTpGQ8ZjLolNa/2KfYHq0xs3/gXDkghX
-rGvjKI8CUA6gUubaapuGoA5zbsQd1ooWdi9XC0n4sBcaxqLRNXDsVCVdzbTnxdJZ
-0cmJm2RWmwyDXol8x1yLAsmuKorl9jXyopK772kmqL6zqPuMhKtQtjRf66TVuhCc
-kAzes4yqbvd2TxUZZ+MR98ks4jh8r3EvfKh7Mra9DQA/lBOK5koQxl2WDWIfW+9x
-OPzb6oqDABKIUU3sObOBYZxnZ83bxo9oOKew7K1RNll5r1XaLAr5uj43sXB0FqjQ
-FY8nRz1eda5tMBKX15qKCByxFMKbMaCCCfHxg6K3k8MLLPwg9InZFPauY32FJrsY
-oVWVXEl5AYN1B7adXqDxW/YTeE1VZCBRjWfZHenoN0v4dIFAWU4=
-=mH8Q
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+-- 
+nvpublic
