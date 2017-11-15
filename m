@@ -1,109 +1,49 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH V2 3/4] PCI: tegra: Apply sw fixups to support ASPM-L1
- Sub-States
-Date: Tue, 14 Nov 2017 17:13:08 -0600
-Message-ID: <20171114231307.GA13646@bhelgaas-glaptop.roam.corp.google.com>
-References: <1509423769-10522-1-git-send-email-vidyas@nvidia.com>
- <1509423769-10522-4-git-send-email-vidyas@nvidia.com>
- <20171107225007.GA22847@bhelgaas-glaptop.roam.corp.google.com>
- <ef7d193c-c114-d0c6-e450-c00ae3ab2d51@nvidia.com>
- <20171108174829.GE28427@bhelgaas-glaptop.roam.corp.google.com>
- <c387c65f-6e87-639e-0bf5-2324a745ba5a@nvidia.com>
- <20171110212900.GB19895@bhelgaas-glaptop.roam.corp.google.com>
- <7b61f849-2a0a-528e-aa6f-b259fda2294b@nvidia.com>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH 2/4] clk: tegra: add fence_delay for clock registers
+Date: Tue, 14 Nov 2017 16:41:32 -0800
+Message-ID: <20171115004132.GM11955@codeaurora.org>
+References: <1510313868-24810-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510313868-24810-3-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <7b61f849-2a0a-528e-aa6f-b259fda2294b@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: treding@nvidia.com, bhelgaas@google.com, rajatja@google.com, yinghai@kernel.org, david.daney@cavium.com, Julia.Lawall@lip6.fr, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com
+In-Reply-To: <1510313868-24810-3-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Nov 12, 2017 at 05:21:47PM +0530, Vidya Sagar wrote:
-> On Saturday 11 November 2017 02:59 AM, Bjorn Helgaas wrote:
-> >On Fri, Nov 10, 2017 at 03:37:10PM +0530, Vidya Sagar wrote:
+On 11/10, Peter De Schrijver wrote:
+> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> >>LTR_L1.2_THRESHOLD time is for the device to enter into and exit
-> >>from L1.2 state.
-> >That doesn't feel right to me.  Device characteristics are normally
-> >communicated via "capabilities" registers, not programmed by the OS in
-> >"control" registers.  The OS needs to be able to configure arbitrary
-> >plug-in devices without having device-specific details built into it.
-> But there is no capability register/field for LTR_L1.2_THRESHOLD either for
-> root ports or end points
+Some commit text perhaps explaining why we add this?
 
-Sorry, I didn't state that clearly.  I agree that LTR_L1.2_THRESHOLD
-should be the time required to enter and exit the L1.2 state.
-
-What doesn't make sense to me is that the OS would have to have
-device-specific quirks built into it instead of being able to discover
-what it needs via "capabilities" registers.  If it did, we would have
-no way to configure a plug-in switch unless we added a quirk for every
-device.  That would be a serious design error in the L1 Substates
-feature.
-
-Assume we have an Endpoint connected to a Root Port.  We should set
-LTR_L1.2_THRESHOLD to the time it takes to transition the Link from L0
-to L1.2 and back to L0.  Then we will enter L1.2 only if the Endpoint
-has reported that it can tolerate at least that much latency.
-
-From sec 5.5.3.3.1, Figures 5-16 and 5-17, it looks like the latency
-to go from L1.0 to L1.2 and back to L0 should be at least the sum of:
-
-  T(POWER_OFF)       max 2us (from Table 5-11)
-  T(L1.2)            min 4us (from Table 5-11)
-  T(POWER_ON)        from L1 PM Substates Control 2 register
-  T(COMMONMODE)      from L1 PM Substates Control 1 register
-
-This doesn't include (a) the time from L0 to L1.0 and (b) the gap
-between T(POWER_ON) and T(COMMONMODE).  I don't know how to learn
-those.  But I think we know how to compute T(POWER_ON) and
-T(COMMONMODE) by taking the max of Port T_POWER_ON and Port
-Common_Mode_Restore_Time for the two ends of the Link.
-
-Your lspci output (below) shows:
-
-  Root Port: Port T_POWER_ON = 70us
-  Root Port: Port Common_Mode_Restore_Time = 30us
-  Endpoint:  Port T_POWER_ON = 10us
-  Endpoint:  Port Common_Mode_Restore_Time = 10us
-
-That would make T(POWER_ON) = max(70us, 10us) = 70us
-and T(COMMONMODE) = max(30us, 10us) = 30us.
-
-So I would think the LTR_L1.2_THRESHOLD should be at least
-
-  2us + 4us + 70us + 30us = 106us
-
-Your hardware folks came up with 55us, but I don't know how.  I guess
-they're using information not visible to the OS?  
-
-Can you explain where I'm going wrong in my calculations?  I think we
-should be able to relate the values from the L1 PM Substates
-Capabilities register to the timing diagrams in sec 5.5.3.3.1 somehow.
-
-> Here is the L1 SS registers dumps for both root port and end point
-> 00:01.0 PCI bridge: NVIDIA Corporation Device 0fae (rev a1) (prog-if
-> 00 [Normal decode])
->     Capabilities: [140 v1] L1 PM Substates
->         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
-> L1_PM_Substates+
->               PortCommonModeRestoreTime=30us PortTPowerOnTime=70us
->         L1SubCtl1: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
->                T_CommonMode=30us LTR1.2_Threshold=56320ns
->         L1SubCtl2: T_PwrOn=70us
+> ---
+>  drivers/clk/tegra/clk.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> 01:00.0 Non-Volatile memory controller: Sandisk Corp Device 5001
-> (prog-if 02 [NVM Express])
->     Capabilities: [2c0 v1] L1 PM Substates
->         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
-> L1_PM_Substates+
->               PortCommonModeRestoreTime=10us PortTPowerOnTime=10us
->         L1SubCtl1: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
->                T_CommonMode=0us LTR1.2_Threshold=56320ns
->         L1SubCtl2: T_PwrOn=70us
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 872f118..3b8947e 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -809,4 +809,11 @@ static inline struct clk *tegra_clk_register_emc(void __iomem *base,
+>  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+>  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+>  
+> +/* Combined read fence with delay */
+> +#define fence_udelay(delay, reg)	\
+> +	do {				\
+> +		readl_relaxed(reg);	\
+> +		udelay(delay);		\
 
-Bjorn
+Does the udelay() need to be after the readl()? As far as I
+recall, the delay can start spinning before the read returns
+because there isn't any sort of barrier between the two. One
+approach would be to have an mb() between the read and the delay
+so that the read is ordered with respect to the delay. If not, we
+need a better comment than "combined read fence with delay".
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
