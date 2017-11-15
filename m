@@ -1,139 +1,40 @@
 From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] phy: tegra: fix device-tree node lookups
-Date: Wed, 15 Nov 2017 10:43:16 +0100
-Message-ID: <20171115094316.31576-1-johan@kernel.org>
+Subject: [PATCH] soc/tegra: pmc: fix child-node lookup
+Date: Wed, 15 Nov 2017 10:44:58 +0100
+Message-ID: <20171115094458.31666-1-johan@kernel.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix child-node lookups during probe, which ended up searching the whole
-device tree depth-first starting at the parents rather than just
-matching on their children.
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-To make things worse, some parent nodes could end up being being
-prematurely freed (by tegra_xusb_pad_register()) as
-of_find_node_by_name() drops a reference to its first argument.
+To make things worse, the parent pmc node could end up being prematurely
+freed as of_find_node_by_name() drops a reference to its first argument.
 
-Fixes: 53d2a715c240 ("phy: Add Tegra XUSB pad controller support")
-Cc: stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>     # 4.7
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Fixes: 3568df3d31d6 ("soc: tegra: Add thermal reset (thermtrip) support to PMC")
+Cc: stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>     # 4.0
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- drivers/phy/tegra/xusb.c | 58 ++++++++++++++++++++++++------------------------
- 1 file changed, 29 insertions(+), 29 deletions(-)
+ drivers/soc/tegra/pmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 4307bf0013e1..63e916d4d069 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -75,14 +75,14 @@ MODULE_DEVICE_TABLE(of, tegra_xusb_padctl_of_match);
- static struct device_node *
- tegra_xusb_find_pad_node(struct tegra_xusb_padctl *padctl, const char *name)
- {
--	/*
--	 * of_find_node_by_name() drops a reference, so make sure to grab one.
--	 */
--	struct device_node *np = of_node_get(padctl->dev->of_node);
-+	struct device_node *pads, *np;
-+
-+	pads = of_get_child_by_name(padctl->dev->of_node, "pads");
-+	if (!pads)
-+		return NULL;
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 0453ff6839a7..7e9ef3431bea 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1321,7 +1321,7 @@ static void tegra_pmc_init_tsense_reset(struct tegra_pmc *pmc)
+ 	if (!pmc->soc->has_tsense_reset)
+ 		return;
  
--	np = of_find_node_by_name(np, "pads");
--	if (np)
--		np = of_find_node_by_name(np, name);
-+	np = of_get_child_by_name(pads, name);
-+	of_node_put(pads);
- 
- 	return np;
- }
-@@ -90,16 +90,16 @@ tegra_xusb_find_pad_node(struct tegra_xusb_padctl *padctl, const char *name)
- static struct device_node *
- tegra_xusb_pad_find_phy_node(struct tegra_xusb_pad *pad, unsigned int index)
- {
--	/*
--	 * of_find_node_by_name() drops a reference, so make sure to grab one.
--	 */
--	struct device_node *np = of_node_get(pad->dev.of_node);
-+	struct device_node *np, *lanes;
- 
--	np = of_find_node_by_name(np, "lanes");
--	if (!np)
-+	lanes = of_get_child_by_name(pad->dev.of_node, "lanes");
-+	if (!lanes)
- 		return NULL;
- 
--	return of_find_node_by_name(np, pad->soc->lanes[index].name);
-+	np = of_get_child_by_name(lanes, pad->soc->lanes[index].name);
-+	of_node_put(lanes);
-+
-+	return np;
- }
- 
- static int
-@@ -195,7 +195,7 @@ int tegra_xusb_pad_register(struct tegra_xusb_pad *pad,
- 	unsigned int i;
- 	int err;
- 
--	children = of_find_node_by_name(pad->dev.of_node, "lanes");
-+	children = of_get_child_by_name(pad->dev.of_node, "lanes");
- 	if (!children)
- 		return -ENODEV;
- 
-@@ -444,21 +444,21 @@ static struct device_node *
- tegra_xusb_find_port_node(struct tegra_xusb_padctl *padctl, const char *type,
- 			  unsigned int index)
- {
--	/*
--	 * of_find_node_by_name() drops a reference, so make sure to grab one.
--	 */
--	struct device_node *np = of_node_get(padctl->dev->of_node);
-+	struct device_node *ports, *np;
-+	char *name;
- 
--	np = of_find_node_by_name(np, "ports");
--	if (np) {
--		char *name;
-+	ports = of_get_child_by_name(padctl->dev->of_node, "ports");
-+	if (!ports)
-+		return NULL;
- 
--		name = kasprintf(GFP_KERNEL, "%s-%u", type, index);
--		if (!name)
--			return ERR_PTR(-ENOMEM);
--		np = of_find_node_by_name(np, name);
--		kfree(name);
-+	name = kasprintf(GFP_KERNEL, "%s-%u", type, index);
-+	if (!name) {
-+		of_node_put(ports);
-+		return ERR_PTR(-ENOMEM);
- 	}
-+	np = of_get_child_by_name(ports, name);
-+	kfree(name);
-+	of_node_put(ports);
- 
- 	return np;
- }
-@@ -847,7 +847,7 @@ static void tegra_xusb_remove_ports(struct tegra_xusb_padctl *padctl)
- 
- static int tegra_xusb_padctl_probe(struct platform_device *pdev)
- {
--	struct device_node *np = of_node_get(pdev->dev.of_node);
-+	struct device_node *np = pdev->dev.of_node;
- 	const struct tegra_xusb_padctl_soc *soc;
- 	struct tegra_xusb_padctl *padctl;
- 	const struct of_device_id *match;
-@@ -855,7 +855,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
- 	int err;
- 
- 	/* for backwards compatibility with old device trees */
--	np = of_find_node_by_name(np, "pads");
-+	np = of_get_child_by_name(np, "pads");
+-	np = of_find_node_by_name(pmc->dev->of_node, "i2c-thermtrip");
++	np = of_get_child_by_name(pmc->dev->of_node, "i2c-thermtrip");
  	if (!np) {
- 		dev_warn(&pdev->dev, "deprecated DT, using legacy driver\n");
- 		return tegra_xusb_padctl_legacy_probe(pdev);
+ 		dev_warn(dev, "i2c-thermtrip node not found, %s.\n", disabled);
+ 		return;
 -- 
 2.15.0
