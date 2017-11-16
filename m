@@ -1,31 +1,38 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] arm64: defconfig: Enable CONFIG_ARM_TEGRA186_CPUFREQ
-Date: Thu, 16 Nov 2017 13:46:51 +0200
-Message-ID: <20171116114652.25321-1-mperttunen@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
+Date: Thu, 16 Nov 2017 16:28:58 +0200
+Message-ID: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable Tegra186 CPU frequency scaling support by default.
+This patch series introduces the Memory Built-In Self Test (MBIST)
+work around (WAR) needed when power ungating certain domains. More
+details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+implement the WAR in the Tegra210 clock driver, because most accesses are
+to CAR registers and for the VENC domain, we need to make sure the CSI
+clock source is not changed during the WAR execution.
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+* Use readl for fence_delay() rather than readl_relaxed
+* clarify MBIST and WAR acronyms
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 6356c6da34ea..42711031a72d 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -101,6 +101,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
- CONFIG_ARM_SCPI_CPUFREQ=y
-+CONFIG_ARM_TEGRA186_CPUFREQ=y
- CONFIG_ACPI_CPPC_CPUFREQ=m
- CONFIG_NET=y
- CONFIG_PACKET=y
+Peter De Schrijver (4):
+  clk: tegra: Add la clock for Tegra210
+  clk: tegra: add fence_delay for clock registers
+  clk: tegra: MBIST work around for Tegra210
+  soc/tegra: pmc: apply MBIST work around fo Tegra210
+
+ drivers/clk/tegra/clk-tegra210.c         | 371 ++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h                  |   7 +
+ drivers/soc/tegra/pmc.c                  |   5 +
+ include/dt-bindings/clock/tegra210-car.h |   2 +-
+ include/linux/clk/tegra.h                |   1 +
+ 5 files changed, 383 insertions(+), 3 deletions(-)
+
 -- 
-2.14.2
+1.9.1
