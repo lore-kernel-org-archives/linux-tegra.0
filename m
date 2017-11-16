@@ -1,77 +1,37 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH RESEND v2] dmaengine: tegra-apb: Support non-flow controlled slave configuration
-Date: Thu, 16 Nov 2017 20:11:06 +0300
-Message-ID: <20171116171106.25932-1-digetx@gmail.com>
+Subject: Re: [PATCH v2] dmaengine: tegra-apb: Support non-flow controlled
+ slave configuration
+Date: Thu, 16 Nov 2017 20:16:29 +0300
+Message-ID: <8a2345de-6165-d6b7-8fe9-5845a4dfdc10@gmail.com>
+References: <20171019221308.18707-1-digetx@gmail.com>
+ <57ef35f0-d8fa-5238-901e-11cd9d001e02@gmail.com>
+ <20171115155422.GN3187@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171115155422.GN3187@localhost>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This allows DMA client to issue a non-flow controlled TX. In particular
-it is needed for the fuse driver that reads fuse registers using APBDMA
-to workaround a HW bug that results in hang when CPU and DMA perform
-simultaneous access to fuse peripheral.
+On 15.11.2017 18:54, Vinod Koul wrote:
+> On Tue, Nov 14, 2017 at 02:23:07PM +0300, Dmitry Osipenko wrote:
+>> On 20.10.2017 01:13, Dmitry Osipenko wrote:
+>>> This allows DMA client to issue a non-flow controlled TX. In particular
+>>> it is needed for the fuse driver that reads fuse registers using APBDMA
+>>> to workaround a HW bug that results in hang when CPU and DMA perform
+>>> simultaneous access to fuse peripheral.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Vinod, are you going to apply this patch for 4.15?
+> 
+> Sorry I dont seem to have this one in my queue and dont see it applied, not
+> sure why. Can you guys resend please
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-
-Petch resent as per Vinod's request.
-
-Change log:
-
-v2:
-        - Removed trailing whitespace reported by checkpatch
-
- drivers/dma/tegra20-apb-dma.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index b9d75a54c896..9a558e30c461 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -353,7 +353,8 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
- 	}
- 
- 	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
--	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID) {
-+	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID &&
-+	    sconfig->device_fc) {
- 		if (sconfig->slave_id > TEGRA_APBDMA_CSR_REQ_SEL_MASK)
- 			return -EINVAL;
- 		tdc->slave_id = sconfig->slave_id;
-@@ -970,8 +971,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
- 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
- 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
- 
--	csr |= TEGRA_APBDMA_CSR_ONCE | TEGRA_APBDMA_CSR_FLOW;
--	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
-+	csr |= TEGRA_APBDMA_CSR_ONCE;
-+
-+	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
-+		csr |= TEGRA_APBDMA_CSR_FLOW;
-+		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
-+	}
-+
- 	if (flags & DMA_PREP_INTERRUPT)
- 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
- 
-@@ -1110,10 +1116,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
- 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
- 
--	csr |= TEGRA_APBDMA_CSR_FLOW;
-+	if (tdc->slave_id != TEGRA_APBDMA_SLAVE_ID_INVALID) {
-+		csr |= TEGRA_APBDMA_CSR_FLOW;
-+		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
-+	}
-+
- 	if (flags & DMA_PREP_INTERRUPT)
- 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
--	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
- 
- 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
- 
--- 
-2.14.2
+No problem, re-sent.
