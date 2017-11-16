@@ -1,19 +1,19 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH 06/10] drm/tegra: Deliver job completion callback to
  client
-Date: Thu, 16 Nov 2017 19:33:39 +0300
-Message-ID: <a5b3d90e-6cc9-8c1a-5141-d5cb8548add9@gmail.com>
+Date: Thu, 16 Nov 2017 19:40:52 +0300
+Message-ID: <1afa1ba9-3103-3672-2e15-fb8c7de2520b@gmail.com>
 References: <20171105110118.15142-1-mperttunen@nvidia.com>
  <20171105110118.15142-7-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171105110118.15142-7-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171105110118.15142-7-mperttunen@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 05.11.2017 14:01, Mikko Perttunen wrote:
@@ -23,11 +23,7 @@ On 05.11.2017 14:01, Mikko Perttunen wrote:
 > after the userspace application has closed the context. As such,
 > also add kref-based refcounting for contexts.
 > 
-
-It's very likely that we will need contexts kref'ing for other things as well,
-would be nice if you could factor out kref addition into a standalone patch.
-
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
 >  drivers/gpu/drm/tegra/drm.c | 27 ++++++++++++++++++++++++---
 >  drivers/gpu/drm/tegra/drm.h |  4 ++++
@@ -95,10 +91,6 @@ would be nice if you could factor out kref addition into a standalone patch.
 >  
 > +	kref_init(&context->ref);
 > +
-
-Would be a bit cleaner to move kref_init into tegra_client_open() where the rest
-of context variables getting initialized.
-
 >  	mutex_unlock(&fpriv->lock);
 >  	return err;
 >  }
@@ -118,6 +110,9 @@ of context variables getting initialized.
 > -	tegra_drm_context_free(context);
 > +	kref_put(&context->ref, tegra_drm_context_free);
 >  
+
+Probably won't hurt to add and use tegra_drm_context_get()/tegra_drm_context_put().
+
 >  	return 0;
 >  }
 > diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
