@@ -1,107 +1,54 @@
-From: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: next/master boot: 210 boots: 35 failed, 174 passed with 1
- conflict (next-20171115)
-Date: Thu, 16 Nov 2017 14:50:33 +0000
-Message-ID: <0e2dbcf5-6823-8e48-e2ac-85afa7d6dbaf@collabora.com>
-References: <5a0c2169.c6a2df0a.13ea3.9c02@mx.google.com>
- <a21b88b2-663d-49fc-527a-87494a23087f@collabora.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 4/4] soc/tegra: pmc: apply MBIST work around fo Tegra210
+Date: Thu, 16 Nov 2017 17:29:55 +0200
+Message-ID: <1510846195-28555-5-git-send-email-pdeschrijver@nvidia.com>
+References: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a21b88b2-663d-49fc-527a-87494a23087f-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+In-Reply-To: <1510846195-28555-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "kernelci.org bot" <bot-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 16/11/17 14:42, Guillaume Tucker wrote:
-> On 15/11/17 11:13, kernelci.org bot wrote:
->> next/master boot: 210 boots: 35 failed, 174 passed with 1 conflict (next-20171115)
->>
->> Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/kernel/next-20171115/
->> Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/next-20171115/
->>
->> Tree: next
->> Branch: master
->> Git Describe: next-20171115
->> Git Commit: 63fb091c80188ec51f53514d07de907c1dd3d61d
->> Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->> Tested: 35 unique boards, 16 SoC families, 30 builds out of 213
->>
->> Boot Regressions Detected:
->>
->> arm:
-> [...]
->>     multi_v7_defconfig:
->>         tegra124-nyan-big:
->>             lab-collabora: failing since 11 days (last pass: next-20171102 - first fail: next-20171103)
->
-> I've run another automated bisection with some tweaks to remove
-> known failures and found this breaking change:
->
->   commit 859eb05676f67d4960130dff36d3368006716110
->   Author: Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->   Date:   Fri Sep 8 13:50:11 2017 -0700
->
->       platform/chrome: Use proper protocol transfer function
->
->
+Apply the memory built-in self test work around when ungating certain
+Tegra210 power domains.
 
-Should have added, this is essentially the kernel error:
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/soc/tegra/pmc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-[    1.711581] kernel BUG at drivers/platform/chrome/cros_ec_proto.c:34!
-[    1.718004] Internal error: Oops - BUG: 0 [#1] SMP ARM
-
-Please see the links to the LAVA jobs below for the full logs.
-
-> The bisection was run with CONFIG_MODULES and CONFIG_DRM_NOUVEAU
-> disabled and d89e2378a97fafdc74cbf997e7c88af75b81610a ("drivers:
-> flag buses which demand DMA configuration") reverted in each
-> iteration as these things are known to cause other boot failures.
-> See the full log here (from staging.kernelci.org Jenkins):
->
->   https://people.collabora.com/~gtucker/kernelci/bisections/20171116-nyan-big-next.txt
->
-> As the kernelci.org automated bisection tool is still
-> experimental, I then did a couple of checks to confirm whether
-> this commit was still an issue:
->
->   * 859eb056 with MODULES and DRM_NOUVEAU disabled, failed:
->     https://lava.collabora.co.uk/scheduler/job/992002
->
->   * same as above but with 859eb056 reverted in-place, passes:
->     https://lava.collabora.co.uk/scheduler/job/992003
->
->   * next-20171115 with MODULES and DRM_NOUVEAU disabled, and
->     d89e2378 reverted, fails:
->     https://lava.collabora.co.uk/scheduler/job/992004
->
->   * same as above but with 859eb056 reverted on top, passes:
->     https://lava.collabora.co.uk/scheduler/job/992005
->
-> So this shows the commit found by the bisection seems to be still
-> causing problems on tegra124-nyan-big.  I haven't investigated
-> any further, I don't know if other platforms show the same
-> symptoms.  At least this should narrow things down a bit.
->
-> Note: With this in mind, another possible bisection would be to
-> enable DRM_NOUVEAU again while reverting the 2 known breaking
-> commits and try to find what is actually causing the issue in
-> that driver.  I'm not planning to do this right now though...
->
-> Hope this helps!
->
-> Guillaume
->
->> ---
->> For more info write to <info-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org>
->>
->>
->>
->> _______________________________________________
->> Kernel-build-reports mailing list
->> Kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
->> https://lists.linaro.org/mailman/listinfo/kernel-build-reports
->>
->
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 0453ff6..4c0582d 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -142,6 +142,7 @@ struct tegra_pmc_soc {
+ 
+ 	bool has_tsense_reset;
+ 	bool has_gpu_clamps;
++	bool needs_mbist_war;
+ 
+ 	const struct tegra_io_pad_soc *io_pads;
+ 	unsigned int num_io_pads;
+@@ -411,6 +412,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+ 
+ 	usleep_range(10, 20);
+ 
++	if (pg->pmc->soc->needs_mbist_war)
++		tegra210_handle_mbist_war(pg->id);
++
+ 	if (disable_clocks)
+ 		tegra_powergate_disable_clocks(pg);
+ 
+@@ -1712,6 +1716,7 @@ static int tegra_pmc_resume(struct device *dev)
+ 	.cpu_powergates = tegra210_cpu_powergates,
+ 	.has_tsense_reset = true,
+ 	.has_gpu_clamps = true,
++	.needs_mbist_war = true,
+ 	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+ 	.io_pads = tegra210_io_pads,
+ };
+-- 
+1.9.1
