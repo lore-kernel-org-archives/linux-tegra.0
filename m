@@ -1,69 +1,96 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Subject: Re: next/master boot: 210 boots: 35 failed, 174 passed with 1
  conflict (next-20171115)
-Date: Thu, 16 Nov 2017 17:55:24 +0000
-Message-ID: <3ddf8ad5-e3d9-49cc-9e20-2d8cdbc9685f@nvidia.com>
+Date: Thu, 16 Nov 2017 19:01:47 +0000
+Message-ID: <e0e9994c-8d2e-f499-e430-1f15bff7b0e6@collabora.com>
 References: <5a0c2169.c6a2df0a.13ea3.9c02@mx.google.com>
  <a21b88b2-663d-49fc-527a-87494a23087f@collabora.com>
  <0e2dbcf5-6823-8e48-e2ac-85afa7d6dbaf@collabora.com>
+ <3ddf8ad5-e3d9-49cc-9e20-2d8cdbc9685f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <0e2dbcf5-6823-8e48-e2ac-85afa7d6dbaf@collabora.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Guillaume Tucker <guillaume.tucker@collabora.com>, Shawn Nematbakhsh <shawnn@chromium.org>
-Cc: "kernelci.org bot" <bot@kernelci.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, kernel-build-reports@lists.linaro.org, "open list:TEGRA
- ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <3ddf8ad5-e3d9-49cc-9e20-2d8cdbc9685f-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDE2LzExLzE3IDE0OjUwLCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgo+IE9uIDE2LzExLzE3
-IDE0OjQyLCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgo+PiBPbiAxNS8xMS8xNyAxMToxMywga2Vy
-bmVsY2kub3JnIGJvdCB3cm90ZToKPj4+IG5leHQvbWFzdGVyIGJvb3Q6IDIxMCBib290czogMzUg
-ZmFpbGVkLCAxNzQgcGFzc2VkIHdpdGggMSBjb25mbGljdAo+Pj4gKG5leHQtMjAxNzExMTUpCj4+
-Pgo+Pj4gRnVsbCBCb290IFN1bW1hcnk6Cj4+PiBodHRwczovL2tlcm5lbGNpLm9yZy9ib290L2Fs
-bC9qb2IvbmV4dC9icmFuY2gvbWFzdGVyL2tlcm5lbC9uZXh0LTIwMTcxMTE1Lwo+Pj4KPj4+IEZ1
-bGwgQnVpbGQgU3VtbWFyeToKPj4+IGh0dHBzOi8va2VybmVsY2kub3JnL2J1aWxkL25leHQvYnJh
-bmNoL21hc3Rlci9rZXJuZWwvbmV4dC0yMDE3MTExNS8KPj4+Cj4+PiBUcmVlOiBuZXh0Cj4+PiBC
-cmFuY2g6IG1hc3Rlcgo+Pj4gR2l0IERlc2NyaWJlOiBuZXh0LTIwMTcxMTE1Cj4+PiBHaXQgQ29t
-bWl0OiA2M2ZiMDkxYzgwMTg4ZWM1MWY1MzUxNGQwN2RlOTA3YzFkZDNkNjFkCj4+PiBHaXQgVVJM
-Ogo+Pj4gaHR0cDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9uZXh0
-L2xpbnV4LW5leHQuZ2l0Cj4+PiBUZXN0ZWQ6IDM1IHVuaXF1ZSBib2FyZHMsIDE2IFNvQyBmYW1p
-bGllcywgMzAgYnVpbGRzIG91dCBvZiAyMTMKPj4+Cj4+PiBCb290IFJlZ3Jlc3Npb25zIERldGVj
-dGVkOgo+Pj4KPj4+IGFybToKPj4gWy4uLl0KPj4+IMKgwqDCoCBtdWx0aV92N19kZWZjb25maWc6
-Cj4+PiDCoMKgwqDCoMKgwqDCoCB0ZWdyYTEyNC1ueWFuLWJpZzoKPj4+IMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgbGFiLWNvbGxhYm9yYTogZmFpbGluZyBzaW5jZSAxMSBkYXlzIChsYXN0IHBhc3M6
-Cj4+PiBuZXh0LTIwMTcxMTAyIC0gZmlyc3QgZmFpbDogbmV4dC0yMDE3MTEwMykKPj4KPj4gSSd2
-ZSBydW4gYW5vdGhlciBhdXRvbWF0ZWQgYmlzZWN0aW9uIHdpdGggc29tZSB0d2Vha3MgdG8gcmVt
-b3ZlCj4+IGtub3duIGZhaWx1cmVzIGFuZCBmb3VuZCB0aGlzIGJyZWFraW5nIGNoYW5nZToKPj4K
-Pj4gwqAgY29tbWl0IDg1OWViMDU2NzZmNjdkNDk2MDEzMGRmZjM2ZDMzNjgwMDY3MTYxMTAKPj4g
-wqAgQXV0aG9yOiBTaGF3biBOZW1hdGJha2hzaCA8c2hhd25uQGNocm9taXVtLm9yZz4KPj4gwqAg
-RGF0ZTrCoMKgIEZyaSBTZXAgOCAxMzo1MDoxMSAyMDE3IC0wNzAwCj4+Cj4+IMKgwqDCoMKgwqAg
-cGxhdGZvcm0vY2hyb21lOiBVc2UgcHJvcGVyIHByb3RvY29sIHRyYW5zZmVyIGZ1bmN0aW9uCj4+
-Cj4+Cj4gCj4gU2hvdWxkIGhhdmUgYWRkZWQsIHRoaXMgaXMgZXNzZW50aWFsbHkgdGhlIGtlcm5l
-bCBlcnJvcjoKPiAKPiBbwqDCoMKgIDEuNzExNTgxXSBrZXJuZWwgQlVHIGF0IGRyaXZlcnMvcGxh
-dGZvcm0vY2hyb21lL2Nyb3NfZWNfcHJvdG8uYzozNCEKPiBbwqDCoMKgIDEuNzE4MDA0XSBJbnRl
-cm5hbCBlcnJvcjogT29wcyAtIEJVRzogMCBbIzFdIFNNUCBBUk0KPiAKPiBQbGVhc2Ugc2VlIHRo
-ZSBsaW5rcyB0byB0aGUgTEFWQSBqb2JzIGJlbG93IGZvciB0aGUgZnVsbCBsb2dzLgpUaGlzIG9u
-ZSBpcyBhIGtub3duIGlzc3VlICh3aGljaCBJIGJlbGlldmUgSSBoYXZlIG1lbnRpb25lZCBhIGNv
-dXBsZQp0aW1lcykuIFRoZXJlIGlzIGEgZml4IGF2YWlsYWJsZSBbMF0uCgpJIGFtIG5vdCBzdXJl
-IHRoYXQgY29udGludWluZyB0byBiaXNlY3QgdGhpcyBpcyBnb2luZyB0byBiYXJlIGFueSBmcnVp
-dApkdWUgdG8gdGhlIG51bWJlciBvZiBpc3N1ZXMgcGxhZ3VpbmcgdGhpcyBib2FyZCBhdCB0aGUg
-bW9tZW50LiBJdCBzZWVtcwp0byBiZSBhIERSTSByZWxhdGVkIGlzc3VlIGFuZCB3aGVuIEkgZ2V0
-IHNvbWV0aW1lIEkgd2lsbCBzZWUgaWYgSSBjYW4KZmlndXJlIG91dCB3aGF0IGlzIGNhdXNpbmcg
-dGhpcy4gVGhpcyBpcyB0aGUgZnVydGhlcmVzdCBJIGhhdmUgZ290dGVuIHNvCmZhciBbMV0uCgoK
-Sm9uCgpbMF0gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC85OTc0ODM1LwpbMV0g
-aHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvYXJtLWtlcm5lbC9tc2c2MTY2MTYuaHRtbAoK
-LS0gCm52cHVibGljCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
-LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9saW51eC1hcm0ta2VybmVsCg==
+On 16/11/17 17:55, Jon Hunter wrote:
+>
+> On 16/11/17 14:50, Guillaume Tucker wrote:
+>> On 16/11/17 14:42, Guillaume Tucker wrote:
+>>> On 15/11/17 11:13, kernelci.org bot wrote:
+>>>> next/master boot: 210 boots: 35 failed, 174 passed with 1 conflict
+>>>> (next-20171115)
+>>>>
+>>>> Full Boot Summary:
+>>>> https://kernelci.org/boot/all/job/next/branch/master/kernel/next-20171115/
+>>>>
+>>>> Full Build Summary:
+>>>> https://kernelci.org/build/next/branch/master/kernel/next-20171115/
+>>>>
+>>>> Tree: next
+>>>> Branch: master
+>>>> Git Describe: next-20171115
+>>>> Git Commit: 63fb091c80188ec51f53514d07de907c1dd3d61d
+>>>> Git URL:
+>>>> http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>>>> Tested: 35 unique boards, 16 SoC families, 30 builds out of 213
+>>>>
+>>>> Boot Regressions Detected:
+>>>>
+>>>> arm:
+>>> [...]
+>>>>     multi_v7_defconfig:
+>>>>         tegra124-nyan-big:
+>>>>             lab-collabora: failing since 11 days (last pass:
+>>>> next-20171102 - first fail: next-20171103)
+>>>
+>>> I've run another automated bisection with some tweaks to remove
+>>> known failures and found this breaking change:
+>>>
+>>>   commit 859eb05676f67d4960130dff36d3368006716110
+>>>   Author: Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>>>   Date:   Fri Sep 8 13:50:11 2017 -0700
+>>>
+>>>       platform/chrome: Use proper protocol transfer function
+>>>
+>>>
+>>
+>> Should have added, this is essentially the kernel error:
+>>
+>> [    1.711581] kernel BUG at drivers/platform/chrome/cros_ec_proto.c:34!
+>> [    1.718004] Internal error: Oops - BUG: 0 [#1] SMP ARM
+>>
+>> Please see the links to the LAVA jobs below for the full logs.
+> This one is a known issue (which I believe I have mentioned a couple
+> times). There is a fix available [0].
+
+Right, it's true that this kernel error showed up in the previous
+bisection I ran last week.  As this time it found another commit
+I thought it might be worthwhile sharing the result.
+
+> I am not sure that continuing to bisect this is going to bare any fruit
+> due to the number of issues plaguing this board at the moment. It seems
+> to be a DRM related issue and when I get sometime I will see if I can
+> figure out what is causing this. This is the furtherest I have gotten so
+> far [1].
+
+Thanks for the update.  Please keep in mind that DRM_MOUVEAU was
+disabled in every iteration this time, so there might also be
+something else unrelated to DRM.
+
+Agreed, it's not worth bisecting much further.  In fact I found
+these issues mostly as a side effect of working on the automatic
+bisection mechanism in kernelci.org, and linux-next is especially
+tricky to bisect.  On this subject, we'll probably start by
+enabling this on stable trees and mainline, then see what we can
+do with linux-next and other tricky trees at a later stage.
+
+Thanks,
+Guillaume
+
+> [0] https://patchwork.kernel.org/patch/9974835/
+> [1] https://www.spinics.net/lists/arm-kernel/msg616616.html
