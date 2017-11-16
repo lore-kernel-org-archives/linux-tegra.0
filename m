@@ -1,70 +1,484 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 6/8] cpufreq: tegra124-cpufreq: extend to support Tegra210
-Date: Thu, 16 Nov 2017 17:33:07 +0200
-Message-ID: <1510846389-28712-7-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 3/8] clk: tegra: add CVB tables for Tegra210 CPU DFLL
+Date: Thu, 16 Nov 2017 17:33:04 +0200
+Message-ID: <1510846389-28712-4-git-send-email-pdeschrijver@nvidia.com>
 References: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1510846389-28712-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-support in this driver. Also allow for the case where the CPU voltage is
-controlled directly by the DFLL rather than by a separate regulator object.
-
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 426 +++++++++++++++++++++++++++++
+ drivers/clk/tegra/cvb.h                    |   1 +
+ 2 files changed, 427 insertions(+)
 
-diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-index 4353025..d631dc4 100644
---- a/drivers/cpufreq/tegra124-cpufreq.c
-+++ b/drivers/cpufreq/tegra124-cpufreq.c
-@@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
- {
- 	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
- 	clk_disable_unprepare(priv->dfll_clk);
--	regulator_sync_voltage(priv->vdd_cpu_reg);
-+	if (priv->vdd_cpu_reg)
-+		regulator_sync_voltage(priv->vdd_cpu_reg);
- 	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
- }
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index b587f6b..57f64ae 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -90,6 +90,421 @@ struct dfll_fcpu_data {
+ 	},
+ };
  
-@@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
- 		return -ENODEV;
++static const unsigned long tegra210_cpu_max_freq_table[] = {
++	[0] = 1912500000UL,
++	[1] = 1912500000UL,
++	[2] = 2218500000UL,
++	[3] = 1785000000UL,
++	[4] = 1632000000UL,
++	[5] = 1912500000UL,
++	[6] = 2014500000UL,
++	[7] = 1734000000UL,
++	[8] = 1683000000UL,
++	[9] = 1555500000UL,
++	[10] = 1504500000UL,
++};
++
++#define CPU_CVB_TABLE \
++	.speedo_scale = 100,	\
++	.voltage_scale = 1000,	\
++	.entries = {		\
++		{204000000UL,	{1007452, -23865, 370} }, \
++		{306000000UL,	{1052709, -24875, 370} }, \
++		{408000000UL,	{1099069, -25895, 370} }, \
++		{510000000UL,	{1146534, -26905, 370} }, \
++		{612000000UL,	{1195102, -27915, 370} }, \
++		{714000000UL,	{1244773, -28925, 370} }, \
++		{816000000UL,	{1295549, -29935, 370} }, \
++		{918000000UL,	{1347428, -30955, 370} }, \
++		{1020000000UL,	{1400411, -31965, 370} }, \
++		{1122000000UL,	{1454497, -32975, 370} }, \
++		{1224000000UL,	{1509687, -33985, 370} }, \
++		{1326000000UL,	{1565981, -35005, 370} }, \
++		{1428000000UL,	{1623379, -36015, 370} }, \
++		{1530000000UL,	{1681880, -37025, 370} }, \
++		{1632000000UL,	{1741485, -38035, 370} }, \
++		{1734000000UL,	{1802194, -39055, 370} }, \
++		{1836000000UL,	{1864006, -40065, 370} }, \
++		{1912500000UL,	{1910780, -40815, 370} }, \
++		{2014500000UL,	{1227000,      0,   0} }, \
++		{2218500000UL,	{1227000,      0,   0} }, \
++		{0,           	{      0,      0,   0} }, \
++	}
++
++#define CPU_CVB_TABLE_XA \
++	.speedo_scale = 100,	\
++	.voltage_scale = 1000,	\
++	.entries = {		\
++		{204000000UL,	{1250024, -39785, 565} }, \
++		{306000000UL,	{1297556, -41145, 565} }, \
++		{408000000UL,	{1346718, -42505, 565} }, \
++		{510000000UL,	{1397511, -43855, 565} }, \
++		{612000000UL,	{1449933, -45215, 565} }, \
++		{714000000UL,	{1503986, -46575, 565} }, \
++		{816000000UL,	{1559669, -47935, 565} }, \
++		{918000000UL,	{1616982, -49295, 565} }, \
++		{1020000000UL,	{1675926, -50645, 565} }, \
++		{1122000000UL,	{1736500, -52005, 565} }, \
++		{1224000000UL,	{1798704, -53365, 565} }, \
++		{1326000000UL,	{1862538, -54725, 565} }, \
++		{1428000000UL,	{1928003, -56085, 565} }, \
++		{1530000000UL,	{1995097, -57435, 565} }, \
++		{1606500000UL,	{2046149, -58445, 565} }, \
++		{1632000000UL,	{2063822, -58795, 565} }, \
++		{0,           	{      0,      0,   0} }, \
++	}
++
++#define CPU_CVB_TABLE_EUCM1 \
++	.speedo_scale = 100,	\
++	.voltage_scale = 1000,	\
++	.entries = {		\
++		{204000000UL,	{734429, 0, 0} }, \
++		{306000000UL,	{768191, 0, 0} }, \
++		{408000000UL,	{801953, 0, 0} }, \
++		{510000000UL,	{835715, 0, 0} }, \
++		{612000000UL,	{869477, 0, 0} }, \
++		{714000000UL,	{903239, 0, 0} }, \
++		{816000000UL,	{937001, 0, 0} }, \
++		{918000000UL,	{970763, 0, 0} }, \
++		{1020000000UL,	{1004525, 0, 0} }, \
++		{1122000000UL,	{1038287, 0, 0} }, \
++		{1224000000UL,	{1072049, 0, 0} }, \
++		{1326000000UL,	{1105811, 0, 0} }, \
++		{1428000000UL,	{1130000, 0, 0} }, \
++		{1555500000UL,	{1130000, 0, 0} }, \
++		{1632000000UL,	{1170000, 0, 0} }, \
++		{1734000000UL,	{1227500, 0, 0} }, \
++		{0,           	{      0, 0, 0} }, \
++	}
++
++#define CPU_CVB_TABLE_EUCM2 \
++	.speedo_scale = 100,	\
++	.voltage_scale = 1000,	\
++	.entries = {		\
++		{204000000UL,	{742283, 0, 0} }, \
++		{306000000UL,	{776249, 0, 0} }, \
++		{408000000UL,	{810215, 0, 0} }, \
++		{510000000UL,	{844181, 0, 0} }, \
++		{612000000UL,	{878147, 0, 0} }, \
++		{714000000UL,	{912113, 0, 0} }, \
++		{816000000UL,	{946079, 0, 0} }, \
++		{918000000UL,	{980045, 0, 0} }, \
++		{1020000000UL,	{1014011, 0, 0} }, \
++		{1122000000UL,	{1047977, 0, 0} }, \
++		{1224000000UL,	{1081943, 0, 0} }, \
++		{1326000000UL,	{1090000, 0, 0} }, \
++		{1479000000UL,	{1090000, 0, 0} }, \
++		{1555500000UL,	{1162000, 0, 0} }, \
++		{1683000000UL,	{1195000, 0, 0} }, \
++		{0,           	{      0, 0, 0} }, \
++	}
++
++#define CPU_CVB_TABLE_EUCM2_JOINT_RAIL \
++	.speedo_scale = 100,	\
++	.voltage_scale = 1000,	\
++	.entries = {		\
++		{204000000UL,	{742283, 0, 0} }, \
++		{306000000UL,	{776249, 0, 0} }, \
++		{408000000UL,	{810215, 0, 0} }, \
++		{510000000UL,	{844181, 0, 0} }, \
++		{612000000UL,	{878147, 0, 0} }, \
++		{714000000UL,	{912113, 0, 0} }, \
++		{816000000UL,	{946079, 0, 0} }, \
++		{918000000UL,	{980045, 0, 0} }, \
++		{1020000000UL,	{1014011, 0, 0} }, \
++		{1122000000UL,	{1047977, 0, 0} }, \
++		{1224000000UL,	{1081943, 0, 0} }, \
++		{1326000000UL,	{1090000, 0, 0} }, \
++		{1479000000UL,	{1090000, 0, 0} }, \
++		{1504500000UL,	{1120000, 0, 0} }, \
++		{0,           	{      0, 0, 0} }, \
++	}
++
++#define CPU_CVB_TABLE_ODN \
++	.speedo_scale = 100,	\
++	.voltage_scale = 1000,	\
++	.entries = {		\
++		{204000000UL,	{721094, 0, 0} }, \
++		{306000000UL,	{754040, 0, 0} }, \
++		{408000000UL,	{786986, 0, 0} }, \
++		{510000000UL,	{819932, 0, 0} }, \
++		{612000000UL,	{852878, 0, 0} }, \
++		{714000000UL,	{885824, 0, 0} }, \
++		{816000000UL,	{918770, 0, 0} }, \
++		{918000000UL,	{915716, 0, 0} }, \
++		{1020000000UL,	{984662, 0, 0} }, \
++		{1122000000UL,	{1017608, 0, 0} }, \
++		{1224000000UL,	{1050554, 0, 0} }, \
++		{1326000000UL,	{1083500, 0, 0} }, \
++		{1428000000UL,	{1116446, 0, 0} }, \
++		{1581000000UL,	{1130000, 0, 0} }, \
++		{1683000000UL,	{1168000, 0, 0} }, \
++		{1785000000UL,	{1227500, 0, 0} }, \
++		{0,           	{      0, 0, 0} }, \
++	}
++
++struct cvb_table tegra210_cpu_cvb_tables[] = {
++	{
++		.speedo_id = 10,
++		.process_id = 0,
++		.min_millivolts = 840,
++		.max_millivolts = 1120,
++		CPU_CVB_TABLE_EUCM2_JOINT_RAIL,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 10,
++		.process_id = 1,
++		.min_millivolts = 840,
++		.max_millivolts = 1120,
++		CPU_CVB_TABLE_EUCM2_JOINT_RAIL,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 9,
++		.process_id = 0,
++		.min_millivolts = 900,
++		.max_millivolts = 1162,
++		CPU_CVB_TABLE_EUCM2,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++		}
++	},
++	{
++		.speedo_id = 9,
++		.process_id = 1,
++		.min_millivolts = 900,
++		.max_millivolts = 1162,
++		CPU_CVB_TABLE_EUCM2,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++		}
++	},
++	{
++		.speedo_id = 8,
++		.process_id = 0,
++		.min_millivolts = 900,
++		.max_millivolts = 1195,
++		CPU_CVB_TABLE_EUCM2,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++		}
++	},
++	{
++		.speedo_id = 8,
++		.process_id = 1,
++		.min_millivolts = 900,
++		.max_millivolts = 1195,
++		CPU_CVB_TABLE_EUCM2,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++		}
++	},
++	{
++		.speedo_id = 7,
++		.process_id = 0,
++		.min_millivolts = 841,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE_EUCM1,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 7,
++		.process_id = 1,
++		.min_millivolts = 841,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE_EUCM1,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 6,
++		.process_id = 0,
++		.min_millivolts = 870,
++		.max_millivolts = 1150,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune1 = 0x20091d9,
++		}
++	},
++	{
++		.speedo_id = 6,
++		.process_id = 1,
++		.min_millivolts = 870,
++		.max_millivolts = 1150,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune1 = 0x25501d0,
++		}
++	},
++	{
++		.speedo_id = 5,
++		.process_id = 0,
++		.min_millivolts = 818,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 5,
++		.process_id = 1,
++		.min_millivolts = 818,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x25501d0,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 4,
++		.process_id = -1,
++		.min_millivolts = 918,
++		.max_millivolts = 1113,
++		CPU_CVB_TABLE_XA,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune1 = 0x17711BD,
++		}
++	},
++	{
++		.speedo_id = 3,
++		.process_id = 0,
++		.min_millivolts = 825,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE_ODN,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 3,
++		.process_id = 1,
++		.min_millivolts = 825,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE_ODN,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x25501d0,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 2,
++		.process_id = 0,
++		.min_millivolts = 870,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune1 = 0x20091d9,
++		}
++	},
++	{
++		.speedo_id = 2,
++		.process_id = 1,
++		.min_millivolts = 870,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune1 = 0x25501d0,
++		}
++	},
++	{
++		.speedo_id = 1,
++		.process_id = 0,
++		.min_millivolts = 837,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 1,
++		.process_id = 1,
++		.min_millivolts = 837,
++		.max_millivolts = 1227,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x25501d0,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 0,
++		.process_id = 0,
++		.min_millivolts = 850,
++		.max_millivolts = 1170,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x20091d9,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++	{
++		.speedo_id = 0,
++		.process_id = 1,
++		.min_millivolts = 850,
++		.max_millivolts = 1170,
++		CPU_CVB_TABLE,
++		.cpu_dfll_data = {
++			.tune0_low = 0xffead0ff,
++			.tune0_high = 0xffead0ff,
++			.tune1 = 0x25501d0,
++			.tune_high_min_millivolts = 864,
++		}
++	},
++};
++
+ static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
+ 	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
+ 	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
+@@ -97,11 +512,22 @@ struct dfll_fcpu_data {
+ 	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
+ };
  
- 	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
--	if (IS_ERR(priv->vdd_cpu_reg)) {
--		ret = PTR_ERR(priv->vdd_cpu_reg);
--		goto out_put_np;
--	}
-+	if (IS_ERR(priv->vdd_cpu_reg))
-+		priv->vdd_cpu_reg = NULL;
++static const struct dfll_fcpu_data tegra210_dfll_fcpu_data = {
++	.cpu_max_freq_table = tegra210_cpu_max_freq_table,
++	.cpu_max_freq_table_size = ARRAY_SIZE(tegra210_cpu_max_freq_table),
++	.cpu_cvb_tables = tegra210_cpu_cvb_tables,
++	.cpu_cvb_tables_size = ARRAY_SIZE(tegra210_cpu_cvb_tables),
++};
++
+ static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+ 	{
+ 		.compatible = "nvidia,tegra124-dfll",
+ 		.data = &tegra124_dfll_fcpu_data,
+ 	},
++        {
++		.compatible = "nvidia,tegra210-dfll",
++		.data = &tegra210_dfll_fcpu_data
++	},
+ 	{ },
+ };
  
- 	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
- 	if (IS_ERR(priv->cpu_clk)) {
-@@ -148,7 +147,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
- 	clk_put(priv->cpu_clk);
- out_put_vdd_cpu_reg:
- 	regulator_put(priv->vdd_cpu_reg);
--out_put_np:
- 	of_node_put(np);
+diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
+index cfa110f..72c0a2d 100644
+--- a/drivers/clk/tegra/cvb.h
++++ b/drivers/clk/tegra/cvb.h
+@@ -41,6 +41,7 @@ struct cvb_cpu_dfll_data {
+ 	u32 tune0_low;
+ 	u32 tune0_high;
+ 	u32 tune1;
++	unsigned int tune_high_min_millivolts;
+ };
  
- 	return ret;
-@@ -181,7 +179,8 @@ static int __init tegra_cpufreq_init(void)
- 	int ret;
- 	struct platform_device *pdev;
- 
--	if (!of_machine_is_compatible("nvidia,tegra124"))
-+	if (!(of_machine_is_compatible("nvidia,tegra124")
-+		|| of_machine_is_compatible("nvidia,tegra210")))
- 		return -ENODEV;
- 
- 	/*
+ struct cvb_table {
 -- 
 1.9.1
+
