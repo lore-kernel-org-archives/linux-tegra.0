@@ -1,37 +1,69 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] dmaengine: tegra-apb: Support non-flow controlled
- slave configuration
-Date: Thu, 16 Nov 2017 20:16:29 +0300
-Message-ID: <8a2345de-6165-d6b7-8fe9-5845a4dfdc10@gmail.com>
-References: <20171019221308.18707-1-digetx@gmail.com>
- <57ef35f0-d8fa-5238-901e-11cd9d001e02@gmail.com>
- <20171115155422.GN3187@localhost>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: next/master boot: 210 boots: 35 failed, 174 passed with 1
+ conflict (next-20171115)
+Date: Thu, 16 Nov 2017 17:55:24 +0000
+Message-ID: <3ddf8ad5-e3d9-49cc-9e20-2d8cdbc9685f@nvidia.com>
+References: <5a0c2169.c6a2df0a.13ea3.9c02@mx.google.com>
+ <a21b88b2-663d-49fc-527a-87494a23087f@collabora.com>
+ <0e2dbcf5-6823-8e48-e2ac-85afa7d6dbaf@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171115155422.GN3187@localhost>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <0e2dbcf5-6823-8e48-e2ac-85afa7d6dbaf@collabora.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Guillaume Tucker <guillaume.tucker@collabora.com>, Shawn Nematbakhsh <shawnn@chromium.org>
+Cc: "kernelci.org bot" <bot@kernelci.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, kernel-build-reports@lists.linaro.org, "open list:TEGRA
+ ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 15.11.2017 18:54, Vinod Koul wrote:
-> On Tue, Nov 14, 2017 at 02:23:07PM +0300, Dmitry Osipenko wrote:
->> On 20.10.2017 01:13, Dmitry Osipenko wrote:
->>> This allows DMA client to issue a non-flow controlled TX. In particular
->>> it is needed for the fuse driver that reads fuse registers using APBDMA
->>> to workaround a HW bug that results in hang when CPU and DMA perform
->>> simultaneous access to fuse peripheral.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Vinod, are you going to apply this patch for 4.15?
-> 
-> Sorry I dont seem to have this one in my queue and dont see it applied, not
-> sure why. Can you guys resend please
-> 
-
-No problem, re-sent.
+Ck9uIDE2LzExLzE3IDE0OjUwLCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgo+IE9uIDE2LzExLzE3
+IDE0OjQyLCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgo+PiBPbiAxNS8xMS8xNyAxMToxMywga2Vy
+bmVsY2kub3JnIGJvdCB3cm90ZToKPj4+IG5leHQvbWFzdGVyIGJvb3Q6IDIxMCBib290czogMzUg
+ZmFpbGVkLCAxNzQgcGFzc2VkIHdpdGggMSBjb25mbGljdAo+Pj4gKG5leHQtMjAxNzExMTUpCj4+
+Pgo+Pj4gRnVsbCBCb290IFN1bW1hcnk6Cj4+PiBodHRwczovL2tlcm5lbGNpLm9yZy9ib290L2Fs
+bC9qb2IvbmV4dC9icmFuY2gvbWFzdGVyL2tlcm5lbC9uZXh0LTIwMTcxMTE1Lwo+Pj4KPj4+IEZ1
+bGwgQnVpbGQgU3VtbWFyeToKPj4+IGh0dHBzOi8va2VybmVsY2kub3JnL2J1aWxkL25leHQvYnJh
+bmNoL21hc3Rlci9rZXJuZWwvbmV4dC0yMDE3MTExNS8KPj4+Cj4+PiBUcmVlOiBuZXh0Cj4+PiBC
+cmFuY2g6IG1hc3Rlcgo+Pj4gR2l0IERlc2NyaWJlOiBuZXh0LTIwMTcxMTE1Cj4+PiBHaXQgQ29t
+bWl0OiA2M2ZiMDkxYzgwMTg4ZWM1MWY1MzUxNGQwN2RlOTA3YzFkZDNkNjFkCj4+PiBHaXQgVVJM
+Ogo+Pj4gaHR0cDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9uZXh0
+L2xpbnV4LW5leHQuZ2l0Cj4+PiBUZXN0ZWQ6IDM1IHVuaXF1ZSBib2FyZHMsIDE2IFNvQyBmYW1p
+bGllcywgMzAgYnVpbGRzIG91dCBvZiAyMTMKPj4+Cj4+PiBCb290IFJlZ3Jlc3Npb25zIERldGVj
+dGVkOgo+Pj4KPj4+IGFybToKPj4gWy4uLl0KPj4+IMKgwqDCoCBtdWx0aV92N19kZWZjb25maWc6
+Cj4+PiDCoMKgwqDCoMKgwqDCoCB0ZWdyYTEyNC1ueWFuLWJpZzoKPj4+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgbGFiLWNvbGxhYm9yYTogZmFpbGluZyBzaW5jZSAxMSBkYXlzIChsYXN0IHBhc3M6
+Cj4+PiBuZXh0LTIwMTcxMTAyIC0gZmlyc3QgZmFpbDogbmV4dC0yMDE3MTEwMykKPj4KPj4gSSd2
+ZSBydW4gYW5vdGhlciBhdXRvbWF0ZWQgYmlzZWN0aW9uIHdpdGggc29tZSB0d2Vha3MgdG8gcmVt
+b3ZlCj4+IGtub3duIGZhaWx1cmVzIGFuZCBmb3VuZCB0aGlzIGJyZWFraW5nIGNoYW5nZToKPj4K
+Pj4gwqAgY29tbWl0IDg1OWViMDU2NzZmNjdkNDk2MDEzMGRmZjM2ZDMzNjgwMDY3MTYxMTAKPj4g
+wqAgQXV0aG9yOiBTaGF3biBOZW1hdGJha2hzaCA8c2hhd25uQGNocm9taXVtLm9yZz4KPj4gwqAg
+RGF0ZTrCoMKgIEZyaSBTZXAgOCAxMzo1MDoxMSAyMDE3IC0wNzAwCj4+Cj4+IMKgwqDCoMKgwqAg
+cGxhdGZvcm0vY2hyb21lOiBVc2UgcHJvcGVyIHByb3RvY29sIHRyYW5zZmVyIGZ1bmN0aW9uCj4+
+Cj4+Cj4gCj4gU2hvdWxkIGhhdmUgYWRkZWQsIHRoaXMgaXMgZXNzZW50aWFsbHkgdGhlIGtlcm5l
+bCBlcnJvcjoKPiAKPiBbwqDCoMKgIDEuNzExNTgxXSBrZXJuZWwgQlVHIGF0IGRyaXZlcnMvcGxh
+dGZvcm0vY2hyb21lL2Nyb3NfZWNfcHJvdG8uYzozNCEKPiBbwqDCoMKgIDEuNzE4MDA0XSBJbnRl
+cm5hbCBlcnJvcjogT29wcyAtIEJVRzogMCBbIzFdIFNNUCBBUk0KPiAKPiBQbGVhc2Ugc2VlIHRo
+ZSBsaW5rcyB0byB0aGUgTEFWQSBqb2JzIGJlbG93IGZvciB0aGUgZnVsbCBsb2dzLgpUaGlzIG9u
+ZSBpcyBhIGtub3duIGlzc3VlICh3aGljaCBJIGJlbGlldmUgSSBoYXZlIG1lbnRpb25lZCBhIGNv
+dXBsZQp0aW1lcykuIFRoZXJlIGlzIGEgZml4IGF2YWlsYWJsZSBbMF0uCgpJIGFtIG5vdCBzdXJl
+IHRoYXQgY29udGludWluZyB0byBiaXNlY3QgdGhpcyBpcyBnb2luZyB0byBiYXJlIGFueSBmcnVp
+dApkdWUgdG8gdGhlIG51bWJlciBvZiBpc3N1ZXMgcGxhZ3VpbmcgdGhpcyBib2FyZCBhdCB0aGUg
+bW9tZW50LiBJdCBzZWVtcwp0byBiZSBhIERSTSByZWxhdGVkIGlzc3VlIGFuZCB3aGVuIEkgZ2V0
+IHNvbWV0aW1lIEkgd2lsbCBzZWUgaWYgSSBjYW4KZmlndXJlIG91dCB3aGF0IGlzIGNhdXNpbmcg
+dGhpcy4gVGhpcyBpcyB0aGUgZnVydGhlcmVzdCBJIGhhdmUgZ290dGVuIHNvCmZhciBbMV0uCgoK
+Sm9uCgpbMF0gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC85OTc0ODM1LwpbMV0g
+aHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvYXJtLWtlcm5lbC9tc2c2MTY2MTYuaHRtbAoK
+LS0gCm52cHVibGljCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
+LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9saW51eC1hcm0ta2VybmVsCg==
