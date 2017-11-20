@@ -1,82 +1,39 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
-Date: Mon, 20 Nov 2017 17:07:08 +0000
-Message-ID: <20171120170708.GA1941@red-moon>
-References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
- <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
- <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com>
- <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
- <20171110112201.GA25235@red-moon>
- <3887d62c-98bb-04d5-5b40-96d5b7b43e63@arm.com>
- <20171110130704.GA31316@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Jesse Chan <jc-vYTEC60ixJUAvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] media: tegra-cec: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Mon, 20 Nov 2017 12:56:52 -0800
+Message-ID: <20171120205652.86405-1-jc@linux.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171110130704.GA31316@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, ryder.lee-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
+Cc: Jesse Chan <jc-vYTEC60ixJUAvxtiuMwx3w@public.gmane.org>, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-[+ryder]
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-On Fri, Nov 10, 2017 at 02:07:05PM +0100, Thierry Reding wrote:
+WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/tegra-cec/tegra_cec.o
+see include/linux/module.h for more information
 
-[...]
+This adds the license as "GPL v2", which matches the header of the file.
 
-> > The really neat version is to take a known non-memory physical address like
-> > the host controller's own MMIO region, which has no legitimate reason to
-> > ever be used as a DMA address. pcie-mediatek almost gets this right, but by
-> > using virt_to_phys() on an ioremapped address they end up with nonsense
-> > rather than the correct address (although realistically you would have to be
-> > extremely unlucky for said nonsense to collide with a real DMA address given
-> > to a PCI endpoint later). Following on from above, dma_map_resource() would
-> > be the foolproof way to get that right.
-> 
-> Yes, that was our intention as well. Our initial plan was to use an
-> address from the PCI aperture within Tegra that wasn't being used for
-> any other purpose.
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
 
-Hi Thierry,
+Signed-off-by: Jesse Chan <jc-vYTEC60ixJUAvxtiuMwx3w@public.gmane.org>
+---
+ drivers/media/platform/tegra-cec/tegra_cec.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-to wrap up this thread, why an address from the PCI aperture and
-not a host bridge register ?
-
-I CC'ed Ryder so that he can explain to me please what:
-
-PCIE_MSI_VECTOR and PCIE_IMSI_ADDR offsets in:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/host/pcie-mediatek.c?h=v4.14
-
-register space represent (IIUC the driver uses:
-
-virt_to_phys(port->base + PCIE_MSI_VECTOR);
-
-as MSI doorbell address, which is wrong anyway as Robin explained, just
-want to understand how that register was chosen - it is never written or
-read in the driver so it is hard to figure that out) to understand
-whether the approach can be replicated instead of relying on GFP_DMA
-for pages allocation.
-
-Thanks,
-Lorenzo
-
-> However, we ran into some odd corner cases where this wasn't working
-> as expected. As a temporary solution we wanted to move to GFP_DMA32
-> (or GFP_DMA) in order to support 32-bit only MSI endpoints.
-> 
-> Eventually we'll want to get rid of the allocation altogether, we just
-> need to find a set of values that work reliably. In the meantime, it
-> looks as though GFP_DMA would be the right solution as long as we have
-> to stick with __get_free_pages().
-> 
-> Alternatively, since we've already verified that the MSI writes are
-> never committed to memory, we could choose some random address pointing
-> to system memory as well, but I'm reluctant to do that because it could
-> end up being confusing for users (and developers) to see some random
-> address showing up somewhere. A physical address such as the beginning
-> of system memory should always work and might be unique enough to
-> indicate that it is special.
-> 
-> Thierry
+diff --git a/drivers/media/platform/tegra-cec/tegra_cec.c b/drivers/media/platform/tegra-cec/tegra_cec.c
+index 807c94c70049..92f93a880015 100644
+--- a/drivers/media/platform/tegra-cec/tegra_cec.c
++++ b/drivers/media/platform/tegra-cec/tegra_cec.c
+@@ -493,3 +493,8 @@ static struct platform_driver tegra_cec_driver = {
+ };
+ 
+ module_platform_driver(tegra_cec_driver);
++
++MODULE_DESCRIPTION("Tegra HDMI CEC driver");
++MODULE_AUTHOR("NVIDIA CORPORATION");
++MODULE_AUTHOR("Cisco Systems, Inc. and/or its affiliates");
++MODULE_LICENSE("GPL v2");
+-- 
+2.14.1
