@@ -1,55 +1,82 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 0/2] Tegra PCIe end point config space map code
- refactoring
-Date: Mon, 20 Nov 2017 15:57:18 +0530
-Message-ID: <2d2ec183-c14c-1eb8-0cd5-fd62d8b36779@nvidia.com>
-References: <1508827489-10842-1-git-send-email-vidyas@nvidia.com>
- <20171024201512.GG21840@bhelgaas-glaptop.roam.corp.google.com>
- <20171106195123.GG31930@bhelgaas-glaptop.roam.corp.google.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: limit MSI target address to 32-bit
+Date: Mon, 20 Nov 2017 17:07:08 +0000
+Message-ID: <20171120170708.GA1941@red-moon>
+References: <1509991387-15951-1-git-send-email-vidyas@nvidia.com>
+ <20171108212558.GC21597@bhelgaas-glaptop.roam.corp.google.com>
+ <e993e1f8-b6b3-de07-759c-a56012e06a2a@nvidia.com>
+ <20171109181435.GB7629@bhelgaas-glaptop.roam.corp.google.com>
+ <20171110112201.GA25235@red-moon>
+ <3887d62c-98bb-04d5-5b40-96d5b7b43e63@arm.com>
+ <20171110130704.GA31316@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171106195123.GG31930-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20171110130704.GA31316@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, ryder.lee-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry, Can you please Ack it so that we can target it for next release?
+[+ryder]
 
-On Tuesday 07 November 2017 01:21 AM, Bjorn Helgaas wrote:
-> On Tue, Oct 24, 2017 at 03:15:12PM -0500, Bjorn Helgaas wrote:
->> On Tue, Oct 24, 2017 at 12:14:47PM +0530, Vidya Sagar wrote:
->>> PCIe host controller in Tegra SoCs has 1GB of aperture available
->>> for mapping end points config space, IO and BARs. In that, currently
->>> 256MB is being reserved for mapping end points configuration space
->>> which leaves less memory space available for mapping end points BARs
->>> on some of the platforms.
->>> This patch series attempts to map only 4K space from 1GB aperture to
->>> access end points configuration space.
->>>
->>> Currently, this change can benefit T20 and T186 in saving (i.e. repurposed
->>> to use for BAR mapping) physical space as well as kernel virtual mapping space,
->>> it saves only kernel virtual address space in T30, T124, T132 and T210.
->>>
->>> NOTE: Since T186 PCIe DT entry is not yet present in main line (it is currently
->>> merged to 'for-4.15/arm64/dt' branch), nothing gets broken with this change for T186.
->>> For older platforms (T20, T30, T124, T132, T210), this change works fine without any
->>> DT modifications
->>>
->>> Testing Done on T124, T210 & T186:
->>>   Enumeration and basic functionality of immediate devices
->>>   Enumeration of devices behind a PCIe switch
->>>   Complete 4K configuration space access
->>>
->>> Vidya Sagar (2):
->>>    PCI: tegra: refactor config space mapping code
->>>    ARM64: tegra: limit PCIe config space mapping to 4K for T186
->>>
->>>   arch/arm64/boot/dts/nvidia/tegra186.dtsi |   8 +-
->>>   drivers/pci/host/pci-tegra.c             | 125 ++++++++++---------------------
->>>   2 files changed, 44 insertions(+), 89 deletions(-)
->> Seems OK to me; waiting for Thierry's ack.
-> Dropping for lack of an ack.  Please repost if/when Thierry acks it.
+On Fri, Nov 10, 2017 at 02:07:05PM +0100, Thierry Reding wrote:
+
+[...]
+
+> > The really neat version is to take a known non-memory physical address like
+> > the host controller's own MMIO region, which has no legitimate reason to
+> > ever be used as a DMA address. pcie-mediatek almost gets this right, but by
+> > using virt_to_phys() on an ioremapped address they end up with nonsense
+> > rather than the correct address (although realistically you would have to be
+> > extremely unlucky for said nonsense to collide with a real DMA address given
+> > to a PCI endpoint later). Following on from above, dma_map_resource() would
+> > be the foolproof way to get that right.
+> 
+> Yes, that was our intention as well. Our initial plan was to use an
+> address from the PCI aperture within Tegra that wasn't being used for
+> any other purpose.
+
+Hi Thierry,
+
+to wrap up this thread, why an address from the PCI aperture and
+not a host bridge register ?
+
+I CC'ed Ryder so that he can explain to me please what:
+
+PCIE_MSI_VECTOR and PCIE_IMSI_ADDR offsets in:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/host/pcie-mediatek.c?h=v4.14
+
+register space represent (IIUC the driver uses:
+
+virt_to_phys(port->base + PCIE_MSI_VECTOR);
+
+as MSI doorbell address, which is wrong anyway as Robin explained, just
+want to understand how that register was chosen - it is never written or
+read in the driver so it is hard to figure that out) to understand
+whether the approach can be replicated instead of relying on GFP_DMA
+for pages allocation.
+
+Thanks,
+Lorenzo
+
+> However, we ran into some odd corner cases where this wasn't working
+> as expected. As a temporary solution we wanted to move to GFP_DMA32
+> (or GFP_DMA) in order to support 32-bit only MSI endpoints.
+> 
+> Eventually we'll want to get rid of the allocation altogether, we just
+> need to find a set of values that work reliably. In the meantime, it
+> looks as though GFP_DMA would be the right solution as long as we have
+> to stick with __get_free_pages().
+> 
+> Alternatively, since we've already verified that the MSI writes are
+> never committed to memory, we could choose some random address pointing
+> to system memory as well, but I'm reluctant to do that because it could
+> end up being confusing for users (and developers) to see some random
+> address showing up somewhere. A physical address such as the beginning
+> of system memory should always work and might be unique enough to
+> indicate that it is special.
+> 
+> Thierry
