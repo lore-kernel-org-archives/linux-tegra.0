@@ -1,119 +1,63 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [Nouveau] GP10B regression
-Date: Tue, 21 Nov 2017 20:07:41 +0200
-Message-ID: <eef8d770-f948-12b3-0749-f1b9a25f231d@kapsi.fi>
+From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Subject: Re: GP10B regression
+Date: Tue, 21 Nov 2017 13:27:14 -0500
+Message-ID: <CAKb7Uvh6-hThzgvb_hdeGdoz3WT5r--TPbb3EcOcQ45i6-n9Cw@mail.gmail.com>
 References: <343f2346-1a6b-682b-97f3-12d5dd71c856@kapsi.fi>
  <582d1472-1287-0eb2-dcd7-3e48178489b3@kapsi.fi>
+ <eef8d770-f948-12b3-0749-f1b9a25f231d@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <582d1472-1287-0eb2-dcd7-3e48178489b3-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Anthony Eden <aeden-EfZU8u+QLuPpgkiH4x7ZXw@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <eef8d770-f948-12b3-0749-f1b9a25f231d-/1wQRMveznE@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Anthony Eden <aeden-EfZU8u+QLuPpgkiH4x7ZXw@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks to Thierry for finding this - applying
-
-index e14643615698..00eeaaffeae5 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
-@@ -2369,7 +2369,7 @@ nv13b_chipset = {
-         .imem = gk20a_instmem_new,
-         .ltc = gp100_ltc_new,
-         .mc = gp10b_mc_new,
--       .mmu = gf100_mmu_new,
-+       .mmu = gp10b_mmu_new,
-         .secboot = gp10b_secboot_new,
-         .pmu = gm20b_pmu_new,
-         .timer = gk20a_timer_new,
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c 
-b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c
-index 3dcc6bddb32f..470a4fadc165 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c
-@@ -33,7 +33,7 @@ gp10b_vmm = {
-                 { 38, &gp100_vmm_desc_16[3], NVKM_VMM_PAGE_Sxxx },
-                 { 29, &gp100_vmm_desc_16[2], NVKM_VMM_PAGE_Sxxx },
-                 { 21, &gp100_vmm_desc_16[1], NVKM_VMM_PAGE_SxHC },
--               { 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SxHC },
-+/*             { 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SxHC },*/
-                 { 12, &gp100_vmm_desc_12[0], NVKM_VMM_PAGE_SxHx },
-                 {}
-         }
-
-on top of next-20171121 works at least for a simple test.
-
-Mikko
-
-On 11/11/2017 03:02 PM, Mikko Perttunen wrote:
-> Bisection status report:
-> 
-> The latest commit I have gotten to work is
-> 
-> 10842ba074e9 drm/nouveau: remove unused nouveau_fence_work()
-> 
-> i.e. the first bad commit is
-> 
-> d7722134b825 drm/nouveau: switch over to new memory and vmm interfaces
-> 
-> Even with the first one some patches/hacks are needed:
-> 
-> - in mmu/gp10b.c, in the constructor we need to select the GM200 path - 
-> the GP100 path seems to not to work
-> 
-> - as mentioned in the first mail, we need to set .mmu = gp10b_mmu_new,
-> 
-> - and in nouveau_mem_memory_target we need to return 
-> NVKM_MEM_TARGET_NCOH instead of NVKM_MEM_TARGET_HOST.
-> 
-> Cheers,
-> Mikko
-> 
-> On 11/10/2017 11:27 PM, Mikko Perttunen wrote:
->> Hello everyone,
->>
->> it seems that GP10B support has regressed recently. With linux-next, I 
->> need to modify device/base.c to set
->>
->>      .mmu = gp10b_mmu_new
->>
->> for GP10B (makes sense - I guess this was left as gf100_mmu_new as a 
->> typo) to probe. After that, running a trivial testcase (running a NOP 
->> method in 3D class) fails with
->>
->> [  110.084649] nouveau 17000000.gpu: fifo: read fault at 0000011000 
->> engine 06 [HOST0] client 06 [GPC0/L1_2] reas|
->> on 02 [PTE] on channel 1 [00f206a000 nouveau_noop_te[2413]] 
->>                                         |
->> [  110.101423] nouveau 17000000.gpu: fifo: channel 1: killed 
->>                                         |
->> [  110.106827] nouveau 17000000.gpu: fifo: runlist 0: scheduled for 
->> recovery                                    |
->> Submitted pushbuffer.                                        |
->> [  110.113867] nouveau 17000000.gpu: nouveau_noop_te[2413]: channel 1 
->> killed!                                   |
->> [  125.084858] nouveau 17000000.gpu: nouveau_noop_te[2413]: failed to 
->> idle channel 1 [nouveau_noop_te[2413]]
->>
->> I haven't managed to track this down yet. However, I did find out that 
->> checking out the drm/nouveau directory at commit 
->> "drm/nouveau/kms/nv50: use the correct state for base channel notifier 
->> setup" makes things work again.
->>
->> I'll continue to take look, though bisecting is a bit harder than 
->> usual due to some other issues in Tegra186 recently, so any pointers 
->> in the right direction would be useful :)
->>
->> Thanks,
->> Mikko
->> _______________________________________________
->> Nouveau mailing list
->> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
->> https://lists.freedesktop.org/mailman/listinfo/nouveau
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+T24gVHVlLCBOb3YgMjEsIDIwMTcgYXQgMTowNyBQTSwgTWlra28gUGVydHR1bmVuIDxjeW5kaXNA
+a2Fwc2kuZmk+IHdyb3RlOgo+IFRoYW5rcyB0byBUaGllcnJ5IGZvciBmaW5kaW5nIHRoaXMgLSBh
+cHBseWluZwo+Cj4gaW5kZXggZTE0NjQzNjE1Njk4Li4wMGVlYWFmZmVhZTUgMTAwNjQ0Cj4gLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL2Jhc2UuYwo+ICsr
+KyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vZW5naW5lL2RldmljZS9iYXNlLmMKPiBA
+QCAtMjM2OSw3ICsyMzY5LDcgQEAgbnYxM2JfY2hpcHNldCA9IHsKPiAgICAgICAgIC5pbWVtID0g
+Z2syMGFfaW5zdG1lbV9uZXcsCj4gICAgICAgICAubHRjID0gZ3AxMDBfbHRjX25ldywKPiAgICAg
+ICAgIC5tYyA9IGdwMTBiX21jX25ldywKPiAtICAgICAgIC5tbXUgPSBnZjEwMF9tbXVfbmV3LAo+
+ICsgICAgICAgLm1tdSA9IGdwMTBiX21tdV9uZXcsCj4gICAgICAgICAuc2VjYm9vdCA9IGdwMTBi
+X3NlY2Jvb3RfbmV3LAo+ICAgICAgICAgLnBtdSA9IGdtMjBiX3BtdV9uZXcsCj4gICAgICAgICAu
+dGltZXIgPSBnazIwYV90aW1lcl9uZXcsCgpUaGlzIHNlZW1zIGxpa2UgYW4gb2J2aW91cyB0eXBv
+LiBGZWVsIGZyZWUgdG8gc2VuZCBhIHByb3BlciBwYXRjaCB3aXRoCmEgRml4ZXM6IHRhZyByZWZl
+cmVuY2luZyBlaXRoZXIgdGhlIGNvbW1pdCB0aGF0IGZsaXBzIHRoaW5ncyBvdmVyIG9yCjYzNTlj
+OTgyMjQgKGRybS9ub3V2ZWF1L21tdS9ncDEwYjogZm9yayBmcm9tIGdmMTAwKQoKPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvbW11L3ZtbWdwMTBiLmMK
+PiBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L21tdS92bW1ncDEwYi5jCj4g
+aW5kZXggM2RjYzZiZGRiMzJmLi40NzBhNGZhZGMxNjUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvbW11L3ZtbWdwMTBiLmMKPiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9tbXUvdm1tZ3AxMGIuYwo+IEBAIC0zMyw3ICsz
+Myw3IEBAIGdwMTBiX3ZtbSA9IHsKPiAgICAgICAgICAgICAgICAgeyAzOCwgJmdwMTAwX3ZtbV9k
+ZXNjXzE2WzNdLCBOVktNX1ZNTV9QQUdFX1N4eHggfSwKPiAgICAgICAgICAgICAgICAgeyAyOSwg
+JmdwMTAwX3ZtbV9kZXNjXzE2WzJdLCBOVktNX1ZNTV9QQUdFX1N4eHggfSwKPiAgICAgICAgICAg
+ICAgICAgeyAyMSwgJmdwMTAwX3ZtbV9kZXNjXzE2WzFdLCBOVktNX1ZNTV9QQUdFX1N4SEMgfSwK
+PiAtICAgICAgICAgICAgICAgeyAxNiwgJmdwMTAwX3ZtbV9kZXNjXzE2WzBdLCBOVktNX1ZNTV9Q
+QUdFX1N4SEMgfSwKPiArLyogICAgICAgICAgICAgeyAxNiwgJmdwMTAwX3ZtbV9kZXNjXzE2WzBd
+LCBOVktNX1ZNTV9QQUdFX1N4SEMgfSwqLwo+ICAgICAgICAgICAgICAgICB7IDEyLCAmZ3AxMDBf
+dm1tX2Rlc2NfMTJbMF0sIE5WS01fVk1NX1BBR0VfU3hIeCB9LAo+ICAgICAgICAgICAgICAgICB7
+fQo+ICAgICAgICAgfQo+Cj4gb24gdG9wIG9mIG5leHQtMjAxNzExMjEgd29ya3MgYXQgbGVhc3Qg
+Zm9yIGEgc2ltcGxlIHRlc3QuCgpZb3UncmUgb24geW91ciBvd24gZm9yIHRoaXMgb25lIDopIEkg
+dGhpbmsgQmVuJ3Mgb24gdmFjYXRpb24gdW50aWwKbmV4dCB3ZWVrIHRvby4KCmdwMTAwX3ZtbV9k
+ZXNjXzE2WzBdIGlzCgogKyAgICAgICB7IExQVCwgNSwgIDgsIDB4MDEwMCwgJmdwMTAwX3ZtbV9k
+ZXNjX2xwdCB9LAoKXzE2IGlzIGluIHJlZmVyZW5jZSB0byA2NEtCIGxhcmdlIHBhZ2VzICgxIDw8
+IDE2KS4KTFBUIGlzIGEgc3ViLWFsbG9jYXRlZCBwYWdlIHRhYmxlPyBOb3Qgc3VyZSBvbiB0aGUg
+ZGV0YWlscy4KU3hIQyA9IHNwYXJzZSwgaG9zdCBtZW1vcnksIGNvbXByZXNzaW9uIGVuYWJsZWQK
+Ckdvb2QgbHVjay4KCiAgLWlsaWEKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2
+ZWF1Cg==
