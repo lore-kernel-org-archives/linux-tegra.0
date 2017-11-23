@@ -1,35 +1,100 @@
-From: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Subject: [PATCH] phy: tegra: remove redundant self assignment of 'map'
-Date: Thu, 23 Nov 2017 11:10:47 +0000
-Message-ID: <20171123111047.19383-1-colin.king@canonical.com>
+From: Ville Syrjala <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: [PATCH 00/15] drm: More plane clipping polish
+Date: Thu, 23 Nov 2017 21:04:47 +0200
+Message-ID: <20171123190502.28449-1-ville.syrjala@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Brian Starkey <brian.starkey-5wv7dgnIgG8@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Mali DP Maintainers <malidp-VeJGdqYn5oNWk0Htik3J/w@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf-L59+Z2yzLopAfugRpC6u6w@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sinclair Yeh <syeh@vmwa>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+From: Ville Syrjälä <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 
-The assignment of map to itself is redundant and can be removed.
-Detected with Coccinelle.
+This series first unifies all users of drm_atomic_helper_check_plane_state()
+to populate the clip rectangle with drm_mode_get_hv_timing(), and once
+everything is unified the clip rectangle handling is sucked into
+drm_atomic_helper_check_plane_state() away from driver code.
 
-Signed-off-by: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
----
- drivers/phy/tegra/xusb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Entire series available here:
+git://github.com/vsyrjala/linux.git atomic_plane_helper_clip
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 4307bf0013e1..bfec91e36be7 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -418,7 +418,7 @@ tegra_xusb_port_find_lane(struct tegra_xusb_port *port,
- {
- 	struct tegra_xusb_lane *lane, *match = ERR_PTR(-ENODEV);
- 
--	for (map = map; map->type; map++) {
-+	for (; map->type; map++) {
- 		if (port->index != map->port)
- 			continue;
- 
+Cc: Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Brian Starkey <brian.starkey-5wv7dgnIgG8@public.gmane.org>
+Cc: CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>
+Cc: Mali DP Maintainers <malidp-VeJGdqYn5oNWk0Htik3J/w@public.gmane.org>
+Cc: Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: Noralf Trønnes <noralf-L59+Z2yzLopAfugRpC6u6w@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sinclair Yeh <syeh-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thomas Hellstrom <thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>
+Cc: VMware Graphics <linux-graphics-maintainer-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>
+
+Ville Syrjälä (15):
+  drm/i915: Reject odd pipe source width with double wide/dual link
+  drm/i915: Use drm_mode_get_hv_timing() to populate plane clip
+    rectangle
+  drm/arm/hdlcd: Use drm_mode_get_hv_timing() to populate plane clip
+    rectangle
+  drm/arm/mali-dp: Use drm_mode_get_hv_timing() to populate plane clip
+    rectangle
+  drm/simple_kms_helper: Use drm_mode_get_hv_timing() to populate plane
+    clip rectangle
+  drm/imx: Use drm_mode_get_hv_timing() to populate plane clip rectangle
+  drm/mediatek: Use drm_mode_get_hv_timing() to populate plane clip
+    rectangle
+  drm/meson: Use drm_mode_get_hv_timing() to populate plane clip
+    rectangle
+  drm/msm/mdp5: Use drm_mode_get_hv_timing() to populate plane clip
+    rectangle
+  drm/nouveau/kms/nv50: Use drm_mode_get_hv_timing() to populate plane
+    clip rectangle
+  drm/rockchip: Use drm_mode_get_hv_timing() to populate plane clip
+    rectangle
+  drm/tegra/dc: Use drm_mode_get_hv_timing() to populate plane clip
+    rectangle
+  drm/vmwgfx: Use drm_mode_get_hv_timing() to populate plane clip
+    rectangle
+  drm/zte: Use drm_mode_get_hv_timing() to populate plane clip rectangle
+  drm: Don't pass clip to drm_atomic_helper_check_plane_state()
+
+ drivers/gpu/drm/arm/hdlcd_crtc.c            |  6 +-----
+ drivers/gpu/drm/arm/malidp_planes.c         |  5 +----
+ drivers/gpu/drm/armada/armada_overlay.c     |  2 +-
+ drivers/gpu/drm/drm_atomic_helper.c         | 12 +++++++-----
+ drivers/gpu/drm/drm_plane_helper.c          | 11 +++--------
+ drivers/gpu/drm/drm_simple_kms_helper.c     |  5 -----
+ drivers/gpu/drm/i915/intel_atomic_plane.c   |  8 --------
+ drivers/gpu/drm/i915/intel_display.c        | 12 +++++++-----
+ drivers/gpu/drm/i915/intel_drv.h            |  1 -
+ drivers/gpu/drm/i915/intel_sprite.c         |  8 ++++++--
+ drivers/gpu/drm/imx/ipuv3-plane.c           |  7 +------
+ drivers/gpu/drm/mediatek/mtk_drm_plane.c    |  6 +-----
+ drivers/gpu/drm/meson/meson_plane.c         |  6 +-----
+ drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c   | 14 ++------------
+ drivers/gpu/drm/nouveau/nv50_display.c      |  8 --------
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c |  8 +-------
+ drivers/gpu/drm/tegra/dc.c                  |  8 +-------
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c         |  8 +-------
+ drivers/gpu/drm/zte/zx_plane.c              | 15 +--------------
+ include/drm/drm_atomic_helper.h             |  1 -
+ include/drm/drm_plane_helper.h              |  1 -
+ 21 files changed, 35 insertions(+), 117 deletions(-)
+
 -- 
-2.14.1
+2.13.6
