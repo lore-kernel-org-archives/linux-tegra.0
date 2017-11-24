@@ -1,32 +1,57 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 03/10] PM / QoS: Fix device resume latency for non PM QoS devices
-Date: Fri, 24 Nov 2017 17:50:42 +0100
-Message-ID: <CAJZ5v0ghcwSHdrbZd_=XA=tHz7=aTUVd66dHkMYRNyXpnqP84w@mail.gmail.com>
-References: <1511538800-8275-1-git-send-email-mmaddireddy@nvidia.com> <1511538800-8275-4-git-send-email-mmaddireddy@nvidia.com>
+From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Subject: [PATCH 10/13] fbdev: allow apertures == NULL in
+ remove_conflicting_framebuffers()
+Date: Fri, 24 Nov 2017 18:53:33 +0100
+Message-ID: <13240c59cafec988cdda37cc4d48252ff56f0d04.1511544782.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1511538800-8275-4-git-send-email-mmaddireddy@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thomas Gleixner <tglx@linutronix.de>, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1511544782.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 24, 2017 at 4:53 PM, Manikanta Maddireddy
-<mmaddireddy@nvidia.com> wrote:
-> In 'commit 0cc2b4e5a020 ("PM / QoS: Fix device resume latency PM QoS")'
-> PM QoS resume latency modified 0 as "no latency at all". However
-> dev_pm_qos_raw_read_value() returns 0 for devices which doesn't have
-> PM QoS constraints. This is blocking runtime suspend for these devices
-> in rpm_check_suspend_allowed(). Return PM_QOS_RESUME_LATENCY_NO_CONSTRAINT
-> when PM QoS constraints are not available for a particular device.
->
-> Fixes: 0cc2b4e5a020 ("PM / QoS: Fix device resume latency PM QoS")
+Interpret (otherwise-invalid) NULL apertures argument to mean all-memory
+range. This will allow to remove several duplicates of this code from
+drivers in following patches.
 
-That commit has been reverted, so this patch is not applicable and
-therefore the whole series isn't.
+Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+---
+ drivers/video/fbdev/core/fbmem.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-What kernel is it based off?
-
-Thanks,
-Rafael
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 5ea980e5d3b7..927e016487e9 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -1780,11 +1780,25 @@ int remove_conflicting_framebuffers(struct apertures_struct *a,
+ 				    const char *name, bool primary)
+ {
+ 	int ret;
++	bool do_free = false;
++
++	if (!a) {
++		a = alloc_apertures(1);
++		if (!a)
++			return -ENOMEM;
++
++		a->ranges[0].base = 0;
++		a->ranges[0].size = ~0;
++		do_free = true;
++	}
+ 
+ 	mutex_lock(&registration_lock);
+ 	ret = do_remove_conflicting_framebuffers(a, name, primary);
+ 	mutex_unlock(&registration_lock);
+ 
++	if (do_free)
++		kfree(a);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL(remove_conflicting_framebuffers);
+-- 
+2.11.0
