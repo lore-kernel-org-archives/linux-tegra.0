@@ -1,39 +1,60 @@
-From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: [PATCH 13/13] drm/tegra: kick out simplefb
-Date: Fri, 24 Nov 2017 18:53:34 +0100
-Message-ID: <89e22ee1c026b40a5bfa91de282d658b56dc8ee8.1511544782.git.mirq-linux@rere.qmqm.pl>
-References: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
+From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 00/13] remove_conflicting_framebuffers() cleanup
+Date: Fri, 24 Nov 2017 18:53:25 +0100
+Message-ID: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1511544782.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, Teddy Wang <teddy.wang@siliconmotion.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, David Airlie <airlied@linux.ie>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, amd-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Eric Anholt <eric@anholt.net>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Kick out firmware fb when loading tegra driver.
-
-Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
----
- drivers/gpu/drm/tegra/drm.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 943bdf88c4a2..1ec66ae29839 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1239,6 +1239,10 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 
- 	dev_set_drvdata(&dev->dev, drm);
- 
-+	err = drm_fb_helper_remove_conflicting_framebuffers(NULL, "tegradrmfb", false);
-+	if (err < 0)
-+		goto unref;
-+
- 	err = drm_dev_register(drm, 0);
- 	if (err < 0)
- 		goto unref;
--- 
-2.11.0
+VGhpcyBzZXJpZXMgY2xlYW5zIHVwIGR1cGxpY2F0ZWQgY29kZSBmb3IgcmVwbGFjaW5nIGZpcm13
+YXJlIEZCCmRyaXZlciB3aXRoIHByb3BlciBEUkkgZHJpdmVyIGFuZCBhZGRzIGhhbmRvdmVyIHN1
+cHBvcnQgdG8KVGVncmEgZHJpdmVyLgoKVGhlIGxhc3QgcGF0Y2ggaXMgaGVyZSBiZWNhdXNlIGl0
+IHVzZXMgbmV3IHNlbWFudGljcyBvZgpyZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKCkg
+ZnJvbSB0aGlzIHNlcmllcy4gVGhpcwpjYW4gYmUgY29uc2lkZXJlZCBpbmRlcGVuZGVudGx5LCB0
+aG91Z2guCgotLS0KCk1pY2hhxYIgTWlyb3PFgmF3ICgxMyk6CiAgZmJkZXY6IHNob3cgZmJkZXYg
+bnVtYmVyIGZvciBkZWJ1Z2dpbmcKICBmYmRldjogYWRkIHJlbW92ZV9jb25mbGljdGluZ19wY2lf
+ZnJhbWVidWZmZXJzKCkKICBkcm0vYW1kZ3B1OiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3Rp
+bmdfcGNpX2ZyYW1lYnVmZmVycygpCiAgZHJtL2JvY2hzOiB1c2Ugc2ltcGxlciByZW1vdmVfY29u
+ZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCiAgZHJtL2NpcnJ1czogdXNlIHNpbXBsZXIgcmVt
+b3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQogIGRybS9tZ2FnMjAwOiB1c2Ugc2lt
+cGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCiAgZHJtL3JhZGVvbjog
+dXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQogIGRybS92
+aXJ0aW86IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJzKCkK
+ICBzdGFnaW5nOiBzbTc1MGZiOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2Zy
+YW1lYnVmZmVycygpCiAgZmJkZXY6IGFsbG93IGFwZXJ0dXJlcyA9PSBOVUxMIGluIHJlbW92ZV9j
+b25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoKQogIGRybS92YzQ6IHVzZSBzaW1wbGVyIHJlbW92ZV9j
+b25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoTlVMTCkKICBkcm0vc3VuNGk6IHVzZSBzaW1wbGVyIHJl
+bW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoTlVMTCkKICBkcm0vdGVncmE6IGtpY2sgb3V0
+IHNpbXBsZWZiCgogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Rydi5jICB8IDIz
+ICstLS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2JvY2hzL2JvY2hzX2Rydi5jICAg
+ICAgICB8IDE4ICstLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vY2lycnVzL2NpcnJ1c19k
+cnYuYyAgICAgIHwgMjMgKy0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vbWdhZzIw
+MC9tZ2FnMjAwX2Rydi5jICAgIHwgMjEgKy0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2Ry
+bS9tZ2FnMjAwL21nYWcyMDBfbWFpbi5jICAgfCAgOSAtLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0v
+cmFkZW9uL3JhZGVvbl9kcnYuYyAgICAgIHwgMjMgKy0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMgICAgICAgIHwgMTggKy0tLS0tLS0tLS0tLS0KIGRy
+aXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyAgICAgICAgICAgICAgfCAgNCArKysrCiBkcml2ZXJz
+L2dwdS9kcm0vdmM0L3ZjNF9kcnYuYyAgICAgICAgICAgIHwgMjAgKy0tLS0tLS0tLS0tLS0tLQog
+ZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2RybV9idXMuYyB8IDI0ICsrKy0tLS0tLS0t
+LS0tLS0tLS0KIGRyaXZlcnMvc3RhZ2luZy9zbTc1MGZiL3NtNzUwLmMgICAgICAgICAgfCAyMiAr
+LS0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvdmlkZW8vZmJkZXYvY29yZS9mYm1lbS5jICAgICAg
+ICAgfCA0MCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLQogaW5jbHVkZS9kcm0vZHJt
+X2ZiX2hlbHBlci5oICAgICAgICAgICAgICB8IDEyICsrKysrKysrKysKIGluY2x1ZGUvbGludXgv
+ZmIuaCAgICAgICAgICAgICAgICAgICAgICAgfCAgMiArKwogMTQgZmlsZXMgY2hhbmdlZCwgNjcg
+aW5zZXJ0aW9ucygrKSwgMTkyIGRlbGV0aW9ucygtKQoKLS0gCjIuMTEuMAoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KVmlydHVhbGl6YXRpb24gbWFpbGlu
+ZyBsaXN0ClZpcnR1YWxpemF0aW9uQGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8v
+bGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL3ZpcnR1YWxpemF0aW9u
