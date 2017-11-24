@@ -1,60 +1,81 @@
-From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH 00/13] remove_conflicting_framebuffers() cleanup
-Date: Fri, 24 Nov 2017 18:53:25 +0100
-Message-ID: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 03/10] PM / QoS: Fix device resume latency for non PM QoS
+ devices
+Date: Fri, 24 Nov 2017 21:39:42 +0100
+Message-ID: <20171124203940.GA12811@mithrandir>
+References: <1511538800-8275-1-git-send-email-mmaddireddy@nvidia.com>
+ <1511538800-8275-4-git-send-email-mmaddireddy@nvidia.com>
+ <CAJZ5v0ghcwSHdrbZd_=XA=tHz7=aTUVd66dHkMYRNyXpnqP84w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org, Teddy Wang <teddy.wang@siliconmotion.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, David Airlie <airlied@linux.ie>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, amd-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Eric Anholt <eric@anholt.net>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0ghcwSHdrbZd_=XA=tHz7=aTUVd66dHkMYRNyXpnqP84w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux PCI <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux PM <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhpcyBzZXJpZXMgY2xlYW5zIHVwIGR1cGxpY2F0ZWQgY29kZSBmb3IgcmVwbGFjaW5nIGZpcm13
-YXJlIEZCCmRyaXZlciB3aXRoIHByb3BlciBEUkkgZHJpdmVyIGFuZCBhZGRzIGhhbmRvdmVyIHN1
-cHBvcnQgdG8KVGVncmEgZHJpdmVyLgoKVGhlIGxhc3QgcGF0Y2ggaXMgaGVyZSBiZWNhdXNlIGl0
-IHVzZXMgbmV3IHNlbWFudGljcyBvZgpyZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKCkg
-ZnJvbSB0aGlzIHNlcmllcy4gVGhpcwpjYW4gYmUgY29uc2lkZXJlZCBpbmRlcGVuZGVudGx5LCB0
-aG91Z2guCgotLS0KCk1pY2hhxYIgTWlyb3PFgmF3ICgxMyk6CiAgZmJkZXY6IHNob3cgZmJkZXYg
-bnVtYmVyIGZvciBkZWJ1Z2dpbmcKICBmYmRldjogYWRkIHJlbW92ZV9jb25mbGljdGluZ19wY2lf
-ZnJhbWVidWZmZXJzKCkKICBkcm0vYW1kZ3B1OiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3Rp
-bmdfcGNpX2ZyYW1lYnVmZmVycygpCiAgZHJtL2JvY2hzOiB1c2Ugc2ltcGxlciByZW1vdmVfY29u
-ZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCiAgZHJtL2NpcnJ1czogdXNlIHNpbXBsZXIgcmVt
-b3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQogIGRybS9tZ2FnMjAwOiB1c2Ugc2lt
-cGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCiAgZHJtL3JhZGVvbjog
-dXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQogIGRybS92
-aXJ0aW86IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJzKCkK
-ICBzdGFnaW5nOiBzbTc1MGZiOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2Zy
-YW1lYnVmZmVycygpCiAgZmJkZXY6IGFsbG93IGFwZXJ0dXJlcyA9PSBOVUxMIGluIHJlbW92ZV9j
-b25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoKQogIGRybS92YzQ6IHVzZSBzaW1wbGVyIHJlbW92ZV9j
-b25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoTlVMTCkKICBkcm0vc3VuNGk6IHVzZSBzaW1wbGVyIHJl
-bW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoTlVMTCkKICBkcm0vdGVncmE6IGtpY2sgb3V0
-IHNpbXBsZWZiCgogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Rydi5jICB8IDIz
-ICstLS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2JvY2hzL2JvY2hzX2Rydi5jICAg
-ICAgICB8IDE4ICstLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vY2lycnVzL2NpcnJ1c19k
-cnYuYyAgICAgIHwgMjMgKy0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vbWdhZzIw
-MC9tZ2FnMjAwX2Rydi5jICAgIHwgMjEgKy0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9tZ2FnMjAwL21nYWcyMDBfbWFpbi5jICAgfCAgOSAtLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0v
-cmFkZW9uL3JhZGVvbl9kcnYuYyAgICAgIHwgMjMgKy0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMgICAgICAgIHwgMTggKy0tLS0tLS0tLS0tLS0KIGRy
-aXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyAgICAgICAgICAgICAgfCAgNCArKysrCiBkcml2ZXJz
-L2dwdS9kcm0vdmM0L3ZjNF9kcnYuYyAgICAgICAgICAgIHwgMjAgKy0tLS0tLS0tLS0tLS0tLQog
-ZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2RybV9idXMuYyB8IDI0ICsrKy0tLS0tLS0t
-LS0tLS0tLS0KIGRyaXZlcnMvc3RhZ2luZy9zbTc1MGZiL3NtNzUwLmMgICAgICAgICAgfCAyMiAr
-LS0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvdmlkZW8vZmJkZXYvY29yZS9mYm1lbS5jICAgICAg
-ICAgfCA0MCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLQogaW5jbHVkZS9kcm0vZHJt
-X2ZiX2hlbHBlci5oICAgICAgICAgICAgICB8IDEyICsrKysrKysrKysKIGluY2x1ZGUvbGludXgv
-ZmIuaCAgICAgICAgICAgICAgICAgICAgICAgfCAgMiArKwogMTQgZmlsZXMgY2hhbmdlZCwgNjcg
-aW5zZXJ0aW9ucygrKSwgMTkyIGRlbGV0aW9ucygtKQoKLS0gCjIuMTEuMAoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KVmlydHVhbGl6YXRpb24gbWFpbGlu
-ZyBsaXN0ClZpcnR1YWxpemF0aW9uQGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8v
-bGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL3ZpcnR1YWxpemF0aW9u
+
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 24, 2017 at 05:50:42PM +0100, Rafael J. Wysocki wrote:
+> On Fri, Nov 24, 2017 at 4:53 PM, Manikanta Maddireddy
+> <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > In 'commit 0cc2b4e5a020 ("PM / QoS: Fix device resume latency PM QoS")'
+> > PM QoS resume latency modified 0 as "no latency at all". However
+> > dev_pm_qos_raw_read_value() returns 0 for devices which doesn't have
+> > PM QoS constraints. This is blocking runtime suspend for these devices
+> > in rpm_check_suspend_allowed(). Return PM_QOS_RESUME_LATENCY_NO_CONSTRA=
+INT
+> > when PM QoS constraints are not available for a particular device.
+> >
+> > Fixes: 0cc2b4e5a020 ("PM / QoS: Fix device resume latency PM QoS")
+>=20
+> That commit has been reverted, so this patch is not applicable and
+> therefore the whole series isn't.
+>=20
+> What kernel is it based off?
+
+It looks like this might have crept in via commit 0759e80b84e3 ("PM /
+QoS: Fix device resume latency framework"). But checking more closely,
+that commit actually incorporates this change already.
+
+According to the git log the correct commit for this showed up in
+linux-next only today, which is probably why Manikanta missed it.
+
+Manikanta: can you try rebasing your series on top of next-20171124?
+git should notice that this particular change is already part of that
+and drop it during the rebase.
+
+Thierry
+
+--uAKRQypu60I7Lcqm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloYg4UACgkQ3SOs138+
+s6EkZxAAmGjFyXPByhGc3KiydAMFKOwvSnuMWz+ADFnA/0MCDXuPoRdHfFLeZ6c6
+mqWL5+E7J9rQ5mQ1dhSotqplowXGST0ayquEqc/ECfsDVLbKBpSDKp7Z1Q80EG/d
++R2sKfDcZm9yOPVfQ6PDzRCcirkY60IEYUA/+aLcwZHa7Syt+e63rkTc3omFd0Yw
+vT1/N7KmcBgCNKEJotHn4uE6Q8dGMg0dD2Rq5AQ4La0kVdQ4T964st6SfVFfQgYS
+OdQpwpKiarxmRfn8+h6jfjNnTvgpJf/ni3ebxACSemqYjA1enviZmR5srioFy1UX
+BgSIn2BqdcdioR1wm7HOkfqgt+5s6a9MqhLz2lDeaF1MoHCsOsF93xkTIMxWb0df
+weduGaQDAFOzBXmdK2nK6wg1UXUDQ6JhiJ6VbLbWpgT9S4AYPkxrV1RIDIu0Ckmz
+0U0pWAx/G3xKAbWLjRkeC34JaBcAU80Rz9ZcLs9RrRX3XOZcGeQS3dGTvvC1SY+T
+iwgu4W2z+d+RQzgWySh9IGbNS3HQtw8LF0IHRMxx64k2Ka97KdhtGFKRnaSzTc1s
+VET2Q9HFwqxVC7TIzuOinIp0NS9FJH6U/AbByJx44Vk+uF/m6E9u9VWCr2sU8/nH
+uw9av12TpCjLWL+O/4r8SW7EcPN6bLHszlBbS8bw5qJ+h9iKLs0=
+=voue
+-----END PGP SIGNATURE-----
+
+--uAKRQypu60I7Lcqm--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
