@@ -1,30 +1,49 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: Re: [PATCH 13/13] drm/tegra: kick out simplefb
-Date: Fri, 24 Nov 2017 22:42:59 +0100
-Message-ID: <20171124214259.mot44jw6gbweyhju@qmqm.qmqm.pl>
-References: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
- <89e22ee1c026b40a5bfa91de282d658b56dc8ee8.1511544782.git.mirq-linux@rere.qmqm.pl>
- <20171124205049.GB12811@mithrandir>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 01/10] genirq: Export irq_set_msi_desc()
+Date: Sat, 25 Nov 2017 00:55:33 +0100 (CET)
+Message-ID: <alpine.DEB.2.20.1711250050520.2316@nanos>
+References: <1511538800-8275-1-git-send-email-mmaddireddy@nvidia.com> <1511538800-8275-2-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171124205049.GB12811@mithrandir>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1511538800-8275-2-git-send-email-mmaddireddy@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, bhelgaas@google.com, rjw@rjwysocki.net, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 24, 2017 at 09:50:50PM +0100, Thierry Reding wrote:
-> On Fri, Nov 24, 2017 at 06:53:34PM +0100, Micha³ Miros³aw wrote:
-> > Kick out firmware fb when loading tegra driver.
-> Cool. Can you provide some background on how you tested this? What is
-> your firmware FB? That'd be useful information to put in the commit
-> message. Also, nit: "tegra driver" -> "Tegra driver".
+On Fri, 24 Nov 2017, Manikanta Maddireddy wrote:
 
-I checked this on my Asus TF300T, as I use simplefb for initial
-boot messages.  simplefb uses framebuffer set up by the bootloader.
+Please CC the proper mailing list for irq related changes.
 
-Best Regards,
-Micha³ Miros³aw
+> PCI bus support MSI interrupts, allow PCI host driver to set MSI descriptor
+> data for an irq.
+
+This is not really an explanation why this export is needed.
+
+Thanks,
+
+	tglx
+
+> 
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> ---
+>  kernel/irq/chip.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+> index 5a2ef92c2782..bfbd17386bc4 100644
+> --- a/kernel/irq/chip.c
+> +++ b/kernel/irq/chip.c
+> @@ -136,6 +136,7 @@ int irq_set_msi_desc(unsigned int irq, struct msi_desc *entry)
+>  {
+>  	return irq_set_msi_desc_off(irq, 0, entry);
+>  }
+> +EXPORT_SYMBOL(irq_set_msi_desc);
+>  
+>  /**
+>   *	irq_set_chip_data - set irq chip data for an irq
+> -- 
+> 2.1.4
+> 
+> 
