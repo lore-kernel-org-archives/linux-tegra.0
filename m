@@ -1,63 +1,57 @@
 From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 03/10] PM / QoS: Fix device resume latency for non PM QoS
- devices
-Date: Sun, 26 Nov 2017 01:16:42 +0530
-Message-ID: <d6abebcf-5397-33d4-f41f-a96f3c81ac14@nvidia.com>
-References: <1511538800-8275-1-git-send-email-mmaddireddy@nvidia.com>
- <1511538800-8275-4-git-send-email-mmaddireddy@nvidia.com>
- <CAJZ5v0ghcwSHdrbZd_=XA=tHz7=aTUVd66dHkMYRNyXpnqP84w@mail.gmail.com>
- <20171124203940.GA12811@mithrandir>
- <CAJZ5v0h1EdMV5u-5noMv_1_OpS13nH2NW_6Aua9+LMoWH0tL2w@mail.gmail.com>
+Subject: Re: [PATCH V3 00/12] Enable Tegra root port features and apply SW
+ fixups
+Date: Sun, 26 Nov 2017 01:29:26 +0530
+Message-ID: <912eb378-2b12-0474-8c33-34113d23476b@nvidia.com>
+References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAJZ5v0h1EdMV5u-5noMv_1_OpS13nH2NW_6Aua9+LMoWH0tL2w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1509371843-22931-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux PCI <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux PM <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Bjorn, Thierry,
 
+Could you please review this series of patches?
 
-On 25-Nov-17 5:32 AM, Rafael J. Wysocki wrote:
-> On Fri, Nov 24, 2017 at 9:39 PM, Thierry Reding
-> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> On Fri, Nov 24, 2017 at 05:50:42PM +0100, Rafael J. Wysocki wrote:
->>> On Fri, Nov 24, 2017 at 4:53 PM, Manikanta Maddireddy
->>> <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>> In 'commit 0cc2b4e5a020 ("PM / QoS: Fix device resume latency PM QoS")'
->>>> PM QoS resume latency modified 0 as "no latency at all". However
->>>> dev_pm_qos_raw_read_value() returns 0 for devices which doesn't have
->>>> PM QoS constraints. This is blocking runtime suspend for these devices
->>>> in rpm_check_suspend_allowed(). Return PM_QOS_RESUME_LATENCY_NO_CONSTRAINT
->>>> when PM QoS constraints are not available for a particular device.
->>>>
->>>> Fixes: 0cc2b4e5a020 ("PM / QoS: Fix device resume latency PM QoS")
->>>
->>> That commit has been reverted, so this patch is not applicable and
->>> therefore the whole series isn't.
->>>
->>> What kernel is it based off?
->>
->> It looks like this might have crept in via commit 0759e80b84e3 ("PM /
->> QoS: Fix device resume latency framework"). But checking more closely,
->> that commit actually incorporates this change already.
->>
->> According to the git log the correct commit for this showed up in
->> linux-next only today, which is probably why Manikanta missed it.
+On 30-Oct-17 7:27 PM, Manikanta Maddireddy wrote:
+> These series of patches does the following things,
+> - Deasserting pcie_xrst after programming root port to make sure that
+>   register programming is reflected during LTSSM
+> - Apply REFCLK pad settings to make sure P2P amplitude requirement is met
+> - Enable Gen2 link speed
+> - Advertise AER capability
+> - Program UPHY electrical settings for meeting eye diagram requirements
+> - Bunch of SW fixups explained in their respective commit log
 > 
-> Well, it's been in the Linus' tree for a week, though.
+> Testing done on Tegra124, 210 and 186:
+> - PCIe link up, config read, BAR read and basic functionality of Ethernet
+>   card
+> - Link speed switch to Gen2 after link retrain
+> - Link speed stays in Gen1 after retrain if end point is only Gen1 capable
+> - Simulated AER errors and verified dmesg logs for them
+> - Rest of the programming is verified by dumping the registers after PCIe
+> link up
 > 
-> Thanks,
-> Rafael
+> Manikanta Maddireddy (12):
+>   PCI: tegra: Start LTSSM after programming root port
+>   PCI: tegra: Move REFCLK pad settings out of phy_power_on()
+>   PCI: tegra: Retrain link for Gen2 speed
+>   PCI: tegra: Advertise AER capability
+>   PCI: tegra: Program UPHY electrical settings in Tegra210
+>   PCI: tegra: Enable opportunistic update FC and ACK
+>   PCI: tegra: Disable AFI dynamic clock gating
+>   PCI: tegra: Wait for DLLP to finish before entering L1 or L2
+>   PCI: tegra: Enable PCIe xclk clock clamping
+>   PCI: tegra: Add SW fixup for RAW violations
+>   PCI: tegra: Increase the deskew retry time
+>   PCI: tegra: Update flow control threshold in Tegra210
 > 
-I dropped this patch in V2.
-
-Thanks,
-Manikanta
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  drivers/pci/host/pci-tegra.c | 306 ++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 288 insertions(+), 18 deletions(-)
+> 
