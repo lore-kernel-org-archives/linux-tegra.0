@@ -1,114 +1,114 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 13/13] drm/tegra: dc: Support background color
-Date: Mon, 27 Nov 2017 11:07:58 +0100
-Message-ID: <20171127100758.22149-14-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 05/13] drm/tegra: dc: Reshuffle some code
+Date: Mon, 27 Nov 2017 11:07:50 +0100
+Message-ID: <20171127100758.22149-6-thierry.reding@gmail.com>
 References: <20171127100758.22149-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171127100758.22149-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20171127100758.22149-1-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Starting with Tegra124, the interface to set the background color (the
-value generated for pixels that are not sourced from any window) is via
-a different register. Earlier generations called this the border color.
-Reverse the feature flag and assume that IP revisions that don't have
-support for background color will support border color instead.
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/dc.c | 14 ++++++++------
- drivers/gpu/drm/tegra/dc.h |  8 +++++++-
- 2 files changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 69d98bf84ceb..954bf92f21fd 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1572,7 +1572,9 @@ static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
- 		WIN_A_OF_INT | WIN_B_OF_INT | WIN_C_OF_INT;
- 	tegra_dc_writel(dc, value, DC_CMD_INT_MASK);
- 
--	if (dc->soc->supports_border_color)
-+	if (dc->soc->supports_background_color)
-+		tegra_dc_writel(dc, 0, DC_DISP_BLEND_BACKGROUND_COLOR);
-+	else
- 		tegra_dc_writel(dc, 0, DC_DISP_BORDER_COLOR);
- 
- 	/* apply PLL and pixel clock changes */
-@@ -1835,7 +1837,7 @@ static const struct host1x_client_ops dc_client_ops = {
- };
- 
- static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
--	.supports_border_color = true,
-+	.supports_background_color = false,
- 	.supports_interlacing = false,
- 	.supports_cursor = false,
- 	.supports_block_linear = false,
-@@ -1845,7 +1847,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
- };
- 
- static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
--	.supports_border_color = true,
-+	.supports_background_color = false,
- 	.supports_interlacing = false,
- 	.supports_cursor = false,
- 	.supports_block_linear = false,
-@@ -1855,7 +1857,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
- };
- 
- static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
--	.supports_border_color = true,
-+	.supports_background_color = false,
- 	.supports_interlacing = false,
- 	.supports_cursor = false,
- 	.supports_block_linear = false,
-@@ -1865,7 +1867,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
- };
- 
- static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
--	.supports_border_color = false,
-+	.supports_background_color = true,
- 	.supports_interlacing = true,
- 	.supports_cursor = true,
- 	.supports_block_linear = true,
-@@ -1875,7 +1877,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
- };
- 
- static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
--	.supports_border_color = false,
-+	.supports_background_color = true,
- 	.supports_interlacing = true,
- 	.supports_cursor = true,
- 	.supports_block_linear = true,
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 032c734dd470..571a6c78619f 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -26,7 +26,7 @@ struct tegra_dc_stats {
- };
- 
- struct tegra_dc_soc_info {
--	bool supports_border_color;
-+	bool supports_background_color;
- 	bool supports_interlacing;
- 	bool supports_cursor;
- 	bool supports_block_linear;
-@@ -447,6 +447,12 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
- #define DC_DISP_SD_HW_K_VALUES			0x4dd
- #define DC_DISP_SD_MAN_K_VALUES			0x4de
- 
-+#define DC_DISP_BLEND_BACKGROUND_COLOR		0x4e4
-+#define  BACKGROUND_COLOR_ALPHA(x) (((x) & 0xff) << 24)
-+#define  BACKGROUND_COLOR_BLUE(x)  (((x) & 0xff) << 16)
-+#define  BACKGROUND_COLOR_GREEN(x) (((x) & 0xff) << 8)
-+#define  BACKGROUND_COLOR_RED(x)   (((x) & 0xff) << 0)
-+
- #define DC_DISP_INTERLACE_CONTROL		0x4e5
- #define  INTERLACE_STATUS (1 << 2)
- #define  INTERLACE_START  (1 << 1)
--- 
-2.15.0
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClJlc2h1ZmZsZSBzb21l
+IGNvZGUgc28gdGhhdCBmdW5jdGlvbnMgYXJlIGRlZmluZWQgY2xvc2VyIHRvIHdoZXJlIHRoZXkK
+YXJlIHVzZWQuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEu
+Y29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jIHwgMTUyICsrKysrKysrKysrKysr
+KysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDc2IGluc2Vy
+dGlvbnMoKyksIDc2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9kYy5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMKaW5kZXggODI1NDE5ZGZmMDdi
+Li4wNTJmNTEyNTcyZDUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jCisr
+KyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jCkBAIC05MDksODIgKzkwOSw2IEBAIHN0YXRp
+YyBpbnQgdGVncmFfZGNfYWRkX3BsYW5lcyhzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCBzdHJ1Y3Qg
+dGVncmFfZGMgKmRjKQogCXJldHVybiAwOwogfQogCi1zdGF0aWMgdTMyIHRlZ3JhX2RjX2dldF92
+YmxhbmtfY291bnRlcihzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCi17Ci0Jc3RydWN0IHRlZ3JhX2Rj
+ICpkYyA9IHRvX3RlZ3JhX2RjKGNydGMpOwotCi0JaWYgKGRjLT5zeW5jcHQpCi0JCXJldHVybiBo
+b3N0MXhfc3luY3B0X3JlYWQoZGMtPnN5bmNwdCk7Ci0KLQkvKiBmYWxsYmFjayB0byBzb2Z0d2Fy
+ZSBlbXVsYXRlZCBWQkxBTksgY291bnRlciAqLwotCXJldHVybiBkcm1fY3J0Y192YmxhbmtfY291
+bnQoJmRjLT5iYXNlKTsKLX0KLQotc3RhdGljIGludCB0ZWdyYV9kY19lbmFibGVfdmJsYW5rKHN0
+cnVjdCBkcm1fY3J0YyAqY3J0YykKLXsKLQlzdHJ1Y3QgdGVncmFfZGMgKmRjID0gdG9fdGVncmFf
+ZGMoY3J0Yyk7Ci0JdW5zaWduZWQgbG9uZyB2YWx1ZSwgZmxhZ3M7Ci0KLQlzcGluX2xvY2tfaXJx
+c2F2ZSgmZGMtPmxvY2ssIGZsYWdzKTsKLQotCXZhbHVlID0gdGVncmFfZGNfcmVhZGwoZGMsIERD
+X0NNRF9JTlRfTUFTSyk7Ci0JdmFsdWUgfD0gVkJMQU5LX0lOVDsKLQl0ZWdyYV9kY193cml0ZWwo
+ZGMsIHZhbHVlLCBEQ19DTURfSU5UX01BU0spOwotCi0Jc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgm
+ZGMtPmxvY2ssIGZsYWdzKTsKLQotCXJldHVybiAwOwotfQotCi1zdGF0aWMgdm9pZCB0ZWdyYV9k
+Y19kaXNhYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCi17Ci0Jc3RydWN0IHRlZ3Jh
+X2RjICpkYyA9IHRvX3RlZ3JhX2RjKGNydGMpOwotCXVuc2lnbmVkIGxvbmcgdmFsdWUsIGZsYWdz
+OwotCi0Jc3Bpbl9sb2NrX2lycXNhdmUoJmRjLT5sb2NrLCBmbGFncyk7Ci0KLQl2YWx1ZSA9IHRl
+Z3JhX2RjX3JlYWRsKGRjLCBEQ19DTURfSU5UX01BU0spOwotCXZhbHVlICY9IH5WQkxBTktfSU5U
+OwotCXRlZ3JhX2RjX3dyaXRlbChkYywgdmFsdWUsIERDX0NNRF9JTlRfTUFTSyk7Ci0KLQlzcGlu
+X3VubG9ja19pcnFyZXN0b3JlKCZkYy0+bG9jaywgZmxhZ3MpOwotfQotCi1zdGF0aWMgdm9pZCB0
+ZWdyYV9kY19maW5pc2hfcGFnZV9mbGlwKHN0cnVjdCB0ZWdyYV9kYyAqZGMpCi17Ci0Jc3RydWN0
+IGRybV9kZXZpY2UgKmRybSA9IGRjLT5iYXNlLmRldjsKLQlzdHJ1Y3QgZHJtX2NydGMgKmNydGMg
+PSAmZGMtPmJhc2U7Ci0JdW5zaWduZWQgbG9uZyBmbGFncywgYmFzZTsKLQlzdHJ1Y3QgdGVncmFf
+Ym8gKmJvOwotCi0Jc3Bpbl9sb2NrX2lycXNhdmUoJmRybS0+ZXZlbnRfbG9jaywgZmxhZ3MpOwot
+Ci0JaWYgKCFkYy0+ZXZlbnQpIHsKLQkJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmZHJtLT5ldmVu
+dF9sb2NrLCBmbGFncyk7Ci0JCXJldHVybjsKLQl9Ci0KLQlibyA9IHRlZ3JhX2ZiX2dldF9wbGFu
+ZShjcnRjLT5wcmltYXJ5LT5mYiwgMCk7Ci0KLQlzcGluX2xvY2soJmRjLT5sb2NrKTsKLQotCS8q
+IGNoZWNrIGlmIG5ldyBzdGFydCBhZGRyZXNzIGhhcyBiZWVuIGxhdGNoZWQgKi8KLQl0ZWdyYV9k
+Y193cml0ZWwoZGMsIFdJTkRPV19BX1NFTEVDVCwgRENfQ01EX0RJU1BMQVlfV0lORE9XX0hFQURF
+Uik7Ci0JdGVncmFfZGNfd3JpdGVsKGRjLCBSRUFEX01VWCwgRENfQ01EX1NUQVRFX0FDQ0VTUyk7
+Ci0JYmFzZSA9IHRlZ3JhX2RjX3JlYWRsKGRjLCBEQ19XSU5CVUZfU1RBUlRfQUREUik7Ci0JdGVn
+cmFfZGNfd3JpdGVsKGRjLCAwLCBEQ19DTURfU1RBVEVfQUNDRVNTKTsKLQotCXNwaW5fdW5sb2Nr
+KCZkYy0+bG9jayk7Ci0KLQlpZiAoYmFzZSA9PSBiby0+cGFkZHIgKyBjcnRjLT5wcmltYXJ5LT5m
+Yi0+b2Zmc2V0c1swXSkgewotCQlkcm1fY3J0Y19zZW5kX3ZibGFua19ldmVudChjcnRjLCBkYy0+
+ZXZlbnQpOwotCQlkcm1fY3J0Y192YmxhbmtfcHV0KGNydGMpOwotCQlkYy0+ZXZlbnQgPSBOVUxM
+OwotCX0KLQotCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmRybS0+ZXZlbnRfbG9jaywgZmxhZ3Mp
+OwotfQotCiBzdGF0aWMgdm9pZCB0ZWdyYV9kY19kZXN0cm95KHN0cnVjdCBkcm1fY3J0YyAqY3J0
+YykKIHsKIAlkcm1fY3J0Y19jbGVhbnVwKGNydGMpOwpAQCAtMTAzNSw2ICs5NTksNDcgQEAgc3Rh
+dGljIHZvaWQgdGVncmFfY3J0Y19hdG9taWNfZGVzdHJveV9zdGF0ZShzdHJ1Y3QgZHJtX2NydGMg
+KmNydGMsCiAJa2ZyZWUoc3RhdGUpOwogfQogCitzdGF0aWMgdTMyIHRlZ3JhX2RjX2dldF92Ymxh
+bmtfY291bnRlcihzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCit7CisJc3RydWN0IHRlZ3JhX2RjICpk
+YyA9IHRvX3RlZ3JhX2RjKGNydGMpOworCisJaWYgKGRjLT5zeW5jcHQpCisJCXJldHVybiBob3N0
+MXhfc3luY3B0X3JlYWQoZGMtPnN5bmNwdCk7CisKKwkvKiBmYWxsYmFjayB0byBzb2Z0d2FyZSBl
+bXVsYXRlZCBWQkxBTksgY291bnRlciAqLworCXJldHVybiBkcm1fY3J0Y192YmxhbmtfY291bnQo
+JmRjLT5iYXNlKTsKK30KKworc3RhdGljIGludCB0ZWdyYV9kY19lbmFibGVfdmJsYW5rKHN0cnVj
+dCBkcm1fY3J0YyAqY3J0YykKK3sKKwlzdHJ1Y3QgdGVncmFfZGMgKmRjID0gdG9fdGVncmFfZGMo
+Y3J0Yyk7CisJdW5zaWduZWQgbG9uZyB2YWx1ZSwgZmxhZ3M7CisKKwlzcGluX2xvY2tfaXJxc2F2
+ZSgmZGMtPmxvY2ssIGZsYWdzKTsKKworCXZhbHVlID0gdGVncmFfZGNfcmVhZGwoZGMsIERDX0NN
+RF9JTlRfTUFTSyk7CisJdmFsdWUgfD0gVkJMQU5LX0lOVDsKKwl0ZWdyYV9kY193cml0ZWwoZGMs
+IHZhbHVlLCBEQ19DTURfSU5UX01BU0spOworCisJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmZGMt
+PmxvY2ssIGZsYWdzKTsKKworCXJldHVybiAwOworfQorCitzdGF0aWMgdm9pZCB0ZWdyYV9kY19k
+aXNhYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCit7CisJc3RydWN0IHRlZ3JhX2Rj
+ICpkYyA9IHRvX3RlZ3JhX2RjKGNydGMpOworCXVuc2lnbmVkIGxvbmcgdmFsdWUsIGZsYWdzOwor
+CisJc3Bpbl9sb2NrX2lycXNhdmUoJmRjLT5sb2NrLCBmbGFncyk7CisKKwl2YWx1ZSA9IHRlZ3Jh
+X2RjX3JlYWRsKGRjLCBEQ19DTURfSU5UX01BU0spOworCXZhbHVlICY9IH5WQkxBTktfSU5UOwor
+CXRlZ3JhX2RjX3dyaXRlbChkYywgdmFsdWUsIERDX0NNRF9JTlRfTUFTSyk7CisKKwlzcGluX3Vu
+bG9ja19pcnFyZXN0b3JlKCZkYy0+bG9jaywgZmxhZ3MpOworfQorCiBzdGF0aWMgY29uc3Qgc3Ry
+dWN0IGRybV9jcnRjX2Z1bmNzIHRlZ3JhX2NydGNfZnVuY3MgPSB7CiAJLnBhZ2VfZmxpcCA9IGRy
+bV9hdG9taWNfaGVscGVyX3BhZ2VfZmxpcCwKIAkuc2V0X2NvbmZpZyA9IGRybV9hdG9taWNfaGVs
+cGVyX3NldF9jb25maWcsCkBAIC0xMzQyLDYgKzEzMDcsNDEgQEAgc3RhdGljIGNvbnN0IHN0cnVj
+dCBkcm1fY3J0Y19oZWxwZXJfZnVuY3MgdGVncmFfY3J0Y19oZWxwZXJfZnVuY3MgPSB7CiAJLmF0
+b21pY19kaXNhYmxlID0gdGVncmFfY3J0Y19hdG9taWNfZGlzYWJsZSwKIH07CiAKK3N0YXRpYyB2
+b2lkIHRlZ3JhX2RjX2ZpbmlzaF9wYWdlX2ZsaXAoc3RydWN0IHRlZ3JhX2RjICpkYykKK3sKKwlz
+dHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gZGMtPmJhc2UuZGV2OworCXN0cnVjdCBkcm1fY3J0YyAq
+Y3J0YyA9ICZkYy0+YmFzZTsKKwl1bnNpZ25lZCBsb25nIGZsYWdzLCBiYXNlOworCXN0cnVjdCB0
+ZWdyYV9ibyAqYm87CisKKwlzcGluX2xvY2tfaXJxc2F2ZSgmZHJtLT5ldmVudF9sb2NrLCBmbGFn
+cyk7CisKKwlpZiAoIWRjLT5ldmVudCkgeworCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZkcm0t
+PmV2ZW50X2xvY2ssIGZsYWdzKTsKKwkJcmV0dXJuOworCX0KKworCWJvID0gdGVncmFfZmJfZ2V0
+X3BsYW5lKGNydGMtPnByaW1hcnktPmZiLCAwKTsKKworCXNwaW5fbG9jaygmZGMtPmxvY2spOwor
+CisJLyogY2hlY2sgaWYgbmV3IHN0YXJ0IGFkZHJlc3MgaGFzIGJlZW4gbGF0Y2hlZCAqLworCXRl
+Z3JhX2RjX3dyaXRlbChkYywgV0lORE9XX0FfU0VMRUNULCBEQ19DTURfRElTUExBWV9XSU5ET1df
+SEVBREVSKTsKKwl0ZWdyYV9kY193cml0ZWwoZGMsIFJFQURfTVVYLCBEQ19DTURfU1RBVEVfQUND
+RVNTKTsKKwliYXNlID0gdGVncmFfZGNfcmVhZGwoZGMsIERDX1dJTkJVRl9TVEFSVF9BRERSKTsK
+Kwl0ZWdyYV9kY193cml0ZWwoZGMsIDAsIERDX0NNRF9TVEFURV9BQ0NFU1MpOworCisJc3Bpbl91
+bmxvY2soJmRjLT5sb2NrKTsKKworCWlmIChiYXNlID09IGJvLT5wYWRkciArIGNydGMtPnByaW1h
+cnktPmZiLT5vZmZzZXRzWzBdKSB7CisJCWRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KGNydGMs
+IGRjLT5ldmVudCk7CisJCWRybV9jcnRjX3ZibGFua19wdXQoY3J0Yyk7CisJCWRjLT5ldmVudCA9
+IE5VTEw7CisJfQorCisJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmZHJtLT5ldmVudF9sb2NrLCBm
+bGFncyk7Cit9CisKIHN0YXRpYyBpcnFyZXR1cm5fdCB0ZWdyYV9kY19pcnEoaW50IGlycSwgdm9p
+ZCAqZGF0YSkKIHsKIAlzdHJ1Y3QgdGVncmFfZGMgKmRjID0gZGF0YTsKLS0gCjIuMTUuMAoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
