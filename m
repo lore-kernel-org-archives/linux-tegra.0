@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 05/12] drm/tegra: dc: Move state definition to header
-Date: Mon, 27 Nov 2017 11:09:45 +0100
-Message-ID: <20171127100952.22465-6-thierry.reding@gmail.com>
+Subject: [PATCH 03/12] drm/tegra: dc: Remove tegra_overlay_plane_destroy()
+Date: Mon, 27 Nov 2017 11:09:43 +0100
+Message-ID: <20171127100952.22465-4-thierry.reding@gmail.com>
 References: <20171127100952.22465-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20171127100952.22465-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,72 +12,34 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Move the display controller state definition to the header file so that
-it can be referenced by other files.
+This function is a simple wrapper around tegra_plane_destroy(), so it
+can be dropped.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 18 ------------------
- drivers/gpu/drm/tegra/dc.h | 18 ++++++++++++++++++
- 2 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 1075b4e06834..88b8d137726e 100644
+index 2b7ece1d0c18..fdffab7e41b9 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -34,24 +34,6 @@ static inline struct tegra_plane *to_tegra_plane(struct drm_plane *plane)
- 	return container_of(plane, struct tegra_plane, base);
+@@ -844,15 +844,10 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+ 	return &plane->base;
  }
  
--struct tegra_dc_state {
--	struct drm_crtc_state base;
--
--	struct clk *clk;
--	unsigned long pclk;
--	unsigned int div;
--
--	u32 planes;
--};
--
--static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
+-static void tegra_overlay_plane_destroy(struct drm_plane *plane)
 -{
--	if (state)
--		return container_of(state, struct tegra_dc_state, base);
--
--	return NULL;
+-	tegra_plane_destroy(plane);
 -}
 -
- struct tegra_plane_state {
- 	struct drm_plane_state base;
- 
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 6e46e4aed10b..b65dfbb0af89 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -18,6 +18,24 @@
- 
- struct tegra_output;
- 
-+struct tegra_dc_state {
-+	struct drm_crtc_state base;
-+
-+	struct clk *clk;
-+	unsigned long pclk;
-+	unsigned int div;
-+
-+	u32 planes;
-+};
-+
-+static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
-+{
-+	if (state)
-+		return container_of(state, struct tegra_dc_state, base);
-+
-+	return NULL;
-+}
-+
- struct tegra_dc_stats {
- 	unsigned long frames;
- 	unsigned long vblank;
+ static const struct drm_plane_funcs tegra_overlay_plane_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+-	.destroy = tegra_overlay_plane_destroy,
++	.destroy = tegra_plane_destroy,
+ 	.reset = tegra_plane_reset,
+ 	.atomic_duplicate_state = tegra_plane_atomic_duplicate_state,
+ 	.atomic_destroy_state = tegra_plane_atomic_destroy_state,
 -- 
 2.15.0
