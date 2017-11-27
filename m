@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 02/12] drm/tegra: dc: Remove duplicate plane funcs
-Date: Mon, 27 Nov 2017 11:09:42 +0100
-Message-ID: <20171127100952.22465-3-thierry.reding@gmail.com>
+Subject: [PATCH 05/12] drm/tegra: dc: Move state definition to header
+Date: Mon, 27 Nov 2017 11:09:45 +0100
+Message-ID: <20171127100952.22465-6-thierry.reding@gmail.com>
 References: <20171127100952.22465-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20171127100952.22465-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,61 +12,72 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Both tegra_primary_plane_funcs and tegra_cursor_plane_funcs are
-identical. Get rid of the duplicate and use one set of function pointers
-for all planes.
+Move the display controller state definition to the header file so that
+it can be referenced by other files.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 18 ------------------
+ drivers/gpu/drm/tegra/dc.h | 18 ++++++++++++++++++
+ 2 files changed, 18 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 552710f5c386..2b7ece1d0c18 100644
+index 1075b4e06834..88b8d137726e 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -458,7 +458,7 @@ static void tegra_plane_atomic_destroy_state(struct drm_plane *plane,
- 	kfree(state);
+@@ -34,24 +34,6 @@ static inline struct tegra_plane *to_tegra_plane(struct drm_plane *plane)
+ 	return container_of(plane, struct tegra_plane, base);
  }
  
--static const struct drm_plane_funcs tegra_primary_plane_funcs = {
-+static const struct drm_plane_funcs tegra_plane_funcs = {
- 	.update_plane = drm_atomic_helper_update_plane,
- 	.disable_plane = drm_atomic_helper_disable_plane,
- 	.destroy = tegra_plane_destroy,
-@@ -673,7 +673,7 @@ static struct drm_plane *tegra_dc_primary_plane_create(struct drm_device *drm,
- 	formats = tegra_primary_plane_formats;
- 
- 	err = drm_universal_plane_init(drm, &plane->base, possible_crtcs,
--				       &tegra_primary_plane_funcs, formats,
-+				       &tegra_plane_funcs, formats,
- 				       num_formats, NULL,
- 				       DRM_PLANE_TYPE_PRIMARY, NULL);
- 	if (err < 0) {
-@@ -799,15 +799,6 @@ static void tegra_cursor_atomic_disable(struct drm_plane *plane,
- 	tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
- }
- 
--static const struct drm_plane_funcs tegra_cursor_plane_funcs = {
--	.update_plane = drm_atomic_helper_update_plane,
--	.disable_plane = drm_atomic_helper_disable_plane,
--	.destroy = tegra_plane_destroy,
--	.reset = tegra_plane_reset,
--	.atomic_duplicate_state = tegra_plane_atomic_duplicate_state,
--	.atomic_destroy_state = tegra_plane_atomic_destroy_state,
+-struct tegra_dc_state {
+-	struct drm_crtc_state base;
+-
+-	struct clk *clk;
+-	unsigned long pclk;
+-	unsigned int div;
+-
+-	u32 planes;
 -};
 -
- static const struct drm_plane_helper_funcs tegra_cursor_plane_helper_funcs = {
- 	.atomic_check = tegra_cursor_atomic_check,
- 	.atomic_update = tegra_cursor_atomic_update,
-@@ -840,7 +831,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
- 	formats = tegra_cursor_plane_formats;
+-static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
+-{
+-	if (state)
+-		return container_of(state, struct tegra_dc_state, base);
+-
+-	return NULL;
+-}
+-
+ struct tegra_plane_state {
+ 	struct drm_plane_state base;
  
- 	err = drm_universal_plane_init(drm, &plane->base, 1 << dc->pipe,
--				       &tegra_cursor_plane_funcs, formats,
-+				       &tegra_plane_funcs, formats,
- 				       num_formats, NULL,
- 				       DRM_PLANE_TYPE_CURSOR, NULL);
- 	if (err < 0) {
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index 6e46e4aed10b..b65dfbb0af89 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -18,6 +18,24 @@
+ 
+ struct tegra_output;
+ 
++struct tegra_dc_state {
++	struct drm_crtc_state base;
++
++	struct clk *clk;
++	unsigned long pclk;
++	unsigned int div;
++
++	u32 planes;
++};
++
++static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
++{
++	if (state)
++		return container_of(state, struct tegra_dc_state, base);
++
++	return NULL;
++}
++
+ struct tegra_dc_stats {
+ 	unsigned long frames;
+ 	unsigned long vblank;
 -- 
 2.15.0
