@@ -1,53 +1,72 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 04/12] drm/tegra: dc: Remove duplicate plane funcs
-Date: Mon, 27 Nov 2017 11:09:44 +0100
-Message-ID: <20171127100952.22465-5-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 02/12] drm/tegra: dc: Remove duplicate plane funcs
+Date: Mon, 27 Nov 2017 11:09:42 +0100
+Message-ID: <20171127100952.22465-3-thierry.reding@gmail.com>
 References: <20171127100952.22465-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20171127100952.22465-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171127100952.22465-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkJvdGggdGVncmFfb3Zl
-cmxheV9wbGFuZV9mdW5jcyBpcyBpZGVudGljYWwgdG8gdGVncmFfcGxhbmVfZnVuY3MuIEdldApy
-aWQgb2YgdGhlIGR1cGxpY2F0ZSBhbmQgdXNlIG9uZSBzZXQgb2YgZnVuY3Rpb24gcG9pbnRlcnMg
-Zm9yIGFsbApwbGFuZXMuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0Bu
-dmlkaWEuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jIHwgMTEgKy0tLS0tLS0t
-LS0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMTAgZGVsZXRpb25zKC0pCgpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZGMuYwppbmRleCBmZGZmYWI3ZTQxYjkuLjEwNzViNGUwNjgzNCAxMDA2NDQKLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMK
-QEAgLTg0NCwxNSArODQ0LDYgQEAgc3RhdGljIHN0cnVjdCBkcm1fcGxhbmUgKnRlZ3JhX2RjX2N1
-cnNvcl9wbGFuZV9jcmVhdGUoc3RydWN0IGRybV9kZXZpY2UgKmRybSwKIAlyZXR1cm4gJnBsYW5l
-LT5iYXNlOwogfQogCi1zdGF0aWMgY29uc3Qgc3RydWN0IGRybV9wbGFuZV9mdW5jcyB0ZWdyYV9v
-dmVybGF5X3BsYW5lX2Z1bmNzID0gewotCS51cGRhdGVfcGxhbmUgPSBkcm1fYXRvbWljX2hlbHBl
-cl91cGRhdGVfcGxhbmUsCi0JLmRpc2FibGVfcGxhbmUgPSBkcm1fYXRvbWljX2hlbHBlcl9kaXNh
-YmxlX3BsYW5lLAotCS5kZXN0cm95ID0gdGVncmFfcGxhbmVfZGVzdHJveSwKLQkucmVzZXQgPSB0
-ZWdyYV9wbGFuZV9yZXNldCwKLQkuYXRvbWljX2R1cGxpY2F0ZV9zdGF0ZSA9IHRlZ3JhX3BsYW5l
-X2F0b21pY19kdXBsaWNhdGVfc3RhdGUsCi0JLmF0b21pY19kZXN0cm95X3N0YXRlID0gdGVncmFf
-cGxhbmVfYXRvbWljX2Rlc3Ryb3lfc3RhdGUsCi19OwotCiBzdGF0aWMgY29uc3QgdWludDMyX3Qg
-dGVncmFfb3ZlcmxheV9wbGFuZV9mb3JtYXRzW10gPSB7CiAJRFJNX0ZPUk1BVF9YQkdSODg4OCwK
-IAlEUk1fRk9STUFUX1hSR0I4ODg4LApAQCAtODgyLDcgKzg3Myw3IEBAIHN0YXRpYyBzdHJ1Y3Qg
-ZHJtX3BsYW5lICp0ZWdyYV9kY19vdmVybGF5X3BsYW5lX2NyZWF0ZShzdHJ1Y3QgZHJtX2Rldmlj
-ZSAqZHJtLAogCWZvcm1hdHMgPSB0ZWdyYV9vdmVybGF5X3BsYW5lX2Zvcm1hdHM7CiAKIAllcnIg
-PSBkcm1fdW5pdmVyc2FsX3BsYW5lX2luaXQoZHJtLCAmcGxhbmUtPmJhc2UsIDEgPDwgZGMtPnBp
-cGUsCi0JCQkJICAgICAgICZ0ZWdyYV9vdmVybGF5X3BsYW5lX2Z1bmNzLCBmb3JtYXRzLAorCQkJ
-CSAgICAgICAmdGVncmFfcGxhbmVfZnVuY3MsIGZvcm1hdHMsCiAJCQkJICAgICAgIG51bV9mb3Jt
-YXRzLCBOVUxMLAogCQkJCSAgICAgICBEUk1fUExBTkVfVFlQRV9PVkVSTEFZLCBOVUxMKTsKIAlp
-ZiAoZXJyIDwgMCkgewotLSAKMi4xNS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Both tegra_primary_plane_funcs and tegra_cursor_plane_funcs are
+identical. Get rid of the duplicate and use one set of function pointers
+for all planes.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dc.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 552710f5c386..2b7ece1d0c18 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -458,7 +458,7 @@ static void tegra_plane_atomic_destroy_state(struct drm_plane *plane,
+ 	kfree(state);
+ }
+ 
+-static const struct drm_plane_funcs tegra_primary_plane_funcs = {
++static const struct drm_plane_funcs tegra_plane_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+ 	.destroy = tegra_plane_destroy,
+@@ -673,7 +673,7 @@ static struct drm_plane *tegra_dc_primary_plane_create(struct drm_device *drm,
+ 	formats = tegra_primary_plane_formats;
+ 
+ 	err = drm_universal_plane_init(drm, &plane->base, possible_crtcs,
+-				       &tegra_primary_plane_funcs, formats,
++				       &tegra_plane_funcs, formats,
+ 				       num_formats, NULL,
+ 				       DRM_PLANE_TYPE_PRIMARY, NULL);
+ 	if (err < 0) {
+@@ -799,15 +799,6 @@ static void tegra_cursor_atomic_disable(struct drm_plane *plane,
+ 	tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
+ }
+ 
+-static const struct drm_plane_funcs tegra_cursor_plane_funcs = {
+-	.update_plane = drm_atomic_helper_update_plane,
+-	.disable_plane = drm_atomic_helper_disable_plane,
+-	.destroy = tegra_plane_destroy,
+-	.reset = tegra_plane_reset,
+-	.atomic_duplicate_state = tegra_plane_atomic_duplicate_state,
+-	.atomic_destroy_state = tegra_plane_atomic_destroy_state,
+-};
+-
+ static const struct drm_plane_helper_funcs tegra_cursor_plane_helper_funcs = {
+ 	.atomic_check = tegra_cursor_atomic_check,
+ 	.atomic_update = tegra_cursor_atomic_update,
+@@ -840,7 +831,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+ 	formats = tegra_cursor_plane_formats;
+ 
+ 	err = drm_universal_plane_init(drm, &plane->base, 1 << dc->pipe,
+-				       &tegra_cursor_plane_funcs, formats,
++				       &tegra_plane_funcs, formats,
+ 				       num_formats, NULL,
+ 				       DRM_PLANE_TYPE_CURSOR, NULL);
+ 	if (err < 0) {
+-- 
+2.15.0
