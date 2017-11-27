@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 06/12] drm/tegra: Move common plane code to separate file
-Date: Mon, 27 Nov 2017 11:09:46 +0100
-Message-ID: <20171127100952.22465-7-thierry.reding@gmail.com>
+Subject: [PATCH 10/12] drm/tegra: sor: Parameterize register offsets
+Date: Mon, 27 Nov 2017 11:09:50 +0100
+Message-ID: <20171127100952.22465-11-thierry.reding@gmail.com>
 References: <20171127100952.22465-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20171127100952.22465-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,531 +12,497 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Subsequent patches will add support for Tegra186 which has a different
-architecture and needs different plane code but which can share a lot of
-code with earlier Tegra support.
+Future Tegra generations have an increased number of display controllers
+that can drive individual SORs. In order to support that, the offset and
+layout of some registers has changed in backwards-incompatible ways. Use
+parameterized register offsets to support this.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/Makefile |   1 +
- drivers/gpu/drm/tegra/dc.c     | 199 ++---------------------------------------
- drivers/gpu/drm/tegra/plane.c  | 180 +++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/plane.h  |  59 ++++++++++++
- 4 files changed, 245 insertions(+), 194 deletions(-)
- create mode 100644 drivers/gpu/drm/tegra/plane.c
- create mode 100644 drivers/gpu/drm/tegra/plane.h
+ drivers/gpu/drm/tegra/sor.c | 203 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 127 insertions(+), 76 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index 46d65d39214d..a47784765217 100644
---- a/drivers/gpu/drm/tegra/Makefile
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -5,6 +5,7 @@ tegra-drm-y := \
- 	drm.o \
- 	gem.o \
- 	fb.o \
-+	plane.o \
- 	dc.o \
- 	output.o \
- 	rgb.o \
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 88b8d137726e..d2c7a3481022 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -19,38 +19,12 @@
- #include "dc.h"
- #include "drm.h"
- #include "gem.h"
-+#include "plane.h"
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 2fba6c2bd486..d51399587aca 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -144,12 +144,29 @@ static const struct tegra_sor_hdmi_settings tegra210_sor_hdmi_defaults[] = {
+ };
+ #endif
  
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_plane_helper.h>
++struct tegra_sor_regs {
++	unsigned int head_state0;
++	unsigned int head_state1;
++	unsigned int head_state2;
++	unsigned int head_state3;
++	unsigned int head_state4;
++	unsigned int head_state5;
++	unsigned int pll0;
++	unsigned int pll1;
++	unsigned int pll2;
++	unsigned int pll3;
++	unsigned int dp_padctl0;
++	unsigned int dp_padctl2;
++};
++
+ struct tegra_sor_soc {
+ 	bool supports_edp;
+ 	bool supports_lvds;
+ 	bool supports_hdmi;
+ 	bool supports_dp;
  
--struct tegra_plane {
--	struct drm_plane base;
--	unsigned int index;
--};
--
--static inline struct tegra_plane *to_tegra_plane(struct drm_plane *plane)
--{
--	return container_of(plane, struct tegra_plane, base);
--}
--
--struct tegra_plane_state {
--	struct drm_plane_state base;
--
--	struct tegra_bo_tiling tiling;
--	u32 format;
--	u32 swap;
--};
--
--static inline struct tegra_plane_state *
--to_tegra_plane_state(struct drm_plane_state *state)
--{
--	if (state)
--		return container_of(state, struct tegra_plane_state, base);
--
--	return NULL;
--}
--
- static void tegra_dc_stats_reset(struct tegra_dc_stats *stats)
- {
- 	stats->frames = 0;
-@@ -97,81 +71,6 @@ void tegra_dc_commit(struct tegra_dc *dc)
- 	tegra_dc_writel(dc, GENERAL_ACT_REQ, DC_CMD_STATE_CONTROL);
- }
++	const struct tegra_sor_regs *regs;
++
+ 	const struct tegra_sor_hdmi_settings *settings;
+ 	unsigned int num_settings;
  
--static int tegra_dc_format(u32 fourcc, u32 *format, u32 *swap)
--{
--	/* assume no swapping of fetched data */
--	if (swap)
--		*swap = BYTE_SWAP_NOSWAP;
--
--	switch (fourcc) {
--	case DRM_FORMAT_XBGR8888:
--		*format = WIN_COLOR_DEPTH_R8G8B8A8;
--		break;
--
--	case DRM_FORMAT_XRGB8888:
--		*format = WIN_COLOR_DEPTH_B8G8R8A8;
--		break;
--
--	case DRM_FORMAT_RGB565:
--		*format = WIN_COLOR_DEPTH_B5G6R5;
--		break;
--
--	case DRM_FORMAT_UYVY:
--		*format = WIN_COLOR_DEPTH_YCbCr422;
--		break;
--
--	case DRM_FORMAT_YUYV:
--		if (swap)
--			*swap = BYTE_SWAP_SWAP2;
--
--		*format = WIN_COLOR_DEPTH_YCbCr422;
--		break;
--
--	case DRM_FORMAT_YUV420:
--		*format = WIN_COLOR_DEPTH_YCbCr420P;
--		break;
--
--	case DRM_FORMAT_YUV422:
--		*format = WIN_COLOR_DEPTH_YCbCr422P;
--		break;
--
--	default:
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--static bool tegra_dc_format_is_yuv(unsigned int format, bool *planar)
--{
--	switch (format) {
--	case WIN_COLOR_DEPTH_YCbCr422:
--	case WIN_COLOR_DEPTH_YUV422:
--		if (planar)
--			*planar = false;
--
--		return true;
--
--	case WIN_COLOR_DEPTH_YCbCr420P:
--	case WIN_COLOR_DEPTH_YUV420P:
--	case WIN_COLOR_DEPTH_YCbCr422P:
--	case WIN_COLOR_DEPTH_YUV422P:
--	case WIN_COLOR_DEPTH_YCbCr422R:
--	case WIN_COLOR_DEPTH_YUV422R:
--	case WIN_COLOR_DEPTH_YCbCr422RA:
--	case WIN_COLOR_DEPTH_YUV422RA:
--		if (planar)
--			*planar = true;
--
--		return true;
--	}
--
--	if (planar)
--		*planar = false;
--
--	return false;
--}
--
- static inline u32 compute_dda_inc(unsigned int in, unsigned int out, bool v,
- 				  unsigned int bpp)
- {
-@@ -223,7 +122,7 @@ static void tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
- 	 * For YUV planar modes, the number of bytes per pixel takes into
- 	 * account only the luma component and therefore is 1.
+@@ -387,23 +404,23 @@ static int tegra_sor_dp_train_fast(struct tegra_sor *sor,
+ 	/* disable LVDS mode */
+ 	tegra_sor_writel(sor, 0, SOR_LVDS);
+ 
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value |= SOR_DP_PADCTL_TX_PU_ENABLE;
+ 	value &= ~SOR_DP_PADCTL_TX_PU_MASK;
+ 	value |= SOR_DP_PADCTL_TX_PU(2); /* XXX: don't hardcode? */
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value |= SOR_DP_PADCTL_CM_TXD_3 | SOR_DP_PADCTL_CM_TXD_2 |
+ 		 SOR_DP_PADCTL_CM_TXD_1 | SOR_DP_PADCTL_CM_TXD_0;
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	usleep_range(10, 100);
+ 
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value &= ~(SOR_DP_PADCTL_CM_TXD_3 | SOR_DP_PADCTL_CM_TXD_2 |
+ 		   SOR_DP_PADCTL_CM_TXD_1 | SOR_DP_PADCTL_CM_TXD_0);
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	err = drm_dp_aux_prepare(sor->aux, DP_SET_ANSI_8B10B);
+ 	if (err < 0)
+@@ -895,31 +912,31 @@ static void tegra_sor_mode_set(struct tegra_sor *sor,
  	 */
--	yuv = tegra_dc_format_is_yuv(window->format, &planar);
-+	yuv = tegra_plane_format_is_yuv(window->format, &planar);
- 	if (!yuv)
- 		bpp = window->bits_per_pixel / 8;
- 	else
-@@ -385,101 +284,12 @@ static void tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
- 	spin_unlock_irqrestore(&dc->lock, flags);
+ 
+ 	value = ((mode->vtotal & 0x7fff) << 16) | (mode->htotal & 0x7fff);
+-	tegra_sor_writel(sor, value, SOR_HEAD_STATE1(dc->pipe));
++	tegra_sor_writel(sor, value, sor->soc->regs->head_state1 + dc->pipe);
+ 
+ 	/* sync end = sync width - 1 */
+ 	vse = mode->vsync_end - mode->vsync_start - 1;
+ 	hse = mode->hsync_end - mode->hsync_start - 1;
+ 
+ 	value = ((vse & 0x7fff) << 16) | (hse & 0x7fff);
+-	tegra_sor_writel(sor, value, SOR_HEAD_STATE2(dc->pipe));
++	tegra_sor_writel(sor, value, sor->soc->regs->head_state2 + dc->pipe);
+ 
+ 	/* blank end = sync end + back porch */
+ 	vbe = vse + (mode->vtotal - mode->vsync_end);
+ 	hbe = hse + (mode->htotal - mode->hsync_end);
+ 
+ 	value = ((vbe & 0x7fff) << 16) | (hbe & 0x7fff);
+-	tegra_sor_writel(sor, value, SOR_HEAD_STATE3(dc->pipe));
++	tegra_sor_writel(sor, value, sor->soc->regs->head_state3 + dc->pipe);
+ 
+ 	/* blank start = blank end + active */
+ 	vbs = vbe + mode->vdisplay;
+ 	hbs = hbe + mode->hdisplay;
+ 
+ 	value = ((vbs & 0x7fff) << 16) | (hbs & 0x7fff);
+-	tegra_sor_writel(sor, value, SOR_HEAD_STATE4(dc->pipe));
++	tegra_sor_writel(sor, value, sor->soc->regs->head_state4 + dc->pipe);
+ 
+ 	/* XXX interlacing support */
+-	tegra_sor_writel(sor, 0x001, SOR_HEAD_STATE5(dc->pipe));
++	tegra_sor_writel(sor, 0x001, sor->soc->regs->head_state5 + dc->pipe);
  }
  
--static void tegra_plane_destroy(struct drm_plane *plane)
--{
--	struct tegra_plane *p = to_tegra_plane(plane);
--
--	drm_plane_cleanup(plane);
--	kfree(p);
--}
--
- static const u32 tegra_primary_plane_formats[] = {
- 	DRM_FORMAT_XBGR8888,
- 	DRM_FORMAT_XRGB8888,
- 	DRM_FORMAT_RGB565,
+ static int tegra_sor_detach(struct tegra_sor *sor)
+@@ -1001,10 +1018,10 @@ static int tegra_sor_power_down(struct tegra_sor *sor)
+ 		return err;
+ 	}
+ 
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value &= ~(SOR_DP_PADCTL_PD_TXD_3 | SOR_DP_PADCTL_PD_TXD_0 |
+ 		   SOR_DP_PADCTL_PD_TXD_1 | SOR_DP_PADCTL_PD_TXD_2);
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	/* stop lane sequencer */
+ 	value = SOR_LANE_SEQ_CTL_TRIGGER | SOR_LANE_SEQ_CTL_SEQUENCE_UP |
+@@ -1024,20 +1041,20 @@ static int tegra_sor_power_down(struct tegra_sor *sor)
+ 	if ((value & SOR_LANE_SEQ_CTL_TRIGGER) != 0)
+ 		return -ETIMEDOUT;
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value |= SOR_PLL2_PORT_POWERDOWN;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	usleep_range(20, 100);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll0);
+ 	value |= SOR_PLL0_VCOPD | SOR_PLL0_PWR;
+-	tegra_sor_writel(sor, value, SOR_PLL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll0);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value |= SOR_PLL2_SEQ_PLLCAPPD;
+ 	value |= SOR_PLL2_SEQ_PLLCAPPD_ENFORCE;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	usleep_range(20, 100);
+ 
+@@ -1528,40 +1545,40 @@ static void tegra_sor_edp_enable(struct drm_encoder *encoder)
+ 	value |= SOR_CLK_CNTRL_DP_CLK_SEL_SINGLE_DPCLK;
+ 	tegra_sor_writel(sor, value, SOR_CLK_CNTRL);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value &= ~SOR_PLL2_BANDGAP_POWERDOWN;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 	usleep_range(20, 100);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL3);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll3);
+ 	value |= SOR_PLL3_PLL_VDD_MODE_3V3;
+-	tegra_sor_writel(sor, value, SOR_PLL3);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll3);
+ 
+ 	value = SOR_PLL0_ICHPMP(0xf) | SOR_PLL0_VCOCAP_RST |
+ 		SOR_PLL0_PLLREG_LEVEL_V45 | SOR_PLL0_RESISTOR_EXT;
+-	tegra_sor_writel(sor, value, SOR_PLL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll0);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value |= SOR_PLL2_SEQ_PLLCAPPD;
+ 	value &= ~SOR_PLL2_SEQ_PLLCAPPD_ENFORCE;
+ 	value |= SOR_PLL2_LVDS_ENABLE;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	value = SOR_PLL1_TERM_COMPOUT | SOR_PLL1_TMDS_TERM;
+-	tegra_sor_writel(sor, value, SOR_PLL1);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll1);
+ 
+ 	while (true) {
+-		value = tegra_sor_readl(sor, SOR_PLL2);
++		value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 		if ((value & SOR_PLL2_SEQ_PLLCAPPD_ENFORCE) == 0)
+ 			break;
+ 
+ 		usleep_range(250, 1000);
+ 	}
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value &= ~SOR_PLL2_POWERDOWN_OVERRIDE;
+ 	value &= ~SOR_PLL2_PORT_POWERDOWN;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	/*
+ 	 * power up
+@@ -1574,18 +1591,18 @@ static void tegra_sor_edp_enable(struct drm_encoder *encoder)
+ 	tegra_sor_writel(sor, value, SOR_CLK_CNTRL);
+ 
+ 	/* step 1 */
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value |= SOR_PLL2_SEQ_PLLCAPPD_ENFORCE | SOR_PLL2_PORT_POWERDOWN |
+ 		 SOR_PLL2_BANDGAP_POWERDOWN;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll0);
+ 	value |= SOR_PLL0_VCOPD | SOR_PLL0_PWR;
+-	tegra_sor_writel(sor, value, SOR_PLL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll0);
+ 
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value &= ~SOR_DP_PADCTL_PAD_CAL_PD;
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	/* step 2 */
+ 	err = tegra_io_rail_power_on(TEGRA_IO_RAIL_LVDS);
+@@ -1595,28 +1612,28 @@ static void tegra_sor_edp_enable(struct drm_encoder *encoder)
+ 	usleep_range(5, 100);
+ 
+ 	/* step 3 */
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value &= ~SOR_PLL2_BANDGAP_POWERDOWN;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	usleep_range(20, 100);
+ 
+ 	/* step 4 */
+-	value = tegra_sor_readl(sor, SOR_PLL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll0);
+ 	value &= ~SOR_PLL0_VCOPD;
+ 	value &= ~SOR_PLL0_PWR;
+-	tegra_sor_writel(sor, value, SOR_PLL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll0);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value &= ~SOR_PLL2_SEQ_PLLCAPPD_ENFORCE;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	usleep_range(200, 1000);
+ 
+ 	/* step 5 */
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value &= ~SOR_PLL2_PORT_POWERDOWN;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	/* XXX not in TRM */
+ 	for (value = 0, i = 0; i < 5; i++)
+@@ -1632,7 +1649,7 @@ static void tegra_sor_edp_enable(struct drm_encoder *encoder)
+ 		dev_err(sor->dev, "failed to set parent clock: %d\n", err);
+ 
+ 	/* power DP lanes */
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 
+ 	if (link.num_lanes <= 2)
+ 		value &= ~(SOR_DP_PADCTL_PD_TXD_3 | SOR_DP_PADCTL_PD_TXD_2);
+@@ -1649,7 +1666,7 @@ static void tegra_sor_edp_enable(struct drm_encoder *encoder)
+ 	else
+ 		value |= SOR_DP_PADCTL_PD_TXD_0;
+ 
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	value = tegra_sor_readl(sor, SOR_DP_LINKCTL0);
+ 	value &= ~SOR_DP_LINKCTL_LANE_COUNT_MASK;
+@@ -1693,9 +1710,9 @@ static void tegra_sor_edp_enable(struct drm_encoder *encoder)
+ 	tegra_sor_writel(sor, value, SOR_DP_TPG);
+ 
+ 	/* enable pad calibration logic */
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value |= SOR_DP_PADCTL_PAD_CAL_PD;
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	err = drm_dp_link_probe(sor->aux, &link);
+ 	if (err < 0)
+@@ -2017,38 +2034,38 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 
+ 	usleep_range(20, 100);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value &= ~SOR_PLL2_BANDGAP_POWERDOWN;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	usleep_range(20, 100);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL3);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll3);
+ 	value &= ~SOR_PLL3_PLL_VDD_MODE_3V3;
+-	tegra_sor_writel(sor, value, SOR_PLL3);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll3);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll0);
+ 	value &= ~SOR_PLL0_VCOPD;
+ 	value &= ~SOR_PLL0_PWR;
+-	tegra_sor_writel(sor, value, SOR_PLL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll0);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value &= ~SOR_PLL2_SEQ_PLLCAPPD_ENFORCE;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	usleep_range(200, 400);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL2);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll2);
+ 	value &= ~SOR_PLL2_POWERDOWN_OVERRIDE;
+ 	value &= ~SOR_PLL2_PORT_POWERDOWN;
+-	tegra_sor_writel(sor, value, SOR_PLL2);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll2);
+ 
+ 	usleep_range(20, 100);
+ 
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value |= SOR_DP_PADCTL_PD_TXD_3 | SOR_DP_PADCTL_PD_TXD_0 |
+ 		 SOR_DP_PADCTL_PD_TXD_1 | SOR_DP_PADCTL_PD_TXD_2;
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	while (true) {
+ 		value = tegra_sor_readl(sor, SOR_LANE_SEQ_CTL);
+@@ -2166,9 +2183,9 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 	tegra_sor_writel(sor, value, SOR_STATE1);
+ 
+ 	/* power up pad calibration */
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value &= ~SOR_DP_PADCTL_PAD_CAL_PD;
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	/* production settings */
+ 	settings = tegra_sor_hdmi_find_settings(sor, mode->clock * 1000);
+@@ -2178,24 +2195,24 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 		return;
+ 	}
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll0);
+ 	value &= ~SOR_PLL0_ICHPMP_MASK;
+ 	value &= ~SOR_PLL0_VCOCAP_MASK;
+ 	value |= SOR_PLL0_ICHPMP(settings->ichpmp);
+ 	value |= SOR_PLL0_VCOCAP(settings->vcocap);
+-	tegra_sor_writel(sor, value, SOR_PLL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll0);
+ 
+ 	tegra_sor_dp_term_calibrate(sor);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL1);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll1);
+ 	value &= ~SOR_PLL1_LOADADJ_MASK;
+ 	value |= SOR_PLL1_LOADADJ(settings->loadadj);
+-	tegra_sor_writel(sor, value, SOR_PLL1);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll1);
+ 
+-	value = tegra_sor_readl(sor, SOR_PLL3);
++	value = tegra_sor_readl(sor, sor->soc->regs->pll3);
+ 	value &= ~SOR_PLL3_BG_VREF_LEVEL_MASK;
+ 	value |= SOR_PLL3_BG_VREF_LEVEL(settings->bg_vref);
+-	tegra_sor_writel(sor, value, SOR_PLL3);
++	tegra_sor_writel(sor, value, sor->soc->regs->pll3);
+ 
+ 	value = settings->drive_current[0] << 24 |
+ 		settings->drive_current[1] << 16 |
+@@ -2209,16 +2226,16 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 		settings->preemphasis[3] <<  0;
+ 	tegra_sor_writel(sor, value, SOR_LANE_PREEMPHASIS0);
+ 
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value &= ~SOR_DP_PADCTL_TX_PU_MASK;
+ 	value |= SOR_DP_PADCTL_TX_PU_ENABLE;
+ 	value |= SOR_DP_PADCTL_TX_PU(settings->tx_pu);
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	/* power down pad calibration */
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value |= SOR_DP_PADCTL_PAD_CAL_PD;
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	/* miscellaneous display controller settings */
+ 	value = VSYNC_H_POSITION(1);
+@@ -2250,16 +2267,16 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 		dev_err(sor->dev, "failed to power up SOR: %d\n", err);
+ 
+ 	/* configure dynamic range of output */
+-	value = tegra_sor_readl(sor, SOR_HEAD_STATE0(dc->pipe));
++	value = tegra_sor_readl(sor, sor->soc->regs->head_state0 + dc->pipe);
+ 	value &= ~SOR_HEAD_STATE_RANGECOMPRESS_MASK;
+ 	value &= ~SOR_HEAD_STATE_DYNRANGE_MASK;
+-	tegra_sor_writel(sor, value, SOR_HEAD_STATE0(dc->pipe));
++	tegra_sor_writel(sor, value, sor->soc->regs->head_state0 + dc->pipe);
+ 
+ 	/* configure colorspace */
+-	value = tegra_sor_readl(sor, SOR_HEAD_STATE0(dc->pipe));
++	value = tegra_sor_readl(sor, sor->soc->regs->head_state0 + dc->pipe);
+ 	value &= ~SOR_HEAD_STATE_COLORSPACE_MASK;
+ 	value |= SOR_HEAD_STATE_COLORSPACE_RGB;
+-	tegra_sor_writel(sor, value, SOR_HEAD_STATE0(dc->pipe));
++	tegra_sor_writel(sor, value, sor->soc->regs->head_state0 + dc->pipe);
+ 
+ 	tegra_sor_mode_set(sor, mode, state);
+ 
+@@ -2488,19 +2505,51 @@ static const u8 tegra124_sor_xbar_cfg[5] = {
+ 	0, 1, 2, 3, 4
  };
  
--static void tegra_plane_reset(struct drm_plane *plane)
--{
--	struct tegra_plane_state *state;
--
--	if (plane->state)
--		__drm_atomic_helper_plane_destroy_state(plane->state);
--
--	kfree(plane->state);
--	plane->state = NULL;
--
--	state = kzalloc(sizeof(*state), GFP_KERNEL);
--	if (state) {
--		plane->state = &state->base;
--		plane->state->plane = plane;
--	}
--}
--
--static struct drm_plane_state *tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
--{
--	struct tegra_plane_state *state = to_tegra_plane_state(plane->state);
--	struct tegra_plane_state *copy;
--
--	copy = kmalloc(sizeof(*copy), GFP_KERNEL);
--	if (!copy)
--		return NULL;
--
--	__drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
--	copy->tiling = state->tiling;
--	copy->format = state->format;
--	copy->swap = state->swap;
--
--	return &copy->base;
--}
--
--static void tegra_plane_atomic_destroy_state(struct drm_plane *plane,
--					     struct drm_plane_state *state)
--{
--	__drm_atomic_helper_plane_destroy_state(state);
--	kfree(state);
--}
--
--static const struct drm_plane_funcs tegra_plane_funcs = {
--	.update_plane = drm_atomic_helper_update_plane,
--	.disable_plane = drm_atomic_helper_disable_plane,
--	.destroy = tegra_plane_destroy,
--	.reset = tegra_plane_reset,
--	.atomic_duplicate_state = tegra_plane_atomic_duplicate_state,
--	.atomic_destroy_state = tegra_plane_atomic_destroy_state,
--};
--
--static int tegra_plane_state_add(struct tegra_plane *plane,
--				 struct drm_plane_state *state)
--{
--	struct drm_crtc_state *crtc_state;
--	struct tegra_dc_state *tegra;
--	struct drm_rect clip;
--	int err;
--
--	/* Propagate errors from allocation or locking failures. */
--	crtc_state = drm_atomic_get_crtc_state(state->state, state->crtc);
--	if (IS_ERR(crtc_state))
--		return PTR_ERR(crtc_state);
--
--	clip.x1 = 0;
--	clip.y1 = 0;
--	clip.x2 = crtc_state->mode.hdisplay;
--	clip.y2 = crtc_state->mode.vdisplay;
--
--	/* Check plane state for visibility and calculate clipping bounds */
--	err = drm_plane_helper_check_state(state, &clip, 0, INT_MAX,
--					   true, true);
--	if (err < 0)
--		return err;
--
--	tegra = to_dc_state(crtc_state);
--
--	tegra->planes |= WIN_A_ACT_REQ << plane->index;
--
--	return 0;
--}
--
- static int tegra_plane_atomic_check(struct drm_plane *plane,
- 				    struct drm_plane_state *state)
- {
-@@ -493,8 +303,9 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 	if (!state->crtc)
- 		return 0;
++static const struct tegra_sor_regs tegra124_sor_regs = {
++	.head_state0 = 0x05,
++	.head_state1 = 0x07,
++	.head_state2 = 0x09,
++	.head_state3 = 0x0b,
++	.head_state4 = 0x0d,
++	.head_state5 = 0x0f,
++	.pll0 = 0x17,
++	.pll1 = 0x18,
++	.pll2 = 0x19,
++	.pll3 = 0x1a,
++	.dp_padctl0 = 0x5c,
++	.dp_padctl2 = 0x73,
++};
++
+ static const struct tegra_sor_soc tegra124_sor = {
+ 	.supports_edp = true,
+ 	.supports_lvds = true,
+ 	.supports_hdmi = false,
+ 	.supports_dp = false,
++	.regs = &tegra124_sor_regs,
+ 	.xbar_cfg = tegra124_sor_xbar_cfg,
+ };
  
--	err = tegra_dc_format(state->fb->format->format, &plane_state->format,
--			      &plane_state->swap);
-+	err = tegra_plane_format(state->fb->format->format,
-+				 &plane_state->format,
-+				 &plane_state->swap);
- 	if (err < 0)
- 		return err;
++static const struct tegra_sor_regs tegra210_sor_regs = {
++	.head_state0 = 0x05,
++	.head_state1 = 0x07,
++	.head_state2 = 0x09,
++	.head_state3 = 0x0b,
++	.head_state4 = 0x0d,
++	.head_state5 = 0x0f,
++	.pll0 = 0x17,
++	.pll1 = 0x18,
++	.pll2 = 0x19,
++	.pll3 = 0x1a,
++	.dp_padctl0 = 0x5c,
++	.dp_padctl2 = 0x73,
++};
++
+ static const struct tegra_sor_soc tegra210_sor = {
+ 	.supports_edp = true,
+ 	.supports_lvds = false,
+ 	.supports_hdmi = false,
+ 	.supports_dp = false,
++	.regs = &tegra210_sor_regs,
+ 	.xbar_cfg = tegra124_sor_xbar_cfg,
+ };
  
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-new file mode 100644
-index 000000000000..1847d0204e46
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -0,0 +1,180 @@
-+/*
-+ * Copyright (C) 2017 NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
+@@ -2514,6 +2563,8 @@ static const struct tegra_sor_soc tegra210_sor1 = {
+ 	.supports_hdmi = true,
+ 	.supports_dp = true,
+ 
++	.regs = &tegra210_sor_regs,
 +
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_plane_helper.h>
-+
-+#include "dc.h"
-+#include "plane.h"
-+
-+static void tegra_plane_destroy(struct drm_plane *plane)
-+{
-+	struct tegra_plane *p = to_tegra_plane(plane);
-+
-+	drm_plane_cleanup(plane);
-+	kfree(p);
-+}
-+
-+static void tegra_plane_reset(struct drm_plane *plane)
-+{
-+	struct tegra_plane_state *state;
-+
-+	if (plane->state)
-+		__drm_atomic_helper_plane_destroy_state(plane->state);
-+
-+	kfree(plane->state);
-+	plane->state = NULL;
-+
-+	state = kzalloc(sizeof(*state), GFP_KERNEL);
-+	if (state) {
-+		plane->state = &state->base;
-+		plane->state->plane = plane;
-+	}
-+}
-+
-+static struct drm_plane_state *
-+tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
-+{
-+	struct tegra_plane_state *state = to_tegra_plane_state(plane->state);
-+	struct tegra_plane_state *copy;
-+
-+	copy = kmalloc(sizeof(*copy), GFP_KERNEL);
-+	if (!copy)
-+		return NULL;
-+
-+	__drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
-+	copy->tiling = state->tiling;
-+	copy->format = state->format;
-+	copy->swap = state->swap;
-+
-+	return &copy->base;
-+}
-+
-+static void tegra_plane_atomic_destroy_state(struct drm_plane *plane,
-+					     struct drm_plane_state *state)
-+{
-+	__drm_atomic_helper_plane_destroy_state(state);
-+	kfree(state);
-+}
-+
-+const struct drm_plane_funcs tegra_plane_funcs = {
-+	.update_plane = drm_atomic_helper_update_plane,
-+	.disable_plane = drm_atomic_helper_disable_plane,
-+	.destroy = tegra_plane_destroy,
-+	.reset = tegra_plane_reset,
-+	.atomic_duplicate_state = tegra_plane_atomic_duplicate_state,
-+	.atomic_destroy_state = tegra_plane_atomic_destroy_state,
-+};
-+
-+int tegra_plane_state_add(struct tegra_plane *plane,
-+			  struct drm_plane_state *state)
-+{
-+	struct drm_crtc_state *crtc_state;
-+	struct tegra_dc_state *tegra;
-+	struct drm_rect clip;
-+	int err;
-+
-+	/* Propagate errors from allocation or locking failures. */
-+	crtc_state = drm_atomic_get_crtc_state(state->state, state->crtc);
-+	if (IS_ERR(crtc_state))
-+		return PTR_ERR(crtc_state);
-+
-+	clip.x1 = 0;
-+	clip.y1 = 0;
-+	clip.x2 = crtc_state->mode.hdisplay;
-+	clip.y2 = crtc_state->mode.vdisplay;
-+
-+	/* Check plane state for visibility and calculate clipping bounds */
-+	err = drm_plane_helper_check_state(state, &clip, 0, INT_MAX,
-+					   true, true);
-+	if (err < 0)
-+		return err;
-+
-+	tegra = to_dc_state(crtc_state);
-+
-+	tegra->planes |= WIN_A_ACT_REQ << plane->index;
-+
-+	return 0;
-+}
-+
-+int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap)
-+{
-+	/* assume no swapping of fetched data */
-+	if (swap)
-+		*swap = BYTE_SWAP_NOSWAP;
-+
-+	switch (fourcc) {
-+	case DRM_FORMAT_XBGR8888:
-+		*format = WIN_COLOR_DEPTH_R8G8B8A8;
-+		break;
-+
-+	case DRM_FORMAT_XRGB8888:
-+		*format = WIN_COLOR_DEPTH_B8G8R8A8;
-+		break;
-+
-+	case DRM_FORMAT_RGB565:
-+		*format = WIN_COLOR_DEPTH_B5G6R5;
-+		break;
-+
-+	case DRM_FORMAT_UYVY:
-+		*format = WIN_COLOR_DEPTH_YCbCr422;
-+		break;
-+
-+	case DRM_FORMAT_YUYV:
-+		if (!swap)
-+			return -EINVAL;
-+
-+		*format = WIN_COLOR_DEPTH_YCbCr422;
-+		*swap = BYTE_SWAP_SWAP2;
-+		break;
-+
-+	case DRM_FORMAT_YUV420:
-+		*format = WIN_COLOR_DEPTH_YCbCr420P;
-+		break;
-+
-+	case DRM_FORMAT_YUV422:
-+		*format = WIN_COLOR_DEPTH_YCbCr422P;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+bool tegra_plane_format_is_yuv(unsigned int format, bool *planar)
-+{
-+	switch (format) {
-+	case WIN_COLOR_DEPTH_YCbCr422:
-+	case WIN_COLOR_DEPTH_YUV422:
-+		if (planar)
-+			*planar = false;
-+
-+		return true;
-+
-+	case WIN_COLOR_DEPTH_YCbCr420P:
-+	case WIN_COLOR_DEPTH_YUV420P:
-+	case WIN_COLOR_DEPTH_YCbCr422P:
-+	case WIN_COLOR_DEPTH_YUV422P:
-+	case WIN_COLOR_DEPTH_YCbCr422R:
-+	case WIN_COLOR_DEPTH_YUV422R:
-+	case WIN_COLOR_DEPTH_YCbCr422RA:
-+	case WIN_COLOR_DEPTH_YUV422RA:
-+		if (planar)
-+			*planar = true;
-+
-+		return true;
-+	}
-+
-+	if (planar)
-+		*planar = false;
-+
-+	return false;
-+}
-diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
-new file mode 100644
-index 000000000000..8237b885acd7
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/plane.h
-@@ -0,0 +1,59 @@
-+/*
-+ * Copyright (C) 2017 NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef TEGRA_PLANE_H
-+#define TEGRA_PLANE_H 1
-+
-+#include <drm/drm_plane.h>
-+
-+struct tegra_bo;
-+
-+struct tegra_plane {
-+	struct drm_plane base;
-+	unsigned int index;
-+};
-+
-+struct tegra_cursor {
-+	struct tegra_plane base;
-+
-+	struct tegra_bo *bo;
-+	unsigned int width;
-+	unsigned int height;
-+};
-+
-+static inline struct tegra_plane *to_tegra_plane(struct drm_plane *plane)
-+{
-+	return container_of(plane, struct tegra_plane, base);
-+}
-+
-+struct tegra_plane_state {
-+	struct drm_plane_state base;
-+
-+	struct tegra_bo_tiling tiling;
-+	u32 format;
-+	u32 swap;
-+};
-+
-+static inline struct tegra_plane_state *
-+to_tegra_plane_state(struct drm_plane_state *state)
-+{
-+	if (state)
-+		return container_of(state, struct tegra_plane_state, base);
-+
-+	return NULL;
-+}
-+
-+extern const struct drm_plane_funcs tegra_plane_funcs;
-+
-+int tegra_plane_state_add(struct tegra_plane *plane,
-+			  struct drm_plane_state *state);
-+
-+int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap);
-+bool tegra_plane_format_is_yuv(unsigned int format, bool *planar);
-+
-+#endif /* TEGRA_PLANE_H */
+ 	.num_settings = ARRAY_SIZE(tegra210_sor_hdmi_defaults),
+ 	.settings = tegra210_sor_hdmi_defaults,
+ 
 -- 
 2.15.0
