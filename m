@@ -1,45 +1,178 @@
 From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH 1/2] drm/fourcc: Fix fourcc_mod_code() definition
-Date: Mon, 27 Nov 2017 11:35:21 +0100
-Message-ID: <20171127103521.hvjpz43ppo7mz5pb@phenom.ffwll.local>
+Subject: Re: [PATCH 2/2] drm/tegra: Sanitize format modifiers
+Date: Mon, 27 Nov 2017 11:38:14 +0100
+Message-ID: <20171127103814.qnywbtkjqzaj74g4@phenom.ffwll.local>
 References: <20171127093948.20986-1-thierry.reding@gmail.com>
- <20171127093948.20986-2-thierry.reding@gmail.com>
+ <20171127093948.20986-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20171127093948.20986-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20171127093948.20986-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 27, 2017 at 10:39:47AM +0100, Thierry Reding wrote:
+On Mon, Nov 27, 2017 at 10:39:48AM +0100, Thierry Reding wrote:
 > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Avoid compiler warnings when the val parameter is an expression.
+> The existing format modifier definitions were merged prematurely, and
+> recent work has unveiled that the definitions are suboptimal in several
+> ways:
+> 
+>   - The format specifiers, except for one, are not Tegra specific, but
+>     the names don't reflect that.
+>   - The number space is split into two, reserving 32 bits for some
+>     "parameter" which most of the modifiers are not going to have.
+>   - Symbolic names for the modifiers are not using the standard
+>     DRM_FORMAT_MOD_* prefix, which makes them awkward to use.
+>   - The vendor prefix NV is somewhat ambiguous.
+> 
+> Fortunately, nobody's started using these modifiers, so we can still fix
+> the above issues. Do so by using the standard prefix. Also, remove TEGRA
+> from the name of those modifiers that exist on NVIDIA GPUs as well. In
+> case of the block linear modifiers, make the "parameter" smaller (4
+> bits, though only 6 values are valid) and don't let that leak into any
+> of the other modifiers.
+> 
+> Finally, also use the more canonical NVIDIA instead of the ambiguous NV
+> prefix.
 > 
 > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Reviewed-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-
 > ---
->  include/uapi/drm/drm_fourcc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/tegra/fb.c    | 35 +++++++++++++++++++++++++++++------
+>  include/uapi/drm/drm_fourcc.h | 36 +++++++++++++++++++-----------------
+>  2 files changed, 48 insertions(+), 23 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+> index 80540c1c66dc..406e895d82cc 100644
+> --- a/drivers/gpu/drm/tegra/fb.c
+> +++ b/drivers/gpu/drm/tegra/fb.c
+> @@ -54,17 +54,40 @@ int tegra_fb_get_tiling(struct drm_framebuffer *framebuffer,
+>  	struct tegra_fb *fb = to_tegra_fb(framebuffer);
+>  	uint64_t modifier = fb->base.modifier;
+>  
+> -	switch (fourcc_mod_tegra_mod(modifier)) {
+> -	case NV_FORMAT_MOD_TEGRA_TILED:
+> +	switch (modifier) {
+> +	case DRM_FORMAT_MOD_NVIDIA_TEGRA_TILED:
+>  		tiling->mode = TEGRA_BO_TILING_MODE_TILED;
+>  		tiling->value = 0;
+>  		break;
+>  
+> -	case NV_FORMAT_MOD_TEGRA_16BX2_BLOCK(0):
+> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK(0):
+>  		tiling->mode = TEGRA_BO_TILING_MODE_BLOCK;
+> -		tiling->value = fourcc_mod_tegra_param(modifier);
+> -		if (tiling->value > 5)
+> -			return -EINVAL;
+> +		tiling->value = 0;
+> +		break;
+> +
+> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK(1):
+> +		tiling->mode = TEGRA_BO_TILING_MODE_BLOCK;
+> +		tiling->value = 1;
+> +		break;
+> +
+> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK(2):
+> +		tiling->mode = TEGRA_BO_TILING_MODE_BLOCK;
+> +		tiling->value = 2;
+> +		break;
+> +
+> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK(3):
+> +		tiling->mode = TEGRA_BO_TILING_MODE_BLOCK;
+> +		tiling->value = 3;
+> +		break;
+> +
+> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK(4):
+> +		tiling->mode = TEGRA_BO_TILING_MODE_BLOCK;
+> +		tiling->value = 4;
+> +		break;
+> +
+> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK(5):
+> +		tiling->mode = TEGRA_BO_TILING_MODE_BLOCK;
+> +		tiling->value = 5;
+>  		break;
+>  
+>  	default:
 > diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index 3ad838d3f93f..a76ed8f9e383 100644
+> index a76ed8f9e383..e04613d30a13 100644
 > --- a/include/uapi/drm/drm_fourcc.h
 > +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -188,7 +188,7 @@ extern "C" {
->  #define DRM_FORMAT_RESERVED	      ((1ULL << 56) - 1)
+> @@ -178,7 +178,7 @@ extern "C" {
+>  #define DRM_FORMAT_MOD_VENDOR_NONE    0
+>  #define DRM_FORMAT_MOD_VENDOR_INTEL   0x01
+>  #define DRM_FORMAT_MOD_VENDOR_AMD     0x02
+> -#define DRM_FORMAT_MOD_VENDOR_NV      0x03
+> +#define DRM_FORMAT_MOD_VENDOR_NVIDIA  0x03
+>  #define DRM_FORMAT_MOD_VENDOR_SAMSUNG 0x04
+>  #define DRM_FORMAT_MOD_VENDOR_QCOM    0x05
+>  #define DRM_FORMAT_MOD_VENDOR_VIVANTE 0x06
+> @@ -338,29 +338,17 @@ extern "C" {
+>   */
+>  #define DRM_FORMAT_MOD_VIVANTE_SPLIT_SUPER_TILED fourcc_mod_code(VIVANTE, 4)
 >  
->  #define fourcc_mod_code(vendor, val) \
-> -	((((__u64)DRM_FORMAT_MOD_VENDOR_## vendor) << 56) | (val & 0x00ffffffffffffffULL))
-> +	((((__u64)DRM_FORMAT_MOD_VENDOR_## vendor) << 56) | ((val) & 0x00ffffffffffffffULL))
+> -/* NVIDIA Tegra frame buffer modifiers */
+> -
+> -/*
+> - * Some modifiers take parameters, for example the number of vertical GOBs in
+> - * a block. Reserve the lower 32 bits for parameters
+> - */
+> -#define __fourcc_mod_tegra_mode_shift 32
+> -#define fourcc_mod_tegra_code(val, params) \
+> -	fourcc_mod_code(NV, ((((__u64)val) << __fourcc_mod_tegra_mode_shift) | params))
+> -#define fourcc_mod_tegra_mod(m) \
+> -	(m & ~((1ULL << __fourcc_mod_tegra_mode_shift) - 1))
+> -#define fourcc_mod_tegra_param(m) \
+> -	(m & ((1ULL << __fourcc_mod_tegra_mode_shift) - 1))
+> +/* NVIDIA frame buffer modifiers */
 >  
 >  /*
->   * Format Modifier tokens:
+>   * Tegra Tiled Layout, used by Tegra 2, 3 and 4.
+>   *
+>   * Pixels are arranged in simple tiles of 16 x 16 bytes.
+>   */
+> -#define NV_FORMAT_MOD_TEGRA_TILED fourcc_mod_tegra_code(1, 0)
+> +#define DRM_FORMAT_MOD_NVIDIA_TEGRA_TILED fourcc_mod_code(NVIDIA, 1)
+>  
+>  /*
+> - * Tegra 16Bx2 Block Linear layout, used by TK1/TX1
+> + * 16Bx2 Block Linear layout, used by desktop GPUs, and Tegra K1 and later
+>   *
+>   * Pixels are arranged in 64x8 Groups Of Bytes (GOBs). GOBs are then stacked
+>   * vertically by a power of 2 (1 to 32 GOBs) to form a block.
+> @@ -380,7 +368,21 @@ extern "C" {
+>   * Chapter 20 "Pixel Memory Formats" of the Tegra X1 TRM describes this format
+>   * in full detail.
+>   */
+> -#define NV_FORMAT_MOD_TEGRA_16BX2_BLOCK(v) fourcc_mod_tegra_code(2, v)
+> +#define DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK(v) \
+> +	fourcc_mod_code(NVIDIA, 0x10 | ((v) & 0xf))
+> +
+> +#define DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_ONE_GOB \
+> +	fourcc_mod_code(NVIDIA, 0x10)
+
+Any reason to start at 0x10? Either way I think this looks a lot more in
+line with what we generally do with modifiers:
+
+Acked-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+
+Cheers, Daniel
+
+> +#define DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_TWO_GOB \
+> +	fourcc_mod_code(NVIDIA, 0x11)
+> +#define DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_FOUR_GOB \
+> +	fourcc_mod_code(NVIDIA, 0x12)
+> +#define DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_EIGHT_GOB \
+> +	fourcc_mod_code(NVIDIA, 0x13)
+> +#define DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_SIXTEEN_GOB \
+> +	fourcc_mod_code(NVIDIA, 0x14)
+> +#define DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_THIRTYTWO_GOB \
+> +	fourcc_mod_code(NVIDIA, 0x15)
+>  
+>  /*
+>   * Broadcom VC4 "T" format
 > -- 
 > 2.15.0
 > 
