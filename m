@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 12/12] drm/tegra: sor: Support HDMI 2.0 modes
-Date: Mon, 27 Nov 2017 11:09:52 +0100
-Message-ID: <20171127100952.22465-13-thierry.reding@gmail.com>
+Subject: [PATCH 11/12] drm/tegra: sor: Add Tegra186 support
+Date: Mon, 27 Nov 2017 11:09:51 +0100
+Message-ID: <20171127100952.22465-12-thierry.reding@gmail.com>
 References: <20171127100952.22465-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20171127100952.22465-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,239 +12,993 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+The SOR found on Tegra186 is very similar to the one found on Tegra210
+and earlier. However, due to some changes in the display architecture,
+some programming sequences have changed and some register have moved
+around.
+
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/sor.c | 121 +++++++++++++++++++++++++++++++++++++++++---
- drivers/gpu/drm/tegra/sor.h |   4 ++
- 2 files changed, 119 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/tegra/dc.c     |  13 ++
+ drivers/gpu/drm/tegra/dc.h     |   5 +-
+ drivers/gpu/drm/tegra/drm.c    |   2 +
+ drivers/gpu/drm/tegra/drm.h    |   2 +
+ drivers/gpu/drm/tegra/output.c |  24 +++
+ drivers/gpu/drm/tegra/sor.c    | 479 ++++++++++++++++++++++++++++++-----------
+ drivers/gpu/drm/tegra/sor.h    |  12 ++
+ 7 files changed, 414 insertions(+), 123 deletions(-)
 
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index e40272493235..bf7fcb93fc17 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -54,6 +54,19 @@ static u32 tegra_dc_readl_active(struct tegra_dc *dc, unsigned long offset)
+ 	return value;
+ }
+ 
++bool tegra_dc_has_output(struct tegra_dc *dc, struct device *dev)
++{
++	struct device_node *np = dc->dev->of_node;
++	struct of_phandle_iterator it;
++	int err;
++
++	of_for_each_phandle(&it, err, np, "nvidia,outputs", NULL, 0)
++		if (it.node == dev->of_node)
++			return true;
++
++	return false;
++}
++
+ /*
+  * Double-buffered registers have two copies: ASSEMBLY and ACTIVE. When the
+  * *_ACT_REQ bits are set the ASSEMBLY copy is latched into the ACTIVE copy.
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index 018fea74fb50..336d2c22f521 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -141,6 +141,7 @@ struct tegra_dc_window {
+ };
+ 
+ /* from dc.c */
++bool tegra_dc_has_output(struct tegra_dc *dc, struct device *dev);
+ void tegra_dc_commit(struct tegra_dc *dc);
+ int tegra_dc_state_setup_clock(struct tegra_dc *dc,
+ 			       struct drm_crtc_state *crtc_state,
+@@ -289,10 +290,10 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+ #define HDMI_ENABLE	(1 << 30)
+ #define DSI_ENABLE	(1 << 29)
+ #define SOR1_TIMING_CYA	(1 << 27)
+-#define SOR1_ENABLE	(1 << 26)
+-#define SOR_ENABLE	(1 << 25)
+ #define CURSOR_ENABLE	(1 << 16)
+ 
++#define SOR_ENABLE(x)	(1 << (25 + (x)))
++
+ #define DC_DISP_DISP_MEM_HIGH_PRIORITY		0x403
+ #define CURSOR_THRESHOLD(x)   (((x) & 0x03) << 24)
+ #define WINDOW_A_THRESHOLD(x) (((x) & 0x7f) << 16)
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index edd440504876..5d9bfcf65161 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1347,6 +1347,8 @@ static const struct of_device_id host1x_drm_subdevs[] = {
+ 	{ .compatible = "nvidia,tegra210-vic", },
+ 	{ .compatible = "nvidia,tegra186-display", },
+ 	{ .compatible = "nvidia,tegra186-dc", },
++	{ .compatible = "nvidia,tegra186-sor", },
++	{ .compatible = "nvidia,tegra186-sor1", },
+ 	{ .compatible = "nvidia,tegra186-vic", },
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index 4073bad48f14..da3d8c141aee 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -165,6 +165,8 @@ int tegra_output_probe(struct tegra_output *output);
+ void tegra_output_remove(struct tegra_output *output);
+ int tegra_output_init(struct drm_device *drm, struct tegra_output *output);
+ void tegra_output_exit(struct tegra_output *output);
++void tegra_output_find_possible_crtcs(struct tegra_output *output,
++				      struct drm_device *drm);
+ 
+ int tegra_output_connector_get_modes(struct drm_connector *connector);
+ enum drm_connector_status
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index 1cfbacea8113..0ab076819df9 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -9,7 +9,9 @@
+ 
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_panel.h>
++
+ #include "drm.h"
++#include "dc.h"
+ 
+ #include <media/cec-notifier.h>
+ 
+@@ -219,3 +221,25 @@ void tegra_output_exit(struct tegra_output *output)
+ 	if (output->panel)
+ 		drm_panel_detach(output->panel);
+ }
++
++void tegra_output_find_possible_crtcs(struct tegra_output *output,
++				      struct drm_device *drm)
++{
++	struct device *dev = output->dev;
++	struct drm_crtc *crtc;
++	unsigned int mask = 0;
++
++	drm_for_each_crtc(crtc, drm) {
++		struct tegra_dc *dc = to_tegra_dc(crtc);
++
++		if (tegra_dc_has_output(dc, dev))
++			mask |= drm_crtc_mask(crtc);
++	}
++
++	if (mask == 0) {
++		dev_warn(dev, "missing output definition for heads in DT\n");
++		mask = 0x3;
++	}
++
++	output->encoder.possible_crtcs = mask;
++}
 diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 91fd0a48dcaa..d3cc25fcccdd 100644
+index d51399587aca..91fd0a48dcaa 100644
 --- a/drivers/gpu/drm/tegra/sor.c
 +++ b/drivers/gpu/drm/tegra/sor.c
-@@ -22,6 +22,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_dp_helper.h>
- #include <drm/drm_panel.h>
-+#include <drm/drm_scdc_helper.h>
+@@ -34,11 +34,16 @@ struct tegra_sor_hdmi_settings {
+ 	unsigned long frequency;
  
- #include "dc.h"
- #include "drm.h"
-@@ -342,11 +343,16 @@ struct tegra_sor {
- 	struct regulator *avdd_io_supply;
- 	struct regulator *vdd_pll_supply;
- 	struct regulator *hdmi_supply;
-+
-+	struct delayed_work scdc;
-+	bool scdc_enabled;
+ 	u8 vcocap;
++	u8 filter;
+ 	u8 ichpmp;
+ 	u8 loadadj;
+-	u8 termadj;
+-	u8 tx_pu;
+-	u8 bg_vref;
++	u8 tmds_termadj;
++	u8 tx_pu_value;
++	u8 bg_temp_coef;
++	u8 bg_vref_level;
++	u8 avdd10_level;
++	u8 avdd14_level;
++	u8 sparepll;
+ 
+ 	u8 drive_current[4];
+ 	u8 preemphasis[4];
+@@ -49,51 +54,76 @@ static const struct tegra_sor_hdmi_settings tegra210_sor_hdmi_defaults[] = {
+ 	{
+ 		.frequency = 54000000,
+ 		.vcocap = 0x0,
++		.filter = 0x0,
+ 		.ichpmp = 0x1,
+ 		.loadadj = 0x3,
+-		.termadj = 0x9,
+-		.tx_pu = 0x10,
+-		.bg_vref = 0x8,
++		.tmds_termadj = 0x9,
++		.tx_pu_value = 0x10,
++		.bg_temp_coef = 0x3,
++		.bg_vref_level = 0x8,
++		.avdd10_level = 0x4,
++		.avdd14_level = 0x4,
++		.sparepll = 0x0,
+ 		.drive_current = { 0x33, 0x3a, 0x3a, 0x3a },
+ 		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
+ 	}, {
+ 		.frequency = 75000000,
+ 		.vcocap = 0x3,
++		.filter = 0x0,
+ 		.ichpmp = 0x1,
+ 		.loadadj = 0x3,
+-		.termadj = 0x9,
+-		.tx_pu = 0x40,
+-		.bg_vref = 0x8,
++		.tmds_termadj = 0x9,
++		.tx_pu_value = 0x40,
++		.bg_temp_coef = 0x3,
++		.bg_vref_level = 0x8,
++		.avdd10_level = 0x4,
++		.avdd14_level = 0x4,
++		.sparepll = 0x0,
+ 		.drive_current = { 0x33, 0x3a, 0x3a, 0x3a },
+ 		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
+ 	}, {
+ 		.frequency = 150000000,
+ 		.vcocap = 0x3,
++		.filter = 0x0,
+ 		.ichpmp = 0x1,
+ 		.loadadj = 0x3,
+-		.termadj = 0x9,
+-		.tx_pu = 0x66,
+-		.bg_vref = 0x8,
++		.tmds_termadj = 0x9,
++		.tx_pu_value = 0x66,
++		.bg_temp_coef = 0x3,
++		.bg_vref_level = 0x8,
++		.avdd10_level = 0x4,
++		.avdd14_level = 0x4,
++		.sparepll = 0x0,
+ 		.drive_current = { 0x33, 0x3a, 0x3a, 0x3a },
+ 		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
+ 	}, {
+ 		.frequency = 300000000,
+ 		.vcocap = 0x3,
++		.filter = 0x0,
+ 		.ichpmp = 0x1,
+ 		.loadadj = 0x3,
+-		.termadj = 0x9,
+-		.tx_pu = 0x66,
+-		.bg_vref = 0xa,
++		.tmds_termadj = 0x9,
++		.tx_pu_value = 0x66,
++		.bg_temp_coef = 0x3,
++		.bg_vref_level = 0xa,
++		.avdd10_level = 0x4,
++		.avdd14_level = 0x4,
++		.sparepll = 0x0,
+ 		.drive_current = { 0x33, 0x3f, 0x3f, 0x3f },
+ 		.preemphasis = { 0x00, 0x17, 0x17, 0x17 },
+ 	}, {
+ 		.frequency = 600000000,
+ 		.vcocap = 0x3,
++		.filter = 0x0,
+ 		.ichpmp = 0x1,
+ 		.loadadj = 0x3,
+-		.termadj = 0x9,
+-		.tx_pu = 0x66,
+-		.bg_vref = 0x8,
++		.tmds_termadj = 0x9,
++		.tx_pu_value = 0x66,
++		.bg_temp_coef = 0x3,
++		.bg_vref_level = 0x8,
++		.avdd10_level = 0x4,
++		.avdd14_level = 0x4,
++		.sparepll = 0x0,
+ 		.drive_current = { 0x33, 0x3f, 0x3f, 0x3f },
+ 		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
+ 	},
+@@ -103,47 +133,146 @@ static const struct tegra_sor_hdmi_settings tegra210_sor_hdmi_defaults[] = {
+ 	{
+ 		.frequency = 75000000,
+ 		.vcocap = 0x3,
++		.filter = 0x0,
+ 		.ichpmp = 0x1,
+ 		.loadadj = 0x3,
+-		.termadj = 0x9,
+-		.tx_pu = 0x40,
+-		.bg_vref = 0x8,
++		.tmds_termadj = 0x9,
++		.tx_pu_value = 0x40,
++		.bg_temp_coef = 0x3,
++		.bg_vref_level = 0x8,
++		.avdd10_level = 0x4,
++		.avdd14_level = 0x4,
++		.sparepll = 0x0,
+ 		.drive_current = { 0x29, 0x29, 0x29, 0x29 },
+ 		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
+ 	}, {
+ 		.frequency = 150000000,
+ 		.vcocap = 0x3,
++		.filter = 0x0,
+ 		.ichpmp = 0x1,
+ 		.loadadj = 0x3,
+-		.termadj = 0x9,
+-		.tx_pu = 0x66,
+-		.bg_vref = 0x8,
++		.tmds_termadj = 0x9,
++		.tx_pu_value = 0x66,
++		.bg_temp_coef = 0x3,
++		.bg_vref_level = 0x8,
++		.avdd10_level = 0x4,
++		.avdd14_level = 0x4,
++		.sparepll = 0x0,
+ 		.drive_current = { 0x30, 0x37, 0x37, 0x37 },
+ 		.preemphasis = { 0x01, 0x02, 0x02, 0x02 },
+ 	}, {
+ 		.frequency = 300000000,
+ 		.vcocap = 0x3,
++		.filter = 0x0,
+ 		.ichpmp = 0x6,
+ 		.loadadj = 0x3,
+-		.termadj = 0x9,
+-		.tx_pu = 0x66,
+-		.bg_vref = 0xf,
++		.tmds_termadj = 0x9,
++		.tx_pu_value = 0x66,
++		.bg_temp_coef = 0x3,
++		.bg_vref_level = 0xf,
++		.avdd10_level = 0x4,
++		.avdd14_level = 0x4,
++		.sparepll = 0x0,
+ 		.drive_current = { 0x30, 0x37, 0x37, 0x37 },
+ 		.preemphasis = { 0x10, 0x3e, 0x3e, 0x3e },
+ 	}, {
+ 		.frequency = 600000000,
+ 		.vcocap = 0x3,
++		.filter = 0x0,
+ 		.ichpmp = 0xa,
+ 		.loadadj = 0x3,
+-		.termadj = 0xb,
+-		.tx_pu = 0x66,
+-		.bg_vref = 0xe,
++		.tmds_termadj = 0xb,
++		.tx_pu_value = 0x66,
++		.bg_temp_coef = 0x3,
++		.bg_vref_level = 0xe,
++		.avdd10_level = 0x4,
++		.avdd14_level = 0x4,
++		.sparepll = 0x0,
+ 		.drive_current = { 0x35, 0x3e, 0x3e, 0x3e },
+ 		.preemphasis = { 0x02, 0x3f, 0x3f, 0x3f },
+ 	},
  };
+ #endif
  
- struct tegra_sor_state {
- 	struct drm_connector_state base;
- 
-+	unsigned int link_speed;
-+	unsigned long pclk;
- 	unsigned int bpc;
- };
- 
-@@ -1481,10 +1487,6 @@ static enum drm_mode_status
- tegra_sor_connector_mode_valid(struct drm_connector *connector,
- 			       struct drm_display_mode *mode)
- {
--	/* HDMI 2.0 modes are not yet supported */
--	if (mode->clock > 340000)
--		return MODE_NOCLOCK;
--
- 	return MODE_OK;
- }
- 
-@@ -1909,6 +1911,18 @@ tegra_sor_encoder_atomic_check(struct drm_encoder *encoder,
- 
- 	info = &output->connector.display_info;
- 
-+	/*
-+	 * For HBR2 modes, the SOR brick needs to use the x20 multiplier, so
-+	 * the pixel clock must be corrected accordingly.
-+	 */
-+	if (pclk >= 340000000) {
-+		state->link_speed = 20;
-+		state->pclk = pclk / 2;
-+	} else {
-+		state->link_speed = 10;
-+		state->pclk = pclk;
++static const struct tegra_sor_hdmi_settings tegra186_sor_hdmi_defaults[] = {
++	{
++		.frequency = 54000000,
++		.vcocap = 0,
++		.filter = 5,
++		.ichpmp = 5,
++		.loadadj = 3,
++		.tmds_termadj = 0xf,
++		.tx_pu_value = 0,
++		.bg_temp_coef = 3,
++		.bg_vref_level = 8,
++		.avdd10_level = 4,
++		.avdd14_level = 4,
++		.sparepll = 0x54,
++		.drive_current = { 0x3a, 0x3a, 0x3a, 0x33 },
++		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
++	}, {
++		.frequency = 75000000,
++		.vcocap = 1,
++		.filter = 5,
++		.ichpmp = 5,
++		.loadadj = 3,
++		.tmds_termadj = 0xf,
++		.tx_pu_value = 0,
++		.bg_temp_coef = 3,
++		.bg_vref_level = 8,
++		.avdd10_level = 4,
++		.avdd14_level = 4,
++		.sparepll = 0x44,
++		.drive_current = { 0x3a, 0x3a, 0x3a, 0x33 },
++		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
++	}, {
++		.frequency = 150000000,
++		.vcocap = 3,
++		.filter = 5,
++		.ichpmp = 5,
++		.loadadj = 3,
++		.tmds_termadj = 15,
++		.tx_pu_value = 0x66 /* 0 */,
++		.bg_temp_coef = 3,
++		.bg_vref_level = 8,
++		.avdd10_level = 4,
++		.avdd14_level = 4,
++		.sparepll = 0x00, /* 0x34 */
++		.drive_current = { 0x3a, 0x3a, 0x3a, 0x37 },
++		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
++	}, {
++		.frequency = 300000000,
++		.vcocap = 3,
++		.filter = 5,
++		.ichpmp = 5,
++		.loadadj = 3,
++		.tmds_termadj = 15,
++		.tx_pu_value = 64,
++		.bg_temp_coef = 3,
++		.bg_vref_level = 8,
++		.avdd10_level = 4,
++		.avdd14_level = 4,
++		.sparepll = 0x34,
++		.drive_current = { 0x3d, 0x3d, 0x3d, 0x33 },
++		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
++	}, {
++		.frequency = 600000000,
++		.vcocap = 3,
++		.filter = 5,
++		.ichpmp = 5,
++		.loadadj = 3,
++		.tmds_termadj = 12,
++		.tx_pu_value = 96,
++		.bg_temp_coef = 3,
++		.bg_vref_level = 8,
++		.avdd10_level = 4,
++		.avdd14_level = 4,
++		.sparepll = 0x34,
++		.drive_current = { 0x3d, 0x3d, 0x3d, 0x33 },
++		.preemphasis = { 0x00, 0x00, 0x00, 0x00 },
 +	}
++};
 +
- 	err = tegra_dc_state_setup_clock(dc, crtc_state, sor->clk_parent,
- 					 pclk, 0);
- 	if (err < 0) {
-@@ -2059,6 +2073,81 @@ tegra_sor_hdmi_find_settings(struct tegra_sor *sor, unsigned long frequency)
- 	return NULL;
- }
+ struct tegra_sor_regs {
+ 	unsigned int head_state0;
+ 	unsigned int head_state1;
+@@ -166,6 +295,7 @@ struct tegra_sor_soc {
+ 	bool supports_dp;
  
-+static void tegra_sor_hdmi_disable_scrambling(struct tegra_sor *sor)
-+{
-+	u32 value;
-+
-+	value = tegra_sor_readl(sor, SOR_HDMI2_CTRL);
-+	value &= ~SOR_HDMI2_CTRL_CLOCK_MODE_DIV_BY_4;
-+	value &= ~SOR_HDMI2_CTRL_SCRAMBLE;
-+	tegra_sor_writel(sor, value, SOR_HDMI2_CTRL);
-+}
-+
-+static void tegra_sor_hdmi_scdc_disable(struct tegra_sor *sor)
-+{
-+	struct i2c_adapter *ddc = sor->output.ddc;
-+
-+	drm_scdc_set_high_tmds_clock_ratio(ddc, false);
-+	drm_scdc_set_scrambling(ddc, false);
-+
-+	tegra_sor_hdmi_disable_scrambling(sor);
-+}
-+
-+static void tegra_sor_hdmi_scdc_stop(struct tegra_sor *sor)
-+{
-+	if (sor->scdc_enabled) {
-+		cancel_delayed_work_sync(&sor->scdc);
-+		tegra_sor_hdmi_scdc_disable(sor);
-+	}
-+}
-+
-+static void tegra_sor_hdmi_enable_scrambling(struct tegra_sor *sor)
-+{
-+	u32 value;
-+
-+	value = tegra_sor_readl(sor, SOR_HDMI2_CTRL);
-+	value |= SOR_HDMI2_CTRL_CLOCK_MODE_DIV_BY_4;
-+	value |= SOR_HDMI2_CTRL_SCRAMBLE;
-+	tegra_sor_writel(sor, value, SOR_HDMI2_CTRL);
-+}
-+
-+static void tegra_sor_hdmi_scdc_enable(struct tegra_sor *sor)
-+{
-+	struct i2c_adapter *ddc = sor->output.ddc;
-+
-+	drm_scdc_set_high_tmds_clock_ratio(ddc, true);
-+	drm_scdc_set_scrambling(ddc, true);
-+
-+	tegra_sor_hdmi_enable_scrambling(sor);
-+}
-+
-+static void tegra_sor_hdmi_scdc_work(struct work_struct *work)
-+{
-+	struct tegra_sor *sor = container_of(work, struct tegra_sor, scdc.work);
-+	struct i2c_adapter *ddc = sor->output.ddc;
-+
-+	if (!drm_scdc_get_scrambling_status(ddc)) {
-+		DRM_DEBUG_KMS("SCDC not scrambled\n");
-+		tegra_sor_hdmi_scdc_enable(sor);
-+	}
-+
-+	schedule_delayed_work(&sor->scdc, msecs_to_jiffies(5000));
-+}
-+
-+static void tegra_sor_hdmi_scdc_start(struct tegra_sor *sor)
-+{
-+	struct drm_scdc *scdc = &sor->output.connector.display_info.hdmi.scdc;
-+	struct drm_display_mode *mode;
-+
-+	mode = &sor->output.encoder.crtc->state->adjusted_mode;
-+
-+	if (mode->clock >= 340000 && scdc->supported) {
-+		schedule_delayed_work(&sor->scdc, msecs_to_jiffies(5000));
-+		tegra_sor_hdmi_scdc_enable(sor);
-+		sor->scdc_enabled = true;
-+	}
-+}
-+
- static void tegra_sor_hdmi_disable(struct drm_encoder *encoder)
- {
- 	struct tegra_output *output = encoder_to_output(encoder);
-@@ -2067,6 +2156,8 @@ static void tegra_sor_hdmi_disable(struct drm_encoder *encoder)
- 	u32 value;
- 	int err;
+ 	const struct tegra_sor_regs *regs;
++	bool has_nvdisplay;
  
-+	tegra_sor_hdmi_scdc_stop(sor);
-+
- 	err = tegra_sor_detach(sor);
- 	if (err < 0)
- 		dev_err(sor->dev, "failed to detach SOR: %d\n", err);
-@@ -2106,12 +2197,14 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
- 	struct tegra_sor *sor = to_sor(output);
- 	struct tegra_sor_state *state;
- 	struct drm_display_mode *mode;
-+	unsigned long rate, pclk;
- 	unsigned int div, i;
- 	u32 value;
- 	int err;
+ 	const struct tegra_sor_hdmi_settings *settings;
+ 	unsigned int num_settings;
+@@ -188,6 +318,7 @@ struct tegra_sor {
  
- 	state = to_sor_state(output->connector.state);
- 	mode = &encoder->crtc->state->adjusted_mode;
-+	pclk = mode->clock * 1000;
+ 	const struct tegra_sor_soc *soc;
+ 	void __iomem *regs;
++	unsigned int index;
  
- 	pm_runtime_get_sync(sor->dev);
+ 	struct reset_control *rst;
+ 	struct clk *clk_parent;
+@@ -202,6 +333,7 @@ struct tegra_sor {
+ 	struct drm_info_list *debugfs_files;
  
-@@ -2187,10 +2280,13 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
- 	value &= ~SOR_CLK_CNTRL_DP_LINK_SPEED_MASK;
- 	value &= ~SOR_CLK_CNTRL_DP_CLK_SEL_MASK;
+ 	const struct tegra_sor_ops *ops;
++	enum tegra_io_pad pad;
  
--	if (mode->clock < 340000)
-+	if (mode->clock < 340000) {
-+		DRM_DEBUG_KMS("setting 2.7 GHz link speed\n");
- 		value |= SOR_CLK_CNTRL_DP_LINK_SPEED_G2_70;
--	else
-+	} else {
-+		DRM_DEBUG_KMS("setting 5.4 GHz link speed\n");
- 		value |= SOR_CLK_CNTRL_DP_LINK_SPEED_G5_40;
-+	}
- 
- 	value |= SOR_CLK_CNTRL_DP_CLK_SEL_SINGLE_PCLK;
- 	tegra_sor_writel(sor, value, SOR_CLK_CNTRL);
-@@ -2246,6 +2342,15 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
- 		return;
- 	}
- 
-+	/* adjust clock rate for HDMI 2.0 modes */
-+	rate = clk_get_rate(sor->clk_parent);
-+
-+	if (mode->clock >= 340000)
-+		rate /= 2;
-+
-+	DRM_DEBUG_KMS("setting clock to %lu Hz, mode: %lu Hz\n", rate, pclk);
-+
-+	clk_set_rate(sor->clk, rate);
- 
- 	if (!sor->soc->has_nvdisplay) {
- 		value = SOR_INPUT_CONTROL_HDMI_SRC_SELECT(dc->pipe);
-@@ -2457,6 +2562,8 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
- 	err = tegra_sor_wakeup(sor);
- 	if (err < 0)
- 		dev_err(sor->dev, "failed to wakeup SOR: %d\n", err);
-+
-+	tegra_sor_hdmi_scdc_start(sor);
- }
- 
- static const struct drm_encoder_helper_funcs tegra_sor_hdmi_helpers = {
-@@ -2644,6 +2751,8 @@ static int tegra_sor_hdmi_probe(struct tegra_sor *sor)
- 		return err;
- 	}
- 
-+	INIT_DELAYED_WORK(&sor->scdc, tegra_sor_hdmi_scdc_work);
-+
+ 	/* for HDMI 2.0 */
+ 	struct tegra_sor_hdmi_settings *settings;
+@@ -480,47 +612,6 @@ static int tegra_sor_dp_train_fast(struct tegra_sor *sor,
  	return 0;
  }
  
+-static void tegra_sor_dp_term_calibrate(struct tegra_sor *sor)
+-{
+-	u32 mask = 0x08, adj = 0, value;
+-
+-	/* enable pad calibration logic */
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
+-	value &= ~SOR_DP_PADCTL_PAD_CAL_PD;
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
+-
+-	value = tegra_sor_readl(sor, SOR_PLL1);
+-	value |= SOR_PLL1_TMDS_TERM;
+-	tegra_sor_writel(sor, value, SOR_PLL1);
+-
+-	while (mask) {
+-		adj |= mask;
+-
+-		value = tegra_sor_readl(sor, SOR_PLL1);
+-		value &= ~SOR_PLL1_TMDS_TERMADJ_MASK;
+-		value |= SOR_PLL1_TMDS_TERMADJ(adj);
+-		tegra_sor_writel(sor, value, SOR_PLL1);
+-
+-		usleep_range(100, 200);
+-
+-		value = tegra_sor_readl(sor, SOR_PLL1);
+-		if (value & SOR_PLL1_TERM_COMPOUT)
+-			adj &= ~mask;
+-
+-		mask >>= 1;
+-	}
+-
+-	value = tegra_sor_readl(sor, SOR_PLL1);
+-	value &= ~SOR_PLL1_TMDS_TERMADJ_MASK;
+-	value |= SOR_PLL1_TMDS_TERMADJ(adj);
+-	tegra_sor_writel(sor, value, SOR_PLL1);
+-
+-	/* disable pad calibration logic */
+-	value = tegra_sor_readl(sor, SOR_DP_PADCTL0);
+-	value |= SOR_DP_PADCTL_PAD_CAL_PD;
+-	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
+-}
+-
+ static void tegra_sor_super_update(struct tegra_sor *sor)
+ {
+ 	tegra_sor_writel(sor, 0, SOR_SUPER_STATE0);
+@@ -1217,6 +1308,7 @@ static const struct debugfs_reg32 tegra_sor_regs[] = {
+ 	DEBUGFS_REG32(SOR_DP_MN1),
+ 	DEBUGFS_REG32(SOR_DP_PADCTL0),
+ 	DEBUGFS_REG32(SOR_DP_PADCTL1),
++	DEBUGFS_REG32(SOR_DP_PADCTL2),
+ 	DEBUGFS_REG32(SOR_DP_DEBUG0),
+ 	DEBUGFS_REG32(SOR_DP_DEBUG1),
+ 	DEBUGFS_REG32(SOR_DP_SPARE0),
+@@ -1429,7 +1521,7 @@ static void tegra_sor_edp_disable(struct drm_encoder *encoder)
+ 	 */
+ 	if (dc) {
+ 		value = tegra_dc_readl(dc, DC_DISP_DISP_WIN_OPTIONS);
+-		value &= ~SOR_ENABLE;
++		value &= ~SOR_ENABLE(0);
+ 		tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
+ 
+ 		tegra_dc_commit(dc);
+@@ -1445,9 +1537,9 @@ static void tegra_sor_edp_disable(struct drm_encoder *encoder)
+ 			dev_err(sor->dev, "failed to disable DP: %d\n", err);
+ 	}
+ 
+-	err = tegra_io_rail_power_off(TEGRA_IO_RAIL_LVDS);
++	err = tegra_io_pad_power_disable(sor->pad);
+ 	if (err < 0)
+-		dev_err(sor->dev, "failed to power off I/O rail: %d\n", err);
++		dev_err(sor->dev, "failed to power off I/O pad: %d\n", err);
+ 
+ 	if (output->panel)
+ 		drm_panel_unprepare(output->panel);
+@@ -1605,9 +1697,9 @@ static void tegra_sor_edp_enable(struct drm_encoder *encoder)
+ 	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+ 	/* step 2 */
+-	err = tegra_io_rail_power_on(TEGRA_IO_RAIL_LVDS);
++	err = tegra_io_pad_power_enable(sor->pad);
+ 	if (err < 0)
+-		dev_err(sor->dev, "failed to power on I/O rail: %d\n", err);
++		dev_err(sor->dev, "failed to power on I/O pad: %d\n", err);
+ 
+ 	usleep_range(5, 100);
+ 
+@@ -1785,7 +1877,7 @@ static void tegra_sor_edp_enable(struct drm_encoder *encoder)
+ 	tegra_sor_update(sor);
+ 
+ 	value = tegra_dc_readl(dc, DC_DISP_DISP_WIN_OPTIONS);
+-	value |= SOR_ENABLE;
++	value |= SOR_ENABLE(0);
+ 	tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
+ 
+ 	tegra_dc_commit(dc);
+@@ -1984,8 +2076,12 @@ static void tegra_sor_hdmi_disable(struct drm_encoder *encoder)
+ 
+ 	/* disable display to SOR clock */
+ 	value = tegra_dc_readl(dc, DC_DISP_DISP_WIN_OPTIONS);
+-	value &= ~SOR1_TIMING_CYA;
+-	value &= ~SOR1_ENABLE;
++
++	if (!sor->soc->has_nvdisplay)
++		value &= ~(SOR1_TIMING_CYA | SOR_ENABLE(1));
++	else
++		value &= ~SOR_ENABLE(sor->index);
++
+ 	tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
+ 
+ 	tegra_dc_commit(dc);
+@@ -1994,9 +2090,9 @@ static void tegra_sor_hdmi_disable(struct drm_encoder *encoder)
+ 	if (err < 0)
+ 		dev_err(sor->dev, "failed to power down SOR: %d\n", err);
+ 
+-	err = tegra_io_rail_power_off(TEGRA_IO_RAIL_HDMI);
++	err = tegra_io_pad_power_disable(sor->pad);
+ 	if (err < 0)
+-		dev_err(sor->dev, "failed to power off HDMI rail: %d\n", err);
++		dev_err(sor->dev, "failed to power off I/O pad: %d\n", err);
+ 
+ 	pm_runtime_put(sor->dev);
+ }
+@@ -2028,9 +2124,9 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 
+ 	div = clk_get_rate(sor->clk) / 1000000 * 4;
+ 
+-	err = tegra_io_rail_power_on(TEGRA_IO_RAIL_HDMI);
++	err = tegra_io_pad_power_enable(sor->pad);
+ 	if (err < 0)
+-		dev_err(sor->dev, "failed to power on HDMI rail: %d\n", err);
++		dev_err(sor->dev, "failed to power on I/O pad: %d\n", err);
+ 
+ 	usleep_range(20, 100);
+ 
+@@ -2099,10 +2195,19 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 	value |= SOR_CLK_CNTRL_DP_CLK_SEL_SINGLE_PCLK;
+ 	tegra_sor_writel(sor, value, SOR_CLK_CNTRL);
+ 
++	/* SOR pad PLL stabilization time */
++	usleep_range(250, 1000);
++
++	value = tegra_sor_readl(sor, SOR_DP_LINKCTL0);
++	value &= ~SOR_DP_LINKCTL_LANE_COUNT_MASK;
++	value |= SOR_DP_LINKCTL_LANE_COUNT(4);
++	tegra_sor_writel(sor, value, SOR_DP_LINKCTL0);
++
+ 	value = tegra_sor_readl(sor, SOR_DP_SPARE0);
+-	value |= SOR_DP_SPARE_DISP_VIDEO_PREAMBLE;
++	value &= ~SOR_DP_SPARE_DISP_VIDEO_PREAMBLE;
+ 	value &= ~SOR_DP_SPARE_PANEL_INTERNAL;
+-	value |= SOR_DP_SPARE_SEQ_ENABLE;
++	value &= ~SOR_DP_SPARE_SEQ_ENABLE;
++	value &= ~SOR_DP_SPARE_MACRO_SOR_CLK;
+ 	tegra_sor_writel(sor, value, SOR_DP_SPARE0);
+ 
+ 	value = SOR_SEQ_CTL_PU_PC(0) | SOR_SEQ_CTL_PU_PC_ALT(0) |
+@@ -2114,9 +2219,11 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 	tegra_sor_writel(sor, value, SOR_SEQ_INST(0));
+ 	tegra_sor_writel(sor, value, SOR_SEQ_INST(8));
+ 
+-	/* program the reference clock */
+-	value = SOR_REFCLK_DIV_INT(div) | SOR_REFCLK_DIV_FRAC(div);
+-	tegra_sor_writel(sor, value, SOR_REFCLK);
++	if (!sor->soc->has_nvdisplay) {
++		/* program the reference clock */
++		value = SOR_REFCLK_DIV_INT(div) | SOR_REFCLK_DIV_FRAC(div);
++		tegra_sor_writel(sor, value, SOR_REFCLK);
++	}
+ 
+ 	/* XXX not in TRM */
+ 	for (value = 0, i = 0; i < 5; i++)
+@@ -2139,13 +2246,16 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 		return;
+ 	}
+ 
+-	value = SOR_INPUT_CONTROL_HDMI_SRC_SELECT(dc->pipe);
+ 
+-	/* XXX is this the proper check? */
+-	if (mode->clock < 75000)
+-		value |= SOR_INPUT_CONTROL_ARM_VIDEO_RANGE_LIMITED;
++	if (!sor->soc->has_nvdisplay) {
++		value = SOR_INPUT_CONTROL_HDMI_SRC_SELECT(dc->pipe);
+ 
+-	tegra_sor_writel(sor, value, SOR_INPUT_CONTROL);
++		/* XXX is this the proper check? */
++		if (mode->clock < 75000)
++			value |= SOR_INPUT_CONTROL_ARM_VIDEO_RANGE_LIMITED;
++
++		tegra_sor_writel(sor, value, SOR_INPUT_CONTROL);
++	}
+ 
+ 	max_ac = ((mode->htotal - mode->hdisplay) - SOR_REKEY - 18) / 32;
+ 
+@@ -2153,20 +2263,23 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 		SOR_HDMI_CTRL_AUDIO_LAYOUT | SOR_HDMI_CTRL_REKEY(SOR_REKEY);
+ 	tegra_sor_writel(sor, value, SOR_HDMI_CTRL);
+ 
+-	/* H_PULSE2 setup */
+-	pulse_start = h_ref_to_sync + (mode->hsync_end - mode->hsync_start) +
+-		      (mode->htotal - mode->hsync_end) - 10;
++	if (!dc->soc->has_nvdisplay) {
++		/* H_PULSE2 setup */
++		pulse_start = h_ref_to_sync +
++			      (mode->hsync_end - mode->hsync_start) +
++			      (mode->htotal - mode->hsync_end) - 10;
+ 
+-	value = PULSE_LAST_END_A | PULSE_QUAL_VACTIVE |
+-		PULSE_POLARITY_HIGH | PULSE_MODE_NORMAL;
+-	tegra_dc_writel(dc, value, DC_DISP_H_PULSE2_CONTROL);
++		value = PULSE_LAST_END_A | PULSE_QUAL_VACTIVE |
++			PULSE_POLARITY_HIGH | PULSE_MODE_NORMAL;
++		tegra_dc_writel(dc, value, DC_DISP_H_PULSE2_CONTROL);
+ 
+-	value = PULSE_END(pulse_start + 8) | PULSE_START(pulse_start);
+-	tegra_dc_writel(dc, value, DC_DISP_H_PULSE2_POSITION_A);
++		value = PULSE_END(pulse_start + 8) | PULSE_START(pulse_start);
++		tegra_dc_writel(dc, value, DC_DISP_H_PULSE2_POSITION_A);
+ 
+-	value = tegra_dc_readl(dc, DC_DISP_DISP_SIGNAL_OPTIONS0);
+-	value |= H_PULSE2_ENABLE;
+-	tegra_dc_writel(dc, value, DC_DISP_DISP_SIGNAL_OPTIONS0);
++		value = tegra_dc_readl(dc, DC_DISP_DISP_SIGNAL_OPTIONS0);
++		value |= H_PULSE2_ENABLE;
++		tegra_dc_writel(dc, value, DC_DISP_DISP_SIGNAL_OPTIONS0);
++	}
+ 
+ 	/* infoframe setup */
+ 	err = tegra_sor_hdmi_setup_avi_infoframe(sor, mode);
+@@ -2197,49 +2310,66 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 
+ 	value = tegra_sor_readl(sor, sor->soc->regs->pll0);
+ 	value &= ~SOR_PLL0_ICHPMP_MASK;
++	value &= ~SOR_PLL0_FILTER_MASK;
+ 	value &= ~SOR_PLL0_VCOCAP_MASK;
+ 	value |= SOR_PLL0_ICHPMP(settings->ichpmp);
++	value |= SOR_PLL0_FILTER(settings->filter);
+ 	value |= SOR_PLL0_VCOCAP(settings->vcocap);
+ 	tegra_sor_writel(sor, value, sor->soc->regs->pll0);
+ 
+-	tegra_sor_dp_term_calibrate(sor);
+-
++	/* XXX not in TRM */
+ 	value = tegra_sor_readl(sor, sor->soc->regs->pll1);
+ 	value &= ~SOR_PLL1_LOADADJ_MASK;
++	value &= ~SOR_PLL1_TMDS_TERMADJ_MASK;
+ 	value |= SOR_PLL1_LOADADJ(settings->loadadj);
++	value |= SOR_PLL1_TMDS_TERMADJ(settings->tmds_termadj);
++	value |= SOR_PLL1_TMDS_TERM;
+ 	tegra_sor_writel(sor, value, sor->soc->regs->pll1);
+ 
+ 	value = tegra_sor_readl(sor, sor->soc->regs->pll3);
++	value &= ~SOR_PLL3_BG_TEMP_COEF_MASK;
+ 	value &= ~SOR_PLL3_BG_VREF_LEVEL_MASK;
+-	value |= SOR_PLL3_BG_VREF_LEVEL(settings->bg_vref);
++	value &= ~SOR_PLL3_AVDD10_LEVEL_MASK;
++	value &= ~SOR_PLL3_AVDD14_LEVEL_MASK;
++	value |= SOR_PLL3_BG_TEMP_COEF(settings->bg_temp_coef);
++	value |= SOR_PLL3_BG_VREF_LEVEL(settings->bg_vref_level);
++	value |= SOR_PLL3_AVDD10_LEVEL(settings->avdd10_level);
++	value |= SOR_PLL3_AVDD14_LEVEL(settings->avdd14_level);
+ 	tegra_sor_writel(sor, value, sor->soc->regs->pll3);
+ 
+-	value = settings->drive_current[0] << 24 |
+-		settings->drive_current[1] << 16 |
+-		settings->drive_current[2] <<  8 |
+-		settings->drive_current[3] <<  0;
++	value = settings->drive_current[3] << 24 |
++		settings->drive_current[2] << 16 |
++		settings->drive_current[1] <<  8 |
++		settings->drive_current[0] <<  0;
+ 	tegra_sor_writel(sor, value, SOR_LANE_DRIVE_CURRENT0);
+ 
+-	value = settings->preemphasis[0] << 24 |
+-		settings->preemphasis[1] << 16 |
+-		settings->preemphasis[2] <<  8 |
+-		settings->preemphasis[3] <<  0;
++	value = settings->preemphasis[3] << 24 |
++		settings->preemphasis[2] << 16 |
++		settings->preemphasis[1] <<  8 |
++		settings->preemphasis[0] <<  0;
+ 	tegra_sor_writel(sor, value, SOR_LANE_PREEMPHASIS0);
+ 
+ 	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value &= ~SOR_DP_PADCTL_TX_PU_MASK;
+ 	value |= SOR_DP_PADCTL_TX_PU_ENABLE;
+-	value |= SOR_DP_PADCTL_TX_PU(settings->tx_pu);
++	value |= SOR_DP_PADCTL_TX_PU(settings->tx_pu_value);
+ 	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
++	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl2);
++	value &= ~SOR_DP_PADCTL_SPAREPLL_MASK;
++	value |= SOR_DP_PADCTL_SPAREPLL(settings->sparepll);
++	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl2);
++
+ 	/* power down pad calibration */
+ 	value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+ 	value |= SOR_DP_PADCTL_PAD_CAL_PD;
+ 	tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+ 
+-	/* miscellaneous display controller settings */
+-	value = VSYNC_H_POSITION(1);
+-	tegra_dc_writel(dc, value, DC_DISP_DISP_TIMING_OPTIONS);
++	if (!dc->soc->has_nvdisplay) {
++		/* miscellaneous display controller settings */
++		value = VSYNC_H_POSITION(1);
++		tegra_dc_writel(dc, value, DC_DISP_DISP_TIMING_OPTIONS);
++	}
+ 
+ 	value = tegra_dc_readl(dc, DC_DISP_DISP_COLOR_CONTROL);
+ 	value &= ~DITHER_CONTROL_MASK;
+@@ -2254,6 +2384,14 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 		value |= BASE_COLOR_SIZE_888;
+ 		break;
+ 
++	case 10:
++		value |= BASE_COLOR_SIZE_101010;
++		break;
++
++	case 12:
++		value |= BASE_COLOR_SIZE_121212;
++		break;
++
+ 	default:
+ 		WARN(1, "%u bits-per-color not supported\n", state->bpc);
+ 		value |= BASE_COLOR_SIZE_888;
+@@ -2262,6 +2400,12 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 
+ 	tegra_dc_writel(dc, value, DC_DISP_DISP_COLOR_CONTROL);
+ 
++	/* XXX set display head owner */
++	value = tegra_sor_readl(sor, SOR_STATE1);
++	value &= ~SOR_STATE_ASY_OWNER_MASK;
++	value |= SOR_STATE_ASY_OWNER(1 + dc->pipe);
++	tegra_sor_writel(sor, value, SOR_STATE1);
++
+ 	err = tegra_sor_power_up(sor, 250);
+ 	if (err < 0)
+ 		dev_err(sor->dev, "failed to power up SOR: %d\n", err);
+@@ -2282,15 +2426,32 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+ 
+ 	tegra_sor_update(sor);
+ 
++	/* program preamble timing in SOR (XXX) */
++	value = tegra_sor_readl(sor, SOR_DP_SPARE0);
++	value &= ~SOR_DP_SPARE_DISP_VIDEO_PREAMBLE;
++	tegra_sor_writel(sor, value, SOR_DP_SPARE0);
++
+ 	err = tegra_sor_attach(sor);
+ 	if (err < 0)
+ 		dev_err(sor->dev, "failed to attach SOR: %d\n", err);
+ 
+ 	/* enable display to SOR clock and generate HDMI preamble */
+ 	value = tegra_dc_readl(dc, DC_DISP_DISP_WIN_OPTIONS);
+-	value |= SOR1_ENABLE | SOR1_TIMING_CYA;
++
++	if (!sor->soc->has_nvdisplay)
++		value |= SOR_ENABLE(1) | SOR1_TIMING_CYA;
++	else
++		value |= SOR_ENABLE(sor->index);
++
+ 	tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
+ 
++	if (dc->soc->has_nvdisplay) {
++		value = tegra_dc_readl(dc, DC_DISP_CORE_SOR_SET_CONTROL(sor->index));
++		value &= ~PROTOCOL_MASK;
++		value |= PROTOCOL_SINGLE_TMDS_A;
++		tegra_dc_writel(dc, value, DC_DISP_CORE_SOR_SET_CONTROL(sor->index));
++	}
++
+ 	tegra_dc_commit(dc);
+ 
+ 	err = tegra_sor_wakeup(sor);
+@@ -2356,7 +2517,7 @@ static int tegra_sor_init(struct host1x_client *client)
+ 		return err;
+ 	}
+ 
+-	sor->output.encoder.possible_crtcs = 0x3;
++	tegra_output_find_possible_crtcs(&sor->output, drm);
+ 
+ 	if (sor->aux) {
+ 		err = drm_dp_aux_attach(sor->aux, &sor->output);
+@@ -2526,6 +2687,7 @@ static const struct tegra_sor_soc tegra124_sor = {
+ 	.supports_hdmi = false,
+ 	.supports_dp = false,
+ 	.regs = &tegra124_sor_regs,
++	.has_nvdisplay = false,
+ 	.xbar_cfg = tegra124_sor_xbar_cfg,
+ };
+ 
+@@ -2550,6 +2712,7 @@ static const struct tegra_sor_soc tegra210_sor = {
+ 	.supports_hdmi = false,
+ 	.supports_dp = false,
+ 	.regs = &tegra210_sor_regs,
++	.has_nvdisplay = false,
+ 	.xbar_cfg = tegra124_sor_xbar_cfg,
+ };
+ 
+@@ -2564,6 +2727,7 @@ static const struct tegra_sor_soc tegra210_sor1 = {
+ 	.supports_dp = true,
+ 
+ 	.regs = &tegra210_sor_regs,
++	.has_nvdisplay = false,
+ 
+ 	.num_settings = ARRAY_SIZE(tegra210_sor_hdmi_defaults),
+ 	.settings = tegra210_sor_hdmi_defaults,
+@@ -2571,7 +2735,51 @@ static const struct tegra_sor_soc tegra210_sor1 = {
+ 	.xbar_cfg = tegra210_sor_xbar_cfg,
+ };
+ 
++static const struct tegra_sor_regs tegra186_sor_regs = {
++	.head_state0 = 0x151,
++	.head_state1 = 0x154,
++	.head_state2 = 0x157,
++	.head_state3 = 0x15a,
++	.head_state4 = 0x15d,
++	.head_state5 = 0x160,
++	.pll0 = 0x163,
++	.pll1 = 0x164,
++	.pll2 = 0x165,
++	.pll3 = 0x166,
++	.dp_padctl0 = 0x168,
++	.dp_padctl2 = 0x16a,
++};
++
++static const struct tegra_sor_soc tegra186_sor = {
++	.supports_edp = false,
++	.supports_lvds = false,
++	.supports_hdmi = false,
++	.supports_dp = true,
++
++	.regs = &tegra186_sor_regs,
++	.has_nvdisplay = true,
++
++	.xbar_cfg = tegra124_sor_xbar_cfg,
++};
++
++static const struct tegra_sor_soc tegra186_sor1 = {
++	.supports_edp = false,
++	.supports_lvds = false,
++	.supports_hdmi = true,
++	.supports_dp = true,
++
++	.regs = &tegra186_sor_regs,
++	.has_nvdisplay = true,
++
++	.num_settings = ARRAY_SIZE(tegra186_sor_hdmi_defaults),
++	.settings = tegra186_sor_hdmi_defaults,
++
++	.xbar_cfg = tegra124_sor_xbar_cfg,
++};
++
+ static const struct of_device_id tegra_sor_of_match[] = {
++	{ .compatible = "nvidia,tegra186-sor1", .data = &tegra186_sor1 },
++	{ .compatible = "nvidia,tegra186-sor", .data = &tegra186_sor },
+ 	{ .compatible = "nvidia,tegra210-sor1", .data = &tegra210_sor1 },
+ 	{ .compatible = "nvidia,tegra210-sor", .data = &tegra210_sor },
+ 	{ .compatible = "nvidia,tegra124-sor", .data = &tegra124_sor },
+@@ -2579,6 +2787,29 @@ static const struct of_device_id tegra_sor_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra_sor_of_match);
+ 
++static int tegra_sor_parse_dt(struct tegra_sor *sor)
++{
++	struct device_node *np = sor->dev->of_node;
++	u32 value;
++	int err;
++
++	if (sor->soc->has_nvdisplay) {
++		err = of_property_read_u32(np, "nvidia,interface", &value);
++		if (err < 0)
++			return err;
++
++		sor->index = value;
++
++		/*
++		 * override the default that we already set for Tegra210 and
++		 * earlier
++		 */
++		sor->pad = TEGRA_IO_PAD_HDMI_DP0 + sor->index;
++	}
++
++	return 0;
++}
++
+ static int tegra_sor_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np;
+@@ -2614,6 +2845,7 @@ static int tegra_sor_probe(struct platform_device *pdev)
+ 	if (!sor->aux) {
+ 		if (sor->soc->supports_hdmi) {
+ 			sor->ops = &tegra_sor_hdmi_ops;
++			sor->pad = TEGRA_IO_PAD_HDMI;
+ 		} else if (sor->soc->supports_lvds) {
+ 			dev_err(&pdev->dev, "LVDS not supported yet\n");
+ 			return -ENODEV;
+@@ -2624,6 +2856,7 @@ static int tegra_sor_probe(struct platform_device *pdev)
+ 	} else {
+ 		if (sor->soc->supports_edp) {
+ 			sor->ops = &tegra_sor_edp_ops;
++			sor->pad = TEGRA_IO_PAD_LVDS;
+ 		} else if (sor->soc->supports_dp) {
+ 			dev_err(&pdev->dev, "DisplayPort not supported yet\n");
+ 			return -ENODEV;
+@@ -2633,6 +2866,10 @@ static int tegra_sor_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	err = tegra_sor_parse_dt(sor);
++	if (err < 0)
++		return err;
++
+ 	err = tegra_output_probe(&sor->output);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to probe output: %d\n", err);
 diff --git a/drivers/gpu/drm/tegra/sor.h b/drivers/gpu/drm/tegra/sor.h
-index e85ffc8d98e4..fb0854d92a27 100644
+index 865c73b48968..e85ffc8d98e4 100644
 --- a/drivers/gpu/drm/tegra/sor.h
 +++ b/drivers/gpu/drm/tegra/sor.h
-@@ -382,4 +382,8 @@
- #define SOR_HDMI_VSI_INFOFRAME_STATUS 0x124
- #define SOR_HDMI_VSI_INFOFRAME_HEADER 0x125
+@@ -89,6 +89,8 @@
+ #define SOR_PLL0 0x17
+ #define  SOR_PLL0_ICHPMP_MASK			(0xf << 24)
+ #define  SOR_PLL0_ICHPMP(x)			(((x) & 0xf) << 24)
++#define  SOR_PLL0_FILTER_MASK			(0xf << 16)
++#define  SOR_PLL0_FILTER(x)			(((x) & 0xf) << 16)
+ #define  SOR_PLL0_VCOCAP_MASK			(0xf << 8)
+ #define  SOR_PLL0_VCOCAP(x)			(((x) & 0xf) << 8)
+ #define  SOR_PLL0_VCOCAP_RST			SOR_PLL0_VCOCAP(3)
+@@ -122,10 +124,16 @@
+ #define  SOR_PLL2_SEQ_PLL_PULLDOWN		(1 << 16)
  
-+#define SOR_HDMI2_CTRL 0x13e
-+#define  SOR_HDMI2_CTRL_CLOCK_MODE_DIV_BY_4 (1 << 1)
-+#define  SOR_HDMI2_CTRL_SCRAMBLE (1 << 0)
+ #define SOR_PLL3 0x1a
++#define  SOR_PLL3_BG_TEMP_COEF_MASK		(0xf << 28)
++#define  SOR_PLL3_BG_TEMP_COEF(x)		(((x) & 0xf) << 28)
+ #define  SOR_PLL3_BG_VREF_LEVEL_MASK		(0xf << 24)
+ #define  SOR_PLL3_BG_VREF_LEVEL(x)		(((x) & 0xf) << 24)
+ #define  SOR_PLL3_PLL_VDD_MODE_1V8		(0 << 13)
+ #define  SOR_PLL3_PLL_VDD_MODE_3V3		(1 << 13)
++#define  SOR_PLL3_AVDD10_LEVEL_MASK		(0xf << 8)
++#define  SOR_PLL3_AVDD10_LEVEL(x)		(((x) & 0xf) << 8)
++#define  SOR_PLL3_AVDD14_LEVEL_MASK		(0xf << 4)
++#define  SOR_PLL3_AVDD14_LEVEL(x)		(((x) & 0xf) << 4)
+ 
+ #define SOR_CSTM 0x1b
+ #define  SOR_CSTM_ROTCLK_MASK			(0xf << 24)
+@@ -334,6 +342,10 @@
+ #define SOR_DP_LQ_CSTM1 0x70
+ #define SOR_DP_LQ_CSTM2 0x71
+ 
++#define SOR_DP_PADCTL2 0x73
++#define  SOR_DP_PADCTL_SPAREPLL_MASK (0xff << 24)
++#define  SOR_DP_PADCTL_SPAREPLL(x) (((x) & 0xff) << 24)
 +
- #endif
+ #define SOR_HDMI_AUDIO_INFOFRAME_CTRL 0x9a
+ #define SOR_HDMI_AUDIO_INFOFRAME_STATUS 0x9b
+ #define SOR_HDMI_AUDIO_INFOFRAME_HEADER 0x9c
 -- 
 2.15.0
