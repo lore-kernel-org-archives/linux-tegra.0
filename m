@@ -1,114 +1,64 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 05/13] drm/tegra: dc: Reshuffle some code
-Date: Mon, 27 Nov 2017 11:07:50 +0100
-Message-ID: <20171127100758.22149-6-thierry.reding@gmail.com>
-References: <20171127100758.22149-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20171127100758.22149-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 00/12] drm/tegra: Basic Tegra186 support
+Date: Mon, 27 Nov 2017 11:09:40 +0100
+Message-ID: <20171127100952.22465-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClJlc2h1ZmZsZSBzb21l
-IGNvZGUgc28gdGhhdCBmdW5jdGlvbnMgYXJlIGRlZmluZWQgY2xvc2VyIHRvIHdoZXJlIHRoZXkK
-YXJlIHVzZWQuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEu
-Y29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jIHwgMTUyICsrKysrKysrKysrKysr
-KysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDc2IGluc2Vy
-dGlvbnMoKyksIDc2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9kYy5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMKaW5kZXggODI1NDE5ZGZmMDdi
-Li4wNTJmNTEyNTcyZDUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jCisr
-KyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jCkBAIC05MDksODIgKzkwOSw2IEBAIHN0YXRp
-YyBpbnQgdGVncmFfZGNfYWRkX3BsYW5lcyhzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCBzdHJ1Y3Qg
-dGVncmFfZGMgKmRjKQogCXJldHVybiAwOwogfQogCi1zdGF0aWMgdTMyIHRlZ3JhX2RjX2dldF92
-YmxhbmtfY291bnRlcihzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCi17Ci0Jc3RydWN0IHRlZ3JhX2Rj
-ICpkYyA9IHRvX3RlZ3JhX2RjKGNydGMpOwotCi0JaWYgKGRjLT5zeW5jcHQpCi0JCXJldHVybiBo
-b3N0MXhfc3luY3B0X3JlYWQoZGMtPnN5bmNwdCk7Ci0KLQkvKiBmYWxsYmFjayB0byBzb2Z0d2Fy
-ZSBlbXVsYXRlZCBWQkxBTksgY291bnRlciAqLwotCXJldHVybiBkcm1fY3J0Y192YmxhbmtfY291
-bnQoJmRjLT5iYXNlKTsKLX0KLQotc3RhdGljIGludCB0ZWdyYV9kY19lbmFibGVfdmJsYW5rKHN0
-cnVjdCBkcm1fY3J0YyAqY3J0YykKLXsKLQlzdHJ1Y3QgdGVncmFfZGMgKmRjID0gdG9fdGVncmFf
-ZGMoY3J0Yyk7Ci0JdW5zaWduZWQgbG9uZyB2YWx1ZSwgZmxhZ3M7Ci0KLQlzcGluX2xvY2tfaXJx
-c2F2ZSgmZGMtPmxvY2ssIGZsYWdzKTsKLQotCXZhbHVlID0gdGVncmFfZGNfcmVhZGwoZGMsIERD
-X0NNRF9JTlRfTUFTSyk7Ci0JdmFsdWUgfD0gVkJMQU5LX0lOVDsKLQl0ZWdyYV9kY193cml0ZWwo
-ZGMsIHZhbHVlLCBEQ19DTURfSU5UX01BU0spOwotCi0Jc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgm
-ZGMtPmxvY2ssIGZsYWdzKTsKLQotCXJldHVybiAwOwotfQotCi1zdGF0aWMgdm9pZCB0ZWdyYV9k
-Y19kaXNhYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCi17Ci0Jc3RydWN0IHRlZ3Jh
-X2RjICpkYyA9IHRvX3RlZ3JhX2RjKGNydGMpOwotCXVuc2lnbmVkIGxvbmcgdmFsdWUsIGZsYWdz
-OwotCi0Jc3Bpbl9sb2NrX2lycXNhdmUoJmRjLT5sb2NrLCBmbGFncyk7Ci0KLQl2YWx1ZSA9IHRl
-Z3JhX2RjX3JlYWRsKGRjLCBEQ19DTURfSU5UX01BU0spOwotCXZhbHVlICY9IH5WQkxBTktfSU5U
-OwotCXRlZ3JhX2RjX3dyaXRlbChkYywgdmFsdWUsIERDX0NNRF9JTlRfTUFTSyk7Ci0KLQlzcGlu
-X3VubG9ja19pcnFyZXN0b3JlKCZkYy0+bG9jaywgZmxhZ3MpOwotfQotCi1zdGF0aWMgdm9pZCB0
-ZWdyYV9kY19maW5pc2hfcGFnZV9mbGlwKHN0cnVjdCB0ZWdyYV9kYyAqZGMpCi17Ci0Jc3RydWN0
-IGRybV9kZXZpY2UgKmRybSA9IGRjLT5iYXNlLmRldjsKLQlzdHJ1Y3QgZHJtX2NydGMgKmNydGMg
-PSAmZGMtPmJhc2U7Ci0JdW5zaWduZWQgbG9uZyBmbGFncywgYmFzZTsKLQlzdHJ1Y3QgdGVncmFf
-Ym8gKmJvOwotCi0Jc3Bpbl9sb2NrX2lycXNhdmUoJmRybS0+ZXZlbnRfbG9jaywgZmxhZ3MpOwot
-Ci0JaWYgKCFkYy0+ZXZlbnQpIHsKLQkJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmZHJtLT5ldmVu
-dF9sb2NrLCBmbGFncyk7Ci0JCXJldHVybjsKLQl9Ci0KLQlibyA9IHRlZ3JhX2ZiX2dldF9wbGFu
-ZShjcnRjLT5wcmltYXJ5LT5mYiwgMCk7Ci0KLQlzcGluX2xvY2soJmRjLT5sb2NrKTsKLQotCS8q
-IGNoZWNrIGlmIG5ldyBzdGFydCBhZGRyZXNzIGhhcyBiZWVuIGxhdGNoZWQgKi8KLQl0ZWdyYV9k
-Y193cml0ZWwoZGMsIFdJTkRPV19BX1NFTEVDVCwgRENfQ01EX0RJU1BMQVlfV0lORE9XX0hFQURF
-Uik7Ci0JdGVncmFfZGNfd3JpdGVsKGRjLCBSRUFEX01VWCwgRENfQ01EX1NUQVRFX0FDQ0VTUyk7
-Ci0JYmFzZSA9IHRlZ3JhX2RjX3JlYWRsKGRjLCBEQ19XSU5CVUZfU1RBUlRfQUREUik7Ci0JdGVn
-cmFfZGNfd3JpdGVsKGRjLCAwLCBEQ19DTURfU1RBVEVfQUNDRVNTKTsKLQotCXNwaW5fdW5sb2Nr
-KCZkYy0+bG9jayk7Ci0KLQlpZiAoYmFzZSA9PSBiby0+cGFkZHIgKyBjcnRjLT5wcmltYXJ5LT5m
-Yi0+b2Zmc2V0c1swXSkgewotCQlkcm1fY3J0Y19zZW5kX3ZibGFua19ldmVudChjcnRjLCBkYy0+
-ZXZlbnQpOwotCQlkcm1fY3J0Y192YmxhbmtfcHV0KGNydGMpOwotCQlkYy0+ZXZlbnQgPSBOVUxM
-OwotCX0KLQotCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmRybS0+ZXZlbnRfbG9jaywgZmxhZ3Mp
-OwotfQotCiBzdGF0aWMgdm9pZCB0ZWdyYV9kY19kZXN0cm95KHN0cnVjdCBkcm1fY3J0YyAqY3J0
-YykKIHsKIAlkcm1fY3J0Y19jbGVhbnVwKGNydGMpOwpAQCAtMTAzNSw2ICs5NTksNDcgQEAgc3Rh
-dGljIHZvaWQgdGVncmFfY3J0Y19hdG9taWNfZGVzdHJveV9zdGF0ZShzdHJ1Y3QgZHJtX2NydGMg
-KmNydGMsCiAJa2ZyZWUoc3RhdGUpOwogfQogCitzdGF0aWMgdTMyIHRlZ3JhX2RjX2dldF92Ymxh
-bmtfY291bnRlcihzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCit7CisJc3RydWN0IHRlZ3JhX2RjICpk
-YyA9IHRvX3RlZ3JhX2RjKGNydGMpOworCisJaWYgKGRjLT5zeW5jcHQpCisJCXJldHVybiBob3N0
-MXhfc3luY3B0X3JlYWQoZGMtPnN5bmNwdCk7CisKKwkvKiBmYWxsYmFjayB0byBzb2Z0d2FyZSBl
-bXVsYXRlZCBWQkxBTksgY291bnRlciAqLworCXJldHVybiBkcm1fY3J0Y192YmxhbmtfY291bnQo
-JmRjLT5iYXNlKTsKK30KKworc3RhdGljIGludCB0ZWdyYV9kY19lbmFibGVfdmJsYW5rKHN0cnVj
-dCBkcm1fY3J0YyAqY3J0YykKK3sKKwlzdHJ1Y3QgdGVncmFfZGMgKmRjID0gdG9fdGVncmFfZGMo
-Y3J0Yyk7CisJdW5zaWduZWQgbG9uZyB2YWx1ZSwgZmxhZ3M7CisKKwlzcGluX2xvY2tfaXJxc2F2
-ZSgmZGMtPmxvY2ssIGZsYWdzKTsKKworCXZhbHVlID0gdGVncmFfZGNfcmVhZGwoZGMsIERDX0NN
-RF9JTlRfTUFTSyk7CisJdmFsdWUgfD0gVkJMQU5LX0lOVDsKKwl0ZWdyYV9kY193cml0ZWwoZGMs
-IHZhbHVlLCBEQ19DTURfSU5UX01BU0spOworCisJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmZGMt
-PmxvY2ssIGZsYWdzKTsKKworCXJldHVybiAwOworfQorCitzdGF0aWMgdm9pZCB0ZWdyYV9kY19k
-aXNhYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCit7CisJc3RydWN0IHRlZ3JhX2Rj
-ICpkYyA9IHRvX3RlZ3JhX2RjKGNydGMpOworCXVuc2lnbmVkIGxvbmcgdmFsdWUsIGZsYWdzOwor
-CisJc3Bpbl9sb2NrX2lycXNhdmUoJmRjLT5sb2NrLCBmbGFncyk7CisKKwl2YWx1ZSA9IHRlZ3Jh
-X2RjX3JlYWRsKGRjLCBEQ19DTURfSU5UX01BU0spOworCXZhbHVlICY9IH5WQkxBTktfSU5UOwor
-CXRlZ3JhX2RjX3dyaXRlbChkYywgdmFsdWUsIERDX0NNRF9JTlRfTUFTSyk7CisKKwlzcGluX3Vu
-bG9ja19pcnFyZXN0b3JlKCZkYy0+bG9jaywgZmxhZ3MpOworfQorCiBzdGF0aWMgY29uc3Qgc3Ry
-dWN0IGRybV9jcnRjX2Z1bmNzIHRlZ3JhX2NydGNfZnVuY3MgPSB7CiAJLnBhZ2VfZmxpcCA9IGRy
-bV9hdG9taWNfaGVscGVyX3BhZ2VfZmxpcCwKIAkuc2V0X2NvbmZpZyA9IGRybV9hdG9taWNfaGVs
-cGVyX3NldF9jb25maWcsCkBAIC0xMzQyLDYgKzEzMDcsNDEgQEAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBkcm1fY3J0Y19oZWxwZXJfZnVuY3MgdGVncmFfY3J0Y19oZWxwZXJfZnVuY3MgPSB7CiAJLmF0
-b21pY19kaXNhYmxlID0gdGVncmFfY3J0Y19hdG9taWNfZGlzYWJsZSwKIH07CiAKK3N0YXRpYyB2
-b2lkIHRlZ3JhX2RjX2ZpbmlzaF9wYWdlX2ZsaXAoc3RydWN0IHRlZ3JhX2RjICpkYykKK3sKKwlz
-dHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gZGMtPmJhc2UuZGV2OworCXN0cnVjdCBkcm1fY3J0YyAq
-Y3J0YyA9ICZkYy0+YmFzZTsKKwl1bnNpZ25lZCBsb25nIGZsYWdzLCBiYXNlOworCXN0cnVjdCB0
-ZWdyYV9ibyAqYm87CisKKwlzcGluX2xvY2tfaXJxc2F2ZSgmZHJtLT5ldmVudF9sb2NrLCBmbGFn
-cyk7CisKKwlpZiAoIWRjLT5ldmVudCkgeworCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZkcm0t
-PmV2ZW50X2xvY2ssIGZsYWdzKTsKKwkJcmV0dXJuOworCX0KKworCWJvID0gdGVncmFfZmJfZ2V0
-X3BsYW5lKGNydGMtPnByaW1hcnktPmZiLCAwKTsKKworCXNwaW5fbG9jaygmZGMtPmxvY2spOwor
-CisJLyogY2hlY2sgaWYgbmV3IHN0YXJ0IGFkZHJlc3MgaGFzIGJlZW4gbGF0Y2hlZCAqLworCXRl
-Z3JhX2RjX3dyaXRlbChkYywgV0lORE9XX0FfU0VMRUNULCBEQ19DTURfRElTUExBWV9XSU5ET1df
-SEVBREVSKTsKKwl0ZWdyYV9kY193cml0ZWwoZGMsIFJFQURfTVVYLCBEQ19DTURfU1RBVEVfQUND
-RVNTKTsKKwliYXNlID0gdGVncmFfZGNfcmVhZGwoZGMsIERDX1dJTkJVRl9TVEFSVF9BRERSKTsK
-Kwl0ZWdyYV9kY193cml0ZWwoZGMsIDAsIERDX0NNRF9TVEFURV9BQ0NFU1MpOworCisJc3Bpbl91
-bmxvY2soJmRjLT5sb2NrKTsKKworCWlmIChiYXNlID09IGJvLT5wYWRkciArIGNydGMtPnByaW1h
-cnktPmZiLT5vZmZzZXRzWzBdKSB7CisJCWRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KGNydGMs
-IGRjLT5ldmVudCk7CisJCWRybV9jcnRjX3ZibGFua19wdXQoY3J0Yyk7CisJCWRjLT5ldmVudCA9
-IE5VTEw7CisJfQorCisJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmZHJtLT5ldmVudF9sb2NrLCBm
-bGFncyk7Cit9CisKIHN0YXRpYyBpcnFyZXR1cm5fdCB0ZWdyYV9kY19pcnEoaW50IGlycSwgdm9p
-ZCAqZGF0YSkKIHsKIAlzdHJ1Y3QgdGVncmFfZGMgKmRjID0gZGF0YTsKLS0gCjIuMTUuMAoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Hi,
+
+this series adds support for display and HDMI on Tegra186. The initial 6
+patches are preparatory work to move code around and make the subsequent
+patches easier to review.
+
+Patch 7 introduces the display hub driver which controls resources
+shared between all display controllers and patch 8 extends the display
+controller driver with Tegra186 support. Some changes to the registers
+are backwards incompatible, but this can be dealt with with a bit of
+parameterization of code and register offsets.
+
+Finally, the SOR driver is also parameterized to take into account some
+changes on Tegra186 and the last patch in the series enables support for
+HDMI 2.0 modes using the SCDC helpers.
+
+Thierry
+
+Thierry Reding (12):
+  drm/tegra: dc: Remove tegra_primary_plane_destroy()
+  drm/tegra: dc: Remove duplicate plane funcs
+  drm/tegra: dc: Remove tegra_overlay_plane_destroy()
+  drm/tegra: dc: Remove duplicate plane funcs
+  drm/tegra: dc: Move state definition to header
+  drm/tegra: Move common plane code to separate file
+  drm/tegra: Add Tegra186 display hub support
+  drm/tegra: dc: Add Tegra186 support
+  drm/tegra: Support ARGB and ABGR formats
+  drm/tegra: sor: Parameterize register offsets
+  drm/tegra: sor: Add Tegra186 support
+  drm/tegra: sor: Support HDMI 2.0 modes
+
+ drivers/gpu/drm/tegra/Makefile |   2 +
+ drivers/gpu/drm/tegra/dc.c     | 549 +++++++++++++---------------
+ drivers/gpu/drm/tegra/dc.h     | 237 ++++++++++--
+ drivers/gpu/drm/tegra/drm.c    |  70 +++-
+ drivers/gpu/drm/tegra/drm.h    |  21 ++
+ drivers/gpu/drm/tegra/hub.c    | 808 +++++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/hub.h    |  82 +++++
+ drivers/gpu/drm/tegra/output.c |  24 ++
+ drivers/gpu/drm/tegra/plane.c  | 188 ++++++++++
+ drivers/gpu/drm/tegra/plane.h  |  61 ++++
+ drivers/gpu/drm/tegra/sor.c    | 805 +++++++++++++++++++++++++++++-----------
+ drivers/gpu/drm/tegra/sor.h    |  16 +
+ 12 files changed, 2329 insertions(+), 534 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/hub.c
+ create mode 100644 drivers/gpu/drm/tegra/hub.h
+ create mode 100644 drivers/gpu/drm/tegra/plane.c
+ create mode 100644 drivers/gpu/drm/tegra/plane.h
+
+-- 
+2.15.0
