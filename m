@@ -1,66 +1,76 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH 10/13] fbdev: allow apertures == NULL in
- remove_conflicting_framebuffers()
-Date: Mon, 27 Nov 2017 11:29:18 +0100
-Message-ID: <20171127102918.pgzjknl6bl2jsbyq@phenom.ffwll.local>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 00/13] remove_conflicting_framebuffers() cleanup
+Date: Mon, 27 Nov 2017 11:30:44 +0100
+Message-ID: <20171127103044.faakzch7ehlkc3or@phenom.ffwll.local>
 References: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
- <13240c59cafec988cdda37cc4d48252ff56f0d04.1511544782.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <13240c59cafec988cdda37cc4d48252ff56f0d04.1511544782.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+In-Reply-To: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: Teddy Wang <teddy.wang@siliconmotion.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Alex Deucher <alexander.deucher@amd.com>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jonathan Hunter <jonathanh@nvidia.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 24, 2017 at 06:53:33PM +0100, Michał Mirosław wrote:
-> Interpret (otherwise-invalid) NULL apertures argument to mean all-memory
-> range. This will allow to remove several duplicates of this code from
-> drivers in following patches.
-> 
-> Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-> ---
->  drivers/video/fbdev/core/fbmem.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-> index 5ea980e5d3b7..927e016487e9 100644
-> --- a/drivers/video/fbdev/core/fbmem.c
-> +++ b/drivers/video/fbdev/core/fbmem.c
-> @@ -1780,11 +1780,25 @@ int remove_conflicting_framebuffers(struct apertures_struct *a,
->  				    const char *name, bool primary)
->  {
->  	int ret;
-> +	bool do_free = false;
-> +
-> +	if (!a) {
-> +		a = alloc_apertures(1);
-> +		if (!a)
-> +			return -ENOMEM;
-> +
-> +		a->ranges[0].base = 0;
-> +		a->ranges[0].size = ~0;
-> +		do_free = true;
-> +	}
->  
->  	mutex_lock(&registration_lock);
->  	ret = do_remove_conflicting_framebuffers(a, name, primary);
->  	mutex_unlock(&registration_lock);
->  
-> +	if (do_free)
-> +		kfree(a);
-> +
->  	return ret;
->  }
->  EXPORT_SYMBOL(remove_conflicting_framebuffers);
-
-Please also update the kerneldoc for the varios drm wrappers and explain
-that passing NULL means to remove all fbdev drivers.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+T24gRnJpLCBOb3YgMjQsIDIwMTcgYXQgMDY6NTM6MjVQTSArMDEwMCwgTWljaGHFgiBNaXJvc8WC
+YXcgd3JvdGU6Cj4gVGhpcyBzZXJpZXMgY2xlYW5zIHVwIGR1cGxpY2F0ZWQgY29kZSBmb3IgcmVw
+bGFjaW5nIGZpcm13YXJlIEZCCj4gZHJpdmVyIHdpdGggcHJvcGVyIERSSSBkcml2ZXIgYW5kIGFk
+ZHMgaGFuZG92ZXIgc3VwcG9ydCB0bwo+IFRlZ3JhIGRyaXZlci4KPiAKPiBUaGUgbGFzdCBwYXRj
+aCBpcyBoZXJlIGJlY2F1c2UgaXQgdXNlcyBuZXcgc2VtYW50aWNzIG9mCj4gcmVtb3ZlX2NvbmZs
+aWN0aW5nX2ZyYW1lYnVmZmVycygpIGZyb20gdGhpcyBzZXJpZXMuIFRoaXMKPiBjYW4gYmUgY29u
+c2lkZXJlZCBpbmRlcGVuZGVudGx5LCB0aG91Z2guCgpFeGNlcHQgZm9yIHRoYXQgcGF0Y2hlcyBJ
+J3ZlIGNvbW1lbnRlZCBvbjoKCkFja2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVy
+QGZmd2xsLmNoPgoKU2luY2UgdGhpcyBpcyBmb3IgdGVncmEgYW5kIFRoaWVycnkgaGFzIGRybS1t
+aXNjIGNvbW1pdCByaWdodHMsIGl0J3MKcHJvYmFibHkgc2ltcGxlc3Qgd2hlbiBUaGllcnJ5IHB1
+c2hlcyB0aGlzIGFsbCB0byBkcm0tbWlzYyBvbmNlIGRyaXZlcgptYWludGFpbmVycyBoYWQgYSBj
+aGFuY2UgdG8gbG9vayBhdCBpdC4gQWxzbyBuZWVkcyBhbmQgYWNrIGZyb20gQmFydCBmb3IKdGhl
+IGZiZGV2IHNpZGVzLgotRGFuaWVsCgo+IAo+IC0tLQo+IAo+IE1pY2hhxYIgTWlyb3PFgmF3ICgx
+Myk6Cj4gICBmYmRldjogc2hvdyBmYmRldiBudW1iZXIgZm9yIGRlYnVnZ2luZwo+ICAgZmJkZXY6
+IGFkZCByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gICBkcm0vYW1kZ3B1
+OiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gICBk
+cm0vYm9jaHM6IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJz
+KCkKPiAgIGRybS9jaXJydXM6IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJh
+bWVidWZmZXJzKCkKPiAgIGRybS9tZ2FnMjAwOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3Rp
+bmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gICBkcm0vcmFkZW9uOiB1c2Ugc2ltcGxlciByZW1vdmVf
+Y29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gICBkcm0vdmlydGlvOiB1c2Ugc2ltcGxl
+ciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gICBzdGFnaW5nOiBzbTc1
+MGZiOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4g
+ICBmYmRldjogYWxsb3cgYXBlcnR1cmVzID09IE5VTEwgaW4gcmVtb3ZlX2NvbmZsaWN0aW5nX2Zy
+YW1lYnVmZmVycygpCj4gICBkcm0vdmM0OiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3Rpbmdf
+ZnJhbWVidWZmZXJzKE5VTEwpCj4gICBkcm0vc3VuNGk6IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25m
+bGljdGluZ19mcmFtZWJ1ZmZlcnMoTlVMTCkKPiAgIGRybS90ZWdyYToga2ljayBvdXQgc2ltcGxl
+ZmIKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Rydi5jICB8IDIzICst
+LS0tLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYm9jaHMvYm9jaHNfZHJ2LmMgICAg
+ICAgIHwgMTggKy0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2NpcnJ1cy9jaXJydXNf
+ZHJ2LmMgICAgICB8IDIzICstLS0tLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbWdh
+ZzIwMC9tZ2FnMjAwX2Rydi5jICAgIHwgMjEgKy0tLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9n
+cHUvZHJtL21nYWcyMDAvbWdhZzIwMF9tYWluLmMgICB8ICA5IC0tLS0tLS0KPiAgZHJpdmVycy9n
+cHUvZHJtL3JhZGVvbi9yYWRlb25fZHJ2LmMgICAgICB8IDIzICstLS0tLS0tLS0tLS0tLS0tLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMgICAgICAgIHwgMTggKy0tLS0tLS0t
+LS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgICAgICAgICAgICB8ICA0ICsr
+KysKPiAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICB8IDIwICstLS0t
+LS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2RybV9idXMuYyB8
+IDI0ICsrKy0tLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9zdGFnaW5nL3NtNzUwZmIvc203NTAu
+YyAgICAgICAgICB8IDIyICstLS0tLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL3ZpZGVvL2ZiZGV2
+L2NvcmUvZmJtZW0uYyAgICAgICAgIHwgNDAgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+LS0KPiAgaW5jbHVkZS9kcm0vZHJtX2ZiX2hlbHBlci5oICAgICAgICAgICAgICB8IDEyICsrKysr
+KysrKysKPiAgaW5jbHVkZS9saW51eC9mYi5oICAgICAgICAgICAgICAgICAgICAgICB8ICAyICsr
+Cj4gIDE0IGZpbGVzIGNoYW5nZWQsIDY3IGluc2VydGlvbnMoKyksIDE5MiBkZWxldGlvbnMoLSkK
+PiAKPiAtLSAKPiAyLjExLjAKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJ
+bnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
