@@ -1,77 +1,61 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 00/12] Enable Tegra root port features and apply SW
- fixups
-Date: Mon, 27 Nov 2017 23:57:48 +0530
-Message-ID: <19e2abfe-29ce-80e0-585a-3749e06cf740@nvidia.com>
-References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <912eb378-2b12-0474-8c33-34113d23476b@nvidia.com>
- <20171127180908.GB4123@red-moon>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 01/10] genirq: Export irq_set_msi_desc()
+Date: Tue, 28 Nov 2017 10:00:32 +0000
+Message-ID: <be79bf6f-b24a-6292-5eb1-3bcf97890421@arm.com>
+References: <1511538800-8275-1-git-send-email-mmaddireddy@nvidia.com>
+ <1511538800-8275-2-git-send-email-mmaddireddy@nvidia.com>
+ <alpine.DEB.2.20.1711250050520.2316@nanos>
+ <600a7b65-670e-b164-913c-99e18ae593d2@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171127180908.GB4123@red-moon>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <600a7b65-670e-b164-913c-99e18ae593d2-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-GB
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lorenzo,
+On 25/11/17 19:41, Manikanta Maddireddy wrote:
+> 
+> 
+> On 25-Nov-17 5:25 AM, Thomas Gleixner wrote:
+>> On Fri, 24 Nov 2017, Manikanta Maddireddy wrote:
+>>
+>> Please CC the proper mailing list for irq related changes.
+>>
+>>> PCI bus support MSI interrupts, allow PCI host driver to set MSI descriptor
+>>> data for an irq.
+>>
+>> This is not really an explanation why this export is needed.
+>>
+>> Thanks,
+>>
+>> 	tglx
+>>
+> Updated the commit log with why Tegra PCIe driver is using this function in V2.
+> Please review.
 
-Except "PCI: tegra: Move REFCLK pad settings out of phy_power_on()"
-all other patches in the series is new code.
+Well, to review it, I would like to be on Cc.
+
+My current position on this is that if you need to export this function,
+then you're using a deprecated API, and you should instead consider
+moving to the generic MSI model, which doesn't need any of this.
+
+I've done that a distant past, but never actually published the patch
+(not tested it):
+
+https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/kill-msi-controller&id=83b3602fcee7972b9d549ed729b56ec28de16081
+
+But without seeing the patches, I may be barking up the wrong tree...
 
 Thanks,
-Manikanta
 
-On 27-Nov-17 11:39 PM, Lorenzo Pieralisi wrote:
-> Hi Manikanta,
-> 
-> On Sun, Nov 26, 2017 at 01:29:26AM +0530, Manikanta Maddireddy wrote:
->> Hi Bjorn, Thierry,
->>
->> Could you please review this series of patches?
-> 
-> It is new code correct (ie there are not any fixes in the series) ?
-> I will mark it as code to review for the next kernel cycle on my side.
-> 
-> Thanks,
-> Lorenzo
-> 
->> On 30-Oct-17 7:27 PM, Manikanta Maddireddy wrote:
->>> These series of patches does the following things,
->>> - Deasserting pcie_xrst after programming root port to make sure that
->>>   register programming is reflected during LTSSM
->>> - Apply REFCLK pad settings to make sure P2P amplitude requirement is met
->>> - Enable Gen2 link speed
->>> - Advertise AER capability
->>> - Program UPHY electrical settings for meeting eye diagram requirements
->>> - Bunch of SW fixups explained in their respective commit log
->>>
->>> Testing done on Tegra124, 210 and 186:
->>> - PCIe link up, config read, BAR read and basic functionality of Ethernet
->>>   card
->>> - Link speed switch to Gen2 after link retrain
->>> - Link speed stays in Gen1 after retrain if end point is only Gen1 capable
->>> - Simulated AER errors and verified dmesg logs for them
->>> - Rest of the programming is verified by dumping the registers after PCIe
->>> link up
->>>
->>> Manikanta Maddireddy (12):
->>>   PCI: tegra: Start LTSSM after programming root port
->>>   PCI: tegra: Move REFCLK pad settings out of phy_power_on()
->>>   PCI: tegra: Retrain link for Gen2 speed
->>>   PCI: tegra: Advertise AER capability
->>>   PCI: tegra: Program UPHY electrical settings in Tegra210
->>>   PCI: tegra: Enable opportunistic update FC and ACK
->>>   PCI: tegra: Disable AFI dynamic clock gating
->>>   PCI: tegra: Wait for DLLP to finish before entering L1 or L2
->>>   PCI: tegra: Enable PCIe xclk clock clamping
->>>   PCI: tegra: Add SW fixup for RAW violations
->>>   PCI: tegra: Increase the deskew retry time
->>>   PCI: tegra: Update flow control threshold in Tegra210
->>>
->>>  drivers/pci/host/pci-tegra.c | 306 ++++++++++++++++++++++++++++++++++++++++---
->>>  1 file changed, 288 insertions(+), 18 deletions(-)
->>>
+	M.
+-- 
+Jazz is not dead. It just smells funny...
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
