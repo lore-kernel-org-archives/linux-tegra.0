@@ -1,72 +1,68 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 1/2] mfd: cros ec: spi: Don't send first message too
- soon
-Date: Tue, 28 Nov 2017 16:25:44 +0000
-Message-ID: <419f195f-8c38-5dd2-7742-3fff98d6795b@nvidia.com>
-References: <1510670608-19594-1-git-send-email-jonathanh@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: Re: [PATCH 01/10] genirq: Export irq_set_msi_desc()
+Date: Tue, 28 Nov 2017 22:49:51 +0530
+Message-ID: <7b877547-873f-dcb9-e110-5a4435736d23@nvidia.com>
+References: <1511538800-8275-1-git-send-email-mmaddireddy@nvidia.com>
+ <1511538800-8275-2-git-send-email-mmaddireddy@nvidia.com>
+ <alpine.DEB.2.20.1711250050520.2316@nanos>
+ <600a7b65-670e-b164-913c-99e18ae593d2@nvidia.com>
+ <be79bf6f-b24a-6292-5eb1-3bcf97890421@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1510670608-19594-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <be79bf6f-b24a-6292-5eb1-3bcf97890421@arm.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-pm-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, bhelgaas@google.com, rjw@rjwysocki.net, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lee,
 
-On 14/11/17 14:43, Jon Hunter wrote:
-> On the Tegra124 Nyan-Big chromebook the very first SPI message sent to
-> the EC is failing.
-> 
-> The Tegra SPI driver configures the SPI chip-selects to be active-high
-> by default (and always has for many years). The EC SPI requires an
-> active-low chip-select and so the Tegra chip-select is reconfigured to
-> be active-low when the EC SPI driver calls spi_setup(). The problem is
-> that if the first SPI message to the EC is sent too soon after
-> reconfiguring the SPI chip-select, it fails.
-> 
-> The EC SPI driver prevents back-to-back SPI messages being sent too
-> soon by keeping track of the time the last transfer was sent via the
-> variable 'last_transfer_ns'. To prevent the very first transfer being
-> sent too soon, initialise the 'last_transfer_ns' variable after calling
-> spi_setup() and before sending the first SPI message.
-> 
-> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> ---
-> Changes since V1:
-> - Added stable-tag and Brian's reviewed-by.
-> 
-> Looks like this issue has been around for several Linux releases now
-> and it just depends on timing if this issue is seen or not and so there
-> is no specific commit this fixes. However, would be good to include for
-> v4.15.
-> 
->  drivers/mfd/cros_ec_spi.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-> index c9714072e224..a14196e95e9b 100644
-> --- a/drivers/mfd/cros_ec_spi.c
-> +++ b/drivers/mfd/cros_ec_spi.c
-> @@ -667,6 +667,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
->  			   sizeof(struct ec_response_get_protocol_info);
->  	ec_dev->dout_size = sizeof(struct ec_host_request);
->  
-> +	ec_spi->last_transfer_ns = ktime_get_ns();
->  
->  	err = cros_ec_register(ec_dev);
->  	if (err) {
 
-Can you queue this as a fix for v4.15-rc1?
+On 28-Nov-17 3:30 PM, Marc Zyngier wrote:
+> On 25/11/17 19:41, Manikanta Maddireddy wrote:
+>>
+>>
+>> On 25-Nov-17 5:25 AM, Thomas Gleixner wrote:
+>>> On Fri, 24 Nov 2017, Manikanta Maddireddy wrote:
+>>>
+>>> Please CC the proper mailing list for irq related changes.
+>>>
+>>>> PCI bus support MSI interrupts, allow PCI host driver to set MSI descriptor
+>>>> data for an irq.
+>>>
+>>> This is not really an explanation why this export is needed.
+>>>
+>>> Thanks,
+>>>
+>>> 	tglx
+>>>
+>> Updated the commit log with why Tegra PCIe driver is using this function in V2.
+>> Please review.
+> 
+> Well, to review it, I would like to be on Cc.
+> 
+> My current position on this is that if you need to export this function,
+> then you're using a deprecated API, and you should instead consider
+> moving to the generic MSI model, which doesn't need any of this.
+> 
+> I've done that a distant past, but never actually published the patch
+> (not tested it):
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/kill-msi-controller&id=83b3602fcee7972b9d549ed729b56ec28de16081
+> 
+> But without seeing the patches, I may be barking up the wrong tree...
+> 
+> Thanks,
+> 
+> 	M.
+> 
+Hi Mark,
 
-Cheers
-Jon
+I will drop this change from this series and will take up generic MSI work in the next series of changes for pci-tegra driver.
+Even without this change, pci-tegra driver will work fine as a builtin module. So other changes can still be reviewed and
+can be considered as initial step for adding LKM support for pci-tegra.
 
--- 
-nvpublic
+Thanks,
+Manikanta
