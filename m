@@ -1,73 +1,51 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
-Date: Wed, 29 Nov 2017 10:12:00 +0000
-Message-ID: <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
-References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
- <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
- <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] mfd: cros ec: spi: Don't send first message too soon
+Date: Wed, 29 Nov 2017 11:07:25 +0000
+Message-ID: <20171129110725.cszh6o6s5n7cyn4s@dell>
+References: <1510607140-30582-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f940d9f1-aaec-cf25-24d2-956df63bbbd1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1510607140-30582-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Shawn Nematbakhsh <shawnn-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, 13 Nov 2017, Jon Hunter wrote:
 
-On 29/11/17 00:09, Dmitry Osipenko wrote:
-> On 29.11.2017 02:30, Dmitry Osipenko wrote:
->> On 23.10.2017 14:12, Jon Hunter wrote:
->>> Commit a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
->>> fixed the parent clock for APBDMA, but the consequence of this that
->>> after probing the APBDMA device, the APB Clock (or PCLK) is now
->>> disabled. Disabling the APB clock causes accesses to any other device
->>> on the APB to hang and prevent Tegra from booting.
->>>
->>> Currently, the APB clock is registered with the flag "CLK_IGNORE_UNUSED"
->>> to prevent the clock being disabled if unused on boot. However, even
->>> if it is used, it still needs to be always kept enabled and so update
->>> the flag for the APB clock to be "CLK_IS_CRITICAL".
->>>
->>> Fixes: a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
->>>
->>> Suggested-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  drivers/clk/tegra/clk-tegra-super-gen4.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
->>> index 4f6fd307cb70..10047107c1dc 100644
->>> --- a/drivers/clk/tegra/clk-tegra-super-gen4.c
->>> +++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
->>> @@ -166,7 +166,7 @@ static void __init tegra_sclk_init(void __iomem *clk_base,
->>>  				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
->>>  				   &sysrate_lock);
->>>  	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
->>> -				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
->>> +				CLK_IS_CRITICAL, clk_base + SYSTEM_CLK_RATE,
->>>  				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
->>>  	*dt_clk = clk;
->>>  }
->>>
->>
->> Unfortunately this patch somehow breaks Tegra20, getting a hang during boot. For
->> now I don't know what's the cause of the issue, may take a more detailed look
->> soon. If you have any suggestions, please tell.
->>
+> On the Tegra124 Nyan-Big chromebook the very first SPI message sent to
+> the EC is failing.
 > 
-> It looks like that with CLK_IS_CRITICAL flag, pclk is getting enabled before
-> clock rate is setup and in result it is enabled with some invalid rate config.
+> The Tegra SPI driver configures the SPI chip-selects to be active-high
+> by default (and always has for many years). The EC SPI requires an
+> active-low chip-select and so the Tegra chip-select is reconfigured to
+> be active-low when the EC SPI driver calls spi_setup(). The problem is
+> that if the first SPI message to the EC is sent too soon after
+> reconfiguring the SPI chip-select, it fails.
+> 
+> The EC SPI driver prevents back-to-back SPI messages being sent too
+> soon by keeping track of the time the last transfer was sent via the
+> variable 'last_transfer_ns'. To prevent the very first transfer being
+> sent too soon, initialise the 'last_transfer_ns' variable after calling
+> spi_setup() and before sending the first SPI message.
+> 
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Looks like this issue has been around for several Linux releases now
+> and it just depends on timing if this issue is seen or not and so there
+> is no specific commit this fixes. However, would be good to include for
+> v4.15.
+> 
+>  drivers/mfd/cros_ec_spi.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-What Tegra20 platform? I have not seen any issues with booting Tegra20
-trimslice with v4.15-rc1 or next-20171129. I am surprised this clock
-would not have been enabled by the bootloader and hence rate set correctly.
-
-Cheers
-Jon
+Applied, thanks.
 
 -- 
-nvpublic
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
