@@ -1,116 +1,73 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH V2 7/9] PCI: tegra: Add loadable kernel module support
-Date: Wed, 29 Nov 2017 14:01:47 +0200
-Message-ID: <e49cb27d-6803-2ca5-6ee6-2bb862968451@kapsi.fi>
-References: <1511638333-22951-1-git-send-email-mmaddireddy@nvidia.com>
- <1511638333-22951-8-git-send-email-mmaddireddy@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 10/10] gpu: host1x: Optionally block when acquiring
+ channel
+Date: Wed, 29 Nov 2017 15:18:02 +0300
+Message-ID: <07e28b40-dd2b-774f-2d07-3b5d6cf08c46@gmail.com>
+References: <20171105110118.15142-1-mperttunen@nvidia.com>
+ <20171105110118.15142-11-mperttunen@nvidia.com>
+ <9c5676eb-ba6f-c187-29e4-7b331bd3962f@gmail.com>
+ <38340901-7016-3444-5ace-64159b32f1c7@kapsi.fi>
+ <1b35ec93-167b-3436-0ff2-5e2e0886aea7@gmail.com>
+ <dcb8c4ef-9eb9-556f-cc96-651a50636afa@gmail.com>
+ <775a2536-b225-2d96-3954-7efab6bc5c3e@gmail.com>
+ <794b713e-e4f9-0b71-d9eb-168d002ab6a2@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1511638333-22951-8-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org
-Cc: vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <794b713e-e4f9-0b71-d9eb-168d002ab6a2@kapsi.fi>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <cyndis@kapsi.fi>, Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 25.11.2017 21:32, Manikanta Maddireddy wrote:
-> Implement remove callback function for Tegra PCIe driver to add
-> loadable kernel module support. Change PCI_TEGRA config to tristate to
-> allow pci-tegra driver to be build as a module.
->
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V2:
-> * no change in this patch
->
->  drivers/pci/host/Kconfig     |  2 +-
->  drivers/pci/host/pci-tegra.c | 31 ++++++++++++++++++++++++++++++-
->  2 files changed, 31 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-> index 38d12980db0f..6fd2a5937804 100644
-> --- a/drivers/pci/host/Kconfig
-> +++ b/drivers/pci/host/Kconfig
-> @@ -34,7 +34,7 @@ config PCI_FTPCI100
->  	default ARCH_GEMINI
->
->  config PCI_TEGRA
-> -	bool "NVIDIA Tegra PCIe controller"
-> +	tristate "NVIDIA Tegra PCIe controller"
->  	depends on ARCH_TEGRA
->  	help
->  	  Say Y here if you want support for the PCIe host controller found
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 7f7b8c9c1e84..bbc2807bcd4a 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -35,6 +35,7 @@
->  #include <linux/irqdomain.h>
->  #include <linux/kernel.h>
->  #include <linux/init.h>
-> +#include <linux/module.h>
->  #include <linux/msi.h>
->  #include <linux/of_address.h>
->  #include <linux/of_pci.h>
-> @@ -2720,6 +2721,12 @@ static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
->  	return -ENOMEM;
->  }
->
-> +static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
-> +{
-> +	debugfs_remove_recursive(pcie->debugfs);
-> +	pcie->debugfs = NULL;
-> +}
-> +
-
-I think it's unnecessary to have a helper function for this - just 
-inline it in the remove function.
-
->  static int tegra_pcie_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -2734,6 +2741,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->
->  	pcie = pci_host_bridge_priv(host);
-> +	platform_set_drvdata(pdev, pcie);
->
->  	pcie->soc = of_device_get_match_data(dev);
->  	INIT_LIST_HEAD(&pcie->buses);
-> @@ -2816,6 +2824,25 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->  	return err;
->  }
->
-> +static int tegra_pcie_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_pcie *pcie = platform_get_drvdata(pdev);
-> +	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-> +
-> +	if (IS_ENABLED(CONFIG_DEBUG_FS))
-> +		tegra_pcie_debugfs_exit(pcie);
-> +	pci_stop_root_bus(host->bus);
-> +	pci_remove_root_bus(host->bus);
-> +	if (IS_ENABLED(CONFIG_PCI_MSI))
-> +		tegra_pcie_disable_msi(pcie);
-> +	tegra_pcie_disable_ports(pcie);
-> +	tegra_pcie_free_resources(pcie);
-> +	tegra_pcie_disable_controller(pcie);
-> +	tegra_pcie_put_resources(pcie);
-> +
-> +	return 0;
-> +}
-> +
->  static struct platform_driver tegra_pcie_driver = {
->  	.driver = {
->  		.name = "tegra-pcie",
-> @@ -2823,5 +2850,7 @@ static struct platform_driver tegra_pcie_driver = {
->  		.suppress_bind_attrs = true,
->  	},
->  	.probe = tegra_pcie_probe,
-> +	.remove = tegra_pcie_remove,
->  };
-> -builtin_platform_driver(tegra_pcie_driver);
-> +module_platform_driver(tegra_pcie_driver);
-> +MODULE_LICENSE("GPL");
->
+On 29.11.2017 12:10, Mikko Perttunen wrote:
+> On 12.11.2017 13:23, Dmitry Osipenko wrote:
+>> On 11.11.2017 00:15, Dmitry Osipenko wrote:
+>>> On 07.11.2017 18:29, Dmitry Osipenko wrote:
+>>>> On 07.11.2017 16:11, Mikko Perttunen wrote:
+>>>>> On 05.11.2017 19:14, Dmitry Osipenko wrote:
+>>>>>> On 05.11.2017 14:01, Mikko Perttunen wrote:
+>>>>>>> Add an option to host1x_channel_request to interruptibly wait for a
+>>>>>>> free channel. This allows IOCTLs that acquire a channel to block
+>>>>>>> the userspace.
+>>>>>>>
+>>>>>>
+>>>>>> Wouldn't it be more optimal to request channel and block after job's pining,
+>>>>>> when all patching and checks are completed? Note that right now we have
+>>>>>> locking
+>>>>>> around submission in DRM, which I suppose should go away by making locking
+>>>>>> fine
+>>>>>> grained.
+>>>>>
+>>>>> That would be possible, but I don't think it should matter much since
+>>>>> contention
+>>>>> here should not be the common case.
+>>>>>
+>>>>>>
+>>>>>> Or maybe it would be more optimal to just iterate over channels, like I
+>>>>>> suggested before [0]?
+>>>>>
+>>>>> Somehow I hadn't noticed this before, but this would break the invariant of
+>>>>> having one client/class per channel.
+>>>>>
+>>>>
+>>>> Yes, currently there is a weak relation of channel and clients device, but
+>>>> seems
+>>>> channels device is only used for printing dev_* messages and device could be
+>>>> borrowed from the channels job. I don't see any real point of hardwiring
+>>>> channel
+>>>> to a specific device or client.
+>>>
+>>> Although, it won't work with syncpoint assignment to channel.
+>>
+>> On the other hand.. it should work if one syncpoint could be assigned to
+>> multiple channels, couldn't it?
+> 
+> A syncpoint can only be mapped to a single channel, so unfortunately this won't
+> work.
+Okay, in DRM we are requesting syncpoint on channels 'open' and syncpoint
+assignment happens on jobs submission. So firstly submitted job will assign
+syncpoint to the first channel and second job would re-assign syncpoint to a
+second channel while first job is still in-progress, how is it going to work?
