@@ -1,54 +1,38 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V2 5/9] PCI: Export pci_flags
-Date: Thu, 30 Nov 2017 10:24:37 +0000
-Message-ID: <20171130102436.GB10349@red-moon>
-References: <1511638333-22951-1-git-send-email-mmaddireddy@nvidia.com>
- <1511638333-22951-6-git-send-email-mmaddireddy@nvidia.com>
- <20171129170133.GC6469@bhelgaas-glaptop.roam.corp.google.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+Date: Thu, 30 Nov 2017 11:31:12 +0000
+Message-ID: <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+ <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
+ <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171129170133.GC6469-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
+In-Reply-To: <a96d03da-c2a3-1e44-f227-02577f972df6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 29, 2017 at 11:01:33AM -0600, Bjorn Helgaas wrote:
-> [+cc Lorenzo]
-> 
-> On Sun, Nov 26, 2017 at 01:02:09AM +0530, Manikanta Maddireddy wrote:
-> > pci_flags variable is used in inline functions in 'pci.h', Tegra PCIe
-> > driver use one of these functions pci_add_flags() and includes 'pci.h'.
-> > Export pci_flags to allow Tegra PCIe host controller driver to be
-> > compiled as loadable kernel module.
-> 
-> Here's the usage in tegra_pcie_probe():
-> 
->   pci_add_flags(PCI_REASSIGN_ALL_RSRC | PCI_REASSIGN_ALL_BUS);
-> 
-> We've probably had this discussion before, but  I don't know why Tegra
-> needs PCI_REASSIGN_ALL_RSRC and PCI_REASSIGN_ALL_BUS.
-> 
-> I would prefer to drop this usage of pci_add_flags() if possible.  It
-> seems to be just an arm/powerpc thing and I'm not convinced it's
-> really necessary.
 
-It is hard to say if it is really necessary (because it depends
-on firmware configuration - ie pci_scan_bridge()), that's the
-problem.
+On 29/11/17 23:13, Dmitry Osipenko wrote:
+> On 30.11.2017 01:55, Jon Hunter wrote:
 
-I suspect it can trigger regressions if we do not set it (since
-it affects what pcibios_assign_all_busses() returns on eg arm/arm64).
+...
 
-There are two things we can do:
+> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
+> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
+> caused trouble on Tegra114/124.
 
-1) Set it unconditionally in arch code (in a hook to be defined)
-2) We remove it on a per-host bridge basis and ask for testing
+Please share the exact change you would like me to test and I will.
 
-I agree this may have trickled from host bridge to host bridge through
-copy'n'paste and it is not based on any firmware assumtpion but I can't
-say if it is really needed.
+Jon
 
-Lorenzo
+-- 
+nvpublic
