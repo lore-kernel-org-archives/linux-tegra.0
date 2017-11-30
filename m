@@ -1,38 +1,43 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
-Date: Thu, 30 Nov 2017 11:31:12 +0000
-Message-ID: <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
-References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
- <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
- <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
- <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
- <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
- <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
- <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH 04/10] ARM: tegra: EXPORT tegra_cpuidle_pcie_irqs_in_use()
+Date: Thu, 30 Nov 2017 12:41:49 +0000
+Message-ID: <20171130124149.GB12096@red-moon>
+References: <1511538800-8275-1-git-send-email-mmaddireddy@nvidia.com>
+ <1511538800-8275-5-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a96d03da-c2a3-1e44-f227-02577f972df6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1511538800-8275-5-git-send-email-mmaddireddy@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, bhelgaas@google.com, rjw@rjwysocki.net, tglx@linutronix.de, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Nov 24, 2017 at 09:23:14PM +0530, Manikanta Maddireddy wrote:
+> EXPORT tegra_cpuidle_pcie_irqs_in_use() to allow Tegra PCIe driver to be
+> compiled as loadable kernel module.
+> 
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> ---
+>  arch/arm/mach-tegra/cpuidle.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-On 29/11/17 23:13, Dmitry Osipenko wrote:
-> On 30.11.2017 01:55, Jon Hunter wrote:
+You should find a way to remove this call and the corresponding
+drivers->arch dependency, not to export it by spreading it even
+further.
 
-...
+Lorenzo
 
-> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
-> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
-> caused trouble on Tegra114/124.
-
-Please share the exact change you would like me to test and I will.
-
-Jon
-
--- 
-nvpublic
+> diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle.c
+> index 316563141add..7d7e6d3ce32d 100644
+> --- a/arch/arm/mach-tegra/cpuidle.c
+> +++ b/arch/arm/mach-tegra/cpuidle.c
+> @@ -57,3 +57,4 @@ void tegra_cpuidle_pcie_irqs_in_use(void)
+>  		break;
+>  	}
+>  }
+> +EXPORT_SYMBOL(tegra_cpuidle_pcie_irqs_in_use);
+> -- 
+> 2.1.4
+> 
