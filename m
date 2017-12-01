@@ -1,88 +1,195 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
-Date: Fri, 1 Dec 2017 10:48:18 +0200
-Message-ID: <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
-References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
- <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
- <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
- <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
- <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
- <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
- <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
- <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
- <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
- <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH V2 8/9] PCI: tegra: Broadcast PME_turn_Off message before
+ link goes to L2
+Date: Fri, 1 Dec 2017 10:51:33 +0200
+Message-ID: <66ff860b-d97f-95aa-99d3-b7e9b0a4c7b1@kapsi.fi>
+References: <1511638333-22951-1-git-send-email-mmaddireddy@nvidia.com>
+ <1511638333-22951-9-git-send-email-mmaddireddy@nvidia.com>
+ <dd3cb6a5-76ec-98c2-4132-54678c2d74ce@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <236aa250-3b9b-94de-0978-0fb8546d504d-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <dd3cb6a5-76ec-98c2-4132-54678c2d74ce@kapsi.fi>
+Sender: linux-pm-owner@vger.kernel.org
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, bhelgaas@google.com, rjw@rjwysocki.net, tglx@linutronix.de
+Cc: vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 30, 2017 at 04:39:22PM +0000, Jon Hunter wrote:
-> 
-> On 30/11/17 13:24, Dmitry Osipenko wrote:
-> > On 30.11.2017 14:31, Jon Hunter wrote:
-> >>
-> >> On 29/11/17 23:13, Dmitry Osipenko wrote:
-> >>> On 30.11.2017 01:55, Jon Hunter wrote:
-> >>
-> >> ...
-> >>
-> >>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
-> >>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
-> >>> caused trouble on Tegra114/124.
-> >>
-> >> Please share the exact change you would like me to test and I will.
-> > 
-> > Please try this:
-> 
-> I tried the patch, but this does not work for Tegra124 it still hangs.
-> Tracing the clk calls the last thing I see is ...
-> 
-> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
-> [    2.694403] clk_prepare: hclk_div
-> [    2.695929] clk_prepare_complete: hclk_div
-> [    2.700027] clk_prepare: hclk
-> [    2.702947] clk_prepare_complete: hclk
-> [    2.706673] clk_prepare: pclk_div
-> [    2.709986] clk_prepare_complete: pclk_div
-> [    2.714039] clk_prepare: pclk
-> [    2.716985] clk_prepare_complete: pclk
-> [    2.720739] clk_prepare: apbdma
-> [    2.723833] clk_prepare_complete: apbdma
-> [    2.727736] clk_enable: hclk_div
-> [    2.730940] clk_enable_complete: hclk_div
-> [    2.734926] clk_enable: hclk
-> [    2.737788] clk_enable_complete: hclk
-> [    2.741426] clk_enable: pclk_div
-> [    2.744633] clk_enable_complete: pclk_div
-> [    2.748619] clk_enable: pclk
-> [    2.751481] clk_enable_complete: pclk
-> [    2.755120] clk_enable: apbdma
-> [    2.758153] clk_enable_complete: apbdma
-> [    2.762390] clk_disable: apbdma
-> [    2.765088] clk_disable_complete: apbdma
-> [    2.768986] clk
-> 
-> So I believe this change is correct and that Peter's analysis on IRC
-> seems correct, that this change has exposed another issue with the clock
-> driver.
-> 
-> Peter, can you summarise which other clocks should be made critical?
+On 29.11.2017 14:18, Mikko Perttunen wrote:
+> On 25.11.2017 21:32, Manikanta Maddireddy wrote:
+>> Per PCIe r3.0, sec 5.3.3.2.1, PCIe root port shoould broadcast
+>> PME_turn_Off
+>> message before PCIe link goes to L2. PME_turn_Off broadcast mechanism is
+>> implemented in AFI module. Each Tegra PCIe root port has its own
+>> PME_turn_Off and PME_TO_Ack bitmap in AFI_PME register, program this
+>> register to broadcast PME_turn_Off message.
+>>
+>> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+>> ---
+>> V2:
+>> * no change in this patch
+>>
+>>  drivers/pci/host/pci-tegra.c | 76
+>> ++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 76 insertions(+)
+>>
+>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+>> index bbc2807bcd4a..b380958a3deb 100644
+>> --- a/drivers/pci/host/pci-tegra.c
+>> +++ b/drivers/pci/host/pci-tegra.c
+>> @@ -155,6 +155,8 @@
+>>  #define  AFI_INTR_EN_FPCI_TIMEOUT    (1 << 7)
+>>  #define  AFI_INTR_EN_PRSNT_SENSE    (1 << 8)
+>>
+>> +#define AFI_PCIE_PME        0xf0
+>> +
+>>  #define AFI_PCIE_CONFIG                    0x0f8
+>>  #define  AFI_PCIE_CONFIG_PCIE_DISABLE(x)        (1 << ((x) + 1))
+>>  #define  AFI_PCIE_CONFIG_PCIE_DISABLE_ALL        0xe
+>> @@ -315,6 +317,7 @@
+>>  #define PADS_REFCLK_CFG_DRVI_SHIFT        12 /* 15:12 */
+>>
+>>  #define LINK_RETRAIN_TIMEOUT 100000
+>> +#define PME_ACK_TIMEOUT 10000
+>>
+>>  struct tegra_msi {
+>>      struct msi_controller chip;
+>> @@ -1503,6 +1506,76 @@ static int tegra_pcie_put_resources(struct
+>> tegra_pcie *pcie)
+>>      return 0;
+>>  }
+>>
+>> +static inline u32 get_pme_turnoff_bitmap(struct tegra_pcie_port *port)
+>> +{
+>> +    struct device *dev = port->pcie->dev;
+>> +    struct device_node *np = dev->of_node;
+>> +    int ret = 0;
+>> +
+>> +    switch (port->index) {
+>> +    case 0:
+>> +        ret = 0;
+>> +    case 1:
+>> +        ret = 8;
+>> +    case 2:
+>> +        if (of_device_is_compatible(np, "nvidia,tegra30-pcie"))
+>> +            ret = 16;
+>> +        else
+>> +            ret = 12;
+>> +    }
+>> +    return ret;
+>> +}
+>> +
+>> +static inline u32 get_pme_ack_bitmap(struct tegra_pcie_port *port)
+>> +{
+>> +    struct device *dev = port->pcie->dev;
+>> +    struct device_node *np = dev->of_node;
+>> +    int ret = 0;
+>> +
+>> +    switch (port->index) {
+>> +    case 0:
+>> +        ret = 5;
+>> +    case 1:
+>> +        ret = 10;
+>> +    case 2:
+>> +        if (of_device_is_compatible(np, "nvidia,tegra30-pcie"))
+>> +            ret = 18;
+>> +        else
+>> +            ret = 14;
+>> +    }
+>> +    return ret;
+>> +}
+>
+> From what I can tell, the port 2 bit is 12/14 on everything after
+> Tegra30 as well, so I don't think this actually works?
 
-The following clocks should be critical:
+Looks like I misread this and it is correct, sorry :)
+Still the below applies.
 
-pclk
-hclk
-sclk
-emc
-mc
-pll_p
+Thanks,
+Mikko
 
-I think that's it.
-
-Peter.
+>
+> I think simpler would be to add a SoC data fields 'u8
+> pme_turnoff_bit[3]' and 'u8 pme_ack_bit[3]' and then set that
+> to '.pme_turnoff_bit = { 0, 8, 16 }' and so on.
+>
+>> +
+>> +static void tegra_pcie_pme_turnoff(struct tegra_pcie_port *port)
+>> +{
+>> +    struct tegra_pcie *pcie = port->pcie;
+>> +    ktime_t deadline;
+>> +    unsigned int data;
+>> +
+>> +    data = afi_readl(pcie, AFI_PCIE_PME);
+>> +    data |= (0x1 << get_pme_turnoff_bitmap(port));
+>> +    afi_writel(pcie, data, AFI_PCIE_PME);
+>> +
+>> +    deadline = ktime_add_us(ktime_get(), PME_ACK_TIMEOUT);
+>> +    do {
+>> +        data = afi_readl(pcie, AFI_PCIE_PME);
+>> +        data &= (0x1 << get_pme_ack_bitmap(port));
+>> +        udelay(1);
+>> +        if (ktime_after(ktime_get(), deadline))
+>> +            break;
+>> +    } while (!data);
+>
+> Since this is a normal MMIO read, we could replace the whole loop with a
+> call to readl_poll_timeout (or readl_relaxed_poll_timeout, or if we
+> really must delay and not sleep, readl_poll_timeout_atomic etc.) from
+> iopoll.h
+>
+>   int err;
+>   u32 val;
+>
+>   err = readl_poll_timeout(pcie->afi + AFI_PCIE_PME, val,
+>                            val & (0x1 << pcie->soc->pme_ack_bit[port]),
+>                            1, PME_ACK_TIMEOUT);
+>   if (err)
+>     ...
+>
+>> +
+>> +    if (data)
+>> +        dev_err(pcie->dev, "PME Ack is not receieved on port: %d\n",
+>> +            port->index);
+>> +
+>
+> Typo here, s/receieved/received/
+>
+> Cheers,
+> Mikko
+>
+>> +    usleep_range(10000, 11000);
+>> +
+>> +    data = afi_readl(pcie, AFI_PCIE_PME);
+>> +    data &= ~(0x1 << get_pme_turnoff_bitmap(port));
+>> +    afi_writel(pcie, data, AFI_PCIE_PME);
+>> +}
+>> +
+>>  static int tegra_msi_alloc(struct tegra_msi *chip)
+>>  {
+>>      int msi;
+>> @@ -2828,6 +2901,7 @@ static int tegra_pcie_remove(struct
+>> platform_device *pdev)
+>>  {
+>>      struct tegra_pcie *pcie = platform_get_drvdata(pdev);
+>>      struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+>> +    struct tegra_pcie_port *port, *tmp;
+>>
+>>      if (IS_ENABLED(CONFIG_DEBUG_FS))
+>>          tegra_pcie_debugfs_exit(pcie);
+>> @@ -2835,6 +2909,8 @@ static int tegra_pcie_remove(struct
+>> platform_device *pdev)
+>>      pci_remove_root_bus(host->bus);
+>>      if (IS_ENABLED(CONFIG_PCI_MSI))
+>>          tegra_pcie_disable_msi(pcie);
+>> +    list_for_each_entry_safe(port, tmp, &pcie->ports, list)
+>> +        tegra_pcie_pme_turnoff(port);
+>>      tegra_pcie_disable_ports(pcie);
+>>      tegra_pcie_free_resources(pcie);
+>>      tegra_pcie_disable_controller(pcie);
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
