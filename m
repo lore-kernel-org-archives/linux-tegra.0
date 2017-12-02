@@ -1,32 +1,92 @@
-From: Daniel Axtens <dja-Yfaxwxk/+vWsTnJN9+BGXg@public.gmane.org>
-Subject: [PATCH] media: tegra-cec: add MODULE_LICENSE()
-Date: Sat,  2 Dec 2017 16:59:18 +1100
-Message-ID: <20171202055918.15989-1-dja@axtens.net>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: trivial-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Daniel Axtens <dja-Yfaxwxk/+vWsTnJN9+BGXg@public.gmane.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+Date: Sat, 2 Dec 2017 15:47:32 +0300
+Message-ID: <803890bc-e3fe-134a-2127-3363187d04f2@gmail.com>
+References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+ <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
+ <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+ <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+ <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
+ <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+ <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
+Content-Language: en-US
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This fixes the following warning in an allmodconfig build:
-WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/tegra-cec/tegra_cec.o
+On 01.12.2017 11:48, Peter De Schrijver wrote:
+> On Thu, Nov 30, 2017 at 04:39:22PM +0000, Jon Hunter wrote:
+>>
+>> On 30/11/17 13:24, Dmitry Osipenko wrote:
+>>> On 30.11.2017 14:31, Jon Hunter wrote:
+>>>>
+>>>> On 29/11/17 23:13, Dmitry Osipenko wrote:
+>>>>> On 30.11.2017 01:55, Jon Hunter wrote:
+>>>>
+>>>> ...
+>>>>
+>>>>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
+>>>>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
+>>>>> caused trouble on Tegra114/124.
+>>>>
+>>>> Please share the exact change you would like me to test and I will.
+>>>
+>>> Please try this:
+>>
+>> I tried the patch, but this does not work for Tegra124 it still hangs.
+>> Tracing the clk calls the last thing I see is ...
+>>
+>> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
+>> [    2.694403] clk_prepare: hclk_div
+>> [    2.695929] clk_prepare_complete: hclk_div
+>> [    2.700027] clk_prepare: hclk
+>> [    2.702947] clk_prepare_complete: hclk
+>> [    2.706673] clk_prepare: pclk_div
+>> [    2.709986] clk_prepare_complete: pclk_div
+>> [    2.714039] clk_prepare: pclk
+>> [    2.716985] clk_prepare_complete: pclk
+>> [    2.720739] clk_prepare: apbdma
+>> [    2.723833] clk_prepare_complete: apbdma
+>> [    2.727736] clk_enable: hclk_div
+>> [    2.730940] clk_enable_complete: hclk_div
+>> [    2.734926] clk_enable: hclk
+>> [    2.737788] clk_enable_complete: hclk
+>> [    2.741426] clk_enable: pclk_div
+>> [    2.744633] clk_enable_complete: pclk_div
+>> [    2.748619] clk_enable: pclk
+>> [    2.751481] clk_enable_complete: pclk
+>> [    2.755120] clk_enable: apbdma
+>> [    2.758153] clk_enable_complete: apbdma
+>> [    2.762390] clk_disable: apbdma
+>> [    2.765088] clk_disable_complete: apbdma
+>> [    2.768986] clk
+>>
+>> So I believe this change is correct and that Peter's analysis on IRC
+>> seems correct, that this change has exposed another issue with the clock
+>> driver.
+>>
+>> Peter, can you summarise which other clocks should be made critical?
+> 
+> The following clocks should be critical:
+> 
+> pclk
+> hclk
+> sclk
+> emc
+> mc
+> pll_p
+> 
+> I think that's it.
 
-The license matches the header.
-
-Signed-off-by: Daniel Axtens <dja-Yfaxwxk/+vWsTnJN9+BGXg@public.gmane.org>
----
- drivers/media/platform/tegra-cec/tegra_cec.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/media/platform/tegra-cec/tegra_cec.c b/drivers/media/platform/tegra-cec/tegra_cec.c
-index 807c94c70049..680884a69f9f 100644
---- a/drivers/media/platform/tegra-cec/tegra_cec.c
-+++ b/drivers/media/platform/tegra-cec/tegra_cec.c
-@@ -493,3 +493,5 @@ static struct platform_driver tegra_cec_driver = {
- };
- 
- module_platform_driver(tegra_cec_driver);
-+
-+MODULE_LICENSE("GPL v2");
--- 
-2.11.0
+Could you please elaborate why pll_p should be critical? Is it applicable to all
+Tegra generations?
