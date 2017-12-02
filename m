@@ -1,63 +1,176 @@
 From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v1 0/2] PCI/ASPM: Refine L1 PM Substates support
-Date: Sat, 02 Dec 2017 15:45:38 -0600
-Message-ID: <20171202211833.23146.5744.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Subject: [PATCH v1 1/2] PCI/ASPM: Calculate LTR_L1.2_THRESHOLD from device
+ characteristics
+Date: Sat, 02 Dec 2017 15:45:46 -0600
+Message-ID: <20171202214546.23146.20327.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <20171202211833.23146.5744.stgit@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171202211833.23146.5744.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-pci@vger.kernel.org
 Cc: Kenji Chen <kenji.chen@intel.com>, Thierry Reding <treding@nvidia.com>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, David Daney <david.daney@cavium.com>, Krishna Kishore <kthota@nvidia.com>, linux-kernel@vger.kernel.org, Vidya Sagar <vidyas@nvidia.com>, Julia Lawall <Julia.Lawall@lip6.fr>, linux-tegra@vger.kernel.org, Patrick Georgi <pgeorgi@chromium.org>, Rajat Jain <rajatja@google.com>, Yinghai Lu <yinghai@kernel.org>, Stefan Reinauer <stefan.reinauer@coreboot.org>, Duncan Laurie <dlaurie@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The PCIe active link power state is L0.  ASPM defines two low-power
-states: L0s and L1.  The L1 PM Substates feature defines two
-additional low-power states: L1.1 and L2.2.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-The L1.2 state may have substantial entry/exit latency.  Downstream
-devices can use the Latency Tolerance Reporting (LTR) feature to
-report how much latency they can tolerate.  The L1 PM Substates
-capability includes a programmable L1.2 threshold register.  If the
-downstream devices can tolerate the latency indicated by the
-threshold, L1.2 may be used.
+Per PCIe r3.1, sec 5.5.1, LTR_L1.2_THRESHOLD determines whether we enter
+the L1.2 Link state: if L1.2 is enabled and downstream devices have
+reported that they can tolerate latency of at least LTR_L1.2_THRESHOLD, we
+must enter L1.2 when CLKREQ# is de-asserted.
 
-If LTR is not enabled, the L1.2 threshold is ignored and L1.2 can be
-used whenever it is enabled and CLKREQ# is de-asserted.  Linux
-currently never enables LTR, but firmware may have done so.
+The implication is that LTR_L1.2_THRESHOLD is the time required to
+transition the Link from L0 to L1.2 and back to L0, and per sec 5.5.3.3.1,
+Figures 5-16 and 5-17, it appears that the absolute minimum time for those
+transitions would be T(POWER_OFF) + T(L1.2) + T(POWER_ON) + T(COMMONMODE).
 
-The current L1 PM substates support in Linux sets the L1.2 threshold
-to a fixed value (163.84us) copied from coreboot [1].  I don't know
-where that value came from, and it is incorrect for some platforms,
-e.g., Tegra [2].
+Therefore, compute LTR_L1.2_THRESHOLD as:
 
-These patches change that so we calculate the L1.2 threshold based on
-values reported by the hardware, and we enable LTR whenever possible.
+    2us T(POWER_OFF)
+  + 4us T(L1.2)
+  + T(POWER_ON)
+  + T(COMMONMODE)
+  = LTR_L1.2_THRESHOLD
 
-This is all just my understanding from reading the spec.  I'd be glad
-to be corrected if I'm going wrong.
+Previously we set LTR_L1.2_THRESHOLD to a fixed value of 163840ns
+(163.84us):
 
-I'm particularly puzzled about the coreboot code in
-pciexp_L1_substate_commit() that sets LTR_L1.2_THRESHOLD:
+  #define LTR_L1_2_THRESHOLD_BITS     ((1 << 21) | (1 << 23) | (1 << 30))
+  ((1 << 21) | (1 << 23) | (1 << 30)) = 0x40a00000
+  LTR_L1.2_THRESHOLD_Value = (0x40a00000 & 0x03ff0000) >> 16 = 0xa0 = 160
+  LTR_L1.2_THRESHOLD_Scale = (0x40a00000 & 0xe0000000) >> 29 = 0x2 (* 1024ns)
+  LTR_L1.2_THRESHOLD = 160 * 1024ns = 163840ns
 
-+	pcie_update_cfg(root, root_cap + 0x08, ~0xe3ff0000,
-+		(1 << 21) | (1 << 23) | (1 << 30));
+Obviously this doesn't account for the circuit characteristics of different
+implementations.
 
-This is writing the L1 PM Substates Control 1 register, but the shifts
-don't match up with any of the fields in the register, so this is an
-awfully funny way to write the threshold.
+Note that while firmware may enable LTR, Linux itself currently does not
+enable LTR.  When L1.2 is enabled but LTR is not, LTR_L1.2_THRESHOLD is
+ignored and we always enter L1.2 when it is enabled and CLKREQ# is
+de-asserted.  So this patch should not have any effect unless firmware
+enables LTR.
 
-[1] https://mail.coreboot.org/pipermail/coreboot-gerrit/2015-March/021134.html
-[2] https://lkml.kernel.org/r/1510492674-12786-1-git-send-email-vidyas@nvidia.com
-
+Fixes: f1f0366dd6be ("PCI/ASPM: Calculate and save the L1.2 timing parameters")
+Link: https://www.coreboot.org/pipermail/coreboot-gerrit/2015-March/021134.html
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Kenji Chen <kenji.chen@intel.com>
+Cc: Patrick Georgi <pgeorgi@google.com>
+Cc: Rajat Jain <rajatja@google.com>
 ---
-
-Bjorn Helgaas (2):
-      PCI/ASPM: Calculate LTR_L1.2_THRESHOLD from device characteristics
-      PCI/ASPM: Enable Latency Tolerance Reporting when supported
-
-
  drivers/pci/pcie/aspm.c |   71 +++++++++++++++++++++++++++++++----------------
- drivers/pci/probe.c     |   33 ++++++++++++++++++++++
- include/linux/pci.h     |    2 +
- 3 files changed, 82 insertions(+), 24 deletions(-)
+ 1 file changed, 47 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index 9783e10da3a9..3b9b4d50cd98 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -43,18 +43,6 @@
+ #define ASPM_STATE_ALL		(ASPM_STATE_L0S | ASPM_STATE_L1 |	\
+ 				 ASPM_STATE_L1SS)
+ 
+-/*
+- * When L1 substates are enabled, the LTR L1.2 threshold is a timing parameter
+- * that decides whether L1.1 or L1.2 is entered (Refer PCIe spec for details).
+- * Not sure is there is a way to "calculate" this on the fly, but maybe we
+- * could turn it into a parameter in future.  This value has been taken from
+- * the following files from Intel's coreboot (which is the only code I found
+- * to have used this):
+- * https://www.coreboot.org/pipermail/coreboot-gerrit/2015-March/021134.html
+- * https://review.coreboot.org/#/c/8832/
+- */
+-#define LTR_L1_2_THRESHOLD_BITS	((1 << 21) | (1 << 23) | (1 << 30))
+-
+ struct aspm_latency {
+ 	u32 l0s;			/* L0s latency (nsec) */
+ 	u32 l1;				/* L1 latency (nsec) */
+@@ -333,6 +321,32 @@ static u32 calc_l1ss_pwron(struct pci_dev *pdev, u32 scale, u32 val)
+ 	return 0;
+ }
+ 
++static void encode_l12_threshold(u32 threshold_us, u32 *scale, u32 *value)
++{
++	u64 threshold_ns = threshold_us * 1000;
++
++	/* See PCIe r3.1, sec 7.33.3 and sec 6.18 */
++	if (threshold_ns < 32) {
++		*scale = 0;
++		*value = threshold_ns;
++	} else if (threshold_ns < 1024) {
++		*scale = 1;
++		*value = threshold_ns >> 5;
++	} else if (threshold_ns < 32768) {
++		*scale = 2;
++		*value = threshold_ns >> 10;
++	} else if (threshold_ns < 1048576) {
++		*scale = 3;
++		*value = threshold_ns >> 15;
++	} else if (threshold_ns < 33554432) {
++		*scale = 4;
++		*value = threshold_ns >> 20;
++	} else {
++		*scale = 5;
++		*value = threshold_ns >> 25;
++	}
++}
++
+ struct aspm_register_info {
+ 	u32 support:2;
+ 	u32 enabled:2;
+@@ -443,6 +457,7 @@ static void aspm_calc_l1ss_info(struct pcie_link_state *link,
+ 				struct aspm_register_info *dwreg)
+ {
+ 	u32 val1, val2, scale1, scale2;
++	u32 t_common_mode, t_power_on, l1_2_threshold, scale, value;
+ 
+ 	link->l1ss.up_cap_ptr = upreg->l1ss_cap_ptr;
+ 	link->l1ss.dw_cap_ptr = dwreg->l1ss_cap_ptr;
+@@ -454,16 +469,7 @@ static void aspm_calc_l1ss_info(struct pcie_link_state *link,
+ 	/* Choose the greater of the two Port Common_Mode_Restore_Times */
+ 	val1 = (upreg->l1ss_cap & PCI_L1SS_CAP_CM_RESTORE_TIME) >> 8;
+ 	val2 = (dwreg->l1ss_cap & PCI_L1SS_CAP_CM_RESTORE_TIME) >> 8;
+-	if (val1 > val2)
+-		link->l1ss.ctl1 |= val1 << 8;
+-	else
+-		link->l1ss.ctl1 |= val2 << 8;
+-
+-	/*
+-	 * We currently use LTR L1.2 threshold to be fixed constant picked from
+-	 * Intel's coreboot.
+-	 */
+-	link->l1ss.ctl1 |= LTR_L1_2_THRESHOLD_BITS;
++	t_common_mode = max(val1, val2);
+ 
+ 	/* Choose the greater of the two Port T_POWER_ON times */
+ 	val1   = (upreg->l1ss_cap & PCI_L1SS_CAP_P_PWR_ON_VALUE) >> 19;
+@@ -472,10 +478,27 @@ static void aspm_calc_l1ss_info(struct pcie_link_state *link,
+ 	scale2 = (dwreg->l1ss_cap & PCI_L1SS_CAP_P_PWR_ON_SCALE) >> 16;
+ 
+ 	if (calc_l1ss_pwron(link->pdev, scale1, val1) >
+-	    calc_l1ss_pwron(link->downstream, scale2, val2))
++	    calc_l1ss_pwron(link->downstream, scale2, val2)) {
+ 		link->l1ss.ctl2 |= scale1 | (val1 << 3);
+-	else
++		t_power_on = calc_l1ss_pwron(link->pdev, scale1, val1);
++	} else {
+ 		link->l1ss.ctl2 |= scale2 | (val2 << 3);
++		t_power_on = calc_l1ss_pwron(link->downstream, scale2, val2);
++	}
++
++	/*
++	 * Set LTR_L1.2_THRESHOLD to the time required to transition the
++	 * Link from L0 to L1.2 and back to L0 so we enter L1.2 only if
++	 * downstream devices report (via LTR) that they can tolerate at
++	 * least that much latency.
++	 *
++	 * Based on PCIe r3.1, sec 5.5.3.3.1, Figures 5-16 and 5-17, and
++	 * Table 5-11.  T(POWER_OFF) is at most 2us and T(L1.2) is at
++	 * least 4us.
++	 */
++	l1_2_threshold = 2 + 4 + t_common_mode + t_power_on;
++	encode_l12_threshold(l1_2_threshold, &scale, &value);
++	link->l1ss.ctl1 |= t_common_mode << 8 | scale << 29 | value << 16;
+ }
+ 
+ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
