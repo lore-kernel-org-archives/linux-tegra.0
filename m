@@ -1,54 +1,44 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 2/2] ARM64: tegra: limit PCIe config space mapping to 4K for T186
-Date: Mon, 4 Dec 2017 23:23:50 +0530
-Message-ID: <1512410030-21038-3-git-send-email-vidyas@nvidia.com>
-References: <1512410030-21038-1-git-send-email-vidyas@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH 1/2] drm/nouveau/bar/gf100: fix hang when calling ->fini() before ->init()
+Date: Mon,  4 Dec 2017 18:37:58 +0000
+Message-ID: <be610a7596ad8fee7da092161888c532c2eb2908.1512411775.git.guillaume.tucker@collabora.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1512410030-21038-1-git-send-email-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-reduces PCIe config space mapping size from its current 256MB
-to 4K to have only 4K of virtual memory mapping and to be
-in line with driver implementation
+If the firmware fails to load then ->fini() will be called before the
+device has been initialised, causing the kernel to hang while trying
+to write to a register.  Add a test in ->fini() to avoid this issue.
 
-Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This fixes a kernel hang on tegra124.
+
+Fixes: b17de35a2ebbe ("drm/nouveau/bar: implement bar1 teardown")
+Signed-off-by: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+CC: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 ---
-V3:
-* no change in this patch
+ drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 46d1f287fb0f..62fa3bef3e18 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -363,7 +363,7 @@
- 		device_type = "pci";
- 		reg = <0x0 0x10003000 0x0 0x00000800   /* PADS registers */
- 		       0x0 0x10003800 0x0 0x00000800   /* AFI registers */
--		       0x0 0x40000000 0x0 0x10000000>; /* configuration space */
-+		       0x0 0x40000000 0x0 0x00001000>; /* configuration space */
- 		reg-names = "pads", "afi", "cs";
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
+index a3ba7f50198b..95e2aba64aad 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
+@@ -43,9 +43,12 @@ gf100_bar_bar1_wait(struct nvkm_bar *base)
+ }
  
- 		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-@@ -381,9 +381,9 @@
- 		ranges = <0x82000000 0 0x10000000 0x0 0x10000000 0 0x00001000   /* port 0 configuration space */
- 			  0x82000000 0 0x10001000 0x0 0x10001000 0 0x00001000   /* port 1 configuration space */
- 			  0x82000000 0 0x10004000 0x0 0x10004000 0 0x00001000   /* port 2 configuration space */
--			  0x81000000 0 0x0        0x0 0x50000000 0 0x00010000   /* downstream I/O (64 KiB) */
--			  0x82000000 0 0x50100000 0x0 0x50100000 0 0x07F00000   /* non-prefetchable memory (127 MiB) */
--			  0xc2000000 0 0x58000000 0x0 0x58000000 0 0x28000000>; /* prefetchable memory (640 MiB) */
-+			  0x81000000 0 0x0        0x0 0x40001000 0 0x00010000   /* downstream I/O (64 KiB) */
-+			  0x82000000 0 0x40100000 0x0 0x40100000 0 0x07F00000   /* non-prefetchable memory (127 MiB) */
-+			  0xc2000000 0 0x48000000 0x0 0x48000000 0 0x38000000>; /* prefetchable memory (896 MiB) */
+ void
+-gf100_bar_bar1_fini(struct nvkm_bar *bar)
++gf100_bar_bar1_fini(struct nvkm_bar *base)
+ {
+-	nvkm_mask(bar->subdev.device, 0x001704, 0x80000000, 0x00000000);
++	struct nvkm_device *device = base->subdev.device;
++
++	if (base->subdev.oneinit)
++		nvkm_mask(device, 0x001704, 0x80000000, 0x00000000);
+ }
  
- 		clocks = <&bpmp TEGRA186_CLK_AFI>,
- 			 <&bpmp TEGRA186_CLK_PCIE>,
+ void
 -- 
-2.7.4
+2.11.0
