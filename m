@@ -1,78 +1,88 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v4 3/5] staging: Introduce NVIDIA Tegra video decoder
- driver
-Date: Tue, 5 Dec 2017 14:03:37 +0100
-Message-ID: <93c98569-0282-80d9-78ad-c8ab8fd9db92@xs4all.nl>
-References: <cover.1508448293.git.digetx@gmail.com>
- <1a3798f337c0097e67d70226ae3ba665fd9156c2.1508448293.git.digetx@gmail.com>
- <ad2da9f4-8899-7db3-493f-5aa15297c33c@xs4all.nl>
- <3ac6a087-def2-014f-673d-1be9d5094635@gmail.com>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH 04/10] gpu: host1x: Lock classes during job submission
+Date: Tue, 5 Dec 2017 15:21:49 +0200
+Message-ID: <2b4d9283-dabe-9e1f-f8cb-6ddbc16e3f0f@kapsi.fi>
+References: <20171105110118.15142-1-mperttunen@nvidia.com>
+ <20171105110118.15142-5-mperttunen@nvidia.com>
+ <97ce4873-fdc1-5197-17bc-74505beadfc4@gmail.com>
+ <ef08d3d8-94a7-8804-c339-5310719333f3@kapsi.fi>
+ <dc39398b-ea49-6e97-28ba-652f8b49db44@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <3ac6a087-def2-014f-673d-1be9d5094635@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Vladimir Zapolskiy <vz@mleia.com>
-Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Giulio Benetti <giulio.benetti@micronovasrl.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <dc39398b-ea49-6e97-28ba-652f8b49db44-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/05/17 13:17, Dmitry Osipenko wrote:
-> Hi Hans,
-> 
-> On 04.12.2017 17:04, Hans Verkuil wrote:
->> Hi Dmitry,
+On 07.11.2017 23:23, Dmitry Osipenko wrote:
+> On 07.11.2017 15:28, Mikko Perttunen wrote:
+>> On 05.11.2017 18:46, Dmitry Osipenko wrote:
+>>> On 05.11.2017 14:01, Mikko Perttunen wrote:
+>>>> ...
+>>>>
+>>>> +static int mlock_id_for_class(unsigned int class)
+>>>> +{
+>>>> +#if HOST1X_HW >= 6
+>>>> +    switch (class)
+>>>> +    {
+>>>> +    case HOST1X_CLASS_HOST1X:
+>>>> +        return 0;
+>>>> +    case HOST1X_CLASS_VIC:
+>>>> +        return 17;
+>>>
+>>> What is the meaning of returned ID values that you have defined here? Why VIC
+>>> should have different ID on T186?
 >>
->> As you already mention in the TODO, this should become a v4l2 codec driver.
+>> On T186, MLOCKs are not "generic" - the HW knows that each MLOCK corresponds to
+>> a specific class. Therefore we must map that correctly.
 >>
->> Good existing examples are the coda, qcom/venus and mtk-vcodec drivers.
+>
+> Okay.
+>
+>>>
+>>>> +    default:
+>>>> +        return -EINVAL;
+>>>> +    }
+>>>> +#else
+>>>> +    switch (class)
+>>>> +    {
+>>>> +    case HOST1X_CLASS_HOST1X:
+>>>> +        return 0;
+>>>> +    case HOST1X_CLASS_GR2D:
+>>>> +        return 1;
+>>>> +    case HOST1X_CLASS_GR2D_SB:
+>>>> +        return 2;
+>>>
+>>> Note that we are allowing to switch 2d classes in the same jobs context and
+>>> currently jobs class is somewhat hardcoded to GR2D.
+>>>
+>>> Even though that GR2D and GR2D_SB use different register banks, is it okay to
+>>> trigger execution of different classes simultaneously? Would syncpoint
+>>> differentiate classes on OP_DONE event?
 >>
->> One thing that is not clear from this code is if the tegra hardware is a
->> stateful or stateless codec, i.e. does it keep track of the decoder state
->> in the hardware, or does the application have to keep track of the state and
->> provide the state information together with the video data?
+>> Good point, we might need to use the same lock for these two.
 >>
->> I ask because at the moment only stateful codecs are supported. Work is ongoing
->> to support stateless codecs, but we don't support that for now.
+>>>
+>>> I suppose that MLOCK (the module lock) implies the whole module locking,
+>>> wouldn't it make sense to just use the module ID's defined in the TRM?
 >>
-> 
-> It is stateless. Is there anything ready to try out? If yes, could you please
-> give a reference to that work?
+>> Can you point out where these are defined?
+>
+> See INDMODID / REGF_MODULEID fields of HOST1X_CHANNEL_INDOFF2_0 /
+> HOST1X_SYNC_REGF_ADDR_0 registers, bit numbers of HOST1X_SYNC_INTSTATUS_0 /
+> HOST1X_SYNC_INTC0MASK_0 / HOST1X_SYNC_MOD_TEARDOWN_0.
 
-I rebased my two year old 'requests2' branch to the latest mainline version and
-gave it the imaginative name 'requests3':
+These values look like they would work on T20, but at least on T124 the 
+module numbering for modules we want to lock goes above the number of 
+MLOCKs so the indexing scheme would not work there..
 
-https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=requests3
+Mikko
 
-(Note: only compile tested!)
-
-This is what ChromeOS has been using (actually they use a slightly older version)
-and the new version that is currently being developed will be similar, so any work
-you do on top of this will carry over to the final version without too much effort.
-
-At least, that's the intention :-)
-
-I've CC-ed Maxime and Giulio as well: they are looking into adding support for
-the stateless allwinner codec based on this code as well. There may well be
-opportunities for you to work together, esp. on the userspace side. Note that
-Rockchip has the same issue, they too have a stateless HW codec.
-
-> 
->> Anyway, I'm OK with merging this in staging. Although I think it should go
->> to staging/media since we want to keep track of it.
->>
-> 
-> Awesome, I'll move driver to staging/media in V5. Thanks!
-
-Nice, thanks!
-
-	Hans
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
