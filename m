@@ -1,103 +1,100 @@
-From: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
-Subject: Re: [PATCH] thermal: tegra: delete unneeded of_node_put
-Date: Tue, 5 Dec 2017 07:17:02 +0100 (CET)
-Message-ID: <alpine.DEB.2.20.1712050716210.2555@hadrien>
-References: <1500108152-1812-1-git-send-email-Julia.Lawall@lip6.fr> <66e7906c-9472-4fcb-7c04-750bb27d3989@nvidia.com> <alpine.DEB.2.20.1707171641190.2038@hadrien> <20171205014918.GB3536@localhost.localdomain>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+Date: Tue, 5 Dec 2017 11:06:35 +0200
+Message-ID: <20171205090635.GL32106@tbergstrom-lnx.Nvidia.com>
+References: <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+ <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+ <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
+ <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+ <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
+ <803890bc-e3fe-134a-2127-3363187d04f2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171205014918.GB3536-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <803890bc-e3fe-134a-2127-3363187d04f2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Sat, Dec 02, 2017 at 03:47:32PM +0300, Dmitry Osipenko wrote:
+> On 01.12.2017 11:48, Peter De Schrijver wrote:
+> > On Thu, Nov 30, 2017 at 04:39:22PM +0000, Jon Hunter wrote:
+> >>
+> >> On 30/11/17 13:24, Dmitry Osipenko wrote:
+> >>> On 30.11.2017 14:31, Jon Hunter wrote:
+> >>>>
+> >>>> On 29/11/17 23:13, Dmitry Osipenko wrote:
+> >>>>> On 30.11.2017 01:55, Jon Hunter wrote:
+> >>>>
+> >>>> ...
+> >>>>
+> >>>>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
+> >>>>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
+> >>>>> caused trouble on Tegra114/124.
+> >>>>
+> >>>> Please share the exact change you would like me to test and I will.
+> >>>
+> >>> Please try this:
+> >>
+> >> I tried the patch, but this does not work for Tegra124 it still hangs.
+> >> Tracing the clk calls the last thing I see is ...
+> >>
+> >> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
+> >> [    2.694403] clk_prepare: hclk_div
+> >> [    2.695929] clk_prepare_complete: hclk_div
+> >> [    2.700027] clk_prepare: hclk
+> >> [    2.702947] clk_prepare_complete: hclk
+> >> [    2.706673] clk_prepare: pclk_div
+> >> [    2.709986] clk_prepare_complete: pclk_div
+> >> [    2.714039] clk_prepare: pclk
+> >> [    2.716985] clk_prepare_complete: pclk
+> >> [    2.720739] clk_prepare: apbdma
+> >> [    2.723833] clk_prepare_complete: apbdma
+> >> [    2.727736] clk_enable: hclk_div
+> >> [    2.730940] clk_enable_complete: hclk_div
+> >> [    2.734926] clk_enable: hclk
+> >> [    2.737788] clk_enable_complete: hclk
+> >> [    2.741426] clk_enable: pclk_div
+> >> [    2.744633] clk_enable_complete: pclk_div
+> >> [    2.748619] clk_enable: pclk
+> >> [    2.751481] clk_enable_complete: pclk
+> >> [    2.755120] clk_enable: apbdma
+> >> [    2.758153] clk_enable_complete: apbdma
+> >> [    2.762390] clk_disable: apbdma
+> >> [    2.765088] clk_disable_complete: apbdma
+> >> [    2.768986] clk
+> >>
+> >> So I believe this change is correct and that Peter's analysis on IRC
+> >> seems correct, that this change has exposed another issue with the clock
+> >> driver.
+> >>
+> >> Peter, can you summarise which other clocks should be made critical?
+> > 
+> > The following clocks should be critical:
+> > 
+> > pclk
+> > hclk
+> > sclk
+> > emc
+> > mc
+> > pll_p
+> > 
+> > I think that's it.
+> 
+> Could you please elaborate why pll_p should be critical? Is it applicable to all
+> Tegra generations?
 
+There are quite many clocks relying on pll_p as their source. In theory we
+might get away with making sure all thsoe clocks are critical if needed, but
+it's usually easier to just make sure we never turn off pll_p. We should
+certainly never try to change the rate of pll_p. Obviously also osc and clk32k
+should never be turned off during runtime, but there is no hw which allows you
+to do this.
 
-On Mon, 4 Dec 2017, Eduardo Valentin wrote:
-
-> On Mon, Jul 17, 2017 at 04:42:38PM +0200, Julia Lawall wrote:
-> >
-> >
-> > On Mon, 17 Jul 2017, Jon Hunter wrote:
-> >
-> > >
-> > > On 15/07/17 09:42, Julia Lawall wrote:
-> > > > Device node iterators perform an of_node_put on each iteration, so putting
-> > > > an of_node_put before a continue results in a double put.
-> > > >
-> > > > The semantic match that finds this problem is as follows
-> > > > (http://coccinelle.lip6.fr):
-> > > >
-> > > > // <smpl>
-> > > > @@
-> > > > expression e1;
-> > > > local idexpression child;
-> > > > iterator name for_each_child_of_node;
-> > > > @@
-> > > >
-> > > >  for_each_child_of_node(e1,child) {
-> > > >    ... when != of_node_get(child)
-> > > > *  of_node_put(child);
-> > > >    ...
-> > > > *  continue;
-> > > > }
-> > > > // </smpl>
-> > > >
-> > > > Furthermore, the call to thermal_of_cooling_device_register immediately
-> > > > calls __thermal_cooling_device_register with the same arguments.  The
-> > > > latter function stores the device node argument, which is the second
-> > > > argument of for_each_child_of_node, in the returned thermal_cooling_device
-> > > > structure.  This returned structure is then stored in the cdev field of
-> > > > stc.  Thus it seems that the second argument of for_each_child_of_node
-> > > > escapes the scope of the for_each_child_of_node, so an explicit of_node_get
-> > > > on success of thermal_of_cooling_device_register is also needed.
-> > > >
-> > > > Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-> > > >
-> > > > ---
-> > > >  drivers/thermal/tegra/soctherm.c |    2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-> > > > index 7d2db23..10f4fdd 100644
-> > > > --- a/drivers/thermal/tegra/soctherm.c
-> > > > +++ b/drivers/thermal/tegra/soctherm.c
-> > > > @@ -1014,7 +1014,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
-> > > >  		tcd = thermal_of_cooling_device_register(np_stcc,
-> > > >  							 (char *)name, ts,
-> > > >  							 &throt_cooling_ops);
-> > > > -		of_node_put(np_stcc);
-> > > >  		if (IS_ERR_OR_NULL(tcd)) {
-> > > >  			dev_err(dev,
-> > > >  				"throttle-cfg: %s: failed to register cooling device\n",
-> > > > @@ -1022,6 +1021,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
-> > > >  			continue;
-> > > >  		}
-> > > >
-> > > > +		of_node_get(np_stcc);
-> > > >  		stc->cdev = tcd;
-> > > >  		stc->init = true;
-> > > >  	}
-> > >
-> > > Thanks for fixing this. However, I am wondering if it is better for the
-> > > 'of_node_get' to be placed within the
-> > > thermal_of_cooling_device_register() function as it seems a bit odd if
-> > > the caller needs to know that this is being stored for later use.
-> > >
-> > > Also, taking a quick look, I see a couple other drivers calling
-> > > thermal_of_cooling_device_register() and they are also not calling
-> > > of_node_get on success. So it maybe easier to fix placing it in the
-> > > thermal_of_cooling_device_register() function.
-> >
-> > I'm not an expert, but I had the impression that from some call sites, the
-> > get would have been done already, because the argument is already stored
-> > in some structure.  I can check more exhaustively.
->
-> Julia, I agree with Jon here. Better if fixed in the API itself. Are you
-> still planning on sending a fix for this?
-
-This has fallen off my stack, and I'mnot sure that Ican get to it in the
-short term.
-
-julia
+Peter.
