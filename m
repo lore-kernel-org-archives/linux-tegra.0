@@ -1,47 +1,104 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra baseline test results for v4.15-rc2
-Date: Tue, 5 Dec 2017 14:38:58 +0000
-Message-ID: <a31d99c2-74b6-2c02-ffc5-4fbe0dae7ec6@nvidia.com>
-References: <acc93fae-7fb0-71c1-c839-8c7b0e6cfb5e@nvidia.com>
- <027eb309-4c8c-088a-8f12-da51269c1dc2@collabora.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+Date: Tue, 5 Dec 2017 21:22:57 +0300
+Message-ID: <0e593ef4-8f22-92c7-d119-2aec7a7009f1@gmail.com>
+References: <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+ <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+ <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
+ <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+ <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
+ <803890bc-e3fe-134a-2127-3363187d04f2@gmail.com>
+ <20171205090635.GL32106@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <027eb309-4c8c-088a-8f12-da51269c1dc2-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+In-Reply-To: <20171205090635.GL32106-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 05/12/17 14:23, Guillaume Tucker wrote:
-> On 05/12/17 14:05, Jon Hunter wrote:
->> Here are some basic Tegra test results for Linux v4.15-rc2.
->> Logs and other details at:
+On 05.12.2017 12:06, Peter De Schrijver wrote:
+> On Sat, Dec 02, 2017 at 03:47:32PM +0300, Dmitry Osipenko wrote:
+>> On 01.12.2017 11:48, Peter De Schrijver wrote:
+>>> On Thu, Nov 30, 2017 at 04:39:22PM +0000, Jon Hunter wrote:
+>>>>
+>>>> On 30/11/17 13:24, Dmitry Osipenko wrote:
+>>>>> On 30.11.2017 14:31, Jon Hunter wrote:
+>>>>>>
+>>>>>> On 29/11/17 23:13, Dmitry Osipenko wrote:
+>>>>>>> On 30.11.2017 01:55, Jon Hunter wrote:
+>>>>>>
+>>>>>> ...
+>>>>>>
+>>>>>>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
+>>>>>>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
+>>>>>>> caused trouble on Tegra114/124.
+>>>>>>
+>>>>>> Please share the exact change you would like me to test and I will.
+>>>>>
+>>>>> Please try this:
+>>>>
+>>>> I tried the patch, but this does not work for Tegra124 it still hangs.
+>>>> Tracing the clk calls the last thing I see is ...
+>>>>
+>>>> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
+>>>> [    2.694403] clk_prepare: hclk_div
+>>>> [    2.695929] clk_prepare_complete: hclk_div
+>>>> [    2.700027] clk_prepare: hclk
+>>>> [    2.702947] clk_prepare_complete: hclk
+>>>> [    2.706673] clk_prepare: pclk_div
+>>>> [    2.709986] clk_prepare_complete: pclk_div
+>>>> [    2.714039] clk_prepare: pclk
+>>>> [    2.716985] clk_prepare_complete: pclk
+>>>> [    2.720739] clk_prepare: apbdma
+>>>> [    2.723833] clk_prepare_complete: apbdma
+>>>> [    2.727736] clk_enable: hclk_div
+>>>> [    2.730940] clk_enable_complete: hclk_div
+>>>> [    2.734926] clk_enable: hclk
+>>>> [    2.737788] clk_enable_complete: hclk
+>>>> [    2.741426] clk_enable: pclk_div
+>>>> [    2.744633] clk_enable_complete: pclk_div
+>>>> [    2.748619] clk_enable: pclk
+>>>> [    2.751481] clk_enable_complete: pclk
+>>>> [    2.755120] clk_enable: apbdma
+>>>> [    2.758153] clk_enable_complete: apbdma
+>>>> [    2.762390] clk_disable: apbdma
+>>>> [    2.765088] clk_disable_complete: apbdma
+>>>> [    2.768986] clk
+>>>>
+>>>> So I believe this change is correct and that Peter's analysis on IRC
+>>>> seems correct, that this change has exposed another issue with the clock
+>>>> driver.
+>>>>
+>>>> Peter, can you summarise which other clocks should be made critical?
+>>>
+>>> The following clocks should be critical:
+>>>
+>>> pclk
+>>> hclk
+>>> sclk
+>>> emc
+>>> mc
+>>> pll_p
+>>>
+>>> I think that's it.
 >>
->>     https://nvtb.github.io//linux/test_v4.15-rc2/20171204140104/
-> [...]
->> Boot to userspace: multi_v7_defconfig:
->>     FAIL: ( 1/ 5): tegra124-nyan-big
+>> Could you please elaborate why pll_p should be critical? Is it applicable to all
+>> Tegra generations?
 > 
-> Thanks for the report.  Following up on the automated bisection
-> runs, I've found 2 independent issues that both cause a kernel
-> hang on tegra124-nyan-big and sent some patches to address them
-> yesterday:
-> 
->  
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-December/545681.html
-
-Yes, I have seen those and thanks for sending. The above failure is
-caused by the CROS EC bug [0]. Lee Jones has picked up the fix which are
-now in -next and hopefully, will appear in the mainline soon.
-
-Cheers
-Jon
-
-[0] https://patchwork.kernel.org/patch/9974835/
-
--- 
-nvpublic
+> There are quite many clocks relying on pll_p as their source. In theory we
+> might get away with making sure all thsoe clocks are critical if needed, but
+> it's usually easier to just make sure we never turn off pll_p. We should
+> certainly never try to change the rate of pll_p. Obviously also osc and clk32k
+> should never be turned off during runtime, but there is no hw which allows you
+> to do this.
+Okay, I see it is explicitly documented in TRM that "modules take in an
+additional fix PLL clock source for a portion of their logic" and indeed most of
+periperals use pll_p and its dividers for the "portion of logic".
