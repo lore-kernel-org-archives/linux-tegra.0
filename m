@@ -1,86 +1,97 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 04/10] gpu: host1x: Lock classes during job submission
-Date: Tue, 5 Dec 2017 16:43:27 +0300
-Message-ID: <13306780-4a59-dda0-bf46-ecdf92d66e14@gmail.com>
-References: <20171105110118.15142-1-mperttunen@nvidia.com>
- <20171105110118.15142-5-mperttunen@nvidia.com>
- <97ce4873-fdc1-5197-17bc-74505beadfc4@gmail.com>
- <ef08d3d8-94a7-8804-c339-5310719333f3@kapsi.fi>
- <dc39398b-ea49-6e97-28ba-652f8b49db44@gmail.com>
- <2b4d9283-dabe-9e1f-f8cb-6ddbc16e3f0f@kapsi.fi>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.15-rc1
+Date: Tue, 5 Dec 2017 14:03:58 +0000
+Message-ID: <42c00023-110c-9c88-c15d-deacc95ecfb3@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2b4d9283-dabe-9e1f-f8cb-6ddbc16e3f0f-/1wQRMveznE@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.12.2017 16:21, Mikko Perttunen wrote:
-> On 07.11.2017 23:23, Dmitry Osipenko wrote:
->> On 07.11.2017 15:28, Mikko Perttunen wrote:
->>> On 05.11.2017 18:46, Dmitry Osipenko wrote:
->>>> On 05.11.2017 14:01, Mikko Perttunen wrote:
->>>>> ...
->>>>>
->>>>> +static int mlock_id_for_class(unsigned int class)
->>>>> +{
->>>>> +#if HOST1X_HW >= 6
->>>>> +    switch (class)
->>>>> +    {
->>>>> +    case HOST1X_CLASS_HOST1X:
->>>>> +        return 0;
->>>>> +    case HOST1X_CLASS_VIC:
->>>>> +        return 17;
->>>>
->>>> What is the meaning of returned ID values that you have defined here? Why VIC
->>>> should have different ID on T186?
->>>
->>> On T186, MLOCKs are not "generic" - the HW knows that each MLOCK corresponds to
->>> a specific class. Therefore we must map that correctly.
->>>
->>
->> Okay.
->>
->>>>
->>>>> +    default:
->>>>> +        return -EINVAL;
->>>>> +    }
->>>>> +#else
->>>>> +    switch (class)
->>>>> +    {
->>>>> +    case HOST1X_CLASS_HOST1X:
->>>>> +        return 0;
->>>>> +    case HOST1X_CLASS_GR2D:
->>>>> +        return 1;
->>>>> +    case HOST1X_CLASS_GR2D_SB:
->>>>> +        return 2;
->>>>
->>>> Note that we are allowing to switch 2d classes in the same jobs context and
->>>> currently jobs class is somewhat hardcoded to GR2D.
->>>>
->>>> Even though that GR2D and GR2D_SB use different register banks, is it okay to
->>>> trigger execution of different classes simultaneously? Would syncpoint
->>>> differentiate classes on OP_DONE event?
->>>
->>> Good point, we might need to use the same lock for these two.
->>>
->>>>
->>>> I suppose that MLOCK (the module lock) implies the whole module locking,
->>>> wouldn't it make sense to just use the module ID's defined in the TRM?
->>>
->>> Can you point out where these are defined?
->>
->> See INDMODID / REGF_MODULEID fields of HOST1X_CHANNEL_INDOFF2_0 /
->> HOST1X_SYNC_REGF_ADDR_0 registers, bit numbers of HOST1X_SYNC_INTSTATUS_0 /
->> HOST1X_SYNC_INTC0MASK_0 / HOST1X_SYNC_MOD_TEARDOWN_0.
-> 
-> These values look like they would work on T20, but at least on T124 the module
-> numbering for modules we want to lock goes above the number of MLOCKs so the
-> indexing scheme would not work there..
-> 
+Here are some basic Tegra test results for Linux v4.15-rc1.
+Logs and other details at:
 
-Indeed, for some reason I was thinking that there are 32 MLOCK's instead of 16.
+    https://nvtb.github.io//linux/test_v4.15-rc1/20171204133126/
+
+
+Test summary - 84% Success
+--------------------------
+
+Build: zImage:
+    Pass: ( 3/ 3): multi_v7_defconfig, tegra_defconfig,
+		   tegra_defconfig%tegra-fw
+
+Build: Image:
+    Pass: ( 3/ 3): defconfig, defconfig%jetson-tx2,
+		   defconfig%jetson-tx1
+
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
+
+Boot to userspace: defconfig%jetson-tx1:
+    Pass: ( 2/ 2): tegra210-p2371-0000, tegra210-p2371-2180
+
+Boot to userspace: defconfig%jetson-tx2:
+    Pass: ( 1/ 1): tegra186-p2771-0000
+
+Boot to userspace: multi_v7_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig%tegra-fw:
+    FAIL: ( 1/ 2): tegra124-nyan-big
+    Pass: ( 1/ 2): tegra124-jetson-tk1
+
+PM: System suspend: multi_v7_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig%tegra-fw:
+    FAIL: ( 1/ 2): tegra124-nyan-big
+    Pass: ( 1/ 2): tegra124-jetson-tk1
+
+
+vmlinux object size
+(delta in bytes from test_v4.14 (bebc6082da0a9f5d47a1ea2edc099bf671058bd4)):
+   text     data      bss    total  kernel
++178037  -144968    -8488   +24581  defconfig
++111965  -295324    -1816  -185175  multi_v7_defconfig
+ +79872  -300436    -1808  -222372  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.14 (bebc6082da0a9f5d47a1ea2edc099bf671058bd4))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+      20k     -20k        .     -64k      qemu-vexpress64            defconfig           __internal
+    -928k     928k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+    1108k   -1108k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+    -916k     916k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+    1120k   -1120k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+    -916k     916k        .   -2048k    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+    1124k   -1124k        .   -1024k    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+   -2088k    2088k        .     -64k      tegra132-norrin            defconfig      tegra132-norrin
+    -932k     932k        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+    1104k   -1104k        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+      56k     -56k        .     -64k  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+   -2064k    2064k        .     -64k       tegra210-smaug            defconfig       tegra210-smaug
+    -920k     920k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+    1116k   -1116k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+--
+nvpublic
