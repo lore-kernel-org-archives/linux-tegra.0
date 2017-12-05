@@ -1,54 +1,47 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 1/2] drm/nouveau/bar/gf100: fix hang when calling ->fini()
- before ->init()
-Date: Tue, 5 Dec 2017 14:30:21 +0000
-Message-ID: <6db622ac-319d-c640-91ab-9248e528b69b@nvidia.com>
-References: <be610a7596ad8fee7da092161888c532c2eb2908.1512411775.git.guillaume.tucker@collabora.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Tegra baseline test results for v4.15-rc2
+Date: Tue, 5 Dec 2017 14:38:58 +0000
+Message-ID: <a31d99c2-74b6-2c02-ffc5-4fbe0dae7ec6@nvidia.com>
+References: <acc93fae-7fb0-71c1-c839-8c7b0e6cfb5e@nvidia.com>
+ <027eb309-4c8c-088a-8f12-da51269c1dc2@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <be610a7596ad8fee7da092161888c532c2eb2908.1512411775.git.guillaume.tucker@collabora.com>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <027eb309-4c8c-088a-8f12-da51269c1dc2-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Guillaume Tucker <guillaume.tucker@collabora.com>, David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA0LzEyLzE3IDE4OjM3LCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgo+IElmIHRoZSBmaXJt
-d2FyZSBmYWlscyB0byBsb2FkIHRoZW4gLT5maW5pKCkgd2lsbCBiZSBjYWxsZWQgYmVmb3JlIHRo
-ZQo+IGRldmljZSBoYXMgYmVlbiBpbml0aWFsaXNlZCwgY2F1c2luZyB0aGUga2VybmVsIHRvIGhh
-bmcgd2hpbGUgdHJ5aW5nCj4gdG8gd3JpdGUgdG8gYSByZWdpc3Rlci4gIEFkZCBhIHRlc3QgaW4g
-LT5maW5pKCkgdG8gYXZvaWQgdGhpcyBpc3N1ZS4KPiAKPiBUaGlzIGZpeGVzIGEga2VybmVsIGhh
-bmcgb24gdGVncmExMjQuCj4gCj4gRml4ZXM6IGIxN2RlMzVhMmViYmUgKCJkcm0vbm91dmVhdS9i
-YXI6IGltcGxlbWVudCBiYXIxIHRlYXJkb3duIikKPiBTaWduZWQtb2ZmLWJ5OiBHdWlsbGF1bWUg
-VHVja2VyIDxndWlsbGF1bWUudHVja2VyQGNvbGxhYm9yYS5jb20+Cj4gQ0M6IEJlbiBTa2VnZ3Mg
-PGJza2VnZ3NAcmVkaGF0LmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZr
-bS9zdWJkZXYvYmFyL2dmMTAwLmMgfCA3ICsrKysrLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDUgaW5z
-ZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvYmFyL2dmMTAwLmMgYi9kcml2ZXJzL2dwdS9kcm0vbm91
-dmVhdS9udmttL3N1YmRldi9iYXIvZ2YxMDAuYwo+IGluZGV4IGEzYmE3ZjUwMTk4Yi4uOTVlMmFi
-YTY0YWFkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2
-L2Jhci9nZjEwMC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYv
-YmFyL2dmMTAwLmMKPiBAQCAtNDMsOSArNDMsMTIgQEAgZ2YxMDBfYmFyX2JhcjFfd2FpdChzdHJ1
-Y3QgbnZrbV9iYXIgKmJhc2UpCj4gIH0KPiAgCj4gIHZvaWQKPiAtZ2YxMDBfYmFyX2JhcjFfZmlu
-aShzdHJ1Y3QgbnZrbV9iYXIgKmJhcikKPiArZ2YxMDBfYmFyX2JhcjFfZmluaShzdHJ1Y3QgbnZr
-bV9iYXIgKmJhc2UpCj4gIHsKPiAtCW52a21fbWFzayhiYXItPnN1YmRldi5kZXZpY2UsIDB4MDAx
-NzA0LCAweDgwMDAwMDAwLCAweDAwMDAwMDAwKTsKPiArCXN0cnVjdCBudmttX2RldmljZSAqZGV2
-aWNlID0gYmFzZS0+c3ViZGV2LmRldmljZTsKPiArCj4gKwlpZiAoYmFzZS0+c3ViZGV2Lm9uZWlu
-aXQpCj4gKwkJbnZrbV9tYXNrKGRldmljZSwgMHgwMDE3MDQsIDB4ODAwMDAwMDAsIDB4MDAwMDAw
-MDApOwo+ICB9Cj4gIAo+ICB2b2lkCgpJIGhhdmUgdGVzdGVkIHRoaXMgYW5kIGl0IHdvcmtzIGZv
-ciBtZS4gVGhhbmtzIGZvciBmaXhpbmcgdGhpcyEgV291bGQgYmUKZ29vZCB0byBnZXQgQmVuJ3Mg
-QUNLLCBidXQgeW91IGNhbiBoYXZlIG15IC4uLgoKVGVzdGVkLWJ5OiBKb24gSHVudGVyIDxqb25h
-dGhhbmhAbnZpZGlhLmNvbT4KCkNoZWVycwpKb24KCi0tIApudnB1YmxpYwpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+On 05/12/17 14:23, Guillaume Tucker wrote:
+> On 05/12/17 14:05, Jon Hunter wrote:
+>> Here are some basic Tegra test results for Linux v4.15-rc2.
+>> Logs and other details at:
+>>
+>>     https://nvtb.github.io//linux/test_v4.15-rc2/20171204140104/
+> [...]
+>> Boot to userspace: multi_v7_defconfig:
+>>     FAIL: ( 1/ 5): tegra124-nyan-big
+> 
+> Thanks for the report.  Following up on the automated bisection
+> runs, I've found 2 independent issues that both cause a kernel
+> hang on tegra124-nyan-big and sent some patches to address them
+> yesterday:
+> 
+>  
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-December/545681.html
+
+Yes, I have seen those and thanks for sending. The above failure is
+caused by the CROS EC bug [0]. Lee Jones has picked up the fix which are
+now in -next and hopefully, will appear in the mainline soon.
+
+Cheers
+Jon
+
+[0] https://patchwork.kernel.org/patch/9974835/
+
+-- 
+nvpublic
