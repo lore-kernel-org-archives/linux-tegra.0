@@ -1,100 +1,45 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
-Date: Tue, 5 Dec 2017 11:06:35 +0200
-Message-ID: <20171205090635.GL32106@tbergstrom-lnx.Nvidia.com>
-References: <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
- <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
- <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
- <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
- <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
- <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
- <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
- <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
- <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
- <803890bc-e3fe-134a-2127-3363187d04f2@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 3/5] staging: Introduce NVIDIA Tegra video decoder
+ driver
+Date: Tue, 5 Dec 2017 15:17:58 +0300
+Message-ID: <3ac6a087-def2-014f-673d-1be9d5094635@gmail.com>
+References: <cover.1508448293.git.digetx@gmail.com>
+ <1a3798f337c0097e67d70226ae3ba665fd9156c2.1508448293.git.digetx@gmail.com>
+ <ad2da9f4-8899-7db3-493f-5aa15297c33c@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <803890bc-e3fe-134a-2127-3363187d04f2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <ad2da9f4-8899-7db3-493f-5aa15297c33c-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
+Cc: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Dec 02, 2017 at 03:47:32PM +0300, Dmitry Osipenko wrote:
-> On 01.12.2017 11:48, Peter De Schrijver wrote:
-> > On Thu, Nov 30, 2017 at 04:39:22PM +0000, Jon Hunter wrote:
-> >>
-> >> On 30/11/17 13:24, Dmitry Osipenko wrote:
-> >>> On 30.11.2017 14:31, Jon Hunter wrote:
-> >>>>
-> >>>> On 29/11/17 23:13, Dmitry Osipenko wrote:
-> >>>>> On 30.11.2017 01:55, Jon Hunter wrote:
-> >>>>
-> >>>> ...
-> >>>>
-> >>>>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
-> >>>>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
-> >>>>> caused trouble on Tegra114/124.
-> >>>>
-> >>>> Please share the exact change you would like me to test and I will.
-> >>>
-> >>> Please try this:
-> >>
-> >> I tried the patch, but this does not work for Tegra124 it still hangs.
-> >> Tracing the clk calls the last thing I see is ...
-> >>
-> >> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
-> >> [    2.694403] clk_prepare: hclk_div
-> >> [    2.695929] clk_prepare_complete: hclk_div
-> >> [    2.700027] clk_prepare: hclk
-> >> [    2.702947] clk_prepare_complete: hclk
-> >> [    2.706673] clk_prepare: pclk_div
-> >> [    2.709986] clk_prepare_complete: pclk_div
-> >> [    2.714039] clk_prepare: pclk
-> >> [    2.716985] clk_prepare_complete: pclk
-> >> [    2.720739] clk_prepare: apbdma
-> >> [    2.723833] clk_prepare_complete: apbdma
-> >> [    2.727736] clk_enable: hclk_div
-> >> [    2.730940] clk_enable_complete: hclk_div
-> >> [    2.734926] clk_enable: hclk
-> >> [    2.737788] clk_enable_complete: hclk
-> >> [    2.741426] clk_enable: pclk_div
-> >> [    2.744633] clk_enable_complete: pclk_div
-> >> [    2.748619] clk_enable: pclk
-> >> [    2.751481] clk_enable_complete: pclk
-> >> [    2.755120] clk_enable: apbdma
-> >> [    2.758153] clk_enable_complete: apbdma
-> >> [    2.762390] clk_disable: apbdma
-> >> [    2.765088] clk_disable_complete: apbdma
-> >> [    2.768986] clk
-> >>
-> >> So I believe this change is correct and that Peter's analysis on IRC
-> >> seems correct, that this change has exposed another issue with the clock
-> >> driver.
-> >>
-> >> Peter, can you summarise which other clocks should be made critical?
-> > 
-> > The following clocks should be critical:
-> > 
-> > pclk
-> > hclk
-> > sclk
-> > emc
-> > mc
-> > pll_p
-> > 
-> > I think that's it.
+Hi Hans,
+
+On 04.12.2017 17:04, Hans Verkuil wrote:
+> Hi Dmitry,
 > 
-> Could you please elaborate why pll_p should be critical? Is it applicable to all
-> Tegra generations?
+> As you already mention in the TODO, this should become a v4l2 codec driver.
+> 
+> Good existing examples are the coda, qcom/venus and mtk-vcodec drivers.
+> 
+> One thing that is not clear from this code is if the tegra hardware is a
+> stateful or stateless codec, i.e. does it keep track of the decoder state
+> in the hardware, or does the application have to keep track of the state and
+> provide the state information together with the video data?
+> 
+> I ask because at the moment only stateful codecs are supported. Work is ongoing
+> to support stateless codecs, but we don't support that for now.
+> 
 
-There are quite many clocks relying on pll_p as their source. In theory we
-might get away with making sure all thsoe clocks are critical if needed, but
-it's usually easier to just make sure we never turn off pll_p. We should
-certainly never try to change the rate of pll_p. Obviously also osc and clk32k
-should never be turned off during runtime, but there is no hw which allows you
-to do this.
+It is stateless. Is there anything ready to try out? If yes, could you please
+give a reference to that work?
 
-Peter.
+> Anyway, I'm OK with merging this in staging. Although I think it should go
+> to staging/media since we want to keep track of it.
+> 
+
+Awesome, I'll move driver to staging/media in V5. Thanks!
