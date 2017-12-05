@@ -1,175 +1,74 @@
-From: Ben Skeggs <bskeggs@redhat.com>
-Subject: Re: [PATCH 1/2] drm/nouveau/bar/gf100: fix hang when calling ->fini()
- before ->init()
-Date: Wed, 6 Dec 2017 04:32:40 +1000
-Message-ID: <CABDvA=krahNw3q+qpEPbbv8Y9fvX4jXc_B54qafwtgFyWpqKWg@mail.gmail.com>
-References: <be610a7596ad8fee7da092161888c532c2eb2908.1512411775.git.guillaume.tucker@collabora.com>
- <6db622ac-319d-c640-91ab-9248e528b69b@nvidia.com>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v1 0/2] PCI/ASPM: Refine L1 PM Substates support
+Date: Tue, 5 Dec 2017 13:40:50 -0600
+Message-ID: <20171205194050.GD23510@bhelgaas-glaptop.roam.corp.google.com>
+References: <20171202211833.23146.5744.stgit@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1610944616=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <6db622ac-319d-c640-91ab-9248e528b69b@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: David Airlie <airlied@linux.ie>, Guillaume Tucker <guillaume.tucker@collabora.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20171202211833.23146.5744.stgit-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kenji Chen <kenji.chen-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Krishna Kishore <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Patrick Georgi <pgeorgi-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rajat Jain <rajatja-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stefan Reinauer <stefan.reinauer-7ChRSZmxDtxg9hUCZPvPmw@public.gmane.org>, Duncan Laurie <dlaurie-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---===============1610944616==
-Content-Type: multipart/alternative; boundary="001a1134fbbc60865c055f9c0f4a"
+On Sat, Dec 02, 2017 at 03:45:38PM -0600, Bjorn Helgaas wrote:
+> The PCIe active link power state is L0.  ASPM defines two low-power
+> states: L0s and L1.  The L1 PM Substates feature defines two
+> additional low-power states: L1.1 and L2.2.
+> 
+> The L1.2 state may have substantial entry/exit latency.  Downstream
+> devices can use the Latency Tolerance Reporting (LTR) feature to
+> report how much latency they can tolerate.  The L1 PM Substates
+> capability includes a programmable L1.2 threshold register.  If the
+> downstream devices can tolerate the latency indicated by the
+> threshold, L1.2 may be used.
+> 
+> If LTR is not enabled, the L1.2 threshold is ignored and L1.2 can be
+> used whenever it is enabled and CLKREQ# is de-asserted.  Linux
+> currently never enables LTR, but firmware may have done so.
+> 
+> The current L1 PM substates support in Linux sets the L1.2 threshold
+> to a fixed value (163.84us) copied from coreboot [1].  I don't know
+> where that value came from, and it is incorrect for some platforms,
+> e.g., Tegra [2].
+> 
+> These patches change that so we calculate the L1.2 threshold based on
+> values reported by the hardware, and we enable LTR whenever possible.
+> 
+> This is all just my understanding from reading the spec.  I'd be glad
+> to be corrected if I'm going wrong.
+> 
+> I'm particularly puzzled about the coreboot code in
+> pciexp_L1_substate_commit() that sets LTR_L1.2_THRESHOLD:
+> 
+> +	pcie_update_cfg(root, root_cap + 0x08, ~0xe3ff0000,
+> +		(1 << 21) | (1 << 23) | (1 << 30));
+> 
+> This is writing the L1 PM Substates Control 1 register, but the shifts
+> don't match up with any of the fields in the register, so this is an
+> awfully funny way to write the threshold.
+> 
+> [1] https://mail.coreboot.org/pipermail/coreboot-gerrit/2015-March/021134.html
+> [2] https://lkml.kernel.org/r/1510492674-12786-1-git-send-email-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+> 
+> ---
+> 
+> Bjorn Helgaas (2):
+>       PCI/ASPM: Calculate LTR_L1.2_THRESHOLD from device characteristics
+>       PCI/ASPM: Enable Latency Tolerance Reporting when supported
+> 
+> 
+>  drivers/pci/pcie/aspm.c |   71 +++++++++++++++++++++++++++++++----------------
+>  drivers/pci/probe.c     |   33 ++++++++++++++++++++++
+>  include/linux/pci.h     |    2 +
+>  3 files changed, 82 insertions(+), 24 deletions(-)
 
---001a1134fbbc60865c055f9c0f4a
-Content-Type: text/plain; charset="UTF-8"
+I applied these with Vidya's Reviewed-by to pci/aspm for v4.16.
 
-On Wed, Dec 6, 2017 at 12:30 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+I'd still really like to hear from the coreboot folks about the
+rationale for the current coreboot code.  You folks are in a much
+better position to actually understand the hardware details.
 
->
-> On 04/12/17 18:37, Guillaume Tucker wrote:
-> > If the firmware fails to load then ->fini() will be called before the
-> > device has been initialised, causing the kernel to hang while trying
-> > to write to a register.  Add a test in ->fini() to avoid this issue.
-> >
-> > This fixes a kernel hang on tegra124.
-> >
-> > Fixes: b17de35a2ebbe ("drm/nouveau/bar: implement bar1 teardown")
-> > Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> > CC: Ben Skeggs <bskeggs@redhat.com>
-> > ---
-> >  drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
-> b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
-> > index a3ba7f50198b..95e2aba64aad 100644
-> > --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
-> > +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
-> > @@ -43,9 +43,12 @@ gf100_bar_bar1_wait(struct nvkm_bar *base)
-> >  }
-> >
-> >  void
-> > -gf100_bar_bar1_fini(struct nvkm_bar *bar)
-> > +gf100_bar_bar1_fini(struct nvkm_bar *base)
-> >  {
-> > -     nvkm_mask(bar->subdev.device, 0x001704, 0x80000000, 0x00000000);
-> > +     struct nvkm_device *device = base->subdev.device;
-> > +
-> > +     if (base->subdev.oneinit)
-> > +             nvkm_mask(device, 0x001704, 0x80000000, 0x00000000);
-> >  }
-> >
-> >  void
->
-> I have tested this and it works for me. Thanks for fixing this! Would be
-> good to get Ben's ACK, but you can have my ...
->
-I'd love to get a good explanation as to why it hangs without this change,
-as, on the surface, it's not immediately obvious as to why it's hanging.
-
-Thanks,
-Ben.
-
-
->
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
->
-> Cheers
-> Jon
->
-> --
-> nvpublic
->
-
---001a1134fbbc60865c055f9c0f4a
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div class=3D"gmail_extra"><div class=3D"gmail_quote">On W=
-ed, Dec 6, 2017 at 12:30 AM, Jon Hunter <span dir=3D"ltr">&lt;<a href=3D"ma=
-ilto:jonathanh@nvidia.com" target=3D"_blank">jonathanh@nvidia.com</a>&gt;</=
-span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8e=
-x;border-left:1px #ccc solid;padding-left:1ex"><div class=3D"HOEnZb"><div c=
-lass=3D"h5"><br>
-On 04/12/17 18:37, Guillaume Tucker wrote:<br>
-&gt; If the firmware fails to load then -&gt;fini() will be called before t=
-he<br>
-&gt; device has been initialised, causing the kernel to hang while trying<b=
-r>
-&gt; to write to a register.=C2=A0 Add a test in -&gt;fini() to avoid this =
-issue.<br>
-&gt;<br>
-&gt; This fixes a kernel hang on tegra124.<br>
-&gt;<br>
-&gt; Fixes: b17de35a2ebbe (&quot;drm/nouveau/bar: implement bar1 teardown&q=
-uot;)<br>
-&gt; Signed-off-by: Guillaume Tucker &lt;<a href=3D"mailto:guillaume.tucker=
-@collabora.com">guillaume.tucker@collabora.<wbr>com</a>&gt;<br>
-&gt; CC: Ben Skeggs &lt;<a href=3D"mailto:bskeggs@redhat.com">bskeggs@redha=
-t.com</a>&gt;<br>
-&gt; ---<br>
-&gt;=C2=A0 drivers/gpu/drm/nouveau/nvkm/<wbr>subdev/bar/gf100.c | 7 +++++--=
-<br>
-&gt;=C2=A0 1 file changed, 5 insertions(+), 2 deletions(-)<br>
-&gt;<br>
-&gt; diff --git a/drivers/gpu/drm/nouveau/<wbr>nvkm/subdev/bar/gf100.c b/dr=
-ivers/gpu/drm/nouveau/<wbr>nvkm/subdev/bar/gf100.c<br>
-&gt; index a3ba7f50198b..95e2aba64aad 100644<br>
-&gt; --- a/drivers/gpu/drm/nouveau/<wbr>nvkm/subdev/bar/gf100.c<br>
-&gt; +++ b/drivers/gpu/drm/nouveau/<wbr>nvkm/subdev/bar/gf100.c<br>
-&gt; @@ -43,9 +43,12 @@ gf100_bar_bar1_wait(struct nvkm_bar *base)<br>
-&gt;=C2=A0 }<br>
-&gt;<br>
-&gt;=C2=A0 void<br>
-&gt; -gf100_bar_bar1_fini(struct nvkm_bar *bar)<br>
-&gt; +gf100_bar_bar1_fini(struct nvkm_bar *base)<br>
-&gt;=C2=A0 {<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0nvkm_mask(bar-&gt;subdev.device, 0x001704, 0x8000=
-0000, 0x00000000);<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0struct nvkm_device *device =3D base-&gt;subdev.de=
-vice;<br>
-&gt; +<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0if (base-&gt;subdev.oneinit)<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0nvkm_mask(device, 0x0=
-01704, 0x80000000, 0x00000000);<br>
-&gt;=C2=A0 }<br>
-&gt;<br>
-&gt;=C2=A0 void<br>
-<br>
-</div></div>I have tested this and it works for me. Thanks for fixing this!=
- Would be<br>
-good to get Ben&#39;s ACK, but you can have my ...<br></blockquote><div>I&#=
-39;d love to get a good explanation as to why it hangs without this change,=
- as, on the surface, it&#39;s not immediately obvious as to why it&#39;s ha=
-nging.</div><div><br></div><div>Thanks,</div><div>Ben.</div><div>=C2=A0</di=
-v><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:=
-1px #ccc solid;padding-left:1ex">
-<br>
-Tested-by: Jon Hunter &lt;<a href=3D"mailto:jonathanh@nvidia.com">jonathanh=
-@nvidia.com</a>&gt;<br>
-<br>
-Cheers<br>
-<span class=3D"HOEnZb"><font color=3D"#888888">Jon<br>
-<br>
---<br>
-nvpublic<br>
-</font></span></blockquote></div><br></div></div>
-
---001a1134fbbc60865c055f9c0f4a--
-
---===============1610944616==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1610944616==--
+Bjorn
