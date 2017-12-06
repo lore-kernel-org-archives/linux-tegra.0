@@ -1,61 +1,80 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V3 2/7] PCI: Export pci_find_host_bridge()
-Date: Tue, 5 Dec 2017 14:04:02 -0600
-Message-ID: <20171205200402.GF23510@bhelgaas-glaptop.roam.corp.google.com>
-References: <1512120007-28088-1-git-send-email-mmaddireddy@nvidia.com>
- <1512120007-28088-3-git-send-email-mmaddireddy@nvidia.com>
+From: Guillaume Tucker <guillaume.tucker@collabora.com>
+Subject: Re: [PATCH 1/2] drm/nouveau/bar/gf100: fix hang when calling ->fini()
+ before ->init()
+Date: Wed, 6 Dec 2017 09:22:04 +0000
+Message-ID: <d5b6a012-52c4-dce3-1cc6-3041558e808b@collabora.com>
+References: <be610a7596ad8fee7da092161888c532c2eb2908.1512411775.git.guillaume.tucker@collabora.com>
+ <6db622ac-319d-c640-91ab-9248e528b69b@nvidia.com>
+ <CABDvA=krahNw3q+qpEPbbv8Y9fvX4jXc_B54qafwtgFyWpqKWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1512120007-28088-3-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: cyndis-/1wQRMveznE@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CABDvA=krahNw3q+qpEPbbv8Y9fvX4jXc_B54qafwtgFyWpqKWg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>, Jon Hunter <jonathanh@nvidia.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 01, 2017 at 02:50:02PM +0530, Manikanta Maddireddy wrote:
-> PCI subsystem pass pci_bus pointer to pci_ops callback functions, Tegra
+On 05/12/17 18:32, Ben Skeggs wrote:
+> On Wed, Dec 6, 2017 at 12:30 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>>
+>> On 04/12/17 18:37, Guillaume Tucker wrote:
+>>> If the firmware fails to load then ->fini() will be called before the
+>>> device has been initialised, causing the kernel to hang while trying
+>>> to write to a register.  Add a test in ->fini() to avoid this issue.
+>>>
+>>> This fixes a kernel hang on tegra124.
+>>>
+>>> Fixes: b17de35a2ebbe ("drm/nouveau/bar: implement bar1 teardown")
+>>> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+>>> CC: Ben Skeggs <bskeggs@redhat.com>
+>>> ---
+>>>  drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c | 7 +++++--
+>>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
+>> b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
+>>> index a3ba7f50198b..95e2aba64aad 100644
+>>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
+>>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
+>>> @@ -43,9 +43,12 @@ gf100_bar_bar1_wait(struct nvkm_bar *base)
+>>>  }
+>>>
+>>>  void
+>>> -gf100_bar_bar1_fini(struct nvkm_bar *bar)
+>>> +gf100_bar_bar1_fini(struct nvkm_bar *base)
+>>>  {
+>>> -     nvkm_mask(bar->subdev.device, 0x001704, 0x80000000, 0x00000000);
+>>> +     struct nvkm_device *device = base->subdev.device;
+>>> +
+>>> +     if (base->subdev.oneinit)
+>>> +             nvkm_mask(device, 0x001704, 0x80000000, 0x00000000);
+>>>  }
+>>>
+>>>  void
+>>
+>> I have tested this and it works for me. Thanks for fixing this! Would be
+>> good to get Ben's ACK, but you can have my ...
+>>
+> I'd love to get a good explanation as to why it hangs without this change,
+> as, on the surface, it's not immediately obvious as to why it's hanging.
 
-s/PCI subsystem pass/The PCI subsystem passes a/
-s/, Tegra/.  The Tegra/
+To be fair I'm not entirely sure either why this causes a hang, I
+haven't read the TRM...  The iomem has been mapped at this point,
+so accessing the register should work.  One clue is when you look
+at _bar1_init(), the 0x1704 register is initialised with
+some (device instance?) memory address.  So it's possible that
+the hardware does something special when you set this to 0 as in
+_bar1_fini(), which may fail in particular if it was previously
+not initialised with a valid address.
 
-> host driver use pci_find_host_bridge() to get pci_host_bridge from pci_bus.
+This is merely guesswork, would be interested to find out the
+real explanation though.
 
-s/use/uses/
+>> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> Export pci_find_host_bridge() to allow Tegra PCIe driver to be compiled as
-> loadable kernel module.
+Thanks!
 
-s/allow Tegra/allow the Tegra/
-s/loadable/a loadable/
-
-But why do you need pci_find_host_bridge() at all?  Most drivers use
-the pci_bus.sysdata pointer for this purpose, e.g., see db271747a04d
-("PCI: mediatek: Use bus->sysdata to get host private data")
-
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V2:
-> * commit message update
-> V3:
-> * EXPORT_SYMBOL is changed to EXPORT_SYMBOL_GPL
-> 
->  drivers/pci/host-bridge.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/host-bridge.c b/drivers/pci/host-bridge.c
-> index add66236215c..b8c0fcde9bd7 100644
-> --- a/drivers/pci/host-bridge.c
-> +++ b/drivers/pci/host-bridge.c
-> @@ -22,6 +22,7 @@ struct pci_host_bridge *pci_find_host_bridge(struct pci_bus *bus)
->  
->  	return to_pci_host_bridge(root_bus->bridge);
->  }
-> +EXPORT_SYMBOL_GPL(pci_find_host_bridge);
->  
->  struct device *pci_get_host_bridge_device(struct pci_dev *dev)
->  {
-> -- 
-> 2.1.4
-> 
+Guillaume
