@@ -1,80 +1,87 @@
-From: Guillaume Tucker <guillaume.tucker@collabora.com>
-Subject: Re: [PATCH 1/2] drm/nouveau/bar/gf100: fix hang when calling ->fini()
- before ->init()
-Date: Wed, 6 Dec 2017 09:22:04 +0000
-Message-ID: <d5b6a012-52c4-dce3-1cc6-3041558e808b@collabora.com>
-References: <be610a7596ad8fee7da092161888c532c2eb2908.1512411775.git.guillaume.tucker@collabora.com>
- <6db622ac-319d-c640-91ab-9248e528b69b@nvidia.com>
- <CABDvA=krahNw3q+qpEPbbv8Y9fvX4jXc_B54qafwtgFyWpqKWg@mail.gmail.com>
+From: "Chen, Kenji" <kenji.chen-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: RE: [PATCH v1 0/2] PCI/ASPM: Refine L1 PM Substates support
+Date: Wed, 6 Dec 2017 01:55:37 +0000
+Message-ID: <A7A4B3ECFA40144E98B82E71E29693557CA5516C@PGSMSX102.gar.corp.intel.com>
+References: <20171202211833.23146.5744.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20171205194050.GD23510@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CABDvA=krahNw3q+qpEPbbv8Y9fvX4jXc_B54qafwtgFyWpqKWg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Skeggs <bskeggs@redhat.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171205194050.GD23510-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Krishna Kishore <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Patrick Georgi <pgeorgi-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rajat Jain <rajatja-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stefan Reinauer <stefan.reinauer-7ChRSZmxDtxg9hUCZPvPmw@public.gmane.org>, Duncan Laurie <dlaurie-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/12/17 18:32, Ben Skeggs wrote:
-> On Wed, Dec 6, 2017 at 12:30 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
->
->>
->> On 04/12/17 18:37, Guillaume Tucker wrote:
->>> If the firmware fails to load then ->fini() will be called before the
->>> device has been initialised, causing the kernel to hang while trying
->>> to write to a register.  Add a test in ->fini() to avoid this issue.
->>>
->>> This fixes a kernel hang on tegra124.
->>>
->>> Fixes: b17de35a2ebbe ("drm/nouveau/bar: implement bar1 teardown")
->>> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
->>> CC: Ben Skeggs <bskeggs@redhat.com>
->>> ---
->>>  drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c | 7 +++++--
->>>  1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
->>> index a3ba7f50198b..95e2aba64aad 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
->>> @@ -43,9 +43,12 @@ gf100_bar_bar1_wait(struct nvkm_bar *base)
->>>  }
->>>
->>>  void
->>> -gf100_bar_bar1_fini(struct nvkm_bar *bar)
->>> +gf100_bar_bar1_fini(struct nvkm_bar *base)
->>>  {
->>> -     nvkm_mask(bar->subdev.device, 0x001704, 0x80000000, 0x00000000);
->>> +     struct nvkm_device *device = base->subdev.device;
->>> +
->>> +     if (base->subdev.oneinit)
->>> +             nvkm_mask(device, 0x001704, 0x80000000, 0x00000000);
->>>  }
->>>
->>>  void
->>
->> I have tested this and it works for me. Thanks for fixing this! Would be
->> good to get Ben's ACK, but you can have my ...
->>
-> I'd love to get a good explanation as to why it hangs without this change,
-> as, on the surface, it's not immediately obvious as to why it's hanging.
+https://pcisig.com/sites/default/files/specification_documents/ECN_L1_PM_Substates_with_CLKREQ_31_May_2013_Rev10a.pdf
+Pls also check My Intel Doc# 545845 for the bits fields description.
 
-To be fair I'm not entirely sure either why this causes a hang, I
-haven't read the TRM...  The iomem has been mapped at this point,
-so accessing the register should work.  One clue is when you look
-at _bar1_init(), the 0x1704 register is initialised with
-some (device instance?) memory address.  So it's possible that
-the hardware does something special when you set this to 0 as in
-_bar1_fini(), which may fail in particular if it was previously
-not initialised with a valid address.
+-----Original Message-----
+From: Bjorn Helgaas [mailto:helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org] 
+Sent: Wednesday, December 6, 2017 3:41 AM
+To: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Chen, Kenji <kenji.chen-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>; Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>; Krishna Kishore <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Patrick Georgi <pgeorgi-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>; Rajat Jain <rajatja-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>; Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>; Stefan Reinauer <stefan.reinauer-7ChRSZmxDtxg9hUCZPvPmw@public.gmane.org>; Duncan Laurie <dlaurie-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v1 0/2] PCI/ASPM: Refine L1 PM Substates support
 
-This is merely guesswork, would be interested to find out the
-real explanation though.
+On Sat, Dec 02, 2017 at 03:45:38PM -0600, Bjorn Helgaas wrote:
+> The PCIe active link power state is L0.  ASPM defines two low-power
+> states: L0s and L1.  The L1 PM Substates feature defines two 
+> additional low-power states: L1.1 and L2.2.
+> 
+> The L1.2 state may have substantial entry/exit latency.  Downstream 
+> devices can use the Latency Tolerance Reporting (LTR) feature to 
+> report how much latency they can tolerate.  The L1 PM Substates 
+> capability includes a programmable L1.2 threshold register.  If the 
+> downstream devices can tolerate the latency indicated by the 
+> threshold, L1.2 may be used.
+> 
+> If LTR is not enabled, the L1.2 threshold is ignored and L1.2 can be 
+> used whenever it is enabled and CLKREQ# is de-asserted.  Linux 
+> currently never enables LTR, but firmware may have done so.
+> 
+> The current L1 PM substates support in Linux sets the L1.2 threshold 
+> to a fixed value (163.84us) copied from coreboot [1].  I don't know 
+> where that value came from, and it is incorrect for some platforms, 
+> e.g., Tegra [2].
+> 
+> These patches change that so we calculate the L1.2 threshold based on 
+> values reported by the hardware, and we enable LTR whenever possible.
+> 
+> This is all just my understanding from reading the spec.  I'd be glad 
+> to be corrected if I'm going wrong.
+> 
+> I'm particularly puzzled about the coreboot code in
+> pciexp_L1_substate_commit() that sets LTR_L1.2_THRESHOLD:
+> 
+> +	pcie_update_cfg(root, root_cap + 0x08, ~0xe3ff0000,
+> +		(1 << 21) | (1 << 23) | (1 << 30));
+> 
+> This is writing the L1 PM Substates Control 1 register, but the shifts 
+> don't match up with any of the fields in the register, so this is an 
+> awfully funny way to write the threshold.
+> 
+> [1] 
+> https://mail.coreboot.org/pipermail/coreboot-gerrit/2015-March/021134.
+> html [2] 
+> https://lkml.kernel.org/r/1510492674-12786-1-git-send-email-vidyas@nvi
+> dia.com
+> 
+> ---
+> 
+> Bjorn Helgaas (2):
+>       PCI/ASPM: Calculate LTR_L1.2_THRESHOLD from device characteristics
+>       PCI/ASPM: Enable Latency Tolerance Reporting when supported
+> 
+> 
+>  drivers/pci/pcie/aspm.c |   71 +++++++++++++++++++++++++++++++----------------
+>  drivers/pci/probe.c     |   33 ++++++++++++++++++++++
+>  include/linux/pci.h     |    2 +
+>  3 files changed, 82 insertions(+), 24 deletions(-)
 
->> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+I applied these with Vidya's Reviewed-by to pci/aspm for v4.16.
 
-Thanks!
+I'd still really like to hear from the coreboot folks about the rationale for the current coreboot code.  You folks are in a much better position to actually understand the hardware details.
 
-Guillaume
+Bjorn
