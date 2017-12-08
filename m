@@ -1,41 +1,69 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 2/2] serial: tegra: Fix a typo in a comment line
-Date: Thu, 7 Dec 2017 21:21:15 +0100
-Message-ID: <2b7ff65b-dcb8-996b-1f34-f1bff28bb515@users.sourceforge.net>
-References: <605adc2b-3591-86fc-410a-370f48dfb14e@users.sourceforge.net>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 2/7] PCI: Export pci_find_host_bridge()
+Date: Fri, 8 Dec 2017 14:07:54 +0530
+Message-ID: <aebabb88-d894-2b1f-d3e8-63a2acad9665@nvidia.com>
+References: <1512120007-28088-1-git-send-email-mmaddireddy@nvidia.com>
+ <1512120007-28088-3-git-send-email-mmaddireddy@nvidia.com>
+ <20171205200402.GF23510@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <605adc2b-3591-86fc-410a-370f48dfb14e@users.sourceforge.net>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171205200402.GF23510-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: cyndis-/1wQRMveznE@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 7 Dec 2017 21:06:25 +0100
 
-Delete a duplicate character in a word of this description.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/serial/serial-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 06-Dec-17 1:34 AM, Bjorn Helgaas wrote:
+> On Fri, Dec 01, 2017 at 02:50:02PM +0530, Manikanta Maddireddy wrote:
+>> PCI subsystem pass pci_bus pointer to pci_ops callback functions, Tegra
+> 
+> s/PCI subsystem pass/The PCI subsystem passes a/
+> s/, Tegra/.  The Tegra/
+> 
+>> host driver use pci_find_host_bridge() to get pci_host_bridge from pci_bus.
+> 
+> s/use/uses/
+> 
+>> Export pci_find_host_bridge() to allow Tegra PCIe driver to be compiled as
+>> loadable kernel module.
+> 
+> s/allow Tegra/allow the Tegra/
+> s/loadable/a loadable/
+> 
+> But why do you need pci_find_host_bridge() at all?  Most drivers use
+> the pci_bus.sysdata pointer for this purpose, e.g., see db271747a04d
+> ("PCI: mediatek: Use bus->sysdata to get host private data")
+> 
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index 46233c5974f1..a731b2d61d3e 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -888,7 +888,7 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
- 	 * EORD is different interrupt than RX_TIMEOUT - RX_TIMEOUT occurs when
- 	 * the DATA is sitting in the FIFO and couldn't be transferred to the
- 	 * DMA as the DMA size alignment(4 bytes) is not met. EORD will be
--	 * triggered when there is a pause of the incomming data stream for 4
-+	 * triggered when there is a pause of the incoming data stream for 4
- 	 * characters long.
- 	 *
- 	 * For pauses in the data which is not aligned to 4 bytes, we get
--- 
-2.15.1
+I will send a patch to use bus->sysdata instead of pci_find_host_bridge().
+
+>> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> V2:
+>> * commit message update
+>> V3:
+>> * EXPORT_SYMBOL is changed to EXPORT_SYMBOL_GPL
+>>
+>>  drivers/pci/host-bridge.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/pci/host-bridge.c b/drivers/pci/host-bridge.c
+>> index add66236215c..b8c0fcde9bd7 100644
+>> --- a/drivers/pci/host-bridge.c
+>> +++ b/drivers/pci/host-bridge.c
+>> @@ -22,6 +22,7 @@ struct pci_host_bridge *pci_find_host_bridge(struct pci_bus *bus)
+>>  
+>>  	return to_pci_host_bridge(root_bus->bridge);
+>>  }
+>> +EXPORT_SYMBOL_GPL(pci_find_host_bridge);
+>>  
+>>  struct device *pci_get_host_bridge_device(struct pci_dev *dev)
+>>  {
+>> -- 
+>> 2.1.4
+>>
