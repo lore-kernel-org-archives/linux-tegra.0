@@ -1,38 +1,51 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 2/2] serial: tegra: Fix a typo in a comment line
-Date: Fri, 8 Dec 2017 10:42:28 +0000
-Message-ID: <0dd7a341-e9aa-ff00-357c-43cf994b9188@nvidia.com>
-References: <605adc2b-3591-86fc-410a-370f48dfb14e@users.sourceforge.net>
- <2b7ff65b-dcb8-996b-1f34-f1bff28bb515@users.sourceforge.net>
- <b7bcd402-1fc2-85aa-bbd6-89e2e465e855@nvidia.com>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V3 2/7] PCI: Export pci_find_host_bridge()
+Date: Fri, 8 Dec 2017 08:38:52 -0600
+Message-ID: <20171208143852.GA2386@bhelgaas-glaptop.roam.corp.google.com>
+References: <1512120007-28088-1-git-send-email-mmaddireddy@nvidia.com>
+ <1512120007-28088-3-git-send-email-mmaddireddy@nvidia.com>
+ <20171205200402.GF23510@bhelgaas-glaptop.roam.corp.google.com>
+ <aebabb88-d894-2b1f-d3e8-63a2acad9665@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b7bcd402-1fc2-85aa-bbd6-89e2e465e855@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, SF Markus Elfring <elfring@users.sourceforge.net>, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <aebabb88-d894-2b1f-d3e8-63a2acad9665-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: cyndis-/1wQRMveznE@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 08/12/17 09:37, Laxman Dewangan wrote:
+On Fri, Dec 08, 2017 at 02:07:54PM +0530, Manikanta Maddireddy wrote:
 > 
 > 
-> On Friday 08 December 2017 01:51 AM, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Thu, 7 Dec 2017 21:06:25 +0100
->>
->> Delete a duplicate character in a word of this description.
->>
+> On 06-Dec-17 1:34 AM, Bjorn Helgaas wrote:
+> > On Fri, Dec 01, 2017 at 02:50:02PM +0530, Manikanta Maddireddy wrote:
+> >> PCI subsystem pass pci_bus pointer to pci_ops callback functions, Tegra
+> > 
+> > s/PCI subsystem pass/The PCI subsystem passes a/
+> > s/, Tegra/.  The Tegra/
+> > 
+> >> host driver use pci_find_host_bridge() to get pci_host_bridge from pci_bus.
+> > 
+> > s/use/uses/
+> > 
+> >> Export pci_find_host_bridge() to allow Tegra PCIe driver to be compiled as
+> >> loadable kernel module.
+> > 
+> > s/allow Tegra/allow the Tegra/
+> > s/loadable/a loadable/
+> > 
+> > But why do you need pci_find_host_bridge() at all?  Most drivers use
+> > the pci_bus.sysdata pointer for this purpose, e.g., see db271747a04d
+> > ("PCI: mediatek: Use bus->sysdata to get host private data")
 > 
-> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+> I will send a patch to use bus->sysdata instead of pci_find_host_bridge().
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+That would be excellent!  Thank you!
 
-Thanks!
-Jon
-
--- 
-nvpublic
+Bjorn
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
