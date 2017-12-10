@@ -1,227 +1,266 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 1/2] usb: phy: tegra: Cleanup error messages
-Date: Mon, 11 Dec 2017 02:07:37 +0300
-Message-ID: <ddf583790b551999ef063107be12a2d85e7b6a86.1512946782.git.digetx@gmail.com>
+Subject: [PATCH v1 2/2] usb: tegra: Move UTMI-pads reset from ehci-tegra to tegra-phy
+Date: Mon, 11 Dec 2017 02:07:38 +0300
+Message-ID: <853ce44924e396b907332d4f3ad4ae70eae9bbcc.1512946782.git.digetx@gmail.com>
+References: <ddf583790b551999ef063107be12a2d85e7b6a86.1512946782.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <ddf583790b551999ef063107be12a2d85e7b6a86.1512946782.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <ddf583790b551999ef063107be12a2d85e7b6a86.1512946782.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+References: <ddf583790b551999ef063107be12a2d85e7b6a86.1512946782.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra's PHY driver has a mix of pr_err() and dev_err(), let's switch to
-dev_err() and use common errors message formatting across the driver for
-consistency.
+UTMI pads are shared by USB controllers and reset of UTMI pads is shared
+with the reset of USB1 controller. Currently reset of UTMI pads is done by
+the EHCI driver and ChipIdea UDC works because EHCI driver always happen
+to be probed first. Move reset controls from ehci-tegra to tegra-phy in
+order to resolve the problem.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 72 +++++++++++++++++++++++++----------------
- 1 file changed, 44 insertions(+), 28 deletions(-)
+ drivers/usb/host/ehci-tegra.c     | 87 ++++++++++++++++++---------------------
+ drivers/usb/phy/phy-tegra-usb.c   | 46 +++++++++++++++++++++
+ include/linux/usb/tegra_usb_phy.h |  2 +
+ 3 files changed, 87 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 7d5db625f800..019968a5d0ab 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -236,10 +236,14 @@ static void set_phcd(struct tegra_usb_phy *phy, bool enable)
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index c809f7d2f08f..63294892e198 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -36,7 +36,6 @@
+ #define DRV_NAME "tegra-ehci"
  
- static int utmip_pad_open(struct tegra_usb_phy *phy)
+ static struct hc_driver __read_mostly tegra_ehci_hc_driver;
+-static bool usb1_reset_attempted;
+ 
+ struct tegra_ehci_soc_config {
+ 	bool has_hostpc;
+@@ -51,67 +50,54 @@ struct tegra_ehci_hcd {
+ 	enum tegra_usb_phy_port_speed port_speed;
+ };
+ 
+-/*
+- * The 1st USB controller contains some UTMI pad registers that are global for
+- * all the controllers on the chip. Those registers are also cleared when
+- * reset is asserted to the 1st controller. This means that the 1st controller
+- * can only be reset when no other controlled has finished probing. So we'll
+- * reset the 1st controller before doing any other setup on any of the
+- * controllers, and then never again.
+- *
+- * Since this is a PHY issue, the Tegra PHY driver should probably be doing
+- * the resetting of the USB controllers. But to keep compatibility with old
+- * device trees that don't have reset phandles in the PHYs, do it here.
+- * Those old DTs will be vulnerable to total USB breakage if the 1st EHCI
+- * device isn't the first one to finish probing, so warn them.
+- */
+ static int tegra_reset_usb_controller(struct platform_device *pdev)
  {
+ 	struct device_node *phy_np;
+ 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+ 	struct tegra_ehci_hcd *tegra =
+ 		(struct tegra_ehci_hcd *)hcd_to_ehci(hcd)->priv;
+-	bool has_utmi_pad_registers = false;
++	struct reset_control *rst;
 +	int err;
-+
- 	phy->pad_clk = devm_clk_get(phy->u_phy.dev, "utmi-pads");
- 	if (IS_ERR(phy->pad_clk)) {
--		pr_err("%s: can't get utmip pad clock\n", __func__);
--		return PTR_ERR(phy->pad_clk);
-+		err = PTR_ERR(phy->pad_clk);
-+		dev_err(phy->u_phy.dev,
-+			"Failed to get UTMIP pad clock: %d\n", err);
+ 
+ 	phy_np = of_parse_phandle(pdev->dev.of_node, "nvidia,phy", 0);
+ 	if (!phy_np)
+ 		return -ENOENT;
+ 
+-	if (of_property_read_bool(phy_np, "nvidia,has-utmi-pad-registers"))
+-		has_utmi_pad_registers = true;
++	/*
++	 * The 1st USB controller contains some UTMI pad registers that are
++	 * global for all the controllers on the chip. Those registers are
++	 * also cleared when reset is asserted to the 1st controller.
++	 */
++	rst = of_reset_control_get_shared(phy_np, "utmi-pads");
++	if (IS_ERR(rst)) {
++		dev_warn(&pdev->dev,
++			 "can't get utmi-pads reset from the PHY\n");
++		dev_warn(&pdev->dev,
++			 "continuing, but please update your DT\n");
++	} else {
++		/*
++		 * PHY driver performs UTMI-pads reset in a case of
++		 * non-legacy DT.
++		 */
++		reset_control_put(rst);
++	}
+ 
+-	if (!usb1_reset_attempted) {
+-		struct reset_control *usb1_reset;
++	of_node_put(phy_np);
+ 
+-		if (!has_utmi_pad_registers)
+-			usb1_reset = of_reset_control_get(phy_np, "utmi-pads");
+-		else
+-			usb1_reset = tegra->rst;
+-
+-		if (IS_ERR(usb1_reset)) {
+-			dev_warn(&pdev->dev,
+-				 "can't get utmi-pads reset from the PHY\n");
+-			dev_warn(&pdev->dev,
+-				 "continuing, but please update your DT\n");
+-		} else {
+-			reset_control_assert(usb1_reset);
+-			udelay(1);
+-			reset_control_deassert(usb1_reset);
+-
+-			if (!has_utmi_pad_registers)
+-				reset_control_put(usb1_reset);
+-		}
++	/* reset control is shared, hence initialize it first */
++	err = reset_control_deassert(tegra->rst);
++	if (err)
 +		return err;
- 	}
+ 
+-		usb1_reset_attempted = true;
+-	}
++	err = reset_control_assert(tegra->rst);
++	if (err)
++		return err;
+ 
+-	if (!has_utmi_pad_registers) {
+-		reset_control_assert(tegra->rst);
+-		udelay(1);
+-		reset_control_deassert(tegra->rst);
+-	}
++	udelay(1);
+ 
+-	of_node_put(phy_np);
++	err = reset_control_deassert(tegra->rst);
++	if (err)
++		return err;
  
  	return 0;
-@@ -282,7 +286,8 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
- 	void __iomem *base = phy->pad_regs;
- 
- 	if (!utmip_pad_count) {
--		pr_err("%s: utmip pad already powered off\n", __func__);
-+		dev_err(phy->u_phy.dev,
-+			"%s: UTMIP pad already powered off\n", __func__);
- 		return -EINVAL;
- 	}
- 
-@@ -337,7 +342,8 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
- 		set_phcd(phy, true);
- 
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) < 0)
--		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
-+		dev_err(phy->u_phy.dev,
-+			"%s: Timeout waiting for PHY to stabilize\n", __func__);
  }
+@@ -440,7 +426,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 		goto cleanup_hcd_create;
+ 	}
  
- static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
-@@ -369,7 +375,8 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
+-	tegra->rst = devm_reset_control_get(&pdev->dev, "usb");
++	tegra->rst = devm_reset_control_get_shared(&pdev->dev, "usb");
+ 	if (IS_ERR(tegra->rst)) {
+ 		dev_err(&pdev->dev, "Can't get ehci reset\n");
+ 		err = PTR_ERR(tegra->rst);
+@@ -452,8 +438,10 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 		goto cleanup_hcd_create;
  
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
- 						     USB_PHY_CLK_VALID))
--		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
+ 	err = tegra_reset_usb_controller(pdev);
+-	if (err)
++	if (err) {
++		dev_err(&pdev->dev, "Failed to reset controller\n");
+ 		goto cleanup_clk_en;
++	}
+ 
+ 	u_phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
+ 	if (IS_ERR(u_phy)) {
+@@ -537,6 +525,9 @@ static int tegra_ehci_remove(struct platform_device *pdev)
+ 	usb_phy_shutdown(hcd->usb_phy);
+ 	usb_remove_hcd(hcd);
+ 
++	reset_control_assert(tegra->rst);
++	udelay(1);
++
+ 	clk_disable_unprepare(tegra->clk);
+ 
+ 	usb_put_hcd(hcd);
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 019968a5d0ab..d8b43a09228c 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -246,9 +246,48 @@ static int utmip_pad_open(struct tegra_usb_phy *phy)
+ 		return err;
+ 	}
+ 
++	phy->pad_rst = devm_reset_control_get_optional_shared(
++						phy->u_phy.dev, "utmi-pads");
++	if (IS_ERR(phy->pad_rst)) {
++		err = PTR_ERR(phy->pad_rst);
 +		dev_err(phy->u_phy.dev,
-+			"%s: Timeout waiting for PHY to stabilize\n", __func__);
- }
- 
- static int utmi_phy_power_on(struct tegra_usb_phy *phy)
-@@ -616,15 +623,15 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
- 
- 	ret = gpio_direction_output(phy->reset_gpio, 0);
- 	if (ret < 0) {
--		dev_err(phy->u_phy.dev, "gpio %d not set to 0\n",
--			phy->reset_gpio);
-+		dev_err(phy->u_phy.dev, "%s: GPIO %d not set to 0: %d\n",
-+			__func__, phy->reset_gpio, ret);
- 		return ret;
- 	}
- 	msleep(5);
- 	ret = gpio_direction_output(phy->reset_gpio, 1);
- 	if (ret < 0) {
--		dev_err(phy->u_phy.dev, "gpio %d not set to 1\n",
--			phy->reset_gpio);
-+		dev_err(phy->u_phy.dev, "%s: GPIO %d not set to 1: %d\n",
-+			__func__, phy->reset_gpio, ret);
- 		return ret;
- 	}
- 
-@@ -660,13 +667,15 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
- 	/* Fix VbusInvalid due to floating VBUS */
- 	ret = usb_phy_io_write(phy->ulpi, 0x40, 0x08);
- 	if (ret) {
--		pr_err("%s: ulpi write failed\n", __func__);
-+		dev_err(phy->u_phy.dev, "%s: ULPI write failed: %d\n",
-+			__func__, ret);
- 		return ret;
- 	}
- 
- 	ret = usb_phy_io_write(phy->ulpi, 0x80, 0x0B);
- 	if (ret) {
--		pr_err("%s: ulpi write failed\n", __func__);
-+		dev_err(phy->u_phy.dev, "%s: ULPI write failed: %d\n",
-+			__func__, ret);
- 		return ret;
- 	}
- 
-@@ -727,28 +736,30 @@ static int ulpi_open(struct tegra_usb_phy *phy)
- 
- 	phy->clk = devm_clk_get(phy->u_phy.dev, "ulpi-link");
- 	if (IS_ERR(phy->clk)) {
--		pr_err("%s: can't get ulpi clock\n", __func__);
--		return PTR_ERR(phy->clk);
-+		err = PTR_ERR(phy->clk);
-+		dev_err(phy->u_phy.dev, "Failed to get ULPI clock: %d\n", err);
++			"Failed to get UTMI-pads reset: %d\n", err);
 +		return err;
- 	}
- 
- 	err = devm_gpio_request(phy->u_phy.dev, phy->reset_gpio,
- 		"ulpi_phy_reset_b");
- 	if (err < 0) {
--		dev_err(phy->u_phy.dev, "request failed for gpio: %d\n",
--		       phy->reset_gpio);
-+		dev_err(phy->u_phy.dev, "Request failed for GPIO %d: %d\n",
-+			phy->reset_gpio, err);
- 		return err;
- 	}
- 
- 	err = gpio_direction_output(phy->reset_gpio, 0);
- 	if (err < 0) {
--		dev_err(phy->u_phy.dev, "gpio %d direction not set to output\n",
--		       phy->reset_gpio);
++	}
++
++	err = reset_control_deassert(phy->pad_rst);
++	if (err) {
 +		dev_err(phy->u_phy.dev,
-+			"GPIO %d direction not set to output: %d\n",
-+			phy->reset_gpio, err);
- 		return err;
- 	}
- 
- 	phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
- 	if (!phy->ulpi) {
--		dev_err(phy->u_phy.dev, "otg_ulpi_create returned NULL\n");
-+		dev_err(phy->u_phy.dev, "Failed to create ULPI OTG\n");
- 		err = -ENOMEM;
- 		return err;
- 	}
-@@ -765,8 +776,10 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
- 
- 	phy->pll_u = devm_clk_get(phy->u_phy.dev, "pll_u");
- 	if (IS_ERR(phy->pll_u)) {
--		pr_err("Can't get pll_u clock\n");
--		return PTR_ERR(phy->pll_u);
-+		err = PTR_ERR(phy->pll_u);
-+		dev_err(phy->u_phy.dev,
-+			"Failed to get pll_u clock: %d\n", err);
++			"Failed to initialize UTMI-pads reset: %d\n", err);
 +		return err;
- 	}
- 
- 	err = clk_prepare_enable(phy->pll_u);
-@@ -781,7 +794,8 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
- 		}
- 	}
- 	if (!phy->freq) {
--		pr_err("invalid pll_u parent rate %ld\n", parent_rate);
-+		dev_err(phy->u_phy.dev, "Invalid pll_u parent rate %ld\n",
-+			parent_rate);
- 		err = -EINVAL;
- 		goto fail;
- 	}
-@@ -790,7 +804,7 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
- 		err = regulator_enable(phy->vbus);
- 		if (err) {
- 			dev_err(phy->u_phy.dev,
--				"failed to enable usb vbus regulator: %d\n",
-+				"Failed to enable USB VBUS regulator: %d\n",
- 				err);
- 			goto fail;
- 		}
-@@ -854,7 +868,8 @@ static int read_utmi_param(struct platform_device *pdev, const char *param,
- 	int err = of_property_read_u32(pdev->dev.of_node, param, &value);
- 	*dest = (u8)value;
- 	if (err < 0)
--		dev_err(&pdev->dev, "Failed to read USB UTMI parameter %s: %d\n",
-+		dev_err(&pdev->dev,
-+			"Failed to read USB UTMI parameter %s: %d\n",
- 			param, err);
- 	return err;
++	}
++
+ 	return 0;
  }
-@@ -870,14 +885,14 @@ static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
- 	if (!res) {
--		dev_err(&pdev->dev, "Failed to get UTMI Pad regs\n");
-+		dev_err(&pdev->dev, "Failed to get UTMI pad regs\n");
- 		return  -ENXIO;
- 	}
++static int utmip_pad_close(struct tegra_usb_phy *phy)
++{
++	int ret;
++
++	ret = clk_prepare_enable(phy->pad_clk);
++	if (ret) {
++		dev_err(phy->u_phy.dev,
++			"Failed to enable UTMI-pads clock: %d\n", ret);
++		return ret;
++	}
++
++	ret = reset_control_assert(phy->pad_rst);
++	if (ret)
++		dev_err(phy->u_phy.dev,
++			"Failed to assert UTMI-pads reset: %d\n", ret);
++
++	udelay(1);
++
++	clk_disable_unprepare(phy->pad_clk);
++
++	return ret;
++}
++
+ static void utmip_pad_power_on(struct tegra_usb_phy *phy)
+ {
+ 	unsigned long val, flags;
+@@ -260,6 +299,10 @@ static void utmip_pad_power_on(struct tegra_usb_phy *phy)
+ 	spin_lock_irqsave(&utmip_pad_lock, flags);
  
- 	tegra_phy->pad_regs = devm_ioremap(&pdev->dev, res->start,
- 		resource_size(res));
- 	if (!tegra_phy->pad_regs) {
--		dev_err(&pdev->dev, "Failed to remap UTMI Pad regs\n");
-+		dev_err(&pdev->dev, "Failed to remap UTMI pad regs\n");
- 		return -ENOMEM;
- 	}
+ 	if (utmip_pad_count++ == 0) {
++		reset_control_assert(phy->pad_rst);
++		udelay(1);
++		reset_control_deassert(phy->pad_rst);
++
+ 		val = readl(base + UTMIP_BIAS_CFG0);
+ 		val &= ~(UTMIP_OTGPD | UTMIP_BIASPD);
  
-@@ -1019,15 +1034,16 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 		tegra_phy->reset_gpio =
- 			of_get_named_gpio(np, "nvidia,phy-reset-gpio", 0);
- 		if (!gpio_is_valid(tegra_phy->reset_gpio)) {
--			dev_err(&pdev->dev, "invalid gpio: %d\n",
--				tegra_phy->reset_gpio);
-+			dev_err(&pdev->dev,
-+				"Invalid GPIO: %d\n", tegra_phy->reset_gpio);
- 			return tegra_phy->reset_gpio;
- 		}
- 		tegra_phy->config = NULL;
- 		break;
+@@ -702,6 +745,9 @@ static void tegra_usb_phy_close(struct tegra_usb_phy *phy)
+ 	if (!IS_ERR(phy->vbus))
+ 		regulator_disable(phy->vbus);
  
- 	default:
--		dev_err(&pdev->dev, "phy_type is invalid or unsupported\n");
-+		dev_err(&pdev->dev, "phy_type %u is invalid or unsupported\n",
-+			phy_type);
- 		return -EINVAL;
- 	}
++	if (!phy->is_ulpi_phy)
++		utmip_pad_close(phy);
++
+ 	clk_disable_unprepare(phy->pll_u);
+ }
  
+diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
+index d641ea1660b7..0c5c3ea8b2d7 100644
+--- a/include/linux/usb/tegra_usb_phy.h
++++ b/include/linux/usb/tegra_usb_phy.h
+@@ -17,6 +17,7 @@
+ #define __TEGRA_USB_PHY_H
+ 
+ #include <linux/clk.h>
++#include <linux/reset.h>
+ #include <linux/usb/otg.h>
+ 
+ /*
+@@ -76,6 +77,7 @@ struct tegra_usb_phy {
+ 	bool is_legacy_phy;
+ 	bool is_ulpi_phy;
+ 	int reset_gpio;
++	struct reset_control *pad_rst;
+ };
+ 
+ void tegra_usb_phy_preresume(struct usb_phy *phy);
 -- 
 2.15.1
