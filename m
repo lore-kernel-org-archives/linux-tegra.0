@@ -1,72 +1,213 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 1/2] usb: phy: Add Kconfig entry for Tegra's PHY driver
-Date: Mon, 11 Dec 2017 02:09:59 +0300
-Message-ID: <b820f290730e57c999c211e5f82cf833755c299f.1512947332.git.digetx@gmail.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Subject: [PATCH v1 1/2] drm/tegra: dc: Link DC1 to DC0 on Tegra20
+Date: Mon, 11 Dec 2017 02:19:43 +0300
+Message-ID: <85902b42264b094cbf7cf30930f8c0bbccdca1b7.1512947732.git.digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add Kconfig entry so that other drivers other than ehci-tegra
-(like ChipIdea) could add Tegra's PHY to build dependencies.
+HW reset isn't actually broken on Tegra20, but there is a dependency on
+first display controller to be taken out of reset for the second to be
+enabled successfully.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/usb/host/Kconfig | 2 +-
- drivers/usb/phy/Kconfig  | 8 ++++++++
- drivers/usb/phy/Makefile | 2 +-
- 3 files changed, 10 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 77 +++++++++++++++++++++++++++++-----------------
+ drivers/gpu/drm/tegra/dc.h |  4 ++-
+ 2 files changed, 51 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index b80a94e632af..f19072f1f519 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -226,7 +226,7 @@ config USB_EHCI_TEGRA
-        tristate "NVIDIA Tegra HCD support"
-        depends on ARCH_TEGRA
-        select USB_EHCI_ROOT_HUB_TT
--       select USB_PHY
-+	select USB_TEGRA_PHY
- 	select USB_ULPI
- 	select USB_ULPI_VIEWPORT
-        help
-diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
-index 0f8ab981d572..2a50576e1a2a 100644
---- a/drivers/usb/phy/Kconfig
-+++ b/drivers/usb/phy/Kconfig
-@@ -159,6 +159,14 @@ config USB_MXS_PHY
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index fc70351b9017..6139d3e9cedf 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -24,6 +24,8 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_plane_helper.h>
  
- 	  MXS Phy is used by some of the i.MX SoCs, for example imx23/28/6x.
- 
-+config USB_TEGRA_PHY
-+	tristate "NVIDIA Tegra USB PHY Driver"
-+	depends on ARCH_TEGRA
-+	select USB_PHY
-+	help
-+	  This driver provides PHY support for the USB controllers found
-+	  on NVIDIA Tegra SoC's.
++static struct tegra_dc *dc0;
 +
- config USB_ULPI
- 	bool "Generic ULPI Transceiver Driver"
- 	depends on ARM || ARM64
-diff --git a/drivers/usb/phy/Makefile b/drivers/usb/phy/Makefile
-index 25e579fb92b8..df1d99010079 100644
---- a/drivers/usb/phy/Makefile
-+++ b/drivers/usb/phy/Makefile
-@@ -16,7 +16,7 @@ obj-$(CONFIG_AM335X_CONTROL_USB)	+= phy-am335x-control.o
- obj-$(CONFIG_AM335X_PHY_USB)		+= phy-am335x.o
- obj-$(CONFIG_OMAP_OTG)			+= phy-omap-otg.o
- obj-$(CONFIG_TWL6030_USB)		+= phy-twl6030-usb.o
--obj-$(CONFIG_USB_EHCI_TEGRA)		+= phy-tegra-usb.o
-+obj-$(CONFIG_USB_TEGRA_PHY)		+= phy-tegra-usb.o
- obj-$(CONFIG_USB_GPIO_VBUS)		+= phy-gpio-vbus-usb.o
- obj-$(CONFIG_USB_ISP1301)		+= phy-isp1301.o
- obj-$(CONFIG_USB_MV_OTG)		+= phy-mv-usb.o
+ struct tegra_plane {
+ 	struct drm_plane base;
+ 	unsigned int index;
+@@ -1863,7 +1865,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
+ 	.supports_block_linear = false,
+ 	.pitch_align = 8,
+ 	.has_powergate = false,
+-	.broken_reset = true,
++	.coupled_pm = true,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+@@ -1873,7 +1875,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+ 	.supports_block_linear = false,
+ 	.pitch_align = 8,
+ 	.has_powergate = false,
+-	.broken_reset = false,
++	.coupled_pm = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+@@ -1883,7 +1885,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+ 	.supports_block_linear = false,
+ 	.pitch_align = 64,
+ 	.has_powergate = true,
+-	.broken_reset = false,
++	.coupled_pm = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+@@ -1893,7 +1895,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+ 	.supports_block_linear = true,
+ 	.pitch_align = 64,
+ 	.has_powergate = true,
+-	.broken_reset = false,
++	.coupled_pm = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+@@ -1903,7 +1905,7 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+ 	.supports_block_linear = true,
+ 	.pitch_align = 64,
+ 	.has_powergate = true,
+-	.broken_reset = false,
++	.coupled_pm = false,
+ };
+ 
+ static const struct of_device_id tegra_dc_of_match[] = {
+@@ -1985,6 +1987,24 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 	if (err < 0)
+ 		return err;
+ 
++	/*
++	 * On Tegra20 DC1 requires DC0 to be taken out of reset in order to
++	 * be enabled, otherwise CPU hangs on writing to CMD_DISPLAY_COMMAND /
++	 * POWER_CONTROL registers during CRTC enabling.
++	 */
++	if (dc->pipe == 1 && dc->soc->coupled_pm) {
++		int link_flags = DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE;
++
++		if (!dc0)
++			return -EPROBE_DEFER;
++
++		dc->link = device_link_add(&pdev->dev, dc0->dev, link_flags);
++		if (!dc->link) {
++			dev_err(&pdev->dev, "failed to link to DC0\n");
++			return -EINVAL;
++		}
++	}
++
+ 	dc->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(dc->clk)) {
+ 		dev_err(&pdev->dev, "failed to get clock\n");
+@@ -1998,21 +2018,19 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* assert reset and disable clock */
+-	if (!dc->soc->broken_reset) {
+-		err = clk_prepare_enable(dc->clk);
+-		if (err < 0)
+-			return err;
++	err = clk_prepare_enable(dc->clk);
++	if (err < 0)
++		return err;
+ 
+-		usleep_range(2000, 4000);
++	usleep_range(2000, 4000);
+ 
+-		err = reset_control_assert(dc->rst);
+-		if (err < 0)
+-			return err;
++	err = reset_control_assert(dc->rst);
++	if (err < 0)
++		return err;
+ 
+-		usleep_range(2000, 4000);
++	usleep_range(2000, 4000);
+ 
+-		clk_disable_unprepare(dc->clk);
+-	}
++	clk_disable_unprepare(dc->clk);
+ 
+ 	if (dc->soc->has_powergate) {
+ 		if (dc->pipe == 0)
+@@ -2054,6 +2072,9 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	if (dc->pipe == 0)
++		dc0 = dc;
++
+ 	return 0;
+ }
+ 
+@@ -2077,6 +2098,9 @@ static int tegra_dc_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	if (dc == dc0)
++		dc0 = NULL;
++
+ 	return 0;
+ }
+ 
+@@ -2086,12 +2110,10 @@ static int tegra_dc_suspend(struct device *dev)
+ 	struct tegra_dc *dc = dev_get_drvdata(dev);
+ 	int err;
+ 
+-	if (!dc->soc->broken_reset) {
+-		err = reset_control_assert(dc->rst);
+-		if (err < 0) {
+-			dev_err(dev, "failed to assert reset: %d\n", err);
+-			return err;
+-		}
++	err = reset_control_assert(dc->rst);
++	if (err < 0) {
++		dev_err(dev, "failed to assert reset: %d\n", err);
++		return err;
+ 	}
+ 
+ 	if (dc->soc->has_powergate)
+@@ -2121,13 +2143,10 @@ static int tegra_dc_resume(struct device *dev)
+ 			return err;
+ 		}
+ 
+-		if (!dc->soc->broken_reset) {
+-			err = reset_control_deassert(dc->rst);
+-			if (err < 0) {
+-				dev_err(dev,
+-					"failed to deassert reset: %d\n", err);
+-				return err;
+-			}
++		err = reset_control_deassert(dc->rst);
++		if (err < 0) {
++			dev_err(dev, "failed to deassert reset: %d\n", err);
++			return err;
+ 		}
+ 	}
+ 
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index cb100b6e3282..1d772ed78301 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -32,7 +32,7 @@ struct tegra_dc_soc_info {
+ 	bool supports_block_linear;
+ 	unsigned int pitch_align;
+ 	bool has_powergate;
+-	bool broken_reset;
++	bool coupled_pm;
+ };
+ 
+ struct tegra_dc {
+@@ -65,6 +65,8 @@ struct tegra_dc {
+ 	const struct tegra_dc_soc_info *soc;
+ 
+ 	struct iommu_domain *domain;
++
++	struct device_link *link;
+ };
+ 
+ static inline struct tegra_dc *
 -- 
 2.15.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
