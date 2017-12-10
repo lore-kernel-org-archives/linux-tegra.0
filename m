@@ -1,51 +1,84 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V3 2/7] PCI: Export pci_find_host_bridge()
-Date: Fri, 8 Dec 2017 08:38:52 -0600
-Message-ID: <20171208143852.GA2386@bhelgaas-glaptop.roam.corp.google.com>
-References: <1512120007-28088-1-git-send-email-mmaddireddy@nvidia.com>
- <1512120007-28088-3-git-send-email-mmaddireddy@nvidia.com>
- <20171205200402.GF23510@bhelgaas-glaptop.roam.corp.google.com>
- <aebabb88-d894-2b1f-d3e8-63a2acad9665@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 3/5] staging: Introduce NVIDIA Tegra video decoder
+ driver
+Date: Sun, 10 Dec 2017 21:56:35 +0300
+Message-ID: <f46f397d-28e1-f4e5-55d4-9863214e8f6c@gmail.com>
+References: <cover.1508448293.git.digetx@gmail.com>
+ <1a3798f337c0097e67d70226ae3ba665fd9156c2.1508448293.git.digetx@gmail.com>
+ <ad2da9f4-8899-7db3-493f-5aa15297c33c@xs4all.nl>
+ <3ac6a087-def2-014f-673d-1be9d5094635@gmail.com>
+ <93c98569-0282-80d9-78ad-c8ab8fd9db92@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <aebabb88-d894-2b1f-d3e8-63a2acad9665-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: cyndis-/1wQRMveznE@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <93c98569-0282-80d9-78ad-c8ab8fd9db92@xs4all.nl>
+Content-Language: en-US
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Vladimir Zapolskiy <vz@mleia.com>
+Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Giulio Benetti <giulio.benetti@micronovasrl.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 08, 2017 at 02:07:54PM +0530, Manikanta Maddireddy wrote:
+On 05.12.2017 16:03, Hans Verkuil wrote:
+> On 12/05/17 13:17, Dmitry Osipenko wrote:
+>> Hi Hans,
+>>
+>> On 04.12.2017 17:04, Hans Verkuil wrote:
+>>> Hi Dmitry,
+>>>
+>>> As you already mention in the TODO, this should become a v4l2 codec driver.
+>>>
+>>> Good existing examples are the coda, qcom/venus and mtk-vcodec drivers.
+>>>
+>>> One thing that is not clear from this code is if the tegra hardware is a
+>>> stateful or stateless codec, i.e. does it keep track of the decoder state
+>>> in the hardware, or does the application have to keep track of the state and
+>>> provide the state information together with the video data?
+>>>
+>>> I ask because at the moment only stateful codecs are supported. Work is ongoing
+>>> to support stateless codecs, but we don't support that for now.
+>>>
+>>
+>> It is stateless. Is there anything ready to try out? If yes, could you please
+>> give a reference to that work?
 > 
+> I rebased my two year old 'requests2' branch to the latest mainline version and
+> gave it the imaginative name 'requests3':
 > 
-> On 06-Dec-17 1:34 AM, Bjorn Helgaas wrote:
-> > On Fri, Dec 01, 2017 at 02:50:02PM +0530, Manikanta Maddireddy wrote:
-> >> PCI subsystem pass pci_bus pointer to pci_ops callback functions, Tegra
-> > 
-> > s/PCI subsystem pass/The PCI subsystem passes a/
-> > s/, Tegra/.  The Tegra/
-> > 
-> >> host driver use pci_find_host_bridge() to get pci_host_bridge from pci_bus.
-> > 
-> > s/use/uses/
-> > 
-> >> Export pci_find_host_bridge() to allow Tegra PCIe driver to be compiled as
-> >> loadable kernel module.
-> > 
-> > s/allow Tegra/allow the Tegra/
-> > s/loadable/a loadable/
-> > 
-> > But why do you need pci_find_host_bridge() at all?  Most drivers use
-> > the pci_bus.sysdata pointer for this purpose, e.g., see db271747a04d
-> > ("PCI: mediatek: Use bus->sysdata to get host private data")
+> https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=requests3
 > 
-> I will send a patch to use bus->sysdata instead of pci_find_host_bridge().
+> (Note: only compile tested!)
 
-That would be excellent!  Thank you!
+Thank you very much.
 
-Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> This is what ChromeOS has been using (actually they use a slightly older version)
+> and the new version that is currently being developed will be similar, so any work
+> you do on top of this will carry over to the final version without too much effort.
+> 
+> At least, that's the intention :-)
+> 
+> I've CC-ed Maxime and Giulio as well: they are looking into adding support for
+> the stateless allwinner codec based on this code as well. There may well be
+> opportunities for you to work together, esp. on the userspace side. Note that
+> Rockchip has the same issue, they too have a stateless HW codec.
+
+IIUC, we will have to define video decoder parameters in V4L API and then make a
+V4L driver / userspace prototype (ffmpeg for example) that will use the requests
+API for video decoding in order to upstream the requests API. Does it sound good?
+
+>>
+>>> Anyway, I'm OK with merging this in staging. Although I think it should go
+>>> to staging/media since we want to keep track of it.
+>>>
+>>
+>> Awesome, I'll move driver to staging/media in V5. Thanks!
+> 
+> Nice, thanks!
