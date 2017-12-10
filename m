@@ -1,35 +1,56 @@
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-Subject: Re: [PATCH v4 3/5] staging: Introduce NVIDIA Tegra video decoder
- driver
-Date: Sun, 10 Dec 2017 14:29:39 -0500
-Message-ID: <1512934179.4281.15.camel@ndufresne.ca>
-References: <cover.1508448293.git.digetx@gmail.com>
-         <1a3798f337c0097e67d70226ae3ba665fd9156c2.1508448293.git.digetx@gmail.com>
-         <ad2da9f4-8899-7db3-493f-5aa15297c33c@xs4all.nl>
-         <3ac6a087-def2-014f-673d-1be9d5094635@gmail.com>
-         <93c98569-0282-80d9-78ad-c8ab8fd9db92@xs4all.nl>
-         <f46f397d-28e1-f4e5-55d4-9863214e8f6c@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <f46f397d-28e1-f4e5-55d4-9863214e8f6c@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Vladimir Zapolskiy <vz@mleia.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Giulio Benetti <giulio.benetti@micronovasrl.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1] usb: phy: tegra: Increase PHY clock stabilization timeout
+Date: Mon, 11 Dec 2017 01:55:35 +0300
+Message-ID: <20171210225535.8532-1-digetx@gmail.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Le dimanche 10 décembre 2017 à 21:56 +0300, Dmitry Osipenko a écrit :
-> > I've CC-ed Maxime and Giulio as well: they are looking into adding support for
-> > the stateless allwinner codec based on this code as well. There may well be
-> > opportunities for you to work together, esp. on the userspace side. Note that
-> > Rockchip has the same issue, they too have a stateless HW codec.
-> 
-> IIUC, we will have to define video decoder parameters in V4L API and then make a
-> V4L driver / userspace prototype (ffmpeg for example) that will use the requests
-> API for video decoding in order to upstream the requests API. Does it sound good?
+This fixes "utmi_phy_clk_enable: timeout waiting for phy to stabilize"
+error message.
 
-Chromium/Chrome already have support for that type of decoder in their
-tree. In theory, it should just work.
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/usb/phy/phy-tegra-usb.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-Nicolas
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index f668bfb708d3..7d5db625f800 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -16,7 +16,7 @@
+ #include <linux/export.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/gpio.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -305,14 +305,9 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
+ 
+ static int utmi_wait_register(void __iomem *reg, u32 mask, u32 result)
+ {
+-	unsigned long timeout = 2000;
+-	do {
+-		if ((readl(reg) & mask) == result)
+-			return 0;
+-		udelay(1);
+-		timeout--;
+-	} while (timeout);
+-	return -1;
++	u32 tmp;
++
++	return readl_poll_timeout(reg, tmp, (tmp & mask) == result, 1, 5000);
+ }
+ 
+ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
+-- 
+2.15.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
