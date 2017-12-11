@@ -1,80 +1,37 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH V3 0/2] Tegra PCIe end point config space map code
- refactoring
-Date: Mon, 11 Dec 2017 11:54:53 -0600
-Message-ID: <20171211175452.GC16032@bhelgaas-glaptop.roam.corp.google.com>
-References: <1512410030-21038-1-git-send-email-vidyas@nvidia.com>
- <20171211105431.GI10671@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171211105431.GI10671@ulmo>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Vidya Sagar <vidyas@nvidia.com>, treding@nvidia.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1] clk: tegra20: Add 216 MHz entry for PLL_X
+Date: Mon, 11 Dec 2017 21:50:09 +0300
+Message-ID: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-[+cc Lorenzo]
+The cpufreq driver uses 216 MHz as the lowest CPU clock frequency, but
+clock driver doesn't provide that rate, so the requested clock is rounded
+up to 312 MHz. Let's add entry for 216 MHz to match with cpufreq.
 
-On Mon, Dec 11, 2017 at 11:54:31AM +0100, Thierry Reding wrote:
-> On Mon, Dec 04, 2017 at 11:23:48PM +0530, Vidya Sagar wrote:
-> > PCIe host controller in Tegra SoCs has 1GB of aperture available
-> > for mapping end points config space, IO and BARs. In that, currently
-> > 256MB is being reserved for mapping end points configuration space
-> > which leaves less memory space available for mapping end points BARs
-> > on some of the platforms.
-> > This patch series attempts to map only 4K space from 1GB aperture to
-> > access end points configuration space.
-> > 
-> > Currently, this change can benefit T20 and T186 in saving (i.e. repurposed
-> > to use for BAR mapping) physical space as well as kernel virtual mapping space,
-> > it saves only kernel virtual address space in T30, T124, T132 and T210.
-> > 
-> > NOTE: Since T186 PCIe DT entry is not yet present in main line (it is currently
-> > merged to 'for-4.15/arm64/dt' branch), nothing gets broken with this change for T186.
-> > For older platforms (T20, T30, T124, T132, T210), this change works fine without any
-> > DT modifications
-> > 
-> > Testing Done on T124, T210 & T186:
-> >  Enumeration and basic functionality of immediate devices
-> >  Enumeration of devices behind a PCIe switch
-> >  Complete 4K configuration space access
-> > 
-> > Vidya Sagar (2):
-> >   PCI: tegra: refactor config space mapping code
-> >   ARM64: tegra: limit PCIe config space mapping to 4K for T186
-> > 
-> >  arch/arm64/boot/dts/nvidia/tegra186.dtsi |   8 +-
-> >  drivers/pci/host/pci-tegra.c             | 125 ++++++++++---------------------
-> >  2 files changed, 44 insertions(+), 89 deletions(-)
-> 
-> Hi Bjorn,
-> 
-> there's a bunch of PCI related patches for Tegra floating around on the
-> lists. I'm wondering if you'd be okay if I pick those up into the Tegra
-> tree after they've been reviewed and send you a pull request later on
-> (say around v4.15-rc6). That would allow me to get things cooking in
-> linux-next for a bit and get broader testing in addition to the
-> flexibility to patch things up if they break.
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra20.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Lorenzo will be merging the Tegra stuff, so this is more a question
-for him.
-
-Just to clarify, I think your questions is about putting those patches
-in
-git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git#for-next.
-If you put them there they will show up in linux-next, and then when
-Lorenzo merges them, you'll have to coordinate so they don't get
-merged into linux-next twice (once via the usual PCI tree route and
-again via the Tegra tree).
-
-If you wait until after they've been reviewed to put them into the
-Tegra tree, I'm not sure what the gain is, because I assume Lorenzo
-would merge them at about that same point.
-
-This cycle isn't going to be ideal timing with all the holidays
-coming up.  I know I'm going to be traveling and on vacation quite a
-bit in the rc5, 6, 7 timeframe.
-
-Bjorn
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cbd5a2e5c569..e33d7548a4e9 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -269,6 +269,11 @@ static struct tegra_clk_pll_freq_table pll_x_freq_table[] = {
+ 	{ 13000000,  312000000,  312, 13, 1, 12 },
+ 	{ 19200000,  312000000,  260, 16, 1,  8 },
+ 	{ 26000000,  312000000,  312, 26, 1, 12 },
++	/* 216 MHz */
++	{ 12000000, 216000000,  216,  12, 1, 12 },
++	{ 13000000, 216000000,  216,  13, 1, 12 },
++	{ 19200000, 216000000,  180,  16, 1,  8 },
++	{ 26000000, 216000000,  216,  26, 1, 12 },
+ 	{        0,          0,    0,  0, 0,  0 },
+ };
+ 
+-- 
+2.15.1
