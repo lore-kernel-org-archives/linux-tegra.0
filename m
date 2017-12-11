@@ -1,72 +1,71 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 2/2] usb: chipidea: tegra: Select Tegra's PHY in
- Kconfig
-Date: Mon, 11 Dec 2017 11:04:00 +0100
-Message-ID: <20171211100400.GE10671@ulmo>
-References: <b820f290730e57c999c211e5f82cf833755c299f.1512947332.git.digetx@gmail.com>
- <d6b64530412955aba1284886b3f5f74e42d776da.1512947332.git.digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 1/2] drm/tegra: dc: Link DC1 to DC0 on Tegra20
+Date: Mon, 11 Dec 2017 11:12:22 +0100
+Message-ID: <20171211101222.GF10671@ulmo>
+References: <85902b42264b094cbf7cf30930f8c0bbccdca1b7.1512947732.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a1QUDc0q7S3U7/Jg"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="+ts6NCQ4mrNQIV8p"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <d6b64530412955aba1284886b3f5f74e42d776da.1512947332.git.digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Felipe Balbi <balbi@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, Peter Chen <Peter.Chen@nxp.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <85902b42264b094cbf7cf30930f8c0bbccdca1b7.1512947732.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---a1QUDc0q7S3U7/Jg
+--+ts6NCQ4mrNQIV8p
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 11, 2017 at 02:10:00AM +0300, Dmitry Osipenko wrote:
-> UDC driver won't probe without Tegra's PHY, hence select it in the
-> Kconfig.
+On Mon, Dec 11, 2017 at 02:19:43AM +0300, Dmitry Osipenko wrote:
+> HW reset isn't actually broken on Tegra20, but there is a dependency on
+> first display controller to be taken out of reset for the second to be
+> enabled successfully.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/usb/chipidea/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/gpu/drm/tegra/dc.c | 77 +++++++++++++++++++++++++++++-----------=
+------
+>  drivers/gpu/drm/tegra/dc.h |  4 ++-
+>  2 files changed, 51 insertions(+), 30 deletions(-)
 >=20
-> diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
-> index 785f0ed037f7..2ef3b27ea72b 100644
-> --- a/drivers/usb/chipidea/Kconfig
-> +++ b/drivers/usb/chipidea/Kconfig
-> @@ -27,6 +27,7 @@ config USB_CHIPIDEA_PCI
->  config USB_CHIPIDEA_UDC
->  	bool "ChipIdea device controller"
->  	depends on USB_GADGET
-> +	select USB_TEGRA_PHY if ARCH_TEGRA
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index fc70351b9017..6139d3e9cedf 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -24,6 +24,8 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_plane_helper.h>
+> =20
+> +static struct tegra_dc *dc0;
 
-This is kind of pointless given that USB_TEGRA_PHY originally was
-automatically enabled if ARCH_TEGRA was enabled.
-
-What do we gain by these two patches, other than maybe make the driver
-buildable as a module?
+I'd like to avoid the global variable. Perhaps you can use the
+driver_for_each_device() or driver_find_device() functions to find the
+correct device?
 
 Thierry
 
---a1QUDc0q7S3U7/Jg
+--+ts6NCQ4mrNQIV8p
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlouWBAACgkQ3SOs138+
-s6Fmag/+KXeUWColoRE9PIwR/KKMmjhx/WZDiGTzDXP/D3TbZcUxRKJKzAoR2jd3
-jbEDHlJNCnPfu0xOElBzooO+H5bMELiECKns6OVcQXTKkdk8AIhUlULJxb49nvFO
-bQxW5ztSUu4HlWD2DQqql8yavlYnOJUHKOhhXISkJvbgQiJ1YoxbYMxiKTAIU7tW
-sJgcE1foIfDXcj1WSfdO4U7rKUvxA9PsamPpyKGBIk7byKiayT/0uAF4fWzBItee
-uTLIPBr4EFLJPXjpROz6Wb7D0gFR5ldyekDigIqVHV1WF/QVvIUM5elAi5K4NIY5
-X1eJNJMg08oFz3TR+zeSJU8cqPPKCA9rfuUnZo/09EjQiFumAZ+e/eXKX7prSNVW
-qK+V/MpKLO2UsICOIdXynTPi8m2uCxoJIZary1f0R+qA6R610kVXwzLI+Pz7DfGU
-J197dK7ZP7AVlaKipxXJRy79eva2GkkD7vMaJ+ulRGFM+gBHXkGvfV3zVcsAWXmL
-4XMWYB8ZFRCifxHQZVaVIxfEsiqsJ3jsYCd0n03W3wNnqOullqVNzI5V18mjvHbr
-Dz2ScOa8Vq1/4pmTp+GnWcsEAceUbzTbOXsa78JWF0FUeR78I7k/6B7RvdKFKeH7
-/9ATqpPbYl2QWeaZB4yryAiMlGDwU2bHm0gFGyTQHQKMj2PEOKA=
-=Cs+u
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlouWgYACgkQ3SOs138+
+s6EG/w/+OdUlYCGesWRUDkC0Atva94YOX4LC2yqhddrxtzaMg0D03jcZx+SFoMIt
+zCSBftARcqcH/bpw/feHmeN2/0Y1aYrERNsAaRpAHjNJ4a5UGXegKjr8+rKJ82Vn
+yWDcj92UxSW1HyTlv+8yoFownaUg9yi2oOxe2PHM3k4+ccIK+SenSKBK8uI6atfR
+20ja+KwKoxuPXYqPEPOLHT9bAv1PTFfGavpKH8qGLsrtUraQFXpiF5jW2UpQI0K5
+m8pRvQlaQCSP+COhA15yf12bcEd43Nc9dUduELEVXwJ6Uvg3SC9+xChS3EFYhjlv
+wvK2LHUWyCpteRcPQTFYJvADKzsCSM4m+jkewNmL9wpmEWm65Q5kGU7noKYCTXZo
+5HqdWiNCBRpC6FDO/MzsefX+Z1f9EpxFw/3G9Jt4/AxfgNv1jYImunZIbI/8vKSd
+uxCsQ8izCN7dEwDMNR6TiyAbO1Ctk89V2pCIyRN/voEakQw4km3Mzy5l5QWtuAKT
+cQQJsT8XLqLQaVU/4PDVktli3iZRoYYn3d7CuiYFeHkGczSQnwK5EnJYv6pzLU3P
+OS3m0OSNyg3WHh5J6XMTQ8piPN8fLIDu+ANnMGVbPM+53DbcYnvkXEK1U9EQ/aIy
+l/o1/qRqFQsBccdYwEL/5A/bDHhJS1h/ljtyj+PAA9zDxhIb3QM=
+=uv1F
 -----END PGP SIGNATURE-----
 
---a1QUDc0q7S3U7/Jg--
+--+ts6NCQ4mrNQIV8p--
