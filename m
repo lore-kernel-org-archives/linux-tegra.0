@@ -1,42 +1,67 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 3/5] staging: Introduce NVIDIA Tegra video decoder
- driver
-Date: Mon, 11 Dec 2017 03:12:55 +0300
-Message-ID: <c9d8ad71-2fb3-4ce9-2672-9006511f5079@gmail.com>
-References: <cover.1508448293.git.digetx@gmail.com>
- <1a3798f337c0097e67d70226ae3ba665fd9156c2.1508448293.git.digetx@gmail.com>
- <ad2da9f4-8899-7db3-493f-5aa15297c33c@xs4all.nl>
- <3ac6a087-def2-014f-673d-1be9d5094635@gmail.com>
- <93c98569-0282-80d9-78ad-c8ab8fd9db92@xs4all.nl>
- <f46f397d-28e1-f4e5-55d4-9863214e8f6c@gmail.com>
- <1512934179.4281.15.camel@ndufresne.ca>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 1/2] usb: phy: tegra: Cleanup error messages
+Date: Mon, 11 Dec 2017 10:37:44 +0100
+Message-ID: <20171211093744.GB10671@ulmo>
+References: <ddf583790b551999ef063107be12a2d85e7b6a86.1512946782.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1512934179.4281.15.camel-dDhyB4GVkw9AFePFGvp55w@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolas Dufresne <nicolas-dDhyB4GVkw9AFePFGvp55w@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
-Cc: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Giulio Benetti <giulio.benetti-W14uJ/fiAyBY2hyreNRi6g@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="0ntfKIWw70PvrIHh"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <ddf583790b551999ef063107be12a2d85e7b6a86.1512946782.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10.12.2017 22:29, Nicolas Dufresne wrote:
-> Le dimanche 10 décembre 2017 à 21:56 +0300, Dmitry Osipenko a écrit :
->>> I've CC-ed Maxime and Giulio as well: they are looking into adding support for
->>> the stateless allwinner codec based on this code as well. There may well be
->>> opportunities for you to work together, esp. on the userspace side. Note that
->>> Rockchip has the same issue, they too have a stateless HW codec.
->>
->> IIUC, we will have to define video decoder parameters in V4L API and then make a
->> V4L driver / userspace prototype (ffmpeg for example) that will use the requests
->> API for video decoding in order to upstream the requests API. Does it sound good?
-> 
-> Chromium/Chrome already have support for that type of decoder in their
-> tree. In theory, it should just work.
 
-Everything is possible, in theory ;)
+--0ntfKIWw70PvrIHh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Dec 11, 2017 at 02:07:37AM +0300, Dmitry Osipenko wrote:
+> Tegra's PHY driver has a mix of pr_err() and dev_err(), let's switch to
+> dev_err() and use common errors message formatting across the driver for
+> consistency.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/usb/phy/phy-tegra-usb.c | 72 +++++++++++++++++++++++++----------=
+------
+>  1 file changed, 44 insertions(+), 28 deletions(-)
+
+Can we also get rid of all the function names in error messages? I see
+that for some error messages you've removed them, but then for others
+you added them, so you remove inconsistencies on one hand and add other
+inconsistencies at the same time. =3D)
+
+Other than that, I like this.
+
+Thierry
+
+--0ntfKIWw70PvrIHh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlouUeUACgkQ3SOs138+
+s6GhUQ//XStPco0+7j9QNrv3r3O5C7PE4snO+i3NnG5jSEsItSmpzxSWV6A8jnsr
+vPhLCGtjf0TAr2mEv/1fSNosJzN5cA4MZYgySQqLA9Iyeub9zTAk4eSWKgz8NVZj
+VodUv1NqESR66u5qP22TMOOFRNmuRNGzjdGl6d9343UewpPoVOtevBocme4+zbo2
+9cMHN1Js/jXm3hdLcBzGAvySz9mI2bp2a9IINiei0mMg78uzefOB16ybvwmP58T2
+T9Pfem/zJEknt8yBjxFR9EgKMBy6tcwFsN61jpm5Gcaj+oq20omwQL2wuqYuCrfP
+hRfrbdid4ZxO5wpiiM92nS1gYeKLwbopY0BtwF7bGbNGJpiaNiLiFeZ3yEaATeo/
+6bynf6AC0kZ5J74ZXN49EF99ajODQs25vN8e7bp1k+L4i2S17Ln2drkrNj+WOQ2q
+drsQiq0zzaiPIhzGAFvvOVreeIqubHSbC1KlkQ8nGcfgo++8gkBRAtcpFKXNFeeg
+UOilC9L5eTWauFLisHjeJSWuQ4tA0+sCEzFqgziTFuI7wOpHq0WqovnS2+xmsFMY
+u2mbPeB7xH0Gte9WhcYVHT4dkqUjs4d8EE0m3LTv1p1LFUokaYW77rpfG2q5J036
+ROuvu95YcttBm8SqKjIEMj7I6Lv3pj0tEsNYrYqjl69REsKu8Qw=
+=yQ0J
+-----END PGP SIGNATURE-----
+
+--0ntfKIWw70PvrIHh--
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
