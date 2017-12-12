@@ -1,105 +1,30 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V3 02/12] PCI: tegra: Move REFCLK pad settings out of
- phy_power_on()
-Date: Tue, 12 Dec 2017 11:45:27 +0000
-Message-ID: <20171212114527.GB30799@e107981-ln.cambridge.arm.com>
-References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-3-git-send-email-mmaddireddy@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] clk: tegra20: Add 216 MHz entry for PLL_X
+Date: Tue, 12 Dec 2017 15:08:08 +0300
+Message-ID: <508cb22d-42cb-d169-dbea-0073d7a4e034@gmail.com>
+References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
+ <20171212100200.GW32106@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1509371843-22931-3-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171212100200.GW32106@tbergstrom-lnx.Nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 30, 2017 at 07:27:13PM +0530, Manikanta Maddireddy wrote:
-> In Tegra186 PHY programming is done by BPMP-FW, so PHY calls are skipped
-
-It is time you defined what FW does and what the kernel does and stick
-to that SW initialization sequence for all Tegra PCI host bridges from
-now onwards. Those tegra_pcie_soc structures in the driver will end up
-with a gazillion hardcoded parameters if you do not take a stance from
-that perspective and I do not like that - at all.
-
-You may want to use DT bindings to describe the FW<->OS handover - or
-just enforce firmware guidelines for Tegra systems - something has to be
-done.
-
-This patch makes sense stand-alone but I wanted to get the message
-across.
-
-Thanks,
-Lorenzo
-
-> in driver. REFCLK pad settings are independent of PHY and should be
-> programmed by driver. So move REFCLK pad settings out of phy_power_on().
-> These pad settings improve REFCLK peak to peak amplitude.
+On 12.12.2017 13:02, Peter De Schrijver wrote:
+> On Mon, Dec 11, 2017 at 09:50:09PM +0300, Dmitry Osipenko wrote:
+>> The cpufreq driver uses 216 MHz as the lowest CPU clock frequency, but
+>> clock driver doesn't provide that rate, so the requested clock is rounded
+>> up to 312 MHz. Let's add entry for 216 MHz to match with cpufreq.
+>>
 > 
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V3:
-> * Corrected commit log
-> V2:
-> * no change in this patch
-> 
->  drivers/pci/host/pci-tegra.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index b41c60c7414c..068510b40c1a 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -910,7 +910,6 @@ static int tegra_pcie_port_phy_power_off(struct tegra_pcie_port *port)
->  static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
->  {
->  	struct device *dev = pcie->dev;
-> -	const struct tegra_pcie_soc *soc = pcie->soc;
->  	struct tegra_pcie_port *port;
->  	int err;
->  
-> @@ -936,12 +935,6 @@ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
->  		}
->  	}
->  
-> -	/* Configure the reference clock driver */
-> -	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
-> -
-> -	if (soc->num_ports > 2)
-> -		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
-> -
->  	return 0;
->  }
->  
-> @@ -2049,6 +2042,17 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
->  	return 0;
->  }
->  
-> +static void tegra_pcie_apply_pad_settings(struct tegra_pcie *pcie)
-> +{
-> +	const struct tegra_pcie_soc *soc = pcie->soc;
-> +
-> +	/* Configure the reference clock driver */
-> +	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
-> +
-> +	if (soc->num_ports > 2)
-> +		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
-> +}
-> +
->  /*
->   * FIXME: If there are no PCIe cards attached, then calling this function
->   * can result in the increase of the bootup time as there are big timeout
-> @@ -2107,6 +2111,8 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
->  	struct device *dev = pcie->dev;
->  	struct tegra_pcie_port *port, *tmp;
->  
-> +	tegra_pcie_apply_pad_settings(pcie);
-> +
->  	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
->  		dev_info(dev, "probing port %u, using %u lanes\n",
->  			 port->index, port->lanes);
-> -- 
-> 2.1.4
-> 
+> This seems odd. If there's no table entry, _calc_rate should kick in and
+> calculate the parameters for 216MHz. Any idea why this is not happening?
+
+Actually, it is happening. Please ignore this patch.
+
+If PLL's rate could be calculated, why do we need the predefined tables?
