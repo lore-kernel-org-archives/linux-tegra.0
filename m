@@ -1,58 +1,63 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 3/4] ARM: dts: tegra20: Add device tree node to describe
- IRAM
-Date: Tue, 12 Dec 2017 03:26:09 +0300
-Message-ID: <92563f9030ab413ff8f6d5a6b6a5680124ec4d98.1513038011.git.digetx@gmail.com>
-References: <cover.1513038011.git.digetx@gmail.com>
+From: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 2/2] usb: chipidea: tegra: Select Tegra's PHY in
+ Kconfig
+Date: Tue, 12 Dec 2017 10:54:44 +0800
+Message-ID: <20171212025444.GA22364@b29397-desktop>
+References: <b820f290730e57c999c211e5f82cf833755c299f.1512947332.git.digetx@gmail.com>
+ <d6b64530412955aba1284886b3f5f74e42d776da.1512947332.git.digetx@gmail.com>
+ <20171211100400.GE10671@ulmo>
+ <6dddb581-e708-b96e-cf56-f3bf106117e2@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <cover.1513038011.git.digetx@gmail.com>
-In-Reply-To: <cover.1513038011.git.digetx@gmail.com>
-References: <cover.1513038011.git.digetx@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Vladimir Zapolskiy <vz@mleia.com>
-Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <6dddb581-e708-b96e-cf56-f3bf106117e2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Vladimir Zapolskiy <vz@mleia.com>
+On Mon, Dec 11, 2017 at 04:09:44PM +0300, Dmitry Osipenko wrote:
+> On 11.12.2017 13:04, Thierry Reding wrote:
+> > On Mon, Dec 11, 2017 at 02:10:00AM +0300, Dmitry Osipenko wrote:
+> >> UDC driver won't probe without Tegra's PHY, hence select it in the
+> >> Kconfig.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >> ---
+> >>  drivers/usb/chipidea/Kconfig | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
+> >> index 785f0ed037f7..2ef3b27ea72b 100644
+> >> --- a/drivers/usb/chipidea/Kconfig
+> >> +++ b/drivers/usb/chipidea/Kconfig
+> >> @@ -27,6 +27,7 @@ config USB_CHIPIDEA_PCI
+> >>  config USB_CHIPIDEA_UDC
+> >>  	bool "ChipIdea device controller"
+> >>  	depends on USB_GADGET
+> >> +	select USB_TEGRA_PHY if ARCH_TEGRA
+> > 
+> > This is kind of pointless given that USB_TEGRA_PHY originally was
+> > automatically enabled if ARCH_TEGRA was enabled.
+> 
+> Again, please take a closer look at the patches. USB_TEGRA_PHY was enabled if
+> USB_EHCI_TEGRA was and not ARCH_TEGRA.
+> 
+> > What do we gain by these two patches, other than maybe make the driver
+> > buildable as a module?
+> 
+> Firstly, tegra-phy is built only if ehci-tegra is built.
+> 
+> Secondly, I think we need to enforce Tegra PHY to be compiled as built-in if one
+> of ehci-tegra or chipidea drivers is built-in and the other is compiled as a module.
 
-All Tegra20 SoCs contain 256KiB IRAM, which is used to store
-resume code and by a video decoder engine.
+You may not bind controller driver with PHY driver in Kconfig, we need
+to make sure the controller driver has no build error if the PHY driver
+is not select. And if the PHY driver is not loaded, the controller
+driver should return -EPROBE_DEFER for it.
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 914f59166a99..36909df653c3 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -10,6 +10,14 @@
- 	compatible = "nvidia,tegra20";
- 	interrupt-parent = <&lic>;
- 
-+	iram@40000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x40000000 0x40000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x40000000 0x40000>;
-+	};
-+
- 	host1x@50000000 {
- 		compatible = "nvidia,tegra20-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
 -- 
-2.15.1
+
+Best Regards,
+Peter Chen
