@@ -1,134 +1,38 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V3 03/12] PCI: tegra: Retrain link for Gen2 speed
-Date: Tue, 12 Dec 2017 14:32:01 +0000
-Message-ID: <20171212143201.GC30799@e107981-ln.cambridge.arm.com>
-References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-4-git-send-email-mmaddireddy@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v1] clk: tegra20: Add 216 MHz entry for PLL_X
+Date: Tue, 12 Dec 2017 17:17:49 +0200
+Message-ID: <20171212151749.GA29158@tbergstrom-lnx.Nvidia.com>
+References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
+ <20171212100200.GW32106@tbergstrom-lnx.Nvidia.com>
+ <508cb22d-42cb-d169-dbea-0073d7a4e034@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1509371843-22931-4-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <508cb22d-42cb-d169-dbea-0073d7a4e034-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-[+Ley Foon Tan]
-
-On Mon, Oct 30, 2017 at 07:27:14PM +0530, Manikanta Maddireddy wrote:
-> Tegra124, 132, 210 and 186 support Gen2 link speed. After the link is up
-> in Gen1, set target link speed as Gen2 and retrain link. Link switches to
-> Gen2 speed if Gen2 capable end point is connected, else link stays in Gen1.
+On Tue, Dec 12, 2017 at 03:08:08PM +0300, Dmitry Osipenko wrote:
+> On 12.12.2017 13:02, Peter De Schrijver wrote:
+> > On Mon, Dec 11, 2017 at 09:50:09PM +0300, Dmitry Osipenko wrote:
+> >> The cpufreq driver uses 216 MHz as the lowest CPU clock frequency, but
+> >> clock driver doesn't provide that rate, so the requested clock is rounded
+> >> up to 312 MHz. Let's add entry for 216 MHz to match with cpufreq.
+> >>
+> > 
+> > This seems odd. If there's no table entry, _calc_rate should kick in and
+> > calculate the parameters for 216MHz. Any idea why this is not happening?
 > 
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V3:
-> * Corrected commit log
-> * Replaced jiffies with ktime
-> V2:
-> * no change in this patch
+> Actually, it is happening. Please ignore this patch.
 > 
->  drivers/pci/host/pci-tegra.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 068510b40c1a..ed5e8acfdc32 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -232,6 +232,8 @@
->  #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
->  #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
->  
-> +#define LINK_RETRAIN_TIMEOUT 100000
-> +
->  struct tegra_msi {
->  	struct msi_controller chip;
->  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
-> @@ -2134,6 +2136,42 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
->  	}
->  }
->  
-> +static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
-> +					 struct pci_dev *pci_dev)
-> +{
-> +	struct device *dev = pcie->dev;
-> +	ktime_t deadline;
-> +	unsigned short val;
+> If PLL's rate could be calculated, why do we need the predefined tables?
 
-u16
+The algorithm to calculate the PLL parameters is rather crude. It will
+favour undershooting the rate rather than overshooting. This is fine for
+DVFS usecases when you want to avoid a too high clock rate, but not good
+for eg display or memory, where as close as match as possible is needed.
 
-> +	/* Skip if the current device is not a root port */
-> +	if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
-> +		return;
-> +
-> +	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
-> +	val &= ~PCI_EXP_LNKSTA_CLS;
-> +	val |= PCI_EXP_LNKSTA_CLS_5_0GB;
-> +	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
-
-Should you not read the Link Capabilities 2 register ("Supported Speed
-Vector") before programming the Link control 2 register Target Link
-Speed value ?
-
-> +
-> +	/* Retrain the link */
-> +	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
-> +	val |= PCI_EXP_LNKCTL_RL;
-> +	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
-> +
-> +	deadline = ktime_add_us(ktime_get(), LINK_RETRAIN_TIMEOUT);
-> +	for (;;) {
-> +		pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &val);
-> +		if (!(val & PCI_EXP_LNKSTA_LT))
-> +			break;
-> +		if (ktime_after(ktime_get(), deadline))
-> +			break;
-> +		usleep_range(2000, 3000);
-
-Ok - I hope we won't end up with every host bridge re-writing its own
-link training loop because at that point in time we should think about
-consolidating this.
-
-CC'ing Ley Foon Tan since I would like to understand why the Altera
-driver link retraining can't be written with the same code as this
-driver - I suspect it has to do with the retraining sequence and when
-the retraining is actually carried out in the host bridge probe
-sequence.
-
-> +	}
-> +
-> +	if (val & PCI_EXP_LNKSTA_LT)
-> +		dev_err(dev, "link retrain of PCIe slot %u failed\n",
-> +			PCI_SLOT(pci_dev->devfn));
-> +}
-> +
->  static const struct tegra_pcie_soc tegra20_pcie = {
->  	.num_ports = 2,
->  	.msi_base_shift = 0,
-> @@ -2335,6 +2373,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->  	struct pci_host_bridge *host;
->  	struct tegra_pcie *pcie;
->  	struct pci_bus *child;
-> +	struct pci_dev *pci_dev = NULL;
->  	int err;
->  
->  	host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
-> @@ -2400,6 +2439,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->  
->  	pci_bus_add_devices(host->bus);
->  
-> +	for_each_pci_dev(pci_dev)
-> +		tegra_pcie_change_link_speed(pcie, pci_dev);
-> +
-
-Are you sure it is safe to change link speed after adding devices ?
-
-Lorenzo
-
->  	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
->  		err = tegra_pcie_debugfs_init(pcie);
->  		if (err < 0)
-> -- 
-> 2.1.4
-> 
+Peter.
