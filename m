@@ -1,94 +1,131 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V4 2/7] PCI: tegra: Use bus->sysdata to store and get
- host private data
-Date: Tue, 12 Dec 2017 11:34:40 -0600
-Message-ID: <20171212173440.GC53955@bhelgaas-glaptop.roam.corp.google.com>
-References: <1512723493-865-1-git-send-email-mmaddireddy@nvidia.com>
- <1512723493-865-3-git-send-email-mmaddireddy@nvidia.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH V3 12/12] PCI: tegra: Update flow control threshold in
+ Tegra210
+Date: Tue, 12 Dec 2017 17:43:29 +0000
+Message-ID: <20171212174329.GA22418@red-moon>
+References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
+ <1509371843-22931-13-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1512723493-865-3-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1509371843-22931-13-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: cyndis-/1wQRMveznE@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 08, 2017 at 02:28:08PM +0530, Manikanta Maddireddy wrote:
-> Tegra host driver is using pci_find_host_bridge() to get private data,
-> however pci_find_host_bridge() is causing module build failure because
-> it is not exported. pci_find_host_bridge() can be avoided by using
-> bus->sysdata to store and get private data.
+On Mon, Oct 30, 2017 at 07:27:23PM +0530, Manikanta Maddireddy wrote:
+> Recommended update FC threshold in Tegra210 is 0x60 for best performance
+> of x1 link. Setting this to 0x60 provides the best balance between number
+> of UpdateFC and read data sent over the link.
 > 
 > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Thanks a lot for doing this!  Looks like it was even easier than I
-expected :)
-
 > ---
-> V4:
-> * new patch in V4
+> V3:
+> * changed soc parameter name
+> V2:
+> * no change in this patch
 > 
->  drivers/pci/host/pci-tegra.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
+>  drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
 > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 6f2f44539020..a549c5899e26 100644
+> index b29329226e3d..812d32cfdd0e 100644
 > --- a/drivers/pci/host/pci-tegra.c
 > +++ b/drivers/pci/host/pci-tegra.c
-> @@ -448,8 +448,7 @@ static unsigned long tegra_pcie_conf_offset(unsigned char b, unsigned int devfn,
+> @@ -223,6 +223,7 @@
+>  #define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
+>  #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
+>  #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
+> +#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_T210	(0x60 << 18)
+
+You define a SOC specific threshold and a update_fc_threshold bool
+variable to update it ? And what are you going to do if that's needed
+on something that it is not a T210 ? Should not this be a(nother)
+struct tegra_pcie_soc parameter instead than a macro ?
+
+Not that I am happy about it but this deviates from the current
+approach.
+
+>  #define RP_VEND_CTL0	0xf44
+>  #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
+> @@ -323,6 +324,7 @@ struct tegra_pcie_soc {
+>  	bool update_clamp_threshold;
+>  	bool raw_violation_fixup;
+>  	bool program_deskew_time;
+> +	bool update_fc_threshold;
+>  };
 >  
->  static int tegra_pcie_add_bus(struct pci_bus *bus)
->  {
-> -	struct pci_host_bridge *host = pci_find_host_bridge(bus);
-> -	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
-> +	struct tegra_pcie *pcie = bus->sysdata;
->  	struct tegra_pcie_bus *b;
+>  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
+> @@ -2231,6 +2233,13 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+>  		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
+>  		writel(value, port->base + RP_VEND_CTL0);
+>  	}
+> +
+> +	if (soc->update_fc_threshold) {
+> +		value = readl(port->base + RP_VEND_XP);
+> +		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
+> +		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_T210;
+> +		writel(value, port->base + RP_VEND_XP);
+> +	}
+
+If, say, a platform requires update_fc_threshold and raw_violation_fixup
+what takes precedence (ie they required programming the _same_
+registers) ? update_fc_threshold takes precedence, since it is applied
+last - but I would like you to think about this and realize that this
+per-SoC mechanism does not scale anymore.
+
+You should a) enforce some firmware initialization - most of the
+parameters in struct tegra_pcie_soc could have been pre-programmed
+by FW and b) think about adding some DT properties to handle the PCI
+host bridge set-up.
+
+Lorenzo
+
+>  }
+>  /*
+>   * FIXME: If there are no PCIe cards attached, then calling this function
+> @@ -2371,6 +2380,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+>  	.update_clamp_threshold = false,
+>  	.raw_violation_fixup = false,
+>  	.program_deskew_time = false,
+> +	.update_fc_threshold = false,
+>  };
 >  
->  	b = kzalloc(sizeof(*b), GFP_KERNEL);
-> @@ -466,8 +465,7 @@ static int tegra_pcie_add_bus(struct pci_bus *bus)
+>  static const struct tegra_pcie_soc tegra30_pcie = {
+> @@ -2391,6 +2401,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+>  	.update_clamp_threshold = false,
+>  	.raw_violation_fixup = false,
+>  	.program_deskew_time = false,
+> +	.update_fc_threshold = false,
+>  };
 >  
->  static void tegra_pcie_remove_bus(struct pci_bus *child)
->  {
-> -	struct pci_host_bridge *host = pci_find_host_bridge(child);
-> -	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
-> +	struct tegra_pcie *pcie = child->sysdata;
->  	struct tegra_pcie_bus *bus, *tmp;
+>  static const struct tegra_pcie_soc tegra124_pcie = {
+> @@ -2410,6 +2421,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+>  	.update_clamp_threshold = true,
+>  	.raw_violation_fixup = true,
+>  	.program_deskew_time = false,
+> +	.update_fc_threshold = false,
+>  };
 >  
->  	list_for_each_entry_safe(bus, tmp, &pcie->buses, list) {
-> @@ -483,8 +481,7 @@ static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
->  					unsigned int devfn,
->  					int where)
->  {
-> -	struct pci_host_bridge *host = pci_find_host_bridge(bus);
-> -	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
-> +	struct tegra_pcie *pcie = bus->sysdata;
->  	void __iomem *addr = NULL;
->  	u32 val = 0;
->  	u32 offset = 0;
-> @@ -675,8 +672,7 @@ static int tegra_pcie_request_resources(struct tegra_pcie *pcie)
+>  static const struct tegra_pcie_soc tegra210_pcie = {
+> @@ -2437,6 +2449,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
+>  	.update_clamp_threshold = true,
+>  	.raw_violation_fixup = false,
+>  	.program_deskew_time = true,
+> +	.update_fc_threshold = true,
+>  };
 >  
->  static int tegra_pcie_map_irq(const struct pci_dev *pdev, u8 slot, u8 pin)
->  {
-> -	struct pci_host_bridge *host = pci_find_host_bridge(pdev->bus);
-> -	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
-> +	struct tegra_pcie *pcie = pdev->bus->sysdata;
->  	int irq;
+>  static const struct tegra_pcie_soc tegra186_pcie = {
+> @@ -2457,6 +2470,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
+>  	.update_clamp_threshold = false,
+>  	.raw_violation_fixup = false,
+>  	.program_deskew_time = false,
+> +	.update_fc_threshold = false,
+>  };
 >  
->  	tegra_cpuidle_pcie_irqs_in_use();
-> @@ -2570,6 +2566,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	pcie = pci_host_bridge_priv(host);
-> +	host->sysdata = pcie;
->  
->  	pcie->soc = of_device_get_match_data(dev);
->  	INIT_LIST_HEAD(&pcie->buses);
+>  static const struct of_device_id tegra_pcie_of_match[] = {
 > -- 
 > 2.1.4
 > 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
