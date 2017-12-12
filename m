@@ -1,78 +1,65 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V3 01/12] PCI: tegra: Start LTSSM after programming root
- port
-Date: Tue, 12 Dec 2017 11:32:48 +0000
-Message-ID: <20171212113248.GA30799@e107981-ln.cambridge.arm.com>
-References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-2-git-send-email-mmaddireddy@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 2/2] usb: chipidea: tegra: Select Tegra's PHY in
+ Kconfig
+Date: Tue, 12 Dec 2017 14:39:41 +0300
+Message-ID: <37461928-a078-9247-ebad-c4a18fbd91ef@gmail.com>
+References: <b820f290730e57c999c211e5f82cf833755c299f.1512947332.git.digetx@gmail.com>
+ <d6b64530412955aba1284886b3f5f74e42d776da.1512947332.git.digetx@gmail.com>
+ <20171211100400.GE10671@ulmo>
+ <6dddb581-e708-b96e-cf56-f3bf106117e2@gmail.com>
+ <20171212025444.GA22364@b29397-desktop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1509371843-22931-2-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171212025444.GA22364@b29397-desktop>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Chen <hzpeterchen@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Felipe Balbi <balbi@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, Peter Chen <Peter.Chen@nxp.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 30, 2017 at 07:27:12PM +0530, Manikanta Maddireddy wrote:
-> This patch ensures that LTSSM is started (by deasserting pcie_xrst) only
-> after all the required root port register programming is completed.
+On 12.12.2017 05:54, Peter Chen wrote:
+> On Mon, Dec 11, 2017 at 04:09:44PM +0300, Dmitry Osipenko wrote:
+>> On 11.12.2017 13:04, Thierry Reding wrote:
+>>> On Mon, Dec 11, 2017 at 02:10:00AM +0300, Dmitry Osipenko wrote:
+>>>> UDC driver won't probe without Tegra's PHY, hence select it in the
+>>>> Kconfig.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/usb/chipidea/Kconfig | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
+>>>> index 785f0ed037f7..2ef3b27ea72b 100644
+>>>> --- a/drivers/usb/chipidea/Kconfig
+>>>> +++ b/drivers/usb/chipidea/Kconfig
+>>>> @@ -27,6 +27,7 @@ config USB_CHIPIDEA_PCI
+>>>>  config USB_CHIPIDEA_UDC
+>>>>  	bool "ChipIdea device controller"
+>>>>  	depends on USB_GADGET
+>>>> +	select USB_TEGRA_PHY if ARCH_TEGRA
+>>>
+>>> This is kind of pointless given that USB_TEGRA_PHY originally was
+>>> automatically enabled if ARCH_TEGRA was enabled.
+>>
+>> Again, please take a closer look at the patches. USB_TEGRA_PHY was enabled if
+>> USB_EHCI_TEGRA was and not ARCH_TEGRA.
+>>
+>>> What do we gain by these two patches, other than maybe make the driver
+>>> buildable as a module?
+>>
+>> Firstly, tegra-phy is built only if ehci-tegra is built.
+>>
+>> Secondly, I think we need to enforce Tegra PHY to be compiled as built-in if one
+>> of ehci-tegra or chipidea drivers is built-in and the other is compiled as a module.
 > 
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V3:
-> * no change in this patch
-> V2:
-> * no change in this patch
-> 
->  drivers/pci/host/pci-tegra.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 96e8038c3019..b41c60c7414c 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -1024,9 +1024,6 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
->  		}
->  	}
->  
-> -	/* take the PCIe interface module out of reset */
-> -	reset_control_deassert(pcie->pcie_xrst);
-> -
->  	/* finally enable PCIe */
->  	value = afi_readl(pcie, AFI_CONFIGURATION);
->  	value |= AFI_CONFIGURATION_EN_FPCI;
-> @@ -1065,7 +1062,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
->  			dev_err(dev, "failed to power off PHY(s): %d\n", err);
->  	}
->  
-> -	reset_control_assert(pcie->pcie_xrst);
+> You may not bind controller driver with PHY driver in Kconfig, we need
+> to make sure the controller driver has no build error if the PHY driver
+> is not select. And if the PHY driver is not loaded, the controller
+> driver should return -EPROBE_DEFER for it.
 
-This does not look like it is part of the reset de-assertion code move.
-
-tegra_pcie_enable_controller() -> tegra_pcie_enable_ports()
-
-in other words, why are you removing it ?
-
-Lorenzo
-
->  	reset_control_assert(pcie->afi_rst);
->  	reset_control_assert(pcie->pex_rst);
->  
-> @@ -2116,7 +2112,12 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
->  			 port->index, port->lanes);
->  
->  		tegra_pcie_port_enable(port);
-> +	}
->  
-> +	/* take the PCIe interface module out of reset */
-> +	reset_control_deassert(pcie->pcie_xrst);
-> +
-> +	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
->  		if (tegra_pcie_port_check_link(port))
->  			continue;
->  
-> -- 
-> 2.1.4
-> 
+Okay, I'll drop the ChipIdea Kconfig patch and remove USB_TEGRA_PHY selection in
+ USB_EHCI_TEGRA config entry in the next iteration of the patch. Also, I noticed
+that USB_ULPI* selection should be moved from ehci-tegra to tegra-phy Kconfig entry.
