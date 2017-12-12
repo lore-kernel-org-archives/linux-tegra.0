@@ -1,131 +1,40 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V3 12/12] PCI: tegra: Update flow control threshold in
- Tegra210
-Date: Tue, 12 Dec 2017 17:43:29 +0000
-Message-ID: <20171212174329.GA22418@red-moon>
-References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-13-git-send-email-mmaddireddy@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1] clk: tegra20: Add 216 MHz entry for PLL_X
+Date: Wed, 13 Dec 2017 00:37:28 +0300
+Message-ID: <1469d692-077a-93c7-8722-1bf86e53f481@gmail.com>
+References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
+ <20171212100200.GW32106@tbergstrom-lnx.Nvidia.com>
+ <508cb22d-42cb-d169-dbea-0073d7a4e034@gmail.com>
+ <20171212151749.GA29158@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1509371843-22931-13-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20171212151749.GA29158-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 30, 2017 at 07:27:23PM +0530, Manikanta Maddireddy wrote:
-> Recommended update FC threshold in Tegra210 is 0x60 for best performance
-> of x1 link. Setting this to 0x60 provides the best balance between number
-> of UpdateFC and read data sent over the link.
+On 12.12.2017 18:17, Peter De Schrijver wrote:
+> On Tue, Dec 12, 2017 at 03:08:08PM +0300, Dmitry Osipenko wrote:
+>> On 12.12.2017 13:02, Peter De Schrijver wrote:
+>>> On Mon, Dec 11, 2017 at 09:50:09PM +0300, Dmitry Osipenko wrote:
+>>>> The cpufreq driver uses 216 MHz as the lowest CPU clock frequency, but
+>>>> clock driver doesn't provide that rate, so the requested clock is rounded
+>>>> up to 312 MHz. Let's add entry for 216 MHz to match with cpufreq.
+>>>>
+>>>
+>>> This seems odd. If there's no table entry, _calc_rate should kick in and
+>>> calculate the parameters for 216MHz. Any idea why this is not happening?
+>>
+>> Actually, it is happening. Please ignore this patch.
+>>
+>> If PLL's rate could be calculated, why do we need the predefined tables?
 > 
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V3:
-> * changed soc parameter name
-> V2:
-> * no change in this patch
-> 
->  drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index b29329226e3d..812d32cfdd0e 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -223,6 +223,7 @@
->  #define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
->  #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
->  #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
-> +#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_T210	(0x60 << 18)
-
-You define a SOC specific threshold and a update_fc_threshold bool
-variable to update it ? And what are you going to do if that's needed
-on something that it is not a T210 ? Should not this be a(nother)
-struct tegra_pcie_soc parameter instead than a macro ?
-
-Not that I am happy about it but this deviates from the current
-approach.
-
->  #define RP_VEND_CTL0	0xf44
->  #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
-> @@ -323,6 +324,7 @@ struct tegra_pcie_soc {
->  	bool update_clamp_threshold;
->  	bool raw_violation_fixup;
->  	bool program_deskew_time;
-> +	bool update_fc_threshold;
->  };
->  
->  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-> @@ -2231,6 +2233,13 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->  		value |= RP_VEND_CTL0_DSK_RST_PULSE_WIDTH;
->  		writel(value, port->base + RP_VEND_CTL0);
->  	}
-> +
-> +	if (soc->update_fc_threshold) {
-> +		value = readl(port->base + RP_VEND_XP);
-> +		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
-> +		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_T210;
-> +		writel(value, port->base + RP_VEND_XP);
-> +	}
-
-If, say, a platform requires update_fc_threshold and raw_violation_fixup
-what takes precedence (ie they required programming the _same_
-registers) ? update_fc_threshold takes precedence, since it is applied
-last - but I would like you to think about this and realize that this
-per-SoC mechanism does not scale anymore.
-
-You should a) enforce some firmware initialization - most of the
-parameters in struct tegra_pcie_soc could have been pre-programmed
-by FW and b) think about adding some DT properties to handle the PCI
-host bridge set-up.
-
-Lorenzo
-
->  }
->  /*
->   * FIXME: If there are no PCIe cards attached, then calling this function
-> @@ -2371,6 +2380,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
->  	.update_clamp_threshold = false,
->  	.raw_violation_fixup = false,
->  	.program_deskew_time = false,
-> +	.update_fc_threshold = false,
->  };
->  
->  static const struct tegra_pcie_soc tegra30_pcie = {
-> @@ -2391,6 +2401,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
->  	.update_clamp_threshold = false,
->  	.raw_violation_fixup = false,
->  	.program_deskew_time = false,
-> +	.update_fc_threshold = false,
->  };
->  
->  static const struct tegra_pcie_soc tegra124_pcie = {
-> @@ -2410,6 +2421,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
->  	.update_clamp_threshold = true,
->  	.raw_violation_fixup = true,
->  	.program_deskew_time = false,
-> +	.update_fc_threshold = false,
->  };
->  
->  static const struct tegra_pcie_soc tegra210_pcie = {
-> @@ -2437,6 +2449,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
->  	.update_clamp_threshold = true,
->  	.raw_violation_fixup = false,
->  	.program_deskew_time = true,
-> +	.update_fc_threshold = true,
->  };
->  
->  static const struct tegra_pcie_soc tegra186_pcie = {
-> @@ -2457,6 +2470,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
->  	.update_clamp_threshold = false,
->  	.raw_violation_fixup = false,
->  	.program_deskew_time = false,
-> +	.update_fc_threshold = false,
->  };
->  
->  static const struct of_device_id tegra_pcie_of_match[] = {
-> -- 
-> 2.1.4
-> 
+> The algorithm to calculate the PLL parameters is rather crude. It will
+> favour undershooting the rate rather than overshooting. This is fine for
+> DVFS usecases when you want to avoid a too high clock rate, but not good
+> for eg display or memory, where as close as match as possible is needed.
+Okay, thank you for the clarification.
