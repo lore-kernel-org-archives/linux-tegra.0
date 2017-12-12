@@ -1,107 +1,134 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v4 3/5] staging: Introduce NVIDIA Tegra video decoder
- driver
-Date: Tue, 12 Dec 2017 13:54:34 +0100
-Message-ID: <a293c278-0c44-6a8b-55bb-7a1c5c9575f6@xs4all.nl>
-References: <cover.1508448293.git.digetx@gmail.com>
- <1a3798f337c0097e67d70226ae3ba665fd9156c2.1508448293.git.digetx@gmail.com>
- <ad2da9f4-8899-7db3-493f-5aa15297c33c@xs4all.nl>
- <3ac6a087-def2-014f-673d-1be9d5094635@gmail.com>
- <93c98569-0282-80d9-78ad-c8ab8fd9db92@xs4all.nl>
- <f46f397d-28e1-f4e5-55d4-9863214e8f6c@gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH V3 03/12] PCI: tegra: Retrain link for Gen2 speed
+Date: Tue, 12 Dec 2017 14:32:01 +0000
+Message-ID: <20171212143201.GC30799@e107981-ln.cambridge.arm.com>
+References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
+ <1509371843-22931-4-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <f46f397d-28e1-f4e5-55d4-9863214e8f6c@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Vladimir Zapolskiy <vz@mleia.com>
-Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Giulio Benetti <giulio.benetti@micronovasrl.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1509371843-22931-4-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/12/17 19:56, Dmitry Osipenko wrote:
-> On 05.12.2017 16:03, Hans Verkuil wrote:
->> On 12/05/17 13:17, Dmitry Osipenko wrote:
->>> Hi Hans,
->>>
->>> On 04.12.2017 17:04, Hans Verkuil wrote:
->>>> Hi Dmitry,
->>>>
->>>> As you already mention in the TODO, this should become a v4l2 codec driver.
->>>>
->>>> Good existing examples are the coda, qcom/venus and mtk-vcodec drivers.
->>>>
->>>> One thing that is not clear from this code is if the tegra hardware is a
->>>> stateful or stateless codec, i.e. does it keep track of the decoder state
->>>> in the hardware, or does the application have to keep track of the state and
->>>> provide the state information together with the video data?
->>>>
->>>> I ask because at the moment only stateful codecs are supported. Work is ongoing
->>>> to support stateless codecs, but we don't support that for now.
->>>>
->>>
->>> It is stateless. Is there anything ready to try out? If yes, could you please
->>> give a reference to that work?
->>
->> I rebased my two year old 'requests2' branch to the latest mainline version and
->> gave it the imaginative name 'requests3':
->>
->> https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=requests3
->>
->> (Note: only compile tested!)
+[+Ley Foon Tan]
+
+On Mon, Oct 30, 2017 at 07:27:14PM +0530, Manikanta Maddireddy wrote:
+> Tegra124, 132, 210 and 186 support Gen2 link speed. After the link is up
+> in Gen1, set target link speed as Gen2 and retrain link. Link switches to
+> Gen2 speed if Gen2 capable end point is connected, else link stays in Gen1.
 > 
-> Thank you very much.
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> V3:
+> * Corrected commit log
+> * Replaced jiffies with ktime
+> V2:
+> * no change in this patch
 > 
->> This is what ChromeOS has been using (actually they use a slightly older version)
->> and the new version that is currently being developed will be similar, so any work
->> you do on top of this will carry over to the final version without too much effort.
->>
->> At least, that's the intention :-)
->>
->> I've CC-ed Maxime and Giulio as well: they are looking into adding support for
->> the stateless allwinner codec based on this code as well. There may well be
->> opportunities for you to work together, esp. on the userspace side. Note that
->> Rockchip has the same issue, they too have a stateless HW codec.
+>  drivers/pci/host/pci-tegra.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 > 
-> IIUC, we will have to define video decoder parameters in V4L API and then make a
-> V4L driver / userspace prototype (ffmpeg for example) that will use the requests
-> API for video decoding in order to upstream the requests API. Does it sound good?
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 068510b40c1a..ed5e8acfdc32 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -232,6 +232,8 @@
+>  #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
+>  #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
+>  
+> +#define LINK_RETRAIN_TIMEOUT 100000
+> +
+>  struct tegra_msi {
+>  	struct msi_controller chip;
+>  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+> @@ -2134,6 +2136,42 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+>  	}
+>  }
+>  
+> +static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
+> +					 struct pci_dev *pci_dev)
+> +{
+> +	struct device *dev = pcie->dev;
+> +	ktime_t deadline;
+> +	unsigned short val;
 
-Correct.
+u16
 
-Hugues Fruchet made an example bit parser for mpeg:
+> +	/* Skip if the current device is not a root port */
+> +	if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
+> +		return;
+> +
+> +	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
+> +	val &= ~PCI_EXP_LNKSTA_CLS;
+> +	val |= PCI_EXP_LNKSTA_CLS_5_0GB;
+> +	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
 
-https://www.spinics.net/lists/linux-media/msg115017.html
+Should you not read the Link Capabilities 2 register ("Supported Speed
+Vector") before programming the Link control 2 register Target Link
+Speed value ?
 
-So something similar would work.
+> +
+> +	/* Retrain the link */
+> +	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
+> +	val |= PCI_EXP_LNKCTL_RL;
+> +	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
+> +
+> +	deadline = ktime_add_us(ktime_get(), LINK_RETRAIN_TIMEOUT);
+> +	for (;;) {
+> +		pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &val);
+> +		if (!(val & PCI_EXP_LNKSTA_LT))
+> +			break;
+> +		if (ktime_after(ktime_get(), deadline))
+> +			break;
+> +		usleep_range(2000, 3000);
 
-My recommendation would be to make a separate library that can be shared among
-different implementations (i.e. in gstreamer, in vdpau, using a libv4l2 plugin, etc., etc.).
+Ok - I hope we won't end up with every host bridge re-writing its own
+link training loop because at that point in time we should think about
+consolidating this.
 
-That can easily be hosted as part of v4l-utils to keep it in sync with the
-kernel drivers. If it's independent of the various drivers, then it can be
-hosted anywhere of course.
+CC'ing Ley Foon Tan since I would like to understand why the Altera
+driver link retraining can't be written with the same code as this
+driver - I suspect it has to do with the retraining sequence and when
+the retraining is actually carried out in the host bridge probe
+sequence.
 
-BTW, we as V4L2 core developers have no plans on working on such a library :-)
+> +	}
+> +
+> +	if (val & PCI_EXP_LNKSTA_LT)
+> +		dev_err(dev, "link retrain of PCIe slot %u failed\n",
+> +			PCI_SLOT(pci_dev->devfn));
+> +}
+> +
+>  static const struct tegra_pcie_soc tegra20_pcie = {
+>  	.num_ports = 2,
+>  	.msi_base_shift = 0,
+> @@ -2335,6 +2373,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>  	struct pci_host_bridge *host;
+>  	struct tegra_pcie *pcie;
+>  	struct pci_bus *child;
+> +	struct pci_dev *pci_dev = NULL;
+>  	int err;
+>  
+>  	host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
+> @@ -2400,6 +2439,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>  
+>  	pci_bus_add_devices(host->bus);
+>  
+> +	for_each_pci_dev(pci_dev)
+> +		tegra_pcie_change_link_speed(pcie, pci_dev);
+> +
 
-Regards,
+Are you sure it is safe to change link speed after adding devices ?
 
-	Hans
+Lorenzo
 
+>  	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+>  		err = tegra_pcie_debugfs_init(pcie);
+>  		if (err < 0)
+> -- 
+> 2.1.4
 > 
->>>
->>>> Anyway, I'm OK with merging this in staging. Although I think it should go
->>>> to staging/media since we want to keep track of it.
->>>>
->>>
->>> Awesome, I'll move driver to staging/media in V5. Thanks!
->>
->> Nice, thanks!
