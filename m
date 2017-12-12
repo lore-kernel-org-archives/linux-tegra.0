@@ -1,8 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 1/4] media: dt: bindings: Add binding for NVIDIA Tegra
- Video Decoder Engine
-Date: Tue, 12 Dec 2017 03:26:07 +0300
-Message-ID: <155182bb32443b69e457adbd642c12da81b0a241.1513038011.git.digetx@gmail.com>
+Subject: [PATCH v5 4/4] ARM: dts: tegra20: Add video decoder node
+Date: Tue, 12 Dec 2017 03:26:10 +0300
+Message-ID: <e80456489c7802e768883ded842e7818158168c4.1513038011.git.digetx@gmail.com>
 References: <cover.1513038011.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -24,76 +23,57 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add binding documentation for the Video Decoder Engine which is found
-on NVIDIA Tegra20/30/114/124/132 SoC's.
+Add Video Decoder Engine device node.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/media/nvidia,tegra-vde.txt | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+ arch/arm/boot/dts/tegra20.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-new file mode 100644
-index 000000000000..470237ed6fe5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-@@ -0,0 +1,55 @@
-+NVIDIA Tegra Video Decoder Engine
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 36909df653c3..864a95872b8d 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -16,6 +16,11 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0 0x40000000 0x40000>;
 +
-+Required properties:
-+- compatible : Must contain one of the following values:
-+   - "nvidia,tegra20-vde"
-+   - "nvidia,tegra30-vde"
-+   - "nvidia,tegra114-vde"
-+   - "nvidia,tegra124-vde"
-+   - "nvidia,tegra132-vde"
-+- reg : Must contain an entry for each entry in reg-names.
-+- reg-names : Must include the following entries:
-+  - sxe
-+  - bsev
-+  - mbe
-+  - ppe
-+  - mce
-+  - tfe
-+  - ppb
-+  - vdma
-+  - frameid
-+- iram : Must contain phandle to the mmio-sram device node that represents
-+         IRAM region used by VDE.
-+- interrupts : Must contain an entry for each entry in interrupt-names.
-+- interrupt-names : Must include the following entries:
-+  - sync-token
-+  - bsev
-+  - sxe
-+- clocks : Must include the following entries:
-+  - vde
-+- resets : Must include the following entries:
-+  - vde
++		vde_pool: vde {
++			reg = <0x400 0x3fc00>;
++			pool;
++		};
+ 	};
+ 
+ 	host1x@50000000 {
+@@ -258,6 +263,28 @@
+ 		*/
+ 	};
+ 
++	vde@6001a000 {
++		compatible = "nvidia,tegra20-vde";
++		reg = <0x6001a000 0x1000   /* Syntax Engine */
++		       0x6001b000 0x1000   /* Video Bitstream Engine */
++		       0x6001c000  0x100   /* Macroblock Engine */
++		       0x6001c200  0x100   /* Post-processing Engine */
++		       0x6001c400  0x100   /* Motion Compensation Engine */
++		       0x6001c600  0x100   /* Transform Engine */
++		       0x6001c800  0x100   /* Pixel prediction block */
++		       0x6001ca00  0x100   /* Video DMA */
++		       0x6001d800  0x300>; /* Video frame controls */
++		reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
++			    "tfe", "ppb", "vdma", "frameid";
++		iram = <&vde_pool>; /* IRAM region */
++		interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
++			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
++			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
++		interrupt-names = "sync-token", "bsev", "sxe";
++		clocks = <&tegra_car TEGRA20_CLK_VDE>;
++		resets = <&tegra_car 61>;
++	};
 +
-+Example:
-+
-+video-codec@6001a000 {
-+	compatible = "nvidia,tegra20-vde";
-+	reg = <0x6001a000 0x1000 /* Syntax Engine */
-+	       0x6001b000 0x1000 /* Video Bitstream Engine */
-+	       0x6001c000  0x100 /* Macroblock Engine */
-+	       0x6001c200  0x100 /* Post-processing Engine */
-+	       0x6001c400  0x100 /* Motion Compensation Engine */
-+	       0x6001c600  0x100 /* Transform Engine */
-+	       0x6001c800  0x100 /* Pixel prediction block */
-+	       0x6001ca00  0x100 /* Video DMA */
-+	       0x6001d800  0x300 /* Video frame controls */>;
-+	reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
-+		    "tfe", "ppb", "vdma", "frameid";
-+	iram = <&vde_pool>; /* IRAM region */
-+	interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
-+		     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
-+		     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
-+	interrupt-names = "sync-token", "bsev", "sxe";
-+	clocks = <&tegra_car TEGRA20_CLK_VDE>;
-+	resets = <&tegra_car 61>;
-+};
+ 	apbmisc@70000800 {
+ 		compatible = "nvidia,tegra20-apbmisc";
+ 		reg = <0x70000800 0x64   /* Chip revision */
 -- 
 2.15.1
