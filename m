@@ -1,41 +1,91 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 2/2] clk: tegra20: Correct PLL_C_OUT1 setup
-Date: Mon, 11 Dec 2017 21:50:12 +0300
-Message-ID: <4c15ac578fd847bc4047384ae2f8cadd6b9e9fe4.1513018140.git.digetx@gmail.com>
-References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
-In-Reply-To: <09480d74d240d8e77b3989cfe85e6e624eaee866.1513018140.git.digetx@gmail.com>
-References: <09480d74d240d8e77b3989cfe85e6e624eaee866.1513018140.git.digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v5 0/4] NVIDIA Tegra video decoder driver
+Date: Tue, 12 Dec 2017 03:26:06 +0300
+Message-ID: <cover.1513038011.git.digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-PLL_C_OUT_1 can't produce 216 MHz defined in the init_table. Let's
-set it to 240 MHz and explicitly specify HCLK rate for consistency.
+VDE driver provides accelerated video decoding to NVIDIA Tegra SoC's,
+it is a result of reverse-engineering efforts. Driver has been tested on
+Toshiba AC100 and Acer A500, it should work on any Tegra20 device.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra20.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+In userspace this driver is utilized by libvdpau-tegra [0] that implements
+VDPAU interface, so any video player that supports VDPAU can provide
+accelerated video decoding on Tegra20 on Linux.
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 32763dfbfaba..c39e7e2446d8 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1026,9 +1026,9 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 0 },
- 	{ TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 0 },
--	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 216000000, 0 },
--	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 0 },
--	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 0, 0 },
-+	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 240000000, 0 },
-+	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 240000000, 0 },
-+	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 240000000, 0 },
- 	{ TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 0 },
- 	{ TEGRA20_CLK_CSITE, TEGRA20_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA20_CLK_CCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
+[0] https://github.com/grate-driver/libvdpau-tegra
+
+Change log:
+v5:
+	- Moved driver to staging/media as per Hans's Verkuil request
+	- Addressed review comments to v4 from Vladimir Zapolskiy and
+	  Dan Carpenter
+	- Updated 'TODO', reflecting that this driver require upcoming
+	  support of stateless decoders by V4L2
+	- Dropped patch that enabled VDE driver in tegra_defconfig for now
+	  as I realized that Tegra's DRM staging config is disabled there
+	  and right now we are relying on it in libvdpau-tegra
+	- Added myself to MAINTAINERS in the "Introduce driver" patch as per
+	  Vladimir's suggestion
+
+v4:
+	- Added mmio-sram "IRAM DT node" patch from Vladimir Zapolskiy to
+	  the series, I modified it to cover all Tegra's and not only Tegra20
+	- Utilized genalloc for the reservation of IRAM region as per
+	  Vladimir's suggestion, VDE driver now selects SRAM driver in Kconfig
+	- Added defconfig patch to the series
+	- Described VDE registers in DT per HW unit, excluding BSE-A / UCQ
+	  and holes between the units
+	- Extended DT compatibility property with Tegra30/114/124/132 in the
+	  binding doc.
+	- Removed BSE-A interrupt from the DT binding because it's very
+	  likely that Audio Bitstream Engine isn't integrated with VDE
+	- Removed UCQ interrupt from the DT binding because in TRM it is
+	  represented as a distinct HW block that probably should have
+	  its own driver
+	- Addressed v3 review comments: factored out DT binding addition
+	  into a standalone patch, moved binding to media/, removed
+	  clocks/resets-names
+
+v3:
+	- Suppressed compilation warnings reported by 'kbuild test robot'
+
+v2:
+	- Addressed v1 review comments from Stephen Warren and Dan Carpenter
+	- Implemented runtime PM
+	- Miscellaneous code cleanups
+	- Changed 'TODO'
+	- CC'd media maintainers for the review as per Greg's K-H request,
+	  v1 can be viewed at https://lkml.org/lkml/2017/9/25/606
+
+Dmitry Osipenko (3):
+  media: dt: bindings: Add binding for NVIDIA Tegra Video Decoder Engine
+  staging: media: Introduce NVIDIA Tegra video decoder driver
+  ARM: dts: tegra20: Add video decoder node
+
+Vladimir Zapolskiy (1):
+  ARM: dts: tegra20: Add device tree node to describe IRAM
+
+ .../devicetree/bindings/media/nvidia,tegra-vde.txt |   55 +
+ MAINTAINERS                                        |    9 +
+ arch/arm/boot/dts/tegra20.dtsi                     |   35 +
+ drivers/staging/media/Kconfig                      |    2 +
+ drivers/staging/media/Makefile                     |    1 +
+ drivers/staging/media/tegra-vde/Kconfig            |    7 +
+ drivers/staging/media/tegra-vde/Makefile           |    1 +
+ drivers/staging/media/tegra-vde/TODO               |    4 +
+ drivers/staging/media/tegra-vde/tegra-vde.c        | 1213 ++++++++++++++++++++
+ drivers/staging/media/tegra-vde/uapi.h             |   78 ++
+ 10 files changed, 1405 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+ create mode 100644 drivers/staging/media/tegra-vde/Kconfig
+ create mode 100644 drivers/staging/media/tegra-vde/Makefile
+ create mode 100644 drivers/staging/media/tegra-vde/TODO
+ create mode 100644 drivers/staging/media/tegra-vde/tegra-vde.c
+ create mode 100644 drivers/staging/media/tegra-vde/uapi.h
+
 -- 
 2.15.1
