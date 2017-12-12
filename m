@@ -1,91 +1,99 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 0/4] NVIDIA Tegra video decoder driver
-Date: Tue, 12 Dec 2017 03:26:06 +0300
-Message-ID: <cover.1513038011.git.digetx@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v5 1/4] media: dt: bindings: Add binding for NVIDIA Tegra
+ Video Decoder Engine
+Date: Tue, 12 Dec 2017 03:26:07 +0300
+Message-ID: <155182bb32443b69e457adbd642c12da81b0a241.1513038011.git.digetx@gmail.com>
+References: <cover.1513038011.git.digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <cover.1513038011.git.digetx@gmail.com>
+In-Reply-To: <cover.1513038011.git.digetx@gmail.com>
+References: <cover.1513038011.git.digetx@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Vladimir Zapolskiy <vz@mleia.com>
+Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-VDE driver provides accelerated video decoding to NVIDIA Tegra SoC's,
-it is a result of reverse-engineering efforts. Driver has been tested on
-Toshiba AC100 and Acer A500, it should work on any Tegra20 device.
+Add binding documentation for the Video Decoder Engine which is found
+on NVIDIA Tegra20/30/114/124/132 SoC's.
 
-In userspace this driver is utilized by libvdpau-tegra [0] that implements
-VDPAU interface, so any video player that supports VDPAU can provide
-accelerated video decoding on Tegra20 on Linux.
-
-[0] https://github.com/grate-driver/libvdpau-tegra
-
-Change log:
-v5:
-	- Moved driver to staging/media as per Hans's Verkuil request
-	- Addressed review comments to v4 from Vladimir Zapolskiy and
-	  Dan Carpenter
-	- Updated 'TODO', reflecting that this driver require upcoming
-	  support of stateless decoders by V4L2
-	- Dropped patch that enabled VDE driver in tegra_defconfig for now
-	  as I realized that Tegra's DRM staging config is disabled there
-	  and right now we are relying on it in libvdpau-tegra
-	- Added myself to MAINTAINERS in the "Introduce driver" patch as per
-	  Vladimir's suggestion
-
-v4:
-	- Added mmio-sram "IRAM DT node" patch from Vladimir Zapolskiy to
-	  the series, I modified it to cover all Tegra's and not only Tegra20
-	- Utilized genalloc for the reservation of IRAM region as per
-	  Vladimir's suggestion, VDE driver now selects SRAM driver in Kconfig
-	- Added defconfig patch to the series
-	- Described VDE registers in DT per HW unit, excluding BSE-A / UCQ
-	  and holes between the units
-	- Extended DT compatibility property with Tegra30/114/124/132 in the
-	  binding doc.
-	- Removed BSE-A interrupt from the DT binding because it's very
-	  likely that Audio Bitstream Engine isn't integrated with VDE
-	- Removed UCQ interrupt from the DT binding because in TRM it is
-	  represented as a distinct HW block that probably should have
-	  its own driver
-	- Addressed v3 review comments: factored out DT binding addition
-	  into a standalone patch, moved binding to media/, removed
-	  clocks/resets-names
-
-v3:
-	- Suppressed compilation warnings reported by 'kbuild test robot'
-
-v2:
-	- Addressed v1 review comments from Stephen Warren and Dan Carpenter
-	- Implemented runtime PM
-	- Miscellaneous code cleanups
-	- Changed 'TODO'
-	- CC'd media maintainers for the review as per Greg's K-H request,
-	  v1 can be viewed at https://lkml.org/lkml/2017/9/25/606
-
-Dmitry Osipenko (3):
-  media: dt: bindings: Add binding for NVIDIA Tegra Video Decoder Engine
-  staging: media: Introduce NVIDIA Tegra video decoder driver
-  ARM: dts: tegra20: Add video decoder node
-
-Vladimir Zapolskiy (1):
-  ARM: dts: tegra20: Add device tree node to describe IRAM
-
- .../devicetree/bindings/media/nvidia,tegra-vde.txt |   55 +
- MAINTAINERS                                        |    9 +
- arch/arm/boot/dts/tegra20.dtsi                     |   35 +
- drivers/staging/media/Kconfig                      |    2 +
- drivers/staging/media/Makefile                     |    1 +
- drivers/staging/media/tegra-vde/Kconfig            |    7 +
- drivers/staging/media/tegra-vde/Makefile           |    1 +
- drivers/staging/media/tegra-vde/TODO               |    4 +
- drivers/staging/media/tegra-vde/tegra-vde.c        | 1213 ++++++++++++++++++++
- drivers/staging/media/tegra-vde/uapi.h             |   78 ++
- 10 files changed, 1405 insertions(+)
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/media/nvidia,tegra-vde.txt | 55 ++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
- create mode 100644 drivers/staging/media/tegra-vde/Kconfig
- create mode 100644 drivers/staging/media/tegra-vde/Makefile
- create mode 100644 drivers/staging/media/tegra-vde/TODO
- create mode 100644 drivers/staging/media/tegra-vde/tegra-vde.c
- create mode 100644 drivers/staging/media/tegra-vde/uapi.h
 
+diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+new file mode 100644
+index 000000000000..470237ed6fe5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+@@ -0,0 +1,55 @@
++NVIDIA Tegra Video Decoder Engine
++
++Required properties:
++- compatible : Must contain one of the following values:
++   - "nvidia,tegra20-vde"
++   - "nvidia,tegra30-vde"
++   - "nvidia,tegra114-vde"
++   - "nvidia,tegra124-vde"
++   - "nvidia,tegra132-vde"
++- reg : Must contain an entry for each entry in reg-names.
++- reg-names : Must include the following entries:
++  - sxe
++  - bsev
++  - mbe
++  - ppe
++  - mce
++  - tfe
++  - ppb
++  - vdma
++  - frameid
++- iram : Must contain phandle to the mmio-sram device node that represents
++         IRAM region used by VDE.
++- interrupts : Must contain an entry for each entry in interrupt-names.
++- interrupt-names : Must include the following entries:
++  - sync-token
++  - bsev
++  - sxe
++- clocks : Must include the following entries:
++  - vde
++- resets : Must include the following entries:
++  - vde
++
++Example:
++
++video-codec@6001a000 {
++	compatible = "nvidia,tegra20-vde";
++	reg = <0x6001a000 0x1000 /* Syntax Engine */
++	       0x6001b000 0x1000 /* Video Bitstream Engine */
++	       0x6001c000  0x100 /* Macroblock Engine */
++	       0x6001c200  0x100 /* Post-processing Engine */
++	       0x6001c400  0x100 /* Motion Compensation Engine */
++	       0x6001c600  0x100 /* Transform Engine */
++	       0x6001c800  0x100 /* Pixel prediction block */
++	       0x6001ca00  0x100 /* Video DMA */
++	       0x6001d800  0x300 /* Video frame controls */>;
++	reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
++		    "tfe", "ppb", "vdma", "frameid";
++	iram = <&vde_pool>; /* IRAM region */
++	interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
++		     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
++		     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
++	interrupt-names = "sync-token", "bsev", "sxe";
++	clocks = <&tegra_car TEGRA20_CLK_VDE>;
++	resets = <&tegra_car 61>;
++};
 -- 
 2.15.1
