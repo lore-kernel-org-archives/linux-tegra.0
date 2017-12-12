@@ -1,84 +1,90 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v1] clk: tegra: Specify VDE clock rate
-Date: Tue, 12 Dec 2017 12:18:16 +0200
-Message-ID: <20171212101816.GZ32106@tbergstrom-lnx.Nvidia.com>
-References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
- <41813e7cda9ade75637d6c25b0a1b004462058f4.1513018131.git.digetx@gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH V3 0/2] Tegra PCIe end point config space map code
+ refactoring
+Date: Tue, 12 Dec 2017 11:01:58 +0000
+Message-ID: <20171212110158.GA30601@e107981-ln.cambridge.arm.com>
+References: <1512410030-21038-1-git-send-email-vidyas@nvidia.com>
+ <20171211105431.GI10671@ulmo>
+ <20171211175452.GC16032@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <41813e7cda9ade75637d6c25b0a1b004462058f4.1513018131.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20171211175452.GC16032-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 11, 2017 at 09:50:11PM +0300, Dmitry Osipenko wrote:
-> Currently VDE clock rate is determined by clock config left from
-> bootloader, let's not rely on it and explicitly specify the clock
-> rate in the CCF driver.
+On Mon, Dec 11, 2017 at 11:54:53AM -0600, Bjorn Helgaas wrote:
+> [+cc Lorenzo]
 > 
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> On Mon, Dec 11, 2017 at 11:54:31AM +0100, Thierry Reding wrote:
+> > On Mon, Dec 04, 2017 at 11:23:48PM +0530, Vidya Sagar wrote:
+> > > PCIe host controller in Tegra SoCs has 1GB of aperture available
+> > > for mapping end points config space, IO and BARs. In that, currently
+> > > 256MB is being reserved for mapping end points configuration space
+> > > which leaves less memory space available for mapping end points BARs
+> > > on some of the platforms.
+> > > This patch series attempts to map only 4K space from 1GB aperture to
+> > > access end points configuration space.
+> > > 
+> > > Currently, this change can benefit T20 and T186 in saving (i.e. repurposed
+> > > to use for BAR mapping) physical space as well as kernel virtual mapping space,
+> > > it saves only kernel virtual address space in T30, T124, T132 and T210.
+> > > 
+> > > NOTE: Since T186 PCIe DT entry is not yet present in main line (it is currently
+> > > merged to 'for-4.15/arm64/dt' branch), nothing gets broken with this change for T186.
+> > > For older platforms (T20, T30, T124, T132, T210), this change works fine without any
+> > > DT modifications
+> > > 
+> > > Testing Done on T124, T210 & T186:
+> > >  Enumeration and basic functionality of immediate devices
+> > >  Enumeration of devices behind a PCIe switch
+> > >  Complete 4K configuration space access
+> > > 
+> > > Vidya Sagar (2):
+> > >   PCI: tegra: refactor config space mapping code
+> > >   ARM64: tegra: limit PCIe config space mapping to 4K for T186
+> > > 
+> > >  arch/arm64/boot/dts/nvidia/tegra186.dtsi |   8 +-
+> > >  drivers/pci/host/pci-tegra.c             | 125 ++++++++++---------------------
+> > >  2 files changed, 44 insertions(+), 89 deletions(-)
+> > 
+> > Hi Bjorn,
+> > 
+> > there's a bunch of PCI related patches for Tegra floating around on the
+> > lists. I'm wondering if you'd be okay if I pick those up into the Tegra
+> > tree after they've been reviewed and send you a pull request later on
+> > (say around v4.15-rc6). That would allow me to get things cooking in
+> > linux-next for a bit and get broader testing in addition to the
+> > flexibility to patch things up if they break.
+> 
+> Lorenzo will be merging the Tegra stuff, so this is more a question
+> for him.
+> 
+> Just to clarify, I think your questions is about putting those patches
+> in
+> git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git#for-next.
+> If you put them there they will show up in linux-next, and then when
+> Lorenzo merges them, you'll have to coordinate so they don't get
+> merged into linux-next twice (once via the usual PCI tree route and
+> again via the Tegra tree).
+> 
+> If you wait until after they've been reviewed to put them into the
+> Tegra tree, I'm not sure what the gain is, because I assume Lorenzo
+> would merge them at about that same point.
 
-Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+I think that after the review, the Tegra patches that are considered for
+upstream they should go to -next via the PCI tree as any other platform PCI
+patches; the relevant patches need ACKs from the respective platform
+maintainer - I am getting to them as fast as I can.
 
-> ---
->  drivers/clk/tegra/clk-tegra114.c | 1 +
->  drivers/clk/tegra/clk-tegra124.c | 2 +-
->  drivers/clk/tegra/clk-tegra20.c  | 1 +
->  drivers/clk/tegra/clk-tegra30.c  | 1 +
->  4 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> index f39e09d1bdba..3523852accd8 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -1189,6 +1189,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->  	{ TEGRA114_CLK_XUSB_HS_SRC, TEGRA114_CLK_XUSB_SS_DIV2, 61200000, 0 },
->  	{ TEGRA114_CLK_XUSB_FALCON_SRC, TEGRA114_CLK_PLL_P, 204000000, 0 },
->  	{ TEGRA114_CLK_XUSB_HOST_SRC, TEGRA114_CLK_PLL_P, 102000000, 0 },
-> +	{ TEGRA114_CLK_VDE, TEGRA114_CLK_CLK_MAX, 600000000, 0 },
->  	/* must be the last entry */
->  	{ TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_CLK_MAX, 0, 0 },
->  };
-> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-> index c802fbcbc5fa..dda7c2163521 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -1268,7 +1268,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
->  	{ TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
->  	{ TEGRA124_CLK_I2S3, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
->  	{ TEGRA124_CLK_I2S4, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
-> -	{ TEGRA124_CLK_VDE, TEGRA124_CLK_PLL_P, 0, 0 },
-> +	{ TEGRA124_CLK_VDE, TEGRA124_CLK_CLK_MAX, 600000000, 0 },
->  	{ TEGRA124_CLK_HOST1X, TEGRA124_CLK_PLL_P, 136000000, 1 },
->  	{ TEGRA124_CLK_DSIALP, TEGRA124_CLK_PLL_P, 68000000, 0 },
->  	{ TEGRA124_CLK_DSIBLP, TEGRA124_CLK_PLL_P, 68000000, 0 },
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index c39e7e2446d8..66d9a2c91b9c 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -1056,6 +1056,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->  	{ TEGRA20_CLK_DISP2, TEGRA20_CLK_PLL_P, 600000000, 0 },
->  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> +	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
->  	/* must be the last entry */
->  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
->  };
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index 54d2c3436a31..aa47617850a6 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1269,6 +1269,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->  	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
->  	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
->  	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
-> +	{ TEGRA30_CLK_VDE, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
->  	/* must be the last entry */
->  	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
->  };
-> -- 
-> 2.15.1
-> 
+> This cycle isn't going to be ideal timing with all the holidays
+> coming up.  I know I'm going to be traveling and on vacation quite a
+> bit in the rc5, 6, 7 timeframe.
+
+Yes timing is not ideal - I won't be able to review anything in the -rc5
+week either but apart from that I should be online.
+
+Lorenzo
