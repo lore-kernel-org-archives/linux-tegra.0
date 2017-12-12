@@ -1,134 +1,107 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 0/2] Tegra PCIe end point config space map code
- refactoring
-Date: Tue, 12 Dec 2017 13:22:52 +0100
-Message-ID: <20171212122252.GA29883@ulmo>
-References: <1512410030-21038-1-git-send-email-vidyas@nvidia.com>
- <20171211105431.GI10671@ulmo>
- <20171211175452.GC16032@bhelgaas-glaptop.roam.corp.google.com>
- <20171212110158.GA30601@e107981-ln.cambridge.arm.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v4 3/5] staging: Introduce NVIDIA Tegra video decoder
+ driver
+Date: Tue, 12 Dec 2017 13:54:34 +0100
+Message-ID: <a293c278-0c44-6a8b-55bb-7a1c5c9575f6@xs4all.nl>
+References: <cover.1508448293.git.digetx@gmail.com>
+ <1a3798f337c0097e67d70226ae3ba665fd9156c2.1508448293.git.digetx@gmail.com>
+ <ad2da9f4-8899-7db3-493f-5aa15297c33c@xs4all.nl>
+ <3ac6a087-def2-014f-673d-1be9d5094635@gmail.com>
+ <93c98569-0282-80d9-78ad-c8ab8fd9db92@xs4all.nl>
+ <f46f397d-28e1-f4e5-55d4-9863214e8f6c@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k1lZvvs/B4yU6o8G"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171212110158.GA30601-4tUPXFaYRHv6sAKXYmQ0tx/iLCjYCKR+VpNB7YpNyf8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <f46f397d-28e1-f4e5-55d4-9863214e8f6c@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Vladimir Zapolskiy <vz@mleia.com>
+Cc: devel@driverdev.osuosl.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Giulio Benetti <giulio.benetti@micronovasrl.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/12/17 19:56, Dmitry Osipenko wrote:
+> On 05.12.2017 16:03, Hans Verkuil wrote:
+>> On 12/05/17 13:17, Dmitry Osipenko wrote:
+>>> Hi Hans,
+>>>
+>>> On 04.12.2017 17:04, Hans Verkuil wrote:
+>>>> Hi Dmitry,
+>>>>
+>>>> As you already mention in the TODO, this should become a v4l2 codec driver.
+>>>>
+>>>> Good existing examples are the coda, qcom/venus and mtk-vcodec drivers.
+>>>>
+>>>> One thing that is not clear from this code is if the tegra hardware is a
+>>>> stateful or stateless codec, i.e. does it keep track of the decoder state
+>>>> in the hardware, or does the application have to keep track of the state and
+>>>> provide the state information together with the video data?
+>>>>
+>>>> I ask because at the moment only stateful codecs are supported. Work is ongoing
+>>>> to support stateless codecs, but we don't support that for now.
+>>>>
+>>>
+>>> It is stateless. Is there anything ready to try out? If yes, could you please
+>>> give a reference to that work?
+>>
+>> I rebased my two year old 'requests2' branch to the latest mainline version and
+>> gave it the imaginative name 'requests3':
+>>
+>> https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=requests3
+>>
+>> (Note: only compile tested!)
+> 
+> Thank you very much.
+> 
+>> This is what ChromeOS has been using (actually they use a slightly older version)
+>> and the new version that is currently being developed will be similar, so any work
+>> you do on top of this will carry over to the final version without too much effort.
+>>
+>> At least, that's the intention :-)
+>>
+>> I've CC-ed Maxime and Giulio as well: they are looking into adding support for
+>> the stateless allwinner codec based on this code as well. There may well be
+>> opportunities for you to work together, esp. on the userspace side. Note that
+>> Rockchip has the same issue, they too have a stateless HW codec.
+> 
+> IIUC, we will have to define video decoder parameters in V4L API and then make a
+> V4L driver / userspace prototype (ffmpeg for example) that will use the requests
+> API for video decoding in order to upstream the requests API. Does it sound good?
 
---k1lZvvs/B4yU6o8G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Correct.
 
-On Tue, Dec 12, 2017 at 11:01:58AM +0000, Lorenzo Pieralisi wrote:
-> On Mon, Dec 11, 2017 at 11:54:53AM -0600, Bjorn Helgaas wrote:
-> > [+cc Lorenzo]
-> >=20
-> > On Mon, Dec 11, 2017 at 11:54:31AM +0100, Thierry Reding wrote:
-> > > On Mon, Dec 04, 2017 at 11:23:48PM +0530, Vidya Sagar wrote:
-> > > > PCIe host controller in Tegra SoCs has 1GB of aperture available
-> > > > for mapping end points config space, IO and BARs. In that, currently
-> > > > 256MB is being reserved for mapping end points configuration space
-> > > > which leaves less memory space available for mapping end points BARs
-> > > > on some of the platforms.
-> > > > This patch series attempts to map only 4K space from 1GB aperture to
-> > > > access end points configuration space.
-> > > >=20
-> > > > Currently, this change can benefit T20 and T186 in saving (i.e. rep=
-urposed
-> > > > to use for BAR mapping) physical space as well as kernel virtual ma=
-pping space,
-> > > > it saves only kernel virtual address space in T30, T124, T132 and T=
-210.
-> > > >=20
-> > > > NOTE: Since T186 PCIe DT entry is not yet present in main line (it =
-is currently
-> > > > merged to 'for-4.15/arm64/dt' branch), nothing gets broken with thi=
-s change for T186.
-> > > > For older platforms (T20, T30, T124, T132, T210), this change works=
- fine without any
-> > > > DT modifications
-> > > >=20
-> > > > Testing Done on T124, T210 & T186:
-> > > >  Enumeration and basic functionality of immediate devices
-> > > >  Enumeration of devices behind a PCIe switch
-> > > >  Complete 4K configuration space access
-> > > >=20
-> > > > Vidya Sagar (2):
-> > > >   PCI: tegra: refactor config space mapping code
-> > > >   ARM64: tegra: limit PCIe config space mapping to 4K for T186
-> > > >=20
-> > > >  arch/arm64/boot/dts/nvidia/tegra186.dtsi |   8 +-
-> > > >  drivers/pci/host/pci-tegra.c             | 125 ++++++++++---------=
-------------
-> > > >  2 files changed, 44 insertions(+), 89 deletions(-)
-> > >=20
-> > > Hi Bjorn,
-> > >=20
-> > > there's a bunch of PCI related patches for Tegra floating around on t=
-he
-> > > lists. I'm wondering if you'd be okay if I pick those up into the Teg=
-ra
-> > > tree after they've been reviewed and send you a pull request later on
-> > > (say around v4.15-rc6). That would allow me to get things cooking in
-> > > linux-next for a bit and get broader testing in addition to the
-> > > flexibility to patch things up if they break.
-> >=20
-> > Lorenzo will be merging the Tegra stuff, so this is more a question
-> > for him.
-> >=20
-> > Just to clarify, I think your questions is about putting those patches
-> > in
-> > git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git#for-next.
-> > If you put them there they will show up in linux-next, and then when
-> > Lorenzo merges them, you'll have to coordinate so they don't get
-> > merged into linux-next twice (once via the usual PCI tree route and
-> > again via the Tegra tree).
-> >=20
-> > If you wait until after they've been reviewed to put them into the
-> > Tegra tree, I'm not sure what the gain is, because I assume Lorenzo
-> > would merge them at about that same point.
->=20
-> I think that after the review, the Tegra patches that are considered for
-> upstream they should go to -next via the PCI tree as any other platform P=
-CI
-> patches; the relevant patches need ACKs from the respective platform
-> maintainer - I am getting to them as fast as I can.
+Hugues Fruchet made an example bit parser for mpeg:
 
-Just to clarify: I wasn't suggesting that these patches are merged for
-v4.16 via the Tegra tree, only that I carry them in the Tegra tree for a
-little while so that we can get broader testing and fix things up in
-case they break. My proposal was to then send a pull request for
-inclusion in the PCI tree. linux-next can deal with this type of
-scenario just fine because it will simply see the same branch twice and
-ignore the second one.
+https://www.spinics.net/lists/linux-media/msg115017.html
 
-If you prefer to merge directly via the PCI tree that works for me too.
+So something similar would work.
 
-Thierry
+My recommendation would be to make a separate library that can be shared among
+different implementations (i.e. in gstreamer, in vdpau, using a libv4l2 plugin, etc., etc.).
 
---k1lZvvs/B4yU6o8G
-Content-Type: application/pgp-signature; name="signature.asc"
+That can easily be hosted as part of v4l-utils to keep it in sync with the
+kernel drivers. If it's independent of the various drivers, then it can be
+hosted anywhere of course.
 
------BEGIN PGP SIGNATURE-----
+BTW, we as V4L2 core developers have no plans on working on such a library :-)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlovyhkACgkQ3SOs138+
-s6HIoA//UOk1Pqde8iX0UEGdNSME8v7GmCtfPEE8EvLEt2URNFcZDF4KWvFONg7R
-BNpn9yjOs83UTHlVIG0Vqwxl5SwvzMKXshCxNbFvkM5t1a6VUZqdyEFQ8idRtb7F
-4LkY9WHd9zTpw62jVAPZfT76v2XZxKHjR61r/iDeYLefP5r9tbg8iZlYroBO9aAA
-qwaKtU1d8rAeu/UIZle1jm9ThoklA+6KccnkyYg3eyoBChbYEOvf635bVupl9di+
-qJcIHT6ma4tzmVxqxIYKyuTZejjYjoYYjo3DrCBsLfPAJFpGe3ojap5XfaSFYYFl
-GKxf7QuavHGsx1m5sRr6NuK18ZNgRIC1DVZARrfUb6PfRC6TjV9aJEPcwnmW8itO
-cRWxgVjT48sP0gDUfpOd++onDw1jkzdNyINITWv48L+VJU6giHTr7I3XS1pU2fuy
-psE/I8r8S6yWT0jz7mseZu2unHAT8YkHnfIL3Lf5qzHwDXV0Dxc7x7RrexdyKLII
-Q53Vn4C3k8SkvvG6R7LzEZi6he+V7wpY6/yrFsoOEmjKU1pwJi2ypzmno9TBBCHn
-+Gs2n30imJ4oh11uc5YaAxub7mIcT3wdnTt8Es3J/ao2MdKtVYRxaw5J4l+H0FOP
-VSWejveoRUpBoNu5JFwqTv/pIDefwBt6Vv+4vQTj+KYXNkXQDwc=
-=9Mbc
------END PGP SIGNATURE-----
+Regards,
 
---k1lZvvs/B4yU6o8G--
+	Hans
+
+> 
+>>>
+>>>> Anyway, I'm OK with merging this in staging. Although I think it should go
+>>>> to staging/media since we want to keep track of it.
+>>>>
+>>>
+>>> Awesome, I'll move driver to staging/media in V5. Thanks!
+>>
+>> Nice, thanks!
