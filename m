@@ -1,149 +1,161 @@
 From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V3 01/12] PCI: tegra: Start LTSSM after programming root
- port
-Date: Wed, 13 Dec 2017 18:34:17 +0000
-Message-ID: <20171213183417.GD4060@red-moon>
+Subject: Re: [PATCH V3 03/12] PCI: tegra: Retrain link for Gen2 speed
+Date: Wed, 13 Dec 2017 18:51:37 +0000
+Message-ID: <20171213185137.GE4060@red-moon>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-2-git-send-email-mmaddireddy@nvidia.com>
- <20171212113248.GA30799@e107981-ln.cambridge.arm.com>
- <7d3396dc-b133-5645-24da-a20fd9db6286@nvidia.com>
- <20171213140848.GA1736@red-moon>
- <b72dda91-5307-f024-9810-d6abadf7f337@nvidia.com>
+ <1509371843-22931-4-git-send-email-mmaddireddy@nvidia.com>
+ <20171212143201.GC30799@e107981-ln.cambridge.arm.com>
+ <bc949c6d-1947-164f-d1f4-2e9e77be56d9@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <b72dda91-5307-f024-9810-d6abadf7f337-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <bc949c6d-1947-164f-d1f4-2e9e77be56d9-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 13, 2017 at 10:02:02PM +0530, Manikanta Maddireddy wrote:
+On Wed, Dec 13, 2017 at 11:24:03PM +0530, Manikanta Maddireddy wrote:
 > 
 > 
-> On 13-Dec-17 7:38 PM, Lorenzo Pieralisi wrote:
-> > On Wed, Dec 13, 2017 at 05:20:39PM +0530, Manikanta Maddireddy wrote:
-> >>
-> >>
-> >> On 12-Dec-17 5:02 PM, Lorenzo Pieralisi wrote:
-> >>> On Mon, Oct 30, 2017 at 07:27:12PM +0530, Manikanta Maddireddy wrote:
-> >>>> This patch ensures that LTSSM is started (by deasserting pcie_xrst) only
-> >>>> after all the required root port register programming is completed.
-> >>>>
-> >>>> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>>> ---
-> >>>> V3:
-> >>>> * no change in this patch
-> >>>> V2:
-> >>>> * no change in this patch
-> >>>>
-> >>>>  drivers/pci/host/pci-tegra.c | 9 +++++----
-> >>>>  1 file changed, 5 insertions(+), 4 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> >>>> index 96e8038c3019..b41c60c7414c 100644
-> >>>> --- a/drivers/pci/host/pci-tegra.c
-> >>>> +++ b/drivers/pci/host/pci-tegra.c
-> >>>> @@ -1024,9 +1024,6 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
-> >>>>  		}
-> >>>>  	}
-> >>>>  
-> >>>> -	/* take the PCIe interface module out of reset */
-> >>>> -	reset_control_deassert(pcie->pcie_xrst);
-> >>>> -
-> >>>>  	/* finally enable PCIe */
-> >>>>  	value = afi_readl(pcie, AFI_CONFIGURATION);
-> >>>>  	value |= AFI_CONFIGURATION_EN_FPCI;
-> >>>> @@ -1065,7 +1062,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
-> >>>>  			dev_err(dev, "failed to power off PHY(s): %d\n", err);
-> >>>>  	}
-> >>>>  
-> >>>> -	reset_control_assert(pcie->pcie_xrst);
-> >>>
-> >>> This does not look like it is part of the reset de-assertion code move.
-> >>>
-> >>> tegra_pcie_enable_controller() -> tegra_pcie_enable_ports()
-> >>>
-> >>> in other words, why are you removing it ?
-> >>>
-> >>> Lorenzo
-> >>
-> >> Hi Lorenzo,
-> >>
-> >> Host driver should start LTSSM after programming all controller registers.
-> >> In tegra_pcie_enable_controller() bunch of AFI module programming is done and
-> >> I am adding PCIe register programming in this series.
-> >> So I moved deasserting of pcie_xrst(which starts LTSSM) to tegra_pcie_enable_ports(),
-> >> which is right after sending RST pulse(tegra_pcie_port_reset()) to endpoint.
+> On 12-Dec-17 8:02 PM, Lorenzo Pieralisi wrote:
+> > [+Ley Foon Tan]
 > > 
-> > I asked why you removed the reset assertion in tegra_pcie_power_off(),
-> > it is not clear to me. You still call tegra_pcie_power_off() in
-> > the tegra_pcie_probe() error path and I see no reason why the reset
-> > assertion - called through:
+> > On Mon, Oct 30, 2017 at 07:27:14PM +0530, Manikanta Maddireddy wrote:
+> >> Tegra124, 132, 210 and 186 support Gen2 link speed. After the link is up
+> >> in Gen1, set target link speed as Gen2 and retrain link. Link switches to
+> >> Gen2 speed if Gen2 capable end point is connected, else link stays in Gen1.
+> >>
+> >> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> ---
+> >> V3:
+> >> * Corrected commit log
+> >> * Replaced jiffies with ktime
+> >> V2:
+> >> * no change in this patch
+> >>
+> >>  drivers/pci/host/pci-tegra.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 42 insertions(+)
+> >>
+> >> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> >> index 068510b40c1a..ed5e8acfdc32 100644
+> >> --- a/drivers/pci/host/pci-tegra.c
+> >> +++ b/drivers/pci/host/pci-tegra.c
+> >> @@ -232,6 +232,8 @@
+> >>  #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
+> >>  #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
+> >>  
+> >> +#define LINK_RETRAIN_TIMEOUT 100000
+> >> +
+> >>  struct tegra_msi {
+> >>  	struct msi_controller chip;
+> >>  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+> >> @@ -2134,6 +2136,42 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+> >>  	}
+> >>  }
+> >>  
+> >> +static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
+> >> +					 struct pci_dev *pci_dev)
+> >> +{
+> >> +	struct device *dev = pcie->dev;
+> >> +	ktime_t deadline;
+> >> +	unsigned short val;
 > > 
-> > tegra_pcie_put_resources()
-> > 	-> tegra_pcie_power_of()
-> > 	
-> > is removed, if it was needed previously.
+> > u16
+> > 
+> >> +	/* Skip if the current device is not a root port */
+> >> +	if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
+> >> +		return;
+> >> +
+> >> +	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
+> >> +	val &= ~PCI_EXP_LNKSTA_CLS;
+> >> +	val |= PCI_EXP_LNKSTA_CLS_5_0GB;
+> >> +	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
+> > 
+> > Should you not read the Link Capabilities 2 register ("Supported Speed
+> > Vector") before programming the Link control 2 register Target Link
+> > Speed value ?
+> > 
+> Link Capabilities 2 register is hardwired to 0 and not used in Tegra.
+> This information is documented in Tegra TRM.
+
+You should add a comment to explain that then.
+
+> >> +	/* Retrain the link */
+> >> +	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
+> >> +	val |= PCI_EXP_LNKCTL_RL;
+> >> +	pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
+> >> +
+> >> +	deadline = ktime_add_us(ktime_get(), LINK_RETRAIN_TIMEOUT);
+> >> +	for (;;) {
+> >> +		pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &val);
+> >> +		if (!(val & PCI_EXP_LNKSTA_LT))
+> >> +			break;
+> >> +		if (ktime_after(ktime_get(), deadline))
+> >> +			break;
+> >> +		usleep_range(2000, 3000);
+> > 
+> > Ok - I hope we won't end up with every host bridge re-writing its own
+> > link training loop because at that point in time we should think about
+> > consolidating this.
+> > 
+> Are you saying that we need to add common link retrain function in
+> pci core driver and reuse it in all host drivers?
+
+We do not need to, we should aim for it though. There is nothing
+(well - I wish) platform specific in what you are doing.
+
+> > CC'ing Ley Foon Tan since I would like to understand why the Altera
+> > driver link retraining can't be written with the same code as this
+> > driver - I suspect it has to do with the retraining sequence and when
+> > the retraining is actually carried out in the host bridge probe
+> > sequence.
+> >
+> >> +	}
+> >> +
+> >> +	if (val & PCI_EXP_LNKSTA_LT)
+> >> +		dev_err(dev, "link retrain of PCIe slot %u failed\n",
+> >> +			PCI_SLOT(pci_dev->devfn));
+> >> +}
+> >> +
+> >>  static const struct tegra_pcie_soc tegra20_pcie = {
+> >>  	.num_ports = 2,
+> >>  	.msi_base_shift = 0,
+> >> @@ -2335,6 +2373,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+> >>  	struct pci_host_bridge *host;
+> >>  	struct tegra_pcie *pcie;
+> >>  	struct pci_bus *child;
+> >> +	struct pci_dev *pci_dev = NULL;
+> >>  	int err;
+> >>  
+> >>  	host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
+> >> @@ -2400,6 +2439,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+> >>  
+> >>  	pci_bus_add_devices(host->bus);
+> >>  
+> >> +	for_each_pci_dev(pci_dev)
+> >> +		tegra_pcie_change_link_speed(pcie, pci_dev);
+> >> +
+> > 
+> > Are you sure it is safe to change link speed after adding devices ?
 > > 
 > > Lorenzo
-> > 
-> 
-> New sequence with this patch will be
-> tegra_pcie_enable_controller() -> tegra_pcie_request_resources() -> tegra_pcie_enable_ports()
->                                    ->goto put_resources on fail        -> reset_control_deassert(pcie->pcie_xrst);
-> 
-> Since pcie_xrst deassert happens after tegra_pcie_request_resources(), there is no need to assert pcie_xrst on put_resource failure.
+> I tried to do link retrain right after 'linkup in Gen1' i.e before pci_bus_add_devices(),
+> but it taking more time than timeout(100 msec) I added in tegra_pcie_change_link_speed().
 
-I do not understand you, sorry for being blunt.
+You should not try, you should understand the reason behind it.
 
-What has tegra_pcie_request_resources() to do with the reset
-assertion/deassertion ?
+> So I moved it here to have minimum delay for retraining link. I didn't see any issue
+> here, link speed is moving to Gen2 without any issue. Do you want me look into anything
+> particular here?
 
-This patch moves:
+At that point you can have devices matched to drivers - I do not think
+that's correct to carry out the retraining after devices are added even
+if it may work for you.
 
-reset_control_deassert(pcie->pcie_xrst);
+Yes, I want you please to look into the reasons that bring to the timeout
+and the consequent retraining code placement in the probe path.
 
-from:
-
-tegra_pcie_enable_controller()
-
-to
-
-tegra_pcie_enable_ports()
-
-if:
-
-reset_control_assert(pcie->pcie_xrst);
-
-was needed before this patch in tegra_pcie_power_off()
-
-why it is not needed there after this patch is applied ?
-
+Thanks,
 Lorenzo
-
-> >>>>  	reset_control_assert(pcie->afi_rst);
-> >>>>  	reset_control_assert(pcie->pex_rst);
-> >>>>  
-> >>>> @@ -2116,7 +2112,12 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
-> >>>>  			 port->index, port->lanes);
-> >>>>  
-> >>>>  		tegra_pcie_port_enable(port);
-> >>>> +	}
-> >>>>  
-> >>>> +	/* take the PCIe interface module out of reset */
-> >>>> +	reset_control_deassert(pcie->pcie_xrst);
-> >>>> +
-> >>>> +	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
-> >>>>  		if (tegra_pcie_port_check_link(port))
-> >>>>  			continue;
-> >>>>  
-> >>>> -- 
-> >>>> 2.1.4
-> >>>>
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> > the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
