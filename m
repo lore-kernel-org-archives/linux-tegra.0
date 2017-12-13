@@ -1,7 +1,7 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH V3 03/12] PCI: tegra: Retrain link for Gen2 speed
-Date: Wed, 13 Dec 2017 18:51:37 +0000
-Message-ID: <20171213185137.GE4060@red-moon>
+Date: Wed, 13 Dec 2017 13:10:11 -0600
+Message-ID: <20171213191011.GF30595@bhelgaas-glaptop.roam.corp.google.com>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
  <1509371843-22931-4-git-send-email-mmaddireddy@nvidia.com>
  <20171212143201.GC30799@e107981-ln.cambridge.arm.com>
@@ -13,7 +13,7 @@ Content-Disposition: inline
 In-Reply-To: <bc949c6d-1947-164f-d1f4-2e9e77be56d9-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 On Wed, Dec 13, 2017 at 11:24:03PM +0530, Manikanta Maddireddy wrote:
@@ -79,9 +79,8 @@ On Wed, Dec 13, 2017 at 11:24:03PM +0530, Manikanta Maddireddy wrote:
 > > 
 > Link Capabilities 2 register is hardwired to 0 and not used in Tegra.
 > This information is documented in Tegra TRM.
-
-You should add a comment to explain that then.
-
+> 
+> >> +
 > >> +	/* Retrain the link */
 > >> +	pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
 > >> +	val |= PCI_EXP_LNKCTL_RL;
@@ -102,10 +101,7 @@ You should add a comment to explain that then.
 > > 
 > Are you saying that we need to add common link retrain function in
 > pci core driver and reuse it in all host drivers?
-
-We do not need to, we should aim for it though. There is nothing
-(well - I wish) platform specific in what you are doing.
-
+> 
 > > CC'ing Ley Foon Tan since I would like to understand why the Altera
 > > driver link retraining can't be written with the same code as this
 > > driver - I suspect it has to do with the retraining sequence and when
@@ -139,23 +135,24 @@ We do not need to, we should aim for it though. There is nothing
 > >> +
 > > 
 > > Are you sure it is safe to change link speed after adding devices ?
-> > 
-> > Lorenzo
-> I tried to do link retrain right after 'linkup in Gen1' i.e before pci_bus_add_devices(),
-> but it taking more time than timeout(100 msec) I added in tegra_pcie_change_link_speed().
 
-You should not try, you should understand the reason behind it.
+> I tried to do link retrain right after 'linkup in Gen1' i.e before
+> pci_bus_add_devices(), but it taking more time than timeout(100
+> msec) I added in tegra_pcie_change_link_speed().  So I moved it here
+> to have minimum delay for retraining link. I didn't see any issue
+> here, link speed is moving to Gen2 without any issue. Do you want me
+> look into anything particular here?
 
-> So I moved it here to have minimum delay for retraining link. I didn't see any issue
-> here, link speed is moving to Gen2 without any issue. Do you want me look into anything
-> particular here?
+pci_bus_add_devices() is basically the end of the line as far as the
+PCI core is concerned because pci_bus_add_devices() is the point at
+which drivers can claim the device.  After that, the core must not do
+anything that might interfere with the driver.
 
-At that point you can have devices matched to drivers - I do not think
-that's correct to carry out the retraining after devices are added even
-if it may work for you.
+You might be able to change the link speed while the driver is
+operating the device, but I think it's bad form.
 
-Yes, I want you please to look into the reasons that bring to the timeout
-and the consequent retraining code placement in the probe path.
+Plus this call doesn't do anything for hot-added devices.  I can see
+that tegra_pcie_change_link_speed() only touches Root Ports, and maybe
+you don't support hot-add for them, but it just doesn't fit the model.
 
-Thanks,
-Lorenzo
+Bjorn
