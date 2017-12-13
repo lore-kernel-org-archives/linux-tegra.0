@@ -1,102 +1,92 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.15-rc3
-Date: Wed, 13 Dec 2017 10:36:24 +0000
-Message-ID: <e2f90733-eb64-cb23-76a2-cdae32409f38@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 01/12] PCI: tegra: Start LTSSM after programming root
+ port
+Date: Wed, 13 Dec 2017 17:20:39 +0530
+Message-ID: <7d3396dc-b133-5645-24da-a20fd9db6286@nvidia.com>
+References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
+ <1509371843-22931-2-git-send-email-mmaddireddy@nvidia.com>
+ <20171212113248.GA30799@e107981-ln.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171212113248.GA30799-4tUPXFaYRHv6sAKXYmQ0tx/iLCjYCKR+VpNB7YpNyf8@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.15-rc3.
-Logs and other details at:
-
-    https://nvtb.github.io//linux/test_v4.15-rc3/20171212080102/
 
 
-Test summary - 81% Success
---------------------------
+On 12-Dec-17 5:02 PM, Lorenzo Pieralisi wrote:
+> On Mon, Oct 30, 2017 at 07:27:12PM +0530, Manikanta Maddireddy wrote:
+>> This patch ensures that LTSSM is started (by deasserting pcie_xrst) only
+>> after all the required root port register programming is completed.
+>>
+>> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> V3:
+>> * no change in this patch
+>> V2:
+>> * no change in this patch
+>>
+>>  drivers/pci/host/pci-tegra.c | 9 +++++----
+>>  1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+>> index 96e8038c3019..b41c60c7414c 100644
+>> --- a/drivers/pci/host/pci-tegra.c
+>> +++ b/drivers/pci/host/pci-tegra.c
+>> @@ -1024,9 +1024,6 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+>>  		}
+>>  	}
+>>  
+>> -	/* take the PCIe interface module out of reset */
+>> -	reset_control_deassert(pcie->pcie_xrst);
+>> -
+>>  	/* finally enable PCIe */
+>>  	value = afi_readl(pcie, AFI_CONFIGURATION);
+>>  	value |= AFI_CONFIGURATION_EN_FPCI;
+>> @@ -1065,7 +1062,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+>>  			dev_err(dev, "failed to power off PHY(s): %d\n", err);
+>>  	}
+>>  
+>> -	reset_control_assert(pcie->pcie_xrst);
+> 
+> This does not look like it is part of the reset de-assertion code move.
+> 
+> tegra_pcie_enable_controller() -> tegra_pcie_enable_ports()
+> 
+> in other words, why are you removing it ?
+> 
+> Lorenzo
 
-Build: zImage:
-    Pass: ( 3/ 3): multi_v7_defconfig, tegra_defconfig,
-		   tegra_defconfig%tegra-fw
+Hi Lorenzo,
 
-Build: Image:
-    Pass: ( 3/ 3): defconfig, defconfig%jetson-tx2,
-		   defconfig%jetson-tx1
+Host driver should start LTSSM after programming all controller registers.
+In tegra_pcie_enable_controller() bunch of AFI module programming is done and
+I am adding PCIe register programming in this series.
+So I moved deasserting of pcie_xrst(which starts LTSSM) to tegra_pcie_enable_ports(),
+which is right after sending RST pulse(tegra_pcie_port_reset()) to endpoint.
 
-Boot to userspace: defconfig:
-    FAIL: ( 1/ 4): qemu-vexpress64
-    Pass: ( 3/ 4): tegra132-norrin, tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: defconfig%jetson-tx1:
-    Pass: ( 2/ 2): tegra210-p2371-0000, tegra210-p2371-2180
-
-Boot to userspace: defconfig%jetson-tx2:
-    Pass: ( 1/ 1): tegra186-p2771-0000
-
-Boot to userspace: multi_v7_defconfig:
-    FAIL: ( 1/ 5): tegra124-nyan-big
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    FAIL: ( 1/ 5): tegra124-nyan-big
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig%tegra-fw:
-    FAIL: ( 1/ 2): tegra124-nyan-big
-    Pass: ( 1/ 2): tegra124-jetson-tk1
-
-PM: System suspend: multi_v7_defconfig:
-    FAIL: ( 1/ 5): tegra124-nyan-big
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    FAIL: ( 1/ 5): tegra124-nyan-big
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig%tegra-fw:
-    FAIL: ( 1/ 2): tegra124-nyan-big
-    Pass: ( 1/ 2): tegra124-jetson-tk1
-
-
-vmlinux object size
-(delta in bytes from test_v4.15-rc2 (ae64f9bd1d3621b5e60d7363bc20afb46aede215)):
-   text     data      bss    total  kernel
-  +3152     +832        0    +3984  defconfig
-   +820     -128      +64     +756  multi_v7_defconfig
-  +2120    +4108        0    +6228  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.15-rc2 (ae64f9bd1d3621b5e60d7363bc20afb46aede215))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1 tegra_defconfig%tegr  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big tegra_defconfig%tegr    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .  tegra186-p2771-0000 defconfig%jetson-tx2  tegra186-p2771-0000
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000 defconfig%jetson-tx1  tegra210-p2371-0000
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .  tegra210-p2371-2180 defconfig%jetson-tx1  tegra210-p2371-2180
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
---
-nvpublic
+> 
+>>  	reset_control_assert(pcie->afi_rst);
+>>  	reset_control_assert(pcie->pex_rst);
+>>  
+>> @@ -2116,7 +2112,12 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+>>  			 port->index, port->lanes);
+>>  
+>>  		tegra_pcie_port_enable(port);
+>> +	}
+>>  
+>> +	/* take the PCIe interface module out of reset */
+>> +	reset_control_deassert(pcie->pcie_xrst);
+>> +
+>> +	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
+>>  		if (tegra_pcie_port_check_link(port))
+>>  			continue;
+>>  
+>> -- 
+>> 2.1.4
+>>
