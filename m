@@ -1,27 +1,102 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 0/3] NVIDIA Tegra AHB DMA controller driver
-Date: Wed, 13 Dec 2017 06:41:31 +0300
-Message-ID: <46cae715-ca15-05ba-93b5-2705c9e48d42@gmail.com>
-References: <cover.1507073384.git.digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.15-rc3
+Date: Wed, 13 Dec 2017 10:36:24 +0000
+Message-ID: <e2f90733-eb64-cb23-76a2-cdae32409f38@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1507073384.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04.10.2017 02:58, Dmitry Osipenko wrote:
-> NVIDIA Tegra20/30 SoC's have AHB DMA controller. It has 4 DMA channels,
-> supports AHB <-> Memory and Memory <-> Memory transfers, slave / master
-> modes. This driver is primarily supposed to be used by gpu/host1x in a
-> master mode, performing 3D HW context stores.
+Here are some basic Tegra test results for Linux v4.15-rc3.
+Logs and other details at:
 
-A brief update.. it looks like that we won't need to store 3D HW context, turned
-out that context uploading is by an order of magnitude faster than the storing.
-So it means that there is no user for the DMA driver and I'm pausing the work on
-it. I've made v3 that I think is in a very good shape and may come handy later,
-but for now I'll keep it conserved. Thanks to everyone for the awesome reviews!
+    https://nvtb.github.io//linux/test_v4.15-rc3/20171212080102/
+
+
+Test summary - 81% Success
+--------------------------
+
+Build: zImage:
+    Pass: ( 3/ 3): multi_v7_defconfig, tegra_defconfig,
+		   tegra_defconfig%tegra-fw
+
+Build: Image:
+    Pass: ( 3/ 3): defconfig, defconfig%jetson-tx2,
+		   defconfig%jetson-tx1
+
+Boot to userspace: defconfig:
+    FAIL: ( 1/ 4): qemu-vexpress64
+    Pass: ( 3/ 4): tegra132-norrin, tegra210-p2371-0000, tegra210-smaug
+
+Boot to userspace: defconfig%jetson-tx1:
+    Pass: ( 2/ 2): tegra210-p2371-0000, tegra210-p2371-2180
+
+Boot to userspace: defconfig%jetson-tx2:
+    Pass: ( 1/ 1): tegra186-p2771-0000
+
+Boot to userspace: multi_v7_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig%tegra-fw:
+    FAIL: ( 1/ 2): tegra124-nyan-big
+    Pass: ( 1/ 2): tegra124-jetson-tk1
+
+PM: System suspend: multi_v7_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig%tegra-fw:
+    FAIL: ( 1/ 2): tegra124-nyan-big
+    Pass: ( 1/ 2): tegra124-jetson-tk1
+
+
+vmlinux object size
+(delta in bytes from test_v4.15-rc2 (ae64f9bd1d3621b5e60d7363bc20afb46aede215)):
+   text     data      bss    total  kernel
+  +3152     +832        0    +3984  defconfig
+   +820     -128      +64     +756  multi_v7_defconfig
+  +2120    +4108        0    +6228  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.15-rc2 (ae64f9bd1d3621b5e60d7363bc20afb46aede215))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1 tegra_defconfig%tegr  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big tegra_defconfig%tegr    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .  tegra186-p2771-0000 defconfig%jetson-tx2  tegra186-p2771-0000
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000 defconfig%jetson-tx1  tegra210-p2371-0000
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .  tegra210-p2371-2180 defconfig%jetson-tx1  tegra210-p2371-2180
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+--
+nvpublic
