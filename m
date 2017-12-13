@@ -1,241 +1,721 @@
-From: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] iommu/tegra: Allow devices to be grouped
-Date: Tue, 12 Dec 2017 14:57:36 -0700
-Message-ID: <20171212145736.511b2031@t450s.home>
-References: <20171127095055.21486-1-thierry.reding@gmail.com>
-        <20171127095055.21486-2-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1 1/2] memory: tegra: Squash tegra20-mc into common tegra-mc driver
+Date: Wed, 13 Dec 2017 06:12:30 +0300
+Message-ID: <1b8256265365e9b6dd431aeaf96f2ee9d39f484b.1513134137.git.digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171127095055.21486-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 27 Nov 2017 10:50:54 +0100
-Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+Tegra30+ has some minor differences in registers / bits layout compared
+to Tegra20. Let's squash Tegra20 driver into the common tegra-mc driver
+to reduce code a tad, this also will be useful for the upcoming Tegra's MC
+reset API.
 
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Implement the ->device_group() and ->of_xlate() callbacks which are used
-> in order to group devices. Each group can then share a single domain.
-> 
-> This is implemented primarily in order to achieve the same semantics on
-> Tegra210 and earlier as on Tegra186 where the Tegra SMMU was replaced by
-> an ARM SMMU. Users of the IOMMU API can now use the same code to share
-> domains between devices, whereas previously they used to attach each
-> device individually.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/iommu/tegra-smmu.c | 124 +++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 120 insertions(+), 4 deletions(-)
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/memory/Kconfig         |  10 --
+ drivers/memory/Makefile        |   1 -
+ drivers/memory/tegra/Makefile  |   1 +
+ drivers/memory/tegra/mc.c      | 184 +++++++++++++++++++----------
+ drivers/memory/tegra/mc.h      |  10 ++
+ drivers/memory/tegra/tegra20.c |  72 ++++++++++++
+ drivers/memory/tegra20-mc.c    | 254 -----------------------------------------
+ include/soc/tegra/mc.h         |   4 +-
+ 8 files changed, 211 insertions(+), 325 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra20.c
+ delete mode 100644 drivers/memory/tegra20-mc.c
 
-
-Acked-by: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-
-> 
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 3b6449e2cbf1..8885635d0a3b 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -20,6 +20,12 @@
->  #include <soc/tegra/ahb.h>
->  #include <soc/tegra/mc.h>
->  
-> +struct tegra_smmu_group {
-> +	struct list_head list;
-> +	const struct tegra_smmu_group_soc *soc;
-> +	struct iommu_group *group;
-> +};
-> +
->  struct tegra_smmu {
->  	void __iomem *regs;
->  	struct device *dev;
-> @@ -27,6 +33,8 @@ struct tegra_smmu {
->  	struct tegra_mc *mc;
->  	const struct tegra_smmu_soc *soc;
->  
-> +	struct list_head groups;
-> +
->  	unsigned long pfn_mask;
->  	unsigned long tlb_mask;
->  
-> @@ -703,19 +711,47 @@ static struct tegra_smmu *tegra_smmu_find(struct device_node *np)
->  	return mc->smmu;
->  }
->  
-> +static int tegra_smmu_configure(struct tegra_smmu *smmu, struct device *dev,
-> +				struct of_phandle_args *args)
-> +{
-> +	const struct iommu_ops *ops = smmu->iommu.ops;
-> +	int err;
-> +
-> +	err = iommu_fwspec_init(dev, &dev->of_node->fwnode, ops);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to initialize fwspec: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	err = ops->of_xlate(dev, args);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to parse SW group ID: %d\n", err);
-> +		iommu_fwspec_free(dev);
-> +		return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int tegra_smmu_add_device(struct device *dev)
->  {
->  	struct device_node *np = dev->of_node;
-> +	struct tegra_smmu *smmu = NULL;
->  	struct iommu_group *group;
->  	struct of_phandle_args args;
->  	unsigned int index = 0;
-> +	int err;
->  
->  	while (of_parse_phandle_with_args(np, "iommus", "#iommu-cells", index,
->  					  &args) == 0) {
-> -		struct tegra_smmu *smmu;
-> -
->  		smmu = tegra_smmu_find(args.np);
->  		if (smmu) {
-> +			err = tegra_smmu_configure(smmu, dev, &args);
-> +			of_node_put(args.np);
-> +
-> +			if (err < 0)
-> +				return err;
-> +
->  			/*
->  			 * Only a single IOMMU master interface is currently
->  			 * supported by the Linux kernel, so abort after the
-> @@ -728,9 +764,13 @@ static int tegra_smmu_add_device(struct device *dev)
->  			break;
->  		}
->  
-> +		of_node_put(args.np);
->  		index++;
->  	}
->  
-> +	if (!smmu)
-> +		return -ENODEV;
-> +
->  	group = iommu_group_get_for_dev(dev);
->  	if (IS_ERR(group))
->  		return PTR_ERR(group);
-> @@ -751,6 +791,80 @@ static void tegra_smmu_remove_device(struct device *dev)
->  	iommu_group_remove_device(dev);
->  }
->  
-> +static const struct tegra_smmu_group_soc *
-> +tegra_smmu_find_group(struct tegra_smmu *smmu, unsigned int swgroup)
-> +{
-> +	unsigned int i, j;
-> +
-> +	for (i = 0; i < smmu->soc->num_groups; i++)
-> +		for (j = 0; j < smmu->soc->groups[i].num_swgroups; j++)
-> +			if (smmu->soc->groups[i].swgroups[j] == swgroup)
-> +				return &smmu->soc->groups[i];
-> +
-> +	return NULL;
-> +}
-> +
-> +static struct iommu_group *tegra_smmu_group_get(struct tegra_smmu *smmu,
-> +						unsigned int swgroup)
-> +{
-> +	const struct tegra_smmu_group_soc *soc;
-> +	struct tegra_smmu_group *group;
-> +
-> +	soc = tegra_smmu_find_group(smmu, swgroup);
-> +	if (!soc)
-> +		return NULL;
-> +
-> +	mutex_lock(&smmu->lock);
-> +
-> +	list_for_each_entry(group, &smmu->groups, list)
-> +		if (group->soc == soc) {
-> +			mutex_unlock(&smmu->lock);
-> +			return group->group;
-> +		}
-> +
-> +	group = devm_kzalloc(smmu->dev, sizeof(*group), GFP_KERNEL);
-> +	if (!group) {
-> +		mutex_unlock(&smmu->lock);
-> +		return NULL;
-> +	}
-> +
-> +	INIT_LIST_HEAD(&group->list);
-> +	group->soc = soc;
-> +
-> +	group->group = iommu_group_alloc();
-> +	if (!group->group) {
-> +		devm_kfree(smmu->dev, group);
-> +		mutex_unlock(&smmu->lock);
-> +		return NULL;
-> +	}
-> +
-> +	list_add_tail(&group->list, &smmu->groups);
-> +	mutex_unlock(&smmu->lock);
-> +
-> +	return group->group;
-> +}
-> +
-> +static struct iommu_group *tegra_smmu_device_group(struct device *dev)
-> +{
-> +	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
-> +	struct tegra_smmu *smmu = dev->archdata.iommu;
-> +	struct iommu_group *group;
-> +
-> +	group = tegra_smmu_group_get(smmu, fwspec->ids[0]);
-> +	if (!group)
-> +		group = generic_device_group(dev);
-> +
-> +	return group;
-> +}
-> +
-> +static int tegra_smmu_of_xlate(struct device *dev,
-> +			       struct of_phandle_args *args)
-> +{
-> +	u32 id = args->args[0];
-> +
-> +	return iommu_fwspec_add_ids(dev, &id, 1);
-> +}
-> +
->  static const struct iommu_ops tegra_smmu_ops = {
->  	.capable = tegra_smmu_capable,
->  	.domain_alloc = tegra_smmu_domain_alloc,
-> @@ -759,12 +873,12 @@ static const struct iommu_ops tegra_smmu_ops = {
->  	.detach_dev = tegra_smmu_detach_dev,
->  	.add_device = tegra_smmu_add_device,
->  	.remove_device = tegra_smmu_remove_device,
-> -	.device_group = generic_device_group,
-> +	.device_group = tegra_smmu_device_group,
->  	.map = tegra_smmu_map,
->  	.unmap = tegra_smmu_unmap,
->  	.map_sg = default_iommu_map_sg,
->  	.iova_to_phys = tegra_smmu_iova_to_phys,
-> -
-> +	.of_xlate = tegra_smmu_of_xlate,
->  	.pgsize_bitmap = SZ_4K,
->  };
->  
-> @@ -913,6 +1027,7 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
->  	if (!smmu->asids)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	INIT_LIST_HEAD(&smmu->groups);
->  	mutex_init(&smmu->lock);
->  
->  	smmu->regs = mc->regs;
-> @@ -954,6 +1069,7 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
->  		return ERR_PTR(err);
->  
->  	iommu_device_set_ops(&smmu->iommu, &tegra_smmu_ops);
-> +	iommu_device_set_fwnode(&smmu->iommu, dev->fwnode);
->  
->  	err = iommu_device_register(&smmu->iommu);
->  	if (err) {
+diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
+index 19a0e83f260d..8d731d6c3e54 100644
+--- a/drivers/memory/Kconfig
++++ b/drivers/memory/Kconfig
+@@ -104,16 +104,6 @@ config MVEBU_DEVBUS
+ 	  Armada 370 and Armada XP. This controller allows to handle flash
+ 	  devices such as NOR, NAND, SRAM, and FPGA.
+ 
+-config TEGRA20_MC
+-	bool "Tegra20 Memory Controller(MC) driver"
+-	default y
+-	depends on ARCH_TEGRA_2x_SOC
+-	help
+-	  This driver is for the Memory Controller(MC) module available
+-	  in Tegra20 SoCs, mainly for a address translation fault
+-	  analysis, especially for IOMMU/GART(Graphics Address
+-	  Relocation Table) module.
+-
+ config FSL_CORENET_CF
+ 	tristate "Freescale CoreNet Error Reporting"
+ 	depends on FSL_SOC_BOOKE
+diff --git a/drivers/memory/Makefile b/drivers/memory/Makefile
+index 66f55240830e..a01ab3e22f94 100644
+--- a/drivers/memory/Makefile
++++ b/drivers/memory/Makefile
+@@ -16,7 +16,6 @@ obj-$(CONFIG_OMAP_GPMC)		+= omap-gpmc.o
+ obj-$(CONFIG_FSL_CORENET_CF)	+= fsl-corenet-cf.o
+ obj-$(CONFIG_FSL_IFC)		+= fsl_ifc.o
+ obj-$(CONFIG_MVEBU_DEVBUS)	+= mvebu-devbus.o
+-obj-$(CONFIG_TEGRA20_MC)	+= tegra20-mc.o
+ obj-$(CONFIG_JZ4780_NEMC)	+= jz4780-nemc.o
+ obj-$(CONFIG_MTK_SMI)		+= mtk-smi.o
+ obj-$(CONFIG_DA8XX_DDRCTL)	+= da8xx-ddrctl.o
+diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
+index b44e8627a5e0..581624938e6b 100644
+--- a/drivers/memory/tegra/Makefile
++++ b/drivers/memory/tegra/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ tegra-mc-y := mc.o
+ 
++tegra-mc-$(CONFIG_ARCH_TEGRA_2x_SOC)  += tegra20.o
+ tegra-mc-$(CONFIG_ARCH_TEGRA_3x_SOC)  += tegra30.o
+ tegra-mc-$(CONFIG_ARCH_TEGRA_114_SOC) += tegra114.o
+ tegra-mc-$(CONFIG_ARCH_TEGRA_124_SOC) += tegra124.o
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index a4803ac192bb..187a9005351b 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -27,6 +27,7 @@
+ #define  MC_INT_INVALID_SMMU_PAGE (1 << 10)
+ #define  MC_INT_ARBITRATION_EMEM (1 << 9)
+ #define  MC_INT_SECURITY_VIOLATION (1 << 8)
++#define  MC_INT_INVALID_GART_PAGE (1 << 7)
+ #define  MC_INT_DECERR_EMEM (1 << 6)
+ 
+ #define MC_INTMASK 0x004
+@@ -53,7 +54,14 @@
+ #define MC_EMEM_ADR_CFG 0x54
+ #define MC_EMEM_ADR_CFG_EMEM_NUMDEV BIT(0)
+ 
++#define MC_GART_ERROR_REQ		0x30
++#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
++#define MC_SECURITY_VIOLATION_STATUS	0x74
++
+ static const struct of_device_id tegra_mc_of_match[] = {
++#ifdef CONFIG_ARCH_TEGRA_2x_SOC
++	{ .compatible = "nvidia,tegra20-mc", .data = &tegra20_mc_soc },
++#endif
+ #ifdef CONFIG_ARCH_TEGRA_3x_SOC
+ 	{ .compatible = "nvidia,tegra30-mc", .data = &tegra30_mc_soc },
+ #endif
+@@ -79,6 +87,9 @@ static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
+ 	unsigned int i;
+ 	u32 value;
+ 
++	if (mc->soc->tegra20)
++		return 0;
++
+ 	/* compute the number of MC clock cycles per tick */
+ 	tick = mc->tick * clk_get_rate(mc->clk);
+ 	do_div(tick, NSEC_PER_SEC);
+@@ -229,6 +240,7 @@ static int tegra_mc_setup_timings(struct tegra_mc *mc)
+ static const char *const status_names[32] = {
+ 	[ 1] = "External interrupt",
+ 	[ 6] = "EMEM address decode error",
++	[ 7] = "GART page fault",
+ 	[ 8] = "Security violation",
+ 	[ 9] = "EMEM arbitration error",
+ 	[10] = "Page fault",
+@@ -257,78 +269,124 @@ static irqreturn_t tegra_mc_irq(int irq, void *data)
+ 
+ 	for_each_set_bit(bit, &status, 32) {
+ 		const char *error = status_names[bit] ?: "unknown";
+-		const char *client = "unknown", *desc;
+-		const char *direction, *secure;
++		const char *client = "unknown", *desc = "";
++		const char *direction = "read", *secure = "";
+ 		phys_addr_t addr = 0;
+ 		unsigned int i;
+-		char perm[7];
++		char perm[7] = { 0 };
+ 		u8 id, type;
+-		u32 value;
++		u32 value, reg;
+ 
+-		value = mc_readl(mc, MC_ERR_STATUS);
++		if (mc->soc->tegra20) {
++			switch (bit) {
++			case 6:
++				reg = MC_DECERR_EMEM_OTHERS_STATUS;
++				value = mc_readl(mc, reg);
+ 
+-#ifdef CONFIG_PHYS_ADDR_T_64BIT
+-		if (mc->soc->num_address_bits > 32) {
+-			addr = ((value >> MC_ERR_STATUS_ADR_HI_SHIFT) &
+-				MC_ERR_STATUS_ADR_HI_MASK);
+-			addr <<= 32;
+-		}
+-#endif
++				id = value & mc->soc->client_id_mask;
++				desc = error_names[2];
+ 
+-		if (value & MC_ERR_STATUS_RW)
+-			direction = "write";
+-		else
+-			direction = "read";
++				if (value & BIT(31))
++					direction = "write";
++				break;
+ 
+-		if (value & MC_ERR_STATUS_SECURITY)
+-			secure = "secure ";
+-		else
+-			secure = "";
++			case 7:
++				reg = MC_GART_ERROR_REQ;
++				value = mc_readl(mc, reg);
+ 
+-		id = value & mc->soc->client_id_mask;
++				id = (value >> 1) & mc->soc->client_id_mask;
++				desc = error_names[2];
+ 
+-		for (i = 0; i < mc->soc->num_clients; i++) {
+-			if (mc->soc->clients[i].id == id) {
+-				client = mc->soc->clients[i].name;
++				if (value & BIT(0))
++					direction = "write";
++				break;
++
++			case 8:
++				reg = MC_SECURITY_VIOLATION_STATUS;
++				value = mc_readl(mc, reg);
++
++				id = value & mc->soc->client_id_mask;
++				type = (value & BIT(30)) ? 4 : 3;
++				desc = error_names[type];
++				secure = "secure ";
++
++				if (value & BIT(31))
++					direction = "write";
++				break;
++
++			default:
++				reg = 0;
++				direction = "";
++				id = mc->soc->num_clients;
+ 				break;
+ 			}
+-		}
+ 
+-		type = (value & MC_ERR_STATUS_TYPE_MASK) >>
+-		       MC_ERR_STATUS_TYPE_SHIFT;
+-		desc = error_names[type];
++			if (id < mc->soc->num_clients)
++				client = mc->soc->clients[id].name;
+ 
+-		switch (value & MC_ERR_STATUS_TYPE_MASK) {
+-		case MC_ERR_STATUS_TYPE_INVALID_SMMU_PAGE:
+-			perm[0] = ' ';
+-			perm[1] = '[';
++			if (reg)
++				addr = mc_readl(mc, reg + sizeof(u32));
++		} else {
++			value = mc_readl(mc, MC_ERR_STATUS);
+ 
+-			if (value & MC_ERR_STATUS_READABLE)
+-				perm[2] = 'R';
+-			else
+-				perm[2] = '-';
++#ifdef CONFIG_PHYS_ADDR_T_64BIT
++			if (mc->soc->num_address_bits > 32) {
++				addr = ((value >> MC_ERR_STATUS_ADR_HI_SHIFT) &
++					MC_ERR_STATUS_ADR_HI_MASK);
++				addr <<= 32;
++			}
++#endif
++			if (value & MC_ERR_STATUS_RW)
++				direction = "write";
+ 
+-			if (value & MC_ERR_STATUS_WRITABLE)
+-				perm[3] = 'W';
+-			else
+-				perm[3] = '-';
++			if (value & MC_ERR_STATUS_SECURITY)
++				secure = "secure ";
+ 
+-			if (value & MC_ERR_STATUS_NONSECURE)
+-				perm[4] = '-';
+-			else
+-				perm[4] = 'S';
++			id = value & mc->soc->client_id_mask;
+ 
+-			perm[5] = ']';
+-			perm[6] = '\0';
+-			break;
++			for (i = 0; i < mc->soc->num_clients; i++) {
++				if (mc->soc->clients[i].id == id) {
++					client = mc->soc->clients[i].name;
++					break;
++				}
++			}
+ 
+-		default:
+-			perm[0] = '\0';
+-			break;
+-		}
++			type = (value & MC_ERR_STATUS_TYPE_MASK) >>
++			       MC_ERR_STATUS_TYPE_SHIFT;
++			desc = error_names[type];
++
++			switch (value & MC_ERR_STATUS_TYPE_MASK) {
++			case MC_ERR_STATUS_TYPE_INVALID_SMMU_PAGE:
++				perm[0] = ' ';
++				perm[1] = '[';
++
++				if (value & MC_ERR_STATUS_READABLE)
++					perm[2] = 'R';
++				else
++					perm[2] = '-';
++
++				if (value & MC_ERR_STATUS_WRITABLE)
++					perm[3] = 'W';
++				else
++					perm[3] = '-';
+ 
+-		value = mc_readl(mc, MC_ERR_ADR);
+-		addr |= value;
++				if (value & MC_ERR_STATUS_NONSECURE)
++					perm[4] = '-';
++				else
++					perm[4] = 'S';
++
++				perm[5] = ']';
++				perm[6] = '\0';
++				break;
++
++			default:
++				perm[0] = '\0';
++				break;
++			}
++
++			value = mc_readl(mc, MC_ERR_ADR);
++			addr |= value;
++		}
+ 
+ 		dev_err_ratelimited(mc->dev, "%s: %s%s @%pa: %s (%s%s)\n",
+ 				    client, secure, direction, &addr, error,
+@@ -369,11 +427,18 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(mc->regs))
+ 		return PTR_ERR(mc->regs);
+ 
+-	mc->clk = devm_clk_get(&pdev->dev, "mc");
+-	if (IS_ERR(mc->clk)) {
+-		dev_err(&pdev->dev, "failed to get MC clock: %ld\n",
+-			PTR_ERR(mc->clk));
+-		return PTR_ERR(mc->clk);
++	if (mc->soc->tegra20) {
++		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++		mc->regs2 = devm_ioremap_resource(&pdev->dev, res);
++		if (IS_ERR(mc->regs2))
++			return PTR_ERR(mc->regs2);
++	} else {
++		mc->clk = devm_clk_get(&pdev->dev, "mc");
++		if (IS_ERR(mc->clk)) {
++			dev_err(&pdev->dev, "failed to get MC clock: %ld\n",
++				PTR_ERR(mc->clk));
++			return PTR_ERR(mc->clk);
++		}
+ 	}
+ 
+ 	err = tegra_mc_setup_latency_allowance(mc);
+@@ -416,7 +481,8 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 
+ 	value = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
+ 		MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
+-		MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM;
++		MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM |
++		MC_INT_INVALID_GART_PAGE;
+ 
+ 	mc_writel(mc, value, MC_INTMASK);
+ 
+diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+index ddb16676c3af..1642fbea5ce3 100644
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -16,15 +16,25 @@
+ 
+ static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+ {
++	if (mc->soc->tegra20 && offset >= 0x24)
++		return readl(mc->regs2 + offset - 0x3c);
++
+ 	return readl(mc->regs + offset);
+ }
+ 
+ static inline void mc_writel(struct tegra_mc *mc, u32 value,
+ 			     unsigned long offset)
+ {
++	if (mc->soc->tegra20 && offset >= 0x24)
++		return writel(value, mc->regs2 + offset - 0x3c);
++
+ 	writel(value, mc->regs + offset);
+ }
+ 
++#ifdef CONFIG_ARCH_TEGRA_2x_SOC
++extern const struct tegra_mc_soc tegra20_mc_soc;
++#endif
++
+ #ifdef CONFIG_ARCH_TEGRA_3x_SOC
+ extern const struct tegra_mc_soc tegra30_mc_soc;
+ #endif
+diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
+new file mode 100644
+index 000000000000..81a082bdba19
+--- /dev/null
++++ b/drivers/memory/tegra/tegra20.c
+@@ -0,0 +1,72 @@
++/*
++ * Copyright (C) 2012 NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "mc.h"
++
++static const struct tegra_mc_client tegra20_mc_clients[] = {
++	{ .name = "display0a" },
++	{ .name = "display0ab" },
++	{ .name = "display0b" },
++	{ .name = "display0bb" },
++	{ .name = "display0c" },
++	{ .name = "display0cb" },
++	{ .name = "display1b" },
++	{ .name = "display1bb" },
++	{ .name = "eppup" },
++	{ .name = "g2pr" },
++	{ .name = "g2sr" },
++	{ .name = "mpeunifbr" },
++	{ .name = "viruv" },
++	{ .name = "avpcarm7r" },
++	{ .name = "displayhc" },
++	{ .name = "displayhcb" },
++	{ .name = "fdcdrd" },
++	{ .name = "g2dr" },
++	{ .name = "host1xdmar" },
++	{ .name = "host1xr" },
++	{ .name = "idxsrd" },
++	{ .name = "mpcorer" },
++	{ .name = "mpe_ipred" },
++	{ .name = "mpeamemrd" },
++	{ .name = "mpecsrd" },
++	{ .name = "ppcsahbdmar" },
++	{ .name = "ppcsahbslvr" },
++	{ .name = "texsrd" },
++	{ .name = "vdebsevr" },
++	{ .name = "vdember" },
++	{ .name = "vdemcer" },
++	{ .name = "vdetper" },
++	{ .name = "eppu" },
++	{ .name = "eppv" },
++	{ .name = "eppy" },
++	{ .name = "mpeunifbw" },
++	{ .name = "viwsb" },
++	{ .name = "viwu" },
++	{ .name = "viwv" },
++	{ .name = "viwy" },
++	{ .name = "g2dw" },
++	{ .name = "avpcarm7w" },
++	{ .name = "fdcdwr" },
++	{ .name = "host1xw" },
++	{ .name = "ispw" },
++	{ .name = "mpcorew" },
++	{ .name = "mpecswr" },
++	{ .name = "ppcsahbdmaw" },
++	{ .name = "ppcsahbslvw" },
++	{ .name = "vdebsevw" },
++	{ .name = "vdembew" },
++	{ .name = "vdetpmw" },
++};
++
++const struct tegra_mc_soc tegra20_mc_soc = {
++	.clients = tegra20_mc_clients,
++	.num_clients = ARRAY_SIZE(tegra20_mc_clients),
++	.num_address_bits = 32,
++	.client_id_mask = 0x3f,
++	.tegra20 = true,
++};
+diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
+deleted file mode 100644
+index cc309a05289a..000000000000
+--- a/drivers/memory/tegra20-mc.c
++++ /dev/null
+@@ -1,254 +0,0 @@
+-/*
+- * Tegra20 Memory Controller
+- *
+- * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program; if not, write to the Free Software Foundation, Inc.,
+- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
+- */
+-
+-#include <linux/err.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/ratelimit.h>
+-#include <linux/platform_device.h>
+-#include <linux/interrupt.h>
+-#include <linux/io.h>
+-
+-#define DRV_NAME "tegra20-mc"
+-
+-#define MC_INTSTATUS			0x0
+-#define MC_INTMASK			0x4
+-
+-#define MC_INT_ERR_SHIFT		6
+-#define MC_INT_ERR_MASK			(0x1f << MC_INT_ERR_SHIFT)
+-#define MC_INT_DECERR_EMEM		BIT(MC_INT_ERR_SHIFT)
+-#define MC_INT_INVALID_GART_PAGE	BIT(MC_INT_ERR_SHIFT + 1)
+-#define MC_INT_SECURITY_VIOLATION	BIT(MC_INT_ERR_SHIFT + 2)
+-#define MC_INT_ARBITRATION_EMEM		BIT(MC_INT_ERR_SHIFT + 3)
+-
+-#define MC_GART_ERROR_REQ		0x30
+-#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
+-#define MC_SECURITY_VIOLATION_STATUS	0x74
+-
+-#define SECURITY_VIOLATION_TYPE		BIT(30)	/* 0=TRUSTZONE, 1=CARVEOUT */
+-
+-#define MC_CLIENT_ID_MASK		0x3f
+-
+-#define NUM_MC_REG_BANKS		2
+-
+-struct tegra20_mc {
+-	void __iomem *regs[NUM_MC_REG_BANKS];
+-	struct device *dev;
+-};
+-
+-static inline u32 mc_readl(struct tegra20_mc *mc, u32 offs)
+-{
+-	u32 val = 0;
+-
+-	if (offs < 0x24)
+-		val = readl(mc->regs[0] + offs);
+-	else if (offs < 0x400)
+-		val = readl(mc->regs[1] + offs - 0x3c);
+-
+-	return val;
+-}
+-
+-static inline void mc_writel(struct tegra20_mc *mc, u32 val, u32 offs)
+-{
+-	if (offs < 0x24)
+-		writel(val, mc->regs[0] + offs);
+-	else if (offs < 0x400)
+-		writel(val, mc->regs[1] + offs - 0x3c);
+-}
+-
+-static const char * const tegra20_mc_client[] = {
+-	"cbr_display0a",
+-	"cbr_display0ab",
+-	"cbr_display0b",
+-	"cbr_display0bb",
+-	"cbr_display0c",
+-	"cbr_display0cb",
+-	"cbr_display1b",
+-	"cbr_display1bb",
+-	"cbr_eppup",
+-	"cbr_g2pr",
+-	"cbr_g2sr",
+-	"cbr_mpeunifbr",
+-	"cbr_viruv",
+-	"csr_avpcarm7r",
+-	"csr_displayhc",
+-	"csr_displayhcb",
+-	"csr_fdcdrd",
+-	"csr_g2dr",
+-	"csr_host1xdmar",
+-	"csr_host1xr",
+-	"csr_idxsrd",
+-	"csr_mpcorer",
+-	"csr_mpe_ipred",
+-	"csr_mpeamemrd",
+-	"csr_mpecsrd",
+-	"csr_ppcsahbdmar",
+-	"csr_ppcsahbslvr",
+-	"csr_texsrd",
+-	"csr_vdebsevr",
+-	"csr_vdember",
+-	"csr_vdemcer",
+-	"csr_vdetper",
+-	"cbw_eppu",
+-	"cbw_eppv",
+-	"cbw_eppy",
+-	"cbw_mpeunifbw",
+-	"cbw_viwsb",
+-	"cbw_viwu",
+-	"cbw_viwv",
+-	"cbw_viwy",
+-	"ccw_g2dw",
+-	"csw_avpcarm7w",
+-	"csw_fdcdwr",
+-	"csw_host1xw",
+-	"csw_ispw",
+-	"csw_mpcorew",
+-	"csw_mpecswr",
+-	"csw_ppcsahbdmaw",
+-	"csw_ppcsahbslvw",
+-	"csw_vdebsevw",
+-	"csw_vdembew",
+-	"csw_vdetpmw",
+-};
+-
+-static void tegra20_mc_decode(struct tegra20_mc *mc, int n)
+-{
+-	u32 addr, req;
+-	const char *client = "Unknown";
+-	int idx, cid;
+-	const struct reg_info {
+-		u32 offset;
+-		u32 write_bit;	/* 0=READ, 1=WRITE */
+-		int cid_shift;
+-		char *message;
+-	} reg[] = {
+-		{
+-			.offset = MC_DECERR_EMEM_OTHERS_STATUS,
+-			.write_bit = 31,
+-			.message = "MC_DECERR",
+-		},
+-		{
+-			.offset	= MC_GART_ERROR_REQ,
+-			.cid_shift = 1,
+-			.message = "MC_GART_ERR",
+-
+-		},
+-		{
+-			.offset = MC_SECURITY_VIOLATION_STATUS,
+-			.write_bit = 31,
+-			.message = "MC_SECURITY_ERR",
+-		},
+-	};
+-
+-	idx = n - MC_INT_ERR_SHIFT;
+-	if ((idx < 0) || (idx >= ARRAY_SIZE(reg))) {
+-		dev_err_ratelimited(mc->dev, "Unknown interrupt status %08lx\n",
+-				    BIT(n));
+-		return;
+-	}
+-
+-	req = mc_readl(mc, reg[idx].offset);
+-	cid = (req >> reg[idx].cid_shift) & MC_CLIENT_ID_MASK;
+-	if (cid < ARRAY_SIZE(tegra20_mc_client))
+-		client = tegra20_mc_client[cid];
+-
+-	addr = mc_readl(mc, reg[idx].offset + sizeof(u32));
+-
+-	dev_err_ratelimited(mc->dev, "%s (0x%08x): 0x%08x %s (%s %s)\n",
+-			   reg[idx].message, req, addr, client,
+-			   (req & BIT(reg[idx].write_bit)) ? "write" : "read",
+-			   (reg[idx].offset == MC_SECURITY_VIOLATION_STATUS) ?
+-			   ((req & SECURITY_VIOLATION_TYPE) ?
+-			    "carveout" : "trustzone") : "");
+-}
+-
+-static const struct of_device_id tegra20_mc_of_match[] = {
+-	{ .compatible = "nvidia,tegra20-mc", },
+-	{},
+-};
+-
+-static irqreturn_t tegra20_mc_isr(int irq, void *data)
+-{
+-	u32 stat, mask, bit;
+-	struct tegra20_mc *mc = data;
+-
+-	stat = mc_readl(mc, MC_INTSTATUS);
+-	mask = mc_readl(mc, MC_INTMASK);
+-	mask &= stat;
+-	if (!mask)
+-		return IRQ_NONE;
+-	while ((bit = ffs(mask)) != 0) {
+-		tegra20_mc_decode(mc, bit - 1);
+-		mask &= ~BIT(bit - 1);
+-	}
+-
+-	mc_writel(mc, stat, MC_INTSTATUS);
+-	return IRQ_HANDLED;
+-}
+-
+-static int tegra20_mc_probe(struct platform_device *pdev)
+-{
+-	struct resource *irq;
+-	struct tegra20_mc *mc;
+-	int i, err;
+-	u32 intmask;
+-
+-	mc = devm_kzalloc(&pdev->dev, sizeof(*mc), GFP_KERNEL);
+-	if (!mc)
+-		return -ENOMEM;
+-	mc->dev = &pdev->dev;
+-
+-	for (i = 0; i < ARRAY_SIZE(mc->regs); i++) {
+-		struct resource *res;
+-
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		mc->regs[i] = devm_ioremap_resource(&pdev->dev, res);
+-		if (IS_ERR(mc->regs[i]))
+-			return PTR_ERR(mc->regs[i]);
+-	}
+-
+-	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!irq)
+-		return -ENODEV;
+-	err = devm_request_irq(&pdev->dev, irq->start, tegra20_mc_isr,
+-			       IRQF_SHARED, dev_name(&pdev->dev), mc);
+-	if (err)
+-		return -ENODEV;
+-
+-	platform_set_drvdata(pdev, mc);
+-
+-	intmask = MC_INT_INVALID_GART_PAGE |
+-		MC_INT_DECERR_EMEM | MC_INT_SECURITY_VIOLATION;
+-	mc_writel(mc, intmask, MC_INTMASK);
+-	return 0;
+-}
+-
+-static struct platform_driver tegra20_mc_driver = {
+-	.probe = tegra20_mc_probe,
+-	.driver = {
+-		.name = DRV_NAME,
+-		.of_match_table = tegra20_mc_of_match,
+-	},
+-};
+-module_platform_driver(tegra20_mc_driver);
+-
+-MODULE_AUTHOR("Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("Tegra20 MC driver");
+-MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("platform:" DRV_NAME);
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index 44202ff897fd..858904c09d7d 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -99,12 +99,14 @@ struct tegra_mc_soc {
+ 	u8 client_id_mask;
+ 
+ 	const struct tegra_smmu_soc *smmu;
++
++	bool tegra20;
+ };
+ 
+ struct tegra_mc {
+ 	struct device *dev;
+ 	struct tegra_smmu *smmu;
+-	void __iomem *regs;
++	void __iomem *regs, *regs2;
+ 	struct clk *clk;
+ 	int irq;
+ 
+-- 
+2.15.1
