@@ -1,35 +1,41 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V3 2/3] PCI: tegra: fixups to avoid unnecessary wakeup
- from ASPM-L1.2
-Date: Thu, 14 Dec 2017 22:02:06 +0530
-Message-ID: <0bb6aa5e-5482-bb7e-619c-d3065b07de86@nvidia.com>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 1/3] PCI: tegra: Apply sw fixups to support ASPM-L1
+ Sub-States
+Date: Thu, 14 Dec 2017 22:02:15 +0530
+Message-ID: <42e1cd97-c886-4e21-c13d-8861238b9644@nvidia.com>
 References: <1510492674-12786-1-git-send-email-vidyas@nvidia.com>
- <1510492674-12786-3-git-send-email-vidyas@nvidia.com>
- <20171120213052.GD16362@bhelgaas-glaptop.roam.corp.google.com>
+ <1510492674-12786-2-git-send-email-vidyas@nvidia.com>
+ <20171120212151.GC16362@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20171120213052.GD16362@bhelgaas-glaptop.roam.corp.google.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171120212151.GC16362-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
 Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: treding@nvidia.com, bhelgaas@google.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, swarren@nvidia.com, mmaddireddy@nvidia.com
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On Tuesday 21 November 2017 03:00 AM, Bjorn Helgaas wrote:
-> s/PCI: tegra: fixups to avoid unnecessary .../
->   /PCI: tegra: <Capitalized verb> .../
+On Tuesday 21 November 2017 02:51 AM, Bjorn Helgaas wrote:
+> On Sun, Nov 12, 2017 at 06:47:52PM +0530, Vidya Sagar wrote:
+>> Programs T_cmrt (Commmon Mode Restore Time) and T_pwr_on (Power On)
+> Please use the exact names used in the spec.  In this case, I think
+> that would be "Port Common_Mode_Restore_Time" and "Port T_POWER_ON"
+> (from the L1 PM Substates Capabilities Register, sec 7.33.2).
+> Searching the spec for "T_cmrt" isn't going to find anything useful.
 I'll take care of this in next patch
-> On Sun, Nov 12, 2017 at 06:47:53PM +0530, Vidya Sagar wrote:
->> sets CLKREQ asserted delay to a higher value to avoid
->> unnecessary wake up from L1.2_ENTRY state for Tegra210
-> "L1.2.Entry" to match the spec sec 5.5.3.1 (at least I assume that's
-> what this refers to).
-I'll take care of this in next patch
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> These look like things that maybe should be in the DT because they
+> depend on external component values, so you might need different
+> values depending on what board the Tegra is on?  Same for clk_m?
+I'm afraid not. These are fixed for Tegra including clk_m.
+>
+>> values to get them reflected in ASPM-L1 Sub-States capability registers
+>> Also adjusts internal counter values according to 19.2 MHz clk_m value
+>>
+>> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >> ---
 >> V2:
 >> * no change in this patch
@@ -37,99 +43,132 @@ I'll take care of this in next patch
 >> V3:
 >> * no change in this patch
 >>
->>   drivers/pci/host/pci-tegra.c | 18 ++++++++++++++++++
->>   1 file changed, 18 insertions(+)
+>>   drivers/pci/host/pci-tegra.c | 59 ++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 59 insertions(+)
 >>
 >> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->> index 6d68f49f152e..29ee4bb0b7c6 100644
+>> index adae03d671ab..6d68f49f152e 100644
 >> --- a/drivers/pci/host/pci-tegra.c
 >> +++ b/drivers/pci/host/pci-tegra.c
->> @@ -204,6 +204,8 @@
->>   #define RP_L1_PM_SUBSTATES_1_CTL			0xC04
->>   #define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK	0x1FFF
->>   #define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY		0x26
->> +#define RP_L1SS_1_CTL_CLKREQ_ASSERTED_DLY_MASK		(0x1FF << 13)
->> +#define RP_L1SS_1_CTL_CLKREQ_ASSERTED_DLY		(0x27 << 13)
+>> @@ -40,6 +40,7 @@
+>>   #include <linux/of_pci.h>
+>>   #include <linux/of_platform.h>
+>>   #include <linux/pci.h>
+>> +#include <linux/pci-aspm.h>
+>>   #include <linux/phy/phy.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/reset.h>
+>> @@ -191,6 +192,27 @@
+>>   #define RP_PRIV_XP_DL	0x494
+>>   #define  RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD	(0x1ff << 1)
 >>   
->>   #define RP_L1_PM_SUBSTATES_2_CTL			0xC08
->>   #define RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY_MASK	0x1FFF
->> @@ -350,6 +352,7 @@ struct tegra_pcie_soc {
+>> +#define RP_L1_PM_SUBSTATES_CTL				0xC00
+>> +#define RP_L1_PM_SUBSTATES_CTL_CM_RTIME_MASK		(0xFF << 8)
+>> +#define RP_L1_PM_SUBSTATES_CTL_CM_RTIME_SHIFT		8
+>> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_MASK		(0x3 << 16)
+>> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_SHIFT		16
+>> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_MASK		(0x1F << 19)
+>> +#define RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_SHIFT		19
+>> +#define RP_L1_PM_SUBSTATES_CTL_HIDE_CAP			(0x1 << 24)
+>> +
+>> +#define RP_L1_PM_SUBSTATES_1_CTL			0xC04
+>> +#define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK	0x1FFF
+>> +#define RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY		0x26
+>> +
+>> +#define RP_L1_PM_SUBSTATES_2_CTL			0xC08
+>> +#define RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY_MASK	0x1FFF
+>> +#define RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY		0x4D
+>> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_MASK	(0xFF << 13)
+>> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND		(0x13 << 13)
+>> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP_MASK	(0xF << 21)
+>> +#define RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP	(0x2 << 21)
+>> +
+>>   #define RP_RX_HDR_LIMIT	0xe00
+>>   #define  RP_RX_HDR_LIMIT_PW_MASK	(0xff << 8)
+>>   #define  RP_RX_HDR_LIMIT_PW		(0x0e << 8)
+>> @@ -327,6 +349,7 @@ struct tegra_pcie_soc {
+>>   	bool RAW_violation_fixup;
 >>   	bool program_deskew_time;
 >>   	bool updateFC_threshold;
->>   	bool has_aspm_l1ss;
->> +	bool l1ss_rp_wake_fixup;
+>> +	bool has_aspm_l1ss;
 >>   };
 >>   
 >>   static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
->> @@ -2290,6 +2293,16 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
->>   			(7 << RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_SHIFT);
->>   		writel(value, port->base + RP_L1_PM_SUBSTATES_CTL);
->>   
->> +		if (soc->l1ss_rp_wake_fixup) {
->> +			/* Set CLKREQ asserted delay greater than Power_Off
->> +			 * time (2us) to avoid RP wakeup in L1.2_ENTRY
->> +			 */
-> Use standard multi-line comment formatting (and "L1.2.Entry" as above).
-I'll take care of it in next patch
-> I assume "CLKREQ asserted delay" is a Tegra-internal thing, since it
-> doesn't obviously correspond to a timing parameter in the spec.
-Yes. Its Tegra's internal thing
-> And I assume it doesn't depend on any of the OS-writable things in the
-> L1 PM Substates control registers, since this fixup isn't executed
-> during config writes to those registers?
-Yes. It doesn't depend on any OS-writable value in L1 PM Substates 
-control registers.
-Its a one time programmable value to be written before root port's LTSSM 
-starts.
-> Does this depend on any circuit details outside of Tegra, i.e., should
-> it be described via DT?	
-Nope. It doesn't depend on any external (to Tegra) circuitry.
->> +			value = readl(port->base + RP_L1_PM_SUBSTATES_1_CTL);
->> +			value &= ~RP_L1SS_1_CTL_CLKREQ_ASSERTED_DLY_MASK;
->> +			value |= RP_L1SS_1_CTL_CLKREQ_ASSERTED_DLY;
->> +			writel(value, port->base + RP_L1_PM_SUBSTATES_1_CTL);
->> +		}
+>> @@ -2251,6 +2274,37 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+>>   		value |= RP_VEND_XP_UPDATE_FC_THRESHOLD_T210;
+>>   		writel(value, port->base + RP_VEND_XP);
+>>   	}
 >> +
->>   		/* Following is based on clk_m being 19.2 MHz */
->>   		value = readl(port->base + RP_L1_PM_SUBSTATES_1_CTL);
->>   		value &= ~RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK;
->> @@ -2446,6 +2459,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+>> +	if (soc->has_aspm_l1ss) {
+>> +		/* Set Common Mode Restore Time to 30us */
+>> +		value = readl(port->base + RP_L1_PM_SUBSTATES_CTL);
+>> +		value &= ~RP_L1_PM_SUBSTATES_CTL_CM_RTIME_MASK;
+>> +		value |= (0x1E << RP_L1_PM_SUBSTATES_CTL_CM_RTIME_SHIFT);
+>> +		writel(value, port->base + RP_L1_PM_SUBSTATES_CTL);
+>> +
+>> +		/* set T_Power_On to 70us */
+>> +		value = readl(port->base + RP_L1_PM_SUBSTATES_CTL);
+>> +		value &= ~(RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_MASK |
+>> +			RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_MASK);
+>> +		value |= (1 << RP_L1_PM_SUBSTATES_CTL_T_PWRN_SCL_SHIFT) |
+>> +			(7 << RP_L1_PM_SUBSTATES_CTL_T_PWRN_VAL_SHIFT);
+>> +		writel(value, port->base + RP_L1_PM_SUBSTATES_CTL);
+>> +
+>> +		/* Following is based on clk_m being 19.2 MHz */
+>> +		value = readl(port->base + RP_L1_PM_SUBSTATES_1_CTL);
+>> +		value &= ~RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY_MASK;
+>> +		value |= RP_L1_PM_SUBSTATES_1_CTL_PWR_OFF_DLY;
+>> +		writel(value, port->base + RP_L1_PM_SUBSTATES_1_CTL);
+>> +
+>> +		value = readl(port->base + RP_L1_PM_SUBSTATES_2_CTL);
+>> +		value &= ~RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY_MASK;
+>> +		value |= RP_L1_PM_SUBSTATES_2_CTL_T_L1_2_DLY;
+>> +		value &= ~RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_MASK;
+>> +		value |= RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND;
+>> +		value &= ~RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP_MASK;
+>> +		value |= RP_L1_PM_SUBSTATES_2_CTL_MICROSECOND_COMP;
+>> +		writel(value, port->base + RP_L1_PM_SUBSTATES_2_CTL);
+>> +	}
+>>   }
+>>   /*
+>>    * FIXME: If there are no PCIe cards attached, then calling this function
+>> @@ -2391,6 +2445,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+>>   	.RAW_violation_fixup = false,
 >>   	.program_deskew_time = false,
 >>   	.updateFC_threshold = false,
->>   	.has_aspm_l1ss = false,
->> +	.l1ss_rp_wake_fixup = false,
+>> +	.has_aspm_l1ss = false,
 >>   };
 >>   
 >>   static const struct tegra_pcie_soc tegra30_pcie = {
->> @@ -2468,6 +2482,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+>> @@ -2412,6 +2467,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+>>   	.RAW_violation_fixup = false,
 >>   	.program_deskew_time = false,
 >>   	.updateFC_threshold = false,
->>   	.has_aspm_l1ss = false,
->> +	.l1ss_rp_wake_fixup = false,
+>> +	.has_aspm_l1ss = false,
 >>   };
 >>   
 >>   static const struct tegra_pcie_soc tegra124_pcie = {
->> @@ -2489,6 +2504,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+>> @@ -2432,6 +2488,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+>>   	.RAW_violation_fixup = true,
 >>   	.program_deskew_time = false,
 >>   	.updateFC_threshold = false,
->>   	.has_aspm_l1ss = false,
->> +	.l1ss_rp_wake_fixup = false,
+>> +	.has_aspm_l1ss = false,
 >>   };
 >>   
 >>   static const struct tegra_pcie_soc tegra210_pcie = {
->> @@ -2518,6 +2534,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
+>> @@ -2460,6 +2517,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
+>>   	.RAW_violation_fixup = false,
 >>   	.program_deskew_time = true,
 >>   	.updateFC_threshold = true,
->>   	.has_aspm_l1ss = true,
->> +	.l1ss_rp_wake_fixup = true,
+>> +	.has_aspm_l1ss = true,
 >>   };
 >>   
 >>   static const struct tegra_pcie_soc tegra186_pcie = {
->> @@ -2540,6 +2557,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
+>> @@ -2481,6 +2539,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
+>>   	.RAW_violation_fixup = false,
 >>   	.program_deskew_time = false,
 >>   	.updateFC_threshold = false,
->>   	.has_aspm_l1ss = true,
->> +	.l1ss_rp_wake_fixup = false,
+>> +	.has_aspm_l1ss = true,
 >>   };
 >>   
 >>   static const struct of_device_id tegra_pcie_of_match[] = {
