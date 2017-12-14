@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 0/4] PCI: tegra: Configuration space mapping cleanups and fixes
-Date: Thu, 14 Dec 2017 14:45:41 +0100
-Message-ID: <20171214134545.11143-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/4] PCI: tegra: Clarify configuration space address computations
+Date: Thu, 14 Dec 2017 14:45:42 +0100
+Message-ID: <20171214134545.11143-2-thierry.reding@gmail.com>
+References: <20171214134545.11143-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171214134545.11143-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Saga <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -10,38 +12,38 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Hi Lorenzo,
+Tegra uses a non-compatible variant of ECAM where the extended register
+field is separate from the register field. Clarify that the register
+offset also factors into the computation of the configuration space
+addresses.
 
-This cleans up a few oddities that I found while reviewing and testing
-the patch
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/host/pci-tegra.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-	[PATCH V3 1/2] PCI: tegra: refactor config space mapping code
-
-that Vidya Sagar sent out earlier. The first three patches are mostly
-cleanup and admittedly somewhat bikeshedding in nature. They could've
-been just review comments, but I thought I'd just submit them as a
-series of patches since I had already typed them up anyway.
-
-The last patch gets rid of an artificial restriction regarding the
-mapping address and does a bit of simplification.
-
-These are technically incremental on top of the original patch, but if
-you prefer, feel free to squash them into that patch.
-
-I've tested these on all of Tegra20, Tegra30, Tegra124, Tegra210 and
-Tegra186.
-
-Thanks,
-Thierry
-
-Thierry Reding (4):
-  PCI: tegra: Clarify configuration space address computations
-  PCI: tegra: Reorder parameters in offset computations
-  PCI: tegra: Consolidate I/O register variables
-  PCI: tegra: Remove artificial mapping restriction
-
- drivers/pci/host/pci-tegra.c | 71 ++++++++++++++++++++------------------------
- 1 file changed, 33 insertions(+), 38 deletions(-)
-
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index f6d0430e6704..8a07c6f9e1b0 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -364,11 +364,13 @@ static inline u32 pads_readl(struct tegra_pcie *pcie, unsigned long offset)
+  *
+  * Mapping the whole extended configuration space would require 256 MiB of
+  * virtual address space, only a small part of which will actually be used.
+- * To work around this, a 4K of region is used to generate required
+- * configuration transaction with relevant B:D:F values. This is achieved by
+- * dynamically programming base address and size of AFI_AXI_BAR used for
+- * end point config space mapping to make sure that the address (access to
+- * which generates correct config transaction) falls in this 4K region
++ *
++ * To work around this, a 4 KiB region is used to generate the required
++ * configuration transaction with relevant B:D:F and register offset values.
++ * This is achieved by dynamically programming base address and size of
++ * AFI_AXI_BAR used for end point config space mapping to make sure that the
++ * address (access to which generates correct config transaction) falls in
++ * this 4 KiB region.
+  */
+ static unsigned long tegra_pcie_conf_offset(unsigned char b, unsigned int devfn,
+ 					    int where)
 -- 
 2.15.1
