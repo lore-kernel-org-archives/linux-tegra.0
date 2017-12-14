@@ -1,35 +1,22 @@
 From: Anthony Eden <aeden-EfZU8u+QLuPpgkiH4x7ZXw@public.gmane.org>
-Subject: [bug report] null ptr deref in nouveau_platform_probe
-	(tegra186-p2771-0000)
-Date: Thu, 14 Dec 2017 16:09:14 -0500
-Message-ID: <CAHMsQjWKhgm5BnngHtH6QeWumNrbSS=LaTRD=XCSy5+iovg7mA@mail.gmail.com>
+Subject: [bug report] null ptr deref in nouveau_platform_probe (tegra186-p2771-0000)
+Date: Thu, 14 Dec 2017 16:10:48 -0500
+Message-ID: <CAHMsQjXev+JWFvNOXm5TUq0FwrcYSdhK9u6rp0WhEYR1eZ_Siw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="94eb2c11ac3adb95ea0560534b75"
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: multipart/mixed; boundary="001a1146d0367ebdce056053519a"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---94eb2c11ac3adb95ea0560534b75
-Content-Type: multipart/alternative; boundary="94eb2c11ac3adb95e70560534b73"
-
---94eb2c11ac3adb95e70560534b73
+--001a1146d0367ebdce056053519a
 Content-Type: text/plain; charset="UTF-8"
 
 With linux-next-2017-12-14, I get a crash when nouveau is loaded by
 systemd-udevd.
 
-[   12.050625] Unable to handle kernel NULL pointer dereference at virtual
-address 00000058
+[   12.050625] Unable to handle kernel NULL pointer dereference at
+virtual address 00000058
 [   12.050627] Mem abort info:
 [   12.050628]   ESR = 0x96000004
 [   12.050630]   Exception class = DABT (current EL), IL = 32 bits
@@ -46,9 +33,8 @@ stmmac ptp nouveau(+) tegra_drm(+) i2c_algo_bit ttm gpio_keys
 drm_kms_helper drm drm_panel_orientation_quirks(P) syscopy
 area sysfillrect sysimgblt fb_sys_fops pps_core host1x
 [   12.050665] CPU: 0 PID: 261 Comm: systemd-udevd Tainted: P S
-  4.15.0-rc3-next-20171214-ARCH-AEDEN+ #3
-[   12.050666] Hardware name: NVIDIA Tegra186 P2771-0000 Development Board
-(DT)
+       4.15.0-rc3-next-20171214-ARCH-AEDEN+ #3
+[   12.050666] Hardware name: NVIDIA Tegra186 P2771-0000 Development Board (DT)
 [   12.050668] pstate: 80000005 (Nzcv daif -PAN -UAO)
 [   12.050675] pc : mutex_lock+0x28/0x58
 [   12.050676] lr : mutex_lock+0x1c/0x58
@@ -93,10 +79,10 @@ area sysfillrect sysimgblt fb_sys_fops pps_core host1x
 [   12.051597] Code: 97fffa1e d2800000 d5384101 f9800271 (c85ffe62)
 [   12.051600] ---[ end trace 7e15532ee457d321 ]---
 [   12.346156] iommu: Adding device 15220000.display to group 1
-[   12.360735] tegra-dpaux 15040000.dpaux: 15040000.dpaux supply vdd not
-found, using dummy regulator
-[   12.372895] tegra-dpaux 155c0000.dpaux: 155c0000.dpaux supply vdd not
-found, using dummy regulator
+[   12.360735] tegra-dpaux 15040000.dpaux: 15040000.dpaux supply vdd
+not found, using dummy regulator
+[   12.372895] tegra-dpaux 155c0000.dpaux: 155c0000.dpaux supply vdd
+not found, using dummy regulator
 [   12.384763] tegra-sor 15580000.sor: failed to probe output: -517
 [   12.391830] tegra-sor 15580000.sor: failed to probe output: -517
 
@@ -137,103 +123,13 @@ Serial output is attached which includes rest of dmesg.
 Thanks,
 -Anthony
 
---94eb2c11ac3adb95e70560534b73
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">With linux-next-2017-12-14, I get a crash when nouveau is =
-loaded by systemd-udevd.<br><br>[ =C2=A0 12.050625] Unable to handle kernel=
- NULL pointer dereference at virtual address 00000058<br>[ =C2=A0 12.050627=
-] Mem abort info:<br>[ =C2=A0 12.050628] =C2=A0 ESR =3D 0x96000004<br>[ =C2=
-=A0 12.050630] =C2=A0 Exception class =3D DABT (current EL), IL =3D 32 bits=
-<br>[ =C2=A0 12.050631] =C2=A0 SET =3D 0, FnV =3D 0<br>[ =C2=A0 12.050632] =
-=C2=A0 EA =3D 0, S1PTW =3D 0<br>[ =C2=A0 12.050633] Data abort info:<br>[ =
-=C2=A0 12.050634] =C2=A0 ISV =3D 0, ISS =3D 0x00000004<br>[ =C2=A0 12.05063=
-5] =C2=A0 CM =3D 0, WnR =3D 0<br>[ =C2=A0 12.050637] user pgtable: 4k pages=
-, 48-bit VAs, pgd =3D 00000000af2ac1b1<br>[ =C2=A0 12.050639] [000000000000=
-0058] *pgd=3D0000000000000000<br>[ =C2=A0 12.050643] Internal error: Oops: =
-96000004 [#1] SMP<br>[ =C2=A0 12.050644] Modules linked in: dwmac_dwc_qos_e=
-th(+) stmmac_platform stmmac ptp nouveau(+) tegra_drm(+) i2c_algo_bit ttm g=
-pio_keys drm_kms_helper drm drm_panel_orientation_quirks(P) syscopy<br>area=
- sysfillrect sysimgblt fb_sys_fops pps_core host1x<br>[ =C2=A0 12.050665] C=
-PU: 0 PID: 261 Comm: systemd-udevd Tainted: P S =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 4.15.0-rc3-next-20171214-ARCH-AEDEN+ #3<br>[ =C2=A0 1=
-2.050666] Hardware name: NVIDIA Tegra186 P2771-0000 Development Board (DT)<=
-br>[ =C2=A0 12.050668] pstate: 80000005 (Nzcv daif -PAN -UAO)<br>[ =C2=A0 1=
-2.050675] pc : mutex_lock+0x28/0x58<br>[ =C2=A0 12.050676] lr : mutex_lock+=
-0x1c/0x58<br>[ =C2=A0 12.050677] sp : ffff00000a33b970<br>[ =C2=A0 12.05067=
-9] x29: ffff00000a33b970 x28: ffff000009527a20<br>[ =C2=A0 12.050682] x27: =
-ffff8001c5089c00 x26: ffffffffffffffff<br>[ =C2=A0 12.050684] x25: 00000000=
-00000001 x24: 0000000000000001<br>[ =C2=A0 12.050686] x23: 0000000000000000=
- x22: 0000000000000000<br>[ =C2=A0 12.050689] x21: ffff8001c8c5af80 x20: 00=
-00000000000058<br>[ =C2=A0 12.050691] x19: 0000000000000058 x18: 0000000000=
-000230<br>[ =C2=A0 12.050693] x17: fffffffffffffff0 x16: ffff7e00071fb300<b=
-r>[ =C2=A0 12.050695] x15: 0000000000000000 x14: ffffffffffffffff<br>[ =C2=
-=A0 12.050697] x13: 0000000000000038 x12: 0000000000000018<br>[ =C2=A0 12.0=
-50700] x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f<br>[ =C2=A0 12.050702] x=
-9 : 0000000000000000 x8 : ffff8001c8c5b000<br>[ =C2=A0 12.050704] x7 : 0000=
-000000000000 x6 : 000000000000003f<br>[ =C2=A0 12.050706] x5 : 000000000000=
-0040 x4 : 0000000000000000<br>[ =C2=A0 12.050708] x3 : 0000000000000004 x2 =
-: 0000000000000000<br>[ =C2=A0 12.050710] x1 : ffff8001c915b800 x0 : 000000=
-0000000000<br>[ =C2=A0 12.050713] Process systemd-udevd (pid: 261, stack li=
-mit =3D 0x00000000247b2b64)<br>[ =C2=A0 12.050714] Call trace:<br>[ =C2=A0 =
-12.050717] =C2=A0mutex_lock+0x28/0x58<br>[ =C2=A0 12.050721] =C2=A0iommu_at=
-tach_device+0xac/0xf8<br>[ =C2=A0 12.050948] =C2=A0nvkm_device_tegra_new+0x=
-260/0x510 [nouveau]<br>[ =C2=A0 12.051166] =C2=A0nouveau_platform_device_cr=
-eate+0x48/0xa8 [nouveau]<br>[ =C2=A0 12.051364] =C2=A0nouveau_platform_prob=
-e+0x34/0x80 [nouveau]<br>[ =C2=A0 12.051368] =C2=A0platform_drv_probe+0x60/=
-0xc0<br>[ =C2=A0 12.051372] =C2=A0driver_probe_device+0x33c/0x4a0<br>[ =C2=
-=A0 12.051375] =C2=A0__driver_attach+0xdc/0x128<br>[ =C2=A0 12.051377] =C2=
-=A0bus_for_each_dev+0x5c/0xa8<br>[ =C2=A0 12.051379] =C2=A0driver_attach+0x=
-30/0x40<br>[ =C2=A0 12.051381] =C2=A0bus_add_driver+0x218/0x2b8<br>[ =C2=A0=
- 12.051384] =C2=A0driver_register+0x6c/0x118<br>[ =C2=A0 12.051385] =C2=A0_=
-_platform_driver_register+0x54/0x60<br>[ =C2=A0 12.051578] =C2=A0nouveau_dr=
-m_init+0x164/0x1000 [nouveau]<br>[ =C2=A0 12.051584] =C2=A0do_one_initcall+=
-0x44/0x138<br>[ =C2=A0 12.051588] =C2=A0do_init_module+0x64/0x1dc<br>[ =C2=
-=A0 12.051590] =C2=A0load_module+0x12f4/0x14b8<br>[ =C2=A0 12.051592] =C2=
-=A0SyS_finit_module+0xd8/0xf0<br>[ =C2=A0 12.051594] =C2=A0el0_svc_naked+0x=
-20/0x24<br>[ =C2=A0 12.051597] Code: 97fffa1e d2800000 d5384101 f9800271 (c=
-85ffe62)<br>[ =C2=A0 12.051600] ---[ end trace 7e15532ee457d321 ]---<br>[ =
-=C2=A0 12.346156] iommu: Adding device 15220000.display to group 1<br>[ =C2=
-=A0 12.360735] tegra-dpaux 15040000.dpaux: 15040000.dpaux supply vdd not fo=
-und, using dummy regulator<br>[ =C2=A0 12.372895] tegra-dpaux 155c0000.dpau=
-x: 155c0000.dpaux supply vdd not found, using dummy regulator<br>[ =C2=A0 1=
-2.384763] tegra-sor 15580000.sor: failed to probe output: -517<br>[ =C2=A0 =
-12.391830] tegra-sor 15580000.sor: failed to probe output: -517<br><br>Here=
-&#39;s the trace with files and line numbers (via addr2line -pfi):<br><br>_=
-_cmpxchg_case_acq_8 at arch/arm64/include/asm/atomic_ll_sc.h:284<br>=C2=A0(=
-inlined by) __cmpxchg_acq at arch/arm64/include/asm/cmpxchg.h:140<br>=C2=A0=
-(inlined by) __mutex_trylock_fast at kernel/locking/mutex.c:143<br>=C2=A0(i=
-nlined by) mutex_lock at kernel/locking/mutex.c:240<br>iommu_group_device_c=
-ount at drivers/iommu/iommu.c:673<br>=C2=A0(inlined by) iommu_attach_device=
- at drivers/iommu/iommu.c:1312<br>clk_prepare_enable at include/linux/clk.h=
-:646<br>=C2=A0(inlined by) nvkm_device_tegra_power_up at drivers/gpu/drm/no=
-uveau/nvkm/engine/device/tegra.c:37<br>=C2=A0(inlined by) nvkm_device_tegra=
-_new at drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c:319<br>nouveau_p=
-latform_device_create at drivers/gpu/drm/nouveau/nouveau_drm.c:1193<br>nouv=
-eau_platform_probe at drivers/gpu/drm/nouveau/nouveau_platform.c:44<br>plat=
-form_drv_probe at drivers/base/platform.c:577<br>really_probe at drivers/ba=
-se/dd.c:423<br>=C2=A0(inlined by) driver_probe_device at drivers/base/dd.c:=
-565<br>__driver_attach at drivers/base/dd.c:799<br>bus_for_each_dev at driv=
-ers/base/bus.c:311<br>driver_attach at drivers/base/dd.c:819<br>bus_add_dri=
-ver at drivers/base/bus.c:668<br>driver_register at drivers/base/driver.c:1=
-66<br>__platform_driver_register at drivers/base/platform.c:636<br>nouveau_=
-drm_init at drivers/gpu/drm/nouveau/nouveau_drm.c:1212<br>do_one_initcall a=
-t init/main.c:833<br>do_init_module at kernel/module.c:3451<br>load_module =
-at kernel/module.c:3775<br>SYSC_finit_module at kernel/module.c:3874<br>=C2=
-=A0(inlined by) SyS_finit_module at kernel/module.c:3850<br>el0_svc_naked a=
-t arch/arm64/kernel/entry.S:937<br><br>Serial output is attached which incl=
-udes rest of dmesg.<br><br>Thanks,<br>-Anthony</div>
-
---94eb2c11ac3adb95e70560534b73--
-
---94eb2c11ac3adb95ea0560534b75
+--001a1146d0367ebdce056053519a
 Content-Type: text/plain; charset="US-ASCII";
 	name="tegra186-p2771-0000.linux-next-2017-12-14.crash.txt"
 Content-Disposition: attachment;
 	filename="tegra186-p2771-0000.linux-next-2017-12-14.crash.txt"
 Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jb6z96mr0
+X-Attachment-Id: f_jb6zbg2m0
 
 WzAwMDEuMTQzXSBJPiAgNCkgQmFzZToweGY3YjAwMDAwIFNpemU6MHgwMDEwMDAwMApbMDAwMS4x
 NDddIEk+ICA1KSBCYXNlOjB4ZjdhMDAwMDAgU2l6ZToweDAwMTAwMDAwClswMDAxLjE1Ml0gST4g
@@ -801,14 +697,4 @@ c3VwcGx5IHZkZCBub3QgZm91bmQsIHVzaW5nIGR1bW15IHJlZ3VsYXRvcgpbICAgMTIuMzg0NzYz
 XSB0ZWdyYS1zb3IgMTU1ODAwMDAuc29yOiBmYWlsZWQgdG8gcHJvYmUgb3V0cHV0OiAtNTE3Clsg
 ICAxMi4zOTE4MzBdIHRlZ3JhLXNvciAxNTU4MDAwMC5zb3I6IGZhaWxlZCB0byBwcm9iZSBvdXRw
 dXQ6IC01MTcKCgo=
---94eb2c11ac3adb95ea0560534b75
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
-YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
-
---94eb2c11ac3adb95ea0560534b75--
+--001a1146d0367ebdce056053519a--
