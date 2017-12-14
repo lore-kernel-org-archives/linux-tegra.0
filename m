@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/4] PCI: tegra: Reorder parameters in offset computations
-Date: Thu, 14 Dec 2017 14:45:43 +0100
-Message-ID: <20171214134545.11143-3-thierry.reding@gmail.com>
+Subject: [PATCH 3/4] PCI: tegra: Consolidate I/O register variables
+Date: Thu, 14 Dec 2017 14:45:44 +0100
+Message-ID: <20171214134545.11143-4-thierry.reding@gmail.com>
 References: <20171214134545.11143-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20171214134545.11143-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,36 +12,52 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The current computation of the configuration space offset is slightly
-difficult to read because the fields aren't naturally ordered. This is
-no doubt done to put extended register and register fields together,
-but that's confusing because they are separate in the address mapping
-given in the comment above the computations.
+Move variables that store I/O register region mappings together for
+slightly better readability.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/host/pci-tegra.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 8a07c6f9e1b0..26b734c84850 100644
+index 26b734c84850..7f8a81e17db6 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -372,11 +372,11 @@ static inline u32 pads_readl(struct tegra_pcie *pcie, unsigned long offset)
-  * address (access to which generates correct config transaction) falls in
-  * this 4 KiB region.
-  */
--static unsigned long tegra_pcie_conf_offset(unsigned char b, unsigned int devfn,
--					    int where)
-+static unsigned int tegra_pcie_conf_offset(u8 bus, unsigned int devfn,
-+					   unsigned int where)
- {
--	return (b << 16) | (PCI_SLOT(devfn) << 11) | (PCI_FUNC(devfn) << 8) |
--	       (((where & 0xf00) >> 8) << 24) | (where & 0xff);
-+	return ((where & 0xf00) << 16) | (bus << 16) | (PCI_SLOT(devfn) << 11) |
-+	       (PCI_FUNC(devfn) << 8) | (where & 0xff);
- }
+@@ -270,13 +270,12 @@ struct tegra_pcie {
  
- static int tegra_pcie_add_bus(struct pci_bus *bus)
+ 	void __iomem *pads;
+ 	void __iomem *afi;
++	void __iomem *cfg;
+ 	int irq;
+ 
+ 	struct list_head buses;
+ 	struct resource *cs;
+ 
+-	void __iomem *cfg_va_base;
+-
+ 	struct resource io;
+ 	struct resource pio;
+ 	struct resource mem;
+@@ -434,7 +433,7 @@ static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
+ 		}
+ 	} else {
+ 		offset = tegra_pcie_conf_offset(bus->number, devfn, where);
+-		addr = pcie->cfg_va_base + (offset & (SZ_4K - 1));
++		addr = pcie->cfg + (offset & (SZ_4K - 1));
+ 		val = offset & ~(SZ_4K - 1);
+ 		afi_writel(pcie, pcie->cs->start - val, AFI_AXI_BAR0_START);
+ 		afi_writel(pcie, (val + SZ_4K) >> 12, AFI_AXI_BAR0_SZ);
+@@ -1305,8 +1304,8 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 		goto poweroff;
+ 	}
+ 
+-	pcie->cfg_va_base = devm_ioremap(dev, pcie->cs->start, SZ_4K);
+-	if (!pcie->cfg_va_base) {
++	pcie->cfg = devm_ioremap(dev, pcie->cs.start, SZ_4K);
++	if (!pcie->cfg) {
+ 		dev_err(pcie->dev, "failed to ioremap config space\n");
+ 		err = -EADDRNOTAVAIL;
+ 		goto poweroff;
 -- 
 2.15.1
