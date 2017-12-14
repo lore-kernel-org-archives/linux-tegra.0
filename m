@@ -1,216 +1,102 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 05/12] PCI: tegra: Program UPHY electrical settings in
- Tegra210
-Date: Thu, 14 Dec 2017 16:28:34 +0100
-Message-ID: <20171214152834.GE13733@ulmo>
+Subject: Re: [PATCH V3 04/12] PCI: tegra: Advertise PCIe Advanced Error
+ Reporting (AER) capability
+Date: Thu, 14 Dec 2017 16:29:13 +0100
+Message-ID: <20171214152913.GF13733@ulmo>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-6-git-send-email-mmaddireddy@nvidia.com>
+ <1509371843-22931-5-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HnQK338I3UIa/qiP"
+        protocol="application/pgp-signature"; boundary="K/NRh952CO+2tg14"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1509371843-22931-6-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1509371843-22931-5-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---HnQK338I3UIa/qiP
+--K/NRh952CO+2tg14
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2017 at 07:27:16PM +0530, Manikanta Maddireddy wrote:
-> UPHY electrical programming guidelines are documented in Tegra210 TRM.
-> Program these electrical settings for proper eye diagram in all link
-> speeds.
+On Mon, Oct 30, 2017 at 07:27:15PM +0530, Manikanta Maddireddy wrote:
+> Default root port settings hide AER capability. This patch enables the
+> advertisement of AER capability by root port.
 >=20
 > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 > V3:
-> * Added shift operation for readability
+> * updated commit log
 > V2:
 > * no change in this patch
 >=20
->  drivers/pci/host/pci-tegra.c | 97 ++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 97 insertions(+)
+>  drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 >=20
 > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 46896aaab81d..c862facfd6e9 100644
+> index ed5e8acfdc32..46896aaab81d 100644
 > --- a/drivers/pci/host/pci-tegra.c
 > +++ b/drivers/pci/host/pci-tegra.c
-> @@ -184,6 +184,32 @@
-> =20
->  #define AFI_PEXBIAS_CTRL_0		0x168
-> =20
-> +#define RP_ECTL_2_R1	0xe84
-> +#define  RP_ECTL_2_R1_RX_CTLE_1C_MASK		0xffff
-> +
-> +#define RP_ECTL_4_R1	0xe8c
-> +#define  RP_ECTL_4_R1_RX_CDR_CTRL_1C_MASK	(0xffff << 16)
-> +#define  RP_ECTL_4_R1_RX_CDR_CTRL_1C_SHIFT	16
-> +
-> +#define RP_ECTL_5_R1	0xe90
-> +#define  RP_ECTL_5_R1_RX_EQ_CTRL_L_1C_MASK	0xffffffff
-> +
-> +#define RP_ECTL_6_R1	0xe94
-> +#define  RP_ECTL_6_R1_RX_EQ_CTRL_H_1C_MASK	0xffffffff
-> +
-> +#define RP_ECTL_2_R2	0xea4
-> +#define  RP_ECTL_2_R2_RX_CTLE_1C_MASK		0xffff
-> +
-> +#define RP_ECTL_4_R2	0xeac
-> +#define  RP_ECTL_4_R2_RX_CDR_CTRL_1C_MASK	(0xffff << 16)
-> +#define  RP_ECTL_4_R2_RX_CDR_CTRL_1C_SHIFT	16
-> +
-> +#define RP_ECTL_5_R2	0xeb0
-> +#define  RP_ECTL_5_R2_RX_EQ_CTRL_L_1C_MASK	0xffffffff
-> +
-> +#define RP_ECTL_6_R2	0xeb4
-> +#define  RP_ECTL_6_R2_RX_EQ_CTRL_H_1C_MASK	0xffffffff
-> +
+> @@ -187,6 +187,9 @@
 >  #define RP_VEND_XP	0x00000f00
 >  #define  RP_VEND_XP_DL_UP	(1 << 30)
 > =20
-> @@ -254,6 +280,14 @@ struct tegra_pcie_soc {
->  	u32 tx_ref_sel;
->  	u32 pads_refclk_cfg0;
->  	u32 pads_refclk_cfg1;
-> +	u32 rp_ectl_2_r1;
-> +	u32 rp_ectl_4_r1;
-> +	u32 rp_ectl_5_r1;
-> +	u32 rp_ectl_6_r1;
-> +	u32 rp_ectl_2_r2;
-> +	u32 rp_ectl_4_r2;
-> +	u32 rp_ectl_5_r2;
-> +	u32 rp_ectl_6_r2;
->  	bool has_pex_clkreq_en;
->  	bool has_pex_bias_ctrl;
->  	bool has_intr_prsnt_sense;
-> @@ -261,6 +295,7 @@ struct tegra_pcie_soc {
->  	bool has_gen2;
->  	bool force_pca_enable;
->  	bool program_uphy;
-> +	bool program_ectl_settings;
-
-Could you move all of the ECTL related fields under a substructure for
-better readability? Something like:
-
-	struct {
-		struct {
-			u32 ...;
-			...
-		} regs;
-
-		bool enable;
-	} ectl;
-
->  };
+> +#define RP_VEND_CTL1	0xf48
+> +#define  RP_VEND_CTL1_ERPT	(1 << 13)
+> +
+>  #define RP_VEND_CTL2 0x00000fa8
+>  #define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
 > =20
->  static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
-> @@ -2058,6 +2093,52 @@ static void tegra_pcie_apply_pad_settings(struct t=
+> @@ -2055,6 +2058,16 @@ static void tegra_pcie_apply_pad_settings(struct t=
 egra_pcie *pcie)
 >  		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
 >  }
 > =20
-> +static void tegra_pcie_program_ectl_settings(struct tegra_pcie_port *por=
-t)
+> +static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
 > +{
 > +	unsigned long value;
-
-u32, please.
-
-> +	const struct tegra_pcie_soc *soc =3D port->pcie->soc;
 > +
-> +	value =3D readl(port->base + RP_ECTL_2_R1);
-> +	value &=3D ~RP_ECTL_2_R1_RX_CTLE_1C_MASK;
-> +	value |=3D soc->rp_ectl_2_r1;
-> +	writel(value, port->base + RP_ECTL_2_R1);
-> +
-> +	value =3D readl(port->base + RP_ECTL_4_R1);
-> +	value &=3D ~RP_ECTL_4_R1_RX_CDR_CTRL_1C_MASK;
-> +	value |=3D (soc->rp_ectl_4_r1 << RP_ECTL_4_R1_RX_CDR_CTRL_1C_SHIFT);
-> +	writel(value, port->base + RP_ECTL_4_R1);
-> +
-> +	value =3D readl(port->base + RP_ECTL_5_R1);
-> +	value &=3D ~RP_ECTL_5_R1_RX_EQ_CTRL_L_1C_MASK;
-> +	value |=3D soc->rp_ectl_5_r1;
-> +	writel(value, port->base + RP_ECTL_5_R1);
-> +
-> +	value =3D readl(port->base + RP_ECTL_6_R1);
-> +	value &=3D ~RP_ECTL_6_R1_RX_EQ_CTRL_H_1C_MASK;
-> +	value |=3D soc->rp_ectl_6_r1;
-> +	writel(value, port->base + RP_ECTL_6_R1);
-> +
-> +	value =3D readl(port->base + RP_ECTL_2_R2);
-> +	value &=3D ~RP_ECTL_2_R2_RX_CTLE_1C_MASK;
-> +	value |=3D soc->rp_ectl_2_r2;
-> +	writel(value, port->base + RP_ECTL_2_R2);
-> +
-> +	value =3D readl(port->base + RP_ECTL_4_R2);
-> +	value &=3D ~RP_ECTL_4_R2_RX_CDR_CTRL_1C_MASK;
-> +	value |=3D (soc->rp_ectl_4_r2 << RP_ECTL_4_R2_RX_CDR_CTRL_1C_SHIFT);
-> +	writel(value, port->base + RP_ECTL_4_R2);
-> +
-> +	value =3D readl(port->base + RP_ECTL_5_R2);
-> +	value &=3D ~RP_ECTL_5_R2_RX_EQ_CTRL_L_1C_MASK;
-> +	value |=3D soc->rp_ectl_5_r2;
-> +	writel(value, port->base + RP_ECTL_5_R2);
-> +
-> +	value =3D readl(port->base + RP_ECTL_6_R2);
-> +	value &=3D ~RP_ECTL_6_R2_RX_EQ_CTRL_H_1C_MASK;
-> +	value |=3D soc->rp_ectl_6_r2;
-> +	writel(value, port->base + RP_ECTL_6_R2);
+> +	/* Enable AER capability */
+> +	value =3D readl(port->base + RP_VEND_CTL1);
+> +	value |=3D RP_VEND_CTL1_ERPT;
+> +	writel(value, port->base + RP_VEND_CTL1);
 > +}
 > +
->  static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
->  {
->  	unsigned long value;
-> @@ -2125,6 +2206,7 @@ static void tegra_pcie_enable_ports(struct tegra_pc=
-ie *pcie)
->  {
->  	struct device *dev =3D pcie->dev;
->  	struct tegra_pcie_port *port, *tmp;
-> +	const struct tegra_pcie_soc *soc =3D pcie->soc;
-> =20
->  	tegra_pcie_apply_pad_settings(pcie);
-> =20
-> @@ -2133,6 +2215,8 @@ static void tegra_pcie_enable_ports(struct tegra_pc=
+>  /*
+>   * FIXME: If there are no PCIe cards attached, then calling this function
+>   * can result in the increase of the bootup time as there are big timeout
+> @@ -2120,6 +2133,7 @@ static void tegra_pcie_enable_ports(struct tegra_pc=
 ie *pcie)
 >  			 port->index, port->lanes);
 > =20
 >  		tegra_pcie_port_enable(port);
-> +		if (soc->program_ectl_settings)
-> +			tegra_pcie_program_ectl_settings(port);
+> +		tegra_pcie_enable_rp_features(port);
 
-Perhaps this should be moved into tegra_pcie_port_enable()? That way the
-programming is done in one central location. If ever we need to enable
-the ports from somewhere else we could simply call it instead of having
-to duplicate enabling all the extra features.
+Same as for patch 5: move this into tegra_pcie_port_enable()?
 
 Thierry
 
---HnQK338I3UIa/qiP
+--K/NRh952CO+2tg14
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloymJ8ACgkQ3SOs138+
-s6HY3Q/8DfmUdPMxNgKha6K9he7wOBP46SN/iusLNTJvReJZ+LjgBot1YxAZTSLn
-exHI5y6iXQZv0AXpfjJlwOR1076DJlrwNP8cEWxD8F6IQFg/5mn6qPgRkl1MwjlT
-jML48YIIvTU3GLRefV96kIVul/YnlQv22Dk9EXpuEBmxzFgjk5YHYT5Dg5WOfQGC
-CKXKAoK2tfCXY4T3g8sPx3koqnN46PS3i0e6faz03xOwlPOgaDM8/ILI8X6MwQ5u
-PiNA9q0WQ0imC6cvhLQdd2gT4hlufmBfNfaaAJwsIFcMNLjdztoGNvDxQmkbb3Gk
-Fi5F7hCNt8gAh/rec5sio4F00Wuqp5Ob4nTElZRFblpVACSKBNbmOiw/KS3EnZ40
-nvorBhJ/rbQWkA2XNyE/WI38ttlqcGi+u/kx6HV7W1VWJEr/UJwgrLcurr5cAQET
-Kq3KVOJzstNWT0TF56VUE85+7lpNI7+lJLhU6BDQfHeIamOe1DnUjeeVWIW/PujT
-lUBX+zBrimPlGZmJ4PUUpWyDMECSxGtBeeHyxh5G8ZT0dlHucC+yevnCVcxaA9L3
-7PCMCFZpbHKlkJaZf2k+fzuMxoN9tZ+VHgzv/XkHzIbu1uv1TugaCfa7coYTt1tm
-CDKtZquv7VzFOMXNQbqK6qz3MiE6SgNHjN9KeFe1jOmShBP7HfQ=
-=b0ke
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloymMkACgkQ3SOs138+
+s6G2IQ/7BTWfnyY6zcb/ukTLQsFMA3VK1P+eDHYQ4k2vbITad+8dO7MAJf2uADvT
+vGk+F8skYqGJaPnTQp1urH3+WiUyHyOXYlhJ/VeJ9hzG1gsWpOK7LhSi8N/T0oXc
+NAgHcrb0q2hgPNq1cpYguS8sE+X4AytyGkp6dv9Wr2u2snZBfq0ohdWjtWHkjzb2
+eyQWhnL1LeIhlj7fFMvUw5vO4Z933BGFXNVW9++v/bW3BLFYDcf4TtYJGPcjaDNu
+qklQ8ibBjNQ/aPSe32y5q/gCCf4tYBECJOMzwT45POvo2ESXLzUkjZofzHIb1Ack
+CjsYdQSV/KOQF8skA1OA2ELNYyGj8kiGBKuqMdQAWLk7hNj4flGRDSXZowxVYDEL
+j8FDDp20+6MixcSQYqZIczDTNyLgdJgEr/TBtLzuNr0cHImNAay7nzOalS4VWseg
+Uskl11nTk09TRI+Q4j8+DcByIjgAAiTRf2J2a0EkKeLdnq8gf6qqzD0bfTpUBkSy
+nV+oR5K+MCC55xAznK02Mjos6pBCpgtjh/WQgsl/vABgKxBQYcYIZ1xiKSZ45gK7
+yB6pw0rcwW4vfeVt8omIbXs9nZmhJdpf9wDsbByMpwNS3vdLVeUNLp3IX0w2mMTK
+nma6Z4M8TxTF7KL/JPTLgjnykXeeOGrNbOssOypRSpml1/YJQc8=
+=MfJ5
 -----END PGP SIGNATURE-----
 
---HnQK338I3UIa/qiP--
+--K/NRh952CO+2tg14--
