@@ -1,102 +1,86 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 04/12] PCI: tegra: Advertise PCIe Advanced Error
- Reporting (AER) capability
-Date: Thu, 14 Dec 2017 16:29:13 +0100
-Message-ID: <20171214152913.GF13733@ulmo>
+Subject: Re: [PATCH V3 06/12] PCI: tegra: Enable opportunistic update FC and
+ ACK
+Date: Thu, 14 Dec 2017 16:30:22 +0100
+Message-ID: <20171214153022.GG13733@ulmo>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-5-git-send-email-mmaddireddy@nvidia.com>
+ <1509371843-22931-7-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="K/NRh952CO+2tg14"
+        protocol="application/pgp-signature"; boundary="KIzF6Cje4W/osXrF"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1509371843-22931-5-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1509371843-22931-7-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---K/NRh952CO+2tg14
+--KIzF6Cje4W/osXrF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2017 at 07:27:15PM +0530, Manikanta Maddireddy wrote:
-> Default root port settings hide AER capability. This patch enables the
-> advertisement of AER capability by root port.
+On Mon, Oct 30, 2017 at 07:27:17PM +0530, Manikanta Maddireddy wrote:
+> This patch ensures that DL sends pending ACKs and update FC packets when
+> link is idle instead of waiting for timers to expire which improves PCIe
+> bandwidth.
 >=20
 > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 > V3:
-> * updated commit log
+> * no change in this patch
 > V2:
 > * no change in this patch
 >=20
->  drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  drivers/pci/host/pci-tegra.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
 >=20
 > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index ed5e8acfdc32..46896aaab81d 100644
+> index c862facfd6e9..4562b0c113a8 100644
 > --- a/drivers/pci/host/pci-tegra.c
 > +++ b/drivers/pci/host/pci-tegra.c
-> @@ -187,6 +187,9 @@
+> @@ -211,7 +211,9 @@
+>  #define  RP_ECTL_6_R2_RX_EQ_CTRL_H_1C_MASK	0xffffffff
+> =20
 >  #define RP_VEND_XP	0x00000f00
->  #define  RP_VEND_XP_DL_UP	(1 << 30)
+> -#define  RP_VEND_XP_DL_UP	(1 << 30)
+> +#define  RP_VEND_XP_DL_UP			(1 << 30)
+> +#define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
+> +#define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
 > =20
-> +#define RP_VEND_CTL1	0xf48
-> +#define  RP_VEND_CTL1_ERPT	(1 << 13)
-> +
->  #define RP_VEND_CTL2 0x00000fa8
->  #define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
-> =20
-> @@ -2055,6 +2058,16 @@ static void tegra_pcie_apply_pad_settings(struct t=
-egra_pcie *pcie)
->  		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
+>  #define RP_VEND_CTL1	0xf48
+>  #define  RP_VEND_CTL1_ERPT	(1 << 13)
+> @@ -2149,6 +2151,16 @@ static void tegra_pcie_enable_rp_features(struct t=
+egra_pcie_port *port)
+>  	writel(value, port->base + RP_VEND_CTL1);
 >  }
 > =20
-> +static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
-> +{
-> +	unsigned long value;
-> +
-> +	/* Enable AER capability */
-> +	value =3D readl(port->base + RP_VEND_CTL1);
-> +	value |=3D RP_VEND_CTL1_ERPT;
-> +	writel(value, port->base + RP_VEND_CTL1);
-> +}
-> +
->  /*
->   * FIXME: If there are no PCIe cards attached, then calling this function
->   * can result in the increase of the bootup time as there are big timeout
-> @@ -2120,6 +2133,7 @@ static void tegra_pcie_enable_ports(struct tegra_pc=
-ie *pcie)
->  			 port->index, port->lanes);
-> =20
->  		tegra_pcie_port_enable(port);
-> +		tegra_pcie_enable_rp_features(port);
+> +static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
 
-Same as for patch 5: move this into tegra_pcie_port_enable()?
+Why not make the name reflect what the function does?
 
 Thierry
 
---K/NRh952CO+2tg14
+--KIzF6Cje4W/osXrF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloymMkACgkQ3SOs138+
-s6G2IQ/7BTWfnyY6zcb/ukTLQsFMA3VK1P+eDHYQ4k2vbITad+8dO7MAJf2uADvT
-vGk+F8skYqGJaPnTQp1urH3+WiUyHyOXYlhJ/VeJ9hzG1gsWpOK7LhSi8N/T0oXc
-NAgHcrb0q2hgPNq1cpYguS8sE+X4AytyGkp6dv9Wr2u2snZBfq0ohdWjtWHkjzb2
-eyQWhnL1LeIhlj7fFMvUw5vO4Z933BGFXNVW9++v/bW3BLFYDcf4TtYJGPcjaDNu
-qklQ8ibBjNQ/aPSe32y5q/gCCf4tYBECJOMzwT45POvo2ESXLzUkjZofzHIb1Ack
-CjsYdQSV/KOQF8skA1OA2ELNYyGj8kiGBKuqMdQAWLk7hNj4flGRDSXZowxVYDEL
-j8FDDp20+6MixcSQYqZIczDTNyLgdJgEr/TBtLzuNr0cHImNAay7nzOalS4VWseg
-Uskl11nTk09TRI+Q4j8+DcByIjgAAiTRf2J2a0EkKeLdnq8gf6qqzD0bfTpUBkSy
-nV+oR5K+MCC55xAznK02Mjos6pBCpgtjh/WQgsl/vABgKxBQYcYIZ1xiKSZ45gK7
-yB6pw0rcwW4vfeVt8omIbXs9nZmhJdpf9wDsbByMpwNS3vdLVeUNLp3IX0w2mMTK
-nma6Z4M8TxTF7KL/JPTLgjnykXeeOGrNbOssOypRSpml1/YJQc8=
-=MfJ5
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloymQ0ACgkQ3SOs138+
+s6GIGxAAkCXkJFnCEXzX+3rgTUCbMMjHh6WBgqt+kBM1HoQ+7LIpmxV22WEt9wwG
+ixv7DSnat9/HGqqAXqo0cQ2poKu6X/s/6vzRh40Mx6yLROmZGsm/OMOtAXlD6jv/
+cV0W1uGufgclQU7JIij1FikND8rQ847FVwZpPddtb62cVll3UFRYq5ypTCFlzju0
+qgu75ElwVTq04/2PFZIrX/Z/h6aqWofCYHYCffSiYK+bJTIvR2OYFd6gwBoRFO6B
+xuTA8PmZsdX5kd1taqjy1Av4F4cFZe39g5/GFseG0CdZm8SBbpYfOz8jWfL2buVA
+HBNsbVkAly224oP4Zc/a//OZEV3+fONDS4gOYJ3tvgUvb4r/KGn3u6vO9ALHl1bq
+hITEcHQWjSHCMcHM4ZJP32Qw5zxTmHu8eynIfK27VPTJEpXL/1XOIU0f94LUQjle
+P24UGqtgjXh2zsnzy3Z1aBKtMbMfiNyET0SU5emW35sB/b8hwlPCRxDR7uJ/21TC
++lmgihXRZONhYaSrVOix1IIZ6Ja33cKH+bnqwMLzm3/OnZW8zYL3kvqhIOsgOkLh
+RDdV7srfb6XIBni7ZCjYqL8+FYolpRMgOn2xWOBsyi5ha6wBd2IwF6UmJdfTNlPq
+Lk+OHI5jRSbkS12CnN4WPsN2vbVJ3Y8nC2MGrmjBNel4WvEUj7o=
+=mHWE
 -----END PGP SIGNATURE-----
 
---K/NRh952CO+2tg14--
+--KIzF6Cje4W/osXrF--
