@@ -1,38 +1,31 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 07/12] PCI: tegra: Disable AFI dynamic clock gating
-Date: Thu, 14 Dec 2017 16:32:16 +0100
-Message-ID: <20171214153216.GH13733@ulmo>
+Subject: Re: [PATCH V3 08/12] PCI: tegra: Wait for DLLP to finish before
+ entering L1 or L2
+Date: Thu, 14 Dec 2017 16:34:57 +0100
+Message-ID: <20171214153457.GI13733@ulmo>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-8-git-send-email-mmaddireddy@nvidia.com>
+ <1509371843-22931-9-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="MGu/vTNewDGZ7tmp"
+        protocol="application/pgp-signature"; boundary="3eH4Qcq5fItR5cpy"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1509371843-22931-8-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1509371843-22931-9-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---MGu/vTNewDGZ7tmp
+--3eH4Qcq5fItR5cpy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2017 at 07:27:18PM +0530, Manikanta Maddireddy wrote:
-> When there are 32 outstanding writes from AFI to memory, the outstanding
-> write counter overflows and indicates that there are "0" outstanding write
-> transactions. This outstanding write counter is used to generate IDLE
-> signal to dynamically gate the AFI clock.
->=20
-> When memory controller is under heavy load, its possible that write
-> completions will come back to AFI after long delay and AFI write counter
-> overflows. AFI clock gets gated even when there are outstanding
-> transactions towards memory controller resutling in system hang.
->=20
-> Disable dynamic clock gating of AFI clock to avoid system hang.
+On Mon, Oct 30, 2017 at 07:27:19PM +0530, Manikanta Maddireddy wrote:
+> Set required bit to have LTSSM wait for DLLP to finish before entering L1
+> or L2. This avoids truncation of PM messages which results in receiver
+> errors.
 >=20
 > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
@@ -41,62 +34,61 @@ On Mon, Oct 30, 2017 at 07:27:18PM +0530, Manikanta Maddireddy wrote:
 > V2:
 > * no change in this patch
 >=20
->  drivers/pci/host/pci-tegra.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>  drivers/pci/host/pci-tegra.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 >=20
 > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 4562b0c113a8..c264037112cb 100644
+> index c264037112cb..34740a7033f7 100644
 > --- a/drivers/pci/host/pci-tegra.c
 > +++ b/drivers/pci/host/pci-tegra.c
-> @@ -103,8 +103,9 @@
->  #define AFI_MSI_EN_VEC6		0xa4
->  #define AFI_MSI_EN_VEC7		0xa8
+> @@ -219,6 +219,9 @@
+>  #define RP_VEND_CTL1	0xf48
+>  #define  RP_VEND_CTL1_ERPT	(1 << 13)
 > =20
-> -#define AFI_CONFIGURATION		0xac
-> -#define  AFI_CONFIGURATION_EN_FPCI	(1 << 0)
-> +#define AFI_CONFIGURATION			0xac
-> +#define  AFI_CONFIGURATION_EN_FPCI		(1 << 0)
-> +#define  AFI_CONFIGURATION_CLKEN_OVERRIDE	(1 << 31)
+> +#define RP_VEND_XP_BIST	0xf4c
+> +#define  RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE	(1 << 28)
+> +
+>  #define RP_VEND_CTL2 0x00000fa8
+>  #define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
 > =20
->  #define AFI_FPCI_ERROR_MASKS	0xb0
-> =20
-> @@ -1059,9 +1060,10 @@ static int tegra_pcie_enable_controller(struct teg=
-ra_pcie *pcie)
->  		}
->  	}
-> =20
-> -	/* finally enable PCIe */
-> +	/* Disable AFI dynamic clock gating and enable PCIe */
->  	value =3D afi_readl(pcie, AFI_CONFIGURATION);
-> -	value |=3D AFI_CONFIGURATION_EN_FPCI;
-> +	value |=3D (AFI_CONFIGURATION_EN_FPCI |
-> +			AFI_CONFIGURATION_CLKEN_OVERRIDE);
+> @@ -2162,6 +2165,13 @@ static void tegra_pcie_apply_sw_fixup(struct tegra=
+_pcie_port *port)
+>  	value |=3D RP_VEND_XP_OPPORTUNISTIC_ACK;
+>  	value |=3D RP_VEND_XP_OPPORTUNISTIC_UPDATEFC;
+>  	writel(value, port->base + RP_VEND_XP);
+> +
+> +	/* LTSSM will wait for DLLP to finish before entering L1 or L2,
+> +	 * to avoid truncation of PM messages which results in receiver errors
+> +	 */
 
-I think this is cleaner (and results in a smaller diff) if you simply
-put this on a new line:
+Block comment style, please.
 
-	value |=3D AFI_CONFIGURATION_CLKEN_OVERRIDE;
+I'm still not sure if tegra_pcie_apply_sw_fixup() is a good name for
+this, even it's now becoming clear why you have a separate function.
+
+These aren't really SW fixups, are they? Why not stash these into the
+tegra_pcie_enable_rp_features() function?
 
 Thierry
 
---MGu/vTNewDGZ7tmp
+--3eH4Qcq5fItR5cpy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloymYAACgkQ3SOs138+
-s6HCvRAAvJrMlEervcZeA98DQKzDmaB7cKgrK8MLdnrpZZhVTrHKuR75+sbbpm0m
-xeYbp51MxP/s5QyG99UV6u5bOMKzGHYHLzH2MNg00pWpG2tCC8Qk3CHze7NC5FkB
-KRTCY/7TxzVQ/KXJql3TSCT97Vg87ND/IYHCJKLmLKPTA/WlaLYqs8Xwbgj4GczX
-l5+M1Ks4ZIypg5bnn8FLNdkVq3kFF5iCBZ8i6ca/+u6o8wHq1xu/lJkKMO5Bg5c5
-DbA8oBP/djXPFqyf/SOy3cs6MlBMXKMHCN7pDLPGNMyz2jd0/IhXBbyH4doSSEXY
-Am9AhCSFHPSCNhzm4q3BP/9StDLBkY51elXpiRz7LffLNqJLquMw3jue46yf88r6
-4mJEQwVGgkcDzRsBRsUUMHNOY+Q/Ubvz4+lMb4BU81ihViPjehNnkwaeScEClux4
-ICw12YPUlCJYdM1cI1Ey2AWgi8yNkUdKqGV+d17sLdAdVxEdLrX7V6DLKchWkduh
-4rUdBl/w40Iy6Ns0jmUU8VpF5C0/EjqjN7OZuvrPd2YS59WPjFnHGrlJ9VxWGkre
-5ZhNsiuymAg+lXjjpGBtjjh9k+wtPe0RmaBxbOVyPRTorQIRIqTE7WNZdsgV9EaB
-xMy8mN8z7CV7/S9hZyPI2beqJGCvMK8MQz0UBt9kuikOi81Vkk4=
-=Euq2
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloymiEACgkQ3SOs138+
+s6G2oRAAopHtydsO4MboU9HbMYFCLWLyGnwhKxsHRpAw6g6ueBJF++78s+ttAL+1
+Ey7kvONOn7bvni+cCiOu1Ed/2IzwVvm3xSm9IP0aAZBX8DdpipO1NGP0iVwNDOzI
+HIiGNrzzdCEmeSdgT7QnQi2ZfYWvkOtk9vsBpe4rP1GEhQOxM5Wgtrfc3kX6AzVi
+QX8yynWM0By16Q6Gt7c9ApO9I+X6rD0YU+YLneWkckSBzVN0FPNHjGqBC2PMiN8I
+dtyCbSLJ/yUdQat03qCP42TSv1n3/W9KvRFo1ViH5tPqnZpi9pv04/kaZIfSxLYE
+rNuXZVl39K7CJBHTRv1el5d2Z2Ps20Che5ix7RLH3BIZDWUWPADWmvCfmi/EZi5+
+zSliArG9OGiEI2ZlGFXnjdjVAuEwTXJiSxIEY4kAzDzPrqF5Jinff71EfR3f6fpk
+ExA2fYDRSnNZ25m2HftUozgTeiQr7nrpz46Uma1+Y8jMX2vBj2NDKhY3t7KnvKK8
+paRC8g+jewS+i+K/TK5iAMvCwfAW0Yr/145uB2vopBpLryvkaDeGFlZI2Fw7NbqG
+VgoP7AXrsj1Qrm+W9ZyypJJmfJcu+ZBOvkL/7HJdbwu9zdwINJoZVhLBQiX/bDt+
+WvxoTE3TPgrYdU6c7UnXcLh83x45Hy0/BaTkjvkoATzussl2g7w=
+=BuIX
 -----END PGP SIGNATURE-----
 
---MGu/vTNewDGZ7tmp--
+--3eH4Qcq5fItR5cpy--
