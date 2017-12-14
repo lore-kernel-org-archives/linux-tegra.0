@@ -1,31 +1,38 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 06/12] PCI: tegra: Enable opportunistic update FC and
- ACK
-Date: Thu, 14 Dec 2017 16:30:22 +0100
-Message-ID: <20171214153022.GG13733@ulmo>
+Subject: Re: [PATCH V3 07/12] PCI: tegra: Disable AFI dynamic clock gating
+Date: Thu, 14 Dec 2017 16:32:16 +0100
+Message-ID: <20171214153216.GH13733@ulmo>
 References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-7-git-send-email-mmaddireddy@nvidia.com>
+ <1509371843-22931-8-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="KIzF6Cje4W/osXrF"
+        protocol="application/pgp-signature"; boundary="MGu/vTNewDGZ7tmp"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1509371843-22931-7-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1509371843-22931-8-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---KIzF6Cje4W/osXrF
+--MGu/vTNewDGZ7tmp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2017 at 07:27:17PM +0530, Manikanta Maddireddy wrote:
-> This patch ensures that DL sends pending ACKs and update FC packets when
-> link is idle instead of waiting for timers to expire which improves PCIe
-> bandwidth.
+On Mon, Oct 30, 2017 at 07:27:18PM +0530, Manikanta Maddireddy wrote:
+> When there are 32 outstanding writes from AFI to memory, the outstanding
+> write counter overflows and indicates that there are "0" outstanding write
+> transactions. This outstanding write counter is used to generate IDLE
+> signal to dynamically gate the AFI clock.
+>=20
+> When memory controller is under heavy load, its possible that write
+> completions will come back to AFI after long delay and AFI write counter
+> overflows. AFI clock gets gated even when there are outstanding
+> transactions towards memory controller resutling in system hang.
+>=20
+> Disable dynamic clock gating of AFI clock to avoid system hang.
 >=20
 > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
@@ -34,53 +41,62 @@ On Mon, Oct 30, 2017 at 07:27:17PM +0530, Manikanta Maddireddy wrote:
 > V2:
 > * no change in this patch
 >=20
->  drivers/pci/host/pci-tegra.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+>  drivers/pci/host/pci-tegra.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 >=20
 > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index c862facfd6e9..4562b0c113a8 100644
+> index 4562b0c113a8..c264037112cb 100644
 > --- a/drivers/pci/host/pci-tegra.c
 > +++ b/drivers/pci/host/pci-tegra.c
-> @@ -211,7 +211,9 @@
->  #define  RP_ECTL_6_R2_RX_EQ_CTRL_H_1C_MASK	0xffffffff
+> @@ -103,8 +103,9 @@
+>  #define AFI_MSI_EN_VEC6		0xa4
+>  #define AFI_MSI_EN_VEC7		0xa8
 > =20
->  #define RP_VEND_XP	0x00000f00
-> -#define  RP_VEND_XP_DL_UP	(1 << 30)
-> +#define  RP_VEND_XP_DL_UP			(1 << 30)
-> +#define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
-> +#define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
+> -#define AFI_CONFIGURATION		0xac
+> -#define  AFI_CONFIGURATION_EN_FPCI	(1 << 0)
+> +#define AFI_CONFIGURATION			0xac
+> +#define  AFI_CONFIGURATION_EN_FPCI		(1 << 0)
+> +#define  AFI_CONFIGURATION_CLKEN_OVERRIDE	(1 << 31)
 > =20
->  #define RP_VEND_CTL1	0xf48
->  #define  RP_VEND_CTL1_ERPT	(1 << 13)
-> @@ -2149,6 +2151,16 @@ static void tegra_pcie_enable_rp_features(struct t=
-egra_pcie_port *port)
->  	writel(value, port->base + RP_VEND_CTL1);
->  }
+>  #define AFI_FPCI_ERROR_MASKS	0xb0
 > =20
-> +static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+> @@ -1059,9 +1060,10 @@ static int tegra_pcie_enable_controller(struct teg=
+ra_pcie *pcie)
+>  		}
+>  	}
+> =20
+> -	/* finally enable PCIe */
+> +	/* Disable AFI dynamic clock gating and enable PCIe */
+>  	value =3D afi_readl(pcie, AFI_CONFIGURATION);
+> -	value |=3D AFI_CONFIGURATION_EN_FPCI;
+> +	value |=3D (AFI_CONFIGURATION_EN_FPCI |
+> +			AFI_CONFIGURATION_CLKEN_OVERRIDE);
 
-Why not make the name reflect what the function does?
+I think this is cleaner (and results in a smaller diff) if you simply
+put this on a new line:
+
+	value |=3D AFI_CONFIGURATION_CLKEN_OVERRIDE;
 
 Thierry
 
---KIzF6Cje4W/osXrF
+--MGu/vTNewDGZ7tmp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloymQ0ACgkQ3SOs138+
-s6GIGxAAkCXkJFnCEXzX+3rgTUCbMMjHh6WBgqt+kBM1HoQ+7LIpmxV22WEt9wwG
-ixv7DSnat9/HGqqAXqo0cQ2poKu6X/s/6vzRh40Mx6yLROmZGsm/OMOtAXlD6jv/
-cV0W1uGufgclQU7JIij1FikND8rQ847FVwZpPddtb62cVll3UFRYq5ypTCFlzju0
-qgu75ElwVTq04/2PFZIrX/Z/h6aqWofCYHYCffSiYK+bJTIvR2OYFd6gwBoRFO6B
-xuTA8PmZsdX5kd1taqjy1Av4F4cFZe39g5/GFseG0CdZm8SBbpYfOz8jWfL2buVA
-HBNsbVkAly224oP4Zc/a//OZEV3+fONDS4gOYJ3tvgUvb4r/KGn3u6vO9ALHl1bq
-hITEcHQWjSHCMcHM4ZJP32Qw5zxTmHu8eynIfK27VPTJEpXL/1XOIU0f94LUQjle
-P24UGqtgjXh2zsnzy3Z1aBKtMbMfiNyET0SU5emW35sB/b8hwlPCRxDR7uJ/21TC
-+lmgihXRZONhYaSrVOix1IIZ6Ja33cKH+bnqwMLzm3/OnZW8zYL3kvqhIOsgOkLh
-RDdV7srfb6XIBni7ZCjYqL8+FYolpRMgOn2xWOBsyi5ha6wBd2IwF6UmJdfTNlPq
-Lk+OHI5jRSbkS12CnN4WPsN2vbVJ3Y8nC2MGrmjBNel4WvEUj7o=
-=mHWE
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloymYAACgkQ3SOs138+
+s6HCvRAAvJrMlEervcZeA98DQKzDmaB7cKgrK8MLdnrpZZhVTrHKuR75+sbbpm0m
+xeYbp51MxP/s5QyG99UV6u5bOMKzGHYHLzH2MNg00pWpG2tCC8Qk3CHze7NC5FkB
+KRTCY/7TxzVQ/KXJql3TSCT97Vg87ND/IYHCJKLmLKPTA/WlaLYqs8Xwbgj4GczX
+l5+M1Ks4ZIypg5bnn8FLNdkVq3kFF5iCBZ8i6ca/+u6o8wHq1xu/lJkKMO5Bg5c5
+DbA8oBP/djXPFqyf/SOy3cs6MlBMXKMHCN7pDLPGNMyz2jd0/IhXBbyH4doSSEXY
+Am9AhCSFHPSCNhzm4q3BP/9StDLBkY51elXpiRz7LffLNqJLquMw3jue46yf88r6
+4mJEQwVGgkcDzRsBRsUUMHNOY+Q/Ubvz4+lMb4BU81ihViPjehNnkwaeScEClux4
+ICw12YPUlCJYdM1cI1Ey2AWgi8yNkUdKqGV+d17sLdAdVxEdLrX7V6DLKchWkduh
+4rUdBl/w40Iy6Ns0jmUU8VpF5C0/EjqjN7OZuvrPd2YS59WPjFnHGrlJ9VxWGkre
+5ZhNsiuymAg+lXjjpGBtjjh9k+wtPe0RmaBxbOVyPRTorQIRIqTE7WNZdsgV9EaB
+xMy8mN8z7CV7/S9hZyPI2beqJGCvMK8MQz0UBt9kuikOi81Vkk4=
+=Euq2
 -----END PGP SIGNATURE-----
 
---KIzF6Cje4W/osXrF--
+--MGu/vTNewDGZ7tmp--
