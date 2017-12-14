@@ -1,75 +1,65 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 0/3] Add ASPM-L1 Substates support for Tegra
-Date: Thu, 14 Dec 2017 22:05:58 +0530
-Message-ID: <6f11a0d5-ebc2-ab48-b5bb-bd286010c316@nvidia.com>
-References: <1510492674-12786-1-git-send-email-vidyas@nvidia.com>
- <20171214145943.GC13733@ulmo>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH 0/4] PCI: tegra: Configuration space mapping cleanups and
+ fixes
+Date: Thu, 14 Dec 2017 17:37:45 +0000
+Message-ID: <20171214173745.GA17018@red-moon>
+References: <20171214134545.11143-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171214145943.GC13733@ulmo>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171214134545.11143-1-thierry.reding@gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, Vidya Saga <vidyas@nvidia.com>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Thierry,
 
+On Thu, Dec 14, 2017 at 02:45:41PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Hi Lorenzo,
+> 
+> This cleans up a few oddities that I found while reviewing and testing
+> the patch
+> 
+> 	[PATCH V3 1/2] PCI: tegra: refactor config space mapping code
+> 
+> that Vidya Sagar sent out earlier. The first three patches are mostly
+> cleanup and admittedly somewhat bikeshedding in nature. They could've
+> been just review comments, but I thought I'd just submit them as a
+> series of patches since I had already typed them up anyway.
+> 
+> The last patch gets rid of an artificial restriction regarding the
+> mapping address and does a bit of simplification.
+> 
+> These are technically incremental on top of the original patch, but if
+> you prefer, feel free to squash them into that patch.
 
-On Thursday 14 December 2017 08:29 PM, Thierry Reding wrote:
-> On Sun, Nov 12, 2017 at 06:47:51PM +0530, Vidya Sagar wrote:
->> Tegra chips T210 and T186 support ASPM-L1 Substates (i.e. L1.1 and L1.2)
->> This patch series
->> - applies fixups to reflect correct capability values for
->>    T_cmrt (Common Mode Restore Time) and
->>    T_pwr_on (Power On)
->>    and adjusts counter values for 19.2 MHz of clk_m
->> - applies fixup specific to T210 to avoid unnecessary wake ups from L1.2 state
->> - enables advertisement of ASPM-L1 support in capability register
->>
->> NOTE:- This version of patch series drops a patch (that was present till V2 series)
->> that introduces an API for host controller drivers to specify LTR_L1.2_THRESHOLD
->> value as more details and better understanding of spec is required to program
->> LTR_L1.2_THRESHOLD value.
->> It also reorders patches to appropriately have software fixups and advertisement
->> of capabilities
->>
->> PCIe - ASPM L1 Sub States spec
->> https://pcisig.com/sites/default/files/specification_documents/ECN_L1_PM_Substates_with_CLKREQ_31_May_2013_Rev10a.pdf
->>
->> Testing Done on T210 and T186
->> - ASPM-L1:
->>    Verified ASPM-L1 enablement by selecting PCIEASPM_POWERSAVE config
->>    With the help of Tegra rootport's internal counter registers, confirmed
->>    link entry in and out of ASPM-L1 state using USB3.0 add-on card, NVMe and NIC
->>    cards
->> - ASPM-L1 SubStates:
->>    Verified ASPM-L1 Substates enablement by selecting PCIEASPM_POWER_SUPERSAVE config
->>    Confirmed link's entry into L1SS using Westren Digital NVMe card (with Sandisk
->>    Controller) using Tegra rootport's internal counter registers
->>
->> Vidya Sagar (3):
->>    PCI: tegra: Apply sw fixups to support ASPM-L1 Sub-States
->>    PCI: tegra: fixups to avoid unnecessary wakeup from ASPM-L1.2
->>    PCI: tegra: Enable ASPM-L1 capability advertisement
->>
->>   drivers/pci/host/pci-tegra.c | 93 ++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 93 insertions(+)
-> Looks like these don't apply to an upstream kernel. Do you have any
-> other patches in your tree that would cause the context to be different?
-> I see a couple of fields in struct tegra_pcie_soc that aren't in the
-> driver upstream and I didn't find any patches on the list that add them.
->
-> Can you rebase this on top of a recent linux-next or -rc and resend?
-> Also, if the series depends on any other patches that have been sent to
-> the list but haven't been merged yet, please include a reference to the
-> patchwork or email thread for the dependencies.
->
-> Thanks,
-> Thierry
-Yes. These patches depend on 
-https://patchwork.ozlabs.org/project/linux-pci/list/?series=10924
-series, but this series is being under reviewed getting modified 
-frequently. I'll re-post my patches
-once this series reaches a stable state.
+I took some time to have a look at all of them and actually I am happy
+with the end result, except that I would prefer if you squash them all
+in and rewrite the logs since I can easily miss something (eg I have no
+insights into the Tegra config space FPCI windowing mechanism) - I will
+merge the resulting patch(es).
+
+I have a question: after merging both series, are
+
+tegra_pcie_{add/remove}_bus()
+
+(and struct tegra_pcie_bus)
+
+still needed ? I do not think so.
+
+> I've tested these on all of Tegra20, Tegra30, Tegra124, Tegra210 and
+> Tegra186.
+
+If the testing goes OK please send me unified series and will merge
+that one.
+
+This brings me to a question for you and Bjorn: how do you usually
+handle DT updates ? I assume we send them via the PCI tree but I am
+asking to prevent any issue upfront.
+
+Thanks,
+Lorenzo
