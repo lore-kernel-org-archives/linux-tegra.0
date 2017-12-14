@@ -1,74 +1,47 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V3 0/2] Tegra PCIe end point config space map code
- refactoring
-Date: Thu, 14 Dec 2017 10:37:22 +0000
-Message-ID: <20171214103722.GC697@e107981-ln.cambridge.arm.com>
-References: <1512410030-21038-1-git-send-email-vidyas@nvidia.com>
- <20171211105431.GI10671@ulmo>
- <20171211175452.GC16032@bhelgaas-glaptop.roam.corp.google.com>
- <20171212110158.GA30601@e107981-ln.cambridge.arm.com>
- <20171212122252.GA29883@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 2/4] PCI: tegra: Reorder parameters in offset computations
+Date: Thu, 14 Dec 2017 14:45:43 +0100
+Message-ID: <20171214134545.11143-3-thierry.reding@gmail.com>
+References: <20171214134545.11143-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171212122252.GA29883@ulmo>
+In-Reply-To: <20171214134545.11143-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Saga <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 12, 2017 at 01:22:52PM +0100, Thierry Reding wrote:
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-[...]
+The current computation of the configuration space offset is slightly
+difficult to read because the fields aren't naturally ordered. This is
+no doubt done to put extended register and register fields together,
+but that's confusing because they are separate in the address mapping
+given in the comment above the computations.
 
-> > > > Hi Bjorn,
-> > > > 
-> > > > there's a bunch of PCI related patches for Tegra floating around on the
-> > > > lists. I'm wondering if you'd be okay if I pick those up into the Tegra
-> > > > tree after they've been reviewed and send you a pull request later on
-> > > > (say around v4.15-rc6). That would allow me to get things cooking in
-> > > > linux-next for a bit and get broader testing in addition to the
-> > > > flexibility to patch things up if they break.
-> > > 
-> > > Lorenzo will be merging the Tegra stuff, so this is more a question
-> > > for him.
-> > > 
-> > > Just to clarify, I think your questions is about putting those patches
-> > > in
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git#for-next.
-> > > If you put them there they will show up in linux-next, and then when
-> > > Lorenzo merges them, you'll have to coordinate so they don't get
-> > > merged into linux-next twice (once via the usual PCI tree route and
-> > > again via the Tegra tree).
-> > > 
-> > > If you wait until after they've been reviewed to put them into the
-> > > Tegra tree, I'm not sure what the gain is, because I assume Lorenzo
-> > > would merge them at about that same point.
-> > 
-> > I think that after the review, the Tegra patches that are considered for
-> > upstream they should go to -next via the PCI tree as any other platform PCI
-> > patches; the relevant patches need ACKs from the respective platform
-> > maintainer - I am getting to them as fast as I can.
-> 
-> Just to clarify: I wasn't suggesting that these patches are merged for
-> v4.16 via the Tegra tree, only that I carry them in the Tegra tree for a
-> little while so that we can get broader testing and fix things up in
-> case they break. My proposal was to then send a pull request for
-> inclusion in the PCI tree. linux-next can deal with this type of
-> scenario just fine because it will simply see the same branch twice and
-> ignore the second one.
-> 
-> If you prefer to merge directly via the PCI tree that works for me too.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/host/pci-tegra.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-We would end up merging the patches into -next at the same time, so there
-is not much point in queuing them via Tegra if they go via the PCI tree
-eventually; we should not add to -next patches that are not ready to
-be merged anyway.
-
-I need your help (ACKs) though to queue them up - I review the patches
-but I can neither test them nor get access to HW TRMs so for some of them
-there is not much I can do.
-
-Thanks,
-Lorenzo
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 8a07c6f9e1b0..26b734c84850 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -372,11 +372,11 @@ static inline u32 pads_readl(struct tegra_pcie *pcie, unsigned long offset)
+  * address (access to which generates correct config transaction) falls in
+  * this 4 KiB region.
+  */
+-static unsigned long tegra_pcie_conf_offset(unsigned char b, unsigned int devfn,
+-					    int where)
++static unsigned int tegra_pcie_conf_offset(u8 bus, unsigned int devfn,
++					   unsigned int where)
+ {
+-	return (b << 16) | (PCI_SLOT(devfn) << 11) | (PCI_FUNC(devfn) << 8) |
+-	       (((where & 0xf00) >> 8) << 24) | (where & 0xff);
++	return ((where & 0xf00) << 16) | (bus << 16) | (PCI_SLOT(devfn) << 11) |
++	       (PCI_FUNC(devfn) << 8) | (where & 0xff);
+ }
+ 
+ static int tegra_pcie_add_bus(struct pci_bus *bus)
+-- 
+2.15.1
