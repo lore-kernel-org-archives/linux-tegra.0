@@ -1,84 +1,128 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 12/12] PCI: tegra: Update flow control threshold in
- Tegra210
-Date: Thu, 14 Dec 2017 17:14:54 +0100
-Message-ID: <20171214161454.GN13733@ulmo>
-References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-13-git-send-email-mmaddireddy@nvidia.com>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 3/3] PCI: tegra: Enable ASPM-L1 capability
+ advertisement
+Date: Thu, 14 Dec 2017 22:01:57 +0530
+Message-ID: <595470ab-9627-8dd6-3008-10ca15040633@nvidia.com>
+References: <1510492674-12786-1-git-send-email-vidyas@nvidia.com>
+ <1510492674-12786-4-git-send-email-vidyas@nvidia.com>
+ <20171120213710.GE16362@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0aF+6pWUK5w8WdCh"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1509371843-22931-13-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20171120213710.GE16362-1RhO1Y9PlrlHTL0Zs8A6p5iNqAH0jzoTYJqu5kTmcBRl57MIdRCFDg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---0aF+6pWUK5w8WdCh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2017 at 07:27:23PM +0530, Manikanta Maddireddy wrote:
-> Recommended update FC threshold in Tegra210 is 0x60 for best performance
-> of x1 link. Setting this to 0x60 provides the best balance between number
-> of UpdateFC and read data sent over the link.
->=20
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V3:
-> * changed soc parameter name
-> V2:
-> * no change in this patch
->=20
->  drivers/pci/host/pci-tegra.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->=20
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index b29329226e3d..812d32cfdd0e 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -223,6 +223,7 @@
->  #define  RP_VEND_XP_OPPORTUNISTIC_ACK		(1 << 27)
->  #define  RP_VEND_XP_OPPORTUNISTIC_UPDATEFC	(1 << 28)
->  #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
-> +#define  RP_VEND_XP_UPDATE_FC_THRESHOLD_T210	(0x60 << 18)
-> =20
->  #define RP_VEND_CTL0	0xf44
->  #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
-> @@ -323,6 +324,7 @@ struct tegra_pcie_soc {
->  	bool update_clamp_threshold;
->  	bool raw_violation_fixup;
->  	bool program_deskew_time;
-> +	bool update_fc_threshold;
->  };
-
-I agree with Lorenzo here that the threshold value should be a separate
-field in struct tegra_pcie_soc.
-
-Thierry
-
---0aF+6pWUK5w8WdCh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloyo34ACgkQ3SOs138+
-s6Gf0g//Wq8k8pIUrDn3dj8VHfRQCOV1ZX1t08yrQ5X8DQLeeIYXl1wBTxnqHiSa
-duBkY+ewzKuN/HEp3ctN/at7Zq/H03pPLOKGmPgtcRSy/smOjgO+qVUel1RbDQwb
-jE1kkQqrevCfs9kz3ngdhsVwYBM2DjSKa/AjUIaVMN5Gg4ROgEf/xBT8jNtFzsjk
-SCjsZxGsRNKjnhSBzFd9mPdMM9RODPhW84ABq9X0tUsqglVw/7PdqwhGDItDSqct
-ifnnTNFFu5lKf4zdUBl9An5FXkCc4maHw+B/FpJSW+N1R7ufpiz3hqRu2pDNBvU4
-oxAEw+xnxnu/PM6HczqCuerLW39G3SBUufjyfMfSLfXPXtgKDYIF9oN2cBGEMpdR
-tPoLlcqIuO4w18Rr7vVb6T/Gff2HbyAT0lrRgMVUT0vVKgnXZQi8C7dNcxWq0uV9
-TpSOireA9uIG9seyzNJTlF+y+5Kk12Xl7V1+W3RgfWiJnWyc3liCNxZ8GGfOa5E+
-a4Ub1BWcNZ1xmeptO/BcZu9+rgZG4BpLJg0Vp4o+JjCGJQxWkjJCiBYIHnkNdnsf
-LR3xxWR3J7ZL7FVRYm8qvxvd1JihxA1f1zutzFwIgLaHMDbI+RG4qYHeq14L+OvB
-dmxdU4Bug5Wy3i99R59Oc2QcubzC+KWDsVbRqlqCGfWD8xv9WuU=
-=e5b3
------END PGP SIGNATURE-----
-
---0aF+6pWUK5w8WdCh--
+On Tuesday 21 November 2017 03:07 AM, Bjorn Helgaas wrote:
+> s/Enable ASPM-L1 capability advertisement/
+>   /Advertise ASPM L1 PM Substates support/
+This patch controls advertisement of ASPM-L1 capability (not ASPM-L1 
+Substates)
+>
+> On Sun, Nov 12, 2017 at 06:47:54PM +0530, Vidya Sagar wrote:
+>> Enables advertisement of ASPM-L1 support in capability
+>> registers of applicable Tegra chips
+> Actually, I'm a little confused about whether this has to do with ASPM
+> L1 support (which would be advertised in the Link Capabilities
+> register) or the ASPM L1 Substates support (which would be advertised
+> in the L1 PM Substates Capabilities register)?
+This is to do with ASPM L1 support (and not ASPM L1 Substates)
+But, since ASPM-L1SS needs ASPM-L1 anyway, I think it is ok to enable
+advertisement of ASPM-L1 in the last patch of the series.
+>
+>> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> V2:
+>> * no change in this patch
+>>
+>> V3:
+>> * no change in this patch
+>>
+>>   drivers/pci/host/pci-tegra.c | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+>> index 29ee4bb0b7c6..fb61202ee60f 100644
+>> --- a/drivers/pci/host/pci-tegra.c
+>> +++ b/drivers/pci/host/pci-tegra.c
+>> @@ -250,6 +250,9 @@
+>>   #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK	(0xff << 18)
+>>   #define  RP_VEND_XP_UPDATE_FC_THRESHOLD_T210	(0x60 << 18)
+>>   
+>> +#define RP_VEND_XP1	0xf04
+>> +#define RP_VEND_XP1_LINK_PVT_CTL_L1_ASPM_SUPPORT	BIT(21)
+>> +
+>>   #define RP_VEND_CTL0	0xf44
+>>   #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH_MASK	(0xf << 12)
+>>   #define  RP_VEND_CTL0_DSK_RST_PULSE_WIDTH	(0x9 << 12)
+>> @@ -351,6 +354,7 @@ struct tegra_pcie_soc {
+>>   	bool RAW_violation_fixup;
+>>   	bool program_deskew_time;
+>>   	bool updateFC_threshold;
+>> +	bool has_aspm_l1;
+>>   	bool has_aspm_l1ss;
+>>   	bool l1ss_rp_wake_fixup;
+>>   };
+>> @@ -2214,6 +2218,13 @@ static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
+>>   	value = readl(port->base + RP_VEND_CTL1);
+>>   	value |= RP_VEND_CTL1_ERPT;
+>>   	writel(value, port->base + RP_VEND_CTL1);
+>> +
+>> +	if (port->pcie->soc->has_aspm_l1) {
+>> +		/* Advertise ASPM-L1 state capability*/
+>> +		value = readl(port->base + RP_VEND_XP1);
+>> +		value |= RP_VEND_XP1_LINK_PVT_CTL_L1_ASPM_SUPPORT;
+>> +		writel(value, port->base + RP_VEND_XP1);
+>> +	}
+>>   }
+>>   
+>>   static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+>> @@ -2458,6 +2469,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+>>   	.RAW_violation_fixup = false,
+>>   	.program_deskew_time = false,
+>>   	.updateFC_threshold = false,
+>> +	.has_aspm_l1 = false,
+>>   	.has_aspm_l1ss = false,
+>>   	.l1ss_rp_wake_fixup = false,
+>>   };
+>> @@ -2481,6 +2493,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+>>   	.RAW_violation_fixup = false,
+>>   	.program_deskew_time = false,
+>>   	.updateFC_threshold = false,
+>> +	.has_aspm_l1 = true,
+>>   	.has_aspm_l1ss = false,
+>>   	.l1ss_rp_wake_fixup = false,
+>>   };
+>> @@ -2503,6 +2516,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+>>   	.RAW_violation_fixup = true,
+>>   	.program_deskew_time = false,
+>>   	.updateFC_threshold = false,
+>> +	.has_aspm_l1 = true,
+>>   	.has_aspm_l1ss = false,
+>>   	.l1ss_rp_wake_fixup = false,
+>>   };
+>> @@ -2533,6 +2547,7 @@ static const struct tegra_pcie_soc tegra210_pcie = {
+>>   	.RAW_violation_fixup = false,
+>>   	.program_deskew_time = true,
+>>   	.updateFC_threshold = true,
+>> +	.has_aspm_l1 = true,
+>>   	.has_aspm_l1ss = true,
+>>   	.l1ss_rp_wake_fixup = true,
+>>   };
+>> @@ -2556,6 +2571,7 @@ static const struct tegra_pcie_soc tegra186_pcie = {
+>>   	.RAW_violation_fixup = false,
+>>   	.program_deskew_time = false,
+>>   	.updateFC_threshold = false,
+>> +	.has_aspm_l1 = true,
+>>   	.has_aspm_l1ss = true,
+>>   	.l1ss_rp_wake_fixup = false,
+>>   };
+>> -- 
+>> 2.7.4
+>>
