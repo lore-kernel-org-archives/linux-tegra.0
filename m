@@ -1,42 +1,56 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drm/tegra: mark t186 display hub PM functions
- __maybe_unused
-Date: Fri, 15 Dec 2017 18:25:33 +0300
-Message-ID: <d515c872-ce78-488f-1530-916e0c7fd33c@gmail.com>
-References: <20171215125205.2969211-1-arnd@arndb.de>
- <20171215133340.GA353@ulmo>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH V4 3/7] PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for
+ Tegra PCIe
+Date: Fri, 15 Dec 2017 17:36:43 +0000
+Message-ID: <20171215173643.GA1050@red-moon>
+References: <1512723493-865-1-git-send-email-mmaddireddy@nvidia.com>
+ <1512723493-865-4-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171215133340.GA353@ulmo>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1512723493-865-4-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: cyndis-/1wQRMveznE@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 15.12.2017 16:33, Thierry Reding wrote:
-> On Fri, Dec 15, 2017 at 01:51:52PM +0100, Arnd Bergmann wrote:
->> The newly introduced driver has optional suspend/resume functions,
->> causing a warning when CONFIG_PM is disabled:
->>
->> drivers/gpu/drm/tegra/hub.c:749:12: error: 'tegra_display_hub_resume' defined but not used [-Werror=unused-function]
->> drivers/gpu/drm/tegra/hub.c:733:12: error: 'tegra_display_hub_suspend' defined but not used [-Werror=unused-function]
->>
->> This marks them __maybe_unused to shut up the warnings.
->>
->> Fixes: c4755fb9064f ("drm/tegra: Add Tegra186 display hub support")
->> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
->> ---
->>  drivers/gpu/drm/tegra/hub.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Dec 08, 2017 at 02:28:09PM +0530, Manikanta Maddireddy wrote:
+> Primary, secondary and subordinate default bus numbers are 0 in Tegra and
+> it is expecting SW to program these numbers in configration space.
 > 
-> We had touched on this topic in a different thread. The Tegra DRM driver
-> currently relies on runtime PM to work properly. I don't see a reason to
-> not make that official by adding a select PM to menuconfig ARCH_TEGRA on
-> 32-bit ARM just like we already do on 64-bit ARM.
+> pci_scan_bridge_extend() function programs these numbers in configuration
+> space if secondary & subordinate bus numbers are 0 or PCI_REASSIGN_ALL_BUS
+> flag is set. Since secondary & subordinate default bus numbers are 0,
+> PCI_REASSIGN_ALL_BUS flag can be removed for Tegra PCIe.
+> 
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> V3:
+> * new patch in V3
+> V4:
+> * no change in this patch
+> 
+>  drivers/pci/host/pci-tegra.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index a549c5899e26..0d91f1a3a6b4 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -2604,7 +2604,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>  
+>  	tegra_pcie_enable_ports(pcie);
+>  
+> -	pci_add_flags(PCI_REASSIGN_ALL_BUS);
 
-Since you've repeated the third time that you 'don't see a reason', I'll take it
-as NAK for my patch that made drm/tegra to work with the disabled PM and drop
-it. Next time please state it clearly if you oppose to something strongly. Thanks.
+This looks obviously OK to me but I need Thierry's ACK to queue it.
+
+Lorenzo
+
+>  	host->busnr = pcie->busn.start;
+>  	host->dev.parent = &pdev->dev;
+>  	host->ops = &tegra_pcie_ops;
+> -- 
+> 2.1.4
+> 
