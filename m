@@ -1,56 +1,104 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V4 3/7] PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for
- Tegra PCIe
-Date: Fri, 15 Dec 2017 17:36:43 +0000
-Message-ID: <20171215173643.GA1050@red-moon>
-References: <1512723493-865-1-git-send-email-mmaddireddy@nvidia.com>
- <1512723493-865-4-git-send-email-mmaddireddy@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH v1 2/2] drm/tegra: Support disabled CONFIG_PM
+Date: Fri, 15 Dec 2017 21:25:32 +0100
+Message-ID: <1513369532.16053.6.camel@lynxeye.de>
+References: <85902b42264b094cbf7cf30930f8c0bbccdca1b7.1512947732.git.digetx@gmail.com>
+         <02bccd8c39c0e7e9d3c6733e238e291e8297c830.1512947732.git.digetx@gmail.com>
+         <20171211101343.GG10671@ulmo>
+         <f04f7268-bcf8-feab-bded-88a166b3b474@gmail.com>
+         <20171211142727.GA19922@ulmo>
+         <5c0435f4-88ae-282c-f096-b8dd7226ab0e@gmail.com>
+         <1513287684.16053.4.camel@lynxeye.de>
+         <f20a67a1-92c6-2dff-aa60-958801e53c06@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1512723493-865-4-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <f20a67a1-92c6-2dff-aa60-958801e53c06-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: cyndis-/1wQRMveznE@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 08, 2017 at 02:28:09PM +0530, Manikanta Maddireddy wrote:
-> Primary, secondary and subordinate default bus numbers are 0 in Tegra and
-> it is expecting SW to program these numbers in configration space.
+Am Freitag, den 15.12.2017, 01:45 +0300 schrieb Dmitry Osipenko:
+> On 15.12.2017 00:41, Lucas Stach wrote:
+> > Am Montag, den 11.12.2017, 18:26 +0300 schrieb Dmitry Osipenko:
+> > > On 11.12.2017 17:27, Thierry Reding wrote:
+> > > > On Mon, Dec 11, 2017 at 04:53:56PM +0300, Dmitry Osipenko
+> > > > wrote:
+> > > > > On 11.12.2017 13:13, Thierry Reding wrote:
+> > > > > > On Mon, Dec 11, 2017 at 02:19:44AM +0300, Dmitry Osipenko
+> > > > > > wrote:
+> > > > > > > Add manual HW power management to drivers probe/remove in
+> > > > > > > order to
+> > > > > > > not fail in a case of runtime power management being
+> > > > > > > disabled
+> > > > > > > in kernel
+> > > > > > > config.
+> > > > > > > 
+> > > > > > > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > > > > > > ---
+> > > > > > >  drivers/gpu/drm/tegra/dc.c   | 164
+> > > > > > > +++++++++++++++++++++++++++----------------
+> > > > > > >  drivers/gpu/drm/tegra/dsi.c  | 138
+> > > > > > > +++++++++++++++++++++--
+> > > > > > > -------------
+> > > > > > >  drivers/gpu/drm/tegra/hdmi.c |  90 ++++++++++++++++-----
+> > > > > > > ---
+> > > > > > >  drivers/gpu/drm/tegra/sor.c  | 103 +++++++++++++++++--
+> > > > > > > ----
+> > > > > > > ----
+> > > > > > >  4 files changed, 310 insertions(+), 185 deletions(-)
+> > > > > > 
+> > > > > > I think that's the wrong way around. We unconditionally
+> > > > > > select
+> > > > > > PM on
+> > > > > > 64-bit ARM already, and I think we should do the same on
+> > > > > > 32-bit 
+> > > > > > ARM.
+> > > > > > There's really no excuse not to enable runtime PM these
+> > > > > > days.
+> > > > > 
+> > > > > What is the rational behind enabling PM unconditionally? It
+> > > > > is
+> > > > > actually a very
+> > > > > useful debug feature when there is something wrong with the
+> > > > > PM.
+> > > > > It looks like
+> > > > > Tegra DRM driver is the only driver on Tegra that doesn't
+> > > > > work
+> > > > > properly with PM
+> > > > > being disabled. Please, let's just fix it.
+> > > > 
+> > > > What's useful about disabling PM? The problem with allowing !PM
+> > > > is
+> > > > that
+> > > > it adds one more combination that needs to be build- and
+> > > > runtime
+> > > > tested.
+> > > 
+> > > As I already stated, disabling PM is very useful for debugging
+> > > when
+> > > system hangs
+> > > unexpectedly. I found it very helpful several times.
+> > 
+> > This assumes that the bootloader/firmware left the power domains
+> > powered up. Without PM_GENERIC_DOMAINS, which depends on CONFIG_PM
+> > the
+> > kernel has no means to control the state of the power domains.
+> > Probe
+> > deferral based on the power domain will also not work, so driver
+> > may
+> > probe and try to access power-gated devices, leading to system
+> > hangs in
+> > the common case.
 > 
-> pci_scan_bridge_extend() function programs these numbers in configuration
-> space if secondary & subordinate bus numbers are 0 or PCI_REASSIGN_ALL_BUS
-> flag is set. Since secondary & subordinate default bus numbers are 0,
-> PCI_REASSIGN_ALL_BUS flag can be removed for Tegra PCIe.
-> 
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V3:
-> * new patch in V3
-> V4:
-> * no change in this patch
-> 
->  drivers/pci/host/pci-tegra.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index a549c5899e26..0d91f1a3a6b4 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -2604,7 +2604,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->  
->  	tegra_pcie_enable_ports(pcie);
->  
-> -	pci_add_flags(PCI_REASSIGN_ALL_BUS);
+> Pre-186 Tegra's do not use generic PM domains, but a custom API.
+> Meanwhile T186
+> always has CONFIG_PM enabled.
 
-This looks obviously OK to me but I need Thierry's ACK to queue it.
+This is incorrect since a38045121bf4 (soc/tegra: pmc: Add generic PM
+domain support), i.e. kernel 4.7.
 
-Lorenzo
-
->  	host->busnr = pcie->busn.start;
->  	host->dev.parent = &pdev->dev;
->  	host->ops = &tegra_pcie_ops;
-> -- 
-> 2.1.4
-> 
+Regards,
+Lucas
