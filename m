@@ -1,63 +1,70 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH V3 3/3] PCI: tegra: Enable ASPM-L1 capability
- advertisement
-Date: Thu, 14 Dec 2017 17:46:16 -0600
-Message-ID: <20171214234616.GQ30595@bhelgaas-glaptop.roam.corp.google.com>
-References: <1510492674-12786-1-git-send-email-vidyas@nvidia.com>
- <1510492674-12786-4-git-send-email-vidyas@nvidia.com>
- <20171120213710.GE16362@bhelgaas-glaptop.roam.corp.google.com>
- <595470ab-9627-8dd6-3008-10ca15040633@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 2/2] usb: tegra: Move UTMI-pads reset from ehci-tegra
+ to tegra-phy
+Date: Fri, 15 Dec 2017 03:33:05 +0300
+Message-ID: <e6d9f648-4082-44cc-d03f-7bb02962da21@gmail.com>
+References: <ddf583790b551999ef063107be12a2d85e7b6a86.1512946782.git.digetx@gmail.com>
+ <853ce44924e396b907332d4f3ad4ae70eae9bbcc.1512946782.git.digetx@gmail.com>
+ <20171211102523.GH10671@ulmo>
+ <886b6cfe-1691-508b-335b-6f015747dd40@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <595470ab-9627-8dd6-3008-10ca15040633@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: treding@nvidia.com, bhelgaas@google.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, kthota@nvidia.com, swarren@nvidia.com, mmaddireddy@nvidia.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <886b6cfe-1691-508b-335b-6f015747dd40-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 14, 2017 at 10:01:57PM +0530, Vidya Sagar wrote:
-> On Tuesday 21 November 2017 03:07 AM, Bjorn Helgaas wrote:
-> >s/Enable ASPM-L1 capability advertisement/
-> >  /Advertise ASPM L1 PM Substates support/
-> This patch controls advertisement of ASPM-L1 capability (not ASPM-L1
-> Substates)
-> >
-> >On Sun, Nov 12, 2017 at 06:47:54PM +0530, Vidya Sagar wrote:
-> >>Enables advertisement of ASPM-L1 support in capability
-> >>registers of applicable Tegra chips
-> >Actually, I'm a little confused about whether this has to do with ASPM
-> >L1 support (which would be advertised in the Link Capabilities
-> >register) or the ASPM L1 Substates support (which would be advertised
-> >in the L1 PM Substates Capabilities register)?
-> This is to do with ASPM L1 support (and not ASPM L1 Substates)
-> But, since ASPM-L1SS needs ASPM-L1 anyway, I think it is ok to enable
-> advertisement of ASPM-L1 in the last patch of the series.
+On 11.12.2017 16:31, Dmitry Osipenko wrote:
+> On 11.12.2017 13:25, Thierry Reding wrote:
+>> On Mon, Dec 11, 2017 at 02:07:38AM +0300, Dmitry Osipenko wrote:
+>>> UTMI pads are shared by USB controllers and reset of UTMI pads is shared
+>>> with the reset of USB1 controller. Currently reset of UTMI pads is done by
+>>> the EHCI driver and ChipIdea UDC works because EHCI driver always happen
+>>> to be probed first. Move reset controls from ehci-tegra to tegra-phy in
+>>> order to resolve the problem.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> ---
+>>>  drivers/usb/host/ehci-tegra.c     | 87 ++++++++++++++++++---------------------
+>>>  drivers/usb/phy/phy-tegra-usb.c   | 46 +++++++++++++++++++++
+>>>  include/linux/usb/tegra_usb_phy.h |  2 +
+>>>  3 files changed, 87 insertions(+), 48 deletions(-)
+>>
+>> I don't think we can do this. For one I don't think shared resets are
+>> going to work here because you really won't ever be able to reset after
+>> two devices have requested the same reset.
+> 
+> Ah, indeed. Originally I had the reset being done in the probe, but then changed
+> it in the last minute without proper testing. Good catch! I'll revert back patch
+> to the origin.
+> 
+>  Second, utmip_pad_close()
+>> could be called at any point and it will have the side-effect of either
+>> not doing a reset at all (because it is shared) or resetting the USBD
+>> controller at the same time.
+> 
+> utmip_pad_close() is only called on tegra-phy driver removal, so it is
+> absolutely fine.
+> 
+>> We've been over this code a great deal over the years. I'd love it to be
+>> simpler, but every time we tried to simplify it, things broke.
+> 
+> Well, the current code is already broken quite severely because now we have two
+> users of the tegra-phy: ehci-tegra and chipidea-tegra. Things brake if host
+> driver is loaded after the UDC because host would reset the UDC. And also pads
+> won't be reset if ehci-tegra isn't loaded at all.
+> 
+> Shared reset seems to be a perfect solution for us and of course it requires
+> extra carefulness.
 
-It makes this part of the patch look funny:
+BTW, I think that the current code never did anything useful, because it resets
+utmi-pads without enabling pads clk. So if non-USB1 controller gets probed
+first, then it will enable non-USB1 clk and reset the pads, while it probably
+should reset pads with USB1 clk being enabled.
 
-> >>@@ -2458,6 +2469,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
-> >>  	.RAW_violation_fixup = false,
-> >>  	.program_deskew_time = false,
-> >>  	.updateFC_threshold = false,
-
-> >>+	.has_aspm_l1 = false,
-> >>  	.has_aspm_l1ss = false,
-> >>  	.l1ss_rp_wake_fixup = false,
-> >>  };
-
-because in PCIe terms, you have to have ASPM before you can have L1SS.
-But the code had .has_aspm_l1ss before you add .has_aspm_l1.
-
-It would make more sense if you could:
-
-  1) make ASPM work, *then*
-  2) incrementally add ASPM L1SS
-
-But maybe that's not practical, e.g., maybe you can't make the
-hardware hide the L1SS capability the way you can make it hide ASPM.
-
-It's not that big a deal to me either way.
-
-Bjorn
+Although, I'm not familiar with the actual HW and it could be that pads clk
+isn't needed for the proper reset.
