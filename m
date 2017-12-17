@@ -1,57 +1,228 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2] usb: phy: tegra: Increase PHY clock stabilization timeout
-Date: Sun, 17 Dec 2017 20:02:39 +0300
-Message-ID: <11fbb780b9478b3b379b6e01c7eb5462cfbedf64.1513530136.git.digetx@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 1/4] usb: phy: tegra: Cleanup error messages
+Date: Sun, 17 Dec 2017 20:07:03 +0300
+Message-ID: <36f2956bd89de80d798cdf7317cc58a6a8c0fa36.1513528011.git.digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This fixes "utmi_phy_clk_enable: timeout waiting for phy to stabilize"
-error message.
+Tegra's PHY driver has a mix of pr_err() and dev_err(), let's switch to
+dev_err() and use common errors message formatting across the driver for
+consistency.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
 
 Change log:
-v2:	Increased delay for the poll retry from 1us to 2000ms, thanks to
-	Thierry Reding for the suggestion.
+v2:	Removed function names as per Thierry's suggestion.
 
- drivers/usb/phy/phy-tegra-usb.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c | 69 ++++++++++++++++++++++++-----------------
+ 1 file changed, 41 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index f668bfb708d3..0e8d23e51732 100644
+index 0e8d23e51732..e46219e7fa93 100644
 --- a/drivers/usb/phy/phy-tegra-usb.c
 +++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -16,7 +16,7 @@
- #include <linux/export.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
--#include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/gpio.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -305,14 +305,10 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
+@@ -236,10 +236,14 @@ static void set_phcd(struct tegra_usb_phy *phy, bool enable)
  
- static int utmi_wait_register(void __iomem *reg, u32 mask, u32 result)
+ static int utmip_pad_open(struct tegra_usb_phy *phy)
  {
--	unsigned long timeout = 2000;
--	do {
--		if ((readl(reg) & mask) == result)
--			return 0;
--		udelay(1);
--		timeout--;
--	} while (timeout);
--	return -1;
-+	u32 tmp;
++	int err;
 +
-+	return readl_poll_timeout(reg, tmp, (tmp & mask) == result,
-+				  2000, 6000);
+ 	phy->pad_clk = devm_clk_get(phy->u_phy.dev, "utmi-pads");
+ 	if (IS_ERR(phy->pad_clk)) {
+-		pr_err("%s: can't get utmip pad clock\n", __func__);
+-		return PTR_ERR(phy->pad_clk);
++		err = PTR_ERR(phy->pad_clk);
++		dev_err(phy->u_phy.dev,
++			"Failed to get UTMIP pad clock: %d\n", err);
++		return err;
+ 	}
+ 
+ 	return 0;
+@@ -282,7 +286,7 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
+ 	void __iomem *base = phy->pad_regs;
+ 
+ 	if (!utmip_pad_count) {
+-		pr_err("%s: utmip pad already powered off\n", __func__);
++		dev_err(phy->u_phy.dev, "UTMIP pad already powered off\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -338,7 +342,8 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
+ 		set_phcd(phy, true);
+ 
+ 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) < 0)
+-		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
++		dev_err(phy->u_phy.dev,
++			"Timeout waiting for PHY to stabilize on disable\n");
  }
  
- static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
+ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
+@@ -370,7 +375,8 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
+ 
+ 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
+ 						     USB_PHY_CLK_VALID))
+-		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
++		dev_err(phy->u_phy.dev,
++			"Timeout waiting for PHY to stabilize on enable\n");
+ }
+ 
+ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
+@@ -617,15 +623,15 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
+ 
+ 	ret = gpio_direction_output(phy->reset_gpio, 0);
+ 	if (ret < 0) {
+-		dev_err(phy->u_phy.dev, "gpio %d not set to 0\n",
+-			phy->reset_gpio);
++		dev_err(phy->u_phy.dev, "GPIO %d not set to 0: %d\n",
++			phy->reset_gpio, ret);
+ 		return ret;
+ 	}
+ 	msleep(5);
+ 	ret = gpio_direction_output(phy->reset_gpio, 1);
+ 	if (ret < 0) {
+-		dev_err(phy->u_phy.dev, "gpio %d not set to 1\n",
+-			phy->reset_gpio);
++		dev_err(phy->u_phy.dev, "GPIO %d not set to 1: %d\n",
++			phy->reset_gpio, ret);
+ 		return ret;
+ 	}
+ 
+@@ -661,13 +667,13 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
+ 	/* Fix VbusInvalid due to floating VBUS */
+ 	ret = usb_phy_io_write(phy->ulpi, 0x40, 0x08);
+ 	if (ret) {
+-		pr_err("%s: ulpi write failed\n", __func__);
++		dev_err(phy->u_phy.dev, "ULPI write failed: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	ret = usb_phy_io_write(phy->ulpi, 0x80, 0x0B);
+ 	if (ret) {
+-		pr_err("%s: ulpi write failed\n", __func__);
++		dev_err(phy->u_phy.dev, "ULPI write failed: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -728,28 +734,30 @@ static int ulpi_open(struct tegra_usb_phy *phy)
+ 
+ 	phy->clk = devm_clk_get(phy->u_phy.dev, "ulpi-link");
+ 	if (IS_ERR(phy->clk)) {
+-		pr_err("%s: can't get ulpi clock\n", __func__);
+-		return PTR_ERR(phy->clk);
++		err = PTR_ERR(phy->clk);
++		dev_err(phy->u_phy.dev, "Failed to get ULPI clock: %d\n", err);
++		return err;
+ 	}
+ 
+ 	err = devm_gpio_request(phy->u_phy.dev, phy->reset_gpio,
+ 		"ulpi_phy_reset_b");
+ 	if (err < 0) {
+-		dev_err(phy->u_phy.dev, "request failed for gpio: %d\n",
+-		       phy->reset_gpio);
++		dev_err(phy->u_phy.dev, "Request failed for GPIO %d: %d\n",
++			phy->reset_gpio, err);
+ 		return err;
+ 	}
+ 
+ 	err = gpio_direction_output(phy->reset_gpio, 0);
+ 	if (err < 0) {
+-		dev_err(phy->u_phy.dev, "gpio %d direction not set to output\n",
+-		       phy->reset_gpio);
++		dev_err(phy->u_phy.dev,
++			"GPIO %d direction not set to output: %d\n",
++			phy->reset_gpio, err);
+ 		return err;
+ 	}
+ 
+ 	phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
+ 	if (!phy->ulpi) {
+-		dev_err(phy->u_phy.dev, "otg_ulpi_create returned NULL\n");
++		dev_err(phy->u_phy.dev, "Failed to create ULPI OTG\n");
+ 		err = -ENOMEM;
+ 		return err;
+ 	}
+@@ -766,8 +774,10 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
+ 
+ 	phy->pll_u = devm_clk_get(phy->u_phy.dev, "pll_u");
+ 	if (IS_ERR(phy->pll_u)) {
+-		pr_err("Can't get pll_u clock\n");
+-		return PTR_ERR(phy->pll_u);
++		err = PTR_ERR(phy->pll_u);
++		dev_err(phy->u_phy.dev,
++			"Failed to get pll_u clock: %d\n", err);
++		return err;
+ 	}
+ 
+ 	err = clk_prepare_enable(phy->pll_u);
+@@ -782,7 +792,8 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
+ 		}
+ 	}
+ 	if (!phy->freq) {
+-		pr_err("invalid pll_u parent rate %ld\n", parent_rate);
++		dev_err(phy->u_phy.dev, "Invalid pll_u parent rate %ld\n",
++			parent_rate);
+ 		err = -EINVAL;
+ 		goto fail;
+ 	}
+@@ -791,7 +802,7 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
+ 		err = regulator_enable(phy->vbus);
+ 		if (err) {
+ 			dev_err(phy->u_phy.dev,
+-				"failed to enable usb vbus regulator: %d\n",
++				"Failed to enable USB VBUS regulator: %d\n",
+ 				err);
+ 			goto fail;
+ 		}
+@@ -855,7 +866,8 @@ static int read_utmi_param(struct platform_device *pdev, const char *param,
+ 	int err = of_property_read_u32(pdev->dev.of_node, param, &value);
+ 	*dest = (u8)value;
+ 	if (err < 0)
+-		dev_err(&pdev->dev, "Failed to read USB UTMI parameter %s: %d\n",
++		dev_err(&pdev->dev,
++			"Failed to read USB UTMI parameter %s: %d\n",
+ 			param, err);
+ 	return err;
+ }
+@@ -871,14 +883,14 @@ static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	if (!res) {
+-		dev_err(&pdev->dev, "Failed to get UTMI Pad regs\n");
++		dev_err(&pdev->dev, "Failed to get UTMI pad regs\n");
+ 		return  -ENXIO;
+ 	}
+ 
+ 	tegra_phy->pad_regs = devm_ioremap(&pdev->dev, res->start,
+ 		resource_size(res));
+ 	if (!tegra_phy->pad_regs) {
+-		dev_err(&pdev->dev, "Failed to remap UTMI Pad regs\n");
++		dev_err(&pdev->dev, "Failed to remap UTMI pad regs\n");
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -1020,15 +1032,16 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 		tegra_phy->reset_gpio =
+ 			of_get_named_gpio(np, "nvidia,phy-reset-gpio", 0);
+ 		if (!gpio_is_valid(tegra_phy->reset_gpio)) {
+-			dev_err(&pdev->dev, "invalid gpio: %d\n",
+-				tegra_phy->reset_gpio);
++			dev_err(&pdev->dev,
++				"Invalid GPIO: %d\n", tegra_phy->reset_gpio);
+ 			return tegra_phy->reset_gpio;
+ 		}
+ 		tegra_phy->config = NULL;
+ 		break;
+ 
+ 	default:
+-		dev_err(&pdev->dev, "phy_type is invalid or unsupported\n");
++		dev_err(&pdev->dev, "phy_type %u is invalid or unsupported\n",
++			phy_type);
+ 		return -EINVAL;
+ 	}
+ 
 -- 
 2.15.1
