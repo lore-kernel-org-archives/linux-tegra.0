@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2] drm/tegra: dc: Link DC1 to DC0 on Tegra20
-Date: Sun, 17 Dec 2017 20:25:46 +0300
-Message-ID: <e116695832ce1e4024424da1550a9c086aeb6788.1513530826.git.digetx@gmail.com>
+Subject: [PATCH v1] drm/tegra: Trade overlay plane for cursor on older Tegra's
+Date: Sun, 17 Dec 2017 20:25:45 +0300
+Message-ID: <73fc5a5b95e6829e895dbd4ed97462451d0c0338.1513530923.git.digetx@gmail.com>
 References: <8a87083279bb793dd21a0c621bcd002a851495e5.1513530934.git.digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <8a87083279bb793dd21a0c621bcd002a851495e5.1513530934.git.digetx@gmail.com>
@@ -10,197 +10,158 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-HW reset isn't actually broken on Tegra20, but there is a dependency on
-first display controller to be taken out of reset for the second to be
-enabled successfully.
+Older Tegra's do not support RGBA format for the cursor, but instead
+overlay plane could be used for it. Since there is no much use for the
+overlays on a regular desktop and HW-accelerated cursor is much nicer
+than the jerky SW cursor, let's trade one overlay plane for the cursor.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
-
-Change log:
-v2:	Got rid of global variable and now use driver_find_device() instead.
-
- drivers/gpu/drm/tegra/dc.c | 80 +++++++++++++++++++++++++++++-----------------
- drivers/gpu/drm/tegra/dc.h |  2 +-
- 2 files changed, 51 insertions(+), 31 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 52 +++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 37 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index e963e40d8a25..be84c36ad81f 100644
+index 7e58143f4145..3282aa911351 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1842,7 +1842,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
- 	.supports_block_linear = false,
- 	.pitch_align = 8,
- 	.has_powergate = false,
--	.broken_reset = true,
-+	.coupled_pm = true,
- 	.has_nvdisplay = false,
- 	.num_primary_formats = ARRAY_SIZE(tegra20_primary_formats),
- 	.primary_formats = tegra20_primary_formats,
-@@ -1857,7 +1857,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
- 	.supports_block_linear = false,
- 	.pitch_align = 8,
- 	.has_powergate = false,
--	.broken_reset = false,
-+	.coupled_pm = false,
- 	.has_nvdisplay = false,
- 	.num_primary_formats = ARRAY_SIZE(tegra20_primary_formats),
- 	.primary_formats = tegra20_primary_formats,
-@@ -1872,7 +1872,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
- 	.supports_block_linear = false,
- 	.pitch_align = 64,
- 	.has_powergate = true,
--	.broken_reset = false,
-+	.coupled_pm = false,
- 	.has_nvdisplay = false,
- 	.num_primary_formats = ARRAY_SIZE(tegra114_primary_formats),
- 	.primary_formats = tegra114_primary_formats,
-@@ -1887,7 +1887,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
- 	.supports_block_linear = true,
- 	.pitch_align = 64,
- 	.has_powergate = true,
--	.broken_reset = false,
-+	.coupled_pm = false,
- 	.has_nvdisplay = false,
- 	.num_primary_formats = ARRAY_SIZE(tegra124_primary_formats),
- 	.primary_formats = tegra114_primary_formats,
-@@ -1902,7 +1902,7 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
- 	.supports_block_linear = true,
- 	.pitch_align = 64,
- 	.has_powergate = true,
--	.broken_reset = false,
-+	.coupled_pm = false,
- 	.has_nvdisplay = false,
- 	.num_primary_formats = ARRAY_SIZE(tegra114_primary_formats),
- 	.primary_formats = tegra114_primary_formats,
-@@ -1951,7 +1951,7 @@ static const struct tegra_dc_soc_info tegra186_dc_soc_info = {
- 	.supports_block_linear = true,
- 	.pitch_align = 64,
- 	.has_powergate = false,
--	.broken_reset = false,
-+	.coupled_pm = false,
- 	.has_nvdisplay = true,
- 	.wgrps = tegra186_dc_wgrps,
- 	.num_wgrps = ARRAY_SIZE(tegra186_dc_wgrps),
-@@ -2019,6 +2019,11 @@ static int tegra_dc_parse_dt(struct tegra_dc *dc)
- 	return 0;
+@@ -125,9 +125,10 @@ static inline u32 compute_initial_dda(unsigned int in)
+ 	return dfixed_frac(inf);
  }
  
-+static int tegra_dc_match(struct device *dev, void *data)
-+{
-+	return of_device_is_compatible(dev->of_node, "nvidia,tegra20-dc");
-+}
-+
- static int tegra_dc_probe(struct platform_device *pdev)
+-static void tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
++static void tegra_dc_setup_window(struct tegra_dc *dc, struct drm_plane *plane,
+ 				  const struct tegra_dc_window *window)
  {
- 	struct resource *regs;
-@@ -2039,6 +2044,28 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		return err;
++	struct tegra_plane *p = to_tegra_plane(plane);
+ 	unsigned h_offset, v_offset, h_size, v_size, h_dda, v_dda, bpp;
+ 	unsigned long value, flags;
+ 	bool yuv, planar;
+@@ -144,7 +145,7 @@ static void tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
  
-+	/*
-+	 * On Tegra20 DC1 requires DC0 to be taken out of reset in order to
-+	 * be enabled, otherwise CPU hangs on writing to CMD_DISPLAY_COMMAND /
-+	 * POWER_CONTROL registers during CRTC enabling.
-+	 */
-+	if (dc->pipe == 1 && dc->soc->coupled_pm) {
-+		struct device_link *link;
-+		struct device *dc0_dev;
-+
-+		dc0_dev = driver_find_device(pdev->dev.driver, NULL, NULL,
-+					     tegra_dc_match);
-+		if (!dc0_dev)
-+			return -EPROBE_DEFER;
-+
-+		link = device_link_add(&pdev->dev, dc0_dev,
-+				       DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE);
-+		if (!link) {
-+			dev_err(&pdev->dev, "failed to link to DC0\n");
-+			return -EINVAL;
+ 	spin_lock_irqsave(&dc->lock, flags);
+ 
+-	value = WINDOW_A_SELECT << index;
++	value = WINDOW_A_SELECT << p->index;
+ 	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
+ 
+ 	tegra_dc_writel(dc, window->format, DC_WIN_COLOR_DEPTH);
+@@ -275,23 +276,29 @@ static void tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
+ 	tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_NOKEY);
+ 	tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_1WIN);
+ 
+-	switch (index) {
++	switch (p->index) {
+ 	case 0:
+ 		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_2WIN_X);
+-		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_2WIN_Y);
++		tegra_dc_writel(dc, 0x000008, DC_WIN_BLEND_2WIN_Y);
+ 		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_3WIN_XY);
+ 		break;
+ 
+ 	case 1:
+ 		tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_2WIN_X);
+ 		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_2WIN_Y);
+-		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_3WIN_XY);
++		tegra_dc_writel(dc, 0x000008, DC_WIN_BLEND_3WIN_XY);
+ 		break;
+ 
+ 	case 2:
+-		tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_2WIN_X);
+-		tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_2WIN_Y);
+-		tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_3WIN_XY);
++		if (plane->type == DRM_PLANE_TYPE_CURSOR) {
++			tegra_dc_writel(dc, 0xffff04, DC_WIN_BLEND_2WIN_X);
++			tegra_dc_writel(dc, 0xffff04, DC_WIN_BLEND_2WIN_Y);
++			tegra_dc_writel(dc, 0xffff04, DC_WIN_BLEND_3WIN_XY);
++		} else {
++			tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_2WIN_X);
++			tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_2WIN_Y);
++			tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_3WIN_XY);
 +		}
-+	}
-+
- 	dc->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(dc->clk)) {
- 		dev_err(&pdev->dev, "failed to get clock\n");
-@@ -2052,21 +2079,19 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		break;
  	}
  
- 	/* assert reset and disable clock */
--	if (!dc->soc->broken_reset) {
--		err = clk_prepare_enable(dc->clk);
--		if (err < 0)
--			return err;
-+	err = clk_prepare_enable(dc->clk);
-+	if (err < 0)
-+		return err;
+@@ -438,7 +445,6 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 	struct tegra_plane_state *state = to_tegra_plane_state(plane->state);
+ 	struct tegra_dc *dc = to_tegra_dc(plane->state->crtc);
+ 	struct drm_framebuffer *fb = plane->state->fb;
+-	struct tegra_plane *p = to_tegra_plane(plane);
+ 	struct tegra_dc_window window;
+ 	unsigned int i;
  
--		usleep_range(2000, 4000);
-+	usleep_range(2000, 4000);
+@@ -480,7 +486,7 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 			window.stride[i] = fb->pitches[i];
+ 	}
  
--		err = reset_control_assert(dc->rst);
--		if (err < 0)
--			return err;
-+	err = reset_control_assert(dc->rst);
-+	if (err < 0)
-+		return err;
+-	tegra_dc_setup_window(dc, p->index, &window);
++	tegra_dc_setup_window(dc, plane, &window);
+ }
  
--		usleep_range(2000, 4000);
-+	usleep_range(2000, 4000);
+ static const struct drm_plane_helper_funcs tegra_plane_helper_funcs = {
+@@ -775,9 +781,11 @@ static const u32 tegra124_overlay_formats[] = {
  
--		clk_disable_unprepare(dc->clk);
--	}
-+	clk_disable_unprepare(dc->clk);
- 
- 	if (dc->soc->has_powergate) {
- 		if (dc->pipe == 0)
-@@ -2140,12 +2165,10 @@ static int tegra_dc_suspend(struct device *dev)
- 	struct tegra_dc *dc = dev_get_drvdata(dev);
+ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
+ 						       struct tegra_dc *dc,
+-						       unsigned int index)
++						       unsigned int index,
++						       bool cursor)
+ {
+ 	struct tegra_plane *plane;
++	enum drm_plane_type type;
+ 	unsigned int num_formats;
+ 	const u32 *formats;
  	int err;
+@@ -793,11 +801,14 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
  
--	if (!dc->soc->broken_reset) {
--		err = reset_control_assert(dc->rst);
--		if (err < 0) {
--			dev_err(dev, "failed to assert reset: %d\n", err);
--			return err;
--		}
-+	err = reset_control_assert(dc->rst);
-+	if (err < 0) {
-+		dev_err(dev, "failed to assert reset: %d\n", err);
-+		return err;
+ 	num_formats = dc->soc->num_overlay_formats;
+ 	formats = dc->soc->overlay_formats;
++	type = DRM_PLANE_TYPE_OVERLAY;
++
++	if (cursor)
++		type = DRM_PLANE_TYPE_CURSOR;
+ 
+ 	err = drm_universal_plane_init(drm, &plane->base, 1 << dc->pipe,
+ 				       &tegra_plane_funcs, formats,
+-				       num_formats, NULL,
+-				       DRM_PLANE_TYPE_OVERLAY, NULL);
++				       num_formats, NULL, type, NULL);
+ 	if (err < 0) {
+ 		kfree(plane);
+ 		return ERR_PTR(err);
+@@ -846,14 +857,18 @@ static struct drm_plane *tegra_dc_add_planes(struct drm_device *drm,
+ 					     struct tegra_dc *dc)
+ {
+ 	struct drm_plane *plane, *primary;
++	unsigned int planes_num = 2;
+ 	unsigned int i;
+ 
+ 	primary = tegra_primary_plane_create(drm, dc);
+ 	if (IS_ERR(primary))
+ 		return primary;
+ 
+-	for (i = 0; i < 2; i++) {
+-		plane = tegra_dc_overlay_plane_create(drm, dc, 1 + i);
++	if (!dc->soc->supports_cursor)
++		planes_num--;
++
++	for (i = 0; i < planes_num; i++) {
++		plane = tegra_dc_overlay_plane_create(drm, dc, 1 + i, false);
+ 		if (IS_ERR(plane)) {
+ 			/* XXX tegra_plane_destroy() */
+ 			drm_plane_cleanup(primary);
+@@ -1770,6 +1785,13 @@ static int tegra_dc_init(struct host1x_client *client)
+ 			err = PTR_ERR(cursor);
+ 			goto cleanup;
+ 		}
++	} else {
++		/* trade overlay for RGBA cursor plane on older Tegra's */
++		cursor = tegra_dc_overlay_plane_create(drm, dc, 2, true);
++		if (IS_ERR(cursor)) {
++			err = PTR_ERR(cursor);
++			goto cleanup;
++		}
  	}
  
- 	if (dc->soc->has_powergate)
-@@ -2175,13 +2198,10 @@ static int tegra_dc_resume(struct device *dev)
- 			return err;
- 		}
- 
--		if (!dc->soc->broken_reset) {
--			err = reset_control_deassert(dc->rst);
--			if (err < 0) {
--				dev_err(dev,
--					"failed to deassert reset: %d\n", err);
--				return err;
--			}
-+		err = reset_control_deassert(dc->rst);
-+		if (err < 0) {
-+			dev_err(dev, "failed to deassert reset: %d\n", err);
-+			return err;
- 		}
- 	}
- 
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 8d68997e6263..8098f49c0d96 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -57,7 +57,7 @@ struct tegra_dc_soc_info {
- 	bool supports_block_linear;
- 	unsigned int pitch_align;
- 	bool has_powergate;
--	bool broken_reset;
-+	bool coupled_pm;
- 	bool has_nvdisplay;
- 	const struct tegra_windowgroup_soc *wgrps;
- 	unsigned int num_wgrps;
+ 	err = drm_crtc_init_with_planes(drm, &dc->base, primary, cursor,
 -- 
 2.15.1
