@@ -1,29 +1,50 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 0/4] NVIDIA Tegra video decoder driver
-Date: Sun, 17 Dec 2017 21:03:33 +0300
-Message-ID: <e011cbc3-c41c-0aef-99ec-c897e57214a7@gmail.com>
-References: <cover.1513038011.git.digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: [PATCH] drm/tegra: fix non-debugfs builds
+Date: Mon, 18 Dec 2017 14:44:46 +0100
+Message-ID: <20171218134519.3042726-1-arnd@arndb.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1513038011.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12.12.2017 03:26, Dmitry Osipenko wrote:
-> VDE driver provides accelerated video decoding to NVIDIA Tegra SoC's,
-> it is a result of reverse-engineering efforts. Driver has been tested on
-> Toshiba AC100 and Acer A500, it should work on any Tegra20 device.
-> 
-> In userspace this driver is utilized by libvdpau-tegra [0] that implements
-> VDPAU interface, so any video player that supports VDPAU can provide
-> accelerated video decoding on Tegra20 on Linux.
-> 
-> [0] https://github.com/grate-driver/libvdpau-tegra
+The new debugfs registration fails to build when CONFIG_DEBUGFS is
+disabled, because the drm_crtc structure is lacking a member in that
+configuration:
 
-Thierry, driver has been approved by media maintainers and should appear in 4.16
-(it is already in -next). Please schedule the DT patches for 4.16, thanks.
+drivers/gpu/drm/tegra/dc.c: In function 'tegra_dc_late_register':
+drivers/gpu/drm/tegra/dc.c:1204:28: error: 'struct drm_crtc' has no member named 'debugfs_entry'
+
+Without CONFIG_DEBUGFS, the rest of the function already degrades
+into nothing, so we just avoid the one assignment.
+
+Fixes: b95800eeef09 ("drm/tegra: dc: Register debugfs in ->late_register()")
+Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index e963e40d8a25..e8a0cad5899c 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -1201,10 +1201,16 @@ static int tegra_dc_late_register(struct drm_crtc *crtc)
+ {
+ 	unsigned int i, count = ARRAY_SIZE(debugfs_files);
+ 	struct drm_minor *minor = crtc->dev->primary;
+-	struct dentry *root = crtc->debugfs_entry;
++	struct dentry *root;
+ 	struct tegra_dc *dc = to_tegra_dc(crtc);
+ 	int err;
+ 
++#ifdef CONFIG_DEBUG_FS
++	root = crtc->debugfs_entry;
++#else
++	root = NULL;
++#endif
++
+ 	dc->debugfs_files = kmemdup(debugfs_files, sizeof(debugfs_files),
+ 				    GFP_KERNEL);
+ 	if (!dc->debugfs_files)
+-- 
+2.9.0
