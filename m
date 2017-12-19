@@ -1,51 +1,30 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V3 02/12] PCI: tegra: Move REFCLK pad settings out of
- phy_power_on()
-Date: Tue, 19 Dec 2017 12:40:41 +0000
-Message-ID: <20171219124041.GC19911@red-moon>
-References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
- <1509371843-22931-3-git-send-email-mmaddireddy@nvidia.com>
- <20171214151452.GD13733@ulmo>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
+Date: Tue, 19 Dec 2017 09:40:39 +0000
+Message-ID: <a1e42fc5-d836-d74f-bf8f-f136b51e1ed9@nvidia.com>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <20171219085346.GK29417@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171214151452.GD13733@ulmo>
+In-Reply-To: <20171219085346.GK29417-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 14, 2017 at 04:14:52PM +0100, Thierry Reding wrote:
-> On Mon, Oct 30, 2017 at 07:27:13PM +0530, Manikanta Maddireddy wrote:
-> > In Tegra186 PHY programming is done by BPMP-FW, so PHY calls are skipped
-> > in driver. REFCLK pad settings are independent of PHY and should be
-> > programmed by driver. So move REFCLK pad settings out of phy_power_on().
-> > These pad settings improve REFCLK peak to peak amplitude.
-> > 
-> > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > V3:
-> > * Corrected commit log
-> > V2:
-> > * no change in this patch
-> > 
-> >  drivers/pci/host/pci-tegra.c | 20 +++++++++++++-------
-> >  1 file changed, 13 insertions(+), 7 deletions(-)
+
+On 19/12/17 08:53, Peter De Schrijver wrote:
+> Ping! Any comments on this?
 > 
-> As far as I can tell, this is a bugfix that can and should be applied
-> independently of the rest of the series.
-> 
-> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Peter.
 
-Ok, I will apply - I would add a Fixes: tag though.
+Sorry Peter, I have been planning to review and test this, but other
+things keep coming up. I will see if I can do this tomorrow.
 
-Is:
+Cheers
+Jon
 
-Fixes: cf5d31801278 ("PCI: tegra: Program PADS_REFCLK_CFG* always, not
-just on legacy SoCs")
-
-the correct commit ?
-
-Thanks,
-Lorenzo
+-- 
+nvpublic
