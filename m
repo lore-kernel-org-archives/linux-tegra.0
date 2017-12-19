@@ -1,50 +1,56 @@
 From: Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Subject: Re: [PATCH 7/9] ARM: tegra: enable cache via TF
-Date: Tue, 19 Dec 2017 23:21:11 +0000
-Message-ID: <20171219232111.GH10595@n2100.armlinux.org.uk>
+Subject: Re: [PATCH 1/9] ARM: enable secure platform-only erratas
+Date: Tue, 19 Dec 2017 23:28:11 +0000
+Message-ID: <20171219232810.GI10595@n2100.armlinux.org.uk>
 References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
- <6a164b2270a3e996c083e94bf5b1e27028c1135e.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <bdff72b9-8ebd-a426-b27b-fe055d45cfb1@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <6a164b2270a3e996c083e94bf5b1e27028c1135e.1500510157.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+In-Reply-To: <bdff72b9-8ebd-a426-b27b-fe055d45cfb1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 20, 2017 at 02:29:25AM +0200, Michał Mirosław wrote:
-> diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-> index 805f306fa6f7..aae7f5961563 100644
-> --- a/arch/arm/mach-tegra/reset-handler.S
-> +++ b/arch/arm/mach-tegra/reset-handler.S
-> @@ -78,8 +78,20 @@ ENTRY(tegra_resume)
->  	orr	r1, r1, #1
->  	str	r1, [r0]
->  #endif
-> +#ifdef CONFIG_TRUSTED_FOUNDATIONS
-> +	adr	r3, __tegra_smc_stack
-> +	stmia	r3, {r4-r12, sp, lr}
->  
-> -#ifdef CONFIG_CACHE_L2X0
-> +	mov	r0, #3	// local wake
-> +	mov	r3, #0
-> +	mov	r4, #0
-> +	dsb
-> +	.arch_extension	sec
-> +	smc	#0
-> +
-> +	adr	r3, __tegra_smc_stack
-> +	ldmia	r3, {r4-r12, sp, pc}
+On Thu, Oct 05, 2017 at 09:16:12PM +0300, Dmitry Osipenko wrote:
+> On 20.07.2017 03:29, Michał Mirosław wrote:
+> > Allow secure-only erratas to be used in multiarch kernel.
+> > 
+> > Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+> > ---
+> >  arch/arm/Kconfig | 20 ++++++++++++++------
+> >  1 file changed, 14 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> > index a208bfe367b5..a1eff866550b 100644
+> > --- a/arch/arm/Kconfig
+> > +++ b/arch/arm/Kconfig
+> > @@ -696,6 +696,14 @@ config ARCH_MULTI_CPU_AUTO
+> >  
+> >  endmenu
+> >  
+> > +config ARCH_ASSUME_SECURE_PLATFORM
+> > +	bool "Enable ERRATAs using secure-only registers"
+> > +	default !ARCH_MULTIPLATFORM
+> 
+> I think default should always be "Yes" and this option shouldn't affect
+> multiplatform kernels. So a multiplatform kernel wouldn't be an option
+> for your device.
 
-You don't want to jump to the 'lr' value previously stacked here.  I
-also wonder whether you need all this stacking, or whether you're
-just doing it because you don't know whether its necessary.  From
-what I can see, the only register that this code cares about is r8,
-although it would be wise to place a comment in the code if the smc
-call corrupts the other registers.
+No, that changes the current behaviour.
+
+Current behaviour is for the secure-only errata to be disabled when the
+multi-platform option is enabled, because multi-platform kernels have to
+be able to run in the non-secure world.  Defaulting this option to "yes"
+means that these errata become visible.
+
+I have to wonder why you need this though - your patches seem to be
+targetting a platform that runs in non-secure world, and enabling these
+errata would make the kernel non-bootable on your platform.
 
 -- 
 RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
