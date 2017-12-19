@@ -1,49 +1,52 @@
-From: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH -next] iommu/tegra-smmu: Fix return value check in
- tegra_smmu_group_get()
-Date: Wed, 20 Dec 2017 09:44:00 -0700
-Message-ID: <20171220094400.5b95004f@t450s.home>
-References: <1513739169-122341-1-git-send-email-weiyongjun1@huawei.com>
+From: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] clk: tegra: Mark HCLK, SCLK, EMC,
+ MC and PLL_P outputs as critical
+Date: Tue, 19 Dec 2017 14:15:58 -0800
+Message-ID: <151372175856.45969.11728164366457295655@resonance>
+References: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx@gmail.com>
+ <151371340146.45969.1875712520168365873@resonance>
+ <6e09f1cb-cb89-55a5-b7ea-52cb9f0efaf2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1513739169-122341-1-git-send-email-weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <6e09f1cb-cb89-55a5-b7ea-52cb9f0efaf2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 20 Dec 2017 03:06:09 +0000
-Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org> wrote:
+Quoting Dmitry Osipenko (2017-12-19 12:20:56)
+> On 19.12.2017 22:56, Michael Turquette wrote:
+> > Quoting Dmitry Osipenko (2017-12-18 19:59:06)
+> >> Machine dies if HCLK, SCLK or EMC is disabled, hence mark these clocks
+> >> as critical. Currently some of drivers do not manage clocks properly,
+> >> expecting clocks to be 'always enabled', these clocks are MC and PLL_P
+> >> outputs. Let's mark MC or PLL_P outputs as critical for now and revert
+> >> this change once drivers would be corrected.
+> > =
 
-> In case of error, the function iommu_group_alloc() returns ERR_PTR() and
-> never returns NULL. The NULL test in the return value check should be
-> replaced with IS_ERR().
-> 
-> Fixes: 7f4c9176f760 ("iommu/tegra: Allow devices to be grouped")
-> Signed-off-by: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/iommu/tegra-smmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 8885635..44d40bc 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -832,7 +832,7 @@ static struct iommu_group *tegra_smmu_group_get(struct tegra_smmu *smmu,
->  	group->soc = soc;
->  
->  	group->group = iommu_group_alloc();
-> -	if (!group->group) {
-> +	if (IS_ERR(group->group)) {
->  		devm_kfree(smmu->dev, group);
->  		mutex_unlock(&smmu->lock);
->  		return NULL;
+> > Are the drivers that do not manage their clocks correctly merged
+> > upstream? If so can we fix those drivers instead of marking clocks as
+> > critical?
+> =
 
-Acked-by: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+> All the drivers are in upstream for a quite long time already. We should =
+be able
+> to correct them, but I haven't tried yet.
+> =
 
-Thierry, I assume you'll add this on top of the referenced commit.
-Thanks,
+> > If not can we annotate the flags below with a comment stating to remove
+> > the critical clock flag once the consumer driver gets a clue?
+> I'll try to take a look at how much effort it would take to correct the d=
+rivers
+> during the next few days and will send v3 with either the comment being a=
+dded or
+> 'always enabled' clocks being dropped from the patch.
 
-Alex
+Great, thanks for looking into it. Critical clocks are an easy-to-abuse
+feature and we should really be using the clk.h api as much as possible
+in place of the critical clocks mechanism.
+
+Best regards,
+Mike
