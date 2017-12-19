@@ -1,839 +1,583 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 4/8] clk: tegra: dfll: support PWM regulator control
-Date: Tue, 19 Dec 2017 11:17:21 -0800
-Message-ID: <151371104193.45969.16504297321753674956@resonance>
-References: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
- <1510846389-28712-5-git-send-email-pdeschrijver@nvidia.com>
+From: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] clk: tegra: Mark HCLK, SCLK, EMC,
+ MC and PLL_P outputs as critical
+Date: Tue, 19 Dec 2017 11:56:41 -0800
+Message-ID: <151371340146.45969.1875712520168365873@resonance>
+References: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1510846389-28712-5-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
+Quoting Dmitry Osipenko (2017-12-18 19:59:06)
+> Machine dies if HCLK, SCLK or EMC is disabled, hence mark these clocks
+> as critical. Currently some of drivers do not manage clocks properly,
+> expecting clocks to be 'always enabled', these clocks are MC and PLL_P
+> outputs. Let's mark MC or PLL_P outputs as critical for now and revert
+> this change once drivers would be corrected.
 
-Quoting Peter De Schrijver (2017-11-16 07:33:05)
-> The DFLL can directly generate a PWM signal to control the regulator rath=
-er
-> then sending i2c messages. This patch adds support for this mode. In this=
- mode
-> the LUT is not used and also there is no regulator object involved because
-> there is no way to force the regulator voltage without also changing the =
-DFLL
-> output frequency. Also the register debugfs file is slightly reworked to =
-only
+Are the drivers that do not manage their clocks correctly merged
+upstream? If so can we fix those drivers instead of marking clocks as
+critical?
 
-Since the DFLL frequency can be set by clk_set_rate, why not implement a
-.set_voltage or .set_voltage_sel callback that calls clk_set_rate?
+If not can we annotate the flags below with a comment stating to remove
+the critical clock flag once the consumer driver gets a clue?
 
-Best regards,
+Regards,
 Mike
 
-> show the i2c registers when i2c mode is in use.
 > =
 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Acked-By:  Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/clk/tegra/clk-dfll.c | 481 ++++++++++++++++++++++++++++++++++++-=
-------
->  drivers/clk/tegra/clk-dfll.h |   7 +
->  2 files changed, 410 insertions(+), 78 deletions(-)
 > =
 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 2c44aeb..c08a2b4 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -243,6 +243,12 @@ enum dfll_tune_range {
->         DFLL_TUNE_LOW =3D 1,
->  };
->  =
+> Change log:
+> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+>         Tegra124. Switched to a use of common EMC gate definition on Tegr=
+a20
+>         and Tegra30.
+> =
 
-> +
-> +enum tegra_dfll_pmu_if {
-> +       TEGRA_DFLL_PMU_I2C =3D 0,
-> +       TEGRA_DFLL_PMU_PWM =3D 1,
-> +};
-> +
->  /**
->   * struct dfll_rate_req - target DFLL rate request data
->   * @rate: target frequency, after the postscaling
-> @@ -292,18 +298,27 @@ struct tegra_dfll {
->         u32                             force_mode;
->         u32                             cf;
->         u32                             ci;
-> -       u32                             cg;
-> +       s32                             cg;
->         bool                            cg_scale;
-> +       u32                             reg_init_uV;
->  =
+>  drivers/clk/tegra/clk-divider.c          |  3 ++-
+>  drivers/clk/tegra/clk-emc.c              |  2 +-
+>  drivers/clk/tegra/clk-tegra-periph.c     | 27 ++++++++++++++++++------
+>  drivers/clk/tegra/clk-tegra-super-gen4.c |  8 ++++---
+>  drivers/clk/tegra/clk-tegra114.c         |  5 ++---
+>  drivers/clk/tegra/clk-tegra124.c         | 10 ++++-----
+>  drivers/clk/tegra/clk-tegra20.c          | 36 +++++++++++++++-----------=
+------
+>  drivers/clk/tegra/clk-tegra210.c         |  6 +++---
+>  drivers/clk/tegra/clk-tegra30.c          | 17 ++++++---------
+>  drivers/clk/tegra/clk.h                  |  2 +-
+>  10 files changed, 63 insertions(+), 53 deletions(-)
+> =
 
->         /* I2C interface parameters */
->         u32                             i2c_fs_rate;
->         u32                             i2c_reg;
->         u32                             i2c_slave_addr;
->  =
-
-> -       /* i2c_lut array entries are regulator framework selectors */
-> -       unsigned                        i2c_lut[MAX_DFLL_VOLTAGES];
-> -       int                             i2c_lut_size;
-> -       u8                              lut_min, lut_max, lut_safe;
-> +       /* lut array entries are regulator framework selectors or PWM val=
-ues*/
-> +       unsigned                        lut[MAX_DFLL_VOLTAGES];
-> +       unsigned                        lut_uv[MAX_DFLL_VOLTAGES];
-> +       int                             lut_size;
-> +       u8                              lut_bottom, lut_min, lut_max, lut=
-_safe;
-> +
-> +       /* PWM interface */
-> +       enum tegra_dfll_pmu_if          pmu_if;
-> +       unsigned long                   pwm_rate;
-> +       struct pinctrl                  *pwm_pin;
-> +       struct pinctrl_state            *pwm_enable_state;
-> +       struct pinctrl_state            *pwm_disable_state;
->  };
->  =
-
->  #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_cl=
-k_hw)
-> @@ -490,6 +505,36 @@ static void dfll_set_mode(struct tegra_dfll *td,
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divi=
+der.c
+> index 16e0aee14773..ffae26a7c823 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -194,6 +194,7 @@ static const struct clk_div_table mc_div_table[] =3D {
+>  struct clk *tegra_clk_register_mc(const char *name, const char *parent_n=
+ame,
+>                                   void __iomem *reg, spinlock_t *lock)
+>  {
+> -       return clk_register_divider_table(NULL, name, parent_name, 0, reg,
+> +       return clk_register_divider_table(NULL, name, parent_name,
+> +                                         CLK_IS_CRITICAL, reg,
+>                                           16, 1, 0, mc_div_table, lock);
 >  }
+> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+> index 11a5066e5c27..5234acd30e89 100644
+> --- a/drivers/clk/tegra/clk-emc.c
+> +++ b/drivers/clk/tegra/clk-emc.c
+> @@ -515,7 +515,7 @@ struct clk *tegra_clk_register_emc(void __iomem *base=
+, struct device_node *np,
 >  =
 
->  /*
-> + * DVCO rate control
-> + */
-> +
-> +static unsigned long get_dvco_rate_below(struct tegra_dfll *td, u8 out_m=
-in)
-> +{
-> +       struct dev_pm_opp *opp;
-> +       unsigned long rate, prev_rate;
-> +       int uv, min_uv;
-> +
-> +       min_uv =3D td->lut_uv[out_min];
-> +       for (rate =3D 0, prev_rate =3D 0; ; rate++) {
-> +               rcu_read_lock();
-> +               opp =3D dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
-> +               if (IS_ERR(opp)) {
-> +                       rcu_read_unlock();
-> +                       break;
-> +               }
-> +               uv =3D dev_pm_opp_get_voltage(opp);
-> +               rcu_read_unlock();
-> +
-> +               if (uv && uv > min_uv)
-> +                       return prev_rate;
-> +
-> +               prev_rate =3D rate;
-> +       }
-> +
-> +       return prev_rate;
-> +}
-> +
-> +/*
->   * DFLL-to-I2C controller interface
->   */
+>         init.name =3D "emc";
+>         init.ops =3D &tegra_clk_emc_ops;
+> -       init.flags =3D 0;
+> +       init.flags =3D CLK_IS_CRITICAL;
+>         init.parent_names =3D emc_parent_clk_names;
+>         init.num_parents =3D ARRAY_SIZE(emc_parent_clk_names);
 >  =
 
-> @@ -518,6 +563,118 @@ static int dfll_i2c_set_output_enabled(struct tegra=
-_dfll *td, bool enable)
->         return 0;
->  }
+> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk=
+-tegra-periph.c
+> index c02711927d79..97bc7b43f40a 100644
+> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> @@ -830,7 +830,7 @@ static struct tegra_periph_init_data gate_clks[] =3D {
+>         GATE("xusb_host", "xusb_host_src", 89, 0, tegra_clk_xusb_host, 0),
+>         GATE("xusb_ss", "xusb_ss_src", 156, 0, tegra_clk_xusb_ss, 0),
+>         GATE("xusb_dev", "xusb_dev_src", 95, 0, tegra_clk_xusb_dev, 0),
+> -       GATE("emc", "emc_mux", 57, 0, tegra_clk_emc, CLK_IGNORE_UNUSED),
+> +       GATE("emc", "emc_mux", 57, 0, tegra_clk_emc, CLK_IS_CRITICAL),
+>         GATE("sata_cold", "clk_m", 129, TEGRA_PERIPH_ON_APB, tegra_clk_sa=
+ta_cold, 0),
+>         GATE("ispa", "isp", 23, 0, tegra_clk_ispa, 0),
+>         GATE("ispb", "isp", 3, 0, tegra_clk_ispb, 0),
+> @@ -971,7 +971,8 @@ static void __init div_clk_init(void __iomem *clk_bas=
+e,
 >  =
 
-> +
-> +/*
-> + * DFLL-to-PWM controller interface
-> + */
-> +
-> +/**
-> + * dfll_pwm_set_output_enabled - enable/disable PWM voltage requests
-> + * @td: DFLL instance
-> + * @enable: whether to enable or disable the PWM voltage requests
-> + *
-> + * Set the master enable control for PWM control value updates. If disab=
-led,
-> + * then the PWM signal is not driven. Also configure the PWM output pad
-> + * to the approriate state.
-> + */
-> +static int dfll_pwm_set_output_enabled(struct tegra_dfll *td, bool enabl=
-e)
-> +{
-> +       int ret;
-> +       u32 val, div;
-> +
-> +       if (enable) {
-> +               ret =3D pinctrl_select_state(td->pwm_pin, td->pwm_enable_=
-state);
-> +               if (ret < 0) {
-> +                       dev_err(td->dev, "setting enable state failed\n");
-> +                       return -EINVAL;
-> +               }
-> +               val =3D dfll_readl(td, DFLL_OUTPUT_CFG);
-> +               val &=3D ~DFLL_OUTPUT_CFG_PWM_DIV_MASK;
-> +               div =3D DIV_ROUND_UP(td->ref_rate, td->pwm_rate);
-> +               val |=3D (div << DFLL_OUTPUT_CFG_PWM_DIV_SHIFT)
-> +                               & DFLL_OUTPUT_CFG_PWM_DIV_MASK;
-> +               dfll_writel(td, val, DFLL_OUTPUT_CFG);
-> +               dfll_wmb(td);
-> +
-> +               val |=3D DFLL_OUTPUT_CFG_PWM_ENABLE;
-> +               dfll_writel(td, val, DFLL_OUTPUT_CFG);
-> +               dfll_wmb(td);
-> +       } else {
-> +               ret =3D pinctrl_select_state(td->pwm_pin, td->pwm_disable=
-_state);
-> +               if (ret < 0)
-> +                       dev_warn(td->dev, "setting disable state failed\n=
-");
-> +
-> +               val =3D dfll_readl(td, DFLL_OUTPUT_CFG);
-> +               val &=3D ~DFLL_OUTPUT_CFG_PWM_ENABLE;
-> +               dfll_writel(td, val, DFLL_OUTPUT_CFG);
-> +               dfll_wmb(td);
-> +       }
-> +
-> +       return 0;
-> +}
-> +/**
-> + * dfll_set_force_output_value - set fixed value for force output
-> + * @td: DFLL instance
-> + * @out_val: value to force output
-> + *
-> + * Set the fixec value for force output, DFLL will output this value when
-> + * force output is enabled.
-> + */
-> +static u32 dfll_set_force_output_value(struct tegra_dfll *td, u8 out_val)
-> +{
-> +       u32 val =3D dfll_readl(td, DFLL_OUTPUT_FORCE);
-> +
-> +       val =3D (val & DFLL_OUTPUT_FORCE_ENABLE) | (out_val & OUT_MASK);
-> +       dfll_writel(td, val, DFLL_OUTPUT_FORCE);
-> +       dfll_wmb(td);
-> +
-> +       return dfll_readl(td, DFLL_OUTPUT_FORCE);
-> +}
-> +
-> +/**
-> + * dfll_set_force_output_enabled - enable/disable force output
-> + * @td: DFLL instance
-> + * @enable: whether to enable or disable the force output
-> + *
-> + * Set the enable control for fouce output with fixed value.
-> + */
-> +static void dfll_set_force_output_enabled(struct tegra_dfll *td, bool en=
-able)
-> +{
-> +       u32 val =3D dfll_readl(td, DFLL_OUTPUT_FORCE);
-> +
-> +       if (enable)
-> +               val |=3D DFLL_OUTPUT_FORCE_ENABLE;
-> +       else
-> +               val &=3D ~DFLL_OUTPUT_FORCE_ENABLE;
-> +
-> +       dfll_writel(td, val, DFLL_OUTPUT_FORCE);
-> +       dfll_wmb(td);
-> +}
-> +
-> +/**
-> + * dfll_i2c_set_output_enabled - enable/disable I2C PMIC voltage requests
-> + * @td: DFLL instance
-> + * @enable: whether to enable or disable the I2C voltage requests
-> + *
-> + * Set the master enable control for I2C control value updates. If disab=
-led,
-> + * then I2C control messages are inhibited, regardless of the DFLL mode.
-> + */
-> +static int dfll_force_output(struct tegra_dfll *td, unsigned int out_sel)
-> +{
-> +       u32 val;
-> +
-> +       if (out_sel > OUT_MASK)
-> +               return -EINVAL;
-> +
-> +       val =3D dfll_set_force_output_value(td, out_sel);
-> +       if ((td->mode < DFLL_CLOSED_LOOP) &&
-> +           !(val & DFLL_OUTPUT_FORCE_ENABLE)) {
-> +               dfll_set_force_output_enabled(td, true);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  /**
->   * dfll_load_lut - load the voltage lookup table
->   * @td: struct tegra_dfll *
-> @@ -531,15 +688,15 @@ static void dfll_load_i2c_lut(struct tegra_dfll *td)
->         u32 val;
->  =
-
->         for (i =3D 0; i < MAX_DFLL_VOLTAGES; i++) {
-> -               if (i < td->lut_min)
-> -                       lut_index =3D td->lut_min;
-> -               else if (i > td->lut_max)
-> -                       lut_index =3D td->lut_max;
-> +               if (i < td->lut_bottom)
-> +                       lut_index =3D td->lut_bottom;
-> +               else if (i > td->lut_size - 1)
-> +                       lut_index =3D td->lut_size - 1;
->                 else
->                         lut_index =3D i;
->  =
-
->                 val =3D regulator_list_hardware_vsel(td->vdd_reg,
-> -                                                    td->i2c_lut[lut_inde=
-x]);
-> +                                                    td->lut[lut_index]);
->                 __raw_writel(val, td->lut_base + i * 4);
+>  static void __init init_pllp(void __iomem *clk_base, void __iomem *pmc_b=
+ase,
+>                                 struct tegra_clk *tegra_clks,
+> -                               struct tegra_clk_pll_params *pll_params)
+> +                               struct tegra_clk_pll_params *pll_params,
+> +                               bool tegra30)
+>  {
+>         struct clk *clk;
+>         struct clk **dt_clk;
+> @@ -987,6 +988,7 @@ static void __init init_pllp(void __iomem *clk_base, =
+void __iomem *pmc_base,
 >         }
 >  =
 
-> @@ -595,23 +752,53 @@ static void dfll_init_out_if(struct tegra_dfll *td)
->         u32 val;
+>         for (i =3D 0; i < ARRAY_SIZE(pllp_out_clks); i++) {
+> +               unsigned long flags =3D CLK_SET_RATE_PARENT;
+>                 struct pll_out_data *data;
 >  =
 
->         td->lut_min =3D 0;
-> -       td->lut_max =3D td->i2c_lut_size - 1;
-> -       td->lut_safe =3D td->lut_min + 1;
-> -
-> -       dfll_i2c_writel(td, 0, DFLL_OUTPUT_CFG);
-> -       val =3D (td->lut_safe << DFLL_OUTPUT_CFG_SAFE_SHIFT) |
-> -               (td->lut_max << DFLL_OUTPUT_CFG_MAX_SHIFT) |
-> -               (td->lut_min << DFLL_OUTPUT_CFG_MIN_SHIFT);
-> -       dfll_i2c_writel(td, val, DFLL_OUTPUT_CFG);
-> -       dfll_i2c_wmb(td);
-> -
-> -       dfll_writel(td, 0, DFLL_OUTPUT_FORCE);
-> -       dfll_i2c_writel(td, 0, DFLL_INTR_EN);
-> -       dfll_i2c_writel(td, DFLL_INTR_MAX_MASK | DFLL_INTR_MIN_MASK,
-> -                       DFLL_INTR_STS);
-> -
-> -       dfll_load_i2c_lut(td);
-> -       dfll_init_i2c_if(td);
-> +       td->lut_max =3D td->lut_size - 1;
-> +       td->lut_safe =3D td->lut_min + (td->lut_min < td->lut_max ? 1 : 0=
+>                 data =3D pllp_out_clks + i;
+> @@ -995,14 +997,27 @@ static void __init init_pllp(void __iomem *clk_base=
+, void __iomem *pmc_base,
+>                 if (!dt_clk)
+>                         continue;
+>  =
+
+> +               /*
+> +                * On all Tegra generations pll_p_out3 is used as an auxi=
+liary
+> +                * clock source by multiple peripherals.
+> +                */
+> +               if (strcmp(data->pll_out_name, "pll_p_out3") =3D=3D 0)
+> +                       flags |=3D CLK_IS_CRITICAL;
+> +
+> +               /*
+> +                * Only on Tegra30 pll_p_out4 is used as an auxiliary clo=
+ck
+> +                * source by HDMI hardware block.
+> +                */
+> +               if (tegra30 && strcmp(data->pll_out_name, "pll_p_out4") =
+=3D=3D 0)
+> +                       flags |=3D CLK_IS_CRITICAL;
+> +
+>                 clk =3D tegra_clk_register_divider(data->div_name, "pll_p=
+",
+>                                 clk_base + data->offset, 0, data->div_fla=
+gs,
+>                                 data->div_shift, 8, 1, data->lock);
+>                 clk =3D tegra_clk_register_pll_out(data->pll_out_name,
+>                                 data->div_name, clk_base + data->offset,
+>                                 data->rst_shift + 1, data->rst_shift,
+> -                               CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, =
+0,
+> -                               data->lock);
+> +                               flags, 0, data->lock);
+>                 *dt_clk =3D clk;
+>         }
+>  =
+
+> @@ -1054,9 +1069,9 @@ static void __init init_pllp(void __iomem *clk_base=
+, void __iomem *pmc_base,
+>  =
+
+>  void __init tegra_periph_clk_init(void __iomem *clk_base,
+>                         void __iomem *pmc_base, struct tegra_clk *tegra_c=
+lks,
+> -                       struct tegra_clk_pll_params *pll_params)
+> +                       struct tegra_clk_pll_params *pll_params, bool teg=
+ra30)
+>  {
+> -       init_pllp(clk_base, pmc_base, tegra_clks, pll_params);
+> +       init_pllp(clk_base, pmc_base, tegra_clks, pll_params, tegra30);
+>         periph_clk_init(clk_base, tegra_clks);
+>         gate_clk_init(clk_base, tegra_clks);
+>         div_clk_init(clk_base, tegra_clks);
+> diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra=
+/clk-tegra-super-gen4.c
+> index 10047107c1dc..89d6b47a27a8 100644
+> --- a/drivers/clk/tegra/clk-tegra-super-gen4.c
+> +++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+> @@ -125,7 +125,8 @@ static void __init tegra_sclk_init(void __iomem *clk_=
+base,
+>                 /* SCLK */
+>                 dt_clk =3D tegra_lookup_dt_id(tegra_clk_sclk, tegra_clks);
+>                 if (dt_clk) {
+> -                       clk =3D clk_register_divider(NULL, "sclk", "sclk_=
+mux", 0,
+> +                       clk =3D clk_register_divider(NULL, "sclk", "sclk_=
+mux",
+> +                                               CLK_IS_CRITICAL,
+>                                                 clk_base + SCLK_DIVIDER, =
+0, 8,
+>                                                 0, &sysrate_lock);
+>                         *dt_clk =3D clk;
+> @@ -137,7 +138,8 @@ static void __init tegra_sclk_init(void __iomem *clk_=
+base,
+>                         clk =3D tegra_clk_register_super_mux("sclk",
+>                                                 gen_info->sclk_parents,
+>                                                 gen_info->num_sclk_parent=
+s,
+> -                                               CLK_SET_RATE_PARENT,
+> +                                               CLK_SET_RATE_PARENT |
+> +                                               CLK_IS_CRITICAL,
+>                                                 clk_base + SCLK_BURST_POL=
+ICY,
+>                                                 0, 4, 0, 0, NULL);
+>                         *dt_clk =3D clk;
+> @@ -151,7 +153,7 @@ static void __init tegra_sclk_init(void __iomem *clk_=
+base,
+>                                    clk_base + SYSTEM_CLK_RATE, 4, 2, 0,
+>                                    &sysrate_lock);
+>                 clk =3D clk_register_gate(NULL, "hclk", "hclk_div",
+> -                               CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +                               CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>                                 clk_base + SYSTEM_CLK_RATE,
+>                                 7, CLK_GATE_SET_TO_DISABLE, &sysrate_lock=
 );
-> +
-> +       if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM) {
-> +               int vinit =3D td->reg_init_uV;
-> +               int vstep =3D td->soc->alignment.step_uv;
-> +               int vmin =3D td->lut_uv[0];
-> +
-> +               /* clear DFLL_OUTPUT_CFG before setting new value */
-> +               dfll_writel(td, 0, DFLL_OUTPUT_CFG);
-> +               dfll_wmb(td);
-> +
-> +               val =3D dfll_readl(td, DFLL_OUTPUT_CFG);
-> +               val |=3D (td->lut_safe << DFLL_OUTPUT_CFG_SAFE_SHIFT) |
-> +                      (td->lut_max << DFLL_OUTPUT_CFG_MAX_SHIFT) |
-> +                      (td->lut_min << DFLL_OUTPUT_CFG_MIN_SHIFT);
-> +               dfll_writel(td, val, DFLL_OUTPUT_CFG);
-> +               dfll_wmb(td);
-> +
-> +               dfll_writel(td, 0, DFLL_OUTPUT_FORCE);
-> +               dfll_i2c_writel(td, 0, DFLL_INTR_EN);
-> +               dfll_i2c_writel(td, DFLL_INTR_MAX_MASK | DFLL_INTR_MIN_MA=
-SK,
-> +                               DFLL_INTR_STS);
-> +
-> +               /* set initial voltage */
-> +               if ((vinit >=3D vmin) && vstep) {
-> +                       unsigned int vsel;
-> +
-> +                       vsel =3D DIV_ROUND_UP((vinit - vmin), vstep);
-> +                       dfll_force_output(td, vsel);
-> +               }
-> +       } else {
-> +               dfll_i2c_writel(td, 0, DFLL_OUTPUT_CFG);
-> +               val =3D (td->lut_safe << DFLL_OUTPUT_CFG_SAFE_SHIFT) |
-> +                       (td->lut_max << DFLL_OUTPUT_CFG_MAX_SHIFT) |
-> +                       (td->lut_min << DFLL_OUTPUT_CFG_MIN_SHIFT);
-> +               dfll_i2c_writel(td, val, DFLL_OUTPUT_CFG);
-> +               dfll_i2c_wmb(td);
-> +
-> +               dfll_writel(td, 0, DFLL_OUTPUT_FORCE);
-> +               dfll_i2c_writel(td, 0, DFLL_INTR_EN);
-> +               dfll_i2c_writel(td, DFLL_INTR_MAX_MASK | DFLL_INTR_MIN_MA=
-SK,
-> +                               DFLL_INTR_STS);
-> +
-> +               dfll_load_i2c_lut(td);
-> +               dfll_init_i2c_if(td);
-> +       }
+>                 *dt_clk =3D clk;
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-teg=
+ra114.c
+> index 63087d17c3e2..f39e09d1bdba 100644
+> --- a/drivers/clk/tegra/clk-tegra114.c
+> +++ b/drivers/clk/tegra/clk-tegra114.c
+> @@ -955,8 +955,7 @@ static void __init tegra114_pll_init(void __iomem *cl=
+k_base,
+>  =
+
+>         /* PLLM */
+>         clk =3D tegra_clk_register_pllm("pll_m", "pll_ref", clk_base, pmc,
+> -                            CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
+> -                            &pll_m_params, NULL);
+> +                            CLK_SET_RATE_GATE, &pll_m_params, NULL);
+>         clks[TEGRA114_CLK_PLL_M] =3D clk;
+>  =
+
+>         /* PLLM_OUT1 */
+> @@ -1097,7 +1096,7 @@ static __init void tegra114_periph_clk_init(void __=
+iomem *clk_base,
+>         }
+>  =
+
+>         tegra_periph_clk_init(clk_base, pmc_base, tegra114_clks,
+> -                               &pll_p_params);
+> +                               &pll_p_params, false);
 >  }
 >  =
 
->  /*
-> @@ -637,11 +824,12 @@ static int find_lut_index_for_rate(struct tegra_dfl=
-l *td, unsigned long rate)
->         if (IS_ERR(opp))
->                 return PTR_ERR(opp);
+>  /* Tegra114 CPU clock and reset control functions */
+> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-teg=
+ra124.c
+> index e81ea5b11577..c802fbcbc5fa 100644
+> --- a/drivers/clk/tegra/clk-tegra124.c
+> +++ b/drivers/clk/tegra/clk-tegra124.c
+> @@ -1045,7 +1045,8 @@ static __init void tegra124_periph_clk_init(void __=
+iomem *clk_base,
+>         clk_register_clkdev(clk, "cml1", NULL);
+>         clks[TEGRA124_CLK_CML1] =3D clk;
 >  =
 
-> -       uv =3D dev_pm_opp_get_voltage(opp);
-> +       uv =3D dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
-> +
->         dev_pm_opp_put(opp);
->  =
-
-> -       for (i =3D 0; i < td->i2c_lut_size; i++) {
-> -               if (regulator_list_voltage(td->vdd_reg, td->i2c_lut[i]) =
-=3D=3D uv)
-> +       for (i =3D td->lut_bottom; i < td->lut_size; i++) {
-> +               if ((td->lut_uv[i] / td->soc->alignment.step_uv) >=3D uv)
->                         return i;
->         }
->  =
-
-> @@ -863,9 +1051,14 @@ static int dfll_lock(struct tegra_dfll *td)
->                         return -EINVAL;
->                 }
->  =
-
-> -               dfll_i2c_set_output_enabled(td, true);
-> +               if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM)
-> +                       dfll_pwm_set_output_enabled(td, true);
-> +               else
-> +                       dfll_i2c_set_output_enabled(td, true);
-> +
->                 dfll_set_mode(td, DFLL_CLOSED_LOOP);
->                 dfll_set_frequency_request(td, req);
-> +               dfll_set_force_output_enabled(td, false);
->                 return 0;
->  =
-
->         default:
-> @@ -889,7 +1082,10 @@ static int dfll_unlock(struct tegra_dfll *td)
->         case DFLL_CLOSED_LOOP:
->                 dfll_set_open_loop_config(td);
->                 dfll_set_mode(td, DFLL_OPEN_LOOP);
-> -               dfll_i2c_set_output_enabled(td, false);
-> +               if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM)
-> +                       dfll_pwm_set_output_enabled(td, false);
-> +               else
-> +                       dfll_i2c_set_output_enabled(td, false);
->                 return 0;
->  =
-
->         case DFLL_OPEN_LOOP:
-> @@ -1171,15 +1367,17 @@ static int attr_registers_show(struct seq_file *s=
-, void *data)
->                 seq_printf(s, "[0x%02x] =3D 0x%08x\n", offs,
->                            dfll_i2c_readl(td, offs));
->  =
-
-> -       seq_puts(s, "\nINTEGRATED I2C CONTROLLER REGISTERS:\n");
-> -       offs =3D DFLL_I2C_CLK_DIVISOR;
-> -       seq_printf(s, "[0x%02x] =3D 0x%08x\n", offs,
-> -                  __raw_readl(td->i2c_controller_base + offs));
-> -
-> -       seq_puts(s, "\nLUT:\n");
-> -       for (offs =3D 0; offs <  4 * MAX_DFLL_VOLTAGES; offs +=3D 4)
-> +       if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_I2C) {
-> +               seq_puts(s, "\nINTEGRATED I2C CONTROLLER REGISTERS:\n");
-> +               offs =3D DFLL_I2C_CLK_DIVISOR;
->                 seq_printf(s, "[0x%02x] =3D 0x%08x\n", offs,
-> -                          __raw_readl(td->lut_base + offs));
-> +                          __raw_readl(td->i2c_controller_base + offs));
-> +
-> +               seq_puts(s, "\nLUT:\n");
-> +               for (offs =3D 0; offs <  4 * MAX_DFLL_VOLTAGES; offs +=3D=
- 4)
-> +                       seq_printf(s, "[0x%02x] =3D 0x%08x\n", offs,
-> +                                  __raw_readl(td->lut_base + offs));
-> +       }
->  =
-
->         return 0;
->  }
-> @@ -1377,15 +1575,17 @@ static int dfll_init(struct tegra_dfll *td)
->   */
->  static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
->  {
-> -       int i, n_voltages, reg_uV;
-> +       int i, n_voltages, reg_mult, align_mult;
->  =
-
-> +       align_mult =3D uV / td->soc->alignment.step_uv;
->         n_voltages =3D regulator_count_voltages(td->vdd_reg);
->         for (i =3D 0; i < n_voltages; i++) {
-> -               reg_uV =3D regulator_list_voltage(td->vdd_reg, i);
-> -               if (reg_uV < 0)
-> +               reg_mult =3D regulator_list_voltage(td->vdd_reg, i) /
-> +                                       td->soc->alignment.step_uv;
-> +               if (reg_mult < 0)
->                         break;
->  =
-
-> -               if (uV =3D=3D reg_uV)
-> +               if (align_mult =3D=3D reg_mult)
->                         return i;
->         }
->  =
-
-> @@ -1399,15 +1599,17 @@ static int find_vdd_map_entry_exact(struct tegra_=
-dfll *td, int uV)
->   * */
->  static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
->  {
-> -       int i, n_voltages, reg_uV;
-> +       int i, n_voltages, reg_mult, align_mult;
->  =
-
-> +       align_mult =3D uV / td->soc->alignment.step_uv;
->         n_voltages =3D regulator_count_voltages(td->vdd_reg);
->         for (i =3D 0; i < n_voltages; i++) {
-> -               reg_uV =3D regulator_list_voltage(td->vdd_reg, i);
-> -               if (reg_uV < 0)
-> +               reg_mult =3D regulator_list_voltage(td->vdd_reg, i) /
-> +                                       td->soc->alignment.step_uv;
-> +               if (reg_mult < 0)
->                         break;
->  =
-
-> -               if (uV <=3D reg_uV)
-> +               if (align_mult <=3D reg_mult)
->                         return i;
->         }
->  =
-
-> @@ -1415,6 +1617,53 @@ static int find_vdd_map_entry_min(struct tegra_dfl=
-l *td, int uV)
->         return -EINVAL;
+> -       tegra_periph_clk_init(clk_base, pmc_base, tegra124_clks, &pll_p_p=
+arams);
+> +       tegra_periph_clk_init(clk_base, pmc_base, tegra124_clks, &pll_p_p=
+arams,
+> +                             false);
 >  }
 >  =
 
-> +/*
-> + * Look-up table in h/w is ignored when PWM is used as DFLL interface to=
- PMIC.
-> + * In this case closed loop output is controlling duty cycle directly. T=
-he s/w
-> + * look-up that maps PWM duty cycle to voltage is still built by this fu=
-nction.
-> + */
-> +static int dfll_build_lut_pwm(struct tegra_dfll *td, int v_max)
-> +{
-> +       int i, reg_volt;
-> +       unsigned long rate;
-> +       u8 lut_bottom =3D MAX_DFLL_VOLTAGES;
-> +       int v_min =3D td->soc->cvb->min_millivolts * 1000;
-> +
-> +       for (i =3D 0; i < MAX_DFLL_VOLTAGES; i++) {
-> +               reg_volt =3D td->lut_uv[i];
-> +
-> +               /* since opp voltage is exact mv */
-> +               reg_volt =3D (reg_volt / 1000) * 1000;
-> +               if (reg_volt > v_max)
-> +                       break;
-> +
-> +               td->lut[i] =3D i;
-> +               if ((lut_bottom =3D=3D MAX_DFLL_VOLTAGES) && (reg_volt >=
-=3D v_min))
-> +                       lut_bottom =3D i;
-> +       }
-> +
-> +       /* determine voltage boundaries */
-> +       td->lut_size =3D i;
-> +       if ((lut_bottom =3D=3D MAX_DFLL_VOLTAGES) ||
-> +           (lut_bottom + 1 >=3D td->lut_size)) {
-> +               dev_err(td->dev, "no voltage above DFLL minimum %d mV\n",
-> +                       td->soc->cvb->min_millivolts);
-> +               return -EINVAL;
-> +       }
-> +       td->lut_bottom =3D lut_bottom;
-> +
-> +       /* determine rate boundaries */
-> +       rate =3D get_dvco_rate_below(td, td->lut_bottom);
-> +       if (!rate) {
-> +               dev_err(td->dev, "no opp below DFLL minimum voltage %d mV=
-\n",
-> +                       td->soc->cvb->min_millivolts);
-> +               return -EINVAL;
-> +       }
-> +       td->dvco_rate_min =3D rate;
-> +
-> +       return 0;
-> +}
-> +
->  /**
->   * dfll_build_i2c_lut - build the I2C voltage register lookup table
->   * @td: DFLL instance
-> @@ -1427,31 +1676,24 @@ static int find_vdd_map_entry_min(struct tegra_df=
-ll *td, int uV)
->   *
->   * On success, fills in td->i2c_lut and returns 0, or -err on failure.
->   */
-> -static int dfll_build_i2c_lut(struct tegra_dfll *td)
-> +static int dfll_build_i2c_lut(struct tegra_dfll *td, int v_max)
->  {
-> +       unsigned long rate;
->         int ret =3D -EINVAL;
-> -       int j, v, v_max, v_opp;
-> +       int j, v, v_opp;
->         int selector;
-> -       unsigned long rate;
-> -       struct dev_pm_opp *opp;
->         int lut;
+>  static void __init tegra124_pll_init(void __iomem *clk_base,
+> @@ -1089,8 +1090,7 @@ static void __init tegra124_pll_init(void __iomem *=
+clk_base,
 >  =
 
-> -       rate =3D ULONG_MAX;
-> -       opp =3D dev_pm_opp_find_freq_floor(td->soc->dev, &rate);
-> -       if (IS_ERR(opp)) {
-> -               dev_err(td->dev, "couldn't get vmax opp, empty opp table?=
-\n");
-> -               goto out;
-> -       }
-> -       v_max =3D dev_pm_opp_get_voltage(opp);
-> -       dev_pm_opp_put(opp);
-> -
->         v =3D td->soc->cvb->min_millivolts * 1000;
->         lut =3D find_vdd_map_entry_exact(td, v);
->         if (lut < 0)
->                 goto out;
-> -       td->i2c_lut[0] =3D lut;
-> +       td->lut[0] =3D lut;
-> +       td->lut_bottom =3D 0;
+>         /* PLLM */
+>         clk =3D tegra_clk_register_pllm("pll_m", "pll_ref", clk_base, pmc,
+> -                            CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
+> -                            &pll_m_params, NULL);
+> +                            CLK_SET_RATE_GATE, &pll_m_params, NULL);
+>         clk_register_clkdev(clk, "pll_m", NULL);
+>         clks[TEGRA124_CLK_PLL_M] =3D clk;
 >  =
 
->         for (j =3D 1, rate =3D 0; ; rate++) {
-> +               struct dev_pm_opp *opp;
-> +
->                 opp =3D dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
->                 if (IS_ERR(opp))
->                         break;
-> @@ -1470,32 +1712,61 @@ static int dfll_build_i2c_lut(struct tegra_dfll *=
-td)
->                         selector =3D find_vdd_map_entry_min(td, v);
->                         if (selector < 0)
->                                 goto out;
-> -                       if (selector !=3D td->i2c_lut[j - 1])
-> -                               td->i2c_lut[j++] =3D selector;
-> +                       if (selector !=3D td->lut[j - 1])
-> +                               td->lut[j++] =3D selector;
->                 }
+> @@ -1099,7 +1099,7 @@ static void __init tegra124_pll_init(void __iomem *=
+clk_base,
+>                                 clk_base + PLLM_OUT, 0, TEGRA_DIVIDER_ROU=
+ND_UP,
+>                                 8, 8, 1, NULL);
+>         clk =3D tegra_clk_register_pll_out("pll_m_out1", "pll_m_out1_div",
+> -                               clk_base + PLLM_OUT, 1, 0, CLK_IGNORE_UNU=
+SED |
+> +                               clk_base + PLLM_OUT, 1, 0,
+>                                 CLK_SET_RATE_PARENT, 0, NULL);
+>         clk_register_clkdev(clk, "pll_m_out1", NULL);
+>         clks[TEGRA124_CLK_PLL_M_OUT1] =3D clk;
+> @@ -1272,7 +1272,7 @@ static struct tegra_clk_init_table common_init_tabl=
+e[] __initdata =3D {
+>         { TEGRA124_CLK_HOST1X, TEGRA124_CLK_PLL_P, 136000000, 1 },
+>         { TEGRA124_CLK_DSIALP, TEGRA124_CLK_PLL_P, 68000000, 0 },
+>         { TEGRA124_CLK_DSIBLP, TEGRA124_CLK_PLL_P, 68000000, 0 },
+> -       { TEGRA124_CLK_SCLK, TEGRA124_CLK_PLL_P_OUT2, 102000000, 1 },
+> +       { TEGRA124_CLK_SCLK, TEGRA124_CLK_PLL_P_OUT2, 102000000, 0 },
+>         { TEGRA124_CLK_DFLL_SOC, TEGRA124_CLK_PLL_P, 51000000, 1 },
+>         { TEGRA124_CLK_DFLL_REF, TEGRA124_CLK_PLL_P, 51000000, 1 },
+>         { TEGRA124_CLK_PLL_C, TEGRA124_CLK_CLK_MAX, 768000000, 0 },
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegr=
+a20.c
+> index cbd5a2e5c569..d143a867968a 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -576,6 +576,7 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] _=
+_initdata =3D {
+>         [tegra_clk_afi] =3D { .dt_id =3D TEGRA20_CLK_AFI, .present =3D tr=
+ue },
+>         [tegra_clk_fuse] =3D { .dt_id =3D TEGRA20_CLK_FUSE, .present =3D =
+true },
+>         [tegra_clk_kfuse] =3D { .dt_id =3D TEGRA20_CLK_KFUSE, .present =
+=3D true },
+> +       [tegra_clk_emc] =3D { .dt_id =3D TEGRA20_CLK_EMC, .present =3D tr=
+ue },
+>  };
 >  =
 
->                 v =3D (j =3D=3D MAX_DFLL_VOLTAGES - 1) ? v_max : v_opp;
->                 selector =3D find_vdd_map_entry_exact(td, v);
->                 if (selector < 0)
->                         goto out;
-> -               if (selector !=3D td->i2c_lut[j - 1])
-> -                       td->i2c_lut[j++] =3D selector;
-> +               if (selector !=3D td->lut[j - 1])
-> +                       td->lut[j++] =3D selector;
+>  static unsigned long tegra20_clk_measure_input_freq(void)
+> @@ -651,8 +652,7 @@ static void tegra20_pll_init(void)
 >  =
 
->                 if (v >=3D v_max)
->                         break;
+>         /* PLLM */
+>         clk =3D tegra_clk_register_pll("pll_m", "pll_ref", clk_base, NULL,
+> -                           CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
+> -                           &pll_m_params, NULL);
+> +                           CLK_SET_RATE_GATE, &pll_m_params, NULL);
+>         clks[TEGRA20_CLK_PLL_M] =3D clk;
+>  =
+
+>         /* PLLM_OUT1 */
+> @@ -660,7 +660,7 @@ static void tegra20_pll_init(void)
+>                                 clk_base + PLLM_OUT, 0, TEGRA_DIVIDER_ROU=
+ND_UP,
+>                                 8, 8, 1, NULL);
+>         clk =3D tegra_clk_register_pll_out("pll_m_out1", "pll_m_out1_div",
+> -                               clk_base + PLLM_OUT, 1, 0, CLK_IGNORE_UNU=
+SED |
+> +                               clk_base + PLLM_OUT, 1, 0,
+>                                 CLK_SET_RATE_PARENT, 0, NULL);
+>         clks[TEGRA20_CLK_PLL_M_OUT1] =3D clk;
+>  =
+
+> @@ -723,7 +723,8 @@ static void tegra20_super_clk_init(void)
+>  =
+
+>         /* SCLK */
+>         clk =3D tegra_clk_register_super_mux("sclk", sclk_parents,
+> -                             ARRAY_SIZE(sclk_parents), CLK_SET_RATE_PARE=
+NT,
+> +                             ARRAY_SIZE(sclk_parents),
+> +                             CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>                               clk_base + SCLK_BURST_POLICY, 0, 4, 0, 0, N=
+ULL);
+>         clks[TEGRA20_CLK_SCLK] =3D clk;
+>  =
+
+> @@ -814,9 +815,6 @@ static void __init tegra20_periph_clk_init(void)
+>                                CLK_SET_RATE_NO_REPARENT,
+>                                clk_base + CLK_SOURCE_EMC,
+>                                30, 2, 0, &emc_lock);
+> -       clk =3D tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_b=
+ase, 0,
+> -                                   57, periph_clk_enb_refcnt);
+> -       clks[TEGRA20_CLK_EMC] =3D clk;
+>  =
+
+>         clk =3D tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOU=
+RCE_EMC,
+>                                     &emc_lock);
+> @@ -860,7 +858,8 @@ static void __init tegra20_periph_clk_init(void)
+>                 clks[data->clk_id] =3D clk;
 >         }
-> -       td->i2c_lut_size =3D j;
-> +       td->lut_size =3D j;
 >  =
 
->         if (!td->dvco_rate_min)
->                 dev_err(td->dev, "no opp above DFLL minimum voltage %d mV=
-\n",
->                         td->soc->cvb->min_millivolts);
-> -       else
-> +       else {
->                 ret =3D 0;
-> +               for (j =3D 0; j < td->lut_size; j++)
-> +                       td->lut_uv[j] =3D
-> +                               regulator_list_voltage(td->vdd_reg,
-> +                                                      td->lut[j]);
-> +       }
->  =
-
->  out:
->         return ret;
+> -       tegra_periph_clk_init(clk_base, pmc_base, tegra20_clks, &pll_p_pa=
+rams);
+> +       tegra_periph_clk_init(clk_base, pmc_base, tegra20_clks, &pll_p_pa=
+rams,
+> +                             false);
 >  }
 >  =
 
-> +static int dfll_build_lut(struct tegra_dfll *td)
-> +{
-> +       unsigned long rate;
-> +       struct dev_pm_opp *opp;
-> +       int v_max;
-> +
-> +       rcu_read_lock();
-> +
-> +       rate =3D ULONG_MAX;
-> +       opp =3D dev_pm_opp_find_freq_floor(td->soc->dev, &rate);
-> +       if (IS_ERR(opp)) {
-> +               dev_err(td->dev, "couldn't get vmax opp, empty opp table?=
-\n");
-> +               return -EINVAL;
-> +       }
-> +       v_max =3D dev_pm_opp_get_voltage(opp);
-> +
-> +       rcu_read_unlock();
-> +
-> +       if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM) {
-> +               return dfll_build_lut_pwm(td, v_max);
-> +       } else
-> +               return dfll_build_i2c_lut(td, v_max);
-> +}
-> +
->  /**
->   * read_dt_param - helper function for reading required parameters from =
-the DT
->   * @td: DFLL instance
-> @@ -1554,12 +1825,55 @@ static int dfll_fetch_i2c_params(struct tegra_dfl=
-l *td)
->         }
->         td->i2c_reg =3D vsel_reg;
+>  static void __init tegra20_osc_clk_init(void)
+> @@ -1014,18 +1013,17 @@ static struct tegra_cpu_car_ops tegra20_cpu_car_o=
+ps =3D {
+>  };
 >  =
 
-> -       ret =3D dfll_build_i2c_lut(td);
-> -       if (ret) {
-> -               dev_err(td->dev, "couldn't build I2C LUT\n");
-> +       return 0;
-> +}
-> +
-> +static int dfll_fetch_pwm_params(struct tegra_dfll *td)
-> +{
-> +       int ret, i;
-> +       u32 pwm_period;
-> +
-> +       if (!td->soc->alignment.step_uv || !td->soc->alignment.offset_uv)=
- {
-> +               dev_err(td->dev, "Missing step or alignment info for PWM =
-regulator");
-> +               return -EINVAL;
-> +       }
-> +       for (i =3D 0; i < MAX_DFLL_VOLTAGES; i++)
-> +               td->lut_uv[i] =3D td->soc->alignment.offset_uv +
-> +                               i * td->soc->alignment.step_uv;
-> +
-> +       ret =3D read_dt_param(td, "nvidia,init-uv", &td->reg_init_uV);
-> +       if (!ret) {
-> +               dev_err(td->dev, "couldn't get initialized voltage\n");
->                 return ret;
+>  static struct tegra_clk_init_table init_table[] __initdata =3D {
+> -       { TEGRA20_CLK_PLL_P, TEGRA20_CLK_CLK_MAX, 216000000, 1 },
+> -       { TEGRA20_CLK_PLL_P_OUT1, TEGRA20_CLK_CLK_MAX, 28800000, 1 },
+> -       { TEGRA20_CLK_PLL_P_OUT2, TEGRA20_CLK_CLK_MAX, 48000000, 1 },
+> -       { TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 1 },
+> -       { TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 1 },
+> -       { TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 1 },
+> -       { TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 216000000, 1 },
+> -       { TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 1 },
+> -       { TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
+> -       { TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 1 },
+> +       { TEGRA20_CLK_PLL_P, TEGRA20_CLK_CLK_MAX, 216000000, 0 },
+> +       { TEGRA20_CLK_PLL_P_OUT1, TEGRA20_CLK_CLK_MAX, 28800000, 0 },
+> +       { TEGRA20_CLK_PLL_P_OUT2, TEGRA20_CLK_CLK_MAX, 48000000, 0 },
+> +       { TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 0 },
+> +       { TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 0 },
+> +       { TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 0 },
+> +       { TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 216000000, 0 },
+> +       { TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 0 },
+> +       { TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 0, 0 },
+> +       { TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 0 },
+>         { TEGRA20_CLK_CSITE, TEGRA20_CLK_CLK_MAX, 0, 1 },
+> -       { TEGRA20_CLK_EMC, TEGRA20_CLK_CLK_MAX, 0, 1 },
+>         { TEGRA20_CLK_CCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
+>         { TEGRA20_CLK_UARTA, TEGRA20_CLK_PLL_P, 0, 0 },
+>         { TEGRA20_CLK_UARTB, TEGRA20_CLK_PLL_P, 0, 0 },
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-teg=
+ra210.c
+> index 9e6260869eb9..0502eba363d7 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2741,7 +2741,8 @@ static __init void tegra210_periph_clk_init(void __=
+iomem *clk_base,
+>                 *clkp =3D clk;
 >         }
 >  =
 
-> +       ret =3D read_dt_param(td, "nvidia,pwm-period", &pwm_period);
-> +       if (!ret) {
-> +               dev_err(td->dev, "couldn't get PWM period\n");
-> +               return ret;
-> +       }
-> +       td->pwm_rate =3D (NSEC_PER_SEC / pwm_period) * (MAX_DFLL_VOLTAGES=
- - 1);
-> +
-> +       td->pwm_pin =3D devm_pinctrl_get(td->dev);
-> +       if (IS_ERR(td->pwm_pin)) {
-> +               dev_err(td->dev, "DT: missing pinctrl device\n");
-> +               return PTR_ERR(td->pwm_pin);
-> +       }
-> +
-> +       td->pwm_enable_state =3D pinctrl_lookup_state(td->pwm_pin,
-> +                                                   "dvfs_pwm_enable");
-> +       if (IS_ERR(td->pwm_enable_state)) {
-> +               dev_err(td->dev, "DT: missing pwm enabled state\n");
-> +               return PTR_ERR(td->pwm_enable_state);
-> +        }
-> +
-> +        td->pwm_disable_state =3D pinctrl_lookup_state(td->pwm_pin,
-> +                                                    "dvfs_pwm_disable");
-> +       if (IS_ERR(td->pwm_disable_state)) {
-> +               dev_err(td->dev, "DT: missing pwm disabled state\n");
-> +               return PTR_ERR(td->pwm_disable_state);
-> +       }
-> +
->         return 0;
+> -       tegra_periph_clk_init(clk_base, pmc_base, tegra210_clks, &pll_p_p=
+arams);
+> +       tegra_periph_clk_init(clk_base, pmc_base, tegra210_clks, &pll_p_p=
+arams,
+> +                             false);
 >  }
 >  =
 
-> @@ -1625,12 +1939,6 @@ int tegra_dfll_register(struct platform_device *pd=
-ev,
+>  static void __init tegra210_pll_init(void __iomem *clk_base,
+> @@ -3025,7 +3026,7 @@ static struct tegra_clk_init_table init_table[] __i=
+nitdata =3D {
+>         { TEGRA210_CLK_I2S4, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
+>         { TEGRA210_CLK_HOST1X, TEGRA210_CLK_PLL_P, 136000000, 1 },
+>         { TEGRA210_CLK_SCLK_MUX, TEGRA210_CLK_PLL_P, 0, 1 },
+> -       { TEGRA210_CLK_SCLK, TEGRA210_CLK_CLK_MAX, 102000000, 1 },
+> +       { TEGRA210_CLK_SCLK, TEGRA210_CLK_CLK_MAX, 102000000, 0 },
+>         { TEGRA210_CLK_DFLL_SOC, TEGRA210_CLK_PLL_P, 51000000, 1 },
+>         { TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
+>         { TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
+> @@ -3040,7 +3041,6 @@ static struct tegra_clk_init_table init_table[] __i=
+nitdata =3D {
+>         { TEGRA210_CLK_XUSB_DEV_SRC, TEGRA210_CLK_PLL_P_OUT_XUSB, 1020000=
+00, 0 },
+>         { TEGRA210_CLK_SATA, TEGRA210_CLK_PLL_P, 104000000, 0 },
+>         { TEGRA210_CLK_SATA_OOB, TEGRA210_CLK_PLL_P, 204000000, 0 },
+> -       { TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>         { TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>         { TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>         /* TODO find a way to enable this on-demand */
+> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegr=
+a30.c
+> index bee84c554932..827a8cfa42f4 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -819,6 +819,7 @@ static struct tegra_clk tegra30_clks[tegra_clk_max] _=
+_initdata =3D {
+>         [tegra_clk_pll_a] =3D { .dt_id =3D TEGRA30_CLK_PLL_A, .present =
+=3D true },
+>         [tegra_clk_pll_a_out0] =3D { .dt_id =3D TEGRA30_CLK_PLL_A_OUT0, .=
+present =3D true },
+>         [tegra_clk_cec] =3D { .dt_id =3D TEGRA30_CLK_CEC, .present =3D tr=
+ue },
+> +       [tegra_clk_emc] =3D { .dt_id =3D TEGRA30_CLK_EMC, .present =3D tr=
+ue },
+>  };
 >  =
 
->         td->soc =3D soc;
+>  static const char *pll_e_parents[] =3D { "pll_ref", "pll_p" };
+> @@ -843,8 +844,7 @@ static void __init tegra30_pll_init(void)
 >  =
 
-> -       td->vdd_reg =3D devm_regulator_get(td->dev, "vdd-cpu");
-> -       if (IS_ERR(td->vdd_reg)) {
-> -               dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
-> -               return PTR_ERR(td->vdd_reg);
-> -       }
-> -
->         td->dvco_rst =3D devm_reset_control_get(td->dev, "dvco");
->         if (IS_ERR(td->dvco_rst)) {
->                 dev_err(td->dev, "couldn't get dvco reset\n");
-> @@ -1643,10 +1951,27 @@ int tegra_dfll_register(struct platform_device *p=
-dev,
->                 return ret;
+>         /* PLLM */
+>         clk =3D tegra_clk_register_pll("pll_m", "pll_ref", clk_base, pmc_=
+base,
+> -                           CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
+> -                           &pll_m_params, NULL);
+> +                           CLK_SET_RATE_GATE, &pll_m_params, NULL);
+>         clks[TEGRA30_CLK_PLL_M] =3D clk;
+>  =
+
+>         /* PLLM_OUT1 */
+> @@ -852,7 +852,7 @@ static void __init tegra30_pll_init(void)
+>                                 clk_base + PLLM_OUT, 0, TEGRA_DIVIDER_ROU=
+ND_UP,
+>                                 8, 8, 1, NULL);
+>         clk =3D tegra_clk_register_pll_out("pll_m_out1", "pll_m_out1_div",
+> -                               clk_base + PLLM_OUT, 1, 0, CLK_IGNORE_UNU=
+SED |
+> +                               clk_base + PLLM_OUT, 1, 0,
+>                                 CLK_SET_RATE_PARENT, 0, NULL);
+>         clks[TEGRA30_CLK_PLL_M_OUT1] =3D clk;
+>  =
+
+> @@ -990,7 +990,7 @@ static void __init tegra30_super_clk_init(void)
+>         /* SCLK */
+>         clk =3D tegra_clk_register_super_mux("sclk", sclk_parents,
+>                                   ARRAY_SIZE(sclk_parents),
+> -                                 CLK_SET_RATE_PARENT,
+> +                                 CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>                                   clk_base + SCLK_BURST_POLICY,
+>                                   0, 4, 0, 0, NULL);
+>         clks[TEGRA30_CLK_SCLK] =3D clk;
+> @@ -1060,9 +1060,6 @@ static void __init tegra30_periph_clk_init(void)
+>                                CLK_SET_RATE_NO_REPARENT,
+>                                clk_base + CLK_SOURCE_EMC,
+>                                30, 2, 0, &emc_lock);
+> -       clk =3D tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_b=
+ase, 0,
+> -                                   57, periph_clk_enb_refcnt);
+> -       clks[TEGRA30_CLK_EMC] =3D clk;
+>  =
+
+>         clk =3D tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOU=
+RCE_EMC,
+>                                     &emc_lock);
+> @@ -1093,7 +1090,8 @@ static void __init tegra30_periph_clk_init(void)
+>                 clks[data->clk_id] =3D clk;
 >         }
 >  =
 
-> -       ret =3D dfll_fetch_i2c_params(td);
-> +       if (of_property_read_bool(td->dev->of_node, "nvidia,pwm-to-pmic")=
-) {
-> +               td->pmu_if =3D TEGRA_DFLL_PMU_PWM;
-> +               ret =3D dfll_fetch_pwm_params(td);
-> +       } else  {
-> +               td->vdd_reg =3D devm_regulator_get(td->dev, "vdd-cpu");
-> +               if (IS_ERR(td->vdd_reg)) {
-> +                       dev_err(td->dev, "couldn't get vdd_cpu regulator\=
-n");
-> +                       return PTR_ERR(td->vdd_reg);
-> +               }
-> +               td->pmu_if =3D TEGRA_DFLL_PMU_I2C;
-> +               ret =3D dfll_fetch_i2c_params(td);
-> +       }
->         if (ret)
->                 return ret;
+> -       tegra_periph_clk_init(clk_base, pmc_base, tegra30_clks, &pll_p_pa=
+rams);
+> +       tegra_periph_clk_init(clk_base, pmc_base, tegra30_clks, &pll_p_pa=
+rams,
+> +                             true);
+>  }
 >  =
 
-> +       ret =3D dfll_build_lut(td);
-> +       if (ret) {
-> +               dev_err(td->dev, "couldn't build LUT\n");
-> +               return ret;
-> +       }
-> +
->         mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         if (!mem) {
->                 dev_err(td->dev, "no control register resource\n");
-> diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
-> index ed2ad88..b15c690 100644
-> --- a/drivers/clk/tegra/clk-dfll.h
-> +++ b/drivers/clk/tegra/clk-dfll.h
-> @@ -21,6 +21,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/reset.h>
->  #include <linux/types.h>
-> +#include "cvb.h"
+>  /* Tegra30 CPU clock and reset control functions */
+> @@ -1252,10 +1250,7 @@ static struct tegra_clk_init_table init_table[] __=
+initdata =3D {
+>         { TEGRA30_CLK_SDMMC1, TEGRA30_CLK_PLL_P, 48000000, 0 },
+>         { TEGRA30_CLK_SDMMC2, TEGRA30_CLK_PLL_P, 48000000, 0 },
+>         { TEGRA30_CLK_SDMMC3, TEGRA30_CLK_PLL_P, 48000000, 0 },
+> -       { TEGRA30_CLK_PLL_M, TEGRA30_CLK_CLK_MAX, 0, 1 },
+> -       { TEGRA30_CLK_PCLK, TEGRA30_CLK_CLK_MAX, 0, 1 },
+>         { TEGRA30_CLK_CSITE, TEGRA30_CLK_CLK_MAX, 0, 1 },
+> -       { TEGRA30_CLK_EMC, TEGRA30_CLK_CLK_MAX, 0, 1 },
+>         { TEGRA30_CLK_MSELECT, TEGRA30_CLK_CLK_MAX, 0, 1 },
+>         { TEGRA30_CLK_SBC1, TEGRA30_CLK_PLL_P, 100000000, 0 },
+>         { TEGRA30_CLK_SBC2, TEGRA30_CLK_PLL_P, 100000000, 0 },
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 3b2763df51c2..df1cdff58c27 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -773,7 +773,7 @@ void tegra_audio_clk_init(void __iomem *clk_base,
 >  =
 
->  /**
->   * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the D=
-FLL driver
-> @@ -35,6 +36,12 @@ struct tegra_dfll_soc_data {
->         struct device *dev;
->         unsigned long max_freq;
->         const struct cvb_table *cvb;
-> +       struct rail_alignment alignment;
-> +       unsigned int min_millivolts;
-> +       unsigned int tune_high_min_millivolts;
-> +       u32 tune0_low;
-> +       u32 tune0_high;
-> +       u32 tune1;
+>  void tegra_periph_clk_init(void __iomem *clk_base, void __iomem *pmc_bas=
+e,
+>                         struct tegra_clk *tegra_clks,
+> -                       struct tegra_clk_pll_params *pll_params);
+> +                       struct tegra_clk_pll_params *pll_params, bool teg=
+ra30);
 >  =
 
->         void (*init_clock_trimmers)(void);
->         void (*set_clock_trimmers_high)(void);
+>  void tegra_pmc_clk_init(void __iomem *pmc_base, struct tegra_clk *tegra_=
+clks);
+>  void tegra_fixed_clk_init(struct tegra_clk *tegra_clks);
 > -- =
 
-> 1.9.1
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 2.15.1
+>=20
