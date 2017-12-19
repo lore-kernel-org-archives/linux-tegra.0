@@ -1,29 +1,50 @@
 From: Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Subject: Re: [PATCH 6/9] ARM: init: update secondary_data register
- documentation
-Date: Tue, 19 Dec 2017 23:16:44 +0000
-Message-ID: <20171219231644.GG10595@n2100.armlinux.org.uk>
+Subject: Re: [PATCH 7/9] ARM: tegra: enable cache via TF
+Date: Tue, 19 Dec 2017 23:21:11 +0000
+Message-ID: <20171219232111.GH10595@n2100.armlinux.org.uk>
 References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
- <a6e5e735ebae32a433e501188a86082efc8b0b52.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <6a164b2270a3e996c083e94bf5b1e27028c1135e.1500510157.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <a6e5e735ebae32a433e501188a86082efc8b0b52.1500510157.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+In-Reply-To: <6a164b2270a3e996c083e94bf5b1e27028c1135e.1500510157.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On Thu, Jul 20, 2017 at 02:29:25AM +0200, Michał Mirosław wrote:
-> Fix secondary_data pointer register and document other
-> occurrences in SMP boot code.
-> 
-> Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+> diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+> index 805f306fa6f7..aae7f5961563 100644
+> --- a/arch/arm/mach-tegra/reset-handler.S
+> +++ b/arch/arm/mach-tegra/reset-handler.S
+> @@ -78,8 +78,20 @@ ENTRY(tegra_resume)
+>  	orr	r1, r1, #1
+>  	str	r1, [r0]
+>  #endif
+> +#ifdef CONFIG_TRUSTED_FOUNDATIONS
+> +	adr	r3, __tegra_smc_stack
+> +	stmia	r3, {r4-r12, sp, lr}
+>  
+> -#ifdef CONFIG_CACHE_L2X0
+> +	mov	r0, #3	// local wake
+> +	mov	r3, #0
+> +	mov	r4, #0
+> +	dsb
+> +	.arch_extension	sec
+> +	smc	#0
+> +
+> +	adr	r3, __tegra_smc_stack
+> +	ldmia	r3, {r4-r12, sp, pc}
 
-It's probably worth referecing commit 34d926266500 ("[ARM] Fix SMP booting")
-since we have it in our history for this.
+You don't want to jump to the 'lr' value previously stacked here.  I
+also wonder whether you need all this stacking, or whether you're
+just doing it because you don't know whether its necessary.  From
+what I can see, the only register that this code cares about is r8,
+although it would be wise to place a comment in the code if the smc
+call corrupts the other registers.
 
 -- 
 RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
