@@ -1,65 +1,61 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 5/5] arm64: tegra: Changes for v4.16-rc1
-Date: Wed, 20 Dec 2017 20:19:00 +0100
-Message-ID: <20171220191900.757-5-thierry.reding@gmail.com>
-References: <20171220191900.757-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH v5 3/4] ARM: dts: tegra20: Add device tree node to
+ describe IRAM
+Date: Wed, 20 Dec 2017 20:19:39 +0100
+Message-ID: <20171220191939.GE9687@ulmo>
+References: <cover.1513038011.git.digetx@gmail.com>
+ <92563f9030ab413ff8f6d5a6b6a5680124ec4d98.1513038011.git.digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="G6nVm6DDWH/FONJq"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171220191900.757-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <92563f9030ab413ff8f6d5a6b6a5680124ec4d98.1513038011.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+--G6nVm6DDWH/FONJq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+On Tue, Dec 12, 2017 at 03:26:09AM +0300, Dmitry Osipenko wrote:
+> From: Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
+>=20
+> All Tegra20 SoCs contain 256KiB IRAM, which is used to store
+> resume code and by a video decoder engine.
+>=20
+> Signed-off-by: Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra20.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
-are available in the Git repository at:
+Applied, thanks.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.16-arm64-dt
-
-for you to fetch changes up to 50f5b841ba06f4dfb739e7a5ab9b87e8173d5915:
-
-  arm64: tegra: Use sor1_out clock (2017-12-15 10:14:17 +0100)
-
-Thanks,
 Thierry
 
-----------------------------------------------------------------
-arm64: tegra: Changes for v4.16-rc1
+--G6nVm6DDWH/FONJq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This set of patches enables a bunch of new features on Jetson TX2 that
-were finally unblocked by the GPIO driver getting merged for v4.15.
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Jon Hunter (1):
-      arm64: tegra: Add CPU and PSCI nodes for NVIDIA Tegra210 platforms
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlo6t8sACgkQ3SOs138+
+s6F3tQ//Qlj1LW9auRVzLNEljlIaVA9PvpaSI+bHlvcm2oaLI72x4+90goOb1FoU
+bCBzHj8fgu3zu8pPGAskWhw3vx9OBA6tJjOywMBuxuEKtRXsXLe3tw4uKu4ASP6Q
+MCM9RACnNCJf/mNFW3akz3L3WQKhozPGCdH5huANVvGGI3hChfNaPCX2N9Rc6Lkk
+fUsTzUe+BpKUwN9Vm/XG6Bo0WbYuGBA+khGzGO4OGt9v95vhYoUOt7v1nuo3l0Wq
+T0sN6UEQIyslunYLJqVwNmmBEPAuNCabdFhFfrto3BhkyFHsQqCG8S25EHWBHmcv
+kbX47z/n89pdt0Frpz/c148lky/gr7T+BdWHvbuQw8FXAvRxOrtgnCzzCQyKd8Qi
+xSZzbcjF5Wapy25m/N7KihAvuhWMsIENljarK5kHAGWqwZLrA+CyeVNrXXae1HFs
+8TqCNUpBEoTKjBm4oZ5Cs7hazHM2XYjvddGdbWWO2B7AQRDXVf2WUCgicCvOU7nX
+/6RbJqpiAPDB2W0Ye6S9B15ZAYxMzHy+B/+lBKql/pYysVEzqfvnUEkkLPayruyx
+u9dRXxy2hQy7SYwuMM1/XP04b1Xrvn7S1rak09/W3GpbJrIJ56Q83Sl7L1XGb1GK
+2fPn7POUiQGtY2auj4fD9K8PB3W2g5WWXSyj0ZERvoGZTL0OE2A=
+=OB1z
+-----END PGP SIGNATURE-----
 
-Thierry Reding (12):
-      dt-bindings: misc: Add Tegra186 MISC registers bindings
-      dt-bindings: memory: Add Tegra186 support
-      arm64: tegra: Add MISC registers on Tegra186
-      arm64: tegra: Add FUSE block on Tegra186
-      arm64: tegra: Add memory controller on Tegra186
-      arm64: tegra: Enable memory controller on P3310
-      arm64: tegra: Add SMMU node for Tegra186
-      arm64: tegra: Add display nodes on Tegra186
-      arm64: tegra: Mark I2C4 as DDC on P3310
-      arm64: tegra: Enable HDMI on Jetson TX2
-      arm64: tegra: Fix SD write-protect polarity on Jetson TX2
-      arm64: tegra: Use sor1_out clock
-
- .../memory-controllers/nvidia,tegra30-mc.txt       |   2 +
- .../bindings/misc/nvidia,tegra186-misc.txt         |  12 +
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  51 +++
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |  10 +-
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 351 +++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |  23 ++
- arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi     |  23 ++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   4 +-
- include/dt-bindings/memory/tegra186-mc.h           | 111 +++++++
- 9 files changed, 582 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/misc/nvidia,tegra186-misc.txt
- create mode 100644 include/dt-bindings/memory/tegra186-mc.h
+--G6nVm6DDWH/FONJq--
