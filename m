@@ -1,81 +1,64 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 5/5] drm/tegra: Correct timeout in tegra_syncpt_wait
-Date: Wed, 20 Dec 2017 21:17:29 +0100
-Message-ID: <20171220201729.GE31757@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 3/5] drm/tegra: Trade overlay plane for cursor on
+ older Tegra's
+Date: Wed, 20 Dec 2017 21:19:43 +0100
+Message-ID: <20171220201943.GF31757@ulmo>
 References: <cover.1513783738.git.digetx@gmail.com>
- <c7314f8a7085205695a69a7e248161d4dbe326c0.1513783739.git.digetx@gmail.com>
+ <fd0034ee935cc17915f4189ee65865c974f34d98.1513783739.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1222010518=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <c7314f8a7085205695a69a7e248161d4dbe326c0.1513783739.git.digetx@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l+goss899txtYvYf"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <fd0034ee935cc17915f4189ee65865c974f34d98.1513783739.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1222010518==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="imjhCm/Pyz7Rq5F2"
-Content-Disposition: inline
-
-
---imjhCm/Pyz7Rq5F2
+--l+goss899txtYvYf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 20, 2017 at 06:46:14PM +0300, Dmitry Osipenko wrote:
-> host1x_syncpt_wait() takes timeout value in jiffies, but DRM passes it in
-> milliseconds.
+On Wed, Dec 20, 2017 at 06:46:12PM +0300, Dmitry Osipenko wrote:
+> Older Tegra's do not support RGBA format for the cursor, but instead
+> overlay plane could be used for it. Since there is no much use for the
+> overlays on a regular desktop and HW-accelerated cursor is much nicer
+> than the jerky SW cursor, let's trade one overlay plane for the cursor.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/gpu/drm/tegra/drm.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/tegra/dc.c | 75 +++++++++++++++++++++++++++++++++++-----=
+------
+>  drivers/gpu/drm/tegra/dc.h |  2 ++
+>  2 files changed, 59 insertions(+), 18 deletions(-)
 
-Applied, thanks.
+Given the dependency on the alpha formats patch and due to lack of time
+because of the holidays messing up the schedule I'd like to defer this
+to v4.17, unless we can settle all of it until Friday.
 
 Thierry
 
---imjhCm/Pyz7Rq5F2
+--l+goss899txtYvYf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlo6xVkACgkQ3SOs138+
-s6GBOxAAmstKwYeg49mtGekJg7PwvodgdXIj/zW6iMKQFsBASF/TBPSOCPhxdWQL
-hx4XgcXKI5MW/kAo3PoSVfru3BxXbeDIAkUMPLByhS1S10BNAlieuoP0WCDEAYRR
-rxH2qYBNMm0Z0SzUqxeY2TpVY+GKeWVffUrj1iRl2o3BtatEXIyR01J5bld4CyCD
-kTJw7IkZ/UQGct8oZ9jImMb91yfIFdVzcH92vgciXT0FOUTMPvlQ+/Z7OSP75nWC
-f2uBQt8UJF+n0yM3IFpVuqpc7iv2XpkCzFf+LsnwzjzdtK4z9ID9FOjiYqxgivbA
-7VfvRsu6Wn7AxPrPkkFRiQLVcIJWfI73NUe2uG/svPGYSZxpPBGtRkFFVtwIPWFM
-IhpMmIEsi0Kbg+5jS4J5IQuyc1nP+z2eUK206ZZDaZzM49hQPLYoe0H1rOjvHtEF
-6Juh2JXi6AmmlZ9BqNdon4IuKIxEakzPXcX7az8cVjm2l1DZjr9Zc7hlhTHHJyRk
-7falG3DbMqguO8Tc4xMYfDRvltNjPoL5QCEj0Atxsn5oJAFdjyjB4Ys/yabl3d7P
-Td7muJAz2OB1eYZTh6uvyIdLz/r20mF/2JuEnklYymIW2v6zPEQf0Sw8RsG4PBuF
-zdOEL6lPTXLHy5O+2zEAk0Qn+zcqQz/KA+NUyDNGPBbCsf8feVM=
-=xXcx
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlo6xd8ACgkQ3SOs138+
+s6GcGA//ZE0mMbgAlwwnS/cB+9Dv9jrdzZ9ioht90+wakuCceDluHO3/0ypfmEoL
+oyd+WPkxrgCc+mjA+6C+bcnCjiHOlrYn+93axmjf4qrmAhaByO9il+kn9SNSxOl7
+/T9LhoYrOWDMAokoZh6pvk2zgrR0BnjOsyGVTbyq/SRqpHljwZExZjNwsYs2FO1s
+b+meEVVjdvTPI6ZDbo/VeWj+al5/Vbte4l58jXVWMQorRz7Y9p1NhOalsH7a8QeC
+dXNkYL4IXIu2JmNtL3OCk6u3o2ASAXMppcDqaTy0Ibnen5+P5NBjYRkB7OgVziyO
+hnn6/gOZavVUC8B6cYa6t7w6aR+8xWk0SeoqZxgYZRGaPYyAkBX2tD81np8UvGkH
+P5Hnoi7B+7GQHwNRx8OvU3yYoxOUBp/BPPxSgPGnaH16IoOWuq+nb6SUHlcAV+Ua
+Pv+ScdmfS4+XBZ8GlvCQNI1CmwHsAX3PBVMMCwigaB4WYUA3KELiU1p+jTKQhmnJ
+HuQ83zR8ZlTPOna4Gp+nw52LNDWj5/wBkcDqjPyOesT4YJrnR7S7PrUjl/xvx3Z0
+xYcb6FTp2VPITscOnHQo5HeGVUQDO8Raqe23N6gpZAQIoYAL9rzDmi5y+Ci5EFEc
+zAifOFajnVp9WgDy6XMz64u14vlhf9Flh13n+Gu/LYuDUd9dbhA=
+=vlh+
 -----END PGP SIGNATURE-----
 
---imjhCm/Pyz7Rq5F2--
-
---===============1222010518==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1222010518==--
+--l+goss899txtYvYf--
