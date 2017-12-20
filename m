@@ -1,108 +1,148 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/4] PCI: tegra: Configuration space mapping cleanups and
- fixes
-Date: Wed, 20 Dec 2017 21:39:10 +0100
-Message-ID: <20171220203910.GG31757@ulmo>
-References: <20171214134545.11143-1-thierry.reding@gmail.com>
- <20171214173745.GA17018@red-moon>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 2/5] drm/tegra: Restore opaque and drop alpha formats
+ on Tegra20/30
+Date: Thu, 21 Dec 2017 00:05:40 +0300
+Message-ID: <0a19bbe0-5dd2-7929-c1e0-dfe6d3817d35@gmail.com>
+References: <cover.1513783738.git.digetx@gmail.com>
+ <0476e28d70b47ec599fb65d1cfa457276629de27.1513783738.git.digetx@gmail.com>
+ <20171220180119.GB8780@ulmo> <3924358d-ae3b-78a4-1227-164435add8d1@gmail.com>
+ <20171220201641.GB31757@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lHGcFxmlz1yfXmOs"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171214173745.GA17018@red-moon>
+In-Reply-To: <20171220201641.GB31757@ulmo>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Saga <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 20.12.2017 23:16, Thierry Reding wrote:
+> On Wed, Dec 20, 2017 at 11:01:49PM +0300, Dmitry Osipenko wrote:
+>> On 20.12.2017 21:01, Thierry Reding wrote:
+>>> On Wed, Dec 20, 2017 at 06:46:11PM +0300, Dmitry Osipenko wrote:
+>>>> Commit 7772fdaef939 ("drm/tegra: Support ARGB and ABGR formats") broke
+>>>> DRM's MODE_ADDFB IOCTL on Tegra20/30, because IOCTL uses XRGB format if
+>>>> requested FB depth is 24bpp. As a result, Xorg doesn't work anymore with
+>>>> both modesetting and opentegra drivers. On older Tegra's each plane has
+>>>> a blending configuration which should be used to enable / disable alpha
+>>>> blending and right now the blending configs are hardcoded to disabled
+>>>> alpha blending. In order to support alpha formats properly, planes
+>>>> blending configuration must be adjusted, until then the alpha formats
+>>>> are equal to non-alpha.
+>>>>
+>>>> Fixes: 7772fdaef939 ("drm/tegra: Support ARGB and ABGR formats")
+>>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>> ---
+>>>>  drivers/gpu/drm/tegra/dc.c    | 29 ++++++++++++++++++-----------
+>>>>  drivers/gpu/drm/tegra/dc.h    |  1 +
+>>>>  drivers/gpu/drm/tegra/fb.c    | 13 -------------
+>>>>  drivers/gpu/drm/tegra/hub.c   |  3 ++-
+>>>>  drivers/gpu/drm/tegra/plane.c | 22 +++++++++++++++++-----
+>>>>  drivers/gpu/drm/tegra/plane.h |  2 +-
+>>>>  6 files changed, 39 insertions(+), 31 deletions(-)
+>>>
+>>> This kept bugging me, so I spent some time looking at the blending
+>>> programming. I came up with the attached patch which seems to work
+>>> for all scenarios and is fairly similar to your patch. It has the
+>>> added benefit that we can keep support for more formats.
+>>>
+>>> Any comments?
+>>>
+>>> Thierry
+>>> --- >8 ---
+>>> From 3d2b7d1a9b8239dc6940477d8783461ac60783bc Mon Sep 17 00:00:00 2001
+>>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> Date: Wed, 20 Dec 2017 09:39:14 +0100
+>>> Subject: [PATCH] drm/tegra: dc: Implement legacy blending
+>>>
+>>> This implements alpha blending on legacy display controllers (Tegra20,
+>>> Tegra30 and Tegra114). While it's theoretically possible to support the
+>>> zpos property to enable userspace to specify the Z-order of each plane
+>>> individually, this is not currently supported and the same fixed Z-
+>>> order as previously defined is used.
+>>
+>> Perhaps one variant of implementing zpos could be by making overlays 'virtual',
+>> so each virtual overlay will be backed by the real HW plane and we could swap
+>> the HW planes of the virtual overlays, emulating zpos.
+>>
+>>> Reverts commit 71835caa00e8 ("drm/tegra: fb: Force alpha formats") since
+>>> the opaque formats are now supported.
+>>>
+>>> Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> Fixes: 7772fdaef939 ("drm/tegra: Support ARGB and ABGR formats")
+>>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>  drivers/gpu/drm/tegra/dc.c    | 74 ++++++++++++++++++++++++++++++++++---------
+>>>  drivers/gpu/drm/tegra/dc.h    | 13 ++++++++
+>>>  drivers/gpu/drm/tegra/fb.c    | 12 -------
+>>>  drivers/gpu/drm/tegra/plane.c | 41 ++++++++++++++++++++++++
+>>>  drivers/gpu/drm/tegra/plane.h |  3 ++
+>>>  5 files changed, 116 insertions(+), 27 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+>>> index bc65c314e00f..07c687d7f615 100644
+>>> --- a/drivers/gpu/drm/tegra/dc.c
+>>> +++ b/drivers/gpu/drm/tegra/dc.c
+>>> @@ -168,32 +168,46 @@ static inline u32 compute_initial_dda(unsigned int in)
+>>>  	return dfixed_frac(inf);
+>>>  }
+>>>  
+>>> -static void tegra_plane_setup_blending_legacy(struct tegra_plane *plane)
+>>> +static void
+>>> +tegra_plane_setup_blending_legacy(struct tegra_plane *plane,
+>>> +				  const struct tegra_dc_window *window)
+>>>  {
+>>> +	u32 foreground = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255) |
+>>> +			 BLEND_COLOR_KEY_NONE;
+>>> +	u32 background = BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) |
+>>> +			 BLEND_COLOR_KEY_NONE;
+>>> +	u32 blendnokey = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255);
+>>> +
+>>> +	/* enable alpha blending if window->alpha */
+>>> +	if (window->alpha) {
+>>> +		background |= BLEND_CONTROL_DEPENDENT;
+>>> +		foreground |= BLEND_CONTROL_ALPHA;
+>>> +	}
+>>
+>> I think dependent weight means that window doesn't have alpha transparency. So
+>> we should set the dependent_weight mode for opaque formats and alpha_weight for
+>> formats with alpha channel.
+> 
+> According to the TRM, dependent weight means that its weight will be 1 -
+> the sum of the other overlapping windows. And it certainly seems to work
+> that way in my tests (see below).
 
---lHGcFxmlz1yfXmOs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, and you are hardcoding the blending modes regardless of the actual plane
+format. So even if underlying window has alpha format, it will be treated as it
+is opaque.
 
-On Thu, Dec 14, 2017 at 05:37:45PM +0000, Lorenzo Pieralisi wrote:
-> Hi Thierry,
->=20
-> On Thu, Dec 14, 2017 at 02:45:41PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Hi Lorenzo,
-> >=20
-> > This cleans up a few oddities that I found while reviewing and testing
-> > the patch
-> >=20
-> > 	[PATCH V3 1/2] PCI: tegra: refactor config space mapping code
-> >=20
-> > that Vidya Sagar sent out earlier. The first three patches are mostly
-> > cleanup and admittedly somewhat bikeshedding in nature. They could've
-> > been just review comments, but I thought I'd just submit them as a
-> > series of patches since I had already typed them up anyway.
-> >=20
-> > The last patch gets rid of an artificial restriction regarding the
-> > mapping address and does a bit of simplification.
-> >=20
-> > These are technically incremental on top of the original patch, but if
-> > you prefer, feel free to squash them into that patch.
->=20
-> I took some time to have a look at all of them and actually I am happy
-> with the end result, except that I would prefer if you squash them all
-> in and rewrite the logs since I can easily miss something (eg I have no
-> insights into the Tegra config space FPCI windowing mechanism) - I will
-> merge the resulting patch(es).
->=20
-> I have a question: after merging both series, are
->=20
-> tegra_pcie_{add/remove}_bus()
->=20
-> (and struct tegra_pcie_bus)
->=20
-> still needed ? I do not think so.
+>> If the above is correct, then I'm suggesting to not expose alpha formats, we
+>> should properly test all combinations of blending of all the windows. In one
+>> case you could apply my patch for now and then me/you/we could work on a proper
+>> legacy blending implementation based on your patch. In the other case I could
+>> take your patch into v4 (cursor patch would have to be rabased in that case) and
+>> we will correct blending sometime later. I don't mind either case, up to you to
+>> decide.
+> 
+> The problem with not exposing alpha formats is that we either have to
+> omit them everywhere or implement complicated workarounds that make the
+> old hardware special. That's still true to some degree in this patch,
+> but I think it's fairly cleanly split out.
+> 
+>> Is there any ready-made testsuite for the DRM planes blending? Or you have made
+>> a test by yourself? In the latter case, could you please share the code so that
+>> I could test it too without burden of writing testcases from scratch?
+> 
+> I've implemented a test for this in my fork of libdrm:
+> 
+> 	https://cgit.freedesktop.org/~tagr/drm/
+> 
+> The kms-planes-blending test will fill three framebuffers with the
+> primary colors at 0.5 alpha and presents them in three planes that
+> overlay at the screen center.
+> 
+> I tested it on TrimSlice and the result looks correct.
 
-Yes, you're right, those were only to track the quilt mappings that we
-used to do. I've removed them in the patch I just sent (v4).
-
-> > I've tested these on all of Tegra20, Tegra30, Tegra124, Tegra210 and
-> > Tegra186.
->=20
-> If the testing goes OK please send me unified series and will merge
-> that one.
->=20
-> This brings me to a question for you and Bjorn: how do you usually
-> handle DT updates ? I assume we send them via the PCI tree but I am
-> asking to prevent any issue upfront.
-
-DT updates usually go through the ARM SoC tree. It's usually okay to do
-that because the DT stability requirement nicely decouples DT and driver
-updates already.
-
-In this particular case, the driver will be presented with a 256 MiB
-window from existing DTs and simply use the first 4 KiB of that window
-for the configuration space mapping. We can apply the DT patches at any
-later time to reduce the region from 256 MiB to 4 KiB. I plan to do that
-during for v4.17.
-
-Thierry
-
---lHGcFxmlz1yfXmOs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlo6ymsACgkQ3SOs138+
-s6FrAw/+PkIsN+yoLQv/Loqi+1kJPDxmSH8dToI2mLD9GDH3It0h/WSXaroeHHan
-s0rKU3jNjyZS6+S2yAGIke9eHgrsmDwJznHswcUr71wkqegHTnZYA4j2+3tT8kku
-4LxgcLnmkRQ9CATDnhodsn2yVh61654/n4HY/dPKk+KYbfxq+eBbfCO0WwV/YH/O
-ZJyK2h0YW8wm9F4HHYET06VucXfT+gdpf6xViOrlEcvjUIaMoJLC0kGf6ZAiDnNZ
-DCf3U7zs6J/EkdeqvPZXT98/KV7SmQfvAQaypTFs92/mQ+fqoqEDX/4sS3WgmYJG
-4HxGSXxtTszRJgEhxshJZ2kpV+tyZv52JjHtzxccTwN4SMZoCpz+hE5ua4vNgDTv
-31Yz2UXcS00JgsGJNTk1839ujM/FGXPIvJLyluQ1Xg+BB5k2VDUnHULm3U6DDMdy
-0We0zqJzu6CDOYDmUccQRXVg/GkDUcigF6JiMBTyo3aMiGom+ta6h8qIN1Nxe9C+
-2nM6RZdFWf2POJHoDj6JM8Bn5q10XO3JufmMKUt18NfzBh0c89fTLL7eYZal+eWj
-1zL1GQ835PTUHdWYAniuiIFZq91QfL2uhHTvBp25ykou8UJGW5ULm4skJPJPBnPK
-AXaKlmyNYiEbsXoynNJfUWznYFy/YtwicXdniMcZB1zL7gvp9qY=
-=Auey
------END PGP SIGNATURE-----
-
---lHGcFxmlz1yfXmOs--
+But maybe I'm missing something. Thanks for sharing the test, I'll try it out.
