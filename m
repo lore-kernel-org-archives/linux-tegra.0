@@ -1,52 +1,83 @@
-From: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] clk: tegra: Mark HCLK, SCLK, EMC,
- MC and PLL_P outputs as critical
-Date: Tue, 19 Dec 2017 14:15:58 -0800
-Message-ID: <151372175856.45969.11728164366457295655@resonance>
-References: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx@gmail.com>
- <151371340146.45969.1875712520168365873@resonance>
- <6e09f1cb-cb89-55a5-b7ea-52cb9f0efaf2@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH -next] iommu/tegra-smmu: Fix return value check in
+ tegra_smmu_group_get()
+Date: Wed, 20 Dec 2017 18:41:46 +0100
+Message-ID: <20171220174146.GA8780@ulmo>
+References: <1513739169-122341-1-git-send-email-weiyongjun1@huawei.com>
+ <20171220094400.5b95004f@t450s.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6e09f1cb-cb89-55a5-b7ea-52cb9f0efaf2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20171220094400.5b95004f-1yVPhWWZRC1BDLzU/O5InQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Dmitry Osipenko (2017-12-19 12:20:56)
-> On 19.12.2017 22:56, Michael Turquette wrote:
-> > Quoting Dmitry Osipenko (2017-12-18 19:59:06)
-> >> Machine dies if HCLK, SCLK or EMC is disabled, hence mark these clocks
-> >> as critical. Currently some of drivers do not manage clocks properly,
-> >> expecting clocks to be 'always enabled', these clocks are MC and PLL_P
-> >> outputs. Let's mark MC or PLL_P outputs as critical for now and revert
-> >> this change once drivers would be corrected.
-> > =
 
-> > Are the drivers that do not manage their clocks correctly merged
-> > upstream? If so can we fix those drivers instead of marking clocks as
-> > critical?
-> =
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> All the drivers are in upstream for a quite long time already. We should =
-be able
-> to correct them, but I haven't tried yet.
-> =
+On Wed, Dec 20, 2017 at 09:44:00AM -0700, Alex Williamson wrote:
+> On Wed, 20 Dec 2017 03:06:09 +0000
+> Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org> wrote:
+>=20
+> > In case of error, the function iommu_group_alloc() returns ERR_PTR() and
+> > never returns NULL. The NULL test in the return value check should be
+> > replaced with IS_ERR().
+> >=20
+> > Fixes: 7f4c9176f760 ("iommu/tegra: Allow devices to be grouped")
+> > Signed-off-by: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/iommu/tegra-smmu.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> > index 8885635..44d40bc 100644
+> > --- a/drivers/iommu/tegra-smmu.c
+> > +++ b/drivers/iommu/tegra-smmu.c
+> > @@ -832,7 +832,7 @@ static struct iommu_group *tegra_smmu_group_get(str=
+uct tegra_smmu *smmu,
+> >  	group->soc =3D soc;
+> > =20
+> >  	group->group =3D iommu_group_alloc();
+> > -	if (!group->group) {
+> > +	if (IS_ERR(group->group)) {
+> >  		devm_kfree(smmu->dev, group);
+> >  		mutex_unlock(&smmu->lock);
+> >  		return NULL;
+>=20
+> Acked-by: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+>=20
+> Thierry, I assume you'll add this on top of the referenced commit.
+> Thanks,
 
-> > If not can we annotate the flags below with a comment stating to remove
-> > the critical clock flag once the consumer driver gets a clue?
-> I'll try to take a look at how much effort it would take to correct the d=
-rivers
-> during the next few days and will send v3 with either the comment being a=
-dded or
-> 'always enabled' clocks being dropped from the patch.
+Applied, thanks.
 
-Great, thanks for looking into it. Critical clocks are an easy-to-abuse
-feature and we should really be using the clk.h api as much as possible
-in place of the critical clocks mechanism.
+Thierry
 
-Best regards,
-Mike
+--VS++wcV0S1rZb1Fb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlo6oNcACgkQ3SOs138+
+s6ED0w/+MWy9kjp+SsCsfbKGhGP9b4LQ35HhruR2ZLTtrHqhbA4Ip+QzEthihyYG
+Tyfx49PyHwTEyCv6UwrARI5M5GOnnSmuCl81pT7CZ8kP/k/DFcIYVUBxXphqcKd5
+x7/4IM/EG//usI3QwnSnRzCCRI/9MzEpV6wuafG3IQ6eZoiXQl2p5OLE3FH19Tlq
+hQHBOGF1X9ypJDPpCXJHl0ZDij/7YlUVQxkTvx2OVlhsYCf/CtkW/IviLqvYrS26
+Wzc8wZOJ2sc/pnNtCOKL+Drcrv2GN+8NmEsABITUc2+ehpp5mqlcw5TWnk7gmt9l
+M6rlr5NPZQubxu4D4F9DyrXETC1LkoPRuKyTkfXDJ6t5slXJWXTrY8zPtlwaNSTl
+z+prIoS1aIWqeQMQ4tJvabZXyqsPjYhKUEQh4b59doVP68AaltD1SpM1hYuUzlmz
+u3w5/0sRHN4JyA2sffdfE5Pp/xbe3+iY1exc5+OrW/UAHC3++RjKlss4Lns8MpPM
+YpV3mHpEmyo5wOhGTWn1DTCa+PJG80wq7zGCZTZrtpCKcxWqBkGPlpK2AhptJRo8
+l3cXTgVRwnZ/Ws23dvcCFvpmPzF7lKjLtVSH9yn9SIgCAvy/0MOP9HiNCRPOFERa
+wewuKrr7W91CZA59kxTb/U39aHFVIceJLFnGWaDGKFFNzRiKVyY=
+=s2Pc
+-----END PGP SIGNATURE-----
+
+--VS++wcV0S1rZb1Fb--
