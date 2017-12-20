@@ -1,41 +1,64 @@
-From: Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [RFC PATCH v2 0/1] Fix drm driver hang on tegra124-nyan-big
-Date: Wed, 20 Dec 2017 11:32:22 +0000
-Message-ID: <cover.1513768618.git.guillaume.tucker@collabora.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/9] ARM: enable secure platform-only erratas
+Date: Wed, 20 Dec 2017 15:49:39 +0300
+Message-ID: <21964ae9-4c60-36b2-627d-04e4e975a38d@gmail.com>
+References: <cover.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <77ce738c15b992a92bee3a18e5468342fb2dc5ab.1500510157.git.mirq-linux@rere.qmqm.pl>
+ <bdff72b9-8ebd-a426-b27b-fe055d45cfb1@gmail.com>
+ <20171219232810.GI10595@n2100.armlinux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171219232810.GI10595-l+eeeJia6m9URfEZ8mYm6t73F7V6hmMc@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Guillaume Tucker <guillaume.tucker-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+To: Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+Cc: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch was initially sent along with another one to fix a
-first hang in the nouveau drm driver[1].  I'm now sending it
-again as a separate patch as it's to fix a second hang which is
-not strictly related.  It is hidden by the first hang though, as
-this happens later on during the driver initialisation.
+On 20.12.2017 02:28, Russell King - ARM Linux wrote:
+> On Thu, Oct 05, 2017 at 09:16:12PM +0300, Dmitry Osipenko wrote:
+>> On 20.07.2017 03:29, Michał Mirosław wrote:
+>>> Allow secure-only erratas to be used in multiarch kernel.
+>>>
+>>> Signed-off-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+>>> ---
+>>>  arch/arm/Kconfig | 20 ++++++++++++++------
+>>>  1 file changed, 14 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>>> index a208bfe367b5..a1eff866550b 100644
+>>> --- a/arch/arm/Kconfig
+>>> +++ b/arch/arm/Kconfig
+>>> @@ -696,6 +696,14 @@ config ARCH_MULTI_CPU_AUTO
+>>>  
+>>>  endmenu
+>>>  
+>>> +config ARCH_ASSUME_SECURE_PLATFORM
+>>> +	bool "Enable ERRATAs using secure-only registers"
+>>> +	default !ARCH_MULTIPLATFORM
+>>
+>> I think default should always be "Yes" and this option shouldn't affect
+>> multiplatform kernels. So a multiplatform kernel wouldn't be an option
+>> for your device.
+> 
+> No, that changes the current behaviour.
+> 
+> Current behaviour is for the secure-only errata to be disabled when the
+> multi-platform option is enabled, because multi-platform kernels have to
+> be able to run in the non-secure world.  Defaulting this option to "yes"
+> means that these errata become visible.
 
-The issue this is addressing is due to a rework[2] of the driver
-which apparently wasn't fully tested on tegra124 and possibly
-also on tegra210.  The sor->clk_out is not used on these
-platforms as HDMI and DP are both not supported (but eDP is), so
-trying to assign the parent clock to clk_out does nothing.  The
-driver then goes on to configure the clock and PLL registers in
-tegra_sor_edp_enable and this is where it hangs.
+Indeed, I got it inverted.
 
-As this is hard to debug further without full documentation or a
-hardware debugger, this patch essentially makes the driver do
-what it used to do on these platforms before the rework
-(i.e. assign the parent clock to sor->clk instead).  There might
-be a more correct way of fixing this, hence the RFC.
+> I have to wonder why you need this though - your patches seem to be
+> targetting a platform that runs in non-secure world, and enabling these
+> errata would make the kernel non-bootable on your platform.
 
-[1] https://patchwork.kernel.org/patch/10124637/
-[2] e1335e2f0cfc ("drm/tegra: sor: Reimplement pad clock")
+Perhaps because Michał made the Tegra's CPU reset handler hardcoded to either
+secure or to non-secure case based on the kernels configuration. I've showed how
+we can get rid of that inflexibility in [0], maybe Michał could pick up the idea
+in the next iteration of the patches.
 
-Guillaume Tucker (1):
-  drm/tegra: sor: Fix hang on tegra124 due to NULL clk_out
-
- drivers/gpu/drm/tegra/sor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---
-2.11.0
+[0] https://marc.info/?l=linux-tegra&m=151371042522835
