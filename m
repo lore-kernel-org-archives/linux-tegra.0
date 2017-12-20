@@ -1,58 +1,81 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 4/5] drm/tegra: gem: Correct iommu_map_sg() error
- checking
-Date: Wed, 20 Dec 2017 21:17:16 +0100
-Message-ID: <20171220201716.GD31757@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 5/5] drm/tegra: Correct timeout in tegra_syncpt_wait
+Date: Wed, 20 Dec 2017 21:17:29 +0100
+Message-ID: <20171220201729.GE31757@ulmo>
 References: <cover.1513783738.git.digetx@gmail.com>
- <1daf8bfe7c4ef37a4d5d6d5f87eae36425a3df14.1513783739.git.digetx@gmail.com>
+ <c7314f8a7085205695a69a7e248161d4dbe326c0.1513783739.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zbGR4y+acU1DwHSi"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1daf8bfe7c4ef37a4d5d6d5f87eae36425a3df14.1513783739.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============1222010518=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <c7314f8a7085205695a69a7e248161d4dbe326c0.1513783739.git.digetx@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---zbGR4y+acU1DwHSi
+--===============1222010518==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="imjhCm/Pyz7Rq5F2"
+Content-Disposition: inline
+
+
+--imjhCm/Pyz7Rq5F2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 20, 2017 at 06:46:13PM +0300, Dmitry Osipenko wrote:
-> iommu_map_sg() doesn't return a error value, but a size of the requested
-> IOMMU mapping or zero in case of error.
+On Wed, Dec 20, 2017 at 06:46:14PM +0300, Dmitry Osipenko wrote:
+> host1x_syncpt_wait() takes timeout value in jiffies, but DRM passes it in
+> milliseconds.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/gpu/drm/tegra/gem.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
+>  drivers/gpu/drm/tegra/drm.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
 Applied, thanks.
 
 Thierry
 
---zbGR4y+acU1DwHSi
+--imjhCm/Pyz7Rq5F2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlo6xUwACgkQ3SOs138+
-s6G+3g//SYg0QxbxKk8QOecf8DO0APyxhKmCb8SWsxp18Pm6LuDMCuLcm2lr5R+g
-wULs3Bm+7nmqAdPXDgS/MoUbVQTBF2yytU7NZsjOxxgivGrEF4GAvJpne3//PGX7
-b9Qt/uZ/1kYm7ba36zWgoTj7oHAXKQgg5/XGRgTA37jGbBPLylrRu9W3xHj/W61W
-ULEs2NRbRGY/FJ3L+Rth9IHQqQv1Lh3FIwdPIZUjy8dvxPwYjdhoRckAOEwbmp9z
-gw+wpq71nvl4l6Cy4KuxDgWnK4R5HntQEqwnRsT6Uy7eg0xXWPf2zRECWk0OAOpO
-9phyXUrHghBvWd+XxanVYrMLHcEyE09KNQss4RHkdLD8O4X4nDbT6Y6i3csHj2G7
-uMk4eW/UnVL6eFPBaoJU3k/WJX8gWua8tGT+3N3B7XjELbV62n7VTDgDzStJMSDs
-rmE1+77GGnNoKaA4/DcA2NZuQ8FCt1xfnPPv4RQRr7Sm1fjkhABeB9bo6yp/ybRA
-ItbnzQsQpKK4z/QVIGVQOZd2fiwTKDOLPtz0kQ54v4KuAQOliFeEbRcMlKGVBSAo
-tl6q0Gc8f+iKaIIv8AT6iGTMCSfioBeO/8ZnBd7j8Q4DDmILfz+Jwm5bsCHWD24n
-LvtG5ZqJzNavIcRarplIR7SxyUYT50rRUXlxxWSzBSAVP7+PTYg=
-=w7Ex
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlo6xVkACgkQ3SOs138+
+s6GBOxAAmstKwYeg49mtGekJg7PwvodgdXIj/zW6iMKQFsBASF/TBPSOCPhxdWQL
+hx4XgcXKI5MW/kAo3PoSVfru3BxXbeDIAkUMPLByhS1S10BNAlieuoP0WCDEAYRR
+rxH2qYBNMm0Z0SzUqxeY2TpVY+GKeWVffUrj1iRl2o3BtatEXIyR01J5bld4CyCD
+kTJw7IkZ/UQGct8oZ9jImMb91yfIFdVzcH92vgciXT0FOUTMPvlQ+/Z7OSP75nWC
+f2uBQt8UJF+n0yM3IFpVuqpc7iv2XpkCzFf+LsnwzjzdtK4z9ID9FOjiYqxgivbA
+7VfvRsu6Wn7AxPrPkkFRiQLVcIJWfI73NUe2uG/svPGYSZxpPBGtRkFFVtwIPWFM
+IhpMmIEsi0Kbg+5jS4J5IQuyc1nP+z2eUK206ZZDaZzM49hQPLYoe0H1rOjvHtEF
+6Juh2JXi6AmmlZ9BqNdon4IuKIxEakzPXcX7az8cVjm2l1DZjr9Zc7hlhTHHJyRk
+7falG3DbMqguO8Tc4xMYfDRvltNjPoL5QCEj0Atxsn5oJAFdjyjB4Ys/yabl3d7P
+Td7muJAz2OB1eYZTh6uvyIdLz/r20mF/2JuEnklYymIW2v6zPEQf0Sw8RsG4PBuF
+zdOEL6lPTXLHy5O+2zEAk0Qn+zcqQz/KA+NUyDNGPBbCsf8feVM=
+=xXcx
 -----END PGP SIGNATURE-----
 
---zbGR4y+acU1DwHSi--
+--imjhCm/Pyz7Rq5F2--
+
+--===============1222010518==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1222010518==--
