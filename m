@@ -1,526 +1,266 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 3/4] clk: tegra: MBIST work around for Tegra210
-Date: Thu, 21 Dec 2017 11:40:49 +0200
-Message-ID: <20171221094049.GX29417@tbergstrom-lnx.Nvidia.com>
-References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
- <1510842542-16451-4-git-send-email-pdeschrijver@nvidia.com>
- <3d7f4e84-af44-ba3d-7910-a51a0abce136@nvidia.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v4] PCI: tegra: Refactor configuration space mapping code
+Date: Thu, 21 Dec 2017 10:01:23 +0000
+Message-ID: <20171221100123.GA23573@red-moon>
+References: <20171220203607.18288-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <3d7f4e84-af44-ba3d-7910-a51a0abce136-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20171220203607.18288-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Saga <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 20, 2017 at 10:03:35AM +0000, Jon Hunter wrote:
+On Wed, Dec 20, 2017 at 09:36:07PM +0100, Thierry Reding wrote:
+> From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> On 16/11/17 14:29, Peter De Schrijver wrote:
-> > Tegra210 has a hw bug which can cause IP blocks to lock up when ungating a
-> > domain. The reason is that the logic responsible for resetting the memory
-> > built-in self test mode can come up in an undefined state because it doesn't
-> > get a clock or reset signal. Work around this by making sure the logic will
-> > get some clock edges by ensuring the relevant clock is enabled and temporarily
-> > override the relevant second level clock gates (SLCG).
+> Use only 4 KiB space from the available 1 GiB PCIe aperture to access
+> endpoint configuration space by dynamically moving the AFI_FPCI_BAR base
+> address. This frees more space for mapping endpoint device BARs on some
+> Tegra platforms.
 > 
-> Not sure I follow the 2nd half of the above sentence.
+> The ->add_bus() and ->remove_bus() callbacks are now no longer needed,
+> so they can be removed.
+> 
+> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> [treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: various cleanups, update commit message]
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/pci/host/pci-tegra.c | 148 +++++++++----------------------------------
 
-The logic responsible for resetting the MBIST mode is not clocked during
-module reset because the module SLCGs are gated while they shouldn't be.
+Applied to pci/tegra for v4.16.
 
-Does this make it more clear? :)
+Thanks,
+Lorenzo
 
-Peter.
-
+>  1 file changed, 30 insertions(+), 118 deletions(-)
 > 
-> > Unfortunately for some IP blocks, the control bits for overriding the
-> > SLCGs are not in CAR, but in the IP block itself. This means we need to
-> > map a few extra register banks in the clock code.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/clk/tegra/clk-tegra210.c | 359 ++++++++++++++++++++++++++++++++++++++-
-> >  include/linux/clk/tegra.h        |   1 +
-> >  2 files changed, 358 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> > index 55a5b7f..72de0e9 100644
-> > --- a/drivers/clk/tegra/clk-tegra210.c
-> > +++ b/drivers/clk/tegra/clk-tegra210.c
-> > @@ -22,10 +22,12 @@
-> >  #include <linux/of_address.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/export.h>
-> > +#include <linux/mutex.h>
-> >  #include <linux/clk/tegra.h>
-> >  #include <dt-bindings/clock/tegra210-car.h>
-> >  #include <dt-bindings/reset/tegra210-car.h>
-> >  #include <linux/iopoll.h>
-> > +#include <soc/tegra/pmc.h>
-> >  
-> >  #include "clk.h"
-> >  #include "clk-id.h"
-> > @@ -231,6 +233,30 @@
-> >  #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
-> >  #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
-> >  
-> > +#define LVL2_CLK_GATE_OVRA 0xf8
-> > +#define LVL2_CLK_GATE_OVRC 0x3a0
-> > +#define LVL2_CLK_GATE_OVRD 0x3a4
-> > +#define LVL2_CLK_GATE_OVRE 0x554
-> > +
-> > +/* I2S registers to handle during APE MBIST WAR */
-> > +#define TEGRA210_I2S_BASE  0x11000
-> > +#define TEGRA210_I2S_SIZE  0x100
-> > +#define TEGRA210_I2S_CTRLS 5
-> > +#define TEGRA210_I2S_CG    0x88
-> > +#define TEGRA210_I2S_CTRL  0xa0
-> > +
-> > +/* DISPA registers to handle during MBIST WAR */
-> > +#define DC_CMD_DISPLAY_COMMAND 0xc8
-> > +#define DC_COM_DSC_TOP_CTL 0xcf8
-> > +
-> > +/* VIC register to handle during MBIST WAR */
-> > +#define NV_PVIC_THI_SLCG_OVERRIDE_LOW 0x8c
-> > +
-> > +/* APE, DISPA and VIC base addesses needed for MBIST WAR */
-> > +#define TEGRA210_APE_BASE  0x702c0000
-> > +#define TEGRA210_DISPA_BASE 0x54200000
-> > +#define TEGRA210_VIC_BASE  0x54340000
-> > +
-> >  /*
-> >   * SDM fractional divisor is 16-bit 2's complement signed number within
-> >   * (-2^12 ... 2^12-1) range. Represented in PLL data structure as unsigned
-> > @@ -255,8 +281,22 @@
-> >  } tegra210_cpu_clk_sctx;
-> >  #endif
-> >  
-> > +struct tegra210_domain_mbist_war {
-> > +	int (*handle_lvl2_ovr)(struct tegra210_domain_mbist_war *mbist);
-> > +	const u32 lvl2_offset;
-> > +	const u32 lvl2_mask;
-> > +	const unsigned int num_clks;
-> > +	const unsigned int *clk_init_data;
-> > +	struct clk_bulk_data *clks;
-> > +};
-> > +
-> > +static struct clk **clks;
-> > +
-> >  static void __iomem *clk_base;
-> >  static void __iomem *pmc_base;
-> > +static void __iomem *ape_base;
-> > +static void __iomem *dispa_base;
-> > +static void __iomem *vic_base;
-> >  
-> >  static unsigned long osc_freq;
-> >  static unsigned long pll_ref_freq;
-> > @@ -266,6 +306,7 @@
-> >  static DEFINE_SPINLOCK(pll_re_lock);
-> >  static DEFINE_SPINLOCK(pll_u_lock);
-> >  static DEFINE_SPINLOCK(emc_lock);
-> > +static DEFINE_MUTEX(lvl2_ovr_lock);
-> >  
-> >  /* possible OSC frequencies in Hz */
-> >  static unsigned long tegra210_input_freq[] = {
-> > @@ -309,6 +350,8 @@
-> >  #define PLLA_MISC2_WRITE_MASK		0x06ffffff
-> >  
-> >  /* PLLD */
-> > +#define PLLD_BASE_CSI_CLKSOURCE		(1 << 23)
-> > +
-> >  #define PLLD_MISC0_EN_SDM		(1 << 16)
-> >  #define PLLD_MISC0_LOCK_OVERRIDE	(1 << 17)
-> >  #define PLLD_MISC0_LOCK_ENABLE		(1 << 18)
-> > @@ -512,6 +555,176 @@ void tegra210_set_sata_pll_seq_sw(bool state)
-> >  }
-> >  EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
-> >  
-> > +static int tegra210_generic_mbist_war(struct tegra210_domain_mbist_war *mbist)
-> > +{
-> > +	u32 val;
-> > +	int err;
-> > +
-> > +	err = clk_bulk_prepare_enable(mbist->num_clks, mbist->clks);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	mutex_lock(&lvl2_ovr_lock);
-> > +
-> > +	val = readl_relaxed(clk_base + mbist->lvl2_offset);
-> > +	writel_relaxed(val | mbist->lvl2_mask, clk_base + mbist->lvl2_offset);
-> > +	fence_udelay(1, clk_base);
-> > +	writel_relaxed(val, clk_base + mbist->lvl2_offset);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	mutex_unlock(&lvl2_ovr_lock);
-> > +
-> > +	clk_bulk_disable_unprepare(mbist->num_clks, mbist->clks);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tegra210_venc_mbist_war(struct tegra210_domain_mbist_war *mbist)
-> > +{
-> > +	u32 csi_src, ovra, ovre;
-> > +	int err;
-> > +	unsigned long flags = 0;
-> > +
-> > +	err = clk_bulk_prepare_enable(mbist->num_clks, mbist->clks);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	mutex_lock(&lvl2_ovr_lock);
-> > +	spin_lock_irqsave(&pll_d_lock, flags);
-> > +
-> > +	csi_src = readl_relaxed(clk_base + PLLD_BASE);
-> > +	writel_relaxed(csi_src | PLLD_BASE_CSI_CLKSOURCE, clk_base + PLLD_BASE);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	ovra = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRA);
-> > +	writel_relaxed(ovra | BIT(15), clk_base + LVL2_CLK_GATE_OVRA);
-> > +	ovre = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRE);
-> > +	writel_relaxed(ovre | BIT(3), clk_base + LVL2_CLK_GATE_OVRE);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	writel_relaxed(ovra, clk_base + LVL2_CLK_GATE_OVRA);
-> > +	writel_relaxed(ovre, clk_base + LVL2_CLK_GATE_OVRE);
-> > +	writel_relaxed(csi_src, clk_base + PLLD_BASE);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	spin_unlock_irqrestore(&pll_d_lock, flags);
-> > +	mutex_unlock(&lvl2_ovr_lock);
-> > +
-> > +	clk_bulk_disable_unprepare(mbist->num_clks, mbist->clks);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tegra210_disp_mbist_war(struct tegra210_domain_mbist_war *mbist)
-> > +{
-> > +	u32 ovra, dsc_top_ctrl;
-> > +	int err;
-> > +
-> > +	err = clk_bulk_prepare_enable(mbist->num_clks, mbist->clks);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	mutex_lock(&lvl2_ovr_lock);
-> > +
-> > +	ovra = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRA);
-> > +	writel_relaxed(ovra | BIT(1), clk_base + LVL2_CLK_GATE_OVRA);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	dsc_top_ctrl = readl_relaxed(dispa_base + DC_COM_DSC_TOP_CTL);
-> > +	writel_relaxed(dsc_top_ctrl | BIT(2), dispa_base + DC_COM_DSC_TOP_CTL);
-> > +	readl_relaxed(dispa_base + DC_CMD_DISPLAY_COMMAND);
-> > +	writel_relaxed(dsc_top_ctrl, dispa_base + DC_COM_DSC_TOP_CTL);
-> > +	readl_relaxed(dispa_base + DC_CMD_DISPLAY_COMMAND);
-> > +
-> > +	writel_relaxed(ovra, clk_base + LVL2_CLK_GATE_OVRA);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	mutex_unlock(&lvl2_ovr_lock);
-> > +
-> > +	clk_bulk_disable_unprepare(mbist->num_clks, mbist->clks);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tegra210_vic_mbist_war(struct tegra210_domain_mbist_war *mbist)
-> > +{
-> > +	u32 ovre, val;
-> > +	int err;
-> > +
-> > +	err = clk_prepare_enable(clks[TEGRA210_CLK_HOST1X]);
-> 
-> This looks a bit odd. Seems safer to use the bulk handlers like elsewhere.
-> 
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	mutex_lock(&lvl2_ovr_lock);
-> > +
-> > +	ovre = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRE);
-> > +	writel_relaxed(ovre | BIT(5), clk_base + LVL2_CLK_GATE_OVRE);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	val = readl_relaxed(vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
-> > +	writel_relaxed(val | BIT(0) | GENMASK(7,2) | BIT(24),
-> > +			vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
-> 
-> ERROR: space required after that ',' (ctx:VxV)
-> #222: FILE: drivers/clk/tegra/clk-tegra210.c:667:
-> +	writel_relaxed(val | BIT(0) | GENMASK(7,2) | BIT(24),
-> 
-> > +	readl(vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
-> > +	udelay(1);
-> 
-> Looks like a candidate for your fence_delay() macro.
-> 
-> > +	writel_relaxed(val, vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
-> > +	readl(vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
-> > +
-> > +	writel_relaxed(ovre, clk_base + LVL2_CLK_GATE_OVRE);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	mutex_unlock(&lvl2_ovr_lock);
-> > +
-> > +	clk_disable_unprepare(clks[TEGRA210_CLK_HOST1X]);
-> > +
-> > +	return 0;
-> > +}
-> 
-> Most of the above WARs are writing bits to N registers, waiting and then
-> restoring them. I was wondering if we could still have a single generic
-> function that can operate on N registers? But maybe the structure with
-> all the register info to do this becomes massive and ugly? Just a thought.
-> 
-> > +
-> > +static int tegra210_ape_mbist_war(struct tegra210_domain_mbist_war *mbist)
-> > +{
-> > +	int err, i;
-> > +	u32 ovrc, ovre;
-> > +	void __iomem *i2s_base;
-> > +
-> > +	err = clk_bulk_prepare_enable(mbist->num_clks, mbist->clks);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	mutex_lock(&lvl2_ovr_lock);
-> > +
-> > +	ovrc = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRC);
-> > +	ovre = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRE);
-> > +	writel_relaxed(ovrc | BIT(1), clk_base + LVL2_CLK_GATE_OVRC);
-> > +	writel_relaxed(ovre | BIT(10) | BIT(11),
-> > +			clk_base + LVL2_CLK_GATE_OVRE);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	i2s_base = ape_base + TEGRA210_I2S_BASE;
-> > +	for (i = 0; i < TEGRA210_I2S_CTRLS; i++) {
-> > +		u32 i2s_ctrl;
-> > +
-> > +		i2s_ctrl = readl_relaxed(i2s_base + TEGRA210_I2S_CTRL);
-> > +		writel_relaxed(i2s_ctrl | BIT(10),
-> > +				i2s_base + TEGRA210_I2S_CTRL);
-> > +		writel_relaxed(0, i2s_base + TEGRA210_I2S_CG);
-> > +		readl(i2s_base + TEGRA210_I2S_CG);
-> > +		writel_relaxed(1, i2s_base + TEGRA210_I2S_CG);
-> > +		writel_relaxed(i2s_ctrl, i2s_base + TEGRA210_I2S_CTRL);
-> > +		readl(i2s_base + TEGRA210_I2S_CTRL);
-> > +
-> > +		i2s_base += TEGRA210_I2S_SIZE;
-> > +        }
-> 
-> ERROR: code indent should use tabs where possible
-> #272: FILE: drivers/clk/tegra/clk-tegra210.c:717:
-> +        }$
-> 
-> For ARM builds I am seeing ...
-> 
-> drivers/soc/tegra/pmc.o: In function `tegra_powergate_power_up':
-> pmc.c:(.text+0xb14): undefined reference to `tegra210_handle_mbist_war'
-> Makefile:1026: recipe for target 'vmlinux' failed
-> make: *** [vmlinux] Error 1
-> 
-> > +
-> > +	writel_relaxed(ovrc, clk_base + LVL2_CLK_GATE_OVRC);
-> > +	writel_relaxed(ovre, clk_base + LVL2_CLK_GATE_OVRE);
-> > +	fence_udelay(1, clk_base);
-> > +
-> > +	mutex_unlock(&lvl2_ovr_lock);
-> > +
-> > +	clk_bulk_disable_unprepare(mbist->num_clks, mbist->clks);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static inline void _pll_misc_chk_default(void __iomem *base,
-> >  					struct tegra_clk_pll_params *params,
-> >  					u8 misc_num, u32 default_val, u32 mask)
-> > @@ -2410,13 +2623,137 @@ struct utmi_clk_param {
-> >  	{ "pll_a1", &pll_a1_params, tegra_clk_pll_a1, "pll_ref" },
-> >  };
-> >  
-> > -static struct clk **clks;
-> > -
-> >  static const char * const aclk_parents[] = {
-> >  	"pll_a1", "pll_c", "pll_p", "pll_a_out0", "pll_c2", "pll_c3",
-> >  	"clk_m"
-> >  };
-> >  
-> > +static const unsigned int nvjpg_slcg_clkids[] = { TEGRA210_CLK_NVDEC };
-> > +static const unsigned int nvdec_slcg_clkids[] = { TEGRA210_CLK_NVJPG };
-> > +static const unsigned int sor_slcg_clkids[] = { TEGRA210_CLK_HDA2CODEC_2X,
-> > +	TEGRA210_CLK_HDA2HDMI, TEGRA210_CLK_DISP1, TEGRA210_CLK_DISP2 };
-> > +static const unsigned int disp_slcg_clkids[] = { TEGRA210_CLK_LA,
-> > +	TEGRA210_CLK_HOST1X};
-> > +static const unsigned int xusba_slcg_clkids[] = { TEGRA210_CLK_XUSB_HOST,
-> > +	TEGRA210_CLK_XUSB_DEV };
-> > +static const unsigned int xusbb_slcg_clkids[] = { TEGRA210_CLK_XUSB_HOST,
-> > +	TEGRA210_CLK_XUSB_SS };
-> > +static const unsigned int xusbc_slcg_clkids[] = { TEGRA210_CLK_XUSB_DEV,
-> > +	TEGRA210_CLK_XUSB_SS };
-> > +static const unsigned int venc_slcg_clkids[] = { TEGRA210_CLK_HOST1X,
-> > +	TEGRA210_CLK_PLL_D };
-> > +static const unsigned int ape_slcg_clkids[] = { TEGRA210_CLK_ACLK,
-> > +	TEGRA210_CLK_I2S0, TEGRA210_CLK_I2S1, TEGRA210_CLK_I2S2,
-> > +	TEGRA210_CLK_I2S3, TEGRA210_CLK_I2S4, TEGRA210_CLK_SPDIF_OUT,
-> > +	TEGRA210_CLK_D_AUDIO };
-> > +
-> > +static struct tegra210_domain_mbist_war tegra210_pg_mbist_war[] = {
-> > +	[TEGRA_POWERGATE_VENC] = {
-> > +		.handle_lvl2_ovr = tegra210_venc_mbist_war,
-> > +		.num_clks = ARRAY_SIZE(venc_slcg_clkids),
-> > +		.clk_init_data = venc_slcg_clkids,
-> > +	},
-> > +	[TEGRA_POWERGATE_SATA] = {
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-> > +		.lvl2_mask = BIT(0) | BIT(17) | BIT(19),
-> > +	},
-> > +	[TEGRA_POWERGATE_MPE] = {
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRE,
-> > +		.lvl2_mask = BIT(2),
-> > +	},
-> > +	[TEGRA_POWERGATE_SOR] = {
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.num_clks = ARRAY_SIZE(sor_slcg_clkids),
-> > +		.clk_init_data = sor_slcg_clkids,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRA,
-> > +		.lvl2_mask = BIT(1) | BIT(2),
-> > +	},
-> > +	[TEGRA_POWERGATE_DIS] = {
-> > +		.handle_lvl2_ovr = tegra210_disp_mbist_war,
-> > +		.num_clks = ARRAY_SIZE(disp_slcg_clkids),
-> > +		.clk_init_data = disp_slcg_clkids,
-> > +	},
-> > +	[TEGRA_POWERGATE_DISB] = {
-> > +		.num_clks = ARRAY_SIZE(disp_slcg_clkids),
-> > +		.clk_init_data = disp_slcg_clkids,
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRA,
-> > +		.lvl2_mask = BIT(2),
-> > +	},
-> > +	[TEGRA_POWERGATE_XUSBA] = {
-> > +		.num_clks = ARRAY_SIZE(xusba_slcg_clkids),
-> > +		.clk_init_data = xusba_slcg_clkids,
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-> > +		.lvl2_mask = BIT(30) | BIT(31),
-> > +	},
-> > +	[TEGRA_POWERGATE_XUSBB] = {
-> > +		.num_clks = ARRAY_SIZE(xusbb_slcg_clkids),
-> > +		.clk_init_data = xusbb_slcg_clkids,
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-> > +		.lvl2_mask = BIT(30) | BIT(31),
-> > +	},
-> > +	[TEGRA_POWERGATE_XUSBC] = {
-> > +		.num_clks = ARRAY_SIZE(xusbc_slcg_clkids),
-> > +		.clk_init_data = xusbc_slcg_clkids,
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-> > +		.lvl2_mask = BIT(30) | BIT(31),
-> > +	},
-> > +	[TEGRA_POWERGATE_VIC] = {
-> > +		.handle_lvl2_ovr = tegra210_vic_mbist_war,
-> > +	},
-> > +	[TEGRA_POWERGATE_NVDEC] = {
-> > +		.num_clks = ARRAY_SIZE(nvdec_slcg_clkids),
-> > +		.clk_init_data = nvdec_slcg_clkids,
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-> > +		.lvl2_mask = BIT(9) | BIT(31),
-> > +	},
-> > +	[TEGRA_POWERGATE_NVJPG] = {
-> > +		.num_clks = ARRAY_SIZE(nvjpg_slcg_clkids),
-> > +		.clk_init_data = nvjpg_slcg_clkids,
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-> > +		.lvl2_mask = BIT(9) | BIT(31),
-> > +	},
-> > +	[TEGRA_POWERGATE_AUD] = {
-> > +		.num_clks = ARRAY_SIZE(ape_slcg_clkids),
-> > +		.clk_init_data = ape_slcg_clkids,
-> > +		.handle_lvl2_ovr = tegra210_ape_mbist_war,
-> > +	},
-> > +	[TEGRA_POWERGATE_VE2] = {
-> > +		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-> > +		.lvl2_offset = LVL2_CLK_GATE_OVRD,
-> > +		.lvl2_mask = BIT(22),
-> > +	},
-> > +};
-> > +
-> > +void tegra210_handle_mbist_war(unsigned int id)
-> 
-> Maybe we should namespace as something like 'tegra210_clk_mbist_war'?
-> 
-> > +{
-> > +	int err;
-> > +
-> > +	if (id >= ARRAY_SIZE(tegra210_pg_mbist_war)) {
-> > +		pr_err("unknown domain id in MBIST WAR handler\n");
-> > +		WARN_ON(1);
-> 
-> WARN(1, ...);
-> 
-> > +		return;
-> > +	}
-> > +
-> > +	if (!tegra210_pg_mbist_war[id].handle_lvl2_ovr)
-> > +		return;
-> > +
-> > +	err =
-> > +	 tegra210_pg_mbist_war[id].handle_lvl2_ovr(&tegra210_pg_mbist_war[id]);
-> 
-> Nit-pick, we should we work this to fit on a single line by using a
-> local variable somewhere.
-> 
-> > +	if (err < 0) {
-> > +		pr_err("error handling MBIST WAR for domain: %d\n", id);
-> > +		WARN_ON(1);
-> 
-> WARN(1, ...);
-> 
-> > +	}
-> > +}
-> > +
-> > +
-> >  void tegra210_put_utmipll_in_iddq(void)
-> >  {
-> >  	u32 reg;
-> > @@ -3148,6 +3485,24 @@ static void __init tegra210_clock_init(struct device_node *np)
-> >  		return;
-> >  	}
-> >  
-> > +	ape_base = ioremap(TEGRA210_APE_BASE, 256*1024);
-> > +	if (!ape_base) {
-> > +		pr_err("ioremap tegra210 APE failed\n");
-> > +		return;
-> > +	}
-> > +
-> > +	dispa_base = ioremap(TEGRA210_DISPA_BASE, 256*1024);
-> > +	if (!dispa_base) {
-> > +		pr_err("ioremap tegra210 DISPA failed\n");
-> > +		return;
-> > +	}
-> > +
-> > +	vic_base = ioremap(TEGRA210_VIC_BASE, 256*1024);
-> > +	if (!vic_base) {
-> > +		pr_err("ioremap tegra210 VIC failed\n");
-> > +		return;
-> > +	}
-> > +
-> 
-> Any reason not to add these to the DT node like we did for PMC?
-> 
-> Where is the clks member of the tegra210_domain_mbist_war initialised?
-> 
-> Cheers
-> Jon
-> 	
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index f2214ca1ad17..56434aa44b60 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -269,11 +269,10 @@ struct tegra_pcie {
+>  
+>  	void __iomem *pads;
+>  	void __iomem *afi;
+> +	void __iomem *cfg;
+>  	int irq;
+>  
+> -	struct list_head buses;
+> -	struct resource *cs;
+> -
+> +	struct resource cs;
+>  	struct resource io;
+>  	struct resource pio;
+>  	struct resource mem;
+> @@ -322,7 +321,6 @@ struct tegra_pcie_port {
+>  };
+>  
+>  struct tegra_pcie_bus {
+> -	struct vm_struct *area;
+>  	struct list_head list;
+>  	unsigned int nr;
+>  };
+> @@ -362,100 +360,19 @@ static inline u32 pads_readl(struct tegra_pcie *pcie, unsigned long offset)
+>   *
+>   * Mapping the whole extended configuration space would require 256 MiB of
+>   * virtual address space, only a small part of which will actually be used.
+> - * To work around this, a 1 MiB of virtual addresses are allocated per bus
+> - * when the bus is first accessed. When the physical range is mapped, the
+> - * the bus number bits are hidden so that the extended register number bits
+> - * appear as bits [19:16]. Therefore the virtual mapping looks like this:
+> - *
+> - *    [19:16] extended register number
+> - *    [15:11] device number
+> - *    [10: 8] function number
+> - *    [ 7: 0] register number
+>   *
+> - * This is achieved by stitching together 16 chunks of 64 KiB of physical
+> - * address space via the MMU.
+> + * To work around this, a 4 KiB region is used to generate the required
+> + * configuration transaction with relevant B:D:F and register offset values.
+> + * This is achieved by dynamically programming base address and size of
+> + * AFI_AXI_BAR used for end point config space mapping to make sure that the
+> + * address (access to which generates correct config transaction) falls in
+> + * this 4 KiB region.
+>   */
+> -static unsigned long tegra_pcie_conf_offset(unsigned int devfn, int where)
+> -{
+> -	return ((where & 0xf00) << 8) | (PCI_SLOT(devfn) << 11) |
+> -	       (PCI_FUNC(devfn) << 8) | (where & 0xfc);
+> -}
+> -
+> -static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
+> -						   unsigned int busnr)
+> +static unsigned int tegra_pcie_conf_offset(u8 bus, unsigned int devfn,
+> +					   unsigned int where)
+>  {
+> -	struct device *dev = pcie->dev;
+> -	pgprot_t prot = pgprot_noncached(PAGE_KERNEL);
+> -	phys_addr_t cs = pcie->cs->start;
+> -	struct tegra_pcie_bus *bus;
+> -	unsigned int i;
+> -	int err;
+> -
+> -	bus = kzalloc(sizeof(*bus), GFP_KERNEL);
+> -	if (!bus)
+> -		return ERR_PTR(-ENOMEM);
+> -
+> -	INIT_LIST_HEAD(&bus->list);
+> -	bus->nr = busnr;
+> -
+> -	/* allocate 1 MiB of virtual addresses */
+> -	bus->area = get_vm_area(SZ_1M, VM_IOREMAP);
+> -	if (!bus->area) {
+> -		err = -ENOMEM;
+> -		goto free;
+> -	}
+> -
+> -	/* map each of the 16 chunks of 64 KiB each */
+> -	for (i = 0; i < 16; i++) {
+> -		unsigned long virt = (unsigned long)bus->area->addr +
+> -				     i * SZ_64K;
+> -		phys_addr_t phys = cs + i * SZ_16M + busnr * SZ_64K;
+> -
+> -		err = ioremap_page_range(virt, virt + SZ_64K, phys, prot);
+> -		if (err < 0) {
+> -			dev_err(dev, "ioremap_page_range() failed: %d\n", err);
+> -			goto unmap;
+> -		}
+> -	}
+> -
+> -	return bus;
+> -
+> -unmap:
+> -	vunmap(bus->area->addr);
+> -free:
+> -	kfree(bus);
+> -	return ERR_PTR(err);
+> -}
+> -
+> -static int tegra_pcie_add_bus(struct pci_bus *bus)
+> -{
+> -	struct pci_host_bridge *host = pci_find_host_bridge(bus);
+> -	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
+> -	struct tegra_pcie_bus *b;
+> -
+> -	b = tegra_pcie_bus_alloc(pcie, bus->number);
+> -	if (IS_ERR(b))
+> -		return PTR_ERR(b);
+> -
+> -	list_add_tail(&b->list, &pcie->buses);
+> -
+> -	return 0;
+> -}
+> -
+> -static void tegra_pcie_remove_bus(struct pci_bus *child)
+> -{
+> -	struct pci_host_bridge *host = pci_find_host_bridge(child);
+> -	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
+> -	struct tegra_pcie_bus *bus, *tmp;
+> -
+> -	list_for_each_entry_safe(bus, tmp, &pcie->buses, list) {
+> -		if (bus->nr == child->number) {
+> -			vunmap(bus->area->addr);
+> -			list_del(&bus->list);
+> -			kfree(bus);
+> -			break;
+> -		}
+> -	}
+> +	return ((where & 0xf00) << 16) | (bus << 16) | (PCI_SLOT(devfn) << 11) |
+> +	       (PCI_FUNC(devfn) << 8) | (where & 0xff);
+>  }
+>  
+>  static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
+> @@ -464,7 +381,6 @@ static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
+>  {
+>  	struct pci_host_bridge *host = pci_find_host_bridge(bus);
+>  	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
+> -	struct device *dev = pcie->dev;
+>  	void __iomem *addr = NULL;
+>  
+>  	if (bus->number == 0) {
+> @@ -478,19 +394,17 @@ static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
+>  			}
+>  		}
+>  	} else {
+> -		struct tegra_pcie_bus *b;
+> +		unsigned int offset;
+> +		u32 base;
+>  
+> -		list_for_each_entry(b, &pcie->buses, list)
+> -			if (b->nr == bus->number)
+> -				addr = (void __iomem *)b->area->addr;
+> +		offset = tegra_pcie_conf_offset(bus->number, devfn, where);
+>  
+> -		if (!addr) {
+> -			dev_err(dev, "failed to map cfg. space for bus %u\n",
+> -				bus->number);
+> -			return NULL;
+> -		}
+> +		/* move 4 KiB window to offset within the FPCI region */
+> +		base = 0xfe100000 + ((offset & ~(SZ_4K - 1)) >> 8);
+> +		afi_writel(pcie, base, AFI_FPCI_BAR0);
+>  
+> -		addr += tegra_pcie_conf_offset(devfn, where);
+> +		/* move to correct offset within the 4 KiB page */
+> +		addr = pcie->cfg + (offset & (SZ_4K - 1));
+>  	}
+>  
+>  	return addr;
+> @@ -517,8 +431,6 @@ static int tegra_pcie_config_write(struct pci_bus *bus, unsigned int devfn,
+>  }
+>  
+>  static struct pci_ops tegra_pcie_ops = {
+> -	.add_bus = tegra_pcie_add_bus,
+> -	.remove_bus = tegra_pcie_remove_bus,
+>  	.map_bus = tegra_pcie_map_bus,
+>  	.read = tegra_pcie_config_read,
+>  	.write = tegra_pcie_config_write,
+> @@ -743,12 +655,9 @@ static void tegra_pcie_setup_translations(struct tegra_pcie *pcie)
+>  	u32 fpci_bar, size, axi_address;
+>  
+>  	/* Bar 0: type 1 extended configuration space */
+> -	fpci_bar = 0xfe100000;
+> -	size = resource_size(pcie->cs);
+> -	axi_address = pcie->cs->start;
+> -	afi_writel(pcie, axi_address, AFI_AXI_BAR0_START);
+> +	size = resource_size(&pcie->cs);
+> +	afi_writel(pcie, pcie->cs.start, AFI_AXI_BAR0_START);
+>  	afi_writel(pcie, size >> 12, AFI_AXI_BAR0_SZ);
+> -	afi_writel(pcie, fpci_bar, AFI_FPCI_BAR0);
+>  
+>  	/* Bar 1: downstream IO bar */
+>  	fpci_bar = 0xfdfc0000;
+> @@ -1353,10 +1262,14 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+>  		goto poweroff;
+>  	}
+>  
+> -	pcie->cs = devm_request_mem_region(dev, res->start,
+> -					   resource_size(res), res->name);
+> -	if (!pcie->cs) {
+> -		err = -EADDRNOTAVAIL;
+> +	pcie->cs = *res;
+> +
+> +	/* constrain configuration space to 4 KiB */
+> +	pcie->cs.end = pcie->cs.start + SZ_4K - 1;
+> +
+> +	pcie->cfg = devm_ioremap_resource(dev, &pcie->cs);
+> +	if (IS_ERR(pcie->cfg)) {
+> +		err = PTR_ERR(pcie->cfg);
+>  		goto poweroff;
+>  	}
+>  
+> @@ -2376,7 +2289,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>  	pcie = pci_host_bridge_priv(host);
+>  
+>  	pcie->soc = of_device_get_match_data(dev);
+> -	INIT_LIST_HEAD(&pcie->buses);
+>  	INIT_LIST_HEAD(&pcie->ports);
+>  	pcie->dev = dev;
+>  
 > -- 
-> nvpublic
+> 2.15.1
+> 
