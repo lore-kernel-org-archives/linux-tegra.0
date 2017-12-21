@@ -1,406 +1,220 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2] drm/tegra: dc: Implement legacy blending
-Date: Thu, 21 Dec 2017 15:03:17 +0100
-Message-ID: <20171221140317.18447-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 2/5] drm/tegra: Restore opaque and drop alpha formats
+ on Tegra20/30
+Date: Thu, 21 Dec 2017 15:10:25 +0100
+Message-ID: <20171221141025.GA18544@ulmo>
+References: <cover.1513783738.git.digetx@gmail.com>
+ <0476e28d70b47ec599fb65d1cfa457276629de27.1513783738.git.digetx@gmail.com>
+ <20171220180119.GB8780@ulmo>
+ <3924358d-ae3b-78a4-1227-164435add8d1@gmail.com>
+ <20171220201641.GB31757@ulmo>
+ <0a19bbe0-5dd2-7929-c1e0-dfe6d3817d35@gmail.com>
+ <20171220220230.GA15796@mithrandir>
+ <2c52becd-f20e-599b-c421-bf4b18dda6bf@gmail.com>
+ <a6644fc8-9c22-4b6b-1fec-82a7636bda65@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <a6644fc8-9c22-4b6b-1fec-82a7636bda65-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This implements alpha blending on legacy display controllers (Tegra20,
-Tegra30 and Tegra114). While it's theoretically possible to support the
-zpos property to enable userspace to specify the Z-order of each plane
-individually, this is not currently supported and the same fixed Z-
-order as previously defined is used.
+--5vNYLRcllDrimb99
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reverts commit 71835caa00e8 ("drm/tegra: fb: Force alpha formats") since
-the opaque formats are now supported.
+On Thu, Dec 21, 2017 at 01:38:31AM +0300, Dmitry Osipenko wrote:
+> On 21.12.2017 01:23, Dmitry Osipenko wrote:
+> > On 21.12.2017 01:02, Thierry Reding wrote:
+> >> On Thu, Dec 21, 2017 at 12:05:40AM +0300, Dmitry Osipenko wrote:
+> >>> On 20.12.2017 23:16, Thierry Reding wrote:
+> >>>> On Wed, Dec 20, 2017 at 11:01:49PM +0300, Dmitry Osipenko wrote:
+> >>>>> On 20.12.2017 21:01, Thierry Reding wrote:
+> >>>>>> On Wed, Dec 20, 2017 at 06:46:11PM +0300, Dmitry Osipenko wrote:
+> >>>>>>> Commit 7772fdaef939 ("drm/tegra: Support ARGB and ABGR formats") =
+broke
+> >>>>>>> DRM's MODE_ADDFB IOCTL on Tegra20/30, because IOCTL uses XRGB for=
+mat if
+> >>>>>>> requested FB depth is 24bpp. As a result, Xorg doesn't work anymo=
+re with
+> >>>>>>> both modesetting and opentegra drivers. On older Tegra's each pla=
+ne has
+> >>>>>>> a blending configuration which should be used to enable / disable=
+ alpha
+> >>>>>>> blending and right now the blending configs are hardcoded to disa=
+bled
+> >>>>>>> alpha blending. In order to support alpha formats properly, planes
+> >>>>>>> blending configuration must be adjusted, until then the alpha for=
+mats
+> >>>>>>> are equal to non-alpha.
+> >>>>>>>
+> >>>>>>> Fixes: 7772fdaef939 ("drm/tegra: Support ARGB and ABGR formats")
+> >>>>>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >>>>>>> ---
+> >>>>>>>  drivers/gpu/drm/tegra/dc.c    | 29 ++++++++++++++++++-----------
+> >>>>>>>  drivers/gpu/drm/tegra/dc.h    |  1 +
+> >>>>>>>  drivers/gpu/drm/tegra/fb.c    | 13 -------------
+> >>>>>>>  drivers/gpu/drm/tegra/hub.c   |  3 ++-
+> >>>>>>>  drivers/gpu/drm/tegra/plane.c | 22 +++++++++++++++++-----
+> >>>>>>>  drivers/gpu/drm/tegra/plane.h |  2 +-
+> >>>>>>>  6 files changed, 39 insertions(+), 31 deletions(-)
+> >>>>>>
+> >>>>>> This kept bugging me, so I spent some time looking at the blending
+> >>>>>> programming. I came up with the attached patch which seems to work
+> >>>>>> for all scenarios and is fairly similar to your patch. It has the
+> >>>>>> added benefit that we can keep support for more formats.
+> >>>>>>
+> >>>>>> Any comments?
+> >>>>>>
+> >>>>>> Thierry
+> >>>>>> --- >8 ---
+> >>>>>> From 3d2b7d1a9b8239dc6940477d8783461ac60783bc Mon Sep 17 00:00:00 =
+2001
+> >>>>>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>>>> Date: Wed, 20 Dec 2017 09:39:14 +0100
+> >>>>>> Subject: [PATCH] drm/tegra: dc: Implement legacy blending
+> >>>>>>
+> >>>>>> This implements alpha blending on legacy display controllers (Tegr=
+a20,
+> >>>>>> Tegra30 and Tegra114). While it's theoretically possible to suppor=
+t the
+> >>>>>> zpos property to enable userspace to specify the Z-order of each p=
+lane
+> >>>>>> individually, this is not currently supported and the same fixed Z-
+> >>>>>> order as previously defined is used.
+> >>>>>
+> >>>>> Perhaps one variant of implementing zpos could be by making overlay=
+s 'virtual',
+> >>>>> so each virtual overlay will be backed by the real HW plane and we =
+could swap
+> >>>>> the HW planes of the virtual overlays, emulating zpos.
+> >>>>>
+> >>>>>> Reverts commit 71835caa00e8 ("drm/tegra: fb: Force alpha formats")=
+ since
+> >>>>>> the opaque formats are now supported.
+> >>>>>>
+> >>>>>> Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >>>>>> Fixes: 7772fdaef939 ("drm/tegra: Support ARGB and ABGR formats")
+> >>>>>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>>>> ---
+> >>>>>>  drivers/gpu/drm/tegra/dc.c    | 74 ++++++++++++++++++++++++++++++=
+++++---------
+> >>>>>>  drivers/gpu/drm/tegra/dc.h    | 13 ++++++++
+> >>>>>>  drivers/gpu/drm/tegra/fb.c    | 12 -------
+> >>>>>>  drivers/gpu/drm/tegra/plane.c | 41 ++++++++++++++++++++++++
+> >>>>>>  drivers/gpu/drm/tegra/plane.h |  3 ++
+> >>>>>>  5 files changed, 116 insertions(+), 27 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc=
+=2Ec
+> >>>>>> index bc65c314e00f..07c687d7f615 100644
+> >>>>>> --- a/drivers/gpu/drm/tegra/dc.c
+> >>>>>> +++ b/drivers/gpu/drm/tegra/dc.c
+> >>>>>> @@ -168,32 +168,46 @@ static inline u32 compute_initial_dda(unsign=
+ed int in)
+> >>>>>>  	return dfixed_frac(inf);
+> >>>>>>  }
+> >>>>>> =20
+> >>>>>> -static void tegra_plane_setup_blending_legacy(struct tegra_plane =
+*plane)
+> >>>>>> +static void
+> >>>>>> +tegra_plane_setup_blending_legacy(struct tegra_plane *plane,
+> >>>>>> +				  const struct tegra_dc_window *window)
+> >>>>>>  {
+> >>>>>> +	u32 foreground =3D BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255) |
+> >>>>>> +			 BLEND_COLOR_KEY_NONE;
+> >>>>>> +	u32 background =3D BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) |
+> >>>>>> +			 BLEND_COLOR_KEY_NONE;
+> >>>>>> +	u32 blendnokey =3D BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255);
+> >>>>>> +
+> >>>>>> +	/* enable alpha blending if window->alpha */
+> >>>>>> +	if (window->alpha) {
+> >>>>>> +		background |=3D BLEND_CONTROL_DEPENDENT;
+> >>>>>> +		foreground |=3D BLEND_CONTROL_ALPHA;
+> >>>>>> +	}
+> >>>>>
+> >>>>> I think dependent weight means that window doesn't have alpha trans=
+parency. So
+> >>>>> we should set the dependent_weight mode for opaque formats and alph=
+a_weight for
+> >>>>> formats with alpha channel.
+> >>>>
+> >>>> According to the TRM, dependent weight means that its weight will be=
+ 1 -
+> >>>> the sum of the other overlapping windows. And it certainly seems to =
+work
+> >>>> that way in my tests (see below).
+> >>>
+> >>> Yes, and you are hardcoding the blending modes regardless of the actu=
+al plane
+> >>> format. So even if underlying window has alpha format, it will be tre=
+ated as it
+> >>> is opaque.
+> >>
+> >> Ah yes, indeed. The patch currently assumes that if the current plane
+> >> has an alpha component, then all the others will, too. That can probab=
+ly
+> >> be done fairly easily by looking at the current atomic state and
+> >> inspecting the pixel format for each plane on the same CRTC. Let me ta=
+ke
+> >> a stab at that tomorrow.
+> >=20
+> > Okay, please push patch to the public repo once it is ready and let me =
+know.
+> > I'll rebase cursor patch on it.
+> >=20
+> >> I'm wondering if we can deal with zpos, too, if we're already going
+> >> through the trouble of looking at all planes involved. I think we can
+> >> simply permute the WIN_BLEND register writes depending on the Z-order
+> >> to implement proper zpos support.
+> > I think we will have to permute the whole window state, not only the WI=
+N_BLEND
+> > register.
+> >=20
+> > Also I'm not sure how to make topmost window opaque and underlying wind=
+ows
+> > transparent, will have to check how blending works. Maybe it not possib=
+le at all..
+>=20
+> Although it is simple to implement using the fixed weights for 2WIN cases=
+, but
+> then we will have to enhance the legacy blending code a tad to handle thi=
+s case
+> properly. You'll have to do quite a lot for tomorrow ;) Alternatively you=
+ can
+> still apply my patch that drops alpha formats on T20/30 and we will try to
+> implement alpha + zpos for 4.17.
 
-Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Fixes: 7772fdaef939 ("drm/tegra: Support ARGB and ABGR formats")
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes in v2:
-- properly implement blending if windows have different pixel formats
+I think I finally nailed this. Just sent out a v2 and updated my test
+program to use different formats for each plane. I tested all opaque &
+alpha combinations and it all looks correct now.
 
- drivers/gpu/drm/tegra/dc.c    |  81 +++++++++++++++++++++----
- drivers/gpu/drm/tegra/dc.h    |  12 ++++
- drivers/gpu/drm/tegra/fb.c    |  12 ----
- drivers/gpu/drm/tegra/plane.c | 138 ++++++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/plane.h |   8 +++
- 5 files changed, 226 insertions(+), 25 deletions(-)
+Thierry
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 2a0c1e93f82e..4507063029e0 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -154,30 +154,53 @@ static inline u32 compute_initial_dda(unsigned int in)
- 
- static void tegra_plane_setup_blending_legacy(struct tegra_plane *plane)
- {
-+	u32 background[3] = {
-+		BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) | BLEND_COLOR_KEY_NONE,
-+		BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) | BLEND_COLOR_KEY_NONE,
-+		BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) | BLEND_COLOR_KEY_NONE,
-+	};
-+	u32 foreground = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255) |
-+			 BLEND_COLOR_KEY_NONE;
-+	u32 blendnokey = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255);
-+	struct tegra_plane_state *state;
-+	unsigned int i;
-+
-+	state = to_tegra_plane_state(plane->base.state);
-+
-+	/* alpha contribution is 1 minus sum of overlapping windows */
-+	for (i = 0; i < 3; i++) {
-+		if (state->dependent[i])
-+			background[i] |= BLEND_CONTROL_DEPENDENT;
-+	}
-+
-+	/* enable alpha blending if pixel format has an alpha component */
-+	if (!state->opaque)
-+		foreground |= BLEND_CONTROL_ALPHA;
-+
- 	/*
- 	 * Disable blending and assume Window A is the bottom-most window,
- 	 * Window C is the top-most window and Window B is in the middle.
- 	 */
--	tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_NOKEY);
--	tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_1WIN);
-+	tegra_plane_writel(plane, blendnokey, DC_WIN_BLEND_NOKEY);
-+	tegra_plane_writel(plane, foreground, DC_WIN_BLEND_1WIN);
- 
- 	switch (plane->index) {
- 	case 0:
--		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_2WIN_X);
--		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_2WIN_Y);
--		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_3WIN_XY);
-+		tegra_plane_writel(plane, background[0], DC_WIN_BLEND_2WIN_X);
-+		tegra_plane_writel(plane, background[1], DC_WIN_BLEND_2WIN_Y);
-+		tegra_plane_writel(plane, background[2], DC_WIN_BLEND_3WIN_XY);
- 		break;
- 
- 	case 1:
--		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_2WIN_X);
--		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_2WIN_Y);
--		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_3WIN_XY);
-+		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_2WIN_X);
-+		tegra_plane_writel(plane, background[1], DC_WIN_BLEND_2WIN_Y);
-+		tegra_plane_writel(plane, background[2], DC_WIN_BLEND_3WIN_XY);
- 		break;
- 
- 	case 2:
--		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_2WIN_X);
--		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_2WIN_Y);
--		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_3WIN_XY);
-+		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_2WIN_X);
-+		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_2WIN_Y);
-+		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_3WIN_XY);
- 		break;
- 	}
- }
-@@ -353,6 +376,11 @@ static const u32 tegra20_primary_formats[] = {
- 	DRM_FORMAT_RGBA5551,
- 	DRM_FORMAT_ABGR8888,
- 	DRM_FORMAT_ARGB8888,
-+	/* non-native formats */
-+	DRM_FORMAT_XRGB1555,
-+	DRM_FORMAT_RGBX5551,
-+	DRM_FORMAT_XBGR8888,
-+	DRM_FORMAT_XRGB8888,
- };
- 
- static const u32 tegra114_primary_formats[] = {
-@@ -409,18 +437,40 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 	struct tegra_bo_tiling *tiling = &plane_state->tiling;
- 	struct tegra_plane *tegra = to_tegra_plane(plane);
- 	struct tegra_dc *dc = to_tegra_dc(state->crtc);
-+	unsigned int format;
- 	int err;
- 
- 	/* no need for further checks if the plane is being disabled */
- 	if (!state->crtc)
- 		return 0;
- 
--	err = tegra_plane_format(state->fb->format->format,
--				 &plane_state->format,
-+	err = tegra_plane_format(state->fb->format->format, &format,
- 				 &plane_state->swap);
- 	if (err < 0)
- 		return err;
- 
-+	/*
-+	 * Tegra20 and Tegra30 are special cases here because they support
-+	 * only variants of specific formats with an alpha component, but not
-+	 * the corresponding opaque formats. However, the opaque formats can
-+	 * be emulated by disabling alpha blending for the plane.
-+	 */
-+	if (!dc->soc->supports_blending) {
-+		if (!tegra_plane_format_has_alpha(format)) {
-+			err = tegra_plane_format_get_alpha(format, &format);
-+			if (err < 0)
-+				return err;
-+
-+			plane_state->opaque = true;
-+		} else {
-+			plane_state->opaque = false;
-+		}
-+
-+		tegra_plane_check_dependent(tegra, plane_state);
-+	}
-+
-+	plane_state->format = format;
-+
- 	err = tegra_fb_get_tiling(state->fb, tiling);
- 	if (err < 0)
- 		return err;
-@@ -737,6 +787,11 @@ static const u32 tegra20_overlay_formats[] = {
- 	DRM_FORMAT_RGBA5551,
- 	DRM_FORMAT_ABGR8888,
- 	DRM_FORMAT_ARGB8888,
-+	/* non-native formats */
-+	DRM_FORMAT_XRGB1555,
-+	DRM_FORMAT_RGBX5551,
-+	DRM_FORMAT_XBGR8888,
-+	DRM_FORMAT_XRGB8888,
- 	/* planar formats */
- 	DRM_FORMAT_UYVY,
- 	DRM_FORMAT_YUYV,
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index e2831e96ea96..096a81ad6d8d 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -649,8 +649,20 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
- #define DC_WIN_DV_CONTROL			0x70e
- 
- #define DC_WIN_BLEND_NOKEY			0x70f
-+#define  BLEND_WEIGHT1(x) (((x) & 0xff) << 16)
-+#define  BLEND_WEIGHT0(x) (((x) & 0xff) <<  8)
-+
- #define DC_WIN_BLEND_1WIN			0x710
-+#define  BLEND_CONTROL_FIX    (0 << 2)
-+#define  BLEND_CONTROL_ALPHA  (1 << 2)
-+#define  BLEND_COLOR_KEY_NONE (0 << 0)
-+#define  BLEND_COLOR_KEY_0    (1 << 0)
-+#define  BLEND_COLOR_KEY_1    (2 << 0)
-+#define  BLEND_COLOR_KEY_BOTH (3 << 0)
-+
- #define DC_WIN_BLEND_2WIN_X			0x711
-+#define  BLEND_CONTROL_DEPENDENT (2 << 2)
-+
- #define DC_WIN_BLEND_2WIN_Y			0x712
- #define DC_WIN_BLEND_3WIN_XY			0x713
- 
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 1af4ef9241f1..e05fde7172f8 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -254,18 +254,6 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
- 	cmd.pitches[0] = round_up(sizes->surface_width * bytes_per_pixel,
- 				  tegra->pitch_align);
- 
--	/*
--	 * Early generations of Tegra (Tegra20 and Tegra30) do not support any
--	 * of the X* or *X formats, only their A* or *A equivalents. Force the
--	 * legacy framebuffer format to include an alpha component so that the
--	 * framebuffer emulation can be supported on all generations.
--	 */
--	if (sizes->surface_bpp == 32 && sizes->surface_depth == 24)
--		sizes->surface_depth = 32;
--
--	if (sizes->surface_bpp == 16 && sizes->surface_depth == 15)
--		sizes->surface_depth = 16;
--
- 	cmd.pixel_format = drm_mode_legacy_fb_format(sizes->surface_bpp,
- 						     sizes->surface_depth);
- 
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index 9146aead973b..154b4d337d0a 100644
---- a/drivers/gpu/drm/tegra/plane.c
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -43,6 +43,7 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
- {
- 	struct tegra_plane_state *state = to_tegra_plane_state(plane->state);
- 	struct tegra_plane_state *copy;
-+	unsigned int i;
- 
- 	copy = kmalloc(sizeof(*copy), GFP_KERNEL);
- 	if (!copy)
-@@ -52,6 +53,10 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
- 	copy->tiling = state->tiling;
- 	copy->format = state->format;
- 	copy->swap = state->swap;
-+	copy->opaque = state->opaque;
-+
-+	for (i = 0; i < 3; i++)
-+		copy->dependent[i] = state->dependent[i];
- 
- 	return &copy->base;
- }
-@@ -238,3 +243,136 @@ bool tegra_plane_format_is_yuv(unsigned int format, bool *planar)
- 
- 	return false;
- }
-+
-+static bool __drm_format_has_alpha(u32 format)
-+{
-+	switch (format) {
-+	case DRM_FORMAT_ARGB1555:
-+	case DRM_FORMAT_RGBA5551:
-+	case DRM_FORMAT_ABGR8888:
-+	case DRM_FORMAT_ARGB8888:
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+/*
-+ * This is applicable to Tegra20 and Tegra30 only where the opaque formats can
-+ * be emulated using the alpha formats and alpha blending disabled.
-+ */
-+bool tegra_plane_format_has_alpha(unsigned int format)
-+{
-+	switch (format) {
-+	case WIN_COLOR_DEPTH_B5G5R5A1:
-+	case WIN_COLOR_DEPTH_A1B5G5R5:
-+	case WIN_COLOR_DEPTH_R8G8B8A8:
-+	case WIN_COLOR_DEPTH_B8G8R8A8:
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+int tegra_plane_format_get_alpha(unsigned int opaque, unsigned int *alpha)
-+{
-+	switch (opaque) {
-+	case WIN_COLOR_DEPTH_B5G5R5X1:
-+		*alpha = WIN_COLOR_DEPTH_B5G5R5A1;
-+		return 0;
-+
-+	case WIN_COLOR_DEPTH_X1B5G5R5:
-+		*alpha = WIN_COLOR_DEPTH_A1B5G5R5;
-+		return 0;
-+
-+	case WIN_COLOR_DEPTH_R8G8B8X8:
-+		*alpha = WIN_COLOR_DEPTH_R8G8B8A8;
-+		return 0;
-+
-+	case WIN_COLOR_DEPTH_B8G8R8X8:
-+		*alpha = WIN_COLOR_DEPTH_B8G8R8A8;
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+unsigned int tegra_plane_get_overlap_index(struct tegra_plane *plane,
-+					   struct tegra_plane *other)
-+{
-+	unsigned int index = 0, i;
-+
-+	WARN_ON(plane == other);
-+
-+	for (i = 0; i < 3; i++) {
-+		if (i == plane->index)
-+			continue;
-+
-+		if (i == other->index)
-+			break;
-+
-+		index++;
-+	}
-+
-+	return index;
-+}
-+
-+void tegra_plane_check_dependent(struct tegra_plane *tegra,
-+				 struct tegra_plane_state *state)
-+{
-+	struct drm_plane_state *old, *new;
-+	struct drm_plane *plane;
-+	unsigned int zpos[2];
-+	unsigned int i;
-+
-+	for (i = 0; i < 3; i++)
-+		state->dependent[i] = false;
-+
-+	for (i = 0; i < 2; i++)
-+		zpos[i] = 0;
-+
-+	for_each_oldnew_plane_in_state(state->base.state, plane, old, new, i) {
-+		struct tegra_plane *p = to_tegra_plane(plane);
-+		unsigned index;
-+
-+		/* skip this plane and planes on different CRTCs */
-+		if (p == tegra || new->crtc != state->base.crtc)
-+			continue;
-+
-+		index = tegra_plane_get_overlap_index(tegra, p);
-+
-+		/*
-+		 * If any of the other planes is on top of this plane and uses
-+		 * a format with an alpha component, mark this plane as being
-+		 * dependent, meaning it's alpha value will be 1 minus the sum
-+		 * of alpha components of the overlapping planes.
-+		 */
-+		if (p->index > tegra->index) {
-+			if (__drm_format_has_alpha(new->fb->format->format))
-+				state->dependent[index] = true;
-+
-+			/* keep track of the Z position */
-+			zpos[index] = p->index;
-+		}
-+	}
-+
-+	/*
-+	 * The region where three windows overlap is the intersection of the
-+	 * two regions where two windows overlap. It contributes to the area
-+	 * if any of the windows on top of it have an alpha component.
-+	 */
-+	for (i = 0; i < 2; i++)
-+		state->dependent[2] = state->dependent[2] ||
-+				      state->dependent[i];
-+
-+	/*
-+	 * However, if any of the windows on top of this window is opaque, it
-+	 * will completely conceal this window within that area, so avoid the
-+	 * window from contributing to the area.
-+	 */
-+	for (i = 0; i < 2; i++) {
-+		if (zpos[i] > tegra->index)
-+			state->dependent[2] = state->dependent[2] &&
-+					      state->dependent[i];
-+	}
-+}
-diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
-index dca66cb95d25..6938719e7e5d 100644
---- a/drivers/gpu/drm/tegra/plane.h
-+++ b/drivers/gpu/drm/tegra/plane.h
-@@ -40,6 +40,10 @@ struct tegra_plane_state {
- 	struct tegra_bo_tiling tiling;
- 	u32 format;
- 	u32 swap;
-+
-+	/* used for legacy blending support only */
-+	bool opaque;
-+	bool dependent[3];
- };
- 
- static inline struct tegra_plane_state *
-@@ -58,5 +62,9 @@ int tegra_plane_state_add(struct tegra_plane *plane,
- 
- int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap);
- bool tegra_plane_format_is_yuv(unsigned int format, bool *planar);
-+bool tegra_plane_format_has_alpha(unsigned int format);
-+int tegra_plane_format_get_alpha(unsigned int opaque, unsigned int *alpha);
-+void tegra_plane_check_dependent(struct tegra_plane *tegra,
-+				 struct tegra_plane_state *state);
- 
- #endif /* TEGRA_PLANE_H */
--- 
-2.15.1
+--5vNYLRcllDrimb99
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlo7wM4ACgkQ3SOs138+
+s6EYYQ/+LMN6Y+2+fvNiT1Kaw1RvqhQipns5QCCs2LWYCPMgF0jpJUMJbih3/3Ou
+YqGhiv/V+XDsgGx/DCOrwvGbNP+T34h7J9Qh6+cgO4Gp17nimg5zd0t9aDfqzxBP
+zhzzFN0U4zpyhMXnyk48LWQV0nYrYlEmQElYm/c59IHoShFyIyEcrxpWlQVIjJB1
+8dD1ukfuDokS/aYl5JHFA9651QG6Sh8QnstS76JihgcuQs1TL1o0JQCuFekDxEeU
+cZBBHxVIrNktwNxauAJOS5f2TwjRUzPfEvjjaXhVONJQmJFk76bkk8Sny7QCPUtU
++7gT4xSXptkQoVnfHegyvIuX2BA0LeFUx8gW2cxqWfsgYrbY0FmCACW3PsohEswU
+HwXJrw4zrC//9aQ+7z4XMVpTdKo9kQ4hcznuIJTjLSL7EXpMNkqqyef0sEqrNR17
+DhBJhKeav3CT9We59OzRKL1fSQfLaFiQJ+u96PMIdR44pZiL4YwhMLASTrp9CaPD
+ktq2YU1tmOCD2CoqqKf1daZJqx8+uJ2K/eki1EH9BnhZ3rAP6g5eBlntlsbpzUA9
+FUdul6E3epPQTnuKfl/u1FmeowONfEiFnH/Y9+7APS/hX+quNSbuhat1t/8bQAdY
+sEkBgYdEgwBjGAl0WvUgc1wrWSeKP8KsV/aQh7Dkke6ebb6QI74=
+=hFnR
+-----END PGP SIGNATURE-----
+
+--5vNYLRcllDrimb99--
