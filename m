@@ -1,58 +1,55 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v2 1/4] clk: tegra: Add la clock for Tegra210
-Date: Thu, 21 Dec 2017 11:00:52 +0200
-Message-ID: <20171221090052.GR29417@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH v2 2/4] clk: tegra: add fence_delay for clock registers
+Date: Thu, 21 Dec 2017 11:01:30 +0200
+Message-ID: <20171221090130.GS29417@tbergstrom-lnx.Nvidia.com>
 References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
- <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
- <01f6a806-362e-1276-07d7-dfe439e92034@nvidia.com>
+ <1510842542-16451-3-git-send-email-pdeschrijver@nvidia.com>
+ <9026e3d1-26aa-28fc-6098-60484957da48@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <01f6a806-362e-1276-07d7-dfe439e92034@nvidia.com>
+In-Reply-To: <9026e3d1-26aa-28fc-6098-60484957da48@nvidia.com>
 Sender: linux-clk-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 19, 2017 at 11:00:52PM +0000, Jon Hunter wrote:
+On Tue, Dec 19, 2017 at 11:04:25PM +0000, Jon Hunter wrote:
 > 
-> On 16/11/17 14:28, Peter De Schrijver wrote:
-> > This clock is needed by the memory built-in self test work around.
-> > 
+> On 16/11/17 14:29, Peter De Schrijver wrote:
+> > To ensure writes to clock registers have properly propagated through the
+> > clock control logic and state machines, we need to ensure the writes have
+> > been posted in the registers and wait for 1us after that.
+> 
+> Is this is all cases or just for the SLCG?
+> 
 > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > > ---
-> >  drivers/clk/tegra/clk-tegra210.c         | 12 ++++++++++++
-> >  include/dt-bindings/clock/tegra210-car.h |  2 +-
-> >  2 files changed, 13 insertions(+), 1 deletion(-)
+> >  drivers/clk/tegra/clk.h | 7 +++++++
+> >  1 file changed, 7 insertions(+)
 > > 
-> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> > index 6d7a613..55a5b7f 100644
-> > --- a/drivers/clk/tegra/clk-tegra210.c
-> > +++ b/drivers/clk/tegra/clk-tegra210.c
-> > @@ -40,6 +40,7 @@
+> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> > index 872f118..d5badbe 100644
+> > --- a/drivers/clk/tegra/clk.h
+> > +++ b/drivers/clk/tegra/clk.h
+> > @@ -809,4 +809,11 @@ static inline struct clk *tegra_clk_register_emc(void __iomem *base,
+> >  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+> >  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
 > >  
-> >  #define CLK_SOURCE_CSITE 0x1d4
-> >  #define CLK_SOURCE_EMC 0x19c
-> > +#define CLK_SOURCE_LA 0x1f8
-> >  
-> >  #define PLLC_BASE 0x80
-> >  #define PLLC_OUT 0x84
-> > @@ -2628,6 +2629,13 @@ static int tegra210_init_pllu(void)
-> >  	return 0;
-> >  }
-> >  
-> > +static const char * const la_parents[] = {
-> > +	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
-> > +};
+> > +/* Combined read fence with delay */
+> > +#define fence_udelay(delay, reg)	\
+> > +	do {				\
+> > +		readl(reg);		\
+> > +		udelay(delay);		\
+> > +	} while(0)
 > > +
-> > +static struct tegra_clk_periph tegra210_la =
-> > +	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, 0);
-> > +
+> >  #endif /* TEGRA_CLK_H */
 > 
-> The above are over 80 characters. I know we already have some in this
-> file that are, but we should avoid it where we can.
+> Do we plan to use this else-where or just for this WAR? I am wondering
+> if it should just go in the Tegra210 clock file.
+> 
 
-la_parents could be split, but I don't think it's any more clear if tegra210_la is split.
+Eventually yes. But I didn't want to add too many things to this series.
 
 Peter.
