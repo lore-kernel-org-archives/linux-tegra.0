@@ -1,51 +1,156 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
-Date: Thu, 21 Dec 2017 11:11:28 +0000
-Message-ID: <8e2266df-a1e4-b46e-3e4a-459bbe6e7b2f@nvidia.com>
-References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
- <83325ffd-5b85-6288-63ac-5a938b948300@nvidia.com>
- <20171221093742.GW29417@tbergstrom-lnx.Nvidia.com>
+From: Ley Foon Tan <ley.foon.tan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3 03/12] PCI: tegra: Retrain link for Gen2 speed
+Date: Fri, 22 Dec 2017 03:48:28 +0800
+Message-ID: <1513885708.2496.10.camel@intel.com>
+References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
+         <1509371843-22931-4-git-send-email-mmaddireddy@nvidia.com>
+         <20171212143201.GC30799@e107981-ln.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171221093742.GW29417-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <20171212143201.GC30799-4tUPXFaYRHv6sAKXYmQ0tx/iLCjYCKR+VpNB7YpNyf8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 21/12/17 09:37, Peter De Schrijver wrote:
-> On Wed, Dec 20, 2017 at 10:12:10AM +0000, Jon Hunter wrote:
->>
->> On 16/11/17 14:28, Peter De Schrijver wrote:
->>> This patch series introduces the Memory Built-In Self Test (MBIST)
->>> work around (WAR) needed when power ungating certain domains. More
->>> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
->>> implement the WAR in the Tegra210 clock driver, because most accesses are
->>> to CAR registers and for the VENC domain, we need to make sure the CSI
->>> clock source is not changed during the WAR execution.
->>
->> In general, I don't have any problems with the proposal, as there is no
->> great way to implement the workaround AFAICT. My only thought was if we
->> could expose the mbist WAR as a 'reset' via the clk driver and use the
->> reset_control_xxx APIs to request and reset the mbist? Yes there is no
->> reset assert/deassert here, but the reset framework does have a 'reset'
->> hook to reset logic and if we are considering these WARs to reset the
->> mbist logic maybe it is not a complete hack/abuse of the API? Feel free
->> to tell me to get lost if it is a naff idea.
->>
+On Tue, 2017-12-12 at 14:32 +0000, Lorenzo Pieralisi wrote:
+> [+Ley Foon Tan]
 > 
-> You would only implement the reset method then? I guess this could be done
-> but I don't really see why this would be better than making dedicated
-> functions given that there really is only one SoC which requires this WAR.
+> On Mon, Oct 30, 2017 at 07:27:14PM +0530, Manikanta Maddireddy wrote:
+> > 
+> > Tegra124, 132, 210 and 186 support Gen2 link speed. After the link
+> > is up
+> > in Gen1, set target link speed as Gen2 and retrain link. Link
+> > switches to
+> > Gen2 speed if Gen2 capable end point is connected, else link stays
+> > in Gen1.
+> > 
+> > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > V3:
+> > * Corrected commit log
+> > * Replaced jiffies with ktime
+> > V2:
+> > * no change in this patch
+> > 
+> >  drivers/pci/host/pci-tegra.c | 42
+> > ++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 42 insertions(+)
+> > 
+> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-
+> > tegra.c
+> > index 068510b40c1a..ed5e8acfdc32 100644
+> > --- a/drivers/pci/host/pci-tegra.c
+> > +++ b/drivers/pci/host/pci-tegra.c
+> > @@ -232,6 +232,8 @@
+> >  #define PADS_REFCLK_CFG_PREDI_SHIFT          8  /* 11:8 */
+> >  #define PADS_REFCLK_CFG_DRVI_SHIFT           12 /* 15:12 */
+> > 
+> > +#define LINK_RETRAIN_TIMEOUT 100000
+> > +
+> >  struct tegra_msi {
+> >       struct msi_controller chip;
+> >       DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+> > @@ -2134,6 +2136,42 @@ static void tegra_pcie_enable_ports(struct
+> > tegra_pcie *pcie)
+> >       }
+> >  }
+> > 
+> > +static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
+> > +                                      struct pci_dev *pci_dev)
+> > +{
+> > +     struct device *dev = pcie->dev;
+> > +     ktime_t deadline;
+> > +     unsigned short val;
+> u16
+> 
+> > 
+> > +     /* Skip if the current device is not a root port */
+> > +     if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
+> > +             return;
+> > +
+> > +     pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
+> > +     val &= ~PCI_EXP_LNKSTA_CLS;
+> > +     val |= PCI_EXP_LNKSTA_CLS_5_0GB;
+> > +     pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
+> Should you not read the Link Capabilities 2 register ("Supported
+> Speed
+> Vector") before programming the Link control 2 register Target Link
+> Speed value ?
+> 
+> > 
+> > +
+> > +     /* Retrain the link */
+> > +     pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
+> > +     val |= PCI_EXP_LNKCTL_RL;
+> > +     pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
+> > +
+> > +     deadline = ktime_add_us(ktime_get(), LINK_RETRAIN_TIMEOUT);
+> > +     for (;;) {
+> > +             pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA,
+> > &val);
+> > +             if (!(val & PCI_EXP_LNKSTA_LT))
+> > +                     break;
+> > +             if (ktime_after(ktime_get(), deadline))
+> > +                     break;
+> > +             usleep_range(2000, 3000);
+> Ok - I hope we won't end up with every host bridge re-writing its own
+> link training loop because at that point in time we should think
+> about
+> consolidating this.
+> 
+> CC'ing Ley Foon Tan since I would like to understand why the Altera
+> driver link retraining can't be written with the same code as this
+> driver - I suspect it has to do with the retraining sequence and when
+> the retraining is actually carried out in the host bridge probe
+> sequence.
+Yes, our hardware requires to poll the LT bit in link status register
+&and polling LTSSM status after setting retrain bit link control
+register.
+> 
+> > 
+> > +     }
+> > +
+> > +     if (val & PCI_EXP_LNKSTA_LT)
+> > +             dev_err(dev, "link retrain of PCIe slot %u failed\n",
+> > +                     PCI_SLOT(pci_dev->devfn));
+> > +}
+> > +
+> >  static const struct tegra_pcie_soc tegra20_pcie = {
+> >       .num_ports = 2,
+> >       .msi_base_shift = 0,
+> > @@ -2335,6 +2373,7 @@ static int tegra_pcie_probe(struct
+> > platform_device *pdev)
+> >       struct pci_host_bridge *host;
+> >       struct tegra_pcie *pcie;
+> >       struct pci_bus *child;
+> > +     struct pci_dev *pci_dev = NULL;
+> >       int err;
+> > 
+> >       host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
+> > @@ -2400,6 +2439,9 @@ static int tegra_pcie_probe(struct
+> > platform_device *pdev)
+> > 
+> >       pci_bus_add_devices(host->bus);
+> > 
+> > +     for_each_pci_dev(pci_dev)
+> > +             tegra_pcie_change_link_speed(pcie, pci_dev);
+> > +
+> Are you sure it is safe to change link speed after adding devices ?
+> 
+> Lorenzo
 
-Yes exactly. Good point, we will only ever need this for this device, so
-maybe stick with what you have.
-
-Jon
-
--- 
-nvpublic
+"for_each_pci_dev(pci_dev)" will lookup all the PCIe devices in system.
+What happen if your system have more than one Tegra PCIe Rootport? Will
+it retrains all rootport? And same rootport will retrain for 2 times if
+there are 2 rootports?
+> 
+> > 
+> >       if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+> >               err = tegra_pcie_debugfs_init(pcie);
+> >               if (err < 0)
+> > --
+> > 2.1.4
+> > 
