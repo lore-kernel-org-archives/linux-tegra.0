@@ -1,156 +1,406 @@
-From: Ley Foon Tan <ley.foon.tan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 03/12] PCI: tegra: Retrain link for Gen2 speed
-Date: Fri, 22 Dec 2017 03:48:28 +0800
-Message-ID: <1513885708.2496.10.camel@intel.com>
-References: <1509371843-22931-1-git-send-email-mmaddireddy@nvidia.com>
-         <1509371843-22931-4-git-send-email-mmaddireddy@nvidia.com>
-         <20171212143201.GC30799@e107981-ln.cambridge.arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] drm/tegra: dc: Implement legacy blending
+Date: Thu, 21 Dec 2017 15:03:17 +0100
+Message-ID: <20171221140317.18447-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171212143201.GC30799-4tUPXFaYRHv6sAKXYmQ0tx/iLCjYCKR+VpNB7YpNyf8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2017-12-12 at 14:32 +0000, Lorenzo Pieralisi wrote:
-> [+Ley Foon Tan]
-> 
-> On Mon, Oct 30, 2017 at 07:27:14PM +0530, Manikanta Maddireddy wrote:
-> > 
-> > Tegra124, 132, 210 and 186 support Gen2 link speed. After the link
-> > is up
-> > in Gen1, set target link speed as Gen2 and retrain link. Link
-> > switches to
-> > Gen2 speed if Gen2 capable end point is connected, else link stays
-> > in Gen1.
-> > 
-> > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > V3:
-> > * Corrected commit log
-> > * Replaced jiffies with ktime
-> > V2:
-> > * no change in this patch
-> > 
-> >  drivers/pci/host/pci-tegra.c | 42
-> > ++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 42 insertions(+)
-> > 
-> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-
-> > tegra.c
-> > index 068510b40c1a..ed5e8acfdc32 100644
-> > --- a/drivers/pci/host/pci-tegra.c
-> > +++ b/drivers/pci/host/pci-tegra.c
-> > @@ -232,6 +232,8 @@
-> >  #define PADS_REFCLK_CFG_PREDI_SHIFT          8  /* 11:8 */
-> >  #define PADS_REFCLK_CFG_DRVI_SHIFT           12 /* 15:12 */
-> > 
-> > +#define LINK_RETRAIN_TIMEOUT 100000
-> > +
-> >  struct tegra_msi {
-> >       struct msi_controller chip;
-> >       DECLARE_BITMAP(used, INT_PCI_MSI_NR);
-> > @@ -2134,6 +2136,42 @@ static void tegra_pcie_enable_ports(struct
-> > tegra_pcie *pcie)
-> >       }
-> >  }
-> > 
-> > +static void tegra_pcie_change_link_speed(struct tegra_pcie *pcie,
-> > +                                      struct pci_dev *pci_dev)
-> > +{
-> > +     struct device *dev = pcie->dev;
-> > +     ktime_t deadline;
-> > +     unsigned short val;
-> u16
-> 
-> > 
-> > +     /* Skip if the current device is not a root port */
-> > +     if (pci_pcie_type(pci_dev) != PCI_EXP_TYPE_ROOT_PORT)
-> > +             return;
-> > +
-> > +     pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL2, &val);
-> > +     val &= ~PCI_EXP_LNKSTA_CLS;
-> > +     val |= PCI_EXP_LNKSTA_CLS_5_0GB;
-> > +     pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL2, val);
-> Should you not read the Link Capabilities 2 register ("Supported
-> Speed
-> Vector") before programming the Link control 2 register Target Link
-> Speed value ?
-> 
-> > 
-> > +
-> > +     /* Retrain the link */
-> > +     pcie_capability_read_word(pci_dev, PCI_EXP_LNKCTL, &val);
-> > +     val |= PCI_EXP_LNKCTL_RL;
-> > +     pcie_capability_write_word(pci_dev, PCI_EXP_LNKCTL, val);
-> > +
-> > +     deadline = ktime_add_us(ktime_get(), LINK_RETRAIN_TIMEOUT);
-> > +     for (;;) {
-> > +             pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA,
-> > &val);
-> > +             if (!(val & PCI_EXP_LNKSTA_LT))
-> > +                     break;
-> > +             if (ktime_after(ktime_get(), deadline))
-> > +                     break;
-> > +             usleep_range(2000, 3000);
-> Ok - I hope we won't end up with every host bridge re-writing its own
-> link training loop because at that point in time we should think
-> about
-> consolidating this.
-> 
-> CC'ing Ley Foon Tan since I would like to understand why the Altera
-> driver link retraining can't be written with the same code as this
-> driver - I suspect it has to do with the retraining sequence and when
-> the retraining is actually carried out in the host bridge probe
-> sequence.
-Yes, our hardware requires to poll the LT bit in link status register
-&and polling LTSSM status after setting retrain bit link control
-register.
-> 
-> > 
-> > +     }
-> > +
-> > +     if (val & PCI_EXP_LNKSTA_LT)
-> > +             dev_err(dev, "link retrain of PCIe slot %u failed\n",
-> > +                     PCI_SLOT(pci_dev->devfn));
-> > +}
-> > +
-> >  static const struct tegra_pcie_soc tegra20_pcie = {
-> >       .num_ports = 2,
-> >       .msi_base_shift = 0,
-> > @@ -2335,6 +2373,7 @@ static int tegra_pcie_probe(struct
-> > platform_device *pdev)
-> >       struct pci_host_bridge *host;
-> >       struct tegra_pcie *pcie;
-> >       struct pci_bus *child;
-> > +     struct pci_dev *pci_dev = NULL;
-> >       int err;
-> > 
-> >       host = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
-> > @@ -2400,6 +2439,9 @@ static int tegra_pcie_probe(struct
-> > platform_device *pdev)
-> > 
-> >       pci_bus_add_devices(host->bus);
-> > 
-> > +     for_each_pci_dev(pci_dev)
-> > +             tegra_pcie_change_link_speed(pcie, pci_dev);
-> > +
-> Are you sure it is safe to change link speed after adding devices ?
-> 
-> Lorenzo
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-"for_each_pci_dev(pci_dev)" will lookup all the PCIe devices in system.
-What happen if your system have more than one Tegra PCIe Rootport? Will
-it retrains all rootport? And same rootport will retrain for 2 times if
-there are 2 rootports?
-> 
-> > 
-> >       if (IS_ENABLED(CONFIG_DEBUG_FS)) {
-> >               err = tegra_pcie_debugfs_init(pcie);
-> >               if (err < 0)
-> > --
-> > 2.1.4
-> > 
+This implements alpha blending on legacy display controllers (Tegra20,
+Tegra30 and Tegra114). While it's theoretically possible to support the
+zpos property to enable userspace to specify the Z-order of each plane
+individually, this is not currently supported and the same fixed Z-
+order as previously defined is used.
+
+Reverts commit 71835caa00e8 ("drm/tegra: fb: Force alpha formats") since
+the opaque formats are now supported.
+
+Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Fixes: 7772fdaef939 ("drm/tegra: Support ARGB and ABGR formats")
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v2:
+- properly implement blending if windows have different pixel formats
+
+ drivers/gpu/drm/tegra/dc.c    |  81 +++++++++++++++++++++----
+ drivers/gpu/drm/tegra/dc.h    |  12 ++++
+ drivers/gpu/drm/tegra/fb.c    |  12 ----
+ drivers/gpu/drm/tegra/plane.c | 138 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/plane.h |   8 +++
+ 5 files changed, 226 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 2a0c1e93f82e..4507063029e0 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -154,30 +154,53 @@ static inline u32 compute_initial_dda(unsigned int in)
+ 
+ static void tegra_plane_setup_blending_legacy(struct tegra_plane *plane)
+ {
++	u32 background[3] = {
++		BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) | BLEND_COLOR_KEY_NONE,
++		BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) | BLEND_COLOR_KEY_NONE,
++		BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) | BLEND_COLOR_KEY_NONE,
++	};
++	u32 foreground = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255) |
++			 BLEND_COLOR_KEY_NONE;
++	u32 blendnokey = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255);
++	struct tegra_plane_state *state;
++	unsigned int i;
++
++	state = to_tegra_plane_state(plane->base.state);
++
++	/* alpha contribution is 1 minus sum of overlapping windows */
++	for (i = 0; i < 3; i++) {
++		if (state->dependent[i])
++			background[i] |= BLEND_CONTROL_DEPENDENT;
++	}
++
++	/* enable alpha blending if pixel format has an alpha component */
++	if (!state->opaque)
++		foreground |= BLEND_CONTROL_ALPHA;
++
+ 	/*
+ 	 * Disable blending and assume Window A is the bottom-most window,
+ 	 * Window C is the top-most window and Window B is in the middle.
+ 	 */
+-	tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_NOKEY);
+-	tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_1WIN);
++	tegra_plane_writel(plane, blendnokey, DC_WIN_BLEND_NOKEY);
++	tegra_plane_writel(plane, foreground, DC_WIN_BLEND_1WIN);
+ 
+ 	switch (plane->index) {
+ 	case 0:
+-		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_2WIN_X);
+-		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_2WIN_Y);
+-		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_3WIN_XY);
++		tegra_plane_writel(plane, background[0], DC_WIN_BLEND_2WIN_X);
++		tegra_plane_writel(plane, background[1], DC_WIN_BLEND_2WIN_Y);
++		tegra_plane_writel(plane, background[2], DC_WIN_BLEND_3WIN_XY);
+ 		break;
+ 
+ 	case 1:
+-		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_2WIN_X);
+-		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_2WIN_Y);
+-		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_3WIN_XY);
++		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_2WIN_X);
++		tegra_plane_writel(plane, background[1], DC_WIN_BLEND_2WIN_Y);
++		tegra_plane_writel(plane, background[2], DC_WIN_BLEND_3WIN_XY);
+ 		break;
+ 
+ 	case 2:
+-		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_2WIN_X);
+-		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_2WIN_Y);
+-		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_3WIN_XY);
++		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_2WIN_X);
++		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_2WIN_Y);
++		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_3WIN_XY);
+ 		break;
+ 	}
+ }
+@@ -353,6 +376,11 @@ static const u32 tegra20_primary_formats[] = {
+ 	DRM_FORMAT_RGBA5551,
+ 	DRM_FORMAT_ABGR8888,
+ 	DRM_FORMAT_ARGB8888,
++	/* non-native formats */
++	DRM_FORMAT_XRGB1555,
++	DRM_FORMAT_RGBX5551,
++	DRM_FORMAT_XBGR8888,
++	DRM_FORMAT_XRGB8888,
+ };
+ 
+ static const u32 tegra114_primary_formats[] = {
+@@ -409,18 +437,40 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ 	struct tegra_bo_tiling *tiling = &plane_state->tiling;
+ 	struct tegra_plane *tegra = to_tegra_plane(plane);
+ 	struct tegra_dc *dc = to_tegra_dc(state->crtc);
++	unsigned int format;
+ 	int err;
+ 
+ 	/* no need for further checks if the plane is being disabled */
+ 	if (!state->crtc)
+ 		return 0;
+ 
+-	err = tegra_plane_format(state->fb->format->format,
+-				 &plane_state->format,
++	err = tegra_plane_format(state->fb->format->format, &format,
+ 				 &plane_state->swap);
+ 	if (err < 0)
+ 		return err;
+ 
++	/*
++	 * Tegra20 and Tegra30 are special cases here because they support
++	 * only variants of specific formats with an alpha component, but not
++	 * the corresponding opaque formats. However, the opaque formats can
++	 * be emulated by disabling alpha blending for the plane.
++	 */
++	if (!dc->soc->supports_blending) {
++		if (!tegra_plane_format_has_alpha(format)) {
++			err = tegra_plane_format_get_alpha(format, &format);
++			if (err < 0)
++				return err;
++
++			plane_state->opaque = true;
++		} else {
++			plane_state->opaque = false;
++		}
++
++		tegra_plane_check_dependent(tegra, plane_state);
++	}
++
++	plane_state->format = format;
++
+ 	err = tegra_fb_get_tiling(state->fb, tiling);
+ 	if (err < 0)
+ 		return err;
+@@ -737,6 +787,11 @@ static const u32 tegra20_overlay_formats[] = {
+ 	DRM_FORMAT_RGBA5551,
+ 	DRM_FORMAT_ABGR8888,
+ 	DRM_FORMAT_ARGB8888,
++	/* non-native formats */
++	DRM_FORMAT_XRGB1555,
++	DRM_FORMAT_RGBX5551,
++	DRM_FORMAT_XBGR8888,
++	DRM_FORMAT_XRGB8888,
+ 	/* planar formats */
+ 	DRM_FORMAT_UYVY,
+ 	DRM_FORMAT_YUYV,
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index e2831e96ea96..096a81ad6d8d 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -649,8 +649,20 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+ #define DC_WIN_DV_CONTROL			0x70e
+ 
+ #define DC_WIN_BLEND_NOKEY			0x70f
++#define  BLEND_WEIGHT1(x) (((x) & 0xff) << 16)
++#define  BLEND_WEIGHT0(x) (((x) & 0xff) <<  8)
++
+ #define DC_WIN_BLEND_1WIN			0x710
++#define  BLEND_CONTROL_FIX    (0 << 2)
++#define  BLEND_CONTROL_ALPHA  (1 << 2)
++#define  BLEND_COLOR_KEY_NONE (0 << 0)
++#define  BLEND_COLOR_KEY_0    (1 << 0)
++#define  BLEND_COLOR_KEY_1    (2 << 0)
++#define  BLEND_COLOR_KEY_BOTH (3 << 0)
++
+ #define DC_WIN_BLEND_2WIN_X			0x711
++#define  BLEND_CONTROL_DEPENDENT (2 << 2)
++
+ #define DC_WIN_BLEND_2WIN_Y			0x712
+ #define DC_WIN_BLEND_3WIN_XY			0x713
+ 
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index 1af4ef9241f1..e05fde7172f8 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -254,18 +254,6 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+ 	cmd.pitches[0] = round_up(sizes->surface_width * bytes_per_pixel,
+ 				  tegra->pitch_align);
+ 
+-	/*
+-	 * Early generations of Tegra (Tegra20 and Tegra30) do not support any
+-	 * of the X* or *X formats, only their A* or *A equivalents. Force the
+-	 * legacy framebuffer format to include an alpha component so that the
+-	 * framebuffer emulation can be supported on all generations.
+-	 */
+-	if (sizes->surface_bpp == 32 && sizes->surface_depth == 24)
+-		sizes->surface_depth = 32;
+-
+-	if (sizes->surface_bpp == 16 && sizes->surface_depth == 15)
+-		sizes->surface_depth = 16;
+-
+ 	cmd.pixel_format = drm_mode_legacy_fb_format(sizes->surface_bpp,
+ 						     sizes->surface_depth);
+ 
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index 9146aead973b..154b4d337d0a 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -43,6 +43,7 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
+ {
+ 	struct tegra_plane_state *state = to_tegra_plane_state(plane->state);
+ 	struct tegra_plane_state *copy;
++	unsigned int i;
+ 
+ 	copy = kmalloc(sizeof(*copy), GFP_KERNEL);
+ 	if (!copy)
+@@ -52,6 +53,10 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
+ 	copy->tiling = state->tiling;
+ 	copy->format = state->format;
+ 	copy->swap = state->swap;
++	copy->opaque = state->opaque;
++
++	for (i = 0; i < 3; i++)
++		copy->dependent[i] = state->dependent[i];
+ 
+ 	return &copy->base;
+ }
+@@ -238,3 +243,136 @@ bool tegra_plane_format_is_yuv(unsigned int format, bool *planar)
+ 
+ 	return false;
+ }
++
++static bool __drm_format_has_alpha(u32 format)
++{
++	switch (format) {
++	case DRM_FORMAT_ARGB1555:
++	case DRM_FORMAT_RGBA5551:
++	case DRM_FORMAT_ABGR8888:
++	case DRM_FORMAT_ARGB8888:
++		return true;
++	}
++
++	return false;
++}
++
++/*
++ * This is applicable to Tegra20 and Tegra30 only where the opaque formats can
++ * be emulated using the alpha formats and alpha blending disabled.
++ */
++bool tegra_plane_format_has_alpha(unsigned int format)
++{
++	switch (format) {
++	case WIN_COLOR_DEPTH_B5G5R5A1:
++	case WIN_COLOR_DEPTH_A1B5G5R5:
++	case WIN_COLOR_DEPTH_R8G8B8A8:
++	case WIN_COLOR_DEPTH_B8G8R8A8:
++		return true;
++	}
++
++	return false;
++}
++
++int tegra_plane_format_get_alpha(unsigned int opaque, unsigned int *alpha)
++{
++	switch (opaque) {
++	case WIN_COLOR_DEPTH_B5G5R5X1:
++		*alpha = WIN_COLOR_DEPTH_B5G5R5A1;
++		return 0;
++
++	case WIN_COLOR_DEPTH_X1B5G5R5:
++		*alpha = WIN_COLOR_DEPTH_A1B5G5R5;
++		return 0;
++
++	case WIN_COLOR_DEPTH_R8G8B8X8:
++		*alpha = WIN_COLOR_DEPTH_R8G8B8A8;
++		return 0;
++
++	case WIN_COLOR_DEPTH_B8G8R8X8:
++		*alpha = WIN_COLOR_DEPTH_B8G8R8A8;
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++unsigned int tegra_plane_get_overlap_index(struct tegra_plane *plane,
++					   struct tegra_plane *other)
++{
++	unsigned int index = 0, i;
++
++	WARN_ON(plane == other);
++
++	for (i = 0; i < 3; i++) {
++		if (i == plane->index)
++			continue;
++
++		if (i == other->index)
++			break;
++
++		index++;
++	}
++
++	return index;
++}
++
++void tegra_plane_check_dependent(struct tegra_plane *tegra,
++				 struct tegra_plane_state *state)
++{
++	struct drm_plane_state *old, *new;
++	struct drm_plane *plane;
++	unsigned int zpos[2];
++	unsigned int i;
++
++	for (i = 0; i < 3; i++)
++		state->dependent[i] = false;
++
++	for (i = 0; i < 2; i++)
++		zpos[i] = 0;
++
++	for_each_oldnew_plane_in_state(state->base.state, plane, old, new, i) {
++		struct tegra_plane *p = to_tegra_plane(plane);
++		unsigned index;
++
++		/* skip this plane and planes on different CRTCs */
++		if (p == tegra || new->crtc != state->base.crtc)
++			continue;
++
++		index = tegra_plane_get_overlap_index(tegra, p);
++
++		/*
++		 * If any of the other planes is on top of this plane and uses
++		 * a format with an alpha component, mark this plane as being
++		 * dependent, meaning it's alpha value will be 1 minus the sum
++		 * of alpha components of the overlapping planes.
++		 */
++		if (p->index > tegra->index) {
++			if (__drm_format_has_alpha(new->fb->format->format))
++				state->dependent[index] = true;
++
++			/* keep track of the Z position */
++			zpos[index] = p->index;
++		}
++	}
++
++	/*
++	 * The region where three windows overlap is the intersection of the
++	 * two regions where two windows overlap. It contributes to the area
++	 * if any of the windows on top of it have an alpha component.
++	 */
++	for (i = 0; i < 2; i++)
++		state->dependent[2] = state->dependent[2] ||
++				      state->dependent[i];
++
++	/*
++	 * However, if any of the windows on top of this window is opaque, it
++	 * will completely conceal this window within that area, so avoid the
++	 * window from contributing to the area.
++	 */
++	for (i = 0; i < 2; i++) {
++		if (zpos[i] > tegra->index)
++			state->dependent[2] = state->dependent[2] &&
++					      state->dependent[i];
++	}
++}
+diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
+index dca66cb95d25..6938719e7e5d 100644
+--- a/drivers/gpu/drm/tegra/plane.h
++++ b/drivers/gpu/drm/tegra/plane.h
+@@ -40,6 +40,10 @@ struct tegra_plane_state {
+ 	struct tegra_bo_tiling tiling;
+ 	u32 format;
+ 	u32 swap;
++
++	/* used for legacy blending support only */
++	bool opaque;
++	bool dependent[3];
+ };
+ 
+ static inline struct tegra_plane_state *
+@@ -58,5 +62,9 @@ int tegra_plane_state_add(struct tegra_plane *plane,
+ 
+ int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap);
+ bool tegra_plane_format_is_yuv(unsigned int format, bool *planar);
++bool tegra_plane_format_has_alpha(unsigned int format);
++int tegra_plane_format_get_alpha(unsigned int opaque, unsigned int *alpha);
++void tegra_plane_check_dependent(struct tegra_plane *tegra,
++				 struct tegra_plane_state *state);
+ 
+ #endif /* TEGRA_PLANE_H */
+-- 
+2.15.1
