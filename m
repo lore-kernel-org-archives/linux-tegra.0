@@ -1,104 +1,501 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [bug report] null ptr deref in nouveau_platform_probe
- (tegra186-p2771-0000)
-Date: Thu, 21 Dec 2017 19:11:41 +0100
-Message-ID: <20171221181141.GA31262@ulmo>
-References: <CAHMsQjWKhgm5BnngHtH6QeWumNrbSS=LaTRD=XCSy5+iovg7mA@mail.gmail.com>
- <20171220190405.GD9687@ulmo>
- <CAHMsQjXAXj-0gctfkpi+f8cuPrxF67BWNnG0ZsnTHL3u307vOA@mail.gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] drm/tegra: dc: Implement legacy blending
+Date: Thu, 21 Dec 2017 21:46:58 +0300
+Message-ID: <3ccf0299-95d9-0c46-dd86-de16434b6e42@gmail.com>
+References: <20171221140317.18447-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2061834636=="
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAHMsQjXAXj-0gctfkpi+f8cuPrxF67BWNnG0ZsnTHL3u307vOA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Anthony Eden <aeden-EfZU8u+QLuPpgkiH4x7ZXw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171221140317.18447-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 21.12.2017 17:03, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> This implements alpha blending on legacy display controllers (Tegra20,
+> Tegra30 and Tegra114). While it's theoretically possible to support the
+> zpos property to enable userspace to specify the Z-order of each plane
+> individually, this is not currently supported and the same fixed Z-
+> order as previously defined is used.
+> 
+> Reverts commit 71835caa00e8 ("drm/tegra: fb: Force alpha formats") since
+> the opaque formats are now supported.
+> 
+> Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Fixes: 7772fdaef939 ("drm/tegra: Support ARGB and ABGR formats")
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes in v2:
+> - properly implement blending if windows have different pixel formats
+> 
+>  drivers/gpu/drm/tegra/dc.c    |  81 +++++++++++++++++++++----
+>  drivers/gpu/drm/tegra/dc.h    |  12 ++++
+>  drivers/gpu/drm/tegra/fb.c    |  12 ----
+>  drivers/gpu/drm/tegra/plane.c | 138 ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/tegra/plane.h |   8 +++
+>  5 files changed, 226 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index 2a0c1e93f82e..4507063029e0 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -154,30 +154,53 @@ static inline u32 compute_initial_dda(unsigned int in)
+>  
+>  static void tegra_plane_setup_blending_legacy(struct tegra_plane *plane)
+>  {
+> +	u32 background[3] = {
+> +		BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) | BLEND_COLOR_KEY_NONE,
+> +		BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) | BLEND_COLOR_KEY_NONE,
+> +		BLEND_WEIGHT1(0) | BLEND_WEIGHT0(0) | BLEND_COLOR_KEY_NONE,
+> +	};
+> +	u32 foreground = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255) |
+> +			 BLEND_COLOR_KEY_NONE;
+> +	u32 blendnokey = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255);
+> +	struct tegra_plane_state *state;
+> +	unsigned int i;
+> +
+> +	state = to_tegra_plane_state(plane->base.state);
+> +
+> +	/* alpha contribution is 1 minus sum of overlapping windows */
+> +	for (i = 0; i < 3; i++) {
+> +		if (state->dependent[i])
+> +			background[i] |= BLEND_CONTROL_DEPENDENT;
+> +	}
+> +
+> +	/* enable alpha blending if pixel format has an alpha component */
+> +	if (!state->opaque)
+> +		foreground |= BLEND_CONTROL_ALPHA;
+> +
+>  	/*
+>  	 * Disable blending and assume Window A is the bottom-most window,
+>  	 * Window C is the top-most window and Window B is in the middle.
+>  	 */
+> -	tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_NOKEY);
+> -	tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_1WIN);
+> +	tegra_plane_writel(plane, blendnokey, DC_WIN_BLEND_NOKEY);
+> +	tegra_plane_writel(plane, foreground, DC_WIN_BLEND_1WIN);
+>  
+>  	switch (plane->index) {
+>  	case 0:
+> -		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_2WIN_X);
+> -		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_2WIN_Y);
+> -		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_3WIN_XY);
+> +		tegra_plane_writel(plane, background[0], DC_WIN_BLEND_2WIN_X);
+> +		tegra_plane_writel(plane, background[1], DC_WIN_BLEND_2WIN_Y);
+> +		tegra_plane_writel(plane, background[2], DC_WIN_BLEND_3WIN_XY);
+>  		break;
+>  
+>  	case 1:
+> -		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_2WIN_X);
+> -		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_2WIN_Y);
+> -		tegra_plane_writel(plane, 0x000000, DC_WIN_BLEND_3WIN_XY);
+> +		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_2WIN_X);
+> +		tegra_plane_writel(plane, background[1], DC_WIN_BLEND_2WIN_Y);
+> +		tegra_plane_writel(plane, background[2], DC_WIN_BLEND_3WIN_XY);
+>  		break;
+>  
+>  	case 2:
+> -		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_2WIN_X);
+> -		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_2WIN_Y);
+> -		tegra_plane_writel(plane, 0xffff00, DC_WIN_BLEND_3WIN_XY);
+> +		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_2WIN_X);
+> +		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_2WIN_Y);
+> +		tegra_plane_writel(plane, foreground, DC_WIN_BLEND_3WIN_XY);
+>  		break;
+>  	}
+>  }
+> @@ -353,6 +376,11 @@ static const u32 tegra20_primary_formats[] = {
+>  	DRM_FORMAT_RGBA5551,
+>  	DRM_FORMAT_ABGR8888,
+>  	DRM_FORMAT_ARGB8888,
+> +	/* non-native formats */
+> +	DRM_FORMAT_XRGB1555,
+> +	DRM_FORMAT_RGBX5551,
+> +	DRM_FORMAT_XBGR8888,
+> +	DRM_FORMAT_XRGB8888,
+>  };
+>  
+>  static const u32 tegra114_primary_formats[] = {
+> @@ -409,18 +437,40 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+>  	struct tegra_bo_tiling *tiling = &plane_state->tiling;
+>  	struct tegra_plane *tegra = to_tegra_plane(plane);
+>  	struct tegra_dc *dc = to_tegra_dc(state->crtc);
+> +	unsigned int format;
+>  	int err;
+>  
+>  	/* no need for further checks if the plane is being disabled */
+>  	if (!state->crtc)
+>  		return 0;
+>  
+> -	err = tegra_plane_format(state->fb->format->format,
+> -				 &plane_state->format,
+> +	err = tegra_plane_format(state->fb->format->format, &format,
+>  				 &plane_state->swap);
+>  	if (err < 0)
+>  		return err;
+>  
+> +	/*
+> +	 * Tegra20 and Tegra30 are special cases here because they support
+> +	 * only variants of specific formats with an alpha component, but not
+> +	 * the corresponding opaque formats. However, the opaque formats can
+> +	 * be emulated by disabling alpha blending for the plane.
+> +	 */
+> +	if (!dc->soc->supports_blending) {
+> +		if (!tegra_plane_format_has_alpha(format)) {
+> +			err = tegra_plane_format_get_alpha(format, &format);
+> +			if (err < 0)
+> +				return err;
+> +
+> +			plane_state->opaque = true;
+> +		} else {
+> +			plane_state->opaque = false;
+> +		}
+> +
+> +		tegra_plane_check_dependent(tegra, plane_state);
+> +	}
+> +
+> +	plane_state->format = format;
+> +
+>  	err = tegra_fb_get_tiling(state->fb, tiling);
+>  	if (err < 0)
+>  		return err;
+> @@ -737,6 +787,11 @@ static const u32 tegra20_overlay_formats[] = {
+>  	DRM_FORMAT_RGBA5551,
+>  	DRM_FORMAT_ABGR8888,
+>  	DRM_FORMAT_ARGB8888,
+> +	/* non-native formats */
+> +	DRM_FORMAT_XRGB1555,
+> +	DRM_FORMAT_RGBX5551,
+> +	DRM_FORMAT_XBGR8888,
+> +	DRM_FORMAT_XRGB8888,
+>  	/* planar formats */
+>  	DRM_FORMAT_UYVY,
+>  	DRM_FORMAT_YUYV,
+> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+> index e2831e96ea96..096a81ad6d8d 100644
+> --- a/drivers/gpu/drm/tegra/dc.h
+> +++ b/drivers/gpu/drm/tegra/dc.h
+> @@ -649,8 +649,20 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+>  #define DC_WIN_DV_CONTROL			0x70e
+>  
+>  #define DC_WIN_BLEND_NOKEY			0x70f
+> +#define  BLEND_WEIGHT1(x) (((x) & 0xff) << 16)
+> +#define  BLEND_WEIGHT0(x) (((x) & 0xff) <<  8)
+> +
+>  #define DC_WIN_BLEND_1WIN			0x710
+> +#define  BLEND_CONTROL_FIX    (0 << 2)
+> +#define  BLEND_CONTROL_ALPHA  (1 << 2)
+> +#define  BLEND_COLOR_KEY_NONE (0 << 0)
+> +#define  BLEND_COLOR_KEY_0    (1 << 0)
+> +#define  BLEND_COLOR_KEY_1    (2 << 0)
+> +#define  BLEND_COLOR_KEY_BOTH (3 << 0)
+> +
+>  #define DC_WIN_BLEND_2WIN_X			0x711
+> +#define  BLEND_CONTROL_DEPENDENT (2 << 2)
+> +
+>  #define DC_WIN_BLEND_2WIN_Y			0x712
+>  #define DC_WIN_BLEND_3WIN_XY			0x713
+>  
+> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+> index 1af4ef9241f1..e05fde7172f8 100644
+> --- a/drivers/gpu/drm/tegra/fb.c
+> +++ b/drivers/gpu/drm/tegra/fb.c
+> @@ -254,18 +254,6 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+>  	cmd.pitches[0] = round_up(sizes->surface_width * bytes_per_pixel,
+>  				  tegra->pitch_align);
+>  
+> -	/*
+> -	 * Early generations of Tegra (Tegra20 and Tegra30) do not support any
+> -	 * of the X* or *X formats, only their A* or *A equivalents. Force the
+> -	 * legacy framebuffer format to include an alpha component so that the
+> -	 * framebuffer emulation can be supported on all generations.
+> -	 */
+> -	if (sizes->surface_bpp == 32 && sizes->surface_depth == 24)
+> -		sizes->surface_depth = 32;
+> -
+> -	if (sizes->surface_bpp == 16 && sizes->surface_depth == 15)
+> -		sizes->surface_depth = 16;
+> -
+>  	cmd.pixel_format = drm_mode_legacy_fb_format(sizes->surface_bpp,
+>  						     sizes->surface_depth);
+>  
+> diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+> index 9146aead973b..154b4d337d0a 100644
+> --- a/drivers/gpu/drm/tegra/plane.c
+> +++ b/drivers/gpu/drm/tegra/plane.c
+> @@ -43,6 +43,7 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
+>  {
+>  	struct tegra_plane_state *state = to_tegra_plane_state(plane->state);
+>  	struct tegra_plane_state *copy;
+> +	unsigned int i;
+>  
+>  	copy = kmalloc(sizeof(*copy), GFP_KERNEL);
+>  	if (!copy)
+> @@ -52,6 +53,10 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
+>  	copy->tiling = state->tiling;
+>  	copy->format = state->format;
+>  	copy->swap = state->swap;
+> +	copy->opaque = state->opaque;
+> +
+> +	for (i = 0; i < 3; i++)
+> +		copy->dependent[i] = state->dependent[i];
+>  
+>  	return &copy->base;
+>  }
+> @@ -238,3 +243,136 @@ bool tegra_plane_format_is_yuv(unsigned int format, bool *planar)
+>  
+>  	return false;
+>  }
+> +
+> +static bool __drm_format_has_alpha(u32 format)
+> +{
+> +	switch (format) {
+> +	case DRM_FORMAT_ARGB1555:
+> +	case DRM_FORMAT_RGBA5551:
+> +	case DRM_FORMAT_ABGR8888:
+> +	case DRM_FORMAT_ARGB8888:
 
---===============2061834636==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
-Content-Disposition: inline
+DRM_FORMAT_ARGB4444 missing here?
 
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +/*
+> + * This is applicable to Tegra20 and Tegra30 only where the opaque formats can
+> + * be emulated using the alpha formats and alpha blending disabled.
+> + */
+> +bool tegra_plane_format_has_alpha(unsigned int format)
+> +{
+> +	switch (format) {
+> +	case WIN_COLOR_DEPTH_B5G5R5A1:
+> +	case WIN_COLOR_DEPTH_A1B5G5R5:
+> +	case WIN_COLOR_DEPTH_R8G8B8A8:
+> +	case WIN_COLOR_DEPTH_B8G8R8A8:
 
---huq684BweRXVnRxX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+WIN_COLOR_DEPTH_B4G4R4A4 missing here?
 
-On Thu, Dec 21, 2017 at 12:32:39PM -0500, Anthony Eden wrote:
-> Hi Thierry,
->=20
-> Thanks for the patch. I applied on top of linux-next-2017-12-14.
-> Different output this time.
->=20
-> [   11.862495] WARNING: CPU: 1 PID: 254 at
-> drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgf100.c:391
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +int tegra_plane_format_get_alpha(unsigned int opaque, unsigned int *alpha)
+> +{
+> +	switch (opaque) {
+> +	case WIN_COLOR_DEPTH_B5G5R5X1:
+> +		*alpha = WIN_COLOR_DEPTH_B5G5R5A1;
+> +		return 0;
+> +
+> +	case WIN_COLOR_DEPTH_X1B5G5R5:
+> +		*alpha = WIN_COLOR_DEPTH_A1B5G5R5;
+> +		return 0;
+> +
+> +	case WIN_COLOR_DEPTH_R8G8B8X8:
+> +		*alpha = WIN_COLOR_DEPTH_R8G8B8A8;
+> +		return 0;
+> +
+> +	case WIN_COLOR_DEPTH_B8G8R8X8:
+> +		*alpha = WIN_COLOR_DEPTH_B8G8R8A8;
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +unsigned int tegra_plane_get_overlap_index(struct tegra_plane *plane,
+> +					   struct tegra_plane *other)
+> +{
+> +	unsigned int index = 0, i;
+> +
+> +	WARN_ON(plane == other);
+> +
+> +	for (i = 0; i < 3; i++) {
+> +		if (i == plane->index)
+> +			continue;
+> +
+> +		if (i == other->index)
+> +			break;
+> +
+> +		index++;
+> +	}
+> +
+> +	return index;
+> +}
+> +
+> +void tegra_plane_check_dependent(struct tegra_plane *tegra,
+> +				 struct tegra_plane_state *state)
+> +{
+> +	struct drm_plane_state *old, *new;
+> +	struct drm_plane *plane;
+> +	unsigned int zpos[2];
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < 3; i++)
+> +		state->dependent[i] = false;
+> +
+> +	for (i = 0; i < 2; i++)
+> +		zpos[i] = 0;
+> +
+> +	for_each_oldnew_plane_in_state(state->base.state, plane, old, new, i) {
 
-This looks like something that could potentially be fixed by this:
+Somehow this works when 2 windows are blended (primary plane + cursor). But
+unfortunately this doesn't work at all in a case when 3 windows blended (primary
++ video overlay + cursor), for some reason there is only one plane in the state
+here, so blending dependency tracking doesn't work at all. I'll continue to look
+into it, but for now I don't know why it doesn't work as expected. If you have
+any idea, please tell.
 
-	https://github.com/skeggsb/nouveau/commit/305d38cb1d20bf909e2daf6989bba4b2=
-7c3a3688
+> +		struct tegra_plane *p = to_tegra_plane(plane);
+> +		unsigned index;
+> +
+> +		/* skip this plane and planes on different CRTCs */
+> +		if (p == tegra || new->crtc != state->base.crtc)
+> +			continue;
+> +
+> +		index = tegra_plane_get_overlap_index(tegra, p);
+> +
+> +		/*
+> +		 * If any of the other planes is on top of this plane and uses
+> +		 * a format with an alpha component, mark this plane as being
+> +		 * dependent, meaning it's alpha value will be 1 minus the sum
+> +		 * of alpha components of the overlapping planes.
+> +		 */
+> +		if (p->index > tegra->index) {
+> +			if (__drm_format_has_alpha(new->fb->format->format))
+> +				state->dependent[index] = true;
+> +
+> +			/* keep track of the Z position */
+> +			zpos[index] = p->index;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * The region where three windows overlap is the intersection of the
+> +	 * two regions where two windows overlap. It contributes to the area
+> +	 * if any of the windows on top of it have an alpha component.
+> +	 */
+> +	for (i = 0; i < 2; i++)
+> +		state->dependent[2] = state->dependent[2] ||
+> +				      state->dependent[i];
+> +
+> +	/*
+> +	 * However, if any of the windows on top of this window is opaque, it
+> +	 * will completely conceal this window within that area, so avoid the
+> +	 * window from contributing to the area.
+> +	 */
+> +	for (i = 0; i < 2; i++) {
+> +		if (zpos[i] > tegra->index)
+> +			state->dependent[2] = state->dependent[2] &&
+> +					      state->dependent[i];
+> +	}
+> +}
 
-That said, it's probably worth looking at Ben's branch here:
+The above is a bit difficult to follow, could we do something like this?
 
-	https://github.com/skeggsb/nouveau/commits/master
+-unsigned int tegra_plane_get_overlap_index(struct tegra_plane *plane,
+-                                          struct tegra_plane *other)
++static unsigned int tegra_plane_get_dependent_index(struct tegra_plane *plane,
++                                                   struct tegra_plane *other)
+ {
+-       unsigned int index = 0, i;
+-
+        WARN_ON(plane == other);
 
-The top three patches fix various issues that might be relevant.
+-       for (i = 0; i < 3; i++) {
+-               if (i == plane->index)
+-                       continue;
++       switch (plane->index) {
++       case 0:
++               return other->index - 1;
 
-Note that the above is Ben's nouveau repository (as opposed ot a Linux
-kernel tree) and the patches won't apply as-is to the kernel tree. I've
-had some success adding the repository as a remote to my kernel tree,
-fetching it and cherry-picking patches. git is very good at finding the
-right files to apply the patch to, even if they are in different
-directories. One exception where it doesn't work is when files are added
-(presumable because git doesn't have a hash yet to use for guessing the
-right file).
+-               if (i == other->index)
+-                       break;
++       case 1:
++               return other->index ? 1 : 0;
 
-Worst case you could try applying the changes manually, they're fairly
-small.
+-               index++;
++       case 2:
++               return other->index;
+        }
 
-Thierry
+-       return index;
++       return 0;
+ }
 
---huq684BweRXVnRxX
-Content-Type: application/pgp-signature; name="signature.asc"
+ void tegra_plane_check_dependent(struct tegra_plane *tegra,
+@@ -322,14 +323,13 @@ void tegra_plane_check_dependent(struct tegra_plane *tegra,
+ {
+        struct drm_plane_state *old, *new;
+        struct drm_plane *plane;
+-       unsigned int zpos[2];
++       bool opaque[3];
+        unsigned int i;
 
------BEGIN PGP SIGNATURE-----
+-       for (i = 0; i < 3; i++)
++       for (i = 0; i < 3; i++) {
+                state->dependent[i] = false;
+-
+-       for (i = 0; i < 2; i++)
+-               zpos[i] = 0;
++               opaque[i] = false;
++       }
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlo7+VkACgkQ3SOs138+
-s6HmrQ/+Mx6foZzheSzGWFyrCZSbR7a7DbzKIyLyjReu7D/L//8hqBU7lAo4S0zh
-s3BcHj6JIX4k4cYUlgYWUmoUWXVSQ3a2QDgG9k68DtAAOsss/8M1pQqqgb2en19B
-bbKNA5ux2/WQJmPHROsoYQlzSqQ3S2wfL4vNfuF4TepxqQHw7Eu/jjDhVD6apCk7
-JpRaJgbNDfNXTnNqGZlHept82JYZcYahpTzyMkMuD6HugSk3YaaDR5BcWGKHCdMG
-Updz+SCE2kZKHApRQhe62NdXocboJM3HG2RZEckoOSWc8Ojo7bUqayFAWJ1MXyYj
-lzy9/52gEAw7VJtm5JaKGWaDWEkbx2du/iZHZvfLOP7pGc7nkNnwqpocPsRXYB3m
-fthy3Sk6DLGb0mJvtCNLoABExg4C+KEcVPaN0pKtK9h+iL7JAaBQ4BxRrXgcaFKG
-nxJ0armfitR9I0ZWPpV0iKD9X+Np4PPzlp3SQefoCC2MFDxJsYV5p5hMi96/TiaI
-RN30VrfGa5gagOTEwr7nfePP3MmtbjDxj4fYcgNDq0BBxigquaN/u6Aj4SH0Eq/E
-p+JLO3CXLEOifh727y11Rl6prjTPa68LO6zM8TjHgr+B+uDkqbS0kqVzvkUmdW9S
-lZrYt1RqPKXrbbiUeVwzLCpqIkQWzK8BA7Cp2tU4x7+18I73el4=
-=sDJg
------END PGP SIGNATURE-----
+        for_each_oldnew_plane_in_state(state->base.state, plane, old, new, i) {
+                struct tegra_plane *p = to_tegra_plane(plane);
+@@ -339,7 +339,7 @@ void tegra_plane_check_dependent(struct tegra_plane *tegra,
+                if (p == tegra || new->crtc != state->base.crtc)
+                        continue;
 
---huq684BweRXVnRxX--
+-               index = tegra_plane_get_overlap_index(tegra, p);
++               index = tegra_plane_get_dependent_index(tegra, p);
 
---===============2061834636==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+                /*
+                 * If any of the other planes is on top of this plane and uses
+@@ -350,9 +350,8 @@ void tegra_plane_check_dependent(struct tegra_plane *tegra,
+                if (p->index > tegra->index) {
+                        if (__drm_format_has_alpha(new->fb->format->format))
+                                state->dependent[index] = true;
+-
+-                       /* keep track of the Z position */
+-                       zpos[index] = p->index;
++                       else
++                               opaque[index] = true;
+                }
+        }
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
-YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+@@ -361,18 +360,16 @@ void tegra_plane_check_dependent(struct tegra_plane *tegra,
+         * two regions where two windows overlap. It contributes to the area
+         * if any of the windows on top of it have an alpha component.
+         */
+-       for (i = 0; i < 2; i++)
+-               state->dependent[2] = state->dependent[2] ||
+-                                     state->dependent[i];
++       state->dependent[2] = state->dependent[0] || state->dependent[1];
 
---===============2061834636==--
+        /*
+         * However, if any of the windows on top of this window is opaque, it
+         * will completely conceal this window within that area, so avoid the
+         * window from contributing to the area.
+         */
+-       for (i = 0; i < 2; i++) {
+-               if (zpos[i] > tegra->index)
+-                       state->dependent[2] = state->dependent[2] &&
+-                                             state->dependent[i];
+-       }
++       if (tegra->index == 0 && (opaque[0] || opaque[1]))
++               state->dependent[2] = false;
++
++       if (tegra->index == 1 && opaque[1])
++               state->dependent[2] = false;
+ }
+
+[snip]
