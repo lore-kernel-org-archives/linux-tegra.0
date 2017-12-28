@@ -1,26 +1,59 @@
-From: Word Gospel <wordofgospelrania-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: You will definetely be interested...
-Date: Wed, 27 Dec 2017 10:23:40 +0000
-Message-ID: <CA+HvR7yBgq==KG-sAFrc3fhMYzUkG-5vKPy49+RmCjueOVhSHQ__42650.2006398097$1514370117$gmane$org@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] pinctrl: tegra: Delete two error messages for a failed memory
+ allocation in tegra_pinctrl_probe()
+Date: Thu, 28 Dec 2017 15:32:31 +0100
+Message-ID: <0a67035f-e089-85f6-adff-14e41c957ab6@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Language: en-GB
+Sender: linux-gpio-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dear,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 15:15:08 +0100
 
-Reading your profile has given me courage in search of a reasponsable
-and trust worthy Fellow. The past has treated me so awfully but now I
-am ready to move on despite of my health condition. I will like to
-have a sincere and important discussion with you that will be in your
-favor likewise to you and your environment especially to your close
-family. Endeavor to reply me and I have attached my picture in case
-you long to know who emailed you. I will be waiting to hear from you
-as soon as possble.
-Thanks for paying attention to my mail and will appreciate so much if
-I receive a reply from you for understable details.
+Omit extra messages for a memory allocation failure in this function.
 
-Thanks,
+This issue was detected by using the Coccinelle software.
 
-Mrs. Rania Hassan
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 51716819129d..72c718e66ebb 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -666,10 +666,9 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	int fn, gn, gfn;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+-	if (!pmx) {
+-		dev_err(&pdev->dev, "Can't alloc tegra_pmx\n");
++	if (!pmx)
+ 		return -ENOMEM;
+-	}
++
+ 	pmx->dev = &pdev->dev;
+ 	pmx->soc = soc_data;
+ 
+@@ -722,10 +721,8 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	pmx->regs = devm_kzalloc(&pdev->dev, pmx->nbanks * sizeof(*pmx->regs),
+ 				 GFP_KERNEL);
+-	if (!pmx->regs) {
+-		dev_err(&pdev->dev, "Can't alloc regs pointer\n");
++	if (!pmx->regs)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-- 
+2.15.1
+
