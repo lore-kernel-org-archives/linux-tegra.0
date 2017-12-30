@@ -1,7 +1,7 @@
 From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Subject: [PATCH 23/33] clk: tegra: change clk_sync_source_round_rate() return logic
-Date: Sat, 30 Dec 2017 01:13:02 +0000
-Message-ID: <1514596392-22270-24-git-send-email-pure.logic@nexus-software.ie>
+Subject: [PATCH 24/33] clk: tegra: bpmp: change tegra_bpmp_clk_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:13:03 +0000
+Message-ID: <1514596392-22270-25-git-send-email-pure.logic@nexus-software.ie>
 References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
@@ -29,21 +29,21 @@ Cc: linux-clk@vger.kernel.org
 Cc: linux-tegra@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/clk/tegra/clk-audio-sync.c | 2 +-
+ drivers/clk/tegra/clk-bpmp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
-index 9784d58..5fd825b 100644
---- a/drivers/clk/tegra/clk-audio-sync.c
-+++ b/drivers/clk/tegra/clk-audio-sync.c
-@@ -35,7 +35,7 @@ static unsigned long clk_sync_source_round_rate(struct clk_hw *hw,
- 	struct tegra_clk_sync_source *sync = to_clk_sync_source(hw);
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index 0c1197b..4297bb2 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -190,7 +190,7 @@ static unsigned long tegra_bpmp_clk_round_rate(struct clk_hw *hw,
  
- 	if (rate > sync->max_rate)
--		return -EINVAL;
+ 	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+ 	if (err < 0)
+-		return err;
 +		return 0;
- 	else
- 		return rate;
+ 
+ 	return response.rate;
  }
 -- 
 2.7.4
