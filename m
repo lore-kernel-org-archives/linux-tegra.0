@@ -1,31 +1,68 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra: Delete two error messages for a failed
- memory allocation in tegra_pinctrl_probe()
-Date: Tue, 2 Jan 2018 10:00:22 +0100
-Message-ID: <CACRpkdacZsBKukP3LLSJwFyCxULWoRigFwrB4MY4Rf9kbHKGwg@mail.gmail.com>
-References: <0a67035f-e089-85f6-adff-14e41c957ab6@users.sourceforge.net>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH v2 1/1] drm/tegra: sor: Fix hang on tegra124 due to
+ NULL clk_out
+Date: Tue, 2 Jan 2018 18:32:11 +0000
+Message-ID: <d18819df-c91b-c2b5-18f5-12f373ae4956@nvidia.com>
+References: <cover.1513768618.git.guillaume.tucker@collabora.com>
+ <0f776b7500ee0e74b316b9803803b309779d2ff7.1513768618.git.guillaume.tucker@collabora.com>
+ <20171220181520.GA9687@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <0a67035f-e089-85f6-adff-14e41c957ab6-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20171220181520.GA9687@ulmo>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc: David Airlie <airlied@linux.ie>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 28, 2017 at 3:32 PM, SF Markus Elfring
-<elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org> wrote:
-
-> From: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-> Date: Thu, 28 Dec 2017 15:15:08 +0100
->
-> Omit extra messages for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+Ck9uIDIwLzEyLzE3IDE4OjE1LCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiBPbiBXZWQsIERlYyAy
+MCwgMjAxNyBhdCAxMTozMjoyM0FNICswMDAwLCBHdWlsbGF1bWUgVHVja2VyIHdyb3RlOgo+PiBX
+aGVuIG5laXRoZXIgSERNSSBub3IgRFAgaXMgc3VwcG9ydGVkIHN1Y2ggYXMgb24gdGhlIHRlZ3Jh
+MTI0LCB0aGUKPj4gc29yLT5jbGtfb3V0IGlzIG5vdCBpbml0aWFsaXNlZCBhbmQgcmVtYWlucyBO
+VUxMLiAgSW4gdGhpcyBjYXNlLCB0aGUKPj4gcGFyZW50IGNsb2NrIGNhbid0IGJlIGFzc2lnbmVk
+IHRvIGl0IHNvIHJldmVydCB0byB0aGUgcHJldmlvdXMKPj4gYmVoYXZpb3VyIG9mIGFzc2lnbmlu
+ZyBpdCB0byB0aGUgbWFpbiBzb3ItPmNsayBpbnN0ZWFkLgo+Pgo+PiBUaGlzIGZpeGVzIGEga2Vy
+bmVsIGhhbmcgb24gdGVncmExMjQgYW5kIHNob3VsZCBhbHNvIGFmZmVjdCB0ZWdyYTIxMAo+PiBh
+cyB0aGV5IGJvdGggZG9uJ3Qgc3VwcG9ydCBIRE1JIGFuZCBEUC4gIFRlc3RlZCBvbiB0ZWdyYTEy
+NCBvbmx5Lgo+Pgo+PiBGaXhlczogZTEzMzVlMmYwY2ZjICgiZHJtL3RlZ3JhOiBzb3I6IFJlaW1w
+bGVtZW50IHBhZCBjbG9jayIpCj4+IFNpZ25lZC1vZmYtYnk6IEd1aWxsYXVtZSBUdWNrZXIgPGd1
+aWxsYXVtZS50dWNrZXJAY29sbGFib3JhLmNvbT4KPj4gQ0M6IFRoaWVycnkgUmVkaW5nIDx0cmVk
+aW5nQG52aWRpYS5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jIHwg
+MiArLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4g
+Cj4gSG93IGFib3V0IGp1c3QgdGhlIGJlbG93IGluc3RlYWQ/IEl0J3Mgb25lIG1vcmUgbGluZSB0
+aGFuIHlvdXIgcGF0Y2gsCj4gYnV0IGl0IHdpbGwgYXV0b21hdGljYWxseSBoYW5kbGUgYWxsIG9j
+Y3VycmVuY2VzIG9mIGNsa19vdXQgcHJvcGVybHkuCj4gCj4gLS0tID44IC0tLQo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
+c29yLmMKPiBpbmRleCBmNjMxM2M0ZDYxMmUuLjRiZTllZGY5YzZmZSAxMDA2NDQKPiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
+c29yLmMKPiBAQCAtMzA0Nyw2ICszMDQ3LDggQEAgc3RhdGljIGludCB0ZWdyYV9zb3JfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIG5hbWUsIGVycik7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZ290byByZW1vdmU7
+Cj4gICAgICAgICAgICAgICAgIH0KPiArICAgICAgIH0gZWxzZSB7Cj4gKyAgICAgICAgICAgICAg
+IHNvci0+Y2xrX291dCA9IHNvci0+Y2xrOwo+ICAgICAgICAgfQo+ICAKPiAgICAgICAgIHNvci0+
+Y2xrX3BhcmVudCA9IGRldm1fY2xrX2dldCgmcGRldi0+ZGV2LCAicGFyZW50Iik7Cj4gLS0tID44
+IC0tLQo+IAo+IFRoYXQgc2FpZCwgSSBzdXNwZWN0IHRoZSBTT1IgbWlnaHQgYmUgY29tcGF0aWJs
+ZSBmcm9tIGEgY2xvY2sgcG9pbnQgb2YKPiB2aWV3IHdpdGggbGF0ZXIgdmVyc2lvbnMgYW5kIHBl
+cmhhcHMgd2UganVzdCBkaWRuJ3QgaW1wbGVtZW50IGNsb2Nrcwo+IGNvcnJlY3RseSBiYWNrIGlu
+IHRoZSBUZWdyYTEyNCB0aW1lZnJhbWUuCj4gCj4gTWF5YmUgUGV0ZXIga25vd3MuCgpTbyB0aGUg
+YWJvdmUgY2hhbmdlIGZyb20gVGhpZXJyeSB3b3JrcyBmb3IgbWUgYW5kIHdlIG5lZWQgdGhpcyBm
+b3IgdjQuMTUKKG90aGVyd2lzZSBueWFuLWJpZyBkb2VzIG5vdCBib290KSBzbyB5b3UgY2FuIGhh
+dmUgbXkgLi4uCgpUZXN0ZWQtYnk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPgoK
+SG93ZXZlciwgd291bGQgYmUgZ29vZCB0byBoYXZlIFBldGVyJ3MgQUNLLCBlc3BlY2lhbGx5IHNl
+ZWluZyB0aGF0ClRlZ3JhMjEwIHNvcjAgZG9lcyBub3Qgc3VwcG9ydCBIRE1JIGFuZCBEUC4gU28g
+d2UgbmVlZCB0byBtYWtlIHN1cmUgdGhpcwppcyBjb3JyZWN0IGZvciBUZWdyYTIxMCBhcyB3ZWxs
+IChhbHRob3VnaCBJIGhhdmUgbm90IHNlZW4gYW55CnJlZ3Jlc3Npb25zIGZvciBUZWdyYTIxMCku
+CgpDaGVlcnMKSm9uCgotLSAKbnZwdWJsaWMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
