@@ -1,49 +1,52 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: Re: [PATCH v3 01/34] clk_ops: change round_rate() to return
- unsigned long
-Date: Wed, 3 Jan 2018 08:07:42 -0200
-Message-ID: <20180103080742.6ad76c2d@vento.lan>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-        <1514835793-1104-2-git-send-email-pure.logic@nexus-software.ie>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 00/13] remove_conflicting_framebuffers() cleanup
+Date: Wed, 03 Jan 2018 16:04:15 +0100
+Message-ID: <1733339.3qeImzqeL4@amdc3058>
+References: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
+        <CGME20171127103053epcas2p1b42cdcd817182cf468eb96ec16de9370@epcas2p1.samsung.com>
+        <20171127103044.faakzch7ehlkc3or@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1514835793-1104-2-git-send-email-pure.logic@nexus-software.ie>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org, linux-rpi-kernel@lists.infradead.org, patches@opensource.cirrus.com, uclinux-h8-devel@lists.sourceforge.jp, linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org, linux-media@vger.kernel.org, linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20171127103044.faakzch7ehlkc3or-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Teddy Wang <teddy.wang-S9cbI//bT0v8C245oKUbwQC/G2K4zDHf@public.gmane.org>, Sudip Mukherjee <sudipm.mukherjee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, libnux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Em Mon,  1 Jan 2018 19:42:40 +0000
-Bryan O'Donoghue <pure.logic@nexus-software.ie> escreveu:
+On Monday, November 27, 2017 11:30:44 AM Daniel Vetter wrote:
+> On Fri, Nov 24, 2017 at 06:53:25PM +0100, Micha=C5=82 Miros=C5=82aw w=
+rote:
+> > This series cleans up duplicated code for replacing firmware FB
+> > driver with proper DRI driver and adds handover support to
+> > Tegra driver.
 
-> Right now it is not possible to return a value larger than LONG_MAX on 32
-> bit systems. You can pass a rate of ULONG_MAX but can't return anything
-> past LONG_MAX due to the fact both the rounded_rate and negative error
-> codes are represented in the return value of round_rate().
-> 
-> Most implementations either return zero on error or don't return error
-> codes at all. A minority of implementations do return a negative number -
-> typically -EINVAL or -ENODEV.
-> 
-> At the higher level then callers of round_rate() typically and rightly
-> check for a value of <= 0.
-> 
-> It is possible then to convert round_rate() to an unsigned long return
-> value and change error code indication for the minority from -ERRORCODE to
-> a simple 0.
-> 
-> This patch is the first step in making it possible to scale round_rate past
-> LONG_MAX, later patches will change the previously mentioned minority of
-> round_rate() implementations to return zero only on error if those
-> implementations currently return a negative error number. Implementations
-> that do not return an error code of < 0 will be left as-is.
-> 
+Please Cc: me on and linux-fbdev ML on fbdev related patches
+(I was Cc:-ed only on the cover letter and patch #10, linux-fbdev
+was not Cc:-ed at all).
 
->  drivers/media/platform/omap3isp/isp.c           |  4 ++--
+> > The last patch is here because it uses new semantics of
+> > remove_conflicting_framebuffers() from this series. This
+> > can be considered independently, though.
+>=20
+> Except for that patches I've commented on:
+>=20
+> Acked-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+>=20
+> Since this is for tegra and Thierry has drm-misc commit rights, it's
+> probably simplest when Thierry pushes this all to drm-misc once drive=
+r
+> maintainers had a chance to look at it. Also needs and ack from Bart =
+for
+> the fbdev sides.
 
-Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+For fbdev changes:
 
-Thanks,
-Mauro
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
