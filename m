@@ -1,52 +1,72 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 00/13] remove_conflicting_framebuffers() cleanup
-Date: Wed, 03 Jan 2018 16:04:15 +0100
-Message-ID: <1733339.3qeImzqeL4@amdc3058>
-References: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
-        <CGME20171127103053epcas2p1b42cdcd817182cf468eb96ec16de9370@epcas2p1.samsung.com>
-        <20171127103044.faakzch7ehlkc3or@phenom.ffwll.local>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH V4 3/7] PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for
+ Tegra PCIe
+Date: Wed, 3 Jan 2018 15:51:49 +0000
+Message-ID: <20180103155149.GA8929@e107981-ln.cambridge.arm.com>
+References: <1512723493-865-1-git-send-email-mmaddireddy@nvidia.com>
+ <1512723493-865-4-git-send-email-mmaddireddy@nvidia.com>
+ <20171215173643.GA1050@red-moon>
+ <20171220193011.GA31757@ulmo>
+ <20171221104630.GB24280@red-moon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20171127103044.faakzch7ehlkc3or-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20171221104630.GB24280@red-moon>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Teddy Wang <teddy.wang-S9cbI//bT0v8C245oKUbwQC/G2K4zDHf@public.gmane.org>, Sudip Mukherjee <sudipm.mukherjee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, libnux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: cyndis-/1wQRMveznE@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, November 27, 2017 11:30:44 AM Daniel Vetter wrote:
-> On Fri, Nov 24, 2017 at 06:53:25PM +0100, Micha=C5=82 Miros=C5=82aw w=
-rote:
-> > This series cleans up duplicated code for replacing firmware FB
-> > driver with proper DRI driver and adds handover support to
-> > Tegra driver.
+On Thu, Dec 21, 2017 at 10:46:30AM +0000, Lorenzo Pieralisi wrote:
+> On Wed, Dec 20, 2017 at 08:30:11PM +0100, Thierry Reding wrote:
+> > On Fri, Dec 15, 2017 at 05:36:43PM +0000, Lorenzo Pieralisi wrote:
+> > > On Fri, Dec 08, 2017 at 02:28:09PM +0530, Manikanta Maddireddy wrote:
+> > > > Primary, secondary and subordinate default bus numbers are 0 in Tegra and
+> > > > it is expecting SW to program these numbers in configration space.
+> > > > 
+> > > > pci_scan_bridge_extend() function programs these numbers in configuration
+> > > > space if secondary & subordinate bus numbers are 0 or PCI_REASSIGN_ALL_BUS
+> > > > flag is set. Since secondary & subordinate default bus numbers are 0,
+> > > > PCI_REASSIGN_ALL_BUS flag can be removed for Tegra PCIe.
+> > > > 
+> > > > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > > ---
+> > > > V3:
+> > > > * new patch in V3
+> > > > V4:
+> > > > * no change in this patch
+> > > > 
+> > > >  drivers/pci/host/pci-tegra.c | 1 -
+> > > >  1 file changed, 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> > > > index a549c5899e26..0d91f1a3a6b4 100644
+> > > > --- a/drivers/pci/host/pci-tegra.c
+> > > > +++ b/drivers/pci/host/pci-tegra.c
+> > > > @@ -2604,7 +2604,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+> > > >  
+> > > >  	tegra_pcie_enable_ports(pcie);
+> > > >  
+> > > > -	pci_add_flags(PCI_REASSIGN_ALL_BUS);
+> > > 
+> > > This looks obviously OK to me but I need Thierry's ACK to queue it.
+> > 
+> > Just as an additional note: I think the real reason why this is okay to
+> > do is because we reset the PCI host controller in the kernel driver, so
+> > any bus assignments done by the firmware are reset as well.
+> > 
+> > Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Thank you. This series needs rebasing, we should try to untangle
+> the dependencies between series so that I can actually apply some
+> of these patches that make sense on their own.
 
-Please Cc: me on and linux-fbdev ML on fbdev related patches
-(I was Cc:-ed only on the cover letter and patch #10, linux-fbdev
-was not Cc:-ed at all).
+Manikanta, would you be able to decouple this series from:
 
-> > The last patch is here because it uses new semantics of
-> > remove_conflicting_framebuffers() from this series. This
-> > can be considered independently, though.
->=20
-> Except for that patches I've commented on:
->=20
-> Acked-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
->=20
-> Since this is for tegra and Thierry has drm-misc commit rights, it's
-> probably simplest when Thierry pushes this all to drm-misc once drive=
-r
-> maintainers had a chance to look at it. Also needs and ack from Bart =
-for
-> the fbdev sides.
+https://patchwork.ozlabs.org/patch/832053/
 
-For fbdev changes:
+so that we can make forward progress ? There are some patches in
+this series that I could apply - if rebased.
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Lorenzo
