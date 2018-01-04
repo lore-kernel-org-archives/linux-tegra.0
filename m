@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.15-rc4
-Date: Thu, 4 Jan 2018 11:51:33 +0000
-Message-ID: <86792042-72e7-5d96-3d08-b08c23f004cd@nvidia.com>
+Subject: Tegra baseline test results for v4.15-rc5
+Date: Thu, 4 Jan 2018 11:51:39 +0000
+Message-ID: <a799d250-ab5b-f48f-2f0d-993bf0daa4cf@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -12,10 +12,10 @@ To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29
 Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.15-rc4.
+Here are some basic Tegra test results for Linux v4.15-rc5.
 Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.15-rc4/20171217193104/
+    https://nvtb.github.io//linux/test_v4.15-rc5/20171223210103/
 
 
 Test summary - 84% Success
@@ -69,15 +69,15 @@ PM: System suspend: tegra_defconfig%tegra-fw:
 
 
 vmlinux object size
-(delta in bytes from test_v4.15-rc3 (50c4c4e268a2d7a3e58ebb698ac74da0de40ae36)):
+(delta in bytes from test_v4.15-rc4 (1291a0d5049dbc06baaaf66a9ff3f53db493b19b)):
    text     data      bss    total  kernel
-   -571     +732        0     +161  defconfig
-  +1189      +12        0    +1201  multi_v7_defconfig
-  +1069      +76        0    +1145  tegra_defconfig
+    +48      -48        0        0  defconfig
+  +1232        0        0    +1232  multi_v7_defconfig
+  +1140      +64        0    +1204  tegra_defconfig
 
 
 Boot-time memory difference
-(delta in bytes from test_v4.15-rc3 (50c4c4e268a2d7a3e58ebb698ac74da0de40ae36))
+(delta in bytes from test_v4.15-rc4 (1291a0d5049dbc06baaaf66a9ff3f53db493b19b))
     avail    rsrvd     high    freed                board              kconfig                  dtb
         .        .        .        .      qemu-vexpress64            defconfig           __internal
         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
@@ -92,7 +92,7 @@ Boot-time memory difference
         .        .        .        .  tegra186-p2771-0000 defconfig%jetson-tx2  tegra186-p2771-0000
         .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
         .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-     -64k      64k        .        .  tegra210-p2371-0000 defconfig%jetson-tx1  tegra210-p2371-0000
+        .        .        .        .  tegra210-p2371-0000 defconfig%jetson-tx1  tegra210-p2371-0000
         .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
         .        .        .        .  tegra210-p2371-2180 defconfig%jetson-tx1  tegra210-p2371-2180
         .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
