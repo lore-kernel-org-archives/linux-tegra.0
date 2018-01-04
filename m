@@ -1,83 +1,102 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 3/7] PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for
- Tegra PCIe
-Date: Wed, 3 Jan 2018 21:54:03 +0530
-Message-ID: <25d10221-67c8-59c4-46d1-9bff239bd6bd@nvidia.com>
-References: <1512723493-865-1-git-send-email-mmaddireddy@nvidia.com>
- <1512723493-865-4-git-send-email-mmaddireddy@nvidia.com>
- <20171215173643.GA1050@red-moon> <20171220193011.GA31757@ulmo>
- <20171221104630.GB24280@red-moon>
- <20180103155149.GA8929@e107981-ln.cambridge.arm.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.15-rc4
+Date: Thu, 4 Jan 2018 11:51:33 +0000
+Message-ID: <86792042-72e7-5d96-3d08-b08c23f004cd@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180103155149.GA8929-4tUPXFaYRHv6sAKXYmQ0tx/iLCjYCKR+VpNB7YpNyf8@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: cyndis-/1wQRMveznE@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.15-rc4.
+Logs and other details at:
+
+    https://nvtb.github.io//linux/test_v4.15-rc4/20171217193104/
 
 
-On 03-Jan-18 9:21 PM, Lorenzo Pieralisi wrote:
-> On Thu, Dec 21, 2017 at 10:46:30AM +0000, Lorenzo Pieralisi wrote:
->> On Wed, Dec 20, 2017 at 08:30:11PM +0100, Thierry Reding wrote:
->>> On Fri, Dec 15, 2017 at 05:36:43PM +0000, Lorenzo Pieralisi wrote:
->>>> On Fri, Dec 08, 2017 at 02:28:09PM +0530, Manikanta Maddireddy wrote:
->>>>> Primary, secondary and subordinate default bus numbers are 0 in Tegra and
->>>>> it is expecting SW to program these numbers in configration space.
->>>>>
->>>>> pci_scan_bridge_extend() function programs these numbers in configuration
->>>>> space if secondary & subordinate bus numbers are 0 or PCI_REASSIGN_ALL_BUS
->>>>> flag is set. Since secondary & subordinate default bus numbers are 0,
->>>>> PCI_REASSIGN_ALL_BUS flag can be removed for Tegra PCIe.
->>>>>
->>>>> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>> ---
->>>>> V3:
->>>>> * new patch in V3
->>>>> V4:
->>>>> * no change in this patch
->>>>>
->>>>>  drivers/pci/host/pci-tegra.c | 1 -
->>>>>  1 file changed, 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->>>>> index a549c5899e26..0d91f1a3a6b4 100644
->>>>> --- a/drivers/pci/host/pci-tegra.c
->>>>> +++ b/drivers/pci/host/pci-tegra.c
->>>>> @@ -2604,7 +2604,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->>>>>  
->>>>>  	tegra_pcie_enable_ports(pcie);
->>>>>  
->>>>> -	pci_add_flags(PCI_REASSIGN_ALL_BUS);
->>>>
->>>> This looks obviously OK to me but I need Thierry's ACK to queue it.
->>>
->>> Just as an additional note: I think the real reason why this is okay to
->>> do is because we reset the PCI host controller in the kernel driver, so
->>> any bus assignments done by the firmware are reset as well.
->>>
->>> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Thank you. This series needs rebasing, we should try to untangle
->> the dependencies between series so that I can actually apply some
->> of these patches that make sense on their own.
-> 
-> Manikanta, would you be able to decouple this series from:
-> 
-> https://patchwork.ozlabs.org/patch/832053/
-> 
-> so that we can make forward progress ? There are some patches in
-> this series that I could apply - if rebased.
-> 
-> Lorenzo
-> 
+Test summary - 84% Success
+--------------------------
 
-Sure, I will decouple and send this series again.
+Build: zImage:
+    Pass: ( 3/ 3): multi_v7_defconfig, tegra_defconfig,
+		   tegra_defconfig%tegra-fw
+
+Build: Image:
+    Pass: ( 3/ 3): defconfig, defconfig%jetson-tx2,
+		   defconfig%jetson-tx1
+
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
+
+Boot to userspace: defconfig%jetson-tx1:
+    Pass: ( 2/ 2): tegra210-p2371-0000, tegra210-p2371-2180
+
+Boot to userspace: defconfig%jetson-tx2:
+    Pass: ( 1/ 1): tegra186-p2771-0000
+
+Boot to userspace: multi_v7_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig%tegra-fw:
+    FAIL: ( 1/ 2): tegra124-nyan-big
+    Pass: ( 1/ 2): tegra124-jetson-tk1
+
+PM: System suspend: multi_v7_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    FAIL: ( 1/ 5): tegra124-nyan-big
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig%tegra-fw:
+    FAIL: ( 1/ 2): tegra124-nyan-big
+    Pass: ( 1/ 2): tegra124-jetson-tk1
+
+
+vmlinux object size
+(delta in bytes from test_v4.15-rc3 (50c4c4e268a2d7a3e58ebb698ac74da0de40ae36)):
+   text     data      bss    total  kernel
+   -571     +732        0     +161  defconfig
+  +1189      +12        0    +1201  multi_v7_defconfig
+  +1069      +76        0    +1145  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.15-rc3 (50c4c4e268a2d7a3e58ebb698ac74da0de40ae36))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1 tegra_defconfig%tegr  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big tegra_defconfig%tegr    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .  tegra186-p2771-0000 defconfig%jetson-tx2  tegra186-p2771-0000
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+     -64k      64k        .        .  tegra210-p2371-0000 defconfig%jetson-tx1  tegra210-p2371-0000
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .  tegra210-p2371-2180 defconfig%jetson-tx1  tegra210-p2371-2180
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+nvpublic
