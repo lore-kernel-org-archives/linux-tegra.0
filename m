@@ -1,119 +1,111 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Changes for v4.16-rc1
-Date: Fri,  5 Jan 2018 15:17:26 +0100
-Message-ID: <20180105141726.29713-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [GIT PULL] drm/tegra: Changes for v4.16-rc1
+Date: Fri, 5 Jan 2018 17:58:17 +0300
+Message-ID: <558f572b-8174-c8ee-3ff8-79e591c0648d@gmail.com>
+References: <20180105141726.29713-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180105141726.29713-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgOTQyODA4OGM5MGI2
-ZjdkNWVkZDJhMWIwZDc0MmM3NTMzOWIzNmY2ZToKCiAgZHJtL3F4bDogcmVhcHBseSBjdXJzb3Ig
-YWZ0ZXIgcmVzZXR0aW5nIHByaW1hcnkgKDIwMTctMTItMDggMTM6Mzc6MDIgKzEwMDApCgphcmUg
-YXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBhdDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVl
-ZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0vdGVncmEvZm9yLTQuMTYtcmMxCgpmb3Ig
-eW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gZWJhZThkMDc0MzVhZTkxMzE0ZjRhMjhkNjliNTMw
-ZDA5YzYyNTgxNToKCiAgZHJtL3RlZ3JhOiBkYzogSW1wbGVtZW50IGxlZ2FjeSBibGVuZGluZyAo
-MjAxNy0xMi0yMSAxNDo1NTo1NSArMDEwMCkKClRoYW5rcywKVGhpZXJyeQoKLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpkcm0v
-dGVncmE6IENoYW5nZXMgZm9yIHY0LjE2LXJjMQoKVGhlIGJ1bGsgb2YgdGhlc2UgY2hhbmdlcyBh
-cmUgcHJlcGFyYXRpb24gd29yayBhbmQgYWRkaXRpb24gb2Ygc3VwcG9ydApmb3IgVGVncmExODYu
-IEN1cnJlbnRseSBvbmx5IEhETUkgb3V0cHV0ICh0aGUgcHJpbWFyeSBvdXRwdXQgb24gSmV0c29u
-ClRYMikgaXMgc3VwcG9ydGVkLCBidXQgdGhlIGhhcmR3YXJlIGlzIGFsc28gY2FwYWJsZSBvZiBk
-b2luZyBEU0kgYW5kCkRpc3BsYXlQb3J0LgoKVGVncmEgRFJNIG5vdyBhbHNvIHVzZXMgdGhlIGF0
-b21pYyBjb21taXQgaGVscGVycyBpbnN0ZWFkIG9mIHRoZSBvcGVuLQpjb2RlZCB2YXJpYW50IHRo
-YXQgd2FzIG9ubHkgZG9pbmcgaGFsZiBpdHMgam9iLiBBcyBhIGJpdCBvZiBhIGJ5cHJvZHVjdApv
-ZiB0aGUgVGVncmExODYgc3VwcG9ydCB0aGUgZHJpdmVyIGFsc28gZ2FpbmVkIEhETUkgMi4wIGFz
-IHdlbGwgYXMgenBvcwpwcm9wZXJ0eSBzdXBwb3J0LgoKQWxvbmcgdGhlIHdheSB0aGVyZSBhcmUg
-YWxzbyBhIGZldyBwYXRjaGVzIHRvIGNsZWFuIHVwIGEgZmV3IHRoaW5ncyBhbmQKZml4IG1pbm9y
-IGlzc3Vlcy4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0KQXJuZCBCZXJnbWFubiAoMik6CiAgICAgIGRybS90ZWdyYTogTWFy
-ayBUZWdyYTE4NiBkaXNwbGF5IGh1YiBQTSBmdW5jdGlvbnMgX19tYXliZV91bnVzZWQKICAgICAg
-ZHJtL3RlZ3JhOiBGaXggbm9uLWRlYnVnZnMgYnVpbGRzCgpEbWl0cnkgT3NpcGVua28gKDMpOgog
-ICAgICBkcm0vdGVncmE6IGRjOiBMaW5rIERDMSB0byBEQzAgb24gVGVncmEyMAogICAgICBkcm0v
-dGVncmE6IGdlbTogQ29ycmVjdCBpb21tdV9tYXBfc2coKSBlcnJvciBjaGVja2luZwogICAgICBk
-cm0vdGVncmE6IENvcnJlY3QgdGltZW91dCBpbiB0ZWdyYV9zeW5jcHRfd2FpdAoKVGhpZXJyeSBS
-ZWRpbmcgKDQzKToKICAgICAgZHJtL2ZvdXJjYzogRml4IGZvdXJjY19tb2RfY29kZSgpIGRlZmlu
-aXRpb24KICAgICAgZHJtL3RlZ3JhOiBTYW5pdGl6ZSBmb3JtYXQgbW9kaWZpZXJzCiAgICAgIGdw
-dTogaG9zdDF4OiBSZXdyaXRlIGNvbmRpdGlvbmFsIGZvciBiZXR0ZXIgcmVhZGFiaWxpdHkKICAg
-ICAgZ3B1OiBob3N0MXg6IENsZWFudXAgb24gaW5pdGlhbGl6YXRpb24gZmFpbHVyZQogICAgICBk
-dC1iaW5kaW5nczogZGlzcGxheTogdGVncmE6IFVwZGF0ZSBTT1IgZm9yIFRlZ3JhMTg2CiAgICAg
-IGRybS90ZWdyYTogZGM6IE1vdmUgcmVnaXN0ZXIgZGVmaW5pdGlvbnMgaW50byBhIHRhYmxlCiAg
-ICAgIGRybS90ZWdyYTogZHNpOiBNb3ZlIHJlZ2lzdGVyIGRlZmluaXRpb25zIGludG8gYSB0YWJs
-ZQogICAgICBkcm0vdGVncmE6IGhkbWk6IE1vdmUgcmVnaXN0ZXIgZGVmaW5pdGlvbnMgaW50byBh
-IHRhYmxlCiAgICAgIGRybS90ZWdyYTogc29yOiBNb3ZlIHJlZ2lzdGVyIGRlZmluaXRpb25zIGlu
-dG8gYSB0YWJsZQogICAgICBkcm0vdGVncmE6IGRjOiBSZXNodWZmbGUgc29tZSBjb2RlCiAgICAg
-IGRybS90ZWdyYTogZGM6IFJlZ2lzdGVyIGRlYnVnZnMgaW4gLT5sYXRlX3JlZ2lzdGVyKCkKICAg
-ICAgZHJtL3RlZ3JhOiBkc2k6IFJlZ2lzdGVyIGRlYnVnZnMgaW4gLT5sYXRlX3JlZ2lzdGVyKCkK
-ICAgICAgZHJtL3RlZ3JhOiBoZG1pOiBSZWdpc3RlciBkZWJ1Z2ZzIGluIC0+bGF0ZV9yZWdpc3Rl
-cigpCiAgICAgIGRybS90ZWdyYTogc29yOiBSb290IGRlYnVnZnMgZmlsZXMgYXQgdGhlIGNvbm5l
-Y3RvcgogICAgICBkcm0vdGVncmE6IHNvcjogUmVnaXN0ZXIgZGVidWdmcyBpbiAtPmxhdGVfcmVn
-aXN0ZXIoKQogICAgICBkcm0vdGVncmE6IERvIG5vdCB3cmFwIGxpbmVzIHVubmVjZXNzYXJpbHkK
-ICAgICAgZHJtL3RlZ3JhOiB2aWM6IFByb3Blcmx5IGFsaWduIGFyZ3VtZW50cwogICAgICBkcm0v
-dGVncmE6IGRjOiBTdXBwb3J0IGJhY2tncm91bmQgY29sb3IKICAgICAgZHJtL3RlZ3JhOiBVc2Ug
-YXRvbWljIGNvbW1pdCBoZWxwZXJzCiAgICAgIGRybS90ZWdyYTogUmVtb3ZlIGN1c3RvbSBwYWdl
-LWZsaXAgaGFuZGxlcgogICAgICBkcm0vdGVncmE6IGRjOiBSZW1vdmUgdGVncmFfcHJpbWFyeV9w
-bGFuZV9kZXN0cm95KCkKICAgICAgZHJtL3RlZ3JhOiBkYzogUmVtb3ZlIGR1cGxpY2F0ZSBwbGFu
-ZSBmdW5jcwogICAgICBkcm0vdGVncmE6IGRjOiBSZW1vdmUgdGVncmFfb3ZlcmxheV9wbGFuZV9k
-ZXN0cm95KCkKICAgICAgZHJtL3RlZ3JhOiBkYzogUmVtb3ZlIGR1cGxpY2F0ZSBwbGFuZSBmdW5j
-cwogICAgICBkcm0vdGVncmE6IGRjOiBNb3ZlIHN0YXRlIGRlZmluaXRpb24gdG8gaGVhZGVyCiAg
-ICAgIGRybS90ZWdyYTogTW92ZSBjb21tb24gcGxhbmUgY29kZSB0byBzZXBhcmF0ZSBmaWxlCiAg
-ICAgIGRybS90ZWdyYTogQWRkIFRlZ3JhMTg2IGRpc3BsYXkgaHViIHN1cHBvcnQKICAgICAgZHJt
-L3RlZ3JhOiBkYzogQWRkIFRlZ3JhMTg2IHN1cHBvcnQKICAgICAgZHJtL3RlZ3JhOiBTdXBwb3J0
-IEFSR0IgYW5kIEFCR1IgZm9ybWF0cwogICAgICBkcm0vdGVncmE6IHNvcjogUGFyYW1ldGVyaXpl
-IHJlZ2lzdGVyIG9mZnNldHMKICAgICAgZHJtL3RlZ3JhOiBzb3I6IEFkZCBUZWdyYTE4NiBzdXBw
-b3J0CiAgICAgIGRybS90ZWdyYTogc29yOiBTdXBwb3J0IEhETUkgMi4wIG1vZGVzCiAgICAgIGRy
-bS90ZWdyYTogZHBhdXg6IEltcGxlbWVudCBydW50aW1lIFBNCiAgICAgIGRybS90ZWdyYTogZHBh
-dXg6IEFkZCBUZWdyYTE4NiBzdXBwb3J0CiAgICAgIGRybS90ZWdyYTogZmI6IEZvcmNlIGFscGhh
-IGZvcm1hdHMKICAgICAgZHJtL3RlZ3JhOiBkYzogU3VwcG9ydCBtb3JlIGZvcm1hdHMKICAgICAg
-ZHJtL3RlZ3JhOiBkYzogVXNlIGRpcmVjdCBvZmZzZXQgdG8gcGxhbmUgcmVnaXN0ZXJzCiAgICAg
-IGRybS90ZWdyYTogZGM6IFJlbW92ZSByZWR1bmRhbnQgc3BpbmxvY2sKICAgICAgZHJtL3RlZ3Jh
-OiBJbXBsZW1lbnQgenBvcyBwcm9wZXJ0eQogICAgICBncHU6IGhvc3QxeDogVXNlIElPTU1VIGdy
-b3VwcwogICAgICBkcm0vdGVncmE6IFVzZSBJT01NVSBncm91cHMKICAgICAgZHJtL3RlZ3JhOiBk
-cGF1eDogS2VlcCByZXNldCBkZWZhdWx0cyBmb3IgaHlicmlkIHBhZCBwYXJhbWV0ZXJzCiAgICAg
-IGRybS90ZWdyYTogZGM6IEltcGxlbWVudCBsZWdhY3kgYmxlbmRpbmcKCiAuLi4vZGlzcGxheS90
-ZWdyYS9udmlkaWEsdGVncmEyMC1ob3N0MXgudHh0ICAgICAgICB8ICAgMTQgKy0KIGRyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgIHwgICAgMiArCiBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyAgICAgICAgICAgICAgICAgICAgICAgICB8IDE5MDEgKysr
-KysrKysrKystLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5oICAgICAgICAgICAg
-ICAgICAgICAgICAgIHwgIDI4OSArKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jICAg
-ICAgICAgICAgICAgICAgICAgIHwgIDEyMCArLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5j
-ICAgICAgICAgICAgICAgICAgICAgICAgfCAgMTY0ICstCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
-ZHJtLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAgMjYgKy0KIGRyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9kc2kuYyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIyOCArKy0KIGRyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9mYi5jICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAzNiArLQogZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL2dlbS5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDE1ICstCiBk
-cml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICAgICAgICAgICB8ICA1MDQg
-KysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMgICAgICAgICAgICAgICAgICAgICAg
-ICB8ICA4MDYgKysrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmggICAgICAgICAg
-ICAgICAgICAgICAgICB8ICAgODEgKwogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jICAg
-ICAgICAgICAgICAgICAgICAgfCAgIDI0ICsKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5j
-ICAgICAgICAgICAgICAgICAgICAgIHwgIDM3OCArKysrCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
-cGxhbmUuaCAgICAgICAgICAgICAgICAgICAgICB8ICAgNzAgKwogZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL3Nvci5jICAgICAgICAgICAgICAgICAgICAgICAgfCAxMTE5ICsrKysrKysrLS0tLQogZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5oICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDE2ICsK
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuYyAgICAgICAgICAgICAgICAgICAgICAgIHwgICAy
-MCArLQogZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jICAgICAgICAgICAgICAgICAgICAgICAgICAg
-fCAgIDExICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgICAgICAgICAgICAgICAgICAgICAg
-ICAgICB8ICAgMzYgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuaCAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgICAgMSArCiBpbmNsdWRlL3VhcGkvZHJtL2RybV9mb3VyY2MuaCAgICAgICAg
-ICAgICAgICAgICAgICB8ICAgMzggKy0KIDIzIGZpbGVzIGNoYW5nZWQsIDQwNjggaW5zZXJ0aW9u
-cygrKSwgMTgzMSBkZWxldGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9k
-cm0vdGVncmEvaHViLmMKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
-aHViLmgKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vdGVncmEvcGxhbmUuYwog
-Y3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5oCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 05.01.2018 17:17, Thierry Reding wrote:
+> Hi Dave,
+> 
+> The following changes since commit 9428088c90b6f7d5edd2a1b0d742c75339b36f6e:
+> 
+>   drm/qxl: reapply cursor after resetting primary (2017-12-08 13:37:02 +1000)
+> 
+> are available in the Git repository at:
+> 
+>   git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.16-rc1
+> 
+> for you to fetch changes up to ebae8d07435ae91314f4a28d69b530d09c625815:
+> 
+>   drm/tegra: dc: Implement legacy blending (2017-12-21 14:55:55 +0100)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> drm/tegra: Changes for v4.16-rc1
+> 
+> The bulk of these changes are preparation work and addition of support
+> for Tegra186. Currently only HDMI output (the primary output on Jetson
+> TX2) is supported, but the hardware is also capable of doing DSI and
+> DisplayPort.
+> 
+> Tegra DRM now also uses the atomic commit helpers instead of the open-
+> coded variant that was only doing half its job. As a bit of a byproduct
+> of the Tegra186 support the driver also gained HDMI 2.0 as well as zpos
+> property support.
+> 
+> Along the way there are also a few patches to clean up a few things and
+> fix minor issues.
+> 
+> ----------------------------------------------------------------
+> Arnd Bergmann (2):
+>       drm/tegra: Mark Tegra186 display hub PM functions __maybe_unused
+>       drm/tegra: Fix non-debugfs builds
+> 
+> Dmitry Osipenko (3):
+>       drm/tegra: dc: Link DC1 to DC0 on Tegra20
+>       drm/tegra: gem: Correct iommu_map_sg() error checking
+>       drm/tegra: Correct timeout in tegra_syncpt_wait
+> 
+> Thierry Reding (43):
+>       drm/fourcc: Fix fourcc_mod_code() definition
+>       drm/tegra: Sanitize format modifiers
+>       gpu: host1x: Rewrite conditional for better readability
+>       gpu: host1x: Cleanup on initialization failure
+>       dt-bindings: display: tegra: Update SOR for Tegra186
+>       drm/tegra: dc: Move register definitions into a table
+>       drm/tegra: dsi: Move register definitions into a table
+>       drm/tegra: hdmi: Move register definitions into a table
+>       drm/tegra: sor: Move register definitions into a table
+>       drm/tegra: dc: Reshuffle some code
+>       drm/tegra: dc: Register debugfs in ->late_register()
+>       drm/tegra: dsi: Register debugfs in ->late_register()
+>       drm/tegra: hdmi: Register debugfs in ->late_register()
+>       drm/tegra: sor: Root debugfs files at the connector
+>       drm/tegra: sor: Register debugfs in ->late_register()
+>       drm/tegra: Do not wrap lines unnecessarily
+>       drm/tegra: vic: Properly align arguments
+>       drm/tegra: dc: Support background color
+>       drm/tegra: Use atomic commit helpers
+>       drm/tegra: Remove custom page-flip handler
+>       drm/tegra: dc: Remove tegra_primary_plane_destroy()
+>       drm/tegra: dc: Remove duplicate plane funcs
+>       drm/tegra: dc: Remove tegra_overlay_plane_destroy()
+>       drm/tegra: dc: Remove duplicate plane funcs
+>       drm/tegra: dc: Move state definition to header
+>       drm/tegra: Move common plane code to separate file
+>       drm/tegra: Add Tegra186 display hub support
+>       drm/tegra: dc: Add Tegra186 support
+>       drm/tegra: Support ARGB and ABGR formats
+>       drm/tegra: sor: Parameterize register offsets
+>       drm/tegra: sor: Add Tegra186 support
+>       drm/tegra: sor: Support HDMI 2.0 modes
+>       drm/tegra: dpaux: Implement runtime PM
+>       drm/tegra: dpaux: Add Tegra186 support
+>       drm/tegra: fb: Force alpha formats
+>       drm/tegra: dc: Support more formats
+>       drm/tegra: dc: Use direct offset to plane registers
+>       drm/tegra: dc: Remove redundant spinlock
+>       drm/tegra: Implement zpos property
+>       gpu: host1x: Use IOMMU groups
+>       drm/tegra: Use IOMMU groups
+>       drm/tegra: dpaux: Keep reset defaults for hybrid pad parameters
+
+
+>       drm/tegra: dc: Implement legacy blending
+
+Please hold on this patch. First of all it doesn't work correctly, see my last
+reply to the patch. Secondly, it introduces bug that breaks YUV plane.
+
+[snip]
