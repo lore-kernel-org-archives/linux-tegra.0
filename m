@@ -1,8 +1,10 @@
 From: Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 1/3] ARM: dts: rockchip: drop veyron's nonstandard 'backlight-boot-off'
-Date: Fri,  5 Jan 2018 16:47:55 -0800
-Message-ID: <20180106004757.8239-1-briannorris@chromium.org>
+Subject: [PATCH 3/3] arm64: tegra: remove tegra132 norrin's nonstandard 'backlight-boot-off'
+Date: Fri,  5 Jan 2018 16:47:57 -0800
+Message-ID: <20180106004757.8239-3-briannorris@chromium.org>
+References: <20180106004757.8239-1-briannorris@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180106004757.8239-1-briannorris@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Lin Huang <hl@rock-chips.com>, Brian Norris <briannorris@chromium.org>
@@ -17,20 +19,21 @@ useful.
 
 Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
-index d752a315f884..be487111d025 100644
---- a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
-+++ b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
-@@ -92,7 +92,6 @@
- 			248 249 250 251 252 253 254 255>;
- 		default-brightness-level = <128>;
- 		enable-gpios = <&gpio7 RK_PA2 GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+index a0385a386a3f..ba2e1b7c198e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+@@ -951,8 +951,6 @@
+ 
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
+ 		default-brightness-level = <6>;
+-
 -		backlight-boot-off;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&bl_en>;
- 		pwms = <&pwm0 0 1000000 0>;
+ 	};
+ 
+ 	clocks {
 -- 
 2.16.0.rc0.223.g4a4ac83678-goog
