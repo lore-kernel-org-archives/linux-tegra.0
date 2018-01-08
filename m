@@ -1,156 +1,195 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [GIT PULL] drm/tegra: Changes for v4.16-rc1
-Date: Mon, 8 Jan 2018 08:42:50 +0100
-Message-ID: <20180108074250.GA10590@ulmo>
+Date: Mon, 8 Jan 2018 13:39:43 +0100
+Message-ID: <20180108123943.GA13522@ulmo>
 References: <20180105141726.29713-1-thierry.reding@gmail.com>
  <558f572b-8174-c8ee-3ff8-79e591c0648d@gmail.com>
+ <20180108074250.GA10590@ulmo>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <558f572b-8174-c8ee-3ff8-79e591c0648d-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20180108074250.GA10590@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---KsGdsel6WgEHnImy
+--YiEDa0DAkWCtVeE4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 05, 2018 at 05:58:17PM +0300, Dmitry Osipenko wrote:
-> On 05.01.2018 17:17, Thierry Reding wrote:
-> > Hi Dave,
+On Mon, Jan 08, 2018 at 08:42:50AM +0100, Thierry Reding wrote:
+> On Fri, Jan 05, 2018 at 05:58:17PM +0300, Dmitry Osipenko wrote:
+> > On 05.01.2018 17:17, Thierry Reding wrote:
+> > > Hi Dave,
+> > >=20
+> > > The following changes since commit 9428088c90b6f7d5edd2a1b0d742c75339=
+b36f6e:
+> > >=20
+> > >   drm/qxl: reapply cursor after resetting primary (2017-12-08 13:37:0=
+2 +1000)
+> > >=20
+> > > are available in the Git repository at:
+> > >=20
+> > >   git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.16-r=
+c1
+> > >=20
+> > > for you to fetch changes up to ebae8d07435ae91314f4a28d69b530d09c6258=
+15:
+> > >=20
+> > >   drm/tegra: dc: Implement legacy blending (2017-12-21 14:55:55 +0100)
+> > >=20
+> > > Thanks,
+> > > Thierry
+> > >=20
+> > > ----------------------------------------------------------------
+> > > drm/tegra: Changes for v4.16-rc1
+> > >=20
+> > > The bulk of these changes are preparation work and addition of support
+> > > for Tegra186. Currently only HDMI output (the primary output on Jetson
+> > > TX2) is supported, but the hardware is also capable of doing DSI and
+> > > DisplayPort.
+> > >=20
+> > > Tegra DRM now also uses the atomic commit helpers instead of the open-
+> > > coded variant that was only doing half its job. As a bit of a byprodu=
+ct
+> > > of the Tegra186 support the driver also gained HDMI 2.0 as well as zp=
+os
+> > > property support.
+> > >=20
+> > > Along the way there are also a few patches to clean up a few things a=
+nd
+> > > fix minor issues.
+> > >=20
+> > > ----------------------------------------------------------------
+> > > Arnd Bergmann (2):
+> > >       drm/tegra: Mark Tegra186 display hub PM functions __maybe_unused
+> > >       drm/tegra: Fix non-debugfs builds
+> > >=20
+> > > Dmitry Osipenko (3):
+> > >       drm/tegra: dc: Link DC1 to DC0 on Tegra20
+> > >       drm/tegra: gem: Correct iommu_map_sg() error checking
+> > >       drm/tegra: Correct timeout in tegra_syncpt_wait
+> > >=20
+> > > Thierry Reding (43):
+> > >       drm/fourcc: Fix fourcc_mod_code() definition
+> > >       drm/tegra: Sanitize format modifiers
+> > >       gpu: host1x: Rewrite conditional for better readability
+> > >       gpu: host1x: Cleanup on initialization failure
+> > >       dt-bindings: display: tegra: Update SOR for Tegra186
+> > >       drm/tegra: dc: Move register definitions into a table
+> > >       drm/tegra: dsi: Move register definitions into a table
+> > >       drm/tegra: hdmi: Move register definitions into a table
+> > >       drm/tegra: sor: Move register definitions into a table
+> > >       drm/tegra: dc: Reshuffle some code
+> > >       drm/tegra: dc: Register debugfs in ->late_register()
+> > >       drm/tegra: dsi: Register debugfs in ->late_register()
+> > >       drm/tegra: hdmi: Register debugfs in ->late_register()
+> > >       drm/tegra: sor: Root debugfs files at the connector
+> > >       drm/tegra: sor: Register debugfs in ->late_register()
+> > >       drm/tegra: Do not wrap lines unnecessarily
+> > >       drm/tegra: vic: Properly align arguments
+> > >       drm/tegra: dc: Support background color
+> > >       drm/tegra: Use atomic commit helpers
+> > >       drm/tegra: Remove custom page-flip handler
+> > >       drm/tegra: dc: Remove tegra_primary_plane_destroy()
+> > >       drm/tegra: dc: Remove duplicate plane funcs
+> > >       drm/tegra: dc: Remove tegra_overlay_plane_destroy()
+> > >       drm/tegra: dc: Remove duplicate plane funcs
+> > >       drm/tegra: dc: Move state definition to header
+> > >       drm/tegra: Move common plane code to separate file
+> > >       drm/tegra: Add Tegra186 display hub support
+> > >       drm/tegra: dc: Add Tegra186 support
+> > >       drm/tegra: Support ARGB and ABGR formats
+> > >       drm/tegra: sor: Parameterize register offsets
+> > >       drm/tegra: sor: Add Tegra186 support
+> > >       drm/tegra: sor: Support HDMI 2.0 modes
+> > >       drm/tegra: dpaux: Implement runtime PM
+> > >       drm/tegra: dpaux: Add Tegra186 support
+> > >       drm/tegra: fb: Force alpha formats
+> > >       drm/tegra: dc: Support more formats
+> > >       drm/tegra: dc: Use direct offset to plane registers
+> > >       drm/tegra: dc: Remove redundant spinlock
+> > >       drm/tegra: Implement zpos property
+> > >       gpu: host1x: Use IOMMU groups
+> > >       drm/tegra: Use IOMMU groups
+> > >       drm/tegra: dpaux: Keep reset defaults for hybrid pad parameters
 > >=20
-> > The following changes since commit 9428088c90b6f7d5edd2a1b0d742c75339b3=
-6f6e:
 > >=20
-> >   drm/qxl: reapply cursor after resetting primary (2017-12-08 13:37:02 =
-+1000)
+> > >       drm/tegra: dc: Implement legacy blending
 > >=20
-> > are available in the Git repository at:
-> >=20
-> >   git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.16-rc1
-> >=20
-> > for you to fetch changes up to ebae8d07435ae91314f4a28d69b530d09c625815:
-> >=20
-> >   drm/tegra: dc: Implement legacy blending (2017-12-21 14:55:55 +0100)
-> >=20
-> > Thanks,
-> > Thierry
-> >=20
-> > ----------------------------------------------------------------
-> > drm/tegra: Changes for v4.16-rc1
-> >=20
-> > The bulk of these changes are preparation work and addition of support
-> > for Tegra186. Currently only HDMI output (the primary output on Jetson
-> > TX2) is supported, but the hardware is also capable of doing DSI and
-> > DisplayPort.
-> >=20
-> > Tegra DRM now also uses the atomic commit helpers instead of the open-
-> > coded variant that was only doing half its job. As a bit of a byproduct
-> > of the Tegra186 support the driver also gained HDMI 2.0 as well as zpos
-> > property support.
-> >=20
-> > Along the way there are also a few patches to clean up a few things and
-> > fix minor issues.
-> >=20
-> > ----------------------------------------------------------------
-> > Arnd Bergmann (2):
-> >       drm/tegra: Mark Tegra186 display hub PM functions __maybe_unused
-> >       drm/tegra: Fix non-debugfs builds
-> >=20
-> > Dmitry Osipenko (3):
-> >       drm/tegra: dc: Link DC1 to DC0 on Tegra20
-> >       drm/tegra: gem: Correct iommu_map_sg() error checking
-> >       drm/tegra: Correct timeout in tegra_syncpt_wait
-> >=20
-> > Thierry Reding (43):
-> >       drm/fourcc: Fix fourcc_mod_code() definition
-> >       drm/tegra: Sanitize format modifiers
-> >       gpu: host1x: Rewrite conditional for better readability
-> >       gpu: host1x: Cleanup on initialization failure
-> >       dt-bindings: display: tegra: Update SOR for Tegra186
-> >       drm/tegra: dc: Move register definitions into a table
-> >       drm/tegra: dsi: Move register definitions into a table
-> >       drm/tegra: hdmi: Move register definitions into a table
-> >       drm/tegra: sor: Move register definitions into a table
-> >       drm/tegra: dc: Reshuffle some code
-> >       drm/tegra: dc: Register debugfs in ->late_register()
-> >       drm/tegra: dsi: Register debugfs in ->late_register()
-> >       drm/tegra: hdmi: Register debugfs in ->late_register()
-> >       drm/tegra: sor: Root debugfs files at the connector
-> >       drm/tegra: sor: Register debugfs in ->late_register()
-> >       drm/tegra: Do not wrap lines unnecessarily
-> >       drm/tegra: vic: Properly align arguments
-> >       drm/tegra: dc: Support background color
-> >       drm/tegra: Use atomic commit helpers
-> >       drm/tegra: Remove custom page-flip handler
-> >       drm/tegra: dc: Remove tegra_primary_plane_destroy()
-> >       drm/tegra: dc: Remove duplicate plane funcs
-> >       drm/tegra: dc: Remove tegra_overlay_plane_destroy()
-> >       drm/tegra: dc: Remove duplicate plane funcs
-> >       drm/tegra: dc: Move state definition to header
-> >       drm/tegra: Move common plane code to separate file
-> >       drm/tegra: Add Tegra186 display hub support
-> >       drm/tegra: dc: Add Tegra186 support
-> >       drm/tegra: Support ARGB and ABGR formats
-> >       drm/tegra: sor: Parameterize register offsets
-> >       drm/tegra: sor: Add Tegra186 support
-> >       drm/tegra: sor: Support HDMI 2.0 modes
-> >       drm/tegra: dpaux: Implement runtime PM
-> >       drm/tegra: dpaux: Add Tegra186 support
-> >       drm/tegra: fb: Force alpha formats
-> >       drm/tegra: dc: Support more formats
-> >       drm/tegra: dc: Use direct offset to plane registers
-> >       drm/tegra: dc: Remove redundant spinlock
-> >       drm/tegra: Implement zpos property
-> >       gpu: host1x: Use IOMMU groups
-> >       drm/tegra: Use IOMMU groups
-> >       drm/tegra: dpaux: Keep reset defaults for hybrid pad parameters
+> > Please hold on this patch. First of all it doesn't work correctly, see =
+my last
+> > reply to the patch. Secondly, it introduces bug that breaks YUV plane.
 >=20
+> I thought we had already concluded that this version doesn't cause any
+> regressions. And since this is new functionality I'm not too worried if
+> it doesn't work in all cases, we've got plenty of time to fix those up.
 >=20
-> >       drm/tegra: dc: Implement legacy blending
+> As for the YUV plane bug, can you point me at a test case, or describe
+> what exactly you're trying to do so that I can reproduce and fix it?
 >=20
-> Please hold on this patch. First of all it doesn't work correctly, see my=
- last
-> reply to the patch. Secondly, it introduces bug that breaks YUV plane.
+> I'd like to make forward progress on this rather than hold back on
+> patches out of fear that they may break existing functionality. In order
+> to do that we need tests that can be run to validate existing
+> functionality.
 
-I thought we had already concluded that this version doesn't cause any
-regressions. And since this is new functionality I'm not too worried if
-it doesn't work in all cases, we've got plenty of time to fix those up.
+I think I was able to reproduce the bug you mentioned by running this on
+a TrimSlice:
 
-As for the YUV plane bug, can you point me at a test case, or describe
-what exactly you're trying to do so that I can reproduce and fix it?
+	$ modetest -M tegra -s HDMI-A-1@34:1920x1080 -P 28@34:256x256+64+64@XR24 -=
+P 30@34:256x256+384+64@UYVY
 
-I'd like to make forward progress on this rather than hold back on
-patches out of fear that they may break existing functionality. In order
-to do that we need tests that can be run to validate existing
-functionality.
+This currently fails with the above patch, but I can fix it using the
+below diff. Essentially we treat YUV planes as opaque, but currently
+error out on YUV formats because they have no "alpha" equivalent. The
+fix is to simply return the same format.
+
+Can you see any more issues after applying this fix? I wasn't able to
+find a situation where it doesn't work.
 
 Thierry
 
---KsGdsel6WgEHnImy
+--- >8 ---
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index 154b4d337d0a..36a06a993698 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -276,6 +276,11 @@ bool tegra_plane_format_has_alpha(unsigned int format)
+
+ int tegra_plane_format_get_alpha(unsigned int opaque, unsigned int *alpha)
+ {
++	if (tegra_plane_format_is_yuv(opaque, NULL)) {
++		*alpha =3D opaque;
++		return 0;
++	}
++
+ 	switch (opaque) {
+ 	case WIN_COLOR_DEPTH_B5G5R5X1:
+ 		*alpha =3D WIN_COLOR_DEPTH_B5G5R5A1;
+
+--YiEDa0DAkWCtVeE4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlpTIPYACgkQ3SOs138+
-s6Ertw/9EIDJvNBP4cXNha6azHEdfVEAp3Bc11VeyBF/PbOQkh50bRm2OwuQLU+c
-g+rz+hSnSoavy4bQ2Zfko1G4bPjmV7Uhb0w+sjrVq7x3J9kg8Xv/35e6pdtz8owt
-Laf4yvs1FN9VsUtZAqPrNrvBH+x0yEMLl7nEGBToynUMlrhgNBjLiUhMqC6myCMT
-2f+AnrXZAhCBhInGcNARWRBxiEPQB83lz7SiFnEPxkjOd/2SDgxCu05Q/94BFGtG
-Vtnr4foWHGzlpnq8AkNhhZKPQwtCaDgnGq1/kYBE1hJnarrNR/03676y8KAPL60/
-RJrZD4dRapoiBecvmV19C9dy1Mcw68wsQFay8Aflz6BiZLzAvtrU8+GSDNUVqYAU
-mrdqawtsx2go/c18Gf1kvZ/GtcuQvdsQghEBc8XXjVMB7Tcnysp0g+OV32W8+HUN
-A0wg1hBsYLYNBTygzJR8tR0dd94cgDVK4gPvRocRrRzYlRtcDsTHnnXEbGIoHnwU
-p252y7d0ELegYqiTOeJi8NbmjDuy/WdhjPQRcfpJxHyjNwqgHGbbfDvYZpveOnfU
-STuLbqQE1z9BRG3bKB0l65iFdL8yMIyz98jvZf6eP0Fjhsn97qAWEHr+lqrSi6WV
-CKcTrwGY3BCiDY7STI/43bhFNaquv3T02CJV7lwvmOwahJrPBAE=
-=zEb1
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlpTZowACgkQ3SOs138+
+s6EIfQ//R+zbkMtL1/Pm94svbqjv78VCkiCi+Lk7avy4BcOkGPAbOVLKwSmYggQX
+uqKOW40tj2qbSBLhlWl7L9k4qALnqPmlBiCeaVU2et5Q7yaf3CDBK08w/sfIEv5/
+aVg7gBeiHbAUOiPGR5nJoj05SeXoCl7VbJKHWezb0Gag84unHUc5xzCljeU+fF0X
+TfZ8dN2oz/b2OcoHfz2QpTlMj/0Vc23uRmNUygABc6nWSZvdr2QEw59azbWH9sxx
+VopKb2R8j49pgeVVMAEPYUIpehby0ZcePm/Apzs7VBQ8bM8a2+IPD9aqJhZFQv2F
+3Tsm8RZsGENMrcKruzvdeWbfxomBekRESXEyCxBH6rTpVOstqcOc10JVa2wymQaI
+rUOfAFh3t8RNL3vMxhh01SfTeKDOOsp+x4L3nUw9kEXxSl7hHesLWtCgW/9x6Qym
+XPOL4hGi7fdANCuC/b6kJGlro6Cl0YITbb0EU7gdJDa8MJqBci9LeYehy5+ibm31
+sQxB/38DSr0NuPWOojuPkmHbUHT8uSF7stAmlhlrL56YC4GnXG/XtgR58SEFRuKe
+WGtVHgZ4bJrfGorVhf68t7wDvoOQQylNuokcxUI8Rc3S7BycFjc84LxOGtJwKWiT
+FlP5HZ/qhK87PFSSMPnhOIZptc1Zw9BxxTNrAAe/LrRXRnTVxPc=
+=z+FW
 -----END PGP SIGNATURE-----
 
---KsGdsel6WgEHnImy--
+--YiEDa0DAkWCtVeE4--
