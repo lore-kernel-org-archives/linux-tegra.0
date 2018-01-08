@@ -1,55 +1,59 @@
-From: 60796464-JVqo/v6+17SELdXlOq2cAlZq95QhYFEm@public.gmane.org
-Subject: Hallo mein lieber Freund,
-Date: Sat, 06 Jan 2018 12:31:44 +0530
-Message-ID: <DB5PR01MB1430C528F172C948FAB10004B71D0@DB5PR01MB1430.eurprd01.prod.exchangelabs.com>
-Reply-To: verahollin88-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/6] Initial support for NVIDIA Tegra194
+Date: Mon, 8 Jan 2018 06:54:32 +0200
+Message-ID: <1515387278-29777-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Description: Mail message body
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Recipients <60796464-JVqo/v6+17SELdXlOq2cAlZq95QhYFEm@public.gmane.org>
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hallo mein lieber Freund,
+Hello everyone,
 
-Ich schreibe dir diese Post mit schweren Tr=E4nen In meinen Augen und gro=
-=DFem Kummer in meinem Herzen, Mein Name ist Vera Hollin Kvan, und ich kont=
-aktiere dich aus meinem Land Indien Ich m=F6chte dir das sagen, weil ich ke=
-ine habe Eine andere M=F6glichkeit, als Ihnen zu sagen, wie ich ber=FChrt w=
-ar, um Sie zu =F6ffnen, heiratete ich mit Herrn Hollin Kvan, der f=FCr neun=
- Jahre mit der tunesischen Botschaft in Madrid Spanien arbeitete, bevor er =
-im Jahr 2005 starb. Wir waren elf Jahre ohne verheiratet Kind.
+this series adds initial support for the NVIDIA Tegra194 "Xavier"
+system-on-chip. Initially UART, I2C, SDMMC, as well as the PMIC
+are supported, allowing booting to a console.
 
-Er starb nach einer kurzen Krankheit, die nur f=FCnf Tage dauerte. Seit sei=
-nem Tod entschied ich mich, nicht wieder zu heiraten. Als mein verstorbener=
- Mann noch am Leben war, hinterlegte er die Summe von $ 4.850.000,00USD (Vi=
-er Millionen achthundertundf=FCnfzigtausend Dollar) in einer Bank hier in I=
-ndien Neu-Delhi, der Hauptstadt Indiens, gegenw=E4rtig dieses Geld ist imme=
-r noch in der Bank.
+The changes consist almost completely of the new device trees,
+however some fixes are required in the BPMP driver to support the
+new channel layout in Tegra194.
 
-Er stellte dieses Geld f=FCr den Export von Gold aus dem Minenfactory in Ma=
-drid Spanien zur Verf=FCgung. In letzter Zeit sagte mir mein Doktor, dass i=
-ch wegen der Krebserkrankung f=FCr die Dauer von sieben Monaten nicht =FCbe=
-rleben w=FCrde. Derjenige, der mich am meisten st=F6rt, ist meine Schlaganf=
-all-Krankheit. Nachdem ich meinen Zustand gekannt habe, habe ich beschlosse=
-n, dir dieses Geld auszuh=E4ndigen, um auf die weniger privilegierten Mensc=
-hen aufzupassen, du wirst dieses Geld auf die Art und Weise benutzen, wie i=
-ch es hier unterrichten werde.
+The series has been tested on Tegra186 (Jetson TX2) and Tegra194
+(P2972).
 
-Ich m=F6chte, dass Sie 30 Prozent des gesamten Geldes f=FCr Ihren pers=F6nl=
-ichen Gebrauch aufwenden, w=E4hrend 70% des Geldes an wohlt=E4tige Zwecke g=
-ehen, Menschen auf der Stra=DFe und dem Waisenhaus helfen. Ich bin als Wais=
-e aufgewachsen und habe keinen K=F6rper als mein Familienmitglied, nur um z=
-u beenden, dass das Haus Gottes auch erhalten wird. Mache dies, damit Gott =
-meine S=FCnden vergibt und meine Seele akzeptiert, weil diese Krankheiten m=
-ich so sehr leiden. Sobald ich Ihre Antwort erhalten habe, werde ich Ihnen =
-den Kontakt der Bank hier in Delhi Indien geben und ich werde auch den Bank=
-manager beauftragen, Ihnen einen Vollmachtenbrief auszustellen, der Ihnen d=
-en gegenw=E4rtigen Beg=FCnstigten des Geldes in der Bank beweisen wird, wen=
-n Sie versichern mir, dass Sie entsprechend handeln werden, wie ich hier an=
-gegeben habe.
+Cheers,
+Mikko
 
-Ich hoffe auf Ihre Antwort.
-Von Vera Hollin kVan
+Mikko Perttunen (6):
+  firmware: tegra: Simplify channel management
+  soc/tegra: Add Tegra194 SoC configuration option
+  soc/tegra: pmc: Add Tegra194 compatibility string
+  dt-bindings: tegra: Add documentation for nvidia,tegra194-pmc
+  arm64: tegra: Add Tegra194 chip device tree
+  arm64: tegra: Add device tree for the Tegra194 P2972-0000 board
+
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |   2 +
+ arch/arm64/boot/dts/nvidia/Makefile                |   1 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     | 246 +++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |  14 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 334 +++++++++++++++++++++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/firmware/tegra/bpmp.c                      | 142 ++++-----
+ drivers/soc/tegra/Kconfig                          |  10 +
+ drivers/soc/tegra/pmc.c                            |   1 +
+ include/dt-bindings/clock/tegra194-clock.h         |  59 ++++
+ include/dt-bindings/gpio/tegra194-gpio.h           |  59 ++++
+ include/dt-bindings/reset/tegra194-reset.h         |  40 +++
+ include/soc/tegra/bpmp.h                           |   4 +-
+ 13 files changed, 833 insertions(+), 80 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
+ create mode 100644 include/dt-bindings/clock/tegra194-clock.h
+ create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
+ create mode 100644 include/dt-bindings/reset/tegra194-reset.h
+
+-- 
+2.1.4
