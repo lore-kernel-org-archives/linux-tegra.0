@@ -1,57 +1,55 @@
-From: Preetham Chandru Ramchandra <pchandru@nvidia.com>
-Subject: [PATCH V6 7/7] ata: ahci_tegra: Add AHCI support for tegra210
-Date: Tue, 9 Jan 2018 12:47:14 +0530
-Message-ID: <1515482234-24716-8-git-send-email-pchandru@nvidia.com>
-References: <1515482234-24716-1-git-send-email-pchandru@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: [PATCH V5 0/7] Add loadable kernel module and power management support
+Date: Tue, 9 Jan 2018 14:49:30 +0530
+Message-ID: <1515489577-2197-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <1515482234-24716-1-git-send-email-pchandru@nvidia.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: thierry.reding@gmail.com, tj@kernel.org, cyndis@kapsi.fi
-Cc: preetham260@gmail.com, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org, vbyravarasu@nvidia.com, pkunapuli@nvidia.com, Preetham Ramchandra <pchandru@nvidia.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: thierry.reding@gmail.com, bhelgaas@google.com, lorenzo.pieralisi@arm.com, cyndis@kapsi.fi
+Cc: jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, rjw@rjwysocki.net, tglx@linutronix.de, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Preetham Ramchandra <pchandru@nvidia.com>
+This series of patches adds loadable kernel module and power management
+support to Tegra PCIe host controller driver. irq_set_msi_desc() and
+tegra_cpuidle_pcie_irqs_in_use() symbols will be taken care in next
+set of patches.
 
-Signed-off-by: Preetham Chandru R <pchandru@nvidia.com>
----
- drivers/ata/ahci_tegra.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+These patches are tested on Jetson TK1, TX1 and TX2 platforms, following
+are the verification details.
+	- Multiple module insert & remove
+	- PCIe device functionality after module insert
+	- Free clock, resets, regulators, powergate, iomem and interrupt
+	resources after module remove
+	- PCIe device functionality after resume from RAM
 
-diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
-index 013880de6412..3f00dfa3760d 100644
---- a/drivers/ata/ahci_tegra.c
-+++ b/drivers/ata/ahci_tegra.c
-@@ -256,6 +256,10 @@ static const struct tegra_ahci_soc tegra124_ahci_soc_data = {
- 	},
- };
- 
-+static const struct tegra_ahci_soc tegra210_ahci_soc_data = {
-+	.quirks = NO_DEVSLP,
-+};
-+
- static int tegra_ahci_power_on(struct ahci_host_priv *hpriv)
- {
- 	struct tegra_ahci_priv *tegra = hpriv->plat_data;
-@@ -471,6 +475,10 @@ static const struct of_device_id tegra_ahci_of_match[] = {
- 		.compatible = "nvidia,tegra124-ahci",
- 		.data = &tegra124_ahci_soc_data
- 	},
-+	{
-+		.compatible = "nvidia,tegra210-ahci",
-+		.data = &tegra210_ahci_soc_data
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, tegra_ahci_of_match);
-@@ -585,5 +593,5 @@ static struct platform_driver tegra_ahci_driver = {
- module_platform_driver(tegra_ahci_driver);
- 
- MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
--MODULE_DESCRIPTION("Tegra124 AHCI SATA driver");
-+MODULE_DESCRIPTION("Tegra AHCI SATA driver");
- MODULE_LICENSE("GPL v2");
+V2: PM QoS fix is dropped in V2 from this series because the fix is
+incorporated in latest 'commit 0759e80b84e3 ("PM / QoS: Fix device resume
+latency framework")'. Update commit message of few patches in V2.
+
+V3: Patches to export irq_set_msi_desc() and tegra_cpuidle_pcie_irqs_in_use()
+are dropped based on review comments. These symbols will be addressed in next
+series. Took care of few other review comments.
+
+V4: Dropped pci_find_host_bridge() export patch and added new patch to use
+bus->sysdata for private data.
+
+V5: Decouple from https://patchwork.ozlabs.org/patch/832053/ and rebase
+on top of linux-next
+
+Manikanta Maddireddy (7):
+  of: Export of_pci_range_to_resource()
+  PCI: tegra: Use bus->sysdata to store and get host private data
+  PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for Tegra PCIe
+  PCI: tegra: Free resources on probe failure
+  PCI: tegra: Add loadable kernel module support
+  PCI: tegra: Broadcast PME_Turn_Off message before link goes to L2
+  PCI: tegra: Add power management support
+
+ drivers/of/address.c         |   1 +
+ drivers/pci/host/Kconfig     |   2 +-
+ drivers/pci/host/pci-tegra.c | 333 ++++++++++++++++++++++++++++++++-----------
+ 3 files changed, 253 insertions(+), 83 deletions(-)
+
 -- 
-2.7.4
-
+2.1.4
