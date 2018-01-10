@@ -1,102 +1,72 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.15-rc7
-Date: Wed, 10 Jan 2018 10:35:19 +0000
-Message-ID: <ee7d9ffa-315a-f624-3cfd-ddffe8e55576@nvidia.com>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH 2/3] ARM: tegra: paz00: drop nonstandard 'backlight-boot-off'
+Date: Wed, 10 Jan 2018 12:31:31 +0100
+Message-ID: <27065017.X8cFkIFnZg@fb07-iapwap2>
+References: <20180106004757.8239-1-briannorris@chromium.org> <20180106004757.8239-2-briannorris@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; boundary="nextPart2399094.HeAjPAVIu4"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180106004757.8239-2-briannorris@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Brian Norris <briannorris@chromium.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Lin Huang <hl@rock-chips.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.15-rc7.
-Logs and other details at:
+--nextPart2399094.HeAjPAVIu4
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"
 
-    https://nvtb.github.io//linux/test_v4.15-rc7/20180107150102/
+Hi,
 
+Am Samstag, 6. Januar 2018, 01:47:56 CET schrieb Brian Norris:
+> This was used out-of-tree as a hack for resolving issues where some
+> systems expect the backlight to turn on automatically at boot, while
+> others expect to manage the backlight status via a DRM/panel driver.
+> Those issues have since been fixed upstream in pwm_bl.c without device
+> tree hacks, and so this un-documented property should no longer be
+> useful.
+> 
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 
-Test summary - 84% Success
---------------------------
+seems to work again. Thanks!
 
-Build: zImage:
-    Pass: ( 3/ 3): multi_v7_defconfig, tegra_defconfig,
-		   tegra_defconfig%tegra-fw
+Reviewed-by: Marc Dietrich <marvin24@gmx.de>
 
-Build: Image:
-    Pass: ( 3/ 3): defconfig, defconfig%jetson-tx2,
-		   defconfig%jetson-tx1
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: defconfig%jetson-tx1:
-    Pass: ( 2/ 2): tegra210-p2371-0000, tegra210-p2371-2180
-
-Boot to userspace: defconfig%jetson-tx2:
-    Pass: ( 1/ 1): tegra186-p2771-0000
-
-Boot to userspace: multi_v7_defconfig:
-    FAIL: ( 1/ 5): tegra124-nyan-big
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    FAIL: ( 1/ 5): tegra124-nyan-big
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig%tegra-fw:
-    FAIL: ( 1/ 2): tegra124-nyan-big
-    Pass: ( 1/ 2): tegra124-jetson-tk1
-
-PM: System suspend: multi_v7_defconfig:
-    FAIL: ( 1/ 5): tegra124-nyan-big
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    FAIL: ( 1/ 5): tegra124-nyan-big
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig%tegra-fw:
-    FAIL: ( 1/ 2): tegra124-nyan-big
-    Pass: ( 1/ 2): tegra124-jetson-tk1
+> ---
+>  arch/arm/boot/dts/tegra20-paz00.dts | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
+> b/arch/arm/boot/dts/tegra20-paz00.dts index 30436969adc0..12c63b23ed5e
+> 100644
+> --- a/arch/arm/boot/dts/tegra20-paz00.dts
+> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
+> @@ -504,8 +504,6 @@
+> 
+>  		brightness-levels = <0 16 32 48 64 80 96 112 128 144 160 176 192 208 224
+> 240 255>; default-brightness-level = <10>;
+> -
+> -		backlight-boot-off;
+>  	};
+> 
+>  	clocks {
 
 
-vmlinux object size
-(delta in bytes from test_v4.15-rc6 (30a7acd573899fd8b8ac39236eff6468b195ac7d)):
-   text     data      bss    total  kernel
-   +266     -256        0      +10  defconfig
-   +140        0        0     +140  multi_v7_defconfig
-   +108        0        0     +108  tegra_defconfig
+--nextPart2399094.HeAjPAVIu4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
+-----BEGIN PGP SIGNATURE-----
 
-Boot-time memory difference
-(delta in bytes from test_v4.15-rc6 (30a7acd573899fd8b8ac39236eff6468b195ac7d))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-       8k      -8k        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1 tegra_defconfig%tegr  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big tegra_defconfig%tegr    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-       8k      -8k        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .  tegra186-p2771-0000 defconfig%jetson-tx2  tegra186-p2771-0000
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-       8k      -8k        .        .  tegra210-p2371-0000 defconfig%jetson-tx1  tegra210-p2371-0000
-       8k      -8k        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .  tegra210-p2371-2180 defconfig%jetson-tx1  tegra210-p2371-2180
-       8k      -8k        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
---
-nvpublic
+iQEzBAABCAAdFiEEySF+t0C8+8jyqfBvrJ5Hf0cUG2gFAlpV+ZMACgkQrJ5Hf0cU
+G2h0ywgAhPmeR2Lc4M0SYhpOv6r+s2TQoqfB55bqHyJT662DMi++jSMno7H/7zLo
+kNdubWhadXe2mUcW0QfzaRdRFUMh5YHx0oeE0Rxln/CPywQHXOVHtFhull72beMQ
+sAzctL+cDpLYeNI255QUKbvXwQ8yVk9AGinm3KgDo92b6xPITUcmUZdOCyWWiPml
+fmJ1jcbU14X4FuwNrA3QCiuylZaB07dhglK9QpV/4TMAj7wZrV1pEAx5IcwL6S/U
+O/7H2UmTK3SNmYjOAEZFa+N8Br8FEQTQNy78iCwMB6vbmnJtTHne6UQ3RRarOyNf
+zgGNTlqgISpxq3V8QvcyO4jehoGkkg==
+=gTu9
+-----END PGP SIGNATURE-----
+
+--nextPart2399094.HeAjPAVIu4--
