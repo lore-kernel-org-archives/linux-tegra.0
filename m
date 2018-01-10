@@ -1,134 +1,83 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH v2 1/1] drm/tegra: sor: Fix hang on tegra124 due to
- NULL clk_out
-Date: Wed, 10 Jan 2018 13:13:34 +0100
-Message-ID: <20180110121334.GA25824@ulmo>
-References: <cover.1513768618.git.guillaume.tucker@collabora.com>
- <0f776b7500ee0e74b316b9803803b309779d2ff7.1513768618.git.guillaume.tucker@collabora.com>
- <20171220181520.GA9687@ulmo>
- <d18819df-c91b-c2b5-18f5-12f373ae4956@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1972781397=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <d18819df-c91b-c2b5-18f5-12f373ae4956@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: David Airlie <airlied@linux.ie>, Guillaume Tucker <guillaume.tucker@collabora.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3 3/3] clk: tegra: Specify VDE clock rate
+Date: Wed, 10 Jan 2018 16:59:44 +0300
+Message-ID: <9e1258dfbf4f8e3702d5b43ed08c4e790813798c.1515589507.git.digetx@gmail.com>
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+In-Reply-To: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Currently VDE clock rate is determined by clock config left from
+bootloader, let's not rely on it and explicitly specify the clock
+rate in the CCF driver.
 
---===============1972781397==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
-Content-Disposition: inline
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
 
+Change log:
+v2:     No change.
+v3:     No change.
 
---M9NhX3UHpAaciwkO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ drivers/clk/tegra/clk-tegra114.c | 1 +
+ drivers/clk/tegra/clk-tegra124.c | 2 +-
+ drivers/clk/tegra/clk-tegra20.c  | 1 +
+ drivers/clk/tegra/clk-tegra30.c  | 1 +
+ 4 files changed, 4 insertions(+), 1 deletion(-)
 
-On Tue, Jan 02, 2018 at 06:32:11PM +0000, Jon Hunter wrote:
->=20
-> On 20/12/17 18:15, Thierry Reding wrote:
-> > On Wed, Dec 20, 2017 at 11:32:23AM +0000, Guillaume Tucker wrote:
-> >> When neither HDMI nor DP is supported such as on the tegra124, the
-> >> sor->clk_out is not initialised and remains NULL.  In this case, the
-> >> parent clock can't be assigned to it so revert to the previous
-> >> behaviour of assigning it to the main sor->clk instead.
-> >>
-> >> This fixes a kernel hang on tegra124 and should also affect tegra210
-> >> as they both don't support HDMI and DP.  Tested on tegra124 only.
-> >>
-> >> Fixes: e1335e2f0cfc ("drm/tegra: sor: Reimplement pad clock")
-> >> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> >> CC: Thierry Reding <treding@nvidia.com>
-> >> ---
-> >>  drivers/gpu/drm/tegra/sor.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > How about just the below instead? It's one more line than your patch,
-> > but it will automatically handle all occurrences of clk_out properly.
-> >=20
-> > --- >8 ---
-> > diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-> > index f6313c4d612e..4be9edf9c6fe 100644
-> > --- a/drivers/gpu/drm/tegra/sor.c
-> > +++ b/drivers/gpu/drm/tegra/sor.c
-> > @@ -3047,6 +3047,8 @@ static int tegra_sor_probe(struct platform_device=
- *pdev)
-> >                                 name, err);
-> >                         goto remove;
-> >                 }
-> > +       } else {
-> > +               sor->clk_out =3D sor->clk;
-> >         }
-> > =20
-> >         sor->clk_parent =3D devm_clk_get(&pdev->dev, "parent");
-> > --- >8 ---
-> >=20
-> > That said, I suspect the SOR might be compatible from a clock point of
-> > view with later versions and perhaps we just didn't implement clocks
-> > correctly back in the Tegra124 timeframe.
-> >=20
-> > Maybe Peter knows.
->=20
-> So the above change from Thierry works for me and we need this for v4.15
-> (otherwise nyan-big does not boot) so you can have my ...
->=20
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
->=20
-> However, would be good to have Peter's ACK, especially seeing that
-> Tegra210 sor0 does not support HDMI and DP. So we need to make sure this
-> is correct for Tegra210 as well (although I have not seen any
-> regressions for Tegra210).
-
-There are no Tegra210 boards with eDP or LVDS support, which are the
-only setups that are impacted by this.
-
-I've sent out the above as a proper patch. I'll submit this for a late
-fixes pull request.
-
-Thierry
-
---M9NhX3UHpAaciwkO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlpWA2sACgkQ3SOs138+
-s6FqLw//cKEI38sbWAa8oeOLw430DK+hzEryxetxtIC/fFJfc23+gnZChS13dSa+
-eGVILRbzFXynlONhxxwZ8G5N+eb5cMw/rqlic/GK7guTGkXvHYIgoV0/6qlRTsmC
-rCz0Sj6Uu943NshDm8+n47+7MXpH9VPhiVWJgoOQkoiEPiMArcNPsguaIrurynIG
-vjnRIFJ9iz/34R0In0Y/kYLk6nJUIQXZVrPb+T5SOO2fD+v3fhWLXv6wKciDrkES
-C8Bqk86CplFuVpgdODEkS7a5cJaSLCo4mkZg2eLPECgl+WtSH8AKIy/cMKc1jdEo
-KlFdhnYXPUPrkISA7E8G48RJKbCw/59TRMnPa0A4uWMYrEyqs7PHf8OX/M13D4aR
-DXuw2t+bnVu7A+4L20CP+DlQGKOCeDzf5Yhx2Yls0xyoFu/MDc9ozsmRnCQW9scX
-8XVgGByaJZ6DQgGElK45oiI8N8QNub02xNWV/shLRJ1pyUhwgka6rWW7a+OZb91b
-iSmjnFQhtPLv+z2+Xswsa98ZIgvCr8ZE5BYZ0ans0xKHeymCT7X+x2LMgZYKaQmn
-O1BskxPiwTY1slNxxMxPVvHw3nQNIocfpsCjfKaGddLZYEj3fXFbFejYXFR0/P26
-3IfGYugrUEcBZ0kkF++fSXp9qJ9UUMSOEgv0EAP3l7ERN4o4EIk=
-=szAm
------END PGP SIGNATURE-----
-
---M9NhX3UHpAaciwkO--
-
---===============1972781397==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1972781397==--
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index c3945c683f60..5d5a22d529f5 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -1189,6 +1189,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA114_CLK_XUSB_HS_SRC, TEGRA114_CLK_XUSB_SS_DIV2, 61200000, 0 },
+ 	{ TEGRA114_CLK_XUSB_FALCON_SRC, TEGRA114_CLK_PLL_P, 204000000, 0 },
+ 	{ TEGRA114_CLK_XUSB_HOST_SRC, TEGRA114_CLK_PLL_P, 102000000, 0 },
++	{ TEGRA114_CLK_VDE, TEGRA114_CLK_CLK_MAX, 600000000, 0 },
+ 	/* must be the last entry */
+ 	{ TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_CLK_MAX, 0, 0 },
+ };
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 230f9a2c1abf..50088e976611 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1267,7 +1267,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
+ 	{ TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA124_CLK_I2S3, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA124_CLK_I2S4, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
+-	{ TEGRA124_CLK_VDE, TEGRA124_CLK_PLL_P, 0, 0 },
++	{ TEGRA124_CLK_VDE, TEGRA124_CLK_CLK_MAX, 600000000, 0 },
+ 	{ TEGRA124_CLK_HOST1X, TEGRA124_CLK_PLL_P, 136000000, 1 },
+ 	{ TEGRA124_CLK_DSIALP, TEGRA124_CLK_PLL_P, 68000000, 0 },
+ 	{ TEGRA124_CLK_DSIBLP, TEGRA124_CLK_PLL_P, 68000000, 0 },
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index dec95919fbff..0ee56dd04cec 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1048,6 +1048,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA20_CLK_DISP2, TEGRA20_CLK_PLL_P, 600000000, 0 },
+ 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
++	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+ 	/* must be the last entry */
+ 	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+ };
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 8428895ad475..b316dfb6f6c7 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1266,6 +1266,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
++	{ TEGRA30_CLK_VDE, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
+ 	/* must be the last entry */
+ 	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
+ };
+-- 
+2.15.1
