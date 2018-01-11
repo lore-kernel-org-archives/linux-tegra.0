@@ -1,78 +1,73 @@
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: Re: [PATCH V5 0/7] Add loadable kernel module and power management
- support
-Date: Thu, 11 Jan 2018 11:45:46 +0530
-Message-ID: <a33a045c-0384-64fc-5ae5-1a150081d262@nvidia.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH V5 3/7] PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for
+ Tegra PCIe
+Date: Thu, 11 Jan 2018 13:49:25 +0000
+Message-ID: <20180111134925.GA10168@red-moon>
 References: <1515489577-2197-1-git-send-email-mmaddireddy@nvidia.com>
- <20180110171521.GA26960@e107981-ln.cambridge.arm.com>
+ <1515489577-2197-4-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20180110171521.GA26960@e107981-ln.cambridge.arm.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1515489577-2197-4-git-send-email-mmaddireddy@nvidia.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: thierry.reding@gmail.com, bhelgaas@google.com, cyndis@kapsi.fi, jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, rjw@rjwysocki.net, tglx@linutronix.de, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>, bhelgaas@google.com
+Cc: thierry.reding@gmail.com, cyndis@kapsi.fi, jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, rjw@rjwysocki.net, tglx@linutronix.de, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Bjorn,
 
-
-On 10-Jan-18 10:45 PM, Lorenzo Pieralisi wrote:
-> On Tue, Jan 09, 2018 at 02:49:30PM +0530, Manikanta Maddireddy wrote:
->> This series of patches adds loadable kernel module and power management
->> support to Tegra PCIe host controller driver. irq_set_msi_desc() and
->> tegra_cpuidle_pcie_irqs_in_use() symbols will be taken care in next
->> set of patches.
->>
->> These patches are tested on Jetson TK1, TX1 and TX2 platforms, following
->> are the verification details.
->> 	- Multiple module insert & remove
->> 	- PCIe device functionality after module insert
->> 	- Free clock, resets, regulators, powergate, iomem and interrupt
->> 	resources after module remove
->> 	- PCIe device functionality after resume from RAM
->>
->> V2: PM QoS fix is dropped in V2 from this series because the fix is
->> incorporated in latest 'commit 0759e80b84e3 ("PM / QoS: Fix device resume
->> latency framework")'. Update commit message of few patches in V2.
->>
->> V3: Patches to export irq_set_msi_desc() and tegra_cpuidle_pcie_irqs_in_use()
->> are dropped based on review comments. These symbols will be addressed in next
->> series. Took care of few other review comments.
->>
->> V4: Dropped pci_find_host_bridge() export patch and added new patch to use
->> bus->sysdata for private data.
->>
->> V5: Decouple from https://patchwork.ozlabs.org/patch/832053/ and rebase
->> on top of linux-next
->>
->> Manikanta Maddireddy (7):
->>   of: Export of_pci_range_to_resource()
->>   PCI: tegra: Use bus->sysdata to store and get host private data
->>   PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for Tegra PCIe
->>   PCI: tegra: Free resources on probe failure
->>   PCI: tegra: Add loadable kernel module support
->>   PCI: tegra: Broadcast PME_Turn_Off message before link goes to L2
->>   PCI: tegra: Add power management support
->>
->>  drivers/of/address.c         |   1 +
->>  drivers/pci/host/Kconfig     |   2 +-
->>  drivers/pci/host/pci-tegra.c | 333 ++++++++++++++++++++++++++++++++-----------
->>  3 files changed, 253 insertions(+), 83 deletions(-)
+On Tue, Jan 09, 2018 at 02:49:33PM +0530, Manikanta Maddireddy wrote:
+> Primary, secondary and subordinate default bus numbers are 0 in Tegra and
+> it is expecting SW to program these numbers in configration space.
 > 
-> Can I ask you please to rebase this series against my pci/tegra branch ?
+> pci_scan_bridge_extend() function programs these numbers in configuration
+> space if secondary & subordinate bus numbers are 0 or PCI_REASSIGN_ALL_BUS
+> flag is set. Since secondary & subordinate default bus numbers are 0,
+> PCI_REASSIGN_ALL_BUS flag can be removed for Tegra PCIe.
 > 
-> Thanks,
-> Lorenzo
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+
+Would you mind applying this patch (NB: it is the patch in the v5
+version - this patch - not the one in v6 that is a rebased version):
+
+https://patchwork.ozlabs.org/patch/857318/
+
+to your pci/resource branch please (there is a dependency) ?
+
+This would allow me to apply the rest of the patches in the series
+that I consider mergeable independently of your tree branches, to
+simplify the dependency.
+
+Thanks !
+Lorenzo
+
+> ---
+> V3:
+> * new patch in V3
+> V4:
+> * no change in this patch
+> V5:
+> * no change in this patch
 > 
-Hi Lorenzo,
-
-I rebased this series on lpieralisi/pci/tegra and published V6.
-V5 patch https://patchwork.ozlabs.org/patch/857318/ cherry-pick is failing,
-because of missing change "7153884c088a ("PCI: Remove PCI_REASSIGN_ALL_RSRC use on arm and arm64")"
-in lpieralisi/pci/tegra branch. This information might come in
-handy when doing remote branch merge of 'lorenzo/pci/tegra' into next
-
-Thanks,
-Manikanta
+>  drivers/pci/host/pci-tegra.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index d790a26ad87e..e4b47ebc91fe 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -2293,7 +2293,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>  
+>  	tegra_pcie_enable_ports(pcie);
+>  
+> -	pci_add_flags(PCI_REASSIGN_ALL_BUS);
+>  	host->busnr = pcie->busn.start;
+>  	host->dev.parent = &pdev->dev;
+>  	host->ops = &tegra_pcie_ops;
+> -- 
+> 2.1.4
+> 
