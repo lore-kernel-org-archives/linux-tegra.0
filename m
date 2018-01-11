@@ -1,65 +1,76 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL] drm/tegra: Fixes for v4.15-rc1
-Date: Thu, 11 Jan 2018 17:53:42 +0100
-Message-ID: <20180111165342.GA22444@ulmo>
-References: <20180111164117.22150-1-thierry.reding@gmail.com>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V5 3/7] PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for
+ Tegra PCIe
+Date: Thu, 11 Jan 2018 12:27:03 -0600
+Message-ID: <20180111182703.GL241460@bhelgaas-glaptop.roam.corp.google.com>
+References: <1515489577-2197-1-git-send-email-mmaddireddy@nvidia.com>
+ <1515489577-2197-4-git-send-email-mmaddireddy@nvidia.com>
+ <20180111134925.GA10168@red-moon>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20180111164117.22150-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20180111134925.GA10168@red-moon>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, cyndis-/1wQRMveznE@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jan 11, 2018 at 01:49:25PM +0000, Lorenzo Pieralisi wrote:
+> Hi Bjorn,
+> 
+> On Tue, Jan 09, 2018 at 02:49:33PM +0530, Manikanta Maddireddy wrote:
+> > Primary, secondary and subordinate default bus numbers are 0 in Tegra and
+> > it is expecting SW to program these numbers in configration space.
+> > 
+> > pci_scan_bridge_extend() function programs these numbers in configuration
+> > space if secondary & subordinate bus numbers are 0 or PCI_REASSIGN_ALL_BUS
+> > flag is set. Since secondary & subordinate default bus numbers are 0,
+> > PCI_REASSIGN_ALL_BUS flag can be removed for Tegra PCIe.
+> > 
+> > Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+> 
+> Would you mind applying this patch (NB: it is the patch in the v5
+> version - this patch - not the one in v6 that is a rebased version):
+> 
+> https://patchwork.ozlabs.org/patch/857318/
+> 
+> to your pci/resource branch please (there is a dependency) ?
+> 
+> This would allow me to apply the rest of the patches in the series
+> that I consider mergeable independently of your tree branches, to
+> simplify the dependency.
 
---NzB8fVQJ5HfG6fxh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to pci/resource for v4.16, thanks!
 
-On Thu, Jan 11, 2018 at 05:41:17PM +0100, Thierry Reding wrote:
-> Hi Dave,
->=20
->   Merge branch 'linux-4.15' of git://github.com/skeggsb/linux into drm-fi=
-xes (2018-01-09 12:03:10 +1000)
->=20
-> are available in the Git repository at:
->=20
->   git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.15-rc8
->=20
-> for you to fetch changes up to d780537f9b49e9d714a454e5ed989d909beab8ec:
->=20
->   drm/tegra: sor: Fix hang on Tegra124 eDP (2018-01-10 13:04:58 +0100)
->=20
-> Thanks,
-> Thierry
+I'd love to remove more of these.  Every one helps.
 
-I fat-fingered this, please disregard.
-
-Sorry,
-Thierry
-
---NzB8fVQJ5HfG6fxh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlpXlpYACgkQ3SOs138+
-s6HMZRAAgAgy7rbd4OSAAetpWmU8a5ig2Pkf1Ly4VtK7xBtAxS32mOyH9aXMeEtY
-mGMuF+YZn3KyetmUcNHJvtfCRvIHhRBETogLxJqZ83PS37r5qXXOlq7JOkDNHDAE
-hCrajktq4opxV27czztn6fnOnnMBDSNkNz+ke7jY0CcRiHPiNT8/97D6M0mzPF6Y
-Sz/TfNp7ZY1Ve/ycDNzlAGszVRZwupJvOKYftMkxRGbSjDCWb7Y+h/8ytb5gU7od
-CfE8YO1Xg6hYXY4AgiWGFj3cXisHlQLvdXzOk/TlEI50k/3JvTbHrAOpbpnnxycI
-PkINB6qeaAyZBdEqHd7kwBNJjQvYU96t0Nx2VY2c6L8KbEGeFUQcu6nK+hEmraqY
-1obDLM0tuAdBsyYSsnAWR4YPAmQJ7Qi37Bj0f+KRUjVyEeZemM7YCiSaYqhD9IX0
-mXdNUCVmEavmnz7WBLDeDO2LHUI8+z9CeWzDAkZNTOWeeETbLyc60qt3biscOScH
-Psk/xw2vLUsz9A86692DJvwZgxhFQa2r33QEi3p2KJrerujwDul/vP87wdawmU+3
-4evuYsYOM7PBA6Yzz889UkcR64ks+H0FOtMjIpc6jLADC/3qTgIsy408M6ZWE84o
-jdseB6Ta8zar4X6OS9sr9Kyw/Hzx9aubGfE6tek9dV4nC3P9QbA=
-=u0vX
------END PGP SIGNATURE-----
-
---NzB8fVQJ5HfG6fxh--
+> > ---
+> > V3:
+> > * new patch in V3
+> > V4:
+> > * no change in this patch
+> > V5:
+> > * no change in this patch
+> > 
+> >  drivers/pci/host/pci-tegra.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> > index d790a26ad87e..e4b47ebc91fe 100644
+> > --- a/drivers/pci/host/pci-tegra.c
+> > +++ b/drivers/pci/host/pci-tegra.c
+> > @@ -2293,7 +2293,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+> >  
+> >  	tegra_pcie_enable_ports(pcie);
+> >  
+> > -	pci_add_flags(PCI_REASSIGN_ALL_BUS);
+> >  	host->busnr = pcie->busn.start;
+> >  	host->dev.parent = &pdev->dev;
+> >  	host->ops = &tegra_pcie_ops;
+> > -- 
+> > 2.1.4
+> > 
