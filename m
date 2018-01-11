@@ -1,53 +1,79 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/2] drm/nouveau: Remove redundant _get
-Date: Thu, 11 Jan 2018 22:42:20 +0100
-Message-ID: <20180111214221.25919-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Subject: [PATCH 2/2] drm/nouveau: tegra: Use IOMMU groups
+Date: Thu, 11 Jan 2018 22:42:21 +0100
+Message-ID: <20180111214221.25919-2-thierry.reding@gmail.com>
+References: <20180111214221.25919-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20180111214221.25919-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-The nouveau_fence_get_get_driver_name() function has a redundant _get in
-its name. Remove it.
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/nouveau/nouveau_fence.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
-index 503fa94dc06d..9c8f3a154d55 100644
---- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-@@ -426,7 +426,7 @@ nouveau_fence_new(struct nouveau_channel *chan, bool sysmem,
- 	return ret;
- }
- 
--static const char *nouveau_fence_get_get_driver_name(struct dma_fence *fence)
-+static const char *nouveau_fence_get_driver_name(struct dma_fence *fence)
- {
- 	return "nouveau";
- }
-@@ -496,7 +496,7 @@ static void nouveau_fence_release(struct dma_fence *f)
- }
- 
- static const struct dma_fence_ops nouveau_fence_ops_legacy = {
--	.get_driver_name = nouveau_fence_get_get_driver_name,
-+	.get_driver_name = nouveau_fence_get_driver_name,
- 	.get_timeline_name = nouveau_fence_get_timeline_name,
- 	.enable_signaling = nouveau_fence_no_signaling,
- 	.signaled = nouveau_fence_is_signaled,
-@@ -523,7 +523,7 @@ static bool nouveau_fence_enable_signaling(struct dma_fence *f)
- }
- 
- static const struct dma_fence_ops nouveau_fence_ops_uevent = {
--	.get_driver_name = nouveau_fence_get_get_driver_name,
-+	.get_driver_name = nouveau_fence_get_driver_name,
- 	.get_timeline_name = nouveau_fence_get_timeline_name,
- 	.enable_signaling = nouveau_fence_enable_signaling,
- 	.signaled = nouveau_fence_is_signaled,
--- 
-2.15.1
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClVzZSBJT01NVSBncm91
+cHMgdG8gYXR0YWNoIHRoZSBHUFUgdG8gaXRzIElPTU1VIGRvbWFpbi4gVGhpcyBpcyBub3QKc3Ry
+aWN0bHkgbmVjZXNzYXJ5IGJlY2F1c2UgdGhlIGRvbWFpbiBpc24ndCBzaGFyZWQgd2l0aCBhbnkg
+b3RoZXIKZGV2aWNlLCBidXQgaXQgbWFrZXMgdGhlIGNvZGUgY29uc2lzdGVudCB3aXRoIGhvdyBJ
+T01NVSBpcyBoYW5kbGVkIGluCm90aGVyIGRyaXZlcnMgYW5kIHByb3ZpZGVzIGFuIGVhc3kgd2F5
+IHRvIGRldGVjdCB3aGVuIG5vIElPTU1VIGhhcwpiZWVuIGF0dGFjaGVkIHZpYSBkZXZpY2UgdHJl
+ZS4KClNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0t
+LQogZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvaW5jbHVkZS9udmttL2NvcmUvdGVncmEuaCAgfCAg
+MSArCiBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvdGVncmEuYyB8
+IDE4ICsrKysrKysrKysrLS0tLS0tLQogMiBmaWxlcyBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCsp
+LCA3IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2lu
+Y2x1ZGUvbnZrbS9jb3JlL3RlZ3JhLmggYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNsdWRl
+L252a20vY29yZS90ZWdyYS5oCmluZGV4IDVjMTAyZDAyMDZhNy4uNWE5YTc5NjM4MGRjIDEwMDY0
+NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vY29yZS90ZWdyYS5o
+CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZrbS9jb3JlL3RlZ3JhLmgK
+QEAgLTI1LDYgKzI1LDcgQEAgc3RydWN0IG52a21fZGV2aWNlX3RlZ3JhIHsKIAogCQlzdHJ1Y3Qg
+bnZrbV9tbSBtbTsKIAkJc3RydWN0IGlvbW11X2RvbWFpbiAqZG9tYWluOworCQlzdHJ1Y3QgaW9t
+bXVfZ3JvdXAgKmdyb3VwOwogCQl1bnNpZ25lZCBsb25nIHBnc2hpZnQ7CiAJfSBpb21tdTsKIApk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3Rl
+Z3JhLmMgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvdGVncmEu
+YwppbmRleCA3ODU5N2RhNjMxM2EuLjFmMDc5OTlhZWExZCAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMKKysrIGIvZHJpdmVycy9n
+cHUvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMKQEAgLTExMCw3ICsxMTAs
+OCBAQCBudmttX2RldmljZV90ZWdyYV9wcm9iZV9pb21tdShzdHJ1Y3QgbnZrbV9kZXZpY2VfdGVn
+cmEgKnRkZXYpCiAKIAltdXRleF9pbml0KCZ0ZGV2LT5pb21tdS5tdXRleCk7CiAKLQlpZiAoaW9t
+bXVfcHJlc2VudCgmcGxhdGZvcm1fYnVzX3R5cGUpKSB7CisJdGRldi0+aW9tbXUuZ3JvdXAgPSBp
+b21tdV9ncm91cF9nZXQoZGV2KTsKKwlpZiAodGRldi0+aW9tbXUuZ3JvdXApIHsKIAkJdGRldi0+
+aW9tbXUuZG9tYWluID0gaW9tbXVfZG9tYWluX2FsbG9jKCZwbGF0Zm9ybV9idXNfdHlwZSk7CiAJ
+CWlmICghdGRldi0+aW9tbXUuZG9tYWluKQogCQkJZ290byBlcnJvcjsKQEAgLTEzMiw3ICsxMzMs
+NyBAQCBudmttX2RldmljZV90ZWdyYV9wcm9iZV9pb21tdShzdHJ1Y3QgbnZrbV9kZXZpY2VfdGVn
+cmEgKnRkZXYpCiAJCQl0ZGV2LT5pb21tdS5wZ3NoaWZ0IC09IDE7CiAJCX0KIAotCQlyZXQgPSBp
+b21tdV9hdHRhY2hfZGV2aWNlKHRkZXYtPmlvbW11LmRvbWFpbiwgZGV2KTsKKwkJcmV0ID0gaW9t
+bXVfYXR0YWNoX2dyb3VwKHRkZXYtPmlvbW11LmRvbWFpbiwgdGRldi0+aW9tbXUuZ3JvdXApOwog
+CQlpZiAocmV0KQogCQkJZ290byBmcmVlX2RvbWFpbjsKIApAQCAtMTQwLDE5ICsxNDEsMjEgQEAg
+bnZrbV9kZXZpY2VfdGVncmFfcHJvYmVfaW9tbXUoc3RydWN0IG52a21fZGV2aWNlX3RlZ3JhICp0
+ZGV2KQogCQkJCSAgICgxVUxMIDw8IHRkZXYtPmZ1bmMtPmlvbW11X2JpdCkgPj4KIAkJCQkgICB0
+ZGV2LT5pb21tdS5wZ3NoaWZ0LCAxKTsKIAkJaWYgKHJldCkKLQkJCWdvdG8gZGV0YWNoX2Rldmlj
+ZTsKKwkJCWdvdG8gZGV0YWNoX2dyb3VwOwogCX0KIAogCXJldHVybjsKIAotZGV0YWNoX2Rldmlj
+ZToKLQlpb21tdV9kZXRhY2hfZGV2aWNlKHRkZXYtPmlvbW11LmRvbWFpbiwgZGV2KTsKK2RldGFj
+aF9ncm91cDoKKwlpb21tdV9kZXRhY2hfZ3JvdXAodGRldi0+aW9tbXUuZG9tYWluLCB0ZGV2LT5p
+b21tdS5ncm91cCk7CiAKIGZyZWVfZG9tYWluOgogCWlvbW11X2RvbWFpbl9mcmVlKHRkZXYtPmlv
+bW11LmRvbWFpbik7CiAKIGVycm9yOgorCWlvbW11X2dyb3VwX3B1dCh0ZGV2LT5pb21tdS5ncm91
+cCk7CiAJdGRldi0+aW9tbXUuZG9tYWluID0gTlVMTDsKKwl0ZGV2LT5pb21tdS5ncm91cCA9IE5V
+TEw7CiAJdGRldi0+aW9tbXUucGdzaGlmdCA9IDA7CiAJZGV2X2VycihkZXYsICJjYW5ub3QgaW5p
+dGlhbGl6ZSBJT01NVSBNTVxuIik7CiAjZW5kaWYKQEAgLTE2MiwxMCArMTY1LDExIEBAIHN0YXRp
+YyB2b2lkCiBudmttX2RldmljZV90ZWdyYV9yZW1vdmVfaW9tbXUoc3RydWN0IG52a21fZGV2aWNl
+X3RlZ3JhICp0ZGV2KQogewogI2lmIElTX0VOQUJMRUQoQ09ORklHX0lPTU1VX0FQSSkKLQlpZiAo
+dGRldi0+aW9tbXUuZG9tYWluKSB7CisJaWYgKHRkZXYtPmlvbW11Lmdyb3VwICYmIHRkZXYtPmlv
+bW11LmRvbWFpbikgewogCQludmttX21tX2ZpbmkoJnRkZXYtPmlvbW11Lm1tKTsKLQkJaW9tbXVf
+ZGV0YWNoX2RldmljZSh0ZGV2LT5pb21tdS5kb21haW4sIHRkZXYtPmRldmljZS5kZXYpOworCQlp
+b21tdV9kZXRhY2hfZ3JvdXAodGRldi0+aW9tbXUuZG9tYWluLCB0ZGV2LT5pb21tdS5ncm91cCk7
+CiAJCWlvbW11X2RvbWFpbl9mcmVlKHRkZXYtPmlvbW11LmRvbWFpbik7CisJCWlvbW11X2dyb3Vw
+X3B1dCh0ZGV2LT5pb21tdS5ncm91cCk7CiAJfQogI2VuZGlmCiB9Ci0tIAoyLjE1LjEKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCk5vdXZlYXUgbWFpbGlu
+ZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
