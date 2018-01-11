@@ -1,77 +1,51 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 3/3] drm/nouveau: Support DMA fence arrays
-Date: Thu, 11 Jan 2018 23:15:46 +0100
-Message-ID: <20180111221546.28547-4-thierry.reding@gmail.com>
-References: <20180111221546.28547-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180111221546.28547-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 0/3] drm/tegra: Add support for fence FDs
+Date: Thu, 11 Jan 2018 23:22:46 +0100
+Message-ID: <20180111222249.29105-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/nouveau/nouveau_fence.c | 31 ++++++++++++++++++++++++++++---
- 1 file changed, 28 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
-index d61fcfb97b09..53178b1471e3 100644
---- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-@@ -28,6 +28,7 @@
- 
- #include <linux/ktime.h>
- #include <linux/hrtimer.h>
-+#include <linux/dma-fence-array.h>
- #include <trace/events/dma_fence.h>
- 
- #include <nvif/cl826e.h>
-@@ -331,9 +332,9 @@ nouveau_fence_wait(struct nouveau_fence *fence, bool lazy, bool intr)
- 		return 0;
- }
- 
--int
--nouveau_fence_sync(struct dma_fence *fence, struct nouveau_channel *chan,
--		   bool intr)
-+static int
-+__nouveau_fence_sync(struct dma_fence *fence, struct nouveau_channel *chan,
-+		     bool intr)
- {
- 	struct nouveau_fence_chan *fctx = chan->fence;
- 	struct nouveau_channel *prev = NULL;
-@@ -356,6 +357,30 @@ nouveau_fence_sync(struct dma_fence *fence, struct nouveau_channel *chan,
- 	return ret;
- }
- 
-+int
-+nouveau_fence_sync(struct dma_fence *fence, struct nouveau_channel *chan,
-+		   bool intr)
-+{
-+	int ret = 0;
-+
-+	if (dma_fence_is_array(fence)) {
-+		struct dma_fence_array *array = to_dma_fence_array(fence);
-+		unsigned int i;
-+
-+		for (i = 0; i < array->num_fences; i++) {
-+			struct dma_fence *f = array->fences[i];
-+
-+			ret = __nouveau_fence_sync(f, chan, intr);
-+			if (ret < 0)
-+				break;
-+		}
-+	} else {
-+		ret = __nouveau_fence_sync(fence, chan, intr);
-+	}
-+
-+	return ret;
-+}
-+
- void
- nouveau_fence_unref(struct nouveau_fence **pfence)
- {
--- 
-2.15.1
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoaXMgc2V0IG9mIHBh
+dGNoZXMgYWRkcyBzdXBwb3J0IGZvciBmZW5jZXMgdG8gVGVncmEgRFJNIGFuZCBjb21wbGVtZW50
+cwp0aGUgZmVuY2UgRkQgc3VwcG9ydCBmb3IgTm91dmVhdS4gVGVjaG5pY2FsbHkgdGhpcyBpc24n
+dCBuZWNlc3NhcnkgZm9yIGEKZmVuY2UtYmFzZWQgc3luY2hyb25pemF0aW9uIGxvb3Agd2l0aCBO
+b3V2ZWF1IGJlY2F1c2UgdGhlIEtNUyBjb3JlIHRha2VzCmNhcmUgb2YgYWxsIHRoYXQsIGJ1dCBl
+bmdpbmVzIGJlaGluZCBob3N0MXggY2FuIHVzZSB0aGUgSU9DVEwgZXh0ZW5zaW9ucwpwcm92aWRl
+ZCBoZXJlIHRvIGVtaXQgZmVuY2UgRkRzIHRoYXQgaW4gdHVybiBjYW4gYmUgdXNlZCB0byBzeW5j
+aHJvbml6ZQp0aGVpciBqb2JzIHdpdGggZWl0aGVyIHRoZSBzY2Fub3V0IGVuZ2luZSBvciB0aGUg
+R1BVLgoKU2VlIHRoZSBmb2xsb3dpbmcgbGluayBmb3IgdGhlIE5vdXZlYXUgZmVuY2UgRkQgc3Vw
+cG9ydCBzZXJpZXM6CgoJaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy8z
+NjM2MS8KClRoaWVycnkKCk1pa2tvIFBlcnR0dW5lbiAoMyk6CiAgZ3B1OiBob3N0MXg6IEFkZCBz
+dXBwb3J0IGZvciBETUEgZmVuY2VzCiAgZHJtL3RlZ3JhOiBBZGQgc3luYyBmaWxlIHN1cHBvcnQg
+dG8gc3VibWl0IGludGVyZmFjZQogIGRybS90ZWdyYTogU3VwcG9ydCBmb3Igc3luYyBmaWxlLWJh
+c2VkIGZlbmNlcyBpbiBzdWJtaXQKCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAg
+IHwgIDgyICsrKysrKysrKysrKy0tLQogZHJpdmVycy9ncHUvaG9zdDF4L0tjb25maWcgICAgICAg
+ICB8ICAgMSArCiBkcml2ZXJzL2dwdS9ob3N0MXgvTWFrZWZpbGUgICAgICAgIHwgICAxICsKIGRy
+aXZlcnMvZ3B1L2hvc3QxeC9kZXYuaCAgICAgICAgICAgfCAgMTIgKystCiBkcml2ZXJzL2dwdS9o
+b3N0MXgvZmVuY2UuYyAgICAgICAgIHwgMjAyICsrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysKIGRyaXZlcnMvZ3B1L2hvc3QxeC9mZW5jZS5oICAgICAgICAgfCAgMjggKysrKysK
+IGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9jaGFubmVsX2h3LmMgfCAgMzYgKysrKystLQogZHJpdmVy
+cy9ncHUvaG9zdDF4L2ludHIuYyAgICAgICAgICB8ICAxMSArLQogZHJpdmVycy9ncHUvaG9zdDF4
+L2ludHIuaCAgICAgICAgICB8ICAgOCArLQogZHJpdmVycy9ncHUvaG9zdDF4L3N5bmNwdC5jICAg
+ICAgICB8ICAgMiArCiBpbmNsdWRlL2xpbnV4L2hvc3QxeC5oICAgICAgICAgICAgIHwgIDEyICsr
+LQogaW5jbHVkZS91YXBpL2RybS90ZWdyYV9kcm0uaCAgICAgICB8ICAxMCArLQogMTIgZmlsZXMg
+Y2hhbmdlZCwgMzc2IGluc2VydGlvbnMoKyksIDI5IGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUg
+MTAwNjQ0IGRyaXZlcnMvZ3B1L2hvc3QxeC9mZW5jZS5jCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
+dmVycy9ncHUvaG9zdDF4L2ZlbmNlLmgKCi0tIAoyLjE1LjEKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
