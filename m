@@ -1,62 +1,57 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH V5 0/7] Add loadable kernel module and power management
- support
-Date: Wed, 10 Jan 2018 17:15:21 +0000
-Message-ID: <20180110171521.GA26960@e107981-ln.cambridge.arm.com>
-References: <1515489577-2197-1-git-send-email-mmaddireddy@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: [PATCH V6 0/7] Add loadable kernel module and power management support
+Date: Thu, 11 Jan 2018 11:38:01 +0530
+Message-ID: <1515650888-9459-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1515489577-2197-1-git-send-email-mmaddireddy@nvidia.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: thierry.reding@gmail.com, bhelgaas@google.com, cyndis@kapsi.fi, jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, rjw@rjwysocki.net, tglx@linutronix.de, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org
+To: thierry.reding@gmail.com, bhelgaas@google.com, lorenzo.pieralisi@arm.com, cyndis@kapsi.fi
+Cc: jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, rjw@rjwysocki.net, tglx@linutronix.de, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 09, 2018 at 02:49:30PM +0530, Manikanta Maddireddy wrote:
-> This series of patches adds loadable kernel module and power management
-> support to Tegra PCIe host controller driver. irq_set_msi_desc() and
-> tegra_cpuidle_pcie_irqs_in_use() symbols will be taken care in next
-> set of patches.
-> 
-> These patches are tested on Jetson TK1, TX1 and TX2 platforms, following
-> are the verification details.
-> 	- Multiple module insert & remove
-> 	- PCIe device functionality after module insert
-> 	- Free clock, resets, regulators, powergate, iomem and interrupt
-> 	resources after module remove
-> 	- PCIe device functionality after resume from RAM
-> 
-> V2: PM QoS fix is dropped in V2 from this series because the fix is
-> incorporated in latest 'commit 0759e80b84e3 ("PM / QoS: Fix device resume
-> latency framework")'. Update commit message of few patches in V2.
-> 
-> V3: Patches to export irq_set_msi_desc() and tegra_cpuidle_pcie_irqs_in_use()
-> are dropped based on review comments. These symbols will be addressed in next
-> series. Took care of few other review comments.
-> 
-> V4: Dropped pci_find_host_bridge() export patch and added new patch to use
-> bus->sysdata for private data.
-> 
-> V5: Decouple from https://patchwork.ozlabs.org/patch/832053/ and rebase
-> on top of linux-next
-> 
-> Manikanta Maddireddy (7):
->   of: Export of_pci_range_to_resource()
->   PCI: tegra: Use bus->sysdata to store and get host private data
->   PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for Tegra PCIe
->   PCI: tegra: Free resources on probe failure
->   PCI: tegra: Add loadable kernel module support
->   PCI: tegra: Broadcast PME_Turn_Off message before link goes to L2
->   PCI: tegra: Add power management support
-> 
->  drivers/of/address.c         |   1 +
->  drivers/pci/host/Kconfig     |   2 +-
->  drivers/pci/host/pci-tegra.c | 333 ++++++++++++++++++++++++++++++++-----------
->  3 files changed, 253 insertions(+), 83 deletions(-)
+This series of patches adds loadable kernel module and power management
+support to Tegra PCIe host controller driver. irq_set_msi_desc() and
+tegra_cpuidle_pcie_irqs_in_use() symbols will be taken care in next
+set of patches.
 
-Can I ask you please to rebase this series against my pci/tegra branch ?
+These patches are tested on Jetson TK1, TX1 and TX2 platforms, following
+are the verification details.
+	- Multiple module insert & remove
+	- PCIe device functionality after module insert
+	- Free clock, resets, regulators, powergate, iomem and interrupt
+	resources after module remove
+	- PCIe device functionality after resume from RAM
 
-Thanks,
-Lorenzo
+V2: PM QoS fix is dropped in V2 from this series because the fix is
+incorporated in latest 'commit 0759e80b84e3 ("PM / QoS: Fix device resume
+latency framework")'. Update commit message of few patches in V2.
+
+V3: Patches to export irq_set_msi_desc() and tegra_cpuidle_pcie_irqs_in_use()
+are dropped based on review comments. These symbols will be addressed in next
+series. Took care of few other review comments.
+
+V4: Dropped pci_find_host_bridge() export patch and added new patch to use
+bus->sysdata for private data.
+
+V5: Decouple from https://patchwork.ozlabs.org/patch/832053/ and rebase
+on top of linux-next
+
+V6: Rebased on lpieralisi/pci/tegra branch
+
+Manikanta Maddireddy (7):
+  of: Export of_pci_range_to_resource()
+  PCI: tegra: Use bus->sysdata to store and get host private data
+  PCI: tegra: Remove PCI_REASSIGN_ALL_BUS flag for Tegra PCIe
+  PCI: tegra: Free resources on probe failure
+  PCI: tegra: Add loadable kernel module support
+  PCI: tegra: Broadcast PME_Turn_Off message before link goes to L2
+  PCI: tegra: Add power management support
+
+ drivers/of/address.c         |   1 +
+ drivers/pci/host/Kconfig     |   2 +-
+ drivers/pci/host/pci-tegra.c | 333 ++++++++++++++++++++++++++++++++-----------
+ 3 files changed, 253 insertions(+), 83 deletions(-)
+
+-- 
+2.1.4
