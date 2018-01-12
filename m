@@ -1,85 +1,73 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 Subject: Re: [PATCH 0/3] drm/tegra: Add support for fence FDs
-Date: Fri, 12 Jan 2018 16:14:38 +0100
-Message-ID: <20180112151438.GD19999@ulmo>
+Date: Fri, 12 Jan 2018 15:38:56 +0000
+Message-ID: <151577153600.24367.14807966085718429746@mail.alporthouse.com>
 References: <20180111222249.29105-1-thierry.reding@gmail.com>
  <151575361658.23681.15835882826597063093@mail.alporthouse.com>
+ <20180112151438.GD19999@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bjuZg6miEcdLYP6q"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <151575361658.23681.15835882826597063093-M6iVdVfohj6unts5RBS2dVaTQe2KTcn/@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Wilson <chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180112151438.GD19999@ulmo>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
---bjuZg6miEcdLYP6q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jan 12, 2018 at 10:40:16AM +0000, Chris Wilson wrote:
-> Quoting Thierry Reding (2018-01-11 22:22:46)
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > This set of patches adds support for fences to Tegra DRM and complements
-> > the fence FD support for Nouveau. Technically this isn't necessary for a
-> > fence-based synchronization loop with Nouveau because the KMS core takes
-> > care of all that, but engines behind host1x can use the IOCTL extensions
-> > provided here to emit fence FDs that in turn can be used to synchronize
-> > their jobs with either the scanout engine or the GPU.
->=20
-> Whilst hooking up fences, I advise you to also hook up drm_syncobj.
-> Internally they each resolve to another fence, so the mechanics are
-> identical, you just need another array in the uABI for in/out syncobj.
-> The advantage of drm_syncobj is that userspace can track internal fences
-> using inexhaustible handles, reserving the precious fd for IPC or KMS.
-
-I'm not sure that I properly understand how to use these. It looks as if
-they are better fence FDs, so in case where you submit internal work you
-would go with a drm_syncobj and when you need access to the fence from a
-different process or driver, you should use an FD.
-
-Doesn't this mean we can cover this by just adding a flag that marks the
-fence as being a handle or an FD? Do we have situations where we want an
-FD *and* a handle returned as result of the job submission?
-
-For the above it would suffice to add two additional flags:
-
-	#define DRM_TEGRA_SUBMIT_WAIT_SYNCOBJ (1 << 2)
-	#define DRM_TEGRA_SUBMIT_EMIT_SYNCOBJ (1 << 3)
-
-which would even allow both to be combined:
-
-	DRM_TEGRA_SUBMIT_WAIT_SYNCOBJ | DRM_TEGRA_SUBMIT_EMIT_FENCE_FD
-
-would allow the job to wait for an internal syncobj (defined by handle
-in the fence member) and return a fence (as FD in the fence member) to
-pass on to another process or driver as prefence.
-
-Thierry
-
---bjuZg6miEcdLYP6q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlpY0NwACgkQ3SOs138+
-s6FEXRAAr2mEO8C8e7Yw9o0kI/NNiRFUCyytINg3CUF4gfDUUnKrcc5kn6YOedOM
-xveDUPUe2DURCpRb7YTx6ahoX81BQGJHg39KsvgvNWQgU9qXjMB9sY+yz8I6nnFa
-4T203oseAeCSieoxs0fYQ4a27jK3srg8HLe1zacqNNmjLl4TF2GrPlgm9XeXZHNX
-eOVHtjrYwwKOORcpH6aTStZ3AWnj70FBPXSe0VvV+sJKt8APyRhx5MgIanvO0QmR
-L45um8ROZC0to2ODjstsqk19W/s2Y3H0SmJcRIHC4rvpX9Pt4NZ9AJsFfQkkHh3C
-8O4wjedxNVkXcZJlkSvyKgt7l2EE/Ax3dHsEV0oAvnzuOTOi3c8hGm9IIUBCD30w
-f4Gg+4cHTStGPlnq8ddtHv+Ke7ZetP5L9pw642xEd+j8Py1oRPcvtPg1RH9/enXE
-cO3xdP2uw0GQSiwnjskdR3tcR2wGNGGYHnYcoI1hGDo/CcdrIBevFLWvXdkUl+rY
-L4NrJu3g6zFaS5GE5cqjAzwDne6wEMPrgp+biwEARplcvrsHqKmW3FC+QC2cvU1A
-3Q5/RXnhrZ9bM90HorB6Ed/EF6V0IIGDlVwDDRo5DlPN3Wdt/zOAJsW2N/Jfpywf
-ofUVUKfIK5cTu497lh9KCa9cSBIHi9wlNvSl436PdC2BxzWXwxM=
-=m7Tm
------END PGP SIGNATURE-----
-
---bjuZg6miEcdLYP6q--
+UXVvdGluZyBUaGllcnJ5IFJlZGluZyAoMjAxOC0wMS0xMiAxNToxNDozOCkKPiBPbiBGcmksIEph
+biAxMiwgMjAxOCBhdCAxMDo0MDoxNkFNICswMDAwLCBDaHJpcyBXaWxzb24gd3JvdGU6Cj4gPiBR
+dW90aW5nIFRoaWVycnkgUmVkaW5nICgyMDE4LTAxLTExIDIyOjIyOjQ2KQo+ID4gPiBGcm9tOiBU
+aGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+ID4gPiAKPiA+ID4gVGhpcyBzZXQg
+b2YgcGF0Y2hlcyBhZGRzIHN1cHBvcnQgZm9yIGZlbmNlcyB0byBUZWdyYSBEUk0gYW5kIGNvbXBs
+ZW1lbnRzCj4gPiA+IHRoZSBmZW5jZSBGRCBzdXBwb3J0IGZvciBOb3V2ZWF1LiBUZWNobmljYWxs
+eSB0aGlzIGlzbid0IG5lY2Vzc2FyeSBmb3IgYQo+ID4gPiBmZW5jZS1iYXNlZCBzeW5jaHJvbml6
+YXRpb24gbG9vcCB3aXRoIE5vdXZlYXUgYmVjYXVzZSB0aGUgS01TIGNvcmUgdGFrZXMKPiA+ID4g
+Y2FyZSBvZiBhbGwgdGhhdCwgYnV0IGVuZ2luZXMgYmVoaW5kIGhvc3QxeCBjYW4gdXNlIHRoZSBJ
+T0NUTCBleHRlbnNpb25zCj4gPiA+IHByb3ZpZGVkIGhlcmUgdG8gZW1pdCBmZW5jZSBGRHMgdGhh
+dCBpbiB0dXJuIGNhbiBiZSB1c2VkIHRvIHN5bmNocm9uaXplCj4gPiA+IHRoZWlyIGpvYnMgd2l0
+aCBlaXRoZXIgdGhlIHNjYW5vdXQgZW5naW5lIG9yIHRoZSBHUFUuCj4gPiAKPiA+IFdoaWxzdCBo
+b29raW5nIHVwIGZlbmNlcywgSSBhZHZpc2UgeW91IHRvIGFsc28gaG9vayB1cCBkcm1fc3luY29i
+ai4KPiA+IEludGVybmFsbHkgdGhleSBlYWNoIHJlc29sdmUgdG8gYW5vdGhlciBmZW5jZSwgc28g
+dGhlIG1lY2hhbmljcyBhcmUKPiA+IGlkZW50aWNhbCwgeW91IGp1c3QgbmVlZCBhbm90aGVyIGFy
+cmF5IGluIHRoZSB1QUJJIGZvciBpbi9vdXQgc3luY29iai4KPiA+IFRoZSBhZHZhbnRhZ2Ugb2Yg
+ZHJtX3N5bmNvYmogaXMgdGhhdCB1c2Vyc3BhY2UgY2FuIHRyYWNrIGludGVybmFsIGZlbmNlcwo+
+ID4gdXNpbmcgaW5leGhhdXN0aWJsZSBoYW5kbGVzLCByZXNlcnZpbmcgdGhlIHByZWNpb3VzIGZk
+IGZvciBJUEMgb3IgS01TLgo+IAo+IEknbSBub3Qgc3VyZSB0aGF0IEkgcHJvcGVybHkgdW5kZXJz
+dGFuZCBob3cgdG8gdXNlIHRoZXNlLiBJdCBsb29rcyBhcyBpZgo+IHRoZXkgYXJlIGJldHRlciBm
+ZW5jZSBGRHMsIHNvIGluIGNhc2Ugd2hlcmUgeW91IHN1Ym1pdCBpbnRlcm5hbCB3b3JrIHlvdQo+
+IHdvdWxkIGdvIHdpdGggYSBkcm1fc3luY29iaiBhbmQgd2hlbiB5b3UgbmVlZCBhY2Nlc3MgdG8g
+dGhlIGZlbmNlIGZyb20gYQo+IGRpZmZlcmVudCBwcm9jZXNzIG9yIGRyaXZlciwgeW91IHNob3Vs
+ZCB1c2UgYW4gRkQuCgpZZXMsIHNpbXBseSBwdXQgdGhleSBhcmUgYmV0dGVyIGZlbmNlIGZkcy4K
+Cj4gRG9lc24ndCB0aGlzIG1lYW4gd2UgY2FuIGNvdmVyIHRoaXMgYnkganVzdCBhZGRpbmcgYSBm
+bGFnIHRoYXQgbWFya3MgdGhlCj4gZmVuY2UgYXMgYmVpbmcgYSBoYW5kbGUgb3IgYW4gRkQ/IERv
+IHdlIGhhdmUgc2l0dWF0aW9ucyB3aGVyZSB3ZSB3YW50IGFuCj4gRkQgKmFuZCogYSBoYW5kbGUg
+cmV0dXJuZWQgYXMgcmVzdWx0IG9mIHRoZSBqb2Igc3VibWlzc2lvbj8KClByb2JhYmx5IG5vdCwg
+YnV0IGlmIHlvdSBkb24ndCBuZWVkIHRvIGZvcmNlIHVzZXJzcGFjZSB0byBjaG9vc2UsIHRoZXkK
+d2lsbCBjb21lIHVwIHdpdGggYSBzaXR1YXRpb24gd2hlcmUgaXQgaXMgdXNlZnVsLiBUaG91Z2gg
+b25lIHRoaW5nIHRvCmNvbnNpZGVyIHdpdGggdGhlIGRybV9zeW5jb2JqIGlzIHRoYXQgeW91IHdp
+bGwgd2FudCB0byBoYW5kbGUgYW4gYXJyYXkKb2YgaW4vb3V0IGZlbmNlcywgYXMgdXNlcnNwYWNl
+IHdpbGwgcGFzcyBpbiBhbiBhcnJheSBvZiBWa1NlbWFwaG9yZSAob3IKd2hhdGV2ZXIpIHJhdGhl
+ciB0aGFuIGNvbXB1dGUgYSBzaW5ndWxhciBkbWFfZmVuY2VfYXJyYXkgYnkgbWVyZ2luZy4KIAo+
+IEZvciB0aGUgYWJvdmUgaXQgd291bGQgc3VmZmljZSB0byBhZGQgdHdvIGFkZGl0aW9uYWwgZmxh
+Z3M6Cj4gCj4gICAgICAgICAjZGVmaW5lIERSTV9URUdSQV9TVUJNSVRfV0FJVF9TWU5DT0JKICgx
+IDw8IDIpCj4gICAgICAgICAjZGVmaW5lIERSTV9URUdSQV9TVUJNSVRfRU1JVF9TWU5DT0JKICgx
+IDw8IDMpCj4gCj4gd2hpY2ggd291bGQgZXZlbiBhbGxvdyBib3RoIHRvIGJlIGNvbWJpbmVkOgo+
+IAo+ICAgICAgICAgRFJNX1RFR1JBX1NVQk1JVF9XQUlUX1NZTkNPQkogfCBEUk1fVEVHUkFfU1VC
+TUlUX0VNSVRfRkVOQ0VfRkQKPiAKPiB3b3VsZCBhbGxvdyB0aGUgam9iIHRvIHdhaXQgZm9yIGFu
+IGludGVybmFsIHN5bmNvYmogKGRlZmluZWQgYnkgaGFuZGxlCj4gaW4gdGhlIGZlbmNlIG1lbWJl
+cikgYW5kIHJldHVybiBhIGZlbmNlIChhcyBGRCBpbiB0aGUgZmVuY2UgbWVtYmVyKSB0bwo+IHBh
+c3Mgb24gdG8gYW5vdGhlciBwcm9jZXNzIG9yIGRyaXZlciBhcyBwcmVmZW5jZS4KCldvdWxkIGJl
+IGVhc3ksIGlmIHlvdSBhcmUgaGFwcHkgd2l0aCB0aGUgbGltaXRhdGlvbiBvZiBqdXN0IGEgc2lu
+Z2xlCndhaXQtZmVuY2UuCi1DaHJpcwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
