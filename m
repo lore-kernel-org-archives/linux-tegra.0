@@ -1,591 +1,147 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 5/6] arm64: tegra: Add Tegra194 chip device tree
-Date: Fri, 12 Jan 2018 09:22:03 +0200
-Message-ID: <7085e085-134c-27cf-6ee7-ae691e63d454@kapsi.fi>
-References: <1515387278-29777-1-git-send-email-mperttunen@nvidia.com>
- <1515387278-29777-6-git-send-email-mperttunen@nvidia.com>
- <20180111215638.f5vxykb2vvxeypmk@rob-hp-laptop>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH 2/5] drm/prime: Export more helpers for drivers
+Date: Fri, 12 Jan 2018 09:56:03 +0100
+Message-ID: <20180112085603.GG13066@phenom.ffwll.local>
+References: <20180111214420.26203-1-thierry.reding@gmail.com>
+ <20180111214420.26203-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180111215638.f5vxykb2vvxeypmk@rob-hp-laptop>
+Content-Disposition: inline
+In-Reply-To: <20180111214420.26203-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11.01.2018 23:56, Rob Herring wrote:
-> On Mon, Jan 08, 2018 at 06:54:37AM +0200, Mikko Perttunen wrote:
->> Add the chip-level device tree, including binding headers, for the
->> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
->> are initially available, enough to boot to UART console.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  arch/arm64/boot/dts/nvidia/tegra194.dtsi   | 334 +++++++++++++++++++++++++++++
->>  include/dt-bindings/clock/tegra194-clock.h |  59 +++++
->>  include/dt-bindings/gpio/tegra194-gpio.h   |  59 +++++
->>  include/dt-bindings/reset/tegra194-reset.h |  40 ++++
->>  4 files changed, 492 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
->>  create mode 100644 include/dt-bindings/clock/tegra194-clock.h
->>  create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
->>  create mode 100644 include/dt-bindings/reset/tegra194-reset.h
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> new file mode 100644
->> index 000000000000..51eff420816d
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> @@ -0,0 +1,334 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +#include <dt-bindings/clock/tegra194-clock.h>
->> +#include <dt-bindings/gpio/tegra194-gpio.h>
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/mailbox/tegra186-hsp.h>
->> +#include <dt-bindings/reset/tegra194-reset.h>
->> +
->> +/ {
->> +	compatible = "nvidia,tegra194";
->
-> Documented?
+On Thu, Jan 11, 2018 at 10:44:17PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Export some more of the helpers in order to allow drivers to more fine-
+> grainedly select which helpers to use. This gives drivers an easy way to
+> reuse a lot of the code in the helpers while at the same time allowing
+> them to provide their own implementation for other functions in struct
+> dma_buf_ops.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Ah, wasn't aware these needed to be documented as well. Will add in v2.
+Same request as with the amd one: Pls supply a bit of kerneldoc and maybe
+polished intro section. Otherwise lgtm.
+-Daniel
 
->
->> +	interrupt-parent = <&gic>;
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +
->> +	uarta: serial@3100000 {
->
-> These should all be under a bus node. Tegra failed to do this at the
-> start and we're still copy-n-pasting this mistake.
->
-> Then you probably don't need 2 address and size cells for all the
-> peripherals.
+> ---
+>  drivers/gpu/drm/drm_prime.c | 23 +++++++++++++----------
+>  include/drm/drm_prime.h     | 12 ++++++++++++
+>  2 files changed, 25 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+> index 9a17725b0f7a..f9903e6b59f6 100644
+> --- a/drivers/gpu/drm/drm_prime.c
+> +++ b/drivers/gpu/drm/drm_prime.c
+> @@ -180,9 +180,8 @@ static int drm_prime_lookup_buf_handle(struct drm_prime_file_private *prime_fpri
+>  	return -ENOENT;
+>  }
+>  
+> -static int drm_gem_map_attach(struct dma_buf *dma_buf,
+> -			      struct device *target_dev,
+> -			      struct dma_buf_attachment *attach)
+> +int drm_gem_map_attach(struct dma_buf *dma_buf, struct device *target_dev,
+> +		       struct dma_buf_attachment *attach)
+>  {
+>  	struct drm_prime_attachment *prime_attach;
+>  	struct drm_gem_object *obj = dma_buf->priv;
+> @@ -200,9 +199,10 @@ static int drm_gem_map_attach(struct dma_buf *dma_buf,
+>  
+>  	return dev->driver->gem_prime_pin(obj);
+>  }
+> +EXPORT_SYMBOL(drm_gem_map_attach);
+>  
+> -static void drm_gem_map_detach(struct dma_buf *dma_buf,
+> -			       struct dma_buf_attachment *attach)
+> +void drm_gem_map_detach(struct dma_buf *dma_buf,
+> +			struct dma_buf_attachment *attach)
+>  {
+>  	struct drm_prime_attachment *prime_attach = attach->priv;
+>  	struct drm_gem_object *obj = dma_buf->priv;
+> @@ -228,6 +228,7 @@ static void drm_gem_map_detach(struct dma_buf *dma_buf,
+>  	kfree(prime_attach);
+>  	attach->priv = NULL;
+>  }
+> +EXPORT_SYMBOL(drm_gem_map_detach);
+>  
+>  void drm_prime_remove_buf_handle_locked(struct drm_prime_file_private *prime_fpriv,
+>  					struct dma_buf *dma_buf)
+> @@ -254,8 +255,8 @@ void drm_prime_remove_buf_handle_locked(struct drm_prime_file_private *prime_fpr
+>  	}
+>  }
+>  
+> -static struct sg_table *drm_gem_map_dma_buf(struct dma_buf_attachment *attach,
+> -					    enum dma_data_direction dir)
+> +struct sg_table *drm_gem_map_dma_buf(struct dma_buf_attachment *attach,
+> +				     enum dma_data_direction dir)
+>  {
+>  	struct drm_prime_attachment *prime_attach = attach->priv;
+>  	struct drm_gem_object *obj = attach->dmabuf->priv;
+> @@ -291,13 +292,15 @@ static struct sg_table *drm_gem_map_dma_buf(struct dma_buf_attachment *attach,
+>  
+>  	return sgt;
+>  }
+> +EXPORT_SYMBOL(drm_gem_map_dma_buf);
+>  
+> -static void drm_gem_unmap_dma_buf(struct dma_buf_attachment *attach,
+> -				  struct sg_table *sgt,
+> -				  enum dma_data_direction dir)
+> +void drm_gem_unmap_dma_buf(struct dma_buf_attachment *attach,
+> +			   struct sg_table *sgt,
+> +			   enum dma_data_direction dir)
+>  {
+>  	/* nothing to be done here */
+>  }
+> +EXPORT_SYMBOL(drm_gem_unmap_dma_buf);
+>  
+>  /**
+>   * drm_gem_dmabuf_export - dma_buf export implementation for GEM
+> diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
+> index 59ccab402e85..3a9706815773 100644
+> --- a/include/drm/drm_prime.h
+> +++ b/include/drm/drm_prime.h
+> @@ -50,8 +50,10 @@ struct drm_prime_file_private {
+>  	struct rb_root handles;
+>  };
+>  
+> +enum dma_data_direction;
+>  struct device;
+>  
+> +struct dma_buf_attachment;
+>  struct dma_buf_export_info;
+>  struct dma_buf;
+>  
+> @@ -59,6 +61,16 @@ struct drm_device;
+>  struct drm_gem_object;
+>  struct drm_file;
+>  
+> +int drm_gem_map_attach(struct dma_buf *dma_buf, struct device *target_dev,
+> +		       struct dma_buf_attachment *attach);
+> +void drm_gem_map_detach(struct dma_buf *dma_buf,
+> +			struct dma_buf_attachment *attach);
+> +struct sg_table *drm_gem_map_dma_buf(struct dma_buf_attachment *attach,
+> +				     enum dma_data_direction dir);
+> +void drm_gem_unmap_dma_buf(struct dma_buf_attachment *attach,
+> +			   struct sg_table *sgt,
+> +			   enum dma_data_direction dir);
+> +
+>  struct dma_buf *drm_gem_prime_export(struct drm_device *dev,
+>  				     struct drm_gem_object *obj,
+>  				     int flags);
+> -- 
+> 2.15.1
+> 
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
 
-So I should create one big simple-bus node and put everything with an 
-address apart from /memory (and maybe /sysram) inside it?
-
->
->> +		compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
->> +		reg = <0x0 0x03100000 0x0 0x40>;
->> +		reg-shift = <2>;
->> +		interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_UARTA>;
->> +		clock-names = "serial";
->> +		resets = <&bpmp TEGRA194_RESET_UARTA>;
->> +		reset-names = "serial";
->> +		status = "disabled";
->> +	};
->> +
->> +	uartb: serial@3110000 {
->> +		compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
->> +		reg = <0x0 0x03110000 0x0 0x40>;
->> +		reg-shift = <2>;
->> +		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_UARTB>;
->> +		clock-names = "serial";
->> +		resets = <&bpmp TEGRA194_RESET_UARTB>;
->> +		reset-names = "serial";
->> +		status = "disabled";
->> +	};
->> +
->> +	uartd: serial@3130000 {
->> +		compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
->> +		reg = <0x0 0x03130000 0x0 0x40>;
->> +		reg-shift = <2>;
->> +		interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_UARTD>;
->> +		clock-names = "serial";
->> +		resets = <&bpmp TEGRA194_RESET_UARTD>;
->> +		reset-names = "serial";
->> +		status = "disabled";
->> +	};
->> +
->> +	uarte: serial@3140000 {
->> +		compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
->> +		reg = <0x0 0x03140000 0x0 0x40>;
->> +		reg-shift = <2>;
->> +		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_UARTE>;
->> +		clock-names = "serial";
->> +		resets = <&bpmp TEGRA194_RESET_UARTE>;
->> +		reset-names = "serial";
->> +		status = "disabled";
->> +	};
->> +
->> +	uartf: serial@3150000 {
->> +		compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
->> +		reg = <0x0 0x03150000 0x0 0x40>;
->> +		reg-shift = <2>;
->> +		interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_UARTF>;
->> +		clock-names = "serial";
->> +		resets = <&bpmp TEGRA194_RESET_UARTF>;
->> +		reset-names = "serial";
->> +		status = "disabled";
->> +	};
->> +
->> +	gen1_i2c: i2c@3160000 {
->> +		compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
->> +		reg = <0x0 0x03160000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		clocks = <&bpmp TEGRA194_CLK_I2C1>;
->> +		clock-names = "div-clk";
->> +		resets = <&bpmp TEGRA194_RESET_I2C1>;
->> +		reset-names = "i2c";
->> +		status = "disabled";
->> +	};
->> +
->> +	uarth: serial@3170000 {
->> +		compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
->> +		reg = <0x0 0x03170000 0x0 0x40>;
->> +		reg-shift = <2>;
->> +		interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_UARTH>;
->> +		clock-names = "serial";
->> +		resets = <&bpmp TEGRA194_RESET_UARTH>;
->> +		reset-names = "serial";
->> +		status = "disabled";
->> +	};
->> +
->> +	cam_i2c: i2c@3180000 {
->> +		compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
->> +		reg = <0x0 0x03180000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		clocks = <&bpmp TEGRA194_CLK_I2C3>;
->> +		clock-names = "div-clk";
->> +		resets = <&bpmp TEGRA194_RESET_I2C3>;
->> +		reset-names = "i2c";
->> +		status = "disabled";
->> +	};
->> +
->> +	/* shares pads with dpaux1 */
->> +	dp_aux_ch1_i2c: i2c@3190000 {
->> +		compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
->> +		reg = <0x0 0x03190000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		clocks = <&bpmp TEGRA194_CLK_I2C4>;
->> +		clock-names = "div-clk";
->> +		resets = <&bpmp TEGRA194_RESET_I2C4>;
->> +		reset-names = "i2c";
->> +		status = "disabled";
->> +	};
->> +
->> +	/* shares pads with dpaux0 */
->> +	dp_aux_ch0_i2c: i2c@31b0000 {
->> +		compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
->> +		reg = <0x0 0x031b0000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		clocks = <&bpmp TEGRA194_CLK_I2C6>;
->> +		clock-names = "div-clk";
->> +		resets = <&bpmp TEGRA194_RESET_I2C6>;
->> +		reset-names = "i2c";
->> +		status = "disabled";
->> +	};
->> +
->> +	gen7_i2c: i2c@31c0000 {
->> +		compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
->> +		reg = <0x0 0x031c0000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		clocks = <&bpmp TEGRA194_CLK_I2C7>;
->> +		clock-names = "div-clk";
->> +		resets = <&bpmp TEGRA194_RESET_I2C7>;
->> +		reset-names = "i2c";
->> +		status = "disabled";
->> +	};
->> +
->> +	gen9_i2c: i2c@31e0000 {
->> +		compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
->> +		reg = <0x0 0x031e0000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		clocks = <&bpmp TEGRA194_CLK_I2C9>;
->> +		clock-names = "div-clk";
->> +		resets = <&bpmp TEGRA194_RESET_I2C9>;
->> +		reset-names = "i2c";
->> +		status = "disabled";
->> +	};
->> +
->> +	sdmmc1: sdhci@3400000 {
->> +		compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
->> +		reg = <0x0 0x03400000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_SDMMC1>;
->> +		clock-names = "sdhci";
->> +		resets = <&bpmp TEGRA194_RESET_SDMMC1>;
->> +		reset-names = "sdhci";
->> +		status = "disabled";
->> +	};
->> +
->> +	sdmmc3: sdhci@3440000 {
->> +		compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
->> +		reg = <0x0 0x03440000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_SDMMC3>;
->> +		clock-names = "sdhci";
->> +		resets = <&bpmp TEGRA194_RESET_SDMMC3>;
->> +		reset-names = "sdhci";
->> +		status = "disabled";
->> +	};
->> +
->> +	sdmmc4: sdhci@3460000 {
->> +		compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
->> +		reg = <0x0 0x03460000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_SDMMC4>;
->> +		clock-names = "sdhci";
->> +		resets = <&bpmp TEGRA194_RESET_SDMMC4>;
->> +		reset-names = "sdhci";
->> +		status = "disabled";
->> +	};
->> +
->> +	gic: interrupt-controller@3881000 {
->> +		compatible = "arm,gic-400";
->> +		#interrupt-cells = <3>;
->> +		interrupt-controller;
->> +		reg = <0x0 0x03881000 0x0 0x1000>,
->> +		      <0x0 0x03882000 0x0 0x2000>;
->> +		interrupts = <GIC_PPI 9
->> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
->> +		interrupt-parent = <&gic>;
->> +	};
->> +
->> +	hsp_top0: hsp@3c00000 {
->> +		compatible = "nvidia,tegra186-hsp";
->> +		reg = <0x0 0x03c00000 0x0 0xa0000>;
->> +		interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
->> +		interrupt-names = "doorbell";
->> +		#mbox-cells = <2>;
->> +	};
->> +
->> +	gen2_i2c: i2c@c240000 {
->> +		compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
->> +		reg = <0x0 0x0c240000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		clocks = <&bpmp TEGRA194_CLK_I2C2>;
->> +		clock-names = "div-clk";
->> +		resets = <&bpmp TEGRA194_RESET_I2C2>;
->> +		reset-names = "i2c";
->> +		status = "disabled";
->> +	};
->> +
->> +	gen8_i2c: i2c@c250000 {
->> +		compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
->> +		reg = <0x0 0x0c250000 0x0 0x10000>;
->> +		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		clocks = <&bpmp TEGRA194_CLK_I2C8>;
->> +		clock-names = "div-clk";
->> +		resets = <&bpmp TEGRA194_RESET_I2C8>;
->> +		reset-names = "i2c";
->> +		status = "disabled";
->> +	};
->> +
->> +	uartc: serial@c280000 {
->> +		compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
->> +		reg = <0x0 0x0c280000 0x0 0x40>;
->> +		reg-shift = <2>;
->> +		interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_UARTC>;
->> +		clock-names = "serial";
->> +		resets = <&bpmp TEGRA194_RESET_UARTC>;
->> +		reset-names = "serial";
->> +		status = "disabled";
->> +	};
->> +
->> +	uartg: serial@c290000 {
->> +		compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
->> +		reg = <0x0 0x0c290000 0x0 0x40>;
->> +		reg-shift = <2>;
->> +		interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks = <&bpmp TEGRA194_CLK_UARTG>;
->> +		clock-names = "serial";
->> +		resets = <&bpmp TEGRA194_RESET_UARTG>;
->> +		reset-names = "serial";
->> +		status = "disabled";
->> +	};
->> +
->> +	pmc@c360000 {
->> +		compatible = "nvidia,tegra194-pmc";
->> +		reg = <0 0x0c360000 0 0x10000>,
->> +		      <0 0x0c370000 0 0x10000>,
->> +		      <0 0x0c380000 0 0x10000>,
->> +		      <0 0x0c390000 0 0x10000>,
->> +		      <0 0x0c3a0000 0 0x10000>;
->> +		reg-names = "pmc", "wake", "aotag", "scratch", "misc";
->> +	};
->> +
->> +	sysram@40000000 {
->> +		compatible = "nvidia,tegra194-sysram", "mmio-sram";
->> +		reg = <0x0 0x40000000 0x0 0x50000>;
->> +		#address-cells = <2>;
->> +		#size-cells = <2>;
->> +		ranges = <0 0x0 0x0 0x40000000 0x0 0x50000>;
->> +
->> +		cpu_bpmp_tx: shmem@4e000 {
->> +			compatible = "nvidia,tegra194-bpmp-shmem";
->> +			reg = <0x0 0x4e000 0x0 0x1000>;
->> +			label = "cpu-bpmp-tx";
->> +			pool;
->> +		};
->> +
->> +		cpu_bpmp_rx: shmem@4f000 {
->> +			compatible = "nvidia,tegra194-bpmp-shmem";
->> +			reg = <0x0 0x4f000 0x0 0x1000>;
->> +			label = "cpu-bpmp-rx";
->> +			pool;
->> +		};
->> +	};
->> +
->> +	bpmp: bpmp {
->> +		compatible = "nvidia,tegra186-bpmp";
->> +		mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB
->> +				    TEGRA_HSP_DB_MASTER_BPMP>;
->> +		shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
->> +		#clock-cells = <1>;
->> +		#reset-cells = <1>;
->> +		#power-domain-cells = <1>;
->> +
->> +		bpmp_i2c: i2c {
->> +			compatible = "nvidia,tegra186-bpmp-i2c";
->> +			nvidia,bpmp-bus-id = <5>;
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +		};
->> +
->> +		bpmp_thermal: thermal {
->> +			compatible = "nvidia,tegra186-bpmp-thermal";
->> +			#thermal-sensor-cells = <1>;
->> +		};
->> +	};
->> +
->> +	timer {
->> +		compatible = "arm,armv8-timer";
->> +		interrupts = <GIC_PPI 13
->> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 14
->> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 11
->> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 10
->> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->> +		interrupt-parent = <&gic>;
->> +	};
->> +};
->> diff --git a/include/dt-bindings/clock/tegra194-clock.h b/include/dt-bindings/clock/tegra194-clock.h
->> new file mode 100644
->> index 000000000000..7eba4763e375
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/tegra194-clock.h
->> @@ -0,0 +1,59 @@
->> +/*
->> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
->> + *
->> + * This program is free software; you can redistribute it and/or modify it
->> + * under the terms and conditions of the GNU General Public License,
->> + * version 2, as published by the Free Software Foundation.
->> + *
->> + * This program is distributed in the hope it will be useful, but WITHOUT
->> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
->> + * more details.
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->
-> Seems you missed using SPDX tag on this one.
-
-Thanks, will fix.
-
->
->> + */
->> +
->> +#ifndef __ABI_MACH_T194_CLOCK_H
->> +#define __ABI_MACH_T194_CLOCK_H
->> +
->> +/** @clkdesc{i2c_clks, out, mux, CLK_RST_CONTROLLER_CLK_SOURCE_I2C1} */
->> +#define TEGRA194_CLK_I2C1			48
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C2 */
->> +#define TEGRA194_CLK_I2C2			49
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C3 */
->> +#define TEGRA194_CLK_I2C3			50
->> +/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C4 */
->> +#define TEGRA194_CLK_I2C4			51
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C6 */
->> +#define TEGRA194_CLK_I2C6			52
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C7 */
->> +#define TEGRA194_CLK_I2C7			53
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C8 */
->> +#define TEGRA194_CLK_I2C8			54
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C9 */
->> +#define TEGRA194_CLK_I2C9			55
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC1 */
->> +#define TEGRA194_CLK_SDMMC1			120
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC3 */
->> +#define TEGRA194_CLK_SDMMC3			122
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC4 */
->> +#define TEGRA194_CLK_SDMMC4			123
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTA */
->> +#define TEGRA194_CLK_UARTA			155
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTB */
->> +#define TEGRA194_CLK_UARTB			156
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTC */
->> +#define TEGRA194_CLK_UARTC			157
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTD */
->> +#define TEGRA194_CLK_UARTD			158
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTE */
->> +#define TEGRA194_CLK_UARTE			159
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTF */
->> +#define TEGRA194_CLK_UARTF			160
->> +/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTG */
->> +#define TEGRA194_CLK_UARTG			161
->> +/** @brief CLK_RST_CONTROLLER_CLK_SOURCE_UARTH switch divider output */
->> +#define TEGRA194_CLK_UARTH			190
->> +
->> +#endif
->> diff --git a/include/dt-bindings/gpio/tegra194-gpio.h b/include/dt-bindings/gpio/tegra194-gpio.h
->> new file mode 100644
->> index 000000000000..86435a73ef9e
->> --- /dev/null
->> +++ b/include/dt-bindings/gpio/tegra194-gpio.h
->> @@ -0,0 +1,59 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * This header provides constants for binding nvidia,tegra194-gpio*.
->> + *
->> + * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
->> + * provide names for this.
->> + *
->> + * The second cell contains standard flag values specified in gpio.h.
->> + */
->> +
->> +#ifndef _DT_BINDINGS_GPIO_TEGRA194_GPIO_H
->> +#define _DT_BINDINGS_GPIO_TEGRA194_GPIO_H
->> +
->> +#include <dt-bindings/gpio/gpio.h>
->> +
->> +/* GPIOs implemented by main GPIO controller */
->> +#define TEGRA194_MAIN_GPIO_PORT_A 0
->> +#define TEGRA194_MAIN_GPIO_PORT_B 1
->> +#define TEGRA194_MAIN_GPIO_PORT_C 2
->> +#define TEGRA194_MAIN_GPIO_PORT_D 3
->> +#define TEGRA194_MAIN_GPIO_PORT_E 4
->> +#define TEGRA194_MAIN_GPIO_PORT_F 5
->> +#define TEGRA194_MAIN_GPIO_PORT_G 6
->> +#define TEGRA194_MAIN_GPIO_PORT_H 7
->> +#define TEGRA194_MAIN_GPIO_PORT_I 8
->> +#define TEGRA194_MAIN_GPIO_PORT_J 9
->> +#define TEGRA194_MAIN_GPIO_PORT_K 10
->> +#define TEGRA194_MAIN_GPIO_PORT_L 11
->> +#define TEGRA194_MAIN_GPIO_PORT_M 12
->> +#define TEGRA194_MAIN_GPIO_PORT_N 13
->> +#define TEGRA194_MAIN_GPIO_PORT_O 14
->> +#define TEGRA194_MAIN_GPIO_PORT_P 15
->> +#define TEGRA194_MAIN_GPIO_PORT_Q 16
->> +#define TEGRA194_MAIN_GPIO_PORT_R 17
->> +#define TEGRA194_MAIN_GPIO_PORT_S 18
->> +#define TEGRA194_MAIN_GPIO_PORT_T 19
->> +#define TEGRA194_MAIN_GPIO_PORT_U 20
->> +#define TEGRA194_MAIN_GPIO_PORT_V 21
->> +#define TEGRA194_MAIN_GPIO_PORT_W 22
->> +#define TEGRA194_MAIN_GPIO_PORT_X 23
->> +#define TEGRA194_MAIN_GPIO_PORT_Y 24
->> +#define TEGRA194_MAIN_GPIO_PORT_Z 25
->> +#define TEGRA194_MAIN_GPIO_PORT_FF 26
->> +#define TEGRA194_MAIN_GPIO_PORT_GG 27
->> +
->> +#define TEGRA194_MAIN_GPIO(port, offset) \
->> +	((TEGRA194_MAIN_GPIO_PORT_##port * 8) + offset)
->> +
->> +/* GPIOs implemented by AON GPIO controller */
->> +#define TEGRA194_AON_GPIO_PORT_AA 0
->> +#define TEGRA194_AON_GPIO_PORT_BB 1
->> +#define TEGRA194_AON_GPIO_PORT_CC 2
->> +#define TEGRA194_AON_GPIO_PORT_DD 3
->> +#define TEGRA194_AON_GPIO_PORT_EE 4
->> +
->> +#define TEGRA194_AON_GPIO(port, offset) \
->> +	((TEGRA194_AON_GPIO_PORT_##port * 8) + offset)
->> +
->> +#endif
->> diff --git a/include/dt-bindings/reset/tegra194-reset.h b/include/dt-bindings/reset/tegra194-reset.h
->> new file mode 100644
->> index 000000000000..7c6afac99c4a
->> --- /dev/null
->> +++ b/include/dt-bindings/reset/tegra194-reset.h
->> @@ -0,0 +1,40 @@
->> +/*
->> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
->> + *
->> + * This program is free software; you can redistribute it and/or modify it
->> + * under the terms and conditions of the GNU General Public License,
->> + * version 2, as published by the Free Software Foundation.
->> + *
->> + * This program is distributed in the hope it will be useful, but WITHOUT
->> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
->> + * more details.
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->
-> SPDX
-
-Will fix.
-
-Thanks,
-Mikko
-
->
->> + */
->> +
->> +#ifndef __ABI_MACH_T194_RESET_H
->> +#define __ABI_MACH_T194_RESET_H
->> +
->> +#define TEGRA194_RESET_I2C1			24
->> +#define TEGRA194_RESET_I2C2			29
->> +#define TEGRA194_RESET_I2C3			30
->> +#define TEGRA194_RESET_I2C4			31
->> +#define TEGRA194_RESET_I2C6			32
->> +#define TEGRA194_RESET_I2C7			33
->> +#define TEGRA194_RESET_I2C8			34
->> +#define TEGRA194_RESET_I2C9			35
->> +#define TEGRA194_RESET_SDMMC1			82
->> +#define TEGRA194_RESET_SDMMC3			84
->> +#define TEGRA194_RESET_SDMMC4			85
->> +#define TEGRA194_RESET_UARTA			100
->> +#define TEGRA194_RESET_UARTB			101
->> +#define TEGRA194_RESET_UARTC			102
->> +#define TEGRA194_RESET_UARTD			103
->> +#define TEGRA194_RESET_UARTE			104
->> +#define TEGRA194_RESET_UARTF			105
->> +#define TEGRA194_RESET_UARTG			106
->> +#define TEGRA194_RESET_UARTH                    107
->> +
->> +#endif
->> --
->> 2.1.4
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
