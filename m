@@ -1,55 +1,34 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: TK1 System Freeze
-Date: Sat, 13 Jan 2018 01:19:39 +0100
-Message-ID: <7d874417cbb2067bcb4f49af000f9f03@agner.ch>
-References: <1511135854.13661.3.camel@toradex.com>
+From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: dts: rockchip: drop veyron's nonstandard 'backlight-boot-off'
+Date: Sat, 13 Jan 2018 19:49:30 +0100
+Message-ID: <3929059.IgKPAvtPnp@phil>
+References: <20180106004757.8239-1-briannorris@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1511135854.13661.3.camel-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180106004757.8239-1-briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lin Huang <hl-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Marcel, Hi Thierry,
-
-On 2017-11-20 00:57, Marcel Ziswiler wrote:
-> Hi there
+Am Freitag, 5. Januar 2018, 16:47:55 CET schrieb Brian Norris:
+> This was used out-of-tree as a hack for resolving issues where some
+> systems expect the backlight to turn on automatically at boot, while
+> others expect to manage the backlight status via a DRM/panel driver.
+> Those issues have since been fixed upstream in pwm_bl.c without device
+> tree hacks, and so this un-documented property should no longer be
+> useful.
 > 
-> I lately was tasked to run some legacy Qt4e [1] application on Apalis
-> TK1. It should really only draw directly to the Linux frame buffer
-> /dev/fb0. Strangely as soon as that application is started the whole
-> system freezes. Running it with the VNC backend or a pure frame buffer
-> emulation it works just fine. So it must have something to do with the
-> particular way the frame buffer is done on TK1. So far no attempt in
-> debugging this any further bear any fruit. Whether stracing what the
-> application is doing nor tracing the linux kernel side of things
-> revealed where exactly the freeze happens. As I feared some kind of a
-> configuration issue on Apalis TK1 I also tried the same on Jetson TK1
-> with latest stock Linux kernel 4.14. However the same freeze happens.
+> Signed-off-by: Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-This is still the case with 4.15-rc7.
+applied (for 4.17 though)
 
-While dd is not enough to reproduce it, using a simple fbdev application
-such as ts_calibrate seems to be sufficient. Qt and ts_calibrate use
-mmap for the framebuffer. The system seems to freeze when it tries to
-write into the mapped area (at the memset line):
-https://github.com/kergoth/tslib/blob/master/tests/fbutils-linux.c#L160
 
-Is this a known problem? Any idea?
-
+Thanks
+Heiko
 --
-Stefan
-
-
-> 
-> Has anybody ever seen a similar complete system freeze? Any ideas what
-> it may be or how we could debug this any further?
-> 
-> [1] https://layers.openembedded.org/layerindex/recipe/43622/
-> 
-> Cheers
-> 
-> Marcel
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
