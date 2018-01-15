@@ -1,34 +1,39 @@
-From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: dts: rockchip: drop veyron's nonstandard 'backlight-boot-off'
-Date: Sat, 13 Jan 2018 19:49:30 +0100
-Message-ID: <3929059.IgKPAvtPnp@phil>
-References: <20180106004757.8239-1-briannorris@chromium.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+Date: Mon, 15 Jan 2018 13:56:18 +0300
+Message-ID: <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180106004757.8239-1-briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lin Huang <hl-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+Content-Language: en-US
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Freitag, 5. Januar 2018, 16:47:55 CET schrieb Brian Norris:
-> This was used out-of-tree as a hack for resolving issues where some
-> systems expect the backlight to turn on automatically at boot, while
-> others expect to manage the backlight status via a DRM/panel driver.
-> Those issues have since been fixed upstream in pwm_bl.c without device
-> tree hacks, and so this un-documented property should no longer be
-> useful.
+On 10.01.2018 16:59, Dmitry Osipenko wrote:
+> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+> as critical.
 > 
-> Signed-off-by: Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+> 
+> Change log:
+> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
+>         and Tegra30.
+> 
+> v3:     Dropped marking PLL_P outputs as critical, because seems they are
+>         not so critical. Although, I still haven't got a definitive answer
+>         about what exact HW functions are affected by the fixed-clocks.
+>         Anyway it should be cleaner to correct the actual drivers.
 
-applied (for 4.17 though)
-
-
-Thanks
-Heiko
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Stephen / Michael, would it be possible to schedule these patches for 4.16? My
+T20 and T30 devices aren't working without the 'critical clocks' patch. Things
+happen to work with the opensource u-boot, but not with the proprietary
+bootloader. It's probably not a big deal that out-of-tree devices are broken,
+although would be nice to have one problem less.
