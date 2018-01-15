@@ -1,115 +1,54 @@
-From: Chris Wilson <chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org>
-Subject: Re: [PATCH 0/3] drm/tegra: Add support for fence FDs
-Date: Mon, 15 Jan 2018 13:57:24 +0000
-Message-ID: <151602464400.8139.25541493056086029@mail.alporthouse.com>
-References: <20180111222249.29105-1-thierry.reding@gmail.com>
- <151575361658.23681.15835882826597063093@mail.alporthouse.com>
- <20180112151438.GD19999@ulmo>
- <151577153600.24367.14807966085718429746@mail.alporthouse.com>
- <20180112160422.GA7982@ulmo>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 5/6] arm64: tegra: Add Tegra194 chip device tree
+Date: Mon, 15 Jan 2018 11:21:24 -0600
+Message-ID: <CAL_JsqLH8FJ+ppFrtxS7ja-Apkj=RfDcDoFOtNPsnbb6+Pgp-w@mail.gmail.com>
+References: <1515387278-29777-1-git-send-email-mperttunen@nvidia.com>
+ <1515387278-29777-6-git-send-email-mperttunen@nvidia.com> <20180111215638.f5vxykb2vvxeypmk@rob-hp-laptop>
+ <7085e085-134c-27cf-6ee7-ae691e63d454@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20180112160422.GA7982@ulmo>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <7085e085-134c-27cf-6ee7-ae691e63d454-/1wQRMveznE@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-UXVvdGluZyBUaGllcnJ5IFJlZGluZyAoMjAxOC0wMS0xMiAxNjowNDoyMikKPiBPbiBGcmksIEph
-biAxMiwgMjAxOCBhdCAwMzozODo1NlBNICswMDAwLCBDaHJpcyBXaWxzb24gd3JvdGU6Cj4gPiBR
-dW90aW5nIFRoaWVycnkgUmVkaW5nICgyMDE4LTAxLTEyIDE1OjE0OjM4KQo+ID4gPiBPbiBGcmks
-IEphbiAxMiwgMjAxOCBhdCAxMDo0MDoxNkFNICswMDAwLCBDaHJpcyBXaWxzb24gd3JvdGU6Cj4g
-PiA+ID4gUXVvdGluZyBUaGllcnJ5IFJlZGluZyAoMjAxOC0wMS0xMSAyMjoyMjo0NikKPiA+ID4g
-PiA+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gPiA+ID4gPiAK
-PiA+ID4gPiA+IFRoaXMgc2V0IG9mIHBhdGNoZXMgYWRkcyBzdXBwb3J0IGZvciBmZW5jZXMgdG8g
-VGVncmEgRFJNIGFuZCBjb21wbGVtZW50cwo+ID4gPiA+ID4gdGhlIGZlbmNlIEZEIHN1cHBvcnQg
-Zm9yIE5vdXZlYXUuIFRlY2huaWNhbGx5IHRoaXMgaXNuJ3QgbmVjZXNzYXJ5IGZvciBhCj4gPiA+
-ID4gPiBmZW5jZS1iYXNlZCBzeW5jaHJvbml6YXRpb24gbG9vcCB3aXRoIE5vdXZlYXUgYmVjYXVz
-ZSB0aGUgS01TIGNvcmUgdGFrZXMKPiA+ID4gPiA+IGNhcmUgb2YgYWxsIHRoYXQsIGJ1dCBlbmdp
-bmVzIGJlaGluZCBob3N0MXggY2FuIHVzZSB0aGUgSU9DVEwgZXh0ZW5zaW9ucwo+ID4gPiA+ID4g
-cHJvdmlkZWQgaGVyZSB0byBlbWl0IGZlbmNlIEZEcyB0aGF0IGluIHR1cm4gY2FuIGJlIHVzZWQg
-dG8gc3luY2hyb25pemUKPiA+ID4gPiA+IHRoZWlyIGpvYnMgd2l0aCBlaXRoZXIgdGhlIHNjYW5v
-dXQgZW5naW5lIG9yIHRoZSBHUFUuCj4gPiA+ID4gCj4gPiA+ID4gV2hpbHN0IGhvb2tpbmcgdXAg
-ZmVuY2VzLCBJIGFkdmlzZSB5b3UgdG8gYWxzbyBob29rIHVwIGRybV9zeW5jb2JqLgo+ID4gPiA+
-IEludGVybmFsbHkgdGhleSBlYWNoIHJlc29sdmUgdG8gYW5vdGhlciBmZW5jZSwgc28gdGhlIG1l
-Y2hhbmljcyBhcmUKPiA+ID4gPiBpZGVudGljYWwsIHlvdSBqdXN0IG5lZWQgYW5vdGhlciBhcnJh
-eSBpbiB0aGUgdUFCSSBmb3IgaW4vb3V0IHN5bmNvYmouCj4gPiA+ID4gVGhlIGFkdmFudGFnZSBv
-ZiBkcm1fc3luY29iaiBpcyB0aGF0IHVzZXJzcGFjZSBjYW4gdHJhY2sgaW50ZXJuYWwgZmVuY2Vz
-Cj4gPiA+ID4gdXNpbmcgaW5leGhhdXN0aWJsZSBoYW5kbGVzLCByZXNlcnZpbmcgdGhlIHByZWNp
-b3VzIGZkIGZvciBJUEMgb3IgS01TLgo+ID4gPiAKPiA+ID4gSSdtIG5vdCBzdXJlIHRoYXQgSSBw
-cm9wZXJseSB1bmRlcnN0YW5kIGhvdyB0byB1c2UgdGhlc2UuIEl0IGxvb2tzIGFzIGlmCj4gPiA+
-IHRoZXkgYXJlIGJldHRlciBmZW5jZSBGRHMsIHNvIGluIGNhc2Ugd2hlcmUgeW91IHN1Ym1pdCBp
-bnRlcm5hbCB3b3JrIHlvdQo+ID4gPiB3b3VsZCBnbyB3aXRoIGEgZHJtX3N5bmNvYmogYW5kIHdo
-ZW4geW91IG5lZWQgYWNjZXNzIHRvIHRoZSBmZW5jZSBmcm9tIGEKPiA+ID4gZGlmZmVyZW50IHBy
-b2Nlc3Mgb3IgZHJpdmVyLCB5b3Ugc2hvdWxkIHVzZSBhbiBGRC4KPiA+IAo+ID4gWWVzLCBzaW1w
-bHkgcHV0IHRoZXkgYXJlIGJldHRlciBmZW5jZSBmZHMuCj4gPiAKPiA+ID4gRG9lc24ndCB0aGlz
-IG1lYW4gd2UgY2FuIGNvdmVyIHRoaXMgYnkganVzdCBhZGRpbmcgYSBmbGFnIHRoYXQgbWFya3Mg
-dGhlCj4gPiA+IGZlbmNlIGFzIGJlaW5nIGEgaGFuZGxlIG9yIGFuIEZEPyBEbyB3ZSBoYXZlIHNp
-dHVhdGlvbnMgd2hlcmUgd2Ugd2FudCBhbgo+ID4gPiBGRCAqYW5kKiBhIGhhbmRsZSByZXR1cm5l
-ZCBhcyByZXN1bHQgb2YgdGhlIGpvYiBzdWJtaXNzaW9uPwo+ID4gCj4gPiBQcm9iYWJseSBub3Qs
-IGJ1dCBpZiB5b3UgZG9uJ3QgbmVlZCB0byBmb3JjZSB1c2Vyc3BhY2UgdG8gY2hvb3NlLCB0aGV5
-Cj4gPiB3aWxsIGNvbWUgdXAgd2l0aCBhIHNpdHVhdGlvbiB3aGVyZSBpdCBpcyB1c2VmdWwuIFRo
-b3VnaCBvbmUgdGhpbmcgdG8KPiA+IGNvbnNpZGVyIHdpdGggdGhlIGRybV9zeW5jb2JqIGlzIHRo
-YXQgeW91IHdpbGwgd2FudCB0byBoYW5kbGUgYW4gYXJyYXkKPiA+IG9mIGluL291dCBmZW5jZXMs
-IGFzIHVzZXJzcGFjZSB3aWxsIHBhc3MgaW4gYW4gYXJyYXkgb2YgVmtTZW1hcGhvcmUgKG9yCj4g
-PiB3aGF0ZXZlcikgcmF0aGVyIHRoYW4gY29tcHV0ZSBhIHNpbmd1bGFyIGRtYV9mZW5jZV9hcnJh
-eSBieSBtZXJnaW5nLgo+IAo+IEl0J3MgZmFpcmx5IHVubGlrZWx5IHRoYXQgVGVncmEgRFJNIHdp
-bGwgZXZlciBuZWVkIHRvIGJlIGFibGUgdG8gZGVhbAo+IHdpdGggVnVsa2FuIChJJ20gbm90IHN1
-cmUgaWYgdGhlIHByZS1UZWdyYTEyNCBHUFUgaXMgY2FwYWJsZSBvZiBpdCkuIEJ1dAo+IHlvdSdy
-ZSByaWdodCwgbWlnaHQgYmUgYSBnb29kIGlkZWEgdG8gcGxhbiBmb3IgdGhpcyBhbnl3YXkgc2lu
-Y2UgaXQKPiBpc24ndCByZWFsbHkgY29tcGxpY2F0ZWQgYW5kIHdlIHN0aWxsIGhhdmUgYSBmZXcg
-cmVzZXJ2ZWQgYml0cyBsZWZ0Lgo+IAo+ID4gPiBGb3IgdGhlIGFib3ZlIGl0IHdvdWxkIHN1ZmZp
-Y2UgdG8gYWRkIHR3byBhZGRpdGlvbmFsIGZsYWdzOgo+ID4gPiAKPiA+ID4gICAgICAgICAjZGVm
-aW5lIERSTV9URUdSQV9TVUJNSVRfV0FJVF9TWU5DT0JKICgxIDw8IDIpCj4gPiA+ICAgICAgICAg
-I2RlZmluZSBEUk1fVEVHUkFfU1VCTUlUX0VNSVRfU1lOQ09CSiAoMSA8PCAzKQo+ID4gPiAKPiA+
-ID4gd2hpY2ggd291bGQgZXZlbiBhbGxvdyBib3RoIHRvIGJlIGNvbWJpbmVkOgo+ID4gPiAKPiA+
-ID4gICAgICAgICBEUk1fVEVHUkFfU1VCTUlUX1dBSVRfU1lOQ09CSiB8IERSTV9URUdSQV9TVUJN
-SVRfRU1JVF9GRU5DRV9GRAo+ID4gPiAKPiA+ID4gd291bGQgYWxsb3cgdGhlIGpvYiB0byB3YWl0
-IGZvciBhbiBpbnRlcm5hbCBzeW5jb2JqIChkZWZpbmVkIGJ5IGhhbmRsZQo+ID4gPiBpbiB0aGUg
-ZmVuY2UgbWVtYmVyKSBhbmQgcmV0dXJuIGEgZmVuY2UgKGFzIEZEIGluIHRoZSBmZW5jZSBtZW1i
-ZXIpIHRvCj4gPiA+IHBhc3Mgb24gdG8gYW5vdGhlciBwcm9jZXNzIG9yIGRyaXZlciBhcyBwcmVm
-ZW5jZS4KPiA+IAo+ID4gV291bGQgYmUgZWFzeSwgaWYgeW91IGFyZSBoYXBweSB3aXRoIHRoZSBs
-aW1pdGF0aW9uIG9mIGp1c3QgYSBzaW5nbGUKPiA+IHdhaXQtZmVuY2UuCj4gCj4gWWVhaCwgdGhl
-IG9idmlvdXMgYWR2YW50YWdlIGhlcmUgaXMgdGhhdCB0aGlzIGlzIHRvdGFsbHkgdHJpdmlhbCB0
-bwo+IGltcGxlbWVudCBib3RoIGluIHRoZSBrZXJuZWwgYW5kIGluIHVzZXJzcGFjZS4gRXh0ZW5k
-aW5nIGl0IHRvIGFuIGFycmF5Cj4gcmVxdWlyZXMgaW50cm9kdWN0aW9uIG9mIGFuIGV4dHJhIHN0
-cnVjdHVyZSAoZm9yIGEgPGZlbmNlLCBmbGFncz4gcGFpcikKPiBhbmQgYSB1NjQgZm9yIHRoZSBh
-ZGRyZXNzIGFuZCBhIHUzMiBmb3IgdGhlIG51bWJlciBvZiBlbGVtZW50cyBpbiB0aGUKPiBhcnJh
-eS4KPiAKPiBBbm90aGVyIHRoaW5nIEknbSB3b25kZXJpbmcgaXMgaWYgd2UgY2FuJ3Qgc2ltcGxp
-ZnkgdGhpcyBzb21ld2hhdCBieQo+IG9ubHkgc3VwcG9ydGluZyBzeW5jb2JqcyBhbmQgdGhlbiB1
-c2UgdGhlIFNZTkNPQkogSU9DVExzIHRvIGNvbnZlcnQgdG8KPiBGRCBpZiBpdCB0dXJucyBvdXQg
-dGhhdCB3ZSBuZWVkIGl0LgoKWWVzLCBpdCBpcyBwb3NzaWJsZSB0byBrZWVwIHRoZSBrZXJuZWwg
-aW50ZXJmYWNlIG9ubHkgaGFuZGxpbmcgc3luY29iagphbmQgaGFuZGxlIHN5bmNfZmlsZSBpbnRl
-cm9wIGluIHVzZXJzcGFjZS4KCj4gTGV0J3Mgc2F5IHdlIGhhdmUgYSB1c2UtY2FzZSB3aGVyZSB3
-ZSBkZWNvZGUgYW4gdmlkZW8gZnJhbWUgdXNpbmcgYQo+IGhhcmR3YXJlIGRlY29kZXIgKHdoaWNo
-IHdlIGRvbid0IHN1cHBvcnQgdXBzdHJlYW0geWV0KS4gVGhlIGRlY29kZXIKPiBjb3VsZCBzaWdu
-YWwgY29tcGxldGlvbiB1c2luZyBhIHN5bmNvYmouIFVzZXJzcGFjZSBjb3VsZCB0aGVuIGdyYWIg
-dGhlCj4gaGFuZGxlIGZvciB0aGF0IHN5bmNvYmogYW5kIHBhc3MgaXQgYmFjayBpbiBhcyBwcmVm
-ZW5jZSBmb3IgYSBqb2IgdGhhdAo+IGRvZXMgcG9zdC1wcm9jZXNzaW5nIHVzaW5nIFZJQy4gVGhl
-eSBib3RoIGFyZSBiZWhpbmQgdGhlIHNhbWUgRFJNCj4gZGV2aWNlLCBzbyB0aGUgaGFuZGxlIGNh
-biBiZSByZXNvbHZlZCBwcm9wZXJseS4gVGhlIFZJQyBqb2IgY291bGQgdGhlbgo+IHJldHVybiBh
-IGZlbmNlIHZpYSBzeW5jb2JqIGhhbmRsZS4gQnV0IGluIG9yZGVyIHRvIHBhc3MgaXQgdG8gS01T
-IHdlJ2QKPiBuZWVkIHRvIGNvbnZlcnQgaXQgdG8gYW4gRkQgZm9yIHN5bmNocm9uaXphdGlvbi4g
-QnV0IHdlIGNhbiBkbyB0aGF0Cj4gdXNpbmcgdGhlIFNZTkNPQkogSU9DVExzIGFscmVhZHksIHNv
-IHRoZXJlJ3Mgbm90IHJlYWxseSBhIG5lZWQgZm9yIHRoZQo+IFNVQk1JVCBJT0NUTCB0byBzdXBw
-b3J0IGVtaXR0aW5nIEZEcywgcmlnaHQ/Cj4gCj4gR2l2ZW4gdGhhdCBLTVMgYW5kIFZJQyBhcmUg
-YmVoaW5kIHRoZSBzYW1lIERSTSBkZXZpY2UsIHdvdWxkIGl0IGJlCj4gcmVhc29uYWJsZSB0byBh
-bGxvdyBLTVMgdG8gdGFrZSBhIHN5bmNvYmogaGFuZGxlIGFzIGluX2ZlbmNlX2ZkIChwZXJoYXBz
-Cj4gdmlhIGluX2ZlbmNlX2hhbmRsZSBwcm9wZXJ0eSk/CgpzeW5jb2JqIGFyZSB0aWVkIHRvIGEg
-ZmlsZSwgYnV0IGNhbiBiZSBleHBvcnRlZCB2aWEgYSBmZCBiZXR3ZWVuCnByb2Nlc3Nlcy4gU28g
-eWVzLCBpdCB3b3VsZCBiZSBwb3NzaWJsZSBmb3IgS01TIHRvIGFjY2VwdCBzeW5jb2JqOyBpdApk
-b2Vzbid0IHRvZGF5IGFuZCBqdXN0IHJlcXVpcmVzIGNvbnZlcnNpb24gb2YgdGhlIHN5bmNvYmog
-aW50byBzeW5jX2ZpbGUKd2hpY2ggaXMgb25lIGV4dHJhIHN5c2NhbGwgb24gdGhlIEtNUyBwYXRo
-LgotQ2hyaXMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-Tm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+On Fri, Jan 12, 2018 at 1:22 AM, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org> wrote:
+> On 11.01.2018 23:56, Rob Herring wrote:
+>>
+>> On Mon, Jan 08, 2018 at 06:54:37AM +0200, Mikko Perttunen wrote:
+>>>
+>>> Add the chip-level device tree, including binding headers, for the
+>>> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
+>>> are initially available, enough to boot to UART console.
+>>>
+>>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+
+>>> +       interrupt-parent = <&gic>;
+>>> +       #address-cells = <2>;
+>>> +       #size-cells = <2>;
+>>> +
+>>> +       uarta: serial@3100000 {
+>>
+>>
+>> These should all be under a bus node. Tegra failed to do this at the
+>> start and we're still copy-n-pasting this mistake.
+>>
+>> Then you probably don't need 2 address and size cells for all the
+>> peripherals.
+>
+>
+> So I should create one big simple-bus node and put everything with an
+> address apart from /memory (and maybe /sysram) inside it?
+
+Yes. Though you can have multiple buses if that makes sense. Things
+like fixed clocks, gpio-leds, etc. (typically board level) that don't
+have any bus should stay at the top level.
+
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
