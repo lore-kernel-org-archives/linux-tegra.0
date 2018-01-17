@@ -1,119 +1,184 @@
-From: Kyle Evans <kvans32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Port SDIO GPIO to DTS
-Date: Wed, 17 Jan 2018 17:13:18 -0500
-Message-ID: <20180117221318.GA1594@localhost.localdomain>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 3/4] drm: add ARM flush implementations
+Date: Wed, 17 Jan 2018 22:22:55 +0100
+Message-ID: <CAKMK7uFpRPQ-E2zvVcMW6xqG8GF7Zz04_WCrsHMKzoxck9=-uQ@mail.gmail.com>
+References: <20180117003559.67837-1-gurchetansingh@chromium.org>
+ <20180117003559.67837-3-gurchetansingh@chromium.org> <20180117083105.GG2759@phenom.ffwll.local>
+ <20180117185327.n7imr6nhr4o5ydg2@art_vandelay>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <20180117185327.n7imr6nhr4o5ydg2@art_vandelay>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Gurchetan Singh <gurchetansingh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I have an ASUS TF101(ventana) that I am trying to get running on 
-mainline. It is mostly there, but there are a few issues that I believe 
-to be dts related. I am focusing on one at a time. Currently, when I 
-warm boot/reboot, the wireless SDIO device fails to initialize. It 
-works great on cold boot. I'm fairly certain the problem is in the 
-dts, but I'd like some feedback on the correct way.
+On Wed, Jan 17, 2018 at 7:53 PM, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> On Wed, Jan 17, 2018 at 09:31:05AM +0100, Daniel Vetter wrote:
+>> On Tue, Jan 16, 2018 at 04:35:58PM -0800, Gurchetan Singh wrote:
+>> > The DMA API can be used to flush scatter gather tables and physical
+>> > pages on ARM devices.
+>> >
+>> > Signed-off-by: Gurchetan Singh <gurchetansingh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> > ---
+>> >  drivers/gpu/drm/drm_cache.c                 | 17 +++++++++++++++++
+>> >  drivers/gpu/drm/rockchip/rockchip_drm_gem.c |  7 ++-----
+>> >  drivers/gpu/drm/tegra/gem.c                 |  6 +-----
+>> >  3 files changed, 20 insertions(+), 10 deletions(-)
+>> >
+>> > diff --git a/drivers/gpu/drm/drm_cache.c b/drivers/gpu/drm/drm_cache.c
+>> > index 3d2bb9d71a60..98d6ebb40e96 100644
+>> > --- a/drivers/gpu/drm/drm_cache.c
+>> > +++ b/drivers/gpu/drm/drm_cache.c
+>> > @@ -105,6 +105,18 @@ drm_flush_pages(struct device *dev, struct page *pages[],
+>> >                                (unsigned long)page_virtual + PAGE_SIZE);
+>> >             kunmap_atomic(page_virtual);
+>> >     }
+>> > +#elif defined(CONFIG_ARM) || defined(CONFIG_ARM64)
+>> > +   unsigned long i;
+>> > +   dma_addr_t dma_handle;
+>> > +
+>> > +   if (!dev)
+>> > +           return;
+>> > +
+>> > +   for (i = 0; i < num_pages; i++) {
+>> > +           dma_handle = phys_to_dma(drm->dev, page_to_phys(pages[i]));
+>> > +           dma_sync_single_for_device(dev, dma_handle, PAGE_SIZE,
+>> > +                                      DMA_TO_DEVICE);
+>>
+>> Erm no. These functions here are super-low-level functions used by drivers
+>> which know exactly what they're doing. Which is reimplementing half of the
+>> dma api behind the dma api's back because the dma api just isn't quite
+>> sufficient for implementing fast gpu drivers.
+>
+> This isn't obvious from reading the docs, and doubly confusing when reading the
+> TODOs in the individual drivers. I don't think it's reasonable to assume
+> everyone (especially first time contributors!) will know this.
 
-From a working, pre-dts kernel I have stuff like this.
+There isn't any docs, because all this stuff is really badly littered
+with ill-defined behaviour (managed dma-buf and dma api coherency for
+gpu drivers). I've discussed it with lots of people, but thus far no
+insight how we should be do this.
 
-arch/arm/mach-tegra/board-tf101-sdhci.c:
-...
-#define TF101_WLAN_RST  TEGRA_GPIO_PK6
-#define TF101_WLAN_WOW  TEGRA_GPIO_PS0
-#define TF101_SDIO_WOW  TEGRA_GPIO_PY6
-...
-static struct embedded_sdio_data embedded_sdio_data1 = {
-        .cccr   = {
-                .sdio_vsn       = 2,
-                .multi_block    = 1,
-                .low_speed      = 0,
-                .wide_bus       = 0,
-                .high_power     = 1,
-                .high_speed     = 1,
-        },
-        .cis  = {
-                .vendor         = 0x02d0,
-                .device         = 0x4329,
-        },
+>> If all you end up doing is calling the dma api again, then pls just call
+>> it directly.
+>
+> Given that some drivers already midlayer the flush, I don't think it's wrong to
+> provide "dumb" default behavior so drivers don't need to worry about knowing
+> exactly what they're doing.
+>
+>>
+>> And just to make it clear: I'd be perfectly fine with adding arm support
+>> here, but then it'd need to directly flush cpu caches and bypass the dma
+>> api. Otherwise this is pointless.
+>
+> I don't really have skin in this game, but I think providing one call that works
+> across all platforms is pretty nice.
 
-static struct tegra_sdhci_platform_data tegra_sdhci_platform_data1 = {
-        .mmc_data = {
-                .register_status_notify = tf101_wifi_status_register,
-                .embedded_sdio = &embedded_sdio_data1,
-                .built_in = 0,
-        },
-        .wow_gpio = TF101_SDIO_WOW,
-        .cd_gpio = -1,
-        .wp_gpio = -1,
-        .power_gpio = -1,
-        .max_clk_limit = 40000000,
-};
-...
-static int tf101_wifi_power(int on)
-{
-        pr_debug("%s: %d\n", __func__, on);
+The problem I have is not with calling back down into the dma api.
+It's with adding a devcie paramater that isn't needed, but just there
+because we call down into the wrong layer (i.e. the previous patch).
+If you can make this happen without the dummy device then I'd be happy
+to ack the patches. But I thought ARM has a cacheline flush
+instruction too?
+-Daniel
 
-#if 0
-        gpio_set_value(TF101_WLAN_PWR, on);
-        mdelay(100);
-#endif
-        gpio_set_value(TF101_WLAN_RST, on);
-        mdelay(200);
+>
+> Sean
+>
+>
+>> -Daniel
+>>
+>> > +   }
+>> >  #else
+>> >     pr_err("Architecture has no drm_cache.c support\n");
+>> >     WARN_ON_ONCE(1);
+>> > @@ -136,6 +148,11 @@ drm_flush_sg(struct device *dev, struct sg_table *st)
+>> >
+>> >     if (wbinvd_on_all_cpus())
+>> >             pr_err("Timed out waiting for cache flush\n");
+>> > +#elif defined(CONFIG_ARM) || defined(CONFIG_ARM64)
+>> > +   if (!dev)
+>> > +           return;
+>> > +
+>> > +   dma_sync_sg_for_device(dev, st->sgl, st->nents, DMA_TO_DEVICE);
+>> >  #else
+>> >     pr_err("Architecture has no drm_cache.c support\n");
+>> >     WARN_ON_ONCE(1);
+>> > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+>> > index 8ac7eb25e46d..0157f90b5d10 100644
+>> > --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+>> > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+>> > @@ -14,6 +14,7 @@
+>> >
+>> >  #include <drm/drm.h>
+>> >  #include <drm/drmP.h>
+>> > +#include <drm/drm_cache.h>
+>> >  #include <drm/drm_gem.h>
+>> >  #include <drm/drm_vma_manager.h>
+>> >  #include <linux/iommu.h>
+>> > @@ -99,15 +100,11 @@ static int rockchip_gem_get_pages(struct rockchip_gem_object *rk_obj)
+>> >     /*
+>> >      * Fake up the SG table so that dma_sync_sg_for_device() can be used
+>> >      * to flush the pages associated with it.
+>> > -    *
+>> > -    * TODO: Replace this by drm_flush_sg() once it can be implemented
+>> > -    * without relying on symbols that are not exported.
+>> >      */
+>> >     for_each_sg(rk_obj->sgt->sgl, s, rk_obj->sgt->nents, i)
+>> >             sg_dma_address(s) = sg_phys(s);
+>> >
+>> > -   dma_sync_sg_for_device(drm->dev, rk_obj->sgt->sgl, rk_obj->sgt->nents,
+>> > -                          DMA_TO_DEVICE);
+>> > +   drm_flush_sg(drm->dev, rk_obj->sgt);
+>> >
+>> >     return 0;
+>> >
+>> > diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+>> > index ab1e53d434e8..9945fd2f6bd6 100644
+>> > --- a/drivers/gpu/drm/tegra/gem.c
+>> > +++ b/drivers/gpu/drm/tegra/gem.c
+>> > @@ -230,15 +230,11 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
+>> >     /*
+>> >      * Fake up the SG table so that dma_sync_sg_for_device() can be used
+>> >      * to flush the pages associated with it.
+>> > -    *
+>> > -    * TODO: Replace this by drm_clflash_sg() once it can be implemented
+>> > -    * without relying on symbols that are not exported.
+>> >      */
+>> >     for_each_sg(bo->sgt->sgl, s, bo->sgt->nents, i)
+>> >             sg_dma_address(s) = sg_phys(s);
+>> >
+>> > -   dma_sync_sg_for_device(drm->dev, bo->sgt->sgl, bo->sgt->nents,
+>> > -                          DMA_TO_DEVICE);
+>> > +   drm_flush_sg(drm->dev, bo->sgt);
+>> >
+>> >     return 0;
+>> >
+>> > --
+>> > 2.13.5
+>> >
+>> > _______________________________________________
+>> > dri-devel mailing list
+>> > dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+>> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>
+>> --
+>> Daniel Vetter
+>> Software Engineer, Intel Corporation
+>> http://blog.ffwll.ch
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+> --
+> Sean Paul, Software Engineer, Google / Chromium OS
 
-        return 0;
-}
-
-static int tf101_wifi_reset(int on)
-{
-        pr_debug("%s: do nothing\n", __func__);
-        return 0;
-}
-
-static int __init tf101_wifi_init(void)
-{
-        //gpio_request(TF101_WLAN_PWR, "wlan_power");
-        gpio_request(TF101_WLAN_RST, "wlan_rst");
-        gpio_request(TF101_WLAN_WOW, "bcmsdh_sdmmc");
-
-        //tegra_gpio_enable(TF101_WLAN_PWR);
-        tegra_gpio_enable(TF101_WLAN_RST);
-        tegra_gpio_enable(TF101_WLAN_WOW);
-
-        //gpio_direction_output(TF101_WLAN_PWR, 0);
-        gpio_direction_output(TF101_WLAN_RST, 0);
-        gpio_direction_input(TF101_WLAN_WOW);
-
-        platform_device_register(&tf101_wifi_device);
-
-        device_init_wakeup(&tf101_wifi_device.dev, 1);
-        device_set_wakeup_enable(&tf101_wifi_device.dev, 0);
-
-        return 0;
-}
-...
-
-It looks like I have three GPIO lines dealing with mmc0/wlan. Can I 
-assume WOW is Wireless pOWer?
-
-I'm not sure of the difference between WLAN_WOW & SDIO_WOW. I'm 
-assuming one for chip, one for radio, but I don't know their place in 
-the dts.
-
-From tegra20-ventana.dts I've got:
-
-	sdhci@c8000000 {
-                status = "okay";
-                power-gpios = <&gpio TEGRA_GPIO(K, 6) GPIO_ACTIVE_HIGH>;
-                bus-width = <4>;
-                keep-power-in-suspend;
-        };
-
-I'm guessing I need to add the other pins to power-gpois and 
-set up mmc-pwrseq?
 
 
-Regards,
-Kyle
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
