@@ -1,109 +1,96 @@
-From: Gurchetan Singh <gurchetansingh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH 3/4] drm: add ARM flush implementations
-Date: Tue, 16 Jan 2018 16:35:58 -0800
-Message-ID: <20180117003559.67837-3-gurchetansingh@chromium.org>
+From: Gurchetan Singh <gurchetansingh@chromium.org>
+Subject: [PATCH 2/4] drm: add additional parameter in drm_flush_pages() and
+ drm_flush_sg()
+Date: Tue, 16 Jan 2018 16:35:57 -0800
+Message-ID: <20180117003559.67837-2-gurchetansingh@chromium.org>
 References: <20180117003559.67837-1-gurchetansingh@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180117003559.67837-1-gurchetansingh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Gurchetan Singh <gurchetansingh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180117003559.67837-1-gurchetansingh@chromium.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: Gurchetan Singh <gurchetansingh@chromium.org>, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, daniel.vetter@intel.com
 List-Id: linux-tegra@vger.kernel.org
 
-The DMA API can be used to flush scatter gather tables and physical
-pages on ARM devices.
-
-Signed-off-by: Gurchetan Singh <gurchetansingh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- drivers/gpu/drm/drm_cache.c                 | 17 +++++++++++++++++
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c |  7 ++-----
- drivers/gpu/drm/tegra/gem.c                 |  6 +-----
- 3 files changed, 20 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_cache.c b/drivers/gpu/drm/drm_cache.c
-index 3d2bb9d71a60..98d6ebb40e96 100644
---- a/drivers/gpu/drm/drm_cache.c
-+++ b/drivers/gpu/drm/drm_cache.c
-@@ -105,6 +105,18 @@ drm_flush_pages(struct device *dev, struct page *pages[],
- 				   (unsigned long)page_virtual + PAGE_SIZE);
- 		kunmap_atomic(page_virtual);
- 	}
-+#elif defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-+	unsigned long i;
-+	dma_addr_t dma_handle;
-+
-+	if (!dev)
-+		return;
-+
-+	for (i = 0; i < num_pages; i++) {
-+		dma_handle = phys_to_dma(drm->dev, page_to_phys(pages[i]));
-+		dma_sync_single_for_device(dev, dma_handle, PAGE_SIZE,
-+					   DMA_TO_DEVICE);
-+	}
- #else
- 	pr_err("Architecture has no drm_cache.c support\n");
- 	WARN_ON_ONCE(1);
-@@ -136,6 +148,11 @@ drm_flush_sg(struct device *dev, struct sg_table *st)
- 
- 	if (wbinvd_on_all_cpus())
- 		pr_err("Timed out waiting for cache flush\n");
-+#elif defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-+	if (!dev)
-+		return;
-+
-+	dma_sync_sg_for_device(dev, st->sgl, st->nents, DMA_TO_DEVICE);
- #else
- 	pr_err("Architecture has no drm_cache.c support\n");
- 	WARN_ON_ONCE(1);
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-index 8ac7eb25e46d..0157f90b5d10 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-@@ -14,6 +14,7 @@
- 
- #include <drm/drm.h>
- #include <drm/drmP.h>
-+#include <drm/drm_cache.h>
- #include <drm/drm_gem.h>
- #include <drm/drm_vma_manager.h>
- #include <linux/iommu.h>
-@@ -99,15 +100,11 @@ static int rockchip_gem_get_pages(struct rockchip_gem_object *rk_obj)
- 	/*
- 	 * Fake up the SG table so that dma_sync_sg_for_device() can be used
- 	 * to flush the pages associated with it.
--	 *
--	 * TODO: Replace this by drm_flush_sg() once it can be implemented
--	 * without relying on symbols that are not exported.
- 	 */
- 	for_each_sg(rk_obj->sgt->sgl, s, rk_obj->sgt->nents, i)
- 		sg_dma_address(s) = sg_phys(s);
- 
--	dma_sync_sg_for_device(drm->dev, rk_obj->sgt->sgl, rk_obj->sgt->nents,
--			       DMA_TO_DEVICE);
-+	drm_flush_sg(drm->dev, rk_obj->sgt);
- 
- 	return 0;
- 
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index ab1e53d434e8..9945fd2f6bd6 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -230,15 +230,11 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
- 	/*
- 	 * Fake up the SG table so that dma_sync_sg_for_device() can be used
- 	 * to flush the pages associated with it.
--	 *
--	 * TODO: Replace this by drm_clflash_sg() once it can be implemented
--	 * without relying on symbols that are not exported.
- 	 */
- 	for_each_sg(bo->sgt->sgl, s, bo->sgt->nents, i)
- 		sg_dma_address(s) = sg_phys(s);
- 
--	dma_sync_sg_for_device(drm->dev, bo->sgt->sgl, bo->sgt->nents,
--			       DMA_TO_DEVICE);
-+	drm_flush_sg(drm->dev, bo->sgt);
- 
- 	return 0;
- 
--- 
-2.13.5
+V2UndmUgZm91bmQgdGhlIERNQSBBUEkgaXMgZWZmZWN0aXZlIGZvciBmbHVzaGluZyB0aGUgY2Fj
+aGUgb24gQVJNCmRldmljZXMsIGFuZCBpdCByZXF1aXJlcyBhIHN0cnVjdCBkZXZpY2UgKi4KClNp
+Z25lZC1vZmYtYnk6IEd1cmNoZXRhbiBTaW5naCA8Z3VyY2hldGFuc2luZ2hAY2hyb21pdW0ub3Jn
+PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9kcm1fY2FjaGUuYyAgICAgICAgICAgICB8IDUgKysrLS0K
+IGRyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtLmMgICAgICAgICB8IDIgKy0KIGRyaXZlcnMv
+Z3B1L2RybS9pOTE1L2k5MTVfZ2VtX2NsZmx1c2guYyB8IDIgKy0KIGRyaXZlcnMvZ3B1L2RybS90
+dG0vdHRtX3R0LmMgICAgICAgICAgICB8IDIgKy0KIGRyaXZlcnMvZ3B1L2RybS92Z2VtL3ZnZW1f
+ZHJ2LmMgICAgICAgICB8IDIgKy0KIGluY2x1ZGUvZHJtL2RybV9jYWNoZS5oICAgICAgICAgICAg
+ICAgICB8IDUgKysrLS0KIDYgZmlsZXMgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgOCBkZWxl
+dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2NhY2hlLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZHJtX2NhY2hlLmMKaW5kZXggODljZGQzMmZlMWYzLi4zZDJiYjlkNzFhNjAg
+MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fY2FjaGUuYworKysgYi9kcml2ZXJzL2dw
+dS9kcm0vZHJtX2NhY2hlLmMKQEAgLTc4LDcgKzc4LDggQEAgc3RhdGljIHZvaWQgZHJtX2NhY2hl
+X2ZsdXNoX2NsZmx1c2goc3RydWN0IHBhZ2UgKnBhZ2VzW10sCiAgKiB0byBhIHBhZ2UgaW4gdGhl
+IGFycmF5LgogICovCiB2b2lkCi1kcm1fZmx1c2hfcGFnZXMoc3RydWN0IHBhZ2UgKnBhZ2VzW10s
+IHVuc2lnbmVkIGxvbmcgbnVtX3BhZ2VzKQorZHJtX2ZsdXNoX3BhZ2VzKHN0cnVjdCBkZXZpY2Ug
+KmRldiwgc3RydWN0IHBhZ2UgKnBhZ2VzW10sCisJCXVuc2lnbmVkIGxvbmcgbnVtX3BhZ2VzKQog
+ewogCiAjaWYgZGVmaW5lZChDT05GSUdfWDg2KQpAQCAtMTE5LDcgKzEyMCw3IEBAIEVYUE9SVF9T
+WU1CT0woZHJtX2ZsdXNoX3BhZ2VzKTsKICAqIHNnLgogICovCiB2b2lkCi1kcm1fZmx1c2hfc2co
+c3RydWN0IHNnX3RhYmxlICpzdCkKK2RybV9mbHVzaF9zZyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0
+cnVjdCBzZ190YWJsZSAqc3QpCiB7CiAjaWYgZGVmaW5lZChDT05GSUdfWDg2KQogCWlmIChzdGF0
+aWNfY3B1X2hhcyhYODZfRkVBVFVSRV9DTEZMVVNIKSkgewpkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2k5MTUvaTkxNV9nZW0uYyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtLmMK
+aW5kZXggZmUxOTFkMGU4NGUxLi4wNDU4NjZmMmI1ZGQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS9pOTE1L2k5MTVfZ2VtLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW0u
+YwpAQCAtMjU5LDcgKzI1OSw3IEBAIF9faTkxNV9nZW1fb2JqZWN0X3JlbGVhc2Vfc2htZW0oc3Ry
+dWN0IGRybV9pOTE1X2dlbV9vYmplY3QgKm9iaiwKIAlpZiAobmVlZHNfY2xmbHVzaCAmJgogCSAg
+ICAob2JqLT5iYXNlLnJlYWRfZG9tYWlucyAmIEk5MTVfR0VNX0RPTUFJTl9DUFUpID09IDAgJiYK
+IAkgICAgIShvYmotPmNhY2hlX2NvaGVyZW50ICYgSTkxNV9CT19DQUNIRV9DT0hFUkVOVF9GT1Jf
+UkVBRCkpCi0JCWRybV9mbHVzaF9zZyhwYWdlcyk7CisJCWRybV9mbHVzaF9zZyhvYmotPmJhc2Uu
+ZGV2LT5kZXYsIHBhZ2VzKTsKIAogCV9fc3RhcnRfY3B1X3dyaXRlKG9iaik7CiB9CmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dlbV9jbGZsdXNoLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vaTkxNS9pOTE1X2dlbV9jbGZsdXNoLmMKaW5kZXggZjQxM2M1ZTU3MzVkLi5iNTkzOGYx
+NDE0MWYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtX2NsZmx1c2gu
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dlbV9jbGZsdXNoLmMKQEAgLTcxLDcg
+KzcxLDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkbWFfZmVuY2Vfb3BzIGk5MTVfY2xmbHVzaF9v
+cHMgPSB7CiBzdGF0aWMgdm9pZCBfX2k5MTVfZG9fY2xmbHVzaChzdHJ1Y3QgZHJtX2k5MTVfZ2Vt
+X29iamVjdCAqb2JqKQogewogCUdFTV9CVUdfT04oIWk5MTVfZ2VtX29iamVjdF9oYXNfcGFnZXMo
+b2JqKSk7Ci0JZHJtX2ZsdXNoX3NnKG9iai0+bW0ucGFnZXMpOworCWRybV9mbHVzaF9zZyhvYmot
+PmJhc2UuZGV2LT5kZXYsIG9iai0+bW0ucGFnZXMpOwogCWludGVsX2ZiX29ial9mbHVzaChvYmos
+IE9SSUdJTl9DUFUpOwogfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdHRtL3R0bV90
+dC5jIGIvZHJpdmVycy9ncHUvZHJtL3R0bS90dG1fdHQuYwppbmRleCA1OWUyNzJhNTg3NTIuLmZi
+MjM4MmQwMWJiYSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3R0bS90dG1fdHQuYworKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vdHRtL3R0bV90dC5jCkBAIC0xMjIsNyArMTIyLDcgQEAgc3RhdGlj
+IGludCB0dG1fdHRfc2V0X2NhY2hpbmcoc3RydWN0IHR0bV90dCAqdHRtLAogCX0KIAogCWlmICh0
+dG0tPmNhY2hpbmdfc3RhdGUgPT0gdHRfY2FjaGVkKQotCQlkcm1fZmx1c2hfcGFnZXModHRtLT5w
+YWdlcywgdHRtLT5udW1fcGFnZXMpOworCQlkcm1fZmx1c2hfcGFnZXMoTlVMTCwgdHRtLT5wYWdl
+cywgdHRtLT5udW1fcGFnZXMpOwogCiAJZm9yIChpID0gMDsgaSA8IHR0bS0+bnVtX3BhZ2VzOyAr
+K2kpIHsKIAkJY3VyX3BhZ2UgPSB0dG0tPnBhZ2VzW2ldOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL3ZnZW0vdmdlbV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS92Z2VtL3ZnZW1fZHJ2LmMK
+aW5kZXggODAyYTk3ZTFhNGJmLi4zNWJmZGZiNzQ2YTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS92Z2VtL3ZnZW1fZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3ZnZW0vdmdlbV9kcnYu
+YwpAQCAtMzI1LDcgKzMyNSw3IEBAIHN0YXRpYyBpbnQgdmdlbV9wcmltZV9waW4oc3RydWN0IGRy
+bV9nZW1fb2JqZWN0ICpvYmopCiAJLyogRmx1c2ggdGhlIG9iamVjdCBmcm9tIHRoZSBDUFUgY2Fj
+aGUgc28gdGhhdCBpbXBvcnRlcnMgY2FuIHJlbHkKIAkgKiBvbiBjb2hlcmVudCBpbmRpcmVjdCBh
+Y2Nlc3MgdmlhIHRoZSBleHBvcnRlZCBkbWEtYWRkcmVzcy4KIAkgKi8KLQlkcm1fZmx1c2hfcGFn
+ZXMocGFnZXMsIG5fcGFnZXMpOworCWRybV9mbHVzaF9wYWdlcyhvYmotPmRldi0+ZGV2LCBwYWdl
+cywgbl9wYWdlcyk7CiAKIAlyZXR1cm4gMDsKIH0KZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2Ry
+bV9jYWNoZS5oIGIvaW5jbHVkZS9kcm0vZHJtX2NhY2hlLmgKaW5kZXggMjVjMDI5NDcwMzE1Li5j
+Yjc3MzE1ZGQ4ZGQgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvZHJtL2RybV9jYWNoZS5oCisrKyBiL2lu
+Y2x1ZGUvZHJtL2RybV9jYWNoZS5oCkBAIC0zNSw4ICszNSw5IEBACiAKICNpbmNsdWRlIDxsaW51
+eC9zY2F0dGVybGlzdC5oPgogCi12b2lkIGRybV9mbHVzaF9wYWdlcyhzdHJ1Y3QgcGFnZSAqcGFn
+ZXNbXSwgdW5zaWduZWQgbG9uZyBudW1fcGFnZXMpOwotdm9pZCBkcm1fZmx1c2hfc2coc3RydWN0
+IHNnX3RhYmxlICpzdCk7Cit2b2lkIGRybV9mbHVzaF9wYWdlcyhzdHJ1Y3QgZGV2aWNlICpkZXYs
+IHN0cnVjdCBwYWdlICpwYWdlc1tdLAorCQkgICAgIHVuc2lnbmVkIGxvbmcgbnVtX3BhZ2VzKTsK
+K3ZvaWQgZHJtX2ZsdXNoX3NnKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHNnX3RhYmxlICpz
+dCk7CiB2b2lkIGRybV9jbGZsdXNoX3ZpcnRfcmFuZ2Uodm9pZCAqYWRkciwgdW5zaWduZWQgbG9u
+ZyBsZW5ndGgpOwogCiBzdGF0aWMgaW5saW5lIGJvb2wgZHJtX2FyY2hfY2FuX3djX21lbW9yeSh2
+b2lkKQotLSAKMi4xMy41CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
