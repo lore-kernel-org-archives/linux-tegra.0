@@ -1,104 +1,46 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.15-rc8
-Date: Fri, 19 Jan 2018 10:27:26 +0000
-Message-ID: <4ca0095b-0c28-2a87-83ae-7b20a9df8d65@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
+Date: Fri, 19 Jan 2018 16:18:20 +0100
+Message-ID: <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.15-rc8.
-Logs and other details at:
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a negative number in the
+allocation below.
 
-    https://nvtb.github.io//linux/test_v4.15-rc8/20180114163103/
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/soc/rockchip/pm_domains.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index 5c342167b9db7a16..9936038d38771784 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -16,6 +16,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
+ #include <dt-bindings/power/rk3288-power.h>
+@@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+ 		return -EINVAL;
+ 	}
+ 
+-	clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
++	clk_cnt = of_clk_get_parent_count(node);
+ 	pd = devm_kzalloc(pmu->dev,
+ 			  sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
+ 			  GFP_KERNEL);
+-- 
+2.7.4
 
-Test summary - 100% Success*
-----------------------------
-
-Build: zImage:
-    Pass: ( 3/ 3): multi_v7_defconfig, tegra_defconfig,
-		   tegra_defconfig%tegra-fw
-
-Build: Image:
-    Pass: ( 3/ 3): defconfig, defconfig%jetson-tx2,
-		   defconfig%jetson-tx1
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: defconfig%jetson-tx1:
-    Pass: ( 2/ 2): tegra210-p2371-0000, tegra210-p2371-2180
-
-Boot to userspace: defconfig%jetson-tx2:
-    Pass: ( 1/ 1): tegra186-p2771-0000
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig%tegra-fw:
-    Pass: ( 2/ 2): tegra124-jetson-tk1, tegra124-nyan-big
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig%tegra-fw:
-    Pass: ( 2/ 2): tegra124-jetson-tk1, tegra124-nyan-big
-
-
-vmlinux object size
-(delta in bytes from test_v4.15-rc7 (b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d)):
-   text     data      bss    total  kernel
-   -184     +200        0      +16  defconfig
-   +728      +12        0     +740  multi_v7_defconfig
-   +604      +20        0     +624  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.15-rc7 (b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1 tegra_defconfig%tegr  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big tegra_defconfig%tegr    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .  tegra186-p2771-0000 defconfig%jetson-tx2  tegra186-p2771-0000
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000 defconfig%jetson-tx1  tegra210-p2371-0000
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .  tegra210-p2371-2180 defconfig%jetson-tx1  tegra210-p2371-2180
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
-
-* kernelci.org is reporting failures for tegra124-nyan-big which is 
-  caused by nouvueau. There is a workaround available [0] but has not 
-  been picked up yet.
-
-[0] https://www.spinics.net/lists/dri-devel/msg161277.html
-
---
-nvpublic
