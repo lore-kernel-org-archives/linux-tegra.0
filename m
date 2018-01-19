@@ -1,46 +1,40 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
-Date: Fri, 19 Jan 2018 16:18:20 +0100
-Message-ID: <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH 1/3] pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
+Date: Fri, 19 Jan 2018 16:18:19 +0100
+Message-ID: <1516375101-29836-2-git-send-email-geert+renesas@glider.be>
 References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1516375101-29836-1-git-send-email-geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-As of_clk_get_parent_count() returns zero on failure, while
-of_count_phandle_with_args() might return a negative error code, this
-also fixes the issue of possibly using a negative number in the
-allocation below.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
 ---
- drivers/soc/rockchip/pm_domains.c | 3 ++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-index 5c342167b9db7a16..9936038d38771784 100644
---- a/drivers/soc/rockchip/pm_domains.c
-+++ b/drivers/soc/rockchip/pm_domains.c
-@@ -16,6 +16,7 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 4b6cb25bc796f86d..ab425eb45bf5e0f4 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/io.h>
  #include <linux/clk.h>
 +#include <linux/clk-provider.h>
- #include <linux/regmap.h>
- #include <linux/mfd/syscon.h>
- #include <dt-bindings/power/rk3288-power.h>
-@@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
- 		return -EINVAL;
- 	}
+ #include <linux/gpio/driver.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
+@@ -1185,7 +1186,7 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
+ 	int i, ret;
  
--	clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
-+	clk_cnt = of_clk_get_parent_count(node);
- 	pd = devm_kzalloc(pmu->dev,
- 			  sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
- 			  GFP_KERNEL);
+ 	/* Deal with old DTs that didn't have the oscillators */
+-	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
++	if (of_clk_get_parent_count(node) != 3)
+ 		return 0;
+ 
+ 	/* If we don't have any setup, bail out */
 -- 
 2.7.4
-
