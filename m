@@ -1,129 +1,48 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 5/5] drm: Don't pass clip to
- drm_atomic_helper_check_plane_state()
-Date: Wed, 24 Jan 2018 02:12:41 +0200
-Message-ID: <4913120.k2ISnnb0cT@avalon>
-References: <20180123170857.13818-1-ville.syrjala@linux.intel.com>
- <20180123170857.13818-5-ville.syrjala@linux.intel.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH-next] drm/tegra: gem: Use PTR_ERR_OR_ZERO
+Date: Wed, 24 Jan 2018 09:09:22 +0200
+Message-ID: <d6a4a713-4d3c-0dd7-4ddc-3fd96040a1f0@kapsi.fi>
+References: <20180123202922.14334-1-chrisadr@gentoo.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180123170857.13818-5-ville.syrjala@linux.intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Thomas Hellstrom <thellstrom@vmware.com>, VMware Graphics <linux-graphics-maintainer@vmware.com>, Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, Mali DP Maintainers <malidp@foss.arm.com>, linux-arm-msm@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Shawn Guo <shawnguo@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180123202922.14334-1-chrisadr@gentoo.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Christopher_D=c3=adaz_Riveros?= <chrisadr@gentoo.org>, thierry.reding@gmail.com, airlied@linux.ie, jonathanh@nvidia.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgVmlsbGUsCgpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KCk9uIFR1ZXNkYXksIDIzIEphbnVh
-cnkgMjAxOCAxOTowODo1NyBFRVQgVmlsbGUgU3lyamFsYSB3cm90ZToKPiBGcm9tOiBWaWxsZSBT
-eXJqw6Rsw6QgPHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwuY29tPgo+IAo+IE1vdmUgdGhlIHBs
-YW5lIGNsaXAgcmVjdGFuZ2xlIGhhbmRsaW5nIGludG8KPiBkcm1fYXRvbWljX2hlbHBlcl9jaGVj
-a19wbGFuZV9zdGF0ZSgpLiBEcml2ZXJzIG5vIGxvbmdlcgo+IGhhdmUgdG8gd29ycnkgYWJvdXQg
-c3VjaCBtdW5kYW5lIGRldGFpbHMuCj4gCj4gdjI6IENvbnZlcnQgYXJtYWRhLCByY2FyLCBhbmQg
-c3VuNGkgYXMgd2VsbAo+IAo+IENjOiBMaXZpdSBEdWRhdSA8bGl2aXUuZHVkYXVAYXJtLmNvbT4K
-PiBDYzogQnJpYW4gU3RhcmtleSA8YnJpYW4uc3RhcmtleUBhcm0uY29tPgo+IENjOiBNYWxpIERQ
-IE1haW50YWluZXJzIDxtYWxpZHBAZm9zcy5hcm0uY29tPgo+IENjOiBEYW5pZWwgVmV0dGVyIDxk
-YW5pZWwudmV0dGVyQGludGVsLmNvbT4KPiBDYzogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvQHBh
-ZG92YW4ub3JnPgo+IENjOiBTZWFuIFBhdWwgPHNlYW5wYXVsQGNocm9taXVtLm9yZz4KPiBDYzog
-UGhpbGlwcCBaYWJlbCA8cC56YWJlbEBwZW5ndXRyb25peC5kZT4KPiBDYzogQ0sgSHUgPGNrLmh1
-QG1lZGlhdGVrLmNvbT4KPiBDYzogTmVpbCBBcm1zdHJvbmcgPG5hcm1zdHJvbmdAYmF5bGlicmUu
-Y29tPgo+IENjOiBSb2IgQ2xhcmsgPHJvYmRjbGFya0BnbWFpbC5jb20+Cj4gQ2M6IEJlbiBTa2Vn
-Z3MgPGJza2VnZ3NAcmVkaGF0LmNvbT4KPiBDYzogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5w
-aW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgo+IENjOiBTYW5keSBIdWFuZyA8aGpjQHJvY2stY2hp
-cHMuY29tPgo+IENjOiAiSGVpa28gU3TDvGJuZXIiIDxoZWlrb0BzbnRlY2guZGU+Cj4gQ2M6IE1h
-eGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+IENjOiBUaGll
-cnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgo+IENjOiBWTXdhcmUgR3JhcGhp
-Y3MgPGxpbnV4LWdyYXBoaWNzLW1haW50YWluZXJAdm13YXJlLmNvbT4KPiBDYzogU2luY2xhaXIg
-WWVoIDxzeWVoQHZtd2FyZS5jb20+Cj4gQ2M6IFRob21hcyBIZWxsc3Ryb20gPHRoZWxsc3Ryb21A
-dm13YXJlLmNvbT4KPiBDYzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPgo+IENjOiBB
-cmNoaXQgVGFuZWphIDxhcmNoaXR0QGNvZGVhdXJvcmEub3JnPgo+IENjOiBsaW51eC1hbWxvZ2lj
-QGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogbGludXgtYXJtLW1zbUB2Z2VyLmtlcm5lbC5vcmcK
-PiBDYzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBub3V2ZWF1QGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwo+IENjOiBsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmcK
-PiBDYzogbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnCj4gQ2M6IFJ1c3NlbGwgS2luZyA8cm1r
-K2tlcm5lbEBhcm1saW51eC5vcmcudWs+Cj4gU3VnZ2VzdGVkLWJ5OiBEYW5pZWwgVmV0dGVyIDxk
-YW5pZWxAZmZ3bGwuY2g+Cj4gU2lnbmVkLW9mZi1ieTogVmlsbGUgU3lyasOkbMOkIDx2aWxsZS5z
-eXJqYWxhQGxpbnV4LmludGVsLmNvbT4KPiBSZXZpZXdlZC1ieTogRGFuaWVsIFZldHRlciA8ZGFu
-aWVsLnZldHRlckBmZndsbC5jaD4KPiBSZXZpZXdlZC1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRp
-bmdAbnZpZGlhLmNvbT4KPiBSZXZpZXdlZC1ieTogQXJjaGl0IFRhbmVqYSA8YXJjaGl0dEBjb2Rl
-YXVyb3JhLm9yZz4gI21zbQo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXJtL2hkbGNkX2NydGMu
-YyAgICAgICAgICAgIHwgIDcgKy0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9w
-bGFuZXMuYyAgICAgICAgIHwgIDcgKy0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2Fy
-bWFkYV9jcnRjLmMgICAgICAgIHwgIDggKystLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2FybWFk
-YS9hcm1hZGFfb3ZlcmxheS5jICAgICB8ICA4ICsrLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9k
-cm1fYXRvbWljX2hlbHBlci5jICAgICAgICAgfCAxMiArKysrKysrLS0tLS0KPiAgZHJpdmVycy9n
-cHUvZHJtL2RybV9wbGFuZV9oZWxwZXIuYyAgICAgICAgICB8IDExICsrKy0tLS0tLS0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS9kcm1fc2ltcGxlX2ttc19oZWxwZXIuYyAgICAgfCAgNiAtLS0tLS0KPiAg
-ZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5jICAgICAgICB8IDEyIC0tLS0tLS0t
-LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vaW14L2lwdXYzLXBsYW5lLmMgICAgICAgICAgIHwgIDcg
-Ky0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5jICAgIHwg
-IDcgKy0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVzb24vbWVzb25fcGxhbmUuYyAgICAgICAg
-IHwgIDcgKy0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUu
-YyAgIHwgMTQgKystLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnY1MF9k
-aXNwbGF5LmMgICAgICB8IDEyIC0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1k
-dS9yY2FyX2R1X3BsYW5lLmMgICAgIHwgIDcgKy0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcm9j
-a2NoaXAvcm9ja2NoaXBfZHJtX3ZvcC5jIHwgIDcgKy0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0v
-c3VuNGkvc3VuOGlfdWlfbGF5ZXIuYyAgICAgIHwgIDcgKy0tLS0tLQo+ICBkcml2ZXJzL2dwdS9k
-cm0vc3VuNGkvc3VuOGlfdmlfbGF5ZXIuYyAgICAgIHwgIDcgKy0tLS0tLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vdGVncmEvcGxhbmUuYyAgICAgICAgICAgICAgIHwgIDcgKy0tLS0tLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9rbXMuYyAgICAgICAgIHwgIDcgKy0tLS0tLQo+ICBkcml2
-ZXJzL2dwdS9kcm0venRlL3p4X3BsYW5lLmMgICAgICAgICAgICAgIHwgMTMgKy0tLS0tLS0tLS0t
-LQo+ICBpbmNsdWRlL2RybS9kcm1fYXRvbWljX2hlbHBlci5oICAgICAgICAgICAgIHwgIDEgLQo+
-ICBpbmNsdWRlL2RybS9kcm1fcGxhbmVfaGVscGVyLmggICAgICAgICAgICAgIHwgIDEgLQo+ICAy
-MiBmaWxlcyBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCAxNDcgZGVsZXRpb25zKC0pCgpbc25p
-cF0KCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jCj4g
-Yi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyBpbmRleCBhYjQwMzIxNjcwOTQu
-LjlmYjk2ZjljYzM2ZQo+IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWlj
-X2hlbHBlci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMKPiBA
-QCAtNjk5LDcgKzY5OSw2IEBAIEVYUE9SVF9TWU1CT0woZHJtX2F0b21pY19oZWxwZXJfY2hlY2tf
-bW9kZXNldCk7Cj4gICAqIGRybV9hdG9taWNfaGVscGVyX2NoZWNrX3BsYW5lX3N0YXRlKCkgLSBD
-aGVjayBwbGFuZSBzdGF0ZSBmb3IgdmFsaWRpdHkKPiAgICogQHBsYW5lX3N0YXRlOiBwbGFuZSBz
-dGF0ZSB0byBjaGVjawo+ICAgKiBAY3J0Y19zdGF0ZTogY3J0YyBzdGF0ZSB0byBjaGVjawo+IC0g
-KiBAY2xpcDogaW50ZWdlciBjbGlwcGluZyBjb29yZGluYXRlcwo+ICAgKiBAbWluX3NjYWxlOiBt
-aW5pbXVtIEBzcmM6QGRlc3Qgc2NhbGluZyBmYWN0b3IgaW4gMTYuMTYgZml4ZWQgcG9pbnQKPiAg
-ICogQG1heF9zY2FsZTogbWF4aW11bSBAc3JjOkBkZXN0IHNjYWxpbmcgZmFjdG9yIGluIDE2LjE2
-IGZpeGVkIHBvaW50Cj4gICAqIEBjYW5fcG9zaXRpb246IGlzIGl0IGxlZ2FsIHRvIHBvc2l0aW9u
-IHRoZSBwbGFuZSBzdWNoIHRoYXQgaXQKPiBAQCAtNzE5LDcgKzcxOCw2IEBAIEVYUE9SVF9TWU1C
-T0woZHJtX2F0b21pY19oZWxwZXJfY2hlY2tfbW9kZXNldCk7Cj4gICAqLwo+ICBpbnQgZHJtX2F0
-b21pY19oZWxwZXJfY2hlY2tfcGxhbmVfc3RhdGUoc3RydWN0IGRybV9wbGFuZV9zdGF0ZQo+ICpw
-bGFuZV9zdGF0ZSwgY29uc3Qgc3RydWN0IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0YXRlLAo+IC0J
-CQkJCWNvbnN0IHN0cnVjdCBkcm1fcmVjdCAqY2xpcCwKPiAgCQkJCQlpbnQgbWluX3NjYWxlLAo+
-ICAJCQkJCWludCBtYXhfc2NhbGUsCj4gIAkJCQkJYm9vbCBjYW5fcG9zaXRpb24sCj4gQEAgLTcy
-OSw2ICs3MjcsNyBAQCBpbnQgZHJtX2F0b21pY19oZWxwZXJfY2hlY2tfcGxhbmVfc3RhdGUoc3Ry
-dWN0Cj4gZHJtX3BsYW5lX3N0YXRlICpwbGFuZV9zdGF0ZSwgc3RydWN0IGRybV9yZWN0ICpzcmMg
-PSAmcGxhbmVfc3RhdGUtPnNyYzsKPiAgCXN0cnVjdCBkcm1fcmVjdCAqZHN0ID0gJnBsYW5lX3N0
-YXRlLT5kc3Q7Cj4gIAl1bnNpZ25lZCBpbnQgcm90YXRpb24gPSBwbGFuZV9zdGF0ZS0+cm90YXRp
-b247Cj4gKwlzdHJ1Y3QgZHJtX3JlY3QgY2xpcCA9IHt9OwoKSXNuJ3QgdGhlIGNvcnJlY3QgQzk5
-IHplcm8gaW5pdGlhbGl6ZXIgeyAwLCB9ID8KCkFwYXJ0IGZyb20gdGhhdCwKClJldmlld2VkLWJ5
-OiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Cgo+
-ICAJaW50IGhzY2FsZSwgdnNjYWxlOwo+IAo+ICAJV0FSTl9PTihwbGFuZV9zdGF0ZS0+Y3J0YyAm
-JiBwbGFuZV9zdGF0ZS0+Y3J0YyAhPSBjcnRjX3N0YXRlLT5jcnRjKTsKPiBAQCAtNzY0LDcgKzc2
-MywxMCBAQCBpbnQgZHJtX2F0b21pY19oZWxwZXJfY2hlY2tfcGxhbmVfc3RhdGUoc3RydWN0Cj4g
-ZHJtX3BsYW5lX3N0YXRlICpwbGFuZV9zdGF0ZSwgcmV0dXJuIC1FUkFOR0U7Cj4gIAl9Cj4gCj4g
-LQlwbGFuZV9zdGF0ZS0+dmlzaWJsZSA9IGRybV9yZWN0X2NsaXBfc2NhbGVkKHNyYywgZHN0LCBj
-bGlwLCBoc2NhbGUsCj4gdnNjYWxlKTsKPiArCWlmIChjcnRjX3N0YXRlLT5lbmFibGUpCj4gKwkJ
-ZHJtX21vZGVfZ2V0X2h2X3RpbWluZygmY3J0Y19zdGF0ZS0+bW9kZSwgJmNsaXAueDIsICZjbGlw
-LnkyKTsKPiArCj4gKwlwbGFuZV9zdGF0ZS0+dmlzaWJsZSA9IGRybV9yZWN0X2NsaXBfc2NhbGVk
-KHNyYywgZHN0LCAmY2xpcCwgaHNjYWxlLAo+IHZzY2FsZSk7Cj4gCj4gIAlkcm1fcmVjdF9yb3Rh
-dGVfaW52KHNyYywgZmItPndpZHRoIDw8IDE2LCBmYi0+aGVpZ2h0IDw8IDE2LCByb3RhdGlvbik7
-Cj4gCj4gQEAgLTc3OCwxMCArNzgwLDEwIEBAIGludCBkcm1fYXRvbWljX2hlbHBlcl9jaGVja19w
-bGFuZV9zdGF0ZShzdHJ1Y3QKPiBkcm1fcGxhbmVfc3RhdGUgKnBsYW5lX3N0YXRlLCAqLwo+ICAJ
-CXJldHVybiAwOwo+IAo+IC0JaWYgKCFjYW5fcG9zaXRpb24gJiYgIWRybV9yZWN0X2VxdWFscyhk
-c3QsIGNsaXApKSB7Cj4gKwlpZiAoIWNhbl9wb3NpdGlvbiAmJiAhZHJtX3JlY3RfZXF1YWxzKGRz
-dCwgJmNsaXApKSB7Cj4gIAkJRFJNX0RFQlVHX0tNUygiUGxhbmUgbXVzdCBjb3ZlciBlbnRpcmUg
-Q1JUQ1xuIik7Cj4gIAkJZHJtX3JlY3RfZGVidWdfcHJpbnQoImRzdDogIiwgZHN0LCBmYWxzZSk7
-Cj4gLQkJZHJtX3JlY3RfZGVidWdfcHJpbnQoImNsaXA6ICIsIGNsaXAsIGZhbHNlKTsKPiArCQlk
-cm1fcmVjdF9kZWJ1Z19wcmludCgiY2xpcDogIiwgJmNsaXAsIGZhbHNlKTsKPiAgCQlyZXR1cm4g
-LUVJTlZBTDsKPiAgCX0KPiAKCltzbmlwXQoKLS0gClJlZ2FyZHMsCgpMYXVyZW50IFBpbmNoYXJ0
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+This nas been NAK'd before as harder to read than the current way.
+
+Thanks,
+Mikko
+
+On 01/23/2018 10:29 PM, Christopher Díaz Riveros wrote:
+> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Christopher Díaz Riveros <chrisadr@gentoo.org>
+> ---
+>   drivers/gpu/drm/tegra/gem.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+> index 49b9bf28f872..36c4ecc33e1a 100644
+> --- a/drivers/gpu/drm/tegra/gem.c
+> +++ b/drivers/gpu/drm/tegra/gem.c
+> @@ -416,10 +416,7 @@ int tegra_bo_dumb_create(struct drm_file *file, struct drm_device *drm,
+>   
+>   	bo = tegra_bo_create_with_handle(file, drm, args->size, 0,
+>   					 &args->handle);
+> -	if (IS_ERR(bo))
+> -		return PTR_ERR(bo);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(bo);
+>   }
+>   
+>   static int tegra_bo_fault(struct vm_fault *vmf)
+> 
