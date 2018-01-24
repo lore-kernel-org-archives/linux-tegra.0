@@ -1,15 +1,13 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: [PATCH v2 0/6] Tegra210 DFLL implementation
-Date: Wed, 24 Jan 2018 14:45:32 +0200
-Message-ID: <1516797938-32044-2-git-send-email-pdeschrijver@nvidia.com>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+Date: Wed, 24 Jan 2018 14:45:31 +0200
+Message-ID: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 This series introduces support for the DFLL as a CPU clock source
@@ -24,6 +22,7 @@ other controls.
 
 Changes since v1:
 * improved commit messages
+* some style cleanups
 
 Peter De Schrijver (6):
   clk: tegra: dfll registration for multiple SoCs
@@ -38,11 +37,10 @@ Peter De Schrijver (6):
  drivers/clk/tegra/clk-dfll.c               | 481 +++++++++++++++++++++++-----
  drivers/clk/tegra/clk-dfll.h               |   7 +
  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 492 ++++++++++++++++++++++++++++-
- drivers/clk/tegra/cvb.c                    |  17 +-
+ drivers/clk/tegra/cvb.c                    |  18 +-
  drivers/clk/tegra/cvb.h                    |   6 +-
  drivers/cpufreq/tegra124-cpufreq.c         |  13 +-
- 8 files changed, 919 insertions(+), 104 deletions(-)
+ 8 files changed, 920 insertions(+), 104 deletions(-)
 
 -- 
 1.9.1
-
