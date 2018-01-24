@@ -1,138 +1,70 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 2/6] clk: tegra: DT align parameter for CVB calculation
-Date: Wed, 24 Jan 2018 14:45:34 +0200
-Message-ID: <1516797938-32044-4-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support Tegra210
+Date: Wed, 24 Jan 2018 14:45:38 +0200
+Message-ID: <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
 References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When using a PWM controlled regulator, the voltage step and offset are
-determined by the regulator IC in use. This is specified in DT rather
-than fixed in the CVB table. Hence pass this information to the CVB table
-calculation function. For backwards compatibility the table values are used
-if the corresponding parameter is 0.
+Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+support in this driver. Also allow for the case where the CPU voltage is
+controlled directly by the DFLL rather than by a separate regulator object.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 23 +++++++++++++++++++++--
- drivers/clk/tegra/cvb.c                    | 18 ++++++++++++++----
- drivers/clk/tegra/cvb.h                    |  5 +++--
- 3 files changed, 38 insertions(+), 8 deletions(-)
+ drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 440eb8d..6205ce1 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -111,6 +111,7 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 	struct tegra_dfll_soc_data *soc;
- 	const struct of_device_id *of_id;
- 	const struct dfll_fcpu_data *fcpu_data;
-+	struct rail_alignment align;
- 
- 	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
- 	fcpu_data = of_id->data;
-@@ -135,12 +136,30 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
-+	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-offset-uv",
-+					&align.offset_uv);
-+	if (err < 0) {
-+		dev_err(&pdev->dev,
-+			"offset uv not found, default to table value\n");
-+		align.offset_uv = 0;
-+	}
-+
-+	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-step-uv",
-+					&align.step_uv);
-+	if (err < 0) {
-+		dev_err(&pdev->dev,
-+			"step uv not found, default to table value\n");
-+		align.step_uv = 0;
-+	}
-+
- 	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
- 
- 	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
- 					   fcpu_data->cpu_cvb_tables_size,
--					   process_id, speedo_id, speedo_value,
--					   soc->max_freq);
-+					   &align, process_id, speedo_id,
-+					   speedo_value, soc->max_freq);
-+	soc->alignment = align;
-+
- 	if (IS_ERR(soc->cvb)) {
- 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
- 			PTR_ERR(soc->cvb));
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index da9e8e7..561012a 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -62,11 +62,19 @@ static int round_voltage(int mv, const struct rail_alignment *align, int up)
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+index 4353025..d631dc4 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+ {
+ 	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+ 	clk_disable_unprepare(priv->dfll_clk);
+-	regulator_sync_voltage(priv->vdd_cpu_reg);
++	if (priv->vdd_cpu_reg)
++		regulator_sync_voltage(priv->vdd_cpu_reg);
+ 	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
  }
  
- static int build_opp_table(struct device *dev, const struct cvb_table *table,
-+			   struct rail_alignment *align,
- 			   int speedo_value, unsigned long max_freq)
- {
--	const struct rail_alignment *align = &table->alignment;
- 	int i, ret, dfll_mv, min_mv, max_mv;
+@@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  
-+	if (!align->step_uv)
-+		align->step_uv = table->alignment.step_uv;
-+	if (!align->step_uv)
-+		return -EINVAL;
-+
-+	if (!align->offset_uv)
-+		align->offset_uv = table->alignment.offset_uv;
-+
- 	min_mv = round_voltage(table->min_millivolts, align, UP);
- 	max_mv = round_voltage(table->max_millivolts, align, DOWN);
+ 	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+-	if (IS_ERR(priv->vdd_cpu_reg)) {
+-		ret = PTR_ERR(priv->vdd_cpu_reg);
+-		goto out_put_np;
+-	}
++	if (IS_ERR(priv->vdd_cpu_reg))
++		priv->vdd_cpu_reg = NULL;
  
-@@ -109,8 +117,9 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
-  */
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq)
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq)
- {
- 	size_t i;
+ 	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
+ 	if (IS_ERR(priv->cpu_clk)) {
+@@ -148,7 +147,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 	clk_put(priv->cpu_clk);
+ out_put_vdd_cpu_reg:
+ 	regulator_put(priv->vdd_cpu_reg);
+-out_put_np:
+ 	of_node_put(np);
+ 
+ 	return ret;
+@@ -181,7 +179,8 @@ static int __init tegra_cpufreq_init(void)
  	int ret;
-@@ -124,7 +133,8 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
- 		if (table->process_id != -1 && table->process_id != process_id)
- 			continue;
+ 	struct platform_device *pdev;
  
--		ret = build_opp_table(dev, table, speedo_value, max_freq);
-+		ret = build_opp_table(dev, table, align, speedo_value,
-+				      max_freq);
- 		return ret ? ERR_PTR(ret) : table;
- 	}
+-	if (!of_machine_is_compatible("nvidia,tegra124"))
++	if (!(of_machine_is_compatible("nvidia,tegra124")
++		|| of_machine_is_compatible("nvidia,tegra210")))
+ 		return -ENODEV;
  
-diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-index c1f0779..cfa110f 100644
---- a/drivers/clk/tegra/cvb.h
-+++ b/drivers/clk/tegra/cvb.h
-@@ -59,8 +59,9 @@ struct cvb_table {
- 
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq);
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq);
- void tegra_cvb_remove_opp_table(struct device *dev,
- 				const struct cvb_table *table,
- 				unsigned long max_freq);
+ 	/*
 -- 
 1.9.1
-
