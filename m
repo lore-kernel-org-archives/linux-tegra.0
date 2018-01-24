@@ -1,60 +1,118 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 1/4] clk: tegra: Add la clock for Tegra210
-Date: Wed, 24 Jan 2018 13:23:50 +0200
-Message-ID: <20180124112350.GG7031@tbergstrom-lnx.Nvidia.com>
-References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
- <1516699369-3513-2-git-send-email-pdeschrijver@nvidia.com>
- <31118e4b-80bd-1db2-0a82-9359b99deccf@nvidia.com>
+Subject: [PATCH v2 1/6] clk: tegra: dfll registration for multiple SoCs
+Date: Wed, 24 Jan 2018 14:45:33 +0200
+Message-ID: <1516797938-32044-3-git-send-email-pdeschrijver@nvidia.com>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <31118e4b-80bd-1db2-0a82-9359b99deccf-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 10:03:31AM +0000, Jon Hunter wrote:
-> 
-> On 23/01/18 09:22, Peter De Schrijver wrote:
-> > This clock is needed by the memory built-in self test work around.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/clk/tegra/clk-tegra210.c         | 14 ++++++++++++++
-> >  include/dt-bindings/clock/tegra210-car.h |  2 +-
-> >  2 files changed, 15 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> > index 9e62608..f790c2d 100644
-> > --- a/drivers/clk/tegra/clk-tegra210.c
-> > +++ b/drivers/clk/tegra/clk-tegra210.c
-> > @@ -41,6 +41,7 @@
-> >  #define CLK_SOURCE_CSITE 0x1d4
-> >  #define CLK_SOURCE_EMC 0x19c
-> >  #define CLK_SOURCE_SOR1 0x410
-> > +#define CLK_SOURCE_LA 0x1f8
-> >  
-> >  #define PLLC_BASE 0x80
-> >  #define PLLC_OUT 0x84
-> > @@ -2654,6 +2655,13 @@ static int tegra210_init_pllu(void)
-> >  			      sor1_parents_idx, 0, &sor1_lock),
-> >  };
-> >  
-> > +static const char * const la_parents[] = {
-> > +	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
-> > +};
-> > +
-> 
-> I was comparing this with downstream and it appears that the parents are
-> listed as "pll_p", "pll_c", "pll_m", "clk_m". Can you double check the
-> above is correct?
-> 
+In a future patch, support for the DFLL in Tegra210 will be introduced.
+This requires support for more than 1 set of CVB and CPU max frequency
+tables.
 
-For all I can see the parents as listed in dowstream are incorrect. Likely
-only pll_p is used in practice, so noone has noticed this. pll_m for example
-can only be used by emc since T210, so it cannot be part of the parent list
-of la.
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 43 +++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 10 deletions(-)
 
-Peter.
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 269d359..440eb8d 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -21,6 +21,7 @@
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <soc/tegra/fuse.h>
+ 
+@@ -28,8 +29,15 @@
+ #include "clk-dfll.h"
+ #include "cvb.h"
+ 
++struct dfll_fcpu_data {
++	const unsigned long *cpu_max_freq_table;
++	unsigned int cpu_max_freq_table_size;
++	const struct cvb_table *cpu_cvb_tables;
++	unsigned int cpu_cvb_tables_size;
++};
++
+ /* Maximum CPU frequency, indexed by CPU speedo id */
+-static const unsigned long cpu_max_freq_table[] = {
++static const unsigned long tegra124_cpu_max_freq_table[] = {
+ 	[0] = 2014500000UL,
+ 	[1] = 2320500000UL,
+ 	[2] = 2116500000UL,
+@@ -82,16 +90,36 @@
+ 	},
+ };
+ 
++static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
++	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
++	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
++	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
++	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
++};
++
++static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
++	{
++		.compatible = "nvidia,tegra124-dfll",
++		.data = &tegra124_dfll_fcpu_data,
++	},
++	{ },
++};
++
+ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ {
+ 	int process_id, speedo_id, speedo_value, err;
+ 	struct tegra_dfll_soc_data *soc;
++	const struct of_device_id *of_id;
++	const struct dfll_fcpu_data *fcpu_data;
++
++	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
++	fcpu_data = of_id->data;
+ 
+ 	process_id = tegra_sku_info.cpu_process_id;
+ 	speedo_id = tegra_sku_info.cpu_speedo_id;
+ 	speedo_value = tegra_sku_info.cpu_speedo_value;
+ 
+-	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
++	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
+ 		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
+ 			speedo_id);
+ 		return -ENODEV;
+@@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	soc->max_freq = cpu_max_freq_table[speedo_id];
++	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
+ 
+-	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
+-					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
++	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
++					   fcpu_data->cpu_cvb_tables_size,
+ 					   process_id, speedo_id, speedo_value,
+ 					   soc->max_freq);
+ 	if (IS_ERR(soc->cvb)) {
+@@ -142,11 +170,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+-	{ .compatible = "nvidia,tegra124-dfll", },
+-	{ },
+-};
+-
+ static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+ 			   tegra_dfll_runtime_resume, NULL)
+-- 
+1.9.1
