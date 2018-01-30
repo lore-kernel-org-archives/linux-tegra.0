@@ -1,213 +1,115 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V6 6/7] PCI: tegra: Broadcast PME_Turn_Off message before
- link goes to L2
-Date: Mon, 29 Jan 2018 16:18:42 +0100
-Message-ID: <20180129151842.GA26264@ulmo>
-References: <1515650888-9459-1-git-send-email-mmaddireddy@nvidia.com>
- <1515650888-9459-7-git-send-email-mmaddireddy@nvidia.com>
- <20180125143627.GH27888@ulmo>
- <8adc2a7d-009b-168c-07f6-b50526ce0605@nvidia.com>
+From: Kyle Evans <kvans32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: Port SDIO GPIO to DTS
+Date: Mon, 29 Jan 2018 21:52:29 -0500
+Message-ID: <20180130025229.GA1183@localhost.localdomain>
+References: <20180117221318.GA1594@localhost.localdomain>
+ <91eab00b-9cfa-f150-369e-2426f9b9dc42@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
-Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <8adc2a7d-009b-168c-07f6-b50526ce0605@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: bhelgaas@google.com, lorenzo.pieralisi@arm.com, cyndis@kapsi.fi, jonathanh@nvidia.com, robh+dt@kernel.org, frowand.list@gmail.com, rjw@rjwysocki.net, tglx@linutronix.de, vidyas@nvidia.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org
+In-Reply-To: <91eab00b-9cfa-f150-369e-2426f9b9dc42-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kyle Evans <kvans32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+* Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> Hello Kyle,
+> 
+> On 18.01.2018 01:13, Kyle Evans wrote:
+> > I have an ASUS TF101(ventana) that I am trying to get running on 
+> > mainline. It is mostly there, but there are a few issues that I believe 
+> > to be dts related. I am focusing on one at a time. Currently, when I 
+> > warm boot/reboot, the wireless SDIO device fails to initialize. It 
+> > works great on cold boot. I'm fairly certain the problem is in the 
+> > dts, but I'd like some feedback on the correct way.
+> >
 
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > I'm not sure of the difference between WLAN_WOW & SDIO_WOW. I'm 
+> > assuming one for chip, one for radio, but I don't know their place in 
+> > the dts.
+> > 
+> > From tegra20-ventana.dts I've got:
+> > 
+> > 	sdhci@c8000000 {
+> >                 status = "okay";
+> >                 power-gpios = <&gpio TEGRA_GPIO(K, 6) GPIO_ACTIVE_HIGH>;
+> >                 bus-width = <4>;
+> >                 keep-power-in-suspend;
+> >         };
+> > 
+> > I'm guessing I need to add the other pins to power-gpois and 
+> > set up mmc-pwrseq?
+> 
+> The 'power-gpois' that you've defined looks fine and probably sufficient to get
+> WiFi up and running.
+> 
+> Take a look at the changes that were needed to get WiFi working on Acer A500,
+> maybe some of it also applicable to TF101:
 
-On Mon, Jan 29, 2018 at 10:11:42AM +0530, Manikanta Maddireddy wrote:
->=20
->=20
-> On 25-Jan-18 8:06 PM, Thierry Reding wrote:
-> > On Thu, Jan 11, 2018 at 11:38:07AM +0530, Manikanta Maddireddy wrote:
-> >> Per PCIe r3.0, sec 5.3.3.2.1, PCIe root port shoould broadcast PME_Tur=
-n_Off
-> >> message before PCIe link goes to L2. PME_Turn_Off broadcast mechanism =
-is
-> >> implemented in AFI module. Each Tegra PCIe root port has its own
-> >> PME_Turn_Off and PME_TO_Ack bitmap in AFI_PME register, program this
-> >> register to broadcast PME_Turn_Off message.
-> >>
-> >> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> >> ---
-> >> V2:
-> >> * no change in this patch
-> >> V3:
-> >> * add PME bitmap in soc data instead of using compatible string
-> >> * replace while loop with readl_poll_timeout() for polling
-> >> * commit log correction
-> >> V4:
-> >> * no change in this patch
-> >> V5:
-> >> * Rebased on linux-next
-> >> V6:
-> >> * no change in this patch
-> >>
-> >>  drivers/pci/host/pci-tegra.c | 45 +++++++++++++++++++++++++++++++++++=
-+++++++++
-> >>  1 file changed, 45 insertions(+)
-> >>
-> >> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra=
-=2Ec
-> >> index 981f126b14d6..cc33fc0fb300 100644
-> >> --- a/drivers/pci/host/pci-tegra.c
-> >> +++ b/drivers/pci/host/pci-tegra.c
-> >> @@ -31,6 +31,7 @@
-> >>  #include <linux/delay.h>
-> >>  #include <linux/export.h>
-> >>  #include <linux/interrupt.h>
-> >> +#include <linux/iopoll.h>
-> >>  #include <linux/irq.h>
-> >>  #include <linux/irqdomain.h>
-> >>  #include <linux/kernel.h>
-> >> @@ -153,6 +154,8 @@
-> >>  #define  AFI_INTR_EN_FPCI_TIMEOUT	(1 << 7)
-> >>  #define  AFI_INTR_EN_PRSNT_SENSE	(1 << 8)
-> >> =20
-> >> +#define AFI_PCIE_PME		0xf0
-> >> +
-> >>  #define AFI_PCIE_CONFIG					0x0f8
-> >>  #define  AFI_PCIE_CONFIG_PCIE_DISABLE(x)		(1 << ((x) + 1))
-> >>  #define  AFI_PCIE_CONFIG_PCIE_DISABLE_ALL		0xe
-> >> @@ -233,6 +236,8 @@
-> >>  #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
-> >>  #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
-> >> =20
-> >> +#define PME_ACK_TIMEOUT 10000
-> >> +
-> >>  struct tegra_msi {
-> >>  	struct msi_controller chip;
-> >>  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
-> >> @@ -251,6 +256,8 @@ struct tegra_pcie_soc {
-> >>  	u32 tx_ref_sel;
-> >>  	u32 pads_refclk_cfg0;
-> >>  	u32 pads_refclk_cfg1;
-> >> +	u8 pme_turnoff_bit[3];
-> >> +	u8 pme_ack_bit[3];
-> >=20
-> > This seems suboptimal to me. Perhaps a better way would be:
-> >=20
-> > 	struct tegra_pcie_port_soc {
-> > 		struct {
-> > 			u8 turnoff_bit;
-> > 			u8 ack_bit;
-> > 		} pme;
-> > 	};
-> >=20
-> > And since we already have num_ports which defines exactly how many ports
-> > we have:
-> >=20
-> > 	struct tegra_pcie_soc {
-> > 		unsigned int num_ports;
-> > 		const struct tegra_pcie_port_soc *ports;
-> > 		...
-> > 	};
-> >=20
-> > I suspect that as you're adding more features we may need more of this
-> > data.
-> >=20
-> > But I'm fine to keep it like this. We can always switch to something
-> > different if the above becomes too much cluttered.
-> >=20
-> I agree it is sub optimal. I moved pme bitmap values to soc data because
-> tegra30 and tegra186 have different bitmap values. To differentiate this
-> I allocated static memory in tegra_pcie_soc. I am a bit hesitant do dynam=
-ic
-> allocation based on num_ports because I need to use compatible string
-> to distinguish between tegra30 & tegra186 in runtime. I believe it is OK
-> to have trade off 16 bits to avoid these compatible check?
+Thanks for this. I have made some progress by adding regulator nodes 
+for pins D,1 & K,6, but am now getting the following error on second 
+boot.
 
-Sorry if I was unclear. I didn't suggest that you'd dynamically allocate
-memory, instead you'd hook it up like so:
+[    2.425281] mmc2: Invalid maximum block size, assuming 512 bytes
+[    2.480692] mmc2: SDHCI controller on c8000000.sdhci [c8000000.sdhci] using ADMA
+[    2.494647] mmc2: error -110 whilst initialising SDIO card
 
-	static const struct tegra_pcie_port_soc tegra186_pcie_ports[] =3D {
-		{ .turnoff_bit =3D  0, .ack_bit =3D  5 },
-		{ .turnoff_bit =3D  8, .ack_bit =3D 10 },
-		{ .turnoff_bit =3D 12, .ack_bit =3D 14 },
-	};
+> 
+> https://github.com/digetx/picasso_upstream_support/commit/beab29d4f172836c5faad91d3232a7c77c5fc6fb
+  HACK: mmc: sdio: Add workaround for wrongly reported CCCR
 
-And then in the existing tegra186_pcie, you'd set this:
+Would you recommend this over setting cap-sd-highspeed in the DT?
+Without either communication has been trouble free thus far. 
 
-	static const struct tegra_pcie_soc tegra186_pcie =3D {
-		.num_ports =3D 3,
-		.ports =3D tegra186_pcie_ports,
-		...
-	};
+> https://github.com/digetx/picasso_upstream_support/commit/165e488e82c97fa1da6ccfe832a43569136000bc
+  mmc: Add "ignore mmc pm notify" functionality
 
-And similar for the others. I realize that this is somewhat more verbose
-than your original, but I think it's more readable.
+This does not apply cleanly, what are the symptoms?
 
-It also allows you to reuse data, such as:
+> https://github.com/digetx/picasso_upstream_support/commit/7e584ca4108707c6469a04bf92d9b659ce76c5cc
+  ARM: tegra: Add Picasso board file
 
-	static const struct tegra_pcie_port_soc tegra20_pcie_ports[] =3D {
-		{ .turnoff_bit =3D 0, .ack_bit =3D  5 },
-		{ .turnoff_bit =3D 8, .ack_bit =3D 10 },
-	};
+I am trying to implement this, but as-is boot hangs before u-boot clears.
 
-	...
+static struct gpiod_lookup_table bluetooth_gpio_lookup = {
+       .dev_id = "rfkill_gpio.1",
+       .table = {
+               GPIO_LOOKUP("tegra-gpio", 160, "reset", 0),
+               { },
+       },
+}
 
-	static const struct tegra_pcie_soc tegra20_pcie =3D {
-		.num_ports =3D 2,
-		.ports =3D tegra20_pcie_ports,
-		...
-	};
+Where does 160 come from?
 
-	...
+static int __init tegra_picasso_wifi_pwr_and_reset(void)
+{
+       if (!of_machine_is_compatible("acer,picasso"))
+               return 0;
 
-	static const struct tegra_pcie_soc tegra124_pcie =3D {
-		.num_ports =3D 2,
-		.ports =3D tegra20_pcie_ports,
-		...
-	};
+       writel(0x00004000, IO_TO_VIRT(0x6000D928));
+       writel(0x00004040, IO_TO_VIRT(0x6000D918));
+       writel(0x00004040, IO_TO_VIRT(0x6000D908));
 
-	static const struct tegra_pcie_soc tegra210_pcie =3D {
-		.num_ports =3D 2,
-		.ports =3D tegra20_pcie_ports,
-		...
-	};
+       writel(0x00000200, IO_TO_VIRT(0x6000D82C));
+       writel(0x00000202, IO_TO_VIRT(0x6000D81C));
+       writel(0x00000202, IO_TO_VIRT(0x6000D80C));
 
-Of course the sharing only works as long as the port definitions don't
-contain data that's different between the chips.
+       writel(0x00004040, IO_TO_VIRT(0x6000D928));
+       mdelay(100);
 
-You could even go and derive the .num_ports as ARRAY_SIZE() of the ports
-definition.
+       writel(0x00000202, IO_TO_VIRT(0x6000D82C));
+       mdelay(200);
 
-So the above does not dynamically allocate memory, it is just a more
-explicit way of specifying the data. It puts the data closer together,
-and thereby makes it easier to read, in my opinion.
+       return 0;
+}
 
-But as I said, feel free to leave this as-is. We can easily rework this
-later on or if necessary.
+What is this magic, or where to find it in a stock kernel? 
 
-Thierry
+> https://github.com/digetx/picasso_upstream_support/commit/4f0d7ac43592826e03f766005a3720ecc5ad1476#diff-4ce775d33b1aadd3981ea13ea140eca6R702
+  ARM: dt: tegra: Add Picasso board dts
 
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlpvO08ACgkQ3SOs138+
-s6GCPg/+MH2hGE+xQ7PI84FzmIaX0w4U1cTbQ6+L0b8NL/1LO9IfQJ1VR8LonPXA
-lCafGzi3rpYhUQglociWVYbrS3KRx6AcWIx7+Ag3JlCt2y1CG4MoCuGX89+qdjiv
-1CzkFztqm+U9UxOMBbNgbWRF4OhoSqTpT8UpsBrGk9Fe3vTeX36+kJXc+yoIvh/P
-iqYE7IQQtfQABhv4FxteVg9+YOC36JWxc7iNNryoZlyO3VHUMVpk42Fltie+thIe
-yxTGrw/zAsMRVWarbN05LeNzdQZXLj5VDZuIXj8rviA45gKK4XFPOctvajYiRmei
-3Z1e0IHiG+UFp1ZqIcqnXHztcvS7TXjvLnH59vaDE3UfOkTL0hmc/lTh/4J+q65q
-0TDucx8R74tNU2/2arFWTv7Qv9mJkMCf82J5T5s4KXJHgYyONpJ4i9jz8OEYvQtr
-7Q15affIXxifR4C8y+hywmW7UuWYLHt/dS1B2/VfIjHx7c+rJEycQzLzm+zwd6+N
-QF9VDwjYCam1GBLt77cerCJYHsgJHu+vn2Y/DYrBSimeNPK3DV770mAQm1VFZHDz
-RVzVr4V0+LYGc64pvQKcjZIrMetDOFj1mNGlsMeSqG9eTGkglie0PZEQyw+Q2/6N
-LDUj2yL2km657WtO2gyZIBYedSSdkIXXRNEtmCOqd7KgwEosDzk=
-=u+Cf
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
+> 
+> Also note that (at least on A500) BCM chip also provides Bluetooth and the
+> 'power/rst' GPIO affects both Wifi and Bluetooth.
