@@ -1,115 +1,57 @@
-From: Kyle Evans <kvans32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Port SDIO GPIO to DTS
-Date: Mon, 29 Jan 2018 21:52:29 -0500
-Message-ID: <20180130025229.GA1183@localhost.localdomain>
-References: <20180117221318.GA1594@localhost.localdomain>
- <91eab00b-9cfa-f150-369e-2426f9b9dc42@gmail.com>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V7  0/4] Add loadable kernel module and power management support
+Date: Tue, 30 Jan 2018 10:54:07 +0530
+Message-ID: <1517289851-14111-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <91eab00b-9cfa-f150-369e-2426f9b9dc42-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kyle Evans <kvans32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, cyndis-/1wQRMveznE@public.gmane.org
+Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-* Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
-> Hello Kyle,
-> 
-> On 18.01.2018 01:13, Kyle Evans wrote:
-> > I have an ASUS TF101(ventana) that I am trying to get running on 
-> > mainline. It is mostly there, but there are a few issues that I believe 
-> > to be dts related. I am focusing on one at a time. Currently, when I 
-> > warm boot/reboot, the wireless SDIO device fails to initialize. It 
-> > works great on cold boot. I'm fairly certain the problem is in the 
-> > dts, but I'd like some feedback on the correct way.
-> >
+This series of patches adds loadable kernel module and power management
+support to Tegra PCIe host controller driver. irq_set_msi_desc() and
+tegra_cpuidle_pcie_irqs_in_use() symbols will be taken care in next
+set of patches.
 
-> > I'm not sure of the difference between WLAN_WOW & SDIO_WOW. I'm 
-> > assuming one for chip, one for radio, but I don't know their place in 
-> > the dts.
-> > 
-> > From tegra20-ventana.dts I've got:
-> > 
-> > 	sdhci@c8000000 {
-> >                 status = "okay";
-> >                 power-gpios = <&gpio TEGRA_GPIO(K, 6) GPIO_ACTIVE_HIGH>;
-> >                 bus-width = <4>;
-> >                 keep-power-in-suspend;
-> >         };
-> > 
-> > I'm guessing I need to add the other pins to power-gpois and 
-> > set up mmc-pwrseq?
-> 
-> The 'power-gpois' that you've defined looks fine and probably sufficient to get
-> WiFi up and running.
-> 
-> Take a look at the changes that were needed to get WiFi working on Acer A500,
-> maybe some of it also applicable to TF101:
+These patches are tested on Jetson TK1, TX1 and TX2 platforms, following
+are the verification details.
+	- Multiple module insert & remove
+	- PCIe device functionality after module insert
+	- Free clock, resets, regulators, powergate, iomem and interrupt
+	resources after module remove
+	- PCIe device functionality after resume from RAM
 
-Thanks for this. I have made some progress by adding regulator nodes 
-for pins D,1 & K,6, but am now getting the following error on second 
-boot.
+V2: PM QoS fix is dropped in V2 from this series because the fix is
+incorporated in latest 'commit 0759e80b84e3 ("PM / QoS: Fix device resume
+latency framework")'. Update commit message of few patches in V2.
 
-[    2.425281] mmc2: Invalid maximum block size, assuming 512 bytes
-[    2.480692] mmc2: SDHCI controller on c8000000.sdhci [c8000000.sdhci] using ADMA
-[    2.494647] mmc2: error -110 whilst initialising SDIO card
+V3: Patches to export irq_set_msi_desc() and tegra_cpuidle_pcie_irqs_in_use()
+are dropped based on review comments. These symbols will be addressed in next
+series. Took care of few other review comments.
 
-> 
-> https://github.com/digetx/picasso_upstream_support/commit/beab29d4f172836c5faad91d3232a7c77c5fc6fb
-  HACK: mmc: sdio: Add workaround for wrongly reported CCCR
+V4: Dropped pci_find_host_bridge() export patch and added new patch to use
+bus->sysdata for private data.
 
-Would you recommend this over setting cap-sd-highspeed in the DT?
-Without either communication has been trouble free thus far. 
+V5: Decouple from https://patchwork.ozlabs.org/patch/832053/ and rebase
+on top of linux-next
 
-> https://github.com/digetx/picasso_upstream_support/commit/165e488e82c97fa1da6ccfe832a43569136000bc
-  mmc: Add "ignore mmc pm notify" functionality
+V6: Rebased on lpieralisi/pci/tegra branch
 
-This does not apply cleanly, what are the symptoms?
+V7: Addressed comments on patch: 6 and 7 in V6
+Limiting this series to linux-tegra & linux-pci since patches for other 
+subsystem are merged or dropped
 
-> https://github.com/digetx/picasso_upstream_support/commit/7e584ca4108707c6469a04bf92d9b659ce76c5cc
-  ARM: tegra: Add Picasso board file
+Manikanta Maddireddy (4):
+  PCI: tegra: Free resources on probe failure
+  PCI: tegra: Add loadable kernel module support
+  PCI: tegra: Broadcast PME_Turn_Off message before link goes to L2
+  PCI: tegra: Add power management support
 
-I am trying to implement this, but as-is boot hangs before u-boot clears.
+ drivers/pci/host/Kconfig     |   2 +-
+ drivers/pci/host/pci-tegra.c | 347 +++++++++++++++++++++++++++++++++----------
+ 2 files changed, 272 insertions(+), 77 deletions(-)
 
-static struct gpiod_lookup_table bluetooth_gpio_lookup = {
-       .dev_id = "rfkill_gpio.1",
-       .table = {
-               GPIO_LOOKUP("tegra-gpio", 160, "reset", 0),
-               { },
-       },
-}
-
-Where does 160 come from?
-
-static int __init tegra_picasso_wifi_pwr_and_reset(void)
-{
-       if (!of_machine_is_compatible("acer,picasso"))
-               return 0;
-
-       writel(0x00004000, IO_TO_VIRT(0x6000D928));
-       writel(0x00004040, IO_TO_VIRT(0x6000D918));
-       writel(0x00004040, IO_TO_VIRT(0x6000D908));
-
-       writel(0x00000200, IO_TO_VIRT(0x6000D82C));
-       writel(0x00000202, IO_TO_VIRT(0x6000D81C));
-       writel(0x00000202, IO_TO_VIRT(0x6000D80C));
-
-       writel(0x00004040, IO_TO_VIRT(0x6000D928));
-       mdelay(100);
-
-       writel(0x00000202, IO_TO_VIRT(0x6000D82C));
-       mdelay(200);
-
-       return 0;
-}
-
-What is this magic, or where to find it in a stock kernel? 
-
-> https://github.com/digetx/picasso_upstream_support/commit/4f0d7ac43592826e03f766005a3720ecc5ad1476#diff-4ce775d33b1aadd3981ea13ea140eca6R702
-  ARM: dt: tegra: Add Picasso board dts
-
-> 
-> Also note that (at least on A500) BCM chip also provides Bluetooth and the
-> 'power/rst' GPIO affects both Wifi and Bluetooth.
+-- 
+2.1.4
