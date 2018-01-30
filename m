@@ -1,391 +1,185 @@
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [PATCH V7  4/4] PCI: tegra: Add power management support
-Date: Tue, 30 Jan 2018 10:54:11 +0530
-Message-ID: <1517289851-14111-5-git-send-email-mmaddireddy@nvidia.com>
-References: <1517289851-14111-1-git-send-email-mmaddireddy@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 3/4] drm: add ARM flush implementations
+Date: Tue, 30 Jan 2018 10:09:41 +0100
+Message-ID: <20180130090941.GA25930@phenom.ffwll.local>
+References: <20180117003559.67837-1-gurchetansingh@chromium.org>
+ <20180117003559.67837-3-gurchetansingh@chromium.org>
+ <20180117083105.GG2759@phenom.ffwll.local>
+ <CAAfnVBm4Mp8vC4aBmrP2rJeRSBN_AFN5gaZfijg9BCJEBupDzw@mail.gmail.com>
+ <CAKMK7uHoAqYsgqOTT4O=NQFvj51M2tKp+c2Sm8t4t01QN9Jkfg@mail.gmail.com>
+ <CAAfnVB=W9XNid3NX7Jr5axPF4FG_QbQAR+_uwdAqWwO3-_N+7Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1517289851-14111-1-git-send-email-mmaddireddy@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: thierry.reding@gmail.com, bhelgaas@google.com, lorenzo.pieralisi@arm.com, cyndis@kapsi.fi
-Cc: jonathanh@nvidia.com, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, vidyas@nvidia.com, kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CAAfnVB=W9XNid3NX7Jr5axPF4FG_QbQAR+_uwdAqWwO3-_N+7Q@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gurchetan Singh <gurchetansingh@chromium.org>
+Cc: ML dri-devel <dri-devel@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra186 powergate driver is implemented as power domain driver, power
-partition ungate/gate are registered as power_on/power_off callback
-functions. There are no direct functions to power gate/ungate host
-controller in Tegra186. Host controller driver should add "power-domains"
-property in device tree and implement runtime suspend and resume
-callback functons. Power gate and ungate is taken care by power domain
-driver when host controller driver calls pm_runtime_put_sync and
-pm_runtime_get_sync respectively.
-
-Register suspend_noirq & resume_noirq callback functions to allow PCIe to
-come up after resume from RAM. Both runtime and noirq pm ops share same
-callback functions.
-
-Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
----
-V2:
-* no change in this patch
-V3:
-* no change in this patch
-V4:
-* no change in this patch
-V5:
-* Decoupled from https://patchwork.ozlabs.org/patch/832053/ and
-rebased on linux-next
-V6:
-* no change in this patch
-V7:
-* memory & irq alloc and AFI programming for MSI are split in two functions
-
- drivers/pci/host/pci-tegra.c | 178 +++++++++++++++++++++++++++----------------
- 1 file changed, 111 insertions(+), 67 deletions(-)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index feb5b961f737..21851bc08c7e 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -1293,31 +1293,25 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
- 		}
- 	}
- 
--	err = tegra_pcie_power_on(pcie);
--	if (err) {
--		dev_err(dev, "failed to power up: %d\n", err);
--		goto phys_put;
--	}
--
- 	pads = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pads");
- 	pcie->pads = devm_ioremap_resource(dev, pads);
- 	if (IS_ERR(pcie->pads)) {
- 		err = PTR_ERR(pcie->pads);
--		goto poweroff;
-+		goto phys_put;
- 	}
- 
- 	afi = platform_get_resource_byname(pdev, IORESOURCE_MEM, "afi");
- 	pcie->afi = devm_ioremap_resource(dev, afi);
- 	if (IS_ERR(pcie->afi)) {
- 		err = PTR_ERR(pcie->afi);
--		goto poweroff;
-+		goto phys_put;
- 	}
- 
- 	/* request configuration space, but remap later, on demand */
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cs");
- 	if (!res) {
- 		err = -EADDRNOTAVAIL;
--		goto poweroff;
-+		goto phys_put;
- 	}
- 
- 	pcie->cs = *res;
-@@ -1328,14 +1322,14 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
- 	pcie->cfg = devm_ioremap_resource(dev, &pcie->cs);
- 	if (IS_ERR(pcie->cfg)) {
- 		err = PTR_ERR(pcie->cfg);
--		goto poweroff;
-+		goto phys_put;
- 	}
- 
- 	/* request interrupt */
- 	err = platform_get_irq_byname(pdev, "intr");
- 	if (err < 0) {
- 		dev_err(dev, "failed to get IRQ: %d\n", err);
--		goto poweroff;
-+		goto phys_put;
- 	}
- 
- 	pcie->irq = err;
-@@ -1343,7 +1337,7 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
- 	err = request_irq(pcie->irq, tegra_pcie_isr, IRQF_SHARED, "PCIE", pcie);
- 	if (err) {
- 		dev_err(dev, "failed to register IRQ: %d\n", err);
--		goto poweroff;
-+		goto phys_put;
- 	}
- 
- 	return 0;
-@@ -1351,8 +1345,6 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
- phys_put:
- 	if (soc->program_uphy)
- 		tegra_pcie_phys_put(pcie);
--poweroff:
--	tegra_pcie_power_off(pcie);
- 	return err;
- }
- 
-@@ -1363,8 +1355,6 @@ static int tegra_pcie_put_resources(struct tegra_pcie *pcie)
- 	if (pcie->irq > 0)
- 		free_irq(pcie->irq, pcie);
- 
--	tegra_pcie_power_off(pcie);
--
- 	if (soc->program_uphy)
- 		tegra_pcie_phys_put(pcie);
- 
-@@ -1533,15 +1523,13 @@ static const struct irq_domain_ops msi_domain_ops = {
- 	.map = tegra_msi_map,
- };
- 
--static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
-+static int tegra_pcie_msi_setup(struct tegra_pcie *pcie)
- {
- 	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
- 	struct platform_device *pdev = to_platform_device(pcie->dev);
--	const struct tegra_pcie_soc *soc = pcie->soc;
- 	struct tegra_msi *msi = &pcie->msi;
- 	struct device *dev = pcie->dev;
- 	int err;
--	u32 reg;
- 
- 	mutex_init(&msi->lock);
- 
-@@ -1574,6 +1562,20 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
- 	/* setup AFI/FPCI range */
- 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
- 	msi->phys = virt_to_phys((void *)msi->pages);
-+	host->msi = &msi->chip;
-+
-+	return 0;
-+
-+err:
-+	irq_domain_remove(msi->domain);
-+	return err;
-+}
-+
-+static void tegra_pcie_enable_msi(struct tegra_pcie *pcie)
-+{
-+	const struct tegra_pcie_soc *soc = pcie->soc;
-+	struct tegra_msi *msi = &pcie->msi;
-+	u32 reg;
- 
- 	afi_writel(pcie, msi->phys >> soc->msi_base_shift, AFI_MSI_FPCI_BAR_ST);
- 	afi_writel(pcie, msi->phys, AFI_MSI_AXI_BAR_ST);
-@@ -1594,20 +1596,29 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
- 	reg = afi_readl(pcie, AFI_INTR_MASK);
- 	reg |= AFI_INTR_MASK_MSI_MASK;
- 	afi_writel(pcie, reg, AFI_INTR_MASK);
-+}
- 
--	host->msi = &msi->chip;
-+static void tegra_pcie_msi_teardown(struct tegra_pcie *pcie)
-+{
-+	struct tegra_msi *msi = &pcie->msi;
-+	unsigned int i, irq;
- 
--	return 0;
-+	free_pages(msi->pages, 0);
-+
-+	if (msi->irq > 0)
-+		free_irq(msi->irq, pcie);
-+
-+	for (i = 0; i < INT_PCI_MSI_NR; i++) {
-+		irq = irq_find_mapping(msi->domain, i);
-+		if (irq > 0)
-+			irq_dispose_mapping(irq);
-+	}
- 
--err:
- 	irq_domain_remove(msi->domain);
--	return err;
- }
- 
- static int tegra_pcie_disable_msi(struct tegra_pcie *pcie)
- {
--	struct tegra_msi *msi = &pcie->msi;
--	unsigned int i, irq;
- 	u32 value;
- 
- 	/* mask the MSI interrupt */
-@@ -1625,19 +1636,6 @@ static int tegra_pcie_disable_msi(struct tegra_pcie *pcie)
- 	afi_writel(pcie, 0, AFI_MSI_EN_VEC6);
- 	afi_writel(pcie, 0, AFI_MSI_EN_VEC7);
- 
--	free_pages(msi->pages, 0);
--
--	if (msi->irq > 0)
--		free_irq(msi->irq, pcie);
--
--	for (i = 0; i < INT_PCI_MSI_NR; i++) {
--		irq = irq_find_mapping(msi->domain, i);
--		if (irq > 0)
--			irq_dispose_mapping(irq);
--	}
--
--	irq_domain_remove(msi->domain);
--
- 	return 0;
- }
- 
-@@ -2136,10 +2134,8 @@ static void tegra_pcie_disable_ports(struct tegra_pcie *pcie)
- {
- 	struct tegra_pcie_port *port, *tmp;
- 
--	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
-+	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
- 		tegra_pcie_port_disable(port);
--		tegra_pcie_port_free(port);
--	}
- }
- 
- static const struct tegra_pcie_port_soc tegra20_pcie_ports[] = {
-@@ -2394,26 +2390,22 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = tegra_pcie_enable_controller(pcie);
--	if (err)
-+	err = tegra_pcie_msi_setup(pcie);
-+	if (err < 0) {
-+		dev_err(dev, "failed to enable MSI support: %d\n", err);
- 		goto put_resources;
-+	}
- 
--	err = tegra_pcie_request_resources(pcie);
--	if (err)
--		goto disable_controller;
--
--	/* setup the AFI address translations */
--	tegra_pcie_setup_translations(pcie);
--
--	if (IS_ENABLED(CONFIG_PCI_MSI)) {
--		err = tegra_pcie_enable_msi(pcie);
--		if (err < 0) {
--			dev_err(dev, "failed to enable MSI support: %d\n", err);
--			goto free_resources;
--		}
-+	pm_runtime_enable(pcie->dev);
-+	err = pm_runtime_get_sync(pcie->dev);
-+	if (err) {
-+		dev_err(dev, "fail to enable pcie controller: %d\n", err);
-+		goto teardown_msi;
- 	}
- 
--	tegra_pcie_enable_ports(pcie);
-+	err = tegra_pcie_request_resources(pcie);
-+	if (err)
-+		goto pm_runtime_put;
- 
- 	host->busnr = pcie->busn.start;
- 	host->dev.parent = &pdev->dev;
-@@ -2424,7 +2416,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 	err = pci_scan_root_bus_bridge(host);
- 	if (err < 0) {
- 		dev_err(dev, "failed to register host: %d\n", err);
--		goto disable_ports;
-+		goto free_resources;
- 	}
- 
- 	pci_bus_size_bridges(host->bus);
-@@ -2443,14 +2435,13 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--disable_ports:
--	tegra_pcie_disable_ports(pcie);
--	if (IS_ENABLED(CONFIG_PCI_MSI))
--		tegra_pcie_disable_msi(pcie);
- free_resources:
- 	tegra_pcie_free_resources(pcie);
--disable_controller:
--	tegra_pcie_disable_controller(pcie);
-+pm_runtime_put:
-+	pm_runtime_put_sync(pcie->dev);
-+	pm_runtime_disable(pcie->dev);
-+teardown_msi:
-+	tegra_pcie_msi_teardown(pcie);
- put_resources:
- 	tegra_pcie_put_resources(pcie);
- 	return err;
-@@ -2460,29 +2451,82 @@ static int tegra_pcie_remove(struct platform_device *pdev)
- {
- 	struct tegra_pcie *pcie = platform_get_drvdata(pdev);
- 	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
--	struct tegra_pcie_port *port;
-+	struct tegra_pcie_port *port, *tmp;
- 
- 	if (IS_ENABLED(CONFIG_DEBUG_FS))
- 		tegra_pcie_debugfs_exit(pcie);
- 	pci_stop_root_bus(host->bus);
- 	pci_remove_root_bus(host->bus);
-+	tegra_pcie_free_resources(pcie);
-+	pm_runtime_put_sync(pcie->dev);
-+	pm_runtime_disable(pcie->dev);
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		tegra_pcie_msi_teardown(pcie);
-+	tegra_pcie_put_resources(pcie);
-+	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
-+		tegra_pcie_port_free(port);
-+
-+	return 0;
-+}
-+
-+static int tegra_pcie_pm_suspend(struct device *dev)
-+{
-+	struct tegra_pcie *pcie = dev_get_drvdata(dev);
-+	struct tegra_pcie_port *port;
-+
- 	list_for_each_entry(port, &pcie->ports, list)
- 		tegra_pcie_pme_turnoff(port);
- 	tegra_pcie_disable_ports(pcie);
- 	if (IS_ENABLED(CONFIG_PCI_MSI))
- 		tegra_pcie_disable_msi(pcie);
--	tegra_pcie_free_resources(pcie);
- 	tegra_pcie_disable_controller(pcie);
--	tegra_pcie_put_resources(pcie);
-+	tegra_pcie_power_off(pcie);
- 
- 	return 0;
- }
- 
-+static int tegra_pcie_pm_resume(struct device *dev)
-+{
-+	struct tegra_pcie *pcie = dev_get_drvdata(dev);
-+	int err;
-+
-+	err = tegra_pcie_power_on(pcie);
-+	if (err) {
-+		dev_err(dev, "tegra pcie power on fail: %d\n", err);
-+		return err;
-+	}
-+	err = tegra_pcie_enable_controller(pcie);
-+	if (err) {
-+		dev_err(dev, "tegra pcie controller enable fail: %d\n", err);
-+		goto poweroff;
-+	}
-+	tegra_pcie_setup_translations(pcie);
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		tegra_pcie_enable_msi(pcie);
-+
-+	tegra_pcie_enable_ports(pcie);
-+
-+	return 0;
-+
-+poweroff:
-+	tegra_pcie_power_off(pcie);
-+
-+	return err;
-+}
-+
-+static const struct dev_pm_ops tegra_pcie_pm_ops = {
-+	SET_RUNTIME_PM_OPS(tegra_pcie_pm_suspend, tegra_pcie_pm_resume, NULL)
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_pcie_pm_suspend,
-+				      tegra_pcie_pm_resume)
-+};
-+
- static struct platform_driver tegra_pcie_driver = {
- 	.driver = {
- 		.name = "tegra-pcie",
- 		.of_match_table = tegra_pcie_of_match,
- 		.suppress_bind_attrs = true,
-+		.pm = &tegra_pcie_pm_ops,
- 	},
- 	.probe = tegra_pcie_probe,
- 	.remove = tegra_pcie_remove,
--- 
-2.1.4
+T24gVGh1LCBKYW4gMTgsIDIwMTggYXQgMDk6MjA6MTFBTSAtMDgwMCwgR3VyY2hldGFuIFNpbmdo
+IHdyb3RlOgo+IE9uIFdlZCwgSmFuIDE3LCAyMDE4IGF0IDExOjQyIFBNLCBEYW5pZWwgVmV0dGVy
+IDxkYW5pZWxAZmZ3bGwuY2g+IHdyb3RlOgo+IAo+ID4gT24gV2VkLCBKYW4gMTcsIDIwMTggYXQg
+MTE6NDYgUE0sIEd1cmNoZXRhbiBTaW5naAo+ID4gPGd1cmNoZXRhbnNpbmdoQGNocm9taXVtLm9y
+Zz4gd3JvdGU6Cj4gPiA+PiBkbWEgYXBpIGp1c3QgaXNuJ3QgcXVpdGUgc3VmZmljaWVudCBmb3Ig
+aW1wbGVtZW50aW5nIGZhc3QgZ3B1IGRyaXZlcnMuCj4gPiA+Cj4gPiA+Cj4gPiA+IENhbiB5b3Ug
+ZWxhYm9yYXRlPyAgSUlSQyB0aGUgRE1BIEFQSSBoYXMgc3Ryb25nIHN5bmNocm9uaXphdGlvbgo+
+ID4gZ3VhcmFudGVlcwo+ID4gPiBhbmQgdGhhdCBjYW4gYmUgcHJvYmxlbWF0aWMgZm9yIEdQVSBk
+cml2ZXJzLiAgSG93ZXZlciwgdXNpbmcgdGhlIERNQSBBUEkKPiA+IGZvcgo+ID4gPiBmbHVzaGlu
+ZyBkb2Vzbid0IG5lY2Vzc2FyaWx5IG1lYW4gdGhlIGRyaXZlciBoYXMgdG8gdXNlIHRoZSByZXN0
+IG9mIHRoZQo+ID4gRE1BCj4gPiA+IEFQSS4KPiA+ID4KPiA+ID4+IGJ1dCB0aGVuIGl0J2QgbmVl
+ZCB0byBkaXJlY3RseSBmbHVzaCBjcHUgY2FjaGVzIGFuZCBieXBhc3MgdGhlIGRtYSBhcGkuCj4g
+PiA+Cj4gPiA+Cj4gPiA+IE9uIEFSTSwgY2FjaGUgZmx1c2hpbmcgc2VlbXMgdG8gdmFyeSBmcm9t
+IGNoaXBzZXQgdG8gY2hpcHNldC4gIEZvcgo+ID4gZXhhbXBsZSwKPiA+ID4gb24gQVJNMzIgYSB0
+eXBpY2FsIGNhbGwtc3RhY2sgZm9yIGRtYV9zeW5jX3NpbmdsZV9mb3JfZGV2aWNlIGxvb2tzIGxp
+a2U6Cj4gPiA+Cj4gPiA+IGFybV9kbWFfc3luY19zaW5nbGVfZm9yX2RldmljZQo+ID4gPiBfX2Rt
+YV9wYWdlX2NwdV90b19kZXYKPiA+ID4gb3V0ZXJfY2xlYW5fcmFuZ2UKPiA+ID4gb3V0ZXJfY2Fj
+aGUuY2xlYW5fcmFuZ2UKPiA+ID4KPiA+ID4gVGhlcmUgYXJlIG11bHRpcGxlIGNsZWFuX3Jhbmdl
+IGltcGxlbWVudGF0aW9ucyBvdXQgdGhlcmUgKGkuZSwKPiA+ID4gYXVyb3JhX2NsZWFuX3Jhbmdl
+LCBsMmMyMTBfY2xlYW5fcmFuZ2UsIGZlcm9jZW9uX2wyX2NsZWFuX3JhbmdlKSwgc28KPiA+IHRo
+YXQncwo+ID4gPiB3aHkgdGhlIERNQSBBUEkgd2FzIHVzZWQgaW4gdGhpcyBjYXNlLiAgT24gQVJN
+NjQsIHRoaW5ncyBhcmUgYSBsaXR0bGUKPiA+ID4gc2ltcGxlciwgYnV0IHRoZSBETUEgQVBJIHNl
+ZW1zIHRvIGdvIGRpcmVjdGx5IHRvIGFzc2VtYmx5Cj4gPiAoX19kbWFfbWFwX2FyZWEpCj4gPiA+
+IGFmdGVyIGEgbGl0dGxlIGluZGlyZWN0aW9uLiAgV2h5IGRvIHlvdSB0aGluayB0aGF0J3MgaW5l
+ZmZpY2llbnQ/Cj4gPgo+ID4gSSBuZXZlciBzYWlkIGl0J3MgaW5lZmZpY2llbnQuIE15IG9ubHkg
+Z3JpcGUgaXMgd2l0aCBhZGRpbmcgdGhlCj4gPiBwb2ludGxlc3Mgc3RydWN0IGRldmljZSAqIGFy
+Z3VtZW50IHRvIGZsdXNoaW5nIGZ1bmN0aW9ucyB3aGljaCByZWFsbHkKPiA+IGRvbid0IGNhcmUg
+KG5vciBzaG91bGQgY2FyZSkgYWJvdXQgdGhlIGRldmljZS4gQmVjYXVzZSB3aGF0IHdlIHJlYWxs
+eQo+ID4gd2FudCB0byBjYWxsIGlzIG91dGVyX2NsZWFuX3JhbmdlIGhlcmUsIGFuZCB0aGF0IGRv
+ZXNuJ3QgbmVlZCBhIHN0cnVjdAo+ID4gZGV2aWNlICouIEltbyB0aGF0IGZ1bmN0aW9uIChvciBz
+b21ldGhpbmcgc2ltaWxhcikgbmVlZHMgdG8gYmUKPiA+IGV4cG9ydGVkIGFuZCB0aGVuIHVzZWQg
+YnkgZHJtX2ZsdXNoXyogZnVuY3Rpb25zLgo+ID4KPiAKPiBPa2F5LCB3ZSBjYW4gZ28gd2l0aCBv
+dXRlcl9jbGVhbl9yYW5nZSBvbiBBUk0gYW5kCj4gX19kbWFfbWFwX2FyZWEvX19kbWFfZmx1c2hf
+YXJlYQo+IG9uIEFSTTY0LiAgT25lIGNvbmNlcm4sIG9uIEFSTTY0IGF0LWxlYXN0LCB0aGUgaGVh
+ZGVyCj4gKGFybTY0L2luY2x1ZGUvYXNtL2NhY2hlZmx1c2guaCkgaW5kaWNhdGVzIHdlIHNob3Vs
+ZG4ndCBjYWxsIHRoZXNlCj4gZnVuY3Rpb25zIGRpcmVjdGx5IGZvciB3aGF0ZXZlciByZWFzb246
+Cj4gCj4gIkNhY2hlIG1haW50ZW5hbmNlIGZ1bmN0aW9ucyB1c2VkIGJ5IHRoZSBETUEgQVBJLiBO
+byB0byBiZSB1c2VkIGRpcmVjdGx5LiIKPiAKPiBIb3dldmVyLCBpZiBubyBvbmUgb2JqZWN0cywg
+dGhhdCdzIHRoZSByb3V0ZSB3ZSdsbCBnby4KClllYWgsIGRybV9mbHVzaC5jIGlzIGFsbCBhYm91
+dCBub3QgZm9sbG93aW5nIHRoZSBkbWEgYXBpIGFuZCBkaWdnaW5nIGEKZGlyZWN0IHBhdGggdG8g
+dGhlIHVuZGVybHlpbmcgY29uY2VwdHMuIFNvIHRvdGFsbHkgZmluZS4KCk1heWJlIHdlIHNob3Vs
+ZCBpbXByb3ZlIHRoZSBrZXJuZWxkb2MgYSBiaXQgYXMgcGFydCBvZiB5b3VyIHBhdGNoIHNlcmll
+cywKdG8gZXhwbGFpbiB0aGlzIGJldHRlcj8KLURhbmllbAoKPiAKPiA+Cj4gPiBBbHNvIG5vdGUg
+dGhhdCBhcm0gaGFzIGJvdGggZmx1c2ggYW5kIGludmFsaWRhdGUgZnVuY3Rpb25zLCBidXQgb24g
+eDg2Cj4gPiB0aG9zZSBhcmUgdGhlIHNhbWUgaW1wbGVtZW50YXRpb24gKGFuZCB3ZSBkb24ndCBo
+YXZlIGEgc2VwYXJhdGUKPiA+IGRybV9pbnZhbGlkYXRlXyogc2V0IG9mIGZ1bmN0aW9ucykuIFRo
+YXQgZG9lc24ndCBsb29rIGxpa2UgYSB0b28gZ29vZAo+ID4gaWRlYS4KPiA+Cj4gPiBPZiBjb3Vy
+c2UgdGhhdCBkb2Vzbid0IHNvbHZlIHRoZSBwcm9ibGVtIG9mIHdobydzIHN1cHBvc2VkIHRvIGNh
+bGwgaXQKPiA+IGFuZCB3aGVuIGluIHRoZSBkbWEtYnVmIHNoYXJpbmcgc2l0dWF0aW9uLgo+ID4g
+LURhbmllbAo+ID4KPiA+ID4gT24gV2VkLCBKYW4gMTcsIDIwMTggYXQgMTI6MzEgQU0sIERhbmll
+bCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4gd3JvdGU6Cj4gPiA+Pgo+ID4gPj4gT24gVHVlLCBK
+YW4gMTYsIDIwMTggYXQgMDQ6MzU6NThQTSAtMDgwMCwgR3VyY2hldGFuIFNpbmdoIHdyb3RlOgo+
+ID4gPj4gPiBUaGUgRE1BIEFQSSBjYW4gYmUgdXNlZCB0byBmbHVzaCBzY2F0dGVyIGdhdGhlciB0
+YWJsZXMgYW5kIHBoeXNpY2FsCj4gPiA+PiA+IHBhZ2VzIG9uIEFSTSBkZXZpY2VzLgo+ID4gPj4g
+Pgo+ID4gPj4gPiBTaWduZWQtb2ZmLWJ5OiBHdXJjaGV0YW4gU2luZ2ggPGd1cmNoZXRhbnNpbmdo
+QGNocm9taXVtLm9yZz4KPiA+ID4+ID4gLS0tCj4gPiA+PiA+ICBkcml2ZXJzL2dwdS9kcm0vZHJt
+X2NhY2hlLmMgICAgICAgICAgICAgICAgIHwgMTcgKysrKysrKysrKysrKysrKysKPiA+ID4+ID4g
+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZ2VtLmMgfCAgNyArKy0tLS0t
+Cj4gPiA+PiA+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMgICAgICAgICAgICAgICAgIHwg
+IDYgKy0tLS0tCj4gPiA+PiA+ICAzIGZpbGVzIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyksIDEw
+IGRlbGV0aW9ucygtKQo+ID4gPj4gPgo+ID4gPj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2RybV9jYWNoZS5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9jYWNoZS5jCj4gPiA+PiA+IGlu
+ZGV4IDNkMmJiOWQ3MWE2MC4uOThkNmViYjQwZTk2IDEwMDY0NAo+ID4gPj4gPiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZHJtX2NhY2hlLmMKPiA+ID4+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2Ry
+bV9jYWNoZS5jCj4gPiA+PiA+IEBAIC0xMDUsNiArMTA1LDE4IEBAIGRybV9mbHVzaF9wYWdlcyhz
+dHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBwYWdlCj4gPiA+PiA+ICpwYWdlc1tdLAo+ID4gPj4g
+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAodW5zaWduZWQgbG9uZylwYWdlX3Zp
+cnR1YWwgKwo+ID4gPj4gPiBQQUdFX1NJWkUpOwo+ID4gPj4gPiAgICAgICAgICAgICAgIGt1bm1h
+cF9hdG9taWMocGFnZV92aXJ0dWFsKTsKPiA+ID4+ID4gICAgICAgfQo+ID4gPj4gPiArI2VsaWYg
+ZGVmaW5lZChDT05GSUdfQVJNKSB8fCBkZWZpbmVkKENPTkZJR19BUk02NCkKPiA+ID4+ID4gKyAg
+ICAgdW5zaWduZWQgbG9uZyBpOwo+ID4gPj4gPiArICAgICBkbWFfYWRkcl90IGRtYV9oYW5kbGU7
+Cj4gPiA+PiA+ICsKPiA+ID4+ID4gKyAgICAgaWYgKCFkZXYpCj4gPiA+PiA+ICsgICAgICAgICAg
+ICAgcmV0dXJuOwo+ID4gPj4gPiArCj4gPiA+PiA+ICsgICAgIGZvciAoaSA9IDA7IGkgPCBudW1f
+cGFnZXM7IGkrKykgewo+ID4gPj4gPiArICAgICAgICAgICAgIGRtYV9oYW5kbGUgPSBwaHlzX3Rv
+X2RtYShkcm0tPmRldiwKPiA+ID4+ID4gcGFnZV90b19waHlzKHBhZ2VzW2ldKSk7Cj4gPiA+PiA+
+ICsgICAgICAgICAgICAgZG1hX3N5bmNfc2luZ2xlX2Zvcl9kZXZpY2UoZGV2LCBkbWFfaGFuZGxl
+LCBQQUdFX1NJWkUsCj4gPiA+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgRE1BX1RPX0RFVklDRSk7Cj4gPiA+Pgo+ID4gPj4gRXJtIG5vLiBUaGVzZSBmdW5jdGlv
+bnMgaGVyZSBhcmUgc3VwZXItbG93LWxldmVsIGZ1bmN0aW9ucyB1c2VkIGJ5Cj4gPiBkcml2ZXJz
+Cj4gPiA+PiB3aGljaCBrbm93IGV4YWN0bHkgd2hhdCB0aGV5J3JlIGRvaW5nLiBXaGljaCBpcyBy
+ZWltcGxlbWVudGluZyBoYWxmIG9mCj4gPiB0aGUKPiA+ID4+IGRtYSBhcGkgYmVoaW5kIHRoZSBk
+bWEgYXBpJ3MgYmFjayBiZWNhdXNlIHRoZSBkbWEgYXBpIGp1c3QgaXNuJ3QgcXVpdGUKPiA+ID4+
+IHN1ZmZpY2llbnQgZm9yIGltcGxlbWVudGluZyBmYXN0IGdwdSBkcml2ZXJzLgo+ID4gPj4KPiA+
+ID4+IElmIGFsbCB5b3UgZW5kIHVwIGRvaW5nIGlzIGNhbGxpbmcgdGhlIGRtYSBhcGkgYWdhaW4s
+IHRoZW4gcGxzIGp1c3QgY2FsbAo+ID4gPj4gaXQgZGlyZWN0bHkuCj4gPiA+Pgo+ID4gPj4gQW5k
+IGp1c3QgdG8gbWFrZSBpdCBjbGVhcjogSSdkIGJlIHBlcmZlY3RseSBmaW5lIHdpdGggYWRkaW5n
+IGFybSBzdXBwb3J0Cj4gPiA+PiBoZXJlLCBidXQgdGhlbiBpdCdkIG5lZWQgdG8gZGlyZWN0bHkg
+Zmx1c2ggY3B1IGNhY2hlcyBhbmQgYnlwYXNzIHRoZSBkbWEKPiA+ID4+IGFwaS4gT3RoZXJ3aXNl
+IHRoaXMgaXMgcG9pbnRsZXNzLgo+ID4gPj4gLURhbmllbAo+ID4gPj4KPiA+ID4+ID4gKyAgICAg
+fQo+ID4gPj4gPiAgI2Vsc2UKPiA+ID4+ID4gICAgICAgcHJfZXJyKCJBcmNoaXRlY3R1cmUgaGFz
+IG5vIGRybV9jYWNoZS5jIHN1cHBvcnRcbiIpOwo+ID4gPj4gPiAgICAgICBXQVJOX09OX09OQ0Uo
+MSk7Cj4gPiA+PiA+IEBAIC0xMzYsNiArMTQ4LDExIEBAIGRybV9mbHVzaF9zZyhzdHJ1Y3QgZGV2
+aWNlICpkZXYsIHN0cnVjdCBzZ190YWJsZQo+ID4gPj4gPiAqc3QpCj4gPiA+PiA+Cj4gPiA+PiA+
+ICAgICAgIGlmICh3YmludmRfb25fYWxsX2NwdXMoKSkKPiA+ID4+ID4gICAgICAgICAgICAgICBw
+cl9lcnIoIlRpbWVkIG91dCB3YWl0aW5nIGZvciBjYWNoZSBmbHVzaFxuIik7Cj4gPiA+PiA+ICsj
+ZWxpZiBkZWZpbmVkKENPTkZJR19BUk0pIHx8IGRlZmluZWQoQ09ORklHX0FSTTY0KQo+ID4gPj4g
+PiArICAgICBpZiAoIWRldikKPiA+ID4+ID4gKyAgICAgICAgICAgICByZXR1cm47Cj4gPiA+PiA+
+ICsKPiA+ID4+ID4gKyAgICAgZG1hX3N5bmNfc2dfZm9yX2RldmljZShkZXYsIHN0LT5zZ2wsIHN0
+LT5uZW50cywgRE1BX1RPX0RFVklDRSk7Cj4gPiA+PiA+ICAjZWxzZQo+ID4gPj4gPiAgICAgICBw
+cl9lcnIoIkFyY2hpdGVjdHVyZSBoYXMgbm8gZHJtX2NhY2hlLmMgc3VwcG9ydFxuIik7Cj4gPiA+
+PiA+ICAgICAgIFdBUk5fT05fT05DRSgxKTsKPiA+ID4+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZ2VtLmMKPiA+ID4+ID4gYi9kcml2ZXJzL2dw
+dS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2dlbS5jCj4gPiA+PiA+IGluZGV4IDhhYzdlYjI1
+ZTQ2ZC4uMDE1N2Y5MGI1ZDEwIDEwMDY0NAo+ID4gPj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+cm9ja2NoaXAvcm9ja2NoaXBfZHJtX2dlbS5jCj4gPiA+PiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZ2VtLmMKPiA+ID4+ID4gQEAgLTE0LDYgKzE0LDcgQEAK
+PiA+ID4+ID4KPiA+ID4+ID4gICNpbmNsdWRlIDxkcm0vZHJtLmg+Cj4gPiA+PiA+ICAjaW5jbHVk
+ZSA8ZHJtL2RybVAuaD4KPiA+ID4+ID4gKyNpbmNsdWRlIDxkcm0vZHJtX2NhY2hlLmg+Cj4gPiA+
+PiA+ICAjaW5jbHVkZSA8ZHJtL2RybV9nZW0uaD4KPiA+ID4+ID4gICNpbmNsdWRlIDxkcm0vZHJt
+X3ZtYV9tYW5hZ2VyLmg+Cj4gPiA+PiA+ICAjaW5jbHVkZSA8bGludXgvaW9tbXUuaD4KPiA+ID4+
+ID4gQEAgLTk5LDE1ICsxMDAsMTEgQEAgc3RhdGljIGludCByb2NrY2hpcF9nZW1fZ2V0X3BhZ2Vz
+KHN0cnVjdAo+ID4gPj4gPiByb2NrY2hpcF9nZW1fb2JqZWN0ICpya19vYmopCj4gPiA+PiA+ICAg
+ICAgIC8qCj4gPiA+PiA+ICAgICAgICAqIEZha2UgdXAgdGhlIFNHIHRhYmxlIHNvIHRoYXQgZG1h
+X3N5bmNfc2dfZm9yX2RldmljZSgpIGNhbiBiZQo+ID4gPj4gPiB1c2VkCj4gPiA+PiA+ICAgICAg
+ICAqIHRvIGZsdXNoIHRoZSBwYWdlcyBhc3NvY2lhdGVkIHdpdGggaXQuCj4gPiA+PiA+IC0gICAg
+ICAqCj4gPiA+PiA+IC0gICAgICAqIFRPRE86IFJlcGxhY2UgdGhpcyBieSBkcm1fZmx1c2hfc2co
+KSBvbmNlIGl0IGNhbiBiZQo+ID4gaW1wbGVtZW50ZWQKPiA+ID4+ID4gLSAgICAgICogd2l0aG91
+dCByZWx5aW5nIG9uIHN5bWJvbHMgdGhhdCBhcmUgbm90IGV4cG9ydGVkLgo+ID4gPj4gPiAgICAg
+ICAgKi8KPiA+ID4+ID4gICAgICAgZm9yX2VhY2hfc2cocmtfb2JqLT5zZ3QtPnNnbCwgcywgcmtf
+b2JqLT5zZ3QtPm5lbnRzLCBpKQo+ID4gPj4gPiAgICAgICAgICAgICAgIHNnX2RtYV9hZGRyZXNz
+KHMpID0gc2dfcGh5cyhzKTsKPiA+ID4+ID4KPiA+ID4+ID4gLSAgICAgZG1hX3N5bmNfc2dfZm9y
+X2RldmljZShkcm0tPmRldiwgcmtfb2JqLT5zZ3QtPnNnbCwKPiA+ID4+ID4gcmtfb2JqLT5zZ3Qt
+Pm5lbnRzLAo+ID4gPj4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgIERNQV9UT19ERVZJ
+Q0UpOwo+ID4gPj4gPiArICAgICBkcm1fZmx1c2hfc2coZHJtLT5kZXYsIHJrX29iai0+c2d0KTsK
+PiA+ID4+ID4KPiA+ID4+ID4gICAgICAgcmV0dXJuIDA7Cj4gPiA+PiA+Cj4gPiA+PiA+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
+cmEvZ2VtLmMKPiA+ID4+ID4gaW5kZXggYWIxZTUzZDQzNGU4Li45OTQ1ZmQyZjZiZDYgMTAwNjQ0
+Cj4gPiA+PiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9nZW0uYwo+ID4gPj4gPiArKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKPiA+ID4+ID4gQEAgLTIzMCwxNSArMjMwLDEx
+IEBAIHN0YXRpYyBpbnQgdGVncmFfYm9fZ2V0X3BhZ2VzKHN0cnVjdCBkcm1fZGV2aWNlCj4gPiA+
+PiA+ICpkcm0sIHN0cnVjdCB0ZWdyYV9ibyAqYm8pCj4gPiA+PiA+ICAgICAgIC8qCj4gPiA+PiA+
+ICAgICAgICAqIEZha2UgdXAgdGhlIFNHIHRhYmxlIHNvIHRoYXQgZG1hX3N5bmNfc2dfZm9yX2Rl
+dmljZSgpIGNhbiBiZQo+ID4gPj4gPiB1c2VkCj4gPiA+PiA+ICAgICAgICAqIHRvIGZsdXNoIHRo
+ZSBwYWdlcyBhc3NvY2lhdGVkIHdpdGggaXQuCj4gPiA+PiA+IC0gICAgICAqCj4gPiA+PiA+IC0g
+ICAgICAqIFRPRE86IFJlcGxhY2UgdGhpcyBieSBkcm1fY2xmbGFzaF9zZygpIG9uY2UgaXQgY2Fu
+IGJlCj4gPiA+PiA+IGltcGxlbWVudGVkCj4gPiA+PiA+IC0gICAgICAqIHdpdGhvdXQgcmVseWlu
+ZyBvbiBzeW1ib2xzIHRoYXQgYXJlIG5vdCBleHBvcnRlZC4KPiA+ID4+ID4gICAgICAgICovCj4g
+PiA+PiA+ICAgICAgIGZvcl9lYWNoX3NnKGJvLT5zZ3QtPnNnbCwgcywgYm8tPnNndC0+bmVudHMs
+IGkpCj4gPiA+PiA+ICAgICAgICAgICAgICAgc2dfZG1hX2FkZHJlc3MocykgPSBzZ19waHlzKHMp
+Owo+ID4gPj4gPgo+ID4gPj4gPiAtICAgICBkbWFfc3luY19zZ19mb3JfZGV2aWNlKGRybS0+ZGV2
+LCBiby0+c2d0LT5zZ2wsIGJvLT5zZ3QtPm5lbnRzLAo+ID4gPj4gPiAtICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIERNQV9UT19ERVZJQ0UpOwo+ID4gPj4gPiArICAgICBkcm1fZmx1c2hfc2co
+ZHJtLT5kZXYsIGJvLT5zZ3QpOwo+ID4gPj4gPgo+ID4gPj4gPiAgICAgICByZXR1cm4gMDsKPiA+
+ID4+ID4KPiA+ID4+ID4gLS0KPiA+ID4+ID4gMi4xMy41Cj4gPiA+PiA+Cj4gPiA+PiA+IF9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gPiA+PiA+IGRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKPiA+ID4+ID4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+Zwo+ID4gPj4gPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo+ID4gPj4KPiA+ID4+IC0tCj4gPiA+PiBEYW5pZWwgVmV0dGVyCj4gPiA+PiBT
+b2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KPiA+ID4+IGh0dHA6Ly9ibG9nLmZm
+d2xsLmNoCj4gPiA+Cj4gPiA+Cj4gPgo+ID4KPiA+Cj4gPiAtLQo+ID4gRGFuaWVsIFZldHRlcgo+
+ID4gU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCj4gPiArNDEgKDApIDc5IDM2
+NSA1NyA0OCAtIGh0dHA6Ly9ibG9nLmZmd2xsLmNoCj4gPgoKLS0gCkRhbmllbCBWZXR0ZXIKU29m
+dHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
