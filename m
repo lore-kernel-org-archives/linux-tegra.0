@@ -1,127 +1,226 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 4/4] drm/vgem: flush page during page fault
-Date: Tue, 30 Jan 2018 10:14:52 +0100
-Message-ID: <20180130091452.GB25930@phenom.ffwll.local>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH 3/4] drm: add ARM flush implementations
+Date: Tue, 30 Jan 2018 15:34:00 +0200
+Message-ID: <20180130133400.GY5453@intel.com>
 References: <20180117003559.67837-1-gurchetansingh@chromium.org>
- <20180117003559.67837-4-gurchetansingh@chromium.org>
- <20180117083928.GH2759@phenom.ffwll.local>
- <CAAfnVBkxhEec1U8Ck4UyMXjwKvSFJs-bpip5K-7sbB51TNK0bA@mail.gmail.com>
- <CAKMK7uGV=JxX4BB2OTPAWRVR8ugytxnr8+5JVE1SRZELNnuwhA@mail.gmail.com>
- <CAAfnVBnn=ziKBu3-RfWd9_bLb1gFJ_b24d+uis=XfkEejwbHeA@mail.gmail.com>
+ <20180117003559.67837-3-gurchetansingh@chromium.org>
+ <20180117083105.GG2759@phenom.ffwll.local>
+ <CAAfnVBm4Mp8vC4aBmrP2rJeRSBN_AFN5gaZfijg9BCJEBupDzw@mail.gmail.com>
+ <CAKMK7uHoAqYsgqOTT4O=NQFvj51M2tKp+c2Sm8t4t01QN9Jkfg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAAfnVBnn=ziKBu3-RfWd9_bLb1gFJ_b24d+uis=XfkEejwbHeA@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gurchetan Singh <gurchetansingh@chromium.org>
-Cc: linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, Thierry Reding <thierry.reding@gmail.com>, ML dri-devel <dri-devel@lists.freedesktop.org>
+In-Reply-To: <CAKMK7uHoAqYsgqOTT4O=NQFvj51M2tKp+c2Sm8t4t01QN9Jkfg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: Gurchetan Singh <gurchetansingh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBKYW4gMTgsIDIwMTggYXQgMDk6MjM6MzFBTSAtMDgwMCwgR3VyY2hldGFuIFNpbmdo
-IHdyb3RlOgo+IE9uIFdlZCwgSmFuIDE3LCAyMDE4IGF0IDExOjM4IFBNLCBEYW5pZWwgVmV0dGVy
-IDxkYW5pZWxAZmZ3bGwuY2g+IHdyb3RlOgo+IAo+ID4gT24gV2VkLCBKYW4gMTcsIDIwMTggYXQg
-MTE6NDkgUE0sIEd1cmNoZXRhbiBTaW5naAo+ID4gPGd1cmNoZXRhbnNpbmdoQGNocm9taXVtLm9y
-Zz4gd3JvdGU6Cj4gPiA+Cj4gPiA+IE9uIFdlZCwgSmFuIDE3LCAyMDE4IGF0IDEyOjM5IEFNLCBE
-YW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+IHdyb3RlOgo+ID4gPj4KPiA+ID4+IE9uIFR1
-ZSwgSmFuIDE2LCAyMDE4IGF0IDA0OjM1OjU5UE0gLTA4MDAsIEd1cmNoZXRhbiBTaW5naCB3cm90
-ZToKPiA+ID4+ID4gVGhpcyBpcyByZXF1aXJlZCB0byB1c2UgYnVmZmVycyBhbGxvY2F0ZWQgYnkg
-dmdlbSBvbiBBTUQgYW5kIEFSTQo+ID4gPj4gPiBkZXZpY2VzLgo+ID4gPj4gPiBXZSdyZSBleHBl
-cmllbmNpbmcgYSBjYXNlIHdoZXJlIGV2aWN0aW9uIG9mIHRoZSBjYWNoZSByYWNlcyB3aXRoCj4g
-PiA+PiA+IHVzZXJzcGFjZQo+ID4gPj4gPiB3cml0ZXMuIFRvIGZpeCB0aGlzLCBmbHVzaCB0aGUg
-Y2FjaGUgYWZ0ZXIgcmV0cmlldmluZyBhIHBhZ2UuCj4gPiA+PiA+Cj4gPiA+PiA+IFNpZ25lZC1v
-ZmYtYnk6IEd1cmNoZXRhbiBTaW5naCA8Z3VyY2hldGFuc2luZ2hAY2hyb21pdW0ub3JnPgo+ID4g
-Pj4gPiAtLS0KPiA+ID4+ID4gIGRyaXZlcnMvZ3B1L2RybS92Z2VtL3ZnZW1fZHJ2LmMgfCAxICsK
-PiA+ID4+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQo+ID4gPj4gPgo+ID4gPj4g
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3ZnZW0vdmdlbV9kcnYuYwo+ID4gPj4gPiBi
-L2RyaXZlcnMvZ3B1L2RybS92Z2VtL3ZnZW1fZHJ2LmMKPiA+ID4+ID4gaW5kZXggMzViZmRmYjc0
-NmE3Li5mYjI2Mzk2OWYwMmQgMTAwNjQ0Cj4gPiA+PiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS92
-Z2VtL3ZnZW1fZHJ2LmMKPiA+ID4+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3ZnZW0vdmdlbV9k
-cnYuYwo+ID4gPj4gPiBAQCAtMTEyLDYgKzExMiw3IEBAIHN0YXRpYyBpbnQgdmdlbV9nZW1fZmF1
-bHQoc3RydWN0IHZtX2ZhdWx0ICp2bWYpCj4gPiA+PiA+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIGJyZWFrOwo+ID4gPj4gPiAgICAgICAgICAgICAgIH0KPiA+ID4+ID4KPiA+ID4+ID4g
-KyAgICAgICAgICAgICBkcm1fZmx1c2hfcGFnZXMob2JqLT5iYXNlLmRldi0+ZGV2LCAmcGFnZSwg
-MSk7Cj4gPiA+Pgo+ID4gPj4gVWggLi4uIHdoYXQgZXhhY3RseSBhcmUgeW91IGRvaW5nPwo+ID4g
-Pj4KPiA+ID4+IEFza2luZyBiZWNhdXNlIHRoZSBlbnRpcmUgIndobydzIHJlc3BvbnNpYmxlIGZv
-ciBjb2hlcmVuY3kiIHN0b3J5IGlzCj4gPiA+PiBlbnRpcmVseSB1bmRlZmluZWQgc3RpbGwgd2hl
-biBkb2luZyBidWZmZXIgc2hhcmluZyA6LS8gV2hhdCBpcyBjbGVhciBpcwo+ID4gPj4gdGhhdCBj
-dXJyZW50bHkgdmdlbSBlbnRpcmVseSBpZ25vcmVzIHRoaXMgKHRoZXJlJ3Mgbm90Cj4gPiA+PiBi
-ZWdpbi9lbmRfY3B1X2FjY2VzcyBjYWxsYmFjayksIG1vc3RseSBiZWNhdXNlIHRoZSBzaGFyZWQg
-ZG1hLWJ1Zgo+ID4gc3VwcG9ydAo+ID4gPj4gaW4gZHJtX3ByaW1lLmMgYWxzbyBlbnRpcmVseSBp
-Z25vcmVzIHRoaXMuCj4gPiA+Cj4gPiA+Cj4gPiA+Cj4gPiA+IFRoaXMgcGF0Y2ggaXNuJ3QgdHJ5
-aW5nIHRvIGFkZHJlc3MgdGhlIGNhc2Ugb2YgYSBkbWEtYnVmIGltcG9ydGVkIGludG8KPiA+IHZn
-ZW0uCj4gPiA+IEl0J3MgdHJ5aW5nIHRvIGFkZHJlc3MgdGhlIGNhc2Ugd2hlbiBhIGJ1ZmZlciBp
-cyBjcmVhdGVkIGJ5Cj4gPiA+IHZnZW1fZ2VtX2R1bWJfY3JlYXRlLCBtYXBwZWQgYnkgdmdlbV9n
-ZW1fZHVtYl9tYXAgYW5kIHRoZW4gYWNjZXNzZWQgYnkKPiA+IHVzZXIKPiA+ID4gc3BhY2UuICBT
-aW5jZSB0aGUgcGFnZSByZXRyaWV2ZWQgYnkgc2htZW1fcmVhZF9tYXBwaW5nX3BhZ2UgZHVyaW5n
-IHRoZQo+ID4gcGFnZQo+ID4gPiBmYXVsdCBtYXkgc3RpbGwgYmUgaW4gdGhlIGNhY2hlLCB3ZSdy
-ZSBleHBlcmllbmNpbmcgaW5jb3JyZWN0IGRhdGEgaW4KPiA+ID4gYnVmZmVyLiAgSGVyZSdzIHRo
-ZSB0ZXN0IGNhc2Ugd2UncmUgcnVubmluZzoKPiA+ID4KPiA+ID4gaHR0cHM6Ly9jaHJvbWl1bS5n
-b29nbGVzb3VyY2UuY29tL2Nocm9taXVtb3MvcGxhdGZvcm0vZHJtLXRlCj4gPiBzdHMvKy9tYXN0
-ZXIvdmdlbV90ZXN0LmMKPiA+Cj4gPiA0MDRzIG92ZXIgaGVyZSAoSW50ZXJuYWwgdXJsPykuCj4g
-Cj4gCj4gSG1tIC4uLiBJIHdhcyBhYmxlIHRvIGFjY2VzcyB0aGF0IGxpbmsgd2l0aG91dCBiZWlu
-ZyBsb2dnZWQgaW4gdG8gYW55Cj4gYWNjb3VudHMuCj4gCj4gPiBJdCBmYWlscyBvbiBsaW5lIDIx
-MCBvbiBBTUQgYW5kIEFSTSBkZXZpY2VzIChub3QgSW50ZWwgdGhvdWdoKS4KPiA+Cj4gPiBTbyB5
-b3UgX2RvXyBpbXBvcnQgaXQgb24gdGhlIG90aGVyIGRldmljZSBkcml2ZXIgYXMgYSBkbWEtYnVm
-IChhbmQKPiA+IGV4cG9ydCBpdCBmcm9tIHZnZW0pPwo+IAo+IAo+IFRob3NlIHBvcnRpb25zIG9m
-IHRoZSB0ZXN0IHdvcmsgZmluZSAoaWYgdGhlIHBsYXRmb3JtIGhhcyBhIGRybV9jbGZsdXNoCj4g
-aW1wbGVtZW50YXRpb24pLiAgdmdlbV9wcmltZV9waW4gY2FsbHMgZHJtX2NsZmx1c2hfcGFnZXMg
-Zm9yIHRoZSBleHBvcnRpbmcKPiBjYXNlLiAgVHlwaWNhbGx5LCBBUk0gZHJpdmVycyBmbHVzaCB0
-aGUgY2FjaGUgYWZ0ZXIgZHJtX2dlbV9nZXRfcGFnZXMoKSBhbmQKPiBvbmx5IGRvIFdDIG1hcHBp
-bmdzLCBzbyBpbXBvcnQgd29ya3MuICBGb3IgSW50ZWwsIHRoZXJlIGlzIHNvbWUgaGFyZHdhcmUK
-PiBsZXZlbCBjb2hlcmVuY3kgaW52b2x2ZWQuICBUaGUgcHJvYmxlbSBpcyB2Z2VtIGRvZXNuJ3Qg
-Zmx1c2ggdGhlIGNhY2hlIG9uCj4gQVJNL0FNRCB3aGVuIGdldHRpbmcgcGFnZXMgZm9yIHRoZSBu
-b24tZXhwb3J0L25vbi1pbXBvcnQgY2FzZSAod2hlbgo+IGZhdWx0aW5nIGFmdGVyIGEgdmdlbV9n
-ZW1fZHVtYl9tYXAsIG5vdCBkdXJpbmcgZG1hLWJ1ZiBtbWFwKSAtLSBpLmUsIGR1cmluZwo+IHJl
-Z3VsYXIgdXNlIG9mIHRoZSBidWZmZXIuCgpTbyBpZiB0aGUgaWRlYSBpcyB0aGF0IHRoZSB2Z2Vt
-IGJ1ZmZlcnMgc2hvdWxkIGJlIGFjY2Vzc2VkIHVzaW5nIFdDLCB0aGVuCndlIG5lZWQgdG8gc3dp
-dGNoIHRoZSBkdW1wX21hcCBzdHVmZiB0byBkbyB3Yy4gRmx1c2hpbmcgb25jZSBpcyBub3QgZ29p
-bmcKdG8gZml4IHRoaW5ncyBpZiB5b3Ugd3JpdGUgYWdhaW4gKGFmYWlrIENyT1Mgb25seSBkb2Vz
-IHdyaXRlLW9uY2UgYW5kIHRoZW4KdGhyb3dzIGJ1ZmZlcnMgYXdheSBhZ2FpbiwgYnV0IG5vdCBz
-dXJlKS4KClRoZSBvdGhlciBvcHRpb24gaXMgdG8gdGhyb3cgZHVtYl9tYXAgaW50byB0aGUgd2lu
-ZCBhbmQgb25seSBzdXBwb3J0CmRtYS1idWYgbW1hcGluZywgd2hpY2ggaGFzIGEgc3BlY2lhbCBp
-b2N0bCBmb3IgcmFuZ2UgZmx1c2hpbmcgKHNvIHRoYXQgd2UKY291bGQgZmx1c2ggYmVmb3JlL2Fm
-dGVyIGVhY2ggYWNjZXNzIGFzIG5lZWRlZCkuIEEgZ3Jvc3MgaGFjayB3b3VsZCBiZSB0bwprZWVw
-IHVzaW5nIGR1bWJfbWFwIGJ1dCBhYnVzZSB0aGUgZG1hLWJ1ZiBmbHVzaGluZyBpb2N0bCBmb3Ig
-dGhlIGZsdXNoaW5nLgoKVGhlIHByb2JsZW0gb2ZjIGlzIHRoYXQgdGhlcmUncyBubyBhZ3JlZW1l
-bnQgYmV0d2VlbiBpbXBvcnRlcnMvZXhwb3J0ZXJzCm9uIHdobyBzaG91bGQgZmx1c2ggd2hlbiBh
-bmQgd2hlcmUuIEZpeGluZyB0aGF0IGlzIHdheSB0b28gbXVjaCB3b3JrLCBzbwpwZXJzb25hbGx5
-IEkgdGhpbmsgdGhlIHNpbXBsZXN0IGNsZWFuIGZpeCBpcyBzb21ldGhpbmcgYWxvbmcgdGhlIGxp
-bmVzIG9mCnVzaW5nIHRoZSBkbWEtYnVmIGZsdXNoIGlvY3RsIChETUFfQlVGX0lPQ1RMX1NZTkMp
-LgoKQ2hlZXJzLCBEYW5pZWwKCj4gCj4gPgo+ID4gPj4gQW5kIGRvaW5nIGEgb25lLXRpbWUgb25s
-eQo+ID4gPj4gZmx1c2hpbmcgaW4geW91ciBmYXVsdCBoYW5kbGVyIGlzIGRlZmluaXRlbHkgbm90
-IGdvaW5nIHRvIGZpeCB0aGlzIChhdAo+ID4gPj4gbGVhc3Qgbm90IGlmIHlvdSBkbyBhbnl0aGlu
-ZyBlbHNlIHRoYW4gb25lLXNob3QgdXBsb2FkcykuCj4gPiA+Cj4gPiA+Cj4gPiA+IFRoZXJlIHVz
-ZWQgdG8gYmUgYSBiZSB2Z2VtX2dlbV9nZXRfcGFnZXMgZnVuY3Rpb24sIGJ1dCB0aGF0J3MgYmVl
-bgo+ID4gcmVtb3ZlZC4KPiA+ID4gSSBkb24ndCBrbm93IHdoZXJlIGVsc2UgdG8gZmx1c2ggaW4g
-dGhpcyBzaXR1YXRpb24uCj4gPgo+ID4gZG1hX2J1ZiBiZWdpbi9lbmQgY3B1IGFjY2Vzcy4gRXZl
-biBleHBvc2VkIGFzIGFuIGlvY3RsIHdoZW4geW91J3JlCj4gPiB1c2luZyB0aGUgZG1hLWJ1ZiBt
-bWFwIHN0dWZmLiBWZ2VtIGRvZXNuJ3QgaGF2ZSB0aGF0LCB3aGljaCBtZWFucwo+ID4gYXMtaXMg
-dGhlIGR1bWIgbW1hcCBzdXBwb3J0IG9mIHZnZW0gY2FuJ3QgcmVhbGx5IHN1cHBvcnQgdGhpcyBp
-ZiB5b3UKPiA+IHdhbnQgdG8gZG8gZXhwbGljaXQgZmx1c2hpbmcuCj4gCj4gCj4gPiBXaGF0IHdv
-dWxkIHdvcmsgaXMgdW5jYWNoZWQvd3JpdGVjb21iaW5lL2NvaGVyZW50IGRtYSBtZW1vcnkuIEJ1
-dCB0aGVuCj4gPiB3ZSdyZSBpbiB0aGUgbWlkZGxlIG9mIHRoZSBlbnRpcmUKPiA+ICJ3aG8ncyBy
-ZXNwb25zaWJsZS4KPiA+IC1EYW5pZWwKPiA+Cj4gPiA+Cj4gPiA+Pgo+ID4gPj4gLURhbmllbAo+
-ID4gPj4KPiA+ID4+ID4gICAgICAgfQo+ID4gPj4gPiAgICAgICByZXR1cm4gcmV0Owo+ID4gPj4g
-PiAgfQo+ID4gPj4gPiAtLQo+ID4gPj4gPiAyLjEzLjUKPiA+ID4+ID4KPiA+ID4+ID4gX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiA+ID4+ID4gZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdAo+ID4gPj4gPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cj4gPiA+PiA+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCj4gPiA+Pgo+ID4gPj4gLS0KPiA+ID4+IERhbmllbCBWZXR0ZXIKPiA+ID4+IFNv
-ZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgo+ID4gPj4gaHR0cDovL2Jsb2cuZmZ3
-bGwuY2gKPiA+ID4KPiA+ID4KPiA+Cj4gPgo+ID4KPiA+IC0tCj4gPiBEYW5pZWwgVmV0dGVyCj4g
-PiBTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KPiA+ICs0MSAoMCkgNzkgMzY1
-IDU3IDQ4IC0gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKPiA+CgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0
-d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Thu, Jan 18, 2018 at 08:42:55AM +0100, Daniel Vetter wrote:
+> On Wed, Jan 17, 2018 at 11:46 PM, Gurchetan Singh
+> <gurchetansingh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> >> dma api just isn't quite sufficient for implementing fast gpu drivers.
+> >
+> >
+> > Can you elaborate?  IIRC the DMA API has strong synchronization guarantees
+> > and that can be problematic for GPU drivers.  However, using the DMA API for
+> > flushing doesn't necessarily mean the driver has to use the rest of the DMA
+> > API.
+> >
+> >> but then it'd need to directly flush cpu caches and bypass the dma api.
+> >
+> >
+> > On ARM, cache flushing seems to vary from chipset to chipset.  For example,
+> > on ARM32 a typical call-stack for dma_sync_single_for_device looks like:
+> >
+> > arm_dma_sync_single_for_device
+> > __dma_page_cpu_to_dev
+> > outer_clean_range
+> > outer_cache.clean_range
+> >
+> > There are multiple clean_range implementations out there (i.e,
+> > aurora_clean_range, l2c210_clean_range, feroceon_l2_clean_range), so that's
+> > why the DMA API was used in this case.  On ARM64, things are a little
+> > simpler, but the DMA API seems to go directly to assembly (__dma_map_area)
+> > after a little indirection.  Why do you think that's inefficient?
+> 
+> I never said it's inefficient. My only gripe is with adding the
+> pointless struct device * argument to flushing functions which really
+> don't care (nor should care) about the device. Because what we really
+> want to call is outer_clean_range here, and that doesn't need a struct
+> device *. Imo that function (or something similar) needs to be
+> exported and then used by drm_flush_* functions.
+> 
+> Also note that arm has both flush and invalidate functions, but on x86
+> those are the same implementation (and we don't have a separate
+> drm_invalidate_* set of functions). That doesn't look like a too good
+> idea.
+
+IMO if someone adds some new functions they should talk about
+"writeback" and "invalidate". I think "flush" is a very vague
+term that could mean different things to different people.
+
+x86 has clflush which is writeback+invalidate, and more recently
+x86 gained the clwb instruction for doing just writeback without
+the invalidate. On ARM IIRC you can choose whether to do
+writeback or invalidate or both.
+
+> 
+> Of course that doesn't solve the problem of who's supposed to call it
+> and when in the dma-buf sharing situation.
+> -Daniel
+> 
+> > On Wed, Jan 17, 2018 at 12:31 AM, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org> wrote:
+> >>
+> >> On Tue, Jan 16, 2018 at 04:35:58PM -0800, Gurchetan Singh wrote:
+> >> > The DMA API can be used to flush scatter gather tables and physical
+> >> > pages on ARM devices.
+> >> >
+> >> > Signed-off-by: Gurchetan Singh <gurchetansingh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> >> > ---
+> >> >  drivers/gpu/drm/drm_cache.c                 | 17 +++++++++++++++++
+> >> >  drivers/gpu/drm/rockchip/rockchip_drm_gem.c |  7 ++-----
+> >> >  drivers/gpu/drm/tegra/gem.c                 |  6 +-----
+> >> >  3 files changed, 20 insertions(+), 10 deletions(-)
+> >> >
+> >> > diff --git a/drivers/gpu/drm/drm_cache.c b/drivers/gpu/drm/drm_cache.c
+> >> > index 3d2bb9d71a60..98d6ebb40e96 100644
+> >> > --- a/drivers/gpu/drm/drm_cache.c
+> >> > +++ b/drivers/gpu/drm/drm_cache.c
+> >> > @@ -105,6 +105,18 @@ drm_flush_pages(struct device *dev, struct page
+> >> > *pages[],
+> >> >                                  (unsigned long)page_virtual +
+> >> > PAGE_SIZE);
+> >> >               kunmap_atomic(page_virtual);
+> >> >       }
+> >> > +#elif defined(CONFIG_ARM) || defined(CONFIG_ARM64)
+> >> > +     unsigned long i;
+> >> > +     dma_addr_t dma_handle;
+> >> > +
+> >> > +     if (!dev)
+> >> > +             return;
+> >> > +
+> >> > +     for (i = 0; i < num_pages; i++) {
+> >> > +             dma_handle = phys_to_dma(drm->dev,
+> >> > page_to_phys(pages[i]));
+> >> > +             dma_sync_single_for_device(dev, dma_handle, PAGE_SIZE,
+> >> > +                                        DMA_TO_DEVICE);
+> >>
+> >> Erm no. These functions here are super-low-level functions used by drivers
+> >> which know exactly what they're doing. Which is reimplementing half of the
+> >> dma api behind the dma api's back because the dma api just isn't quite
+> >> sufficient for implementing fast gpu drivers.
+> >>
+> >> If all you end up doing is calling the dma api again, then pls just call
+> >> it directly.
+> >>
+> >> And just to make it clear: I'd be perfectly fine with adding arm support
+> >> here, but then it'd need to directly flush cpu caches and bypass the dma
+> >> api. Otherwise this is pointless.
+> >> -Daniel
+> >>
+> >> > +     }
+> >> >  #else
+> >> >       pr_err("Architecture has no drm_cache.c support\n");
+> >> >       WARN_ON_ONCE(1);
+> >> > @@ -136,6 +148,11 @@ drm_flush_sg(struct device *dev, struct sg_table
+> >> > *st)
+> >> >
+> >> >       if (wbinvd_on_all_cpus())
+> >> >               pr_err("Timed out waiting for cache flush\n");
+> >> > +#elif defined(CONFIG_ARM) || defined(CONFIG_ARM64)
+> >> > +     if (!dev)
+> >> > +             return;
+> >> > +
+> >> > +     dma_sync_sg_for_device(dev, st->sgl, st->nents, DMA_TO_DEVICE);
+> >> >  #else
+> >> >       pr_err("Architecture has no drm_cache.c support\n");
+> >> >       WARN_ON_ONCE(1);
+> >> > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> >> > b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> >> > index 8ac7eb25e46d..0157f90b5d10 100644
+> >> > --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> >> > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> >> > @@ -14,6 +14,7 @@
+> >> >
+> >> >  #include <drm/drm.h>
+> >> >  #include <drm/drmP.h>
+> >> > +#include <drm/drm_cache.h>
+> >> >  #include <drm/drm_gem.h>
+> >> >  #include <drm/drm_vma_manager.h>
+> >> >  #include <linux/iommu.h>
+> >> > @@ -99,15 +100,11 @@ static int rockchip_gem_get_pages(struct
+> >> > rockchip_gem_object *rk_obj)
+> >> >       /*
+> >> >        * Fake up the SG table so that dma_sync_sg_for_device() can be
+> >> > used
+> >> >        * to flush the pages associated with it.
+> >> > -      *
+> >> > -      * TODO: Replace this by drm_flush_sg() once it can be implemented
+> >> > -      * without relying on symbols that are not exported.
+> >> >        */
+> >> >       for_each_sg(rk_obj->sgt->sgl, s, rk_obj->sgt->nents, i)
+> >> >               sg_dma_address(s) = sg_phys(s);
+> >> >
+> >> > -     dma_sync_sg_for_device(drm->dev, rk_obj->sgt->sgl,
+> >> > rk_obj->sgt->nents,
+> >> > -                            DMA_TO_DEVICE);
+> >> > +     drm_flush_sg(drm->dev, rk_obj->sgt);
+> >> >
+> >> >       return 0;
+> >> >
+> >> > diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+> >> > index ab1e53d434e8..9945fd2f6bd6 100644
+> >> > --- a/drivers/gpu/drm/tegra/gem.c
+> >> > +++ b/drivers/gpu/drm/tegra/gem.c
+> >> > @@ -230,15 +230,11 @@ static int tegra_bo_get_pages(struct drm_device
+> >> > *drm, struct tegra_bo *bo)
+> >> >       /*
+> >> >        * Fake up the SG table so that dma_sync_sg_for_device() can be
+> >> > used
+> >> >        * to flush the pages associated with it.
+> >> > -      *
+> >> > -      * TODO: Replace this by drm_clflash_sg() once it can be
+> >> > implemented
+> >> > -      * without relying on symbols that are not exported.
+> >> >        */
+> >> >       for_each_sg(bo->sgt->sgl, s, bo->sgt->nents, i)
+> >> >               sg_dma_address(s) = sg_phys(s);
+> >> >
+> >> > -     dma_sync_sg_for_device(drm->dev, bo->sgt->sgl, bo->sgt->nents,
+> >> > -                            DMA_TO_DEVICE);
+> >> > +     drm_flush_sg(drm->dev, bo->sgt);
+> >> >
+> >> >       return 0;
+> >> >
+> >> > --
+> >> > 2.13.5
+> >> >
+> >> > _______________________________________________
+> >> > dri-devel mailing list
+> >> > dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> >> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> >>
+> >> --
+> >> Daniel Vetter
+> >> Software Engineer, Intel Corporation
+> >> http://blog.ffwll.ch
+> >
+> >
+> 
+> 
+> 
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Ville Syrjälä
+Intel OTC
