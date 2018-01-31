@@ -1,56 +1,99 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 0/6] Tegra210 DFLL implementation
-Date: Wed, 31 Jan 2018 11:28:31 +0000
-Message-ID: <31e9aad3-bb3d-2475-4fa7-3ecf43dc2f9e@nvidia.com>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: Tegra baseline test results for v4.15
+Date: Wed, 31 Jan 2018 11:53:06 +0000
+Message-ID: <a30c38c6-9b9d-f6f5-6887-52263d1005e7@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra baseline test results for v4.15
 
-On 24/01/18 12:45, Peter De Schrijver wrote:
-> This series introduces support for the DFLL as a CPU clock source
-> on Tegra210. As Jetson TX2 uses a PWM controlled regulator IC which
-> is driven directly by the DFLLs PWM output, we also introduce support
-> for PWM regulators next to I2C controlled regulators. The DFLL output
-> frequency is directly controlled by the regulator voltage. The registers
-> for controlling the PWM are part of the DFLL IP block, so there's no
-> separate linux regulator object involved because the regulator IC only
-> supplies the rail powering the DFLL and the CPUs. It doesn't have any
-> other controls.
-> 
-> Changes since v1:
-> * improved commit messages
-> * some style cleanups
-> 
-> Peter De Schrijver (6):
->   clk: tegra: dfll registration for multiple SoCs
->   clk: tegra: DT align parameter for CVB calculation
->   clk: tegra: add CVB tables for Tegra210 CPU DFLL
->   clk: tegra: dfll: support PWM regulator control
->   clk: tegra: build clk-dfll.c for Tegra124 and Tegra210
->   cpufreq: tegra124-cpufreq: extend to support Tegra210
-> 
->  drivers/clk/tegra/Kconfig                  |   5 +
->  drivers/clk/tegra/Makefile                 |   2 +-
->  drivers/clk/tegra/clk-dfll.c               | 481 +++++++++++++++++++++++-----
->  drivers/clk/tegra/clk-dfll.h               |   7 +
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 492 ++++++++++++++++++++++++++++-
->  drivers/clk/tegra/cvb.c                    |  18 +-
->  drivers/clk/tegra/cvb.h                    |   6 +-
->  drivers/cpufreq/tegra124-cpufreq.c         |  13 +-
->  8 files changed, 920 insertions(+), 104 deletions(-)
 
-This series appears to be missing DT documentation and DT source changes?
+Here are some basic Tegra test results for Linux v4.15.
+Logs and other details at:
 
-Cheers
-Jon
+    https://nvtb.github.io//linux/test_v4.15/20180128133104/
 
--- 
+
+Test summary - 100% PASS
+------------------------
+
+Build: zImage:
+    Pass: ( 3/ 3): multi_v7_defconfig, tegra_defconfig,
+		   tegra_defconfig%tegra-fw
+
+Build: Image:
+    Pass: ( 3/ 3): defconfig, defconfig%jetson-tx2,
+		   defconfig%jetson-tx1
+
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
+
+Boot to userspace: defconfig%jetson-tx1:
+    Pass: ( 2/ 2): tegra210-p2371-0000, tegra210-p2371-2180
+
+Boot to userspace: defconfig%jetson-tx2:
+    Pass: ( 1/ 1): tegra186-p2771-0000
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig%tegra-fw:
+    Pass: ( 2/ 2): tegra124-jetson-tk1, tegra124-nyan-big
+
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig%tegra-fw:
+    Pass: ( 2/ 2): tegra124-jetson-tk1, tegra124-nyan-big
+
+
+vmlinux object size
+(delta in bytes from test_v4.15-rc9 (0c5b9b5d9adbad4b60491f9ba0d2af38904bb4b9)):
+   text     data      bss    total  kernel
+   -120      +56        0      -64  defconfig
+   +688      -12        0     +676  multi_v7_defconfig
+   +676      -12        0     +664  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.15-rc9 (0c5b9b5d9adbad4b60491f9ba0d2af38904bb4b9))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1 tegra_defconfig%tegr  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big tegra_defconfig%tegr    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .  tegra186-p2771-0000 defconfig%jetson-tx2  tegra186-p2771-0000
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000 defconfig%jetson-tx1  tegra210-p2371-0000
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .  tegra210-p2371-2180 defconfig%jetson-tx1  tegra210-p2371-2180
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+--
 nvpublic
