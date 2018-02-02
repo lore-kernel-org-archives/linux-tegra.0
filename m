@@ -1,87 +1,167 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 2/6] clk: tegra: DT align parameter for CVB calculation
-Date: Thu, 1 Feb 2018 13:02:19 +0200
-Message-ID: <20180201110219.GC7031@tbergstrom-lnx.Nvidia.com>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
- <1516797938-32044-4-git-send-email-pdeschrijver@nvidia.com>
- <7066d1ff-6da4-203d-57ea-cf179fea17be@nvidia.com>
- <20180201103002.GY7031@tbergstrom-lnx.Nvidia.com>
- <98da869b-e3b5-d703-c2bd-c34a081dfbc8@nvidia.com>
+From: Kyle Evans <kvans32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: Port SDIO GPIO to DTS
+Date: Fri, 2 Feb 2018 11:06:35 -0500
+Message-ID: <20180202160635.GA1275@localhost.localdomain>
+References: <20180117221318.GA1594@localhost.localdomain>
+ <91eab00b-9cfa-f150-369e-2426f9b9dc42@gmail.com>
+ <20180130025229.GA1183@localhost.localdomain>
+ <c899990a-822b-ebd0-4ccb-2d4d117de8f6@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <98da869b-e3b5-d703-c2bd-c34a081dfbc8-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <c899990a-822b-ebd0-4ccb-2d4d117de8f6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kyle Evans <kvans32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 10:54:15AM +0000, Jon Hunter wrote:
-> 
-> On 01/02/18 10:30, Peter De Schrijver wrote:
-> > On Wed, Jan 31, 2018 at 10:43:04AM +0000, Jon Hunter wrote:
+* Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> On 30.01.2018 05:52, Kyle Evans wrote:
+> > * Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> >> Hello Kyle,
 > >>
-> >> On 24/01/18 12:45, Peter De Schrijver wrote:
-> >>> When using a PWM controlled regulator, the voltage step and offset are
-> >>> determined by the regulator IC in use. This is specified in DT rather
-> >>> than fixed in the CVB table. Hence pass this information to the CVB table
-> >>> calculation function. For backwards compatibility the table values are used
-> >>> if the corresponding parameter is 0.
+> >> On 18.01.2018 01:13, Kyle Evans wrote:
+> >>> I have an ASUS TF101(ventana) that I am trying to get running on 
+> >>> mainline. It is mostly there, but there are a few issues that I believe 
+> >>> to be dts related. I am focusing on one at a time. Currently, when I 
+> >>> warm boot/reboot, the wireless SDIO device fails to initialize. It 
+> >>> works great on cold boot. I'm fairly certain the problem is in the 
+> >>> dts, but I'd like some feedback on the correct way.
 > >>>
-> >>> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>> ---
-> >>>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 23 +++++++++++++++++++++--
-> >>>  drivers/clk/tegra/cvb.c                    | 18 ++++++++++++++----
-> >>>  drivers/clk/tegra/cvb.h                    |  5 +++--
-> >>>  3 files changed, 38 insertions(+), 8 deletions(-)
-> >>>
-> >>> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> >>> index 440eb8d..6205ce1 100644
-> >>> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> >>> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> >>> @@ -111,6 +111,7 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
-> >>>  	struct tegra_dfll_soc_data *soc;
-> >>>  	const struct of_device_id *of_id;
-> >>>  	const struct dfll_fcpu_data *fcpu_data;
-> >>> +	struct rail_alignment align;
-> >>>  
-> >>>  	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
-> >>>  	fcpu_data = of_id->data;
-> >>> @@ -135,12 +136,30 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
-> >>>  		return -ENODEV;
-> >>>  	}
-> >>>  
-> >>> +	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-offset-uv",
-> >>> +					&align.offset_uv);
-> >>> +	if (err < 0) {
-> >>> +		dev_err(&pdev->dev,
-> >>> +			"offset uv not found, default to table value\n");
-> >>> +		align.offset_uv = 0;
-> >>> +	}
-> >>> +
-> >>> +	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-step-uv",
-> >>> +					&align.step_uv);
-> >>> +	if (err < 0) {
-> >>> +		dev_err(&pdev->dev,
-> >>> +			"step uv not found, default to table value\n");
-> >>> +		align.step_uv = 0;
-> >>> +	}
-> >>> +
-> >>
-> >> I am a bit confused by this ...
-> >>
-> >> 1. Isn't this going to break Tegra124 DFLL support?
 > > 
-> > We fall back to the original behaviour in case the properties are missing, so
-> > it should work.
+> >>> I'm not sure of the difference between WLAN_WOW & SDIO_WOW. I'm 
+> >>> assuming one for chip, one for radio, but I don't know their place in 
+> >>> the dts.
+> >>>
+> >>> From tegra20-ventana.dts I've got:
+> >>>
+> >>> 	sdhci@c8000000 {
+> >>>                 status = "okay";
+> >>>                 power-gpios = <&gpio TEGRA_GPIO(K, 6) GPIO_ACTIVE_HIGH>;
+> >>>                 bus-width = <4>;
+> >>>                 keep-power-in-suspend;
+> >>>         };
+> >>>
+> >>> I'm guessing I need to add the other pins to power-gpois and 
+> >>> set up mmc-pwrseq?
+> >>
+> >> The 'power-gpois' that you've defined looks fine and probably sufficient to get
+> >> WiFi up and running.
+> >>
+> >> Take a look at the changes that were needed to get WiFi working on Acer A500,
+> >> maybe some of it also applicable to TF101:
+> > 
+> > Thanks for this. I have made some progress by adding regulator nodes 
+> > for pins D,1 & K,6, but am now getting the following error on second 
+> > boot.
+> > 
+> > [    2.425281] mmc2: Invalid maximum block size, assuming 512 bytes
+> > [    2.480692] mmc2: SDHCI controller on c8000000.sdhci [c8000000.sdhci] using ADMA
+> > [    2.494647] mmc2: error -110 whilst initialising SDIO card
+> > 
+> >>
+> >> https://github.com/digetx/picasso_upstream_support/commit/beab29d4f172836c5faad91d3232a7c77c5fc6fb
+> >   HACK: mmc: sdio: Add workaround for wrongly reported CCCR
+> > 
+> > Would you recommend this over setting cap-sd-highspeed in the DT?
+> > Without either communication has been trouble free thus far. 
 > 
-> Ah yes. However, on Tegra124 now I see all this prints. Can't we only
-> read these properties if using PWM?
+> Looks like cap-sd-highspeed should work, but I don't remember whether I've tried
+> it before or not, maybe there some obstacle with it. I'm recalling that WiFi
+> somewhat worked without the high speed CAP, but WiFi bandwidth sucked without
+> it, like it was 100 KB/s at max or something like that.
 > 
+> >> https://github.com/digetx/picasso_upstream_support/commit/165e488e82c97fa1da6ccfe832a43569136000bc
+> >   mmc: Add "ignore mmc pm notify" functionality
+> > 
+> > This does not apply cleanly, what are the symptoms?
+> 
+> MMC code got refactored since then, you'll have to rebase the patch. Basically
+> s/of_property_read_bool/device_property_read_bool/. I'm now recalling that this
+> patch is only needed for the WiFi suspend/resume to work correctly.
 
-I think it would make more sense then to get these parameters from the
-regulator object in case of i2c. If that works on Tegra124, we can eliminate
-using the CVB table align values entirely.
+Ok, good to know. I have not tried suspend yet.
 
-Peter.
+> 
+> >> https://github.com/digetx/picasso_upstream_support/commit/7e584ca4108707c6469a04bf92d9b659ce76c5cc
+> >   ARM: tegra: Add Picasso board file
+> > 
+> > I am trying to implement this, but as-is boot hangs before u-boot clears.
+> 
+> You may skip the board file, it's not really needed to make WiFi working. It's
+> likely that GPIO's are wired differently on your device, that code is A500 specific.
+
+Good, I'm pretty sure that upstream would not accept a board file for 
+a wifi bug.
+
+> 
+> > static struct gpiod_lookup_table bluetooth_gpio_lookup = {
+> >        .dev_id = "rfkill_gpio.1",
+> >        .table = {
+> >                GPIO_LOOKUP("tegra-gpio", 160, "reset", 0),
+> >                { },
+> >        },
+> > }
+> > 
+> > Where does 160 come from?
+> 
+> From stock kernel. That's just a raw GPIO number.
+
+I have determined it to be U,0, which is rfkill here as well.
+
+> 
+> > static int __init tegra_picasso_wifi_pwr_and_reset(void)
+> > {
+> >        if (!of_machine_is_compatible("acer,picasso"))
+> >                return 0;
+> > 
+> >        writel(0x00004000, IO_TO_VIRT(0x6000D928));
+> >        writel(0x00004040, IO_TO_VIRT(0x6000D918));
+> >        writel(0x00004040, IO_TO_VIRT(0x6000D908));
+> > 
+> >        writel(0x00000200, IO_TO_VIRT(0x6000D82C));
+> >        writel(0x00000202, IO_TO_VIRT(0x6000D81C));
+> >        writel(0x00000202, IO_TO_VIRT(0x6000D80C));
+> > 
+> >        writel(0x00004040, IO_TO_VIRT(0x6000D928));
+> >        mdelay(100);
+> > 
+> >        writel(0x00000202, IO_TO_VIRT(0x6000D82C));
+> >        mdelay(200);
+> > 
+> >        return 0;
+> > }
+> > 
+> > What is this magic, or where to find it in a stock kernel? 
+> 
+> It should power-cycle BCM chip on boot, the code just writes GPIO controller
+> registers directly. I think there wasn't better place to do it in the code
+> without much effort, so I just hacked it that way. Sometimes brcmfmac driver
+> fails to probe the HW on boot and I think that power-cycle helps a tad. Although
+> I suppose that it's upstream driver fault, it looks like it doesn't perform HW
+> initialization properly because I haven't had any issues like that with the
+> downstream BCMHD driver ported to upstream kernel, literally using same DT /
+> board code.
+> 
+> In stock kernel it should be ventana_wifi_power() that does the same.
+
+I see that the ventana_wifi_power() calls clk_enable(wifi_32k_clk). So,
+the problem could be clock related. However, I do not see any dts trees
+that use `compatible = "brcm,bcm4329-fmac"` also call out any special
+clocks. 
+
+I am inclined to second it as a driver issue becuase I have done
+everything suggested with no success. I started out by posting to 
+linux-wireless and came here when I discovered that modprobe -r 
+sdhci-tegra; modprobe shci-tegra; brought the interface up after 
+failure. Unfortunately, I do not use a ramdisk so such a workaround is 
+not possible because then I would get a VFS panic.
+
+Although it would be nice to have a system fully functional after 
+reboot with all of the code porting and testing that is required, I 
+think I shall put this issue on the back burner. I am excited for all 
+of the work you are doing with the grate driver.
+
+Thank you for your help,
+Kyle
