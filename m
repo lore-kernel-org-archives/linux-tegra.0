@@ -1,195 +1,77 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 02/11] clk: tegra: retrieve regulator info from framework
-Date: Tue, 6 Feb 2018 18:34:03 +0200
-Message-ID: <1517934852-23255-3-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support Tegra210
+Date: Tue, 6 Feb 2018 18:34:10 +0200
+Message-ID: <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
 References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1517934852-23255-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The CVB table contains calibration data for the CPU DFLL based on
-process charaterization. The regulator step and offset parameters depend
-on the regulator supplying vdd-cpu , not on the specific Tegra SKU.
-Hence than hardcoding those regulator parameters in the CVB table,
-retrieve them from the regulator framework and store them as part of the
-tegra_dfll_soc_data struct.
+Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+support in this driver. Also allow for the case where the CPU voltage is
+controlled directly by the DFLL rather than by a separate regulator object.
 
 Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-dfll.h               |  2 ++
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 42 +++++++++++++++++++++++++-----
- drivers/clk/tegra/cvb.c                    | 16 +++++++++---
- drivers/clk/tegra/cvb.h                    |  6 ++---
- 4 files changed, 53 insertions(+), 13 deletions(-)
+ drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
-index 83352c8..e7cbc5b 100644
---- a/drivers/clk/tegra/clk-dfll.h
-+++ b/drivers/clk/tegra/clk-dfll.h
-@@ -21,6 +21,7 @@
- #include <linux/platform_device.h>
- #include <linux/reset.h>
- #include <linux/types.h>
-+#include "cvb.h"
- 
- /**
-  * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFLL driver
-@@ -35,6 +36,7 @@ struct tegra_dfll_soc_data {
- 	struct device *dev;
- 	unsigned long max_freq;
- 	const struct cvb_table *cvb;
-+	struct rail_alignment alignment;
- 
- 	void (*init_clock_trimmers)(void);
- 	void (*set_clock_trimmers_high)(void);
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 269d359..e2dbb79 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -22,6 +22,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
- #include <soc/tegra/fuse.h>
- 
- #include "clk.h"
-@@ -42,9 +43,6 @@
- 		.process_id = -1,
- 		.min_millivolts = 900,
- 		.max_millivolts = 1260,
--		.alignment = {
--			.step_uv = 10000, /* 10mV */
--		},
- 		.speedo_scale = 100,
- 		.voltage_scale = 1000,
- 		.entries = {
-@@ -82,6 +80,34 @@
- 	},
- };
- 
-+static int get_alignment_from_regulator(struct device *dev,
-+					struct rail_alignment *align)
-+{
-+	int min_uV, max_uV, n_voltages, ret;
-+	struct regulator *reg;
-+
-+	reg = devm_regulator_get(dev, "vdd-cpu");
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
-+
-+	ret = regulator_get_constraint_voltages(reg, &min_uV, &max_uV);
-+	if (!ret)
-+		align->offset_uv = min_uV;
-+	else
-+		return ret;
-+
-+	align->step_uv = regulator_get_linear_step(reg);
-+	if (!align->step_uv && !ret) {
-+		n_voltages = regulator_count_voltages(reg);
-+		if (n_voltages > 1)
-+			align->step_uv = (max_uV - min_uV) / (n_voltages - 1);
-+	}
-+
-+	devm_regulator_put(reg);
-+
-+	return 0;
-+}
-+
- static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+index 4353025..f8e01a8 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
  {
- 	int process_id, speedo_id, speedo_value, err;
-@@ -108,10 +134,14 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 	}
- 
- 	soc->max_freq = cpu_max_freq_table[speedo_id];
-+	err = get_alignment_from_regulator(&pdev->dev, &soc->alignment);
-+	if (err < 0)
-+		return err;
- 
--	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
--					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
--					   process_id, speedo_id, speedo_value,
-+	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
-+					   fcpu_data->cpu_cvb_tables_size,
-+					   &soc->alignment, process_id,
-+					   speedo_id, speedo_value,
- 					   soc->max_freq);
- 	if (IS_ERR(soc->cvb)) {
- 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index da9e8e7..2aa9639 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -62,11 +62,17 @@ static int round_voltage(int mv, const struct rail_alignment *align, int up)
+ 	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+ 	clk_disable_unprepare(priv->dfll_clk);
+-	regulator_sync_voltage(priv->vdd_cpu_reg);
++	if (priv->vdd_cpu_reg)
++		regulator_sync_voltage(priv->vdd_cpu_reg);
+ 	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
  }
  
- static int build_opp_table(struct device *dev, const struct cvb_table *table,
-+			   struct rail_alignment *align,
- 			   int speedo_value, unsigned long max_freq)
- {
--	const struct rail_alignment *align = &table->alignment;
- 	int i, ret, dfll_mv, min_mv, max_mv;
+@@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  
-+	if (!align->step_uv)
-+		return -EINVAL;
-+
-+	if (!align->offset_uv)
-+		return -EINVAL;
-+
- 	min_mv = round_voltage(table->min_millivolts, align, UP);
- 	max_mv = round_voltage(table->max_millivolts, align, DOWN);
+ 	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+-	if (IS_ERR(priv->vdd_cpu_reg)) {
+-		ret = PTR_ERR(priv->vdd_cpu_reg);
+-		goto out_put_np;
+-	}
++	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
++		priv->vdd_cpu_reg = NULL;
++	else
++		return -EPROBE_DEFER;
  
-@@ -109,8 +115,9 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
-  */
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq)
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq)
- {
- 	size_t i;
+ 	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
+ 	if (IS_ERR(priv->cpu_clk)) {
+@@ -148,7 +149,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 	clk_put(priv->cpu_clk);
+ out_put_vdd_cpu_reg:
+ 	regulator_put(priv->vdd_cpu_reg);
+-out_put_np:
+ 	of_node_put(np);
+ 
+ 	return ret;
+@@ -181,7 +181,8 @@ static int __init tegra_cpufreq_init(void)
  	int ret;
-@@ -124,7 +131,8 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
- 		if (table->process_id != -1 && table->process_id != process_id)
- 			continue;
+ 	struct platform_device *pdev;
  
--		ret = build_opp_table(dev, table, speedo_value, max_freq);
-+		ret = build_opp_table(dev, table, align, speedo_value,
-+				      max_freq);
- 		return ret ? ERR_PTR(ret) : table;
- 	}
+-	if (!of_machine_is_compatible("nvidia,tegra124"))
++	if (!(of_machine_is_compatible("nvidia,tegra124")
++		|| of_machine_is_compatible("nvidia,tegra210")))
+ 		return -ENODEV;
  
-diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-index c1f0779..bcf15a0 100644
---- a/drivers/clk/tegra/cvb.h
-+++ b/drivers/clk/tegra/cvb.h
-@@ -49,7 +49,6 @@ struct cvb_table {
- 
- 	int min_millivolts;
- 	int max_millivolts;
--	struct rail_alignment alignment;
- 
- 	int speedo_scale;
- 	int voltage_scale;
-@@ -59,8 +58,9 @@ struct cvb_table {
- 
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq);
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq);
- void tegra_cvb_remove_opp_table(struct device *dev,
- 				const struct cvb_table *table,
- 				unsigned long max_freq);
+ 	/*
 -- 
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
