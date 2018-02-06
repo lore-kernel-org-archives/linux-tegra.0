@@ -1,64 +1,71 @@
-From: stefan-XLVq0VzYD2Y@public.gmane.org
-Subject: Re: TK1 System Freeze
-Date: Tue, 06 Feb 2018 08:51:19 +0100
-Message-ID: <19526d1015c3c60e8bbdf26ec9d082bb@agner.ch>
-References: <1511135854.13661.3.camel@toradex.com>
- <7d874417cbb2067bcb4f49af000f9f03@agner.ch>
+From: Tuomas Tynkkynen <tuomas@tuxera.com>
+Subject: Re: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+Date: Tue, 6 Feb 2018 14:27:20 +0200
+Message-ID: <20180206142720.3a52b532@duuni>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
+ <248eee6f-7f37-a5d1-8eff-116c3ef57751@nvidia.com>
+ <20180201092520.GV7031@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7d874417cbb2067bcb4f49af000f9f03-XLVq0VzYD2Y@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20180201092520.GV7031@tbergstrom-lnx.Nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 13.01.2018 01:19, Stefan Agner wrote:
-> Hi Marcel, Hi Thierry,
-> 
-> On 2017-11-20 00:57, Marcel Ziswiler wrote:
->> Hi there
->>
->> I lately was tasked to run some legacy Qt4e [1] application on Apalis
->> TK1. It should really only draw directly to the Linux frame buffer
->> /dev/fb0. Strangely as soon as that application is started the whole
->> system freezes. Running it with the VNC backend or a pure frame buffer
->> emulation it works just fine. So it must have something to do with the
->> particular way the frame buffer is done on TK1. So far no attempt in
->> debugging this any further bear any fruit. Whether stracing what the
->> application is doing nor tracing the linux kernel side of things
->> revealed where exactly the freeze happens. As I feared some kind of a
->> configuration issue on Apalis TK1 I also tried the same on Jetson TK1
->> with latest stock Linux kernel 4.14. However the same freeze happens.
-> 
-> This is still the case with 4.15-rc7.
-> 
-> While dd is not enough to reproduce it, using a simple fbdev application
-> such as ts_calibrate seems to be sufficient. Qt and ts_calibrate use
-> mmap for the framebuffer. The system seems to freeze when it tries to
-> write into the mapped area (at the memset line):
-> https://github.com/kergoth/tslib/blob/master/tests/fbutils-linux.c#L160
-> 
-> Is this a known problem? Any idea?
+(Attempting to post through Gmane - let's see if this works at all).
 
-Thierry, anybody else, any idea? This should be easily reproducible on
-Jetson TK1.
+On Thu, 1 Feb 2018 11:25:20 +0200
+Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
---
-Stefan
+> On Wed, Jan 31, 2018 at 11:06:36AM +0000, Jon Hunter wrote:
+> > 
+> > On 24/01/18 12:45, Peter De Schrijver wrote:  
+> > > Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> > > support in this driver. Also allow for the case where the CPU voltage is
+> > > controlled directly by the DFLL rather than by a separate regulator object.
+> > > 
+> > > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > >  drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
+> > >  1 file changed, 6 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> > > index 4353025..d631dc4 100644
+> > > --- a/drivers/cpufreq/tegra124-cpufreq.c
+> > > +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> > > @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> > >  {
+> > >  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> > >  	clk_disable_unprepare(priv->dfll_clk);
+> > > -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> > > +	if (priv->vdd_cpu_reg)
+> > > +		regulator_sync_voltage(priv->vdd_cpu_reg);
+> > >  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> > >  }
+> > >  
+> > > @@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+> > >  		return -ENODEV;
+> > >  
+> > >  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+> > > -	if (IS_ERR(priv->vdd_cpu_reg)) {
+> > > -		ret = PTR_ERR(priv->vdd_cpu_reg);
+> > > -		goto out_put_np;
+> > > -	}
+> > > +	if (IS_ERR(priv->vdd_cpu_reg))
+> > > +		priv->vdd_cpu_reg = NULL;
+> > >    
+> > 
+> > For Tegra124, don't we still want to return an error here?  
+> 
+> Not necessarily. Also on Tegra124 the DFLL can use PWM and I think jetson TK1
+> can be reworked to use this.
+> 
+> Peter.
+> 
 
- 
->>
->> Has anybody ever seen a similar complete system freeze? Any ideas what
->> it may be or how we could debug this any further?
->>
->> [1] https://layers.openembedded.org/layerindex/recipe/43622/
->>
->> Cheers
->>
->> Marcel
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regardless of that, you need to bail out on -EPROBE_DEFER I think.
