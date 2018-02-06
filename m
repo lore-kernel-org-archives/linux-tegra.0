@@ -1,63 +1,63 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 5/5] drm: Don't pass clip to
- drm_atomic_helper_check_plane_state()
-Date: Mon, 5 Feb 2018 14:50:23 +0800
-Message-ID: <20180205065022.GJ31354@dragon>
-References: <20180123170857.13818-1-ville.syrjala@linux.intel.com>
- <20180123170857.13818-5-ville.syrjala@linux.intel.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/7] Initial support for NVIDIA Tegra194
+Date: Tue, 6 Feb 2018 09:22:30 +0200
+Message-ID: <1517901757-15353-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20180123170857.13818-5-ville.syrjala@linux.intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Daniel Vetter <daniel.vetter@intel.com>, Thomas Hellstrom <thellstrom@vmware.com>, VMware Graphics <linux-graphics-maintainer@vmware.com>, Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, Mali DP Maintainers <malidp@foss.arm.com>, linux-arm-msm@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, freedreno@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKYW4gMjMsIDIwMTggYXQgMDc6MDg6NTdQTSArMDIwMCwgVmlsbGUgU3lyamFsYSB3
-cm90ZToKPiBGcm9tOiBWaWxsZSBTeXJqw6Rsw6QgPHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwu
-Y29tPgo+IAo+IE1vdmUgdGhlIHBsYW5lIGNsaXAgcmVjdGFuZ2xlIGhhbmRsaW5nIGludG8KPiBk
-cm1fYXRvbWljX2hlbHBlcl9jaGVja19wbGFuZV9zdGF0ZSgpLiBEcml2ZXJzIG5vIGxvbmdlcgo+
-IGhhdmUgdG8gd29ycnkgYWJvdXQgc3VjaCBtdW5kYW5lIGRldGFpbHMuCj4gCj4gdjI6IENvbnZl
-cnQgYXJtYWRhLCByY2FyLCBhbmQgc3VuNGkgYXMgd2VsbAo+IAo+IENjOiBMaXZpdSBEdWRhdSA8
-bGl2aXUuZHVkYXVAYXJtLmNvbT4KPiBDYzogQnJpYW4gU3RhcmtleSA8YnJpYW4uc3RhcmtleUBh
-cm0uY29tPgo+IENjOiBNYWxpIERQIE1haW50YWluZXJzIDxtYWxpZHBAZm9zcy5hcm0uY29tPgo+
-IENjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGludGVsLmNvbT4KPiBDYzogR3VzdGF2
-byBQYWRvdmFuIDxndXN0YXZvQHBhZG92YW4ub3JnPgo+IENjOiBTZWFuIFBhdWwgPHNlYW5wYXVs
-QGNocm9taXVtLm9yZz4KPiBDYzogUGhpbGlwcCBaYWJlbCA8cC56YWJlbEBwZW5ndXRyb25peC5k
-ZT4KPiBDYzogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4KPiBDYzogTmVpbCBBcm1zdHJvbmcg
-PG5hcm1zdHJvbmdAYmF5bGlicmUuY29tPgo+IENjOiBSb2IgQ2xhcmsgPHJvYmRjbGFya0BnbWFp
-bC5jb20+Cj4gQ2M6IEJlbiBTa2VnZ3MgPGJza2VnZ3NAcmVkaGF0LmNvbT4KPiBDYzogTGF1cmVu
-dCBQaW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgo+IENjOiBTYW5k
-eSBIdWFuZyA8aGpjQHJvY2stY2hpcHMuY29tPgo+IENjOiAiSGVpa28gU3TDvGJuZXIiIDxoZWlr
-b0BzbnRlY2guZGU+Cj4gQ2M6IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVj
-dHJvbnMuY29tPgo+IENjOiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29t
-Pgo+IENjOiBWTXdhcmUgR3JhcGhpY3MgPGxpbnV4LWdyYXBoaWNzLW1haW50YWluZXJAdm13YXJl
-LmNvbT4KPiBDYzogU2luY2xhaXIgWWVoIDxzeWVoQHZtd2FyZS5jb20+Cj4gQ2M6IFRob21hcyBI
-ZWxsc3Ryb20gPHRoZWxsc3Ryb21Adm13YXJlLmNvbT4KPiBDYzogU2hhd24gR3VvIDxzaGF3bmd1
-b0BrZXJuZWwub3JnPgo+IENjOiBBcmNoaXQgVGFuZWphIDxhcmNoaXR0QGNvZGVhdXJvcmEub3Jn
-Pgo+IENjOiBsaW51eC1hbWxvZ2ljQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogbGludXgtYXJt
-LW1zbUB2Z2VyLmtlcm5lbC5vcmcKPiBDYzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-Zwo+IENjOiBub3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBsaW51eC1yZW5lc2Fz
-LXNvY0B2Z2VyLmtlcm5lbC5vcmcKPiBDYzogbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnCj4g
-Q2M6IFJ1c3NlbGwgS2luZyA8cm1rK2tlcm5lbEBhcm1saW51eC5vcmcudWs+Cj4gU3VnZ2VzdGVk
-LWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+Cj4gU2lnbmVkLW9mZi1ieTogVmls
-bGUgU3lyasOkbMOkIDx2aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4KPiBSZXZpZXdlZC1i
-eTogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBmZndsbC5jaD4KPiBSZXZpZXdlZC1ieTog
-VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiBSZXZpZXdlZC1ieTogQXJjaGl0
-IFRhbmVqYSA8YXJjaGl0dEBjb2RlYXVyb3JhLm9yZz4gI21zbQo+IC0tLQouLi4KPiAgZHJpdmVy
-cy9ncHUvZHJtL3p0ZS96eF9wbGFuZS5jICAgICAgICAgICAgICB8IDEzICstLS0tLS0tLS0tLS0K
-CkFja2VkLWJ5OiBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5lbC5vcmc+Cl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hello everyone,
+
+this series adds initial support for the NVIDIA Tegra194 "Xavier"
+system-on-chip. Initially UART, I2C, SDMMC, as well as the PMIC
+are supported, allowing booting to a console.
+
+The changes consist almost completely of the new device trees,
+however some fixes are required in the BPMP driver to support the
+new channel layout in Tegra194.
+
+The series has been tested on Tegra186 (Jetson TX2) and Tegra194
+(P2972).
+
+Cheers,
+Mikko
+
+Mikko Perttunen (7):
+  firmware: tegra: Simplify channel management
+  soc/tegra: Add Tegra194 SoC configuration option
+  soc/tegra: pmc: Add Tegra194 compatibility string
+  dt-bindings: tegra: Add missing chips and NVIDIA boards
+  dt-bindings: tegra: Add documentation for nvidia,tegra194-pmc
+  arm64: tegra: Add Tegra194 chip device tree
+  arm64: tegra: Add device tree for the Tegra194 P2972-0000 board
+
+ Documentation/devicetree/bindings/arm/tegra.txt    |  16 +
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |   2 +
+ arch/arm64/boot/dts/nvidia/Makefile                |   1 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     | 248 ++++++++
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |  16 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 342 +++++++++++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/firmware/tegra/bpmp.c                      | 142 ++---
+ drivers/soc/tegra/Kconfig                          |  10 +
+ drivers/soc/tegra/pmc.c                            |   1 +
+ include/dt-bindings/clock/tegra194-clock.h         | 664 +++++++++++++++++++++
+ include/dt-bindings/gpio/tegra194-gpio.h           |  59 ++
+ include/dt-bindings/power/tegra194-powergate.h     |  49 ++
+ include/dt-bindings/reset/tegra194-reset.h         | 166 ++++++
+ include/soc/tegra/bpmp.h                           |   4 +-
+ 15 files changed, 1641 insertions(+), 80 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
+ create mode 100644 include/dt-bindings/clock/tegra194-clock.h
+ create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
+ create mode 100644 include/dt-bindings/power/tegra194-powergate.h
+ create mode 100644 include/dt-bindings/reset/tegra194-reset.h
+
+-- 
+2.1.4
