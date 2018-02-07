@@ -1,86 +1,58 @@
-From: stefan-XLVq0VzYD2Y@public.gmane.org
-Subject: Re: TK1 System Freeze
-Date: Wed, 07 Feb 2018 20:20:27 +0100
-Message-ID: <3bc3dd406d4629175d4244a3a261c7e3@agner.ch>
-References: <1511135854.13661.3.camel@toradex.com>
- <7d874417cbb2067bcb4f49af000f9f03@agner.ch>
- <19526d1015c3c60e8bbdf26ec9d082bb@agner.ch> <20180207175106.GA25486@ulmo>
+From: stefan@agner.ch
+Subject: Re: [PATCH 3/3] drm/tegra: fb: Implement ->fb_mmap() callback
+Date: Wed, 07 Feb 2018 20:24:37 +0100
+Message-ID: <38cadc9d2e10559c3a8d3eab479ec6cb@agner.ch>
+References: <20180207174556.25401-1-thierry.reding@gmail.com>
+ <20180207174556.25401-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180207175106.GA25486@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180207174556.25401-3-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07.02.2018 18:51, Thierry Reding wrote:
-> On Tue, Feb 06, 2018 at 08:51:19AM +0100, stefan-XLVq0VzYD2Y@public.gmane.org wrote:
->> On 13.01.2018 01:19, Stefan Agner wrote:
->> > Hi Marcel, Hi Thierry,
->> >
->> > On 2017-11-20 00:57, Marcel Ziswiler wrote:
->> >> Hi there
->> >>
->> >> I lately was tasked to run some legacy Qt4e [1] application on Apalis
->> >> TK1. It should really only draw directly to the Linux frame buffer
->> >> /dev/fb0. Strangely as soon as that application is started the whole
->> >> system freezes. Running it with the VNC backend or a pure frame buffer
->> >> emulation it works just fine. So it must have something to do with the
->> >> particular way the frame buffer is done on TK1. So far no attempt in
->> >> debugging this any further bear any fruit. Whether stracing what the
->> >> application is doing nor tracing the linux kernel side of things
->> >> revealed where exactly the freeze happens. As I feared some kind of a
->> >> configuration issue on Apalis TK1 I also tried the same on Jetson TK1
->> >> with latest stock Linux kernel 4.14. However the same freeze happens.
->> >
->> > This is still the case with 4.15-rc7.
->> >
->> > While dd is not enough to reproduce it, using a simple fbdev application
->> > such as ts_calibrate seems to be sufficient. Qt and ts_calibrate use
->> > mmap for the framebuffer. The system seems to freeze when it tries to
->> > write into the mapped area (at the memset line):
->> > https://github.com/kergoth/tslib/blob/master/tests/fbutils-linux.c#L160
->> >
->> > Is this a known problem? Any idea?
->>
->> Thierry, anybody else, any idea? This should be easily reproducible on
->> Jetson TK1.
-> 
-> I was able to reproduce this on Venice2 (just because I was using it for
-> unrelated work, I'm pretty certain this can be reproduced on Jetson TK1)
-> and came up with a fix. I think the problem is that fbdev has an mmap()
-> implementation that conflicts with what we do in DRM/KMS and therefore
-> causes a hang. I've sent out a series with the fix. It'd be great if you
-> two can check that this indeed fixes the issue for you on Apalis. It did
-> fix the issue for me on Venice2.
-
-Thanks for looking into this!
-
-Yeah I suspected that missing mmap in fbdev emulation is the issue since
-Tegra was pretty much the only "higher end" graphics driver which did
-not overwrite the fbdev mmap callback.
-
-FWIW, tested our use-case (Qt4e) on a patched 4.14, works like a charm!
-
-> 
-> Tested using fbdev.c from here:
-> 
-> 	https://patchwork.kernel.org/patch/743682/
-> 
-> This seems like it would have been broken since the dawn of time. Have
-> you never encountered this before? Or has it only recently broken with
-> newer kernels? We probably want this backported to all stable releases.
-
-Yeah we discussed that too, we realized that only now when we tried to
-use mainline with this legacy application.
-
-Marcel remembered that he used to observe crashes when using fbdev &
-X.org but never really bothered and just used modesetting...
-
-It is kind of a nice DoS (as in Denial of System :-)). Agreed, this
-should be backported.
-
---
-Stefan
+T24gMDcuMDIuMjAxOCAxODo0NSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBUaGlzIGZpeGVzIGhhbmdzIHdpdGgg
+bGVnYWN5IGFwcGxpY2F0aW9ucyB0aGF0IHVzZSB0aGUgbW1hcCgpIHN5c2NhbGwgb24KPiB0aGUg
+ZmJkZXYgZGV2aWNlIHRvIG1hcCBmcmFtZWJ1ZmZlciBtZW1vcnkuIFRoZSBmYmRldiBpbXBsZW1l
+bnRhdGlvbiBmb3IKPiBtbWFwKCkgY3JlYXRlcyBhIG1hcHBpbmcgdGhhdCBjb25mbGljdHMgd2l0
+aCBEUk0gdXNhZ2UgYW5kIGNhdXNlcyBhIGhhbmcKPiB3aGVuIHRoZSBtZW1vcnkgaXMgYWNjZXNz
+ZWQgdGhyb3VnaCB0aGUgbWFwcGluZy4KClRoYXQgaGVscHMgdXNpbmcgYXBwbGljYXRpb25zIG1h
+a2luZyB1c2Ugb2YgbW1hcCAmIGZiZGV2IG9uIGFuIEFwYWxpcwpUSzEhCgpUZXN0ZWQtYnk6IFN0
+ZWZhbiBBZ25lciA8c3RlZmFuQGFnbmVyLmNoPgoKLS0KU3RlZmFuCgo+IAo+IFJlcG9ydGVkLWJ5
+OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4KPiBTaWduZWQt
+b2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+ICBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvZmIuYyB8IDE2ICsrKysrKysrKysrKysrKysKPiAgMSBmaWxlIGNo
+YW5nZWQsIDE2IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L3RlZ3JhL2ZiLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYwo+IGluZGV4IDAwMWNiNzdl
+MmY1OS4uMDc4NjE1OWVkZWYzIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9m
+Yi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMKPiBAQCAtMjI0LDEyICsyMjQs
+MjggQEAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqdGVncmFfZmJfY3JlYXRlKHN0cnVjdAo+IGRy
+bV9kZXZpY2UgKmRybSwKPiAgfQo+ICAKPiAgI2lmZGVmIENPTkZJR19EUk1fRkJERVZfRU1VTEFU
+SU9OCj4gK3N0YXRpYyBpbnQgdGVncmFfZmJfbW1hcChzdHJ1Y3QgZmJfaW5mbyAqaW5mbywgc3Ry
+dWN0IHZtX2FyZWFfc3RydWN0ICp2bWEpCj4gK3sKPiArCXN0cnVjdCBkcm1fZmJfaGVscGVyICpo
+ZWxwZXIgPSBpbmZvLT5wYXI7Cj4gKwlzdHJ1Y3QgdGVncmFfYm8gKmJvOwo+ICsJaW50IGVycjsK
+PiArCj4gKwlibyA9IHRlZ3JhX2ZiX2dldF9wbGFuZShoZWxwZXItPmZiLCAwKTsKPiArCj4gKwll
+cnIgPSBkcm1fZ2VtX21tYXBfb2JqKCZiby0+Z2VtLCBiby0+Z2VtLnNpemUsIHZtYSk7Cj4gKwlp
+ZiAoZXJyIDwgMCkKPiArCQlyZXR1cm4gZXJyOwo+ICsKPiArCXJldHVybiBfX3RlZ3JhX2dlbV9t
+bWFwKCZiby0+Z2VtLCB2bWEpOwo+ICt9Cj4gKwo+ICBzdGF0aWMgc3RydWN0IGZiX29wcyB0ZWdy
+YV9mYl9vcHMgPSB7Cj4gIAkub3duZXIgPSBUSElTX01PRFVMRSwKPiAgCURSTV9GQl9IRUxQRVJf
+REVGQVVMVF9PUFMsCj4gIAkuZmJfZmlsbHJlY3QgPSBkcm1fZmJfaGVscGVyX3N5c19maWxscmVj
+dCwKPiAgCS5mYl9jb3B5YXJlYSA9IGRybV9mYl9oZWxwZXJfc3lzX2NvcHlhcmVhLAo+ICAJLmZi
+X2ltYWdlYmxpdCA9IGRybV9mYl9oZWxwZXJfc3lzX2ltYWdlYmxpdCwKPiArCS5mYl9tbWFwID0g
+dGVncmFfZmJfbW1hcCwKPiAgfTsKPiAgCj4gIHN0YXRpYyBpbnQgdGVncmFfZmJkZXZfcHJvYmUo
+c3RydWN0IGRybV9mYl9oZWxwZXIgKmhlbHBlciwKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
