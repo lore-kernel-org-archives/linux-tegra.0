@@ -1,58 +1,45 @@
-From: stefan@agner.ch
-Subject: Re: [PATCH 3/3] drm/tegra: fb: Implement ->fb_mmap() callback
-Date: Wed, 07 Feb 2018 20:24:37 +0100
-Message-ID: <38cadc9d2e10559c3a8d3eab479ec6cb@agner.ch>
-References: <20180207174556.25401-1-thierry.reding@gmail.com>
- <20180207174556.25401-3-thierry.reding@gmail.com>
+From: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Subject: [PATCH] drm/tegra/fb: Delete an error message for a failed memory
+ allocation in tegra_fbdev_create()
+Date: Wed, 7 Feb 2018 21:23:35 +0100
+Message-ID: <0704416a-23f7-3ce3-2bd2-d6a8c106f10d@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180207174556.25401-3-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDcuMDIuMjAxOCAxODo0NSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBUaGlzIGZpeGVzIGhhbmdzIHdpdGgg
-bGVnYWN5IGFwcGxpY2F0aW9ucyB0aGF0IHVzZSB0aGUgbW1hcCgpIHN5c2NhbGwgb24KPiB0aGUg
-ZmJkZXYgZGV2aWNlIHRvIG1hcCBmcmFtZWJ1ZmZlciBtZW1vcnkuIFRoZSBmYmRldiBpbXBsZW1l
-bnRhdGlvbiBmb3IKPiBtbWFwKCkgY3JlYXRlcyBhIG1hcHBpbmcgdGhhdCBjb25mbGljdHMgd2l0
-aCBEUk0gdXNhZ2UgYW5kIGNhdXNlcyBhIGhhbmcKPiB3aGVuIHRoZSBtZW1vcnkgaXMgYWNjZXNz
-ZWQgdGhyb3VnaCB0aGUgbWFwcGluZy4KClRoYXQgaGVscHMgdXNpbmcgYXBwbGljYXRpb25zIG1h
-a2luZyB1c2Ugb2YgbW1hcCAmIGZiZGV2IG9uIGFuIEFwYWxpcwpUSzEhCgpUZXN0ZWQtYnk6IFN0
-ZWZhbiBBZ25lciA8c3RlZmFuQGFnbmVyLmNoPgoKLS0KU3RlZmFuCgo+IAo+IFJlcG9ydGVkLWJ5
-OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4KPiBTaWduZWQt
-b2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZmIuYyB8IDE2ICsrKysrKysrKysrKysrKysKPiAgMSBmaWxlIGNo
-YW5nZWQsIDE2IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL2ZiLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYwo+IGluZGV4IDAwMWNiNzdl
-MmY1OS4uMDc4NjE1OWVkZWYzIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9m
-Yi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMKPiBAQCAtMjI0LDEyICsyMjQs
-MjggQEAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqdGVncmFfZmJfY3JlYXRlKHN0cnVjdAo+IGRy
-bV9kZXZpY2UgKmRybSwKPiAgfQo+ICAKPiAgI2lmZGVmIENPTkZJR19EUk1fRkJERVZfRU1VTEFU
-SU9OCj4gK3N0YXRpYyBpbnQgdGVncmFfZmJfbW1hcChzdHJ1Y3QgZmJfaW5mbyAqaW5mbywgc3Ry
-dWN0IHZtX2FyZWFfc3RydWN0ICp2bWEpCj4gK3sKPiArCXN0cnVjdCBkcm1fZmJfaGVscGVyICpo
-ZWxwZXIgPSBpbmZvLT5wYXI7Cj4gKwlzdHJ1Y3QgdGVncmFfYm8gKmJvOwo+ICsJaW50IGVycjsK
-PiArCj4gKwlibyA9IHRlZ3JhX2ZiX2dldF9wbGFuZShoZWxwZXItPmZiLCAwKTsKPiArCj4gKwll
-cnIgPSBkcm1fZ2VtX21tYXBfb2JqKCZiby0+Z2VtLCBiby0+Z2VtLnNpemUsIHZtYSk7Cj4gKwlp
-ZiAoZXJyIDwgMCkKPiArCQlyZXR1cm4gZXJyOwo+ICsKPiArCXJldHVybiBfX3RlZ3JhX2dlbV9t
-bWFwKCZiby0+Z2VtLCB2bWEpOwo+ICt9Cj4gKwo+ICBzdGF0aWMgc3RydWN0IGZiX29wcyB0ZWdy
-YV9mYl9vcHMgPSB7Cj4gIAkub3duZXIgPSBUSElTX01PRFVMRSwKPiAgCURSTV9GQl9IRUxQRVJf
-REVGQVVMVF9PUFMsCj4gIAkuZmJfZmlsbHJlY3QgPSBkcm1fZmJfaGVscGVyX3N5c19maWxscmVj
-dCwKPiAgCS5mYl9jb3B5YXJlYSA9IGRybV9mYl9oZWxwZXJfc3lzX2NvcHlhcmVhLAo+ICAJLmZi
-X2ltYWdlYmxpdCA9IGRybV9mYl9oZWxwZXJfc3lzX2ltYWdlYmxpdCwKPiArCS5mYl9tbWFwID0g
-dGVncmFfZmJfbW1hcCwKPiAgfTsKPiAgCj4gIHN0YXRpYyBpbnQgdGVncmFfZmJkZXZfcHJvYmUo
-c3RydWN0IGRybV9mYl9oZWxwZXIgKmhlbHBlciwKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+From: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Date: Wed, 7 Feb 2018 21:17:17 +0100
+
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/fb.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index 001cb77e2f59..e63a0b228751 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -325,10 +325,8 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
+ 	struct tegra_fbdev *fbdev;
+ 
+ 	fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
+-	if (!fbdev) {
+-		dev_err(drm->dev, "failed to allocate DRM fbdev\n");
++	if (!fbdev)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	drm_fb_helper_prepare(drm, &fbdev->base, &tegra_fb_helper_funcs);
+ 
+-- 
+2.16.1
