@@ -1,64 +1,32 @@
-From: Tuomas Tynkkynen <tuomas-yrGDUoBaLx3QT0dZR+AlfA@public.gmane.org>
-Subject: Re: TK1 System Freeze
-Date: Tue, 6 Feb 2018 18:40:41 +0200
-Message-ID: <20180206184041.131525eb@duuni>
-References: <1511135854.13661.3.camel@toradex.com>
-        <7d874417cbb2067bcb4f49af000f9f03@agner.ch>
-        <19526d1015c3c60e8bbdf26ec9d082bb@agner.ch>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
+ constraints
+Date: Wed, 7 Feb 2018 10:47:44 +0200
+Message-ID: <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
+ <20180206163544.GI5681@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <19526d1015c3c60e8bbdf26ec9d082bb-XLVq0VzYD2Y@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20180206163544.GI5681-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Agner <stefan.agner-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Cc: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stefan,
-
-On Tue, 06 Feb 2018 08:51:19 +0100
-stefan-XLVq0VzYD2Y-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org wrote:
-
-> On 13.01.2018 01:19, Stefan Agner wrote:
-> > Hi Marcel, Hi Thierry,
-> > 
-> > On 2017-11-20 00:57, Marcel Ziswiler wrote:  
-> >> Hi there
-> >>
-> >> I lately was tasked to run some legacy Qt4e [1] application on Apalis
-> >> TK1. It should really only draw directly to the Linux frame buffer
-> >> /dev/fb0. Strangely as soon as that application is started the whole
-> >> system freezes. Running it with the VNC backend or a pure frame buffer
-> >> emulation it works just fine. So it must have something to do with the
-> >> particular way the frame buffer is done on TK1. So far no attempt in
-> >> debugging this any further bear any fruit. Whether stracing what the
-> >> application is doing nor tracing the linux kernel side of things
-> >> revealed where exactly the freeze happens. As I feared some kind of a
-> >> configuration issue on Apalis TK1 I also tried the same on Jetson TK1
-> >> with latest stock Linux kernel 4.14. However the same freeze happens.  
-> > 
-> > This is still the case with 4.15-rc7.
-> > 
-> > While dd is not enough to reproduce it, using a simple fbdev application
-> > such as ts_calibrate seems to be sufficient. Qt and ts_calibrate use
-> > mmap for the framebuffer. The system seems to freeze when it tries to
-> > write into the mapped area (at the memset line):
-> > https://github.com/kergoth/tslib/blob/master/tests/fbutils-linux.c#L160
-> > 
-> > Is this a known problem? Any idea?  
+On Tue, Feb 06, 2018 at 04:35:44PM +0000, Mark Brown wrote:
+> * PGP Signed by an unknown key
 > 
-> Thierry, anybody else, any idea? This should be easily reproducible on
-> Jetson TK1.
+> On Tue, Feb 06, 2018 at 06:34:02PM +0200, Peter De Schrijver wrote:
+> > From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > Add API to get min/max rail voltage configured from platform for
+> > given rails.
 > 
+> because...
 
-Some time ago I was able to cause a similar-sounding hang by running kmscon[1]
-on the Jetson TK1. I remember that I tried the debug the problem with a
-Lauterbach JTAG debugger at some point, but whatever steps that I did
-to make the Lauterbach usable on mainline also made the problem disappear!
-IIRC, it was disabling cpuidle (either via cmdline or sysfs, can't remember)
-that made the hang go away.
+of the next patch where this is used to retrieve the minimum rail voltage.
 
-[1]: https://github.com/dvdhrm/kmscon
-
-- Tuomas
+Peter.
