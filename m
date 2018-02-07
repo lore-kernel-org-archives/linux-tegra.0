@@ -1,71 +1,72 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
- constraints
-Date: Wed, 7 Feb 2018 15:37:11 +0000
-Message-ID: <20180207153711.GE6003@sirena.org.uk>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
- <20180206163544.GI5681@sirena.org.uk>
- <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
- <20180207104351.GA6003@sirena.org.uk>
- <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
- <20180207141846.GC6003@sirena.org.uk>
- <20180207143213.GB5850@tbergstrom-lnx.Nvidia.com>
- <20180207150155.GD6003@sirena.org.uk>
- <20180207152045.GC5850@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="EXKGNeO8l0xGFBjy"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20180207152045.GC5850-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 2/3] drm/tegra: gem: Make __tegra_gem_mmap() available more widely
+Date: Wed,  7 Feb 2018 18:45:55 +0100
+Message-ID: <20180207174556.25401-2-thierry.reding@gmail.com>
+References: <20180207174556.25401-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180207174556.25401-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---EXKGNeO8l0xGFBjy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This function allows mapping a GEM object into a virtual memory address
+space, which makes it useful outside of the GEM code.
 
-On Wed, Feb 07, 2018 at 05:20:45PM +0200, Peter De Schrijver wrote:
-> On Wed, Feb 07, 2018 at 03:01:55PM +0000, Mark Brown wrote:
+While at it, rename the function so it doesn't clash with the function
+that implements the DRM_TEGRA_GEM_MMAP IOCTL.
 
-> > I can't really tell what you're saying here.  If the driver needs to
-> > know if it can set the a given voltage there's already an API for doing
-> > that as I said.  If you're trying to convey this minimum and maximum
-> > voltage via the constraints that sounds like an abuse of the constraints.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/gem.c | 7 +++----
+ drivers/gpu/drm/tegra/gem.h | 1 +
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-> No, what I want is the voltage which the regulator will output for a given
-> regulator_set_voltage request taking constraints, regulator step etc into
-> account.
-
-Knowing the range of the constaints is going to tell you nothing useful
-about that, it has zero information on steps or anything.  The way to
-find out what voltages can be set is to enumerate the voltages that can
-be set through the existing API and then if you want to set a specific
-voltage that you've confirmed is available you can set exactly that
-voltage via the normal voltage setting interface, no need to provide a
-range.
-
---EXKGNeO8l0xGFBjy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp7HSYACgkQJNaLcl1U
-h9BRDAf9FdaH1tOaZcNU2t7spzIT8bqpr3eAGIuF9GdmskpVdhVYL2z/iik+AAWA
-5dvU5+U4UfexPA6KB0lZFVASav5z8XuUdk+t0GH45MGYIramZTSm6ouCpQXor7YD
-DtVtWRw0oNJIgBesUpC3Vfa0JVpuwbkce4GzvmlzLMB/Jd1nEJkjxJm3l14k997k
-njGXu7R/9hI1uwLFSwoMdDFQME49766JgVrp5cVOySWbK2c4c/l9+iL4Xg+TuGpP
-REVfT2NC4ZNWH7BlqtdUqdwzO1bE9F+WaVh/0bfNbtrHgHV+0XWYNNv2IFTDtYvl
-pOPsqdXTfJ8HlKeSjw7f0SqZdWU52g==
-=lJXf
------END PGP SIGNATURE-----
-
---EXKGNeO8l0xGFBjy--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 0e390ae73559..4b80fe58d4f7 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -464,8 +464,7 @@ const struct vm_operations_struct tegra_bo_vm_ops = {
+ 	.close = drm_gem_vm_close,
+ };
+ 
+-static int tegra_gem_mmap(struct drm_gem_object *gem,
+-			  struct vm_area_struct *vma)
++int __tegra_gem_mmap(struct drm_gem_object *gem, struct vm_area_struct *vma)
+ {
+ 	struct tegra_bo *bo = to_tegra_bo(gem);
+ 
+@@ -512,7 +511,7 @@ int tegra_drm_mmap(struct file *file, struct vm_area_struct *vma)
+ 
+ 	gem = vma->vm_private_data;
+ 
+-	return tegra_gem_mmap(gem, vma);
++	return __tegra_gem_mmap(gem, vma);
+ }
+ 
+ static struct sg_table *
+@@ -633,7 +632,7 @@ static int tegra_gem_prime_mmap(struct dma_buf *buf, struct vm_area_struct *vma)
+ 	if (err < 0)
+ 		return err;
+ 
+-	return tegra_gem_mmap(gem, vma);
++	return __tegra_gem_mmap(gem, vma);
+ }
+ 
+ static void *tegra_gem_prime_vmap(struct dma_buf *buf)
+diff --git a/drivers/gpu/drm/tegra/gem.h b/drivers/gpu/drm/tegra/gem.h
+index 7e1635a01c81..bb369c129fdd 100644
+--- a/drivers/gpu/drm/tegra/gem.h
++++ b/drivers/gpu/drm/tegra/gem.h
+@@ -75,6 +75,7 @@ int tegra_bo_dumb_create(struct drm_file *file, struct drm_device *drm,
+ 
+ extern const struct vm_operations_struct tegra_bo_vm_ops;
+ 
++int __tegra_gem_mmap(struct drm_gem_object *gem, struct vm_area_struct *vma);
+ int tegra_drm_mmap(struct file *file, struct vm_area_struct *vma);
+ 
+ struct dma_buf *tegra_gem_prime_export(struct drm_device *drm,
+-- 
+2.15.1
