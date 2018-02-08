@@ -1,51 +1,53 @@
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 3/3] drm/tegra: fb: Implement ->fb_mmap() callback
-Date: Thu, 8 Feb 2018 00:52:15 +0000
-Message-ID: <1518051133.3701.93.camel@toradex.com>
-References: <20180207174556.25401-1-thierry.reding@gmail.com>
-         <20180207174556.25401-3-thierry.reding@gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
+ constraints
+Date: Thu, 8 Feb 2018 15:34:56 +0530
+Message-ID: <86cd40ac-d255-f4b9-87cb-0cd34efba7d8@nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
+ <20180206163544.GI5681@sirena.org.uk>
+ <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
+ <20180207104351.GA6003@sirena.org.uk>
+ <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
+ <20180207141846.GC6003@sirena.org.uk>
+ <20180207143213.GB5850@tbergstrom-lnx.Nvidia.com>
+ <20180207150155.GD6003@sirena.org.uk>
+ <20180207152045.GC5850@tbergstrom-lnx.Nvidia.com>
+ <20180207153711.GE6003@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180207174556.25401-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Content-ID: <DD785067BDC3E34F81E528A784DF235B-wNKe6lTLrGecE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <20180207153711.GE6003-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "stefan-XLVq0VzYD2Y@public.gmane.org" <stefan-XLVq0VzYD2Y@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTAyLTA3IGF0IDE4OjQ1ICswMTAwLCBUaGllcnJ5IFJlZGluZyB3cm90ZToN
-Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4gDQo+IFRoaXMg
-Zml4ZXMgaGFuZ3Mgd2l0aCBsZWdhY3kgYXBwbGljYXRpb25zIHRoYXQgdXNlIHRoZSBtbWFwKCkg
-c3lzY2FsbA0KPiBvbg0KPiB0aGUgZmJkZXYgZGV2aWNlIHRvIG1hcCBmcmFtZWJ1ZmZlciBtZW1v
-cnkuIFRoZSBmYmRldiBpbXBsZW1lbnRhdGlvbg0KPiBmb3INCj4gbW1hcCgpIGNyZWF0ZXMgYSBt
-YXBwaW5nIHRoYXQgY29uZmxpY3RzIHdpdGggRFJNIHVzYWdlIGFuZCBjYXVzZXMgYQ0KPiBoYW5n
-DQo+IHdoZW4gdGhlIG1lbW9yeSBpcyBhY2Nlc3NlZCB0aHJvdWdoIHRoZSBtYXBwaW5nLg0KDQpX
-aXRoIHRoYXQgbGVnYWN5IFF0NGUgYXBwbGljYXRpb25zIHJ1biBqdXN0IGZpbmUgbm93IG9uIEFw
-YWxpcyBUSzENCnJ1bm5pbmcgTGludXgga2VybmVsIDQuMTQuMTguDQoNClRoYW5rcywgVGhpZXJy
-eSENCg0KVGVzdGVkLWJ5OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4
-LmNvbT4NCg0KUmVwb3J0ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRv
-cmFkZXguY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0Budmlk
-aWEuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5jIHwgMTYgKysrKysr
-KysrKysrKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKykNCj4gDQo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9mYi5jDQo+IGluZGV4IDAwMWNiNzdlMmY1OS4uMDc4NjE1OWVkZWYzIDEwMDY0NA0KPiAt
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZmIuYw0KPiBAQCAtMjI0LDEyICsyMjQsMjggQEAgc3RydWN0IGRybV9mcmFtZWJ1ZmZl
-ciAqdGVncmFfZmJfY3JlYXRlKHN0cnVjdA0KPiBkcm1fZGV2aWNlICpkcm0sDQo+ICB9DQo+ICAN
-Cj4gICNpZmRlZiBDT05GSUdfRFJNX0ZCREVWX0VNVUxBVElPTg0KPiArc3RhdGljIGludCB0ZWdy
-YV9mYl9tbWFwKHN0cnVjdCBmYl9pbmZvICppbmZvLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QNCj4g
-KnZtYSkNCj4gK3sNCj4gKwlzdHJ1Y3QgZHJtX2ZiX2hlbHBlciAqaGVscGVyID0gaW5mby0+cGFy
-Ow0KPiArCXN0cnVjdCB0ZWdyYV9ibyAqYm87DQo+ICsJaW50IGVycjsNCj4gKw0KPiArCWJvID0g
-dGVncmFfZmJfZ2V0X3BsYW5lKGhlbHBlci0+ZmIsIDApOw0KPiArDQo+ICsJZXJyID0gZHJtX2dl
-bV9tbWFwX29iaigmYm8tPmdlbSwgYm8tPmdlbS5zaXplLCB2bWEpOw0KPiArCWlmIChlcnIgPCAw
-KQ0KPiArCQlyZXR1cm4gZXJyOw0KPiArDQo+ICsJcmV0dXJuIF9fdGVncmFfZ2VtX21tYXAoJmJv
-LT5nZW0sIHZtYSk7DQo+ICt9DQo+ICsNCj4gIHN0YXRpYyBzdHJ1Y3QgZmJfb3BzIHRlZ3JhX2Zi
-X29wcyA9IHsNCj4gIAkub3duZXIgPSBUSElTX01PRFVMRSwNCj4gIAlEUk1fRkJfSEVMUEVSX0RF
-RkFVTFRfT1BTLA0KPiAgCS5mYl9maWxscmVjdCA9IGRybV9mYl9oZWxwZXJfc3lzX2ZpbGxyZWN0
-LA0KPiAgCS5mYl9jb3B5YXJlYSA9IGRybV9mYl9oZWxwZXJfc3lzX2NvcHlhcmVhLA0KPiAgCS5m
-Yl9pbWFnZWJsaXQgPSBkcm1fZmJfaGVscGVyX3N5c19pbWFnZWJsaXQsDQo+ICsJLmZiX21tYXAg
-PSB0ZWdyYV9mYl9tbWFwLA0KPiAgfTsNCj4gIA0KPiAgc3RhdGljIGludCB0ZWdyYV9mYmRldl9w
-cm9iZShzdHJ1Y3QgZHJtX2ZiX2hlbHBlciAqaGVscGVyLA==
+
+
+On Wednesday 07 February 2018 09:07 PM, Mark Brown wrote:
+> On Wed, Feb 07, 2018 at 05:20:45PM +0200, Peter De Schrijver wrote:
+>> On Wed, Feb 07, 2018 at 03:01:55PM +0000, Mark Brown wrote:
+>>> I can't really tell what you're saying here.  If the driver needs to
+>>> know if it can set the a given voltage there's already an API for doing
+>>> that as I said.  If you're trying to convey this minimum and maximum
+>>> voltage via the constraints that sounds like an abuse of the constraints.
+>> No, what I want is the voltage which the regulator will output for a given
+>> regulator_set_voltage request taking constraints, regulator step etc into
+>> account.
+> Knowing the range of the constaints is going to tell you nothing useful
+> about that, it has zero information on steps or anything.  The way to
+> find out what voltages can be set is to enumerate the voltages that can
+> be set through the existing API and then if you want to set a specific
+> voltage that you've confirmed is available you can set exactly that
+> voltage via the normal voltage setting interface, no need to provide a
+> range.
+
+Hi,
+I added this API in downstream for the purpose of finding whether rail 
+output can be changed or not(fixed) based on constraints.
+If min and max is same then it can not change. I used this information 
+to set the pad voltage of SOC automatically.
+
+I dont know other usage when I added this API. May be Peter is needed here.
