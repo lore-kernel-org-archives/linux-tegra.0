@@ -1,45 +1,51 @@
-From: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Subject: [PATCH] drm/tegra/fb: Delete an error message for a failed memory
- allocation in tegra_fbdev_create()
-Date: Wed, 7 Feb 2018 21:23:35 +0100
-Message-ID: <0704416a-23f7-3ce3-2bd2-d6a8c106f10d@users.sourceforge.net>
+From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 3/3] drm/tegra: fb: Implement ->fb_mmap() callback
+Date: Thu, 8 Feb 2018 00:52:15 +0000
+Message-ID: <1518051133.3701.93.camel@toradex.com>
+References: <20180207174556.25401-1-thierry.reding@gmail.com>
+         <20180207174556.25401-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180207174556.25401-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
+Content-ID: <DD785067BDC3E34F81E528A784DF235B-wNKe6lTLrGecE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "stefan-XLVq0VzYD2Y@public.gmane.org" <stefan-XLVq0VzYD2Y@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Date: Wed, 7 Feb 2018 21:17:17 +0100
-
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
----
- drivers/gpu/drm/tegra/fb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 001cb77e2f59..e63a0b228751 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -325,10 +325,8 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
- 	struct tegra_fbdev *fbdev;
- 
- 	fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
--	if (!fbdev) {
--		dev_err(drm->dev, "failed to allocate DRM fbdev\n");
-+	if (!fbdev)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	drm_fb_helper_prepare(drm, &fbdev->base, &tegra_fb_helper_funcs);
- 
--- 
-2.16.1
+T24gV2VkLCAyMDE4LTAyLTA3IGF0IDE4OjQ1ICswMTAwLCBUaGllcnJ5IFJlZGluZyB3cm90ZToN
+Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4gDQo+IFRoaXMg
+Zml4ZXMgaGFuZ3Mgd2l0aCBsZWdhY3kgYXBwbGljYXRpb25zIHRoYXQgdXNlIHRoZSBtbWFwKCkg
+c3lzY2FsbA0KPiBvbg0KPiB0aGUgZmJkZXYgZGV2aWNlIHRvIG1hcCBmcmFtZWJ1ZmZlciBtZW1v
+cnkuIFRoZSBmYmRldiBpbXBsZW1lbnRhdGlvbg0KPiBmb3INCj4gbW1hcCgpIGNyZWF0ZXMgYSBt
+YXBwaW5nIHRoYXQgY29uZmxpY3RzIHdpdGggRFJNIHVzYWdlIGFuZCBjYXVzZXMgYQ0KPiBoYW5n
+DQo+IHdoZW4gdGhlIG1lbW9yeSBpcyBhY2Nlc3NlZCB0aHJvdWdoIHRoZSBtYXBwaW5nLg0KDQpX
+aXRoIHRoYXQgbGVnYWN5IFF0NGUgYXBwbGljYXRpb25zIHJ1biBqdXN0IGZpbmUgbm93IG9uIEFw
+YWxpcyBUSzENCnJ1bm5pbmcgTGludXgga2VybmVsIDQuMTQuMTguDQoNClRoYW5rcywgVGhpZXJy
+eSENCg0KVGVzdGVkLWJ5OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4
+LmNvbT4NCg0KUmVwb3J0ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRv
+cmFkZXguY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0Budmlk
+aWEuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5jIHwgMTYgKysrKysr
+KysrKysrKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKykNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9mYi5jDQo+IGluZGV4IDAwMWNiNzdlMmY1OS4uMDc4NjE1OWVkZWYzIDEwMDY0NA0KPiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZmIuYw0KPiBAQCAtMjI0LDEyICsyMjQsMjggQEAgc3RydWN0IGRybV9mcmFtZWJ1ZmZl
+ciAqdGVncmFfZmJfY3JlYXRlKHN0cnVjdA0KPiBkcm1fZGV2aWNlICpkcm0sDQo+ICB9DQo+ICAN
+Cj4gICNpZmRlZiBDT05GSUdfRFJNX0ZCREVWX0VNVUxBVElPTg0KPiArc3RhdGljIGludCB0ZWdy
+YV9mYl9tbWFwKHN0cnVjdCBmYl9pbmZvICppbmZvLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QNCj4g
+KnZtYSkNCj4gK3sNCj4gKwlzdHJ1Y3QgZHJtX2ZiX2hlbHBlciAqaGVscGVyID0gaW5mby0+cGFy
+Ow0KPiArCXN0cnVjdCB0ZWdyYV9ibyAqYm87DQo+ICsJaW50IGVycjsNCj4gKw0KPiArCWJvID0g
+dGVncmFfZmJfZ2V0X3BsYW5lKGhlbHBlci0+ZmIsIDApOw0KPiArDQo+ICsJZXJyID0gZHJtX2dl
+bV9tbWFwX29iaigmYm8tPmdlbSwgYm8tPmdlbS5zaXplLCB2bWEpOw0KPiArCWlmIChlcnIgPCAw
+KQ0KPiArCQlyZXR1cm4gZXJyOw0KPiArDQo+ICsJcmV0dXJuIF9fdGVncmFfZ2VtX21tYXAoJmJv
+LT5nZW0sIHZtYSk7DQo+ICt9DQo+ICsNCj4gIHN0YXRpYyBzdHJ1Y3QgZmJfb3BzIHRlZ3JhX2Zi
+X29wcyA9IHsNCj4gIAkub3duZXIgPSBUSElTX01PRFVMRSwNCj4gIAlEUk1fRkJfSEVMUEVSX0RF
+RkFVTFRfT1BTLA0KPiAgCS5mYl9maWxscmVjdCA9IGRybV9mYl9oZWxwZXJfc3lzX2ZpbGxyZWN0
+LA0KPiAgCS5mYl9jb3B5YXJlYSA9IGRybV9mYl9oZWxwZXJfc3lzX2NvcHlhcmVhLA0KPiAgCS5m
+Yl9pbWFnZWJsaXQgPSBkcm1fZmJfaGVscGVyX3N5c19pbWFnZWJsaXQsDQo+ICsJLmZiX21tYXAg
+PSB0ZWdyYV9mYl9tbWFwLA0KPiAgfTsNCj4gIA0KPiAgc3RhdGljIGludCB0ZWdyYV9mYmRldl9w
+cm9iZShzdHJ1Y3QgZHJtX2ZiX2hlbHBlciAqaGVscGVyLA==
