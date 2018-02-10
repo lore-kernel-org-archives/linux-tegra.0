@@ -1,11 +1,13 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 0/4] dt/bindings & ARM: dts: tegra: updates
-Date: Sat, 10 Feb 2018 02:33:21 +0100
-Message-ID: <20180210013326.27771-1-marcel@ziswiler.com>
+Subject: [PATCH 2/4] ARM: dts: tegra: use proper irq type definitions
+Date: Sat, 10 Feb 2018 02:33:23 +0100
+Message-ID: <20180210013326.27771-3-marcel@ziswiler.com>
+References: <20180210013326.27771-1-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180210013326.27771-1-marcel@ziswiler.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,29 +18,125 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Marcel Ziswiler <marcel@ziswiler.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-This series fixes the Tegra GMI controller DT/bindings example, a few
-IRQ type definitions, removes some invalid uses of rsvd1 pin muxes on
-Beaver and removes a duplicate pcie-1 node on Venice2.
+This switches a few interrupt definitions that were using either
+GPIO_ACTIVE_HIGH or GPIO_ACTIVE_LOW as IRQ type, which is invalid.
 
+This is mostly a cosmetic change, that doesn't affect any driver.
 
-Marcel Ziswiler (4):
-  dt/bindings: fix binding examples for tegra gmi controller
-  ARM: dts: tegra: use proper irq type definitions
-  ARM: dts: tegra: beaver: remove invalid uses of rsvd1
-  ARM: dts: tegra: venice2: remove duplicate pcie-1 node
+Analogous to Paul's commit 38333641b6dd ("ARM: tegra: nyan: Use proper
+IRQ type definitions").
 
- .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt |  6 ++--
- arch/arm/boot/dts/tegra114-dalmore.dts             |  2 +-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  2 +-
- arch/arm/boot/dts/tegra124-venice2.dts             |  9 ++----
- arch/arm/boot/dts/tegra30-apalis.dtsi              |  4 +--
- arch/arm/boot/dts/tegra30-beaver.dts               | 32 +++++++++++-----------
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts      |  2 +-
- 7 files changed, 25 insertions(+), 32 deletions(-)
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+---
 
+ arch/arm/boot/dts/tegra114-dalmore.dts        | 2 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts     | 2 +-
+ arch/arm/boot/dts/tegra124-venice2.dts        | 4 ++--
+ arch/arm/boot/dts/tegra30-apalis.dtsi         | 4 ++--
+ arch/arm/boot/dts/tegra30-beaver.dts          | 2 +-
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index acd6cf51b15b..eafff16765b4 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -780,7 +780,7 @@
+ 			compatible = "realtek,rt5640";
+ 			reg = <0x1c>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(W, 3) GPIO_ACTIVE_HIGH>;
++			interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_EDGE_FALLING>;
+ 			realtek,ldo1-en-gpios =
+ 				<&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index d112f85e66ed..6dbcf84dafbc 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1418,7 +1418,7 @@
+ 			compatible = "realtek,rt5639";
+ 			reg = <0x1c>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
++			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_FALLING>;
+ 			realtek,ldo1-en-gpios =
+ 				<&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_HIGH>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 32d9079f025b..c0469ea149d2 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -613,7 +613,7 @@
+ 			compatible = "maxim,max98090";
+ 			reg = <0x10>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
++			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_FALLING>;
+ 		};
+ 	};
+ 
+@@ -859,7 +859,7 @@
+ 					reg = <0x9>;
+ 					interrupt-parent = <&gpio>;
+ 					interrupts = <TEGRA_GPIO(J, 0)
+-							GPIO_ACTIVE_HIGH>;
++							IRQ_TYPE_EDGE_BOTH>;
+ 					ti,ac-detect-gpios = <&gpio
+ 							TEGRA_GPIO(J, 0)
+ 							GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index faa8cd2914e8..bfb7913c0657 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -657,7 +657,7 @@
+ 			reg = <1>;
+ 			clocks = <&clk16m>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(W, 3) GPIO_ACTIVE_LOW>;
++			interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_EDGE_RISING>;
+ 			spi-max-frequency = <10000000>;
+ 		};
+ 	};
+@@ -672,7 +672,7 @@
+ 			reg = <0>;
+ 			clocks = <&clk16m>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
++			interrupts = <TEGRA_GPIO(W, 2) IRQ_TYPE_EDGE_RISING>;
+ 			spi-max-frequency = <10000000>;
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 5331a8f7dcf8..36b85a0ab0eb 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -1762,7 +1762,7 @@
+ 			compatible = "realtek,rt5640";
+ 			reg = <0x1c>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(X, 3) GPIO_ACTIVE_HIGH>;
++			interrupts = <TEGRA_GPIO(X, 3) IRQ_TYPE_EDGE_FALLING>;
+ 			realtek,ldo1-en-gpios =
+ 				<&gpio TEGRA_GPIO(X, 2) GPIO_ACTIVE_HIGH>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+index 3c5fb2430212..b307feb7c330 100644
+--- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
++++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+@@ -79,7 +79,7 @@
+ 			reg = <0>;
+ 			clocks = <&clk16m>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
++			interrupts = <TEGRA_GPIO(S, 0) IRQ_TYPE_EDGE_RISING>;
+ 			spi-max-frequency = <10000000>;
+ 		};
+ 		spidev0: spi@1 {
 -- 
 2.14.3
