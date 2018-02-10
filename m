@@ -1,55 +1,71 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 3/6] ARM: dts: tegra: apalis-tk1: add missing as3722 gpio0
- configuration
-Date: Sat, 10 Feb 2018 02:38:03 +0100
-Message-ID: <20180210013806.28496-4-marcel@ziswiler.com>
-References: <20180210013806.28496-1-marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180210013806.28496-1-marcel@ziswiler.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Subject: [PATCH 1/4] dt/bindings: fix binding examples for tegra gmi controller
+Date: Sat, 10 Feb 2018 02:33:22 +0100
+Message-ID: <20180210013326.27771-2-marcel@ziswiler.com>
+References: <20180210013326.27771-1-marcel@ziswiler.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180210013326.27771-1-marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 
-As the AS3722 GPIO0 is also a not connected on our Apalis TK1 module
-explicitly configure it to high-impedance as well.
+Fix devicetree binding examples for the Generic Memory Interface (GMI)
+bus driver found on Tegra SOCs.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+While at it also remove double new lines as a left over from Rob's
+commit 4da722ca19f3 ("dt-bindings: Remove "status" from examples").
 
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 ---
 
- arch/arm/boot/dts/tegra124-apalis.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 7fbaaf221029..44c31176ce90 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1620,9 +1620,9 @@
- 					bias-pull-up;
- 				};
+diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+index 3e21eb822811..c1e70621799b 100644
+--- a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
++++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+@@ -73,7 +73,7 @@ Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
+ controllers with a simple-bus node since they are all connected to the same
+ chip-select (CS4), in this example external address decoding is provided:
  
--				gpio1_3_4_5_6 {
--					pins = "gpio1", "gpio3", "gpio4",
--					       "gpio5", "gpio6";
-+				gpio0_1_3_4_5_6 {
-+					pins = "gpio0", "gpio1", "gpio3",
-+					       "gpio4", "gpio5", "gpio6";
- 					bias-high-impedance;
- 				};
- 			};
+-gmi@70090000 {
++gmi@70009000 {
+ 	compatible = "nvidia,tegra20-gmi";
+ 	reg = <0x70009000 0x1000>;
+ 	#address-cells = <2>;
+@@ -84,7 +84,6 @@ gmi@70090000 {
+ 	reset-names = "gmi";
+ 	ranges = <4 0 0xd0000000 0xfffffff>;
+ 
+-
+ 	bus@4,0 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -109,7 +108,7 @@ gmi@70090000 {
+ Example with one SJA1000 CAN controller connected to the GMI bus
+ on CS4:
+ 
+-gmi@70090000 {
++gmi@70009000 {
+ 	compatible = "nvidia,tegra20-gmi";
+ 	reg = <0x70009000 0x1000>;
+ 	#address-cells = <2>;
+@@ -120,7 +119,6 @@ gmi@70090000 {
+ 	reset-names = "gmi";
+ 	ranges = <4 0 0xd0000000 0xfffffff>;
+ 
+-
+ 	can@4,0 {
+ 		reg = <4 0 0x100>;
+ 		nvidia,snor-mux-mode;
 -- 
 2.14.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
