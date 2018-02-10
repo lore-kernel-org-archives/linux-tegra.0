@@ -1,29 +1,68 @@
-From: Philippe Ombredanne <pombredanne-od1rfyK75/E@public.gmane.org>
-Subject: Re: [PATCH 5/6] ARM: dts: tegra: apalis-tk1: copyright period,
- spurious newlines
-Date: Sat, 10 Feb 2018 15:48:22 +0100
-Message-ID: <CAOFm3uGyspJshw7h=fhobEpCS971k+kfF_RN0ppXc8Uc_teJ7g@mail.gmail.com>
-References: <20180210013806.28496-1-marcel@ziswiler.com> <20180210013806.28496-6-marcel@ziswiler.com>
- <CAOFm3uH+aasUA9MrV+uXvHUT=fzS63PvC2fDfNo3q687dUQ_dw@mail.gmail.com> <C651C677-D157-41A3-B206-CB02B986AD19@ziswiler.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
+Date: Sat, 10 Feb 2018 17:35:01 +0100
+Message-ID: <11171053.oOJPuGlHoK@phil>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be> <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <C651C677-D157-41A3-B206-CB02B986AD19-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 9:40 AM, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org> wrote:
+Hi Geert,
 
-> Yes, I'm already in the process of preparing a separate patch set fixing this
-> across all Toradex files. However I'm running this through our legal as well
-> first to make absolutely sure it's all proper.
+Am Freitag, 19. Januar 2018, 16:18:20 CET schrieb Geert Uytterhoeven:
+> As of_clk_get_parent_count() returns zero on failure, while
+> of_count_phandle_with_args() might return a negative error code, this
+> also fixes the issue of possibly using a negative number in the
+> allocation below.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/soc/rockchip/pm_domains.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+> index 5c342167b9db7a16..9936038d38771784 100644
+> --- a/drivers/soc/rockchip/pm_domains.c
+> +++ b/drivers/soc/rockchip/pm_domains.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/clk.h>
+> +#include <linux/clk-provider.h>
 
-That's the way to go and thank you for this.
-Do not hesitate to ping here or privately if there is any legal
-concern that comes up.
+not wanting to be to nitpicky, but clk-provider.h seems that it should be
+used from drivers exposing clocks to the system, not from clock users.
 
--- 
-Cordially
-Philippe Ombredanne
+I just remember that in the past clk maintainers tried to keep their
+layering intact, so I've included them for clarification.
+
+Mike, Stephen: the power-domain driver of Rockchip socs needs
+to toggle all clocks of domain peripherals when turning a domain
+on or off, so has a variable list of clocks in the clocks property in dt.
+Hence the of_count_... call which could be replaced with
+of_clk_get_parent_count to not open-code this.
+
+
+Heiko
+
+>  #include <linux/regmap.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <dt-bindings/power/rk3288-power.h>
+> @@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+>  		return -EINVAL;
+>  	}
+>  
+> -	clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
+> +	clk_cnt = of_clk_get_parent_count(node);
+>  	pd = devm_kzalloc(pmu->dev,
+>  			  sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
+>  			  GFP_KERNEL);
+> 
+
+
