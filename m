@@ -1,141 +1,174 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 07/11] dt-bindings: tegra: Update DFLL binding for PWM
- regulator
-Date: Fri, 9 Feb 2018 17:19:54 -0600
-Message-ID: <20180209231954.hx3qhn5kc7xcqzc6@rob-hp-laptop>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-8-git-send-email-pdeschrijver@nvidia.com>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH 3/4] ARM: dts: tegra: beaver: remove invalid uses of rsvd1
+Date: Sat, 10 Feb 2018 02:33:24 +0100
+Message-ID: <20180210013326.27771-4-marcel@ziswiler.com>
+References: <20180210013326.27771-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1517934852-23255-8-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180210013326.27771-1-marcel@ziswiler.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 06:34:08PM +0200, Peter De Schrijver wrote:
-> Add new properties to configure the DFLL PWM regulator support. Also
-> add an example and make the I2C clock only required when I2C support is
-> used.
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../bindings/clock/nvidia,tegra124-dfll.txt        | 76 +++++++++++++++++++++-
->  1 file changed, 74 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> index dff236f..a4903f7 100644
-> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> @@ -23,7 +23,8 @@ Required properties:
->  - clock-names: Must include the following entries:
->    - soc: Clock source for the DFLL control logic.
->    - ref: The closed loop reference clock
-> -  - i2c: Clock source for the integrated I2C master.
-> +  - i2c: Clock source for the integrated I2C master (only required when
-> +	 using I2C mode).
->  - resets: Must contain an entry for each entry in reset-names.
->    See ../reset/reset.txt for details.
->  - reset-names: Must include the following entries:
-> @@ -45,10 +46,28 @@ Required properties for the control loop parameters:
->  Optional properties for the control loop parameters:
->  - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
->  
-> +Optional properties for mode selection:
-> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
-> +
->  Required properties for I2C mode:
->  - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
->  
-> -Example:
-> +Required properties for PWM mode:
-> +- nvidia,pwm-period: period of PWM square wave in us.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add standard unit suffix.
+Remove invalid uses of rsvd1 from beaver device tree. Replace by actual
+function names of pinmux option 1.
 
-> +- nvidia,init-uv: Regulator voltage in uV when PWM control is disabled.
-> +- nvidia,align-offset-uv: Regulator voltage in uV when PWM control is enabled
-> +			  and PWM output is low.
-> +- nvidia,align-step-uv: Voltage increase in uV corresponding to a 1/33th
+Taken from https://github.com/NVIDIA/tegra-pinmux-scripts commit
+b0aceda108c0 ("remove invalid uses of rsvd1 from beaver config").
 
-Use the standard unit suffix, not a custom one. See property-units.txt.
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+---
 
-> +			increase in duty cycle. Eg the voltage for 2/33th duty
-> +			cycle would be:
-> +			nvidia,align-offset-uv + nvidia,align-step-uv * 2.
-> +- pinctrl-0: I/O pad configuration when PWM control is enabled.
-> +- pinctrl-1: I/O pad configuration when PWM control is disabled.
-> +- pinctrl-names: must include the following entries:
-> +  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
-> +  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
-> +
-> +Example for I2C:
->  
->  clock@70110000 {
->          compatible = "nvidia,tegra124-dfll";
-> @@ -76,3 +95,56 @@ clock@70110000 {
->  
->          nvidia,i2c-fs-rate = <400000>;
->  };
-> +
-> +Example for PWM:
-> +
-> +clock@70110000 {
-> +        compatible = "nvidia,tegra124-dfll";
-> +        reg = <0 0x70110000 0 0x100>, /* DFLL control */
-> +              <0 0x70110000 0 0x100>, /* I2C output control */
-> +              <0 0x70110100 0 0x100>, /* Integrated I2C controller */
-> +              <0 0x70110200 0 0x100>; /* Look-up table RAM */
-> +        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
-> +                 <&tegra_car TEGRA210_CLK_DFLL_REF>;
-> +        clock-names = "soc", "ref";
-> +        resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
-> +        reset-names = "dvco";
-> +        #clock-cells = <0>;
-> +        clock-output-names = "dfllCPU_out";
-> +	nvidia,pwm-to-pmic;
-> +	nvidia,init-uv = <1000000>;
-> +	nvidia,align-step-uv = <19200>; /* 19.2mV */
-> +	nvidia,align-offset-uv = <708000>; /* 708mV */
-> +	nvidia,sample-rate = <25000>;
-> +	nvidia,droop-ctrl = <0x00000f00>;
-> +	nvidia,force-mode = <1>;
-> +	nvidia,cf = <6>;
-> +	nvidia,ci = <0>;
-> +	nvidia,cg = <2>;
-> +	nvidia,idle-override;
-> +	nvidia,one-shot-calibrate;
-> +	nvidia,pwm-period = <2500>; /* 2.5us */
-> +	pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
-> +	pinctrl-0 = <&dvfs_pwm_active_state>;
-> +	pinctrl-1 = <&dvfs_pwm_inactive_state>;
-> +};
-> +
-> +/* pinmux nodes added for completeness. Binding doc can be found in:
-> + * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-> + */
-> +
-> +pinmux: pinmux@700008d4 {
-> +	dvfs_pwm_active_state: dvfs_pwm_active {
-> +		dvfs_pwm_pbb1 {
-> +			nvidia,pins = "dvfs_pwm_pbb1";
-> +			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-> +		};
-> +	};
-> +	dvfs_pwm_inactive_state: dvfs_pwm_inactive {
-> +		dvfs_pwm_pbb1 {
-> +			nvidia,pins = "dvfs_pwm_pbb1";
-> +			nvidia,tristate = <TEGRA_PIN_ENABLE>;
-> +		};
-> +	};
-> +};
-> -- 
-> 1.9.1
-> 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ arch/arm/boot/dts/tegra30-beaver.dts | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 36b85a0ab0eb..ae52a5039506 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -260,14 +260,14 @@
+ 			};
+ 			sdmmc3_dat6_pd3 {
+ 				nvidia,pins = "sdmmc3_dat6_pd3";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "spdif";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			sdmmc3_dat7_pd4 {
+ 				nvidia,pins = "sdmmc3_dat7_pd4";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "spdif";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -281,14 +281,14 @@
+ 			};
+ 			vi_vsync_pd6 {
+ 				nvidia,pins = "vi_vsync_pd6";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			vi_hsync_pd7 {
+ 				nvidia,pins = "vi_hsync_pd7";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -806,7 +806,7 @@
+ 			};
+ 			hdmi_int_pn7 {
+ 				nvidia,pins = "hdmi_int_pn7";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "hdmi";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -841,7 +841,7 @@
+ 			};
+ 			ulpi_data3_po4 {
+ 				nvidia,pins = "ulpi_data3_po4";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "uarta";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1107,21 +1107,21 @@
+ 			};
+ 			vi_d10_pt2 {
+ 				nvidia,pins = "vi_d10_pt2";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			vi_d11_pt3 {
+ 				nvidia,pins = "vi_d11_pt3";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			vi_d0_pt4 {
+ 				nvidia,pins = "vi_d0_pt4";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1151,7 +1151,7 @@
+ 			};
+ 			pu0 {
+ 				nvidia,pins = "pu0";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "owr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1172,7 +1172,7 @@
+ 			};
+ 			pu3 {
+ 				nvidia,pins = "pu3";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "pwm0";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1193,7 +1193,7 @@
+ 			};
+ 			pu6 {
+ 				nvidia,pins = "pu6";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "pwm3";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1221,7 +1221,7 @@
+ 			};
+ 			pv3 {
+ 				nvidia,pins = "pv3";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "clk_12m_out";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+@@ -1510,7 +1510,7 @@
+ 			};
+ 			pbb0 {
+ 				nvidia,pins = "pbb0";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "i2s4";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1575,7 +1575,7 @@
+ 			};
+ 			pcc1 {
+ 				nvidia,pins = "pcc1";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "i2s4";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+-- 
+2.14.3
