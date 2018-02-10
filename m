@@ -1,66 +1,87 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: Re: [PATCH 5/6] ARM: dts: tegra: apalis-tk1: copyright period, spurious newlines
-Date: Sat, 10 Feb 2018 09:40:30 +0100
-Message-ID: <C651C677-D157-41A3-B206-CB02B986AD19@ziswiler.com>
-References: <20180210013806.28496-1-marcel@ziswiler.com> <20180210013806.28496-6-marcel@ziswiler.com> <CAOFm3uH+aasUA9MrV+uXvHUT=fzS63PvC2fDfNo3q687dUQ_dw@mail.gmail.com>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH v2 4/7] dt-bindings: tegra: Add missing chips and NVIDIA
+ boards
+Date: Sat, 10 Feb 2018 10:45:35 +0200
+Message-ID: <5105d996-8020-ebcf-cf46-2f13c6b8b35f@kapsi.fi>
+References: <1517901757-15353-1-git-send-email-mperttunen@nvidia.com>
+ <1517901757-15353-5-git-send-email-mperttunen@nvidia.com>
+ <20180209224922.4fxlpl77kwibzfui@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOFm3uH+aasUA9MrV+uXvHUT=fzS63PvC2fDfNo3q687dUQ_dw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-tegra@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180209224922.4fxlpl77kwibzfui@rob-hp-laptop>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On February 10, 2018 8:07:58 AM GMT+01:00, Philippe Ombredanne <pombredanne@nexb.com> wrote:
->Marcel,
->
->On Sat, Feb 10, 2018 at 2:38 AM, Marcel Ziswiler <marcel@ziswiler.com>
->wrote:
->> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 02/10/2018 12:49 AM, Rob Herring wrote:
+> On Tue, Feb 06, 2018 at 09:22:34AM +0200, Mikko Perttunen wrote:
+>> Add compatibility strings for supported but undocumented Tegra chips
+>> (Tegra114/124/132/210/186/194) and reference boards.
 >>
->> Update the copyright period and get rid of some spurious newlines.
->>
->> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->>
+>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >> ---
 >>
->>  arch/arm/boot/dts/tegra124-apalis-eval.dts |  6 ++----
->>  arch/arm/boot/dts/tegra124-apalis.dtsi     | 11 +----------
->>  2 files changed, 3 insertions(+), 14 deletions(-)
+>> Notes:
+>>      v2:
+>>      - add patch
 >>
->> diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts
->b/arch/arm/boot/dts/tegra124-apalis-eval.dts
->> index f1010cefb993..a6ad759dddb4 100644
->> --- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
->> +++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
->> @@ -1,5 +1,5 @@
->>  /*
->> - * Copyright 2016 Toradex AG
->> + * Copyright 2016-2018 Toradex AG
->>   *
->>   * This file is dual-licensed: you can use it either under the terms
->>   * of the GPL or the X11 license, at your option. Note that this
->dual
->
->Since you are fixing copyrights, would you consider also fixing the
->license to use a proper SPDX Id instead?
->
->It would be super gentle of you!
->
->And you will get extra good karma point if you feel like doing the
->same for every Toradex-copyrighted files ;)
->
->The (still new and fresh) license documentation contributed by tglx
->--the only real-time docu-mentalist-- is in:
->Documentation/process/license-rules.rst
->
->Thanks!
+>>   Documentation/devicetree/bindings/arm/tegra.txt | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+>> index 7f1411bbabf7..32f62bb7006d 100644
+>> --- a/Documentation/devicetree/bindings/arm/tegra.txt
+>> +++ b/Documentation/devicetree/bindings/arm/tegra.txt
+>> @@ -9,6 +9,12 @@ following compatible values:
+>>   
+>>     nvidia,tegra20
+>>     nvidia,tegra30
+>> +  nvidia,tegra114
+>> +  nvidia,tegra124
+>> +  nvidia,tegra132
+>> +  nvidia,tegra210
+> 
+> Some reason why this is not in numerical order?
 
-Yes, I'm already in the process of preparing a separate patch set fixing this across all Toradex files. However I'm running this through our legal as well first to make absolutely sure it's all proper.
+They are in chronological/chip generation order, and for whatever 
+reason, that isn't numerical.
 
-Thanks!
+Mikko
+
+> 
+>> +  nvidia,tegra186
+>> +  nvidia,tegra194
+>>   
+>>   Boards
+>>   -------------------------------------------
+>> @@ -26,8 +32,18 @@ board-specific compatible values:
+>>     nvidia,cardhu
+>>     nvidia,cardhu-a02
+>>     nvidia,cardhu-a04
+>> +  nvidia,dalmore
+>>     nvidia,harmony
+>> +  nvidia,jetson-tk1
+>> +  nvidia,norrin
+>> +  nvidia,p2371-0000
+>> +  nvidia,p2371-2180
+>> +  nvidia,p2571
+>> +  nvidia,p2771-0000
+>> +  nvidia,p2972-0000
+>> +  nvidia,roth
+>>     nvidia,seaboard
+>> +  nvidia,tn7
+>>     nvidia,ventana
+>>     toradex,apalis_t30
+>>     toradex,apalis_t30-eval
+>> -- 
+>> 2.1.4
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
