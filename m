@@ -1,81 +1,71 @@
-From: =?UTF-8?B?TWlsYW4gQnXFoWth?= <milan.buska-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Jetson TX2 and serial console
-Date: Mon, 12 Feb 2018 17:39:14 +0000
-Message-ID: <CAFCWPPLsFit2xL8YCEAV2AQPLSg6C27Jzetw9JvThfwuePUp8g@mail.gmail.com>
-References: <CAFCWPPKe6LW1+Uu40tGz4jzYwHY6MvU2D79HauWxRHOentVq3A@mail.gmail.com>
- <4e6b2e2a-af20-3bf3-149c-497584b17212@nvidia.com>
+From: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Subject: Re: [PATCH usb-next v9 2/8] usb: add a flag to skip PHY
+ initialization to struct usb_hcd
+Date: Mon, 12 Feb 2018 20:25:36 +0100
+Message-ID: <CAFBinCBnea-Nt73Lz6K+hKub++Upxa6ot8o857rG3GeuLugZYw@mail.gmail.com>
+References: <20180211210651.2046-3-martin.blumenstingl@googlemail.com> <Pine.LNX.4.44L0.1802121013360.1411-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4e6b2e2a-af20-3bf3-149c-497584b17212-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1802121013360.1411-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, Peter.Chen-3arQi8VN3Tc@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
+Hi Alan,
 
-Use
-USB to TTL Serial Cable - Debug / Console Cable for Raspberry Pi
+On Mon, Feb 12, 2018 at 4:15 PM, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org> wrote:
+> On Sun, 11 Feb 2018, Martin Blumenstingl wrote:
+>
+>> The USB HCD core driver parses the device-tree node for "phys" and
+>> "usb-phys" properties. It also manages the power state of these PHYs
+>> automatically.
+>> However, drivers may opt-out of this behavior by setting "phy" or
+>> "usb_phy" in struct usb_hcd to a non-null value. An example where this
+>> is required is the "Qualcomm USB2 controller", implemented by the
+>> chipidea driver. The hardware requires that the PHY is only powered on
+>> after the "reset completed" event from the controller is received.
+>>
+>> A follow-up patch will allow the USB HCD core driver to manage more than
+>> one PHY. Add a new "bool skip_phy_initialization" field to struct
+>> usb_hcd so drivers can opt-out of any PHY management provided by the USB
+>> HCD core driver. The new field will be used in that patch as well.
+>>
+>> This also updates the existing drivers so they use the new flag if they
+>> want to opt out of the PHY management provided by the USB HCD core
+>> driver. This means that for these drivers the new "multiple PHY"
+>> handling (which will be added in a follow-up patch) will be disabled as
+>> well.
+>>
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+>> ---
+>
+>> --- a/include/linux/usb/hcd.h
+>> +++ b/include/linux/usb/hcd.h
+>> @@ -98,6 +98,12 @@ struct usb_hcd {
+>>        */
+>>       const struct hc_driver  *driver;        /* hw-specific hooks */
+>>
+>> +     /*
+>> +      * do not manage the PHY state in the HCD core, instead let the driver
+>> +      * handle this (for example if the PHY can only be turned on after a
+>> +      * specific event)
+>> +      */
+>> +     bool skip_phy_initialization;
+>
+> Instead of declaring this as a bool at some random location in the
+> structure, it would be better to make this a bitflag along with the
+> other ones that get set at registration.  For example, it could come
+> right after the remove_phy flag.
+I'll move it to the other bitflags as suggested - thanks for pointing this out!
 
-Jetson TX2 J21 Pin 8 (UART 1 TXD) =E2=86=92 Cable RXD (White Wire)
-Jetson TX2 J21 Pin 10 (UART 1 RXD) =E2=86=92 Cable TXD (Green Wire)
-Jetson TX2 J21 Pin 9 (GND) =E2=86=92 Cable GND (Black Wire)
+just to save you from reviewing this over and over again:
+- I'll move the skip_phy_initialization field below remove_phy
+- it's new definition will be "unsigned skip_phy_initialization:1"
+- do you see any issues with the rest of the patch (the "concept" of
+using a flag to skip all kinds of PHY initialization)?
 
-host PC over usb connected via /dev/ttyUSB0 minicom
-
-L4T yes use
-./flash.sh jetson-tx2 mmcblk0p1 and config file for setup extlinux.conf
-
-Something I'm wrong with.
-ttyS0? inittab? extlinux.conf line ADD?
-
-TX2 OS Crux    Host PC OS Crux
-
-After boot TX2 on host PC
-I will be shown (tail)
-hostname: ishi
-font: default
-keyboard: us
-INIT: Entering runlevel: 2
-starting services: sysklogd lo net firewall crond gpm saslauthd
-Here's my problem.
-  =EF=BF=BD =EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD     =EF=BF=BD  =
-=EF=BF=BD=EF=BF=BD =EF=BF=BD =EF=BF=BD  =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=
-=BF=BD =EF=BF=BD =EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD =EF=BF=BD =
-=EF=BF=BD=EF=BF=BD =EF=BF=BD =EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD =EF=BF=BD =EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD
-and here I'm done
-
-Again, I am sorry to be burdening this mailing list with stupid questions
 
 Regards
-
-Milan
-
-2018-02-12 8:20 GMT+00:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
->
-> On 09/02/18 18:41, Milan Bu=C5=A1ka wrote:
->> Hi Jon,
->>
->> Is there any way to control tx2 via the serial interface?
->> Every time I run the minicom, it stops before the bash prompt.
->> I mean to communicate with tx2 with the computer on which the minicom ru=
-ns.
->
-> Yes that should work. I always use the serial interface. What userspace
-> are you using? If you are using the L4T userspace it should work.
->
-> Jon
->
-> --
-> nvpublic
-
-
-
---=20
----------------------------------------------------------------------------=
--
-Remember, no question is too stupid and no problem
-          too small--We've all been beginners
+Martin
