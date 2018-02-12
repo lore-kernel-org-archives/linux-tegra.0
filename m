@@ -1,103 +1,51 @@
-From: Preetham Chandru <pchandru@nvidia.com>
-Subject: RE: [PATCH V6 1/7] dt-bindings: tegra: add binding documentation
-Date: Mon, 12 Feb 2018 17:06:46 +0000
-Message-ID: <26e3d1fb953d4b3abcf510b842d41cbb@bgmail102.nvidia.com>
-References: <1515482234-24716-1-git-send-email-pchandru@nvidia.com>
- <1515482234-24716-2-git-send-email-pchandru@nvidia.com>
- <f8ce6c14-bbff-2eb1-63ad-951723aa47e7@kapsi.fi>
- <2c02c25d-e80b-5a4f-b024-602bac94db13@kapsi.fi>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <2c02c25d-e80b-5a4f-b024-602bac94db13@kapsi.fi>
-Content-Language: en-US
-Sender: linux-ide-owner@vger.kernel.org
-To: Mikko Perttunen <cyndis@kapsi.fi>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "tj@kernel.org" <tj@kernel.org>
-Cc: "preetham260@gmail.com" <preetham260@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Venu Byravarasu <vbyravarasu@nvidia.com>, Pavan Kunapuli <pkunapuli@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 0/2] Memory controller hot reset
+Date: Mon, 12 Feb 2018 20:06:29 +0300
+Message-ID: <cover.1518452709.git.digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IE1pa2tvIFBlcnR0dW5lbiBb
-bWFpbHRvOmN5bmRpc0BrYXBzaS5maV0NCj5TZW50OiBUdWVzZGF5LCBKYW51YXJ5IDIzLCAyMDE4
-IDk6MDIgUE0NCj5UbzogUHJlZXRoYW0gQ2hhbmRydSA8cGNoYW5kcnVAbnZpZGlhLmNvbT47IHRo
-aWVycnkucmVkaW5nQGdtYWlsLmNvbTsNCj50akBrZXJuZWwub3JnDQo+Q2M6IHByZWV0aGFtMjYw
-QGdtYWlsLmNvbTsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj5pZGVAdmdl
-ci5rZXJuZWwub3JnOyBWZW51IEJ5cmF2YXJhc3UgPHZieXJhdmFyYXN1QG52aWRpYS5jb20+OyBQ
-YXZhbg0KPkt1bmFwdWxpIDxwa3VuYXB1bGlAbnZpZGlhLmNvbT4NCj5TdWJqZWN0OiBSZTogW1BB
-VENIIFY2IDEvN10gZHQtYmluZGluZ3M6IHRlZ3JhOiBhZGQgYmluZGluZyBkb2N1bWVudGF0aW9u
-DQo+DQo+QWxzbyB0aGUgY29tbWl0IHN1YmplY3QgbmVlZHMgdG8gc3BlY2lmeSBpdCdzIGFib3V0
-IGFoY2ktdGVncmEuDQo+DQpPa2F5Lg0KDQo+T24gMDEvMjMvMjAxOCAwNTozMCBQTSwgTWlra28g
-UGVydHR1bmVuIHdyb3RlOg0KPj4gT24gMDEvMDkvMjAxOCAwOToxNyBBTSwgUHJlZXRoYW0gQ2hh
-bmRydSBSYW1jaGFuZHJhIHdyb3RlOg0KPj4+IEZyb206IFByZWV0aGFtIFJhbWNoYW5kcmEgPHBj
-aGFuZHJ1QG52aWRpYS5jb20+DQo+Pj4NCj4+PiBUaGlzIGFkZHMgYmluZGluZ3MgZG9jdW1lbnRh
-dGlvbiBmb3IgdGhlIEFIQ0kgY29udHJvbGxlciBvbiBUZWdyYTIxMA0KPj4+DQo+Pj4gU2lnbmVk
-LW9mZi1ieTogUHJlZXRoYW0gQ2hhbmRydSBSIDxwY2hhbmRydUBudmlkaWEuY29tPg0KPj4+IC0t
-LQ0KPj4+IHY0Og0KPj4+ICogY2hhbmdlZCB0aGUgY29tbWl0IG1lc3NhZ2UNCj4+PiAqIGNoYW5n
-ZWQgJ3NhdGEtY29sZCcgcmVzZXQgdG8gbWFuZGF0b3J5IGZvciB0MjEwIGFuZCB0MTI0DQo+Pj4g
-KiBSZW1vdmVkIHRoZSByZWd1bGF0b3JzIGZvciBUMjEwIHNpbmNlIHRoZXNlIHJlZ3VsYXRvcnMN
-Cj4+PiDCoMKgIHdpbGwgYmUgZW5hYmxlZCBpbiBwaHkgZHJpdmVyLg0KPj4+IHYzOg0KPj4+ICog
-QWRkIEFVWCByZWdpc3Rlci4NCj4+PiB2MjoNCj4+PiAqIGNoYW5nZSBjbWwxLCBwbGxfZSBhbmQg
-cGh5IHJlZ3VsYXRvcnMgYXMgb3B0aW9uYWwNCj4+PiDCoMKgIGZvciBUMjEwLg0KPj4+IC0tLQ0K
-Pj4+IMKgIC4uLi9iaW5kaW5ncy9hdGEvbnZpZGlhLHRlZ3JhMTI0LWFoY2kudHh0wqDCoMKgwqDC
-oMKgwqDCoMKgIHwgMzgNCj4+PiArKysrKysrKysrKysrKy0tLS0tLS0tDQo+Pj4gwqAgMSBmaWxl
-IGNoYW5nZWQsIDI1IGluc2VydGlvbnMoKyksIDEzIGRlbGV0aW9ucygtKQ0KPj4+DQo+Pj4gZGlm
-ZiAtLWdpdA0KPj4+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2F0YS9udmlk
-aWEsdGVncmExMjQtYWhjaS50eHQNCj4+PiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9hdGEvbnZpZGlhLHRlZ3JhMTI0LWFoY2kudHh0DQo+Pj4gaW5kZXggNjZjODNjM2U4OTE1
-Li5kZjRkYzJjNzhlZTggMTAwNjQ0DQo+Pj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL2F0YS9udmlkaWEsdGVncmExMjQtYWhjaS50eHQNCj4+PiArKysgYi9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXRhL252aWRpYSx0ZWdyYTEyNC1haGNpLnR4dA0K
-Pj4+IEBAIC0xLDIwICsxLDE5IEBADQo+Pj4gLVRlZ3JhMTI0IFNvQyBTQVRBIEFIQ0kgY29udHJv
-bGxlcg0KPj4+ICtUZWdyYSBTb0MgU0FUQSBBSENJIGNvbnRyb2xsZXINCj4+PiDCoCBSZXF1aXJl
-ZCBwcm9wZXJ0aWVzIDoNCj4+PiAtLSBjb21wYXRpYmxlIDogRm9yIFRlZ3JhMTI0LCBtdXN0IGNv
-bnRhaW4gIm52aWRpYSx0ZWdyYTEyNC1haGNpIi4NCj4+PiBPdGhlcndpc2UsDQo+Pj4gLcKgIG11
-c3QgY29udGFpbiAnIm52aWRpYSw8Y2hpcD4tYWhjaSIsICJudmlkaWEsdGVncmExMjQtYWhjaSIn
-LCB3aGVyZQ0KPj4+IDxjaGlwPg0KPj4+IC3CoCBpcyB0ZWdyYTEzMi4NCj4+PiAtLSByZWcgOiBT
-aG91bGQgY29udGFpbiAyIGVudHJpZXM6DQo+Pj4gKy0gY29tcGF0aWJsZSA6IE11c3QgYmUgb25l
-IG9mOg0KPj4+ICvCoCAtIFRlZ3JhMTI0IDogIm52aWRpYSx0ZWdyYTEyNC1haGNpIg0KPj4+ICvC
-oCAtIFRlZ3JhMjEwIDogIm52aWRpYSx0ZWdyYTIxMC1haGNpIg0KPj4+ICstIHJlZyA6IFNob3Vs
-ZCBjb250YWluIDMgZW50cmllczoNCj4+PiDCoMKgwqAgLSBBSENJIHJlZ2lzdGVyIHNldCAoU0FU
-QSBCQVI1KQ0KPj4+IMKgwqDCoCAtIFNBVEEgcmVnaXN0ZXIgc2V0DQo+Pj4gK8KgIC0gVGVncmEy
-MTAgOiBBVVggcmVnaXN0ZXIgc2V0DQo+Pj4gwqAgLSBpbnRlcnJ1cHRzIDogRGVmaW5lcyB0aGUg
-aW50ZXJydXB0IHVzZWQgYnkgU0FUQQ0KPj4+IMKgIC0gY2xvY2tzIDogTXVzdCBjb250YWluIGFu
-IGVudHJ5IGZvciBlYWNoIGVudHJ5IGluIGNsb2NrLW5hbWVzLg0KPj4+IMKgwqDCoCBTZWUgLi4v
-Y2xvY2tzL2Nsb2NrLWJpbmRpbmdzLnR4dCBmb3IgZGV0YWlscy4NCj4+PiDCoCAtIGNsb2NrLW5h
-bWVzIDogTXVzdCBpbmNsdWRlIHRoZSBmb2xsb3dpbmcgZW50cmllczoNCj4+PiDCoMKgwqAgLSBz
-YXRhDQo+Pj4gwqDCoMKgIC0gc2F0YS1vb2INCj4+PiAtwqAgLSBjbWwxDQo+Pj4gLcKgIC0gcGxs
-X2UNCj4+PiDCoCAtIHJlc2V0cyA6IE11c3QgY29udGFpbiBhbiBlbnRyeSBmb3IgZWFjaCBlbnRy
-eSBpbiByZXNldC1uYW1lcy4NCj4+PiDCoMKgwqAgU2VlIC4uL3Jlc2V0L3Jlc2V0LnR4dCBmb3Ig
-ZGV0YWlscy4NCj4+PiDCoCAtIHJlc2V0LW5hbWVzIDogTXVzdCBpbmNsdWRlIHRoZSBmb2xsb3dp
-bmcgZW50cmllczoNCj4+PiBAQCAtMjQsOSArMjMsMjIgQEAgUmVxdWlyZWQgcHJvcGVydGllcyA6
-DQo+Pj4gwqAgLSBwaHlzIDogTXVzdCBjb250YWluIGFuIGVudHJ5IGZvciBlYWNoIGVudHJ5IGlu
-IHBoeS1uYW1lcy4NCj4+PiDCoMKgwqAgU2VlIC4uL3BoeS9waHktYmluZGluZ3MudHh0IGZvciBk
-ZXRhaWxzLg0KPj4+IMKgIC0gcGh5LW5hbWVzIDogTXVzdCBpbmNsdWRlIHRoZSBmb2xsb3dpbmcg
-ZW50cmllczoNCj4+PiAtwqAgLSBzYXRhLXBoeSA6IFhVU0IgUEFEQ1RMIFNBVEEgUEhZDQo+Pj4g
-LS0gaHZkZC1zdXBwbHkgOiBEZWZpbmVzIHRoZSBTQVRBIEhWREQgcmVndWxhdG9yDQo+Pj4gLS0g
-dmRkaW8tc3VwcGx5IDogRGVmaW5lcyB0aGUgU0FUQSBWRERJTyByZWd1bGF0b3INCj4+PiAtLSBh
-dmRkLXN1cHBseSA6IERlZmluZXMgdGhlIFNBVEEgQVZERCByZWd1bGF0b3INCj4+PiAtLSB0YXJn
-ZXQtNXYtc3VwcGx5IDogRGVmaW5lcyB0aGUgU0FUQSA1ViBwb3dlciByZWd1bGF0b3INCj4+PiAt
-LSB0YXJnZXQtMTJ2LXN1cHBseSA6IERlZmluZXMgdGhlIFNBVEEgMTJWIHBvd2VyIHJlZ3VsYXRv
-cg0KPj4+ICvCoCAtIEZvciBUMTI0Og0KPj4+ICvCoMKgwqAgLSBzYXRhLXBoeSA6IFhVU0IgUEFE
-Q1RMIFNBVEEgUEhZDQo+Pj4gK8KgIC0gRm9yIFQyMTA6DQo+Pj4gK8KgwqDCoCAtIHNhdGEtMA0K
-Pj4+ICstIEZvciBUMTI0Og0KPj4+ICvCoCAtIGh2ZGQtc3VwcGx5IDogRGVmaW5lcyB0aGUgU0FU
-QSBIVkREIHJlZ3VsYXRvcg0KPj4+ICvCoCAtIHZkZGlvLXN1cHBseSA6IERlZmluZXMgdGhlIFNB
-VEEgVkRESU8gcmVndWxhdG9yDQo+Pj4gK8KgIC0gYXZkZC1zdXBwbHkgOiBEZWZpbmVzIHRoZSBT
-QVRBIEFWREQgcmVndWxhdG9yDQo+Pj4gK8KgIC0gdGFyZ2V0LTV2LXN1cHBseSA6IERlZmluZXMg
-dGhlIFNBVEEgNVYgcG93ZXIgcmVndWxhdG9yDQo+Pj4gK8KgIC0gdGFyZ2V0LTEydi1zdXBwbHkg
-OiBEZWZpbmVzIHRoZSBTQVRBIDEyViBwb3dlciByZWd1bGF0b3INCj4+PiArDQo+Pj4gK09wdGlv
-bmFsIHByb3BlcnRpZXM6DQo+Pj4gKy0gY2xvY2stbmFtZXMgOg0KPj4+ICvCoCAtIGNtbDEgOg0K
-Pj4+ICvCoMKgwqAgY21sMSBjbG9jayBpcyByZXF1aXJlZCBieSBwaHkgc28gaXQgaXMgb3B0aW9u
-YWwgdG8gZGVmaW5lDQo+Pj4gK8KgwqDCoCBoZXJlIGFzIHBoeSBkcml2ZXIgd2lsbCBiZSBlbmFi
-bGluZyB0aGlzIGNsb2NrLg0KPj4+ICvCoCAtIHBsbF9lIDoNCj4+PiArwqDCoMKgIHBsbF9lIGlz
-IHRoZSBwYXJlbnQgb2YgY21sMSBjbG9jayBzbyBpdCBpcyBvcHRpb25hbCB0byBkZWZpbmUNCj4+
-PiArwqDCoMKgIGhlcmUgYXMgcGh5IGRyaXZlciB3aWxsIGJlIGVuYWJsaW5nIHRoaXMgY2xvY2su
-DQo+Pj4NCj4+DQo+PiBXZSBzaG91bGQgZHJvcCB0aGUgcGxsX2UgaGVyZSBzaW5jZSBDQ0Ygc2hv
-dWxkIGhhbmRsZSB0aGF0DQo+PiBhdXRvbWF0aWNhbGx5IGFzIENNTDEgaXMgYSBjaGlsZCBjbG9j
-ayBvZiBpdC4gSSBhbHNvIGhhZCBzb21lDQo+PiBwcmltYXJpbHkgY29zbWV0aWMgY2hhbmdlIHN1
-Z2dlc3Rpb25zIHRvIHRoaXMgaW4gdjUuIEknZCBzdGlsbCBsaWtlIHRvDQo+PiBzZWUgdGhvc2Ug
-Z28gaW4gLSBpdCdzIG9mIGNvdXJzZSBwb3NzaWJsZSB0byBhbHNvIGFwcGx5IHRoZXNlIGNoYW5n
-ZXMNCj4+IHdoaWxlIGFwcGx5aW5nIHRoZSBwYXRjaC4NCj4+DQpPa2F5DQoNCj4+IE1pa2tvDQo+
-PiAtLQ0KPj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVu
-c3Vic2NyaWJlIGxpbnV4LXRlZ3JhIg0KPj4gaW4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1h
-am9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcgTW9yZSBtYWpvcmRvbW8NCj4+IGluZm8gYXTCoCBodHRw
-Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwNCg==
+Hello,
+
+Tegra's memory controller has a "memory hot reset" functionality that
+blocks all memory transactions for the memory client. During reset of HW,
+it could perform DMA and resetting HW during DMA could lead to a system
+hang or memory corruption, so here comes the memory hot reset that blocks
+all interactions of HW with memory so that it could be reset safely. Memory
+hot reset is urgently required for multimedia, like GPU or video decoder,
+as it is quite easy to get into trouble without a proper HW reset.
+
+The short series introduces a custom Tegra-specific memory hot reset API.
+
+Since first revision of this patchset haven't got any comment, I'm trying
+again with a V2 that has one minor correction compared to V1, I've added
+terga_mc_hotreset_assert()/deassert() functions as in V1 there was only
+tegra_mc_hot_reset() and turned out it is not enough.
+
+Please review, thanks.
+
+Dmitry Osipenko (2):
+  memory: tegra: Squash tegra20-mc into common tegra-mc driver
+  memory: tegra: Introduce memory client hot reset API
+
+ drivers/memory/Kconfig          |  10 -
+ drivers/memory/Makefile         |   1 -
+ drivers/memory/tegra/Makefile   |   1 +
+ drivers/memory/tegra/mc.c       | 433 ++++++++++++++++++++++++++++++++++------
+ drivers/memory/tegra/mc.h       |  10 +
+ drivers/memory/tegra/tegra114.c |  25 +++
+ drivers/memory/tegra/tegra124.c |  32 +++
+ drivers/memory/tegra/tegra20.c  |  95 +++++++++
+ drivers/memory/tegra/tegra210.c |  27 +++
+ drivers/memory/tegra/tegra30.c  |  25 +++
+ drivers/memory/tegra20-mc.c     | 254 -----------------------
+ include/soc/tegra/mc.h          |  81 +++++++-
+ 12 files changed, 669 insertions(+), 325 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra20.c
+ delete mode 100644 drivers/memory/tegra20-mc.c
+
+-- 
+2.15.1
