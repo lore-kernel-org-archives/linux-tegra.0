@@ -1,64 +1,88 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [PATCH usb-next v9 2/8] usb: add a flag to skip PHY initialization
- to struct usb_hcd
-Date: Mon, 12 Feb 2018 10:15:40 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1802121013360.1411-100000@iolanthe.rowland.org>
-References: <20180211210651.2046-3-martin.blumenstingl@googlemail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
+Date: Mon, 12 Feb 2018 17:09:03 +0100
+Message-ID: <20180212160903.GA4287@ulmo>
+References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180211210651.2046-3-martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, Peter.Chen-3arQi8VN3Tc@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, 11 Feb 2018, Martin Blumenstingl wrote:
 
-> The USB HCD core driver parses the device-tree node for "phys" and
-> "usb-phys" properties. It also manages the power state of these PHYs
-> automatically.
-> However, drivers may opt-out of this behavior by setting "phy" or
-> "usb_phy" in struct usb_hcd to a non-null value. An example where this
-> is required is the "Qualcomm USB2 controller", implemented by the
-> chipidea driver. The hardware requires that the PHY is only powered on
-> after the "reset completed" event from the controller is received.
-> 
-> A follow-up patch will allow the USB HCD core driver to manage more than
-> one PHY. Add a new "bool skip_phy_initialization" field to struct
-> usb_hcd so drivers can opt-out of any PHY management provided by the USB
-> HCD core driver. The new field will be used in that patch as well.
-> 
-> This also updates the existing drivers so they use the new flag if they
-> want to opt out of the PHY management provided by the USB HCD core
-> driver. This means that for these drivers the new "multiple PHY"
-> handling (which will be added in a follow-up patch) will be disabled as
-> well.
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-> ---
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> --- a/include/linux/usb/hcd.h
-> +++ b/include/linux/usb/hcd.h
-> @@ -98,6 +98,12 @@ struct usb_hcd {
->  	 */
->  	const struct hc_driver	*driver;	/* hw-specific hooks */
->  
-> +	/*
-> +	 * do not manage the PHY state in the HCD core, instead let the driver
-> +	 * handle this (for example if the PHY can only be turned on after a
-> +	 * specific event)
-> +	 */
-> +	bool skip_phy_initialization;
+On Thu, Jan 25, 2018 at 04:00:09PM +0200, Peter De Schrijver wrote:
+> This patch series introduces the Memory Built-In Self Test (MBIST)
+> work around (WAR) needed when power ungating certain domains. More
+> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+> implement the WAR in the Tegra210 clock driver, because most accesses are
+> to CAR registers and for the VENC domain, we need to make sure the CSI
+> clock source is not changed during the WAR execution.
+>=20
+> Changes in v4:
+> * moved locking and clock control to tegra210_clk_handle_mbist_war()
+> * propagate errors during WAR execution to user
+> * rework error handling tegra210_mbist_clk_init() slightly
+>=20
+> Changes in v3:
+> * fix compile problem on non-Tegra210 platforms
+> * fix clock handling bug in tegra210_generic_mbist_war()
+> * addressed minor comments
+>=20
+> Changes in v2:
+> * Use readl for fence_delay() rather than readl_relaxed
+> * clarify MBIST and WAR acronyms
+>=20
+> Peter De Schrijver (4):
+>   clk: tegra: Add la clock for Tegra210
+>   clk: tegra: add fence_delay for clock registers
+>   clk: tegra: MBIST work around for Tegra210
+>   soc/tegra: pmc: MBIST work around for Tegra210
+>=20
+>  drivers/clk/tegra/clk-tegra210.c         | 357 +++++++++++++++++++++++++=
++++++-
+>  drivers/clk/tegra/clk.h                  |   7 +
+>  drivers/soc/tegra/pmc.c                  |   7 +
+>  include/dt-bindings/clock/tegra210-car.h |   2 +-
+>  include/linux/clk/tegra.h                |   6 +
+>  5 files changed, 376 insertions(+), 3 deletions(-)
 
-Instead of declaring this as a bool at some random location in the
-structure, it would be better to make this a bitflag along with the
-other ones that get set at registration.  For example, it could come
-right after the remove_phy flag.
+Hi Mike, Stephen,
 
-Alan Stern
+since there's a dependency from patch 4 to patch 3 in the series, do you
+mind if I take this in via the Tegra tree? I can send out a pull request
+for the clock branch sometime later in the release cycle and pick up any
+other Tegra clock related patches that may show up in the meantime.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thierry
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqBvBoACgkQ3SOs138+
+s6Ft8BAAtOzBwzUiHNLPri6diF44f8zNJF6wTuRMxpZfT8prqa7FmLoEEuwchW5O
+VYcXNmO8l+5nlB743EMu8hD/4jDMXPvFq8wgp4SnUCA/yJHZr7/fno2iA7y1+aMB
+edJYbjUpTyMJhJcr2VmjINGKBwmvEpTNedkrmb/1+dnVIVBeIWSRwsA/eqQg9XJM
+y+8mapXJitpljKaURiesbE4t3fRk3hWrjFeY+LmxTQGfw1lHXSlf/K71Xx3YXAzI
++czkZc3ig+4n988M1ClZDHf2TzMuLzggFXXSxfb4dqMB4EKF8mbQA3s65jO3e3de
+UiC5RJNYUu2qDQHPMnMnwqc/3JbyVYa7Z/QJT1/YnCqry4elG+rMa0AB5IQFFCBD
+tlx2tKc/UeH3mtW20c/8JYJUvYJPIjevN2DYBY+gClLZAjHbR9ziSEtdi++E0HUl
+7suXGhH68W2sfQlBZ8I9hQD7sXkiKBxQfIPCCw99wgpeLlkRNz+TOquFaPWOV8E7
+k77BYISrq4mHV+FA95tRV/ERDp4epoii9SnG1EIJWYiy1DkXEcEFzPNgZAoFlSHn
+2A+soPmMFYSCS27N1MkOSY6wwDgQVMQoHl55SqZtzwJUYLVlRRZ8qaM0aLiVuvps
+oXV9Tk+e0GH77AqoLU7XgM5HFWXjUO7e/PEJ1ce1W/J9hYrUbd4=
+=FFUS
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
