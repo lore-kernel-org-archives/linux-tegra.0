@@ -1,44 +1,38 @@
-From: Preetham Chandru <pchandru@nvidia.com>
-Subject: RE: [PATCH V6 6/7] ata: ahci_tegra: disable DIPM
-Date: Mon, 12 Feb 2018 17:12:23 +0000
-Message-ID: <b0175fc58f5640b0be3b382f6ad79ff8@bgmail102.nvidia.com>
-References: <1515482234-24716-1-git-send-email-pchandru@nvidia.com>
- <1515482234-24716-7-git-send-email-pchandru@nvidia.com>
- <cdff68f3-9a4c-3591-0882-073ffad16e5e@kapsi.fi>
+From: Preetham Chandru Ramchandra <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V7 0/7] Refactor and add AHCI support for tegra210
+Date: Mon, 12 Feb 2018 22:56:39 +0530
+Message-ID: <1518456406-21564-1-git-send-email-pchandru@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <cdff68f3-9a4c-3591-0882-073ffad16e5e@kapsi.fi>
-Content-Language: en-US
-Sender: linux-ide-owner@vger.kernel.org
-To: Mikko Perttunen <cyndis@kapsi.fi>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "tj@kernel.org" <tj@kernel.org>
-Cc: "preetham260@gmail.com" <preetham260@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Venu Byravarasu <vbyravarasu@nvidia.com>, Pavan Kunapuli <pkunapuli@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cyndis-/1wQRMveznE@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: preetham260-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Preetham Ramchandra <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IE1pa2tvIFBlcnR0dW5lbiBb
-bWFpbHRvOmN5bmRpc0BrYXBzaS5maV0NCj5TZW50OiBUdWVzZGF5LCBKYW51YXJ5IDIzLCAyMDE4
-IDk6MjMgUE0NCj5UbzogUHJlZXRoYW0gQ2hhbmRydSA8cGNoYW5kcnVAbnZpZGlhLmNvbT47IHRo
-aWVycnkucmVkaW5nQGdtYWlsLmNvbTsNCj50akBrZXJuZWwub3JnDQo+Q2M6IHByZWV0aGFtMjYw
-QGdtYWlsLmNvbTsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj5pZGVAdmdl
-ci5rZXJuZWwub3JnOyBWZW51IEJ5cmF2YXJhc3UgPHZieXJhdmFyYXN1QG52aWRpYS5jb20+OyBQ
-YXZhbg0KPkt1bmFwdWxpIDxwa3VuYXB1bGlAbnZpZGlhLmNvbT4NCj5TdWJqZWN0OiBSZTogW1BB
-VENIIFY2IDYvN10gYXRhOiBhaGNpX3RlZ3JhOiBkaXNhYmxlIERJUE0NCj4NCj5PbiAwMS8wOS8y
-MDE4IDA5OjE3IEFNLCBQcmVldGhhbSBDaGFuZHJ1IFJhbWNoYW5kcmEgd3JvdGU6DQo+PiBGcm9t
-OiBQcmVldGhhbSBSYW1jaGFuZHJhIDxwY2hhbmRydUBudmlkaWEuY29tPg0KPj4NCj4+IHRlZ3Jh
-IGRvZXMgbm90IHN1cHBvcnQgRElQTSBhbmQgaXQgc2hvdWxkIGJlIGRpc2FibGVkDQo+DQo+Tml0
-OiBUZWdyYSBzaG91bGQgYmUgY2FwaXRhbGl6ZWQNCj4NCm9rYXkNCj5vdGhlcndpc2UsDQo+UmV2
-aWV3ZWQtYnk6IE1pa2tvIFBlcnR0dW5lbiA8bXBlcnR0dW5lbkBudmlkaWEuY29tPg0KPg0KPj4N
-Cj4+IFNpZ25lZC1vZmYtYnk6IFByZWV0aGFtIENoYW5kcnUgUiA8cGNoYW5kcnVAbnZpZGlhLmNv
-bT4NCj4+IC0tLQ0KPj4gICBkcml2ZXJzL2F0YS9haGNpX3RlZ3JhLmMgfCAyICstDQo+PiAgIDEg
-ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPj4NCj4+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2F0YS9haGNpX3RlZ3JhLmMgYi9kcml2ZXJzL2F0YS9haGNpX3RlZ3Jh
-LmMgaW5kZXgNCj4+IGE1OWE5N2IxYjJlNS4uMDEzODgwZGU2NDEyIDEwMDY0NA0KPj4gLS0tIGEv
-ZHJpdmVycy9hdGEvYWhjaV90ZWdyYS5jDQo+PiArKysgYi9kcml2ZXJzL2F0YS9haGNpX3RlZ3Jh
-LmMNCj4+IEBAIC00NjAsNyArNDYwLDcgQEAgc3RhdGljIHN0cnVjdCBhdGFfcG9ydF9vcGVyYXRp
-b25zIGFoY2lfdGVncmFfcG9ydF9vcHMNCj49IHsNCj4+ICAgfTsNCj4+DQo+PiAgIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgYXRhX3BvcnRfaW5mbyBhaGNpX3RlZ3JhX3BvcnRfaW5mbyA9IHsNCj4+IC0J
-LmZsYWdzCQk9IEFIQ0lfRkxBR19DT01NT04sDQo+PiArCS5mbGFncwkJPSBBSENJX0ZMQUdfQ09N
-TU9OIHwgQVRBX0ZMQUdfTk9fRElQTSwNCj4+ICAgCS5waW9fbWFzawk9IEFUQV9QSU80LA0KPj4g
-ICAJLnVkbWFfbWFzawk9IEFUQV9VRE1BNiwNCj4+ICAgCS5wb3J0X29wcwk9ICZhaGNpX3RlZ3Jh
-X3BvcnRfb3BzLA0KPj4NCg==
+From: Preetham Ramchandra <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+1. ADD AHCI support for tegra210
+2. Extend the tegra AHCI controller device tree binding with tegra210
+3. Update initialization sequence
+4. Initialize regulators based on chip
+5. Disable DevSlp
+6. Disable DIPM
+---
+Preetham Ramchandra (7):
+  dt-bindings: ahci-tegra: add binding documentation
+  arm64: tegra: Enable AHCI on Jetson TX1
+  ata: ahci_tegra: Update initialization sequence
+  ata: ahci_tegra: initialize regulators from soc_data
+  ata: ahci_tegra: disable devslp for t124
+  ata: ahci_tegra: disable DIPM
+  ata: ahci_tegra: Add AHCI support for Tegra210
+
+ .../bindings/ata/nvidia,tegra124-ahci.txt          |  35 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   6 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  16 +
+ drivers/ata/ahci_tegra.c                           | 362 ++++++++++++++++-----
+ 4 files changed, 329 insertions(+), 90 deletions(-)
+
+-- 
+2.7.4
