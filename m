@@ -1,65 +1,57 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
-Date: Mon, 12 Feb 2018 14:34:11 +0200
-Message-ID: <20180212123411.GJ5850@tbergstrom-lnx.Nvidia.com>
-References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
- <a40f0593-24d8-a91e-9f8c-f7eafc379591@kapsi.fi>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] gpio: tegra: Convert to use DEFINE_SHOW_ATTRIBUTE macro
+Date: Mon, 12 Feb 2018 22:01:57 +0800
+Message-ID: <20180212140157.27023-1-axel.lin@ingics.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <a40f0593-24d8-a91e-9f8c-f7eafc379591-/1wQRMveznE@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 02:05:36PM +0200, Mikko Perttunen wrote:
-> This seems to cause a system hang with an HDMI monitor attached -
-> likely in unpowergate as if I disable powergating the hang doesn't
-> happen.
-> 
-> Have you tested with a display attached?
-> 
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Yes. A DSI display at least seems to work.
+Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpio/gpio-tegra.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-Peter.
-
-> Mikko
-> 
-> On 01/25/2018 04:00 PM, Peter De Schrijver wrote:
-> >This patch series introduces the Memory Built-In Self Test (MBIST)
-> >work around (WAR) needed when power ungating certain domains. More
-> >details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
-> >implement the WAR in the Tegra210 clock driver, because most accesses are
-> >to CAR registers and for the VENC domain, we need to make sure the CSI
-> >clock source is not changed during the WAR execution.
-> >
-> >Changes in v4:
-> >* moved locking and clock control to tegra210_clk_handle_mbist_war()
-> >* propagate errors during WAR execution to user
-> >* rework error handling tegra210_mbist_clk_init() slightly
-> >
-> >Changes in v3:
-> >* fix compile problem on non-Tegra210 platforms
-> >* fix clock handling bug in tegra210_generic_mbist_war()
-> >* addressed minor comments
-> >
-> >Changes in v2:
-> >* Use readl for fence_delay() rather than readl_relaxed
-> >* clarify MBIST and WAR acronyms
-> >
-> >Peter De Schrijver (4):
-> >   clk: tegra: Add la clock for Tegra210
-> >   clk: tegra: add fence_delay for clock registers
-> >   clk: tegra: MBIST work around for Tegra210
-> >   soc/tegra: pmc: MBIST work around for Tegra210
-> >
-> >  drivers/clk/tegra/clk-tegra210.c         | 357 ++++++++++++++++++++++++++++++-
-> >  drivers/clk/tegra/clk.h                  |   7 +
-> >  drivers/soc/tegra/pmc.c                  |   7 +
-> >  include/dt-bindings/clock/tegra210-car.h |   2 +-
-> >  include/linux/clk/tegra.h                |   6 +
-> >  5 files changed, 376 insertions(+), 3 deletions(-)
-> >
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 02fa8fe2292a..94396caaca75 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -506,7 +506,7 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
+ 
+-static int dbg_gpio_show(struct seq_file *s, void *unused)
++static int tegra_dbg_gpio_show(struct seq_file *s, void *unused)
+ {
+ 	struct tegra_gpio_info *tgi = s->private;
+ 	unsigned int i, j;
+@@ -530,22 +530,12 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int dbg_gpio_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, dbg_gpio_show, inode->i_private);
+-}
+-
+-static const struct file_operations debug_fops = {
+-	.open		= dbg_gpio_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(tegra_dbg_gpio);
+ 
+ static void tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
+ {
+ 	(void) debugfs_create_file("tegra_gpio", 0444,
+-					NULL, tgi, &debug_fops);
++				   NULL, tgi, &tegra_dbg_gpio_fops);
+ }
+ 
+ #else
+-- 
+2.14.1
