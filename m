@@ -1,35 +1,69 @@
-From: Hector Martin 'marcan' <marcan-WKacp4m3WJJeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
-Date: Tue, 13 Feb 2018 01:17:49 +0900
-Message-ID: <09072c49-9796-9a16-8a6f-8e5c609d7e06@marcan.st>
-References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
+From: Preetham Chandru <pchandru@nvidia.com>
+Subject: RE: [PATCH V6 2/7] arm64: tegra: Enable AHCI on Jetson TX1
+Date: Mon, 12 Feb 2018 17:06:46 +0000
+Message-ID: <6e4ed9500a42495cb605a139e7afae8d@bgmail102.nvidia.com>
+References: <1515482234-24716-1-git-send-email-pchandru@nvidia.com>
+ <1515482234-24716-3-git-send-email-pchandru@nvidia.com>
+ <ea0d92f7-8267-722f-fbf5-607c5d896fa8@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1516888813-32180-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: es-ES
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <ea0d92f7-8267-722f-fbf5-607c5d896fa8@kapsi.fi>
+Content-Language: en-US
+Sender: linux-ide-owner@vger.kernel.org
+To: Mikko Perttunen <cyndis@kapsi.fi>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "tj@kernel.org" <tj@kernel.org>
+Cc: "preetham260@gmail.com" <preetham260@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Venu Byravarasu <vbyravarasu@nvidia.com>, Pavan Kunapuli <pkunapuli@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 25, 2018 at 04:00:09PM +0200, Peter De Schrijver wrote:
-> This patch series introduces the Memory Built-In Self Test (MBIST)
-> work around (WAR) needed when power ungating certain domains. More
-> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
-> implement the WAR in the Tegra210 clock driver, because most accesses are
-> to CAR registers and for the VENC domain, we need to make sure the CSI
-> clock source is not changed during the WAR execution.
-
-For the series:
-Tested-by: Hector Martin <marcan-WKacp4m3WJJeoWH0uzbU5w@public.gmane.org>
-
-This requires an additional patch (Thierry has it in one of his trees)
-to fix the tegra_powergate_sequence_power_up path (missing `pg.pmc =
-pmc;` in that function). With that fix, this series fixes the
-nondeterministic "green bars across display" issue.
-
--- 
-Hector Martin "marcan" (marcan-WKacp4m3WJJeoWH0uzbU5w@public.gmane.org)
-Public Key: https://mrcn.st/pub
+T2theSwgd2lsbCBjaGFuZ2UgdGhlIGNvbW1pdCBtZXNzYWdlIGZvciBub3cgYXMgc3VnZ2VzdGVk
+DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IE1pa2tvIFBlcnR0dW5lbiBb
+bWFpbHRvOmN5bmRpc0BrYXBzaS5maV0NCj5TZW50OiBUdWVzZGF5LCBKYW51YXJ5IDIzLCAyMDE4
+IDk6MDQgUE0NCj5UbzogUHJlZXRoYW0gQ2hhbmRydSA8cGNoYW5kcnVAbnZpZGlhLmNvbT47IHRo
+aWVycnkucmVkaW5nQGdtYWlsLmNvbTsNCj50akBrZXJuZWwub3JnDQo+Q2M6IHByZWV0aGFtMjYw
+QGdtYWlsLmNvbTsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj5pZGVAdmdl
+ci5rZXJuZWwub3JnOyBWZW51IEJ5cmF2YXJhc3UgPHZieXJhdmFyYXN1QG52aWRpYS5jb20+OyBQ
+YXZhbg0KPkt1bmFwdWxpIDxwa3VuYXB1bGlAbnZpZGlhLmNvbT4NCj5TdWJqZWN0OiBSZTogW1BB
+VENIIFY2IDIvN10gYXJtNjQ6IHRlZ3JhOiBFbmFibGUgQUhDSSBvbiBKZXRzb24gVFgxDQo+DQo+
+SSBoYXZlIHVzdWFsbHkgc3BsaXQgdGhlIGNoYW5nZSBpbiBjaGlwIC5kdHNpIGFuZCBib2FyZCAu
+ZHRzaS8uZHRzIGluIHNlcGFyYXRlDQo+Y29tbWl0cy4gSSBkb24ndCBrbm93IGlmIHRoYXQncyBu
+ZWNlc3NhcnkgdGhvdWdoLg0KPg0KPlRoaXMgZG9lcyBob3dldmVyIHJlcXVpcmUgYSBjb21taXQg
+bWVzc2FnZSwgbGlrZQ0KPg0KPiAgIEFkZCBzYXRhIG5vZGUgdG8gdGhlIFRlZ3JhMjEwIGRldmlj
+ZSB0cmVlLCBhbmQgZW5hYmxlIHRoZSBkZXZpY2UgYW5kDQo+ICAgYXNzaWduIGJvYXJkLXNwZWNp
+ZmljIHByb3BlcnRpZXMgb24gSmV0c29uIFRYMS4NCj4NCj5NaWtrbw0KPg0KPk9uIDAxLzA5LzIw
+MTggMDk6MTcgQU0sIFByZWV0aGFtIENoYW5kcnUgUmFtY2hhbmRyYSB3cm90ZToNCj4+IEZyb206
+IFByZWV0aGFtIFJhbWNoYW5kcmEgPHBjaGFuZHJ1QG52aWRpYS5jb20+DQo+Pg0KPj4gU2lnbmVk
+LW9mZi1ieTogUHJlZXRoYW0gQ2hhbmRydSBSIDxwY2hhbmRydUBudmlkaWEuY29tPg0KPj4gLS0t
+DQo+PiB2NDoNCj4+ICogRml4ZWQgbWlzc2luZyBzcGFjZSBhZnRlciAnQVVYJw0KPj4gLS0tDQo+
+PiAgIGFyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMjEwLXAyNTk3LmR0c2kgfCAgNiAr
+KysrKysNCj4+ICAgYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmEyMTAuZHRzaSAgICAg
+ICB8IDE2ICsrKysrKysrKysrKysrKysNCj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNlcnRp
+b25zKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3Rl
+Z3JhMjEwLXAyNTk3LmR0c2kNCj4+IGIvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmEy
+MTAtcDI1OTcuZHRzaQ0KPj4gaW5kZXggZDY3ZWY0MzE5ZjNiLi4yYWEyOTc5Y2Q2YjUgMTAwNjQ0
+DQo+PiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC1wMjU5Ny5kdHNp
+DQo+PiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC1wMjU5Ny5kdHNp
+DQo+PiBAQCAtMTMyNSw2ICsxMzI1LDEyIEBADQo+PiAgIAkJc3RhdHVzID0gIm9rYXkiOw0KPj4g
+ICAJfTsNCj4+DQo+PiArCXNhdGFANzAwMjAwMDAgew0KPj4gKwkJc3RhdHVzID0gIm9rYXkiOw0K
+Pj4gKwkJcGh5cyA9IDwmey9wYWRjdGxANzAwOWYwMDAvcGFkcy9zYXRhL2xhbmVzL3NhdGEtMH0+
+Ow0KPj4gKwkJcGh5LW5hbWVzID0gInNhdGEtMCI7DQo+PiArCX07DQo+PiArDQo+PiAgIAlwYWRj
+dGxANzAwOWYwMDAgew0KPj4gICAJCXN0YXR1cyA9ICJva2F5IjsNCj4+DQo+PiBkaWZmIC0tZ2l0
+IGEvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmEyMTAuZHRzaQ0KPj4gYi9hcmNoL2Fy
+bTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC5kdHNpDQo+PiBpbmRleCA5YzI0MDIxMDg3NzIu
+LmJmNzJkYjUzODZhNSAxMDA2NDQNCj4+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlh
+L3RlZ3JhMjEwLmR0c2kNCj4+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3Jh
+MjEwLmR0c2kNCj4+IEBAIC03OTgsNiArNzk4LDIyIEBADQo+PiAgIAkJI2lvbW11LWNlbGxzID0g
+PDE+Ow0KPj4gICAJfTsNCj4+DQo+PiArCXNhdGFANzAwMjAwMDAgew0KPj4gKwkJY29tcGF0aWJs
+ZSA9ICJudmlkaWEsdGVncmEyMTAtYWhjaSI7DQo+PiArCQlyZWcgPSA8MHgwIDB4NzAwMjcwMDAg
+MHgwIDB4MjAwMD4sIC8qIEFIQ0kgKi8NCj4+ICsJCSAgICAgIDwweDAgMHg3MDAyMDAwMCAweDAg
+MHg3MDAwPiwgLyogU0FUQSAqLw0KPj4gKwkJICAgICAgPDB4MCAweDcwMDAxMTAwIDB4MCAweDEw
+MDA+OyAvKiBTQVRBIEFVWCAqLw0KPj4gKwkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDIzIElSUV9U
+WVBFX0xFVkVMX0hJR0g+Ow0KPj4gKwkJY2xvY2tzID0gPCZ0ZWdyYV9jYXIgVEVHUkEyMTBfQ0xL
+X1NBVEE+LA0KPj4gKwkJCTwmdGVncmFfY2FyIFRFR1JBMjEwX0NMS19TQVRBX09PQj47DQo+PiAr
+CQljbG9jay1uYW1lcyA9ICJzYXRhIiwgInNhdGEtb29iIjsNCj4+ICsJCXJlc2V0cyA9IDwmdGVn
+cmFfY2FyIDEyND4sDQo+PiArCQkJIDwmdGVncmFfY2FyIDEyMz4sDQo+PiArCQkJIDwmdGVncmFf
+Y2FyIDEyOT47DQo+PiArCQlyZXNldC1uYW1lcyA9ICJzYXRhIiwgInNhdGEtb29iIiwgInNhdGEt
+Y29sZCI7DQo+PiArCQlzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPj4gKwl9Ow0KPj4gKw0KPj4gICAJ
+aGRhQDcwMDMwMDAwIHsNCj4+ICAgCQljb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTIxMC1oZGEi
+LCAibnZpZGlhLHRlZ3JhMzAtaGRhIjsNCj4+ICAgCQlyZWcgPSA8MHgwIDB4NzAwMzAwMDAgMHgw
+IDB4MTAwMDA+Ow0KPj4NCg==
