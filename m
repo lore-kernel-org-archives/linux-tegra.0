@@ -1,57 +1,55 @@
-From: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] gpio: tegra: Convert to use DEFINE_SHOW_ATTRIBUTE macro
-Date: Mon, 12 Feb 2018 22:01:57 +0800
-Message-ID: <20180212140157.27023-1-axel.lin@ingics.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 4/7] dt-bindings: tegra: Add missing chips and NVIDIA
+ boards
+Date: Mon, 12 Feb 2018 08:42:43 -0600
+Message-ID: <20180212144243.5ovljzk2heu3ccck@rob-hp-laptop>
+References: <1517901757-15353-1-git-send-email-mperttunen@nvidia.com>
+ <1517901757-15353-5-git-send-email-mperttunen@nvidia.com>
+ <20180209224922.4fxlpl77kwibzfui@rob-hp-laptop>
+ <5105d996-8020-ebcf-cf46-2f13c6b8b35f@kapsi.fi>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5105d996-8020-ebcf-cf46-2f13c6b8b35f@kapsi.fi>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On Sat, Feb 10, 2018 at 10:45:35AM +0200, Mikko Perttunen wrote:
+> On 02/10/2018 12:49 AM, Rob Herring wrote:
+> > On Tue, Feb 06, 2018 at 09:22:34AM +0200, Mikko Perttunen wrote:
+> > > Add compatibility strings for supported but undocumented Tegra chips
+> > > (Tegra114/124/132/210/186/194) and reference boards.
+> > > 
+> > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > > ---
+> > > 
+> > > Notes:
+> > >      v2:
+> > >      - add patch
+> > > 
+> > >   Documentation/devicetree/bindings/arm/tegra.txt | 16 ++++++++++++++++
+> > >   1 file changed, 16 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+> > > index 7f1411bbabf7..32f62bb7006d 100644
+> > > --- a/Documentation/devicetree/bindings/arm/tegra.txt
+> > > +++ b/Documentation/devicetree/bindings/arm/tegra.txt
+> > > @@ -9,6 +9,12 @@ following compatible values:
+> > >     nvidia,tegra20
+> > >     nvidia,tegra30
+> > > +  nvidia,tegra114
+> > > +  nvidia,tegra124
+> > > +  nvidia,tegra132
+> > > +  nvidia,tegra210
+> > 
+> > Some reason why this is not in numerical order?
+> 
+> They are in chronological/chip generation order, and for whatever reason,
+> that isn't numerical.
 
-Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpio/gpio-tegra.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+Okay.
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 02fa8fe2292a..94396caaca75 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -506,7 +506,7 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
- 
--static int dbg_gpio_show(struct seq_file *s, void *unused)
-+static int tegra_dbg_gpio_show(struct seq_file *s, void *unused)
- {
- 	struct tegra_gpio_info *tgi = s->private;
- 	unsigned int i, j;
-@@ -530,22 +530,12 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int dbg_gpio_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, dbg_gpio_show, inode->i_private);
--}
--
--static const struct file_operations debug_fops = {
--	.open		= dbg_gpio_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(tegra_dbg_gpio);
- 
- static void tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
- {
- 	(void) debugfs_create_file("tegra_gpio", 0444,
--					NULL, tgi, &debug_fops);
-+				   NULL, tgi, &tegra_dbg_gpio_fops);
- }
- 
- #else
--- 
-2.14.1
+Reviewed-by: Rob Herring <robh@kernel.org>
