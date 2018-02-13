@@ -1,98 +1,64 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V7  0/4] Add loadable kernel module and power management
- support
-Date: Tue, 13 Feb 2018 14:08:58 +0100
-Message-ID: <20180213130858.GG6764@ulmo>
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: Re: [PATCH V7 2/4] PCI: tegra: Add loadable kernel module support
+Date: Tue, 13 Feb 2018 18:48:49 +0530
+Message-ID: <eeab925c-3da4-38ae-2060-f77458abaaea@nvidia.com>
 References: <1517289851-14111-1-git-send-email-mmaddireddy@nvidia.com>
+ <1517289851-14111-3-git-send-email-mmaddireddy@nvidia.com>
+ <20180213130718.GE6764@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p7qwJlK53pWzbayA"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1517289851-14111-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, cyndis-/1wQRMveznE@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20180213130718.GE6764@ulmo>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: bhelgaas@google.com, lorenzo.pieralisi@arm.com, cyndis@kapsi.fi, jonathanh@nvidia.com, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, vidyas@nvidia.com, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---p7qwJlK53pWzbayA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 30, 2018 at 10:54:07AM +0530, Manikanta Maddireddy wrote:
-> This series of patches adds loadable kernel module and power management
-> support to Tegra PCIe host controller driver. irq_set_msi_desc() and
-> tegra_cpuidle_pcie_irqs_in_use() symbols will be taken care in next
-> set of patches.
->=20
-> These patches are tested on Jetson TK1, TX1 and TX2 platforms, following
-> are the verification details.
-> 	- Multiple module insert & remove
-> 	- PCIe device functionality after module insert
-> 	- Free clock, resets, regulators, powergate, iomem and interrupt
-> 	resources after module remove
-> 	- PCIe device functionality after resume from RAM
->=20
-> V2: PM QoS fix is dropped in V2 from this series because the fix is
-> incorporated in latest 'commit 0759e80b84e3 ("PM / QoS: Fix device resume
-> latency framework")'. Update commit message of few patches in V2.
->=20
-> V3: Patches to export irq_set_msi_desc() and tegra_cpuidle_pcie_irqs_in_u=
-se()
-> are dropped based on review comments. These symbols will be addressed in =
-next
-> series. Took care of few other review comments.
->=20
-> V4: Dropped pci_find_host_bridge() export patch and added new patch to use
-> bus->sysdata for private data.
->=20
-> V5: Decouple from https://patchwork.ozlabs.org/patch/832053/ and rebase
-> on top of linux-next
->=20
-> V6: Rebased on lpieralisi/pci/tegra branch
->=20
-> V7: Addressed comments on patch: 6 and 7 in V6
-> Limiting this series to linux-tegra & linux-pci since patches for other=
-=20
-> subsystem are merged or dropped
->=20
-> Manikanta Maddireddy (4):
->   PCI: tegra: Free resources on probe failure
->   PCI: tegra: Add loadable kernel module support
->   PCI: tegra: Broadcast PME_Turn_Off message before link goes to L2
->   PCI: tegra: Add power management support
->=20
->  drivers/pci/host/Kconfig     |   2 +-
->  drivers/pci/host/pci-tegra.c | 347 +++++++++++++++++++++++++++++++++----=
-------
->  2 files changed, 272 insertions(+), 77 deletions(-)
+On 13-Feb-18 6:37 PM, Thierry Reding wrote:
+> On Tue, Jan 30, 2018 at 10:54:09AM +0530, Manikanta Maddireddy wrote:
+>> Implement remove callback function for Tegra PCIe driver to add
+>> loadable kernel module support. Change PCI_TEGRA config to tristate to
+>> allow pci-tegra driver to be build as a module.
+>>
+>> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> ---
+>> V2:
+>> * no change in this patch
+>> V3:
+>> * use tegra_pcie_debugfs_exit() helper function in tegra_pcie_debugfs_init()
+>> V4:
+>> * no change in this patch
+>> V5:
+>> * Decoupled from https://patchwork.ozlabs.org/patch/832053/ and
+>> rebased on linux-next
+>> V6:
+>> * no change in this patch
+>> V7:
+>> * no change in this patch
+>>
+>>  drivers/pci/host/Kconfig     |  2 +-
+>>  drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++---
+>>  2 files changed, 32 insertions(+), 4 deletions(-)
+> 
+> Trying to build this as a module I get a link failure because
+> irq_set_msi_desc() is not exported. I thought a patch to do that had
+> been part of an earlier version of this series. Has that not been merged
+> yet?
+> 
+> Thierry
+> 
+I got a review comment to use generic MSI model instead of deprecated API.
+source: https://patchwork.ozlabs.org/patch/841111/
 
-With the exception of the failure when building as a module that I
-mentioned on patch 3/4, I've successfully tested this on Tegra20
-(TrimSlice), Tegra30 (Beaver) and Tegra186 (Jetson TX2):
+Also arm32 compilation will fail because of missing EXPORT of
+tegra_cpuidle_pcie_irqs_in_use()
+source: https://patchwork.ozlabs.org/patch/841119/
 
-Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---p7qwJlK53pWzbayA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqC42oACgkQ3SOs138+
-s6H8hA/8CrlhFya4crtq2aXk7WbelAxMF1O3+hOtBJVPMQEc7qwp2TWjcjY+w2jp
-JcGMxmy22r7UEQvWV9eCkW8Fak1z7TCTFfO2EKGitUyA2IUxVv5d8wqWF6bZDno/
-CTKVTc4XEqUMGGtARnW8EgTogc4+ZVlwMoNS0frsPm6eD3PwIgNZTP7EbCaKf8Sr
-2yntJntr/qWGBIpMZnMulgx2RxU0dgyywKTihuyjrj35aIxDVFHcAouqah9J9pp+
-ytQpV2d09KO6PimB8GFa+NLl6p1fPmD8dyGxNwHt7X2eJ89pfLbeOB4xCtPf4p/c
-O4Zk/raCvpniyGb0ozZTIShdH0q1MhzAd9aRHZepJ26gSv9Vi3SUEOuWx5VKeSuU
-1E1ClBoHt1cyAichMOrKThyr3gVn/JR3BKlw8FsLhnGS47vYgmwlifz/+zAF9FxG
-+vFeCEAXVJ9CklbVU2rvnXWxuzorZT2cUCrMaObZ5Y0ljOsm4hRqh1EvjF1z5WJJ
-IM+zWifUifwtaUvv8RdHpVD53yE5wY/2oTn0GbEBVyW1r0C9anLB6Q8fETWiWcxW
-rkw1wy6OITyWWxaMNoaPvspdRtUyTVktcNmgDlNYe54cbmjzSKEkua9OYjYgNyE/
-670Z3Mg1vMFKl9nnIBjkKseGhbrl5tQ31kzTH2S9J2HoN3PcF04=
-=UcNn
------END PGP SIGNATURE-----
-
---p7qwJlK53pWzbayA--
+I need to put some time to prepare patches for these two cases.
+Meanwhile I want to get the basic driver structure for LKM to be merged.
+I verified locally with these two symbols exported.
