@@ -1,65 +1,59 @@
-From: =?UTF-8?B?TWlsYW4gQnXFoWth?= <milan.buska-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Jetson TX2 and serial console
-Date: Tue, 13 Feb 2018 15:46:01 +0100
-Message-ID: <CAFCWPPKpi0pkNwtbtCcVjOzaNQDdcBs3zUA819MdefifJfFx7A@mail.gmail.com>
-References: <CAFCWPPKe6LW1+Uu40tGz4jzYwHY6MvU2D79HauWxRHOentVq3A@mail.gmail.com>
- <4e6b2e2a-af20-3bf3-149c-497584b17212@nvidia.com> <CAFCWPPLsFit2xL8YCEAV2AQPLSg6C27Jzetw9JvThfwuePUp8g@mail.gmail.com>
- <3718cdb9-d929-44a4-d726-ad3c6bc6b627@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V8 0/4] Add loadable kernel module and power management support
+Date: Tue, 13 Feb 2018 20:54:06 +0530
+Message-ID: <1518535450-24400-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3718cdb9-d929-44a4-d726-ad3c6bc6b627-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, cyndis-/1wQRMveznE@public.gmane.org
+Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
+This series of patches adds loadable kernel module and power management
+support to Tegra PCIe host controller driver. irq_set_msi_desc() and
+tegra_cpuidle_pcie_irqs_in_use() symbols will be taken care in next
+set of patches.
 
-Thank you for the tip and I wish all developers in their work a lot of succ=
-ess.
+These patches are tested on Jetson TK1, TX1 and TX2 platforms, following
+are the verification details.
+	- Multiple module insert & remove
+	- PCIe device functionality after module insert
+	- Free clock, resets, regulators, powergate, iomem and interrupt
+	resources after module remove
+	- PCIe device functionality after resume from RAM
 
-With respect
+V2: PM QoS fix is dropped in V2 from this series because the fix is
+incorporated in latest 'commit 0759e80b84e3 ("PM / QoS: Fix device resume
+latency framework")'. Update commit message of few patches in V2.
 
-Milan
+V3: Patches to export irq_set_msi_desc() and tegra_cpuidle_pcie_irqs_in_use()
+are dropped based on review comments. These symbols will be addressed in next
+series. Took care of few other review comments.
 
+V4: Dropped pci_find_host_bridge() export patch and added new patch to use
+bus->sysdata for private data.
 
-2018-02-13 11:50 GMT+01:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
-> Hi Milan,
->
-> On 12/02/18 17:39, Milan Bu=C5=A1ka wrote:
->> Hi Jon,
->>
->> Use
->> USB to TTL Serial Cable - Debug / Console Cable for Raspberry Pi
->>
->> Jetson TX2 J21 Pin 8 (UART 1 TXD) =E2=86=92 Cable RXD (White Wire)
->> Jetson TX2 J21 Pin 10 (UART 1 RXD) =E2=86=92 Cable TXD (Green Wire)
->> Jetson TX2 J21 Pin 9 (GND) =E2=86=92 Cable GND (Black Wire)
->
-> I believe that you want J17. Can you try connecting the debug cable to
-> that header?
->
->> Again, I am sorry to be burdening this mailing list with stupid question=
-s
->
-> Not at all. This is the correct forum for mainline kernel related
-> questions. If you have generic Jetson-TX2 or L4T questions then the
-> right place is here [0].
->
-> Cheers
-> Jon
->
-> [0] https://devtalk.nvidia.com/default/board/139/jetson-embedded-systems/
->
-> --
-> nvpublic
+V5: Decouple from https://patchwork.ozlabs.org/patch/832053/ and rebase
+on top of linux-next
 
+V6: Rebased on lpieralisi/pci/tegra branch
 
+V7: Addressed comments on patch: 6 and 7 in V6
+Limiting this series to linux-tegra & linux-pci since patches for other 
+subsystem are merged or dropped
 
---=20
----------------------------------------------------------------------------=
--
-Remember, no question is too stupid and no problem
-          too small--We've all been beginners
+V8: Since LKM is not completely implemented changing PCI_TEGRA config
+back to bool
+
+Manikanta Maddireddy (4):
+  PCI: tegra: Free resources on probe failure
+  PCI: tegra: Add loadable kernel module support
+  PCI: tegra: Broadcast PME_Turn_Off message before link goes to L2
+  PCI: tegra: Add power management support
+
+ drivers/pci/host/pci-tegra.c | 354 +++++++++++++++++++++++++++++++++----------
+ 1 file changed, 278 insertions(+), 76 deletions(-)
+
+-- 
+2.1.4
