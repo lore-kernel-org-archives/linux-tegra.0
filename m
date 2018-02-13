@@ -1,59 +1,250 @@
 From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V8 0/4] Add loadable kernel module and power management support
-Date: Tue, 13 Feb 2018 20:54:06 +0530
-Message-ID: <1518535450-24400-1-git-send-email-mmaddireddy@nvidia.com>
+Subject: [PATCH V8 1/4] PCI: tegra: Free resources on probe failure
+Date: Tue, 13 Feb 2018 20:54:07 +0530
+Message-ID: <1518535450-24400-2-git-send-email-mmaddireddy@nvidia.com>
+References: <1518535450-24400-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1518535450-24400-1-git-send-email-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, cyndis-/1wQRMveznE@public.gmane.org
 Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This series of patches adds loadable kernel module and power management
-support to Tegra PCIe host controller driver. irq_set_msi_desc() and
-tegra_cpuidle_pcie_irqs_in_use() symbols will be taken care in next
-set of patches.
+tegra_pcie_probe() can fail in multiple instances, this patch takes care
+of freeing the resources which are allocated before probe fail.
 
-These patches are tested on Jetson TK1, TX1 and TX2 platforms, following
-are the verification details.
-	- Multiple module insert & remove
-	- PCIe device functionality after module insert
-	- Free clock, resets, regulators, powergate, iomem and interrupt
-	resources after module remove
-	- PCIe device functionality after resume from RAM
+Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+V2:
+* no change in this patch
+V3:
+* change 'if check' to 'legacy_phy is true' for tegra_pcie_phys_put_legacy()
+* commit log correction
+V4:
+* no change in this patch
+V5:
+* Decoupled from https://patchwork.ozlabs.org/patch/832053/ and
+rebased on linux-next
+V6:
+* no change in this patch
+V7:
+* no change in this patch
+V8:
+* no change in this patch
 
-V2: PM QoS fix is dropped in V2 from this series because the fix is
-incorporated in latest 'commit 0759e80b84e3 ("PM / QoS: Fix device resume
-latency framework")'. Update commit message of few patches in V2.
+ drivers/pci/host/pci-tegra.c | 99 +++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 79 insertions(+), 20 deletions(-)
 
-V3: Patches to export irq_set_msi_desc() and tegra_cpuidle_pcie_irqs_in_use()
-are dropped based on review comments. These symbols will be addressed in next
-series. Took care of few other review comments.
-
-V4: Dropped pci_find_host_bridge() export patch and added new patch to use
-bus->sysdata for private data.
-
-V5: Decouple from https://patchwork.ozlabs.org/patch/832053/ and rebase
-on top of linux-next
-
-V6: Rebased on lpieralisi/pci/tegra branch
-
-V7: Addressed comments on patch: 6 and 7 in V6
-Limiting this series to linux-tegra & linux-pci since patches for other 
-subsystem are merged or dropped
-
-V8: Since LKM is not completely implemented changing PCI_TEGRA config
-back to bool
-
-Manikanta Maddireddy (4):
-  PCI: tegra: Free resources on probe failure
-  PCI: tegra: Add loadable kernel module support
-  PCI: tegra: Broadcast PME_Turn_Off message before link goes to L2
-  PCI: tegra: Add power management support
-
- drivers/pci/host/pci-tegra.c | 354 +++++++++++++++++++++++++++++++++----------
- 1 file changed, 278 insertions(+), 76 deletions(-)
-
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index e4b47ebc91fe..e68507f658d8 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -562,14 +562,25 @@ static int tegra_pcie_request_resources(struct tegra_pcie *pcie)
+ 	pci_add_resource(windows, &pcie->busn);
+ 
+ 	err = devm_request_pci_bus_resources(dev, windows);
+-	if (err < 0)
++	if (err < 0) {
++		pci_free_resource_list(windows);
+ 		return err;
++	}
+ 
+ 	pci_remap_iospace(&pcie->pio, pcie->io.start);
+ 
+ 	return 0;
+ }
+ 
++static void tegra_pcie_free_resources(struct tegra_pcie *pcie)
++{
++	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
++	struct list_head *windows = &host->windows;
++
++	pci_unmap_iospace(&pcie->pio);
++	pci_free_resource_list(windows);
++}
++
+ static int tegra_pcie_map_irq(const struct pci_dev *pdev, u8 slot, u8 pin)
+ {
+ 	struct tegra_pcie *pcie = pdev->bus->sysdata;
+@@ -979,24 +990,35 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+ 	return 0;
+ }
+ 
+-static void tegra_pcie_power_off(struct tegra_pcie *pcie)
++static void tegra_pcie_disable_controller(struct tegra_pcie *pcie)
+ {
+-	struct device *dev = pcie->dev;
+-	const struct tegra_pcie_soc *soc = pcie->soc;
+ 	int err;
+ 
+-	/* TODO: disable and unprepare clocks? */
++	reset_control_assert(pcie->pcie_xrst);
+ 
+-	if (soc->program_uphy) {
++	if (pcie->soc->program_uphy) {
+ 		err = tegra_pcie_phy_power_off(pcie);
+ 		if (err < 0)
+-			dev_err(dev, "failed to power off PHY(s): %d\n", err);
++			dev_err(pcie->dev, "failed to power off PHY(s): %d\n",
++				err);
+ 	}
++}
++
++static void tegra_pcie_power_off(struct tegra_pcie *pcie)
++{
++	struct device *dev = pcie->dev;
++	const struct tegra_pcie_soc *soc = pcie->soc;
++	int err;
+ 
+-	reset_control_assert(pcie->pcie_xrst);
+ 	reset_control_assert(pcie->afi_rst);
+ 	reset_control_assert(pcie->pex_rst);
+ 
++	clk_disable_unprepare(pcie->pll_e);
++	if (soc->has_cml_clk)
++		clk_disable_unprepare(pcie->cml_clk);
++	clk_disable_unprepare(pcie->afi_clk);
++	clk_disable_unprepare(pcie->pex_clk);
++
+ 	if (!dev->pm_domain)
+ 		tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+ 
+@@ -1205,6 +1227,30 @@ static int tegra_pcie_phys_get(struct tegra_pcie *pcie)
+ 	return 0;
+ }
+ 
++static void tegra_pcie_phys_put(struct tegra_pcie *pcie)
++{
++	struct tegra_pcie_port *port;
++	struct device *dev = pcie->dev;
++	int err, i;
++
++	if (pcie->legacy_phy) {
++		err = phy_exit(pcie->phy);
++		if (err < 0)
++			dev_err(dev, "failed to teardown PHY: %d\n", err);
++		return;
++	}
++
++	list_for_each_entry(port, &pcie->ports, list) {
++		for (i = 0; i < port->lanes; i++) {
++			err = phy_exit(port->phys[i]);
++			if (err < 0)
++				dev_err(dev, "failed to teardown PHY#%u: %d\n",
++					i, err);
++		}
++	}
++}
++
++
+ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ {
+ 	struct device *dev = pcie->dev;
+@@ -1236,7 +1282,7 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 	err = tegra_pcie_power_on(pcie);
+ 	if (err) {
+ 		dev_err(dev, "failed to power up: %d\n", err);
+-		return err;
++		goto phys_put;
+ 	}
+ 
+ 	pads = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pads");
+@@ -1288,6 +1334,9 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 
+ 	return 0;
+ 
++phys_put:
++	if (soc->program_uphy)
++		tegra_pcie_phys_put(pcie);
+ poweroff:
+ 	tegra_pcie_power_off(pcie);
+ 	return err;
+@@ -1295,20 +1344,15 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 
+ static int tegra_pcie_put_resources(struct tegra_pcie *pcie)
+ {
+-	struct device *dev = pcie->dev;
+ 	const struct tegra_pcie_soc *soc = pcie->soc;
+-	int err;
+ 
+ 	if (pcie->irq > 0)
+ 		free_irq(pcie->irq, pcie);
+ 
+ 	tegra_pcie_power_off(pcie);
+ 
+-	if (soc->program_uphy) {
+-		err = phy_exit(pcie->phy);
+-		if (err < 0)
+-			dev_err(dev, "failed to teardown PHY: %d\n", err);
+-	}
++	if (soc->program_uphy)
++		tegra_pcie_phys_put(pcie);
+ 
+ 	return 0;
+ }
+@@ -2048,6 +2092,16 @@ static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+ 	}
+ }
+ 
++static void tegra_pcie_disable_ports(struct tegra_pcie *pcie)
++{
++	struct tegra_pcie_port *port, *tmp;
++
++	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
++		tegra_pcie_port_disable(port);
++		tegra_pcie_port_free(port);
++	}
++}
++
+ static const struct tegra_pcie_soc tegra20_pcie = {
+ 	.num_ports = 2,
+ 	.msi_base_shift = 0,
+@@ -2278,7 +2332,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 
+ 	err = tegra_pcie_request_resources(pcie);
+ 	if (err)
+-		goto put_resources;
++		goto disable_controller;
+ 
+ 	/* setup the AFI address translations */
+ 	tegra_pcie_setup_translations(pcie);
+@@ -2287,7 +2341,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 		err = tegra_pcie_enable_msi(pcie);
+ 		if (err < 0) {
+ 			dev_err(dev, "failed to enable MSI support: %d\n", err);
+-			goto put_resources;
++			goto free_resources;
+ 		}
+ 	}
+ 
+@@ -2302,7 +2356,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 	err = pci_scan_root_bus_bridge(host);
+ 	if (err < 0) {
+ 		dev_err(dev, "failed to register host: %d\n", err);
+-		goto disable_msi;
++		goto disable_ports;
+ 	}
+ 
+ 	pci_bus_size_bridges(host->bus);
+@@ -2321,9 +2375,14 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-disable_msi:
++disable_ports:
++	tegra_pcie_disable_ports(pcie);
+ 	if (IS_ENABLED(CONFIG_PCI_MSI))
+ 		tegra_pcie_disable_msi(pcie);
++free_resources:
++	tegra_pcie_free_resources(pcie);
++disable_controller:
++	tegra_pcie_disable_controller(pcie);
+ put_resources:
+ 	tegra_pcie_put_resources(pcie);
+ 	return err;
 -- 
 2.1.4
