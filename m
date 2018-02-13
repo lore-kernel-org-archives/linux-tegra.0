@@ -1,7 +1,7 @@
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH V7 2/4] PCI: tegra: Add loadable kernel module support
-Date: Tue, 13 Feb 2018 20:56:28 +0530
-Message-ID: <80f86571-dd70-717b-124a-f2e8cd4c377f@nvidia.com>
+Date: Tue, 13 Feb 2018 21:00:07 +0530
+Message-ID: <b90f8f85-9e8a-3ba3-1e4d-7bd63b61c9b7@nvidia.com>
 References: <1517289851-14111-1-git-send-email-mmaddireddy@nvidia.com>
  <1517289851-14111-3-git-send-email-mmaddireddy@nvidia.com>
  <20180213130718.GE6764@ulmo>
@@ -10,12 +10,12 @@ References: <1517289851-14111-1-git-send-email-mmaddireddy@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20180213135139.GA15842@ulmo>
 Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: bhelgaas@google.com, lorenzo.pieralisi@arm.com, cyndis@kapsi.fi, jonathanh@nvidia.com, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, vidyas@nvidia.com, kthota@nvidia.com
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, cyndis-/1wQRMveznE@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
@@ -30,8 +30,8 @@ On 13-Feb-18 7:21 PM, Thierry Reding wrote:
 >>>> loadable kernel module support. Change PCI_TEGRA config to tristate to
 >>>> allow pci-tegra driver to be build as a module.
 >>>>
->>>> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
->>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>>> ---
 >>>> V2:
 >>>> * no change in this patch
@@ -86,6 +86,9 @@ On 13-Feb-18 7:21 PM, Thierry Reding wrote:
 > Thierry
 > 
 
-Taken care of both and published V8.
+Hi Thierry,
+
+Taken care of both and published V8. Since these are simple changes,
+I retained your Ack & Tested signoff.
 
 Manikanta
