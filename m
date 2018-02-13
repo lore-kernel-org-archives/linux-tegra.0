@@ -1,111 +1,179 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V7 2/4] PCI: tegra: Add loadable kernel module support
-Date: Tue, 13 Feb 2018 14:51:39 +0100
-Message-ID: <20180213135139.GA15842@ulmo>
-References: <1517289851-14111-1-git-send-email-mmaddireddy@nvidia.com>
- <1517289851-14111-3-git-send-email-mmaddireddy@nvidia.com>
- <20180213130718.GE6764@ulmo>
- <eeab925c-3da4-38ae-2060-f77458abaaea@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v6 4/4] soc/tegra: pmc: Use the new reset APIs to manage
+ reset controllers
+Date: Tue, 13 Feb 2018 13:54:49 +0000
+Message-ID: <90ef269d-cb8f-414f-ad56-faa933ad2e8a@nvidia.com>
+References: <20170619143408.15668-1-p.zabel@pengutronix.de>
+ <20170619143408.15668-5-p.zabel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <eeab925c-3da4-38ae-2060-f77458abaaea-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20170619143408.15668-5-p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, cyndis-/1wQRMveznE@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 13, 2018 at 06:48:49PM +0530, Manikanta Maddireddy wrote:
->=20
->=20
-> On 13-Feb-18 6:37 PM, Thierry Reding wrote:
-> > On Tue, Jan 30, 2018 at 10:54:09AM +0530, Manikanta Maddireddy wrote:
-> >> Implement remove callback function for Tegra PCIe driver to add
-> >> loadable kernel module support. Change PCI_TEGRA config to tristate to
-> >> allow pci-tegra driver to be build as a module.
-> >>
-> >> Signed-off-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
-> >> V2:
-> >> * no change in this patch
-> >> V3:
-> >> * use tegra_pcie_debugfs_exit() helper function in tegra_pcie_debugfs_=
-init()
-> >> V4:
-> >> * no change in this patch
-> >> V5:
-> >> * Decoupled from https://patchwork.ozlabs.org/patch/832053/ and
-> >> rebased on linux-next
-> >> V6:
-> >> * no change in this patch
-> >> V7:
-> >> * no change in this patch
-> >>
-> >>  drivers/pci/host/Kconfig     |  2 +-
-> >>  drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++---
-> >>  2 files changed, 32 insertions(+), 4 deletions(-)
-> >=20
-> > Trying to build this as a module I get a link failure because
-> > irq_set_msi_desc() is not exported. I thought a patch to do that had
-> > been part of an earlier version of this series. Has that not been merged
-> > yet?
-> >=20
-> > Thierry
-> >=20
-> I got a review comment to use generic MSI model instead of deprecated API.
-> source: https://patchwork.ozlabs.org/patch/841111/
->=20
-> Also arm32 compilation will fail because of missing EXPORT of
-> tegra_cpuidle_pcie_irqs_in_use()
-> source: https://patchwork.ozlabs.org/patch/841119/
->=20
-> I need to put some time to prepare patches for these two cases.
-> Meanwhile I want to get the basic driver structure for LKM to be merged.
-> I verified locally with these two symbols exported.
+On 19/06/17 15:34, Philipp Zabel wrote:
+> From: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> 
+> Make use of of_reset_control_array_get_exclusive() to manage
+> an array of reset controllers available with the device.
+> 
+> Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> [p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org: switch to hidden reset control array]
+> Signed-off-by: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> ---
+> Changes since v5: updated commit message, added missing SoB
+> ---
+>  drivers/soc/tegra/pmc.c | 82 ++++++++++++-------------------------------------
+>  1 file changed, 20 insertions(+), 62 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index e233dd5dcab3d..749b218147a19 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -124,8 +124,7 @@ struct tegra_powergate {
+>  	unsigned int id;
+>  	struct clk **clks;
+>  	unsigned int num_clks;
+> -	struct reset_control **resets;
+> -	unsigned int num_resets;
+> +	struct reset_control *reset;
+>  };
+>  
+>  struct tegra_io_pad_soc {
+> @@ -348,32 +347,14 @@ static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
+>  	return err;
+>  }
+>  
+> -static int tegra_powergate_reset_assert(struct tegra_powergate *pg)
+> +static inline int tegra_powergate_reset_assert(struct tegra_powergate *pg)
+>  {
+> -	unsigned int i;
+> -	int err;
+> -
+> -	for (i = 0; i < pg->num_resets; i++) {
+> -		err = reset_control_assert(pg->resets[i]);
+> -		if (err)
+> -			return err;
+> -	}
+> -
+> -	return 0;
+> +	return reset_control_assert(pg->reset);
+>  }
+>  
+> -static int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
+> +static inline int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
+>  {
+> -	unsigned int i;
+> -	int err;
+> -
+> -	for (i = 0; i < pg->num_resets; i++) {
+> -		err = reset_control_deassert(pg->resets[i]);
+> -		if (err)
+> -			return err;
+> -	}
+> -
+> -	return 0;
+> +	return reset_control_deassert(pg->reset);
+>  }
+>  
+>  static int tegra_powergate_power_up(struct tegra_powergate *pg,
+> @@ -566,8 +547,7 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+>  	pg.id = id;
+>  	pg.clks = &clk;
+>  	pg.num_clks = 1;
+> -	pg.resets = &rst;
+> -	pg.num_resets = 1;
+> +	pg.reset = IS_ERR(rst) ? NULL : rst;
+>  
+>  	err = tegra_powergate_power_up(&pg, false);
+>  	if (err)
+> @@ -755,45 +735,26 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+>  static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
+>  					 struct device_node *np, bool off)
+>  {
+> -	struct reset_control *rst;
+> -	unsigned int i, count;
+>  	int err;
+>  
+> -	count = of_count_phandle_with_args(np, "resets", "#reset-cells");
+> -	if (count == 0)
+> -		return -ENODEV;
+> -
+> -	pg->resets = kcalloc(count, sizeof(rst), GFP_KERNEL);
+> -	if (!pg->resets)
+> -		return -ENOMEM;
+> -
+> -	for (i = 0; i < count; i++) {
+> -		pg->resets[i] = of_reset_control_get_by_index(np, i);
+> -		if (IS_ERR(pg->resets[i])) {
+> -			err = PTR_ERR(pg->resets[i]);
+> -			goto error;
+> -		}
+> -
+> -		if (off)
+> -			err = reset_control_assert(pg->resets[i]);
+> -		else
+> -			err = reset_control_deassert(pg->resets[i]);
+> -
+> -		if (err) {
+> -			reset_control_put(pg->resets[i]);
+> -			goto error;
+> -		}
+> +	pg->reset = of_reset_control_array_get_exclusive(np);
+> +	if (IS_ERR(pg->reset)) {
+> +		pr_err("failed to get device resets\n");
+> +		return PTR_ERR(pg->reset);
+>  	}
+>  
+> -	pg->num_resets = count;
+> +	if (off)
+> +		err = reset_control_assert(pg->reset);
+> +	else
+> +		err = reset_control_deassert(pg->reset);
+>  
+> -	return 0;
+> +	if (err)
+> +		goto put_reset;
+>  
+> -error:
+> -	while (i--)
+> -		reset_control_put(pg->resets[i]);
+> +	return 0;
+>  
+> -	kfree(pg->resets);
+> +put_reset:
+> +	reset_control_put(pg->reset);
+>  
+>  	return err;
+>  }
+> @@ -885,10 +846,7 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+>  	pm_genpd_remove(&pg->genpd);
+>  
+>  remove_resets:
+> -	while (pg->num_resets--)
+> -		reset_control_put(pg->resets[pg->num_resets]);
+> -
+> -	kfree(pg->resets);
+> +	reset_control_put(pg->reset);
+>  
+>  remove_clks:
+>  	while (pg->num_clks--)
+> 
 
-Okay, that's fine. However, you can't request these patches to be merged
-if they will break builds. There are people that run automated builders
-that will check random configurations, which is bound to eventually get
-us a bug report about how this fails to build.
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Perhaps in order to get loadable module support merged without these
-issues you could omit the Kconfig change making this a tristate symbol.
-That way we can get all the structural changes ready and you can work
-on the necessary exports or MSI model patches so that we can eventually
-flip the symbol to tristate.
+Cheers
+Jon
 
-By the way, if you do respin for the tristate change, do you mind taking
-a look at the blank line changes for readability I mentioned earlier?
-
-Thierry
-
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqC7WgACgkQ3SOs138+
-s6HeKA/5AfpqUtIa4iyaxxwRVq1sYrSM3mlt8KqhgZ39jshOSKqRl7X2pHAWtL0D
-QgI6/UvdevGnBhPjegfpOF+M7UD9CGhbxejeZCaNqf1EMRqqYvOGsxQ6sCVUY4NS
-olDdEW5Qk/mdNi0kEUTNkJf1UOzOv3SwqzasYmGlaC2kWKM0VCfN8GO2Cna3CFRi
-Pqi20k7BCgcRuLdnnjpjIcytuzPsFzFL/ncF3opG6dyEHZruFKQj25kpJEJWeeu5
-jooWLkF0F9svl7fjZ08JaVpuv0ilLEZR4kOJ0v+BTOEMBfmRDP1qs62qdsIhpBgg
-d/8hfrrQXKQGQTaU8R+7HwLVPZFWC043Z25ELdds3xX2BWdjDBRWYGvBzkR3Ggzq
-yvbf5otj+HuW0LPLOOg90mXZJxOR5hAPWdeXhhpQ41jOimrKU6p2RHjZlskpUOss
-q3x3+06GVlxW/59LDARs/d5AtLeqjmd3QTK8Tmsu5l6DKYD1DM2pGebOvGnWfjME
-WL+t2qDfQyG9axnAb7/GCbMpsr3VDN23t2gwsn9LHIRvyc9gCnKqzGIdIR8OJOVH
-xzjXadFlQRvfCRnvZCKlyygD2OUzHGI/h4BL5Dii7KGhIJeDvCpQ/qJ6jmI2Lx1M
-xj498mSCqYcQxw+mD09Qx7RH/7fTUfPctNSfSwwbWqyRX6f+eyA=
-=+ltN
------END PGP SIGNATURE-----
-
---azLHFNyN32YCQGCU--
+-- 
+nvpublic
