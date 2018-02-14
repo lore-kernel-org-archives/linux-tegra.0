@@ -1,46 +1,36 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH V7 0/7] Refactor and add AHCI support for tegra210
-Date: Wed, 14 Feb 2018 15:11:15 +0200
-Message-ID: <3cda27d3-bb42-9e00-2e9f-ac52fbe66630@kapsi.fi>
-References: <1518456406-21564-1-git-send-email-pchandru@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] memory: tegra: Squash tegra20-mc into common
+ tegra-mc driver
+Date: Wed, 14 Feb 2018 18:42:15 +0300
+Message-ID: <ea94ef04-2eda-51c8-b485-e8c8063f2598@gmail.com>
+References: <cover.1518452709.git.digetx@gmail.com>
+ <148ce8c56ad764fc8133e0d97e43f9639cae15ff.1518452709.git.digetx@gmail.com>
+ <20180213103039.GA6764@ulmo>
+ <20180214111546.GR5850@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <1518456406-21564-1-git-send-email-pchandru@nvidia.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Preetham Chandru Ramchandra <pchandru@nvidia.com>, thierry.reding@gmail.com, tj@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
-Cc: preetham260@gmail.com, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org, vbyravarasu@nvidia.com, pkunapuli@nvidia.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180214111546.GR5850-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I think this now looks good enough to merge - others please take a look 
-as well.
+On 14.02.2018 14:15, Peter De Schrijver wrote:
+> On Tue, Feb 13, 2018 at 11:30:39AM +0100, Thierry Reding wrote:
+>>>  	}
+>>
+>> It's odd that we don't have an MC clock on Tegra2. I wonder if perhaps
+>> we just never implemented one, or it uses one which is always on by
+>> default. Cc Peter to see if he knows.
+> 
+> We do, it has DT ID TEGRA20_CLK_MC. However, it looks like the modeling is
+> incorrect for Tegra20. Unlike on Tegra30 where the MC clock can be either
+> half or the same as the EMC clock, it is always half the EMC clock on
+> Tegra20. This happens to work because we likely never change the MC clock
+> and the non-existing bit just reads as 0, which means half the MC clock.
 
-Series,
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-
-On 12.02.2018 19:26, Preetham Chandru Ramchandra wrote:
-> From: Preetham Ramchandra <pchandru@nvidia.com>
->
-> 1. ADD AHCI support for tegra210
-> 2. Extend the tegra AHCI controller device tree binding with tegra210
-> 3. Update initialization sequence
-> 4. Initialize regulators based on chip
-> 5. Disable DevSlp
-> 6. Disable DIPM
-> ---
-> Preetham Ramchandra (7):
->   dt-bindings: ahci-tegra: add binding documentation
->   arm64: tegra: Enable AHCI on Jetson TX1
->   ata: ahci_tegra: Update initialization sequence
->   ata: ahci_tegra: initialize regulators from soc_data
->   ata: ahci_tegra: disable devslp for t124
->   ata: ahci_tegra: disable DIPM
->   ata: ahci_tegra: Add AHCI support for Tegra210
->
->  .../bindings/ata/nvidia,tegra124-ahci.txt          |  35 +-
->  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   6 +
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  16 +
->  drivers/ata/ahci_tegra.c                           | 362 ++++++++++++++++-----
->  4 files changed, 329 insertions(+), 90 deletions(-)
->
+Yes, and also that clock isn't specified in DT for MC. So probably we would have
+to use clk_get_sys even if it was implemented correctly.
