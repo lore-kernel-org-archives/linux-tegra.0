@@ -1,170 +1,166 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/3] usb: xhci: tegra: Add support for managing powergates
-Date: Wed, 14 Feb 2018 16:34:45 +0000
-Message-ID: <1518626085-29102-3-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 2/3] usb: xhci: tegra: Add runtime PM support
+Date: Wed, 14 Feb 2018 16:34:44 +0000
+Message-ID: <1518626085-29102-2-git-send-email-jonathanh@nvidia.com>
 References: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1518626085-29102-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra XHCI controller requires that the XUSBA (for superspeed) and
-XUSBC (for host) power-domains are enabled. Commit 8df127456f29
-("soc/tegra: pmc: Enable XUSB partitions on boot") was added to force
-on these power-domains if the XHCI driver is enabled while proper
-power-domain support is added, to ensure the device did not hang on
-boot. However, rather than forcing on these power-domains in the PMC
-driver we can use the legacy Tegra powergate APIs to turn on these
-power-domains during the probe of the Tegra XHCI driver.
+Add runtime PM support to the Tegra XHCI driver and move the function
+calls to enable/disable the clocks, regulators and PHY into the runtime
+PM callbacks.
 
-In the near future we plan to move the Tegra XHCI driver to use the
-generic PM domain framework for power-domains and so to prepare for
-this only use the legacy Tegra powergate API if there is not PM
-domain associated with device (ie. dev.pm_domain is NULL). Please
-note that in the future the superspeed and host resets will be handled
-by the generic PM domain provider and so these are only these are only
-needed in the case where there is no generic PM domain.
-
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/usb/host/xhci-tegra.c | 68 +++++++++++++++++++++++++++++++------------
- 1 file changed, 49 insertions(+), 19 deletions(-)
+ drivers/usb/host/xhci-tegra.c | 80 ++++++++++++++++++++++++++++++-------------
+ 1 file changed, 56 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 42aa67858b53..f69e5edfd604 100644
+index 02b0b24faa58..42aa67858b53 100644
 --- a/drivers/usb/host/xhci-tegra.c
 +++ b/drivers/usb/host/xhci-tegra.c
-@@ -22,6 +22,7 @@
+@@ -18,6 +18,7 @@
+ #include <linux/phy/tegra/xusb.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
++#include <linux/pm_runtime.h>
  #include <linux/regulator/consumer.h>
  #include <linux/reset.h>
  #include <linux/slab.h>
-+#include <soc/tegra/pmc.h>
+@@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	 */
+ 	platform_set_drvdata(pdev, tegra);
  
- #include "xhci.h"
- 
-@@ -931,20 +932,6 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	if (IS_ERR(tegra->padctl))
- 		return PTR_ERR(tegra->padctl);
- 
--	tegra->host_rst = devm_reset_control_get(&pdev->dev, "xusb_host");
--	if (IS_ERR(tegra->host_rst)) {
--		err = PTR_ERR(tegra->host_rst);
--		dev_err(&pdev->dev, "failed to get xusb_host reset: %d\n", err);
--		goto put_padctl;
+-	err = tegra_xusb_clk_enable(tegra);
+-	if (err) {
+-		dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
+-		goto put_usb2;
 -	}
 -
--	tegra->ss_rst = devm_reset_control_get(&pdev->dev, "xusb_ss");
--	if (IS_ERR(tegra->ss_rst)) {
--		err = PTR_ERR(tegra->ss_rst);
--		dev_err(&pdev->dev, "failed to get xusb_ss reset: %d\n", err);
--		goto put_padctl;
+-	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
+-	if (err) {
+-		dev_err(&pdev->dev, "failed to enable regulators: %d\n", err);
+-		goto disable_clk;
 -	}
--
- 	tegra->host_clk = devm_clk_get(&pdev->dev, "xusb_host");
- 	if (IS_ERR(tegra->host_clk)) {
- 		err = PTR_ERR(tegra->host_clk);
-@@ -1008,11 +995,48 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 		goto put_padctl;
++	pm_runtime_enable(&pdev->dev);
+ 
+-	err = tegra_xusb_phy_enable(tegra);
++	err = pm_runtime_get_sync(&pdev->dev);
+ 	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to enable PHYs: %d\n", err);
+-		goto disable_regulator;
++		dev_err(&pdev->dev, "failed to enable device: %d\n", err);
++		goto disable_rpm;
  	}
  
-+	if (!pdev->dev.pm_domain) {
-+		tegra->host_rst = devm_reset_control_get(&pdev->dev,
-+							 "xusb_host");
-+		if (IS_ERR(tegra->host_rst)) {
-+			err = PTR_ERR(tegra->host_rst);
-+			dev_err(&pdev->dev,
-+				"failed to get xusb_host reset: %d\n", err);
-+			goto put_padctl;
-+		}
-+
-+		tegra->ss_rst = devm_reset_control_get(&pdev->dev, "xusb_ss");
-+		if (IS_ERR(tegra->ss_rst)) {
-+			err = PTR_ERR(tegra->ss_rst);
-+			dev_err(&pdev->dev, "failed to get xusb_ss reset: %d\n",
-+				err);
-+			goto put_padctl;
-+		}
-+
-+		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
-+							tegra->ss_clk,
-+							tegra->ss_rst);
-+		if (err) {
-+			dev_err(&pdev->dev,
-+				"failed to enable XUSBA domain: %d\n", err);
-+			goto put_padctl;
-+		}
-+
-+		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
-+							tegra->host_clk,
-+							tegra->host_rst);
-+		if (err) {
-+			dev_err(&pdev->dev,
-+				"failed to enable XUSBC domain: %d\n", err);
-+			goto disable_xusba;
-+		}
-+	}
-+
- 	tegra->supplies = devm_kcalloc(&pdev->dev, tegra->soc->num_supplies,
- 				       sizeof(*tegra->supplies), GFP_KERNEL);
- 	if (!tegra->supplies) {
- 		err = -ENOMEM;
--		goto put_padctl;
-+		goto disable_xusbc;
+ 	tegra_xusb_ipfs_config(tegra, regs);
+@@ -1090,7 +1081,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	err = tegra_xusb_load_firmware(tegra);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to load firmware: %d\n", err);
+-		goto disable_phy;
++		goto put_rpm;
  	}
  
- 	for (i = 0; i < tegra->soc->num_supplies; i++)
-@@ -1022,7 +1046,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 				      tegra->supplies);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
--		goto put_padctl;
-+		goto disable_xusbc;
+ 	tegra->hcd->regs = tegra->regs;
+@@ -1100,7 +1091,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	err = usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to add USB HCD: %d\n", err);
+-		goto disable_phy;
++		goto put_rpm;
  	}
  
- 	for (i = 0; i < tegra->soc->num_types; i++)
-@@ -1032,7 +1056,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 				   sizeof(*tegra->phys), GFP_KERNEL);
- 	if (!tegra->phys) {
- 		err = -ENOMEM;
--		goto put_padctl;
-+		goto disable_xusbc;
- 	}
- 
- 	for (i = 0, k = 0; i < tegra->soc->num_types; i++) {
-@@ -1048,7 +1072,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 					"failed to get PHY %s: %ld\n", prop,
- 					PTR_ERR(phy));
- 				err = PTR_ERR(phy);
--				goto put_padctl;
-+				goto disable_xusbc;
- 			}
- 
- 			tegra->phys[k++] = phy;
-@@ -1059,7 +1083,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 				    dev_name(&pdev->dev));
- 	if (!tegra->hcd) {
- 		err = -ENOMEM;
--		goto put_padctl;
-+		goto disable_xusbc;
- 	}
- 
- 	/*
-@@ -1151,6 +1175,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- disable_rpm:
- 	pm_runtime_disable(&pdev->dev);
+ 	device_wakeup_enable(tegra->hcd->self.controller);
+@@ -1155,13 +1146,10 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	usb_put_hcd(xhci->shared_hcd);
+ remove_usb2:
+ 	usb_remove_hcd(tegra->hcd);
+-disable_phy:
+-	tegra_xusb_phy_disable(tegra);
+-disable_regulator:
+-	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+-disable_clk:
+-	tegra_xusb_clk_disable(tegra);
+-put_usb2:
++put_rpm:
++	pm_runtime_put_sync(&pdev->dev);
++disable_rpm:
++	pm_runtime_disable(&pdev->dev);
  	usb_put_hcd(tegra->hcd);
-+disable_xusbc:
-+	if (!&pdev->dev.pm_domain)
-+		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
-+disable_xusba:
-+	if (!&pdev->dev.pm_domain)
-+		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
  put_padctl:
  	tegra_xusb_padctl_put(tegra->padctl);
- 	return err;
+@@ -1181,13 +1169,55 @@ static int tegra_xusb_remove(struct platform_device *pdev)
+ 	dma_free_coherent(&pdev->dev, tegra->fw.size, tegra->fw.virt,
+ 			  tegra->fw.phys);
+ 
++	pm_runtime_put_sync(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	tegra_xusb_padctl_put(tegra->padctl);
++
++	return 0;
++}
++
++static int tegra_xusb_runtime_suspend(struct device *dev)
++{
++	struct tegra_xusb *tegra = dev_get_drvdata(dev);
++
+ 	tegra_xusb_phy_disable(tegra);
+ 	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+ 	tegra_xusb_clk_disable(tegra);
+ 
+-	tegra_xusb_padctl_put(tegra->padctl);
++	return 0;
++}
++
++static int tegra_xusb_runtime_resume(struct device *dev)
++{
++	struct tegra_xusb *tegra = dev_get_drvdata(dev);
++	int err;
++
++	err = tegra_xusb_clk_enable(tegra);
++	if (err) {
++		dev_err(dev, "failed to enable clocks: %d\n", err);
++		return err;
++	}
++
++	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
++	if (err) {
++		dev_err(dev, "failed to enable regulators: %d\n", err);
++		goto disable_clk;
++	}
++
++	err = tegra_xusb_phy_enable(tegra);
++	if (err < 0) {
++		dev_err(dev, "failed to enable PHYs: %d\n", err);
++		goto disable_regulator;
++	}
+ 
+ 	return 0;
++
++disable_regulator:
++	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
++disable_clk:
++	tegra_xusb_clk_disable(tegra);
++	return err;
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -1211,6 +1241,8 @@ static int tegra_xusb_resume(struct device *dev)
+ #endif
+ 
+ static const struct dev_pm_ops tegra_xusb_pm_ops = {
++	SET_RUNTIME_PM_OPS(tegra_xusb_runtime_suspend,
++			   tegra_xusb_runtime_resume, NULL)
+ 	SET_SYSTEM_SLEEP_PM_OPS(tegra_xusb_suspend, tegra_xusb_resume)
+ };
+ 
 -- 
 2.7.4
