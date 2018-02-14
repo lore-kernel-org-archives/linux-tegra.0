@@ -1,32 +1,68 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] memory: tegra: Squash tegra20-mc into common
- tegra-mc driver
-Date: Wed, 14 Feb 2018 13:15:46 +0200
-Message-ID: <20180214111546.GR5850@tbergstrom-lnx.Nvidia.com>
-References: <cover.1518452709.git.digetx@gmail.com>
- <148ce8c56ad764fc8133e0d97e43f9639cae15ff.1518452709.git.digetx@gmail.com>
- <20180213103039.GA6764@ulmo>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH v2 6/7] arm64: tegra: Add Tegra194 chip device tree
+Date: Wed, 14 Feb 2018 13:34:58 +0200
+Message-ID: <d860ee1a-d69d-2d45-ce36-71f2b726ec3f@kapsi.fi>
+References: <1517901757-15353-1-git-send-email-mperttunen@nvidia.com>
+ <1517901757-15353-7-git-send-email-mperttunen@nvidia.com>
+ <458ba9f9-d703-9edf-8e7b-bc9d0f0ef0cc@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20180213103039.GA6764@ulmo>
+In-Reply-To: <458ba9f9-d703-9edf-8e7b-bc9d0f0ef0cc-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 11:30:39AM +0100, Thierry Reding wrote:
-> >  	}
-> 
-> It's odd that we don't have an MC clock on Tegra2. I wonder if perhaps
-> we just never implemented one, or it uses one which is always on by
-> default. Cc Peter to see if he knows.
+On 07.02.2018 12:21, Marc Zyngier wrote:
+> Hi Mikko,
+>
+> On 06/02/18 07:22, Mikko Perttunen wrote:
+>> Add the chip-level device tree, including binding headers, for the
+>> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
+>> are initially available, enough to boot to UART console.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 342 +++++++++++++
+>>  include/dt-bindings/clock/tegra194-clock.h     | 664 +++++++++++++++++++++++++
+>>  include/dt-bindings/gpio/tegra194-gpio.h       |  59 +++
+>>  include/dt-bindings/power/tegra194-powergate.h |  49 ++
+>>  include/dt-bindings/reset/tegra194-reset.h     | 166 +++++++
+>>  5 files changed, 1280 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>>  create mode 100644 include/dt-bindings/clock/tegra194-clock.h
+>>  create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
+>>  create mode 100644 include/dt-bindings/power/tegra194-powergate.h
+>>  create mode 100644 include/dt-bindings/reset/tegra194-reset.h
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> new file mode 100644
+>> index 000000000000..dda28d758cab
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>
+> [...]
+>
+>> +		gic: interrupt-controller@3881000 {
+>> +			compatible = "arm,gic-400";
+>> +			#interrupt-cells = <3>;
+>> +			interrupt-controller;
+>> +			reg = <0x03881000 0x1000>,
+>> +			      <0x03882000 0x2000>;
+>
+> You're missing the GICH and GICV regions here.
+>
+>> +			interrupts = <GIC_PPI 9
+>> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+>> +			interrupt-parent = <&gic>;
+>> +		};
+> Thanks,
+>
+> 	M.
+>
 
-We do, it has DT ID TEGRA20_CLK_MC. However, it looks like the modeling is
-incorrect for Tegra20. Unlike on Tegra30 where the MC clock can be either
-half or the same as the EMC clock, it is always half the EMC clock on
-Tegra20. This happens to work because we likely never change the MC clock
-and the non-existing bit just reads as 0, which means half the MC clock.
+Thanks, fixed.
 
-Peter.
+Mikko
