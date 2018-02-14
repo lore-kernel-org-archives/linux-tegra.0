@@ -1,36 +1,105 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] memory: tegra: Squash tegra20-mc into common
- tegra-mc driver
-Date: Wed, 14 Feb 2018 18:42:15 +0300
-Message-ID: <ea94ef04-2eda-51c8-b485-e8c8063f2598@gmail.com>
-References: <cover.1518452709.git.digetx@gmail.com>
- <148ce8c56ad764fc8133e0d97e43f9639cae15ff.1518452709.git.digetx@gmail.com>
- <20180213103039.GA6764@ulmo>
- <20180214111546.GR5850@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 1/3] usb: xhci: tegra: Prepare for adding runtime PM support
+Date: Wed, 14 Feb 2018 16:34:43 +0000
+Message-ID: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180214111546.GR5850-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14.02.2018 14:15, Peter De Schrijver wrote:
-> On Tue, Feb 13, 2018 at 11:30:39AM +0100, Thierry Reding wrote:
->>>  	}
->>
->> It's odd that we don't have an MC clock on Tegra2. I wonder if perhaps
->> we just never implemented one, or it uses one which is always on by
->> default. Cc Peter to see if he knows.
-> 
-> We do, it has DT ID TEGRA20_CLK_MC. However, it looks like the modeling is
-> incorrect for Tegra20. Unlike on Tegra30 where the MC clock can be either
-> half or the same as the EMC clock, it is always half the EMC clock on
-> Tegra20. This happens to work because we likely never change the MC clock
-> and the non-existing bit just reads as 0, which means half the MC clock.
+When adding runtime PM support to the Tegra XHCI driver, it is desirable
+to move the function calls to enable the clocks, regulators and PHY from
+the tegra_xusb_probe into the runtime PM handlers. Currently, the
+clocks, regulators and PHY are all enabled before we call
+usb_create_hcd() in tegra_xusb_probe(), however, we cannot call
+pm_runtime_get_sync() at this point because the platform device data is
+not yet initialised. Fortunately, the function usb_create_hcd() can be
+called before we enable the clocks, regulators and PHY and so prepare
+for adding runtime PM support, by moving the call to usb_create_hcd()
+before we enable the hardware.
 
-Yes, and also that clock isn't specified in DT for MC. So probably we would have
-to use clk_get_sys even if it was implemented correctly.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/usb/host/xhci-tegra.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 2c076ea80522..02b0b24faa58 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1054,10 +1054,23 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	tegra->hcd = usb_create_hcd(&tegra_xhci_hc_driver, &pdev->dev,
++				    dev_name(&pdev->dev));
++	if (!tegra->hcd) {
++		err = -ENOMEM;
++		goto put_padctl;
++	}
++
++	/*
++	 * This must happen after usb_create_hcd(), because usb_create_hcd()
++	 * will overwrite the drvdata of the device with the hcd it creates.
++	 */
++	platform_set_drvdata(pdev, tegra);
++
+ 	err = tegra_xusb_clk_enable(tegra);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
+-		goto put_padctl;
++		goto put_usb2;
+ 	}
+ 
+ 	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
+@@ -1080,19 +1093,6 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 		goto disable_phy;
+ 	}
+ 
+-	tegra->hcd = usb_create_hcd(&tegra_xhci_hc_driver, &pdev->dev,
+-				    dev_name(&pdev->dev));
+-	if (!tegra->hcd) {
+-		err = -ENOMEM;
+-		goto disable_phy;
+-	}
+-
+-	/*
+-	 * This must happen after usb_create_hcd(), because usb_create_hcd()
+-	 * will overwrite the drvdata of the device with the hcd it creates.
+-	 */
+-	platform_set_drvdata(pdev, tegra);
+-
+ 	tegra->hcd->regs = tegra->regs;
+ 	tegra->hcd->rsrc_start = regs->start;
+ 	tegra->hcd->rsrc_len = resource_size(regs);
+@@ -1100,7 +1100,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	err = usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to add USB HCD: %d\n", err);
+-		goto put_usb2;
++		goto disable_phy;
+ 	}
+ 
+ 	device_wakeup_enable(tegra->hcd->self.controller);
+@@ -1155,14 +1155,14 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	usb_put_hcd(xhci->shared_hcd);
+ remove_usb2:
+ 	usb_remove_hcd(tegra->hcd);
+-put_usb2:
+-	usb_put_hcd(tegra->hcd);
+ disable_phy:
+ 	tegra_xusb_phy_disable(tegra);
+ disable_regulator:
+ 	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+ disable_clk:
+ 	tegra_xusb_clk_disable(tegra);
++put_usb2:
++	usb_put_hcd(tegra->hcd);
+ put_padctl:
+ 	tegra_xusb_padctl_put(tegra->padctl);
+ 	return err;
+-- 
+2.7.4
