@@ -1,52 +1,59 @@
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: How to test new bootloaders on Jetson TX1?
-Date: Thu, 15 Feb 2018 14:25:16 +0100
-Message-ID: <8320e1df-774c-65c1-28ae-96e1b90ad178@suse.de>
+Date: Thu, 15 Feb 2018 14:01:33 +0000
+Message-ID: <33de1065-1372-282c-9646-30a63729e08e@nvidia.com>
 References: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
- <2089c895-7992-9741-a471-fae5b410d4b7@kapsi.fi>
+ <0247bb39-1f53-5c45-4d37-247813b53b96@nvidia.com>
+ <8d80b0d3-eaed-b1ab-02c9-86f81ac4b7fa@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2089c895-7992-9741-a471-fae5b410d4b7-/1wQRMveznE@public.gmane.org>
+In-Reply-To: <8d80b0d3-eaed-b1ab-02c9-86f81ac4b7fa-l3A5Bk7waGM@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Mian Yousaf Kaukab <yousaf.kaukab-IBi9RG/b67k@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mikko,
 
-Am 15.02.2018 um 08:56 schrieb Mikko Perttunen:
-> In the cboot + U-Boot combination, cboot loads U-Boot from the usual
-> kernel partition (LNX or kernel depending on system), so flashing U-Boot
-> there should do the trick. I believe this did indeed change in some L4T
-> version, so the wiki page needs to be updated. Tom should know more
-> about this.
+On 15/02/18 12:32, Andreas Färber wrote:
+> Am 15.02.2018 um 10:22 schrieb Jon Hunter:
+>> On 15/02/18 01:51, Andreas Färber wrote:
+>>> I would like to test the latest version of U-Boot on the Jetson TX1.
+> [...]
+>>> Here's what I have tried:
+>>>
+>>> $ sudo ./flash.sh p2371-2180-devkit mmcblk0p1
+>> This should work. Which u-boot binary are you copying and where are you
+>> copying it?
+>>
+>> I copy the u-boot-dtb.bin over u-boot.bin in the L4T directory
+>> Linux_for_Tegra/bootloader/t186ref/p2771-0000/500/u-boot.bin.
+> 
+> I downloaded the .rpm from
+> https://build.opensuse.org/package/show/hardware:boot/u-boot-p2371-2180
+> extracting all of u-boot, u-boot.bin, u-boot.dtb and u-boot-dtb.bin to
+> bootloader/t210ref/p2371-2180/ - and as described it makes a difference
+> in that it then ceases to boot to a U-Boot prompt.
 
-Thanks for explaining.
+Sorry, looks like I mixed TX1 and TX2. I see you are using TX1. However,
+I believe you are still booting the wrong u-boot file.
 
-The LNX partition is getting a boot.img - what is the relation to the
-four U-Boot files? flash.sh source is not really helping here.
+If you look at the p2371-2180-devkit.conf you will see that it has ...
 
-Might any changes to RP1 and/or DTB partitions be necessary to match my
-newer U-Boot, or does U-Boot use an internal .dtb these days?
+ DFLT_KERNEL_IMAGE="bootloader/${target_board}/p2371-2180/u-boot.bin
 
-Is there any more efficient way to flash just U-Boot? -k LNX possibly?
+For using the upstream u-boot, we need to use the u-boot-dtb.bin and not
+the u-boot.bin. So you can either ...
 
-I had played with the -L option before (which mentions u-boot-dtb.bin),
-but recall it ran into some form of checksum error on boot when passing
-it my file...
+1. Update the p2371-2180-devkit.conf to use the u-boot-dtb.bin that you
+copied.
+2. Move the u-boot-dtb.bin from your rpm to
+bootloader/t210ref/p2371-2180/u-boot.bin.
 
-> I expect Varun to know the details about ATF, but I'll check if I can
-> find some answer myself.
-
-Thanks again for your efforts.
-
-Regards,
-Andreas
+Cheers
+Jon
 
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+nvpublic
