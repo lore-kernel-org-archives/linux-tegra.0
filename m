@@ -1,75 +1,74 @@
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+From: Jon Hunter <jonathanh@nvidia.com>
 Subject: Re: How to test new bootloaders on Jetson TX1?
-Date: Thu, 15 Feb 2018 16:12:28 +0100
-Message-ID: <71bf7527-3fb7-293f-8a1c-63ce74882649@suse.de>
+Date: Thu, 15 Feb 2018 15:38:35 +0000
+Message-ID: <fa89b123-bfcb-6f91-59cc-bae29aef19ab@nvidia.com>
 References: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
  <0247bb39-1f53-5c45-4d37-247813b53b96@nvidia.com>
  <8d80b0d3-eaed-b1ab-02c9-86f81ac4b7fa@suse.de>
  <33de1065-1372-282c-9646-30a63729e08e@nvidia.com>
+ <71bf7527-3fb7-293f-8a1c-63ce74882649@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <33de1065-1372-282c-9646-30a63729e08e-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <u-boot-bounces@lists.denx.de>
+In-Reply-To: <71bf7527-3fb7-293f-8a1c-63ce74882649@suse.de>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Mian Yousaf Kaukab <yousaf.kaukab-IBi9RG/b67k@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Cc: Alexander Graf <agraf@suse.de>, Varun Wadekar <vwadekar@nvidia.com>, U-Boot <u-boot@lists.denx.de>, Tom Warren <twarren@nvidia.com>, linux-tegra@vger.kernel.org, Mian Yousaf Kaukab <yousaf.kaukab@suse.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
-
-Am 15.02.2018 um 15:01 schrieb Jon Hunter:
-> On 15/02/18 12:32, Andreas Färber wrote:
->> Am 15.02.2018 um 10:22 schrieb Jon Hunter:
->>> On 15/02/18 01:51, Andreas Färber wrote:
->>>> I would like to test the latest version of U-Boot on the Jetson TX1.
->> [...]
->>>> Here's what I have tried:
->>>>
->>>> $ sudo ./flash.sh p2371-2180-devkit mmcblk0p1
->>> This should work. Which u-boot binary are you copying and where are you
->>> copying it?
->>>
->>> I copy the u-boot-dtb.bin over u-boot.bin in the L4T directory
->>> Linux_for_Tegra/bootloader/t186ref/p2771-0000/500/u-boot.bin.
->>
->> I downloaded the .rpm from
->> https://build.opensuse.org/package/show/hardware:boot/u-boot-p2371-2180
->> extracting all of u-boot, u-boot.bin, u-boot.dtb and u-boot-dtb.bin to
->> bootloader/t210ref/p2371-2180/ - and as described it makes a difference
->> in that it then ceases to boot to a U-Boot prompt.
-> 
-> Sorry, looks like I mixed TX1 and TX2. I see you are using TX1. However,
-> I believe you are still booting the wrong u-boot file.
-> 
-> If you look at the p2371-2180-devkit.conf you will see that it has ...
-> 
->  DFLT_KERNEL_IMAGE="bootloader/${target_board}/p2371-2180/u-boot.bin
-> 
-> For using the upstream u-boot, we need to use the u-boot-dtb.bin and not
-> the u-boot.bin. So you can either ...
-> 
-> 1. Update the p2371-2180-devkit.conf to use the u-boot-dtb.bin that you
-> copied.
-> 2. Move the u-boot-dtb.bin from your rpm to
-> bootloader/t210ref/p2371-2180/u-boot.bin.
-
-Both in the Nvidia tarball and in our upstream based package builds,
-u-boot.bin and u-boot-dtb.bin are identical. Since some time
-u-boot-dtb.bin gets copied over as u-boot.bin for consistency upstream.
-
-Should this work with the vanilla upstream files, or do they need any
-headers or signatures or something?
-
-Do any of you have that upstream version booting successfully, or might
-it be an upstream U-Boot regression? I was so far assuming it's a user
-error, so haven't tried bisecting yet.
-
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Ck9uIDE1LzAyLzE4IDE1OjEyLCBBbmRyZWFzIEbDpHJiZXIgd3JvdGU6Cj4gSGkgSm9uLAo+IAo+
+IEFtIDE1LjAyLjIwMTggdW0gMTU6MDEgc2NocmllYiBKb24gSHVudGVyOgo+PiBPbiAxNS8wMi8x
+OCAxMjozMiwgQW5kcmVhcyBGw6RyYmVyIHdyb3RlOgo+Pj4gQW0gMTUuMDIuMjAxOCB1bSAxMDoy
+MiBzY2hyaWViIEpvbiBIdW50ZXI6Cj4+Pj4gT24gMTUvMDIvMTggMDE6NTEsIEFuZHJlYXMgRsOk
+cmJlciB3cm90ZToKPj4+Pj4gSSB3b3VsZCBsaWtlIHRvIHRlc3QgdGhlIGxhdGVzdCB2ZXJzaW9u
+IG9mIFUtQm9vdCBvbiB0aGUgSmV0c29uIFRYMS4KPj4+IFsuLi5dCj4+Pj4+IEhlcmUncyB3aGF0
+IEkgaGF2ZSB0cmllZDoKPj4+Pj4KPj4+Pj4gJCBzdWRvIC4vZmxhc2guc2ggcDIzNzEtMjE4MC1k
+ZXZraXQgbW1jYmxrMHAxCj4+Pj4gVGhpcyBzaG91bGQgd29yay4gV2hpY2ggdS1ib290IGJpbmFy
+eSBhcmUgeW91IGNvcHlpbmcgYW5kIHdoZXJlIGFyZSB5b3UKPj4+PiBjb3B5aW5nIGl0Pwo+Pj4+
+Cj4+Pj4gSSBjb3B5IHRoZSB1LWJvb3QtZHRiLmJpbiBvdmVyIHUtYm9vdC5iaW4gaW4gdGhlIEw0
+VCBkaXJlY3RvcnkKPj4+PiBMaW51eF9mb3JfVGVncmEvYm9vdGxvYWRlci90MTg2cmVmL3AyNzcx
+LTAwMDAvNTAwL3UtYm9vdC5iaW4uCj4+Pgo+Pj4gSSBkb3dubG9hZGVkIHRoZSAucnBtIGZyb20K
+Pj4+IGh0dHBzOi8vYnVpbGQub3BlbnN1c2Uub3JnL3BhY2thZ2Uvc2hvdy9oYXJkd2FyZTpib290
+L3UtYm9vdC1wMjM3MS0yMTgwCj4+PiBleHRyYWN0aW5nIGFsbCBvZiB1LWJvb3QsIHUtYm9vdC5i
+aW4sIHUtYm9vdC5kdGIgYW5kIHUtYm9vdC1kdGIuYmluIHRvCj4+PiBib290bG9hZGVyL3QyMTBy
+ZWYvcDIzNzEtMjE4MC8gLSBhbmQgYXMgZGVzY3JpYmVkIGl0IG1ha2VzIGEgZGlmZmVyZW5jZQo+
+Pj4gaW4gdGhhdCBpdCB0aGVuIGNlYXNlcyB0byBib290IHRvIGEgVS1Cb290IHByb21wdC4KPj4K
+Pj4gU29ycnksIGxvb2tzIGxpa2UgSSBtaXhlZCBUWDEgYW5kIFRYMi4gSSBzZWUgeW91IGFyZSB1
+c2luZyBUWDEuIEhvd2V2ZXIsCj4+IEkgYmVsaWV2ZSB5b3UgYXJlIHN0aWxsIGJvb3RpbmcgdGhl
+IHdyb25nIHUtYm9vdCBmaWxlLgo+Pgo+PiBJZiB5b3UgbG9vayBhdCB0aGUgcDIzNzEtMjE4MC1k
+ZXZraXQuY29uZiB5b3Ugd2lsbCBzZWUgdGhhdCBpdCBoYXMgLi4uCj4+Cj4+ICBERkxUX0tFUk5F
+TF9JTUFHRT0iYm9vdGxvYWRlci8ke3RhcmdldF9ib2FyZH0vcDIzNzEtMjE4MC91LWJvb3QuYmlu
+Cj4+Cj4+IEZvciB1c2luZyB0aGUgdXBzdHJlYW0gdS1ib290LCB3ZSBuZWVkIHRvIHVzZSB0aGUg
+dS1ib290LWR0Yi5iaW4gYW5kIG5vdAo+PiB0aGUgdS1ib290LmJpbi4gU28geW91IGNhbiBlaXRo
+ZXIgLi4uCj4+Cj4+IDEuIFVwZGF0ZSB0aGUgcDIzNzEtMjE4MC1kZXZraXQuY29uZiB0byB1c2Ug
+dGhlIHUtYm9vdC1kdGIuYmluIHRoYXQgeW91Cj4+IGNvcGllZC4KPj4gMi4gTW92ZSB0aGUgdS1i
+b290LWR0Yi5iaW4gZnJvbSB5b3VyIHJwbSB0bwo+PiBib290bG9hZGVyL3QyMTByZWYvcDIzNzEt
+MjE4MC91LWJvb3QuYmluLgo+IAo+IEJvdGggaW4gdGhlIE52aWRpYSB0YXJiYWxsIGFuZCBpbiBv
+dXIgdXBzdHJlYW0gYmFzZWQgcGFja2FnZSBidWlsZHMsCj4gdS1ib290LmJpbiBhbmQgdS1ib290
+LWR0Yi5iaW4gYXJlIGlkZW50aWNhbC4gU2luY2Ugc29tZSB0aW1lCj4gdS1ib290LWR0Yi5iaW4g
+Z2V0cyBjb3BpZWQgb3ZlciBhcyB1LWJvb3QuYmluIGZvciBjb25zaXN0ZW5jeSB1cHN0cmVhbS4K
+Ckdvb2QgdG8ga25vdyEKCj4gU2hvdWxkIHRoaXMgd29yayB3aXRoIHRoZSB2YW5pbGxhIHVwc3Ry
+ZWFtIGZpbGVzLCBvciBkbyB0aGV5IG5lZWQgYW55Cj4gaGVhZGVycyBvciBzaWduYXR1cmVzIG9y
+IHNvbWV0aGluZz8KClllcyBzaG91bGQgd29yayBmaW5lIHdpdGggdmFuaWxsYSB1cHN0cmVhbS4K
+Cj4gRG8gYW55IG9mIHlvdSBoYXZlIHRoYXQgdXBzdHJlYW0gdmVyc2lvbiBib290aW5nIHN1Y2Nl
+c3NmdWxseSwgb3IgbWlnaHQKPiBpdCBiZSBhbiB1cHN0cmVhbSBVLUJvb3QgcmVncmVzc2lvbj8g
+SSB3YXMgc28gZmFyIGFzc3VtaW5nIGl0J3MgYSB1c2VyCj4gZXJyb3IsIHNvIGhhdmVuJ3QgdHJp
+ZWQgYmlzZWN0aW5nIHlldC4KCkkgYW0gdXNpbmcgIlUtQm9vdCAyMDE3LjAzIi4gSG93ZXZlciwg
+SSByZWFsaXNlIHRoYXQgSSBhbSBjdXJyZW50bHkKYmFzZWQgdXBvbiBMNFQgcmVsMjQuMi4xIChh
+cyByZWwyOC4xIHdhcyBub3QgYXZhaWxhYmxlIHdoZW4gSSBzdGFydGVkCnVzaW5nIEw0VCBmb3Ig
+dGVzdGluZyB1cHN0cmVhbSkuIEkgaG9wZSBpdCB3b3VsZCBub3QgbWF0dGVyLCBidXQgeW91Cm5l
+dmVyIGtub3cuIEkgcGxhbiB0byBtb3ZlIHRvIHJlbDI4LjIgb25jZSBpdCBpcyByZWxlYXNlZC4g
+SWYgd2UgdGhpbmsKaXQgaXMgYSBwcm9ibGVtIHdpdGggcmVsMjguMSBJIHNob3VsZCBiZSBhYmxl
+IHRvIHRlc3QgbXkgc2lkZS4KCkNoZWVycwpKb24KCi0tIApudnB1YmxpYwpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpVLUJvb3QgbWFpbGluZyBsaXN0ClUt
+Qm9vdEBsaXN0cy5kZW54LmRlCmh0dHBzOi8vbGlzdHMuZGVueC5kZS9saXN0aW5mby91LWJvb3QK
