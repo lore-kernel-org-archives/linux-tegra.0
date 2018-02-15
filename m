@@ -1,47 +1,47 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
 Subject: Re: How to test new bootloaders on Jetson TX1?
-Date: Thu, 15 Feb 2018 09:22:41 +0000
-Message-ID: <0247bb39-1f53-5c45-4d37-247813b53b96@nvidia.com>
+Date: Thu, 15 Feb 2018 13:32:49 +0100
+Message-ID: <8d80b0d3-eaed-b1ab-02c9-86f81ac4b7fa@suse.de>
 References: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
+ <0247bb39-1f53-5c45-4d37-247813b53b96@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5ff3ffde-653c-ea50-490c-efcc6dccecc2-l3A5Bk7waGM@public.gmane.org>
+In-Reply-To: <0247bb39-1f53-5c45-4d37-247813b53b96-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
-Cc: Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Mian Yousaf Kaukab <yousaf.kaukab-IBi9RG/b67k@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Mian Yousaf Kaukab <yousaf.kaukab-IBi9RG/b67k@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Am 15.02.2018 um 10:22 schrieb Jon Hunter:
+> On 15/02/18 01:51, Andreas Färber wrote:
+>> I would like to test the latest version of U-Boot on the Jetson TX1.
+[...]
+>> Here's what I have tried:
+>>
+>> $ sudo ./flash.sh p2371-2180-devkit mmcblk0p1
+> This should work. Which u-boot binary are you copying and where are you
+> copying it?
+> 
+> I copy the u-boot-dtb.bin over u-boot.bin in the L4T directory
+> Linux_for_Tegra/bootloader/t186ref/p2771-0000/500/u-boot.bin.
 
-On 15/02/18 01:51, Andreas Färber wrote:
-> Hello,
-> 
-> I would like to test the latest version of U-Boot on the Jetson TX1.
-> 
-> Unfortunately U-Boot is lacking a README that would explain how to do that:
-> 
-> http://git.denx.de/?p=u-boot.git;a=tree;f=board/nvidia/p2371-2180;h=097fb9aaec8abd522b7b8382e5c4169f5ea8f691;hb=HEAD
-> 
-> 
-> I understand that the Jetson TK1's Python based
-> https://github.com/NVIDIA/tegra-uboot-flasher-scripts
-> have never been updated for Tegra X1.
-> 
-> That leaves L4T Jetson TX1 Driver Package, latest version being R28.1.0.
-> 
-> Here's what I have tried:
-> 
-> $ sudo ./flash.sh p2371-2180-devkit mmcblk0p1
-This should work. Which u-boot binary are you copying and where are you
-copying it?
+I downloaded the .rpm from
+https://build.opensuse.org/package/show/hardware:boot/u-boot-p2371-2180
+extracting all of u-boot, u-boot.bin, u-boot.dtb and u-boot-dtb.bin to
+bootloader/t210ref/p2371-2180/ - and as described it makes a difference
+in that it then ceases to boot to a U-Boot prompt.
 
-I copy the u-boot-dtb.bin over u-boot.bin in the L4T directory
-Linux_for_Tegra/bootloader/t186ref/p2771-0000/500/u-boot.bin.
+I then have to use jumper J9 to enter RCM again.
 
-Cheers
-Jon
+So something is getting flashed, it's just not working right.
+
+Regards,
+Andreas
 
 -- 
-nvpublic
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
