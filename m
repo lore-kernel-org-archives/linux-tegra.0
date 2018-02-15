@@ -1,102 +1,36 @@
-From: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: How to test new bootloaders on Jetson TX1?
-Date: Thu, 15 Feb 2018 16:57:57 +0000
-Message-ID: <205465fc7b2f4547ac81c7394108e2c7@bgmail103.nvidia.com>
-References: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
- <0247bb39-1f53-5c45-4d37-247813b53b96@nvidia.com>
- <8d80b0d3-eaed-b1ab-02c9-86f81ac4b7fa@suse.de>
- <33de1065-1372-282c-9646-30a63729e08e@nvidia.com>
- <71bf7527-3fb7-293f-8a1c-63ce74882649@suse.de>
- <fa89b123-bfcb-6f91-59cc-bae29aef19ab@nvidia.com>
- <d6a44448867a47028685fb0af0005d59@HQMAIL101.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: [PATCH] nvc0: Use GP100_COMPUTE_CLASS on GP10B
+Date: Thu, 15 Feb 2018 20:13:20 +0200
+Message-ID: <20180215181320.17589-1-cyndis@kapsi.fi>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d6a44448867a47028685fb0af0005d59-wO81nVYWzR7wKU+G0hyRhFaTQe2KTcn/@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Mian Yousaf Kaukab <yousaf.kaukab-IBi9RG/b67k@public.gmane.org>
+To: kherbst-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org
+Cc: mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-QW5kcmVhcywgY2FuIHlvdSB0cnkgdGhlIFRPUyBwYWNrYWdpbmcgc2NyaXB0IGF2YWlsYWJsZSBp
-biBvdXIgcHVibGljIHJlcG8/DQoNCmh0dHA6Ly9udi10ZWdyYS5udmlkaWEuY29tL2dpdHdlYi8/
-cD0zcmRwYXJ0eS9vdGVfcGFydG5lci90bGsuZ2l0O2E9YmxvYjtmPXRvb2xzL2dlbl90b3NfcGFy
-dF9pbWcucHk7aD00NzgyOGY3MDI4ZTU2YTZjZmZiOWI3NzM1MDJiMTNkYzQzMWEwMTVlO2hiPUhF
-QUQNCg0KUGxlYXNlIGxldCBtZSBrbm93IGlmIHRoaXMgZG9lcyBub3Qgd29yayBmb3IgeW91Lg0K
-DQpGb3IgdGhlIHVwc3RyZWFtIEFURiBjb2RlLCBvdXIgZG93bnN0cmVhbSBoYXMgbm90IGNhdWdo
-dCB1cCB3aXRoIHVwc3RyZWFtIHlldCwgc28gSSBhbSBub3Qgc3VyZSBpZiB1cHN0cmVhbSB3b3Vs
-ZCBkaXJlY3RseSB3b3JrIGZvciBUWDEuIEJ1dCBpdHMgZGVmaW5pdGVseSB3b3J0aCBhIHRyeS4N
-Cg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IFRvbSBXYXJyZW4gDQpTZW50OiBU
-aHVyc2RheSwgRmVicnVhcnkgMTUsIDIwMTggNzo0NCBBTQ0KVG86IEpvbmF0aGFuIEh1bnRlciA8
-am9uYXRoYW5oQG52aWRpYS5jb20+OyBBbmRyZWFzIEbDpHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+
-DQpDYzogbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBVLUJvb3QgPHUtYm9vdEBsaXN0cy5k
-ZW54LmRlPjsgQWxleGFuZGVyIEdyYWYgPGFncmFmQHN1c2UuZGU+OyBNaWFuIFlvdXNhZiBLYXVr
-YWIgPHlvdXNhZi5rYXVrYWJAc3VzZS5jb20+OyBWYXJ1biBXYWRla2FyIDx2d2FkZWthckBudmlk
-aWEuY29tPg0KU3ViamVjdDogUkU6IEhvdyB0byB0ZXN0IG5ldyBib290bG9hZGVycyBvbiBKZXRz
-b24gVFgxPw0KDQoNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IEpvbmF0aGFu
-IEh1bnRlciANClNlbnQ6IFRodXJzZGF5LCBGZWJydWFyeSAxNSwgMjAxOCA4OjM5IEFNDQpUbzog
-QW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPg0KQ2M6IGxpbnV4LXRlZ3JhQHZnZXIu
-a2VybmVsLm9yZzsgVS1Cb290IDx1LWJvb3RAbGlzdHMuZGVueC5kZT47IEFsZXhhbmRlciBHcmFm
-IDxhZ3JhZkBzdXNlLmRlPjsgTWlhbiBZb3VzYWYgS2F1a2FiIDx5b3VzYWYua2F1a2FiQHN1c2Uu
-Y29tPjsgVG9tIFdhcnJlbiA8VFdhcnJlbkBudmlkaWEuY29tPjsgVmFydW4gV2FkZWthciA8dndh
-ZGVrYXJAbnZpZGlhLmNvbT4NClN1YmplY3Q6IFJlOiBIb3cgdG8gdGVzdCBuZXcgYm9vdGxvYWRl
-cnMgb24gSmV0c29uIFRYMT8NCg0KDQpPbiAxNS8wMi8xOCAxNToxMiwgQW5kcmVhcyBGw6RyYmVy
-IHdyb3RlOg0KPiBIaSBKb24sDQo+IA0KPiBBbSAxNS4wMi4yMDE4IHVtIDE1OjAxIHNjaHJpZWIg
-Sm9uIEh1bnRlcjoNCj4+IE9uIDE1LzAyLzE4IDEyOjMyLCBBbmRyZWFzIEbDpHJiZXIgd3JvdGU6
-DQo+Pj4gQW0gMTUuMDIuMjAxOCB1bSAxMDoyMiBzY2hyaWViIEpvbiBIdW50ZXI6DQo+Pj4+IE9u
-IDE1LzAyLzE4IDAxOjUxLCBBbmRyZWFzIEbDpHJiZXIgd3JvdGU6DQo+Pj4+PiBJIHdvdWxkIGxp
-a2UgdG8gdGVzdCB0aGUgbGF0ZXN0IHZlcnNpb24gb2YgVS1Cb290IG9uIHRoZSBKZXRzb24gVFgx
-Lg0KPj4+IFsuLi5dDQo+Pj4+PiBIZXJlJ3Mgd2hhdCBJIGhhdmUgdHJpZWQ6DQo+Pj4+Pg0KPj4+
-Pj4gJCBzdWRvIC4vZmxhc2guc2ggcDIzNzEtMjE4MC1kZXZraXQgbW1jYmxrMHAxDQo+Pj4+IFRo
-aXMgc2hvdWxkIHdvcmsuIFdoaWNoIHUtYm9vdCBiaW5hcnkgYXJlIHlvdSBjb3B5aW5nIGFuZCB3
-aGVyZSBhcmUgDQo+Pj4+IHlvdSBjb3B5aW5nIGl0Pw0KPj4+Pg0KPj4+PiBJIGNvcHkgdGhlIHUt
-Ym9vdC1kdGIuYmluIG92ZXIgdS1ib290LmJpbiBpbiB0aGUgTDRUIGRpcmVjdG9yeSANCj4+Pj4g
-TGludXhfZm9yX1RlZ3JhL2Jvb3Rsb2FkZXIvdDE4NnJlZi9wMjc3MS0wMDAwLzUwMC91LWJvb3Qu
-YmluLg0KPj4+DQo+Pj4gSSBkb3dubG9hZGVkIHRoZSAucnBtIGZyb20NCj4+PiBodHRwczovL2J1
-aWxkLm9wZW5zdXNlLm9yZy9wYWNrYWdlL3Nob3cvaGFyZHdhcmU6Ym9vdC91LWJvb3QtcDIzNzEt
-Mg0KPj4+IDE4MCBleHRyYWN0aW5nIGFsbCBvZiB1LWJvb3QsIHUtYm9vdC5iaW4sIHUtYm9vdC5k
-dGIgYW5kIA0KPj4+IHUtYm9vdC1kdGIuYmluIHRvIGJvb3Rsb2FkZXIvdDIxMHJlZi9wMjM3MS0y
-MTgwLyAtIGFuZCBhcyBkZXNjcmliZWQgDQo+Pj4gaXQgbWFrZXMgYSBkaWZmZXJlbmNlIGluIHRo
-YXQgaXQgdGhlbiBjZWFzZXMgdG8gYm9vdCB0byBhIFUtQm9vdCANCj4+PiBwcm9tcHQuDQo+Pg0K
-Pj4gU29ycnksIGxvb2tzIGxpa2UgSSBtaXhlZCBUWDEgYW5kIFRYMi4gSSBzZWUgeW91IGFyZSB1
-c2luZyBUWDEuIA0KPj4gSG93ZXZlciwgSSBiZWxpZXZlIHlvdSBhcmUgc3RpbGwgYm9vdGluZyB0
-aGUgd3JvbmcgdS1ib290IGZpbGUuDQo+Pg0KPj4gSWYgeW91IGxvb2sgYXQgdGhlIHAyMzcxLTIx
-ODAtZGV2a2l0LmNvbmYgeW91IHdpbGwgc2VlIHRoYXQgaXQgaGFzIC4uLg0KPj4NCj4+ICBERkxU
-X0tFUk5FTF9JTUFHRT0iYm9vdGxvYWRlci8ke3RhcmdldF9ib2FyZH0vcDIzNzEtMjE4MC91LWJv
-b3QuYmluDQo+Pg0KPj4gRm9yIHVzaW5nIHRoZSB1cHN0cmVhbSB1LWJvb3QsIHdlIG5lZWQgdG8g
-dXNlIHRoZSB1LWJvb3QtZHRiLmJpbiBhbmQgDQo+PiBub3QgdGhlIHUtYm9vdC5iaW4uIFNvIHlv
-dSBjYW4gZWl0aGVyIC4uLg0KPj4NCj4+IDEuIFVwZGF0ZSB0aGUgcDIzNzEtMjE4MC1kZXZraXQu
-Y29uZiB0byB1c2UgdGhlIHUtYm9vdC1kdGIuYmluIHRoYXQgDQo+PiB5b3UgY29waWVkLg0KPj4g
-Mi4gTW92ZSB0aGUgdS1ib290LWR0Yi5iaW4gZnJvbSB5b3VyIHJwbSB0byANCj4+IGJvb3Rsb2Fk
-ZXIvdDIxMHJlZi9wMjM3MS0yMTgwL3UtYm9vdC5iaW4uDQo+IA0KPiBCb3RoIGluIHRoZSBOdmlk
-aWEgdGFyYmFsbCBhbmQgaW4gb3VyIHVwc3RyZWFtIGJhc2VkIHBhY2thZ2UgYnVpbGRzLCANCj4g
-dS1ib290LmJpbiBhbmQgdS1ib290LWR0Yi5iaW4gYXJlIGlkZW50aWNhbC4gU2luY2Ugc29tZSB0
-aW1lIA0KPiB1LWJvb3QtZHRiLmJpbiBnZXRzIGNvcGllZCBvdmVyIGFzIHUtYm9vdC5iaW4gZm9y
-IGNvbnNpc3RlbmN5IHVwc3RyZWFtLg0KDQpHb29kIHRvIGtub3chDQoNCj4gU2hvdWxkIHRoaXMg
-d29yayB3aXRoIHRoZSB2YW5pbGxhIHVwc3RyZWFtIGZpbGVzLCBvciBkbyB0aGV5IG5lZWQgYW55
-IA0KPiBoZWFkZXJzIG9yIHNpZ25hdHVyZXMgb3Igc29tZXRoaW5nPw0KDQpZZXMgc2hvdWxkIHdv
-cmsgZmluZSB3aXRoIHZhbmlsbGEgdXBzdHJlYW0uDQoNCj4gRG8gYW55IG9mIHlvdSBoYXZlIHRo
-YXQgdXBzdHJlYW0gdmVyc2lvbiBib290aW5nIHN1Y2Nlc3NmdWxseSwgb3IgDQo+IG1pZ2h0IGl0
-IGJlIGFuIHVwc3RyZWFtIFUtQm9vdCByZWdyZXNzaW9uPyBJIHdhcyBzbyBmYXIgYXNzdW1pbmcg
-aXQncyANCj4gYSB1c2VyIGVycm9yLCBzbyBoYXZlbid0IHRyaWVkIGJpc2VjdGluZyB5ZXQuDQoN
-CkkgYW0gdXNpbmcgIlUtQm9vdCAyMDE3LjAzIi4gSG93ZXZlciwgSSByZWFsaXNlIHRoYXQgSSBh
-bSBjdXJyZW50bHkgYmFzZWQgdXBvbiBMNFQgcmVsMjQuMi4xIChhcyByZWwyOC4xIHdhcyBub3Qg
-YXZhaWxhYmxlIHdoZW4gSSBzdGFydGVkIHVzaW5nIEw0VCBmb3IgdGVzdGluZyB1cHN0cmVhbSku
-IEkgaG9wZSBpdCB3b3VsZCBub3QgbWF0dGVyLCBidXQgeW91IG5ldmVyIGtub3cuIEkgcGxhbiB0
-byBtb3ZlIHRvIHJlbDI4LjIgb25jZSBpdCBpcyByZWxlYXNlZC4gSWYgd2UgdGhpbmsgaXQgaXMg
-YSBwcm9ibGVtIHdpdGggcmVsMjguMSBJIHNob3VsZCBiZSBhYmxlIHRvIHRlc3QgbXkgc2lkZS4N
-Cg0KW1RvbV0gQ3VycmVudCAoUjI4LngpIFUtQm9vdCByZXF1aXJlcyBDQm9vdCB0byBsb2FkIC0g
-d2Ugbm8gbG9uZ2VyIHVzZSBOVlRCb290IGFzIHdlIGRpZCBpbiBSMjQueC4gIEhlbmNlLCB1cHN0
-cmVhbSBVLUJvb3QgbmVlZHMgc29tZSBtb2RpZmljYXRpb25zIHRvIGJlIGFibGUgdG8gYmUgbG9h
-ZGVkIGJ5IENCb290IGluc3RlYWQgb2YgTlZUQm9vdC4gIEkgaGF2ZW4ndCBkb25lIHRoYXQgd29y
-ayB5ZXQgKHBhdGNoZXMgdG8gY29udmVydCB1cHN0cmVhbSBEZW54IFUtQm9vdCBzb3VyY2UgZm9y
-IFQyMTAvVDE4NiB0byB1c2UgQ0Jvb3QgYXMgdGhlIGxvYWRlciAtIGRvbid0IGtub3cgaG93IEkn
-bGwgc3RydWN0dXJlIGl0IHNvIG9sZCAoTlZUQm9vdCkgYm9vdGZsb3cgd2lsbCBzdGlsbCB3b3Jr
-IGFzIHdlbGwgYXMgdGhlIG5ldyAoQ0Jvb3QpIGJvb3RmbG93KS4gIEkndmUgZ290IGl0IG9uIG15
-IHBsYXRlLCBidXQgb3RoZXIgcHJpb3JpdGllcyBoYXZlIHByZXZlbnRlZCBtZSBmcm9tIHdvcmtp
-bmcgb24gaXQuIEknbGwgdHJ5IHRvIGdldCBpdCBpbnRvIHRoZSBxdWV1ZS4gIFVudGlsIHRoZW4s
-IHlvdSB3b24ndCBiZSBhYmxlIHRvIGxvYWQvcnVuIHVwc3RyZWFtIFUtQm9vdCB1c2luZyB0aGUg
-Ym9vdCBmbG93IGluIFIyOC54LiBTb3JyeS4NCg0KDQpDaGVlcnMNCkpvbg0KDQotLQ0KbnZwdWJs
-aWMNCg==
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+GP10B requires the use of GP100_COMPUTE_CLASS instead of
+GP104_COMPUTE_CLASS as is used for other non-GP100 chips.
+
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ src/gallium/drivers/nouveau/nvc0/nve4_compute.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/gallium/drivers/nouveau/nvc0/nve4_compute.c b/src/gallium/drivers/nouveau/nvc0/nve4_compute.c
+index f641f47..28460f8 100644
+--- a/src/gallium/drivers/nouveau/nvc0/nve4_compute.c
++++ b/src/gallium/drivers/nouveau/nvc0/nve4_compute.c
+@@ -59,7 +59,8 @@ nve4_screen_compute_setup(struct nvc0_screen *screen,
+       obj_class = GM200_COMPUTE_CLASS;
+       break;
+    case 0x130:
+-      obj_class = dev->chipset == 0x130 ? GP100_COMPUTE_CLASS : GP104_COMPUTE_CLASS;
++      obj_class = (dev->chipset == 0x130 || dev->chipset == 0x13b) ?
++                      GP100_COMPUTE_CLASS : GP104_COMPUTE_CLASS;
+       break;
+    default:
+       NOUVEAU_ERR("unsupported chipset: NV%02x\n", dev->chipset);
+-- 
+2.9.3
