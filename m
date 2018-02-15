@@ -1,103 +1,158 @@
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Subject: How to test new bootloaders on Jetson TX1?
-Date: Thu, 15 Feb 2018 02:51:17 +0100
-Message-ID: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: How to test new bootloaders on Jetson TX1?
+Date: Thu, 15 Feb 2018 09:56:25 +0200
+Message-ID: <2089c895-7992-9741-a471-fae5b410d4b7@kapsi.fi>
+References: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <u-boot-bounces@lists.denx.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5ff3ffde-653c-ea50-490c-efcc6dccecc2-l3A5Bk7waGM@public.gmane.org>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
-To: linux-tegra@vger.kernel.org, U-Boot <u-boot@lists.denx.de>
-Cc: Mian Yousaf Kaukab <yousaf.kaukab@suse.com>, Alexander Graf <agraf@suse.de>, Varun Wadekar <vwadekar@nvidia.com>, Tom Warren <twarren@nvidia.com>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
+Cc: Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Mian Yousaf Kaukab <yousaf.kaukab-IBi9RG/b67k@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGVsbG8sCgpJIHdvdWxkIGxpa2UgdG8gdGVzdCB0aGUgbGF0ZXN0IHZlcnNpb24gb2YgVS1Cb290
-IG9uIHRoZSBKZXRzb24gVFgxLgoKVW5mb3J0dW5hdGVseSBVLUJvb3QgaXMgbGFja2luZyBhIFJF
-QURNRSB0aGF0IHdvdWxkIGV4cGxhaW4gaG93IHRvIGRvIHRoYXQ6CgpodHRwOi8vZ2l0LmRlbngu
-ZGUvP3A9dS1ib290LmdpdDthPXRyZWU7Zj1ib2FyZC9udmlkaWEvcDIzNzEtMjE4MDtoPTA5N2Zi
-OWFhZWM4YWJkNTIyYjdiODM4MmU1YzQxNjlmNWVhOGY2OTE7aGI9SEVBRAoKCkkgdW5kZXJzdGFu
-ZCB0aGF0IHRoZSBKZXRzb24gVEsxJ3MgUHl0aG9uIGJhc2VkCmh0dHBzOi8vZ2l0aHViLmNvbS9O
-VklESUEvdGVncmEtdWJvb3QtZmxhc2hlci1zY3JpcHRzCmhhdmUgbmV2ZXIgYmVlbiB1cGRhdGVk
-IGZvciBUZWdyYSBYMS4KClRoYXQgbGVhdmVzIEw0VCBKZXRzb24gVFgxIERyaXZlciBQYWNrYWdl
-LCBsYXRlc3QgdmVyc2lvbiBiZWluZyBSMjguMS4wLgoKSGVyZSdzIHdoYXQgSSBoYXZlIHRyaWVk
-OgoKJCBzdWRvIC4vZmxhc2guc2ggcDIzNzEtMjE4MC1kZXZraXQgbW1jYmxrMHAxCgpPbiBvcGVu
-U1VTRSBMZWFwIDQyLjMgdGhpcyBrZWVwcyBmYWlsaW5nIHRoZSBmaXJzdCB0aW1lOgoKY29weWlu
-ZwpiY3RmaWxlKC9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRzb25UWDEvTGludXhfZm9yX1RlZ3Jh
-L2Jvb3Rsb2FkZXIvdDIxMHJlZi9CQ1QvUDIxODBfQTAwX0xQNF9EU0NfMjA0TWh6LmNmZykuLi4K
-ZG9uZS4KY29weWluZwpib290bG9hZGVyKC9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRzb25UWDEv
-TGludXhfZm9yX1RlZ3JhL2Jvb3Rsb2FkZXIvdDIxMHJlZi9jYm9vdC5iaW4pLi4uCmRvbmUuCglw
-b3B1bGF0aW5nIGtlcm5lbCB0byByb290ZnMuLi4gZG9uZS4KCXBvcHVsYXRpbmcgaW5pdHJkIHRv
-IHJvb3Rmcy4uLiBkb25lLgoJcG9wdWxhdGluZyBleHRsaW51eC5jb25mLmVtbWMgdG8gcm9vdGZz
-Li4uIGRvbmUuCglwb3B1bGF0aW5nCi9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRzb25UWDEvTGlu
-dXhfZm9yX1RlZ3JhL2tlcm5lbC9kdGIvdGVncmEyMTAtamV0c29uLXR4MS1wMjU5Ny0yMTgwLWEw
-MS1kZXZraXQuZHRiCnRvIHJvb3Rmcy4uLiBkb25lLgpkb25lLgpNYWtpbmcgQm9vdCBpbWFnZS4u
-LiBkb25lLgpjb3B5aW5nCmJjZmZpbGUoL2hvbWUvYW5kcmVhcy9NQ1UvQVJNL0pldHNvblRYMS9M
-aW51eF9mb3JfVGVncmEvYm9vdGxvYWRlci90MjEwcmVmL2NmZy9ib2FyZF9jb25maWdfcDI1OTct
-ZGV2a2l0LnhtbCkuLi4KZG9uZS4KRXhpc3RpbmcKc29zZmlsZSgvaG9tZS9hbmRyZWFzL01DVS9B
-Uk0vSmV0c29uVFgxL0xpbnV4X2Zvcl9UZWdyYS9ib290bG9hZGVyL252dGJvb3RfcmVjb3Zlcnku
-YmluKQpyZXVzZWQuCmNvcHlpbmcKdGVncmFib290KC9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRz
-b25UWDEvTGludXhfZm9yX1RlZ3JhL2Jvb3Rsb2FkZXIvdDIxMHJlZi9udnRib290LmJpbikuLi4K
-ZG9uZS4KRXhpc3RpbmcKYnBmZmlsZSgvaG9tZS9hbmRyZWFzL01DVS9BUk0vSmV0c29uVFgxL0xp
-bnV4X2Zvcl9UZWdyYS9ib290bG9hZGVyL2JwbXAuYmluKQpyZXVzZWQuCmNvcHlpbmcKd2IwYm9v
-dCgvaG9tZS9hbmRyZWFzL01DVS9BUk0vSmV0c29uVFgxL0xpbnV4X2Zvcl9UZWdyYS9ib290bG9h
-ZGVyL3QyMTByZWYvd2FybWJvb3QuYmluKS4uLgpkb25lLgpFeGlzdGluZwp0b3NmaWxlKC9ob21l
-L2FuZHJlYXMvTUNVL0FSTS9KZXRzb25UWDEvTGludXhfZm9yX1RlZ3JhL2Jvb3Rsb2FkZXIvdG9z
-LmltZykKcmV1c2VkLgpFeGlzdGluZwpla3NmaWxlKC9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRz
-b25UWDEvTGludXhfZm9yX1RlZ3JhL2Jvb3Rsb2FkZXIvZWtzLmltZykKcmV1c2VkLgpjb3B5aW5n
-CmR0YmZpbGUoL2hvbWUvYW5kcmVhcy9NQ1UvQVJNL0pldHNvblRYMS9MaW51eF9mb3JfVGVncmEv
-a2VybmVsL2R0Yi90ZWdyYTIxMC1qZXRzb24tdHgxLXAyNTk3LTIxODAtYTAxLWRldmtpdC5kdGIp
-Li4uCmRvbmUuCk1ha2luZyBzeXN0ZW0uaW1nLi4uCi9kZXYvbG9vcDAgaXMgbm90IGJsb2NrIGRl
-dmljZS4gVGVybWluYXRpbmcuLgoKSSBoYXZlIG1hbmFnZWQgdG8gd29yayBhcm91bmQgdGhhdCBi
-eSBydW5uaW5nIHN1ZG8gbG9zZXR1cCAtZiBvbmNlLgoKVGhhdCBnZXRzIG1lIHRvIGE6CgpVLUJv
-b3QgMjAxNi4wNy1nMGNlN2NhMiAoSnVsIDIwIDIwMTcgLSAwMDozNzowMyAtMDcwMCkKCih3aGVy
-ZSBvdXIgZWZpYm9vdCBjb21tYW5kIGRvZXNuJ3QgcXVpdGUgd29yayB5ZXQpCgoKaHR0cHM6Ly9l
-bGludXgub3JnL0pldHNvbi9UWDFfVXBzdHJlYW1fS2VybmVsCgpjbGFpbXM6ICJUaGUgZGlzdHJp
-YnV0ZWQgdGFyYmFsbCBjb250YWlucyBhIHByZS1idWlsdCBVLUJvb3QgYW5kIGtlcm5lbCwKYnV0
-IHRoZXNlIG1heSBiZSByZXBsYWNlZCB3aXRoIGFueSBpbWFnZXMgeW91IHdpc2ggdG8gZmxhc2gs
-IGJ5CnJlcGxhY2luZyB0aGUgZGlzdHJpYnV0ZWQgaW1hZ2VzIGluIHRoZSBkaXJlY3RvcnkgdHJl
-ZS4iCmFuZCAiVG8gZmxhc2ggb25seSB0aGUgcHJpbWFyeSBib290bG9hZGVyIGFuZCBVLUJvb3Q6
-IC4vZmxhc2guc2ggLWsgRUJUCnAyMzcxLTIxODAgbW1jYmxrMHAxIgoKQXBwYXJlbnRseSB0aGF0
-J3Mgbm90IHRydWUgYW55bW9yZSAoUjIzLjEuMSBhcm1oZiB2cy4gUjI4LjEuMCBhYXJjaDY0KToK
-T3BlcmF0aW9uIHN1Y2NlZWRzLCBidXQgVS1Cb290IGlzIHN0aWxsIHRoZSBvbGQgb25lLgoKUG9z
-c2libGUgY2F1c2U6IFRoZSBFQlQgcGFydGl0aW9uIGdldHMgYSBjYm9vdC5iaW4sIG5vdCB1LWJv
-b3QtZHRiLmJpbi4KCklmIEkgcmVwZWF0IHdpdGhvdXQgLWsgRUJUIGFuZCB3aXRoIHRoZSBvcGVu
-U1VTRSBPQlMgYnVpbGRzIG9mIFUtQm9vdAp2MjAxOC4wMSB0aGVuIGFnYWluIGZsYXNoaW5nIGFw
-cGVhcnMgdG8gc3VjY2VlZCwgYnV0IGJvb3QgZ2V0cyBzdHVjayBhdDoKClswMDAzLjI2MF0gU3Rh
-cnRpbmcgQnBtcCBGVwpbMDAwMy4yNjNdIEJQTVAtRlcgQ2FydmVvdXQ6IEJhc2UgPSAweGZmMmMw
-MDAwIGFuZCBTaXplID0gMHg0MDAwMAoKKHNob3J0IG9mIHNob3dpbmcgdGhlIFUtQm9vdCBiYW5u
-ZXIpCgoKQWxzbywgQVRGIHNob3dzIHVwIGFzOgoKTk9USUNFOiAgQkwzMTogdjEuMihyZWxlYXNl
-KTpjYzVmZDdjCk5PVElDRTogIEJMMzE6IEJ1aWx0IDogMDA6Mzc6MDIsIEp1bCAyMCAyMDE3Cgoo
-d2hpY2ggaXMgbW9zdCBjZXJ0YWlubHkgbGFja2luZyBKYW4gMjAxOCBTcGVjdHJlIG1pdGlnYXRp
-b25zIGZvciBDQTU3KQoKU2VjdXJpdHkgQnVsbGV0aW4KaHR0cDovL252aWRpYS5jdXN0aGVscC5j
-b20vYXBwL2Fuc3dlcnMvZGV0YWlsL2FfaWQvNDYxNgphbm5vdW5jZXMgYW4gUjI4LjIgZm9yIGxh
-dGVyIHRoaXMgbW9udGgsIGJ1dCB3aXRoIHQyMTAgaW4gbWFpbmxpbmUgQVRGIEkKd291bGQgcmVh
-bGx5IGxpa2UgdG8gdXNlIG15IG93biBwYXRjaGVkIEFURiBidWlsZCBhbHJlYWR5LgoKaHR0cHM6
-Ly9naXRodWIuY29tL0FSTS1zb2Z0d2FyZS9hcm0tdHJ1c3RlZC1maXJtd2FyZS9ibG9iLzZmNjI1
-NzQ3Njc1NDZiMTExOTkxNDJiMWI1NzdhODY1NzEwNTFjNDAvZG9jcy9wbGF0L252aWRpYS10ZWdy
-YS5yc3QKZG9lc24ndCBleHBsYWluIGhvdyB0byBnZXQgdGhlIHQyMTAgYmwzMS5iaW4gb250byBh
-IGJvYXJkIGVpdGhlci4KCgpodHRwczovL2VsaW51eC5vcmcvSmV0c29uX1RYMSBsaW5rcyB0byBt
-dWx0aXBsZSBBcHAgTm90ZXMgb24gYQpub24tcmVhY2hhYmxlIE52aWRpYSBGVFAgc2VydmVyLiBJ
-IGZvdW5kIHRoYXQgcmVwbGFjaW5nIGZ0cCB3aXRoIGh0dHAsCnRoZXkgY2FuIHN0aWxsIGJlIHJl
-YWNoZWQgKGRhdGVkIDIwMTUpLCBidXQKaHR0cDovL2Rvd25sb2FkLm52aWRpYS5jb20vdGVncmEt
-cHVibGljLWFwcG5vdGVzL3QyMTAtbnZ0Ym9vdC1mbG93Lmh0bWwKaXNuJ3QgdG9vIGhlbHBmdWwg
-ZWl0aGVyLCBvdGhlciB0aGFuIGdpdmluZyBhIHJvdWdoIG92ZXJ2aWV3LgoKCkNvbGxlYWd1ZXMg
-aGF2ZSBzdWNjZWVkZWQgaW4gbG9hZGluZyBhIFUtQm9vdCB2aWEgUkNNIGludG8gUkFNIGFuZApl
-eGVjdXRpbmcgZnJvbSB0aGVyZSwgYnV0IEkgZmlndXJlIHRoYXQgd29uJ3QgcXVpdGUgd29yayBm
-b3IgQVRGLgpBbmQgaXQncyBubyBwZXJtYW5lbnQgc29sdXRpb24gYW55d2F5LgoKClNvIGNvdWxk
-IHNvbWVvbmUgcGxlYXNlIGNvbW1lbnQgb24gaG93IHRvIHBlcmZvcm0gYSBtaW5pbWFsbHktaW52
-YXNpdmUKdXBkYXRlIG9mIHRoZSBpbmRpdmlkdWFsIE9wZW4gU291cmNlIGZpcm13YXJlIGNvbXBv
-bmVudHMgZm9yIEpldHNvbiBUWDE/CgpUaGFua3MsCkFuZHJlYXMKCi0tIApTVVNFIExpbnV4IEdt
-YkgsIE1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJuYmVyZywgR2VybWFueQpHRjogRmVsaXggSW1l
-bmTDtnJmZmVyLCBKYW5lIFNtaXRoYXJkLCBHcmFoYW0gTm9ydG9uCkhSQiAyMTI4NCAoQUcgTsO8
-cm5iZXJnKQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpV
-LUJvb3QgbWFpbGluZyBsaXN0ClUtQm9vdEBsaXN0cy5kZW54LmRlCmh0dHBzOi8vbGlzdHMuZGVu
-eC5kZS9saXN0aW5mby91LWJvb3QK
+Hi Andreas,
+
+In the cboot + U-Boot combination, cboot loads U-Boot from the usual 
+kernel partition (LNX or kernel depending on system), so flashing U-Boot 
+there should do the trick. I believe this did indeed change in some L4T 
+version, so the wiki page needs to be updated. Tom should know more 
+about this.
+
+I expect Varun to know the details about ATF, but I'll check if I can 
+find some answer myself.
+
+Thanks,
+Mikko
+
+On 02/15/2018 03:51 AM, Andreas Färber wrote:
+> Hello,
+> 
+> I would like to test the latest version of U-Boot on the Jetson TX1.
+> 
+> Unfortunately U-Boot is lacking a README that would explain how to do that:
+> 
+> http://git.denx.de/?p=u-boot.git;a=tree;f=board/nvidia/p2371-2180;h=097fb9aaec8abd522b7b8382e5c4169f5ea8f691;hb=HEAD
+> 
+> 
+> I understand that the Jetson TK1's Python based
+> https://github.com/NVIDIA/tegra-uboot-flasher-scripts
+> have never been updated for Tegra X1.
+> 
+> That leaves L4T Jetson TX1 Driver Package, latest version being R28.1.0.
+> 
+> Here's what I have tried:
+> 
+> $ sudo ./flash.sh p2371-2180-devkit mmcblk0p1
+> 
+> On openSUSE Leap 42.3 this keeps failing the first time:
+> 
+> copying
+> bctfile(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/bootloader/t210ref/BCT/P2180_A00_LP4_DSC_204Mhz.cfg)...
+> done.
+> copying
+> bootloader(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/bootloader/t210ref/cboot.bin)...
+> done.
+> 	populating kernel to rootfs... done.
+> 	populating initrd to rootfs... done.
+> 	populating extlinux.conf.emmc to rootfs... done.
+> 	populating
+> /home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/kernel/dtb/tegra210-jetson-tx1-p2597-2180-a01-devkit.dtb
+> to rootfs... done.
+> done.
+> Making Boot image... done.
+> copying
+> bcffile(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/bootloader/t210ref/cfg/board_config_p2597-devkit.xml)...
+> done.
+> Existing
+> sosfile(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/bootloader/nvtboot_recovery.bin)
+> reused.
+> copying
+> tegraboot(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/bootloader/t210ref/nvtboot.bin)...
+> done.
+> Existing
+> bpffile(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/bootloader/bpmp.bin)
+> reused.
+> copying
+> wb0boot(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/bootloader/t210ref/warmboot.bin)...
+> done.
+> Existing
+> tosfile(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/bootloader/tos.img)
+> reused.
+> Existing
+> eksfile(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/bootloader/eks.img)
+> reused.
+> copying
+> dtbfile(/home/andreas/MCU/ARM/JetsonTX1/Linux_for_Tegra/kernel/dtb/tegra210-jetson-tx1-p2597-2180-a01-devkit.dtb)...
+> done.
+> Making system.img...
+> /dev/loop0 is not block device. Terminating..
+> 
+> I have managed to work around that by running sudo losetup -f once.
+> 
+> That gets me to a:
+> 
+> U-Boot 2016.07-g0ce7ca2 (Jul 20 2017 - 00:37:03 -0700)
+> 
+> (where our efiboot command doesn't quite work yet)
+> 
+> 
+> https://elinux.org/Jetson/TX1_Upstream_Kernel
+> 
+> claims: "The distributed tarball contains a pre-built U-Boot and kernel,
+> but these may be replaced with any images you wish to flash, by
+> replacing the distributed images in the directory tree."
+> and "To flash only the primary bootloader and U-Boot: ./flash.sh -k EBT
+> p2371-2180 mmcblk0p1"
+> 
+> Apparently that's not true anymore (R23.1.1 armhf vs. R28.1.0 aarch64):
+> Operation succeeds, but U-Boot is still the old one.
+> 
+> Possible cause: The EBT partition gets a cboot.bin, not u-boot-dtb.bin.
+> 
+> If I repeat without -k EBT and with the openSUSE OBS builds of U-Boot
+> v2018.01 then again flashing appears to succeed, but boot gets stuck at:
+> 
+> [0003.260] Starting Bpmp FW
+> [0003.263] BPMP-FW Carveout: Base = 0xff2c0000 and Size = 0x40000
+> 
+> (short of showing the U-Boot banner)
+> 
+> 
+> Also, ATF shows up as:
+> 
+> NOTICE:  BL31: v1.2(release):cc5fd7c
+> NOTICE:  BL31: Built : 00:37:02, Jul 20 2017
+> 
+> (which is most certainly lacking Jan 2018 Spectre mitigations for CA57)
+> 
+> Security Bulletin
+> http://nvidia.custhelp.com/app/answers/detail/a_id/4616
+> announces an R28.2 for later this month, but with t210 in mainline ATF I
+> would really like to use my own patched ATF build already.
+> 
+> https://github.com/ARM-software/arm-trusted-firmware/blob/6f62574767546b11199142b1b577a86571051c40/docs/plat/nvidia-tegra.rst
+> doesn't explain how to get the t210 bl31.bin onto a board either.
+> 
+> 
+> https://elinux.org/Jetson_TX1 links to multiple App Notes on a
+> non-reachable Nvidia FTP server. I found that replacing ftp with http,
+> they can still be reached (dated 2015), but
+> http://download.nvidia.com/tegra-public-appnotes/t210-nvtboot-flow.html
+> isn't too helpful either, other than giving a rough overview.
+> 
+> 
+> Colleagues have succeeded in loading a U-Boot via RCM into RAM and
+> executing from there, but I figure that won't quite work for ATF.
+> And it's no permanent solution anyway.
+> 
+> 
+> So could someone please comment on how to perform a minimally-invasive
+> update of the individual Open Source firmware components for Jetson TX1?
+> 
+> Thanks,
+> Andreas
+> 
