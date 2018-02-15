@@ -1,166 +1,103 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 2/3] usb: xhci: tegra: Add runtime PM support
-Date: Wed, 14 Feb 2018 16:34:44 +0000
-Message-ID: <1518626085-29102-2-git-send-email-jonathanh@nvidia.com>
-References: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Subject: How to test new bootloaders on Jetson TX1?
+Date: Thu, 15 Feb 2018 02:51:17 +0100
+Message-ID: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <u-boot-bounces@lists.denx.de>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+To: linux-tegra@vger.kernel.org, U-Boot <u-boot@lists.denx.de>
+Cc: Mian Yousaf Kaukab <yousaf.kaukab@suse.com>, Alexander Graf <agraf@suse.de>, Varun Wadekar <vwadekar@nvidia.com>, Tom Warren <twarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add runtime PM support to the Tegra XHCI driver and move the function
-calls to enable/disable the clocks, regulators and PHY into the runtime
-PM callbacks.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/usb/host/xhci-tegra.c | 80 ++++++++++++++++++++++++++++++-------------
- 1 file changed, 56 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 02b0b24faa58..42aa67858b53 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -18,6 +18,7 @@
- #include <linux/phy/tegra/xusb.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
-@@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	 */
- 	platform_set_drvdata(pdev, tegra);
- 
--	err = tegra_xusb_clk_enable(tegra);
--	if (err) {
--		dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
--		goto put_usb2;
--	}
--
--	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
--	if (err) {
--		dev_err(&pdev->dev, "failed to enable regulators: %d\n", err);
--		goto disable_clk;
--	}
-+	pm_runtime_enable(&pdev->dev);
- 
--	err = tegra_xusb_phy_enable(tegra);
-+	err = pm_runtime_get_sync(&pdev->dev);
- 	if (err < 0) {
--		dev_err(&pdev->dev, "failed to enable PHYs: %d\n", err);
--		goto disable_regulator;
-+		dev_err(&pdev->dev, "failed to enable device: %d\n", err);
-+		goto disable_rpm;
- 	}
- 
- 	tegra_xusb_ipfs_config(tegra, regs);
-@@ -1090,7 +1081,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	err = tegra_xusb_load_firmware(tegra);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to load firmware: %d\n", err);
--		goto disable_phy;
-+		goto put_rpm;
- 	}
- 
- 	tegra->hcd->regs = tegra->regs;
-@@ -1100,7 +1091,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	err = usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to add USB HCD: %d\n", err);
--		goto disable_phy;
-+		goto put_rpm;
- 	}
- 
- 	device_wakeup_enable(tegra->hcd->self.controller);
-@@ -1155,13 +1146,10 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	usb_put_hcd(xhci->shared_hcd);
- remove_usb2:
- 	usb_remove_hcd(tegra->hcd);
--disable_phy:
--	tegra_xusb_phy_disable(tegra);
--disable_regulator:
--	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
--disable_clk:
--	tegra_xusb_clk_disable(tegra);
--put_usb2:
-+put_rpm:
-+	pm_runtime_put_sync(&pdev->dev);
-+disable_rpm:
-+	pm_runtime_disable(&pdev->dev);
- 	usb_put_hcd(tegra->hcd);
- put_padctl:
- 	tegra_xusb_padctl_put(tegra->padctl);
-@@ -1181,13 +1169,55 @@ static int tegra_xusb_remove(struct platform_device *pdev)
- 	dma_free_coherent(&pdev->dev, tegra->fw.size, tegra->fw.virt,
- 			  tegra->fw.phys);
- 
-+	pm_runtime_put_sync(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	tegra_xusb_padctl_put(tegra->padctl);
-+
-+	return 0;
-+}
-+
-+static int tegra_xusb_runtime_suspend(struct device *dev)
-+{
-+	struct tegra_xusb *tegra = dev_get_drvdata(dev);
-+
- 	tegra_xusb_phy_disable(tegra);
- 	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
- 	tegra_xusb_clk_disable(tegra);
- 
--	tegra_xusb_padctl_put(tegra->padctl);
-+	return 0;
-+}
-+
-+static int tegra_xusb_runtime_resume(struct device *dev)
-+{
-+	struct tegra_xusb *tegra = dev_get_drvdata(dev);
-+	int err;
-+
-+	err = tegra_xusb_clk_enable(tegra);
-+	if (err) {
-+		dev_err(dev, "failed to enable clocks: %d\n", err);
-+		return err;
-+	}
-+
-+	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
-+	if (err) {
-+		dev_err(dev, "failed to enable regulators: %d\n", err);
-+		goto disable_clk;
-+	}
-+
-+	err = tegra_xusb_phy_enable(tegra);
-+	if (err < 0) {
-+		dev_err(dev, "failed to enable PHYs: %d\n", err);
-+		goto disable_regulator;
-+	}
- 
- 	return 0;
-+
-+disable_regulator:
-+	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
-+disable_clk:
-+	tegra_xusb_clk_disable(tegra);
-+	return err;
- }
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -1211,6 +1241,8 @@ static int tegra_xusb_resume(struct device *dev)
- #endif
- 
- static const struct dev_pm_ops tegra_xusb_pm_ops = {
-+	SET_RUNTIME_PM_OPS(tegra_xusb_runtime_suspend,
-+			   tegra_xusb_runtime_resume, NULL)
- 	SET_SYSTEM_SLEEP_PM_OPS(tegra_xusb_suspend, tegra_xusb_resume)
- };
- 
--- 
-2.7.4
+SGVsbG8sCgpJIHdvdWxkIGxpa2UgdG8gdGVzdCB0aGUgbGF0ZXN0IHZlcnNpb24gb2YgVS1Cb290
+IG9uIHRoZSBKZXRzb24gVFgxLgoKVW5mb3J0dW5hdGVseSBVLUJvb3QgaXMgbGFja2luZyBhIFJF
+QURNRSB0aGF0IHdvdWxkIGV4cGxhaW4gaG93IHRvIGRvIHRoYXQ6CgpodHRwOi8vZ2l0LmRlbngu
+ZGUvP3A9dS1ib290LmdpdDthPXRyZWU7Zj1ib2FyZC9udmlkaWEvcDIzNzEtMjE4MDtoPTA5N2Zi
+OWFhZWM4YWJkNTIyYjdiODM4MmU1YzQxNjlmNWVhOGY2OTE7aGI9SEVBRAoKCkkgdW5kZXJzdGFu
+ZCB0aGF0IHRoZSBKZXRzb24gVEsxJ3MgUHl0aG9uIGJhc2VkCmh0dHBzOi8vZ2l0aHViLmNvbS9O
+VklESUEvdGVncmEtdWJvb3QtZmxhc2hlci1zY3JpcHRzCmhhdmUgbmV2ZXIgYmVlbiB1cGRhdGVk
+IGZvciBUZWdyYSBYMS4KClRoYXQgbGVhdmVzIEw0VCBKZXRzb24gVFgxIERyaXZlciBQYWNrYWdl
+LCBsYXRlc3QgdmVyc2lvbiBiZWluZyBSMjguMS4wLgoKSGVyZSdzIHdoYXQgSSBoYXZlIHRyaWVk
+OgoKJCBzdWRvIC4vZmxhc2guc2ggcDIzNzEtMjE4MC1kZXZraXQgbW1jYmxrMHAxCgpPbiBvcGVu
+U1VTRSBMZWFwIDQyLjMgdGhpcyBrZWVwcyBmYWlsaW5nIHRoZSBmaXJzdCB0aW1lOgoKY29weWlu
+ZwpiY3RmaWxlKC9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRzb25UWDEvTGludXhfZm9yX1RlZ3Jh
+L2Jvb3Rsb2FkZXIvdDIxMHJlZi9CQ1QvUDIxODBfQTAwX0xQNF9EU0NfMjA0TWh6LmNmZykuLi4K
+ZG9uZS4KY29weWluZwpib290bG9hZGVyKC9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRzb25UWDEv
+TGludXhfZm9yX1RlZ3JhL2Jvb3Rsb2FkZXIvdDIxMHJlZi9jYm9vdC5iaW4pLi4uCmRvbmUuCglw
+b3B1bGF0aW5nIGtlcm5lbCB0byByb290ZnMuLi4gZG9uZS4KCXBvcHVsYXRpbmcgaW5pdHJkIHRv
+IHJvb3Rmcy4uLiBkb25lLgoJcG9wdWxhdGluZyBleHRsaW51eC5jb25mLmVtbWMgdG8gcm9vdGZz
+Li4uIGRvbmUuCglwb3B1bGF0aW5nCi9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRzb25UWDEvTGlu
+dXhfZm9yX1RlZ3JhL2tlcm5lbC9kdGIvdGVncmEyMTAtamV0c29uLXR4MS1wMjU5Ny0yMTgwLWEw
+MS1kZXZraXQuZHRiCnRvIHJvb3Rmcy4uLiBkb25lLgpkb25lLgpNYWtpbmcgQm9vdCBpbWFnZS4u
+LiBkb25lLgpjb3B5aW5nCmJjZmZpbGUoL2hvbWUvYW5kcmVhcy9NQ1UvQVJNL0pldHNvblRYMS9M
+aW51eF9mb3JfVGVncmEvYm9vdGxvYWRlci90MjEwcmVmL2NmZy9ib2FyZF9jb25maWdfcDI1OTct
+ZGV2a2l0LnhtbCkuLi4KZG9uZS4KRXhpc3RpbmcKc29zZmlsZSgvaG9tZS9hbmRyZWFzL01DVS9B
+Uk0vSmV0c29uVFgxL0xpbnV4X2Zvcl9UZWdyYS9ib290bG9hZGVyL252dGJvb3RfcmVjb3Zlcnku
+YmluKQpyZXVzZWQuCmNvcHlpbmcKdGVncmFib290KC9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRz
+b25UWDEvTGludXhfZm9yX1RlZ3JhL2Jvb3Rsb2FkZXIvdDIxMHJlZi9udnRib290LmJpbikuLi4K
+ZG9uZS4KRXhpc3RpbmcKYnBmZmlsZSgvaG9tZS9hbmRyZWFzL01DVS9BUk0vSmV0c29uVFgxL0xp
+bnV4X2Zvcl9UZWdyYS9ib290bG9hZGVyL2JwbXAuYmluKQpyZXVzZWQuCmNvcHlpbmcKd2IwYm9v
+dCgvaG9tZS9hbmRyZWFzL01DVS9BUk0vSmV0c29uVFgxL0xpbnV4X2Zvcl9UZWdyYS9ib290bG9h
+ZGVyL3QyMTByZWYvd2FybWJvb3QuYmluKS4uLgpkb25lLgpFeGlzdGluZwp0b3NmaWxlKC9ob21l
+L2FuZHJlYXMvTUNVL0FSTS9KZXRzb25UWDEvTGludXhfZm9yX1RlZ3JhL2Jvb3Rsb2FkZXIvdG9z
+LmltZykKcmV1c2VkLgpFeGlzdGluZwpla3NmaWxlKC9ob21lL2FuZHJlYXMvTUNVL0FSTS9KZXRz
+b25UWDEvTGludXhfZm9yX1RlZ3JhL2Jvb3Rsb2FkZXIvZWtzLmltZykKcmV1c2VkLgpjb3B5aW5n
+CmR0YmZpbGUoL2hvbWUvYW5kcmVhcy9NQ1UvQVJNL0pldHNvblRYMS9MaW51eF9mb3JfVGVncmEv
+a2VybmVsL2R0Yi90ZWdyYTIxMC1qZXRzb24tdHgxLXAyNTk3LTIxODAtYTAxLWRldmtpdC5kdGIp
+Li4uCmRvbmUuCk1ha2luZyBzeXN0ZW0uaW1nLi4uCi9kZXYvbG9vcDAgaXMgbm90IGJsb2NrIGRl
+dmljZS4gVGVybWluYXRpbmcuLgoKSSBoYXZlIG1hbmFnZWQgdG8gd29yayBhcm91bmQgdGhhdCBi
+eSBydW5uaW5nIHN1ZG8gbG9zZXR1cCAtZiBvbmNlLgoKVGhhdCBnZXRzIG1lIHRvIGE6CgpVLUJv
+b3QgMjAxNi4wNy1nMGNlN2NhMiAoSnVsIDIwIDIwMTcgLSAwMDozNzowMyAtMDcwMCkKCih3aGVy
+ZSBvdXIgZWZpYm9vdCBjb21tYW5kIGRvZXNuJ3QgcXVpdGUgd29yayB5ZXQpCgoKaHR0cHM6Ly9l
+bGludXgub3JnL0pldHNvbi9UWDFfVXBzdHJlYW1fS2VybmVsCgpjbGFpbXM6ICJUaGUgZGlzdHJp
+YnV0ZWQgdGFyYmFsbCBjb250YWlucyBhIHByZS1idWlsdCBVLUJvb3QgYW5kIGtlcm5lbCwKYnV0
+IHRoZXNlIG1heSBiZSByZXBsYWNlZCB3aXRoIGFueSBpbWFnZXMgeW91IHdpc2ggdG8gZmxhc2gs
+IGJ5CnJlcGxhY2luZyB0aGUgZGlzdHJpYnV0ZWQgaW1hZ2VzIGluIHRoZSBkaXJlY3RvcnkgdHJl
+ZS4iCmFuZCAiVG8gZmxhc2ggb25seSB0aGUgcHJpbWFyeSBib290bG9hZGVyIGFuZCBVLUJvb3Q6
+IC4vZmxhc2guc2ggLWsgRUJUCnAyMzcxLTIxODAgbW1jYmxrMHAxIgoKQXBwYXJlbnRseSB0aGF0
+J3Mgbm90IHRydWUgYW55bW9yZSAoUjIzLjEuMSBhcm1oZiB2cy4gUjI4LjEuMCBhYXJjaDY0KToK
+T3BlcmF0aW9uIHN1Y2NlZWRzLCBidXQgVS1Cb290IGlzIHN0aWxsIHRoZSBvbGQgb25lLgoKUG9z
+c2libGUgY2F1c2U6IFRoZSBFQlQgcGFydGl0aW9uIGdldHMgYSBjYm9vdC5iaW4sIG5vdCB1LWJv
+b3QtZHRiLmJpbi4KCklmIEkgcmVwZWF0IHdpdGhvdXQgLWsgRUJUIGFuZCB3aXRoIHRoZSBvcGVu
+U1VTRSBPQlMgYnVpbGRzIG9mIFUtQm9vdAp2MjAxOC4wMSB0aGVuIGFnYWluIGZsYXNoaW5nIGFw
+cGVhcnMgdG8gc3VjY2VlZCwgYnV0IGJvb3QgZ2V0cyBzdHVjayBhdDoKClswMDAzLjI2MF0gU3Rh
+cnRpbmcgQnBtcCBGVwpbMDAwMy4yNjNdIEJQTVAtRlcgQ2FydmVvdXQ6IEJhc2UgPSAweGZmMmMw
+MDAwIGFuZCBTaXplID0gMHg0MDAwMAoKKHNob3J0IG9mIHNob3dpbmcgdGhlIFUtQm9vdCBiYW5u
+ZXIpCgoKQWxzbywgQVRGIHNob3dzIHVwIGFzOgoKTk9USUNFOiAgQkwzMTogdjEuMihyZWxlYXNl
+KTpjYzVmZDdjCk5PVElDRTogIEJMMzE6IEJ1aWx0IDogMDA6Mzc6MDIsIEp1bCAyMCAyMDE3Cgoo
+d2hpY2ggaXMgbW9zdCBjZXJ0YWlubHkgbGFja2luZyBKYW4gMjAxOCBTcGVjdHJlIG1pdGlnYXRp
+b25zIGZvciBDQTU3KQoKU2VjdXJpdHkgQnVsbGV0aW4KaHR0cDovL252aWRpYS5jdXN0aGVscC5j
+b20vYXBwL2Fuc3dlcnMvZGV0YWlsL2FfaWQvNDYxNgphbm5vdW5jZXMgYW4gUjI4LjIgZm9yIGxh
+dGVyIHRoaXMgbW9udGgsIGJ1dCB3aXRoIHQyMTAgaW4gbWFpbmxpbmUgQVRGIEkKd291bGQgcmVh
+bGx5IGxpa2UgdG8gdXNlIG15IG93biBwYXRjaGVkIEFURiBidWlsZCBhbHJlYWR5LgoKaHR0cHM6
+Ly9naXRodWIuY29tL0FSTS1zb2Z0d2FyZS9hcm0tdHJ1c3RlZC1maXJtd2FyZS9ibG9iLzZmNjI1
+NzQ3Njc1NDZiMTExOTkxNDJiMWI1NzdhODY1NzEwNTFjNDAvZG9jcy9wbGF0L252aWRpYS10ZWdy
+YS5yc3QKZG9lc24ndCBleHBsYWluIGhvdyB0byBnZXQgdGhlIHQyMTAgYmwzMS5iaW4gb250byBh
+IGJvYXJkIGVpdGhlci4KCgpodHRwczovL2VsaW51eC5vcmcvSmV0c29uX1RYMSBsaW5rcyB0byBt
+dWx0aXBsZSBBcHAgTm90ZXMgb24gYQpub24tcmVhY2hhYmxlIE52aWRpYSBGVFAgc2VydmVyLiBJ
+IGZvdW5kIHRoYXQgcmVwbGFjaW5nIGZ0cCB3aXRoIGh0dHAsCnRoZXkgY2FuIHN0aWxsIGJlIHJl
+YWNoZWQgKGRhdGVkIDIwMTUpLCBidXQKaHR0cDovL2Rvd25sb2FkLm52aWRpYS5jb20vdGVncmEt
+cHVibGljLWFwcG5vdGVzL3QyMTAtbnZ0Ym9vdC1mbG93Lmh0bWwKaXNuJ3QgdG9vIGhlbHBmdWwg
+ZWl0aGVyLCBvdGhlciB0aGFuIGdpdmluZyBhIHJvdWdoIG92ZXJ2aWV3LgoKCkNvbGxlYWd1ZXMg
+aGF2ZSBzdWNjZWVkZWQgaW4gbG9hZGluZyBhIFUtQm9vdCB2aWEgUkNNIGludG8gUkFNIGFuZApl
+eGVjdXRpbmcgZnJvbSB0aGVyZSwgYnV0IEkgZmlndXJlIHRoYXQgd29uJ3QgcXVpdGUgd29yayBm
+b3IgQVRGLgpBbmQgaXQncyBubyBwZXJtYW5lbnQgc29sdXRpb24gYW55d2F5LgoKClNvIGNvdWxk
+IHNvbWVvbmUgcGxlYXNlIGNvbW1lbnQgb24gaG93IHRvIHBlcmZvcm0gYSBtaW5pbWFsbHktaW52
+YXNpdmUKdXBkYXRlIG9mIHRoZSBpbmRpdmlkdWFsIE9wZW4gU291cmNlIGZpcm13YXJlIGNvbXBv
+bmVudHMgZm9yIEpldHNvbiBUWDE/CgpUaGFua3MsCkFuZHJlYXMKCi0tIApTVVNFIExpbnV4IEdt
+YkgsIE1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJuYmVyZywgR2VybWFueQpHRjogRmVsaXggSW1l
+bmTDtnJmZmVyLCBKYW5lIFNtaXRoYXJkLCBHcmFoYW0gTm9ydG9uCkhSQiAyMTI4NCAoQUcgTsO8
+cm5iZXJnKQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpV
+LUJvb3QgbWFpbGluZyBsaXN0ClUtQm9vdEBsaXN0cy5kZW54LmRlCmh0dHBzOi8vbGlzdHMuZGVu
+eC5kZS9saXN0aW5mby91LWJvb3QK
