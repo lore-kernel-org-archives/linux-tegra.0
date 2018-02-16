@@ -1,66 +1,101 @@
-From: Varun Wadekar <vwadekar@nvidia.com>
-Subject: Re: How to test new bootloaders on Jetson TX1? - ATF
-Date: Fri, 16 Feb 2018 06:18:38 +0000
-Message-ID: <e9728e54-8c58-4586-8863-0f26eb156deb@nvidia.com>
-References: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
- <0247bb39-1f53-5c45-4d37-247813b53b96@nvidia.com>
- <8d80b0d3-eaed-b1ab-02c9-86f81ac4b7fa@suse.de>
- <33de1065-1372-282c-9646-30a63729e08e@nvidia.com>
- <71bf7527-3fb7-293f-8a1c-63ce74882649@suse.de>
- <fa89b123-bfcb-6f91-59cc-bae29aef19ab@nvidia.com>
- <d6a44448867a47028685fb0af0005d59@HQMAIL101.nvidia.com>
- <205465fc7b2f4547ac81c7394108e2c7@bgmail103.nvidia.com>,
- <d219bbd4-df4c-f6b7-e64d-5f305fe5d854@suse.de>
+From: Philippe Ombredanne <pombredanne-od1rfyK75/E@public.gmane.org>
+Subject: Re: [PATCH v3 6/7] arm64: tegra: Add Tegra194 chip device tree
+Date: Fri, 16 Feb 2018 13:33:53 +0100
+Message-ID: <CAOFm3uHvbut7w5eBuggNg0NnW-UvBsRjifsJxGuj3L34vCjEHA@mail.gmail.com>
+References: <20180215145206.24775-1-mperttunen@nvidia.com> <20180215145206.24775-7-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <d219bbd4-df4c-f6b7-e64d-5f305fe5d854@suse.de>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
-To: =?iso-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Cc: Alexander Graf <agraf@suse.de>, Jonathan Hunter <jonathanh@nvidia.com>, U-Boot <u-boot@lists.denx.de>, Tom Warren <TWarren@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mian Yousaf Kaukab <yousaf.kaukab@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180215145206.24775-7-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-WWVzLiBUaGF0J3MgYSBjdXN0b20gU01DIHdlIGhhdmUgZm9yIHNvbWUgbm9uLUw0VCB1c2VzLiBJ
-dCBoYXMgbm90IGJlZW4gdXBzdHJlYW1lZCB5ZXQuCgpZb3UgY2FuIGFkZCBkdW1teSBoYW5kbGlu
-ZyBpbiB0ZWdyYV9zaXBfY2FsbHMuYyB0byBtb3ZlIGZvcndhcmQuCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpGcm9tOiBBbmRyZWFzIEbDpHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+
-ClNlbnQ6IFRodXJzZGF5LCBGZWJydWFyeSAxNSwgMjAxOCA3OjA0IFBNClRvOiBWYXJ1biBXYWRl
-a2FyCkNjOiBUb20gV2FycmVuOyBKb25hdGhhbiBIdW50ZXI7IGxpbnV4LXRlZ3JhQHZnZXIua2Vy
-bmVsLm9yZzsgVS1Cb290OyBBbGV4YW5kZXIgR3JhZjsgTWlhbiBZb3VzYWYgS2F1a2FiClN1Ympl
-Y3Q6IFJlOiBIb3cgdG8gdGVzdCBuZXcgYm9vdGxvYWRlcnMgb24gSmV0c29uIFRYMT8gLSBBVEYK
-CkhpIFZhcnVuLAoKQW0gMTUuMDIuMjAxOCB1bSAxNzo1NyBzY2hyaWViIFZhcnVuIFdhZGVrYXI6
-Cj4gQW5kcmVhcywgY2FuIHlvdSB0cnkgdGhlIFRPUyBwYWNrYWdpbmcgc2NyaXB0IGF2YWlsYWJs
-ZSBpbiBvdXIgcHVibGljIHJlcG8/Cj4KPiBodHRwOi8vbnYtdGVncmEubnZpZGlhLmNvbS9naXR3
-ZWIvP3A9M3JkcGFydHkvb3RlX3BhcnRuZXIvdGxrLmdpdDthPWJsb2I7Zj10b29scy9nZW5fdG9z
-X3BhcnRfaW1nLnB5O2g9NDc4MjhmNzAyOGU1NmE2Y2ZmYjliNzczNTAyYjEzZGM0MzFhMDE1ZTto
-Yj1IRUFECgpHcmVhdCwgdGhhdCBzY3JpcHQgZG9lcyB3b3JrLiBJdCBpcyBsYWNraW5nIHVzYWdl
-IG91dHB1dCwgYnV0IGxvb2tpbmcgYXQKdGhlIGNvZGUsIGl0cyBhcmd1bWVudHMgd2VyZSBzZWxm
-LWRvY3VtZW50aW5nLgoKPiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgdGhpcyBkb2VzIG5vdCB3b3Jr
-IGZvciB5b3UuCj4KPiBGb3IgdGhlIHVwc3RyZWFtIEFURiBjb2RlLCBvdXIgZG93bnN0cmVhbSBo
-YXMgbm90IGNhdWdodCB1cCB3aXRoIHVwc3RyZWFtIHlldCwgc28gSSBhbSBub3Qgc3VyZSBpZiB1
-cHN0cmVhbSB3b3VsZCBkaXJlY3RseSB3b3JrIGZvciBUWDEuIEJ1dCBpdHMgZGVmaW5pdGVseSB3
-b3J0aCBhIHRyeS4KCkkgdHJpZWQgUjI4LjEgZmxhc2guc2ggLWsgVE9TIHdpdGggbXkgQVRGIHYx
-LjQgd2l0aCBTcGVjdHJlIGJhY2twb3J0cywKd2l0aG91dCBTUEQuIEJMMzEgYXBwZWFycyB0byBp
-bml0aWFsaXplIG9rYXksIGJ1dCBsYXRlciBzb21ldGhpbmcgcnVucwppbnRvIGFuIHVuaGFuZGxl
-ZCBTTUMgMHg4MjAwMDAxNSAtIHRoaW5ncyB0aGVuIGdvIHNvdXRoIGFuZCBpdCBkb2Vzbid0CnJl
-YWNoIHRoZSBOdmlkaWEgVS1Cb290LiBTZXJpYWwgbG9nIGF0dGFjaGVkLgoKQWNjb3JkaW5nIHRv
-Cmh0dHBzOi8vZ2l0aHViLmNvbS9BUk0tc29mdHdhcmUvYXJtLXRydXN0ZWQtZmlybXdhcmUvYmxv
-Yi9tYXN0ZXIvZG9jcy9hcm0tc2lwLXNlcnZpY2UucnN0CnRoYXQgU01DIGZ1bmN0aW9uIElEIGZh
-bGxzIGludG8gdGhlIFNpUCByYW5nZSwgc28gaW5kZWVkIHNvbWV0aGluZwpOdmlkaWEtc3BlY2lm
-aWMgbWlzc2luZyBpbiB2MS40PwoKUmVnYXJkcywKQW5kcmVhcwoKaHR0cHM6Ly9idWlsZC5vcGVu
-c3VzZS5vcmcvcGFja2FnZS9zaG93L2hhcmR3YXJlOmJvb3QvYXJtLXRydXN0ZWQtZmlybXdhcmUt
-dGVncmEyMTAKCi0tClNVU0UgTGludXggR21iSCwgTWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5i
-ZXJnLCBHZXJtYW55CkdGOiBGZWxpeCBJbWVuZMO2cmZmZXIsIEphbmUgU21pdGhhcmQsIEdyYWhh
-bSBOb3J0b24KSFJCIDIxMjg0IChBRyBOw7xybmJlcmcpCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fClUtQm9vdCBtYWlsaW5nIGxpc3QKVS1Cb290QGxpc3Rz
-LmRlbnguZGUKaHR0cHM6Ly9saXN0cy5kZW54LmRlL2xpc3RpbmZvL3UtYm9vdAo=
+Mikko,
+
+On Thu, Feb 15, 2018 at 3:52 PM, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Add the chip-level device tree, including binding headers, for the
+> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
+> are initially available, enough to boot to UART console.
+>
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>
+> Notes:
+>     v3:
+>     - added hypervisor-related apertures to GIC node
+>     - removed GPL boilerplate in favor of SPDX and harmonized
+>       copyright headers
+
+Thanks for this boilerplate removal! but see a few nits below.
+
+<snip>
+
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/tegra194-clock.h
+> @@ -0,0 +1,653 @@
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+
+The proper style should be this for a .h header on the first line per [1]
+
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+> + *
+> + */
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
+
+<snip>
+
+> --- /dev/null
+> +++ b/include/dt-bindings/gpio/tegra194-gpio.h
+> @@ -0,0 +1,64 @@
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+> +
+
+<snip>
+
+Same as above
+
+> --- /dev/null
+> +++ b/include/dt-bindings/power/tegra194-powergate.h
+> @@ -0,0 +1,38 @@
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+
+<snip>
+
+Same as above
+
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/tegra194-reset.h
+> @@ -0,0 +1,155 @@
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+
+<snip>
+
+Same as above
+-- 
+Cordially
+Philippe Ombredanne
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
