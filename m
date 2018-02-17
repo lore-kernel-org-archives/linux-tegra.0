@@ -1,7 +1,7 @@
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+From: Varun Wadekar <vwadekar@nvidia.com>
 Subject: Re: How to test new bootloaders on Jetson TX1? - ATF
-Date: Sat, 17 Feb 2018 06:34:01 +0100
-Message-ID: <5b1b68d4-e2c2-80e6-8a42-594053d1860c@suse.de>
+Date: Sat, 17 Feb 2018 07:04:35 +0000
+Message-ID: <e7aae43b-b1c8-4c87-8dcb-a29f1d9a6232@nvidia.com>
 References: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
  <0247bb39-1f53-5c45-4d37-247813b53b96@nvidia.com>
  <8d80b0d3-eaed-b1ab-02c9-86f81ac4b7fa@suse.de>
@@ -11,89 +11,81 @@ References: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
  <d6a44448867a47028685fb0af0005d59@HQMAIL101.nvidia.com>
  <205465fc7b2f4547ac81c7394108e2c7@bgmail103.nvidia.com>
  <d219bbd4-df4c-f6b7-e64d-5f305fe5d854@suse.de>
- <e9728e54-8c58-4586-8863-0f26eb156deb@nvidia.com>
+ <e9728e54-8c58-4586-8863-0f26eb156deb@nvidia.com>,
+ <5b1b68d4-e2c2-80e6-8a42-594053d1860c@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e9728e54-8c58-4586-8863-0f26eb156deb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <u-boot-bounces@lists.denx.de>
+In-Reply-To: <5b1b68d4-e2c2-80e6-8a42-594053d1860c@suse.de>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Mian Yousaf Kaukab <yousaf.kaukab-IBi9RG/b67k@public.gmane.org>
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+To: =?Windows-1252?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Cc: Alexander Graf <agraf@suse.de>, Jonathan Hunter <jonathanh@nvidia.com>, U-Boot <u-boot@lists.denx.de>, Tom Warren <TWarren@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mian Yousaf Kaukab <yousaf.kaukab@suse.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Am 16.02.2018 um 07:18 schrieb Varun Wadekar:
-> Yes. That's a custom SMC we have for some non-L4T uses. It has not been
-> upstreamed yet.
-> 
-> You can add dummy handling in tegra_sip_calls.c to move forward.
-
-Thanks, on my 1.4 based branch I succeeded to boot into Nvidia U-Boot
-with the following change:
-
---- a/plat/nvidia/tegra/common/tegra_sip_calls.c
-+++ b/plat/nvidia/tegra/common/tegra_sip_calls.c
-@@ -162,6 +162,11 @@ uint64_t tegra_sip_handler(uint32_t smc_fid,
-                 */
-                break;
-
-+       case 0x82000015:
-+               INFO("%s: SMC 0x%x\n", __func__, smc_fid);
-+               SMC_RET1(handle, 0);
-+               break;
-+
-        default:
-                ERROR("%s: unhandled SMC (0x%x)\n", __func__, smc_fid);
-                break;
-
-The INFO output shows up exactly once.
-
-On master branch I've further needed to fix a regression:
-https://github.com/ARM-software/arm-trusted-firmware/pull/1271
-
-Regards,
-Andreas
-
-> 
-> ------------------------------------------------------------------------
-> *From:* Andreas Färber <afaerber-l3A5Bk7waGM@public.gmane.org>
-> *Sent:* Thursday, February 15, 2018 7:04 PM
-> *To:* Varun Wadekar
-> *Cc:* Tom Warren; Jonathan Hunter; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; U-Boot;
-> Alexander Graf; Mian Yousaf Kaukab
-> *Subject:* Re: How to test new bootloaders on Jetson TX1? - ATF
-> 
-> Hi Varun,
-> 
-> Am 15.02.2018 um 17:57 schrieb Varun Wadekar:
->> Andreas, can you try the TOS packaging script available in our public repo?
->> 
->> http://nv-tegra.nvidia.com/gitweb/?p=3rdparty/ote_partner/tlk.git;a=blob;f=tools/gen_tos_part_img.py;h=47828f7028e56a6cffb9b773502b13dc431a015e;hb=HEAD
-> 
-> Great, that script does work. It is lacking usage output, but looking at
-> the code, its arguments were self-documenting.
-> 
->> Please let me know if this does not work for you.
->> 
->> For the upstream ATF code, our downstream has not caught up with upstream yet, so I am not sure if upstream would directly work for TX1. But its definitely worth a try.
-> 
-> I tried R28.1 flash.sh -k TOS with my ATF v1.4 with Spectre backports,
-> without SPD. BL31 appears to initialize okay, but later something runs
-> into an unhandled SMC 0x82000015 - things then go south and it doesn't
-> reach the Nvidia U-Boot. Serial log attached.
-> 
-> According to
-> https://github.com/ARM-software/arm-trusted-firmware/blob/master/docs/arm-sip-service.rst
-> that SMC function ID falls into the SiP range, so indeed something
-> Nvidia-specific missing in v1.4?
-> 
-> Regards,
-> Andreas
-> 
-> https://build.opensuse.org/package/show/hardware:boot/arm-trusted-firmware-tegra210
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+U291bmRzIGdvb2QuIEkgcmV2aWV3ZWQgdGhlIEFURiBjaGFuZ2UgdXBzdHJlYW0uIExvb2tzIGdv
+b2QuCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcm9tOiBBbmRyZWFzIEbDpHJi
+ZXIgPGFmYWVyYmVyQHN1c2UuZGU+ClNlbnQ6IEZyaWRheSwgRmVicnVhcnkgMTYsIDIwMTggNzoz
+NCBQTQpUbzogVmFydW4gV2FkZWthcgpDYzogVG9tIFdhcnJlbjsgSm9uYXRoYW4gSHVudGVyOyBs
+aW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7IFUtQm9vdDsgQWxleGFuZGVyIEdyYWY7IE1pYW4g
+WW91c2FmIEthdWthYgpTdWJqZWN0OiBSZTogSG93IHRvIHRlc3QgbmV3IGJvb3Rsb2FkZXJzIG9u
+IEpldHNvbiBUWDE/IC0gQVRGCgpBbSAxNi4wMi4yMDE4IHVtIDA3OjE4IHNjaHJpZWIgVmFydW4g
+V2FkZWthcjoKPiBZZXMuIFRoYXQncyBhIGN1c3RvbSBTTUMgd2UgaGF2ZSBmb3Igc29tZSBub24t
+TDRUIHVzZXMuIEl0IGhhcyBub3QgYmVlbgo+IHVwc3RyZWFtZWQgeWV0Lgo+Cj4gWW91IGNhbiBh
+ZGQgZHVtbXkgaGFuZGxpbmcgaW4gdGVncmFfc2lwX2NhbGxzLmMgdG8gbW92ZSBmb3J3YXJkLgoK
+VGhhbmtzLCBvbiBteSAxLjQgYmFzZWQgYnJhbmNoIEkgc3VjY2VlZGVkIHRvIGJvb3QgaW50byBO
+dmlkaWEgVS1Cb290CndpdGggdGhlIGZvbGxvd2luZyBjaGFuZ2U6CgotLS0gYS9wbGF0L252aWRp
+YS90ZWdyYS9jb21tb24vdGVncmFfc2lwX2NhbGxzLmMKKysrIGIvcGxhdC9udmlkaWEvdGVncmEv
+Y29tbW9uL3RlZ3JhX3NpcF9jYWxscy5jCkBAIC0xNjIsNiArMTYyLDExIEBAIHVpbnQ2NF90IHRl
+Z3JhX3NpcF9oYW5kbGVyKHVpbnQzMl90IHNtY19maWQsCiAgICAgICAgICAgICAgICAgKi8KICAg
+ICAgICAgICAgICAgIGJyZWFrOwoKKyAgICAgICBjYXNlIDB4ODIwMDAwMTU6CisgICAgICAgICAg
+ICAgICBJTkZPKCIlczogU01DIDB4JXhcbiIsIF9fZnVuY19fLCBzbWNfZmlkKTsKKyAgICAgICAg
+ICAgICAgIFNNQ19SRVQxKGhhbmRsZSwgMCk7CisgICAgICAgICAgICAgICBicmVhazsKKwogICAg
+ICAgIGRlZmF1bHQ6CiAgICAgICAgICAgICAgICBFUlJPUigiJXM6IHVuaGFuZGxlZCBTTUMgKDB4
+JXgpXG4iLCBfX2Z1bmNfXywgc21jX2ZpZCk7CiAgICAgICAgICAgICAgICBicmVhazsKClRoZSBJ
+TkZPIG91dHB1dCBzaG93cyB1cCBleGFjdGx5IG9uY2UuCgpPbiBtYXN0ZXIgYnJhbmNoIEkndmUg
+ZnVydGhlciBuZWVkZWQgdG8gZml4IGEgcmVncmVzc2lvbjoKaHR0cHM6Ly9naXRodWIuY29tL0FS
+TS1zb2Z0d2FyZS9hcm0tdHJ1c3RlZC1maXJtd2FyZS9wdWxsLzEyNzEKClJlZ2FyZHMsCkFuZHJl
+YXMKCj4KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAqRnJvbToqIEFuZHJlYXMgRsOkcmJlciA8YWZhZXJi
+ZXJAc3VzZS5kZT4KPiAqU2VudDoqIFRodXJzZGF5LCBGZWJydWFyeSAxNSwgMjAxOCA3OjA0IFBN
+Cj4gKlRvOiogVmFydW4gV2FkZWthcgo+ICpDYzoqIFRvbSBXYXJyZW47IEpvbmF0aGFuIEh1bnRl
+cjsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBVLUJvb3Q7Cj4gQWxleGFuZGVyIEdyYWY7
+IE1pYW4gWW91c2FmIEthdWthYgo+ICpTdWJqZWN0OiogUmU6IEhvdyB0byB0ZXN0IG5ldyBib290
+bG9hZGVycyBvbiBKZXRzb24gVFgxPyAtIEFURgo+Cj4gSGkgVmFydW4sCj4KPiBBbSAxNS4wMi4y
+MDE4IHVtIDE3OjU3IHNjaHJpZWIgVmFydW4gV2FkZWthcjoKPj4gQW5kcmVhcywgY2FuIHlvdSB0
+cnkgdGhlIFRPUyBwYWNrYWdpbmcgc2NyaXB0IGF2YWlsYWJsZSBpbiBvdXIgcHVibGljIHJlcG8/
+Cj4+Cj4+IGh0dHA6Ly9udi10ZWdyYS5udmlkaWEuY29tL2dpdHdlYi8/cD0zcmRwYXJ0eS9vdGVf
+cGFydG5lci90bGsuZ2l0O2E9YmxvYjtmPXRvb2xzL2dlbl90b3NfcGFydF9pbWcucHk7aD00Nzgy
+OGY3MDI4ZTU2YTZjZmZiOWI3NzM1MDJiMTNkYzQzMWEwMTVlO2hiPUhFQUQKPgo+IEdyZWF0LCB0
+aGF0IHNjcmlwdCBkb2VzIHdvcmsuIEl0IGlzIGxhY2tpbmcgdXNhZ2Ugb3V0cHV0LCBidXQgbG9v
+a2luZyBhdAo+IHRoZSBjb2RlLCBpdHMgYXJndW1lbnRzIHdlcmUgc2VsZi1kb2N1bWVudGluZy4K
+Pgo+PiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgdGhpcyBkb2VzIG5vdCB3b3JrIGZvciB5b3UuCj4+
+Cj4+IEZvciB0aGUgdXBzdHJlYW0gQVRGIGNvZGUsIG91ciBkb3duc3RyZWFtIGhhcyBub3QgY2F1
+Z2h0IHVwIHdpdGggdXBzdHJlYW0geWV0LCBzbyBJIGFtIG5vdCBzdXJlIGlmIHVwc3RyZWFtIHdv
+dWxkIGRpcmVjdGx5IHdvcmsgZm9yIFRYMS4gQnV0IGl0cyBkZWZpbml0ZWx5IHdvcnRoIGEgdHJ5
+Lgo+Cj4gSSB0cmllZCBSMjguMSBmbGFzaC5zaCAtayBUT1Mgd2l0aCBteSBBVEYgdjEuNCB3aXRo
+IFNwZWN0cmUgYmFja3BvcnRzLAo+IHdpdGhvdXQgU1BELiBCTDMxIGFwcGVhcnMgdG8gaW5pdGlh
+bGl6ZSBva2F5LCBidXQgbGF0ZXIgc29tZXRoaW5nIHJ1bnMKPiBpbnRvIGFuIHVuaGFuZGxlZCBT
+TUMgMHg4MjAwMDAxNSAtIHRoaW5ncyB0aGVuIGdvIHNvdXRoIGFuZCBpdCBkb2Vzbid0Cj4gcmVh
+Y2ggdGhlIE52aWRpYSBVLUJvb3QuIFNlcmlhbCBsb2cgYXR0YWNoZWQuCj4KPiBBY2NvcmRpbmcg
+dG8KPiBodHRwczovL2dpdGh1Yi5jb20vQVJNLXNvZnR3YXJlL2FybS10cnVzdGVkLWZpcm13YXJl
+L2Jsb2IvbWFzdGVyL2RvY3MvYXJtLXNpcC1zZXJ2aWNlLnJzdAo+IHRoYXQgU01DIGZ1bmN0aW9u
+IElEIGZhbGxzIGludG8gdGhlIFNpUCByYW5nZSwgc28gaW5kZWVkIHNvbWV0aGluZwo+IE52aWRp
+YS1zcGVjaWZpYyBtaXNzaW5nIGluIHYxLjQ/Cj4KPiBSZWdhcmRzLAo+IEFuZHJlYXMKPgo+IGh0
+dHBzOi8vYnVpbGQub3BlbnN1c2Uub3JnL3BhY2thZ2Uvc2hvdy9oYXJkd2FyZTpib290L2FybS10
+cnVzdGVkLWZpcm13YXJlLXRlZ3JhMjEwCgotLQpTVVNFIExpbnV4IEdtYkgsIE1heGZlbGRzdHIu
+IDUsIDkwNDA5IE7DvHJuYmVyZywgR2VybWFueQpHRjogRmVsaXggSW1lbmTDtnJmZmVyLCBKYW5l
+IFNtaXRoYXJkLCBHcmFoYW0gTm9ydG9uCkhSQiAyMTI4NCAoQUcgTsO8cm5iZXJnKQpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpVLUJvb3QgbWFpbGluZyBs
+aXN0ClUtQm9vdEBsaXN0cy5kZW54LmRlCmh0dHBzOi8vbGlzdHMuZGVueC5kZS9saXN0aW5mby91
+LWJvb3QK
