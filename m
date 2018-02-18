@@ -1,91 +1,44 @@
-From: Varun Wadekar <vwadekar@nvidia.com>
-Subject: Re: How to test new bootloaders on Jetson TX1? - ATF
-Date: Sat, 17 Feb 2018 07:04:35 +0000
-Message-ID: <e7aae43b-b1c8-4c87-8dcb-a29f1d9a6232@nvidia.com>
-References: <5ff3ffde-653c-ea50-490c-efcc6dccecc2@suse.de>
- <0247bb39-1f53-5c45-4d37-247813b53b96@nvidia.com>
- <8d80b0d3-eaed-b1ab-02c9-86f81ac4b7fa@suse.de>
- <33de1065-1372-282c-9646-30a63729e08e@nvidia.com>
- <71bf7527-3fb7-293f-8a1c-63ce74882649@suse.de>
- <fa89b123-bfcb-6f91-59cc-bae29aef19ab@nvidia.com>
- <d6a44448867a47028685fb0af0005d59@HQMAIL101.nvidia.com>
- <205465fc7b2f4547ac81c7394108e2c7@bgmail103.nvidia.com>
- <d219bbd4-df4c-f6b7-e64d-5f305fe5d854@suse.de>
- <e9728e54-8c58-4586-8863-0f26eb156deb@nvidia.com>,
- <5b1b68d4-e2c2-80e6-8a42-594053d1860c@suse.de>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v1 2/2] ARM: dts: tegra30: Add video decoder node
+Date: Sun, 18 Feb 2018 19:03:26 +0100
+Message-ID: <4cf77dcd-0921-dec2-e5cd-ed8b5dc2fb7c@suse.de>
+References: <cover.1518973069.git.digetx@gmail.com>
+ <6ac145a1259566f85c88bd29be9c8b3e44e53bcf.1518973069.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <5b1b68d4-e2c2-80e6-8a42-594053d1860c@suse.de>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <6ac145a1259566f85c88bd29be9c8b3e44e53bcf.1518973069.git.digetx@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
-To: =?Windows-1252?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Cc: Alexander Graf <agraf@suse.de>, Jonathan Hunter <jonathanh@nvidia.com>, U-Boot <u-boot@lists.denx.de>, Tom Warren <TWarren@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mian Yousaf Kaukab <yousaf.kaukab@suse.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-U291bmRzIGdvb2QuIEkgcmV2aWV3ZWQgdGhlIEFURiBjaGFuZ2UgdXBzdHJlYW0uIExvb2tzIGdv
-b2QuCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcm9tOiBBbmRyZWFzIEbDpHJi
-ZXIgPGFmYWVyYmVyQHN1c2UuZGU+ClNlbnQ6IEZyaWRheSwgRmVicnVhcnkgMTYsIDIwMTggNzoz
-NCBQTQpUbzogVmFydW4gV2FkZWthcgpDYzogVG9tIFdhcnJlbjsgSm9uYXRoYW4gSHVudGVyOyBs
-aW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7IFUtQm9vdDsgQWxleGFuZGVyIEdyYWY7IE1pYW4g
-WW91c2FmIEthdWthYgpTdWJqZWN0OiBSZTogSG93IHRvIHRlc3QgbmV3IGJvb3Rsb2FkZXJzIG9u
-IEpldHNvbiBUWDE/IC0gQVRGCgpBbSAxNi4wMi4yMDE4IHVtIDA3OjE4IHNjaHJpZWIgVmFydW4g
-V2FkZWthcjoKPiBZZXMuIFRoYXQncyBhIGN1c3RvbSBTTUMgd2UgaGF2ZSBmb3Igc29tZSBub24t
-TDRUIHVzZXMuIEl0IGhhcyBub3QgYmVlbgo+IHVwc3RyZWFtZWQgeWV0Lgo+Cj4gWW91IGNhbiBh
-ZGQgZHVtbXkgaGFuZGxpbmcgaW4gdGVncmFfc2lwX2NhbGxzLmMgdG8gbW92ZSBmb3J3YXJkLgoK
-VGhhbmtzLCBvbiBteSAxLjQgYmFzZWQgYnJhbmNoIEkgc3VjY2VlZGVkIHRvIGJvb3QgaW50byBO
-dmlkaWEgVS1Cb290CndpdGggdGhlIGZvbGxvd2luZyBjaGFuZ2U6CgotLS0gYS9wbGF0L252aWRp
-YS90ZWdyYS9jb21tb24vdGVncmFfc2lwX2NhbGxzLmMKKysrIGIvcGxhdC9udmlkaWEvdGVncmEv
-Y29tbW9uL3RlZ3JhX3NpcF9jYWxscy5jCkBAIC0xNjIsNiArMTYyLDExIEBAIHVpbnQ2NF90IHRl
-Z3JhX3NpcF9oYW5kbGVyKHVpbnQzMl90IHNtY19maWQsCiAgICAgICAgICAgICAgICAgKi8KICAg
-ICAgICAgICAgICAgIGJyZWFrOwoKKyAgICAgICBjYXNlIDB4ODIwMDAwMTU6CisgICAgICAgICAg
-ICAgICBJTkZPKCIlczogU01DIDB4JXhcbiIsIF9fZnVuY19fLCBzbWNfZmlkKTsKKyAgICAgICAg
-ICAgICAgIFNNQ19SRVQxKGhhbmRsZSwgMCk7CisgICAgICAgICAgICAgICBicmVhazsKKwogICAg
-ICAgIGRlZmF1bHQ6CiAgICAgICAgICAgICAgICBFUlJPUigiJXM6IHVuaGFuZGxlZCBTTUMgKDB4
-JXgpXG4iLCBfX2Z1bmNfXywgc21jX2ZpZCk7CiAgICAgICAgICAgICAgICBicmVhazsKClRoZSBJ
-TkZPIG91dHB1dCBzaG93cyB1cCBleGFjdGx5IG9uY2UuCgpPbiBtYXN0ZXIgYnJhbmNoIEkndmUg
-ZnVydGhlciBuZWVkZWQgdG8gZml4IGEgcmVncmVzc2lvbjoKaHR0cHM6Ly9naXRodWIuY29tL0FS
-TS1zb2Z0d2FyZS9hcm0tdHJ1c3RlZC1maXJtd2FyZS9wdWxsLzEyNzEKClJlZ2FyZHMsCkFuZHJl
-YXMKCj4KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAqRnJvbToqIEFuZHJlYXMgRsOkcmJlciA8YWZhZXJi
-ZXJAc3VzZS5kZT4KPiAqU2VudDoqIFRodXJzZGF5LCBGZWJydWFyeSAxNSwgMjAxOCA3OjA0IFBN
-Cj4gKlRvOiogVmFydW4gV2FkZWthcgo+ICpDYzoqIFRvbSBXYXJyZW47IEpvbmF0aGFuIEh1bnRl
-cjsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBVLUJvb3Q7Cj4gQWxleGFuZGVyIEdyYWY7
-IE1pYW4gWW91c2FmIEthdWthYgo+ICpTdWJqZWN0OiogUmU6IEhvdyB0byB0ZXN0IG5ldyBib290
-bG9hZGVycyBvbiBKZXRzb24gVFgxPyAtIEFURgo+Cj4gSGkgVmFydW4sCj4KPiBBbSAxNS4wMi4y
-MDE4IHVtIDE3OjU3IHNjaHJpZWIgVmFydW4gV2FkZWthcjoKPj4gQW5kcmVhcywgY2FuIHlvdSB0
-cnkgdGhlIFRPUyBwYWNrYWdpbmcgc2NyaXB0IGF2YWlsYWJsZSBpbiBvdXIgcHVibGljIHJlcG8/
-Cj4+Cj4+IGh0dHA6Ly9udi10ZWdyYS5udmlkaWEuY29tL2dpdHdlYi8/cD0zcmRwYXJ0eS9vdGVf
-cGFydG5lci90bGsuZ2l0O2E9YmxvYjtmPXRvb2xzL2dlbl90b3NfcGFydF9pbWcucHk7aD00Nzgy
-OGY3MDI4ZTU2YTZjZmZiOWI3NzM1MDJiMTNkYzQzMWEwMTVlO2hiPUhFQUQKPgo+IEdyZWF0LCB0
-aGF0IHNjcmlwdCBkb2VzIHdvcmsuIEl0IGlzIGxhY2tpbmcgdXNhZ2Ugb3V0cHV0LCBidXQgbG9v
-a2luZyBhdAo+IHRoZSBjb2RlLCBpdHMgYXJndW1lbnRzIHdlcmUgc2VsZi1kb2N1bWVudGluZy4K
-Pgo+PiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgdGhpcyBkb2VzIG5vdCB3b3JrIGZvciB5b3UuCj4+
-Cj4+IEZvciB0aGUgdXBzdHJlYW0gQVRGIGNvZGUsIG91ciBkb3duc3RyZWFtIGhhcyBub3QgY2F1
-Z2h0IHVwIHdpdGggdXBzdHJlYW0geWV0LCBzbyBJIGFtIG5vdCBzdXJlIGlmIHVwc3RyZWFtIHdv
-dWxkIGRpcmVjdGx5IHdvcmsgZm9yIFRYMS4gQnV0IGl0cyBkZWZpbml0ZWx5IHdvcnRoIGEgdHJ5
-Lgo+Cj4gSSB0cmllZCBSMjguMSBmbGFzaC5zaCAtayBUT1Mgd2l0aCBteSBBVEYgdjEuNCB3aXRo
-IFNwZWN0cmUgYmFja3BvcnRzLAo+IHdpdGhvdXQgU1BELiBCTDMxIGFwcGVhcnMgdG8gaW5pdGlh
-bGl6ZSBva2F5LCBidXQgbGF0ZXIgc29tZXRoaW5nIHJ1bnMKPiBpbnRvIGFuIHVuaGFuZGxlZCBT
-TUMgMHg4MjAwMDAxNSAtIHRoaW5ncyB0aGVuIGdvIHNvdXRoIGFuZCBpdCBkb2Vzbid0Cj4gcmVh
-Y2ggdGhlIE52aWRpYSBVLUJvb3QuIFNlcmlhbCBsb2cgYXR0YWNoZWQuCj4KPiBBY2NvcmRpbmcg
-dG8KPiBodHRwczovL2dpdGh1Yi5jb20vQVJNLXNvZnR3YXJlL2FybS10cnVzdGVkLWZpcm13YXJl
-L2Jsb2IvbWFzdGVyL2RvY3MvYXJtLXNpcC1zZXJ2aWNlLnJzdAo+IHRoYXQgU01DIGZ1bmN0aW9u
-IElEIGZhbGxzIGludG8gdGhlIFNpUCByYW5nZSwgc28gaW5kZWVkIHNvbWV0aGluZwo+IE52aWRp
-YS1zcGVjaWZpYyBtaXNzaW5nIGluIHYxLjQ/Cj4KPiBSZWdhcmRzLAo+IEFuZHJlYXMKPgo+IGh0
-dHBzOi8vYnVpbGQub3BlbnN1c2Uub3JnL3BhY2thZ2Uvc2hvdy9oYXJkd2FyZTpib290L2FybS10
-cnVzdGVkLWZpcm13YXJlLXRlZ3JhMjEwCgotLQpTVVNFIExpbnV4IEdtYkgsIE1heGZlbGRzdHIu
-IDUsIDkwNDA5IE7DvHJuYmVyZywgR2VybWFueQpHRjogRmVsaXggSW1lbmTDtnJmZmVyLCBKYW5l
-IFNtaXRoYXJkLCBHcmFoYW0gTm9ydG9uCkhSQiAyMTI4NCAoQUcgTsO8cm5iZXJnKQpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpVLUJvb3QgbWFpbGluZyBs
-aXN0ClUtQm9vdEBsaXN0cy5kZW54LmRlCmh0dHBzOi8vbGlzdHMuZGVueC5kZS9saXN0aW5mby91
-LWJvb3QK
+QW0gMTguMDIuMjAxOCB1bSAxODowMSBzY2hyaWViIERtaXRyeSBPc2lwZW5rbzoKPiBBZGQgZGV2
+aWNlIHRyZWUgbm9kZSBmb3IgdGhlIFZpZGVvIERlY29kZXIgRW5naW5lIGZvdW5kIG9uIFRlZ3Jh
+MzAgU29DJ3MuCj4gCj4gU2lnbmVkLW9mZi1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21h
+aWwuY29tPgo+IC0tLQo+ICBhcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLmR0c2kgfCAyNyArKysr
+KysrKysrKysrKysrKysrKysrKysrKysKPiAgMSBmaWxlIGNoYW5nZWQsIDI3IGluc2VydGlvbnMo
+KykKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC5kdHNpIGIvYXJj
+aC9hcm0vYm9vdC9kdHMvdGVncmEzMC5kdHNpCj4gaW5kZXggMWZiMGM0MjFhOWQ4Li44YWU3MmZm
+ZTAwNDggMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC5kdHNpCj4gKysr
+IGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC5kdHNpCj4gQEAgLTE3LDYgKzE3LDExIEBACj4g
+IAkJI2FkZHJlc3MtY2VsbHMgPSA8MT47Cj4gIAkJI3NpemUtY2VsbHMgPSA8MT47Cj4gIAkJcmFu
+Z2VzID0gPDAgMHg0MDAwMDAwMCAweDQwMDAwPjsKPiArCj4gKwkJdmRlX3Bvb2w6IHZkZSB7Cj4g
+KwkJCXJlZyA9IDwweDQwMCAweDNmYzAwPjsKCnZkZUA0MDAgdGhlbiwgdG8gYXZvaWQgZHRjIHdh
+cm5pbmdzLgoKPiArCQkJcG9vbDsKPiArCQl9Owo+ICAJfTsKPiAgCj4gIAlwY2llQDMwMDAgewoK
+UmVnYXJkcywKQW5kcmVhcwoKLS0gClNVU0UgTGludXggR21iSCwgTWF4ZmVsZHN0ci4gNSwgOTA0
+MDkgTsO8cm5iZXJnLCBHZXJtYW55CkdGOiBGZWxpeCBJbWVuZMO2cmZmZXIsIEphbmUgU21pdGhh
+cmQsIEdyYWhhbSBOb3J0b24KSFJCIDIxMjg0IChBRyBOw7xybmJlcmcpCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxp
+bmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3Rz
+LmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
