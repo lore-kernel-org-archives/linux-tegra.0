@@ -1,11 +1,16 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH] ARM: tegra: fix ulpi regression on tegra20
-Date: Mon, 19 Feb 2018 16:12:52 +0100
-Message-ID: <20180219151252.29289-1-marcel@ziswiler.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 6/7] arm64: tegra: Add Tegra194 chip device tree
+Date: Mon, 19 Feb 2018 09:36:38 -0600
+Message-ID: <CAL_JsqJXUDzrWJ+yKR7Ow6==j=k5yZgjrXehfHtDyOC0RAiGAw@mail.gmail.com>
+References: <1517901757-15353-1-git-send-email-mperttunen@nvidia.com>
+ <1517901757-15353-7-git-send-email-mperttunen@nvidia.com>
+ <20180209225402.uexw7vlzwflo7zmr@rob-hp-laptop>
+ <49fc21ac-4630-b90c-04fb-31740354b35b@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <49fc21ac-4630-b90c-04fb-31740354b35b@kapsi.fi>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -15,47 +20,55 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, talho@nvidia.com, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Wed, Feb 14, 2018 at 5:56 AM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
+> On 10.02.2018 00:54, Rob Herring wrote:
+>>
+>> On Tue, Feb 06, 2018 at 09:22:36AM +0200, Mikko Perttunen wrote:
+>>>
+>>> ...
+>>> index 000000000000..dcc6eea52684
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/clock/tegra194-clock.h
 
-Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
-during registration") ULPI has been broken on Tegra20 leading to the
-following error message during boot:
+>>> + */
+>>> +
+>>> +#ifndef __ABI_MACH_T194_CLOCK_H
+>>> +#define __ABI_MACH_T194_CLOCK_H
+>>> +
+>>> +/** @file */
+>>> +
+>>> +/** @brief output of mux controlled by TEGRA194_CLK_SOC_ACTMON */
+>>> +#define TEGRA194_CLK_ACTMON                    1
+>>> +/** @brief output of gate CLK_ENB_ADSP */
+>>
+>>
+>> These comments don't add much and make readability horrible.
+>
+>
+> The comments allow mapping each define to the clocks defined in the chip
+> technical reference manual.
 
-[    1.974698] ulpi_phy_power_on: ulpi write failed
-[    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
-[    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
+If that's not obvious from the define name, then fix the define name.
+Looks like in most cases it is.
 
-Debugging through the changes and finally also consulting the TRM
-revealed that rather than the CDEV2 clock off OSC requiring such pin
-muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
-just worked by chance of that one having been enabled which Stephen's
-commit now changed when reparenting sclk away from pll_p_out4 leaving
-that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
-as the ULPI PHY clock.
+> The file also comes as is from the firmware team
+> so I'd prefer to keep changes to a minimum.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+I can appreciate that and perhaps if this was something imported at
+some frequency then it would be worthwhile to maintain formatting. But
+this is an ABI and defined by the hardware (as opposed to BPMP
+firmware) so it generally shouldn't ever change. And bindings should
+be complete, so if you plan periodic additions to it, that's a
+separate problem.
 
----
+> We have done this previously
+> with the BPMP ABI and device tree binding headers for the Tegra186.
 
- arch/arm/boot/dts/tegra20.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Generally, we don't accept doxygen comments in the kernel tree.
+There's only a handful of cases that seem to have sneaked in.
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 864a95872b8d..e05b6bb2599f 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -741,7 +741,7 @@
- 		phy_type = "ulpi";
- 		clocks = <&tegra_car TEGRA20_CLK_USB2>,
- 			 <&tegra_car TEGRA20_CLK_PLL_U>,
--			 <&tegra_car TEGRA20_CLK_CDEV2>;
-+			 <&tegra_car TEGRA20_CLK_PLL_P_OUT4>;
- 		clock-names = "reg", "pll_u", "ulpi-link";
- 		resets = <&tegra_car 58>, <&tegra_car 22>;
- 		reset-names = "usb", "utmi-pads";
--- 
-2.14.3
+Rob
