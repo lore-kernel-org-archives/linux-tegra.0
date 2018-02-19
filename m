@@ -1,15 +1,11 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH v3 6/7] arm64: tegra: Add Tegra194 chip device tree
-Date: Mon, 19 Feb 2018 11:32:01 +0200
-Message-ID: <eb5cde8c-7d21-2542-261b-23f94bacf85e@kapsi.fi>
-References: <20180215145206.24775-1-mperttunen@nvidia.com>
- <20180215145206.24775-7-mperttunen@nvidia.com>
- <CAOFm3uHvbut7w5eBuggNg0NnW-UvBsRjifsJxGuj3L34vCjEHA@mail.gmail.com>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH] ARM: tegra: fix ulpi regression on tegra20
+Date: Mon, 19 Feb 2018 16:12:52 +0100
+Message-ID: <20180219151252.29289-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAOFm3uHvbut7w5eBuggNg0NnW-UvBsRjifsJxGuj3L34vCjEHA@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,95 +15,47 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Philippe Ombredanne <pombredanne@nexb.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, talho@nvidia.com, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 16.02.2018 14:33, Philippe Ombredanne wrote:
-> Mikko,
->
-> On Thu, Feb 15, 2018 at 3:52 PM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
->> Add the chip-level device tree, including binding headers, for the
->> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
->> are initially available, enough to boot to UART console.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>
->> Notes:
->>     v3:
->>     - added hypervisor-related apertures to GIC node
->>     - removed GPL boilerplate in favor of SPDX and harmonized
->>       copyright headers
->
-> Thanks for this boilerplate removal! but see a few nits below.
->
-> <snip>
->
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/tegra194-clock.h
->> @@ -0,0 +1,653 @@
->> +/*
->> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
->> + *
->> + * SPDX-License-Identifier: GPL-2.0
->> + */
->
-> The proper style should be this for a .h header on the first line per [1]
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-I see -- I'll fix this in v4 (or if there are no further issues maybe 
-Thierry can fix this while applying?:)
+Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
+during registration") ULPI has been broken on Tegra20 leading to the
+following error message during boot:
 
-Mikko
+[    1.974698] ulpi_phy_power_on: ulpi write failed
+[    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
+[    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
 
->
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
->> + *
->> + */
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
->
-> <snip>
->
->> --- /dev/null
->> +++ b/include/dt-bindings/gpio/tegra194-gpio.h
->> @@ -0,0 +1,64 @@
->> +/*
->> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
->> + *
->> + * SPDX-License-Identifier: GPL-2.0
->> + */
->> +
->
-> <snip>
->
-> Same as above
->
->> --- /dev/null
->> +++ b/include/dt-bindings/power/tegra194-powergate.h
->> @@ -0,0 +1,38 @@
->> +/*
->> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
->> + *
->> + * SPDX-License-Identifier: GPL-2.0
->> + */
->
-> <snip>
->
-> Same as above
->
->> --- /dev/null
->> +++ b/include/dt-bindings/reset/tegra194-reset.h
->> @@ -0,0 +1,155 @@
->> +/*
->> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
->> + *
->> + * SPDX-License-Identifier: GPL-2.0
->> + */
->
-> <snip>
->
-> Same as above
->
+Debugging through the changes and finally also consulting the TRM
+revealed that rather than the CDEV2 clock off OSC requiring such pin
+muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
+just worked by chance of that one having been enabled which Stephen's
+commit now changed when reparenting sclk away from pll_p_out4 leaving
+that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
+as the ULPI PHY clock.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+ arch/arm/boot/dts/tegra20.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 864a95872b8d..e05b6bb2599f 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -741,7 +741,7 @@
+ 		phy_type = "ulpi";
+ 		clocks = <&tegra_car TEGRA20_CLK_USB2>,
+ 			 <&tegra_car TEGRA20_CLK_PLL_U>,
+-			 <&tegra_car TEGRA20_CLK_CDEV2>;
++			 <&tegra_car TEGRA20_CLK_PLL_P_OUT4>;
+ 		clock-names = "reg", "pll_u", "ulpi-link";
+ 		resets = <&tegra_car 58>, <&tegra_car 22>;
+ 		reset-names = "usb", "utmi-pads";
+-- 
+2.14.3
