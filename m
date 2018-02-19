@@ -1,16 +1,15 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use
- of_clk_get_parent_count() instead of open coding
-Date: Sun, 18 Feb 2018 11:09:25 -0800
-Message-ID: <CAEG3pNCioW_FVXj3-j4KC_yO6ZYGXQB_eanHWSb9NUE9kYsWag@mail.gmail.com>
-References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
- <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
- <11171053.oOJPuGlHoK@phil>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH v3 6/7] arm64: tegra: Add Tegra194 chip device tree
+Date: Mon, 19 Feb 2018 11:32:01 +0200
+Message-ID: <eb5cde8c-7d21-2542-261b-23f94bacf85e@kapsi.fi>
+References: <20180215145206.24775-1-mperttunen@nvidia.com>
+ <20180215145206.24775-7-mperttunen@nvidia.com>
+ <CAOFm3uHvbut7w5eBuggNg0NnW-UvBsRjifsJxGuj3L34vCjEHA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <11171053.oOJPuGlHoK@phil>
+In-Reply-To: <CAOFm3uHvbut7w5eBuggNg0NnW-UvBsRjifsJxGuj3L34vCjEHA@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,84 +19,95 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd <sboyd@codeaurora.org>,
- Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
+To: Philippe Ombredanne <pombredanne@nexb.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, talho@nvidia.com, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Heiko, Geert,
-
-On Sat, Feb 10, 2018 at 8:35 AM, Heiko Stuebner <heiko@sntech.de> wrote:
-> Hi Geert,
+On 16.02.2018 14:33, Philippe Ombredanne wrote:
+> Mikko,
 >
-> Am Freitag, 19. Januar 2018, 16:18:20 CET schrieb Geert Uytterhoeven:
->> As of_clk_get_parent_count() returns zero on failure, while
->> of_count_phandle_with_args() might return a negative error code, this
->> also fixes the issue of possibly using a negative number in the
->> allocation below.
+> On Thu, Feb 15, 2018 at 3:52 PM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
+>> Add the chip-level device tree, including binding headers, for the
+>> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
+>> are initially available, enough to boot to UART console.
 >>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 >> ---
->>  drivers/soc/rockchip/pm_domains.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
 >>
->> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
->> index 5c342167b9db7a16..9936038d38771784 100644
->> --- a/drivers/soc/rockchip/pm_domains.c
->> +++ b/drivers/soc/rockchip/pm_domains.c
->> @@ -16,6 +16,7 @@
->>  #include <linux/of_address.h>
->>  #include <linux/of_platform.h>
->>  #include <linux/clk.h>
->> +#include <linux/clk-provider.h>
+>> Notes:
+>>     v3:
+>>     - added hypervisor-related apertures to GIC node
+>>     - removed GPL boilerplate in favor of SPDX and harmonized
+>>       copyright headers
 >
-> not wanting to be to nitpicky, but clk-provider.h seems that it should be
-> used from drivers exposing clocks to the system, not from clock users.
+> Thanks for this boilerplate removal! but see a few nits below.
 >
-> I just remember that in the past clk maintainers tried to keep their
-> layering intact, so I've included them for clarification.
+> <snip>
 >
-> Mike, Stephen: the power-domain driver of Rockchip socs needs
-> to toggle all clocks of domain peripherals when turning a domain
-> on or off, so has a variable list of clocks in the clocks property in dt.
-> Hence the of_count_... call which could be replaced with
-> of_clk_get_parent_count to not open-code this.
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/tegra194-clock.h
+>> @@ -0,0 +1,653 @@
+>> +/*
+>> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+>> + *
+>> + * SPDX-License-Identifier: GPL-2.0
+>> + */
+>
+> The proper style should be this for a .h header on the first line per [1]
 
-Moving of_clk_get_parent_count to clk.h seems reasonable to me. It's
-more of an of-specific helper than a provider-specific helper.
+I see -- I'll fix this in v4 (or if there are no further issues maybe 
+Thierry can fix this while applying?:)
 
-Anyone up to submit a patch so that this one doesn't need to include
-clk-provider.h?
-
-Regards,
-Mike
+Mikko
 
 >
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+>> + *
+>> + */
 >
-> Heiko
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
 >
->>  #include <linux/regmap.h>
->>  #include <linux/mfd/syscon.h>
->>  #include <dt-bindings/power/rk3288-power.h>
->> @@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
->>               return -EINVAL;
->>       }
->>
->> -     clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
->> +     clk_cnt = of_clk_get_parent_count(node);
->>       pd = devm_kzalloc(pmu->dev,
->>                         sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
->>                         GFP_KERNEL);
->>
+> <snip>
 >
+>> --- /dev/null
+>> +++ b/include/dt-bindings/gpio/tegra194-gpio.h
+>> @@ -0,0 +1,64 @@
+>> +/*
+>> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+>> + *
+>> + * SPDX-License-Identifier: GPL-2.0
+>> + */
+>> +
 >
-
-
-
--- 
-Michael Turquette
-CEO
-BayLibre - At the Heart of Embedded Linux
-http://baylibre.com/
+> <snip>
+>
+> Same as above
+>
+>> --- /dev/null
+>> +++ b/include/dt-bindings/power/tegra194-powergate.h
+>> @@ -0,0 +1,38 @@
+>> +/*
+>> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+>> + *
+>> + * SPDX-License-Identifier: GPL-2.0
+>> + */
+>
+> <snip>
+>
+> Same as above
+>
+>> --- /dev/null
+>> +++ b/include/dt-bindings/reset/tegra194-reset.h
+>> @@ -0,0 +1,155 @@
+>> +/*
+>> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
+>> + *
+>> + * SPDX-License-Identifier: GPL-2.0
+>> + */
+>
+> <snip>
+>
+> Same as above
+>
