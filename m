@@ -1,277 +1,85 @@
-From: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v2] watchdog: add SPDX identifiers for watchdog subsystem
-Date: Tue, 20 Feb 2018 12:25:38 +0100
-Message-ID: <4d2ed1b9-8865-6ea1-9e5e-c5f42fafc505@baylibre.com>
-References: <20180220104542.32286-1-marcus.folkesson@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [4.4-stable 09/22] ARM: tegra: select USB_ULPI from EHCI rather than
+ platform
+Date: Tue, 20 Feb 2018 12:54:56 +0100
+Message-ID: <20180220115527.1806578-10-arnd@arndb.de>
+References: <20180220115527.1806578-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20180220104542.32286-1-marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wim Van Sebroeck <wim-Q8PRGTgFL9WUCWQAtAn6Ix2eb7JE58TQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Support Opensource <support.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jimmy Vance <jimmy.vance-ZPxbGqLxI0U@public.gmane.org>, Keguang Zhang <keguang.zhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomas Winkler <tomas.winkler-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Johannes Thumshirn <morbidrsa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Werner <andreas.>
-Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180220115527.1806578-1-arnd@arndb.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: stable@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Greg KH <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20/02/2018 11:45, Marcus Folkesson wrote:
-> - Add SPDX identifier
-> - Remove boiler plate license text
-> - If MODULE_LICENSE and boiler plate does not match, go for boiler plate
->   license
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Acked-by: Adam Thomson <Adam.Thomson.Opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>
-> Acked-by: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> Acked-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> ---
-> 
-> Notes:
->     v2:
->     	- Put back removed copyright texts for meson_gxbb_wdt and coh901327_wdt
->     	- Change to BSD-3-Clause for meson_gxbb_wdt
->     v1: Please have an extra look at meson_gxbb_wdt.c
-> 
->  drivers/watchdog/acquirewdt.c          |  6 +---
->  drivers/watchdog/advantechwdt.c        |  6 +---
->  drivers/watchdog/alim1535_wdt.c        |  6 +---
->  drivers/watchdog/alim7101_wdt.c        |  1 +
->  drivers/watchdog/ar7_wdt.c             | 14 +---------
->  drivers/watchdog/asm9260_wdt.c         |  2 +-
->  drivers/watchdog/aspeed_wdt.c          |  5 +---
->  drivers/watchdog/at91rm9200_wdt.c      |  5 +---
->  drivers/watchdog/at91sam9_wdt.c        |  5 +---
->  drivers/watchdog/at91sam9_wdt.h        |  5 +---
->  drivers/watchdog/ath79_wdt.c           |  4 +--
->  drivers/watchdog/atlas7_wdt.c          |  2 +-
->  drivers/watchdog/bcm2835_wdt.c         |  5 +---
->  drivers/watchdog/bcm47xx_wdt.c         |  5 +---
->  drivers/watchdog/bcm63xx_wdt.c         |  5 +---
->  drivers/watchdog/bcm7038_wdt.c         | 12 ++------
->  drivers/watchdog/bcm_kona_wdt.c        |  9 +-----
->  drivers/watchdog/bfin_wdt.c            |  2 +-
->  drivers/watchdog/booke_wdt.c           |  5 +---
->  drivers/watchdog/cadence_wdt.c         |  5 +---
->  drivers/watchdog/coh901327_wdt.c       |  4 +--
->  drivers/watchdog/cpu5wdt.c             | 15 +---------
->  drivers/watchdog/cpwd.c                |  1 +
->  drivers/watchdog/da9052_wdt.c          |  6 +---
->  drivers/watchdog/da9055_wdt.c          |  6 +---
->  drivers/watchdog/da9062_wdt.c          | 10 +------
->  drivers/watchdog/da9063_wdt.c          |  5 +---
->  drivers/watchdog/davinci_wdt.c         |  7 ++---
->  drivers/watchdog/diag288_wdt.c         |  1 +
->  drivers/watchdog/digicolor_wdt.c       |  5 +---
->  drivers/watchdog/dw_wdt.c              |  6 +---
->  drivers/watchdog/ebc-c384_wdt.c        |  9 +-----
->  drivers/watchdog/ep93xx_wdt.c          |  7 ++---
->  drivers/watchdog/eurotechwdt.c         |  6 +---
->  drivers/watchdog/f71808e_wdt.c         | 16 +----------
->  drivers/watchdog/ftwdt010_wdt.c        |  6 ++--
->  drivers/watchdog/gef_wdt.c             |  6 +---
->  drivers/watchdog/geodewdt.c            |  5 +---
->  drivers/watchdog/gpio_wdt.c            |  5 +---
->  drivers/watchdog/hpwdt.c               |  7 ++---
->  drivers/watchdog/i6300esb.c            |  6 +---
->  drivers/watchdog/iTCO_vendor_support.c |  9 +-----
->  drivers/watchdog/iTCO_wdt.c            | 10 +------
->  drivers/watchdog/ib700wdt.c            |  6 +---
->  drivers/watchdog/ibmasr.c              |  3 +-
->  drivers/watchdog/ie6xx_wdt.c           | 18 ++----------
->  drivers/watchdog/imgpdc_wdt.c          |  5 +---
->  drivers/watchdog/imx2_wdt.c            |  5 +---
->  drivers/watchdog/indydog.c             |  6 +---
->  drivers/watchdog/intel-mid_wdt.c       |  6 ++--
->  drivers/watchdog/intel_scu_watchdog.c  | 18 ++----------
->  drivers/watchdog/intel_scu_watchdog.h  | 16 +----------
->  drivers/watchdog/iop_wdt.c             | 16 ++---------
->  drivers/watchdog/it8712f_wdt.c         | 10 +------
->  drivers/watchdog/it87_wdt.c            | 10 +------
->  drivers/watchdog/ixp4xx_wdt.c          |  6 ++--
->  drivers/watchdog/jz4740_wdt.c          | 10 +------
->  drivers/watchdog/kempld_wdt.c          | 12 ++------
->  drivers/watchdog/ks8695_wdt.c          |  6 ++--
->  drivers/watchdog/lantiq_wdt.c          |  7 ++---
->  drivers/watchdog/loongson1_wdt.c       |  5 +---
->  drivers/watchdog/lpc18xx_wdt.c         |  5 +---
->  drivers/watchdog/m54xx_wdt.c           |  6 ++--
->  drivers/watchdog/machzwd.c             | 11 +-------
->  drivers/watchdog/max63xx_wdt.c         |  5 +---
->  drivers/watchdog/max77620_wdt.c        |  5 +---
->  drivers/watchdog/mei_wdt.c             | 12 ++------
->  drivers/watchdog/mena21_wdt.c          |  4 +--
->  drivers/watchdog/menf21bmc_wdt.c       |  8 ++----
->  drivers/watchdog/meson_gxbb_wdt.c      | 50 +---------------------------------
->  drivers/watchdog/meson_wdt.c           |  6 +---
->  drivers/watchdog/mixcomwd.c            |  6 +---
->  drivers/watchdog/moxart_wdt.c          |  7 ++---
->  drivers/watchdog/mpc8xxx_wdt.c         |  6 +---
->  drivers/watchdog/mt7621_wdt.c          |  5 +---
->  drivers/watchdog/mtk_wdt.c             | 11 +-------
->  drivers/watchdog/mtx-1_wdt.c           | 11 +-------
->  drivers/watchdog/mv64x60_wdt.c         |  6 ++--
->  drivers/watchdog/ni903x_wdt.c          | 11 +-------
->  drivers/watchdog/nic7018_wdt.c         | 11 +-------
->  drivers/watchdog/nuc900_wdt.c          |  7 ++---
->  drivers/watchdog/nv_tco.c              |  6 +---
->  drivers/watchdog/nv_tco.h              | 10 +------
->  drivers/watchdog/octeon-wdt-main.c     | 11 +-------
->  drivers/watchdog/octeon-wdt-nmi.S      |  5 +---
->  drivers/watchdog/of_xilinx_wdt.c       |  8 ++----
->  drivers/watchdog/omap_wdt.c            |  1 +
->  drivers/watchdog/omap_wdt.h            | 21 +-------------
->  drivers/watchdog/orion_wdt.c           |  5 +---
->  drivers/watchdog/pc87413_wdt.c         | 10 +------
->  drivers/watchdog/pcwd.c                |  1 +
->  drivers/watchdog/pcwd_pci.c            | 10 +------
->  drivers/watchdog/pcwd_usb.c            | 10 +------
->  drivers/watchdog/pic32-dmt.c           |  5 +---
->  drivers/watchdog/pic32-wdt.c           |  6 +---
->  drivers/watchdog/pika_wdt.c            |  1 +
->  drivers/watchdog/pnx4008_wdt.c         |  7 ++---
->  drivers/watchdog/pnx833x_wdt.c         |  6 +---
->  drivers/watchdog/pretimeout_noop.c     |  7 +----
->  drivers/watchdog/pretimeout_panic.c    |  7 +----
->  drivers/watchdog/qcom-wdt.c            | 14 ++--------
->  drivers/watchdog/renesas_wdt.c         |  4 +--
->  drivers/watchdog/retu_wdt.c            | 10 +------
->  drivers/watchdog/riowd.c               |  1 +
->  drivers/watchdog/rn5t618_wdt.c         |  8 +-----
->  drivers/watchdog/rt2880_wdt.c          |  5 +---
->  drivers/watchdog/rtd119x_wdt.c         |  2 +-
->  drivers/watchdog/rza_wdt.c             |  5 +---
->  drivers/watchdog/s3c2410_wdt.c         | 11 +-------
->  drivers/watchdog/sa1100_wdt.c          | 11 +-------
->  drivers/watchdog/sama5d4_wdt.c         |  3 +-
->  drivers/watchdog/sb_wdog.c             |  5 +---
->  drivers/watchdog/sbc60xxwdt.c          | 10 +------
->  drivers/watchdog/sbc7240_wdt.c         | 12 ++------
->  drivers/watchdog/sbc8360.c             | 10 +------
->  drivers/watchdog/sbc_epx_c3.c          |  6 +---
->  drivers/watchdog/sbc_fitpc2_wdt.c      |  7 ++---
->  drivers/watchdog/sbsa_gwdt.c           | 10 +------
->  drivers/watchdog/sc1200wdt.c           | 10 +------
->  drivers/watchdog/sc520_wdt.c           | 10 +------
->  drivers/watchdog/sch311x_wdt.c         | 10 +------
->  drivers/watchdog/scx200_wdt.c          | 10 ++-----
->  drivers/watchdog/shwdt.c               |  6 +---
->  drivers/watchdog/sirfsoc_wdt.c         |  5 ++--
->  drivers/watchdog/smsc37b787_wdt.c      | 10 +------
->  drivers/watchdog/softdog.c             | 10 +------
->  drivers/watchdog/sp5100_tco.c          |  6 +---
->  drivers/watchdog/sp805_wdt.c           |  5 +---
->  drivers/watchdog/sprd_wdt.c            | 10 +------
->  drivers/watchdog/st_lpc_wdt.c          |  6 +---
->  drivers/watchdog/stmp3xxx_rtc_wdt.c    |  5 +---
->  drivers/watchdog/sun4v_wdt.c           |  6 +---
->  drivers/watchdog/sunxi_wdt.c           |  6 +---
->  drivers/watchdog/tangox_wdt.c          |  6 +---
->  drivers/watchdog/tegra_wdt.c           | 10 +------
->  drivers/watchdog/ts4800_wdt.c          |  5 +---
->  drivers/watchdog/ts72xx_wdt.c          |  7 ++---
->  drivers/watchdog/twl4030_wdt.c         | 15 +---------
->  drivers/watchdog/txx9wdt.c             |  9 ++----
->  drivers/watchdog/uniphier_wdt.c        | 10 +------
->  drivers/watchdog/ux500_wdt.c           |  5 ++--
->  drivers/watchdog/via_wdt.c             |  4 +--
->  drivers/watchdog/w83627hf_wdt.c        | 10 +------
->  drivers/watchdog/w83877f_wdt.c         | 10 +------
->  drivers/watchdog/w83977f_wdt.c         |  9 +-----
->  drivers/watchdog/wafer5823wdt.c        | 11 +-------
->  drivers/watchdog/watchdog_core.c       | 10 +------
->  drivers/watchdog/watchdog_core.h       | 10 +------
->  drivers/watchdog/watchdog_dev.c        | 10 +------
->  drivers/watchdog/watchdog_pretimeout.c |  6 +---
->  drivers/watchdog/wd501p.h              |  1 +
->  drivers/watchdog/wdat_wdt.c            |  5 +---
->  drivers/watchdog/wdrtas.c              | 15 +---------
->  drivers/watchdog/wdt.c                 | 11 +-------
->  drivers/watchdog/wdt285.c              |  7 +----
->  drivers/watchdog/wdt977.c              |  8 +-----
->  drivers/watchdog/wdt_pci.c             | 11 +-------
->  drivers/watchdog/wm831x_wdt.c          |  5 +---
->  drivers/watchdog/wm8350_wdt.c          |  5 +---
->  drivers/watchdog/xen_wdt.c             |  6 +---
->  drivers/watchdog/ziirave_wdt.c         | 11 +-------
->  drivers/watchdog/zx2967_wdt.c          |  3 +-
->  162 files changed, 195 insertions(+), 1051 deletions(-)
-> 
+commit a262e87ff354f12447bb6268bd63edf7ba1c20e0 upstream.
 
-[...]
+For historic reasons, the tegra platform selects USB_ULPI from architecture
+code, but that hasn't really made sense for a long time, as the only
+user of that code is the Tegra EHCI driver that has its own Kconfig
+symbol.
 
-> diff --git a/drivers/watchdog/meson_gxbb_wdt.c b/drivers/watchdog/meson_gxbb_wdt.c
-> index 69a5a57f1446..69adeab3fde7 100644
-> --- a/drivers/watchdog/meson_gxbb_wdt.c
-> +++ b/drivers/watchdog/meson_gxbb_wdt.c
-> @@ -1,56 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
->  /*
-> - * This file is provided under a dual BSD/GPLv2 license.  When using or
-> - * redistributing this file, you may do so under either license.
-> - *
-> - * GPL LICENSE SUMMARY
-> - *
->   * Copyright (c) 2016 BayLibre, SAS.
->   * Author: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
->   *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of version 2 of the GNU General Public License as
-> - * published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful, but
-> - * WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> - * General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, see <http://www.gnu.org/licenses/>.
-> - * The full GNU General Public License is included in this distribution
-> - * in the file called COPYING.
-> - *
-> - * BSD LICENSE
-> - *
-> - * Copyright (c) 2016 BayLibre, SAS.
-> - * Author: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-> - *
-> - * Redistribution and use in source and binary forms, with or without
-> - * modification, are permitted provided that the following conditions
-> - * are met:
-> - *
-> - *   * Redistributions of source code must retain the above copyright
-> - *     notice, this list of conditions and the following disclaimer.
-> - *   * Redistributions in binary form must reproduce the above copyright
-> - *     notice, this list of conditions and the following disclaimer in
-> - *     the documentation and/or other materials provided with the
-> - *     distribution.
-> - *   * Neither the name of Intel Corporation nor the names of its
-> - *     contributors may be used to endorse or promote products derived
-> - *     from this software without specific prior written permission.
-> - *
-> - * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-> - * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-> - * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-> - * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-> - * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-> - * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-> - * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-> - * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-> - * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-> - * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-> - * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
->   */
->  #include <linux/clk.h>
->  #include <linux/err.h>
+This removes the 'select' statements from mach-tegra and drivers/soc/tegra
+and adds them with the device driver that actually needs them.
 
-[...]
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+[arnd: rebased to 4.4-stable]
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-tegra/Kconfig  | 2 --
+ arch/arm64/Kconfig.platforms | 2 --
+ drivers/usb/host/Kconfig     | 2 ++
+ 3 files changed, 2 insertions(+), 4 deletions(-)
 
-For meson_gxbb_wdt.c :
-Acked-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 0fa4c5f8b1be..2d43357d4a0a 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -12,8 +12,6 @@ menuconfig ARCH_TEGRA
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select RESET_CONTROLLER
+ 	select SOC_BUS
+-	select USB_ULPI if USB_PHY
+-	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  This enables support for NVIDIA Tegra based systems.
+ 
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 4043c35962cc..5edb50772c11 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -90,8 +90,6 @@ config ARCH_TEGRA_132_SOC
+ 	bool "NVIDIA Tegra132 SoC"
+ 	depends on ARCH_TEGRA
+ 	select PINCTRL_TEGRA124
+-	select USB_ULPI if USB_PHY
+-	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  Enable support for NVIDIA Tegra132 SoC, based on the Denver
+ 	  ARMv8 CPU.  The Tegra132 SoC is similar to the Tegra124 SoC,
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 3bb08870148f..95e72d75e0a0 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -220,6 +220,8 @@ config USB_EHCI_TEGRA
+        depends on ARCH_TEGRA
+        select USB_EHCI_ROOT_HUB_TT
+        select USB_PHY
++	select USB_ULPI
++	select USB_ULPI_VIEWPORT
+        help
+          This driver enables support for the internal USB Host Controllers
+          found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
+-- 
+2.9.0
