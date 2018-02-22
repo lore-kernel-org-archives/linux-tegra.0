@@ -1,130 +1,67 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: Re: [PATCH v2] ARM: tegra: fix ulpi regression on tegra20
-Date: Thu, 22 Feb 2018 22:37:48 +0100
-Message-ID: <23F053F8-8CE2-49A0-ADE6-1AC720953849@ziswiler.com>
-References: <20180222143825.1517-1-marcel@ziswiler.com>
- <278c02d3-7fc2-a92e-b309-1da8116e7c41@gmail.com>
+From: Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>
+Subject: Re: [PATCH v3] watchdog: add SPDX identifiers for watchdog subsystem
+Date: Fri, 23 Feb 2018 09:38:21 +1100
+Message-ID: <87po4wps4i.fsf@concordia.ellerman.id.au>
+References: <20180221122744.28300-1-marcus.folkesson@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <278c02d3-7fc2-a92e-b309-1da8116e7c41@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Osipenko <digetx@gmail.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20180221122744.28300-1-marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Wim Van Sebroeck <wim-Q8PRGTgFL9WUCWQAtAn6Ix2eb7JE58TQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Support Opensource <support.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jimmy Vance <jimmy.vance-ZPxbGqLxI0U@public.gmane.org>, Keguang Zhang <keguang.zhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomas Winkler <tomas.winkler-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Johannes Thumshirn <morbidrsa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Werner <andreas.wern>
+Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Utz Bacher <utz.bacher-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On February 22, 2018 9:08:44 PM GMT+01:00, Dmitry Osipenko <digetx@gmail.com> wrote:
->On 22.02.2018 17:38, Marcel Ziswiler wrote:
->> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->> 
->> Since commit f8f8f1d04494 ("clk: Don't touch hardware when
->reparenting
->> during registration") ULPI has been broken on Tegra20 leading to the
->> following error message during boot:
->> 
->> [    1.974698] ulpi_phy_power_on: ulpi write failed
->> [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
->> [    1.985434] tegra-ehci: probe of c5004000.usb failed with error
->-110
->> 
->> Debugging through the changes and finally also consulting the TRM
->> revealed that rather than the CDEV2 clock off OSC requiring such pin
->> muxing actually the PLL_P_OUT4 clock is in use. It looks like so far
->it
->> just worked by chance of that one having been enabled which Stephen's
->> commit now changed when reparenting sclk away from pll_p_out4 leaving
->> that one disabled. Fix this by properly assigning the PLL_P_OUT4
->clock
->> as the ULPI PHY clock.
->> 
->> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
+> - Add SPDX identifier
+> - Remove boiler plate license text
+> - If MODULE_LICENSE and boiler plate does not match, go for boiler plate
+>   license
 >
->Indeed CDEV2 clock doesn't exist on Tegra, but there is a CDEV2 pinmux
->pad
->group. Looks like another clk-related relic from downstream driver that
->was
->borrowed to upstream and stayed unnoticed for a long time.
->
->I think in practice all T20 boards have CDEV2 configured to PLL_P_OUT4,
+> Signed-off-by: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Exactly.
+<snip>
 
->so this
->patch is correct to me. Probably it would also worth to set CDEV2
->parent to
->PLL_P_OUT4 in the clk driver for DT backwards compatibility
+> diff --git a/drivers/watchdog/wdrtas.c b/drivers/watchdog/wdrtas.c
+> index 0240c60d14e3..af07f746b7cc 100644
+> --- a/drivers/watchdog/wdrtas.c
+> +++ b/drivers/watchdog/wdrtas.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * FIXME: add wdrtas_get_status and wdrtas_get_boot_status as soon as
+>   * RTAS calls are available
+> @@ -10,20 +11,6 @@
+>   * device driver to exploit watchdog RTAS functions
+>   *
+>   * Authors : Utz Bacher <utz.bacher-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2, or (at your option)
+> - * any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program; if not, write to the Free Software
+> - * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+>   */
 
-I guess that might work but what the original designer(s) probably meant by that strange otherwise nonexistent cdev2 clock might be the other configuration of that pad group called OSC which would allow outputting the base Oscillator frequency even with a separate divider allowing by 2, 4 or even 8 as far as I remember from glancing at the TRM. However like you correctly noted no design ever made use of any such as far as I can tell.
+LGTM.
 
-> or even
->make clk
->driver to read the CDEV2 pinmux config and set the proper parent based
->on it.
+Acked-by: Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org> (powerpc)
 
-Sounds a little too fancy to me but might work if device tree backwards compatibility is required at utmost importance.
-
->CC'ed Peter.
->
->Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-
-Thanks Dmitry.
-
->> ---
->> 
->> Changes in v2:
->> - Updated device tree binding documentation as well.
->> - CCing Dmitry as well.
->> 
->>  Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt | 4
->+++-
->>  arch/arm/boot/dts/tegra20.dtsi                                   | 2
->+-
->>  2 files changed, 4 insertions(+), 2 deletions(-)
->> 
->> diff --git
->a/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
->b/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
->> index a9aa79fb90ed..1aa6f2674af5 100644
->> ---
->a/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
->> +++
->b/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
->> @@ -21,7 +21,9 @@ Required properties :
->>     - timer: The timeout clock (clk_m). Present if phy_type == utmi.
->>     - utmi-pads: The clock needed to access the UTMI pad control
->registers.
->>       Present if phy_type == utmi.
->> -   - ulpi-link: The clock Tegra provides to the ULPI PHY (cdev2).
->> +   - ulpi-link: The clock Tegra provides to the ULPI PHY (usually
->pad DAP_MCLK2
->> +     with pad group aka "nvidia,pins" cdev2 and pin mux option
->config aka
->> +     "nvidia,function" pllp_out4).
->>       Present if phy_type == ulpi, and ULPI link mode is in use.
->>   - resets : Must contain an entry for each entry in reset-names.
->>     See ../reset/reset.txt for details.
->> diff --git a/arch/arm/boot/dts/tegra20.dtsi
->b/arch/arm/boot/dts/tegra20.dtsi
->> index 864a95872b8d..e05b6bb2599f 100644
->> --- a/arch/arm/boot/dts/tegra20.dtsi
->> +++ b/arch/arm/boot/dts/tegra20.dtsi
->> @@ -741,7 +741,7 @@
->>  		phy_type = "ulpi";
->>  		clocks = <&tegra_car TEGRA20_CLK_USB2>,
->>  			 <&tegra_car TEGRA20_CLK_PLL_U>,
->> -			 <&tegra_car TEGRA20_CLK_CDEV2>;
->> +			 <&tegra_car TEGRA20_CLK_PLL_P_OUT4>;
->>  		clock-names = "reg", "pll_u", "ulpi-link";
->>  		resets = <&tegra_car 58>, <&tegra_car 22>;
->>  		reset-names = "usb", "utmi-pads";
+cheers
