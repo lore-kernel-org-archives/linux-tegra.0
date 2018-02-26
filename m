@@ -1,112 +1,207 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 00/27] cpufreq: Stop validating cpufreq table in drivers
-Date: Mon, 26 Feb 2018 10:38:43 +0530
-Message-ID: <cover.1519620578.git.viresh.kumar@linaro.org>
+From: Peter Chen <hzpeterchen@gmail.com>
+Subject: Re: [PATCH usb-next v10 2/8] usb: add a flag to skip PHY
+ initialization to struct usb_hcd
+Date: Mon, 26 Feb 2018 11:26:59 +0800
+Message-ID: <20180226032659.GC22100@b29397-desktop>
+References: <20180218184504.3331-1-martin.blumenstingl@googlemail.com>
+ <20180218184504.3331-3-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Markus Mayer <mmayer-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Guittot <vincent.guittot-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180218184504.3331-3-martin.blumenstingl@googlemail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, yixun.lan@amlogic.com, arnd@arndb.de, felipe.balbi@linux.intel.com, Peter.Chen@nxp.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, narmstrong@baylibre.com, robh+dt@kernel.org, jonathanh@nvidia.com, mathias.nyman@intel.com, matthias.bgg@gmail.com, thierry.reding@gmail.com, linux-mediatek@lists.infradead.org, linux@prisktech.co.nz, linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org, stern@rowland.harvard.edu, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Sun, Feb 18, 2018 at 07:44:58PM +0100, Martin Blumenstingl wrote:
+> The USB HCD core driver parses the device-tree node for "phys" and
+> "usb-phys" properties. It also manages the power state of these PHYs
+> automatically.
+> However, drivers may opt-out of this behavior by setting "phy" or
+> "usb_phy" in struct usb_hcd to a non-null value. An example where this
+> is required is the "Qualcomm USB2 controller", implemented by the
+> chipidea driver. The hardware requires that the PHY is only powered on
+> after the "reset completed" event from the controller is received.
+> 
+> A follow-up patch will allow the USB HCD core driver to manage more than
+> one PHY. Add a new "skip_phy_initialization" bitflag to struct usb_hcd
+> so drivers can opt-out of any PHY management provided by the USB HCD
+> core driver.
+> 
+> This also updates the existing drivers so they use the new flag if they
+> want to opt out of the PHY management provided by the USB HCD core
+> driver. This means that for these drivers the new "multiple PHY"
+> handling (which will be added in a follow-up patch) will be disabled as
+> well.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/usb/chipidea/host.c      | 6 ++----
+>  drivers/usb/core/hcd.c           | 4 ++--
+>  drivers/usb/host/ehci-fsl.c      | 2 ++
+>  drivers/usb/host/ehci-platform.c | 4 ++--
+>  drivers/usb/host/ehci-tegra.c    | 1 +
+>  drivers/usb/host/ohci-omap.c     | 1 +
+>  drivers/usb/host/ohci-platform.c | 4 ++--
+>  drivers/usb/host/xhci-plat.c     | 1 +
+>  include/linux/usb/hcd.h          | 6 ++++++
+>  9 files changed, 19 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
+> index 19d60ed7e41f..af45aa3222b5 100644
+> --- a/drivers/usb/chipidea/host.c
+> +++ b/drivers/usb/chipidea/host.c
+> @@ -124,10 +124,8 @@ static int host_start(struct ci_hdrc *ci)
+>  
+>  	hcd->power_budget = ci->platdata->power_budget;
+>  	hcd->tpl_support = ci->platdata->tpl_support;
+> -	if (ci->phy)
+> -		hcd->phy = ci->phy;
+> -	else
+> -		hcd->usb_phy = ci->usb_phy;
+> +	if (ci->phy || ci->usb_phy)
+> +		hcd->skip_phy_initialization = 1;
+>  
+>  	ehci = hcd_to_ehci(hcd);
+>  	ehci->caps = ci->hw_bank.cap;
+> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> index fc32391a34d5..f2307470a31e 100644
+> --- a/drivers/usb/core/hcd.c
+> +++ b/drivers/usb/core/hcd.c
+> @@ -2727,7 +2727,7 @@ int usb_add_hcd(struct usb_hcd *hcd,
+>  	int retval;
+>  	struct usb_device *rhdev;
+>  
+> -	if (IS_ENABLED(CONFIG_USB_PHY) && !hcd->usb_phy) {
+> +	if (IS_ENABLED(CONFIG_USB_PHY) && !hcd->skip_phy_initialization) {
+>  		struct usb_phy *phy = usb_get_phy_dev(hcd->self.sysdev, 0);
+>  
+>  		if (IS_ERR(phy)) {
+> @@ -2745,7 +2745,7 @@ int usb_add_hcd(struct usb_hcd *hcd,
+>  		}
+>  	}
+>  
+> -	if (IS_ENABLED(CONFIG_GENERIC_PHY) && !hcd->phy) {
+> +	if (IS_ENABLED(CONFIG_GENERIC_PHY) && !hcd->skip_phy_initialization) {
+>  		struct phy *phy = phy_get(hcd->self.sysdev, "usb");
+>  
+>  		if (IS_ERR(phy)) {
+> diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
+> index c5094cb88cd5..0a9fd2022acf 100644
+> --- a/drivers/usb/host/ehci-fsl.c
+> +++ b/drivers/usb/host/ehci-fsl.c
+> @@ -155,6 +155,8 @@ static int fsl_ehci_drv_probe(struct platform_device *pdev)
+>  			retval = -ENODEV;
+>  			goto err2;
+>  		}
+> +
+> +		hcd->skip_phy_initialization = 1;
+>  	}
+>  #endif
+>  	return retval;
+> diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
+> index b065a960adc2..b91eea8c73ae 100644
+> --- a/drivers/usb/host/ehci-platform.c
+> +++ b/drivers/usb/host/ehci-platform.c
+> @@ -219,9 +219,9 @@ static int ehci_platform_probe(struct platform_device *dev)
+>  			if (IS_ERR(priv->phys[phy_num])) {
+>  				err = PTR_ERR(priv->phys[phy_num]);
+>  					goto err_put_hcd;
+> -			} else if (!hcd->phy) {
+> +			} else {
+>  				/* Avoiding phy_get() in usb_add_hcd() */
+> -				hcd->phy = priv->phys[phy_num];
+> +				hcd->skip_phy_initialization = 1;
+>  			}
+>  		}
+>  
+> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+> index c809f7d2f08f..a6f4389f7e88 100644
+> --- a/drivers/usb/host/ehci-tegra.c
+> +++ b/drivers/usb/host/ehci-tegra.c
+> @@ -461,6 +461,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+>  		goto cleanup_clk_en;
+>  	}
+>  	hcd->usb_phy = u_phy;
+> +	hcd->skip_phy_initialization = 1;
+>  
+>  	tegra->needs_double_reset = of_property_read_bool(pdev->dev.of_node,
+>  		"nvidia,needs-double-reset");
+> diff --git a/drivers/usb/host/ohci-omap.c b/drivers/usb/host/ohci-omap.c
+> index 0201c49bc4fc..d8d35d456456 100644
+> --- a/drivers/usb/host/ohci-omap.c
+> +++ b/drivers/usb/host/ohci-omap.c
+> @@ -230,6 +230,7 @@ static int ohci_omap_reset(struct usb_hcd *hcd)
+>  		} else {
+>  			return -EPROBE_DEFER;
+>  		}
+> +		hcd->skip_phy_initialization = 1;
+>  		ohci->start_hnp = start_hnp;
+>  	}
+>  #endif
+> diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-platform.c
+> index 1e6c954f4b3f..62ef36a9333f 100644
+> --- a/drivers/usb/host/ohci-platform.c
+> +++ b/drivers/usb/host/ohci-platform.c
+> @@ -186,9 +186,9 @@ static int ohci_platform_probe(struct platform_device *dev)
+>  			if (IS_ERR(priv->phys[phy_num])) {
+>  				err = PTR_ERR(priv->phys[phy_num]);
+>  				goto err_put_hcd;
+> -			} else if (!hcd->phy) {
+> +			} else {
+>  				/* Avoiding phy_get() in usb_add_hcd() */
+> -				hcd->phy = priv->phys[phy_num];
+> +				hcd->skip_phy_initialization = 1;
+>  			}
+>  		}
+>  
+> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+> index 6f038306c14d..6700e5ee82ad 100644
+> --- a/drivers/usb/host/xhci-plat.c
+> +++ b/drivers/usb/host/xhci-plat.c
+> @@ -284,6 +284,7 @@ static int xhci_plat_probe(struct platform_device *pdev)
+>  		ret = usb_phy_init(hcd->usb_phy);
+>  		if (ret)
+>  			goto put_usb3_hcd;
+> +		hcd->skip_phy_initialization = 1;
+>  	}
+>  
+>  	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
+> diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
+> index 176900528822..693502c84c04 100644
+> --- a/include/linux/usb/hcd.h
+> +++ b/include/linux/usb/hcd.h
+> @@ -151,6 +151,12 @@ struct usb_hcd {
+>  	unsigned		msix_enabled:1;	/* driver has MSI-X enabled? */
+>  	unsigned		msi_enabled:1;	/* driver has MSI enabled? */
+>  	unsigned		remove_phy:1;	/* auto-remove USB phy */
+> +	/*
+> +	 * do not manage the PHY state in the HCD core, instead let the driver
+> +	 * handle this (for example if the PHY can only be turned on after a
+> +	 * specific event)
+> +	 */
+> +	unsigned		skip_phy_initialization:1;
+>  
+>  	/* The next flag is a stopgap, to be removed when all the HCDs
+>  	 * support the new root-hub polling mechanism. */
+> -- 
 
-A patchset [1] sent last week already updated the cpufreq core to start
-validating cpufreq table if the policy contains a valid
-"policy->freq_table" pointer.
+For chipidea part:
 
-This series updates all such drivers to stop validating the cpufreq
-table directly and let only the core handle it.
-
-It depends on the previous series [1] and two cleanup patches [2][3] and
-is rebased over 4.16-rc3.
-
-It is already tested by the 0-day testing infrastructure and no issues
-were reported.
-
---
-viresh
-
-[1] https://lkml.kernel.org/r/bd8c6133ad0bdd56c936802bcf26878d7cbdb679.1519279148.git.viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-[2] https://lkml.kernel.org/r/77d470741dab32c2076a35253b9c0c2f0136583b.1519293292.git.viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-[3] https://lkml.kernel.org/r/6b737a9c285840b4b2036fa51b692ee835664ec8.1519358505.git.viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-
-Viresh Kumar (27):
-  cpufreq: imx6q: Find max freq from frequency table itself
-  cpufreq: Don't validate cpufreq table from cpufreq_generic_init()
-  cpufreq: acpi: Don't validate the frequency table twice
-  cpufreq: arm_big_little: Don't validate the frequency table twice
-  cpufreq: blackfin: Don't validate the frequency table twice
-  cpufreq: brcmstb: Don't validate the frequency table twice
-  cpufreq: cpufreq-dt: Don't validate the frequency table twice
-  cpufreq: e_powersaver: Don't validate the frequency table twice
-  cpufreq: elanfreq: Don't validate the frequency table twice
-  cpufreq: ia64-acpi: Don't validate the frequency table twice
-  cpufreq: longhaul: Don't validate the frequency table twice
-  cpufreq: mediatek: Don't validate the frequency table twice
-  cpufreq: p4-clockmod: Don't validate the frequency table twice
-  cpufreq: powernow: Don't validate the frequency table twice
-  cpufreq: powerenv: Don't validate the frequency table twice
-  cpufreq: ppc_cbe: Don't validate the frequency table twice
-  cpufreq: pxa: Don't validate the frequency table twice
-  cpufreq: qoirq: Don't validate the frequency table twice
-  cpufreq: s3c24xx: Don't validate the frequency table twice
-  cpufreq: sc520: Don't validate the frequency table twice
-  cpufreq: scpi: Don't validate the frequency table twice
-  cpufreq: sfi: Don't validate the frequency table twice
-  cpufreq: sh: Don't validate the frequency table twice
-  cpufreq: sparc: Don't validate the frequency table twice
-  cpufreq: speedstep: Don't validate the frequency table twice
-  cpufreq: tegra186: Don't validate the frequency table twice
-  cpufreq: Drop cpufreq_table_validate_and_show()
-
- Documentation/cpu-freq/core.txt        | 12 +++++-------
- Documentation/cpu-freq/cpu-drivers.txt |  6 ++----
- drivers/cpufreq/acpi-cpufreq.c         | 20 +++++++++++---------
- drivers/cpufreq/arm_big_little.c       |  9 +--------
- drivers/cpufreq/blackfin-cpufreq.c     |  3 ++-
- drivers/cpufreq/brcmstb-avs-cpufreq.c  |  6 +-----
- drivers/cpufreq/cpufreq-dt.c           |  8 +-------
- drivers/cpufreq/cpufreq.c              |  9 +--------
- drivers/cpufreq/e_powersaver.c         |  8 +-------
- drivers/cpufreq/elanfreq.c             |  3 ++-
- drivers/cpufreq/freq_table.c           | 14 --------------
- drivers/cpufreq/ia64-acpi-cpufreq.c    |  7 +------
- drivers/cpufreq/imx6q-cpufreq.c        |  7 ++++---
- drivers/cpufreq/longhaul.c             |  3 ++-
- drivers/cpufreq/mediatek-cpufreq.c     | 11 +----------
- drivers/cpufreq/p4-clockmod.c          |  3 ++-
- drivers/cpufreq/powernow-k6.c          |  3 ++-
- drivers/cpufreq/powernow-k7.c          |  3 ++-
- drivers/cpufreq/powernow-k8.c          | 10 +---------
- drivers/cpufreq/powernv-cpufreq.c      | 11 +++--------
- drivers/cpufreq/ppc_cbe_cpufreq.c      |  5 ++---
- drivers/cpufreq/pxa2xx-cpufreq.c       |  4 ++--
- drivers/cpufreq/pxa3xx-cpufreq.c       |  4 +++-
- drivers/cpufreq/qoriq-cpufreq.c        | 13 ++-----------
- drivers/cpufreq/s3c24xx-cpufreq.c      |  5 +----
- drivers/cpufreq/sc520_freq.c           |  3 ++-
- drivers/cpufreq/scpi-cpufreq.c         | 10 +---------
- drivers/cpufreq/sfi-cpufreq.c          |  3 ++-
- drivers/cpufreq/sh-cpufreq.c           | 22 ++++++++++++----------
- drivers/cpufreq/sparc-us2e-cpufreq.c   |  3 ++-
- drivers/cpufreq/sparc-us3-cpufreq.c    |  3 ++-
- drivers/cpufreq/speedstep-centrino.c   |  4 ++--
- drivers/cpufreq/speedstep-ich.c        |  4 +++-
- drivers/cpufreq/speedstep-smi.c        |  4 +++-
- drivers/cpufreq/tegra186-cpufreq.c     |  2 +-
- include/linux/cpufreq.h                |  2 --
- 36 files changed, 85 insertions(+), 162 deletions(-)
+Acked-by: Peter Chen <peter.chen@nxp.com>
 
 -- 
-2.15.0.194.g9af6a3dea062
+
+Best Regards,
+Peter Chen
