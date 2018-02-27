@@ -1,65 +1,109 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-Date: Mon, 26 Feb 2018 23:04:24 +0000
-Message-ID: <1519686262.6374.3.camel@toradex.com>
+Date: Tue, 27 Feb 2018 14:59:11 +0300
+Message-ID: <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
 References: <20180222230451.15515-1-marcel@ziswiler.com>
-         <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+In-Reply-To: <1519686262.6374.3.camel@toradex.com>
 Content-Language: en-US
-Content-ID: <56997F7CFF17FB46BF45C41DA7DCC7B6@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "digetx@gmail.com" <digetx@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTAyLTI2IGF0IDE1OjQyICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-DQo+IE9uIDIzLjAyLjIwMTggMDI6MDQsIE1hcmNlbCBaaXN3aWxlciB3cm90ZToNCj4gPiBUdXJu
-cyBvdXQgbGF0ZXN0IHVwc3RyZWFtIFUtQm9vdCBkb2VzIG5vdCBjb25maWd1cmUvZW5hYmxlIHBs
-bHUNCj4gPiB3aGljaA0KPiA+IGxlYXZlcyBpdCBhdCBzb21lIGRlZmF1bHQgcmF0ZSBvZiA1MDAg
-a0h6Og0KPiA+IA0KPiA+IHJvb3RAYXBhbGlzLXQzMDp+IyBjYXQgL3N5cy9rZXJuZWwvZGVidWcv
-Y2xrL2Nsa19zdW1tYXJ5IHwgZ3JlcA0KPiA+IHBsbF91DQo+ID4gICAgICAgIHBsbF91ICAgICAg
-ICAgICAgICAgICAgMyAgICAgICAgMyAgICAgICAgMCAgICAgIDUwMDAwMCAgICAgIA0KPiA+ICAg
-ICAwDQo+ID4gDQo+ID4gT2YgY291cnNlIHRoaXMgd29uJ3QgcXVpdGUgd29yayBsZWFkaW5nIHRv
-IHRoZSBmb2xsb3dpbmcgbWVzc2FnZXM6DQo+ID4gDQo+ID4gWyAgICA2LjU1OTU5M10gdXNiIDIt
-MTogbmV3IGZ1bGwtc3BlZWQgVVNCIGRldmljZSBudW1iZXIgMiB1c2luZw0KPiA+IHRlZ3JhLQ0K
-PiA+IGVoY2kNCj4gPiBbICAgMTEuNzU5MTczXSB1c2IgMi0xOiBkZXZpY2UgZGVzY3JpcHRvciBy
-ZWFkLzY0LCBlcnJvciAtMTEwDQo+ID4gWyAgIDI3LjExOTQ1M10gdXNiIDItMTogZGV2aWNlIGRl
-c2NyaXB0b3IgcmVhZC82NCwgZXJyb3IgLTExMA0KPiA+IFsgICAyNy4zODkyMTddIHVzYiAyLTE6
-IG5ldyBmdWxsLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDMgdXNpbmcNCj4gPiB0ZWdyYS0NCj4g
-PiBlaGNpDQo+ID4gWyAgIDMyLjU1OTQ1NF0gdXNiIDItMTogZGV2aWNlIGRlc2NyaXB0b3IgcmVh
-ZC82NCwgZXJyb3IgLTExMA0KPiA+IFsgICA0Ny45Mjk3NzddIHVzYiAyLTE6IGRldmljZSBkZXNj
-cmlwdG9yIHJlYWQvNjQsIGVycm9yIC0xMTANCj4gPiBbICAgNDguMDQ5NjU4XSB1c2IgdXNiMi1w
-b3J0MTogYXR0ZW1wdCBwb3dlciBjeWNsZQ0KPiA+IFsgICA0OC43NTk0NzVdIHVzYiAyLTE6IG5l
-dyBmdWxsLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDQgdXNpbmcNCj4gPiB0ZWdyYS0NCj4gPiBl
-aGNpDQo+ID4gWyAgIDU5LjM0OTQ1N10gdXNiIDItMTogZGV2aWNlIG5vdCBhY2NlcHRpbmcgYWRk
-cmVzcyA0LCBlcnJvciAtMTEwDQo+ID4gWyAgIDU5LjUwOTQ0OV0gdXNiIDItMTogbmV3IGZ1bGwt
-c3BlZWQgVVNCIGRldmljZSBudW1iZXIgNSB1c2luZw0KPiA+IHRlZ3JhLQ0KPiA+IGVoY2kNCj4g
-PiBbICAgNzAuMDY5NDU3XSB1c2IgMi0xOiBkZXZpY2Ugbm90IGFjY2VwdGluZyBhZGRyZXNzIDUs
-IGVycm9yIC0xMTANCj4gPiBbICAgNzAuMDc5NzIxXSB1c2IgdXNiMi1wb3J0MTogdW5hYmxlIHRv
-IGVudW1lcmF0ZSBVU0IgZGV2aWNlDQo+ID4gDQo+ID4gRml4IHRoaXMgYnkgYWN0dWFsbHkgYWxs
-b3dpbmcgdGhlIHJhdGUgYWxzbyBiZWluZyBzZXQgZnJvbSB3aXRoaW4NCj4gPiB0aGUgTGludXgg
-a2VybmVsLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2Vs
-Lnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+IA0KPiA+IC0tLQ0KPiA+IA0KPiA+ICBkcml2ZXJz
-L2Nsay90ZWdyYS9jbGstcGxsLmMgfCAyICsrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2Vy
-dGlvbnMoKykNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvdGVncmEvY2xrLXBs
-bC5jIGIvZHJpdmVycy9jbGsvdGVncmEvY2xrLQ0KPiA+IHBsbC5jDQo+ID4gaW5kZXggN2MzNjll
-MjFjOTFjLi44MzBkMWM4N2ZhN2MgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvdGVncmEv
-Y2xrLXBsbC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvdGVncmEvY2xrLXBsbC5jDQo+ID4gQEAg
-LTExNTEsNiArMTE1MSw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgY2xrX29wcw0KPiA+IHRlZ3Jh
-X2Nsa19wbGx1X29wcyA9IHsNCj4gPiAgCS5lbmFibGUgPSBjbGtfcGxsdV9lbmFibGUsDQo+ID4g
-IAkuZGlzYWJsZSA9IGNsa19wbGxfZGlzYWJsZSwNCj4gPiAgCS5yZWNhbGNfcmF0ZSA9IGNsa19w
-bGxfcmVjYWxjX3JhdGUsDQo+ID4gKwkucm91bmRfcmF0ZSA9IGNsa19wbGxfcm91bmRfcmF0ZSwN
-Cj4gPiArCS5zZXRfcmF0ZSA9IGNsa19wbGxfc2V0X3JhdGUsDQo+ID4gIH07DQo+ID4gIA0KPiA+
-ICBzdGF0aWMgaW50IF9wbGxfZml4ZWRfbWRpdihzdHJ1Y3QgdGVncmFfY2xrX3BsbF9wYXJhbXMN
-Cj4gPiAqcGxsX3BhcmFtcywNCj4gPiANCj4gDQo+IFRlZ3JhJ3MgVVNCIFBIWSBkcml2ZXIgb25s
-eSBlbmFibGVzIGNsb2NrIGFuZCBjbGsgZHJpdmVyIGRvZXNuJ3QNCj4gc3BlY2lmeSB0aGUNCj4g
-Y2xvY2sgcmF0ZSBpbiB0aGUgaW5pdCB0YWJsZS4gQ291bGQgeW91IHBsZWFzZSBjbGFyaWZ5IHdo
-ZXJlIGluIHRoZQ0KPiBrZXJuZWxzIGNvZGUNCj4gUExMX1UgcmF0ZSBpcyBnZXR0aW5nIHNldD8N
-Cg0KSSBndWVzcyB0aGF0IHdvdWxkIGJlIGFjY29yZGluZyB0byB0aGUgZm9sbG93aW5nIHRhYmxl
-IGlzbid0IGl0Og0KDQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVs
-L2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZQ0KL2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdy
-YTMwLmM/aD12NC4xNi1yYzMjbjI4Nw==
+On 27.02.2018 02:04, Marcel Ziswiler wrote:
+> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+>>> Turns out latest upstream U-Boot does not configure/enable pllu
+>>> which
+>>> leaves it at some default rate of 500 kHz:
+>>>
+>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+>>> pll_u
+>>>        pll_u                  3        3        0      500000      
+>>>     0
+>>>
+>>> Of course this won't quite work leading to the following messages:
+>>>
+>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+>>> tegra-
+>>> ehci
+>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+>>> tegra-
+>>> ehci
+>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+>>> [   48.049658] usb usb2-port1: attempt power cycle
+>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+>>> tegra-
+>>> ehci
+>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+>>> tegra-
+>>> ehci
+>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+>>>
+>>> Fix this by actually allowing the rate also being set from within
+>>> the Linux kernel.
+>>>
+>>> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>>>
+>>> ---
+>>>
+>>>  drivers/clk/tegra/clk-pll.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-
+>>> pll.c
+>>> index 7c369e21c91c..830d1c87fa7c 100644
+>>> --- a/drivers/clk/tegra/clk-pll.c
+>>> +++ b/drivers/clk/tegra/clk-pll.c
+>>> @@ -1151,6 +1151,8 @@ static const struct clk_ops
+>>> tegra_clk_pllu_ops = {
+>>>  	.enable = clk_pllu_enable,
+>>>  	.disable = clk_pll_disable,
+>>>  	.recalc_rate = clk_pll_recalc_rate,
+>>> +	.round_rate = clk_pll_round_rate,
+>>> +	.set_rate = clk_pll_set_rate,
+>>>  };
+>>>  
+>>>  static int _pll_fixed_mdiv(struct tegra_clk_pll_params
+>>> *pll_params,
+>>>
+>>
+>> Tegra's USB PHY driver only enables clock and clk driver doesn't
+>> specify the
+>> clock rate in the init table. Could you please clarify where in the
+>> kernels code
+>> PLL_U rate is getting set?
+> 
+> I guess that would be according to the following table isn't it:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree
+> /drivers/clk/tegra/clk-tegra30.c?h=v4.16-rc3#n287
+> 
+
+I see now that T30 has PLL_U in the init table [0], but T20 doesn't.
+
+There is only one 480MHz rate defined in PLL_U lookup table. PLL_U also provides
+12MHz and 60MHz outputs using fixed dividers and hence PLL_U shouldn't need
+set/round_rate(), we can't change PLL_U rate at all and only enable / disable it.
+
+Looks like for some reason PLL_U enabling fails without set/round_rate, but then
+PHY driver should fail to probe [1]. Is it the case? Do you know why PLL_U isn't
+actually getting enabled in HW? It is quite fishy, seems like clk driver /
+framework bug or I'm missing something.
+
+[0]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/tegra/clk-tegra30.c?h=v4.16-rc3#n1274
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/phy/phy-tegra-usb.c?h=v4.16-rc3#n777
