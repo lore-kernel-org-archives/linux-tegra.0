@@ -1,47 +1,45 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2] ARM: tegra: fix ulpi regression on tegra20
-Date: Thu, 1 Mar 2018 17:24:19 -0600
-Message-ID: <20180301232419.ypehol54rhqrqjds@rob-hp-laptop>
-References: <20180222143825.1517-1-marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [RFC 5/5] PCI: tegra: use seq_open_data
+Date: Fri,  2 Mar 2018 00:37:24 +0100
+Message-ID: <20180301233724.20440-5-linux@rasmusvillemoes.dk>
+References: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180222143825.1517-1-marcel@ziswiler.com>
+In-Reply-To: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 03:38:25PM +0100, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
-> during registration") ULPI has been broken on Tegra20 leading to the
-> following error message during boot:
-> 
-> [    1.974698] ulpi_phy_power_on: ulpi write failed
-> [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
-> [    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
-> 
-> Debugging through the changes and finally also consulting the TRM
-> revealed that rather than the CDEV2 clock off OSC requiring such pin
-> muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
-> just worked by chance of that one having been enabled which Stephen's
-> commit now changed when reparenting sclk away from pll_p_out4 leaving
-> that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
-> as the ULPI PHY clock.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
-> Changes in v2:
-> - Updated device tree binding documentation as well.
-> - CCing Dmitry as well.
-> 
->  Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt | 4 +++-
->  arch/arm/boot/dts/tegra20.dtsi                                   | 2 +-
->  2 files changed, 4 insertions(+), 2 deletions(-)
+Simplify the code slightly by having seq_open_data do the ->private
+assignment.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ drivers/pci/host/pci-tegra.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index dd9b3bcc41c3..7921428786aa 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -2188,17 +2188,8 @@ static const struct seq_operations tegra_pcie_ports_seq_ops = {
+ static int tegra_pcie_ports_open(struct inode *inode, struct file *file)
+ {
+ 	struct tegra_pcie *pcie = inode->i_private;
+-	struct seq_file *s;
+-	int err;
+-
+-	err = seq_open(file, &tegra_pcie_ports_seq_ops);
+-	if (err)
+-		return err;
+-
+-	s = file->private_data;
+-	s->private = pcie;
+ 
+-	return 0;
++	return seq_open_data(file, &tegra_pcie_ports_seq_ops, pcie);
+ }
+ 
+ static const struct file_operations tegra_pcie_ports_ops = {
+-- 
+2.15.1
