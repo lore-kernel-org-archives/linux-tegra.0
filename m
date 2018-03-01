@@ -1,70 +1,47 @@
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: [PATCH 2/3] usb: xhci: tegra: Add runtime PM support
-Date: Thu, 1 Mar 2018 16:18:09 +0200
-Message-ID: <54bd00b7-2835-a253-0399-370e8c8203b8@linux.intel.com>
-References: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
- <1518626085-29102-2-git-send-email-jonathanh@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 6/7] arm64: tegra: Add Tegra194 chip device tree
+Date: Thu, 1 Mar 2018 15:43:57 -0600
+Message-ID: <20180301214357.a7wur5izbpk3udky@rob-hp-laptop>
+References: <20180220115812.24108-1-mperttunen@nvidia.com>
+ <20180220115812.24108-7-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1518626085-29102-2-git-send-email-jonathanh@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180220115812.24108-7-mperttunen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, pombredanne@nexb.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 14.02.2018 18:34, Jon Hunter wrote:
-> Add runtime PM support to the Tegra XHCI driver and move the function
-> calls to enable/disable the clocks, regulators and PHY into the runtime
-> PM callbacks.
+On Tue, Feb 20, 2018 at 01:58:11PM +0200, Mikko Perttunen wrote:
+> Add the chip-level device tree, including binding headers, for the
+> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
+> are initially available, enough to boot to UART console.
 > 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->   drivers/usb/host/xhci-tegra.c | 80 ++++++++++++++++++++++++++++++-------------
->   1 file changed, 56 insertions(+), 24 deletions(-)
 > 
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 02b0b24faa58..42aa67858b53 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -18,6 +18,7 @@
->   #include <linux/phy/tegra/xusb.h>
->   #include <linux/platform_device.h>
->   #include <linux/pm.h>
-> +#include <linux/pm_runtime.h>
->   #include <linux/regulator/consumer.h>
->   #include <linux/reset.h>
->   #include <linux/slab.h>
-> @@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->   	 */
->   	platform_set_drvdata(pdev, tegra);
->   
-> -	err = tegra_xusb_clk_enable(tegra);
-> -	if (err) {
-> -		dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
-> -		goto put_usb2;
-> -	}
-> -
-> -	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
-> -	if (err) {
-> -		dev_err(&pdev->dev, "failed to enable regulators: %d\n", err);
-> -		goto disable_clk;
-> -	}
-> +	pm_runtime_enable(&pdev->dev);
->   
-> -	err = tegra_xusb_phy_enable(tegra);
-> +	err = pm_runtime_get_sync(&pdev->dev);
->   	if (err < 0) {
+> Notes:
+>     v4:
+>     - fixed copyright headers according to license-rules.rst
+>     - removed comments from clock bindings
+>     
+>     v3:
+>     - added hypervisor-related apertures to GIC node
+>     - removed GPL boilerplate in favor of SPDX and harmonized
+>       copyright headers
+> 
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 344 +++++++++++++++++++++++++
+>  include/dt-bindings/clock/tegra194-clock.h     | 321 +++++++++++++++++++++++
+>  include/dt-bindings/gpio/tegra194-gpio.h       |  61 +++++
+>  include/dt-bindings/power/tegra194-powergate.h |  35 +++
+>  include/dt-bindings/reset/tegra194-reset.h     | 152 +++++++++++
+>  5 files changed, 913 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>  create mode 100644 include/dt-bindings/clock/tegra194-clock.h
+>  create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
+>  create mode 100644 include/dt-bindings/power/tegra194-powergate.h
+>  create mode 100644 include/dt-bindings/reset/tegra194-reset.h
 
-Does this mean that if runtime PM is disabled then clocks and regulator will never be enabled
-for Tegra xhci?
-
-How about keeping the clock and regualtor enabling in probe, and instead add something like:
-
-pm_runtime_set_active(&pdev->dev);
-pm_runtime_enable(&pdev->dev);
-pm_runtime_get_noresume(&pdev->dev);
-
--Mathias
+Reviewed-by: Rob Herring <robh@kernel.org>
