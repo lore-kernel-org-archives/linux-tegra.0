@@ -1,63 +1,47 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 05/10] hwmon: generic-pwm-tachometer: Add generic PWM
- based tachometer
-Date: Thu, 1 Mar 2018 16:08:36 -0600
-Message-ID: <20180301220836.a77o5i5g7g2k7lei@rob-hp-laptop>
-References: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
- <1519196339-9377-6-git-send-email-rrajk@nvidia.com>
- <ee03e1e5-bbeb-1238-04ed-b992fe3a3ce6@kapsi.fi>
- <c1192f75-0e6e-c735-67e1-2901624831ae@roeck-us.net>
- <a5db25f7-6999-ff3a-21c2-161cfcf4db35@kapsi.fi>
+Subject: Re: [PATCH v2] ARM: tegra: fix ulpi regression on tegra20
+Date: Thu, 1 Mar 2018 17:24:19 -0600
+Message-ID: <20180301232419.ypehol54rhqrqjds@rob-hp-laptop>
+References: <20180222143825.1517-1-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <a5db25f7-6999-ff3a-21c2-161cfcf4db35@kapsi.fi>
+In-Reply-To: <20180222143825.1517-1-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Guenter Roeck <linux@roeck-us.net>, Rajkumar Rampelli <rrajk@nvidia.com>, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, jdelvare@suse.com, corbet@lwn.net, catalin.marinas@arm.com, will.deacon@arm.com, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, pombredanne@nexb.com, mmaddireddy@nvidia.com, mperttunen@nvidia.com, arnd@arndb.de, gregory.clement@free-electrons.com, timur@codeaurora.org, andy.gross@linaro.org, xuwei5@hisilicon.com, elder@linaro.org, heiko@sntech.de, krzk@kernel.org, ard.biesheuvel@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ldewangan@nvidia.com
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 05:20:29PM +0200, Mikko Perttunen wrote:
-> On 21.02.2018 16:46, Guenter Roeck wrote:
-> > On 02/20/2018 11:15 PM, Mikko Perttunen wrote:
-> > > AIUI, the PWM framework already exposes a sysfs node with period
-> > > information. We should just use that instead of adding a new driver
-> > > for this.
-> > > 
-> > 
-> > I am kind of lost. Please explain.
-> > 
-> > Are you saying that we should drop the pwm-fan driver as well (which goes
-> > the opposite way), as well as any other drivers doing anything with pwm
-> > signals,
-> > because after all those signals are already exposed to userspace a sysfs
-> > attributes,
-> > and a kernel driver to abstract those values is thus not needed ?
+On Thu, Feb 22, 2018 at 03:38:25PM +0100, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> The only thing this driver does is do a constant division in kernelspace.
-> I'm not really seeing why that couldn't be done in userspace. But if you
-> think it's appropriate to do the RPM conversion in kernelspace then I'm not
-> greatly opposed to that.
+> Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
+> during registration") ULPI has been broken on Tegra20 leading to the
+> following error message during boot:
 > 
-> > 
-> > > In any case, we cannot add something like this to device tree since
-> > > it's not a hardware device.
-> > > 
-> > 
-> > So you are saying there is no means to express in devicetree that
-> > a pwm input is connected to a fan ? How is that not hardware ?
-> > 
-> > If so, how do you express in devicetree that a pwm signal is connected
-> > to anything ?
+> [    1.974698] ulpi_phy_power_on: ulpi write failed
+> [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
+> [    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
 > 
-> If we want to describe that the tachometer is connected to a fan, then we
-> should have a fan node in the board's device tree. We don't have a chip that
-> has a thing called "generic-pwm-tachometer" attached to it. (We have chips
-> that have a "nvidia,tegra186-tachometer", so it's proper to have that.)
+> Debugging through the changes and finally also consulting the TRM
+> revealed that rather than the CDEV2 clock off OSC requiring such pin
+> muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
+> just worked by chance of that one having been enabled which Stephen's
+> commit now changed when reparenting sclk away from pll_p_out4 leaving
+> that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
+> as the ULPI PHY clock.
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> ---
+> 
+> Changes in v2:
+> - Updated device tree binding documentation as well.
+> - CCing Dmitry as well.
+> 
+>  Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt | 4 +++-
+>  arch/arm/boot/dts/tegra20.dtsi                                   | 2 +-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
 
-We already have some fan control bindings in the tree. Follow those. 
-There's only so many ways to control fans, so lets have some alignment. 
-And yes, we should have a fan node. 
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
