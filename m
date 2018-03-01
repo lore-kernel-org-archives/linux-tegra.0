@@ -1,47 +1,29 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 6/7] arm64: tegra: Add Tegra194 chip device tree
-Date: Thu, 1 Mar 2018 15:43:57 -0600
-Message-ID: <20180301214357.a7wur5izbpk3udky@rob-hp-laptop>
-References: <20180220115812.24108-1-mperttunen@nvidia.com>
- <20180220115812.24108-7-mperttunen@nvidia.com>
+Subject: Re: [PATCH v3 01/15] dt-bindings: arm: tegra: Remove duplicated
+ Tegra30+ MC binding
+Date: Thu, 1 Mar 2018 15:53:09 -0600
+Message-ID: <20180301215309.v6gk77j4trwkpn7j@rob-hp-laptop>
+References: <cover.1519141896.git.digetx@gmail.com>
+ <0d1b4a840954796f319621e481ec1a90baee98cc.1519141896.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180220115812.24108-7-mperttunen@nvidia.com>
+In-Reply-To: <0d1b4a840954796f319621e481ec1a90baee98cc.1519141896.git.digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, pombredanne@nexb.com
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 01:58:11PM +0200, Mikko Perttunen wrote:
-> Add the chip-level device tree, including binding headers, for the
-> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
-> are initially available, enough to boot to UART console.
+On Tue, Feb 20, 2018 at 07:25:14PM +0300, Dmitry Osipenko wrote:
+> There are two bindings for the same Memory Controller. One of the bindings
+> became obsolete long time ago and probably was left unnoticed, remove it
+> for consistency.
 > 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
-> 
-> Notes:
->     v4:
->     - fixed copyright headers according to license-rules.rst
->     - removed comments from clock bindings
->     
->     v3:
->     - added hypervisor-related apertures to GIC node
->     - removed GPL boilerplate in favor of SPDX and harmonized
->       copyright headers
-> 
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 344 +++++++++++++++++++++++++
->  include/dt-bindings/clock/tegra194-clock.h     | 321 +++++++++++++++++++++++
->  include/dt-bindings/gpio/tegra194-gpio.h       |  61 +++++
->  include/dt-bindings/power/tegra194-powergate.h |  35 +++
->  include/dt-bindings/reset/tegra194-reset.h     | 152 +++++++++++
->  5 files changed, 913 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
->  create mode 100644 include/dt-bindings/clock/tegra194-clock.h
->  create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
->  create mode 100644 include/dt-bindings/power/tegra194-powergate.h
->  create mode 100644 include/dt-bindings/reset/tegra194-reset.h
+>  .../bindings/arm/tegra/nvidia,tegra30-mc.txt           | 18 ------------------
+>  1 file changed, 18 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt
 
 Reviewed-by: Rob Herring <robh@kernel.org>
