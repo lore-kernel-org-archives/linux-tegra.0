@@ -1,59 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC 5/5] PCI: tegra: use seq_open_data
-Date: Fri, 2 Mar 2018 11:42:07 +0100
-Message-ID: <20180302104207.GB27178@ulmo>
-References: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
- <20180301233724.20440-5-linux@rasmusvillemoes.dk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+Date: Fri, 2 Mar 2018 08:56:46 +0000
+Message-ID: <2feb313b-ef9f-be2f-68a5-b8cc46ad75c3@nvidia.com>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180301233724.20440-5-linux@rasmusvillemoes.dk>
+In-Reply-To: <20180222230451.15515-1-marcel@ziswiler.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org
+Cc: Dmitry Osipenko <digetx@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---CUfgB8w4ZwR/yMy5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 02, 2018 at 12:37:24AM +0100, Rasmus Villemoes wrote:
-> Simplify the code slightly by having seq_open_data do the ->private
-> assignment.
->=20
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+On 22/02/18 23:04, Marcel Ziswiler wrote:
+> Turns out latest upstream U-Boot does not configure/enable pllu which
+> leaves it at some default rate of 500 kHz:
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
+>        pll_u                  3        3        0      500000          0
+> 
+> Of course this won't quite work leading to the following messages:
+> 
+> [    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
+> ehci
+> [   11.759173] usb 2-1: device descriptor read/64, error -110
+> [   27.119453] usb 2-1: device descriptor read/64, error -110
+> [   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
+> ehci
+> [   32.559454] usb 2-1: device descriptor read/64, error -110
+> [   47.929777] usb 2-1: device descriptor read/64, error -110
+> [   48.049658] usb usb2-port1: attempt power cycle
+> [   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
+> ehci
+> [   59.349457] usb 2-1: device not accepting address 4, error -110
+> [   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
+> ehci
+> [   70.069457] usb 2-1: device not accepting address 5, error -110
+> [   70.079721] usb usb2-port1: unable to enumerate USB device
+> 
+> Fix this by actually allowing the rate also being set from within
+> the Linux kernel.
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
 > ---
->  drivers/pci/host/pci-tegra.c | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
+> 
+>  drivers/clk/tegra/clk-pll.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 7c369e21c91c..830d1c87fa7c 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -1151,6 +1151,8 @@ static const struct clk_ops tegra_clk_pllu_ops = {
+>  	.enable = clk_pllu_enable,
+>  	.disable = clk_pll_disable,
+>  	.recalc_rate = clk_pll_recalc_rate,
+> +	.round_rate = clk_pll_round_rate,
+> +	.set_rate = clk_pll_set_rate,
+>  };
+>  
+>  static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
 
-I had to go hunt for patch 1/5 to be able to tell if this is indeed
-equivalent. It is, so:
+Thanks for the fix. I have tested this on Tegra30 cardhu and this
+resolves a problem booting this board with the upstream uboot bootloader.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
+We just need to align with Peter on the best way to fix.
 
---CUfgB8w4ZwR/yMy5
-Content-Type: application/pgp-signature; name="signature.asc"
+Cheers,
+Jon
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqZKn8ACgkQ3SOs138+
-s6EmyRAAkzu5grx2iNvsqWgE/4+9sRZ97eRSEc4muVz5vPvuNNZ0aviU4rXZ9OCi
-1R73r8tc73U1LOTlHozRLIwvXiWMiv8vE9YzgUyoaj0Pllh44P0GK7PXiuPmktyo
-hUMpQwxEfQNtTR18svAFb0iKexFzLUhTndAvgRwmUb9stTkfEXX0HUMYb5vOD1t5
-NWbw8sO9lCUq++NUkiyKG9+mGK1M2YLAsGtbewYqqBqP0g68NPYBPHBaDzATZrvF
-z61G0Y0SzUg9F1oNmkDgUghDKlDzouhWxYBRVk37sCNg2CVkW+9+Exlcwi3lSNQI
-pDgykezDrCcC/sYJJ2wGQBiElrvtfGwJUJmI3eozKoDqvSI8o4r15EZozAuaAexL
-CBoJy9NfQBhqbFBl0HcteEqCLdqXmmA6sIleBbadQWjW+fvGsIyfyS4lGL2Cs8Sl
-qgkVe+iKhg4jRYFBTVKRbADdxxpBZ8hoty5I9ew+tcpWOWwOyjc1AZHM9n54J/IA
-Poj0tJmDgbfeC4J/AnSYpYXCm+P+2YxwprTzuOdIe2N8XMkiCj8jYKWOydWzZAEW
-eMHZ8vnyvmUWVgmHpo2KPo0nMGMc8KGqMAVOjbThUvh3ETvczyd+XhizMV/G9AvW
-W9/Ry5co8MP/2Eder/JT6ylcjwVcnVN3MtvMB8bjn2Xw3I2hHTE=
-=QeI3
------END PGP SIGNATURE-----
-
---CUfgB8w4ZwR/yMy5--
+-- 
+nvpublic
