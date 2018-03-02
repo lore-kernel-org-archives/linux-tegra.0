@@ -1,40 +1,97 @@
-From: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
-Subject: Re: [PATCH v4] watchdog: add SPDX identifiers for watchdog subsystem
-Date: Fri, 2 Mar 2018 14:09:31 +1030
-Message-ID: <CACPK8Xd2W1559soSAfviY6AS0uMRCxYEmOrhHAof5gX6y_63Cg@mail.gmail.com>
-References: <20180228150209.2525-1-marcus.folkesson@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+Date: Fri, 2 Mar 2018 09:02:07 +0000
+Message-ID: <7914774e-e88f-7914-2434-790a67f3aa4e@nvidia.com>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+ <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+ <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
+ <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
+ <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+ <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
+ <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20180228150209.2525-1-marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Mans Rullgard <mans-2StjZFpD7GcAvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Baoyou Xie <baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Sylvain Lemieux <slemieux.tyco-Re5JQEeQqe8@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 1:31 AM, Marcus Folkesson
-<marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> - Add SPDX identifier
-> - Remove boiler plate license text
-> - If MODULE_LICENSE and boiler plate does not match, go for boiler plate
->   license
->
 
-For this one:
+On 01/03/18 07:41, Peter De Schrijver wrote:
+> On Wed, Feb 28, 2018 at 08:20:47PM +0300, Dmitry Osipenko wrote:
+>> On 28.02.2018 17:14, Peter De Schrijver wrote:
+>>> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
+>>>> On 28.02.2018 12:36, Peter De Schrijver wrote:
+>>>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
+>>>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+>>>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
+>>>>>>>>> which
+>>>>>>>>> leaves it at some default rate of 500 kHz:
+>>>>>>>>>
+>>>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+>>>>>>>>> pll_u
+>>>>>>>>>        pll_u                  3        3        0      500000      
+>>>>>>>>>     0
+>>>>>>>>>
+>>>>>>>>> Of course this won't quite work leading to the following messages:
+>>>>>>>>>
+>>>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+>>>>>>>>> tegra-
+>>>>>>>>> ehci
+>>>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+>>>>>>>>> tegra-
+>>>>>>>>> ehci
+>>>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
+>>>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+>>>>>>>>> tegra-
+>>>>>>>>> ehci
+>>>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+>>>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+>>>>>>>>> tegra-
+>>>>>>>>> ehci
+>>>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+>>>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+>>>>>>>>>
+>>>>>>>>> Fix this by actually allowing the rate also being set from within
+>>>>>>>>> the Linux kernel.
+>>>>>
+>>>>> I think the best solution to this problem would be to make pll_u a fixed
+>>>>> clock and enable it and program the rate if it's not enabled at boot.
+>>>>
+>>>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
+>>>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
+>>>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
+>>>> there.
+>>>>
+>>>
+>>> AFAIK we only use one rate ever?
+>>
+>> IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
+>> setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
+>>
+> 
+> Indeed. And given that it's hw controlled anyway, I don't see why we can't make
+> it a fixed clock and handle the init at kernel boot depending on what the
+> bootloader has done.
 
->  drivers/watchdog/aspeed_wdt.c          |  5 +---
+Peter, are you suggesting we implement the equivalent to
+tegra210_init_pllu()? This does look a bit more involved that what this
+change is doing. Is there a simple way to do what you are suggesting?
 
-Acked-by: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
+Cheers
+Jon
 
-Cheers,
-
-Joel
+-- 
+nvpublic
