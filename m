@@ -1,97 +1,131 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-Date: Fri, 2 Mar 2018 13:25:34 +0200
-Message-ID: <20180302112534.GI6190@tbergstrom-lnx.Nvidia.com>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
- <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
- <1519686262.6374.3.camel@toradex.com>
- <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
- <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
- <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
- <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
- <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
- <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
- <7914774e-e88f-7914-2434-790a67f3aa4e@nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use
+ of_clk_get_parent_count() instead of open coding
+Date: Fri, 2 Mar 2018 14:15:35 +0100
+Message-ID: <CAMuHMdVsb+5T-DYfF9v6ANhVxhRk6_r+XPA34mW7Q=90HnitAA@mail.gmail.com>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+ <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+ <11171053.oOJPuGlHoK@phil>
+ <CAEG3pNCioW_FVXj3-j4KC_yO6ZYGXQB_eanHWSb9NUE9kYsWag@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7914774e-e88f-7914-2434-790a67f3aa4e@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAEG3pNCioW_FVXj3-j4KC_yO6ZYGXQB_eanHWSb9NUE9kYsWag@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Geert Uytterhoeven <geert+renesas@glider.be>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd <sboyd@codeaurora.org>,
+ Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 09:02:07AM +0000, Jon Hunter wrote:
-> 
-> On 01/03/18 07:41, Peter De Schrijver wrote:
-> > On Wed, Feb 28, 2018 at 08:20:47PM +0300, Dmitry Osipenko wrote:
-> >> On 28.02.2018 17:14, Peter De Schrijver wrote:
-> >>> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
-> >>>> On 28.02.2018 12:36, Peter De Schrijver wrote:
-> >>>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
-> >>>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
-> >>>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
-> >>>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
-> >>>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
-> >>>>>>>>> which
-> >>>>>>>>> leaves it at some default rate of 500 kHz:
-> >>>>>>>>>
-> >>>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
-> >>>>>>>>> pll_u
-> >>>>>>>>>        pll_u                  3        3        0      500000      
-> >>>>>>>>>     0
-> >>>>>>>>>
-> >>>>>>>>> Of course this won't quite work leading to the following messages:
-> >>>>>>>>>
-> >>>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
-> >>>>>>>>> tegra-
-> >>>>>>>>> ehci
-> >>>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
-> >>>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
-> >>>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
-> >>>>>>>>> tegra-
-> >>>>>>>>> ehci
-> >>>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
-> >>>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
-> >>>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
-> >>>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
-> >>>>>>>>> tegra-
-> >>>>>>>>> ehci
-> >>>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
-> >>>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
-> >>>>>>>>> tegra-
-> >>>>>>>>> ehci
-> >>>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
-> >>>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
-> >>>>>>>>>
-> >>>>>>>>> Fix this by actually allowing the rate also being set from within
-> >>>>>>>>> the Linux kernel.
-> >>>>>
-> >>>>> I think the best solution to this problem would be to make pll_u a fixed
-> >>>>> clock and enable it and program the rate if it's not enabled at boot.
-> >>>>
-> >>>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
-> >>>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
-> >>>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
-> >>>> there.
-> >>>>
-> >>>
-> >>> AFAIK we only use one rate ever?
-> >>
-> >> IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
-> >> setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
-> >>
-> > 
-> > Indeed. And given that it's hw controlled anyway, I don't see why we can't make
-> > it a fixed clock and handle the init at kernel boot depending on what the
-> > bootloader has done.
-> 
-> Peter, are you suggesting we implement the equivalent to
-> tegra210_init_pllu()? This does look a bit more involved that what this
-> change is doing. Is there a simple way to do what you are suggesting?
-> 
+Hi Mike,
 
-Basically yes.
+On Sun, Feb 18, 2018 at 8:09 PM, Michael Turquette
+<mturquette@baylibre.com> wrote:
+> On Sat, Feb 10, 2018 at 8:35 AM, Heiko Stuebner <heiko@sntech.de> wrote:
+>> Am Freitag, 19. Januar 2018, 16:18:20 CET schrieb Geert Uytterhoeven:
+>>> As of_clk_get_parent_count() returns zero on failure, while
+>>> of_count_phandle_with_args() might return a negative error code, this
+>>> also fixes the issue of possibly using a negative number in the
+>>> allocation below.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> ---
+>>>  drivers/soc/rockchip/pm_domains.c | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+>>> index 5c342167b9db7a16..9936038d38771784 100644
+>>> --- a/drivers/soc/rockchip/pm_domains.c
+>>> +++ b/drivers/soc/rockchip/pm_domains.c
+>>> @@ -16,6 +16,7 @@
+>>>  #include <linux/of_address.h>
+>>>  #include <linux/of_platform.h>
+>>>  #include <linux/clk.h>
+>>> +#include <linux/clk-provider.h>
+>>
+>> not wanting to be to nitpicky, but clk-provider.h seems that it should be
+>> used from drivers exposing clocks to the system, not from clock users.
+>>
+>> I just remember that in the past clk maintainers tried to keep their
+>> layering intact, so I've included them for clarification.
+>>
+>> Mike, Stephen: the power-domain driver of Rockchip socs needs
+>> to toggle all clocks of domain peripherals when turning a domain
+>> on or off, so has a variable list of clocks in the clocks property in dt.
+>> Hence the of_count_... call which could be replaced with
+>> of_clk_get_parent_count to not open-code this.
+>
+> Moving of_clk_get_parent_count to clk.h seems reasonable to me. It's
+> more of an of-specific helper than a provider-specific helper.
+>
+> Anyone up to submit a patch so that this one doesn't need to include
+> clk-provider.h?
 
-Peter.
+I gave it a try.
+Just moving of_clk_get_parent_count() from clk-provider.h to clk.h causes
+breakage, as half of the clock providers using of_clk_get_parent_count()
+do not include <linux/clk.h>:
+
+    drivers/clk/at91/clk-generated.c
+    drivers/clk/at91/clk-main.c
+    drivers/clk/at91/clk-master.c
+    drivers/clk/at91/clk-programmable.c
+    drivers/clk/at91/clk-slow.c
+    drivers/clk/at91/clk-smd.c
+    drivers/clk/at91/clk-usb.c
+    drivers/clk/at91/sckc.c
+    drivers/clk/clk-axi-clkgen.c
+    drivers/clk/clk-gpio.c
+    drivers/clk/clk-hsdk-pll.c
+    drivers/clk/h8300/clk-div.c
+    drivers/clk/h8300/clk-h8s2678.c
+    drivers/clk/renesas/clk-div6.c
+    drivers/clk/ti/composite.c
+    drivers/clk/ti/gate.c
+    drivers/clk/ti/mux.c
+
+So our options are:
+  1. Add #include <linux/clk.h> to each of the above,
+  2. Add #include <linux/clk.h> to <linux/clk-provider.h>,
+  3. Do nothing, i.e. users of of_clk_get_parent_count () need to
+      #include <linux/clk-provider.h>, cfr. this patch series.
+
+Any preference? Any option I'm missing?
+
+Thanks!
+
+>>>  #include <linux/regmap.h>
+>>>  #include <linux/mfd/syscon.h>
+>>>  #include <dt-bindings/power/rk3288-power.h>
+>>> @@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+>>>               return -EINVAL;
+>>>       }
+>>>
+>>> -     clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
+>>> +     clk_cnt = of_clk_get_parent_count(node);
+>>>       pd = devm_kzalloc(pmu->dev,
+>>>                         sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
+>>>                         GFP_KERNEL);
+>>>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
