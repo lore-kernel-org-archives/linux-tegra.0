@@ -1,68 +1,61 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 0/3] ARM: dts: tegra: apalis/colibri updates
-Date: Thu, 8 Mar 2018 16:11:59 +0100
-Message-ID: <20180308151159.GC13814@ulmo>
-References: <20180210013638.28164-1-marcel@ziswiler.com>
+Subject: Re: [PATCH 2/6] ARM: dts: tegra: apalis-tk1: activate pwm pin muxing
+ for pwm3
+Date: Thu, 8 Mar 2018 16:14:44 +0100
+Message-ID: <20180308151444.GD13814@ulmo>
+References: <20180210013806.28496-1-marcel@ziswiler.com>
+ <20180210013806.28496-3-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="MnLPg7ZWsaic7Fhd"
+        protocol="application/pgp-signature"; boundary="LKTjZJSUETSlgu2t"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180210013638.28164-1-marcel@ziswiler.com>
+In-Reply-To: <20180210013806.28496-3-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---MnLPg7ZWsaic7Fhd
+--LKTjZJSUETSlgu2t
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 10, 2018 at 02:36:35AM +0100, Marcel Ziswiler wrote:
+On Sat, Feb 10, 2018 at 02:38:02AM +0100, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 >=20
-> This series fixes the I2C bus frequencies, uses the correct compatible
-> for the RTC and removes an unneeded reg property for Tegra based
-> Toradex Apalis and Colibri modules.
+> Activate PWM pin muxing for Apalis PWM3. Note that the same PWM3 is
+> already active on pu6 being Apalis BKL1_PWM as well. Therefore exporting
+> that one for raw sysfs access will fail and one has to revert to using
+> the pwm backlight.
 >=20
->=20
-> Marcel Ziswiler (3):
->   apalis_t30/tk1, colibri_t20/t30: fix i2c bus frequencies
->   ARM: dts: tegra: apalis/colibri: use correct compatible for rtc
->   ARM: dts: tegra: apalis/colibri: remove unneeded reg property
->=20
->  arch/arm/boot/dts/tegra124-apalis-eval.dts    |  7 +++----
->  arch/arm/boot/dts/tegra124-apalis.dtsi        |  2 +-
->  arch/arm/boot/dts/tegra20-colibri-512.dtsi    | 16 +++++++++++-----
->  arch/arm/boot/dts/tegra30-apalis-eval.dts     |  4 ++--
->  arch/arm/boot/dts/tegra30-apalis.dtsi         |  3 +--
->  arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |  4 ++--
->  arch/arm/boot/dts/tegra30-colibri.dtsi        |  3 +--
->  7 files changed, 21 insertions(+), 18 deletions(-)
+> Downstream commit 668ddb921800 ("apalis-tk1: activate pwm pin muxing for
+> pwm3").
 
-Applied, thanks.
+That line is rather meaningless without knowing what exactly
+"downstream" is. I've removed that line.
 
 Thierry
 
---MnLPg7ZWsaic7Fhd
+--LKTjZJSUETSlgu2t
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhUr8ACgkQ3SOs138+
-s6GusxAAqCyCkcL688gAHUc3s0CGQmJJqeguHAyhM0HFi+z+6z2rtlnSYoJSGq7J
-emp74DisYPJTkQjZV1ZnDf8ZqTXxAaujxHyXeS1uOAnVZC4v8qgUWIl+RsphRu9S
-/P+YTzjeXtTuq8BJSpYGAy/jmzr95j/C10Ko9OHS1tuxgEmS4opXd1QH8VuJZpQI
-SmWNmmjLbrKPzqKeIZJynJUHSMqVVmNTkjbEwmM/4onYWhD4pUzK4j3rooqbAqM6
-IpLFvgkOboC1rJ+eua9ovDjN5FAiUAC/SBCjcB0BgqWiN6NiY+OOP4MFIEsOewmL
-GlJXYHq/V0PFhQFSulfnskG6fyA2QVU/ZnPlnJqrtAXWNYEujSDx9dNEeQa0RNVa
-ilxCp6KtH4XZuD44wiMLeJe7U64D/4B4w0JgDs1DXrpBhf+9ikyDyYl3wJU85L4A
-NMDJvFOBYFAhw12cCEzPUymUeIbbWTbUH03ebqs+2nR//aUbKXgHnkqexQ4UYtUB
-fiusw4dyFvcrx95nQkba64mk7uFXKc6+wuoNPfBcLwf5XlTwZ+ZzwnrMw84R9exN
-G3GgysdJb4wHOL1XPf9xyNGsOjDjBSOSpdEqzVX5+L/cq1bkzBRBOwkTI/MFsQ4y
-MbvXNbUk7Uj8wDCTdsYsItOoXZ4XjhmBG5mGYY0b+2kAKN0lhXw=
-=9g5E
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhU2QACgkQ3SOs138+
+s6F4/g//aegrx5okEY5hxiGSgLoAC8/pDkHsiMA3jH4jz16P/0NUy3yWAFLql19q
+bUtIn6cXXY5qREFM2IbcXgZDK0pYoMuoPiVn331pPSic0rWqv1K8SJL+GdHthQtf
+we2gdOwZEhUYvf2i3aXWdImBZ92lSSGcOgJXU7dXZ9iWiNkIxLm3j4oQMdWURgaO
+FYsD6zmcV0xw/7OILQ9z4Yt3ukMLJEyvUSA2XZV020QZIFTW8Ppdd5HtfW3MJ/8k
+WSnB/O850OZuvf/niZ+fFWkgUp1++UbRhI8U0aIASOvzAq0CPKQ3l5XPoPr4T0aF
+P60jL09uvN4WtNlAebgSfZZh7GQSpy1tqxK9RT3yMgyccJC1KVRjPW1REHeMC/Op
+9S5xT5hIDCTKt+i9yQ5lbr1+Ly4Vr4D0gE2Pf/FcfW9RS2ASfn7e5MhogepDGgjC
+GYrgRGuGjNIrioh4o+OpV9CuRVV5dIV6zjqqk8hdHYhIstXUnlNz4L5cH1Vd7OW0
+qWpl+5AfMmgH9qeBoqyXRbZJcnTvCbZAHHSjdJX+fGtP8fQwa5yCnPK+pvhDNh7B
+f6ZO1kkwBRtEBN3qHKHCZPDGK8Cx8kDcVVu+SODv9t04d5abkzbtfVY2oJTKebEk
+ajE0HT68Ssp0L5mKzDn2vfXDkcYXGneQN9uGFvD4dqhRfUPmI7E=
+=mb8a
 -----END PGP SIGNATURE-----
 
---MnLPg7ZWsaic7Fhd--
+--LKTjZJSUETSlgu2t--
