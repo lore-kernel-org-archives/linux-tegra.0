@@ -1,60 +1,67 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 2/7] soc/tegra: Add Tegra194 SoC configuration option
-Date: Thu, 8 Mar 2018 14:45:45 +0100
-Message-ID: <20180308134545.GF3529@ulmo>
-References: <20180220115812.24108-1-mperttunen@nvidia.com>
- <20180220115812.24108-3-mperttunen@nvidia.com>
+Subject: Re: [PATCH v2 0/2] Enable Video Decoder on Tegra30
+Date: Thu, 8 Mar 2018 15:00:10 +0100
+Message-ID: <20180308140010.GG3529@ulmo>
+References: <cover.1518981147.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ChQOR20MqfxkMJg9"
+        protocol="application/pgp-signature"; boundary="iJXiJc/TAIT2rh2r"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180220115812.24108-3-mperttunen@nvidia.com>
+In-Reply-To: <cover.1518981147.git.digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, pombredanne@nexb.com
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ChQOR20MqfxkMJg9
-Content-Type: text/plain; charset=us-ascii
+--iJXiJc/TAIT2rh2r
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 20, 2018 at 01:58:07PM +0200, Mikko Perttunen wrote:
-> Add the configuration option to enable support for the Tegra194
-> system-on-chip, and enable it by default in the arm64 defconfig.
+On Sun, Feb 18, 2018 at 10:46:54PM +0300, Dmitry Osipenko wrote:
+> VDE on Terga30 is compatible with VDE on Tegra20, hence the 'tegra-vde'
+> driver works fine on Terga30. Let's add missing DT nodes to expose Video
+> Decoder Engine on Terga30.
 >=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  arch/arm64/configs/defconfig |  1 +
->  drivers/soc/tegra/Kconfig    | 10 ++++++++++
->  2 files changed, 11 insertions(+)
+> Changelog:
+>=20
+> V2:
+> 	1) Appended unit address to the name of VDE pool node to fix
+> 	   DTC warning as per Andreas's F=C3=A4rber suggestion.
+>=20
+> 	2) Correctly placed IRAM DT node in the address-ascending order.
+>=20
+> Dmitry Osipenko (2):
+>   ARM: dts: tegra30: Add IRAM node
+>   ARM: dts: tegra30: Add video decoder node
+>=20
+>  arch/arm/boot/dts/tegra30.dtsi | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 
-defconfig changes should be in a separate patch because they need to go
-into different branches in the ARM SoC tree. I've fixed that up, but
-maybe something to keep in mind for next time.
+Applied, thanks.
 
 Thierry
 
---ChQOR20MqfxkMJg9
+--iJXiJc/TAIT2rh2r
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhPogACgkQ3SOs138+
-s6HWWQ//R3yF+Lj/Mohu5zTgSXdYRXk4XfP0c4PVOlc8MOJkWGdoo7nS+fHwfLmY
-GAEjY3HkRpQ0iwlA6he4hwGDPJEMvaPiopmhOdYEgJXwpREpLkJHBZaE5ts6azxH
-44MpdgAF2ls0jyqKM1rOw7Il/G7itDsREMkl70tNfwPJ1LSMpjapn74zYVtl9TVH
-sksQvRb0cjho9s+9s/eemTbQctqFML9pjWP3AWbIvhyT3LHHCg5Q6BUsSuhsBgRb
-Wa1iWD6t9pOKmqkZq/6dfgrVcK7E1JMG6k7E91R1OvQCNMFlARFLYnuU28T96UpE
-HJSpNvNST++lqmGZ4hVaUusgobvSWwwiI4SQWqcuyx2bS3Dzrih2IUVuME6vrqkd
-oINZCTOdL4qShJ9k0hBU9VaxnZhjkg+qZ40ZW0mM+F7rCPSWTp9vUUyV4MjAo2OB
-p9twbBMcNyRLRFL7oTaA3ygsyqIgU7MbjM5u39MMwA3TMyQ5jt7pWcpTI4xP7sz5
-BknWf4K8QEwY7PEdZiXJOW2gAYnKUv/ycrZfjCcd2CQvYTGAwwyUcc5Xaab4OW/j
-H0zD6LOJMpFVYpB1LedLqmxVKMS6GExQZiH0qgHDuIx0rm6sR9NgNAKSpspPF4FA
-04WRyLobbrND8CLyHGqzJFEl0mf33+BwG4Mx3bmu8fp0NBvnUow=
-=gBJs
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhQegACgkQ3SOs138+
+s6Eieg/9Gpvvz1j/xzTU0oaLBptJXo4AugnotE3G1W7Qgn4XtheFguWwKX/Z0KYd
+s8roltZ+g+t3Wn8cOjIAS2ygIbRkWeFTs24mKnE0YergJQlHNvo+dEZ2FA785Br2
+8+AxJs80zjk8aTeR1XTT/9IXvOWXVcU8lrnb4zokK/21s/Z5/fehsE/UuX/oPuDh
+HRBeygNVFfiz3kbj0QUn88qjVUJt6uSHSfz+DH8T7TvfMXxIeNJkt4WF+CcoZs8G
+ULpyVb0vism3INR2urVhvw+5XfUL89f5it3z+dnj9cJ4Jr/ZisFRlJXzQfAj2PG8
+sC7uL3SV629DkswpSgj7VBfZnZFuospEdy/3v0eajDyZ/LPFCh6IgJCJDbbNJOdp
+gRoy2683QnHeyqKS/OIxe6uwpplzUYfQ3PG+8sVu4+6YnrVmdBopxnZdsMETVTFk
+S6vAqirePqRNuwMqQjShtmfXbAbvFyIByfnmkcwL4F9p6DUXVfx6np//P+P9UCtu
+KpSoYhhWmbl2xgxYHRKFPg1hBZRNkfQ2e2GzfxIq0KeEZqvwvP2VKGOkGR80Gmt/
+YeFAijO/8F1PdnIvWCCf+W7tuZ/ECp/lKElFq12bzNSvI9nMYb0qVaqrALt5XuqK
+mAXEflyWLKmx/9us1F3Ts5w96q1Wc2nebvbo+00h3smqAKycKYU=
+=vM3O
 -----END PGP SIGNATURE-----
 
---ChQOR20MqfxkMJg9--
+--iJXiJc/TAIT2rh2r--
