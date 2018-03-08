@@ -1,55 +1,78 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] spi: tegra20-slink: use true and false for boolean values
-Date: Thu, 8 Mar 2018 14:14:40 +0100
-Message-ID: <20180308131440.GC3529@ulmo>
-References: <20180305235339.GA646@embeddedgus>
+Subject: Re: [PATCH] firmware: tegra: adjust tested variable
+Date: Thu, 8 Mar 2018 14:43:35 +0100
+Message-ID: <20180308134335.GD3529@ulmo>
+References: <1517063308-16679-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Qbvjkv9qwOGw/5Fx"
+        protocol="application/pgp-signature"; boundary="P+33d92oIH25kiaB"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180305235339.GA646@embeddedgus>
+In-Reply-To: <1517063308-16679-1-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Qbvjkv9qwOGw/5Fx
+--P+33d92oIH25kiaB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 05, 2018 at 05:53:39PM -0600, Gustavo A. R. Silva wrote:
-> Assign true or false to boolean variables instead of an integer value.
+On Sat, Jan 27, 2018 at 03:28:28PM +0100, Julia Lawall wrote:
+> Check the variable that was most recently initialized.
 >=20
-> This issue was detected with the help of Coccinelle.
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
 >=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> // <smpl>
+> @@
+> expression x, y, f, g, e, m;
+> statement S1,S2,S3,S4;
+> @@
+>=20
+> x =3D f(...);
+> if (\(<+...x...+>\&e\)) S1 else S2
+> (
+> x =3D g(...);
+> |
+> m =3D g(...,&x,...);
+> |
+> y =3D g(...);
+> *if (e)
+>  S3 else S4
+> )
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
 > ---
->  drivers/spi/spi-tegra20-slink.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/firmware/tegra/bpmp.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Applied, thanks.
 
---Qbvjkv9qwOGw/5Fx
+Thierry
+
+--P+33d92oIH25kiaB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhNz0ACgkQ3SOs138+
-s6FpSA/+KQBYiHSNVnrRvJ6y7/N2jBi1X1tQlelO5L/E98voet8WK7BW+gvPItvJ
-ZEKsmDqAUtLioRQ2zoxTfl76GF7jVgOoRuj9nGx2GOYmQrbY9+rKJzSv9zWsGwBD
-2k0XAtQAyFayXUdkYHcTZ+2GS+0OWbjiBm3HPIeMaZ9nvzj9bTbNtILdfrPLjDYy
-dRJ75AgBuPybEI1ckYy63tYzYeHltsQ4324eGtFBcnN+YMrtij9RfvWuNBeKCkng
-mdzuMpmKkRwC9G3lMjKV01RUOGtMZhSh84P+Wfs/3xDjIQajETEKxZ7wD7Xj8AOH
-/ZBrNlj1TlH7gBQiKuQYB8hbQwc7ORdRBchGkXj40dw2eifNGZfOcdFPDB6qA8er
-qZxGrWumue/QG1qEHCHqDrriBfmUBwnTTaoabwwg0ms3otvgP9b9ofqfKgSWjFLI
-icfTlBo+nI64/sAEcnnuiVxWH4PXSd4CBVoVm+DxqlVvmgpLRXxIaCR20uFeyMMB
-uedJk8hlxwlg7vJSrmXedUqzHU3rRnQH329bI68VdSIybZa4VIe7AAxCYSY4at0O
-QPAHzvr7BMrBwAW/r34NiOWt8h+ODtT/FwBAL7ejYvJcHXz7KqacSH6ouG8qmNYG
-ITvdQbL2zt8DL9M+agF+wWLccoVL19fPrf1HpWItwlPn4DUaaJ8=
-=h8jU
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhPgUACgkQ3SOs138+
+s6HFwQ/+OPn2T/yc9RXznPlpyt5yMNxjvCUFFnugI3o+WQu1wvM42JahxvRFe3rY
+HgWdRrg/7AMMIpFU+uXOjjDxBhCzGT+91CoOdD3ugACu9lvCNAxxvw+wlrOvcP9k
+aMB63V8RxtEzlsEIowVlt3uS6TDiHJSCSGVj1tTq3JuLRQZ6mZ5Kw2sU4827tR/4
+sdrlElA9F4s7fJbDxvQK8l16BQKa9KqH38v/uNyH8Bomn3mtknV7IrrdgYiYBXAZ
+ytACHn8ifEziLZI1F1RKR4yJ4lEmOVQsFaD7Uk920M4y+mmKlOSyIDLQpZdJtcxg
+KFCVqo8bE1Jmv12fypPn4hkj27JSTLpu0Kb1D3xEEIfXdL0JMfihgKyy/CwOZO7d
+1AFynLn0n+ZAaJgqKpCgfFTiX/5YBD7LvGqhikowVLg2l5XZxdZdl83YKzh0/JIL
+xsMD1Ieg34xszH/0qfNGNbi0NhxRJrcyLZTF8OU32cVXYQkRAWahJupLro02q9Uv
+kDlDfMNWllZl/3landBv/IjFq5RefKDRwOiOFYP9+6jWOU9B/VPBQqC3yMp0CDx6
+biYU1SjlMLhNm0K5XX0vOvheyiekM/ht5+7qibEryurFtkqRYqhqF5wmZan09uru
+7MOzjmu+S20S/mxvZB4yvqAoz3XR4r/zLFpuC/UJr+2oqMyQ2o8=
+=Bc3N
 -----END PGP SIGNATURE-----
 
---Qbvjkv9qwOGw/5Fx--
+--P+33d92oIH25kiaB--
