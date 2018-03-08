@@ -1,65 +1,51 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 05/10] hwmon: generic-pwm-tachometer: Add generic PWM
- based tachometer
-Date: Thu, 8 Mar 2018 06:31:24 -0800
-Message-ID: <d4e745a6-5534-662e-f6d5-a91bf580f550@roeck-us.net>
-References: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
- <1519196339-9377-6-git-send-email-rrajk@nvidia.com>
- <5172edff-fe29-7ed1-f0d2-b0359ea2c24d@roeck-us.net>
- <2510b525-ec36-b49d-5a62-81f335c0d10d@nvidia.com>
- <cfe0d0ce-3a89-bad0-85ba-6edf1135d2dc@roeck-us.net>
- <2628eff2-dd33-34f4-a7e1-cfe46ef88a3f@nvidia.com>
- <4556a8d2-947d-72c4-2962-3167afb53978@kapsi.fi>
- <62ba7f67-5a99-51ab-1214-eb68ebb7e642@roeck-us.net>
- <952cb50e-d9a0-ae5e-d9f6-d1ce268f0384@nvidia.com>
- <f7818e4c-17b6-c58b-3424-85749bb9c1cc@roeck-us.net>
- <5bffef40-a4a7-5f7d-a448-b2a381c57822@nvidia.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v2] ARM: tegra: fix ulpi regression on tegra20
+Date: Thu, 8 Mar 2018 14:31:26 +0000
+Message-ID: <1520519485.23006.6.camel@toradex.com>
+References: <20180222143825.1517-1-marcel@ziswiler.com>
+         <20180308141501.GH3529@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5bffef40-a4a7-5f7d-a448-b2a381c57822@nvidia.com>
+In-Reply-To: <20180308141501.GH3529@ulmo>
 Content-Language: en-US
+Content-ID: <5172D0DCC432A84FB5D47AB81AFAED9A@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Rajkumar Rampelli <rrajk@nvidia.com>, Mikko Perttunen <cyndis@kapsi.fi>, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, jdelvare@suse.com, corbet@lwn.net, catalin.marinas@arm.com, will.deacon@arm.com, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, pombredanne@nexb.com, mmaddireddy@nvidia.com, mperttunen@nvidia.com, arnd@arndb.de, timur@codeaurora.org, andy.gross@linaro.org, xuwei5@hisilicon.com, elder@linaro.org, heiko@sntech.de, krzk@kernel.org, ard.biesheuvel@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "digetx@gmail.com" <digetx@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/07/2018 10:06 PM, Laxman Dewangan wrote:
-> 
-> 
-> On Wednesday 07 March 2018 07:50 PM, Guenter Roeck wrote:
->> On 03/07/2018 01:47 AM, Rajkumar Rampelli wrote:
->>>
->>>>
->>>> While I am not opposed to ABI changes, the merits of those would need to be
->>>> discussed on the mailing list. But replacing "fan1_input" with "rpm" is
->>>> not an acceptable ABI change, even if it may measure something that turns
->>>> but isn't a fan.
->>>>
->>>> If this _is_ in fact supposed to be used for something else but fans, we
->>>> would have to discuss what that might be, and if hwmon is the appropriate
->>>> subsystem to measure and report it. This does to some degree lead back to
->>>> my concern of having the "fan" part of this patch series in the pwm core.
->>>> I am still not sure if that makes sense.
->>>>
->>>> Thanks,
->>>> Guenter
->>> I am planning to add tachometer support in pwm-fan.c driver (drivers/hwmon/) instead of adding new generic-pwm-tachometer.c driver. Measuring RPM value will be done in pwm-fan driver itself using pwm capture feature and will add new sysfs attributes under this driver to report rpm value of fan.
->>
->> There is an existing attribute to report the RPM of fans. It is called fan[1..n]_input.
->>
->> "replacing "fan1_input" with "rpm" is not an acceptable ABI change"
->>
->> Preemptive NACK.
-> 
-> The RPM is measured speed via PWM signal capture  which is output from fan.
-> So should we have the fan[1..n]_output_rpm?
-> 
-
-No. I hear you clearly that you for some reason dislike fan[1..n]_input.
-While ABIs are not always to our liking, that doesn't mean that we get
-to change them at our whim. If that is not acceptable for you, I can't
-help you. And you can't change inX_input to inX_voltage either, sorry.
-
-Guenter
+T24gVGh1LCAyMDE4LTAzLTA4IGF0IDE1OjE1ICswMTAwLCBUaGllcnJ5IFJlZGluZyB3cm90ZToN
+Cj4gT24gVGh1LCBGZWIgMjIsIDIwMTggYXQgMDM6Mzg6MjVQTSArMDEwMCwgTWFyY2VsIFppc3dp
+bGVyIHdyb3RlOg0KPiA+IEZyb206IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRv
+cmFkZXguY29tPg0KPiA+IA0KPiA+IFNpbmNlIGNvbW1pdCBmOGY4ZjFkMDQ0OTQgKCJjbGs6IERv
+bid0IHRvdWNoIGhhcmR3YXJlIHdoZW4NCj4gPiByZXBhcmVudGluZw0KPiA+IGR1cmluZyByZWdp
+c3RyYXRpb24iKSBVTFBJIGhhcyBiZWVuIGJyb2tlbiBvbiBUZWdyYTIwIGxlYWRpbmcgdG8NCj4g
+PiB0aGUNCj4gPiBmb2xsb3dpbmcgZXJyb3IgbWVzc2FnZSBkdXJpbmcgYm9vdDoNCj4gPiANCj4g
+PiBbICAgIDEuOTc0Njk4XSB1bHBpX3BoeV9wb3dlcl9vbjogdWxwaSB3cml0ZSBmYWlsZWQNCj4g
+PiBbICAgIDEuOTc5Mzg0XSB0ZWdyYS1laGNpIGM1MDA0MDAwLnVzYjogRmFpbGVkIHRvIHBvd2Vy
+IG9uIHRoZSBwaHkNCj4gPiBbICAgIDEuOTg1NDM0XSB0ZWdyYS1laGNpOiBwcm9iZSBvZiBjNTAw
+NDAwMC51c2IgZmFpbGVkIHdpdGggZXJyb3INCj4gPiAtMTEwDQo+ID4gDQo+ID4gRGVidWdnaW5n
+IHRocm91Z2ggdGhlIGNoYW5nZXMgYW5kIGZpbmFsbHkgYWxzbyBjb25zdWx0aW5nIHRoZSBUUk0N
+Cj4gPiByZXZlYWxlZCB0aGF0IHJhdGhlciB0aGFuIHRoZSBDREVWMiBjbG9jayBvZmYgT1NDIHJl
+cXVpcmluZyBzdWNoDQo+ID4gcGluDQo+ID4gbXV4aW5nIGFjdHVhbGx5IHRoZSBQTExfUF9PVVQ0
+IGNsb2NrIGlzIGluIHVzZS4gSXQgbG9va3MgbGlrZSBzbw0KPiA+IGZhciBpdA0KPiA+IGp1c3Qg
+d29ya2VkIGJ5IGNoYW5jZSBvZiB0aGF0IG9uZSBoYXZpbmcgYmVlbiBlbmFibGVkIHdoaWNoDQo+
+ID4gU3RlcGhlbidzDQo+ID4gY29tbWl0IG5vdyBjaGFuZ2VkIHdoZW4gcmVwYXJlbnRpbmcgc2Ns
+ayBhd2F5IGZyb20gcGxsX3Bfb3V0NA0KPiA+IGxlYXZpbmcNCj4gPiB0aGF0IG9uZSBkaXNhYmxl
+ZC4gRml4IHRoaXMgYnkgcHJvcGVybHkgYXNzaWduaW5nIHRoZSBQTExfUF9PVVQ0DQo+ID4gY2xv
+Y2sNCj4gPiBhcyB0aGUgVUxQSSBQSFkgY2xvY2suDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTog
+TWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+ID4gDQo+ID4g
+LS0tDQo+ID4gDQo+ID4gQ2hhbmdlcyBpbiB2MjoNCj4gPiAtIFVwZGF0ZWQgZGV2aWNlIHRyZWUg
+YmluZGluZyBkb2N1bWVudGF0aW9uIGFzIHdlbGwuDQo+ID4gLSBDQ2luZyBEbWl0cnkgYXMgd2Vs
+bC4NCj4gPiANCj4gPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9udmlk
+aWEsdGVncmEyMC11c2ItcGh5LnR4dCB8DQo+ID4gNCArKystDQo+ID4gIGFyY2gvYXJtL2Jvb3Qv
+ZHRzL3RlZ3JhMjAuZHRzaSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KPiA+
+IDIgKy0NCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
+KC0pDQo+IA0KPiBBcHBsaWVkLCB0aG91Z2ggSSd2ZSBzcGxpdCB0aGlzIGludG8gdHdvIHNlcGFy
+YXRlIHBhdGNoZXMsIG9uZSBnb2luZw0KPiBpbnRvIGZvci00LjE3L2R0LWJpbmRpbmdzIGFuZCB0
+aGUgb3RoZXIgZ29pbmcgaW50byBmb3ItNC4xNy9hcm0vZHQuDQoNClRoYW5rcywgVGhpZXJyeSEN
+Cg0KQlRXOiBEbyB5b3Uga25vdyB3aGF0IGlzIGhhcHBlbmluZyB3aXRoIG15IFQzMCBVU0IgcGF0
+Y2g/IElzIHRoZXJlDQphbnl0aGluZyBJIG1heSBkbyBhYm91dCBpdD8NCg0KPiBUaGFua3MsDQo+
+IFRoaWVycnk=
