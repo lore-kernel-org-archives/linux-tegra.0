@@ -1,78 +1,99 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] firmware: tegra: adjust tested variable
-Date: Thu, 8 Mar 2018 14:43:35 +0100
-Message-ID: <20180308134335.GD3529@ulmo>
-References: <1517063308-16679-1-git-send-email-Julia.Lawall@lip6.fr>
+Subject: Re: [PATCH v4 0/7] Initial support for NVIDIA Tegra194
+Date: Thu, 8 Mar 2018 14:44:26 +0100
+Message-ID: <20180308134426.GE3529@ulmo>
+References: <20180220115812.24108-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="P+33d92oIH25kiaB"
+        protocol="application/pgp-signature"; boundary="ep0oHQY+/Gbo/zt0"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1517063308-16679-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <20180220115812.24108-1-mperttunen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, pombredanne@nexb.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---P+33d92oIH25kiaB
+--ep0oHQY+/Gbo/zt0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jan 27, 2018 at 03:28:28PM +0100, Julia Lawall wrote:
-> Check the variable that was most recently initialized.
+On Tue, Feb 20, 2018 at 01:58:05PM +0200, Mikko Perttunen wrote:
+> Hello everyone,
 >=20
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+> this series adds initial support for the NVIDIA Tegra194 "Xavier"
+> system-on-chip. Initially UART, I2C, SDMMC, as well as the PMIC
+> are supported, allowing booting to a console.
 >=20
-> // <smpl>
-> @@
-> expression x, y, f, g, e, m;
-> statement S1,S2,S3,S4;
-> @@
+> The changes consist almost completely of the new device trees,
+> however some fixes are required in the BPMP driver to support the
+> new channel layout in Tegra194.
 >=20
-> x =3D f(...);
-> if (\(<+...x...+>\&e\)) S1 else S2
-> (
-> x =3D g(...);
-> |
-> m =3D g(...,&x,...);
-> |
-> y =3D g(...);
-> *if (e)
->  S3 else S4
-> )
-> // </smpl>
+> The series has been tested on Tegra186 (Jetson TX2) and Tegra194
+> (P2972).
 >=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> Cheers,
+> Mikko
 >=20
-> ---
->  drivers/firmware/tegra/bpmp.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Mikko Perttunen (7):
+>   firmware: tegra: Simplify channel management
+>   soc/tegra: Add Tegra194 SoC configuration option
+>   soc/tegra: pmc: Add Tegra194 compatibility string
+>   dt-bindings: tegra: Add missing chips and NVIDIA boards
+>   dt-bindings: tegra: Add documentation for nvidia,tegra194-pmc
+>   arm64: tegra: Add Tegra194 chip device tree
+>   arm64: tegra: Add device tree for the Tegra194 P2972-0000 board
+>=20
+>  Documentation/devicetree/bindings/arm/tegra.txt    |  16 +
+>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |   2 +
+>  arch/arm64/boot/dts/nvidia/Makefile                |   1 +
+>  arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     | 248 +++++++++++++++
+>  arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |  16 +
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 344 +++++++++++++++=
+++++++
+>  arch/arm64/configs/defconfig                       |   1 +
+>  drivers/firmware/tegra/bpmp.c                      | 142 ++++-----
+>  drivers/soc/tegra/Kconfig                          |  10 +
+>  drivers/soc/tegra/pmc.c                            |   1 +
+>  include/dt-bindings/clock/tegra194-clock.h         | 321 +++++++++++++++=
+++++
+>  include/dt-bindings/gpio/tegra194-gpio.h           |  61 ++++
+>  include/dt-bindings/power/tegra194-powergate.h     |  35 +++
+>  include/dt-bindings/reset/tegra194-reset.h         | 152 +++++++++
+>  include/soc/tegra/bpmp.h                           |   4 +-
+>  15 files changed, 1274 insertions(+), 80 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>  create mode 100644 include/dt-bindings/clock/tegra194-clock.h
+>  create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
+>  create mode 100644 include/dt-bindings/power/tegra194-powergate.h
+>  create mode 100644 include/dt-bindings/reset/tegra194-reset.h
 
 Applied, thanks.
 
 Thierry
 
---P+33d92oIH25kiaB
+--ep0oHQY+/Gbo/zt0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhPgUACgkQ3SOs138+
-s6HFwQ/+OPn2T/yc9RXznPlpyt5yMNxjvCUFFnugI3o+WQu1wvM42JahxvRFe3rY
-HgWdRrg/7AMMIpFU+uXOjjDxBhCzGT+91CoOdD3ugACu9lvCNAxxvw+wlrOvcP9k
-aMB63V8RxtEzlsEIowVlt3uS6TDiHJSCSGVj1tTq3JuLRQZ6mZ5Kw2sU4827tR/4
-sdrlElA9F4s7fJbDxvQK8l16BQKa9KqH38v/uNyH8Bomn3mtknV7IrrdgYiYBXAZ
-ytACHn8ifEziLZI1F1RKR4yJ4lEmOVQsFaD7Uk920M4y+mmKlOSyIDLQpZdJtcxg
-KFCVqo8bE1Jmv12fypPn4hkj27JSTLpu0Kb1D3xEEIfXdL0JMfihgKyy/CwOZO7d
-1AFynLn0n+ZAaJgqKpCgfFTiX/5YBD7LvGqhikowVLg2l5XZxdZdl83YKzh0/JIL
-xsMD1Ieg34xszH/0qfNGNbi0NhxRJrcyLZTF8OU32cVXYQkRAWahJupLro02q9Uv
-kDlDfMNWllZl/3landBv/IjFq5RefKDRwOiOFYP9+6jWOU9B/VPBQqC3yMp0CDx6
-biYU1SjlMLhNm0K5XX0vOvheyiekM/ht5+7qibEryurFtkqRYqhqF5wmZan09uru
-7MOzjmu+S20S/mxvZB4yvqAoz3XR4r/zLFpuC/UJr+2oqMyQ2o8=
-=Bc3N
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhPjoACgkQ3SOs138+
+s6Ffeg/8DhaIZ2XeWg/oQ7SOEVS/1ykCnG6zZZVXxcC8AkVbwOjaKVFpzJa5fs4T
+ohbU/9V0WqvDecXSLGdqq4vq6mgFzACxqkuGZBhtIRiNbGswVwFSnBgZkUKdiasa
+elOQYz6kMYKl/MfoLqfxrvQmhciXukF19VKVZLBT6GRDoFDccN7wXjFr6CMxaeh0
+LfcNGCslLYbHq8IAjmM3qRkK3n+N/6tjrQzwqIvH6hO8qmzRY4ms/005/91iqNj+
+/b7JBgr9STN1S1smyZqMxS0Fv0E70avInFDso15HZgaiF88IODBIylR2ZYDKzAey
+IZ9flNUwcXk6hSGng8oxd5CgKTDUhZLtt56KHZau/rF8BfnTCjVwEV4mLRqdQyFe
+d9JiHVk8bsRoXoZ1wAUDQWC+9Xpv423YLV36FA5g/JPA68+GvVqWI1cT0blNMnw6
+QsoypJq36HzPCbjOlwYVZswhxi0Yyw7BIG3VHYF51Y6nGYxrIRoCA+8Cf3FvIaTX
+8sm3SxYJ1XEBnW1NVnyEhCvKKsFG3QG/Ub0TpXzQpB98LRydjmvEVxpDMb6Sn0gA
+oPFF57dP9RhLbk0piMp6U6fqomj6KvA6Cn+cNTnNhvJkARGkUdAF2aiPjMLAaDyN
+myyuokzxii3BantL+pIcP4qAr8/lpT4WvaPOjN9eKj3bADPxfmw=
+=pSgW
 -----END PGP SIGNATURE-----
 
---P+33d92oIH25kiaB--
+--ep0oHQY+/Gbo/zt0--
