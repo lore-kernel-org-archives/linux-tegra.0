@@ -1,90 +1,89 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
-Date: Thu, 8 Mar 2018 15:44:37 +0100
-Message-ID: <20180308144437.GJ3529@ulmo>
-References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
- <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
- <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+Date: Thu, 8 Mar 2018 15:57:43 +0100
+Message-ID: <20180308145743.GK3529@ulmo>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J2uG6jHjFLimDtBY"
+        protocol="application/pgp-signature"; boundary="YQEH9CATo+4lan7A"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com>
+In-Reply-To: <20180222230451.15515-1-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---J2uG6jHjFLimDtBY
+--YQEH9CATo+4lan7A
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
-> On 15.01.2018 13:56, Dmitry Osipenko wrote:
-> > On 10.01.2018 16:59, Dmitry Osipenko wrote:
-> >> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
-> >> as critical.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >> ---
-> >>
-> >> Change log:
-> >> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 a=
-nd
-> >>         Tegra124. Switched to a use of common EMC gate definition on T=
-egra20
-> >>         and Tegra30.
-> >>
-> >> v3:     Dropped marking PLL_P outputs as critical, because seems they =
-are
-> >>         not so critical. Although, I still haven't got a definitive an=
-swer
-> >>         about what exact HW functions are affected by the fixed-clocks.
-> >>         Anyway it should be cleaner to correct the actual drivers.
-> >=20
-> > Stephen / Michael, would it be possible to schedule these patches for 4=
-=2E16? My
-> > T20 and T30 devices aren't working without the 'critical clocks' patch.=
- Things
-> > happen to work with the opensource u-boot, but not with the proprietary
-> > bootloader. It's probably not a big deal that out-of-tree devices are b=
-roken,
-> > although would be nice to have one problem less.
+On Fri, Feb 23, 2018 at 12:04:51AM +0100, Marcel Ziswiler wrote:
+> Turns out latest upstream U-Boot does not configure/enable pllu which
+> leaves it at some default rate of 500 kHz:
 >=20
-> Guys, is there anything I could do to get these patches in linux-next?
+> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
+>        pll_u                  3        3        0      500000          0
+>=20
+> Of course this won't quite work leading to the following messages:
+>=20
+> [    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
+> ehci
+> [   11.759173] usb 2-1: device descriptor read/64, error -110
+> [   27.119453] usb 2-1: device descriptor read/64, error -110
+> [   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
+> ehci
+> [   32.559454] usb 2-1: device descriptor read/64, error -110
+> [   47.929777] usb 2-1: device descriptor read/64, error -110
+> [   48.049658] usb usb2-port1: attempt power cycle
+> [   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
+> ehci
+> [   59.349457] usb 2-1: device not accepting address 4, error -110
+> [   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
+> ehci
+> [   70.069457] usb 2-1: device not accepting address 5, error -110
+> [   70.079721] usb usb2-port1: unable to enumerate USB device
+>=20
+> Fix this by actually allowing the rate also being set from within
+> the Linux kernel.
+>=20
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>=20
+> ---
+>=20
+>  drivers/clk/tegra/clk-pll.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-I've picked these up into the for-4.17/clk branch in the Tegra tree. I
-already have that branch for the MBIST patches which are a dependency
-for the for-4.17/soc branch.
+I'm aware of the discussion about how best to implement this, but this
+seems like a reasonable fix until we have something better.
 
-Stephen, Mike, let me know if you have any objections to carrying these
-in the Tegra tree.
+Peter, Jon: if you want to fix this more properly, please take point on
+this.
 
-Thanks,
+Applied this to for-4.17/clk, thanks.
+
 Thierry
 
---J2uG6jHjFLimDtBY
+--YQEH9CATo+4lan7A
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhTFUACgkQ3SOs138+
-s6HkiQ/+O0EfjH6ZS4NOtc7o8vllzUKFMVlWp/b/GfzgQYT9Pab3GAgJhR0HxFN9
-zmKxaO5MxiWZnD4PNR5J9ZpApe5oDMt7lmOHoa7VeuXQCqVvC3Ykf4NbR8YAZ9Cd
-O4i8dsSqeU7QRpplvCkYiRauWRfl09NZiPtn60xHXQyFwE5r/k2ZXcmYrP2mkKjU
-fgbIYJBNixxCtCsa/hjAVegi2woWy+3YdygIdo/buDtNUAQsLEX4QmFnbFmie0Lt
-+O9nDeTCfRh05Bq3MrC55lC6UrKyNy012Sdf//fgTlyF0eDVlkqWiN+4yHhvpSMO
-PpS3aiAekYod0RfxVmfRseNO26e7Mu+9QlyxY9EEgDs+RY6Nv5pTny3b606K5b6w
-dtTnJmzX3jVYEiRGl1I5efCKwf1VuinyF9e/uEArI+BzK6yefIqsMzsZo76LZWSs
-y2db0ra4E9astiyShVjEy5F14yq9R59XGZ8wemYNLyjkJwqM15bnBDFtxKDY7+O1
-UcvczgBwRzjaYZOj3OHHeQnk68IBwgieHDHhr9srloox00usLqkgqlz/JdZ6Q1IM
-pq7Bys6L3MZv9X0H1Se6ie8kuJMLKOea5r8VnHZDiZSDF6glm1Bk8RF9eGukcPnn
-xkrQKwbqVK+jBPa5fGWSR4fdM9Cm+WMDj4PQ+6yZrZprVBSpf6A=
-=rzzQ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhT2QACgkQ3SOs138+
+s6HfIg//QKMJaDaJsNPOL3kC7s3piPoVc3qyNEdrNAafHWTrnt25IU22tV/X2RV2
+uAAGQVTk5MOunhgKNbBhz/i1I6FIyTqyQWx+QyB8NFjZQ8HXNfc+O2cl/IQGLq+k
+BESU2HOISJ7THKGteMsMw3wJLKRFjBMHllLYxd9DEdvA+04SaIf318eBeHMeQyIQ
+Dh+QMtq7FyAmrEDQLFTJhEkB627kty2bD/3BXhLZpHjG0Qb8MpXp4/BBPcqWubju
+HsVeEJjcpfshp7k9uIAACnnh0TqtfliFdmksuis5NIpzIO9jzLkXbIc6Zyy+sDTk
+2UyrJj7FGVG7fHGkLzLbI2wFpTq8sYu1om7Qp9vWk6GVTm+uBdWjQeym1ocKw6SM
+R5voboBXMtDuTuBQ9FRzj2gf9AckOCgipOQsWK3dbp4u6H4aaRdaIJ6wwYz5DRMZ
+8P/OMON/BJCuIF+sM4b5ddrLmhkiE0Pz4MCt5/LnRe7p+9pEHG5mFBV7bTwsJZsr
+Dd+zgI4L8ReBStB7UAhD2fZFH+kz03BSQbwVn2UbaWt2Z3mF29KDMHkhHT8jwHH+
+MEGStWJuCCenVgwP69IowpKkJlqusgJh9WmUXDBMqkgwc0WYo7hGKf8JCmfT10Xr
+GCMzihI1h8TQb01sjJX5Yp9lkxy40Qd27jLPiMy0Zpi8RR4hk8E=
+=9v9j
 -----END PGP SIGNATURE-----
 
---J2uG6jHjFLimDtBY--
+--YQEH9CATo+4lan7A--
