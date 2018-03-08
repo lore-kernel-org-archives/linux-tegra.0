@@ -1,75 +1,45 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 0/6] ARM: dts: tegra: apalis-tk1: updates incl. v1.2
- hardware support
-Date: Thu, 8 Mar 2018 16:19:29 +0100
-Message-ID: <20180308151929.GE13814@ulmo>
-References: <20180210013806.28496-1-marcel@ziswiler.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 05/10] hwmon: generic-pwm-tachometer: Add generic PWM
+ based tachometer
+Date: Thu, 8 Mar 2018 20:51:07 +0530
+Message-ID: <4d00a31b-44cc-d3dc-78a2-1b7f23d777e0@nvidia.com>
+References: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
+ <1519196339-9377-6-git-send-email-rrajk@nvidia.com>
+ <5172edff-fe29-7ed1-f0d2-b0359ea2c24d@roeck-us.net>
+ <2510b525-ec36-b49d-5a62-81f335c0d10d@nvidia.com>
+ <cfe0d0ce-3a89-bad0-85ba-6edf1135d2dc@roeck-us.net>
+ <2628eff2-dd33-34f4-a7e1-cfe46ef88a3f@nvidia.com>
+ <4556a8d2-947d-72c4-2962-3167afb53978@kapsi.fi>
+ <62ba7f67-5a99-51ab-1214-eb68ebb7e642@roeck-us.net>
+ <952cb50e-d9a0-ae5e-d9f6-d1ce268f0384@nvidia.com>
+ <f7818e4c-17b6-c58b-3424-85749bb9c1cc@roeck-us.net>
+ <5bffef40-a4a7-5f7d-a448-b2a381c57822@nvidia.com>
+ <d4e745a6-5534-662e-f6d5-a91bf580f550@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a1QUDc0q7S3U7/Jg"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180210013806.28496-1-marcel@ziswiler.com>
+In-Reply-To: <d4e745a6-5534-662e-f6d5-a91bf580f550@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: Guenter Roeck <linux@roeck-us.net>, Rajkumar Rampelli <rrajk@nvidia.com>, Mikko Perttunen <cyndis@kapsi.fi>, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, jdelvare@suse.com, corbet@lwn.net, catalin.marinas@arm.com, will.deacon@arm.com, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, pombredanne@nexb.com, mmaddireddy@nvidia.com, mperttunen@nvidia.com, arnd@arndb.de, timur@codeaurora.org, andy.gross@linaro.org, xuwei5@hisilicon.com, elder@linaro.org, heiko@sntech.de, krzk@kernel.org, ard.biesheuvel@linaro.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---a1QUDc0q7S3U7/Jg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 10, 2018 at 02:38:00AM +0100, Marcel Ziswiler wrote:
->=20
-> This series sets critical trips, activates PWM pin muxing for PWM3,
-> adds a missing AS3722 GPIO0 configuration, adds a hog group for
-> Ethernet, PCIe, reset GPIOs, updates the copyright period, removes
-> spurious newlines and adds support for the V1.2 hardware revision of
-> the Toradex Apalis TK1 system on module.
->=20
->=20
-> Marcel Ziswiler (6):
->   arm: tegra: apalis-tk1: set critical trips
->   ARM: dts: tegra: apalis-tk1: activate pwm pin muxing for pwm3
->   ARM: dts: tegra: apalis-tk1: add missing as3722 gpio0 configuration
->   ARM: dts: tegra: apalis-tk1: hog group for ethernet, pcie, reset gpios
->   ARM: dts: tegra: apalis-tk1: copyright period, spurious newlines
->   ARM: dts: tegra: apalis-tk1: support v1.2 hardware revision
->=20
->  arch/arm/boot/dts/Makefile                      |    1 +
->  arch/arm/boot/dts/tegra124-apalis-eval.dts      |   16 +-
->  arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  250 +++
->  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 2052 +++++++++++++++++=
-++++++
->  arch/arm/boot/dts/tegra124-apalis.dtsi          |   70 +-
->  5 files changed, 2344 insertions(+), 45 deletions(-)
->  create mode 100644 arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
->  create mode 100644 arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+On Thursday 08 March 2018 08:01 PM, Guenter Roeck wrote:
+> On 03/07/2018 10:06 PM, Laxman Dewangan wrote:
+>>
+>>
+>> The RPM is measured speed via PWM signal capture  which is output 
+>> from fan.
+>> So should we have the fan[1..n]_output_rpm?
+>>
+>
+> No. I hear you clearly that you for some reason dislike fan[1..n]_input.
+> While ABIs are not always to our liking, that doesn't mean that we get
+> to change them at our whim. If that is not acceptable for you, I can't
+> help you. And you can't change inX_input to inX_voltage either, sorry.
 
-Applied, thanks.
-
-Thierry
-
---a1QUDc0q7S3U7/Jg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhVIEACgkQ3SOs138+
-s6GdFBAArxRzFoP2qvn5sTy+YxuR35WGzCzljcKp+Sem03Frmn2znFS3iehH6dT7
-IU2xjdyN2J8CKc2AXxodLYWVM/EFMvpldvZNyzd2XfpzGvUO3hwAYTdtU5XGcXub
-uSV+/UJcXjcGgLVerMv6/+JcddE/KX/WsyzAWhRwaGxdxc/ILZe2rk1LGsv3/d7S
-sUqYjPKZdbxkx2yhLPGH0PmBGTG6utU0s7BCJAzlSPlQ8hn4Ia6aYapRhXWtc7Q3
-7KD30irjMETNG1VbwJym55oG40kkBG9dMrQEws/7X30vUWD+DOlXmLxXGeCflqTI
-55ltG5JIYOcV2C6cqqdFuB18P3T7vwaPBty2UG7kjpEgVY0KikrXAwhQbrG9kCTB
-Xwj+k8etRbX5IOcZVs9Xr3BUjNpL0lz6HnfTfQNv6nwZ5KWG+C0nHhGcFpigWDWH
-jMAFoqH2Xhrjo9ym7AOQiWYj9tFI7brI2O29tz6vX8EqaFe/ynnrGTScGHF2Xoyx
-jWc5OBRpKGjMdjvamoxr+D/1DZpUabETo1Nxjs9uQUHWtnd8qJXHgNsauuZOxnJ+
-i1SoBPaZ39xN8ZE49m61MMn9QTYF7ghhUL+N7gk2BvMhlg9b2zdy5o2wnvLL6FdK
-fD7dX6T9FKQW++l6w58gT4AKuOo7mqx5JSB7WO1g9spK3nmVAP4=
-=hCn0
------END PGP SIGNATURE-----
-
---a1QUDc0q7S3U7/Jg--
+My opinion is only to not use "input" as this is not really the input to 
+fan.
