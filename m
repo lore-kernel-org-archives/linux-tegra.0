@@ -1,111 +1,26 @@
-From: Mathias Nyman <mathias.nyman@intel.com>
-Subject: Re: [PATCH 2/3] usb: xhci: tegra: Add runtime PM support
-Date: Fri, 9 Mar 2018 11:13:02 +0200
-Message-ID: <1fff9fc1-2ad2-dba1-cb1d-d531254984ce@intel.com>
-References: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
- <1518626085-29102-2-git-send-email-jonathanh@nvidia.com>
- <54bd00b7-2835-a253-0399-370e8c8203b8@linux.intel.com>
- <f1a1c300-a558-f31a-bcfa-c3eda697b0fd@nvidia.com>
- <20180309083629.GA13877@ulmo>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support Tegra210
+Date: Fri, 9 Mar 2018 14:41:39 +0530
+Message-ID: <CAOh2x=kczewDo1wTR+46+M7SussWLQzMPZW2MgUnz3bmQq1Wkg@mail.gmail.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com> <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180309083629.GA13877@ulmo>
-Content-Language: en-US
+In-Reply-To: <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, DTML <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09.03.2018 10:36, Thierry Reding wrote:
-> On Thu, Mar 08, 2018 at 09:31:07PM +0000, Jon Hunter wrote:
->>
->> On 01/03/18 14:18, Mathias Nyman wrote:
->>> On 14.02.2018 18:34, Jon Hunter wrote:
->>>> Add runtime PM support to the Tegra XHCI driver and move the function
->>>> calls to enable/disable the clocks, regulators and PHY into the runtime
->>>> PM callbacks.
->>>>
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>> ---
->>>>    drivers/usb/host/xhci-tegra.c | 80
->>>> ++++++++++++++++++++++++++++++-------------
->>>>    1 file changed, 56 insertions(+), 24 deletions(-)
->>>>
->>>> diff --git a/drivers/usb/host/xhci-tegra.c
->>>> b/drivers/usb/host/xhci-tegra.c
->>>> index 02b0b24faa58..42aa67858b53 100644
->>>> --- a/drivers/usb/host/xhci-tegra.c
->>>> +++ b/drivers/usb/host/xhci-tegra.c
->>>> @@ -18,6 +18,7 @@
->>>>    #include <linux/phy/tegra/xusb.h>
->>>>    #include <linux/platform_device.h>
->>>>    #include <linux/pm.h>
->>>> +#include <linux/pm_runtime.h>
->>>>    #include <linux/regulator/consumer.h>
->>>>    #include <linux/reset.h>
->>>>    #include <linux/slab.h>
->>>> @@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct
->>>> platform_device *pdev)
->>>>         */
->>>>        platform_set_drvdata(pdev, tegra);
->>>>    -    err = tegra_xusb_clk_enable(tegra);
->>>> -    if (err) {
->>>> -        dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
->>>> -        goto put_usb2;
->>>> -    }
->>>> -
->>>> -    err = regulator_bulk_enable(tegra->soc->num_supplies,
->>>> tegra->supplies);
->>>> -    if (err) {
->>>> -        dev_err(&pdev->dev, "failed to enable regulators: %d\n", err);
->>>> -        goto disable_clk;
->>>> -    }
->>>> +    pm_runtime_enable(&pdev->dev);
->>>>    -    err = tegra_xusb_phy_enable(tegra);
->>>> +    err = pm_runtime_get_sync(&pdev->dev);
->>>>        if (err < 0) {
->>>
->>> Does this mean that if runtime PM is disabled then clocks and regulator
->>> will never be enabled
->>> for Tegra xhci?
->>>
->>> How about keeping the clock and regualtor enabling in probe, and instead
->>> add something like:
->>>
->>> pm_runtime_set_active(&pdev->dev);
->>> pm_runtime_enable(&pdev->dev);
->>> pm_runtime_get_noresume(&pdev->dev);
->>
->> For 64-bit Tegra there is a dependency on CONFIG_PM, but for 32-bit
->> AFAIK there is not and so yes we should handle the case when PM_RUNTIME
->> is disabled.
->>
->> Typically we do something like ...
->>
->>      pm_runtime_enable(&pdev->dev);
->>      if (!pm_runtime_enabled(&pdev->dev))
->> 	ret = tegra_xusb_runtime_resume(&pdev->dev);
->>      else
->>          ret = pm_runtime_get_sync(&pdev->dev);
->>
->> That way we can keep the regulator and clock stuff in the handler. I
->> will update this series.
-> 
-> Is there any good reason why we don't depend on PM for 32-bit as well?
-> I'm not aware of any differences in drivers that are 32-bit specific for
-> Tegra, and I'm not even sure the !PM case gets any testing at all. And
-> even if, do we really still want to support that?
-> 
-> I don't see any advantage these days for having it disabled.
+On Tue, Feb 6, 2018 at 10:04 PM, Peter De Schrijver
+<pdeschrijver@nvidia.com> wrote:
+> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> support in this driver. Also allow for the case where the CPU voltage is
+> controlled directly by the DFLL rather than by a separate regulator object.
+>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 
-I don't know much about Tegra, but I'd still like to turn this question around:
-
-Is there any reason why clks and regulators can't initially be turned on in probe,
-and then let runtime PM handle them later if PM is supported?
-
-Shouldn't this work in all cases, and it avoids creating new dependencies?
-
-Thanks
-Mathias
+You forgot to Cc maintainers and pm-list from the cpufreq world :(
