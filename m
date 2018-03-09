@@ -1,55 +1,59 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] arm64: defconfig: Enable CONFIG_ARM_TEGRA186_CPUFREQ
-Date: Fri, 9 Mar 2018 13:08:31 +0100
-Message-ID: <20180309120831.GA18609@ulmo>
-References: <20171116114652.25321-1-mperttunen@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+Date: Fri, 9 Mar 2018 17:35:46 +0300
+Message-ID: <92084f1b-848a-39e6-7d77-7ceaa6a6f1d3@gmail.com>
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171116114652.25321-1-mperttunen@nvidia.com>
+In-Reply-To: <20180308144437.GJ3529@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 08.03.2018 17:44, Thierry Reding wrote:
+> On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
+>> On 15.01.2018 13:56, Dmitry Osipenko wrote:
+>>> On 10.01.2018 16:59, Dmitry Osipenko wrote:
+>>>> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+>>>> as critical.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>> ---
+>>>>
+>>>> Change log:
+>>>> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+>>>>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
+>>>>         and Tegra30.
+>>>>
+>>>> v3:     Dropped marking PLL_P outputs as critical, because seems they are
+>>>>         not so critical. Although, I still haven't got a definitive answer
+>>>>         about what exact HW functions are affected by the fixed-clocks.
+>>>>         Anyway it should be cleaner to correct the actual drivers.
+>>>
+>>> Stephen / Michael, would it be possible to schedule these patches for 4.16? My
+>>> T20 and T30 devices aren't working without the 'critical clocks' patch. Things
+>>> happen to work with the opensource u-boot, but not with the proprietary
+>>> bootloader. It's probably not a big deal that out-of-tree devices are broken,
+>>> although would be nice to have one problem less.
+>>
+>> Guys, is there anything I could do to get these patches in linux-next?
+> 
+> I've picked these up into the for-4.17/clk branch in the Tegra tree. I
+> already have that branch for the MBIST patches which are a dependency
+> for the for-4.17/soc branch.
 
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you very much! Could you please add stable tag to this ("Mark HCLK, SCLK
+and EMC as critical") patch? It would be nice to have 4.16 unbroken eventually
+for those who (have to) use downstream android bootloader.
 
-On Thu, Nov 16, 2017 at 01:46:51PM +0200, Mikko Perttunen wrote:
-> Enable Tegra186 CPU frequency scaling support by default.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+Cc: <stable@vger.kernel.org> # v4.16
 
-Both patches applied, thanks.
-
-Thierry
-
---82I3+IH0IqGh5yIs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqieTsACgkQ3SOs138+
-s6EzNQ//e2kMZUjzvdKlIsIr8hXj6sYBoxAvn3A01BVeurVUjSozlPDzTDDlUQMa
-JHvzqHXd5loZPFB06ZUvNdJ8nK+7HYSvqD7Sh57UTgOrX2+qavmXHOySLHPWGr3i
-OaL0WhWzXaVsgn9Gp5nbgrRE3WS4N6vyJpY4C2XSxwrmcFi4D3Vwe306xF3p2YoW
-9/UFxQiAcyIImmxaRuHb4xJTEmqcGBERd3fRRVn2MAn5tpAV6ngCaJeE5kMy8fQX
-UsibGkXfSSUAHrij5IOTD65FmkrbSg68E0Qd0NLa9rELqGJT9UgQbAD/cxM89Q4Q
-HRvURGkX2XNsa80hiAXc/l3ks5zMUWSluHPSikI9h2MAg11Utz3cYzFBmHUC3EHX
-iGyPtjIYHzTcdBGvt+X4cJn0mj6naKO5l4THUyzjsCWCYcByh7fc306qtTgm3Qms
-1iaYY0PvbQjO2VqbDI5fOVgIlFz59zpBAtzJS2D1SmE1jK8E2xdbG6gW1jm68ZjV
-X3Kzik8Q7fkNFDblpzTog6osLvSbOgMa+wBYi7bsTZ2mvUUOFZqP7CfdVhsdSvqV
-kY5r/HDhgaIPGATn2hniT7XTl5hNMG5wpuJrxztothd/1uTw97eDDEmX/RpyAch9
-Njfs4NmdCDKvp0oSONw728dAVDRVeCWwYaThG3F1Rwh/L1RlyKE=
-=J/zq
------END PGP SIGNATURE-----
-
---82I3+IH0IqGh5yIs--
+> Stephen, Mike, let me know if you have any objections to carrying these
+> in the Tegra tree.
