@@ -1,64 +1,68 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-Date: Thu, 8 Mar 2018 23:25:04 +0000
-Message-ID: <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v7 4/4] soc/tegra: pmc: Use the new reset APIs to manage
+ reset controllers
+Date: Fri, 9 Mar 2018 09:09:09 +0100
+Message-ID: <20180309080909.GA13841@ulmo>
+References: <1500479948-29988-1-git-send-email-p.zabel@pengutronix.de>
+ <1500479948-29988-5-git-send-email-p.zabel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1500479948-29988-5-git-send-email-p.zabel@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, linux-kernel@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 06/02/18 16:34, Peter De Schrijver wrote:
-> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-> support in this driver. Also allow for the case where the CPU voltage is
-> controlled directly by the DFLL rather than by a separate regulator object.
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jul 19, 2017 at 05:59:08PM +0200, Philipp Zabel wrote:
+> From: Vivek Gautam <vivek.gautam@codeaurora.org>
+>=20
+> Make use of of_reset_control_array_get_exclusive() to manage
+> an array of reset controllers available with the device.
+>=20
+> Cc: Jon Hunter <jonathanh@nvidia.com>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> [p.zabel@pengutronix.de: switch to hidden reset control array]
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 > ---
->  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> index 4353025..f8e01a8 100644
-> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
->  {
->  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
->  	clk_disable_unprepare(priv->dfll_clk);
-> -	regulator_sync_voltage(priv->vdd_cpu_reg);
-> +	if (priv->vdd_cpu_reg)
-> +		regulator_sync_voltage(priv->vdd_cpu_reg);
->  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
->  }
->  
-> @@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  
->  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
-> -	if (IS_ERR(priv->vdd_cpu_reg)) {
-> -		ret = PTR_ERR(priv->vdd_cpu_reg);
-> -		goto out_put_np;
-> -	}
-> +	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
-> +		priv->vdd_cpu_reg = NULL;
-> +	else
-> +		return -EPROBE_DEFER;
+> No changes since v6.
+> ---
+>  drivers/soc/tegra/pmc.c | 82 ++++++++++++-------------------------------=
+------
+>  1 file changed, 20 insertions(+), 62 deletions(-)
 
-I am still not sure that we should rely on the fact that the regulator
-is not present in DT to imply that we do not need it. I think that we
-should be checking if we are using I2C mode here.
+I've applied this with the static inline change that Jon suggested.
 
-Cheers
-Jon
+Thanks,
+Thierry
 
--- 
-nvpublic
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqiQR4ACgkQ3SOs138+
+s6HXTQ//e+zFt1s0RGOWduEZR2kzsTApj7UqF/XklL/8F/SS2DGCx7Irq6TcuDpk
+d/RrsCmms8A8qbJ1oHEITgevQFP6APOfB6gE9x0hF+K10IXGKw5JI/PsHM0HgUWK
+wVX0sg36SIDixwAd8YdQcTD7L2UqQ0OQipklfNqsOfvSXsfoNO/f8I6EdocCQcXJ
+WvBPg0Rst32Lmky1z1Ap8svn2yHUQMC1Tdpi77VPc+SeEckhd7btOEWOj0fw8xyW
+Hl2XRdTmcizsIk3wIC5hSfHHVuq9m3BpeouqxheYJbot8kH7JmlNpTaWS8bjNSDM
++G8QkK2jYY1dJ4re434oiiGFdLauyRgxZsqybthPErXCxXN3g2Gp5/UdOiNTZoJ/
+fG2qz+DUInhS0/6xznT24Nuu4Jpv2Z+NrpJrWSefxACZsz5ecLhlNGOHph5i6qOp
+WWeGTLAj7hk8KCurBK7yMWmpw6bftXXsm5PCIZWsmoLD2SYIktM/hAv9MzVKNtJi
+RIPOpS87eRzr++C8+p1GE7qH8LDMx70Pq3amkwlTfFazcwSm9NdOB12StlNXHV1W
+M1dNbCaqctYVQUyKsqdCSVMnw2K7wnBG8w3GIEeO3olnn62B1ziPnM3wuQHoCN8b
+rBpN5n0ps4Xmb4hw+bMMhUFiEn5WueIE+2LIXpS9hqAmbHrqNIg=
+=wa/y
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
