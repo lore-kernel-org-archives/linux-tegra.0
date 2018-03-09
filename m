@@ -1,110 +1,129 @@
 From: Jon Hunter <jonathanh@nvidia.com>
 Subject: Re: [PATCH 2/3] usb: xhci: tegra: Add runtime PM support
-Date: Fri, 9 Mar 2018 11:13:13 +0000
-Message-ID: <939222b8-62c3-aea5-625c-a3490958a306@nvidia.com>
+Date: Fri, 9 Mar 2018 11:19:11 +0000
+Message-ID: <81534ac4-c446-62da-2656-e4d5d0fd1da2@nvidia.com>
 References: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
  <1518626085-29102-2-git-send-email-jonathanh@nvidia.com>
  <54bd00b7-2835-a253-0399-370e8c8203b8@linux.intel.com>
  <f1a1c300-a558-f31a-bcfa-c3eda697b0fd@nvidia.com>
  <20180309083629.GA13877@ulmo>
+ <1fff9fc1-2ad2-dba1-cb1d-d531254984ce@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180309083629.GA13877@ulmo>
+In-Reply-To: <1fff9fc1-2ad2-dba1-cb1d-d531254984ce@intel.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@intel.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 09/03/18 08:36, Thierry Reding wrote:
-> On Thu, Mar 08, 2018 at 09:31:07PM +0000, Jon Hunter wrote:
->>
->> On 01/03/18 14:18, Mathias Nyman wrote:
->>> On 14.02.2018 18:34, Jon Hunter wrote:
->>>> Add runtime PM support to the Tegra XHCI driver and move the function
->>>> calls to enable/disable the clocks, regulators and PHY into the runtime
->>>> PM callbacks.
+On 09/03/18 09:13, Mathias Nyman wrote:
+> On 09.03.2018 10:36, Thierry Reding wrote:
+>> On Thu, Mar 08, 2018 at 09:31:07PM +0000, Jon Hunter wrote:
+>>>
+>>> On 01/03/18 14:18, Mathias Nyman wrote:
+>>>> On 14.02.2018 18:34, Jon Hunter wrote:
+>>>>> Add runtime PM support to the Tegra XHCI driver and move the function
+>>>>> calls to enable/disable the clocks, regulators and PHY into the
+>>>>> runtime
+>>>>> PM callbacks.
+>>>>>
+>>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>>> ---
+>>>>>    drivers/usb/host/xhci-tegra.c | 80
+>>>>> ++++++++++++++++++++++++++++++-------------
+>>>>>    1 file changed, 56 insertions(+), 24 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/usb/host/xhci-tegra.c
+>>>>> b/drivers/usb/host/xhci-tegra.c
+>>>>> index 02b0b24faa58..42aa67858b53 100644
+>>>>> --- a/drivers/usb/host/xhci-tegra.c
+>>>>> +++ b/drivers/usb/host/xhci-tegra.c
+>>>>> @@ -18,6 +18,7 @@
+>>>>>    #include <linux/phy/tegra/xusb.h>
+>>>>>    #include <linux/platform_device.h>
+>>>>>    #include <linux/pm.h>
+>>>>> +#include <linux/pm_runtime.h>
+>>>>>    #include <linux/regulator/consumer.h>
+>>>>>    #include <linux/reset.h>
+>>>>>    #include <linux/slab.h>
+>>>>> @@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct
+>>>>> platform_device *pdev)
+>>>>>         */
+>>>>>        platform_set_drvdata(pdev, tegra);
+>>>>>    -    err = tegra_xusb_clk_enable(tegra);
+>>>>> -    if (err) {
+>>>>> -        dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
+>>>>> -        goto put_usb2;
+>>>>> -    }
+>>>>> -
+>>>>> -    err = regulator_bulk_enable(tegra->soc->num_supplies,
+>>>>> tegra->supplies);
+>>>>> -    if (err) {
+>>>>> -        dev_err(&pdev->dev, "failed to enable regulators: %d\n",
+>>>>> err);
+>>>>> -        goto disable_clk;
+>>>>> -    }
+>>>>> +    pm_runtime_enable(&pdev->dev);
+>>>>>    -    err = tegra_xusb_phy_enable(tegra);
+>>>>> +    err = pm_runtime_get_sync(&pdev->dev);
+>>>>>        if (err < 0) {
 >>>>
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>> ---
->>>>   drivers/usb/host/xhci-tegra.c | 80
->>>> ++++++++++++++++++++++++++++++-------------
->>>>   1 file changed, 56 insertions(+), 24 deletions(-)
+>>>> Does this mean that if runtime PM is disabled then clocks and regulator
+>>>> will never be enabled
+>>>> for Tegra xhci?
 >>>>
->>>> diff --git a/drivers/usb/host/xhci-tegra.c
->>>> b/drivers/usb/host/xhci-tegra.c
->>>> index 02b0b24faa58..42aa67858b53 100644
->>>> --- a/drivers/usb/host/xhci-tegra.c
->>>> +++ b/drivers/usb/host/xhci-tegra.c
->>>> @@ -18,6 +18,7 @@
->>>>   #include <linux/phy/tegra/xusb.h>
->>>>   #include <linux/platform_device.h>
->>>>   #include <linux/pm.h>
->>>> +#include <linux/pm_runtime.h>
->>>>   #include <linux/regulator/consumer.h>
->>>>   #include <linux/reset.h>
->>>>   #include <linux/slab.h>
->>>> @@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct
->>>> platform_device *pdev)
->>>>        */
->>>>       platform_set_drvdata(pdev, tegra);
->>>>   -    err = tegra_xusb_clk_enable(tegra);
->>>> -    if (err) {
->>>> -        dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
->>>> -        goto put_usb2;
->>>> -    }
->>>> -
->>>> -    err = regulator_bulk_enable(tegra->soc->num_supplies,
->>>> tegra->supplies);
->>>> -    if (err) {
->>>> -        dev_err(&pdev->dev, "failed to enable regulators: %d\n", err);
->>>> -        goto disable_clk;
->>>> -    }
->>>> +    pm_runtime_enable(&pdev->dev);
->>>>   -    err = tegra_xusb_phy_enable(tegra);
->>>> +    err = pm_runtime_get_sync(&pdev->dev);
->>>>       if (err < 0) {
+>>>> How about keeping the clock and regualtor enabling in probe, and
+>>>> instead
+>>>> add something like:
+>>>>
+>>>> pm_runtime_set_active(&pdev->dev);
+>>>> pm_runtime_enable(&pdev->dev);
+>>>> pm_runtime_get_noresume(&pdev->dev);
 >>>
->>> Does this mean that if runtime PM is disabled then clocks and regulator
->>> will never be enabled
->>> for Tegra xhci?
+>>> For 64-bit Tegra there is a dependency on CONFIG_PM, but for 32-bit
+>>> AFAIK there is not and so yes we should handle the case when PM_RUNTIME
+>>> is disabled.
 >>>
->>> How about keeping the clock and regualtor enabling in probe, and instead
->>> add something like:
+>>> Typically we do something like ...
 >>>
->>> pm_runtime_set_active(&pdev->dev);
->>> pm_runtime_enable(&pdev->dev);
->>> pm_runtime_get_noresume(&pdev->dev);
+>>>      pm_runtime_enable(&pdev->dev);
+>>>      if (!pm_runtime_enabled(&pdev->dev))
+>>>     ret = tegra_xusb_runtime_resume(&pdev->dev);
+>>>      else
+>>>          ret = pm_runtime_get_sync(&pdev->dev);
+>>>
+>>> That way we can keep the regulator and clock stuff in the handler. I
+>>> will update this series.
 >>
->> For 64-bit Tegra there is a dependency on CONFIG_PM, but for 32-bit
->> AFAIK there is not and so yes we should handle the case when PM_RUNTIME
->> is disabled.
+>> Is there any good reason why we don't depend on PM for 32-bit as well?
+>> I'm not aware of any differences in drivers that are 32-bit specific for
+>> Tegra, and I'm not even sure the !PM case gets any testing at all. And
+>> even if, do we really still want to support that?
 >>
->> Typically we do something like ...
->>
->>     pm_runtime_enable(&pdev->dev);
->>     if (!pm_runtime_enabled(&pdev->dev))
->> 	ret = tegra_xusb_runtime_resume(&pdev->dev);
->>     else
->>         ret = pm_runtime_get_sync(&pdev->dev);
->>
->> That way we can keep the regulator and clock stuff in the handler. I
->> will update this series.
+>> I don't see any advantage these days for having it disabled.
 > 
-> Is there any good reason why we don't depend on PM for 32-bit as well?
-
-Not that I am aware of.
-
-> I'm not aware of any differences in drivers that are 32-bit specific for
-> Tegra, and I'm not even sure the !PM case gets any testing at all. And
-> even if, do we really still want to support that?
+> I don't know much about Tegra, but I'd still like to turn this question
+> around:
 > 
-> I don't see any advantage these days for having it disabled.
+> Is there any reason why clks and regulators can't initially be turned on
+> in probe,
+> and then let runtime PM handle them later if PM is supported?
 
-It would be fine IMO.
+I personally prefer having the regulator, clock, etc handling for
+enabling and disabling for a device in their own handler. Duplicating
+the calls to the regulator and clock frameworks in probe and the rpm
+handlers seems more prone to mistakes. Hence, that's why I would prefer
+the option I suggested above, which IMO is the best of both worlds.
+
+> Shouldn't this work in all cases, and it avoids creating new dependencies?
+
+Yes but when you want to use frameworks such as genpd it becomes more
+complex to support !PM and that is why for 64-bit Tegra we have a
+dependency today.
 
 Cheers
 Jon
