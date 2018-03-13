@@ -1,78 +1,100 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
 Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
  Tegra210
-Date: Tue, 13 Mar 2018 11:28:16 +0200
-Message-ID: <20180313092816.GW6190@tbergstrom-lnx.Nvidia.com>
+Date: Tue, 13 Mar 2018 11:51:17 +0200
+Message-ID: <20180313095117.GX6190@tbergstrom-lnx.Nvidia.com>
 References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
  <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
- <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
- <20180309081438.GO6190@tbergstrom-lnx.Nvidia.com>
- <50b05dda-4577-0c86-a8e5-eb7095ee1f59@nvidia.com>
+ <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <50b05dda-4577-0c86-a8e5-eb7095ee1f59@nvidia.com>
+In-Reply-To: <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:14:17AM +0000, Jon Hunter wrote:
+On Mon, Mar 12, 2018 at 12:15:22PM +0000, Jon Hunter wrote:
 > 
-> On 09/03/18 08:14, Peter De Schrijver wrote:
-> > On Thu, Mar 08, 2018 at 11:25:04PM +0000, Jon Hunter wrote:
-> >>
-> >> On 06/02/18 16:34, Peter De Schrijver wrote:
-> >>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-> >>> support in this driver. Also allow for the case where the CPU voltage is
-> >>> controlled directly by the DFLL rather than by a separate regulator object.
-> >>>
-> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >>> ---
-> >>>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
-> >>>  1 file changed, 8 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> >>> index 4353025..f8e01a8 100644
-> >>> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> >>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> >>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
-> >>>  {
-> >>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-> >>>  	clk_disable_unprepare(priv->dfll_clk);
-> >>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
-> >>> +	if (priv->vdd_cpu_reg)
-> >>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
-> >>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
-> >>>  }
-> >>>  
-> >>> @@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
-> >>>  		return -ENODEV;
-> >>>  
-> >>>  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
-> >>> -	if (IS_ERR(priv->vdd_cpu_reg)) {
-> >>> -		ret = PTR_ERR(priv->vdd_cpu_reg);
-> >>> -		goto out_put_np;
-> >>> -	}
-> >>> +	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
-> >>> +		priv->vdd_cpu_reg = NULL;
-> >>> +	else
-> >>> +		return -EPROBE_DEFER;
-> >>
-> >> I am still not sure that we should rely on the fact that the regulator
-> >> is not present in DT to imply that we do not need it. I think that we
-> >> should be checking if we are using I2C mode here.
-> >>
+> On 06/02/18 16:34, Peter De Schrijver wrote:
+> > Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> > support in this driver. Also allow for the case where the CPU voltage is
+> > controlled directly by the DFLL rather than by a separate regulator object.
 > > 
-> > The cpufreq driver doesn't know this however. Also the current approach of
-> > setting the same voltage when switching to pll_x is incorrect. The CVB
-> > tables when using pll_x include more margin than when using the DFLL.
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> > index 4353025..f8e01a8 100644
+> > --- a/drivers/cpufreq/tegra124-cpufreq.c
+> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> > @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> >  {
+> >  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> >  	clk_disable_unprepare(priv->dfll_clk);
+> > -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> > +	if (priv->vdd_cpu_reg)
+> > +		regulator_sync_voltage(priv->vdd_cpu_reg);
+> >  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> >  }
 > 
-> Ah yes I see now. However, we are going to need to update the DT doc,
-> because 'vdd-cpu-supply' is listed as required.
-> 
+> OK, so this bit does not make sense to me. In the above we are switching
+> from the DFLL to the PLL (ie. disabling the DFLL) and so to ensure we
+> are operating at the correct voltage after disabling the DFLL we need to
+> sync the voltage. Seems we would need to do this for all devices, no?
+> How is the different between Tegra124 and Tegra210?
 
-Ok.
+Yes. So in case of i2c the regulator framework will reapply the voltage it
+knows which in our case is the boot voltage for VDD_CPU because noone else
+from a regulator framework pov has ever changed the voltage. In case of PWM
+putting the PWM output pad in tri state will cause the OVR regulator to output
+a hardware defined voltage. This is done as part of the dfll_clk_disable()
+function. To summarize:
+
+switch from pll_x to DFLL for i2c regulator:
+
+entry: voltage is boot voltage set bootloader
+1) set dfll rate to pll_x rate
+2) set parent to pll_p so we run at 408MHz which is below Fmax@Vmin when
+   running from PLL
+3) enable DFLL this will switch to closed loop mode and start controlling
+   the voltage via i2c, however because we are below Fmax@Vmin there's no
+   V/f curve violation.
+4) change parent from pll_x to DFLL
+
+switch from DFLL to pll_x for i2c regulator:
+
+entry: voltage is whatever the DFLL has programmed but not lower than Vmin
+1) set parent to pll_p so we run at 408MHz (below Fmax@Vmin)
+2) disable DFLL, this will cause the voltage to be the last value programmed
+   by the DFLL.
+3) go back to the voltage as programmed by the boot loader using
+   regulator_sync_voltage().
+4) change parent from DFLL to pll_x. Because pll_x is still programmed at
+   the bootloader frequency, we're within the V/f curve.
+
+switch from pll_x to DFLL for PWM regulator:
+
+entry: voltage is boot voltage set by hardware because PWM pin is in tristate
+1) set dfll rate to pll_x rate
+2) set parent to pll_p so we run at 408MHz which is below Fmax@Vmin when
+   running from PLL
+3) enable DFLL this will set the PWM pad to output, switch to closed loop mode
+   and start controlling the voltage via PWM, however because we are below
+   Fmax@Vmin there's no V/f curve violation.
+4) change parent from pll_x to DFLL
+
+switch from DFLL to pll_x for PWM regulator:
+
+entry: voltage is whatever the DFLL has programmed but not lower than Vmin
+1) set parent to pll_p so we run at 408MHz (below Fmax@Vmin)
+2) disable DFLL, this will cause the PWM pad to be programmed to tristate
+   and the voltage to change back to the hardware defined voltage.
+3) change parent from DFLL to pll_x. Because pll_x is still programmed at
+   the bootloader frequency, we're within the V/f curve.
 
 Peter.
