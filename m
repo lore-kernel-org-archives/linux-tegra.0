@@ -1,70 +1,37 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-Date: Tue, 13 Mar 2018 10:20:52 +0000
-Message-ID: <f50eaa7b-3ce3-c18f-ca8c-e035a4f6aa7d@nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
- <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
- <20180313095117.GX6190@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pci: tegra: add MSI dependency
+Date: Tue, 13 Mar 2018 12:52:05 +0100
+Message-ID: <20180313115218.2246372-1-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180313095117.GX6190@tbergstrom-lnx.Nvidia.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, linux-kernel@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>, linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Building the tegra PCIe host driver without MSI results in a link
+failure:
 
-On 13/03/18 09:51, Peter De Schrijver wrote:
-> On Mon, Mar 12, 2018 at 12:15:22PM +0000, Jon Hunter wrote:
->>
->> On 06/02/18 16:34, Peter De Schrijver wrote:
->>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
->>> support in this driver. Also allow for the case where the CPU voltage is
->>> controlled directly by the DFLL rather than by a separate regulator object.
->>>
->>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> ---
->>>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
->>>  1 file changed, 8 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
->>> index 4353025..f8e01a8 100644
->>> --- a/drivers/cpufreq/tegra124-cpufreq.c
->>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
->>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
->>>  {
->>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
->>>  	clk_disable_unprepare(priv->dfll_clk);
->>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
->>> +	if (priv->vdd_cpu_reg)
->>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
->>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
->>>  }
->>
->> OK, so this bit does not make sense to me. In the above we are switching
->> from the DFLL to the PLL (ie. disabling the DFLL) and so to ensure we
->> are operating at the correct voltage after disabling the DFLL we need to
->> sync the voltage. Seems we would need to do this for all devices, no?
->> How is the different between Tegra124 and Tegra210?
-> 
-> Yes. So in case of i2c the regulator framework will reapply the voltage it
-> knows which in our case is the boot voltage for VDD_CPU because noone else
-> from a regulator framework pov has ever changed the voltage. In case of PWM
-> putting the PWM output pad in tri state will cause the OVR regulator to output
-> a hardware defined voltage. This is done as part of the dfll_clk_disable()
-> function. To summarize:
+drivers/pci/host/pci-tegra.o:(.data+0x70): undefined reference to `pci_msi_unmask_irq'
+drivers/pci/host/pci-tegra.o:(.data+0x74): undefined reference to `pci_msi_mask_irq'
 
-So this is the piece of information I was missing. Maybe add this to the
-changelog so it is clear why we do not need to handle the cpu rail in
-the case of PWM.
+This adds the same dependency that everyone else uses.
 
-Cheers
-Jon
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pci/host/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+index 1fcdc890acc7..65b4afb8d11d 100644
+--- a/drivers/pci/host/Kconfig
++++ b/drivers/pci/host/Kconfig
+@@ -38,6 +38,7 @@ config PCI_FTPCI100
+ config PCI_TEGRA
+ 	bool "NVIDIA Tegra PCIe controller"
+ 	depends on ARCH_TEGRA && MMU
++	depends on PCI_MSI_IRQ_DOMAIN
+ 	help
+ 	  Say Y here if you want support for the PCIe host controller found
+ 	  on NVIDIA Tegra SoCs.
 -- 
-nvpublic
+2.9.0
