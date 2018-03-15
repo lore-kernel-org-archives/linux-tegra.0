@@ -1,75 +1,103 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] pci: tegra: add MSI dependency
-Date: Wed, 14 Mar 2018 18:34:56 +0000
-Message-ID: <20180314183456.GA3056@e107981-ln.cambridge.arm.com>
-References: <20180313115218.2246372-1-arnd@arndb.de>
- <20180314114515.GC8564@ulmo>
- <CAK8P3a3Wr8FNRP4ZYDGk9OL+=0w--pzRX=R6ye_+6nCtnHGVjg@mail.gmail.com>
- <20180314121314.GE8564@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 1/3] drm/tegra: plane: Fix RGB565 plane format on older Tegra's
+Date: Thu, 15 Mar 2018 04:00:23 +0300
+Message-ID: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180314121314.GE8564@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 01:13:14PM +0100, Thierry Reding wrote:
-> On Wed, Mar 14, 2018 at 01:06:11PM +0100, Arnd Bergmann wrote:
-> > On Wed, Mar 14, 2018 at 12:45 PM, Thierry Reding
-> > <thierry.reding@gmail.com> wrote:
-> > > On Tue, Mar 13, 2018 at 12:52:05PM +0100, Arnd Bergmann wrote:
-> > >> Building the tegra PCIe host driver without MSI results in a link
-> > >> failure:
-> > >>
-> > >> drivers/pci/host/pci-tegra.o:(.data+0x70): undefined reference to `pci_msi_unmask_irq'
-> > >> drivers/pci/host/pci-tegra.o:(.data+0x74): undefined reference to `pci_msi_mask_irq'
-> > >>
-> > >> This adds the same dependency that everyone else uses.
-> > >>
-> > >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > >> ---
-> > >>  drivers/pci/host/Kconfig | 1 +
-> > >>  1 file changed, 1 insertion(+)
-> > >
-> > > I'm slightly concerned about the dependency. Not that I doubt its
-> > > correctness, but because it could mean that PCI_TEGRA is not visible in
-> > > the default configuration. The only reason why it is currently visible
-> > > is because PCI_MSI is selected by some symbols that also happen to be
-> > > enabled. However, what if at some point those symbols are disabled or
-> > > removed?
-> > >
-> > > Some architectures make sure that PCI_MSI is enabled by selecting it,
-> > > but that's risky, isn't it, because PCI_MSI is user-visible and could
-> > > therefore easily lead to conflicts.
-> > >
-> > > Enabling PCI_MSI in the arm64 defconfig would solve the issue and is
-> > > good enough for me. I've got a couple of changes to that defconfig in
-> > > the Tegra tree for v4.17-rc1, I can add a patch to enable PCI_MSI.
-> > >
-> > > Unless there are any objections.
-> > 
-> > I looked at it again and found that this on ARM64, PCI_MSI is always
-> > selected indirectly by ARM_GIC&&PCI, so there is no problem.
-> > 
-> > The build failure must have been on 32-bit ARM.
-> 
-> Okay, I had assumed that ARM_GIC_V2M (which selects PCI_MSI) was user-
-> visible and hence could be disabled. But it's not, and always enabled on
-> ARM64. On 32-bit we already explicitly enable PCI_MSI via the default
-> configurations.
-> 
-> I withdraw my concerns. I see that Lorenzo already applied the patch, so
-> just for the record:
+Simplify opaque format adjustment by removing format checking. There are
+only 4 formats that require the adjustment and so this way is less error
+prone, avoiding mishandling native formats, like in this case RGB565 is
+the format that was erroneously treated as invalid.
 
-Apologies - it fixed an issue and it seemed harmless hence I applied it
-straight away, I should have waited for an ACK.
+Fixes: ebae8d07435a ("drm/tegra: dc: Implement legacy blending")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/drm/tegra/dc.c    | 11 ++---------
+ drivers/gpu/drm/tegra/plane.c | 21 ++++++---------------
+ drivers/gpu/drm/tegra/plane.h |  2 +-
+ 3 files changed, 9 insertions(+), 25 deletions(-)
 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-
-Updated - it is important to keep records, that's what tags are for.
-
-Thanks,
-Lorenzo
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 49df2db2ad46..22bf513612d1 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -456,15 +456,8 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ 	 * be emulated by disabling alpha blending for the plane.
+ 	 */
+ 	if (!dc->soc->supports_blending) {
+-		if (!tegra_plane_format_has_alpha(format)) {
+-			err = tegra_plane_format_get_alpha(format, &format);
+-			if (err < 0)
+-				return err;
+-
+-			plane_state->opaque = true;
+-		} else {
+-			plane_state->opaque = false;
+-		}
++		plane_state->opaque = !tegra_plane_format_has_alpha(format);
++		format = tegra_plane_format_adjust(format);
+ 
+ 		tegra_plane_check_dependent(tegra, plane_state);
+ 	}
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index a056fbf83b53..fc37dcf8c458 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -268,32 +268,23 @@ bool tegra_plane_format_has_alpha(unsigned int format)
+ 	return false;
+ }
+ 
+-int tegra_plane_format_get_alpha(unsigned int opaque, unsigned int *alpha)
++unsigned int tegra_plane_format_adjust(unsigned int opaque)
+ {
+-	if (tegra_plane_format_is_yuv(opaque, NULL)) {
+-		*alpha = opaque;
+-		return 0;
+-	}
+-
+ 	switch (opaque) {
+ 	case WIN_COLOR_DEPTH_B5G5R5X1:
+-		*alpha = WIN_COLOR_DEPTH_B5G5R5A1;
+-		return 0;
++		return WIN_COLOR_DEPTH_B5G5R5A1;
+ 
+ 	case WIN_COLOR_DEPTH_X1B5G5R5:
+-		*alpha = WIN_COLOR_DEPTH_A1B5G5R5;
+-		return 0;
++		return WIN_COLOR_DEPTH_A1B5G5R5;
+ 
+ 	case WIN_COLOR_DEPTH_R8G8B8X8:
+-		*alpha = WIN_COLOR_DEPTH_R8G8B8A8;
+-		return 0;
++		return WIN_COLOR_DEPTH_R8G8B8A8;
+ 
+ 	case WIN_COLOR_DEPTH_B8G8R8X8:
+-		*alpha = WIN_COLOR_DEPTH_B8G8R8A8;
+-		return 0;
++		return WIN_COLOR_DEPTH_B8G8R8A8;
+ 	}
+ 
+-	return -EINVAL;
++	return opaque;
+ }
+ 
+ unsigned int tegra_plane_get_overlap_index(struct tegra_plane *plane,
+diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
+index 6938719e7e5d..9fda841564cd 100644
+--- a/drivers/gpu/drm/tegra/plane.h
++++ b/drivers/gpu/drm/tegra/plane.h
+@@ -63,7 +63,7 @@ int tegra_plane_state_add(struct tegra_plane *plane,
+ int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap);
+ bool tegra_plane_format_is_yuv(unsigned int format, bool *planar);
+ bool tegra_plane_format_has_alpha(unsigned int format);
+-int tegra_plane_format_get_alpha(unsigned int opaque, unsigned int *alpha);
++unsigned int tegra_plane_format_adjust(unsigned int opaque);
+ void tegra_plane_check_dependent(struct tegra_plane *tegra,
+ 				 struct tegra_plane_state *state);
+ 
+-- 
+2.16.1
