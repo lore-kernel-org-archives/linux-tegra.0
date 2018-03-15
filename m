@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH v1 2/3] drm/tegra: plane: Correct legacy blending
-Date: Thu, 15 Mar 2018 16:47:01 +0300
-Message-ID: <5bb313f0-8d90-3cd6-5680-bb695d9b7e2a@gmail.com>
+Date: Thu, 15 Mar 2018 16:47:16 +0300
+Message-ID: <82bc3aad-b532-9122-bec3-bd30f94c3c08@gmail.com>
 References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
  <00cf4565238be471c90e5823e53e0ed504869bfe.1521075485.git.digetx@gmail.com>
  <20180315102905.GB15393@ulmo>
