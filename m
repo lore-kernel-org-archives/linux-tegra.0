@@ -1,97 +1,88 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/3] drm/tegra: dc: Dedicate overlay plane to cursor on older Tegra's
-Date: Thu, 15 Mar 2018 04:00:25 +0300
-Message-ID: <f48200af36c3358d549fc451fbc754c2a37b0d47.1521075485.git.digetx@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v1 1/3] drm/tegra: plane: Fix RGB565 plane format on
+ older Tegra's
+Date: Thu, 15 Mar 2018 11:27:00 +0100
+Message-ID: <20180315102700.GA15393@ulmo>
 References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0941448615=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
-In-Reply-To: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
-References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Older Tegra's do not support RGBA format for the cursor, but instead
-overlay plane could be used for it. Since there is no much use for the
-overlays on a regular desktop and HW-accelerated cursor is much better
-than a SW cursor, let's dedicate one overlay plane to the mouse cursor.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/tegra/dc.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+--===============0941448615==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
+Content-Disposition: inline
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 22bf513612d1..e4d567ec07cc 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -857,9 +857,11 @@ static const u32 tegra124_overlay_formats[] = {
- 
- static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
- 						       struct tegra_dc *dc,
--						       unsigned int index)
-+						       unsigned int index,
-+						       bool cursor)
- {
- 	unsigned long possible_crtcs = tegra_plane_get_possible_crtcs(drm);
-+	enum drm_plane_type type = DRM_PLANE_TYPE_OVERLAY;
- 	struct tegra_plane *plane;
- 	unsigned int num_formats;
- 	const u32 *formats;
-@@ -876,10 +878,12 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
- 	num_formats = dc->soc->num_overlay_formats;
- 	formats = dc->soc->overlay_formats;
- 
-+	if (cursor)
-+		type = DRM_PLANE_TYPE_CURSOR;
-+
- 	err = drm_universal_plane_init(drm, &plane->base, possible_crtcs,
- 				       &tegra_plane_funcs, formats,
--				       num_formats, NULL,
--				       DRM_PLANE_TYPE_OVERLAY, NULL);
-+				       num_formats, NULL, type, NULL);
- 	if (err < 0) {
- 		kfree(plane);
- 		return ERR_PTR(err);
-@@ -931,6 +935,7 @@ static struct drm_plane *tegra_dc_add_planes(struct drm_device *drm,
- 					     struct tegra_dc *dc)
- {
- 	struct drm_plane *planes[2], *primary;
-+	unsigned int planes_num;
- 	unsigned int i;
- 	int err;
- 
-@@ -938,8 +943,14 @@ static struct drm_plane *tegra_dc_add_planes(struct drm_device *drm,
- 	if (IS_ERR(primary))
- 		return primary;
- 
--	for (i = 0; i < 2; i++) {
--		planes[i] = tegra_dc_overlay_plane_create(drm, dc, 1 + i);
-+	if (dc->soc->supports_cursor)
-+		planes_num = 2;
-+	else
-+		planes_num = 1;
-+
-+	for (i = 0; i < planes_num; i++) {
-+		planes[i] = tegra_dc_overlay_plane_create(drm, dc, 1 + i,
-+							  false);
- 		if (IS_ERR(planes[i])) {
- 			err = PTR_ERR(planes[i]);
- 
-@@ -1857,6 +1868,13 @@ static int tegra_dc_init(struct host1x_client *client)
- 			err = PTR_ERR(cursor);
- 			goto cleanup;
- 		}
-+	} else {
-+		/* dedicate one overlay to mouse cursor */
-+		cursor = tegra_dc_overlay_plane_create(drm, dc, 2, true);
-+		if (IS_ERR(cursor)) {
-+			err = PTR_ERR(cursor);
-+			goto cleanup;
-+		}
- 	}
- 
- 	err = drm_crtc_init_with_planes(drm, &dc->base, primary, cursor,
--- 
-2.16.1
+
+--T4sUOijqQbZv57TR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Mar 15, 2018 at 04:00:23AM +0300, Dmitry Osipenko wrote:
+> Simplify opaque format adjustment by removing format checking. There are
+> only 4 formats that require the adjustment and so this way is less error
+> prone, avoiding mishandling native formats, like in this case RGB565 is
+> the format that was erroneously treated as invalid.
+>=20
+> Fixes: ebae8d07435a ("drm/tegra: dc: Implement legacy blending")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/gpu/drm/tegra/dc.c    | 11 ++---------
+>  drivers/gpu/drm/tegra/plane.c | 21 ++++++---------------
+>  drivers/gpu/drm/tegra/plane.h |  2 +-
+>  3 files changed, 9 insertions(+), 25 deletions(-)
+
+I've applied a slightly different version of this which doesn't rework
+as much of the surrounding code and is therefore easier to backport to
+v4.16.
+
+Thierry
+
+--T4sUOijqQbZv57TR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqqSnEACgkQ3SOs138+
+s6GLWBAAjVnw0dbXXghy0m5xpXQi+uwcqhbDv/imL5un0qIt3ZxcbdRM1WoGZwSF
+090XlZi0/sQwCOR5TFZUPfbWOXqKI3YghMp5jcxuoRGbi51yzDS8US2VnA2A6gFb
+VsPn7pgPgOyMibjVvQ+zLhK6XBQwW2I/ThEBuzqCLFSruDiGdPblC9JbtRKLRVkA
+1Mb0faLhNZ1LlL/6H/YJ5YnaQ/JekVRbbSOOVCMyCXmUvpVvUTzJbQ5viNwJGp22
+kO5YLa/WFwijndX7uUdVb77tO+g9WQ0N5Vnd000df/S+nsBV19SJunP2mgwpORf5
+jwB707wqYwn+wJ16FsI22fLNcWLwTWgchP8fYkOr9YxRM9KEzRtz8pxJ/XqWG47b
+SZ+Mif5cIXAvQ+kbTrKYuEUvmFrJLCZmanDw5zujnLVMl5fB+XMuDN3NRtSvOFED
+FHiE54RlwwqkEY7mimYmf6FJbVnV5/qry0TaEAkGJPlYglihGWbRYx/8iXGlbM1x
+AUvFSuWzr+Xlaruzf91RKvCQ6Bss5Yc6NKwoir+Gs0JZNbTM9OPMil9X1Wu8Bz5h
+Mrg5fwSx/uw3KSX2vqFjQmDexSL9H5pt0ThIi9FauQmAtxQhg+gmVIS3JvkwRSMg
+38TnqJtPtREAjlgUAIA74b6fq7IDcWHdLr/4OOTm9cBVwrVb2cc=
+=rz7o
+-----END PGP SIGNATURE-----
+
+--T4sUOijqQbZv57TR--
+
+--===============0941448615==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0941448615==--
