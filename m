@@ -1,64 +1,53 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] PCI: tegra: mark PM functions as __maybe_unused
-Date: Thu, 15 Mar 2018 17:49:27 +0100
-Message-ID: <20180315164927.GA31871@ulmo>
-References: <20180315161901.772729-1-arnd@arndb.de>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v1 3/3] drm/tegra: dc: Dedicate overlay plane to cursor on
+ older Tegra's
+Date: Fri, 16 Mar 2018 08:36:46 +0100
+Message-ID: <CAKMK7uFo3YZ2P4CFywwyZLJS0tPgwOmn8dG3g84pMF+xV52D0w@mail.gmail.com>
+References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
+ <f48200af36c3358d549fc451fbc754c2a37b0d47.1521075485.git.digetx@gmail.com>
+ <20180315104511.GC15393@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180315161901.772729-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180315104511.GC15393@ulmo>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---DocE+STaALJfprDB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Mar 15, 2018 at 05:18:39PM +0100, Arnd Bergmann wrote:
-> The new PM support causes a warning when CONFIG_PM is disabled:
->=20
-> drivers/pci/host/pci-tegra.c:2482:12: error: 'tegra_pcie_pm_resume' defin=
-ed but not used [-Werror=3Dunused-function]
->  static int tegra_pcie_pm_resume(struct device *dev)
-> drivers/pci/host/pci-tegra.c:2463:12: error: 'tegra_pcie_pm_suspend' defi=
-ned but not used [-Werror=3Dunused-function]
->  static int tegra_pcie_pm_suspend(struct device *dev)
->=20
-> Marking the functions as __maybe_unused lets the compiler drop them
-> silently instead.
->=20
-> Fixes: b90b44154023 ("PCI: tegra: Add power management support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/pci/host/pci-tegra.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---DocE+STaALJfprDB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqqpBcACgkQ3SOs138+
-s6GZZxAAgfh++fLMiINh7+QqGgjQs3u1OPUCZvgOAB2ovdTlu4I4mB13sH2XqtyS
-dLeiEyGpGc23vtJLfOgD7JrwEb5PZyQ1Boxz5L+58yVIgks/gOwvZ+ghxefc5J8M
-m+rl8VjPb54DYWgAUrxTXC4cPS60ATGuEJAeX3YXpQfVc89lWy7alt8PjUGOdmH1
-qd8p/tn3KF+SpnvTgO7DlcEpwFT0FgiMMORxtCrmJUg6IoAGI3pmndSYvkggzgud
-wodK+XKk1Tyg3BBbg+qKzMmi3W1cs80F3AJdPMngz4o3OTcUSOY8WI2tUZDiQkqy
-B1H23XNadB7pnBr5ijkmF1scM+dPiP6PwxYlhXmxhcU+oLZzh4UqbWymidAS/GhL
-XA6Tc4uHq+K012B6/18AQdYmj9N6mAz5ZiH2Z6QE/1pE9SyjMDVwvfoqtBPpcULU
-X5E/G60zNcflKTPskSkjHQA689b1SqqWaWW9iF8Wlx6PyTmsWEPXZsksOsTMYKO5
-6PbGuHxj5DwveBgr9txz1lQAIC/SfrD3Py6hOu5k1IZxK4UPo+JSiJeytY6exkyR
-Zaevz/ZyZHKu9zFKQkf/wB+mU1qEWCcVRwHYIJh9Ar5zr69qeO/W+WQk7lzepD+U
-RkztyJRpWM4Bxx0b+zVKlc6KiT/6eOR6sR7IxvaHD3StfRQUT88=
-=7CmL
------END PGP SIGNATURE-----
-
---DocE+STaALJfprDB--
+T24gVGh1LCBNYXIgMTUsIDIwMTggYXQgMTE6NDUgQU0sIFRoaWVycnkgUmVkaW5nCjx0aGllcnJ5
+LnJlZGluZ0BnbWFpbC5jb20+IHdyb3RlOgo+IE9uIFRodSwgTWFyIDE1LCAyMDE4IGF0IDA0OjAw
+OjI1QU0gKzAzMDAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPj4gT2xkZXIgVGVncmEncyBkbyBu
+b3Qgc3VwcG9ydCBSR0JBIGZvcm1hdCBmb3IgdGhlIGN1cnNvciwgYnV0IGluc3RlYWQKPj4gb3Zl
+cmxheSBwbGFuZSBjb3VsZCBiZSB1c2VkIGZvciBpdC4gU2luY2UgdGhlcmUgaXMgbm8gbXVjaCB1
+c2UgZm9yIHRoZQo+PiBvdmVybGF5cyBvbiBhIHJlZ3VsYXIgZGVza3RvcCBhbmQgSFctYWNjZWxl
+cmF0ZWQgY3Vyc29yIGlzIG11Y2ggYmV0dGVyCj4+IHRoYW4gYSBTVyBjdXJzb3IsIGxldCdzIGRl
+ZGljYXRlIG9uZSBvdmVybGF5IHBsYW5lIHRvIHRoZSBtb3VzZSBjdXJzb3IuCj4+Cj4+IFNpZ25l
+ZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KPj4gLS0tCj4+ICBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyB8IDI4ICsrKysrKysrKysrKysrKysrKysrKysrLS0t
+LS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyMyBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQo+
+Cj4gQXBwbGllZC4gSSdtIG5vdCBlbnRpcmVseSBoYXBweSB0aGF0IHdlIG5lZWQgdG8gc2Fjcmlm
+aWNlIG9uZSBvZiB0aGUKPiBvdmVybGF5IHdpbmRvd3MgZm9yIHRoaXMsIGJ1dCB5b3UncmUgcmln
+aHQsIGl0J3MgcHJvYmFibHkgb2theSBnaXZlbgo+IGhvdyBsaXR0bGUgcGxhbmVzIGFyZSB1c2Vk
+IG9uIGEgcmVndWxhciBkZXNrdG9wLgo+Cj4gV2UgY291bGQgYWx3YXlzIHByb3ZpZGUgYSBtb2R1
+bGUgcGFyYW1ldGVyIHRvIHN3aXRjaCB0aGlzIG9uIGFuZCBvZmYKPiBpZiB0aGF0J3MgZXZlciBz
+b21ldGhpbmcgd2Ugd2FudC4KClRoZSBpZGVhIHdpdGggdW5pdmVyc2FsIHBsYW5lcyBpcyB0aGF0
+IHlvdSBjYW4gKGF0IGxlYXN0IHRyeSB0bykgdXNlCnRoZSBjdXJzb3Igb3ZlcmxheSBwbGFuZSBh
+cyBhIG5vcm1hbCBwbGFuZS4gSXQgaXMgb25seSBhIGhpbnQgdG8KdXNlcnNwYWNlLCB0aGVyZSdz
+IG5vIHJlcXVpcmVtZW50IGFueXdoZXJlIGluIGF0b21pYyB0aGF0IHlvdSBvbmx5IHVzZQppdCBh
+cyBhIGN1cnNvci4gVGhhdCB3YXkgZGVza3RvcHMgZ2V0IGEgZ29vZCBoaW50IGZvciB3aGF0IHRo
+ZSBjdXJzb3IKcGxhbmUgc2hvdWxkIGJlLCBldmVyeW9uZSBlbHNlIGNhbiBzdGlsbCB1c2UgYWxs
+IHRoZSBwbGFuZXMuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIs
+IEludGVsIENvcnBvcmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0gaHR0cDovL2Jsb2cuZmZ3
+bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
