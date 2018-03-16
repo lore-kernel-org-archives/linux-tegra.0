@@ -1,53 +1,50 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v1 3/3] drm/tegra: dc: Dedicate overlay plane to cursor on
- older Tegra's
-Date: Fri, 16 Mar 2018 08:36:46 +0100
-Message-ID: <CAKMK7uFo3YZ2P4CFywwyZLJS0tPgwOmn8dG3g84pMF+xV52D0w@mail.gmail.com>
-References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
- <f48200af36c3358d549fc451fbc754c2a37b0d47.1521075485.git.digetx@gmail.com>
- <20180315104511.GC15393@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL 1/7] ARM: tegra: Miscellaneous changes for v4.17-rc1
+Date: Fri, 16 Mar 2018 15:18:44 +0100
+Message-ID: <20180316141850.4876-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180315104511.GC15393@ulmo>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBNYXIgMTUsIDIwMTggYXQgMTE6NDUgQU0sIFRoaWVycnkgUmVkaW5nCjx0aGllcnJ5
-LnJlZGluZ0BnbWFpbC5jb20+IHdyb3RlOgo+IE9uIFRodSwgTWFyIDE1LCAyMDE4IGF0IDA0OjAw
-OjI1QU0gKzAzMDAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPj4gT2xkZXIgVGVncmEncyBkbyBu
-b3Qgc3VwcG9ydCBSR0JBIGZvcm1hdCBmb3IgdGhlIGN1cnNvciwgYnV0IGluc3RlYWQKPj4gb3Zl
-cmxheSBwbGFuZSBjb3VsZCBiZSB1c2VkIGZvciBpdC4gU2luY2UgdGhlcmUgaXMgbm8gbXVjaCB1
-c2UgZm9yIHRoZQo+PiBvdmVybGF5cyBvbiBhIHJlZ3VsYXIgZGVza3RvcCBhbmQgSFctYWNjZWxl
-cmF0ZWQgY3Vyc29yIGlzIG11Y2ggYmV0dGVyCj4+IHRoYW4gYSBTVyBjdXJzb3IsIGxldCdzIGRl
-ZGljYXRlIG9uZSBvdmVybGF5IHBsYW5lIHRvIHRoZSBtb3VzZSBjdXJzb3IuCj4+Cj4+IFNpZ25l
-ZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KPj4gLS0tCj4+ICBk
-cml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyB8IDI4ICsrKysrKysrKysrKysrKysrKysrKysrLS0t
-LS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyMyBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQo+
-Cj4gQXBwbGllZC4gSSdtIG5vdCBlbnRpcmVseSBoYXBweSB0aGF0IHdlIG5lZWQgdG8gc2Fjcmlm
-aWNlIG9uZSBvZiB0aGUKPiBvdmVybGF5IHdpbmRvd3MgZm9yIHRoaXMsIGJ1dCB5b3UncmUgcmln
-aHQsIGl0J3MgcHJvYmFibHkgb2theSBnaXZlbgo+IGhvdyBsaXR0bGUgcGxhbmVzIGFyZSB1c2Vk
-IG9uIGEgcmVndWxhciBkZXNrdG9wLgo+Cj4gV2UgY291bGQgYWx3YXlzIHByb3ZpZGUgYSBtb2R1
-bGUgcGFyYW1ldGVyIHRvIHN3aXRjaCB0aGlzIG9uIGFuZCBvZmYKPiBpZiB0aGF0J3MgZXZlciBz
-b21ldGhpbmcgd2Ugd2FudC4KClRoZSBpZGVhIHdpdGggdW5pdmVyc2FsIHBsYW5lcyBpcyB0aGF0
-IHlvdSBjYW4gKGF0IGxlYXN0IHRyeSB0bykgdXNlCnRoZSBjdXJzb3Igb3ZlcmxheSBwbGFuZSBh
-cyBhIG5vcm1hbCBwbGFuZS4gSXQgaXMgb25seSBhIGhpbnQgdG8KdXNlcnNwYWNlLCB0aGVyZSdz
-IG5vIHJlcXVpcmVtZW50IGFueXdoZXJlIGluIGF0b21pYyB0aGF0IHlvdSBvbmx5IHVzZQppdCBh
-cyBhIGN1cnNvci4gVGhhdCB3YXkgZGVza3RvcHMgZ2V0IGEgZ29vZCBoaW50IGZvciB3aGF0IHRo
-ZSBjdXJzb3IKcGxhbmUgc2hvdWxkIGJlLCBldmVyeW9uZSBlbHNlIGNhbiBzdGlsbCB1c2UgYWxs
-IHRoZSBwbGFuZXMuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIs
-IEludGVsIENvcnBvcmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0gaHR0cDovL2Jsb2cuZmZ3
-bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi ARM SoC maintainers,
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.17-misc
+
+for you to fetch changes up to 601ff7edc748213fc6d4d7c1ded6467edbd1f1c2:
+
+  MAINTAINERS: Update Tegra IOMMU maintainer (2018-03-09 09:45:27 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+ARM: tegra: Miscellaneous changes for v4.17-rc1
+
+This contains a single patch to update the MAINTAINERS entry for the
+Tegra SMMU driver.
+
+----------------------------------------------------------------
+Jon Hunter (1):
+      MAINTAINERS: Update Tegra IOMMU maintainer
+
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
