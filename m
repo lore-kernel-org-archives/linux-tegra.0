@@ -1,40 +1,48 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Fixes for v4.16-rc7
-Date: Sat, 17 Mar 2018 00:00:18 +0100
-Message-ID: <20180316230018.7654-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 3/3] drm/tegra: dc: Dedicate overlay plane to cursor on
+ older Tegra's
+Date: Sat, 17 Mar 2018 18:22:05 +0300
+Message-ID: <9b2ba155-8db0-7a51-e09a-015c8eb90612@gmail.com>
+References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
+ <f48200af36c3358d549fc451fbc754c2a37b0d47.1521075485.git.digetx@gmail.com>
+ <20180315104511.GC15393@ulmo>
+ <CAKMK7uFo3YZ2P4CFywwyZLJS0tPgwOmn8dG3g84pMF+xV52D0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAKMK7uFo3YZ2P4CFywwyZLJS0tPgwOmn8dG3g84pMF+xV52D0w@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Vetter <daniel@ffwll.ch>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNzkyOGIyY2JlNTVi
-MmE0MTBhMGY1YzFmMTU0NjEwMDU5YzU3YjFiMjoKCiAgTGludXggNC4xNi1yYzEgKDIwMTgtMDIt
-MTEgMTU6MDQ6MjkgLTA4MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBh
-dDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0v
-dGVncmEvZm9yLTQuMTYtcmM3Cgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gNDg1MTky
-MzJiZWE5MjMwZDFjNWRiYmI2ODBkOTI1N2Q0ODYxYmI0YzoKCiAgZHJtL3RlZ3JhOiBwbGFuZTog
-Q29ycmVjdCBsZWdhY3kgYmxlbmRpbmcgKDIwMTgtMDMtMTUgMTU6NTY6NDYgKzAxMDApCgpUaGFu
-a3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBGaXhlcyBmb3IgdjQuMTYtcmM3CgpUaGlz
-IGNvbnRhaW5zIHR3byBzbWFsbCBmaXhlcyBmb3IgdGhlIGFscGhhIGJsZW5kaW5nIHN1cHBvcnQg
-dGhhdCB3YXMKbWVyZ2VkIGludG8gdjQuMTYtcmMxLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpEbWl0cnkgT3NpcGVua28g
-KDEpOgogICAgICBkcm0vdGVncmE6IHBsYW5lOiBDb3JyZWN0IGxlZ2FjeSBibGVuZGluZwoKVGhp
-ZXJyeSBSZWRpbmcgKDEpOgogICAgICBkcm0vdGVncmE6IHBsYW5lOiBGaXggUkdCNTY1IGZvcm1h
-dCBvbiBvbGRlciBUZWdyYQoKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5jIHwgOSArKysr
-KystLS0KIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 16.03.2018 10:36, Daniel Vetter wrote:
+> On Thu, Mar 15, 2018 at 11:45 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>> On Thu, Mar 15, 2018 at 04:00:25AM +0300, Dmitry Osipenko wrote:
+>>> Older Tegra's do not support RGBA format for the cursor, but instead
+>>> overlay plane could be used for it. Since there is no much use for the
+>>> overlays on a regular desktop and HW-accelerated cursor is much better
+>>> than a SW cursor, let's dedicate one overlay plane to the mouse cursor.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/gpu/drm/tegra/dc.c | 28 +++++++++++++++++++++++-----
+>>>  1 file changed, 23 insertions(+), 5 deletions(-)
+>>
+>> Applied. I'm not entirely happy that we need to sacrifice one of the
+>> overlay windows for this, but you're right, it's probably okay given
+>> how little planes are used on a regular desktop.
+>>
+>> We could always provide a module parameter to switch this on and off
+>> if that's ever something we want.
+> 
+> The idea with universal planes is that you can (at least try to) use
+> the cursor overlay plane as a normal plane. It is only a hint to
+> userspace, there's no requirement anywhere in atomic that you only use
+> it as a cursor. That way desktops get a good hint for what the cursor
+> plane should be, everyone else can still use all the planes.
+
+Indeed, thank you for pointing at it. That is a nice feature.
