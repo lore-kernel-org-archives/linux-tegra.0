@@ -1,364 +1,313 @@
-From: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Subject: Re: [PATCH usb-next v10 3/8] usb: core: add a wrapper for the USB
- PHYs on the HCD
-Date: Mon, 19 Mar 2018 17:12:06 +0100
-Message-ID: <CAFBinCBB2eqHC-k9wN67ZehKb9eun=mPaLuqhrbR-J1C0Ldqtw@mail.gmail.com>
-References: <20180218184504.3331-1-martin.blumenstingl@googlemail.com>
- <20180218184504.3331-4-martin.blumenstingl@googlemail.com>
- <7f511a6f-f3a2-2002-f601-5ce1742f4539@ti.com>
- <CAFBinCAOG9Yj5PQo4wsxH2Ev6WOwFge+jBMprRiOgxKuA_z8wA@mail.gmail.com>
- <e723fe80-1ff3-6f47-fbbd-699dfcd0be4f@ti.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [GIT PULL] drm/tegra: Changes for v4.17-rc1
+Date: Mon, 19 Mar 2018 17:52:40 +0100
+Message-ID: <20180319165240.GA22770@ulmo>
+References: <20180319095939.17131-1-thierry.reding@gmail.com>
+ <1521469926.13125.10.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <e723fe80-1ff3-6f47-fbbd-699dfcd0be4f-l0cyMroinI0@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, Peter.Chen-3arQi8VN3Tc@public.gmane.org, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, KISHON VIJAY ABRAHAM <kishon-l0cyMroinI0@public.gmane.org>, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "Gerlach,
- Dave" <d-gerlach-l0cyMroinI0@public.gmane.org>, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============0579436405=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1521469926.13125.10.camel@toradex.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Roger,
 
-On Mon, Mar 19, 2018 at 9:49 AM, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org> wrote:
-> Hi,
->
-> On 19/03/18 00:29, Martin Blumenstingl wrote:
->> Hi Roger,
->>
->> On Fri, Mar 16, 2018 at 3:32 PM, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org> wrote:
->>> +some TI folks
->>>
->>> Hi Martin,
->>>
->>> On 18/02/18 20:44, Martin Blumenstingl wrote:
->>>> Many SoC platforms have separate devices for the USB PHY which are
->>>> registered through the generic PHY framework. These PHYs have to be
->>>> enabled to make the USB controller actually work. They also have to be
->>>> disabled again on shutdown/suspend.
->>>>
->>>> Currently (at least) the following HCI platform drivers are using custom
->>>> code to obtain all PHYs via devicetree for the roothub/controller and
->>>> disable/enable them when required:
->>>> - ehci-platform.c has ehci_platform_power_{on,off}
->>>> - xhci-mtk.c has xhci_mtk_phy_{init,exit,power_on,power_off}
->>>> - ohci-platform.c has ohci_platform_power_{on,off}
->>>>
->>>> With this new wrapper the USB PHYs can be specified directly in the
->>>> USB controller's devicetree node (just like on the drivers listed
->>>> above). This allows SoCs like the Amlogic Meson GXL family to operate
->>>> correctly once this is wired up correctly. These SoCs use a dwc3
->>>> controller and require all USB PHYs to be initialized (if one of the USB
->>>> PHYs it not initialized then none of USB port works at all).
->>>>
->>>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
->>>> Tested-by: Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
->>>> Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
->>>> Cc: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
->>>
->>> This patch is breaking low power cases on TI SoCs when USB is in host mode.
->>> I'll explain why below.
->> based on your explanation and reading the TI PHY drivers I am assuming
->> that the affected SoCs are using the "phy-omap-usb2" driver
->>
-> yes and phy-ti-pipe3 as well i.e. "ti,phy-usb3" and "ti,omap-usb3"
-I missed that, thanks
-
->>>> ---
->>>>  drivers/usb/core/Makefile |   2 +-
->>>>  drivers/usb/core/phy.c    | 158 ++++++++++++++++++++++++++++++++++++++++++++++
->>>>  drivers/usb/core/phy.h    |   7 ++
->>>>  3 files changed, 166 insertions(+), 1 deletion(-)
->>>>  create mode 100644 drivers/usb/core/phy.c
->>>>  create mode 100644 drivers/usb/core/phy.h
->>>>
->>>> diff --git a/drivers/usb/core/Makefile b/drivers/usb/core/Makefile
->>>> index 92c9cefb4317..18e874b0441e 100644
->>>> --- a/drivers/usb/core/Makefile
->>>> +++ b/drivers/usb/core/Makefile
->>>> @@ -6,7 +6,7 @@
->>>>  usbcore-y := usb.o hub.o hcd.o urb.o message.o driver.o
->>>>  usbcore-y += config.o file.o buffer.o sysfs.o endpoint.o
->>>>  usbcore-y += devio.o notify.o generic.o quirks.o devices.o
->>>> -usbcore-y += port.o
->>>> +usbcore-y += phy.o port.o
->>>>
->>>>  usbcore-$(CONFIG_OF)         += of.o
->>>>  usbcore-$(CONFIG_USB_PCI)            += hcd-pci.o
->>>> diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
->>>> new file mode 100644
->>>> index 000000000000..09b7c43c0ea4
->>>> --- /dev/null
->>>> +++ b/drivers/usb/core/phy.c
->>>> @@ -0,0 +1,158 @@
->>>> +// SPDX-License-Identifier: GPL-2.0+
->>>> +/*
->>>> + * A wrapper for multiple PHYs which passes all phy_* function calls to
->>>> + * multiple (actual) PHY devices. This is comes handy when initializing
->>>> + * all PHYs on a HCD and to keep them all in the same state.
->>>> + *
->>>> + * Copyright (C) 2018 Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
->>>> + */
->>>> +
->>>> +#include <linux/device.h>
->>>> +#include <linux/list.h>
->>>> +#include <linux/phy/phy.h>
->>>> +#include <linux/of.h>
->>>> +
->>>> +#include "phy.h"
->>>> +
->>>> +struct usb_phy_roothub {
->>>> +     struct phy              *phy;
->>>> +     struct list_head        list;
->>>> +};
->>>> +
->>>> +static struct usb_phy_roothub *usb_phy_roothub_alloc(struct device *dev)
->>>> +{
->>>> +     struct usb_phy_roothub *roothub_entry;
->>>> +
->>>> +     roothub_entry = devm_kzalloc(dev, sizeof(*roothub_entry), GFP_KERNEL);
->>>> +     if (!roothub_entry)
->>>> +             return ERR_PTR(-ENOMEM);
->>>> +
->>>> +     INIT_LIST_HEAD(&roothub_entry->list);
->>>> +
->>>> +     return roothub_entry;
->>>> +}
->>>> +
->>>> +static int usb_phy_roothub_add_phy(struct device *dev, int index,
->>>> +                                struct list_head *list)
->>>> +{
->>>> +     struct usb_phy_roothub *roothub_entry;
->>>> +     struct phy *phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
->>>> +
->>>> +     if (IS_ERR_OR_NULL(phy)) {
->>>> +             if (!phy || PTR_ERR(phy) == -ENODEV)
->>>> +                     return 0;
->>>> +             else
->>>> +                     return PTR_ERR(phy);
->>>> +     }
->>>> +
->>>> +     roothub_entry = usb_phy_roothub_alloc(dev);
->>>> +     if (IS_ERR(roothub_entry))
->>>> +             return PTR_ERR(roothub_entry);
->>>> +
->>>> +     roothub_entry->phy = phy;
->>>> +
->>>> +     list_add_tail(&roothub_entry->list, list);
->>>> +
->>>> +     return 0;
->>>> +}
->>>> +
->>>> +struct usb_phy_roothub *usb_phy_roothub_init(struct device *dev)
->>>> +{
->>>> +     struct usb_phy_roothub *phy_roothub;
->>>> +     struct usb_phy_roothub *roothub_entry;
->>>> +     struct list_head *head;
->>>> +     int i, num_phys, err;
->>>> +
->>>> +     num_phys = of_count_phandle_with_args(dev->of_node, "phys",
->>>> +                                           "#phy-cells");
->>>> +     if (num_phys <= 0)
->>>> +             return NULL;
->>>> +
->>>> +     phy_roothub = usb_phy_roothub_alloc(dev);
->>>> +     if (IS_ERR(phy_roothub))
->>>> +             return phy_roothub;
->>>> +
->>>> +     for (i = 0; i < num_phys; i++) {
->>>> +             err = usb_phy_roothub_add_phy(dev, i, &phy_roothub->list);
->>>> +             if (err)
->>>> +                     goto err_out;
->>>> +     }
->>>> +
->>>> +     head = &phy_roothub->list;
->>>> +
->>>> +     list_for_each_entry(roothub_entry, head, list) {
->>>> +             err = phy_init(roothub_entry->phy);
->>>
->>> The phy_init() function actually enables the PHY clocks.
->>> It should be moved to the usb_phy_roothub_exit() routine just before calling phy_power_on().
->> do you mean that phy_init should be moved to usb_phy_roothub_power_on
->> (just before phy_power_on is called within usb_phy_roothub_power_on)?
->>
->
-> Yes.
->
->> an earlier version of my patch did exactly this, but it caused
->> problems during a suspend/resume cycle on Mediatek devices
->> Chunfeng Yun reported that issue here [0], quote from that mail for
->> easier reading:
->> "In order to keep link state on mt8173, we just power off all phys(not
->> exit) when system enter suspend, then power on them again (needn't
->> init, otherwise device will be disconnected) when system resume, this
->> can avoid re-enumerating device."
->>
->>>> +             if (err)
->>>> +                     goto err_exit_phys;
->>>> +     }
->>>> +
->>>> +     return phy_roothub;
->>>> +
->>>> +err_exit_phys:
->>>> +     list_for_each_entry_continue_reverse(roothub_entry, head, list)
->>>> +             phy_exit(roothub_entry->phy);
->>>> +
->>>> +err_out:
->>>> +     return ERR_PTR(err);
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(usb_phy_roothub_init);
->>>> +
->>>> +int usb_phy_roothub_exit(struct usb_phy_roothub *phy_roothub)
->>>> +{
->>>> +     struct usb_phy_roothub *roothub_entry;
->>>> +     struct list_head *head;
->>>> +     int err, ret = 0;
->>>> +
->>>> +     if (!phy_roothub)
->>>> +             return 0;
->>>> +
->>>> +     head = &phy_roothub->list;
->>>> +
->>>> +     list_for_each_entry(roothub_entry, head, list) {
->>>> +             err = phy_exit(roothub_entry->phy);
->>>> +             if (err)
->>>> +                     ret = ret;
->>>> +     }
->>>
->>> phy_exit() should be moved to usb_phy_roothub_poweroff() just after calling phy_power_off().
->> if I understood Chunfeng Yun correctly this will require
->> re-enumeration of the USB devices after a suspend/resume cycle on
->> Mediatek SoCs
->>
->
-> OK. I suppose that there are 2 cases
-> 1) Mediatek's case: USB controller context retained across suspend/resume.
-> Remote wakeup probably required.
-> No re-enumeration preferred after resume. phy_exit()/phy_init() must not be called
-> during suspend/resume to keep PHY link active.
-Documentation/devicetree/bindings/usb/mediatek,mtu3.txt indeed shows
-that the parent of the USB controller can be marked as "wakeup-source"
-
-> 2) TI's case: low power important: USB context is lost, OK to re-enumerate.
-> phy_exit()/phy_init() must be called during suspend/resume.
-ACK
-
->>> With that there is nothing else being done here. Shouldn't we be doing the equivalent of
->>> usb_phy_roothub_del_phy() and usb_phy_roothub_free() here?
->>>
->>>> +
->>>> +     return ret;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(usb_phy_roothub_exit);
->>>> +
->>>> +int usb_phy_roothub_power_on(struct usb_phy_roothub *phy_roothub)
->>>> +{
->>>> +     struct usb_phy_roothub *roothub_entry;
->>>> +     struct list_head *head;
->>>> +     int err;
->>>> +
->>>> +     if (!phy_roothub)
->>>> +             return 0;
->>>> +
->>>> +     head = &phy_roothub->list;
->>>> +
->>>> +     list_for_each_entry(roothub_entry, head, list) {
->>>> +             err = phy_power_on(roothub_entry->phy);
->>>> +             if (err)
->>>> +                     goto err_out;
->>>> +     }
->>>> +
->>>> +     return 0;
->>>> +
->>>> +err_out:
->>>> +     list_for_each_entry_continue_reverse(roothub_entry, head, list)
->>>> +             phy_power_off(roothub_entry->phy);
->>>> +
->>>> +     return err;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(usb_phy_roothub_power_on);
->>>> +
->>>> +void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub)
->>>> +{
->>>> +     struct usb_phy_roothub *roothub_entry;
->>>> +
->>>> +     if (!phy_roothub)
->>>> +             return;
->>>> +
->>>> +     list_for_each_entry_reverse(roothub_entry, &phy_roothub->list, list)
->>>> +             phy_power_off(roothub_entry->phy);
->>>
->>> Not doing the phy_exit() here leaves the clocks enabled on our SoC and
->>> we're no longer able to reach low power states on system suspend.
->> I'm not sure where this problem should be solved:
->> - set skip_phy_initialization in struct usb_hcd to 1 for the affected
->> TI platforms
->
-> Many TI platforms are affected, omap5*, dra7*, am43*
->
->> - fix this in the usb_phy_roothub code
->
-> I'd vote for fixing it in the usb_phy_roothub code. How?
-> How about using the device_can_wakeup() to decide if we should call phy_exit()/init() or not?
-> If the USB device can't wakeup the system there is no point in keeping it powered/clocked right?
-@Chunfeng: can you confirm Roger's idea that we could call phy_exit if
-the controller is *NOT* marked as "wakeup-source"?
-I am also not sure if it would work, since the "wakeup-source"
-property is defined on the USB controller's parent node in case of the
-Mediatek MTU3 (Mediatek USB3.0 DRD) controller
-
->> - fix this in the PHY driver
->
-> There is nothing to fix in the PHY driver. It is doing what it is supposed to do.
-I actually wonder if phy_ops should have explicit suspend/resume support:
-- assuming we define two new callbacks: .suspend and .resume
-- the PHY framework could call .power_off by default if .suspend is not defined
-- the PHY framework could call .power_on by default if .resume is not defined
-- drivers could set .suspend and .resume on their own, allowing more
-fine-grained control by for example *only* stopping the clock (but not
-re-initializing the registers, etc.)
-
-@Roger: what do you think about this?
-Kishon (the PHY framework maintainer) is also CC'ed - I would like to
-hear his opinion too
-
->> - somewhere else
->>
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(usb_phy_roothub_power_off);
->>>> diff --git a/drivers/usb/core/phy.h b/drivers/usb/core/phy.h
->>>> new file mode 100644
->>>> index 000000000000..6fde59bfbff8
->>>> --- /dev/null
->>>> +++ b/drivers/usb/core/phy.h
->>>> @@ -0,0 +1,7 @@
->>>> +struct usb_phy_roothub;
->>>> +
->>>> +struct usb_phy_roothub *usb_phy_roothub_init(struct device *dev);
->>>> +int usb_phy_roothub_exit(struct usb_phy_roothub *phy_roothub);
->>>> +
->>>> +int usb_phy_roothub_power_on(struct usb_phy_roothub *phy_roothub);
->>>> +void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub);
->>>>
->>>
->
-> <snip>
->
-> --
-> cheers,
-> -roger
->
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+--===============0579436405==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
+Content-Disposition: inline
 
 
-Regards
-Martin
+--T4sUOijqQbZv57TR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Mar 19, 2018 at 02:32:08PM +0000, Marcel Ziswiler wrote:
+> Hi Thierry
+>=20
+> On Mon, 2018-03-19 at 10:59 +0100, Thierry Reding wrote:
+> > Hi Dave,
+> >=20
+> > The following changes since commit
+> > 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+> >=20
+> >   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+> >=20
+> > are available in the Git repository at:
+> >=20
+> >   git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.17-
+> > rc1
+> >=20
+> > for you to fetch changes up to
+> > 27e92f1f1600c214bf649daddb9b88b68330a8d1:
+> >=20
+> >   drm/tegra: prime: Implement ->{begin,end}_cpu_access() (2018-03-17
+> > 00:04:20 +0100)
+> >=20
+> > Apologies for the delay. I originally wanted to send this out on
+> > Friday
+> > but then ran into a pair of bugs that I thought might be caused by
+> > this
+> > branch. Turns out that they were both already broken in v4.16-rc1 and
+> > I
+> > just hadn't tested for the corner case, so I caught them only very
+> > late
+> > in the release cycle.
+> >=20
+> > Anyway, the fixes for that are on the drm/tegra/fixes branch for
+> > which
+> > I sent an updated pull request earlier. The stuff here's fairly
+> > trivial
+> > and incremental improvements.
+>=20
+> Both linux-next as of Friday and today as well as your
+> tags/drm/tegra/for-4.17-rc1 fail for me on TK1 as follows:
+>=20
+> [    3.609146] +V1.05_AVDD_HDMI_PLL: supplied by +V1.05
+> [    3.614294] +V3.3_AVDD_HDMI: supplied by +V1.05
+> [    3.622078] ------------[ cut here ]------------
+> [    3.626719] WARNING: CPU: 2 PID: 87 at
+> /run/media/zim/Build/Sources/linux-
+> tegra.git/drivers/gpu/drm/drm_fourcc.c:204 drm_format_info+0x48/0x50
+> [    3.639588] Modules linked in:
+> [    3.642673] CPU: 2 PID: 87 Comm: kworker/2:1 Not tainted 4.16.0-rc1
+> #2
+> [    3.649213] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [    3.655495] Workqueue: events deferred_probe_work_func
+> [    3.660672] [<c01117e4>] (unwind_backtrace) from [<c010c9fc>]
+> (show_stack+0x10/0x14)
+> [    3.668430] [<c010c9fc>] (show_stack) from [<c09d39d8>]
+> (dump_stack+0x8c/0xa0)
+> [    3.675684] [<c09d39d8>] (dump_stack) from [<c0122b50>]
+> (__warn+0xe0/0xf8)
+> [    3.682587] [<c0122b50>] (__warn) from [<c0122c80>]
+> (warn_slowpath_null+0x40/0x48)
+> [    3.690189] [<c0122c80>] (warn_slowpath_null) from [<c0505438>]
+> (drm_format_info+0x48/0x50)
+> [    3.698551] [<c0505438>] (drm_format_info) from [<c0529fd0>]
+> (tegra_plane_format_mod_supported+0x14/0x30)
+> [    3.708150] [<c0529fd0>] (tegra_plane_format_mod_supported) from
+> [<c05186cc>] (drm_universal_plane_init+0x2ec/0x59c)
+> [    3.718703] [<c05186cc>] (drm_universal_plane_init) from
+> [<c052c36c>] (tegra_dc_init+0x1b8/0x510)
+> [    3.727611] [<c052c36c>] (tegra_dc_init) from [<c04d8b5c>]
+> (host1x_device_init+0x44/0xd0)
+> [    3.735821] [<c04d8b5c>] (host1x_device_init) from [<c0523ef4>]
+> (tegra_drm_load+0x228/0x308)
+> [    3.744291] [<c0523ef4>] (tegra_drm_load) from [<c0501024>]
+> (drm_dev_register+0x138/0x1d0)
+> [    3.752588] [<c0501024>] (drm_dev_register) from [<c0523a30>]
+> (host1x_drm_probe+0x34/0x58)
+> [    3.760883] [<c0523a30>] (host1x_drm_probe) from [<c05570f8>]
+> (driver_probe_device+0x254/0x32c)
+> [    3.769612] [<c05570f8>] (driver_probe_device) from [<c0555578>]
+> (bus_for_each_drv+0x58/0xb8)
+> [    3.778145] [<c0555578>] (bus_for_each_drv) from [<c0556dc0>]
+> (__device_attach+0xd0/0x138)
+> [    3.786436] [<c0556dc0>] (__device_attach) from [<c05562f4>]
+> (bus_probe_device+0x84/0x8c)
+> [    3.794645] [<c05562f4>] (bus_probe_device) from [<c05545cc>]
+> (device_add+0x3b4/0x5b8)
+> [    3.802599] [<c05545cc>] (device_add) from [<c04d908c>]
+> (host1x_subdev_register+0xac/0xd4)
+> [    3.810897] [<c04d908c>] (host1x_subdev_register) from [<c04d958c>]
+> (host1x_client_register+0x108/0x128)
+> [    3.820412] [<c04d958c>] (host1x_client_register) from [<c05380d0>]
+> (tegra_hdmi_probe+0x1e4/0x2d0)
+> [    3.829406] [<c05380d0>] (tegra_hdmi_probe) from [<c0558d00>]
+> (platform_drv_probe+0x50/0xac)
+> [    3.837855] [<c0558d00>] (platform_drv_probe) from [<c05570f8>]
+> (driver_probe_device+0x254/0x32c)
+> [    3.846756] [<c05570f8>] (driver_probe_device) from [<c0555578>]
+> (bus_for_each_drv+0x58/0xb8)
+> [    3.855309] [<c0555578>] (bus_for_each_drv) from [<c0556dc0>]
+> (__device_attach+0xd0/0x138)
+> [    3.863603] [<c0556dc0>] (__device_attach) from [<c05562f4>]
+> (bus_probe_device+0x84/0x8c)
+> [    3.871809] [<c05562f4>] (bus_probe_device) from [<c0556780>]
+> (deferred_probe_work_func+0x4c/0x148)
+> [    3.880885] [<c0556780>] (deferred_probe_work_func) from
+> [<c013c6e0>] (process_one_work+0x1ec/0x55c)
+> [    3.890047] [<c013c6e0>] (process_one_work) from [<c013d830>]
+> (worker_thread+0x29c/0x598)
+> [    3.898237] [<c013d830>] (worker_thread) from [<c0142414>]
+> (kthread+0x14c/0x154)
+> [    3.905662] [<c0142414>] (kthread) from [<c01010e8>]
+> (ret_from_fork+0x14/0x2c)
+> [    3.912901] Exception stack(0xee2b1fb0 to 0xee2b1ff8)
+> [    3.917958] 1fa0:                                     00000000
+> 00000000 00000000 00000000
+> [    3.926153] 1fc0: 00000000 00000000 00000000 00000000 00000000
+> 00000000 00000000 00000000
+> [    3.934348] 1fe0: 00000000 00000000 00000000 00000000 00000013
+> 00000000
+> [    3.941050] ---[ end trace f2913c9fb893aca6 ]---
+> ...
+> [    4.594476] Unable to handle kernel NULL pointer dereference at
+> virtual address 00000005
+> [    4.602584] pgd =3D b237c3d6
+> [    4.605293] [00000005] *pgd=3D00000000
+> [    4.608895] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+> [    4.614209] Modules linked in:
+> [    4.617274] CPU: 2 PID: 87 Comm: kworker/2:1 Tainted:
+> G        W        4.16.0-rc1 #2
+> [    4.625105] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [    4.631376] Workqueue: events deferred_probe_work_func
+> [    4.636525] PC is at tegra_plane_format_mod_supported+0x18/0x30
+> [    4.642448] LR is at warn_slowpath_null+0x40/0x48
+> [    4.647153] pc : [<c0529fd4>]    lr : [<c0122c80>]    psr: 20000113
+> [    4.653419] sp : ee2b1be0  ip : 00000000  fp : 00000001
+> [    4.658644] r10: 00000001  r9 : 00000008  r8 : c0e04c48
+> [    4.663870] r7 : c0529fbc  r6 : eda9bac4  r5 : 03000000  r4 :
+> 00000010
+> [    4.670396] r3 : 03000010  r2 : 00000200  r1 : c0ec2540  r0 :
+> 00000000
+> [    4.676925] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA
+> ARM  Segment none
+> [    4.684060] Control: 10c5387d  Table: 8000406a  DAC: 00000051
+> [    4.689806] Process kworker/2:1 (pid: 87, stack limit =3D 0x62aacce7)
+> [    4.696072] Stack: (0xee2b1be0 to 0xee2b2000)
+> ...
+> [    4.970477] [<c0529fd4>] (tegra_plane_format_mod_supported) from
+> [<c05186cc>] (drm_universal_plane_init+0x2ec/0x59c)
+> [    4.981009] [<c05186cc>] (drm_universal_plane_init) from
+> [<c052c36c>] (tegra_dc_init+0x1b8/0x510)
+> [    4.989891] [<c052c36c>] (tegra_dc_init) from [<c04d8b5c>]
+> (host1x_device_init+0x44/0xd0)
+> [    4.998076] [<c04d8b5c>] (host1x_device_init) from [<c0523ef4>]
+> (tegra_drm_load+0x228/0x308)
+> [    5.006523] [<c0523ef4>] (tegra_drm_load) from [<c0501024>]
+> (drm_dev_register+0x138/0x1d0)
+> [    5.014795] [<c0501024>] (drm_dev_register) from [<c0523a30>]
+> (host1x_drm_probe+0x34/0x58)
+> [    5.023067] [<c0523a30>] (host1x_drm_probe) from [<c05570f8>]
+> (driver_probe_device+0x254/0x32c)
+> [    5.031773] [<c05570f8>] (driver_probe_device) from [<c0555578>]
+> (bus_for_each_drv+0x58/0xb8)
+> [    5.040303] [<c0555578>] (bus_for_each_drv) from [<c0556dc0>]
+> (__device_attach+0xd0/0x138)
+> [    5.048572] [<c0556dc0>] (__device_attach) from [<c05562f4>]
+> (bus_probe_device+0x84/0x8c)
+> [    5.056761] [<c05562f4>] (bus_probe_device) from [<c05545cc>]
+> (device_add+0x3b4/0x5b8)
+> [    5.064688] [<c05545cc>] (device_add) from [<c04d908c>]
+> (host1x_subdev_register+0xac/0xd4)
+> [    5.072962] [<c04d908c>] (host1x_subdev_register) from [<c04d958c>]
+> (host1x_client_register+0x108/0x128)
+> [    5.082450] [<c04d958c>] (host1x_client_register) from [<c05380d0>]
+> (tegra_hdmi_probe+0x1e4/0x2d0)
+> [    5.091418] [<c05380d0>] (tegra_hdmi_probe) from [<c0558d00>]
+> (platform_drv_probe+0x50/0xac)
+> [    5.099862] [<c0558d00>] (platform_drv_probe) from [<c05570f8>]
+> (driver_probe_device+0x254/0x32c)
+> [    5.108739] [<c05570f8>] (driver_probe_device) from [<c0555578>]
+> (bus_for_each_drv+0x58/0xb8)
+> [    5.117268] [<c0555578>] (bus_for_each_drv) from [<c0556dc0>]
+> (__device_attach+0xd0/0x138)
+> [    5.125537] [<c0556dc0>] (__device_attach) from [<c05562f4>]
+> (bus_probe_device+0x84/0x8c)
+> [    5.133720] [<c05562f4>] (bus_probe_device) from [<c0556780>]
+> (deferred_probe_work_func+0x4c/0x148)
+> [    5.142774] [<c0556780>] (deferred_probe_work_func) from
+> [<c013c6e0>] (process_one_work+0x1ec/0x55c)
+> [    5.151913] [<c013c6e0>] (process_one_work) from [<c013d830>]
+> (worker_thread+0x29c/0x598)
+> [    5.160100] [<c013d830>] (worker_thread) from [<c0142414>]
+> (kthread+0x14c/0x154)
+> [    5.167504] [<c0142414>] (kthread) from [<c01010e8>]
+> (ret_from_fork+0x14/0x2c)
+> [    5.174727] Exception stack(0xee2b1fb0 to 0xee2b1ff8)
+> [    5.179784] 1fa0:                                     00000000
+> 00000000 00000000 00000000
+> [    5.187965] 1fc0: 00000000 00000000 00000000 00000000 00000000
+> 00000000 00000000 00000000
+> [    5.196147] 1fe0: 00000000 00000000 00000000 00000000 00000013
+> 00000000
+> [    5.202768] Code: e1a04002 e1a05003 ebff6d07 e1943005 (15d00005)=20
+> [    5.208926] ---[ end trace f2913c9fb893aca9 ]---
+>=20
+> Is this something your drm/tegra/fixes address or do you know what
+> might be the issue?
+
+This looks like an issue with the format modifier patch in
+drm/tegra/for-next, and I'm somewhat surprised to see that because it
+means you're trying to set a format that's not supported by the
+drm_format_info() function. It should be easy to fix that, though.
+
+Can you find out which format is missing from the table? Something like
+the patch below should show which one is missing.
+
+Thanks,
+Thierry
+
+--- >8 ---
+diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+index 5ca6395cd4d3..07abfc383ae3 100644
+--- a/drivers/gpu/drm/drm_fourcc.c
++++ b/drivers/gpu/drm/drm_fourcc.c
+@@ -174,7 +174,7 @@ const struct drm_format_info *__drm_format_info(u32 for=
+mat)
+ 		{ .format =3D DRM_FORMAT_VYUY,		.depth =3D 0,  .num_planes =3D 1, .cpp =
+=3D { 2, 0, 0 }, .hsub =3D 2, .vsub =3D 1 },
+ 		{ .format =3D DRM_FORMAT_AYUV,		.depth =3D 0,  .num_planes =3D 1, .cpp =
+=3D { 4, 0, 0 }, .hsub =3D 1, .vsub =3D 1, .has_alpha =3D true },
+ 	};
+-
++	struct drm_format_name_buf buf;
+ 	unsigned int i;
+=20
+ 	for (i =3D 0; i < ARRAY_SIZE(formats); ++i) {
+@@ -182,6 +182,7 @@ const struct drm_format_info *__drm_format_info(u32 for=
+mat)
+ 			return &formats[i];
+ 	}
+=20
++	WARN(1, "format %s not supported\n", drm_get_format_name(format, &buf));
+ 	return NULL;
+ }
+=20
+
+--T4sUOijqQbZv57TR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqv6tUACgkQ3SOs138+
+s6HXWA//VAb1d+XaCjt+OX463qzPNDZx+cXNGJgKrDUgnlyfh2hxJG/J8smNkDIF
+mgP5tZkYwF+X3MEulq8xRp0ut7KwiBrudSUA2TakPDmkgqhgq9eEisOFrZtiZs/J
+D6L+boYU1yd7wiCQZgC9iy/JjF02WiAhaPrTAtKpa02saav+kEbPa+ruuLEr8CoB
+MM1jjrMaxYHUSbjU5Nci0iVzw2ewYjeG2ExTdURWAUrPvHYaeJQ1qmia4UppfmC6
+GYcUr91ViRYMyGi+j5u2c5XcoGbrO1lQDmHjpxNLf63xi0N1SlMZ9art6S3gtR1j
+U38fKU5UN/rAzCXe/Pv1/AXAK5jYq2Rxrp1ZSOHg36FPA98p/mmyhGq945uSDRBS
+IuVNEAnSPcEnoX4rfdFMp8p2kfff0clLKqBHim3EDwMzdHkw8vJxwrnHepQiI9E1
+g6oy1N2sLtfog7/Ajodgkj5Zx3IuWgJ/sgUFpwxYRWIIFr4eBjVjkRxxqWpKyzOS
++MKPKTu/5NkGYsCK9ca/K/ann6oDrC0L3zpHbzCEpo/X4WLz8vFFkQSj2gnds1nx
+63x4Ora249PiWwqG5ZsqqgTmdGK9aenh/gkNYWIIQCzo7Y1ftYrb+2Bci5Vvm4IR
+bS1v0tEaR22P18d723pqEH1K83kXeM9bo7dd4ICj4ZRM0uFlzxM=
+=QNAO
+-----END PGP SIGNATURE-----
+
+--T4sUOijqQbZv57TR--
+
+--===============0579436405==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0579436405==--
