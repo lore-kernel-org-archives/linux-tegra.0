@@ -1,63 +1,56 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL v2 4/7] soc/tegra: Changes for v4.17-rc1
-Date: Mon, 19 Mar 2018 09:52:45 +0100
-Message-ID: <20180319085245.25834-1-thierry.reding@gmail.com>
-References: <20180316141850.4876-4-thierry.reding@gmail.com>
+Subject: [GIT PULL v2] drm/tegra: Fixes for v4.16-rc7
+Date: Mon, 19 Mar 2018 10:09:45 +0100
+Message-ID: <20180319090945.27469-1-thierry.reding@gmail.com>
+References: <20180316230018.7654-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180316141850.4876-4-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: arm@kernel.org
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180316230018.7654-1-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
-
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.17-soc-2
-
-for you to fetch changes up to 4c817ccf73abaf7b06a2630e8352d82648c8bc70:
-
-  soc/tegra: pmc: Use the new reset APIs to manage reset controllers (2018-03-19 09:42:39 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-soc/tegra: Changes for v4.17-rc1
-
-This contains more Tegra194 support as well as an implementation for the
-MBIST workaround needed to avoid some memory-related issues on Tegra210.
-
-----------------------------------------------------------------
-Mikko Perttunen (2):
-      soc/tegra: Add Tegra194 SoC configuration option
-      soc/tegra: pmc: Add Tegra194 compatibility string
-
-Peter De Schrijver (1):
-      soc/tegra: pmc: MBIST work around for Tegra210
-
-Thierry Reding (1):
-      soc/tegra: pmc: Pass PMC to tegra_powergate_power_up()
-
-Vivek Gautam (1):
-      soc/tegra: pmc: Use the new reset APIs to manage reset controllers
-
- drivers/soc/tegra/Kconfig | 10 +++++
- drivers/soc/tegra/pmc.c   | 98 ++++++++++++++---------------------------------
- 2 files changed, 38 insertions(+), 70 deletions(-)
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNzkyOGIyY2JlNTVi
+MmE0MTBhMGY1YzFmMTU0NjEwMDU5YzU3YjFiMjoKCiAgTGludXggNC4xNi1yYzEgKDIwMTgtMDIt
+MTEgMTU6MDQ6MjkgLTA4MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBh
+dDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0v
+dGVncmEvZm9yLTQuMTYtcmM3LWZpeGVzCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8g
+MTkyYjRhZjZjZDI4Y2RhZDliNDJmZDc5YzIxYTkwYTJhZWIwYmVjNzoKCiAgZHJtL3RlZ3JhOiBT
+aHV0ZG93biBvbiBkcml2ZXIgdW5iaW5kICgyMDE4LTAzLTE5IDA5OjU3OjMyICswMTAwKQoKVGhp
+cyB1cGRhdGVkIHB1bGwgcmVxdWVzdCBjb250YWlucyBmaXhlcyBmb3IgdGhyZWUgbW9yZSBpc3N1
+ZXMgdGhhdCBJCmFjY2lkZW50YWxseSByYW4gaW50byB3aGlsZSBkZWJ1Z2dpbmcgc29tZSB1bnJl
+bGF0ZWQgY29kZS4gVGhleSBoYXBwZW4Kb25seSBpZiBhbGwgb3V0cHV0cyBhcmUgZGlzYWJsZWQs
+IHNvIHRoZSBjb2RlIHBhdGhzIGRvbid0IHNlZSBhIGxvdCBvZgp0ZXN0IGNvdmVyYWdlLgoKVGhp
+ZXJyeQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQpkcm0vdGVncmE6IEZpeGVzIGZvciB2NC4xNi1yYzcKClRoaXMgY29udGFp
+bnMgdHdvIHNtYWxsIGZpeGVzIGZvciB0aGUgYWxwaGEgYmxlbmRpbmcgc3VwcG9ydCB0aGF0IHdh
+cwptZXJnZWQgaW50byB2NC4xNi1yYzEgYW5kIGEgZml4IGZvciBjb25uZWN0b3IgcmVmZXJlbmNl
+IGxlYWtzIGNhdXNlZCBieQp0aGUgZmFjdCB0aGF0IGRpc3BsYXkgcGlwZWxpbmVzIGFyZSBubyBs
+b25nZXIgYXV0b21hdGljYWxseSBkaXNhYmxlZCBpZgp0aGUgZnJhbWVidWZmZXIgaXMgcmVtb3Zl
+ZC4KCkZ1cnRoZXJtb3JlIHRoaXMgY29udGFpbnMgYSBmaXggZm9yIGEgY3Jhc2ggb24gSU9NTVUg
+ZGV0YWNoIGF0IGRyaXZlcgp1bmJpbmQgdGltZSBhbmQgYSByZWd1bGF0b3IgZW5hYmxlL2Rpc2Fi
+bGUgdW5iYWxhbmNlIGZpeC4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KRG1pdHJ5IE9zaXBlbmtvICgxKToKICAgICAgZHJt
+L3RlZ3JhOiBwbGFuZTogQ29ycmVjdCBsZWdhY3kgYmxlbmRpbmcKClRoaWVycnkgUmVkaW5nICg0
+KToKICAgICAgZHJtL3RlZ3JhOiBwbGFuZTogRml4IFJHQjU2NSBmb3JtYXQgb24gb2xkZXIgVGVn
+cmEKICAgICAgZHJtL3RlZ3JhOiBkYzogRGV0YWNoIElPTU1VIGdyb3VwIGZyb20gZG9tYWluIG9u
+bHkgb25jZQogICAgICBkcm0vdGVncmE6IGRzaTogRG9uJ3QgZGlzYWJsZSByZWd1bGF0b3Igb24g
+LT5leGl0KCkKICAgICAgZHJtL3RlZ3JhOiBTaHV0ZG93biBvbiBkcml2ZXIgdW5iaW5kCgogZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMgICAgfCAxNiArKysrKysrKysrKysrLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vdGVncmEvZHJtLmMgICB8ICAxICsKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kc2ku
+YyAgIHwgIDEgLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3BsYW5lLmMgfCAgOSArKysrKystLS0K
+IDQgZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
