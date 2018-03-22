@@ -1,64 +1,90 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] soc/tegra: pmc: fix child-node lookup
-Date: Thu, 22 Mar 2018 15:24:32 +0100
-Message-ID: <20180322142432.GA5853@ulmo>
-References: <20171115094458.31666-1-johan@kernel.org>
+Subject: Re: [PATCH v2] drm/tegra: dc: use correct format array for Tegra124.
+Date: Thu, 22 Mar 2018 15:30:46 +0100
+Message-ID: <20180322143046.GB5853@ulmo>
+References: <20180320091144.22421-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171115094458.31666-1-johan@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: multipart/mixed; boundary="===============0245642599=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180320091144.22421-1-marcel@ziswiler.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: airlied@linux.ie, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---bg08WKrSYDhXBjb5
+--===============0245642599==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RASg3xLB4tUQ4RcS"
+Content-Disposition: inline
+
+
+--RASg3xLB4tUQ4RcS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 15, 2017 at 10:44:58AM +0100, Johan Hovold wrote:
-> Fix child-node lookup during probe, which ended up searching the whole
-> device tree depth-first starting at the parent rather than just matching
-> on its children.
+On Tue, Mar 20, 2018 at 10:11:44AM +0100, Marcel Ziswiler wrote:
+> From: Stefan Agner <stefan@agner.ch>
 >=20
-> To make things worse, the parent pmc node could end up being prematurely
-> freed as of_find_node_by_name() drops a reference to its first argument.
+> Use tegra124_(primary|overlay)_formats for Tegra124.
 >=20
-> Fixes: 3568df3d31d6 ("soc: tegra: Add thermal reset (thermtrip) support t=
-o PMC")
-> Cc: stable <stable@vger.kernel.org>     # 4.0
-> Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+> Fixes: 511c7023cf23 ("drm/tegra: dc: Support more formats")
+>=20
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Acked-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>=20
 > ---
->  drivers/soc/tegra/pmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> Changes in v2:
+> - re-based on top of today's next
+> - added my ACK
+>=20
+>  drivers/gpu/drm/tegra/dc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---bg08WKrSYDhXBjb5
+--RASg3xLB4tUQ4RcS
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqzvJsACgkQ3SOs138+
-s6HPrRAApCkkMDOTQ5UGZnElEcAOQmZQFCeoRLNZgLLqA5UxqDm1wxsqnIaZsMG4
-GQlmUJ8dtGsUeGsPCy019scvCCNewMdKXk6+mcMiCD2btzGwOlvCPmyH4eF2uL/c
-ZcLQi+gJ3q0rqUptxhgbzsyrfly0TI1aVSJkOjLLuoEiqRjMdBc2pa6ZUh9zwWEQ
-j39ncI0uH1Ny9KR68LPBX0u1XJtH0Ehk+4mMtKCThNbotJcGPrORGJitV8o0FoWq
-X77H1m9TAnvE0FlHFkFvKyanA+bRpuGGg8ywQ3i7FHEwdQVb1M9Vio+tPj6IffBL
-3gAmvbJ35VE7i2LXZqK3LXDLGFHmeJjvH/QVKuXwaDxwY1Ee2iiLFeGzKdabC5M/
-Xup4QJpul2Qi4M1eGTLAeB2RnnM3kC78Ep1MNRraOLNs8xUxQciEbWSN5yAHKR1D
-P/ZaIeh4PDI0ReGe8ujpYPs6dfLAiHKlvK1AI7j8zye+SfdvJZxUZ9Ui+bGhh8yd
-Fgm+b+YcjYelldEvwndCsyk07Erb8Vp4RTc4Qk6092d9iXdjsxrWe5Tstm/iKaHX
-mhoqk23/k8syd8CF5aWr3BAUDQcjoZI83i7IJhsIs3wcSMQ64S7KxWpFHWa0g15V
-UNYrcIEQBStF0ky7Jdeh9mLPnucwVJ7qSqLJaK3O4OA5KqL0CUM=
-=nOqv
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqzvhYACgkQ3SOs138+
+s6HMSRAAsAJtTuoQGKKJRqLI27mnGs3elabEL5nZAHkSPAC9HUNvRdR8OjyxGBZE
+KBum6wWCuYbiu615YyoJwqj1DeGlp5YXFfiF5cWyvZUjL1z7Y1Nx5qjrTE0SCeuB
+l1x28zKv2t2KPAzRPjijczNjbhnhPpoHxD3HYvzSoYF9xW1LM7Mff3eFyWKMCyzx
+UNRQ1oR2W5HOrN9nV3/NqWRwWuE/cfrQE3zNDyjR/87WtdzJI+jwOZR/X7fa2a/3
+PbY7kytM3fFLaYPQnh89Z+tboOaqvJ2a46ugfqu99vvhZqA7hmKpyic6O7IJWoKN
+T6jn/LTlr9AFIcWmNDxNCxyH1xkOY2ephoxssTqUQgEA/ow1AB9zqMle9JeGg+X0
+Xjn1a8yOGI8MBRM3Z4zFxk6aI8LeOtbkhL7Az6mgZq9H8dgxM4YJ5OUa6+ouaROA
+988xAyFq/HR6cskeHYcbZDQoMNSkMICnT7xALKVHSR5Qeb3wCp8Q0pDEn7vZtOlF
+IM2rSnQvAtwd4Zpyp9NMW6onEct6oPvmsJAwkL0Lp93GP2f8+0Zthdy4Sk4ju2+5
+JlGlJxLC5LpsSlTUiRQRgqzl5FgyoiAmiz9HEFIb+DevgVWnv5LgOBhg78L0gyU8
+PxIvXE4MEULgGt/EiClfOgVke/lgFp1m9SvmNcWK4X7vS/bnF4M=
+=GEmo
 -----END PGP SIGNATURE-----
 
---bg08WKrSYDhXBjb5--
+--RASg3xLB4tUQ4RcS--
+
+--===============0245642599==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0245642599==--
