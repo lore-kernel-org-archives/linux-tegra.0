@@ -1,237 +1,526 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [GIT PULL] drm/tegra: Changes for v4.17-rc1
-Date: Tue, 20 Mar 2018 09:03:56 +0000
-Message-ID: <1521536634.13125.15.camel@toradex.com>
-References: <20180319095939.17131-1-thierry.reding@gmail.com>
- <1521469926.13125.10.camel@toradex.com> <20180319165240.GA22770@ulmo>
+From: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH usb-next v10 3/8] usb: core: add a wrapper for the USB
+ PHYs on the HCD
+Date: Fri, 23 Mar 2018 11:19:41 +0800
+Message-ID: <1521775181.3717.158.camel@mhfsdcap03>
+References: <20180218184504.3331-1-martin.blumenstingl@googlemail.com>
+ <20180218184504.3331-4-martin.blumenstingl@googlemail.com>
+ <7f511a6f-f3a2-2002-f601-5ce1742f4539@ti.com>
+ <CAFBinCAOG9Yj5PQo4wsxH2Ev6WOwFge+jBMprRiOgxKuA_z8wA@mail.gmail.com>
+ <e723fe80-1ff3-6f47-fbbd-699dfcd0be4f@ti.com>
+ <CAFBinCBB2eqHC-k9wN67ZehKb9eun=mPaLuqhrbR-J1C0Ldqtw@mail.gmail.com>
+ <1521547467.3717.92.camel@mhfsdcap03>
+ <CAFBinCC7X08oVt223FeZHSqmbCry9aKA8JXz+WmLuDRwwtr+gQ@mail.gmail.com>
+ <613ebb74-6167-56bc-6fa0-2b3c9876ccaa@ti.com>
+ <1521706245.3717.139.camel@mhfsdcap03>
+ <e9ef724f-0a62-cd35-9e0a-82643bde4a16@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180319165240.GA22770@ulmo>
-Content-Language: en-US
-Content-ID: <0096D28B4533FC49926FE8CA0C9EA1B9@eurprd05.prod.outlook.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <e9ef724f-0a62-cd35-9e0a-82643bde4a16-l0cyMroinI0@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, Peter.Chen-3arQi8VN3Tc@public.gmane.org, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, KISHON VIJAY ABRAHAM <kishon-l0cyMroinI0@public.gmane.org>, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "Gerlach,
+ Dave" <d-gerlach-l0cyMroinI0@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTAzLTE5IGF0IDE3OjUyICswMTAwLCBUaGllcnJ5IFJlZGluZyB3cm90ZToN
-Cj4gT24gTW9uLCBNYXIgMTksIDIwMTggYXQgMDI6MzI6MDhQTSArMDAwMCwgTWFyY2VsIFppc3dp
-bGVyIHdyb3RlOg0KPiA+IEhpIFRoaWVycnkNCj4gPiANCj4gPiBPbiBNb24sIDIwMTgtMDMtMTkg
-YXQgMTA6NTkgKzAxMDAsIFRoaWVycnkgUmVkaW5nIHdyb3RlOg0KPiA+ID4gSGkgRGF2ZSwNCj4g
-PiA+IA0KPiA+ID4gVGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdA0KPiA+ID4gNzky
-OGIyY2JlNTViMmE0MTBhMGY1YzFmMTU0NjEwMDU5YzU3YjFiMjoNCj4gPiA+IA0KPiA+ID4gICBM
-aW51eCA0LjE2LXJjMSAoMjAxOC0wMi0xMSAxNTowNDoyOSAtMDgwMCkNCj4gPiA+IA0KPiA+ID4g
-YXJlIGF2YWlsYWJsZSBpbiB0aGUgR2l0IHJlcG9zaXRvcnkgYXQ6DQo+ID4gPiANCj4gPiA+ICAg
-Z2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0vdGVncmEv
-Zm9yLQ0KPiA+ID4gNC4xNy0NCj4gPiA+IHJjMQ0KPiA+ID4gDQo+ID4gPiBmb3IgeW91IHRvIGZl
-dGNoIGNoYW5nZXMgdXAgdG8NCj4gPiA+IDI3ZTkyZjFmMTYwMGMyMTRiZjY0OWRhZGRiOWI4OGI2
-ODMzMGE4ZDE6DQo+ID4gPiANCj4gPiA+ICAgZHJtL3RlZ3JhOiBwcmltZTogSW1wbGVtZW50IC0+
-e2JlZ2luLGVuZH1fY3B1X2FjY2VzcygpICgyMDE4LQ0KPiA+ID4gMDMtMTcNCj4gPiA+IDAwOjA0
-OjIwICswMTAwKQ0KPiA+ID4gDQo+ID4gPiBBcG9sb2dpZXMgZm9yIHRoZSBkZWxheS4gSSBvcmln
-aW5hbGx5IHdhbnRlZCB0byBzZW5kIHRoaXMgb3V0IG9uDQo+ID4gPiBGcmlkYXkNCj4gPiA+IGJ1
-dCB0aGVuIHJhbiBpbnRvIGEgcGFpciBvZiBidWdzIHRoYXQgSSB0aG91Z2h0IG1pZ2h0IGJlIGNh
-dXNlZA0KPiA+ID4gYnkNCj4gPiA+IHRoaXMNCj4gPiA+IGJyYW5jaC4gVHVybnMgb3V0IHRoYXQg
-dGhleSB3ZXJlIGJvdGggYWxyZWFkeSBicm9rZW4gaW4gdjQuMTYtcmMxIA0KPiA+ID4gYW5kDQo+
-ID4gPiBJDQo+ID4gPiBqdXN0IGhhZG4ndCB0ZXN0ZWQgZm9yIHRoZSBjb3JuZXIgY2FzZSwgc28g
-SSBjYXVnaHQgdGhlbSBvbmx5DQo+ID4gPiB2ZXJ5DQo+ID4gPiBsYXRlDQo+ID4gPiBpbiB0aGUg
-cmVsZWFzZSBjeWNsZS4NCj4gPiA+IA0KPiA+ID4gQW55d2F5LCB0aGUgZml4ZXMgZm9yIHRoYXQg
-YXJlIG9uIHRoZSBkcm0vdGVncmEvZml4ZXMgYnJhbmNoIGZvcg0KPiA+ID4gd2hpY2gNCj4gPiA+
-IEkgc2VudCBhbiB1cGRhdGVkIHB1bGwgcmVxdWVzdCBlYXJsaWVyLiBUaGUgc3R1ZmYgaGVyZSdz
-IGZhaXJseQ0KPiA+ID4gdHJpdmlhbA0KPiA+ID4gYW5kIGluY3JlbWVudGFsIGltcHJvdmVtZW50
-cy4NCj4gPiANCj4gPiBCb3RoIGxpbnV4LW5leHQgYXMgb2YgRnJpZGF5IGFuZCB0b2RheSBhcyB3
-ZWxsIGFzIHlvdXINCj4gPiB0YWdzL2RybS90ZWdyYS9mb3ItNC4xNy1yYzEgZmFpbCBmb3IgbWUg
-b24gVEsxIGFzIGZvbGxvd3M6DQo+ID4gDQo+ID4gWyAgICAzLjYwOTE0Nl0gK1YxLjA1X0FWRERf
-SERNSV9QTEw6IHN1cHBsaWVkIGJ5ICtWMS4wNQ0KPiA+IFsgICAgMy42MTQyOTRdICtWMy4zX0FW
-RERfSERNSTogc3VwcGxpZWQgYnkgK1YxLjA1DQo+ID4gWyAgICAzLjYyMjA3OF0gLS0tLS0tLS0t
-LS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQo+ID4gWyAgICAzLjYyNjcxOV0gV0FSTklORzog
-Q1BVOiAyIFBJRDogODcgYXQNCj4gPiAvcnVuL21lZGlhL3ppbS9CdWlsZC9Tb3VyY2VzL2xpbnV4
-LQ0KPiA+IHRlZ3JhLmdpdC9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZvdXJjYy5jOjIwNA0KPiA+IGRy
-bV9mb3JtYXRfaW5mbysweDQ4LzB4NTANCj4gPiBbICAgIDMuNjM5NTg4XSBNb2R1bGVzIGxpbmtl
-ZCBpbjoNCj4gPiBbICAgIDMuNjQyNjczXSBDUFU6IDIgUElEOiA4NyBDb21tOiBrd29ya2VyLzI6
-MSBOb3QgdGFpbnRlZCA0LjE2LjAtDQo+ID4gcmMxDQo+ID4gIzINCj4gPiBbICAgIDMuNjQ5MjEz
-XSBIYXJkd2FyZSBuYW1lOiBOVklESUEgVGVncmEgU29DIChGbGF0dGVuZWQgRGV2aWNlDQo+ID4g
-VHJlZSkNCj4gPiBbICAgIDMuNjU1NDk1XSBXb3JrcXVldWU6IGV2ZW50cyBkZWZlcnJlZF9wcm9i
-ZV93b3JrX2Z1bmMNCj4gPiBbICAgIDMuNjYwNjcyXSBbPGMwMTExN2U0Pl0gKHVud2luZF9iYWNr
-dHJhY2UpIGZyb20gWzxjMDEwYzlmYz5dDQo+ID4gKHNob3dfc3RhY2srMHgxMC8weDE0KQ0KPiA+
-IFsgICAgMy42Njg0MzBdIFs8YzAxMGM5ZmM+XSAoc2hvd19zdGFjaykgZnJvbSBbPGMwOWQzOWQ4
-Pl0NCj4gPiAoZHVtcF9zdGFjaysweDhjLzB4YTApDQo+ID4gWyAgICAzLjY3NTY4NF0gWzxjMDlk
-MzlkOD5dIChkdW1wX3N0YWNrKSBmcm9tIFs8YzAxMjJiNTA+XQ0KPiA+IChfX3dhcm4rMHhlMC8w
-eGY4KQ0KPiA+IFsgICAgMy42ODI1ODddIFs8YzAxMjJiNTA+XSAoX193YXJuKSBmcm9tIFs8YzAx
-MjJjODA+XQ0KPiA+ICh3YXJuX3Nsb3dwYXRoX251bGwrMHg0MC8weDQ4KQ0KPiA+IFsgICAgMy42
-OTAxODldIFs8YzAxMjJjODA+XSAod2Fybl9zbG93cGF0aF9udWxsKSBmcm9tIFs8YzA1MDU0Mzg+
-XQ0KPiA+IChkcm1fZm9ybWF0X2luZm8rMHg0OC8weDUwKQ0KPiA+IFsgICAgMy42OTg1NTFdIFs8
-YzA1MDU0Mzg+XSAoZHJtX2Zvcm1hdF9pbmZvKSBmcm9tIFs8YzA1MjlmZDA+XQ0KPiA+ICh0ZWdy
-YV9wbGFuZV9mb3JtYXRfbW9kX3N1cHBvcnRlZCsweDE0LzB4MzApDQo+ID4gWyAgICAzLjcwODE1
-MF0gWzxjMDUyOWZkMD5dICh0ZWdyYV9wbGFuZV9mb3JtYXRfbW9kX3N1cHBvcnRlZCkgZnJvbQ0K
-PiA+IFs8YzA1MTg2Y2M+XSAoZHJtX3VuaXZlcnNhbF9wbGFuZV9pbml0KzB4MmVjLzB4NTljKQ0K
-PiA+IFsgICAgMy43MTg3MDNdIFs8YzA1MTg2Y2M+XSAoZHJtX3VuaXZlcnNhbF9wbGFuZV9pbml0
-KSBmcm9tDQo+ID4gWzxjMDUyYzM2Yz5dICh0ZWdyYV9kY19pbml0KzB4MWI4LzB4NTEwKQ0KPiA+
-IFsgICAgMy43Mjc2MTFdIFs8YzA1MmMzNmM+XSAodGVncmFfZGNfaW5pdCkgZnJvbSBbPGMwNGQ4
-YjVjPl0NCj4gPiAoaG9zdDF4X2RldmljZV9pbml0KzB4NDQvMHhkMCkNCj4gPiBbICAgIDMuNzM1
-ODIxXSBbPGMwNGQ4YjVjPl0gKGhvc3QxeF9kZXZpY2VfaW5pdCkgZnJvbSBbPGMwNTIzZWY0Pl0N
-Cj4gPiAodGVncmFfZHJtX2xvYWQrMHgyMjgvMHgzMDgpDQo+ID4gWyAgICAzLjc0NDI5MV0gWzxj
-MDUyM2VmND5dICh0ZWdyYV9kcm1fbG9hZCkgZnJvbSBbPGMwNTAxMDI0Pl0NCj4gPiAoZHJtX2Rl
-dl9yZWdpc3RlcisweDEzOC8weDFkMCkNCj4gPiBbICAgIDMuNzUyNTg4XSBbPGMwNTAxMDI0Pl0g
-KGRybV9kZXZfcmVnaXN0ZXIpIGZyb20gWzxjMDUyM2EzMD5dDQo+ID4gKGhvc3QxeF9kcm1fcHJv
-YmUrMHgzNC8weDU4KQ0KPiA+IFsgICAgMy43NjA4ODNdIFs8YzA1MjNhMzA+XSAoaG9zdDF4X2Ry
-bV9wcm9iZSkgZnJvbSBbPGMwNTU3MGY4Pl0NCj4gPiAoZHJpdmVyX3Byb2JlX2RldmljZSsweDI1
-NC8weDMyYykNCj4gPiBbICAgIDMuNzY5NjEyXSBbPGMwNTU3MGY4Pl0gKGRyaXZlcl9wcm9iZV9k
-ZXZpY2UpIGZyb20gWzxjMDU1NTU3OD5dDQo+ID4gKGJ1c19mb3JfZWFjaF9kcnYrMHg1OC8weGI4
-KQ0KPiA+IFsgICAgMy43NzgxNDVdIFs8YzA1NTU1Nzg+XSAoYnVzX2Zvcl9lYWNoX2RydikgZnJv
-bSBbPGMwNTU2ZGMwPl0NCj4gPiAoX19kZXZpY2VfYXR0YWNoKzB4ZDAvMHgxMzgpDQo+ID4gWyAg
-ICAzLjc4NjQzNl0gWzxjMDU1NmRjMD5dIChfX2RldmljZV9hdHRhY2gpIGZyb20gWzxjMDU1NjJm
-ND5dDQo+ID4gKGJ1c19wcm9iZV9kZXZpY2UrMHg4NC8weDhjKQ0KPiA+IFsgICAgMy43OTQ2NDVd
-IFs8YzA1NTYyZjQ+XSAoYnVzX3Byb2JlX2RldmljZSkgZnJvbSBbPGMwNTU0NWNjPl0NCj4gPiAo
-ZGV2aWNlX2FkZCsweDNiNC8weDViOCkNCj4gPiBbICAgIDMuODAyNTk5XSBbPGMwNTU0NWNjPl0g
-KGRldmljZV9hZGQpIGZyb20gWzxjMDRkOTA4Yz5dDQo+ID4gKGhvc3QxeF9zdWJkZXZfcmVnaXN0
-ZXIrMHhhYy8weGQ0KQ0KPiA+IFsgICAgMy44MTA4OTddIFs8YzA0ZDkwOGM+XSAoaG9zdDF4X3N1
-YmRldl9yZWdpc3RlcikgZnJvbQ0KPiA+IFs8YzA0ZDk1OGM+XQ0KPiA+IChob3N0MXhfY2xpZW50
-X3JlZ2lzdGVyKzB4MTA4LzB4MTI4KQ0KPiA+IFsgICAgMy44MjA0MTJdIFs8YzA0ZDk1OGM+XSAo
-aG9zdDF4X2NsaWVudF9yZWdpc3RlcikgZnJvbQ0KPiA+IFs8YzA1MzgwZDA+XQ0KPiA+ICh0ZWdy
-YV9oZG1pX3Byb2JlKzB4MWU0LzB4MmQwKQ0KPiA+IFsgICAgMy44Mjk0MDZdIFs8YzA1MzgwZDA+
-XSAodGVncmFfaGRtaV9wcm9iZSkgZnJvbSBbPGMwNTU4ZDAwPl0NCj4gPiAocGxhdGZvcm1fZHJ2
-X3Byb2JlKzB4NTAvMHhhYykNCj4gPiBbICAgIDMuODM3ODU1XSBbPGMwNTU4ZDAwPl0gKHBsYXRm
-b3JtX2Rydl9wcm9iZSkgZnJvbSBbPGMwNTU3MGY4Pl0NCj4gPiAoZHJpdmVyX3Byb2JlX2Rldmlj
-ZSsweDI1NC8weDMyYykNCj4gPiBbICAgIDMuODQ2NzU2XSBbPGMwNTU3MGY4Pl0gKGRyaXZlcl9w
-cm9iZV9kZXZpY2UpIGZyb20gWzxjMDU1NTU3OD5dDQo+ID4gKGJ1c19mb3JfZWFjaF9kcnYrMHg1
-OC8weGI4KQ0KPiA+IFsgICAgMy44NTUzMDldIFs8YzA1NTU1Nzg+XSAoYnVzX2Zvcl9lYWNoX2Ry
-dikgZnJvbSBbPGMwNTU2ZGMwPl0NCj4gPiAoX19kZXZpY2VfYXR0YWNoKzB4ZDAvMHgxMzgpDQo+
-ID4gWyAgICAzLjg2MzYwM10gWzxjMDU1NmRjMD5dIChfX2RldmljZV9hdHRhY2gpIGZyb20gWzxj
-MDU1NjJmND5dDQo+ID4gKGJ1c19wcm9iZV9kZXZpY2UrMHg4NC8weDhjKQ0KPiA+IFsgICAgMy44
-NzE4MDldIFs8YzA1NTYyZjQ+XSAoYnVzX3Byb2JlX2RldmljZSkgZnJvbSBbPGMwNTU2NzgwPl0N
-Cj4gPiAoZGVmZXJyZWRfcHJvYmVfd29ya19mdW5jKzB4NGMvMHgxNDgpDQo+ID4gWyAgICAzLjg4
-MDg4NV0gWzxjMDU1Njc4MD5dIChkZWZlcnJlZF9wcm9iZV93b3JrX2Z1bmMpIGZyb20NCj4gPiBb
-PGMwMTNjNmUwPl0gKHByb2Nlc3Nfb25lX3dvcmsrMHgxZWMvMHg1NWMpDQo+ID4gWyAgICAzLjg5
-MDA0N10gWzxjMDEzYzZlMD5dIChwcm9jZXNzX29uZV93b3JrKSBmcm9tIFs8YzAxM2Q4MzA+XQ0K
-PiA+ICh3b3JrZXJfdGhyZWFkKzB4MjljLzB4NTk4KQ0KPiA+IFsgICAgMy44OTgyMzddIFs8YzAx
-M2Q4MzA+XSAod29ya2VyX3RocmVhZCkgZnJvbSBbPGMwMTQyNDE0Pl0NCj4gPiAoa3RocmVhZCsw
-eDE0Yy8weDE1NCkNCj4gPiBbICAgIDMuOTA1NjYyXSBbPGMwMTQyNDE0Pl0gKGt0aHJlYWQpIGZy
-b20gWzxjMDEwMTBlOD5dDQo+ID4gKHJldF9mcm9tX2ZvcmsrMHgxNC8weDJjKQ0KPiA+IFsgICAg
-My45MTI5MDFdIEV4Y2VwdGlvbiBzdGFjaygweGVlMmIxZmIwIHRvIDB4ZWUyYjFmZjgpDQo+ID4g
-WyAgICAzLjkxNzk1OF0gMWZhMDogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-MDAwMDAwMDANCj4gPiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMA0KPiA+IFsgICAgMy45MjYx
-NTNdIDFmYzA6IDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwDQo+
-ID4gMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDANCj4gPiBbICAgIDMuOTM0MzQ4XSAxZmUwOiAw
-MDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAxMw0KPiA+IDAwMDAwMDAw
-DQo+ID4gWyAgICAzLjk0MTA1MF0gLS0tWyBlbmQgdHJhY2UgZjI5MTNjOWZiODkzYWNhNiBdLS0t
-DQo+ID4gLi4uDQo+ID4gWyAgICA0LjU5NDQ3Nl0gVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgTlVM
-TCBwb2ludGVyIGRlcmVmZXJlbmNlIGF0DQo+ID4gdmlydHVhbCBhZGRyZXNzIDAwMDAwMDA1DQo+
-ID4gWyAgICA0LjYwMjU4NF0gcGdkID0gYjIzN2MzZDYNCj4gPiBbICAgIDQuNjA1MjkzXSBbMDAw
-MDAwMDVdICpwZ2Q9MDAwMDAwMDANCj4gPiBbICAgIDQuNjA4ODk1XSBJbnRlcm5hbCBlcnJvcjog
-T29wczogNSBbIzFdIFBSRUVNUFQgU01QIEFSTQ0KPiA+IFsgICAgNC42MTQyMDldIE1vZHVsZXMg
-bGlua2VkIGluOg0KPiA+IFsgICAgNC42MTcyNzRdIENQVTogMiBQSUQ6IDg3IENvbW06IGt3b3Jr
-ZXIvMjoxIFRhaW50ZWQ6DQo+ID4gRyAgICAgICAgVyAgICAgICAgNC4xNi4wLXJjMSAjMg0KPiA+
-IFsgICAgNC42MjUxMDVdIEhhcmR3YXJlIG5hbWU6IE5WSURJQSBUZWdyYSBTb0MgKEZsYXR0ZW5l
-ZCBEZXZpY2UNCj4gPiBUcmVlKQ0KPiA+IFsgICAgNC42MzEzNzZdIFdvcmtxdWV1ZTogZXZlbnRz
-IGRlZmVycmVkX3Byb2JlX3dvcmtfZnVuYw0KPiA+IFsgICAgNC42MzY1MjVdIFBDIGlzIGF0IHRl
-Z3JhX3BsYW5lX2Zvcm1hdF9tb2Rfc3VwcG9ydGVkKzB4MTgvMHgzMA0KPiA+IFsgICAgNC42NDI0
-NDhdIExSIGlzIGF0IHdhcm5fc2xvd3BhdGhfbnVsbCsweDQwLzB4NDgNCj4gPiBbICAgIDQuNjQ3
-MTUzXSBwYyA6IFs8YzA1MjlmZDQ+XSAgICBsciA6IFs8YzAxMjJjODA+XSAgICBwc3I6DQo+ID4g
-MjAwMDAxMTMNCj4gPiBbICAgIDQuNjUzNDE5XSBzcCA6IGVlMmIxYmUwICBpcCA6IDAwMDAwMDAw
-ICBmcCA6IDAwMDAwMDAxDQo+ID4gWyAgICA0LjY1ODY0NF0gcjEwOiAwMDAwMDAwMSAgcjkgOiAw
-MDAwMDAwOCAgcjggOiBjMGUwNGM0OA0KPiA+IFsgICAgNC42NjM4NzBdIHI3IDogYzA1MjlmYmMg
-IHI2IDogZWRhOWJhYzQgIHI1IDogMDMwMDAwMDAgIHI0IDoNCj4gPiAwMDAwMDAxMA0KPiA+IFsg
-ICAgNC42NzAzOTZdIHIzIDogMDMwMDAwMTAgIHIyIDogMDAwMDAyMDAgIHIxIDogYzBlYzI1NDAg
-IHIwIDoNCj4gPiAwMDAwMDAwMA0KPiA+IFsgICAgNC42NzY5MjVdIEZsYWdzOiBuekN2ICBJUlFz
-IG9uICBGSVFzIG9uICBNb2RlIFNWQ18zMiAgSVNBDQo+ID4gQVJNICBTZWdtZW50IG5vbmUNCj4g
-PiBbICAgIDQuNjg0MDYwXSBDb250cm9sOiAxMGM1Mzg3ZCAgVGFibGU6IDgwMDA0MDZhICBEQUM6
-IDAwMDAwMDUxDQo+ID4gWyAgICA0LjY4OTgwNl0gUHJvY2VzcyBrd29ya2VyLzI6MSAocGlkOiA4
-Nywgc3RhY2sgbGltaXQgPQ0KPiA+IDB4NjJhYWNjZTcpDQo+ID4gWyAgICA0LjY5NjA3Ml0gU3Rh
-Y2s6ICgweGVlMmIxYmUwIHRvIDB4ZWUyYjIwMDApDQo+ID4gLi4uDQo+ID4gWyAgICA0Ljk3MDQ3
-N10gWzxjMDUyOWZkND5dICh0ZWdyYV9wbGFuZV9mb3JtYXRfbW9kX3N1cHBvcnRlZCkgZnJvbQ0K
-PiA+IFs8YzA1MTg2Y2M+XSAoZHJtX3VuaXZlcnNhbF9wbGFuZV9pbml0KzB4MmVjLzB4NTljKQ0K
-PiA+IFsgICAgNC45ODEwMDldIFs8YzA1MTg2Y2M+XSAoZHJtX3VuaXZlcnNhbF9wbGFuZV9pbml0
-KSBmcm9tDQo+ID4gWzxjMDUyYzM2Yz5dICh0ZWdyYV9kY19pbml0KzB4MWI4LzB4NTEwKQ0KPiA+
-IFsgICAgNC45ODk4OTFdIFs8YzA1MmMzNmM+XSAodGVncmFfZGNfaW5pdCkgZnJvbSBbPGMwNGQ4
-YjVjPl0NCj4gPiAoaG9zdDF4X2RldmljZV9pbml0KzB4NDQvMHhkMCkNCj4gPiBbICAgIDQuOTk4
-MDc2XSBbPGMwNGQ4YjVjPl0gKGhvc3QxeF9kZXZpY2VfaW5pdCkgZnJvbSBbPGMwNTIzZWY0Pl0N
-Cj4gPiAodGVncmFfZHJtX2xvYWQrMHgyMjgvMHgzMDgpDQo+ID4gWyAgICA1LjAwNjUyM10gWzxj
-MDUyM2VmND5dICh0ZWdyYV9kcm1fbG9hZCkgZnJvbSBbPGMwNTAxMDI0Pl0NCj4gPiAoZHJtX2Rl
-dl9yZWdpc3RlcisweDEzOC8weDFkMCkNCj4gPiBbICAgIDUuMDE0Nzk1XSBbPGMwNTAxMDI0Pl0g
-KGRybV9kZXZfcmVnaXN0ZXIpIGZyb20gWzxjMDUyM2EzMD5dDQo+ID4gKGhvc3QxeF9kcm1fcHJv
-YmUrMHgzNC8weDU4KQ0KPiA+IFsgICAgNS4wMjMwNjddIFs8YzA1MjNhMzA+XSAoaG9zdDF4X2Ry
-bV9wcm9iZSkgZnJvbSBbPGMwNTU3MGY4Pl0NCj4gPiAoZHJpdmVyX3Byb2JlX2RldmljZSsweDI1
-NC8weDMyYykNCj4gPiBbICAgIDUuMDMxNzczXSBbPGMwNTU3MGY4Pl0gKGRyaXZlcl9wcm9iZV9k
-ZXZpY2UpIGZyb20gWzxjMDU1NTU3OD5dDQo+ID4gKGJ1c19mb3JfZWFjaF9kcnYrMHg1OC8weGI4
-KQ0KPiA+IFsgICAgNS4wNDAzMDNdIFs8YzA1NTU1Nzg+XSAoYnVzX2Zvcl9lYWNoX2RydikgZnJv
-bSBbPGMwNTU2ZGMwPl0NCj4gPiAoX19kZXZpY2VfYXR0YWNoKzB4ZDAvMHgxMzgpDQo+ID4gWyAg
-ICA1LjA0ODU3Ml0gWzxjMDU1NmRjMD5dIChfX2RldmljZV9hdHRhY2gpIGZyb20gWzxjMDU1NjJm
-ND5dDQo+ID4gKGJ1c19wcm9iZV9kZXZpY2UrMHg4NC8weDhjKQ0KPiA+IFsgICAgNS4wNTY3NjFd
-IFs8YzA1NTYyZjQ+XSAoYnVzX3Byb2JlX2RldmljZSkgZnJvbSBbPGMwNTU0NWNjPl0NCj4gPiAo
-ZGV2aWNlX2FkZCsweDNiNC8weDViOCkNCj4gPiBbICAgIDUuMDY0Njg4XSBbPGMwNTU0NWNjPl0g
-KGRldmljZV9hZGQpIGZyb20gWzxjMDRkOTA4Yz5dDQo+ID4gKGhvc3QxeF9zdWJkZXZfcmVnaXN0
-ZXIrMHhhYy8weGQ0KQ0KPiA+IFsgICAgNS4wNzI5NjJdIFs8YzA0ZDkwOGM+XSAoaG9zdDF4X3N1
-YmRldl9yZWdpc3RlcikgZnJvbQ0KPiA+IFs8YzA0ZDk1OGM+XQ0KPiA+IChob3N0MXhfY2xpZW50
-X3JlZ2lzdGVyKzB4MTA4LzB4MTI4KQ0KPiA+IFsgICAgNS4wODI0NTBdIFs8YzA0ZDk1OGM+XSAo
-aG9zdDF4X2NsaWVudF9yZWdpc3RlcikgZnJvbQ0KPiA+IFs8YzA1MzgwZDA+XQ0KPiA+ICh0ZWdy
-YV9oZG1pX3Byb2JlKzB4MWU0LzB4MmQwKQ0KPiA+IFsgICAgNS4wOTE0MThdIFs8YzA1MzgwZDA+
-XSAodGVncmFfaGRtaV9wcm9iZSkgZnJvbSBbPGMwNTU4ZDAwPl0NCj4gPiAocGxhdGZvcm1fZHJ2
-X3Byb2JlKzB4NTAvMHhhYykNCj4gPiBbICAgIDUuMDk5ODYyXSBbPGMwNTU4ZDAwPl0gKHBsYXRm
-b3JtX2Rydl9wcm9iZSkgZnJvbSBbPGMwNTU3MGY4Pl0NCj4gPiAoZHJpdmVyX3Byb2JlX2Rldmlj
-ZSsweDI1NC8weDMyYykNCj4gPiBbICAgIDUuMTA4NzM5XSBbPGMwNTU3MGY4Pl0gKGRyaXZlcl9w
-cm9iZV9kZXZpY2UpIGZyb20gWzxjMDU1NTU3OD5dDQo+ID4gKGJ1c19mb3JfZWFjaF9kcnYrMHg1
-OC8weGI4KQ0KPiA+IFsgICAgNS4xMTcyNjhdIFs8YzA1NTU1Nzg+XSAoYnVzX2Zvcl9lYWNoX2Ry
-dikgZnJvbSBbPGMwNTU2ZGMwPl0NCj4gPiAoX19kZXZpY2VfYXR0YWNoKzB4ZDAvMHgxMzgpDQo+
-ID4gWyAgICA1LjEyNTUzN10gWzxjMDU1NmRjMD5dIChfX2RldmljZV9hdHRhY2gpIGZyb20gWzxj
-MDU1NjJmND5dDQo+ID4gKGJ1c19wcm9iZV9kZXZpY2UrMHg4NC8weDhjKQ0KPiA+IFsgICAgNS4x
-MzM3MjBdIFs8YzA1NTYyZjQ+XSAoYnVzX3Byb2JlX2RldmljZSkgZnJvbSBbPGMwNTU2NzgwPl0N
-Cj4gPiAoZGVmZXJyZWRfcHJvYmVfd29ya19mdW5jKzB4NGMvMHgxNDgpDQo+ID4gWyAgICA1LjE0
-Mjc3NF0gWzxjMDU1Njc4MD5dIChkZWZlcnJlZF9wcm9iZV93b3JrX2Z1bmMpIGZyb20NCj4gPiBb
-PGMwMTNjNmUwPl0gKHByb2Nlc3Nfb25lX3dvcmsrMHgxZWMvMHg1NWMpDQo+ID4gWyAgICA1LjE1
-MTkxM10gWzxjMDEzYzZlMD5dIChwcm9jZXNzX29uZV93b3JrKSBmcm9tIFs8YzAxM2Q4MzA+XQ0K
-PiA+ICh3b3JrZXJfdGhyZWFkKzB4MjljLzB4NTk4KQ0KPiA+IFsgICAgNS4xNjAxMDBdIFs8YzAx
-M2Q4MzA+XSAod29ya2VyX3RocmVhZCkgZnJvbSBbPGMwMTQyNDE0Pl0NCj4gPiAoa3RocmVhZCsw
-eDE0Yy8weDE1NCkNCj4gPiBbICAgIDUuMTY3NTA0XSBbPGMwMTQyNDE0Pl0gKGt0aHJlYWQpIGZy
-b20gWzxjMDEwMTBlOD5dDQo+ID4gKHJldF9mcm9tX2ZvcmsrMHgxNC8weDJjKQ0KPiA+IFsgICAg
-NS4xNzQ3MjddIEV4Y2VwdGlvbiBzdGFjaygweGVlMmIxZmIwIHRvIDB4ZWUyYjFmZjgpDQo+ID4g
-WyAgICA1LjE3OTc4NF0gMWZhMDogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-MDAwMDAwMDANCj4gPiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMA0KPiA+IFsgICAgNS4xODc5
-NjVdIDFmYzA6IDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwDQo+
-ID4gMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDANCj4gPiBbICAgIDUuMTk2MTQ3XSAxZmUwOiAw
-MDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAxMw0KPiA+IDAwMDAwMDAw
-DQo+ID4gWyAgICA1LjIwMjc2OF0gQ29kZTogZTFhMDQwMDIgZTFhMDUwMDMgZWJmZjZkMDcgZTE5
-NDMwMDUNCj4gPiAoMTVkMDAwMDUpIA0KPiA+IFsgICAgNS4yMDg5MjZdIC0tLVsgZW5kIHRyYWNl
-IGYyOTEzYzlmYjg5M2FjYTkgXS0tLQ0KPiA+IA0KPiA+IElzIHRoaXMgc29tZXRoaW5nIHlvdXIg
-ZHJtL3RlZ3JhL2ZpeGVzIGFkZHJlc3Mgb3IgZG8geW91IGtub3cgd2hhdA0KPiA+IG1pZ2h0IGJl
-IHRoZSBpc3N1ZT8NCj4gDQo+IFRoaXMgbG9va3MgbGlrZSBhbiBpc3N1ZSB3aXRoIHRoZSBmb3Jt
-YXQgbW9kaWZpZXIgcGF0Y2ggaW4NCj4gZHJtL3RlZ3JhL2Zvci1uZXh0LCBhbmQgSSdtIHNvbWV3
-aGF0IHN1cnByaXNlZCB0byBzZWUgdGhhdCBiZWNhdXNlIGl0DQo+IG1lYW5zIHlvdSdyZSB0cnlp
-bmcgdG8gc2V0IGEgZm9ybWF0IHRoYXQncyBub3Qgc3VwcG9ydGVkIGJ5IHRoZQ0KPiBkcm1fZm9y
-bWF0X2luZm8oKSBmdW5jdGlvbi4gSXQgc2hvdWxkIGJlIGVhc3kgdG8gZml4IHRoYXQsIHRob3Vn
-aC4NCg0KTm8sIGl0IHR1cm5zIG91dCBpdCB3YXMganVzdCB0aGUgYnVnIFN0ZWZhbiBieSBjaGFu
-Y2Ugc3R1bWJsZWQgdXBvbiBhbmQNCmFscmVhZHkgc2VudCBhIGZpeCBmb3I6DQoNCltQQVRDSF0g
-ZHJtL3RlZ3JhOiBkYzogdXNlIGNvcnJlY3QgZm9ybWF0IGFycmF5IGZvciBUZWdyYTEyNC4NCg0K
-SG93ZXZlciBhcyB0aGF0IG9uZSBkaWQgbm90IGFwcGx5IG9uIHRvcCBvZiB0b2RheSdzIG5leHQg
-SSB3aWxsIHNlbmQgYQ0KcmUtYmFzZWQgdmVyc2lvbiB3aXRoIG15IEFDSy4NCg0KPiBDYW4geW91
-IGZpbmQgb3V0IHdoaWNoIGZvcm1hdCBpcyBtaXNzaW5nIGZyb20gdGhlIHRhYmxlPyBTb21ldGhp
-bmcNCj4gbGlrZQ0KPiB0aGUgcGF0Y2ggYmVsb3cgc2hvdWxkIHNob3cgd2hpY2ggb25lIGlzIG1p
-c3NpbmcuDQo+IA0KPiBUaGFua3MsDQo+IFRoaWVycnkNCj4gDQo+IC0tLSA+OCAtLS0NCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZm91cmNjLmMNCj4gYi9kcml2ZXJzL2dwdS9k
-cm0vZHJtX2ZvdXJjYy5jDQo+IGluZGV4IDVjYTYzOTVjZDRkMy4uMDdhYmZjMzgzYWUzIDEwMDY0
-NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZvdXJjYy5jDQo+ICsrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9kcm1fZm91cmNjLmMNCj4gQEAgLTE3NCw3ICsxNzQsNyBAQCBjb25zdCBzdHJ1Y3Qg
-ZHJtX2Zvcm1hdF9pbmZvDQo+ICpfX2RybV9mb3JtYXRfaW5mbyh1MzIgZm9ybWF0KQ0KPiAgCQl7
-IC5mb3JtYXQgPSBEUk1fRk9STUFUX1ZZVVksCQkuZGVwdGggPQ0KPiAwLCAgLm51bV9wbGFuZXMg
-PSAxLCAuY3BwID0geyAyLCAwLCAwIH0sIC5oc3ViID0gMiwgLnZzdWIgPSAxIH0sDQo+ICAJCXsg
-LmZvcm1hdCA9IERSTV9GT1JNQVRfQVlVViwJCS5kZXB0aCA9DQo+IDAsICAubnVtX3BsYW5lcyA9
-IDEsIC5jcHAgPSB7IDQsIDAsIDAgfSwgLmhzdWIgPSAxLCAudnN1YiA9IDEsDQo+IC5oYXNfYWxw
-aGEgPSB0cnVlIH0sDQo+ICAJfTsNCj4gLQ0KPiArCXN0cnVjdCBkcm1fZm9ybWF0X25hbWVfYnVm
-IGJ1ZjsNCj4gIAl1bnNpZ25lZCBpbnQgaTsNCj4gIA0KPiAgCWZvciAoaSA9IDA7IGkgPCBBUlJB
-WV9TSVpFKGZvcm1hdHMpOyArK2kpIHsNCj4gQEAgLTE4Miw2ICsxODIsNyBAQCBjb25zdCBzdHJ1
-Y3QgZHJtX2Zvcm1hdF9pbmZvDQo+ICpfX2RybV9mb3JtYXRfaW5mbyh1MzIgZm9ybWF0KQ0KPiAg
-CQkJcmV0dXJuICZmb3JtYXRzW2ldOw0KPiAgCX0NCj4gIA0KPiArCVdBUk4oMSwgImZvcm1hdCAl
-cyBub3Qgc3VwcG9ydGVkXG4iLA0KPiBkcm1fZ2V0X2Zvcm1hdF9uYW1lKGZvcm1hdCwgJmJ1Zikp
-Ow0KPiAgCXJldHVybiBOVUxMOw0KPiAgfQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+On Thu, 2018-03-22 at 14:41 +0200, Roger Quadros wrote:
+> On 22/03/18 10:10, Chunfeng Yun wrote:
+> > Hi,
+> > On Wed, 2018-03-21 at 13:30 +0200, Roger Quadros wrote:
+> >> Martin,
+> >>
+> >> On 21/03/18 00:01, Martin Blumenstingl wrote:
+> >>> Hi Roger, Hi Chunfeng,
+> >>>
+> >>> On Tue, Mar 20, 2018 at 1:04 PM, Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
+> >>>> Hi Martin & Roger:
+> >>>>
+> >>>> On Mon, 2018-03-19 at 17:12 +0100, Martin Blumenstingl wrote:
+> >>>>> Hi Roger,
+> >>>>>
+> >>>>> On Mon, Mar 19, 2018 at 9:49 AM, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org> wrote:
+> >>>>>> Hi,
+> >>>>>>
+> >>>>>> On 19/03/18 00:29, Martin Blumenstingl wrote:
+> >>>>>>> Hi Roger,
+> >>>>>>>
+> >>>>>>> On Fri, Mar 16, 2018 at 3:32 PM, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org> wrote:
+> >>>>>>>> +some TI folks
+> >>>>>>>>
+> >>>>>>>> Hi Martin,
+> >>>>>>>>
+> >>>>>>>> On 18/02/18 20:44, Martin Blumenstingl wrote:
+> >>>>>>>>> Many SoC platforms have separate devices for the USB PHY which are
+> >>>>>>>>> registered through the generic PHY framework. These PHYs have to be
+> >>>>>>>>> enabled to make the USB controller actually work. They also have to be
+> >>>>>>>>> disabled again on shutdown/suspend.
+> >>>>>>>>>
+> >>>>>>>>> Currently (at least) the following HCI platform drivers are using custom
+> >>>>>>>>> code to obtain all PHYs via devicetree for the roothub/controller and
+> >>>>>>>>> disable/enable them when required:
+> >>>>>>>>> - ehci-platform.c has ehci_platform_power_{on,off}
+> >>>>>>>>> - xhci-mtk.c has xhci_mtk_phy_{init,exit,power_on,power_off}
+> >>>>>>>>> - ohci-platform.c has ohci_platform_power_{on,off}
+> >>>>>>>>>
+> >>>>>>>>> With this new wrapper the USB PHYs can be specified directly in the
+> >>>>>>>>> USB controller's devicetree node (just like on the drivers listed
+> >>>>>>>>> above). This allows SoCs like the Amlogic Meson GXL family to operate
+> >>>>>>>>> correctly once this is wired up correctly. These SoCs use a dwc3
+> >>>>>>>>> controller and require all USB PHYs to be initialized (if one of the USB
+> >>>>>>>>> PHYs it not initialized then none of USB port works at all).
+> >>>>>>>>>
+> >>>>>>>>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+> >>>>>>>>> Tested-by: Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
+> >>>>>>>>> Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+> >>>>>>>>> Cc: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> >>>>>>>>
+> >>>>>>>> This patch is breaking low power cases on TI SoCs when USB is in host mode.
+> >>>>>>>> I'll explain why below.
+> >>>>>>> based on your explanation and reading the TI PHY drivers I am assuming
+> >>>>>>> that the affected SoCs are using the "phy-omap-usb2" driver
+> >>>>>>>
+> >>>>>> yes and phy-ti-pipe3 as well i.e. "ti,phy-usb3" and "ti,omap-usb3"
+> >>>>> I missed that, thanks
+> >>>>>
+> >>>>>>>>> ---
+> >>>>>>>>>  drivers/usb/core/Makefile |   2 +-
+> >>>>>>>>>  drivers/usb/core/phy.c    | 158 ++++++++++++++++++++++++++++++++++++++++++++++
+> >>>>>>>>>  drivers/usb/core/phy.h    |   7 ++
+> >>>>>>>>>  3 files changed, 166 insertions(+), 1 deletion(-)
+> >>>>>>>>>  create mode 100644 drivers/usb/core/phy.c
+> >>>>>>>>>  create mode 100644 drivers/usb/core/phy.h
+> >>>>>>>>>
+> >>>>>>>>> diff --git a/drivers/usb/core/Makefile b/drivers/usb/core/Makefile
+> >>>>>>>>> index 92c9cefb4317..18e874b0441e 100644
+> >>>>>>>>> --- a/drivers/usb/core/Makefile
+> >>>>>>>>> +++ b/drivers/usb/core/Makefile
+> >>>>>>>>> @@ -6,7 +6,7 @@
+> >>>>>>>>>  usbcore-y := usb.o hub.o hcd.o urb.o message.o driver.o
+> >>>>>>>>>  usbcore-y += config.o file.o buffer.o sysfs.o endpoint.o
+> >>>>>>>>>  usbcore-y += devio.o notify.o generic.o quirks.o devices.o
+> >>>>>>>>> -usbcore-y += port.o
+> >>>>>>>>> +usbcore-y += phy.o port.o
+> >>>>>>>>>
+> >>>>>>>>>  usbcore-$(CONFIG_OF)         += of.o
+> >>>>>>>>>  usbcore-$(CONFIG_USB_PCI)            += hcd-pci.o
+> >>>>>>>>> diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
+> >>>>>>>>> new file mode 100644
+> >>>>>>>>> index 000000000000..09b7c43c0ea4
+> >>>>>>>>> --- /dev/null
+> >>>>>>>>> +++ b/drivers/usb/core/phy.c
+> >>>>>>>>> @@ -0,0 +1,158 @@
+> >>>>>>>>> +// SPDX-License-Identifier: GPL-2.0+
+> >>>>>>>>> +/*
+> >>>>>>>>> + * A wrapper for multiple PHYs which passes all phy_* function calls to
+> >>>>>>>>> + * multiple (actual) PHY devices. This is comes handy when initializing
+> >>>>>>>>> + * all PHYs on a HCD and to keep them all in the same state.
+> >>>>>>>>> + *
+> >>>>>>>>> + * Copyright (C) 2018 Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+> >>>>>>>>> + */
+> >>>>>>>>> +
+> >>>>>>>>> +#include <linux/device.h>
+> >>>>>>>>> +#include <linux/list.h>
+> >>>>>>>>> +#include <linux/phy/phy.h>
+> >>>>>>>>> +#include <linux/of.h>
+> >>>>>>>>> +
+> >>>>>>>>> +#include "phy.h"
+> >>>>>>>>> +
+> >>>>>>>>> +struct usb_phy_roothub {
+> >>>>>>>>> +     struct phy              *phy;
+> >>>>>>>>> +     struct list_head        list;
+> >>>>>>>>> +};
+> >>>>>>>>> +
+> >>>>>>>>> +static struct usb_phy_roothub *usb_phy_roothub_alloc(struct device *dev)
+> >>>>>>>>> +{
+> >>>>>>>>> +     struct usb_phy_roothub *roothub_entry;
+> >>>>>>>>> +
+> >>>>>>>>> +     roothub_entry = devm_kzalloc(dev, sizeof(*roothub_entry), GFP_KERNEL);
+> >>>>>>>>> +     if (!roothub_entry)
+> >>>>>>>>> +             return ERR_PTR(-ENOMEM);
+> >>>>>>>>> +
+> >>>>>>>>> +     INIT_LIST_HEAD(&roothub_entry->list);
+> >>>>>>>>> +
+> >>>>>>>>> +     return roothub_entry;
+> >>>>>>>>> +}
+> >>>>>>>>> +
+> >>>>>>>>> +static int usb_phy_roothub_add_phy(struct device *dev, int index,
+> >>>>>>>>> +                                struct list_head *list)
+> >>>>>>>>> +{
+> >>>>>>>>> +     struct usb_phy_roothub *roothub_entry;
+> >>>>>>>>> +     struct phy *phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
+> >>>>>>>>> +
+> >>>>>>>>> +     if (IS_ERR_OR_NULL(phy)) {
+> >>>>>>>>> +             if (!phy || PTR_ERR(phy) == -ENODEV)
+> >>>>>>>>> +                     return 0;
+> >>>>>>>>> +             else
+> >>>>>>>>> +                     return PTR_ERR(phy);
+> >>>>>>>>> +     }
+> >>>>>>>>> +
+> >>>>>>>>> +     roothub_entry = usb_phy_roothub_alloc(dev);
+> >>>>>>>>> +     if (IS_ERR(roothub_entry))
+> >>>>>>>>> +             return PTR_ERR(roothub_entry);
+> >>>>>>>>> +
+> >>>>>>>>> +     roothub_entry->phy = phy;
+> >>>>>>>>> +
+> >>>>>>>>> +     list_add_tail(&roothub_entry->list, list);
+> >>>>>>>>> +
+> >>>>>>>>> +     return 0;
+> >>>>>>>>> +}
+> >>>>>>>>> +
+> >>>>>>>>> +struct usb_phy_roothub *usb_phy_roothub_init(struct device *dev)
+> >>>>>>>>> +{
+> >>>>>>>>> +     struct usb_phy_roothub *phy_roothub;
+> >>>>>>>>> +     struct usb_phy_roothub *roothub_entry;
+> >>>>>>>>> +     struct list_head *head;
+> >>>>>>>>> +     int i, num_phys, err;
+> >>>>>>>>> +
+> >>>>>>>>> +     num_phys = of_count_phandle_with_args(dev->of_node, "phys",
+> >>>>>>>>> +                                           "#phy-cells");
+> >>>>>>>>> +     if (num_phys <= 0)
+> >>>>>>>>> +             return NULL;
+> >>>>>>>>> +
+> >>>>>>>>> +     phy_roothub = usb_phy_roothub_alloc(dev);
+> >>>>>>>>> +     if (IS_ERR(phy_roothub))
+> >>>>>>>>> +             return phy_roothub;
+> >>>>>>>>> +
+> >>>>>>>>> +     for (i = 0; i < num_phys; i++) {
+> >>>>>>>>> +             err = usb_phy_roothub_add_phy(dev, i, &phy_roothub->list);
+> >>>>>>>>> +             if (err)
+> >>>>>>>>> +                     goto err_out;
+> >>>>>>>>> +     }
+> >>>>>>>>> +
+> >>>>>>>>> +     head = &phy_roothub->list;
+> >>>>>>>>> +
+> >>>>>>>>> +     list_for_each_entry(roothub_entry, head, list) {
+> >>>>>>>>> +             err = phy_init(roothub_entry->phy);
+> >>>>>>>>
+> >>>>>>>> The phy_init() function actually enables the PHY clocks.
+> >>>>>>>> It should be moved to the usb_phy_roothub_exit() routine just before calling phy_power_on().
+> >>>>>>> do you mean that phy_init should be moved to usb_phy_roothub_power_on
+> >>>>>>> (just before phy_power_on is called within usb_phy_roothub_power_on)?
+> >>>>>>>
+> >>>>>>
+> >>>>>> Yes.
+> >>>>>>
+> >>>>>>> an earlier version of my patch did exactly this, but it caused
+> >>>>>>> problems during a suspend/resume cycle on Mediatek devices
+> >>>>>>> Chunfeng Yun reported that issue here [0], quote from that mail for
+> >>>>>>> easier reading:
+> >>>>>>> "In order to keep link state on mt8173, we just power off all phys(not
+> >>>>>>> exit) when system enter suspend, then power on them again (needn't
+> >>>>>>> init, otherwise device will be disconnected) when system resume, this
+> >>>>>>> can avoid re-enumerating device."
+> >>>>>>>
+> >>>>>>>>> +             if (err)
+> >>>>>>>>> +                     goto err_exit_phys;
+> >>>>>>>>> +     }
+> >>>>>>>>> +
+> >>>>>>>>> +     return phy_roothub;
+> >>>>>>>>> +
+> >>>>>>>>> +err_exit_phys:
+> >>>>>>>>> +     list_for_each_entry_continue_reverse(roothub_entry, head, list)
+> >>>>>>>>> +             phy_exit(roothub_entry->phy);
+> >>>>>>>>> +
+> >>>>>>>>> +err_out:
+> >>>>>>>>> +     return ERR_PTR(err);
+> >>>>>>>>> +}
+> >>>>>>>>> +EXPORT_SYMBOL_GPL(usb_phy_roothub_init);
+> >>>>>>>>> +
+> >>>>>>>>> +int usb_phy_roothub_exit(struct usb_phy_roothub *phy_roothub)
+> >>>>>>>>> +{
+> >>>>>>>>> +     struct usb_phy_roothub *roothub_entry;
+> >>>>>>>>> +     struct list_head *head;
+> >>>>>>>>> +     int err, ret = 0;
+> >>>>>>>>> +
+> >>>>>>>>> +     if (!phy_roothub)
+> >>>>>>>>> +             return 0;
+> >>>>>>>>> +
+> >>>>>>>>> +     head = &phy_roothub->list;
+> >>>>>>>>> +
+> >>>>>>>>> +     list_for_each_entry(roothub_entry, head, list) {
+> >>>>>>>>> +             err = phy_exit(roothub_entry->phy);
+> >>>>>>>>> +             if (err)
+> >>>>>>>>> +                     ret = ret;
+> >>>>>>>>> +     }
+> >>>>>>>>
+> >>>>>>>> phy_exit() should be moved to usb_phy_roothub_poweroff() just after calling phy_power_off().
+> >>>>>>> if I understood Chunfeng Yun correctly this will require
+> >>>>>>> re-enumeration of the USB devices after a suspend/resume cycle on
+> >>>>>>> Mediatek SoCs
+> >>>>>>>
+> >>>>>>
+> >>>>>> OK. I suppose that there are 2 cases
+> >>>>>> 1) Mediatek's case: USB controller context retained across suspend/resume.
+> >>>>>> Remote wakeup probably required.
+> >>>>>> No re-enumeration preferred after resume. phy_exit()/phy_init() must not be called
+> >>>>>> during suspend/resume to keep PHY link active.
+> >>>>> Documentation/devicetree/bindings/usb/mediatek,mtu3.txt indeed shows
+> >>>>> that the parent of the USB controller can be marked as "wakeup-source"
+> >>>>>
+> >>>>>> 2) TI's case: low power important: USB context is lost, OK to re-enumerate.
+> >>>>>> phy_exit()/phy_init() must be called during suspend/resume.
+> >>>>> ACK
+> >>>>>
+> >>>>>>>> With that there is nothing else being done here. Shouldn't we be doing the equivalent of
+> >>>>>>>> usb_phy_roothub_del_phy() and usb_phy_roothub_free() here?
+> >>>>>>>>
+> >>>>>>>>> +
+> >>>>>>>>> +     return ret;
+> >>>>>>>>> +}
+> >>>>>>>>> +EXPORT_SYMBOL_GPL(usb_phy_roothub_exit);
+> >>>>>>>>> +
+> >>>>>>>>> +int usb_phy_roothub_power_on(struct usb_phy_roothub *phy_roothub)
+> >>>>>>>>> +{
+> >>>>>>>>> +     struct usb_phy_roothub *roothub_entry;
+> >>>>>>>>> +     struct list_head *head;
+> >>>>>>>>> +     int err;
+> >>>>>>>>> +
+> >>>>>>>>> +     if (!phy_roothub)
+> >>>>>>>>> +             return 0;
+> >>>>>>>>> +
+> >>>>>>>>> +     head = &phy_roothub->list;
+> >>>>>>>>> +
+> >>>>>>>>> +     list_for_each_entry(roothub_entry, head, list) {
+> >>>>>>>>> +             err = phy_power_on(roothub_entry->phy);
+> >>>>>>>>> +             if (err)
+> >>>>>>>>> +                     goto err_out;
+> >>>>>>>>> +     }
+> >>>>>>>>> +
+> >>>>>>>>> +     return 0;
+> >>>>>>>>> +
+> >>>>>>>>> +err_out:
+> >>>>>>>>> +     list_for_each_entry_continue_reverse(roothub_entry, head, list)
+> >>>>>>>>> +             phy_power_off(roothub_entry->phy);
+> >>>>>>>>> +
+> >>>>>>>>> +     return err;
+> >>>>>>>>> +}
+> >>>>>>>>> +EXPORT_SYMBOL_GPL(usb_phy_roothub_power_on);
+> >>>>>>>>> +
+> >>>>>>>>> +void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub)
+> >>>>>>>>> +{
+> >>>>>>>>> +     struct usb_phy_roothub *roothub_entry;
+> >>>>>>>>> +
+> >>>>>>>>> +     if (!phy_roothub)
+> >>>>>>>>> +             return;
+> >>>>>>>>> +
+> >>>>>>>>> +     list_for_each_entry_reverse(roothub_entry, &phy_roothub->list, list)
+> >>>>>>>>> +             phy_power_off(roothub_entry->phy);
+> >>>>>>>>
+> >>>>>>>> Not doing the phy_exit() here leaves the clocks enabled on our SoC and
+> >>>>>>>> we're no longer able to reach low power states on system suspend.
+> >>>>>>> I'm not sure where this problem should be solved:
+> >>>>>>> - set skip_phy_initialization in struct usb_hcd to 1 for the affected
+> >>>>>>> TI platforms
+> >>>>>>
+> >>>>>> Many TI platforms are affected, omap5*, dra7*, am43*
+> >>>>>>
+> >>>>>>> - fix this in the usb_phy_roothub code
+> >>>>>>
+> >>>>>> I'd vote for fixing it in the usb_phy_roothub code. How?
+> >>>>>> How about using the device_can_wakeup() to decide if we should call phy_exit()/init() or not?
+> >>>>>> If the USB device can't wakeup the system there is no point in keeping it powered/clocked right?
+> >>>>> @Chunfeng: can you confirm Roger's idea that we could call phy_exit if
+> >>>>> the controller is *NOT* marked as "wakeup-source"?
+> >>>>> I am also not sure if it would work, since the "wakeup-source"
+> >>>>> property is defined on the USB controller's parent node in case of the
+> >>>>> Mediatek MTU3 (Mediatek USB3.0 DRD) controller
+> >>>>>
+> >>>> Very sorry, I forgot that MTU3 & xHCI drivers always set them as wakeup
+> >>>> devices by device_init_wakeup(dev, true),but not dependent on
+> >>>> "wakeup-source" property, so maybe we can use device_can_wakeup() to
+> >>>> decide whether call phy_exit()/init() or not.
+> >>> the 64-bit Amlogic Meson GXL/GXM SoCs don't support suspend/resume
+> >>> yet, so I cannot test this
+> >>> based on this suggestion I threw up two patches which are *compile
+> >>> tested only* based on Greg's usb-next branch
+> >>> you can find them here: [0] (as well as attached to this mail)
+> >>>
+> >>> @Chunfeng: can you please test this on one of your Mediatek SoCs?
+> >>> @Roger: can you please test this on a TI SoC?
+> >>>
+> >>> (apologies in advance if these patches don't work)
+> >>>
+> >>> please note that I won't have access to my computer until Saturday.
+> >>> if these patches need to be rewritten/replaced/etc. then feel free to
+> >>> send your own version to the list
+> >>
+> >> Had to do the following to build
+> >>
+> >> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> >> index 6d4a419..2884607 100644
+> >> --- a/drivers/usb/core/hcd.c
+> >> +++ b/drivers/usb/core/hcd.c
+> >> @@ -2262,7 +2262,7 @@ int hcd_bus_suspend(struct usb_device *rhdev, pm_message_t msg)
+> >>  		hcd->state = HC_STATE_SUSPENDED;
+> >>  
+> >>  		if (!PMSG_IS_AUTO(msg))
+> >> -			usb_phy_roothub_suspend(hcd->phy_roothub);
+> >> +			usb_phy_roothub_suspend(&rhdev->dev, hcd->phy_roothub);
+> > 
+> > Try to use hcd->self.controller instead of &rhdev->dev;
+> 
+> Actually it should be hcd->self.sysdev.
+I find that xhci-plat.c enables wakeup by hcd->self.controller which is
+different from hcd->self.sysdev sometimes.
+
+And hcd->self.controller is the same as hcd->self.sysdev on MTK's
+platform.
+
+> > 
+> >>  
+> >>  		/* Did we race with a root-hub wakeup event? */
+> >>  		if (rhdev->do_remote_wakeup) {
+> >> @@ -2302,7 +2302,7 @@ int hcd_bus_resume(struct usb_device *rhdev, pm_message_t msg)
+> >>  	}
+> >>  
+> >>  	if (!PMSG_IS_AUTO(msg)) {
+> >> -		status = usb_phy_roothub_resume(hcd->phy_roothub);
+> >> +		status = usb_phy_roothub_resume(&rhdev->dev, hcd->phy_roothub);
+> > ditto
+> >>  		if (status)
+> >>  			return status;
+> >>  	}
+> >> @@ -2344,7 +2344,7 @@ int hcd_bus_resume(struct usb_device *rhdev, pm_message_t msg)
+> >>  		}
+> >>  	} else {
+> >>  		hcd->state = old_state;
+> >> -		usb_phy_roothub_suspend(hcd->phy_roothub);
+> >> +		usb_phy_roothub_suspend(&rhdev->dev, hcd->phy_roothub);
+> > ditto
+> >>  		dev_dbg(&rhdev->dev, "bus %s fail, err %d\n",
+> >>  				"resume", status);
+> >>  		if (status != -ESHUTDOWN)
+> >>
+> >>
+> >> And the following to fix runtime issues
+> >>
+> >> diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
+> >> index 2eca371..8598906 100644
+> >> --- a/drivers/usb/core/phy.c
+> >> +++ b/drivers/usb/core/phy.c
+> >> @@ -32,9 +32,9 @@ static int usb_phy_roothub_add_phy(struct device *dev, int index,
+> >>  			return PTR_ERR(phy);
+> >>  	}
+> >>  
+> >> -	roothub_entry = usb_phy_roothub_alloc(dev);
+> >> -	if (IS_ERR(roothub_entry))
+> >> -		return PTR_ERR(roothub_entry);
+> >> +	roothub_entry = devm_kzalloc(dev, sizeof(*roothub_entry), GFP_KERNEL);
+> >> +	if (!roothub_entry)
+> >> +		return -ENOMEM;
+> >>  
+> >>  	roothub_entry->phy = phy;
+> >>  
+> >> @@ -162,7 +162,7 @@ int usb_phy_roothub_suspend(struct device *dev,
+> >>  	usb_phy_roothub_power_off(phy_roothub);
+> >>  
+> >>  	/* keep the PHYs initialized so the device can wake up the system */
+> >> -	if (device_can_wakeup(dev))
+> >> +	if (device_may_wakeup(dev))
+> > It's ok
+> 
+> I had to additionally fix usb_phy_roothub_resume() from
+> 	if (device_can_wakeup(dev))
+> to
+> 	if (!device_may_wakeup(dev))
+> 
+> >>  		return 0;
+> >>  
+> >>  	return usb_phy_roothub_exit(phy_roothub);
+> >>
+> >>
+> >> Here are my obervations
+> >> - if wakeup is disabled it works fine as expected, phy_exit() is called and I'm able to reach
+> >> low power states.
+> >>
+> >> - if wakeup is enabled (/sys/bus/usb/device/usb2/power/wakeup), then hcd_bus_suspend() is never called
+> >> and so phy_power_off won't be called either.
+> >>
+> >> This means that the device_may_wakeup() check is redundant. Sorry for suggesting this.
+> > You maybe use a wrong device.
+> 
+> Yes, after using the correct device I don't see the problem.
+> 
+> Can you please try the below patch on top of the 2 Patches that Martin sent and the new patch you sent?
+> Once you confirm it works for you I can send the 2 patches officially.
+It works on MTK's platform, I'll test it again when official patches are
+sent out.
+
+Thanks a lot
+> 
+> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> index 6d4a419..04cc453 100644
+> --- a/drivers/usb/core/hcd.c
+> +++ b/drivers/usb/core/hcd.c
+> @@ -2262,7 +2262,7 @@ int hcd_bus_suspend(struct usb_device *rhdev, pm_message_t msg)
+>  		hcd->state = HC_STATE_SUSPENDED;
+>  
+>  		if (!PMSG_IS_AUTO(msg))
+> -			usb_phy_roothub_suspend(hcd->phy_roothub);
+> +			usb_phy_roothub_suspend(hcd->self.sysdev, hcd->phy_roothub);
+>  
+>  		/* Did we race with a root-hub wakeup event? */
+>  		if (rhdev->do_remote_wakeup) {
+> @@ -2302,7 +2302,7 @@ int hcd_bus_resume(struct usb_device *rhdev, pm_message_t msg)
+>  	}
+>  
+>  	if (!PMSG_IS_AUTO(msg)) {
+> -		status = usb_phy_roothub_resume(hcd->phy_roothub);
+> +		status = usb_phy_roothub_resume(hcd->self.sysdev, hcd->phy_roothub);
+>  		if (status)
+>  			return status;
+>  	}
+> @@ -2344,7 +2344,7 @@ int hcd_bus_resume(struct usb_device *rhdev, pm_message_t msg)
+>  		}
+>  	} else {
+>  		hcd->state = old_state;
+> -		usb_phy_roothub_suspend(hcd->phy_roothub);
+> +		usb_phy_roothub_suspend(hcd->self.sysdev, hcd->phy_roothub);
+>  		dev_dbg(&rhdev->dev, "bus %s fail, err %d\n",
+>  				"resume", status);
+>  		if (status != -ESHUTDOWN)
+> diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
+> index 2eca371..25fe729 100644
+> --- a/drivers/usb/core/phy.c
+> +++ b/drivers/usb/core/phy.c
+> @@ -32,9 +32,9 @@ static int usb_phy_roothub_add_phy(struct device *dev, int index,
+>  			return PTR_ERR(phy);
+>  	}
+>  
+> -	roothub_entry = usb_phy_roothub_alloc(dev);
+> -	if (IS_ERR(roothub_entry))
+> -		return PTR_ERR(roothub_entry);
+> +	roothub_entry = devm_kzalloc(dev, sizeof(*roothub_entry), GFP_KERNEL);
+> +	if (!roothub_entry)
+> +		return -ENOMEM;
+>  
+>  	roothub_entry->phy = phy;
+>  
+> @@ -162,7 +162,7 @@ int usb_phy_roothub_suspend(struct device *dev,
+>  	usb_phy_roothub_power_off(phy_roothub);
+>  
+>  	/* keep the PHYs initialized so the device can wake up the system */
+> -	if (device_can_wakeup(dev))
+> +	if (device_may_wakeup(dev))
+>  		return 0;
+>  
+>  	return usb_phy_roothub_exit(phy_roothub);
+> @@ -175,7 +175,7 @@ int usb_phy_roothub_resume(struct device *dev,
+>  	int err;
+>  
+>  	/* if the device can't wake up the system _exit was called */
+> -	if (device_can_wakeup(dev)) {
+> +	if (!device_may_wakeup(dev)) {
+>  		err = usb_phy_roothub_init(phy_roothub);
+>  		if (err)
+>  			return err;
