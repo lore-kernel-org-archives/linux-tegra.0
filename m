@@ -1,82 +1,46 @@
-From: Emil Goode <emil.fsw@goode.io>
-Subject: Re: [PATCH] gpu: host1x: Fix compiler errors
-Date: Mon, 26 Mar 2018 17:47:54 +0200
-Message-ID: <20180326154753.akbdpxlstb4mr3ne@lianli>
-References: <20180326144314.xeuocqp5fjpfjm3q@lianli>
- <20180326145734.GA8016@ulmo>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 1/7] ARM: tegra: Miscellaneous changes for v4.17-rc1
+Date: Tue, 27 Mar 2018 13:10:19 +0200
+Message-ID: <CAK8P3a0RZnKnSiibbSQ1w_yRpDOz48fz3=_wGP7turRh0x4DOw@mail.gmail.com>
+References: <20180316141850.4876-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180326145734.GA8016@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180316141850.4876-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
-
-On Mon, Mar 26, 2018 at 04:57:34PM +0200, Thierry Reding wrote:
-> On Mon, Mar 26, 2018 at 04:44:14PM +0200, Emil Goode wrote:
-> > The compiler is complaining with the following errors:
-> > 
-> > drivers/gpu/host1x/cdma.c:94:48: error:
-> > 	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-> > 	[-Werror=incompatible-pointer-types]
-> > 
-> > drivers/gpu/host1x/cdma.c:113:48: error:
-> > 	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-> > 	[-Werror=incompatible-pointer-types]
-> > 
-> > The expected pointer type of the third argument to dma_alloc_wc() is
-> > dma_addr_t but phys_addr_t is passed. Fix this by adding casts to the
-> > expected pointer type.
-> > 
-> > Signed-off-by: Emil Goode <emil.fsw@goode.io>
-> > ---
-> >  drivers/gpu/host1x/cdma.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> What compiler do you use? I do regular builds and check for warnings and
-> errors, and this one is new to me.
-> 
-> Thierry
+On Fri, Mar 16, 2018 at 3:18 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> Hi ARM SoC maintainers,
+>
+> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+>
+>   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.17-misc
+>
+> for you to fetch changes up to 601ff7edc748213fc6d4d7c1ded6467edbd1f1c2:
+>
+>   MAINTAINERS: Update Tegra IOMMU maintainer (2018-03-09 09:45:27 +0100)
 >
 
-I use gcc version 6.3.0 cross compiler for armhf supplied with Debian Stretch.
+I put this in the "fixes" branch now, sorry for the delay during my travels.
+It would of course have been appropriate for other branches as well, but
+bouncing maintainer addresses are annoying, so I think it's better to have
+it in the 4.16 release.
 
-Best regards,
-
-Emil
-
-> > 
-> > diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-> > index 28541b280739..5e8b321a751e 100644
-> > --- a/drivers/gpu/host1x/cdma.c
-> > +++ b/drivers/gpu/host1x/cdma.c
-> > @@ -91,8 +91,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
-> >  
-> >  		size = iova_align(&host1x->iova, size);
-> >  
-> > -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
-> > -					  GFP_KERNEL);
-> > +		pb->mapped = dma_alloc_wc(host1x->dev, size,
-> > +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
-> >  		if (!pb->mapped)
-> >  			return -ENOMEM;
-> >  
-> > @@ -110,8 +110,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
-> >  		if (err)
-> >  			goto iommu_free_iova;
-> >  	} else {
-> > -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
-> > -					  GFP_KERNEL);
-> > +		pb->mapped = dma_alloc_wc(host1x->dev, size,
-> > +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
-> >  		if (!pb->mapped)
-> >  			return -ENOMEM;
-> >  
-> > -- 
-> > 2.11.0
-> > 
+     Arnd
