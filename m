@@ -1,7 +1,7 @@
 From: Aniruddha Banerjee <aniruddha.nitd@gmail.com>
-Subject: [PATCHv2] irqchip: arm-gic: take gic_lock when updating irq type
-Date: Wed, 28 Mar 2018 01:11:58 +0530
-Message-ID: <20180327194158.16127-1-aniruddha.nitd@gmail.com>
+Subject: [PATCHv3] irqchip: arm-gic: take gic_lock when updating irq type
+Date: Wed, 28 Mar 2018 14:24:30 +0530
+Message-ID: <20180328085430.3401-1-aniruddha.nitd@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: marc.zyngier@arm.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
@@ -17,8 +17,17 @@ the same time, there can be a simultaneous write at the gic
 distributor, leading to a race. Acquire the gic_lock when the
 irq_type is updated.
 
-Signed-off-by: Aniruddha Banerjee <aniruddha.nitd@gmail.com>
+Signed-off-by: Aniruddha Banerjee <aniruddhab@nvidia.com>
 ---
+Changes from V1:
+
+* Moved the spinlock from irq-gic to irq-gic common, so that the fix
+is valid for GIC v1/v2/v3.
+
+Change from V2:
+
+* Fixup the Signed-off-by line.
+
  drivers/irqchip/irq-gic-common.c | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
 
