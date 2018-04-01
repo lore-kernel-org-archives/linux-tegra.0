@@ -1,59 +1,47 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Subject: Re: [PATCH 00/24] drm_framebuffer boilerplate removal
-Date: Fri, 30 Mar 2018 10:47:53 -0400
-Message-ID: <CADnq5_MSsXgUdGNPu76c0qE1As5wmTbJr147KfTeG8E-LGG5ig@mail.gmail.com>
-References: <CAPj87rPKDwBK7qoOoY2zXoS6T02toATPRsk=39m_OBr=s1kXTw@mail.gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] phy: tegra: Remote self cast in tegra_xusb_port_find_lane
+Date: Sat, 31 Mar 2018 23:57:43 -0700
+Message-ID: <20180401065743.GA30363@flashbox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAPj87rPKDwBK7qoOoY2zXoS6T02toATPRsk=39m_OBr=s1kXTw@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Stone <daniels@collabora.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, "open list:VIRTIO CORE,
- NET..." <virtualization@lists.linux-foundation.org>, Thierry Reding <thierry.reding@gmail.com>, amd-gfx mailing list <amd-gfx@lists.freedesktop.org>, Russell King <linux@armlinux.org.uk>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Dave Airlie <airlied@redhat.com>, David Lechner <david@lechnology.com>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Gerd Hoffmann <kraxel@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Nathan Chancellor <natechancellor@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBNYXIgMzAsIDIwMTggYXQgMTA6MTEgQU0sIERhbmllbCBTdG9uZSA8ZGFuaWVsc0Bj
-b2xsYWJvcmEuY29tPiB3cm90ZToKPiBIaSwKPiBJJ3ZlIGJlZW4gd29ya2luZyBvbiBhIGdldGZi
-MlswXSBpb2N0bCwgd2hpY2ggYW1vbmdzdCBvdGhlciB0aGluZ3MKPiBzdXBwb3J0cyBtdWx0aS1w
-bGFuYXIgZnJhbWVidWZmZXJzIGFzIHdlbGwgYXMgbW9kaWZpZXJzLiBnZXRmYgo+IGN1cnJlbnRs
-eSBjYWxscyB0aGUgZnJhbWVidWZmZXIncyBoYW5kbGVfY3JlYXRlIGhvb2ssIHdoaWNoIGRvZXNu
-J3QKPiBzdXBwb3J0IG11bHRpcGxlIHBsYW5lcy4KPgo+IFRoYW5rcyB0byBOb3JhbGYncyByZWNl
-bnQgd29yaywgZHJpdmVycyBjYW4ganVzdCBzdG9yZSBHRU0gb2JqZWN0cwo+IGRpcmVjdGx5IGlu
-IGRybV9mcmFtZWJ1ZmZlci4gSSB1c2UgdGhpcyBkaXJlY3RseSBpbiBnZXRmYjI6IHdlIG5lZWQK
-PiBkaXJlY3QgYWNjZXNzIHRvIHRoZSBHRU0gb2JqZWN0cyBhbmQgbm90IGEgdmZ1bmMgaW4gb3Jk
-ZXIgdG8gbm90IGhhbmQKPiBvdXQgZHVwbGljYXRlIEdFTSBuYW1lcyBmb3IgdGhlIHNhbWUgb2Jq
-ZWN0Lgo+Cj4gVGhpcyBzZXJpZXMgY29udmVydHMgYWxsIGRyaXZlcnMgZXhjZXB0IGZvciBub3V2
-ZWF1LCB3aGljaCB3YXMgYQo+IGxpdHRsZSB0b28gbm9uLXRyaXZpYWwgZm9yIG15IGNvbWZvcnQs
-IHRvIHN0b3JpbmcgR0VNIG9iamVjdHMgZGlyZWN0bHkKPiBpbiBkcm1fZnJhbWVidWZmZXIuIEZv
-ciB0aG9zZSBkcml2ZXJzIHdob3NlIGRyaXZlcl9mcmFtZWJ1ZmZlciBzdHJ1Y3QKPiB3YXMgbm90
-aGluZyBidXQgZHJtX2ZyYW1lYnVmZmVyICsgQk8sIGl0IGRlbGV0ZXMgdGhlIGRyaXZlci1zcGVj
-aWZpYwo+IHN0cnVjdC4gSXQgYWxzbyBtYWtlcyB1c2Ugb2YgTm9yYWxmJ3MgZ2VuZXJpYyBmcmFt
-ZWJ1ZmZlciBoZWxwZXJzIGZvcgo+IGNyZWF0ZV9oYW5kbGUgYW5kIGRlc3Ryb3kgd2hlcmUgcG9z
-c2libGUuCj4KPiBJIGRvbid0IGhhdmUgdGhlIGhhcmR3YXJlIGZvciBtb3N0IG9mIHRoZXNlIGRy
-aXZlcnMsIHNvIGhhdmUgaGFkIHRvCj4gc2V0dGxlIGZvciBqdXN0IHN0YXJpbmcgcmVhbGx5IGhh
-cmQgYXQgdGhlIGRpZmYuCj4KPiBJIGludGVuZCB0byByZW1vdmUgY3JlYXRlX2hhbmRsZSB3aGVu
-IGFsbCBkcml2ZXJzIGFyZSBjb252ZXJ0ZWQgb3Zlcgo+IHRvIHBsYWNpbmcgQk9zIGRpcmVjdGx5
-IGluc2lkZSBkcm1fZnJhbWVidWZmZXIuIEZvciBtb3N0IGRyaXZlcnMKPiB0aGVyZSdzIGEgcmVs
-YXRpdmVseSBlYXN5IGNvbnZlcnNpb24gdG8gdXNpbmcgdGhlIGhlbHBlcnMgZm9yCj4gYmFzaWNh
-bGx5IGFsbCBmcmFtZWJ1ZmZlciBoYW5kbGluZyBhbmQgZmJkZXYgZW11bGF0aW9uIGFzIHdlbGws
-IHRob3VnaAo+IHRoYXQncyBhIGJpdCBmdXJ0aGVyIHRoYW4gSSB3YXMgd2lsbGluZyB0byBnbyB3
-aXRob3V0IGhhcmR3YXJlIHRvIHRlc3QKPiBvbiAuLi4KClNlcmllcyBpczoKQWNrZWQtYnk6IEFs
-ZXggRGV1Y2hlciA8YWxleGFuZGVyLmRldWNoZXJAYW1kLmNvbT4KCj4KPiBDaGVlcnMsCj4gRGFu
-aWVsCj4KPiBbMF06IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1k
-ZXZlbC8yMDE4LU1hcmNoLzE3MDUxMi5odG1sCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KPiBhbWQtZ2Z4IG1haWxpbmcgbGlzdAo+IGFtZC1nZnhAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9hbWQtZ2Z4Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Clang warns about casting variables to themselves because it is rarely
+necessary. Removing the cast should not change anything regarding the
+code and silences the warning.
+
+../drivers/phy/tegra/xusb.c:421:11: warning: explicitly assigning value
+of variable of type 'const struct tegra_xusb_lane_map *' to itself
+[-Wself-assign]
+        for (map = map; map->type; map++) {
+             ~~~ ^ ~~~
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+I am not entirely sure if this is the correct solution, especially since
+I don't have the hardware and I am not too familiar with this code. If
+there is a better solution, please let me know.
+
+ drivers/phy/tegra/xusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 63e916d4d069..11aa5902a9ac 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -418,7 +418,7 @@ tegra_xusb_port_find_lane(struct tegra_xusb_port *port,
+ {
+ 	struct tegra_xusb_lane *lane, *match = ERR_PTR(-ENODEV);
+ 
+-	for (map = map; map->type; map++) {
++	for (; map->type; map++) {
+ 		if (port->index != map->port)
+ 			continue;
+ 
+-- 
+2.16.3
