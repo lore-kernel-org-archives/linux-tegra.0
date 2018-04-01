@@ -1,7 +1,7 @@
 From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] phy: tegra: Remote self cast in tegra_xusb_port_find_lane
-Date: Sat, 31 Mar 2018 23:57:43 -0700
-Message-ID: <20180401065743.GA30363@flashbox>
+Subject: [PATCH v2] phy: tegra: Remove self cast in tegra_xusb_port_find_lane
+Date: Sun, 1 Apr 2018 04:04:10 -0700
+Message-ID: <20180401110410.GA3405@flashbox>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -26,6 +26,8 @@ Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 I am not entirely sure if this is the correct solution, especially since
 I don't have the hardware and I am not too familiar with this code. If
 there is a better solution, please let me know.
+
+Changes from v1 -> v2: Fix spelling error in commit title
 
  drivers/phy/tegra/xusb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
