@@ -1,157 +1,201 @@
-From: John Garry <john.garry@huawei.com>
-Subject: Re: [PATCH v17 01/10] LIB: Introduce a generic PIO mapping method
-Date: Tue, 3 Apr 2018 19:24:06 +0100
-Message-ID: <b920026d-88f1-f262-61dd-60e8260c8ec5@huawei.com>
-References: <1521051359-34473-1-git-send-email-john.garry@huawei.com>
- <1521051359-34473-2-git-send-email-john.garry@huawei.com>
- <20180403140410.GE27789@ulmo> <20180403143909.GA21171@ulmo>
- <ab748c97-2b55-d090-606f-5491551feff6@huawei.com>
- <20180403163700.GA10059@ulmo>
- <19c46196-304a-1574-89c9-01c71d123539@huawei.com>
- <20180403175311.GD60020@bhelgaas-glaptop.roam.corp.google.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [usb-next PATCH v11 3/8] usb: core: add a wrapper for the USB
+ PHYs on the HCD
+Date: Wed, 4 Apr 2018 21:10:28 +0900
+Message-ID: <CAK7LNARM=F3Ey0aO9PiNftxkcLVo4z10jdrkSrQE1f74nK1=Ng@mail.gmail.com>
+References: <20180303214309.25643-1-martin.blumenstingl@googlemail.com>
+ <20180303214309.25643-4-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180403175311.GD60020@bhelgaas-glaptop.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, mika.westerberg@linux.intel.com, rafael@kernel.org, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, hanjun.guo@linaro.org, robh+dt@kernel.org, bhelgaas@google.com, arnd@arndb.de, mark.rutland@arm.com, olof@lixom.net, dann.frazier@canonical.com, andy.shevchenko@gmail.com, robh@kernel.org, andriy.shevchenko@linux.intel.com, joe@perches.com, benh@kernel.crashing.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, minyard@acm.org, devicetree@vger.kernel.org, linux-arch@vger.kernel.org, rdunlap@infradead.org, gregkh@linuxfoundation.org, akpm@linux-foundation.org, frowand.list@gmail.com, agraf@suse.de, linux-tegra@vger.kernel
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180303214309.25643-4-martin.blumenstingl@googlemail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Peter.Chen@nxp.com, Neil Armstrong <narmstrong@baylibre.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Tony Prisk <linux@prisktech.co.nz>, Felipe Balbi <felipe.balbi@linux.intel.com>, Jon Hunter <jonathanh@nvidia.com>, Alan Stern <stern@rowland.harvard.edu>, Chunfeng Yun <chunfeng.yun@mediatek.com>, DTML <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, yixun.lan@amlogic.com, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-amlogic@lists.infradead.org, Linux-OMAP <linux-omap@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, mathias.nyman@intel.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/04/2018 18:53, Bjorn Helgaas wrote:
-> On Tue, Apr 03, 2018 at 06:02:43PM +0100, John Garry wrote:
->> On 03/04/2018 17:37, Thierry Reding wrote:
->>> On Tue, Apr 03, 2018 at 05:01:37PM +0100, John Garry wrote:
->>>>>>> +int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
->>>>>>> +{
->>>>>>> +	struct logic_pio_hwaddr *range;
->>>>>>> +	resource_size_t start = new_range->hw_start;
->>>>>>> +	resource_size_t end = new_range->hw_start + new_range->size;
->>>>>>> +	resource_size_t mmio_sz = 0;
->>>>>>> +	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
->>>>>>> +	int ret = 0;
->>>>>>> +
->>>>>>> +	if (!new_range || !new_range->fwnode || !new_range->size)
->>>>>>> +		return -EINVAL;
->>>>>>> +
->>>>>>> +	mutex_lock(&io_range_mutex);
->>>>>>> +	list_for_each_entry_rcu(range, &io_range_list, list) {
->>>>>>> +		if (range->fwnode == new_range->fwnode) {
->>>>>>> +			/* range already there */
->>>>>>> +			ret = -EFAULT;
->>>>>>> +			goto end_register;
->>>>>>> +		}
->>>>>>
->>>>
->>>> Hi Thierry,
->>>>
->>>>>> This is the -EFAULT that propagates to pci-tegra.c's ->probe() and fails
->>>>>> to bind the driver.
->>>>>>
->>>>>> I'm not exactly sure what's causing the duplicate here because it's
->>>>>> rather difficult to get at something useful from just the ->fwnode, but
->>>>>> I'm fairly sure that the reason this breaks is because the Tegra driver
->>>>>> will defer probe due to some regulators that aren't available on the
->>>>>> first try. Given the above code and the rest of this file, I can't see a
->>>>>> way to "fix" the driver and remove the I/O range on failure.
->>>>>>
->>>>>> This is doubly bad because this doesn't only leak the ranges on probe
->>>>>> deferral, but also on driver unload, and we just added support for
->>>>>> building the Tegra driver as a loadable module, so these are actually
->>>>>> cases that can happen in regular uses of the driver.
->>>>>>
->>>>>> I have no idea on how to fix this. Anyone know of a quick fix to restore
->>>>>> PCI for Tegra other than reverting all of these changes?
->>>>>>
->>>>>> I suppose an API could be added to unregister the range, but the calling
->>>>>> sequence is rather obfuscated, so removing the range will look totally
->>>>>> asymmetric, I'm afraid.
->>>>>>
->>>>>> Here's the call stack:
->>>>>>
->>>>>> 	tegra_pcie_probe()
->>>>>> 	tegra_pcie_parse_dt()
->>>>>> 	of_pci_range_to_resource()
->>>>>> 	pci_register_io_range()
->>>>>> 	logic_pio_register_range()
->>>>>>
->>>>>> So the range here is registered as part of a resource parsing function,
->>>>>> which is supposed to not have any side-effects. There's no equivalent of
->>>>>> that parsing routine (i.e. no "unparse" function that would undo the
->>>>>> effects of parsing).
->>>>>>
->>>>>> Perhaps a cleaner way would be to decouple the parsing from the actual
->>>>>> request step that has the side-effect.
->>>>
->>>> This could be added if we agreed that it would be useful.
->>>
->>> I guess in most cases these ranges will be static at least during one
->>> boot. But it still feels like this should be removed when the driver
->>> goes away. While this may not depend on data by the driver, and hence
->>> won't cause a crash or anything, it just seems wrong to leave it
->>> around when the driver no longer isn't.
->>
->> That sounds reasonable, considering we do unmap the iospace when we release
->> - so it looks like currently we're leaving some IO range reserved which does
->> not have a mapping.
->>
->> However this change seems non-trivial, considering we're now even coupling
->> the PIO range registration into DT parsing.
->>
->>>
->>>>>> Going back in history a little, it looks like even before this commit
->>>>>> the I/O range registration was triggered by the parsing code and even
->>>>>> the range leak was there, except that it caused pci_register_io_range()
->>>>>> to return 0 rather than -EFAULT. Perhaps the quickest fix for this would
->>>>>> be to do the same in the new code and restore drivers that accidentally
->>>>>> depend on this behaviour.
->>>>>
->>>>> I can confirm that the following fixes the issue for me, though I don't
->>>>> think it's a very clean fix given that the range will remain requested
->>>>> forever, even if the driver is gone. But since that's already been the
->>>>> case for quite a while, probably something that can be fixed separately.
->>>>>
->>>>
->>>> Right, there was no way to deregister the range previously.  From looking at
->>>> the history here I see no reason to not support it.
->>>>
->>>> As for this patch, as you said, the only difference is that we fault on
->>>> trying to register the same range again. So this solution seems reasonable.
->>>
->>> Okay, I can turn this into a proper patch to fix this up. I suspect that
->>> other drivers may be subject to the same regression. For the longer term
->>> I think it'd be better to properly undo the registration on failure and
->>> removal, but I suspect that it'd be quite a bit of work and not suitable
->>> for v4.17 anymore.
->>
->> Thanks, I had started to put the patch together but if you're happy to
->> continue then that's fine. Please let me know.
+2018-03-04 6:43 GMT+09:00 Martin Blumenstingl
+<martin.blumenstingl@googlemail.com>:
+> Many SoC platforms have separate devices for the USB PHY which are
+> registered through the generic PHY framework. These PHYs have to be
+> enabled to make the USB controller actually work. They also have to be
+> disabled again on shutdown/suspend.
 >
-> Since you seem to agree this is the right short-term fix and I would
-> squash it into the original commit anyway, I went ahead and did that
-> so we could get this into linux-next as soon as possible.
+> Currently (at least) the following HCI platform drivers are using custom
+> code to obtain all PHYs via devicetree for the roothub/controller and
+> disable/enable them when required:
+> - ehci-platform.c has ehci_platform_power_{on,off}
+> - xhci-mtk.c has xhci_mtk_phy_{init,exit,power_on,power_off}
+> - ohci-platform.c has ohci_platform_power_{on,off}
 >
+> With this new wrapper the USB PHYs can be specified directly in the
+> USB controller's devicetree node (just like on the drivers listed
+> above). This allows SoCs like the Amlogic Meson GXL family to operate
+> correctly once this is wired up correctly. These SoCs use a dwc3
+> controller and require all USB PHYs to be initialized (if one of the USB
+> PHYs it not initialized then none of USB port works at all).
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Tested-by: Yixun Lan <yixun.lan@amlogic.com>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> ---
+>  drivers/usb/core/Makefile |   2 +-
+>  drivers/usb/core/phy.c    | 158 ++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/usb/core/phy.h    |   7 ++
+>  3 files changed, 166 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/usb/core/phy.c
+>  create mode 100644 drivers/usb/core/phy.h
+>
+> diff --git a/drivers/usb/core/Makefile b/drivers/usb/core/Makefile
+> index 92c9cefb4317..18e874b0441e 100644
+> --- a/drivers/usb/core/Makefile
+> +++ b/drivers/usb/core/Makefile
+> @@ -6,7 +6,7 @@
+>  usbcore-y := usb.o hub.o hcd.o urb.o message.o driver.o
+>  usbcore-y += config.o file.o buffer.o sysfs.o endpoint.o
+>  usbcore-y += devio.o notify.o generic.o quirks.o devices.o
+> -usbcore-y += port.o
+> +usbcore-y += phy.o port.o
+>
+>  usbcore-$(CONFIG_OF)           += of.o
+>  usbcore-$(CONFIG_USB_PCI)              += hcd-pci.o
+> diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
+> new file mode 100644
+> index 000000000000..09b7c43c0ea4
+> --- /dev/null
+> +++ b/drivers/usb/core/phy.c
+> @@ -0,0 +1,158 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * A wrapper for multiple PHYs which passes all phy_* function calls to
+> + * multiple (actual) PHY devices. This is comes handy when initializing
+> + * all PHYs on a HCD and to keep them all in the same state.
+> + *
+> + * Copyright (C) 2018 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/list.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/of.h>
+> +
+> +#include "phy.h"
+> +
+> +struct usb_phy_roothub {
+> +       struct phy              *phy;
+> +       struct list_head        list;
+> +};
+> +
+> +static struct usb_phy_roothub *usb_phy_roothub_alloc(struct device *dev)
+> +{
+> +       struct usb_phy_roothub *roothub_entry;
+> +
+> +       roothub_entry = devm_kzalloc(dev, sizeof(*roothub_entry), GFP_KERNEL);
+> +       if (!roothub_entry)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       INIT_LIST_HEAD(&roothub_entry->list);
+> +
+> +       return roothub_entry;
+> +}
+> +
+> +static int usb_phy_roothub_add_phy(struct device *dev, int index,
+> +                                  struct list_head *list)
+> +{
+> +       struct usb_phy_roothub *roothub_entry;
+> +       struct phy *phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
+> +
+> +       if (IS_ERR_OR_NULL(phy)) {
+> +               if (!phy || PTR_ERR(phy) == -ENODEV)
+> +                       return 0;
+> +               else
+> +                       return PTR_ERR(phy);
+> +       }
+> +
+> +       roothub_entry = usb_phy_roothub_alloc(dev);
+> +       if (IS_ERR(roothub_entry))
+> +               return PTR_ERR(roothub_entry);
+> +
+> +       roothub_entry->phy = phy;
+> +
+> +       list_add_tail(&roothub_entry->list, list);
+> +
+> +       return 0;
+> +}
+> +
+> +struct usb_phy_roothub *usb_phy_roothub_init(struct device *dev)
+> +{
+> +       struct usb_phy_roothub *phy_roothub;
+> +       struct usb_phy_roothub *roothub_entry;
+> +       struct list_head *head;
+> +       int i, num_phys, err;
+> +
+> +       num_phys = of_count_phandle_with_args(dev->of_node, "phys",
+> +                                             "#phy-cells");
+> +       if (num_phys <= 0)
+> +               return NULL;
+> +
+> +       phy_roothub = usb_phy_roothub_alloc(dev);
+> +       if (IS_ERR(phy_roothub))
+> +               return phy_roothub;
+> +
+> +       for (i = 0; i < num_phys; i++) {
+> +               err = usb_phy_roothub_add_phy(dev, i, &phy_roothub->list);
+> +               if (err)
+> +                       goto err_out;
+> +       }
+> +
+> +       head = &phy_roothub->list;
 
-Ok, thanks.
 
-John
+I think phy_roothub->phy is always empty,
+and only phy_roothub->list is used.
 
-> Here's the diff from my previous "next" branch with respect to this
-> series:
->
-> diff --git a/lib/logic_pio.c b/lib/logic_pio.c
-> index 29cedeadb397..4664b87e1c5f 100644
-> --- a/lib/logic_pio.c
-> +++ b/lib/logic_pio.c
-> @@ -46,7 +46,6 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
->  	list_for_each_entry_rcu(range, &io_range_list, list) {
->  		if (range->fwnode == new_range->fwnode) {
->  			/* range already there */
-> -			ret = -EFAULT;
->  			goto end_register;
->  		}
->  		if (range->flags == LOGIC_PIO_CPU_MMIO &&
->
-> .
->
+
+I just wondered if we can directly put 'struct list_head' into
+'struct usb_hcd'.
+
+
+
+
+
+> diff --git a/drivers/usb/core/phy.h b/drivers/usb/core/phy.h
+> new file mode 100644
+> index 000000000000..6fde59bfbff8
+> --- /dev/null
+> +++ b/drivers/usb/core/phy.h
+> @@ -0,0 +1,7 @@
+> +struct usb_phy_roothub;
+
+struct device;
+
+is also needed for usb_phy_roothub_init().
+
+
+
+> +struct usb_phy_roothub *usb_phy_roothub_init(struct device *dev);
+> +int usb_phy_roothub_exit(struct usb_phy_roothub *phy_roothub);
+> +
+> +int usb_phy_roothub_power_on(struct usb_phy_roothub *phy_roothub);
+> +void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub);
+
+
+Better to add an include guard?
+SPDX-License-Identifier for this header too?
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
