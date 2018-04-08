@@ -1,55 +1,37 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [usb-next PATCH v11 3/8] usb: core: add a wrapper for the USB
- PHYs on the HCD
-Date: Fri, 6 Apr 2018 17:28:52 +0900
-Message-ID: <CAK7LNAQ=ke2MJVx2Fs-bSAO40QT7ceMNfPXJy2AOREfNb_7r_g@mail.gmail.com>
-References: <20180303214309.25643-1-martin.blumenstingl@googlemail.com>
- <20180303214309.25643-4-martin.blumenstingl@googlemail.com>
- <CAK7LNARM=F3Ey0aO9PiNftxkcLVo4z10jdrkSrQE1f74nK1=Ng@mail.gmail.com>
- <CAFBinCCRhJLxOCz6_a23XnVcSo35MpE8huA8keNFBrWmr_mR=A@mail.gmail.com>
- <CAK7LNASN4mgSVXw425CEuFzJdgmgiv=u9h7T+_zSbqU7dwRRcA@mail.gmail.com>
- <CAFBinCDThyLeeHaB4WrtCCf_91jf68MohaUF7UbdgWxBDBq6LQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAFBinCDThyLeeHaB4WrtCCf_91jf68MohaUF7UbdgWxBDBq6LQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Peter.Chen@nxp.com, Neil Armstrong <narmstrong@baylibre.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Tony Prisk <linux@prisktech.co.nz>, Felipe Balbi <felipe.balbi@linux.intel.com>, Jon Hunter <jonathanh@nvidia.com>, Alan Stern <stern@rowland.harvard.edu>, Chunfeng Yun <chunfeng.yun@mediatek.com>, DTML <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, yixun.lan@amlogic.com, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-amlogic@lists.infradead.org, Linux-OMAP <linux-omap@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, mathias.nyman@intel.com
+From: srplinux2008 <srplinux2008@gmail.com>
+Subject: [PATCH] thermal: tegra: soctherm: add const to struct thermal_cooling_device_ops
+Date: Sun,  8 Apr 2018 17:31:45 +0530
+Message-ID: <1523188905-3066-1-git-send-email-srplinux2008@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org
+Cc: rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, srplinux2008@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-2018-04-06 14:15 GMT+09:00 Martin Blumenstingl
-<martin.blumenstingl@googlemail.com>:
+From: srp linux <srplinux2008@gmail.com>
 
->>
->> When will this be available in Linus' tree?   In the current MW?
-> this is already available in Linus' tree. the commit for this specific
-> patch (#3) is known as 07dbff0ddbd86c
+Correct the typecast with const to struct thermal_cooling_device_ops.
+It is the last argument to the function thermal_of_cooling_device_register
+and this argument is of type const. So, declare this structure
+thermal_cooling_device_ops as constant.
 
+Signed-off-by: srp linux <srplinux2008@gmail.com>
+---
+ drivers/thermal/tegra/soctherm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Oh, great!  Thank you.
-
-
-
->> Sure, I can send a patch after some flaws are ironed-out.
-> great, thank you!
-> could you also let me know once you have tested this on one of your SoCs?
-
-I will.
-
-
-
-
-
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 455b58c..72da745 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -926,7 +926,7 @@ static int throt_set_cdev_state(struct thermal_cooling_device *cdev,
+ 	return 0;
+ }
+ 
+-static struct thermal_cooling_device_ops throt_cooling_ops = {
++static const struct thermal_cooling_device_ops throt_cooling_ops = {
+ 	.get_max_state = throt_get_cdev_max_state,
+ 	.get_cur_state = throt_get_cdev_cur_state,
+ 	.set_cur_state = throt_set_cdev_state,
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
