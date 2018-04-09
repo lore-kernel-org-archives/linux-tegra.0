@@ -1,103 +1,85 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH V2 3/9] dt-bindings: Tegra186 tachometer device tree
- bindings
-Date: Mon, 9 Apr 2018 17:37:09 +0300
-Message-ID: <615d6771-00c3-a4a7-a99f-ec4f6e667c8f@kapsi.fi>
-References: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
- <1521607244-29734-4-git-send-email-rrajk@nvidia.com>
- <20180327145249.xjoo42qow34ksdle@rob-hp-laptop>
- <867aace8-dac7-51d4-bd46-15919b58b37d@kapsi.fi>
- <CAL_Jsq+AsUiWWBQ7K4OUM58KqQbvBHuFYmXxXLwr7viwoKW-Yw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v4 00/15] Memory controller hot reset
+Date: Mon,  9 Apr 2018 22:28:22 +0300
+Message-ID: <cover.1523301400.git.digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_Jsq+AsUiWWBQ7K4OUM58KqQbvBHuFYmXxXLwr7viwoKW-Yw@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Rajkumar Rampelli <rrajk@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Philippe Ombredanne <pombredanne@nexb.com>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Timur Tabi <timur@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Alex Elder <elder@linaro.org>, "heiko@sntech.de" <heiko@sn>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra's memory controller has a "memory hot reset" functionality that
+blocks all memory transactions for the memory client, which is required
+for a proper HW resetting. HW could be in process of performing DMA while
+being reset and this could lead to a system hang or memory corruption, so
+here comes the memory hot reset that blocks all interactions of HW with
+memory so that it could be reset safely.
+
+Changelog:
+
+V4:
+        Fixed compilation warning about unused function for the case where
+        Tegra20 SoC isn't enabled in Kconfig, corrected typos in commit
+        messages.
+
+V3:
+        Addressed review comments to V2 from Thierry Reding. MC now
+        uses generic reset controller API instead of a custom one,
+        hence DT changes are now involved and so Rob Herring is CC'd
+        for a review.
+
+        Added couple minor cleanup/correction patches.
+
+V2:
+        Basically a re-send of V1 with some minor changes.
 
 
-On 04/09/2018 04:21 PM, Rob Herring wrote:
-> On Mon, Apr 9, 2018 at 12:38 AM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
->> Rob,
-> 
-> Please don't top post to lists.
-> 
->> this binding is for a specific IP block (for measuring/aggregating input
->> pulses) on the Tegra186 SoC, so I don't think it fits into any generic
->> binding.
-> 
-> What is it hooked up to to measure? You only mention "fan" five times
-> in the doc.
+Dmitry Osipenko (14):
+  dt-bindings: arm: tegra: Remove duplicated Tegra30+ MC binding
+  dt-bindings: memory: tegra: Document #reset-cells property of the
+    Tegra30 MC
+  dt-bindings: arm: tegra: Document #reset-cells property of the Tegra20
+    MC
+  dt-bindings: memory: tegra: Add hot resets definitions
+  memory: tegra: Do not handle spurious interrupts
+  memory: tegra: Setup interrupts mask before requesting IRQ
+  memory: tegra: Apply interrupts mask per SoC
+  memory: tegra: Remove unused headers inclusions
+  memory: tegra: Squash tegra20-mc into common tegra-mc driver
+  memory: tegra: Introduce memory client hot reset
+  memory: tegra: Add Tegra124 memory controller hot resets
+  memory: tegra: Add Tegra114 memory controller hot resets
+  memory: tegra: Add Tegra30 memory controller hot resets
+  memory: tegra: Add Tegra20 memory controller hot resets
 
-In practice, fans.
+Thierry Reding (1):
+  memory: tegra: Add Tegra210 memory controller hot resets
 
-> 
-> You have #pwm-cells too, so this block has PWM output as well? If not,
-> then where's the PWM for the fan control because there is no point in
-> having fan tach without some control mechanism.
+ .../bindings/arm/tegra/nvidia,tegra20-mc.txt       |  12 +-
+ .../bindings/arm/tegra/nvidia,tegra30-mc.txt       |  18 --
+ .../memory-controllers/nvidia,tegra30-mc.txt       |   5 +
+ drivers/memory/Kconfig                             |  10 -
+ drivers/memory/Makefile                            |   1 -
+ drivers/memory/tegra/Makefile                      |   1 +
+ drivers/memory/tegra/mc.c                          | 358 +++++++++++++++++++--
+ drivers/memory/tegra/mc.h                          |  22 ++
+ drivers/memory/tegra/tegra114.c                    |  35 ++
+ drivers/memory/tegra/tegra124.c                    |  48 +++
+ drivers/memory/tegra/tegra20.c                     | 296 +++++++++++++++++
+ drivers/memory/tegra/tegra210.c                    |  53 ++-
+ drivers/memory/tegra/tegra30.c                     |  35 ++
+ drivers/memory/tegra20-mc.c                        | 254 ---------------
+ include/dt-bindings/memory/tegra114-mc.h           |  19 ++
+ include/dt-bindings/memory/tegra124-mc.h           |  25 ++
+ include/dt-bindings/memory/tegra20-mc.h            |  21 ++
+ include/dt-bindings/memory/tegra210-mc.h           |  31 ++
+ include/dt-bindings/memory/tegra30-mc.h            |  19 ++
+ include/soc/tegra/mc.h                             |  37 ++-
+ 20 files changed, 978 insertions(+), 322 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt
+ create mode 100644 drivers/memory/tegra/tegra20.c
+ delete mode 100644 drivers/memory/tegra20-mc.c
+ create mode 100644 include/dt-bindings/memory/tegra20-mc.h
 
-It doesn't provide a PWM output. The (Linux) PWM framework provides 
-functionality in both directions - control and capture. But if the 
-device tree #pwm-cells/pwms properties are only for control, we may need 
-to introduce a new #capture-pwm-cells/capture-pwms or similar.
-
-The idea is that the generic fan node can then specify two pwms, one for 
-control and one for capture, to enable e.g. closed-loop control (I'm not 
-personally familiar with the usecase for this but I could imagine 
-something like that). The control PWM can be something completely 
-different, maybe not a PWM in the first place (e.g. some fixed voltage).
-
-> 
-> There's only so many ways to control fans and types of fans, so yes,
-> the interface of control and feedback lines between a fan and its
-> controller should absolutely be generic.
-
-I'm not quite getting what you mean by this. Clearly we need a custom 
-compatibility string for the tachometer as it's a different hardware 
-block with different programming than others. Or are you complaining 
-about the nvidia,pulse-per-rev/capture-window-len properties?
-
-Thanks,
-Mikko
-
-> 
-> Rob
-> 
->>
->> Thanks,
->> Mikko
->>
->>
->> On 03/27/2018 05:52 PM, Rob Herring wrote:
->>>
->>> On Wed, Mar 21, 2018 at 10:10:38AM +0530, Rajkumar Rampelli wrote:
->>>>
->>>> Supply Device tree binding documentation for the NVIDIA
->>>> Tegra186 SoC's Tachometer Controller
->>>>
->>>> Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
->>>> ---
->>>>
->>>> V2: Renamed compatible string to "nvidia,tegra186-pwm-tachometer"
->>>>       Renamed dt property values of clock-names and reset-names to
->>>> "tachometer"
->>>>       from "tach"
->>>
->>>
->>> Read my prior comments on v1.
->>>
->>> Rob
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+2.16.3
