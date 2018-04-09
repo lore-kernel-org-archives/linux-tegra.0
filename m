@@ -1,51 +1,36 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 01/15] dt-bindings: arm: tegra: Remove duplicated Tegra30+ MC binding
-Date: Mon,  9 Apr 2018 22:28:23 +0300
-Message-ID: <1ac41372c213e96871df1e02cada2e1899f03a7b.1523301400.git.digetx@gmail.com>
-References: <cover.1523301400.git.digetx@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1523301400.git.digetx@gmail.com>
-In-Reply-To: <cover.1523301400.git.digetx@gmail.com>
-References: <cover.1523301400.git.digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1 0/4] Tegra GART fixes and improvements
+Date: Mon,  9 Apr 2018 23:07:18 +0300
+Message-ID: <cover.1523304324.git.digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-There are two bindings for the same Memory Controller. One of the bindings
-became obsolete long time ago and probably was left unnoticed, remove it
-for consistency.
+GART driver wasn't ever been utilized in upstream, but finally this should
+change sometime soon with Tegra's DRM driver rework. In general GART driver
+works fine, though there are couple things that could be improved.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/arm/tegra/nvidia,tegra30-mc.txt           | 18 ------------------
- 1 file changed, 18 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt
+Dmitry Osipenko (4):
+  iommu/tegra: gart: Add debugging facility
+  iommu/tegra: gart: Fix gart_iommu_unmap()
+  iommu/tegra: gart: Constify number of GART pages
+  iommu/tegra: gart: Optimize map/unmap
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt
-deleted file mode 100644
-index bdf1a612422b..000000000000
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt
-+++ /dev/null
-@@ -1,18 +0,0 @@
--NVIDIA Tegra30 MC(Memory Controller)
--
--Required properties:
--- compatible : "nvidia,tegra30-mc"
--- reg : Should contain 4 register ranges(address and length); see the
--  example below. Note that the MC registers are interleaved with the
--  SMMU registers, and hence must be represented as multiple ranges.
--- interrupts : Should contain MC General interrupt.
--
--Example:
--	memory-controller {
--		compatible = "nvidia,tegra30-mc";
--		reg = <0x7000f000 0x010
--		       0x7000f03c 0x1b4
--		       0x7000f200 0x028
--		       0x7000f284 0x17c>;
--		interrupts = <0 77 0x04>;
--	};
+ drivers/iommu/tegra-gart.c | 90 +++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 69 insertions(+), 21 deletions(-)
+
 -- 
 2.16.3
