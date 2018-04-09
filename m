@@ -1,64 +1,71 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] thermal: tegra: soctherm: add const to struct
- thermal_cooling_device_ops
-Date: Mon, 9 Apr 2018 13:56:15 +0200
-Message-ID: <20180409115615.GA29946@ulmo>
-References: <1523188905-3066-1-git-send-email-srplinux2008@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V2 3/9] dt-bindings: Tegra186 tachometer device tree bindings
+Date: Mon, 9 Apr 2018 08:21:17 -0500
+Message-ID: <CAL_Jsq+AsUiWWBQ7K4OUM58KqQbvBHuFYmXxXLwr7viwoKW-Yw@mail.gmail.com>
+References: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
+ <1521607244-29734-4-git-send-email-rrajk@nvidia.com> <20180327145249.xjoo42qow34ksdle@rob-hp-laptop>
+ <867aace8-dac7-51d4-bd46-15919b58b37d@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1523188905-3066-1-git-send-email-srplinux2008@gmail.com>
+In-Reply-To: <867aace8-dac7-51d4-bd46-15919b58b37d@kapsi.fi>
 Sender: linux-kernel-owner@vger.kernel.org
-To: srplinux2008 <srplinux2008@gmail.com>
-Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Rajkumar Rampelli <rrajk@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Philippe Ombredanne <pombredanne@nexb.com>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Timur Tabi <timur@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Alex Elder <elder@linaro.org>, "heiko@sntech.de" <heiko@sn>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Apr 9, 2018 at 12:38 AM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
+> Rob,
 
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please don't top post to lists.
 
-On Sun, Apr 08, 2018 at 05:31:45PM +0530, srplinux2008 wrote:
-> From: srp linux <srplinux2008@gmail.com>
+> this binding is for a specific IP block (for measuring/aggregating input
+> pulses) on the Tegra186 SoC, so I don't think it fits into any generic
+> binding.
 
-Looks like you haven't properly set up git. Try setting your real name
-using:
+What is it hooked up to to measure? You only mention "fan" five times
+in the doc.
 
-	$ git config user.name 'Your Name'
+You have #pwm-cells too, so this block has PWM output as well? If not,
+then where's the PWM for the fan control because there is no point in
+having fan tach without some control mechanism.
 
-> Correct the typecast with const to struct thermal_cooling_device_ops.
-> It is the last argument to the function thermal_of_cooling_device_register
-> and this argument is of type const. So, declare this structure
-> thermal_cooling_device_ops as constant.
->=20
-> Signed-off-by: srp linux <srplinux2008@gmail.com>
-> ---
->  drivers/thermal/tegra/soctherm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+There's only so many ways to control fans and types of fans, so yes,
+the interface of control and feedback lines between a fan and its
+controller should absolutely be generic.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Rob
 
---bp/iNruPH9dso1Pn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrLVNwACgkQ3SOs138+
-s6EasBAAwX2tVtJJelfLvUVmeW84stYcfjQzpcV44aW2YE69Am1Ev1dZ1+r6VPMS
-+Uqgf0KkBzKPvNDRzJ9MbJapzb0L7J/rkAdn5A69flHVcqwuVaSnQrAMKdBZjK67
-WMAyhuyUWan1KbLG1iKOdx6WFzP6YQ8zX2Z83p0wc0PgQhKRZL5rDXcpKGi/nGFp
-rb7I7DvmCKUbvQFLqArotunFZYQ3KFFWwHo7+VVt0XFneJk6OdtTjITkBWMPcbt3
-W73OPp56HHOu4yCUykEsVNHgsH8MemmHU2uBUCF3MmZlzWJd3zkJ47I6evkPac4A
-vsXQT7JMjvpBj45Jym3iJOoZ5NXM18bJUbKlQVpVoCUwWWjylbOaz2F5MxfPQNcc
-QPQlMMSKmlb3YSuDTgLOnsUw6t6G6JG5lu7ypZcrK1vYazttts9iwE3tJYl1sdFe
-6DMN1YjSwpcqaDtT7KZ2Ealr04O8adcBfmi88R9ZzIQ+0/fAcxK2l7t1zFtp7Mo7
-cRBLJZLQ/v9sJD0LNRwYWrHpL4PNjLntvV3IOBzEysVD5lED+IUh8X2wnId5aqZG
-fn2nn2QXKPvPvkaev0/bEW9ElptHr1Uq5BU3c5tqwSOjlX0tNu0r1AoxOmJG3CMr
-G3U67DFjglt4xS6hsnbvlObMdzjDpeNkYzOdtWIzo5oWuLTr444=
-=L2zH
------END PGP SIGNATURE-----
-
---bp/iNruPH9dso1Pn--
+>
+> Thanks,
+> Mikko
+>
+>
+> On 03/27/2018 05:52 PM, Rob Herring wrote:
+>>
+>> On Wed, Mar 21, 2018 at 10:10:38AM +0530, Rajkumar Rampelli wrote:
+>>>
+>>> Supply Device tree binding documentation for the NVIDIA
+>>> Tegra186 SoC's Tachometer Controller
+>>>
+>>> Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
+>>> ---
+>>>
+>>> V2: Renamed compatible string to "nvidia,tegra186-pwm-tachometer"
+>>>      Renamed dt property values of clock-names and reset-names to
+>>> "tachometer"
+>>>      from "tach"
+>>
+>>
+>> Read my prior comments on v1.
+>>
+>> Rob
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
