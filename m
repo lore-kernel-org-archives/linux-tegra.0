@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 05/15] memory: tegra: Do not handle spurious interrupts
-Date: Mon,  9 Apr 2018 22:28:27 +0300
-Message-ID: <30ec0fb1941e2ea2e10808d59f478f022b06266b.1523301400.git.digetx@gmail.com>
+Subject: [PATCH v4 03/15] dt-bindings: arm: tegra: Document #reset-cells property of the Tegra20 MC
+Date: Mon,  9 Apr 2018 22:28:25 +0300
+Message-ID: <57c08ef0d2e3dbc6ad0e91f426c5db5b181b0ab9.1523301400.git.digetx@gmail.com>
 References: <cover.1523301400.git.digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1523301400.git.digetx@gmail.com>
@@ -12,32 +12,41 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The ISR reads interrupts-enable mask, but doesn't utilize it. Apply the
-mask to the interrupt status and don't handle interrupts that MC driver
-haven't asked for. Kernel would disable spurious MC IRQ and report the
-error. This would happen only in a case of a very severe bug.
+Memory Controller has a memory client "hot reset" functionality, which
+resets the DMA interface of a memory client, so MC is a reset controller.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/memory/tegra/mc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt      | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index a4803ac192bb..d2005b995821 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -252,8 +252,11 @@ static irqreturn_t tegra_mc_irq(int irq, void *data)
- 	unsigned int bit;
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt
+index f9632bacbd04..7d60a50a4fa1 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt
+@@ -6,11 +6,21 @@ Required properties:
+   example below. Note that the MC registers are interleaved with the
+   GART registers, and hence must be represented as multiple ranges.
+ - interrupts : Should contain MC General interrupt.
++- #reset-cells : Should be 1. This cell represents memory client module ID.
++  The assignments may be found in header file <dt-bindings/memory/tegra20-mc.h>
++  or in the TRM documentation.
  
- 	/* mask all interrupts to avoid flooding */
--	status = mc_readl(mc, MC_INTSTATUS);
- 	mask = mc_readl(mc, MC_INTMASK);
-+	status = mc_readl(mc, MC_INTSTATUS) & mask;
+ Example:
+-	memory-controller@7000f000 {
++	mc: memory-controller@7000f000 {
+ 		compatible = "nvidia,tegra20-mc";
+ 		reg = <0x7000f000 0x024
+ 		       0x7000f03c 0x3c4>;
+ 		interrupts = <0 77 0x04>;
++		#reset-cells = <1>;
++	};
 +
-+	if (!status)
-+		return IRQ_NONE;
- 
- 	for_each_set_bit(bit, &status, 32) {
- 		const char *error = status_names[bit] ?: "unknown";
++	video-codec@6001a000 {
++		compatible = "nvidia,tegra20-vde";
++		...
++		resets = <&mc TEGRA20_MC_RESET_VDE>;
+ 	};
 -- 
 2.16.3
