@@ -1,58 +1,58 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 5/5] pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
-Date: Tue, 10 Apr 2018 14:51:41 +0200
-Message-ID: <1523364701-15383-6-git-send-email-geert+renesas@glider.be>
-References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 0/5] Use of_clk_get_parent_count() instead of open coding
+Date: Tue, 10 Apr 2018 14:51:36 +0200
+Message-ID: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-tegra@vger.kernel.org
 
-A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
-Use of_clk_get_parent_count() instead of open coding"), replace it.
+	Hi Mike, Stephen, et al,
 
-of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
-instead of <linux/clk-provider.h>.
+This patch series replaces open-coded versions of
+of_clk_get_parent_count() by calls to the helper function.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
-<linux/of_clk.h>".
+Changes compared to v1:
+  - Move OF clock helpers (a.o. of_clk_get_parent_count()) to their own
+    include file <linux/of_clk.h>, as suggested by Stephen,
+  - Update includes for the above change,
+  - Fix timer-sp804, now a dummy is available in the !CONFIG_COMMON_CLK
+    case,
+  - Fix a new occurrence.
 
-v2:
-  - New.
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Note that patches 2-5 depend on the first patch.  To simplify
+dependencies, perhaps the first patch can still make it in v4.17-rc1?
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 020d6d84639ca002..25e80a5370ca02f6 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -12,12 +12,12 @@
- 
- #include <linux/io.h>
- #include <linux/clk.h>
--#include <linux/clk-provider.h>
- #include <linux/gpio/driver.h>
- #include <linux/irqdomain.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/export.h>
- #include <linux/of.h>
-+#include <linux/of_clk.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
-@@ -1361,7 +1361,7 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
- 			goto gpiochip_error;
- 	}
- 
--	ret = of_count_phandle_with_args(node, "clocks", "#clock-cells");
-+	ret = of_clk_get_parent_count(node);
- 	clk = devm_clk_get(&pdev->dev, ret == 1 ? NULL : "apb");
- 	if (IS_ERR(clk)) {
- 		ret = PTR_ERR(clk);
+Thanks!
+
+Geert Uytterhoeven (5):
+  clk: Extract OF clock helpers in <linux/of_clk.h>
+  ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
+  soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of
+    open coding
+  soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
+  pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
+
+ drivers/clocksource/timer-sp804.c     |  3 ++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c |  4 ++--
+ drivers/soc/rockchip/pm_domains.c     |  4 ++--
+ drivers/soc/tegra/pmc.c               |  3 ++-
+ include/linux/clk-provider.h          | 14 +-------------
+ include/linux/of_clk.h                | 29 +++++++++++++++++++++++++++++
+ 6 files changed, 38 insertions(+), 19 deletions(-)
+ create mode 100644 include/linux/of_clk.h
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
