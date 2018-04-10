@@ -1,127 +1,63 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
-Date: Tue, 10 Apr 2018 14:51:37 +0200
-Message-ID: <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH v2 5/5] pinctrl: sunxi: Use of_clk_get_parent_count()
+ instead of open coding
+Date: Tue, 10 Apr 2018 15:01:52 +0200
+Message-ID: <20180410130152.cccquujj7j6asv5b@flea>
 References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+ <1523364701-15383-6-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="o3guqvonumlxhijw"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+Content-Disposition: inline
+In-Reply-To: <1523364701-15383-6-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
-limited to clock providers.
 
-Hence move these helpers into their own header file, so callers that are
-not clock providers no longer have to include <linux/clk-provider.h>.
+--o3guqvonumlxhijw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
+On Tue, Apr 10, 2018 at 02:51:41PM +0200, Geert Uytterhoeven wrote:
+> A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
+> Use of_clk_get_parent_count() instead of open coding"), replace it.
+>=20
+> of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
+> instead of <linux/clk-provider.h>.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I have't added an SPDX-License-Identifier line, as
-<linux/clk-provider.h> also doesn't have one yet.
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Other candidates to be moved here later?
-  - of_clk_get(),
-  - of_clk_get_by_name(),
-  - of_clk_get_from_provider().
----
- include/linux/clk-provider.h | 14 +-------------
- include/linux/of_clk.h       | 29 +++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+), 13 deletions(-)
- create mode 100644 include/linux/of_clk.h
+Maxime
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 210a890008f9e129..61cb4729f22acd6b 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -13,6 +13,7 @@
- 
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/of_clk.h>
- 
- #ifdef CONFIG_COMMON_CLK
- 
-@@ -890,13 +891,10 @@ struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec,
- struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data);
- struct clk_hw *of_clk_hw_onecell_get(struct of_phandle_args *clkspec,
- 				     void *data);
--unsigned int of_clk_get_parent_count(struct device_node *np);
- int of_clk_parent_fill(struct device_node *np, const char **parents,
- 		       unsigned int size);
--const char *of_clk_get_parent_name(struct device_node *np, int index);
- int of_clk_detect_critical(struct device_node *np, int index,
- 			    unsigned long *flags);
--void of_clk_init(const struct of_device_id *matches);
- 
- #else /* !CONFIG_OF */
- 
-@@ -943,26 +941,16 @@ of_clk_hw_onecell_get(struct of_phandle_args *clkspec, void *data)
- {
- 	return ERR_PTR(-ENOENT);
- }
--static inline unsigned int of_clk_get_parent_count(struct device_node *np)
--{
--	return 0;
--}
- static inline int of_clk_parent_fill(struct device_node *np,
- 				     const char **parents, unsigned int size)
- {
- 	return 0;
- }
--static inline const char *of_clk_get_parent_name(struct device_node *np,
--						 int index)
--{
--	return NULL;
--}
- static inline int of_clk_detect_critical(struct device_node *np, int index,
- 					  unsigned long *flags)
- {
- 	return 0;
- }
--static inline void of_clk_init(const struct of_device_id *matches) {}
- #endif /* CONFIG_OF */
- 
- /*
-diff --git a/include/linux/of_clk.h b/include/linux/of_clk.h
-new file mode 100644
-index 0000000000000000..ba3c0e6983ec1543
---- /dev/null
-+++ b/include/linux/of_clk.h
-@@ -0,0 +1,29 @@
-+/*
-+ * OF clock helpers
-+ */
-+
-+#ifndef __LINUX_OF_CLK_H
-+#define __LINUX_OF_CLK_H
-+
-+#if defined(CONFIG_COMMON_CLK) && defined(CONFIG_OF)
-+
-+unsigned int of_clk_get_parent_count(struct device_node *np);
-+const char *of_clk_get_parent_name(struct device_node *np, int index);
-+void of_clk_init(const struct of_device_id *matches);
-+
-+#else /* !CONFIG_COMMON_CLK || !CONFIG_OF */
-+
-+static inline unsigned int of_clk_get_parent_count(struct device_node *np)
-+{
-+	return 0;
-+}
-+static inline const char *of_clk_get_parent_name(struct device_node *np,
-+						 int index)
-+{
-+	return NULL;
-+}
-+static inline void of_clk_init(const struct of_device_id *matches) {}
-+
-+#endif /* !CONFIG_COMMON_CLK || !CONFIG_OF */
-+
-+#endif /* __LINUX_OF_CLK_H */
--- 
-2.7.4
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--o3guqvonumlxhijw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrMtb8ACgkQ0rTAlCFN
+r3S8Mg//ZpBQHXcvZIXgRQTDxBsbN/raSOmakCV8l1JmXYXKrQ6vSrHuQdQgA5jz
+PJRAZaYRlR6ZVI3sTnqR17oxAxa2b1C+Jusz9Qfl3kuirfXipu2lRKtlUnZfzR/D
+cL1XBODMO7/MgcI+ip1TZe3D9zzyRsa2ZzJ6AQOfsZg44O6LkvlXDVRljhpR7fmH
+7k9PvEJCLkgldXTFSe/FsQvGLFP2eDNrc6v3CFthfdX/gzTugGL83PyRJwRj8Agj
+0eB2GIeTpKmLGRq2ESWmVIls/w/Q1trxVyfHNp3pg3n+m6K/1qixYD8aECPW2/88
+0ITTZYfZ955Kgr9RY3ieqVIAg9SfrRu+eaEBFlrceo5AZTEIrslpBWbaGJcHG9sW
+Z6R019Tb46ufXXdaEUEMdFN7d/hlXu1bfz0uxtSe7Dcv8UaQyEUH4h+N5bpt8FfV
+DjD2m1zDGiznCDLVZECfbT6mjXeGkwrIAwP2Kz4lU8v6rilGiCIsYv2ecnyTMNUB
+B5Z0pJt2j1czGlQO2jpovt2QAXg9lmuHlg0ny/xXwlpG8YbBUz1ZOPYT+a/g09FE
+7BEkNXYe0FDJlkIuVjBjF/qFgtK0jylsi4hUsOMai6SG4vQMXe8QzX9lECcx/cB7
+iqMASBwI5iyTRX+A8UVzCymbw8Zk10me91tXaTtk0Tji3qKxuUY=
+=tkZm
+-----END PGP SIGNATURE-----
+
+--o3guqvonumlxhijw--
