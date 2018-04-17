@@ -1,49 +1,30 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] gpu: drm: tegra: Adding new typedef vm_fault_t
-Date: Mon, 16 Apr 2018 21:39:18 +0530
-Message-ID: <20180416160918.GA27080@jordon-HP-15-Notebook-PC>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2 2/5] ARM: timer-sp: Use of_clk_get_parent_count()
+ instead of open coding
+Date: Tue, 17 Apr 2018 10:50:20 +0200
+Message-ID: <20180417085020.GA7214@mai>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+ <1523364701-15383-3-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com, airlied@linux.ie, jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org, willy@infradead.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <1523364701-15383-3-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-VXNlIG5ldyByZXR1cm4gdHlwZSB2bV9mYXVsdF90IGZvciBmYXVsdCBoYW5kbGVyCmluIHZtX29w
-ZXJhdGlvbnNfc3RydWN0LgoKU2lnbmVkLW9mZi1ieTogU291cHRpY2sgSm9hcmRlciA8anJkci5s
-aW51eEBnbWFpbC5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jIHwgMTggKyst
-LS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxNiBkZWxl
-dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKaW5kZXggNDliOWJmMi4uNjEyMTQ5MyAxMDA2NDQKLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9nZW0uYwpAQCAtNDIyLDE0ICs0MjIsMTMgQEAgaW50IHRlZ3JhX2JvX2R1bWJfY3JlYXRlKHN0
-cnVjdCBkcm1fZmlsZSAqZmlsZSwgc3RydWN0IGRybV9kZXZpY2UgKmRybSwKIAlyZXR1cm4gMDsK
-IH0KCi1zdGF0aWMgaW50IHRlZ3JhX2JvX2ZhdWx0KHN0cnVjdCB2bV9mYXVsdCAqdm1mKQorc3Rh
-dGljIHZtX2ZhdWx0X3QgdGVncmFfYm9fZmF1bHQoc3RydWN0IHZtX2ZhdWx0ICp2bWYpCiB7CiAJ
-c3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEgPSB2bWYtPnZtYTsKIAlzdHJ1Y3QgZHJtX2dlbV9v
-YmplY3QgKmdlbSA9IHZtYS0+dm1fcHJpdmF0ZV9kYXRhOwogCXN0cnVjdCB0ZWdyYV9ibyAqYm8g
-PSB0b190ZWdyYV9ibyhnZW0pOwogCXN0cnVjdCBwYWdlICpwYWdlOwogCXBnb2ZmX3Qgb2Zmc2V0
-OwotCWludCBlcnI7CgogCWlmICghYm8tPnBhZ2VzKQogCQlyZXR1cm4gVk1fRkFVTFRfU0lHQlVT
-OwpAQCAtNDM3LDIwICs0MzYsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2JvX2ZhdWx0KHN0cnVjdCB2
-bV9mYXVsdCAqdm1mKQogCW9mZnNldCA9ICh2bWYtPmFkZHJlc3MgLSB2bWEtPnZtX3N0YXJ0KSA+
-PiBQQUdFX1NISUZUOwogCXBhZ2UgPSBiby0+cGFnZXNbb2Zmc2V0XTsKCi0JZXJyID0gdm1faW5z
-ZXJ0X3BhZ2Uodm1hLCB2bWYtPmFkZHJlc3MsIHBhZ2UpOwotCXN3aXRjaCAoZXJyKSB7Ci0JY2Fz
-ZSAtRUFHQUlOOgotCWNhc2UgMDoKLQljYXNlIC1FUkVTVEFSVFNZUzoKLQljYXNlIC1FSU5UUjoK
-LQljYXNlIC1FQlVTWToKLQkJcmV0dXJuIFZNX0ZBVUxUX05PUEFHRTsKLQotCWNhc2UgLUVOT01F
-TToKLQkJcmV0dXJuIFZNX0ZBVUxUX09PTTsKLQl9Ci0KLQlyZXR1cm4gVk1fRkFVTFRfU0lHQlVT
-OworCXJldHVybiB2bWZfaW5zZXJ0X3BhZ2Uodm1hLCB2bWYtPmFkZHJlc3MsIHBhZ2UpOwogfQoK
-IGNvbnN0IHN0cnVjdCB2bV9vcGVyYXRpb25zX3N0cnVjdCB0ZWdyYV9ib192bV9vcHMgPSB7Ci0t
-CjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Tue, Apr 10, 2018 at 02:51:38PM +0200, Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
+> <linux/of_clk.h>".
+> 
+> v2:
+>   - of_clk_get_parent_count() was moved to <linux/of_clk.h>,
+>   - Dropped RFC, as a dummy is now available in the !CONFIG_COMMON_CLK
+>     case.
+> ---
+
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
