@@ -1,42 +1,29 @@
-From: Stefan Schake <stschake@gmail.com>
-Subject: [PATCH] drm/tegra: hub: Use state directly
-Date: Wed, 18 Apr 2018 03:40:19 -0700
-Message-ID: <20180418104019.31344-1-stschake@gmail.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Subject: Re: [PATCH] gpu: drm: tegra: Adding new typedef vm_fault_t
+Date: Wed, 18 Apr 2018 16:39:22 +0530
+Message-ID: <CAFqt6zb74=222mOnpnzLpfXEpttHTgpMitB-TgwrLdHKP3dEkg@mail.gmail.com>
+References: <20180417134755.GA30291@jordon-HP-15-Notebook-PC> <20180418082439.GA4646@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com
-Cc: airlied@linux.ie, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Stefan Schake <stschake@gmail.com>, linux-tegra@vger.kernel.org, jonathanh@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180418082439.GA4646@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: airlied@linux.ie, jonathanh@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VXNpbmcgZHJtX2F0b21pY19nZXRfcHJpdmF0ZV9vYmpfc3RhdGUgYWZ0ZXIgc3RhdGUgaGFzIGJl
-ZW4gc3dhcHBlZAp3aWxsIHJldHVybiBvbGQgc3RhdGUuCgpGaXhlczogMDI4MWM0MTQ5MDIxICgi
-ZHJtL3RlZ3JhOiBodWI6IFVzZSBwcml2YXRlIG9iamVjdCBmb3IgZ2xvYmFsIHN0YXRlIikKU2ln
-bmVkLW9mZi1ieTogU3RlZmFuIFNjaGFrZSA8c3RzY2hha2VAZ21haWwuY29tPgotLS0KIGRyaXZl
-cnMvZ3B1L2RybS90ZWdyYS9odWIuYyB8IDUgKystLS0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2Vy
-dGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL2h1Yi5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jCmluZGV4IDlhM2YyM2Q0Nzgw
-Zi4uYmRkMmNkZDA3NDVjIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMK
-KysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jCkBAIC02ODMsMTIgKzY4MywxMSBAQCB2
-b2lkIHRlZ3JhX2Rpc3BsYXlfaHViX2F0b21pY19jb21taXQoc3RydWN0IGRybV9kZXZpY2UgKmRy
-bSwKIHsKIAlzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSA9IGRybS0+ZGV2X3ByaXZhdGU7CiAJc3Ry
-dWN0IHRlZ3JhX2Rpc3BsYXlfaHViICpodWIgPSB0ZWdyYS0+aHViOwotCXN0cnVjdCB0ZWdyYV9k
-aXNwbGF5X2h1Yl9zdGF0ZSAqaHViX3N0YXRlOworCXN0cnVjdCB0ZWdyYV9kaXNwbGF5X2h1Yl9z
-dGF0ZSAqaHViX3N0YXRlID0KKwkJdG9fdGVncmFfZGlzcGxheV9odWJfc3RhdGUoaHViLT5iYXNl
-LnN0YXRlKTsKIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBodWItPmNsaWVudC5kZXY7CiAJaW50IGVy
-cjsKIAotCWh1Yl9zdGF0ZSA9IHRlZ3JhX2Rpc3BsYXlfaHViX2dldF9zdGF0ZShodWIsIHN0YXRl
-KTsKLQogCWlmIChodWJfc3RhdGUtPmNsaykgewogCQllcnIgPSBjbGtfc2V0X3JhdGUoaHViX3N0
-YXRlLT5jbGssIGh1Yl9zdGF0ZS0+cmF0ZSk7CiAJCWlmIChlcnIgPCAwKQotLSAKMi4xNC4xCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+> This new function returns VM_FAULT_NOPAGE only for 0 and -EBUSY, whereas
+> we used to return VM_FAULT_NOPAGE for -EAGAIN, -ERESTARTSYS and -EINTR
+> as well.
+
+Previously vm_insert_page unable to return VM_FAULT_ type due to which
+different drivers
+have their own mapping from err to VM_FAULT_ type. With new
+vmf_insert_page() introduce
+in 4.17-rc1 we have a common mapping for err to VM_FAULT_ which remain
+same for every
+drivers/file systems.
+
+Was this previously wrong?
+
+I think Matthew is the right person to answer this.
