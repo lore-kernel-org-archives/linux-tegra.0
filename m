@@ -1,52 +1,65 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/5] ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
-Date: Wed, 18 Apr 2018 16:50:02 +0200
-Message-ID: <1524063005-1716-3-git-send-email-geert+renesas@glider.be>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v3 0/5] Use of_clk_get_parent_count() instead of open coding
+Date: Wed, 18 Apr 2018 16:50:00 +0200
+Message-ID: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
-This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
-<linux/of_clk.h>".
+	Hi Mike, Stephen, et al,
 
-v3:
-  - Add Acked-by,
+This patch series replaces open-coded versions of
+of_clk_get_parent_count() by calls to the helper function.
 
-v2:
-  - of_clk_get_parent_count() was moved to <linux/of_clk.h>,
-  - Dropped RFC, as a dummy is now available in the !CONFIG_COMMON_CLK
-    case.
----
- drivers/clocksource/timer-sp804.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes compared to v2:
+  - Add Acked-by, Reviewed-by,
+  - Add SPDX-License-Identifier to <linux/of_clk.h>,
+  - Add <linux/of_clk.h> to clock section in MAINTAINERS (note that Rob
+    is still listed as a maintainer, too, due to the include/linux/of*.h
+    catch-all rule),
 
-diff --git a/drivers/clocksource/timer-sp804.c b/drivers/clocksource/timer-sp804.c
-index 3ac9dec9a03852f9..e01222ea888ff9d2 100644
---- a/drivers/clocksource/timer-sp804.c
-+++ b/drivers/clocksource/timer-sp804.c
-@@ -27,6 +27,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_clk.h>
- #include <linux/of_irq.h>
- #include <linux/sched_clock.h>
- 
-@@ -245,7 +246,7 @@ static int __init sp804_of_init(struct device_node *np)
- 		clk1 = NULL;
- 
- 	/* Get the 2nd clock if the timer has 3 timer clocks */
--	if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
-+	if (of_clk_get_parent_count(np) == 3) {
- 		clk2 = of_clk_get(np, 1);
- 		if (IS_ERR(clk2)) {
- 			pr_err("sp804: %s clock not found: %d\n", np->name,
+Changes compared to v1:
+  - Move OF clock helpers (a.o. of_clk_get_parent_count()) to their own
+    include file <linux/of_clk.h>, as suggested by Stephen,
+  - Update includes for the above change,
+  - Fix timer-sp804, now a dummy is available in the !CONFIG_COMMON_CLK
+    case,
+  - Fix a new occurrence.
+
+Note that patches 2-5 depend on the first patch.
+
+Thanks!
+
+Geert Uytterhoeven (5):
+  clk: Extract OF clock helpers in <linux/of_clk.h>
+  ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
+  soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of
+    open coding
+  soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
+  pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
+
+ MAINTAINERS                           |  1 +
+ drivers/clocksource/timer-sp804.c     |  3 ++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c |  4 ++--
+ drivers/soc/rockchip/pm_domains.c     |  4 ++--
+ drivers/soc/tegra/pmc.c               |  3 ++-
+ include/linux/clk-provider.h          | 14 +-------------
+ include/linux/of_clk.h                | 30 ++++++++++++++++++++++++++++++
+ 7 files changed, 40 insertions(+), 19 deletions(-)
+ create mode 100644 include/linux/of_clk.h
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
