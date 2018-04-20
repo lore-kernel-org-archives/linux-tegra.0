@@ -1,95 +1,45 @@
 From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v1 3/4] drm/tegra: plane: Add custom colorkey properties
- for older Tegra's
-Date: Fri, 20 Apr 2018 09:31:19 +0200
-Message-ID: <20180420073119.GJ31310@phenom.ffwll.local>
+Subject: Re: [PATCH v1 4/4] drm/tegra: plane: Add custom CSC BLOB property
+Date: Fri, 20 Apr 2018 09:34:04 +0200
+Message-ID: <20180420073404.GK31310@phenom.ffwll.local>
 References: <cover.1523880381.git.digetx@gmail.com>
- <d78f7339de922d6a8114c73f0919534f4195f572.1523880381.git.digetx@gmail.com>
- <20180417090040.GY31310@phenom.ffwll.local>
- <6ff89658-28e4-fa9f-173d-4e9a885a7962@gmail.com>
+ <dac33c4b27107fee37d187d97187431353fe6afc.1523880381.git.digetx@gmail.com>
+ <20180417090144.GZ31310@phenom.ffwll.local>
+ <3b1c45ee-a48e-0cae-c7bc-b87e792f2b97@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6ff89658-28e4-fa9f-173d-4e9a885a7962@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <3b1c45ee-a48e-0cae-c7bc-b87e792f2b97@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBBcHIgMTcsIDIwMTggYXQgMDg6MDg6MjdQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtv
-IHdyb3RlOgo+IE9uIDE3LjA0LjIwMTggMTI6MDAsIERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4gPiBP
-biBNb24sIEFwciAxNiwgMjAxOCBhdCAwMzoxNjoyN1BNICswMzAwLCBEbWl0cnkgT3NpcGVua28g
-d3JvdGU6Cj4gPj4gQ29sb3JrZXknaW5nIGFsbG93cyB0byBkcmF3IG9uIHRvcCBvZiBvdmVybGFw
-cGluZyBwbGFuZXMsIGxpa2UgZm9yIGV4YW1wbGUKPiA+PiBvbiB0b3Agb2YgYSB2aWRlbyBwbGFu
-ZS4gT2xkZXIgVGVncmEncyBoYXZlIGEgbGltaXRlZCBjb2xvcmtleSdpbmcKPiA+PiBjYXBhYmls
-aXR5IHN1Y2ggdGhhdCBibGVuZGluZyBmZWF0dXJlcyBhcmUgcmVkdWNlZCB3aGVuIGNvbG9ya2V5
-J2luZyBpcwo+ID4+IGVuYWJsZWQuIEluIHBhcnRpY3VsYXIgZGVwZW5kZW50IHdlaWdodGluZyBp
-c24ndCBwb3NzaWJsZSwgbWVhbmluZyB0aGF0Cj4gPj4gY3Vyc29ycyBwbGFuZSBjYW4ndCBiZSBk
-aXNwbGF5ZWQgcHJvcGVybHkuIEluIG1vc3QgY2FzZXMgaXQgaXMgbW9yZSB1c2VmdWwKPiA+PiB0
-byBkaXNwbGF5IGNvbnRlbnQgb24gdG9wIG9mIHZpZGVvIG92ZXJsYXksIHNhY3JpZmljaW5nIG1v
-dXNlIGN1cnNvcgo+ID4+IGluIHRoZSBhcmVhIG9mIHRocmVlIHBsYW5lcyBpbnRlcnNlY3Rpb24g
-d2l0aCBjb2xvcmtleSBtaXNtYXRjaC4gVGhpcwo+ID4+IHBhdGNoIGFkZHMgYSBjdXN0b20gY29s
-b3JrZXkgcHJvcGVydGllcyB0byBwcmltYXJ5IHBsYW5lIGFuZCBDUlRDJ3Mgb2YKPiA+PiBvbGRl
-ciBUZWdyYSdzLCBhbGxvd2luZyB1c2Vyc3BhY2UgbGlrZSBPcGVudGVncmEgWG9yZyBkcml2ZXIg
-dG8gaW1wbGVtZW50Cj4gPj4gY29sb3JrZXkgc3VwcG9ydCBmb3IgWFZpZGVvIGV4dGVuc2lvbi4K
-PiA+Pgo+ID4+IFNpZ25lZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNv
-bT4KPiA+IAo+ID4gU2luY2UgdGhpcyBpcyB5b3VyIG93biB1YXBpLCB3aGVyZSdzIHRoZSB1c2Vy
-c3BhY2UgcGVyCj4gPiAKPiA+IGh0dHBzOi8vZHJpLmZyZWVkZXNrdG9wLm9yZy9kb2NzL2RybS9n
-cHUvZHJtLXVhcGkuaHRtbCNvcGVuLXNvdXJjZS11c2Vyc3BhY2UtcmVxdWlyZW1lbnRzCj4gCj4g
-VXNlcnNwYWNlIHBhdGNoZXMgZm9yIGNvbG9ya2V5IGFuZCBDU0MgdXRpbGl6YXRpb24gYXJlIGlu
-IG15IHBlcnNvbmFsIGdpdGh1Ygo+IHJlcG9zIGZvciBub3cgWzBdWzFdLiBUaGUgbG9uZ3Rlcm0g
-cGxhbiBpcyB0byBnZXQgT3BlbnRlZ3JhIGRyaXZlciAvIGxpYmRybSBiaXRzCj4gb2YgWzJdIHRv
-IHJlcG9zIG9uIGZyZWVkZXNrdG9wLm9yZywgd2hpY2ggc2hvdWxkIGJlIGNvbnNpZGVyZWQgYXMg
-dXBzdHJlYW0uIFdlCj4gaGF2ZSBldmVyeXRoaW5nIGRlcGVuZGluZyBvbiBsaWJkcm0tdGVncmEg
-YW5kIGl0IGlzIGN1cnJlbnRseSBvbiBob2xkIGJlY2F1c2Ugb2YKPiB1cGNvbWluZyBtYXNzaXZl
-IHJld29yayBvZiBUZWdyYSBEUk0gVUFQSSB3aXRoIGZ1cnRoZXIgZGUtc3RhZ2luZyBvZiBqb2Jz
-Cj4gc3VibWlzc2lvbiBVQVBJLCB0aGF0IHJld29ya2luZyBzaG91bGQgc3RhcnQgd2l0aCA0LjE4
-IGtlcm5lbC4KPiAKPiBGb3Igbm93IEkgd2FudGVkIHRvIGdldCBpbml0aWFsIGlucHV0IG9uIHRo
-ZSBwYXRjaGVzLiBPbmNlIGV2ZXJ5b25lIGlzIGluCj4gYWdyZWVtZW50LCBJJ2QgbGlrZSB0byBo
-YXZlIGNvbG9ya2V5IC8gQ1NDIHN1cHBvcnRlZCBieSB0aGUgdXBzdHJlYW0gRFJNIGRyaXZlciwK
-PiBzbyB0aGF0IGF0IGxlYXN0IGdyYXRlLWRyaXZlciBwcm9qZWN0cyBjb3VsZCB1dGlsaXplIHRo
-ZW0gcmlnaHQgbm93Lgo+IAo+ID4gQW5kIHdoeSB3byB3ZSBuZWVkIGEgdGVncmEtcHJpdmF0ZSBj
-b2xvcmtleSBwcm9wZXJ0eSBoZXJlPyBJIHRob3VnaHQKPiA+IG90aGVyJ3MgaGF2ZSBiZWVuIGRp
-c2N1c3NpbmcgdGhpcyBpbiB0aGUgY29udGV4dCBvZiBvdGhlciBkcml2ZXJzLgo+IAo+IEF0IGxl
-YXN0IG9sZGVyIFRlZ3JhJ3MgaGF2ZSBsaW1pdGF0aW9ucyBpbiByZWdhcmRzIHRvIGNvbG9ya2V5
-LCBsaWtlIHBsYW5lcwo+IGJsZW5kaW5nIGNhcGFiaWxpdGllcyBhcmUgcmVkdWNlZCBhIGxvdCB3
-aGVuIGNvbG9ya2V5J2luZyBpcyBlbmFibGVkLiBJJ20gbm90Cj4gc3VyZSB3aGV0aGVyIHdlJ2Qg
-d2FudCB0byBoYXZlIGl0IGFzIGEgZ2VuZXJpYyBwcm9wZXJ0eSwgYmVjYXVzZSBnZW5lcmljCj4g
-dXNlcnNwYWNlIHNob3VsZCBiZSBhd2FyZSBvZiB0aG9zZSBsaW1pdGF0aW9ucywgb3RoZXJ3aXNl
-IHRoZXJlIGlzIGEgZ29vZCBjaGFuY2UKPiB0byBnZXQgdW5kZXNpcmFibGUgcmVzdWx0IHVzaW5n
-IGNvbG9ya2V5LiBUaG91Z2ggSSdtIG5vdCByZWFsbHkgc3VyZSBob3cgd2lkZWx5Cj4gY29sb3Jr
-ZXkgcHJvcGVydHkgY291bGQgYmUgdXRpbGl6ZSBieSB1c2Vyc3BhY2UgYW5kIHdoYXQga2luZCBv
-ZiBhcHBsaWNhdGlvbnMKPiB0aGF0IHVzZXJzcGFjZSBjb3VsZCBoYXZlIGZvciBpdCwgbWF5YmUg
-aGF2aW5nIGNvbG9ya2V5IGFzIGEgZ2VuZXJpYyBwcm9wZXJ0eQo+IHdvdWxkIGJlIGdvb2QgZW5v
-dWdoIGFmdGVyIGFsbC4KPiAKPiBJJ3ZlIGxvb2tlZCB1cCB0aGUgRFJJIE1MIGFyY2hpdmUgYW5k
-IHNlZW1zIHRoZSBtb3N0IHJlY2VudCBjb2xvcmtleS1yZWxhdGVkCj4gcGF0Y2hlcyBhcmUgWzNd
-LiBUaGVzZSBwYXRjaGVzIGFyZSBhIGJpdCBvZGQgdG8gbWUgYmVjYXVzZSBieSBnZW5lcmljIHBy
-b3BlcnR5IEkKPiBhc3N1bWUgYSBwcm9wZXJ0eSB0aGF0IGlzIEhXLWFnbm9zdGljIGFuZCB0aGUg
-cGF0Y2hzZXQgZG9lcyBvcHBvc2l0ZSB0byBpdC4KPiBNYXliZSBJJ20gbWlzdW5kZXJzdGFuZGlu
-ZyB3aGF0IGlzIG1lYW50IGJ5ICdnZW5lcmljJyBwcm9wZXJ0eSB0aGVuPyBBbnl3YXkgSSd2ZQo+
-IGFwcGxpZWQgWzNdIGFuZCBtYWRlIFRlZ3JhIHRvIHVzZSB0aGF0IGdlbmVyaWMgcHJvcGVydHks
-IGl0IHdvcmtzIGZpbmUuIEknbGwgYmUKPiBoYXBweSB0byBzd2l0Y2ggdG8gYSBnZW5lcmljIHBy
-b3BlcnR5IGlmIHdlJ2xsIGNvbnNpZGVyIHRoYXQgaXQgaXMgYSB2aWFibGUgd2F5Lgo+IAo+IFsw
-XSBodHRwczovL2dpdGh1Yi5jb20vZGlnZXR4L3hmODYtdmlkZW8tb3BlbnRlZ3JhL2NvbW1pdHMv
-Y2tleQo+IFsxXSBodHRwczovL2dpdGh1Yi5jb20vZGlnZXR4L2xpYnZkcGF1LXRlZ3JhL2NvbW1p
-dHMvY2tleQo+IFsyXSBodHRwczovL2dpdGh1Yi5jb20vZ3JhdGUtZHJpdmVyCj4gWzNdIGh0dHBz
-Oi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTAxMTc1OTMvCgpZZXMgdGhhdCdzIHRoZSBw
-YXRjaGVzIEkgbWVhbnQsIHRoYW5rcyBmb3Igc3VyZmFjaW5nIHRoZW0uCgpQbGVhc2Ugd29yayB0
-b2dldGhlciB3aXRoIExhdXJlbnQsIE1heGltZSBhbmQgQm9yaXMgb24gdGhpcyAoanVtcCBvbiB0
-aGF0CnRocmVhZCBhbmQgQ2MgdGhlbSBvbiB5b3VyIG93biBwYXRjaGVzIGZvciB0aGUgbmV4dCBy
-b3VuZCkuIEFuZCBwbHMgYWxzbwp3b3JrIHRvZ2V0aGVyIG9uIGEgY29tbW9uIHVzZXJzcGFjZSBm
-b3IgdGhpcy4KLURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50
-ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Tue, Apr 17, 2018 at 08:31:11PM +0300, Dmitry Osipenko wrote:
+> On 17.04.2018 12:01, Daniel Vetter wrote:
+> > On Mon, Apr 16, 2018 at 03:16:28PM +0300, Dmitry Osipenko wrote:
+> >> This new property allows userspace to apply custom color conversion
+> >> coefficients per plane, making possible to utilize display controller
+> >> for color adjustments of a video overlay.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > 
+> > Same here, this needs corresponding userspace:
+> > 
+> > https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
+> > 
+> > And again there's even more people who discussed extending the existing
+> > color management support for crtcs to planes. I think we definitely want a
+> > standard interface for this, not each driver doing their own thing.
+> 
+> Could you please point me to where that discussion is happening?
+
+https://patchwork.freedesktop.org/patch/209469/
+
+is one I've found, but I think there's other efforts.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
