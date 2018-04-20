@@ -1,45 +1,63 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v1 4/4] drm/tegra: plane: Add custom CSC BLOB property
-Date: Fri, 20 Apr 2018 09:34:04 +0200
-Message-ID: <20180420073404.GK31310@phenom.ffwll.local>
-References: <cover.1523880381.git.digetx@gmail.com>
- <dac33c4b27107fee37d187d97187431353fe6afc.1523880381.git.digetx@gmail.com>
- <20180417090144.GZ31310@phenom.ffwll.local>
- <3b1c45ee-a48e-0cae-c7bc-b87e792f2b97@gmail.com>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH 49/61] staging: nvec: simplify getting .drvdata
+Date: Fri, 20 Apr 2018 10:45:42 +0200
+Message-ID: <1534139.KRlJX3jJQi@ax5200p>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-50-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3b1c45ee-a48e-0cae-c7bc-b87e792f2b97@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180419140641.27926-50-wsa+renesas@sang-engineering.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 08:31:11PM +0300, Dmitry Osipenko wrote:
-> On 17.04.2018 12:01, Daniel Vetter wrote:
-> > On Mon, Apr 16, 2018 at 03:16:28PM +0300, Dmitry Osipenko wrote:
-> >> This new property allows userspace to apply custom color conversion
-> >> coefficients per plane, making possible to utilize display controller
-> >> for color adjustments of a video overlay.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > 
-> > Same here, this needs corresponding userspace:
-> > 
-> > https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
-> > 
-> > And again there's even more people who discussed extending the existing
-> > color management support for crtcs to planes. I think we definitely want a
-> > standard interface for this, not each driver doing their own thing.
+Am Donnerstag, 19. April 2018, 16:06:19 CEST schrieb Wolfram Sang:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
 > 
-> Could you please point me to where that discussion is happening?
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-https://patchwork.freedesktop.org/patch/209469/
+Acked-by: Marc Dietrich <marvin24@gmx.de>
 
-is one I've found, but I think there's other efforts.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/staging/nvec/nvec.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 52054a528723..2a5e0dcf4162 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -925,8 +925,7 @@ static int tegra_nvec_remove(struct platform_device
+> *pdev) static int nvec_suspend(struct device *dev)
+>  {
+>  	int err;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct nvec_chip *nvec = platform_get_drvdata(pdev);
+> +	struct nvec_chip *nvec = dev_get_drvdata(dev);
+>  	struct nvec_msg *msg;
+>  	char ap_suspend[] = { NVEC_SLEEP, AP_SUSPEND };
+> 
+> @@ -946,8 +945,7 @@ static int nvec_suspend(struct device *dev)
+> 
+>  static int nvec_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct nvec_chip *nvec = platform_get_drvdata(pdev);
+> +	struct nvec_chip *nvec = dev_get_drvdata(dev);
+> 
+>  	dev_dbg(nvec->dev, "resuming\n");
+>  	tegra_init_i2c_slave(nvec);
