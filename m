@@ -1,59 +1,47 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
-Date: Fri, 20 Apr 2018 08:28:28 +0200
-Message-ID: <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-2-git-send-email-geert+renesas@glider.be> <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] MAINTAINERS: Rakesh Iyer can't be reached anymore
+Date: Fri, 20 Apr 2018 08:03:26 +0100
+Message-ID: <1f70f124-53e9-9cca-c045-ff919a577e4e@nvidia.com>
+References: <20180419174211.2532-1-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180419174211.2532-1-wsa@the-dreams.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-tegra@vger.kernel.org, open list:OPEN FIRMWARE AND FLATTENE
+To: Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen, Rob,
 
-On Fri, Apr 20, 2018 at 12:25 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
->> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
->> limited to clock providers.
->>
->> Hence move these helpers into their own header file, so callers that are
->> not clock providers no longer have to include <linux/clk-provider.h>.
->>
->> Suggested-by: Stephen Boyd <sboyd@kernel.org>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->> ---
->> v3:
->>   - Add Reviewed-by,
->>   - Add SPDX-License-Identifier,
->>   - Add to clock section in MAINTAINERS (note that Rob is still listed
->>     as a maintainer, too, due to the include/linux/of*.h catch-all
->>     rule),
->
-> Can you X: out this file so Rob is happy? Or that doesn't work?
+On 19/04/18 18:42, Wolfram Sang wrote:
+> The current mail address is rejected, last activity (with a different
+> address) in git-history is from 2012. Remove this.
+> 
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> ---
+> 
+> If somebody knows a recent address, then we can simply update, of course.
+> 
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c4b6d379423e..0307426c2564 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13833,7 +13833,6 @@ S:	Supported
+>  F:	drivers/iommu/tegra*
+>  
+>  TEGRA KBC DRIVER
+> -M:	Rakesh Iyer <riyer@nvidia.com>
+>  M:	Laxman Dewangan <ldewangan@nvidia.com>
+>  S:	Supported
+>  F:	drivers/input/keyboard/tegra-kbc.c
+> 
 
-I guess that should work.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-My point here is that due to the catch-all rule, he's listed as maintainer
-for of_{dma,gpio,irq,iommu,mdio,net,pci} too, which are all helpers for
-other subsystems. Perhaps these should be X'd-out too?
-Or is it OK without X-ing them out, as the clock maintainers are now shown, too?
-
-Rob: What's your preference?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers!
+Jon
