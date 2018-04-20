@@ -1,63 +1,67 @@
 From: Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH 49/61] staging: nvec: simplify getting .drvdata
-Date: Fri, 20 Apr 2018 10:45:42 +0200
-Message-ID: <1534139.KRlJX3jJQi@ax5200p>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-50-wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH] ARM: tegra: fix ulpi regression on tegra20
+Date: Fri, 20 Apr 2018 10:52:00 +0200
+Message-ID: <6600596.BijQW1iq1K@ax5200p>
+References: <20180219151252.29289-1-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180419140641.27926-50-wsa+renesas@sang-engineering.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180219151252.29289-1-marcel@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, 19. April 2018, 16:06:19 CEST schrieb Wolfram Sang:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
+Hi Marcel,
+
+Am Montag, 19. Februar 2018, 16:12:52 CEST schrieb Marcel Ziswiler:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
+> during registration") ULPI has been broken on Tegra20 leading to the
+> following error message during boot:
+> 
+> [    1.974698] ulpi_phy_power_on: ulpi write failed
+> [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
+> [    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
+> 
+> Debugging through the changes and finally also consulting the TRM
+> revealed that rather than the CDEV2 clock off OSC requiring such pin
+> muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
+> just worked by chance of that one having been enabled which Stephen's
+> commit now changed when reparenting sclk away from pll_p_out4 leaving
+> that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
+> as the ULPI PHY clock.
 
-Acked-by: Marc Dietrich <marvin24@gmx.de>
+I booted 4.17-rc1 (which includes this fix) on an AC100 (T20 paz00 board) and 
+the error above is still there. Surprisingly the error vanishes when I revert 
+your patch. So this patch actually *causes* the problem above on my board. 
+Could it be, that we need all four clocks? Dimitry mentioned on IRC that it 
+could also be a problem in the clock init table. I don't have the technical 
+background myself to fix it, but I still wonder what could be so different 
+between TrimSlice and AC100.
 
+Marc
+
+
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
 > ---
 > 
-> Build tested only. buildbot is happy. Please apply individually.
+>  arch/arm/boot/dts/tegra20.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  drivers/staging/nvec/nvec.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index 52054a528723..2a5e0dcf4162 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -925,8 +925,7 @@ static int tegra_nvec_remove(struct platform_device
-> *pdev) static int nvec_suspend(struct device *dev)
->  {
->  	int err;
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct nvec_chip *nvec = platform_get_drvdata(pdev);
-> +	struct nvec_chip *nvec = dev_get_drvdata(dev);
->  	struct nvec_msg *msg;
->  	char ap_suspend[] = { NVEC_SLEEP, AP_SUSPEND };
-> 
-> @@ -946,8 +945,7 @@ static int nvec_suspend(struct device *dev)
-> 
->  static int nvec_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct nvec_chip *nvec = platform_get_drvdata(pdev);
-> +	struct nvec_chip *nvec = dev_get_drvdata(dev);
-> 
->  	dev_dbg(nvec->dev, "resuming\n");
->  	tegra_init_i2c_slave(nvec);
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 864a95872b8d..e05b6bb2599f 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -741,7 +741,7 @@
+>  		phy_type = "ulpi";
+>  		clocks = <&tegra_car TEGRA20_CLK_USB2>,
+>  			 <&tegra_car TEGRA20_CLK_PLL_U>,
+> -			 <&tegra_car TEGRA20_CLK_CDEV2>;
+> +			 <&tegra_car TEGRA20_CLK_PLL_P_OUT4>;
+>  		clock-names = "reg", "pll_u", "ulpi-link";
+>  		resets = <&tegra_car 58>, <&tegra_car 22>;
+>  		reset-names = "usb", "utmi-pads";
