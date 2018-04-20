@@ -1,173 +1,95 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Date: Fri, 20 Apr 2018 09:20:00 +0200
-Message-ID: <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v1 3/4] drm/tegra: plane: Add custom colorkey properties
+ for older Tegra's
+Date: Fri, 20 Apr 2018 09:31:19 +0200
+Message-ID: <20180420073119.GJ31310@phenom.ffwll.local>
+References: <cover.1523880381.git.digetx@gmail.com>
+ <d78f7339de922d6a8114c73f0919534f4195f572.1523880381.git.digetx@gmail.com>
+ <20180417090040.GY31310@phenom.ffwll.local>
+ <6ff89658-28e4-fa9f-173d-4e9a885a7962@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michal Simek <michal.simek@xilinx.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <6ff89658-28e4-fa9f-173d-4e9a885a7962@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wolfram,
-
-On 19.4.2018 16:05, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/gpio/gpio-dwapb.c     |  6 ++----
->  drivers/gpio/gpio-lynxpoint.c |  3 +--
->  drivers/gpio/gpio-omap.c      | 12 ++++--------
->  drivers/gpio/gpio-tegra.c     |  6 ++----
->  drivers/gpio/gpio-zynq.c      |  6 ++----
->  5 files changed, 11 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 226977f78482..caaabb79e31f 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -732,8 +732,7 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
->  #ifdef CONFIG_PM_SLEEP
->  static int dwapb_gpio_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
->  	struct gpio_chip *gc	= &gpio->ports[0].gc;
->  	unsigned long flags;
->  	int i;
-> @@ -777,8 +776,7 @@ static int dwapb_gpio_suspend(struct device *dev)
->  
->  static int dwapb_gpio_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
->  	struct gpio_chip *gc	= &gpio->ports[0].gc;
->  	unsigned long flags;
->  	int i;
-> diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
-> index 1e557b10d73e..55fa33b7209f 100644
-> --- a/drivers/gpio/gpio-lynxpoint.c
-> +++ b/drivers/gpio/gpio-lynxpoint.c
-> @@ -408,8 +408,7 @@ static int lp_gpio_runtime_resume(struct device *dev)
->  
->  static int lp_gpio_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct lp_gpio *lg = platform_get_drvdata(pdev);
-> +	struct lp_gpio *lg = dev_get_drvdata(dev);
->  	unsigned long reg;
->  	int i;
->  
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 35971a341c40..b4f8a048a2a1 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -856,8 +856,7 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
->  
->  static int omap_mpuio_suspend_noirq(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct gpio_bank	*bank = platform_get_drvdata(pdev);
-> +	struct gpio_bank	*bank = dev_get_drvdata(dev);
->  	void __iomem		*mask_reg = bank->base +
->  					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
->  	unsigned long		flags;
-> @@ -871,8 +870,7 @@ static int omap_mpuio_suspend_noirq(struct device *dev)
->  
->  static int omap_mpuio_resume_noirq(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct gpio_bank	*bank = platform_get_drvdata(pdev);
-> +	struct gpio_bank	*bank = dev_get_drvdata(dev);
->  	void __iomem		*mask_reg = bank->base +
->  					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
->  	unsigned long		flags;
-> @@ -1284,8 +1282,7 @@ static void omap_gpio_restore_context(struct gpio_bank *bank);
->  
->  static int omap_gpio_runtime_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct gpio_bank *bank = platform_get_drvdata(pdev);
-> +	struct gpio_bank *bank = dev_get_drvdata(dev);
->  	u32 l1 = 0, l2 = 0;
->  	unsigned long flags;
->  	u32 wake_low, wake_hi;
-> @@ -1352,8 +1349,7 @@ static void omap_gpio_init_context(struct gpio_bank *p);
->  
->  static int omap_gpio_runtime_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct gpio_bank *bank = platform_get_drvdata(pdev);
-> +	struct gpio_bank *bank = dev_get_drvdata(dev);
->  	u32 l = 0, gen, gen0, gen1;
->  	unsigned long flags;
->  	int c;
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index 94396caaca75..04c963f03b68 100644
-> --- a/drivers/gpio/gpio-tegra.c
-> +++ b/drivers/gpio/gpio-tegra.c
-> @@ -403,8 +403,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
->  #ifdef CONFIG_PM_SLEEP
->  static int tegra_gpio_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
-> +	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
->  	unsigned long flags;
->  	unsigned int b, p;
->  
-> @@ -443,8 +442,7 @@ static int tegra_gpio_resume(struct device *dev)
->  
->  static int tegra_gpio_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
-> +	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
->  	unsigned long flags;
->  	unsigned int b, p;
->  
-> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-> index 75ee877e5cd5..49534241bb1e 100644
-> --- a/drivers/gpio/gpio-zynq.c
-> +++ b/drivers/gpio/gpio-zynq.c
-> @@ -697,8 +697,7 @@ static int __maybe_unused zynq_gpio_resume(struct device *dev)
->  
->  static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct zynq_gpio *gpio = dev_get_drvdata(dev);
->  
->  	clk_disable_unprepare(gpio->clk);
->  
-> @@ -707,8 +706,7 @@ static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
->  
->  static int __maybe_unused zynq_gpio_runtime_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct zynq_gpio *gpio = dev_get_drvdata(dev);
->  
->  	return clk_prepare_enable(gpio->clk);
->  }
-> 
-
-There are two more occurences in this gpio-zynq driver.
-zynq_gpio_resume, zynq_gpio_suspend. It wasn't detected because these
-two lines are not together. But the same change can be applied for them too.
-
-Thanks,
-Michal
+T24gVHVlLCBBcHIgMTcsIDIwMTggYXQgMDg6MDg6MjdQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtv
+IHdyb3RlOgo+IE9uIDE3LjA0LjIwMTggMTI6MDAsIERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4gPiBP
+biBNb24sIEFwciAxNiwgMjAxOCBhdCAwMzoxNjoyN1BNICswMzAwLCBEbWl0cnkgT3NpcGVua28g
+d3JvdGU6Cj4gPj4gQ29sb3JrZXknaW5nIGFsbG93cyB0byBkcmF3IG9uIHRvcCBvZiBvdmVybGFw
+cGluZyBwbGFuZXMsIGxpa2UgZm9yIGV4YW1wbGUKPiA+PiBvbiB0b3Agb2YgYSB2aWRlbyBwbGFu
+ZS4gT2xkZXIgVGVncmEncyBoYXZlIGEgbGltaXRlZCBjb2xvcmtleSdpbmcKPiA+PiBjYXBhYmls
+aXR5IHN1Y2ggdGhhdCBibGVuZGluZyBmZWF0dXJlcyBhcmUgcmVkdWNlZCB3aGVuIGNvbG9ya2V5
+J2luZyBpcwo+ID4+IGVuYWJsZWQuIEluIHBhcnRpY3VsYXIgZGVwZW5kZW50IHdlaWdodGluZyBp
+c24ndCBwb3NzaWJsZSwgbWVhbmluZyB0aGF0Cj4gPj4gY3Vyc29ycyBwbGFuZSBjYW4ndCBiZSBk
+aXNwbGF5ZWQgcHJvcGVybHkuIEluIG1vc3QgY2FzZXMgaXQgaXMgbW9yZSB1c2VmdWwKPiA+PiB0
+byBkaXNwbGF5IGNvbnRlbnQgb24gdG9wIG9mIHZpZGVvIG92ZXJsYXksIHNhY3JpZmljaW5nIG1v
+dXNlIGN1cnNvcgo+ID4+IGluIHRoZSBhcmVhIG9mIHRocmVlIHBsYW5lcyBpbnRlcnNlY3Rpb24g
+d2l0aCBjb2xvcmtleSBtaXNtYXRjaC4gVGhpcwo+ID4+IHBhdGNoIGFkZHMgYSBjdXN0b20gY29s
+b3JrZXkgcHJvcGVydGllcyB0byBwcmltYXJ5IHBsYW5lIGFuZCBDUlRDJ3Mgb2YKPiA+PiBvbGRl
+ciBUZWdyYSdzLCBhbGxvd2luZyB1c2Vyc3BhY2UgbGlrZSBPcGVudGVncmEgWG9yZyBkcml2ZXIg
+dG8gaW1wbGVtZW50Cj4gPj4gY29sb3JrZXkgc3VwcG9ydCBmb3IgWFZpZGVvIGV4dGVuc2lvbi4K
+PiA+Pgo+ID4+IFNpZ25lZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNv
+bT4KPiA+IAo+ID4gU2luY2UgdGhpcyBpcyB5b3VyIG93biB1YXBpLCB3aGVyZSdzIHRoZSB1c2Vy
+c3BhY2UgcGVyCj4gPiAKPiA+IGh0dHBzOi8vZHJpLmZyZWVkZXNrdG9wLm9yZy9kb2NzL2RybS9n
+cHUvZHJtLXVhcGkuaHRtbCNvcGVuLXNvdXJjZS11c2Vyc3BhY2UtcmVxdWlyZW1lbnRzCj4gCj4g
+VXNlcnNwYWNlIHBhdGNoZXMgZm9yIGNvbG9ya2V5IGFuZCBDU0MgdXRpbGl6YXRpb24gYXJlIGlu
+IG15IHBlcnNvbmFsIGdpdGh1Ygo+IHJlcG9zIGZvciBub3cgWzBdWzFdLiBUaGUgbG9uZ3Rlcm0g
+cGxhbiBpcyB0byBnZXQgT3BlbnRlZ3JhIGRyaXZlciAvIGxpYmRybSBiaXRzCj4gb2YgWzJdIHRv
+IHJlcG9zIG9uIGZyZWVkZXNrdG9wLm9yZywgd2hpY2ggc2hvdWxkIGJlIGNvbnNpZGVyZWQgYXMg
+dXBzdHJlYW0uIFdlCj4gaGF2ZSBldmVyeXRoaW5nIGRlcGVuZGluZyBvbiBsaWJkcm0tdGVncmEg
+YW5kIGl0IGlzIGN1cnJlbnRseSBvbiBob2xkIGJlY2F1c2Ugb2YKPiB1cGNvbWluZyBtYXNzaXZl
+IHJld29yayBvZiBUZWdyYSBEUk0gVUFQSSB3aXRoIGZ1cnRoZXIgZGUtc3RhZ2luZyBvZiBqb2Jz
+Cj4gc3VibWlzc2lvbiBVQVBJLCB0aGF0IHJld29ya2luZyBzaG91bGQgc3RhcnQgd2l0aCA0LjE4
+IGtlcm5lbC4KPiAKPiBGb3Igbm93IEkgd2FudGVkIHRvIGdldCBpbml0aWFsIGlucHV0IG9uIHRo
+ZSBwYXRjaGVzLiBPbmNlIGV2ZXJ5b25lIGlzIGluCj4gYWdyZWVtZW50LCBJJ2QgbGlrZSB0byBo
+YXZlIGNvbG9ya2V5IC8gQ1NDIHN1cHBvcnRlZCBieSB0aGUgdXBzdHJlYW0gRFJNIGRyaXZlciwK
+PiBzbyB0aGF0IGF0IGxlYXN0IGdyYXRlLWRyaXZlciBwcm9qZWN0cyBjb3VsZCB1dGlsaXplIHRo
+ZW0gcmlnaHQgbm93Lgo+IAo+ID4gQW5kIHdoeSB3byB3ZSBuZWVkIGEgdGVncmEtcHJpdmF0ZSBj
+b2xvcmtleSBwcm9wZXJ0eSBoZXJlPyBJIHRob3VnaHQKPiA+IG90aGVyJ3MgaGF2ZSBiZWVuIGRp
+c2N1c3NpbmcgdGhpcyBpbiB0aGUgY29udGV4dCBvZiBvdGhlciBkcml2ZXJzLgo+IAo+IEF0IGxl
+YXN0IG9sZGVyIFRlZ3JhJ3MgaGF2ZSBsaW1pdGF0aW9ucyBpbiByZWdhcmRzIHRvIGNvbG9ya2V5
+LCBsaWtlIHBsYW5lcwo+IGJsZW5kaW5nIGNhcGFiaWxpdGllcyBhcmUgcmVkdWNlZCBhIGxvdCB3
+aGVuIGNvbG9ya2V5J2luZyBpcyBlbmFibGVkLiBJJ20gbm90Cj4gc3VyZSB3aGV0aGVyIHdlJ2Qg
+d2FudCB0byBoYXZlIGl0IGFzIGEgZ2VuZXJpYyBwcm9wZXJ0eSwgYmVjYXVzZSBnZW5lcmljCj4g
+dXNlcnNwYWNlIHNob3VsZCBiZSBhd2FyZSBvZiB0aG9zZSBsaW1pdGF0aW9ucywgb3RoZXJ3aXNl
+IHRoZXJlIGlzIGEgZ29vZCBjaGFuY2UKPiB0byBnZXQgdW5kZXNpcmFibGUgcmVzdWx0IHVzaW5n
+IGNvbG9ya2V5LiBUaG91Z2ggSSdtIG5vdCByZWFsbHkgc3VyZSBob3cgd2lkZWx5Cj4gY29sb3Jr
+ZXkgcHJvcGVydHkgY291bGQgYmUgdXRpbGl6ZSBieSB1c2Vyc3BhY2UgYW5kIHdoYXQga2luZCBv
+ZiBhcHBsaWNhdGlvbnMKPiB0aGF0IHVzZXJzcGFjZSBjb3VsZCBoYXZlIGZvciBpdCwgbWF5YmUg
+aGF2aW5nIGNvbG9ya2V5IGFzIGEgZ2VuZXJpYyBwcm9wZXJ0eQo+IHdvdWxkIGJlIGdvb2QgZW5v
+dWdoIGFmdGVyIGFsbC4KPiAKPiBJJ3ZlIGxvb2tlZCB1cCB0aGUgRFJJIE1MIGFyY2hpdmUgYW5k
+IHNlZW1zIHRoZSBtb3N0IHJlY2VudCBjb2xvcmtleS1yZWxhdGVkCj4gcGF0Y2hlcyBhcmUgWzNd
+LiBUaGVzZSBwYXRjaGVzIGFyZSBhIGJpdCBvZGQgdG8gbWUgYmVjYXVzZSBieSBnZW5lcmljIHBy
+b3BlcnR5IEkKPiBhc3N1bWUgYSBwcm9wZXJ0eSB0aGF0IGlzIEhXLWFnbm9zdGljIGFuZCB0aGUg
+cGF0Y2hzZXQgZG9lcyBvcHBvc2l0ZSB0byBpdC4KPiBNYXliZSBJJ20gbWlzdW5kZXJzdGFuZGlu
+ZyB3aGF0IGlzIG1lYW50IGJ5ICdnZW5lcmljJyBwcm9wZXJ0eSB0aGVuPyBBbnl3YXkgSSd2ZQo+
+IGFwcGxpZWQgWzNdIGFuZCBtYWRlIFRlZ3JhIHRvIHVzZSB0aGF0IGdlbmVyaWMgcHJvcGVydHks
+IGl0IHdvcmtzIGZpbmUuIEknbGwgYmUKPiBoYXBweSB0byBzd2l0Y2ggdG8gYSBnZW5lcmljIHBy
+b3BlcnR5IGlmIHdlJ2xsIGNvbnNpZGVyIHRoYXQgaXQgaXMgYSB2aWFibGUgd2F5Lgo+IAo+IFsw
+XSBodHRwczovL2dpdGh1Yi5jb20vZGlnZXR4L3hmODYtdmlkZW8tb3BlbnRlZ3JhL2NvbW1pdHMv
+Y2tleQo+IFsxXSBodHRwczovL2dpdGh1Yi5jb20vZGlnZXR4L2xpYnZkcGF1LXRlZ3JhL2NvbW1p
+dHMvY2tleQo+IFsyXSBodHRwczovL2dpdGh1Yi5jb20vZ3JhdGUtZHJpdmVyCj4gWzNdIGh0dHBz
+Oi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTAxMTc1OTMvCgpZZXMgdGhhdCdzIHRoZSBw
+YXRjaGVzIEkgbWVhbnQsIHRoYW5rcyBmb3Igc3VyZmFjaW5nIHRoZW0uCgpQbGVhc2Ugd29yayB0
+b2dldGhlciB3aXRoIExhdXJlbnQsIE1heGltZSBhbmQgQm9yaXMgb24gdGhpcyAoanVtcCBvbiB0
+aGF0CnRocmVhZCBhbmQgQ2MgdGhlbSBvbiB5b3VyIG93biBwYXRjaGVzIGZvciB0aGUgbmV4dCBy
+b3VuZCkuIEFuZCBwbHMgYWxzbwp3b3JrIHRvZ2V0aGVyIG9uIGEgY29tbW9uIHVzZXJzcGFjZSBm
+b3IgdGhpcy4KLURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50
+ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
