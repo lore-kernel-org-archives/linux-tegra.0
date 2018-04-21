@@ -1,75 +1,68 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: fix ulpi regression on tegra20
-Date: Fri, 20 Apr 2018 13:50:10 +0300
-Message-ID: <4f2ac009-8618-4b4d-e137-a5fd4907a56f@gmail.com>
-References: <20180219151252.29289-1-marcel@ziswiler.com>
- <6600596.BijQW1iq1K@ax5200p>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
+Date: Sat, 21 Apr 2018 18:23:33 +0200
+Message-ID: <20180421162333.d4jtidmbxrx76k4x@ninjato>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+ <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="etezdywpoq6lir6p"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6600596.BijQW1iq1K@ax5200p>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Dietrich <marvin24@gmx.de>, Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.04.2018 11:52, Marc Dietrich wrote:
-> Hi Marcel,
-> 
-> Am Montag, 19. Februar 2018, 16:12:52 CEST schrieb Marcel Ziswiler:
->> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->>
->> Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
->> during registration") ULPI has been broken on Tegra20 leading to the
->> following error message during boot:
->>
->> [    1.974698] ulpi_phy_power_on: ulpi write failed
->> [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
->> [    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
->>
->> Debugging through the changes and finally also consulting the TRM
->> revealed that rather than the CDEV2 clock off OSC requiring such pin
->> muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
->> just worked by chance of that one having been enabled which Stephen's
->> commit now changed when reparenting sclk away from pll_p_out4 leaving
->> that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
->> as the ULPI PHY clock.
-> 
-> I booted 4.17-rc1 (which includes this fix) on an AC100 (T20 paz00 board) and 
-> the error above is still there. Surprisingly the error vanishes when I revert 
-> your patch. So this patch actually *causes* the problem above on my board. 
-> Could it be, that we need all four clocks? Dimitry mentioned on IRC that it 
-> could also be a problem in the clock init table. I don't have the technical 
-> background myself to fix it, but I still wonder what could be so different 
-> between TrimSlice and AC100.
 
-I managed to find CDEV clocks in TRM this time. Seems assigning CDEV2 clock to
-"ulpi-link" was correct and both CDEV2 and PLL_P_OUT4 should be enabled, CDEV2
-should gate the PLL_P_OUT4 that feeds USB HW and PLL_P_OUT4 should be
-always-enabled because it is enabled by init_table, but apparently it is getting
-disabled erroneously.
+--etezdywpoq6lir6p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Marcel, could you please revert your patch, add
-"trace_event=clk_enable,clk_disable,clk_set_parent tp_printk" to kernels cmdline
-and post the log?
+Hi Michal,
 
-It looks like there is some clk framework bug, but just in case please also try
-to apply this patch:
+Thanks for the reviews!
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c
-b/drivers/clk/tegra/clk-tegra-periph.c
-index 2acba2986bc6..407bd0c0ac2f 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -1024,7 +1024,7 @@ static void __init init_pllp(void __iomem *clk_base, void
-__iomem *pmc_base,
-                if (dt_clk) {
-                        clk = tegra_clk_register_pll_out("pll_p_out4",
-                                        "pll_p_out4_div", clk_base + PLLP_OUTB,
--                                       17, 16, CLK_IGNORE_UNUSED |
-+                                       17, 16, CLK_IS_CRITICAL |
-                                        CLK_SET_RATE_PARENT, 0,
-                                        &PLLP_OUTB_lock);
-                        *dt_clk = clk;
+> There are two more occurences in this gpio-zynq driver.
+> zynq_gpio_resume, zynq_gpio_suspend. It wasn't detected because these
+> two lines are not together. But the same change can be applied for them too.
+
+Not really. The rule would have matched if there was just "something"
+inbetween. It did not match because the "something" involves the
+variable 'pdev', so we can't remove it. And just changing towards
+'dev_get_drvdata' and keeping 'pdev' was not worth the hazzle in my
+book. Especially since I think the code should probably get refactored.
+Calling platform_get_irq() in suspend/resume paths in order to get the
+irq_data looks a little expensive to me, but I haven't tested it.
+
+Best wishes,
+
+   Wolfram
+
+PS: Please quote only relevant parts of the message, it is a lot easier
+to find comments then IMO.
+
+
+--etezdywpoq6lir6p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrbZYAACgkQFA3kzBSg
+Kbbs9Q/8CL8LUkArsY2fuzYW2Su/J3zMzkR+T15UyicBY0On6vsRRNvm74+Ll0Ot
+RL2LKMT8vTDuX1/rxX4hkeVNyMe+YCvl2zSTYjBMBGhP3nKbw0RZ9T6oQrPYlFlS
+G7H0ye0KDb7Kv1YsoDzoTtMAJHezvGslA3Jh4mWnkQWjPhzLJAIpCCD7sQyGmNq8
+kMofA51jGYZtoPNlvIli1focrJ73x4Ws5zj+GVhVQdEGdsBHRzPK4RGavxFMeH0u
+fJ1FcqusTkuDWCnf2XTorFHUqk4/4RSrdiV5J8vrgdiB76Q8iztNg8mBR5vG0J7t
+NEG1aO4P2yNbFBrIgh/1MgihVIRyTkEuZuEFgPcoDslK8YYMOHvN9AjEHJsD6TsX
+Fp3EQVBD/dMgIKQZc9jIzKZvO6vd7yW1i5iQDmECUbpt0PnQhr8YnDArdEfwFDF5
+DKk5PZKAiOCwi4Kqfcwpr9mhUOln96atjcIPBxC0nBh3leyGwE3qRQjWw+IDB9v3
+5Q8sle2qEa4jfkPk5FQ9kCtOh9/MbWgxZrrPFZwzQUAJgAfcDbgAacLSpNYfaCnj
+sj6Ds5eKt19K2tg/Mg5DLDflzYMwz5ET4TmKHrX+ihi7pzxerVUeEiwiXdo5/62o
+8ywmeyKdIhROHZ1b5GbhnafbZQgPm+p0RQGNp1FMePpg7Xa5Ef8=
+=uQyw
+-----END PGP SIGNATURE-----
+
+--etezdywpoq6lir6p--
