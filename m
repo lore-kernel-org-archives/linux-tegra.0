@@ -1,63 +1,33 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] drm/nouveau: tegra: Detach from ARM DMA/IOMMU
- mapping
-Date: Mon, 23 Apr 2018 10:24:47 +0200
-Message-ID: <20180423082447.1516-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1] gpu: host1x: Fix dma_free_wc() argument in the error path
+Date: Mon, 23 Apr 2018 12:54:56 +0300
+Message-ID: <20180423095456.16697-1-digetx@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkRlcGVuZGluZyBvbiB0
-aGUga2VybmVsIGNvbmZpZ3VyYXRpb24sIGVhcmx5IEFSTSBhcmNoaXRlY3R1cmUgc2V0dXAgY29k
-ZQptYXkgaGF2ZSBhdHRhY2hlZCB0aGUgR1BVIHRvIGEgRE1BL0lPTU1VIG1hcHBpbmcgdGhhdCB0
-cmFuc3BhcmVudGx5IHVzZXMKdGhlIElPTU1VIHRvIGJhY2sgdGhlIERNQSBBUEkuIFRlZ3JhIHJl
-cXVpcmVzIHNwZWNpYWwgaGFuZGxpbmcgZm9yIElPTU1VCmJhY2tlZCBidWZmZXJzIChhIHNwZWNp
-YWwgYml0IGluIHRoZSBHUFUncyBNTVUgcGFnZSB0YWJsZXMgaW5kaWNhdGVzIHRoZQptZW1vcnkg
-cGF0aCB0byB0YWtlOiB2aWEgdGhlIFNNTVUgb3IgZGlyZWN0bHkgdG8gdGhlIG1lbW9yeSBjb250
-cm9sbGVyKS4KVHJhbnNwYXJlbnRseSBiYWNraW5nIERNQSBtZW1vcnkgd2l0aCBhbiBJT01NVSBw
-cmV2ZW50cyBOb3V2ZWF1IGZyb20KcHJvcGVybHkgaGFuZGxpbmcgc3VjaCBtZW1vcnkgYWNjZXNz
-ZXMgYW5kIGNhdXNlcyBtZW1vcnkgYWNjZXNzIGZhdWx0cy4KCkFzIGEgc2lkZS1ub3RlOiBidWZm
-ZXJzIG90aGVyIHRoYW4gdGhvc2UgYWxsb2NhdGVkIGluIGluc3RhbmNlIG1lbW9yeQpkb24ndCBu
-ZWVkIHRvIGJlIHBoeXNpY2FsbHkgY29udGlndW91cyBmcm9tIHRoZSBHUFUncyBwZXJzcGVjdGl2
-ZSBzaW5jZQp0aGUgR1BVIGNhbiBtYXAgdGhlbSBpbnRvIGNvbnRpZ3VvdXMgYnVmZmVycyB1c2lu
-ZyBpdHMgb3duIE1NVS4gTWFwcGluZwp0aGVzZSBidWZmZXJzIHRocm91Z2ggdGhlIElPTU1VIGlz
-IHVubmVjZXNzYXJ5IGFuZCB3aWxsIGV2ZW4gbGVhZCB0bwpwZXJmb3JtYW5jZSBkZWdyYWRhdGlv
-biBiZWNhdXNlIG9mIHRoZSBhZGRpdGlvbmFsIHRyYW5zbGF0aW9uLgoKU2lnbmVkLW9mZi1ieTog
-VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiAuLi4vZHJtL25vdXZlYXUv
-bnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMgICAgfCAxOSArKysrKysrKysrKysrKysrKysrCiAx
-IGZpbGUgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
-L2RybS9ub3V2ZWF1L252a20vZW5naW5lL2RldmljZS90ZWdyYS5jIGIvZHJpdmVycy9ncHUvZHJt
-L25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMKaW5kZXggMWYwNzk5OWFlYTFkLi5h
-Yzc3MDZmNTZmNmYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vZW5n
-aW5lL2RldmljZS90ZWdyYS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vZW5n
-aW5lL2RldmljZS90ZWdyYS5jCkBAIC0xOSw2ICsxOSwxMSBAQAogICogRlJPTSwgT1VUIE9GIE9S
-IElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUgogICog
-REVBTElOR1MgSU4gVEhFIFNPRlRXQVJFLgogICovCisKKyNpZiBJU19FTkFCTEVEKENPTkZJR19B
-Uk1fRE1BX1VTRV9JT01NVSkKKyNpbmNsdWRlIDxhc20vZG1hLWlvbW11Lmg+CisjZW5kaWYKKwog
-I2luY2x1ZGUgPGNvcmUvdGVncmEuaD4KICNpZmRlZiBDT05GSUdfTk9VVkVBVV9QTEFURk9STV9E
-UklWRVIKICNpbmNsdWRlICJwcml2LmgiCkBAIC0xMDUsNiArMTEwLDIwIEBAIG52a21fZGV2aWNl
-X3RlZ3JhX3Byb2JlX2lvbW11KHN0cnVjdCBudmttX2RldmljZV90ZWdyYSAqdGRldikKIAl1bnNp
-Z25lZCBsb25nIHBnc2l6ZV9iaXRtYXA7CiAJaW50IHJldDsKIAorI2lmIElTX0VOQUJMRUQoQ09O
-RklHX0FSTV9ETUFfVVNFX0lPTU1VKQorCWlmIChkZXYtPmFyY2hkYXRhLm1hcHBpbmcpIHsKKwkJ
-c3RydWN0IGRtYV9pb21tdV9tYXBwaW5nICptYXBwaW5nID0gdG9fZG1hX2lvbW11X21hcHBpbmco
-ZGV2KTsKKworCQlhcm1faW9tbXVfcmVsZWFzZV9tYXBwaW5nKG1hcHBpbmcpOworCQlhcm1faW9t
-bXVfZGV0YWNoX2RldmljZShkZXYpOworCisJCWlmIChkZXYtPmFyY2hkYXRhLmRtYV9jb2hlcmVu
-dCkKKwkJCXNldF9kbWFfb3BzKGRldiwgJmFybV9jb2hlcmVudF9kbWFfb3BzKTsKKwkJZWxzZQor
-CQkJc2V0X2RtYV9vcHMoZGV2LCAmYXJtX2RtYV9vcHMpOworCX0KKyNlbmRpZgorCiAJaWYgKCF0
-ZGV2LT5mdW5jLT5pb21tdV9iaXQpCiAJCXJldHVybjsKIAotLSAKMi4xNy4wCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlz
-dApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+If IOVA allocation or IOMMU mapping fails, dma_free_wc() is invoked with
+size=0 because of a typo, that triggers "kernel BUG at mm/vmalloc.c:124!".
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/host1x/cdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+index 93df28228721..0724122afeac 100644
+--- a/drivers/gpu/host1x/cdma.c
++++ b/drivers/gpu/host1x/cdma.c
+@@ -127,7 +127,7 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
+ iommu_free_iova:
+ 	__free_iova(&host1x->iova, alloc);
+ iommu_free_mem:
+-	dma_free_wc(host1x->dev, pb->alloc_size, pb->mapped, pb->phys);
++	dma_free_wc(host1x->dev, size, pb->mapped, pb->phys);
+ 
+ 	return err;
+ }
+-- 
+2.17.0
