@@ -1,54 +1,89 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Rakesh Iyer can't be reached anymore
-Date: Mon, 23 Apr 2018 12:03:23 -0700
-Message-ID: <20180423190323.GE66646@dtor-ws>
-References: <20180419174211.2532-1-wsa@the-dreams.de>
- <1f70f124-53e9-9cca-c045-ff919a577e4e@nvidia.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH] ARM: tegra: fix ulpi regression on tegra20
+Date: Mon, 23 Apr 2018 22:05:44 +0000
+Message-ID: <1524521136.4493.70.camel@toradex.com>
+References: <20180219151252.29289-1-marcel@ziswiler.com>
+         <6600596.BijQW1iq1K@ax5200p>
+         <4f2ac009-8618-4b4d-e137-a5fd4907a56f@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1f70f124-53e9-9cca-c045-ff919a577e4e@nvidia.com>
+In-Reply-To: <4f2ac009-8618-4b4d-e137-a5fd4907a56f@gmail.com>
+Content-Language: en-US
+Content-ID: <F44244DA3365E842AB0BCD2F93B6A28F@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
+To: "marvin24@gmx.de" <marvin24@gmx.de>, "digetx@gmail.com" <digetx@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 08:03:26AM +0100, Jon Hunter wrote:
-> 
-> On 19/04/18 18:42, Wolfram Sang wrote:
-> > The current mail address is rejected, last activity (with a different
-> > address) in git-history is from 2012. Remove this.
-> > 
-> > Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> > ---
-> > 
-> > If somebody knows a recent address, then we can simply update, of course.
-> > 
-> >  MAINTAINERS | 1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index c4b6d379423e..0307426c2564 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -13833,7 +13833,6 @@ S:	Supported
-> >  F:	drivers/iommu/tegra*
-> >  
-> >  TEGRA KBC DRIVER
-> > -M:	Rakesh Iyer <riyer@nvidia.com>
-> >  M:	Laxman Dewangan <ldewangan@nvidia.com>
-> >  S:	Supported
-> >  F:	drivers/input/keyboard/tegra-kbc.c
-> > 
-> 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Applied, thank you.
-
-> 
-> Cheers!
-> Jon
-
--- 
-Dmitry
+SGkgRG1pdHJ5DQoNCk9uIEZyaSwgMjAxOC0wNC0yMCBhdCAxMzo1MCArMDMwMCwgRG1pdHJ5IE9z
+aXBlbmtvIHdyb3RlOg0KPiAuLi4NCj4gSSBtYW5hZ2VkIHRvIGZpbmQgQ0RFViBjbG9ja3MgaW4g
+VFJNIHRoaXMgdGltZS4NCg0KQW5kIHdoZXJlIGV4YWN0bHkgaW4gd2hpY2ggVFJNPyBJbiBhbGwg
+bXkgYXR0ZW1wdHMgYXQgZmluZGluZyBhbnl0aGluZw0KQ0RFVjIgaXMganVzdCBhIHBhZCBncm91
+cCB3aGljaCBpbmNsdWRlcyB0aGUgREFQX01DTEsyIHBhZCBpbiBxdWVzdGlvbi4NCg0KPiBTZWVt
+cyBhc3NpZ25pbmcgQ0RFVjIgY2xvY2sgdG8NCj4gInVscGktbGluayIgd2FzIGNvcnJlY3QNCg0K
+U29ycnksIGJ1dCBJIGRvIHJlYWxseSBub3Qgc2VlIGhvdyB5b3UgY2FuIGdldCB0byBhbnkgc3Vj
+aCBjb25jbHVzaW9uLg0KDQpXaGF0ZXZlciB0aGF0IENERVYyIGNsb2NrIGV4YWN0bHkgaXMuIEl0
+cyBvZmZzZXQgOTMgcG9pbnRzIHRvd2FyZHMgdGhlDQpDTEtfUlNUX0NPTlRST0xMRVJfQ0xLX09V
+VF9FTkJfVV8wIHJlZ2lzdGVyIHdoaWNoIGhhcyBDTEtfRU5CX0RFVjJfT1VUDQphdCBiaXQgcG9z
+aXRpb24gMjkgcmVhZGluZyAiRW5hYmxlIGNsb2NrIHRvIERFVjIgcGFkIi4gV2hpbGUgdGhlIFRS
+TQ0KbWlzc2VzIGZ1cnRoZXIgZG9jdW1lbnRpbmcgd2hhdCBleGFjdGx5IHRoYXQgREVWMiBwYWQg
+c2hvdWxkIGJlIEkgZ3Vlc3MNCml0IG1heSBwb2ludCB0b3dhcmRzIG91ciBzdXNwZWN0ZWQgREFQ
+X01DTEsyLiBTbyBmb3Igc29tZSByZWFzb24NCmJlc2lkZXMgUExMX1BfT1VUNCB3aGljaCBpcyB3
+aGF0IHRoYXQgcGFkIGlzIGFjdHVhbGx5IG11eGVkIHRvIGFsc28NCnNvbWUgYWRkaXRpb25hbCBE
+RVYyIHBhZCBjbG9jayBuZWVkcyBlbmFibGluZy4gSW4gYWRkaXRpb24gdGhlcmUgd291bGQNCmJl
+IGEgQ0xLX1JTVF9DT05UUk9MTEVSX01JU0NfQ0xLX0VOQl8wIHJlZ2lzdGVyIHdoZXJlIG9uZSBj
+b3VsZCBhbHNvDQpzcGVjaWZ5IGEgREVWMl9PU0NfRElWX1NFTCBidXQgSSB3b3VsZCBhc3N1bWUg
+dGhhdCBvbmUgb25seSBhcHBsaWVzIGlmDQp0aGUgcGFkIGluIHF1ZXN0aW9uIGJlaW5nIG11eGVk
+IHRvIE9TQyB3aGljaCBpcyBub3QgdGhlIGNhc2UgYXQgbGVhc3QNCmluIGFsbCBkZXZpY2UgdHJl
+ZXMgSSBoYXZlIGxvb2tlZCBhdC4NCg0KPiBhbmQgYm90aCBDREVWMiBhbmQgUExMX1BfT1VUNCBz
+aG91bGQgYmUgZW5hYmxlZCwNCg0KQWdyZWVkLCBiYXNpY2FsbHkgdGhlIERBUF9NQ0xLMiBwYWQg
+c2VlbXMgZ2F0ZWQgYnkgYW4gYWRkaXRpb25hbCBlbmFibGUNCmNhbGxlZCBDTEtfRU5CX0RFVjJf
+T1VULg0KDQo+IENERVYyDQo+IHNob3VsZCBnYXRlIHRoZSBQTExfUF9PVVQ0IHRoYXQgZmVlZHMg
+VVNCIEhXIGFuZCBQTExfUF9PVVQ0IHNob3VsZCBiZQ0KPiBhbHdheXMtZW5hYmxlZCBiZWNhdXNl
+IGl0IGlzIGVuYWJsZWQgYnkgaW5pdF90YWJsZSwgYnV0IGFwcGFyZW50bHkgaXQNCj4gaXMgZ2V0
+dGluZw0KPiBkaXNhYmxlZCBlcnJvbmVvdXNseS4NCg0KQXQgbGVhc3QgdGhhdCB3YXMgdGhlIGNh
+c2UgYmFjayB3aGVuIEkgaGFkIHRyb3VibGUgZ2V0dGluZyBVTFBJIHRvIHdvcmsNCm9uIFQyMC4g
+U3RyYW5nZWx5IGxhdGVzdCAtbmV4dCByaWdodCBub3cgZG9lcyBubyBsb25nZXIgc2VlbSB0byBz
+dWZmZXINCmZyb20gdGhhdCBzYW1lIGlzc3VlIGV2ZW4gaWYgbXkgcGF0Y2ggaXMgcmV2ZXJ0ZWQg
+YnV0IGFzIG1lbnRpb25lZA0KYmVmb3JlIG5vYm9keSBzdG9wcyB0aGUgcmVxdWlyZWQgUExMX1Bf
+T1VUNCB3aGljaCBpcyB3aGF0IGlzIGFjdHVhbGx5DQpkcml2aW5nIERBUF9NQ0xLMiB0byBub3Qg
+YmUgY2hhbmdlZCBiZWhpbmQgdGhlIHNjZW5lcyBicmVha2luZyB0aGUNCndob2xlIHRoaW5nIGFn
+YWluLg0KDQo+IE1hcmNlbCwgY291bGQgeW91IHBsZWFzZSByZXZlcnQgeW91ciBwYXRjaCwgYWRk
+DQo+ICJ0cmFjZV9ldmVudD1jbGtfZW5hYmxlLGNsa19kaXNhYmxlLGNsa19zZXRfcGFyZW50IHRw
+X3ByaW50ayIgdG8NCj4ga2VybmVscyBjbWRsaW5lDQo+IGFuZCBwb3N0IHRoZSBsb2c/DQoNClll
+cywgdGhlIG9ubHkgZGlmZmVyZW5jZSBpbiB0aG9zZSB0cmFjZXMgaXMgd2hldGhlciBvciBub3Qg
+dGhhdCBub24tDQpleGlzdGVudCBDREVWMiBjbG9jayBpcyBlbmFibGVkIG9yIG5vdDoNCg0KWyAg
+ICAxLjg5NzUyMV0gY2xrX2VuYWJsZTogY2RldjJfZml4ZWQNClsgICAgMS45MDEwMDhdIGNsa19l
+bmFibGU6IGNkZXYyDQoNCkkgYWxzbyBkbyBoYXZlIGFuIGV4cGxhbmF0aW9uIHdoeSBpdCBrZXB0
+IHdvcmtpbmcgaW4gbXkgY2FzZS4gUHJvYmFibHkNCnRoZSBib290IFJPTSBvciBVLUJvb3QgaXMg
+YWxyZWFkeSBzZXR0aW5nIHRoYXQgYml0Lg0KDQo+IEl0IGxvb2tzIGxpa2UgdGhlcmUgaXMgc29t
+ZSBjbGsgZnJhbWV3b3JrIGJ1ZywNCg0KTXkgY29uY2x1c2lvbiBpcyB0aGF0IHRoZXJlIHNob3Vs
+ZCBiZSBhIERBUF9NQ0xLMiBjbG9jayB3aGljaCBpcyBnYXRlZA0KYnkgdGhhdCBDTEtfRU5CX0RF
+VjJfT1VUIGJ1dCByZWFsbHkgb3V0cHV0cyBhIFQyMCBpbnRlcm5hbCBjbG9jaw0KYWNjb3JkaW5n
+IHRvIGl0cyBwaW4gbXV4aW5nIHdoaWNoIGlmIHNldCB0byBPU0MgbWF5IGJlIGZ1cnRoZXIgZGl2
+aWRlZA0KZG93biBieSBERVYyX09TQ19ESVZfU0VMLg0KDQo+IGJ1dCBqdXN0IGluIGNhc2UgcGxl
+YXNlIGFsc28gdHJ5DQo+IHRvIGFwcGx5IHRoaXMgcGF0Y2g6DQo+IA0KPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9jbGsvdGVncmEvY2xrLXRlZ3JhLXBlcmlwaC5jDQo+IGIvZHJpdmVycy9jbGsvdGVn
+cmEvY2xrLXRlZ3JhLXBlcmlwaC5jDQo+IGluZGV4IDJhY2JhMjk4NmJjNi4uNDA3YmQwYzBhYzJm
+IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEtcGVyaXBoLmMNCj4g
+KysrIGIvZHJpdmVycy9jbGsvdGVncmEvY2xrLXRlZ3JhLXBlcmlwaC5jDQo+IEBAIC0xMDI0LDcg
+KzEwMjQsNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgaW5pdF9wbGxwKHZvaWQgX19pb21lbQ0KPiAq
+Y2xrX2Jhc2UsIHZvaWQNCj4gX19pb21lbSAqcG1jX2Jhc2UsDQo+ICAgICAgICAgICAgICAgICBp
+ZiAoZHRfY2xrKSB7DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIGNsayA9DQo+IHRlZ3JhX2Ns
+a19yZWdpc3Rlcl9wbGxfb3V0KCJwbGxfcF9vdXQ0IiwNCj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICJwbGxfcF9vdXQ0X2RpdiIsIGNsa19iYXNlICsNCj4gUExMUF9P
+VVRCLA0KPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMTcsIDE2LCBD
+TEtfSUdOT1JFX1VOVVNFRCB8DQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAxNywgMTYsIENMS19JU19DUklUSUNBTCB8DQo+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBDTEtfU0VUX1JBVEVfUEFSRU5ULCAwLA0KPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgJlBMTFBfT1VUQl9sb2NrKTsNCj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgKmR0X2NsayA9IGNsazsNCg0KSSBkaWQgbm90IGhhdmUgdG8gZG8gYW55
+IHN1Y2ggYnV0IG1heWJlIHRoYXQgd291bGQgYXQgbGVhc3QgcHJldmVudCBhbnkNCmZ1cnRoZXIg
+aXNzdWVzIG9uIFBMTF9QX09VVDQuIEhvd2V2ZXIgSSBzdGlsbCBiZWxpZXZlIHRoaXMgaXMga2lu
+ZCBvZg0Kd3JvbmcgYXMgUExMX1BfT1VUNCBpcyB3aGF0IGRyaXZlcyBEQVBfTUNMSzIgaW4gaXRz
+IGN1cnJlbnQgbXV4aW5nDQp3aGljaCBpcyBjb25uZWN0ZWQgdG8gdGhlIFVMUEkgdHJhbnNjZWl2
+ZXJzIFJFRkNMSyBwaW4uDQoNCkJUVzogVGhhdCBwaW4gaXMgdXN1YWxseSB0byBiZSBkcml2ZW4g
+YXQgMjQgTUh6IGFuZCBub3QgMjYgTUh6IHdoaWNoDQpDREVWMiBjbGFpbXMgdG8gYmUgYXQuDQoN
+CldoYXQgZG8geW91IHRoaW5rPw0KDQpDaGVlcnMNCg0KTWFyY2Vs
