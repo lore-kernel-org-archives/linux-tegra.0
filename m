@@ -1,43 +1,46 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Date: Mon, 23 Apr 2018 08:04:48 +0200
-Message-ID: <19e48035-917c-7bb0-eef3-a7d6db4c1db2@xilinx.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
- <20180421162333.d4jtidmbxrx76k4x@ninjato>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 1/2] drm/tegra: Fix order of teardown in IOMMU case
+Date: Mon, 23 Apr 2018 08:57:44 +0200
+Message-ID: <20180423065745.26102-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180421162333.d4jtidmbxrx76k4x@ninjato>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>, Michal Simek <michal.simek@xilinx.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wolfram,
-
-On 21.4.2018 18:23, Wolfram Sang wrote:
-> Hi Michal,
-> 
-> Thanks for the reviews!
-> 
->> There are two more occurences in this gpio-zynq driver.
->> zynq_gpio_resume, zynq_gpio_suspend. It wasn't detected because these
->> two lines are not together. But the same change can be applied for them too.
-> 
-> Not really. The rule would have matched if there was just "something"
-> inbetween. It did not match because the "something" involves the
-> variable 'pdev', so we can't remove it. And just changing towards
-> 'dev_get_drvdata' and keeping 'pdev' was not worth the hazzle in my
-> book. Especially since I think the code should probably get refactored.
-> Calling platform_get_irq() in suspend/resume paths in order to get the
-> irq_data looks a little expensive to me, but I haven't tested it.
-> 
-
-ok. Thanks. I have overlooked that.
-
-Thanks,
-Michal
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBvcmlnaW5hbCBj
+b2RlIHdvcmtzIGZpbmUsIHRoaXMgaXMgbWVyZWx5IGEgY29zbWV0aWMgY2hhbmdlIHRvIG1ha2UK
+dGhlIHRlYXJkb3duIG9yZGVyIHRoZSByZXZlcnNlIG9mIHRoZSBzZXR1cCBvcmRlci4KClNpZ25l
+ZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgOCArKysrLS0tLQogMSBmaWxlIGNoYW5nZWQsIDQgaW5z
+ZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKaW5kZXggMWNmZTFlN2Uy
+ZmViLi40YTY5NmZhMjc0YTMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0u
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKQEAgLTIwNywxMCArMjA3LDEwIEBA
+IHN0YXRpYyBpbnQgdGVncmFfZHJtX2xvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdW5zaWdu
+ZWQgbG9uZyBmbGFncykKIAlkcm1fbW9kZV9jb25maWdfY2xlYW51cChkcm0pOwogCiAJaWYgKHRl
+Z3JhLT5kb21haW4pIHsKLQkJaW9tbXVfZG9tYWluX2ZyZWUodGVncmEtPmRvbWFpbik7Ci0JCWRy
+bV9tbV90YWtlZG93bigmdGVncmEtPm1tKTsKIAkJbXV0ZXhfZGVzdHJveSgmdGVncmEtPm1tX2xv
+Y2spOworCQlkcm1fbW1fdGFrZWRvd24oJnRlZ3JhLT5tbSk7CiAJCXB1dF9pb3ZhX2RvbWFpbigm
+dGVncmEtPmNhcnZlb3V0LmRvbWFpbik7CisJCWlvbW11X2RvbWFpbl9mcmVlKHRlZ3JhLT5kb21h
+aW4pOwogCX0KIGZyZWU6CiAJa2ZyZWUodGVncmEpOwpAQCAtMjMzLDEwICsyMzMsMTAgQEAgc3Rh
+dGljIHZvaWQgdGVncmFfZHJtX3VubG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZHJtKQogCQlyZXR1
+cm47CiAKIAlpZiAodGVncmEtPmRvbWFpbikgewotCQlpb21tdV9kb21haW5fZnJlZSh0ZWdyYS0+
+ZG9tYWluKTsKLQkJZHJtX21tX3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwogCQltdXRleF9kZXN0cm95
+KCZ0ZWdyYS0+bW1fbG9jayk7CisJCWRybV9tbV90YWtlZG93bigmdGVncmEtPm1tKTsKIAkJcHV0
+X2lvdmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKKwkJaW9tbXVfZG9tYWluX2Zy
+ZWUodGVncmEtPmRvbWFpbik7CiAJfQogCiAJa2ZyZWUodGVncmEpOwotLSAKMi4xNy4wCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
