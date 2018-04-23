@@ -1,39 +1,54 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH] ARM: tegra: fix ulpi regression on tegra20
-Date: Mon, 23 Apr 2018 15:42:28 +0000
-Message-ID: <1524498146.4493.35.camel@toradex.com>
-References: <20180219151252.29289-1-marcel@ziswiler.com>
-         <6600596.BijQW1iq1K@ax5200p>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Rakesh Iyer can't be reached anymore
+Date: Mon, 23 Apr 2018 12:03:23 -0700
+Message-ID: <20180423190323.GE66646@dtor-ws>
+References: <20180419174211.2532-1-wsa@the-dreams.de>
+ <1f70f124-53e9-9cca-c045-ff919a577e4e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6600596.BijQW1iq1K@ax5200p>
-Content-Language: en-US
-Content-ID: <C9BFBBB465BFAF41BD8A445F94E1A68A@eurprd05.prod.outlook.com>
+Content-Disposition: inline
+In-Reply-To: <1f70f124-53e9-9cca-c045-ff919a577e4e@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "marvin24@gmx.de" <marvin24@gmx.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgTWFyYw0KDQpPbiBGcmksIDIwMTgtMDQtMjAgYXQgMTA6NTIgKzAyMDAsIE1hcmMgRGlldHJp
-Y2ggd3JvdGU6DQo+IA0KPiAuLi4NCj4gSSBib290ZWQgNC4xNy1yYzEgKHdoaWNoIGluY2x1ZGVz
-IHRoaXMgZml4KSBvbiBhbiBBQzEwMCAoVDIwIHBhejAwDQo+IGJvYXJkKSBhbmQgDQo+IHRoZSBl
-cnJvciBhYm92ZSBpcyBzdGlsbCB0aGVyZS4gU3VycHJpc2luZ2x5IHRoZSBlcnJvciB2YW5pc2hl
-cyB3aGVuDQo+IEkgcmV2ZXJ0IA0KPiB5b3VyIHBhdGNoLiBTbyB0aGlzIHBhdGNoIGFjdHVhbGx5
-ICpjYXVzZXMqIHRoZSBwcm9ibGVtIGFib3ZlIG9uIG15DQo+IGJvYXJkLg0KDQpUaGF0J3MgcmVh
-bGx5IHN0cmFuZ2UuDQoNCkkgYmVsaWV2ZSBJIGRvIGhhdmUgb25lIG9mIHRoZW0gcGF6MDAgYm9h
-cmRzIGxheWluZyBhcm91bmQgc29tZXdoZXJlIGFzDQp3ZWxsLiBKdXN0IG5lZWQgdG8gZGlnIGl0
-IG91dCBhZ2FpbiBhbmQgd2lsbCBnaXZlIGl0IGEgdHJ5LiBMb29raW5nIGF0DQp0aGVpciBzY2hl
-bWF0aWNzIGF0IGxlYXN0IHJldmVhbHMgdGhlIGV4YWN0IHNhbWUgY2lyY3VpdCBhcyBmb3VuZCBv
-bg0KYWxsIG90aGVyIFQyMCBiYXNlZCBib2FyZHMgdXNpbmcgREFQX01DTEsyIGFzIFJFRkNMSyB0
-byB0aGUgVVNCMzMxNUMNCndoaWNoIEJUVyBpcyAyNCBNSHogYW5kIG5vdCAyNiBNSHogYXMgQ0RF
-VjIgY2xhaW1zIQ0KDQo+IENvdWxkIGl0IGJlLCB0aGF0IHdlIG5lZWQgYWxsIGZvdXIgY2xvY2tz
-PyBEaW1pdHJ5IG1lbnRpb25lZCBvbiBJUkMNCj4gdGhhdCBpdCANCj4gY291bGQgYWxzbyBiZSBh
-IHByb2JsZW0gaW4gdGhlIGNsb2NrIGluaXQgdGFibGUuIEkgZG9uJ3QgaGF2ZSB0aGUNCj4gdGVj
-aG5pY2FsIA0KPiBiYWNrZ3JvdW5kIG15c2VsZiB0byBmaXggaXQsIGJ1dCBJIHN0aWxsIHdvbmRl
-ciB3aGF0IGNvdWxkIGJlIHNvDQo+IGRpZmZlcmVudCANCj4gYmV0d2VlbiBUcmltU2xpY2UgYW5k
-IEFDMTAwLg0KDQpJIGFtIHdvbmRlcmluZyB0aGUgc2FtZS4gSG93ZXZlciBJIHN0aWxsIHN1c3Bl
-Y3QgdGhhdCBzb21ldGhpbmcgaXMNCmNvbXBsZXRlbHkgd3JvbmcgaW4gdGhhdCBhcmVhIGFzIHRo
-YXQgQ0RFVjIgY2xvY2sgaXMgY29tcGxldGVseSBib2d1cy4NCkl0IHJlYWxseSBkb2VzIG5vdCBl
-eGlzdCENCg0KPiBNYXJjDQoNCkNoZWVycw0KDQpNYXJjZWw=
+On Fri, Apr 20, 2018 at 08:03:26AM +0100, Jon Hunter wrote:
+> 
+> On 19/04/18 18:42, Wolfram Sang wrote:
+> > The current mail address is rejected, last activity (with a different
+> > address) in git-history is from 2012. Remove this.
+> > 
+> > Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> > ---
+> > 
+> > If somebody knows a recent address, then we can simply update, of course.
+> > 
+> >  MAINTAINERS | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index c4b6d379423e..0307426c2564 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -13833,7 +13833,6 @@ S:	Supported
+> >  F:	drivers/iommu/tegra*
+> >  
+> >  TEGRA KBC DRIVER
+> > -M:	Rakesh Iyer <riyer@nvidia.com>
+> >  M:	Laxman Dewangan <ldewangan@nvidia.com>
+> >  S:	Supported
+> >  F:	drivers/input/keyboard/tegra-kbc.c
+> > 
+> 
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Applied, thank you.
+
+> 
+> Cheers!
+> Jon
+
+-- 
+Dmitry
