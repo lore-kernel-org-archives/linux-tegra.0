@@ -1,71 +1,176 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 2/2] drm/tegra: Acquire a reference to the IOVA cache
-Date: Mon, 23 Apr 2018 11:34:22 +0300
-Message-ID: <98ffd7c2-1184-a667-39e5-68d011e516a4@gmail.com>
-References: <20180423065745.26102-1-thierry.reding@gmail.com>
- <20180423065745.26102-2-thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: fix ulpi regression on tegra20
+Date: Tue, 24 Apr 2018 17:38:41 +0300
+Message-ID: <c0cb2620-91b5-8043-bb74-306dca0331eb@gmail.com>
+References: <20180219151252.29289-1-marcel@ziswiler.com>
+ <6600596.BijQW1iq1K@ax5200p> <4f2ac009-8618-4b4d-e137-a5fd4907a56f@gmail.com>
+ <1524521136.4493.70.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180423065745.26102-2-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1524521136.4493.70.camel@toradex.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "marvin24@gmx.de" <marvin24@gmx.de>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjMuMDQuMjAxOCAwOTo1NywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBUaGUgSU9WQSBBUEkgdXNlcyBhIG1l
-bW9yeSBjYWNoZSB0byBhbGxvY2F0ZSBJT1ZBIG5vZGVzIGZyb20uIFRvIG1ha2UKPiBzdXJlIHRo
-YXQgdGhpcyBjYWNoZSBpcyBhdmFpbGFibGUsIG9idGFpbiBhIHJlZmVyZW5jZSB0byBpdCBhbmQg
-cmVsZWFzZQo+IHRoZSByZWZlcmVuY2Ugd2hlbiB0aGUgY2FjaGUgaXMgbm8gbG9uZ2VyIG5lZWRl
-ZC4KPiAKPiBPbiA2NC1iaXQgQVJNIHRoaXMgaXMgaGlkZGVuIGJ5IHRoZSBmYWN0IHRoYXQgdGhl
-IERNQSBtYXBwaW5nIEFQSSBnZXRzCj4gdGhhdCByZWZlcmVuY2UgYW5kIG5ldmVyIHJlbGVhc2Vz
-IGl0LiBPbiAzMi1iaXQgQVJNLCBob3dldmVyLCB0aGUgRE1BCj4gbWFwcGluZyBBUEkgZG9lc24n
-dCBkbyB0aGF0LCBzbyBhbGxvY2F0aW9uIG9mIElPVkEgbm9kZXMgZmFpbHMuCj4gCj4gU2lnbmVk
-LW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAtLS0KClJldmll
-d2VkLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5jb20+ClRlc3RlZC1ieTogRG1p
-dHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgoKQ09ORklHX1RFR1JBX0lPTU1VX1NNTVUg
-aXMgZW5hYmxlZCBpbiB0aGUgZGVmYXVsdCBrZXJuZWwgY29uZmlncyBhbmQgaGVuY2UgRFJNCnNo
-b3VsZCBmYWlsIHRvIHByb2JlIG9uIHQxMjQgc2luY2UgNC4xMS4gV2hhdCBhYm91dCB0byBhZGQg
-c3RhYmxlIHRhZyBmb3IgdjQuMTErCmhlcmUgdG8gdW5icmVhayBzdGFibGUga2VybmVscyBhcyB3
-ZWxsPwoKPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgOCArKysrKysrLQo+ICAxIGZp
-bGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
-cm0uYwo+IGluZGV4IDRhNjk2ZmEyNzRhMy4uMDU0MGIwNzQxZGY2IDEwMDY0NAo+IC0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
-cm0uYwo+IEBAIC0xMTUsNiArMTE1LDEwIEBAIHN0YXRpYyBpbnQgdGVncmFfZHJtX2xvYWQoc3Ry
-dWN0IGRybV9kZXZpY2UgKmRybSwgdW5zaWduZWQgbG9uZyBmbGFncykKPiAgCQkJZ290byBmcmVl
-Owo+ICAJCX0KPiAgCj4gKwkJZXJyID0gaW92YV9jYWNoZV9nZXQoKTsKPiArCQlpZiAoZXJyIDwg
-MCkKPiArCQkJZ290byBkb21haW47Cj4gKwoKSG9zdDF4IGFsc28gdXNlcyB0aGUgYWxsb2NfaW92
-YSgpLCB0aG91Z2ggdGhpcyBhbGxvY2F0aW9uIGlzIGFjdHVhbGx5IGludm9rZWQgYnkKdGhlIERS
-TSBkcml2ZXIgb24gcmVxdWVzdGluZyBhIGNoYW5uZWwuIEl0IGlzIGZpbmUgcmlnaHQgbm93IGJl
-Y2F1c2UgRFJNIGRyaXZlcgppcyB0aGUgb25seSBob3N0MXggdXNlciwgYnV0IHdoYXQgYWJvdXQg
-dG8gYWRkIGlvdmFfY2FjaGVfZ2V0KCkgdG8gdGhlIGhvc3QxeApkcml2ZXIgYXMgd2VsbCBmb3Ig
-Y29uc2lzdGVuY3k/Cgo+ICAJCWdlb21ldHJ5ID0gJnRlZ3JhLT5kb21haW4tPmdlb21ldHJ5Owo+
-ICAJCWdlbV9zdGFydCA9IGdlb21ldHJ5LT5hcGVydHVyZV9zdGFydDsKPiAgCQlnZW1fZW5kID0g
-Z2VvbWV0cnktPmFwZXJ0dXJlX2VuZCAtIENBUlZFT1VUX1NaOwo+IEBAIC0yMDUsMTEgKzIwOSwx
-MiBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHVu
-c2lnbmVkIGxvbmcgZmxhZ3MpCj4gIAl0ZWdyYV9kcm1fZmJfZnJlZShkcm0pOwo+ICBjb25maWc6
-Cj4gIAlkcm1fbW9kZV9jb25maWdfY2xlYW51cChkcm0pOwo+IC0KPiArZG9tYWluOgo+ICAJaWYg
-KHRlZ3JhLT5kb21haW4pIHsKPiAgCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7Cj4g
-IAkJZHJtX21tX3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwo+ICAJCXB1dF9pb3ZhX2RvbWFpbigmdGVn
-cmEtPmNhcnZlb3V0LmRvbWFpbik7Cj4gKwkJaW92YV9jYWNoZV9wdXQoKTsKPiAgCQlpb21tdV9k
-b21haW5fZnJlZSh0ZWdyYS0+ZG9tYWluKTsKPiAgCX0KPiAgZnJlZToKPiBAQCAtMjM2LDYgKzI0
-MSw3IEBAIHN0YXRpYyB2b2lkIHRlZ3JhX2RybV91bmxvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRy
-bSkKPiAgCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gIAkJZHJtX21tX3Rha2Vk
-b3duKCZ0ZWdyYS0+bW0pOwo+ICAJCXB1dF9pb3ZhX2RvbWFpbigmdGVncmEtPmNhcnZlb3V0LmRv
-bWFpbik7Cj4gKwkJaW92YV9jYWNoZV9wdXQoKTsKPiAgCQlpb21tdV9kb21haW5fZnJlZSh0ZWdy
-YS0+ZG9tYWluKTsKPiAgCX0KPiAgCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+Hi Marcel,
+
+On 24.04.2018 01:05, Marcel Ziswiler wrote:
+> Hi Dmitry
+> 
+> On Fri, 2018-04-20 at 13:50 +0300, Dmitry Osipenko wrote:
+>> ...
+>> I managed to find CDEV clocks in TRM this time.
+> 
+> And where exactly in which TRM? In all my attempts at finding anything
+> CDEV2 is just a pad group which includes the DAP_MCLK2 pad in question. 
+
+That's the DEV2 clock you're talking about below.
+
+>> Seems assigning CDEV2 clock to
+>> "ulpi-link" was correct
+> 
+> Sorry, but I do really not see how you can get to any such conclusion.
+> 
+> Whatever that CDEV2 clock exactly is. Its offset 93 points towards the
+> CLK_RST_CONTROLLER_CLK_OUT_ENB_U_0 register which has CLK_ENB_DEV2_OUT
+> at bit position 29 reading "Enable clock to DEV2 pad". While the TRM
+> misses further documenting what exactly that DEV2 pad should be I guess
+> it may point towards our suspected DAP_MCLK2. So for some reason
+> besides PLL_P_OUT4 which is what that pad is actually muxed to also
+> some additional DEV2 pad clock needs enabling. In addition there would
+> be a CLK_RST_CONTROLLER_MISC_CLK_ENB_0 register where one could also
+> specify a DEV2_OSC_DIV_SEL but I would assume that one only applies if
+> the pad in question being muxed to OSC which is not the case at least
+> in all device trees I have looked at.
+> 
+>> and both CDEV2 and PLL_P_OUT4 should be enabled,
+> 
+> Agreed, basically the DAP_MCLK2 pad seems gated by an additional enable
+> called CLK_ENB_DEV2_OUT.
+> 
+>> CDEV2
+>> should gate the PLL_P_OUT4 that feeds USB HW and PLL_P_OUT4 should be
+>> always-enabled because it is enabled by init_table, but apparently it
+>> is getting
+>> disabled erroneously.
+> 
+> At least that was the case back when I had trouble getting ULPI to work
+> on T20. Strangely latest -next right now does no longer seem to suffer
+> from that same issue even if my patch is reverted but as mentioned
+> before nobody stops the required PLL_P_OUT4 which is what is actually
+> driving DAP_MCLK2 to not be changed behind the scenes breaking the
+> whole thing again.
+> 
+>> Marcel, could you please revert your patch, add
+>> "trace_event=clk_enable,clk_disable,clk_set_parent tp_printk" to
+>> kernels cmdline
+>> and post the log?
+> 
+> Yes, the only difference in those traces is whether or not that non-
+> existent CDEV2 clock is enabled or not:
+> 
+> [    1.897521] clk_enable: cdev2_fixed
+> [    1.901008] clk_enable: cdev2
+> 
+> I also do have an explanation why it kept working in my case. Probably
+> the boot ROM or U-Boot is already setting that bit.
+> 
+>> It looks like there is some clk framework bug,
+> 
+> My conclusion is that there should be a DAP_MCLK2 clock which is gated
+> by that CLK_ENB_DEV2_OUT but really outputs a T20 internal clock
+> according to its pin muxing which if set to OSC may be further divided
+> down by DEV2_OSC_DIV_SEL.
+
+Could be that DEV2_OSC_DIV_SEL is only relevant when DAP_MCLK2 is mux'ed to OSC.
+Maybe Peter could clarify everything.
+
+>> but just in case please also try
+>> to apply this patch:
+>>
+>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c
+>> b/drivers/clk/tegra/clk-tegra-periph.c
+>> index 2acba2986bc6..407bd0c0ac2f 100644
+>> --- a/drivers/clk/tegra/clk-tegra-periph.c
+>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+>> @@ -1024,7 +1024,7 @@ static void __init init_pllp(void __iomem
+>> *clk_base, void
+>> __iomem *pmc_base,
+>>                 if (dt_clk) {
+>>                         clk =
+>> tegra_clk_register_pll_out("pll_p_out4",
+>>                                         "pll_p_out4_div", clk_base +
+>> PLLP_OUTB,
+>> -                                       17, 16, CLK_IGNORE_UNUSED |
+>> +                                       17, 16, CLK_IS_CRITICAL |
+>>                                         CLK_SET_RATE_PARENT, 0,
+>>                                         &PLLP_OUTB_lock);
+>>                         *dt_clk = clk;
+> 
+> I did not have to do any such but maybe that would at least prevent any
+> further issues on PLL_P_OUT4. However I still believe this is kind of
+> wrong as PLL_P_OUT4 is what drives DAP_MCLK2 in its current muxing
+> which is connected to the ULPI transceivers REFCLK pin.
+> 
+> BTW: That pin is usually to be driven at 24 MHz and not 26 MHz which
+> CDEV2 claims to be at.
+
+Pin is driven by the PLL_P_OUT4, which is set to 24 MHz via the init_table. The
+clock tree is invalid in that regards because Tegra's clock driver defines
+non-existent "cdev2_fixed" 26 MHz clock source and sets it as a parent for the
+"cdev2" clock, while "cdev2" should be a gate (and maybe divider?) for the real
+parent clock (PLL_P_OUT4 in our case).
+
+> What do you think?
+
+It looks to me that a clock signal coming from the mux'ed CDEV2 pin is routed to
+the DEV2 of CLK controller (which can gate it) and then it goes out to DAP_MCLK2.
+
+PLL_P_OUT4 ---> PINMUX_CDEV2 ---> CLK_DEV2 ---> DAP_MCLK2
+
+But it also could be that CLK_ENB_DEV2_OUT is indeed some internal
+pinmux-related clock-gate. I think Peter should have a clue.
+
+Anyway the implementation details do not really matter for us, what matters is
+that PLL_P_OUT4 clk and DEV2 clk-gate must be enabled.
+
+Seems indeed ideally would be to have DAP_MCLK2 for the USB controller's
+"ulpi-link" clock and then DEV2 will be enable bit for the DAP_MCLK2. But also
+information about parent clock of the DAP_MCLK2 needs to be conducted to the clk
+driver via DT, that probably would require backward-incompatible change of the
+binding which is undesirable.
+
+One tolerable solution could be to remove fake "cdev2_fixed" clock in the driver
+and hardcode PLL_P_OUT4 for the parent of "cdev2". (Note that cdev1 also has a
+fake parent)
+
+index 0ee56dd04cec..4708653dedeb 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -838,8 +838,7 @@ static void __init tegra20_periph_clk_init(void)
+        clks[TEGRA20_CLK_CDEV1] = clk;
+
+        /* cdev2 */
+-       clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
+-       clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
++       clk = tegra_clk_register_periph_gate("cdev2", "pll_p_out4", 0,
+                                    clk_base, 0, 93, periph_clk_enb_refcnt);
+        clks[TEGRA20_CLK_CDEV2] = clk;
+
+
+Now the real problem is that PLL_P_OUT4 was getting disabled. We had CDEV2 clock
+in the DT for "ulpi-link" and PLL_P_OUT4 was permanently enabled (supposedly) by
+the Tegra's clock driver using init_table. Apparently PLL_P_OUT4 was disabled on
+SCLK re-parenting, as you mentioned in the commit description. This should be
+considered as a bug because one of two purposes (permanently enable and setup
+default clock rate) of the init_table is defeated.
+
+Could you please try to bisect to the point when erroneous PLL_P_OUT4 disable
+issue is fixed->broken? It is quite important to know what commit changed the
+behaviour. If it was some common clk issue that got fixed - that should be a
+good case for us, if it was some unrelated change that obscured the issue -
+that's not good and we should go back and fix the real bug.
