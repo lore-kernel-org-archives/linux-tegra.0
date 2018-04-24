@@ -1,80 +1,54 @@
-From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drm/nouveau: tegra: Detach from ARM DMA/IOMMU
- mapping
-Date: Wed, 25 Apr 2018 01:30:53 +1000
-Message-ID: <CACAvsv5YK_STL+anSxT_fmyYKpUUJCEVbVcEYj+wGFj4g8XUBg@mail.gmail.com>
-References: <20180423082447.1516-1-thierry.reding@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+Date: Tue, 24 Apr 2018 10:44:31 -0500
+Message-ID: <20180424154431.5bf35ck4z5xtusnm@rob-hp-laptop>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+ <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
+ <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+ <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20180423082447.1516-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-tegra@vger.kernel.org, open list:OPEN FIRMWARE AND FLATTENED
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjMgQXByaWwgMjAxOCBhdCAxODoyNCwgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5n
-QGdtYWlsLmNvbT4gd3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlh
-LmNvbT4KPgo+IERlcGVuZGluZyBvbiB0aGUga2VybmVsIGNvbmZpZ3VyYXRpb24sIGVhcmx5IEFS
-TSBhcmNoaXRlY3R1cmUgc2V0dXAgY29kZQo+IG1heSBoYXZlIGF0dGFjaGVkIHRoZSBHUFUgdG8g
-YSBETUEvSU9NTVUgbWFwcGluZyB0aGF0IHRyYW5zcGFyZW50bHkgdXNlcwo+IHRoZSBJT01NVSB0
-byBiYWNrIHRoZSBETUEgQVBJLiBUZWdyYSByZXF1aXJlcyBzcGVjaWFsIGhhbmRsaW5nIGZvciBJ
-T01NVQo+IGJhY2tlZCBidWZmZXJzIChhIHNwZWNpYWwgYml0IGluIHRoZSBHUFUncyBNTVUgcGFn
-ZSB0YWJsZXMgaW5kaWNhdGVzIHRoZQo+IG1lbW9yeSBwYXRoIHRvIHRha2U6IHZpYSB0aGUgU01N
-VSBvciBkaXJlY3RseSB0byB0aGUgbWVtb3J5IGNvbnRyb2xsZXIpLgo+IFRyYW5zcGFyZW50bHkg
-YmFja2luZyBETUEgbWVtb3J5IHdpdGggYW4gSU9NTVUgcHJldmVudHMgTm91dmVhdSBmcm9tCj4g
-cHJvcGVybHkgaGFuZGxpbmcgc3VjaCBtZW1vcnkgYWNjZXNzZXMgYW5kIGNhdXNlcyBtZW1vcnkg
-YWNjZXNzIGZhdWx0cy4KPgo+IEFzIGEgc2lkZS1ub3RlOiBidWZmZXJzIG90aGVyIHRoYW4gdGhv
-c2UgYWxsb2NhdGVkIGluIGluc3RhbmNlIG1lbW9yeQo+IGRvbid0IG5lZWQgdG8gYmUgcGh5c2lj
-YWxseSBjb250aWd1b3VzIGZyb20gdGhlIEdQVSdzIHBlcnNwZWN0aXZlIHNpbmNlCj4gdGhlIEdQ
-VSBjYW4gbWFwIHRoZW0gaW50byBjb250aWd1b3VzIGJ1ZmZlcnMgdXNpbmcgaXRzIG93biBNTVUu
-IE1hcHBpbmcKPiB0aGVzZSBidWZmZXJzIHRocm91Z2ggdGhlIElPTU1VIGlzIHVubmVjZXNzYXJ5
-IGFuZCB3aWxsIGV2ZW4gbGVhZCB0bwo+IHBlcmZvcm1hbmNlIGRlZ3JhZGF0aW9uIGJlY2F1c2Ug
-b2YgdGhlIGFkZGl0aW9uYWwgdHJhbnNsYXRpb24uClRoaXMgaXMgbm90IHN0cmljdGx5IHRydWUu
-ICBJZiB5b3Ugd2FudCB0byBiZSBhYmxlIHRvIHVzZSBjb21wcmVzc2lvbgpldGMsIG9uIFRlZ3Jh
-IEdQVXMsIHlvdSdsbCBuZWVkIHRvIGJlIGFibGUgdG8gbWFwIG11bHRpcGxlCihwb3RlbnRpYWxs
-eSBzbWFsbGVyLCBpZS4gNEspIHN5c3RlbSBtZW1vcnkgcGFnZXMgaW50byBhIGNvbnRpZ3VvdXMK
-YmxvY2sgYmlnIGVub3VnaCB0byBzYXRpc2Z5IHRoZSBHUFUgYmlnIHBhZ2Ugc2l6ZS4gIE5vb25l
-J3MKaW1wbGVtZW50ZWQgdGhpcyBmb3IgVGVncmEgaW4gTm91dmVhdSB5ZXQsIGJ1dCB0aGUgcmVz
-dCBvZiB0aGUgc3VwcG9ydApzaG91bGQgYmUgdGhlcmUgYWxyZWFkeSBub3cuCgpCZW4uCgo+Cj4g
-U2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAtLS0K
-PiAgLi4uL2RybS9ub3V2ZWF1L252a20vZW5naW5lL2RldmljZS90ZWdyYS5jICAgIHwgMTkgKysr
-KysrKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKQo+Cj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vZW5naW5lL2RldmljZS90
-ZWdyYS5jIGIvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3Jh
-LmMKPiBpbmRleCAxZjA3OTk5YWVhMWQuLmFjNzcwNmY1NmY2ZiAxMDA2NDQKPiAtLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvdGVncmEuYwo+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vZW5naW5lL2RldmljZS90ZWdyYS5jCj4gQEAgLTE5
-LDYgKzE5LDExIEBACj4gICAqIEZST00sIE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhF
-IFNPRlRXQVJFIE9SIFRIRSBVU0UgT1IgT1RIRVIKPiAgICogREVBTElOR1MgSU4gVEhFIFNPRlRX
-QVJFLgo+ICAgKi8KPiArCj4gKyNpZiBJU19FTkFCTEVEKENPTkZJR19BUk1fRE1BX1VTRV9JT01N
-VSkKPiArI2luY2x1ZGUgPGFzbS9kbWEtaW9tbXUuaD4KPiArI2VuZGlmCj4gKwo+ICAjaW5jbHVk
-ZSA8Y29yZS90ZWdyYS5oPgo+ICAjaWZkZWYgQ09ORklHX05PVVZFQVVfUExBVEZPUk1fRFJJVkVS
-Cj4gICNpbmNsdWRlICJwcml2LmgiCj4gQEAgLTEwNSw2ICsxMTAsMjAgQEAgbnZrbV9kZXZpY2Vf
-dGVncmFfcHJvYmVfaW9tbXUoc3RydWN0IG52a21fZGV2aWNlX3RlZ3JhICp0ZGV2KQo+ICAgICAg
-ICAgdW5zaWduZWQgbG9uZyBwZ3NpemVfYml0bWFwOwo+ICAgICAgICAgaW50IHJldDsKPgo+ICsj
-aWYgSVNfRU5BQkxFRChDT05GSUdfQVJNX0RNQV9VU0VfSU9NTVUpCj4gKyAgICAgICBpZiAoZGV2
-LT5hcmNoZGF0YS5tYXBwaW5nKSB7Cj4gKyAgICAgICAgICAgICAgIHN0cnVjdCBkbWFfaW9tbXVf
-bWFwcGluZyAqbWFwcGluZyA9IHRvX2RtYV9pb21tdV9tYXBwaW5nKGRldik7Cj4gKwo+ICsgICAg
-ICAgICAgICAgICBhcm1faW9tbXVfcmVsZWFzZV9tYXBwaW5nKG1hcHBpbmcpOwo+ICsgICAgICAg
-ICAgICAgICBhcm1faW9tbXVfZGV0YWNoX2RldmljZShkZXYpOwo+ICsKPiArICAgICAgICAgICAg
-ICAgaWYgKGRldi0+YXJjaGRhdGEuZG1hX2NvaGVyZW50KQo+ICsgICAgICAgICAgICAgICAgICAg
-ICAgIHNldF9kbWFfb3BzKGRldiwgJmFybV9jb2hlcmVudF9kbWFfb3BzKTsKPiArICAgICAgICAg
-ICAgICAgZWxzZQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHNldF9kbWFfb3BzKGRldiwgJmFy
-bV9kbWFfb3BzKTsKPiArICAgICAgIH0KPiArI2VuZGlmCj4gKwo+ICAgICAgICAgaWYgKCF0ZGV2
-LT5mdW5jLT5pb21tdV9iaXQpCj4gICAgICAgICAgICAgICAgIHJldHVybjsKPgo+IC0tCj4gMi4x
-Ny4wCj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+
-IE5vdXZlYXUgbWFpbGluZyBsaXN0Cj4gTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWls
-aW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+On Fri, Apr 20, 2018 at 08:28:28AM +0200, Geert Uytterhoeven wrote:
+> Hi Stephen, Rob,
+> 
+> On Fri, Apr 20, 2018 at 12:25 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
+> >> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+> >> limited to clock providers.
+> >>
+> >> Hence move these helpers into their own header file, so callers that are
+> >> not clock providers no longer have to include <linux/clk-provider.h>.
+> >>
+> >> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> >> ---
+> >> v3:
+> >>   - Add Reviewed-by,
+> >>   - Add SPDX-License-Identifier,
+> >>   - Add to clock section in MAINTAINERS (note that Rob is still listed
+> >>     as a maintainer, too, due to the include/linux/of*.h catch-all
+> >>     rule),
+> >
+> > Can you X: out this file so Rob is happy? Or that doesn't work?
+> 
+> I guess that should work.
+> 
+> My point here is that due to the catch-all rule, he's listed as maintainer
+> for of_{dma,gpio,irq,iommu,mdio,net,pci} too, which are all helpers for
+> other subsystems. Perhaps these should be X'd-out too?
+> Or is it OK without X-ing them out, as the clock maintainers are now shown, too?
+> 
+> Rob: What's your preference?
+
+It's fine as-is.
+
+Rob
