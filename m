@@ -1,45 +1,69 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [RFC 5/5] PCI: tegra: use seq_open_data
-Date: Wed, 25 Apr 2018 10:38:08 +0100
-Message-ID: <20180425093808.GA15875@e107981-ln.cambridge.arm.com>
-References: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
- <20180301233724.20440-5-linux@rasmusvillemoes.dk>
- <20180302104207.GB27178@ulmo>
- <20180307124105.GE15139@e107981-ln.cambridge.arm.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 1/5] drm/nouveau: tegra: Detach from ARM
+ DMA/IOMMU mapping
+Date: Wed, 25 Apr 2018 12:10:47 +0200
+Message-ID: <20180425101051.15349-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180307124105.GE15139@e107981-ln.cambridge.arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 12:41:05PM +0000, Lorenzo Pieralisi wrote:
-> On Fri, Mar 02, 2018 at 11:42:07AM +0100, Thierry Reding wrote:
-> > On Fri, Mar 02, 2018 at 12:37:24AM +0100, Rasmus Villemoes wrote:
-> > > Simplify the code slightly by having seq_open_data do the ->private
-> > > assignment.
-> > > 
-> > > Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> > > ---
-> > >  drivers/pci/host/pci-tegra.c | 11 +----------
-> > >  1 file changed, 1 insertion(+), 10 deletions(-)
-> > 
-> > I had to go hunt for patch 1/5 to be able to tell if this is indeed
-> > equivalent. It is, so:
-> > 
-> > Reviewed-by: Thierry Reding <treding@nvidia.com>
-> > Acked-by: Thierry Reding <treding@nvidia.com>
-> 
-> I can't apply this patch standalone so I assume this will go via
-> some other tree; I will drop it from the PCI patch queue, if I
-> should not please do let me know.
-
-I would kindly ask you some feedback - where are we with this patch
-series ? Please let me know if should consider it for the pci tree
-as per my request above.
-
-Thanks,
-Lorenzo
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkRlcGVuZGluZyBvbiB0
+aGUga2VybmVsIGNvbmZpZ3VyYXRpb24sIGVhcmx5IEFSTSBhcmNoaXRlY3R1cmUgc2V0dXAgY29k
+ZQptYXkgaGF2ZSBhdHRhY2hlZCB0aGUgR1BVIHRvIGEgRE1BL0lPTU1VIG1hcHBpbmcgdGhhdCB0
+cmFuc3BhcmVudGx5IHVzZXMKdGhlIElPTU1VIHRvIGJhY2sgdGhlIERNQSBBUEkuIFRlZ3JhIHJl
+cXVpcmVzIHNwZWNpYWwgaGFuZGxpbmcgZm9yIElPTU1VCmJhY2tlZCBidWZmZXJzIChhIHNwZWNp
+YWwgYml0IGluIHRoZSBHUFUncyBNTVUgcGFnZSB0YWJsZXMgaW5kaWNhdGVzIHRoZQptZW1vcnkg
+cGF0aCB0byB0YWtlOiB2aWEgdGhlIFNNTVUgb3IgZGlyZWN0bHkgdG8gdGhlIG1lbW9yeSBjb250
+cm9sbGVyKS4KVHJhbnNwYXJlbnRseSBiYWNraW5nIERNQSBtZW1vcnkgd2l0aCBhbiBJT01NVSBw
+cmV2ZW50cyBOb3V2ZWF1IGZyb20KcHJvcGVybHkgaGFuZGxpbmcgc3VjaCBtZW1vcnkgYWNjZXNz
+ZXMgYW5kIGNhdXNlcyBtZW1vcnkgYWNjZXNzIGZhdWx0cy4KCkFzIGEgc2lkZS1ub3RlOiBidWZm
+ZXJzIG90aGVyIHRoYW4gdGhvc2UgYWxsb2NhdGVkIGluIGluc3RhbmNlIG1lbW9yeQpkb24ndCBu
+ZWVkIHRvIGJlIHBoeXNpY2FsbHkgY29udGlndW91cyBmcm9tIHRoZSBHUFUncyBwZXJzcGVjdGl2
+ZSBzaW5jZQp0aGUgR1BVIGNhbiBtYXAgdGhlbSBpbnRvIGNvbnRpZ3VvdXMgYnVmZmVycyB1c2lu
+ZyBpdHMgb3duIE1NVS4gTWFwcGluZwp0aGVzZSBidWZmZXJzIHRocm91Z2ggdGhlIElPTU1VIGlz
+IHVubmVjZXNzYXJ5IGFuZCB3aWxsIGV2ZW4gbGVhZCB0bwpwZXJmb3JtYW5jZSBkZWdyYWRhdGlv
+biBiZWNhdXNlIG9mIHRoZSBhZGRpdGlvbmFsIHRyYW5zbGF0aW9uLgoKU2lnbmVkLW9mZi1ieTog
+VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCkkgaGFkIGFscmVhZHkgc2Vu
+dCB0aGlzIG91dCBpbmRlcGVuZGVudGx5IHRvIGZpeCBhIHJlZ3Jlc3Npb24gdGhhdCB3YXMKaW50
+cm9kdWNlZCBpbiB2NC4xNiwgYnV0IHRoZW4gQ2hyaXN0b3BoIHBvaW50ZWQgb3V0IHRoYXQgaXQg
+c2hvdWxkJ3ZlCmJlZW4gc2VudCB0byBhIHdpZGVyIGF1ZGllbmNlIGFuZCBzaG91bGQgdXNlIGEg
+Y29yZSBBUEkgcmF0aGVyIHRoYW4KY2FsbGluZyBpbnRvIGFyY2hpdGVjdHVyZSBjb2RlIGRpcmVj
+dGx5LgoKSSd2ZSBhZGRlZCBpdCB0byB0aGlzIHNlcmllcyBmb3IgZWFzaWVyIHJlZmVyZW5jZSBh
+bmQgdG8gc2hvdyB0aGUgbmVlZApmb3IgdGhlIG5ldyBBUEkuCgogLi4uL2RybS9ub3V2ZWF1L252
+a20vZW5naW5lL2RldmljZS90ZWdyYS5jICAgIHwgMTkgKysrKysrKysrKysrKysrKysrKwogMSBm
+aWxlIGNoYW5nZWQsIDE5IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
+cm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvdGVncmEuYyBiL2RyaXZlcnMvZ3B1L2RybS9u
+b3V2ZWF1L252a20vZW5naW5lL2RldmljZS90ZWdyYS5jCmluZGV4IDc4NTk3ZGE2MzEzYS4uMjM0
+MjhhNzA1NmU5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL2VuZ2lu
+ZS9kZXZpY2UvdGVncmEuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL2VuZ2lu
+ZS9kZXZpY2UvdGVncmEuYwpAQCAtMTksNiArMTksMTEgQEAKICAqIEZST00sIE9VVCBPRiBPUiBJ
+TiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRXQVJFIE9SIFRIRSBVU0UgT1IgT1RIRVIKICAqIERF
+QUxJTkdTIElOIFRIRSBTT0ZUV0FSRS4KICAqLworCisjaWYgSVNfRU5BQkxFRChDT05GSUdfQVJN
+X0RNQV9VU0VfSU9NTVUpCisjaW5jbHVkZSA8YXNtL2RtYS1pb21tdS5oPgorI2VuZGlmCisKICNp
+bmNsdWRlIDxjb3JlL3RlZ3JhLmg+CiAjaWZkZWYgQ09ORklHX05PVVZFQVVfUExBVEZPUk1fRFJJ
+VkVSCiAjaW5jbHVkZSAicHJpdi5oIgpAQCAtMTA1LDYgKzExMCwyMCBAQCBudmttX2RldmljZV90
+ZWdyYV9wcm9iZV9pb21tdShzdHJ1Y3QgbnZrbV9kZXZpY2VfdGVncmEgKnRkZXYpCiAJdW5zaWdu
+ZWQgbG9uZyBwZ3NpemVfYml0bWFwOwogCWludCByZXQ7CiAKKyNpZiBJU19FTkFCTEVEKENPTkZJ
+R19BUk1fRE1BX1VTRV9JT01NVSkKKwlpZiAoZGV2LT5hcmNoZGF0YS5tYXBwaW5nKSB7CisJCXN0
+cnVjdCBkbWFfaW9tbXVfbWFwcGluZyAqbWFwcGluZyA9IHRvX2RtYV9pb21tdV9tYXBwaW5nKGRl
+dik7CisKKwkJYXJtX2lvbW11X3JlbGVhc2VfbWFwcGluZyhtYXBwaW5nKTsKKwkJYXJtX2lvbW11
+X2RldGFjaF9kZXZpY2UoZGV2KTsKKworCQlpZiAoZGV2LT5hcmNoZGF0YS5kbWFfY29oZXJlbnQp
+CisJCQlzZXRfZG1hX29wcyhkZXYsICZhcm1fY29oZXJlbnRfZG1hX29wcyk7CisJCWVsc2UKKwkJ
+CXNldF9kbWFfb3BzKGRldiwgJmFybV9kbWFfb3BzKTsKKwl9CisjZW5kaWYKKwogCWlmICghdGRl
+di0+ZnVuYy0+aW9tbXVfYml0KQogCQlyZXR1cm47CiAKLS0gCjIuMTcuMAoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QK
+Tm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
