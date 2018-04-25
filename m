@@ -1,54 +1,89 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
-Date: Tue, 24 Apr 2018 10:44:31 -0500
-Message-ID: <20180424154431.5bf35ck4z5xtusnm@rob-hp-laptop>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
- <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
- <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/4] drm/nouveau: tegra: Detach from ARM DMA/IOMMU mapping
+Date: Wed, 25 Apr 2018 11:18:12 +0200
+Message-ID: <20180425091815.16264-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-tegra@vger.kernel.org, open list:OPEN FIRMWARE AND FLATTENED
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 08:28:28AM +0200, Geert Uytterhoeven wrote:
-> Hi Stephen, Rob,
-> 
-> On Fri, Apr 20, 2018 at 12:25 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> > Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
-> >> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
-> >> limited to clock providers.
-> >>
-> >> Hence move these helpers into their own header file, so callers that are
-> >> not clock providers no longer have to include <linux/clk-provider.h>.
-> >>
-> >> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> >> ---
-> >> v3:
-> >>   - Add Reviewed-by,
-> >>   - Add SPDX-License-Identifier,
-> >>   - Add to clock section in MAINTAINERS (note that Rob is still listed
-> >>     as a maintainer, too, due to the include/linux/of*.h catch-all
-> >>     rule),
-> >
-> > Can you X: out this file so Rob is happy? Or that doesn't work?
-> 
-> I guess that should work.
-> 
-> My point here is that due to the catch-all rule, he's listed as maintainer
-> for of_{dma,gpio,irq,iommu,mdio,net,pci} too, which are all helpers for
-> other subsystems. Perhaps these should be X'd-out too?
-> Or is it OK without X-ing them out, as the clock maintainers are now shown, too?
-> 
-> Rob: What's your preference?
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-It's fine as-is.
+Depending on the kernel configuration, early ARM architecture setup code
+may have attached the GPU to a DMA/IOMMU mapping that transparently uses
+the IOMMU to back the DMA API. Tegra requires special handling for IOMMU
+backed buffers (a special bit in the GPU's MMU page tables indicates the
+memory path to take: via the SMMU or directly to the memory controller).
+Transparently backing DMA memory with an IOMMU prevents Nouveau from
+properly handling such memory accesses and causes memory access faults.
 
-Rob
+As a side-note: buffers other than those allocated in instance memory
+don't need to be physically contiguous from the GPU's perspective since
+the GPU can map them into contiguous buffers using its own MMU. Mapping
+these buffers through the IOMMU is unnecessary and will even lead to
+performance degradation because of the additional translation.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+I had already sent this out independently to fix a regression that was
+introduced in v4.16, but then Christoph pointed out that it should've
+been sent to a wider audience and should use a core API rather than
+calling into architecture code directly.
+
+I've added it to this series for easier reference and to show the need
+for the new API.
+
+ .../drm/nouveau/nvkm/engine/device/tegra.c    | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index 78597da6313a..23428a7056e9 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -19,6 +19,11 @@
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  * DEALINGS IN THE SOFTWARE.
+  */
++
++#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
++#include <asm/dma-iommu.h>
++#endif
++
+ #include <core/tegra.h>
+ #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
+ #include "priv.h"
+@@ -105,6 +110,20 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
+ 	unsigned long pgsize_bitmap;
+ 	int ret;
+ 
++#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
++	if (dev->archdata.mapping) {
++		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
++
++		arm_iommu_release_mapping(mapping);
++		arm_iommu_detach_device(dev);
++
++		if (dev->archdata.dma_coherent)
++			set_dma_ops(dev, &arm_coherent_dma_ops);
++		else
++			set_dma_ops(dev, &arm_dma_ops);
++	}
++#endif
++
+ 	if (!tdev->func->iommu_bit)
+ 		return;
+ 
+-- 
+2.17.0
