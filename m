@@ -1,52 +1,100 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 4/4] drm/nouveau: tegra: Use
- dma_iommu_detach_device()
-Date: Wed, 25 Apr 2018 11:18:15 +0200
-Message-ID: <20180425091815.16264-4-thierry.reding@gmail.com>
+Subject: Re: [PATCH 3/4] ARM: dma-mapping: Implement arch_iommu_detach_device()
+Date: Wed, 25 Apr 2018 11:29:38 +0200
+Message-ID: <20180425092938.GA21182@ulmo>
 References: <20180425091815.16264-1-thierry.reding@gmail.com>
+	<20180425091815.16264-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20180425091815.16264-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============2336374934013037688=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20180425091815.16264-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 To: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClVzZSB0aGUgbmV3IGRt
-YV9pb21tdV9kZXRhY2hfZGV2aWNlKCkgZnVuY3Rpb24gdG8gcmVwbGFjZSB0aGUgb3Blbi1jb2Rl
-ZAplcXVpdmFsZW50LgoKU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZp
-ZGlhLmNvbT4KLS0tCiAuLi4vZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMg
-ICAgfCAxOSArKy0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
-KCspLCAxNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVh
-dS9udmttL2VuZ2luZS9kZXZpY2UvdGVncmEuYyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252
-a20vZW5naW5lL2RldmljZS90ZWdyYS5jCmluZGV4IDIzNDI4YTcwNTZlOS4uYzBhN2YzODM5Y2Ji
-IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2Uv
-dGVncmEuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2Uv
-dGVncmEuYwpAQCAtMjAsMTAgKzIwLDYgQEAKICAqIERFQUxJTkdTIElOIFRIRSBTT0ZUV0FSRS4K
-ICAqLwogCi0jaWYgSVNfRU5BQkxFRChDT05GSUdfQVJNX0RNQV9VU0VfSU9NTVUpCi0jaW5jbHVk
-ZSA8YXNtL2RtYS1pb21tdS5oPgotI2VuZGlmCi0KICNpbmNsdWRlIDxjb3JlL3RlZ3JhLmg+CiAj
-aWZkZWYgQ09ORklHX05PVVZFQVVfUExBVEZPUk1fRFJJVkVSCiAjaW5jbHVkZSAicHJpdi5oIgpA
-QCAtMTEwLDE5ICsxMDYsOCBAQCBudmttX2RldmljZV90ZWdyYV9wcm9iZV9pb21tdShzdHJ1Y3Qg
-bnZrbV9kZXZpY2VfdGVncmEgKnRkZXYpCiAJdW5zaWduZWQgbG9uZyBwZ3NpemVfYml0bWFwOwog
-CWludCByZXQ7CiAKLSNpZiBJU19FTkFCTEVEKENPTkZJR19BUk1fRE1BX1VTRV9JT01NVSkKLQlp
-ZiAoZGV2LT5hcmNoZGF0YS5tYXBwaW5nKSB7Ci0JCXN0cnVjdCBkbWFfaW9tbXVfbWFwcGluZyAq
-bWFwcGluZyA9IHRvX2RtYV9pb21tdV9tYXBwaW5nKGRldik7Ci0KLQkJYXJtX2lvbW11X3JlbGVh
-c2VfbWFwcGluZyhtYXBwaW5nKTsKLQkJYXJtX2lvbW11X2RldGFjaF9kZXZpY2UoZGV2KTsKLQot
-CQlpZiAoZGV2LT5hcmNoZGF0YS5kbWFfY29oZXJlbnQpCi0JCQlzZXRfZG1hX29wcyhkZXYsICZh
-cm1fY29oZXJlbnRfZG1hX29wcyk7Ci0JCWVsc2UKLQkJCXNldF9kbWFfb3BzKGRldiwgJmFybV9k
-bWFfb3BzKTsKLQl9Ci0jZW5kaWYKKwkvKiBtYWtlIHN1cmUgd2UgY2FuIHVzZSB0aGUgSU9NTVUg
-ZXhjbHVzaXZlbHkgKi8KKwlkbWFfaW9tbXVfZGV0YWNoX2RldmljZShkZXYpOwogCiAJaWYgKCF0
-ZGV2LT5mdW5jLT5pb21tdV9iaXQpCiAJCXJldHVybjsKLS0gCjIuMTcuMAoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QK
-Tm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+
+--===============2336374934013037688==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
+Content-Disposition: inline
+
+
+--huq684BweRXVnRxX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Apr 25, 2018 at 11:18:14AM +0200, Thierry Reding wrote:
+[...]
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 8c398fedbbb6..1957938d8c9c 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -2366,6 +2366,21 @@ static void arm_teardown_iommu_dma_ops(struct devi=
+ce *dev)
+>  	arm_iommu_release_mapping(mapping);
+>  }
+> =20
+> +void arch_iommu_detach_device(struct device *dev)
+> +{
+> +	struct dma_iommu_mapping *mapping =3D to_dma_iommu_mapping(dev);
+> +	const struct dma_map_ops *dma_ops;
+> +
+> +	if (!mapping)
+> +		return;
+> +
+> +	arm_iommu_release_mapping(mapping);
+> +	arm_iommu_detach_device(dev);
+> +
+> +	dma_ops =3D arm_get_dma_map_ops(dev->archdata.dma_coherent);
+> +	set_dma_ops(dev, dma_ops);
+> +}
+
+Oh, the irony! This doesn't actually build and I failed to notice
+because I forgot to enable ARM_DMA_USE_IOMMU...
+
+Sorry about that, but I think we can use this as basis to discuss
+whether the API is good and I'll make sure to properly test the next
+revision before sending it out.
+
+Thierry
+
+--huq684BweRXVnRxX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrgSn8ACgkQ3SOs138+
+s6F1ww/+Io3Jb9byScviM7GR6y34CYPzZt1/CqxuuQRTH6emuGKJAX7mWuU9ijVk
+U2GvdZWo5Jx20V4+22CJhlV6MqWGLOKKDrhCDD45X4v5q4U1BRQYwxzbHwjqmFdm
+kmOsvWuupQ/flF4ZsX9EfVsikoQMZMyhplHpaue2DN5iiOG1abD5tYDoYYNeog0e
+0QSdcdYK6phHNgbP03DILieeH+fg3UwjSaGrE/9gX2aGNfR6taHtHe8h5A1xwosr
+eVjpzOYSZVpDd/inbte2mAzI6mj2gng4XTAKpN40jJV4ckKthcmvNRZOp5t6UnsA
++zkbK2yPOxvFXZToCWgcGQOXN1/6BOrYpqp7ZkoOKenbfsr6+c8d0MUYEBW0OFrl
+y5xVg5Ycj/o/q52/LETGHUK2b1IYm2af1vw/poauQZOx1G9HtFnxtoJXR3U3T5X3
+Py37aFcImZELUq3JkNr/dk4NCIBuXU0dMQhx14qKHJ9UPlPUpnWQKMpwarY2UXAf
+opHXDgD//tpBKolmdlHHnAR+6Dqo3mFuU5RUAmYJakfMCiSyM1Zz/zTwJKAN1tEV
+qlBJRrNnDHliroPYVlYq1lOxbAttvhIMMpEsH6QbxCICcTY2FPG6wCdAa9eo+fTW
+mZ8LIqwLIsM+taZdbznDlL8PjpgSrCG5//SmHXXonYTvKt8VG54=
+=J0eW
+-----END PGP SIGNATURE-----
+
+--huq684BweRXVnRxX--
+
+--===============2336374934013037688==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============2336374934013037688==--
