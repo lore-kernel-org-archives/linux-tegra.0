@@ -1,85 +1,122 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] drm/core: Remove drm_dev_unref() and it's uses
-Date: Thu, 26 Apr 2018 13:43:09 +0300
-Message-ID: <2767328.18DNhHKilX@avalon>
-References: <20180426102819.6985-1-vthakkar1994@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: fix ulpi regression on tegra20
+Date: Thu, 26 Apr 2018 14:39:29 +0300
+Message-ID: <20180426113929.GH6835@tbergstrom-lnx.Nvidia.com>
+References: <20180219151252.29289-1-marcel@ziswiler.com>
+ <6600596.BijQW1iq1K@ax5200p>
+ <4f2ac009-8618-4b4d-e137-a5fd4907a56f@gmail.com>
+ <1524521136.4493.70.camel@toradex.com>
+ <c0cb2620-91b5-8043-bb74-306dca0331eb@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180426102819.6985-1-vthakkar1994@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Vaishali Thakkar <vthakkar1994@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, alexandre.belloni@bootlin.com, airlied@linux.ie, thierry.reding@gmail.com, kraxel@redhat.com, nouveau@lists.freedesktop.org, marex@denx.de, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, tomi.valkeinen@ti.com, linux@armlinux.org.uk, krzk@kernel.org, jonathanh@nvidia.com, z.liuxinliang@hisilicon.com, maxime.ripard@bootlin.com, kong.kongxinwei@hisilicon.com, kgene@kernel.org, bskeggs@redhat.com, linux-arm-msm@vger.kernel.org, airlied@redhat.com, virtualization@lists.linux-foundation.org, freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, puck.chen@hisilicon.com, intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, brodkin@synopsys.com, boris.brezillon@bootlin.com, zourongrong@gmail.com, rodrigo.vivi@intel.com, matthias.bgg@gmail.com, org@freedesktop.org, wens@csie.org, vincent.abriou@st.com
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <c0cb2620-91b5-8043-bb74-306dca0331eb@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "marvin24@gmx.de" <marvin24@gmx.de>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgVmFpc2hhbGksCgpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KCk9uIFRodXJzZGF5LCAyNiBB
-cHJpbCAyMDE4IDEzOjI4OjE5IEVFU1QgVmFpc2hhbGkgVGhha2thciB3cm90ZToKPiBJdCdzIGJl
-ZW4gYSB3aGlsZSBzaW5jZSB3ZSBpbnRyb2R1Y2VkIGRybV9kZXZ7Z2V0L3B1dH0gZnVuY3Rpb25z
-Cj4gdG8gcmVwbGFjZSByZWZlcmVuY2UvdW5yZWZlcmVuY2UgaW4gZHJtIHN1YnN5c3RlbSBmb3Ig
-dGhlCj4gY29uc2lzdGVuY3kgcHVycG9zZS4gU28sIHdpdGggdGhpcyBwYXRjaCwgbGV0J3MganVz
-dCByZXBsYWNlCj4gYWxsIGN1cnJlbnQgdXNlIGNhc2VzIG9mIGRybV9kZXZfdW5yZWYoKSB3aXRo
-IGRybV9kZXZfcHV0IGFuZCByZW1vdmUKPiB0aGUgZnVuY3Rpb24gaXRzZWxmLgo+IAo+IENvY2Np
-bmVsbGUgd2FzIHVzZWQgZm9yIG1hc3MtcGF0Y2hpbmcuCj4gCj4gU2lnbmVkLW9mZi1ieTogVmFp
-c2hhbGkgVGhha2thciA8dnRoYWtrYXIxOTk0QGdtYWlsLmNvbT4KCkkgbG92ZSBzZWVpbmcgZGVw
-cmVjYXRlZCBmdW5jdGlvbnMgZ28uCgpSZXZpZXdlZC1ieTogTGF1cmVudCBQaW5jaGFydCA8bGF1
-cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgoKPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJt
-L2FtZC9hbWRncHUvYW1kZ3B1X2Rydi5jICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMv
-Z3B1L2RybS9hcmMvYXJjcGd1X2Rydi5jICAgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9kcnYuYyAgICAgICAgICAgICAgICB8ICA2ICsr
-Ky0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYyAgICAg
-ICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV9kcnYuYyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgfCAxMyAtLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0
-bmF2aXZfZHJ2LmMgICAgICAgICAgICAgIHwgIDQgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHJ2LmMgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZl
-cnMvZ3B1L2RybS9oaXNpbGljb24vaGlibWMvaGlibWNfZHJtX2Rydi5jICAgIHwgIDQgKystLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2tpcmluL2tpcmluX2RybV9kcnYuYyAgICB8ICA4
-ICsrKystLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9odWdlX3BhZ2VzLmMg
-ICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3RzL2k5MTVfZ2Vt
-X2RtYWJ1Zi5jICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvaTkx
-NV9nZW1fZXZpY3QuYyAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0
-cy9pOTE1X2dlbV9ndHQuYyAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvc2Vs
-ZnRlc3RzL2k5MTVfZ2VtX29iamVjdC5jICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkx
-NS9zZWxmdGVzdHMvaTkxNV9yZXF1ZXN0LmMgICAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9pOTE1L3NlbGZ0ZXN0cy9pOTE1X3ZtYS5jICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9n
-cHUvZHJtL2k5MTUvc2VsZnRlc3RzL2ludGVsX2JyZWFkY3J1bWJzLmMgfCAgMiArLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vaW14L2lteC1kcm0tY29yZS5jICAgICAgICAgICAgICAgICB8ICA0ICsrLS0K
-PiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmMgICAgICAgICAgICAgfCAg
-NiArKystLS0KPiAgZHJpdmVycy9ncHUvZHJtL21zbS9tc21fZHJ2LmMgICAgICAgICAgICAgICAg
-ICAgICAgfCAgOCArKysrLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbXhzZmIvbXhzZmJfZHJ2LmMg
-ICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91
-dmVhdV9wbGF0Zm9ybS5jICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRy
-bS9vbWFwX2Rydi5jICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJt
-L3BsMTExL3BsMTExX2Rydi5jICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMv
-Z3B1L2RybS9xeGwvcXhsX2Rydi5jICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJp
-dmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuYyAgICAgICAgICAgICAgfCAgMiArLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5jICAgICAgICB8ICA0
-ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL3NobW9iaWxlL3NobW9iX2RybV9kcnYuYyAgICAgICAg
-ICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2Rydi5jICAgICAgICAgICAg
-ICAgICAgICAgIHwgIDggKysrKy0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3N0bS9kcnYuYyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9z
-dW40aV9kcnYuYyAgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHJtLmMgICAgICAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9n
-cHUvZHJtL3Rpbnlkcm0vY29yZS90aW55ZHJtLWNvcmUuYyAgICAgICAgfCAgNiArKystLS0KPiAg
-ZHJpdmVycy9ncHUvZHJtL3R2ZTIwMC90dmUyMDBfZHJ2LmMgICAgICAgICAgICAgICAgfCAgNCAr
-Ky0tCj4gIGRyaXZlcnMvZ3B1L2RybS91ZGwvdWRsX2Rydi5jICAgICAgICAgICAgICAgICAgICAg
-IHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICAgICAg
-ICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS92Z2VtL3ZnZW1fZHJ2LmMgICAgICAg
-ICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2Ry
-bV9idXMuYyAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0venRlL3p4X2RybV9k
-cnYuYyAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgaW5jbHVkZS9kcm0vZHJtX2Rydi5o
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIDQxIGZpbGVzIGNoYW5nZWQs
-IDczIGluc2VydGlvbnMoKyksIDg3IGRlbGV0aW9ucygtKQoKLS0gClJlZ2FyZHMsCgpMYXVyZW50
-IFBpbmNoYXJ0CgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+On Tue, Apr 24, 2018 at 05:38:41PM +0300, Dmitry Osipenko wrote:
+> Hi Marcel,
+> 
+> On 24.04.2018 01:05, Marcel Ziswiler wrote:
+> > Hi Dmitry
+> > 
+> > On Fri, 2018-04-20 at 13:50 +0300, Dmitry Osipenko wrote:
+> >> ...
+> >> I managed to find CDEV clocks in TRM this time.
+> > 
+> > And where exactly in which TRM? In all my attempts at finding anything
+> > CDEV2 is just a pad group which includes the DAP_MCLK2 pad in question. 
+> 
+> That's the DEV2 clock you're talking about below.
+> 
+> >> Seems assigning CDEV2 clock to
+> >> "ulpi-link" was correct
+> > 
+> > Sorry, but I do really not see how you can get to any such conclusion.
+> > 
+> > Whatever that CDEV2 clock exactly is. Its offset 93 points towards the
+> > CLK_RST_CONTROLLER_CLK_OUT_ENB_U_0 register which has CLK_ENB_DEV2_OUT
+> > at bit position 29 reading "Enable clock to DEV2 pad". While the TRM
+> > misses further documenting what exactly that DEV2 pad should be I guess
+> > it may point towards our suspected DAP_MCLK2. So for some reason
+> > besides PLL_P_OUT4 which is what that pad is actually muxed to also
+> > some additional DEV2 pad clock needs enabling. In addition there would
+> > be a CLK_RST_CONTROLLER_MISC_CLK_ENB_0 register where one could also
+> > specify a DEV2_OSC_DIV_SEL but I would assume that one only applies if
+> > the pad in question being muxed to OSC which is not the case at least
+> > in all device trees I have looked at.
+> > 
+> >> and both CDEV2 and PLL_P_OUT4 should be enabled,
+> > 
+> > Agreed, basically the DAP_MCLK2 pad seems gated by an additional enable
+> > called CLK_ENB_DEV2_OUT.
+> > 
+> >> CDEV2
+> >> should gate the PLL_P_OUT4 that feeds USB HW and PLL_P_OUT4 should be
+> >> always-enabled because it is enabled by init_table, but apparently it
+> >> is getting
+> >> disabled erroneously.
+> > 
+> > At least that was the case back when I had trouble getting ULPI to work
+> > on T20. Strangely latest -next right now does no longer seem to suffer
+> > from that same issue even if my patch is reverted but as mentioned
+> > before nobody stops the required PLL_P_OUT4 which is what is actually
+> > driving DAP_MCLK2 to not be changed behind the scenes breaking the
+> > whole thing again.
+> > 
+> >> Marcel, could you please revert your patch, add
+> >> "trace_event=clk_enable,clk_disable,clk_set_parent tp_printk" to
+> >> kernels cmdline
+> >> and post the log?
+> > 
+> > Yes, the only difference in those traces is whether or not that non-
+> > existent CDEV2 clock is enabled or not:
+> > 
+> > [    1.897521] clk_enable: cdev2_fixed
+> > [    1.901008] clk_enable: cdev2
+> > 
+> > I also do have an explanation why it kept working in my case. Probably
+> > the boot ROM or U-Boot is already setting that bit.
+> > 
+> >> It looks like there is some clk framework bug,
+> > 
+> > My conclusion is that there should be a DAP_MCLK2 clock which is gated
+> > by that CLK_ENB_DEV2_OUT but really outputs a T20 internal clock
+> > according to its pin muxing which if set to OSC may be further divided
+> > down by DEV2_OSC_DIV_SEL.
+> 
+> Could be that DEV2_OSC_DIV_SEL is only relevant when DAP_MCLK2 is mux'ed to OSC.
+> Maybe Peter could clarify everything.
+> 
+
+Yes. This looks likely. Problem here is that the source selection for cdev1
+and cdev2 is done via pinmuxing rather than via a regular mux control in CAR.
+So probably the "OSC" input is not really OSC but the output of the divider
+configured in CLK_RST_CONTROLLER_MISC_CLK_ENB_0.
+
+Possible solutions I see are:
+
+1) make the tegra20 pinctrl driver a clock provider for the cdev1 and cdev2
+   clocks. We would then need to introduce 2 new clocks cdev1_mux and
+   cdev2_mux which represent pinmuxes. cdev1 and cdev2 would use those as
+   a parent. cdev1_fixed and cdev2_fixed would need to be renamed to refelect
+   the settings in CLK_RST_CONTROLLER_MISC_CLK_ENB_0 and can be inputs for
+   cdev1_mux and cdev2_mux
+
+2) read the pinmux configuration for cdev1 and cdev2 at boot. this would
+   require mapping the apbmisc aperture in the clock driver, but we already
+   map the PMC aperture, so there's a precedent for mappings outside CAR.
+   Then define the cdev1 and cdev2 parent accordingly. Also cdev1_fixed and
+   cdev2_fixed could be defined as the divided version of OSC according to
+   the settings in CLK_RST_CONTROLLER_MISC_CLK_ENB_0. Limitation of this
+   approach is that we assume these settings are never changed at runtime.
+   This seems acceptable to me though. Or do we know of a use case where the
+   setting is changed at runtime?
+
+Solution 1 is nicer, but would require backwards-incompatible changes to the
+DT bindings.
+
+Peter.
