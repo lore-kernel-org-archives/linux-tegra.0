@@ -1,45 +1,43 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/4] clk: tegra20: Set correct parents for CDEV1/2 clocks
-Date: Fri, 27 Apr 2018 02:58:17 +0300
-Message-ID: <20180426235818.10018-4-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
+Subject: [PATCH v1 0/4] Restore ULPI USB on Tegra20
+Date: Fri, 27 Apr 2018 02:58:14 +0300
+Message-ID: <20180426235818.10018-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
 Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Parents of CDEV1/2 clocks are determined by muxing of the corresponding
-pins. Pinctrl driver now provides the CDEV1/2 clock muxes and hence
-CDEV1/2 clocks could have correct parents. Set CDEV1/2 parents to the
-corresponding muxes to fix the parents.
+Hello,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra20.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+This series of patches fixes ULPI USB on Tegra20. The original problem
+was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+with the USB for the devices that have CDEV2 being enabled by bootloader.
+The patch got into the kernel and later Marc Dietrich found that USB
+stopped working on the "paz00" Tegra20 board. After a bit of discussion
+was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+driver was setting CDEV2's parent incorrectly. The parent clock is actually
+determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
+providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+suggestion), and then setting these clock muxes as parents for the CDEV1/2
+clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CDEV2
+(aka MCLK2) is the actual clock source for "ulpi-link".
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 16cf4108f2ff..7e8b6de86d89 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -844,14 +844,12 @@ static void __init tegra20_periph_clk_init(void)
- 			     CLK_DIVIDER_POWER_OF_TWO, NULL);
- 
- 	/* cdev1 */
--	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
--	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
-+	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_mux", 0,
- 				    clk_base, 0, 94, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_CDEV1] = clk;
- 
- 	/* cdev2 */
--	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
--	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
-+	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_mux", 0,
- 				    clk_base, 0, 93, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_CDEV2] = clk;
- 
+Dmitry Osipenko (4):
+  clk: tegra20: Add DEV1/DEV2 OSC dividers
+  pinctrl: tegra20: Provide CDEV1/2 clock muxes
+  clk: tegra20: Set correct parents for CDEV1/2 clocks
+  ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+
+ arch/arm/boot/dts/tegra20.dtsi          |  2 +-
+ drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
+ drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+ drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+ 5 files changed, 55 insertions(+), 17 deletions(-)
+
 -- 
 2.17.0
