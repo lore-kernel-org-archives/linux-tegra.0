@@ -1,92 +1,42 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 3/5] ARM: dma-mapping: Implement
-	arch_iommu_detach_device()
-Date: Thu, 26 Apr 2018 14:14:09 +0200
-Message-ID: <20180426121409.GE11985@ulmo>
-References: <20180425101051.15349-1-thierry.reding@gmail.com>
-	<20180425101051.15349-3-thierry.reding@gmail.com>
-	<20180425152049.GD16075@infradead.org>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH] drm/core: Remove drm_dev_unref() and it's
+ uses
+Date: Thu, 26 Apr 2018 14:15:59 +0200
+Message-ID: <20180426141559.6811127b@bbrezillon>
+References: <20180426102819.6985-1-vthakkar1994@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4079600245322452102=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20180425152049.GD16075-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20180426102819.6985-1-vthakkar1994@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Vaishali Thakkar <vthakkar1994@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, alexandre.belloni@bootlin.com, heiko@sntech.de, airlied@linux.ie, linus.walleij@linaro.org, stefan@agner.ch, hjc@rock-chips.com, kraxel@redhat.com, benjamin.gaignard@linaro.org, nouveau@lists.freedesktop.org, marex@denx.de, David1.Zhou@amd.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, linux-rockchip@lists.infradead.org, tomi.valkeinen@ti.com, linux@armlinux.org.uk, krzk@kernel.org, jonathanh@nvidia.com, z.liuxinliang@hisilicon.com, maxime.ripard@bootlin.com, kong.kongxinwei@hisilicon.com, kgene@kernel.org, bskeggs@redhat.com, linux-arm-msm@vger.kernel.org, ck.hu@mediatek.com, airlied@redhat.com, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, puck.chen@hisilicon.com, intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, brodkin@synopsys.com, zourongrong@gmail.com, dri-devel@lists.free
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============4079600245322452102==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cPi+lWm09sJ+d57q"
-Content-Disposition: inline
-
-
---cPi+lWm09sJ+d57q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Apr 25, 2018 at 08:20:49AM -0700, Christoph Hellwig wrote:
-> > +void arch_iommu_detach_device(struct device *dev)
-> > +{
-> > +#ifdef CONFIG_ARM_DMA_USE_IOMMU
-> > +	struct dma_iommu_mapping *mapping =3D to_dma_iommu_mapping(dev);
-> > +	const struct dma_map_ops *dma_ops;
-> > +
-> > +	if (!mapping)
-> > +		return;
-> > +
-> > +	arm_iommu_release_mapping(mapping);
-> > +	arm_iommu_detach_device(dev);
-> > +
-> > +	dma_ops =3D arm_get_dma_map_ops(dev->archdata.dma_coherent);
-> > +	set_dma_ops(dev, dma_ops);
->=20
-> Why not simply:
->=20
-> 	set_dma_ops(dev, arm_get_dma_map_ops(dev->archdata.dma_coherent));
-
-I had that initially, but it looked cluttered to me, so I split it up.
-I don't care much either way, so I can revert to that if you prefer.
-
-Thierry
-
---cPi+lWm09sJ+d57q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrhwpEACgkQ3SOs138+
-s6FV9Q/+KVsKhrVJ7Zh8jvSb6d/IAN1aQMyNjF/2Z39Y4CoJvSf7b1UfWFrxCqPa
-Mn3QVSjsW0xCIf8TNvhyxu7T4utumxzQ5Hh1Xl0ql8Astkj1rnGnenN6RpHb5abR
-ePpXDYfeltIWHTCUON2NCHnz494SUKbB9Y6/t4u2vWVjapr+dc1WY3P0fRpOxgSN
-Ei5IUqn97vHB4zvLQoE7V8x2xohh1D5ZWgS1tkl9CRstgAnCebUZVIvP+j2gULdc
-mVODPlj5iw1JLlYlovw9jf8L6eobAMtMzJsg1xeBfgUKsTm6SBES/GHjiUKQwbqq
-tXufglIka3tJmNde3D9ESOhCkJPbkwCEzKY90JVGDulB/D9XI+24AMXG+6Ip0D8k
-BP8+xHBRjsiWmQs6QGMQfAevV9+xYCA/cg1LletwoV1nf4QhfS5qUTVNd75jKU4e
-q2FKimpJHDgATjwk/pBfru7myN3+7c6qA2UMd3NFJzaKIczisRHJvpChdDhwZsSS
-70d4XAsVPlnagL3l9V3m2cvqqEobJnQrhaf0ncHhzs7Lu5WF8ZaEODzwYrqu8lHM
-H/yktoBOuA7eyQ360VugWkzZkzmk6G1gfQmwzDvGIfU0d7j5YOYui5p0wsWbXstJ
-u2VdllCbsrfFOLgFCLwiyQPy4gQ22Tja58D7WRRx6vopRk36zAg=
-=2jKW
------END PGP SIGNATURE-----
-
---cPi+lWm09sJ+d57q--
-
---===============4079600245322452102==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============4079600245322452102==--
+T24gVGh1LCAyNiBBcHIgMjAxOCAxNTo1ODoxOSArMDUzMApWYWlzaGFsaSBUaGFra2FyIDx2dGhh
+a2thcjE5OTRAZ21haWwuY29tPiB3cm90ZToKCj4gSXQncyBiZWVuIGEgd2hpbGUgc2luY2Ugd2Ug
+aW50cm9kdWNlZCBkcm1fZGV2e2dldC9wdXR9IGZ1bmN0aW9ucwo+IHRvIHJlcGxhY2UgcmVmZXJl
+bmNlL3VucmVmZXJlbmNlIGluIGRybSBzdWJzeXN0ZW0gZm9yIHRoZQo+IGNvbnNpc3RlbmN5IHB1
+cnBvc2UuIFNvLCB3aXRoIHRoaXMgcGF0Y2gsIGxldCdzIGp1c3QgcmVwbGFjZQo+IGFsbCBjdXJy
+ZW50IHVzZSBjYXNlcyBvZiBkcm1fZGV2X3VucmVmKCkgd2l0aCBkcm1fZGV2X3B1dCBhbmQgcmVt
+b3ZlCj4gdGhlIGZ1bmN0aW9uIGl0c2VsZi4KPiAKPiBDb2NjaW5lbGxlIHdhcyB1c2VkIGZvciBt
+YXNzLXBhdGNoaW5nLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFZhaXNoYWxpIFRoYWtrYXIgPHZ0aGFr
+a2FyMTk5NEBnbWFpbC5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2Ft
+ZGdwdV9kcnYuYyAgICAgICAgICAgIHwgIDQgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXJjL2Fy
+Y3BndV9kcnYuYyAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJt
+L2FybWFkYS9hcm1hZGFfZHJ2LmMgICAgICAgICAgICAgICAgfCAgNiArKystLS0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMgICAgICAgfCAgNCArKy0tCgpG
+b3IgYXRtZWwtaGxjZGM6CgpBY2tlZC1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxs
+b25AYm9vdGxpbi5jb20+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVs
+LWdmeAo=
