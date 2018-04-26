@@ -1,169 +1,100 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/5] drm/nouveau: tegra: Detach from ARM
- DMA/IOMMU mapping
-Date: Thu, 26 Apr 2018 14:41:03 +0200
-Message-ID: <20180426124103.GF11985@ulmo>
-References: <20180425101051.15349-1-thierry.reding@gmail.com>
- <20180425152849.GA2447@jcrouse-lnx.qualcomm.com>
+From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Subject: Re: [Intel-gfx] [PATCH] drm/core: Remove drm_dev_unref() and it's uses
+Date: Thu, 26 Apr 2018 15:45:44 +0300
+Message-ID: <1556510.Xu6NnhyFGZ@avalon>
+References: <20180426102819.6985-1-vthakkar1994@gmail.com>
+ <20180426123615.GA12521@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1213382348=="
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20180425152849.GA2447-9PYrDHPZ2Orvke4nUoYGnHL1okKdlPRT@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20180426123615.GA12521-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, marex-ynQEQJNshbs@public.gmane.org, David1.Zhou-5C7GfCeVMHo@public.gmane.org, maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, z.liuxinliang-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kong.kongxinwei-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, tomi.valkeinen-l0cyMroinI0@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, puck.chen-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, brodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, zourongrong-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============1213382348==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AH+kv8CCoFf6qPuz"
-Content-Disposition: inline
-
-
---AH+kv8CCoFf6qPuz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Apr 25, 2018 at 09:28:49AM -0600, Jordan Crouse wrote:
-> On Wed, Apr 25, 2018 at 12:10:47PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Depending on the kernel configuration, early ARM architecture setup code
-> > may have attached the GPU to a DMA/IOMMU mapping that transparently uses
-> > the IOMMU to back the DMA API. Tegra requires special handling for IOMMU
-> > backed buffers (a special bit in the GPU's MMU page tables indicates the
-> > memory path to take: via the SMMU or directly to the memory controller).
-> > Transparently backing DMA memory with an IOMMU prevents Nouveau from
-> > properly handling such memory accesses and causes memory access faults.
-> >=20
-> > As a side-note: buffers other than those allocated in instance memory
-> > don't need to be physically contiguous from the GPU's perspective since
-> > the GPU can map them into contiguous buffers using its own MMU. Mapping
-> > these buffers through the IOMMU is unnecessary and will even lead to
-> > performance degradation because of the additional translation.
-> >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > I had already sent this out independently to fix a regression that was
-> > introduced in v4.16, but then Christoph pointed out that it should've
-> > been sent to a wider audience and should use a core API rather than
-> > calling into architecture code directly.
-> >=20
-> > I've added it to this series for easier reference and to show the need
-> > for the new API.
->=20
-> This is good stuff, I am struggling with something similar on ARM64. One
-> problem that I wasn't able to fully solve cleanly was that for arm-smmu=
-=20
-> the SMMU HW resources are not released until the domain itself is destroy=
-ed
-> and I never quite figured out a way to swap the default domain cleanly.
->=20
-> This is a problem for the MSM GPU because not only do we run our own IOMM=
-U as
-> you do we also have a hardware dependency to use context bank 0 to
-> asynchronously switch the pagetable during rendering.
->=20
-> I'm not sure if this is a problem you have encountered.
-
-I don't think I have. Recent chips have similar capabilities, but they
-don't have the restriction to a context bank, as far as I understand.
-Adding Mikko who's had more exposure to this.
-
-> In any event, this code
-> gets us a little bit further down the path and at least there is somebody=
- else
-> out there in the cold dark world that understands my pain. :)
-
-This doesn't actually fix anything on 64-bit ARM, and oddly enough I
-haven't run into this issue myself on 64-bit ARM either. I think the
-reason is that I haven't tested Nouveau on Tegra186 yet, which is the
-first SoC which has an ARM SMMU. On prior 64-bit ARM chips we've used
-the custom Tegra SMMU and that driver simply forbids creating any DMA
-domains, so it will allow only explicit usage of the IOMMU API. There
-is code in the generic DMA/IOMMU integration layer to not use the DMA
-API with non-DMA IOMMU domains, but that's not true on 32-bit ARM,
-unfortunately. It's entirely possible that Tegra186 will show exactly
-the same problem that you are describing.
-
-We do use the IOMMU API explicitly in the Tegra DRM driver as well,
-and that is something that I've tested on Tegra186 and that I know to
-be working. However, the reason why it works there is that the IOMMU
-group will contain multiple display controllers, which will again
-trigger a special case that will prevent the DMA/IOMMU integration
-=66rom setting up a DMA domain for use with those devices.
-
-> For your interest, here was my half-hearted attempt to avoid creating DMA
-> domains in the first place based on a blacklist to try to spur a bit of
-> discussion: https://patchwork.freedesktop.org/series/41573/
-
-This looks very interesting and simple, but I can imagine that it will
-see significant pushback from the ARM SMMU maintainers (if not complete
-silence), because it adds SoC-specific knowledge to an otherwise fully
-generic driver. Having the GPU driver explicitly detach from the IOMMU
-domain sounds like a better option, but I don't see how that would help
-with the context bank issue that you're seeing.
-
-One other possibility that I can imagine is to add something to struct
-device that could be used by arch_setup_dma_ops() to not attach any of
-the IOMMU-backed DMA operations to the device. Unfortunately that code
-is called before the driver's ->probe() implementation is called, so a
-driver doesn't have an opportunity to set it. Something like
-of_dma_configure() could still set that up, perhaps based on some DT
-property, though I can already hear the NAK from DT maintainers because
-this is, after all, policy, not hardware description.
-
-The last solution that I can think of that might allow us to do this is
-to add a flag to struct device_driver (bool explicit_iommu?) that will
-be used by the DMA/IOMMU setup code to decide whether or not to attach
-to the IOMMU automatically.
-
-Though, again, I'm not sure that would actually solve your bank problem.
-That's really something I don't see any other solution than to fix it in
-the ARM SMMU driver. Perhaps context bank 0 can always be reserved for
-non-DMA domains?
-
-Thierry
-
---AH+kv8CCoFf6qPuz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrhyN0ACgkQ3SOs138+
-s6FmjQ//U3HvtvhAphVFr1x+uAqV+uMCOpAaY3OhLMyk/IlbCZ6ON/o3k/BHKuds
-s3jR0P5kr81B+3bN3eZoIizqATXnGAK0heVjJh1/oNTWTkarXAPWPdpVWkRy2zwF
-0q6nkT4+y1nIpzqIvKMK5iHnODYSxDe3iCgFhloSL/fS7ZJnVgLDI82qGU40TPuW
-kl6o4vucrEV3qGN97sImgEO6pL2XHPEigc/Xbi2YAqUUwEWPNqUrGwoEIaU6wzWi
-yK7LT7DtNli8p1lXCij2SqFduxka8wVMUXNe7CDTABbZ7DF8rCvXcwPjRnGnGrLP
-/YEFMHYGiBLP4Wu7EIsqOrBNFF6OnLdb7TqA7Lt9zfC6EoncRtChGFnnRh+c0a7m
-FHTts5H2MK6w4Pafw+AOd3OElLLxOx53lZSoEEwM/1npeQ9kBBpN+eOUzfBeWkkt
-cWQoVLO6mLnpY3H8gpkoOhjLYvs4ILFjeT93EpJCeGDC8NtimZbBe3lcrfiEc7Xh
-sHqDPR07QqJFBTLx7+kkw4RjEaOfkZXyAH27Qb8aSHneWWG2MNdfD+IqAAfU8+Be
-eWC86kSM429C0ilAcpf5ZWxYLwXEmimltztg5ewbmzNejY7KFvaCZovVrbIpQJVU
-+cS95j0ROIucy9XumPVxRu8Gh+mFMb9rqAzHyODy+cGoAJnsIsw=
-=AocE
------END PGP SIGNATURE-----
-
---AH+kv8CCoFf6qPuz--
-
---===============1213382348==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
-YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
-
---===============1213382348==--
+SGkgRGFuaWVsLAoKT24gVGh1cnNkYXksIDI2IEFwcmlsIDIwMTggMTU6MzY6MTUgRUVTVCBEYW5p
+ZWwgVmV0dGVyIHdyb3RlOgo+IE9uIFRodSwgQXByIDI2LCAyMDE4IGF0IDAzOjU4OjE5UE0gKzA1
+MzAsIFZhaXNoYWxpIFRoYWtrYXIgd3JvdGU6Cj4gPiBJdCdzIGJlZW4gYSB3aGlsZSBzaW5jZSB3
+ZSBpbnRyb2R1Y2VkIGRybV9kZXZ7Z2V0L3B1dH0gZnVuY3Rpb25zCj4gPiB0byByZXBsYWNlIHJl
+ZmVyZW5jZS91bnJlZmVyZW5jZSBpbiBkcm0gc3Vic3lzdGVtIGZvciB0aGUKPiA+IGNvbnNpc3Rl
+bmN5IHB1cnBvc2UuIFNvLCB3aXRoIHRoaXMgcGF0Y2gsIGxldCdzIGp1c3QgcmVwbGFjZQo+ID4g
+YWxsIGN1cnJlbnQgdXNlIGNhc2VzIG9mIGRybV9kZXZfdW5yZWYoKSB3aXRoIGRybV9kZXZfcHV0
+IGFuZCByZW1vdmUKPiA+IHRoZSBmdW5jdGlvbiBpdHNlbGYuCj4gPiAKPiA+IENvY2NpbmVsbGUg
+d2FzIHVzZWQgZm9yIG1hc3MtcGF0Y2hpbmcuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IFZhaXNo
+YWxpIFRoYWtrYXIgPHZ0aGFra2FyMTk5NEBnbWFpbC5jb20+Cj4gCj4gVGhhbmtzIGZvciBkb2lu
+ZyB0aGlzLiBVbmZvcnR1bmF0ZWx5IGRybSBtb3ZlcyBwcmV0dHkgZmFzdCwgc28gYWxyZWFkeSBh
+Cj4gY29uZmxpY3Qgd2hlbiBJIHRyaWVkIHRvIGFwcGx5IHRoaXMuIFNvbWUgZHJpdmVycyBhcmUg
+YWxzbyBpbiB0aGVpciBvd24KPiB0cmVlcywgc28gdGhpcyBtaWdodCBsZWFkIHRvIG1vcmUgZnVu
+IDotLwo+IAo+IENhbiB5b3UgcGxzIHNwbGl0IGl0IHVwIHBlci1kcml2ZXIgKGp1c3QgdGhlIGRp
+cmVjdG9yaWVzIHVuZGVyCj4gZHJpdmVycy9ncHUvZHJtLyBpcyBlbm91Z2gpPyBGaW5hbCBwYXRj
+aCB0byByZW1vdmUgdGhlIGZ1bmN0aW9uIG1pZ2h0IHRoZW4KPiBnZXQgc3RhbGxlZCBhIGJpdCBv
+ZmMuCgpJIHJlcXVlc3RlZCBhIHNpbmdsZSBwYXRjaCBpbnN0ZWFkIG9mIHNwbGl0dGluZyBpdCBw
+ZXIgZHJpdmVyLCB5b3UgbWlnaHQgd2FudCAKdG8gYmxhbWUgbWUgZm9yIHRoYXQuCgo+IEFsc28g
+Y2FuIHlvdSBwbHMgdXBkYXRlIC4vc2NyaXB0cy9jb2NjaW5lbGxlL2FwaS9kcm0tZ2V0LXB1dC5j
+b2NjaSBhbmQKPiByZW1vdmUgdGhhdCBzcGF0Y2ggaHVuayBpbiB0aGUgZmluYWwgcGF0Y2gsIHNp
+bmNlIHdlIG5vIGxvbmdlciBuZWVkIGl0PwoKSG93IGFib3V0IGp1c3QgcmVydW5uaW5nIHRoZSBj
+b2NjaW5lbGxlIHBhdGNoIHdoZW4gaXQncyB0aW1lIHRvIGFwcGx5IHRoaXMgPyAKVGhlcmUncyBw
+cmVjZWRlbnQgZm9yIHBlcmZvcm1pbmcgc3VjaCBhdXRvbWF0ZWQgY2hhbmdlcywgYW5kIGl0IHdv
+dWxkIGVuc3VyZSAKdGhhdCBubyBkcml2ZXIgaXMgbGVmdCBvdXQuCgo+ID4gLS0tCj4gPiAKPiA+
+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZHJ2LmMgICAgICAgICAgICB8ICA0
+ICsrLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vYXJjL2FyY3BndV9kcnYuYyAgICAgICAgICAgICAg
+ICAgICB8ICA0ICsrLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9kcnYuYyAg
+ICAgICAgICAgICAgICB8ICA2ICsrKy0tLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNk
+Yy9hdG1lbF9obGNkY19kYy5jICAgICAgIHwgIDQgKystLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9k
+cm1fZHJ2LmMgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMTMgLS0tLS0tLS0tLS0tLQo+ID4g
+IGRyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2aXZfZHJ2LmMgICAgICAgICAgICAgIHwgIDQg
+KystLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgICAgICAg
+ICAgIHwgIDQgKystLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9mc2wtZGN1L2ZzbF9kY3VfZHJtX2Ry
+di5jICAgICAgICAgIHwgIDQgKystLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9oaXNpbGljb24vaGli
+bWMvaGlibWNfZHJtX2Rydi5jICAgIHwgIDQgKystLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9oaXNp
+bGljb24va2lyaW4va2lyaW5fZHJtX2Rydi5jICAgIHwgIDggKysrKy0tLS0KPiA+ICBkcml2ZXJz
+L2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvaHVnZV9wYWdlcy5jICAgICAgICB8ICAyICstCj4gPiAg
+ZHJpdmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3RzL2k5MTVfZ2VtX2RtYWJ1Zi5jICAgfCAgMiAr
+LQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9pOTE1X2dlbV9ldmljdC5jICAg
+IHwgIDIgKy0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvaTkxNV9nZW1fZ3R0
+LmMgICAgICB8ICAyICstCj4gPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3RzL2k5MTVf
+Z2VtX29iamVjdC5jICAgfCAgMiArLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0
+cy9pOTE1X3JlcXVlc3QuYyAgICAgIHwgIDIgKy0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9z
+ZWxmdGVzdHMvaTkxNV92bWEuYyAgICAgICAgICB8ICAyICstCj4gPiAgZHJpdmVycy9ncHUvZHJt
+L2k5MTUvc2VsZnRlc3RzL2ludGVsX2JyZWFkY3J1bWJzLmMgfCAgMiArLQo+ID4gIGRyaXZlcnMv
+Z3B1L2RybS9pbXgvaW14LWRybS1jb3JlLmMgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ID4g
+IGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2Rydi5jICAgICAgICAgICAgIHwgIDYg
+KysrLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL21zbS9tc21fZHJ2LmMgICAgICAgICAgICAgICAg
+ICAgICAgfCAgOCArKysrLS0tLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9teHNmYi9teHNmYl9kcnYu
+YyAgICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1
+L25vdXZlYXVfcGxhdGZvcm0uYyAgICAgICAgIHwgIDIgKy0KPiA+ICBkcml2ZXJzL2dwdS9kcm0v
+b21hcGRybS9vbWFwX2Rydi5jICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiA+ICBkcml2ZXJz
+L2dwdS9kcm0vcGwxMTEvcGwxMTFfZHJ2LmMgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiA+
+ICBkcml2ZXJzL2dwdS9kcm0vcXhsL3F4bF9kcnYuYyAgICAgICAgICAgICAgICAgICAgICB8ICAy
+ICstCj4gPiAgZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuYyAgICAgICAgICAg
+ICAgfCAgMiArLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2
+LmMgICAgICAgIHwgIDQgKystLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9zaG1vYmlsZS9zaG1vYl9k
+cm1fZHJ2LmMgICAgICAgICAgIHwgIDQgKystLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3Rp
+X2Rydi5jICAgICAgICAgICAgICAgICAgICAgIHwgIDggKysrKy0tLS0KPiA+ICBkcml2ZXJzL2dw
+dS9kcm0vc3RtL2Rydi5jICAgICAgICAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiA+ICBk
+cml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMgICAgICAgICAgICAgICAgICB8ICA0ICsr
+LS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAgICAgICAgICAgICAgICAg
+ICB8ICA0ICsrLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vdGlueWRybS9jb3JlL3Rpbnlkcm0tY29y
+ZS5jICAgICAgICB8ICA2ICsrKy0tLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS90dmUyMDAvdHZlMjAw
+X2Rydi5jICAgICAgICAgICAgICAgIHwgIDQgKystLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS91ZGwv
+dWRsX2Rydi5jICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiA+ICBkcml2ZXJzL2dwdS9k
+cm0vdmM0L3ZjNF9kcnYuYyAgICAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiA+ICBkcml2
+ZXJzL2dwdS9kcm0vdmdlbS92Z2VtX2Rydi5jICAgICAgICAgICAgICAgICAgICB8ICAyICstCj4g
+PiAgZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2RybV9idXMuYyAgICAgICAgICAgfCAg
+MiArLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS96dGUvenhfZHJtX2Rydi5jICAgICAgICAgICAgICAg
+ICAgIHwgIDQgKystLQo+ID4gIGluY2x1ZGUvZHJtL2RybV9kcnYuaCAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHwgIDEgLQo+ID4gIDQxIGZpbGVzIGNoYW5nZWQsIDczIGluc2VydGlvbnMo
+KyksIDg3IGRlbGV0aW9ucygtKQoKLS0gClJlZ2FyZHMsCgpMYXVyZW50IFBpbmNoYXJ0CgoKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmFtZC1nZnggbWFp
+bGluZyBsaXN0CmFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vYW1kLWdmeAo=
