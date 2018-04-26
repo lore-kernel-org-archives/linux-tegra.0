@@ -1,52 +1,53 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 20/61] input: keyboard: simplify getting .drvdata
-Date: Thu, 26 Apr 2018 14:23:27 -0700
-Message-ID: <20180426212327.GB210716@dtor-ws>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-21-wsa+renesas@sang-engineering.com>
- <20180426191947.GC162443@dtor-ws>
- <20180426200401.lvqiy4gnchkwr4qw@ninjato>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Fri, 27 Apr 2018 02:58:15 +0300
+Message-ID: <20180426235818.10018-2-digetx@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180426200401.lvqiy4gnchkwr4qw@ninjato>
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 10:04:01PM +0200, Wolfram Sang wrote:
-> Hi Dmitry,
-> 
-> > > We should get drvdata from struct device directly. Going via
-> > > platform_device is an unneeded step back and forth.
-> > 
-> > I consider the fact that platform device's driver data is accessible via
-> > device driver data being implementation detail that may or may not change
-> 
-> Isn't it actually the other way around? platform_get_drvdata() is a
-> convenience function to access driver_data which is embedded in struct
-> device?
+CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
+a parent. Add these dividers in order to be able to provide that parent
+option.
 
-I guess it depends on how you read it. I always considered it separate
-because none (?) of the bus implementation assert this in comments to
-XXX_get_drvdata().
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> 
-> > in the future, so I'd prefer keep using the proper accessors for the
-> > objects we are dealing with.
-> 
-> Exactly. I'd just argue, the object we are dealing with, declared in the
-> PM functions, is a struct device.
-
-No, the driver does not create a generic device, it actually creates a
-platform device, or i2c client, or spi, or something else. The fact that
-suspend and resume routines have generic device as their argument has
-more to do with the language limitation rather than reflection of true
-type of the objects we are dealing with.
-
-Thanks.
-
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 0ee56dd04cec..16cf4108f2ff 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -26,6 +26,8 @@
+ #include "clk.h"
+ #include "clk-id.h"
+ 
++#define MISC_CLK_ENB 0x48
++
+ #define OSC_CTRL 0x50
+ #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+ #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+@@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
+ 				    periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_PEX] = clk;
+ 
++	/* cdev1 OSC divider */
++	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 20, 2,
++			     CLK_DIVIDER_POWER_OF_TWO, NULL);
++
++	/* cdev2 OSC divider */
++	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 22, 2,
++			     CLK_DIVIDER_POWER_OF_TWO, NULL);
++
+ 	/* cdev1 */
+ 	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+ 	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
 -- 
-Dmitry
+2.17.0
