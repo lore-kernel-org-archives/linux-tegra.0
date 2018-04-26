@@ -1,174 +1,62 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2 3/3] usb: xhci: tegra: Add support for managing powergates
-Date: Thu, 26 Apr 2018 15:59:10 +0100
-Message-ID: <1524754750-3633-3-git-send-email-jonathanh@nvidia.com>
-References: <1524754750-3633-1-git-send-email-jonathanh@nvidia.com>
+From: David Gilhooley <dgilhooley@nvidia.com>
+Subject: [PATCH] arm64: Add MIDR encoding for NVIDIA CPUs
+Date: Thu, 26 Apr 2018 10:32:05 -0700
+Message-ID: <1524763925-13959-1-git-send-email-dgilhooley@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1524754750-3633-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: catalin.marinas@arm.com, will.deacon@arm.com
+Cc: linux-tegra@vger.kernel.org, David Gilhooley <dgilhooley@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra XHCI controller requires that the XUSBA (for superspeed) and
-XUSBC (for host) power-domains are enabled. Commit 8df127456f29
-("soc/tegra: pmc: Enable XUSB partitions on boot") was added to force
-on these power-domains if the XHCI driver is enabled while proper
-power-domain support is added, to ensure the device did not hang on
-boot. However, rather than forcing on these power-domains in the PMC
-driver we can use the legacy Tegra powergate APIs to turn on these
-power-domains during the probe of the Tegra XHCI driver.
+This patch adds the MIDR encodings for NVIDIA as well as
+the Denver and Carmel CPUs used in Tegra SoCs.
 
-In the near future we plan to move the Tegra XHCI driver to use the
-generic PM domain framework for power-domains and so to prepare for
-this only use the legacy Tegra powergate API if there is not PM
-domain associated with device (ie. dev.pm_domain is NULL). Please
-note that in the future the superspeed and host resets will be handled
-by the generic PM domain provider and so these are only these are only
-needed in the case where there is no generic PM domain.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: David Gilhooley <dgilhooley@nvidia.com>
 ---
+ arch/arm64/include/asm/cputype.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Changes since V1:
-- None
-
- drivers/usb/host/xhci-tegra.c | 68 +++++++++++++++++++++++++++++++------------
- 1 file changed, 49 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 85f2381883ad..862f85f4c8bb 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -22,6 +22,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
-+#include <soc/tegra/pmc.h>
+diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+index 30014a9..df1d530 100644
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -75,6 +75,7 @@
+ #define ARM_CPU_IMP_CAVIUM		0x43
+ #define ARM_CPU_IMP_BRCM		0x42
+ #define ARM_CPU_IMP_QCOM		0x51
++#define ARM_CPU_IMP_NVIDIA		0x4E
  
- #include "xhci.h"
+ #define ARM_CPU_PART_AEM_V8		0xD0F
+ #define ARM_CPU_PART_FOUNDATION		0xD00
+@@ -99,6 +100,8 @@
+ #define QCOM_CPU_PART_FALKOR		0xC00
+ #define QCOM_CPU_PART_KRYO		0x200
  
-@@ -975,20 +976,6 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	if (IS_ERR(tegra->padctl))
- 		return PTR_ERR(tegra->padctl);
- 
--	tegra->host_rst = devm_reset_control_get(&pdev->dev, "xusb_host");
--	if (IS_ERR(tegra->host_rst)) {
--		err = PTR_ERR(tegra->host_rst);
--		dev_err(&pdev->dev, "failed to get xusb_host reset: %d\n", err);
--		goto put_padctl;
--	}
--
--	tegra->ss_rst = devm_reset_control_get(&pdev->dev, "xusb_ss");
--	if (IS_ERR(tegra->ss_rst)) {
--		err = PTR_ERR(tegra->ss_rst);
--		dev_err(&pdev->dev, "failed to get xusb_ss reset: %d\n", err);
--		goto put_padctl;
--	}
--
- 	tegra->host_clk = devm_clk_get(&pdev->dev, "xusb_host");
- 	if (IS_ERR(tegra->host_clk)) {
- 		err = PTR_ERR(tegra->host_clk);
-@@ -1052,11 +1039,48 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 		goto put_padctl;
- 	}
- 
-+	if (!pdev->dev.pm_domain) {
-+		tegra->host_rst = devm_reset_control_get(&pdev->dev,
-+							 "xusb_host");
-+		if (IS_ERR(tegra->host_rst)) {
-+			err = PTR_ERR(tegra->host_rst);
-+			dev_err(&pdev->dev,
-+				"failed to get xusb_host reset: %d\n", err);
-+			goto put_padctl;
-+		}
++#define NVIDIA_CPU_PART_DENVER		0x003
++#define NVIDIA_CPU_PART_CARMEL		0x004
 +
-+		tegra->ss_rst = devm_reset_control_get(&pdev->dev, "xusb_ss");
-+		if (IS_ERR(tegra->ss_rst)) {
-+			err = PTR_ERR(tegra->ss_rst);
-+			dev_err(&pdev->dev, "failed to get xusb_ss reset: %d\n",
-+				err);
-+			goto put_padctl;
-+		}
-+
-+		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
-+							tegra->ss_clk,
-+							tegra->ss_rst);
-+		if (err) {
-+			dev_err(&pdev->dev,
-+				"failed to enable XUSBA domain: %d\n", err);
-+			goto put_padctl;
-+		}
-+
-+		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
-+							tegra->host_clk,
-+							tegra->host_rst);
-+		if (err) {
-+			dev_err(&pdev->dev,
-+				"failed to enable XUSBC domain: %d\n", err);
-+			goto disable_xusba;
-+		}
-+	}
-+
- 	tegra->supplies = devm_kcalloc(&pdev->dev, tegra->soc->num_supplies,
- 				       sizeof(*tegra->supplies), GFP_KERNEL);
- 	if (!tegra->supplies) {
- 		err = -ENOMEM;
--		goto put_padctl;
-+		goto disable_xusbc;
- 	}
+ #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
+ #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
+ #define MIDR_CORTEX_A72 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A72)
+@@ -114,6 +117,7 @@
+ #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
+ #define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
+ #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
++#define MIDR_NVIDIA_DENVER MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_DENVER)
++#define MIDR_NVIDIA_CARMEL MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_CARMEL)
  
- 	for (i = 0; i < tegra->soc->num_supplies; i++)
-@@ -1066,7 +1090,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 				      tegra->supplies);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
--		goto put_padctl;
-+		goto disable_xusbc;
- 	}
+ #ifndef __ASSEMBLY__
  
- 	for (i = 0; i < tegra->soc->num_types; i++)
-@@ -1076,7 +1100,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 				   sizeof(*tegra->phys), GFP_KERNEL);
- 	if (!tegra->phys) {
- 		err = -ENOMEM;
--		goto put_padctl;
-+		goto disable_xusbc;
- 	}
- 
- 	for (i = 0, k = 0; i < tegra->soc->num_types; i++) {
-@@ -1092,7 +1116,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 					"failed to get PHY %s: %ld\n", prop,
- 					PTR_ERR(phy));
- 				err = PTR_ERR(phy);
--				goto put_padctl;
-+				goto disable_xusbc;
- 			}
- 
- 			tegra->phys[k++] = phy;
-@@ -1103,7 +1127,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 				    dev_name(&pdev->dev));
- 	if (!tegra->hcd) {
- 		err = -ENOMEM;
--		goto put_padctl;
-+		goto disable_xusbc;
- 	}
- 
- 	/*
-@@ -1199,6 +1223,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- disable_rpm:
- 	pm_runtime_disable(&pdev->dev);
- 	usb_put_hcd(tegra->hcd);
-+disable_xusbc:
-+	if (!&pdev->dev.pm_domain)
-+		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
-+disable_xusba:
-+	if (!&pdev->dev.pm_domain)
-+		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
- put_padctl:
- 	tegra_xusb_padctl_put(tegra->padctl);
- 	return err;
 -- 
-2.7.4
+2.1.4
