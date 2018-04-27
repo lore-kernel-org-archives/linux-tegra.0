@@ -1,78 +1,61 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 09/15] memory: tegra: Squash tegra20-mc into common
- tegra-mc driver
-Date: Fri, 27 Apr 2018 13:56:55 +0300
-Message-ID: <103e449b-8ac9-c70b-4d85-638ba4a4a73a@gmail.com>
-References: <cover.1523301400.git.digetx@gmail.com>
- <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
- <20180427093435.GB30388@ulmo>
- <882f14b8-78c8-95bb-326e-3917c9736faf@gmail.com>
- <20180427102456.GA17137@ulmo>
+Subject: Re: [PATCH v1 4/4] iommu/tegra: gart: Optimize map/unmap
+Date: Fri, 27 Apr 2018 15:01:57 +0300
+Message-ID: <1980b5a2-3921-04f5-0519-ba926ac66e3d@gmail.com>
+References: <cover.1523304324.git.digetx@gmail.com>
+ <f21a7b6a8f141b87f75687904a76f3728ea639a8.1523304324.git.digetx@gmail.com>
+ <20180427100202.GO30388@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180427102456.GA17137@ulmo>
+In-Reply-To: <20180427100202.GO30388@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Joerg Roedel <joro@8bytes.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 27.04.2018 13:24, Thierry Reding wrote:
-> On Fri, Apr 27, 2018 at 01:13:47PM +0300, Dmitry Osipenko wrote:
->> On 27.04.2018 12:34, Thierry Reding wrote:
->>> On Mon, Apr 09, 2018 at 10:28:31PM +0300, Dmitry Osipenko wrote:
->>> [...]
->>>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
->>> [...]
->>>> +#define MC_GART_ERROR_REQ		0x30
->>>> +#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
->>>> +#define MC_SECURITY_VIOLATION_STATUS	0x74
->>> [...]
->>>> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
->>> [...]
->>>> @@ -21,19 +21,30 @@
->>>>  #define MC_INT_INVALID_SMMU_PAGE (1 << 10)
->>>>  #define MC_INT_ARBITRATION_EMEM (1 << 9)
->>>>  #define MC_INT_SECURITY_VIOLATION (1 << 8)
->>>> +#define MC_INT_INVALID_GART_PAGE (1 << 7)
->>>>  #define MC_INT_DECERR_EMEM (1 << 6)
->>>>  
->>>>  static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
->>>>  {
->>>> +	if (mc->regs2 && offset >= 0x24)
->>>> +		return readl(mc->regs2 + offset - 0x3c);
->>>
->>> I'm still not sure how this is supposed to work. If we pass in
->>> MC_GART_ERROR_REQ as offset into mc_readl(), then the condition above
->>> will be true (0x30 >= 0x24) but then the new offset will be computed
->>> and we end up with:
->>>
->>> 	return readl(mc->regs2 + 0x30 - 0x3c);
->>>
->>> which means we'll be adding a negative offset (or rather a very large
->>> offset because it will wrap around).
+On 27.04.2018 13:02, Thierry Reding wrote:
+> On Mon, Apr 09, 2018 at 11:07:22PM +0300, Dmitry Osipenko wrote:
+>> Currently GART writes one page entry at a time. More optimal would be to
+>> aggregate the writes and flush BUS buffer in the end, this gives map/unmap
+>> 10-40% (depending on size of mapping) performance boost compared to a
+>> flushing after each entry update.
 >>
->> Indeed! Thank you for pointing at it again, now I see the issue. It probably
->> works because actual registers mapping is aligned to page(?) size and adding the
->> large offset with wraparound is equal to subtraction.
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/iommu/tegra-gart.c | 63 +++++++++++++++++++++++++++++++++++-----------
+>>  1 file changed, 48 insertions(+), 15 deletions(-)
 >>
->> That register belongs to the GART and we can't simply move interrupt handling to
->> the GART driver because status register is within the MC in device tree. We can
->> omit reading of MC_GART_ERROR_REQ and simply report GART page fault for the
->> starter and then reorganize drivers by making MC driver MFD and GART its
->> sub-device, what do you think?
+>> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+>> index 4a0607669d34..9f59f5f17661 100644
+>> --- a/drivers/iommu/tegra-gart.c
+>> +++ b/drivers/iommu/tegra-gart.c
+>> @@ -36,7 +36,7 @@
+>>  #define GART_APERTURE_SIZE	SZ_32M
+>>  
+>>  /* bitmap of the page sizes currently supported */
+>> -#define GART_IOMMU_PGSIZES	(SZ_4K)
+>> +#define GART_IOMMU_PGSIZES	GENMASK(24, 12)
 > 
-> Sounds like a good idea. Can you send a fix on top of this that I can
-> squash into this when applying?
+> That doesn't look right. The GART really only supports 4 KiB pages. You
+> seem to be "emulating" more page sizes here in order to improve mapping
+> performance. That seems wrong to me. I'm wondering if this couldn't be
+> improved by a similar factor by simply moving the flushing into an
+> implementation of ->iotlb_sync().
+> 
+> That said, it seems like ->iotlb_sync() is only used for unmapping, but
+> I don't see a reason why iommu_map() wouldn't need to call it as well
+> after going through several calls to ->map(). It seems to me like a
+> driver that implements ->iotlb_sync() would want to use it to optimize
+> for both the mapping and unmapping cases.
 
-Sure.
+I vaguely remember looking at the IOMMU syncing, but decided to try at first the
+way this patch is. I'll be happy to switch to map/unmap syncing, let's see what
+Joerg would suggest.
 
-> As for integrating GART with MC, I'd prefer something that doesn't use
-> MFD but rather does something similar to what we have for the SMMU. I
-> think that's simpler to do and has less boilerplate. I think it's also
-> warranted because the MC and GART are very tightly coupled, so an MFD
-> would be slightly over-engineered, in my opinion.
-
-Okay, I'll recap how SMMU is integrated with MC and then come up with something.
+> Joerg, I've gone over the git log and header files and I see no mention
+> of why the TLB flush interface isn't used for mapping. Do you recall any
+> special reasons why the same shouldn't be applied for mapping? Would you
+> accept any patches doing this?
