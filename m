@@ -1,196 +1,83 @@
-From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v1 4/4] iommu/tegra: gart: Optimize map/unmap
-Date: Fri, 27 Apr 2018 13:36:30 +0100
-Message-ID: <716edf58-38a7-21e5-1668-b866bf392e34@arm.com>
-References: <cover.1523304324.git.digetx@gmail.com>
-	<f21a7b6a8f141b87f75687904a76f3728ea639a8.1523304324.git.digetx@gmail.com>
-	<20180427100202.GO30388@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Fri, 27 Apr 2018 15:54:44 +0300
+Message-ID: <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+ <20180426235818.10018-2-digetx@gmail.com>
+ <1524832404.6979.9.camel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20180427100202.GO30388@ulmo>
-Content-Language: en-GB
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1524832404.6979.9.camel@ziswiler.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+Hi Marcel,
 
-On 27/04/18 11:02, Thierry Reding wrote:
-> On Mon, Apr 09, 2018 at 11:07:22PM +0300, Dmitry Osipenko wrote:
->> Currently GART writes one page entry at a time. More optimal would be to
->> aggregate the writes and flush BUS buffer in the end, this gives map/unmap
->> 10-40% (depending on size of mapping) performance boost compared to a
->> flushing after each entry update.
+On 27.04.2018 15:33,  Ziswiler wrote:
+> Hi Dmitry
+> 
+> Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around e.g.
+> DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
+> 
+> On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
+>> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider
+>> as
+>> a parent. Add these dividers in order to be able to provide that
+>> parent
+>> option.
 >>
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>   drivers/iommu/tegra-gart.c | 63 +++++++++++++++++++++++++++++++++++-----------
->>   1 file changed, 48 insertions(+), 15 deletions(-)
+>>  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
 >>
->> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
->> index 4a0607669d34..9f59f5f17661 100644
->> --- a/drivers/iommu/tegra-gart.c
->> +++ b/drivers/iommu/tegra-gart.c
->> @@ -36,7 +36,7 @@
->>   #define GART_APERTURE_SIZE	SZ_32M
->>   
->>   /* bitmap of the page sizes currently supported */
->> -#define GART_IOMMU_PGSIZES	(SZ_4K)
->> +#define GART_IOMMU_PGSIZES	GENMASK(24, 12)
+>> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-
+>> tegra20.c
+>> index 0ee56dd04cec..16cf4108f2ff 100644
+>> --- a/drivers/clk/tegra/clk-tegra20.c
+>> +++ b/drivers/clk/tegra/clk-tegra20.c
+>> @@ -26,6 +26,8 @@
+>>  #include "clk.h"
+>>  #include "clk-id.h"
+>>  
+>> +#define MISC_CLK_ENB 0x48
+>> +
+>>  #define OSC_CTRL 0x50
+>>  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+>>  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+>> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
+>>  				    periph_clk_enb_refcnt);
+>>  	clks[TEGRA20_CLK_PEX] = clk;
+>>  
+>> +	/* cdev1 OSC divider */
+>> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
+>> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
 > 
-> That doesn't look right. The GART really only supports 4 KiB pages. You
-> seem to be "emulating" more page sizes here in order to improve mapping
-> performance. That seems wrong to me. I'm wondering if this couldn't be
-> improved by a similar factor by simply moving the flushing into an
-> implementation of ->iotlb_sync().
+> So it would be:
 > 
-> That said, it seems like ->iotlb_sync() is only used for unmapping, but
-> I don't see a reason why iommu_map() wouldn't need to call it as well
-> after going through several calls to ->map(). It seems to me like a
-> driver that implements ->iotlb_sync() would want to use it to optimize
-> for both the mapping and unmapping cases.
+> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
 > 
-> Joerg, I've gone over the git log and header files and I see no mention
-> of why the TLB flush interface isn't used for mapping. Do you recall any
-> special reasons why the same shouldn't be applied for mapping? Would you
-> accept any patches doing this?
-
-In general, requiring TLB maintenance when transitioning from an invalid 
-entry to a valid one tends to be the exception rather than the norm, and 
-I think we ended up at the consensus that it wasn't worth the 
-complication of trying to cater for this in the generic iotlb API.
-
-To be fair, on simple hardware which doesn't implement multiple page 
-sizes with associated walk depth/TLB pressure benefits for larger ones, 
-there's no need for the IOMMU API (and/or the owner of the domain) to 
-try harder to use them, so handling "compound" page sizes within the 
-driver is a more reasonable thing to do. There is already some precedent 
-for this in other drivers (e.g. mtk_iommu_v1).
-
-Robin.
-
+>> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+>> +
+>> +	/* cdev2 OSC divider */
+>> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
+>> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
 > 
-> Thierry
+> And:
 > 
->>   
->>   #define GART_REG_BASE		0x24
->>   #define GART_CONFIG		(0x24 - GART_REG_BASE)
->> @@ -269,25 +269,21 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
->>   	kfree(gart_domain);
->>   }
->>   
->> -static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
->> -			  phys_addr_t pa, size_t bytes, int prot)
->> +static int gart_iommu_map_page(struct gart_device *gart,
->> +			       unsigned long iova,
->> +			       phys_addr_t pa)
->>   {
->> -	struct gart_domain *gart_domain = to_gart_domain(domain);
->> -	struct gart_device *gart = gart_domain->gart;
->>   	unsigned long flags;
->>   	unsigned long pfn;
->>   	unsigned long pte;
->>   
->> -	if (!gart_iova_range_valid(gart, iova, bytes))
->> -		return -EINVAL;
->> -
->> -	spin_lock_irqsave(&gart->pte_lock, flags);
->>   	pfn = __phys_to_pfn(pa);
->>   	if (!pfn_valid(pfn)) {
->>   		dev_err(gart->dev, "Invalid page: %pa\n", &pa);
->> -		spin_unlock_irqrestore(&gart->pte_lock, flags);
->>   		return -EINVAL;
->>   	}
+> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+> 
+>> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
 >> +
->> +	spin_lock_irqsave(&gart->pte_lock, flags);
->>   	if (gart_debug) {
->>   		pte = gart_read_pte(gart, iova);
->>   		if (pte & GART_ENTRY_PHYS_ADDR_VALID) {
->> @@ -297,8 +293,41 @@ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
->>   		}
->>   	}
->>   	gart_set_pte(gart, iova, GART_PTE(pfn));
->> +	spin_unlock_irqrestore(&gart->pte_lock, flags);
->> +
->> +	return 0;
->> +}
->> +
->> +static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
->> +			  phys_addr_t pa, size_t bytes, int prot)
->> +{
->> +	struct gart_domain *gart_domain = to_gart_domain(domain);
->> +	struct gart_device *gart = gart_domain->gart;
->> +	size_t mapped;
->> +	int ret = -1;
->> +
->> +	if (!gart_iova_range_valid(gart, iova, bytes))
->> +		return -EINVAL;
->> +
->> +	for (mapped = 0; mapped < bytes; mapped += GART_PAGE_SIZE) {
->> +		ret = gart_iommu_map_page(gart, iova + mapped, pa + mapped);
->> +		if (ret)
->> +			break;
->> +	}
->> +
->>   	FLUSH_GART_REGS(gart);
->> +	return ret;
->> +}
->> +
->> +static int gart_iommu_unmap_page(struct gart_device *gart,
->> +				 unsigned long iova)
->> +{
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(&gart->pte_lock, flags);
->> +	gart_set_pte(gart, iova, 0);
->>   	spin_unlock_irqrestore(&gart->pte_lock, flags);
->> +
->>   	return 0;
->>   }
->>   
->> @@ -307,16 +336,20 @@ static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
->>   {
->>   	struct gart_domain *gart_domain = to_gart_domain(domain);
->>   	struct gart_device *gart = gart_domain->gart;
->> -	unsigned long flags;
->> +	size_t unmapped;
->> +	int ret;
->>   
->>   	if (!gart_iova_range_valid(gart, iova, bytes))
->>   		return 0;
->>   
->> -	spin_lock_irqsave(&gart->pte_lock, flags);
->> -	gart_set_pte(gart, iova, 0);
->> +	for (unmapped = 0; unmapped < bytes; unmapped += GART_PAGE_SIZE) {
->> +		ret = gart_iommu_unmap_page(gart, iova + unmapped);
->> +		if (ret)
->> +			break;
->> +	}
->> +
->>   	FLUSH_GART_REGS(gart);
->> -	spin_unlock_irqrestore(&gart->pte_lock, flags);
->> -	return bytes;
->> +	return unmapped;
->>   }
->>   
->>   static phys_addr_t gart_iommu_iova_to_phys(struct iommu_domain *domain,
->> -- 
->> 2.16.3
->>
->>
->>
->> _______________________________________________
->> iommu mailing list
->> iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
->> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+>>  	/* cdev1 */
+>>  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0,
+>> 26000000);
+>>  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed",
+>> 0,
+Indeed, good catch! I'll wait for more comments and then re-spin patchset with
+the fix. Thank you.
