@@ -1,75 +1,61 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] arm64: Add MIDR encoding for NVIDIA CPUs
-Date: Fri, 27 Apr 2018 11:13:43 +0100
-Message-ID: <20180427101342.GA20014@arm.com>
-References: <1524763925-13959-1-git-send-email-dgilhooley@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 09/15] memory: tegra: Squash tegra20-mc into common
+ tegra-mc driver
+Date: Fri, 27 Apr 2018 13:13:47 +0300
+Message-ID: <882f14b8-78c8-95bb-326e-3917c9736faf@gmail.com>
+References: <cover.1523301400.git.digetx@gmail.com>
+ <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
+ <20180427093435.GB30388@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1524763925-13959-1-git-send-email-dgilhooley@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: David Gilhooley <dgilhooley@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180427093435.GB30388@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi David,
-
-On Thu, Apr 26, 2018 at 10:32:05AM -0700, David Gilhooley wrote:
-> This patch adds the MIDR encodings for NVIDIA as well as
-> the Denver and Carmel CPUs used in Tegra SoCs.
+On 27.04.2018 12:34, Thierry Reding wrote:
+> On Mon, Apr 09, 2018 at 10:28:31PM +0300, Dmitry Osipenko wrote:
+> [...]
+>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> [...]
+>> +#define MC_GART_ERROR_REQ		0x30
+>> +#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
+>> +#define MC_SECURITY_VIOLATION_STATUS	0x74
+> [...]
+>> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+> [...]
+>> @@ -21,19 +21,30 @@
+>>  #define MC_INT_INVALID_SMMU_PAGE (1 << 10)
+>>  #define MC_INT_ARBITRATION_EMEM (1 << 9)
+>>  #define MC_INT_SECURITY_VIOLATION (1 << 8)
+>> +#define MC_INT_INVALID_GART_PAGE (1 << 7)
+>>  #define MC_INT_DECERR_EMEM (1 << 6)
+>>  
+>>  static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+>>  {
+>> +	if (mc->regs2 && offset >= 0x24)
+>> +		return readl(mc->regs2 + offset - 0x3c);
 > 
-> Signed-off-by: David Gilhooley <dgilhooley@nvidia.com>
-> ---
->  arch/arm64/include/asm/cputype.h | 4 ++++
->  1 file changed, 4 insertions(+)
-
-This looks fine to me, but it probably makes sense to merge this along with
-some code that actually uses the definitions. I'm assuming you have some
-workarounds that rely on this?
-
-Will
-
-> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-> index 30014a9..df1d530 100644
-> --- a/arch/arm64/include/asm/cputype.h
-> +++ b/arch/arm64/include/asm/cputype.h
-> @@ -75,6 +75,7 @@
->  #define ARM_CPU_IMP_CAVIUM		0x43
->  #define ARM_CPU_IMP_BRCM		0x42
->  #define ARM_CPU_IMP_QCOM		0x51
-> +#define ARM_CPU_IMP_NVIDIA		0x4E
->  
->  #define ARM_CPU_PART_AEM_V8		0xD0F
->  #define ARM_CPU_PART_FOUNDATION		0xD00
-> @@ -99,6 +100,8 @@
->  #define QCOM_CPU_PART_FALKOR		0xC00
->  #define QCOM_CPU_PART_KRYO		0x200
->  
-> +#define NVIDIA_CPU_PART_DENVER		0x003
-> +#define NVIDIA_CPU_PART_CARMEL		0x004
-> +
->  #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
->  #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
->  #define MIDR_CORTEX_A72 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A72)
-> @@ -114,6 +117,7 @@
->  #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
->  #define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
->  #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
-> +#define MIDR_NVIDIA_DENVER MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_DENVER)
-> +#define MIDR_NVIDIA_CARMEL MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_CARMEL)
->  
->  #ifndef __ASSEMBLY__
->  
-> -- 
-> 2.1.4
+> I'm still not sure how this is supposed to work. If we pass in
+> MC_GART_ERROR_REQ as offset into mc_readl(), then the condition above
+> will be true (0x30 >= 0x24) but then the new offset will be computed
+> and we end up with:
 > 
+> 	return readl(mc->regs2 + 0x30 - 0x3c);
+> 
+> which means we'll be adding a negative offset (or rather a very large
+> offset because it will wrap around).
+
+Indeed! Thank you for pointing at it again, now I see the issue. It probably
+works because actual registers mapping is aligned to page(?) size and adding the
+large offset with wraparound is equal to subtraction.
+
+That register belongs to the GART and we can't simply move interrupt handling to
+the GART driver because status register is within the MC in device tree. We can
+omit reading of MC_GART_ERROR_REQ and simply report GART page fault for the
+starter and then reorganize drivers by making MC driver MFD and GART its
+sub-device, what do you think?
