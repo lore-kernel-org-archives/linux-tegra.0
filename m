@@ -1,86 +1,107 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 20/61] input: keyboard: simplify getting .drvdata
-Date: Fri, 27 Apr 2018 12:20:33 +0200
-Message-ID: <20180427102033.msrr5sourxrtypg7@ninjato>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-21-wsa+renesas@sang-engineering.com>
- <20180426191947.GC162443@dtor-ws>
- <20180426200401.lvqiy4gnchkwr4qw@ninjato>
- <20180426212327.GB210716@dtor-ws>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v4 09/15] memory: tegra: Squash tegra20-mc into common
+ tegra-mc driver
+Date: Fri, 27 Apr 2018 12:24:56 +0200
+Message-ID: <20180427102456.GA17137@ulmo>
+References: <cover.1523301400.git.digetx@gmail.com>
+ <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
+ <20180427093435.GB30388@ulmo>
+ <882f14b8-78c8-95bb-326e-3917c9736faf@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ro7fbsqyzfs5cg2h"
+        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180426212327.GB210716@dtor-ws>
+In-Reply-To: <882f14b8-78c8-95bb-326e-3917c9736faf@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ro7fbsqyzfs5cg2h
+--/04w6evG8XlLl3ft
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
-
-> > Isn't it actually the other way around? platform_get_drvdata() is a
-> > convenience function to access driver_data which is embedded in struct
-> > device?
->=20
-> I guess it depends on how you read it. I always considered it separate
-> because none (?) of the bus implementation assert this in comments to
-> XXX_get_drvdata().
-
-Well, even in the case somebody will implement a custom driver_data for
-platform_devices, this person will need to convert all current users to
-'dev_get_drvdata(&pdev->dev);' first in order to avoid regressions, I'd
-think. This is what my patch does right now (but merely for overhead
-reasons). Or?
-
-> > > in the future, so I'd prefer keep using the proper accessors for the
-> > > objects we are dealing with.
+On Fri, Apr 27, 2018 at 01:13:47PM +0300, Dmitry Osipenko wrote:
+> On 27.04.2018 12:34, Thierry Reding wrote:
+> > On Mon, Apr 09, 2018 at 10:28:31PM +0300, Dmitry Osipenko wrote:
+> > [...]
+> >> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> > [...]
+> >> +#define MC_GART_ERROR_REQ		0x30
+> >> +#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
+> >> +#define MC_SECURITY_VIOLATION_STATUS	0x74
+> > [...]
+> >> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+> > [...]
+> >> @@ -21,19 +21,30 @@
+> >>  #define MC_INT_INVALID_SMMU_PAGE (1 << 10)
+> >>  #define MC_INT_ARBITRATION_EMEM (1 << 9)
+> >>  #define MC_INT_SECURITY_VIOLATION (1 << 8)
+> >> +#define MC_INT_INVALID_GART_PAGE (1 << 7)
+> >>  #define MC_INT_DECERR_EMEM (1 << 6)
+> >> =20
+> >>  static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+> >>  {
+> >> +	if (mc->regs2 && offset >=3D 0x24)
+> >> +		return readl(mc->regs2 + offset - 0x3c);
 > >=20
-> > Exactly. I'd just argue, the object we are dealing with, declared in the
-> > PM functions, is a struct device.
+> > I'm still not sure how this is supposed to work. If we pass in
+> > MC_GART_ERROR_REQ as offset into mc_readl(), then the condition above
+> > will be true (0x30 >=3D 0x24) but then the new offset will be computed
+> > and we end up with:
+> >=20
+> > 	return readl(mc->regs2 + 0x30 - 0x3c);
+> >=20
+> > which means we'll be adding a negative offset (or rather a very large
+> > offset because it will wrap around).
 >=20
-> No, the driver does not create a generic device, it actually creates a
-> platform device, or i2c client, or spi, or something else. The fact that
+> Indeed! Thank you for pointing at it again, now I see the issue. It proba=
+bly
+> works because actual registers mapping is aligned to page(?) size and add=
+ing the
+> large offset with wraparound is equal to subtraction.
+>=20
+> That register belongs to the GART and we can't simply move interrupt hand=
+ling to
+> the GART driver because status register is within the MC in device tree. =
+We can
+> omit reading of MC_GART_ERROR_REQ and simply report GART page fault for t=
+he
+> starter and then reorganize drivers by making MC driver MFD and GART its
+> sub-device, what do you think?
 
-True.
+Sounds like a good idea. Can you send a fix on top of this that I can
+squash into this when applying?
 
-> suspend and resume routines have generic device as their argument has
-> more to do with the language limitation rather than reflection of true
-> type of the objects we are dealing with.
+As for integrating GART with MC, I'd prefer something that doesn't use
+MFD but rather does something similar to what we have for the SMMU. I
+think that's simpler to do and has less boilerplate. I think it's also
+warranted because the MC and GART are very tightly coupled, so an MFD
+would be slightly over-engineered, in my opinion.
 
-Ok, can be argued. I'd personally still go for the gain, but I won't
-push harder than this mail.
+Thierry
 
-Regards,
-
-   Wolfram
-
-
---ro7fbsqyzfs5cg2h
+--/04w6evG8XlLl3ft
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlri+W0ACgkQFA3kzBSg
-KbaA8RAAkAc1/BldRxZwTtZe+wdvyAJeqmAvEr0Q89w3mD9zRSGiUy6fyUziggtI
-xxWfsOlzCQFr2d1Q8oqiyrqC3S5VrvmNinOfdRVcFbkAwlwoprNlnLT9EIYJBQND
-09oEqYv+SfaZMOGNjSBwL6udRJtN9UHxs+/s5xtox9xz0qLUla/iqn+mJ24FTQ6K
-qQ4GabIU8iRCUfIUaYozZisNJD/+6ikCVGBPQu/0kqYgSrFmdZupXHvVZ5IeAq7U
-cU+sBsz0SGEniPV6Q/GevnpJpfz4wrnU3l6c+kz82iGGoJmJu4Rg1vsj5krlXNx7
-KMy/JZQ7lAQmChsSVHgSHw5qtxXKYQmlywDWf8TJeA6ELRdQKa69SjVo5jW4aWTX
-Ni73xwSWxZGTueM23JYw33lYzP+OtCE4I6DwnT25skqzT8GHEHL/xMzYrWgiCpXL
-TWcIA28A3WW44PPCD2xS9rlSOhWjQIoETUZ1SVOkfxrXfCfGagZAtRc5NLU1MGSa
-JszHEFYSzi8pxVraoc+eZRgGtU5fnZrHwicRkNsouXqI/j6J37OUzs8VSnGNTmuS
-LRoEOQ5Y4zbw5ChRi13olVYuOmIa9oOnMk++4i/k8wMqjer+dDV9qtaZzs+Q+Tjp
-qkZMUdEdW6ggDX+Hzcgb3d5wFIts2aNQb1S8D0aY+MAk5EG9p3k=
-=rOVE
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri+nYACgkQ3SOs138+
+s6GYExAAimwXipgcyZTeIWvARB5qgXxFKtWdPsMmGXSiqsx/NfWGcn8Vl9Jr4xAC
+OoreH4vXxFPQ64hakD2Pe6C7C0Y/Q5PPrg6Pq5rK4M9SGR8kdt2o8szNsn3P5AAg
+QtUYAY6+w5LpbpRKeOmxPO1We5/X55HY7Prk+kzTS2qO3mfgPvlf8RkC3LaVTl78
+VVUtBd8duG9PO+8lS91RaTZBrBYSNCwg47f1SGHR8UJGozvWEssqCqebbuCplMNZ
+j9XjkA4MBE8ZgBgcpYDA+M4jnhjulN8RaURsM0vfSCo8SB4gId09aGk2Liq7ClsP
+rdPOt8W/cCW3/3UYguxnjeGWV29+FM5J73WF4qj4mI2JA3bWoCYNPYs9hmeFi2+j
+fihhbsotBf74XWNol660ILUZNXXWS9iwMo6Qu9+G+YAXihMdln6EA49asifCkCOg
+R6Wybrj+6O+rrUjZxOxptA+jbLxOeBzk5XPD52VCTpjmY/iw3NKjyAEtfFm3am+k
+4KXs0Lubo2HmDMO3LRLzqVEa391F9ef5JCK9C9OsUJp/yvKklwyJRDkVUYl5HnzS
+CBgBCIUG50EWikLF3x/v+6PKwQOFSdhtDvBRDwuaIgxj5C6W8Mn+5gqZA/D4U/lJ
+Ln2PAj1i6RvK7PnJjFu93Ni9pE93elJw7mbmC6QU+XlSdLDqclY=
+=k/ub
 -----END PGP SIGNATURE-----
 
---ro7fbsqyzfs5cg2h--
+--/04w6evG8XlLl3ft--
