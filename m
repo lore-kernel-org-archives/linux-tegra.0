@@ -1,78 +1,75 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 3/3] usb: xhci: tegra: Add support for managing
- powergates
-Date: Fri, 27 Apr 2018 12:13:00 +0200
-Message-ID: <20180427101300.GR30388@ulmo>
-References: <1524754750-3633-1-git-send-email-jonathanh@nvidia.com>
- <1524754750-3633-3-git-send-email-jonathanh@nvidia.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] arm64: Add MIDR encoding for NVIDIA CPUs
+Date: Fri, 27 Apr 2018 11:13:43 +0100
+Message-ID: <20180427101342.GA20014@arm.com>
+References: <1524763925-13959-1-git-send-email-dgilhooley@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Kuk/n493crKO4rgR"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1524754750-3633-3-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1524763925-13959-1-git-send-email-dgilhooley@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: David Gilhooley <dgilhooley@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi David,
 
---Kuk/n493crKO4rgR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Apr 26, 2018 at 03:59:10PM +0100, Jon Hunter wrote:
-> The Tegra XHCI controller requires that the XUSBA (for superspeed) and
-> XUSBC (for host) power-domains are enabled. Commit 8df127456f29
-> ("soc/tegra: pmc: Enable XUSB partitions on boot") was added to force
-> on these power-domains if the XHCI driver is enabled while proper
-> power-domain support is added, to ensure the device did not hang on
-> boot. However, rather than forcing on these power-domains in the PMC
-> driver we can use the legacy Tegra powergate APIs to turn on these
-> power-domains during the probe of the Tegra XHCI driver.
->=20
-> In the near future we plan to move the Tegra XHCI driver to use the
-> generic PM domain framework for power-domains and so to prepare for
-> this only use the legacy Tegra powergate API if there is not PM
-> domain associated with device (ie. dev.pm_domain is NULL). Please
-> note that in the future the superspeed and host resets will be handled
-> by the generic PM domain provider and so these are only these are only
-> needed in the case where there is no generic PM domain.
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+On Thu, Apr 26, 2018 at 10:32:05AM -0700, David Gilhooley wrote:
+> This patch adds the MIDR encodings for NVIDIA as well as
+> the Denver and Carmel CPUs used in Tegra SoCs.
+> 
+> Signed-off-by: David Gilhooley <dgilhooley@nvidia.com>
 > ---
->=20
-> Changes since V1:
-> - None
->=20
->  drivers/usb/host/xhci-tegra.c | 68 +++++++++++++++++++++++++++++++------=
-------
->  1 file changed, 49 insertions(+), 19 deletions(-)
+>  arch/arm64/include/asm/cputype.h | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Seems fine to me:
+This looks fine to me, but it probably makes sense to merge this along with
+some code that actually uses the definitions. I'm assuming you have some
+workarounds that rely on this?
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
+Will
 
---Kuk/n493crKO4rgR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri96sACgkQ3SOs138+
-s6HZhw//egJEzwCSLViIX7vjQ8k/H9ZEACSjHStMmwnvl6iemM0c6UwIX9Zwpbc+
-d3yKlTj1CLBgNus9hVGH2OoXCK1ve+XMisUKvQUAXxOCONqWXQ5RI20aWleQJx6g
-rpwX3R/GFfRuNvSEUoQmWHUMZw6HcJGMMU5JvwqimWqlDStEn8APzxpBx/5x51Rt
-XgmDgArgb248qotsu4sYz0dEeoQkKdvId4TL/SR9JV4c4XrxPmaglDh+eJo+sFFm
-CG34Ro9rcHdzLu1rhYnnZuKxN9cR4A1vxWnrB/ETCBlIZpQ/zSQeqN/1lutm1B1r
-np/zUcpZtxNyU1BU01/XUdnrgm5tonFQoO/UpFk4JAJ0eqmwhS6gL6e2vtJ0j2+/
-GEoA+mllur7IBnsTsY16PGu5cfm+JQe+XCsU4pcqemF1594KlDiRxLXeqH3W/U+6
-6Av+VXp0xQhF6Gqmzxfygkj8R7RD1ng+rpwZAResezH4GJZk3MZCMGdfxzw13PeL
-UnCEdqukPqcTSZI+QcQJ3+yFnDzl65t7MnPSJT4LrVCzMiPxND7YUzx2oX230GIv
-ZUvj9CIrc4r1IUSKK0hz43Rsie6O3gVvSPYPsexpy9v4pHdKu/RCh/QhIaERbx2F
-5tn5qh+3s/DiHn+LnOxDJUbHCsZhrC70oh6XbKT0EfGOzivueNg=
-=B7hL
------END PGP SIGNATURE-----
-
---Kuk/n493crKO4rgR--
+> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+> index 30014a9..df1d530 100644
+> --- a/arch/arm64/include/asm/cputype.h
+> +++ b/arch/arm64/include/asm/cputype.h
+> @@ -75,6 +75,7 @@
+>  #define ARM_CPU_IMP_CAVIUM		0x43
+>  #define ARM_CPU_IMP_BRCM		0x42
+>  #define ARM_CPU_IMP_QCOM		0x51
+> +#define ARM_CPU_IMP_NVIDIA		0x4E
+>  
+>  #define ARM_CPU_PART_AEM_V8		0xD0F
+>  #define ARM_CPU_PART_FOUNDATION		0xD00
+> @@ -99,6 +100,8 @@
+>  #define QCOM_CPU_PART_FALKOR		0xC00
+>  #define QCOM_CPU_PART_KRYO		0x200
+>  
+> +#define NVIDIA_CPU_PART_DENVER		0x003
+> +#define NVIDIA_CPU_PART_CARMEL		0x004
+> +
+>  #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
+>  #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
+>  #define MIDR_CORTEX_A72 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A72)
+> @@ -114,6 +117,7 @@
+>  #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
+>  #define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
+>  #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
+> +#define MIDR_NVIDIA_DENVER MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_DENVER)
+> +#define MIDR_NVIDIA_CARMEL MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_CARMEL)
+>  
+>  #ifndef __ASSEMBLY__
+>  
+> -- 
+> 2.1.4
+> 
