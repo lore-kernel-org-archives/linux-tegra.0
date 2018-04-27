@@ -1,79 +1,63 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 09/15] memory: tegra: Squash tegra20-mc into common
- tegra-mc driver
-Date: Fri, 27 Apr 2018 11:34:35 +0200
-Message-ID: <20180427093435.GB30388@ulmo>
+Subject: Re: [PATCH v4 01/15] dt-bindings: arm: tegra: Remove duplicated
+ Tegra30+ MC binding
+Date: Fri, 27 Apr 2018 11:35:29 +0200
+Message-ID: <20180427093529.GC30388@ulmo>
 References: <cover.1523301400.git.digetx@gmail.com>
- <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
+ <1ac41372c213e96871df1e02cada2e1899f03a7b.1523301400.git.digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="24zk1gE8NUlDmwG9"
+        protocol="application/pgp-signature"; boundary="uXxzq0nDebZQVNAZ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
+In-Reply-To: <1ac41372c213e96871df1e02cada2e1899f03a7b.1523301400.git.digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---24zk1gE8NUlDmwG9
+--uXxzq0nDebZQVNAZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 09, 2018 at 10:28:31PM +0300, Dmitry Osipenko wrote:
-[...]
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-[...]
-> +#define MC_GART_ERROR_REQ		0x30
-> +#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
-> +#define MC_SECURITY_VIOLATION_STATUS	0x74
-[...]
-> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-[...]
-> @@ -21,19 +21,30 @@
->  #define MC_INT_INVALID_SMMU_PAGE (1 << 10)
->  #define MC_INT_ARBITRATION_EMEM (1 << 9)
->  #define MC_INT_SECURITY_VIOLATION (1 << 8)
-> +#define MC_INT_INVALID_GART_PAGE (1 << 7)
->  #define MC_INT_DECERR_EMEM (1 << 6)
-> =20
->  static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
->  {
-> +	if (mc->regs2 && offset >=3D 0x24)
-> +		return readl(mc->regs2 + offset - 0x3c);
+On Mon, Apr 09, 2018 at 10:28:23PM +0300, Dmitry Osipenko wrote:
+> There are two bindings for the same Memory Controller. One of the bindings
+> became obsolete long time ago and probably was left unnoticed, remove it
+> for consistency.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra30-mc.txt           | 18 ------------=
+------
+>  1 file changed, 18 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,te=
+gra30-mc.txt
 
-I'm still not sure how this is supposed to work. If we pass in
-MC_GART_ERROR_REQ as offset into mc_readl(), then the condition above
-will be true (0x30 >=3D 0x24) but then the new offset will be computed
-and we end up with:
-
-	return readl(mc->regs2 + 0x30 - 0x3c);
-
-which means we'll be adding a negative offset (or rather a very large
-offset because it will wrap around).
+Applied, thanks.
 
 Thierry
 
---24zk1gE8NUlDmwG9
+--uXxzq0nDebZQVNAZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri7qsACgkQ3SOs138+
-s6Huow/+Lubm4qV0XNorEeW/fNQLPsFNooMAMtEn9uM/bKtDbNAWeQwFc//pw9ji
-gTCNgLBHhGxgZp9Y8woT0itfLBN2J9N3uSR3of2i8hMek0NuNtHWj7fa8oFZ4C49
-7V2j2jKooTxCP5p+9ONUSoDOEpbYpgvQmXkZEt37AnY7ntiEeFzAHcn6WbA72wIS
-eiFzWe0JqD1dqNGDvA0Odo2v3/GIOG0/jsdySvPPc5db0G+kpTVIjVJENGYvNcli
-mOxlT0FVLQ00cNUZDxKOuj0N/FiZjwrbVq0paMoez2VAghIa7MoSZsONgSB1oD9e
-RCMOsC3dosHzRSrmES0lVo7gCb5xobKbO6ztM6I5jXbtYiphJ4NfkB0+viJ65fBh
-zsSABXJF6Kfb4GbZCQBLC6Nru10+jJh6hZH5LfUrbBRdnY43Ic3bXuSPj+HoTz+B
-JHspvdmXrn1OZCek+sLOsPwMt9hdqk0lil0ruVCrSvUyRpCCEWsYBG5A8asX9XiL
-cZ+wI7prBvfyNQnrDGpdtuBL/CrpsKwrKTrGPjFvQrHdVM+EWBtR2oLxauu8dXNj
-o4r8CayWUIBK4yjELKJWdsqxTuGLz+QekprzkdV5j+I3fpjAkD1pTcMcvqfqWKJ7
-0bfRyFyQ0DSoF39vReNBcShyNSPe5HErwnQGFCOZx6XxfdUNJxk=
-=UQSC
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri7uEACgkQ3SOs138+
+s6EO4BAAq8j7hAxQ9InPsy3sOeg8IvvzcLMr0FMqcu9djpq/LAfrbJFTPWx7oKZw
+yYFYmpvwN2BZLuFH85SQkaeC8Xy+WpKyWQpsigLa1kdUMBpa/y6a7ttaersgp01T
+T8kpmxMxRHB0rHTvlXj7wLf6KP91xqI9QDjelgl65VqWAYVE0AjWP4ir21Rv4iLK
+XfPdBimRy1bTRNxTtXKltS6lGdoIvsBNIDiPvluyuPo+2k35r4ad28J30fvRdBUc
+Jtphka90MpHcY6OJr/+Zdl7/cJzZcHNCvcyG6spLsQ3l7K82NRBJnUAPHI2Yp6w2
+DkfxPh1LQjdECCZPFRmskzqorhEvd0oVFFR/wZlqr31qDAB3KXM2tJDH0VvXX/ds
+mCQ7DO3oPeMRcjr6NiiyRkVJnfhpQB6utrTf1PROEDynrqrj0QWp+gpY8BqwZHCg
+QvCamz2O1fOjeyJqXFFsacPUmzTXydKbn+XpRlV4o7gFV1TtTnGaG3gw4lIT46JO
+osYcDfJfZ+5Dbd+scfeamzOwYrV2XAmrlQ4vWjsoDZNHl4ycSGfK1vDteunfaiWI
+azRBD9JdBEOaCQCPZUQGmIA1tv4vSViYVHP5WdLbZJpQ5SRyEFX03aqJpw98ZEPa
+zWgva52D0El8pyn4Jo8w3ZU390GQ5infPuGzxruCNvQ84DpoiOg=
+=avVn
 -----END PGP SIGNATURE-----
 
---24zk1gE8NUlDmwG9--
+--uXxzq0nDebZQVNAZ--
