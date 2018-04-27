@@ -1,61 +1,56 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 4/4] iommu/tegra: gart: Optimize map/unmap
-Date: Fri, 27 Apr 2018 15:01:57 +0300
-Message-ID: <1980b5a2-3921-04f5-0519-ba926ac66e3d@gmail.com>
-References: <cover.1523304324.git.digetx@gmail.com>
- <f21a7b6a8f141b87f75687904a76f3728ea639a8.1523304324.git.digetx@gmail.com>
- <20180427100202.GO30388@ulmo>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
+Date: Fri, 27 Apr 2018 14:30:41 +0200
+Message-ID: <4032338.O1BXeabcRj@ax5200p>
+References: <20180426235818.10018-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180427100202.GO30388@ulmo>
-Content-Language: en-US
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Joerg Roedel <joro@8bytes.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 27.04.2018 13:02, Thierry Reding wrote:
-> On Mon, Apr 09, 2018 at 11:07:22PM +0300, Dmitry Osipenko wrote:
->> Currently GART writes one page entry at a time. More optimal would be to
->> aggregate the writes and flush BUS buffer in the end, this gives map/unmap
->> 10-40% (depending on size of mapping) performance boost compared to a
->> flushing after each entry update.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/iommu/tegra-gart.c | 63 +++++++++++++++++++++++++++++++++++-----------
->>  1 file changed, 48 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
->> index 4a0607669d34..9f59f5f17661 100644
->> --- a/drivers/iommu/tegra-gart.c
->> +++ b/drivers/iommu/tegra-gart.c
->> @@ -36,7 +36,7 @@
->>  #define GART_APERTURE_SIZE	SZ_32M
->>  
->>  /* bitmap of the page sizes currently supported */
->> -#define GART_IOMMU_PGSIZES	(SZ_4K)
->> +#define GART_IOMMU_PGSIZES	GENMASK(24, 12)
-> 
-> That doesn't look right. The GART really only supports 4 KiB pages. You
-> seem to be "emulating" more page sizes here in order to improve mapping
-> performance. That seems wrong to me. I'm wondering if this couldn't be
-> improved by a similar factor by simply moving the flushing into an
-> implementation of ->iotlb_sync().
-> 
-> That said, it seems like ->iotlb_sync() is only used for unmapping, but
-> I don't see a reason why iommu_map() wouldn't need to call it as well
-> after going through several calls to ->map(). It seems to me like a
-> driver that implements ->iotlb_sync() would want to use it to optimize
-> for both the mapping and unmapping cases.
+Hi Dmitry,
 
-I vaguely remember looking at the IOMMU syncing, but decided to try at first the
-way this patch is. I'll be happy to switch to map/unmap syncing, let's see what
-Joerg would suggest.
+Am Freitag, 27. April 2018, 01:58:14 CEST schrieb Dmitry Osipenko:
+> Hello,
+> 
+> This series of patches fixes ULPI USB on Tegra20. The original problem
+> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+> with the USB for the devices that have CDEV2 being enabled by bootloader.
+> The patch got into the kernel and later Marc Dietrich found that USB
+> stopped working on the "paz00" Tegra20 board. After a bit of discussion
+> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+> driver was setting CDEV2's parent incorrectly. The parent clock is actually
+> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
+> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+> suggestion), and then setting these clock muxes as parents for the CDEV1/2
+> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since
+> CDEV2 (aka MCLK2) is the actual clock source for "ulpi-link".
+> 
+> Dmitry Osipenko (4):
+>   clk: tegra20: Add DEV1/DEV2 OSC dividers
+>   pinctrl: tegra20: Provide CDEV1/2 clock muxes
+>   clk: tegra20: Set correct parents for CDEV1/2 clocks
+>   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+> 
+>  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
+>  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
+>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+>  5 files changed, 55 insertions(+), 17 deletions(-)
 
-> Joerg, I've gone over the git log and header files and I see no mention
-> of why the TLB flush interface isn't used for mapping. Do you recall any
-> special reasons why the same shouldn't be applied for mapping? Would you
-> accept any patches doing this?
+Thanks for taking a look at this!
+
+Series is:
+
+Tested-by: Marc Dietrich <marvin24@gmx.de>
+
+Marc
