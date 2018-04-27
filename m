@@ -1,120 +1,79 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 2/4] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Fri, 27 Apr 2018 02:58:16 +0300
-Message-ID: <20180426235818.10018-3-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v4 09/15] memory: tegra: Squash tegra20-mc into common
+ tegra-mc driver
+Date: Fri, 27 Apr 2018 11:34:35 +0200
+Message-ID: <20180427093435.GB30388@ulmo>
+References: <cover.1523301400.git.digetx@gmail.com>
+ <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="24zk1gE8NUlDmwG9"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-that main clk-controller driver could get an actual parent clock for the
-CDEV1/2 clocks.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
- drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
- drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
- 3 files changed, 40 insertions(+), 12 deletions(-)
+--24zk1gE8NUlDmwG9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 72c718e66ebb..49c7c1499bc3 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -33,17 +33,6 @@
- #include "../pinctrl-utils.h"
- #include "pinctrl-tegra.h"
- 
--struct tegra_pmx {
--	struct device *dev;
--	struct pinctrl_dev *pctl;
--
--	const struct tegra_pinctrl_soc_data *soc;
--	const char **group_pins;
--
--	int nbanks;
--	void __iomem **regs;
--};
--
- static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
- {
- 	return readl(pmx->regs[bank] + reg);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index 33b17cb1471e..aa33c20766c4 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -16,6 +16,17 @@
- #ifndef __PINMUX_TEGRA_H__
- #define __PINMUX_TEGRA_H__
- 
-+struct tegra_pmx {
-+	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+
-+	const struct tegra_pinctrl_soc_data *soc;
-+	const char **group_pins;
-+
-+	int nbanks;
-+	void __iomem **regs;
-+};
-+
- enum tegra_pinconf_param {
- 	/* argument: tegra_pinconf_pull */
- 	TEGRA_PINCONF_PARAM_PULL,
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-index 7e38ee9bae78..f31e39d797f9 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-@@ -19,6 +19,7 @@
-  * more details.
-  */
- 
-+#include <linux/clk-provider.h>
- #include <linux/init.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -2231,9 +2232,36 @@ static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
- 	.drvtype_in_mux = false,
- };
- 
-+static const char *cdev1_parents[4] = {
-+	"cdev1_osc_div", "pll_a_out0", "pll_m_out1", "audio",
-+};
-+
-+static const char *cdev2_parents[4] = {
-+	"cdev2_osc_div", "hclk", "pclk", "pll_p_out4",
-+};
-+
-+static void tegra20_pinctrl_register_clock_muxes(struct platform_device *pdev)
-+{
-+	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
-+
-+	clk_register_mux(NULL, "cdev1_mux", cdev1_parents, 4, 0,
-+			 pmx->regs[1] + 0x8, 2, 2, CLK_MUX_READ_ONLY, NULL);
-+
-+	clk_register_mux(NULL, "cdev2_mux", cdev2_parents, 4, 0,
-+			 pmx->regs[1] + 0x8, 4, 2, CLK_MUX_READ_ONLY, NULL);
-+}
-+
- static int tegra20_pinctrl_probe(struct platform_device *pdev)
- {
--	return tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
-+	int err;
-+
-+	err = tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
-+	if (err)
-+		return err;
-+
-+	tegra20_pinctrl_register_clock_muxes(pdev);
-+
-+	return 0;
- }
- 
- static const struct of_device_id tegra20_pinctrl_of_match[] = {
--- 
-2.17.0
+On Mon, Apr 09, 2018 at 10:28:31PM +0300, Dmitry Osipenko wrote:
+[...]
+> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+[...]
+> +#define MC_GART_ERROR_REQ		0x30
+> +#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
+> +#define MC_SECURITY_VIOLATION_STATUS	0x74
+[...]
+> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+[...]
+> @@ -21,19 +21,30 @@
+>  #define MC_INT_INVALID_SMMU_PAGE (1 << 10)
+>  #define MC_INT_ARBITRATION_EMEM (1 << 9)
+>  #define MC_INT_SECURITY_VIOLATION (1 << 8)
+> +#define MC_INT_INVALID_GART_PAGE (1 << 7)
+>  #define MC_INT_DECERR_EMEM (1 << 6)
+> =20
+>  static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+>  {
+> +	if (mc->regs2 && offset >=3D 0x24)
+> +		return readl(mc->regs2 + offset - 0x3c);
+
+I'm still not sure how this is supposed to work. If we pass in
+MC_GART_ERROR_REQ as offset into mc_readl(), then the condition above
+will be true (0x30 >=3D 0x24) but then the new offset will be computed
+and we end up with:
+
+	return readl(mc->regs2 + 0x30 - 0x3c);
+
+which means we'll be adding a negative offset (or rather a very large
+offset because it will wrap around).
+
+Thierry
+
+--24zk1gE8NUlDmwG9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri7qsACgkQ3SOs138+
+s6Huow/+Lubm4qV0XNorEeW/fNQLPsFNooMAMtEn9uM/bKtDbNAWeQwFc//pw9ji
+gTCNgLBHhGxgZp9Y8woT0itfLBN2J9N3uSR3of2i8hMek0NuNtHWj7fa8oFZ4C49
+7V2j2jKooTxCP5p+9ONUSoDOEpbYpgvQmXkZEt37AnY7ntiEeFzAHcn6WbA72wIS
+eiFzWe0JqD1dqNGDvA0Odo2v3/GIOG0/jsdySvPPc5db0G+kpTVIjVJENGYvNcli
+mOxlT0FVLQ00cNUZDxKOuj0N/FiZjwrbVq0paMoez2VAghIa7MoSZsONgSB1oD9e
+RCMOsC3dosHzRSrmES0lVo7gCb5xobKbO6ztM6I5jXbtYiphJ4NfkB0+viJ65fBh
+zsSABXJF6Kfb4GbZCQBLC6Nru10+jJh6hZH5LfUrbBRdnY43Ic3bXuSPj+HoTz+B
+JHspvdmXrn1OZCek+sLOsPwMt9hdqk0lil0ruVCrSvUyRpCCEWsYBG5A8asX9XiL
+cZ+wI7prBvfyNQnrDGpdtuBL/CrpsKwrKTrGPjFvQrHdVM+EWBtR2oLxauu8dXNj
+o4r8CayWUIBK4yjELKJWdsqxTuGLz+QekprzkdV5j+I3fpjAkD1pTcMcvqfqWKJ7
+0bfRyFyQ0DSoF39vReNBcShyNSPe5HErwnQGFCOZx6XxfdUNJxk=
+=UQSC
+-----END PGP SIGNATURE-----
+
+--24zk1gE8NUlDmwG9--
