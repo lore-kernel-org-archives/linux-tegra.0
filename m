@@ -1,115 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 11/15] memory: tegra: Add Tegra210 memory controller
- hot resets
-Date: Fri, 27 Apr 2018 11:39:27 +0200
-Message-ID: <20180427093927.GK30388@ulmo>
-References: <cover.1523301400.git.digetx@gmail.com>
- <f064d034477537bfb5473c1277da07d772b0d4b5.1523301400.git.digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 2/4] iommu/tegra: gart: Fix gart_iommu_unmap()
+Date: Fri, 27 Apr 2018 11:43:26 +0200
+Message-ID: <20180427094326.GL30388@ulmo>
+References: <cover.1523304324.git.digetx@gmail.com>
+	<dd25a9ff7bad7c92b345c0c0ce2bf235c4c3b6e8.1523304324.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3MHXEHrrXKLGx71o"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <f064d034477537bfb5473c1277da07d772b0d4b5.1523301400.git.digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============8465491895501998859=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <dd25a9ff7bad7c92b345c0c0ce2bf235c4c3b6e8.1523304324.git.digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---3MHXEHrrXKLGx71o
+--===============8465491895501998859==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DN8g+DOX2TxGxleI"
+Content-Disposition: inline
+
+
+--DN8g+DOX2TxGxleI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 13, 2018 at 02:33:50PM +0300, Dmitry Osipenko wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Mon, Apr 09, 2018 at 11:07:20PM +0300, Dmitry Osipenko wrote:
+> It must return the number of unmapped bytes on success, returning 0 means
+> that unmapping failed and in result only one page is unmapped.
 >=20
-> Define the table of memory controller hot resets for Tegra210.
->=20
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/memory/tegra/tegra210.c | 45 +++++++++++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
->=20
-> diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra=
-210.c
-> index b729f49ffc8f..d00a77160407 100644
-> --- a/drivers/memory/tegra/tegra210.c
-> +++ b/drivers/memory/tegra/tegra210.c
-> @@ -1080,6 +1080,48 @@ static const struct tegra_smmu_soc tegra210_smmu_s=
-oc =3D {
->  	.num_asids =3D 128,
->  };
-> =20
-> +#define TEGRA210_MC_RESET(_name, _control, _status, _bit)	\
-> +	{							\
-> +		.name =3D #_name,					\
-> +		.id =3D TEGRA210_MC_RESET_##_name,		\
-> +		.control =3D _control,				\
-> +		.status =3D _status,				\
-> +		.bit =3D _bit,					\
-> +	}
-> +
-> +static const struct tegra_mc_reset tegra210_mc_resets[] =3D {
-> +	TEGRA210_MC_RESET(AFI,       0x200, 0x204,  0),
-> +	TEGRA210_MC_RESET(AVPC,      0x200, 0x204,  1),
-> +	TEGRA210_MC_RESET(DC,        0x200, 0x204,  2),
-> +	TEGRA210_MC_RESET(DCB,       0x200, 0x204,  3),
-> +	TEGRA210_MC_RESET(HC,        0x200, 0x204,  6),
-> +	TEGRA210_MC_RESET(HDA,       0x200, 0x204,  7),
-> +	TEGRA210_MC_RESET(ISP2,      0x200, 0x204,  8),
-> +	TEGRA210_MC_RESET(MPCORE,    0x200, 0x204,  9),
-> +	TEGRA210_MC_RESET(NVENC,     0x200, 0x204, 11),
-> +	TEGRA210_MC_RESET(PPCS,      0x200, 0x204, 14),
-> +	TEGRA210_MC_RESET(SATA,      0x200, 0x204, 15),
-> +	TEGRA210_MC_RESET(VI,        0x200, 0x204, 17),
-> +	TEGRA210_MC_RESET(VIC,       0x200, 0x204, 18),
-> +	TEGRA210_MC_RESET(XUSB_HOST, 0x200, 0x204, 19),
-> +	TEGRA210_MC_RESET(XUSB_DEV,  0x200, 0x204, 20),
-> +	TEGRA210_MC_RESET(A9AVP,     0x200, 0x204, 21),
-> +	TEGRA210_MC_RESET(TSEC,      0x200, 0x204, 22),
-> +	TEGRA210_MC_RESET(SDMMC1,    0x200, 0x204, 29),
-> +	TEGRA210_MC_RESET(SDMMC2,    0x200, 0x204, 30),
-> +	TEGRA210_MC_RESET(SDMMC3,    0x200, 0x204, 31),
-> +	TEGRA210_MC_RESET(SDMMC4,    0x970, 0x974,  0),
-> +	TEGRA210_MC_RESET(ISP2B,     0x970, 0x974,  1),
-> +	TEGRA210_MC_RESET(GPU,       0x970, 0x974,  2),
-> +	TEGRA210_MC_RESET(NVDEC,     0x970, 0x974,  5),
-> +	TEGRA210_MC_RESET(APE,       0x970, 0x974,  6),
-> +	TEGRA210_MC_RESET(SE,        0x970, 0x974,  7),
-> +	TEGRA210_MC_RESET(NVJPG,     0x970, 0x974,  8),
-> +	TEGRA210_MC_RESET(AXIAP,     0x970, 0x974, 11),
-> +	TEGRA210_MC_RESET(ETR,       0x970, 0x974, 12),
-> +	TEGRA210_MC_RESET(TSECB,     0x970, 0x974, 13),
-> +};
+>  drivers/iommu/tegra-gart.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Isn't this missing an include for the definitions? There is an include
-for dt-bindings/memory/tegra20-mc.h for the Tegra20 driver, but none of
-the others have it.
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-No need to respin, though, I can add that when applying.
-
-Thierry
-
---3MHXEHrrXKLGx71o
+--DN8g+DOX2TxGxleI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri788ACgkQ3SOs138+
-s6G6BA//eg7x2FvSKYaYvi4HQQ7vWXbiTkJY5qutkBBHP50gRA8bb2bUgh4mdMUd
-ABBex8TFR6glG0zsrWHdK58uKzw8dj3FfHlfW0L/GgsIFWN+PnEHuEsC/yCoBhkt
-9WmgcR7y3tpt4W/WAyNhsIDmNzHkh/uch31VcQFBHSSgZBHqKgMr/jYllxHj0/T1
-0m24rk6O8gJ2NoubCqZq+Yi//48olEAkvC6cwyvKVr/XQXeC6r8h3yzhp9dt1wUk
-jVAVBGahk6U337XtXyvSdtAklS+0R54aiax3p10ucfYD+pBinp0RjYX894Qu6xwX
-yqXK9CScqgjy0jPBr/TCzBqatLEmHx+JWDJ7x+hIJ2UrNuaJ6XCjb8bmc1hiukEn
-D/YSe76wCFE88z9o0HyPZuNiSkBozXrvaInudljIx5UxbIJeMqWYdie4U3vrDMRS
-ZM4xSscFUf5aZ0MaQXT6V2OsWMM1dgpIiQ6IsEzOTTIeBmGD8n1yL47lyuzAufrs
-oZClfgAEUnU6MUZ5zn3W1hQUhTUGOx3WbdnmrvDmnUwwm3VPmE6WClyy65SJI6yE
-uvWcaeF4gSxUvx2vuHDsOhv4whFOVhLGOfjK3nThzfpXJphzpSXkZFblUtvWtf0q
-qZasnGx2eyfypwWA90h9d4KchbyDIT/oLrOR4CTSkLWSTquXhp8=
-=jjsR
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri8L0ACgkQ3SOs138+
+s6F/EQ//XwtuK53IT2hLJ632ZguS9Dbp77vbd7S36ww8dcafYkeJ+PsaKpetk9BU
+whOnWe/elWUTkOtL6wHMerSHa1RoMpNR46cHkjqppPaNaWn5kJfdYIgvZj+GVBjG
+7n5tYsZLsbjWlsXZoQu0cb0gcwybZzhrzXAu+tLYzI0p9WJO/dxz/VH1mEMxA6Bj
+ykDHT5bSTzukiOlLbMYy+cwajd1lr6fe9UAJMQ8rAb6Zej/MTFpRuS18DeeGRkva
++CLvhX9DGi1Bc+Jt101EJ/SO9Edsg/poZ0ZpT+rYTLQgExJw6vEd4XZWyhiBR2QK
+EzglVE+3mZ13mz7QmdWy2xJSn77lGrsA3pbMwv6rNTQ/VsXD0Tf0ljdc8xvL9B2H
+UCRfXPICCw/8o8SNrLpZapq+Z12o/3a7a0yAHZFVNEyMB6I0Y6Rs8L+zUf8aY3dm
+e1ruuoU23ryISE9de7LwpNAZIyb6y3tie+3XqlhAe8M4PFVDR6uWtXryo60d/6aS
+ngEnv2oTqqmA3uE+yJHpHSNIrhNGnpkX02srWeHCIXZBW5HzwnzhlxPbK1jboyQB
+qr1a+6rWqJfuSZXK3wT4uCP0YFdDW6Y2tolxxWDdnNKNKJpikgsLWJbg/9h7AquI
+ACSNJ/dYE2OpdRGmcK2ymiwRQ/Ge4B94iIRGxB7k8LrgI8AbrAE=
+=MkpY
 -----END PGP SIGNATURE-----
 
---3MHXEHrrXKLGx71o--
+--DN8g+DOX2TxGxleI--
+
+--===============8465491895501998859==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============8465491895501998859==--
