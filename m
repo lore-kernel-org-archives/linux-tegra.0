@@ -1,127 +1,78 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 2/3] usb: xhci: tegra: Add runtime PM support
-Date: Fri, 27 Apr 2018 12:10:16 +0200
-Message-ID: <20180427101016.GQ30388@ulmo>
+Subject: Re: [PATCH V2 3/3] usb: xhci: tegra: Add support for managing
+ powergates
+Date: Fri, 27 Apr 2018 12:13:00 +0200
+Message-ID: <20180427101300.GR30388@ulmo>
 References: <1524754750-3633-1-git-send-email-jonathanh@nvidia.com>
- <1524754750-3633-2-git-send-email-jonathanh@nvidia.com>
+ <1524754750-3633-3-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Mh8CTEa8Ax54aLHp"
+        protocol="application/pgp-signature"; boundary="Kuk/n493crKO4rgR"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1524754750-3633-2-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <1524754750-3633-3-git-send-email-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Mh8CTEa8Ax54aLHp
+--Kuk/n493crKO4rgR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 26, 2018 at 03:59:09PM +0100, Jon Hunter wrote:
-> Add runtime PM support to the Tegra XHCI driver and move the function
-> calls to enable/disable the clocks, regulators and PHY into the runtime
-> PM callbacks.
+On Thu, Apr 26, 2018 at 03:59:10PM +0100, Jon Hunter wrote:
+> The Tegra XHCI controller requires that the XUSBA (for superspeed) and
+> XUSBC (for host) power-domains are enabled. Commit 8df127456f29
+> ("soc/tegra: pmc: Enable XUSB partitions on boot") was added to force
+> on these power-domains if the XHCI driver is enabled while proper
+> power-domain support is added, to ensure the device did not hang on
+> boot. However, rather than forcing on these power-domains in the PMC
+> driver we can use the legacy Tegra powergate APIs to turn on these
+> power-domains during the probe of the Tegra XHCI driver.
+>=20
+> In the near future we plan to move the Tegra XHCI driver to use the
+> generic PM domain framework for power-domains and so to prepare for
+> this only use the legacy Tegra powergate API if there is not PM
+> domain associated with device (ie. dev.pm_domain is NULL). Please
+> note that in the future the superspeed and host resets will be handled
+> by the generic PM domain provider and so these are only these are only
+> needed in the case where there is no generic PM domain.
 >=20
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
 >=20
 > Changes since V1:
-> - Re-worked change to handle case where runtime PM is disabled.
+> - None
 >=20
->  drivers/usb/host/xhci-tegra.c | 89 ++++++++++++++++++++++++++++++-------=
+>  drivers/usb/host/xhci-tegra.c | 68 +++++++++++++++++++++++++++++++------=
 ------
->  1 file changed, 63 insertions(+), 26 deletions(-)
->=20
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 02b0b24faa58..85f2381883ad 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -18,6 +18,7 @@
->  #include <linux/phy/tegra/xusb.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/reset.h>
->  #include <linux/slab.h>
-> @@ -761,6 +762,50 @@ static void tegra_xusb_phy_disable(struct tegra_xusb=
- *tegra)
->  	}
->  }
-> =20
-> +static int tegra_xusb_runtime_suspend(struct device *dev)
-> +{
-> +	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
-> +
-> +	tegra_xusb_phy_disable(tegra);
-> +	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
-> +	tegra_xusb_clk_disable(tegra);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_xusb_runtime_resume(struct device *dev)
-> +{
-> +	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
-> +	int err;
-> +
-> +	err =3D tegra_xusb_clk_enable(tegra);
-> +	if (err) {
-> +		dev_err(dev, "failed to enable clocks: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	err =3D regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies=
-);
-> +	if (err) {
-> +		dev_err(dev, "failed to enable regulators: %d\n", err);
-> +		goto disable_clk;
-> +	}
-> +
-> +	err =3D tegra_xusb_phy_enable(tegra);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to enable PHYs: %d\n", err);
-> +		goto disable_regulator;
-> +	}
-> +
-> +	return 0;
-> +
-> +disable_regulator:
-> +	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
-> +disable_clk:
-> +	tegra_xusb_clk_disable(tegra);
-> +	return err;
-> +}
-> +
-> +
+>  1 file changed, 49 insertions(+), 19 deletions(-)
 
-There's an extra blank line here. Other than that, this looks very nice.
+Seems fine to me:
 
 Reviewed-by: Thierry Reding <treding@nvidia.com>
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---Mh8CTEa8Ax54aLHp
+--Kuk/n493crKO4rgR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri9wgACgkQ3SOs138+
-s6FCfA/+NIIPUPLO3LD+ESfrgxl8t2zBE2yH/a8k3Kp5eiW4oJ69Jt1ZAeHjjqPq
-9F3BisdjSWQjYqML2ap8eQFP+b6F7qPjFQN6e3u2V782762UJ4Xq1uJjBC2Z5inw
-StepwEfvw1c9FmfXx6DXPghGcwrAyYY1aGztLI/5JeoEl2J/fyMcPTX5KKjvTDSw
-SLAQvlh2LEaMhaym20JZWMTREyuzdRkhNpJGc0d61jk+hDr97tmaNF+Ad3WsX4o2
-Hk3Y0clnwqnoN9+DZ0dGj7thIMGsxoLfhs+1Yl1m77/IYXXfRtXfeoEvqLbdvN6c
-EH6AgJUpQ+hrcYhmd6q9mGROmp8OHEwruhlHNA9cfDwl6ZQlCNdhUJVUM8msBHBl
-cEnRI0qdSUHhQtjuEXCn//YOmeEX6iBtwsvZJBeqdhNUEQc2RFrKVRYfUlRzX2QC
-I58WFQYKP+n7q+b3qsWccXDXVsx5Xgb9ffxIzbbq6NLj9qgygL1La0BFnZxrfi8r
-iNtYW6ZYwHDHbjPHuSxWg/ilGR56WGQ41uEl81def3fEIe/W0ta6YLxN8OrB8r6W
-Eop3MFWG6HqqNbuROdLkPXq18seQUaB9je9O/n0lQADwMMXY278hLA2HVXGla9qO
-lCqkwTPCQC2Jx5RKq5lr8jVR8nBElriEmq4X+d7LRFZrMJjlZcI=
-=m7h4
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri96sACgkQ3SOs138+
+s6HZhw//egJEzwCSLViIX7vjQ8k/H9ZEACSjHStMmwnvl6iemM0c6UwIX9Zwpbc+
+d3yKlTj1CLBgNus9hVGH2OoXCK1ve+XMisUKvQUAXxOCONqWXQ5RI20aWleQJx6g
+rpwX3R/GFfRuNvSEUoQmWHUMZw6HcJGMMU5JvwqimWqlDStEn8APzxpBx/5x51Rt
+XgmDgArgb248qotsu4sYz0dEeoQkKdvId4TL/SR9JV4c4XrxPmaglDh+eJo+sFFm
+CG34Ro9rcHdzLu1rhYnnZuKxN9cR4A1vxWnrB/ETCBlIZpQ/zSQeqN/1lutm1B1r
+np/zUcpZtxNyU1BU01/XUdnrgm5tonFQoO/UpFk4JAJ0eqmwhS6gL6e2vtJ0j2+/
+GEoA+mllur7IBnsTsY16PGu5cfm+JQe+XCsU4pcqemF1594KlDiRxLXeqH3W/U+6
+6Av+VXp0xQhF6Gqmzxfygkj8R7RD1ng+rpwZAResezH4GJZk3MZCMGdfxzw13PeL
+UnCEdqukPqcTSZI+QcQJ3+yFnDzl65t7MnPSJT4LrVCzMiPxND7YUzx2oX230GIv
+ZUvj9CIrc4r1IUSKK0hz43Rsie6O3gVvSPYPsexpy9v4pHdKu/RCh/QhIaERbx2F
+5tn5qh+3s/DiHn+LnOxDJUbHCsZhrC70oh6XbKT0EfGOzivueNg=
+=B7hL
 -----END PGP SIGNATURE-----
 
---Mh8CTEa8Ax54aLHp--
+--Kuk/n493crKO4rgR--
