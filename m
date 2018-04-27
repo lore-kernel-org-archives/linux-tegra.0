@@ -1,56 +1,80 @@
-From: Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
-Date: Fri, 27 Apr 2018 14:30:41 +0200
-Message-ID: <4032338.O1BXeabcRj@ax5200p>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Fri, 27 Apr 2018 14:33:24 +0200
+Message-ID: <1524832404.6979.9.camel@ziswiler.com>
 References: <20180426235818.10018-1-digetx@gmail.com>
+         <20180426235818.10018-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
+In-Reply-To: <20180426235818.10018-2-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+Hi Dmitry
 
-Am Freitag, 27. April 2018, 01:58:14 CEST schrieb Dmitry Osipenko:
-> Hello,
+Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around e.g.
+DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
+
+On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
+> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider
+> as
+> a parent. Add these dividers in order to be able to provide that
+> parent
+> option.
 > 
-> This series of patches fixes ULPI USB on Tegra20. The original problem
-> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-> with the USB for the devices that have CDEV2 being enabled by bootloader.
-> The patch got into the kernel and later Marc Dietrich found that USB
-> stopped working on the "paz00" Tegra20 board. After a bit of discussion
-> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
-> driver was setting CDEV2's parent incorrectly. The parent clock is actually
-> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
-> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
-> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-> suggestion), and then setting these clock muxes as parents for the CDEV1/2
-> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since
-> CDEV2 (aka MCLK2) is the actual clock source for "ulpi-link".
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> Dmitry Osipenko (4):
->   clk: tegra20: Add DEV1/DEV2 OSC dividers
->   pinctrl: tegra20: Provide CDEV1/2 clock muxes
->   clk: tegra20: Set correct parents for CDEV1/2 clocks
->   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
-> 
->  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
->  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
->  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
->  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
->  5 files changed, 55 insertions(+), 17 deletions(-)
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-
+> tegra20.c
+> index 0ee56dd04cec..16cf4108f2ff 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -26,6 +26,8 @@
+>  #include "clk.h"
+>  #include "clk-id.h"
+>  
+> +#define MISC_CLK_ENB 0x48
+> +
+>  #define OSC_CTRL 0x50
+>  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+>  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
+>  				    periph_clk_enb_refcnt);
+>  	clks[TEGRA20_CLK_PEX] = clk;
+>  
+> +	/* cdev1 OSC divider */
+> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
+> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
 
-Thanks for taking a look at this!
+So it would be:
 
-Series is:
++			     0, clk_base + MISC_CLK_ENB, 22, 2,
 
-Tested-by: Marc Dietrich <marvin24@gmx.de>
+> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> +
+> +	/* cdev2 OSC divider */
+> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
+> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
 
-Marc
+And:
+
++			     0, clk_base + MISC_CLK_ENB, 20, 2,
+
+> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> +
+>  	/* cdev1 */
+>  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0,
+> 26000000);
+>  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed",
+> 0,
+
+Cheers
+
+Marcel
