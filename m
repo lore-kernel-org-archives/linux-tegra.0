@@ -1,61 +1,86 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 09/15] memory: tegra: Squash tegra20-mc into common
- tegra-mc driver
-Date: Fri, 27 Apr 2018 13:13:47 +0300
-Message-ID: <882f14b8-78c8-95bb-326e-3917c9736faf@gmail.com>
-References: <cover.1523301400.git.digetx@gmail.com>
- <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
- <20180427093435.GB30388@ulmo>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 20/61] input: keyboard: simplify getting .drvdata
+Date: Fri, 27 Apr 2018 12:20:33 +0200
+Message-ID: <20180427102033.msrr5sourxrtypg7@ninjato>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-21-wsa+renesas@sang-engineering.com>
+ <20180426191947.GC162443@dtor-ws>
+ <20180426200401.lvqiy4gnchkwr4qw@ninjato>
+ <20180426212327.GB210716@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ro7fbsqyzfs5cg2h"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180427093435.GB30388@ulmo>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180426212327.GB210716@dtor-ws>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 27.04.2018 12:34, Thierry Reding wrote:
-> On Mon, Apr 09, 2018 at 10:28:31PM +0300, Dmitry Osipenko wrote:
-> [...]
->> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> [...]
->> +#define MC_GART_ERROR_REQ		0x30
->> +#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
->> +#define MC_SECURITY_VIOLATION_STATUS	0x74
-> [...]
->> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-> [...]
->> @@ -21,19 +21,30 @@
->>  #define MC_INT_INVALID_SMMU_PAGE (1 << 10)
->>  #define MC_INT_ARBITRATION_EMEM (1 << 9)
->>  #define MC_INT_SECURITY_VIOLATION (1 << 8)
->> +#define MC_INT_INVALID_GART_PAGE (1 << 7)
->>  #define MC_INT_DECERR_EMEM (1 << 6)
->>  
->>  static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
->>  {
->> +	if (mc->regs2 && offset >= 0x24)
->> +		return readl(mc->regs2 + offset - 0x3c);
-> 
-> I'm still not sure how this is supposed to work. If we pass in
-> MC_GART_ERROR_REQ as offset into mc_readl(), then the condition above
-> will be true (0x30 >= 0x24) but then the new offset will be computed
-> and we end up with:
-> 
-> 	return readl(mc->regs2 + 0x30 - 0x3c);
-> 
-> which means we'll be adding a negative offset (or rather a very large
-> offset because it will wrap around).
 
-Indeed! Thank you for pointing at it again, now I see the issue. It probably
-works because actual registers mapping is aligned to page(?) size and adding the
-large offset with wraparound is equal to subtraction.
+--ro7fbsqyzfs5cg2h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That register belongs to the GART and we can't simply move interrupt handling to
-the GART driver because status register is within the MC in device tree. We can
-omit reading of MC_GART_ERROR_REQ and simply report GART page fault for the
-starter and then reorganize drivers by making MC driver MFD and GART its
-sub-device, what do you think?
+Hi Dmitry,
+
+> > Isn't it actually the other way around? platform_get_drvdata() is a
+> > convenience function to access driver_data which is embedded in struct
+> > device?
+>=20
+> I guess it depends on how you read it. I always considered it separate
+> because none (?) of the bus implementation assert this in comments to
+> XXX_get_drvdata().
+
+Well, even in the case somebody will implement a custom driver_data for
+platform_devices, this person will need to convert all current users to
+'dev_get_drvdata(&pdev->dev);' first in order to avoid regressions, I'd
+think. This is what my patch does right now (but merely for overhead
+reasons). Or?
+
+> > > in the future, so I'd prefer keep using the proper accessors for the
+> > > objects we are dealing with.
+> >=20
+> > Exactly. I'd just argue, the object we are dealing with, declared in the
+> > PM functions, is a struct device.
+>=20
+> No, the driver does not create a generic device, it actually creates a
+> platform device, or i2c client, or spi, or something else. The fact that
+
+True.
+
+> suspend and resume routines have generic device as their argument has
+> more to do with the language limitation rather than reflection of true
+> type of the objects we are dealing with.
+
+Ok, can be argued. I'd personally still go for the gain, but I won't
+push harder than this mail.
+
+Regards,
+
+   Wolfram
+
+
+--ro7fbsqyzfs5cg2h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlri+W0ACgkQFA3kzBSg
+KbaA8RAAkAc1/BldRxZwTtZe+wdvyAJeqmAvEr0Q89w3mD9zRSGiUy6fyUziggtI
+xxWfsOlzCQFr2d1Q8oqiyrqC3S5VrvmNinOfdRVcFbkAwlwoprNlnLT9EIYJBQND
+09oEqYv+SfaZMOGNjSBwL6udRJtN9UHxs+/s5xtox9xz0qLUla/iqn+mJ24FTQ6K
+qQ4GabIU8iRCUfIUaYozZisNJD/+6ikCVGBPQu/0kqYgSrFmdZupXHvVZ5IeAq7U
+cU+sBsz0SGEniPV6Q/GevnpJpfz4wrnU3l6c+kz82iGGoJmJu4Rg1vsj5krlXNx7
+KMy/JZQ7lAQmChsSVHgSHw5qtxXKYQmlywDWf8TJeA6ELRdQKa69SjVo5jW4aWTX
+Ni73xwSWxZGTueM23JYw33lYzP+OtCE4I6DwnT25skqzT8GHEHL/xMzYrWgiCpXL
+TWcIA28A3WW44PPCD2xS9rlSOhWjQIoETUZ1SVOkfxrXfCfGagZAtRc5NLU1MGSa
+JszHEFYSzi8pxVraoc+eZRgGtU5fnZrHwicRkNsouXqI/j6J37OUzs8VSnGNTmuS
+LRoEOQ5Y4zbw5ChRi13olVYuOmIa9oOnMk++4i/k8wMqjer+dDV9qtaZzs+Q+Tjp
+qkZMUdEdW6ggDX+Hzcgb3d5wFIts2aNQb1S8D0aY+MAk5EG9p3k=
+=rOVE
+-----END PGP SIGNATURE-----
+
+--ro7fbsqyzfs5cg2h--
