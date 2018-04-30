@@ -1,100 +1,105 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 2/5] dma-mapping: Introduce dma_iommu_detach_device()
- API
-Date: Mon, 30 Apr 2018 13:02:31 +0200
-Message-ID: <20180430110231.GF2476@ulmo>
-References: <20180425101051.15349-1-thierry.reding@gmail.com>
- <20180425101051.15349-2-thierry.reding@gmail.com>
- <20180425151934.GC16075@infradead.org>
- <20180426121136.GD11985@ulmo>
+Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
+Date: Mon, 30 Apr 2018 13:28:04 +0200
+Message-ID: <20180430112804.GA5770@ulmo>
+References: <20180426235818.10018-1-digetx@gmail.com>
+ <20180430094821.GC2476@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0997261042=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180426121136.GD11985@ulmo>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: nouveau@lists.freedesktop.org, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180430094821.GC2476@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0997261042==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xkXJwpr35CY/Lc3I"
-Content-Disposition: inline
-
-
---xkXJwpr35CY/Lc3I
+--bp/iNruPH9dso1Pn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 26, 2018 at 02:11:36PM +0200, Thierry Reding wrote:
-> On Wed, Apr 25, 2018 at 08:19:34AM -0700, Christoph Hellwig wrote:
-> > On Wed, Apr 25, 2018 at 12:10:48PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >=20
-> > > The dma_iommu_detach_device() API can be used by drivers to forcibly
-> > > detach a device from an IOMMU that architecture code might have attac=
-hed
-> > > to. This is useful for drivers that need explicit control over the IO=
-MMU
-> > > using the IOMMU API directly.
+On Mon, Apr 30, 2018 at 11:48:21AM +0200, Thierry Reding wrote:
+> On Fri, Apr 27, 2018 at 02:58:14AM +0300, Dmitry Osipenko wrote:
+> > Hello,
 > >=20
-> > Given that no one else implements it making it a generic API seems
-> > rather confusing.  For now I'd rename it to
-> > arm_dma_iommu_detach_device() and only implement it in arm.
+> > This series of patches fixes ULPI USB on Tegra20. The original problem
+> > was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+> > incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+> > that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+> > with the USB for the devices that have CDEV2 being enabled by bootloade=
+r.
+> > The patch got into the kernel and later Marc Dietrich found that USB
+> > stopped working on the "paz00" Tegra20 board. After a bit of discussion
+> > was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+> > driver was setting CDEV2's parent incorrectly. The parent clock is actu=
+ally
+> > determined by the pinmuxing config of CDEV2 pingroup. This patchset fix=
+es
+> > the parent of CDEV2 clock by making Tegra's pinctrl driver a clock prov=
+ider,
+> > providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+> > suggestion), and then setting these clock muxes as parents for the CDEV=
+1/2
+> > clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since =
+CDEV2
+> > (aka MCLK2) is the actual clock source for "ulpi-link".
+> >=20
+> > Dmitry Osipenko (4):
+> >   clk: tegra20: Add DEV1/DEV2 OSC dividers
+> >   pinctrl: tegra20: Provide CDEV1/2 clock muxes
+> >   clk: tegra20: Set correct parents for CDEV1/2 clocks
+> >   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+> >=20
+> >  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
+> >  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
+> >  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+> >  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+> >  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+> >  5 files changed, 55 insertions(+), 17 deletions(-)
 >=20
-> That'd be suboptimal because this code is used on both 32-bit and 64-bit
-> ARM. If we make the function 32-bit ARM specific then the driver code
-> would need to use an #ifdef to make sure compilation doesn't break on
-> 64-bit ARM.
+> Stephen, Michael, Linus,
+>=20
+> as far as I can tell there aren't any build dependencies between the
+> above, so technically these could all be merged through the individual
+> trees. There's a runtime dependency from patch 2 on patch 1 and from
+> patch 3 on patch 2, though I don't think they will cause any actual
+> failures at runtime.
+>=20
+> But I can also pick this up into the Tegra tree and send out pull
+> requests to you for v4.18 (at around v4.17-rc6), if that's what you
+> prefer.
 
-Do you still want me to make this ARM specific? While I haven't
-encountered this issue on 64-bit ARM yet, I think it would happen there
-as well, under the right circumstances. I could take a shot at
-implementing the equivalent there (which means essentially implementing
-it for drivers/iommu/dma-iommu.c and calling that from 64-bit ARM code).
+Marc just pointed out to me on IRC that this fixes a regression that was
+introduced in v4.17-rc1.
+
+Can you guys pick this up into your -fixes branches? Again, I volunteer
+to collect these into a separate branch and submit via ARM SoC (the DTS
+patch is crucial in enabling the fix) with your Acked-bys if that's the
+preferred option.
 
 Thierry
 
---xkXJwpr35CY/Lc3I
+--bp/iNruPH9dso1Pn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm98UACgkQ3SOs138+
-s6EExBAAmDM+xgOh1951XBz8yxrk7+Et/NzR5wNx72a5Mnnv6znRSNsYZrBNDS5v
-91+B3jAy6oj9Yd6c7OJ62vPYUlyrri4cV4mIZX2HMhYBtn/Fj5Ur9l8KDS4kgPGB
-9S++aqjlbk40yuxBpb2hHcHY7WDytTXq5UiWcejIn1+TIN0WR0uRFIyXYVgpAqdx
-PQmzMXpCgZWpmKKu9takqENCMJNUqSaU4DDxj7E+PRmZpa2JWYnChjf0sGNupo3D
-+funq3GO8+yThG46fVHHsDygwEelxkzBxdF6fgKC7wiU3kom6vUD6/2NcL8sRH0U
-Fa+XKphCBPsuhL3EmBTtQtABtzIm6+Et9XmGInOR447z85KSp7mwzWcvLaGAfoij
-BIO4AIL9SOg0J1cTce5oOrtCdBriGWFIXpp478MkfyitLPLAbqDkrn+GcfS53LoG
-CXRllGJ3XCmtYJ/3TM9MjoieIHs5X5V5VLER+KTM+iWt4Jh0ooXr8O7orbmiQ99B
-K92wilEwTzvyEMG+HQOO7aP4pt+gqLzV38Ly8yaZDsrTQdFpFjpmaTRWxJof9KTe
-1GudUvLQfDAqD/sGxcQbCKIF908rTy57eCYC5Vb1o/bxxBIyeRc67seLeyDTk1mP
-bXz4i9FFETrp97zMumjuwUcW/oFEmZx56RAsQu2PxnyoI+07xGY=
-=n0M9
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm/cEACgkQ3SOs138+
+s6GwGhAAsBYMU6OfkVDBMYaVoDuMn0nzGwKlLnJ4idXGkoSPlVevGYqVM+mmBpoQ
+Ep57Ctbq5cbs5i+4uS1dUI1pZfv7cHUsxABicSPSsvj86lh9fXepI5o9NMDJLIt+
+C+xQ8IQnwCKWrn5sDQ6yhFKrA41lIkXEyoYZgGhotyxMZx9f+YA6xv/a/0Bp7nA+
+EHEfu5wF+0hyQI1KDEkWpBxE9C/ptgz0c9Uc1joD5CTXdoZRmbyycDwfgBvL6vJY
+WQv/y1iNsNNbSCynHnbhx9RvWBSEV61lfaZohjoI6Je5YOgj7I17ujbVSR7tHGAd
+JRQ5jY1yi88t/SGaot+1ZzyjBhAHlCCm6SPZRwGnKe2BNyvVr3CW1pFDgJa+M9dn
+6gjz0qxJV4eZvauHIBoqlpVKTN4UFYyjVRkyvi57iJiX9Vn5eEX+I3HnbMUTbHvD
+DBJJJODc9maE8Sr0kMn4PSabYi6HLyJEKSqYSGgDT852Sc9S2vq9428eGVDJEgx7
+DUnG3xgxRjmSFVr25zLQhUE5du2hNce9ZDSYQQ+g2fqa4wcFN2C0eVdkmD9cqbVh
+juoPUkoXb32338MH+E46rfwT8J1jhCLb0IT7Cdis6dI57JzMVgAZMH25viUwygc9
+2bG6mEfUVi9nF35raMTGadHb2AyABkousQcgOjdcs6VAfAKPk18=
+=LwJ4
 -----END PGP SIGNATURE-----
 
---xkXJwpr35CY/Lc3I--
-
---===============0997261042==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0997261042==--
+--bp/iNruPH9dso1Pn--
