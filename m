@@ -1,105 +1,70 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
-Date: Mon, 30 Apr 2018 13:28:04 +0200
-Message-ID: <20180430112804.GA5770@ulmo>
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180430094821.GC2476@ulmo>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v2 2/5] dma-mapping: Introduce dma_iommu_detach_device()
+ API
+Date: Mon, 30 Apr 2018 12:41:52 +0100
+Message-ID: <e549979d-9f53-a329-da1a-ed5139958762@arm.com>
+References: <20180425101051.15349-1-thierry.reding@gmail.com>
+ <20180425101051.15349-2-thierry.reding@gmail.com>
+ <20180425151934.GC16075@infradead.org> <20180426121136.GD11985@ulmo>
+ <20180430110231.GF2476@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180430094821.GC2476@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180430110231.GF2476@ulmo>
+Content-Language: en-GB
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Christoph Hellwig <hch@infradead.org>
+Cc: nouveau@lists.freedesktop.org, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Apr 30, 2018 at 11:48:21AM +0200, Thierry Reding wrote:
-> On Fri, Apr 27, 2018 at 02:58:14AM +0300, Dmitry Osipenko wrote:
-> > Hello,
-> >=20
-> > This series of patches fixes ULPI USB on Tegra20. The original problem
-> > was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-> > incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-> > that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-> > with the USB for the devices that have CDEV2 being enabled by bootloade=
-r.
-> > The patch got into the kernel and later Marc Dietrich found that USB
-> > stopped working on the "paz00" Tegra20 board. After a bit of discussion
-> > was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
-> > driver was setting CDEV2's parent incorrectly. The parent clock is actu=
-ally
-> > determined by the pinmuxing config of CDEV2 pingroup. This patchset fix=
-es
-> > the parent of CDEV2 clock by making Tegra's pinctrl driver a clock prov=
-ider,
-> > providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-> > suggestion), and then setting these clock muxes as parents for the CDEV=
-1/2
-> > clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since =
-CDEV2
-> > (aka MCLK2) is the actual clock source for "ulpi-link".
-> >=20
-> > Dmitry Osipenko (4):
-> >   clk: tegra20: Add DEV1/DEV2 OSC dividers
-> >   pinctrl: tegra20: Provide CDEV1/2 clock muxes
-> >   clk: tegra20: Set correct parents for CDEV1/2 clocks
-> >   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
-> >=20
-> >  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
-> >  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
-> >  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
-> >  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
-> >  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
-> >  5 files changed, 55 insertions(+), 17 deletions(-)
->=20
-> Stephen, Michael, Linus,
->=20
-> as far as I can tell there aren't any build dependencies between the
-> above, so technically these could all be merged through the individual
-> trees. There's a runtime dependency from patch 2 on patch 1 and from
-> patch 3 on patch 2, though I don't think they will cause any actual
-> failures at runtime.
->=20
-> But I can also pick this up into the Tegra tree and send out pull
-> requests to you for v4.18 (at around v4.17-rc6), if that's what you
-> prefer.
-
-Marc just pointed out to me on IRC that this fixes a regression that was
-introduced in v4.17-rc1.
-
-Can you guys pick this up into your -fixes branches? Again, I volunteer
-to collect these into a separate branch and submit via ARM SoC (the DTS
-patch is crucial in enabling the fix) with your Acked-bys if that's the
-preferred option.
-
-Thierry
-
---bp/iNruPH9dso1Pn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm/cEACgkQ3SOs138+
-s6GwGhAAsBYMU6OfkVDBMYaVoDuMn0nzGwKlLnJ4idXGkoSPlVevGYqVM+mmBpoQ
-Ep57Ctbq5cbs5i+4uS1dUI1pZfv7cHUsxABicSPSsvj86lh9fXepI5o9NMDJLIt+
-C+xQ8IQnwCKWrn5sDQ6yhFKrA41lIkXEyoYZgGhotyxMZx9f+YA6xv/a/0Bp7nA+
-EHEfu5wF+0hyQI1KDEkWpBxE9C/ptgz0c9Uc1joD5CTXdoZRmbyycDwfgBvL6vJY
-WQv/y1iNsNNbSCynHnbhx9RvWBSEV61lfaZohjoI6Je5YOgj7I17ujbVSR7tHGAd
-JRQ5jY1yi88t/SGaot+1ZzyjBhAHlCCm6SPZRwGnKe2BNyvVr3CW1pFDgJa+M9dn
-6gjz0qxJV4eZvauHIBoqlpVKTN4UFYyjVRkyvi57iJiX9Vn5eEX+I3HnbMUTbHvD
-DBJJJODc9maE8Sr0kMn4PSabYi6HLyJEKSqYSGgDT852Sc9S2vq9428eGVDJEgx7
-DUnG3xgxRjmSFVr25zLQhUE5du2hNce9ZDSYQQ+g2fqa4wcFN2C0eVdkmD9cqbVh
-juoPUkoXb32338MH+E46rfwT8J1jhCLb0IT7Cdis6dI57JzMVgAZMH25viUwygc9
-2bG6mEfUVi9nF35raMTGadHb2AyABkousQcgOjdcs6VAfAKPk18=
-=LwJ4
------END PGP SIGNATURE-----
-
---bp/iNruPH9dso1Pn--
+T24gMzAvMDQvMTggMTI6MDIsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+IE9uIFRodSwgQXByIDI2
+LCAyMDE4IGF0IDAyOjExOjM2UE0gKzAyMDAsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+PiBPbiBX
+ZWQsIEFwciAyNSwgMjAxOCBhdCAwODoxOTozNEFNIC0wNzAwLCBDaHJpc3RvcGggSGVsbHdpZyB3
+cm90ZToKPj4+IE9uIFdlZCwgQXByIDI1LCAyMDE4IGF0IDEyOjEwOjQ4UE0gKzAyMDAsIFRoaWVy
+cnkgUmVkaW5nIHdyb3RlOgo+Pj4+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRp
+YS5jb20+Cj4+Pj4KPj4+PiBUaGUgZG1hX2lvbW11X2RldGFjaF9kZXZpY2UoKSBBUEkgY2FuIGJl
+IHVzZWQgYnkgZHJpdmVycyB0byBmb3JjaWJseQo+Pj4+IGRldGFjaCBhIGRldmljZSBmcm9tIGFu
+IElPTU1VIHRoYXQgYXJjaGl0ZWN0dXJlIGNvZGUgbWlnaHQgaGF2ZSBhdHRhY2hlZAo+Pj4+IHRv
+LiBUaGlzIGlzIHVzZWZ1bCBmb3IgZHJpdmVycyB0aGF0IG5lZWQgZXhwbGljaXQgY29udHJvbCBv
+dmVyIHRoZSBJT01NVQo+Pj4+IHVzaW5nIHRoZSBJT01NVSBBUEkgZGlyZWN0bHkuCj4+Pgo+Pj4g
+R2l2ZW4gdGhhdCBubyBvbmUgZWxzZSBpbXBsZW1lbnRzIGl0IG1ha2luZyBpdCBhIGdlbmVyaWMg
+QVBJIHNlZW1zCj4+PiByYXRoZXIgY29uZnVzaW5nLiAgRm9yIG5vdyBJJ2QgcmVuYW1lIGl0IHRv
+Cj4+PiBhcm1fZG1hX2lvbW11X2RldGFjaF9kZXZpY2UoKSBhbmQgb25seSBpbXBsZW1lbnQgaXQg
+aW4gYXJtLgo+Pgo+PiBUaGF0J2QgYmUgc3Vib3B0aW1hbCBiZWNhdXNlIHRoaXMgY29kZSBpcyB1
+c2VkIG9uIGJvdGggMzItYml0IGFuZCA2NC1iaXQKPj4gQVJNLiBJZiB3ZSBtYWtlIHRoZSBmdW5j
+dGlvbiAzMi1iaXQgQVJNIHNwZWNpZmljIHRoZW4gdGhlIGRyaXZlciBjb2RlCj4+IHdvdWxkIG5l
+ZWQgdG8gdXNlIGFuICNpZmRlZiB0byBtYWtlIHN1cmUgY29tcGlsYXRpb24gZG9lc24ndCBicmVh
+ayBvbgo+PiA2NC1iaXQgQVJNLgo+IAo+IERvIHlvdSBzdGlsbCB3YW50IG1lIHRvIG1ha2UgdGhp
+cyBBUk0gc3BlY2lmaWM/IFdoaWxlIEkgaGF2ZW4ndAo+IGVuY291bnRlcmVkIHRoaXMgaXNzdWUg
+b24gNjQtYml0IEFSTSB5ZXQsIEkgdGhpbmsgaXQgd291bGQgaGFwcGVuIHRoZXJlCj4gYXMgd2Vs
+bCwgdW5kZXIgdGhlIHJpZ2h0IGNpcmN1bXN0YW5jZXMuIEkgY291bGQgdGFrZSBhIHNob3QgYXQK
+PiBpbXBsZW1lbnRpbmcgdGhlIGVxdWl2YWxlbnQgdGhlcmUgKHdoaWNoIG1lYW5zIGVzc2VudGlh
+bGx5IGltcGxlbWVudGluZwo+IGl0IGZvciBkcml2ZXJzL2lvbW11L2RtYS1pb21tdS5jIGFuZCBj
+YWxsaW5nIHRoYXQgZnJvbSA2NC1iaXQgQVJNIGNvZGUpLgoKSXQgc291bmRzIGxpa2UgdGhpbmdz
+IGFyZSBnZXR0aW5nIGEgYml0IGJhY2t3YXJkcyBoZXJlOiBpb21tdS1kbWEgc2hvdWxkIApoYXZl
+IG5vdGhpbmcgdG8gZG8gd2l0aCB0aGlzLCBzaW5jZSBpZiB5b3UndmUgZXhwbGljaXRseSBhdHRh
+Y2hlZCB0aGUgCmRldmljZSB0byB5b3VyIG93biBJT01NVSBkb21haW4gdGhlbiB5b3UncmUgYWxy
+ZWFkeSBieXBhc3NpbmcgZXZlcnl0aGluZyAKaXQga25vd3MgYWJvdXQgYW5kIGhhcyBjb250cm9s
+IG92ZXIuIEFyY2ggY29kZSBjYWxsaW5nIGludG8gaW9tbXUtZG1hIHRvIApkbyBzb21ldGhpbmcg
+d2hpY2ggbWFrZXMgYXJjaCBjb2RlIG5vdCB1c2UgaW9tbXUtZG1hIG1ha2VzIHZlcnkgbGl0dGxl
+IApzZW5zZS4KCkFGQUlDUyB0aGUgb25seSBhc3BlY3Qgb2YgYXJtX2lvbW11X2RldGFjaF9kZXZp
+Y2UoKSB3aGljaCBhY3R1YWxseSAKbWF0dGVycyBpbiB0aGlzIGNhc2UgaXMgdGhlIHNldF9kbWFf
+b3BzKCkgYml0LCBzbyB3aGF0IHdlJ3JlIHJlYWxseSAKYWZ0ZXIgaXMgYSBnZW5lcmljIHdheSBm
+b3IgZHJpdmVycyB0byBzYXkgIkhleSwgSSBhY3R1YWxseSBoYXZlIG15IG93biAKTU1VIChvciB3
+YW50IHRvIGNvbnRyb2wgdGhlIG9uZSB5b3UgYWxyZWFkeSBrbm93IGFib3V0KSBzbyBwbGVhc2Ug
+Z2l2ZSAKbWUgZGlyZWN0IERNQSBvcHMiLCB3aGljaCB0aGUgYXJjaCBjb2RlIGhhbmRsZXMgYXMg
+YXBwcm9wcmlhdGUgKG1heWJlIAppdCdzIGFsc28gYWxsb3dlZCB0byBmYWlsIGluIGNhc2VzIGxp
+a2Ugc3dpb3RsYj1mb3JjZSBvciB3aGVuIHRoZXJlIGlzIApSQU0gYmV5b25kIHRoZSBkZXZpY2Un
+cyBETUEgbWFzaykuCgpSb2Jpbi4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
