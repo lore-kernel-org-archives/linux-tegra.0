@@ -1,65 +1,72 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-Date: Mon, 30 Apr 2018 10:48:54 +0300
-Message-ID: <20180430074854.GM6835@tbergstrom-lnx.Nvidia.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180426235818.10018-2-digetx@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v4 09/15] memory: tegra: Squash tegra20-mc into common
+ tegra-mc driver
+Date: Mon, 30 Apr 2018 10:07:45 +0200
+Message-ID: <20180430080745.GA2484@ulmo>
+References: <cover.1523301400.git.digetx@gmail.com>
+ <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180426235818.10018-2-digetx@gmail.com>
+In-Reply-To: <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 02:58:15AM +0300, Dmitry Osipenko wrote:
-> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
-> a parent. Add these dividers in order to be able to provide that parent
-> option.
-> 
+
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 09, 2018 at 10:28:31PM +0300, Dmitry Osipenko wrote:
+> Tegra30+ has some minor differences in registers / bits layout compared
+> to Tegra20. Let's squash Tegra20 driver into the common tegra-mc driver
+> in a preparation for the upcoming MC hot reset controls implementation,
+> avoiding code duplication.
+>=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index 0ee56dd04cec..16cf4108f2ff 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -26,6 +26,8 @@
->  #include "clk.h"
->  #include "clk-id.h"
->  
-> +#define MISC_CLK_ENB 0x48
-> +
->  #define OSC_CTRL 0x50
->  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
->  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
-> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
->  				    periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_PEX] = clk;
->  
-> +	/* cdev1 OSC divider */
-> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
+>  drivers/memory/Kconfig         |  10 --
+>  drivers/memory/Makefile        |   1 -
+>  drivers/memory/tegra/Makefile  |   1 +
+>  drivers/memory/tegra/mc.c      | 120 +++++++++++++++++--
+>  drivers/memory/tegra/mc.h      |  11 ++
+>  drivers/memory/tegra/tegra20.c | 178 +++++++++++++++++++++++++++++
+>  drivers/memory/tegra20-mc.c    | 254 -----------------------------------=
+------
+>  include/soc/tegra/mc.h         |   2 +-
+>  8 files changed, 299 insertions(+), 278 deletions(-)
+>  create mode 100644 drivers/memory/tegra/tegra20.c
+>  delete mode 100644 drivers/memory/tegra20-mc.c
 
-I don't know if this divider can be changed glitchlessly so to be safe,
-I would mark this readonly, so add the CLK_DIVIDER_READ_ONLY flag.
+I've applied this now and squashed in patch "memory: tegra: Remove
+handling of MC_GART_ERROR_REQ on Tegra20".
 
-> +	/* cdev2 OSC divider */
-> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
->  	/* cdev1 */
->  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
->  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
-> -- 
-> 2.17.0
-> 
+Thanks,
+Thierry
 
-Peter.
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrmzs8ACgkQ3SOs138+
+s6FuzRAApQnPwRJPJTDj4CPHW1c40336Q79dx5RPPDNoyugQoWk+YgqT7JT3bpV7
+ZULc2dDSXd+UScWI1TZoM6sqW5HvdzTb5sCZ5740M296CrcsCPs/PE6behseQSJV
+FL6uOxI3MUK4gC13K28ABZsz8aGCiWFAgOqJKPcR6nFKEsCUb6kYNKhMPKk55lml
+gzLaz/eRTA0oBEiAjDJX+L0EfKvffXCNUaesvYd9453y15PYHXoqBDdJ+T9vQQhk
+Fz860qU5pUllv+lemFsxsXftSCK8n0Ex+LVOwWF24gyMWY5h2KbngkDXQeytlzIJ
+B83EKrevhsa9a4znaj2cMB6VCV15NTkHa9ZHNuR8ltxXelvk0qIeECHnWictdFD9
+IX/JzzXdJ5V4FOeSp3hk982lIfmnrDkPKkpWZN2Byx0jQW0Z/N/QTdvb3aGlN/yR
+wwF6Hwa3RPEV+pjmWqx7krxWyWou1Jnt75VdXXTtPq8u07SbyZD1z6ibylap+HS+
+ALhkgqvL+L9v62VroQAeGg691eJqvUBGZYITs6v7OiDMmS1riMNCRL85vrQrYoYt
+VfmEjpCA93HnbIQTiokC+DFjtjeDoE98qiS5f+8GqBK9A/M7ZWa62ipZUvHe+Q+S
+TRv+xPASZ1eu9sydfQBNe2ygnqybgu7idMcVJibN/XkKy5HhJkg=
+=CcR0
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
