@@ -1,74 +1,92 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Date: Mon, 30 Apr 2018 11:29:47 +0200
-Message-ID: <20180430092947.GC2270@ulmo>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
+Date: Mon, 30 Apr 2018 11:48:21 +0200
+Message-ID: <20180430094821.GC2476@ulmo>
+References: <20180426235818.10018-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
+        protocol="application/pgp-signature"; boundary="/e2eDi0V/xtL+Mc8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Michal Simek <michal.simek@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---9Ek0hoCL9XbhcSqy
+--/e2eDi0V/xtL+Mc8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
-> On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
-> > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
-> >>
-> >> We should get drvdata from struct device directly. Going via
-> >> platform_device is an unneeded step back and forth.
-> >>
-> >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >> ---
-> >>
-> >> Build tested only. buildbot is happy. Please apply individually.
-> >
-> >
-> > for gpio-omap.c:
-> > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+On Fri, Apr 27, 2018 at 02:58:14AM +0300, Dmitry Osipenko wrote:
+> Hello,
 >=20
-> Hm I only see the responses not the actual patch, I guess I will find it
-> sooner or later.
+> This series of patches fixes ULPI USB on Tegra20. The original problem
+> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+> with the USB for the devices that have CDEV2 being enabled by bootloader.
+> The patch got into the kernel and later Marc Dietrich found that USB
+> stopped working on the "paz00" Tegra20 board. After a bit of discussion
+> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+> driver was setting CDEV2's parent incorrectly. The parent clock is actual=
+ly
+> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provid=
+er,
+> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+> suggestion), and then setting these clock muxes as parents for the CDEV1/2
+> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CD=
+EV2
+> (aka MCLK2) is the actual clock source for "ulpi-link".
 >=20
-> Wolfram: if I don't find it, poke me with something sharp so I get to app=
-ly it.
+> Dmitry Osipenko (4):
+>   clk: tegra20: Add DEV1/DEV2 OSC dividers
+>   pinctrl: tegra20: Provide CDEV1/2 clock muxes
+>   clk: tegra20: Set correct parents for CDEV1/2 clocks
+>   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+>=20
+>  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
+>  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
+>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+>  5 files changed, 55 insertions(+), 17 deletions(-)
 
-I had the same problem, turned out this got classified as spam by Google
-for some reason. Maybe try your spam folder?
+Stephen, Michael, Linus,
+
+as far as I can tell there aren't any build dependencies between the
+above, so technically these could all be merged through the individual
+trees. There's a runtime dependency from patch 2 on patch 1 and from
+patch 3 on patch 2, though I don't think they will cause any actual
+failures at runtime.
+
+But I can also pick this up into the Tegra tree and send out pull
+requests to you for v4.18 (at around v4.17-rc6), if that's what you
+prefer.
 
 Thierry
 
---9Ek0hoCL9XbhcSqy
+--/e2eDi0V/xtL+Mc8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm4gsACgkQ3SOs138+
-s6E+/Q/9EjphqdxUrnsFSD+/mR1PWKT+wgaYut4Zt8pP0aPfTRABNwbDutpCoz/w
-PTdquuAzoziVhHWLZFYyqEfug3/gB/4rHfl9UspVMirZlLjL/CJCGag79Df2oENl
-C6Q43ql8C5GfosbgL17xjZ5YkboZbPWmbaiODae3XOTRc3EDwCPiw1yn5xFiQxRG
-h16gu6kwhXDoipAXN5ljenWF2QkL1av5/7lY01n6NVtIOMg5ercIfx50NofCPpoi
-eniMXrWziPcryMq2u8e6rZKERXq+iZAMfZSr9s+NDsVrESPDkRM2PiCtRtCKH34g
-UYKK1pG7BikpaQmZKmBllMQ3fPKzsWVdhirioYwv5igTBJ4egwgmnjdjhHq8MOOd
-TV1YAjxFen0gAUTCo2MPUEvN3khqUY3xi0dnOgZOF64Q6D+ZHGltdCZcB5PdL2xE
-qLJ2CDGPxCk9fWI2oCVsZXjzc9T4l06baKF2dcxLdTyoCgB4ru3R4eV7V2CuRnnu
-/0IqZ1wRTWH9GW2VrmD+/CWJqSgknhWRwBVPQaZT87hfWMZC7xmRqAC+cK/OdBX/
-uadYQvwvLJBc3BsjtljiqzvvV8FwoXlhkVt0OPIARKCnBJtenbJfOMwewdVKjvVW
-42PBcd6qBelFBrohpOO3eQ967KJG+Z8c/NkrZ6t0JF8i4GaBT4o=
-=odoW
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm5mUACgkQ3SOs138+
+s6HYZA/+Jd9SEUtBU37s8HSilhhRW0RMjH2s3kCNHRU7mK0Ub6nPk8VlHhdzn7z5
+emLliMzIBxoLYlaf/msP04X2O6vtQaAlN2WBMmQxIRTHZLgSgMozxMRoimI4hAAB
+7pNnWisHeukGD4lsmyCvObCy2vvYay8PljgTaGe9128WkQSJQxk29sqnzQ58vnb9
+4c7dsmJ0ZXCfWAWhXnC5EJXdq0Ojhro44Vywh8XR1+TghIKwbrxjE5IzzGVD3Ydw
+iEhJe3IP5Hy3awb74nnpYUDyFTHcxBpBNIqQ7cedI9xDwfoGJ+etpit0YsMU2aVF
+AuhpeVUYSH3L0ZwdeMrh/KOgVuWkqP8BrPmDNxrtIBs+ZwSri6+01fv2f1MI0aCM
+UcLny3r0x/+plRyeLVcb0z22QQ/eYDYMrKODF/6pIP5nUls12M+RjE/GRfeQwCmY
+EvZ38fWMnCAmC9WqWaoB++kG7EZf1bCjL1lIGboBmb9MNLqWhG3EioLXKzgwl/Kj
+0xZpf1dy070UJhovG4ZB83IU3UUBzo7NaLKGaQkDHwp+gJiCPlaGSfsa0ne8cOcG
+7Yk3jzyRNrBE/OgeWG/9XuDYUL+6wuRG/Wgpxs6vURFXFJHxMTSeHSKe8iGgipij
+l0MvB6r3nGHV2tIi+494Sa5gd4cRqqx8nm9ywOOGHL3ThIdHOUo=
+=qn1g
 -----END PGP SIGNATURE-----
 
---9Ek0hoCL9XbhcSqy--
+--/e2eDi0V/xtL+Mc8--
