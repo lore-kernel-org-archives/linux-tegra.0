@@ -1,90 +1,100 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 1/2] dma-mapping: move dma configuration to bus
-	infrastructure
-Date: Mon, 30 Apr 2018 12:41:24 +0200
-Message-ID: <20180430104124.GE2476@ulmo>
-References: <1520868292-2479-1-git-send-email-nipun.gupta@nxp.com>
-	<1524883919-29484-1-git-send-email-nipun.gupta@nxp.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 2/5] dma-mapping: Introduce dma_iommu_detach_device()
+ API
+Date: Mon, 30 Apr 2018 13:02:31 +0200
+Message-ID: <20180430110231.GF2476@ulmo>
+References: <20180425101051.15349-1-thierry.reding@gmail.com>
+ <20180425101051.15349-2-thierry.reding@gmail.com>
+ <20180425151934.GC16075@infradead.org>
+ <20180426121136.GD11985@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2143633477189065833=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1524883919-29484-1-git-send-email-nipun.gupta-3arQi8VN3Tc@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Nipun Gupta <nipun.gupta-3arQi8VN3Tc@public.gmane.org>
-Cc: zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hch-jcswGhMUV9g@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, msuchanek-l3A5Bk7waGM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, leoyang.li-3arQi8VN3Tc@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============0997261042=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180426121136.GD11985@ulmo>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: nouveau@lists.freedesktop.org, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2143633477189065833==
+--===============0997261042==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Ns7jmDPpOpCD+GE/"
+	protocol="application/pgp-signature"; boundary="xkXJwpr35CY/Lc3I"
 Content-Disposition: inline
 
 
---Ns7jmDPpOpCD+GE/
+--xkXJwpr35CY/Lc3I
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 28, 2018 at 08:21:58AM +0530, Nipun Gupta wrote:
-[...]
-> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-> index 88a3558..a9ec99d 100644
-> --- a/drivers/gpu/host1x/bus.c
-> +++ b/drivers/gpu/host1x/bus.c
-> @@ -314,6 +314,13 @@ static int host1x_device_match(struct device *dev, s=
-truct device_driver *drv)
->  	return strcmp(dev_name(dev), drv->name) =3D=3D 0;
->  }
-> =20
-> +static int host1x_dma_configure(struct device *dev)
-> +{
-> +	if (dev->of_node)
-> +		return of_dma_configure(dev, dev->of_node);
+On Thu, Apr 26, 2018 at 02:11:36PM +0200, Thierry Reding wrote:
+> On Wed, Apr 25, 2018 at 08:19:34AM -0700, Christoph Hellwig wrote:
+> > On Wed, Apr 25, 2018 at 12:10:48PM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >=20
+> > > The dma_iommu_detach_device() API can be used by drivers to forcibly
+> > > detach a device from an IOMMU that architecture code might have attac=
+hed
+> > > to. This is useful for drivers that need explicit control over the IO=
+MMU
+> > > using the IOMMU API directly.
+> >=20
+> > Given that no one else implements it making it a generic API seems
+> > rather confusing.  For now I'd rename it to
+> > arm_dma_iommu_detach_device() and only implement it in arm.
+>=20
+> That'd be suboptimal because this code is used on both 32-bit and 64-bit
+> ARM. If we make the function 32-bit ARM specific then the driver code
+> would need to use an #ifdef to make sure compilation doesn't break on
+> 64-bit ARM.
 
-The conditional here is somewhat pointless since the of_node should
-always be set. If it weren't it should be considered a bug and this
-function welcome to crash to make that very obvious.
+Do you still want me to make this ARM specific? While I haven't
+encountered this issue on 64-bit ARM yet, I think it would happen there
+as well, under the right circumstances. I could take a shot at
+implementing the equivalent there (which means essentially implementing
+it for drivers/iommu/dma-iommu.c and calling that from 64-bit ARM code).
 
-Either way:
+Thierry
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---Ns7jmDPpOpCD+GE/
+--xkXJwpr35CY/Lc3I
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm8tIACgkQ3SOs138+
-s6HAJg/9FscZP4vLRd/bBp6+rBZLIilAu8k5gn/V+Tv9DJZRIXPsbeOuuixcznXK
-Sc940MSfERPYXl8fscrW9kdJWuFM4W3bdXJGzZ08T+IdVVSyFdbldOoPAVpeLi8Y
-C8pT3jlCLD5r6foGpUXy52rt6Jtuh7Tc4+3rr+D5h/efg9kbudcOjb2p3hcUDum+
-6BJSl7yVKDN6yjK1+o7GHu0wic6CWZe/mNmaQ7g8jn7ahWV3kHnwrHj3/3l4N+h+
-cDiZhl34yzyEJRyQ0aHr1r2qdEJTXYA33JpX0zMhqzpv9JCMa+VlteQ48kXSxxTN
-X6TuS4pmeihUA9h3pFsuGAogPvW/tznL8tr9c2F2cJ/VDL3itQmfNmzT44ybrZYT
-uNPIULOaNePPf10DGcd4RZCJIMUDQeza1IHEmiwlDnr5lYJWJUDtSb4ZfyA2j87y
-q5wcupDKuqQ4v2tdkcZb9z8Mm5jYGsrWDVKFxKDPfx0LAwzmo5MNOcbGHnPiy8Oo
-N24oBFW3v1ESkzX9Yfd7VCDcKIms1qjO2hyVmIb6jCvPg36E8mqG3f599zn8zCdu
-i7xUnhwOs64t/yj62rPEd++T6dEsn7idUd6RGkZxLAWwSMipQ7dFhh0nBbKUGwwU
-8yRNFMAtpLAaTnt4FqcLN/0BFZ09zwCVHJFw/mYxeUTFGN/V4Xc=
-=hGR3
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm98UACgkQ3SOs138+
+s6EExBAAmDM+xgOh1951XBz8yxrk7+Et/NzR5wNx72a5Mnnv6znRSNsYZrBNDS5v
+91+B3jAy6oj9Yd6c7OJ62vPYUlyrri4cV4mIZX2HMhYBtn/Fj5Ur9l8KDS4kgPGB
+9S++aqjlbk40yuxBpb2hHcHY7WDytTXq5UiWcejIn1+TIN0WR0uRFIyXYVgpAqdx
+PQmzMXpCgZWpmKKu9takqENCMJNUqSaU4DDxj7E+PRmZpa2JWYnChjf0sGNupo3D
++funq3GO8+yThG46fVHHsDygwEelxkzBxdF6fgKC7wiU3kom6vUD6/2NcL8sRH0U
+Fa+XKphCBPsuhL3EmBTtQtABtzIm6+Et9XmGInOR447z85KSp7mwzWcvLaGAfoij
+BIO4AIL9SOg0J1cTce5oOrtCdBriGWFIXpp478MkfyitLPLAbqDkrn+GcfS53LoG
+CXRllGJ3XCmtYJ/3TM9MjoieIHs5X5V5VLER+KTM+iWt4Jh0ooXr8O7orbmiQ99B
+K92wilEwTzvyEMG+HQOO7aP4pt+gqLzV38Ly8yaZDsrTQdFpFjpmaTRWxJof9KTe
+1GudUvLQfDAqD/sGxcQbCKIF908rTy57eCYC5Vb1o/bxxBIyeRc67seLeyDTk1mP
+bXz4i9FFETrp97zMumjuwUcW/oFEmZx56RAsQu2PxnyoI+07xGY=
+=n0M9
 -----END PGP SIGNATURE-----
 
---Ns7jmDPpOpCD+GE/--
+--xkXJwpr35CY/Lc3I--
 
---===============2143633477189065833==
-Content-Type: text/plain; charset="us-ascii"
+--===============0997261042==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Content-Disposition: inline
 
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============2143633477189065833==--
+--===============0997261042==--
