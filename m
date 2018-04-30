@@ -1,87 +1,133 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 11/15] memory: tegra: Add Tegra210 memory controller
- hot resets
-Date: Sat, 28 Apr 2018 11:18:38 +0300
-Message-ID: <935ad30c-1ade-3380-ad4d-f5ffbbe63a66@gmail.com>
-References: <cover.1523301400.git.digetx@gmail.com>
- <f064d034477537bfb5473c1277da07d772b0d4b5.1523301400.git.digetx@gmail.com>
- <20180427093927.GK30388@ulmo>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v1 2/4] pinctrl: tegra20: Provide CDEV1/2 clock muxes
+Date: Mon, 30 Apr 2018 10:46:09 +0300
+Message-ID: <20180430074609.GK6835@tbergstrom-lnx.Nvidia.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+ <20180426235818.10018-3-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180427093927.GK30388@ulmo>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180426235818.10018-3-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 27.04.2018 12:39, Thierry Reding wrote:
-> On Fri, Apr 13, 2018 at 02:33:50PM +0300, Dmitry Osipenko wrote:
->> From: Thierry Reding <treding@nvidia.com>
->>
->> Define the table of memory controller hot resets for Tegra210.
->>
->> Signed-off-by: Thierry Reding <treding@nvidia.com>
->> ---
->>  drivers/memory/tegra/tegra210.c | 45 +++++++++++++++++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>
->> diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
->> index b729f49ffc8f..d00a77160407 100644
->> --- a/drivers/memory/tegra/tegra210.c
->> +++ b/drivers/memory/tegra/tegra210.c
->> @@ -1080,6 +1080,48 @@ static const struct tegra_smmu_soc tegra210_smmu_soc = {
->>  	.num_asids = 128,
->>  };
->>  
->> +#define TEGRA210_MC_RESET(_name, _control, _status, _bit)	\
->> +	{							\
->> +		.name = #_name,					\
->> +		.id = TEGRA210_MC_RESET_##_name,		\
->> +		.control = _control,				\
->> +		.status = _status,				\
->> +		.bit = _bit,					\
->> +	}
->> +
->> +static const struct tegra_mc_reset tegra210_mc_resets[] = {
->> +	TEGRA210_MC_RESET(AFI,       0x200, 0x204,  0),
->> +	TEGRA210_MC_RESET(AVPC,      0x200, 0x204,  1),
->> +	TEGRA210_MC_RESET(DC,        0x200, 0x204,  2),
->> +	TEGRA210_MC_RESET(DCB,       0x200, 0x204,  3),
->> +	TEGRA210_MC_RESET(HC,        0x200, 0x204,  6),
->> +	TEGRA210_MC_RESET(HDA,       0x200, 0x204,  7),
->> +	TEGRA210_MC_RESET(ISP2,      0x200, 0x204,  8),
->> +	TEGRA210_MC_RESET(MPCORE,    0x200, 0x204,  9),
->> +	TEGRA210_MC_RESET(NVENC,     0x200, 0x204, 11),
->> +	TEGRA210_MC_RESET(PPCS,      0x200, 0x204, 14),
->> +	TEGRA210_MC_RESET(SATA,      0x200, 0x204, 15),
->> +	TEGRA210_MC_RESET(VI,        0x200, 0x204, 17),
->> +	TEGRA210_MC_RESET(VIC,       0x200, 0x204, 18),
->> +	TEGRA210_MC_RESET(XUSB_HOST, 0x200, 0x204, 19),
->> +	TEGRA210_MC_RESET(XUSB_DEV,  0x200, 0x204, 20),
->> +	TEGRA210_MC_RESET(A9AVP,     0x200, 0x204, 21),
->> +	TEGRA210_MC_RESET(TSEC,      0x200, 0x204, 22),
->> +	TEGRA210_MC_RESET(SDMMC1,    0x200, 0x204, 29),
->> +	TEGRA210_MC_RESET(SDMMC2,    0x200, 0x204, 30),
->> +	TEGRA210_MC_RESET(SDMMC3,    0x200, 0x204, 31),
->> +	TEGRA210_MC_RESET(SDMMC4,    0x970, 0x974,  0),
->> +	TEGRA210_MC_RESET(ISP2B,     0x970, 0x974,  1),
->> +	TEGRA210_MC_RESET(GPU,       0x970, 0x974,  2),
->> +	TEGRA210_MC_RESET(NVDEC,     0x970, 0x974,  5),
->> +	TEGRA210_MC_RESET(APE,       0x970, 0x974,  6),
->> +	TEGRA210_MC_RESET(SE,        0x970, 0x974,  7),
->> +	TEGRA210_MC_RESET(NVJPG,     0x970, 0x974,  8),
->> +	TEGRA210_MC_RESET(AXIAP,     0x970, 0x974, 11),
->> +	TEGRA210_MC_RESET(ETR,       0x970, 0x974, 12),
->> +	TEGRA210_MC_RESET(TSECB,     0x970, 0x974, 13),
->> +};
+On Fri, Apr 27, 2018 at 02:58:16AM +0300, Dmitry Osipenko wrote:
+> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
+> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
+> that main clk-controller driver could get an actual parent clock for the
+> CDEV1/2 clocks.
 > 
-> Isn't this missing an include for the definitions? There is an include
-> for dt-bindings/memory/tegra20-mc.h for the Tegra20 driver, but none of
-> the others have it.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+>  3 files changed, 40 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> index 72c718e66ebb..49c7c1499bc3 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -33,17 +33,6 @@
+>  #include "../pinctrl-utils.h"
+>  #include "pinctrl-tegra.h"
+>  
+> -struct tegra_pmx {
+> -	struct device *dev;
+> -	struct pinctrl_dev *pctl;
+> -
+> -	const struct tegra_pinctrl_soc_data *soc;
+> -	const char **group_pins;
+> -
+> -	int nbanks;
+> -	void __iomem **regs;
+> -};
+> -
+>  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>  {
+>  	return readl(pmx->regs[bank] + reg);
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+> index 33b17cb1471e..aa33c20766c4 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+> @@ -16,6 +16,17 @@
+>  #ifndef __PINMUX_TEGRA_H__
+>  #define __PINMUX_TEGRA_H__
+>  
+> +struct tegra_pmx {
+> +	struct device *dev;
+> +	struct pinctrl_dev *pctl;
+> +
+> +	const struct tegra_pinctrl_soc_data *soc;
+> +	const char **group_pins;
+> +
+> +	int nbanks;
+> +	void __iomem **regs;
+> +};
+> +
+>  enum tegra_pinconf_param {
+>  	/* argument: tegra_pinconf_pull */
+>  	TEGRA_PINCONF_PARAM_PULL,
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> index 7e38ee9bae78..f31e39d797f9 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> @@ -19,6 +19,7 @@
+>   * more details.
+>   */
+>  
+> +#include <linux/clk-provider.h>
+>  #include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> @@ -2231,9 +2232,36 @@ static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
+>  	.drvtype_in_mux = false,
+>  };
+>  
+> +static const char *cdev1_parents[4] = {
 
-Those drivers already have dt-bindings included.
+No need to have 4 here, just cdev1_parents[] will do. 
 
-> No need to respin, though, I can add that when applying.
+> +	"cdev1_osc_div", "pll_a_out0", "pll_m_out1", "audio",
+> +};
+> +
+> +static const char *cdev2_parents[4] = {
+> +	"cdev2_osc_div", "hclk", "pclk", "pll_p_out4",
+> +};
+> +
+
+Same here.
+
+> +static void tegra20_pinctrl_register_clock_muxes(struct platform_device *pdev)
+> +{
+> +	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
+> +
+> +	clk_register_mux(NULL, "cdev1_mux", cdev1_parents, 4, 0,
+> +			 pmx->regs[1] + 0x8, 2, 2, CLK_MUX_READ_ONLY, NULL);
+> +
+> +	clk_register_mux(NULL, "cdev2_mux", cdev2_parents, 4, 0,
+> +			 pmx->regs[1] + 0x8, 4, 2, CLK_MUX_READ_ONLY, NULL);
+> +}
+> +
+>  static int tegra20_pinctrl_probe(struct platform_device *pdev)
+>  {
+> -	return tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
+> +	int err;
+> +
+> +	err = tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
+> +	if (err)
+> +		return err;
+> +
+> +	tegra20_pinctrl_register_clock_muxes(pdev);
+> +
+> +	return 0;
+>  }
+>  
+>  static const struct of_device_id tegra20_pinctrl_of_match[] = {
+
+Apart from these nitpicks:
+
+Acked-By:  Peter De Schrijver <pdeschrijver@nvidia.com>
