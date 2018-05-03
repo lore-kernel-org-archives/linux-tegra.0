@@ -1,29 +1,76 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 3/5] soc: rockchip: power-domain: Use
- of_clk_get_parent_count() instead of open coding
-Date: Wed, 02 May 2018 08:38:46 -0700
-Message-ID: <152527552692.138124.9472680209483820124@swboyd.mtv.corp.google.com>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-4-git-send-email-geert+renesas@glider.be>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH] ARM: tegra: apalis-tk1: fix high speed uart compatible
+Date: Thu,  3 May 2018 09:46:46 +0200
+Message-ID: <20180503074646.24300-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1524063005-1716-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2018-04-18 07:50:03)
-> As of_clk_get_parent_count() returns zero on failure, while
-> of_count_phandle_with_args() might return a negative error code, this
-> also fixes the issue of possibly using a negative number in the
-> allocation below.
-> =
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+Turns out the compatible "nvidia,tegra124-hsuart" does not (yet) exit
+and everybody else also uses it only in conjunction with
+"nvidia,tegra30-hsuart".
 
-Applied to clk-next
+Reported-by: Martin Šafařík <msafarik@retia.cz>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 6 +++---
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+index bb67edb016c5..3455822350c5 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+@@ -1536,15 +1536,15 @@
+ 	};
+ 
+ 	serial@70006040 {
+-		compatible = "nvidia,tegra124-hsuart";
++		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
+ 	};
+ 
+ 	serial@70006200 {
+-		compatible = "nvidia,tegra124-hsuart";
++		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
+ 	};
+ 
+ 	serial@70006300 {
+-		compatible = "nvidia,tegra124-hsuart";
++		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
+ 	};
+ 
+ 	hdmi_ddc: i2c@7000c700 {
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 65a2161b9b8e..9f960c84ba10 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -1565,15 +1565,15 @@
+ 	};
+ 
+ 	serial@70006040 {
+-		compatible = "nvidia,tegra124-hsuart";
++		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
+ 	};
+ 
+ 	serial@70006200 {
+-		compatible = "nvidia,tegra124-hsuart";
++		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
+ 	};
+ 
+ 	serial@70006300 {
+-		compatible = "nvidia,tegra124-hsuart";
++		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
+ 	};
+ 
+ 	hdmi_ddc: i2c@7000c400 {
+-- 
+2.14.3
