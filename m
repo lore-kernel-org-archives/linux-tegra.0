@@ -1,33 +1,100 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 0/5] Support IOMMU for 2d/3d on Tegra30/114
-Date: Fri,  4 May 2018 02:47:18 +0300
-Message-ID: <20180503234723.4368-1-digetx@gmail.com>
+Subject: [PATCH v1 2/5] drm/tegra: gr2d: Add IOMMU support
+Date: Fri,  4 May 2018 02:47:20 +0300
+Message-ID: <20180503234723.4368-3-digetx@gmail.com>
+References: <20180503234723.4368-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180503234723.4368-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Attach GR2D to the display IOMMU group in order to provide GR2D access
+to BO's IOVA.
 
-This series enables IOMMU support for 2d/3d HW on Tegra30/114, as a result
-userspace that uses 2d/3d could work with the active IOMMU.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/drm/tegra/gr2d.c | 31 +++++++++++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
 
-Dmitry Osipenko (5):
-  drm/tegra: dc: Balance IOMMU group refcounting
-  drm/tegra: gr2d: Add IOMMU support
-  drm/tegra: gr3d: Add IOMMU support
-  ARM: dts: tegra30: Add IOMMU nodes to Host1x and its clients
-  ARM: dts: tegra114: Add IOMMU nodes to Host1x and its clients
-
- arch/arm/boot/dts/tegra114.dtsi |  5 +++++
- arch/arm/boot/dts/tegra30.dtsi  | 14 +++++++++++++
- drivers/gpu/drm/tegra/dc.c      | 35 ++++++++++++++++-----------------
- drivers/gpu/drm/tegra/dc.h      |  2 +-
- drivers/gpu/drm/tegra/drm.h     |  2 +-
- drivers/gpu/drm/tegra/gr2d.c    | 31 +++++++++++++++++++++++++++--
- drivers/gpu/drm/tegra/gr3d.c    | 27 +++++++++++++++++++++++++
- 7 files changed, 94 insertions(+), 22 deletions(-)
-
+diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
+index 9a8ea93016a9..8eb530a85dd0 100644
+--- a/drivers/gpu/drm/tegra/gr2d.c
++++ b/drivers/gpu/drm/tegra/gr2d.c
+@@ -7,12 +7,14 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/iommu.h>
+ 
+ #include "drm.h"
+ #include "gem.h"
+ #include "gr2d.h"
+ 
+ struct gr2d {
++	struct iommu_group *group;
+ 	struct tegra_drm_client client;
+ 	struct host1x_channel *channel;
+ 	struct clk *clk;
+@@ -30,7 +32,9 @@ static int gr2d_init(struct host1x_client *client)
+ 	struct tegra_drm_client *drm = host1x_to_drm_client(client);
+ 	struct drm_device *dev = dev_get_drvdata(client->parent);
+ 	unsigned long flags = HOST1X_SYNCPT_HAS_BASE;
++	struct tegra_drm *tegra = dev->dev_private;
+ 	struct gr2d *gr2d = to_gr2d(drm);
++	int err;
+ 
+ 	gr2d->channel = host1x_channel_request(client->dev);
+ 	if (!gr2d->channel)
+@@ -42,23 +46,46 @@ static int gr2d_init(struct host1x_client *client)
+ 		return -ENOMEM;
+ 	}
+ 
+-	return tegra_drm_register_client(dev->dev_private, drm);
++	if (tegra->domain) {
++		gr2d->group = iommu_group_get(client->dev);
++
++		if (gr2d->group) {
++			err = iommu_attach_group(tegra->domain, gr2d->group);
++			if (err < 0) {
++				dev_err(client->dev,
++					"failed to attach to domain: %d\n",
++					err);
++				host1x_syncpt_free(client->syncpts[0]);
++				host1x_channel_put(gr2d->channel);
++				iommu_group_put(gr2d->group);
++				return err;
++			}
++		}
++	}
++
++	return tegra_drm_register_client(tegra, drm);
+ }
+ 
+ static int gr2d_exit(struct host1x_client *client)
+ {
+ 	struct tegra_drm_client *drm = host1x_to_drm_client(client);
+ 	struct drm_device *dev = dev_get_drvdata(client->parent);
++	struct tegra_drm *tegra = dev->dev_private;
+ 	struct gr2d *gr2d = to_gr2d(drm);
+ 	int err;
+ 
+-	err = tegra_drm_unregister_client(dev->dev_private, drm);
++	err = tegra_drm_unregister_client(tegra, drm);
+ 	if (err < 0)
+ 		return err;
+ 
+ 	host1x_syncpt_free(client->syncpts[0]);
+ 	host1x_channel_put(gr2d->channel);
+ 
++	if (gr2d->group) {
++		iommu_detach_group(tegra->domain, gr2d->group);
++		iommu_group_put(gr2d->group);
++	}
++
+ 	return 0;
+ }
+ 
 -- 
 2.17.0
