@@ -1,72 +1,110 @@
-From: Satendra Singh Thakur <satendra.t@samsung.com>
-Subject: [PATCH 11/13] drm/kms/mode/tegra: using helper func
- drm_display_mode_to_videomode for calculating timing parameters
-Date: Thu,  3 May 2018 16:38:16 +0530
-Message-ID: <dc9f279708a7b9a363e2705d01ab3347e5336735.1525087679.git.satendra.t@samsung.com>
-References: <cover.1525087679.git.satendra.t@samsung.com>
-        <CGME20180503110834epcas5p25cf074e5fe2292c8053dfa9ebe9f8dc7@epcas5p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Thu, 3 May 2018 14:59:26 +0300
+Message-ID: <7c4e96ea-8bcf-1643-1b0f-29dc85b62b7b@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+ <20180426235818.10018-2-digetx@gmail.com>
+ <1524832404.6979.9.camel@ziswiler.com>
+ <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
+ <1524834018.6979.13.camel@ziswiler.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1525087679.git.satendra.t@samsung.com>
+In-Reply-To: <1524834018.6979.13.camel@ziswiler.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Satendra Singh Thakur <satendra.t@samsung.com>, Madhur Verma <madhur.verma@samsung.com>, Hemanshu Srivastava <hemanshu.s@samsung.com>
+To: Marcel Ziswiler <marcel@ziswiler.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-To avoid duplicate logic for the same
+On 27.04.2018 16:00, Marcel Ziswiler wrote:
+> On Fri, 2018-04-27 at 15:54 +0300, Dmitry Osipenko wrote:
+>> Hi Marcel,
+>>
+>> On 27.04.2018 15:33,  Ziswiler wrote:
+>>> Hi Dmitry
+>>>
+>>> Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around
+>>> e.g.
+>>> DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
+>>>
+>>> On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
+>>>> CDEV1/CDEV2 clocks could have corresponding oscillator clock
+>>>> divider
+>>>> as
+>>>> a parent. Add these dividers in order to be able to provide that
+>>>> parent
+>>>> option.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+>>>>  1 file changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/tegra/clk-tegra20.c
+>>>> b/drivers/clk/tegra/clk-
+>>>> tegra20.c
+>>>> index 0ee56dd04cec..16cf4108f2ff 100644
+>>>> --- a/drivers/clk/tegra/clk-tegra20.c
+>>>> +++ b/drivers/clk/tegra/clk-tegra20.c
+>>>> @@ -26,6 +26,8 @@
+>>>>  #include "clk.h"
+>>>>  #include "clk-id.h"
+>>>>  
+>>>> +#define MISC_CLK_ENB 0x48
+>>>> +
+>>>>  #define OSC_CTRL 0x50
+>>>>  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+>>>>  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+>>>> @@ -831,6 +833,16 @@ static void __init
+>>>> tegra20_periph_clk_init(void)
+>>>>  				    periph_clk_enb_refcnt);
+>>>>  	clks[TEGRA20_CLK_PEX] = clk;
+>>>>  
+>>>> +	/* cdev1 OSC divider */
+>>>> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
+>>>> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+>>>
+>>> So it would be:
+>>>
+>>> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+>>>
+>>>> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+>>>> +
+>>>> +	/* cdev2 OSC divider */
+>>>> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
+>>>> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+>>>
+>>> And:
+>>>
+>>> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+>>>
+>>>> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+>>>> +
+>>>>  	/* cdev1 */
+>>>>  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL,
+>>>> 0,
+>>>> 26000000);
+>>>>  	clk = tegra_clk_register_periph_gate("cdev1",
+>>>> "cdev1_fixed",
+>>>> 0,
+>>
+>> Indeed, good catch! I'll wait for more comments and then re-spin
+>> patchset with
+>> the fix. Thank you.
+> 
+> You are very welcome. Thank you!
+> 
+> Other than that it all looks proper and works fine at least in the
+> configuration we use on Colibri T20. So you may add my reviewed and
+> tested bys to the whole series:
+> 
+> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
 
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-Cc: Madhur Verma <madhur.verma@samsung.com>
-Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
----
- drivers/gpu/drm/tegra/dc.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 9f83a65..f1d6f65 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -25,6 +25,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_plane_helper.h>
-+#include <video/videomode.h>
- 
- static void tegra_dc_stats_reset(struct tegra_dc_stats *stats)
- {
-@@ -1436,6 +1437,7 @@ static int tegra_dc_set_timings(struct tegra_dc *dc,
- 	unsigned int h_ref_to_sync = 1;
- 	unsigned int v_ref_to_sync = 1;
- 	unsigned long value;
-+	struct videomode vm;
- 
- 	if (!dc->soc->has_nvdisplay) {
- 		tegra_dc_writel(dc, 0x0, DC_DISP_DISP_TIMING_OPTIONS);
-@@ -1443,20 +1445,17 @@ static int tegra_dc_set_timings(struct tegra_dc *dc,
- 		value = (v_ref_to_sync << 16) | h_ref_to_sync;
- 		tegra_dc_writel(dc, value, DC_DISP_REF_TO_SYNC);
- 	}
--
--	value = ((mode->vsync_end - mode->vsync_start) << 16) |
--		((mode->hsync_end - mode->hsync_start) <<  0);
-+	drm_display_mode_to_videomode(mode, &vm);
-+	value = (vm.vsync_len << 16) | vm.hsync_len;
- 	tegra_dc_writel(dc, value, DC_DISP_SYNC_WIDTH);
- 
--	value = ((mode->vtotal - mode->vsync_end) << 16) |
--		((mode->htotal - mode->hsync_end) <<  0);
-+	value = (vm.vback_porch << 16) | vm.hback_porch;
- 	tegra_dc_writel(dc, value, DC_DISP_BACK_PORCH);
- 
--	value = ((mode->vsync_start - mode->vdisplay) << 16) |
--		((mode->hsync_start - mode->hdisplay) <<  0);
-+	value = (vm.vfront_porch << 16) | vm.hfront_porch;
- 	tegra_dc_writel(dc, value, DC_DISP_FRONT_PORCH);
- 
--	value = (mode->vdisplay << 16) | mode->hdisplay;
-+	value = (vm.vactive << 16) | vm.hactive;
- 	tegra_dc_writel(dc, value, DC_DISP_ACTIVE);
- 
- 	return 0;
--- 
-2.7.4
+Marcel, you previously mentioned that reverting of your DT patch works for the
+Colibri now. Does that reverting also work for the 4.17 kernel? If yes, I may
+add stable tag to the revert-patch to get back paz00 working with 4.17. If it's
+not working, we should figure out why pll_p_out4 is getting disabled as it
+should be a distinct issue.
