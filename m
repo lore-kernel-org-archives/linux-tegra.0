@@ -1,45 +1,40 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v4 1/2] dma-mapping: move dma configuration to bus
- infrastructure
-Date: Thu, 3 May 2018 14:21:47 +0200
-Message-ID: <20180503122147.GB18590@lst.de>
-References: <1520868292-2479-1-git-send-email-nipun.gupta@nxp.com>
- <1524883919-29484-1-git-send-email-nipun.gupta@nxp.com>
- <20180430104124.GE2476@ulmo>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Thu, 03 May 2018 14:30:12 +0200
+Message-ID: <1525350612.5836.6.camel@ziswiler.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+         <20180426235818.10018-2-digetx@gmail.com>
+         <1524832404.6979.9.camel@ziswiler.com>
+         <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
+         <1524834018.6979.13.camel@ziswiler.com>
+         <7c4e96ea-8bcf-1643-1b0f-29dc85b62b7b@gmail.com>
+         <440e71db-cd0b-c4d8-eb24-ac8ebec9ae75@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20180430104124.GE2476@ulmo>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: zajec5@gmail.com, linux-pci@vger.kernel.org, jarkko.sakkinen@linux.intel.com, david.brown@linaro.org, frowand.list@gmail.com, hch@lst.de, m.szyprowski@samsung.com, vinod.koul@intel.com, bharat.bhushan@nxp.com, rafael.j.wysocki@intel.com, linux@armlinux.org.uk, andy.gross@linaro.org, msuchanek@suse.de, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, johan@kernel.org, robh+dt@kernel.org, dri-devel@lists.freedesktop.org, Nipun Gupta <nipun.gupta@nxp.com>, bhelgaas@google.com, dan.j.williams@intel.com, linux-soc@vger.kernel.org, gregkh@linuxfoundation.org, dmitry.torokhov@gmail.com, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, leoyang.li@nxp.com, iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org, robin.murphy@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <440e71db-cd0b-c4d8-eb24-ac8ebec9ae75@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBBcHIgMzAsIDIwMTggYXQgMTI6NDE6MjRQTSArMDIwMCwgVGhpZXJyeSBSZWRpbmcg
-d3JvdGU6Cj4gT24gU2F0LCBBcHIgMjgsIDIwMTggYXQgMDg6MjE6NThBTSArMDUzMCwgTmlwdW4g
-R3VwdGEgd3JvdGU6Cj4gWy4uLl0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgv
-YnVzLmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMKPiA+IGluZGV4IDg4YTM1NTguLmE5ZWM5
-OWQgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMKPiA+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2hvc3QxeC9idXMuYwo+ID4gQEAgLTMxNCw2ICszMTQsMTMgQEAgc3RhdGljIGlu
-dCBob3N0MXhfZGV2aWNlX21hdGNoKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZV9k
-cml2ZXIgKmRydikKPiA+ICAJcmV0dXJuIHN0cmNtcChkZXZfbmFtZShkZXYpLCBkcnYtPm5hbWUp
-ID09IDA7Cj4gPiAgfQo+ID4gIAo+ID4gK3N0YXRpYyBpbnQgaG9zdDF4X2RtYV9jb25maWd1cmUo
-c3RydWN0IGRldmljZSAqZGV2KQo+ID4gK3sKPiA+ICsJaWYgKGRldi0+b2Zfbm9kZSkKPiA+ICsJ
-CXJldHVybiBvZl9kbWFfY29uZmlndXJlKGRldiwgZGV2LT5vZl9ub2RlKTsKPiAKPiBUaGUgY29u
-ZGl0aW9uYWwgaGVyZSBpcyBzb21ld2hhdCBwb2ludGxlc3Mgc2luY2UgdGhlIG9mX25vZGUgc2hv
-dWxkCj4gYWx3YXlzIGJlIHNldC4gSWYgaXQgd2VyZW4ndCBpdCBzaG91bGQgYmUgY29uc2lkZXJl
-ZCBhIGJ1ZyBhbmQgdGhpcwo+IGZ1bmN0aW9uIHdlbGNvbWUgdG8gY3Jhc2ggdG8gbWFrZSB0aGF0
-IHZlcnkgb2J2aW91cy4KCkFncmVlZC4gIFBsZWFzZSByZW1vdmUgdGhlIGNoZWNrIGZvciB0aGUg
-cmVzZW5kLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Thu, 2018-05-03 at 15:02 +0300, Dmitry Osipenko wrote:
+> ...
+> > Marcel, you previously mentioned that reverting of your DT patch
+> > works for the
+> > Colibri now. Does that reverting also work for the 4.17 kernel? If
+> > yes, I may
+> > add stable tag to the revert-patch to get back paz00 working with
+> > 4.17. If it's
+> > not working, we should figure out why pll_p_out4 is getting
+> > disabled as it
+> > should be a distinct issue.
+> 
+> Oh, I just found that Thierry already asked to get this patches
+> included into
+> 4.17. Anyway would be nice to know if a sole DT revert works with
+> 4.17 for you.
+
+Yes, 4.17.0-rc3 with just 4c9a27a6c66d4427f3cba4019d4ba738fe99fa87
+reverted works fine as well.
