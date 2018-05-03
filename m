@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/5] drm/tegra: gr3d: Add IOMMU support
-Date: Fri,  4 May 2018 02:47:21 +0300
-Message-ID: <20180503234723.4368-4-digetx@gmail.com>
+Subject: [PATCH v1 1/5] drm/tegra: dc: Balance IOMMU group refcounting
+Date: Fri,  4 May 2018 02:47:19 +0300
+Message-ID: <20180503234723.4368-2-digetx@gmail.com>
 References: <20180503234723.4368-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180503234723.4368-1-digetx@gmail.com>
@@ -10,87 +10,129 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Attach GR3D to the displays IOMMU group in order to provide GR3D access
-to BO's IOVA.
+Remove unneeded iommu_group_get() and add missing iommu_group_put(),
+correcting IOMMU group refcount. This is a minor correction / cleanup that
+doesn't really fix anything because Tegra's IOMMU driver are built-in and
+hence groups refcounting can't hold IOMMU driver from unloading.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/gr3d.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ drivers/gpu/drm/tegra/dc.c  | 35 +++++++++++++++++------------------
+ drivers/gpu/drm/tegra/dc.h  |  2 +-
+ drivers/gpu/drm/tegra/drm.h |  2 +-
+ 3 files changed, 19 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index 28c4ef63065b..ce5120683091 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -9,6 +9,7 @@
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index d7a0f62c6e2e..9fc34c6a7218 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -1927,7 +1927,6 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
+ static int tegra_dc_init(struct host1x_client *client)
+ {
+ 	struct drm_device *drm = dev_get_drvdata(client->parent);
+-	struct iommu_group *group = iommu_group_get(client->dev);
+ 	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
+ 	struct tegra_dc *dc = host1x_client_to_dc(client);
+ 	struct tegra_drm *tegra = drm->dev_private;
+@@ -1939,20 +1938,21 @@ static int tegra_dc_init(struct host1x_client *client)
+ 	if (!dc->syncpt)
+ 		dev_warn(dc->dev, "failed to allocate syncpoint\n");
  
- #include <linux/clk.h>
- #include <linux/host1x.h>
-+#include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/reset.h>
-@@ -20,6 +21,7 @@
- #include "gr3d.h"
+-	if (group && tegra->domain) {
+-		if (group != tegra->group) {
+-			err = iommu_attach_group(tegra->domain, group);
++	if (tegra->domain) {
++		dc->group = iommu_group_get(client->dev);
++
++		if (dc->group && dc->group != tegra->dc_group) {
++			err = iommu_attach_group(tegra->domain, dc->group);
+ 			if (err < 0) {
+ 				dev_err(dc->dev,
+ 					"failed to attach to domain: %d\n",
+ 					err);
++				iommu_group_put(dc->group);
+ 				return err;
+ 			}
  
- struct gr3d {
-+	struct iommu_group *group;
- 	struct tegra_drm_client client;
- 	struct host1x_channel *channel;
- 	struct clk *clk_secondary;
-@@ -40,7 +42,9 @@ static int gr3d_init(struct host1x_client *client)
- 	struct tegra_drm_client *drm = host1x_to_drm_client(client);
- 	struct drm_device *dev = dev_get_drvdata(client->parent);
- 	unsigned long flags = HOST1X_SYNCPT_HAS_BASE;
-+	struct tegra_drm *tegra = dev->dev_private;
- 	struct gr3d *gr3d = to_gr3d(drm);
-+	int err;
- 
- 	gr3d->channel = host1x_channel_request(client->dev);
- 	if (!gr3d->channel)
-@@ -52,6 +56,23 @@ static int gr3d_init(struct host1x_client *client)
- 		return -ENOMEM;
+-			tegra->group = group;
++			tegra->dc_group = dc->group;
+ 		}
+-
+-		dc->domain = tegra->domain;
  	}
  
-+	if (tegra->domain) {
-+		gr3d->group = iommu_group_get(client->dev);
-+
-+		if (gr3d->group) {
-+			err = iommu_attach_group(tegra->domain, gr3d->group);
-+			if (err < 0) {
-+				dev_err(client->dev,
-+					"failed to attach to domain: %d\n",
-+					err);
-+				host1x_syncpt_free(client->syncpts[0]);
-+				host1x_channel_put(gr3d->channel);
-+				iommu_group_put(gr3d->group);
-+				return err;
-+			}
-+		}
-+	}
-+
- 	return tegra_drm_register_client(dev->dev_private, drm);
- }
+ 	if (dc->soc->wgrps)
+@@ -2017,13 +2017,13 @@ static int tegra_dc_init(struct host1x_client *client)
+ 	if (!IS_ERR(primary))
+ 		drm_plane_cleanup(primary);
  
-@@ -59,6 +80,7 @@ static int gr3d_exit(struct host1x_client *client)
+-	if (group && dc->domain) {
+-		if (group == tegra->group) {
+-			iommu_detach_group(dc->domain, group);
+-			tegra->group = NULL;
++	if (dc->group) {
++		if (dc->group && dc->group == tegra->dc_group) {
++			iommu_detach_group(tegra->domain, dc->group);
++			tegra->dc_group = NULL;
+ 		}
+ 
+-		dc->domain = NULL;
++		iommu_group_put(dc->group);
+ 	}
+ 
+ 	return err;
+@@ -2032,7 +2032,6 @@ static int tegra_dc_init(struct host1x_client *client)
+ static int tegra_dc_exit(struct host1x_client *client)
  {
- 	struct tegra_drm_client *drm = host1x_to_drm_client(client);
- 	struct drm_device *dev = dev_get_drvdata(client->parent);
-+	struct tegra_drm *tegra = dev->dev_private;
- 	struct gr3d *gr3d = to_gr3d(drm);
+ 	struct drm_device *drm = dev_get_drvdata(client->parent);
+-	struct iommu_group *group = iommu_group_get(client->dev);
+ 	struct tegra_dc *dc = host1x_client_to_dc(client);
+ 	struct tegra_drm *tegra = drm->dev_private;
  	int err;
+@@ -2045,13 +2044,13 @@ static int tegra_dc_exit(struct host1x_client *client)
+ 		return err;
+ 	}
  
-@@ -69,6 +91,11 @@ static int gr3d_exit(struct host1x_client *client)
- 	host1x_syncpt_free(client->syncpts[0]);
- 	host1x_channel_put(gr3d->channel);
+-	if (group && dc->domain) {
+-		if (group == tegra->group) {
+-			iommu_detach_group(dc->domain, group);
+-			tegra->group = NULL;
++	if (dc->group) {
++		if (dc->group && dc->group == tegra->dc_group) {
++			iommu_detach_group(tegra->domain, dc->group);
++			tegra->dc_group = NULL;
+ 		}
  
-+	if (gr3d->group) {
-+		iommu_detach_group(tegra->domain, gr3d->group);
-+		iommu_group_put(gr3d->group);
-+	}
-+
- 	return 0;
- }
+-		dc->domain = NULL;
++		iommu_group_put(dc->group);
+ 	}
+ 
+ 	host1x_syncpt_free(dc->syncpt);
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index ca5cac6bf8ea..5ca4e07333bb 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -94,7 +94,7 @@ struct tegra_dc {
+ 
+ 	const struct tegra_dc_soc_info *soc;
+ 
+-	struct iommu_domain *domain;
++	struct iommu_group *group;
+ };
+ 
+ static inline struct tegra_dc *
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index 4f41aaec8530..7777640a6911 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -46,7 +46,7 @@ struct tegra_drm {
+ 	struct drm_device *drm;
+ 
+ 	struct iommu_domain *domain;
+-	struct iommu_group *group;
++	struct iommu_group *dc_group;
+ 	struct mutex mm_lock;
+ 	struct drm_mm mm;
  
 -- 
 2.17.0
