@@ -1,196 +1,79 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 1/3] drm/tegra: dc: Enable plane scaling filters
-Date: Fri, 4 May 2018 14:09:10 +0200
-Message-ID: <20180504120910.GQ13459@ulmo>
+Subject: Re: [PATCH v1 2/3] drm/tegra: plane: Implement zPos plane property
+ for older Tegra's
+Date: Fri, 4 May 2018 14:15:30 +0200
+Message-ID: <20180504121530.GS13459@ulmo>
 References: <20180504000844.18661-1-digetx@gmail.com>
- <20180504000844.18661-2-digetx@gmail.com>
- <20180504111004.GP13459@ulmo>
- <85841227-e008-b129-f1e0-689837877e61@gmail.com>
+ <20180504000844.18661-3-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0900829996=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <85841227-e008-b129-f1e0-689837877e61@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="K5roPakIqCb4O6y8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180504000844.18661-3-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0900829996==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="E50aLcSU4JxQSj/B"
-Content-Disposition: inline
-
-
---E50aLcSU4JxQSj/B
+--K5roPakIqCb4O6y8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 04, 2018 at 02:55:01PM +0300, Dmitry Osipenko wrote:
-> On 04.05.2018 14:10, Thierry Reding wrote:
-> > On Fri, May 04, 2018 at 03:08:42AM +0300, Dmitry Osipenko wrote:
-> >> Currently resized plane produces a "pixelated" image which doesn't look
-> >> nice, especially in a case of a video overlay. Enable scaling filters =
-that
-> >> significantly improve image quality of a scaled overlay.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  drivers/gpu/drm/tegra/dc.c | 51 ++++++++++++++++++++++++++++++++++++++
-> >>  drivers/gpu/drm/tegra/dc.h |  7 ++++++
-> >>  2 files changed, 58 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> >> index 9f83a65b5ea9..2e81142281c3 100644
-> >> --- a/drivers/gpu/drm/tegra/dc.c
-> >> +++ b/drivers/gpu/drm/tegra/dc.c
-> >> @@ -361,6 +361,47 @@ static void tegra_dc_setup_window(struct tegra_pl=
-ane *plane,
-> >>  	if (window->bottom_up)
-> >>  		value |=3D V_DIRECTION;
-> >> =20
-> >> +	if (!(dc->soc->has_win_a_without_filter && plane->index =3D=3D 0) &&
-> >> +	    !(window->src.w =3D=3D window->dst.w)) {
-> >=20
-> > I don't know about you, but I get dizzy trying to parse the above. How
-> > about we move this into helpers:
+On Fri, May 04, 2018 at 03:08:43AM +0300, Dmitry Osipenko wrote:
+> Older Tegra's do not support planes z position handling in hardware,
+> but HW provides knobs for zPos implementation in software.
 >=20
-> +1
->=20
-> > 	static bool tegra_plane_has_horizontal_filter(struct tegra_plane *plan=
-e)
-> > 	{
-> > 		struct tegra_dc *dc =3D plane->dc;
-> >=20
-> > 		/* this function should never be called on inactive planes */
-> > 		if (WARN_ON(!dc))
-> > 			return false;
-> >=20
-> > 		if (plane->index =3D=3D 0 && dc->soc->has_win_a_without_filter)
-> > 			return false;
-> >=20
-> > 		return true;
-> > 	}
-> >=20
-> > Then the above becomes:
-> >=20
-> > 	bool scale_x =3D window->dst.w !=3D window->src.w;
-> >=20
-> > 	if (scale_x && tegra_plane_has_horizontal_filter(plane)) {
-> >=20
-> >> +		/*
-> >> +		 * Enable horizontal 6-tap filter and set filtering
-> >> +		 * coefficients to the default values defined in TRM.
-> >> +		 */
-> >> +		tegra_plane_writel(plane, 0x00008000, DC_WIN_H_FILTER_P(0));
-> >> +		tegra_plane_writel(plane, 0x3e087ce1, DC_WIN_H_FILTER_P(1));
-> >> +		tegra_plane_writel(plane, 0x3b117ac1, DC_WIN_H_FILTER_P(2));
-> >> +		tegra_plane_writel(plane, 0x591b73aa, DC_WIN_H_FILTER_P(3));
-> >> +		tegra_plane_writel(plane, 0x57256d9a, DC_WIN_H_FILTER_P(4));
-> >> +		tegra_plane_writel(plane, 0x552f668b, DC_WIN_H_FILTER_P(5));
-> >> +		tegra_plane_writel(plane, 0x73385e8b, DC_WIN_H_FILTER_P(6));
-> >> +		tegra_plane_writel(plane, 0x72435583, DC_WIN_H_FILTER_P(7));
-> >> +		tegra_plane_writel(plane, 0x714c4c8b, DC_WIN_H_FILTER_P(8));
-> >> +		tegra_plane_writel(plane, 0x70554393, DC_WIN_H_FILTER_P(9));
-> >> +		tegra_plane_writel(plane, 0x715e389b, DC_WIN_H_FILTER_P(10));
-> >> +		tegra_plane_writel(plane, 0x71662faa, DC_WIN_H_FILTER_P(11));
-> >> +		tegra_plane_writel(plane, 0x536d25ba, DC_WIN_H_FILTER_P(12));
-> >> +		tegra_plane_writel(plane, 0x55731bca, DC_WIN_H_FILTER_P(13));
-> >> +		tegra_plane_writel(plane, 0x387a11d9, DC_WIN_H_FILTER_P(14));
-> >> +		tegra_plane_writel(plane, 0x3c7c08f1, DC_WIN_H_FILTER_P(15));
-> >> +
-> >> +		value |=3D H_FILTER;
-> >> +	}
-> >> +
-> >> +	if (!(dc->soc->has_win_a_without_filter && plane->index =3D=3D 0) &&
-> >> +	    !(dc->soc->has_win_c_without_vert_filter && plane->index =3D=3D =
-2) &&
-> >> +	    !(window->src.h =3D=3D window->dst.h)) {
-> >=20
-> > 	static bool tegra_plane_has_vertical_filter(struct tegra_plane *plane)
-> > 	{
-> > 		struct tegra_dc *dc =3D plane->dc;
-> >=20
-> > 		/* this function should never be called on inactive planes */
-> > 		if (WARN_ON(!dc))
-> > 			return false;
-> >=20
-> > 		if (plane->index =3D=3D 0 && dc->soc->has_win_a_without_filter)
-> > 			return false;
-> >=20
-> > 		if (plane->index =3D=3D 2 && dc->soc->has_win_c_without_vert_filter)
-> > 			return false;
-> >=20
-> > 		return true;
-> > 	}
-> >=20
-> > And the above becomes:
-> >=20
-> > 	bool scale_y =3D window->dst.h !=3D window->src.h;
-> >=20
-> > 	if (scale_y && tegra_plane_has_vertical_filter(plane)) {
->=20
-> I'll adjust this patch, thanks.
->=20
-> Maybe it also worth to factor filtering out into a custom DRM property? F=
-or
-> example in a case of libvdpau-tegra we perform the exact same filtering on
-> blitting YUV to RGB surface (shown as overlay) by GR2D for displaying vid=
-eo
-> players interface on top of video, this results in a double filtering tha=
-t has
-> no visual effect and probably wastes memory bandwidth a tad.
->=20
-> Though I'm not very keen anymore on trying to add custom plane properties=
- after
-> being previously NAK'ed. We can wrap filtering into a property later if w=
-ill be
-> desired, should be good to just have it enabled by default for now.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/gpu/drm/tegra/dc.c    | 134 ++++++++++++++++-------
+>  drivers/gpu/drm/tegra/plane.c | 193 ++++++++++++++++++++++++----------
+>  drivers/gpu/drm/tegra/plane.h |  13 ++-
+>  3 files changed, 244 insertions(+), 96 deletions(-)
 
-Agreed. Let's keep this enabled by default and then address the corner
-cases separately.
+This is obviously a lot to review, but it looks pretty good. On minor
+comment below.
+
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index 2e81142281c3..ba5481cd470d 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -162,29 +162,90 @@ static void tegra_plane_setup_blending_legacy(struc=
+t tegra_plane *plane)
+[...]
+> +		case 1:
+> +			/*
+> +			 * When both middle and topmost windows have an alpha,
+> +			 * these windows a mixed together and then the result
+> +			 * is blended over the bottom window.
+> +			 */
+> +			if ((state->blending[0].alpha &&
+> +			     state->blending[0].top))
+
+There seems to be one pair of parentheses too much here.
 
 Thierry
 
---E50aLcSU4JxQSj/B
+--K5roPakIqCb4O6y8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsTWMACgkQ3SOs138+
-s6FgeA//RMGyP2dbejTxHLeMnc+cDh75rpM87KEYmPB5/SgzfhDYvW1eGaSlAqSp
-xU8ugTGnAiaE+qY+ECjYuNKcBLqsS9JlyrwmiTwPEYHu0gmIQY2v60bQNqYzcSFJ
-AxPQNX8vtSj2XylCFmj3TEEJdjfx5hD25pMRLBbP3oKmbnQL+/gHpX6o4z3/ZUpV
-+26Ru7g8H7GTKyYN91jMw5fa6Q6bxbDd7AF9IEzj+RcQL9Sb8FgxsefseFwSczTZ
-ZnCYHeS18cfhOSCbmUGkab9GU1V4HGgxFGSL2mAjo0oTUVxrpQsH+vX9HLzXO5HE
-82Ak8PWhPot7BIjs4I8th/V8DJUpw2MJT85kH4J3idSETZC8+EzWCFoL3VhXGFxx
-RDxNFJqw+CjKIE4D8PNnRcdFEf0JhmqwiqW0wnHLwZWdD4W8A2qzyWjMc2SzpWi2
-ejJsA2RY33+WYxynjqAxDoHlP7nchVaS+DuI2DLFvXxMAv+3z983YAEsr4NHLii8
-MFA6ZFWaITacIS72hVyCYGPxM1Ne/oGFgmqqVggmx5r4sRIeQ5REt8AUK9xA3h75
-h71d/do414AnOYSGjEpYeX+rRsZw6oydeYpQpKAjmIfFUFBchS7vXuiUM6iSakMP
-+Ri+XgRKEJPEYGxHmY4slqPi++gg2wxwya9/dcocWyx/ZysSAWs=
-=s909
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsTuEACgkQ3SOs138+
+s6FnXBAAjOr/npcqwva3yX/zDqfPAudXe0ZLQOCZv+5D58yBDDu2DA/WnV0P9pBC
+WWsMvSNqyH/wbXmZX8k0E0l4frldaJsp4EkAwn57hbPgMqtWUwzrzm/Ygg2f6h2B
+zI9u+L6MqYWpBDCcIJ1aUyr6HCiohfNAsqt/A7Aro+NbqVb+FmoIrZCDej/a41SB
+cvEfk+C9vsnUJHJtvdKvRTZouxW6Lw2O7Kwwixnrn26MKKWsPwfE4/bS8we2d9Yi
+8NKvwQqS7rheLMK5eX8sYxs8ZW7pPt13s0o0+uRj7M7J/N38/DMW0UxLoZpfeAUH
+IfWetHseJsJodZmg/3H5TWaIEmIpIMXg3/PFZG1bLYvh2XxZM78k7Nr2gTFFmoqe
+M+OH44mjeWEQFNcRHJdA1o9NKSJFboa6q4rTREic/Cu6OOl25M1rOUz0au5lCS5f
+x0+ggTs8neNh9uBOeN6YTTx3bnPEQUvrUXxNY93cqo1/2q35U4kgdsb//wip04M3
+hHEqP2MMfbFacitcw/8cfhmI3JGhXSLxT3ATvgvsiVL6s+tA0+NJvpXjak4OdnaJ
+tg7EGD59gbfkRBD98tlPa2tS3lm3OVskrV4qNvmAKihH58xXyRO18blSsMOQRpkh
+XkhHWWm7CckyZzhuz/nsLcj9AE6CtL4JCefSxjH7HRzRBjAiUQQ=
+=a/Lf
 -----END PGP SIGNATURE-----
 
---E50aLcSU4JxQSj/B--
-
---===============0900829996==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0900829996==--
+--K5roPakIqCb4O6y8--
