@@ -1,71 +1,202 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 4/4] ARM: dts: tegra20: Revert "Fix ULPI regression on
- Tegra20"
-Date: Fri, 4 May 2018 12:40:51 +0200
-Message-ID: <20180504104051.GL13459@ulmo>
-References: <20180503225537.20748-1-digetx@gmail.com>
- <20180503225537.20748-6-digetx@gmail.com>
+Subject: Re: [PATCH v1 1/5] drm/tegra: dc: Balance IOMMU group refcounting
+Date: Fri, 4 May 2018 12:45:15 +0200
+Message-ID: <20180504104515.GM13459@ulmo>
+References: <20180503234723.4368-1-digetx@gmail.com>
+ <20180503234723.4368-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7l042bGvurpep9Wg"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180503225537.20748-6-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0397154202=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180503234723.4368-2-digetx@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---7l042bGvurpep9Wg
+--===============0397154202==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="KSyhVCl2eeZHT0Rn"
+Content-Disposition: inline
+
+
+--KSyhVCl2eeZHT0Rn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 04, 2018 at 01:55:37AM +0300, Dmitry Osipenko wrote:
-> Commit 4c9a27a6c66d ("ARM: tegra: Fix ULPI regression on Tegra20") changed
-> "ulpi-link" clock from CDEV2 to PLL_P_OUT4. Turned out that PLL_P_OUT4 is
-> the parent of CDEV2 clock and original clock setup of "ulpi-link" was
-> correct. The reverted patch was fixing USB for one board and broke the
-> other, now Tegra's clk driver correctly sets parent for the CDEV2 clock
-> and hence patch could be reverted safely, restoring USB for all of the
-> boards.
+On Fri, May 04, 2018 at 02:47:19AM +0300, Dmitry Osipenko wrote:
+> Remove unneeded iommu_group_get() and add missing iommu_group_put(),
+> correcting IOMMU group refcount. This is a minor correction / cleanup that
+> doesn't really fix anything because Tegra's IOMMU driver are built-in and
+> hence groups refcounting can't hold IOMMU driver from unloading.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marc Dietrich <marvin24@gmx.de>
 > ---
->  arch/arm/boot/dts/tegra20.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/tegra/dc.c  | 35 +++++++++++++++++------------------
+>  drivers/gpu/drm/tegra/dc.h  |  2 +-
+>  drivers/gpu/drm/tegra/drm.h |  2 +-
+>  3 files changed, 19 insertions(+), 20 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index d7a0f62c6e2e..9fc34c6a7218 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -1927,7 +1927,6 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
+>  static int tegra_dc_init(struct host1x_client *client)
+>  {
+>  	struct drm_device *drm =3D dev_get_drvdata(client->parent);
+> -	struct iommu_group *group =3D iommu_group_get(client->dev);
+>  	unsigned long flags =3D HOST1X_SYNCPT_CLIENT_MANAGED;
+>  	struct tegra_dc *dc =3D host1x_client_to_dc(client);
+>  	struct tegra_drm *tegra =3D drm->dev_private;
+> @@ -1939,20 +1938,21 @@ static int tegra_dc_init(struct host1x_client *cl=
+ient)
+>  	if (!dc->syncpt)
+>  		dev_warn(dc->dev, "failed to allocate syncpoint\n");
+> =20
+> -	if (group && tegra->domain) {
+> -		if (group !=3D tegra->group) {
+> -			err =3D iommu_attach_group(tegra->domain, group);
+> +	if (tegra->domain) {
+> +		dc->group =3D iommu_group_get(client->dev);
+> +
+> +		if (dc->group && dc->group !=3D tegra->dc_group) {
+> +			err =3D iommu_attach_group(tegra->domain, dc->group);
+>  			if (err < 0) {
+>  				dev_err(dc->dev,
+>  					"failed to attach to domain: %d\n",
+>  					err);
+> +				iommu_group_put(dc->group);
+>  				return err;
+>  			}
+> =20
+> -			tegra->group =3D group;
+> +			tegra->dc_group =3D dc->group;
+>  		}
+> -
+> -		dc->domain =3D tegra->domain;
+>  	}
+> =20
+>  	if (dc->soc->wgrps)
+> @@ -2017,13 +2017,13 @@ static int tegra_dc_init(struct host1x_client *cl=
+ient)
+>  	if (!IS_ERR(primary))
+>  		drm_plane_cleanup(primary);
+> =20
+> -	if (group && dc->domain) {
+> -		if (group =3D=3D tegra->group) {
+> -			iommu_detach_group(dc->domain, group);
+> -			tegra->group =3D NULL;
+> +	if (dc->group) {
+> +		if (dc->group && dc->group =3D=3D tegra->dc_group) {
 
-Is it still true that this patch alone fixes the known regression? I'm
-just asking because the remainder of the series, even though it sounds
-to be the right thing to do, is fairly big for a fix against v4.17.
+You can drop the dc->group check from the second conditional.
 
-So if this alone fixes the regression I think it'd be best to queue it
-up for v4.17 and get the rest of the patches into v4.18.
+> +			iommu_detach_group(tegra->domain, dc->group);
+> +			tegra->dc_group =3D NULL;
+>  		}
+> =20
+> -		dc->domain =3D NULL;
+> +		iommu_group_put(dc->group);
+>  	}
+> =20
+>  	return err;
+> @@ -2032,7 +2032,6 @@ static int tegra_dc_init(struct host1x_client *clie=
+nt)
+>  static int tegra_dc_exit(struct host1x_client *client)
+>  {
+>  	struct drm_device *drm =3D dev_get_drvdata(client->parent);
+> -	struct iommu_group *group =3D iommu_group_get(client->dev);
+>  	struct tegra_dc *dc =3D host1x_client_to_dc(client);
+>  	struct tegra_drm *tegra =3D drm->dev_private;
+>  	int err;
+> @@ -2045,13 +2044,13 @@ static int tegra_dc_exit(struct host1x_client *cl=
+ient)
+>  		return err;
+>  	}
+> =20
+> -	if (group && dc->domain) {
+> -		if (group =3D=3D tegra->group) {
+> -			iommu_detach_group(dc->domain, group);
+> -			tegra->group =3D NULL;
+> +	if (dc->group) {
+> +		if (dc->group && dc->group =3D=3D tegra->dc_group) {
+> +			iommu_detach_group(tegra->domain, dc->group);
+> +			tegra->dc_group =3D NULL;
+>  		}
+> =20
+> -		dc->domain =3D NULL;
+> +		iommu_group_put(dc->group);
+>  	}
+> =20
+>  	host1x_syncpt_free(dc->syncpt);
+> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+> index ca5cac6bf8ea..5ca4e07333bb 100644
+> --- a/drivers/gpu/drm/tegra/dc.h
+> +++ b/drivers/gpu/drm/tegra/dc.h
+> @@ -94,7 +94,7 @@ struct tegra_dc {
+> =20
+>  	const struct tegra_dc_soc_info *soc;
+> =20
+> -	struct iommu_domain *domain;
+> +	struct iommu_group *group;
+>  };
+> =20
+>  static inline struct tegra_dc *
+> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+> index 4f41aaec8530..7777640a6911 100644
+> --- a/drivers/gpu/drm/tegra/drm.h
+> +++ b/drivers/gpu/drm/tegra/drm.h
+> @@ -46,7 +46,7 @@ struct tegra_drm {
+>  	struct drm_device *drm;
+> =20
+>  	struct iommu_domain *domain;
+> -	struct iommu_group *group;
+> +	struct iommu_group *dc_group;
+
+It's not obvious to me why this needs to be renamed.
 
 Thierry
 
---7l042bGvurpep9Wg
+--KSyhVCl2eeZHT0Rn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsOLEACgkQ3SOs138+
-s6EGSA//eqg+XTznoksvEILxLT2d1DeiOijjzlYVUPKMTriI8Ss7hdg4Sc1HHjVW
-uCBgY+csl//d1RQ2kB+HgrCb8iJ2t/j7KdgLCScI9tlZQZrlciP/SIpxGoSeGa7u
-Xd46KKucNtuE5MEZLWHA6NpVx+b5EBIRCudTWCy5y31oGMGqqAMnQp9NHGL6/p8N
-5C3bRUPZA5w385aPjngGUoZrvKV8GPuLEPi1OHh5wp7rNax8aC75boNK8U3b1I0S
-LIgxJATJdEvSOvBOETfzQz/jXFHH2Q6rJuteu9TF1vzcnaBqRFKv1YTwcmxQM8Lk
-2Ie4rPwvFfd6yY9a7LVvBf/4TGJ01cqhsgFysnKW+4mKWlCKT2VACFFwYaTlYhDb
-M+9guQA6BsocY1ID1MaEiP5+0hCma/qA0n4vlKJwslFAKTUOlTJ4iwlwP/xilCsc
-hIcA671e0N2YYFGRSKFISOWTzEbGB2BD1uGRghwxXRN116+6skwqF9ES44OuoyYD
-s9/8byqPo2m0umKYtGz/KkVM1AvAAWyrmBdpAqtCHLQjk+zJDNloJ3eF1iWikBfm
-9GIDxf2ojxEp6rtA5x3JN+JXBNJQwiZuwB25HBBI8u5/afuFkM/fP59jrtJOQLI8
-3nqNWlQqxgKiP1PPCu2zg34DJwd+R/+7ginkV08T7xyvDrJNRuM=
-=KvsY
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsObsACgkQ3SOs138+
+s6GWlw/+MIAxdCOSqrBkZndVTLv9Tsg7BBg4vsTJj8cTdkGMjWpX7AOqpHPYrW8C
+DKbUEJtoiHh5VyyJ2ohxplDPwGMqKBtLb/AEQ31lu1J9OputvwUmUHs17qW2OpRk
+aR+LYwwVgdSwIikOBhnmBw2lnNsvguTulnkYgd+GU6RHfItmQ2FuMAjt4tlp9mhu
+cSLiTHhC6fZMykWqmc+XtQIDVaY3fb8Qekj+6aMHqJrU6j1iHLpLbR1BhCCFSU17
+YOpw9X5EjwARFLTvohCWhGbDPOaSQnObXO0QqbMWTaT6sHOF6t1dC+RH/CsZBs3L
+odmd4DEtX+Y52R+ZbS+InnoOgbzVEQRBatwVHrFTK20FD1E3bi5EszYZWicITVwW
+4KK8LizuIaXepRqaNrp9AD3HryNhInsl43C8Y0sFmovs5f6SbbxBaU2kJtSMpYRI
+NZlQmmmFKyT08d4dR0Bwx9XKX1gDL13f3Qo8RxftsmWVSN5Tlmzdj0dmwE+JC565
+50zKQQlNochMfaCjHTuO++WEavyafb+cvrwKMKutszt64ko47qsKOZBKaAu5iEiy
+FroNjCxKjJL5TRI4eEJR897usNqWHoknV+nYgBEBa1olc7Cg6ic5puZhXDTtIDH9
+MymSWiu6zV7qfdDHC0kisf8nY7NUON3kCVl1uxhCbSe3h8na6fY=
+=digL
 -----END PGP SIGNATURE-----
 
---7l042bGvurpep9Wg--
+--KSyhVCl2eeZHT0Rn--
+
+--===============0397154202==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0397154202==--
