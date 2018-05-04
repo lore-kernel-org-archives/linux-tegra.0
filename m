@@ -1,84 +1,127 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 2/5] drm/tegra: gr2d: Add IOMMU support
-Date: Fri, 4 May 2018 14:31:22 +0300
-Message-ID: <56f36af6-6113-9b96-4bd3-b386d31c6b5b@gmail.com>
-References: <20180503234723.4368-1-digetx@gmail.com>
- <20180503234723.4368-3-digetx@gmail.com> <20180504105416.GN13459@ulmo>
+Subject: Re: [PATCH v1 1/3] drm/tegra: dc: Enable plane scaling filters
+Date: Fri, 4 May 2018 14:55:01 +0300
+Message-ID: <85841227-e008-b129-f1e0-689837877e61@gmail.com>
+References: <20180504000844.18661-1-digetx@gmail.com>
+ <20180504000844.18661-2-digetx@gmail.com> <20180504111004.GP13459@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180504105416.GN13459@ulmo>
+In-Reply-To: <20180504111004.GP13459@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04.05.2018 13:54, Thierry Reding wrote:
-> On Fri, May 04, 2018 at 02:47:20AM +0300, Dmitry Osipenko wrote:
->> Attach GR2D to the display IOMMU group in order to provide GR2D access
->> to BO's IOVA.
+On 04.05.2018 14:10, Thierry Reding wrote:
+> On Fri, May 04, 2018 at 03:08:42AM +0300, Dmitry Osipenko wrote:
+>> Currently resized plane produces a "pixelated" image which doesn't look
+>> nice, especially in a case of a video overlay. Enable scaling filters that
+>> significantly improve image quality of a scaled overlay.
 >>
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>  drivers/gpu/drm/tegra/gr2d.c | 31 +++++++++++++++++++++++++++++--
->>  1 file changed, 29 insertions(+), 2 deletions(-)
+>>  drivers/gpu/drm/tegra/dc.c | 51 ++++++++++++++++++++++++++++++++++++++
+>>  drivers/gpu/drm/tegra/dc.h |  7 ++++++
+>>  2 files changed, 58 insertions(+)
 >>
->> diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
->> index 9a8ea93016a9..8eb530a85dd0 100644
->> --- a/drivers/gpu/drm/tegra/gr2d.c
->> +++ b/drivers/gpu/drm/tegra/gr2d.c
->> @@ -7,12 +7,14 @@
->>   */
+>> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+>> index 9f83a65b5ea9..2e81142281c3 100644
+>> --- a/drivers/gpu/drm/tegra/dc.c
+>> +++ b/drivers/gpu/drm/tegra/dc.c
+>> @@ -361,6 +361,47 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
+>>  	if (window->bottom_up)
+>>  		value |= V_DIRECTION;
 >>  
->>  #include <linux/clk.h>
->> +#include <linux/iommu.h>
->>  
->>  #include "drm.h"
->>  #include "gem.h"
->>  #include "gr2d.h"
->>  
->>  struct gr2d {
->> +	struct iommu_group *group;
->>  	struct tegra_drm_client client;
->>  	struct host1x_channel *channel;
->>  	struct clk *clk;
->> @@ -30,7 +32,9 @@ static int gr2d_init(struct host1x_client *client)
->>  	struct tegra_drm_client *drm = host1x_to_drm_client(client);
->>  	struct drm_device *dev = dev_get_drvdata(client->parent);
->>  	unsigned long flags = HOST1X_SYNCPT_HAS_BASE;
->> +	struct tegra_drm *tegra = dev->dev_private;
->>  	struct gr2d *gr2d = to_gr2d(drm);
->> +	int err;
->>  
->>  	gr2d->channel = host1x_channel_request(client->dev);
->>  	if (!gr2d->channel)
->> @@ -42,23 +46,46 @@ static int gr2d_init(struct host1x_client *client)
->>  		return -ENOMEM;
->>  	}
->>  
->> -	return tegra_drm_register_client(dev->dev_private, drm);
->> +	if (tegra->domain) {
->> +		gr2d->group = iommu_group_get(client->dev);
->> +
->> +		if (gr2d->group) {
->> +			err = iommu_attach_group(tegra->domain, gr2d->group);
->> +			if (err < 0) {
->> +				dev_err(client->dev,
->> +					"failed to attach to domain: %d\n",
->> +					err);
->> +				host1x_syncpt_free(client->syncpts[0]);
->> +				host1x_channel_put(gr2d->channel);
->> +				iommu_group_put(gr2d->group);
->> +				return err;
->> +			}
->> +		}
->> +	}
+>> +	if (!(dc->soc->has_win_a_without_filter && plane->index == 0) &&
+>> +	    !(window->src.w == window->dst.w)) {
 > 
-> This is almost identical to the code in DC, perhaps we should factor
-> this out into a separate helper? Nothing that needs to be done right
-> now, I'll take a look at it and see if I can come up with something
-> good in a follow-up patch.
+> I don't know about you, but I get dizzy trying to parse the above. How
+> about we move this into helpers:
 
-Sounds good.
++1
+
+> 	static bool tegra_plane_has_horizontal_filter(struct tegra_plane *plane)
+> 	{
+> 		struct tegra_dc *dc = plane->dc;
+> 
+> 		/* this function should never be called on inactive planes */
+> 		if (WARN_ON(!dc))
+> 			return false;
+> 
+> 		if (plane->index == 0 && dc->soc->has_win_a_without_filter)
+> 			return false;
+> 
+> 		return true;
+> 	}
+> 
+> Then the above becomes:
+> 
+> 	bool scale_x = window->dst.w != window->src.w;
+> 
+> 	if (scale_x && tegra_plane_has_horizontal_filter(plane)) {
+> 
+>> +		/*
+>> +		 * Enable horizontal 6-tap filter and set filtering
+>> +		 * coefficients to the default values defined in TRM.
+>> +		 */
+>> +		tegra_plane_writel(plane, 0x00008000, DC_WIN_H_FILTER_P(0));
+>> +		tegra_plane_writel(plane, 0x3e087ce1, DC_WIN_H_FILTER_P(1));
+>> +		tegra_plane_writel(plane, 0x3b117ac1, DC_WIN_H_FILTER_P(2));
+>> +		tegra_plane_writel(plane, 0x591b73aa, DC_WIN_H_FILTER_P(3));
+>> +		tegra_plane_writel(plane, 0x57256d9a, DC_WIN_H_FILTER_P(4));
+>> +		tegra_plane_writel(plane, 0x552f668b, DC_WIN_H_FILTER_P(5));
+>> +		tegra_plane_writel(plane, 0x73385e8b, DC_WIN_H_FILTER_P(6));
+>> +		tegra_plane_writel(plane, 0x72435583, DC_WIN_H_FILTER_P(7));
+>> +		tegra_plane_writel(plane, 0x714c4c8b, DC_WIN_H_FILTER_P(8));
+>> +		tegra_plane_writel(plane, 0x70554393, DC_WIN_H_FILTER_P(9));
+>> +		tegra_plane_writel(plane, 0x715e389b, DC_WIN_H_FILTER_P(10));
+>> +		tegra_plane_writel(plane, 0x71662faa, DC_WIN_H_FILTER_P(11));
+>> +		tegra_plane_writel(plane, 0x536d25ba, DC_WIN_H_FILTER_P(12));
+>> +		tegra_plane_writel(plane, 0x55731bca, DC_WIN_H_FILTER_P(13));
+>> +		tegra_plane_writel(plane, 0x387a11d9, DC_WIN_H_FILTER_P(14));
+>> +		tegra_plane_writel(plane, 0x3c7c08f1, DC_WIN_H_FILTER_P(15));
+>> +
+>> +		value |= H_FILTER;
+>> +	}
+>> +
+>> +	if (!(dc->soc->has_win_a_without_filter && plane->index == 0) &&
+>> +	    !(dc->soc->has_win_c_without_vert_filter && plane->index == 2) &&
+>> +	    !(window->src.h == window->dst.h)) {
+> 
+> 	static bool tegra_plane_has_vertical_filter(struct tegra_plane *plane)
+> 	{
+> 		struct tegra_dc *dc = plane->dc;
+> 
+> 		/* this function should never be called on inactive planes */
+> 		if (WARN_ON(!dc))
+> 			return false;
+> 
+> 		if (plane->index == 0 && dc->soc->has_win_a_without_filter)
+> 			return false;
+> 
+> 		if (plane->index == 2 && dc->soc->has_win_c_without_vert_filter)
+> 			return false;
+> 
+> 		return true;
+> 	}
+> 
+> And the above becomes:
+> 
+> 	bool scale_y = window->dst.h != window->src.h;
+> 
+> 	if (scale_y && tegra_plane_has_vertical_filter(plane)) {
+
+I'll adjust this patch, thanks.
+
+Maybe it also worth to factor filtering out into a custom DRM property? For
+example in a case of libvdpau-tegra we perform the exact same filtering on
+blitting YUV to RGB surface (shown as overlay) by GR2D for displaying video
+players interface on top of video, this results in a double filtering that has
+no visual effect and probably wastes memory bandwidth a tad.
+
+Though I'm not very keen anymore on trying to add custom plane properties after
+being previously NAK'ed. We can wrap filtering into a property later if will be
+desired, should be good to just have it enabled by default for now.
