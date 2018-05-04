@@ -1,24 +1,62 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH v2 1/2] net: phy: broadcom: add support for BCM89610 PHY
-Date: Fri, 04 May 2018 12:46:28 -0400 (EDT)
-Message-ID: <20180504.124628.1324421788481123105.davem@davemloft.net>
-References: <1525274038-13217-1-git-send-email-vbhadram@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 3/4] drm/tegra: gr3d: Properly clean up resources
+Date: Fri, 4 May 2018 17:16:44 +0300
+Message-ID: <578b1fcf-880f-d37c-33a8-374995348b56@gmail.com>
+References: <20180504133707.22451-1-thierry.reding@gmail.com>
+ <20180504133707.22451-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <1525274038-13217-1-git-send-email-vbhadram@nvidia.com>
-Sender: netdev-owner@vger.kernel.org
-To: vbhadram@nvidia.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180504133707.22451-3-thierry.reding@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Bhadram Varka <vbhadram@nvidia.com>
-Date: Wed, 2 May 2018 20:43:58 +0530
-
-> It adds support for BCM89610 (Single-Port 10/100/1000BASE-T)
-> transceiver which is used in P3310 Tegra186 platform.
-> 
-> Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
-
-Applied, thank you.
+T24gMDQuMDUuMjAxOCAxNjozNywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBGYWlsdXJlIHRvIHJlZ2lzdGVyIHRo
+ZSBUZWdyYSBEUk0gY2xpZW50IHdvdWxkIGxlYWsgdGhlIHJlc291cmNlcy4gTW92ZQo+IGNsZWFu
+dXAgY29kZSB0byBlcnJvciB1bndpbmRpbmcgZ290b3MgdG8gZml4IHRoYXQgYW5kIHNoYXJlIHRo
+ZSBjbGVhbnVwCj4gY29kZSB3aXRoIHRoZSBvdGhlciBlcnJvciBwYXRocy4KPiAKPiBTaWduZWQt
+b2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+ICBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvZ3IzZC5jIHwgMjcgKysrKysrKysrKysrKysrKysrKysrLS0tLS0t
+Cj4gIDEgZmlsZSBjaGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQo+IAo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IzZC5jIGIvZHJpdmVycy9ncHUv
+ZHJtL3RlZ3JhL2dyM2QuYwo+IGluZGV4IGNlNTEyMDY4MzA5MS4uZTEyOWYxYWZmZjMzIDEwMDY0
+NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMKPiArKysgYi9kcml2ZXJzL2dw
+dS9kcm0vdGVncmEvZ3IzZC5jCj4gQEAgLTUyLDggKzUyLDggQEAgc3RhdGljIGludCBncjNkX2lu
+aXQoc3RydWN0IGhvc3QxeF9jbGllbnQgKmNsaWVudCkKPiAgCj4gIAljbGllbnQtPnN5bmNwdHNb
+MF0gPSBob3N0MXhfc3luY3B0X3JlcXVlc3QoY2xpZW50LCBmbGFncyk7Cj4gIAlpZiAoIWNsaWVu
+dC0+c3luY3B0c1swXSkgewo+IC0JCWhvc3QxeF9jaGFubmVsX3B1dChncjNkLT5jaGFubmVsKTsK
+PiAtCQlyZXR1cm4gLUVOT01FTTsKPiArCQllcnIgPSAtRU5PTUVNOwo+ICsJCWdvdG8gcHV0Owo+
+ICAJfQo+ICAKPiAgCWlmICh0ZWdyYS0+ZG9tYWluKSB7Cj4gQEAgLTY1LDE1ICs2NSwzMCBAQCBz
+dGF0aWMgaW50IGdyM2RfaW5pdChzdHJ1Y3QgaG9zdDF4X2NsaWVudCAqY2xpZW50KQo+ICAJCQkJ
+ZGV2X2VycihjbGllbnQtPmRldiwKPiAgCQkJCQkiZmFpbGVkIHRvIGF0dGFjaCB0byBkb21haW46
+ICVkXG4iLAo+ICAJCQkJCWVycik7Cj4gLQkJCQlob3N0MXhfc3luY3B0X2ZyZWUoY2xpZW50LT5z
+eW5jcHRzWzBdKTsKPiAtCQkJCWhvc3QxeF9jaGFubmVsX3B1dChncjNkLT5jaGFubmVsKTsKPiAg
+CQkJCWlvbW11X2dyb3VwX3B1dChncjNkLT5ncm91cCk7Cj4gLQkJCQlyZXR1cm4gZXJyOwo+ICsJ
+CQkJZ290byBmcmVlOwo+ICAJCQl9Cj4gIAkJfQo+ICAJfQo+ICAKPiAtCXJldHVybiB0ZWdyYV9k
+cm1fcmVnaXN0ZXJfY2xpZW50KGRldi0+ZGV2X3ByaXZhdGUsIGRybSk7Cj4gKwllcnIgPSB0ZWdy
+YV9kcm1fcmVnaXN0ZXJfY2xpZW50KGRldi0+ZGV2X3ByaXZhdGUsIGRybSk7Cj4gKwlpZiAoZXJy
+IDwgMCkgewo+ICsJCWRldl9lcnIoY2xpZW50LT5kZXYsICJmYWlsZWQgdG8gcmVnaXN0ZXIgY2xp
+ZW50OiAlZFxuIiwgZXJyKTsKPiArCQlnb3RvIGRldGFjaDsKPiArCX0KPiArCj4gKwlyZXR1cm4g
+MDsKPiArCj4gK2RldGFjaDoKPiArCWlmIChncjNkLT5ncm91cCkgewo+ICsJCWlvbW11X2RldGFj
+aF9ncm91cCh0ZWdyYS0+ZG9tYWluLCBncjNkLT5ncm91cCk7Cj4gKwkJaW9tbXVfZ3JvdXBfcHV0
+KGdyM2QtPmdyb3VwKTsKPiArCX0KPiArZnJlZToKPiArCWhvc3QxeF9zeW5jcHRfZnJlZShjbGll
+bnQtPnN5bmNwdHNbMF0pOwo+ICtwdXQ6Cj4gKwlob3N0MXhfY2hhbm5lbF9wdXQoZ3IzZC0+Y2hh
+bm5lbCk7Cj4gKwlyZXR1cm4gZXJyOwo+ICB9Cj4gIAo+ICBzdGF0aWMgaW50IGdyM2RfZXhpdChz
+dHJ1Y3QgaG9zdDF4X2NsaWVudCAqY2xpZW50KQo+IAoKUmV2aWV3ZWQtYnk6IERtaXRyeSBPc2lw
+ZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
