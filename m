@@ -1,67 +1,71 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
- (plus such board on Iris)
-Date: Fri, 4 May 2018 10:14:47 +0000
-Message-ID: <1525428885.6296.18.camel@toradex.com>
-References: <1525360112-9893-1-git-send-email-krzk@kernel.org>
-         <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
-         <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 4/4] ARM: dts: tegra20: Revert "Fix ULPI regression on
+ Tegra20"
+Date: Fri, 4 May 2018 12:40:51 +0200
+Message-ID: <20180504104051.GL13459@ulmo>
+References: <20180503225537.20748-1-digetx@gmail.com>
+ <20180503225537.20748-6-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7l042bGvurpep9Wg"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <927B0483E71C84488A18CDFD34B32129@eurprd05.prod.outlook.com>
+Content-Disposition: inline
+In-Reply-To: <20180503225537.20748-6-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "stefan@agner.ch" <stefan@agner.ch>, "krzk@kernel.org" <krzk@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgS3J6eXN6dG9mDQoNCk9uIEZyaSwgMjAxOC0wNS0wNCBhdCAxMjowMyArMDIwMCwgS3J6eXN6
-dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gRnJpLCBNYXkgNCwgMjAxOCBhdCAxMToxOSBBTSwg
-U3RlZmFuIEFnbmVyIDxzdGVmYW5AYWduZXIuY2g+DQo+IHdyb3RlOg0KPiA+IE9uIDAzLjA1LjIw
-MTggMTc6MDgsIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+ID4gPiBDb2xpYnJpLVQyMCBj
-YW4gY29tZSBpbiAyNTYgTUIgUkFNICh3aXRoIDUxMiBNQiBOQU5EKSBvciA1MTIgTUINCj4gPiA+
-IFJBTQ0KPiA+ID4gKHdpdGggMTAyNCBNQiBOQU5EKSBmbGF2b3JzLiAgQWRkIHN1cHBvcnQgZm9y
-IHRoZSAyNTYgTUIgdmVyc2lvbg0KPiA+ID4gb24gSXJpcw0KPiA+ID4gZXZhbHVhdGlvbiBib2Fy
-ZC4NCj4gPiANCj4gPiBUbyB3ZSByZWFsbHkgbmVlZCB0byBzcGVjaWZ5IG1lbW9yeSBzaXplIHRo
-ZXNlIGRheXM/IEkgdGhpbmsgYWxsDQo+ID4gY29tbW9uDQo+ID4gYm9vdCBsb2FkZXJzIGZpbGwg
-dGhlIG1lbW9yeSBub2RlIGFueXdheS4NCj4gPiANCj4gPiBhcmNoL2FybS9ib290L2R0cy9pbXg2
-cWRsLWFwYWxpcy5kdHNpOg0KPiA+ICAgICAgICAgLyogV2lsbCBiZSBmaWxsZWQgYnkgdGhlIGJv
-b3Rsb2FkZXIgKi8NCj4gPiAgICAgICAgIG1lbW9yeUAxMDAwMDAwMCB7DQo+ID4gICAgICAgICAg
-ICAgICAgIHJlZyA9IDwweDEwMDAwMDAwIDA+Ow0KPiA+ICAgICAgICAgfTsNCj4gPiANCj4gPiAN
-Cj4gPiBJIHRoaW5rIHdlIHNob3VsZCBqdXN0IHJlbmFtZSB0ZWdyYTIwLWNvbGlicmktNTEyLmR0
-c2kgPT4NCj4gPiB0ZWdyYTIwLWNvbGlicmkuZHRzaSBhbmQgdGVncmEyMC1pcmlzLTUxMi5kdHMg
-PT4gdGVncmEyMC1pcmlzLmR0cw0KPiA+IHRvDQo+ID4gYXZvaWQgY29uZnVzaW9uIGFuZCBhZGQg
-c3VjaCBhbiBlbXB0eSBub2RlLg0KPiANCj4gSGF2aW5nIG1lbW9yeSBub2RlIGlzIHJlcXVpcmVt
-ZW50IG9mIERldmljZVRyZWUgc3BlY2lmaWNhdGlvbiAoYXQNCj4gbGVhc3Qgb25lIGNwdSBhbmQg
-bWVtb3J5IG5vZGUpLiBPZiBjb3Vyc2UgaWYgYm9vdGxvYWRlciBmaWxscyBpdCwNCj4gdGhlbg0K
-PiB3ZSBjb3VsZCBhc3N1bWUgdGhhdCBzcGVjaWZpY2F0aW9uIGlzIHNhdGlzZmllZC4uLiBidXQg
-d2hhdCBpZiBzb21lDQo+IGJvb3Rsb2FkZXIgc2tpcHMgaXQ/IFRoaXMgY3JlYXRlcyBxdWl0ZSBz
-cGVjaWZpYyBkZXBlbmRlbmN5IGJldHdlZW4NCj4ga2VybmVsJ3MgRFRTIGFuZCBib290bG9hZGVy
-Lg0KDQpZZXMsIG5vIHN5c3RlbSBib290cyB3aXRob3V0IGFueSBib290IGxvYWRlciBlLmcuIGlu
-aXRpYWxpc2luZyB0aGUNCm1lbW9yeSBhbmQgd2hhdCBub3QuIFNvIHRoZXJlIGFyZSBvYnZpb3Vz
-bHkgcXVpdGUgc3BlY2lmaWMNCmRlcGVuZGVuY2llcy4NCg0KPiBPbmUgc2FmZSBzb2x1dGlvbiB3
-b3VsZCBiZSB0byBzcGVjaWZ5IDI1NiBNQiBtZW1vcnkgbm9kZSBmb3IgYm90aA0KPiBib2FyZHMg
-YW5kIGFzc3VtZSB0aGF0IGJvb3Rsb2FkZXIgd2lsbCBidW1wIGl0IHRvIDUxMiBNQiBmb3Igc3Bl
-Y2lmaWMNCj4gbW9kdWxlLg0KDQpMaWtlIEkgbWVudGlvbmVkIHRoaXMgYWN0dWFsbHkgdXNlZCB0
-byBiZSBob3cgaXQgd2FzIGRvbmUgaG93ZXZlcg0KbGF0ZWx5IGl0IGhhcyBiZWVuIGFncmVlZCB0
-aGF0IGFueSBib290IGxvYWRlciBhbnl3YXkgbmVlZHMgdG8gZG8gdGhlDQpkZXZpY2UgdHJlZSBk
-YW5jZSAoZS5nLiBldmVuIGp1c3QgbG9hZGluZyBhbmQgcGFzc2luZyBpdCkuDQoNCj4gPiA+IFNp
-Z25lZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4NCj4gPiA+
-IA0KPiA+ID4gLS0tDQo+ID4gPiANCj4gPiA+IENoYW5nZXMgc2luY2UgdjE6DQo+ID4gPiAxLiBG
-aXggbWVtb3J5IHNpemUgaW4gdGVncmEyMC1jb2xpYnJpLTI1Ni5kdHNpICh3YXMgd29ya2luZyBm
-aW5lDQo+ID4gPiBiZWNhdXNlDQo+ID4gPiAgICBteSBib290bG9hZGVyIHVzZXMgbWVtPSBhcmd1
-bWVudCkuDQo+ID4gDQo+ID4gV2hhdCBib290IGxvYWRlciBhcmUgeW91IHVzaW5nPyBZb3UgZXZl
-biBjYW4gb21pdCBtZW09IGlmIHlvdXIgYm9vdA0KPiA+IGxvYWRlciBmaWxscyB0aGUgbWVtb3J5
-IG5vZGUgcHJvcGVybHkuDQo+IA0KPiBJIHVzZSB0aGUgb25lIHByb3ZpZGVkIGJ5IHZlbmRvciAt
-IFRvcmFkZXguIEJ5IGRlZmF1bHQgaXQgcGFzc2VzIGJvdGgNCj4gbWVtPSBhbmQgZmV3IG90aGVy
-IG1lbS1saWtlIGFyZ3VtZW50cyAoZm9yIEZCIGFuZCB2aWRlbyBwcm9jZXNzb3IpIHRvDQo+IGNv
-bW1hbmQgbGluZS4gSSBiZWxpZXZlIGl0IGRvZXMgbm90IGFkanVzdCB0aGUgRFRCIGl0c2VsZiBi
-ZWNhdXNlDQo+IFRvcmFkZXggcHJlcGFyZWQgdGhpcyBib290bG9hZGVyIGZvci4uLiAzLjEga2Vy
-bmVsIHdpdGhvdXQgRFRCLiA3DQo+IHllYXJzIG9sZCBrZXJuZWwuIDopDQoNClJlbWVtYmVyIG91
-ciByZWd1bGFyIEJTUCBpcyBzdGlsbCBiYXNlZCBvbiBOVklESUEncyBkb3duc3RyZWFtIExpbnV4
-DQpmb3IgVGVncmEgYWthIEw0VCBSMTYuNSBiYXNlZCBvbiBMaW51eCBrZXJuZWwgMy4xLjEwIHdo
-aWNoIGRvZXMgbm90DQpldmVuIHVzZSBhbnkgZGV2aWNlIHRyZWUgeWV0Lg0KDQo+IEJlc3QgcmVn
-YXJkcywNCj4gS3J6eXN6dG9mDQoNCkNoZWVycw0KDQpNYXJjZWw=
+
+--7l042bGvurpep9Wg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, May 04, 2018 at 01:55:37AM +0300, Dmitry Osipenko wrote:
+> Commit 4c9a27a6c66d ("ARM: tegra: Fix ULPI regression on Tegra20") changed
+> "ulpi-link" clock from CDEV2 to PLL_P_OUT4. Turned out that PLL_P_OUT4 is
+> the parent of CDEV2 clock and original clock setup of "ulpi-link" was
+> correct. The reverted patch was fixing USB for one board and broke the
+> other, now Tegra's clk driver correctly sets parent for the CDEV2 clock
+> and hence patch could be reverted safely, restoring USB for all of the
+> boards.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marc Dietrich <marvin24@gmx.de>
+> ---
+>  arch/arm/boot/dts/tegra20.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Is it still true that this patch alone fixes the known regression? I'm
+just asking because the remainder of the series, even though it sounds
+to be the right thing to do, is fairly big for a fix against v4.17.
+
+So if this alone fixes the regression I think it'd be best to queue it
+up for v4.17 and get the rest of the patches into v4.18.
+
+Thierry
+
+--7l042bGvurpep9Wg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsOLEACgkQ3SOs138+
+s6EGSA//eqg+XTznoksvEILxLT2d1DeiOijjzlYVUPKMTriI8Ss7hdg4Sc1HHjVW
+uCBgY+csl//d1RQ2kB+HgrCb8iJ2t/j7KdgLCScI9tlZQZrlciP/SIpxGoSeGa7u
+Xd46KKucNtuE5MEZLWHA6NpVx+b5EBIRCudTWCy5y31oGMGqqAMnQp9NHGL6/p8N
+5C3bRUPZA5w385aPjngGUoZrvKV8GPuLEPi1OHh5wp7rNax8aC75boNK8U3b1I0S
+LIgxJATJdEvSOvBOETfzQz/jXFHH2Q6rJuteu9TF1vzcnaBqRFKv1YTwcmxQM8Lk
+2Ie4rPwvFfd6yY9a7LVvBf/4TGJ01cqhsgFysnKW+4mKWlCKT2VACFFwYaTlYhDb
+M+9guQA6BsocY1ID1MaEiP5+0hCma/qA0n4vlKJwslFAKTUOlTJ4iwlwP/xilCsc
+hIcA671e0N2YYFGRSKFISOWTzEbGB2BD1uGRghwxXRN116+6skwqF9ES44OuoyYD
+s9/8byqPo2m0umKYtGz/KkVM1AvAAWyrmBdpAqtCHLQjk+zJDNloJ3eF1iWikBfm
+9GIDxf2ojxEp6rtA5x3JN+JXBNJQwiZuwB25HBBI8u5/afuFkM/fP59jrtJOQLI8
+3nqNWlQqxgKiP1PPCu2zg34DJwd+R/+7ginkV08T7xyvDrJNRuM=
+=KvsY
+-----END PGP SIGNATURE-----
+
+--7l042bGvurpep9Wg--
