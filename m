@@ -1,64 +1,67 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
  (plus such board on Iris)
-Date: Fri, 4 May 2018 12:03:36 +0200
-Message-ID: <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
-References: <1525360112-9893-1-git-send-email-krzk@kernel.org> <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
+Date: Fri, 4 May 2018 10:14:47 +0000
+Message-ID: <1525428885.6296.18.camel@toradex.com>
+References: <1525360112-9893-1-git-send-email-krzk@kernel.org>
+         <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
+         <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
+In-Reply-To: <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <927B0483E71C84488A18CDFD34B32129@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Lucas Stach <dev@lynxeye.de>
+To: "stefan@agner.ch" <stefan@agner.ch>, "krzk@kernel.org" <krzk@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 4, 2018 at 11:19 AM, Stefan Agner <stefan@agner.ch> wrote:
-> On 03.05.2018 17:08, Krzysztof Kozlowski wrote:
->> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
->> (with 1024 MB NAND) flavors.  Add support for the 256 MB version on Iris
->> evaluation board.
->
-> To we really need to specify memory size these days? I think all common
-> boot loaders fill the memory node anyway.
->
-> arch/arm/boot/dts/imx6qdl-apalis.dtsi:
->         /* Will be filled by the bootloader */
->         memory@10000000 {
->                 reg = <0x10000000 0>;
->         };
->
->
-> I think we should just rename tegra20-colibri-512.dtsi =>
-> tegra20-colibri.dtsi and tegra20-iris-512.dts => tegra20-iris.dts to
-> avoid confusion and add such an empty node.
-
-Having memory node is requirement of DeviceTree specification (at
-least one cpu and memory node). Of course if bootloader fills it, then
-we could assume that specification is satisfied... but what if some
-bootloader skips it? This creates quite specific dependency between
-kernel's DTS and bootloader.
-
-One safe solution would be to specify 256 MB memory node for both
-boards and assume that bootloader will bump it to 512 MB for specific
-module.
-
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>
->> ---
->>
->> Changes since v1:
->> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
->>    my bootloader uses mem= argument).
->
-> What boot loader are you using? You even can omit mem= if your boot
-> loader fills the memory node properly.
-
-I use the one provided by vendor - Toradex. By default it passes both
-mem= and few other mem-like arguments (for FB and video processor) to
-command line. I believe it does not adjust the DTB itself because
-Toradex prepared this bootloader for... 3.1 kernel without DTB. 7
-years old kernel. :)
-
-Best regards,
-Krzysztof
+SGkgS3J6eXN6dG9mDQoNCk9uIEZyaSwgMjAxOC0wNS0wNCBhdCAxMjowMyArMDIwMCwgS3J6eXN6
+dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gRnJpLCBNYXkgNCwgMjAxOCBhdCAxMToxOSBBTSwg
+U3RlZmFuIEFnbmVyIDxzdGVmYW5AYWduZXIuY2g+DQo+IHdyb3RlOg0KPiA+IE9uIDAzLjA1LjIw
+MTggMTc6MDgsIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+ID4gPiBDb2xpYnJpLVQyMCBj
+YW4gY29tZSBpbiAyNTYgTUIgUkFNICh3aXRoIDUxMiBNQiBOQU5EKSBvciA1MTIgTUINCj4gPiA+
+IFJBTQ0KPiA+ID4gKHdpdGggMTAyNCBNQiBOQU5EKSBmbGF2b3JzLiAgQWRkIHN1cHBvcnQgZm9y
+IHRoZSAyNTYgTUIgdmVyc2lvbg0KPiA+ID4gb24gSXJpcw0KPiA+ID4gZXZhbHVhdGlvbiBib2Fy
+ZC4NCj4gPiANCj4gPiBUbyB3ZSByZWFsbHkgbmVlZCB0byBzcGVjaWZ5IG1lbW9yeSBzaXplIHRo
+ZXNlIGRheXM/IEkgdGhpbmsgYWxsDQo+ID4gY29tbW9uDQo+ID4gYm9vdCBsb2FkZXJzIGZpbGwg
+dGhlIG1lbW9yeSBub2RlIGFueXdheS4NCj4gPiANCj4gPiBhcmNoL2FybS9ib290L2R0cy9pbXg2
+cWRsLWFwYWxpcy5kdHNpOg0KPiA+ICAgICAgICAgLyogV2lsbCBiZSBmaWxsZWQgYnkgdGhlIGJv
+b3Rsb2FkZXIgKi8NCj4gPiAgICAgICAgIG1lbW9yeUAxMDAwMDAwMCB7DQo+ID4gICAgICAgICAg
+ICAgICAgIHJlZyA9IDwweDEwMDAwMDAwIDA+Ow0KPiA+ICAgICAgICAgfTsNCj4gPiANCj4gPiAN
+Cj4gPiBJIHRoaW5rIHdlIHNob3VsZCBqdXN0IHJlbmFtZSB0ZWdyYTIwLWNvbGlicmktNTEyLmR0
+c2kgPT4NCj4gPiB0ZWdyYTIwLWNvbGlicmkuZHRzaSBhbmQgdGVncmEyMC1pcmlzLTUxMi5kdHMg
+PT4gdGVncmEyMC1pcmlzLmR0cw0KPiA+IHRvDQo+ID4gYXZvaWQgY29uZnVzaW9uIGFuZCBhZGQg
+c3VjaCBhbiBlbXB0eSBub2RlLg0KPiANCj4gSGF2aW5nIG1lbW9yeSBub2RlIGlzIHJlcXVpcmVt
+ZW50IG9mIERldmljZVRyZWUgc3BlY2lmaWNhdGlvbiAoYXQNCj4gbGVhc3Qgb25lIGNwdSBhbmQg
+bWVtb3J5IG5vZGUpLiBPZiBjb3Vyc2UgaWYgYm9vdGxvYWRlciBmaWxscyBpdCwNCj4gdGhlbg0K
+PiB3ZSBjb3VsZCBhc3N1bWUgdGhhdCBzcGVjaWZpY2F0aW9uIGlzIHNhdGlzZmllZC4uLiBidXQg
+d2hhdCBpZiBzb21lDQo+IGJvb3Rsb2FkZXIgc2tpcHMgaXQ/IFRoaXMgY3JlYXRlcyBxdWl0ZSBz
+cGVjaWZpYyBkZXBlbmRlbmN5IGJldHdlZW4NCj4ga2VybmVsJ3MgRFRTIGFuZCBib290bG9hZGVy
+Lg0KDQpZZXMsIG5vIHN5c3RlbSBib290cyB3aXRob3V0IGFueSBib290IGxvYWRlciBlLmcuIGlu
+aXRpYWxpc2luZyB0aGUNCm1lbW9yeSBhbmQgd2hhdCBub3QuIFNvIHRoZXJlIGFyZSBvYnZpb3Vz
+bHkgcXVpdGUgc3BlY2lmaWMNCmRlcGVuZGVuY2llcy4NCg0KPiBPbmUgc2FmZSBzb2x1dGlvbiB3
+b3VsZCBiZSB0byBzcGVjaWZ5IDI1NiBNQiBtZW1vcnkgbm9kZSBmb3IgYm90aA0KPiBib2FyZHMg
+YW5kIGFzc3VtZSB0aGF0IGJvb3Rsb2FkZXIgd2lsbCBidW1wIGl0IHRvIDUxMiBNQiBmb3Igc3Bl
+Y2lmaWMNCj4gbW9kdWxlLg0KDQpMaWtlIEkgbWVudGlvbmVkIHRoaXMgYWN0dWFsbHkgdXNlZCB0
+byBiZSBob3cgaXQgd2FzIGRvbmUgaG93ZXZlcg0KbGF0ZWx5IGl0IGhhcyBiZWVuIGFncmVlZCB0
+aGF0IGFueSBib290IGxvYWRlciBhbnl3YXkgbmVlZHMgdG8gZG8gdGhlDQpkZXZpY2UgdHJlZSBk
+YW5jZSAoZS5nLiBldmVuIGp1c3QgbG9hZGluZyBhbmQgcGFzc2luZyBpdCkuDQoNCj4gPiA+IFNp
+Z25lZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4NCj4gPiA+
+IA0KPiA+ID4gLS0tDQo+ID4gPiANCj4gPiA+IENoYW5nZXMgc2luY2UgdjE6DQo+ID4gPiAxLiBG
+aXggbWVtb3J5IHNpemUgaW4gdGVncmEyMC1jb2xpYnJpLTI1Ni5kdHNpICh3YXMgd29ya2luZyBm
+aW5lDQo+ID4gPiBiZWNhdXNlDQo+ID4gPiAgICBteSBib290bG9hZGVyIHVzZXMgbWVtPSBhcmd1
+bWVudCkuDQo+ID4gDQo+ID4gV2hhdCBib290IGxvYWRlciBhcmUgeW91IHVzaW5nPyBZb3UgZXZl
+biBjYW4gb21pdCBtZW09IGlmIHlvdXIgYm9vdA0KPiA+IGxvYWRlciBmaWxscyB0aGUgbWVtb3J5
+IG5vZGUgcHJvcGVybHkuDQo+IA0KPiBJIHVzZSB0aGUgb25lIHByb3ZpZGVkIGJ5IHZlbmRvciAt
+IFRvcmFkZXguIEJ5IGRlZmF1bHQgaXQgcGFzc2VzIGJvdGgNCj4gbWVtPSBhbmQgZmV3IG90aGVy
+IG1lbS1saWtlIGFyZ3VtZW50cyAoZm9yIEZCIGFuZCB2aWRlbyBwcm9jZXNzb3IpIHRvDQo+IGNv
+bW1hbmQgbGluZS4gSSBiZWxpZXZlIGl0IGRvZXMgbm90IGFkanVzdCB0aGUgRFRCIGl0c2VsZiBi
+ZWNhdXNlDQo+IFRvcmFkZXggcHJlcGFyZWQgdGhpcyBib290bG9hZGVyIGZvci4uLiAzLjEga2Vy
+bmVsIHdpdGhvdXQgRFRCLiA3DQo+IHllYXJzIG9sZCBrZXJuZWwuIDopDQoNClJlbWVtYmVyIG91
+ciByZWd1bGFyIEJTUCBpcyBzdGlsbCBiYXNlZCBvbiBOVklESUEncyBkb3duc3RyZWFtIExpbnV4
+DQpmb3IgVGVncmEgYWthIEw0VCBSMTYuNSBiYXNlZCBvbiBMaW51eCBrZXJuZWwgMy4xLjEwIHdo
+aWNoIGRvZXMgbm90DQpldmVuIHVzZSBhbnkgZGV2aWNlIHRyZWUgeWV0Lg0KDQo+IEJlc3QgcmVn
+YXJkcywNCj4gS3J6eXN6dG9mDQoNCkNoZWVycw0KDQpNYXJjZWw=
