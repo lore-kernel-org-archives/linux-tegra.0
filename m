@@ -1,73 +1,51 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] mmc: tegra: remove redundant return statement
-Date: Fri, 4 May 2018 11:27:16 +0200
-Message-ID: <20180504092716.GA13459@ulmo>
-References: <20180504092053.GA20277@orion>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
+ (plus such board on Iris)
+Date: Fri, 4 May 2018 09:37:47 +0000
+Message-ID: <1525426665.6296.7.camel@toradex.com>
+References: <1525360112-9893-1-git-send-email-krzk@kernel.org>
+         <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180504092053.GA20277@orion>
+In-Reply-To: <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
+Content-Language: en-US
+Content-ID: <A7F450C509846E428FFA0046778F25F7@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <aapo.vienamo@iki.fi>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "stefan@agner.ch" <stefan@agner.ch>, "krzk@kernel.org" <krzk@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 04, 2018 at 12:20:53PM +0300, Aapo Vienamo wrote:
-> A redundant return statement is removed from
-> tegra_sdhci_set_uhs_signaling(). The function returns void and the
-> return does not affect the control flow of the function.
->=20
-> Signed-off-by: Aapo Vienamo <aapo.vienamo@iki.fi>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegr=
-a.c
-> index b877c13184c2..970d38f68939 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -231,7 +231,7 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhc=
-i_host *host,
->  	if (timing =3D=3D MMC_TIMING_UHS_DDR50)
->  		tegra_host->ddr_signaling =3D true;
-> =20
-> -	return sdhci_set_uhs_signaling(host, timing);
-> +	sdhci_set_uhs_signaling(host, timing);
->  }
-> =20
->  static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
-
-Good catch!
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsJ3EACgkQ3SOs138+
-s6EWqRAAg1ponv3piQ857cxYBQQbZK32PMk75V3QJweCt1oq8eDdM2YhRvljDFJJ
-jkXFhAqBUyeH5Yq6nkfbfnKkV0EqPHrS9YTzwssmiQCZYP5geEtYy+UcNzV75PBD
-NnEqt5eG8aWsZd+HvBscFyPU6tlEFFxXWNRKFHkAOVOi/RTEeQhmuZHG46FlyT5C
-GGa/KowfdWp+zNGwSVM+IAdiETfWuH6nqVxtfcANXJP00qJ1thP3zoOl7JDHNCUA
-oQ3rRopy5Gd8IYvKJRNDxrZqhti7iK1V1Oklu4ixBiKvxAxzHIu8JdHP/vJcvoDY
-Dr/cfbCzGij3ILkqwrDkmlYgYhL1nICAiZrimo2EED3tGOLSaPXo3vb0mNDoWJKy
-TeNzghkTwWdvveEeS1S1BPFxw2Fp9+4eqwOaOCrTCf4PXN16CrHbuJK7U/L2+sCm
-uk13lrkXKFTXS8GUXktZSHIx7ojFuLE6pFr/fumjgV0ZhfuFzgxspGVBq9244fii
-uFkQaJtYmbsOpT9EcVBSbBn0CxJEMsjcuzk2zlDroRc4ZNM89L4uqOwp6SubAyZD
-QFLH5ipoBhJdKmJ0qoJGR/RUXq614fCjU7OWOhq4nvSIABBJUP5jLhwc/Uav0zA8
-gHVBb6MTGku22iq6Mhbz2TcINmKnYky4UTZr4B/nL1AISnBhLQA=
-=/CUS
------END PGP SIGNATURE-----
-
---ZPt4rx8FFjLCG7dd--
+SGkgS3J6eXN6dG9mDQoNCk9uIEZyaSwgMjAxOC0wNS0wNCBhdCAxMToxOSArMDIwMCwgU3RlZmFu
+IEFnbmVyIHdyb3RlOg0KPiBPbiAwMy4wNS4yMDE4IDE3OjA4LCBLcnp5c3p0b2YgS296bG93c2tp
+IHdyb3RlOg0KPiA+IENvbGlicmktVDIwIGNhbiBjb21lIGluIDI1NiBNQiBSQU0gKHdpdGggNTEy
+IE1CIE5BTkQpIG9yIDUxMiBNQiBSQU0NCj4gPiAod2l0aCAxMDI0IE1CIE5BTkQpIGZsYXZvcnMu
+ICBBZGQgc3VwcG9ydCBmb3IgdGhlIDI1NiBNQiB2ZXJzaW9uIG9uDQo+ID4gSXJpcw0KPiA+IGV2
+YWx1YXRpb24gYm9hcmQuDQo+IA0KPiBUbyB3ZSByZWFsbHkgbmVlZCB0byBzcGVjaWZ5IG1lbW9y
+eSBzaXplIHRoZXNlIGRheXM/IEkgdGhpbmsgYWxsDQo+IGNvbW1vbg0KPiBib290IGxvYWRlcnMg
+ZmlsbCB0aGUgbWVtb3J5IG5vZGUgYW55d2F5Lg0KPiANCj4gYXJjaC9hcm0vYm9vdC9kdHMvaW14
+NnFkbC1hcGFsaXMuZHRzaToNCj4gCS8qIFdpbGwgYmUgZmlsbGVkIGJ5IHRoZSBib290bG9hZGVy
+ICovDQo+IAltZW1vcnlAMTAwMDAwMDAgew0KPiAJCXJlZyA9IDwweDEwMDAwMDAwIDA+Ow0KPiAJ
+fTsNCg0KWWVzLCBib3RoIG1haW5saW5lIGFzIHdlbGwgYXMgb3VyIGRvd25zdHJlYW0gVS1Cb290
+IGRvIGFjdHVhbGx5IHNldCB0aGUNCm1lbW9yeSBub2RlLg0KDQpJbiB0aGUgcGFzdCBzb21lIHBl
+b3BsZSB1c2VkIHRvIHNldCBpdCB0byB0aGUgc21hbGxlc3QgU0tVJ3MgbWVtb3J5DQpzaXplIGp1
+c3QgdG8gYmUgb24gdGhlIHNhZmUgc2lkZS4NCg0KSG93ZXZlciBsYXRlbHkgaXQgaXMgYWdyZWVk
+IHRoYXQgdGhlIG1lbW9yeSBub2RlIHNob3VsZCBubyBsb25nZXIgZXZlbg0KYmUgcHJlc2VudCBh
+cyBjYW4gYmUgc2VlbiBmcm9tIGUuZy4gYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC0NCmFwYWxp
+cy5kdHNpIHJlc3AuIHRlZ3JhMzAtYXBhbGlzLWV2YWwuZHRzLg0KDQo+IEkgdGhpbmsgd2Ugc2hv
+dWxkIGp1c3QgcmVuYW1lIHRlZ3JhMjAtY29saWJyaS01MTIuZHRzaSA9Pg0KPiB0ZWdyYTIwLWNv
+bGlicmkuZHRzaSBhbmQgdGVncmEyMC1pcmlzLTUxMi5kdHMgPT4gdGVncmEyMC1pcmlzLmR0cw0K
+PiBhdm9pZCBjb25mdXNpb24gYW5kIGFkZCBzdWNoIGFuIGVtcHR5IG5vZGUuDQoNCkkgd291bGQg
+cmF0aGVyIHN1Z2dlc3QgZ29pbmcgdG8gdGhlIHJlZ3VsYXIgU29DLCBtb2R1bGUsIGNhcnJpZXIg
+bmFtaW5nDQpjb252ZW50aW9uIG1ha2luZyBpdCB0ZWdyYTIwLWNvbGlicmktaXJpcy5kdHMgaW5z
+dGVhZC4NCg0KPiA+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2Vy
+bmVsLm9yZz4NCj4gPiANCj4gPiAtLS0NCj4gPiANCj4gPiBDaGFuZ2VzIHNpbmNlIHYxOg0KPiA+
+IDEuIEZpeCBtZW1vcnkgc2l6ZSBpbiB0ZWdyYTIwLWNvbGlicmktMjU2LmR0c2kgKHdhcyB3b3Jr
+aW5nIGZpbmUNCj4gPiBiZWNhdXNlDQo+ID4gICAgbXkgYm9vdGxvYWRlciB1c2VzIG1lbT0gYXJn
+dW1lbnQpLg0KPiANCj4gV2hhdCBib290IGxvYWRlciBhcmUgeW91IHVzaW5nPyBZb3UgZXZlbiBj
+YW4gb21pdCBtZW09IGlmIHlvdXIgYm9vdA0KPiBsb2FkZXIgZmlsbHMgdGhlIG1lbW9yeSBub2Rl
+IHByb3Blcmx5Lg0KDQpZZXMsIHVzaW5nIG1lbT0gc2hvdWxkIG9ubHkgYmUgdXNlZCB0byBmb3Jj
+ZSBtZW1vcnkgc2l6ZSBmb3IgdGVzdA0KcHVycG9zZSBbMV0uDQoNCj4gLS0NCj4gU3RlZmFuDQoN
+ClsxXSBodHRwczovL3d3dy5rZXJuZWwub3JnL2RvYy9odG1sL3Y0LjE0L2FkbWluLWd1aWRlL2tl
+cm5lbC1wYXJhbWV0ZXJzDQouaHRtbA0KDQpDaGVlcnMNCg0KTWFyY2Vs
