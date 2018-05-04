@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/3] drm/tegra: dc: Rename supports_blending to has_legacy_blending
-Date: Fri,  4 May 2018 03:08:44 +0300
-Message-ID: <20180504000844.18661-4-digetx@gmail.com>
+Subject: [PATCH v1 1/3] drm/tegra: dc: Enable plane scaling filters
+Date: Fri,  4 May 2018 03:08:42 +0300
+Message-ID: <20180504000844.18661-2-digetx@gmail.com>
 References: <20180504000844.18661-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180504000844.18661-1-digetx@gmail.com>
@@ -10,108 +10,144 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Older Tegra's support blending. Rename SoC info entry supports_blending
-to has_legacy_blending to eliminate confusion.
+Currently resized plane produces a "pixelated" image which doesn't look
+nice, especially in a case of a video overlay. Enable scaling filters that
+significantly improve image quality of a scaled overlay.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c | 20 ++++++++++----------
- drivers/gpu/drm/tegra/dc.h |  2 +-
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 51 ++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/dc.h |  7 ++++++
+ 2 files changed, 58 insertions(+)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index ba5481cd470d..fe00b3250f6a 100644
+index 9f83a65b5ea9..2e81142281c3 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -478,10 +478,10 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
+@@ -361,6 +361,47 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
+ 	if (window->bottom_up)
+ 		value |= V_DIRECTION;
  
++	if (!(dc->soc->has_win_a_without_filter && plane->index == 0) &&
++	    !(window->src.w == window->dst.w)) {
++		/*
++		 * Enable horizontal 6-tap filter and set filtering
++		 * coefficients to the default values defined in TRM.
++		 */
++		tegra_plane_writel(plane, 0x00008000, DC_WIN_H_FILTER_P(0));
++		tegra_plane_writel(plane, 0x3e087ce1, DC_WIN_H_FILTER_P(1));
++		tegra_plane_writel(plane, 0x3b117ac1, DC_WIN_H_FILTER_P(2));
++		tegra_plane_writel(plane, 0x591b73aa, DC_WIN_H_FILTER_P(3));
++		tegra_plane_writel(plane, 0x57256d9a, DC_WIN_H_FILTER_P(4));
++		tegra_plane_writel(plane, 0x552f668b, DC_WIN_H_FILTER_P(5));
++		tegra_plane_writel(plane, 0x73385e8b, DC_WIN_H_FILTER_P(6));
++		tegra_plane_writel(plane, 0x72435583, DC_WIN_H_FILTER_P(7));
++		tegra_plane_writel(plane, 0x714c4c8b, DC_WIN_H_FILTER_P(8));
++		tegra_plane_writel(plane, 0x70554393, DC_WIN_H_FILTER_P(9));
++		tegra_plane_writel(plane, 0x715e389b, DC_WIN_H_FILTER_P(10));
++		tegra_plane_writel(plane, 0x71662faa, DC_WIN_H_FILTER_P(11));
++		tegra_plane_writel(plane, 0x536d25ba, DC_WIN_H_FILTER_P(12));
++		tegra_plane_writel(plane, 0x55731bca, DC_WIN_H_FILTER_P(13));
++		tegra_plane_writel(plane, 0x387a11d9, DC_WIN_H_FILTER_P(14));
++		tegra_plane_writel(plane, 0x3c7c08f1, DC_WIN_H_FILTER_P(15));
++
++		value |= H_FILTER;
++	}
++
++	if (!(dc->soc->has_win_a_without_filter && plane->index == 0) &&
++	    !(dc->soc->has_win_c_without_vert_filter && plane->index == 2) &&
++	    !(window->src.h == window->dst.h)) {
++		unsigned int i, k;
++
++		/*
++		 * Enable vertical 2-tap filter and set filtering
++		 * coefficients to the default values defined in TRM.
++		 */
++		for (i = 0, k = 128; i < 16; i++, k -= 8)
++			tegra_plane_writel(plane, k, DC_WIN_V_FILTER_P(i));
++
++		value |= V_FILTER;
++	}
++
  	tegra_plane_writel(plane, value, DC_WIN_WIN_OPTIONS);
  
--	if (dc->soc->supports_blending)
--		tegra_plane_setup_blending(plane, window);
--	else
-+	if (dc->soc->has_legacy_blending)
- 		tegra_plane_setup_blending_legacy(plane);
-+	else
-+		tegra_plane_setup_blending(plane, window);
- }
+ 	if (dc->soc->supports_blending)
+@@ -1978,6 +2019,8 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra20_overlay_formats),
+ 	.overlay_formats = tegra20_overlay_formats,
+ 	.modifiers = tegra20_modifiers,
++	.has_win_a_without_filter = true,
++	.has_win_c_without_vert_filter = true,
+ };
  
- static const u32 tegra20_primary_formats[] = {
-@@ -587,7 +587,7 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 	 * the corresponding opaque formats. However, the opaque formats can
- 	 * be emulated by disabling alpha blending for the plane.
- 	 */
--	if (!dc->soc->supports_blending) {
-+	if (dc->soc->has_legacy_blending) {
- 		err = tegra_plane_setup_legacy_state(tegra, plane_state);
- 		if (err < 0)
- 			return err;
-@@ -2069,7 +2069,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
- 	.supports_interlacing = false,
- 	.supports_cursor = false,
- 	.supports_block_linear = false,
--	.supports_blending = false,
-+	.has_legacy_blending = true,
- 	.pitch_align = 8,
- 	.has_powergate = false,
- 	.coupled_pm = true,
-@@ -2088,7 +2088,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
- 	.supports_interlacing = false,
- 	.supports_cursor = false,
- 	.supports_block_linear = false,
--	.supports_blending = false,
-+	.has_legacy_blending = true,
- 	.pitch_align = 8,
- 	.has_powergate = false,
- 	.coupled_pm = false,
-@@ -2107,7 +2107,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
- 	.supports_interlacing = false,
- 	.supports_cursor = false,
- 	.supports_block_linear = false,
--	.supports_blending = false,
-+	.has_legacy_blending = true,
- 	.pitch_align = 64,
- 	.has_powergate = true,
- 	.coupled_pm = false,
-@@ -2126,7 +2126,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
- 	.supports_interlacing = true,
- 	.supports_cursor = true,
- 	.supports_block_linear = true,
--	.supports_blending = true,
-+	.has_legacy_blending = false,
- 	.pitch_align = 64,
- 	.has_powergate = true,
- 	.coupled_pm = false,
-@@ -2145,7 +2145,7 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
- 	.supports_interlacing = true,
- 	.supports_cursor = true,
- 	.supports_block_linear = true,
--	.supports_blending = true,
-+	.has_legacy_blending = false,
- 	.pitch_align = 64,
- 	.has_powergate = true,
- 	.coupled_pm = false,
-@@ -2198,7 +2198,7 @@ static const struct tegra_dc_soc_info tegra186_dc_soc_info = {
- 	.supports_interlacing = true,
- 	.supports_cursor = true,
- 	.supports_block_linear = true,
--	.supports_blending = true,
-+	.has_legacy_blending = false,
- 	.pitch_align = 64,
- 	.has_powergate = false,
- 	.coupled_pm = false,
+ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+@@ -1995,6 +2038,8 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra20_overlay_formats),
+ 	.overlay_formats = tegra20_overlay_formats,
+ 	.modifiers = tegra20_modifiers,
++	.has_win_a_without_filter = false,
++	.has_win_c_without_vert_filter = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+@@ -2012,6 +2057,8 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra114_overlay_formats),
+ 	.overlay_formats = tegra114_overlay_formats,
+ 	.modifiers = tegra20_modifiers,
++	.has_win_a_without_filter = false,
++	.has_win_c_without_vert_filter = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+@@ -2029,6 +2076,8 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra124_overlay_formats),
+ 	.overlay_formats = tegra124_overlay_formats,
+ 	.modifiers = tegra124_modifiers,
++	.has_win_a_without_filter = false,
++	.has_win_c_without_vert_filter = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+@@ -2046,6 +2095,8 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra114_overlay_formats),
+ 	.overlay_formats = tegra114_overlay_formats,
+ 	.modifiers = tegra124_modifiers,
++	.has_win_a_without_filter = false,
++	.has_win_c_without_vert_filter = false,
+ };
+ 
+ static const struct tegra_windowgroup_soc tegra186_dc_wgrps[] = {
 diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 5c3d1d6faa3b..ca5cac6bf8ea 100644
+index d2b50d32de4d..5c3d1d6faa3b 100644
 --- a/drivers/gpu/drm/tegra/dc.h
 +++ b/drivers/gpu/drm/tegra/dc.h
-@@ -55,7 +55,7 @@ struct tegra_dc_soc_info {
- 	bool supports_interlacing;
- 	bool supports_cursor;
- 	bool supports_block_linear;
--	bool supports_blending;
-+	bool has_legacy_blending;
- 	unsigned int pitch_align;
- 	bool has_powergate;
- 	bool coupled_pm;
+@@ -67,6 +67,8 @@ struct tegra_dc_soc_info {
+ 	const u32 *overlay_formats;
+ 	unsigned int num_overlay_formats;
+ 	const u64 *modifiers;
++	bool has_win_a_without_filter;
++	bool has_win_c_without_vert_filter;
+ };
+ 
+ struct tegra_dc {
+@@ -553,6 +555,9 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+ #define  THREAD_NUM(x) (((x) & 0x1f) << 1)
+ #define  THREAD_GROUP_ENABLE (1 << 0)
+ 
++#define DC_WIN_H_FILTER_P(p)			(0x601 + p)
++#define DC_WIN_V_FILTER_P(p)			(0x619 + p)
++
+ #define DC_WIN_CSC_YOF				0x611
+ #define DC_WIN_CSC_KYRGB			0x612
+ #define DC_WIN_CSC_KUR				0x613
+@@ -566,6 +571,8 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+ #define H_DIRECTION  (1 <<  0)
+ #define V_DIRECTION  (1 <<  2)
+ #define COLOR_EXPAND (1 <<  6)
++#define H_FILTER     (1 <<  8)
++#define V_FILTER     (1 << 10)
+ #define CSC_ENABLE   (1 << 18)
+ #define WIN_ENABLE   (1 << 30)
+ 
 -- 
 2.17.0
