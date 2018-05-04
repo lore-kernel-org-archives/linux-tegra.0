@@ -1,52 +1,24 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] ARM: tegra: Device tree fixes for v4.17
-Date: Fri,  4 May 2018 17:38:25 +0200
-Message-ID: <20180504153825.1074-1-thierry.reding@gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH v2 1/2] net: phy: broadcom: add support for BCM89610 PHY
+Date: Fri, 04 May 2018 12:46:28 -0400 (EDT)
+Message-ID: <20180504.124628.1324421788481123105.davem@davemloft.net>
+References: <1525274038-13217-1-git-send-email-vbhadram@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: arm@kernel.org
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <1525274038-13217-1-git-send-email-vbhadram@nvidia.com>
+Sender: netdev-owner@vger.kernel.org
+To: vbhadram@nvidia.com
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+From: Bhadram Varka <vbhadram@nvidia.com>
+Date: Wed, 2 May 2018 20:43:58 +0530
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+> It adds support for BCM89610 (Single-Port 10/100/1000BASE-T)
+> transceiver which is used in P3310 Tegra186 platform.
+> 
+> Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.17-fixes
-
-for you to fetch changes up to 9bf4e370048d2bbae5262d0c6280e0142804a272:
-
-  ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20" (2018-05-04 17:32:29 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-ARM: tegra: Device tree fixes for v4.17
-
-This contains a single revert for a patch that was merged in v4.17-rc1
-and that turns out to cause a regression on some boards. Further, the
-original issue that the patch was supposed to fix seems to have
-disappeared.
-
-----------------------------------------------------------------
-Dmitry Osipenko (1):
-      ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
-
- arch/arm/boot/dts/tegra20.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thank you.
