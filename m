@@ -1,110 +1,46 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 00/13] drm/kms/mode: using helper func
- drm_display_mode_to/from_videomode for calculating timing parameters
-Date: Mon, 7 May 2018 15:46:02 +0200
-Message-ID: <20180507134602.GH12521@phenom.ffwll.local>
-References: <CGME20180503082417epcas5p19ee919d68eb5ae18f183a41881869cc1@epcas5p1.samsung.com>
- <cover.1525087679.git.satendra.t@samsung.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 4/4] iommu/tegra: gart: Optimize map/unmap
+Date: Mon, 7 May 2018 18:46:48 +0300
+Message-ID: <c4cd6692-2010-ec15-f541-b4709932ac82@gmail.com>
+References: <cover.1523304324.git.digetx@gmail.com>
+	<f21a7b6a8f141b87f75687904a76f3728ea639a8.1523304324.git.digetx@gmail.com>
+	<20180427100202.GO30388@ulmo> <20180507075920.GA18595@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <cover.1525087679.git.satendra.t@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Satendra Singh Thakur <satendra.t@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, madhur.verma@samsung.com, hemanshu.s@samsung.com, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20180507075920.GA18595-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBNYXkgMDMsIDIwMTggYXQgMDE6NTM6NTVQTSArMDUzMCwgU2F0ZW5kcmEgU2luZ2gg
-VGhha3VyIHdyb3RlOgo+IDEuVGhlcmUgaXMgYSBmdW5jdGlvbiBpbiBkcm0tY29yZSB0byBjYWxj
-dWxhdGUgZGlzcGxheSB0aW1pbmcgcGFyYW1ldGVyczoKPiBob3Jpem9udGFsIGZyb250IHBvcmNo
-LCBiYWNrIHBvcmNoLCBzeW5jIGxlbmd0aCwKPiB2ZXJ0aWNhbCBmcm9udCBwb3JjaCwgYmFjayBw
-b3JjaCwgc3luYyBsZW5ndGggYW5kCj4gY2xvY2sgaW4gSHouCj4gSG93ZXZlciwgc29tZSBkcml2
-ZXJzIGFyZSBzdGlsbCBjYWxjdWxhdGluZyB0aGVzZSBwYXJhbWV0ZXJzIHRoZW1zZWx2ZXMuCj4g
-VGhlcmVmb3JlLCB0aGVyZSBpcyBhIGR1cGxpY2F0aW9uIG9mIHRoZSBjb2RlLgo+IFRoaXMgcGF0
-Y2ggc2VyaWVzIHJlcGxhY2VzIHRoaXMgcmVkdW5kYW50IGNvZGUgd2l0aCB0aGUgZnVuY3Rpb24K
-PiBkcm1fZGlzcGxheV9tb2RlX3RvX3ZpZGVvbW9kZS4KPiBUaGlzIHJlbW92ZXMgbmVhcmx5IDEw
-MCByZWR1bmRhbnQgbGluZXMgZnJvbSB0aGUgcmVsYXRlZCBkcml2ZXJzLgo+IDIuRm9yIHNvbWUg
-ZHJpdmVycyAoc3VuNGkpIHRoZSByZXZlcnNlIGhlbHBlcgo+IGRybV9kaXNwbGF5X21vZGVfZnJv
-bV92aWRlb21vZGUgaXMgdXNlZC4KPiAzLkZvciBzb21lIGRyaXZlcnMgaXQgcmVwbGFjZXMgYXJp
-dGhtYXRpYyBvcGVyYXRvcnMgKCosIC8pIHdpdGggc2hpZnRpbmcKPiBvcGVyYXRvcnMgKD4+LCA8
-PCkuCj4gNC5Gb3Igc29tZSBkcml2ZXJzIERSTV9NT0RFX0ZMQUdfKiBhcmUgcmVwbGFjZWQgd2l0
-aCBESVNQTEFZX0ZMQUdTXyogZmxhZ3MuCj4gNS5UaGVzZSBjaGFuZ2VzIGFwcGx5IHRvIGZvbGxv
-d2luZyBjcnRjIGFuZCBlbmNvZGVyIGRyaXZlcnM6Cj4gYXRtZWwtaGxjZGMKPiBicmlkZ2UtdGMz
-NTg3NjcKPiBleHlub3MtZHNpCj4gZnNsLWRjdQo+IGdtYTUwMC1tZGZsZF9kc2lfZHBpCj4gaGlz
-aWxpY29uLWtpcmluX2RzaSwgYWRlCj4gbWVzb24tZW5jb2Rlcgo+IHBsMTExLWRpc3BsYXkKPiBz
-dW40aS10dgo+IHRpIGxjZGMKPiB0ZWdyYSBkYwo+IG1lZGlhdGVrIGRwaSBkc2kKPiBicmlkZ2Ut
-YWR2NzUzMwoKVGhlIGRybV9tb2RlX3RvX3ZpZGVvbW9kZSBoZWxwZXIgaXMgbWVhbnQgZm9yIGlu
-dGVyb3AgYmV0d2VlbiBkcm0gYW5kIHY0bCwKd2hpY2ggaGF2ZSBkaWZmZXJlbnQgaW50ZXJuYWwg
-c3RydWN0dXJlcyB0byByZXByZXNlbnQgbW9kZXMuCgpGb3IgZHJpdmVycyB0aGF0IG9ubHkgdXNl
-IGRybSBJIHRoaW5rIHRoZSBiZXR0ZXIgb3B0aW9uIHdvdWxkIGJlIHRvIGFkZAp0aGVzZSBmaWVs
-ZHMgdG8gc3RydWN0IGRybV9kaXNwbGF5X21vZGUgYXMgYW5vdGhlciBzZXQgb2YgY3J0Y18qIHZh
-bHVlcwoodGhlIGNvbXB1dGVkIHZhbHVlcyBhcmUgc3RvcmVkIGluIGNydGNfIHByZWZpeGVkIG1l
-bWJlcnMpLiBBbmQgY29tcHV0ZQpmcm9udC9iYWNrIHBvcmNoIGluIGRybV9tb2RlX3NldF9jcnRj
-aW5mby4KClRoZW4gd2UgY2FuIHVzZSB0aGVzZSBuZXcgZHJtX2Rpc3BsYXlfbW9kZS0+Y3J0Y19o
-fHZmcm9udHxiYWNrX3BvcmNoCmZpZWxkcyBpbiBhbGwgdGhlIGRyaXZlcnMgeW91J3JlIGNoYW5n
-aW5nLiBUaGlzIHdheSB5b3UgYXZvaWQgaGF2aW5nIHRvCmNoYW5nZSBhbGwgdGhlIGRybSBkcml2
-ZXJzIHRvIHVzZSB2NGwgI2RlZmluZXMuCgpUaGFua3MsCkRhbmllbAoKPiAKPiBTYXRlbmRyYSBT
-aW5naCBUaGFrdXIgKDEzKToKPiAgIGRybS9rbXMvbW9kZS9hdG1lbC1obGNkYzogdXNpbmcgaGVs
-cGVyIGZ1bmMKPiAgICAgZHJtX2Rpc3BsYXlfbW9kZV90b192aWRlb21vZGUgZm9yIGNhbGN1bGF0
-aW5nIHRpbWluZyBwYXJhbWV0ZXJzCj4gICBkcm0va21zL21vZGUvYnJpZGdlLXRjMzU4NzY3OiB1
-c2luZyBoZWxwZXIgZnVuYwo+ICAgICBkcm1fZGlzcGxheV9tb2RlX3RvX3ZpZGVvbW9kZSBmb3Ig
-Y2FsY3VsYXRpbmcgdGltaW5nIHBhcmFtZXRlcnMKPiAgIGRybS9rbXMvbW9kZS9leHlub3MtZHNp
-OiB1c2luZyBoZWxwZXIgZnVuYwo+ICAgICBkcm1fZGlzcGxheV9tb2RlX3RvX3ZpZGVvbW9kZSBm
-b3IgY2FsY3VsYXRpbmcgdGltaW5nIHBhcmFtZXRlcnMKPiAgIGRybS9rbXMvbW9kZS9mc2wtZGN1
-OiB1c2luZyBoZWxwZXIgZnVuYyBkcm1fZGlzcGxheV9tb2RlX3RvX3ZpZGVvbW9kZSAKPiAgICAg
-ICAgZm9yIGNhbGN1bGF0aW5nIHRpbWluZyBwYXJhbWV0ZXJzCj4gICBkcm0va21zL21vZGUvZ21h
-NTAwLW1kZmxkX2RzaV9kcGk6IHVzaW5nIGhlbHBlciBmdW5jdGlvbgo+ICAgICBkcm1fZGlzcGxh
-eV9tb2RlX3RvX3ZpZGVvbW9kZSBmb3IgY2FsY3VsYXRpbmcgdGltaW5nIHBhcmFtZXRlcnMKPiAg
-IGRybS9rbXMvbW9kZS9oaXNpbGljb24ta2lyaW4tZHNpLWFkZTogdXNpbmcgaGVscGVyIGZ1bmN0
-aW9uICAgIAo+ICAgICBkcm1fZGlzcGxheV9tb2RlX3RvX3ZpZGVvbW9kZSBmb3IgY2FsY3VsYXRp
-bmcgdGltaW5nIHBhcmFtZXRlcnMKPiAgIGRybS9rbXMvbW9kZS9tZXNvbi1lbmNvZGVyOiB1c2lu
-ZyBoZWxwZXIgZnVuY3Rpb24KPiAgICAgZHJtX2Rpc3BsYXlfbW9kZV90b192aWRlb21vZGUgZm9y
-IGNhbGN1bGF0aW5nIHRpbWluZyBwYXJhbWV0ZXJzCj4gICBkcm0va21zL21vZGUvcGwxMTEtZGlz
-cGxheTogdXNpbmcgaGVscGVyIGZ1bmN0aW9uCj4gICAgIGRybV9kaXNwbGF5X21vZGVfdG9fdmlk
-ZW9tb2RlIGZvciBjYWxjdWxhdGluZyB0aW1pbmcgcGFyYW1ldGVycwo+ICAgZHJtL2ttcy9tb2Rl
-L3N1bjRpLXR2OiB1c2luZyBoZWxwZXIgZnVuYwo+ICAgICBkcm1fZGlzcGxheV9tb2RlX2Zyb21f
-dmlkZW9tb2RlIGZvciBjYWxjdWxhdGluZyB0aW1pbmcKPiAgICAgcGFyYW1ldGVycwo+ICAgZHJt
-L2ttcy9tb2RlL3RpLWxjZGM6IHVzaW5nIGhlbHBlciBmdW5jIGRybV9kaXNwbGF5X21vZGVfdG9f
-dmlkZW9tb2RlIAo+ICAgICAgICBmb3IgY2FsY3VsYXRpbmcgdGltaW5nIHBhcmFtZXRlcnMKPiAg
-IGRybS9rbXMvbW9kZS90ZWdyYTogdXNpbmcgaGVscGVyIGZ1bmMgZHJtX2Rpc3BsYXlfbW9kZV90
-b192aWRlb21vZGUKPiAgICAgZm9yIGNhbGN1bGF0aW5nIHRpbWluZyBwYXJhbWV0ZXJzCj4gICBk
-cm0va21zL21vZGUvbXRrX2RwaV9kc2k6IHVzaW5nIGhlbHBlciBmdW5jCj4gICAgIGRybV9kaXNw
-bGF5X21vZGVfdG9fdmlkZW9tb2RlIGZvciBjYWxjdWxhdGluZyB0aW1pbmcgcGFyYW1ldGVycwo+
-ICAgZHJtL2ttcy9tb2RlL2JyaWRnZS1hZHY3NTMzOiB1c2luZyBoZWxwZXIgZnVuYwo+ICAgICBk
-cm1fZGlzcGxheV9tb2RlX3RvX3ZpZGVvbW9kZSBmb3IgY2FsY3VsYXRpbmcgdGltaW5nIHBhcmFt
-ZXRlcnMKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMg
-ICAgfCAgMjggKysrLS0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hZHY3NTExL2Fkdjc1MzMu
-YyAgICAgICAgfCAgMzUgKysrLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvdGMzNTg3Njcu
-YyAgICAgICAgICAgICAgIHwgIDQyICsrKy0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2RzaS5jICAgICAgICAgfCAgIDkgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2ZzbC1k
-Y3UvZnNsX2RjdV9kcm1fY3J0Yy5jICAgICAgfCAgMjkgKystLS0KPiAgZHJpdmVycy9ncHUvZHJt
-L2dtYTUwMC9tZGZsZF9kc2lfZHBpLmMgICAgICAgICAgfCAgMjggKystLS0KPiAgZHJpdmVycy9n
-cHUvZHJtL2hpc2lsaWNvbi9raXJpbi9kd19kcm1fZHNpLmMgICAgfCAgNDIgKysrKy0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2tpcmluL2tpcmluX2RybV9hZGUuYyB8ICA1MiArKyst
-LS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcGkuYyAgICAgICAgICAgICAg
-fCAgNjAgKysrKystLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RzaS5jICAg
-ICAgICAgICAgICB8ICAxNCArLS0KPiAgZHJpdmVycy9ncHUvZHJtL21lc29uL21lc29uX3ZlbmMu
-YyAgICAgICAgICAgICAgfCAxNDkgKysrKysrKysrKystLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMv
-Z3B1L2RybS9wbDExMS9wbDExMV9kaXNwbGF5LmMgICAgICAgICAgIHwgIDQwICsrKy0tLS0KPiAg
-ZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX3R2LmMgICAgICAgICAgICAgICAgfCAgNjcgKysr
-Ky0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMgICAgICAgICAgICAgICAgICAg
-ICAgfCAgMTUgKystCj4gIGRyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX2NydGMuYyAgICAg
-ICAgICAgIHwgIDYwICsrKysrLS0tLS0KPiAgMTUgZmlsZXMgY2hhbmdlZCwgMjgwIGluc2VydGlv
-bnMoKyksIDM5MCBkZWxldGlvbnMoLSkKPiAKPiAtLSAKPiAyLjcuNAo+IAo+IF9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcg
-bGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0
-ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xs
-LmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 07.05.2018 10:59, Joerg Roedel wrote:
+> On Fri, Apr 27, 2018 at 12:02:02PM +0200, Thierry Reding wrote:
+>> Joerg, I've gone over the git log and header files and I see no mention
+>> of why the TLB flush interface isn't used for mapping. Do you recall any
+>> special reasons why the same shouldn't be applied for mapping? Would you
+>> accept any patches doing this?
+> 
+> Yeah, the reason was that we assumed that only emulated IOMMUs ever need
+> flushing in the mapping path, and there is no reason to optimize for
+> that. Especially when a call to iotlb_sync() in the mapping path would
+> hurt most other users.
+> 
+> Does the tegra-gart actually need it too?
+
+Tegra-GART is exactly an emulated IOMMU, it doesn't have anything like TLB and
+it's simply a remapping table. What is actually needed for the GART - is to make
+sure that the remapping table modifications reach GART HW before anything tries
+to touch the modified page entries. Presumable there is some kind of a HW buffer
+that accumulates multiple registers writes and issues them in bursts to improve
+performance, read-after-write is the way to flush that buffer.
