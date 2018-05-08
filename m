@@ -1,142 +1,66 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
- (plus such board on Iris)
-Date: Tue, 08 May 2018 15:03:02 +0200
-Message-ID: <1525784582.6999.27.camel@ziswiler.com>
-References: <1525360112-9893-1-git-send-email-krzk@kernel.org>
-         <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
-         <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
-         <1525428885.6296.18.camel@toradex.com>
-         <CAJKOXPetgqJgGHwdSzZeujM2KEDMWqffYMAJdBS3MXPd3Thb5w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3 0/4] Restore ULPI USB on Tegra20
+Date: Tue,  8 May 2018 19:26:02 +0300
+Message-ID: <20180508162607.3500-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPetgqJgGHwdSzZeujM2KEDMWqffYMAJdBS3MXPd3Thb5w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "stefan@agner.ch" <stefan@agner.ch>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2018-05-08 at 14:35 +0200, Krzysztof Kozlowski wrote:
-> On Fri, May 4, 2018 at 12:14 PM, Marcel Ziswiler
-> <marcel.ziswiler@toradex.com> wrote:
-> > Hi Krzysztof
-> > 
-> > On Fri, 2018-05-04 at 12:03 +0200, Krzysztof Kozlowski wrote:
-> > > On Fri, May 4, 2018 at 11:19 AM, Stefan Agner <stefan@agner.ch>
-> > > wrote:
-> > > > On 03.05.2018 17:08, Krzysztof Kozlowski wrote:
-> > > > > Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512
-> > > > > MB
-> > > > > RAM
-> > > > > (with 1024 MB NAND) flavors.  Add support for the 256 MB
-> > > > > version
-> > > > > on Iris
-> > > > > evaluation board.
-> > > > 
-> > > > To we really need to specify memory size these days? I think
-> > > > all
-> > > > common
-> > > > boot loaders fill the memory node anyway.
-> > > > 
-> > > > arch/arm/boot/dts/imx6qdl-apalis.dtsi:
-> > > >         /* Will be filled by the bootloader */
-> > > >         memory@10000000 {
-> > > >                 reg = <0x10000000 0>;
-> > > >         };
-> > > > 
-> > > > 
-> > > > I think we should just rename tegra20-colibri-512.dtsi =>
-> > > > tegra20-colibri.dtsi and tegra20-iris-512.dts => tegra20-
-> > > > iris.dts
-> > > > to
-> > > > avoid confusion and add such an empty node.
-> > > 
-> > > Having memory node is requirement of DeviceTree specification (at
-> > > least one cpu and memory node). Of course if bootloader fills it,
-> > > then
-> > > we could assume that specification is satisfied... but what if
-> > > some
-> > > bootloader skips it? This creates quite specific dependency
-> > > between
-> > > kernel's DTS and bootloader.
-> > 
-> > Yes, no system boots without any boot loader e.g. initialising the
-> > memory and what not. So there are obviously quite specific
-> > dependencies.
-> 
-> Sorry for late reply, I missed your emails because unfortunately
-> Google marks messages coming for Toradex as spam ("This message has a
-> from address in toradex.com but has failed toradex.com's required
-> tests for authentication.").
+Hello,
 
-Argh, I guess that happens if you have stubborn IT departments which
-still believe in M$. Sending via private email now.
+This series of patches fixes ULPI USB on Tegra20. The original problem
+was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+with the USB for the devices that have CDEV2 being enabled by bootloader.
+The patch got into the kernel and later Marc Dietrich found that USB
+stopped working on the "paz00" Tegra20 board. After a bit of discussion
+was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+driver was setting CDEV2's parent incorrectly. The parent clock is actually
+determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
+providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+suggestion), and then setting these clock muxes as parents for the CDEV1/2
+clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CDEV2
+(aka MCLK2) is the actual clock source for "ulpi-link".
 
-> Therefore I did not include your comments
-> and sent v3.
+Changelog:
 
-Yeah, I noticed that. It's forgiven, don't worry (;-p).
+v3:
+	- Use clk DT ID's instead of comparing clk names and make
+	  custom of_src_onecell_get specific to Tegra20 clk provider
+	  in the "Add quirk for getting CDEV1/2 clocks on Tegra20" patch
+	  as was suggested by Peter De Schrijver for v2.
 
-> > > One safe solution would be to specify 256 MB memory node for both
-> > > boards and assume that bootloader will bump it to 512 MB for
-> > > specific
-> > > module.
-> > 
-> > Like I mentioned this actually used to be how it was done however
-> > lately it has been agreed that any boot loader anyway needs to do
-> > the
-> > device tree dance (e.g. even just loading and passing it).
-> 
-> Then the safest way is to provide /memory node with 256 MB. If some
-> bootloader omits it (e.g. because it is too old or by any mistake)
-> the
-> FDT will be still usable with reduced memory in case of 512 board.
+v2:
+	- Added new patch "Add quirk for getting CDEV1/2 clocks", assuring
+	  that clk user won't get CDEV1/2 clocks until parent clk muxes
+	  are available, i.e. resolves potential issue with CDEV-user driver
+	  vs pinctrl driver probe order.
 
-Makes sense.
+	- Factored out "pinctrl" patch from the patchset as was requested by
+	  Linus Walleij.
 
-> > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > > 
-> > > > > ---
-> > > > > 
-> > > > > Changes since v1:
-> > > > > 1. Fix memory size in tegra20-colibri-256.dtsi (was working
-> > > > > fine
-> > > > > because
-> > > > >    my bootloader uses mem= argument).
-> > > > 
-> > > > What boot loader are you using? You even can omit mem= if your
-> > > > boot
-> > > > loader fills the memory node properly.
-> > > 
-> > > I use the one provided by vendor - Toradex. By default it passes
-> > > both
-> > > mem= and few other mem-like arguments (for FB and video
-> > > processor) to
-> > > command line. I believe it does not adjust the DTB itself because
-> > > Toradex prepared this bootloader for... 3.1 kernel without DTB. 7
-> > > years old kernel. :)
-> > 
-> > Remember our regular BSP is still based on NVIDIA's downstream
-> > Linux
-> > for Tegra aka L4T R16.5 based on Linux kernel 3.1.10 which does not
-> > even use any device tree yet.
-> 
-> Yes, I noticed. I am trying to bring it fully on new kernels but no
-> huge successes so far... I'm stuck on NAND trying Lucas Stach's old
-> patchset.
+	- Addressed v1 review comments: fixed swapped DEV1/2 clk div bits,
+	  made DEV1/2 divs read-only, etc minor changes.
 
-Yeah, for a while I kept his patch set alive as well. I believe 4.4 was
-still working fine passing all MTD tests. However, lately there were so
-many changes it all fell apart. About a month ago I spend a couple
-nights trying to get it running again but something is still not quite
-right. Yet have to sync with Stefan in my team who is much more
-knowledgeable about latest NAND development.
+Dmitry Osipenko (4):
+  clk: tegra20: Add DEV1/DEV2 OSC dividers
+  clk: tegra20: Correct parents of CDEV1/2 clocks
+  clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
+  ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
 
-> Best regards,
-> Krzysztof
+ arch/arm/boot/dts/tegra20.dtsi   |  2 +-
+ drivers/clk/tegra/clk-tegra114.c |  2 +-
+ drivers/clk/tegra/clk-tegra124.c |  2 +-
+ drivers/clk/tegra/clk-tegra20.c  | 52 +++++++++++++++++++++++++++++---
+ drivers/clk/tegra/clk-tegra210.c |  2 +-
+ drivers/clk/tegra/clk-tegra30.c  |  2 +-
+ drivers/clk/tegra/clk.c          |  5 +--
+ drivers/clk/tegra/clk.h          |  2 +-
+ 8 files changed, 56 insertions(+), 13 deletions(-)
 
-Cheers
-
-Marcel
+-- 
+2.17.0
