@@ -1,46 +1,91 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: tegra: remove redundant return statement
-Date: Tue, 8 May 2018 11:06:11 +0200
-Message-ID: <CAPDyKFrb0eJVUQ1Nq7d9GwHzw6zzm8GpgYiexsQN-7KwdY5RKw@mail.gmail.com>
-References: <20180504092053.GA20277@orion>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks
+Date: Tue, 8 May 2018 13:54:31 +0300
+Message-ID: <20180508105431.GS6835@tbergstrom-lnx.Nvidia.com>
+References: <20180503225537.20748-1-digetx@gmail.com>
+ <20180503225537.20748-5-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180504092053.GA20277@orion>
+Content-Disposition: inline
+In-Reply-To: <20180503225537.20748-5-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <aapo.vienamo@iki.fi>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 4 May 2018 at 11:20, Aapo Vienamo <aapo.vienamo@iki.fi> wrote:
-> A redundant return statement is removed from
-> tegra_sdhci_set_uhs_signaling(). The function returns void and the
-> return does not affect the control flow of the function.
->
-> Signed-off-by: Aapo Vienamo <aapo.vienamo@iki.fi>
-
-Thanks, applied for next!
-
-Kind regards
-Uffe
-
+On Fri, May 04, 2018 at 01:55:36AM +0300, Dmitry Osipenko wrote:
+> CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
+> created by the pinctrl driver. It should be possible for clk user to
+> request these clocks before pinctrl driver got probed and hence user will
+> get an orphaned clock. That might be undesirable because user expects
+> parent clock to be enabled by the child, so let's return EPROBE_DEFER
+> until parent clock appear.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/mmc/host/sdhci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index b877c13184c2..970d38f68939 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -231,7 +231,7 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
->         if (timing == MMC_TIMING_UHS_DDR50)
->                 tegra_host->ddr_signaling = true;
->
-> -       return sdhci_set_uhs_signaling(host, timing);
-> +       sdhci_set_uhs_signaling(host, timing);
->  }
->
->  static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
-> --
-> 2.16.1
->
+>  drivers/clk/tegra/clk.c | 34 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+> index ba923f0d5953..04cbe7e9eff3 100644
+> --- a/drivers/clk/tegra/clk.c
+> +++ b/drivers/clk/tegra/clk.c
+> @@ -298,6 +298,38 @@ static struct reset_controller_dev rst_ctlr = {
+>  	.of_reset_n_cells = 1,
+>  };
+>  
+> +static struct clk *tegra_of_clk_src_onecell_get(struct of_phandle_args *clkspec,
+> +						void *data)
+> +{
+> +	struct clk_hw *parent_hw;
+> +	struct clk_hw *hw;
+> +	struct clk *clk;
+> +	const char *name;
+> +
+> +	clk = of_clk_src_onecell_get(clkspec, data);
+> +	if (IS_ERR(clk))
+> +		return clk;
+> +
+> +	name = __clk_get_name(clk);
+> +
+> +	/*
+> +	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
+> +	 * clock is created by the pinctrl driver. It is possible for clk user
+> +	 * to request these clocks before pinctrl driver got probed and hence
+> +	 * user will get an orphaned clock. That might be undesirable because
+> +	 * user may expect parent clock to be enabled by the child.
+> +	 */
+> +	if (!strcmp(name, "cdev1") || !strcmp(name, "cdev2")) {
+> +		hw = __clk_get_hw(clk);
+> +
+> +		parent_hw = clk_hw_get_parent(hw);
+> +		if (!parent_hw)
+> +			return ERR_PTR(-EPROBE_DEFER);
+> +	}
+> +
+> +	return clk;
+> +}
+> +
+
+Rather than retrieving the struct clk * and comparing the names, you can use
+the DT ID in  clkspec->args[0] and compare against TEGRA20_CLK_CDEV1 and
+TEGRA20_CLK_CDEV2.
+
+Peter.
+
+>  void __init tegra_add_of_provider(struct device_node *np)
+>  {
+>  	int i;
+> @@ -314,7 +346,7 @@ void __init tegra_add_of_provider(struct device_node *np)
+>  
+>  	clk_data.clks = clks;
+>  	clk_data.clk_num = clk_num;
+> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+> +	of_clk_add_provider(np, tegra_of_clk_src_onecell_get, &clk_data);
+>  
+>  	rst_ctlr.of_node = np;
+>  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
+> -- 
+> 2.17.0
+> 
