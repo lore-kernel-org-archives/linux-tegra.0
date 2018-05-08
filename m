@@ -1,78 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 2/3] ARM: dts: tegra: Fix unit_address_vs_reg and avoid_unnecessary_addr_size DTC warnings
-Date: Tue,  8 May 2018 10:24:40 +0200
-Message-ID: <1525767881-28516-3-git-send-email-krzk@kernel.org>
-References: <1525767881-28516-1-git-send-email-krzk@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: tegra: remove redundant return statement
+Date: Tue, 8 May 2018 11:06:11 +0200
+Message-ID: <CAPDyKFrb0eJVUQ1Nq7d9GwHzw6zzm8GpgYiexsQN-7KwdY5RKw@mail.gmail.com>
+References: <20180504092053.GA20277@orion>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1525767881-28516-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <20180504092053.GA20277@orion>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Aapo Vienamo <aapo.vienamo@iki.fi>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove unneeded address/size cells properties and unit addresses to fix
-DTC warnings like:
+On 4 May 2018 at 11:20, Aapo Vienamo <aapo.vienamo@iki.fi> wrote:
+> A redundant return statement is removed from
+> tegra_sdhci_set_uhs_signaling(). The function returns void and the
+> return does not affect the control flow of the function.
+>
+> Signed-off-by: Aapo Vienamo <aapo.vienamo@iki.fi>
 
-    arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning (unit_address_vs_reg):
-        /i2c@7000d000/stmpe811@41/stmpe_touchscreen@0: node has a unit name, but no reg property
-    arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning (avoid_unnecessary_addr_size):
-        /i2c@7000d000/stmpe811@41: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+Thanks, applied for next!
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/tegra30-apalis.dtsi  | 4 +---
- arch/arm/boot/dts/tegra30-beaver.dts   | 3 ---
- arch/arm/boot/dts/tegra30-colibri.dtsi | 2 --
- 3 files changed, 1 insertion(+), 8 deletions(-)
+Kind regards
+Uffe
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 184f60c720fa..5038ca7b68af 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -590,8 +590,6 @@
- 		/* STMPE811 touch screen controller */
- 		stmpe811@41 {
- 			compatible = "st,stmpe811";
--			#address-cells = <1>;
--			#size-cells = <0>;
- 			reg = <0x41>;
- 			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-parent = <&gpio>;
-@@ -600,7 +598,7 @@
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
- 
--			stmpe_touchscreen@0 {
-+			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
- 				/* 3.25 MHz ADC clock speed */
- 				st,adc-freq = <1>;
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 72369877d284..961934f70639 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -1791,9 +1791,6 @@
- 			vccio-supply = <&vdd_5v_in_reg>;
- 
- 			regulators {
--				#address-cells = <1>;
--				#size-cells = <0>;
--
- 				vdd1_reg: vdd1 {
- 					regulator-name = "vddio_ddr_1v2";
- 					regulator-min-microvolt = <1200000>;
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index cc46cedf80b9..a593dc8be47f 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -352,8 +352,6 @@
- 		/* STMPE811 touch screen controller */
- 		stmpe811@41 {
- 			compatible = "st,stmpe811";
--			#address-cells = <1>;
--			#size-cells = <0>;
- 			reg = <0x41>;
- 			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-parent = <&gpio>;
--- 
-2.7.4
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index b877c13184c2..970d38f68939 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -231,7 +231,7 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+>         if (timing == MMC_TIMING_UHS_DDR50)
+>                 tegra_host->ddr_signaling = true;
+>
+> -       return sdhci_set_uhs_signaling(host, timing);
+> +       sdhci_set_uhs_signaling(host, timing);
+>  }
+>
+>  static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
+> --
+> 2.16.1
+>
