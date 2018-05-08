@@ -1,47 +1,61 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 2/4] drm/tegra: gr2d: Properly clean up resources
-Date: Mon, 7 May 2018 23:57:35 +0300
-Message-ID: <e8ec9684-43f1-81cb-614b-76f1d756d9c0@gmail.com>
-References: <20180504133707.22451-1-thierry.reding@gmail.com>
- <20180504133707.22451-2-thierry.reding@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
+ (plus such board on Iris)
+Date: Tue, 8 May 2018 09:26:39 +0200
+Message-ID: <CAJKOXPeJULLkWZsCH+oSBUdmeO1k3g4PsqaGOQApyzCC1orNww@mail.gmail.com>
+References: <1525360112-9893-1-git-send-email-krzk@kernel.org> <20180507165814.GA4180@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180504133707.22451-2-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180507165814.GA4180@rob-hp-laptop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDQuMDUuMjAxOCAxNjozNywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBGYWlsdXJlIHRvIHJlZ2lzdGVyIHRo
-ZSBUZWdyYSBEUk0gY2xpZW50IHdvdWxkIGxlYWsgdGhlIHJlc291cmNlcy4gTW92ZQo+IGNsZWFu
-dXAgY29kZSB0byBlcnJvciB1bndpbmRpbmcgZ290b3MgdG8gZml4IHRoYXQgYW5kIHNoYXJlIHRo
-ZSBjbGVhbnVwCj4gY29kZSB3aXRoIHRoZSBvdGhlciBlcnJvciBwYXRocy4KPiAKPiBTaWduZWQt
-b2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZ3IyZC5jIHwgMjggKysrKysrKysrKysrKysrKysrKysrKy0tLS0t
-LQo+ICAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPiAK
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dyMmQuYyBiL2RyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9ncjJkLmMKPiBpbmRleCA4ZWI1MzBhODVkZDAuLjBiNDJlOTlkYThhZCAxMDA2
-NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IyZC5jCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL2dyMmQuYwo+IEBAIC00Miw4ICs0Miw5IEBAIHN0YXRpYyBpbnQgZ3IyZF9p
-bml0KHN0cnVjdCBob3N0MXhfY2xpZW50ICpjbGllbnQpCj4gIAo+ICAJY2xpZW50LT5zeW5jcHRz
-WzBdID0gaG9zdDF4X3N5bmNwdF9yZXF1ZXN0KGNsaWVudCwgZmxhZ3MpOwo+ICAJaWYgKCFjbGll
-bnQtPnN5bmNwdHNbMF0pIHsKPiAtCQlob3N0MXhfY2hhbm5lbF9wdXQoZ3IyZC0+Y2hhbm5lbCk7
-Cj4gLQkJcmV0dXJuIC1FTk9NRU07Cj4gKwkJZXJyID0gLUVOT01FTTsKPiArCQlkZXZfZXJyKGNs
-aWVudC0+ZGV2LCAiZmFpbGVkIHRvIHJlcXVlc3Qgc3luY3BvaW50OiAlZFxuIiwgZXJyKTsKCk5p
-dDogWW91IGNvdWxkIGFkZCB0aGUgc2FtZSBlcnJvciBtZXNzYWdlIHRvIHRoZSBncjNkIHBhdGNo
-IGZvciBjb25zaXN0ZW5jeS4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+On Mon, May 7, 2018 at 6:58 PM, Rob Herring <robh@kernel.org> wrote:
+> On Thu, May 03, 2018 at 05:08:32PM +0200, Krzysztof Kozlowski wrote:
+>> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
+>> (with 1024 MB NAND) flavors.  Add support for the 256 MB version on Iris
+>> evaluation board.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>
+>> ---
+>>
+>> Changes since v1:
+>> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
+>>    my bootloader uses mem= argument).
+>> ---
+>>  Documentation/devicetree/bindings/arm/tegra.txt    |   1 +
+>>  arch/arm/boot/dts/Makefile                         |   1 +
+>>  arch/arm/boot/dts/tegra20-colibri-256.dtsi         |  11 +
+>>  arch/arm/boot/dts/tegra20-colibri-512.dtsi         | 531 +--------------------
+>>  ...gra20-colibri-512.dtsi => tegra20-colibri.dtsi} |   4 -
+>>  arch/arm/boot/dts/tegra20-iris-256.dts             |  10 +
+>>  arch/arm/boot/dts/tegra20-iris-512.dts             |  98 +---
+>>  ...gra20-iris-512.dts => tegra20-iris-common.dtsi} |  11 +-
+>>  8 files changed, 31 insertions(+), 636 deletions(-)
+>>  create mode 100644 arch/arm/boot/dts/tegra20-colibri-256.dtsi
+>>  copy arch/arm/boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi} (99%)
+>>  create mode 100644 arch/arm/boot/dts/tegra20-iris-256.dts
+>>  copy arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris-common.dtsi} (85%)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+>> index 32f62bb7006d..d304574ae441 100644
+>> --- a/Documentation/devicetree/bindings/arm/tegra.txt
+>> +++ b/Documentation/devicetree/bindings/arm/tegra.txt
+>> @@ -49,6 +49,7 @@ board-specific compatible values:
+>>    toradex,apalis_t30-eval
+>>    toradex,apalis-tk1
+>>    toradex,apalis-tk1-eval
+>> +  toradex,colibri_t20-256
+>
+> NAK unless there are changes beyond the memory size. Otherwise, just use
+> the existing string or deprecate the existing one for a new one without
+> the memory size. I prefer the less churn of the former option.
+
+I'll stick to original compatible. Thanks for feedback.
+
+Best regards,
+Krzysztof
