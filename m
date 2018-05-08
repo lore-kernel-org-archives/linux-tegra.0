@@ -1,67 +1,63 @@
-From: Satendra Singh Thakur <satendra.t@samsung.com>
-Subject: Re: [PATCH 00/13] drm/kms/mode: using helper func
- drm_display_mode_to/from_videomode for calculating timing parameters
-Date: Tue,  8 May 2018 16:28:30 +0530
-Message-ID: <1525777110-11378-1-git-send-email-satendra.t@samsung.com>
-References: <20180507134602.GH12521@phenom.ffwll.local>
-        <CGME20180508105900epcas5p25ffe94a214e5ad0848d834d6c3562ad6@epcas5p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH 0/8] Tegra Combined UART driver
+Date: Tue, 8 May 2018 14:43:55 +0300
+Message-ID: <20180508114403.14499-1-mperttunen@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180507134602.GH12521@phenom.ffwll.local>
 Sender: linux-kernel-owner@vger.kernel.org
-To: daniel@ffwll.ch, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org
-Cc: sst2005@gmail.com, Satendra Singh Thakur <satendra.t@samsung.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, jassisinghbrar@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: araza@nvidia.com, devicetree@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 07, 2018 at 15:46:02 +0200, Daniel Vetter wrote:
-> On Thu, May 03, 2018 at 01:53:55PM +0530, Satendra Singh Thakur wrote:
-> > 1.There is a function in drm-core to calculate display timing parameters:
-> > horizontal front porch, back porch, sync length,
-> > vertical front porch, back porch, sync length and
-> > clock in Hz.
-> > However, some drivers are still calculating these parameters themselves.
-> > Therefore, there is a duplication of the code.
-> > This patch series replaces this redundant code with the function
-> > drm_display_mode_to_videomode.
-> > This removes nearly 100 redundant lines from the related drivers.
-> > 2.For some drivers (sun4i) the reverse helper
-> > drm_display_mode_from_videomode is used.
-> > 3.For some drivers it replaces arithmatic operators (*, /) with shifting
-> > operators (>>, <<).
-> > 4.For some drivers DRM_MODE_FLAG_* are replaced with DISPLAY_FLAGS_* flags.
-> > 5.These changes apply to following crtc and encoder drivers:
-> > atmel-hlcdc
-> > bridge-tc358767
-> > exynos-dsi
-> > fsl-dcu
-> > gma500-mdfld_dsi_dpi
-> > hisilicon-kirin_dsi, ade
-> > meson-encoder
-> > pl111-display
-> > sun4i-tv
-> > ti lcdc
-> > tegra dc
-> > mediatek dpi dsi
-> > bridge-adv7533
-> 
-> The drm_mode_to_videomode helper is meant for interop between drm and v4l,
-> which have different internal structures to represent modes.
-> 
-> For drivers that only use drm I think the better option would be to add
-> these fields to struct drm_display_mode as another set of crtc_* values
-> (the computed values are stored in crtc_ prefixed members). And compute
-> front/back porch in drm_mode_set_crtcinfo.
-> 
-> Then we can use these new drm_display_mode->crtc_h|vfront|back_porch
-> fields in all the drivers you're changing. This way you avoid having to
-> change all the drm drivers to use v4l #defines.
-> 
-> Thanks,
-> Daniel
+Hi all,
 
-Hi Daniel,
-Thanks for the comments.
-I will look into it.
+on Tegra194, the primary console UART is the "Tegra Combined UART",
+or TCU. This is a "virtual UART", where each consumer communicates
+with a central implementation over mailboxes. The central
+implementation then multiplexes the streams and arbitrates use of
+a hardware serial port. This driver implements the consumer portion
+to allow using the primary console.
 
-Thanks
--Satendra
+The series is split into the following parts:
+* patches 1 and 2 add the device tree bindings for mailbox and tcu
+  itself.
+* patch 3 adds a blocking transmission option to the mailbox
+  framework.
+* patches 4 and 5 add support for the "shared mailbox" primitive
+  to the Tegra HSP driver.
+* patch 6 adds the TCU driver itself
+* patches 7 and 8 do the necessary device tree changes.
+
+The series has been tested on the Tegra194 P2972 board.
+
+Thanks,
+Mikko
+
+Mikko Perttunen (8):
+  dt-bindings: tegra186-hsp: Add shared interrupts
+  dt-bindings: serial: Add bindings for nvidia,tegra194-tcu
+  mailbox: Add transmit done by blocking option
+  mailbox: tegra-hsp: Refactor in preparation of mailboxes
+  mailbox: tegra-hsp: Add support for shared mailboxes
+  serial: Add Tegra Combined UART driver
+  arm64: tegra: Add nodes for tcu on Tegra194
+  arm64: tegra: Mark tcu as primary serial port on Tegra194 P2888
+
+ .../bindings/mailbox/nvidia,tegra186-hsp.txt       |   2 +
+ .../bindings/serial/nvidia,tegra194-tcu.txt        |  35 +++
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   2 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |  34 ++-
+ drivers/mailbox/mailbox.c                          |  30 +-
+ drivers/mailbox/mailbox.h                          |   1 +
+ drivers/mailbox/tegra-hsp.c                        | 320 +++++++++++++++++----
+ drivers/tty/serial/Kconfig                         |   9 +
+ drivers/tty/serial/Makefile                        |   1 +
+ drivers/tty/serial/tegra-tcu.c                     | 302 +++++++++++++++++++
+ include/uapi/linux/serial_core.h                   |   3 +
+ 11 files changed, 671 insertions(+), 68 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
+ create mode 100644 drivers/tty/serial/tegra-tcu.c
+
+-- 
+2.16.1
