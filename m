@@ -1,181 +1,168 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v3 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks
- on Tegra20
-Date: Fri, 11 May 2018 10:57:54 +0300
-Message-ID: <20180511075754.GW6835@tbergstrom-lnx.Nvidia.com>
-References: <20180508162607.3500-1-digetx@gmail.com>
- <20180508162607.3500-5-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 7/9] iommu/tegra: gart: Provide single domain and group
+	for all devices
+Date: Fri, 11 May 2018 14:12:56 +0300
+Message-ID: <2f966990-7961-63de-87ec-f6a67c95d0bf@gmail.com>
+References: <20180508181700.5169-1-digetx@gmail.com>
+	<20180508181700.5169-8-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180508162607.3500-5-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20180508181700.5169-8-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 08, 2018 at 07:26:06PM +0300, Dmitry Osipenko wrote:
-> CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
-> created by the pinctrl driver. It should be possible for clk user to
-> request these clocks before pinctrl driver got probed and hence user will
-> get an orphaned clock. That might be undesirable because user may expect
-> parent clock to be enabled by the child, so let's return -EPROBE_DEFER
-> till parent clock appears.
+On 08.05.2018 21:16, Dmitry Osipenko wrote:
+> GART aperture is shared by all devices, hence there is a single IOMMU
+> domain and group shared by these devices. Allocation of a group per
+> device only wastes resources and allowance of having more than one domain
+> is simply wrong because IOMMU mappings made by the users of "different"
+> domains will stomp on each other.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>                                                                                                     
-
-
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/clk/tegra/clk-tegra114.c |  2 +-
->  drivers/clk/tegra/clk-tegra124.c |  2 +-
->  drivers/clk/tegra/clk-tegra20.c  | 32 +++++++++++++++++++++++++++++++-
->  drivers/clk/tegra/clk-tegra210.c |  2 +-
->  drivers/clk/tegra/clk-tegra30.c  |  2 +-
->  drivers/clk/tegra/clk.c          |  5 +++--
->  drivers/clk/tegra/clk.h          |  2 +-
->  7 files changed, 39 insertions(+), 8 deletions(-)
+>  drivers/iommu/tegra-gart.c | 107 +++++++++----------------------------
+>  1 file changed, 24 insertions(+), 83 deletions(-)
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> index 5d5a22d529f5..1824f014202b 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -1367,7 +1367,7 @@ static void __init tegra114_clock_init(struct device_node *np)
->  	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
->  					&pll_x_params);
+> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+> index 5b2d27620350..ebc105c201bd 100644
+> --- a/drivers/iommu/tegra-gart.c
+> +++ b/drivers/iommu/tegra-gart.c
+> @@ -19,7 +19,6 @@
 >  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
+>  #include <linux/io.h>
+>  #include <linux/iommu.h>
+> -#include <linux/list.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+>  #include <linux/slab.h>
+> @@ -44,22 +43,17 @@
+>  #define GART_PAGE_MASK						\
+>  	(~(GART_PAGE_SIZE - 1) & ~GART_ENTRY_PHYS_ADDR_VALID)
 >  
->  	tegra_clk_apply_init_table = tegra114_clock_apply_init_table;
-> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-> index 50088e976611..0c69c7970950 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -1479,7 +1479,7 @@ static void __init tegra124_132_clock_init_post(struct device_node *np)
->  				  &pll_x_params);
->  	tegra_init_special_resets(1, tegra124_reset_assert,
->  				  tegra124_reset_deassert);
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
+> -struct gart_client {
+> -	struct device		*dev;
+> -	struct list_head	list;
+> -};
+> -
+>  struct gart_device {
+>  	void __iomem		*regs;
+>  	u32			*savedata;
+>  	u32			page_count;	/* total remappable size */
+>  	dma_addr_t		iovmm_base;	/* offset to vmm_area */
+>  	spinlock_t		pte_lock;	/* for pagetable */
+> -	struct list_head	client;
+> -	spinlock_t		client_lock;	/* for client list */
+>  	struct device		*dev;
 >  
->  	clks[TEGRA124_CLK_EMC] = tegra_clk_register_emc(clk_base, np,
->  							&emc_lock);
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index 636500a98561..cc857d4d4a86 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -1089,6 +1089,36 @@ static const struct of_device_id pmc_match[] __initconst = {
->  	{ },
+>  	struct iommu_device	iommu;		/* IOMMU Core handle */
+> +	struct iommu_group	*group;		/* Common IOMMU group */
+> +	struct gart_domain	*domain;	/* Unique IOMMU domain */
+>  
+>  	struct tegra_mc_gart_handle mc_gart_handle;
 >  };
+> @@ -169,81 +163,31 @@ static inline bool gart_iova_range_valid(struct gart_device *gart,
+>  static int gart_iommu_attach_dev(struct iommu_domain *domain,
+>  				 struct device *dev)
+>  {
+> -	struct gart_domain *gart_domain = to_gart_domain(domain);
+> -	struct gart_device *gart = gart_domain->gart;
+> -	struct gart_client *client, *c;
+> -	int err = 0;
+> -
+> -	client = devm_kzalloc(gart->dev, sizeof(*c), GFP_KERNEL);
+> -	if (!client)
+> -		return -ENOMEM;
+> -	client->dev = dev;
+> -
+> -	spin_lock(&gart->client_lock);
+> -	list_for_each_entry(c, &gart->client, list) {
+> -		if (c->dev == dev) {
+> -			dev_err(gart->dev,
+> -				"%s is already attached\n", dev_name(dev));
+> -			err = -EINVAL;
+> -			goto fail;
+> -		}
+> -	}
+> -	list_add(&client->list, &gart->client);
+> -	spin_unlock(&gart->client_lock);
+> -	dev_dbg(gart->dev, "Attached %s\n", dev_name(dev));
+>  	return 0;
+> -
+> -fail:
+> -	devm_kfree(gart->dev, client);
+> -	spin_unlock(&gart->client_lock);
+> -	return err;
+>  }
 >  
-> +static struct clk *tegra20_clk_src_onecell_get(struct of_phandle_args *clkspec,
-> +					       void *data)
-> +{
-> +	struct clk_hw *parent_hw;
-> +	struct clk_hw *hw;
-> +	struct clk *clk;
-> +
-> +	clk = of_clk_src_onecell_get(clkspec, data);
-> +	if (IS_ERR(clk))
-> +		return clk;
-> +
-> +	/*
-> +	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
-> +	 * clock is created by the pinctrl driver. It is possible for clk user
-> +	 * to request these clocks before pinctrl driver got probed and hence
-> +	 * user will get an orphaned clock. That might be undesirable because
-> +	 * user may expect parent clock to be enabled by the child.
-> +	 */
-> +	if (clkspec->args[0] == TEGRA20_CLK_CDEV1 ||
-> +	    clkspec->args[0] == TEGRA20_CLK_CDEV2) {
-> +		hw = __clk_get_hw(clk);
-> +
-> +		parent_hw = clk_hw_get_parent(hw);
-> +		if (!parent_hw)
-> +			return ERR_PTR(-EPROBE_DEFER);
+>  static void gart_iommu_detach_dev(struct iommu_domain *domain,
+>  				  struct device *dev)
+>  {
+> -	struct gart_domain *gart_domain = to_gart_domain(domain);
+> -	struct gart_device *gart = gart_domain->gart;
+> -	struct gart_client *c;
+> -
+> -	spin_lock(&gart->client_lock);
+> -
+> -	list_for_each_entry(c, &gart->client, list) {
+> -		if (c->dev == dev) {
+> -			list_del(&c->list);
+> -			devm_kfree(gart->dev, c);
+> -			dev_dbg(gart->dev, "Detached %s\n", dev_name(dev));
+> -			goto out;
+> -		}
+> -	}
+> -	dev_err(gart->dev, "Couldn't find\n");
+> -out:
+> -	spin_unlock(&gart->client_lock);
+>  }
+>  
+>  static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
+>  {
+> -	struct gart_domain *gart_domain;
+> -	struct gart_device *gart;
+> -
+> -	if (type != IOMMU_DOMAIN_UNMANAGED)
+> -		return NULL;
+> +	struct gart_device *gart = gart_handle;
+>  
+> -	gart = gart_handle;
+> -	if (!gart)
+> +	if (type != IOMMU_DOMAIN_UNMANAGED || gart->domain)
+>  		return NULL;
+>  
+> -	gart_domain = kzalloc(sizeof(*gart_domain), GFP_KERNEL);
+> -	if (!gart_domain)
+> -		return NULL;
+> -
+> -	gart_domain->gart = gart;
+> -	gart_domain->domain.geometry.aperture_start = gart->iovmm_base;
+> -	gart_domain->domain.geometry.aperture_end = gart->iovmm_base +
+> +	gart->domain = kzalloc(sizeof(*gart->domain), GFP_KERNEL);
+> +	if (gart->domain) {
+> +		gart->domain->domain.geometry.aperture_start = gart->iovmm_base;
+> +		gart->domain->domain.geometry.aperture_end = gart->iovmm_base +
+>  					gart->page_count * GART_PAGE_SIZE - 1;
+> -	gart_domain->domain.geometry.force_aperture = true;
+> +		gart->domain->domain.geometry.force_aperture = true;
+> +		gart->domain->gart = gart;
 > +	}
-> +
-> +	return clk;
-> +}
-> +
->  static void __init tegra20_clock_init(struct device_node *np)
->  {
->  	struct device_node *node;
-> @@ -1127,7 +1157,7 @@ static void __init tegra20_clock_init(struct device_node *np)
 >  
->  	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA20_CLK_CLK_MAX);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, tegra20_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra_clk_apply_init_table = tegra20_clock_apply_init_table;
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 9fb5d51ccce4..5435d01c636a 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -3567,7 +3567,7 @@ static void __init tegra210_clock_init(struct device_node *np)
->  	tegra_init_special_resets(2, tegra210_reset_assert,
->  				  tegra210_reset_deassert);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra210_mbist_clk_init();
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index b316dfb6f6c7..acfe661b2ae7 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1349,7 +1349,7 @@ static void __init tegra30_clock_init(struct device_node *np)
->  
->  	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra_clk_apply_init_table = tegra30_clock_apply_init_table;
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> index ba923f0d5953..593d76a114f9 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -298,7 +298,8 @@ static struct reset_controller_dev rst_ctlr = {
->  	.of_reset_n_cells = 1,
->  };
->  
-> -void __init tegra_add_of_provider(struct device_node *np)
-> +void __init tegra_add_of_provider(struct device_node *np,
-> +				  void *clk_src_onecell_get)
->  {
->  	int i;
->  
-> @@ -314,7 +315,7 @@ void __init tegra_add_of_provider(struct device_node *np)
->  
->  	clk_data.clks = clks;
->  	clk_data.clk_num = clk_num;
-> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +	of_clk_add_provider(np, clk_src_onecell_get, &clk_data);
->  
->  	rst_ctlr.of_node = np;
->  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index ba7e20e6a82b..e1f88463b600 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -763,7 +763,7 @@ struct clk **tegra_clk_init(void __iomem *clk_base, int num, int periph_banks);
->  
->  struct clk **tegra_lookup_dt_id(int clk_id, struct tegra_clk *tegra_clk);
->  
-> -void tegra_add_of_provider(struct device_node *np);
-> +void tegra_add_of_provider(struct device_node *np, void *clk_src_onecell_get);
->  void tegra_register_devclks(struct tegra_devclk *dev_clks, int num);
->  
->  void tegra_audio_clk_init(void __iomem *clk_base,
-> -- 
-> 2.17.0
-> 
+> -	return &gart_domain->domain;
+> +	return &gart->domain->domain;
+>  }
+
+I've missed a NULL-check and locking here, this will be fixed in v2. For now
+I'll wait for the review comments (please review).
