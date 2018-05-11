@@ -1,47 +1,79 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: Re: [PATCH] gpu: drm: tegra: Adding new typedef vm_fault_t
-Date: Fri, 11 May 2018 23:50:05 +0530
-Message-ID: <CAFqt6zYR1n75iXtjWtgVVGWDPaeAN5BPVBsGXR-58t5d4_Fi9Q@mail.gmail.com>
-References: <20180417134755.GA30291@jordon-HP-15-Notebook-PC>
- <20180418082439.GA4646@ulmo> <20180423105409.GC2308@bombadil.infradead.org>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 6/9] iommu/tegra: gart: Ignore devices without IOMMU
+	phandle in DT
+Date: Fri, 11 May 2018 18:34:49 +0300
+Message-ID: <000ce2c8-2b20-3fb5-8942-b9e60ba34422@gmail.com>
+References: <20180508181700.5169-1-digetx@gmail.com>
+	<20180508181700.5169-7-digetx@gmail.com>
+	<a3293da9-b750-6c5c-6f84-53b1aafc5e53@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180423105409.GC2308@bombadil.infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, airlied@linux.ie, jonathanh@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <a3293da9-b750-6c5c-6f84-53b1aafc5e53-5wv7dgnIgG8@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 4:24 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Wed, Apr 18, 2018 at 10:24:39AM +0200, Thierry Reding wrote:
->> > @@ -437,20 +436,7 @@ static int tegra_bo_fault(struct vm_fault *vmf)
->> >     offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
->> >     page = bo->pages[offset];
->> >
->> > -   err = vm_insert_page(vma, vmf->address, page);
->> > -   switch (err) {
->> > -   case -EAGAIN:
->> > -   case 0:
->> > -   case -ERESTARTSYS:
->> > -   case -EINTR:
->> > -   case -EBUSY:
->> > -           return VM_FAULT_NOPAGE;
->> > -
->> > -   case -ENOMEM:
->> > -           return VM_FAULT_OOM;
->> > -   }
->> > -
->> > -   return VM_FAULT_SIGBUS;
->> > +   return vmf_insert_page(vma, vmf->address, page);
->> >  }
->>
->> This new function returns VM_FAULT_NOPAGE only for 0 and -EBUSY, whereas
->> we used to return VM_FAULT_NOPAGE for -EAGAIN, -ERESTARTSYS and -EINTR
->> as well. Was this previously wrong?
->
-> Not so much wrong as unnecessary.  vm_insert_page() can't return -EAGAIN,
-> -ERESTARTSYS or -EINTR.
-
-If no further comment on this patch, We would like to get this patch
-queued for 4.18.
+SGkgUm9iaW4sCgpPbiAxMS4wNS4yMDE4IDE0OjM0LCBSb2JpbiBNdXJwaHkgd3JvdGU6Cj4gSGkg
+RG1pdHJ5LAo+IAo+IE9uIDA4LzA1LzE4IDE5OjE2LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+
+IEdBUlQgY2FuJ3QgaGFuZGxlIGFsbCBkZXZpY2VzLCBpZ25vcmUgZGV2aWNlcyB0aGF0IGFyZW4n
+dCByZWxhdGVkIHRvIEdBUlQuCj4+IERldmljZSB0cmVlIG11c3QgZXhwbGljaXRseSBhc3NpZ24g
+R0FSVCBJT01NVSB0byB0aGUgZGV2aWNlcy4KPj4KPj4gU2lnbmVkLW9mZi1ieTogRG1pdHJ5IE9z
+aXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgo+PiAtLS0KPj4gwqAgZHJpdmVycy9pb21tdS90ZWdy
+YS1nYXJ0LmMgfCAzMyArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0KPj4gwqAgMSBm
+aWxlIGNoYW5nZWQsIDMyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPj4KPj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvaW9tbXUvdGVncmEtZ2FydC5jIGIvZHJpdmVycy9pb21tdS90ZWdyYS1n
+YXJ0LmMKPj4gaW5kZXggMzkzMDUyMjRjNDhkLi41YjJkMjc2MjAzNTAgMTAwNjQ0Cj4+IC0tLSBh
+L2RyaXZlcnMvaW9tbXUvdGVncmEtZ2FydC5jCj4+ICsrKyBiL2RyaXZlcnMvaW9tbXUvdGVncmEt
+Z2FydC5jCj4+IEBAIC0zNjYsNiArMzY2LDI2IEBAIHN0YXRpYyB2b2lkIGdhcnRfaW9tbXVfcmVt
+b3ZlX2RldmljZShzdHJ1Y3QgZGV2aWNlICpkZXYpCj4+IMKgwqDCoMKgwqAgaW9tbXVfZGV2aWNl
+X3VubGluaygmZ2FydF9oYW5kbGUtPmlvbW11LCBkZXYpOwo+PiDCoCB9Cj4+IMKgICtzdGF0aWMg
+aW50IGdhcnRfaW9tbXVfY2hlY2tfZGV2aWNlKHN0cnVjdCBnYXJ0X2RldmljZSAqZ2FydCwKPj4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgZGV2aWNlICpkZXYp
+Owo+PiArCj4+ICtzdHJ1Y3QgaW9tbXVfZ3JvdXAgKmdhcnRfaW9tbXVfZGV2aWNlX2dyb3VwKHN0
+cnVjdCBkZXZpY2UgKmRldikKPj4gK3sKPj4gK8KgwqDCoCBpbnQgZXJyOwo+PiArCj4+ICvCoMKg
+wqAgZXJyID0gZ2FydF9pb21tdV9jaGVja19kZXZpY2UoZ2FydF9oYW5kbGUsIGRldik7Cj4+ICvC
+oMKgwqAgaWYgKGVycikKPj4gK8KgwqDCoMKgwqDCoMKgIHJldHVybiBFUlJfUFRSKGVycik7Cj4+
+ICsKPj4gK8KgwqDCoCByZXR1cm4gZ2VuZXJpY19kZXZpY2VfZ3JvdXAoZGV2KTsKPj4gK30KPj4g
+Kwo+PiArc3RhdGljIGludCBnYXJ0X2lvbW11X29mX3hsYXRlKHN0cnVjdCBkZXZpY2UgKmRldiwK
+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3Qgb2ZfcGhhbmRs
+ZV9hcmdzICphcmdzKQo+PiArewo+PiArwqDCoMKgIHJldHVybiAwOwo+PiArfQo+PiArCj4+IMKg
+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgaW9tbXVfb3BzIGdhcnRfaW9tbXVfb3BzID0gewo+PiDCoMKg
+wqDCoMKgIC5jYXBhYmxlwqDCoMKgID0gZ2FydF9pb21tdV9jYXBhYmxlLAo+PiDCoMKgwqDCoMKg
+IC5kb21haW5fYWxsb2PCoMKgwqAgPSBnYXJ0X2lvbW11X2RvbWFpbl9hbGxvYywKPj4gQEAgLTM3
+NCwxNCArMzk0LDI0IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaW9tbXVfb3BzIGdhcnRfaW9tbXVf
+b3BzID0gewo+PiDCoMKgwqDCoMKgIC5kZXRhY2hfZGV2wqDCoMKgID0gZ2FydF9pb21tdV9kZXRh
+Y2hfZGV2LAo+PiDCoMKgwqDCoMKgIC5hZGRfZGV2aWNlwqDCoMKgID0gZ2FydF9pb21tdV9hZGRf
+ZGV2aWNlLAo+PiDCoMKgwqDCoMKgIC5yZW1vdmVfZGV2aWNlwqDCoMKgID0gZ2FydF9pb21tdV9y
+ZW1vdmVfZGV2aWNlLAo+PiAtwqDCoMKgIC5kZXZpY2VfZ3JvdXDCoMKgwqAgPSBnZW5lcmljX2Rl
+dmljZV9ncm91cCwKPj4gK8KgwqDCoCAuZGV2aWNlX2dyb3VwwqDCoMKgID0gZ2FydF9pb21tdV9k
+ZXZpY2VfZ3JvdXAsCj4+IMKgwqDCoMKgwqAgLm1hcMKgwqDCoMKgwqDCoMKgID0gZ2FydF9pb21t
+dV9tYXAsCj4+IMKgwqDCoMKgwqAgLm1hcF9zZ8KgwqDCoMKgwqDCoMKgID0gZGVmYXVsdF9pb21t
+dV9tYXBfc2csCj4+IMKgwqDCoMKgwqAgLnVubWFwwqDCoMKgwqDCoMKgwqAgPSBnYXJ0X2lvbW11
+X3VubWFwLAo+PiDCoMKgwqDCoMKgIC5pb3ZhX3RvX3BoeXPCoMKgwqAgPSBnYXJ0X2lvbW11X2lv
+dmFfdG9fcGh5cywKPj4gwqDCoMKgwqDCoCAucGdzaXplX2JpdG1hcMKgwqDCoCA9IEdBUlRfSU9N
+TVVfUEdTSVpFUywKPj4gK8KgwqDCoCAub2ZfeGxhdGXCoMKgwqAgPSBnYXJ0X2lvbW11X29mX3hs
+YXRlLAo+PiDCoCB9Owo+PiDCoCArc3RhdGljIGludCBnYXJ0X2lvbW11X2NoZWNrX2RldmljZShz
+dHJ1Y3QgZ2FydF9kZXZpY2UgKmdhcnQsCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgc3RydWN0IGRldmljZSAqZGV2KQo+PiArewo+PiArwqDCoMKgIGlmICghZGV2LT5p
+b21tdV9md3NwZWMgfHwgZGV2LT5pb21tdV9md3NwZWMtPm9wcyAhPSAmZ2FydF9pb21tdV9vcHMp
+Cj4+ICvCoMKgwqDCoMKgwqDCoCByZXR1cm4gLUVOT0RFVjsKPiAKPiBDb25jZXB0dWFsbHksIGl0
+IHdvdWxkIGJlIGJldHRlciB0byB2ZXJpZnkgdGhpcyBpbiAuYWRkX2RldmljZSAqYmVmb3JlKiBj
+YWxsaW5nCj4gaW9tbXVfZ3JvdXBfZ2V0X2Zvcl9kZXYoKS4gVGhhdCB3b3VsZCBhbHNvIGFsaWdu
+IHdpdGggd2hhdCBvdGhlciBkcml2ZXJzIGRvLCBhbmQKPiBsZXQgeW91IHNhdmUgaW50cm9kdWNp
+bmcgdGhlIC5kZXZpY2VfZ3JvdXAgY2FsbGJhY2sgdW50aWwgdGhlIHJlYWwKPiBpbXBsZW1lbnRh
+dGlvbiBpbiB0aGUgbGF0ZXIgcGF0Y2guCgpJbmRlZWQsIHRoYW5rIHlvdSBmb3IgdGhlIHN1Z2dl
+c3Rpb24uCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmlv
+bW11IG1haWxpbmcgbGlzdAppb21tdUBsaXN0cy5saW51eC1mb3VuZGF0aW9uLm9yZwpodHRwczov
+L2xpc3RzLmxpbnV4Zm91bmRhdGlvbi5vcmcvbWFpbG1hbi9saXN0aW5mby9pb21tdQ==
