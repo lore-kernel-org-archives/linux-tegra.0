@@ -1,104 +1,47 @@
-From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v1 8/9] iommu: Introduce iotlb_sync_map callback
-Date: Fri, 11 May 2018 14:02:04 +0100
-Message-ID: <da823a61-5bda-042b-c61f-d0d98f9b6e6f@arm.com>
-References: <20180508181700.5169-1-digetx@gmail.com>
-	<20180508181700.5169-9-digetx@gmail.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Subject: Re: [PATCH] gpu: drm: tegra: Adding new typedef vm_fault_t
+Date: Fri, 11 May 2018 23:50:05 +0530
+Message-ID: <CAFqt6zYR1n75iXtjWtgVVGWDPaeAN5BPVBsGXR-58t5d4_Fi9Q@mail.gmail.com>
+References: <20180417134755.GA30291@jordon-HP-15-Notebook-PC>
+ <20180418082439.GA4646@ulmo> <20180423105409.GC2308@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20180508181700.5169-9-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-GB
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180423105409.GC2308@bombadil.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, airlied@linux.ie, jonathanh@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/05/18 19:16, Dmitry Osipenko wrote:
-> Introduce iotlb_sync_map() callback that is invoked in the end of
-> iommu_map(). This new callback allows IOMMU drivers to avoid syncing
-> on mapping of each contiguous chunk and sync only when whole mapping
-> is completed, optimizing performance of the mapping operation.
+On Mon, Apr 23, 2018 at 4:24 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Wed, Apr 18, 2018 at 10:24:39AM +0200, Thierry Reding wrote:
+>> > @@ -437,20 +436,7 @@ static int tegra_bo_fault(struct vm_fault *vmf)
+>> >     offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
+>> >     page = bo->pages[offset];
+>> >
+>> > -   err = vm_insert_page(vma, vmf->address, page);
+>> > -   switch (err) {
+>> > -   case -EAGAIN:
+>> > -   case 0:
+>> > -   case -ERESTARTSYS:
+>> > -   case -EINTR:
+>> > -   case -EBUSY:
+>> > -           return VM_FAULT_NOPAGE;
+>> > -
+>> > -   case -ENOMEM:
+>> > -           return VM_FAULT_OOM;
+>> > -   }
+>> > -
+>> > -   return VM_FAULT_SIGBUS;
+>> > +   return vmf_insert_page(vma, vmf->address, page);
+>> >  }
+>>
+>> This new function returns VM_FAULT_NOPAGE only for 0 and -EBUSY, whereas
+>> we used to return VM_FAULT_NOPAGE for -EAGAIN, -ERESTARTSYS and -EINTR
+>> as well. Was this previously wrong?
+>
+> Not so much wrong as unnecessary.  vm_insert_page() can't return -EAGAIN,
+> -ERESTARTSYS or -EINTR.
 
-This looks like a reasonable compromise - for users of 
-IO_PGTABLE_QUIRK_TLBI_ON_MAP we can leave the implicit add_flush() in 
-place for each individual map call, but at least move the sync() out to 
-this callback, which should still be beneficial overall.
-
-Modulo one possible nit below,
-
-Reviewed-by: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->   drivers/iommu/iommu.c | 8 ++++++--
->   include/linux/iommu.h | 1 +
->   2 files changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index d2aa23202bb9..39b2ee66aa96 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -1508,13 +1508,14 @@ static size_t iommu_pgsize(struct iommu_domain *domain,
->   int iommu_map(struct iommu_domain *domain, unsigned long iova,
->   	      phys_addr_t paddr, size_t size, int prot)
->   {
-> +	const struct iommu_ops *ops = domain->ops;
->   	unsigned long orig_iova = iova;
->   	unsigned int min_pagesz;
->   	size_t orig_size = size;
->   	phys_addr_t orig_paddr = paddr;
->   	int ret = 0;
->   
-> -	if (unlikely(domain->ops->map == NULL ||
-> +	if (unlikely(ops->map == NULL ||
->   		     domain->pgsize_bitmap == 0UL))
->   		return -ENODEV;
->   
-> @@ -1543,7 +1544,7 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
->   		pr_debug("mapping: iova 0x%lx pa %pa pgsize 0x%zx\n",
->   			 iova, &paddr, pgsize);
->   
-> -		ret = domain->ops->map(domain, iova, paddr, pgsize, prot);
-> +		ret = ops->map(domain, iova, paddr, pgsize, prot);
->   		if (ret)
->   			break;
->   
-> @@ -1552,6 +1553,9 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
->   		size -= pgsize;
->   	}
->   
-> +	if (ops->iotlb_sync_map)
-> +		ops->iotlb_sync_map(domain);
-
-Is it worth trying to skip this in the error case when we're just going 
-to undo it immediately?
-
-Robin.
-
-> +
->   	/* unroll mapping in case something went wrong */
->   	if (ret)
->   		iommu_unmap(domain, orig_iova, orig_size - size);
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 19938ee6eb31..5224aa376377 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -206,6 +206,7 @@ struct iommu_ops {
->   	void (*flush_iotlb_all)(struct iommu_domain *domain);
->   	void (*iotlb_range_add)(struct iommu_domain *domain,
->   				unsigned long iova, size_t size);
-> +	void (*iotlb_sync_map)(struct iommu_domain *domain);
->   	void (*iotlb_sync)(struct iommu_domain *domain);
->   	phys_addr_t (*iova_to_phys)(struct iommu_domain *domain, dma_addr_t iova);
->   	int (*add_device)(struct device *dev);
-> 
+If no further comment on this patch, We would like to get this patch
+queued for 4.18.
