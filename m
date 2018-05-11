@@ -1,15 +1,14 @@
 From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v1 7/9] iommu/tegra: gart: Provide single domain and group
-	for all devices
-Date: Fri, 11 May 2018 13:32:54 +0100
-Message-ID: <dd440bff-5bbd-e0c6-5ebb-e36b9ab5e843@arm.com>
+Subject: Re: [PATCH v1 8/9] iommu: Introduce iotlb_sync_map callback
+Date: Fri, 11 May 2018 14:02:04 +0100
+Message-ID: <da823a61-5bda-042b-c61f-d0d98f9b6e6f@arm.com>
 References: <20180508181700.5169-1-digetx@gmail.com>
-	<20180508181700.5169-8-digetx@gmail.com>
+	<20180508181700.5169-9-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20180508181700.5169-8-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20180508181700.5169-9-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-GB
 List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
 	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
@@ -25,250 +24,81 @@ Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy
 List-Id: linux-tegra@vger.kernel.org
 
 On 08/05/18 19:16, Dmitry Osipenko wrote:
-> GART aperture is shared by all devices, hence there is a single IOMMU
-> domain and group shared by these devices. Allocation of a group per
-> device only wastes resources and allowance of having more than one domain
-> is simply wrong because IOMMU mappings made by the users of "different"
-> domains will stomp on each other.
+> Introduce iotlb_sync_map() callback that is invoked in the end of
+> iommu_map(). This new callback allows IOMMU drivers to avoid syncing
+> on mapping of each contiguous chunk and sync only when whole mapping
+> is completed, optimizing performance of the mapping operation.
 
-Strictly, that reasoning is a bit backwards - allocating multiple groups 
-is the conceptually-wrong thing if the GART cannot differentiate between 
-different devices, whereas having multiple domains *exist* is no real 
-problem, it's merely that only one can be active at any point in time 
-(which will inherently become the case once all devices are grouped 
-together).
+This looks like a reasonable compromise - for users of 
+IO_PGTABLE_QUIRK_TLBI_ON_MAP we can leave the implicit add_flush() in 
+place for each individual map call, but at least move the sync() out to 
+this callback, which should still be beneficial overall.
+
+Modulo one possible nit below,
+
+Reviewed-by: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->   drivers/iommu/tegra-gart.c | 107 +++++++++----------------------------
->   1 file changed, 24 insertions(+), 83 deletions(-)
+>   drivers/iommu/iommu.c | 8 ++++++--
+>   include/linux/iommu.h | 1 +
+>   2 files changed, 7 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-> index 5b2d27620350..ebc105c201bd 100644
-> --- a/drivers/iommu/tegra-gart.c
-> +++ b/drivers/iommu/tegra-gart.c
-> @@ -19,7 +19,6 @@
->   
->   #include <linux/io.h>
->   #include <linux/iommu.h>
-> -#include <linux/list.h>
->   #include <linux/module.h>
->   #include <linux/of_device.h>
->   #include <linux/slab.h>
-> @@ -44,22 +43,17 @@
->   #define GART_PAGE_MASK						\
->   	(~(GART_PAGE_SIZE - 1) & ~GART_ENTRY_PHYS_ADDR_VALID)
->   
-> -struct gart_client {
-> -	struct device		*dev;
-> -	struct list_head	list;
-> -};
-> -
->   struct gart_device {
->   	void __iomem		*regs;
->   	u32			*savedata;
->   	u32			page_count;	/* total remappable size */
->   	dma_addr_t		iovmm_base;	/* offset to vmm_area */
->   	spinlock_t		pte_lock;	/* for pagetable */
-> -	struct list_head	client;
-> -	spinlock_t		client_lock;	/* for client list */
->   	struct device		*dev;
->   
->   	struct iommu_device	iommu;		/* IOMMU Core handle */
-> +	struct iommu_group	*group;		/* Common IOMMU group */
-> +	struct gart_domain	*domain;	/* Unique IOMMU domain */
->   
->   	struct tegra_mc_gart_handle mc_gart_handle;
->   };
-> @@ -169,81 +163,31 @@ static inline bool gart_iova_range_valid(struct gart_device *gart,
->   static int gart_iommu_attach_dev(struct iommu_domain *domain,
->   				 struct device *dev)
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index d2aa23202bb9..39b2ee66aa96 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1508,13 +1508,14 @@ static size_t iommu_pgsize(struct iommu_domain *domain,
+>   int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>   	      phys_addr_t paddr, size_t size, int prot)
 >   {
-> -	struct gart_domain *gart_domain = to_gart_domain(domain);
-> -	struct gart_device *gart = gart_domain->gart;
-> -	struct gart_client *client, *c;
-> -	int err = 0;
-> -
-> -	client = devm_kzalloc(gart->dev, sizeof(*c), GFP_KERNEL);
-> -	if (!client)
-> -		return -ENOMEM;
-> -	client->dev = dev;
-> -
-> -	spin_lock(&gart->client_lock);
-> -	list_for_each_entry(c, &gart->client, list) {
-> -		if (c->dev == dev) {
-> -			dev_err(gart->dev,
-> -				"%s is already attached\n", dev_name(dev));
-> -			err = -EINVAL;
-> -			goto fail;
-> -		}
-> -	}
-> -	list_add(&client->list, &gart->client);
-> -	spin_unlock(&gart->client_lock);
-> -	dev_dbg(gart->dev, "Attached %s\n", dev_name(dev));
->   	return 0;
-> -
-> -fail:
-> -	devm_kfree(gart->dev, client);
-> -	spin_unlock(&gart->client_lock);
-> -	return err;
->   }
+> +	const struct iommu_ops *ops = domain->ops;
+>   	unsigned long orig_iova = iova;
+>   	unsigned int min_pagesz;
+>   	size_t orig_size = size;
+>   	phys_addr_t orig_paddr = paddr;
+>   	int ret = 0;
 >   
->   static void gart_iommu_detach_dev(struct iommu_domain *domain,
->   				  struct device *dev)
->   {
-> -	struct gart_domain *gart_domain = to_gart_domain(domain);
-> -	struct gart_device *gart = gart_domain->gart;
-> -	struct gart_client *c;
-> -
-> -	spin_lock(&gart->client_lock);
-> -
-> -	list_for_each_entry(c, &gart->client, list) {
-> -		if (c->dev == dev) {
-> -			list_del(&c->list);
-> -			devm_kfree(gart->dev, c);
-> -			dev_dbg(gart->dev, "Detached %s\n", dev_name(dev));
-> -			goto out;
-> -		}
-> -	}
-> -	dev_err(gart->dev, "Couldn't find\n");
-> -out:
-> -	spin_unlock(&gart->client_lock);
->   }
-
-The .detach_dev callback is optional in the core API now, so you can 
-just remove the whole thing.
-
->   static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
->   {
-> -	struct gart_domain *gart_domain;
-> -	struct gart_device *gart;
-> -
-> -	if (type != IOMMU_DOMAIN_UNMANAGED)
-> -		return NULL;
-> +	struct gart_device *gart = gart_handle;
+> -	if (unlikely(domain->ops->map == NULL ||
+> +	if (unlikely(ops->map == NULL ||
+>   		     domain->pgsize_bitmap == 0UL))
+>   		return -ENODEV;
 >   
-> -	gart = gart_handle;
-> -	if (!gart)
-> +	if (type != IOMMU_DOMAIN_UNMANAGED || gart->domain)
-
-Singleton domains are a little unpleasant given the way the IOMMU API 
-expects things to work, but it looks fairly simple to avoid needing that 
-at all. AFAICS you could move gart->savedata to something like 
-gart_domain->ptes and keep it up-to-date in .map/.unmap, then in 
-.attach_dev you just need to do something like:
-
-	if (gart_domain != gart->domain) {
-		do_gart_setup(gart, gart_domain->ptes);
-		gart->domain = gart_domain;
-	}
-
-to context-switch the hardware state when moving the group from one 
-domain to another (and as a bonus you would no longer need to do 
-anything for suspend, since resume can just look at the current domain 
-too). If in practice there's only ever one domain allocated anyway, then 
-there's no difference in memory overhead, but you still have the benefit 
-of the driver being more consistent with others and allowing that 
-flexibility if anyone ever did want to play with it.
-
->   		return NULL;
+> @@ -1543,7 +1544,7 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>   		pr_debug("mapping: iova 0x%lx pa %pa pgsize 0x%zx\n",
+>   			 iova, &paddr, pgsize);
 >   
-> -	gart_domain = kzalloc(sizeof(*gart_domain), GFP_KERNEL);
-> -	if (!gart_domain)
-> -		return NULL;
-> -
-> -	gart_domain->gart = gart;
-> -	gart_domain->domain.geometry.aperture_start = gart->iovmm_base;
-> -	gart_domain->domain.geometry.aperture_end = gart->iovmm_base +
-> +	gart->domain = kzalloc(sizeof(*gart->domain), GFP_KERNEL);
-> +	if (gart->domain) {
-> +		gart->domain->domain.geometry.aperture_start = gart->iovmm_base;
-> +		gart->domain->domain.geometry.aperture_end = gart->iovmm_base +
->   					gart->page_count * GART_PAGE_SIZE - 1;
-> -	gart_domain->domain.geometry.force_aperture = true;
-> +		gart->domain->domain.geometry.force_aperture = true;
-> +		gart->domain->gart = gart;
-> +	}
+> -		ret = domain->ops->map(domain, iova, paddr, pgsize, prot);
+> +		ret = ops->map(domain, iova, paddr, pgsize, prot);
+>   		if (ret)
+>   			break;
 >   
-> -	return &gart_domain->domain;
-> +	return &gart->domain->domain;
->   }
->   
->   static void gart_iommu_domain_free(struct iommu_domain *domain)
-> @@ -251,18 +195,7 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
->   	struct gart_domain *gart_domain = to_gart_domain(domain);
->   	struct gart_device *gart = gart_domain->gart;
->   
-> -	if (gart) {
-> -		spin_lock(&gart->client_lock);
-> -		if (!list_empty(&gart->client)) {
-> -			struct gart_client *c;
-> -
-> -			list_for_each_entry(c, &gart->client, list)
-> -				gart_iommu_detach_dev(domain, c->dev);
-> -		}
-> -		spin_unlock(&gart->client_lock);
-> -	}
-> -
-> -	kfree(gart_domain);
-> +	kfree(gart->domain);
->   }
->   
->   static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
-> @@ -377,7 +310,7 @@ struct iommu_group *gart_iommu_device_group(struct device *dev)
->   	if (err)
->   		return ERR_PTR(err);
->   
-> -	return generic_device_group(dev);
-> +	return gart_handle->group;
-
-You should take a reference per device, i.e.:
-
-	return iommu_group_ref_get(gart_handle->group);
-
-otherwise removing devices could unbalance things and result in the 
-group getting freed prematurely.
-
->   }
->   
->   static int gart_iommu_of_xlate(struct device *dev,
-> @@ -502,8 +435,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
->   
->   	gart->dev = &pdev->dev;
->   	spin_lock_init(&gart->pte_lock);
-> -	spin_lock_init(&gart->client_lock);
-> -	INIT_LIST_HEAD(&gart->client);
->   	gart->regs = gart_regs;
->   	gart->iovmm_base = (dma_addr_t)res_remap->start;
->   	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
-> @@ -517,6 +448,14 @@ static int tegra_gart_probe(struct platform_device *pdev)
->   		goto iommu_unregister;
+> @@ -1552,6 +1553,9 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>   		size -= pgsize;
 >   	}
 >   
-> +	gart->group = iommu_group_alloc();
-> +	if (IS_ERR(gart->group)) {
-> +		ret = PTR_ERR(gart->group);
-> +		goto free_savedata;
-> +	}
-> +
-> +	iommu_group_ref_get(gart->group);
+> +	if (ops->iotlb_sync_map)
+> +		ops->iotlb_sync_map(domain);
 
-You already hold the initial reference from iommu_group_alloc(), so 
-there's no need to take a second one at this point.
+Is it worth trying to skip this in the error case when we're just going 
+to undo it immediately?
 
 Robin.
 
 > +
->   	platform_set_drvdata(pdev, gart);
->   	do_gart_setup(gart, NULL);
->   
-> @@ -525,6 +464,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
->   
->   	return 0;
->   
-> +free_savedata:
-> +	vfree(gart->savedata);
->   iommu_unregister:
->   	iommu_device_unregister(&gart->iommu);
->   remove_sysfs:
+>   	/* unroll mapping in case something went wrong */
+>   	if (ret)
+>   		iommu_unmap(domain, orig_iova, orig_size - size);
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 19938ee6eb31..5224aa376377 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -206,6 +206,7 @@ struct iommu_ops {
+>   	void (*flush_iotlb_all)(struct iommu_domain *domain);
+>   	void (*iotlb_range_add)(struct iommu_domain *domain,
+>   				unsigned long iova, size_t size);
+> +	void (*iotlb_sync_map)(struct iommu_domain *domain);
+>   	void (*iotlb_sync)(struct iommu_domain *domain);
+>   	phys_addr_t (*iova_to_phys)(struct iommu_domain *domain, dma_addr_t iova);
+>   	int (*add_device)(struct device *dev);
 > 
