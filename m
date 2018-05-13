@@ -1,80 +1,104 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH 6/8] serial: Add Tegra Combined UART driver
-Date: Sun, 13 May 2018 21:06:37 +0300
-Message-ID: <4d6aab52-9c99-8dd8-556d-86f32d9f6234@kapsi.fi>
-References: <20180508114403.14499-1-mperttunen@nvidia.com>
- <20180508114403.14499-7-mperttunen@nvidia.com>
- <CABb+yY3snB9o4e14by4xui+o_Vhqpe2zh6Pp_e0t-DCTKvMHWA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1] i2c: tegra: Remove suspend-resume
+Date: Mon, 14 May 2018 00:13:47 +0300
+Message-ID: <20180513211347.7187-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CABb+yY3snB9o4e14by4xui+o_Vhqpe2zh6Pp_e0t-DCTKvMHWA@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg KH <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, araza@nvidia.com, Devicetree List <devicetree@vger.kernel.org>, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, ", linux-arm-kernel"@lists.infradead.org, linux-mediatek@lists.infradead.org, srv_heupstream <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/13/2018 06:36 PM, Jassi Brar wrote:
-> On Tue, May 8, 2018 at 5:14 PM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
-> 
-> ....
->>
->> +config SERIAL_TEGRA_TCU
->> +       tristate "NVIDIA Tegra Combined UART"
->> +       depends on ARCH_TEGRA && MAILBOX
->> +       select SERIAL_CORE
->> +       help
->> +         Support for the mailbox-based TCU (Tegra Combined UART) serial port.
->> +         TCU is a virtual serial port that allows multiplexing multiple data
->> +         streams into a single hardware serial port.
->> +
-> Maybe make it depend upon TEGRA_HSP_MBOX ?
+Nothing prevents I2C clients to access I2C while Tegra's driver is being
+suspended, this results in -EBUSY error returned to the clients and that
+may have unfortunate consequences. In particular this causes problems
+for the TPS6586x MFD driver which emits hundreds of "failed to read
+interrupt status" error messages on resume from suspend. This happens if
+TPS6586X is used to wake system from suspend by the expired RTC alarm
+timer because TPS6586X is an I2C device driver and its IRQ handler reads
+the status register while Tegra's I2C driver is suspended, i.e. just after
+kernel enabled IRQ's during of resume-from-suspend process.
 
-Yeah, that probably makes more sense. MAILBOX is enough to build it but 
-it won't be of any use without TEGRA_HSP_MBOX.
+Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() which
+performs HW reset. That seems was also not entirely correct because moving
+tegra_i2c_resume to an earlier stage of resume-from-suspend process causes
+I2C transfer to fail in the case of TPS6586X. It is fine to remove the
+HW-reinitialization for now because it should be only needed in a case of
+using lowest power-mode during suspend, which upstream kernel doesn't
+support.
 
-> 
-> ......
-> 
->> +
->> +static void tegra_tcu_write(const char *s, unsigned int count)
->> +{
->> +       struct tegra_tcu *tcu = tegra_tcu_uart_port.private_data;
->> +       unsigned int written = 0, i = 0;
->> +       bool insert_nl = false;
->> +       uint32_t value = 0;
->> +
->> +       while (i < count) {
->> +               if (insert_nl) {
->> +                       value |= '\n' << (written++ * 8);
->> +                       insert_nl = false;
->> +                       i++;
->> +               } else if (s[i] == '\n') {
->> +                       value |= '\r' << (written++ * 8);
->> +                       insert_nl = true;
->> +               } else {
->> +                       value |= s[i++] << (written++ * 8);
->> +               }
->> +
->> +               if (written == 3) {
->> +                       value |= 3 << 24;
->> +                       value |= BIT(26);
->> +                       mbox_send_message(tcu->tx, &value);
->>
-> How is this supposed to work? tegra_hsp_doorbell_send_data() ignores
-> the second argument.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Cc: <stable@vger.kernel.org>
+---
+ drivers/i2c/busses/i2c-tegra.c | 33 ---------------------------------
+ 1 file changed, 33 deletions(-)
 
-The previous patch in the series adds support for what are called 
-"shared mailboxes" to the tegra-hsp driver. For these the second 
-argument is used.
-
-Thanks,
-Mikko
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 60292d243e24..5fccd1f1bca8 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -173,7 +173,6 @@ struct tegra_i2c_hw_feature {
+  * @msg_buf_remaining: size of unsent data in the message buffer
+  * @msg_read: identifies read transfers
+  * @bus_clk_rate: current i2c bus clock rate
+- * @is_suspended: prevents i2c controller accesses after suspend is called
+  */
+ struct tegra_i2c_dev {
+ 	struct device *dev;
+@@ -194,7 +193,6 @@ struct tegra_i2c_dev {
+ 	int msg_read;
+ 	u32 bus_clk_rate;
+ 	u16 clk_divisor_non_hs_mode;
+-	bool is_suspended;
+ 	bool is_multimaster_mode;
+ 	spinlock_t xfer_lock;
+ };
+@@ -734,9 +732,6 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 	int i;
+ 	int ret = 0;
+ 
+-	if (i2c_dev->is_suspended)
+-		return -EBUSY;
+-
+ 	ret = pm_runtime_get_sync(i2c_dev->dev);
+ 	if (ret < 0) {
+ 		dev_err(i2c_dev->dev, "runtime resume failed %d\n", ret);
+@@ -1051,37 +1046,9 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static int tegra_i2c_suspend(struct device *dev)
+-{
+-	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+-
+-	i2c_lock_adapter(&i2c_dev->adapter);
+-	i2c_dev->is_suspended = true;
+-	i2c_unlock_adapter(&i2c_dev->adapter);
+-
+-	return 0;
+-}
+-
+-static int tegra_i2c_resume(struct device *dev)
+-{
+-	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+-	int ret;
+-
+-	i2c_lock_adapter(&i2c_dev->adapter);
+-
+-	ret = tegra_i2c_init(i2c_dev);
+-	if (!ret)
+-		i2c_dev->is_suspended = false;
+-
+-	i2c_unlock_adapter(&i2c_dev->adapter);
+-
+-	return ret;
+-}
+-
+ static const struct dev_pm_ops tegra_i2c_pm = {
+ 	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
+ 			   NULL)
+-	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
+ };
+ #define TEGRA_I2C_PM	(&tegra_i2c_pm)
+ #else
+-- 
+2.17.0
