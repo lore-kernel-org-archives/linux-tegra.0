@@ -1,109 +1,116 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] mfd: tps6586x: Move interrupt handling into workqueue
-Date: Mon, 14 May 2018 00:18:42 +0300
-Message-ID: <20180513211842.7819-1-digetx@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 6/8] serial: Add Tegra Combined UART driver
+Date: Mon, 14 May 2018 01:20:07 +0300
+Message-ID: <CAHp75VeJcqaiWUVr=oXEH5YurY3yCDdE1eeoWumo6jCa_4PWEQ@mail.gmail.com>
+References: <20180508114403.14499-1-mperttunen@nvidia.com> <20180508114403.14499-7-mperttunen@nvidia.com>
+ <CAHp75VfYF_u2bZ+temGbReEB9K-t3A75aUNYwffyv9-=zEi0Lw@mail.gmail.com> <662ce972-56a9-9daa-d332-faa08b89c05a@kapsi.fi>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <662ce972-56a9-9daa-d332-faa08b89c05a@kapsi.fi>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jassi Brar <jassisinghbrar@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, araza@nvidia.com, devicetree <devicetree@vger.kernel.org>, "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, linux-tegra@vger.kernel.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Reading of status register within the interrupt handler fails with -EAGAIN
-if I2C is busy with handling some other request at the same time. Move the
-actual interrupt handling into a workqueue to avoid the unfortunate I2C
-failure and to avoid hanging CPU in interrupt up to 1 second (transfer
-timeout in the Tegra I2C driver).
+On Sun, May 13, 2018 at 9:04 PM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
+> On 05/13/2018 05:16 PM, Andy Shevchenko wrote:
+>>
+>> On Tue, May 8, 2018 at 2:44 PM, Mikko Perttunen <mperttunen@nvidia.com>
+>> wrote:
+>>>
+>>> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+>>> multiplexing multiple "virtual UARTs" into a single hardware serial
+>>> port. The TCU is the primary serial port on Tegra194 devices.
+>>>
+>>> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+>>> are part of Tegra HSP blocks that are already controlled by the Tegra
+>>> HSP mailbox driver.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/mfd/tps6586x.c | 40 +++++++++++++++++++++++++++++-----------
- 1 file changed, 29 insertions(+), 11 deletions(-)
+>>> +static void tegra_tcu_uart_set_mctrl(struct uart_port *port, unsigned
+>>> int mctrl)
+>>> +{
+>>
+>>
+>>> +       (void)port;
+>>> +       (void)mctrl;
+>>
+>>
+>> Huh?
+>
+>
+> The serial core calls these callbacks without checking if they are set. They
+> don't make sense for this driver so they are stubbed out.
 
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index b89379782741..9896e080b274 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -133,6 +133,7 @@ struct tps6586x {
- 	u32			irq_en;
- 	u8			mask_reg[5];
- 	struct irq_domain	*irq_domain;
-+	struct work_struct	isr_work;
- };
- 
- static inline struct tps6586x *dev_to_tps6586x(struct device *dev)
-@@ -309,18 +310,19 @@ static const struct irq_domain_ops tps6586x_domain_ops = {
- 	.xlate  = irq_domain_xlate_twocell,
- };
- 
--static irqreturn_t tps6586x_irq(int irq, void *data)
-+static void tps6586x_isr_work(struct work_struct *work)
- {
--	struct tps6586x *tps6586x = data;
-+	struct tps6586x *tps6586x = container_of(work, struct tps6586x,
-+						 isr_work);
- 	u32 acks;
--	int ret = 0;
-+	int err;
- 
--	ret = tps6586x_reads(tps6586x->dev, TPS6586X_INT_ACK1,
-+	err = tps6586x_reads(tps6586x->dev, TPS6586X_INT_ACK1,
- 			     sizeof(acks), (uint8_t *)&acks);
--
--	if (ret < 0) {
--		dev_err(tps6586x->dev, "failed to read interrupt status\n");
--		return IRQ_NONE;
-+	if (err < 0) {
-+		dev_err(tps6586x->dev,
-+			"failed to read interrupt status %d\n", err);
-+		return;
- 	}
- 
- 	acks = le32_to_cpu(acks);
-@@ -335,6 +337,16 @@ static irqreturn_t tps6586x_irq(int irq, void *data)
- 		acks &= ~(1 << i);
- 	}
- 
-+	enable_irq(tps6586x->irq);
-+}
-+
-+static irqreturn_t tps6586x_irq(int irq, void *data)
-+{
-+	struct tps6586x *tps6586x = data;
-+
-+	disable_irq_nosync(irq);
-+	schedule_work(&tps6586x->isr_work);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -542,8 +554,9 @@ static int tps6586x_i2c_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
--
- 	if (client->irq) {
-+		INIT_WORK(&tps6586x->isr_work, tps6586x_isr_work);
-+
- 		ret = tps6586x_irq_init(tps6586x, client->irq,
- 					pdata->irq_base);
- 		if (ret) {
-@@ -585,10 +598,15 @@ static int tps6586x_i2c_remove(struct i2c_client *client)
- {
- 	struct tps6586x *tps6586x = i2c_get_clientdata(client);
- 
-+	if (client->irq) {
-+		disable_irq(client->irq);
-+		flush_work(&tps6586x->isr_work);
-+		free_irq(client->irq, tps6586x);
-+	}
-+
- 	tps6586x_remove_subdevs(tps6586x);
- 	mfd_remove_devices(tps6586x->dev);
--	if (client->irq)
--		free_irq(client->irq, tps6586x);
-+
- 	return 0;
- }
- 
+My question why do you need these ugly lines? I'm pretty sure no other
+driver with stubs using such style.
+
+>>> +}
+
+>>> +               if (written == 3) {
+>>> +                       value |= 3 << 24;
+>>> +                       value |= BIT(26);
+>>> +                       mbox_send_message(tcu->tx, &value);
+>>
+>>
+>>> +               }
+>>
+>>
+>> (1)
+>>
+>>> +       }
+>>> +
+>>> +       if (written) {
+>>> +               value |= written << 24;
+>>> +               value |= BIT(26);
+>>> +               mbox_send_message(tcu->tx, &value);
+>>> +       }
+>>
+>>
+>> (2)
+>>
+>> These are code duplications.
+>
+>
+> Indeed - the length of the duplicated code is so short, and the instances
+> are so close to each other, that I don't find it necessary (or clearer) to
+> have an extra function.
+
+It makes sense. Consider to refactor other way w/o duplication then.
+
+>>> +static void tegra_tcu_uart_set_termios(struct uart_port *port,
+>>> +                                      struct ktermios *new,
+>>> +                                      struct ktermios *old)
+>>> +{
+>>> +       (void)port;
+>>> +       (void)new;
+>>> +       (void)old;
+>>> +}
+>>
+>>
+>> Remove those unused stub contents.
+>
+>
+> Sure. I had these here so that we don't get unused parameter warnings, but I
+> can just as well remove the parameter names.
+
+What warnings? How did you get them? We have them disabled as far as I
+know even with W=1.
+
+>
+>>
+>>> +       return uart_set_options(&tegra_tcu_uart_port, cons,
+>>> +                               115200, 'n', 8, 'n');
+>>
+>>
+>> Can't it be one line?
+>
+>
+> It would be a total of 81 characters in length on one line, so no.
+
+So, yes. 1 character doesn't prevent us make the readability better.
+Please, put to one line.
+
 -- 
-2.17.0
+With Best Regards,
+Andy Shevchenko
