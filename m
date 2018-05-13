@@ -1,131 +1,143 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 00/13] drm/kms/mode: using helper func
- drm_display_mode_to/from_videomode for calculating timing parameters
-Date: Sun, 13 May 2018 16:12:18 +0200
-Message-ID: <CAKMK7uGb_psf+H4oWqwpWYg6OT6YV3Gm_CrjEpfzk=WtxH3MjQ@mail.gmail.com>
-References: <CGME20180509115224epcas5p1c958418bc36fd224e8d36b9511c5beea@epcas5p1.samsung.com>
- <1525777110-11378-1-git-send-email-satendra.t@samsung.com>
- <1525866725-16685-1-git-send-email-satendra.t@samsung.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 6/8] serial: Add Tegra Combined UART driver
+Date: Sun, 13 May 2018 17:16:36 +0300
+Message-ID: <CAHp75VfYF_u2bZ+temGbReEB9K-t3A75aUNYwffyv9-=zEi0Lw@mail.gmail.com>
+References: <20180508114403.14499-1-mperttunen@nvidia.com> <20180508114403.14499-7-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1525866725-16685-1-git-send-email-satendra.t@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Satendra Singh Thakur <satendra.t@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, sst2005@gmail.com, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180508114403.14499-7-mperttunen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jassi Brar <jassisinghbrar@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, araza@nvidia.com, devicetree <devicetree@vger.kernel.org>, "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, linux-tegra@vger.kernel.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBNYXkgOSwgMjAxOCBhdCAxOjUyIFBNLCBTYXRlbmRyYSBTaW5naCBUaGFrdXIKPHNh
-dGVuZHJhLnRAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IE9uIFRodSwgTWF5IDA4LCAyMDE4IGF0IDE2
-OjI4OjMwICswNTMwLCBTYXRlbmRyYSBTaW5naCBUaGFrdXIgd3JvdGU6Cj4+IE9uIFRodSwgTWF5
-IDA3LCAyMDE4IGF0IDE1OjQ2OjAyICswMjAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+PiA+IE9u
-IFRodSwgTWF5IDAzLCAyMDE4IGF0IDAxOjUzOjU1UE0gKzA1MzAsIFNhdGVuZHJhIFNpbmdoIFRo
-YWt1ciB3cm90ZToKPj4gPiA+IDEuVGhlcmUgaXMgYSBmdW5jdGlvbiBpbiBkcm0tY29yZSB0byBj
-YWxjdWxhdGUgZGlzcGxheSB0aW1pbmcgcGFyYW1ldGVyczoKPj4gPiA+IGhvcml6b250YWwgZnJv
-bnQgcG9yY2gsIGJhY2sgcG9yY2gsIHN5bmMgbGVuZ3RoLAo+PiA+ID4gdmVydGljYWwgZnJvbnQg
-cG9yY2gsIGJhY2sgcG9yY2gsIHN5bmMgbGVuZ3RoIGFuZAo+PiA+ID4gY2xvY2sgaW4gSHouCj4+
-ID4gPiBIb3dldmVyLCBzb21lIGRyaXZlcnMgYXJlIHN0aWxsIGNhbGN1bGF0aW5nIHRoZXNlIHBh
-cmFtZXRlcnMgdGhlbXNlbHZlcy4KPj4gPiA+IFRoZXJlZm9yZSwgdGhlcmUgaXMgYSBkdXBsaWNh
-dGlvbiBvZiB0aGUgY29kZS4KPj4gPiA+IFRoaXMgcGF0Y2ggc2VyaWVzIHJlcGxhY2VzIHRoaXMg
-cmVkdW5kYW50IGNvZGUgd2l0aCB0aGUgZnVuY3Rpb24KPj4gPiA+IGRybV9kaXNwbGF5X21vZGVf
-dG9fdmlkZW9tb2RlLgo+PiA+ID4gVGhpcyByZW1vdmVzIG5lYXJseSAxMDAgcmVkdW5kYW50IGxp
-bmVzIGZyb20gdGhlIHJlbGF0ZWQgZHJpdmVycy4KPj4gPiA+IDIuRm9yIHNvbWUgZHJpdmVycyAo
-c3VuNGkpIHRoZSByZXZlcnNlIGhlbHBlcgo+PiA+ID4gZHJtX2Rpc3BsYXlfbW9kZV9mcm9tX3Zp
-ZGVvbW9kZSBpcyB1c2VkLgo+PiA+ID4gMy5Gb3Igc29tZSBkcml2ZXJzIGl0IHJlcGxhY2VzIGFy
-aXRobWF0aWMgb3BlcmF0b3JzICgqLCAvKSB3aXRoIHNoaWZ0aW5nCj4+ID4gPiBvcGVyYXRvcnMg
-KD4+LCA8PCkuCj4+ID4gPiA0LkZvciBzb21lIGRyaXZlcnMgRFJNX01PREVfRkxBR18qIGFyZSBy
-ZXBsYWNlZCB3aXRoIERJU1BMQVlfRkxBR1NfKiBmbGFncy4KPj4gPiA+IDUuVGhlc2UgY2hhbmdl
-cyBhcHBseSB0byBmb2xsb3dpbmcgY3J0YyBhbmQgZW5jb2RlciBkcml2ZXJzOgo+PiA+ID4gYXRt
-ZWwtaGxjZGMKPj4gPiA+IGJyaWRnZS10YzM1ODc2Nwo+PiA+ID4gZXh5bm9zLWRzaQo+PiA+ID4g
-ZnNsLWRjdQo+PiA+ID4gZ21hNTAwLW1kZmxkX2RzaV9kcGkKPj4gPiA+IGhpc2lsaWNvbi1raXJp
-bl9kc2ksIGFkZQo+PiA+ID4gbWVzb24tZW5jb2Rlcgo+PiA+ID4gcGwxMTEtZGlzcGxheQo+PiA+
-ID4gc3VuNGktdHYKPj4gPiA+IHRpIGxjZGMKPj4gPiA+IHRlZ3JhIGRjCj4+ID4gPiBtZWRpYXRl
-ayBkcGkgZHNpCj4+ID4gPiBicmlkZ2UtYWR2NzUzMwo+PiA+Cj4+ID4gVGhlIGRybV9tb2RlX3Rv
-X3ZpZGVvbW9kZSBoZWxwZXIgaXMgbWVhbnQgZm9yIGludGVyb3AgYmV0d2VlbiBkcm0gYW5kIHY0
-bCwKPj4gPiB3aGljaCBoYXZlIGRpZmZlcmVudCBpbnRlcm5hbCBzdHJ1Y3R1cmVzIHRvIHJlcHJl
-c2VudCBtb2Rlcy4KPj4gPgo+PiA+IEZvciBkcml2ZXJzIHRoYXQgb25seSB1c2UgZHJtIEkgdGhp
-bmsgdGhlIGJldHRlciBvcHRpb24gd291bGQgYmUgdG8gYWRkCj4+ID4gdGhlc2UgZmllbGRzIHRv
-IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlIGFzIGFub3RoZXIgc2V0IG9mIGNydGNfKiB2YWx1ZXMK
-Pj4gPiAodGhlIGNvbXB1dGVkIHZhbHVlcyBhcmUgc3RvcmVkIGluIGNydGNfIHByZWZpeGVkIG1l
-bWJlcnMpLiBBbmQgY29tcHV0ZQo+PiA+IGZyb250L2JhY2sgcG9yY2ggaW4gZHJtX21vZGVfc2V0
-X2NydGNpbmZvLgo+PiA+Cj4+ID4gVGhlbiB3ZSBjYW4gdXNlIHRoZXNlIG5ldyBkcm1fZGlzcGxh
-eV9tb2RlLT5jcnRjX2h8dmZyb250fGJhY2tfcG9yY2gKPj4gPiBmaWVsZHMgaW4gYWxsIHRoZSBk
-cml2ZXJzIHlvdSdyZSBjaGFuZ2luZy4gVGhpcyB3YXkgeW91IGF2b2lkIGhhdmluZyB0bwo+PiA+
-IGNoYW5nZSBhbGwgdGhlIGRybSBkcml2ZXJzIHRvIHVzZSB2NGwgI2RlZmluZXMuCj4+ID4KPj4g
-PiBUaGFua3MsCj4+ID4gRGFuaWVsCj4+Cj4+IEhpIERhbmllbCwKPj4gVGhhbmtzIGZvciB0aGUg
-Y29tbWVudHMuCj4+IEkgd2lsbCBsb29rIGludG8gaXQuCj4+Cj4+IFRoYW5rcwo+PiAtU2F0ZW5k
-cmEKPgo+IEhpIERhbmllbCwKPiBUaGFua3MgZm9yIHRoZSBjb21tZW50cy4KPiBQbGVhc2UgZmlu
-ZCBiZWxvdyBteSB1bmRlcnN0YW5kaW5nIGluIHRoaXMgZGlyZWN0aW9uLgo+Cj4gMS4gQ3VycmVu
-dGx5IHN0cnVjdCB2aWRlb21vZGUgaXMgYmVpbmcgdXNlZCBpbiA1MCBkcm0gZHJpdmVycyBhbmQg
-MTQgZmJkZXYgZHJpdmVycy4KPiAgICBTaW5jZSwgaXQncyBhbHJlYWR5IGJlaW5nIHVzZWQgYnkg
-c28gbWFueSBkcm0gZHJpdmVycywgdGhhdCBpcyB0aGUgcmVhc29uCj4gICAgdGhlc2UgZmJkZXYg
-b2JqZWN0cyAoc3RydWN0IHZpZGVtb2RlIGFuZCBmdW5jIGRybV9kaXNwbGF5X21vZGVfdG9fdmlk
-ZW9tb2RlKSB3ZXJlIHVzZWQgaW4gdGhpcyBwYXRjaCBzZXJpZXMuCgpUaGUgYmlnZ2VzdCBjb250
-cmlidXRvciBmb3IgdGhhdCBzZWVtcyB0byBiZSBvZl9nZXRfdmlkZW9tb2RlLiBXZQpzaG91bGQg
-cHJvYmFibHkgaGF2ZSBhIG9mX2RybV9nZXRfZGlzcGxheV9tb2RlIGhlbHBlciwgd2hpY2gKYXV0
-b21hdGljYWxseSBjb252ZXJ0cyB0aGUgb2YvZHQgdmlkZW8gZGVzY3JpcHRpb24gaW50byB0aGUg
-ZHJtCmRpc3BsYXkgbW9kZSBzdHJ1Y3R1cmUuCgpBbmQgSSBmb3VuZCB3YXkgbGVzcyB0aGFuIDUw
-IGRybSBkcml2ZXJzIHVzaW5nIHZpZGVvbW9kZSwgbXVjaCBsZXNzIGlmCndlIGlnbm9yZSBvZi4K
-Cj4gMi4gQW55d2F5LCBpZiBmYmRldiByZWxhdGVkIG9iamVjdHMgKHN0cnVjdC9mdW5jKSBhcmUg
-bm90IGVuY291cmFnZWQgaW4gZHJtIGRyaXZlcnMsIHRoZW4gd2UgbWF5IGFkZAo+ICAgIGgvdiBm
-cm9udC9iYWNrIHBvcmNoZXMgaW4gc3RydWN0IGRybV9kaXNwbGF5X21vZGUgYXMgYWR2aWNlZCBi
-eSB5b3UuCj4KPiAzLiBXZSBjYW4gY2FsY3VsYXRlIHRoZXNlIHBhcmFtcyBpbiBmdW5jIGRybV9t
-b2RlX3NldF9jcnRjaW5mbyBhdCB0aGUgZW5kIG9mIGl0Lgo+ICAgIGludCBkcm1fbW9kZV9zZXRf
-Y3J0Y2luZm8gKCkKPiAgICB7Cj4gICAgLgo+ICAgIC4KPiAgICBjcnRjX2hmcm9udF9wb3JjaCA9
-IGNydGNfaHN5bmNfc3RhcnQgLSBjcnRjX2hkaXNwbGF5Owo+ICAgIGNydGNfdmZyb250X3BvcmNo
-ID0gY3J0Y192c3luY19zdGFydCAtIGNydGNfdmRpc3BsYXk7Cj4gICAgLgo+ICAgIC4KPiAgICBj
-cnRjX2Nsb2NrX2h6ID0gY3J0Y19jbG9jayoxMDAwOwo+ICAgIH07Cj4KPiA0LiBOb3JtYWxseSBt
-b2RlIGlzIHByb2dyYW1tZWQgaW4gSFcgaW4gZm9sbG93aW5nIGNhbGxiYWNrcyBvZiBjcnRjIGFu
-ZCBlbmNvZGVyIGRyaXZlcnMKPiAgICAtbW9kZV9zZXQKPiAgICAtbW9kZV9zZXRfbm9mYgo+ICAg
-IC1hdG9taWNfZW5hYmxlCj4KPgo+ICAgIE5vcm1hbGx5IGRybV9tb2RlX3NldF9jcnRjaW5mbyBp
-cyB1c2VkIGluCj4gICAgLW1vZGVfZml4dXAgY2FsbGJhY2tzIChDQnMpCj4gICAgb2YgZW5jb2Rl
-ciBhbmQgY3J0YyBkcml2ZXJzLgo+Cj4gICAgaWYgbW9kZV9maXh1cCBDQnMgYXJlIGNhbGxlZCBi
-ZWZvcmUgbW9kZV9zZXQgQ0JzIHRoZW4KPiAgICBkcm1fbW9kZV9zZXRfY3J0Y2luZm8gaXMgcmln
-aHQgcGxhY2UgdG8gY2FsY3VsYXRlIHN5bmMvcG9yY2ggcGFyYW1zLgo+ICAgIFdlIGNhbiB1c2Ug
-Y3J0Y19oZnJvbnQvYmFja19wb3JjaGVzIGRpcmVjdGx5IGFuZCBwcm9ncmFtIHRoZW0gdG8gSFcK
-PiAgICBpbiBhYm92ZSBtZW50aW9uZWQgY2FsbGJhY2tzLgo+Cj4gICAgaW50IG15X21vZGVfc2V0
-ICgpCj4gICAgewo+ICAgICAgICAgUkVHX1dSSVRFKGNydGNfaGZyb250X3BvcmNoKTsKPiAgICAg
-ICAgIFJFR19XUklURShjcnRjX2hiYWNrX3BvcmNoKTsKPiAgICAgICAgIC4KPiAgICAgICAgIC4K
-PiAgICB9CgpBZ3JlZWQgd2l0aCB5b3VyIHBsYW4gdXAgdG8gcG9pbnQgNSBoZXJlLgoKPiAgNi4g
-IEhvd2V2ZXIsIGlmIHRoZXNlIHBhcmFtcyBhcmUgYmVpbmcgbW9kaWZpZWQgYWZ0ZXIgY2FsbGlu
-ZyBkcm1fc2V0X2NydGNpbmZvIGFzIG1lbnRpb25lZCBiZWxvdzoKPgo+ICAgIGJvb2wgYW1kZ3B1
-X2F0b21iaW9zX2VuY29kZXJfbW9kZV9maXh1cChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIs
-Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0IGRybV9kaXNw
-bGF5X21vZGUgKm1vZGUsCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0
-IGRybV9kaXNwbGF5X21vZGUgKmFkanVzdGVkX21vZGUpCj4gICAgewo+ICAgICAgICAgc3RydWN0
-IGFtZGdwdV9lbmNvZGVyICphbWRncHVfZW5jb2RlciA9IHRvX2FtZGdwdV9lbmNvZGVyKGVuY29k
-ZXIpOwo+Cj4gICAgICAgICAvKiBzZXQgdGhlIGFjdGl2ZSBlbmNvZGVyIHRvIGNvbm5lY3RvciBy
-b3V0aW5nICovCj4gICAgICAgICBhbWRncHVfZW5jb2Rlcl9zZXRfYWN0aXZlX2RldmljZShlbmNv
-ZGVyKTsKPiAgICAgICAgICoqKmRybV9tb2RlX3NldF9jcnRjaW5mbyhhZGp1c3RlZF9tb2RlLCAw
-KTsqKioqCj4KPiAgICAgICAgIC8qIGh3IGJ1ZyAqLwo+ICAgICAgICAgaWYgKChtb2RlLT5mbGFn
-cyAmIERSTV9NT0RFX0ZMQUdfSU5URVJMQUNFKQo+ICAgICAgICAgICAgICYmIChtb2RlLT5jcnRj
-X3ZzeW5jX3N0YXJ0IDwgKG1vZGUtPmNydGNfdmRpc3BsYXkgKyAyKSkpCj4gICAgICAgICAgICAg
-ICAgIGFkanVzdGVkX21vZGUtPmNydGNfdnN5bmNfc3RhcnQgPSBhZGp1c3RlZF9tb2RlLT5jcnRj
-X3ZkaXNwbGF5ICsgMjsKPgo+ICAgVGhlbiB3ZSBtYXkgbmVlZCB0byBkZWZpbmUgbmV3IGZ1bmMg
-bGlrZQo+Cj4gICB2b2lkIGRybV9jYWxjX2h2X3BvcmNoZXNfc3luYygpCj4gICB7Cj4gICAgY3J0
-Y19oZnJvbnRfcG9yY2ggPSBjcnRjX2hzeW5jX3N0YXJ0IC0gY3J0Y19oZGlzcGxheTsKPiAgICBj
-cnRjX3Zmcm9udF9wb3JjaCA9IGNydGNfdnN5bmNfc3RhcnQgLSBjcnRjX3ZkaXNwbGF5Owo+ICAg
-IC4KPiAgICAuCj4gICAgY3J0Y19jbG9ja19oeiA9IGNydGNfY2xvY2sqMTAwMDsKPiAgIH0gIGFu
-ZCBjYWxsIHRoaXMgZnVuYyBpbiBtb2RlX3NldCosIGF0b21pY19lbmFibGUgQ0JTIGJlZm9yZSBw
-cm9ncmFtbWluZyB0aGUgSFcgd2l0aCB0aGlzIG1vZGUuCj4KPgo+ICAgU2hvdWxkIEkgY3JlYXRl
-IHBhdGNoZXMgYXJvdW5kIHRoaXMgaWRlYSA/Cj4gICBQbGVhc2UgbGV0IG1lIGtub3cgeW91ciBj
-b21tZW50cy4KCkknbSBub3Qgc3VyZSBhYm91dCBwb2ludCA2LiBJIHRoaW5rIHdlIHNob3VsZCB3
-YWl0IHdpdGggY29taW5nIHVwIHdpdGgKYSBzb2x1dGlvbiB0byB0aGlzIHByb2JsZW0gb25jZSB0
-aGVyZSdzIGEgY2xlYXIgbmVlZCBmb3IgaXQuIE1vc3QKbGlrZWx5IEkgdGhpbmsgZHJpdmVycyB3
-aG8gYm90aCBuZWVkIHRvIGFkanVzdCBjb21wdXRlZCB0aW1pbmdzIGFuZAp3aG8gbmVlZCB2L2hm
-cm9udC9iYWNrIHBvcmNoIGp1c3QgbmVlZCB0byBhZGp1c3QgZXZlcnl0aGluZyBvbiB0aGVpcgpv
-d24uIEFuZCB3ZSB3b24ndCBwcm92aWRlIGFueSBhZGRpdGlvbmFsIGhlbHBlcnMuCgpDaGVlcnMs
-IERhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9y
-YXRpb24KKzQxICgwKSA3OSAzNjUgNTcgNDggLSBodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Tue, May 8, 2018 at 2:44 PM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
+> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+> multiplexing multiple "virtual UARTs" into a single hardware serial
+> port. The TCU is the primary serial port on Tegra194 devices.
+>
+> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+> are part of Tegra HSP blocks that are already controlled by the Tegra
+> HSP mailbox driver.
+
+First question, can it be done utilizing SERDEV framework?
+
+> +static void tegra_tcu_uart_set_mctrl(struct uart_port *port, unsigned int mctrl)
+> +{
+
+> +       (void)port;
+> +       (void)mctrl;
+
+Huh?
+
+> +}
+
+> +static void tegra_tcu_uart_stop_tx(struct uart_port *port)
+> +{
+> +       (void)port;
+> +}
+
+Ditto.
+
+> +               if (written == 3) {
+> +                       value |= 3 << 24;
+> +                       value |= BIT(26);
+> +                       mbox_send_message(tcu->tx, &value);
+
+> +               }
+
+(1)
+
+> +       }
+> +
+> +       if (written) {
+> +               value |= written << 24;
+> +               value |= BIT(26);
+> +               mbox_send_message(tcu->tx, &value);
+> +       }
+
+(2)
+
+These are code duplications.
+
+> +static void tegra_tcu_uart_stop_rx(struct uart_port *port)
+> +{
+> +       (void)port;
+> +}
+> +
+> +static void tegra_tcu_uart_break_ctl(struct uart_port *port, int ctl)
+> +{
+> +       (void)port;
+> +       (void)ctl;
+> +}
+> +
+> +static int tegra_tcu_uart_startup(struct uart_port *port)
+> +{
+> +       (void)port;
+> +
+> +       return 0;
+> +}
+> +
+> +static void tegra_tcu_uart_shutdown(struct uart_port *port)
+> +{
+> +       (void)port;
+> +}
+> +
+> +static void tegra_tcu_uart_set_termios(struct uart_port *port,
+> +                                      struct ktermios *new,
+> +                                      struct ktermios *old)
+> +{
+> +       (void)port;
+> +       (void)new;
+> +       (void)old;
+> +}
+
+Remove those unused stub contents.
+
+> +       return uart_set_options(&tegra_tcu_uart_port, cons,
+> +                               115200, 'n', 8, 'n');
+
+Can't it be one line?
+
+> +static void tegra_tcu_receive(struct mbox_client *client, void *msg_p)
+> +{
+> +       struct tty_port *port = &tegra_tcu_uart_port.state->port;
+
+> +       uint32_t msg = *(uint32_t *)msg_p;
+
+Redundant casting.
+
+> +       unsigned int num_bytes;
+> +       int i;
+> +
+
+> +       num_bytes = (msg >> 24) & 0x3;
+
+Two magic numbers.
+
+> +       for (i = 0; i < num_bytes; i++)
+> +               tty_insert_flip_char(port, (msg >> (i*8)) & 0xff, TTY_NORMAL);
+> +
+> +       tty_flip_buffer_push(port);
+> +}
+
+> +MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("NVIDIA Tegra Combined UART driver");
+> diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
+> index dce5f9dae121..eaf3c303cba6 100644
+> --- a/include/uapi/linux/serial_core.h
+> +++ b/include/uapi/linux/serial_core.h
+> @@ -281,4 +281,7 @@
+>  /* MediaTek BTIF */
+>  #define PORT_MTK_BTIF  117
+>
+> +/* NVIDIA Tegra Combined UART */
+> +#define PORT_TEGRA_TCU 118
+
+Check if there is an unused gap. IIRC we still have one near to 40ish.
+
+-- 
+With Best Regards,
+Andy Shevchenko
