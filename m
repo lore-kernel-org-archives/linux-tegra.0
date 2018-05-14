@@ -1,11 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] gpu: host1x: Acquire a reference to the IOVA cache
-Date: Mon, 14 May 2018 12:13:01 +0200
-Message-ID: <20180514101301.32188-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH] gpu: host1x: Acquire a reference to the IOVA cache
+Date: Mon, 14 May 2018 12:57:54 +0200
+Message-ID: <20180514105754.GE18312@ulmo>
+References: <20180514101301.32188-1-thierry.reding@gmail.com>
+ <bf3e90f5-8111-6035-1313-e43fb5bd6baa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1778515087=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <bf3e90f5-8111-6035-1313-e43fb5bd6baa@gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -15,49 +17,77 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBJT1ZBIEFQSSB1
-c2VzIGEgbWVtb3J5IGNhY2hlIHRvIGFsbG9jYXRlIElPVkEgbm9kZXMgZnJvbS4gVG8gbWFrZQpz
-dXJlIHRoYXQgdGhpcyBjYWNoZSBpcyBhdmFpbGFibGUsIG9idGFpbiBhIHJlZmVyZW5jZSB0byBp
-dCBhbmQgcmVsZWFzZQp0aGUgcmVmZXJlbmNlIHdoZW4gdGhlIGNhY2hlIGlzIG5vIGxvbmdlciBu
-ZWVkZWQuCgpPbiA2NC1iaXQgQVJNIHRoaXMgaXMgaGlkZGVuIGJ5IHRoZSBmYWN0IHRoYXQgdGhl
-IERNQSBtYXBwaW5nIEFQSSBnZXRzCnRoYXQgcmVmZXJlbmNlIGFuZCBuZXZlciByZWxlYXNlcyBp
-dC4gT24gMzItYml0IEFSTSwgdGhpcyBpcyBwYXBlcmVkCm92ZXIgYnkgdGhlIFRlZ3JhIERSTSBk
-cml2ZXIgKHRoZSBzb2xlIHVzZXIgb2YgdGhlIGhvc3QxeCBBUEkgcmVxdWlyaW5nCnRoZSBjYWNo
-ZSkgYWNxdWlyaW5nIGEgcmVmZXJlbmNlIHRvIHRoZSBJT1ZBIGNhY2hlIGZvciBpdHMgb3duIHB1
-cnBvc2VzLgpIb3dldmVyLCB0aGVyZSBtYXkgYmUgYWRkaXRpb25hbCB1c2VycyBvZiB0aGlzIEFQ
-SSBpbiB0aGUgZnV0dXJlLCBzbyBmaXgKdGhpcyB1cGZyb250IHRvIGF2b2lkIHN1cnByaXNlcy4K
-CkZpeGVzOiA0MDRiZmI3OGRhZjMgKCJncHU6IGhvc3QxeDogQWRkIElPTU1VIHN1cHBvcnQiKQpT
-aWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRy
-aXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyB8IDExICsrKysrKysrKystCiAxIGZpbGUgY2hhbmdlZCwg
-MTAgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
-L2hvc3QxeC9kZXYuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwppbmRleCAwM2RiNzExNzNm
-NWQuLmYxZDVmNzZlOWMzMyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCisr
-KyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwpAQCAtMjIzLDEwICsyMjMsMTQgQEAgc3RhdGlj
-IGludCBob3N0MXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJc3RydWN0
-IGlvbW11X2RvbWFpbl9nZW9tZXRyeSAqZ2VvbWV0cnk7CiAJCXVuc2lnbmVkIGxvbmcgb3JkZXI7
-CiAKKwkJZXJyID0gaW92YV9jYWNoZV9nZXQoKTsKKwkJaWYgKGVyciA8IDApCisJCQlnb3RvIHB1
-dF9ncm91cDsKKwogCQlob3N0LT5kb21haW4gPSBpb21tdV9kb21haW5fYWxsb2MoJnBsYXRmb3Jt
-X2J1c190eXBlKTsKIAkJaWYgKCFob3N0LT5kb21haW4pIHsKIAkJCWVyciA9IC1FTk9NRU07Ci0J
-CQlnb3RvIHB1dF9ncm91cDsKKwkJCWdvdG8gcHV0X2NhY2hlOwogCQl9CiAKIAkJZXJyID0gaW9t
-bXVfYXR0YWNoX2dyb3VwKGhvc3QtPmRvbWFpbiwgaG9zdC0+Z3JvdXApOwpAQCAtMjM0LDYgKzIz
-OCw3IEBAIHN0YXRpYyBpbnQgaG9zdDF4X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
-ZXYpCiAJCQlpZiAoZXJyID09IC1FTk9ERVYpIHsKIAkJCQlpb21tdV9kb21haW5fZnJlZShob3N0
-LT5kb21haW4pOwogCQkJCWhvc3QtPmRvbWFpbiA9IE5VTEw7CisJCQkJaW92YV9jYWNoZV9wdXQo
-KTsKIAkJCQlpb21tdV9ncm91cF9wdXQoaG9zdC0+Z3JvdXApOwogCQkJCWhvc3QtPmdyb3VwID0g
-TlVMTDsKIAkJCQlnb3RvIHNraXBfaW9tbXU7CkBAIC0zMDgsNiArMzEzLDkgQEAgc3RhdGljIGlu
-dCBob3N0MXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIGZhaWxfZnJlZV9k
-b21haW46CiAJaWYgKGhvc3QtPmRvbWFpbikKIAkJaW9tbXVfZG9tYWluX2ZyZWUoaG9zdC0+ZG9t
-YWluKTsKK3B1dF9jYWNoZToKKwlpZiAoaG9zdC0+Z3JvdXApCisJCWlvdmFfY2FjaGVfcHV0KCk7
-CiBwdXRfZ3JvdXA6CiAJaW9tbXVfZ3JvdXBfcHV0KGhvc3QtPmdyb3VwKTsKIApAQCAtMzI4LDYg
-KzMzNiw3IEBAIHN0YXRpYyBpbnQgaG9zdDF4X3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2KQogCQlwdXRfaW92YV9kb21haW4oJmhvc3QtPmlvdmEpOwogCQlpb21tdV9kZXRhY2hf
-Z3JvdXAoaG9zdC0+ZG9tYWluLCBob3N0LT5ncm91cCk7CiAJCWlvbW11X2RvbWFpbl9mcmVlKGhv
-c3QtPmRvbWFpbik7CisJCWlvdmFfY2FjaGVfcHV0KCk7CiAJCWlvbW11X2dyb3VwX3B1dChob3N0
-LT5ncm91cCk7CiAJfQogCi0tIAoyLjE3LjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+
+--===============1778515087==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3XA6nns4nE4KvaS/"
+Content-Disposition: inline
+
+
+--3XA6nns4nE4KvaS/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, May 14, 2018 at 01:34:27PM +0300, Dmitry Osipenko wrote:
+> On 14.05.2018 13:13, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > The IOVA API uses a memory cache to allocate IOVA nodes from. To make
+> > sure that this cache is available, obtain a reference to it and release
+> > the reference when the cache is no longer needed.
+> >=20
+> > On 64-bit ARM this is hidden by the fact that the DMA mapping API gets
+> > that reference and never releases it. On 32-bit ARM, this is papered
+> > over by the Tegra DRM driver (the sole user of the host1x API requiring
+> > the cache) acquiring a reference to the IOVA cache for its own purposes.
+> > However, there may be additional users of this API in the future, so fix
+> > this upfront to avoid surprises.
+> >=20
+> > Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  drivers/gpu/host1x/dev.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+
+Applied, thanks.
+
+Thierry
+
+--3XA6nns4nE4KvaS/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5a7AACgkQ3SOs138+
+s6EGfA//XCjxKtOzlQJOfQkg1aORJbHFnfwr9mWl1PDJH43HoHuaSBso556/lzR4
+V1WwVTuoSRld0xoX41FvgTcU3XsDzAbBOuUy+GU7n/xPW9XXtULiT9ln/h5noTzv
+g5wy0Fx81fe2pECLs6aiA/fcAikHqX/hKasgSyc1jVKqbsfg35A4i7mTcrOSKvPh
+zik9UZ1tE8q9Wi3DQBk2mMAgzQO8cI5bnvrmK97Rnv4WNpTZcQ8KPxDTq3790Q7D
+cvC9SXQo4aDBYAdVq7DsW93COWhvmUza6YvuhIuiLIBqpHp0/KzHeDTf5yoIJNA5
+jdeI2RMkIa9ND/aVVW9r3w8m3weqQu1wbY8yc3i6kvLV6yoGtga/YmZgCQkBixrq
+IXnZTKUJV1EoGSJ60o0j5ybcsP+rQ97X/yivaH1kMaJwZWIoeMZIZpEn3YlzszkO
+LHM456vt5ogoZHFTRtsfWawkP19dP5Cp+/WsYeuHa7loXlnuAR9Dj8/94aYvrBEw
+SUROzLgGx9dKNiILbV7mY1whQWIq6USRwXSCnW6+8cFEUHmxAZR5NnkUN085tBLN
+iuE2aBLZw88lir/InMeDZujmP5iXcTL0ELGtizyPioKe6ddGk+c4tNytW7DAbdTN
+nxm5Md4i/lvBi6MDajQyg5ILCxysX6tXtw5ITb5qCvMWuelMO6Y=
+=pBuy
+-----END PGP SIGNATURE-----
+
+--3XA6nns4nE4KvaS/--
+
+--===============1778515087==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1778515087==--
