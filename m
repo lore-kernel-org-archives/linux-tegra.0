@@ -1,70 +1,61 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
-Date: Mon, 14 May 2018 15:51:28 +0300
-Message-ID: <5949e650-8ab5-b4bb-196d-5a0705383141@gmail.com>
-References: <20180513211347.7187-1-digetx@gmail.com>
- <20180514115933.GH18312@ulmo>
- <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2] thermal: tegra: soctherm: add const to struct
+ thermal_cooling_device_ops
+Date: Mon, 14 May 2018 14:55:27 +0200
+Message-ID: <20180514125527.GK18312@ulmo>
+References: <1526147228-5317-1-git-send-email-srplinux2008@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x+RZeZVNR8VILNfK"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1526147228-5317-1-git-send-email-srplinux2008@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Jonathan Hunter <jonathanh@nvidia.com>, Shardar Shariff Md <smohammed@nvidia.com>, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sumeet p <srplinux2008@gmail.com>
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 14.05.2018 15:21, Laxman Dewangan wrote:
-> 
-> 
-> On Monday 14 May 2018 05:29 PM, Thierry Reding wrote:
->> * PGP Signed by an unknown key
->>
->> On Mon, May 14, 2018 at 12:13:47AM +0300, Dmitry Osipenko wrote:
->>> Nothing prevents I2C clients to access I2C while Tegra's driver is being
->>> suspended, this results in -EBUSY error returned to the clients and that
->>> may have unfortunate consequences. In particular this causes problems
->>> for the TPS6586x MFD driver which emits hundreds of "failed to read
->>> interrupt status" error messages on resume from suspend. This happens if
->>> TPS6586X is used to wake system from suspend by the expired RTC alarm
->>> timer because TPS6586X is an I2C device driver and its IRQ handler reads
->>> the status register while Tegra's I2C driver is suspended, i.e. just after
->>> kernel enabled IRQ's during of resume-from-suspend process.
->>>
->>> Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() which
->>> performs HW reset. That seems was also not entirely correct because moving
->>> tegra_i2c_resume to an earlier stage of resume-from-suspend process causes
->>> I2C transfer to fail in the case of TPS6586X. It is fine to remove the
->>> HW-reinitialization for now because it should be only needed in a case of
->>> using lowest power-mode during suspend, which upstream kernel doesn't
->>> support.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> Cc: <stable@vger.kernel.org>
->>> ---
->>>   drivers/i2c/busses/i2c-tegra.c | 33 ---------------------------------
->>>   1 file changed, 33 deletions(-)
->> Shardar, Laxman, any thoughts on this? The is_suspended thing looks to
->> me like a workaround of some sort that may not be needed if clients have
->> proper suspend/resume implementations. Even without suspend/resume
->> support in client drivers, the driver core should resume devices in the
->> right order (I2C adapter before any of the clients), so I don't see any
->> cases where the is_suspended logic would be useful.
->>
-> 
-> Our I2C driver is based on the interrupt. So we have converted the
-> suspend/resume to suspend_noirq and reseume_noirq so that we will not allow the
-> transfer when system interrupt disabled in downstream.
->           SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
-> 
-> In shutdown path, where interrupt disabled and still need i2c, we use the
-> bit-bang method via GPIO for i2c transfer.
-In the current upstream kernel suspend/resume can't be simply moved to the
-'noirq' stage because resume invokes tegra_i2c_init() which uses runtime PM and
-that doesn't work with the IRQ's being disabled. But things do not work even
-with the tegra_i2c_init() changed to work with the disabled IRQ's, like I wrote
-above the I2C transfer fails (due to timeout) and a "fix" for that failure was
-to remove reset_control_assert/deassert from the tegra_i2c_init(). So I'd go for
-a complete suspend/resume removal for now as it is causes problem.
+
+--x+RZeZVNR8VILNfK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, May 12, 2018 at 11:17:08PM +0530, sumeet p wrote:
+> Correct the typecast with const to struct thermal_cooling_device_ops.
+> It is the last argument to the function thermal_of_cooling_device_register
+> and this argument is of type const. So, declare this structure
+> thermal_cooling_device_ops as constant.
+>=20
+> Signed-off-by: sumeet p <srplinux2008@gmail.com>
+> ---
+> Changes in V2:
+> - Updated Signed-off-by with correct name.
+>=20
+> ---
+>  drivers/thermal/tegra/soctherm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--x+RZeZVNR8VILNfK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5hz8ACgkQ3SOs138+
+s6FzTw//UHE9kxWKN65Ox6rnF9i4OjP0s00iyS+VHqUde2M9s/yhhFVCKAYwoSy3
+lft31j7hHDsVmKDy243aUJrRZ8epvVR3t28wVnDYuS77pvFi6YWxvzaY5UrHrKIk
+F0w71k39Xv9OKTCC5v0/vgDUvJcJlhu16AzCBq5DojrfUBP4YgEEngicSFMQCTfG
+TRowsWuCgqU4zvLeKRlC6RjG1k+ynIa7e+ddBhg5nfJabf0dUm7pCPepWnQ83/av
+4eCoVB1eD8UEiYE9CqI85R/gjIR4LFkGEbQVK+2gMaugkwjNkJ9CRXPXZ0NuS9ws
+MTDs5Lt44YAe3ricmrJXcOre3yH1UWla+a6AcCgzlciQUzdWOloec1r7jNMXZSiR
+V5mP+/ocvBdzrw+fu71grKVwJvoTb406LvSLYd3qL34NHaPHLc20pmGWmXxgSTvk
+2ym7obQjHh8iLS3HFwyUbqkbVN2UbOwZeE7wyaKTzMncCfs+7uLML0CCZ99Fiwb4
+StiFFb4EefYiuDa0Ihs57Mf/eh79VMpuCYNQxy4SNTNyyhEH8LNQEr+8Dtj6Emcx
+SAqlt34CpQtu03zACeQErCFixFuB1nNr8fgbQ7oXC6mX3g5Z1KLW+ZGAc0oyLyh5
+rjUJ6bXfUe1tnxk3vfGBhXQ19iZcvbo7VP4BUm1qFnSTia7RId8=
+=9eRK
+-----END PGP SIGNATURE-----
+
+--x+RZeZVNR8VILNfK--
