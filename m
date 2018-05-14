@@ -1,70 +1,82 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [RFC PATCH 10/10] time: timekeeping: Remove time compensating from nonstop clocksources
-Date: Mon, 14 May 2018 16:55:36 +0800
-Message-ID: <a38362d75aed947756d84976265de5772b3787cb.1526285602.git.baolin.wang@linaro.org>
-References: <cover.1526285602.git.baolin.wang@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
-References: <cover.1526285602.git.baolin.wang@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tglx@linutronix.de, john.stultz@linaro.org, daniel.lezcano@linaro.org, arnd@arndb.de, tony@atomide.com, aaro.koskinen@iki.fi, linux@armlinux.org.uk, mark.rutland@arm.com, marc.zyngier@arm.com
-Cc: baolin.wang@linaro.org, broonie@kernel.org, paulmck@linux.vnet.ibm.com, mlichvar@redhat.com, rdunlap@infradead.org, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, pombredanne@nexb.com, thierry.reding@gmail.com, jonathanh@nvidia.com, heiko@sntech.de, linus.walleij@linaro.org, viresh.kumar@linaro.org, mingo@kernel.org, hpa@zytor.com, peterz@infradead.org, douly.fnst@cn.fujitsu.com, len.brown@intel.com, rajvi.jingar@intel.com, alexandre.belloni@bootlin.com, x86@kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] drm/tegra: Fix order of teardown in IOMMU case
+Date: Mon, 14 May 2018 10:59:23 +0200
+Message-ID: <20180514085923.GC18312@ulmo>
+References: <20180423065745.26102-1-thierry.reding@gmail.com>
+ <51f0d03d-afc3-c05f-dbf6-f3710e6f70ba@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0347700358=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <51f0d03d-afc3-c05f-dbf6-f3710e6f70ba@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Since we have converted all nonstop clocksources to use persistent clock,
-thus we can simplify the time compensating by removing the nonstop
-clocksources. Now we can compensate the suspend time for the OS time from
-the persistent clock or rtc device.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- kernel/time/timekeeping.c |   19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+--===============0347700358==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
+Content-Disposition: inline
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 49cbcee..48d2a80 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1666,7 +1666,6 @@ void timekeeping_inject_sleeptime64(struct timespec64 *delta)
- void timekeeping_resume(void)
- {
- 	struct timekeeper *tk = &tk_core.timekeeper;
--	struct clocksource *clock = tk->tkr_mono.clock;
- 	unsigned long flags;
- 	struct timespec64 ts_new, ts_delta;
- 	u64 cycle_now;
-@@ -1682,27 +1681,17 @@ void timekeeping_resume(void)
- 
- 	/*
- 	 * After system resumes, we need to calculate the suspended time and
--	 * compensate it for the OS time. There are 3 sources that could be
--	 * used: Nonstop clocksource during suspend, persistent clock and rtc
--	 * device.
-+	 * compensate it for the OS time. There are 2 sources that could be
-+	 * used: persistent clock and rtc device.
- 	 *
- 	 * One specific platform may have 1 or 2 or all of them, and the
- 	 * preference will be:
--	 *	suspend-nonstop clocksource -> persistent clock -> rtc
-+	 *	persistent clock -> rtc
- 	 * The less preferred source will only be tried if there is no better
- 	 * usable source. The rtc part is handled separately in rtc core code.
- 	 */
- 	cycle_now = tk_clock_read(&tk->tkr_mono);
--	if ((clock->flags & CLOCK_SOURCE_SUSPEND_NONSTOP) &&
--		cycle_now > tk->tkr_mono.cycle_last) {
--		u64 nsec, cyc_delta;
--
--		cyc_delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last,
--					      tk->tkr_mono.mask);
--		nsec = mul_u64_u32_shr(cyc_delta, clock->mult, clock->shift);
--		ts_delta = ns_to_timespec64(nsec);
--		sleeptime_injected = true;
--	} else if (timespec64_compare(&ts_new, &timekeeping_suspend_time) > 0) {
-+	if (timespec64_compare(&ts_new, &timekeeping_suspend_time) > 0) {
- 		ts_delta = timespec64_sub(ts_new, timekeeping_suspend_time);
- 		sleeptime_injected = true;
- 	}
--- 
-1.7.9.5
+
+--oJ71EGRlYNjSvfq7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 23, 2018 at 11:35:14AM +0300, Dmitry Osipenko wrote:
+> On 23.04.2018 09:57, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > The original code works fine, this is merely a cosmetic change to make
+> > the teardown order the reverse of the setup order.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+
+Applied, thanks.
+
+Thierry
+
+--oJ71EGRlYNjSvfq7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5T+gACgkQ3SOs138+
+s6HR3BAAqmfrsU73gcwS/Eg4MJByhHIfzB32tYCZsPJB0i0IfOmoWR0Zt+X66oD/
+lby464fsyhvb3fg8v1ZzS6yMJk2cfM1lE3bRpOlaMAkS5JOFaRen8obZjCJtw61D
+fmKKtdqexc0EtMJM5jU4t/r4kYlalfAeiXKXmTYl9cYa0McInfAcIwgP20unYBdY
+Pku1Gj2ap1SNulXhFxjflQmjoMCfz5fHdDmehB9K/PC/XRWokG4ejTrBl7lgGvbv
+yCfh+T1+eODrh/T4Cf3VLUQHA5I2OMwFo1aoRKEwUb7bci4WWZfBqV2+MYGTgq5q
+JEG5jpmntiKonzNhB3imEuNaeK98VQQ0sgemlj50Obj9s2x6lYxrWlelk8Oc8oDN
+DYxl7ZIUe6OfG1kVlRTsbCK5HPd1ukQkpS4ZB6pGXe6iUixr1r/MrROQyjHYg1lI
+Vm0IKxgkwlJ5QMhS3NUrOhbGg4LfXRwKdVcot4ovhwiJMk20HhLioo4BbZ9TsShz
+ScO4OBUUbIFuwdyIHoHYUxzU4zLgl0HqbqgWd0NF4kOC3j9LpgrRXR0EYI7yHJgK
+7mAs5j1z/Ij+QVw5RYvjPXRX3ZfI9BmvLx1C5o0focjpZINTUX+JmVNO8ZNB25xO
+S+rxmnqitPGXtFxNgjxLaULOnTKJJjCw1WRsZYbyVBKpmvQrvHI=
+=mfT1
+-----END PGP SIGNATURE-----
+
+--oJ71EGRlYNjSvfq7--
+
+--===============0347700358==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0347700358==--
