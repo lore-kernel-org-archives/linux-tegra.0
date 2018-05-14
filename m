@@ -1,13 +1,16 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] drm/tegra: Fix order of teardown in IOMMU case
-Date: Mon, 14 May 2018 10:59:23 +0200
-Message-ID: <20180514085923.GC18312@ulmo>
+Subject: Re: [PATCH 2/2] drm/tegra: Acquire a reference to the IOVA cache
+Date: Mon, 14 May 2018 11:02:10 +0200
+Message-ID: <20180514090210.GD18312@ulmo>
 References: <20180423065745.26102-1-thierry.reding@gmail.com>
- <51f0d03d-afc3-c05f-dbf6-f3710e6f70ba@gmail.com>
+ <20180423065745.26102-2-thierry.reding@gmail.com>
+ <98ffd7c2-1184-a667-39e5-68d011e516a4@gmail.com>
+ <ae552ade-e4e7-669c-ee85-820a92490871@gmail.com>
+ <c07b8a6a-3509-74d0-17a1-f7ace40f532b@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0347700358=="
+Content-Type: multipart/mixed; boundary="===============1784913769=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <51f0d03d-afc3-c05f-dbf6-f3710e6f70ba@gmail.com>
+In-Reply-To: <c07b8a6a-3509-74d0-17a1-f7ace40f532b@gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -22,54 +25,88 @@ Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttune
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0347700358==
+--===============1784913769==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
+	protocol="application/pgp-signature"; boundary="IMjqdzrDRly81ofr"
 Content-Disposition: inline
 
 
---oJ71EGRlYNjSvfq7
+--IMjqdzrDRly81ofr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 23, 2018 at 11:35:14AM +0300, Dmitry Osipenko wrote:
-> On 23.04.2018 09:57, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
+On Mon, Apr 23, 2018 at 11:43:16AM +0300, Dmitry Osipenko wrote:
+> On 23.04.2018 11:41, Dmitry Osipenko wrote:
+> > On 23.04.2018 11:34, Dmitry Osipenko wrote:
+> >> On 23.04.2018 09:57, Thierry Reding wrote:
+> >>> From: Thierry Reding <treding@nvidia.com>
+> >>>
+> >>> The IOVA API uses a memory cache to allocate IOVA nodes from. To make
+> >>> sure that this cache is available, obtain a reference to it and relea=
+se
+> >>> the reference when the cache is no longer needed.
+> >>>
+> >>> On 64-bit ARM this is hidden by the fact that the DMA mapping API gets
+> >>> that reference and never releases it. On 32-bit ARM, however, the DMA
+> >>> mapping API doesn't do that, so allocation of IOVA nodes fails.
+> >>>
+> >>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >>> ---
+> >>
+> >> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> >> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+> >>
+> >> CONFIG_TEGRA_IOMMU_SMMU is enabled in the default kernel configs and h=
+ence DRM
+> >> should fail to probe on t124 since 4.11. What about to add stable tag =
+for v4.11+
+> >> here to unbreak stable kernels as well?
 > >=20
-> > The original code works fine, this is merely a cosmetic change to make
-> > the teardown order the reverse of the setup order.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> > IOMMU node for host1x was added to t124 DT in kernel v4.14, so s/4.11/4=
+=2E14/.
+>=20
+> On the other hand nothing stops to use newer DT with older kernel.
 
-Applied, thanks.
+I've applied this and added:
+
+	Fixes: ad92601521ea ("drm/tegra: Add Tegra DRM allocation API")
+
+Since that's the commit that introduced the iova API usage. It seems
+like we also need a fix in drivers/gpu/host1x to grab a reference to
+this IOVA cache because the host1x driver also makes use of that. It
+looks as if this patch currently papers over that bug, and there's
+very little chance that anyone will use the host1x driver without the
+Tegra DRM driver. However, it's probably best to still fix it to avoid
+future exposure.
+
+I'll go type that patch up now.
 
 Thierry
 
---oJ71EGRlYNjSvfq7
+--IMjqdzrDRly81ofr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5T+gACgkQ3SOs138+
-s6HR3BAAqmfrsU73gcwS/Eg4MJByhHIfzB32tYCZsPJB0i0IfOmoWR0Zt+X66oD/
-lby464fsyhvb3fg8v1ZzS6yMJk2cfM1lE3bRpOlaMAkS5JOFaRen8obZjCJtw61D
-fmKKtdqexc0EtMJM5jU4t/r4kYlalfAeiXKXmTYl9cYa0McInfAcIwgP20unYBdY
-Pku1Gj2ap1SNulXhFxjflQmjoMCfz5fHdDmehB9K/PC/XRWokG4ejTrBl7lgGvbv
-yCfh+T1+eODrh/T4Cf3VLUQHA5I2OMwFo1aoRKEwUb7bci4WWZfBqV2+MYGTgq5q
-JEG5jpmntiKonzNhB3imEuNaeK98VQQ0sgemlj50Obj9s2x6lYxrWlelk8Oc8oDN
-DYxl7ZIUe6OfG1kVlRTsbCK5HPd1ukQkpS4ZB6pGXe6iUixr1r/MrROQyjHYg1lI
-Vm0IKxgkwlJ5QMhS3NUrOhbGg4LfXRwKdVcot4ovhwiJMk20HhLioo4BbZ9TsShz
-ScO4OBUUbIFuwdyIHoHYUxzU4zLgl0HqbqgWd0NF4kOC3j9LpgrRXR0EYI7yHJgK
-7mAs5j1z/Ij+QVw5RYvjPXRX3ZfI9BmvLx1C5o0focjpZINTUX+JmVNO8ZNB25xO
-S+rxmnqitPGXtFxNgjxLaULOnTKJJjCw1WRsZYbyVBKpmvQrvHI=
-=mfT1
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5UJIACgkQ3SOs138+
+s6ERCRAAnnQGEcsfvaXbqfleFVdaQFeFusI5ej7Z+wjfS5+b+isT4939MEV+XRYa
+Ex2xK3wlcEv0MPWew0r1YKX+YCVJLlkWu3/pCsesIbtNYE400YO6sdHKSNqsGna2
+r+RvpCDIeo1eVqvsq0hOwWU6oLB/Tre9o3AsqLWgTcZOeKDt9e2x84FMjKWrRRcL
+YxotakhrGgfECuyEExynOHR4z0HROuz4l4arM18DpEcaMS6KkXKjHoBurj03yCbT
+xmX/jeHoQSS6ADqu8CcVR0I/gXLf70LwjNc1mgPWeowLfJ1F4Cx5GgB/docXz9Hu
+o7mDIE+LH/4aLCX0zQLmOZ3S9h8Tv2fyd0/uHShHHTFh31z5hyrOWtH0eTV+bYSC
+P6dm9tDrE8m8GsD52jdxKG/MrmD5C2YqhocX5wGtMTWQ0PguckCJKu1Y2tzQ7L3O
+aHfTOXW9EzZbecoavj2gMKXqk9XM2kN2BbQrquWhkKBegsgP7fX8hBYN8Y2/2avH
+CWi3shTOQuM9W85Isx+KScODWtMvoiZtBhTB9bAlK08RpuzDQZYnhlNhxvwWFj5K
+TET9xxs85GOQPagI4cNo5FkXBbOr9PcDpwID2uVCOonONdU+CXHTFJxRn/YjmpqN
+Ch8rrtKoBJk1Tqd/Becn8RN0muZHilun6qd7BTAMAtwXIrt/w/g=
+=scxj
 -----END PGP SIGNATURE-----
 
---oJ71EGRlYNjSvfq7--
+--IMjqdzrDRly81ofr--
 
---===============0347700358==
+--===============1784913769==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -79,4 +116,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============0347700358==--
+--===============1784913769==--
