@@ -1,61 +1,89 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
-Date: Mon, 14 May 2018 17:51:58 +0530
-Message-ID: <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
-References: <20180513211347.7187-1-digetx@gmail.com>
- <20180514115933.GH18312@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v1] mfd: tps6586x: Move interrupt handling into workqueue
+Date: Mon, 14 May 2018 14:39:33 +0200
+Message-ID: <20180514123933.GI18312@ulmo>
+References: <20180513211842.7819-1-digetx@gmail.com>
+ <20180514115135.GG18312@ulmo>
+ <739706a9-4925-a7a0-686e-8d352ece4bac@gmail.com>
+ <af2393f6-f4cd-13c8-01ef-760e90a660a0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nO3oAMapP4dBpMZi"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180514115933.GH18312@ulmo>
+Content-Disposition: inline
+In-Reply-To: <af2393f6-f4cd-13c8-01ef-760e90a660a0@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Dmitry Osipenko <digetx@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Jonathan Hunter <jonathanh@nvidia.com>, Shardar Shariff Md <smohammed@nvidia.com>, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
+--nO3oAMapP4dBpMZi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Monday 14 May 2018 05:29 PM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Mon, May 14, 2018 at 12:13:47AM +0300, Dmitry Osipenko wrote:
->> Nothing prevents I2C clients to access I2C while Tegra's driver is being
->> suspended, this results in -EBUSY error returned to the clients and that
->> may have unfortunate consequences. In particular this causes problems
->> for the TPS6586x MFD driver which emits hundreds of "failed to read
->> interrupt status" error messages on resume from suspend. This happens if
->> TPS6586X is used to wake system from suspend by the expired RTC alarm
->> timer because TPS6586X is an I2C device driver and its IRQ handler reads
->> the status register while Tegra's I2C driver is suspended, i.e. just after
->> kernel enabled IRQ's during of resume-from-suspend process.
->>
->> Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() which
->> performs HW reset. That seems was also not entirely correct because moving
->> tegra_i2c_resume to an earlier stage of resume-from-suspend process causes
->> I2C transfer to fail in the case of TPS6586X. It is fine to remove the
->> HW-reinitialization for now because it should be only needed in a case of
->> using lowest power-mode during suspend, which upstream kernel doesn't
->> support.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> Cc: <stable@vger.kernel.org>
->> ---
->>   drivers/i2c/busses/i2c-tegra.c | 33 ---------------------------------
->>   1 file changed, 33 deletions(-)
-> Shardar, Laxman, any thoughts on this? The is_suspended thing looks to
-> me like a workaround of some sort that may not be needed if clients have
-> proper suspend/resume implementations. Even without suspend/resume
-> support in client drivers, the driver core should resume devices in the
-> right order (I2C adapter before any of the clients), so I don't see any
-> cases where the is_suspended logic would be useful.
->
+On Mon, May 14, 2018 at 03:20:55PM +0300, Dmitry Osipenko wrote:
+> On 14.05.2018 15:01, Dmitry Osipenko wrote:
+> > On 14.05.2018 14:51, Thierry Reding wrote:
+> >> On Mon, May 14, 2018 at 12:18:42AM +0300, Dmitry Osipenko wrote:
+> >>> Reading of status register within the interrupt handler fails with -E=
+AGAIN
+> >>> if I2C is busy with handling some other request at the same time. Mov=
+e the
+> >>> actual interrupt handling into a workqueue to avoid the unfortunate I=
+2C
+> >>> failure and to avoid hanging CPU in interrupt up to 1 second (transfer
+> >>> timeout in the Tegra I2C driver).
+> >>>
+> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>> ---
+> >>>  drivers/mfd/tps6586x.c | 40 +++++++++++++++++++++++++++++-----------
+> >>>  1 file changed, 29 insertions(+), 11 deletions(-)
+> >>
+> >> Could this not be achieved with a threaded interrupt handler?
+> >>
+> >> Thierry
+> >>
+> >=20
+> > Seems yes. I completely forgot about the threaded interrupt handlers ex=
+istence.
+> > Thank you very much for the suggestion, I'll try with the threaded IRQ =
+and send
+> > v2 if it will be fine.
+> >=20
+>=20
+> Oh wait! TPS6586x driver already uses threaded interrupt handler, so ever=
+ything
+> should be fine in regards to the interrupt handling and this patch is obs=
+olete.
+> Thank you again for the good suggestion, then it's only the Tegra's I2C d=
+river
+> that causes trouble for the TPS6586x right now.
 
-Our I2C driver is based on the interrupt. So we have converted the 
-suspend/resume to suspend_noirq and reseume_noirq so that we will not 
-allow the transfer when system interrupt disabled in downstream.
-           SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, 
-tegra_i2c_resume)
+Heh... indeed. Sounds like the discussion that Wolfram pointed out is
+the right way forward.
 
-In shutdown path, where interrupt disabled and still need i2c, we use 
-the bit-bang method via GPIO for i2c transfer.
+Thierry
+
+--nO3oAMapP4dBpMZi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5g4MACgkQ3SOs138+
+s6Ft3hAAvL7R3y+XemmmGs/JBWdaFlJNbuqViIhJk3ITeP7kxfDCh8QbqeW/yhLa
+LAvWqCFLw6lnra5b/t+Ux6wLpaPUTN9LBZjoziz2wgLtPtu2qn2oaAJG5PHzrh55
+CWrcw//Fd03x3GjdrtlmQl3BABQgql72BTTNuzprsdEK7Q/HUaQaWsREMNbPwlHq
+IV6zggdLkrbOJ9veMkNyx8ScPf2VwPdqO9kpr9lsw1W8/i+2mxKxadYija0hE8+9
+MeKdac0PZYMppz5YJ+RGqouqzr768+21OXmcP4F35RaJN6EGpFTjxiM+QtB9Ng7v
+kB8hIDtMg//jawQgO7MhW14T0vvTh22QQ8+oiqszizoV9R1/FB3L1hpUJ5P8Jg3w
+M570UV5B83xz+zONBaBiz3ZGyyBYRHxvYd23EGLL0Qs1N/deWC47kRwMewL9sOvU
+FG9djADKyjUUFysJpK5umXplCHazdL0DukADljI141ZgoBbNn1HnB2VMRKZ09y9A
+gj0dlU8u/W82g07pUDkzlPyvwm2WNXOcHDfFTytW8H60ewH2tCndKy4CZjpr/pgO
+csSo4grmtgzgSIr9JHQ8StjeMe2rM77KzegKybHQRfBsUvbtPznMRhjK3zqf70NJ
+P/FHKKhy5nqo5b63sIu5UhLOofRnfarX75c79YoOxlOFnK9732M=
+=Zx4p
+-----END PGP SIGNATURE-----
+
+--nO3oAMapP4dBpMZi--
