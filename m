@@ -1,54 +1,108 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] ARM: tegra: Device tree fixes for v4.17
-Date: Mon, 14 May 2018 01:00:31 -0700
-Message-ID: <20180514080031.nvp2dzyvg4ojie2x@localhost>
-References: <20180504153825.1074-1-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] gpu: host1x: Fix compiler errors
+Date: Mon, 14 May 2018 10:43:08 +0200
+Message-ID: <20180514084308.GA18312@ulmo>
+References: <20180326144314.xeuocqp5fjpfjm3q@lianli>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180504153825.1074-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20180326144314.xeuocqp5fjpfjm3q@lianli>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Emil Goode <emil.fsw@goode.io>
+Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 04, 2018 at 05:38:25PM +0200, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
-> 
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-> 
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.17-fixes
-> 
-> for you to fetch changes up to 9bf4e370048d2bbae5262d0c6280e0142804a272:
-> 
->   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20" (2018-05-04 17:32:29 +0200)
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> ARM: tegra: Device tree fixes for v4.17
-> 
-> This contains a single revert for a patch that was merged in v4.17-rc1
-> and that turns out to cause a regression on some boards. Further, the
-> original issue that the patch was supposed to fix seems to have
-> disappeared.
 
-Merged, thanks.
+--bp/iNruPH9dso1Pn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 26, 2018 at 04:44:14PM +0200, Emil Goode wrote:
+> The compiler is complaining with the following errors:
+>=20
+> drivers/gpu/host1x/cdma.c:94:48: error:
+> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
+ointer type
+> 	[-Werror=3Dincompatible-pointer-types]
+>=20
+> drivers/gpu/host1x/cdma.c:113:48: error:
+> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
+ointer type
+> 	[-Werror=3Dincompatible-pointer-types]
+>=20
+> The expected pointer type of the third argument to dma_alloc_wc() is
+> dma_addr_t but phys_addr_t is passed. Fix this by adding casts to the
+> expected pointer type.
+>=20
+> Signed-off-by: Emil Goode <emil.fsw@goode.io>
+> ---
+>  drivers/gpu/host1x/cdma.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+> index 28541b280739..5e8b321a751e 100644
+> --- a/drivers/gpu/host1x/cdma.c
+> +++ b/drivers/gpu/host1x/cdma.c
+> @@ -91,8 +91,8 @@ static int host1x_pushbuffer_init(struct push_buffer *p=
+b)
+> =20
+>  		size =3D iova_align(&host1x->iova, size);
+> =20
+> -		pb->mapped =3D dma_alloc_wc(host1x->dev, size, &pb->phys,
+> -					  GFP_KERNEL);
+> +		pb->mapped =3D dma_alloc_wc(host1x->dev, size,
+> +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
+>  		if (!pb->mapped)
+>  			return -ENOMEM;
+> =20
+> @@ -110,8 +110,8 @@ static int host1x_pushbuffer_init(struct push_buffer =
+*pb)
+>  		if (err)
+>  			goto iommu_free_iova;
+>  	} else {
+> -		pb->mapped =3D dma_alloc_wc(host1x->dev, size, &pb->phys,
+> -					  GFP_KERNEL);
+> +		pb->mapped =3D dma_alloc_wc(host1x->dev, size,
+> +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
+>  		if (!pb->mapped)
+>  			return -ENOMEM;
+> =20
 
--Olof
+This doesn't seem right. There's no guarantee that phys_addr_t and
+dma_addr_t will be compatible, so the above isn't always correct. Also,
+I don't see a need for pb->phys to ever be phys_addr_t. It's allocated
+through dma_alloc_wc() exclusively, so it should just be dma_addr_t.
+
+Note that the !pb->phys check in host1x_pushbuffer_destroy() becomes
+technically wrong if pb->phys is dma_addr_t (0 is a perfectly valid
+value for dma_addr_t), so make sure to flip that to !pb->mapped instead.
+pb->mapped and pb->phys are always set in tandem, and checking mapped
+for non-NULL is the right check to test whether the pair is valid or
+not.
+
+Thierry
+
+--bp/iNruPH9dso1Pn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5TBkACgkQ3SOs138+
+s6G56g//VpYNFTGEXoQtF3mu6srEPteFaOn/GAVW/kBSUvL+ujF7mZQYM67KdBPH
+/ZxRkc+2oCZ025a91uVMWj8Qz8H3hUlSEZx4Ep7OQrJqlL9FO8cROnfAKt0Xq6zT
+PYsQGPecBeGURZ3G+QDT5gb3DBLdzF7GoTO0Aj7wrzG1A0QHqtgjcvQj1vhxrDPw
+T1iOZpax8iZdmZwLJRmGmGi/TUPd9LghmSy7Uy3zFwxU3Fzue9Y7qZ+jdtImD4bJ
+6ZkkVTyz2cbuUQo3P7nU6ic2LXnr8LTPCuIvKHN/OSjQWUOOhCWf/i0uS/qLlNeU
+RulA6dvHr29QqAFITwvULHApPTxz8u4Hu0lsvISWyIkXNUeg9iRmravS2JqDHFRp
+upFEdX3tdlFJFtlveIvBfuoCHwWQrzhGK4dIC4x2XMxBz5MPuvDMyAIil0HUCj6W
+pOLsbn57GKe9jr5UlpNNUFpm0epbNj/kIRVV6lsMoHzUQYwDyBNVyeWPpp04Ldov
+yRG+O4KG9ejXPkQp2X5vtl+zvFMx64ENVYISywbd9s7963+u96VyV8UgKmC/3bOO
+T+gZ9TOiTjWv0xKe3PmpHbaHxhgWmrO0V8uVCA/kNzhXfpTUEE/TLI0WZoQuRRzW
+iU4or6UysrLgMBl8lQTS35qgruAjQM38VxOeCai9DiIQHb4BTBQ=
+=Q7XC
+-----END PGP SIGNATURE-----
+
+--bp/iNruPH9dso1Pn--
