@@ -1,70 +1,45 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] gpu: host1x: Acquire a reference to the IOVA cache
-Date: Mon, 14 May 2018 13:34:27 +0300
-Message-ID: <bf3e90f5-8111-6035-1313-e43fb5bd6baa@gmail.com>
-References: <20180514101301.32188-1-thierry.reding@gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [RFC PATCH 00/10] Add persistent clock support
+Date: Tue, 15 May 2018 12:27:15 +0200
+Message-ID: <20180515102715.GO29062@mai>
+References: <cover.1526285602.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180514101301.32188-1-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: tglx@linutronix.de, john.stultz@linaro.org, arnd@arndb.de, tony@atomide.com, aaro.koskinen@iki.fi, linux@armlinux.org.uk, mark.rutland@arm.com, marc.zyngier@arm.com, broonie@kernel.org, paulmck@linux.vnet.ibm.com, mlichvar@redhat.com, rdunlap@infradead.org, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, pombredanne@nexb.com, thierry.reding@gmail.com, jonathanh@nvidia.com, heiko@sntech.de, linus.walleij@linaro.org, viresh.kumar@linaro.org, mingo@kernel.org, hpa@zytor.com, peterz@infradead.org, douly.fnst@cn.fujitsu.com, len.brown@intel.com, rajvi.jingar@intel.com, alexandre.belloni@bootlin.com, x86@kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTQuMDUuMjAxOCAxMzoxMywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBUaGUgSU9WQSBBUEkgdXNlcyBhIG1l
-bW9yeSBjYWNoZSB0byBhbGxvY2F0ZSBJT1ZBIG5vZGVzIGZyb20uIFRvIG1ha2UKPiBzdXJlIHRo
-YXQgdGhpcyBjYWNoZSBpcyBhdmFpbGFibGUsIG9idGFpbiBhIHJlZmVyZW5jZSB0byBpdCBhbmQg
-cmVsZWFzZQo+IHRoZSByZWZlcmVuY2Ugd2hlbiB0aGUgY2FjaGUgaXMgbm8gbG9uZ2VyIG5lZWRl
-ZC4KPiAKPiBPbiA2NC1iaXQgQVJNIHRoaXMgaXMgaGlkZGVuIGJ5IHRoZSBmYWN0IHRoYXQgdGhl
-IERNQSBtYXBwaW5nIEFQSSBnZXRzCj4gdGhhdCByZWZlcmVuY2UgYW5kIG5ldmVyIHJlbGVhc2Vz
-IGl0LiBPbiAzMi1iaXQgQVJNLCB0aGlzIGlzIHBhcGVyZWQKPiBvdmVyIGJ5IHRoZSBUZWdyYSBE
-Uk0gZHJpdmVyICh0aGUgc29sZSB1c2VyIG9mIHRoZSBob3N0MXggQVBJIHJlcXVpcmluZwo+IHRo
-ZSBjYWNoZSkgYWNxdWlyaW5nIGEgcmVmZXJlbmNlIHRvIHRoZSBJT1ZBIGNhY2hlIGZvciBpdHMg
-b3duIHB1cnBvc2VzLgo+IEhvd2V2ZXIsIHRoZXJlIG1heSBiZSBhZGRpdGlvbmFsIHVzZXJzIG9m
-IHRoaXMgQVBJIGluIHRoZSBmdXR1cmUsIHNvIGZpeAo+IHRoaXMgdXBmcm9udCB0byBhdm9pZCBz
-dXJwcmlzZXMuCj4gCj4gRml4ZXM6IDQwNGJmYjc4ZGFmMyAoImdwdTogaG9zdDF4OiBBZGQgSU9N
-TVUgc3VwcG9ydCIpCj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZp
-ZGlhLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jIHwgMTEgKysrKysrKysr
-Ky0KPiAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAK
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jIGIvZHJpdmVycy9ncHUvaG9z
-dDF4L2Rldi5jCj4gaW5kZXggMDNkYjcxMTczZjVkLi5mMWQ1Zjc2ZTljMzMgMTAwNjQ0Cj4gLS0t
-IGEvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCj4gKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2Rl
-di5jCj4gQEAgLTIyMywxMCArMjIzLDE0IEBAIHN0YXRpYyBpbnQgaG9zdDF4X3Byb2JlKHN0cnVj
-dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAkJc3RydWN0IGlvbW11X2RvbWFpbl9nZW9tZXRy
-eSAqZ2VvbWV0cnk7Cj4gIAkJdW5zaWduZWQgbG9uZyBvcmRlcjsKPiAgCj4gKwkJZXJyID0gaW92
-YV9jYWNoZV9nZXQoKTsKPiArCQlpZiAoZXJyIDwgMCkKPiArCQkJZ290byBwdXRfZ3JvdXA7Cj4g
-Kwo+ICAJCWhvc3QtPmRvbWFpbiA9IGlvbW11X2RvbWFpbl9hbGxvYygmcGxhdGZvcm1fYnVzX3R5
-cGUpOwo+ICAJCWlmICghaG9zdC0+ZG9tYWluKSB7Cj4gIAkJCWVyciA9IC1FTk9NRU07Cj4gLQkJ
-CWdvdG8gcHV0X2dyb3VwOwo+ICsJCQlnb3RvIHB1dF9jYWNoZTsKPiAgCQl9Cj4gIAo+ICAJCWVy
-ciA9IGlvbW11X2F0dGFjaF9ncm91cChob3N0LT5kb21haW4sIGhvc3QtPmdyb3VwKTsKPiBAQCAt
-MjM0LDYgKzIzOCw3IEBAIHN0YXRpYyBpbnQgaG9zdDF4X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYpCj4gIAkJCWlmIChlcnIgPT0gLUVOT0RFVikgewo+ICAJCQkJaW9tbXVfZG9t
-YWluX2ZyZWUoaG9zdC0+ZG9tYWluKTsKPiAgCQkJCWhvc3QtPmRvbWFpbiA9IE5VTEw7Cj4gKwkJ
-CQlpb3ZhX2NhY2hlX3B1dCgpOwo+ICAJCQkJaW9tbXVfZ3JvdXBfcHV0KGhvc3QtPmdyb3VwKTsK
-PiAgCQkJCWhvc3QtPmdyb3VwID0gTlVMTDsKPiAgCQkJCWdvdG8gc2tpcF9pb21tdTsKPiBAQCAt
-MzA4LDYgKzMxMyw5IEBAIHN0YXRpYyBpbnQgaG9zdDF4X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYpCj4gIGZhaWxfZnJlZV9kb21haW46Cj4gIAlpZiAoaG9zdC0+ZG9tYWluKQo+
-ICAJCWlvbW11X2RvbWFpbl9mcmVlKGhvc3QtPmRvbWFpbik7Cj4gK3B1dF9jYWNoZToKPiArCWlm
-IChob3N0LT5ncm91cCkKPiArCQlpb3ZhX2NhY2hlX3B1dCgpOwo+ICBwdXRfZ3JvdXA6Cj4gIAlp
-b21tdV9ncm91cF9wdXQoaG9zdC0+Z3JvdXApOwo+ICAKPiBAQCAtMzI4LDYgKzMzNiw3IEBAIHN0
-YXRpYyBpbnQgaG9zdDF4X3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJ
-CXB1dF9pb3ZhX2RvbWFpbigmaG9zdC0+aW92YSk7Cj4gIAkJaW9tbXVfZGV0YWNoX2dyb3VwKGhv
-c3QtPmRvbWFpbiwgaG9zdC0+Z3JvdXApOwo+ICAJCWlvbW11X2RvbWFpbl9mcmVlKGhvc3QtPmRv
-bWFpbik7Cj4gKwkJaW92YV9jYWNoZV9wdXQoKTsKPiAgCQlpb21tdV9ncm91cF9wdXQoaG9zdC0+
-Z3JvdXApOwo+ICAJfQo+ICAKPiAKClJldmlld2VkLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0
-eEBnbWFpbC5jb20+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+On Mon, May 14, 2018 at 04:55:26PM +0800, Baolin Wang wrote:
+> Hi,
+> 
+> We will meet below issues when compensating the suspend time for the timekeeping.
+> 
+> 1. We have too many different ways of dealing with persistent timekeeping
+> across architectures, so it is hard for one driver to compatable with different
+> architectures.
+> 
+> 2. On some platforms (such as Spreadtrum platform), we registered the high
+> resolution timer as one clocksource to update the OS time, but the high
+> resolution timer will be stopped in suspend state. So we use another one
+> always-on timer (but low resolution) to calculate the suspend time to
+> compensate the OS time. Though we can register the always-on timer as one
+> clocksource, we need re-calculate the mult/shift with one larger conversion
+> range to calculate the suspend time and need update the clock in case of
+> running over the always-on timer.
+
+First, can you elaborate what you mean by 'suspend state' ? On which power
+domain the clocksource belongs to?
+
+
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
