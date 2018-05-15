@@ -1,88 +1,107 @@
-From: Emil Goode <emil.fsw@goode.io>
-Subject: Re: [PATCH] gpu: host1x: Fix compiler errors
-Date: Tue, 15 May 2018 23:07:30 +0200
-Message-ID: <20180515210729.qtokt4zjlrbzdkem@lianli>
-References: <20180326144314.xeuocqp5fjpfjm3q@lianli>
- <20180514084308.GA18312@ulmo>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v4 3/3] ARM: dts: tegra: Work safely with 256 MB
+ Colibri-T20 modules
+Date: Tue, 15 May 2018 23:20:46 +0200
+Message-ID: <fce1d8c51fc3fd74fe61933fe9b59654@agner.ch>
+References: <1526395285-19006-1-git-send-email-krzk@kernel.org>
+ <1526395285-19006-4-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180514084308.GA18312@ulmo>
+In-Reply-To: <1526395285-19006-4-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Lucas Stach <dev@lynxeye.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
-
-On Mon, May 14, 2018 at 10:43:08AM +0200, Thierry Reding wrote:
-> On Mon, Mar 26, 2018 at 04:44:14PM +0200, Emil Goode wrote:
-> > The compiler is complaining with the following errors:
-> > 
-> > drivers/gpu/host1x/cdma.c:94:48: error:
-> > 	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-> > 	[-Werror=incompatible-pointer-types]
-> > 
-> > drivers/gpu/host1x/cdma.c:113:48: error:
-> > 	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-> > 	[-Werror=incompatible-pointer-types]
-> > 
-> > The expected pointer type of the third argument to dma_alloc_wc() is
-> > dma_addr_t but phys_addr_t is passed. Fix this by adding casts to the
-> > expected pointer type.
-> > 
-> > Signed-off-by: Emil Goode <emil.fsw@goode.io>
-> > ---
-> >  drivers/gpu/host1x/cdma.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-> > index 28541b280739..5e8b321a751e 100644
-> > --- a/drivers/gpu/host1x/cdma.c
-> > +++ b/drivers/gpu/host1x/cdma.c
-> > @@ -91,8 +91,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
-> >  
-> >  		size = iova_align(&host1x->iova, size);
-> >  
-> > -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
-> > -					  GFP_KERNEL);
-> > +		pb->mapped = dma_alloc_wc(host1x->dev, size,
-> > +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
-> >  		if (!pb->mapped)
-> >  			return -ENOMEM;
-> >  
-> > @@ -110,8 +110,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
-> >  		if (err)
-> >  			goto iommu_free_iova;
-> >  	} else {
-> > -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
-> > -					  GFP_KERNEL);
-> > +		pb->mapped = dma_alloc_wc(host1x->dev, size,
-> > +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
-> >  		if (!pb->mapped)
-> >  			return -ENOMEM;
-> >  
+On 15.05.2018 16:41, Krzysztof Kozlowski wrote:
+> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
+> (with 1024 MB NAND) flavors.  Both of them will use the same DTSI
+> expecting the bootloader to do the fixup of /memory node.  However in
+> case it does not happen, let's stay on safe side by limiting the memory
+> to 256 MB for both versions of Colibri-T20.
 > 
-> This doesn't seem right. There's no guarantee that phys_addr_t and
-> dma_addr_t will be compatible, so the above isn't always correct. Also,
-> I don't see a need for pb->phys to ever be phys_addr_t. It's allocated
-> through dma_alloc_wc() exclusively, so it should just be dma_addr_t.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> RFT:
+> Not tested on 512 MB module as I have only the 256 MB one.
+> 
+> Changes since v3:
+> 1. Reduce the memory in existing DTSI instead of creating a new one
+>    (suggested by Marcel).
+> 
+> Changes since v2:
+> 1. Do not add new compatible but use everywhere existing
+>    "toradex,colibri_t20-512" (suggested by Rob).
+> 
+> Changes since v1:
+> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
+>    my bootloader uses mem= argument).
+> ---
+>  arch/arm/boot/dts/tegra20-colibri-512.dtsi | 9 +++++++--
+>  arch/arm/boot/dts/tegra20-iris-512.dts     | 2 +-
 
-I agree that this is a better solution, however when changing pb->phys to dma_addr_t
-the type will be wrong when it's passed to iommu_map() as phys_addr_t is expected
-but that doesn't cause a compilation error.
+I don't like this variant too much.
 
-> Note that the !pb->phys check in host1x_pushbuffer_destroy() becomes
-> technically wrong if pb->phys is dma_addr_t (0 is a perfectly valid
-> value for dma_addr_t), so make sure to flip that to !pb->mapped instead.
-> pb->mapped and pb->phys are always set in tandem, and checking mapped
-> for non-NULL is the right check to test whether the pair is valid or
-> not.
+Can we not just drop the 512? And while at it, I would prefer to see the
+usual $soc-$module-$carrier schema, as we use with all the other modules
+of the Colibri and Apalis family.
 
-Ok I will change this as well.
+e.g.
+tegra20-colibri-512.dtsi -> tegra20-colibri.dtsi
+tegra20-iris-512.dts -> tegra20-colibri-iris.dts
 
-Best regards,
+Yes, it is somewhat churn, but I would prefer it for the sake of clarity
+and consistency...
 
-Emil
+--
+Stefan
+
+
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> index 305efb275b48..b9387c540450 100644
+> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> @@ -2,7 +2,7 @@
+>  #include "tegra20.dtsi"
+>  
+>  / {
+> -	model = "Toradex Colibri T20 512MB";
+> +	model = "Toradex Colibri T20 256/512 MB";
+>  	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
+>  
+>  	aliases {
+> @@ -12,7 +12,12 @@
+>  
+>  	memory@0 {
+>  		device_type = "memory";
+> -		reg = <0x00000000 0x20000000>;
+> +		/*
+> +		 * Set memory to 256 MB to be safe as this could be used on
+> +		 * 256 or 512 MB module. It is expected from bootloader
+> +		 * to fix this up for 512 MB version.
+> +		 */
+> +		reg = <0x00000000 0x10000000>;
+>  	};
+>  
+>  	host1x@50000000 {
+> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts
+> b/arch/arm/boot/dts/tegra20-iris-512.dts
+> index 40126388946d..efaa96228722 100644
+> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
+> +++ b/arch/arm/boot/dts/tegra20-iris-512.dts
+> @@ -4,7 +4,7 @@
+>  #include "tegra20-colibri-512.dtsi"
+>  
+>  / {
+> -	model = "Toradex Colibri T20 512MB on Iris";
+> +	model = "Toradex Colibri T20 256/512 MB on Iris";
+>  	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
+>  
+>  	aliases {
