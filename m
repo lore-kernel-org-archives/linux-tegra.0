@@ -1,75 +1,56 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [RFC PATCH 00/10] Add persistent clock support
-Date: Tue, 15 May 2018 15:56:12 +0200
-Message-ID: <20180515135612.GQ29062@mai>
-References: <cover.1526285602.git.baolin.wang@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 0/3] ARM: dts: tegra: Add 256 MB Colibri-T20 and cleanups
+Date: Tue, 15 May 2018 16:41:22 +0200
+Message-ID: <1526395285-19006-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: tglx@linutronix.de, john.stultz@linaro.org, arnd@arndb.de, tony@atomide.com, aaro.koskinen@iki.fi, linux@armlinux.org.uk, mark.rutland@arm.com, marc.zyngier@arm.com, broonie@kernel.org, paulmck@linux.vnet.ibm.com, mlichvar@redhat.com, rdunlap@infradead.org, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, pombredanne@nexb.com, thierry.reding@gmail.com, jonathanh@nvidia.com, heiko@sntech.de, linus.walleij@linaro.org, viresh.kumar@linaro.org, mingo@kernel.org, hpa@zytor.com, peterz@infradead.org, douly.fnst@cn.fujitsu.com, len.brown@intel.com, rajvi.jingar@intel.com, alexandre.belloni@bootlin.com, x86@kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 14, 2018 at 04:55:26PM +0800, Baolin Wang wrote:
-> Hi,
-> 
-> We will meet below issues when compensating the suspend time for the timekeeping.
-> 
-> 1. We have too many different ways of dealing with persistent timekeeping
-> across architectures, so it is hard for one driver to compatable with different
-> architectures.
-> 
-> 2. On some platforms (such as Spreadtrum platform), we registered the high
-> resolution timer as one clocksource to update the OS time, but the high
-> resolution timer will be stopped in suspend state. So we use another one
-> always-on timer (but low resolution) to calculate the suspend time to
-> compensate the OS time. Though we can register the always-on timer as one
-> clocksource, we need re-calculate the mult/shift with one larger conversion
-> range to calculate the suspend time and need update the clock in case of
-> running over the always-on timer.
-> 
-> More duplicate code will be added if other platforms meet this case.
-> 
-> 3. Now we have 3 sources that could be used to compensate the OS time:
-> Nonstop clocksource during suspend, persistent clock and rtc device,
-> which is complicated. Another hand is that the nonstop clocksource can
-> risk wrapping if the suspend time is too long, so we need one mechanism
-> to wake up the system before the nonstop clocksource wrapping.
-> 
-> According to above issues, we can introduce one common persistent clock
-> framework to compatable with different architectures, in future we will
-> remove the persistent clock implementation for each architecture. Also
-> this framework will implement common code to help drivers to register easily.
-> Moreover if we converted all SUSPEND_NONSTOP clocksource to register to
-> be one persistent clock, we can remove the SUSPEND_NONSTOP clocksource
-> accounting in timekeeping, which means we can only compensate the OS time
-> from persistent clock and RTC.
-> 
-> Will be appreciated for any comments. Thank you all.
+Hi,
 
-Why do we need another API ?
 
-Why not remove the present persistent API and rely on the SUSPEND_NONSTOP flag
-to do the right action at suspend and resume?
+Changes since v3:
+1. Patch 3/3: Just reduce the memory of existing DTSI
+   (suggested by Marcel).
 
-We register different clocksources, the rating does the selection.
 
-When entering 'suspend', we check against the SUSPEND_NONSTOP flag and switch
-to the first clocksource with the best rating and the flag set. When resuming,
-we switch back to the highest rating.
+Best regards,
+Krzysztof
 
-Having a clocksource out of the always-on domain must be notified with a trace
-in the log because this is not a normal situation.
 
+Krzysztof Kozlowski (3):
+  ARM: dts: tegra: Remove skeleton.dtsi and fix DTC warnings for /memory
+  ARM: dts: tegra: Fix unit_address_vs_reg and
+    avoid_unnecessary_addr_size DTC warnings
+  ARM: dts: tegra: Work safely with 256 MB Colibri-T20 modules
+
+ arch/arm/boot/dts/tegra114-dalmore.dts      |  3 ++-
+ arch/arm/boot/dts/tegra114-roth.dts         |  3 ++-
+ arch/arm/boot/dts/tegra114-tn7.dts          |  3 ++-
+ arch/arm/boot/dts/tegra114.dtsi             |  4 ++--
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi |  3 ++-
+ arch/arm/boot/dts/tegra124-apalis.dtsi      |  3 ++-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts   |  3 ++-
+ arch/arm/boot/dts/tegra124-nyan.dtsi        |  3 ++-
+ arch/arm/boot/dts/tegra124-venice2.dts      |  3 ++-
+ arch/arm/boot/dts/tegra124.dtsi             |  2 --
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 12 +++++++++---
+ arch/arm/boot/dts/tegra20-harmony.dts       |  3 ++-
+ arch/arm/boot/dts/tegra20-iris-512.dts      |  2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts         |  3 ++-
+ arch/arm/boot/dts/tegra20-seaboard.dts      |  3 ++-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi     |  3 ++-
+ arch/arm/boot/dts/tegra20-trimslice.dts     |  3 ++-
+ arch/arm/boot/dts/tegra20-ventana.dts       |  3 ++-
+ arch/arm/boot/dts/tegra20.dtsi              |  7 +++++--
+ arch/arm/boot/dts/tegra30-apalis.dtsi       |  9 ++++++---
+ arch/arm/boot/dts/tegra30-beaver.dts        |  6 ++----
+ arch/arm/boot/dts/tegra30-cardhu.dtsi       |  3 ++-
+ arch/arm/boot/dts/tegra30-colibri.dtsi      |  5 ++---
+ arch/arm/boot/dts/tegra30.dtsi              |  7 +++++--
+ 24 files changed, 62 insertions(+), 37 deletions(-)
 
 -- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.7.4
