@@ -1,107 +1,49 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v4 3/3] ARM: dts: tegra: Work safely with 256 MB
- Colibri-T20 modules
-Date: Tue, 15 May 2018 23:20:46 +0200
-Message-ID: <fce1d8c51fc3fd74fe61933fe9b59654@agner.ch>
-References: <1526395285-19006-1-git-send-email-krzk@kernel.org>
- <1526395285-19006-4-git-send-email-krzk@kernel.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [RFC PATCH 00/10] Add persistent clock support
+Date: Wed, 16 May 2018 10:20:17 +0800
+Message-ID: <CAMz4kuJjhhty7HigPEA6Gm4HtFk_3t1aCwbX3c0mLLQF8SZBLw@mail.gmail.com>
+References: <cover.1526285602.git.baolin.wang@linaro.org> <20180515102715.GO29062@mai>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526395285-19006-4-git-send-email-krzk@kernel.org>
+In-Reply-To: <20180515102715.GO29062@mai>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Lucas Stach <dev@lynxeye.de>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>, aaro.koskinen@iki.fi, linux@armlinux.org.uk, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>, Paul McKenney <paulmck@linux.vnet.ibm.com>, mlichvar@redhat.com, rdunlap@infradead.org, Kate Stewart <kstewart@linuxfoundation.org>, Greg KH <gregkh@linuxfoundation.org>, Philippe Ombredanne <pombredanne@nexb.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>H
 List-Id: linux-tegra@vger.kernel.org
 
-On 15.05.2018 16:41, Krzysztof Kozlowski wrote:
-> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
-> (with 1024 MB NAND) flavors.  Both of them will use the same DTSI
-> expecting the bootloader to do the fixup of /memory node.  However in
-> case it does not happen, let's stay on safe side by limiting the memory
-> to 256 MB for both versions of Colibri-T20.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> RFT:
-> Not tested on 512 MB module as I have only the 256 MB one.
-> 
-> Changes since v3:
-> 1. Reduce the memory in existing DTSI instead of creating a new one
->    (suggested by Marcel).
-> 
-> Changes since v2:
-> 1. Do not add new compatible but use everywhere existing
->    "toradex,colibri_t20-512" (suggested by Rob).
-> 
-> Changes since v1:
-> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
->    my bootloader uses mem= argument).
-> ---
->  arch/arm/boot/dts/tegra20-colibri-512.dtsi | 9 +++++++--
->  arch/arm/boot/dts/tegra20-iris-512.dts     | 2 +-
+Hi Daniel,
 
-I don't like this variant too much.
+On 15 May 2018 at 18:27, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+> On Mon, May 14, 2018 at 04:55:26PM +0800, Baolin Wang wrote:
+>> Hi,
+>>
+>> We will meet below issues when compensating the suspend time for the timekeeping.
+>>
+>> 1. We have too many different ways of dealing with persistent timekeeping
+>> across architectures, so it is hard for one driver to compatable with different
+>> architectures.
+>>
+>> 2. On some platforms (such as Spreadtrum platform), we registered the high
+>> resolution timer as one clocksource to update the OS time, but the high
+>> resolution timer will be stopped in suspend state. So we use another one
+>> always-on timer (but low resolution) to calculate the suspend time to
+>> compensate the OS time. Though we can register the always-on timer as one
+>> clocksource, we need re-calculate the mult/shift with one larger conversion
+>> range to calculate the suspend time and need update the clock in case of
+>> running over the always-on timer.
+>
+> First, can you elaborate what you mean by 'suspend state' ? On which power
 
-Can we not just drop the 512? And while at it, I would prefer to see the
-usual $soc-$module-$carrier schema, as we use with all the other modules
-of the Colibri and Apalis family.
+What I mean is the high resolution timer will be stopped when the
+system goes into suspend state.
 
-e.g.
-tegra20-colibri-512.dtsi -> tegra20-colibri.dtsi
-tegra20-iris-512.dts -> tegra20-colibri-iris.dts
+> domain the clocksource belongs to?
 
-Yes, it is somewhat churn, but I would prefer it for the sake of clarity
-and consistency...
+On Spreadtrum platform, It belongs to one power domain named
+"APCPU_TOP", that will be power down when the system goes into suspend
+state.
 
---
-Stefan
-
-
->  2 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> index 305efb275b48..b9387c540450 100644
-> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> @@ -2,7 +2,7 @@
->  #include "tegra20.dtsi"
->  
->  / {
-> -	model = "Toradex Colibri T20 512MB";
-> +	model = "Toradex Colibri T20 256/512 MB";
->  	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
->  
->  	aliases {
-> @@ -12,7 +12,12 @@
->  
->  	memory@0 {
->  		device_type = "memory";
-> -		reg = <0x00000000 0x20000000>;
-> +		/*
-> +		 * Set memory to 256 MB to be safe as this could be used on
-> +		 * 256 or 512 MB module. It is expected from bootloader
-> +		 * to fix this up for 512 MB version.
-> +		 */
-> +		reg = <0x00000000 0x10000000>;
->  	};
->  
->  	host1x@50000000 {
-> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts
-> b/arch/arm/boot/dts/tegra20-iris-512.dts
-> index 40126388946d..efaa96228722 100644
-> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
-> +++ b/arch/arm/boot/dts/tegra20-iris-512.dts
-> @@ -4,7 +4,7 @@
->  #include "tegra20-colibri-512.dtsi"
->  
->  / {
-> -	model = "Toradex Colibri T20 512MB on Iris";
-> +	model = "Toradex Colibri T20 256/512 MB on Iris";
->  	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
->  
->  	aliases {
+-- 
+Baolin.wang
+Best Regards
