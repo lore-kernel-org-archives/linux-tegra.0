@@ -1,45 +1,60 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Wed, 16 May 2018 17:05:30 +0300
-Message-ID: <a5015143-ef1d-4eb1-5651-346dae82d42e@gmail.com>
-References: <20180503225537.20748-1-digetx@gmail.com>
- <20180503225537.20748-3-digetx@gmail.com>
- <CACRpkdbykxwHvQgfFnihOHy1hsM7ZWHtCYGCNb49MbNkKWz6Hg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 3/3] ARM: dts: tegra: Work safely with 256 MB
+ Colibri-T20 modules
+Date: Thu, 17 May 2018 09:40:14 +0200
+Message-ID: <CAJKOXPcBpOUkVay7u=gHRuw3=gZkR2Jk0k3QycHZorxWz7x2jg@mail.gmail.com>
+References: <1526395285-19006-1-git-send-email-krzk@kernel.org>
+ <1526395285-19006-4-git-send-email-krzk@kernel.org> <fce1d8c51fc3fd74fe61933fe9b59654@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbykxwHvQgfFnihOHy1hsM7ZWHtCYGCNb49MbNkKWz6Hg@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <fce1d8c51fc3fd74fe61933fe9b59654@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Lucas Stach <dev@lynxeye.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On 16.05.2018 15:23, Linus Walleij wrote:
-> On Fri, May 4, 2018 at 12:55 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
-> 
->> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
->> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
->> that main clk-controller driver could get an actual parent clock for the
->> CDEV1/2 clocks.
+On Tue, May 15, 2018 at 11:20 PM, Stefan Agner <stefan@agner.ch> wrote:
+> On 15.05.2018 16:41, Krzysztof Kozlowski wrote:
+>> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
+>> (with 1024 MB NAND) flavors.  Both of them will use the same DTSI
+>> expecting the bootloader to do the fixup of /memory node.  However in
+>> case it does not happen, let's stay on safe side by limiting the memory
+>> to 256 MB for both versions of Colibri-T20.
 >>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marc Dietrich <marvin24@gmx.de>
->> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>
 >> ---
 >>
->> v2: This patch is factored out from the v1 clk/DT series so that it could be
->>     applied separately.
-> 
-> Patch applied unless Stephen W protests.
-> Please include swarren on future patches to this driver.
+>> RFT:
+>> Not tested on 512 MB module as I have only the 256 MB one.
+>>
+>> Changes since v3:
+>> 1. Reduce the memory in existing DTSI instead of creating a new one
+>>    (suggested by Marcel).
+>>
+>> Changes since v2:
+>> 1. Do not add new compatible but use everywhere existing
+>>    "toradex,colibri_t20-512" (suggested by Rob).
+>>
+>> Changes since v1:
+>> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
+>>    my bootloader uses mem= argument).
+>> ---
+>>  arch/arm/boot/dts/tegra20-colibri-512.dtsi | 9 +++++++--
+>>  arch/arm/boot/dts/tegra20-iris-512.dts     | 2 +-
+>
+> I don't like this variant too much.
+>
+> Can we not just drop the 512? And while at it, I would prefer to see the
+> usual $soc-$module-$carrier schema, as we use with all the other modules
+> of the Colibri and Apalis family.
+>
+> e.g.
+> tegra20-colibri-512.dtsi -> tegra20-colibri.dtsi
+> tegra20-iris-512.dts -> tegra20-colibri-iris.dts
 
-I think previously get_maintainer script suggested driver authors, probably it
-changed sometime ago. I'm pretty sure that Stephen follows the linux-tegra ML
-(Stephen, are you?) and would have jumped into the thread if there was anything
-wrong in the patch, though indeed won't hurt to ping him for this patch explicitly.
+Sure, let me resend it.
 
-Stephen, please let me know if you disagree with anything in this patch.
+BR,
+Krzysztof
