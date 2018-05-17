@@ -1,55 +1,42 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] arm64: tegra: Device tree fixes for v4.17
-Date: Thu, 17 May 2018 18:04:36 +0200
-Message-ID: <20180517160436.12180-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: arm@kernel.org
-Cc: Bhadram Varka <vbhadram@nvidia.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 00/11] Clean up Tegra20 cpufreq driver
+Date: Thu, 17 May 2018 21:00:45 +0300
+Message-ID: <20180517180056.13336-1-digetx@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+Hello,
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+Recently Peter Geis (who is working on Tegra30 cpufreq driver) asked me how
+tegra20-cpufreq driver is getting loaded. After taking a look at the code
+it became apparent that the drivers code has been rusted a tad and so this
+series is intended to refresh the drivers code by disallowing module to be
+loaded on non-Tegra20 machines, by cleaning whitespaces in the code, removing
+dead EMC code and in the end by allowing tegra20-cpufreq to be built as a
+loadable module.
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+Please review, thanks.
 
-are available in the Git repository at:
+Dmitry Osipenko (11):
+  cpufreq: tegra20: Change module description
+  cpufreq: tegra20: Clean up whitespaces in the code
+  cpufreq: tegra20: Remove EMC clock usage
+  cpufreq: tegra20: Release clocks properly
+  cpufreq: tegra20: Clean up included headers
+  cpufreq: tegra20: Remove unneeded check in tegra_cpu_init
+  cpufreq: tegra20: Check if this is Tegra20 machine
+  cpufreq: tegra20: Remove unneeded variable initialization
+  cpufreq: tegra20: Allow cpufreq driver to be built as loadable module
+  cpufreq: tegra20: Wrap cpufreq into platform driver
+  ARM: tegra: Create platform device for tegra20-cpufreq driver
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.17-fixes-2
+ arch/arm/mach-tegra/tegra.c       |   4 +
+ drivers/cpufreq/Kconfig.arm       |   2 +-
+ drivers/cpufreq/tegra20-cpufreq.c | 172 +++++++++++++++++-------------
+ 3 files changed, 101 insertions(+), 77 deletions(-)
 
-for you to fetch changes up to 9df50ba76ac1485b844beffa1f3f5d9659d9cdaf:
-
-  arm64: tegra: Make BCM89610 PHY interrupt as active low (2018-05-03 11:48:16 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-arm64: tegra: Device tree fixes for v4.17
-
-This contains a one-line update to the device tree of the Tegra186 P3310
-processor module, fixing the polarity of the PHY interrupt. Originally,
-this was queued to go into v4.18, but the PHY ID matching patch has now
-found its way into v4.17-rc5, which means that the PHY driver will know
-how to identify the PHY on this board and try to use the interrupt. This
-will unfortunately cause networking to break on P3310, hence why I think
-this should go into v4.17.
-
-----------------------------------------------------------------
-Bhadram Varka (1):
-      arm64: tegra: Make BCM89610 PHY interrupt as active low
-
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-- 
+2.17.0
