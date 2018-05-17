@@ -1,70 +1,55 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 5/7] drm/tegra: gr3d: Track interface version
-Date: Thu, 17 May 2018 17:41:30 +0200
-Message-ID: <20180517154132.10058-6-thierry.reding@gmail.com>
-References: <20180517154132.10058-1-thierry.reding@gmail.com>
+Subject: [GIT PULL] arm64: tegra: Device tree fixes for v4.17
+Date: Thu, 17 May 2018 18:04:36 +0200
+Message-ID: <20180517160436.12180-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180517154132.10058-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org
+Cc: Bhadram Varka <vbhadram@nvidia.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClNldCB0aGUgaW50ZXJm
-YWNlIHZlcnNpb24gaW1wbGVtZW50ZWQgYnkgdGhlIGdyM2QgbW9kdWxlLiBUaGlzIGFsbG93cwp1
-c2Vyc3BhY2UgdG8gcGFzcyB0aGUgY29ycmVjdCBjb21tYW5kIHN0cmVhbSB3aGVuIHByb2dyYW1t
-aW5nIHRoZSBncjNkCm1vZHVsZS4KClNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVk
-aW5nQG52aWRpYS5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dyM2QuYyB8IDI4ICsr
-KysrKysrKysrKysrKysrKysrKysrKystLS0KIDEgZmlsZSBjaGFuZ2VkLCAyNSBpbnNlcnRpb25z
-KCspLCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9n
-cjNkLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IzZC5jCmluZGV4IDI4YzRlZjYzMDY1Yi4u
-MGQ0ZGNlOTc4ZWIyIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IzZC5jCisr
-KyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMKQEAgLTEwLDYgKzEwLDcgQEAKICNpbmNs
-dWRlIDxsaW51eC9jbGsuaD4KICNpbmNsdWRlIDxsaW51eC9ob3N0MXguaD4KICNpbmNsdWRlIDxs
-aW51eC9tb2R1bGUuaD4KKyNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4KICNpbmNsdWRlIDxs
-aW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KICNpbmNsdWRlIDxsaW51eC9yZXNldC5oPgogCkBAIC0x
-OSw2ICsyMCwxMCBAQAogI2luY2x1ZGUgImdlbS5oIgogI2luY2x1ZGUgImdyM2QuaCIKIAorc3Ry
-dWN0IGdyM2Rfc29jIHsKKwl1bnNpZ25lZCBpbnQgdmVyc2lvbjsKK307CisKIHN0cnVjdCBncjNk
-IHsKIAlzdHJ1Y3QgdGVncmFfZHJtX2NsaWVudCBjbGllbnQ7CiAJc3RydWN0IGhvc3QxeF9jaGFu
-bmVsICpjaGFubmVsOwpAQCAtMjcsNiArMzIsOCBAQCBzdHJ1Y3QgZ3IzZCB7CiAJc3RydWN0IHJl
-c2V0X2NvbnRyb2wgKnJzdF9zZWNvbmRhcnk7CiAJc3RydWN0IHJlc2V0X2NvbnRyb2wgKnJzdDsK
-IAorCWNvbnN0IHN0cnVjdCBncjNkX3NvYyAqc29jOworCiAJREVDTEFSRV9CSVRNQVAoYWRkcl9y
-ZWdzLCBHUjNEX05VTV9SRUdTKTsKIH07CiAKQEAgLTEyNSwxMCArMTMyLDIyIEBAIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgdGVncmFfZHJtX2NsaWVudF9vcHMgZ3IzZF9vcHMgPSB7CiAJLnN1Ym1pdCA9
-IHRlZ3JhX2RybV9zdWJtaXQsCiB9OwogCitzdGF0aWMgY29uc3Qgc3RydWN0IGdyM2Rfc29jIHRl
-Z3JhMjBfZ3IzZF9zb2MgPSB7CisJLnZlcnNpb24gPSAweDIwLAorfTsKKworc3RhdGljIGNvbnN0
-IHN0cnVjdCBncjNkX3NvYyB0ZWdyYTMwX2dyM2Rfc29jID0geworCS52ZXJzaW9uID0gMHgzMCwK
-K307CisKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZ3IzZF9zb2MgdGVncmExMTRfZ3IzZF9zb2MgPSB7
-CisJLnZlcnNpb24gPSAweDM1LAorfTsKKwogc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2Vf
-aWQgdGVncmFfZ3IzZF9tYXRjaFtdID0gewotCXsgLmNvbXBhdGlibGUgPSAibnZpZGlhLHRlZ3Jh
-MTE0LWdyM2QiIH0sCi0JeyAuY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmEzMC1ncjNkIiB9LAot
-CXsgLmNvbXBhdGlibGUgPSAibnZpZGlhLHRlZ3JhMjAtZ3IzZCIgfSwKKwl7IC5jb21wYXRpYmxl
-ID0gIm52aWRpYSx0ZWdyYTExNC1ncjNkIiwgLmRhdGEgPSAmdGVncmExMTRfZ3IzZF9zb2MgfSwK
-Kwl7IC5jb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTMwLWdyM2QiLCAuZGF0YSA9ICZ0ZWdyYTMw
-X2dyM2Rfc29jIH0sCisJeyAuY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmEyMC1ncjNkIiwgLmRh
-dGEgPSAmdGVncmEyMF9ncjNkX3NvYyB9LAogCXsgfQogfTsKIE1PRFVMRV9ERVZJQ0VfVEFCTEUo
-b2YsIHRlZ3JhX2dyM2RfbWF0Y2gpOwpAQCAtMjUwLDYgKzI2OSw4IEBAIHN0YXRpYyBpbnQgZ3Iz
-ZF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCWlmICghZ3IzZCkKIAkJcmV0
-dXJuIC1FTk9NRU07CiAKKwlncjNkLT5zb2MgPSBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEoJnBk
-ZXYtPmRldik7CisKIAlzeW5jcHRzID0gZGV2bV9remFsbG9jKCZwZGV2LT5kZXYsIHNpemVvZigq
-c3luY3B0cyksIEdGUF9LRVJORUwpOwogCWlmICghc3luY3B0cykKIAkJcmV0dXJuIC1FTk9NRU07
-CkBAIC0zMDMsNiArMzI0LDcgQEAgc3RhdGljIGludCBncjNkX3Byb2JlKHN0cnVjdCBwbGF0Zm9y
-bV9kZXZpY2UgKnBkZXYpCiAJZ3IzZC0+Y2xpZW50LmJhc2Uub3BzID0gJmdyM2RfY2xpZW50X29w
-czsKIAlncjNkLT5jbGllbnQuYmFzZS5kZXYgPSAmcGRldi0+ZGV2OwogCWdyM2QtPmNsaWVudC5i
-YXNlLmNsYXNzID0gSE9TVDFYX0NMQVNTX0dSM0Q7CisJZ3IzZC0+Y2xpZW50LmJhc2UudmVyc2lv
-biA9IGdyM2QtPnNvYy0+dmVyc2lvbjsKIAlncjNkLT5jbGllbnQuYmFzZS5zeW5jcHRzID0gc3lu
-Y3B0czsKIAlncjNkLT5jbGllbnQuYmFzZS5udW1fc3luY3B0cyA9IDE7CiAKLS0gCjIuMTcuMAoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi ARM SoC maintainers,
+
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.17-fixes-2
+
+for you to fetch changes up to 9df50ba76ac1485b844beffa1f3f5d9659d9cdaf:
+
+  arm64: tegra: Make BCM89610 PHY interrupt as active low (2018-05-03 11:48:16 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+arm64: tegra: Device tree fixes for v4.17
+
+This contains a one-line update to the device tree of the Tegra186 P3310
+processor module, fixing the polarity of the PHY interrupt. Originally,
+this was queued to go into v4.18, but the PHY ID matching patch has now
+found its way into v4.17-rc5, which means that the PHY driver will know
+how to identify the PHY on this board and try to use the interrupt. This
+will unfortunately cause networking to break on P3310, hence why I think
+this should go into v4.17.
+
+----------------------------------------------------------------
+Bhadram Varka (1):
+      arm64: tegra: Make BCM89610 PHY interrupt as active low
+
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
