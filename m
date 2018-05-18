@@ -1,56 +1,63 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v1 00/11] Clean up Tegra20 cpufreq driver
-Date: Fri, 18 May 2018 09:30:19 +0200
-Message-ID: <33210093.0R9M0pnSOk@aspire.rjw.lan>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 05/11] cpufreq: tegra20: Clean up included headers
+Date: Fri, 18 May 2018 11:05:58 +0300
+Message-ID: <7c3a549b-ad84-5df6-c1d8-7683a3bc2f5d@gmail.com>
 References: <20180517180056.13336-1-digetx@gmail.com>
+ <20180517180056.13336-6-digetx@gmail.com>
+ <20180518015854.glj25krzacf7rnd7@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180517180056.13336-1-digetx@gmail.com>
+In-Reply-To: <20180518015854.glj25krzacf7rnd7@vireshk-i7>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, May 17, 2018 8:00:45 PM CEST Dmitry Osipenko wrote:
-> Hello,
+On 18.05.2018 04:58, Viresh Kumar wrote:
+> On 17-05-18, 21:00, Dmitry Osipenko wrote:
+>> Remove unused/unneeded headers and sort them in the alphabet order.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/cpufreq/tegra20-cpufreq.c | 11 ++---------
+>>  1 file changed, 2 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+>> index 69f033d297e1..61f00d1cba26 100644
+>> --- a/drivers/cpufreq/tegra20-cpufreq.c
+>> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+>> @@ -16,16 +16,9 @@
+>>   *
+>>   */
+>>  
+>> -#include <linux/kernel.h>
+>> -#include <linux/module.h>
+>> -#include <linux/types.h>
+>> -#include <linux/sched.h>
+>> -#include <linux/cpufreq.h>
+>> -#include <linux/delay.h>
+>> -#include <linux/init.h>
+>> -#include <linux/err.h>
+>>  #include <linux/clk.h>
+>> -#include <linux/io.h>
+>> +#include <linux/cpufreq.h>
+>> +#include <linux/module.h>
 > 
-> Recently Peter Geis (who is working on Tegra30 cpufreq driver) asked me how
-> tegra20-cpufreq driver is getting loaded. After taking a look at the code
-> it became apparent that the drivers code has been rusted a tad and so this
-> series is intended to refresh the drivers code by disallowing module to be
-> loaded on non-Tegra20 machines, by cleaning whitespaces in the code, removing
-> dead EMC code and in the end by allowing tegra20-cpufreq to be built as a
-> loadable module.
+> Ideally you should keep all the headers whose declarations your code
+> is using directly. It may happen that removing above still compiles
+> because cpufreq.h has included the headers indirectly for you. But
+> that will break the day cpufreq.h doesn't need those headers anymore.
 > 
-> Please review, thanks.
-> 
-> Dmitry Osipenko (11):
->   cpufreq: tegra20: Change module description
->   cpufreq: tegra20: Clean up whitespaces in the code
->   cpufreq: tegra20: Remove EMC clock usage
->   cpufreq: tegra20: Release clocks properly
->   cpufreq: tegra20: Clean up included headers
->   cpufreq: tegra20: Remove unneeded check in tegra_cpu_init
->   cpufreq: tegra20: Check if this is Tegra20 machine
->   cpufreq: tegra20: Remove unneeded variable initialization
->   cpufreq: tegra20: Allow cpufreq driver to be built as loadable module
->   cpufreq: tegra20: Wrap cpufreq into platform driver
->   ARM: tegra: Create platform device for tegra20-cpufreq driver
-> 
->  arch/arm/mach-tegra/tegra.c       |   4 +
->  drivers/cpufreq/Kconfig.arm       |   2 +-
->  drivers/cpufreq/tegra20-cpufreq.c | 172 +++++++++++++++++-------------
->  3 files changed, 101 insertions(+), 77 deletions(-)
-> 
-> 
+> So just make sure you aren't using any of them in your code. For
+> example you are using bool in your code and so you shouldn't remove
+> types.h ? Same for init.h as you are using __init and __exit.
 
-It looks like Viresh has ACKed the majority of the patches in this series,
-but there are a few where he had comments.
+The preference on includes seems to vary among maintainers. I've seen other
+opinion that encouraged to minimize included headers and only add the headers
+when compilation breaks.
 
-Please fix up these and resend the entire series with the Acked-by tags from
-Viresh added where applicable.
-
-Thanks,
-Rafael
+I'll revisit this patch and keep init.h and others in v2 since you prefer that
+way. Thank you for the review.
