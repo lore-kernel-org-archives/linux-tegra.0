@@ -1,72 +1,107 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 11/11] ARM: tegra: Create platform device for
- tegra20-cpufreq driver
-Date: Fri, 18 May 2018 12:30:21 +0300
-Message-ID: <1ca8f874-40da-05b4-0b76-116164c85137@gmail.com>
-References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-12-digetx@gmail.com> <20180518091352.GK14500@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 1/9] PM / Domains: Drop extern declarations of functions in pm_domain.h
+Date: Fri, 18 May 2018 12:31:22 +0200
+Message-ID: <1526639490-12167-2-git-send-email-ulf.hansson@linaro.org>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180518091352.GK14500@ulmo>
-Content-Language: en-US
+In-Reply-To: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 18.05.2018 12:13, Thierry Reding wrote:
-> On Thu, May 17, 2018 at 09:00:56PM +0300, Dmitry Osipenko wrote:
->> Tegra20-cpufreq driver require a platform device in order to be loaded,
->> instantiate a simple platform device for the driver during of the machines
->> late initialization.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  arch/arm/mach-tegra/tegra.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
->> index 02e712d2ea30..f9587be48235 100644
->> --- a/arch/arm/mach-tegra/tegra.c
->> +++ b/arch/arm/mach-tegra/tegra.c
->> @@ -97,6 +97,10 @@ static void __init tegra_dt_init_late(void)
->>  	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
->>  	    of_machine_is_compatible("compal,paz00"))
->>  		tegra_paz00_wifikill_init();
->> +
->> +	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
->> +	    of_machine_is_compatible("nvidia,tegra20"))
->> +		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
->>  }
->>  
->>  static const char * const tegra_dt_board_compat[] = {
-> 
-> Tegra124 has a CPU frequency driver that is similar to this and it
-> contains code that will instantiate the platform device from the CPU
-> frequency driver's module_init function.
-> 
-> I think the primary reason for doing that was to not tie the code to
-> 32-bit ARM, even though it never runs on anything but that, so it's
-> slightly over-engineered.
+Using "extern" to declare a function in a public header file is somewhat
+pointless, but also doesn't hurt. However, to make all the function
+declarations in pm_domain.h to be consistent, let's drop the use of
+"extern".
 
-The tegra124-cpufreq driver likely to be broken in regards to the module loading
-as platform_device_register_simple() seem to be allowed invoked only from the
-kernel itself.
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ include/linux/pm_domain.h | 51 +++++++++++++++++++++--------------------------
+ 1 file changed, 23 insertions(+), 28 deletions(-)
 
-Having platform_device_register_simple in the kernels module leads to a such
-errors on the module loading:
-
-# section 5 reloc 7 sym 'memset': relocation 10 out of range (0xbf805030 ->
-0xc088c481)
-
-Initially I wanted to make tegra124-cpufreq a module_platform_driver, but
-decided to postpone that, as the driver is shared with ARM64 Tegra132 which
-doesn't have machine-init code. Maybe we could move the devices instantiation to
-something common like driver/soc/tegra/devices.c later.
-
-> I don't mind either way, and it's easy enough to change this to
-> something else later on if we want. I'll pick this up into the Tegra
-> tree.
-Okay, thanks.
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 4e57640..c847e9a 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -143,21 +143,17 @@ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
+ 	return to_gpd_data(dev->power.subsys_data->domain_data);
+ }
+ 
+-extern int __pm_genpd_add_device(struct generic_pm_domain *genpd,
+-				 struct device *dev,
+-				 struct gpd_timing_data *td);
+-
+-extern int pm_genpd_remove_device(struct generic_pm_domain *genpd,
+-				  struct device *dev);
+-extern int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
+-				  struct generic_pm_domain *new_subdomain);
+-extern int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
+-				     struct generic_pm_domain *target);
+-extern int pm_genpd_init(struct generic_pm_domain *genpd,
+-			 struct dev_power_governor *gov, bool is_off);
+-extern int pm_genpd_remove(struct generic_pm_domain *genpd);
+-extern int dev_pm_genpd_set_performance_state(struct device *dev,
+-					      unsigned int state);
++int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
++			  struct gpd_timing_data *td);
++int pm_genpd_remove_device(struct generic_pm_domain *genpd, struct device *dev);
++int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
++			   struct generic_pm_domain *new_subdomain);
++int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
++			      struct generic_pm_domain *target);
++int pm_genpd_init(struct generic_pm_domain *genpd,
++		  struct dev_power_governor *gov, bool is_off);
++int pm_genpd_remove(struct generic_pm_domain *genpd);
++int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state);
+ 
+ extern struct dev_power_governor simple_qos_governor;
+ extern struct dev_power_governor pm_domain_always_on_gov;
+@@ -215,8 +211,8 @@ static inline int pm_genpd_add_device(struct generic_pm_domain *genpd,
+ }
+ 
+ #ifdef CONFIG_PM_GENERIC_DOMAINS_SLEEP
+-extern void pm_genpd_syscore_poweroff(struct device *dev);
+-extern void pm_genpd_syscore_poweron(struct device *dev);
++void pm_genpd_syscore_poweroff(struct device *dev);
++void pm_genpd_syscore_poweron(struct device *dev);
+ #else
+ static inline void pm_genpd_syscore_poweroff(struct device *dev) {}
+ static inline void pm_genpd_syscore_poweron(struct device *dev) {}
+@@ -240,14 +236,13 @@ int of_genpd_add_provider_simple(struct device_node *np,
+ int of_genpd_add_provider_onecell(struct device_node *np,
+ 				  struct genpd_onecell_data *data);
+ void of_genpd_del_provider(struct device_node *np);
+-extern int of_genpd_add_device(struct of_phandle_args *args,
+-			       struct device *dev);
+-extern int of_genpd_add_subdomain(struct of_phandle_args *parent,
+-				  struct of_phandle_args *new_subdomain);
+-extern struct generic_pm_domain *of_genpd_remove_last(struct device_node *np);
+-extern int of_genpd_parse_idle_states(struct device_node *dn,
+-			struct genpd_power_state **states, int *n);
+-extern unsigned int of_genpd_opp_to_performance_state(struct device *dev,
++int of_genpd_add_device(struct of_phandle_args *args, struct device *dev);
++int of_genpd_add_subdomain(struct of_phandle_args *parent,
++			   struct of_phandle_args *new_subdomain);
++struct generic_pm_domain *of_genpd_remove_last(struct device_node *np);
++int of_genpd_parse_idle_states(struct device_node *dn,
++			       struct genpd_power_state **states, int *n);
++unsigned int of_genpd_opp_to_performance_state(struct device *dev,
+ 				struct device_node *opp_node);
+ 
+ int genpd_dev_pm_attach(struct device *dev);
+@@ -304,9 +299,9 @@ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
+ #endif /* CONFIG_PM_GENERIC_DOMAINS_OF */
+ 
+ #ifdef CONFIG_PM
+-extern int dev_pm_domain_attach(struct device *dev, bool power_on);
+-extern void dev_pm_domain_detach(struct device *dev, bool power_off);
+-extern void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
++int dev_pm_domain_attach(struct device *dev, bool power_on);
++void dev_pm_domain_detach(struct device *dev, bool power_off);
++void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
+ #else
+ static inline int dev_pm_domain_attach(struct device *dev, bool power_on)
+ {
+-- 
+2.7.4
