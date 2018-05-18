@@ -1,79 +1,88 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Fri, 18 May 2018 12:39:08 +0200
-Message-ID: <20180518103908.GF5312@ulmo>
-References: <20180508162607.3500-1-digetx@gmail.com>
- <20180508162607.3500-3-digetx@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 5/9] PM / Domains: dt: Allow power-domain property to be a
+ list of phandles
+Date: Fri, 18 May 2018 12:46:58 +0200
+Message-ID: <CAMuHMdUTF-8_V6kMAE0THNES+yv2HhZGJA3f41Yfpd1Bs6txHg@mail.gmail.com>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org> <1526639490-12167-6-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z+pzSjdB7cqptWpS"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180508162607.3500-3-digetx@gmail.com>
+In-Reply-To: <1526639490-12167-6-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux PM list <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Ulf,
 
---z+pzSjdB7cqptWpS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 18, 2018 at 12:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> To be able to describe topologies where devices are partitioned across
+> multiple power domains, let's extend the power-domain property to allow
+> being a list of phandles.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Suggested-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-On Tue, May 08, 2018 at 07:26:04PM +0300, Dmitry Osipenko wrote:
-> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-> that main clk-controller driver could get an actual parent clock for the
-> CDEV1/2 clocks.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marc Dietrich <marvin24@gmx.de>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->=20
-> Changelog:
->=20
-> v3:
-> 	- No change.
->=20
-> v2:
-> 	- See changelog of "Restore ULPI USB on Tegra20" v2 series.
->=20
->  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
->  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
->  3 files changed, 40 insertions(+), 12 deletions(-)
+Thanks for your patch!
 
-Linus,
+> --- a/Documentation/devicetree/bindings/power/power_domain.txt
+> +++ b/Documentation/devicetree/bindings/power/power_domain.txt
+> @@ -111,8 +111,9 @@ Example 3:
+>  ==PM domain consumers==
+>
+>  Required properties:
+> - - power-domains : A phandle and PM domain specifier as defined by bindings of
+> -                   the power controller specified by phandle.
+> + - power-domains : A phandle and PM domain specifier, or a list of phandles, as
 
-were you going to pick this up for v4.18? There's a runtime dependency
-on this from some clock patches that I'd like to get into v4.18.
+A list of PM domain specifiers?
 
-I see I never gave my Acked-by on this particular patch, so here goes:
+(A PM domain specifier consists of a phandle, and zero or more indices)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+> +                  defined by bindings of the power controller specified by
+> +                  phandle.
+>
+>  Example:
+>
+> @@ -122,9 +123,16 @@ Example:
+>                 power-domains = <&power 0>;
+>         };
+>
+> -The node above defines a typical PM domain consumer device, which is located
+> -inside a PM domain with index 0 of a power controller represented by a node
+> -with the label "power".
+> +       leaky-device@12350000 {
 
---z+pzSjdB7cqptWpS
-Content-Type: application/pgp-signature; name="signature.asc"
+I know it's just an example, but this uses the same unit-address and
+reg property
+as the device node above.
 
------BEGIN PGP SIGNATURE-----
+There's a similar issue with the two other examples below, but they
+use different
+node names (leaky-device0 and leaky-device1).
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+rUwACgkQ3SOs138+
-s6F4Zg/+PiE7355bzPMINxgk/9Q+qcq1ME2JselWa8MQtM5FT5RcXkLY5OlkNk9+
-Nf+1BlqOI2cEzUQK7OfB0Qi/Ev0eDaEcLyVt+R41QUkd5QH5Cf+k5/7Xc1BS6E3q
-qQjPgLPk/DGBUl3Rv97Z08x6JZsTfw/Qzubz1l9l9baCIPSrpBq6ou7T2zbG/6B8
-bh7qYQlZFieFPuFQGqKw6l28mNBqV6HWTsunBSjpbLISs/LmXSKkjEQvYuUn3PIx
-HGFoMOtHBlbCQ93/kjL/6+ZjELSJhYgcJ+x4Fy6FWLMVWkUkk3/wjitzYN3ZyS/R
-MwWfhDBuT3fuaPiFQj8ZrD+B8lCiKm5rWBeao0g8fTNzSIGfXFqCC0byS8MzN+CV
-96BbSB8zRww4+TTAIRIVXIExqsBtHmQK9b/IjOIEPQ20UD3nWiIp0B9jBgWTOrUT
-wvncljX+VoZgYWAHUhZnp5ylC5KpPv8u8PyI323DICI1PkIVi4C6YYWSgUw8oIMZ
-+t1TYLeJlcPPZ0aRTjX5kda6ivwULV/lsbebKA8cMxfWm2ufb70Bqc6Gp3I+Inzz
-aVph7jGViUNZnWWt8AO9XvXDka+Otrk8YzLn6F2pjnHoL3Dk+UykUx6kDKSTDZWT
-ep17CM2hrXFXBSVbZ1mjT9rILYKfdmwf7A2X5NLbUDKL6ATD1RU=
-=Or8C
------END PGP SIGNATURE-----
+> +               compatible = "foo,i-leak-current";
+> +               reg = <0x12350000 0x1000>;
+> +               power-domains = <&power0 0>, <&power1 0> ;
+> +       };
+> +
+> +The first example above defines a typical PM domain consumer device, which is
+> +located inside a PM domain with index 0 of a power controller represented by a
+> +node with the label "power". In the second example the consumer device are
+> +partitioned across two PM domains.
+>
+>  Optional properties:
+>  - required-opps: This contains phandle to an OPP node in another device's OPP
 
---z+pzSjdB7cqptWpS--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
