@@ -1,142 +1,80 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 4/5] ARM: tegra: Don't apply CPU erratas in insecure
- mode
-Date: Mon, 21 May 2018 10:36:52 +0300
-Message-ID: <57fceed2-6ca4-8dcf-dd0c-5e4432c086b9@gmail.com>
-References: <20180520101542.12206-1-digetx@gmail.com>
- <20180520101542.12206-5-digetx@gmail.com>
+Subject: Re: [PATCH 2/7] gpu: host1x: Store pointer to client in jobs
+Date: Fri, 18 May 2018 20:35:15 +0300
+Message-ID: <4d098b31-680a-003c-9540-5b8013109df7@gmail.com>
+References: <20180517153430.9602-1-thierry.reding@gmail.com>
+ <20180517153430.9602-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180520101542.12206-5-digetx@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180517153430.9602-3-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.05.2018 13:15, Dmitry Osipenko wrote:
-> CPU isn't allowed to touch secure registers while running under secure
-> monitor. Hence skip applying CPU erratas in the reset handler if Trusted
-> Foundations firmware presents.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/mach-tegra/reset-handler.S | 27 +++++++++++++++++++--------
->  arch/arm/mach-tegra/reset.c         |  3 +++
->  arch/arm/mach-tegra/reset.h         |  4 +++-
->  3 files changed, 25 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-> index 805f306fa6f7..d84c74a95806 100644
-> --- a/arch/arm/mach-tegra/reset-handler.S
-> +++ b/arch/arm/mach-tegra/reset-handler.S
-> @@ -121,6 +121,12 @@ ENTRY(__tegra_cpu_reset_handler)
->  	cpsid	aif, 0x13			@ SVC mode, interrupts disabled
->  
->  	tegra_get_soc_id TEGRA_APB_MISC_BASE, r6
-> +
-> +	adr	r12, __tegra_cpu_reset_handler_data
-> +	ldr	r0, [r12, #RESET_DATA(TF_PRESENT)]
-> +	cmp	r0, #0
-> +	bne	after_errata
-> +
->  #ifdef CONFIG_ARCH_TEGRA_2x_SOC
->  t20_check:
->  	cmp	r6, #TEGRA20
-> @@ -155,7 +161,6 @@ after_errata:
->  	and	r10, r10, #0x3			@ R10 = CPU number
->  	mov	r11, #1
->  	mov	r11, r11, lsl r10  		@ R11 = CPU mask
-> -	adr	r12, __tegra_cpu_reset_handler_data
->  
->  #ifdef CONFIG_SMP
->  	/* Does the OS know about this CPU? */
-> @@ -169,10 +174,9 @@ after_errata:
->  	cmp	r6, #TEGRA20
->  	bne	1f
->  	/* If not CPU0, don't let CPU0 reset CPU1 now that CPU1 is coming up. */
-> -	mov32	r5, TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET
->  	mov	r0, #CPU_NOT_RESETTABLE
->  	cmp	r10, #0
-> -	strneb	r0, [r5, #__tegra20_cpu1_resettable_status_offset]
-> +	strneb	r0, [r12, #RESET_DATA(RESETTABLE_STATUS)]
->  1:
->  #endif
->  
-> @@ -278,13 +282,20 @@ ENDPROC(__tegra_cpu_reset_handler)
->  	.type	__tegra_cpu_reset_handler_data, %object
->  	.globl	__tegra_cpu_reset_handler_data
->  __tegra_cpu_reset_handler_data:
-> -	.rept	TEGRA_RESET_DATA_SIZE
-> -	.long	0
-> -	.endr
-> +	.long	0	/* TEGRA_RESET_MASK_PRESENT */
-> +	.long	0	/* TEGRA_RESET_MASK_LP1 */
-> +	.long	0	/* TEGRA_RESET_MASK_LP2 */
-> +	.long	0	/* TEGRA_RESET_STARTUP_SECONDARY */
-> +	.long	0	/* TEGRA_RESET_STARTUP_LP2 */
-> +	.long	0	/* TEGRA_RESET_STARTUP_LP1 */
-> +
->  	.globl	__tegra20_cpu1_resettable_status_offset
->  	.equ	__tegra20_cpu1_resettable_status_offset, \
->  					. - __tegra_cpu_reset_handler_start
-> -	.byte	0
-> -	.align L1_CACHE_SHIFT
-> +	.long	0	/* TEGRA_RESET_RESETTABLE_STATUS */
->  
-> +	.globl	__tegra_tf_present
-> +	.equ	__tegra_tf_present, . - __tegra_cpu_reset_handler_start
-
-I've noticed that __tegra_tf_present shouldn't belong to this patch, I've missed
-to remove it while was rebasing.
-
-Also, it occurred to me that it will be much better to remove the whole array
-__tegra_cpu_reset_handler_data definition in the asm and get back to the
-original ".rept   TEGRA_RESET_DATA_SIZE" instead. That will make this part of
-code much nicer, I'll change that in v2.
-
-Russell / Thierry, please give you acks-reviews where appropriate and let me
-know if I should change anything else in v2, thanks.
-
-> +	.long	0	/* TEGRA_RESET_TF_PRESENT */
-> +	.align L1_CACHE_SHIFT
->  ENTRY(__tegra_cpu_reset_handler_end)
-> diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-> index dc558892753c..b02ae7699842 100644
-> --- a/arch/arm/mach-tegra/reset.c
-> +++ b/arch/arm/mach-tegra/reset.c
-> @@ -24,6 +24,7 @@
->  #include <asm/cacheflush.h>
->  #include <asm/firmware.h>
->  #include <asm/hardware/cache-l2x0.h>
-> +#include <asm/trusted_foundations.h>
->  
->  #include "iomap.h"
->  #include "irammap.h"
-> @@ -89,6 +90,8 @@ static void __init tegra_cpu_reset_handler_enable(void)
->  
->  void __init tegra_cpu_reset_handler_init(void)
->  {
-> +	__tegra_cpu_reset_handler_data[TEGRA_RESET_TF_PRESENT] =
-> +		trusted_foundations_registered();
->  
->  #ifdef CONFIG_SMP
->  	__tegra_cpu_reset_handler_data[TEGRA_RESET_MASK_PRESENT] =
-> diff --git a/arch/arm/mach-tegra/reset.h b/arch/arm/mach-tegra/reset.h
-> index 9c479c7925b8..0d9ddc022ece 100644
-> --- a/arch/arm/mach-tegra/reset.h
-> +++ b/arch/arm/mach-tegra/reset.h
-> @@ -25,7 +25,9 @@
->  #define TEGRA_RESET_STARTUP_SECONDARY	3
->  #define TEGRA_RESET_STARTUP_LP2		4
->  #define TEGRA_RESET_STARTUP_LP1		5
-> -#define TEGRA_RESET_DATA_SIZE		6
-> +#define TEGRA_RESET_RESETTABLE_STATUS	6
-> +#define TEGRA_RESET_TF_PRESENT		7
-> +#define TEGRA_RESET_DATA_SIZE		8
->  
->  #ifndef __ASSEMBLY__
->  
-> 
+T24gMTcuMDUuMjAxOCAxODozNCwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBSYXRoZXIgdGhhbiBzdG9yaW5nIHNv
+bWUgaWRlbnRpZmllciBkZXJpdmVkIGZyb20gdGhlIGFwcGxpY2F0aW9uCj4gY29udGV4dCB0aGF0
+IGNhbid0IGJlIHVzZWQgY29uY3JldGVseSBhbnl3aGVyZSwgc3RvcmUgYSBwb2ludGVyIHRvIHRo
+ZQo+IGNsaWVudCBkaXJlY3RseSBzbyB0aGF0IGFjY2Vzc2VzIGNhbiBiZSBtYWRlIGRpcmVjdGx5
+IHRocm91Z2ggdGhhdAo+IGNsaWVudCBvYmplY3QuCj4gCj4gU2lnbmVkLW9mZi1ieTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2RybS5jIHwgNSArKystLQo+ICBkcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5jICAgfCAyICst
+Cj4gIGRyaXZlcnMvZ3B1L2hvc3QxeC9jZG1hLmggICB8IDIgKy0KPiAgaW5jbHVkZS9saW51eC9o
+b3N0MXguaCAgICAgIHwgMyArKy0KPiAgNCBmaWxlcyBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyks
+IDUgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
+cm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IGluZGV4IDMzZTQ3OTE4Mjc3My4u
+ZTkyZTQ0ZTY5ODcxIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+
+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IEBAIC0zMTcsNiArMzE3LDcgQEAg
+aW50IHRlZ3JhX2RybV9zdWJtaXQoc3RydWN0IHRlZ3JhX2RybV9jb250ZXh0ICpjb250ZXh0LAo+
+ICAJCSAgICAgc3RydWN0IGRybV90ZWdyYV9zdWJtaXQgKmFyZ3MsIHN0cnVjdCBkcm1fZGV2aWNl
+ICpkcm0sCj4gIAkJICAgICBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCj4gIHsKPiArCXN0cnVjdCBo
+b3N0MXhfY2xpZW50ICpjbGllbnQgPSAmY29udGV4dC0+Y2xpZW50LT5iYXNlOwo+ICAJdW5zaWdu
+ZWQgaW50IG51bV9jbWRidWZzID0gYXJncy0+bnVtX2NtZGJ1ZnM7Cj4gIAl1bnNpZ25lZCBpbnQg
+bnVtX3JlbG9jcyA9IGFyZ3MtPm51bV9yZWxvY3M7Cj4gIAlzdHJ1Y3QgZHJtX3RlZ3JhX2NtZGJ1
+ZiBfX3VzZXIgKnVzZXJfY21kYnVmczsKPiBAQCAtMzQ4LDggKzM0OSw4IEBAIGludCB0ZWdyYV9k
+cm1fc3VibWl0KHN0cnVjdCB0ZWdyYV9kcm1fY29udGV4dCAqY29udGV4dCwKPiAgCQlyZXR1cm4g
+LUVOT01FTTsKPiAgCj4gIAlqb2ItPm51bV9yZWxvY3MgPSBhcmdzLT5udW1fcmVsb2NzOwo+IC0J
+am9iLT5jbGllbnQgPSAodTMyKWFyZ3MtPmNvbnRleHQ7Cj4gLQlqb2ItPmNsYXNzID0gY29udGV4
+dC0+Y2xpZW50LT5iYXNlLmNsYXNzOwo+ICsJam9iLT5jbGllbnQgPSBjbGllbnQ7Cj4gKwlqb2It
+PmNsYXNzID0gY2xpZW50LT5jbGFzczsKPiAgCWpvYi0+c2VyaWFsaXplID0gdHJ1ZTsKPiAgCj4g
+IAkvKgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5jIGIvZHJpdmVycy9n
+cHUvaG9zdDF4L2NkbWEuYwo+IGluZGV4IDI4NTQxYjI4MDczOS4uY2I1OTBiYTg4NmVjIDEwMDY0
+NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9jZG1hLmMKPiArKysgYi9kcml2ZXJzL2dwdS9o
+b3N0MXgvY2RtYS5jCj4gQEAgLTI0Nyw3ICsyNDcsNyBAQCBzdGF0aWMgdm9pZCBjZG1hX3N0YXJ0
+X3RpbWVyX2xvY2tlZChzdHJ1Y3QgaG9zdDF4X2NkbWEgKmNkbWEsCj4gIHN0YXRpYyB2b2lkIHN0
+b3BfY2RtYV90aW1lcl9sb2NrZWQoc3RydWN0IGhvc3QxeF9jZG1hICpjZG1hKQo+ICB7Cj4gIAlj
+YW5jZWxfZGVsYXllZF93b3JrKCZjZG1hLT50aW1lb3V0LndxKTsKPiAtCWNkbWEtPnRpbWVvdXQu
+Y2xpZW50ID0gMDsKPiArCWNkbWEtPnRpbWVvdXQuY2xpZW50ID0gTlVMTDsKPiAgfQo+ICAKPiAg
+LyoKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2NkbWEuaCBiL2RyaXZlcnMvZ3B1
+L2hvc3QxeC9jZG1hLmgKPiBpbmRleCAyODZkNDkzODZiZTkuLjE4MjUwOTFiYzBlZCAxMDA2NDQK
+PiAtLS0gYS9kcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5oCj4gKysrIGIvZHJpdmVycy9ncHUvaG9z
+dDF4L2NkbWEuaAo+IEBAIC01OCw3ICs1OCw3IEBAIHN0cnVjdCBidWZmZXJfdGltZW91dCB7Cj4g
+IAl1MzIgc3luY3B0X3ZhbDsJCQkvKiBzeW5jcHQgdmFsdWUgd2hlbiBjb21wbGV0ZWQgKi8KPiAg
+CWt0aW1lX3Qgc3RhcnRfa3RpbWU7CQkvKiBzdGFydGluZyB0aW1lICovCj4gIAkvKiBjb250ZXh0
+IHRpbWVvdXQgaW5mb3JtYXRpb24gKi8KPiAtCWludCBjbGllbnQ7Cj4gKwlzdHJ1Y3QgaG9zdDF4
+X2NsaWVudCAqY2xpZW50Owo+ICB9Owo+ICAKPiAgZW51bSBjZG1hX2V2ZW50IHsKPiBkaWZmIC0t
+Z2l0IGEvaW5jbHVkZS9saW51eC9ob3N0MXguaCBiL2luY2x1ZGUvbGludXgvaG9zdDF4LmgKPiBp
+bmRleCBmNjZiZWNlMWUxYjcuLjA2MzIwMTBmNDdmYiAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2xp
+bnV4L2hvc3QxeC5oCj4gKysrIGIvaW5jbHVkZS9saW51eC9ob3N0MXguaAo+IEBAIC0yMDIsNyAr
+MjAyLDggQEAgc3RydWN0IGhvc3QxeF9qb2Igewo+ICAJLyogQ2hhbm5lbCB3aGVyZSBqb2IgaXMg
+c3VibWl0dGVkIHRvICovCj4gIAlzdHJ1Y3QgaG9zdDF4X2NoYW5uZWwgKmNoYW5uZWw7Cj4gIAo+
+IC0JdTMyIGNsaWVudDsKPiArCS8qIGNsaWVudCB3aGVyZSB0aGUgam9iIG9yaWdpbmF0ZWQgKi8K
+PiArCXN0cnVjdCBob3N0MXhfY2xpZW50ICpjbGllbnQ7Cj4gIAo+ICAJLyogR2F0aGVycyBhbmQg
+dGhlaXIgbWVtb3J5ICovCj4gIAlzdHJ1Y3QgaG9zdDF4X2pvYl9nYXRoZXIgKmdhdGhlcnM7Cj4g
+CgpSZXZpZXdlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgpUZXN0ZWQt
+Ynk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
