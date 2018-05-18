@@ -1,57 +1,55 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 07/11] cpufreq: tegra20: Check if this is Tegra20
- machine
-Date: Fri, 18 May 2018 10:58:13 +0200
-Message-ID: <20180518085813.GG14500@ulmo>
+Subject: Re: [PATCH v1 08/11] cpufreq: tegra20: Remove unneeded variable
+ initialization
+Date: Fri, 18 May 2018 10:58:32 +0200
+Message-ID: <20180518085832.GH14500@ulmo>
 References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-8-digetx@gmail.com>
+ <20180517180056.13336-9-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Qf1oXS95uex85X0R"
+        protocol="application/pgp-signature"; boundary="y9PDtDHaFrXNoMPU"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180517180056.13336-8-digetx@gmail.com>
+In-Reply-To: <20180517180056.13336-9-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---Qf1oXS95uex85X0R
+--y9PDtDHaFrXNoMPU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 17, 2018 at 09:00:52PM +0300, Dmitry Osipenko wrote:
-> Don't even try to request the clocks during of module initialization on
-> non-Tegra20 machines (this is the case for a multi-platform kernel) for
-> consistency.
+On Thu, May 17, 2018 at 09:00:53PM +0300, Dmitry Osipenko wrote:
+> Remove unneeded variable initialization solely for consistency.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/cpufreq/tegra20-cpufreq.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/cpufreq/tegra20-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---Qf1oXS95uex85X0R
+--y9PDtDHaFrXNoMPU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+laUACgkQ3SOs138+
-s6HFcA//aK/hiIfIrFe2Rtv7UWHEMxSWLuJG37fb1wlxp8UjewTpJkio/5BGiqzx
-k+l1fJdlO/C2UHck6JQQXhRJNhyOZGrabVel/q+giufB+mJjzIzeEMQ8zbGZ4DI4
-mwaAnvEG+vklgRSQe7EOhH7M+ukC+plB2Sw1zBLhLPi69liompbjvsspRDJwHORx
-FV9AYziFNR62RinfU2MlQe1Jamxduy6xelMjqKr9QTC5pr51P4guu6CyY5kD89mm
-q849rExxtXhhh5lVTREYouY0nyGu2MRCwxsKYDXmMrLpDusMkmlv/3Xld0SLuAbq
-moIIqj0/mArMv978BnxqPSZvlcumHMw/Ucj3mPIppsL6qBMMnWzCvYvT15AW9ztL
-nIR/kbKodKjpVD3hwCddmWf/gZOG+HKRZaBK6zQN87vfUgC69cfpSe/IfesHFEv9
-pniiqgbxPCVQaqn+vrs99FLmn844eY4xPAHknSzzFUiOM8B5+k2LsRp+46oU9P8l
-E2gG1tar5PONzWPhhJYEeILkBnvpNVMDIbG12Sy5CKF88OL1EhbUm0U3LXDJFflU
-DvUrmY1yCPn8PZNcpWzi+gtVCo/J+/i1/eO5tUYf0ZgZcUKle8aewp0dfS3yDJTK
-eMXf9iQaGJFxJIU6Ia23C8pTP3Is6RJzxJKy3qQmdbjCE4fiF3U=
-=RTGP
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+lbgACgkQ3SOs138+
+s6EaqQ/9FM7q0piq9uUjVSU5Tc8btDXggWtn9s/TuoVwXviArgyYpESAPXqPELxn
+2u49WMbyMUwDE6ZpGn8DARE7fT+S8E5Y8bdSd9ZnVP8LE36iPD5ni9+GsG9dxfp8
+XyvFHfMVvmc6ACg8GK7zup5qPHhqk3YBGHWVZjG5hfAluhHXrRT+nyTSH2dgsZfx
+J4xskdJ4mPfWexhFTr8d2lUZ9UGSA8lH6Kw1hYD/ttSgZECc9zx9eYBATcdpdqPD
+bMWD7Nr8XlPe5g4uMFyU1WG8ab2RLdfM/eaNgqtc+6s0Km02cq6AKYbS03NU6OlZ
+UyRMQUOSmiTWee4OGJ/0Ll4QL1bREiX0UXYnEGnp7Gsn5ezpldBCPs08BQfd1B9q
+9lQH1lG/cZ8n7uq4dz6MNBTu7P9xg2CoUnaVdRjzzl8V/14fpzFwIo38+U8EPVWE
+PyqadcB1OYKqXnz4Z6Du89CPOIQGooF2KpVJGuDRk+0hjngKKhrumi3wGwg8bXNs
+evnAXeYQEqvN7YiDdjyGP6z0l4K2rj19vxRsKS1qP5H5it65g8/3NCX6oa9YUdC4
+MxCXODVqyLveYHZWhMzMAqTcEDoIqSCbcelMSZ3VEzZ+/8gAIFBQg9/3Gtzv382c
+sh99CK2r6P0ruhEmVu9pasROdL5aevDmTx0VdL3Tv1avjKIXznU=
+=aSfH
 -----END PGP SIGNATURE-----
 
---Qf1oXS95uex85X0R--
+--y9PDtDHaFrXNoMPU--
