@@ -1,14 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 7/7] drm/tegra: Add kerneldoc for UAPI
-Date: Fri, 18 May 2018 22:12:02 +0200
-Message-ID: <20180518201202.GA21358@ulmo>
-References: <20180517154132.10058-1-thierry.reding@gmail.com>
- <20180517154132.10058-8-thierry.reding@gmail.com>
- <2628cd65-3aa1-300e-c952-4a5914544fb6@gmail.com>
+Subject: [PATCH v2] drm/tegra: Add kerneldoc for UAPI
+Date: Fri, 18 May 2018 22:33:37 +0200
+Message-ID: <20180518203337.26476-1-thierry.reding@gmail.com>
+References: <20180517154132.10058-8-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0177726317=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <2628cd65-3aa1-300e-c952-4a5914544fb6@gmail.com>
+In-Reply-To: <20180517154132.10058-8-thierry.reding@gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -18,722 +17,226 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============0177726317==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
-Content-Disposition: inline
-
-
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 18, 2018 at 08:19:55PM +0300, Dmitry Osipenko wrote:
-> On 17.05.2018 18:41, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Document the userspace ABI with kerneldoc to provide some information on
-> > how to use it.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/gpu/drm/tegra/gem.c  |   4 +-
-> >  include/uapi/drm/tegra_drm.h | 480 ++++++++++++++++++++++++++++++++++-
-> >  2 files changed, 468 insertions(+), 16 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> > index 387ba1dfbe0d..e2987a19541d 100644
-> > --- a/drivers/gpu/drm/tegra/gem.c
-> > +++ b/drivers/gpu/drm/tegra/gem.c
-> > @@ -291,10 +291,10 @@ struct tegra_bo *tegra_bo_create(struct drm_devic=
-e *drm, size_t size,
-> >  	if (err < 0)
-> >  		goto release;
-> > =20
-> > -	if (flags & DRM_TEGRA_GEM_CREATE_TILED)
-> > +	if (flags & DRM_TEGRA_GEM_TILED)
-> >  		bo->tiling.mode =3D TEGRA_BO_TILING_MODE_TILED;
-> > =20
-> > -	if (flags & DRM_TEGRA_GEM_CREATE_BOTTOM_UP)
-> > +	if (flags & DRM_TEGRA_GEM_BOTTOM_UP)
-> >  		bo->flags |=3D TEGRA_BO_BOTTOM_UP;
-> > =20
-> >  	return bo;
-> > diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
-> > index 99e15d82d1e9..86a7b1e7559d 100644
-> > --- a/include/uapi/drm/tegra_drm.h
-> > +++ b/include/uapi/drm/tegra_drm.h
-> > @@ -29,146 +29,598 @@
-> >  extern "C" {
-> >  #endif
-> > =20
-> > -#define DRM_TEGRA_GEM_CREATE_TILED     (1 << 0)
-> > -#define DRM_TEGRA_GEM_CREATE_BOTTOM_UP (1 << 1)
-> > +#define DRM_TEGRA_GEM_TILED		(1 << 0)
-> > +#define DRM_TEGRA_GEM_BOTTOM_UP		(1 << 1)
-> > +#define DRM_TEGRA_GEM_FLAGS		(DRM_TEGRA_GEM_TILED | \
-> > +					 DRM_TEGRA_GEM_BOTTOM_UP)
->=20
-> The current userspace won't compile with the above changes, so this is th=
-e ABI
-> breakage. Please keep the old DRM_TEGRA_GEM_CREATE_* DRM_TEGRA_GEM_* flag=
-s for now.
-
-It looks like I fumbled this during a rebase and didn't catch it. I've
-left the original flags in.
-
-[...]
-> > +/**
-> > + * struct drm_tegra_syncpt_read - parameters for the read syncpoint IO=
-CTL
-> > + */
-> >  struct drm_tegra_syncpt_read {
-> > +	/**
-> > +	 * @id:
-> > +	 *
-> > +	 * ID of the syncpoint to read the current value from.
-> > +	 */
-> >  	__u32 id;
-> > +
-> > +	/**
-> > +	 * @value:
-> > +	 *
-> > +	 * Return location for the current syncpoint value.
-> > +	 */>  	__u32 value;
-> >  };
->=20
-> What about:
->=20
-> Returned value of the given syncpoint.
->=20
-> Could we replace "return location for the.." with just "Returned.." in ot=
-her
-> places too? My mind is stuttering while reading "location for the value",=
- though
-> I know that my english isn't ideal and maybe it's only me.
-
-How about something a little more explicit, like:
-
-	The current value of the syncpoint. Will be set by the kernel
-	upon successful completion of the IOCTL.
-
-?
-
-> > =20
-> > +/**
-> > + * struct drm_tegra_syncpt_incr - parameters for the increment syncpoi=
-nt IOCTL
-> > + */
-> >  struct drm_tegra_syncpt_incr {
-> > +	/**
-> > +	 * @id:
-> > +	 *
-> > +	 * ID of the syncpoint to read the current value from.
-> > +	 */
->=20
-> Cut-n-pasted comment. Change to:
->=20
-> ID of the syncpoint to increment.
-
-Good catch. Fixed.
-
-> >  	__u32 id;
-> > +
-> > +	/**
-> > +	 * @pad:
-> > +	 *
-> > +	 * Structure padding that may be used in the future. Must be 0.
-> > +	 */
-> >  	__u32 pad;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_syncpt_wait - parameters for the wait syncpoint IO=
-CTL
-> > + */
-> >  struct drm_tegra_syncpt_wait {
-> > +	/**
-> > +	 * @id:
-> > +	 *
-> > +	 * ID of the syncpoint to wait on.
-> > +	 */
-> >  	__u32 id;
-> > +
-> > +	/**
-> > +	 * @thresh:
-> > +	 *
-> > +	 * Threshold value for which to wait.
-> > +	 */
-> >  	__u32 thresh;
-> > +
-> > +	/**
-> > +	 * @timeout:
-> > +	 *
-> > +	 * Timeout, in milliseconds, to wait.
-> > +	 */
-> >  	__u32 timeout;
-> > +
-> > +	/**
-> > +	 * @value:
-> > +	 *
-> > +	 * Return value for the current syncpoint value.
-> > +	 */
-> Just:
->=20
-> Returned value of the syncpoint.
-
-Will reword this similar to the above.
-
-> >  	__u32 value;
-> >  };
-> > =20
-> >  #define DRM_TEGRA_NO_TIMEOUT	(0xffffffff)
-> > =20
-> > +/**
-> > + * struct drm_tegra_open_channel - parameters for the open channel IOC=
-TL
-> > + */
-> >  struct drm_tegra_open_channel {
-> > +	/**
-> > +	 * @client:
-> > +	 *
-> > +	 * The client ID for this channel.
-> > +	 */
-> >  	__u32 client;
-> > +
-> > +	/**
-> > +	 * @pad:
-> > +	 *
-> > +	 * Structure padding that may be used in the future. Must be 0.
-> > +	 */
-> >  	__u32 pad;
-> > +
-> > +	/**
-> > +	 * @context:
-> > +	 *
-> > +	 * Return location for the application context of this channel. This
-> > +	 * context needs to be passed to the DRM_TEGRA_CHANNEL_CLOSE or the
-> > +	 * DRM_TEGRA_SUBMIT IOCTLs.
-> > +	 */
-> >  	__u64 context;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_close_channel - parameters for the close channel I=
-OCTL
-> > + */
-> >  struct drm_tegra_close_channel {
-> > +	/**
-> > +	 * @context:
-> > +	 *
-> > +	 * The application context of this channel. This is obtained from the
-> > +	 * DRM_TEGRA_OPEN_CHANNEL IOCTL.
-> > +	 */
-> >  	__u64 context;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_get_syncpt - parameters for the get syncpoint IOCTL
-> > + */
-> >  struct drm_tegra_get_syncpt {
-> > +	/**
-> > +	 * @context:
-> > +	 *
-> > +	 * The application context identifying the channel for which to obtain
-> > +	 * the syncpoint ID.
-> > +	 */
-> >  	__u64 context;
-> > +
-> > +	/**
-> > +	 * @index:
-> > +	 *
-> > +	 * Channel-relative index of the syncpoint for which to obtain the ID.
-> > +	 */
-> >  	__u32 index;
->=20
-> Client-relative. And what about:
->=20
-> Clients syncpoint index for which to obtain the ID.
-
-I'll try to find some better wording for this.
-
-> > +
-> > +	/**
-> > +	 * @id:
-> > +	 *
-> > +	 * Return location for the ID of the given syncpoint.
-> > +	 */
-> >  	__u32 id;
-> >  };>
-> > +/**
-> > + * struct drm_tegra_get_syncpt_base - parameters for the get wait base=
- IOCTL
-> > + */
-> >  struct drm_tegra_get_syncpt_base {
-> > +	/**
-> > +	 * @context:
-> > +	 *
-> > +	 * The application context identifying for which channel to obtain the
-> > +	 * wait base.
-> > +	 */
-> >  	__u64 context;
-> > +
-> > +	/**
-> > +	 * @syncpt:
-> > +	 *
-> > +	 * ID of the syncpoint for which to obtain the wait base.
-> > +	 */
-> >  	__u32 syncpt;
-> > +
-> > +	/**
-> > +	 * @id:
-> > +	 *
-> > +	 * Return location for the ID of the wait base.
-> > +	 */
-> >  	__u32 id;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_syncpt - syncpoint increment operation
-> > + */
-> >  struct drm_tegra_syncpt {
-> > +	/**
-> > +	 * @id:
-> > +	 *
-> > +	 * ID of the syncpoint to operate on.
-> > +	 */
-> >  	__u32 id;
-> > +
-> > +	/**
-> > +	 * @incrs:
-> > +	 *
-> > +	 * Number of increments to perform for the syncpoint.
-> > +	 */
-> >  	__u32 incrs;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_cmdbuf - structure describing a command buffer
-> > + */
-> >  struct drm_tegra_cmdbuf {
-> > +	/**
-> > +	 * @handle:
-> > +	 *
-> > +	 * Handle to a GEM object containing the command buffer.
-> > +	 */
-> >  	__u32 handle;
-> > +
-> > +	/**
-> > +	 * @offset:
-> > +	 *
-> > +	 * Offset, in bytes, into the GEM object identified by @handle at
-> > +	 * which the command buffer starts.
-> > +	 */
-> >  	__u32 offset;
-> > +
-> > +	/**
-> > +	 * @words:
-> > +	 *
-> > +	 * Number of 32-bit words in this command buffer.
-> > +	 */
-> >  	__u32 words;
-> > +
-> > +	/**
-> > +	 * @pad:
-> > +	 *
-> > +	 * Structure padding that may be used in the future. Must be 0.
-> > +	 */
-> >  	__u32 pad;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_reloc - GEM object relocation structure
-> > + */
-> >  struct drm_tegra_reloc {
-> >  	struct {
-> > +		/**
-> > +		 * @cmdbuf.handle:
-> > +		 *
-> > +		 * Handle to the GEM object containing the command buffer for
-> > +		 * which to perform this GEM object relocation.
-> > +		 */
-> >  		__u32 handle;
-> > +
-> > +		/**
-> > +		 * @cmdbuf.offset:
-> > +		 *
-> > +		 * Offset into the command buffer at which to insert the the
->=20
-> Offset, in bytes,
-
-Done.
-
-> > +		 * relocated address.
-> > +		 */
-> >  		__u32 offset;
-> >  	} cmdbuf;
-> >  	struct {
-> > +		/**
-> > +		 * @target.handle:
-> > +		 *
-> > +		 * Handle to the GEM object to be relocated.
-> > +		 */
-> >  		__u32 handle;
-> > +
-> > +		/**
-> > +		 * @target.offset:
-> > +		 *
-> > +		 * Offset into the target GEM object at which the relocated
->=20
-> Offset, in bytes,
-
-Done.
-
-> > +		 * data starts.
-> > +		 */
-> >  		__u32 offset;
-> >  	} target;
-> > +
-> > +	/**
-> > +	 * @shift:
-> > +	 *
-> > +	 * The number of bits by which to shift relocated addresses.
-> > +	 */
-> >  	__u32 shift;
-> > +
-> > +	/**
-> > +	 * @pad:
-> > +	 *
-> > +	 * Structure padding that may be used in the future. Must be 0.
-> > +	 */
-> >  	__u32 pad;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_waitchk - wait check structure
-> > + */
-> >  struct drm_tegra_waitchk {
-> > +	/**
-> > +	 * @handle:
-> > +	 *
-> > +	 * Handle to the GEM object containing a command stream on which to
-> > +	 * perform the wait check.
-> > +	 */
-> >  	__u32 handle;
-> > +
-> > +	/**
-> > +	 * @offset:
-> > +	 *
-> > +	 * Offset, in bytes, of the location in the command stream to perform
-> > +	 * the wait check on.
-> > +	 */
-> >  	__u32 offset;
-> > +
-> > +	/**
-> > +	 * @syncpt:
-> > +	 *
-> > +	 * ID of the syncpoint to wait check.
-> > +	 */
-> >  	__u32 syncpt;
-> > +
-> > +	/**
-> > +	 * @thresh:
-> > +	 *
-> > +	 * Threshold value for which to check.
-> > +	 */
-> >  	__u32 thresh;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_submit - job submission structure
-> > + */
-> >  struct drm_tegra_submit {
-> > +	/**
-> > +	 * @context:
-> > +	 *
-> > +	 * The application context identifying the channel to use for the
-> > +	 * execution of this job.
-> > +	 */
-> >  	__u64 context;
-> > +
-> > +	/**
-> > +	 * @num_syncpts:
-> > +	 *
-> > +	 * The number of syncpoints operated on by this job.
-> > +	 */
-> >  	__u32 num_syncpts;
-> > +
-> > +	/**
-> > +	 * @num_cmdbufs:
-> > +	 *
-> > +	 * The number of command buffers to execute as part of this job.
-> > +	 */
-> >  	__u32 num_cmdbufs;
-> > +
-> > +	/**
-> > +	 * @num_relocs:
-> > +	 *
-> > +	 * The number of relocations to perform before executing this job.
-> > +	 */
-> >  	__u32 num_relocs;
-> > +
-> > +	/**
-> > +	 * @num_waitchks:
-> > +	 *
-> > +	 * The number of wait checks to perform as part of this job.
-> > +	 */
-> >  	__u32 num_waitchks;
-> > +
-> > +	/**
-> > +	 * @waitchk_mask:
-> > +	 *
-> > +	 * Bitmask of valid wait checks.
-> > +	 */
-> >  	__u32 waitchk_mask;
-> > +
-> > +	/**
-> > +	 * @timeout:
-> > +	 *
-> > +	 * Timeout, in milliseconds, before this job is cancelled.
-> > +	 */
-> >  	__u32 timeout;
-> > +
-> > +	/**
-> > +	 * @syncpts:
-> > +	 *
-> > +	 * A pointer to @num_syncpts &struct drm_tegra_syncpt structures that
-> > +	 * specify the syncpoint operations performed as part of this job.
-> > +	 */
-> >  	__u64 syncpts;
-> > +
-> > +	/**
-> > +	 * @cmdbufs:
-> > +	 *
-> > +	 * A pointer to @num_cmdbufs &struct drm_tegra_cmdbuf_legacy
->=20
-> We don't have drm_tegra_cmdbuf_legacy yet, should be drm_tegra_cmdbuf.
-
-Done.
-
-> > +	 * structures that define the command buffers to execute as part of
-> > +	 * this job.
-> > +	 */
-> >  	__u64 cmdbufs;
-> > +
-> > +	/**
-> > +	 * @relocs:
-> > +	 *
-> > +	 * A pointer to @num_relocs &struct drm_tegra_reloc_legacy structures
-> > +	 * that specify the relocations that need to be performed before
-> > +	 * executing this job.
-> > +	 */
->=20
-> Same as for drm_tegra_cmdbuf_legacy.
-
-Done.
-
-> >  	__u64 relocs;
-> > +
-> > +	/**
-> > +	 * @waitchks:
-> > +	 *
-> > +	 * A pointer to @num_waitchks &struct drm_tegra_waitchk structures
-> > +	 * that specify the wait checks to be performed while executing this
-> > +	 * job.
-> > +	 */
-> >  	__u64 waitchks;
-> > -	__u32 fence;		/* Return value */
-> > =20
-> > -	__u32 reserved[5];	/* future expansion */
-> > +	/**
-> > +	 * @fence:
-> > +	 *
-> > +	 * Return location for the threshold of the syncpoint associated with
-> > +	 * this job. This can be used with the DRM_TEGRA_SYNCPT_WAIT IOCTL to
-> > +	 * wait for this job to be finished.
-> > +	 */
-> > +	__u32 fence;
-> > +
-> > +	/**
-> > +	 * @reserved:
-> > +	 *
-> > +	 * This field is reserved for future use. Must be 0.
-> > +	 */
-> > +	__u32 reserved[5];
-> >  };
-> > =20
-> >  #define DRM_TEGRA_GEM_TILING_MODE_PITCH 0
-> >  #define DRM_TEGRA_GEM_TILING_MODE_TILED 1
-> >  #define DRM_TEGRA_GEM_TILING_MODE_BLOCK 2
-> > =20
-> > +/**
-> > + * struct drm_tegra_gem_set_tiling - parameters for the set tiling IOC=
-TL
-> > + */
-> >  struct drm_tegra_gem_set_tiling {
-> > -	/* input */
-> > +	/**
-> > +	 * @handle:
-> > +	 *
-> > +	 * Handle to the GEM object for which to set the tiling parameters.
-> > +	 */
-> >  	__u32 handle;
-> > +
-> > +	/**
-> > +	 * @mode:
-> > +	 *
-> > +	 * The tiling mode to set. Must be one of:
-> > +	 *
-> > +	 * DRM_TEGRA_GEM_TILING_MODE_PITCH
-> > +	 *   pitch linear format
-> > +	 *
-> > +	 * DRM_TEGRA_GEM_TILING_MODE_TILED
-> > +	 *   16x16 tiling format
-> > +	 *
-> > +	 * DRM_TEGRA_GEM_TILING_MODE_BLOCK
-> > +	 *   16Bx2 tiling format
-> > +	 */
-> >  	__u32 mode;
-> > +
-> > +	/**
-> > +	 * @value:
-> > +	 *
-> > +	 * The value to set for the tiling mode parameter.
-> > +	 */
-> >  	__u32 value;
-> > +
-> > +	/**
-> > +	 * @pad:
-> > +	 *
-> > +	 * Structure padding that may be used in the future. Must be 0.
-> > +	 */
-> >  	__u32 pad;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_gem_get_tiling - parameters for the get tiling IOC=
-TL
-> > + */
-> >  struct drm_tegra_gem_get_tiling {
-> > -	/* input */
-> > +	/**
-> > +	 * @handle:
-> > +	 *
-> > +	 * Handle to the GEM object for which to query the tiling parameters.
-> > +	 */
-> >  	__u32 handle;
-> > -	/* output */
-> > +
-> > +	/**
-> > +	 * @mode:
-> > +	 *
-> > +	 * Return location for the tiling mode.
-> > +	 */
-> >  	__u32 mode;
-> > +
-> > +	/**
-> > +	 * @value:
-> > +	 *
-> > +	 * Return location for the tiling mode parameter.
-> > +	 */
-> >  	__u32 value;
-> > +
-> > +	/**
-> > +	 * @pad:
-> > +	 *
-> > +	 * Structure padding that may be used in the future. Must be 0.
-> > +	 */
-> >  	__u32 pad;
-> >  };
-> > =20
-> > -#define DRM_TEGRA_GEM_BOTTOM_UP		(1 << 0)
-> > -#define DRM_TEGRA_GEM_FLAGS		(DRM_TEGRA_GEM_BOTTOM_UP)
-> > -
-> > +/**
-> > + * struct drm_tegra_gem_set_flags - parameters for the set flags IOCTL
-> > + */
-> >  struct drm_tegra_gem_set_flags {
-> > -	/* input */
-> > +	/**
-> > +	 * @handle:
-> > +	 *
-> > +	 * Handle to the GEM object for which to set the flags.
-> > +	 */
-> >  	__u32 handle;
-> > -	/* output */
-> > +
-> > +	/**
-> > +	 * @flags:
-> > +	 *
-> > +	 * The flags to set for the GEM object.
-> > +	 */
-> >  	__u32 flags;
-> >  };
-> > =20
-> > +/**
-> > + * struct drm_tegra_gem_get_flags - parameters for the get flags IOCTL
-> > + */
-> >  struct drm_tegra_gem_get_flags {
-> > -	/* input */
-> > +	/**
-> > +	 * @handle:
-> > +	 *
-> > +	 * Handle to the GEM object for which to query the flags.
-> > +	 */
-> >  	__u32 handle;
-> > -	/* output */
-> > +
-> > +	/**
-> > +	 * @flags:
-> > +	 *
-> > +	 * Return location for the flags queried from the GEM object.
-> > +	 */
-> >  	__u32 flags;
-> >  };
-> > =20
-
-Thanks for the review. I'm going to think about a better wording for
-some of the descriptions and send out a new version of this patch
-individually, for review.
-
-Thierry
-
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr/M48ACgkQ3SOs138+
-s6Fhng/9Hr6DudXzLcYB0vRCGsa/hkjThab55Zto9ZF9d/I07hnDpIzZPt47XX5n
-OhOtB6x3kGk+Z5wlv72iWdRzulQfkWyumjOYSjyJm5OJc8DpbonbCjgnqzp5fF3U
-cyuJ6DdWUmbN4BX2QXuf9jce0sblvgCtNoexNI/BRrpALVBYgMMo9w27mBu7bPJm
-IckUT0mKaCWAy2o3CJEknvebqQv6xVtKFf7IRnugSFXIZnywMcRbPPzX+mAA3HRo
-D22NzGSb76bO/wwEDq7U7DZMlzCvGkjRyOtaBipLtOEDnW/rJtibBeoErBgGt7nU
-4leJFr2P2eRHW5FKrFLdQiVQHhLegdBHVmr38k1ZIITo2tzpiWtFQLXJERXqCtYI
-9UM7+rwjey93xqlT+SR9NISJ+gjnTm8dqVEsSu3QIVLCmIaIjGSdQ7FumzFJYdsB
-6rlh2XDE4S1eAaj483zfZGa6fpj3H6D1FYfKoc+T8y28o6iq0LIbGsjEos5vM1jB
-4u7rwB58/wIOJQ0t0c/Bcis+LLgz3kzWuqw0QeVNY2MZaDlUTFYUbGg2XQjV20zU
-ylQoxUMHsp3NuoxM261t8K5fDYUNhmdf9xyq/B2qsU77KH5T2+yQaHSI3oCP3jey
-ugN/y7Id1xmKDt/A/4zHEpmyD01cb7YdKiNtQKS1VHC0beQvPj0=
-=BoLM
------END PGP SIGNATURE-----
-
---qDbXVdCdHGoSgWSk--
-
---===============0177726317==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0177726317==--
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkRvY3VtZW50IHRoZSB1
+c2Vyc3BhY2UgQUJJIHdpdGgga2VybmVsZG9jIHRvIHByb3ZpZGUgc29tZSBpbmZvcm1hdGlvbiBv
+bgpob3cgdG8gdXNlIGl0LgoKdjI6Ci0ga2VlcCBHRU0gb2JqZWN0IGNyZWF0aW9uIGZsYWdzIGZv
+ciBBQkkgY29tcGF0aWJpbGl0eQotIGZpeCB0eXBvIGluIHN0cnVjdCBkcm1fdGVncmFfc3luY3B0
+X2luY3Iga2VybmVsZG9jCi0gZml4IHR5cG9zIGluIHN0cnVjdCBkcm1fdGVncmFfc3VibWl0IGtl
+cm5lbGRvYwotIHJld29yZGVkIHNvbWUgZGVzY3JpcHRpb25zIGFzIHN1Z2dlc3RlZAoKU2lnbmVk
+LW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBpbmNsdWRl
+L3VhcGkvZHJtL3RlZ3JhX2RybS5oIHwgNDgwICsrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKystCiAxIGZpbGUgY2hhbmdlZCwgNDcxIGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0p
+CgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS91YXBpL2RybS90ZWdyYV9kcm0uaCBiL2luY2x1ZGUvdWFw
+aS9kcm0vdGVncmFfZHJtLmgKaW5kZXggOTllMTVkODJkMWU5Li43ZTEyMWM2OWNkOWEgMTAwNjQ0
+Ci0tLSBhL2luY2x1ZGUvdWFwaS9kcm0vdGVncmFfZHJtLmgKKysrIGIvaW5jbHVkZS91YXBpL2Ry
+bS90ZWdyYV9kcm0uaApAQCAtMzIsMTQzICszMiw2MDUgQEAgZXh0ZXJuICJDIiB7CiAjZGVmaW5l
+IERSTV9URUdSQV9HRU1fQ1JFQVRFX1RJTEVEICAgICAoMSA8PCAwKQogI2RlZmluZSBEUk1fVEVH
+UkFfR0VNX0NSRUFURV9CT1RUT01fVVAgKDEgPDwgMSkKIAorLyoqCisgKiBzdHJ1Y3QgZHJtX3Rl
+Z3JhX2dlbV9jcmVhdGUgLSBwYXJhbWV0ZXJzIGZvciB0aGUgR0VNIG9iamVjdCBjcmVhdGlvbiBJ
+T0NUTAorICovCiBzdHJ1Y3QgZHJtX3RlZ3JhX2dlbV9jcmVhdGUgeworCS8qKgorCSAqIEBzaXpl
+OgorCSAqCisJICogVGhlIHNpemUsIGluIGJ5dGVzLCBvZiB0aGUgYnVmZmVyIG9iamVjdCB0byBi
+ZSBjcmVhdGVkLgorCSAqLwogCV9fdTY0IHNpemU7CisKKwkvKioKKwkgKiBAZmxhZ3M6CisJICoK
+KwkgKiBBIGJpdG1hc2sgb2YgZmxhZ3MgdGhhdCBpbmZsdWVuY2UgdGhlIGNyZWF0aW9uIG9mIEdF
+TSBvYmplY3RzOgorCSAqCisJICogRFJNX1RFR1JBX0dFTV9DUkVBVEVfVElMRUQKKwkgKiAgIFVz
+ZSB0aGUgMTZ4MTYgdGlsaW5nIGZvcm1hdCBmb3IgdGhpcyBidWZmZXIuCisJICoKKwkgKiBEUk1f
+VEVHUkFfR0VNX0NSRUFURV9CT1RUT01fVVAKKwkgKiAgIFRoZSBidWZmZXIgaGFzIGEgYm90dG9t
+LXVwIGxheW91dC4KKwkgKi8KIAlfX3UzMiBmbGFnczsKKworCS8qKgorCSAqIEBoYW5kbGU6CisJ
+ICoKKwkgKiBUaGUgaGFuZGxlIG9mIHRoZSBjcmVhdGVkIEdFTSBvYmplY3QuIFNldCBieSB0aGUg
+a2VybmVsIHVwb24KKwkgKiBzdWNjZXNzZnVsIGNvbXBsZXRpb24gb2YgdGhlIElPQ1RMLgorCSAq
+LwogCV9fdTMyIGhhbmRsZTsKIH07CiAKKy8qKgorICogc3RydWN0IGRybV90ZWdyYV9nZW1fbW1h
+cCAtIHBhcmFtZXRlcnMgZm9yIHRoZSBHRU0gbW1hcCBJT0NUTAorICovCiBzdHJ1Y3QgZHJtX3Rl
+Z3JhX2dlbV9tbWFwIHsKKwkvKioKKwkgKiBAaGFuZGxlOgorCSAqCisJICogSGFuZGxlIG9mIHRo
+ZSBHRU0gb2JqZWN0IHRvIG9idGFpbiBhbiBtbWFwIG9mZnNldCBmb3IuCisJICovCiAJX191MzIg
+aGFuZGxlOworCisJLyoqCisJICogQHBhZDoKKwkgKgorCSAqIFN0cnVjdHVyZSBwYWRkaW5nIHRo
+YXQgbWF5IGJlIHVzZWQgaW4gdGhlIGZ1dHVyZS4gTXVzdCBiZSAwLgorCSAqLwogCV9fdTMyIHBh
+ZDsKKworCS8qKgorCSAqIEBvZmZzZXQ6CisJICoKKwkgKiBUaGUgbW1hcCBvZmZzZXQgZm9yIHRo
+ZSBnaXZlbiBHRU0gb2JqZWN0LiBTZXQgYnkgdGhlIGtlcm5lbCB1cG9uCisJICogc3VjY2Vzc2Z1
+bCBjb21wbGV0aW9uIG9mIHRoZSBJT0NUTC4KKwkgKi8KIAlfX3U2NCBvZmZzZXQ7CiB9OwogCisv
+KioKKyAqIHN0cnVjdCBkcm1fdGVncmFfc3luY3B0X3JlYWQgLSBwYXJhbWV0ZXJzIGZvciB0aGUg
+cmVhZCBzeW5jcG9pbnQgSU9DVEwKKyAqLwogc3RydWN0IGRybV90ZWdyYV9zeW5jcHRfcmVhZCB7
+CisJLyoqCisJICogQGlkOgorCSAqCisJICogSUQgb2YgdGhlIHN5bmNwb2ludCB0byByZWFkIHRo
+ZSBjdXJyZW50IHZhbHVlIGZyb20uCisJICovCiAJX191MzIgaWQ7CisKKwkvKioKKwkgKiBAdmFs
+dWU6CisJICoKKwkgKiBUaGUgY3VycmVudCBzeW5jcG9pbnQgdmFsdWUuIFNldCBieSB0aGUga2Vy
+bmVsIHVwb24gc3VjY2Vzc2Z1bAorCSAqIGNvbXBsZXRpb24gb2YgdGhlIElPQ1RMLgorCSAqLwog
+CV9fdTMyIHZhbHVlOwogfTsKIAorLyoqCisgKiBzdHJ1Y3QgZHJtX3RlZ3JhX3N5bmNwdF9pbmNy
+IC0gcGFyYW1ldGVycyBmb3IgdGhlIGluY3JlbWVudCBzeW5jcG9pbnQgSU9DVEwKKyAqLwogc3Ry
+dWN0IGRybV90ZWdyYV9zeW5jcHRfaW5jciB7CisJLyoqCisJICogQGlkOgorCSAqCisJICogSUQg
+b2YgdGhlIHN5bmNwb2ludCB0byBpbmNyZW1lbnQuCisJICovCiAJX191MzIgaWQ7CisKKwkvKioK
+KwkgKiBAcGFkOgorCSAqCisJICogU3RydWN0dXJlIHBhZGRpbmcgdGhhdCBtYXkgYmUgdXNlZCBp
+biB0aGUgZnV0dXJlLiBNdXN0IGJlIDAuCisJICovCiAJX191MzIgcGFkOwogfTsKIAorLyoqCisg
+KiBzdHJ1Y3QgZHJtX3RlZ3JhX3N5bmNwdF93YWl0IC0gcGFyYW1ldGVycyBmb3IgdGhlIHdhaXQg
+c3luY3BvaW50IElPQ1RMCisgKi8KIHN0cnVjdCBkcm1fdGVncmFfc3luY3B0X3dhaXQgeworCS8q
+KgorCSAqIEBpZDoKKwkgKgorCSAqIElEIG9mIHRoZSBzeW5jcG9pbnQgdG8gd2FpdCBvbi4KKwkg
+Ki8KIAlfX3UzMiBpZDsKKworCS8qKgorCSAqIEB0aHJlc2g6CisJICoKKwkgKiBUaHJlc2hvbGQg
+dmFsdWUgZm9yIHdoaWNoIHRvIHdhaXQuCisJICovCiAJX191MzIgdGhyZXNoOworCisJLyoqCisJ
+ICogQHRpbWVvdXQ6CisJICoKKwkgKiBUaW1lb3V0LCBpbiBtaWxsaXNlY29uZHMsIHRvIHdhaXQu
+CisJICovCiAJX191MzIgdGltZW91dDsKKworCS8qKgorCSAqIEB2YWx1ZToKKwkgKgorCSAqIFRo
+ZSBuZXcgc3luY3BvaW50IHZhbHVlIGFmdGVyIHRoZSB3YWl0LiBTZXQgYnkgdGhlIGtlcm5lbCB1
+cG9uCisJICogc3VjY2Vzc2Z1bCBjb21wbGV0aW9uIG9mIHRoZSBJT0NUTC4KKwkgKi8KIAlfX3Uz
+MiB2YWx1ZTsKIH07CiAKICNkZWZpbmUgRFJNX1RFR1JBX05PX1RJTUVPVVQJKDB4ZmZmZmZmZmYp
+CiAKKy8qKgorICogc3RydWN0IGRybV90ZWdyYV9vcGVuX2NoYW5uZWwgLSBwYXJhbWV0ZXJzIGZv
+ciB0aGUgb3BlbiBjaGFubmVsIElPQ1RMCisgKi8KIHN0cnVjdCBkcm1fdGVncmFfb3Blbl9jaGFu
+bmVsIHsKKwkvKioKKwkgKiBAY2xpZW50OgorCSAqCisJICogVGhlIGNsaWVudCBJRCBmb3IgdGhp
+cyBjaGFubmVsLgorCSAqLwogCV9fdTMyIGNsaWVudDsKKworCS8qKgorCSAqIEBwYWQ6CisJICoK
+KwkgKiBTdHJ1Y3R1cmUgcGFkZGluZyB0aGF0IG1heSBiZSB1c2VkIGluIHRoZSBmdXR1cmUuIE11
+c3QgYmUgMC4KKwkgKi8KIAlfX3UzMiBwYWQ7CisKKwkvKioKKwkgKiBAY29udGV4dDoKKwkgKgor
+CSAqIFRoZSBhcHBsaWNhdGlvbiBjb250ZXh0IG9mIHRoaXMgY2hhbm5lbC4gU2V0IGJ5IHRoZSBr
+ZXJuZWwgdXBvbgorCSAqIHN1Y2Nlc3NmdWwgY29tcGxldGlvbiBvZiB0aGUgSU9DVEwuIFRoaXMg
+Y29udGV4dCBuZWVkcyB0byBiZSBwYXNzZWQKKwkgKiB0byB0aGUgRFJNX1RFR1JBX0NIQU5ORUxf
+Q0xPU0Ugb3IgdGhlIERSTV9URUdSQV9TVUJNSVQgSU9DVExzLgorCSAqLwogCV9fdTY0IGNvbnRl
+eHQ7CiB9OwogCisvKioKKyAqIHN0cnVjdCBkcm1fdGVncmFfY2xvc2VfY2hhbm5lbCAtIHBhcmFt
+ZXRlcnMgZm9yIHRoZSBjbG9zZSBjaGFubmVsIElPQ1RMCisgKi8KIHN0cnVjdCBkcm1fdGVncmFf
+Y2xvc2VfY2hhbm5lbCB7CisJLyoqCisJICogQGNvbnRleHQ6CisJICoKKwkgKiBUaGUgYXBwbGlj
+YXRpb24gY29udGV4dCBvZiB0aGlzIGNoYW5uZWwuIFRoaXMgaXMgb2J0YWluZWQgZnJvbSB0aGUK
+KwkgKiBEUk1fVEVHUkFfT1BFTl9DSEFOTkVMIElPQ1RMLgorCSAqLwogCV9fdTY0IGNvbnRleHQ7
+CiB9OwogCisvKioKKyAqIHN0cnVjdCBkcm1fdGVncmFfZ2V0X3N5bmNwdCAtIHBhcmFtZXRlcnMg
+Zm9yIHRoZSBnZXQgc3luY3BvaW50IElPQ1RMCisgKi8KIHN0cnVjdCBkcm1fdGVncmFfZ2V0X3N5
+bmNwdCB7CisJLyoqCisJICogQGNvbnRleHQ6CisJICoKKwkgKiBUaGUgYXBwbGljYXRpb24gY29u
+dGV4dCBpZGVudGlmeWluZyB0aGUgY2hhbm5lbCBmb3Igd2hpY2ggdG8gb2J0YWluCisJICogdGhl
+IHN5bmNwb2ludCBJRC4KKwkgKi8KIAlfX3U2NCBjb250ZXh0OworCisJLyoqCisJICogQGluZGV4
+OgorCSAqCisJICogSW5kZXggb2YgdGhlIGNsaWVudCBzeW5jcG9pbnQgZm9yIHdoaWNoIHRvIG9i
+dGFpbiB0aGUgSUQuCisJICovCiAJX191MzIgaW5kZXg7CisKKwkvKioKKwkgKiBAaWQ6CisJICoK
+KwkgKiBUaGUgSUQgb2YgdGhlIGdpdmVuIHN5bmNwb2ludC4gU2V0IGJ5IHRoZSBrZXJuZWwgdXBv
+biBzdWNjZXNzZnVsCisJICogY29tcGxldGlvbiBvZiB0aGUgSU9DVEwuCisJICovCiAJX191MzIg
+aWQ7CiB9OwogCisvKioKKyAqIHN0cnVjdCBkcm1fdGVncmFfZ2V0X3N5bmNwdF9iYXNlIC0gcGFy
+YW1ldGVycyBmb3IgdGhlIGdldCB3YWl0IGJhc2UgSU9DVEwKKyAqLwogc3RydWN0IGRybV90ZWdy
+YV9nZXRfc3luY3B0X2Jhc2UgeworCS8qKgorCSAqIEBjb250ZXh0OgorCSAqCisJICogVGhlIGFw
+cGxpY2F0aW9uIGNvbnRleHQgaWRlbnRpZnlpbmcgZm9yIHdoaWNoIGNoYW5uZWwgdG8gb2J0YWlu
+IHRoZQorCSAqIHdhaXQgYmFzZS4KKwkgKi8KIAlfX3U2NCBjb250ZXh0OworCisJLyoqCisJICog
+QHN5bmNwdDoKKwkgKgorCSAqIElEIG9mIHRoZSBzeW5jcG9pbnQgZm9yIHdoaWNoIHRvIG9idGFp
+biB0aGUgd2FpdCBiYXNlLgorCSAqLwogCV9fdTMyIHN5bmNwdDsKKworCS8qKgorCSAqIEBpZDoK
+KwkgKgorCSAqIFRoZSBJRCBvZiB0aGUgd2FpdCBiYXNlIGNvcnJlc3BvbmRpbmcgdG8gdGhlIGNs
+aWVudCBzeW5jcG9pbnQuIFNldAorCSAqIGJ5IHRoZSBrZXJuZWwgdXBvbiBzdWNjZXNzZnVsIGNv
+bXBsZXRpb24gb2YgdGhlIElPQ1RMLgorCSAqLwogCV9fdTMyIGlkOwogfTsKIAorLyoqCisgKiBz
+dHJ1Y3QgZHJtX3RlZ3JhX3N5bmNwdCAtIHN5bmNwb2ludCBpbmNyZW1lbnQgb3BlcmF0aW9uCisg
+Ki8KIHN0cnVjdCBkcm1fdGVncmFfc3luY3B0IHsKKwkvKioKKwkgKiBAaWQ6CisJICoKKwkgKiBJ
+RCBvZiB0aGUgc3luY3BvaW50IHRvIG9wZXJhdGUgb24uCisJICovCiAJX191MzIgaWQ7CisKKwkv
+KioKKwkgKiBAaW5jcnM6CisJICoKKwkgKiBOdW1iZXIgb2YgaW5jcmVtZW50cyB0byBwZXJmb3Jt
+IGZvciB0aGUgc3luY3BvaW50LgorCSAqLwogCV9fdTMyIGluY3JzOwogfTsKIAorLyoqCisgKiBz
+dHJ1Y3QgZHJtX3RlZ3JhX2NtZGJ1ZiAtIHN0cnVjdHVyZSBkZXNjcmliaW5nIGEgY29tbWFuZCBi
+dWZmZXIKKyAqLwogc3RydWN0IGRybV90ZWdyYV9jbWRidWYgeworCS8qKgorCSAqIEBoYW5kbGU6
+CisJICoKKwkgKiBIYW5kbGUgdG8gYSBHRU0gb2JqZWN0IGNvbnRhaW5pbmcgdGhlIGNvbW1hbmQg
+YnVmZmVyLgorCSAqLwogCV9fdTMyIGhhbmRsZTsKKworCS8qKgorCSAqIEBvZmZzZXQ6CisJICoK
+KwkgKiBPZmZzZXQsIGluIGJ5dGVzLCBpbnRvIHRoZSBHRU0gb2JqZWN0IGlkZW50aWZpZWQgYnkg
+QGhhbmRsZSBhdAorCSAqIHdoaWNoIHRoZSBjb21tYW5kIGJ1ZmZlciBzdGFydHMuCisJICovCiAJ
+X191MzIgb2Zmc2V0OworCisJLyoqCisJICogQHdvcmRzOgorCSAqCisJICogTnVtYmVyIG9mIDMy
+LWJpdCB3b3JkcyBpbiB0aGlzIGNvbW1hbmQgYnVmZmVyLgorCSAqLwogCV9fdTMyIHdvcmRzOwor
+CisJLyoqCisJICogQHBhZDoKKwkgKgorCSAqIFN0cnVjdHVyZSBwYWRkaW5nIHRoYXQgbWF5IGJl
+IHVzZWQgaW4gdGhlIGZ1dHVyZS4gTXVzdCBiZSAwLgorCSAqLwogCV9fdTMyIHBhZDsKIH07CiAK
+Ky8qKgorICogc3RydWN0IGRybV90ZWdyYV9yZWxvYyAtIEdFTSBvYmplY3QgcmVsb2NhdGlvbiBz
+dHJ1Y3R1cmUKKyAqLwogc3RydWN0IGRybV90ZWdyYV9yZWxvYyB7CiAJc3RydWN0IHsKKwkJLyoq
+CisJCSAqIEBjbWRidWYuaGFuZGxlOgorCQkgKgorCQkgKiBIYW5kbGUgdG8gdGhlIEdFTSBvYmpl
+Y3QgY29udGFpbmluZyB0aGUgY29tbWFuZCBidWZmZXIgZm9yCisJCSAqIHdoaWNoIHRvIHBlcmZv
+cm0gdGhpcyBHRU0gb2JqZWN0IHJlbG9jYXRpb24uCisJCSAqLwogCQlfX3UzMiBoYW5kbGU7CisK
+KwkJLyoqCisJCSAqIEBjbWRidWYub2Zmc2V0OgorCQkgKgorCQkgKiBPZmZzZXQsIGluIGJ5dGVz
+LCBpbnRvIHRoZSBjb21tYW5kIGJ1ZmZlciBhdCB3aGljaCB0bworCQkgKiBpbnNlcnQgdGhlIHJl
+bG9jYXRlZCBhZGRyZXNzLgorCQkgKi8KIAkJX191MzIgb2Zmc2V0OwogCX0gY21kYnVmOwogCXN0
+cnVjdCB7CisJCS8qKgorCQkgKiBAdGFyZ2V0LmhhbmRsZToKKwkJICoKKwkJICogSGFuZGxlIHRv
+IHRoZSBHRU0gb2JqZWN0IHRvIGJlIHJlbG9jYXRlZC4KKwkJICovCiAJCV9fdTMyIGhhbmRsZTsK
+KworCQkvKioKKwkJICogQHRhcmdldC5vZmZzZXQ6CisJCSAqCisJCSAqIE9mZnNldCwgaW4gYnl0
+ZXMsIGludG8gdGhlIHRhcmdldCBHRU0gb2JqZWN0IGF0IHdoaWNoIHRoZQorCQkgKiByZWxvY2F0
+ZWQgZGF0YSBzdGFydHMuCisJCSAqLwogCQlfX3UzMiBvZmZzZXQ7CiAJfSB0YXJnZXQ7CisKKwkv
+KioKKwkgKiBAc2hpZnQ6CisJICoKKwkgKiBUaGUgbnVtYmVyIG9mIGJpdHMgYnkgd2hpY2ggdG8g
+c2hpZnQgcmVsb2NhdGVkIGFkZHJlc3Nlcy4KKwkgKi8KIAlfX3UzMiBzaGlmdDsKKworCS8qKgor
+CSAqIEBwYWQ6CisJICoKKwkgKiBTdHJ1Y3R1cmUgcGFkZGluZyB0aGF0IG1heSBiZSB1c2VkIGlu
+IHRoZSBmdXR1cmUuIE11c3QgYmUgMC4KKwkgKi8KIAlfX3UzMiBwYWQ7CiB9OwogCisvKioKKyAq
+IHN0cnVjdCBkcm1fdGVncmFfd2FpdGNoayAtIHdhaXQgY2hlY2sgc3RydWN0dXJlCisgKi8KIHN0
+cnVjdCBkcm1fdGVncmFfd2FpdGNoayB7CisJLyoqCisJICogQGhhbmRsZToKKwkgKgorCSAqIEhh
+bmRsZSB0byB0aGUgR0VNIG9iamVjdCBjb250YWluaW5nIGEgY29tbWFuZCBzdHJlYW0gb24gd2hp
+Y2ggdG8KKwkgKiBwZXJmb3JtIHRoZSB3YWl0IGNoZWNrLgorCSAqLwogCV9fdTMyIGhhbmRsZTsK
+KworCS8qKgorCSAqIEBvZmZzZXQ6CisJICoKKwkgKiBPZmZzZXQsIGluIGJ5dGVzLCBvZiB0aGUg
+bG9jYXRpb24gaW4gdGhlIGNvbW1hbmQgc3RyZWFtIHRvIHBlcmZvcm0KKwkgKiB0aGUgd2FpdCBj
+aGVjayBvbi4KKwkgKi8KIAlfX3UzMiBvZmZzZXQ7CisKKwkvKioKKwkgKiBAc3luY3B0OgorCSAq
+CisJICogSUQgb2YgdGhlIHN5bmNwb2ludCB0byB3YWl0IGNoZWNrLgorCSAqLwogCV9fdTMyIHN5
+bmNwdDsKKworCS8qKgorCSAqIEB0aHJlc2g6CisJICoKKwkgKiBUaHJlc2hvbGQgdmFsdWUgZm9y
+IHdoaWNoIHRvIGNoZWNrLgorCSAqLwogCV9fdTMyIHRocmVzaDsKIH07CiAKKy8qKgorICogc3Ry
+dWN0IGRybV90ZWdyYV9zdWJtaXQgLSBqb2Igc3VibWlzc2lvbiBzdHJ1Y3R1cmUKKyAqLwogc3Ry
+dWN0IGRybV90ZWdyYV9zdWJtaXQgeworCS8qKgorCSAqIEBjb250ZXh0OgorCSAqCisJICogVGhl
+IGFwcGxpY2F0aW9uIGNvbnRleHQgaWRlbnRpZnlpbmcgdGhlIGNoYW5uZWwgdG8gdXNlIGZvciB0
+aGUKKwkgKiBleGVjdXRpb24gb2YgdGhpcyBqb2IuCisJICovCiAJX191NjQgY29udGV4dDsKKwor
+CS8qKgorCSAqIEBudW1fc3luY3B0czoKKwkgKgorCSAqIFRoZSBudW1iZXIgb2Ygc3luY3BvaW50
+cyBvcGVyYXRlZCBvbiBieSB0aGlzIGpvYi4KKwkgKi8KIAlfX3UzMiBudW1fc3luY3B0czsKKwor
+CS8qKgorCSAqIEBudW1fY21kYnVmczoKKwkgKgorCSAqIFRoZSBudW1iZXIgb2YgY29tbWFuZCBi
+dWZmZXJzIHRvIGV4ZWN1dGUgYXMgcGFydCBvZiB0aGlzIGpvYi4KKwkgKi8KIAlfX3UzMiBudW1f
+Y21kYnVmczsKKworCS8qKgorCSAqIEBudW1fcmVsb2NzOgorCSAqCisJICogVGhlIG51bWJlciBv
+ZiByZWxvY2F0aW9ucyB0byBwZXJmb3JtIGJlZm9yZSBleGVjdXRpbmcgdGhpcyBqb2IuCisJICov
+CiAJX191MzIgbnVtX3JlbG9jczsKKworCS8qKgorCSAqIEBudW1fd2FpdGNoa3M6CisJICoKKwkg
+KiBUaGUgbnVtYmVyIG9mIHdhaXQgY2hlY2tzIHRvIHBlcmZvcm0gYXMgcGFydCBvZiB0aGlzIGpv
+Yi4KKwkgKi8KIAlfX3UzMiBudW1fd2FpdGNoa3M7CisKKwkvKioKKwkgKiBAd2FpdGNoa19tYXNr
+OgorCSAqCisJICogQml0bWFzayBvZiB2YWxpZCB3YWl0IGNoZWNrcy4KKwkgKi8KIAlfX3UzMiB3
+YWl0Y2hrX21hc2s7CisKKwkvKioKKwkgKiBAdGltZW91dDoKKwkgKgorCSAqIFRpbWVvdXQsIGlu
+IG1pbGxpc2Vjb25kcywgYmVmb3JlIHRoaXMgam9iIGlzIGNhbmNlbGxlZC4KKwkgKi8KIAlfX3Uz
+MiB0aW1lb3V0OworCisJLyoqCisJICogQHN5bmNwdHM6CisJICoKKwkgKiBBIHBvaW50ZXIgdG8g
+QG51bV9zeW5jcHRzICZzdHJ1Y3QgZHJtX3RlZ3JhX3N5bmNwdCBzdHJ1Y3R1cmVzIHRoYXQKKwkg
+KiBzcGVjaWZ5IHRoZSBzeW5jcG9pbnQgb3BlcmF0aW9ucyBwZXJmb3JtZWQgYXMgcGFydCBvZiB0
+aGlzIGpvYi4KKwkgKi8KIAlfX3U2NCBzeW5jcHRzOworCisJLyoqCisJICogQGNtZGJ1ZnM6CisJ
+ICoKKwkgKiBBIHBvaW50ZXIgdG8gQG51bV9jbWRidWZzICZzdHJ1Y3QgZHJtX3RlZ3JhX2NtZGJ1
+ZiBzdHJ1Y3R1cmVzIHRoYXQKKwkgKiBkZWZpbmUgdGhlIGNvbW1hbmQgYnVmZmVycyB0byBleGVj
+dXRlIGFzIHBhcnQgb2YgdGhpcyBqb2IuCisJICovCiAJX191NjQgY21kYnVmczsKKworCS8qKgor
+CSAqIEByZWxvY3M6CisJICoKKwkgKiBBIHBvaW50ZXIgdG8gQG51bV9yZWxvY3MgJnN0cnVjdCBk
+cm1fdGVncmFfcmVsb2Mgc3RydWN0dXJlcyB0aGF0CisJICogc3BlY2lmeSB0aGUgcmVsb2NhdGlv
+bnMgdGhhdCBuZWVkIHRvIGJlIHBlcmZvcm1lZCBiZWZvcmUgZXhlY3V0aW5nCisJICogdGhpcyBq
+b2IuCisJICovCiAJX191NjQgcmVsb2NzOworCisJLyoqCisJICogQHdhaXRjaGtzOgorCSAqCisJ
+ICogQSBwb2ludGVyIHRvIEBudW1fd2FpdGNoa3MgJnN0cnVjdCBkcm1fdGVncmFfd2FpdGNoayBz
+dHJ1Y3R1cmVzCisJICogdGhhdCBzcGVjaWZ5IHRoZSB3YWl0IGNoZWNrcyB0byBiZSBwZXJmb3Jt
+ZWQgd2hpbGUgZXhlY3V0aW5nIHRoaXMKKwkgKiBqb2IuCisJICovCiAJX191NjQgd2FpdGNoa3M7
+Ci0JX191MzIgZmVuY2U7CQkvKiBSZXR1cm4gdmFsdWUgKi8KIAotCV9fdTMyIHJlc2VydmVkWzVd
+OwkvKiBmdXR1cmUgZXhwYW5zaW9uICovCisJLyoqCisJICogQGZlbmNlOgorCSAqCisJICogVGhl
+IHRocmVzaG9sZCBvZiB0aGUgc3luY3BvaW50IGFzc29jaWF0ZWQgd2l0aCB0aGlzIGpvYiBhZnRl
+ciBpdAorCSAqIGhhcyBiZWVuIGNvbXBsZXRlZC4gU2V0IGJ5IHRoZSBrZXJuZWwgdXBvbiBzdWNj
+ZXNzZnVsIGNvbXBsZXRpb24gb2YKKwkgKiB0aGUgSU9DVEwuIFRoaXMgY2FuIGJlIHVzZWQgd2l0
+aCB0aGUgRFJNX1RFR1JBX1NZTkNQVF9XQUlUIElPQ1RMIHRvCisJICogd2FpdCBmb3IgdGhpcyBq
+b2IgdG8gYmUgZmluaXNoZWQuCisJICovCisJX191MzIgZmVuY2U7CisKKwkvKioKKwkgKiBAcmVz
+ZXJ2ZWQ6CisJICoKKwkgKiBUaGlzIGZpZWxkIGlzIHJlc2VydmVkIGZvciBmdXR1cmUgdXNlLiBN
+dXN0IGJlIDAuCisJICovCisJX191MzIgcmVzZXJ2ZWRbNV07CiB9OwogCiAjZGVmaW5lIERSTV9U
+RUdSQV9HRU1fVElMSU5HX01PREVfUElUQ0ggMAogI2RlZmluZSBEUk1fVEVHUkFfR0VNX1RJTElO
+R19NT0RFX1RJTEVEIDEKICNkZWZpbmUgRFJNX1RFR1JBX0dFTV9USUxJTkdfTU9ERV9CTE9DSyAy
+CiAKKy8qKgorICogc3RydWN0IGRybV90ZWdyYV9nZW1fc2V0X3RpbGluZyAtIHBhcmFtZXRlcnMg
+Zm9yIHRoZSBzZXQgdGlsaW5nIElPQ1RMCisgKi8KIHN0cnVjdCBkcm1fdGVncmFfZ2VtX3NldF90
+aWxpbmcgewotCS8qIGlucHV0ICovCisJLyoqCisJICogQGhhbmRsZToKKwkgKgorCSAqIEhhbmRs
+ZSB0byB0aGUgR0VNIG9iamVjdCBmb3Igd2hpY2ggdG8gc2V0IHRoZSB0aWxpbmcgcGFyYW1ldGVy
+cy4KKwkgKi8KIAlfX3UzMiBoYW5kbGU7CisKKwkvKioKKwkgKiBAbW9kZToKKwkgKgorCSAqIFRo
+ZSB0aWxpbmcgbW9kZSB0byBzZXQuIE11c3QgYmUgb25lIG9mOgorCSAqCisJICogRFJNX1RFR1JB
+X0dFTV9USUxJTkdfTU9ERV9QSVRDSAorCSAqICAgcGl0Y2ggbGluZWFyIGZvcm1hdAorCSAqCisJ
+ICogRFJNX1RFR1JBX0dFTV9USUxJTkdfTU9ERV9USUxFRAorCSAqICAgMTZ4MTYgdGlsaW5nIGZv
+cm1hdAorCSAqCisJICogRFJNX1RFR1JBX0dFTV9USUxJTkdfTU9ERV9CTE9DSworCSAqICAgMTZC
+eDIgdGlsaW5nIGZvcm1hdAorCSAqLwogCV9fdTMyIG1vZGU7CisKKwkvKioKKwkgKiBAdmFsdWU6
+CisJICoKKwkgKiBUaGUgdmFsdWUgdG8gc2V0IGZvciB0aGUgdGlsaW5nIG1vZGUgcGFyYW1ldGVy
+LgorCSAqLwogCV9fdTMyIHZhbHVlOworCisJLyoqCisJICogQHBhZDoKKwkgKgorCSAqIFN0cnVj
+dHVyZSBwYWRkaW5nIHRoYXQgbWF5IGJlIHVzZWQgaW4gdGhlIGZ1dHVyZS4gTXVzdCBiZSAwLgor
+CSAqLwogCV9fdTMyIHBhZDsKIH07CiAKKy8qKgorICogc3RydWN0IGRybV90ZWdyYV9nZW1fZ2V0
+X3RpbGluZyAtIHBhcmFtZXRlcnMgZm9yIHRoZSBnZXQgdGlsaW5nIElPQ1RMCisgKi8KIHN0cnVj
+dCBkcm1fdGVncmFfZ2VtX2dldF90aWxpbmcgewotCS8qIGlucHV0ICovCisJLyoqCisJICogQGhh
+bmRsZToKKwkgKgorCSAqIEhhbmRsZSB0byB0aGUgR0VNIG9iamVjdCBmb3Igd2hpY2ggdG8gcXVl
+cnkgdGhlIHRpbGluZyBwYXJhbWV0ZXJzLgorCSAqLwogCV9fdTMyIGhhbmRsZTsKLQkvKiBvdXRw
+dXQgKi8KKworCS8qKgorCSAqIEBtb2RlOgorCSAqCisJICogVGhlIHRpbGluZyBtb2RlIGN1cnJl
+bnRseSBhc3NvY2lhdGVkIHdpdGggdGhlIEdFTSBvYmplY3QuIFNldCBieQorCSAqIHRoZSBrZXJu
+ZWwgdXBvbiBzdWNjZXNzZnVsIGNvbXBsZXRpb24gb2YgdGhlIElPQ1RMLgorCSAqLwogCV9fdTMy
+IG1vZGU7CisKKwkvKioKKwkgKiBAdmFsdWU6CisJICoKKwkgKiBUaGUgdGlsaW5nIG1vZGUgcGFy
+YW1ldGVyIGN1cnJlbnRseSBhc3NvY2lhdGVkIHdpdGggdGhlIEdFTSBvYmplY3QuCisJICogU2V0
+IGJ5IHRoZSBrZXJuZWwgdXBvbiBzdWNjZXNzZnVsIGNvbXBsZXRpb24gb2YgdGhlIElPQ1RMLgor
+CSAqLwogCV9fdTMyIHZhbHVlOworCisJLyoqCisJICogQHBhZDoKKwkgKgorCSAqIFN0cnVjdHVy
+ZSBwYWRkaW5nIHRoYXQgbWF5IGJlIHVzZWQgaW4gdGhlIGZ1dHVyZS4gTXVzdCBiZSAwLgorCSAq
+LwogCV9fdTMyIHBhZDsKIH07CiAKICNkZWZpbmUgRFJNX1RFR1JBX0dFTV9CT1RUT01fVVAJCSgx
+IDw8IDApCiAjZGVmaW5lIERSTV9URUdSQV9HRU1fRkxBR1MJCShEUk1fVEVHUkFfR0VNX0JPVFRP
+TV9VUCkKIAorLyoqCisgKiBzdHJ1Y3QgZHJtX3RlZ3JhX2dlbV9zZXRfZmxhZ3MgLSBwYXJhbWV0
+ZXJzIGZvciB0aGUgc2V0IGZsYWdzIElPQ1RMCisgKi8KIHN0cnVjdCBkcm1fdGVncmFfZ2VtX3Nl
+dF9mbGFncyB7Ci0JLyogaW5wdXQgKi8KKwkvKioKKwkgKiBAaGFuZGxlOgorCSAqCisJICogSGFu
+ZGxlIHRvIHRoZSBHRU0gb2JqZWN0IGZvciB3aGljaCB0byBzZXQgdGhlIGZsYWdzLgorCSAqLwog
+CV9fdTMyIGhhbmRsZTsKLQkvKiBvdXRwdXQgKi8KKworCS8qKgorCSAqIEBmbGFnczoKKwkgKgor
+CSAqIFRoZSBmbGFncyB0byBzZXQgZm9yIHRoZSBHRU0gb2JqZWN0LgorCSAqLwogCV9fdTMyIGZs
+YWdzOwogfTsKIAorLyoqCisgKiBzdHJ1Y3QgZHJtX3RlZ3JhX2dlbV9nZXRfZmxhZ3MgLSBwYXJh
+bWV0ZXJzIGZvciB0aGUgZ2V0IGZsYWdzIElPQ1RMCisgKi8KIHN0cnVjdCBkcm1fdGVncmFfZ2Vt
+X2dldF9mbGFncyB7Ci0JLyogaW5wdXQgKi8KKwkvKioKKwkgKiBAaGFuZGxlOgorCSAqCisJICog
+SGFuZGxlIHRvIHRoZSBHRU0gb2JqZWN0IGZvciB3aGljaCB0byBxdWVyeSB0aGUgZmxhZ3MuCisJ
+ICovCiAJX191MzIgaGFuZGxlOwotCS8qIG91dHB1dCAqLworCisJLyoqCisJICogQGZsYWdzOgor
+CSAqCisJICogVGhlIGZsYWdzIGN1cnJlbnRseSBhc3NvY2lhdGVkIHdpdGggdGhlIEdFTSBvYmpl
+Y3QuIFNldCBieSB0aGUKKwkgKiBrZXJuZWwgdXBvbiBzdWNjZXNzZnVsIGNvbXBsZXRpb24gb2Yg
+dGhlIElPQ1RMLgorCSAqLwogCV9fdTMyIGZsYWdzOwogfTsKIAotLSAKMi4xNy4wCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
