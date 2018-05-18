@@ -1,14 +1,16 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
 Subject: Re: [PATCH 7/7] gpu: host1x: Track client version
-Date: Fri, 18 May 2018 14:39:39 +0200
-Message-ID: <20180518123939.GA9594@ulmo>
+Date: Fri, 18 May 2018 15:51:17 +0300
+Message-ID: <6efe1a75-cdfc-34ef-8403-4e5f99a90938@kapsi.fi>
 References: <20180517153430.9602-1-thierry.reding@gmail.com>
  <20180517153430.9602-8-thierry.reding@gmail.com>
- <0a6d355f-1173-61e5-af38-97f65ae41145@kapsi.fi>
+ <0a6d355f-1173-61e5-af38-97f65ae41145@kapsi.fi> <20180518123939.GA9594@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0561455386=="
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <0a6d355f-1173-61e5-af38-97f65ae41145@kapsi.fi>
+In-Reply-To: <20180518123939.GA9594@ulmo>
+Content-Language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -18,208 +20,132 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <cyndis@kapsi.fi>
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============0561455386==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
-Content-Disposition: inline
-
-
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 18, 2018 at 03:21:11PM +0300, Mikko Perttunen wrote:
-> On 05/17/2018 06:34 PM, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Userspace needs to know the version of the interface implemented by a
-> > client so it can create the proper command streams. Allow individual
-> > drivers to store this version along with the client so that it can be
-> > returned to userspace upon opening a channel.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >   include/linux/host1x.h | 3 +++
-> >   1 file changed, 3 insertions(+)
-> >=20
-> > diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> > index 89110d896d72..57d26406bdfd 100644
-> > --- a/include/linux/host1x.h
-> > +++ b/include/linux/host1x.h
-> > @@ -49,6 +49,7 @@ struct host1x_client_ops {
-> >    * @dev: pointer to struct device backing this host1x client
-> >    * @ops: host1x client operations
-> >    * @class: host1x class represented by this client
-> > + * @version: interface version implemented by this client
-> >    * @channel: host1x channel associated with this client
-> >    * @syncpts: array of syncpoints requested for this client
-> >    * @num_syncpts: number of syncpoints requested for this client
-> > @@ -61,6 +62,8 @@ struct host1x_client {
-> >   	const struct host1x_client_ops *ops;
-> >   	enum host1x_class class;
-> > +	unsigned int version;
-> > +
->=20
-> It doesn't seem to me that this fits here - Host1x doesn't provide any
-> userspace interface, TegraDRM does. We will (hopefully) have clients in t=
-he
-> future that use a different userspace interface, or don't have one at all.
-> So this property should be on TegraDRM side instead.
-
-I think the line is somewhat blurry. Technically it is the host1x
-clients that define the version of the interface that they provide. By
-interface I mean the "class" of the command stream supported. So gr2d
-will define what methods are valid to use on a specific version of the
-module. The same goes for gr3d and VIC. The hardware module is where
-that specification lives.
-
-So if we ever had a client that didn't provide a userspace interface via
-Tegra DRM we'd still want to represent what version of the (command
-stream) interface is expected. By moving this to drm/tegra, we move the
-hardware specific bits into the userspace related parts, so I'm not sure
-it is a really good fit.
-
-However, I do understand where you're coming from. Ultimately where
-userspace gets involved is at the ABI level that drm/tegra exposes. And
-for drivers that don't expose a userspace ABI, they'd likely need to
-deal with the version number internally, so storing this in host1x
-clients wouldn't fit very well either.
-
-I don't really care all that much how exactly we store the version
-information so that it can be reported back to userspace, and moving it
-to drm/tegra makes the code somewhat more elegant. I came up with the
-below, which is completely untested but should work.
-
-Thierry
-
---- >8 ---
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 4330d5d48801..5dc02340007e 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1389,7 +1389,7 @@ static int tegra_open_channel(struct drm_device *drm,=
- void *data,
- 				break;
-=20
- 			args->syncpts =3D client->base.num_syncpts;
--			args->version =3D client->base.version;
-+			args->version =3D client->version;
- 			args->context =3D context->id;
- 			break;
- 		}
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 13660f6225a2..f493e0bf2172 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -105,6 +105,7 @@ struct tegra_drm_client {
- 	struct host1x_client base;
- 	struct list_head list;
-=20
-+	unsigned int version;
- 	const struct tegra_drm_client_ops *ops;
- };
-=20
-diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-index 7cae8252f0fa..165a1cece039 100644
---- a/drivers/gpu/drm/tegra/gr2d.c
-+++ b/drivers/gpu/drm/tegra/gr2d.c
-@@ -196,11 +196,11 @@ static int gr2d_probe(struct platform_device *pdev)
- 	gr2d->client.base.ops =3D &gr2d_client_ops;
- 	gr2d->client.base.dev =3D dev;
- 	gr2d->client.base.class =3D HOST1X_CLASS_GR2D;
--	gr2d->client.base.version =3D gr2d->soc->version;
- 	gr2d->client.base.syncpts =3D syncpts;
- 	gr2d->client.base.num_syncpts =3D 1;
-=20
- 	INIT_LIST_HEAD(&gr2d->client.list);
-+	gr2d->client.version =3D gr2d->soc->version;
- 	gr2d->client.ops =3D &gr2d_ops;
-=20
- 	err =3D host1x_client_register(&gr2d->client.base);
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index 9bd89916d2ef..0d72e78bd6e8 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -325,11 +325,11 @@ static int gr3d_probe(struct platform_device *pdev)
- 	gr3d->client.base.ops =3D &gr3d_client_ops;
- 	gr3d->client.base.dev =3D &pdev->dev;
- 	gr3d->client.base.class =3D HOST1X_CLASS_GR3D;
--	gr3d->client.base.version =3D gr3d->soc->version;
- 	gr3d->client.base.syncpts =3D syncpts;
- 	gr3d->client.base.num_syncpts =3D 1;
-=20
- 	INIT_LIST_HEAD(&gr3d->client.list);
-+	gr3d->client.version =3D gr3d->soc->version;
- 	gr3d->client.ops =3D &gr3d_ops;
-=20
- 	err =3D host1x_client_register(&gr3d->client.base);
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index b9df467ca71e..9fa77405db01 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -342,12 +342,12 @@ static int vic_probe(struct platform_device *pdev)
- 	vic->client.base.ops =3D &vic_client_ops;
- 	vic->client.base.dev =3D dev;
- 	vic->client.base.class =3D HOST1X_CLASS_VIC;
--	vic->client.base.version =3D vic->config->version;
- 	vic->client.base.syncpts =3D syncpts;
- 	vic->client.base.num_syncpts =3D 1;
- 	vic->dev =3D dev;
-=20
- 	INIT_LIST_HEAD(&vic->client.list);
-+	vic->client.version =3D vic->config->version;
- 	vic->client.ops =3D &vic_ops;
-=20
- 	err =3D host1x_client_register(&vic->client.base);
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 6dc819b1ab64..518864cfbd16 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -62,7 +62,6 @@ struct host1x_client {
- 	const struct host1x_client_ops *ops;
-=20
- 	enum host1x_class class;
--	unsigned int version;
-=20
- 	struct host1x_channel *channel;
-=20
-
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+yYkACgkQ3SOs138+
-s6F/DBAAqekHyP+4QNCKx381oHW43Rdg6vCOWvUKzFnY6MdrFxFR10516HL29wrN
-QkBDQpYdA+l4suw8HoKyzmsUNabySNEswlPVYUnKnh8TiD3PKxgMTLrWsBtov2Ew
-v6NTWeh9Fb9rzd5EKrek0UdCOPqhl8ffT7l7GxO+dIbrCBZI2UbfFOJtCW+sbJXN
-8ZhmwDmVWSWu7BYg/qeDteChUyvIQ7r8Ax5DeRVlfXl3OkKK8gneAMKNyp3Kw6I7
-WwLN8XVe6OojEkQP4l9u5m9CvSaW0MXHQxr/5Ax6eaqWubVqTESEOV4uGttsNRJS
-kSBvWpbNBUDpdXzqVIvyJDHB1fqgay0fJ/IeCUWPscvCfZy/q+FVBsPOOm0MzGYh
-6NpkRDAG0Gfo8yMKlQ/1tUD3WPEpOs3EwdVB6RkRXUtzWDNdYHusnwPc862laNyM
-nA9chQgLHgqui/t4r4YQN4GhCDCyh5EWqWqyQA8xM+lHh53InaJNe3ungE7/zza9
-8R6ImyDgQ00VgWX48DtTx0IMC63oNvD2b54i4+Yqtvy0JmCHznh3WecFm5Xns6FO
-NhcNKadmKHMbD7Ssc8N3QC+AvB3NBk+LtmHcBF8RekMRsPQg/BkdehMD+O2GVUgJ
-UpVTzPMZ8Q8ph6l1aGXNOxwBv7xl5Ce3zmEcu5jk2UfDU7NGcC4=
-=BgO6
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
-
---===============0561455386==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0561455386==--
+T24gMDUvMTgvMjAxOCAwMzozOSBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24gRnJpLCBN
+YXkgMTgsIDIwMTggYXQgMDM6MjE6MTFQTSArMDMwMCwgTWlra28gUGVydHR1bmVuIHdyb3RlOgo+
+PiBPbiAwNS8xNy8yMDE4IDA2OjM0IFBNLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4+IEZyb206
+IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4+Pgo+Pj4gVXNlcnNwYWNlIG5l
+ZWRzIHRvIGtub3cgdGhlIHZlcnNpb24gb2YgdGhlIGludGVyZmFjZSBpbXBsZW1lbnRlZCBieSBh
+Cj4+PiBjbGllbnQgc28gaXQgY2FuIGNyZWF0ZSB0aGUgcHJvcGVyIGNvbW1hbmQgc3RyZWFtcy4g
+QWxsb3cgaW5kaXZpZHVhbAo+Pj4gZHJpdmVycyB0byBzdG9yZSB0aGlzIHZlcnNpb24gYWxvbmcg
+d2l0aCB0aGUgY2xpZW50IHNvIHRoYXQgaXQgY2FuIGJlCj4+PiByZXR1cm5lZCB0byB1c2Vyc3Bh
+Y2UgdXBvbiBvcGVuaW5nIGEgY2hhbm5lbC4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5
+IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+Pj4gLS0tCj4+PiAgICBpbmNsdWRlL2xpbnV4
+L2hvc3QxeC5oIHwgMyArKysKPj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykK
+Pj4+Cj4+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9ob3N0MXguaCBiL2luY2x1ZGUvbGlu
+dXgvaG9zdDF4LmgKPj4+IGluZGV4IDg5MTEwZDg5NmQ3Mi4uNTdkMjY0MDZiZGZkIDEwMDY0NAo+
+Pj4gLS0tIGEvaW5jbHVkZS9saW51eC9ob3N0MXguaAo+Pj4gKysrIGIvaW5jbHVkZS9saW51eC9o
+b3N0MXguaAo+Pj4gQEAgLTQ5LDYgKzQ5LDcgQEAgc3RydWN0IGhvc3QxeF9jbGllbnRfb3BzIHsK
+Pj4+ICAgICAqIEBkZXY6IHBvaW50ZXIgdG8gc3RydWN0IGRldmljZSBiYWNraW5nIHRoaXMgaG9z
+dDF4IGNsaWVudAo+Pj4gICAgICogQG9wczogaG9zdDF4IGNsaWVudCBvcGVyYXRpb25zCj4+PiAg
+ICAgKiBAY2xhc3M6IGhvc3QxeCBjbGFzcyByZXByZXNlbnRlZCBieSB0aGlzIGNsaWVudAo+Pj4g
+KyAqIEB2ZXJzaW9uOiBpbnRlcmZhY2UgdmVyc2lvbiBpbXBsZW1lbnRlZCBieSB0aGlzIGNsaWVu
+dAo+Pj4gICAgICogQGNoYW5uZWw6IGhvc3QxeCBjaGFubmVsIGFzc29jaWF0ZWQgd2l0aCB0aGlz
+IGNsaWVudAo+Pj4gICAgICogQHN5bmNwdHM6IGFycmF5IG9mIHN5bmNwb2ludHMgcmVxdWVzdGVk
+IGZvciB0aGlzIGNsaWVudAo+Pj4gICAgICogQG51bV9zeW5jcHRzOiBudW1iZXIgb2Ygc3luY3Bv
+aW50cyByZXF1ZXN0ZWQgZm9yIHRoaXMgY2xpZW50Cj4+PiBAQCAtNjEsNiArNjIsOCBAQCBzdHJ1
+Y3QgaG9zdDF4X2NsaWVudCB7Cj4+PiAgICAJY29uc3Qgc3RydWN0IGhvc3QxeF9jbGllbnRfb3Bz
+ICpvcHM7Cj4+PiAgICAJZW51bSBob3N0MXhfY2xhc3MgY2xhc3M7Cj4+PiArCXVuc2lnbmVkIGlu
+dCB2ZXJzaW9uOwo+Pj4gKwo+Pgo+PiBJdCBkb2Vzbid0IHNlZW0gdG8gbWUgdGhhdCB0aGlzIGZp
+dHMgaGVyZSAtIEhvc3QxeCBkb2Vzbid0IHByb3ZpZGUgYW55Cj4+IHVzZXJzcGFjZSBpbnRlcmZh
+Y2UsIFRlZ3JhRFJNIGRvZXMuIFdlIHdpbGwgKGhvcGVmdWxseSkgaGF2ZSBjbGllbnRzIGluIHRo
+ZQo+PiBmdXR1cmUgdGhhdCB1c2UgYSBkaWZmZXJlbnQgdXNlcnNwYWNlIGludGVyZmFjZSwgb3Ig
+ZG9uJ3QgaGF2ZSBvbmUgYXQgYWxsLgo+PiBTbyB0aGlzIHByb3BlcnR5IHNob3VsZCBiZSBvbiBU
+ZWdyYURSTSBzaWRlIGluc3RlYWQuCj4gCj4gSSB0aGluayB0aGUgbGluZSBpcyBzb21ld2hhdCBi
+bHVycnkuIFRlY2huaWNhbGx5IGl0IGlzIHRoZSBob3N0MXgKPiBjbGllbnRzIHRoYXQgZGVmaW5l
+IHRoZSB2ZXJzaW9uIG9mIHRoZSBpbnRlcmZhY2UgdGhhdCB0aGV5IHByb3ZpZGUuIEJ5Cj4gaW50
+ZXJmYWNlIEkgbWVhbiB0aGUgImNsYXNzIiBvZiB0aGUgY29tbWFuZCBzdHJlYW0gc3VwcG9ydGVk
+LiBTbyBncjJkCj4gd2lsbCBkZWZpbmUgd2hhdCBtZXRob2RzIGFyZSB2YWxpZCB0byB1c2Ugb24g
+YSBzcGVjaWZpYyB2ZXJzaW9uIG9mIHRoZQo+IG1vZHVsZS4gVGhlIHNhbWUgZ29lcyBmb3IgZ3Iz
+ZCBhbmQgVklDLiBUaGUgaGFyZHdhcmUgbW9kdWxlIGlzIHdoZXJlCj4gdGhhdCBzcGVjaWZpY2F0
+aW9uIGxpdmVzLgo+IAo+IFNvIGlmIHdlIGV2ZXIgaGFkIGEgY2xpZW50IHRoYXQgZGlkbid0IHBy
+b3ZpZGUgYSB1c2Vyc3BhY2UgaW50ZXJmYWNlIHZpYQo+IFRlZ3JhIERSTSB3ZSdkIHN0aWxsIHdh
+bnQgdG8gcmVwcmVzZW50IHdoYXQgdmVyc2lvbiBvZiB0aGUgKGNvbW1hbmQKPiBzdHJlYW0pIGlu
+dGVyZmFjZSBpcyBleHBlY3RlZC4gQnkgbW92aW5nIHRoaXMgdG8gZHJtL3RlZ3JhLCB3ZSBtb3Zl
+IHRoZQo+IGhhcmR3YXJlIHNwZWNpZmljIGJpdHMgaW50byB0aGUgdXNlcnNwYWNlIHJlbGF0ZWQg
+cGFydHMsIHNvIEknbSBub3Qgc3VyZQo+IGl0IGlzIGEgcmVhbGx5IGdvb2QgZml0LgoKVGhlIHdh
+eSBJIGxvb2sgYXQgaXQsIFRlZ3JhRFJNIGNvbnRhaW5zIHRoZSBlbmdpbmUgZHJpdmVyIAppbXBs
+ZW1lbnRhdGlvbnMgYW5kIHNob3VsZCBjb250YWluIGFsbCBrbm93bGVkZ2UgYWJvdXQgdGhvc2Ug
+LSBIb3N0MXggCnNob3VsZCBrbm93IGFzIGxpdHRsZSBhcyBwb3NzaWJsZSBhYm91dCB0aGUgZW5n
+aW5lcywgYW5kIGFzIGl0IGRvZXNuJ3QgCm5lZWQgdG8ga25vdyB0aGUgaW50ZXJmYWNlIHZlcnNp
+b24sIHdlIHNob3VsZCBrZWVwIHRoYXQgaW5mb3JtYXRpb24gb24gCnRoZSBUZWdyYURSTSBzaWRl
+LiBBcyBhIGNvbXBhcmlzb24sIHdlIGNvdWxkIHRoaW5rIG9mIEhvc3QxeCBhcyBhIFBDSSAKaG9z
+dCBjb250cm9sbGVyIGFuZCB0aGUgZW5naW5lcyBhcyBjb25uZWN0ZWQgZGV2aWNlcy4KCj4gCj4g
+SG93ZXZlciwgSSBkbyB1bmRlcnN0YW5kIHdoZXJlIHlvdSdyZSBjb21pbmcgZnJvbS4gVWx0aW1h
+dGVseSB3aGVyZQo+IHVzZXJzcGFjZSBnZXRzIGludm9sdmVkIGlzIGF0IHRoZSBBQkkgbGV2ZWwg
+dGhhdCBkcm0vdGVncmEgZXhwb3Nlcy4gQW5kCj4gZm9yIGRyaXZlcnMgdGhhdCBkb24ndCBleHBv
+c2UgYSB1c2Vyc3BhY2UgQUJJLCB0aGV5J2QgbGlrZWx5IG5lZWQgdG8KPiBkZWFsIHdpdGggdGhl
+IHZlcnNpb24gbnVtYmVyIGludGVybmFsbHksIHNvIHN0b3JpbmcgdGhpcyBpbiBob3N0MXgKPiBj
+bGllbnRzIHdvdWxkbid0IGZpdCB2ZXJ5IHdlbGwgZWl0aGVyLgo+IAo+IEkgZG9uJ3QgcmVhbGx5
+IGNhcmUgYWxsIHRoYXQgbXVjaCBob3cgZXhhY3RseSB3ZSBzdG9yZSB0aGUgdmVyc2lvbgo+IGlu
+Zm9ybWF0aW9uIHNvIHRoYXQgaXQgY2FuIGJlIHJlcG9ydGVkIGJhY2sgdG8gdXNlcnNwYWNlLCBh
+bmQgbW92aW5nIGl0Cj4gdG8gZHJtL3RlZ3JhIG1ha2VzIHRoZSBjb2RlIHNvbWV3aGF0IG1vcmUg
+ZWxlZ2FudC4gSSBjYW1lIHVwIHdpdGggdGhlCj4gYmVsb3csIHdoaWNoIGlzIGNvbXBsZXRlbHkg
+dW50ZXN0ZWQgYnV0IHNob3VsZCB3b3JrLgoKWWVwLCB0aGlzIGxvb2tzIGdvb2QgdG8gbWUuCgpU
+aGFua3MhCk1pa2tvCgo+IAo+IFRoaWVycnkKPiAKPiAtLS0gPjggLS0tCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0u
+Ywo+IGluZGV4IDQzMzBkNWQ0ODgwMS4uNWRjMDIzNDAwMDdlIDEwMDY0NAo+IC0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0u
+Ywo+IEBAIC0xMzg5LDcgKzEzODksNyBAQCBzdGF0aWMgaW50IHRlZ3JhX29wZW5fY2hhbm5lbChz
+dHJ1Y3QgZHJtX2RldmljZSAqZHJtLCB2b2lkICpkYXRhLAo+ICAgCQkJCWJyZWFrOwo+ICAgCj4g
+ICAJCQlhcmdzLT5zeW5jcHRzID0gY2xpZW50LT5iYXNlLm51bV9zeW5jcHRzOwo+IC0JCQlhcmdz
+LT52ZXJzaW9uID0gY2xpZW50LT5iYXNlLnZlcnNpb247Cj4gKwkJCWFyZ3MtPnZlcnNpb24gPSBj
+bGllbnQtPnZlcnNpb247Cj4gICAJCQlhcmdzLT5jb250ZXh0ID0gY29udGV4dC0+aWQ7Cj4gICAJ
+CQlicmVhazsKPiAgIAkJfQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJt
+LmggYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmgKPiBpbmRleCAxMzY2MGY2MjI1YTIuLmY0
+OTNlMGJmMjE3MiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmgKPiAr
+KysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmgKPiBAQCAtMTA1LDYgKzEwNSw3IEBAIHN0
+cnVjdCB0ZWdyYV9kcm1fY2xpZW50IHsKPiAgIAlzdHJ1Y3QgaG9zdDF4X2NsaWVudCBiYXNlOwo+
+ICAgCXN0cnVjdCBsaXN0X2hlYWQgbGlzdDsKPiAgIAo+ICsJdW5zaWduZWQgaW50IHZlcnNpb247
+Cj4gICAJY29uc3Qgc3RydWN0IHRlZ3JhX2RybV9jbGllbnRfb3BzICpvcHM7Cj4gICB9Owo+ICAg
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjJkLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vdGVncmEvZ3IyZC5jCj4gaW5kZXggN2NhZTgyNTJmMGZhLi4xNjVhMWNlY2UwMzkgMTAw
+NjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dyMmQuYwo+ICsrKyBiL2RyaXZlcnMv
+Z3B1L2RybS90ZWdyYS9ncjJkLmMKPiBAQCAtMTk2LDExICsxOTYsMTEgQEAgc3RhdGljIGludCBn
+cjJkX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gICAJZ3IyZC0+Y2xpZW50
+LmJhc2Uub3BzID0gJmdyMmRfY2xpZW50X29wczsKPiAgIAlncjJkLT5jbGllbnQuYmFzZS5kZXYg
+PSBkZXY7Cj4gICAJZ3IyZC0+Y2xpZW50LmJhc2UuY2xhc3MgPSBIT1NUMVhfQ0xBU1NfR1IyRDsK
+PiAtCWdyMmQtPmNsaWVudC5iYXNlLnZlcnNpb24gPSBncjJkLT5zb2MtPnZlcnNpb247Cj4gICAJ
+Z3IyZC0+Y2xpZW50LmJhc2Uuc3luY3B0cyA9IHN5bmNwdHM7Cj4gICAJZ3IyZC0+Y2xpZW50LmJh
+c2UubnVtX3N5bmNwdHMgPSAxOwo+ICAgCj4gICAJSU5JVF9MSVNUX0hFQUQoJmdyMmQtPmNsaWVu
+dC5saXN0KTsKPiArCWdyMmQtPmNsaWVudC52ZXJzaW9uID0gZ3IyZC0+c29jLT52ZXJzaW9uOwo+
+ICAgCWdyMmQtPmNsaWVudC5vcHMgPSAmZ3IyZF9vcHM7Cj4gICAKPiAgIAllcnIgPSBob3N0MXhf
+Y2xpZW50X3JlZ2lzdGVyKCZncjJkLT5jbGllbnQuYmFzZSk7Cj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IzZC5jCj4g
+aW5kZXggOWJkODk5MTZkMmVmLi4wZDcyZTc4YmQ2ZTggMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL3RlZ3JhL2dyM2QuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMK
+PiBAQCAtMzI1LDExICszMjUsMTEgQEAgc3RhdGljIGludCBncjNkX3Byb2JlKHN0cnVjdCBwbGF0
+Zm9ybV9kZXZpY2UgKnBkZXYpCj4gICAJZ3IzZC0+Y2xpZW50LmJhc2Uub3BzID0gJmdyM2RfY2xp
+ZW50X29wczsKPiAgIAlncjNkLT5jbGllbnQuYmFzZS5kZXYgPSAmcGRldi0+ZGV2Owo+ICAgCWdy
+M2QtPmNsaWVudC5iYXNlLmNsYXNzID0gSE9TVDFYX0NMQVNTX0dSM0Q7Cj4gLQlncjNkLT5jbGll
+bnQuYmFzZS52ZXJzaW9uID0gZ3IzZC0+c29jLT52ZXJzaW9uOwo+ICAgCWdyM2QtPmNsaWVudC5i
+YXNlLnN5bmNwdHMgPSBzeW5jcHRzOwo+ICAgCWdyM2QtPmNsaWVudC5iYXNlLm51bV9zeW5jcHRz
+ID0gMTsKPiAgIAo+ICAgCUlOSVRfTElTVF9IRUFEKCZncjNkLT5jbGllbnQubGlzdCk7Cj4gKwln
+cjNkLT5jbGllbnQudmVyc2lvbiA9IGdyM2QtPnNvYy0+dmVyc2lvbjsKPiAgIAlncjNkLT5jbGll
+bnQub3BzID0gJmdyM2Rfb3BzOwo+ICAgCj4gICAJZXJyID0gaG9zdDF4X2NsaWVudF9yZWdpc3Rl
+cigmZ3IzZC0+Y2xpZW50LmJhc2UpOwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVn
+cmEvdmljLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMKPiBpbmRleCBiOWRmNDY3Y2E3
+MWUuLjlmYTc3NDA1ZGIwMSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmlj
+LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMKPiBAQCAtMzQyLDEyICszNDIs
+MTIgQEAgc3RhdGljIGludCB2aWNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikK
+PiAgIAl2aWMtPmNsaWVudC5iYXNlLm9wcyA9ICZ2aWNfY2xpZW50X29wczsKPiAgIAl2aWMtPmNs
+aWVudC5iYXNlLmRldiA9IGRldjsKPiAgIAl2aWMtPmNsaWVudC5iYXNlLmNsYXNzID0gSE9TVDFY
+X0NMQVNTX1ZJQzsKPiAtCXZpYy0+Y2xpZW50LmJhc2UudmVyc2lvbiA9IHZpYy0+Y29uZmlnLT52
+ZXJzaW9uOwo+ICAgCXZpYy0+Y2xpZW50LmJhc2Uuc3luY3B0cyA9IHN5bmNwdHM7Cj4gICAJdmlj
+LT5jbGllbnQuYmFzZS5udW1fc3luY3B0cyA9IDE7Cj4gICAJdmljLT5kZXYgPSBkZXY7Cj4gICAK
+PiAgIAlJTklUX0xJU1RfSEVBRCgmdmljLT5jbGllbnQubGlzdCk7Cj4gKwl2aWMtPmNsaWVudC52
+ZXJzaW9uID0gdmljLT5jb25maWctPnZlcnNpb247Cj4gICAJdmljLT5jbGllbnQub3BzID0gJnZp
+Y19vcHM7Cj4gICAKPiAgIAllcnIgPSBob3N0MXhfY2xpZW50X3JlZ2lzdGVyKCZ2aWMtPmNsaWVu
+dC5iYXNlKTsKPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9ob3N0MXguaCBiL2luY2x1ZGUv
+bGludXgvaG9zdDF4LmgKPiBpbmRleCA2ZGM4MTliMWFiNjQuLjUxODg2NGNmYmQxNiAxMDA2NDQK
+PiAtLS0gYS9pbmNsdWRlL2xpbnV4L2hvc3QxeC5oCj4gKysrIGIvaW5jbHVkZS9saW51eC9ob3N0
+MXguaAo+IEBAIC02Miw3ICs2Miw2IEBAIHN0cnVjdCBob3N0MXhfY2xpZW50IHsKPiAgIAljb25z
+dCBzdHJ1Y3QgaG9zdDF4X2NsaWVudF9vcHMgKm9wczsKPiAgIAo+ICAgCWVudW0gaG9zdDF4X2Ns
+YXNzIGNsYXNzOwo+IC0JdW5zaWduZWQgaW50IHZlcnNpb247Cj4gICAKPiAgIAlzdHJ1Y3QgaG9z
+dDF4X2NoYW5uZWwgKmNoYW5uZWw7Cj4gICAKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
