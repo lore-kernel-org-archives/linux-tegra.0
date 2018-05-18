@@ -1,103 +1,72 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] gpu: host1x: Fix compiler errors by converting to
- dma_addr_t
-Date: Fri, 18 May 2018 11:22:01 +0200
-Message-ID: <20180518092201.GL14500@ulmo>
-References: <20180516102204.stviarlxgrz3k2nh@lianli>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 11/11] ARM: tegra: Create platform device for
+ tegra20-cpufreq driver
+Date: Fri, 18 May 2018 12:30:21 +0300
+Message-ID: <1ca8f874-40da-05b4-0b76-116164c85137@gmail.com>
+References: <20180517180056.13336-1-digetx@gmail.com>
+ <20180517180056.13336-12-digetx@gmail.com> <20180518091352.GK14500@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0028101434=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180516102204.stviarlxgrz3k2nh@lianli>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Emil Goode <emil.fsw@goode.io>
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180518091352.GK14500@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On 18.05.2018 12:13, Thierry Reding wrote:
+> On Thu, May 17, 2018 at 09:00:56PM +0300, Dmitry Osipenko wrote:
+>> Tegra20-cpufreq driver require a platform device in order to be loaded,
+>> instantiate a simple platform device for the driver during of the machines
+>> late initialization.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  arch/arm/mach-tegra/tegra.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+>> index 02e712d2ea30..f9587be48235 100644
+>> --- a/arch/arm/mach-tegra/tegra.c
+>> +++ b/arch/arm/mach-tegra/tegra.c
+>> @@ -97,6 +97,10 @@ static void __init tegra_dt_init_late(void)
+>>  	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
+>>  	    of_machine_is_compatible("compal,paz00"))
+>>  		tegra_paz00_wifikill_init();
+>> +
+>> +	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
+>> +	    of_machine_is_compatible("nvidia,tegra20"))
+>> +		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
+>>  }
+>>  
+>>  static const char * const tegra_dt_board_compat[] = {
+> 
+> Tegra124 has a CPU frequency driver that is similar to this and it
+> contains code that will instantiate the platform device from the CPU
+> frequency driver's module_init function.
+> 
+> I think the primary reason for doing that was to not tie the code to
+> 32-bit ARM, even though it never runs on anything but that, so it's
+> slightly over-engineered.
 
---===============0028101434==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zH41lVBEV8cLJnCl"
-Content-Disposition: inline
+The tegra124-cpufreq driver likely to be broken in regards to the module loading
+as platform_device_register_simple() seem to be allowed invoked only from the
+kernel itself.
 
+Having platform_device_register_simple in the kernels module leads to a such
+errors on the module loading:
 
---zH41lVBEV8cLJnCl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+# section 5 reloc 7 sym 'memset': relocation 10 out of range (0xbf805030 ->
+0xc088c481)
 
-On Wed, May 16, 2018 at 12:22:04PM +0200, Emil Goode wrote:
-> The compiler is complaining with the following errors:
->=20
-> drivers/gpu/host1x/cdma.c:94:48: error:
-> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
-ointer type
-> 	[-Werror=3Dincompatible-pointer-types]
->=20
-> drivers/gpu/host1x/cdma.c:113:48: error:
-> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
-ointer type
-> 	[-Werror=3Dincompatible-pointer-types]
->=20
-> The expected pointer type of the third argument to dma_alloc_wc() is
-> dma_addr_t but phys_addr_t is passed.
->=20
-> Change the phys member of struct push_buffer to be dma_addr_t so that we
-> pass the correct type to dma_alloc_wc().
-> Also check pb->mapped for non-NULL in the destroy function as that is the
-> right way of checking if dma_alloc_wc() was successful.
->=20
-> Signed-off-by: Emil Goode <emil.fsw@goode.io>
-> ---
-> v2: - Change the phys member type instead of adding casts.
->     - Check pb->mapped in the destroy function as 0 is a valid value
->       for dma_addr_t.
->=20
->  drivers/gpu/host1x/cdma.c | 2 +-
->  drivers/gpu/host1x/cdma.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+Initially I wanted to make tegra124-cpufreq a module_platform_driver, but
+decided to postpone that, as the driver is shared with ARM64 Tegra132 which
+doesn't have machine-init code. Maybe we could move the devices instantiation to
+something common like driver/soc/tegra/devices.c later.
 
-Applied, thanks.
-
-Thierry
-
---zH41lVBEV8cLJnCl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+mzkACgkQ3SOs138+
-s6E/pg//bHifSGSSjuLuoGSL2+fTU7b8n8NLFMy43WOwRNaOZWmQ23lGmSrTrSm8
-4EhzWSrEFdKL4YR/n3r6EsaH2IZjPxEM2qd0+V525ZURbkfy/kOqPUGa6lf2THJ1
-nGt7pDOZH6gZzqYfrkZygmrL5KbterkF9V39Mu77xehmP6BVKT2XGlXTbJCcl4cV
-kPwUnTblvQAMstZWLr9WZKV54JSB93l1oiA4mgxIIrlNusu4itOefMyTj5BMKmj2
-YVp8Dnw9cuJ0gJl3cbGpXL51aJzO5dqaBXy/Ws4l2fmR0Cp132DWZl1X5NOx8Bi5
-4JLvc5+V+MdE19Ohntwok1qffUvRZj6xJwLuvCAuDSFiB5TnwsotMFxdMt/UULeg
-qraPDDVJ10QaXchAgfS1w+d1ZdSDeDoWsvurdEfuy7vHV/IeZbOZBqRzoNie0wfX
-jtDxd/dKSpPr9pkPuMuiT3RVSGYIiST8e0hmDlO5nJnx8rw4vyIWExKFNRKcjln6
-o268mMhtRF0/Su0o565/sq99mhdZNJkkm/G/glzCcgFNcWUqsQYHLhHyP8iTD93X
-00IUTlPmY7iJ2yIwq08hvhPkPNjrkZm2HwK1cx+CYB1iH6H1yzcRfUNyb67LeW27
-JstXrXkcLR6LmzshZhloGkqaqCO8kyyfuAgmjbsC2U75j8nyJDk=
-=EXzw
------END PGP SIGNATURE-----
-
---zH41lVBEV8cLJnCl--
-
---===============0028101434==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0028101434==--
+> I don't mind either way, and it's easy enough to change this to
+> something else later on if we want. I'll pick this up into the Tegra
+> tree.
+Okay, thanks.
