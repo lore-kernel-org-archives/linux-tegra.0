@@ -1,88 +1,57 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 5/9] PM / Domains: dt: Allow power-domain property to be a
- list of phandles
-Date: Fri, 18 May 2018 12:46:58 +0200
-Message-ID: <CAMuHMdUTF-8_V6kMAE0THNES+yv2HhZGJA3f41Yfpd1Bs6txHg@mail.gmail.com>
-References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org> <1526639490-12167-6-git-send-email-ulf.hansson@linaro.org>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH 7/7] gpu: host1x: Track client version
+Date: Fri, 18 May 2018 15:21:11 +0300
+Message-ID: <0a6d355f-1173-61e5-af38-97f65ae41145@kapsi.fi>
+References: <20180517153430.9602-1-thierry.reding@gmail.com>
+ <20180517153430.9602-8-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526639490-12167-6-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux PM list <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180517153430.9602-8-thierry.reding@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Ulf,
-
-On Fri, May 18, 2018 at 12:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> To be able to describe topologies where devices are partitioned across
-> multiple power domains, let's extend the power-domain property to allow
-> being a list of phandles.
->
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Suggested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/power/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/power/power_domain.txt
-> @@ -111,8 +111,9 @@ Example 3:
->  ==PM domain consumers==
->
->  Required properties:
-> - - power-domains : A phandle and PM domain specifier as defined by bindings of
-> -                   the power controller specified by phandle.
-> + - power-domains : A phandle and PM domain specifier, or a list of phandles, as
-
-A list of PM domain specifiers?
-
-(A PM domain specifier consists of a phandle, and zero or more indices)
-
-> +                  defined by bindings of the power controller specified by
-> +                  phandle.
->
->  Example:
->
-> @@ -122,9 +123,16 @@ Example:
->                 power-domains = <&power 0>;
->         };
->
-> -The node above defines a typical PM domain consumer device, which is located
-> -inside a PM domain with index 0 of a power controller represented by a node
-> -with the label "power".
-> +       leaky-device@12350000 {
-
-I know it's just an example, but this uses the same unit-address and
-reg property
-as the device node above.
-
-There's a similar issue with the two other examples below, but they
-use different
-node names (leaky-device0 and leaky-device1).
-
-> +               compatible = "foo,i-leak-current";
-> +               reg = <0x12350000 0x1000>;
-> +               power-domains = <&power0 0>, <&power1 0> ;
-> +       };
-> +
-> +The first example above defines a typical PM domain consumer device, which is
-> +located inside a PM domain with index 0 of a power controller represented by a
-> +node with the label "power". In the second example the consumer device are
-> +partitioned across two PM domains.
->
->  Optional properties:
->  - required-opps: This contains phandle to an OPP node in another device's OPP
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+T24gMDUvMTcvMjAxOCAwNjozNCBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhp
+ZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBVc2Vyc3BhY2UgbmVlZHMgdG8g
+a25vdyB0aGUgdmVyc2lvbiBvZiB0aGUgaW50ZXJmYWNlIGltcGxlbWVudGVkIGJ5IGEKPiBjbGll
+bnQgc28gaXQgY2FuIGNyZWF0ZSB0aGUgcHJvcGVyIGNvbW1hbmQgc3RyZWFtcy4gQWxsb3cgaW5k
+aXZpZHVhbAo+IGRyaXZlcnMgdG8gc3RvcmUgdGhpcyB2ZXJzaW9uIGFsb25nIHdpdGggdGhlIGNs
+aWVudCBzbyB0aGF0IGl0IGNhbiBiZQo+IHJldHVybmVkIHRvIHVzZXJzcGFjZSB1cG9uIG9wZW5p
+bmcgYSBjaGFubmVsLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5n
+QG52aWRpYS5jb20+Cj4gLS0tCj4gICBpbmNsdWRlL2xpbnV4L2hvc3QxeC5oIHwgMyArKysKPiAg
+IDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvaW5jbHVk
+ZS9saW51eC9ob3N0MXguaCBiL2luY2x1ZGUvbGludXgvaG9zdDF4LmgKPiBpbmRleCA4OTExMGQ4
+OTZkNzIuLjU3ZDI2NDA2YmRmZCAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2hvc3QxeC5o
+Cj4gKysrIGIvaW5jbHVkZS9saW51eC9ob3N0MXguaAo+IEBAIC00OSw2ICs0OSw3IEBAIHN0cnVj
+dCBob3N0MXhfY2xpZW50X29wcyB7Cj4gICAgKiBAZGV2OiBwb2ludGVyIHRvIHN0cnVjdCBkZXZp
+Y2UgYmFja2luZyB0aGlzIGhvc3QxeCBjbGllbnQKPiAgICAqIEBvcHM6IGhvc3QxeCBjbGllbnQg
+b3BlcmF0aW9ucwo+ICAgICogQGNsYXNzOiBob3N0MXggY2xhc3MgcmVwcmVzZW50ZWQgYnkgdGhp
+cyBjbGllbnQKPiArICogQHZlcnNpb246IGludGVyZmFjZSB2ZXJzaW9uIGltcGxlbWVudGVkIGJ5
+IHRoaXMgY2xpZW50Cj4gICAgKiBAY2hhbm5lbDogaG9zdDF4IGNoYW5uZWwgYXNzb2NpYXRlZCB3
+aXRoIHRoaXMgY2xpZW50Cj4gICAgKiBAc3luY3B0czogYXJyYXkgb2Ygc3luY3BvaW50cyByZXF1
+ZXN0ZWQgZm9yIHRoaXMgY2xpZW50Cj4gICAgKiBAbnVtX3N5bmNwdHM6IG51bWJlciBvZiBzeW5j
+cG9pbnRzIHJlcXVlc3RlZCBmb3IgdGhpcyBjbGllbnQKPiBAQCAtNjEsNiArNjIsOCBAQCBzdHJ1
+Y3QgaG9zdDF4X2NsaWVudCB7Cj4gICAJY29uc3Qgc3RydWN0IGhvc3QxeF9jbGllbnRfb3BzICpv
+cHM7Cj4gICAKPiAgIAllbnVtIGhvc3QxeF9jbGFzcyBjbGFzczsKPiArCXVuc2lnbmVkIGludCB2
+ZXJzaW9uOwo+ICsKCkl0IGRvZXNuJ3Qgc2VlbSB0byBtZSB0aGF0IHRoaXMgZml0cyBoZXJlIC0g
+SG9zdDF4IGRvZXNuJ3QgcHJvdmlkZSBhbnkgCnVzZXJzcGFjZSBpbnRlcmZhY2UsIFRlZ3JhRFJN
+IGRvZXMuIFdlIHdpbGwgKGhvcGVmdWxseSkgaGF2ZSBjbGllbnRzIGluIAp0aGUgZnV0dXJlIHRo
+YXQgdXNlIGEgZGlmZmVyZW50IHVzZXJzcGFjZSBpbnRlcmZhY2UsIG9yIGRvbid0IGhhdmUgb25l
+IAphdCBhbGwuIFNvIHRoaXMgcHJvcGVydHkgc2hvdWxkIGJlIG9uIFRlZ3JhRFJNIHNpZGUgaW5z
+dGVhZC4KCk1pa2tvCgo+ICAgCXN0cnVjdCBob3N0MXhfY2hhbm5lbCAqY2hhbm5lbDsKPiAgIAo+
+ICAgCXN0cnVjdCBob3N0MXhfc3luY3B0ICoqc3luY3B0czsKPiAKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
