@@ -1,111 +1,103 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 10/11] cpufreq: tegra20: Wrap cpufreq into platform
- driver
-Date: Fri, 18 May 2018 12:19:16 +0300
-Message-ID: <4ed2535c-651a-2bb1-c9bc-0550bca3d292@gmail.com>
-References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-11-digetx@gmail.com> <20180518090755.GJ14500@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] gpu: host1x: Fix compiler errors by converting to
+ dma_addr_t
+Date: Fri, 18 May 2018 11:22:01 +0200
+Message-ID: <20180518092201.GL14500@ulmo>
+References: <20180516102204.stviarlxgrz3k2nh@lianli>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180518090755.GJ14500@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+Content-Type: multipart/mixed; boundary="===============0028101434=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180516102204.stviarlxgrz3k2nh@lianli>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Emil Goode <emil.fsw@goode.io>
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 18.05.2018 12:07, Thierry Reding wrote:
-> On Thu, May 17, 2018 at 09:00:55PM +0300, Dmitry Osipenko wrote:
->> Currently tegra20-cpufreq kernel module isn't getting autoloaded because
->> there is no device associated with the module, this is one of two patches
->> that resolves the module autoloading. This patch adds a module alias that
->> will associate the tegra20-cpufreq kernel module with the platform device,
->> other patch will instantiate the actual platform device. And now it makes
->> sense to wrap cpufreq driver into a platform driver for consistency.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/cpufreq/tegra20-cpufreq.c | 116 +++++++++++++++++++-----------
->>  1 file changed, 73 insertions(+), 43 deletions(-)
->>
->> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
->> index c0a7b5a78aa6..f9d02a28df9e 100644
->> --- a/drivers/cpufreq/tegra20-cpufreq.c
->> +++ b/drivers/cpufreq/tegra20-cpufreq.c
->> @@ -19,7 +19,7 @@
->>  #include <linux/clk.h>
->>  #include <linux/cpufreq.h>
->>  #include <linux/module.h>
->> -#include <linux/of.h>
->> +#include <linux/platform_device.h>
->>  
->>  static struct cpufreq_frequency_table freq_table[] = {
->>  	{ .frequency = 216000 },
->> @@ -33,15 +33,19 @@ static struct cpufreq_frequency_table freq_table[] = {
->>  	{ .frequency = CPUFREQ_TABLE_END },
->>  };
->>  
->> -static struct clk *cpu_clk;
->> -static struct clk *pll_x_clk;
->> -static struct clk *pll_p_clk;
->> -static bool pll_x_prepared;
->> +struct tegra20_cpufreq_data {
-> 
-> Nit: I'm not a big fan of _data suffixes because they are completely
-> redundant. Any data structure by definition hosts data, so I'd just drop
-> that.
 
-Okay, I'll drop it in v2.
+--===============0028101434==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zH41lVBEV8cLJnCl"
+Content-Disposition: inline
 
-> [...]
->> @@ -152,55 +161,76 @@ static struct cpufreq_driver tegra_cpufreq_driver = {
->>  	.suspend		= cpufreq_generic_suspend,
->>  };
->>  
->> -static int __init tegra_cpufreq_init(void)
->> +static int tegra20_cpufreq_probe(struct platform_device *pdev)
->>  {
->> +	struct tegra20_cpufreq_data *data;
->>  	int err;
->>  
->> -	if (!of_machine_is_compatible("nvidia,tegra20"))
->> -		return -ENODEV;
->> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->>  
->> -	cpu_clk = clk_get_sys(NULL, "cclk");
->> -	if (IS_ERR(cpu_clk))
->> -		return PTR_ERR(cpu_clk);
->> +	data->cpu_clk = clk_get_sys(NULL, "cclk");
->> +	if (IS_ERR(data->cpu_clk))
->> +		return PTR_ERR(data->cpu_clk);
->>  
->> -	pll_x_clk = clk_get_sys(NULL, "pll_x");
->> -	if (IS_ERR(pll_x_clk)) {
->> -		err = PTR_ERR(pll_x_clk);
->> +	data->pll_x_clk = clk_get_sys(NULL, "pll_x");
->> +	if (IS_ERR(data->pll_x_clk)) {
->> +		err = PTR_ERR(data->pll_x_clk);
->>  		goto put_cpu;
->>  	}
->>  
->> -	pll_p_clk = clk_get_sys(NULL, "pll_p");
->> -	if (IS_ERR(pll_p_clk)) {
->> -		err = PTR_ERR(pll_p_clk);
->> +	data->pll_p_clk = clk_get_sys(NULL, "pll_p");
->> +	if (IS_ERR(data->pll_p_clk)) {
->> +		err = PTR_ERR(data->pll_p_clk);
->>  		goto put_pll_x;
->>  	}
->>  
->> +	data->dev = &pdev->dev;
->> +
->> +	tegra_cpufreq_driver.driver_data = data;
-> 
-> Couldn't this be embedded into struct tegra20_cpufreq_data? Moving
-> everything but this into a per-device data structure seems half-baked.
 
-That's a good suggestions, thank you.
+--zH41lVBEV8cLJnCl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 16, 2018 at 12:22:04PM +0200, Emil Goode wrote:
+> The compiler is complaining with the following errors:
+>=20
+> drivers/gpu/host1x/cdma.c:94:48: error:
+> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
+ointer type
+> 	[-Werror=3Dincompatible-pointer-types]
+>=20
+> drivers/gpu/host1x/cdma.c:113:48: error:
+> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
+ointer type
+> 	[-Werror=3Dincompatible-pointer-types]
+>=20
+> The expected pointer type of the third argument to dma_alloc_wc() is
+> dma_addr_t but phys_addr_t is passed.
+>=20
+> Change the phys member of struct push_buffer to be dma_addr_t so that we
+> pass the correct type to dma_alloc_wc().
+> Also check pb->mapped for non-NULL in the destroy function as that is the
+> right way of checking if dma_alloc_wc() was successful.
+>=20
+> Signed-off-by: Emil Goode <emil.fsw@goode.io>
+> ---
+> v2: - Change the phys member type instead of adding casts.
+>     - Check pb->mapped in the destroy function as 0 is a valid value
+>       for dma_addr_t.
+>=20
+>  drivers/gpu/host1x/cdma.c | 2 +-
+>  drivers/gpu/host1x/cdma.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+
+Applied, thanks.
+
+Thierry
+
+--zH41lVBEV8cLJnCl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+mzkACgkQ3SOs138+
+s6E/pg//bHifSGSSjuLuoGSL2+fTU7b8n8NLFMy43WOwRNaOZWmQ23lGmSrTrSm8
+4EhzWSrEFdKL4YR/n3r6EsaH2IZjPxEM2qd0+V525ZURbkfy/kOqPUGa6lf2THJ1
+nGt7pDOZH6gZzqYfrkZygmrL5KbterkF9V39Mu77xehmP6BVKT2XGlXTbJCcl4cV
+kPwUnTblvQAMstZWLr9WZKV54JSB93l1oiA4mgxIIrlNusu4itOefMyTj5BMKmj2
+YVp8Dnw9cuJ0gJl3cbGpXL51aJzO5dqaBXy/Ws4l2fmR0Cp132DWZl1X5NOx8Bi5
+4JLvc5+V+MdE19Ohntwok1qffUvRZj6xJwLuvCAuDSFiB5TnwsotMFxdMt/UULeg
+qraPDDVJ10QaXchAgfS1w+d1ZdSDeDoWsvurdEfuy7vHV/IeZbOZBqRzoNie0wfX
+jtDxd/dKSpPr9pkPuMuiT3RVSGYIiST8e0hmDlO5nJnx8rw4vyIWExKFNRKcjln6
+o268mMhtRF0/Su0o565/sq99mhdZNJkkm/G/glzCcgFNcWUqsQYHLhHyP8iTD93X
+00IUTlPmY7iJ2yIwq08hvhPkPNjrkZm2HwK1cx+CYB1iH6H1yzcRfUNyb67LeW27
+JstXrXkcLR6LmzshZhloGkqaqCO8kyyfuAgmjbsC2U75j8nyJDk=
+=EXzw
+-----END PGP SIGNATURE-----
+
+--zH41lVBEV8cLJnCl--
+
+--===============0028101434==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0028101434==--
