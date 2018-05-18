@@ -1,101 +1,147 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Changes for v4.18-rc1
-Date: Sat, 19 May 2018 00:45:23 +0200
-Message-ID: <20180518224523.30982-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1] gpu: host1x: Utilize IOMMU mapping for firewall-copied buffers
+Date: Sat, 19 May 2018 02:52:31 +0300
+Message-ID: <20180518235231.9274-1-digetx@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNjBjYzQzZmM4ODg0
-MjhiYjJmMThmMDg5OTc0MzJkNDI2YTI0MzMzODoKCiAgTGludXggNC4xNy1yYzEgKDIwMTgtMDQt
-MTUgMTg6MjQ6MjAgLTA3MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBh
-dDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0v
-dGVncmEvZm9yLTQuMTgtcmMxCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gNjEzNDUz
-NGNhMjRmNDIwNDNjYWNkZDcxMDgwMjY4MDM1NzdmNmM1OToKCiAgZHJtL3RlZ3JhOiBBZGQga2Vy
-bmVsZG9jIGZvciBVQVBJICgyMDE4LTA1LTE5IDAwOjIxOjIwICswMjAwKQoKVGhhbmtzLApUaGll
-cnJ5CgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tCmRybS90ZWdyYTogQ2hhbmdlcyBmb3IgdjQuMTgtcmMxCgpUaGlzIHNldCBl
-bmFibGVzIElPTU1VIHN1cHBvcnQgaW4gdGhlIGdyMmQgYW5kIGdyM2QgZHJpdmVycyBhbmQgYWRk
-cwpzdXBwb3J0IGZvciB0aGUgenBvcyBwcm9wZXJ0eSBvbiBvbGRlciBUZWdyYSBnZW5lcmF0aW9u
-cy4gSXQgYWxzbwplbmFibGVzIHNjYWxpbmcgZmlsdGVycyBhbmQgaW5jb3Jwb3JhdGVzIHNvbWUg
-cmV3b3JrIHRvIGVsaW1pbmF0ZSBhCnByaXZhdGUgd3JhcHBlciBhcm91bmQgc3RydWN0IGRybV9m
-cmFtZWJ1ZmZlci4KClRoZSByZW1haW5kZXIgaXMgbW9zdGx5IGEgcmFuZG9tIGFzc29ydG1lbnQg
-b2YgZml4ZXMgYW5kIGNsZWFudXBzLCBhcwp3ZWxsIGFzIHNvbWUgcHJlcGFyYXRvcnkgd29yayBm
-b3IgZGVzdGFnaW5nIHRoZSB1c2Vyc3BhY2UgQUJJLCB3aGljaAppcyBhbG1vc3QgcmVhZHkgYW5k
-IGlzIHRhcmdldHRlZCBmb3IgdjQuMTktcmMxLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpEYW5pZWwgU3RvbmUgKDUpOgog
-ICAgICBkcm0vdGVncmE6IFJlbW92ZSBkdXBsaWNhdGUgZnJhbWVidWZmZXIgbnVtX3BsYW5lcwog
-ICAgICBkcm0vdGVncmE6IE1vdmUgR0VNIEJPcyB0byBkcm1fZnJhbWVidWZmZXIKICAgICAgZHJt
-L3RlZ3JhOiB0ZWdyYV9mYiAtPiBkcm1fZnJhbWVidWZmZXIKICAgICAgZHJtL3RlZ3JhOiBNb3Zl
-IGZiZGV2IHVubWFwIHNwZWNpYWwgY2FzZQogICAgICBkcm0vdGVncmE6IFVzZSBkcm1fZ2VtX2Zi
-X2Rlc3Ryb3kKCkRtaXRyeSBPc2lwZW5rbyAoNyk6CiAgICAgIGRybS90ZWdyYTogZGM6IEJhbGFu
-Y2UgSU9NTVUgZ3JvdXAgcmVmY291bnRpbmcKICAgICAgZHJtL3RlZ3JhOiBncjJkOiBBZGQgSU9N
-TVUgc3VwcG9ydAogICAgICBkcm0vdGVncmE6IGdyM2Q6IEFkZCBJT01NVSBzdXBwb3J0CiAgICAg
-IGRybS90ZWdyYTogZGM6IEVuYWJsZSBwbGFuZSBzY2FsaW5nIGZpbHRlcnMKICAgICAgZHJtL3Rl
-Z3JhOiBwbGFuZTogSW1wbGVtZW50IHpwb3MgcGxhbmUgcHJvcGVydHkgZm9yIG9sZGVyIFRlZ3Jh
-cwogICAgICBkcm0vdGVncmE6IGRjOiBSZW5hbWUgc3VwcG9ydHNfYmxlbmRpbmcgdG8gaGFzX2xl
-Z2FjeV9ibGVuZGluZwogICAgICBncHU6IGhvc3QxeDogRml4IGRtYV9mcmVlX3djKCkgYXJndW1l
-bnQgaW4gdGhlIGVycm9yIHBhdGgKCkVtaWwgR29vZGUgKDEpOgogICAgICBncHU6IGhvc3QxeDog
-Rml4IGNvbXBpbGVyIGVycm9ycyBieSBjb252ZXJ0aW5nIHRvIGRtYV9hZGRyX3QKClNvdXB0aWNr
-IEpvYXJkZXIgKDEpOgogICAgICBkcm0vdGVncmE6IEFkZGluZyBuZXcgdHlwZWRlZiB2bV9mYXVs
-dF90CgpTdGVmYW4gU2NoYWtlICgxKToKICAgICAgZHJtL3RlZ3JhOiBodWI6IFVzZSBzdGF0ZSBk
-aXJlY3RseQoKVGhpZXJyeSBSZWRpbmcgKDIxKToKICAgICAgZHJtL3RlZ3JhOiBkYzogRnJlZSBz
-eW5jcG9pbnQgb24gZXJyb3JzCiAgICAgIGRybS90ZWdyYTogZ3IyZDogUHJvcGVybHkgY2xlYW4g
-dXAgcmVzb3VyY2VzCiAgICAgIGRybS90ZWdyYTogZ3IzZDogUHJvcGVybHkgY2xlYW4gdXAgcmVz
-b3VyY2VzCiAgICAgIGRybS90ZWdyYTogUmVmYWN0b3IgSU9NTVUgYXR0YWNoL2RldGFjaAogICAg
-ICBkcm0vdGVncmE6IEZpeCBvcmRlciBvZiB0ZWFyZG93biBpbiBJT01NVSBjYXNlCiAgICAgIGRy
-bS90ZWdyYTogQWNxdWlyZSBhIHJlZmVyZW5jZSB0byB0aGUgSU9WQSBjYWNoZQogICAgICBncHU6
-IGhvc3QxeDogQWNxdWlyZSBhIHJlZmVyZW5jZSB0byB0aGUgSU9WQSBjYWNoZQogICAgICBncHU6
-IGhvc3QxeDogUmVtb3ZlIHdhaXQgY2hlY2sgc3VwcG9ydAogICAgICBncHU6IGhvc3QxeDogU3Rv
-cmUgcG9pbnRlciB0byBjbGllbnQgaW4gam9icwogICAgICBncHU6IGhvc3QxeDogQ2xlYW51cCBs
-b29wIHZhcmlhYmxlIHVzYWdlCiAgICAgIGdwdTogaG9zdDF4OiBEcm9wIHVubmVjZXNzYXJ5IGhv
-c3QxeCBhcmd1bWVudAogICAgICBncHU6IGhvc3QxeDogUmVuYW1lIHJlbG9jYXJyYXkgLT4gcmVs
-b2NzIGZvciBjb25zaXN0ZW5jeQogICAgICBncHU6IGhvc3QxeDogVXNlIG5vdCBleHBsaWNpdGx5
-IHNpemVkIHR5cGVzCiAgICAgIGRybS90ZWdyYTogVXNlIHByb3BlciBhcmd1bWVudHMgZm9yIERS
-TV9URUdSQV9DTE9TRV9DSEFOTkVMIElPQ1RMCiAgICAgIGRybS90ZWdyYTogZ2VtOiBGaWxsIGlu
-IG1pc3NpbmcgZXhwb3J0IGluZm8KICAgICAgZHJtL3RlZ3JhOiBkYzogU3VwcG9ydCByb3RhdGlv
-biBwcm9wZXJ0eQogICAgICBkcm0vdGVncmE6IFRyYWNrIGNsaWVudCB2ZXJzaW9uCiAgICAgIGRy
-bS90ZWdyYTogZ3IyZDogVHJhY2sgaW50ZXJmYWNlIHZlcnNpb24KICAgICAgZHJtL3RlZ3JhOiBn
-cjNkOiBUcmFjayBpbnRlcmZhY2UgdmVyc2lvbgogICAgICBkcm0vdGVncmE6IHZpYzogVHJhY2sg
-aW50ZXJmYWNlIHZlcnNpb24KICAgICAgZHJtL3RlZ3JhOiBBZGQga2VybmVsZG9jIGZvciBVQVBJ
-CgogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMgICAgICAgICB8IDMwMCArKysrKysrKysrKysr
-KysrLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuaCAgICAgICAgIHwgIDExICstCiBk
-cml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAgIHwgMTMzICsrKysrLS0tLS0KIGRyaXZl
-cnMvZ3B1L2RybS90ZWdyYS9kcm0uaCAgICAgICAgfCAgMTMgKy0KIGRyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9mYi5jICAgICAgICAgfCAgOTkgKysrLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9n
-ZW0uYyAgICAgICAgfCAgMjAgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjJkLmMgICAgICAg
-fCAgNTcgKysrKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMgICAgICAgfCAgNjAgKysr
-Ky0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuYyAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9wbGFuZS5jICAgICAgfCAxOTQgKysrKysrKysrKystLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vdGVncmEvcGxhbmUuaCAgICAgIHwgIDE1ICstCiBkcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvdmljLmMgICAgICAgIHwgICA1ICsKIGRyaXZlcnMvZ3B1L2hvc3QxeC9jZG1hLmMgICAgICAg
-ICAgfCAgIDYgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9jZG1hLmggICAgICAgICAgfCAgIDQgKy0K
-IGRyaXZlcnMvZ3B1L2hvc3QxeC9kZWJ1Zy5jICAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMvZ3B1
-L2hvc3QxeC9kZXYuYyAgICAgICAgICAgfCAgMTEgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYu
-aCAgICAgICAgICAgfCAgIDggLQogZHJpdmVycy9ncHUvaG9zdDF4L2h3L2NoYW5uZWxfaHcuYyB8
-ICAgNSArLQogZHJpdmVycy9ncHUvaG9zdDF4L2h3L3N5bmNwdF9ody5jICB8ICAxMSAtCiBkcml2
-ZXJzL2dwdS9ob3N0MXgvaW50ci5jICAgICAgICAgIHwgIDE2ICstCiBkcml2ZXJzL2dwdS9ob3N0
-MXgvaW50ci5oICAgICAgICAgIHwgICA4ICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvam9iLmMgICAg
-ICAgICAgIHwgMTQ3ICsrLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvam9iLmggICAgICAg
-ICAgIHwgICA0ICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvc3luY3B0LmMgICAgICAgIHwgIDEwICst
-CiBkcml2ZXJzL2dwdS9ob3N0MXgvc3luY3B0LmggICAgICAgIHwgICAzIC0KIGluY2x1ZGUvbGlu
-dXgvaG9zdDF4LmggICAgICAgICAgICAgfCAgMjQgKy0KIGluY2x1ZGUvdHJhY2UvZXZlbnRzL2hv
-c3QxeC5oICAgICAgfCAgMTYgKy0KIGluY2x1ZGUvdWFwaS9kcm0vdGVncmFfZHJtLmggICAgICAg
-fCA0OTIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLQogMjggZmlsZXMgY2hh
-bmdlZCwgMTEzOCBpbnNlcnRpb25zKCspLCA1MzggZGVsZXRpb25zKC0pCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Map firewall-copied buffers into Host1x's IOVA space, otherwise Host1x
+CDMA can't access the command buffers and all submitted jobs fail if IOMMU
+and Host1x firewall are enabled in the kernels config.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/host1x/job.c | 58 +++++++++++++++++++++++++++++++++++-----
+ include/linux/host1x.h   |  4 ++-
+ 2 files changed, 55 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index e2f4a4d93d20..57384a5b5059 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -449,10 +449,13 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
+ 
+ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+ {
++	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
+ 	struct host1x_firewall fw;
++	dma_addr_t dma_addr;
+ 	size_t size = 0;
+ 	size_t offset = 0;
+ 	unsigned int i;
++	int err;
+ 
+ 	fw.job = job;
+ 	fw.dev = dev;
+@@ -466,23 +469,55 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+ 		size += g->words * sizeof(u32);
+ 	}
+ 
++	if (host->domain)
++		size = iova_align(&host->iova, size);
++
+ 	/*
+ 	 * Try a non-blocking allocation from a higher priority pools first,
+ 	 * as awaiting for the allocation here is a major performance hit.
+ 	 */
+-	job->gather_copy_mapped = dma_alloc_wc(dev, size, &job->gather_copy,
+-					       GFP_NOWAIT);
++	job->gather_copy_mapped = dma_alloc_wc(dev, size,
++					       &job->gather_copy_phys,
++ 					       GFP_NOWAIT);
+ 
+ 	/* the higher priority allocation failed, try the generic-blocking */
+ 	if (!job->gather_copy_mapped)
+ 		job->gather_copy_mapped = dma_alloc_wc(dev, size,
+-						       &job->gather_copy,
++						       &job->gather_copy_phys,
+ 						       GFP_KERNEL);
+ 	if (!job->gather_copy_mapped)
+ 		return -ENOMEM;
+ 
+ 	job->gather_copy_size = size;
+ 
++	if (host->domain) {
++		unsigned long shift;
++
++		shift = iova_shift(&host->iova);
++		job->gather_copy_iova_alloc = alloc_iova(
++					&host->iova, size >> shift,
++					host->iova_end >> shift, true);
++		if (!job->gather_copy_iova_alloc)
++			return -ENOMEM;
++
++		job->gather_copy_iova = iova_dma_addr(
++				&host->iova, job->gather_copy_iova_alloc);
++
++		err = iommu_map(host->domain,
++				job->gather_copy_iova,
++				job->gather_copy_phys,
++				size, IOMMU_READ);
++		if (err) {
++			__free_iova(&host->iova, job->gather_copy_iova_alloc);
++			job->gather_copy_iova_alloc = NULL;
++			return err;
++		}
++
++		dma_addr = job->gather_copy_iova;
++	} else {
++		dma_addr = job->gather_copy_phys;
++	}
++
+ 	for (i = 0; i < job->num_gathers; i++) {
+ 		struct host1x_job_gather *g = &job->gathers[i];
+ 		void *gather;
+@@ -494,7 +529,7 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+ 		host1x_bo_munmap(g->bo, gather);
+ 
+ 		/* Store the location in the buffer */
+-		g->base = job->gather_copy;
++		g->base = dma_addr;
+ 		g->offset = offset;
+ 
+ 		/* Validate the job */
+@@ -582,9 +617,20 @@ void host1x_job_unpin(struct host1x_job *job)
+ 
+ 	job->num_unpins = 0;
+ 
+-	if (job->gather_copy_size)
++	if (job->gather_copy_size) {
+ 		dma_free_wc(job->channel->dev, job->gather_copy_size,
+-			    job->gather_copy_mapped, job->gather_copy);
++			    job->gather_copy_mapped, job->gather_copy_phys);
++
++		if (job->gather_copy_iova_alloc) {
++			iommu_unmap(host->domain,
++				    job->gather_copy_iova,
++				    job->gather_copy_size);
++
++			__free_iova(&host->iova, job->gather_copy_iova_alloc);
++
++			job->gather_copy_iova_alloc = NULL;
++		}
++	}
+ }
+ EXPORT_SYMBOL(host1x_job_unpin);
+ 
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 57d26406bdfd..536a678f81d4 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -235,8 +235,10 @@ struct host1x_job {
+ 	unsigned int num_slots;
+ 
+ 	/* Copy of gathers */
++	struct iova *gather_copy_iova_alloc;
+ 	size_t gather_copy_size;
+-	dma_addr_t gather_copy;
++	dma_addr_t gather_copy_iova;
++	dma_addr_t gather_copy_phys;
+ 	u8 *gather_copy_mapped;
+ 
+ 	/* Check if register is marked as an address reg */
+-- 
+2.17.0
