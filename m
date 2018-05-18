@@ -1,11 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 1/5] dt-bindings: tegra: Changes for v4.18-rc1
-Date: Fri, 18 May 2018 16:22:41 +0200
-Message-ID: <20180518142245.20242-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/5] ARM: tegra: Core changes for v4.18-rc1
+Date: Fri, 18 May 2018 16:22:43 +0200
+Message-ID: <20180518142245.20242-3-thierry.reding@gmail.com>
+References: <20180518142245.20242-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180518142245.20242-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -27,33 +29,24 @@ The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.18-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.18-arm-soc
 
-for you to fetch changes up to eb8f53b6d3125894e3d825976eb7e03150496362:
+for you to fetch changes up to 15164e0072b579f77c9025f3da3ed931869b89cd:
 
-  dt-bindings: Relocate Tegra20 memory controller bindings (2018-04-27 11:15:51 +0200)
+  ARM: tegra: Create platform device for tegra20-cpufreq driver (2018-05-18 11:15:42 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: tegra: Changes for v4.18-rc1
+ARM: tegra: Core changes for v4.18-rc1
 
-This contains the device tree bindings updates for the memory controller
-hot resets that are implemented by driver patches in a different branch.
+Contains a single patch that instantiates a platform device for the CPU
+frequency driver.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (3):
-      dt-bindings: arm: tegra: Remove duplicated Tegra30+ MC binding
-      dt-bindings: memory: tegra: Document #reset-cells property of the Tegra30 MC
-      dt-bindings: arm: tegra: Document #reset-cells property of the Tegra20 MC
+Dmitry Osipenko (1):
+      ARM: tegra: Create platform device for tegra20-cpufreq driver
 
-Thierry Reding (1):
-      dt-bindings: Relocate Tegra20 memory controller bindings
-
- .../bindings/arm/tegra/nvidia,tegra30-mc.txt           | 18 ------------------
- .../tegra => memory-controllers}/nvidia,tegra20-mc.txt | 12 +++++++++++-
- .../bindings/memory-controllers/nvidia,tegra30-mc.txt  |  5 +++++
- 3 files changed, 16 insertions(+), 19 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt
- rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-mc.txt (57%)
+ arch/arm/mach-tegra/tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
