@@ -1,85 +1,65 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 11/11] ARM: tegra: Create platform device for
- tegra20-cpufreq driver
-Date: Fri, 18 May 2018 11:13:52 +0200
-Message-ID: <20180518091352.GK14500@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 00/11] Clean up Tegra20 cpufreq driver
+Date: Fri, 18 May 2018 11:18:03 +0300
+Message-ID: <9c4a31e5-4f32-c951-6d9e-82798d6500bf@gmail.com>
 References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-12-digetx@gmail.com>
+ <33210093.0R9M0pnSOk@aspire.rjw.lan>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GmiNL4+5WUWrod5m"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180517180056.13336-12-digetx@gmail.com>
+In-Reply-To: <33210093.0R9M0pnSOk@aspire.rjw.lan>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On 18.05.2018 10:30, Rafael J. Wysocki wrote:
+> On Thursday, May 17, 2018 8:00:45 PM CEST Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> Recently Peter Geis (who is working on Tegra30 cpufreq driver) asked me how
+>> tegra20-cpufreq driver is getting loaded. After taking a look at the code
+>> it became apparent that the drivers code has been rusted a tad and so this
+>> series is intended to refresh the drivers code by disallowing module to be
+>> loaded on non-Tegra20 machines, by cleaning whitespaces in the code, removing
+>> dead EMC code and in the end by allowing tegra20-cpufreq to be built as a
+>> loadable module.
+>>
+>> Please review, thanks.
+>>
+>> Dmitry Osipenko (11):
+>>   cpufreq: tegra20: Change module description
+>>   cpufreq: tegra20: Clean up whitespaces in the code
+>>   cpufreq: tegra20: Remove EMC clock usage
+>>   cpufreq: tegra20: Release clocks properly
+>>   cpufreq: tegra20: Clean up included headers
+>>   cpufreq: tegra20: Remove unneeded check in tegra_cpu_init
+>>   cpufreq: tegra20: Check if this is Tegra20 machine
+>>   cpufreq: tegra20: Remove unneeded variable initialization
+>>   cpufreq: tegra20: Allow cpufreq driver to be built as loadable module
+>>   cpufreq: tegra20: Wrap cpufreq into platform driver
+>>   ARM: tegra: Create platform device for tegra20-cpufreq driver
+>>
+>>  arch/arm/mach-tegra/tegra.c       |   4 +
+>>  drivers/cpufreq/Kconfig.arm       |   2 +-
+>>  drivers/cpufreq/tegra20-cpufreq.c | 172 +++++++++++++++++-------------
+>>  3 files changed, 101 insertions(+), 77 deletions(-)
+>>
+>>
+> 
+> It looks like Viresh has ACKed the majority of the patches in this series,
+> but there are a few where he had comments.
+> 
+> Please fix up these and resend the entire series with the Acked-by tags from
+> Viresh added where applicable.
 
---GmiNL4+5WUWrod5m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure, I'll address the Viresh's review comments in the v2 that I'll probably
+prepare and send out later today. I'll also add another minor-cleanup patch to
+the series that removes unnecessary brackets in the code.
 
-On Thu, May 17, 2018 at 09:00:56PM +0300, Dmitry Osipenko wrote:
-> Tegra20-cpufreq driver require a platform device in order to be loaded,
-> instantiate a simple platform device for the driver during of the machines
-> late initialization.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/mach-tegra/tegra.c | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-> index 02e712d2ea30..f9587be48235 100644
-> --- a/arch/arm/mach-tegra/tegra.c
-> +++ b/arch/arm/mach-tegra/tegra.c
-> @@ -97,6 +97,10 @@ static void __init tegra_dt_init_late(void)
->  	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
->  	    of_machine_is_compatible("compal,paz00"))
->  		tegra_paz00_wifikill_init();
-> +
-> +	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
-> +	    of_machine_is_compatible("nvidia,tegra20"))
-> +		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
->  }
-> =20
->  static const char * const tegra_dt_board_compat[] =3D {
+Thierry / Jon, please let me if there is anything you disagree-with in the
+series as I'd like to avoid re-sending multiple times.
 
-Tegra124 has a CPU frequency driver that is similar to this and it
-contains code that will instantiate the platform device from the CPU
-frequency driver's module_init function.
-
-I think the primary reason for doing that was to not tie the code to
-32-bit ARM, even though it never runs on anything but that, so it's
-slightly over-engineered.
-
-I don't mind either way, and it's easy enough to change this to
-something else later on if we want. I'll pick this up into the Tegra
-tree.
-
-Thierry
-
---GmiNL4+5WUWrod5m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+mVAACgkQ3SOs138+
-s6EUEhAAwVCPLLasRUQ+ubjpdCkMnz1lmxN2DkCaAcM3BnTQmO9ALBrzeeWMHP30
-Q8R0uUNFJ4SWdd4Oapf6jAarSh5X7OU9wTafDinvTcL3Wyo5svcNPfCOoES1n2S+
-G+6pmDeuysQ1rWK8/wJ1w6j4YVczagdkAOW7fu8a1JG72AC245HBioezPmEOmE63
-KambHKvtT56vwo+4Bj6GwsnsEIf5sQG+EdOILgfpHC/35Nyck6zPWHYv850SAWvH
-fN8GHalQH/mb3spTEhKKOmyLVytO14TP0veus4KpICyw7QyuQS5Zs0nKZvXn2LtD
-vOf+1NvKuEyzmyVr+q2R5cQ/iZSQImI0lwNZ1jnZDlLXxvc7oA7B73nZ49AHa1P/
-yS85aWFTaOhKiUURi/dDayL21uotHpfj51dDn3F8ttwdHD5YFHljQGbgZqZ759qC
-uM2yUFjAOpbJCpkKrYK5BCQpXT9qPpf3dI1zU6D5x0vwd2hEfBeyY4ucdyuBMr06
-DGrsb1PkFNNFCrU8pgItFM0GavnolPa7FKmGql9kX5/scP/fYz6TjH8gDJ7t9vDr
-vrDGOWYcOn5OcdbftZmC06SBjTasdGbV9GZAYRWpV4Q8x5J0q2oQCcOSJj1mIL/I
-33ubbhHepx2MFFHpRUMJJy5IV7B/5X4S5nArSAQUHJrJkIJZn4U=
-=hAUr
------END PGP SIGNATURE-----
-
---GmiNL4+5WUWrod5m--
+Thanks.
