@@ -1,65 +1,111 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 00/11] Clean up Tegra20 cpufreq driver
-Date: Fri, 18 May 2018 11:18:03 +0300
-Message-ID: <9c4a31e5-4f32-c951-6d9e-82798d6500bf@gmail.com>
+Subject: Re: [PATCH v1 10/11] cpufreq: tegra20: Wrap cpufreq into platform
+ driver
+Date: Fri, 18 May 2018 12:19:16 +0300
+Message-ID: <4ed2535c-651a-2bb1-c9bc-0550bca3d292@gmail.com>
 References: <20180517180056.13336-1-digetx@gmail.com>
- <33210093.0R9M0pnSOk@aspire.rjw.lan>
+ <20180517180056.13336-11-digetx@gmail.com> <20180518090755.GJ14500@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <33210093.0R9M0pnSOk@aspire.rjw.lan>
+In-Reply-To: <20180518090755.GJ14500@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 18.05.2018 10:30, Rafael J. Wysocki wrote:
-> On Thursday, May 17, 2018 8:00:45 PM CEST Dmitry Osipenko wrote:
->> Hello,
+On 18.05.2018 12:07, Thierry Reding wrote:
+> On Thu, May 17, 2018 at 09:00:55PM +0300, Dmitry Osipenko wrote:
+>> Currently tegra20-cpufreq kernel module isn't getting autoloaded because
+>> there is no device associated with the module, this is one of two patches
+>> that resolves the module autoloading. This patch adds a module alias that
+>> will associate the tegra20-cpufreq kernel module with the platform device,
+>> other patch will instantiate the actual platform device. And now it makes
+>> sense to wrap cpufreq driver into a platform driver for consistency.
 >>
->> Recently Peter Geis (who is working on Tegra30 cpufreq driver) asked me how
->> tegra20-cpufreq driver is getting loaded. After taking a look at the code
->> it became apparent that the drivers code has been rusted a tad and so this
->> series is intended to refresh the drivers code by disallowing module to be
->> loaded on non-Tegra20 machines, by cleaning whitespaces in the code, removing
->> dead EMC code and in the end by allowing tegra20-cpufreq to be built as a
->> loadable module.
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/cpufreq/tegra20-cpufreq.c | 116 +++++++++++++++++++-----------
+>>  1 file changed, 73 insertions(+), 43 deletions(-)
 >>
->> Please review, thanks.
->>
->> Dmitry Osipenko (11):
->>   cpufreq: tegra20: Change module description
->>   cpufreq: tegra20: Clean up whitespaces in the code
->>   cpufreq: tegra20: Remove EMC clock usage
->>   cpufreq: tegra20: Release clocks properly
->>   cpufreq: tegra20: Clean up included headers
->>   cpufreq: tegra20: Remove unneeded check in tegra_cpu_init
->>   cpufreq: tegra20: Check if this is Tegra20 machine
->>   cpufreq: tegra20: Remove unneeded variable initialization
->>   cpufreq: tegra20: Allow cpufreq driver to be built as loadable module
->>   cpufreq: tegra20: Wrap cpufreq into platform driver
->>   ARM: tegra: Create platform device for tegra20-cpufreq driver
->>
->>  arch/arm/mach-tegra/tegra.c       |   4 +
->>  drivers/cpufreq/Kconfig.arm       |   2 +-
->>  drivers/cpufreq/tegra20-cpufreq.c | 172 +++++++++++++++++-------------
->>  3 files changed, 101 insertions(+), 77 deletions(-)
->>
->>
+>> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+>> index c0a7b5a78aa6..f9d02a28df9e 100644
+>> --- a/drivers/cpufreq/tegra20-cpufreq.c
+>> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+>> @@ -19,7 +19,7 @@
+>>  #include <linux/clk.h>
+>>  #include <linux/cpufreq.h>
+>>  #include <linux/module.h>
+>> -#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>>  
+>>  static struct cpufreq_frequency_table freq_table[] = {
+>>  	{ .frequency = 216000 },
+>> @@ -33,15 +33,19 @@ static struct cpufreq_frequency_table freq_table[] = {
+>>  	{ .frequency = CPUFREQ_TABLE_END },
+>>  };
+>>  
+>> -static struct clk *cpu_clk;
+>> -static struct clk *pll_x_clk;
+>> -static struct clk *pll_p_clk;
+>> -static bool pll_x_prepared;
+>> +struct tegra20_cpufreq_data {
 > 
-> It looks like Viresh has ACKed the majority of the patches in this series,
-> but there are a few where he had comments.
+> Nit: I'm not a big fan of _data suffixes because they are completely
+> redundant. Any data structure by definition hosts data, so I'd just drop
+> that.
+
+Okay, I'll drop it in v2.
+
+> [...]
+>> @@ -152,55 +161,76 @@ static struct cpufreq_driver tegra_cpufreq_driver = {
+>>  	.suspend		= cpufreq_generic_suspend,
+>>  };
+>>  
+>> -static int __init tegra_cpufreq_init(void)
+>> +static int tegra20_cpufreq_probe(struct platform_device *pdev)
+>>  {
+>> +	struct tegra20_cpufreq_data *data;
+>>  	int err;
+>>  
+>> -	if (!of_machine_is_compatible("nvidia,tegra20"))
+>> -		return -ENODEV;
+>> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>>  
+>> -	cpu_clk = clk_get_sys(NULL, "cclk");
+>> -	if (IS_ERR(cpu_clk))
+>> -		return PTR_ERR(cpu_clk);
+>> +	data->cpu_clk = clk_get_sys(NULL, "cclk");
+>> +	if (IS_ERR(data->cpu_clk))
+>> +		return PTR_ERR(data->cpu_clk);
+>>  
+>> -	pll_x_clk = clk_get_sys(NULL, "pll_x");
+>> -	if (IS_ERR(pll_x_clk)) {
+>> -		err = PTR_ERR(pll_x_clk);
+>> +	data->pll_x_clk = clk_get_sys(NULL, "pll_x");
+>> +	if (IS_ERR(data->pll_x_clk)) {
+>> +		err = PTR_ERR(data->pll_x_clk);
+>>  		goto put_cpu;
+>>  	}
+>>  
+>> -	pll_p_clk = clk_get_sys(NULL, "pll_p");
+>> -	if (IS_ERR(pll_p_clk)) {
+>> -		err = PTR_ERR(pll_p_clk);
+>> +	data->pll_p_clk = clk_get_sys(NULL, "pll_p");
+>> +	if (IS_ERR(data->pll_p_clk)) {
+>> +		err = PTR_ERR(data->pll_p_clk);
+>>  		goto put_pll_x;
+>>  	}
+>>  
+>> +	data->dev = &pdev->dev;
+>> +
+>> +	tegra_cpufreq_driver.driver_data = data;
 > 
-> Please fix up these and resend the entire series with the Acked-by tags from
-> Viresh added where applicable.
+> Couldn't this be embedded into struct tegra20_cpufreq_data? Moving
+> everything but this into a per-device data structure seems half-baked.
 
-Sure, I'll address the Viresh's review comments in the v2 that I'll probably
-prepare and send out later today. I'll also add another minor-cleanup patch to
-the series that removes unnecessary brackets in the code.
-
-Thierry / Jon, please let me if there is anything you disagree-with in the
-series as I'd like to avoid re-sending multiple times.
-
-Thanks.
+That's a good suggestions, thank you.
