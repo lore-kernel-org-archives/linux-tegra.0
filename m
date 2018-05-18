@@ -1,83 +1,56 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 2/2] drm/tegra: Acquire a reference to the IOVA cache
-Date: Thu, 17 May 2018 13:53:23 +0300
-Message-ID: <49971929-ddc7-0cad-bd23-125251bf0af4@gmail.com>
-References: <20180423065745.26102-1-thierry.reding@gmail.com>
- <20180423065745.26102-2-thierry.reding@gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v1 00/11] Clean up Tegra20 cpufreq driver
+Date: Fri, 18 May 2018 09:30:19 +0200
+Message-ID: <33210093.0R9M0pnSOk@aspire.rjw.lan>
+References: <20180517180056.13336-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180423065745.26102-2-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180517180056.13336-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjMuMDQuMjAxOCAwOTo1NywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBUaGUgSU9WQSBBUEkgdXNlcyBhIG1l
-bW9yeSBjYWNoZSB0byBhbGxvY2F0ZSBJT1ZBIG5vZGVzIGZyb20uIFRvIG1ha2UKPiBzdXJlIHRo
-YXQgdGhpcyBjYWNoZSBpcyBhdmFpbGFibGUsIG9idGFpbiBhIHJlZmVyZW5jZSB0byBpdCBhbmQg
-cmVsZWFzZQo+IHRoZSByZWZlcmVuY2Ugd2hlbiB0aGUgY2FjaGUgaXMgbm8gbG9uZ2VyIG5lZWRl
-ZC4KPiAKPiBPbiA2NC1iaXQgQVJNIHRoaXMgaXMgaGlkZGVuIGJ5IHRoZSBmYWN0IHRoYXQgdGhl
-IERNQSBtYXBwaW5nIEFQSSBnZXRzCj4gdGhhdCByZWZlcmVuY2UgYW5kIG5ldmVyIHJlbGVhc2Vz
-IGl0LiBPbiAzMi1iaXQgQVJNLCBob3dldmVyLCB0aGUgRE1BCj4gbWFwcGluZyBBUEkgZG9lc24n
-dCBkbyB0aGF0LCBzbyBhbGxvY2F0aW9uIG9mIElPVkEgbm9kZXMgZmFpbHMuCj4gCj4gU2lnbmVk
-LW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAtLS0KPiAgZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgOCArKysrKysrLQo+ICAxIGZpbGUgY2hhbmdlZCwg
-NyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IGluZGV4
-IDRhNjk2ZmEyNzRhMy4uMDU0MGIwNzQxZGY2IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9kcm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IEBAIC0x
-MTUsNiArMTE1LDEwIEBAIHN0YXRpYyBpbnQgdGVncmFfZHJtX2xvYWQoc3RydWN0IGRybV9kZXZp
-Y2UgKmRybSwgdW5zaWduZWQgbG9uZyBmbGFncykKPiAgCQkJZ290byBmcmVlOwo+ICAJCX0KPiAg
-Cj4gKwkJZXJyID0gaW92YV9jYWNoZV9nZXQoKTsKPiArCQlpZiAoZXJyIDwgMCkKPiArCQkJZ290
-byBkb21haW47Cj4gKwo+ICAJCWdlb21ldHJ5ID0gJnRlZ3JhLT5kb21haW4tPmdlb21ldHJ5Owo+
-ICAJCWdlbV9zdGFydCA9IGdlb21ldHJ5LT5hcGVydHVyZV9zdGFydDsKPiAgCQlnZW1fZW5kID0g
-Z2VvbWV0cnktPmFwZXJ0dXJlX2VuZCAtIENBUlZFT1VUX1NaOwo+IEBAIC0yMDUsMTEgKzIwOSwx
-MiBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHVu
-c2lnbmVkIGxvbmcgZmxhZ3MpCj4gIAl0ZWdyYV9kcm1fZmJfZnJlZShkcm0pOwo+ICBjb25maWc6
-Cj4gIAlkcm1fbW9kZV9jb25maWdfY2xlYW51cChkcm0pOwo+IC0KPiArZG9tYWluOgo+ICAJaWYg
-KHRlZ3JhLT5kb21haW4pIHsKPiAgCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7Cj4g
-IAkJZHJtX21tX3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwo+ICAJCXB1dF9pb3ZhX2RvbWFpbigmdGVn
-cmEtPmNhcnZlb3V0LmRvbWFpbik7Cj4gKwkJaW92YV9jYWNoZV9wdXQoKTsKCkkndmUgc3BvdHRl
-ZCB0aGF0IHRoaXMgXiBpcyBpbmNvcnJlY3QuIFRoaXMgd2lsbCBwdXQgdGhlIGlvdmFfY2FjaGUg
-d2l0aG91dApnZXR0aW5nIGl0IGlmIGlvdmFfY2FjaGVfZ2V0KCkgZmFpbGVkLgoKPiAgCQlpb21t
-dV9kb21haW5fZnJlZSh0ZWdyYS0+ZG9tYWluKTsKPiAgCX0KPiAgZnJlZToKPiBAQCAtMjM2LDYg
-KzI0MSw3IEBAIHN0YXRpYyB2b2lkIHRlZ3JhX2RybV91bmxvYWQoc3RydWN0IGRybV9kZXZpY2Ug
-KmRybSkKPiAgCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gIAkJZHJtX21tX3Rh
-a2Vkb3duKCZ0ZWdyYS0+bW0pOwo+ICAJCXB1dF9pb3ZhX2RvbWFpbigmdGVncmEtPmNhcnZlb3V0
-LmRvbWFpbik7Cj4gKwkJaW92YV9jYWNoZV9wdXQoKTsKPiAgCQlpb21tdV9kb21haW5fZnJlZSh0
-ZWdyYS0+ZG9tYWluKTsKPiAgCX0KPiAgCj4gCgpUaGllcnJ5LCBwbGVhc2UgdXBkYXRlIHRoZSBw
-YXRjaDoKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJz
-L2dwdS9kcm0vdGVncmEvZHJtLmMKaW5kZXggNGE1OWFjNGQ3NzkzLi4yNmNlOTg0NzlmYjYgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYworKysgYi9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZHJtLmMKQEAgLTk4LDYgKzk4LDEwIEBAIHN0YXRpYyBpbnQgdGVncmFfZHJtX2xv
-YWQoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdW5zaWduZWQKbG9uZyBmbGFncykKIAkJCWdvdG8g
-ZnJlZTsKIAkJfQoKKwkJZXJyID0gaW92YV9jYWNoZV9nZXQoKTsKKwkJaWYgKGVyciA8IDApCisJ
-CQlnb3RvIGRvbWFpbjsKKwogCQlnZW9tZXRyeSA9ICZ0ZWdyYS0+ZG9tYWluLT5nZW9tZXRyeTsK
-IAkJZ2VtX3N0YXJ0ID0gZ2VvbWV0cnktPmFwZXJ0dXJlX3N0YXJ0OwogCQlnZW1fZW5kID0gZ2Vv
-bWV0cnktPmFwZXJ0dXJlX2VuZCAtIENBUlZFT1VUX1NaOwpAQCAtMTk0LDggKzE5OCwxMSBAQCBz
-dGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHVuc2lnbmVk
-CmxvbmcgZmxhZ3MpCiAJCW11dGV4X2Rlc3Ryb3koJnRlZ3JhLT5tbV9sb2NrKTsKIAkJZHJtX21t
-X3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwogCQlwdXRfaW92YV9kb21haW4oJnRlZ3JhLT5jYXJ2ZW91
-dC5kb21haW4pOwotCQlpb21tdV9kb21haW5fZnJlZSh0ZWdyYS0+ZG9tYWluKTsKKwkJaW92YV9j
-YWNoZV9wdXQoKTsKIAl9Citkb21haW46CisJaWYgKHRlZ3JhLT5kb21haW4pCisJCWlvbW11X2Rv
-bWFpbl9mcmVlKHRlZ3JhLT5kb21haW4pOwogZnJlZToKIAlrZnJlZSh0ZWdyYSk7CiAJcmV0dXJu
-IGVycjsKQEAgLTIyMCw2ICsyMjcsNyBAQCBzdGF0aWMgdm9pZCB0ZWdyYV9kcm1fdW5sb2FkKHN0
-cnVjdCBkcm1fZGV2aWNlICpkcm0pCiAJCW11dGV4X2Rlc3Ryb3koJnRlZ3JhLT5tbV9sb2NrKTsK
-IAkJZHJtX21tX3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwogCQlwdXRfaW92YV9kb21haW4oJnRlZ3Jh
-LT5jYXJ2ZW91dC5kb21haW4pOworCQlpb3ZhX2NhY2hlX3B1dCgpOwogCQlpb21tdV9kb21haW5f
-ZnJlZSh0ZWdyYS0+ZG9tYWluKTsKIAl9CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+On Thursday, May 17, 2018 8:00:45 PM CEST Dmitry Osipenko wrote:
+> Hello,
+> 
+> Recently Peter Geis (who is working on Tegra30 cpufreq driver) asked me how
+> tegra20-cpufreq driver is getting loaded. After taking a look at the code
+> it became apparent that the drivers code has been rusted a tad and so this
+> series is intended to refresh the drivers code by disallowing module to be
+> loaded on non-Tegra20 machines, by cleaning whitespaces in the code, removing
+> dead EMC code and in the end by allowing tegra20-cpufreq to be built as a
+> loadable module.
+> 
+> Please review, thanks.
+> 
+> Dmitry Osipenko (11):
+>   cpufreq: tegra20: Change module description
+>   cpufreq: tegra20: Clean up whitespaces in the code
+>   cpufreq: tegra20: Remove EMC clock usage
+>   cpufreq: tegra20: Release clocks properly
+>   cpufreq: tegra20: Clean up included headers
+>   cpufreq: tegra20: Remove unneeded check in tegra_cpu_init
+>   cpufreq: tegra20: Check if this is Tegra20 machine
+>   cpufreq: tegra20: Remove unneeded variable initialization
+>   cpufreq: tegra20: Allow cpufreq driver to be built as loadable module
+>   cpufreq: tegra20: Wrap cpufreq into platform driver
+>   ARM: tegra: Create platform device for tegra20-cpufreq driver
+> 
+>  arch/arm/mach-tegra/tegra.c       |   4 +
+>  drivers/cpufreq/Kconfig.arm       |   2 +-
+>  drivers/cpufreq/tegra20-cpufreq.c | 172 +++++++++++++++++-------------
+>  3 files changed, 101 insertions(+), 77 deletions(-)
+> 
+> 
+
+It looks like Viresh has ACKed the majority of the patches in this series,
+but there are a few where he had comments.
+
+Please fix up these and resend the entire series with the Acked-by tags from
+Viresh added where applicable.
+
+Thanks,
+Rafael
