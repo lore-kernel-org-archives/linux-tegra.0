@@ -1,54 +1,110 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 04/11] cpufreq: tegra20: Release clocks properly
-Date: Fri, 18 May 2018 10:37:38 +0200
-Message-ID: <20180518083738.GD14500@ulmo>
+Subject: Re: [PATCH v1 05/11] cpufreq: tegra20: Clean up included headers
+Date: Fri, 18 May 2018 10:57:14 +0200
+Message-ID: <20180518085714.GE14500@ulmo>
 References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-5-digetx@gmail.com>
+ <20180517180056.13336-6-digetx@gmail.com>
+ <20180518015854.glj25krzacf7rnd7@vireshk-i7>
+ <7c3a549b-ad84-5df6-c1d8-7683a3bc2f5d@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9UV9rz0O2dU/yYYn"
+        protocol="application/pgp-signature"; boundary="M/SuVGWktc5uNpra"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180517180056.13336-5-digetx@gmail.com>
+In-Reply-To: <7c3a549b-ad84-5df6-c1d8-7683a3bc2f5d@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---9UV9rz0O2dU/yYYn
+--M/SuVGWktc5uNpra
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 17, 2018 at 09:00:49PM +0300, Dmitry Osipenko wrote:
-> Properly put requested clocks in the module init/exit code.
+On Fri, May 18, 2018 at 11:05:58AM +0300, Dmitry Osipenko wrote:
+> On 18.05.2018 04:58, Viresh Kumar wrote:
+> > On 17-05-18, 21:00, Dmitry Osipenko wrote:
+> >> Remove unused/unneeded headers and sort them in the alphabet order.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  drivers/cpufreq/tegra20-cpufreq.c | 11 ++---------
+> >>  1 file changed, 2 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra=
+20-cpufreq.c
+> >> index 69f033d297e1..61f00d1cba26 100644
+> >> --- a/drivers/cpufreq/tegra20-cpufreq.c
+> >> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+> >> @@ -16,16 +16,9 @@
+> >>   *
+> >>   */
+> >> =20
+> >> -#include <linux/kernel.h>
+> >> -#include <linux/module.h>
+> >> -#include <linux/types.h>
+> >> -#include <linux/sched.h>
+> >> -#include <linux/cpufreq.h>
+> >> -#include <linux/delay.h>
+> >> -#include <linux/init.h>
+> >> -#include <linux/err.h>
+> >>  #include <linux/clk.h>
+> >> -#include <linux/io.h>
+> >> +#include <linux/cpufreq.h>
+> >> +#include <linux/module.h>
+> >=20
+> > Ideally you should keep all the headers whose declarations your code
+> > is using directly. It may happen that removing above still compiles
+> > because cpufreq.h has included the headers indirectly for you. But
+> > that will break the day cpufreq.h doesn't need those headers anymore.
+> >=20
+> > So just make sure you aren't using any of them in your code. For
+> > example you are using bool in your code and so you shouldn't remove
+> > types.h ? Same for init.h as you are using __init and __exit.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpufreq/tegra20-cpufreq.c | 31 ++++++++++++++++++++++++++-----
->  1 file changed, 26 insertions(+), 5 deletions(-)
+> The preference on includes seems to vary among maintainers. I've seen oth=
+er
+> opinion that encouraged to minimize included headers and only add the hea=
+ders
+> when compilation breaks.
+
+I think this probably depends on the type of include. For headers in
+include/linux the reasoning is that they can change often as part of
+some rework and this has in the past caused unrelated files to break
+builds because suddenly a file no longer has all required definitions
+available.
+
+It's slightly different for header files that have a narrower exposure
+because the chances of breaking things randomly are much lower.
+
+> I'll revisit this patch and keep init.h and others in v2 since you prefer=
+ that
+> way. Thank you for the review.
+
+With those changes, this is:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---9UV9rz0O2dU/yYYn
+--M/SuVGWktc5uNpra
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+kNIACgkQ3SOs138+
-s6El9xAAo0rK3CmKN+KYKlyHNxqiy+l4RfFoogQ4cbV2p/zdjEmzy6OHXrwQT6vn
-EPLWlv7QHh8TG/4FZe03Bg4KKjifR1KgdBEeGXOLSzdqe3bf/hYUtFlN/3jgmiEF
-2CqaOSokql1ro+2J9tug8kbDlRD4NXXouIla6X1fNW8/5Bib9v/AWt9NdCnUy1OU
-o937DezQp7dcU6AfJ9BM86NiSi7zD18x6QnHasqyUA/a5/GswJ9GbbYPDuGGKz8t
-5sqa+Z+QiEFxj4K4f8bTRyPcu+DkFRy4tc4wDsVdZNOCNz5TmYuIezgQzloH3b8o
-2k5HY2epzFA9xurXtL23fQhDF1WAY1QoGbeAYTPB5or4Gvn0vhw3cdgkc2bYwpwc
-Q6Mqd+q8YBTLMqnedW6xx7jUrlZlKf/qQ2bCM/aLBblHAAaewjn4EYLNDEec2Ze6
-K5x7d83t3tIv/mz4me0p8N3yKOTDqc2DY9x/aQo2bj/Mm+FsM/JEZVVNOPUmZGqk
-K07d9BzjFK8WRtL8UiWCcN9LPxJVtO2q9skGthOoelkZktZRIeApnhhtkjDQm+dY
-0CQKx/CKSy40ttXtaioP6iZJh88UyoMU2r/4T/3uOH2In9wvVfAdUK8d0gGI3rhP
-KBTZqM1C0HdixGLUEX6Z80Tu9gPy3MdSSAfYSYrGiZttJPjVOnI=
-=zMGs
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+lWcACgkQ3SOs138+
+s6EJ8g//SKL8hoquB+U7SJKwvWWUBHUv0Mgh7cXWFLyrtd8VQOWWI0p0DT8Dk0ym
+Hmpo4b8AE4vmhvTtFkLUWWq4zo5BCh35rgiWuFxaJEoBhGxpXqIh7RqjSxq1vPQw
+Q/NVUhabtNdhV4ELS2bvNyioIJUqtfhjl06ubaDEQvkluLL0OJNvdAbxcd3yw5CU
+y0EbSr6W6gfUKdpRB+QTJlHiSJ2FCXvTu4WjMAX8NfV0d2n/RijJoCZk2gGQ6lSz
+zvVHkDvAJUpVJppqIVeB0EdHu0Eotn2qaB5Vgh3TUL8JEjnYL4y+mD+FGmYj5YZf
+NhgT+2KPbzvMqHR2omIKZ50SmrLYvvSK2iO1dMRIoV/0bf96cI+cWyQ7BiUScRa2
+9wmdwsfvs5vBC0wxl/YfDapHxBpD8irJE1opPfBrAhc/fEGkvscF/vU9BO/ogKR5
+jIKgQ+HjGjYq75/nyxFvdgMDi2I6akqHnRi8OR7Z/fgVVl0y23nTSbQ63jmsoa7C
+r0N2KFGm0FSDYgNTL+ytWXBk7VSOu68mBbCRGgeS7D7/SO/qrVD+taXNRHjbqV6Z
+RlWo1OBtmEc4Ev1n8rwUl42dWDVPc6akTwlyZUygGVpSRBcy8kOQa9PUTRELYj2S
+jJ6BMWIHRIYG7KCX+VyZvu7w9eCZ5PulLGRGvDM3Sx0+NARiqjo=
+=s9lC
 -----END PGP SIGNATURE-----
 
---9UV9rz0O2dU/yYYn--
+--M/SuVGWktc5uNpra--
