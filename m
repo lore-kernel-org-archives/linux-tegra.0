@@ -1,56 +1,57 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Sat, 19 May 2018 18:46:23 +0300
-Message-ID: <5c1e76fe-3ef5-fe31-6b89-edcb8b8c0582@gmail.com>
-References: <20180508162607.3500-1-digetx@gmail.com>
- <20180508162607.3500-3-digetx@gmail.com> <20180518103908.GF5312@ulmo>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] arm64: tegra: Device tree fixes for v4.17
+Date: Sat, 19 May 2018 17:58:46 -0700
+Message-ID: <20180520005846.nss24q7oqi4sbvmc@localhost>
+References: <20180517160436.12180-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180518103908.GF5312@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180517160436.12180-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bhadram Varka <vbhadram@nvidia.com>, linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 18.05.2018 13:39, Thierry Reding wrote:
-> On Tue, May 08, 2018 at 07:26:04PM +0300, Dmitry Osipenko wrote:
->> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
->> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
->> that main clk-controller driver could get an actual parent clock for the
->> CDEV1/2 clocks.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marc Dietrich <marvin24@gmx.de>
->> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->> ---
->>
->> Changelog:
->>
->> v3:
->> 	- No change.
->>
->> v2:
->> 	- See changelog of "Restore ULPI USB on Tegra20" v2 series.
->>
->>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
->>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
->>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
->>  3 files changed, 40 insertions(+), 12 deletions(-)
+On Thu, May 17, 2018 at 06:04:36PM +0200, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
 > 
-> Linus,
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 > 
-> were you going to pick this up for v4.18? There's a runtime dependency
-> on this from some clock patches that I'd like to get into v4.18.
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
 > 
-> I see I never gave my Acked-by on this particular patch, so here goes:
+> are available in the Git repository at:
 > 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.17-fixes-2
+> 
+> for you to fetch changes up to 9df50ba76ac1485b844beffa1f3f5d9659d9cdaf:
+> 
+>   arm64: tegra: Make BCM89610 PHY interrupt as active low (2018-05-03 11:48:16 +0200)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> arm64: tegra: Device tree fixes for v4.17
+> 
+> This contains a one-line update to the device tree of the Tegra186 P3310
+> processor module, fixing the polarity of the PHY interrupt. Originally,
+> this was queued to go into v4.18, but the PHY ID matching patch has now
+> found its way into v4.17-rc5, which means that the PHY driver will know
+> how to identify the PHY on this board and try to use the interrupt. This
+> will unfortunately cause networking to break on P3310, hence why I think
+> this should go into v4.17.
 
-Linus applied the v2 of the patch [0]. Thanks for caring about it.
+Merged, thanks.
 
-[0] https://www.spinics.net/lists/linux-tegra/msg33331.html
+
+-Olof
