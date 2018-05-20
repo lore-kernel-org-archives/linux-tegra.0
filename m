@@ -1,111 +1,60 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] media: staging: tegra-vde: Reset memory client
-Date: Sun, 20 May 2018 16:48:45 +0300
-Message-ID: <20180520134846.31046-2-digetx@gmail.com>
-References: <20180520134846.31046-1-digetx@gmail.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH v1 1/5] ARM: trusted_foundations: Implement L2 cache
+ initialization callback
+Date: Sun, 20 May 2018 15:08:06 +0100
+Message-ID: <20180520140805.GL17671@n2100.armlinux.org.uk>
+References: <20180520101542.12206-1-digetx@gmail.com>
+ <20180520101542.12206-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180520134846.31046-1-digetx@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180520101542.12206-2-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 List-Id: linux-tegra@vger.kernel.org
 
-DMA requests must be blocked before resetting VDE HW, otherwise it is
-possible to get a memory corruption or a machine hang. Use the reset
-control provided by the Memory Controller to block DMA before resetting
-the VDE HW.
+On Sun, May 20, 2018 at 01:15:38PM +0300, Dmitry Osipenko wrote:
+> Implement L2 cache initialization firmware callback that should be invoked
+> early in boot to enable cache HW.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/firmware/trusted_foundations.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+> index 3fb1b5a1dce9..198ce5c75ca0 100644
+> --- a/arch/arm/firmware/trusted_foundations.c
+> +++ b/arch/arm/firmware/trusted_foundations.c
+> @@ -18,8 +18,13 @@
+>  #include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <asm/firmware.h>
+> +#include <asm/outercache.h>
+>  #include <asm/trusted_foundations.h>
+>  
+> +#define TF_CACHE_MAINT		0xfffff100
+> +
+> +#define TF_CACHE_INIT		1
+> +
+>  #define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
+>  
+>  #define TF_CPU_PM		0xfffffffc
+> @@ -63,9 +68,27 @@ static int tf_prepare_idle(void)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_CACHE_L2X0
+> +static void tf_cache_write_sec(unsigned long val, unsigned int reg)
+> +{
+> +	pr_warn("%s: Ignoring write [0x%x]: 0x%08lx\n", __func__, reg, val);
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/staging/media/tegra-vde/tegra-vde.c | 42 +++++++++++++++++++--
- 1 file changed, 38 insertions(+), 4 deletions(-)
+Why at warning level?  Is this some issue that the user needs to be
+warned about?
 
-diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
-index 90177a59b97c..6dd3bf4481be 100644
---- a/drivers/staging/media/tegra-vde/tegra-vde.c
-+++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-@@ -73,6 +73,7 @@ struct tegra_vde {
- 	struct mutex lock;
- 	struct miscdevice miscdev;
- 	struct reset_control *rst;
-+	struct reset_control *rst_mc;
- 	struct gen_pool *iram_pool;
- 	struct completion decode_completion;
- 	struct clk *clk;
-@@ -850,9 +851,23 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 	 * We rely on the VDE registers reset value, otherwise VDE
- 	 * causes bus lockup.
- 	 */
-+	ret = reset_control_assert(vde->rst_mc);
-+	if (ret) {
-+		dev_err(dev, "DEC start: Failed to assert MC reset: %d\n",
-+			ret);
-+		goto put_runtime_pm;
-+	}
-+
- 	ret = reset_control_reset(vde->rst);
- 	if (ret) {
--		dev_err(dev, "Failed to reset HW: %d\n", ret);
-+		dev_err(dev, "DEC start: Failed to reset HW: %d\n", ret);
-+		goto put_runtime_pm;
-+	}
-+
-+	ret = reset_control_deassert(vde->rst_mc);
-+	if (ret) {
-+		dev_err(dev, "DEC start: Failed to deassert MC reset: %d\n",
-+			ret);
- 		goto put_runtime_pm;
- 	}
- 
-@@ -880,9 +895,21 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 		ret = timeout;
- 	}
- 
--	err = reset_control_assert(vde->rst);
--	if (err)
--		dev_err(dev, "Failed to assert HW reset: %d\n", err);
-+	/*
-+	 * At first reset memory client to avoid resetting VDE HW in the
-+	 * middle of DMA which could result into memory corruption or hang
-+	 * the whole system.
-+	 */
-+	err = reset_control_assert(vde->rst_mc);
-+	if (!err) {
-+		err = reset_control_assert(vde->rst);
-+		if (err)
-+			dev_err(dev,
-+				"DEC end: Failed to assert HW reset: %d\n",
-+				err);
-+	} else {
-+		dev_err(dev, "DEC end: Failed to assert MC reset: %d\n", err);
-+	}
- 
- put_runtime_pm:
- 	pm_runtime_mark_last_busy(dev);
-@@ -1074,6 +1101,13 @@ static int tegra_vde_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	vde->rst_mc = devm_reset_control_get_optional(dev, "mc");
-+	if (IS_ERR(vde->rst_mc)) {
-+		err = PTR_ERR(vde->rst_mc);
-+		dev_err(dev, "Could not get MC reset %d\n", err);
-+		return err;
-+	}
-+
- 	irq = platform_get_irq_byname(pdev, "sync-token");
- 	if (irq < 0)
- 		return irq;
 -- 
-2.17.0
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
