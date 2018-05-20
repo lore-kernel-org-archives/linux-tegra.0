@@ -1,71 +1,68 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/5] ARM: tegra: Setup L2 cache using Trusted Foundations
- firmware
-Date: Sun, 20 May 2018 13:15:40 +0300
-Message-ID: <20180520101542.12206-4-digetx@gmail.com>
+Subject: [PATCH v1 2/5] ARM: trusted_foundations: Provide information about whether firmware is registered
+Date: Sun, 20 May 2018 13:15:39 +0300
+Message-ID: <20180520101542.12206-3-digetx@gmail.com>
 References: <20180520101542.12206-1-digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180520101542.12206-1-digetx@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra20/30 L2 cache must be initialized using firmware call if CPU
-is running in insecure mode. Initialize L2 cache and setup the outer-cache
-callbacks in early boot using the firmware API.
+Add a helper that provides information about whether Trusted Foundations
+firmware operations have been registered.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/tegra.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/firmware/trusted_foundations.c    | 5 +++++
+ arch/arm/include/asm/trusted_foundations.h | 7 +++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index f9587be48235..590b1cf1a8c4 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -38,6 +38,7 @@
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/pmc.h>
- 
-+#include <asm/firmware.h>
- #include <asm/hardware/cache-l2x0.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/time.h>
-@@ -70,9 +71,23 @@ u32 tegra_uart_config[3] = {
- 	0,
- };
- 
-+static void __init tegra_trusted_foundations_l2x0_cache_init(void)
-+{
-+	if (IS_ENABLED(CONFIG_CACHE_L2X0) &&
-+	    IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
-+	    of_machine_is_compatible("nvidia,tegra20"))
-+		call_firmware_op(l2x0_init);
-+
-+	if (IS_ENABLED(CONFIG_CACHE_L2X0) &&
-+	    IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) &&
-+	    of_machine_is_compatible("nvidia,tegra30"))
-+		call_firmware_op(l2x0_init);
-+}
-+
- static void __init tegra_init_early(void)
- {
- 	of_register_trusted_foundations();
-+	tegra_trusted_foundations_l2x0_cache_init();
- 	tegra_cpu_reset_handler_init();
+diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+index 198ce5c75ca0..0428351574de 100644
+--- a/arch/arm/firmware/trusted_foundations.c
++++ b/arch/arm/firmware/trusted_foundations.c
+@@ -120,3 +120,8 @@ void of_register_trusted_foundations(void)
+ 		panic("Trusted Foundation: missing version-minor property\n");
+ 	register_trusted_foundations(&pdata);
  }
++
++bool trusted_foundations_registered(void)
++{
++	return firmware_ops == &trusted_foundations_ops;
++}
+diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+index 00748350cf72..bfd0d780824b 100644
+--- a/arch/arm/include/asm/trusted_foundations.h
++++ b/arch/arm/include/asm/trusted_foundations.h
+@@ -31,6 +31,7 @@
+ #include <linux/of.h>
+ #include <linux/cpu.h>
+ #include <linux/smp.h>
++#include <linux/types.h>
  
+ struct trusted_foundations_platform_data {
+ 	unsigned int version_major;
+@@ -41,6 +42,7 @@ struct trusted_foundations_platform_data {
+ 
+ void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
+ void of_register_trusted_foundations(void);
++bool trusted_foundations_registered(void);
+ 
+ #else /* CONFIG_TRUSTED_FOUNDATIONS */
+ 
+@@ -68,6 +70,11 @@ static inline void of_register_trusted_foundations(void)
+ 	if (of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations"))
+ 		register_trusted_foundations(NULL);
+ }
++
++static inline bool trusted_foundations_registered(void)
++{
++	return false;
++}
+ #endif /* CONFIG_TRUSTED_FOUNDATIONS */
+ 
+ #endif
 -- 
 2.17.0
