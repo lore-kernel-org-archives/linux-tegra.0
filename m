@@ -1,67 +1,55 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 1/5] ARM: trusted_foundations: Implement L2 cache
- initialization callback
-Date: Sun, 20 May 2018 17:53:11 +0300
-Message-ID: <a5b6a37c-68e7-eb8b-fb78-2942fe501f28@gmail.com>
-References: <20180520101542.12206-1-digetx@gmail.com>
- <20180520101542.12206-2-digetx@gmail.com>
- <20180520140805.GL17671@n2100.armlinux.org.uk>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 03/11] cpufreq: tegra20: Clean up included headers
+Date: Mon, 21 May 2018 11:14:09 +0530
+Message-ID: <20180521054409.3n6z434de5ibzufq@vireshk-i7>
+References: <20180518200642.24815-1-digetx@gmail.com>
+ <20180518200642.24815-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180520140805.GL17671@n2100.armlinux.org.uk>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180518200642.24815-4-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.05.2018 17:08, Russell King - ARM Linux wrote:
-> On Sun, May 20, 2018 at 01:15:38PM +0300, Dmitry Osipenko wrote:
->> Implement L2 cache initialization firmware callback that should be invoked
->> early in boot to enable cache HW.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  arch/arm/firmware/trusted_foundations.c | 23 +++++++++++++++++++++++
->>  1 file changed, 23 insertions(+)
->>
->> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
->> index 3fb1b5a1dce9..198ce5c75ca0 100644
->> --- a/arch/arm/firmware/trusted_foundations.c
->> +++ b/arch/arm/firmware/trusted_foundations.c
->> @@ -18,8 +18,13 @@
->>  #include <linux/init.h>
->>  #include <linux/of.h>
->>  #include <asm/firmware.h>
->> +#include <asm/outercache.h>
->>  #include <asm/trusted_foundations.h>
->>  
->> +#define TF_CACHE_MAINT		0xfffff100
->> +
->> +#define TF_CACHE_INIT		1
->> +
->>  #define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
->>  
->>  #define TF_CPU_PM		0xfffffffc
->> @@ -63,9 +68,27 @@ static int tf_prepare_idle(void)
->>  	return 0;
->>  }
->>  
->> +#ifdef CONFIG_CACHE_L2X0
->> +static void tf_cache_write_sec(unsigned long val, unsigned int reg)
->> +{
->> +	pr_warn("%s: Ignoring write [0x%x]: 0x%08lx\n", __func__, reg, val);
+On 18-05-18, 23:06, Dmitry Osipenko wrote:
+> Remove unused/unneeded headers and sort them in the alphabet order.
 > 
-> Why at warning level?  Is this some issue that the user needs to be
-> warned about?
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra20-cpufreq.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 > 
+> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+> index dd8a76a64a8e..bec1a50a8138 100644
+> --- a/drivers/cpufreq/tegra20-cpufreq.c
+> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+> @@ -16,16 +16,12 @@
+>   *
+>   */
+>  
+> -#include <linux/kernel.h>
+> -#include <linux/module.h>
+> -#include <linux/types.h>
+> -#include <linux/sched.h>
+> +#include <linux/clk.h>
+>  #include <linux/cpufreq.h>
+> -#include <linux/delay.h>
+> -#include <linux/init.h>
+>  #include <linux/err.h>
+> -#include <linux/clk.h>
+> -#include <linux/io.h>
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/types.h>
+>  
+>  static struct cpufreq_frequency_table freq_table[] = {
+>  	{ .frequency = 216000 },
 
-If cache-l2x0 code will be changed in the future in a way that it will try to do
-something using the secure-registers, then user should be informed about that
-incident as we are ignoring the accesses to secure-registers and this may lead
-to an undesired consequences. If a such change in cache-l2x0 will happen, then
-we will have to take some action by either fixing the invalid accesses or
-silencing the warning message if will be appropriate. For now I'd prefer to have
-verbosity in the KMSG to masking the potential problems.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
