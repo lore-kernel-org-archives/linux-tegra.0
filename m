@@ -1,78 +1,110 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/8] dt-bindings: serial: Add bindings for
- nvidia,tegra194-tcu
-Date: Tue, 22 May 2018 15:20:36 -0500
-Message-ID: <20180522202036.GB24611@rob-hp-laptop>
-References: <20180508114403.14499-1-mperttunen@nvidia.com>
- <20180508114403.14499-3-mperttunen@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
+ device to genpd
+Date: Tue, 22 May 2018 21:55:15 +0100
+Message-ID: <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
+ <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
+ <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
+ <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180508114403.14499-3-mperttunen@nvidia.com>
+In-Reply-To: <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: mark.rutland@arm.com, jassisinghbrar@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, araza@nvidia.com, devicetree@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 08, 2018 at 02:43:57PM +0300, Mikko Perttunen wrote:
-> Add bindings for the Tegra Combined UART device used to talk to the
-> UART console on Tegra194 systems.
+
+On 22/05/18 15:47, Ulf Hansson wrote:
+> [...]
 > 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  .../bindings/serial/nvidia,tegra194-tcu.txt        | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
+>>>
+>>> +/**
+>>> + * genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
+>>> + * @dev: Device to attach.
+>>> + * @index: The index of the PM domain.
+>>> + *
+>>> + * Parse device's OF node to find a PM domain specifier at the provided @index.
+>>> + * If such is found, allocates a new device and attaches it to retrieved
+>>> + * pm_domain ops.
+>>> + *
+>>> + * Returns the allocated device if successfully attached PM domain, NULL when
+>>> + * the device don't need a PM domain or have a single PM domain, else PTR_ERR()
+>>> + * in case of failures. Note that if a power-domain exists for the device, but
+>>> + * cannot be found or turned on, then return PTR_ERR(-EPROBE_DEFER) to ensure
+>>> + * that the device is not probed and to re-try again later.
+>>> + */
+>>> +struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+>>> +                                      unsigned int index)
+>>> +{
+>>> +     struct device *genpd_dev;
+>>> +     int num_domains;
+>>> +     int ret;
+>>> +
+>>> +     if (!dev->of_node)
+>>> +             return NULL;
+>>> +
+>>> +     /* Deal only with devices using multiple PM domains. */
+>>> +     num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
+>>> +                                              "#power-domain-cells");
+>>> +     if (num_domains < 2 || index >= num_domains)
+>>> +             return NULL;
+>>> +
+>>> +     /* Allocate and register device on the genpd bus. */
+>>> +     genpd_dev = kzalloc(sizeof(*genpd_dev), GFP_KERNEL);
+>>> +     if (!genpd_dev)
+>>> +             return ERR_PTR(-ENOMEM);
+>>> +
+>>> +     dev_set_name(genpd_dev, "genpd:%u:%s", index, dev_name(dev));
+>>> +     genpd_dev->bus = &genpd_bus_type;
+>>> +     genpd_dev->release = genpd_release_dev;
+>>> +
+>>> +     ret = device_register(genpd_dev);
+>>> +     if (ret) {
+>>> +             kfree(genpd_dev);
+>>> +             return ERR_PTR(ret);
+>>> +     }
+>>> +
+>>> +     /* Try to attach the device to the PM domain at the specified index. */
+>>> +     ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index);
+>>> +     if (ret < 1) {
+>>> +             device_unregister(genpd_dev);
+>>> +             return ret ? ERR_PTR(ret) : NULL;
+>>> +     }
+>>> +
+>>> +     pm_runtime_set_active(genpd_dev);
+>>> +     pm_runtime_enable(genpd_dev);
+>>> +
+>>> +     return genpd_dev;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
+>>
+>> Thanks for sending this. Believe it or not this has still been on my to-do list
+>> and so we definitely need a solution for Tegra.
+>>
+>> Looking at the above it appears that additional power-domains exposed as devices
+>> to the client device. So I assume that this means that the drivers for devices
+>> with multiple power-domains will need to call RPM APIs for each of these
+>> additional power-domains. Is that correct?
 > 
-> diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt b/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
-> new file mode 100644
-> index 000000000000..86763bc5d74f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
-> @@ -0,0 +1,35 @@
-> +NVIDIA Tegra Combined UART (TCU)
-> +
-> +The TCU is a system for sharing a hardware UART instance among multiple
-> +systems withing the Tegra SoC. It is implemented through a mailbox-
-
-s/withing/within/
-
-Otherwise,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +based protocol where each "virtual UART" has a pair of mailboxes, one
-> +for transmitting and one for receiving, that is used to communicate
-> +with the hardware implementing the TCU.
-> +
-> +Required properties:
-> +- name : Should be tcu
-> +- compatible
-> +    Array of strings
-> +    One of:
-> +    - "nvidia,tegra194-tcu"
-> +- mbox-names:
-> +    "rx" - Mailbox for receiving data from hardware UART
-> +    "tx" - Mailbox for transmitting data to hardware UART
-> +- mboxes: Mailboxes corresponding to the mbox-names. 
-> +
-> +This node is a mailbox consumer. See the following files for details of
-> +the mailbox subsystem, and the specifiers implemented by the relevant
-> +provider(s):
-> +
-> +- .../mailbox/mailbox.txt
-> +- .../mailbox/nvidia,tegra186-hsp.txt
-> +
-> +Example bindings:
-> +-----------------
-> +
-> +tcu: tcu {
-> +	compatible = "nvidia,tegra194-tcu";
-> +	mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_SM 0>,
-> +	         <&hsp_aon TEGRA_HSP_MBOX_TYPE_SM 1>;
-> +	mbox-names = "rx", "tx";
-> +};
-> -- 
-> 2.16.1
+> They can, but should not!
 > 
+> Instead, the driver shall use device_link_add() and device_link_del(),
+> dynamically, depending on what PM domain that their original device
+> needs for the current running use case.
+> 
+> In that way, they keep existing runtime PM deployment, operating on
+> its original device.
+
+OK, sounds good. Any reason why the linking cannot be handled by the 
+above API? Is there a use-case where you would not want it linked?
+
+Thanks
+Jon
+
+-- 
+nvpublic
