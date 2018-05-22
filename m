@@ -1,23 +1,23 @@
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
 Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
  controller driver
-Date: Tue, 22 May 2018 15:16:38 +0300
-Message-ID: <fde238d6-5e95-53c9-b704-8fc9e0697328@gmail.com>
+Date: Tue, 22 May 2018 14:19:09 +0200
+Message-ID: <2e858be88e00e26495fe47c6cd5cd70c@agner.ch>
 References: <cover.1526990589.git.stefan@agner.ch>
  <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>, boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
-Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-[Re-sending the review I made before of the series RESEND]
+[review sent to my first patch sent off-ml, moving to ml thread]
 
+On 21.05.2018 16:05, Dmitry Osipenko wrote:
 > Hello Stefan,
 > 
 > I don't have expertise to review the actual NAND-related driver logic, so I only
@@ -30,7 +30,7 @@ List-Id: linux-tegra@vger.kernel.org
 >> command queue feature. Regular operations/data transfers are
 >> done in PIO mode. Page read/writes with hardware ECC make
 >> use of the DMA for data transfer.
->> 
+>>
 >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
 >> Signed-off-by: Stefan Agner <stefan@agner.ch>
 >> ---
@@ -40,7 +40,7 @@ List-Id: linux-tegra@vger.kernel.org
 >>  drivers/mtd/nand/raw/tegra_nand.c | 915 ++++++++++++++++++++++++++++++
 >>  4 files changed, 929 insertions(+)
 >>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
->> 
+>>
 >> diff --git a/MAINTAINERS b/MAINTAINERS
 >> index 58b9861ccf99..a65739681279 100644
 >> --- a/MAINTAINERS
@@ -48,7 +48,7 @@ List-Id: linux-tegra@vger.kernel.org
 >> @@ -13844,6 +13844,13 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
 >>  S:	Supported
 >>  F:	drivers/input/keyboard/tegra-kbc.c
->>  
+>>
 >> +TEGRA NAND DRIVER
 >> +M:	Stefan Agner <stefan@agner.ch>
 >> +M:	Lucas Stach <dev@lynxeye.de>
@@ -66,7 +66,7 @@ List-Id: linux-tegra@vger.kernel.org
 >> @@ -534,4 +534,10 @@ config MTD_NAND_MTK
 >>  	  Enables support for NAND controller on MTK SoCs.
 >>  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
->>  
+>>
 >> +config MTD_NAND_TEGRA
 >> +	tristate "Support for NAND on NVIDIA Tegra"
 >> +	depends on ARCH_TEGRA
@@ -83,7 +83,7 @@ List-Id: linux-tegra@vger.kernel.org
 >>  obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
 >>  obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
 >> +obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
->>  
+>>
 >>  nand-objs := nand_base.o nand_bbt.o nand_timings.o nand_ids.o
 >>  nand-objs += nand_amd.o
 >> diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
@@ -446,6 +446,9 @@ List-Id: linux-tegra@vger.kernel.org
 > Both variants are fine, but the for-loop is a bit more explicit. You could omit
 > the above op_id variable initialization for consistency.
 > 
+
+Agreed, will do the for loop variant.
+
 >> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
 >> +		unsigned int naddrs, i;
 >> +		const u8 *addrs;
@@ -612,6 +615,13 @@ List-Id: linux-tegra@vger.kernel.org
 > Wouldn't be more efficient to set DMA burst to 16 words? The writesize seems
 > always aligned to at least 64 words.
 > 
+
+Hm, haven't tested 16 words, 8 was the setting Lucas used.
+
+Are you sure this is only about write size? Not sure, but isn't the ECC
+area also DMA'd? On Colibri we use RS with t=8, hence 144 bytes parity,
+so this would be properly aligned non the less...
+
 >> +	if (oob_required)
 >> +		value |= DMA_CTRL_EN_B;
 >> +	writel(value, nand->regs + DMA_CTRL);
@@ -879,6 +889,9 @@ List-Id: linux-tegra@vger.kernel.org
 > may want to move devm_request_irq() after resetting the HW state, to be on a
 > safe side.
 > 
+
+Agreed.
+
 >> +
 >> +	writel(DMA_CTRL_IS_DONE, nand->regs + DMA_CTRL);
 >> +
@@ -891,10 +904,23 @@ List-Id: linux-tegra@vger.kernel.org
 > 
 > Is this "reset config" really needed? It is overwritten below in the code.
 > 
+
+We already use the NAND peripheral in nand_scan_ident, and then properly
+set it up later. I think it is better to have a known config state
+during this phase...
+
 > 
 > Also, maybe you could factor out the HW reset/init stuff into a respective
 > tegra_nand_hw_reset() / tegra_nand_hw_init(), just for consistency.
 > 
+
+I will consider that.
+
+Thanks for your review!
+
+--
+Stefan
+
 >> +
 >> +	chip = &nand->chip;
 >> +	mtd = nand_to_mtd(chip);
@@ -1051,4 +1077,4 @@ List-Id: linux-tegra@vger.kernel.org
 >> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
 >> +MODULE_LICENSE("GPL v2");
 >> +MODULE_DEVICE_TABLE(of, tegra_nand_of_match);
->> 
+>>
