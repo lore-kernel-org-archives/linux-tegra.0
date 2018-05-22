@@ -1,7 +1,7 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [RESEND PATCH 3/5] clk: tegra20: init NDFLASH clock to sensible rate
-Date: Tue, 22 May 2018 14:07:07 +0200
-Message-ID: <7b870e6f8ea65606d136314a34a79f63c244b13c.1526990589.git.stefan@agner.ch>
+Subject: [RESEND PATCH 4/5] ARM: tegra: add Tegra20 NAND flash controller node
+Date: Tue, 22 May 2018 14:07:08 +0200
+Message-ID: <4eccff9a409d229c81e6b4cc453a7f4e29e94510.1526990589.git.stefan@agner.ch>
 References: <cover.1526990589.git.stefan@agner.ch>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1526990589.git.stefan@agner.ch>
@@ -12,27 +12,38 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Lucas Stach <dev@lynxeye.de>
 
-Set up the NAND Flash controller clock to run at 150MHz
-instead of the rate set by the bootloader. This is a
-conservative rate which also yields good performance.
+Add basic controller description to be extended
+by individual boards.
 
 Signed-off-by: Lucas Stach <dev@lynxeye.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/clk/tegra/clk-tegra20.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/tegra20.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 0ee56dd04cec..dff8c425cd28 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-+	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
- };
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 0a7136462a1a..5772d0800ad7 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -425,6 +425,19 @@
+ 		status = "disabled";
+ 	};
+ 
++	nand: nand@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++		status = "disabled";
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
 -- 
 2.17.0
