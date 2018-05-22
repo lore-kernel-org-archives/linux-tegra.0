@@ -1,122 +1,48 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 3/7] drm/tegra: dc: Support rotation property
-Date: Fri, 18 May 2018 20:37:21 +0300
-Message-ID: <c9d04cd5-1bfe-c0a3-0d1c-d0058b40a117@gmail.com>
-References: <20180517154132.10058-1-thierry.reding@gmail.com>
- <20180517154132.10058-4-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180517154132.10058-4-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: [RESEND PATCH 0/5] mtd: rawnand: add NVIDIA Tegra NAND flash support
+Date: Tue, 22 May 2018 14:07:04 +0200
+Message-ID: <cover.1526990589.git.stefan@agner.ch>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
+Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTcuMDUuMjAxOCAxODo0MSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBDdXJyZW50bHkgb25seSB0aGUgRFJN
-X01PREVfUkVGTEVDVF9ZIHJvdGF0aW9uIGlzIHN1cHBvcnRlZC4gVGhlIGRyaXZlcgo+IGFscmVh
-ZHkgc3VwcG9ydHMgcmVmbGVjdGlvbiBvbiB0aGUgWSBheGlzIHZpYSBhIGN1c3RvbSBmbGFnIHdo
-aWNoIGlzIG5vdAo+IHZlcnkgdXNlZnVsIGJlY2F1c2UgaXQgcmVxdWlyZXMgY3VzdG9tIHVzZXJz
-cGFjZS4gUmVwbGFjZSB0aGF0IGZsYWcgYnkgYQo+IHN0YW5kYXJkIHJvdGF0aW9uIHByb3BlcnR5
-IHRoYXQgc3VwcG9ydHMgMCBkZWdyZWUgcm90YXRpb24gYW5kIFkgYXhpcwo+IHJlZmxlY3Rpb24u
-Cj4gCj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4K
-PiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMgICAgfCAxOCArKysrKysrKysrKysr
-KysrKy0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oICAgfCAgMSAtCj4gIGRyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9mYi5jICAgIHwgMTAgLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0v
-dGVncmEvcGxhbmUuYyB8ICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3BsYW5lLmggfCAg
-MiArKwo+ICA1IGZpbGVzIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyksIDEyIGRlbGV0aW9ucygt
-KQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyBiL2RyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9kYy5jCj4gaW5kZXggOWY4M2E2NWI1ZWE5Li5lMmU1NzQyMDJjYTMgMTAw
-NjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMKPiArKysgYi9kcml2ZXJzL2dw
-dS9kcm0vdGVncmEvZGMuYwo+IEBAIC00NTEsNiArNDUxLDcgQEAgc3RhdGljIGludCB0ZWdyYV9w
-bGFuZV9hdG9taWNfY2hlY2soc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gIAkJCQkgICAgc3Ry
-dWN0IGRybV9wbGFuZV9zdGF0ZSAqc3RhdGUpCj4gIHsKPiAgCXN0cnVjdCB0ZWdyYV9wbGFuZV9z
-dGF0ZSAqcGxhbmVfc3RhdGUgPSB0b190ZWdyYV9wbGFuZV9zdGF0ZShzdGF0ZSk7Cj4gKwl1bnNp
-Z25lZCBpbnQgcm90YXRpb24gPSBEUk1fTU9ERV9ST1RBVEVfMCB8IERSTV9NT0RFX1JFRkxFQ1Rf
-WTsKPiAgCXN0cnVjdCB0ZWdyYV9ib190aWxpbmcgKnRpbGluZyA9ICZwbGFuZV9zdGF0ZS0+dGls
-aW5nOwo+ICAJc3RydWN0IHRlZ3JhX3BsYW5lICp0ZWdyYSA9IHRvX3RlZ3JhX3BsYW5lKHBsYW5l
-KTsKPiAgCXN0cnVjdCB0ZWdyYV9kYyAqZGMgPSB0b190ZWdyYV9kYyhzdGF0ZS0+Y3J0Yyk7Cj4g
-QEAgLTQ5OCw2ICs0OTksMTMgQEAgc3RhdGljIGludCB0ZWdyYV9wbGFuZV9hdG9taWNfY2hlY2so
-c3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gIAkJcmV0dXJuIC1FSU5WQUw7Cj4gIAl9Cj4gIAo+
-ICsJcm90YXRpb24gPSBkcm1fcm90YXRpb25fc2ltcGxpZnkoc3RhdGUtPnJvdGF0aW9uLCByb3Rh
-dGlvbik7Cj4gKwo+ICsJaWYgKHJvdGF0aW9uICYgRFJNX01PREVfUkVGTEVDVF9ZKQo+ICsJCXBs
-YW5lX3N0YXRlLT5ib3R0b21fdXAgPSB0cnVlOwo+ICsJZWxzZQo+ICsJCXBsYW5lX3N0YXRlLT5i
-b3R0b21fdXAgPSBmYWxzZTsKPiArCj4gIAkvKgo+ICAJICogVGVncmEgZG9lc24ndCBzdXBwb3J0
-IGRpZmZlcmVudCBzdHJpZGVzIGZvciBVIGFuZCBWIHBsYW5lcyBzbyB3ZQo+ICAJICogZXJyb3Ig
-b3V0IGlmIHRoZSB1c2VyIHRyaWVzIHRvIGRpc3BsYXkgYSBmcmFtZWJ1ZmZlciB3aXRoIHN1Y2gg
-YQo+IEBAIC01NTgsNyArNTY2LDcgQEAgc3RhdGljIHZvaWQgdGVncmFfcGxhbmVfYXRvbWljX3Vw
-ZGF0ZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKPiAgCXdpbmRvdy5kc3QudyA9IGRybV9yZWN0
-X3dpZHRoKCZwbGFuZS0+c3RhdGUtPmRzdCk7Cj4gIAl3aW5kb3cuZHN0LmggPSBkcm1fcmVjdF9o
-ZWlnaHQoJnBsYW5lLT5zdGF0ZS0+ZHN0KTsKPiAgCXdpbmRvdy5iaXRzX3Blcl9waXhlbCA9IGZi
-LT5mb3JtYXQtPmNwcFswXSAqIDg7Cj4gLQl3aW5kb3cuYm90dG9tX3VwID0gdGVncmFfZmJfaXNf
-Ym90dG9tX3VwKGZiKTsKPiArCXdpbmRvdy5ib3R0b21fdXAgPSBzdGF0ZS0+Ym90dG9tX3VwOwoK
-VGhpcyBpcyBBQkkgYnJlYWthZ2UuIEZvciBub3cgbGV0J3Mga2VlcCB0aGUgdGVncmFfZmJfaXNf
-Ym90dG9tX3VwKCkgYW5kIGNoYW5nZQp0aGUgYWJvdmUgbGluZSB0bzoKCgl3aW5kb3cuYm90dG9t
-X3VwID0gdGVncmFfZmJfaXNfYm90dG9tX3VwKGZiKSB8fCBzdGF0ZS0+Ym90dG9tX3VwOwoKPiAg
-Cj4gIAkvKiBjb3B5IGZyb20gc3RhdGUgKi8KPiAgCXdpbmRvdy56cG9zID0gcGxhbmUtPnN0YXRl
-LT5ub3JtYWxpemVkX3pwb3M7Cj4gQEAgLTY0Myw2ICs2NTEsMTQgQEAgc3RhdGljIHN0cnVjdCBk
-cm1fcGxhbmUgKnRlZ3JhX3ByaW1hcnlfcGxhbmVfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpk
-cm0sCj4gIAlpZiAoZGMtPnNvYy0+c3VwcG9ydHNfYmxlbmRpbmcpCj4gIAkJZHJtX3BsYW5lX2Ny
-ZWF0ZV96cG9zX3Byb3BlcnR5KCZwbGFuZS0+YmFzZSwgMCwgMCwgMjU1KTsKPiAgCj4gKwllcnIg
-PSBkcm1fcGxhbmVfY3JlYXRlX3JvdGF0aW9uX3Byb3BlcnR5KCZwbGFuZS0+YmFzZSwKPiArCQkJ
-CQkJIERSTV9NT0RFX1JPVEFURV8wLAo+ICsJCQkJCQkgRFJNX01PREVfUk9UQVRFXzAgfAo+ICsJ
-CQkJCQkgRFJNX01PREVfUkVGTEVDVF9ZKTsKPiArCWlmIChlcnIgPCAwKQo+ICsJCWRldl9lcnIo
-ZGMtPmRldiwgImZhaWxlZCB0byBjcmVhdGUgcm90YXRpb24gcHJvcGVydHk6ICVkXG4iLAo+ICsJ
-CQllcnIpOwo+ICsKClRoZSAicm90YXRpb24iIHByb3BlcnR5IG11c3QgYmUgY3JlYXRlZCBmb3Ig
-dGhlIG92ZXJsYXkgcGxhbmVzIGFzIHdlbGwuCgpJJ3ZlIGFkZGVkICJyb3RhdGlvbiIgcHJvcGVy
-dHkgc3VwcG9ydCB0byB0aGUgR1JBVEUgLSB3b3JrcyBmaW5lLCBzbyB3aXRoIHRoZQphYm92ZSBj
-b21tZW50cyBhZGRyZXNzZWQ6CgpSZXZpZXdlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhA
-Z21haWwuY29tPgpUZXN0ZWQtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4K
-Cj4gIAlyZXR1cm4gJnBsYW5lLT5iYXNlOwo+ICB9Cj4gIAo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vdGVncmEvZHJtLmggYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmgKPiBpbmRl
-eCA0ZjQxYWFlYzg1MzAuLjg0OTMwZDEzZTI4ZCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZHJtLmgKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmgKPiBAQCAt
-MTc3LDcgKzE3Nyw2IEBAIGludCBkcm1fZHBfYXV4X3RyYWluKHN0cnVjdCBkcm1fZHBfYXV4ICph
-dXgsIHN0cnVjdCBkcm1fZHBfbGluayAqbGluaywKPiAgLyogZnJvbSBmYi5jICovCj4gIHN0cnVj
-dCB0ZWdyYV9ibyAqdGVncmFfZmJfZ2V0X3BsYW5lKHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZy
-YW1lYnVmZmVyLAo+ICAJCQkJICAgIHVuc2lnbmVkIGludCBpbmRleCk7Cj4gLWJvb2wgdGVncmFf
-ZmJfaXNfYm90dG9tX3VwKHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZyYW1lYnVmZmVyKTsKPiAg
-aW50IHRlZ3JhX2ZiX2dldF90aWxpbmcoc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZnJhbWVidWZm
-ZXIsCj4gIAkJCXN0cnVjdCB0ZWdyYV9ib190aWxpbmcgKnRpbGluZyk7Cj4gIHN0cnVjdCBkcm1f
-ZnJhbWVidWZmZXIgKnRlZ3JhX2ZiX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9mYi5jCj4gaW5kZXggZTY5NDM0OTA5YTQyLi4zNTgyN2M3Mjk0NjIgMTAwNjQ0Cj4gLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZmIuYwo+IEBAIC0zOCwxNiArMzgsNiBAQCBzdHJ1Y3QgdGVncmFfYm8gKnRlZ3JhX2ZiX2dl
-dF9wbGFuZShzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmcmFtZWJ1ZmZlciwKPiAgCXJldHVybiBm
-Yi0+cGxhbmVzW2luZGV4XTsKPiAgfQo+ICAKPiAtYm9vbCB0ZWdyYV9mYl9pc19ib3R0b21fdXAo
-c3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZnJhbWVidWZmZXIpCj4gLXsKPiAtCXN0cnVjdCB0ZWdy
-YV9mYiAqZmIgPSB0b190ZWdyYV9mYihmcmFtZWJ1ZmZlcik7Cj4gLQo+IC0JaWYgKGZiLT5wbGFu
-ZXNbMF0tPmZsYWdzICYgVEVHUkFfQk9fQk9UVE9NX1VQKQo+IC0JCXJldHVybiB0cnVlOwo+IC0K
-PiAtCXJldHVybiBmYWxzZTsKPiAtfQo+IC0KPiAgaW50IHRlZ3JhX2ZiX2dldF90aWxpbmcoc3Ry
-dWN0IGRybV9mcmFtZWJ1ZmZlciAqZnJhbWVidWZmZXIsCj4gIAkJCXN0cnVjdCB0ZWdyYV9ib190
-aWxpbmcgKnRpbGluZykKPiAgewo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
-cGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5jCj4gaW5kZXggMTc2ZWY0NmM2
-MTVjLi4yNzE3MjliMmM2NTMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Bs
-YW5lLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvcGxhbmUuYwo+IEBAIC01Myw2ICs1
-Myw3IEBAIHRlZ3JhX3BsYW5lX2F0b21pY19kdXBsaWNhdGVfc3RhdGUoc3RydWN0IGRybV9wbGFu
-ZSAqcGxhbmUpCj4gIAljb3B5LT50aWxpbmcgPSBzdGF0ZS0+dGlsaW5nOwo+ICAJY29weS0+Zm9y
-bWF0ID0gc3RhdGUtPmZvcm1hdDsKPiAgCWNvcHktPnN3YXAgPSBzdGF0ZS0+c3dhcDsKPiArCWNv
-cHktPmJvdHRvbV91cCA9IHN0YXRlLT5ib3R0b21fdXA7Cj4gIAljb3B5LT5vcGFxdWUgPSBzdGF0
-ZS0+b3BhcXVlOwo+ICAKPiAgCWZvciAoaSA9IDA7IGkgPCAzOyBpKyspCj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5oIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Bs
-YW5lLmgKPiBpbmRleCA2OTM4NzE5ZTdlNWQuLjg2N2I5YzMyYjFiNiAxMDA2NDQKPiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vdGVncmEvcGxhbmUuaAo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9wbGFuZS5oCj4gQEAgLTQxLDYgKzQxLDggQEAgc3RydWN0IHRlZ3JhX3BsYW5lX3N0YXRlIHsK
-PiAgCXUzMiBmb3JtYXQ7Cj4gIAl1MzIgc3dhcDsKPiAgCj4gKwlib29sIGJvdHRvbV91cDsKPiAr
-Cj4gIAkvKiB1c2VkIGZvciBsZWdhY3kgYmxlbmRpbmcgc3VwcG9ydCBvbmx5ICovCj4gIAlib29s
-IG9wYXF1ZTsKPiAgCWJvb2wgZGVwZW5kZW50WzNdOwo+IAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+[resending, this time with mailing lists in cc]
+
+This picks up an older patchset written by Lucas Stach which
+adds raw NAND flash support for Tegra 2.
+http://lists.infradead.org/pipermail/linux-mtd/2015-November/063031.html
+
+The driver has been reworked to implement the ->exec_op callback.
+Some smaller changes and bug fixes have been applied too, but I did
+not keep track of them. Since the original patchset has been posted
+some years back already, I guess review needs to be done from scratch
+anyway.
+
+--
+Stefan
+
+Lucas Stach (4):
+  mtd: rawnand: tegra: add devicetree binding
+  clk: tegra20: init NDFLASH clock to sensible rate
+  ARM: tegra: add Tegra20 NAND flash controller node
+  ARM: tegra: enable NAND flash on Colibri T20
+
+Stefan Agner (1):
+  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
+
+ .../bindings/mtd/nvidia,tegra20-nand.txt      |  29 +
+ MAINTAINERS                                   |   7 +
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   7 +
+ arch/arm/boot/dts/tegra20.dtsi                |  13 +
+ drivers/clk/tegra/clk-tegra20.c               |   1 +
+ drivers/mtd/nand/raw/Kconfig                  |   6 +
+ drivers/mtd/nand/raw/Makefile                 |   1 +
+ drivers/mtd/nand/raw/tegra_nand.c             | 915 ++++++++++++++++++
+ 8 files changed, 979 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+ create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+
+-- 
+2.17.0
