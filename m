@@ -1,50 +1,77 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 8/8] arm64: tegra: Mark tcu as primary serial port on
- Tegra194 P2888
-Date: Tue, 22 May 2018 17:29:13 +0100
-Message-ID: <d7b65d6d-c415-ac49-d729-9c6b44feb8c6@nvidia.com>
-References: <20180508114403.14499-1-mperttunen@nvidia.com>
- <20180508114403.14499-9-mperttunen@nvidia.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [RESEND PATCH 1/5] mtd: rawnand: tegra: add devicetree binding
+Date: Tue, 22 May 2018 19:52:30 +0200
+Message-ID: <20180522195230.471a796e@bbrezillon>
+References: <cover.1526990589.git.stefan@agner.ch>
+        <8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180508114403.14499-9-mperttunen@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>, robh+dt@kernel.org, mark.rutland@arm.com, jassisinghbrar@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com
-Cc: araza@nvidia.com, devicetree@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello Stefan,
 
-On 08/05/18 12:44, Mikko Perttunen wrote:
-> The Tegra Combined UART is the proper primary serial port on P2888,
-> so use it.
+On Tue, 22 May 2018 14:07:05 +0200
+Stefan Agner <stefan@agner.ch> wrote:
+
+> From: Lucas Stach <dev@lynxeye.de>
 > 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> This adds the devicetree binding for the Tegra 2 NAND flash
+> controller.
+> 
+> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 > ---
->   arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../bindings/mtd/nvidia,tegra20-nand.txt      | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> index 859ab5af17c1..95e2433984f7 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> @@ -10,7 +10,7 @@
->   	aliases {
->   		sdhci0 = "/cbb/sdhci@3460000";
->   		sdhci1 = "/cbb/sdhci@3400000";
-> -		serial0 = &uartb;
-> +		serial0 = &tcu;
->   		i2c0 = "/bpmp/i2c";
->   		i2c1 = "/cbb/i2c@3160000";
->   		i2c2 = "/cbb/i2c@c240000";
-> 
+> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> new file mode 100644
+> index 000000000000..522d442937a9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> @@ -0,0 +1,29 @@
+> +NVIDIA Tegra NAND Flash controller
+> +
+> +Required properties:
+> +- compatible: Must be one of:
+> +  - "nvidia,tegra20-nand"
+> +- reg: MMIO address range
+> +- interrupts: interrupt output of the NFC controller
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +  - nand
+> +- resets: Must contain an entry for each entry in reset-names.
+> +  See ../reset/reset.txt for details.
+> +- reset-names: Must include the following entries:
+> +  - nand
+> +
+> +Optional properties:
+> +- nvidia,wp-gpios: GPIO used to disable write protection of the flash
+> +
+> +  Example:
+> +	nand@70008000 {
+> +		compatible = "nvidia,tegra20-nand";
+> +		reg = <0x70008000 0x100>;
+> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
+> +		clock-names = "nand";
+> +		resets = <&tegra_car 13>;
+> +		reset-names = "nand";
+> +	};
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Can you represent the controller and NAND chip separately as
+recommended here [1].
 
-Cheers
-Jon
+Thanks,
 
--- 
-nvpublic
+Boris
+
+[1]https://elixir.bootlin.com/linux/v4.17-rc6/source/Documentation/devicetree/bindings/mtd/nand.txt#L56
