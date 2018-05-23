@@ -1,94 +1,165 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
-Date: Wed, 23 May 2018 13:44:18 +0300
-Message-ID: <68f62691-9108-9bee-a24d-5c978af8a5ab@gmail.com>
-References: <20180522211420.2006-1-digetx@gmail.com>
- <20180523055817.subrv6oeckfecpcp@vireshk-i7>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v6 1/4] ARM: dts: tegra: Remove usage of deprecated
+ skeleton.dtsi
+Date: Wed, 23 May 2018 12:46:09 +0200
+Message-ID: <9a42132399d8ea69b5b7ce76c442b7b0@agner.ch>
+References: <1527069406-6359-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180523055817.subrv6oeckfecpcp@vireshk-i7>
-Content-Language: en-US
+In-Reply-To: <1527069406-6359-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Lucas Stach <dev@lynxeye.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On 23.05.2018 08:58, Viresh Kumar wrote:
-> On 23-05-18, 00:14, Dmitry Osipenko wrote:
->> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
->> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
->> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
->> on the driver probe.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>
->> CPUFreq maintainers,
->>
->> Please take into account that this patch is made on top of my recent
->> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
->> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
->> the [0], including this patch into the series.
->>
->> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
+On 23.05.2018 11:56, Krzysztof Kozlowski wrote:
+> Remove the usage of skeleton.dtsi because it was deprecated since commit
+> 9c0da3cc61f1 ("ARM: dts: explicitly mark skeleton.dtsi as deprecated").
+> It also allows later to fix DTC warnings for missing unit name in
+> /memory nodes.
 > 
-> This is already picked by Rafael and is sitting in pm/bleeding-edge
-> branch. Should get merged into linux-next in a day or two.
+> The /chosen and /aliases nodes are added only when dependent DTSes do
+> not define them.  Compiled DTB is the same as before this commit.
 > 
->>  drivers/cpufreq/tegra20-cpufreq.c | 16 +++++++++++++++-
->>  1 file changed, 15 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
->> index 05f57dcd5215..ca5229265b60 100644
->> --- a/drivers/cpufreq/tegra20-cpufreq.c
->> +++ b/drivers/cpufreq/tegra20-cpufreq.c
->> @@ -176,6 +176,14 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->>  		goto put_pll_x;
->>  	}
->>  
->> +	err = clk_prepare_enable(cpufreq->pll_x_clk);
->> +	if (err)
->> +		goto put_pll_p;
->> +
->> +	err = clk_prepare_enable(cpufreq->pll_p_clk);
->> +	if (err)
->> +		goto disable_pll_x;
->> +
->>  	cpufreq->dev = &pdev->dev;
->>  	cpufreq->driver.get = cpufreq_generic_get;
->>  	cpufreq->driver.attr = cpufreq_generic_attr;
->> @@ -192,12 +200,16 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->>  
->>  	err = cpufreq_register_driver(&cpufreq->driver);
->>  	if (err)
->> -		goto put_pll_p;
->> +		goto disable_pll_p;
->>  
->>  	platform_set_drvdata(pdev, cpufreq);
->>  
->>  	return 0;
->>  
->> +disable_pll_p:
->> +	clk_disable_unprepare(cpufreq->pll_p_clk);
->> +disable_pll_x:
->> +	clk_disable_unprepare(cpufreq->pll_x_clk);
->>  put_pll_p:
->>  	clk_put(cpufreq->pll_p_clk);
->>  put_pll_x:
->> @@ -214,6 +226,8 @@ static int tegra20_cpufreq_remove(struct platform_device *pdev)
->>  
->>  	cpufreq_unregister_driver(&cpufreq->driver);
->>  
->> +	clk_disable_unprepare(cpufreq->pll_p_clk);
->> +	clk_disable_unprepare(cpufreq->pll_x_clk);
->>  	clk_put(cpufreq->pll_p_clk);
->>  	clk_put(cpufreq->pll_x_clk);
->>  	clk_put(cpufreq->cpu_clk);
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Please hold on this patch, seems I interpreted the cpufreq driver logic
-incorrectly and it is probably fine as it is. I'll re-check later today.
+Hm I see, you cannot add unit address here because the board level
+device tree do not have it yet... That makes the split indeed a bit less
+appealing.
+
+Anyway, now we have it, and I think it is still nice to have a separate
+change.
+
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+
+--
+Stefan
+
+
+
+> 
+> ---
+> 
+> Changes since v5:
+> 1. New patch, split with skeleton.dtsi removal (suggested by Stefan).
+> ---
+>  arch/arm/boot/dts/tegra114.dtsi       |  8 ++++++--
+>  arch/arm/boot/dts/tegra124.dtsi       |  6 ++++--
+>  arch/arm/boot/dts/tegra20.dtsi        | 11 +++++++++--
+>  arch/arm/boot/dts/tegra30-apalis.dtsi |  4 ++++
+>  arch/arm/boot/dts/tegra30.dtsi        | 11 +++++++++--
+>  5 files changed, 32 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+> index 0e4a13295d8a..27ef515e5640 100644
+> --- a/arch/arm/boot/dts/tegra114.dtsi
+> +++ b/arch/arm/boot/dts/tegra114.dtsi
+> @@ -5,11 +5,15 @@
+>  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+> -#include "skeleton.dtsi"
+> -
+>  / {
+>  	compatible = "nvidia,tegra114";
+>  	interrupt-parent = <&lic>;
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +
+> +	memory {
+> +		device_type = "memory";
+> +	};
+>  
+>  	host1x@50000000 {
+>  		compatible = "nvidia,tegra114-host1x", "simple-bus";
+> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+> index 174092bfac90..951feea784af 100644
+> --- a/arch/arm/boot/dts/tegra124.dtsi
+> +++ b/arch/arm/boot/dts/tegra124.dtsi
+> @@ -7,14 +7,16 @@
+>  #include <dt-bindings/reset/tegra124-car.h>
+>  #include <dt-bindings/thermal/tegra124-soctherm.h>
+>  
+> -#include "skeleton.dtsi"
+> -
+>  / {
+>  	compatible = "nvidia,tegra124";
+>  	interrupt-parent = <&lic>;
+>  	#address-cells = <2>;
+>  	#size-cells = <2>;
+>  
+> +	memory {
+> +		device_type = "memory";
+> +	};
+> +
+>  	pcie@1003000 {
+>  		compatible = "nvidia,tegra124-pcie";
+>  		device_type = "pci";
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 0a7136462a1a..88dd1afb5877 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -4,11 +4,18 @@
+>  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+> -#include "skeleton.dtsi"
+> -
+>  / {
+>  	compatible = "nvidia,tegra20";
+>  	interrupt-parent = <&lic>;
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +
+> +	chosen { };
+> +	aliases { };
+> +
+> +	memory {
+> +		device_type = "memory";
+> +	};
+>  
+>  	iram@40000000 {
+>  		compatible = "mmio-sram";
+> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi
+> b/arch/arm/boot/dts/tegra30-apalis.dtsi
+> index d1d21ec2a844..6f29cbad6e8a 100644
+> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+> @@ -10,6 +10,10 @@
+>  	model = "Toradex Apalis T30";
+>  	compatible = "toradex,apalis_t30", "nvidia,tegra30";
+>  
+> +	memory {
+> +		reg = <0 0>;
+> +	};
+> +
+>  	pcie@3000 {
+>  		avdd-pexa-supply = <&vdd2_reg>;
+>  		vdd-pexa-supply = <&vdd2_reg>;
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+> index a110cf84d85f..19237c08c166 100644
+> --- a/arch/arm/boot/dts/tegra30.dtsi
+> +++ b/arch/arm/boot/dts/tegra30.dtsi
+> @@ -5,11 +5,18 @@
+>  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+> -#include "skeleton.dtsi"
+> -
+>  / {
+>  	compatible = "nvidia,tegra30";
+>  	interrupt-parent = <&lic>;
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +
+> +	chosen { };
+> +	aliases { };
+> +
+> +	memory {
+> +		device_type = "memory";
+> +	};
+>  
+>  	pcie@3000 {
+>  		compatible = "nvidia,tegra30-pcie";
