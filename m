@@ -1,78 +1,115 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
-Date: Wed, 23 May 2018 00:14:20 +0300
-Message-ID: <20180522211420.2006-1-digetx@gmail.com>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
+ device to genpd
+Date: Wed, 23 May 2018 10:21:32 +0530
+Message-ID: <51f7de26-579a-8b9e-4e79-f4eee923ab38@codeaurora.org>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
+ <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
+ <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com>
+ <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
+ <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Todor Tomov <todor.tomov@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
-clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
-PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
-on the driver probe.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
 
-CPUFreq maintainers,
+On 05/23/2018 02:25 AM, Jon Hunter wrote:
+> 
+> On 22/05/18 15:47, Ulf Hansson wrote:
+>> [...]
+>>
+>>>>
+>>>> +/**
+>>>> + * genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
+>>>> + * @dev: Device to attach.
+>>>> + * @index: The index of the PM domain.
+>>>> + *
+>>>> + * Parse device's OF node to find a PM domain specifier at the provided @index.
+>>>> + * If such is found, allocates a new device and attaches it to retrieved
+>>>> + * pm_domain ops.
+>>>> + *
+>>>> + * Returns the allocated device if successfully attached PM domain, NULL when
+>>>> + * the device don't need a PM domain or have a single PM domain, else PTR_ERR()
+>>>> + * in case of failures. Note that if a power-domain exists for the device, but
+>>>> + * cannot be found or turned on, then return PTR_ERR(-EPROBE_DEFER) to ensure
+>>>> + * that the device is not probed and to re-try again later.
+>>>> + */
+>>>> +struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+>>>> +                                      unsigned int index)
+>>>> +{
+>>>> +     struct device *genpd_dev;
+>>>> +     int num_domains;
+>>>> +     int ret;
+>>>> +
+>>>> +     if (!dev->of_node)
+>>>> +             return NULL;
+>>>> +
+>>>> +     /* Deal only with devices using multiple PM domains. */
+>>>> +     num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
+>>>> +                                              "#power-domain-cells");
+>>>> +     if (num_domains < 2 || index >= num_domains)
+>>>> +             return NULL;
+>>>> +
+>>>> +     /* Allocate and register device on the genpd bus. */
+>>>> +     genpd_dev = kzalloc(sizeof(*genpd_dev), GFP_KERNEL);
+>>>> +     if (!genpd_dev)
+>>>> +             return ERR_PTR(-ENOMEM);
+>>>> +
+>>>> +     dev_set_name(genpd_dev, "genpd:%u:%s", index, dev_name(dev));
+>>>> +     genpd_dev->bus = &genpd_bus_type;
+>>>> +     genpd_dev->release = genpd_release_dev;
+>>>> +
+>>>> +     ret = device_register(genpd_dev);
+>>>> +     if (ret) {
+>>>> +             kfree(genpd_dev);
+>>>> +             return ERR_PTR(ret);
+>>>> +     }
+>>>> +
+>>>> +     /* Try to attach the device to the PM domain at the specified index. */
+>>>> +     ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index);
+>>>> +     if (ret < 1) {
+>>>> +             device_unregister(genpd_dev);
+>>>> +             return ret ? ERR_PTR(ret) : NULL;
+>>>> +     }
+>>>> +
+>>>> +     pm_runtime_set_active(genpd_dev);
+>>>> +     pm_runtime_enable(genpd_dev);
+>>>> +
+>>>> +     return genpd_dev;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
+>>>
+>>> Thanks for sending this. Believe it or not this has still been on my to-do list
+>>> and so we definitely need a solution for Tegra.
+>>>
+>>> Looking at the above it appears that additional power-domains exposed as devices
+>>> to the client device. So I assume that this means that the drivers for devices
+>>> with multiple power-domains will need to call RPM APIs for each of these
+>>> additional power-domains. Is that correct?
+>>
+>> They can, but should not!
+>>
+>> Instead, the driver shall use device_link_add() and device_link_del(),
+>> dynamically, depending on what PM domain that their original device
+>> needs for the current running use case.
+>>
+>> In that way, they keep existing runtime PM deployment, operating on
+>> its original device.
+> 
+> OK, sounds good. Any reason why the linking cannot be handled by the above API? Is there a use-case where you would not want it linked?
 
-Please take into account that this patch is made on top of my recent
-series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
-reviewed, but seems not applied yet. Let me know if you prefer to re-spin
-the [0], including this patch into the series.
+I am guessing the linking is what would give the driver the ability to decide which subset of powerdomains it actually wants to control
+at any point using runtime PM. If we have cases wherein the driver would want to turn on/off _all_ its associated powerdomains _always_
+then a default linking of all would help.
 
-[0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
-
- drivers/cpufreq/tegra20-cpufreq.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-index 05f57dcd5215..ca5229265b60 100644
---- a/drivers/cpufreq/tegra20-cpufreq.c
-+++ b/drivers/cpufreq/tegra20-cpufreq.c
-@@ -176,6 +176,14 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
- 		goto put_pll_x;
- 	}
- 
-+	err = clk_prepare_enable(cpufreq->pll_x_clk);
-+	if (err)
-+		goto put_pll_p;
-+
-+	err = clk_prepare_enable(cpufreq->pll_p_clk);
-+	if (err)
-+		goto disable_pll_x;
-+
- 	cpufreq->dev = &pdev->dev;
- 	cpufreq->driver.get = cpufreq_generic_get;
- 	cpufreq->driver.attr = cpufreq_generic_attr;
-@@ -192,12 +200,16 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
- 
- 	err = cpufreq_register_driver(&cpufreq->driver);
- 	if (err)
--		goto put_pll_p;
-+		goto disable_pll_p;
- 
- 	platform_set_drvdata(pdev, cpufreq);
- 
- 	return 0;
- 
-+disable_pll_p:
-+	clk_disable_unprepare(cpufreq->pll_p_clk);
-+disable_pll_x:
-+	clk_disable_unprepare(cpufreq->pll_x_clk);
- put_pll_p:
- 	clk_put(cpufreq->pll_p_clk);
- put_pll_x:
-@@ -214,6 +226,8 @@ static int tegra20_cpufreq_remove(struct platform_device *pdev)
- 
- 	cpufreq_unregister_driver(&cpufreq->driver);
- 
-+	clk_disable_unprepare(cpufreq->pll_p_clk);
-+	clk_disable_unprepare(cpufreq->pll_x_clk);
- 	clk_put(cpufreq->pll_p_clk);
- 	clk_put(cpufreq->pll_x_clk);
- 	clk_put(cpufreq->cpu_clk);
 -- 
-2.17.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
