@@ -1,144 +1,368 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v6 1/4] ARM: dts: tegra: Remove usage of deprecated skeleton.dtsi
-Date: Wed, 23 May 2018 11:56:43 +0200
-Message-ID: <1527069406-6359-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v6 2/4] ARM: dts: tegra: Fix unit_address_vs_reg DTC warnings for /memory
+Date: Wed, 23 May 2018 11:56:44 +0200
+Message-ID: <1527069406-6359-2-git-send-email-krzk@kernel.org>
+References: <1527069406-6359-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1527069406-6359-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove the usage of skeleton.dtsi because it was deprecated since commit
-9c0da3cc61f1 ("ARM: dts: explicitly mark skeleton.dtsi as deprecated").
-It also allows later to fix DTC warnings for missing unit name in
-/memory nodes.
+Add a generic /memory node in each Tegra DTSI (with empty reg property,
+to be overidden by each DTS) and set proper unit address for /memory
+nodes to fix the DTC warnings:
 
-The /chosen and /aliases nodes are added only when dependent DTSes do
-not define them.  Compiled DTB is the same as before this commit.
+    arch/arm/boot/dts/tegra20-harmony.dtb: Warning (unit_address_vs_reg):
+        /memory: node has a reg or ranges property, but no unit name
+
+The DTB after the change is the same as before except adding
+unit-address to /memory node.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 ---
 
 Changes since v5:
-1. New patch, split with skeleton.dtsi removal (suggested by Stefan).
----
- arch/arm/boot/dts/tegra114.dtsi       |  8 ++++++--
- arch/arm/boot/dts/tegra124.dtsi       |  6 ++++--
- arch/arm/boot/dts/tegra20.dtsi        | 11 +++++++++--
- arch/arm/boot/dts/tegra30-apalis.dtsi |  4 ++++
- arch/arm/boot/dts/tegra30.dtsi        | 11 +++++++++--
- 5 files changed, 32 insertions(+), 8 deletions(-)
+1. Split with skeleton.dtsi removal (suggested by Stefan).
 
+Changes since v4:
+1. None
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts      | 2 +-
+ arch/arm/boot/dts/tegra114-roth.dts         | 2 +-
+ arch/arm/boot/dts/tegra114-tn7.dts          | 2 +-
+ arch/arm/boot/dts/tegra114.dtsi             | 3 ++-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 2 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi        | 2 +-
+ arch/arm/boot/dts/tegra124-venice2.dts      | 2 +-
+ arch/arm/boot/dts/tegra124.dtsi             | 3 ++-
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts       | 2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts         | 2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts      | 2 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi     | 2 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts     | 2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts       | 2 +-
+ arch/arm/boot/dts/tegra20.dtsi              | 3 ++-
+ arch/arm/boot/dts/tegra30-apalis.dtsi       | 4 ++--
+ arch/arm/boot/dts/tegra30-beaver.dts        | 2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi       | 2 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi      | 2 +-
+ arch/arm/boot/dts/tegra30.dtsi              | 3 ++-
+ 23 files changed, 28 insertions(+), 24 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index eafff16765b4..1788556b4977 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -23,7 +23,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index 7ed7370ee67a..3d3835591cd2 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -28,7 +28,7 @@
+ 		};
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		/* memory >= 0x79600000 is reserved for firmware usage */
+ 		reg = <0x80000000 0x79600000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 7fc4a8b31e45..bfdd1bf61816 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -28,7 +28,7 @@
+ 		};
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		/* memory >= 0x37e00000 is reserved for firmware usage */
+ 		reg = <0x80000000 0x37e00000>;
+ 	};
 diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 0e4a13295d8a..27ef515e5640 100644
+index 27ef515e5640..aff4b8e115bc 100644
 --- a/arch/arm/boot/dts/tegra114.dtsi
 +++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -5,11 +5,15 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -11,8 +11,9 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
  
--#include "skeleton.dtsi"
--
- / {
- 	compatible = "nvidia,tegra114";
- 	interrupt-parent = <&lic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	memory {
-+		device_type = "memory";
-+	};
+-	memory {
++	memory@80000000 {
+ 		device_type = "memory";
++		reg = <0x80000000 0>;
+ 	};
  
  	host1x@50000000 {
- 		compatible = "nvidia,tegra114-host1x", "simple-bus";
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+index bb67edb016c5..6a7f45651d38 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+@@ -15,7 +15,7 @@
+ 	compatible = "toradex,apalis-tk1-v1.2", "toradex,apalis-tk1",
+ 		     "nvidia,tegra124";
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 65a2161b9b8e..e4625abd0a8a 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -50,7 +50,7 @@
+ 	model = "Toradex Apalis TK1";
+ 	compatible = "toradex,apalis-tk1", "nvidia,tegra124";
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 6dbcf84dafbc..e23b1159e8fd 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -24,7 +24,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index 3609367037a6..f45ac668d88c 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -13,7 +13,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 89bcc178994d..44492b48e165 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -18,7 +18,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
 diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 174092bfac90..951feea784af 100644
+index 951feea784af..ad9c9cd6fa8a 100644
 --- a/arch/arm/boot/dts/tegra124.dtsi
 +++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -7,14 +7,16 @@
- #include <dt-bindings/reset/tegra124-car.h>
- #include <dt-bindings/thermal/tegra124-soctherm.h>
- 
--#include "skeleton.dtsi"
--
- / {
- 	compatible = "nvidia,tegra124";
- 	interrupt-parent = <&lic>;
+@@ -13,8 +13,9 @@
  	#address-cells = <2>;
  	#size-cells = <2>;
  
-+	memory {
-+		device_type = "memory";
-+	};
-+
+-	memory {
++	memory@0 {
+ 		device_type = "memory";
++		reg = <0 0>;
+ 	};
+ 
  	pcie@1003000 {
- 		compatible = "nvidia,tegra124-pcie";
- 		device_type = "pci";
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 5c202b3e3bb1..5623ff8d128c 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -10,7 +10,7 @@
+ 		rtc1 = "/rtc@7000e000";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index 628a55a9318b..1d96d92b72a7 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -18,7 +18,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 30436969adc0..ef245291924f 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -19,7 +19,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 284aae351ff2..f91441683aad 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -18,7 +18,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index 872046d48709..20137fc578b1 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -15,7 +15,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index d55c6b240a30..9eb26dc15f6b 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -18,7 +18,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index ee3fbf941e79..f44551e2d9d0 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -18,7 +18,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
 diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 0a7136462a1a..88dd1afb5877 100644
+index 88dd1afb5877..55581c0e5105 100644
 --- a/arch/arm/boot/dts/tegra20.dtsi
 +++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -4,11 +4,18 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -13,8 +13,9 @@
+ 	chosen { };
+ 	aliases { };
  
--#include "skeleton.dtsi"
--
- / {
- 	compatible = "nvidia,tegra20";
- 	interrupt-parent = <&lic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	chosen { };
-+	aliases { };
-+
-+	memory {
-+		device_type = "memory";
-+	};
+-	memory {
++	memory@0 {
+ 		device_type = "memory";
++		reg = <0 0>;
+ 	};
  
  	iram@40000000 {
- 		compatible = "mmio-sram";
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index d1d21ec2a844..6f29cbad6e8a 100644
+index 6f29cbad6e8a..9465fc592b7b 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -10,6 +10,10 @@
+@@ -10,8 +10,8 @@
  	model = "Toradex Apalis T30";
  	compatible = "toradex,apalis_t30", "nvidia,tegra30";
  
-+	memory {
-+		reg = <0 0>;
-+	};
-+
+-	memory {
+-		reg = <0 0>;
++	memory@80000000 {
++		reg = <0x80000000 0x40000000>;
+ 	};
+ 
  	pcie@3000 {
- 		avdd-pexa-supply = <&vdd2_reg>;
- 		vdd-pexa-supply = <&vdd2_reg>;
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index ae52a5039506..1434d50438f9 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -17,7 +17,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x7ff00000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 92a9740c533f..33b73dca16a3 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -40,7 +40,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index c44d8c40c410..9bf3327665d3 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -10,7 +10,7 @@
+ 	model = "Toradex Colibri T30";
+ 	compatible = "toradex,colibri_t30", "nvidia,tegra30";
+ 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
 diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index a110cf84d85f..19237c08c166 100644
+index 19237c08c166..2b6243b0c6d6 100644
 --- a/arch/arm/boot/dts/tegra30.dtsi
 +++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -5,11 +5,18 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -14,8 +14,9 @@
+ 	chosen { };
+ 	aliases { };
  
--#include "skeleton.dtsi"
--
- / {
- 	compatible = "nvidia,tegra30";
- 	interrupt-parent = <&lic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	chosen { };
-+	aliases { };
-+
-+	memory {
-+		device_type = "memory";
-+	};
+-	memory {
++	memory@80000000 {
+ 		device_type = "memory";
++		reg = <0x80000000 0>;
+ 	};
  
  	pcie@3000 {
- 		compatible = "nvidia,tegra30-pcie";
 -- 
 2.7.4
