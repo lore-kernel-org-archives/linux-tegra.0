@@ -1,44 +1,132 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
-Date: Thu, 24 May 2018 11:36:59 +0200
-Message-ID: <2304436.qRMBXhMGsN@aspire.rjw.lan>
-References: <20180522211420.2006-1-digetx@gmail.com> <20180523055817.subrv6oeckfecpcp@vireshk-i7> <db300fa3-ae83-059f-eae0-0808c3cb33fb@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock
+ source
+Date: Thu, 24 May 2018 13:04:13 +0300
+Message-ID: <20180524100413.GL6835@tbergstrom-lnx.Nvidia.com>
+References: <20180523160020.15291-1-digetx@gmail.com>
+ <20180523160020.15291-2-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <db300fa3-ae83-059f-eae0-0808c3cb33fb@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20180523160020.15291-2-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday, May 23, 2018 11:30:39 AM CEST Dmitry Osipenko wrote:
-> On 23.05.2018 08:58, Viresh Kumar wrote:
-> > On 23-05-18, 00:14, Dmitry Osipenko wrote:
-> >> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
-> >> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
-> >> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
-> >> on the driver probe.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>
-> >> CPUFreq maintainers,
-> >>
-> >> Please take into account that this patch is made on top of my recent
-> >> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
-> >> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
-> >> the [0], including this patch into the series.
-> >>
-> >> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
-> > 
-> > This is already picked by Rafael and is sitting in pm/bleeding-edge
-> > branch. Should get merged into linux-next in a day or two.
+On Wed, May 23, 2018 at 07:00:20PM +0300, Dmitry Osipenko wrote:
+> PLL_C is running at 600MHz which is significantly higher than the 216MHz
+> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
+> running on that PLL. Let's use PLL_C as intermediate clock source, making
+> CPU snappier a tad during of the frequency transition.
 > 
-> Neat, thank you for letting me know.
 
-It actually is there in my linux-next branch, but linux-next proper is not
-taking new material this week AFAICS.
+pll_c isn't necessarily 600Mhz when used as a source for the second display
+head.
 
-You'll see this in linux-next on Monday, most probably.
+Peter.
+
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/cpufreq/tegra20-cpufreq.c | 25 +++++++++++++++++++++----
+>  1 file changed, 21 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+> index 3ad6bded6efc..4bf5ba7da40b 100644
+> --- a/drivers/cpufreq/tegra20-cpufreq.c
+> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+> @@ -25,12 +25,13 @@
+>  #include <linux/types.h>
+>  
+>  #define PLL_P_FREQ	216000
+> +#define PLL_C_FREQ	600000
+>  
+>  static struct cpufreq_frequency_table freq_table[] = {
+>  	{ .frequency = 216000 },
+>  	{ .frequency = 312000 },
+>  	{ .frequency = 456000 },
+> -	{ .frequency = 608000 },
+> +	{ .frequency = 600000 },
+>  	{ .frequency = 760000 },
+>  	{ .frequency = 816000 },
+>  	{ .frequency = 912000 },
+> @@ -44,6 +45,7 @@ struct tegra20_cpufreq {
+>  	struct clk *cpu_clk;
+>  	struct clk *pll_x_clk;
+>  	struct clk *pll_p_clk;
+> +	struct clk *pll_c_clk;
+>  	bool pll_x_prepared;
+>  };
+>  
+> @@ -58,7 +60,10 @@ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
+>  	if (index == 0 || policy->cur == PLL_P_FREQ)
+>  		return 0;
+>  
+> -	return PLL_P_FREQ;
+> +	if (index == 3 || policy->cur == PLL_C_FREQ)
+> +		return 0;
+> +
+> +	return PLL_C_FREQ;
+>  }
+>  
+>  static int tegra_target_intermediate(struct cpufreq_policy *policy,
+> @@ -79,7 +84,7 @@ static int tegra_target_intermediate(struct cpufreq_policy *policy,
+>  	 */
+>  	clk_prepare_enable(cpufreq->pll_x_clk);
+>  
+> -	ret = clk_set_parent(cpufreq->cpu_clk, cpufreq->pll_p_clk);
+> +	ret = clk_set_parent(cpufreq->cpu_clk, cpufreq->pll_c_clk);
+>  	if (ret)
+>  		clk_disable_unprepare(cpufreq->pll_x_clk);
+>  	else
+> @@ -101,6 +106,9 @@ static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
+>  	if (index == 0)
+>  		return clk_set_parent(cpufreq->cpu_clk, cpufreq->pll_p_clk);
+>  
+> +	if (index == 3)
+> +		return clk_set_parent(cpufreq->cpu_clk, cpufreq->pll_c_clk);
+> +
+>  	ret = clk_set_rate(cpufreq->pll_x_clk, rate * 1000);
+>  	/* Restore to earlier frequency on error, i.e. pll_x */
+>  	if (ret)
+> @@ -174,6 +182,12 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
+>  		goto put_pll_x;
+>  	}
+>  
+> +	cpufreq->pll_c_clk = clk_get_sys(NULL, "pll_c");
+> +	if (IS_ERR(cpufreq->pll_c_clk)) {
+> +		err = PTR_ERR(cpufreq->pll_c_clk);
+> +		goto put_pll_p;
+> +	}
+> +
+>  	cpufreq->dev = &pdev->dev;
+>  	cpufreq->driver.get = cpufreq_generic_get;
+>  	cpufreq->driver.attr = cpufreq_generic_attr;
+> @@ -190,12 +204,14 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
+>  
+>  	err = cpufreq_register_driver(&cpufreq->driver);
+>  	if (err)
+> -		goto put_pll_p;
+> +		goto put_pll_c;
+>  
+>  	platform_set_drvdata(pdev, cpufreq);
+>  
+>  	return 0;
+>  
+> +put_pll_c:
+> +	clk_put(cpufreq->pll_c_clk);
+>  put_pll_p:
+>  	clk_put(cpufreq->pll_p_clk);
+>  put_pll_x:
+> @@ -212,6 +228,7 @@ static int tegra20_cpufreq_remove(struct platform_device *pdev)
+>  
+>  	cpufreq_unregister_driver(&cpufreq->driver);
+>  
+> +	clk_put(cpufreq->pll_c_clk);
+>  	clk_put(cpufreq->pll_p_clk);
+>  	clk_put(cpufreq->pll_x_clk);
+>  	clk_put(cpufreq->cpu_clk);
+> -- 
+> 2.17.0
+> 
