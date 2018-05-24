@@ -1,54 +1,67 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
-Date: Thu, 24 May 2018 15:18:42 +0300
-Message-ID: <3276b3e4-08c1-51d0-0aef-e349c3a77f07@gmail.com>
-References: <20180522211420.2006-1-digetx@gmail.com>
- <20180523055817.subrv6oeckfecpcp@vireshk-i7>
- <db300fa3-ae83-059f-eae0-0808c3cb33fb@gmail.com>
- <2304436.qRMBXhMGsN@aspire.rjw.lan>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Thu, 24 May 2018 14:19:18 +0200
+Message-ID: <146a3abbbff4dcef30ad662a0fb85ff1@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+ <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
+ <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
+ <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
+ <20180524135335.6aa0b7a4@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2304436.qRMBXhMGsN@aspire.rjw.lan>
-Content-Language: en-US
+In-Reply-To: <20180524135335.6aa0b7a4@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Benjamin Lindqvist <benjamin.lindqvist@endian.se>, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 24.05.2018 12:36, Rafael J. Wysocki wrote:
-> On Wednesday, May 23, 2018 11:30:39 AM CEST Dmitry Osipenko wrote:
->> On 23.05.2018 08:58, Viresh Kumar wrote:
->>> On 23-05-18, 00:14, Dmitry Osipenko wrote:
->>>> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
->>>> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
->>>> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
->>>> on the driver probe.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>
->>>> CPUFreq maintainers,
->>>>
->>>> Please take into account that this patch is made on top of my recent
->>>> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
->>>> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
->>>> the [0], including this patch into the series.
->>>>
->>>> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
->>>
->>> This is already picked by Rafael and is sitting in pm/bleeding-edge
->>> branch. Should get merged into linux-next in a day or two.
+On 24.05.2018 13:53, Boris Brezillon wrote:
+> Hi Benjamin,
+> 
+> On Thu, 24 May 2018 13:30:14 +0200
+> Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
+> 
+>> Hi Stefan,
 >>
->> Neat, thank you for letting me know.
+>> It seems to me that a probe similar to what the BootROM does shouldn't
+>> be awfully complicated to implement - just cycle through the switch
+>> cases in case of an ECC error. But I guess that's more of an idea for
+>> further improvements rather than a comment to the patch set under
+>> review.
 > 
-> It actually is there in my linux-next branch, but linux-next proper is not
-> taking new material this week AFAICS.
-
-I've found it in yours git repo, thank you.
-
-> You'll see this in linux-next on Monday, most probably.
+> Nope, not really an option, because you're not guaranteed that the NAND
+> will be used as a boot media, and the first page or first set of pages
+> might just be erased.
 > 
 
-Yes, I noticed that linux-next stopped updating for awhile.
+Yeah I did not meant probing like the Boot ROM does.
+
+What I meant was using only the ECC modes which are supported by the
+Boot ROM when the driver tries to choose a viable mode. So that would
+be:
+- RS t=4
+- BCH t=8
+- BCH t=16
+
+Maybe we could add a property to enable that behavior:
+
+tegra,use-bootable-ecc-only;
+
+>>
+>> However, I think that allowing for an override of the oobsize
+>> inference would be a good idea before merging, no? This could just be
+>> a trivial #ifdef (at least temporarily). If you agree but don't feel
+>> like doing it yourself, I'd be happy to pitch in. Let me know.
+> 
+> That's why we have nand-ecc-xxx properties in the DT.
+> 
+
+Yes, nand-ecc-strength is the first thing I plan to implement, that way
+strength can be defined in dt.
+
+--
+Stefan
