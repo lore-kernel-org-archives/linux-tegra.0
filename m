@@ -1,90 +1,143 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Date: Thu, 24 May 2018 10:56:14 +0200
-Message-ID: <20180524105614.3c51736c@bbrezillon>
-References: <cover.1526990589.git.stefan@agner.ch>
-        <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-        <20180523161810.0ed9fe80@bbrezillon>
-        <2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v7 4/4] ARM: dts: tegra: Work safely with 256 MB
+ Colibri-T20 modules
+Date: Thu, 24 May 2018 11:29:44 +0200
+Message-ID: <ca288b1b007eaa25d36730d8342d1480@agner.ch>
+References: <1527144833-24285-1-git-send-email-krzk@kernel.org>
+ <1527144833-24285-4-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
+In-Reply-To: <1527144833-24285-4-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Lucas Stach <dev@lynxeye.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 24 May 2018 10:46:27 +0200
-Stefan Agner <stefan@agner.ch> wrote:
-
-> Hi Boris,
+On 24.05.2018 08:53, Krzysztof Kozlowski wrote:
+> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
+> (with 1024 MB NAND) flavors.  Both of them will use the same DTSI
+> expecting the bootloader to do the fixup of /memory node.  However in
+> case it does not happen, let's stay on safe side by limiting the memory
+> to 256 MB for both versions of Colibri-T20.
 > 
-> Thanks for the initial review! One small question below:
+> Rename to remove the unnecessary memory size from the device tree file
+> name.  While at it, also follow the typical Toradex SoC, module, carrier
+> board hierarchy.
 > 
-> On 23.05.2018 16:18, Boris Brezillon wrote:
-> > Hi Stefan,
-> > 
-> > On Tue, 22 May 2018 14:07:06 +0200
-> > Stefan Agner <stefan@agner.ch> wrote:  
-> >> +
-> >> +struct tegra_nand {
-> >> +	void __iomem *regs;
-> >> +	struct clk *clk;
-> >> +	struct gpio_desc *wp_gpio;
-> >> +
-> >> +	struct nand_chip chip;
-> >> +	struct device *dev;
-> >> +
-> >> +	struct completion command_complete;
-> >> +	struct completion dma_complete;
-> >> +	bool last_read_error;
-> >> +
-> >> +	dma_addr_t data_dma;
-> >> +	void *data_buf;
-> >> +	dma_addr_t oob_dma;
-> >> +	void *oob_buf;
-> >> +
-> >> +	int cur_chip;
-> >> +};  
-> > 
-> > This struct should be split in 2 structures: one representing the NAND
-> > controller and one representing the NAND chip:
-> > 
-> > struct tegra_nand_controller {
-> > 	struct nand_hw_control base;
-> > 	void __iomem *regs;
-> > 	struct clk *clk;
-> > 	struct device *dev;
-> > 	struct completion command_complete;
-> > 	struct completion dma_complete;
-> > 	bool last_read_error;
-> > 	int cur_chip;
-> > };
-> > 
-> > struct tegra_nand {
-> > 	struct nand_chip base;
-> > 	dma_addr_t data_dma;
-> > 	void *data_buf;
-> > 	dma_addr_t oob_dma;
-> > 	void *oob_buf;
-> > };  
-> 
-> Is there a particular reason why you would leave DMA buffers in the chip
-> structure? It seems that is more a controller thing...
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-The size of those buffers is likely to be device dependent, so if you
-have several NANDs connected to the controller, you'll either have to
-have one buffer at the controller level which is max(all-chip-buf-size)
-or a buffer per device.
+That looks good!
 
-Also, do you really need these buffers? The core already provide some
-which are suitable for DMA (chip->oob_poi and chip->data_buf).
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+
+Also works fine with full memory available on a 512MiB Colibri T20 using
+downstream U-Boot 2016.11.
+
+Tested-by: Stefan Agner <stefan@agner.ch>
+
+--
+Stefan
 
 > 
-> If I move them, then struct tegra_nand would be basically empty. Can I
-> just use struct nand_chip and have no driver specific chip abstraction?
-
-Sure.
+> ---
+> 
+> RFT:
+> Not tested on 512 MB module as I have only the 256 MB one.
+> 
+> Changes since v6:
+> 1. Only adjust commit msg.
+> 
+> Changes since v5:
+> 1. Add "colibri" suffix to iris DTS (suggested by Stefan).
+> 
+> Changes since v4:
+> 1. Drop the 512 suffix from file names (suggested by Stefan).
+> 
+> Changes since v3:
+> 1. Reduce the memory in existing DTSI instead of creating a new one
+>    (suggested by Marcel).
+> 
+> Changes since v2:
+> 1. Do not add new compatible but use everywhere existing
+>    "toradex,colibri_t20-512" (suggested by Rob).
+> 
+> Changes since v1:
+> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
+>    my bootloader uses mem= argument).
+> ---
+>  arch/arm/boot/dts/Makefile                                       | 2 +-
+>  .../boot/dts/{tegra20-iris-512.dts => tegra20-colibri-iris.dts}  | 4 ++--
+>  .../boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi}  | 9 +++++++--
+>  3 files changed, 10 insertions(+), 5 deletions(-)
+>  rename arch/arm/boot/dts/{tegra20-iris-512.dts =>
+> tegra20-colibri-iris.dts} (95%)
+>  rename arch/arm/boot/dts/{tegra20-colibri-512.dtsi =>
+> tegra20-colibri.dtsi} (98%)
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index ec2024ea8b1e..1c8bb55c0948 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -1030,7 +1030,7 @@ dtb-$(CONFIG_ARCH_TANGO) += \
+>  	tango4-vantage-1172.dtb
+>  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
+>  	tegra20-harmony.dtb \
+> -	tegra20-iris-512.dtb \
+> +	tegra20-colibri-iris.dtb \
+>  	tegra20-medcom-wide.dtb \
+>  	tegra20-paz00.dtb \
+>  	tegra20-plutux.dtb \
+> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts
+> b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+> similarity index 95%
+> rename from arch/arm/boot/dts/tegra20-iris-512.dts
+> rename to arch/arm/boot/dts/tegra20-colibri-iris.dts
+> index 40126388946d..57f16c0e9917 100644
+> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
+> +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+> @@ -1,10 +1,10 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /dts-v1/;
+>  
+> -#include "tegra20-colibri-512.dtsi"
+> +#include "tegra20-colibri.dtsi"
+>  
+>  / {
+> -	model = "Toradex Colibri T20 512MB on Iris";
+> +	model = "Toradex Colibri T20 256/512 MB on Iris";
+>  	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
+>  
+>  	aliases {
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> b/arch/arm/boot/dts/tegra20-colibri.dtsi
+> similarity index 98%
+> rename from arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> rename to arch/arm/boot/dts/tegra20-colibri.dtsi
+> index 5623ff8d128c..dc06b23183e1 100644
+> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+> @@ -2,7 +2,7 @@
+>  #include "tegra20.dtsi"
+>  
+>  / {
+> -	model = "Toradex Colibri T20 512MB";
+> +	model = "Toradex Colibri T20 256/512 MB";
+>  	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
+>  
+>  	aliases {
+> @@ -11,7 +11,12 @@
+>  	};
+>  
+>  	memory@0 {
+> -		reg = <0x00000000 0x20000000>;
+> +		/*
+> +		 * Set memory to 256 MB to be safe as this could be used on
+> +		 * 256 or 512 MB module. It is expected from bootloader
+> +		 * to fix this up for 512 MB version.
+> +		 */
+> +		reg = <0x00000000 0x10000000>;
+>  	};
+>  
+>  	host1x@50000000 {
