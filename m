@@ -1,132 +1,99 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock
- source
-Date: Thu, 24 May 2018 13:04:13 +0300
-Message-ID: <20180524100413.GL6835@tbergstrom-lnx.Nvidia.com>
-References: <20180523160020.15291-1-digetx@gmail.com>
- <20180523160020.15291-2-digetx@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Thu, 24 May 2018 13:00:41 +0200
+Message-ID: <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+ <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180523160020.15291-2-digetx@gmail.com>
+In-Reply-To: <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benjamin Lindqvist <benjamin.lindqvist@endian.se>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 23, 2018 at 07:00:20PM +0300, Dmitry Osipenko wrote:
-> PLL_C is running at 600MHz which is significantly higher than the 216MHz
-> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
-> running on that PLL. Let's use PLL_C as intermediate clock source, making
-> CPU snappier a tad during of the frequency transition.
+On 24.05.2018 09:45, Benjamin Lindqvist wrote:
+> Hi Stefan (and all),
+> 
+> First off, I apoloigize in advance if I'm deviating from common
+> kernel mailing list courtesy -- this is my first time responding.
+> I just have a comment on the NAND driver that I'd like to bring
+> to the public.
 > 
 
-pll_c isn't necessarily 600Mhz when used as a source for the second display
-head.
+Welcome!
 
-Peter.
+>> +       switch (mtd->oobsize) {
+>> ...
+>> +       case 224:
+>> +               mtd_set_ooblayout(mtd, &tegra_nand_oob_224_ops);
+>> +               chip->ecc.strength = 8;
+>> +               chip->ecc.bytes = 18;
+>> +               value |= CFG_ECC_SEL | CFG_TVAL_8;
+>> +               break; +       case 224:
+> 
+> I am not sure how you arrived at this oobsize-based inference. I
+> have not seen any explicit relation between oob size and ECC
+> algorithm used in the reference manual. Indeed, the U-Boot I was
+> working on (a fork of the Toradex 2015.04 U-Boot) always has
+> oobsize == 224 but used either BCH[t=16] or RS[t=4]. In fact, we
+> tried choosing RS[t=8] in U-Boot but we failed to make the
+> BootROM decode this at all. So we had to use RS[t=4]. But
+> changing the algorithm did not automatically change the oobsize,
+> at least it didn't for us. So maybe you should consider if this
+> is really the way to go about deciding which algorithm is used.
 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpufreq/tegra20-cpufreq.c | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
+The oobsize based inference to set the HW ECC mode comes from the
+patchset I picked up. Typically, the size of the OOB area is such that
+it allows "good enough" error correction required for that chip. So
+using it as indicator for the ECC algorithm is not entirely off...
+
+But yeah I agree we have better means, and I already started working on
+a better mechanism. Also, I worked on BCH support, and it looks pretty
+good already.
+
+If we want to auto select mode we can use the ECC requirements from
+ONFI/JEDEC/parameter page. Or we could use device tree only. 
+
+Thanks for bringing up the Boot ROM issue. In fact I investigated the
+supported modes the recent days too. First off, as you mentioned, the
+boot ROM seems to probe different modes until it succeeds. By trying
+through all RS and BCH modes, it seems that it only probes some modes:
+- RS t=4
+- BCH t=8
+- BCH t=16
+
+I guess those are preferred modes in practise. Not sure if we should
+make sure the auto selection such that it only chooses from this list...
+
 > 
-> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-> index 3ad6bded6efc..4bf5ba7da40b 100644
-> --- a/drivers/cpufreq/tegra20-cpufreq.c
-> +++ b/drivers/cpufreq/tegra20-cpufreq.c
-> @@ -25,12 +25,13 @@
->  #include <linux/types.h>
->  
->  #define PLL_P_FREQ	216000
-> +#define PLL_C_FREQ	600000
->  
->  static struct cpufreq_frequency_table freq_table[] = {
->  	{ .frequency = 216000 },
->  	{ .frequency = 312000 },
->  	{ .frequency = 456000 },
-> -	{ .frequency = 608000 },
-> +	{ .frequency = 600000 },
->  	{ .frequency = 760000 },
->  	{ .frequency = 816000 },
->  	{ .frequency = 912000 },
-> @@ -44,6 +45,7 @@ struct tegra20_cpufreq {
->  	struct clk *cpu_clk;
->  	struct clk *pll_x_clk;
->  	struct clk *pll_p_clk;
-> +	struct clk *pll_c_clk;
->  	bool pll_x_prepared;
->  };
->  
-> @@ -58,7 +60,10 @@ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
->  	if (index == 0 || policy->cur == PLL_P_FREQ)
->  		return 0;
->  
-> -	return PLL_P_FREQ;
-> +	if (index == 3 || policy->cur == PLL_C_FREQ)
-> +		return 0;
-> +
-> +	return PLL_C_FREQ;
->  }
->  
->  static int tegra_target_intermediate(struct cpufreq_policy *policy,
-> @@ -79,7 +84,7 @@ static int tegra_target_intermediate(struct cpufreq_policy *policy,
->  	 */
->  	clk_prepare_enable(cpufreq->pll_x_clk);
->  
-> -	ret = clk_set_parent(cpufreq->cpu_clk, cpufreq->pll_p_clk);
-> +	ret = clk_set_parent(cpufreq->cpu_clk, cpufreq->pll_c_clk);
->  	if (ret)
->  		clk_disable_unprepare(cpufreq->pll_x_clk);
->  	else
-> @@ -101,6 +106,9 @@ static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
->  	if (index == 0)
->  		return clk_set_parent(cpufreq->cpu_clk, cpufreq->pll_p_clk);
->  
-> +	if (index == 3)
-> +		return clk_set_parent(cpufreq->cpu_clk, cpufreq->pll_c_clk);
-> +
->  	ret = clk_set_rate(cpufreq->pll_x_clk, rate * 1000);
->  	/* Restore to earlier frequency on error, i.e. pll_x */
->  	if (ret)
-> @@ -174,6 +182,12 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->  		goto put_pll_x;
->  	}
->  
-> +	cpufreq->pll_c_clk = clk_get_sys(NULL, "pll_c");
-> +	if (IS_ERR(cpufreq->pll_c_clk)) {
-> +		err = PTR_ERR(cpufreq->pll_c_clk);
-> +		goto put_pll_p;
-> +	}
-> +
->  	cpufreq->dev = &pdev->dev;
->  	cpufreq->driver.get = cpufreq_generic_get;
->  	cpufreq->driver.attr = cpufreq_generic_attr;
-> @@ -190,12 +204,14 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
->  
->  	err = cpufreq_register_driver(&cpufreq->driver);
->  	if (err)
-> -		goto put_pll_p;
-> +		goto put_pll_c;
->  
->  	platform_set_drvdata(pdev, cpufreq);
->  
->  	return 0;
->  
-> +put_pll_c:
-> +	clk_put(cpufreq->pll_c_clk);
->  put_pll_p:
->  	clk_put(cpufreq->pll_p_clk);
->  put_pll_x:
-> @@ -212,6 +228,7 @@ static int tegra20_cpufreq_remove(struct platform_device *pdev)
->  
->  	cpufreq_unregister_driver(&cpufreq->driver);
->  
-> +	clk_put(cpufreq->pll_c_clk);
->  	clk_put(cpufreq->pll_p_clk);
->  	clk_put(cpufreq->pll_x_clk);
->  	clk_put(cpufreq->cpu_clk);
-> -- 
-> 2.17.0
+> Note that we're in fact using this patch set in Linux today, but
+> we had to remove the oobsize inference part. Currently we're
+> simply hard coding it to CFG_TVAL_4, but maybe it would be
+> cleaner to add ECC algo as a board config instead, e.g. in the
+> .dts file or whatever. This seems to be done by other vendors
+> already, see for example excerpt of
+> Documentation/devicetree/bindings/mtd/gpmc-nand.txt below:
 > 
+>  - ti,nand-ecc-opt: A string setting the ECC layout to use. One of:
+> "sw" 1-bit Hamming ecc code via software
+> "hw" <deprecated> use "ham1" instead
+> "hw-romcode" <deprecated> use "ham1" instead
+> "ham1" 1-bit Hamming ecc code
+> "bch4" 4-bit BCH ecc code
+> "bch8" 8-bit BCH ecc code
+> "bch16" 16-bit BCH ECC code
+> Refer below "How to select correct ECC scheme for your device ?"
+> 
+> It seems as if this method would be equally applicable to Tegra NAND.
+
+Yeah, ideally we can reuse "nand-ecc-algo". Although, Reed-Solomon is
+not yet in the list.  So using this property would require to extend
+this standard property.
+
+--
+Stefan
