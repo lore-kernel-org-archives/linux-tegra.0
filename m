@@ -1,90 +1,451 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock source
-Date: Thu, 24 May 2018 10:01:54 +0200
-Message-ID: <CAJZ5v0iXibwwnAyjBXc+zO5YQ0=WwaoUqq1K3OWqojh8xX+Wjw@mail.gmail.com>
-References: <20180523160020.15291-1-digetx@gmail.com> <20180523160020.15291-2-digetx@gmail.com>
- <20180524043040.25pld3ezs4lpabro@vireshk-i7> <56552c53-8868-af50-232e-b12e3c247ecd@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Thu, 24 May 2018 10:46:27 +0200
+Message-ID: <2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+ <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <20180523161810.0ed9fe80@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56552c53-8868-af50-232e-b12e3c247ecd@gmail.com>
+In-Reply-To: <20180523161810.0ed9fe80@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 24, 2018 at 7:37 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
-> On 24.05.2018 07:30, Viresh Kumar wrote:
->> On 23-05-18, 19:00, Dmitry Osipenko wrote:
->>> PLL_C is running at 600MHz which is significantly higher than the 216MHz
->>> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
->>> running on that PLL. Let's use PLL_C as intermediate clock source, making
->>> CPU snappier a tad during of the frequency transition.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/cpufreq/tegra20-cpufreq.c | 25 +++++++++++++++++++++----
->>>  1 file changed, 21 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
->>> index 3ad6bded6efc..4bf5ba7da40b 100644
->>> --- a/drivers/cpufreq/tegra20-cpufreq.c
->>> +++ b/drivers/cpufreq/tegra20-cpufreq.c
->>> @@ -25,12 +25,13 @@
->>>  #include <linux/types.h>
->>>
->>>  #define PLL_P_FREQ  216000
->>> +#define PLL_C_FREQ  600000
->>>
->>>  static struct cpufreq_frequency_table freq_table[] = {
->>>      { .frequency = 216000 },
->>>      { .frequency = 312000 },
->>>      { .frequency = 456000 },
->>> -    { .frequency = 608000 },
->>> +    { .frequency = 600000 },
->>>      { .frequency = 760000 },
->>>      { .frequency = 816000 },
->>>      { .frequency = 912000 },
->>> @@ -44,6 +45,7 @@ struct tegra20_cpufreq {
->>>      struct clk *cpu_clk;
->>>      struct clk *pll_x_clk;
->>>      struct clk *pll_p_clk;
->>> +    struct clk *pll_c_clk;
->>>      bool pll_x_prepared;
->>>  };
->>>
->>> @@ -58,7 +60,10 @@ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
->>>      if (index == 0 || policy->cur == PLL_P_FREQ)
->>>              return 0;
->>>
->>> -    return PLL_P_FREQ;
->>> +    if (index == 3 || policy->cur == PLL_C_FREQ)
->>> +            return 0;
->>
->> So we can choose between two different intermediate frequencies ? And
->> I didn't like the way magic number 3 is used here. Its prone to errors
->> and we better use a macro or something else here.
->>
->> Like instead of doing index == 3, what about freq_table[index].freq ==
->> PLL_C_FREQ ? Same for the previous patch as well.
->
-> The frequency is determined by the parent clock of CCLK (CPU clock), we can
-> choose between different parents for the CCLK. PLL_C as PLL_P and PLL_X are
-> among the available parents for the CCLK to choose from and there some others.
->
-> I don't mind to use freq_table[index].freq, though I'd like to keep compiled
-> assembly minimal where possible. Hence the freq_table should be made constant to
-> tell compiler that it doesn't need to emit data fetches for the table values and
-> could embed the constants into the code where appropriate.
->
-> Could we constify the "struct cpufreq_frequency_table" within the cpufreq core?
-> Seems nothing prevents this (I already tried to constify - there are no
-> obstacles), unless some cpufreq driver would try to modify
-> policy->freq_table->... within the cpufreq callback implementation.
+Hi Boris,
 
-Some drivers generate frequency tables out of external data
-unavailable at compile time, like ACPI tables.
+Thanks for the initial review! One small question below:
 
-But if you know it for the fact that the core doesn't modify the
-frequency table, you could pass a constant table from the driver to
-it, can't you?
+On 23.05.2018 16:18, Boris Brezillon wrote:
+> Hi Stefan,
+> 
+> On Tue, 22 May 2018 14:07:06 +0200
+> Stefan Agner <stefan@agner.ch> wrote:
+>> +
+>> +struct tegra_nand {
+>> +	void __iomem *regs;
+>> +	struct clk *clk;
+>> +	struct gpio_desc *wp_gpio;
+>> +
+>> +	struct nand_chip chip;
+>> +	struct device *dev;
+>> +
+>> +	struct completion command_complete;
+>> +	struct completion dma_complete;
+>> +	bool last_read_error;
+>> +
+>> +	dma_addr_t data_dma;
+>> +	void *data_buf;
+>> +	dma_addr_t oob_dma;
+>> +	void *oob_buf;
+>> +
+>> +	int cur_chip;
+>> +};
+> 
+> This struct should be split in 2 structures: one representing the NAND
+> controller and one representing the NAND chip:
+> 
+> struct tegra_nand_controller {
+> 	struct nand_hw_control base;
+> 	void __iomem *regs;
+> 	struct clk *clk;
+> 	struct device *dev;
+> 	struct completion command_complete;
+> 	struct completion dma_complete;
+> 	bool last_read_error;
+> 	int cur_chip;
+> };
+> 
+> struct tegra_nand {
+> 	struct nand_chip base;
+> 	dma_addr_t data_dma;
+> 	void *data_buf;
+> 	dma_addr_t oob_dma;
+> 	void *oob_buf;
+> };
+
+Is there a particular reason why you would leave DMA buffers in the chip
+structure? It seems that is more a controller thing...
+
+If I move them, then struct tegra_nand would be basically empty. Can I
+just use struct nand_chip and have no driver specific chip abstraction?
+
+--
+Stefan
+
+> 
+>> +
+>> +static inline struct tegra_nand *to_tegra_nand(struct mtd_info *mtd)
+>> +{
+>> +	struct nand_chip *chip = mtd_to_nand(mtd);
+>> +
+>> +	return nand_get_controller_data(chip);
+> 
+> then you can just do:
+> 
+> 	return container_of(chip, struct tegra_nand, base);
+> 
+>> +}
+>> +
+>> +static int tegra_nand_ooblayout_16_ecc(struct mtd_info *mtd, int section,
+>> +				       struct mtd_oob_region *oobregion)
+>> +{
+>> +	if (section > 0)
+>> +		return -ERANGE;
+>> +
+>> +	oobregion->offset = 4;
+>> +	oobregion->length = 4;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_nand_ooblayout_16_free(struct mtd_info *mtd, int section,
+>> +					struct mtd_oob_region *oobregion)
+>> +{
+>> +	if (section > 0)
+>> +		return -ERANGE;
+>> +
+>> +	oobregion->offset = 8;
+>> +	oobregion->length = 8;
+>> +
+>> +	return 0;
+>> +}
+> 
+> ...
+> 
+>> +
+>> +static int tegra_nand_ooblayout_224_ecc(struct mtd_info *mtd, int section,
+>> +				       struct mtd_oob_region *oobregion)
+>> +{
+>> +	if (section > 0)
+>> +		return -ERANGE;
+>> +
+>> +	oobregion->offset = 4;
+>> +	oobregion->length = 144;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_nand_ooblayout_224_free(struct mtd_info *mtd, int section,
+>> +					struct mtd_oob_region *oobregion)
+>> +{
+>> +	if (section > 0)
+>> +		return -ERANGE;
+>> +
+>> +	oobregion->offset = 148;
+>> +	oobregion->length = 76;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct mtd_ooblayout_ops tegra_nand_oob_224_ops = {
+>> +	.ecc = tegra_nand_ooblayout_224_ecc,
+>> +	.free = tegra_nand_ooblayout_224_free,
+>> +};
+>> +
+> 
+> I'm pretty sure we can find a pattern here to avoid defining a new
+> mtd_ooblayout_ops for each OOB size.
+> 
+>> +static irqreturn_t tegra_nand_irq(int irq, void *data)
+>> +{
+>> +	struct tegra_nand *nand = data;
+>> +	u32 isr, dma;
+>> +
+>> +	isr = readl(nand->regs + ISR);
+>> +	dma = readl(nand->regs + DMA_CTRL);
+>> +	dev_dbg(nand->dev, "isr %08x\n", isr);
+>> +
+>> +	if (!isr && !(dma & DMA_CTRL_IS_DONE))
+>> +		return IRQ_NONE;
+>> +
+>> +	if (isr & ISR_CORRFAIL_ERR)
+>> +		nand->last_read_error = true;
+>> +
+>> +	if (isr & ISR_CMD_DONE)
+>> +		complete(&nand->command_complete);
+>> +
+>> +	if (isr & ISR_UND)
+>> +		dev_dbg(nand->dev, "FIFO underrun\n");
+>> +
+>> +	if (isr & ISR_OVR)
+>> +		dev_dbg(nand->dev, "FIFO overrun\n");
+>> +
+>> +	/* handle DMA interrupts */
+>> +	if (dma & DMA_CTRL_IS_DONE) {
+>> +		writel(dma, nand->regs + DMA_CTRL);
+>> +		complete(&nand->dma_complete);
+>> +	}
+>> +
+>> +	/* clear interrupts */
+>> +	writel(isr, nand->regs + ISR);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int tegra_nand_cmd(struct nand_chip *chip,
+>> +			 const struct nand_subop *subop)
+>> +{
+>> +	const struct nand_op_instr *instr;
+>> +	const struct nand_op_instr *instr_data_in = NULL;
+>> +	struct mtd_info *mtd = nand_to_mtd(chip);
+>> +	struct tegra_nand *nand = to_tegra_nand(mtd);
+>> +	unsigned int op_id = -1, trfr_in_sz = 0, trfr_out_sz = 0, offset = 0;
+>> +	bool first_cmd = true;
+>> +	bool force8bit;
+>> +	u32 cmd = 0;
+>> +	u32 value;
+>> +
+>> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
+>> +		unsigned int naddrs, i;
+>> +		const u8 *addrs;
+>> +		u32 addr1 = 0, addr2 = 0;
+>> +
+>> +		instr = &subop->instrs[op_id];
+>> +
+>> +		switch (instr->type) {
+>> +		case NAND_OP_CMD_INSTR:
+>> +			if (first_cmd) {
+>> +				cmd |= CMD_CLE;
+>> +				writel(instr->ctx.cmd.opcode, nand->regs + CMD_1);
+>> +			} else {
+>> +				cmd |= CMD_SEC_CMD;
+>> +				writel(instr->ctx.cmd.opcode, nand->regs + CMD_2);
+>> +			}
+>> +			first_cmd = false;
+>> +			break;
+>> +		case NAND_OP_ADDR_INSTR:
+>> +			offset = nand_subop_get_addr_start_off(subop, op_id);
+>> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
+>> +			addrs = &instr->ctx.addr.addrs[offset];
+>> +
+>> +			cmd |= CMD_ALE | CMD_ALE_SIZE(naddrs);
+>> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+>> +				addr1 |= *addrs++ << (8 * i);
+>> +			naddrs -= i;
+>> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+>> +				addr2 |= *addrs++ << (8 * i);
+>> +			writel(addr1, nand->regs + ADDR_1);
+>> +			writel(addr2, nand->regs + ADDR_2);
+>> +			break;
+>> +
+>> +		case NAND_OP_DATA_IN_INSTR:
+>> +			trfr_in_sz = nand_subop_get_data_len(subop, op_id);
+>> +			offset = nand_subop_get_data_start_off(subop, op_id);
+>> +
+>> +			cmd |= CMD_TRANS_SIZE(trfr_in_sz) | CMD_PIO | CMD_RX | CMD_A_VALID;
+>> +
+>> +			instr_data_in = instr;
+>> +			break;
+>> +
+>> +		case NAND_OP_DATA_OUT_INSTR:
+>> +			trfr_out_sz = nand_subop_get_data_len(subop, op_id);
+>> +			offset = nand_subop_get_data_start_off(subop, op_id);
+>> +			trfr_out_sz = min_t(size_t, trfr_out_sz, 4);
+>> +
+>> +			cmd |= CMD_TRANS_SIZE(trfr_out_sz) | CMD_PIO | CMD_TX | CMD_A_VALID;
+>> +
+>> +			memcpy(&value, instr->ctx.data.buf.out + offset, trfr_out_sz);
+>> +			writel(value, nand->regs + RESP);
+>> +
+>> +			break;
+>> +		case NAND_OP_WAITRDY_INSTR:
+>> +			cmd |= CMD_RBSY_CHK;
+>> +			break;
+>> +
+>> +		}
+>> +	}
+>> +
+>> +
+>> +	cmd |= CMD_GO | CMD_CE(nand->cur_chip);
+>> +	writel(cmd, nand->regs + CMD);
+>> +	wait_for_completion(&nand->command_complete);
+>> +
+>> +	if (instr_data_in) {
+>> +		u32 value;
+>> +		size_t n = min_t(size_t, trfr_in_sz, 4);
+>> +
+>> +		value = readl(nand->regs + RESP);
+>> +		memcpy(instr_data_in->ctx.data.buf.in + offset, &value, n);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct nand_op_parser tegra_nand_op_parser = NAND_OP_PARSER(
+>> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
+>> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
+>> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true)),
+>> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
+>> +		NAND_OP_PARSER_PAT_DATA_OUT_ELEM(false, 4)),
+>> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
+>> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
+>> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_DATA_IN_ELEM(true, 4)),
+>> +	);
+>> +
+>> +static int tegra_nand_exec_op(struct nand_chip *chip,
+>> +			     const struct nand_operation *op,
+>> +			     bool check_only)
+>> +{
+>> +	return nand_op_parser_exec_op(chip, &tegra_nand_op_parser, op,
+>> +				      check_only);
+>> +}
+> 
+> Missing empty line here.
+> 
+>> +static void tegra_nand_select_chip(struct mtd_info *mtd, int chip)
+>> +{
+>> +	struct tegra_nand *nand = to_tegra_nand(mtd);
+>> +
+>> +	nand->cur_chip = chip;
+>> +}
+> 
+> ...
+> 
+>> +
+>> +static void tegra_nand_setup_chiptiming(struct tegra_nand *nand)
+>> +{
+>> +	struct nand_chip *chip = &nand->chip;
+>> +	int mode;
+>> +
+>> +	mode = onfi_get_async_timing_mode(chip);
+>> +	if (mode == ONFI_TIMING_MODE_UNKNOWN)
+>> +		mode = chip->onfi_timing_mode_default;
+>> +	else
+>> +		mode = fls(mode);
+>> +
+>> +	tegra_nand_setup_timing(nand, mode);
+> 
+> Hm, you shouldn't do that. Let the core select the timing mode for you,
+> and just implement the ->setup_data_interface() hook.
+> 
+>> +}
+>> +
+>> +static int tegra_nand_probe(struct platform_device *pdev)
+>> +{
+>> +	struct reset_control *rst;
+>> +	struct tegra_nand *nand;
+>> +	struct nand_chip *chip;
+>> +	struct mtd_info *mtd;
+>> +	struct resource *res;
+>> +	unsigned long value;
+>> +	int irq, err = 0;
+>> +
+>> +	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
+>> +	if (!nand)
+>> +		return -ENOMEM;
+>> +
+>> +	nand->dev = &pdev->dev;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	nand->regs = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(nand->regs))
+>> +		return PTR_ERR(nand->regs);
+>> +
+>> +	irq = platform_get_irq(pdev, 0);
+>> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
+>> +			       dev_name(&pdev->dev), nand);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	rst = devm_reset_control_get(&pdev->dev, "nand");
+>> +	if (IS_ERR(rst))
+>> +		return PTR_ERR(rst);
+>> +
+>> +	nand->clk = devm_clk_get(&pdev->dev, "nand");
+>> +	if (IS_ERR(nand->clk))
+>> +		return PTR_ERR(nand->clk);
+>> +
+>> +	nand->wp_gpio = gpiod_get_optional(&pdev->dev, "wp-gpios",
+>> +					   GPIOD_OUT_HIGH);
+>> +	if (IS_ERR(nand->wp_gpio))
+>> +		return PTR_ERR(nand->wp_gpio);
+>> +
+>> +	err = clk_prepare_enable(nand->clk);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	reset_control_assert(rst);
+>> +	udelay(2);
+>> +	reset_control_deassert(rst);
+>> +
+>> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
+>> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
+>> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
+>> +	writel(NAND_CMD_STATUS, nand->regs + HWSTATUS_CMD);
+>> +	writel(value, nand->regs + HWSTATUS_MASK);
+>> +
+>> +	init_completion(&nand->command_complete);
+>> +	init_completion(&nand->dma_complete);
+>> +
+>> +	/* clear interrupts */
+>> +	value = readl(nand->regs + ISR);
+>> +	writel(value, nand->regs + ISR);
+>> +
+>> +	writel(DMA_CTRL_IS_DONE, nand->regs + DMA_CTRL);
+>> +
+>> +	/* enable interrupts */
+>> +	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
+>> +	writel(value, nand->regs + IER);
+>> +
+>> +	/* reset config */
+>> +	writel(0, nand->regs + CFG);
+>> +
+>> +	chip = &nand->chip;
+>> +	mtd = nand_to_mtd(chip);
+>> +
+>> +	mtd->dev.parent = &pdev->dev;
+>> +	mtd->name = "tegra_nand";
+>> +	mtd->owner = THIS_MODULE;
+>> +
+>> +	nand_set_flash_node(chip, pdev->dev.of_node);
+>> +	nand_set_controller_data(chip, nand);
+>> +
+>> +	chip->options = NAND_NO_SUBPAGE_WRITE;
+>> +	chip->exec_op = tegra_nand_exec_op;
+>> +	chip->select_chip = tegra_nand_select_chip;
+>> +	tegra_nand_setup_timing(nand, 0);
+>> +
+>> +	err = nand_scan_ident(mtd, 1, NULL);
+>> +	if (err)
+>> +		goto err_disable_clk;
+>> +
+>> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+>> +		chip->bbt_options |= NAND_BBT_NO_OOB;
+>> +
+>> +	nand->data_buf = dmam_alloc_coherent(&pdev->dev, mtd->writesize,
+>> +					    &nand->data_dma, GFP_KERNEL);
+>> +	if (!nand->data_buf) {
+>> +		err = -ENOMEM;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	nand->oob_buf = dmam_alloc_coherent(&pdev->dev, mtd->oobsize,
+>> +					    &nand->oob_dma, GFP_KERNEL);
+>> +	if (!nand->oob_buf) {
+>> +		err = -ENOMEM;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	chip->ecc.mode = NAND_ECC_HW;
+>> +	chip->ecc.size = 512;
+>> +	chip->ecc.read_page = tegra_nand_read_page;
+>> +	chip->ecc.write_page = tegra_nand_write_page;
+> 
+> I'd like to have raw accessors implemented here.
+> 
+> That was just a quick review focusing mainly on architectural issues so
+> that you can start working on a v2.
+> 
+> Regards,
+> 
+> Boris
