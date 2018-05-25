@@ -1,14 +1,15 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 1/5] dt-bindings: tegra: Changes for v4.18-rc1
-Date: Fri, 25 May 2018 05:08:16 -0700
-Message-ID: <20180525120816.23cteydu2zfw6enk@localhost>
+Subject: Re: [GIT PULL 5/5] arm64: tegra: Device tree changes for v4.18-rc1
+Date: Fri, 25 May 2018 05:16:20 -0700
+Message-ID: <20180525121620.wmdlpaqsyaocbkdj@localhost>
 References: <20180518142245.20242-1-thierry.reding@gmail.com>
+ <20180518142245.20242-5-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20180518142245.20242-1-thierry.reding@gmail.com>
+In-Reply-To: <20180518142245.20242-5-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,7 +23,7 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 18, 2018 at 04:22:41PM +0200, Thierry Reding wrote:
+On Fri, May 18, 2018 at 04:22:45PM +0200, Thierry Reding wrote:
 > Hi ARM SoC maintainers,
 > 
 > The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
@@ -31,31 +32,17 @@ On Fri, May 18, 2018 at 04:22:41PM +0200, Thierry Reding wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.18-dt-bindings
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.18-arm64-dt
 > 
-> for you to fetch changes up to eb8f53b6d3125894e3d825976eb7e03150496362:
+> for you to fetch changes up to 9df50ba76ac1485b844beffa1f3f5d9659d9cdaf:
 > 
->   dt-bindings: Relocate Tegra20 memory controller bindings (2018-04-27 11:15:51 +0200)
+>   arm64: tegra: Make BCM89610 PHY interrupt as active low (2018-05-03 11:48:16 +0200)
 > 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> dt-bindings: tegra: Changes for v4.18-rc1
-> 
-> This contains the device tree bindings updates for the memory controller
-> hot resets that are implemented by driver patches in a different branch.
-> 
-> ----------------------------------------------------------------
-> Dmitry Osipenko (3):
->       dt-bindings: arm: tegra: Remove duplicated Tegra30+ MC binding
->       dt-bindings: memory: tegra: Document #reset-cells property of the Tegra30 MC
->       dt-bindings: arm: tegra: Document #reset-cells property of the Tegra20 MC
-> 
-> Thierry Reding (1):
->       dt-bindings: Relocate Tegra20 memory controller bindings
+> I already sent this out as a fix for v4.17, so if you decide to pick
+> that up you can ignore this one. I've only included it here in case you
+> had objections to take it into v4.17 at this point.
 
-Merged, thanks!
+Ok, thanks -- merged the fix so not touching this.
 
 
 -Olof
