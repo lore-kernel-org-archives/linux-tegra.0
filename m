@@ -1,53 +1,43 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 3/5] ARM: tegra: Core changes for v4.18-rc1
-Date: Fri, 25 May 2018 05:15:20 -0700
-Message-ID: <20180525121520.ydxof52ikb6uy2o7@localhost>
-References: <20180518142245.20242-1-thierry.reding@gmail.com>
- <20180518142245.20242-3-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180518142245.20242-3-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] memory: tegra: include linux/spinlock.h
+Date: Fri, 25 May 2018 23:11:39 +0200
+Message-ID: <20180525211155.1928474-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 18, 2018 at 04:22:43PM +0200, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
-> 
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-> 
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.18-arm-soc
-> 
-> for you to fetch changes up to 15164e0072b579f77c9025f3da3ed931869b89cd:
-> 
->   ARM: tegra: Create platform device for tegra20-cpufreq driver (2018-05-18 11:15:42 +0200)
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> ARM: tegra: Core changes for v4.18-rc1
-> 
-> Contains a single patch that instantiates a platform device for the CPU
-> frequency driver.
+The newly added code in this file causes a build error unless
+we include linux/spinlock.h, at least in some configurations:
 
-Merged, thanks.
+In file included from drivers/memory/tegra/mc.h:15,
+                 from drivers/memory/tegra/tegra20.c:11:
+include/soc/tegra/mc.h:159:2: error: unknown type name 'spinlock_t'
+  spinlock_t lock;
+  ^~~~~~~~~~
+drivers/memory/tegra/tegra20.c: In function 'terga20_mc_hotreset_assert':
+drivers/memory/tegra/tegra20.c:207:2: error: implicit declaration of function 'spin_lock_irqsave'; did you mean 'arch_local_irq_save'? [-Werror=implicit-function-declaration]
+  spin_lock_irqsave(&mc->lock, flags);
+  ^~~~~~~~~~~~~~~~~
 
+Fixes: cb557757e1aa ("memory: tegra: Add Tegra20 memory controller hot resets")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/memory/tegra/tegra20.c | 1 +
+ 1 file changed, 1 insertion(+)
 
--Olof
+diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
+index 7119e532471c..8853e21b773f 100644
+--- a/drivers/memory/tegra/tegra20.c
++++ b/drivers/memory/tegra/tegra20.c
+@@ -6,6 +6,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include <linux/spinlock.h>
+ #include <dt-bindings/memory/tegra20-mc.h>
+ 
+ #include "mc.h"
+-- 
+2.9.0
