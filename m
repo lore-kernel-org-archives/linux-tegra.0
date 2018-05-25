@@ -1,75 +1,109 @@
-From: Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH] gpu: Consistently use octal not symbolic
- permissions
-Date: Fri, 25 May 2018 10:04:40 +0300
-Message-ID: <8736yg43nb.fsf@intel.com>
-References: <9b0f5f5cf6bccc003beef82f0972be655613075d.1527193246.git.joe@perches.com>
- <87a7so44q5.fsf@intel.com>
- <2108eb98b35ab682d44ca7bf40276e93d9566bbf.camel@perches.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock source
+Date: Fri, 25 May 2018 10:14:48 +0200
+Message-ID: <CAJZ5v0j80jbqLKORZR87mftbKDbAophywnuDqTfNf-VSBYfyOQ@mail.gmail.com>
+References: <20180523160020.15291-1-digetx@gmail.com> <20180523160020.15291-2-digetx@gmail.com>
+ <20180524043040.25pld3ezs4lpabro@vireshk-i7> <56552c53-8868-af50-232e-b12e3c247ecd@gmail.com>
+ <CAJZ5v0iXibwwnAyjBXc+zO5YQ0=WwaoUqq1K3OWqojh8xX+Wjw@mail.gmail.com> <5f9364c0-4ef5-0883-583d-42da8f016a80@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <2108eb98b35ab682d44ca7bf40276e93d9566bbf.camel-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Zhenyu Wang <zhenyuw-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Zhi Wang <zhi.a.wang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Rodrigo Vivi <rodrigo.vivi-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf-L59+Z2yzLopAfugRpC6u6w@public.gmane.org>, Roger He <Hongbo.He-5C7GfCeVMHo@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gvt-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5f9364c0-4ef5-0883-583d-42da8f016a80@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCAyNCBNYXkgMjAxOCwgSm9lIFBlcmNoZXMgPGpvZUBwZXJjaGVzLmNvbT4gd3JvdGU6
-Cj4gT24gRnJpLCAyMDE4LTA1LTI1IGF0IDA5OjQxICswMzAwLCBKYW5pIE5pa3VsYSB3cm90ZToK
-Pj4gT24gVGh1LCAyNCBNYXkgMjAxOCwgSm9lIFBlcmNoZXMgPGpvZUBwZXJjaGVzLmNvbT4gd3Jv
-dGU6Cj4+ID4gVGhlcmUgaXMgY3VycmVudGx5IGEgbWl4dHVyZSBvZiBvY3RhbCBhbmQgc3ltYm9s
-aWMgcGVybWlzc2lvbnMgdXNlcwo+PiA+IGluIGZpbGVzIGluIGRyaXZlcnMvZ3B1L2RybSBhbmQg
-b25lIGZpbGUgaW4gZHJpdmVycy9ncHUuCj4+ID4gCj4+ID4gVGhlcmUgYXJlIH4yNzAgZXhpc3Rp
-bmcgb2N0YWwgdXNlcyBhbmQgfjExNSBTXzxGT08+IHVzZXMuCj4+ID4gCj4+ID4gQ29udmVydCBh
-bGwgdGhlIFNfPEZPTz4gc3ltYm9saWMgcGVybWlzc2lvbnMgdG8gdGhlaXIgb2N0YWwgZXF1aXZh
-bGVudHMKPj4gPiBhcyB1c2luZyBvY3RhbCBhbmQgbm90IHN5bWJvbGljIHBlcm1pc3Npb25zIGlz
-IHByZWZlcnJlZCBieSBtYW55IGFzIG1vcmUKPj4gPiByZWFkYWJsZS4KPj4gPiAKPj4gPiBzZWU6
-IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE2LzgvMi8xOTQ1Cj4+ID4gCj4+ID4gRG9uZSB3aXRo
-IGF1dG9tYXRlZCBjb252ZXJzaW9uIHZpYToKPj4gPiAkIC4vc2NyaXB0cy9jaGVja3BhdGNoLnBs
-IC1mIC0tdHlwZXM9U1lNQk9MSUNfUEVSTVMgLS1maXgtaW5wbGFjZSA8ZmlsZXMuLi4+Cj4+ID4g
-Cj4+ID4gTWlzY2VsbGFuZWE6Cj4+ID4gCj4+ID4gbyBXcmFwcGVkIG1vZGlmaWVkIG11bHRpLWxp
-bmUgY2FsbHMgdG8gYSBzaW5nbGUgbGluZSB3aGVyZSBhcHByb3ByaWF0ZQo+PiA+IG8gUmVhbGln
-biBtb2RpZmllZCBtdWx0aS1saW5lIGNhbGxzIHRvIG9wZW4gcGFyZW50aGVzaXMKPj4gPiBvIGRy
-aXZlcnMvZ3B1L2RybS9tc20vYWRyZW5vL2E1eHhfZGVidWdmcy5jIGhhcyBhIHdvcmxkLXdyaXRl
-YWJsZQo+PiA+ICAgZGVidWcgcGVybWlzc2lvbiBmb3IgInJlc2V0IiAtIHBlcmhhcHMgdGhhdCBz
-aG91bGQgYmUgbW9kaWZpZWQKPj4gPiBTaWduZWQtb2ZmLWJ5OiBKb2UgUGVyY2hlcyA8am9lQHBl
-cmNoZXMuY29tPgo+PiA+IC0tLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRn
-cHVfZGVidWdmcy5jICAgICAgICB8ICAyICstCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1k
-Z3B1L2FtZGdwdV9wbS5jICAgICAgICAgICAgIHwgOTggKysrKysrKysrKystLS0tLS0tLS0tLQo+
-PiA+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfcmluZy5jICAgICAgICAgICB8
-ICAzICstCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV90dG0uYyAgICAg
-ICAgICAgIHwgIDkgKy0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZGVidWdm
-cy5jICAgICAgICAgICAgfCAgNCArLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2RlYnVnZnMu
-YyAgICAgICAgICAgICAgICAgICAgICB8ICA2ICstCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS9kcm1f
-ZGVidWdmc19jcmMuYyAgICAgICAgICAgICAgICAgIHwgIDQgKy0KPj4gPiAgZHJpdmVycy9ncHUv
-ZHJtL2RybV9zeXNmcy5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgMiArLQo+PiA+ICBkcml2
-ZXJzL2dwdS9kcm0vaTkxNS9ndnQvZmlybXdhcmUuYyAgICAgICAgICAgICAgICB8ICAyICstCj4+
-ID4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZGVidWdmcy5jICAgICAgICAgICAgICAgIHwg
-IDggKy0KPj4gPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9wZXJmLmMgICAgICAgICAgICAg
-ICAgICAgfCAgMiArLQo+PiA+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X3N5c2ZzLmMgICAg
-ICAgICAgICAgICAgICB8IDIyICsrLS0tCj4+ID4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVs
-X3BpcGVfY3JjLmMgICAgICAgICAgICAgIHwgIDIgKy0KPj4gCj4+IFBsZWFzZSBzZW5kIGF0IGxl
-YXN0IGk5MTUgY2hhbmdlcyBzZXBhcmF0ZWx5LiBUaGVyZSdzIHplcm8gcmVhc29uIHRvCj4+IG1h
-a2Ugb3VyIGxpdmVzIGhhcmRlciBmb3IgdGhpcyBjaGFuZ2UuCj4KPiBUaGUgaWRlYSBpcyB0byBh
-dm9pZCB1bm5lY2Vzc2FyeSBtdWx0aXBsZSBwYXRjaGVzIGZvcgo+IGluZGl2aWR1YWwgdHJlZXMu
-CgpZb3UncmUgY2hhbmdpbmcgbGlrZSBhIGRvemVuIHRyZWVzLiBBbmQgYXBwYXJlbnRseSBtYWlu
-dGFpbmVycyBvZgpkaWZmZXJlbnQgdHJlZXMgYWxzbyBoYXZlIGRpZmZlcmVudCBvcGluaW9ucyBv
-biB3aGV0aGVyIHRoaXMgaXMgYSBnb29kCmlkZWEgb3Igbm90LiBNYXNzIGNoYW5nZXMgbGlrZSB0
-aGlzIGdvIG5vd2hlcmUsIGFuZCBpZiB0aGV5IGRvLCB3aWxsCmNhdXNlIHVubmVjZXNzYXJ5IGNv
-bmZsaWN0cyB0aGF0IGNvdWxkIGhhdmUgYmVlbiB0cml2aWFsbHkgYXZvaWRlZC4KCkJSLApKYW5p
-LgoKPiBCdXQgeW91IGNvdWxkIGRvIHRoYXQgdmlhIHNvbWV0aGluZyBsaWtlOgo+Cj4gJCBnaXQg
-YW0gLS1pbmNsdWRlPSdkcml2ZXJzL2dwdS9kcm0vaTkxNS8qJyA8cGF0Y2g+Cj4KPiBjaGVlcnMs
-IEpvZQo+CgotLSAKSmFuaSBOaWt1bGEsIEludGVsIE9wZW4gU291cmNlIEdyYXBoaWNzIENlbnRl
-cgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVlZHJl
-bm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8K
+On Thu, May 24, 2018 at 2:28 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
+> On 24.05.2018 11:01, Rafael J. Wysocki wrote:
+>> On Thu, May 24, 2018 at 7:37 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>> On 24.05.2018 07:30, Viresh Kumar wrote:
+>>>> On 23-05-18, 19:00, Dmitry Osipenko wrote:
+>>>>> PLL_C is running at 600MHz which is significantly higher than the 216MHz
+>>>>> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
+>>>>> running on that PLL. Let's use PLL_C as intermediate clock source, making
+>>>>> CPU snappier a tad during of the frequency transition.
+>>>>>
+>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>> ---
+>>>>>  drivers/cpufreq/tegra20-cpufreq.c | 25 +++++++++++++++++++++----
+>>>>>  1 file changed, 21 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+>>>>> index 3ad6bded6efc..4bf5ba7da40b 100644
+>>>>> --- a/drivers/cpufreq/tegra20-cpufreq.c
+>>>>> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+>>>>> @@ -25,12 +25,13 @@
+>>>>>  #include <linux/types.h>
+>>>>>
+>>>>>  #define PLL_P_FREQ  216000
+>>>>> +#define PLL_C_FREQ  600000
+>>>>>
+>>>>>  static struct cpufreq_frequency_table freq_table[] = {
+>>>>>      { .frequency = 216000 },
+>>>>>      { .frequency = 312000 },
+>>>>>      { .frequency = 456000 },
+>>>>> -    { .frequency = 608000 },
+>>>>> +    { .frequency = 600000 },
+>>>>>      { .frequency = 760000 },
+>>>>>      { .frequency = 816000 },
+>>>>>      { .frequency = 912000 },
+>>>>> @@ -44,6 +45,7 @@ struct tegra20_cpufreq {
+>>>>>      struct clk *cpu_clk;
+>>>>>      struct clk *pll_x_clk;
+>>>>>      struct clk *pll_p_clk;
+>>>>> +    struct clk *pll_c_clk;
+>>>>>      bool pll_x_prepared;
+>>>>>  };
+>>>>>
+>>>>> @@ -58,7 +60,10 @@ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
+>>>>>      if (index == 0 || policy->cur == PLL_P_FREQ)
+>>>>>              return 0;
+>>>>>
+>>>>> -    return PLL_P_FREQ;
+>>>>> +    if (index == 3 || policy->cur == PLL_C_FREQ)
+>>>>> +            return 0;
+>>>>
+>>>> So we can choose between two different intermediate frequencies ? And
+>>>> I didn't like the way magic number 3 is used here. Its prone to errors
+>>>> and we better use a macro or something else here.
+>>>>
+>>>> Like instead of doing index == 3, what about freq_table[index].freq ==
+>>>> PLL_C_FREQ ? Same for the previous patch as well.
+>>>
+>>> The frequency is determined by the parent clock of CCLK (CPU clock), we can
+>>> choose between different parents for the CCLK. PLL_C as PLL_P and PLL_X are
+>>> among the available parents for the CCLK to choose from and there some others.
+>>>
+>>> I don't mind to use freq_table[index].freq, though I'd like to keep compiled
+>>> assembly minimal where possible. Hence the freq_table should be made constant to
+>>> tell compiler that it doesn't need to emit data fetches for the table values and
+>>> could embed the constants into the code where appropriate.
+>>>
+>>> Could we constify the "struct cpufreq_frequency_table" within the cpufreq core?
+>>> Seems nothing prevents this (I already tried to constify - there are no
+>>> obstacles), unless some cpufreq driver would try to modify
+>>> policy->freq_table->... within the cpufreq callback implementation.
+>>
+>> Some drivers generate frequency tables out of external data
+>> unavailable at compile time, like ACPI tables.
+>
+> Instead of making the table constant itself (with its values), seems we can just
+> make the policy->freq_table pointer constant. I'll try to make a patch for that,
+> adjusting the pointers in cpufreq core and the drivers. This works for the
+> acpi-cpufreq at least.
+
+Honestly, messing up with the whole subsystem in order to avoid an
+explicit pointer case doesn't sound right to me.
+
+>
+>> But if you know it for the fact that the core doesn't modify the
+>> frequency table, you could pass a constant table from the driver to
+>> it, can't you?
+>>
+>
+> Yes, but that will require to explicitly silencing the compiler warning about
+> const -> non-const pointer conversion (if you're meaning this pointer
+> conversion), which generally should be avoided.
+
+Why?
