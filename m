@@ -1,15 +1,15 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/5] memory: tegra: Changes for v4.18-rc1
-Date: Fri, 25 May 2018 05:11:58 -0700
-Message-ID: <20180525121158.dk5hv525ilakmshz@localhost>
+Subject: Re: [GIT PULL 4/5] ARM: tegra: Device tree changes for v4.18-rc1
+Date: Fri, 25 May 2018 05:15:50 -0700
+Message-ID: <20180525121550.obwt4br5nqmddy6w@localhost>
 References: <20180518142245.20242-1-thierry.reding@gmail.com>
- <20180518142245.20242-2-thierry.reding@gmail.com>
+ <20180518142245.20242-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20180518142245.20242-2-thierry.reding@gmail.com>
+In-Reply-To: <20180518142245.20242-4-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,7 +23,7 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 18, 2018 at 04:22:42PM +0200, Thierry Reding wrote:
+On Fri, May 18, 2018 at 04:22:44PM +0200, Thierry Reding wrote:
 > Hi ARM SoC maintainers,
 > 
 > The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
@@ -32,47 +32,30 @@ On Fri, May 18, 2018 at 04:22:42PM +0200, Thierry Reding wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.18-memory
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.18-arm-dt
 > 
-> for you to fetch changes up to bef89a8d81ca97aca864778746b110cf52847868:
+> for you to fetch changes up to dc4ea601be724d7ad37c8c5b1059417126e97e27:
 > 
->   memory: tegra: Remove Tegra114 SATA and AFI reset definitions (2018-05-18 12:33:02 +0200)
+>   ARM: dts: tegra114: Add IOMMU nodes to Host1x and its clients (2018-05-04 17:21:02 +0200)
 > 
 > Thanks,
 > Thierry
 > 
 > ----------------------------------------------------------------
-> memory: tegra: Changes for v4.18-rc1
+> ARM: tegra: Device tree changes for v4.18-rc1
 > 
-> This contains some cleanup of the memory controller driver as well as
-> unification work to share more code between Tegra20 and later SoC
-> generations. Also included are an implementation for the hot resets
-> functionality by the memory controller which is required to properly
-> reset busy hardware.
+> Contains a fix for the high-speed UART on Toradex Apalis TK1 boards as
+> well as IOMMU enablement for various devices on Tegra30 and Tegra30.
 > 
 > ----------------------------------------------------------------
-> Dmitry Osipenko (14):
->       dt-bindings: memory: tegra: Add hot resets definitions
->       memory: tegra: Do not handle spurious interrupts
->       memory: tegra: Setup interrupts mask before requesting IRQ
->       memory: tegra: Apply interrupts mask per SoC
->       memory: tegra: Remove unused headers inclusions
->       memory: tegra: Squash tegra20-mc into common tegra-mc driver
->       memory: tegra: Introduce memory client hot reset
->       memory: tegra: Add Tegra20 memory controller hot resets
->       memory: tegra: Add Tegra30 memory controller hot resets
->       memory: tegra: Add Tegra114 memory controller hot resets
->       memory: tegra: Add Tegra124 memory controller hot resets
->       memory: tegra: Register SMMU after MC driver became ready
->       dt-bindings: memory: tegra: Remove Tegra114 SATA and AFI reset definitions
->       memory: tegra: Remove Tegra114 SATA and AFI reset definitions
+> Dmitry Osipenko (2):
+>       ARM: dts: tegra30: Add IOMMU nodes to Host1x and its clients
+>       ARM: dts: tegra114: Add IOMMU nodes to Host1x and its clients
 > 
-> Thierry Reding (1):
->       memory: tegra: Add Tegra210 memory controller hot resets
+> Marcel Ziswiler (1):
+>       ARM: tegra: apalis-tk1: Fix high speed UART compatible
 
-Looks like this is just additional/proper resets, are there any backwards
-compatibility concerns with older device trees or new assumptions of properties
-that should be handled?
+Merged, thanks!
 
 
 -Olof
