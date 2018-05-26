@@ -1,52 +1,109 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] memory: tegra: include linux/spinlock.h
-Date: Sat, 26 May 2018 00:18:34 +0300
-Message-ID: <11dbcb7d-4aa8-90c2-83b2-66e0d6e8bb10@gmail.com>
-References: <20180525211155.1928474-1-arnd@arndb.de>
+Subject: Re: [PATCH v1] media: staging: tegra-vde: Reset memory client
+Date: Sat, 26 May 2018 13:03:01 +0300
+Message-ID: <24810d9d-eede-f9dd-1dbe-e757cfa2e191@gmail.com>
+References: <20180520134846.31046-1-digetx@gmail.com>
+ <20180520134846.31046-2-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180525211155.1928474-1-arnd@arndb.de>
+In-Reply-To: <20180520134846.31046-2-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 26.05.2018 00:11, Arnd Bergmann wrote:
-> The newly added code in this file causes a build error unless
-> we include linux/spinlock.h, at least in some configurations:
+On 20.05.2018 16:48, Dmitry Osipenko wrote:
+> DMA requests must be blocked before resetting VDE HW, otherwise it is
+> possible to get a memory corruption or a machine hang. Use the reset
+> control provided by the Memory Controller to block DMA before resetting
+> the VDE HW.
 > 
-> In file included from drivers/memory/tegra/mc.h:15,
->                  from drivers/memory/tegra/tegra20.c:11:
-> include/soc/tegra/mc.h:159:2: error: unknown type name 'spinlock_t'
->   spinlock_t lock;
->   ^~~~~~~~~~
-> drivers/memory/tegra/tegra20.c: In function 'terga20_mc_hotreset_assert':
-> drivers/memory/tegra/tegra20.c:207:2: error: implicit declaration of function 'spin_lock_irqsave'; did you mean 'arch_local_irq_save'? [-Werror=implicit-function-declaration]
->   spin_lock_irqsave(&mc->lock, flags);
->   ^~~~~~~~~~~~~~~~~
-> 
-> Fixes: cb557757e1aa ("memory: tegra: Add Tegra20 memory controller hot resets")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/memory/tegra/tegra20.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/staging/media/tegra-vde/tegra-vde.c | 42 +++++++++++++++++++--
+>  1 file changed, 38 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
-> index 7119e532471c..8853e21b773f 100644
-> --- a/drivers/memory/tegra/tegra20.c
-> +++ b/drivers/memory/tegra/tegra20.c
-> @@ -6,6 +6,7 @@
->   * published by the Free Software Foundation.
->   */
+> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+> index 90177a59b97c..6dd3bf4481be 100644
+> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
+> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+> @@ -73,6 +73,7 @@ struct tegra_vde {
+>  	struct mutex lock;
+>  	struct miscdevice miscdev;
+>  	struct reset_control *rst;
+> +	struct reset_control *rst_mc;
+>  	struct gen_pool *iram_pool;
+>  	struct completion decode_completion;
+>  	struct clk *clk;
+> @@ -850,9 +851,23 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  	 * We rely on the VDE registers reset value, otherwise VDE
+>  	 * causes bus lockup.
+>  	 */
+> +	ret = reset_control_assert(vde->rst_mc);
+> +	if (ret) {
+> +		dev_err(dev, "DEC start: Failed to assert MC reset: %d\n",
+> +			ret);
+> +		goto put_runtime_pm;
+> +	}
+> +
+>  	ret = reset_control_reset(vde->rst);
+>  	if (ret) {
+> -		dev_err(dev, "Failed to reset HW: %d\n", ret);
+> +		dev_err(dev, "DEC start: Failed to reset HW: %d\n", ret);
+> +		goto put_runtime_pm;
+> +	}
+> +
+> +	ret = reset_control_deassert(vde->rst_mc);
+> +	if (ret) {
+> +		dev_err(dev, "DEC start: Failed to deassert MC reset: %d\n",
+> +			ret);
+>  		goto put_runtime_pm;
+>  	}
 >  
-> +#include <linux/spinlock.h>
->  #include <dt-bindings/memory/tegra20-mc.h>
+> @@ -880,9 +895,21 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  		ret = timeout;
+>  	}
 >  
->  #include "mc.h"
+> -	err = reset_control_assert(vde->rst);
+> -	if (err)
+> -		dev_err(dev, "Failed to assert HW reset: %d\n", err);
+> +	/*
+> +	 * At first reset memory client to avoid resetting VDE HW in the
+> +	 * middle of DMA which could result into memory corruption or hang
+> +	 * the whole system.
+> +	 */
+> +	err = reset_control_assert(vde->rst_mc);
+> +	if (!err) {
 
-Yes, the spinlock header was getting included indirectly.
+It occurred to me that there is no need to skip the HW reset if MC resetting
+fails. I'll make V2 to change that.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> +		err = reset_control_assert(vde->rst);
+> +		if (err)
+> +			dev_err(dev,
+> +				"DEC end: Failed to assert HW reset: %d\n",
+> +				err);
+> +	} else {
+> +		dev_err(dev, "DEC end: Failed to assert MC reset: %d\n", err);
+> +	}
+>  
+>  put_runtime_pm:
+>  	pm_runtime_mark_last_busy(dev);
+> @@ -1074,6 +1101,13 @@ static int tegra_vde_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> +	vde->rst_mc = devm_reset_control_get_optional(dev, "mc");
+> +	if (IS_ERR(vde->rst_mc)) {
+> +		err = PTR_ERR(vde->rst_mc);
+> +		dev_err(dev, "Could not get MC reset %d\n", err);
+> +		return err;
+> +	}
+> +
+>  	irq = platform_get_irq_byname(pdev, "sync-token");
+>  	if (irq < 0)
+>  		return irq;
+> 
