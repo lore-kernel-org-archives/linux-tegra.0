@@ -1,110 +1,51 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2] media: staging: tegra-vde: Reset memory client
-Date: Sat, 26 May 2018 17:27:55 +0300
-Message-ID: <20180526142755.22966-1-digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH v1] media: dt: bindings: tegra-vde: Document new optional Memory Client reset property
+Date: Sat, 26 May 2018 17:33:55 +0300
+Message-ID: <20180526143355.24288-1-digetx@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-DMA requests must be blocked before resetting VDE HW, otherwise it is
-possible to get a memory corruption or a machine hang. Use the reset
-control provided by the Memory Controller to block DMA before resetting
-the VDE HW.
+Recently binding of the Memory Controller has been extended, exposing
+the Memory Client reset controls and hence it is now a reset controller.
+Tegra video-decoder device is among the Memory Controller reset users,
+document the new optional VDE HW reset property.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
+ .../devicetree/bindings/media/nvidia,tegra-vde.txt    | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Changelog:
-
-v2:
-	- Reset HW even if Memory Client resetting fails.
-
- drivers/staging/media/tegra-vde/tegra-vde.c | 35 +++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
-index 90177a59b97c..6f06061a40d9 100644
---- a/drivers/staging/media/tegra-vde/tegra-vde.c
-+++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-@@ -73,6 +73,7 @@ struct tegra_vde {
- 	struct mutex lock;
- 	struct miscdevice miscdev;
- 	struct reset_control *rst;
-+	struct reset_control *rst_mc;
- 	struct gen_pool *iram_pool;
- 	struct completion decode_completion;
- 	struct clk *clk;
-@@ -850,9 +851,23 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 	 * We rely on the VDE registers reset value, otherwise VDE
- 	 * causes bus lockup.
- 	 */
-+	ret = reset_control_assert(vde->rst_mc);
-+	if (ret) {
-+		dev_err(dev, "DEC start: Failed to assert MC reset: %d\n",
-+			ret);
-+		goto put_runtime_pm;
-+	}
-+
- 	ret = reset_control_reset(vde->rst);
- 	if (ret) {
--		dev_err(dev, "Failed to reset HW: %d\n", ret);
-+		dev_err(dev, "DEC start: Failed to reset HW: %d\n", ret);
-+		goto put_runtime_pm;
-+	}
-+
-+	ret = reset_control_deassert(vde->rst_mc);
-+	if (ret) {
-+		dev_err(dev, "DEC start: Failed to deassert MC reset: %d\n",
-+			ret);
- 		goto put_runtime_pm;
- 	}
+diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+index 470237ed6fe5..7302e949e662 100644
+--- a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
++++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+@@ -27,9 +27,15 @@ Required properties:
+   - sxe
+ - clocks : Must include the following entries:
+   - vde
+-- resets : Must include the following entries:
++- resets : Must contain an entry for each entry in reset-names.
++- reset-names : Should include the following entries:
+   - vde
  
-@@ -880,9 +895,18 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 		ret = timeout;
- 	}
- 
-+	/*
-+	 * At first reset memory client to avoid resetting VDE HW in the
-+	 * middle of DMA which could result into memory corruption or hang
-+	 * the whole system.
-+	 */
-+	err = reset_control_assert(vde->rst_mc);
-+	if (err)
-+		dev_err(dev, "DEC end: Failed to assert MC reset: %d\n", err);
++Optional properties:
++- resets : Must contain an entry for each entry in reset-names.
++- reset-names : Must include the following entries:
++  - mc
 +
- 	err = reset_control_assert(vde->rst);
- 	if (err)
--		dev_err(dev, "Failed to assert HW reset: %d\n", err);
-+		dev_err(dev, "DEC end: Failed to assert HW reset: %d\n", err);
+ Example:
  
- put_runtime_pm:
- 	pm_runtime_mark_last_busy(dev);
-@@ -1074,6 +1098,13 @@ static int tegra_vde_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	vde->rst_mc = devm_reset_control_get_optional(dev, "mc");
-+	if (IS_ERR(vde->rst_mc)) {
-+		err = PTR_ERR(vde->rst_mc);
-+		dev_err(dev, "Could not get MC reset %d\n", err);
-+		return err;
-+	}
-+
- 	irq = platform_get_irq_byname(pdev, "sync-token");
- 	if (irq < 0)
- 		return irq;
+ video-codec@6001a000 {
+@@ -51,5 +57,6 @@ video-codec@6001a000 {
+ 		     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
+ 	interrupt-names = "sync-token", "bsev", "sxe";
+ 	clocks = <&tegra_car TEGRA20_CLK_VDE>;
+-	resets = <&tegra_car 61>;
++	reset-names = "vde", "mc";
++	resets = <&tegra_car 61>, <&mc TEGRA20_MC_RESET_VDE>;
+ };
 -- 
 2.17.0
