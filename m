@@ -1,44 +1,92 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 1/6] mtd: rawnand: add Reed-Solomon error correction algorithm
-Date: Sun, 27 May 2018 23:54:37 +0200
-Message-ID: <20180527215442.14760-2-stefan@agner.ch>
+Subject: [PATCH v2 2/6] mtd: rawnand: tegra: add devicetree binding
+Date: Sun, 27 May 2018 23:54:38 +0200
+Message-ID: <20180527215442.14760-3-stefan@agner.ch>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
 Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
+From: Lucas Stach <dev@lynxeye.de>
 
+This adds the devicetree binding for the Tegra 2 NAND flash
+controller.
+
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/mtd/nand/raw/nand_base.c | 1 +
- include/linux/mtd/rawnand.h      | 1 +
- 2 files changed, 2 insertions(+)
+ .../bindings/mtd/nvidia,tegra20-nand.txt      | 62 +++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
 
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index f28c3a555861..9eb5678dd6d0 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5744,6 +5744,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
- static const char * const nand_ecc_algos[] = {
- 	[NAND_ECC_HAMMING]	= "hamming",
- 	[NAND_ECC_BCH]		= "bch",
-+	[NAND_ECC_RS]		= "rs",
- };
- 
- static int of_get_nand_ecc_algo(struct device_node *np)
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 5dad59b31244..6a82da8c44ce 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -114,6 +114,7 @@ enum nand_ecc_algo {
- 	NAND_ECC_UNKNOWN,
- 	NAND_ECC_HAMMING,
- 	NAND_ECC_BCH,
-+	NAND_ECC_RS,
- };
- 
- /*
+diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+new file mode 100644
+index 000000000000..49e472af1b39
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+@@ -0,0 +1,62 @@
++NVIDIA Tegra NAND Flash controller
++
++Required properties:
++- compatible: Must be one of:
++  - "nvidia,tegra20-nand"
++- reg: MMIO address range
++- interrupts: interrupt output of the NFC controller
++- clocks: Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++  - nand
++- resets: Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - nand
++
++Optional children nodes:
++Individual NAND chips are children of the NAND controller node. Currently
++only one NAND chip supported.
++
++Required children node properties:
++- reg: An integer ranging from 1 to 6 representing the CS line to use.
++
++Optional children node properties:
++- nand-ecc-mode: String, operation mode of the NAND ecc mode. "hw" by default
++- nand-ecc-algo: string, algorithm of NAND ECC.
++		 Supported values are: "rs", "bch".
++- nand-bus-width : 8 or 16 bus width if not present 8
++- nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
++- nand-ecc-strength: integer representing the number of bits to correct
++		     per ECC step. Supported strength using HW ECC modes are:
++		     - RS: 4, 6, 8
++		     - BCH: 4, 8, 14, 16
++- nand-ecc-step-size: integer representing the number of data bytes
++		      that are covered by a single ECC step. Must be 512.
++- wp-gpios: GPIO specifier for the write protect pin.
++
++Optional child node of NAND chip nodes:
++Partitions: see partition.txt
++
++  Example:
++	nand@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++
++		nand-chip@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			nand-bus-width = <8>;
++			nand-on-flash-bbt;
++			nand-ecc-algo = "bch";
++			nand-ecc-step-size = <512>;
++			nand-ecc-strength = <8>;
++			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
++		};
++	};
 -- 
 2.17.0
