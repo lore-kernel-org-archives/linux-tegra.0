@@ -1,7 +1,7 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 5/6] ARM: tegra: add Tegra20 NAND flash controller node
-Date: Sun, 27 May 2018 23:54:41 +0200
-Message-ID: <20180527215442.14760-6-stefan@agner.ch>
+Subject: [PATCH v2 6/6] ARM: tegra: enable NAND flash on Colibri T20
+Date: Sun, 27 May 2018 23:54:42 +0200
+Message-ID: <20180527215442.14760-7-stefan@agner.ch>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
@@ -10,38 +10,40 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Lucas Stach <dev@lynxeye.de>
 
-Add basic controller description to be extended
-by individual boards.
+This enables the on-module ONFI conformant NAND flash.
 
 Signed-off-by: Lucas Stach <dev@lynxeye.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 0a7136462a1a..b106e4912b21 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -425,6 +425,19 @@
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 5c202b3e3bb1..ba8c0a535d6e 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -462,6 +462,22 @@
+ 		};
  	};
  
-+	nand: nand@70008000 {
-+		compatible = "nvidia,tegra20-nand";
-+		reg = <0x70008000 0x100>;
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-+		clock-names = "nand";
-+		resets = <&tegra_car 13>;
-+		reset-names = "nand";
-+		status = "disabled";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	nand@70008000 {
++		status = "okay";
++
++		nand-chip@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			nand-bus-width = <8>;
++			nand-on-flash-bbt;
++			nand-ecc-algo = "bch";
++			nand-ecc-step-size = <512>;
++			nand-ecc-strength = <16>;
++			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
++		};
 +	};
 +
- 	pwm: pwm@7000a000 {
- 		compatible = "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
+ 	usb@c5004000 {
+ 		status = "okay";
+ 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
 -- 
 2.17.0
