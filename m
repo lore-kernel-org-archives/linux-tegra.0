@@ -1,130 +1,69 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Date: Sun, 27 May 2018 21:08:54 +0200
-Message-ID: <3edd29f9ab353931024c1b9a4ca1c1dc@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
- <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
- <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
- <20180524135335.6aa0b7a4@bbrezillon>
- <146a3abbbff4dcef30ad662a0fb85ff1@agner.ch> <20180527161832.1152be6e@xps13>
- <20180527171337.002eeb9f@bbrezillon> <20180527175403.065a135d@xps13>
- <20180527183055.05c4d197@bbrezillon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
+Date: Sun, 27 May 2018 23:54:36 +0200
+Message-ID: <20180527215442.14760-1-stefan@agner.ch>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180527183055.05c4d197@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Benjamin Lindqvist <benjamin.lindqvist@endian.se>, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
+Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-On 27.05.2018 18:30, Boris Brezillon wrote:
-> On Sun, 27 May 2018 17:54:03 +0200
-> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> 
->> Hi Boris,
->>
->> On Sun, 27 May 2018 17:13:37 +0200, Boris Brezillon
->> <boris.brezillon@bootlin.com> wrote:
->>
->> > On Sun, 27 May 2018 16:18:32 +0200
->> > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
->> >
->> > > Hi Stefan,
->> > >
->> > > On Thu, 24 May 2018 14:19:18 +0200, Stefan Agner <stefan@agner.ch>
->> > > wrote:
->> > >
->> > > > On 24.05.2018 13:53, Boris Brezillon wrote:
->> > > > > Hi Benjamin,
->> > > > >
->> > > > > On Thu, 24 May 2018 13:30:14 +0200
->> > > > > Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
->> > > > >
->> > > > >> Hi Stefan,
->> > > > >>
->> > > > >> It seems to me that a probe similar to what the BootROM does shouldn't
->> > > > >> be awfully complicated to implement - just cycle through the switch
->> > > > >> cases in case of an ECC error. But I guess that's more of an idea for
->> > > > >> further improvements rather than a comment to the patch set under
->> > > > >> review.
->> > > > >
->> > > > > Nope, not really an option, because you're not guaranteed that the NAND
->> > > > > will be used as a boot media, and the first page or first set of pages
->> > > > > might just be erased.
->> > > > >
->> > > >
->> > > > Yeah I did not meant probing like the Boot ROM does.
->> > > >
->> > > > What I meant was using only the ECC modes which are supported by the
->> > > > Boot ROM when the driver tries to choose a viable mode. So that would
->> > > > be:
->> > > > - RS t=4
->> > > > - BCH t=8
->> > > > - BCH t=16
->> > > >
->> > > > Maybe we could add a property to enable that behavior:
->> > > >
->> > > > tegra,use-bootable-ecc-only;
->> > >
->> > > I'm not sure a property is needed.
->> > >
->> > > As there is currently no official user of this driver, why not turning
->> > > mandatory the nand-ecc-xxx properties?
->> >
->> > Not a big fan of this solution. We already have a few cases where the
->> > NAND part was changed on a design and the new NAND had different ECC
->> > requirements, With your suggestion, that means creating a new .dts file
->> > for each possible NAND part.
->> >
->> > Note that having a solution that picks the best ECC config based on
->> > chip->ecc_xxx_ds should be the preferred approach. nand-ecc- props are
->> > mainly here to address the case where you need/want to assign a config
->> > that does not match the ECC requirements exposed by the chip.
->>
->> Ok, that's right it's a problem.
->>
->> But then the driver has to choose a default algorithm if none is given.
-> 
-> Yep.
-> 
+This picks up an older patchset written by Lucas Stach which
+adds raw NAND flash support for Tegra 2.
+http://lists.infradead.org/pipermail/linux-mtd/2015-November/063031.html
 
-Our design currently uses a chip which requires 8-bit per 512 byte. But
-the downstream BSP currently uses the maximum possible strength, BCH 16.
+The driver has been reworked to implement the ->exec_op callback.
+Some smaller changes and bug fixes have been applied too, but I did
+not keep track of them. Since the original patchset has been posted
+some years back already, I guess review needs to be done from scratch
+anyway.
 
-I guess we could create two algorithms, one which tries to maximize ECC
-strength and one which tries to match the required strength. Both with
-and without the boot ROM restrictions...
-
-But then, newer chips mostly require higher ECC strength. Given that we
-already use the maximum, I think for that particular case just selecting
-BCH 16 would be fine. Therefor I planned for v2 to just implement manual
-selection...
-
->> In this case, should we select the one that fits best the NAND chip
->> requirements, or shall we limit to the ones supported by the BootRom?
-> 
-> We should limit to the one used by the BootROM only if the NAND is used
-> as a boot medium.
-> 
->>
->> The underlying question is: will we add a tegra,use-bootable-ecc-only
->> property?
-> 
-> I guess this one is fine, because it's only adding a constraint on the
-> possible ECC modes that can be used, it's not forcing a specific ECC
-> strength.
-> 
-> Note that if we want to make this property generic we could name it
-> nand-is-boot-medium.
-
-Sounds sensible. Although, only because the boot loader needs to be
-written in that mode does not necessarily requires the rootfs to be in
-the same mode.. But it is clearly preferable.
+This second revision is a rather major overhaul again. There are some
+open issues:
+- Driver specific DMA enabled (read/write)_page_raw are non functional
+  (I am not sure why, or if this is maybe even not possible at all...)
+- OOB layout discrepancy
+  When using HW BCH support, the location of the ECC bytes changes
+  depending on whether extra OOB bytes (tag data) are transmitted or
+  not... Writing/Reading should always be with tag enabled or always
+  without. I am not sure how to solve this correctly, maybe disallow
+  using OOB data with HW ECC completely?
 
 --
 Stefan
+
+Changes since v1:
+- Split controller and NAND chip structure
+- Add BCH support
+- Allow to select algorithm and strength using device tree
+- Improve HW ECC error reporting and use DEC_STATUS_BUF only
+- Use SPDX license identifier
+- Use per algorithm mtd_ooblayout_ops
+- Use setup_data_interface callback for NAND timing configuration
+
+Lucas Stach (4):
+  mtd: rawnand: tegra: add devicetree binding
+  clk: tegra20: init NDFLASH clock to sensible rate
+  ARM: tegra: add Tegra20 NAND flash controller node
+  ARM: tegra: enable NAND flash on Colibri T20
+
+Stefan Agner (2):
+  mtd: rawnand: add Reed-Solomon error correction algorithm
+  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
+
+ .../bindings/mtd/nvidia,tegra20-nand.txt      |  62 ++
+ MAINTAINERS                                   |   7 +
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi    |  16 +
+ arch/arm/boot/dts/tegra20.dtsi                |  13 +
+ drivers/clk/tegra/clk-tegra20.c               |   1 +
+ drivers/mtd/nand/raw/Kconfig                  |   6 +
+ drivers/mtd/nand/raw/Makefile                 |   1 +
+ drivers/mtd/nand/raw/nand_base.c              |   1 +
+ drivers/mtd/nand/raw/tegra_nand.c             | 999 ++++++++++++++++++
+ include/linux/mtd/rawnand.h                   |   1 +
+ 10 files changed, 1107 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+ create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+
+-- 
+2.17.0
