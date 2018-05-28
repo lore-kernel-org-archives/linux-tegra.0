@@ -1,121 +1,48 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v2 2/6] mtd: rawnand: tegra: add devicetree binding
-Date: Mon, 28 May 2018 00:23:54 +0200
-Message-ID: <20180528002354.45025afd@xps13>
-References: <20180527215442.14760-3-stefan@agner.ch>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
+Date: Mon, 28 May 2018 10:55:10 +0300
+Message-ID: <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+References: <20180527215442.14760-5-stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180527215442.14760-3-stefan@agner.ch>
+Content-Disposition: inline
+In-Reply-To: <20180527215442.14760-5-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stefan Agner <stefan@agner.ch>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stefan,
-
-On Sun, 27 May 2018 23:54:38 +0200, Stefan Agner <stefan@agner.ch>
-wrote:
-
+On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
 > From: Lucas Stach <dev@lynxeye.de>
 > 
-> This adds the devicetree binding for the Tegra 2 NAND flash
-> controller.
+> Set up the NAND Flash controller clock to run at 150MHz
+> instead of the rate set by the bootloader. This is a
+> conservative rate which also yields good performance.
 > 
 > Signed-off-by: Lucas Stach <dev@lynxeye.de>
 > Signed-off-by: Stefan Agner <stefan@agner.ch>
 > ---
->  .../bindings/mtd/nvidia,tegra20-nand.txt      | 62 +++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+>  drivers/clk/tegra/clk-tegra20.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> new file mode 100644
-> index 000000000000..49e472af1b39
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> @@ -0,0 +1,62 @@
-> +NVIDIA Tegra NAND Flash controller
-> +
-> +Required properties:
-> +- compatible: Must be one of:
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index 0ee56dd04cec..dff8c425cd28 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
+>  	/* must be the last entry */
+>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+>  };
+> -- 
+> 2.17.0
+> 
 
-Nitpick: just put the compatible here as there is only one?
+Maybe better to specify this in the Tegra20 dtsi? See 
+"Assigned clock parents and rates" in Documentation/devicetree/bindings/clock/clock-bindings.txt
 
-> +  - "nvidia,tegra20-nand"
-> +- reg: MMIO address range
-> +- interrupts: interrupt output of the NFC controller
-> +- clocks: Must contain an entry for each entry in clock-names.
-> +  See ../clocks/clock-bindings.txt for details.
-> +- clock-names: Must include the following entries:
-> +  - nand
-> +- resets: Must contain an entry for each entry in reset-names.
-> +  See ../reset/reset.txt for details.
-> +- reset-names: Must include the following entries:
-> +  - nand
-> +
-> +Optional children nodes:
-> +Individual NAND chips are children of the NAND controller node. Currently
-> +only one NAND chip supported.
-> +
-> +Required children node properties:
-> +- reg: An integer ranging from 1 to 6 representing the CS line to use.
-
-From 1? It usually starts at 0.
-
-> +
-> +Optional children node properties:
-> +- nand-ecc-mode: String, operation mode of the NAND ecc mode. "hw" by default
-> +- nand-ecc-algo: string, algorithm of NAND ECC.
-> +		 Supported values are: "rs", "bch".
-> +- nand-bus-width : 8 or 16 bus width if not present 8
-> +- nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
-> +- nand-ecc-strength: integer representing the number of bits to correct
-> +		     per ECC step. Supported strength using HW ECC modes are:
-> +		     - RS: 4, 6, 8
-> +		     - BCH: 4, 8, 14, 16
-> +- nand-ecc-step-size: integer representing the number of data bytes
-> +		      that are covered by a single ECC step. Must be 512.
-
-Please don't re-explain nand generic DT properties, point to nand.txt
-instead.
-
-> +- wp-gpios: GPIO specifier for the write protect pin.
-> +
-> +Optional child node of NAND chip nodes:
-> +Partitions: see partition.txt
-> +
-> +  Example:
-> +	nand@70008000 {
-> +		compatible = "nvidia,tegra20-nand";
-> +		reg = <0x70008000 0x100>;
-> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-> +		clock-names = "nand";
-> +		resets = <&tegra_car 13>;
-> +		reset-names = "nand";
-> +
-> +		nand-chip@0 {
-> +			reg = <0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			nand-bus-width = <8>;
-> +			nand-on-flash-bbt;
-> +			nand-ecc-algo = "bch";
-> +			nand-ecc-step-size = <512>;
-
-In the driver you only refer to step sizes of 512 B, you can remove the
-property from the bindings.
-
-> +			nand-ecc-strength = <8>;
-> +			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-
-
-
--- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Peter.
