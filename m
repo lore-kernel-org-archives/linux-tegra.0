@@ -1,1111 +1,368 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v2 3/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Date: Mon, 28 May 2018 14:43:49 +0200
-Message-ID: <c4df253d318e7c268e8999d5f3bfcd0f@agner.ch>
-References: <20180527215442.14760-4-stefan@agner.ch>
- <b9cfc23e-2434-fd90-ae2d-e51f28b16038@gmail.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
+Date: Mon, 28 May 2018 16:15:01 +0300
+Message-ID: <20180528131501.GK23723@intel.com>
+References: <20180526155623.12610-1-digetx@gmail.com>
+ <20180526155623.12610-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b9cfc23e-2434-fd90-ae2d-e51f28b16038@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180526155623.12610-2-digetx@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Thomas Hellstrom <thellstrom@vmware.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Neil Armstrong <narmstrong@baylibre.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 28.05.2018 13:57, Dmitry Osipenko wrote:
-> On 28.05.2018 00:54, Stefan Agner wrote:
->> Add support for the NAND flash controller found on NVIDIA
->> Tegra 2 SoCs. This implementation does not make use of the
->> command queue feature. Regular operations/data transfers are
->> done in PIO mode. Page read/writes with hardware ECC make
->> use of the DMA for data transfer.
->>
->> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  MAINTAINERS                       |   7 +
->>  drivers/mtd/nand/raw/Kconfig      |   6 +
->>  drivers/mtd/nand/raw/Makefile     |   1 +
->>  drivers/mtd/nand/raw/tegra_nand.c | 999 ++++++++++++++++++++++++++++++
->>  4 files changed, 1013 insertions(+)
->>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 58b9861ccf99..8cbbb7111742 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -13844,6 +13844,13 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
->>  S:	Supported
->>  F:	drivers/input/keyboard/tegra-kbc.c
->>
->> +TEGRA NAND DRIVER
->> +M:	Stefan Agner <stefan@agner.ch>
->> +M:	Lucas Stach <dev@lynxeye.de>
->> +S:	Maintained
->> +F:	Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
->> +F:	drivers/mtd/nand/raw/tegra_nand.c
->> +
->>  TEGRA PWM DRIVER
->>  M:	Thierry Reding <thierry.reding@gmail.com>
->>  S:	Supported
->> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
->> index 19a2b283fbbe..012c63c6ab47 100644
->> --- a/drivers/mtd/nand/raw/Kconfig
->> +++ b/drivers/mtd/nand/raw/Kconfig
->> @@ -534,4 +534,10 @@ config MTD_NAND_MTK
->>  	  Enables support for NAND controller on MTK SoCs.
->>  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
->>
->> +config MTD_NAND_TEGRA
->> +	tristate "Support for NAND on NVIDIA Tegra"
->> +	depends on ARCH_TEGRA || COMPILE_TEST
->> +	help
->> +	  Enables support for NAND flash on NVIDIA Tegra SoC based boards.
->> +
->>  endif # MTD_NAND
->> diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
->> index 165b7ef9e9a1..d5a5f9832b88 100644
->> --- a/drivers/mtd/nand/raw/Makefile
->> +++ b/drivers/mtd/nand/raw/Makefile
->> @@ -56,6 +56,7 @@ obj-$(CONFIG_MTD_NAND_HISI504)	        += hisi504_nand.o
->>  obj-$(CONFIG_MTD_NAND_BRCMNAND)		+= brcmnand/
->>  obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
->>  obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
->> +obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
->>
->>  nand-objs := nand_base.o nand_bbt.o nand_timings.o nand_ids.o
->>  nand-objs += nand_amd.o
->> diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
->> new file mode 100644
->> index 000000000000..1a0833d97472
->> --- /dev/null
->> +++ b/drivers/mtd/nand/raw/tegra_nand.c
->> @@ -0,0 +1,999 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2018 Stefan Agner <stefan@agner.ch>
->> + * Copyright (C) 2014-2015 Lucas Stach <dev@lynxeye.de>
->> + * Copyright (C) 2012 Avionic Design GmbH
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/completion.h>
->> +#include <linux/delay.h>
->> +#include <linux/dma-mapping.h>
->> +#include <linux/err.h>
->> +#include <linux/gpio/consumer.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/io.h>
->> +#include <linux/module.h>
->> +#include <linux/mtd/partitions.h>
->> +#include <linux/mtd/rawnand.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reset.h>
->> +
->> +#define CMD					0x00
->> +#define   CMD_GO				(1 << 31)
->> +#define   CMD_CLE				(1 << 30)
->> +#define   CMD_ALE				(1 << 29)
->> +#define   CMD_PIO				(1 << 28)
->> +#define   CMD_TX				(1 << 27)
->> +#define   CMD_RX				(1 << 26)
->> +#define   CMD_SEC_CMD				(1 << 25)
->> +#define   CMD_AFT_DAT				(1 << 24)
->> +#define   CMD_TRANS_SIZE(x)			(((x - 1) & 0xf) << 20)
->> +#define   CMD_A_VALID				(1 << 19)
->> +#define   CMD_B_VALID				(1 << 18)
->> +#define   CMD_RD_STATUS_CHK			(1 << 17)
->> +#define   CMD_RBSY_CHK				(1 << 16)
->> +#define   CMD_CE(x)				(1 << (8 + ((x) & 0x7)))
->> +#define   CMD_CLE_SIZE(x)			(((x - 1) & 0x3) << 4)
->> +#define   CMD_ALE_SIZE(x)			(((x - 1) & 0xf) << 0)
->> +
->> +#define STATUS					0x04
->> +
->> +#define ISR					0x08
->> +#define   ISR_CORRFAIL_ERR			(1 << 24)
->> +#define   ISR_UND				(1 << 7)
->> +#define   ISR_OVR				(1 << 6)
->> +#define   ISR_CMD_DONE				(1 << 5)
->> +#define   ISR_ECC_ERR				(1 << 4)
->> +
->> +#define IER					0x0c
->> +#define   IER_ERR_TRIG_VAL(x)			(((x) & 0xf) << 16)
->> +#define   IER_UND				(1 << 7)
->> +#define   IER_OVR				(1 << 6)
->> +#define   IER_CMD_DONE				(1 << 5)
->> +#define   IER_ECC_ERR				(1 << 4)
->> +#define   IER_GIE				(1 << 0)
->> +
->> +#define CFG					0x10
->> +#define   CFG_HW_ECC				(1 << 31)
->> +#define   CFG_ECC_SEL				(1 << 30)
->> +#define   CFG_ERR_COR				(1 << 29)
->> +#define   CFG_PIPE_EN				(1 << 28)
->> +#define   CFG_TVAL_4				(0 << 24)
->> +#define   CFG_TVAL_6				(1 << 24)
->> +#define   CFG_TVAL_8				(2 << 24)
->> +#define   CFG_SKIP_SPARE			(1 << 23)
->> +#define   CFG_BUS_WIDTH_8			(0 << 21)
->> +#define   CFG_BUS_WIDTH_16			(1 << 21)
->> +#define   CFG_COM_BSY				(1 << 20)
->> +#define   CFG_PS_256				(0 << 16)
->> +#define   CFG_PS_512				(1 << 16)
->> +#define   CFG_PS_1024				(2 << 16)
->> +#define   CFG_PS_2048				(3 << 16)
->> +#define   CFG_PS_4096				(4 << 16)
->> +#define   CFG_SKIP_SPARE_SIZE_4			(0 << 14)
->> +#define   CFG_SKIP_SPARE_SIZE_8			(1 << 14)
->> +#define   CFG_SKIP_SPARE_SIZE_12		(2 << 14)
->> +#define   CFG_SKIP_SPARE_SIZE_16		(3 << 14)
->> +#define   CFG_TAG_BYTE_SIZE(x)			((x) & 0xff)
->> +
->> +#define TIMING_1				0x14
->> +#define   TIMING_TRP_RESP(x)			(((x) & 0xf) << 28)
->> +#define   TIMING_TWB(x)				(((x) & 0xf) << 24)
->> +#define   TIMING_TCR_TAR_TRR(x)			(((x) & 0xf) << 20)
->> +#define   TIMING_TWHR(x)			(((x) & 0xf) << 16)
->> +#define   TIMING_TCS(x)				(((x) & 0x3) << 14)
->> +#define   TIMING_TWH(x)				(((x) & 0x3) << 12)
->> +#define   TIMING_TWP(x)				(((x) & 0xf) <<  8)
->> +#define   TIMING_TRH(x)				(((x) & 0xf) <<  4)
->> +#define   TIMING_TRP(x)				(((x) & 0xf) <<  0)
->> +
->> +#define RESP					0x18
->> +
->> +#define TIMING_2				0x1c
->> +#define   TIMING_TADL(x)			((x) & 0xf)
->> +
->> +#define CMD_1					0x20
->> +#define CMD_2					0x24
->> +#define ADDR_1					0x28
->> +#define ADDR_2					0x2c
->> +
->> +#define DMA_CTRL				0x30
->> +#define   DMA_CTRL_GO				(1 << 31)
->> +#define   DMA_CTRL_IN				(0 << 30)
->> +#define   DMA_CTRL_OUT				(1 << 30)
->> +#define   DMA_CTRL_PERF_EN			(1 << 29)
->> +#define   DMA_CTRL_IE_DONE			(1 << 28)
->> +#define   DMA_CTRL_REUSE			(1 << 27)
->> +#define   DMA_CTRL_BURST_1			(2 << 24)
->> +#define   DMA_CTRL_BURST_4			(3 << 24)
->> +#define   DMA_CTRL_BURST_8			(4 << 24)
->> +#define   DMA_CTRL_BURST_16			(5 << 24)
->> +#define   DMA_CTRL_IS_DONE			(1 << 20)
->> +#define   DMA_CTRL_EN_A				(1 <<  2)
->> +#define   DMA_CTRL_EN_B				(1 <<  1)
->> +
->> +#define DMA_CFG_A				0x34
->> +#define DMA_CFG_B				0x38
->> +
->> +#define FIFO_CTRL				0x3c
->> +#define   FIFO_CTRL_CLR_ALL			(1 << 3)
->> +
->> +#define DATA_PTR				0x40
->> +#define TAG_PTR					0x44
->> +#define ECC_PTR					0x48
->> +
->> +#define DEC_STATUS				0x4c
->> +#define   DEC_STATUS_A_ECC_FAIL			(1 << 1)
->> +#define   DEC_STATUS_ERR_COUNT_MASK		0x00ff0000
->> +#define   DEC_STATUS_ERR_COUNT_SHIFT		16
->> +
->> +#define HWSTATUS_CMD				0x50
->> +#define HWSTATUS_MASK				0x54
->> +#define   HWSTATUS_RDSTATUS_MASK(x)		(((x) & 0xff) << 24)
->> +#define   HWSTATUS_RDSTATUS_VALUE(x)		(((x) & 0xff) << 16)
->> +#define   HWSTATUS_RBSY_MASK(x)			(((x) & 0xff) << 8)
->> +#define   HWSTATUS_RBSY_VALUE(x)		(((x) & 0xff) << 0)
->> +
->> +#define BCH_CONFIG				0xcc
->> +#define   BCH_ENABLE				(1 << 0)
->> +#define   BCH_TVAL_4				(0 << 4)
->> +#define   BCH_TVAL_8				(1 << 4)
->> +#define   BCH_TVAL_14				(2 << 4)
->> +#define   BCH_TVAL_16				(3 << 4)
->> +
->> +#define DEC_STAT_RESULT				0xd0
->> +#define DEC_STAT_BUF				0xd4
->> +#define   DEC_STAT_BUF_FAIL_SEC_FLAG_MASK	0xff000000
->> +#define   DEC_STAT_BUF_FAIL_SEC_FLAG_SHIFT	24
->> +#define   DEC_STAT_BUF_CORR_SEC_FLAG_MASK	0x00ff0000
->> +#define   DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT	16
->> +#define   DEC_STAT_BUF_MAX_CORR_CNT_MASK	0x00001f00
->> +#define   DEC_STAT_BUF_MAX_CORR_CNT_SHIFT	8
->> +
->> +#define SKIP_SPARE_BYTES	4
->> +#define BITS_PER_STEP_RS	18
->> +#define BITS_PER_STEP_BCH	13
->> +
->> +struct tegra_nand_controller {
->> +	struct nand_hw_control controller;
->> +	void __iomem *regs;
->> +	struct clk *clk;
->> +	struct device *dev;
->> +	struct completion command_complete;
->> +	struct completion dma_complete;
->> +	bool last_read_error;
->> +	int cur_chip;
->> +	struct nand_chip *chip;
->> +};
->> +
->> +struct tegra_nand_chip {
->> +	struct nand_chip chip;
->> +	struct gpio_desc *wp_gpio;
->> +};
->> +
->> +static inline struct tegra_nand_controller *to_tegra_ctrl(
->> +						struct nand_hw_control *hw_ctrl)
->> +{
->> +	return container_of(hw_ctrl, struct tegra_nand_controller, controller);
->> +}
->> +
->> +static int tegra_nand_ooblayout_rs_ecc(struct mtd_info *mtd, int section,
->> +				       struct mtd_oob_region *oobregion)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +	int bytes_per_step = (BITS_PER_STEP_RS * chip->ecc.strength) / 8;
->> +
->> +	if (section > 0)
->> +		return -ERANGE;
->> +
->> +	oobregion->offset = SKIP_SPARE_BYTES;
->> +	oobregion->length = round_up(bytes_per_step * chip->ecc.steps, 4);
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_ooblayout_rs_free(struct mtd_info *mtd, int section,
->> +					struct mtd_oob_region *oobregion)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_RS * chip->ecc.strength, 8);
->> +
->> +	if (section > 0)
->> +		return -ERANGE;
->> +
->> +	oobregion->offset = SKIP_SPARE_BYTES +
->> +			    round_up(bytes_per_step * chip->ecc.steps, 4);
->> +	oobregion->length = mtd->oobsize - oobregion->offset;
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct mtd_ooblayout_ops tegra_nand_oob_rs_ops = {
->> +	.ecc = tegra_nand_ooblayout_rs_ecc,
->> +	.free = tegra_nand_ooblayout_rs_free,
->> +};
->> +
->> +static int tegra_nand_ooblayout_bch_ecc(struct mtd_info *mtd, int section,
->> +				       struct mtd_oob_region *oobregion)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_BCH * chip->ecc.strength, 8);
->> +
->> +	if (section > 0)
->> +		return -ERANGE;
->> +
->> +	oobregion->offset = SKIP_SPARE_BYTES;
->> +	oobregion->length = round_up(bytes_per_step * chip->ecc.steps, 4);
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_ooblayout_bch_free(struct mtd_info *mtd, int section,
->> +					struct mtd_oob_region *oobregion)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +	int bytes_per_step = (BITS_PER_STEP_BCH * chip->ecc.strength) / 8;
->> +
->> +	if (section > 0)
->> +		return -ERANGE;
->> +
->> +	oobregion->offset = SKIP_SPARE_BYTES +
->> +			    round_up(bytes_per_step * chip->ecc.steps, 4);
->> +	oobregion->length = mtd->oobsize - oobregion->offset;
->> +
->> +	return 0;
->> +}
->> +
->> +/*
->> + * Layout with tag bytes is
->> + *
->> + * --------------------------------------------------------------------------
->> + * | main area                       | skip bytes | tag bytes | parity | .. |
->> + * --------------------------------------------------------------------------
->> + *
->> + * If not tag bytes are written, parity moves right after skip bytes!
->> + */
->> +static const struct mtd_ooblayout_ops tegra_nand_oob_bch_ops = {
->> +	.ecc = tegra_nand_ooblayout_bch_ecc,
->> +	.free = tegra_nand_ooblayout_bch_free,
->> +};
->> +
->> +static irqreturn_t tegra_nand_irq(int irq, void *data)
->> +{
->> +	struct tegra_nand_controller *ctrl = data;
->> +	u32 isr, dma;
->> +
->> +	isr = readl_relaxed(ctrl->regs + ISR);
->> +	dma = readl_relaxed(ctrl->regs + DMA_CTRL);
->> +	dev_dbg(ctrl->dev, "isr %08x\n", isr);
->> +
->> +	if (!isr && !(dma & DMA_CTRL_IS_DONE))
->> +		return IRQ_NONE;
->> +
->> +	if (isr & ISR_CORRFAIL_ERR)
->> +		ctrl->last_read_error = true;
->> +
->> +	if (isr & ISR_CMD_DONE)
->> +		complete(&ctrl->command_complete);
->> +
->> +	if (isr & ISR_UND)
->> +		dev_dbg(ctrl->dev, "FIFO underrun\n");
->> +
->> +	if (isr & ISR_OVR)
->> +		dev_dbg(ctrl->dev, "FIFO overrun\n");
->> +
->> +	/* handle DMA interrupts */
->> +	if (dma & DMA_CTRL_IS_DONE) {
->> +		writel(dma, ctrl->regs + DMA_CTRL);
->> +		complete(&ctrl->dma_complete);
->> +	}
->> +
->> +	/* clear interrupts */
->> +	writel(isr, ctrl->regs + ISR);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static int tegra_nand_cmd(struct nand_chip *chip,
->> +			 const struct nand_subop *subop)
->> +{
->> +	const struct nand_op_instr *instr;
->> +	const struct nand_op_instr *instr_data_in = NULL;
->> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> +	unsigned int op_id = -1, trfr_in_sz = 0, trfr_out_sz = 0, offset = 0;
->> +	bool first_cmd = true;
->> +	u32 cmd = 0;
->> +	u32 value;
->> +
->> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
->> +		unsigned int naddrs, i;
->> +		const u8 *addrs;
->> +		u32 addr1 = 0, addr2 = 0;
->> +
->> +		instr = &subop->instrs[op_id];
->> +
->> +		switch (instr->type) {
->> +		case NAND_OP_CMD_INSTR:
->> +			if (first_cmd) {
->> +				cmd |= CMD_CLE;
->> +				writel(instr->ctx.cmd.opcode, ctrl->regs + CMD_1);
->> +			} else {
->> +				cmd |= CMD_SEC_CMD;
->> +				writel(instr->ctx.cmd.opcode, ctrl->regs + CMD_2);
->> +			}
->> +			first_cmd = false;
->> +			break;
->> +		case NAND_OP_ADDR_INSTR:
->> +			offset = nand_subop_get_addr_start_off(subop, op_id);
->> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
->> +			addrs = &instr->ctx.addr.addrs[offset];
->> +
->> +			cmd |= CMD_ALE | CMD_ALE_SIZE(naddrs);
->> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
->> +				addr1 |= *addrs++ << (8 * i);
->> +			naddrs -= i;
->> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
->> +				addr2 |= *addrs++ << (8 * i);
->> +			writel(addr1, ctrl->regs + ADDR_1);
->> +			writel(addr2, ctrl->regs + ADDR_2);
->> +			break;
->> +
->> +		case NAND_OP_DATA_IN_INSTR:
->> +			trfr_in_sz = nand_subop_get_data_len(subop, op_id);
->> +			offset = nand_subop_get_data_start_off(subop, op_id);
->> +
->> +			cmd |= CMD_TRANS_SIZE(trfr_in_sz) | CMD_PIO | CMD_RX | CMD_A_VALID;
->> +
->> +			instr_data_in = instr;
->> +			break;
->> +
->> +		case NAND_OP_DATA_OUT_INSTR:
->> +			trfr_out_sz = nand_subop_get_data_len(subop, op_id);
->> +			offset = nand_subop_get_data_start_off(subop, op_id);
->> +			trfr_out_sz = min_t(size_t, trfr_out_sz, 4);
->> +
->> +			cmd |= CMD_TRANS_SIZE(trfr_out_sz) | CMD_PIO | CMD_TX | CMD_A_VALID;
->> +
->> +			memcpy(&value, instr->ctx.data.buf.out + offset, trfr_out_sz);
->> +			writel(value, ctrl->regs + RESP);
->> +
->> +			break;
->> +		case NAND_OP_WAITRDY_INSTR:
->> +			cmd |= CMD_RBSY_CHK;
->> +			break;
->> +
->> +		}
->> +	}
->> +
->> +
->> +	cmd |= CMD_GO | CMD_CE(ctrl->cur_chip);
->> +	writel(cmd, ctrl->regs + CMD);
->> +	wait_for_completion(&ctrl->command_complete);
-> 
-> Could this and other completions stuck forever? What about
-> wait_for_completion_timeout() + HW reset / re-init on timeout?
-> 
-
-They actually get stuck forever when I try to use DMA without HW ECC...
-I haven't seen it with HW ECC.
-
-But yes, _timeout variant makes sense here. Not sure if re-init is
-necessary since we rewrite all the relevant settings.
-
-
->> +
->> +	if (instr_data_in) {
->> +		u32 value;
->> +		size_t n = min_t(size_t, trfr_in_sz, 4);
->> +
->> +		value = readl(ctrl->regs + RESP);
->> +		memcpy(instr_data_in->ctx.data.buf.in + offset, &value, n);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct nand_op_parser tegra_nand_op_parser = NAND_OP_PARSER(
->> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
->> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
->> +		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
->> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
->> +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true)),
->> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
->> +		NAND_OP_PARSER_PAT_DATA_OUT_ELEM(false, 4)),
->> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
->> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
->> +		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
->> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
->> +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true),
->> +		NAND_OP_PARSER_PAT_DATA_IN_ELEM(true, 4)),
->> +	);
->> +
->> +static int tegra_nand_exec_op(struct nand_chip *chip,
->> +			     const struct nand_operation *op,
->> +			     bool check_only)
->> +{
->> +	return nand_op_parser_exec_op(chip, &tegra_nand_op_parser, op,
->> +				      check_only);
->> +}
->> +static void tegra_nand_select_chip(struct mtd_info *mtd, int chip_nr)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> +
->> +	ctrl->cur_chip = chip_nr;
->> +}
->> +
->> +static u32 tegra_nand_fill_address(struct tegra_nand_controller *ctrl,
->> +				   struct nand_chip *chip, int page)
->> +{
->> +	/* Lower 16-bits are column, always 0 */
->> +	writel(page << 16, ctrl->regs + ADDR_1);
->> +
->> +	if (chip->options & NAND_ROW_ADDR_3) {
->> +		writel(page >> 16, ctrl->regs + ADDR_2);
->> +		return 5;
->> +	}
->> +
->> +	return 4;
->> +}
->> +
->> +static void tegra_nand_hw_ecc(struct tegra_nand_controller *ctrl,
->> +			      struct nand_chip *chip, bool enable)
->> +{
->> +	u32 value;
->> +
->> +	switch (chip->ecc.algo) {
->> +	case NAND_ECC_RS:
->> +		value = readl(ctrl->regs + CFG);
->> +		if (enable)
->> +			value |= CFG_HW_ECC | CFG_ERR_COR;
->> +		else
->> +			value &= ~(CFG_HW_ECC | CFG_ERR_COR);
->> +		writel(value, ctrl->regs + CFG);
->> +		break;
->> +	case NAND_ECC_BCH:
->> +		value = readl(ctrl->regs + BCH_CONFIG);
->> +		if (enable)
->> +			value |= BCH_ENABLE;
->> +		else
->> +			value &= ~BCH_ENABLE;
->> +		writel(value, ctrl->regs + BCH_CONFIG);
->> +		break;
->> +	default:
->> +		dev_err(ctrl->dev, "Unsupported hardware ECC algorithm\n");
->> +		break;
->> +	}
->> +}
->> +
->> +static int tegra_nand_read_page(struct mtd_info *mtd, struct nand_chip *chip,
->> +				uint8_t *buf, int oob_required, int page)
->> +{
->> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> +	dma_addr_t dma_addr;
->> +	u32 value, addrs;
->> +	int ret, dma_len;
->> +
->> +	writel(NAND_CMD_READ0, ctrl->regs + CMD_1);
->> +	writel(NAND_CMD_READSTART, ctrl->regs + CMD_2);
->> +
->> +	addrs = tegra_nand_fill_address(ctrl, chip, page);
->> +
->> +	dma_len = mtd->writesize + (oob_required ? mtd->oobsize : 0);
->> +	dma_addr = dma_map_single(ctrl->dev, buf, dma_len, DMA_FROM_DEVICE);
->> +	ret = dma_mapping_error(ctrl->dev, dma_addr);
->> +	if (ret) {
->> +		dev_err(ctrl->dev, "dma mapping error\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	writel(mtd->writesize - 1, ctrl->regs + DMA_CFG_A);
->> +	writel(dma_addr, ctrl->regs + DATA_PTR);
->> +
->> +	if (oob_required) {
->> +		struct mtd_oob_region oobregion;
->> +		dma_addr_t dma_addr_oob = dma_addr + mtd->writesize;
->> +
->> +		mtd_ooblayout_free(mtd, 0, &oobregion);
->> +
->> +		writel(oobregion.length - 1, ctrl->regs + DMA_CFG_B);
->> +		writel(dma_addr_oob + oobregion.offset, ctrl->regs + TAG_PTR);
->> +	} else {
->> +		writel(0, ctrl->regs + DMA_CFG_B);
->> +		writel(0, ctrl->regs + TAG_PTR);
->> +	}
->> +
->> +	value = DMA_CTRL_GO | DMA_CTRL_IN | DMA_CTRL_PERF_EN |
->> +		DMA_CTRL_REUSE | DMA_CTRL_IE_DONE | DMA_CTRL_IS_DONE |
->> +		DMA_CTRL_BURST_16 | DMA_CTRL_EN_A;
->> +	if (oob_required)
->> +		value |= DMA_CTRL_EN_B;
->> +	writel(value, ctrl->regs + DMA_CTRL);
->> +
->> +	value = CMD_CLE | CMD_ALE | CMD_ALE_SIZE(addrs) | CMD_SEC_CMD |
->> +		CMD_RBSY_CHK | CMD_GO | CMD_RX | CMD_TRANS_SIZE(9) |
->> +		CMD_A_VALID | CMD_CE(ctrl->cur_chip);
->> +	if (oob_required)
->> +		value |= CMD_B_VALID;
->> +	writel(value, ctrl->regs + CMD);
->> +
->> +	wait_for_completion(&ctrl->command_complete);
->> +	wait_for_completion(&ctrl->dma_complete);
->> +
->> +	dma_unmap_single(ctrl->dev, dma_addr, dma_len, DMA_FROM_DEVICE);
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_read_page_hwecc(struct mtd_info *mtd,
->> +				      struct nand_chip *chip,
->> +				      uint8_t *buf, int oob_required, int page)
->> +{
->> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> +	u32 value;
->> +	int ret;
->> +
->> +	tegra_nand_hw_ecc(ctrl, chip, true);
->> +	ret = tegra_nand_read_page(mtd, chip, buf, oob_required, page);
->> +	tegra_nand_hw_ecc(ctrl, chip, false);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* If no correctable or un-correctable errors occured we can return 0 */
->> +	if (!ctrl->last_read_error)
->> +		return 0;
->> +
->> +	/*
->> +	 * Correctable or un-correctable errors did occure. NAND dec status
->> +	 * contains information for all ECC selections
->> +	 */
->> +	ctrl->last_read_error = false;
->> +	value = readl(ctrl->regs + DEC_STAT_BUF);
->> +
->> +	if (value & DEC_STAT_BUF_FAIL_SEC_FLAG_MASK) {
->> +		/*
->> +		 * The ECC isn't smart enough to figure out if a page is
->> +		 * completely erased and flags an error in this case. So we
->> +		 * check the read data here to figure out if it's a legitimate
->> +		 * error or a false positive.
->> +		 */
->> +		int i, ret;
->> +		int flips_threshold = chip->ecc.strength / 2;
->> +		int max_bitflips = 0;
->> +
->> +		for (i = 0; i < chip->ecc.steps; i++) {
->> +			u8 *data = buf + (chip->ecc.size * i);
->> +
->> +			ret = nand_check_erased_ecc_chunk(data, chip->ecc.size,
->> +							  NULL, 0,
->> +							  NULL, 0,
->> +							  flips_threshold);
->> +			if (ret < 0)
->> +				mtd->ecc_stats.failed++;
->> +			else
->> +				max_bitflips = max(ret, max_bitflips);
->> +		}
->> +
->> +		return max_bitflips;
->> +	} else {
->> +		int max_corr_cnt, corr_sec_flag;
->> +
->> +		corr_sec_flag = (value & DEC_STAT_BUF_CORR_SEC_FLAG_MASK) >>
->> +				DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT;
->> +		max_corr_cnt = (value & DEC_STAT_BUF_MAX_CORR_CNT_MASK) >>
->> +			       DEC_STAT_BUF_MAX_CORR_CNT_SHIFT;
->> +
->> +		/*
->> +		 * The value returned in the register is the maximum of
->> +		 * bitflips encountered in any of the ECC regions. As there is
->> +		 * no way to get the number of bitflips in a specific regions
->> +		 * we are not able to deliver correct stats but instead
->> +		 * overestimate the number of corrected bitflips by assuming
->> +		 * that all regions where errors have been corrected
->> +		 * encountered the maximum number of bitflips.
->> +		 */
->> +		mtd->ecc_stats.corrected += max_corr_cnt * hweight8(corr_sec_flag);
->> +
->> +		return max_corr_cnt;
->> +	}
->> +
->> +}
->> +
->> +static int tegra_nand_write_page(struct mtd_info *mtd, struct nand_chip *chip,
->> +				 const uint8_t *buf, int oob_required, int page)
->> +{
->> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> +	dma_addr_t dma_addr;
->> +	u32 value, addrs;
->> +	int ret, dma_len;
->> +
->> +	writel(NAND_CMD_SEQIN, ctrl->regs + CMD_1);
->> +	writel(NAND_CMD_PAGEPROG, ctrl->regs + CMD_2);
->> +
->> +	addrs = tegra_nand_fill_address(ctrl, chip, page);
->> +
->> +	dma_len = mtd->writesize + (oob_required ? mtd->oobsize : 0);
->> +	dma_addr = dma_map_single(ctrl->dev, (void *)buf, dma_len, DMA_TO_DEVICE);
->> +	ret = dma_mapping_error(ctrl->dev, dma_addr);
->> +	if (ret) {
->> +		dev_err(ctrl->dev, "dma mapping error\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	writel(mtd->writesize - 1, ctrl->regs + DMA_CFG_A);
->> +	writel(dma_addr, ctrl->regs + DATA_PTR);
->> +
->> +	if (oob_required) {
->> +		struct mtd_oob_region oobregion;
->> +		dma_addr_t dma_addr_oob = dma_addr + mtd->writesize;
->> +
->> +		mtd_ooblayout_free(mtd, 0, &oobregion);
->> +
->> +		writel(oobregion.length - 1, ctrl->regs + DMA_CFG_B);
->> +		writel(dma_addr_oob + oobregion.offset, ctrl->regs + TAG_PTR);
->> +	} else {
->> +		writel(0, ctrl->regs + DMA_CFG_B);
->> +		writel(0, ctrl->regs + TAG_PTR);
->> +	}
->> +
->> +	value = DMA_CTRL_GO | DMA_CTRL_OUT | DMA_CTRL_PERF_EN |
->> +		DMA_CTRL_IE_DONE | DMA_CTRL_IS_DONE |
->> +		DMA_CTRL_BURST_16 | DMA_CTRL_EN_A;
->> +	if (oob_required)
->> +		value |= DMA_CTRL_EN_B;
->> +	writel(value, ctrl->regs + DMA_CTRL);
->> +
->> +	value = CMD_CLE | CMD_ALE | CMD_ALE_SIZE(addrs) | CMD_SEC_CMD |
->> +		CMD_AFT_DAT | CMD_RBSY_CHK | CMD_GO | CMD_TX | CMD_A_VALID |
->> +		CMD_TRANS_SIZE(9) | CMD_CE(ctrl->cur_chip);
->> +	if (oob_required)
->> +		value |= CMD_B_VALID;
->> +	writel(value, ctrl->regs + CMD);
->> +
->> +	wait_for_completion(&ctrl->command_complete);
->> +	wait_for_completion(&ctrl->dma_complete);
->> +
->> +
->> +	dma_unmap_single(ctrl->dev, dma_addr, dma_len, DMA_TO_DEVICE);
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_write_page_hwecc(struct mtd_info *mtd,
->> +				       struct nand_chip *chip,
->> +				       const uint8_t *buf, int oob_required,
->> +				       int page)
->> +{
->> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> +	int ret;
->> +
->> +	tegra_nand_hw_ecc(ctrl, chip, true);
->> +	ret = tegra_nand_write_page(mtd, chip, buf, oob_required, page);
->> +	tegra_nand_hw_ecc(ctrl, chip, false);
->> +
->> +	return ret;
->> +}
->> +
->> +static void tegra_nand_setup_timing(struct tegra_nand_controller *ctrl,
->> +				    const struct nand_sdr_timings *timings)
->> +{
->> +	/*
->> +	 * The period (and all other timings in this function) is in ps,
->> +	 * so need to take care here to avoid integer overflows.
->> +	 */
->> +	unsigned int rate = clk_get_rate(ctrl->clk) / 1000000;
->> +	unsigned int period = DIV_ROUND_UP(1000000, rate);
->> +	u32 val, reg = 0;
->> +
->> +	val = DIV_ROUND_UP(max3(timings->tAR_min, timings->tRR_min,
->> +				timings->tRC_min), period);
->> +	if (val > 2)
->> +		val -= 3;
->> +	reg |= TIMING_TCR_TAR_TRR(val);
->> +
->> +	val = DIV_ROUND_UP(max(max(timings->tCS_min, timings->tCH_min),
->> +				   max(timings->tALS_min, timings->tALH_min)),
->> +			   period);
->> +	if (val > 1)
->> +		val -= 2;
->> +	reg |= TIMING_TCS(val);
->> +
->> +	val = DIV_ROUND_UP(max(timings->tRP_min, timings->tREA_max) + 6000,
->> +			   period);
->> +	reg |= TIMING_TRP(val) | TIMING_TRP_RESP(val);
->> +
->> +	reg |= TIMING_TWB(DIV_ROUND_UP(timings->tWB_max, period));
->> +	reg |= TIMING_TWHR(DIV_ROUND_UP(timings->tWHR_min, period));
->> +	reg |= TIMING_TWH(DIV_ROUND_UP(timings->tWH_min, period));
->> +	reg |= TIMING_TWP(DIV_ROUND_UP(timings->tWP_min, period));
->> +	reg |= TIMING_TRH(DIV_ROUND_UP(timings->tRHW_min, period));
->> +
->> +	writel(reg, ctrl->regs + TIMING_1);
->> +
->> +	val = DIV_ROUND_UP(timings->tADL_min, period);
->> +	if (val > 2)
->> +		val -= 3;
->> +	reg = TIMING_TADL(val);
->> +
->> +	writel(reg, ctrl->regs + TIMING_2);
->> +}
->> +
->> +static int tegra_nand_setup_data_interface(struct mtd_info *mtd, int csline,
->> +					   const struct nand_data_interface *conf)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> +	const struct nand_sdr_timings *timings;
->> +
->> +	timings = nand_get_sdr_timings(conf);
->> +	if (IS_ERR(timings))
->> +		return PTR_ERR(timings);
->> +
->> +	if (csline == NAND_DATA_IFACE_CHECK_ONLY)
->> +		return 0;
->> +
->> +	tegra_nand_setup_timing(ctrl, timings);
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_chips_init(struct device *dev,
->> +				 struct tegra_nand_controller *ctrl)
->> +{
->> +	struct device_node *np = dev->of_node;
->> +	struct device_node *np_nand;
->> +	int nchips = of_get_child_count(np);
->> +	struct tegra_nand_chip *nand;
->> +	struct mtd_info *mtd;
->> +	struct nand_chip *chip;
->> +	unsigned long config, bch_config = 0;
->> +	int bits_per_step;
->> +	int err;
->> +
->> +	if (nchips != 1) {
->> +		dev_err(dev, "currently only one NAND chip supported\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	np_nand = of_get_next_child(np, NULL);
->> +
->> +	nand = devm_kzalloc(dev, sizeof(*nand), GFP_KERNEL);
->> +	if (!nand) {
->> +		dev_err(dev, "could not allocate chip structure\n");
->> +		return -ENOMEM;
->> +	}
->> +
->> +	nand->wp_gpio = devm_gpiod_get_optional(dev, "wp", GPIOD_OUT_LOW);
->> +
->> +	if (IS_ERR(nand->wp_gpio)) {
->> +		err = PTR_ERR(nand->wp_gpio);
->> +		dev_err(dev, "failed to request WP GPIO: %d\n", err);
->> +		return err;
->> +	}
->> +
->> +	chip = &nand->chip;
->> +	chip->controller = &ctrl->controller;
->> +	ctrl->chip = chip;
->> +
->> +	mtd = nand_to_mtd(chip);
->> +
->> +	mtd->dev.parent = dev;
->> +	mtd->name = "tegra_nand";
->> +	mtd->owner = THIS_MODULE;
->> +
->> +	nand_set_flash_node(chip, np_nand);
->> +
->> +	chip->options = NAND_NO_SUBPAGE_WRITE | NAND_USE_BOUNCE_BUFFER;
->> +	chip->exec_op = tegra_nand_exec_op;
->> +	chip->select_chip = tegra_nand_select_chip;
->> +	chip->setup_data_interface = tegra_nand_setup_data_interface;
->> +
->> +	err = nand_scan_ident(mtd, 1, NULL);
->> +	if (err)
->> +		return err;
->> +
->> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
->> +		chip->bbt_options |= NAND_BBT_NO_OOB;
->> +
->> +	chip->ecc.mode = NAND_ECC_HW;
->> +	if (!chip->ecc.size)
->> +		chip->ecc.size = 512;
->> +	if (chip->ecc.size != 512)
->> +		return -EINVAL;
->> +
->> +	chip->ecc.read_page = tegra_nand_read_page_hwecc;
->> +	chip->ecc.write_page = tegra_nand_write_page_hwecc;
->> +	/* Not functional for unknown reason...
->> +	chip->ecc.read_page_raw = tegra_nand_read_page;
->> +	chip->ecc.write_page_raw = tegra_nand_write_page;
->> +	*/
->> +	config = readl(ctrl->regs + CFG);
->> +	config |= CFG_PIPE_EN | CFG_SKIP_SPARE | CFG_SKIP_SPARE_SIZE_4;
->> +
->> +	if (chip->options & NAND_BUSWIDTH_16)
->> +		config |= CFG_BUS_WIDTH_16;
->> +
->> +	switch (chip->ecc.algo) {
->> +	case NAND_ECC_RS:
->> +		bits_per_step = BITS_PER_STEP_RS * chip->ecc.strength;
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_rs_ops);
->> +		switch (chip->ecc.strength) {
->> +		case 4:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_4;
->> +			break;
->> +		case 6:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_6;
->> +			break;
->> +		case 8:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_8;
->> +			break;
->> +		default:
->> +			dev_err(dev, "ECC strength %d not supported\n",
->> +				chip->ecc.strength);
->> +			return -EINVAL;
->> +		}
->> +		break;
->> +	case NAND_ECC_BCH:
->> +		bits_per_step = BITS_PER_STEP_BCH * chip->ecc.strength;
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_bch_ops);
->> +		switch (chip->ecc.strength) {
->> +		case 4:
->> +			bch_config = BCH_TVAL_4;
->> +			break;
->> +		case 8:
->> +			bch_config = BCH_TVAL_8;
->> +			break;
->> +		case 14:
->> +			bch_config = BCH_TVAL_14;
->> +			break;
->> +		case 16:
->> +			bch_config = BCH_TVAL_16;
->> +			break;
->> +		default:
->> +			dev_err(dev, "ECC strength %d not supported\n",
->> +				chip->ecc.strength);
->> +			return -EINVAL;
->> +		}
->> +		break;
->> +	default:
->> +		dev_err(dev, "ECC algorithm not supported\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	chip->ecc.bytes = DIV_ROUND_UP(bits_per_step, 8);
->> +
->> +	switch (mtd->writesize) {
->> +	case 256:
->> +		config |= CFG_PS_256;
->> +		break;
->> +	case 512:
->> +		config |= CFG_PS_512;
->> +		break;
->> +	case 1024:
->> +		config |= CFG_PS_1024;
->> +		break;
->> +	case 2048:
->> +		config |= CFG_PS_2048;
->> +		break;
->> +	case 4096:
->> +		config |= CFG_PS_4096;
->> +		break;
->> +	default:
->> +		dev_err(dev, "unhandled writesize %d\n", mtd->writesize);
->> +		return -ENODEV;
->> +	}
->> +
->> +	writel(config, ctrl->regs + CFG);
->> +	writel(bch_config, ctrl->regs + BCH_CONFIG);
->> +
->> +	err = nand_scan_tail(mtd);
->> +	if (err)
->> +		return err;
->> +
->> +	config |= CFG_TAG_BYTE_SIZE(mtd_ooblayout_count_freebytes(mtd) - 1);
->> +	writel(config, ctrl->regs + CFG);
->> +
->> +	err = mtd_device_register(mtd, NULL, 0);
->> +	if (err)
->> +		return err;
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_probe(struct platform_device *pdev)
->> +{
->> +	struct reset_control *rst;
->> +	struct tegra_nand_controller *ctrl;
->> +	struct resource *res;
->> +	unsigned long value;
->> +	int irq, err = 0;
->> +
->> +	ctrl = devm_kzalloc(&pdev->dev, sizeof(*ctrl), GFP_KERNEL);
->> +	if (!ctrl)
->> +		return -ENOMEM;
->> +
->> +	ctrl->dev = &pdev->dev;
->> +	nand_hw_control_init(&ctrl->controller);
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	ctrl->regs = devm_ioremap_resource(&pdev->dev, res);
->> +	if (IS_ERR(ctrl->regs))
->> +		return PTR_ERR(ctrl->regs);
->> +
->> +	rst = devm_reset_control_get(&pdev->dev, "nand");
->> +	if (IS_ERR(rst))
->> +		return PTR_ERR(rst);
->> +
->> +	ctrl->clk = devm_clk_get(&pdev->dev, "nand");
->> +	if (IS_ERR(ctrl->clk))
->> +		return PTR_ERR(ctrl->clk);
->> +
->> +	err = clk_prepare_enable(ctrl->clk);
->> +	if (err)
->> +		return err;
->> +
->> +	reset_control_reset(rst);
-> 
-> Technically reset_control_reset() could fail, so this should be:
-> 
-> 	err = reset_control_reset(rst);
-> 	if (err)
-> 		goto err_disable_clk;
-> 
-
-Ok.
-
---
-Stefan
-
->> +
->> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
->> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
->> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
->> +	writel(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
->> +	writel(value, ctrl->regs + HWSTATUS_MASK);
->> +
->> +	init_completion(&ctrl->command_complete);
->> +	init_completion(&ctrl->dma_complete);
->> +
->> +	/* clear interrupts */
->> +	value = readl(ctrl->regs + ISR);
->> +	writel(value, ctrl->regs + ISR);
->> +
->> +	irq = platform_get_irq(pdev, 0);
->> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
->> +			       dev_name(&pdev->dev), ctrl);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	writel(DMA_CTRL_IS_DONE, ctrl->regs + DMA_CTRL);
->> +
->> +	/* enable interrupts */
->> +	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
->> +	writel(value, ctrl->regs + IER);
->> +
->> +	/* reset config */
->> +	writel(0, ctrl->regs + CFG);
->> +
->> +	err = tegra_nand_chips_init(ctrl->dev, ctrl);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	platform_set_drvdata(pdev, ctrl);
->> +
->> +	return 0;
->> +
->> +err_disable_clk:
->> +	clk_disable_unprepare(ctrl->clk);
->> +	return err;
->> +}
->> +
->> +static int tegra_nand_remove(struct platform_device *pdev)
->> +{
->> +	struct tegra_nand_controller *ctrl = platform_get_drvdata(pdev);
->> +
->> +	nand_release(nand_to_mtd(ctrl->chip));
->> +
->> +	clk_disable_unprepare(ctrl->clk);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct of_device_id tegra_nand_of_match[] = {
->> +	{ .compatible = "nvidia,tegra20-nand" },
->> +	{ /* sentinel */ }
->> +};
->> +
->> +static struct platform_driver tegra_nand_driver = {
->> +	.driver = {
->> +		.name = "tegra-nand",
->> +		.of_match_table = tegra_nand_of_match,
->> +	},
->> +	.probe = tegra_nand_probe,
->> +	.remove = tegra_nand_remove,
->> +};
->> +module_platform_driver(tegra_nand_driver);
->> +
->> +MODULE_DESCRIPTION("NVIDIA Tegra NAND driver");
->> +MODULE_AUTHOR("Thierry Reding <thierry.reding@nvidia.com>");
->> +MODULE_AUTHOR("Lucas Stach <dev@lynxeye.de>");
->> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
->> +MODULE_LICENSE("GPL v2");
->> +MODULE_DEVICE_TABLE(of, tegra_nand_of_match);
->>
+T24gU2F0LCBNYXkgMjYsIDIwMTggYXQgMDY6NTY6MjJQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtv
+IHdyb3RlOgo+IENvbG9yIGtleWluZyBpcyB0aGUgYWN0aW9uIG9mIHJlcGxhY2luZyBwaXhlbHMg
+bWF0Y2hpbmcgYSBnaXZlbiBjb2xvcgo+IChvciByYW5nZSBvZiBjb2xvcnMpIHdpdGggdHJhbnNw
+YXJlbnQgcGl4ZWxzIGluIGFuIG92ZXJsYXkgd2hlbgo+IHBlcmZvcm1pbmcgYmxpdHRpbmcuIERl
+cGVuZGluZyBvbiB0aGUgaGFyZHdhcmUgY2FwYWJpbGl0aWVzLCB0aGUKPiBtYXRjaGluZyBwaXhl
+bCBjYW4gZWl0aGVyIGJlY29tZSBmdWxseSB0cmFuc3BhcmVudCBvciBnYWluIGFkanVzdG1lbnQK
+PiBvZiB0aGUgcGl4ZWxzIGNvbXBvbmVudCB2YWx1ZXMuCj4gCj4gQ29sb3Iga2V5aW5nIGlzIGZv
+dW5kIGluIGEgbGFyZ2UgbnVtYmVyIG9mIGRldmljZXMgd2hvc2UgY2FwYWJpbGl0aWVzCj4gb2Z0
+ZW4gZGlmZmVyLCBidXQgdGhleSBzdGlsbCBoYXZlIGVub3VnaCBjb21tb24gZmVhdHVyZXMgaW4g
+cmFuZ2UgdG8KPiBzdGFuZGFyZGl6ZSBjb2xvciBrZXkgcHJvcGVydGllcy4gVGhpcyBjb21taXQg
+YWRkcyBuaW5lIGdlbmVyaWMgRFJNIHBsYW5lCj4gcHJvcGVydGllcyByZWxhdGVkIHRvIHRoZSBj
+b2xvciBrZXlpbmcgdG8gY292ZXIgdmFyaW91cyBIVyBjYXBhYmlsaXRpZXMuCj4gCj4gVGhpcyBw
+YXRjaCBpcyBiYXNlZCBvbiB0aGUgaW5pdGlhbCB3b3JrIGRvbmUgYnkgTGF1cmVudCBQaW5jaGFy
+dCwgbW9zdCBvZgo+IGNyZWRpdHMgZm9yIHRoaXMgcGF0Y2ggZ29lcyB0byBoaW0uCj4gCj4gU2ln
+bmVkLW9mZi1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgo+IC0tLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jIHwgIDM2ICsrKysrKwo+ICBkcml2ZXJzL2dwdS9k
+cm0vZHJtX2JsZW5kLmMgIHwgMjI5ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+Cj4gIGluY2x1ZGUvZHJtL2RybV9ibGVuZC5oICAgICAgfCAgIDMgKwo+ICBpbmNsdWRlL2RybS9k
+cm1fcGxhbmUuaCAgICAgIHwgIDc3ICsrKysrKysrKysrKwo+ICA0IGZpbGVzIGNoYW5nZWQsIDM0
+NSBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRv
+bWljLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jCj4gaW5kZXggODk1NzQxZTljZDdk
+Li41YjgwOGNiNjg2NTQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMu
+Ywo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljLmMKPiBAQCAtNzk5LDYgKzc5OSwy
+NCBAQCBzdGF0aWMgaW50IGRybV9hdG9taWNfcGxhbmVfc2V0X3Byb3BlcnR5KHN0cnVjdCBkcm1f
+cGxhbmUgKnBsYW5lLAo+ICAJCXN0YXRlLT5yb3RhdGlvbiA9IHZhbDsKPiAgCX0gZWxzZSBpZiAo
+cHJvcGVydHkgPT0gcGxhbmUtPnpwb3NfcHJvcGVydHkpIHsKPiAgCQlzdGF0ZS0+enBvcyA9IHZh
+bDsKPiArCX0gZWxzZSBpZiAocHJvcGVydHkgPT0gcGxhbmUtPmNvbG9ya2V5Lm1vZGVfcHJvcGVy
+dHkpIHsKPiArCQlzdGF0ZS0+Y29sb3JrZXkubW9kZSA9IHZhbDsKPiArCX0gZWxzZSBpZiAocHJv
+cGVydHkgPT0gcGxhbmUtPmNvbG9ya2V5Lm1pbl9wcm9wZXJ0eSkgewo+ICsJCXN0YXRlLT5jb2xv
+cmtleS5taW4gPSB2YWw7Cj4gKwl9IGVsc2UgaWYgKHByb3BlcnR5ID09IHBsYW5lLT5jb2xvcmtl
+eS5tYXhfcHJvcGVydHkpIHsKPiArCQlzdGF0ZS0+Y29sb3JrZXkubWF4ID0gdmFsOwo+ICsJfSBl
+bHNlIGlmIChwcm9wZXJ0eSA9PSBwbGFuZS0+Y29sb3JrZXkuZm9ybWF0X3Byb3BlcnR5KSB7Cj4g
+KwkJc3RhdGUtPmNvbG9ya2V5LmZvcm1hdCA9IHZhbDsKPiArCX0gZWxzZSBpZiAocHJvcGVydHkg
+PT0gcGxhbmUtPmNvbG9ya2V5Lm1hc2tfcHJvcGVydHkpIHsKPiArCQlzdGF0ZS0+Y29sb3JrZXku
+bWFzayA9IHZhbDsKPiArCX0gZWxzZSBpZiAocHJvcGVydHkgPT0gcGxhbmUtPmNvbG9ya2V5Lmlu
+dmVydGVkX21hdGNoX3Byb3BlcnR5KSB7Cj4gKwkJc3RhdGUtPmNvbG9ya2V5LmludmVydGVkX21h
+dGNoID0gdmFsOwo+ICsJfSBlbHNlIGlmIChwcm9wZXJ0eSA9PSBwbGFuZS0+Y29sb3JrZXkucmVw
+bGFjZW1lbnRfbWFza19wcm9wZXJ0eSkgewo+ICsJCXN0YXRlLT5jb2xvcmtleS5yZXBsYWNlbWVu
+dF9tYXNrID0gdmFsOwo+ICsJfSBlbHNlIGlmIChwcm9wZXJ0eSA9PSBwbGFuZS0+Y29sb3JrZXku
+cmVwbGFjZW1lbnRfdmFsdWVfcHJvcGVydHkpIHsKPiArCQlzdGF0ZS0+Y29sb3JrZXkucmVwbGFj
+ZW1lbnRfdmFsdWUgPSB2YWw7Cj4gKwl9IGVsc2UgaWYgKHByb3BlcnR5ID09IHBsYW5lLT5jb2xv
+cmtleS5yZXBsYWNlbWVudF9mb3JtYXRfcHJvcGVydHkpIHsKPiArCQlzdGF0ZS0+Y29sb3JrZXku
+cmVwbGFjZW1lbnRfZm9ybWF0ID0gdmFsOwo+ICAJfSBlbHNlIGlmIChwcm9wZXJ0eSA9PSBwbGFu
+ZS0+Y29sb3JfZW5jb2RpbmdfcHJvcGVydHkpIHsKPiAgCQlzdGF0ZS0+Y29sb3JfZW5jb2Rpbmcg
+PSB2YWw7Cj4gIAl9IGVsc2UgaWYgKHByb3BlcnR5ID09IHBsYW5lLT5jb2xvcl9yYW5nZV9wcm9w
+ZXJ0eSkgewo+IEBAIC04NjQsNiArODgyLDI0IEBAIGRybV9hdG9taWNfcGxhbmVfZ2V0X3Byb3Bl
+cnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+ICAJCSp2YWwgPSBzdGF0ZS0+cm90YXRpb247
+Cj4gIAl9IGVsc2UgaWYgKHByb3BlcnR5ID09IHBsYW5lLT56cG9zX3Byb3BlcnR5KSB7Cj4gIAkJ
+KnZhbCA9IHN0YXRlLT56cG9zOwo+ICsJfSBlbHNlIGlmIChwcm9wZXJ0eSA9PSBwbGFuZS0+Y29s
+b3JrZXkubW9kZV9wcm9wZXJ0eSkgewo+ICsJCSp2YWwgPSBzdGF0ZS0+Y29sb3JrZXkubW9kZTsK
+PiArCX0gZWxzZSBpZiAocHJvcGVydHkgPT0gcGxhbmUtPmNvbG9ya2V5Lm1pbl9wcm9wZXJ0eSkg
+ewo+ICsJCSp2YWwgPSBzdGF0ZS0+Y29sb3JrZXkubWluOwo+ICsJfSBlbHNlIGlmIChwcm9wZXJ0
+eSA9PSBwbGFuZS0+Y29sb3JrZXkubWF4X3Byb3BlcnR5KSB7Cj4gKwkJKnZhbCA9IHN0YXRlLT5j
+b2xvcmtleS5tYXg7Cj4gKwl9IGVsc2UgaWYgKHByb3BlcnR5ID09IHBsYW5lLT5jb2xvcmtleS5m
+b3JtYXRfcHJvcGVydHkpIHsKPiArCQkqdmFsID0gc3RhdGUtPmNvbG9ya2V5LmZvcm1hdDsKPiAr
+CX0gZWxzZSBpZiAocHJvcGVydHkgPT0gcGxhbmUtPmNvbG9ya2V5Lm1hc2tfcHJvcGVydHkpIHsK
+PiArCQkqdmFsID0gc3RhdGUtPmNvbG9ya2V5Lm1hc2s7Cj4gKwl9IGVsc2UgaWYgKHByb3BlcnR5
+ID09IHBsYW5lLT5jb2xvcmtleS5pbnZlcnRlZF9tYXRjaF9wcm9wZXJ0eSkgewo+ICsJCSp2YWwg
+PSBzdGF0ZS0+Y29sb3JrZXkuaW52ZXJ0ZWRfbWF0Y2g7Cj4gKwl9IGVsc2UgaWYgKHByb3BlcnR5
+ID09IHBsYW5lLT5jb2xvcmtleS5yZXBsYWNlbWVudF9tYXNrX3Byb3BlcnR5KSB7Cj4gKwkJKnZh
+bCA9IHN0YXRlLT5jb2xvcmtleS5yZXBsYWNlbWVudF9tYXNrOwo+ICsJfSBlbHNlIGlmIChwcm9w
+ZXJ0eSA9PSBwbGFuZS0+Y29sb3JrZXkucmVwbGFjZW1lbnRfdmFsdWVfcHJvcGVydHkpIHsKPiAr
+CQkqdmFsID0gc3RhdGUtPmNvbG9ya2V5LnJlcGxhY2VtZW50X3ZhbHVlOwo+ICsJfSBlbHNlIGlm
+IChwcm9wZXJ0eSA9PSBwbGFuZS0+Y29sb3JrZXkucmVwbGFjZW1lbnRfZm9ybWF0X3Byb3BlcnR5
+KSB7Cj4gKwkJKnZhbCA9IHN0YXRlLT5jb2xvcmtleS5yZXBsYWNlbWVudF9mb3JtYXQ7Cj4gIAl9
+IGVsc2UgaWYgKHByb3BlcnR5ID09IHBsYW5lLT5jb2xvcl9lbmNvZGluZ19wcm9wZXJ0eSkgewo+
+ICAJCSp2YWwgPSBzdGF0ZS0+Y29sb3JfZW5jb2Rpbmc7Cj4gIAl9IGVsc2UgaWYgKHByb3BlcnR5
+ID09IHBsYW5lLT5jb2xvcl9yYW5nZV9wcm9wZXJ0eSkgewo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2dwdS9kcm0vZHJtX2JsZW5kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMKPiBpbmRl
+eCBhMTZhNzRkN2UxNWUuLjA1ZTU2MzJjZTM3NSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZHJtX2JsZW5kLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMKPiBAQCAt
+MTA3LDYgKzEwNywxMSBAQAo+ICAgKglwbGFuZXMuIFdpdGhvdXQgdGhpcyBwcm9wZXJ0eSB0aGUg
+cHJpbWFyeSBwbGFuZSBpcyBhbHdheXMgYmVsb3cgdGhlIGN1cnNvcgo+ICAgKglwbGFuZSwgYW5k
+IG9yZGVyaW5nIGJldHdlZW4gYWxsIG90aGVyIHBsYW5lcyBpcyB1bmRlZmluZWQuCj4gICAqCj4g
+KyAqIGNvbG9ya2V5Ogo+ICsgKglDb2xvciBrZXlpbmcgaXMgc2V0IHVwIHdpdGggZHJtX3BsYW5l
+X2NyZWF0ZV9jb2xvcmtleV9wcm9wZXJ0aWVzKCkuCj4gKyAqCUl0IGFkZHMgc3VwcG9ydCBmb3Ig
+cmVwbGFjaW5nIGEgcmFuZ2Ugb2YgY29sb3JzIHdpdGggYSB0cmFuc3BhcmVudAo+ICsgKgljb2xv
+ciBpbiB0aGUgcGxhbmUuCj4gKyAqCj4gICAqIE5vdGUgdGhhdCBhbGwgdGhlIHByb3BlcnR5IGV4
+dGVuc2lvbnMgZGVzY3JpYmVkIGhlcmUgYXBwbHkgZWl0aGVyIHRvIHRoZQo+ICAgKiBwbGFuZSBv
+ciB0aGUgQ1JUQyAoZS5nLiBmb3IgdGhlIGJhY2tncm91bmQgY29sb3IsIHdoaWNoIGN1cnJlbnRs
+eSBpcyBub3QKPiAgICogZXhwb3NlZCBhbmQgYXNzdW1lZCB0byBiZSBibGFjaykuCj4gQEAgLTQ0
+OCwzICs0NTMsMjI3IEBAIGludCBkcm1fYXRvbWljX25vcm1hbGl6ZV96cG9zKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkZXYsCj4gIAlyZXR1cm4gMDsKPiAgfQo+ICBFWFBPUlRfU1lNQk9MKGRybV9hdG9t
+aWNfbm9ybWFsaXplX3pwb3MpOwo+ICsKPiArc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBwbGFu
+ZV9jb2xvcmtleV9tb2RlX25hbWVbXSA9IHsKPiArCVtEUk1fUExBTkVfQ09MT1JLRVlfTU9ERV9E
+SVNBQkxFRF0gPSAiZGlzYWJsZWQiLAo+ICsJW0RSTV9QTEFORV9DT0xPUktFWV9NT0RFX1NSQ10g
+PSAic3JjLW1hdGNoLXNyYy1yZXBsYWNlIiwKPiArCVtEUk1fUExBTkVfQ09MT1JLRVlfTU9ERV9E
+U1RdID0gImRzdC1tYXRjaC1zcmMtcmVwbGFjZSIsCgpUaGlzIGxpc3Qgc2VlbXMgd2F5IG1vcmUg
+bGltaXRlZCB0aGFuIEkgd2FzIGV4cGVjdGluZywgYXQgbGVhc3Qgd2hlbgpjb21wYXJlZCB0byBh
+bGwgdGhlIGRpZmZlcmVudCBwcm9wcyB5b3UncmUgcHJvcG9zaW5nIHRvIGFkZC4KCj4gK307Cj4g
+Kwo+ICsvKioKPiArICogZHJtX3BsYW5lX2NyZWF0ZV9jb2xvcmtleV9wcm9wZXJ0aWVzIC0gY3Jl
+YXRlIGNvbG9ya2V5IHByb3BlcnRpZXMKPiArICogQHBsYW5lOiBkcm0gcGxhbmUKPiArICogQHN1
+cHBvcnRlZF9tb2RlczogYml0bWFzayBvZiBzdXBwb3J0ZWQgY29sb3Iga2V5aW5nIG1vZGVzCj4g
+KyAqCj4gKyAqIFRoaXMgZnVuY3Rpb24gY3JlYXRlcyB0aGUgZ2VuZXJpYyBjb2xvciBrZXlpbmcg
+cHJvcGVydGllcyBhbmQgYXR0YWNoIHRoZW0gdG8KPiArICogdGhlIHBsYW5lIHRvIGVuYWJsZSBj
+b2xvciBrZXlpbmcgY29udHJvbCBmb3IgYmxlbmRpbmcgb3BlcmF0aW9ucy4KPiArICoKPiArICog
+Q29sb3Iga2V5aW5nIGlzIGNvbnRyb2xsZWQgdGhyb3VnaCBuaW5lIHByb3BlcnRpZXM6Cj4gKyAq
+Cj4gKyAqIGNvbG9ya2V5Lm1vZGU6Cj4gKyAqCVRoZSBtb2RlIGlzIGFuIGVudW1lcmF0ZWQgcHJv
+cGVydHkgdGhhdCBjb250cm9scyBob3cgY29sb3Iga2V5aW5nCj4gKyAqCW9wZXJhdGVzLiBUaGUg
+ImRpc2FibGVkIiBtb2RlIHRoYXQgZGlzYWJsZXMgY29sb3Iga2V5aW5nIGFuZCBpcwo+ICsgKgl2
+ZXJ5IGxpa2VseSB0byBleGlzdCBpZiBjb2xvciBrZXlpbmcgaXMgc3VwcG9ydGVkLCBpdCBzaG91
+bGQgYmUgdGhlCj4gKyAqCWRlZmF1bHQgbW9kZS4KPiArICoKPiArICogY29sb3JrZXkubWluLCBj
+b2xvcmtleS5tYXg6Cj4gKyAqCVRoZXNlIHR3byBwcm9wZXJ0aWVzIHNwZWNpZnkgdGhlIGNvbG9y
+cyB0aGF0IGFyZSB0cmVhdGVkIGFzIHRoZSBjb2xvcgo+ICsgKglrZXkuIFBpeGVsIHdob3NlIHZh
+bHVlIGlzIGluIHRoZSBbbWluLCBtYXhdIHJhbmdlIGlzIHRoZSBjb2xvciBrZXkKPiArICoJbWF0
+Y2hpbmcgcGl4ZWwuIFRoZSBtaW5pbXVtIGFuZCBtYXhpbXVtIHZhbHVlcyBhcmUgZXhwcmVzc2Vk
+IGFzIGEKPiArICoJNjQtYml0IGludGVnZXIgaW4gQVhZWjE2MTYxNjE2IGZvcm1hdCwgd2hlcmUg
+QSBpcyB0aGUgYWxwaGEgdmFsdWUgYW5kCj4gKyAqCVgsIFkgYW5kIFogY29ycmVzcG9uZCB0byB0
+aGUgY29sb3IgY29tcG9uZW50cyBvZiB0aGUgY29sb3JrZXkuZm9ybWF0Lgo+ICsgKglJbiBtb3N0
+IGNhc2VzIFhZWiB3aWxsIGJlIGVpdGhlciBSR0Igb3IgWVVWLgo+ICsgKgo+ICsgKglXaGVuIGEg
+c2luZ2xlIGNvbG9yIGtleSBpcyBkZXNpcmVkIGluc3RlYWQgb2YgYSByYW5nZSwgdXNlcnNwYWNl
+IHNoYWxsCj4gKyAqCXNldCB0aGUgbWluIGFuZCBtYXggcHJvcGVydGllcyB0byB0aGUgc2FtZSB2
+YWx1ZS4KPiArICoKPiArICoJRHJpdmVycyByZXR1cm4gYW4gZXJyb3IgZnJvbSB0aGVpciBwbGFu
+ZSBhdG9taWMgY2hlY2sgaWYgcmFuZ2UgY2FuJ3QgYmUKPiArICoJaGFuZGxlZC4KPiArICoKPiAr
+ICogY29sb3JrZXkuZm9ybWF0Ogo+ICsgKglUaGlzIHByb3BlcnR5IHNwZWNpZmllcyB0aGUgcGl4
+ZWwgZm9ybWF0IGZvciB0aGUgY29sb3JrZXkubWluIC8gbWF4Cj4gKyAqCXByb3BlcnRpZXMuIFRo
+ZSBmb3JtYXQgaXMgZ2l2ZW4gaW4gYSBmb3JtIG9mIERSTSBmb3VyY2MgY29kZS4KClVtbS4gV2h5
+IHdlIGRvIGV2ZW4gbmVlZCB0aGlzPyBUaGlzIHNlZW1zIGluY29tcGF0aWJsZSB3aXRoIHlvdXIg
+ZWFybGllcgoibWluL21heCBhcmUgc3BlY2lmaWVkIGluIDE2YnBjIGZvcm1hdCIgc3RhdGVtZW50
+LgoKPiArICoKPiArICoJRHJpdmVycyByZXR1cm4gYW4gZXJyb3IgZnJvbSB0aGVpciBwbGFuZSBh
+dG9taWMgY2hlY2sgaWYgcGl4ZWwgZm9ybWF0Cj4gKyAqCWlzIHVuc3VwcG9ydGVkLgo+ICsgKgo+
+ICsgKiBjb2xvcmtleS5tYXNrOgo+ICsgKglUaGlzIHByb3BlcnR5IHNwZWNpZmllcyB0aGUgcGl4
+ZWwgY29tcG9uZW50cyBtYXNrLiBVbm1hc2tlZCBwaXhlbAo+ICsgKgljb21wb25lbnRzIGFyZSBu
+b3QgcGFydGljaXBhdGluZyBpbiB0aGUgbWF0Y2hpbmcuIFRoaXMgbWFzayB2YWx1ZSBpcwo+ICsg
+KglhcHBsaWVkIHRvIGNvbG9ya2V5Lm1pbiAvIG1heCB2YWx1ZXMuIFRoZSBtYXNrIHZhbHVlIGlz
+IGdpdmVuIGluIGEKPiArICoJZm9ybSBvZiBEUk0gZm91cmNjIGNvZGUgY29ycmVzcG9uZGluZyB0
+byB0aGUgY29sb3JrZXkuZm9ybWF0IHByb3BlcnR5Lgo+ICsgKgo+ICsgKglGb3IgZXhhbXBsZTog
+dXNlcnNwYWNlIHNoYWxsIHNldCB0aGUgY29sb3JrZXkubWFzayB0byAweDAwMDBmZjAwCj4gKyAq
+CXRvIG1hdGNoIG9ubHkgdGhlIGdyZWVuIGNvbXBvbmVudCBpZiBjb2xvcmtleS5mb3JtYXQgaXMg
+c2V0IHRvCj4gKyAqCURSTV9GT1JNQVRfWFJHQjg4ODguCj4gKyAqCj4gKyAqCURyaXZlcnMgcmV0
+dXJuIGFuIGVycm9yIGZyb20gdGhlaXIgcGxhbmUgYXRvbWljIGNoZWNrIGlmIG1hc2sgdmFsdWUK
+PiArICoJY2FuJ3QgYmUgaGFuZGxlZC4KPiArICoKPiArICogY29sb3JrZXkuaW52ZXJ0ZWQtbWF0
+Y2g6Cj4gKyAqCVRoaXMgcHJvcGVydHkgc3BlY2lmaWVzIHdoZXRoZXIgdGhlIG1hdGNoaW5nIG1p
+bi1tYXggcmFuZ2Ugc2hvdWxkCj4gKyAqCWJlIGludmVydGVkLCBpLmUuIHBpeGVscyBvdXRzaWRl
+IG9mIHRoZSBnaXZlbiBjb2xvciByYW5nZSBiZWNvbWUKPiArICoJdGhlIGNvbG9yIGtleSBtYXRj
+aC4KPiArICoKPiArICoJRHJpdmVycyByZXR1cm4gYW4gZXJyb3IgZnJvbSB0aGVpciBwbGFuZSBh
+dG9taWMgY2hlY2sgaWYgaW52ZXJzaW9uCj4gKyAqCW1vZGUgY2FuJ3QgYmUgaGFuZGxlZC4KCkht
+bS4gSSdtIHRyeWluZyB0byBmaWd1cmUgb3V0IHdoYXQgdGhpcyBtZWFucyBmb3IgdGhlIHNyYyB2
+cy4gZHN0CmNvbG9ya2V5IG1vZGVzLiBUaG9zZSBwcmV0dHkgbXVjaCBhbHJlYWR5IGhhdmUgYW4g
+aW52ZXJ0ZWQgbWVhbmluZyB3aGVuCmNvbXBhcmVkIHRvIGVhY2ggb3RoZXIuIFNvIEkgY2FuJ3Qg
+ZmlndXJlIG91dCBmcm9tIHRoZXNlIGRvY3Mgd2hldGhlciAKeW91J3JlIHN1cHBvc2VkIHRvIHVz
+ZSB0aGlzIHdoZW4geW91IHdhbnQgYSBub3JtYWwgZHN0IGNrZXkgb3Igbm9ybWFsCnNyYyBrZXkg
+c2VtYW50aWNzLgoKPiArICoKPiArICogY29sb3JrZXkucmVwbGFjZW1lbnQtdmFsdWU6Cj4gKyAq
+CVRoaXMgcHJvcGVydHkgc3BlY2lmaWVzIHRoZSBjb2xvciB2YWx1ZSB0aGF0IHJlcGxhY2VzIHBp
+eGVscyBtYXRjaGluZwo+ICsgKgl0aGUgY29sb3Iga2V5LiBUaGUgdmFsdWUgaXMgZXhwcmVzc2Vk
+IGluIEFYWVoxNjE2MTYxNiBmb3JtYXQsIHdoZXJlIEEKPiArICoJaXMgdGhlIGFscGhhIHZhbHVl
+IGFuZCBYLCBZIGFuZCBaIGNvcnJlc3BvbmQgdG8gdGhlIGNvbG9yIGNvbXBvbmVudHMKPiArICoJ
+b2YgdGhlIGNvbG9ya2V5LnJlcGxhY2VtZW50LWZvcm1hdC4KPiArICoKPiArICoJRHJpdmVycyBy
+ZXR1cm4gYW4gZXJyb3IgZnJvbSB0aGVpciBwbGFuZSBhdG9taWMgY2hlY2sgaWYgcmVwbGFjZW1l
+bnQKPiArICoJdmFsdWUgY2FuJ3QgYmUgaGFuZGxlZC4KPiArICoKPiArICogY29sb3JrZXkucmVw
+bGFjZW1lbnQtZm9ybWF0Ogo+ICsgKglUaGlzIHByb3BlcnR5IHNwZWNpZmllcyB0aGUgcGl4ZWwg
+Zm9ybWF0IGZvciB0aGUKPiArICoJY29sb3JrZXkucmVwbGFjZW1lbnQtdmFsdWUgcHJvcGVydHku
+IFRoZSBmb3JtYXQgaXMgZ2l2ZW4gaW4gYSBmb3JtIG9mCj4gKyAqCURSTSBmb3VyY2MgY29kZS4K
+CkFnYWluIHRoaXMgc2VlbXMgYXQgb2RkcyB3aXRoIHRoZSAxNmJwYyByZXBsYWNlbWVudC12YWx1
+ZS4KCj4gKyAqCj4gKyAqCURyaXZlcnMgcmV0dXJuIGFuIGVycm9yIGZyb20gdGhlaXIgcGxhbmUg
+YXRvbWljIGNoZWNrIGlmIHJlcGxhY2VtZW50Cj4gKyAqCXBpeGVsIGZvcm1hdCBpcyB1bnN1cHBv
+cnRlZC4KPiArICoKPiArICogY29sb3JrZXkucmVwbGFjZW1lbnQtbWFzazoKPiArICoJVGhpcyBw
+cm9wZXJ0eSBzcGVjaWZpZXMgdGhlIHBpeGVsIGNvbXBvbmVudHMgbWFzayB0aGF0IGRlZmluZXMK
+PiArICoJd2hhdCBjb21wb25lbnRzIG9mIHRoZSBjb2xvcmtleS5yZXBsYWNlbWVudC12YWx1ZSB3
+aWxsIHBhcnRpY2lwYXRlIGluCj4gKyAqCXJlcGxhY2VtZW50IG9mIHRoZSBwaXhlbHMgY29sb3Iu
+IFVubWFza2VkIHBpeGVsIGNvbXBvbmVudHMgYXJlIG5vdAo+ICsgKglwYXJ0aWNpcGF0aW5nIGlu
+IHRoZSByZXBsYWNlbWVudC4KCkRvZXMgdGhhdCBtZWFuIHRoYXQgdGhlIGRhdGEgZm9yIHRoZSB1
+bm1hc2tlZCBiaXRzIHdpbGwgYmUgY29taW5nCmZyb20gdGhlIHNvdXJjZT8KCj4gVGhlIG1hc2sg
+dmFsdWUgaXMgZ2l2ZW4gaW4gYSBmb3JtIG9mCj4gKyAqCURSTSBmb3VyY2MgY29kZSBjb3JyZXNw
+b25kaW5nIHRvIHRoZSBjb2xvcmtleS5yZXBsYWNlbWVudC1mb3JtYXQKPiArICoJcHJvcGVydHku
+Cj4gKyAqCj4gKyAqCUZvciBleGFtcGxlOiB1c2Vyc3BhY2Ugc2hhbGwgc2V0IHRoZSBjb2xvcmtl
+eS5yZXBsYWNlbWVudC1tYXNrIHRvCj4gKyAqCTB4MDAwMGZmMDAgdG8gcmVwbGFjZSBvbmx5IHRo
+ZSBncmVlbiBjb21wb25lbnQgaWYKPiArICoJY29sb3JrZXkucmVwbGFjZW1lbnQtZm9ybWF0IGlz
+IHNldCB0byBEUk1fRk9STUFUX1hSR0I4ODg4Lgo+ICsgKgo+ICsgKglVc2Vyc3BhY2Ugc2hhbGwg
+c2V0IGNvbG9ya2V5LnJlcGxhY2VtZW50LW1hc2sgdG8gMCB0byBkaXNhYmxlIHRoZSBjb2xvcgo+
+ICsgKglyZXBsYWNlbWVudC4gSW4gdGhpcyBjYXNlIG1hdGNoaW5nIHBpeGVscyBiZWNvbWUgdHJh
+bnNwYXJlbnQuCj4gKyAqCj4gKyAqCURyaXZlcnMgcmV0dXJuIGFuIGVycm9yIGZyb20gdGhlaXIg
+cGxhbmUgYXRvbWljIGNoZWNrIGlmIHJlcGxhY2VtZW50Cj4gKyAqCW1hc2sgdmFsdWUgY2FuJ3Qg
+YmUgaGFuZGxlZC4KPiArICoKPiArICogUmV0dXJuczoKPiArICogWmVybyBvbiBzdWNjZXNzLCBu
+ZWdhdGl2ZSBlcnJubyBvbiBmYWlsdXJlLgo+ICsgKi8KPiAraW50IGRybV9wbGFuZV9jcmVhdGVf
+Y29sb3JrZXlfcHJvcGVydGllcyhzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKPiArCQkJCQkgdTMy
+IHN1cHBvcnRlZF9tb2RlcykKPiArewo+ICsJc3RydWN0IGRybV9wcm9wX2VudW1fbGlzdCBtb2Rl
+c19saXN0W0RSTV9QTEFORV9DT0xPUktFWV9NT0RFU19OVU1dOwo+ICsJc3RydWN0IGRybV9wcm9w
+ZXJ0eSAqcmVwbGFjZW1lbnRfZm9ybWF0X3Byb3A7Cj4gKwlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpy
+ZXBsYWNlbWVudF92YWx1ZV9wcm9wOwo+ICsJc3RydWN0IGRybV9wcm9wZXJ0eSAqcmVwbGFjZW1l
+bnRfbWFza19wcm9wOwo+ICsJc3RydWN0IGRybV9wcm9wZXJ0eSAqaW52ZXJ0ZWRfbWF0Y2hfcHJv
+cDsKPiArCXN0cnVjdCBkcm1fcHJvcGVydHkgKmZvcm1hdF9wcm9wOwo+ICsJc3RydWN0IGRybV9w
+cm9wZXJ0eSAqbWFza19wcm9wOwo+ICsJc3RydWN0IGRybV9wcm9wZXJ0eSAqbW9kZV9wcm9wOwo+
+ICsJc3RydWN0IGRybV9wcm9wZXJ0eSAqbWluX3Byb3A7Cj4gKwlzdHJ1Y3QgZHJtX3Byb3BlcnR5
+ICptYXhfcHJvcDsKPiArCXVuc2lnbmVkIGludCBtb2Rlc19udW0gPSAwOwo+ICsJdW5zaWduZWQg
+aW50IGk7Cj4gKwo+ICsJLyogYXQgbGVhc3QgdHdvIG1vZGVzIHNob3VsZCBiZSBzdXBwb3J0ZWQg
+Ki8KPiArCWlmICghc3VwcG9ydGVkX21vZGVzKQo+ICsJCXJldHVybiAtRUlOVkFMOwo+ICsKPiAr
+CS8qIG1vZGVzIGFyZSBkcml2ZXItc3BlY2lmaWMsIGJ1aWxkIHRoZSBsaXN0IG9mIHN1cHBvcnRl
+ZCBtb2RlcyAqLwo+ICsJZm9yIChpID0gMDsgaSA8IERSTV9QTEFORV9DT0xPUktFWV9NT0RFU19O
+VU07IGkrKykgewo+ICsJCWlmICghKHN1cHBvcnRlZF9tb2RlcyAmIEJJVChpKSkpCj4gKwkJCWNv
+bnRpbnVlOwo+ICsKPiArCQltb2Rlc19saXN0W21vZGVzX251bV0ubmFtZSA9IHBsYW5lX2NvbG9y
+a2V5X21vZGVfbmFtZVtpXTsKPiArCQltb2Rlc19saXN0W21vZGVzX251bV0udHlwZSA9IGk7Cj4g
+KwkJbW9kZXNfbnVtKys7Cj4gKwl9Cj4gKwo+ICsJbW9kZV9wcm9wID0gZHJtX3Byb3BlcnR5X2Ny
+ZWF0ZV9lbnVtKHBsYW5lLT5kZXYsIDAsICJjb2xvcmtleS5tb2RlIiwKPiArCQkJCQkgICAgIG1v
+ZGVzX2xpc3QsIG1vZGVzX251bSk7Cj4gKwlpZiAoIW1vZGVfcHJvcCkKPiArCQlyZXR1cm4gLUVO
+T01FTTsKPiArCj4gKwltYXNrX3Byb3AgPSBkcm1fcHJvcGVydHlfY3JlYXRlX3JhbmdlKHBsYW5l
+LT5kZXYsIDAsICJjb2xvcmtleS5tYXNrIiwKPiArCQkJCQkgICAgICAwLCBVNjRfTUFYKTsKPiAr
+CWlmICghbWFza19wcm9wKQo+ICsJCWdvdG8gZXJyX2Rlc3Ryb3lfbW9kZV9wcm9wOwo+ICsKPiAr
+CW1pbl9wcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShwbGFuZS0+ZGV2LCAwLCAiY29s
+b3JrZXkubWluIiwKPiArCQkJCQkgICAgIDAsIFU2NF9NQVgpOwo+ICsJaWYgKCFtaW5fcHJvcCkK
+PiArCQlnb3RvIGVycl9kZXN0cm95X21hc2tfcHJvcDsKPiArCj4gKwltYXhfcHJvcCA9IGRybV9w
+cm9wZXJ0eV9jcmVhdGVfcmFuZ2UocGxhbmUtPmRldiwgMCwgImNvbG9ya2V5Lm1heCIsCj4gKwkJ
+CQkJICAgICAwLCBVNjRfTUFYKTsKPiArCWlmICghbWF4X3Byb3ApCj4gKwkJZ290byBlcnJfZGVz
+dHJveV9taW5fcHJvcDsKPiArCj4gKwlmb3JtYXRfcHJvcCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVf
+cmFuZ2UocGxhbmUtPmRldiwgMCwKPiArCQkJCQkiY29sb3JrZXkuZm9ybWF0IiwKPiArCQkJCQkw
+LCBVMzJfTUFYKTsKPiArCWlmICghZm9ybWF0X3Byb3ApCj4gKwkJZ290byBlcnJfZGVzdHJveV9t
+YXhfcHJvcDsKPiArCj4gKwlpbnZlcnRlZF9tYXRjaF9wcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0
+ZV9ib29sKHBsYW5lLT5kZXYsIDAsCj4gKwkJCQkJImNvbG9ya2V5LmludmVydGVkLW1hdGNoIik7
+Cj4gKwlpZiAoIWludmVydGVkX21hdGNoX3Byb3ApCj4gKwkJZ290byBlcnJfZGVzdHJveV9mb3Jt
+YXRfcHJvcDsKPiArCj4gKwlyZXBsYWNlbWVudF9tYXNrX3Byb3AgPSBkcm1fcHJvcGVydHlfY3Jl
+YXRlX3JhbmdlKHBsYW5lLT5kZXYsIDAsCj4gKwkJCQkJImNvbG9ya2V5LnJlcGxhY2VtZW50LW1h
+c2siLAo+ICsJCQkJCTAsIFU2NF9NQVgpOwo+ICsJaWYgKCFyZXBsYWNlbWVudF9tYXNrX3Byb3Ap
+Cj4gKwkJZ290byBlcnJfZGVzdHJveV9pbnZlcnRlZF9tYXRjaF9wcm9wOwo+ICsKPiArCXJlcGxh
+Y2VtZW50X3ZhbHVlX3Byb3AgPSBkcm1fcHJvcGVydHlfY3JlYXRlX3JhbmdlKHBsYW5lLT5kZXYs
+IDAsCj4gKwkJCQkJImNvbG9ya2V5LnJlcGxhY2VtZW50LXZhbHVlIiwKPiArCQkJCQkwLCBVNjRf
+TUFYKTsKPiArCWlmICghcmVwbGFjZW1lbnRfdmFsdWVfcHJvcCkKPiArCQlnb3RvIGVycl9kZXN0
+cm95X3JlcGxhY2VtZW50X21hc2tfcHJvcDsKPiArCj4gKwlyZXBsYWNlbWVudF9mb3JtYXRfcHJv
+cCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UocGxhbmUtPmRldiwgMCwKPiArCQkJCQkiY29s
+b3JrZXkucmVwbGFjZW1lbnQtZm9ybWF0IiwKPiArCQkJCQkwLCBVNjRfTUFYKTsKPiArCWlmICgh
+cmVwbGFjZW1lbnRfZm9ybWF0X3Byb3ApCj4gKwkJZ290byBlcnJfZGVzdHJveV9yZXBsYWNlbWVu
+dF92YWx1ZV9wcm9wOwoKSSBkb24ndCB0aGluayB3ZSB3YW50IHRvIGFkZCBhbGwgdGhlc2UgcHJv
+cHMgZm9yIGV2ZXJ5IGRyaXZlci9oYXJkd2FyZS4KSU1PIHRoZSBzZXQgb2YgcHJvcHMgd2UgZXhw
+b3NlIHNob3VsZCBkZXBlbmQgb24gdGhlIHN1cHBvcnRlZCBzZXQgb2YKY29sb3JrZXlpbmcgbW9k
+ZXMuCgo+ICsKPiArCWRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZwbGFuZS0+YmFzZSwgbWlu
+X3Byb3AsIDApOwo+ICsJZHJtX29iamVjdF9hdHRhY2hfcHJvcGVydHkoJnBsYW5lLT5iYXNlLCBt
+YXhfcHJvcCwgMCk7Cj4gKwlkcm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPmJhc2Us
+IG1vZGVfcHJvcCwgMCk7Cj4gKwlkcm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPmJh
+c2UsIG1hc2tfcHJvcCwgMCk7Cj4gKwlkcm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUt
+PmJhc2UsIGZvcm1hdF9wcm9wLCAwKTsKPiArCWRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZw
+bGFuZS0+YmFzZSwgaW52ZXJ0ZWRfbWF0Y2hfcHJvcCwgMCk7Cj4gKwlkcm1fb2JqZWN0X2F0dGFj
+aF9wcm9wZXJ0eSgmcGxhbmUtPmJhc2UsIHJlcGxhY2VtZW50X21hc2tfcHJvcCwgMCk7Cj4gKwlk
+cm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPmJhc2UsIHJlcGxhY2VtZW50X3ZhbHVl
+X3Byb3AsIDApOwo+ICsJZHJtX29iamVjdF9hdHRhY2hfcHJvcGVydHkoJnBsYW5lLT5iYXNlLCBy
+ZXBsYWNlbWVudF9mb3JtYXRfcHJvcCwgMCk7Cj4gKwo+ICsJcGxhbmUtPmNvbG9ya2V5Lm1pbl9w
+cm9wZXJ0eSA9IG1pbl9wcm9wOwo+ICsJcGxhbmUtPmNvbG9ya2V5Lm1heF9wcm9wZXJ0eSA9IG1h
+eF9wcm9wOwo+ICsJcGxhbmUtPmNvbG9ya2V5Lm1vZGVfcHJvcGVydHkgPSBtb2RlX3Byb3A7Cj4g
+KwlwbGFuZS0+Y29sb3JrZXkubWFza19wcm9wZXJ0eSA9IG1hc2tfcHJvcDsKPiArCXBsYW5lLT5j
+b2xvcmtleS5mb3JtYXRfcHJvcGVydHkgPSBmb3JtYXRfcHJvcDsKPiArCXBsYW5lLT5jb2xvcmtl
+eS5pbnZlcnRlZF9tYXRjaF9wcm9wZXJ0eSA9IGludmVydGVkX21hdGNoX3Byb3A7Cj4gKwlwbGFu
+ZS0+Y29sb3JrZXkucmVwbGFjZW1lbnRfbWFza19wcm9wZXJ0eSA9IHJlcGxhY2VtZW50X21hc2tf
+cHJvcDsKPiArCXBsYW5lLT5jb2xvcmtleS5yZXBsYWNlbWVudF92YWx1ZV9wcm9wZXJ0eSA9IHJl
+cGxhY2VtZW50X3ZhbHVlX3Byb3A7Cj4gKwlwbGFuZS0+Y29sb3JrZXkucmVwbGFjZW1lbnRfZm9y
+bWF0X3Byb3BlcnR5ID0gcmVwbGFjZW1lbnRfZm9ybWF0X3Byb3A7Cj4gKwo+ICsJcmV0dXJuIDA7
+Cj4gKwo+ICtlcnJfZGVzdHJveV9yZXBsYWNlbWVudF92YWx1ZV9wcm9wOgo+ICsJZHJtX3Byb3Bl
+cnR5X2Rlc3Ryb3kocGxhbmUtPmRldiwgcmVwbGFjZW1lbnRfdmFsdWVfcHJvcCk7Cj4gK2Vycl9k
+ZXN0cm95X3JlcGxhY2VtZW50X21hc2tfcHJvcDoKPiArCWRybV9wcm9wZXJ0eV9kZXN0cm95KHBs
+YW5lLT5kZXYsIHJlcGxhY2VtZW50X21hc2tfcHJvcCk7Cj4gK2Vycl9kZXN0cm95X2ludmVydGVk
+X21hdGNoX3Byb3A6Cj4gKwlkcm1fcHJvcGVydHlfZGVzdHJveShwbGFuZS0+ZGV2LCBpbnZlcnRl
+ZF9tYXRjaF9wcm9wKTsKPiArZXJyX2Rlc3Ryb3lfZm9ybWF0X3Byb3A6Cj4gKwlkcm1fcHJvcGVy
+dHlfZGVzdHJveShwbGFuZS0+ZGV2LCBmb3JtYXRfcHJvcCk7Cj4gK2Vycl9kZXN0cm95X21heF9w
+cm9wOgo+ICsJZHJtX3Byb3BlcnR5X2Rlc3Ryb3kocGxhbmUtPmRldiwgbWF4X3Byb3ApOwo+ICtl
+cnJfZGVzdHJveV9taW5fcHJvcDoKPiArCWRybV9wcm9wZXJ0eV9kZXN0cm95KHBsYW5lLT5kZXYs
+IG1pbl9wcm9wKTsKPiArZXJyX2Rlc3Ryb3lfbWFza19wcm9wOgo+ICsJZHJtX3Byb3BlcnR5X2Rl
+c3Ryb3kocGxhbmUtPmRldiwgbWFza19wcm9wKTsKPiArZXJyX2Rlc3Ryb3lfbW9kZV9wcm9wOgo+
+ICsJZHJtX3Byb3BlcnR5X2Rlc3Ryb3kocGxhbmUtPmRldiwgbW9kZV9wcm9wKTsKPiArCj4gKwly
+ZXR1cm4gLUVOT01FTTsKPiArfQo+ICtFWFBPUlRfU1lNQk9MKGRybV9wbGFuZV9jcmVhdGVfY29s
+b3JrZXlfcHJvcGVydGllcyk7Cj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9ibGVuZC5o
+IGIvaW5jbHVkZS9kcm0vZHJtX2JsZW5kLmgKPiBpbmRleCAzMzBjNTYxYzRjMTEuLjhlODBkMzNi
+NjQzZSAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fYmxlbmQuaAo+ICsrKyBiL2luY2x1
+ZGUvZHJtL2RybV9ibGVuZC5oCj4gQEAgLTUyLDQgKzUyLDcgQEAgaW50IGRybV9wbGFuZV9jcmVh
+dGVfenBvc19pbW11dGFibGVfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gIAkJ
+CQkJICAgICB1bnNpZ25lZCBpbnQgenBvcyk7Cj4gIGludCBkcm1fYXRvbWljX25vcm1hbGl6ZV96
+cG9zKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCj4gIAkJCSAgICAgIHN0cnVjdCBkcm1fYXRvbWlj
+X3N0YXRlICpzdGF0ZSk7Cj4gKwo+ICtpbnQgZHJtX3BsYW5lX2NyZWF0ZV9jb2xvcmtleV9wcm9w
+ZXJ0aWVzKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+ICsJCQkJCSB1MzIgc3VwcG9ydGVkX21v
+ZGVzKTsKPiAgI2VuZGlmCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9wbGFuZS5oIGIv
+aW5jbHVkZS9kcm0vZHJtX3BsYW5lLmgKPiBpbmRleCAyNmZhNTBjMmE1MGUuLmZmN2Y1ZWJlMmI3
+OSAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fcGxhbmUuaAo+ICsrKyBiL2luY2x1ZGUv
+ZHJtL2RybV9wbGFuZS5oCj4gQEAgLTMyLDYgKzMyLDQyIEBAIHN0cnVjdCBkcm1fY3J0YzsKPiAg
+c3RydWN0IGRybV9wcmludGVyOwo+ICBzdHJ1Y3QgZHJtX21vZGVzZXRfYWNxdWlyZV9jdHg7Cj4g
+IAo+ICsvKioKPiArICogZW51bSBkcm1fcGxhbmVfY29sb3JrZXlfbW9kZSAtIHVhcGkgcGxhbmUg
+Y29sb3JrZXkgbW9kZSBlbnVtZXJhdGlvbgo+ICsgKi8KPiArZW51bSBkcm1fcGxhbmVfY29sb3Jr
+ZXlfbW9kZSB7Cj4gKwkvKioKPiArCSAqIEBEUk1fUExBTkVfQ09MT1JLRVlfTU9ERV9ESVNBQkxF
+RDoKPiArCSAqCj4gKwkgKiBObyBjb2xvciBtYXRjaGluZyBwZXJmb3JtZWQgaW4gdGhpcyBtb2Rl
+LiBUaGlzIGlzIHRoZSBkZWZhdWx0Cj4gKwkgKiBjb21tb24gbW9kZS4KPiArCSAqLwo+ICsJRFJN
+X1BMQU5FX0NPTE9SS0VZX01PREVfRElTQUJMRUQsCj4gKwo+ICsJLyoqCj4gKwkgKiBARFJNX1BM
+QU5FX0NPTE9SS0VZX01PREVfU1JDOgo+ICsJICoKPiArCSAqIEluIHRoaXMgbW9kZSBjb2xvciBt
+YXRjaGluZyBpcyBwZXJmb3JtZWQgd2l0aCB0aGUgcGl4ZWxzIG9mCj4gKwkgKiB0aGUgZ2l2ZW4g
+cGxhbmUgYW5kIHRoZSBtYXRjaGVkIHBpeGVscyBhcmUgZnVsbHkgKG9yIHBhcnRpYWxseSkKPiAr
+CSAqIHJlcGxhY2VkIHdpdGggdGhlIHJlcGxhY2VtZW50IGNvbG9yIG9yIGJlY29tZSBjb21wbGV0
+ZWx5Cj4gKwkgKiB0cmFuc3BhcmVudC4KPiArCSAqLwo+ICsJRFJNX1BMQU5FX0NPTE9SS0VZX01P
+REVfU1JDLAo+ICsKPiArCS8qKgo+ICsJICogQERSTV9QTEFORV9DT0xPUktFWV9NT0RFX0RTVDoK
+PiArCSAqCj4gKwkgKiBJbiB0aGlzIG1vZGUgY29sb3IgbWF0Y2hpbmcgaXMgcGVyZm9ybWVkIHdp
+dGggdGhlIHBpeGVscyBvZiB0aGUKPiArCSAqIHBsYW5lcyB6LXBvc2l0aW9uZWQgdW5kZXIgdGhl
+IGdpdmVuIHBsYW5lIGFuZCB0aGUgcGl4ZWxzIG9mIHRoZQo+ICsJICogaG92ZXJpbmcgcGxhbmUg
+dGhhdCBhcmUgeHktcG9zaXRpb25lZCBhcyB0aGUgdW5kZXJseWluZwo+ICsJICogY29sb3ItbWF0
+Y2hlZCBwaXhlbHMgYXJlIGZ1bGx5IChvciBwYXJ0aWFsbHkpIHJlcGxhY2VkIHdpdGggdGhlCj4g
+KwkgKiByZXBsYWNlbWVudCBjb2xvciBvciBiZWNvbWUgY29tcGxldGVseSB0cmFuc3BhcmVudC4K
+PiArCSAqLwo+ICsJRFJNX1BMQU5FX0NPTE9SS0VZX01PREVfRFNULAo+ICsKPiArCURSTV9QTEFO
+RV9DT0xPUktFWV9NT0RFU19OVU0sCj4gK307Cj4gKwo+ICAvKioKPiAgICogc3RydWN0IGRybV9w
+bGFuZV9zdGF0ZSAtIG11dGFibGUgcGxhbmUgc3RhdGUKPiAgICogQHBsYW5lOiBiYWNrcG9pbnRl
+ciB0byB0aGUgcGxhbmUKPiBAQCAtNTQsNiArOTAsMjEgQEAgc3RydWN0IGRybV9tb2Rlc2V0X2Fj
+cXVpcmVfY3R4Owo+ICAgKgl3aGVyZSBOIGlzIHRoZSBudW1iZXIgb2YgYWN0aXZlIHBsYW5lcyBm
+b3IgZ2l2ZW4gY3J0Yy4gTm90ZSB0aGF0Cj4gICAqCXRoZSBkcml2ZXIgbXVzdCBzZXQgZHJtX21v
+ZGVfY29uZmlnLm5vcm1hbGl6ZV96cG9zIG9yIGNhbGwKPiAgICoJZHJtX2F0b21pY19ub3JtYWxp
+emVfenBvcygpIHRvIHVwZGF0ZSB0aGlzIGJlZm9yZSBpdCBjYW4gYmUgdHJ1c3RlZC4KPiArICog
+QGNvbG9ya2V5Lm1vZGU6IGNvbG9yIGtleSBtb2RlCj4gKyAqIEBjb2xvcmtleS5taW46IGNvbG9y
+IGtleSByYW5nZSBtaW5pbXVtLiBUaGUgdmFsdWUgaXMgc3RvcmVkIGluIEFYWVoxNjE2MTYxNgo+
+ICsgKglmb3JtYXQsIHdoZXJlIEEgaXMgdGhlIGFscGhhIHZhbHVlIGFuZCBYLCBZIGFuZCBaIGNv
+cnJlc3BvbmQgdG8gdGhlCj4gKyAqCWNvbG9yIGNvbXBvbmVudHMgb2YgdGhlIHBsYW5lJ3MgcGl4
+ZWwgZm9ybWF0ICh1c3VhbGx5IFJHQiBvciBZVVYpCj4gKyAqIEBjb2xvcmtleS5tYXg6IGNvbG9y
+IGtleSByYW5nZSBtYXhpbXVtIChpbiBBWFlaMTYxNjE2MTYgZm9ybWF0KQo+ICsgKiBAY29sb3Jr
+ZXkubWFzazogY29sb3Iga2V5IG1hc2sgdmFsdWUgKGluIEFYWVoxNjE2MTYxNiBmb3JtYXQpCj4g
+KyAqIEBjb2xvcmtleS5mb3JtYXQ6IGNvbG9yIGtleSBtaW4vbWF4L21hc2sgdmFsdWVzIHBpeGVs
+IGZvcm1hdCAoaW4KPiArICogCURSTV9GT1JNQVRfQVhZWjE2MTYxNjE2IGZvcm0pCj4gKyAqIEBj
+b2xvcmtleS5pbnZlcnRlZF9tYXRjaDogY29sb3Iga2V5IG1pbi1tYXggbWF0Y2hpbmcgcmFuZ2Ug
+aXMgaW52ZXJ0ZWQKPiArICogQGNvbG9ya2V5LnJlcGxhY2VtZW50X21hc2s6IGNvbG9yIGtleSBy
+ZXBsYWNlbWVudCBtYXNrIHZhbHVlIChpbgo+ICsgKiAJQVhZWjE2MTYxNjE2IGZvcm1hdCkKPiAr
+ICogQGNvbG9ya2V5LnJlcGxhY2VtZW50X3ZhbHVlOiBjb2xvciBrZXkgcmVwbGFjZW1lbnQgdmFs
+dWUgKGluCj4gKyAqIAlBWFlaMTYxNjE2MTYgZm9ybWF0KQo+ICsgKiBAY29sb3JrZXkucmVwbGFj
+ZW1lbnRfZm9ybWF0OiBjb2xvciBrZXkgcmVwbGFjZW1lbnQgdmFsdWUgLyBtYXNrCj4gKyAqCXBp
+eGVsIGZvcm1hdCAoaW4gRFJNX0ZPUk1BVF9BWFlaMTYxNjE2MTYgZm9ybSkKPiAgICogQHNyYzog
+Y2xpcHBlZCBzb3VyY2UgY29vcmRpbmF0ZXMgb2YgdGhlIHBsYW5lIChpbiAxNi4xNikKPiAgICog
+QGRzdDogY2xpcHBlZCBkZXN0aW5hdGlvbiBjb29yZGluYXRlcyBvZiB0aGUgcGxhbmUKPiAgICog
+QHN0YXRlOiBiYWNrcG9pbnRlciB0byBnbG9iYWwgZHJtX2F0b21pY19zdGF0ZQo+IEBAIC0xMjQs
+NiArMTc1LDE5IEBAIHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgewo+ICAJdW5zaWduZWQgaW50IHpw
+b3M7Cj4gIAl1bnNpZ25lZCBpbnQgbm9ybWFsaXplZF96cG9zOwo+ICAKPiArCS8qIFBsYW5lIGNv
+bG9ya2V5ICovCj4gKwlzdHJ1Y3Qgewo+ICsJCWVudW0gZHJtX3BsYW5lX2NvbG9ya2V5X21vZGUg
+bW9kZTsKPiArCQl1NjQgbWluOwo+ICsJCXU2NCBtYXg7Cj4gKwkJdTY0IG1hc2s7Cj4gKwkJdTMy
+IGZvcm1hdDsKPiArCQlib29sIGludmVydGVkX21hdGNoOwo+ICsJCXU2NCByZXBsYWNlbWVudF9t
+YXNrOwo+ICsJCXU2NCByZXBsYWNlbWVudF92YWx1ZTsKPiArCQl1MzIgcmVwbGFjZW1lbnRfZm9y
+bWF0Owo+ICsJfSBjb2xvcmtleTsKPiArCj4gIAkvKioKPiAgCSAqIEBjb2xvcl9lbmNvZGluZzoK
+PiAgCSAqCj4gQEAgLTUxMCw2ICs1NzQsNyBAQCBlbnVtIGRybV9wbGFuZV90eXBlIHsKPiAgICog
+QGFscGhhX3Byb3BlcnR5OiBhbHBoYSBwcm9wZXJ0eSBmb3IgdGhpcyBwbGFuZQo+ICAgKiBAenBv
+c19wcm9wZXJ0eTogenBvcyBwcm9wZXJ0eSBmb3IgdGhpcyBwbGFuZQo+ICAgKiBAcm90YXRpb25f
+cHJvcGVydHk6IHJvdGF0aW9uIHByb3BlcnR5IGZvciB0aGlzIHBsYW5lCj4gKyAqIEBjb2xvcmtl
+eTogY29sb3JrZXkgcHJvcGVydGllcyBmb3IgdGhpcyBwbGFuZQo+ICAgKiBAaGVscGVyX3ByaXZh
+dGU6IG1pZC1sYXllciBwcml2YXRlIGRhdGEKPiAgICovCj4gIHN0cnVjdCBkcm1fcGxhbmUgewo+
+IEBAIC01ODcsNiArNjUyLDE4IEBAIHN0cnVjdCBkcm1fcGxhbmUgewo+ICAJc3RydWN0IGRybV9w
+cm9wZXJ0eSAqenBvc19wcm9wZXJ0eTsKPiAgCXN0cnVjdCBkcm1fcHJvcGVydHkgKnJvdGF0aW9u
+X3Byb3BlcnR5Owo+ICAKPiArCXN0cnVjdCB7Cj4gKwkJc3RydWN0IGRybV9wcm9wZXJ0eSAqbWlu
+X3Byb3BlcnR5Owo+ICsJCXN0cnVjdCBkcm1fcHJvcGVydHkgKm1heF9wcm9wZXJ0eTsKPiArCQlz
+dHJ1Y3QgZHJtX3Byb3BlcnR5ICptb2RlX3Byb3BlcnR5Owo+ICsJCXN0cnVjdCBkcm1fcHJvcGVy
+dHkgKm1hc2tfcHJvcGVydHk7Cj4gKwkJc3RydWN0IGRybV9wcm9wZXJ0eSAqZm9ybWF0X3Byb3Bl
+cnR5Owo+ICsJCXN0cnVjdCBkcm1fcHJvcGVydHkgKmludmVydGVkX21hdGNoX3Byb3BlcnR5Owo+
+ICsJCXN0cnVjdCBkcm1fcHJvcGVydHkgKnJlcGxhY2VtZW50X21hc2tfcHJvcGVydHk7Cj4gKwkJ
+c3RydWN0IGRybV9wcm9wZXJ0eSAqcmVwbGFjZW1lbnRfdmFsdWVfcHJvcGVydHk7Cj4gKwkJc3Ry
+dWN0IGRybV9wcm9wZXJ0eSAqcmVwbGFjZW1lbnRfZm9ybWF0X3Byb3BlcnR5Owo+ICsJfSBjb2xv
+cmtleTsKPiArCj4gIAkvKioKPiAgCSAqIEBjb2xvcl9lbmNvZGluZ19wcm9wZXJ0eToKPiAgCSAq
+Cj4gLS0gCj4gMi4xNy4wCgotLSAKVmlsbGUgU3lyasOkbMOkCkludGVsCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
