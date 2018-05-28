@@ -1,60 +1,45 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-Date: Mon, 28 May 2018 17:53:08 +0200
-Message-ID: <5665b799f763daa82dced238fb494863@agner.ch>
-References: <20180527215442.14760-5-stefan@agner.ch>
- <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: tegra: fix compile-testing PCI host driver
+Date: Mon, 28 May 2018 17:55:29 +0200
+Message-ID: <20180528155603.2897776-1-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: arm@kernel.org, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 28.05.2018 09:55, Peter De Schrijver wrote:
-> On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
->> From: Lucas Stach <dev@lynxeye.de>
->>
->> Set up the NAND Flash controller clock to run at 150MHz
->> instead of the rate set by the bootloader. This is a
->> conservative rate which also yields good performance.
->>
->> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  drivers/clk/tegra/clk-tegra20.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
->> index 0ee56dd04cec..dff8c425cd28 100644
->> --- a/drivers/clk/tegra/clk-tegra20.c
->> +++ b/drivers/clk/tegra/clk-tegra20.c
->> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
->> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
->>  	/* must be the last entry */
->>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
->>  };
->> --
->> 2.17.0
->>
-> 
-> Maybe better to specify this in the Tegra20 dtsi? See 
-> "Assigned clock parents and rates" in
-> Documentation/devicetree/bindings/clock/clock-bindings.txt
+The tegra_cpuidle_pcie_irqs_in_use() function is stubbed out for non-ARM
+builds, but now we can compile-test the Tegra pci driver on non-Tegra
+ARM platforms as well, which results in a new link error:
 
-assigned-clocks indeed works just fine for this case. Thanks for
-bringing this up, will drop this patch and add the device tree
-properties in v3.
+drivers/pci/host/pci-tegra.o: In function `tegra_pcie_map_irq':
+pci-tegra.c:(.text+0x288): undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
+drivers/pci/host/pci-tegra.o: In function `tegra_msi_map':
+pci-tegra.c:(.text+0xba0): undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
 
-Hm, interesting that none of the Tegra device tree make use of the
-feature so far. I guess there would be other cases where this would be
-useful as well (the one just above, VDE?).
+This adapts the #ifdef statement to match the exact condition under which
+the function can be called.
 
---
-Stefan
+Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
+Cc: Rob Herring <robh@kernel.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/soc/tegra/cpuidle.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/soc/tegra/cpuidle.h b/include/soc/tegra/cpuidle.h
+index 1fae9c7800d1..b6cf32211520 100644
+--- a/include/soc/tegra/cpuidle.h
++++ b/include/soc/tegra/cpuidle.h
+@@ -14,7 +14,7 @@
+ #ifndef __SOC_TEGRA_CPUIDLE_H__
+ #define __SOC_TEGRA_CPUIDLE_H__
+ 
+-#if defined(CONFIG_ARM) && defined(CONFIG_CPU_IDLE)
++#if defined(CONFIG_ARM) && defined(CONFIG_ARCH_TEGRA) && defined(CONFIG_CPU_IDLE)
+ void tegra_cpuidle_pcie_irqs_in_use(void);
+ #else
+ static inline void tegra_cpuidle_pcie_irqs_in_use(void)
+-- 
+2.9.0
