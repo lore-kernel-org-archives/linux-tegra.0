@@ -1,85 +1,51 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-Date: Tue, 29 May 2018 15:19:47 +0300
-Message-ID: <04cdfdf5-33c5-b569-9cd7-dda1b9ea0baf@gmail.com>
-References: <20180527215442.14760-5-stefan@agner.ch>
- <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
- <5665b799f763daa82dced238fb494863@agner.ch>
- <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
- <90180dd9fc6e60175c54b9d70e50f0e5@agner.ch>
+Subject: Re: [PATCH v2] media: staging: tegra-vde: Reset memory client
+Date: Tue, 29 May 2018 16:08:30 +0300
+Message-ID: <591c5840-d2ad-1ccf-0797-ab91fbd33006@gmail.com>
+References: <20180526142755.22966-1-digetx@gmail.com>
+ <87260ffb-545f-4b2c-450f-25091d028187@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <90180dd9fc6e60175c54b9d70e50f0e5@agner.ch>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <87260ffb-545f-4b2c-450f-25091d028187@xs4all.nl>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 29.05.2018 15:12, Stefan Agner wrote:
-> On 29.05.2018 09:48, Peter De Schrijver wrote:
->> On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
->>> On 28.05.2018 09:55, Peter De Schrijver wrote:
->>>> On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
->>>>> From: Lucas Stach <dev@lynxeye.de>
->>>>>
->>>>> Set up the NAND Flash controller clock to run at 150MHz
->>>>> instead of the rate set by the bootloader. This is a
->>>>> conservative rate which also yields good performance.
->>>>>
->>>>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>>>> ---
->>>>>  drivers/clk/tegra/clk-tegra20.c | 1 +
->>>>>  1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
->>>>> index 0ee56dd04cec..dff8c425cd28 100644
->>>>> --- a/drivers/clk/tegra/clk-tegra20.c
->>>>> +++ b/drivers/clk/tegra/clk-tegra20.c
->>>>> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->>>>>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->>>>>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->>>>>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
->>>>> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
->>>>>  	/* must be the last entry */
->>>>>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
->>>>>  };
->>>>> --
->>>>> 2.17.0
->>>>>
->>>>
->>>> Maybe better to specify this in the Tegra20 dtsi? See
->>>> "Assigned clock parents and rates" in
->>>> Documentation/devicetree/bindings/clock/clock-bindings.txt
->>>
->>> assigned-clocks indeed works just fine for this case. Thanks for
->>> bringing this up, will drop this patch and add the device tree
->>> properties in v3.
->>>
->>> Hm, interesting that none of the Tegra device tree make use of the
->>> feature so far. I guess there would be other cases where this would be
->>> useful as well (the one just above, VDE?).
->>>
+On 29.05.2018 09:18, Hans Verkuil wrote:
+> Hi Dmitry,
+> 
+> On 05/26/2018 04:27 PM, Dmitry Osipenko wrote:
+>> DMA requests must be blocked before resetting VDE HW, otherwise it is
+>> possible to get a memory corruption or a machine hang. Use the reset
+>> control provided by the Memory Controller to block DMA before resetting
+>> the VDE HW.
 >>
->> Yes, historically this feature wasn't available, so we used these init tables.
->> Unfortunately it's not easy to get rid of them for parent and rate
->> configuration, because new kernels should also work with existing DTBs, so we
->> can't just add assigned-clock properties and remove the existing table
->> entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
->> are only enabled by the init table. For not yet merged blocks, this is
->> ofcourse not a concern.
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>
+>> Changelog:
+>>
+>> v2:
+>> 	- Reset HW even if Memory Client resetting fails.
 > 
-> Sure I understand.
+> Please note that v1 has already been merged, so if you can make a v3 rebased
+> on top of the latest media_tree master branch, then I'll queue that up for
+> 4.18.
 > 
-> Was just somewhat surprised that it isn't used at all yet (grep -r -e
-> assigned-clock arch/arm/boot/dts/tegra* returns nothing). After all,
-> assigned clocks bindings have been merged in 2014 :-)
-> 
-> At least "clk: tegra: Specify VDE clock rate" merged earlier this year
-> would have been a candidate already.
 
-I wasn't even aware of existence of the assigned-clock properties, probably just
-like others.
+Thank you very much for letting me know, I'll make v3.
+
+Thierry, wouldn't you mind to queue the relevant devicetree patches for 4.18, or
+it's too late now? We'll have a full set in 4.18 then.
