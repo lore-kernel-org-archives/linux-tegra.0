@@ -1,99 +1,72 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
-Date: Tue, 29 May 2018 10:17:42 +0300
-Message-ID: <20180529071742.GM23723@intel.com>
-References: <20180526155623.12610-1-digetx@gmail.com>
- <20180526155623.12610-2-digetx@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
+Date: Tue, 29 May 2018 10:48:04 +0300
+Message-ID: <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
+References: <20180527215442.14760-5-stefan@agner.ch>
+ <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+ <5665b799f763daa82dced238fb494863@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180526155623.12610-2-digetx@gmail.com>
+In-Reply-To: <5665b799f763daa82dced238fb494863@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <thierry.reding@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>, Russell King <linux@armlinux.org.uk>, Ben Skeggs <bskeggs@redhat.com>, Sinclair Yeh <syeh@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, May 26, 2018 at 06:56:22PM +0300, Dmitry Osipenko wrote:
-> Color keying is the action of replacing pixels matching a given color
-> (or range of colors) with transparent pixels in an overlay when
-> performing blitting. Depending on the hardware capabilities, the
-> matching pixel can either become fully transparent or gain adjustment
-> of the pixels component values.
+On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
+> On 28.05.2018 09:55, Peter De Schrijver wrote:
+> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
+> >> From: Lucas Stach <dev@lynxeye.de>
+> >>
+> >> Set up the NAND Flash controller clock to run at 150MHz
+> >> instead of the rate set by the bootloader. This is a
+> >> conservative rate which also yields good performance.
+> >>
+> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >> ---
+> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> >> index 0ee56dd04cec..dff8c425cd28 100644
+> >> --- a/drivers/clk/tegra/clk-tegra20.c
+> >> +++ b/drivers/clk/tegra/clk-tegra20.c
+> >> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+> >>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> >>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> >>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+> >> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
+> >>  	/* must be the last entry */
+> >>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+> >>  };
+> >> --
+> >> 2.17.0
+> >>
+> > 
+> > Maybe better to specify this in the Tegra20 dtsi? See 
+> > "Assigned clock parents and rates" in
+> > Documentation/devicetree/bindings/clock/clock-bindings.txt
 > 
-> Color keying is found in a large number of devices whose capabilities
-> often differ, but they still have enough common features in range to
-> standardize color key properties. This commit adds nine generic DRM plane
-> properties related to the color keying to cover various HW capabilities.
+> assigned-clocks indeed works just fine for this case. Thanks for
+> bringing this up, will drop this patch and add the device tree
+> properties in v3.
 > 
-> This patch is based on the initial work done by Laurent Pinchart, most of
-> credits for this patch goes to him.
+> Hm, interesting that none of the Tegra device tree make use of the
+> feature so far. I guess there would be other cases where this would be
+> useful as well (the one just above, VDE?).
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/drm_atomic.c |  36 ++++++
->  drivers/gpu/drm/drm_blend.c  | 229 +++++++++++++++++++++++++++++++++++
->  include/drm/drm_blend.h      |   3 +
->  include/drm/drm_plane.h      |  77 ++++++++++++
->  4 files changed, 345 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 895741e9cd7d..5b808cb68654 100644
-> @@ -124,6 +175,19 @@ struct drm_plane_state {
->  	unsigned int zpos;
->  	unsigned int normalized_zpos;
->  
-> +	/* Plane colorkey */
-> +	struct {
-> +		enum drm_plane_colorkey_mode mode;
-> +		u64 min;
-> +		u64 max;
-> +		u64 mask;
-> +		u32 format;
-> +		bool inverted_match;
-> +		u64 replacement_mask;
-> +		u64 replacement_value;
-> +		u32 replacement_format;
-> +	} colorkey;
 
-After a quick stab at implementing this for i915 I came to the
-conclusion that I'd like this struct to have a name so that I can pass
-it around/consult it easily without having to mess about with the entire
-plane state.
+Yes, historically this feature wasn't available, so we used these init tables.
+Unfortunately it's not easy to get rid of them for parent and rate
+configuration, because new kernels should also work with existing DTBs, so we
+can't just add assigned-clock properties and remove the existing table
+entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
+are only enabled by the init table. For not yet merged blocks, this is
+ofcourse not a concern.
 
-One extra question that came up is how are we going to define the
-destination color key? Is it to be a) enabled on the plane that has the
-colorkey painted on it, or is it to be b) enabled on a plane that sits
-above the plane that is going to be covering up the colorkey? Modern
-Intel hardware defines it the a) way, whereas older hw used the b)
-method. Thinking about it I do think the a) method seems nicer because
-it removes the ambiguity as to which plane's pixels are going to be
-compared again the colorkey. So kinda matches the src colorkey case
-better.
+Cheers,
 
-Oh and this also brings up the question as to which other plane(s) are
-taking part in the colorkey process. Looks like on modern Intel hw it's
-supposed to be just the plane immediately above the plane with
-dst keying enabled. On some really old hw there were some more
-complicated rules as to which pair of planes are involved. On middle
-aged hw the situation is simpler a there are only ever two
-(non-cursor) planes on the same crtc. The cursor doesn't seem to
-participate in the colorkeing ever. Not sure there's a sane way to
-fully abstract this all.
-
-I should probably poke at the hardware a bit more to figure out how
-this really works when there are more than two active planes on the
-crtc. <day later> I did poke at one particular class of hw which is
-a bit of a mix of old and middle aged hw, and there it seems I can
-also do dst colorkeying the a) way. And in this case there are three
-planes taking part in the dst colorkey match (the primary that
-has the colorkey painted on it, and two overlay planes that cover
-up the matched pixels). So for that case definitely the a) approach
-in the uapi would make more sense as trying to specify conflicting
-dst colorkey settings for each of the overlay planes wouldn't make
-any sense. I'll need to poke at the modern hw a bit more still...
-
--- 
-Ville Syrjälä
-Intel
+Peter.
