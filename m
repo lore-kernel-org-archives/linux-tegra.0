@@ -1,72 +1,79 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-Date: Tue, 29 May 2018 10:48:04 +0300
-Message-ID: <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
-References: <20180527215442.14760-5-stefan@agner.ch>
- <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
- <5665b799f763daa82dced238fb494863@agner.ch>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 0/9] PM / Domains: Add support for multi PM domains per device
+Date: Tue, 29 May 2018 12:04:12 +0200
+Message-ID: <20180529100421.31022-1-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5665b799f763daa82dced238fb494863@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
-> On 28.05.2018 09:55, Peter De Schrijver wrote:
-> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
-> >> From: Lucas Stach <dev@lynxeye.de>
-> >>
-> >> Set up the NAND Flash controller clock to run at 150MHz
-> >> instead of the rate set by the bootloader. This is a
-> >> conservative rate which also yields good performance.
-> >>
-> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >> ---
-> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> >> index 0ee56dd04cec..dff8c425cd28 100644
-> >> --- a/drivers/clk/tegra/clk-tegra20.c
-> >> +++ b/drivers/clk/tegra/clk-tegra20.c
-> >> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
-> >>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> >>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> >>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-> >> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
-> >>  	/* must be the last entry */
-> >>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
-> >>  };
-> >> --
-> >> 2.17.0
-> >>
-> > 
-> > Maybe better to specify this in the Tegra20 dtsi? See 
-> > "Assigned clock parents and rates" in
-> > Documentation/devicetree/bindings/clock/clock-bindings.txt
-> 
-> assigned-clocks indeed works just fine for this case. Thanks for
-> bringing this up, will drop this patch and add the device tree
-> properties in v3.
-> 
-> Hm, interesting that none of the Tegra device tree make use of the
-> feature so far. I guess there would be other cases where this would be
-> useful as well (the one just above, VDE?).
-> 
+Changes in v2:
+	- Addressed comments from Geert around DT doc.
+	- Addressed comments from Jon around clarification of how to use this
+	and changes to returned error codes.
+	- Fixed build error in case CONFIG_PM was unset.
 
-Yes, historically this feature wasn't available, so we used these init tables.
-Unfortunately it's not easy to get rid of them for parent and rate
-configuration, because new kernels should also work with existing DTBs, so we
-can't just add assigned-clock properties and remove the existing table
-entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
-are only enabled by the init table. For not yet merged blocks, this is
-ofcourse not a concern.
+There are devices that are partitioned across multiple PM domains. Currently
+these can't be supported well by the available PM infrastructures we have in
+the kernel. This series is an attempt to address this.
 
-Cheers,
+The interesting parts happens from patch 5 an onwards, including a minor DT
+update to the existing power-domain bindings, the 4 earlier are just trivial
+clean-ups of some related code in genpd, which I happened to stumble over.
 
-Peter.
+Some additional background:
+
+One existing case where devices are partitioned across multiple PM domains, is
+the Nvida Tegra 124/210 X-USB subsystem. A while ago Jon Hunter (Nvidia) sent a
+series, trying to address these issues, however this is a new approach, while
+it re-uses the same concepts from DT point of view.
+
+The Tegra 124/210 X-USB subsystem contains of a host controller and a device
+controller. Each controller have its own independent PM domain, but are being
+partitioned across another shared PM domain for the USB super-speed logic.
+
+Currently to make the drivers work, either the related PM domains needs to stay
+powered on always or the PM domain topology needs to be in-correctly modelled
+through sub-domains. In both cases PM domains may be powered on while they
+don't need to be, so in the end this means - wasting power -.
+
+As stated above, this series intends to address these problem from a PM
+infrastructure point of view. More details are available in each changelog.
+
+It should be noted that this series has been tested on HW, however only by using
+a home-cooked test PM domain driver for genpd and together with a test driver.
+This allowed me to play with PM domain (genpd), runtime PM and device links.
+
+Any further deployment for real use cases are greatly appreciated. I am happy to
+to help, if needed!
+
+Kind regards
+Ulf Hansson
+
+
+Ulf Hansson (9):
+  PM / Domains: Drop extern declarations of functions in pm_domain.h
+  PM / Domains: Drop __pm_genpd_add_device()
+  PM / Domains: Drop genpd as in-param for pm_genpd_remove_device()
+  PM / Domains: Drop unused parameter in genpd_allocate_dev_data()
+  PM / Domains: dt: Allow power-domain property to be a list of
+    specifiers
+  PM / Domains: Don't attach devices in genpd with multi PM domains
+  PM / Domains: Split genpd_dev_pm_attach()
+  PM / Domains: Add support for multi PM domains per device to genpd
+  PM / Domains: Add dev_pm_domain_attach_by_id() to manage multi PM
+    domains
+
+ .../bindings/power/power_domain.txt           |  19 ++-
+ drivers/base/power/common.c                   |  39 ++++-
+ drivers/base/power/domain.c                   | 155 ++++++++++++++----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c       |   2 +-
+ include/linux/pm_domain.h                     |  79 ++++-----
+ 5 files changed, 216 insertions(+), 78 deletions(-)
+
+-- 
+2.17.0
