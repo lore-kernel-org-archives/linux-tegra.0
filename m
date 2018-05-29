@@ -1,94 +1,82 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 2/9] PM / Domains: Drop __pm_genpd_add_device()
-Date: Tue, 29 May 2018 12:04:14 +0200
-Message-ID: <20180529100421.31022-3-ulf.hansson@linaro.org>
-References: <20180529100421.31022-1-ulf.hansson@linaro.org>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
+Date: Tue, 29 May 2018 14:12:35 +0200
+Message-ID: <90180dd9fc6e60175c54b9d70e50f0e5@agner.ch>
+References: <20180527215442.14760-5-stefan@agner.ch>
+ <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+ <5665b799f763daa82dced238fb494863@agner.ch>
+ <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180529100421.31022-1-ulf.hansson@linaro.org>
+In-Reply-To: <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There are still a few non-DT existing users of genpd, however neither of
-them uses __pm_genpd_add_device(), hence let's drop it.
+On 29.05.2018 09:48, Peter De Schrijver wrote:
+> On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
+>> On 28.05.2018 09:55, Peter De Schrijver wrote:
+>> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
+>> >> From: Lucas Stach <dev@lynxeye.de>
+>> >>
+>> >> Set up the NAND Flash controller clock to run at 150MHz
+>> >> instead of the rate set by the bootloader. This is a
+>> >> conservative rate which also yields good performance.
+>> >>
+>> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+>> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> >> ---
+>> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
+>> >>  1 file changed, 1 insertion(+)
+>> >>
+>> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+>> >> index 0ee56dd04cec..dff8c425cd28 100644
+>> >> --- a/drivers/clk/tegra/clk-tegra20.c
+>> >> +++ b/drivers/clk/tegra/clk-tegra20.c
+>> >> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+>> >>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>> >>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>> >>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+>> >> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
+>> >>  	/* must be the last entry */
+>> >>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+>> >>  };
+>> >> --
+>> >> 2.17.0
+>> >>
+>> >
+>> > Maybe better to specify this in the Tegra20 dtsi? See
+>> > "Assigned clock parents and rates" in
+>> > Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>
+>> assigned-clocks indeed works just fine for this case. Thanks for
+>> bringing this up, will drop this patch and add the device tree
+>> properties in v3.
+>>
+>> Hm, interesting that none of the Tegra device tree make use of the
+>> feature so far. I guess there would be other cases where this would be
+>> useful as well (the one just above, VDE?).
+>>
+> 
+> Yes, historically this feature wasn't available, so we used these init tables.
+> Unfortunately it's not easy to get rid of them for parent and rate
+> configuration, because new kernels should also work with existing DTBs, so we
+> can't just add assigned-clock properties and remove the existing table
+> entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
+> are only enabled by the init table. For not yet merged blocks, this is
+> ofcourse not a concern.
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/base/power/domain.c | 10 ++++------
- include/linux/pm_domain.h   | 14 +++-----------
- 2 files changed, 7 insertions(+), 17 deletions(-)
+Sure I understand.
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 71a1cc79fbaa..469edb401811 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -1414,23 +1414,21 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
- }
- 
- /**
-- * __pm_genpd_add_device - Add a device to an I/O PM domain.
-+ * pm_genpd_add_device - Add a device to an I/O PM domain.
-  * @genpd: PM domain to add the device to.
-  * @dev: Device to be added.
-- * @td: Set of PM QoS timing parameters to attach to the device.
-  */
--int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
--			  struct gpd_timing_data *td)
-+int pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev)
- {
- 	int ret;
- 
- 	mutex_lock(&gpd_list_lock);
--	ret = genpd_add_device(genpd, dev, td);
-+	ret = genpd_add_device(genpd, dev, NULL);
- 	mutex_unlock(&gpd_list_lock);
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(__pm_genpd_add_device);
-+EXPORT_SYMBOL_GPL(pm_genpd_add_device);
- 
- static int genpd_remove_device(struct generic_pm_domain *genpd,
- 			       struct device *dev)
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index c847e9a3033d..79888fb4a81f 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -143,8 +143,7 @@ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
- 	return to_gpd_data(dev->power.subsys_data->domain_data);
- }
- 
--int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
--			  struct gpd_timing_data *td);
-+int pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev);
- int pm_genpd_remove_device(struct generic_pm_domain *genpd, struct device *dev);
- int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
- 			   struct generic_pm_domain *new_subdomain);
-@@ -163,9 +162,8 @@ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
- {
- 	return ERR_PTR(-ENOSYS);
- }
--static inline int __pm_genpd_add_device(struct generic_pm_domain *genpd,
--					struct device *dev,
--					struct gpd_timing_data *td)
-+static inline int pm_genpd_add_device(struct generic_pm_domain *genpd,
-+				      struct device *dev)
- {
- 	return -ENOSYS;
- }
-@@ -204,12 +202,6 @@ static inline int dev_pm_genpd_set_performance_state(struct device *dev,
- #define pm_domain_always_on_gov		(*(struct dev_power_governor *)(NULL))
- #endif
- 
--static inline int pm_genpd_add_device(struct generic_pm_domain *genpd,
--				      struct device *dev)
--{
--	return __pm_genpd_add_device(genpd, dev, NULL);
--}
--
- #ifdef CONFIG_PM_GENERIC_DOMAINS_SLEEP
- void pm_genpd_syscore_poweroff(struct device *dev);
- void pm_genpd_syscore_poweron(struct device *dev);
--- 
-2.17.0
+Was just somewhat surprised that it isn't used at all yet (grep -r -e
+assigned-clock arch/arm/boot/dts/tegra* returns nothing). After all,
+assigned clocks bindings have been merged in 2014 :-)
+
+At least "clk: tegra: Specify VDE clock rate" merged earlier this year
+would have been a candidate already.
+
+--
+Stefan
