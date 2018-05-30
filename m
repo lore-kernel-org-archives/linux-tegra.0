@@ -1,91 +1,40 @@
-From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] drm/nouveau: tegra: Detach from ARM DMA/IOMMU
-	mapping
-Date: Wed, 30 May 2018 11:30:25 +0100
-Message-ID: <7960e4fc-f680-f8d1-0c5a-3ff1e13b3154@arm.com>
-References: <20180530080345.2353-1-thierry.reding@gmail.com>
-	<20180530080345.2353-3-thierry.reding@gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
+Date: Wed, 30 May 2018 16:29:45 +0530
+Message-ID: <7b93f6b0-0e09-d8e0-b48e-4ef518c3bd9f@nvidia.com>
+References: <20180513211347.7187-1-digetx@gmail.com>
+ <20180514115933.GH18312@ulmo>
+ <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
+ <5949e650-8ab5-b4bb-196d-5a0705383141@gmail.com>
+ <20180529180659.f5s56nstykztvykr@ninjato>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20180530080345.2353-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180529180659.f5s56nstykztvykr@ninjato>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Shardar Shariff Md <smohammed@nvidia.com>, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 30/05/18 09:03, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Depending on the kernel configuration, early ARM architecture setup code
-> may have attached the GPU to a DMA/IOMMU mapping that transparently uses
-> the IOMMU to back the DMA API. Tegra requires special handling for IOMMU
-> backed buffers (a special bit in the GPU's MMU page tables indicates the
-> memory path to take: via the SMMU or directly to the memory controller).
-> Transparently backing DMA memory with an IOMMU prevents Nouveau from
-> properly handling such memory accesses and causes memory access faults.
-> 
-> As a side-note: buffers other than those allocated in instance memory
-> don't need to be physically contiguous from the GPU's perspective since
-> the GPU can map them into contiguous buffers using its own MMU. Mapping
-> these buffers through the IOMMU is unnecessary and will even lead to
-> performance degradation because of the additional translation. One
-> exception to this are compressible buffers which need large pages. In
-> order to enable these large pages, multiple small pages will have to be
-> combined into one large (I/O virtually contiguous) mapping via the
-> IOMMU. However, that is a topic outside the scope of this fix and isn't
-> currently supported. An implementation will want to explicitly create
-> these large pages in the Nouveau driver, so detaching from a DMA/IOMMU
-> mapping would still be required.
 
-I wonder if it might make sense to have a hook in iommu_attach_device() 
-to notify the arch DMA API code when moving devices between unmanaged 
-and DMA ops domains? That seems like it might be the most low-impact way 
-to address the overall problem long-term.
 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in v3:
-> - clarify the use of IOMMU mapping for compressible buffers
-> - squash multiple patches into this
-> 
->   drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> index 78597da6313a..d0538af1b967 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> @@ -105,6 +105,11 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
->   	unsigned long pgsize_bitmap;
->   	int ret;
->   
-> +#if IS_ENABLED(CONFIG_ARM)
+On Tuesday 29 May 2018 11:36 PM, Wolfram Sang wrote:
+>>> Our I2C driver is based on the interrupt. So we have converted the
+>>> suspend/resume to suspend_noirq and reseume_noirq so that we will not allow the
+>>> transfer when system interrupt disabled in downstream.
+>>>            SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
+>>>
+>>> In shutdown path, where interrupt disabled and still need i2c, we use the
+>>> bit-bang method via GPIO for i2c transfer.
+>> In the current upstream kernel suspend/resume can't be simply moved to the
+>> 'noirq' stage because resume invokes tegra_i2c_init() which uses runtime PM and
+>> that doesn't work with the IRQ's being disabled. But things do not work even
+>> with the tegra_i2c_init() changed to work with the disabled IRQ's, like I wrote
+>> above the I2C transfer fails (due to timeout) and a "fix" for that failure was
+>> to remove reset_control_assert/deassert from the tegra_i2c_init(). So I'd go for
+>> a complete suspend/resume removal for now as it is causes problem.
+> Laxman, are you convinced or do you have still objections?
+Fine with me. Please add my Ack
 
-Wouldn't CONFIG_ARM_DMA_USE_IOMMU be even more appropriate?
-
-> +	/* make sure we can use the IOMMU exclusively */
-> +	arm_dma_iommu_detach_device(dev);
-
-As before, I would just use the existing infrastructure the same way the 
-Exynos DRM driver currently does in __exynos_iommu_attach() (albeit 
-without then reattaching to another DMA ops mapping).
-
-Robin.
-
-> +#endif
-> +
->   	if (!tdev->func->iommu_bit)
->   		return;
->   
-> 
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
