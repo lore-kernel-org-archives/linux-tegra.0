@@ -1,184 +1,243 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] ARM: dma-mapping: Implement
-	arm_dma_iommu_detach_device()
-Date: Wed, 30 May 2018 16:07:42 +0200
-Message-ID: <20180530140742.GC5400@ulmo>
-References: <20180530080345.2353-1-thierry.reding@gmail.com>
-	<20180530080345.2353-2-thierry.reding@gmail.com>
-	<eee02391-aa25-da84-f98a-b5fed6c69599@arm.com>
-	<20180530125446.GA1595@ulmo> <20180530131239.GA5400@ulmo>
-	<d3121aeb-1d75-2ba6-681a-f1e0681e290a@arm.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 9/9] PM / Domains: Add dev_pm_domain_attach_by_id() to
+ manage multi PM domains
+Date: Wed, 30 May 2018 15:30:38 +0100
+Message-ID: <f214cf2b-49ee-2f7c-babd-1cee7dcae927@nvidia.com>
+References: <20180529100421.31022-1-ulf.hansson@linaro.org>
+ <20180529100421.31022-10-ulf.hansson@linaro.org>
+ <cc6f36ce-32b7-4b69-f9a9-98cf0b12a9d1@nvidia.com>
+ <CAPDyKFoiEctBuyw1nVS6ruQ92-jOsMMSAUsWKew42dkmk64_8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2164272946892206685=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <d3121aeb-1d75-2ba6-681a-f1e0681e290a-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFoiEctBuyw1nVS6ruQ92-jOsMMSAUsWKew42dkmk64_8A@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2164272946892206685==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7qSK/uQB79J36Y4o"
-Content-Disposition: inline
+On 30/05/18 12:31, Ulf Hansson wrote:
+> On 30 May 2018 at 11:19, Jon Hunter <jonathanh@nvidia.com> wrote:
+>> Hi Ulf,
+>>
+>> On 29/05/18 11:04, Ulf Hansson wrote:
+>>> The existing dev_pm_domain_attach() function, allows a single PM domain to
+>>> be attached per device. To be able to support devices that are partitioned
+>>> across multiple PM domains, let's introduce a new interface,
+>>> dev_pm_domain_attach_by_id().
+>>>
+>>> The dev_pm_domain_attach_by_id() returns a new allocated struct device with
+>>> the corresponding attached PM domain. This enables for example a driver to
+>>> operate on the new device from a power management point of view. The driver
+>>> may then also benefit from using the received device, to set up so called
+>>> device-links towards its original device. Depending on the situation, these
+>>> links may then be dynamically changed.
+>>
+>> I have given this series a go with Tegra updating the XHCI driver to make
+>> use of these new APIs. Good news it does appear to work fine for Tegra,
+>> however, initially when looking at the device_link_add() API ...
+>>
+>> /**
+>>  * device_link_add - Create a link between two devices.
+>>  * @consumer: Consumer end of the link.
+>>  * @supplier: Supplier end of the link.
+>>  * @flags: Link flags.
+>>
+>>  ... I had assumed that the 'consumer' device would be the actual XHCI
+>> device (in the case of Tegra) and the 'supplier' device would be the new
+>> genpd device. However, this did not work and I got the following WARN on
+>> boot ...
+>>
+>> [    2.050929] ---[ end trace eff0b5265e530c92 ]---
+>> [    2.055567] WARNING: CPU: 2 PID: 1 at drivers/base/core.c:446 device_links_driver_bound+0xc0/0xd0
+>> [    2.064422] Modules linked in:
+>> [    2.067471] CPU: 2 PID: 1 Comm: swapper/0 Tainted: G        W         4.17.0-rc7-next-20180529-00011-g4faf0dc0ebf3-dirty #32
+>> [    2.078667] Hardware name: Google Pixel C (DT)
+>> [    2.083101] pstate: 80000005 (Nzcv daif -PAN -UAO)
+>> [    2.087881] pc : device_links_driver_bound+0xc0/0xd0
+>> [    2.092832] lr : device_links_driver_bound+0x20/0xd0
+>>
+>> Switching the Tegra XHCI device to be the 'supplier' and genpd device to
+>> be the 'consumer' does work, but is this correct? Seems to be opposite to
+> 
+> It shall be the opposite. The Tegra XHCI device shall be the consumer.
+> 
+>> what I expected. Maybe I am missing something?
+> 
+> The problem you get is because the device returned from
+> dev_pm_domain_attach_by_id(), let's call it genpd_dev, doesn't have
+> the a driver.
+> 
+> You need to use a couple of device links flag, something like this:
+> 
+> link = device_link_add(dev, genpd_dev, DL_FLAG_STATELESS |
+> DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE);
 
+Thanks, adding the DL_FLAG_STATELESS flag resolved the issue. I already added
+the DL_FLAG_PM_RUNTIME but I did not bother with the DL_FLAG_RPM_ACTIVE as
+from the description it appears that this will always keep it on? Seems to
+work fine without it.
 
---7qSK/uQB79J36Y4o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Moreover, you also need these commits, depending if you are running on
+> something else than Rafael's tree.
+> 
+> a0504aecba76 PM / runtime: Drop usage count for suppliers at device link removal
+> 1e8378619841 PM / runtime: Fixup reference counting of device link
+> suppliers at probe
 
-On Wed, May 30, 2018 at 02:42:50PM +0100, Robin Murphy wrote:
-> On 30/05/18 14:12, Thierry Reding wrote:
-> > On Wed, May 30, 2018 at 02:54:46PM +0200, Thierry Reding wrote:
-> > > On Wed, May 30, 2018 at 10:59:30AM +0100, Robin Murphy wrote:
-> > > > On 30/05/18 09:03, Thierry Reding wrote:
-> > > > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > >=20
-> > > > > Implement this function to enable drivers from detaching from any=
- IOMMU
-> > > > > domains that architecture code might have attached them to so tha=
-t they
-> > > > > can take exclusive control of the IOMMU via the IOMMU API.
-> > > > >=20
-> > > > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > > ---
-> > > > > Changes in v3:
-> > > > > - make API 32-bit ARM specific
-> > > > > - avoid extra local variable
-> > > > >=20
-> > > > > Changes in v2:
-> > > > > - fix compilation
-> > > > >=20
-> > > > >    arch/arm/include/asm/dma-mapping.h |  3 +++
-> > > > >    arch/arm/mm/dma-mapping-nommu.c    |  4 ++++
-> > > > >    arch/arm/mm/dma-mapping.c          | 16 ++++++++++++++++
-> > > > >    3 files changed, 23 insertions(+)
-> > > > >=20
-> > > > > diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/includ=
-e/asm/dma-mapping.h
-> > > > > index 8436f6ade57d..5960e9f3a9d0 100644
-> > > > > --- a/arch/arm/include/asm/dma-mapping.h
-> > > > > +++ b/arch/arm/include/asm/dma-mapping.h
-> > > > > @@ -103,6 +103,9 @@ extern void arch_setup_dma_ops(struct device =
-*dev, u64 dma_base, u64 size,
-> > > > >    #define arch_teardown_dma_ops arch_teardown_dma_ops
-> > > > >    extern void arch_teardown_dma_ops(struct device *dev);
-> > > > > +#define arm_dma_iommu_detach_device arm_dma_iommu_detach_device
-> > > > > +extern void arm_dma_iommu_detach_device(struct device *dev);
-> > > > > +
-> > > > >    /* do not use this function in a driver */
-> > > > >    static inline bool is_device_dma_coherent(struct device *dev)
-> > > > >    {
-> > > > > diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-ma=
-pping-nommu.c
-> > > > > index f448a0663b10..eb781369377b 100644
-> > > > > --- a/arch/arm/mm/dma-mapping-nommu.c
-> > > > > +++ b/arch/arm/mm/dma-mapping-nommu.c
-> > > > > @@ -241,3 +241,7 @@ void arch_setup_dma_ops(struct device *dev, u=
-64 dma_base, u64 size,
-> > > > >    void arch_teardown_dma_ops(struct device *dev)
-> > > > >    {
-> > > > >    }
-> > > > > +
-> > > > > +void arm_dma_iommu_detach_device(struct device *dev)
-> > > > > +{
-> > > > > +}
-> > > > > diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> > > > > index af27f1c22d93..6d8af08b3e7d 100644
-> > > > > --- a/arch/arm/mm/dma-mapping.c
-> > > > > +++ b/arch/arm/mm/dma-mapping.c
-> > > > > @@ -2400,3 +2400,19 @@ void arch_teardown_dma_ops(struct device *=
-dev)
-> > > > >    	arm_teardown_iommu_dma_ops(dev);
-> > > > >    }
-> > > > > +
-> > > > > +void arm_dma_iommu_detach_device(struct device *dev)
-> > > > > +{
-> > > > > +#ifdef CONFIG_ARM_DMA_USE_IOMMU
-> > > > > +	struct dma_iommu_mapping *mapping =3D to_dma_iommu_mapping(dev);
-> > > > > +
-> > > > > +	if (!mapping)
-> > > > > +		return;
-> > > > > +
-> > > > > +	arm_iommu_release_mapping(mapping);
-> > > >=20
-> > > > Potentially freeing the mapping before you try to operate on it is =
-never the
-> > > > best idea. Plus arm_iommu_detach_device() already releases a refere=
-nce
-> > > > appropriately anyway, so it's a double-free.
-> > >=20
-> > > But the reference released by arm_iommu_detach_device() is to balance
-> > > out the reference acquired by arm_iommu_attach_device(), isn't it? In
-> > > the above, the arm_iommu_release_mapping() is supposed to drop the
-> > > final reference which was obtained by arm_iommu_create_mapping(). The
-> > > mapping shouldn't go away irrespective of the order in which these
-> > > will be called.
-> >=20
-> > Going over the DMA/IOMMU code I just remembered that I drew inspiration
-> > from arm_teardown_iommu_dma_ops() for the initial proposal which also
-> > calls both arm_iommu_detach_device() and arm_iommu_release_mapping().
-> > That said, one other possibility to implement this would be to export
-> > the 32-bit and 64-bit ARM implementations of arch_teardown_dma_ops()
-> > and use that instead. linux/dma-mapping.h implements a stub for
-> > architectures that don't provide one, so it should work without any
-> > #ifdef guards.
-> >=20
-> > That combined with the set_dma_ops() fix in arm_iommu_detach_device()
-> > should fix this pretty nicely.
->=20
-> OK, having a second look at the ARM code I see I had indeed overlooked th=
-at
-> extra reference held until arm_teardown_iommu_dma_ops() - mea culpa - but
-> frankly that looks wrong anyway, as it basically defeats the point of
-> refcounting the mapping at all. AFAICS arm_setup_iommu_dma_ops() should j=
-ust
-> be made to behave 'normally' by unconditionally dropping the initial
-> reference after calling __arm_iommu_attach_device(), then we don't need a=
-ll
-> these odd and confusing release calls dotted around at all.
+Yes these are currently in -next and so I have these.
+ 
+>>
+>>> The new interface is typically called by drivers during their probe phase,
+>>> in case they manages devices which uses multiple PM domains. If that is the
+>>> case, the driver also becomes responsible of managing the detaching of the
+>>> PM domains, which typically should be done at the remove phase. Detaching
+>>> is done by calling the existing dev_pm_domain_detach() function and for
+>>> each of the received devices from dev_pm_domain_attach_by_id().
+>>>
+>>> Note, currently its only genpd that supports multiple PM domains per
+>>> device, but dev_pm_domain_attach_by_id() can easily by extended to cover
+>>> other PM domain types, if/when needed.
+>>>
+>>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>> ---
+>>>
+>>> Changes in v2:
+>>>       - Fixed comments from Jon. Clarified function descriptions/changelog and
+>>>       return ERR_PTR(-EEXIST) in case a PM domain is already assigned.
+>>>       - Fix build error when CONFIG_PM is unset.
+>>>
+>>> ---
+>>>  drivers/base/power/common.c | 43 ++++++++++++++++++++++++++++++++++---
+>>>  include/linux/pm_domain.h   |  7 ++++++
+>>>  2 files changed, 47 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+>>> index 7ae62b6355b8..5e5ea0c239de 100644
+>>> --- a/drivers/base/power/common.c
+>>> +++ b/drivers/base/power/common.c
+>>> @@ -116,14 +116,51 @@ int dev_pm_domain_attach(struct device *dev, bool power_on)
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(dev_pm_domain_attach);
+>>>
+>>> +/**
+>>> + * dev_pm_domain_attach_by_id - Attach a device to one of its PM domains.
+>>> + * @dev: Device to attach.
+>>
+>> Nit ... I still don't think this is the device we are attaching to, but the
+>> device the PM domains are associated with. IOW we are using this device to
+>> lookup the PM domains.
+> 
+> Right. I forgot to update that part of the description.
+> 
+> What about:
+> 
+> dev_pm_domain_attach_by_id - Associate a device with one of its PM domains.
+> @dev: The device used to lookup the PM domain.
 
-Good point. I can follow up with a series to fix the reference counting.
+Perfect.
+ 
+>>
+>>> + * @index: The index of the PM domain.
+>>> + *
+>>> + * As @dev may only be attached to a single PM domain, the backend PM domain
+>>> + * provider creates a virtual device to attach instead. If attachment succeeds,
+>>> + * the ->detach() callback in the struct dev_pm_domain are assigned by the
+>>> + * corresponding backend attach function, as to deal with detaching of the
+>>> + * created virtual device.
+>>> + *
+>>> + * This function should typically be invoked by a driver during the probe phase,
+>>> + * in case its device requires power management through multiple PM domains. The
+>>> + * driver may benefit from using the received device, to configure device-links
+>>> + * towards its original device. Depending on the use-case and if needed, the
+>>> + * links may be dynamically changed by the driver, which allows it to control
+>>> + * the power to the PM domains independently from each other.
+>>> + *
+>>> + * Callers must ensure proper synchronization of this function with power
+>>> + * management callbacks.
+>>> + *
+>>> + * Returns the virtual created device when successfully attached to its PM
+>>> + * domain, NULL in case @dev don't need a PM domain, else an ERR_PTR().
+>>> + * Note that, to detach the returned virtual device, the driver shall call
+>>> + * dev_pm_domain_detach() on it, typically during the remove phase.
+>>> + */
+>>> +struct device *dev_pm_domain_attach_by_id(struct device *dev,
+>>> +                                       unsigned int index)
+>>> +{
+>>> +     if (dev->pm_domain)
+>>> +             return ERR_PTR(-EEXIST);
+>>> +
+>>> +     return genpd_dev_pm_attach_by_id(dev, index);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(dev_pm_domain_attach_by_id);
+>>> +
+>>>  /**
+>>>   * dev_pm_domain_detach - Detach a device from its PM domain.
+>>>   * @dev: Device to detach.
+>>>   * @power_off: Used to indicate whether we should power off the device.
+>>>   *
+>>> - * This functions will reverse the actions from dev_pm_domain_attach() and thus
+>>> - * try to detach the @dev from its PM domain. Typically it should be invoked
+>>> - * from subsystem level code during the remove phase.
+>>> + * This functions will reverse the actions from dev_pm_domain_attach() and
+>>> + * dev_pm_domain_attach_by_id(), thus it detaches @dev from its PM domain.
+>>> + * Typically it should be invoked during the remove phase, either from
+>>> + * subsystem level code or from drivers.
+>>>   *
+>>>   * Callers must ensure proper synchronization of this function with power
+>>>   * management callbacks.
+>>> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+>>> index 82458e8e2e01..9206a4fef9ac 100644
+>>> --- a/include/linux/pm_domain.h
+>>> +++ b/include/linux/pm_domain.h
+>>> @@ -299,6 +299,8 @@ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
+>>>
+>>>  #ifdef CONFIG_PM
+>>>  int dev_pm_domain_attach(struct device *dev, bool power_on);
+>>> +struct device *dev_pm_domain_attach_by_id(struct device *dev,
+>>> +                                       unsigned int index);
+>>>  void dev_pm_domain_detach(struct device *dev, bool power_off);
+>>>  void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
+>>>  #else
+>>> @@ -306,6 +308,11 @@ static inline int dev_pm_domain_attach(struct device *dev, bool power_on)
+>>>  {
+>>>       return 0;
+>>>  }
+>>> +static inline struct device *dev_pm_domain_attach_by_id(struct device *dev,
+>>> +                                                     unsigned int index)
+>>> +{
+>>> +     return NULL;
+>>> +}
+>>>  static inline void dev_pm_domain_detach(struct device *dev, bool power_off) {}
+>>>  static inline void dev_pm_domain_set(struct device *dev,
+>>>                                    struct dev_pm_domain *pd) {}
+>>>
+>>
+>> My only other comments on this series are ...
+>>
+>> 1. I think it would be nice to have an dev_pm_domain_attach_by_name() and
+>>    that the DT binding has a 'power-domain-names' property.
+> 
+> I think it makes sense, but my plan was to do that as second step on
+> top. Are you okay with that as well?
 
-Thierry
+Yes that is fine with me.
 
---7qSK/uQB79J36Y4o
-Content-Type: application/pgp-signature; name="signature.asc"
+>> 2. I am wondering if there could be value in having a
+>>    dev_pm_domain_attach_link_all() helper which would attach and link all
+>>    PM domains at once.
+> 
+> Perhaps it can be useful, yes! However, maybe we can postpone that to
+> after this series. I want to keep the series as simple as possible,
+> then we can build upon it.
 
------BEGIN PGP SIGNATURE-----
+That's fine too and I can always add these if you prefer.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsOsCwACgkQ3SOs138+
-s6H0NBAAgjE9uTnbqLA5cui9dfOx/p6hugcgr+LTh/w5Mv0LJ0yw5cmMTEVUQdkr
-uc1BBclXo8bXME8TMWxcKRCpOwjT+W3nlh1aOyxlgUfPlPo7P/gfwaS0ZIDJjtVa
-CwOLli8H4GSg9Pk7k2kRO0CkSpdZIADa5tb9gbuvEXp5QzA0/0s8Z155WeQ8DPUT
-BK1SdqjsrA9y0DBbWjmBvYtM5NQ0LAcHY6slD/ocInBYzYxi19bky/Q0qJ27PqFk
-XUwyNiCULhPtFlw6+zvyXww5wQtnd0V4EgYo3JsYgFsuUVMBvG4Vcjw4i4V23xCY
-dlEsvEouPBMjWib7fut4NYzeelkqptdGSa4Y1e49h5CU2TPK7cHVlackQdghNl06
-bAv9QW4x5KZZxWnX3XO2xkqwwAk0wLz3HGNurwkYiZcdSEXEuRbPKYhZMkI/TwhO
-HU3/OlLrGXAn/U5oG2bFXCrhx7o3gPoomoGb+jFMiFxUnzHeJm6obclfJHuMC31H
-NcORpXGjxwk4ZORKktIYVQAoz4K4Yexx3wJ7ABUr8Rqg+hkrg+7bM5zvx6S9NrEk
-4IkrwQxjZzOtIiXxzoL/Nj5LlfoPy5GR+S2JIpWXDkEhwtGLJ9kY2FdNMhAghkAM
-mIH05FuMRYy2dPQg8JmTRlTgpx5e3Gg1l/4Upoh9z0w6OAgu93k=
-=cyam
------END PGP SIGNATURE-----
+Cheers
+Jon
 
---7qSK/uQB79J36Y4o--
-
---===============2164272946892206685==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============2164272946892206685==--
+-- 
+nvpublic
