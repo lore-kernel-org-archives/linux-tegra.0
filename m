@@ -1,50 +1,37 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 2/6] mtd: rawnand: tegra: add devicetree binding
-Date: Wed, 30 May 2018 22:45:23 -0500
-Message-ID: <20180531034523.GA5417@rob-hp-laptop>
-References: <20180527215442.14760-3-stefan@agner.ch>
- <20180528002354.45025afd@xps13>
+Subject: Re: [PATCH v2 5/9] PM / Domains: dt: Allow power-domain property to
+ be a list of specifiers
+Date: Wed, 30 May 2018 22:53:42 -0500
+Message-ID: <20180531035342.GA14184@rob-hp-laptop>
+References: <20180529100421.31022-1-ulf.hansson@linaro.org>
+ <20180529100421.31022-6-ulf.hansson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180528002354.45025afd@xps13>
+In-Reply-To: <20180529100421.31022-6-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Stefan Agner <stefan@agner.ch>, boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 28, 2018 at 12:23:54AM +0200, Miquel Raynal wrote:
-> Hi Stefan,
+On Tue, May 29, 2018 at 12:04:17PM +0200, Ulf Hansson wrote:
+> To be able to describe topologies where devices are partitioned across
+> multiple power domains, let's extend the power-domain property to allow
+> being a list of PM domain specifiers.
 > 
-> On Sun, 27 May 2018 23:54:38 +0200, Stefan Agner <stefan@agner.ch>
-> wrote:
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Suggested-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
 > 
-> > From: Lucas Stach <dev@lynxeye.de>
-> > 
-> > This adds the devicetree binding for the Tegra 2 NAND flash
-> > controller.
-> > 
-> > Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > ---
-> >  .../bindings/mtd/nvidia,tegra20-nand.txt      | 62 +++++++++++++++++++
-> >  1 file changed, 62 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> > new file mode 100644
-> > index 000000000000..49e472af1b39
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> > @@ -0,0 +1,62 @@
-> > +NVIDIA Tegra NAND Flash controller
-> > +
-> > +Required properties:
-> > +- compatible: Must be one of:
+> Changes in v2:
+> 	- Fixed comments from Geert. Re-worded to "PM domain specifiers" and
+> 	clarified DT example.
 > 
-> Nitpick: just put the compatible here as there is only one?
+> ---
+>  .../bindings/power/power_domain.txt           | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
 
-No, this is how I ask people to format it.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
