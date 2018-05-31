@@ -1,67 +1,321 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v4 1/2] ARM: dma-mapping: Set proper DMA ops in
- arm_iommu_detach_device()
-Date: Thu, 31 May 2018 18:52:48 +0100
-Message-ID: <a898aeae-e277-928b-9b97-474ebab50f7d@arm.com>
-References: <20180530140625.21247-1-thierry.reding@gmail.com>
- <20180530140625.21247-2-thierry.reding@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Thu, 31 May 2018 19:54:08 +0200
+Message-ID: <047a9a5e72c8db52858a505865d4f720@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+ <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <20180528000422.7f18dc5f@xps13>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180530140625.21247-2-thierry.reding@gmail.com>
-Content-Language: en-GB
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Christoph Hellwig <hch@infradead.org>, Russell King <linux@armlinux.org.uk>
-Cc: nouveau@lists.freedesktop.org, iommu@lists.linux-foundation.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180528000422.7f18dc5f@xps13>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Miquel Raynal <miquel.raynal@bootlin.com>, boris.brezillon@bootlin.com, robh+dt@kernel.org
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMzAvMDUvMTggMTU6MDYsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+IEZyb206IFRoaWVycnkg
-UmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gCj4gSW5zdGVhZCBvZiBzZXR0aW5nIHRoZSBE
-TUEgb3BzIHBvaW50ZXIgdG8gTlVMTCwgc2V0IHRoZSBjb3JyZWN0LAo+IG5vbi1JT01NVSBvcHMg
-ZGVwZW5kaW5nIG9uIHRoZSBkZXZpY2UncyBjb2hlcmVuY3kgc2V0dGluZy4KCkl0IGxvb2tzIGxp
-a2UgaXQncyBwcm9iYWJseSBiZWVuIDQgb3IgNSB5ZWFycyBzaW5jZSB0aGF0IGJlY2FtZSBzdWJ0
-bHkgCndyb25nIGJ5IHZpcnR1ZSBvZiB0aGUgbGFuZHNjYXBlIGNoYW5naW5nIGFyb3VuZCBpdCwg
-YnV0IGl0J3MgY2xlYXJseSAKbm90IGVub3VnaCBvZiBhIHByb2JsZW0gdG8gY29uc2lkZXIgc3Rh
-YmxlIGJhY2twb3J0cyA6KQoKUmV2aWV3ZWQtYnk6IFJvYmluIE11cnBoeSA8cm9iaW4ubXVycGh5
-QGFybS5jb20+Cgo+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRp
-YS5jb20+Cj4gLS0tCj4gQ2hhbmdlcyBpbiB2NDoKPiAtIG5ldyBwYXRjaCB0byBmaXggZXhpc3Rp
-bmcgYXJtX2lvbW11X2RldGFjaF9kZXZpY2UoKSB0byBkbyB3aGF0IHdlIG5lZWQKPiAKPiAgIGFy
-Y2gvYXJtL21tL2RtYS1tYXBwaW5nLmMgfCAxMiArKysrKystLS0tLS0KPiAgIDEgZmlsZSBjaGFu
-Z2VkLCA2IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2Fy
-Y2gvYXJtL21tL2RtYS1tYXBwaW5nLmMgYi9hcmNoL2FybS9tbS9kbWEtbWFwcGluZy5jCj4gaW5k
-ZXggYWYyN2YxYzIyZDkzLi44N2EwMDM3NTc0ZTQgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vbW0v
-ZG1hLW1hcHBpbmcuYwo+ICsrKyBiL2FyY2gvYXJtL21tL2RtYS1tYXBwaW5nLmMKPiBAQCAtMTE1
-MSw2ICsxMTUxLDExIEBAIGludCBhcm1fZG1hX3N1cHBvcnRlZChzdHJ1Y3QgZGV2aWNlICpkZXYs
-IHU2NCBtYXNrKQo+ICAgCXJldHVybiBfX2RtYV9zdXBwb3J0ZWQoZGV2LCBtYXNrLCBmYWxzZSk7
-Cj4gICB9Cj4gICAKPiArc3RhdGljIGNvbnN0IHN0cnVjdCBkbWFfbWFwX29wcyAqYXJtX2dldF9k
-bWFfbWFwX29wcyhib29sIGNvaGVyZW50KQo+ICt7Cj4gKwlyZXR1cm4gY29oZXJlbnQgPyAmYXJt
-X2NvaGVyZW50X2RtYV9vcHMgOiAmYXJtX2RtYV9vcHM7Cj4gK30KPiArCj4gICAjaWZkZWYgQ09O
-RklHX0FSTV9ETUFfVVNFX0lPTU1VCj4gICAKPiAgIHN0YXRpYyBpbnQgX19kbWFfaW5mb190b19w
-cm90KGVudW0gZG1hX2RhdGFfZGlyZWN0aW9uIGRpciwgdW5zaWduZWQgbG9uZyBhdHRycykKPiBA
-QCAtMjI5Niw3ICsyMzAxLDcgQEAgdm9pZCBhcm1faW9tbXVfZGV0YWNoX2RldmljZShzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpCj4gICAJaW9tbXVfZGV0YWNoX2RldmljZShtYXBwaW5nLT5kb21haW4sIGRl
-dik7Cj4gICAJa3JlZl9wdXQoJm1hcHBpbmctPmtyZWYsIHJlbGVhc2VfaW9tbXVfbWFwcGluZyk7
-Cj4gICAJdG9fZG1hX2lvbW11X21hcHBpbmcoZGV2KSA9IE5VTEw7Cj4gLQlzZXRfZG1hX29wcyhk
-ZXYsIE5VTEwpOwo+ICsJc2V0X2RtYV9vcHMoZGV2LCBhcm1fZ2V0X2RtYV9tYXBfb3BzKGRldi0+
-YXJjaGRhdGEuZG1hX2NvaGVyZW50KSk7Cj4gICAKPiAgIAlwcl9kZWJ1ZygiRGV0YWNoZWQgSU9N
-TVUgY29udHJvbGxlciBmcm9tICVzIGRldmljZS5cbiIsIGRldl9uYW1lKGRldikpOwo+ICAgfQo+
-IEBAIC0yMzU3LDExICsyMzYyLDYgQEAgc3RhdGljIHZvaWQgYXJtX3RlYXJkb3duX2lvbW11X2Rt
-YV9vcHMoc3RydWN0IGRldmljZSAqZGV2KSB7IH0KPiAgIAo+ICAgI2VuZGlmCS8qIENPTkZJR19B
-Uk1fRE1BX1VTRV9JT01NVSAqLwo+ICAgCj4gLXN0YXRpYyBjb25zdCBzdHJ1Y3QgZG1hX21hcF9v
-cHMgKmFybV9nZXRfZG1hX21hcF9vcHMoYm9vbCBjb2hlcmVudCkKPiAtewo+IC0JcmV0dXJuIGNv
-aGVyZW50ID8gJmFybV9jb2hlcmVudF9kbWFfb3BzIDogJmFybV9kbWFfb3BzOwo+IC19Cj4gLQo+
-ICAgdm9pZCBhcmNoX3NldHVwX2RtYV9vcHMoc3RydWN0IGRldmljZSAqZGV2LCB1NjQgZG1hX2Jh
-c2UsIHU2NCBzaXplLAo+ICAgCQkJY29uc3Qgc3RydWN0IGlvbW11X29wcyAqaW9tbXUsIGJvb2wg
-Y29oZXJlbnQpCj4gICB7Cj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Miquel, Boris,
+
+[also adding Rob to to since it is DT related]
+
+On 28.05.2018 00:04, Miquel Raynal wrote:
+> Hi Stefan,
+> 
+> I just see your v2 while I'm sending my review on the driver, will
+> probably wait for v4 then ;)
+> 
+> Thanks for the work though!
+> Miquèl
+> 
+> On Tue, 22 May 2018 14:07:06 +0200, Stefan Agner <stefan@agner.ch>
+> wrote:
+> 
+>> Add support for the NAND flash controller found on NVIDIA
+>> Tegra 2 SoCs. This implementation does not make use of the
+>> command queue feature. Regular operations/data transfers are
+>> done in PIO mode. Page read/writes with hardware ECC make
+>> use of the DMA for data transfer.
+>>
+>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+> 
+> [...]
+> 
+
+[...]
+
+>> +
+>> +static int tegra_nand_probe(struct platform_device *pdev)
+>> +{
+>> +	struct reset_control *rst;
+>> +	struct tegra_nand *nand;
+> 
+> Would you mind having another name for the tegra_nand structure than
+> just 'nand'? I found it confusing as, following Boris comment, it won't
+> be a 'NAND device' structure but rather more a controller structure.
+> 
+>> +	struct nand_chip *chip;
+>> +	struct mtd_info *mtd;
+>> +	struct resource *res;
+>> +	unsigned long value;
+> 
+> s/value/reg/ ? or something more explicit?
+> 
+>> +	int irq, err = 0;
+>> +
+>> +	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
+>> +	if (!nand)
+>> +		return -ENOMEM;
+>> +
+>> +	nand->dev = &pdev->dev;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	nand->regs = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(nand->regs))
+>> +		return PTR_ERR(nand->regs);
+>> +
+>> +	irq = platform_get_irq(pdev, 0);
+>> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
+>> +			       dev_name(&pdev->dev), nand);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	rst = devm_reset_control_get(&pdev->dev, "nand");
+>> +	if (IS_ERR(rst))
+>> +		return PTR_ERR(rst);
+>> +
+>> +	nand->clk = devm_clk_get(&pdev->dev, "nand");
+>> +	if (IS_ERR(nand->clk))
+>> +		return PTR_ERR(nand->clk);
+>> +
+>> +	nand->wp_gpio = gpiod_get_optional(&pdev->dev, "wp-gpios",
+>> +					   GPIOD_OUT_HIGH);
+>> +	if (IS_ERR(nand->wp_gpio))
+>> +		return PTR_ERR(nand->wp_gpio);
+>> +
+>> +	err = clk_prepare_enable(nand->clk);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	reset_control_assert(rst);
+>> +	udelay(2);
+>> +	reset_control_deassert(rst);
+>> +
+>> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
+>> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
+>> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
+>> +	writel(NAND_CMD_STATUS, nand->regs + HWSTATUS_CMD);
+>> +	writel(value, nand->regs + HWSTATUS_MASK);
+>> +
+>> +	init_completion(&nand->command_complete);
+>> +	init_completion(&nand->dma_complete);
+>> +
+>> +	/* clear interrupts */
+>> +	value = readl(nand->regs + ISR);
+>> +	writel(value, nand->regs + ISR);
+>> +
+>> +	writel(DMA_CTRL_IS_DONE, nand->regs + DMA_CTRL);
+>> +
+>> +	/* enable interrupts */
+>> +	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
+>> +	writel(value, nand->regs + IER);
+>> +
+>> +	/* reset config */
+>> +	writel(0, nand->regs + CFG);
+>> +
+>> +	chip = &nand->chip;
+>> +	mtd = nand_to_mtd(chip);
+>> +
+>> +	mtd->dev.parent = &pdev->dev;
+>> +	mtd->name = "tegra_nand";
+> 
+> I just figured it was undocumented (yet) but you could have a label
+> string property in your nand DT node that tells you the name of the
+> MTD device instead of something too generic like tegra_nand.
+> 
+
+Using label in the NAND chip subnode actually causes current U-Boot to
+delete (!!) the chip node and create partitions on the controller node.
+
+See:
+https://elixir.bootlin.com/u-boot/latest/source/common/fdt_support.c#L757
+
+The code essentially uses the property label to detect whether its a
+NAND chip or a partition...
+
+At least this is the case when using fdt_fixup_mtdparts and passing the
+controller compatible ("nvidia,tegra20-nand") in node_info, what our
+downstream U-Boot is currently doing. Maybe we should pass the
+compatible property of the NAND chip? But afaik, chips do not have a
+compatible necessarily.
+
+So using label in the chip node is currently a no-go for me.
+
+Will send out v3 soon.
+
+--
+Stefan
+
+
+>> +	mtd->owner = THIS_MODULE;
+>> +
+>> +	nand_set_flash_node(chip, pdev->dev.of_node);
+>> +	nand_set_controller_data(chip, nand);
+>> +
+>> +	chip->options = NAND_NO_SUBPAGE_WRITE;
+>> +	chip->exec_op = tegra_nand_exec_op;
+>> +	chip->select_chip = tegra_nand_select_chip;
+>> +	tegra_nand_setup_timing(nand, 0);
+> 
+> You really should implement ->setup_data_interface() and let the core
+> handle the timings issue entirely (mind that chipnr is not the NAND
+> chip id but more the CS id asserted for the pointed NAND chip).
+>  
+>> +
+>> +	err = nand_scan_ident(mtd, 1, NULL);
+>> +	if (err)
+>> +		goto err_disable_clk;
+>> +
+>> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+>> +		chip->bbt_options |= NAND_BBT_NO_OOB;
+>> +
+>> +	nand->data_buf = dmam_alloc_coherent(&pdev->dev, mtd->writesize,
+>> +					    &nand->data_dma, GFP_KERNEL);
+> 
+> Do you need these buffers before nand_scan_tail() or could you simply
+> use the ones allocated by the core right after?
+> 
+>> +	if (!nand->data_buf) {
+>> +		err = -ENOMEM;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	nand->oob_buf = dmam_alloc_coherent(&pdev->dev, mtd->oobsize,
+>> +					    &nand->oob_dma, GFP_KERNEL);
+>> +	if (!nand->oob_buf) {
+>> +		err = -ENOMEM;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	chip->ecc.mode = NAND_ECC_HW;
+>> +	chip->ecc.size = 512;
+>> +	chip->ecc.read_page = tegra_nand_read_page;
+>> +	chip->ecc.write_page = tegra_nand_write_page;
+>> +
+>> +	value = readl(nand->regs + CFG);
+>> +	value |= CFG_PIPE_EN | CFG_SKIP_SPARE | CFG_SKIP_SPARE_SIZE_4 |
+>> +		 CFG_TAG_BYTE_SIZE(mtd_ooblayout_count_freebytes(mtd) - 1);
+>> +
+>> +	if (chip->options & NAND_BUSWIDTH_16)
+>> +		value |= CFG_BUS_WIDTH_16;
+>> +
+>> +	switch (mtd->oobsize) {
+>> +	case 16:
+>> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_16_ops);
+>> +		chip->ecc.strength = 1;
+>> +		chip->ecc.bytes = 4;
+>> +		break;
+>> +	case 64:
+>> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_64_ops);
+>> +		chip->ecc.strength = 8;
+>> +		chip->ecc.bytes = 18;
+>> +		value |= CFG_ECC_SEL | CFG_TVAL_8;
+>> +		break;
+>> +	case 128:
+>> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_128_ops);
+>> +		chip->ecc.strength = 8;
+>> +		chip->ecc.bytes = 18;
+>> +		value |= CFG_ECC_SEL | CFG_TVAL_8;
+>> +		break;
+>> +	case 224:
+>> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_224_ops);
+>> +		chip->ecc.strength = 8;
+>> +		chip->ecc.bytes = 18;
+>> +		value |= CFG_ECC_SEL | CFG_TVAL_8;
+>> +		break;
+>> +	default:
+>> +		dev_err(&pdev->dev, "unhandled OOB size %d\n", mtd->oobsize);
+>> +		err = -ENODEV;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	switch (mtd->writesize) {
+>> +	case 256:
+>> +		value |= CFG_PS_256;
+>> +		break;
+>> +	case 512:
+>> +		value |= CFG_PS_512;
+>> +		break;
+>> +	case 1024:
+>> +		value |= CFG_PS_1024;
+>> +		break;
+>> +	case 2048:
+>> +		value |= CFG_PS_2048;
+>> +		break;
+>> +	case 4096:
+>> +		value |= CFG_PS_4096;
+>> +		break;
+>> +	default:
+>> +		dev_err(&pdev->dev, "unhandled writesize %d\n", mtd->writesize);
+>> +		err = -ENODEV;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	writel(value, nand->regs + CFG);
+>> +
+>> +	tegra_nand_setup_chiptiming(nand);
+>> +
+>> +	err = nand_scan_tail(mtd);
+>> +	if (err)
+>> +		goto err_disable_clk;
+>> +
+>> +	err = mtd_device_register(mtd, NULL, 0);
+>> +	if (err)
+>> +		goto err_cleanup_nand;
+>> +
+>> +	platform_set_drvdata(pdev, nand);
+>> +
+>> +	return 0;
+>> +
+>> +err_cleanup_nand:
+>> +	nand_cleanup(chip);
+>> +err_disable_clk:
+>> +	clk_disable_unprepare(nand->clk);
+>> +	return err;
+>> +}
+>> +
+>> +static int tegra_nand_remove(struct platform_device *pdev)
+>> +{
+>> +	struct tegra_nand *nand = platform_get_drvdata(pdev);
+>> +
+>> +	nand_release(nand_to_mtd(&nand->chip));
+>> +
+>> +	clk_disable_unprepare(nand->clk);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id tegra_nand_of_match[] = {
+>> +	{ .compatible = "nvidia,tegra20-nand" },
+>> +	{ /* sentinel */ }
+>> +};
+>> +
+>> +static struct platform_driver tegra_nand_driver = {
+>> +	.driver = {
+>> +		.name = "tegra-nand",
+>> +		.of_match_table = tegra_nand_of_match,
+>> +	},
+>> +	.probe = tegra_nand_probe,
+>> +	.remove = tegra_nand_remove,
+>> +};
+>> +module_platform_driver(tegra_nand_driver);
+>> +
+>> +MODULE_DESCRIPTION("NVIDIA Tegra NAND driver");
+>> +MODULE_AUTHOR("Thierry Reding <thierry.reding@nvidia.com>");
+>> +MODULE_AUTHOR("Lucas Stach <dev@lynxeye.de>");
+>> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
+>> +MODULE_LICENSE("GPL v2");
+>> +MODULE_DEVICE_TABLE(of, tegra_nand_of_match);
