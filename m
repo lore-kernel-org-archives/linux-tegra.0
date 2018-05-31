@@ -1,37 +1,28 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 5/9] PM / Domains: dt: Allow power-domain property to
- be a list of specifiers
-Date: Wed, 30 May 2018 22:53:42 -0500
-Message-ID: <20180531035342.GA14184@rob-hp-laptop>
-References: <20180529100421.31022-1-ulf.hansson@linaro.org>
- <20180529100421.31022-6-ulf.hansson@linaro.org>
+Subject: Re: [PATCH v1] media: dt: bindings: tegra-vde: Document new optional
+ Memory Client reset property
+Date: Wed, 30 May 2018 23:11:29 -0500
+Message-ID: <20180531041129.GA566@rob-hp-laptop>
+References: <20180526143355.24288-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180529100421.31022-6-ulf.hansson@linaro.org>
+In-Reply-To: <20180526143355.24288-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 29, 2018 at 12:04:17PM +0200, Ulf Hansson wrote:
-> To be able to describe topologies where devices are partitioned across
-> multiple power domains, let's extend the power-domain property to allow
-> being a list of PM domain specifiers.
+On Sat, May 26, 2018 at 05:33:55PM +0300, Dmitry Osipenko wrote:
+> Recently binding of the Memory Controller has been extended, exposing
+> the Memory Client reset controls and hence it is now a reset controller.
+> Tegra video-decoder device is among the Memory Controller reset users,
+> document the new optional VDE HW reset property.
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Suggested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
-> 
-> Changes in v2:
-> 	- Fixed comments from Geert. Re-worded to "PM domain specifiers" and
-> 	clarified DT example.
-> 
-> ---
->  .../bindings/power/power_domain.txt           | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
+>  .../devicetree/bindings/media/nvidia,tegra-vde.txt    | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
