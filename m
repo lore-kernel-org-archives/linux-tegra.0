@@ -1,102 +1,77 @@
-From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v4 2/2] drm/nouveau: tegra: Detach from ARM DMA/IOMMU
-	mapping
-Date: Thu, 31 May 2018 18:56:53 +0100
-Message-ID: <412f15b5-6beb-3980-1ea4-7a9719786006@arm.com>
-References: <20180530140625.21247-1-thierry.reding@gmail.com>
-	<20180530140625.21247-3-thierry.reding@gmail.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Thu, 31 May 2018 22:30:27 +0200
+Message-ID: <20180531223027.57e36d0b@bbrezillon>
+References: <cover.1526990589.git.stefan@agner.ch>
+        <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+        <20180528000422.7f18dc5f@xps13>
+        <047a9a5e72c8db52858a505865d4f720@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20180530140625.21247-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-GB
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <047a9a5e72c8db52858a505865d4f720@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, robh+dt@kernel.org, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 30/05/18 15:06, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Depending on the kernel configuration, early ARM architecture setup code
-> may have attached the GPU to a DMA/IOMMU mapping that transparently uses
-> the IOMMU to back the DMA API. Tegra requires special handling for IOMMU
-> backed buffers (a special bit in the GPU's MMU page tables indicates the
-> memory path to take: via the SMMU or directly to the memory controller).
-> Transparently backing DMA memory with an IOMMU prevents Nouveau from
-> properly handling such memory accesses and causes memory access faults.
-> 
-> As a side-note: buffers other than those allocated in instance memory
-> don't need to be physically contiguous from the GPU's perspective since
-> the GPU can map them into contiguous buffers using its own MMU. Mapping
-> these buffers through the IOMMU is unnecessary and will even lead to
-> performance degradation because of the additional translation. One
-> exception to this are compressible buffers which need large pages. In
-> order to enable these large pages, multiple small pages will have to be
-> combined into one large (I/O virtually contiguous) mapping via the
-> IOMMU. However, that is a topic outside the scope of this fix and isn't
-> currently supported. An implementation will want to explicitly create
-> these large pages in the Nouveau driver, so detaching from a DMA/IOMMU
-> mapping would still be required.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in v4:
-> - use existing APIs to detach from a DMA/IOMMU mapping
-> 
-> Changes in v3:
-> - clarify the use of IOMMU mapping for compressible buffers
-> - squash multiple patches into this
-> 
->   drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> index 78597da6313a..0e372a190d3f 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> @@ -23,6 +23,10 @@
->   #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
->   #include "priv.h"
->   
-> +#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-> +#include <asm/dma-iommu.h>
-> +#endif
-> +
->   static int
->   nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
->   {
-> @@ -105,6 +109,15 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
->   	unsigned long pgsize_bitmap;
->   	int ret;
->   
-> +#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-> +	if (dev->archdata.mapping) {
-> +		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
+On Thu, 31 May 2018 19:54:08 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
-Nit: there's arguably little point using the helper here after you've 
-already shattered the illusion by poking dev->archdata.mapping directly, 
-but I guess this disappears again anyway once the refcounting gets 
-sorted out and the mapping releases itself properly, so:
-
-Reviewed-by: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-
-> +
-> +		arm_iommu_detach_device(dev);
-> +		arm_iommu_release_mapping(mapping);
-> +	}
-> +#endif
-> +
->   	if (!tdev->func->iommu_bit)
->   		return;
->   
+> >> +
+> >> +	mtd->dev.parent = &pdev->dev;
+> >> +	mtd->name = "tegra_nand";  
+> > 
+> > I just figured it was undocumented (yet) but you could have a label
+> > string property in your nand DT node that tells you the name of the
+> > MTD device instead of something too generic like tegra_nand.
+> >   
 > 
+> Using label in the NAND chip subnode actually causes current U-Boot to
+> delete (!!) the chip node and create partitions on the controller node.
+> 
+> See:
+> https://elixir.bootlin.com/u-boot/latest/source/common/fdt_support.c#L757
+> 
+> The code essentially uses the property label to detect whether its a
+> NAND chip or a partition...
+
+Why not fixing that in uboot? The representation where the NAND device
+and NAND controller are mixed in a single node called nand@xxx is just
+wrong from a HW PoV, and it seems uboot is using this representation,
+which is probably why you have a problem when trying to find the
+partition directly under the NAND controller node.
+
+> 
+> At least this is the case when using fdt_fixup_mtdparts and passing the
+> controller compatible ("nvidia,tegra20-nand") in node_info,
+
+Just a digression, but I recommend using
+"nvidia,tegra20-nand-controller" for the compatible, because the node
+is describing the NAND controller not the NAND chip. 
+
+> what our
+> downstream U-Boot is currently doing. Maybe we should pass the
+> compatible property of the NAND chip?
+
+Or maybe you should search for partitions in children of the controller
+node instead of searching directly under the controller node itself.
+
+> But afaik, chips do not have a
+> compatible necessarily.
+
+Nope, and it should stay like that.
+
+> 
+> So using label in the chip node is currently a no-go for me.
+
+I hope I'm wrong but I fear this is not the only problem you'll face
+when switching to a controller+chip representation. This is just the
+tip of the iceberg.
+
+> 
+> Will send out v3 soon.
+
+Sure, let's see how v3 looks.
