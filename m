@@ -1,51 +1,41 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 4/5] PM / Domains: Add support for multi PM domains per
- device to genpd
-Date: Thu, 31 May 2018 13:47:48 +0100
-Message-ID: <191ed832-3b15-f47d-c171-4039da665b36@nvidia.com>
-References: <20180531105959.14843-1-ulf.hansson@linaro.org>
- <20180531105959.14843-5-ulf.hansson@linaro.org>
- <5fc1d3ee51c8dbc264fb21edf33a879c7db4056b.camel@lynxeye.de>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v4 2/2] drm/nouveau: tegra: Detach from ARM DMA/IOMMU
+ mapping
+Date: Thu, 31 May 2018 09:12:47 -0700
+Message-ID: <20180531161247.GA10203@infradead.org>
+References: <20180530140625.21247-1-thierry.reding@gmail.com>
+ <20180530140625.21247-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5fc1d3ee51c8dbc264fb21edf33a879c7db4056b.camel@lynxeye.de>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lucas Stach <dev@lynxeye.de>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180530140625.21247-3-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: nouveau@lists.freedesktop.org, Joerg Roedel <joro@8bytes.org>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Christoph Hellwig <hch@infradead.org>, Jordan Crouse <jcrouse@codeaurora.org>, iommu@lists.linux-foundation.org, Ben Skeggs <bskeggs@redhat.com>, Daniel Vetter <daniel@ffwll.ch>, linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+> +#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+> +	if (dev->archdata.mapping) {
+> +		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
+> +
+> +		arm_iommu_detach_device(dev);
+> +		arm_iommu_release_mapping(mapping);
+> +	}
+> +#endif
 
-On 31/05/18 12:40, Lucas Stach wrote:
-> Hi Ulf,
-> 
-> Am Donnerstag, den 31.05.2018, 12:59 +0200 schrieb Ulf Hansson:
->> To support devices being partitioned across multiple PM domains, let's
->> begin with extending genpd to cope with these kind of configurations.
->>
->> Therefore, add a new exported function genpd_dev_pm_attach_by_id(), which
->> is similar to the existing genpd_dev_pm_attach(), but with the difference
->> that it allows its callers to provide an index to the PM domain that it
->> wants to attach.
->>
->> Note that, genpd_dev_pm_attach_by_id() shall only be called by the driver
->> core / PM core, similar to how the existing dev_pm_domain_attach() makes
->> use of genpd_dev_pm_attach(). However, this is implemented by following
->> changes on top.
-> 
-> by_id() APIs are not really intuitive to use for driver writers. Other
-> subsystems have solved this by providing a "-names" property to give
-> the phandles a bit more meaning and then providing a by_name API. I
-> would really appreciate if PM domains could move in the same direction.
+Having this hidden in a helper would be nicer, but anything that
+doesn't directly expose the dma_map_ops to a driver is fine with me.
 
-As discussed here [0], there are plans to add that.
+So from the dma-mapping POV:
 
-Cheers
-Jon
-
-[0] https://patchwork.ozlabs.org/patch/921938/
-
--- 
-nvpublic
+Acked-by: Christoph Hellwig <hch@lst.de>
