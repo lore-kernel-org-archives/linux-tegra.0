@@ -1,27 +1,37 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v1 3/4] clk: tegra20: Turn EMC clock gate into divider
-Date: Fri, 01 Jun 2018 23:37:28 -0700
-Message-ID: <152792144851.225090.7409061495035612435@swboyd.mtv.corp.google.com>
-References: <20180530150646.19030-1-digetx@gmail.com>
- <20180530150646.19030-4-digetx@gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: tegra: fix compile-testing PCI host driver
+Date: Sat, 2 Jun 2018 01:17:40 -0700
+Message-ID: <20180602081740.kf6kngvsxybl7hmg@localhost>
+References: <20180528155603.2897776-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180530150646.19030-4-digetx@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20180528155603.2897776-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, arm@kernel.org, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Dmitry Osipenko (2018-05-30 08:06:45)
-> Kernel should never gate the EMC clock as it causes immediate lockup, so
-> removing clk-gate functionality doesn't affect anything. Turning EMC clk
-> gate into divider allows to implement glitch-less EMC scaling, avoiding
-> reparenting to a backup clock.
-> =
+On Mon, May 28, 2018 at 05:55:29PM +0200, Arnd Bergmann wrote:
+> The tegra_cpuidle_pcie_irqs_in_use() function is stubbed out for non-ARM
+> builds, but now we can compile-test the Tegra pci driver on non-Tegra
+> ARM platforms as well, which results in a new link error:
+> 
+> drivers/pci/host/pci-tegra.o: In function `tegra_pcie_map_irq':
+> pci-tegra.c:(.text+0x288): undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
+> drivers/pci/host/pci-tegra.o: In function `tegra_msi_map':
+> pci-tegra.c:(.text+0xba0): undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
+> 
+> This adapts the #ifdef statement to match the exact condition under which
+> the function can be called.
+> 
+> Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Applied, thanks!
 
-Looks ok to me, but I'm waiting for someone from Tegra side to ack it or
-review it.
+
+-Olof
