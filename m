@@ -1,50 +1,33 @@
-From: Bhadram Varka <vbhadram@nvidia.com>
-Subject: [PATCH V2 3/3] arm64: tegra: Configure DWC EQOS TxPBL for multi-queue
-Date: Sat, 2 Jun 2018 14:50:51 +0530
-Message-ID: <1527931251-4809-3-git-send-email-vbhadram@nvidia.com>
-References: <1527931251-4809-1-git-send-email-vbhadram@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 3/4] clk: tegra20: Turn EMC clock gate into divider
+Date: Sat, 2 Jun 2018 14:00:18 +0300
+Message-ID: <7bed6350-b6ee-1d79-39f5-bf0db2c2b102@gmail.com>
+References: <20180530150646.19030-1-digetx@gmail.com>
+ <20180530150646.19030-4-digetx@gmail.com>
+ <152792144851.225090.7409061495035612435@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1527931251-4809-1-git-send-email-vbhadram@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, treding@nvidia.com, mperttunen@nvidia.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <152792144851.225090.7409061495035612435@swboyd.mtv.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-PBL should be limited to half of the Queue size.
+On 02.06.2018 09:37, Stephen Boyd wrote:
+> Quoting Dmitry Osipenko (2018-05-30 08:06:45)
+>> Kernel should never gate the EMC clock as it causes immediate lockup, so
+>> removing clk-gate functionality doesn't affect anything. Turning EMC clk
+>> gate into divider allows to implement glitch-less EMC scaling, avoiding
+>> reparenting to a backup clock.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> Looks ok to me, but I'm waiting for someone from Tegra side to ack it or
+> review it.
+> 
 
-For multi-queue: Total MTL queue size 4KB.
-PBL = 16, PBLx8 = 1 -> This setting would lead
-to an effective burst = 8*16 = 128, which would
-mean 128*16B = 2KB (half of queue size)
-
-Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 48c6caf..c4d70c5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -101,7 +101,7 @@
- 		snps,write-requests = <1>;
- 		snps,read-requests = <3>;
- 		snps,burst-map = <0x7>;
--		snps,txpbl = <32>;
-+		snps,txpbl = <16>;
- 		snps,rxpbl = <8>;
- 		snps,mtl-rx-config = <&mtl_rx_setup>;
- 		snps,mtl-tx-config = <&mtl_tx_setup>;
--- 
-2.7.4
+I've already prepared v2 with some minor cleanups and additional clk patch. For
+now waiting for Peter's review comments to v1.
