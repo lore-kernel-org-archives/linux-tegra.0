@@ -1,37 +1,54 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: tegra: fix compile-testing PCI host driver
-Date: Sat, 2 Jun 2018 01:17:40 -0700
-Message-ID: <20180602081740.kf6kngvsxybl7hmg@localhost>
-References: <20180528155603.2897776-1-arnd@arndb.de>
+From: Bhadram Varka <vbhadram@nvidia.com>
+Subject: [PATCH] arm64: tegra: Remove unused interrupt properties
+Date: Sat, 2 Jun 2018 14:41:51 +0530
+Message-ID: <1527930713-4479-1-git-send-email-vbhadram@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180528155603.2897776-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, arm@kernel.org, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, treding@nvidia.com, mperttunen@nvidia.com
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 28, 2018 at 05:55:29PM +0200, Arnd Bergmann wrote:
-> The tegra_cpuidle_pcie_irqs_in_use() function is stubbed out for non-ARM
-> builds, but now we can compile-test the Tegra pci driver on non-Tegra
-> ARM platforms as well, which results in a new link error:
-> 
-> drivers/pci/host/pci-tegra.o: In function `tegra_pcie_map_irq':
-> pci-tegra.c:(.text+0x288): undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
-> drivers/pci/host/pci-tegra.o: In function `tegra_msi_map':
-> pci-tegra.c:(.text+0xba0): undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
-> 
-> This adapts the #ifdef statement to match the exact condition under which
-> the function can be called.
-> 
-> Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+DWC EQOS on Tegra handles all interrupts through
+common interrupt line. So lets remove unused power
+and per-channel interrupt properties.
 
-Applied, thanks!
+Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-
--Olof
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index b762227..252133b 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -41,16 +41,7 @@
+ 		compatible = "nvidia,tegra186-eqos",
+ 			     "snps,dwc-qos-ethernet-4.10";
+ 		reg = <0x0 0x02490000 0x0 0x10000>;
+-		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>, /* common */
+-			     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>, /* power */
+-			     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>, /* rx0 */
+-			     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>, /* tx0 */
+-			     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>, /* rx1 */
+-			     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>, /* tx1 */
+-			     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>, /* rx2 */
+-			     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>, /* tx2 */
+-			     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>, /* rx3 */
+-			     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>; /* tx3 */
++		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>; /* common */
+ 		clocks = <&bpmp TEGRA186_CLK_AXI_CBB>,
+ 			 <&bpmp TEGRA186_CLK_EQOS_AXI>,
+ 			 <&bpmp TEGRA186_CLK_EQOS_RX>,
+-- 
+2.7.4
