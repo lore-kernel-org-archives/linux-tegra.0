@@ -1,55 +1,27 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v3 1/6] mtd: rawnand: add Reed-Solomon error correction
- algorithm
-Date: Fri, 1 Jun 2018 15:43:26 +0200
-Message-ID: <20180601154326.6c60c579@bbrezillon>
-References: <20180531221637.6017-1-stefan@agner.ch>
-        <20180531221637.6017-2-stefan@agner.ch>
-        <20180601092600.03c14f53@bbrezillon>
-        <20180601112506.2157e8b0@bbrezillon>
-        <18ce3100aabf42059dbd514fb8c93e84@agner.ch>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v1 3/4] clk: tegra20: Turn EMC clock gate into divider
+Date: Fri, 01 Jun 2018 23:37:28 -0700
+Message-ID: <152792144851.225090.7409061495035612435@swboyd.mtv.corp.google.com>
+References: <20180530150646.19030-1-digetx@gmail.com>
+ <20180530150646.19030-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <18ce3100aabf42059dbd514fb8c93e84@agner.ch>
+In-Reply-To: <20180530150646.19030-4-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, pgaikwad@nvidia.com, dev@lynxeye.de, mirza.krak@gmail.com, benjamin.lindqvist@endian.se, pdeschrijver@nvidia.com, miquel.raynal@bootlin.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com, marek.vasut@gmail.com, thierry.reding@gmail.com, linux-mtd@lists.infradead.org, krzk@kernel.org, richard@nod.at, linux-tegra@vger.kernel.org, digetx@gmail.com, computersforpeace@gmail.com, dwmw2@infradead.org, marcel@ziswiler.com
+To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 01 Jun 2018 15:34:33 +0200
-Stefan Agner <stefan@agner.ch> wrote:
+Quoting Dmitry Osipenko (2018-05-30 08:06:45)
+> Kernel should never gate the EMC clock as it causes immediate lockup, so
+> removing clk-gate functionality doesn't affect anything. Turning EMC clk
+> gate into divider allows to implement glitch-less EMC scaling, avoiding
+> reparenting to a backup clock.
+> =
 
-> On 01.06.2018 11:25, Boris Brezillon wrote:
-> > On Fri, 1 Jun 2018 09:26:00 +0200
-> > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> >   
-> >> On Fri,  1 Jun 2018 00:16:32 +0200
-> >> Stefan Agner <stefan@agner.ch> wrote:
-> >>  
-> >> > Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
-> >> >
-> >> > Signed-off-by: Stefan Agner <stefan@agner.ch>  
-> >>
-> >> Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> >>  
-> >> > ---
-> >> >  drivers/mtd/nand/raw/nand_base.c | 1 +
-> >> >  include/linux/mtd/rawnand.h      | 1 +  
-> > 
-> > Hm, you forgot to update Documentation/devicetree/bindings/mtd/nand.txt.
-> >   
-> 
-> Yeah I was not sure about that. Currently it says:
-> 
-> - nand-ecc-algo: string, algorithm of NAND ECC.                         
->                                                                    
->                  Supported values are: "hamming", "bch".
-> 
-> Is supported meant by software ECC here? I feel "supported" is a rather
-> strong word since it is clearly controller dependent whether it is
-> actually supported...
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-I guess "valid values" or "accepted values" would be more appropriate
-here.
+Looks ok to me, but I'm waiting for someone from Tegra side to ack it or
+review it.
