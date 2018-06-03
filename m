@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 1/5] dt: bindings: tegra20-emc: Document interrupt property
-Date: Mon,  4 Jun 2018 01:36:50 +0300
-Message-ID: <20180603223654.23324-2-digetx@gmail.com>
+Subject: [PATCH v2 3/5] clk: tegra20: Turn EMC clock gate into divider
+Date: Mon,  4 Jun 2018 01:36:52 +0300
+Message-ID: <20180603223654.23324-4-digetx@gmail.com>
 References: <20180603223654.23324-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
@@ -10,33 +10,76 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-EMC has a dedicated interrupt that is used to notify about completion of
-HW operations. Document the interrupt property.
+Kernel should never gate the EMC clock as it causes immediate lockup, so
+removing clk-gate functionality doesn't affect anything. Turning EMC clk
+gate into divider allows to implement glitch-less EMC scaling, avoiding
+reparenting to a backup clock.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index 4c33b29dc660..a6fe401d0d48 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -10,6 +10,7 @@ Properties:
-   and chosen using the ramcode board selector. If omitted, only one
-   set of tables can be present and said tables will be used
-   irrespective of ram-code configuration.
-+- interrupts : Should contain EMC General interrupt.
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cc857d4d4a86..2bd35418716a 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
+ 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
+ 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
+ };
  
- Child device nodes describe the memory settings for different configurations and clock rates.
+ static unsigned long tegra20_clk_measure_input_freq(void)
+@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
+ };
  
-@@ -20,6 +21,7 @@ Example:
- 		#size-cells = < 0 >;
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f4000 0x200>;
-+		interrupts = <0 78 0x04>;
- 	}
++static void __init tegra20_emc_clk_init(void)
++{
++	struct clk *clk;
++
++	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
++			       ARRAY_SIZE(mux_pllmcp_clkm),
++			       CLK_SET_RATE_NO_REPARENT,
++			       clk_base + CLK_SOURCE_EMC,
++			       30, 2, 0, &emc_lock);
++
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA20_CLK_MC] = clk;
++
++	/*
++	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
++	 * the same time due to a HW bug, this won't happen because we're
++	 * defining 'emc_mux' and 'emc' as a distinct clocks.
++	 */
++	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
++				   clk_base + CLK_SOURCE_EMC, 0, 7,
++				   0, &emc_lock);
++	clks[TEGRA20_CLK_EMC] = clk;
++}
++
+ static void __init tegra20_periph_clk_init(void)
+ {
+ 	struct tegra_periph_init_data *data;
+@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
+ 	clks[TEGRA20_CLK_AC97] = clk;
  
+ 	/* emc */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, &emc_lock);
+-
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+-				    &emc_lock);
+-	clks[TEGRA20_CLK_MC] = clk;
++	tegra20_emc_clk_init();
  
+ 	/* dsi */
+ 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
 -- 
 2.17.0
