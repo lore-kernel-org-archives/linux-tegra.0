@@ -1,108 +1,94 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: gengdongjiu <gengdongjiu@huawei.com>
 Subject: Re: [PATCH] usb: xhci: remove the code build warning
-Date: Tue, 5 Jun 2018 11:06:06 +0200
-Message-ID: <20180605090606.GA20649@ulmo>
+Date: Tue, 5 Jun 2018 17:12:24 +0800
+Message-ID: <d0492f83-f835-db95-915f-5f7cab9b64c9@huawei.com>
 References: <1528216500-14172-1-git-send-email-gengdongjiu@huawei.com>
  <20180605084019.GA8665@kroah.com>
  <e2b3ea42-ab55-a1b5-567a-1a57a5f45b5c@huawei.com>
+ <20180605090606.GA20649@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <e2b3ea42-ab55-a1b5-567a-1a57a5f45b5c@huawei.com>
+In-Reply-To: <20180605090606.GA20649@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: gengdongjiu <gengdongjiu@huawei.com>
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Greg KH <gregkh@linuxfoundation.org>, mathias.nyman@intel.com, jonathanh@nvidia.com, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 05, 2018 at 04:54:17PM +0800, gengdongjiu wrote:
->=20
->=20
-> On 2018/6/5 16:40, Greg KH wrote:
-> > On Wed, Jun 06, 2018 at 12:35:00AM +0800, Dongjiu Geng wrote:
-> >> Initialize the 'err' variate to remove the build warning,
-> >> the warning is shown as below:
-> >>
-> >> drivers/usb/host/xhci-tegra.c: In function =E2=80=98tegra_xusb_mbox_th=
-read=E2=80=99:
-> >> drivers/usb/host/xhci-tegra.c:552:6: warning: =E2=80=98err=E2=80=99 ma=
-y be used uninitialized in this function [-Wuninitialized]
-> >> drivers/usb/host/xhci-tegra.c:482:6: note: =E2=80=98err=E2=80=99 was d=
-eclared here
-> >>
-> >> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-> >> ---
-> >=20
-> > Any hint as to what commit caused this warning to show up?
->=20
-> It seems below commit:
->=20
-> commit e84fce0f8837496a48d11086829bdbe170358b7a
-> Author: Thierry Reding <treding@nvidia.com>
-> Date:   Thu Feb 11 18:10:48 2016 +0100
->=20
->     usb: xhci: Add NVIDIA Tegra XUSB controller driver
->=20
->     Add support for the on-chip XUSB controller present on Tegra SoCs. Th=
-is
->     controller, when loaded with external firmware, exposes an interface
->     compliant with xHCI. This driver loads the firmware, starts the
->     controller, and is able to service host-specific messages sent by the
->     controller's firmware.
->=20
->     The controller also supports USB device mode as well as powergating
->     of the SuperSpeed and host-controller logic when not in use, but
->     support for these is not yet implemented.
->=20
->     Based on work by:
->       Ajay Gupta <ajayg@nvidia.com>
->       Bharath Yadav <byadav@nvidia.com>
->       Andrew Bresticker <abrestic@chromium.org>
->=20
->     Cc: Mathias Nyman <mathias.nyman@intel.com>
->     Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->     Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
->     Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-I've never seen this warning before. It's also a false positive in that
-technically the mailbox message will always have at least one bit set in
-"mask". However, I don't see how the compiler could know about it, given
-that the data comes from an external source, so I think this makes sense
-as a hint to the compiler. So:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
-Can you provide more detail on what exact version of which compiler you
-used that triggered this? I wonder why it's never presented itself with
-the compiler that I use.
-
-Thierry
-
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsWUnsACgkQ3SOs138+
-s6Gg1A/6A7nFC4EyLNBlNi2EAo5oSBhXA4/i4b+HkR1LHHtteuQH3so3HUavC7Gm
-J8Pz46KMAXZmEW2fMfT+Kfqh6Cs8+3xx9grJ2XMASV1kSdYzbYMwNIiEidvD006Y
-d1nvdrRSnFvWytGtsykpY9coCrNlA8t41OkbtR73l9UDN5ETGqsNxujc3sT7stZT
-eqMoIlIqOcwVRKPDv3Tgm88iTawc0NuMcfLqCd7dI7netkOV51yIVTs5baDFHL/7
-iYl7l1FdIa1wMi6bWs0TSFQZilYoj2i4ADffRvhgTVU0zAjmWFOre2yPPBlCT9z8
-FIG1FfLzS9TT7bgMkCp/BTk7XBBcMHPUM0AheqSxYPq+juIp0Ia2Z4dnmxyPPc3f
-jvkEWHRgXMENRkitMtUV4lTVmVCjDJwLZRdmWIc4S5A/E9nJMuwnWdIDSRPZXVsY
-3XR8pt1AWMBF9unPsaxW3X+IsaMgYoD4vJZ/LWtgO+l8p5+AqCeoYobSmNyU3nlc
-PgogrW2Lxg/Nd8jrHl4LbGw/7rSLnt6UK85E0afLbIPQtkEwg7uAvhQpC+Q04Lxh
-+WXj0Iv1dt9oYXSyXrfUcMMMVf2tDHcinXdk8F55Exojp4Wm7vD/RKjI90+RAmvR
-d/Mvex80nrxGL8XTeDjJhGfiExQBbNf7fJfMhCdn5w9xFrxqc6U=
-=GnaC
------END PGP SIGNATURE-----
-
---qDbXVdCdHGoSgWSk--
+T24gMjAxOC82LzUgMTc6MDYsIFRoaWVycnkgUmVkaW5nIHdyb3RlOg0KPiBPbiBUdWUsIEp1
+biAwNSwgMjAxOCBhdCAwNDo1NDoxN1BNICswODAwLCBnZW5nZG9uZ2ppdSB3cm90ZToNCj4+
+DQo+Pg0KPj4gT24gMjAxOC82LzUgMTY6NDAsIEdyZWcgS0ggd3JvdGU6DQo+Pj4gT24gV2Vk
+LCBKdW4gMDYsIDIwMTggYXQgMTI6MzU6MDBBTSArMDgwMCwgRG9uZ2ppdSBHZW5nIHdyb3Rl
+Og0KPj4+PiBJbml0aWFsaXplIHRoZSAnZXJyJyB2YXJpYXRlIHRvIHJlbW92ZSB0aGUgYnVp
+bGQgd2FybmluZywNCj4+Pj4gdGhlIHdhcm5pbmcgaXMgc2hvd24gYXMgYmVsb3c6DQo+Pj4+
+DQo+Pj4+IGRyaXZlcnMvdXNiL2hvc3QveGhjaS10ZWdyYS5jOiBJbiBmdW5jdGlvbiDigJh0
+ZWdyYV94dXNiX21ib3hfdGhyZWFk4oCZOg0KPj4+PiBkcml2ZXJzL3VzYi9ob3N0L3hoY2kt
+dGVncmEuYzo1NTI6Njogd2FybmluZzog4oCYZXJy4oCZIG1heSBiZSB1c2VkIHVuaW5pdGlh
+bGl6ZWQgaW4gdGhpcyBmdW5jdGlvbiBbLVd1bmluaXRpYWxpemVkXQ0KPj4+PiBkcml2ZXJz
+L3VzYi9ob3N0L3hoY2ktdGVncmEuYzo0ODI6Njogbm90ZTog4oCYZXJy4oCZIHdhcyBkZWNs
+YXJlZCBoZXJlDQo+Pj4+DQo+Pj4+IFNpZ25lZC1vZmYtYnk6IERvbmdqaXUgR2VuZyA8Z2Vu
+Z2RvbmdqaXVAaHVhd2VpLmNvbT4NCj4+Pj4gLS0tDQo+Pj4NCj4+PiBBbnkgaGludCBhcyB0
+byB3aGF0IGNvbW1pdCBjYXVzZWQgdGhpcyB3YXJuaW5nIHRvIHNob3cgdXA/DQo+Pg0KPj4g
+SXQgc2VlbXMgYmVsb3cgY29tbWl0Og0KPj4NCj4+IGNvbW1pdCBlODRmY2UwZjg4Mzc0OTZh
+NDhkMTEwODY4MjliZGJlMTcwMzU4YjdhDQo+PiBBdXRob3I6IFRoaWVycnkgUmVkaW5nIDx0
+cmVkaW5nQG52aWRpYS5jb20+DQo+PiBEYXRlOiAgIFRodSBGZWIgMTEgMTg6MTA6NDggMjAx
+NiArMDEwMA0KPj4NCj4+ICAgICB1c2I6IHhoY2k6IEFkZCBOVklESUEgVGVncmEgWFVTQiBj
+b250cm9sbGVyIGRyaXZlcg0KPj4NCj4+ICAgICBBZGQgc3VwcG9ydCBmb3IgdGhlIG9uLWNo
+aXAgWFVTQiBjb250cm9sbGVyIHByZXNlbnQgb24gVGVncmEgU29Dcy4gVGhpcw0KPj4gICAg
+IGNvbnRyb2xsZXIsIHdoZW4gbG9hZGVkIHdpdGggZXh0ZXJuYWwgZmlybXdhcmUsIGV4cG9z
+ZXMgYW4gaW50ZXJmYWNlDQo+PiAgICAgY29tcGxpYW50IHdpdGggeEhDSS4gVGhpcyBkcml2
+ZXIgbG9hZHMgdGhlIGZpcm13YXJlLCBzdGFydHMgdGhlDQo+PiAgICAgY29udHJvbGxlciwg
+YW5kIGlzIGFibGUgdG8gc2VydmljZSBob3N0LXNwZWNpZmljIG1lc3NhZ2VzIHNlbnQgYnkg
+dGhlDQo+PiAgICAgY29udHJvbGxlcidzIGZpcm13YXJlLg0KPj4NCj4+ICAgICBUaGUgY29u
+dHJvbGxlciBhbHNvIHN1cHBvcnRzIFVTQiBkZXZpY2UgbW9kZSBhcyB3ZWxsIGFzIHBvd2Vy
+Z2F0aW5nDQo+PiAgICAgb2YgdGhlIFN1cGVyU3BlZWQgYW5kIGhvc3QtY29udHJvbGxlciBs
+b2dpYyB3aGVuIG5vdCBpbiB1c2UsIGJ1dA0KPj4gICAgIHN1cHBvcnQgZm9yIHRoZXNlIGlz
+IG5vdCB5ZXQgaW1wbGVtZW50ZWQuDQo+Pg0KPj4gICAgIEJhc2VkIG9uIHdvcmsgYnk6DQo+
+PiAgICAgICBBamF5IEd1cHRhIDxhamF5Z0BudmlkaWEuY29tPg0KPj4gICAgICAgQmhhcmF0
+aCBZYWRhdiA8YnlhZGF2QG52aWRpYS5jb20+DQo+PiAgICAgICBBbmRyZXcgQnJlc3RpY2tl
+ciA8YWJyZXN0aWNAY2hyb21pdW0ub3JnPg0KPj4NCj4+ICAgICBDYzogTWF0aGlhcyBOeW1h
+biA8bWF0aGlhcy5ueW1hbkBpbnRlbC5jb20+DQo+PiAgICAgQ2M6IEdyZWcgS3JvYWgtSGFy
+dG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+DQo+PiAgICAgQWNrZWQtYnk6IE1h
+dGhpYXMgTnltYW4gPG1hdGhpYXMubnltYW5AbGludXguaW50ZWwuY29tPg0KPj4gICAgIFNp
+Z25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+DQo+IA0K
+PiBJJ3ZlIG5ldmVyIHNlZW4gdGhpcyB3YXJuaW5nIGJlZm9yZS4gSXQncyBhbHNvIGEgZmFs
+c2UgcG9zaXRpdmUgaW4gdGhhdA0KPiB0ZWNobmljYWxseSB0aGUgbWFpbGJveCBtZXNzYWdl
+IHdpbGwgYWx3YXlzIGhhdmUgYXQgbGVhc3Qgb25lIGJpdCBzZXQgaW4NCj4gIm1hc2siLiBI
+b3dldmVyLCBJIGRvbid0IHNlZSBob3cgdGhlIGNvbXBpbGVyIGNvdWxkIGtub3cgYWJvdXQg
+aXQsIGdpdmVuDQo+IHRoYXQgdGhlIGRhdGEgY29tZXMgZnJvbSBhbiBleHRlcm5hbCBzb3Vy
+Y2UsIHNvIEkgdGhpbmsgdGhpcyBtYWtlcyBzZW5zZQ0KPiBhcyBhIGhpbnQgdG8gdGhlIGNv
+bXBpbGVyLiBTbzoNCj4gDQo+IEFja2VkLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0Bu
+dmlkaWEuY29tPg0KPiANCj4gQ2FuIHlvdSBwcm92aWRlIG1vcmUgZGV0YWlsIG9uIHdoYXQg
+ZXhhY3QgdmVyc2lvbiBvZiB3aGljaCBjb21waWxlciB5b3UNCj4gdXNlZCB0aGF0IHRyaWdn
+ZXJlZCB0aGlzPyBJIHdvbmRlciB3aHkgaXQncyBuZXZlciBwcmVzZW50ZWQgaXRzZWxmIHdp
+dGgNCj4gdGhlIGNvbXBpbGVyIHRoYXQgSSB1c2UuDQoNCkJlbG93IGlzIHRoZSBkZXRhaWxl
+ZCB2ZXJzaW9uIG9mIGNvbXBpbGVyIHRoYXQgSSB1c2VkLg0KDQokIHN1ZG8gbHNiX3JlbGVh
+c2UgLWENCkRpc3RyaWJ1dG9yIElEOiBVYnVudHUNCkRlc2NyaXB0aW9uOiAgICBVYnVudHUg
+MTQuMDQuNSBMVFMNClJlbGVhc2U6ICAgICAgICAxNC4wNA0KQ29kZW5hbWU6ICAgICAgIHRy
+dXN0eQ0KDQokIGFybS1saW51eC1nbnVlYWJpLWdjYyAtdg0KVXNpbmcgYnVpbHQtaW4gc3Bl
+Y3MuDQpDT0xMRUNUX0dDQz1hcm0tbGludXgtZ251ZWFiaS1nY2MNCkNPTExFQ1RfTFRPX1dS
+QVBQRVI9L3Vzci9saWIvZ2NjLWNyb3NzL2FybS1saW51eC1nbnVlYWJpLzQuNy9sdG8td3Jh
+cHBlcg0KVGFyZ2V0OiBhcm0tbGludXgtZ251ZWFiaQ0KQ29uZmlndXJlZCB3aXRoOiAuLi9z
+cmMvY29uZmlndXJlIC12IC0td2l0aC1wa2d2ZXJzaW9uPSdVYnVudHUvTGluYXJvIDQuNy4z
+LTEydWJ1bnR1MScgLS13aXRoLWJ1Z3VybD1maWxlOi8vL3Vzci9zaGFyZS9kb2MvZ2NjLTQu
+Ny9SRUFETUUuQnVncyAtLWVuYWJsZS1sYW5ndWFnZXM9YyxjKyssZ28sZm9ydHJhbixvYmpj
+LG9iai1jKysgLS1wcmVmaXg9L3VzciAtLXByb2dyYW0tc3VmZml4PS00LjcgLS1lbmFibGUt
+c2hhcmVkIC0tZW5hYmxlLWxpbmtlci1idWlsZC1pZCAtLWxpYmV4ZWNkaXI9L3Vzci9saWIg
+LS13aXRob3V0LWluY2x1ZGVkLWdldHRleHQgLS1lbmFibGUtdGhyZWFkcz1wb3NpeCAtLXdp
+dGgtZ3h4LWluY2x1ZGUtZGlyPS91c3IvYXJtLWxpbnV4LWdudWVhYmkvaW5jbHVkZS9jKysv
+NC43LjMgLS1saWJkaXI9L3Vzci9saWIgLS1lbmFibGUtbmxzIC0td2l0aC1zeXNyb290PS8g
+LS1lbmFibGUtY2xvY2FsZT1nbnUgLS1lbmFibGUtbGlic3RkY3h4LWRlYnVnIC0tZW5hYmxl
+LWdudS11bmlxdWUtb2JqZWN0IC0tZGlzYWJsZS1saWJtdWRmbGFwIC0tZGlzYWJsZS1saWJp
+dG0gLS1lbmFibGUtcGx1Z2luIC0td2l0aC1zeXN0ZW0temxpYiAtLWVuYWJsZS1vYmpjLWdj
+IC0td2l0aC1jbG9vZyAtLWVuYWJsZS1jbG9vZy1iYWNrZW5kPXBwbCAtLWRpc2FibGUtY2xv
+b2ctdmVyc2lvbi1jaGVjayAtLWRpc2FibGUtcHBsLXZlcnNpb24tY2hlY2sgLS1lbmFibGUt
+bXVsdGlhcmNoIC0tZW5hYmxlLW11bHRpbGliIC0tZGlzYWJsZS1zamxqLWV4Y2VwdGlvbnMg
+LS13aXRoLWFyY2g9YXJtdjV0IC0td2l0aC1mbG9hdD1zb2Z0IC0tZGlzYWJsZS13ZXJyb3Ig
+LS1lbmFibGUtY2hlY2tpbmc9cmVsZWFzZSAtLWJ1aWxkPXg4Nl82NC1saW51eC1nbnUgLS1o
+b3N0PXg4Nl82NC1saW51eC1nbnUgLS10YXJnZXQ9YXJtLWxpbnV4LWdudWVhYmkgLS1wcm9n
+cmFtLXByZWZpeD1hcm0tbGludXgtZ251ZWFiaS0gLS1pbmNsdWRlZGlyPS91c3IvYXJtLWxp
+bnV4LWdudWVhYmkvaW5jbHVkZQ0KVGhyZWFkIG1vZGVsOiBwb3NpeA0KZ2NjIHZlcnNpb24g
+NC43LjMgKFVidW50dS9MaW5hcm8gNC43LjMtMTJ1YnVudHUxKQ0KDQo+IA0KPiBUaGllcnJ5
+DQo+IA0K
