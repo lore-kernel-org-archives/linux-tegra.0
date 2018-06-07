@@ -1,48 +1,56 @@
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-Subject: [PATCH v2] usb: xhci: remove the code build warning
-Date: Wed, 6 Jun 2018 22:36:59 +0800
-Message-ID: <20180606143659.1476-1-gengdongjiu@huawei.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v2 3/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Thu, 7 Jun 2018 11:58:48 +0200
+Message-ID: <20180607115848.5ef08680@xps13>
+References: <20180527215442.14760-4-stefan@agner.ch>
+ <80eb6a514e96cdbd460c6a0937a9dff9@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gengdongjiu@huawei.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+In-Reply-To: <80eb6a514e96cdbd460c6a0937a9dff9@agner.ch>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: mark.rutland@arm.com, pgaikwad@nvidia.com, dev@lynxeye.de, marek.vasut@gmail.com, sboyd@kernel.org, richard@nod.at, mturquette@baylibre.com, mirza.krak@gmail.com, krzk@kernel.org, jonathanh@nvidia.com, boris.brezillon@bootlin.com, robh+dt@kernel.org, thierry.reding@gmail.com, marcel@ziswiler.com, benjamin.lindqvist@endian.se, linux-tegra@vger.kernel.org, linux-mtd@lists.infradead.org, digetx@gmail.com, computersforpeace@gmail.com, dwmw2@infradead.org, pdeschrijver@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Initialize the 'err' variate to remove the build warning,
-the warning is shown as below:
-
-drivers/usb/host/xhci-tegra.c: In function 'tegra_xusb_mbox_thread':
-drivers/usb/host/xhci-tegra.c:552:6: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
-drivers/usb/host/xhci-tegra.c:482:6: note: 'err' was declared here
-
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
-How to reproduce:
-1. make defconfig ARCH=arm
-2. make -j100 CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
-
-Then you can see below warnings:
-drivers/usb/host/xhci-tegra.c: In function 'tegra_xusb_mbox_thread':
-drivers/usb/host/xhci-tegra.c:552:6: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
-drivers/usb/host/xhci-tegra.c:482:6: note: 'err' was declared here
----
- drivers/usb/host/xhci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index a8c1d07..d50549f 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -481,7 +481,7 @@ static void tegra_xusb_mbox_handle(struct tegra_xusb *tegra,
- 	unsigned long mask;
- 	unsigned int port;
- 	bool idle, enable;
--	int err;
-+	int err = 0;
- 
- 	memset(&rsp, 0, sizeof(rsp));
- 
--- 
-1.9.1
+SGkgU3RlZmFuLAoKT24gVGh1LCAzMSBNYXkgMjAxOCAxMTozNzo0MSArMDIwMCwgU3RlZmFuIEFn
+bmVyIDxzdGVmYW5AYWduZXIuY2g+Cndyb3RlOgoKPiBPbiAyNy4wNS4yMDE4IDIzOjU0LCBTdGVm
+YW4gQWduZXIgd3JvdGU6Cj4gPiBBZGQgc3VwcG9ydCBmb3IgdGhlIE5BTkQgZmxhc2ggY29udHJv
+bGxlciBmb3VuZCBvbiBOVklESUEKPiA+IFRlZ3JhIDIgU29Dcy4gVGhpcyBpbXBsZW1lbnRhdGlv
+biBkb2VzIG5vdCBtYWtlIHVzZSBvZiB0aGUKPiA+IGNvbW1hbmQgcXVldWUgZmVhdHVyZS4gUmVn
+dWxhciBvcGVyYXRpb25zL2RhdGEgdHJhbnNmZXJzIGFyZQo+ID4gZG9uZSBpbiBQSU8gbW9kZS4g
+UGFnZSByZWFkL3dyaXRlcyB3aXRoIGhhcmR3YXJlIEVDQyBtYWtlCj4gPiB1c2Ugb2YgdGhlIERN
+QSBmb3IgZGF0YSB0cmFuc2Zlci4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogTHVjYXMgU3RhY2gg
+PGRldkBseW54ZXllLmRlPgo+ID4gU2lnbmVkLW9mZi1ieTogU3RlZmFuIEFnbmVyIDxzdGVmYW5A
+YWduZXIuY2g+Cj4gPiAtLS0KPiA+ICBNQUlOVEFJTkVSUyAgICAgICAgICAgICAgICAgICAgICAg
+fCAgIDcgKwo+ID4gIGRyaXZlcnMvbXRkL25hbmQvcmF3L0tjb25maWcgICAgICB8ICAgNiArCj4g
+PiAgZHJpdmVycy9tdGQvbmFuZC9yYXcvTWFrZWZpbGUgICAgIHwgICAxICsKPiA+ICBkcml2ZXJz
+L210ZC9uYW5kL3Jhdy90ZWdyYV9uYW5kLmMgfCA5OTkgKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrCj4gPiAgNCBmaWxlcyBjaGFuZ2VkLCAxMDEzIGluc2VydGlvbnMoKykKPiA+ICBjcmVh
+dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tdGQvbmFuZC9yYXcvdGVncmFfbmFuZC5jCj4gPiAgIAo+
+IFsuLi5dCj4gPiArCj4gPiArCWNoaXAtPmVjYy5yZWFkX3BhZ2UgPSB0ZWdyYV9uYW5kX3JlYWRf
+cGFnZV9od2VjYzsKPiA+ICsJY2hpcC0+ZWNjLndyaXRlX3BhZ2UgPSB0ZWdyYV9uYW5kX3dyaXRl
+X3BhZ2VfaHdlY2M7Cj4gPiArCS8qIE5vdCBmdW5jdGlvbmFsIGZvciB1bmtub3duIHJlYXNvbi4u
+Lgo+ID4gKwljaGlwLT5lY2MucmVhZF9wYWdlX3JhdyA9IHRlZ3JhX25hbmRfcmVhZF9wYWdlOwo+
+ID4gKwljaGlwLT5lY2Mud3JpdGVfcGFnZV9yYXcgPSB0ZWdyYV9uYW5kX3dyaXRlX3BhZ2U7Cj4g
+PiArCSovICAKPiAKPiBJIGFtIGdpdmluZyB1cCBvbiB0aGVzZSByYXcgcmVhZC93cml0ZV9wYWdl
+IGZ1bmN0aW9ucy4gVXNpbmcgRE1BIHdpdGhvdXQKPiBIVyBFQ0MganVzdCBzZWVtcyBub3QgdG8g
+d29yay4KClsuLi5dCgo+IE5vdGUgdGhhdCB0aGUgZGVmYXVsdCBpbXBsZW1lbnRhdGlvbnMgbmFu
+ZF8ocmVhZHx3cml0ZSlfcGFnZV9yYXcgd2hpY2gKPiB1c2UgZXhlY19vcCBkbyB3b3JrIGZpbmUh
+IFVuZm9ydHVuYXRlbHksIHRoZSBQSU8gbW9kZSBvbmx5IGFsbG93cyA0Cj4gYnl0ZXMgaW4gYSBy
+ZWFkIGN5Y2xlLCBoZW5jZSByYXcgcmVhZC93cml0ZSBpcyBzbG93Li4uCj4gCgpXZWxsLCBpZiBy
+YXcgYWNjZXNzb3JzIHdvcmsgaW4gUElPIG1vZGUsIEkgc3VwcG9zZSBpdCdzIG5vdCBhIGJpZyBk
+ZWFsLgoKVGhhbmtzIGZvciB0cnlpbmcgYW55d2F5IQpNaXF1w6hsCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXggTVREIGRpc2N1c3Np
+b24gbWFpbGluZyBsaXN0Cmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGlu
+Zm8vbGludXgtbXRkLwo=
