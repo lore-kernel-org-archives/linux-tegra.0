@@ -1,15 +1,15 @@
-From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] drm: nouveau: Enable gp20b/gp10b firmware tag
  when relevant
-Date: Mon, 11 Jun 2018 11:32:53 +0200
-Message-ID: <CABr+WTk19So=oLbQ0UMLza5HGRo7QvCyZdcOw25zH42oAELLqQ@mail.gmail.com>
+Date: Mon, 11 Jun 2018 13:10:26 +0200
+Message-ID: <20180611111026.GB31977@ulmo>
 References: <20180610110131.10490-1-kwizart@gmail.com>
  <20180611083319.GA31977@ulmo>
+ <CABr+WTk19So=oLbQ0UMLza5HGRo7QvCyZdcOw25zH42oAELLqQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1833297901=="
 Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20180611083319.GA31977@ulmo>
+In-Reply-To: <CABr+WTk19So=oLbQ0UMLza5HGRo7QvCyZdcOw25zH42oAELLqQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
  <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/nouveau>
@@ -19,60 +19,119 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
  <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
 Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-MjAxOC0wNi0xMSAxMDozMyBHTVQrMDI6MDAgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5n
-QGdtYWlsLmNvbT46Cj4gT24gU3VuLCBKdW4gMTAsIDIwMTggYXQgMDE6MDE6MzFQTSArMDIwMCwg
-Tmljb2xhcyBDaGF1dmV0IHdyb3RlOgo+PiBUaGlzIGFsbG93cyB0byBoYXZlIHRoZSByZWxhdGVk
-IE1PRFVMRV9GSVJNV0FSRSB0YWcgb25seQo+PiBvbiByZWxldmFudCBhcmNoIChhcm02NCkuCj4+
-IFRoaXMgd2lsbCBzYXZlcyBhYm91dCA0MDBrIG9uIGluaXRyYW1mcyB3aGVuIG5vdCByZWxldmFu
-dAo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBOaWNvbGFzIENoYXV2ZXQgPGt3aXphcnRAZ21haWwuY29t
-Pgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3Qv
-Z20yMGIuYyB8IDIgKysKPj4gIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3Nl
-Y2Jvb3QvZ3AxMGIuYyB8IDIgKysKPj4gIDIgZmlsZXMgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCsp
-Cj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9z
-ZWNib290L2dtMjBiLmMgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9zZWNi
-b290L2dtMjBiLmMKPj4gaW5kZXggMzA0OTFkMTMyZDU5Li5kZjhiOTE5ZGNmMDkgMTAwNjQ0Cj4+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ20yMGIu
-Ywo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9zZWNib290L2dt
-MjBiLmMKPj4gQEAgLTEyOSw2ICsxMjksNyBAQCBnbTIwYl9zZWNib290X25ldyhzdHJ1Y3QgbnZr
-bV9kZXZpY2UgKmRldmljZSwgaW50IGluZGV4LAo+PiAgICAgICByZXR1cm4gMDsKPj4gIH0KPj4K
-Pj4gKyNpZiBJU19FTkFCTEVEKENPTkZJR19BUkNIX1RFR1JBXzIxMF9TT0MpCj4+ICBNT0RVTEVf
-RklSTVdBUkUoIm52aWRpYS9nbTIwYi9hY3IvYmwuYmluIik7Cj4+ICBNT0RVTEVfRklSTVdBUkUo
-Im52aWRpYS9nbTIwYi9hY3IvdWNvZGVfbG9hZC5iaW4iKTsKPj4gIE1PRFVMRV9GSVJNV0FSRSgi
-bnZpZGlhL2dtMjBiL2dyL2ZlY3NfYmwuYmluIik7Cj4+IEBAIC0xNDQsMyArMTQ1LDQgQEAgTU9E
-VUxFX0ZJUk1XQVJFKCJudmlkaWEvZ20yMGIvZ3Ivc3dfbWV0aG9kX2luaXQuYmluIik7Cj4+ICBN
-T0RVTEVfRklSTVdBUkUoIm52aWRpYS9nbTIwYi9wbXUvZGVzYy5iaW4iKTsKPj4gIE1PRFVMRV9G
-SVJNV0FSRSgibnZpZGlhL2dtMjBiL3BtdS9pbWFnZS5iaW4iKTsKPj4gIE1PRFVMRV9GSVJNV0FS
-RSgibnZpZGlhL2dtMjBiL3BtdS9zaWcuYmluIik7Cj4+ICsjZW5kaWYKPj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ3AxMGIuYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ3AxMGIuYwo+PiBpbmRl
-eCA2MzJlOTU0NWUyOTIuLjI4Y2EyOWQwZWVlZSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvc2VjYm9vdC9ncDEwYi5jCj4+ICsrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ3AxMGIuYwo+PiBAQCAtNzQsNiAr
-NzQsNyBAQCBncDEwYl9zZWNib290X25ldyhzdHJ1Y3QgbnZrbV9kZXZpY2UgKmRldmljZSwgaW50
-IGluZGV4LAo+PiAgICAgICByZXR1cm4gMDsKPj4gIH0KPj4KPj4gKyNpZiBJU19FTkFCTEVEKENP
-TkZJR19BUkNIX1RFR1JBXzE4Nl9TT0MpCj4+ICBNT0RVTEVfRklSTVdBUkUoIm52aWRpYS9ncDEw
-Yi9hY3IvYmwuYmluIik7Cj4+ICBNT0RVTEVfRklSTVdBUkUoIm52aWRpYS9ncDEwYi9hY3IvdWNv
-ZGVfbG9hZC5iaW4iKTsKPj4gIE1PRFVMRV9GSVJNV0FSRSgibnZpZGlhL2dwMTBiL2dyL2ZlY3Nf
-YmwuYmluIik7Cj4+IEBAIC05MSwzICs5Miw0IEBAIE1PRFVMRV9GSVJNV0FSRSgibnZpZGlhL2dw
-MTBiL2dyL3N3X21ldGhvZF9pbml0LmJpbiIpOwo+PiAgTU9EVUxFX0ZJUk1XQVJFKCJudmlkaWEv
-Z3AxMGIvcG11L2Rlc2MuYmluIik7Cj4+ICBNT0RVTEVfRklSTVdBUkUoIm52aWRpYS9ncDEwYi9w
-bXUvaW1hZ2UuYmluIik7Cj4+ICBNT0RVTEVfRklSTVdBUkUoIm52aWRpYS9ncDEwYi9wbXUvc2ln
-LmJpbiIpOwo+PiArI2VuZGlmCj4KPiBJIHN1cHBvc2UgdGhhdCBtYWtlcyBzZW5zZSwgc286Cj4K
-PiBBY2tlZC1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPgo+IE9uIGEg
-c2lkZS1ub3RlLCBJIHdhcyBjaGVja2luZyBmb3Igd2hhdCB3ZSBkbyBmb3IgZ2syMGEsIGJ1dCBp
-dCBzZWVtcwo+IGxpa2Ugd2UgZG9uJ3QgaGF2ZSBNT0RVTEVfRklSTVdBUkUoKSBlbnRyaWVzIGZv
-ciBUZWdyYTEyNC4gSG93IGRvIHdlCj4gbWFrZSBzdXJlIHRoYXQgZmlybXdhcmUgaXMgYXV0b21h
-dGljYWxseSBwdWxsZWQgaW50byBpbml0cmFtZnMgb24gdGhlCj4gVGVncmExMjQgZGV2aWNlcz8K
-VGhlIE1PRFVMRV9GSVJNV0FSRSBlbnRyaWVzIHJlbGF0ZWQgdG8gZ3RrMjBhIGFyZSBsb2NhdGVk
-IGluCmRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfcGxhdGZvcm0uYwpUaGlzIGZpbGUg
-aXMgb25seSBidWlsdCB3aGVuIHVzaW5nIEFSQ0hfVEVHUkEuCkknbSBub3QgYXdhcmUgdGhhdCBu
-b3V2ZWF1IGNhbiBidWlsZCBhIGdrMjBhIG9ubHkgZHJpdmVyLCBzbyBtb3ZpbmcKdGhlc2VzIGVu
-dHJpZXMgdG8gYSBnazIwYSBzcGVjaWZpYyBmaWxlIHdpbGwgaGF2ZSB0aGUgc2FtZSBlZmZlY3Qg
-YXQKdGhpcyB0aW1lLgoKVGh4IGZvciB0aGUgcmV2aWV3LgoKLS0gCi0KCk5pY29sYXMgKGt3aXph
-cnQpCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCk5vdXZl
-YXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
+
+--===============1833297901==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="JP+T4n/bALQSJXh8"
+Content-Disposition: inline
+
+
+--JP+T4n/bALQSJXh8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jun 11, 2018 at 11:32:53AM +0200, Nicolas Chauvet wrote:
+> 2018-06-11 10:33 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> > On Sun, Jun 10, 2018 at 01:01:31PM +0200, Nicolas Chauvet wrote:
+> >> This allows to have the related MODULE_FIRMWARE tag only
+> >> on relevant arch (arm64).
+> >> This will saves about 400k on initramfs when not relevant
+> >>
+> >> Signed-off-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >> ---
+> >>  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c | 2 ++
+> >>  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gp10b.c | 2 ++
+> >>  2 files changed, 4 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+> >> index 30491d132d59..df8b919dcf09 100644
+> >> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+> >> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+> >> @@ -129,6 +129,7 @@ gm20b_secboot_new(struct nvkm_device *device, int index,
+> >>       return 0;
+> >>  }
+> >>
+> >> +#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
+> >>  MODULE_FIRMWARE("nvidia/gm20b/acr/bl.bin");
+> >>  MODULE_FIRMWARE("nvidia/gm20b/acr/ucode_load.bin");
+> >>  MODULE_FIRMWARE("nvidia/gm20b/gr/fecs_bl.bin");
+> >> @@ -144,3 +145,4 @@ MODULE_FIRMWARE("nvidia/gm20b/gr/sw_method_init.bin");
+> >>  MODULE_FIRMWARE("nvidia/gm20b/pmu/desc.bin");
+> >>  MODULE_FIRMWARE("nvidia/gm20b/pmu/image.bin");
+> >>  MODULE_FIRMWARE("nvidia/gm20b/pmu/sig.bin");
+> >> +#endif
+> >> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gp10b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gp10b.c
+> >> index 632e9545e292..28ca29d0eeee 100644
+> >> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gp10b.c
+> >> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gp10b.c
+> >> @@ -74,6 +74,7 @@ gp10b_secboot_new(struct nvkm_device *device, int index,
+> >>       return 0;
+> >>  }
+> >>
+> >> +#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
+> >>  MODULE_FIRMWARE("nvidia/gp10b/acr/bl.bin");
+> >>  MODULE_FIRMWARE("nvidia/gp10b/acr/ucode_load.bin");
+> >>  MODULE_FIRMWARE("nvidia/gp10b/gr/fecs_bl.bin");
+> >> @@ -91,3 +92,4 @@ MODULE_FIRMWARE("nvidia/gp10b/gr/sw_method_init.bin");
+> >>  MODULE_FIRMWARE("nvidia/gp10b/pmu/desc.bin");
+> >>  MODULE_FIRMWARE("nvidia/gp10b/pmu/image.bin");
+> >>  MODULE_FIRMWARE("nvidia/gp10b/pmu/sig.bin");
+> >> +#endif
+> >
+> > I suppose that makes sense, so:
+> >
+> > Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> > On a side-note, I was checking for what we do for gk20a, but it seems
+> > like we don't have MODULE_FIRMWARE() entries for Tegra124. How do we
+> > make sure that firmware is automatically pulled into initramfs on the
+> > Tegra124 devices?
+> The MODULE_FIRMWARE entries related to gtk20a are located in
+> drivers/gpu/drm/nouveau/nouveau_platform.c
+> This file is only built when using ARCH_TEGRA.
+> I'm not aware that nouveau can build a gk20a only driver, so moving
+> theses entries to a gk20a specific file will have the same effect at
+> this time.
+
+Huh... you're right. I must've screwed up my git grep invocation. All
+looks well, then.
+
+Thierry
+
+--JP+T4n/bALQSJXh8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlseWJ8ACgkQ3SOs138+
+s6FrYw//SHmEb9fzBk4qFdwWRumfk6I8yPl+piewuy3Cw5kjf1OMWJQIgXvIrpJn
+ox1DmYDCgvcKRUOk/iBSHhnF6uRFgJjgutRENI8C41F6tGoG06W4OLZVfiAE/DId
+SIbolizoEJbEnT2nbwhmtlOsEeESRnqL7GPzrbY9xjbmHVEpC0OpqP9orJ/VnFog
++H8ybJs5csG9meOddRrFY8tU4GM3SIwKnF3dE2nVTrLqrD5tScJHvzXVdh12v0Ys
+wrV0zw5HdHnqI4/0a0nESQHueCExSFM1AFJAdsrnxPHzpbw73I78jMOBU6nvat8N
+HVj+o0c/qKTMXazNohCm+49M2Usv1r9njS5b2J3GTyXK9U8tORNbPPNc4TX5aASl
+gkdz8vC+5dHNzuDYr2Tnc+0J7q6Cq3LX51OK6PfB8bXaFWlLB8E349wxIiJ0faxr
+xeZkHQmE77JzHqMTPND+Qm//4Djq+pPBgBbE+lhHaU8thJNHCaYvgournohpl0xJ
+hE7gzZ4PxjG389ErscdZCKqbGPmf3LQo1x7lj84gfEcLix3shUDF4Cf6g68speHO
+a/hKfyyW8/MmuV8a/gxiA39G1tLWmkUiIL4fyAG0oFNS7fpYAqFChhCd9l1i7dQm
+pjkNAi3g+qI1S13pRBfYEkaIOyMrnveqLLSyCOu+7OsnvIwvgUo=
+=OoMq
+-----END PGP SIGNATURE-----
+
+--JP+T4n/bALQSJXh8--
+
+--===============1833297901==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
+YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+
+--===============1833297901==--
