@@ -1,133 +1,149 @@
 From: Boris Brezillon <boris.brezillon@bootlin.com>
 Subject: Re: [PATCH v4 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
  controller driver
-Date: Tue, 12 Jun 2018 10:13:19 +0200
-Message-ID: <20180612101319.528da20c@bbrezillon>
+Date: Tue, 12 Jun 2018 10:27:34 +0200
+Message-ID: <20180612102734.0ea3bfa5@bbrezillon>
 References: <20180611205224.23340-1-stefan@agner.ch>
         <20180611205224.23340-5-stefan@agner.ch>
-        <2945591.o6hPPARSMh@dimapc>
-        <fd15fcac50d25281fa8f7d97a738bf6a@agner.ch>
+        <4258393.O1xtUOGbca@dimapc>
+        <cb6f2ef0a5a41e001a2019caa1a18c23@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fd15fcac50d25281fa8f7d97a738bf6a@agner.ch>
+In-Reply-To: <cb6f2ef0a5a41e001a2019caa1a18c23@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stefan Agner <stefan@agner.ch>
 Cc: Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 12 Jun 2018 10:02:12 +0200
+On Tue, 12 Jun 2018 10:06:42 +0200
 Stefan Agner <stefan@agner.ch> wrote:
 
-> >> +static int tegra_nand_read_page_hwecc(struct mtd_info *mtd,
-> >> +				      struct nand_chip *chip,
-> >> +				      uint8_t *buf, int oob_required, int page)
+> On 12.06.2018 02:03, Dmitry Osipenko wrote:
+> > On Monday, 11 June 2018 23:52:22 MSK Stefan Agner wrote:  
+> >> Add support for the NAND flash controller found on NVIDIA
+> >> Tegra 2 SoCs. This implementation does not make use of the
+> >> command queue feature. Regular operations/data transfers are
+> >> done in PIO mode. Page read/writes with hardware ECC make
+> >> use of the DMA for data transfer.
+> >>
+> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >> ---
+> >>  MAINTAINERS                       |    7 +
+> >>  drivers/mtd/nand/raw/Kconfig      |    6 +
+> >>  drivers/mtd/nand/raw/Makefile     |    1 +
+> >>  drivers/mtd/nand/raw/tegra_nand.c | 1248 +++++++++++++++++++++++++++++
+> >>  4 files changed, 1262 insertions(+)
+> >>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+> >>  
+> [snip]
+> >> +static int tegra_nand_cmd(struct nand_chip *chip,
+> >> +			 const struct nand_subop *subop)
 > >> +{
+> >> +	const struct nand_op_instr *instr;
+> >> +	const struct nand_op_instr *instr_data_in = NULL;
 > >> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-> >> +	struct tegra_nand_chip *nand = to_tegra_chip(chip);
-> >> +	void *oob_buf = oob_required ? chip->oob_poi : 0;
-> >> +	u32 dec_stat, max_corr_cnt;
-> >> +	unsigned long fail_sec_flag;
+> >> +	unsigned int op_id, size = 0, offset = 0;
+> >> +	bool first_cmd = true;
+> >> +	u32 reg, cmd = 0;
 > >> +	int ret;
 > >> +
-> >> +	tegra_nand_hw_ecc(ctrl, chip, true);
-> >> +	ret = tegra_nand_page_xfer(mtd, chip, buf, oob_buf, nand->tag.length,
-> >> +				   page, true);
-> >> +	tegra_nand_hw_ecc(ctrl, chip, false);
-> >> +	if (ret)
-> >> +		return ret;
+> >> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
+> >> +		unsigned int naddrs, i;
+> >> +		const u8 *addrs;
+> >> +		u32 addr1 = 0, addr2 = 0;
 > >> +
-> >> +	/* No correctable or un-correctable errors, page must have 0 bitflips */
-> >> +	if (!ctrl->last_read_error)
-> >> +		return 0;
+> >> +		instr = &subop->instrs[op_id];
 > >> +
-> >> +	/*
-> >> +	 * Correctable or un-correctable errors occurred. Use DEC_STAT_BUF
-> >> +	 * which contains information for all ECC selections.
-> >> +	 *
-> >> +	 * Note that since we do not use Command Queues DEC_RESULT does not
-> >> +	 * state the number of pages we can read from the DEC_STAT_BUF. But
-> >> +	 * since CORRFAIL_ERR did occur during page read we do have a valid
-> >> +	 * result in DEC_STAT_BUF.
-> >> +	 */
-> >> +	ctrl->last_read_error = false;
-> >> +	dec_stat = readl_relaxed(ctrl->regs + DEC_STAT_BUF);
+> >> +		switch (instr->type) {
+> >> +		case NAND_OP_CMD_INSTR:
+> >> +			if (first_cmd) {
+> >> +				cmd |= COMMAND_CLE;
+> >> +				writel_relaxed(instr->ctx.cmd.opcode,
+> >> +					       ctrl->regs + CMD_REG1);
+> >> +			} else {
+> >> +				cmd |= COMMAND_SEC_CMD;
+> >> +				writel_relaxed(instr->ctx.cmd.opcode,
+> >> +					       ctrl->regs + CMD_REG2);
+> >> +			}
+> >> +			first_cmd = false;
+> >> +			break;
+> >> +		case NAND_OP_ADDR_INSTR:
+> >> +			offset = nand_subop_get_addr_start_off(subop, op_id);
+> >> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
+> >> +			addrs = &instr->ctx.addr.addrs[offset];
 > >> +
-> >> +	fail_sec_flag = (dec_stat & DEC_STAT_BUF_FAIL_SEC_FLAG_MASK) >>
-> >> +			DEC_STAT_BUF_FAIL_SEC_FLAG_SHIFT;
+> >> +			cmd |= COMMAND_ALE | COMMAND_ALE_SIZE(naddrs);
+> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+> >> +				addr1 |= *addrs++ << (BITS_PER_BYTE * i);
+> >> +			naddrs -= i;
+> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+> >> +				addr2 |= *addrs++ << (BITS_PER_BYTE * i);
+> >> +			writel_relaxed(addr1, ctrl->regs + ADDR_REG1);
+> >> +			writel_relaxed(addr2, ctrl->regs + ADDR_REG2);
+> >> +			break;
 > >> +
-> >> +	max_corr_cnt = (dec_stat & DEC_STAT_BUF_MAX_CORR_CNT_MASK) >>
-> >> +		       DEC_STAT_BUF_MAX_CORR_CNT_SHIFT;
+> >> +		case NAND_OP_DATA_IN_INSTR:
+> >> +			size = nand_subop_get_data_len(subop, op_id);
+> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
 > >> +
-> >> +	if (fail_sec_flag) {
-> >> +		int bit, max_bitflips = 0;
+> >> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
+> >> +				COMMAND_RX | COMMAND_A_VALID;
 > >> +
-> >> +		/*
-> >> +		 * Check if all sectors in a page failed. If only some failed
-> >> +		 * its definitly not an erased page and we can return error
-> >> +		 * stats right away.
-> >> +		 *
-> >> +		 * E.g. controller might return fail_sec_flag with 0x4, which
-> >> +		 * would mean only the third sector failed to correct.
-
-That works because you have NAND_NO_SUBPAGE_WRITE set (i.e. no partial
-page programming), probably something you should state here.
-
-> >> +		 */
-> >> +		if (fail_sec_flag ^ GENMASK(chip->ecc.steps - 1, 0)) {
-> >> +			mtd->ecc_stats.failed += hweight8(fail_sec_flag);
-> >> +			return max_corr_cnt;
+> >> +			instr_data_in = instr;
+> >> +			break;
+> >> +
+> >> +		case NAND_OP_DATA_OUT_INSTR:
+> >> +			size = nand_subop_get_data_len(subop, op_id);
+> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
+> >> +
+> >> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
+> >> +				COMMAND_TX | COMMAND_A_VALID;
+> >> +
+> >> +			memcpy(&reg, instr->ctx.data.buf.out + offset, size);
+> >> +			writel_relaxed(reg, ctrl->regs + RESP);
+> >> +
+> >> +			break;
+> >> +		case NAND_OP_WAITRDY_INSTR:
+> >> +			cmd |= COMMAND_RBSY_CHK;
+> >> +			break;
+> >> +
 > >> +		}
-> >> +
-> >> +		/*
-> >> +		 * All sectors failed to correct, but the ECC isn't smart
-> >> +		 * enough to figure out if a page is really completely erased.
-> >> +		 * We check the read data here to figure out if it's a
-> >> +		 * legitimate ECC error or only an erased page.
-> >> +		 */
-> >> +		for_each_set_bit(bit, &fail_sec_flag, chip->ecc.steps) {
-> >> +			u8 *data = buf + (chip->ecc.size * bit);
-> >> +
-> >> +			ret = nand_check_erased_ecc_chunk(data, chip->ecc.size,
-> >> +							  NULL, 0,
-
-You should also check that the ECC bytes are 0xff here, otherwise you
-won't detect corruption of pages almost filled 0xff but with a few bits
-set to 0.
-
-When you use nand_check_erased_ecc_chunk(), it's important to always
-pass the data along with its associated ECC bytes.
-
-> >> +							  NULL, 0,
-
-If you support writing extra OOB bytes, you should also pass them here.
-
-> >> +							  chip->ecc.strength);
-> >> +			if (ret < 0)
-> >> +				mtd->ecc_stats.failed++;
-> >> +			else
-> >> +				max_bitflips = max(ret, max_bitflips);
-> >> +		}
-> >> +
-> >> +		return max_t(unsigned int, max_corr_cnt, max_bitflips);
-> >> +	} else {
-> >> +		int corr_sec_flag;
-> >> +
-> >> +		corr_sec_flag = (dec_stat & DEC_STAT_BUF_CORR_SEC_FLAG_MASK) >>
-> >> +				DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT;
-> >> +
-> >> +		/*
-> >> +		 * The value returned in the register is the maximum of
-> >> +		 * bitflips encountered in any of the ECC regions. As there is
-> >> +		 * no way to get the number of bitflips in a specific regions
-> >> +		 * we are not able to deliver correct stats but instead
-> >> +		 * overestimate the number of corrected bitflips by assuming
-> >> +		 * that all regions where errors have been corrected
-> >> +		 * encountered the maximum number of bitflips.
-> >> +		 */
-> >> +		mtd->ecc_stats.corrected += max_corr_cnt * hweight8(corr_sec_flag);
-> >> +
-> >> +		return max_corr_cnt;
 > >> +	}
-> >> +  
+> >> +
+> >> +	cmd |= COMMAND_GO | COMMAND_CE(ctrl->cur_cs);
+> >> +	writel_relaxed(cmd, ctrl->regs + COMMAND);
+> >> +	ret = wait_for_completion_io_timeout(&ctrl->command_complete,
+> >> +					     msecs_to_jiffies(500));  
+> > 
+> > It's not obvious to me whether _io_ variant is appropriate to use here, would 
+> > be nice if somebody could clarify that. Maybe block/ already does the IO 
+> > accounting itself and hence the IO time would be counted twice in that case.  
+> 
+> Good that you bring this up.
+> 
+> I don't think that there is any higher layer which could take care of
+> accounting. Usually, with raw nand there is no block layer involved
+> anyway.
+> 
+> In a quick test it seems that only when using wait_for_completion_io I/O
+> is properly accounted in the "wait" section of top.
+> 
+> So far only a single driver (omap2) used the _io variant, but I think it
+> is the right thing to do! After all, it is I/O...
+> 
+> Boris or any other MTD maintainer, any comment on this?
+
+Given this definition of io_schedule_timeout() [1] (which is used when
+you call wait_for_completion_io_timeout()), I'd say it's not useful to
+use the _io_ version, simply because MTD devs are not exposed as blk
+devices, and thus don't need the blk_schedule_flush_plug() that is done
+is io_schedule_prepare(). But that also means MTD I/Os are not
+accounted as I/Os :-(.
+
+Let's go for the non-io version for now, since all drivers except omap2
+seem to use this function.
+
+[1]https://elixir.bootlin.com/linux/v4.17.1/source/kernel/sched/core.c#L5164
