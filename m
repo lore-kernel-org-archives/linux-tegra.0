@@ -1,71 +1,163 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v3 0/5] PM / Domains: Add support for multi PM domains per device
-Date: Tue, 12 Jun 2018 16:58:57 +0200
-Message-ID: <3721375.shleKqokg2@aspire.rjw.lan>
-References: <20180531105959.14843-1-ulf.hansson@linaro.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v4 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Tue, 12 Jun 2018 09:24:31 -0600
+Message-ID: <1fcde0fa-d1e8-1cc3-8c3d-0e8c4097cb91@kernel.dk>
+References: <20180611205224.23340-1-stefan@agner.ch>
+ <20180611205224.23340-5-stefan@agner.ch> <4258393.O1xtUOGbca@dimapc>
+ <cb6f2ef0a5a41e001a2019caa1a18c23@agner.ch>
+ <20180612102734.0ea3bfa5@bbrezillon>
+ <53e36cff80e38e489959aa18471d0782@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180531105959.14843-1-ulf.hansson@linaro.org>
+In-Reply-To: <53e36cff80e38e489959aa18471d0782@agner.ch>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Todor Tomov <todor.tomov@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>, Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, May 31, 2018 12:59:54 PM CEST Ulf Hansson wrote:
-> Changes in v3:
-> 	- Drop patch 1->4 as they have already been applied.
-> 	- Collected tags, for tests and reviews.
-> 	- Minor update to function descriptions in patch 4 (earlier 8) and 5
-> 	(earlier9).
-> 	- Note, because of the minor changes, no history is provided per patch.
+On 6/12/18 3:17 AM, Stefan Agner wrote:
+> [also added Jens Axboe]
 > 
-> Changes in v2:
-> 	- Addressed comments from Geert around DT doc.
-> 	- Addressed comments from Jon around clarification of how to use this
-> 	and changes to returned error codes.
-> 	- Fixed build error in case CONFIG_PM was unset.
+> On 12.06.2018 10:27, Boris Brezillon wrote:
+>> On Tue, 12 Jun 2018 10:06:42 +0200
+>> Stefan Agner <stefan@agner.ch> wrote:
+>>
+>>> On 12.06.2018 02:03, Dmitry Osipenko wrote:
+>>>> On Monday, 11 June 2018 23:52:22 MSK Stefan Agner wrote:
+>>>>> Add support for the NAND flash controller found on NVIDIA
+>>>>> Tegra 2 SoCs. This implementation does not make use of the
+>>>>> command queue feature. Regular operations/data transfers are
+>>>>> done in PIO mode. Page read/writes with hardware ECC make
+>>>>> use of the DMA for data transfer.
+>>>>>
+>>>>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+>>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>>>> ---
+>>>>>  MAINTAINERS                       |    7 +
+>>>>>  drivers/mtd/nand/raw/Kconfig      |    6 +
+>>>>>  drivers/mtd/nand/raw/Makefile     |    1 +
+>>>>>  drivers/mtd/nand/raw/tegra_nand.c | 1248 +++++++++++++++++++++++++++++
+>>>>>  4 files changed, 1262 insertions(+)
+>>>>>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+>>>>>
+>>> [snip]
+>>>>> +static int tegra_nand_cmd(struct nand_chip *chip,
+>>>>> +			 const struct nand_subop *subop)
+>>>>> +{
+>>>>> +	const struct nand_op_instr *instr;
+>>>>> +	const struct nand_op_instr *instr_data_in = NULL;
+>>>>> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
+>>>>> +	unsigned int op_id, size = 0, offset = 0;
+>>>>> +	bool first_cmd = true;
+>>>>> +	u32 reg, cmd = 0;
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
+>>>>> +		unsigned int naddrs, i;
+>>>>> +		const u8 *addrs;
+>>>>> +		u32 addr1 = 0, addr2 = 0;
+>>>>> +
+>>>>> +		instr = &subop->instrs[op_id];
+>>>>> +
+>>>>> +		switch (instr->type) {
+>>>>> +		case NAND_OP_CMD_INSTR:
+>>>>> +			if (first_cmd) {
+>>>>> +				cmd |= COMMAND_CLE;
+>>>>> +				writel_relaxed(instr->ctx.cmd.opcode,
+>>>>> +					       ctrl->regs + CMD_REG1);
+>>>>> +			} else {
+>>>>> +				cmd |= COMMAND_SEC_CMD;
+>>>>> +				writel_relaxed(instr->ctx.cmd.opcode,
+>>>>> +					       ctrl->regs + CMD_REG2);
+>>>>> +			}
+>>>>> +			first_cmd = false;
+>>>>> +			break;
+>>>>> +		case NAND_OP_ADDR_INSTR:
+>>>>> +			offset = nand_subop_get_addr_start_off(subop, op_id);
+>>>>> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
+>>>>> +			addrs = &instr->ctx.addr.addrs[offset];
+>>>>> +
+>>>>> +			cmd |= COMMAND_ALE | COMMAND_ALE_SIZE(naddrs);
+>>>>> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+>>>>> +				addr1 |= *addrs++ << (BITS_PER_BYTE * i);
+>>>>> +			naddrs -= i;
+>>>>> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+>>>>> +				addr2 |= *addrs++ << (BITS_PER_BYTE * i);
+>>>>> +			writel_relaxed(addr1, ctrl->regs + ADDR_REG1);
+>>>>> +			writel_relaxed(addr2, ctrl->regs + ADDR_REG2);
+>>>>> +			break;
+>>>>> +
+>>>>> +		case NAND_OP_DATA_IN_INSTR:
+>>>>> +			size = nand_subop_get_data_len(subop, op_id);
+>>>>> +			offset = nand_subop_get_data_start_off(subop, op_id);
+>>>>> +
+>>>>> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
+>>>>> +				COMMAND_RX | COMMAND_A_VALID;
+>>>>> +
+>>>>> +			instr_data_in = instr;
+>>>>> +			break;
+>>>>> +
+>>>>> +		case NAND_OP_DATA_OUT_INSTR:
+>>>>> +			size = nand_subop_get_data_len(subop, op_id);
+>>>>> +			offset = nand_subop_get_data_start_off(subop, op_id);
+>>>>> +
+>>>>> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
+>>>>> +				COMMAND_TX | COMMAND_A_VALID;
+>>>>> +
+>>>>> +			memcpy(&reg, instr->ctx.data.buf.out + offset, size);
+>>>>> +			writel_relaxed(reg, ctrl->regs + RESP);
+>>>>> +
+>>>>> +			break;
+>>>>> +		case NAND_OP_WAITRDY_INSTR:
+>>>>> +			cmd |= COMMAND_RBSY_CHK;
+>>>>> +			break;
+>>>>> +
+>>>>> +		}
+>>>>> +	}
+>>>>> +
+>>>>> +	cmd |= COMMAND_GO | COMMAND_CE(ctrl->cur_cs);
+>>>>> +	writel_relaxed(cmd, ctrl->regs + COMMAND);
+>>>>> +	ret = wait_for_completion_io_timeout(&ctrl->command_complete,
+>>>>> +					     msecs_to_jiffies(500));
+>>>>
+>>>> It's not obvious to me whether _io_ variant is appropriate to use here, would
+>>>> be nice if somebody could clarify that. Maybe block/ already does the IO
+>>>> accounting itself and hence the IO time would be counted twice in that case.
+>>>
+>>> Good that you bring this up.
+>>>
+>>> I don't think that there is any higher layer which could take care of
+>>> accounting. Usually, with raw nand there is no block layer involved
+>>> anyway.
+>>>
+>>> In a quick test it seems that only when using wait_for_completion_io I/O
+>>> is properly accounted in the "wait" section of top.
+>>>
+>>> So far only a single driver (omap2) used the _io variant, but I think it
+>>> is the right thing to do! After all, it is I/O...
+>>>
+>>> Boris or any other MTD maintainer, any comment on this?
+>>
+>> Given this definition of io_schedule_timeout() [1] (which is used when
+>> you call wait_for_completion_io_timeout()), I'd say it's not useful to
+>> use the _io_ version, simply because MTD devs are not exposed as blk
+>> devices, and thus don't need the blk_schedule_flush_plug() that is done
+>> is io_schedule_prepare(). But that also means MTD I/Os are not
+>> accounted as I/Os :-(.
 > 
-> There are devices that are partitioned across multiple PM domains. Currently
-> these can't be supported well by the available PM infrastructures we have in
-> the kernel. This series is an attempt to address this.
+> Documentation of wait_for_completion_io says:
+> "The caller is accounted as waiting for IO (which traditionally means
+> blkio only)."
 > 
-> One existing case where devices are partitioned across multiple PM domains, is
-> the Nvida Tegra 124/210 X-USB subsystem. A while ago Jon Hunter (Nvidia) sent a
-> series, trying to address these issues, however this is a new approach, while
-> it re-uses the same concepts from DT point of view.
-> 
-> The Tegra 124/210 X-USB subsystem contains of a host controller and a device
-> controller. Each controller have its own independent PM domain, but are being
-> partitioned across another shared PM domain for the USB super-speed logic.
-> 
-> Currently to make the drivers work, either the related PM domains needs to stay
-> powered on always or the PM domain topology needs to be in-correctly modelled
-> through sub-domains. In both cases PM domains may be powered on while they
-> don't need to be, so in the end this means - wasting power -.
-> 
-> As stated above, this series intends to address these problem from a PM
-> infrastructure point of view. More details are available in each changelog.
-> 
-> Kind regards
-> Ulf Hansson
-> 
-> Ulf Hansson (5):
->   PM / Domains: dt: Allow power-domain property to be a list of
->     specifiers
->   PM / Domains: Don't attach devices in genpd with multi PM domains
->   PM / Domains: Split genpd_dev_pm_attach()
->   PM / Domains: Add support for multi PM domains per device to genpd
->   PM / Domains: Add dev_pm_domain_attach_by_id() to manage multi PM
->     domains
-> 
->  .../bindings/power/power_domain.txt           |  19 ++-
->  drivers/base/power/common.c                   |  43 +++++-
->  drivers/base/power/domain.c                   | 134 +++++++++++++++---
->  include/linux/pm_domain.h                     |  15 ++
->  4 files changed, 183 insertions(+), 28 deletions(-)
-> 
-> 
+> Which sounds as if it using _io is only an accounting thing...
 
-Applied, thanks!
+Yes, you should only use it for waiting for IO off a system call
+read path. So block IO, or file system IO. Don't use it for internal
+IO that isn't related to that.
+
+-- 
+Jens Axboe
