@@ -1,42 +1,83 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2] usb: xhci: remove the code build warning
-Date: Fri, 15 Jun 2018 12:40:04 +0200
-Message-ID: <20180615104004.GA2993@kroah.com>
-References: <20180606143659.1476-1-gengdongjiu@huawei.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Subject: [PATCH] ASoC: tegra: fix device_node refcounting
+Date: Sat, 16 Jun 2018 01:22:58 +0300
+Message-ID: <1529101378-5543-1-git-send-email-khoroshilov@ispras.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180606143659.1476-1-gengdongjiu@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dongjiu Geng <gengdongjiu@huawei.com>
-Cc: mathias.nyman@intel.com, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: ldv-project@linuxtesting.org, alsa-devel@alsa-project.org, sil2review@lists.osadl.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, linux-tegra@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 10:36:59PM +0800, Dongjiu Geng wrote:
-> Initialize the 'err' variate to remove the build warning,
-> the warning is shown as below:
-> 
-> drivers/usb/host/xhci-tegra.c: In function 'tegra_xusb_mbox_thread':
-> drivers/usb/host/xhci-tegra.c:552:6: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
-> drivers/usb/host/xhci-tegra.c:482:6: note: 'err' was declared here
-> 
-> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> ---
-> How to reproduce:
-> 1. make defconfig ARCH=arm
-> 2. make -j100 CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
-> 
-> Then you can see below warnings:
-> drivers/usb/host/xhci-tegra.c: In function 'tegra_xusb_mbox_thread':
-> drivers/usb/host/xhci-tegra.c:552:6: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
-> drivers/usb/host/xhci-tegra.c:482:6: note: 'err' was declared here
+tegra_rt5677_probe() gets a couple of device nodes with of_parse_phandle(),
+but there is no release of them.
 
-What changed from v1?  Always put that below the --- line.
+The patch adds the release to tegra_rt5677_remove() and
+to error handling paths in the probe.
 
-Please fix up and resend a v3.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-thanks,
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+---
+ sound/soc/tegra/tegra_rt5677.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
+index 0e4805c7b4ca..7081f15302cc 100644
+--- a/sound/soc/tegra/tegra_rt5677.c
++++ b/sound/soc/tegra/tegra_rt5677.c
+@@ -264,13 +264,13 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,i2s-controller' missing or invalid\n");
+ 		ret = -EINVAL;
+-		goto err;
++		goto err_put_codec_of_node;
+ 	}
+ 	tegra_rt5677_dai.platform_of_node = tegra_rt5677_dai.cpu_of_node;
+ 
+ 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+ 	if (ret)
+-		goto err;
++		goto err_put_cpu_of_node;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+@@ -283,6 +283,13 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
+ 
+ err_fini_utils:
+ 	tegra_asoc_utils_fini(&machine->util_data);
++err_put_cpu_of_node:
++	of_node_put(tegra_rt5677_dai.cpu_of_node);
++	tegra_rt5677_dai.cpu_of_node = NULL;
++	tegra_rt5677_dai.platform_of_node = NULL;
++err_put_codec_of_node:
++	of_node_put(tegra_rt5677_dai.codec_of_node);
++	tegra_rt5677_dai.codec_of_node = NULL;
+ err:
+ 	return ret;
+ }
+@@ -296,6 +303,12 @@ static int tegra_rt5677_remove(struct platform_device *pdev)
+ 
+ 	tegra_asoc_utils_fini(&machine->util_data);
+ 
++	tegra_rt5677_dai.platform_of_node = NULL;
++	of_node_put(tegra_rt5677_dai.codec_of_node);
++	tegra_rt5677_dai.codec_of_node = NULL;
++	of_node_put(tegra_rt5677_dai.cpu_of_node);
++	tegra_rt5677_dai.cpu_of_node = NULL;
++
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
