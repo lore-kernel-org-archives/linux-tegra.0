@@ -1,83 +1,41 @@
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Subject: [PATCH] ASoC: tegra: fix device_node refcounting
-Date: Sat, 16 Jun 2018 01:22:58 +0300
-Message-ID: <1529101378-5543-1-git-send-email-khoroshilov@ispras.ru>
+From: gengdongjiu <gengdongjiu@huawei.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIIHYyXSB1c2I6IHhoY2k6IHJlbW92ZSB0aGUgY29kZSBi?=
+ =?gb2312?Q?uild_warning?=
+Date: Sat, 16 Jun 2018 09:08:23 +0000
+Message-ID: <0184EA26B2509940AA629AE1405DD7F201CE2843@DGGEMA503-MBX.china.huawei.com>
+References: <20180606143659.1476-1-gengdongjiu@huawei.com>
+ <20180615104004.GA2993@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: ldv-project@linuxtesting.org, alsa-devel@alsa-project.org, sil2review@lists.osadl.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, linux-tegra@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180615104004.GA2993@kroah.com>
+Content-Language: zh-CN
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: "mathias.nyman@intel.com" <mathias.nyman@intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-tegra_rt5677_probe() gets a couple of device nodes with of_parse_phandle(),
-but there is no release of them.
-
-The patch adds the release to tegra_rt5677_remove() and
-to error handling paths in the probe.
-
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
----
- sound/soc/tegra/tegra_rt5677.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
-index 0e4805c7b4ca..7081f15302cc 100644
---- a/sound/soc/tegra/tegra_rt5677.c
-+++ b/sound/soc/tegra/tegra_rt5677.c
-@@ -264,13 +264,13 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,i2s-controller' missing or invalid\n");
- 		ret = -EINVAL;
--		goto err;
-+		goto err_put_codec_of_node;
- 	}
- 	tegra_rt5677_dai.platform_of_node = tegra_rt5677_dai.cpu_of_node;
- 
- 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
- 	if (ret)
--		goto err;
-+		goto err_put_cpu_of_node;
- 
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
-@@ -283,6 +283,13 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
- 
- err_fini_utils:
- 	tegra_asoc_utils_fini(&machine->util_data);
-+err_put_cpu_of_node:
-+	of_node_put(tegra_rt5677_dai.cpu_of_node);
-+	tegra_rt5677_dai.cpu_of_node = NULL;
-+	tegra_rt5677_dai.platform_of_node = NULL;
-+err_put_codec_of_node:
-+	of_node_put(tegra_rt5677_dai.codec_of_node);
-+	tegra_rt5677_dai.codec_of_node = NULL;
- err:
- 	return ret;
- }
-@@ -296,6 +303,12 @@ static int tegra_rt5677_remove(struct platform_device *pdev)
- 
- 	tegra_asoc_utils_fini(&machine->util_data);
- 
-+	tegra_rt5677_dai.platform_of_node = NULL;
-+	of_node_put(tegra_rt5677_dai.codec_of_node);
-+	tegra_rt5677_dai.codec_of_node = NULL;
-+	of_node_put(tegra_rt5677_dai.cpu_of_node);
-+	tegra_rt5677_dai.cpu_of_node = NULL;
-+
- 	return 0;
- }
- 
--- 
-2.7.4
+PiBPbiBXZWQsIEp1biAwNiwgMjAxOCBhdCAxMDozNjo1OVBNICswODAwLCBEb25naml1IEdlbmcg
+d3JvdGU6DQo+ID4gSW5pdGlhbGl6ZSB0aGUgJ2VycicgdmFyaWF0ZSB0byByZW1vdmUgdGhlIGJ1
+aWxkIHdhcm5pbmcsIHRoZSB3YXJuaW5nDQo+ID4gaXMgc2hvd24gYXMgYmVsb3c6DQo+ID4NCj4g
+PiBkcml2ZXJzL3VzYi9ob3N0L3hoY2ktdGVncmEuYzogSW4gZnVuY3Rpb24gJ3RlZ3JhX3h1c2Jf
+bWJveF90aHJlYWQnOg0KPiA+IGRyaXZlcnMvdXNiL2hvc3QveGhjaS10ZWdyYS5jOjU1Mjo2OiB3
+YXJuaW5nOiAnZXJyJyBtYXkgYmUgdXNlZA0KPiA+IHVuaW5pdGlhbGl6ZWQgaW4gdGhpcyBmdW5j
+dGlvbiBbLVd1bmluaXRpYWxpemVkXQ0KPiA+IGRyaXZlcnMvdXNiL2hvc3QveGhjaS10ZWdyYS5j
+OjQ4Mjo2OiBub3RlOiAnZXJyJyB3YXMgZGVjbGFyZWQgaGVyZQ0KPiA+DQo+ID4gU2lnbmVkLW9m
+Zi1ieTogRG9uZ2ppdSBHZW5nIDxnZW5nZG9uZ2ppdUBodWF3ZWkuY29tPg0KPiA+IEFja2VkLWJ5
+OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPg0KPiA+IC0tLQ0KPiA+IEhvdyB0
+byByZXByb2R1Y2U6DQo+ID4gMS4gbWFrZSBkZWZjb25maWcgQVJDSD1hcm0NCj4gPiAyLiBtYWtl
+IC1qMTAwIENST1NTX0NPTVBJTEU9YXJtLWxpbnV4LWdudWVhYmktIEFSQ0g9YXJtDQo+ID4NCj4g
+PiBUaGVuIHlvdSBjYW4gc2VlIGJlbG93IHdhcm5pbmdzOg0KPiA+IGRyaXZlcnMvdXNiL2hvc3Qv
+eGhjaS10ZWdyYS5jOiBJbiBmdW5jdGlvbiAndGVncmFfeHVzYl9tYm94X3RocmVhZCc6DQo+ID4g
+ZHJpdmVycy91c2IvaG9zdC94aGNpLXRlZ3JhLmM6NTUyOjY6IHdhcm5pbmc6ICdlcnInIG1heSBi
+ZSB1c2VkDQo+ID4gdW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uIFstV3VuaW5pdGlhbGl6
+ZWRdDQo+ID4gZHJpdmVycy91c2IvaG9zdC94aGNpLXRlZ3JhLmM6NDgyOjY6IG5vdGU6ICdlcnIn
+IHdhcyBkZWNsYXJlZCBoZXJlDQo+IA0KPiBXaGF0IGNoYW5nZWQgZnJvbSB2MT8gIEFsd2F5cyBw
+dXQgdGhhdCBiZWxvdyB0aGUgLS0tIGxpbmUuDQo+IA0KPiBQbGVhc2UgZml4IHVwIGFuZCByZXNl
+bmQgYSB2My4NCg0KDQpUaGFua3MsIEkganVzdGx5IGFkZCAiQWNrZWQtYnk6IFRoaWVycnkgUmVk
+aW5nIDx0cmVkaW5nQG52aWRpYS5jb20+IiBpbiB0aGUgVjIgY29tcGFyZWQgd2l0aCB2MQ0KQW55
+d2F5IEkgd2lsbCBwdXQgdGhhdCBiZWxvdyBhbmQgcmVzZW5kIGEgdjMuDQoNCj4gDQo+IHRoYW5r
+cywNCj4gDQo+IGdyZWcgay1oDQo=
