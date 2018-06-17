@@ -1,33 +1,157 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 5/8] ARM: dts: tegra20: Add clock entry to External Memory Controller
-Date: Sun, 17 Jun 2018 17:55:36 +0300
-Message-ID: <20180617145539.4758-6-digetx@gmail.com>
-References: <20180617145539.4758-1-digetx@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v4 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Sun, 17 Jun 2018 18:57:33 +0200
+Message-ID: <0be3de74809d0ebe32a808eebfd61dcd@agner.ch>
+References: <20180611205224.23340-1-stefan@agner.ch>
+ <20180611205224.23340-5-stefan@agner.ch> <2945591.o6hPPARSMh@dimapc>
+ <fd15fcac50d25281fa8f7d97a738bf6a@agner.ch>
+ <20180612101319.528da20c@bbrezillon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
+In-Reply-To: <20180612101319.528da20c@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add clock entry into the EMC DT node.
+On 12.06.2018 10:13, Boris Brezillon wrote:
+> On Tue, 12 Jun 2018 10:02:12 +0200
+> Stefan Agner <stefan@agner.ch> wrote:
+> 
+>> >> +static int tegra_nand_read_page_hwecc(struct mtd_info *mtd,
+>> >> +				      struct nand_chip *chip,
+>> >> +				      uint8_t *buf, int oob_required, int page)
+>> >> +{
+>> >> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
+>> >> +	struct tegra_nand_chip *nand = to_tegra_chip(chip);
+>> >> +	void *oob_buf = oob_required ? chip->oob_poi : 0;
+>> >> +	u32 dec_stat, max_corr_cnt;
+>> >> +	unsigned long fail_sec_flag;
+>> >> +	int ret;
+>> >> +
+>> >> +	tegra_nand_hw_ecc(ctrl, chip, true);
+>> >> +	ret = tegra_nand_page_xfer(mtd, chip, buf, oob_buf, nand->tag.length,
+>> >> +				   page, true);
+>> >> +	tegra_nand_hw_ecc(ctrl, chip, false);
+>> >> +	if (ret)
+>> >> +		return ret;
+>> >> +
+>> >> +	/* No correctable or un-correctable errors, page must have 0 bitflips */
+>> >> +	if (!ctrl->last_read_error)
+>> >> +		return 0;
+>> >> +
+>> >> +	/*
+>> >> +	 * Correctable or un-correctable errors occurred. Use DEC_STAT_BUF
+>> >> +	 * which contains information for all ECC selections.
+>> >> +	 *
+>> >> +	 * Note that since we do not use Command Queues DEC_RESULT does not
+>> >> +	 * state the number of pages we can read from the DEC_STAT_BUF. But
+>> >> +	 * since CORRFAIL_ERR did occur during page read we do have a valid
+>> >> +	 * result in DEC_STAT_BUF.
+>> >> +	 */
+>> >> +	ctrl->last_read_error = false;
+>> >> +	dec_stat = readl_relaxed(ctrl->regs + DEC_STAT_BUF);
+>> >> +
+>> >> +	fail_sec_flag = (dec_stat & DEC_STAT_BUF_FAIL_SEC_FLAG_MASK) >>
+>> >> +			DEC_STAT_BUF_FAIL_SEC_FLAG_SHIFT;
+>> >> +
+>> >> +	max_corr_cnt = (dec_stat & DEC_STAT_BUF_MAX_CORR_CNT_MASK) >>
+>> >> +		       DEC_STAT_BUF_MAX_CORR_CNT_SHIFT;
+>> >> +
+>> >> +	if (fail_sec_flag) {
+>> >> +		int bit, max_bitflips = 0;
+>> >> +
+>> >> +		/*
+>> >> +		 * Check if all sectors in a page failed. If only some failed
+>> >> +		 * its definitly not an erased page and we can return error
+>> >> +		 * stats right away.
+>> >> +		 *
+>> >> +		 * E.g. controller might return fail_sec_flag with 0x4, which
+>> >> +		 * would mean only the third sector failed to correct.
+> 
+> That works because you have NAND_NO_SUBPAGE_WRITE set (i.e. no partial
+> page programming), probably something you should state here.
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Ok, will add a note.
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 3cd3cb28cfd9..877e41fe87cf 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -610,6 +610,7 @@
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f400 0x200>;
- 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_EMC>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
--- 
-2.17.1
+>> >> +		 */
+>> >> +		if (fail_sec_flag ^ GENMASK(chip->ecc.steps - 1, 0)) {
+>> >> +			mtd->ecc_stats.failed += hweight8(fail_sec_flag);
+>> >> +			return max_corr_cnt;
+>> >> +		}
+>> >> +
+>> >> +		/*
+>> >> +		 * All sectors failed to correct, but the ECC isn't smart
+>> >> +		 * enough to figure out if a page is really completely erased.
+>> >> +		 * We check the read data here to figure out if it's a
+>> >> +		 * legitimate ECC error or only an erased page.
+>> >> +		 */
+>> >> +		for_each_set_bit(bit, &fail_sec_flag, chip->ecc.steps) {
+>> >> +			u8 *data = buf + (chip->ecc.size * bit);
+>> >> +
+>> >> +			ret = nand_check_erased_ecc_chunk(data, chip->ecc.size,
+>> >> +							  NULL, 0,
+> 
+> You should also check that the ECC bytes are 0xff here, otherwise you
+> won't detect corruption of pages almost filled 0xff but with a few bits
+> set to 0.
+> 
+> When you use nand_check_erased_ecc_chunk(), it's important to always
+> pass the data along with its associated ECC bytes.
+> 
+
+Hm, I see this is important in case bitflips accumulate in OOB area
+only.
+
+>> >> +							  NULL, 0,
+> 
+> If you support writing extra OOB bytes, you should also pass them here.
+> 
+
+I see. OOB bytes handled together with the last subpage.
+
+>> >> +							  chip->ecc.strength);
+>> >> +			if (ret < 0)
+>> >> +				mtd->ecc_stats.failed++;
+>> >> +			else
+>> >> +				max_bitflips = max(ret, max_bitflips);
+
+I guess I should also increment ecc_stats.corrected here.
+
+Is it correct that I increment for every step?
+
+So if I have an ECC strength of 16, an empty page could have 8 bitflips
+in the first step, and 12 in the second, I would increment
+mtd->ecc_stats.corrected by 20 but return 12 (maximum number of bitflips
+per step)?
+
+--
+Stefan
+
+>> >> +		}
+>> >> +
+>> >> +		return max_t(unsigned int, max_corr_cnt, max_bitflips);
+>> >> +	} else {
+>> >> +		int corr_sec_flag;
+>> >> +
+>> >> +		corr_sec_flag = (dec_stat & DEC_STAT_BUF_CORR_SEC_FLAG_MASK) >>
+>> >> +				DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT;
+>> >> +
+>> >> +		/*
+>> >> +		 * The value returned in the register is the maximum of
+>> >> +		 * bitflips encountered in any of the ECC regions. As there is
+>> >> +		 * no way to get the number of bitflips in a specific regions
+>> >> +		 * we are not able to deliver correct stats but instead
+>> >> +		 * overestimate the number of corrected bitflips by assuming
+>> >> +		 * that all regions where errors have been corrected
+>> >> +		 * encountered the maximum number of bitflips.
+>> >> +		 */
+>> >> +		mtd->ecc_stats.corrected += max_corr_cnt * hweight8(corr_sec_flag);
+>> >> +
+>> >> +		return max_corr_cnt;
+>> >> +	}
+>> >> +
