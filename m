@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 7/8] clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
-Date: Sun, 17 Jun 2018 17:55:38 +0300
-Message-ID: <20180617145539.4758-8-digetx@gmail.com>
+Subject: [PATCH v3 5/8] ARM: dts: tegra20: Add clock entry to External Memory Controller
+Date: Sun, 17 Jun 2018 17:55:36 +0300
+Message-ID: <20180617145539.4758-6-digetx@gmail.com>
 References: <20180617145539.4758-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
@@ -10,43 +10,24 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ensure that direct PLLM sourcing is turned off for EMC as we don't support
-that configuration in the clk driver.
+Add clock entry into the EMC DT node.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/tegra20.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 2bd35418716a..ca4eadb9520e 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -800,7 +800,9 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
- 
- static void __init tegra20_emc_clk_init(void)
- {
-+	const u32 use_pllm_ud = BIT(29);
- 	struct clk *clk;
-+	u32 emc_reg;
- 
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
-@@ -812,6 +814,14 @@ static void __init tegra20_emc_clk_init(void)
- 				    &emc_lock);
- 	clks[TEGRA20_CLK_MC] = clk;
- 
-+	/* un-divided pll_m_out0 is currently unsupported */
-+	emc_reg = readl_relaxed(clk_base + CLK_SOURCE_EMC);
-+	if (emc_reg & use_pllm_ud) {
-+		pr_err("%s: un-divided PllM_out0 used as clock source\n",
-+		       __func__);
-+		return;
-+	}
-+
- 	/*
- 	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
- 	 * the same time due to a HW bug, this won't happen because we're
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 3cd3cb28cfd9..877e41fe87cf 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -610,6 +610,7 @@
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f400 0x200>;
+ 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_EMC>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
 -- 
 2.17.1
