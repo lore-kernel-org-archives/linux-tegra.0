@@ -1,157 +1,62 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v4 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Date: Sun, 17 Jun 2018 18:57:33 +0200
-Message-ID: <0be3de74809d0ebe32a808eebfd61dcd@agner.ch>
-References: <20180611205224.23340-1-stefan@agner.ch>
- <20180611205224.23340-5-stefan@agner.ch> <2945591.o6hPPARSMh@dimapc>
- <fd15fcac50d25281fa8f7d97a738bf6a@agner.ch>
- <20180612101319.528da20c@bbrezillon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v5 1/6] mtd: rawnand: add Reed-Solomon error correction algorithm
+Date: Sun, 17 Jun 2018 22:46:00 +0200
+Message-ID: <20180617204605.4648-2-stefan@agner.ch>
+References: <20180617204605.4648-1-stefan@agner.ch>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180612101319.528da20c@bbrezillon>
+In-Reply-To: <20180617204605.4648-1-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
+Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12.06.2018 10:13, Boris Brezillon wrote:
-> On Tue, 12 Jun 2018 10:02:12 +0200
-> Stefan Agner <stefan@agner.ch> wrote:
-> 
->> >> +static int tegra_nand_read_page_hwecc(struct mtd_info *mtd,
->> >> +				      struct nand_chip *chip,
->> >> +				      uint8_t *buf, int oob_required, int page)
->> >> +{
->> >> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> >> +	struct tegra_nand_chip *nand = to_tegra_chip(chip);
->> >> +	void *oob_buf = oob_required ? chip->oob_poi : 0;
->> >> +	u32 dec_stat, max_corr_cnt;
->> >> +	unsigned long fail_sec_flag;
->> >> +	int ret;
->> >> +
->> >> +	tegra_nand_hw_ecc(ctrl, chip, true);
->> >> +	ret = tegra_nand_page_xfer(mtd, chip, buf, oob_buf, nand->tag.length,
->> >> +				   page, true);
->> >> +	tegra_nand_hw_ecc(ctrl, chip, false);
->> >> +	if (ret)
->> >> +		return ret;
->> >> +
->> >> +	/* No correctable or un-correctable errors, page must have 0 bitflips */
->> >> +	if (!ctrl->last_read_error)
->> >> +		return 0;
->> >> +
->> >> +	/*
->> >> +	 * Correctable or un-correctable errors occurred. Use DEC_STAT_BUF
->> >> +	 * which contains information for all ECC selections.
->> >> +	 *
->> >> +	 * Note that since we do not use Command Queues DEC_RESULT does not
->> >> +	 * state the number of pages we can read from the DEC_STAT_BUF. But
->> >> +	 * since CORRFAIL_ERR did occur during page read we do have a valid
->> >> +	 * result in DEC_STAT_BUF.
->> >> +	 */
->> >> +	ctrl->last_read_error = false;
->> >> +	dec_stat = readl_relaxed(ctrl->regs + DEC_STAT_BUF);
->> >> +
->> >> +	fail_sec_flag = (dec_stat & DEC_STAT_BUF_FAIL_SEC_FLAG_MASK) >>
->> >> +			DEC_STAT_BUF_FAIL_SEC_FLAG_SHIFT;
->> >> +
->> >> +	max_corr_cnt = (dec_stat & DEC_STAT_BUF_MAX_CORR_CNT_MASK) >>
->> >> +		       DEC_STAT_BUF_MAX_CORR_CNT_SHIFT;
->> >> +
->> >> +	if (fail_sec_flag) {
->> >> +		int bit, max_bitflips = 0;
->> >> +
->> >> +		/*
->> >> +		 * Check if all sectors in a page failed. If only some failed
->> >> +		 * its definitly not an erased page and we can return error
->> >> +		 * stats right away.
->> >> +		 *
->> >> +		 * E.g. controller might return fail_sec_flag with 0x4, which
->> >> +		 * would mean only the third sector failed to correct.
-> 
-> That works because you have NAND_NO_SUBPAGE_WRITE set (i.e. no partial
-> page programming), probably something you should state here.
-> 
+Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
 
-Ok, will add a note.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/mtd/nand.txt | 2 +-
+ drivers/mtd/nand/raw/nand_base.c               | 1 +
+ include/linux/mtd/rawnand.h                    | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
->> >> +		 */
->> >> +		if (fail_sec_flag ^ GENMASK(chip->ecc.steps - 1, 0)) {
->> >> +			mtd->ecc_stats.failed += hweight8(fail_sec_flag);
->> >> +			return max_corr_cnt;
->> >> +		}
->> >> +
->> >> +		/*
->> >> +		 * All sectors failed to correct, but the ECC isn't smart
->> >> +		 * enough to figure out if a page is really completely erased.
->> >> +		 * We check the read data here to figure out if it's a
->> >> +		 * legitimate ECC error or only an erased page.
->> >> +		 */
->> >> +		for_each_set_bit(bit, &fail_sec_flag, chip->ecc.steps) {
->> >> +			u8 *data = buf + (chip->ecc.size * bit);
->> >> +
->> >> +			ret = nand_check_erased_ecc_chunk(data, chip->ecc.size,
->> >> +							  NULL, 0,
-> 
-> You should also check that the ECC bytes are 0xff here, otherwise you
-> won't detect corruption of pages almost filled 0xff but with a few bits
-> set to 0.
-> 
-> When you use nand_check_erased_ecc_chunk(), it's important to always
-> pass the data along with its associated ECC bytes.
-> 
-
-Hm, I see this is important in case bitflips accumulate in OOB area
-only.
-
->> >> +							  NULL, 0,
-> 
-> If you support writing extra OOB bytes, you should also pass them here.
-> 
-
-I see. OOB bytes handled together with the last subpage.
-
->> >> +							  chip->ecc.strength);
->> >> +			if (ret < 0)
->> >> +				mtd->ecc_stats.failed++;
->> >> +			else
->> >> +				max_bitflips = max(ret, max_bitflips);
-
-I guess I should also increment ecc_stats.corrected here.
-
-Is it correct that I increment for every step?
-
-So if I have an ECC strength of 16, an empty page could have 8 bitflips
-in the first step, and 12 in the second, I would increment
-mtd->ecc_stats.corrected by 20 but return 12 (maximum number of bitflips
-per step)?
-
---
-Stefan
-
->> >> +		}
->> >> +
->> >> +		return max_t(unsigned int, max_corr_cnt, max_bitflips);
->> >> +	} else {
->> >> +		int corr_sec_flag;
->> >> +
->> >> +		corr_sec_flag = (dec_stat & DEC_STAT_BUF_CORR_SEC_FLAG_MASK) >>
->> >> +				DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT;
->> >> +
->> >> +		/*
->> >> +		 * The value returned in the register is the maximum of
->> >> +		 * bitflips encountered in any of the ECC regions. As there is
->> >> +		 * no way to get the number of bitflips in a specific regions
->> >> +		 * we are not able to deliver correct stats but instead
->> >> +		 * overestimate the number of corrected bitflips by assuming
->> >> +		 * that all regions where errors have been corrected
->> >> +		 * encountered the maximum number of bitflips.
->> >> +		 */
->> >> +		mtd->ecc_stats.corrected += max_corr_cnt * hweight8(corr_sec_flag);
->> >> +
->> >> +		return max_corr_cnt;
->> >> +	}
->> >> +
+diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
+index 8bb11d809429d..eaef8c657aa5c 100644
+--- a/Documentation/devicetree/bindings/mtd/nand.txt
++++ b/Documentation/devicetree/bindings/mtd/nand.txt
+@@ -25,7 +25,7 @@ Optional NAND chip properties:
+ 		  Deprecated values:
+ 		  "soft_bch": use "soft" and nand-ecc-algo instead
+ - nand-ecc-algo: string, algorithm of NAND ECC.
+-		 Supported values are: "hamming", "bch".
++		 Valid values are: "hamming", "bch", "rs".
+ - nand-bus-width : 8 or 16 bus width if not present 8
+ - nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
+ 
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 10c4f9919850c..47e9cb9063da4 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -5777,6 +5777,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
+ static const char * const nand_ecc_algos[] = {
+ 	[NAND_ECC_HAMMING]	= "hamming",
+ 	[NAND_ECC_BCH]		= "bch",
++	[NAND_ECC_RS]		= "rs",
+ };
+ 
+ static int of_get_nand_ecc_algo(struct device_node *np)
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 3e8ec3b8a39c7..2d9cb7acbc3d8 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -121,6 +121,7 @@ enum nand_ecc_algo {
+ 	NAND_ECC_UNKNOWN,
+ 	NAND_ECC_HAMMING,
+ 	NAND_ECC_BCH,
++	NAND_ECC_RS,
+ };
+ 
+ /*
+-- 
+2.17.1
