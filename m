@@ -1,41 +1,52 @@
-From: gengdongjiu <gengdongjiu@huawei.com>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIIHYyXSB1c2I6IHhoY2k6IHJlbW92ZSB0aGUgY29kZSBi?=
- =?gb2312?Q?uild_warning?=
-Date: Sat, 16 Jun 2018 09:08:23 +0000
-Message-ID: <0184EA26B2509940AA629AE1405DD7F201CE2843@DGGEMA503-MBX.china.huawei.com>
-References: <20180606143659.1476-1-gengdongjiu@huawei.com>
- <20180615104004.GA2993@kroah.com>
+From: Dongjiu Geng <gengdongjiu@huawei.com>
+Subject: [PATCH v3] usb: xhci: remove the code build warning
+Date: Sun, 17 Jun 2018 10:30:18 +0800
+Message-ID: <20180617023018.7952-1-gengdongjiu@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180615104004.GA2993@kroah.com>
-Content-Language: zh-CN
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "mathias.nyman@intel.com" <mathias.nyman@intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: gregkh@linuxfoundation.org, mathias.nyman@intel.com, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: gengdongjiu@huawei.com
 List-Id: linux-tegra@vger.kernel.org
 
-PiBPbiBXZWQsIEp1biAwNiwgMjAxOCBhdCAxMDozNjo1OVBNICswODAwLCBEb25naml1IEdlbmcg
-d3JvdGU6DQo+ID4gSW5pdGlhbGl6ZSB0aGUgJ2VycicgdmFyaWF0ZSB0byByZW1vdmUgdGhlIGJ1
-aWxkIHdhcm5pbmcsIHRoZSB3YXJuaW5nDQo+ID4gaXMgc2hvd24gYXMgYmVsb3c6DQo+ID4NCj4g
-PiBkcml2ZXJzL3VzYi9ob3N0L3hoY2ktdGVncmEuYzogSW4gZnVuY3Rpb24gJ3RlZ3JhX3h1c2Jf
-bWJveF90aHJlYWQnOg0KPiA+IGRyaXZlcnMvdXNiL2hvc3QveGhjaS10ZWdyYS5jOjU1Mjo2OiB3
-YXJuaW5nOiAnZXJyJyBtYXkgYmUgdXNlZA0KPiA+IHVuaW5pdGlhbGl6ZWQgaW4gdGhpcyBmdW5j
-dGlvbiBbLVd1bmluaXRpYWxpemVkXQ0KPiA+IGRyaXZlcnMvdXNiL2hvc3QveGhjaS10ZWdyYS5j
-OjQ4Mjo2OiBub3RlOiAnZXJyJyB3YXMgZGVjbGFyZWQgaGVyZQ0KPiA+DQo+ID4gU2lnbmVkLW9m
-Zi1ieTogRG9uZ2ppdSBHZW5nIDxnZW5nZG9uZ2ppdUBodWF3ZWkuY29tPg0KPiA+IEFja2VkLWJ5
-OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPg0KPiA+IC0tLQ0KPiA+IEhvdyB0
-byByZXByb2R1Y2U6DQo+ID4gMS4gbWFrZSBkZWZjb25maWcgQVJDSD1hcm0NCj4gPiAyLiBtYWtl
-IC1qMTAwIENST1NTX0NPTVBJTEU9YXJtLWxpbnV4LWdudWVhYmktIEFSQ0g9YXJtDQo+ID4NCj4g
-PiBUaGVuIHlvdSBjYW4gc2VlIGJlbG93IHdhcm5pbmdzOg0KPiA+IGRyaXZlcnMvdXNiL2hvc3Qv
-eGhjaS10ZWdyYS5jOiBJbiBmdW5jdGlvbiAndGVncmFfeHVzYl9tYm94X3RocmVhZCc6DQo+ID4g
-ZHJpdmVycy91c2IvaG9zdC94aGNpLXRlZ3JhLmM6NTUyOjY6IHdhcm5pbmc6ICdlcnInIG1heSBi
-ZSB1c2VkDQo+ID4gdW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uIFstV3VuaW5pdGlhbGl6
-ZWRdDQo+ID4gZHJpdmVycy91c2IvaG9zdC94aGNpLXRlZ3JhLmM6NDgyOjY6IG5vdGU6ICdlcnIn
-IHdhcyBkZWNsYXJlZCBoZXJlDQo+IA0KPiBXaGF0IGNoYW5nZWQgZnJvbSB2MT8gIEFsd2F5cyBw
-dXQgdGhhdCBiZWxvdyB0aGUgLS0tIGxpbmUuDQo+IA0KPiBQbGVhc2UgZml4IHVwIGFuZCByZXNl
-bmQgYSB2My4NCg0KDQpUaGFua3MsIEkganVzdGx5IGFkZCAiQWNrZWQtYnk6IFRoaWVycnkgUmVk
-aW5nIDx0cmVkaW5nQG52aWRpYS5jb20+IiBpbiB0aGUgVjIgY29tcGFyZWQgd2l0aCB2MQ0KQW55
-d2F5IEkgd2lsbCBwdXQgdGhhdCBiZWxvdyBhbmQgcmVzZW5kIGEgdjMuDQoNCj4gDQo+IHRoYW5r
-cywNCj4gDQo+IGdyZWcgay1oDQo=
+Initialize the 'err' variate to remove the build warning,
+the warning is shown as below:
+
+drivers/usb/host/xhci-tegra.c: In function 'tegra_xusb_mbox_thread':
+drivers/usb/host/xhci-tegra.c:552:6: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
+drivers/usb/host/xhci-tegra.c:482:6: note: 'err' was declared here
+
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+change since v1:
+1. Add 'Acked-by: Thierry Reding <treding@nvidia.com>'
+
+How to reproduce:
+1. make defconfig ARCH=arm
+2. make -j100 CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
+
+Then you can see below warnings:
+drivers/usb/host/xhci-tegra.c: In function 'tegra_xusb_mbox_thread':
+drivers/usb/host/xhci-tegra.c:552:6: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
+drivers/usb/host/xhci-tegra.c:482:6: note: 'err' was declared here
+---
+ drivers/usb/host/xhci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index a8c1d07..d50549f 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -481,7 +481,7 @@ static void tegra_xusb_mbox_handle(struct tegra_xusb *tegra,
+ 	unsigned long mask;
+ 	unsigned int port;
+ 	bool idle, enable;
+-	int err;
++	int err = 0;
+ 
+ 	memset(&rsp, 0, sizeof(rsp));
+ 
+-- 
+1.9.1
