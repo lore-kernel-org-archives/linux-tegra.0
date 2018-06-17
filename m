@@ -1,7 +1,7 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v5 2/6] mtd: rawnand: add an option to specify NAND chip as a boot device
-Date: Sun, 17 Jun 2018 22:46:01 +0200
-Message-ID: <20180617204605.4648-3-stefan@agner.ch>
+Subject: [PATCH v5 5/6] ARM: dts: tegra: add Tegra20 NAND flash controller node
+Date: Sun, 17 Jun 2018 22:46:04 +0200
+Message-ID: <20180617204605.4648-6-stefan@agner.ch>
 References: <20180617204605.4648-1-stefan@agner.ch>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180617204605.4648-1-stefan@agner.ch>
@@ -10,63 +10,43 @@ To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.co
 Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-Allow to define a NAND chip as a boot device. This can be helpful
-for the selection of the ECC algorithm and strength in case the boot
-ROM supports only a subset of controller provided options.
+From: Lucas Stach <dev@lynxeye.de>
 
+Add basic controller device tree node to be extended by
+individual boards. Use the assigned-clocks mechanism to set
+NDFLASH clock to a sensible default rate of 150MHz.
+
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 ---
- Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
- drivers/mtd/nand/raw/nand_base.c               | 3 +++
- include/linux/mtd/rawnand.h                    | 6 ++++++
- 3 files changed, 13 insertions(+)
+ arch/arm/boot/dts/tegra20.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
-index eaef8c657aa5c..e949c778e9837 100644
---- a/Documentation/devicetree/bindings/mtd/nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/nand.txt
-@@ -43,6 +43,10 @@ Optional NAND chip properties:
- 		     This is particularly useful when only the in-band area is
- 		     used by the upper layers, and you want to make your NAND
- 		     as reliable as possible.
-+- nand-is-boot-medium: Whether the NAND chip is a boot medium. Drivers might use
-+		       this information to select ECC algorithms supported by
-+		       the boot ROM or similar restrictions.
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 983dd5c147945..a75fe7fec7912 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -425,6 +425,21 @@
+ 		status = "disabled";
+ 	};
+ 
++	nand-controller@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++		assigned-clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		assigned-clock-rates = <150000000>;
++		status = "disabled";
++	};
 +
- - nand-rb: shall contain the native Ready/Busy ids.
- 
- The ECC strength and ECC step size properties define the correction capability
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 47e9cb9063da4..e70bf328c64e4 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5859,6 +5859,9 @@ static int nand_dt_init(struct nand_chip *chip)
- 	if (of_get_nand_bus_width(dn) == 16)
- 		chip->options |= NAND_BUSWIDTH_16;
- 
-+	if (of_property_read_bool(dn, "nand-is-boot-medium"))
-+		chip->options |= NAND_IS_BOOT_MEDIUM;
-+
- 	if (of_get_nand_on_flash_bbt(dn))
- 		chip->bbt_options |= NAND_BBT_USE_FLASH;
- 
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 2d9cb7acbc3d8..80aeeca03f36b 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -219,6 +219,12 @@ enum nand_ecc_algo {
-  */
- #define NAND_WAIT_TCCS		0x00200000
- 
-+/*
-+ * Whether the NAND chip is a boot medium. Drivers might use this information
-+ * to select ECC algorithms supported by the boot ROM or similar restrictions.
-+ */
-+#define NAND_IS_BOOT_MEDIUM	0x00400000
-+
- /* Options set by nand scan */
- /* Nand scan has allocated controller struct */
- #define NAND_CONTROLLER_ALLOC	0x80000000
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
 -- 
 2.17.1
