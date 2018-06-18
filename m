@@ -1,60 +1,113 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Mon, 18 Jun 2018 09:06:53 +0200
-Message-ID: <CAJKOXPcAVovxU2mHSbkAG0axutFbd=_92bNdd2P_CnQGmhAfCg@mail.gmail.com>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v5 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash
+ support
+Date: Mon, 18 Jun 2018 11:58:06 +0200
+Message-ID: <20180618115806.7be25499@bbrezillon>
+References: <20180617204605.4648-1-stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+In-Reply-To: <20180617204605.4648-1-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 4:31 PM, Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
-> Multiple binding documents have various forms of unbalanced quotation
-> marks. Fix them.
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> ---
->
-> Should I split this patch so that different parts can go through differen=
-t trees?
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
->  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
->  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
->  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
->  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
->  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
->  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
->  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
->  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
->  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards=
-.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> index bdadc3da9556..6970f30a3770 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> @@ -66,7 +66,7 @@ Required root node properties:
->         - "insignal,arndale-octa" - for Exynos5420-based Insignal Arndale
->                                     Octa board.
->         - "insignal,origen"       - for Exynos4210-based Insignal Origen =
-board.
-> -       - "insignal,origen4412    - for Exynos4412-based Insignal Origen =
-board.
-> +       - "insignal,origen4412"   - for Exynos4412-based Insignal Origen =
-board.
->
+On Sun, 17 Jun 2018 22:45:59 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Changes definitly calm down, most noteably probably the changes
+> around checking whether a page is empty if the stack reports ECC
+> errors.. I verified the code using raw nandwrites with OOB to
+> simulate an empty page which has some bits flipped in the OOB area,
+> everthing seems to work as I would expect it.
+> 
+> For now I do not check extra OOB bytes since those are at variable
+> locations depending on algorithm.
 
-Best regards,
-Krzysztof
+Hm, if you expose them as free OOB bytes, you should also check them,
+otherwise you might end up with corrupted data without noticing it. Note
+that, depending on whether those free OOB bytes are ECC-protected or
+not, you should change the way you do the check:
+
+- non-protected OOB bytes: all bytes should be 0xff (no bitflips
+  allowed)
+- data+free OOB bytes protected by the same ECC bytes: you should pass
+  the free OOB bytes buffer to nand_check_erased_ecc_chunk() along with
+  the data and ECC buffers
+- free OOB bytes have their own ECC bytes: call
+  nand_check_erased_ecc_chunk() separately and pass it the ECC + free
+  OOB buffers.
+
+> 
+> --
+> Stefan
+> 
+> Changes since v1:
+> - Split controller and NAND chip structure
+> - Add BCH support
+> - Allow to select algorithm and strength using device tree
+> - Improve HW ECC error reporting and use DEC_STATUS_BUF only
+> - Use SPDX license identifier
+> - Use per algorithm mtd_ooblayout_ops
+> - Use setup_data_interface callback for NAND timing configuration
+> 
+> Changes since v2:
+> - Set clock rate using assigned-clocks
+> - Use BIT() macro
+> - Fix and improve timing calculation
+> - Improve ECC error handling
+> - Store OOB layout for tag area in Tegra chip structure
+> - Update/fix bindings
+> - Use more specific variable names (replace "value")
+> - Introduce nand-is-boot-medium
+> - Choose sensible ECC strenght automatically
+> - Use wait_for_completion_timeout
+> - Print register dump on completion timeout
+> - Unify tegra_nand_(read|write)_page in tegra_nand_page_xfer
+> 
+> Changes since v3:
+> - Implement tegra_nand_(read|write)_raw using DMA
+> - Implement tegra_nand_(read|write)_oob using DMA
+> - Name registers according to Tegra 2 Technical Reference Manual (v02p)
+> - Use wait_for_completion_io_timeout to account for IO
+> - Get chip select id from device tree reg property
+> - Clear interrupts and reinit wait queues in case command/DMA times out
+> - Set default MTD name after nand_set_flash_node
+> - Move MODULE_DEVICE_TABLE after declaration of tegra_nand_of_match
+> - Make (rs|bch)_strength static
+> 
+> Changes since v4:
+> - Pass OOB area to nand_check_erased_ecc_chunk
+> - Pass algorithm specific bits_per_step to tegra_nand_get_strength
+> - Store ECC layout in chip structure
+> - Fix pointer assignment (use NULL)
+> - Removed obsolete header delay.h
+> - Fixed newlines
+> - Use non-_io variant of wait_for_completion_timeout
+> 
+> Lucas Stach (1):
+>   ARM: dts: tegra: add Tegra20 NAND flash controller node
+> 
+> Stefan Agner (5):
+>   mtd: rawnand: add Reed-Solomon error correction algorithm
+>   mtd: rawnand: add an option to specify NAND chip as a boot device
+>   mtd: rawnand: tegra: add devicetree binding
+>   mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
+>   ARM: dts: tegra: enable NAND flash on Colibri T20
+> 
+>  .../devicetree/bindings/mtd/nand.txt          |    6 +-
+>  .../bindings/mtd/nvidia-tegra20-nand.txt      |   64 +
+>  MAINTAINERS                                   |    7 +
+>  arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   16 +
+>  arch/arm/boot/dts/tegra20.dtsi                |   15 +
+>  drivers/mtd/nand/raw/Kconfig                  |    6 +
+>  drivers/mtd/nand/raw/Makefile                 |    1 +
+>  drivers/mtd/nand/raw/nand_base.c              |    4 +
+>  drivers/mtd/nand/raw/tegra_nand.c             | 1268 +++++++++++++++++
+>  include/linux/mtd/rawnand.h                   |    7 +
+>  10 files changed, 1393 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+> 
