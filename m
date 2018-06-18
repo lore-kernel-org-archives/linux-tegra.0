@@ -1,146 +1,108 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v5 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash
- support
-Date: Mon, 18 Jun 2018 13:59:35 +0200
-Message-ID: <20180618135935.5a41ec6f@bbrezillon>
-References: <20180617204605.4648-1-stefan@agner.ch>
-        <20180618115806.7be25499@bbrezillon>
-        <95279b61ce2630c1276669359b163933@agner.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: tegra: fix device_node refcounting" to the asoc tree
+Date: Mon, 18 Jun 2018 12:59:39 +0100
+Message-ID: <E1fUsot-0008Lr-UI@debutante>
+References: <1529101378-5543-1-git-send-email-khoroshilov@ispras.ru>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <95279b61ce2630c1276669359b163933@agner.ch>
+In-Reply-To: <1529101378-5543-1-git-send-email-khoroshilov@ispras.ru>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, ldv-project@linuxtesting.org, alsa-devel@alsa-project.org, sil2review@lists.osadl.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, linux-tegra@vger.kernel.orgalsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stefan,
+The patch
 
-On Mon, 18 Jun 2018 12:51:52 +0200
-Stefan Agner <stefan@agner.ch> wrote:
+   ASoC: tegra: fix device_node refcounting
 
-> On 18.06.2018 11:58, Boris Brezillon wrote:
-> > On Sun, 17 Jun 2018 22:45:59 +0200
-> > Stefan Agner <stefan@agner.ch> wrote:
-> >   
-> >> Changes definitly calm down, most noteably probably the changes
-> >> around checking whether a page is empty if the stack reports ECC
-> >> errors.. I verified the code using raw nandwrites with OOB to
-> >> simulate an empty page which has some bits flipped in the OOB area,
-> >> everthing seems to work as I would expect it.
-> >>
-> >> For now I do not check extra OOB bytes since those are at variable
-> >> locations depending on algorithm.  
-> > 
-> > Hm, if you expose them as free OOB bytes, you should also check them,
-> > otherwise you might end up with corrupted data without noticing it. Note
-> > that, depending on whether those free OOB bytes are ECC-protected or
-> > not, you should change the way you do the check:
-> > 
-> > - non-protected OOB bytes: all bytes should be 0xff (no bitflips
-> >   allowed)
-> > - data+free OOB bytes protected by the same ECC bytes: you should pass
-> >   the free OOB bytes buffer to nand_check_erased_ecc_chunk() along with
-> >   the data and ECC buffers
-> > - free OOB bytes have their own ECC bytes: call
-> >   nand_check_erased_ecc_chunk() separately and pass it the ECC + free
-> >   OOB buffers.  
-> 
-> This graphic taken from the public Tegra 2 Technical Reference Manual is
-> quite useful:
-> https://imgur.com/a/0Hqzbkc
+has been applied to the asoc tree at
 
-Thanks for sharing this doc.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> 
-> Tegra basically has all of the above, which makes the whole business
-> really tricky...
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-I'm not sure. Are "Skip bytes" protected by "main data parity bytes"?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-AFAICT, you have "Tag bytes" that fall in case #3 and "Remaining spare
-bytes" that fall in case #1. If "Skip bytes" are protected by the "main
-data parity bytes", then it falls in case #2, otherwise it probably
-goes in case #1.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> 
-> I am not sure if we really could do variant 1, non-protected OOB, but
-> since we have the option of protected OOB, we probably anyway would do
-> that.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-That's up to you, but in this case, you should not declare those bytes
-as free (didn't check what is currently done in the driver).
+Thanks,
+Mark
 
-> 
-> RS/Hamming implements variant 3.
+From 7c5dfd549617b87db8e891ff4ecaa4a582b6c4cc Mon Sep 17 00:00:00 2001
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Date: Sat, 16 Jun 2018 01:22:58 +0300
+Subject: [PATCH] ASoC: tegra: fix device_node refcounting
 
-It seems to be a mix of #1 and #3, but I'm not sure (see above).
+tegra_rt5677_probe() gets a couple of device nodes with of_parse_phandle(),
+but there is no release of them.
 
-> 
-> BCH implements variant 2.
+The patch adds the release to tegra_rt5677_remove() and
+to error handling paths in the probe.
 
-I'd say it's a mix of #1 (skip + remaining bytes) and #2(tag bytes).
+Found by Linux Driver Verification project (linuxtesting.org).
 
-> OOB is protected with the last data buffer.
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Reviewed-by: Nicholas Mc Guire <der.herr@hofr.at>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/tegra/tegra_rt5677.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-That would be weird, but maybe you're right. HW ECC engine usually
-split the OOB area in X portions, X being the number of ECC steps needed
-to cover a NAND page, and then have ECC bytes cover a sub-portion of
-data+OOB.
-
-For example, for a NAND page of 2k with 64 bytes of OOB, and assuming
-the ECC step is 512bytes, you usually have something like:
-
-[512(data)+8(protected-oob)+8(ecc)] x 4
-
-> 
-> So this would require a algorithm depending implementation, which is
-> probably not a big deal.
-
-True.
-
-> 
-> But there is one more issue with BCH: Only if extra data are actually
-> transferred, tag space is actually allocated. If no tag bytes are
-> transferred, parity follows immediately skip bytes. As far as I know the
-> MTD stacks OOB layout assumes that is always the same layout, no matter
-> whether we write extra OOB data or not. For the Tegra NAND controller
-> this would mean that we have to always transfer tag bytes and therefor
-> penalize the use case we are most interested in (which is no extra OOB
-> bytes, since UBI does not make use of it)...
-
-Hm, given the amount of tag bytes I don't think you'll have a huge
-penalty, so I'd recommend always sending those bytes. Alternatively,
-you could decide that you never want to have those tag bytes and expose
-none of them.
-
-> 
-> Furthermore I realized that testing is not easily possible since
-> nandwrite with --oob seems not to make use of "oob_required" in the main
-> page write but issues a separate OOB write command. I did not found a
-> way to issue a write from user space which sets oob_required...
-
-Maybe it's time to patch those tools. The ioctl exists, so it's just a
-matter of using it in nandwrite/mtd-utils.
-
-> 
-> Due to all this I rather prefer to not implement extra OOB support at
-> this point.
-
-I'm fine with that, but that means no JFFS2 support, as I think JFFS2
-wants to place some of its metadata in the OOB area. Also, I fear it
-will be a mess to add support for that kind of things without breaking
-existing setup afterwards, so, by taking this decision you're pretty
-much saying that this controller will never expose free OOB bytes.
-That's not a problem from my PoV, but I want you to be aware of that.
-
-> 
-> How do I do this properly? Set mtd_ooblayout_ops.free to NULL?
-
-Just implement a dummy function that returns -ERANGE.
-
-Regards,
-
-Boris
+diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
+index 0e4805c7b4ca..7081f15302cc 100644
+--- a/sound/soc/tegra/tegra_rt5677.c
++++ b/sound/soc/tegra/tegra_rt5677.c
+@@ -264,13 +264,13 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,i2s-controller' missing or invalid\n");
+ 		ret = -EINVAL;
+-		goto err;
++		goto err_put_codec_of_node;
+ 	}
+ 	tegra_rt5677_dai.platform_of_node = tegra_rt5677_dai.cpu_of_node;
+ 
+ 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+ 	if (ret)
+-		goto err;
++		goto err_put_cpu_of_node;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+@@ -283,6 +283,13 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
+ 
+ err_fini_utils:
+ 	tegra_asoc_utils_fini(&machine->util_data);
++err_put_cpu_of_node:
++	of_node_put(tegra_rt5677_dai.cpu_of_node);
++	tegra_rt5677_dai.cpu_of_node = NULL;
++	tegra_rt5677_dai.platform_of_node = NULL;
++err_put_codec_of_node:
++	of_node_put(tegra_rt5677_dai.codec_of_node);
++	tegra_rt5677_dai.codec_of_node = NULL;
+ err:
+ 	return ret;
+ }
+@@ -296,6 +303,12 @@ static int tegra_rt5677_remove(struct platform_device *pdev)
+ 
+ 	tegra_asoc_utils_fini(&machine->util_data);
+ 
++	tegra_rt5677_dai.platform_of_node = NULL;
++	of_node_put(tegra_rt5677_dai.codec_of_node);
++	tegra_rt5677_dai.codec_of_node = NULL;
++	of_node_put(tegra_rt5677_dai.cpu_of_node);
++	tegra_rt5677_dai.cpu_of_node = NULL;
++
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
