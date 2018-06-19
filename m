@@ -1,35 +1,63 @@
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Tue, 19 Jun 2018 11:23:07 -0700
-Message-ID: <20180619182307.GG71788@dtor-ws>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+Subject: Re: [PATCH 04/11] input: rohm_bu21023: switch to i2c_lock_segment
+Date: Tue, 19 Jun 2018 11:40:00 -0700
+Message-ID: <20180619184000.GJ71788@dtor-ws>
+References: <20180615101506.8012-1-peda@axentia.se>
+ <20180615101506.8012-5-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+In-Reply-To: <20180615101506.8012-5-peda@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, "David S. Miller" <davem@>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neuschäfer wrote:
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/hideep.txt b/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
-> index 121d9b7c79a2..1063c30d53f7 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
-> @@ -32,7 +32,7 @@ i2c@00000000 {
->  		reg = <0x6c>;
->  		interrupt-parent = <&gpx1>;
->  		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-> -		vdd-supply = <&ldo15_reg>";
-> +		vdd-supply = <&ldo15_reg>;
->  		vid-supply = <&ldo18_reg>;
->  		reset-gpios = <&gpx1 5 0>;
->  		touchscreen-size-x = <1080>;
+On Fri, Jun 15, 2018 at 12:14:59PM +0200, Peter Rosin wrote:
+> Locking the root adapter for __i2c_transfer will deadlock if the
+> device sits behind a mux-locked I2C mux. Switch to the finer-grained
+> i2c_lock_segment. If the device does not sit behind a mux-locked mux,
+> the two locking variants are equivalent.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
 Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+I'm OK with it going through Wolfram's tree; I do not think I'd need an
+immutable branch for this even...
+
+> ---
+>  drivers/input/touchscreen/rohm_bu21023.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/rohm_bu21023.c b/drivers/input/touchscreen/rohm_bu21023.c
+> index bda0500c9b57..22d79db07234 100644
+> --- a/drivers/input/touchscreen/rohm_bu21023.c
+> +++ b/drivers/input/touchscreen/rohm_bu21023.c
+> @@ -304,7 +304,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
+>  	msg[1].len = len;
+>  	msg[1].buf = buf;
+>  
+> -	i2c_lock_adapter(adap);
+> +	i2c_lock_segment(adap);
+>  
+>  	for (i = 0; i < 2; i++) {
+>  		if (__i2c_transfer(adap, &msg[i], 1) < 0) {
+> @@ -313,7 +313,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
+>  		}
+>  	}
+>  
+> -	i2c_unlock_adapter(adap);
+> +	i2c_unlock_segment(adap);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.11.0
+> 
+
+Thanks.
 
 -- 
 Dmitry
