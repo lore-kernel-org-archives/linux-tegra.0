@@ -1,36 +1,85 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH 02/11] tpm/tpm_i2c_infineon: switch to i2c_lock_segment
-Date: Tue, 19 Jun 2018 15:05:50 +0200
-Message-ID: <eb583028-dfcb-7f1b-c2a1-236ad4c5c2b5@axentia.se>
-References: <20180615101506.8012-1-peda@axentia.se>
- <20180615101506.8012-3-peda@axentia.se>
- <20180619125618.GB5609@linux.intel.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
+Date: Tue, 19 Jun 2018 18:40:12 +0100
+Message-ID: <20180619174011.GJ17671@n2100.armlinux.org.uk>
+References: <20180526155623.12610-1-digetx@gmail.com>
+ <20180526155623.12610-2-digetx@gmail.com>
+ <20180528131501.GK23723@intel.com>
+ <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
+ <20180529071103.GL23723@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180619125618.GB5609@linux.intel.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180529071103.GL23723@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Wo
+To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <thierry.reding@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>, Ben Skeggs <bskeggs@redhat.com>, Sinclair Yeh <syeh@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 2018-06-19 14:56, Jarkko Sakkinen wrote:
-> On Fri, Jun 15, 2018 at 12:14:57PM +0200, Peter Rosin wrote:
->> Locking the root adapter for __i2c_transfer will deadlock if the
->> device sits behind a mux-locked I2C mux. Switch to the finer-grained
->> i2c_lock_segment. If the device does not sit behind a mux-locked mux,
->> the two locking variants are equivalent.
->>
->> Signed-off-by: Peter Rosin <peda@axentia.se>
+On Tue, May 29, 2018 at 10:11:03AM +0300, Ville Syrjälä wrote:
+> On Tue, May 29, 2018 at 02:48:22AM +0300, Dmitry Osipenko wrote:
+> > Though maybe "color components replacement" and "replacement with a complete
+> > transparency" could be factored out into a specific color keying modes.
 > 
-> Can you quickly explain (or give a reference) the difference with these
-> functions? Not an expert in this area. Thanks.
+> Yes. I've never seen those in any hardware. In fact I'm wondering where
+> is the userspace for all these complex modes? Ie. should we even bother
+> with them at this time?
 
-There are some words in the cover letter. If you need more, there's
-always Documentation/i2c/i2c-topology. Hope that helps, otherwise I'll
-try to explain better...
+Such hardware does exist - here's what Armada 510 supports (and is
+supported via armada-drm):
 
-Cheers,
-Peter
+Color Key Mode
+0 = Disable: Disable color key function.
+1 = EnableY: Video Y color key is enabled.
+2 = EnableU: Video U color key is enabled.
+3 = EnableRGB: Graphic RGB color key is enabled.
+4 = EnableV: Video V color key is enabled.
+5 = EnableR: Graphic R color key is enabled.
+6 = EnableG: Graphic G color key is enabled.
+7 = EnableB: Graphic B color key is enabled.
+
+The description of how the colour keying works isn't particularly good,
+which is rather unfortunate, but basically, there's three 32-bit
+registers named LCD_SPU_COLORKEY_Y, LCD_SPU_COLORKEY_U and
+LCD_SPU_COLORKEY_V.
+
+When a graphic mode is selected, then:
+ LCD_SPU_COLORKEY_Y is the R or B component depending on the red/blue swap
+ LCD_SPU_COLORKEY_U is the G component
+ LCD_SPU_COLORKEY_V is the B or R component according to the swap
+
+31:24 is the high bound for the component (inclusive)
+23:16 is the low bound for the component (inclusive)
+15:8  is the replacement value for the component
+ 7:0  is the alpha value - seems to only be for LCD_SPU_COLORKEY_Y and
+	ignored in the other registers when in RGB mode, but I've not
+	fully tested this.  I suspect it's used with the single-channel
+	colour keying modes.
+
+The colour key stage provides an alpha value to the next stage - which
+is alpha blending between the graphic (primary) plane and video
+(overlay) plane.  Zero gives overlay only, 255 gives graphic only.
+
+So, it's possible to use an 0x0101fe (RGB) colour key, and have it
+appear as "black" on the screen if you disable the overlay plane,
+rather than the unsightly bright blue.
+
+One point to make though is about what userspace expects _today_ from
+overlay.  VLC, for example, expects overlay to be colour keyed, so it
+can display its full-screen controller when the user moves the mouse.
+I don't believe it explicitly sets up colour keying, but just expects
+it to be there and functional.  It _is_ rather necessary when you
+consider that overlay via the Xvideo extension is supposed to be
+"drawn" into the specified drawable, which may be a mapped window
+partially obscured by other mapped windows.
+
+Maybe if the kernel DRM components doesn't want to do that, it'd be
+something that an Xorg DDX would have to default-enable to ensure
+that existing applications and expected Xorg behaviour doesn't break.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
