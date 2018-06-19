@@ -1,66 +1,58 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Tue, 19 Jun 2018 11:10:48 +0100
-Message-ID: <819db945-1f89-93d3-b213-365a9704e100@nvidia.com>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
+Date: Tue, 19 Jun 2018 14:00:22 +0300
+Message-ID: <20180619110027.16935-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>, devicetree@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
+This series of patches brings initial support of Trusted Foundations to
+Tegra30, that is to the consumer-grade Tegra30 devices which do not allow
+to easily replace the proprietary bootloader. Support is initial because
+this series implements only a proper CPU boot-up (main + secondary cores)
+and a basic L2 cache maintenance that is done using the TF firmware.
+Suspend-resume support is missing yet as I couldn't get it to work
+(CPU hangs on resume from suspend after awhile and seems that is related
+to inappropriately done cache maintenance during of suspend-resume using
+the firmware), it is work-in-progress for now.
 
-On 17/06/18 15:31, Jonathan Neuschäfer wrote:
-> Multiple binding documents have various forms of unbalanced quotation
-> marks. Fix them.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
-> 
-> Should I split this patch so that different parts can go through different trees?
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
->  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
->  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
->  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
->  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
->  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
->  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
->  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
->  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
->  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
+This patchset is partially based on the work done by Michał Mirosław [0].
 
-...
+[0] https://www.spinics.net/lists/linux-tegra/msg30368.html
 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> index 1099fe0788fa..f246ccbf8838 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> @@ -15,7 +15,7 @@ Required properties:
->    include "nvidia,tegra30-ictlr".	
->  - reg : Specifies base physical address and size of the registers.
->    Each controller must be described separately (Tegra20 has 4 of them,
-> -  whereas Tegra30 and later have 5"  
-> +  whereas Tegra30 and later have 5).
->  - interrupt-controller : Identifies the node as an interrupt controller.
->  - #interrupt-cells : Specifies the number of cells needed to encode an
->    interrupt source. The value must be 3.
+Changelog:
 
-For the above Tegra portion ...
+v2:
+	- The "Don't apply CPU erratas in insecure mode" patch got some
+	  cleanup, in particular resolved the messiness in
+	  __tegra_cpu_reset_handler_data.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+	- Added a comment to tf_cache_write_sec(), justifying the warning
+	  message.
 
-Cheers
-Jon
+Dmitry Osipenko (5):
+  ARM: trusted_foundations: Implement L2 cache initialization callback
+  ARM: trusted_foundations: Provide information about whether firmware
+    is registered
+  ARM: tegra: Setup L2 cache using Trusted Foundations firmware
+  ARM: tegra: Don't apply CPU erratas in insecure mode
+  ARM: tegra: Always boot CPU in ARM-mode
+
+ arch/arm/firmware/trusted_foundations.c    | 32 ++++++++++++++++++++++
+ arch/arm/include/asm/trusted_foundations.h |  7 +++++
+ arch/arm/mach-tegra/reset-handler.S        | 25 +++++++++--------
+ arch/arm/mach-tegra/reset.c                |  5 +++-
+ arch/arm/mach-tegra/reset.h                |  9 ++++--
+ arch/arm/mach-tegra/sleep-tegra20.S        |  4 +++
+ arch/arm/mach-tegra/tegra.c                | 15 ++++++++++
+ 7 files changed, 82 insertions(+), 15 deletions(-)
 
 -- 
-nvpublic
+2.17.1
