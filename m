@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 2/5] ARM: trusted_foundations: Provide information about whether firmware is registered
-Date: Tue, 19 Jun 2018 14:00:24 +0300
-Message-ID: <20180619110027.16935-3-digetx@gmail.com>
+Subject: [PATCH v2 5/5] ARM: tegra: Always boot CPU in ARM-mode
+Date: Tue, 19 Jun 2018 14:00:27 +0300
+Message-ID: <20180619110027.16935-6-digetx@gmail.com>
 References: <20180619110027.16935-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180619110027.16935-1-digetx@gmail.com>
@@ -10,59 +10,41 @@ To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.c
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a helper that provides information about whether Trusted Foundations
-firmware operations have been registered.
+CPU always jumps into the reset handler in ARM-mode from the Trusted
+Foundations firmware, hence make CPU to always jump into kernel in
+ARM-mode regardless of the firmware presence to support Thumb2 kernel + TF
+case.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/firmware/trusted_foundations.c    | 5 +++++
- arch/arm/include/asm/trusted_foundations.h | 7 +++++++
- 2 files changed, 12 insertions(+)
+ arch/arm/mach-tegra/reset-handler.S | 1 +
+ arch/arm/mach-tegra/reset.c         | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
-index 30df6547020f..f6eeb67de217 100644
---- a/arch/arm/firmware/trusted_foundations.c
-+++ b/arch/arm/firmware/trusted_foundations.c
-@@ -124,3 +124,8 @@ void of_register_trusted_foundations(void)
- 		panic("Trusted Foundation: missing version-minor property\n");
- 	register_trusted_foundations(&pdata);
- }
-+
-+bool trusted_foundations_registered(void)
-+{
-+	return firmware_ops == &trusted_foundations_ops;
-+}
-diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
-index 00748350cf72..bfd0d780824b 100644
---- a/arch/arm/include/asm/trusted_foundations.h
-+++ b/arch/arm/include/asm/trusted_foundations.h
-@@ -31,6 +31,7 @@
- #include <linux/of.h>
- #include <linux/cpu.h>
- #include <linux/smp.h>
-+#include <linux/types.h>
+diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+index e9f2a7775998..8eda5c786f50 100644
+--- a/arch/arm/mach-tegra/reset-handler.S
++++ b/arch/arm/mach-tegra/reset-handler.S
+@@ -113,6 +113,7 @@ ENTRY(__tegra_cpu_reset_handler_start)
+  *       must be position-independent.
+  */
  
- struct trusted_foundations_platform_data {
- 	unsigned int version_major;
-@@ -41,6 +42,7 @@ struct trusted_foundations_platform_data {
++	.arm
+ 	.align L1_CACHE_SHIFT
+ ENTRY(__tegra_cpu_reset_handler)
  
- void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
- void of_register_trusted_foundations(void);
-+bool trusted_foundations_registered(void);
- 
- #else /* CONFIG_TRUSTED_FOUNDATIONS */
- 
-@@ -68,6 +70,11 @@ static inline void of_register_trusted_foundations(void)
- 	if (of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations"))
- 		register_trusted_foundations(NULL);
- }
-+
-+static inline bool trusted_foundations_registered(void)
-+{
-+	return false;
-+}
- #endif /* CONFIG_TRUSTED_FOUNDATIONS */
- 
+diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+index b02ae7699842..3f1ef4561298 100644
+--- a/arch/arm/mach-tegra/reset.c
++++ b/arch/arm/mach-tegra/reset.c
+@@ -97,7 +97,7 @@ void __init tegra_cpu_reset_handler_init(void)
+ 	__tegra_cpu_reset_handler_data[TEGRA_RESET_MASK_PRESENT] =
+ 		*((u32 *)cpu_possible_mask);
+ 	__tegra_cpu_reset_handler_data[TEGRA_RESET_STARTUP_SECONDARY] =
+-		__pa_symbol((void *)secondary_startup);
++		__pa_symbol((void *)secondary_startup_arm);
  #endif
+ 
+ #ifdef CONFIG_PM_SLEEP
 -- 
 2.17.1
