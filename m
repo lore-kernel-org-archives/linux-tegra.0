@@ -1,85 +1,35 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
-Date: Tue, 19 Jun 2018 18:40:12 +0100
-Message-ID: <20180619174011.GJ17671@n2100.armlinux.org.uk>
-References: <20180526155623.12610-1-digetx@gmail.com>
- <20180526155623.12610-2-digetx@gmail.com>
- <20180528131501.GK23723@intel.com>
- <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
- <20180529071103.GL23723@intel.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
+Date: Tue, 19 Jun 2018 11:23:07 -0700
+Message-ID: <20180619182307.GG71788@dtor-ws>
+References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180529071103.GL23723@intel.com>
+In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <thierry.reding@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>, Ben Skeggs <bskeggs@redhat.com>, Sinclair Yeh <syeh@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, "David S. Miller" <davem@>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:11:03AM +0300, Ville Syrjälä wrote:
-> On Tue, May 29, 2018 at 02:48:22AM +0300, Dmitry Osipenko wrote:
-> > Though maybe "color components replacement" and "replacement with a complete
-> > transparency" could be factored out into a specific color keying modes.
-> 
-> Yes. I've never seen those in any hardware. In fact I'm wondering where
-> is the userspace for all these complex modes? Ie. should we even bother
-> with them at this time?
+On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neuschäfer wrote:
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/hideep.txt b/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
+> index 121d9b7c79a2..1063c30d53f7 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
+> @@ -32,7 +32,7 @@ i2c@00000000 {
+>  		reg = <0x6c>;
+>  		interrupt-parent = <&gpx1>;
+>  		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+> -		vdd-supply = <&ldo15_reg>";
+> +		vdd-supply = <&ldo15_reg>;
+>  		vid-supply = <&ldo18_reg>;
+>  		reset-gpios = <&gpx1 5 0>;
+>  		touchscreen-size-x = <1080>;
 
-Such hardware does exist - here's what Armada 510 supports (and is
-supported via armada-drm):
-
-Color Key Mode
-0 = Disable: Disable color key function.
-1 = EnableY: Video Y color key is enabled.
-2 = EnableU: Video U color key is enabled.
-3 = EnableRGB: Graphic RGB color key is enabled.
-4 = EnableV: Video V color key is enabled.
-5 = EnableR: Graphic R color key is enabled.
-6 = EnableG: Graphic G color key is enabled.
-7 = EnableB: Graphic B color key is enabled.
-
-The description of how the colour keying works isn't particularly good,
-which is rather unfortunate, but basically, there's three 32-bit
-registers named LCD_SPU_COLORKEY_Y, LCD_SPU_COLORKEY_U and
-LCD_SPU_COLORKEY_V.
-
-When a graphic mode is selected, then:
- LCD_SPU_COLORKEY_Y is the R or B component depending on the red/blue swap
- LCD_SPU_COLORKEY_U is the G component
- LCD_SPU_COLORKEY_V is the B or R component according to the swap
-
-31:24 is the high bound for the component (inclusive)
-23:16 is the low bound for the component (inclusive)
-15:8  is the replacement value for the component
- 7:0  is the alpha value - seems to only be for LCD_SPU_COLORKEY_Y and
-	ignored in the other registers when in RGB mode, but I've not
-	fully tested this.  I suspect it's used with the single-channel
-	colour keying modes.
-
-The colour key stage provides an alpha value to the next stage - which
-is alpha blending between the graphic (primary) plane and video
-(overlay) plane.  Zero gives overlay only, 255 gives graphic only.
-
-So, it's possible to use an 0x0101fe (RGB) colour key, and have it
-appear as "black" on the screen if you disable the overlay plane,
-rather than the unsightly bright blue.
-
-One point to make though is about what userspace expects _today_ from
-overlay.  VLC, for example, expects overlay to be colour keyed, so it
-can display its full-screen controller when the user moves the mouse.
-I don't believe it explicitly sets up colour keying, but just expects
-it to be there and functional.  It _is_ rather necessary when you
-consider that overlay via the Xvideo extension is supposed to be
-"drawn" into the specified drawable, which may be a mapped window
-partially obscured by other mapped windows.
-
-Maybe if the kernel DRM components doesn't want to do that, it'd be
-something that an Xorg DDX would have to default-enable to ensure
-that existing applications and expected Xorg behaviour doesn't break.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Dmitry
