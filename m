@@ -1,175 +1,55 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v5 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
-Date: Mon, 18 Jun 2018 16:11:54 +0200
-Message-ID: <40244fa25ef2d90a750bf8044d46c845@agner.ch>
-References: <20180617204605.4648-1-stefan@agner.ch>
- <20180618115806.7be25499@bbrezillon>
- <95279b61ce2630c1276669359b163933@agner.ch>
- <20180618135935.5a41ec6f@bbrezillon>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] usb: xhci: tegra: fix runtime PM error handling
+Date: Tue, 19 Jun 2018 11:07:20 +0100
+Message-ID: <738c34e8-e6cc-9947-8d4f-3867b57a0e12@nvidia.com>
+References: <20180617111258.13447-1-stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180618135935.5a41ec6f@bbrezillon>
+In-Reply-To: <20180617111258.13447-1-stefan@agner.ch>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Thierry Reding <thierry.reding@gmail.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Boris,
 
-On 18.06.2018 13:59, Boris Brezillon wrote:
-> Hi Stefan,
+On 17/06/18 12:12, Stefan Agner wrote:
+> The address-of operator will always evaluate to true. However,
+> power should be explicitly disabled if no power domain is used.
 > 
-> On Mon, 18 Jun 2018 12:51:52 +0200
-> Stefan Agner <stefan@agner.ch> wrote:
+> Remove the address-of operator.
 > 
->> On 18.06.2018 11:58, Boris Brezillon wrote:
->> > On Sun, 17 Jun 2018 22:45:59 +0200
->> > Stefan Agner <stefan@agner.ch> wrote:
->> >
->> >> Changes definitly calm down, most noteably probably the changes
->> >> around checking whether a page is empty if the stack reports ECC
->> >> errors.. I verified the code using raw nandwrites with OOB to
->> >> simulate an empty page which has some bits flipped in the OOB area,
->> >> everthing seems to work as I would expect it.
->> >>
->> >> For now I do not check extra OOB bytes since those are at variable
->> >> locations depending on algorithm.
->> >
->> > Hm, if you expose them as free OOB bytes, you should also check them,
->> > otherwise you might end up with corrupted data without noticing it. Note
->> > that, depending on whether those free OOB bytes are ECC-protected or
->> > not, you should change the way you do the check:
->> >
->> > - non-protected OOB bytes: all bytes should be 0xff (no bitflips
->> >   allowed)
->> > - data+free OOB bytes protected by the same ECC bytes: you should pass
->> >   the free OOB bytes buffer to nand_check_erased_ecc_chunk() along with
->> >   the data and ECC buffers
->> > - free OOB bytes have their own ECC bytes: call
->> >   nand_check_erased_ecc_chunk() separately and pass it the ECC + free
->> >   OOB buffers.
->>
->> This graphic taken from the public Tegra 2 Technical Reference Manual is
->> quite useful:
->> https://imgur.com/a/0Hqzbkc
+> Fixes: 58c38116c6cc ("usb: xhci: tegra: Add support for managing powergates")
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/usb/host/xhci-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Thanks for sharing this doc.
-> 
->>
->> Tegra basically has all of the above, which makes the whole business
->> really tricky...
-> 
-> I'm not sure. Are "Skip bytes" protected by "main data parity bytes"?
-> 
-> AFAICT, you have "Tag bytes" that fall in case #3 and "Remaining spare
-> bytes" that fall in case #1. If "Skip bytes" are protected by the "main
-> data parity bytes", then it falls in case #2, otherwise it probably
-> goes in case #1.
+> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+> index a8c1d073cba0..33daac4136e8 100644
+> --- a/drivers/usb/host/xhci-tegra.c
+> +++ b/drivers/usb/host/xhci-tegra.c
+> @@ -1223,10 +1223,10 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>  	pm_runtime_disable(&pdev->dev);
+>  	usb_put_hcd(tegra->hcd);
+>  disable_xusbc:
+> -	if (!&pdev->dev.pm_domain)
+> +	if (!pdev->dev.pm_domain)
+>  		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+>  disable_xusba:
+> -	if (!&pdev->dev.pm_domain)
+> +	if (!pdev->dev.pm_domain)
+>  		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+>  put_padctl:
+>  	tegra_xusb_padctl_put(tegra->padctl);
 > 
 
-Skip bytes are not protected. I think they are mainly meant to skip the
-bad block marker. Only 4, 8, 12 or 16 bytes are supported.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
->>
->> I am not sure if we really could do variant 1, non-protected OOB, but
->> since we have the option of protected OOB, we probably anyway would do
->> that.
-> 
-> That's up to you, but in this case, you should not declare those bytes
-> as free (didn't check what is currently done in the driver).
-> 
->>
->> RS/Hamming implements variant 3.
-> 
-> It seems to be a mix of #1 and #3, but I'm not sure (see above).
-> 
->>
->> BCH implements variant 2.
-> 
-> I'd say it's a mix of #1 (skip + remaining bytes) and #2(tag bytes).
-> 
->> OOB is protected with the last data buffer.
-> 
-> That would be weird, but maybe you're right. HW ECC engine usually
-> split the OOB area in X portions, X being the number of ECC steps needed
-> to cover a NAND page, and then have ECC bytes cover a sub-portion of
-> data+OOB.
-> 
-> For example, for a NAND page of 2k with 64 bytes of OOB, and assuming
-> the ECC step is 512bytes, you usually have something like:
-> 
-> [512(data)+8(protected-oob)+8(ecc)] x 4
-> 
+Thanks for fixing!
+Jon
 
-The TRM explicitly states so:
-
-"BCH mode Error correction
-- Error correction with involving spare only transfers is not supported.
-ECC calculation of last sub-page includes tag data in spare area.
-- Error correction with Main only transfers is supported.
-- Maximum possible length of Tag data size is 252 bytes."
-
-
->>
->> So this would require a algorithm depending implementation, which is
->> probably not a big deal.
-> 
-> True.
-> 
->>
->> But there is one more issue with BCH: Only if extra data are actually
->> transferred, tag space is actually allocated. If no tag bytes are
->> transferred, parity follows immediately skip bytes. As far as I know the
->> MTD stacks OOB layout assumes that is always the same layout, no matter
->> whether we write extra OOB data or not. For the Tegra NAND controller
->> this would mean that we have to always transfer tag bytes and therefor
->> penalize the use case we are most interested in (which is no extra OOB
->> bytes, since UBI does not make use of it)...
-> 
-> Hm, given the amount of tag bytes I don't think you'll have a huge
-> penalty, so I'd recommend always sending those bytes. Alternatively,
-> you could decide that you never want to have those tag bytes and expose
-> none of them.
-> 
->>
->> Furthermore I realized that testing is not easily possible since
->> nandwrite with --oob seems not to make use of "oob_required" in the main
->> page write but issues a separate OOB write command. I did not found a
->> way to issue a write from user space which sets oob_required...
-> 
-> Maybe it's time to patch those tools. The ioctl exists, so it's just a
-> matter of using it in nandwrite/mtd-utils.
-> 
->>
->> Due to all this I rather prefer to not implement extra OOB support at
->> this point.
-> 
-> I'm fine with that, but that means no JFFS2 support, as I think JFFS2
-> wants to place some of its metadata in the OOB area. Also, I fear it
-> will be a mess to add support for that kind of things without breaking
-> existing setup afterwards, so, by taking this decision you're pretty
-> much saying that this controller will never expose free OOB bytes.
-> That's not a problem from my PoV, but I want you to be aware of that.
-> 
-
-We already operate without extra OOB byte support in our downstream BSP.
-I'd rather have a easy upgrade path today...
-
-Another issue I just realized: The boot ROM only supports BCH without
-tag bytes... So at least the boot loader has to be written without tag
-bytes.
-
->>
->> How do I do this properly? Set mtd_ooblayout_ops.free to NULL?
-> 
-> Just implement a dummy function that returns -ERANGE.
-> 
-
-Ok, I will go with this then.
-
-Also, thanks for all your valuable feedback, really appreciated!
-
---
-Stefan
+-- 
+nvpublic
