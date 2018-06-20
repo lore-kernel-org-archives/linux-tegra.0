@@ -1,52 +1,91 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH 01/11] i2c: add helpers for locking the I2C segment
-Date: Tue, 19 Jun 2018 23:29:51 +0200
-Message-ID: <4a721b58-d718-68c0-cca5-23b5b21ef100@axentia.se>
-References: <20180615101506.8012-1-peda@axentia.se>
- <20180615101506.8012-2-peda@axentia.se>
- <20180618110502.cb5s24srp4frahm6@ninjato>
- <b860025e-3d4b-f333-80b4-3831dd969757@axentia.se>
- <20180618115444.pgjmfntp767zuvmw@ninjato>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
+Date: Wed, 20 Jun 2018 11:17:50 +0200
+Message-ID: <20180620091750.GD7186@phenom.ffwll.local>
+References: <20180526155623.12610-1-digetx@gmail.com>
+ <20180526155623.12610-2-digetx@gmail.com>
+ <20180528131501.GK23723@intel.com>
+ <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
+ <20180529071103.GL23723@intel.com>
+ <20180619174011.GJ17671@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180618115444.pgjmfntp767zuvmw@ninjato>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180619174011.GJ17671@n2100.armlinux.org.uk>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Thomas Hellstrom <thellstrom@vmware.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Neil Armstrong <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 2018-06-18 13:54, Wolfram Sang wrote:
-> 
->>> I wonder if i2c_lock_segment() and i2c_lock_root_adapter() are really
->>> more readable and convenient than i2c_lock_bus() with the flag. I think
->>> the flags have speaking names, too.
->>>
->>> Is that an idea to remove these functions altogether and start using
->>> i2c_lock_bus()?
->>
->> That would be fine with me. I don't have a strong opinion and agree that
->> both are readable enough...
->>
->> It would make for a reduction of the number of lines so that's nice, but
->> the macro in drivers/i2c/busses/i2c-gpio.c (patch 11) would not fit in
->> the current \-width (or whatever you'd call that line of backslashes to
->> the right in a multi-line macro).
->>
->> Does anyone have a strong opinion?
-> 
-> I have a strong opinion on making i2c.h less bloated. And yes, less
-> number of lines is nice, too. I think that surely pays off the
-> whitespace exception.
-
-Ok, I have rebased onto v4.18-rc1, killed the i2c-tegra hunk and converted
-i2c_lock_root(foo) over to i2c_lock_bus(foo, I2C_LOCK_ROOT_ADAPTER) and
-i2c_lock_segment(foo) over to i2c_lock_bus(foo, I2C_LOCK_SEGMENT). And I
-of course killed a bunch of locking helpers in i2c.h.
-
-I doing build tests now, will post a v2 in the morning.
-
-Cheers,
-Peter
+T24gVHVlLCBKdW4gMTksIDIwMTggYXQgMDY6NDA6MTJQTSArMDEwMCwgUnVzc2VsbCBLaW5nIC0g
+QVJNIExpbnV4IHdyb3RlOgo+IE9uIFR1ZSwgTWF5IDI5LCAyMDE4IGF0IDEwOjExOjAzQU0gKzAz
+MDAsIFZpbGxlIFN5cmrDpGzDpCB3cm90ZToKPiA+IE9uIFR1ZSwgTWF5IDI5LCAyMDE4IGF0IDAy
+OjQ4OjIyQU0gKzAzMDAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiA+ID4gVGhvdWdoIG1heWJl
+ICJjb2xvciBjb21wb25lbnRzIHJlcGxhY2VtZW50IiBhbmQgInJlcGxhY2VtZW50IHdpdGggYSBj
+b21wbGV0ZQo+ID4gPiB0cmFuc3BhcmVuY3kiIGNvdWxkIGJlIGZhY3RvcmVkIG91dCBpbnRvIGEg
+c3BlY2lmaWMgY29sb3Iga2V5aW5nIG1vZGVzLgo+ID4gCj4gPiBZZXMuIEkndmUgbmV2ZXIgc2Vl
+biB0aG9zZSBpbiBhbnkgaGFyZHdhcmUuIEluIGZhY3QgSSdtIHdvbmRlcmluZyB3aGVyZQo+ID4g
+aXMgdGhlIHVzZXJzcGFjZSBmb3IgYWxsIHRoZXNlIGNvbXBsZXggbW9kZXM/IEllLiBzaG91bGQg
+d2UgZXZlbiBib3RoZXIKPiA+IHdpdGggdGhlbSBhdCB0aGlzIHRpbWU/Cj4gCj4gU3VjaCBoYXJk
+d2FyZSBkb2VzIGV4aXN0IC0gaGVyZSdzIHdoYXQgQXJtYWRhIDUxMCBzdXBwb3J0cyAoYW5kIGlz
+Cj4gc3VwcG9ydGVkIHZpYSBhcm1hZGEtZHJtKToKPiAKPiBDb2xvciBLZXkgTW9kZQo+IDAgPSBE
+aXNhYmxlOiBEaXNhYmxlIGNvbG9yIGtleSBmdW5jdGlvbi4KPiAxID0gRW5hYmxlWTogVmlkZW8g
+WSBjb2xvciBrZXkgaXMgZW5hYmxlZC4KPiAyID0gRW5hYmxlVTogVmlkZW8gVSBjb2xvciBrZXkg
+aXMgZW5hYmxlZC4KPiAzID0gRW5hYmxlUkdCOiBHcmFwaGljIFJHQiBjb2xvciBrZXkgaXMgZW5h
+YmxlZC4KPiA0ID0gRW5hYmxlVjogVmlkZW8gViBjb2xvciBrZXkgaXMgZW5hYmxlZC4KPiA1ID0g
+RW5hYmxlUjogR3JhcGhpYyBSIGNvbG9yIGtleSBpcyBlbmFibGVkLgo+IDYgPSBFbmFibGVHOiBH
+cmFwaGljIEcgY29sb3Iga2V5IGlzIGVuYWJsZWQuCj4gNyA9IEVuYWJsZUI6IEdyYXBoaWMgQiBj
+b2xvciBrZXkgaXMgZW5hYmxlZC4KPiAKPiBUaGUgZGVzY3JpcHRpb24gb2YgaG93IHRoZSBjb2xv
+dXIga2V5aW5nIHdvcmtzIGlzbid0IHBhcnRpY3VsYXJseSBnb29kLAo+IHdoaWNoIGlzIHJhdGhl
+ciB1bmZvcnR1bmF0ZSwgYnV0IGJhc2ljYWxseSwgdGhlcmUncyB0aHJlZSAzMi1iaXQKPiByZWdp
+c3RlcnMgbmFtZWQgTENEX1NQVV9DT0xPUktFWV9ZLCBMQ0RfU1BVX0NPTE9SS0VZX1UgYW5kCj4g
+TENEX1NQVV9DT0xPUktFWV9WLgo+IAo+IFdoZW4gYSBncmFwaGljIG1vZGUgaXMgc2VsZWN0ZWQs
+IHRoZW46Cj4gIExDRF9TUFVfQ09MT1JLRVlfWSBpcyB0aGUgUiBvciBCIGNvbXBvbmVudCBkZXBl
+bmRpbmcgb24gdGhlIHJlZC9ibHVlIHN3YXAKPiAgTENEX1NQVV9DT0xPUktFWV9VIGlzIHRoZSBH
+IGNvbXBvbmVudAo+ICBMQ0RfU1BVX0NPTE9SS0VZX1YgaXMgdGhlIEIgb3IgUiBjb21wb25lbnQg
+YWNjb3JkaW5nIHRvIHRoZSBzd2FwCj4gCj4gMzE6MjQgaXMgdGhlIGhpZ2ggYm91bmQgZm9yIHRo
+ZSBjb21wb25lbnQgKGluY2x1c2l2ZSkKPiAyMzoxNiBpcyB0aGUgbG93IGJvdW5kIGZvciB0aGUg
+Y29tcG9uZW50IChpbmNsdXNpdmUpCj4gMTU6OCAgaXMgdGhlIHJlcGxhY2VtZW50IHZhbHVlIGZv
+ciB0aGUgY29tcG9uZW50Cj4gIDc6MCAgaXMgdGhlIGFscGhhIHZhbHVlIC0gc2VlbXMgdG8gb25s
+eSBiZSBmb3IgTENEX1NQVV9DT0xPUktFWV9ZIGFuZAo+IAlpZ25vcmVkIGluIHRoZSBvdGhlciBy
+ZWdpc3RlcnMgd2hlbiBpbiBSR0IgbW9kZSwgYnV0IEkndmUgbm90Cj4gCWZ1bGx5IHRlc3RlZCB0
+aGlzLiAgSSBzdXNwZWN0IGl0J3MgdXNlZCB3aXRoIHRoZSBzaW5nbGUtY2hhbm5lbAo+IAljb2xv
+dXIga2V5aW5nIG1vZGVzLgo+IAo+IFRoZSBjb2xvdXIga2V5IHN0YWdlIHByb3ZpZGVzIGFuIGFs
+cGhhIHZhbHVlIHRvIHRoZSBuZXh0IHN0YWdlIC0gd2hpY2gKPiBpcyBhbHBoYSBibGVuZGluZyBi
+ZXR3ZWVuIHRoZSBncmFwaGljIChwcmltYXJ5KSBwbGFuZSBhbmQgdmlkZW8KPiAob3ZlcmxheSkg
+cGxhbmUuICBaZXJvIGdpdmVzIG92ZXJsYXkgb25seSwgMjU1IGdpdmVzIGdyYXBoaWMgb25seS4K
+PiAKPiBTbywgaXQncyBwb3NzaWJsZSB0byB1c2UgYW4gMHgwMTAxZmUgKFJHQikgY29sb3VyIGtl
+eSwgYW5kIGhhdmUgaXQKPiBhcHBlYXIgYXMgImJsYWNrIiBvbiB0aGUgc2NyZWVuIGlmIHlvdSBk
+aXNhYmxlIHRoZSBvdmVybGF5IHBsYW5lLAo+IHJhdGhlciB0aGFuIHRoZSB1bnNpZ2h0bHkgYnJp
+Z2h0IGJsdWUuCj4gCj4gT25lIHBvaW50IHRvIG1ha2UgdGhvdWdoIGlzIGFib3V0IHdoYXQgdXNl
+cnNwYWNlIGV4cGVjdHMgX3RvZGF5XyBmcm9tCj4gb3ZlcmxheS4gIFZMQywgZm9yIGV4YW1wbGUs
+IGV4cGVjdHMgb3ZlcmxheSB0byBiZSBjb2xvdXIga2V5ZWQsIHNvIGl0Cj4gY2FuIGRpc3BsYXkg
+aXRzIGZ1bGwtc2NyZWVuIGNvbnRyb2xsZXIgd2hlbiB0aGUgdXNlciBtb3ZlcyB0aGUgbW91c2Uu
+Cj4gSSBkb24ndCBiZWxpZXZlIGl0IGV4cGxpY2l0bHkgc2V0cyB1cCBjb2xvdXIga2V5aW5nLCBi
+dXQganVzdCBleHBlY3RzCj4gaXQgdG8gYmUgdGhlcmUgYW5kIGZ1bmN0aW9uYWwuICBJdCBfaXNf
+IHJhdGhlciBuZWNlc3Nhcnkgd2hlbiB5b3UKPiBjb25zaWRlciB0aGF0IG92ZXJsYXkgdmlhIHRo
+ZSBYdmlkZW8gZXh0ZW5zaW9uIGlzIHN1cHBvc2VkIHRvIGJlCj4gImRyYXduIiBpbnRvIHRoZSBz
+cGVjaWZpZWQgZHJhd2FibGUsIHdoaWNoIG1heSBiZSBhIG1hcHBlZCB3aW5kb3cKPiBwYXJ0aWFs
+bHkgb2JzY3VyZWQgYnkgb3RoZXIgbWFwcGVkIHdpbmRvd3MuCj4gCj4gTWF5YmUgaWYgdGhlIGtl
+cm5lbCBEUk0gY29tcG9uZW50cyBkb2Vzbid0IHdhbnQgdG8gZG8gdGhhdCwgaXQnZCBiZQo+IHNv
+bWV0aGluZyB0aGF0IGFuIFhvcmcgRERYIHdvdWxkIGhhdmUgdG8gZGVmYXVsdC1lbmFibGUgdG8g
+ZW5zdXJlCj4gdGhhdCBleGlzdGluZyBhcHBsaWNhdGlvbnMgYW5kIGV4cGVjdGVkIFhvcmcgYmVo
+YXZpb3VyIGRvZXNuJ3QgYnJlYWsuCgpZZXMgLW1vZGVzZXR0aW5nIChvciB3aGljaGV2ZXIgb3Ro
+ZXIgZHJpdmVyKSB3b3VsZCBuZWVkIHRvIHNldCB1cCB0aGUKcHJvcGVydGllcyBjb3JyZWN0bHkg
+Zm9yIFh2aWRlbyBjb2xvciBrZXlpbmcuIFNpbmNlIGRlZmF1bHQgYXNzdW1wdGlvbiBmb3IKYWxs
+IG90aGVyIChnZW5lcmljKSBjb21wb3NpdG9ycyBpcyB0aGF0IHBsYW5lcyB3b24ndCBkbyBhbnkg
+Y29sb3Iga2V5aW5nCmluIHRoZSBib290LXVwIHN0YXRlLgotRGFuaWVsCi0tIApEYW5pZWwgVmV0
+dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZnds
+bC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
