@@ -1,53 +1,54 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
-Date: Wed, 20 Jun 2018 15:20:31 +0300
-Message-ID: <18882685.yDnGXdaDdQ@dimapc>
-References: <20180526155623.12610-1-digetx@gmail.com> <20180620093321.GL17671@n2100.armlinux.org.uk> <CAKMK7uGMKs2GgP+nrxDV4LbbmrqcHApLsz9pTc=mQojHtSVaUQ@mail.gmail.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v2 1/8] dt-bindings: tegra186-hsp: Add shared interrupts
+Date: Wed, 20 Jun 2018 15:20:35 +0300
+Message-ID: <20180620122042.10950-2-mperttunen@nvidia.com>
+References: <20180620122042.10950-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKMK7uGMKs2GgP+nrxDV4LbbmrqcHApLsz9pTc=mQojHtSVaUQ@mail.gmail.com>
+In-Reply-To: <20180620122042.10950-1-mperttunen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Thomas Hellstrom <thellstrom@vmware.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Neil Armstrong <narmstrong@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>, "open list:DRM DRIVERS FOR RENESAS" <linux-renesas-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>
+To: robh+dt@kernel.org, mark.rutland@arm.com, jassisinghbrar@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: devicetree@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday, 20 June 2018 13:10:07 MSK Daniel Vetter wrote:
-> On Wed, Jun 20, 2018 at 11:33 AM, Russell King - ARM Linux
-> 
-> <linux@armlinux.org.uk> wrote:
-> > On Wed, Jun 20, 2018 at 11:17:50AM +0200, Daniel Vetter wrote:
-> >> Yes -modesetting (or whichever other driver) would need to set up the
-> >> properties correctly for Xvideo color keying. Since default assumption
-> >> for
-> >> all other (generic) compositors is that planes won't do any color keying
-> >> in the boot-up state.
-> > 
-> > Thanks, is that documented anywhere?
-> 
-> With the standardization of properties I'm also trying to get these
-> expectations better documented, e.g.
-> 
-> https://dri.freedesktop.org/docs/drm/gpu/drm-kms.html#plane-composition-prop
-> erties
-> 
-> But I think we're not doing a good job yet documenting default
-> expectations. But the above would be a good place to get that fixed -
-> this patch here should do that, at least for color keying.
-> -Daniel
+HSP interrupts can be routed through exposed "shared interrupts". These
+interrupts can be mapped to various internal interrupt lines. Add
+interrupt properties for shared interrupts to the tegra186-hsp device
+tree bindings. At the same time, add the compatibility string for
+tegra194-hsp, which is backwards compatible with tegra186.
 
-There is a comment in this patch that says:
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
 
-+ * colorkey.mode:
-+ *     The mode is an enumerated property that controls how color keying
-+ *     operates. The "disabled" mode that disables color keying and is
-+ *     very likely to exist if color keying is supported, it should be the
-+ *     default mode.
+Notes:
+    v2:
+    - Edited commit message to not say that doorbell interrupts cannot be
+      routed to shared interrupts.
+    - Added tegra194 compatibility string.
 
-So the default-disabled state is kinda documented. Though that comment is 
-omitted in the v3, I'll correct that in the next revision.
+ Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-For now one question that keeps this patchset in RFC state is about how to 
-expose the color key value properties to userspace, whether having drivers to 
-perform RGB->YUV conversion is a viable way (see the v3 of the patchset).
+diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+index b99d25fc2f26..620c249363ca 100644
+--- a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
++++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+@@ -15,12 +15,15 @@ Required properties:
+     Array of strings.
+     one of:
+     - "nvidia,tegra186-hsp"
++    - "nvidia,tegra194-hsp", "nvidia,tegra186-hsp"
+ - reg : Offset and length of the register set for the device.
+ - interrupt-names
+     Array of strings.
+     Contains a list of names for the interrupts described by the interrupt
+     property. May contain the following entries, in any order:
+     - "doorbell"
++    - "sharedN", where 'N' is a number from zero up to the number of
++      external interrupts supported by the HSP instance minus one.
+     Users of this binding MUST look up entries in the interrupt property
+     by name, using this interrupt-names property to do so.
+ - interrupts
+-- 
+2.16.1
