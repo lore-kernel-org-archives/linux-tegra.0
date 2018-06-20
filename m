@@ -1,91 +1,33 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
 Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
-Date: Wed, 20 Jun 2018 11:17:50 +0200
-Message-ID: <20180620091750.GD7186@phenom.ffwll.local>
+Date: Wed, 20 Jun 2018 10:33:21 +0100
+Message-ID: <20180620093321.GL17671@n2100.armlinux.org.uk>
 References: <20180526155623.12610-1-digetx@gmail.com>
  <20180526155623.12610-2-digetx@gmail.com>
  <20180528131501.GK23723@intel.com>
  <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
  <20180529071103.GL23723@intel.com>
  <20180619174011.GJ17671@n2100.armlinux.org.uk>
+ <20180620091750.GD7186@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180619174011.GJ17671@n2100.armlinux.org.uk>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Neil Armstrong <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>, linux-media@vger.kernel.org
+In-Reply-To: <20180620091750.GD7186@phenom.ffwll.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Thomas Hellstrom <thellstrom@vmware.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Neil Armstrong <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>, linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Dmitry Osipenko <digetx@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKdW4gMTksIDIwMTggYXQgMDY6NDA6MTJQTSArMDEwMCwgUnVzc2VsbCBLaW5nIC0g
-QVJNIExpbnV4IHdyb3RlOgo+IE9uIFR1ZSwgTWF5IDI5LCAyMDE4IGF0IDEwOjExOjAzQU0gKzAz
-MDAsIFZpbGxlIFN5cmrDpGzDpCB3cm90ZToKPiA+IE9uIFR1ZSwgTWF5IDI5LCAyMDE4IGF0IDAy
-OjQ4OjIyQU0gKzAzMDAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiA+ID4gVGhvdWdoIG1heWJl
-ICJjb2xvciBjb21wb25lbnRzIHJlcGxhY2VtZW50IiBhbmQgInJlcGxhY2VtZW50IHdpdGggYSBj
-b21wbGV0ZQo+ID4gPiB0cmFuc3BhcmVuY3kiIGNvdWxkIGJlIGZhY3RvcmVkIG91dCBpbnRvIGEg
-c3BlY2lmaWMgY29sb3Iga2V5aW5nIG1vZGVzLgo+ID4gCj4gPiBZZXMuIEkndmUgbmV2ZXIgc2Vl
-biB0aG9zZSBpbiBhbnkgaGFyZHdhcmUuIEluIGZhY3QgSSdtIHdvbmRlcmluZyB3aGVyZQo+ID4g
-aXMgdGhlIHVzZXJzcGFjZSBmb3IgYWxsIHRoZXNlIGNvbXBsZXggbW9kZXM/IEllLiBzaG91bGQg
-d2UgZXZlbiBib3RoZXIKPiA+IHdpdGggdGhlbSBhdCB0aGlzIHRpbWU/Cj4gCj4gU3VjaCBoYXJk
-d2FyZSBkb2VzIGV4aXN0IC0gaGVyZSdzIHdoYXQgQXJtYWRhIDUxMCBzdXBwb3J0cyAoYW5kIGlz
-Cj4gc3VwcG9ydGVkIHZpYSBhcm1hZGEtZHJtKToKPiAKPiBDb2xvciBLZXkgTW9kZQo+IDAgPSBE
-aXNhYmxlOiBEaXNhYmxlIGNvbG9yIGtleSBmdW5jdGlvbi4KPiAxID0gRW5hYmxlWTogVmlkZW8g
-WSBjb2xvciBrZXkgaXMgZW5hYmxlZC4KPiAyID0gRW5hYmxlVTogVmlkZW8gVSBjb2xvciBrZXkg
-aXMgZW5hYmxlZC4KPiAzID0gRW5hYmxlUkdCOiBHcmFwaGljIFJHQiBjb2xvciBrZXkgaXMgZW5h
-YmxlZC4KPiA0ID0gRW5hYmxlVjogVmlkZW8gViBjb2xvciBrZXkgaXMgZW5hYmxlZC4KPiA1ID0g
-RW5hYmxlUjogR3JhcGhpYyBSIGNvbG9yIGtleSBpcyBlbmFibGVkLgo+IDYgPSBFbmFibGVHOiBH
-cmFwaGljIEcgY29sb3Iga2V5IGlzIGVuYWJsZWQuCj4gNyA9IEVuYWJsZUI6IEdyYXBoaWMgQiBj
-b2xvciBrZXkgaXMgZW5hYmxlZC4KPiAKPiBUaGUgZGVzY3JpcHRpb24gb2YgaG93IHRoZSBjb2xv
-dXIga2V5aW5nIHdvcmtzIGlzbid0IHBhcnRpY3VsYXJseSBnb29kLAo+IHdoaWNoIGlzIHJhdGhl
-ciB1bmZvcnR1bmF0ZSwgYnV0IGJhc2ljYWxseSwgdGhlcmUncyB0aHJlZSAzMi1iaXQKPiByZWdp
-c3RlcnMgbmFtZWQgTENEX1NQVV9DT0xPUktFWV9ZLCBMQ0RfU1BVX0NPTE9SS0VZX1UgYW5kCj4g
-TENEX1NQVV9DT0xPUktFWV9WLgo+IAo+IFdoZW4gYSBncmFwaGljIG1vZGUgaXMgc2VsZWN0ZWQs
-IHRoZW46Cj4gIExDRF9TUFVfQ09MT1JLRVlfWSBpcyB0aGUgUiBvciBCIGNvbXBvbmVudCBkZXBl
-bmRpbmcgb24gdGhlIHJlZC9ibHVlIHN3YXAKPiAgTENEX1NQVV9DT0xPUktFWV9VIGlzIHRoZSBH
-IGNvbXBvbmVudAo+ICBMQ0RfU1BVX0NPTE9SS0VZX1YgaXMgdGhlIEIgb3IgUiBjb21wb25lbnQg
-YWNjb3JkaW5nIHRvIHRoZSBzd2FwCj4gCj4gMzE6MjQgaXMgdGhlIGhpZ2ggYm91bmQgZm9yIHRo
-ZSBjb21wb25lbnQgKGluY2x1c2l2ZSkKPiAyMzoxNiBpcyB0aGUgbG93IGJvdW5kIGZvciB0aGUg
-Y29tcG9uZW50IChpbmNsdXNpdmUpCj4gMTU6OCAgaXMgdGhlIHJlcGxhY2VtZW50IHZhbHVlIGZv
-ciB0aGUgY29tcG9uZW50Cj4gIDc6MCAgaXMgdGhlIGFscGhhIHZhbHVlIC0gc2VlbXMgdG8gb25s
-eSBiZSBmb3IgTENEX1NQVV9DT0xPUktFWV9ZIGFuZAo+IAlpZ25vcmVkIGluIHRoZSBvdGhlciBy
-ZWdpc3RlcnMgd2hlbiBpbiBSR0IgbW9kZSwgYnV0IEkndmUgbm90Cj4gCWZ1bGx5IHRlc3RlZCB0
-aGlzLiAgSSBzdXNwZWN0IGl0J3MgdXNlZCB3aXRoIHRoZSBzaW5nbGUtY2hhbm5lbAo+IAljb2xv
-dXIga2V5aW5nIG1vZGVzLgo+IAo+IFRoZSBjb2xvdXIga2V5IHN0YWdlIHByb3ZpZGVzIGFuIGFs
-cGhhIHZhbHVlIHRvIHRoZSBuZXh0IHN0YWdlIC0gd2hpY2gKPiBpcyBhbHBoYSBibGVuZGluZyBi
-ZXR3ZWVuIHRoZSBncmFwaGljIChwcmltYXJ5KSBwbGFuZSBhbmQgdmlkZW8KPiAob3ZlcmxheSkg
-cGxhbmUuICBaZXJvIGdpdmVzIG92ZXJsYXkgb25seSwgMjU1IGdpdmVzIGdyYXBoaWMgb25seS4K
-PiAKPiBTbywgaXQncyBwb3NzaWJsZSB0byB1c2UgYW4gMHgwMTAxZmUgKFJHQikgY29sb3VyIGtl
-eSwgYW5kIGhhdmUgaXQKPiBhcHBlYXIgYXMgImJsYWNrIiBvbiB0aGUgc2NyZWVuIGlmIHlvdSBk
-aXNhYmxlIHRoZSBvdmVybGF5IHBsYW5lLAo+IHJhdGhlciB0aGFuIHRoZSB1bnNpZ2h0bHkgYnJp
-Z2h0IGJsdWUuCj4gCj4gT25lIHBvaW50IHRvIG1ha2UgdGhvdWdoIGlzIGFib3V0IHdoYXQgdXNl
-cnNwYWNlIGV4cGVjdHMgX3RvZGF5XyBmcm9tCj4gb3ZlcmxheS4gIFZMQywgZm9yIGV4YW1wbGUs
-IGV4cGVjdHMgb3ZlcmxheSB0byBiZSBjb2xvdXIga2V5ZWQsIHNvIGl0Cj4gY2FuIGRpc3BsYXkg
-aXRzIGZ1bGwtc2NyZWVuIGNvbnRyb2xsZXIgd2hlbiB0aGUgdXNlciBtb3ZlcyB0aGUgbW91c2Uu
-Cj4gSSBkb24ndCBiZWxpZXZlIGl0IGV4cGxpY2l0bHkgc2V0cyB1cCBjb2xvdXIga2V5aW5nLCBi
-dXQganVzdCBleHBlY3RzCj4gaXQgdG8gYmUgdGhlcmUgYW5kIGZ1bmN0aW9uYWwuICBJdCBfaXNf
-IHJhdGhlciBuZWNlc3Nhcnkgd2hlbiB5b3UKPiBjb25zaWRlciB0aGF0IG92ZXJsYXkgdmlhIHRo
-ZSBYdmlkZW8gZXh0ZW5zaW9uIGlzIHN1cHBvc2VkIHRvIGJlCj4gImRyYXduIiBpbnRvIHRoZSBz
-cGVjaWZpZWQgZHJhd2FibGUsIHdoaWNoIG1heSBiZSBhIG1hcHBlZCB3aW5kb3cKPiBwYXJ0aWFs
-bHkgb2JzY3VyZWQgYnkgb3RoZXIgbWFwcGVkIHdpbmRvd3MuCj4gCj4gTWF5YmUgaWYgdGhlIGtl
-cm5lbCBEUk0gY29tcG9uZW50cyBkb2Vzbid0IHdhbnQgdG8gZG8gdGhhdCwgaXQnZCBiZQo+IHNv
-bWV0aGluZyB0aGF0IGFuIFhvcmcgRERYIHdvdWxkIGhhdmUgdG8gZGVmYXVsdC1lbmFibGUgdG8g
-ZW5zdXJlCj4gdGhhdCBleGlzdGluZyBhcHBsaWNhdGlvbnMgYW5kIGV4cGVjdGVkIFhvcmcgYmVo
-YXZpb3VyIGRvZXNuJ3QgYnJlYWsuCgpZZXMgLW1vZGVzZXR0aW5nIChvciB3aGljaGV2ZXIgb3Ro
-ZXIgZHJpdmVyKSB3b3VsZCBuZWVkIHRvIHNldCB1cCB0aGUKcHJvcGVydGllcyBjb3JyZWN0bHkg
-Zm9yIFh2aWRlbyBjb2xvciBrZXlpbmcuIFNpbmNlIGRlZmF1bHQgYXNzdW1wdGlvbiBmb3IKYWxs
-IG90aGVyIChnZW5lcmljKSBjb21wb3NpdG9ycyBpcyB0aGF0IHBsYW5lcyB3b24ndCBkbyBhbnkg
-Y29sb3Iga2V5aW5nCmluIHRoZSBib290LXVwIHN0YXRlLgotRGFuaWVsCi0tIApEYW5pZWwgVmV0
-dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZnds
-bC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Wed, Jun 20, 2018 at 11:17:50AM +0200, Daniel Vetter wrote:
+> Yes -modesetting (or whichever other driver) would need to set up the
+> properties correctly for Xvideo color keying. Since default assumption for
+> all other (generic) compositors is that planes won't do any color keying
+> in the boot-up state.
+
+Thanks, is that documented anywhere?
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
