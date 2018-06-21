@@ -1,81 +1,72 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: Fix comparison operator for buffer size
-Date: Thu, 21 Jun 2018 15:36:02 +0200
-Message-ID: <20180621133602.GA8599@ulmo>
-References: <20180620130358.26247-1-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0598096889=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180620130358.26247-1-mperttunen@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, digetx@gmail.com, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com
+From: Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v6 2/6] mtd: rawnand: add an option to specify NAND chip as a boot device
+Date: Thu, 21 Jun 2018 22:31:41 +0200
+Message-ID: <20180621203145.7628-3-stefan@agner.ch>
+References: <20180621203145.7628-1-stefan@agner.ch>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180621203145.7628-1-stefan@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
+Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
+Allow to define a NAND chip as a boot device. This can be helpful
+for the selection of the ECC algorithm and strength in case the boot
+ROM supports only a subset of controller provided options.
 
---===============0598096889==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
-Content-Disposition: inline
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+---
+ Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
+ drivers/mtd/nand/raw/nand_base.c               | 3 +++
+ include/linux/mtd/rawnand.h                    | 6 ++++++
+ 3 files changed, 13 insertions(+)
 
-
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 20, 2018 at 04:03:58PM +0300, Mikko Perttunen wrote:
-> Here we are checking for the buffer length, not an offset for writing
-> to, so using > is correct. The current code incorrectly rejects a
-> command buffer ending at the memory buffer's end.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/gpu/drm/tegra/drm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Applied, thanks.
-
-Thierry
-
---tKW2IUtsqtDRztdT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsrqcAACgkQ3SOs138+
-s6FGRw//a60PS+deKv3zD2iwPOJF+RpnVChcZi1dOy+WmmY+2tia4HPxHFMe+FVT
-woSjkK4oTXm6pqYbEHhAOu2Mje6kWQAaJEAJEui0bZzUrtKLf6s4HPawI1uqcnMw
-UkIJoZAmfBafGom7mRgFPfXTjXaa91mit4UxhXlm8YQ6TlOWs3xLnat3yFWmJudP
-Miu5GGjRFf/IkVQS+6KjVGVHgt90wiGBqpR+uzBLKwEFRB4+flTk0xaIeMFKpf+F
-Z7C63qBtQYkpQFPrRURQuJvMOb/K71NElWK4fe7ZIQYjgRtPRJI4Kw4JbvtvQzJB
-ZPdobHxVTsujnMZvoWA0AJ2Bg+tXbdjkxDcsVbA7Kqei6bxYEjeprksmGP9LT799
-4Nt8trFE7XjqJbZzAPGbD8ekF+WghtzwnmPY+mfheBocw363Vgn344lRfHnYq+7L
-xSGn1QB/Nic967lhhARlajP5iGWT61LCi67OywI6AOuYqyTNo9U/e3zAMauV074Q
-ci+ajaPHWMJj1/qEuxFLHcNbIMpNc9QQHOYj4dSSyV9/wnmmeWAfJuU2Yzt6IQdD
-Bsyl92HCyWgwKApTTGnLundr5JQstA9r+0uPqhnNoxAi8bygdWf4xk5LpsBNbiNo
-gXe8uQCl0lmYhpp+gQFDYK9gL59CSW6s2LqP7Ck+NdY1bDMxyoo=
-=NNBT
------END PGP SIGNATURE-----
-
---tKW2IUtsqtDRztdT--
-
---===============0598096889==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0598096889==--
+diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
+index eaef8c657aa5c..e949c778e9837 100644
+--- a/Documentation/devicetree/bindings/mtd/nand.txt
++++ b/Documentation/devicetree/bindings/mtd/nand.txt
+@@ -43,6 +43,10 @@ Optional NAND chip properties:
+ 		     This is particularly useful when only the in-band area is
+ 		     used by the upper layers, and you want to make your NAND
+ 		     as reliable as possible.
++- nand-is-boot-medium: Whether the NAND chip is a boot medium. Drivers might use
++		       this information to select ECC algorithms supported by
++		       the boot ROM or similar restrictions.
++
+ - nand-rb: shall contain the native Ready/Busy ids.
+ 
+ The ECC strength and ECC step size properties define the correction capability
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 47e9cb9063da4..e70bf328c64e4 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -5859,6 +5859,9 @@ static int nand_dt_init(struct nand_chip *chip)
+ 	if (of_get_nand_bus_width(dn) == 16)
+ 		chip->options |= NAND_BUSWIDTH_16;
+ 
++	if (of_property_read_bool(dn, "nand-is-boot-medium"))
++		chip->options |= NAND_IS_BOOT_MEDIUM;
++
+ 	if (of_get_nand_on_flash_bbt(dn))
+ 		chip->bbt_options |= NAND_BBT_USE_FLASH;
+ 
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 2d9cb7acbc3d8..80aeeca03f36b 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -219,6 +219,12 @@ enum nand_ecc_algo {
+  */
+ #define NAND_WAIT_TCCS		0x00200000
+ 
++/*
++ * Whether the NAND chip is a boot medium. Drivers might use this information
++ * to select ECC algorithms supported by the boot ROM or similar restrictions.
++ */
++#define NAND_IS_BOOT_MEDIUM	0x00400000
++
+ /* Options set by nand scan */
+ /* Nand scan has allocated controller struct */
+ #define NAND_CONTROLLER_ALLOC	0x80000000
+-- 
+2.17.1
