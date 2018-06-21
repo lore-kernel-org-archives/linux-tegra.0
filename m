@@ -1,92 +1,81 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 7/8] arm64: tegra: Add nodes for tcu on Tegra194
-Date: Thu, 21 Jun 2018 10:48:33 +0100
-Message-ID: <eb514b19-001b-0783-def5-101a03ab5a6c@nvidia.com>
-References: <20180620122042.10950-1-mperttunen@nvidia.com>
- <20180620122042.10950-8-mperttunen@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: Fix comparison operator for buffer size
+Date: Thu, 21 Jun 2018 15:36:02 +0200
+Message-ID: <20180621133602.GA8599@ulmo>
+References: <20180620130358.26247-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180620122042.10950-8-mperttunen@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>, robh+dt@kernel.org, mark.rutland@arm.com, jassisinghbrar@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com
-Cc: devicetree@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0598096889=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180620130358.26247-1-mperttunen@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, digetx@gmail.com, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 20/06/18 13:20, Mikko Perttunen wrote:
-> Add nodes required for communication through the Tegra Combined UART.
-> This includes the AON HSP instance, addition of shared interrupts
-> for the TOP0 HSP instance, and finally the TCU node itself. Also
-> mark the HSP instances as compatible to tegra194-hsp, as the hardware
-> is not identical but is compatible to tegra186-hsp.
-> 
+--===============0598096889==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Content-Disposition: inline
+
+
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jun 20, 2018 at 04:03:58PM +0300, Mikko Perttunen wrote:
+> Here we are checking for the buffer length, not an offset for writing
+> to, so using > is correct. The current code incorrectly rejects a
+> command buffer ending at the memory buffer's end.
+>=20
 > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 34 +++++++++++++++++++++++++++++---
->  1 file changed, 31 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> index 6d699815a84f..d7f780b06fe2 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -217,10 +217,31 @@
->  		};
->  
->  		hsp_top0: hsp@3c00000 {
-> -			compatible = "nvidia,tegra186-hsp";
-> +			compatible = "nvidia,tegra194-hsp", "nvidia,tegra186-hsp";
->  			reg = <0x03c00000 0xa0000>;
-> -			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-> -			interrupt-names = "doorbell";
-> +			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "doorbell", "shared0", "shared1", "shared2",
-> +			                  "shared3", "shared4", "shared5", "shared6",
-> +			                  "shared7";
-> +			#mbox-cells = <2>;
-> +		};
-> +
-> +		hsp_aon: hsp@c150000 {
-> +			compatible = "nvidia,tegra194-hsp", "nvidia,tegra186-hsp";
-> +			reg = <0x0c150000 0xa0000>;
-> +			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "shared0", "shared1", "shared2", "shared3";
->  			#mbox-cells = <2>;
->  		};
->  
-> @@ -382,6 +403,13 @@
->  		};
->  	};
->  
-> +	tcu: tcu {
-> +		compatible = "nvidia,tegra194-tcu";
-> +		mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_SM 0>,
-> +		         <&hsp_aon TEGRA_HSP_MBOX_TYPE_SM 1>;
-> +		mbox-names = "rx", "tx";
-> +	};
-> +
->  	timer {
->  		compatible = "arm,armv8-timer";
->  		interrupts = <GIC_PPI 13
-> 
+>  drivers/gpu/drm/tegra/drm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Applied, thanks.
 
-Cheers
-Jon
+Thierry
 
--- 
-nvpublic
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsrqcAACgkQ3SOs138+
+s6FGRw//a60PS+deKv3zD2iwPOJF+RpnVChcZi1dOy+WmmY+2tia4HPxHFMe+FVT
+woSjkK4oTXm6pqYbEHhAOu2Mje6kWQAaJEAJEui0bZzUrtKLf6s4HPawI1uqcnMw
+UkIJoZAmfBafGom7mRgFPfXTjXaa91mit4UxhXlm8YQ6TlOWs3xLnat3yFWmJudP
+Miu5GGjRFf/IkVQS+6KjVGVHgt90wiGBqpR+uzBLKwEFRB4+flTk0xaIeMFKpf+F
+Z7C63qBtQYkpQFPrRURQuJvMOb/K71NElWK4fe7ZIQYjgRtPRJI4Kw4JbvtvQzJB
+ZPdobHxVTsujnMZvoWA0AJ2Bg+tXbdjkxDcsVbA7Kqei6bxYEjeprksmGP9LT799
+4Nt8trFE7XjqJbZzAPGbD8ekF+WghtzwnmPY+mfheBocw363Vgn344lRfHnYq+7L
+xSGn1QB/Nic967lhhARlajP5iGWT61LCi67OywI6AOuYqyTNo9U/e3zAMauV074Q
+ci+ajaPHWMJj1/qEuxFLHcNbIMpNc9QQHOYj4dSSyV9/wnmmeWAfJuU2Yzt6IQdD
+Bsyl92HCyWgwKApTTGnLundr5JQstA9r+0uPqhnNoxAi8bygdWf4xk5LpsBNbiNo
+gXe8uQCl0lmYhpp+gQFDYK9gL59CSW6s2LqP7Ck+NdY1bDMxyoo=
+=NNBT
+-----END PGP SIGNATURE-----
+
+--tKW2IUtsqtDRztdT--
+
+--===============0598096889==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0598096889==--
