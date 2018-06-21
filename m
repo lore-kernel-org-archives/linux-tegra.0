@@ -1,7 +1,7 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v6 1/6] mtd: rawnand: add Reed-Solomon error correction algorithm
-Date: Thu, 21 Jun 2018 22:31:40 +0200
-Message-ID: <20180621203145.7628-2-stefan@agner.ch>
+Subject: [PATCH v6 6/6] ARM: dts: tegra: enable NAND flash on Colibri T20
+Date: Thu, 21 Jun 2018 22:31:45 +0200
+Message-ID: <20180621203145.7628-7-stefan@agner.ch>
 References: <20180621203145.7628-1-stefan@agner.ch>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180621203145.7628-1-stefan@agner.ch>
@@ -10,53 +10,40 @@ To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.co
 Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
+This enables the on-module ONFI conformant NAND flash.
 
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/mtd/nand.txt | 2 +-
- drivers/mtd/nand/raw/nand_base.c               | 1 +
- include/linux/mtd/rawnand.h                    | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
-index 8bb11d809429d..eaef8c657aa5c 100644
---- a/Documentation/devicetree/bindings/mtd/nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/nand.txt
-@@ -25,7 +25,7 @@ Optional NAND chip properties:
- 		  Deprecated values:
- 		  "soft_bch": use "soft" and nand-ecc-algo instead
- - nand-ecc-algo: string, algorithm of NAND ECC.
--		 Supported values are: "hamming", "bch".
-+		 Valid values are: "hamming", "bch", "rs".
- - nand-bus-width : 8 or 16 bus width if not present 8
- - nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 5c202b3e3bb1d..0c283fb772148 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -462,6 +462,22 @@
+ 		};
+ 	};
  
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 10c4f9919850c..47e9cb9063da4 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5777,6 +5777,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
- static const char * const nand_ecc_algos[] = {
- 	[NAND_ECC_HAMMING]	= "hamming",
- 	[NAND_ECC_BCH]		= "bch",
-+	[NAND_ECC_RS]		= "rs",
- };
- 
- static int of_get_nand_ecc_algo(struct device_node *np)
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 3e8ec3b8a39c7..2d9cb7acbc3d8 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -121,6 +121,7 @@ enum nand_ecc_algo {
- 	NAND_ECC_UNKNOWN,
- 	NAND_ECC_HAMMING,
- 	NAND_ECC_BCH,
-+	NAND_ECC_RS,
- };
- 
- /*
++	nand-controller@70008000 {
++		status = "okay";
++
++		nand@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			nand-bus-width = <8>;
++			nand-on-flash-bbt;
++			nand-ecc-algo = "bch";
++			nand-is-boot-medium;
++			nand-ecc-maximize;
++			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
++		};
++	};
++
+ 	usb@c5004000 {
+ 		status = "okay";
+ 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
 -- 
 2.17.1
