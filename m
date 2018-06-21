@@ -1,92 +1,65 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v6 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
-Date: Thu, 21 Jun 2018 22:31:39 +0200
-Message-ID: <20180621203145.7628-1-stefan@agner.ch>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v6 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Fri, 22 Jun 2018 00:01:28 +0200
+Message-ID: <20180622000128.3ea45ef7@bbrezillon>
+References: <20180621203145.7628-1-stefan@agner.ch>
+        <20180621203145.7628-5-stefan@agner.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180621203145.7628-5-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
-Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+To: Stefan Agner <stefan@agner.ch>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This sixth revision only removes extra OOB byte support when using
-HW ECC. The previous implementation did place the ECC bytes at a
-different location depending on whether extra OOB bytes were written.
-This does not work well with the MTD subsystem. Since UBI/UBIFS does
-not require extra OOB bytes I descided to not provide extra OOB
-support for now.
+Hi Stefan,
 
---
-Stefan
+On Thu, 21 Jun 2018 22:31:43 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
-Changes since v1:
-- Split controller and NAND chip structure
-- Add BCH support
-- Allow to select algorithm and strength using device tree
-- Improve HW ECC error reporting and use DEC_STATUS_BUF only
-- Use SPDX license identifier
-- Use per algorithm mtd_ooblayout_ops
-- Use setup_data_interface callback for NAND timing configuration
+> Add support for the NAND flash controller found on NVIDIA
+> Tegra 2 SoCs. This implementation does not make use of the
+> command queue feature. Regular operations using ->exec_op()
+> use PIO mode for data transfers. Raw, ECC and OOB read/writes
+> make use of the DMA mode for data transfer.
+> 
+> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  MAINTAINERS                       |    7 +
+>  drivers/mtd/nand/raw/Kconfig      |    6 +
+>  drivers/mtd/nand/raw/Makefile     |    1 +
+>  drivers/mtd/nand/raw/tegra_nand.c | 1225 +++++++++++++++++++++++++++++
+>  4 files changed, 1239 insertions(+)
+>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
 
-Changes since v2:
-- Set clock rate using assigned-clocks
-- Use BIT() macro
-- Fix and improve timing calculation
-- Improve ECC error handling
-- Store OOB layout for tag area in Tegra chip structure
-- Update/fix bindings
-- Use more specific variable names (replace "value")
-- Introduce nand-is-boot-medium
-- Choose sensible ECC strenght automatically
-- Use wait_for_completion_timeout
-- Print register dump on completion timeout
-- Unify tegra_nand_(read|write)_page in tegra_nand_page_xfer
+I think we're almost good. No big issues spotted in this version.
+Can you fix the CHECKs/WARNINGs reported by checkpatch --strict (most
+of them are valid)?
 
-Changes since v3:
-- Implement tegra_nand_(read|write)_raw using DMA
-- Implement tegra_nand_(read|write)_oob using DMA
-- Name registers according to Tegra 2 Technical Reference Manual (v02p)
-- Use wait_for_completion_io_timeout to account for IO
-- Get chip select id from device tree reg property
-- Clear interrupts and reinit wait queues in case command/DMA times out
-- Set default MTD name after nand_set_flash_node
-- Move MODULE_DEVICE_TABLE after declaration of tegra_nand_of_match
-- Make (rs|bch)_strength static
+> +
+> +static int tegra_nand_remove(struct platform_device *pdev)
+> +{
+> +	struct tegra_nand_controller *ctrl = platform_get_drvdata(pdev);
+> +
+> +	nand_release(nand_to_mtd(ctrl->chip));
 
-Changes since v4:
-- Pass OOB area to nand_check_erased_ecc_chunk
-- Pass algorithm specific bits_per_step to tegra_nand_get_strength
-- Store ECC layout in chip structure
-- Fix pointer assignment (use NULL)
-- Removed obsolete header delay.h
-- Fixed newlines
-- Use non-_io variant of wait_for_completion_timeout
+Use mtd_device_unregister() + nand_cleanup() instead of nand_release().
+nand_release() is broken in that it does not check the return code of
+mtd_device_unregister() before calling nand_cleanup(), and does not
+propagate mtd_device_unregister() ret code to its caller. 
 
-Changes since v5:
-- Drop extra OOB bytes support
+> +
+> +	clk_disable_unprepare(ctrl->clk);
+> +
+> +	return 0;
+> +}
 
-Lucas Stach (1):
-  ARM: dts: tegra: add Tegra20 NAND flash controller node
+Thanks for the great work you've done! Yay, another driver implementing
+->exec_op()!
 
-Stefan Agner (5):
-  mtd: rawnand: add Reed-Solomon error correction algorithm
-  mtd: rawnand: add an option to specify NAND chip as a boot device
-  mtd: rawnand: tegra: add devicetree binding
-  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
-  ARM: dts: tegra: enable NAND flash on Colibri T20
-
- .../devicetree/bindings/mtd/nand.txt          |    6 +-
- .../bindings/mtd/nvidia-tegra20-nand.txt      |   64 +
- MAINTAINERS                                   |    7 +
- arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   16 +
- arch/arm/boot/dts/tegra20.dtsi                |   15 +
- drivers/mtd/nand/raw/Kconfig                  |    6 +
- drivers/mtd/nand/raw/Makefile                 |    1 +
- drivers/mtd/nand/raw/nand_base.c              |    4 +
- drivers/mtd/nand/raw/tegra_nand.c             | 1225 +++++++++++++++++
- include/linux/mtd/rawnand.h                   |    7 +
- 10 files changed, 1350 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
- create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
-
--- 
-2.17.1
+Boris
