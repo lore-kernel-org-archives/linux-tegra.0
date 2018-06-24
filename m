@@ -1,79 +1,92 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v7 1/6] mtd: rawnand: add Reed-Solomon error correction
- algorithm
-Date: Sun, 24 Jun 2018 21:22:25 +0200
-Message-ID: <20180624192230.4674-2-stefan@agner.ch>
-References: <20180624192230.4674-1-stefan@agner.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
-In-Reply-To: <20180624192230.4674-1-stefan@agner.ch>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+Subject: [PATCH v7 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
+Date: Sun, 24 Jun 2018 21:22:24 +0200
+Message-ID: <20180624192230.4674-1-stefan@agner.ch>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
-Cc: benjamin.lindqvist@endian.se, Stefan Agner <stefan@agner.ch>, pgaikwad@nvidia.com, dev@lynxeye.de, mirza.krak@gmail.com, richard@nod.at, pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org, krzk@kernel.org, jonathanh@nvidia.com, devicetree@vger.kernel.org, linux-mtd@lists.infradead.org, marcel@ziswiler.com, miquel.raynal@bootlin.com, linux-tegra@vger.kernel.org, digetx@gmail.com, gaireg@gaireg.de
+Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
+Seventh revision fixes some checkpatch shortcomings. The remaning
+issues reported are either not applicable or on purpose, fixing
+them would hurt readability.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/mtd/nand.txt | 2 +-
- drivers/mtd/nand/raw/nand_base.c               | 1 +
- include/linux/mtd/rawnand.h                    | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+--
+Stefan
 
-diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
-index 8bb11d809429d..eaef8c657aa5c 100644
---- a/Documentation/devicetree/bindings/mtd/nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/nand.txt
-@@ -25,7 +25,7 @@ Optional NAND chip properties:
- 		  Deprecated values:
- 		  "soft_bch": use "soft" and nand-ecc-algo instead
- - nand-ecc-algo: string, algorithm of NAND ECC.
--		 Supported values are: "hamming", "bch".
-+		 Valid values are: "hamming", "bch", "rs".
- - nand-bus-width : 8 or 16 bus width if not present 8
- - nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
- 
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 10c4f9919850c..47e9cb9063da4 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5777,6 +5777,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
- static const char * const nand_ecc_algos[] = {
- 	[NAND_ECC_HAMMING]	= "hamming",
- 	[NAND_ECC_BCH]		= "bch",
-+	[NAND_ECC_RS]		= "rs",
- };
- 
- static int of_get_nand_ecc_algo(struct device_node *np)
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 3e8ec3b8a39c7..2d9cb7acbc3d8 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -121,6 +121,7 @@ enum nand_ecc_algo {
- 	NAND_ECC_UNKNOWN,
- 	NAND_ECC_HAMMING,
- 	NAND_ECC_BCH,
-+	NAND_ECC_RS,
- };
- 
- /*
+Changes since v1:
+- Split controller and NAND chip structure
+- Add BCH support
+- Allow to select algorithm and strength using device tree
+- Improve HW ECC error reporting and use DEC_STATUS_BUF only
+- Use SPDX license identifier
+- Use per algorithm mtd_ooblayout_ops
+- Use setup_data_interface callback for NAND timing configuration
+
+Changes since v2:
+- Set clock rate using assigned-clocks
+- Use BIT() macro
+- Fix and improve timing calculation
+- Improve ECC error handling
+- Store OOB layout for tag area in Tegra chip structure
+- Update/fix bindings
+- Use more specific variable names (replace "value")
+- Introduce nand-is-boot-medium
+- Choose sensible ECC strenght automatically
+- Use wait_for_completion_timeout
+- Print register dump on completion timeout
+- Unify tegra_nand_(read|write)_page in tegra_nand_page_xfer
+
+Changes since v3:
+- Implement tegra_nand_(read|write)_raw using DMA
+- Implement tegra_nand_(read|write)_oob using DMA
+- Name registers according to Tegra 2 Technical Reference Manual (v02p)
+- Use wait_for_completion_io_timeout to account for IO
+- Get chip select id from device tree reg property
+- Clear interrupts and reinit wait queues in case command/DMA times out
+- Set default MTD name after nand_set_flash_node
+- Move MODULE_DEVICE_TABLE after declaration of tegra_nand_of_match
+- Make (rs|bch)_strength static
+
+Changes since v4:
+- Pass OOB area to nand_check_erased_ecc_chunk
+- Pass algorithm specific bits_per_step to tegra_nand_get_strength
+- Store ECC layout in chip structure
+- Fix pointer assignment (use NULL)
+- Removed obsolete header delay.h
+- Fixed newlines
+- Use non-_io variant of wait_for_completion_timeout
+
+Changes since v5:
+- Drop extra OOB bytes support
+
+Changes since v6:
+- checkpatch.pl fixes
+
+Lucas Stach (1):
+  ARM: dts: tegra: add Tegra20 NAND flash controller node
+
+Stefan Agner (5):
+  mtd: rawnand: add Reed-Solomon error correction algorithm
+  mtd: rawnand: add an option to specify NAND chip as a boot device
+  mtd: rawnand: tegra: add devicetree binding
+  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
+  ARM: dts: tegra: enable NAND flash on Colibri T20
+
+ .../devicetree/bindings/mtd/nand.txt          |    6 +-
+ .../bindings/mtd/nvidia-tegra20-nand.txt      |   64 +
+ MAINTAINERS                                   |    7 +
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   16 +
+ arch/arm/boot/dts/tegra20.dtsi                |   15 +
+ drivers/mtd/nand/raw/Kconfig                  |   10 +
+ drivers/mtd/nand/raw/Makefile                 |    1 +
+ drivers/mtd/nand/raw/nand_base.c              |    4 +
+ drivers/mtd/nand/raw/tegra_nand.c             | 1223 +++++++++++++++++
+ include/linux/mtd/rawnand.h                   |    7 +
+ 10 files changed, 1352 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+ create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+
 -- 
 2.17.1
-
-
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
