@@ -1,49 +1,42 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v8 6/6] ARM: dts: tegra: enable NAND flash on Colibri T20
-Date: Sun, 24 Jun 2018 23:27:27 +0200
-Message-ID: <20180624212727.21672-7-stefan@agner.ch>
-References: <20180624212727.21672-1-stefan@agner.ch>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH] usb: chipidea: tegra: Use aligned DMA on Tegra114/124
+Date: Mon, 25 Jun 2018 09:58:43 +0200
+Message-ID: <20180625075843.31878-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180624212727.21672-1-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
-Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+To: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: Peter Chen <Peter.Chen@nxp.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This enables the on-module ONFI conformant NAND flash.
+USB Ethernet gadget now works on Tegra114 and Tegra124.
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Similar to commit 061e20e9899e ("usb: chipidea: tegra: Use aligned DMA
+on Tegra30").
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
 ---
- arch/arm/boot/dts/tegra20-colibri-512.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-index 5c202b3e3bb1d..0c283fb772148 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-@@ -462,6 +462,22 @@
- 		};
- 	};
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+index 7f4d2b6af37a..772851bee99b 100644
+--- a/drivers/usb/chipidea/ci_hdrc_tegra.c
++++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+@@ -33,11 +33,11 @@ static const struct tegra_udc_soc_info tegra30_udc_soc_info = {
+ };
  
-+	nand-controller@70008000 {
-+		status = "okay";
-+
-+		nand@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			nand-bus-width = <8>;
-+			nand-on-flash-bbt;
-+			nand-ecc-algo = "bch";
-+			nand-is-boot-medium;
-+			nand-ecc-maximize;
-+			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
- 	usb@c5004000 {
- 		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+ static const struct tegra_udc_soc_info tegra114_udc_soc_info = {
+-	.flags = 0,
++	.flags = CI_HDRC_REQUIRES_ALIGNED_DMA,
+ };
+ 
+ static const struct tegra_udc_soc_info tegra124_udc_soc_info = {
+-	.flags = 0,
++	.flags = CI_HDRC_REQUIRES_ALIGNED_DMA,
+ };
+ 
+ static const struct of_device_id tegra_udc_of_match[] = {
 -- 
-2.17.1
+2.14.4
