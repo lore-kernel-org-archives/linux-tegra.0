@@ -1,32 +1,32 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v8 2/6] mtd: rawnand: add an option to specify NAND chip
- as a boot device
-Date: Mon, 25 Jun 2018 08:47:52 -0600
-Message-ID: <20180625144752.GA19064@rob-hp-laptop>
-References: <20180624212727.21672-1-stefan@agner.ch>
- <20180624212727.21672-3-stefan@agner.ch>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/8] time: Add persistent clock support
+Date: Mon, 25 Jun 2018 18:18:47 +0200 (CEST)
+Message-ID: <alpine.DEB.2.21.1806251815320.1821@nanos.tec.linutronix.de>
+References: <cover.1528878545.git.baolin.wang@linaro.org> <d330f02c8ef2a348b179850e1745a52ab9c47e90.1528878545.git.baolin.wang@linaro.org> <alpine.DEB.2.21.1806232224510.8650@nanos.tec.linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180624212727.21672-3-stefan@agner.ch>
+In-Reply-To: <alpine.DEB.2.21.1806232224510.8650@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: john.stultz@linaro.org, daniel.lezcano@linaro.org, arnd@arndb.de, tony@atomide.com, aaro.koskinen@iki.fi, linux@armlinux.org.uk, mark.rutland@arm.com, marc.zyngier@arm.com, broonie@kernel.org, paulmck@linux.vnet.ibm.com, mlichvar@redhat.com, rdunlap@infradead.org, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, pombredanne@nexb.com, thierry.reding@gmail.com, jonathanh@nvidia.com, heiko@sntech.de, linus.walleij@linaro.org, viresh.kumar@linaro.org, mingo@kernel.org, hpa@zytor.com, peterz@infradead.org, douly.fnst@cn.fujitsu.com, len.brown@intel.com, rajvi.jingar@intel.com, alexandre.belloni@bootlin.com, x86@kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Jun 24, 2018 at 11:27:23PM +0200, Stefan Agner wrote:
-> Allow to define a NAND chip as a boot device. This can be helpful
-> for the selection of the ECC algorithm and strength in case the boot
-> ROM supports only a subset of controller provided options.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
+On Sun, 24 Jun 2018, Thomas Gleixner wrote:
+> The clocksource core already has all the registration/unregistration
+> functionality plus an interface to reconfigure the frequency, so
+> clocksources can come and go and be reconfigured and all of this just
+> works.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Just for completeness sake.
 
->  drivers/mtd/nand/raw/nand_base.c               | 3 +++
->  include/linux/mtd/rawnand.h                    | 6 ++++++
->  3 files changed, 13 insertions(+)
+If this extra suspend clocksource is not needed, i.e. because the system is
+not suspended, then it does not need to be enabled. clocksources already
+have an enable/disable callback exactly for that purpose. So instead of
+having the clocks running during normal system operation the thing can be
+OFF and save power and only be switched to ON when it is actually needed,
+i.e. when going into suspend.
+
+Thanks,
+
+	tglx
