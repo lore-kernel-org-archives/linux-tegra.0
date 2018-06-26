@@ -1,51 +1,41 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH][next] mtd: rawnand: fix a couple of spelling mistakes
-Date: Tue, 26 Jun 2018 12:35:24 +0200
-Message-ID: <93be5d64cc447fb282bcc14fed853f0c@agner.ch>
-References: <20180626102629.31083-1-colin.king@canonical.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
+Date: Tue, 26 Jun 2018 14:19:44 -0600
+Message-ID: <20180626201944.GA24678@rob-hp-laptop>
+References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180626102629.31083-1-colin.king@canonical.com>
+Content-Disposition: inline
+In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Lucas Stach <dev@lynxeye.de>, Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, David S. Mill
 List-Id: linux-tegra@vger.kernel.org
 
-On 26.06.2018 12:26, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neuschäfer wrote:
+> Multiple binding documents have various forms of unbalanced quotation
+> marks. Fix them.
 > 
-> Trival fix of two spelling mistakes in dev_err error messages:
-> "supportes" -> "supports" and "strenght" -> "strength"
-
-Acked-by: Stefan Agner <stefan@agner.ch>
-
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 > ---
->  drivers/mtd/nand/raw/tegra_nand.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/mtd/nand/raw/tegra_nand.c
-> b/drivers/mtd/nand/raw/tegra_nand.c
-> index 4daa88d81413..9f7de36be893 100644
-> --- a/drivers/mtd/nand/raw/tegra_nand.c
-> +++ b/drivers/mtd/nand/raw/tegra_nand.c
-> @@ -1002,14 +1002,14 @@ static int tegra_nand_chips_init(struct device *dev,
->  	}
->  
->  	if (chip->ecc.algo == NAND_ECC_BCH && mtd->writesize < 2048) {
-> -		dev_err(dev, "BCH supportes 2K or 4K page size only\n");
-> +		dev_err(dev, "BCH supports 2K or 4K page size only\n");
->  		return -EINVAL;
->  	}
->  
->  	if (!chip->ecc.strength) {
->  		ret = tegra_nand_select_strength(chip, mtd->oobsize);
->  		if (ret < 0) {
-> -			dev_err(dev, "No valid strenght found, minimum %d\n",
-> +			dev_err(dev, "No valid strength found, minimum %d\n",
->  				chip->ecc_strength_ds);
->  			return ret;
->  		}
+> Should I split this patch so that different parts can go through different trees?
+
+No, I applied it. Thanks.
+
+> ---
+>  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
+>  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
+>  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
+>  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
+>  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
+>  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
+>  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
+>  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
+>  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
+>  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
+>  12 files changed, 12 insertions(+), 12 deletions(-)
