@@ -1,41 +1,41 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Tue, 26 Jun 2018 14:19:44 -0600
-Message-ID: <20180626201944.GA24678@rob-hp-laptop>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Subject: Re: [PATCH v2 9/9] PM / Domains: Add dev_pm_domain_attach_by_id() to
+ manage multi PM domains
+Date: Wed, 27 Jun 2018 14:25:07 +0530
+Message-ID: <ebec2f66-d28d-7b94-3cef-be980617cd6f@codeaurora.org>
+References: <20180529100421.31022-1-ulf.hansson@linaro.org>
+ <20180529100421.31022-10-ulf.hansson@linaro.org>
+ <cc6f36ce-32b7-4b69-f9a9-98cf0b12a9d1@nvidia.com>
+ <CAPDyKFoiEctBuyw1nVS6ruQ92-jOsMMSAUsWKew42dkmk64_8A@mail.gmail.com>
+ <f214cf2b-49ee-2f7c-babd-1cee7dcae927@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+In-Reply-To: <f214cf2b-49ee-2f7c-babd-1cee7dcae927@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, David S. Mill
+To: Jon Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Todor Tomov <todor.tomov@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neuschäfer wrote:
-> Multiple binding documents have various forms of unbalanced quotation
-> marks. Fix them.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
-> 
-> Should I split this patch so that different parts can go through different trees?
 
-No, I applied it. Thanks.
 
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
->  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
->  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
->  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
->  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
->  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
->  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
->  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
->  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
->  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
+On 05/30/2018 08:00 PM, Jon Hunter wrote:
+>>> My only other comments on this series are ...
+>>>
+>>> 1. I think it would be nice to have an dev_pm_domain_attach_by_name() and
+>>>    that the DT binding has a 'power-domain-names' property.
+>> I think it makes sense, but my plan was to do that as second step on
+>> top. Are you okay with that as well?
+> Yes that is fine with me.
+
+Ulf, do you have a patch for this? I am working on moving some of qcom
+remoteproc drivers to use this series and it will help to have a
+dev_pm_domain_attach_by_name() api.
+
+Thanks,
+Rajendra
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
