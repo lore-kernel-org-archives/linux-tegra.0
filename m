@@ -1,16 +1,14 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH 2/2] arm64: tegra: Add CPU nodes to Tegra194 device tree
-Date: Thu, 28 Jun 2018 08:57:23 +0300
-Message-ID: <4eacd53a-b128-241f-8284-14e315451c8e@kapsi.fi>
-References: <20180620122827.14165-1-mperttunen@nvidia.com>
- <20180620122827.14165-2-mperttunen@nvidia.com>
- <20180627165730.GA15867@rob-hp-laptop>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/5] dt-bindings: tegra186-gpio: Add information for
+ Tegra194
+Date: Fri, 29 Jun 2018 10:09:21 +0200
+Message-ID: <CACRpkdaa+Si0iZMpGEFFz6UyRotckdD5YRBPAsFxPkFsibWOkw@mail.gmail.com>
+References: <20180620125406.11906-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180627165730.GA15867@rob-hp-laptop>
-Content-Language: en-US
+In-Reply-To: <20180620125406.11906-1-mperttunen@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,49 +18,18 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, jonathanh@nvidia.com, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, vbhadram@nvidia.com, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 27.06.2018 19:57, Rob Herring wrote:
-> On Wed, Jun 20, 2018 at 03:28:27PM +0300, Mikko Perttunen wrote:
->> Add CPU and PSCI nodes to device tree. The Tegra194 SoC contains
->> eight NVIDIA Carmel CPUs.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 40 +++++++++++++++++++
->>   arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 53 ++++++++++++++++++++++++++
->>   2 files changed, 93 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
->> index ecb034177fc2..859ab5af17c1 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
->> @@ -229,6 +229,46 @@
->>   		};
->>   	};
->>   
->> +	cpus {
->> +		cpu@0 {
->> +			enable-method = "psci";
->> +		};
-> 
-> Kind of strange to have this separated out. I guess you have non-PSCI
-> firmware too? In any case, unless things have changed, upstream is only
-> supporting spin-table or PSCI for arm64. So please combine this with the
-> rest of the cpu nodes.
+On Wed, Jun 20, 2018 at 2:54 PM Mikko Perttunen <mperttunen@nvidia.com> wrote:
 
-This was copied from older Tegras - we might have had some systems in 
-the past with non-PSCI firmware, but certainly don't have that anymore. 
-I'll combine the nodes.
+> The Tegra194 GPIO controller is similar to the one in Tegra186.
+> Add relevant information to the device tree binding documentation.
+>
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Mikko
+Patch applied with Rob's ACK.
 
-> 
-> Rob
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Yours,
+Linus Walleij
