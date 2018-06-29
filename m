@@ -1,70 +1,49 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 1/3] PM / Domains: dt: Add a power-domain-names property
-Date: Fri, 29 Jun 2018 13:07:26 +0200
-Message-ID: <CAPDyKFpM51t13xtNT54d-9_n-0P=HuzV=TOy+r073NymM+=YhA@mail.gmail.com>
-References: <20180629110432.5179-1-ulf.hansson@linaro.org>
- <20180629110432.5179-2-ulf.hansson@linaro.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH] clk: tegra: bpmp: Don't crash when a clock fails to register
+Date: Fri, 29 Jun 2018 17:38:14 +0300
+Message-ID: <20180629143814.17950-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180629110432.5179-2-ulf.hansson@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux PM <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Jon Hunter <jonathanh@nvidia.com>, Todor Tomov <todor.tomov@linaro.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-tegra@vger.kernel.org, Lucas Stach <dev@lynxeye.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: pdeschrijver@nvidia.com, mturquette@baylibre.com, sboyd@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@nvidia.com, vbhadram@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-+devicetree list, Rob
+When registering clocks, we just skip any that fail to register
+(leaving a NULL hole in the clock table). However, our of_xlate
+function still tries to dereference each entry while looking for
+the clock with the requested id, causing a crash if any clocks
+failed to register. Add a check to of_xlate to skip any NULL
+clocks.
 
-On 29 June 2018 at 13:04, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> Let's add a power-domain-names property, to allow consumer drivers to match
-> the power-domains specifiers via a list of power domain names. This follows
-> the same concept as for other similar DT bindings.
->
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  Documentation/devicetree/bindings/power/power_domain.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
-> index 9b387f861aed..4d6bc8829468 100644
-> --- a/Documentation/devicetree/bindings/power/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/power/power_domain.txt
-> @@ -114,18 +114,26 @@ Required properties:
->   - power-domains : A list of PM domain specifiers, as defined by bindings of
->                 the power controller that is the PM domain provider.
->
-> +Optional properties:
-> + - power-domain-names : A list of power domain name strings sorted in the same
-> +               order as the power-domains property. Consumers drivers will use
-> +               power-domain-names to match power domains with power-domains
-> +               specifiers.
-> +
->  Example:
->
->         leaky-device@12350000 {
->                 compatible = "foo,i-leak-current";
->                 reg = <0x12350000 0x1000>;
->                 power-domains = <&power 0>;
-> +               power-domain-names = "io";
->         };
->
->         leaky-device@12351000 {
->                 compatible = "foo,i-leak-current";
->                 reg = <0x12351000 0x1000>;
->                 power-domains = <&power 0>, <&power 1> ;
-> +               power-domain-names = "io", "clk";
->         };
->
->  The first example above defines a typical PM domain consumer device, which is
-> --
-> 2.17.1
->
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/clk/tegra/clk-bpmp.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index a896692b74ec..01dada561c10 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -586,9 +586,15 @@ static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *clkspec,
+ 	unsigned int id = clkspec->args[0], i;
+ 	struct tegra_bpmp *bpmp = data;
+ 
+-	for (i = 0; i < bpmp->num_clocks; i++)
+-		if (bpmp->clocks[i]->id == id)
+-			return &bpmp->clocks[i]->hw;
++	for (i = 0; i < bpmp->num_clocks; i++) {
++		struct tegra_bpmp_clk *clk = bpmp->clocks[i];
++
++		if (!clk)
++			continue;
++
++		if (clk->id == id)
++			return &clk->hw;
++	}
+ 
+ 	return NULL;
+ }
+-- 
+2.16.1
