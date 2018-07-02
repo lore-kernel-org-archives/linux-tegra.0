@@ -1,104 +1,82 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 6/8] serial: Add Tegra Combined UART driver
-Date: Mon, 2 Jul 2018 15:47:31 +0200
-Message-ID: <20180702134731.GI13096@ulmo>
-References: <20180702114033.15654-1-mperttunen@nvidia.com>
- <20180702114033.15654-7-mperttunen@nvidia.com>
- <20180702131851.GH13096@ulmo>
- <50c4702b-3d59-e443-5075-c888f83a2615@kapsi.fi>
+Subject: Re: [PATCH 3/5] arm64: tegra: Add GPIO controller on Tegra194
+Date: Mon, 2 Jul 2018 15:56:35 +0200
+Message-ID: <20180702135635.GJ13096@ulmo>
+References: <20180620125406.11906-1-mperttunen@nvidia.com>
+ <20180620125406.11906-3-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CD/aTaZybdUisKIc"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <50c4702b-3d59-e443-5075-c888f83a2615@kapsi.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, devicetree@vger.kernel.org, gregkh@linuxfoundation.org, jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============7685889824252927107=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180620125406.11906-3-mperttunen@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: mark.rutland@arm.com, vbhadram@nvidia.com, devicetree@vger.kernel.org, linus.walleij@linaro.org, jonathanh@nvidia.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---CD/aTaZybdUisKIc
+--===============7685889824252927107==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9aCKuHbn5v2q3RVc"
+Content-Disposition: inline
+
+
+--9aCKuHbn5v2q3RVc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 02, 2018 at 04:30:07PM +0300, Mikko Perttunen wrote:
-> On 02.07.2018 16:18, Thierry Reding wrote:
-> > On Mon, Jul 02, 2018 at 02:40:31PM +0300, Mikko Perttunen wrote:
-> > > The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
-> > > multiplexing multiple "virtual UARTs" into a single hardware serial
-> > > port. The TCU is the primary serial port on Tegra194 devices.
-> > >=20
-> > > Add a TCU driver utilizing the mailbox framework, as the used mailbox=
-es
-> > > are part of Tegra HSP blocks that are already controlled by the Tegra
-> > > HSP mailbox driver.
-> > >=20
-> > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > > ---
-> > >=20
-> > > Notes:
-> > >      v2:
-> > >      - Removed (void) casts for unused variables.
-> > >      - Changed the uart_set_options() call to be on one line, even if=
- its
-> > >        over 80 characters.
-> > >      - Added defines for magic numbers.
-> > >      - Style fixes.
-> > >      - Changed Kconfig entry to depend on the Tegra HSP driver instea=
-d of
-> > >        just the mailbox framework.
-> > >      v3:
-> > >      - Removed FLUSH bit, as it's unnecessary and slows down printing
-> > >      - Removed call to uart_set_options
-> > >      - Added mbox_free_channel calls to remove()
-> > >=20
-> > >   drivers/tty/serial/Kconfig       |   9 ++
-> > >   drivers/tty/serial/Makefile      |   1 +
-> > >   drivers/tty/serial/tegra-tcu.c   | 291 ++++++++++++++++++++++++++++=
-+++++++++++
-> > >   include/uapi/linux/serial_core.h |   3 +
-> > >   4 files changed, 304 insertions(+)
-> > >   create mode 100644 drivers/tty/serial/tegra-tcu.c
-> >=20
-> > The driver looks good to me. But for my own understanding, is there some
-> > way we can make use of the multiplexing? That is, could we add a
-> > mechanism to have the driver filter out only a specific stream? Could we
-> > also specify which stream to send data back to? What happens by default?
-> > Which stream is data sent to?
+On Wed, Jun 20, 2018 at 03:54:04PM +0300, Mikko Perttunen wrote:
+> Add the device tree node for the GPIO controller on Tegra194.
 >=20
-> There is no multiplexing on the producer/device side (i.e. what this driv=
-er
-> does). The mailbox specified in device tree specifies the stream we send
-> stuff to. The mailboxes are per-CPU (we use the CCPLEX mailbox here), so =
-it
-> cannot really be changed.
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 
-Oh, I see, so there is one stream per pair of mailboxes? That is, the
-mailboxes we specify in the DT define which stream we receive from and
-send to?
+Applied, thanks.
 
 Thierry
 
---CD/aTaZybdUisKIc
+--9aCKuHbn5v2q3RVc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6LPEACgkQ3SOs138+
-s6GgoRAAgtnbovyRq903FXdRr2JlpUdtYTe6KCeaqJKUJLW/jeCa3FbHzG6e3j2S
-z4su9htK4XWFVirwoGDnJgcQfgqIyfMpynjD8j+ol9L6q5ZMKGqKdg1+sNG6DwkF
-M5oYhrTJVaSLlw2X6u3EeBCekqHQjwMEKrKAF+dA7HXOxkZ7vgH9k78VbLgO8yyq
-40O7VIuJuLzPicAj74uRYQYBSpX1nyUWIjtoyBxhojFoUvein50Ek1XzEPf/Bgdy
-7CM/x9K3Qh/P+shnJXHbbr8pDOTL0LeeOxmJQ90rRbbb0K8gwNpc+U6ZA0KHHYWt
-+bKholbST16nc23pvv35KImjgHis+tYJ8y0TTtNoRI+l8nNCqGGRHLrmHRnhZHj9
-RKGN2nd0sZf/MtcsciLWsVkI7i85SvxzulWI1Xty4Y4yfKBYOKyC+ix4ul7w3TRJ
-Ztd4BVF22PUTkA9KNATLhlX2YvCjIs1MPI28u2YgY2UqNu135OBT49ggiK7Ys8oo
-PwftqVO/Ipp/fdHYHLB3xckvhY30XsBHZqRnj+4K9yw6K3wNOBv5cqNrAl94+uBL
-Q91dMAos5hVjKg5rEwPdbELYT4f0r53GpC/3BRgPlZzUY9NIqIPIdJfZZX55VCs4
-dLHS7tgo2KhTOlkOYod2x6HjmdID4Xn9kjrcvYvO+OMVXMib0Rg=
-=fZKs
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6LxMACgkQ3SOs138+
+s6HzxA//YP7iSfBXu7Q+ptyR7r+9MckbEkoGW3QGZWfLwFzhu9r6nQOgL3VmrInY
+l8VFwomrdRM8cijwCF4RSVIPTAhDYaTvibrvjwGHJFmXoJS+j3tf0IfEYSBhCynl
+/Xwlxl4iinLi1yGRbTep+0hLyJY6Hn6UThc2aLYQsPwz6q1Qh0xwnhC9Lu5CXZif
+YMNLISkgjYt5eesEIVz8sk2YyotCzWo7Jj7/3KWECtDw24Cef0yS1vaYJ62DWEYz
+SFeWefy+z1rVTQ3alqtTf+zUwsb0hrT5elZD+JRXYhItXX6O1XNiHjuS+1Tp+Y/s
+y0rgFMJsKt34lwrgkaZr9TFeYpE04NQuOxz2TqNRCzg/FK79UDz5IX4/BeQeUnm2
+z3975DpL1FnrZaHRAvBNdKhEMXeDRNR4L4gxpn7fbrSVp53BTWxvLkSj8cMbv+yE
+xfQF4vxcCOCZBLNOlXIyXTAYo9US2PIosFU3NC9LyOOaF2GP1/GXDoffHvAt3Ui3
+30dLeveA2Kc7JTrif0p5iONmc9y3DyX1WZK83YoKbBdOa8wMewQTDQSqiDgQFPot
+18YiCWPmvc3B1SV0iNVgd52e+nZdFubXvL4zivyJDZ/fKjf8vdkK+b5KEqu4RxAe
+AhiU/gJjPbuw/3Eq4J6kNFy9MFLAzU/+LEXas6BF9IKt2CzcGDk=
+=0ZqF
 -----END PGP SIGNATURE-----
 
---CD/aTaZybdUisKIc--
+--9aCKuHbn5v2q3RVc--
+
+
+--===============7685889824252927107==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============7685889824252927107==--
