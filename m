@@ -1,13 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 3/5] arm64: tegra: Add GPIO controller on Tegra194
-Date: Mon, 2 Jul 2018 15:56:35 +0200
-Message-ID: <20180702135635.GJ13096@ulmo>
+Subject: Re: [PATCH 4/5] arm64: tegra: Enable card detect for SD card on P2888
+Date: Mon, 2 Jul 2018 15:56:51 +0200
+Message-ID: <20180702135651.GK13096@ulmo>
 References: <20180620125406.11906-1-mperttunen@nvidia.com>
- <20180620125406.11906-3-mperttunen@nvidia.com>
+ <20180620125406.11906-4-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7685889824252927107=="
+Content-Type: multipart/mixed; boundary="===============8142629256813893886=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180620125406.11906-3-mperttunen@nvidia.com>
+In-Reply-To: <20180620125406.11906-4-mperttunen@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,53 +22,54 @@ Cc: mark.rutland@arm.com, vbhadram@nvidia.com, devicetree@vger.kernel.org, linus
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============7685889824252927107==
+--===============8142629256813893886==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="9aCKuHbn5v2q3RVc"
+	protocol="application/pgp-signature"; boundary="M0YLxmUXciMpOLPE"
 Content-Disposition: inline
 
 
---9aCKuHbn5v2q3RVc
+--M0YLxmUXciMpOLPE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 20, 2018 at 03:54:04PM +0300, Mikko Perttunen wrote:
-> Add the device tree node for the GPIO controller on Tegra194.
+On Wed, Jun 20, 2018 at 03:54:05PM +0300, Mikko Perttunen wrote:
+> Now that we have a GPIO controller, enable the card detect GPIO for
+> the SD card slot.
 >=20
 > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+>  arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 2 --
+>  1 file changed, 2 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---9aCKuHbn5v2q3RVc
+--M0YLxmUXciMpOLPE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6LxMACgkQ3SOs138+
-s6HzxA//YP7iSfBXu7Q+ptyR7r+9MckbEkoGW3QGZWfLwFzhu9r6nQOgL3VmrInY
-l8VFwomrdRM8cijwCF4RSVIPTAhDYaTvibrvjwGHJFmXoJS+j3tf0IfEYSBhCynl
-/Xwlxl4iinLi1yGRbTep+0hLyJY6Hn6UThc2aLYQsPwz6q1Qh0xwnhC9Lu5CXZif
-YMNLISkgjYt5eesEIVz8sk2YyotCzWo7Jj7/3KWECtDw24Cef0yS1vaYJ62DWEYz
-SFeWefy+z1rVTQ3alqtTf+zUwsb0hrT5elZD+JRXYhItXX6O1XNiHjuS+1Tp+Y/s
-y0rgFMJsKt34lwrgkaZr9TFeYpE04NQuOxz2TqNRCzg/FK79UDz5IX4/BeQeUnm2
-z3975DpL1FnrZaHRAvBNdKhEMXeDRNR4L4gxpn7fbrSVp53BTWxvLkSj8cMbv+yE
-xfQF4vxcCOCZBLNOlXIyXTAYo9US2PIosFU3NC9LyOOaF2GP1/GXDoffHvAt3Ui3
-30dLeveA2Kc7JTrif0p5iONmc9y3DyX1WZK83YoKbBdOa8wMewQTDQSqiDgQFPot
-18YiCWPmvc3B1SV0iNVgd52e+nZdFubXvL4zivyJDZ/fKjf8vdkK+b5KEqu4RxAe
-AhiU/gJjPbuw/3Eq4J6kNFy9MFLAzU/+LEXas6BF9IKt2CzcGDk=
-=0ZqF
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6LyMACgkQ3SOs138+
+s6FUOBAAlL/tHs+wse55njWbh66T6971yYYpsySgdbfQelXZrVzvJKUlXw17wWIh
+xKWd2/Z4vMGkct8ENoqskyC5/3d8RrHJvcesUcZfG2MyGFuZx6GrKO6hMqZYF6m6
+jnoaOOxC9rqkZLvnyH6TvdI5KSXJjQeByrhnVpmx05QBwFYeDmMy+gOqdlQ/ecLD
+Fy+c9YCfVmNbQvxEa7tBbqfEFUeQIGoW2Q8lO35+RPwyaGAlGriteq5RHDu1fAXY
+zOhiaObpwQ4sSKMGGCOJLULVkaCO7dIFcVmjVYYA5tFBK6PMCM+WCVQRNrSxh2l9
+oVhUEHrAoi29xvm9uZ977wdhtjcr89Des5a4qLsmVNGcBrKzrp6AAjc03uuinVUK
+VfmhMa6+4AOxiZ0LBLnz5d4DaBce3Z54ZHX2L0PMOOQ1S9Z1CNa0XLqDmsV3GEn1
+4gJ/C4m2aNAvhIJg/A2cQdDUFjh4I/Oh86JB6wyTmxHO2ASewxE48yBbatxjHdcx
+Dhnw905fhjM2/gFdi9ZMKYovVDWwFMdMQGPFd/bVMsZlr1cVR/9m4E13Tq8dcOrc
+a8UJdu/Qbq66uOzct/2sY+3/PibVUyVBuF5dKVLjdIvcUN0sHckDMUiQlX+cE4as
+UsM/hGpLnGrH/PvYa0Jft4soPIVKjGIMZq/18cyhRG8R281VcFU=
+=/j+E
 -----END PGP SIGNATURE-----
 
---9aCKuHbn5v2q3RVc--
+--M0YLxmUXciMpOLPE--
 
 
---===============7685889824252927107==
+--===============8142629256813893886==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -79,4 +80,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============7685889824252927107==--
+--===============8142629256813893886==--
