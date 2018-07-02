@@ -1,80 +1,87 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 5/8] mailbox: tegra-hsp: Add support for shared
- mailboxes
-Date: Mon, 2 Jul 2018 15:13:00 +0200
-Message-ID: <20180702131300.GG13096@ulmo>
-References: <20180702114033.15654-1-mperttunen@nvidia.com>
- <20180702114033.15654-6-mperttunen@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: tegra: Use sdhci_pltfm_clk_get_max_clock
+Date: Mon, 2 Jul 2018 15:16:52 +0200
+Message-ID: <CAPDyKFoip8gFssftJKzVHD9PAk+j=Z1CTo=0uY9cGASzW8VRJg@mail.gmail.com>
+References: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Wtrm9ATX0sn6fFKv"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180702114033.15654-6-mperttunen@nvidia.com>
+In-Reply-To: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: jassisinghbrar@gmail.com, gregkh@linuxfoundation.org, jonathanh@nvidia.com, devicetree@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 4 June 2018 at 17:35, Aapo Vienamo <avienamo@nvidia.com> wrote:
+> The sdhci get_max_clock callback is set to sdhci_pltfm_clk_get_max_clock
+> and tegra_sdhci_get_max_clock is removed. It appears that the
+> shdci-tegra specific callback was originally introduced due to the
+> requirement that the host clock has to be twice the bus clock on DDR50
+> mode. As far as I can tell the only effect the removal has on DDR50 mode
+> is in cases where the parent clock is unable to supply the requested
+> clock rate, causing the DDR50 mode to run at a lower frequency.
+> Currently the DDR50 mode isn't enabled on any of the SoCs and would also
+> require configuring the SDHCI clock divider register to function
+> properly.
+>
+> The problem with tegra_sdhci_get_max_clock is that it divides the clock
+> rate by two and thus artificially limits the maximum frequency of faster
+> signaling modes which don't have the host-bus frequency ratio requirement
+> of DDR50 such as SDR104 and HS200. Furthermore, the call to
+> clk_round_rate() may return an error which isn't handled by
+> tegra_sdhci_get_max_clock.
+>
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 
---Wtrm9ATX0sn6fFKv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, applied for next!
 
-On Mon, Jul 02, 2018 at 02:40:30PM +0300, Mikko Perttunen wrote:
-> The Tegra HSP block supports 'shared mailboxes' that are simple 32-bit
-> registers consisting of a FULL bit in MSB position and 31 bits of data.
-> The hardware can be configured to trigger interrupts when a mailbox
-> is empty or full. Add support for these shared mailboxes to the HSP
-> driver.
->=20
-> The initial use for the mailboxes is the Tegra Combined UART. For this
-> purpose, we use interrupts to receive data, and spinning to wait for
-> the transmit mailbox to be emptied to minimize unnecessary overhead.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Kind regards
+Uffe
+
 > ---
->=20
-> Notes:
->     v3:
->     - Added define HSP_INT0_IE_FULL_SHIFT
->     - Added Jon's Reviewed-by
->    =20
->     v2:
->     - Added defines for some register fields
->     - Simplified bit looping logic in interrupt handler
->     - Changed write done polling to use readl_poll_timeout
->     - Removed unnecessary zero assignments
->     - Fixed two error cases in probe to do proper cleanup
->=20
->  drivers/mailbox/tegra-hsp.c | 211 ++++++++++++++++++++++++++++++++++++++=
-+-----
->  1 file changed, 191 insertions(+), 20 deletions(-)
-
-Looks good to me:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---Wtrm9ATX0sn6fFKv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6JNwACgkQ3SOs138+
-s6GWoRAAjMSzFRnjIqmYTKNAlC3+zWjnHI329p0ETq4v9BEhKuDXsCKv490meKDp
-+OFZOvgs7InvdNKX9sUmFYsiHNx7z0AjfyMhbLq2QqFQLJVxLG+h5I1oYdrhIaZ6
-PIhOlQNEgrr5b7wYnj/2CvVtANCNB/3uw23gkhQVCvvV0V2SI/SFZzp+JvO4JUT6
-KLSvQEGrmialeqaLvDi47nZswcrjh6w28O6YALiJHQWnx66dk3jQFxqS8Ck+4YXk
-ihTUSlkG3Qy5PzZQQ/zFESL/S6bh9dLeUkGeFeigsV5B2sBBrcsffP0Sj2Ox3TIQ
-LpFHSu9yXAsRRlSxWpeLDVox+AaTrzNNf+earyvItB9tAHKDl1mCLLqAuWrkKyye
-AX1hvhLSuT2oXCfvtx/Xiw2XvI19gvXFtuAsMYb1S7fliIcEkuZqruLKT2yeOMLh
-3alEYF1QYnVzh7JwInY16Kq7lJ2bHLBOZ01SFVFCAoyZR/Or/yVapoHaHk6LQMwW
-vuYBZE7zCWw670+3OS7qRdIwhtt4S1qd5MAoodyu3oA8ZV0C052EhkXASEVG+d0r
-QbJCpeNcTfbDnBUnANJ/saLmTe2EAGhmYN4NxR9VKNyH9oKjS9zVr2p42uNvruLq
-z+xo5qXKOavNVYhVA93k4MQfEEASqltcqr90nE9/0KeO0u0rdDM=
-=30K8
------END PGP SIGNATURE-----
-
---Wtrm9ATX0sn6fFKv--
+>  drivers/mmc/host/sdhci-tegra.c | 15 ++-------------
+>  1 file changed, 2 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 970d38f6..c8745b5 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -234,17 +234,6 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+>         sdhci_set_uhs_signaling(host, timing);
+>  }
+>
+> -static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
+> -{
+> -       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> -
+> -       /*
+> -        * DDR modes require the host to run at double the card frequency, so
+> -        * the maximum rate we can support is half of the module input clock.
+> -        */
+> -       return clk_round_rate(pltfm_host->clk, UINT_MAX) / 2;
+> -}
+> -
+>  static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned int tap)
+>  {
+>         u32 reg;
+> @@ -309,7 +298,7 @@ static const struct sdhci_ops tegra_sdhci_ops = {
+>         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+>         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>         .voltage_switch = tegra_sdhci_voltage_switch,
+> -       .get_max_clock = tegra_sdhci_get_max_clock,
+> +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+>  };
+>
+>  static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
+> @@ -357,7 +346,7 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
+>         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+>         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>         .voltage_switch = tegra_sdhci_voltage_switch,
+> -       .get_max_clock = tegra_sdhci_get_max_clock,
+> +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+>  };
+>
+>  static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+> --
+> 2.7.4
+>
