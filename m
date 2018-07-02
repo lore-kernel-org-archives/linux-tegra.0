@@ -1,74 +1,88 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 0/8] Tegra Combined UART driver
-Date: Mon, 2 Jul 2018 16:03:43 +0200
-Message-ID: <20180702140343.GO13096@ulmo>
-References: <20180702114033.15654-1-mperttunen@nvidia.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: arm: Add compatible string for
+ NVIDIA Carmel
+Date: Mon, 2 Jul 2018 15:58:45 +0200
+Message-ID: <20180702135845.GN13096@ulmo>
+References: <20180702121131.13461-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Iys0Un1O+0sigPHU"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180702114033.15654-1-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>, jassisinghbrar@gmail.com, gregkh@linuxfoundation.org
-Cc: jonathanh@nvidia.com, devicetree@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============9203303158492153365=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180702121131.13461-1-mperttunen@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Iys0Un1O+0sigPHU
+--===============9203303158492153365==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ggdAeHltlv4tpqCr"
+Content-Disposition: inline
+
+
+--ggdAeHltlv4tpqCr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 02, 2018 at 02:40:25PM +0300, Mikko Perttunen wrote:
-> Hi, here's v3. Changes are in individual patches. Acks are still
-> missing from the following patches:
+On Mon, Jul 02, 2018 at 03:11:30PM +0300, Mikko Perttunen wrote:
+> Add compatibility string for the Carmel CPU in Tegra194.
 >=20
-> mailbox: Add transmit done by blocking option
-> mailbox: tegra-hsp: Refactor in preparation of mailboxes
-> mailbox: tegra-hsp: Add support for shared mailboxes
-> serial: Add Tegra Combined UART driver
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>=20
+> Notes:
+>     v2:
+>     - Added Rob's Acked-by
+>=20
+>  Documentation/devicetree/bindings/arm/cpus.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-There don't seem to be any build-time dependencies between the above, so
-technically I guess these could be applied to the respective trees
-separately. The only thing we need to be careful about is to not merge
-the final patch before the others, because it will break serial console
-if the other patches aren't applied.
-
-Jassi, Greg,
-
-What I could do to resolve the runtime dependency is pull the mailbox
-patches into a separate branch, create another separate branch for the
-TCU driver that is based on the mailbox branch and then base the DT
-changes on that branch, or possibly send a separate pull request for
-just the DT change late in the merge window or shortly after v4.19-rc1.
-
-Obviously the latter would be equivalent to you guys merging the patches
-through your trees for v4.19-rc1 and me sending out a late pull request
-for the DT bits.
-
-Any preference?
+Applied, thanks.
 
 Thierry
 
---Iys0Un1O+0sigPHU
+--ggdAeHltlv4tpqCr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6ML8ACgkQ3SOs138+
-s6GrjxAApVMK4gKLyqmXitg+u5FHQadFlJu89OVNUqmuF2AWqg3qq74JssA/QLAH
-dv6nRRrhGvizXqcj6B6F2U8It0cvah8fJYxci1oDKxlPo0ejPuNGGCRMw79MO+Jk
-SHhufCIoB7HisBIh/ocjLowlFD+B9Z9udhEiIqJHAZ9xhA+t4EvuGNqdnqxELX+6
-0gK20Of2tXdF8TZPIQ9qZDt0mH97oLWofygzv2zO6GsQeead7H1MXMa6QBHBt8NC
-yUeLKncthYL/x9NA7GBhfL2RJFrUFCjUt3um2+CPEv1OmGrz8DFu+ozcoqWwYzDE
-q4Wa+uYsW5Qupt0Oj9F2DdMeqi7aHFtptKOxHLUNj6fHj2maIDfUU2AAcfiFogkP
-kk8VO1o7DikltjWT7NeZRRaUa8SkWW1xgQKKWRFiMu3J1BowoYrE/Qo9IZPOj82b
-T4UScNA0zNO87u0sJBCLZo+VFMEM32qdPPYYe04SiT/Bh3Cnsh2mJC++ctT3lGWT
-OUYiiDn+1MJRiuatb1PkVbKaOnUxNyi98duTTksHbqODfyYuybvMAHS+EUYjc80k
-vMX9Kt7FJR1DQSx8k2f4R+ebk7g8upDQWc/RWUTlA0PDuzPmGFe/Gdg+tWIDVGOB
-I0TXw3stMEQezthrRaBwy9l+f58tOpWYJX6qaewtCzgMqE0/DY4=
-=llM5
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6L5UACgkQ3SOs138+
+s6EHQBAArIhMLILyWTzw87QUWRNwlqtwCZvzUjOOEJ1ear61CC+fvkd05l+alzRs
+bUKOR+SlFFujVBtmAi+E49FkOyaED3aVmGb+9TEKJfpYXv1XzNG80mMFlY58yC84
+Xn/Avyxhg4tI219Kb77QDqjpWBgMbsTU63sMzBPdmvMY5wt5d5X+rDyxgk2qEtew
+OcHHM8OyfIZl4PZKaNTLHWI3Kud5MprucR3FJ6dgUtS0rz7wxmY29tafJBa7BG04
+pi5TfVleIxiNemWznrJHamI5HHvXw8cRzEwgTIG920Pa+WlOEV28otm9g/E0bgjQ
+mIooM3vaa1oqr6eRMwPGU0MZBP53Y6/9E+S1FpOmqziPIeFvRe/cghjZjdZfCOgD
+ogngt4zLGbbvWcNtsLdANpxMj64VW0zpMheGKj6rAIC+0XwkWFkScmwoQ5ZyF5s5
+sq6yW5CnN9EMsYLhrVQCEc6dmL44vBl0pFuwAJqJndGox4CRobiKrglGFmmDonK/
+sFwm0Zp/n4R9id6mkgO6e8eP927lp5ArjfYY7rP8fiiaODC/6aCK8/EwrCk3vp9M
+PZUYiSAN11VdfY0Hj4bRJNtSujyFTd67O6vrwnsvroa81XeAyWDYd3Ijpqgi5qez
+p1UJARYPdp5GafvNM0BP2jNENbMqJW4WdR2P5iadupMH7NtzmMU=
+=4ihR
 -----END PGP SIGNATURE-----
 
---Iys0Un1O+0sigPHU--
+--ggdAeHltlv4tpqCr--
+
+
+--===============9203303158492153365==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============9203303158492153365==--
