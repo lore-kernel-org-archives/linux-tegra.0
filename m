@@ -1,35 +1,58 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH][next] mtd: rawnand: fix a couple of spelling mistakes
-Date: Sun, 1 Jul 2018 20:14:26 +0200
-Message-ID: <20180701201426.33d5bd90@xps13>
-References: <20180626102629.31083-1-colin.king@canonical.com>
-        <93be5d64cc447fb282bcc14fed853f0c@agner.ch>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Subject: Re: [PATCH 0/3] PM / Domains: Enable name based lookup at attach
+Date: Mon, 2 Jul 2018 11:50:27 +0530
+Message-ID: <339eb0d1-7b85-4cc1-55b6-8d3f68f73182@codeaurora.org>
+References: <20180629110432.5179-1-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <93be5d64cc447fb282bcc14fed853f0c@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180629110432.5179-1-ulf.hansson@linaro.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Lucas Stach <dev@lynxeye.de>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Jon Hunter <jonathanh@nvidia.com>, Todor Tomov <todor.tomov@linaro.org>, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Colin,
 
-> On 26.06.2018 12:26, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Trival fix of two spelling mistakes in dev_err error messages:
-> > "supportes" -> "supports" and "strenght" -> "strength"  
+
+On 06/29/2018 04:34 PM, Ulf Hansson wrote:
+> Recently we added support to manage multiple PM domains per device. Consumer
+> drivers were provided an API, dev_pm_domain_attach_by_id() to associate its
+> device with one of its PM domain, by using an index.
 > 
-> Acked-by: Stefan Agner <stefan@agner.ch>
+> Let's extend this to allow the association to be done using a name based
+> lookup, which follows the similar concept as for other resource types, such as
+> clocks for example.
+
+Updated [1] to use dev_pm_domain_attach_by_name() instead of dev_pm_domain_attach_by_id()
+Everything works as expected.
+
+Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
+
+[1] https://patchwork.kernel.org/patch/10496107/
+ 
 > 
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
+> Ulf Hansson (3):
+>   PM / Domains: dt: Add a power-domain-names property
+>   PM / Domains: Introduce option to attach a device by name to genpd
+>   PM / Domains: Introduce dev_pm_domain_attach_by_name()
+> 
+>  .../bindings/power/power_domain.txt           |  8 +++++++
+>  drivers/base/power/common.c                   | 17 +++++++++++++
+>  drivers/base/power/domain.c                   | 24 +++++++++++++++++++
+>  include/linux/pm_domain.h                     | 15 ++++++++++++
+>  4 files changed, 64 insertions(+)
+> 
 
-Thanks for fixing this, I squashed this change with the patch adding
-the driver itself.
-
-Thanks,
-Miquèl
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
