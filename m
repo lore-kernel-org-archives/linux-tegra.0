@@ -1,388 +1,134 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v3 5/8] mailbox: tegra-hsp: Add support for shared mailboxes
-Date: Mon, 2 Jul 2018 14:40:30 +0300
-Message-ID: <20180702114033.15654-6-mperttunen@nvidia.com>
-References: <20180702114033.15654-1-mperttunen@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 1/2] ARM: dma-mapping: Set proper DMA ops
+ in arm_iommu_detach_device()
+Date: Mon, 2 Jul 2018 13:53:17 +0200
+Message-ID: <20180702115317.GB5280@ulmo>
+References: <20180530140625.21247-1-thierry.reding@gmail.com>
+ <20180530140625.21247-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180702114033.15654-1-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jassisinghbrar@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: devicetree@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: multipart/mixed; boundary="===============2113506574=="
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20180530140625.21247-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jordan Crouse <jcrouse-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra HSP block supports 'shared mailboxes' that are simple 32-bit
-registers consisting of a FULL bit in MSB position and 31 bits of data.
-The hardware can be configured to trigger interrupts when a mailbox
-is empty or full. Add support for these shared mailboxes to the HSP
-driver.
 
-The initial use for the mailboxes is the Tegra Combined UART. For this
-purpose, we use interrupts to receive data, and spinning to wait for
-the transmit mailbox to be emptied to minimize unnecessary overhead.
+--===============2113506574==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
+Content-Disposition: inline
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
----
 
-Notes:
-    v3:
-    - Added define HSP_INT0_IE_FULL_SHIFT
-    - Added Jon's Reviewed-by
-    
-    v2:
-    - Added defines for some register fields
-    - Simplified bit looping logic in interrupt handler
-    - Changed write done polling to use readl_poll_timeout
-    - Removed unnecessary zero assignments
-    - Fixed two error cases in probe to do proper cleanup
+--6sX45UoQRIJXqkqR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/mailbox/tegra-hsp.c | 211 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 191 insertions(+), 20 deletions(-)
+On Wed, May 30, 2018 at 04:06:24PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Instead of setting the DMA ops pointer to NULL, set the correct,
+> non-IOMMU ops depending on the device's coherency setting.
+>=20
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes in v4:
+> - new patch to fix existing arm_iommu_detach_device() to do what we need
+>=20
+>  arch/arm/mm/dma-mapping.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 5dc21a6d01bb..e0e238287502 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -13,6 +13,7 @@
- 
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/mailbox_controller.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -21,6 +22,14 @@
- 
- #include <dt-bindings/mailbox/tegra186-hsp.h>
- 
-+#include "mailbox.h"
-+
-+#define HSP_INT0_IE		0x100
-+#define HSP_INT0_IE_FULL_SHIFT	8
-+#define HSP_INT_IR		0x304
-+#define HSP_INT_IR_FULL_SHIFT	8
-+#define HSP_INT_IR_FULL_MASK	0xff
-+
- #define HSP_INT_DIMENSIONING	0x380
- #define HSP_nSM_SHIFT		0
- #define HSP_nSS_SHIFT		4
-@@ -34,6 +43,9 @@
- #define HSP_DB_RAW	0x8
- #define HSP_DB_PENDING	0xc
- 
-+#define HSP_SM_SHRD_MBOX	0x0
-+#define HSP_SM_SHRD_MBOX_FULL	BIT(31)
-+
- #define HSP_DB_CCPLEX		1
- #define HSP_DB_BPMP		3
- #define HSP_DB_MAX		7
-@@ -68,6 +80,18 @@ struct tegra_hsp_db_map {
- 	unsigned int index;
- };
- 
-+struct tegra_hsp_mailbox {
-+	struct tegra_hsp_channel channel;
-+	unsigned int index;
-+	bool sending;
-+};
-+
-+static inline struct tegra_hsp_mailbox *
-+channel_to_mailbox(struct tegra_hsp_channel *channel)
-+{
-+	return container_of(channel, struct tegra_hsp_mailbox, channel);
-+}
-+
- struct tegra_hsp_soc {
- 	const struct tegra_hsp_db_map *map;
- };
-@@ -77,6 +101,7 @@ struct tegra_hsp {
- 	struct mbox_controller mbox;
- 	void __iomem *regs;
- 	unsigned int doorbell_irq;
-+	unsigned int shared_irq;
- 	unsigned int num_sm;
- 	unsigned int num_as;
- 	unsigned int num_ss;
-@@ -85,6 +110,7 @@ struct tegra_hsp {
- 	spinlock_t lock;
- 
- 	struct list_head doorbells;
-+	struct tegra_hsp_mailbox *mailboxes;
- };
- 
- static inline struct tegra_hsp *
-@@ -189,6 +215,33 @@ static irqreturn_t tegra_hsp_doorbell_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+static irqreturn_t tegra_hsp_shared_irq(int irq, void *data)
-+{
-+	struct tegra_hsp_mailbox *mb;
-+	struct tegra_hsp *hsp = data;
-+	unsigned long bit, mask;
-+	u32 value;
-+
-+	mask = tegra_hsp_readl(hsp, HSP_INT_IR);
-+	/* Only interested in FULL interrupts */
-+	mask = (mask >> HSP_INT_IR_FULL_SHIFT) & HSP_INT_IR_FULL_MASK;
-+
-+	for_each_set_bit(bit, &mask, 8) {
-+		mb = &hsp->mailboxes[bit];
-+
-+		if (!mb->sending) {
-+			value = tegra_hsp_channel_readl(&mb->channel,
-+							HSP_SM_SHRD_MBOX);
-+			value &= ~HSP_SM_SHRD_MBOX_FULL;
-+			mbox_chan_received_data(mb->channel.chan, &value);
-+			tegra_hsp_channel_writel(&mb->channel, value,
-+						 HSP_SM_SHRD_MBOX);
-+		}
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
- static struct tegra_hsp_channel *
- tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
- 			  unsigned int master, unsigned int index)
-@@ -277,14 +330,57 @@ static void tegra_hsp_doorbell_shutdown(struct tegra_hsp_doorbell *db)
- 	spin_unlock_irqrestore(&hsp->lock, flags);
- }
- 
-+static int tegra_hsp_mailbox_startup(struct tegra_hsp_mailbox *mb)
-+{
-+	struct tegra_hsp *hsp = mb->channel.hsp;
-+	u32 value;
-+
-+	mb->channel.chan->txdone_method = TXDONE_BY_BLOCK;
-+
-+	/* Route FULL interrupt to external IRQ 0 */
-+	value = tegra_hsp_readl(hsp, HSP_INT0_IE);
-+	value |= BIT(HSP_INT0_IE_FULL_SHIFT + mb->index);
-+	tegra_hsp_writel(hsp, value, HSP_INT0_IE);
-+
-+	return 0;
-+}
-+
-+static int tegra_hsp_mailbox_shutdown(struct tegra_hsp_mailbox *mb)
-+{
-+	struct tegra_hsp *hsp = mb->channel.hsp;
-+	u32 value;
-+
-+	value = tegra_hsp_readl(hsp, HSP_INT0_IE);
-+	value &= ~BIT(mb->index + 8);
-+	tegra_hsp_writel(hsp, value, HSP_INT0_IE);
-+
-+	return 0;
-+}
-+
- static int tegra_hsp_send_data(struct mbox_chan *chan, void *data)
- {
- 	struct tegra_hsp_channel *channel = chan->con_priv;
-+	struct tegra_hsp_mailbox *mailbox;
-+	uint32_t value;
- 
- 	switch (channel->type) {
- 	case TEGRA_HSP_MBOX_TYPE_DB:
- 		tegra_hsp_channel_writel(channel, 1, HSP_DB_TRIGGER);
- 		return 0;
-+
-+	case TEGRA_HSP_MBOX_TYPE_SM:
-+		mailbox = channel_to_mailbox(channel);
-+		mailbox->sending = true;
-+
-+		value = *(uint32_t *)data;
-+		/* Mark mailbox full */
-+		value |= HSP_SM_SHRD_MBOX_FULL;
-+
-+		tegra_hsp_channel_writel(channel, value, HSP_SM_SHRD_MBOX);
-+
-+		return readl_poll_timeout(
-+			channel->regs + HSP_SM_SHRD_MBOX, value,
-+			!(value & HSP_SM_SHRD_MBOX_FULL), 0, 10000);
- 	}
- 
- 	return -EINVAL;
-@@ -297,6 +393,8 @@ static int tegra_hsp_startup(struct mbox_chan *chan)
- 	switch (channel->type) {
- 	case TEGRA_HSP_MBOX_TYPE_DB:
- 		return tegra_hsp_doorbell_startup(channel_to_doorbell(channel));
-+	case TEGRA_HSP_MBOX_TYPE_SM:
-+		return tegra_hsp_mailbox_startup(channel_to_mailbox(channel));
- 	}
- 
- 	return -EINVAL;
-@@ -310,6 +408,9 @@ static void tegra_hsp_shutdown(struct mbox_chan *chan)
- 	case TEGRA_HSP_MBOX_TYPE_DB:
- 		tegra_hsp_doorbell_shutdown(channel_to_doorbell(channel));
- 		break;
-+	case TEGRA_HSP_MBOX_TYPE_SM:
-+		tegra_hsp_mailbox_shutdown(channel_to_mailbox(channel));
-+		break;
- 	}
- }
- 
-@@ -363,7 +464,16 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
- 
- 	switch (type) {
- 	case TEGRA_HSP_MBOX_TYPE_DB:
--		return tegra_hsp_doorbell_xlate(hsp, param);
-+		if (hsp->doorbell_irq)
-+			return tegra_hsp_doorbell_xlate(hsp, param);
-+		else
-+			return ERR_PTR(-EINVAL);
-+
-+	case TEGRA_HSP_MBOX_TYPE_SM:
-+		if (hsp->shared_irq && param < hsp->num_sm)
-+			return hsp->mailboxes[param].channel.chan;
-+		else
-+			return ERR_PTR(-EINVAL);
- 
- 	default:
- 		return ERR_PTR(-EINVAL);
-@@ -402,6 +512,31 @@ static int tegra_hsp_add_doorbells(struct tegra_hsp *hsp)
- 	return 0;
- }
- 
-+static int tegra_hsp_add_mailboxes(struct tegra_hsp *hsp, struct device *dev)
-+{
-+	int i;
-+
-+	hsp->mailboxes = devm_kcalloc(dev, hsp->num_sm, sizeof(*hsp->mailboxes),
-+				      GFP_KERNEL);
-+	if (!hsp->mailboxes)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < hsp->num_sm; i++) {
-+		struct tegra_hsp_mailbox *mb = &hsp->mailboxes[i];
-+
-+		mb->index = i;
-+		mb->sending = false;
-+
-+		mb->channel.hsp = hsp;
-+		mb->channel.type = TEGRA_HSP_MBOX_TYPE_SM;
-+		mb->channel.regs = hsp->regs + SZ_64K + i * SZ_32K;
-+		mb->channel.chan = &hsp->mbox.chans[i];
-+		mb->channel.chan->con_priv = &mb->channel;
-+	}
-+
-+	return 0;
-+}
-+
- static int tegra_hsp_probe(struct platform_device *pdev)
- {
- 	struct tegra_hsp *hsp;
-@@ -430,14 +565,15 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	hsp->num_si = (value >> HSP_nSI_SHIFT) & HSP_nINT_MASK;
- 
- 	err = platform_get_irq_byname(pdev, "doorbell");
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to get doorbell IRQ: %d\n", err);
--		return err;
--	}
-+	if (err >= 0)
-+		hsp->doorbell_irq = err;
- 
--	hsp->doorbell_irq = err;
-+	err = platform_get_irq_byname(pdev, "shared0");
-+	if (err >= 0)
-+		hsp->shared_irq = err;
- 
- 	hsp->mbox.of_xlate = of_tegra_hsp_xlate;
-+	/* First nSM are reserved for mailboxes */
- 	hsp->mbox.num_chans = 32;
- 	hsp->mbox.dev = &pdev->dev;
- 	hsp->mbox.txdone_irq = false;
-@@ -450,10 +586,22 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	if (!hsp->mbox.chans)
- 		return -ENOMEM;
- 
--	err = tegra_hsp_add_doorbells(hsp);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to add doorbells: %d\n", err);
--		return err;
-+	if (hsp->doorbell_irq) {
-+		err = tegra_hsp_add_doorbells(hsp);
-+		if (err < 0) {
-+			dev_err(&pdev->dev, "failed to add doorbells: %d\n",
-+			        err);
-+			return err;
-+		}
-+	}
-+
-+	if (hsp->shared_irq) {
-+		err = tegra_hsp_add_mailboxes(hsp, &pdev->dev);
-+		if (err < 0) {
-+			dev_err(&pdev->dev, "failed to add mailboxes: %d\n",
-+			        err);
-+			goto remove_doorbells;
-+		}
- 	}
- 
- 	platform_set_drvdata(pdev, hsp);
-@@ -461,20 +609,42 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	err = mbox_controller_register(&hsp->mbox);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to register mailbox: %d\n", err);
--		tegra_hsp_remove_doorbells(hsp);
--		return err;
-+		goto remove_doorbells;
- 	}
- 
--	err = devm_request_irq(&pdev->dev, hsp->doorbell_irq,
--			       tegra_hsp_doorbell_irq, IRQF_NO_SUSPEND,
--			       dev_name(&pdev->dev), hsp);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to request doorbell IRQ#%u: %d\n",
--			hsp->doorbell_irq, err);
--		return err;
-+	if (hsp->doorbell_irq) {
-+		err = devm_request_irq(&pdev->dev, hsp->doorbell_irq,
-+				       tegra_hsp_doorbell_irq, IRQF_NO_SUSPEND,
-+				       dev_name(&pdev->dev), hsp);
-+		if (err < 0) {
-+			dev_err(&pdev->dev,
-+			        "failed to request doorbell IRQ#%u: %d\n",
-+				hsp->doorbell_irq, err);
-+			goto unregister_mbox_controller;
-+		}
-+	}
-+
-+	if (hsp->shared_irq) {
-+		err = devm_request_irq(&pdev->dev, hsp->shared_irq,
-+				       tegra_hsp_shared_irq, 0,
-+				       dev_name(&pdev->dev), hsp);
-+		if (err < 0) {
-+			dev_err(&pdev->dev,
-+				"failed to request shared0 IRQ%u: %d\n",
-+				hsp->shared_irq, err);
-+			goto unregister_mbox_controller;
-+		}
- 	}
- 
- 	return 0;
-+
-+unregister_mbox_controller:
-+	mbox_controller_unregister(&hsp->mbox);
-+remove_doorbells:
-+	if (hsp->doorbell_irq)
-+		tegra_hsp_remove_doorbells(hsp);
-+
-+	return err;
- }
- 
- static int tegra_hsp_remove(struct platform_device *pdev)
-@@ -482,7 +652,8 @@ static int tegra_hsp_remove(struct platform_device *pdev)
- 	struct tegra_hsp *hsp = platform_get_drvdata(pdev);
- 
- 	mbox_controller_unregister(&hsp->mbox);
--	tegra_hsp_remove_doorbells(hsp);
-+	if (hsp->doorbell_irq)
-+		tegra_hsp_remove_doorbells(hsp);
- 
- 	return 0;
- }
--- 
-2.16.1
+Christoph, Russell,
+
+could either of you provide an Acked-by for this? I think it makes the
+most sense for Ben to pick this up into the Nouveau tree along with
+patch 2/2.
+
+Thierry
+
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index af27f1c22d93..87a0037574e4 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -1151,6 +1151,11 @@ int arm_dma_supported(struct device *dev, u64 mask)
+>  	return __dma_supported(dev, mask, false);
+>  }
+> =20
+> +static const struct dma_map_ops *arm_get_dma_map_ops(bool coherent)
+> +{
+> +	return coherent ? &arm_coherent_dma_ops : &arm_dma_ops;
+> +}
+> +
+>  #ifdef CONFIG_ARM_DMA_USE_IOMMU
+> =20
+>  static int __dma_info_to_prot(enum dma_data_direction dir, unsigned long=
+ attrs)
+> @@ -2296,7 +2301,7 @@ void arm_iommu_detach_device(struct device *dev)
+>  	iommu_detach_device(mapping->domain, dev);
+>  	kref_put(&mapping->kref, release_iommu_mapping);
+>  	to_dma_iommu_mapping(dev) =3D NULL;
+> -	set_dma_ops(dev, NULL);
+> +	set_dma_ops(dev, arm_get_dma_map_ops(dev->archdata.dma_coherent));
+> =20
+>  	pr_debug("Detached IOMMU controller from %s device.\n", dev_name(dev));
+>  }
+> @@ -2357,11 +2362,6 @@ static void arm_teardown_iommu_dma_ops(struct devi=
+ce *dev) { }
+> =20
+>  #endif	/* CONFIG_ARM_DMA_USE_IOMMU */
+> =20
+> -static const struct dma_map_ops *arm_get_dma_map_ops(bool coherent)
+> -{
+> -	return coherent ? &arm_coherent_dma_ops : &arm_dma_ops;
+> -}
+> -
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  			const struct iommu_ops *iommu, bool coherent)
+>  {
+> --=20
+> 2.17.0
+>=20
+
+--6sX45UoQRIJXqkqR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6Ei0ACgkQ3SOs138+
+s6GLKg/9EtxOidIWFfV0JMYDi5/VjIp9Wpb0c3kTEkd1vvvwRvTIDeyr004XGRxf
+TxEhQKwwGVOCQkAevC+OgWmpFxBpbYvJ7Ps4kGTqjoJWFH53VCoVWbHqGcBqdW3A
+gV99iJyR8YyIRMVtsRJIqD/3w9J/JfM2fGHj/gUxqbuiAhLK+heAt+sLXJGD4gDv
+NQp3iCEGvaM8mfMHcgxwKulhmbRbznJ5YIvc7cDQZDVVoijyQqbA7sGWVV26oAkE
+zvFeu0v/Dkl+ht2Y0rKayMgf7nqbhYM1zvMAaDZvoVrj/KuL0+4Gv8RSEsMVoNIg
+akWPRj81i3+hzc+p0T/HmDbzkS+NT5eV3qy9OdZ3h3EDAR/IG0gxqxS40Cz8dlbu
+ai7gDy0lwqLZ/0+qknCH0U4+ep6j+B4oyOSRm7gG2B3a+3MH0lnEAXb+LcM+0Hs/
+t6yMwc4xIg6jAM01G9ov7/szUvaWyJMAmE8/dwZZOTR/iD5l8TGHVb+UM9BR7Wek
+2xLDORkTNVYav8oweu0LEeuihbDRTkX8jJqSPI5Au1qodihqEwzNPf23hr1/w8Hr
+9TCoKI+2OentXk0cYk+1H4nCnEQxThP1TNJIo353TbqXOJgwdaPKbdGizh7BhM19
+2/PwWVPtZpm0uirIxldz0N5mKf7HouYwch9qtl9X3AOQMAn/Mis=
+=wTHr
+-----END PGP SIGNATURE-----
+
+--6sX45UoQRIJXqkqR--
+
+--===============2113506574==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
+YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+
+--===============2113506574==--
