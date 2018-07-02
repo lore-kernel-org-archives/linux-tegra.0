@@ -1,13 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 5/5] arm64: tegra: Add ethernet controller on Tegra194
-Date: Mon, 2 Jul 2018 15:57:03 +0200
-Message-ID: <20180702135703.GL13096@ulmo>
-References: <20180620125406.11906-1-mperttunen@nvidia.com>
- <20180620125406.11906-5-mperttunen@nvidia.com>
+Subject: Re: [PATCH v2 2/2] arm64: tegra: Add CPU nodes to Tegra194 device tree
+Date: Mon, 2 Jul 2018 15:57:54 +0200
+Message-ID: <20180702135754.GM13096@ulmo>
+References: <20180702121131.13461-1-mperttunen@nvidia.com>
+ <20180702121131.13461-2-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============9133669983205340955=="
+Content-Type: multipart/mixed; boundary="===============9134007389063895449=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180620125406.11906-5-mperttunen@nvidia.com>
+In-Reply-To: <20180702121131.13461-2-mperttunen@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,61 +18,64 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: mark.rutland@arm.com, vbhadram@nvidia.com, devicetree@vger.kernel.org, linus.walleij@linaro.org, jonathanh@nvidia.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============9133669983205340955==
+--===============9134007389063895449==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5VuzLDXibKSJvVYD"
+	protocol="application/pgp-signature"; boundary="oiL9LJXJsdjS5rzq"
 Content-Disposition: inline
 
 
---5VuzLDXibKSJvVYD
+--oiL9LJXJsdjS5rzq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 20, 2018 at 03:54:06PM +0300, Mikko Perttunen wrote:
-> The Tegra194 contains the same ethernet controller as the Tegra186.
-> Add the device tree node for it, and correspondingly the PHY node
-> on the board device tree.
+On Mon, Jul 02, 2018 at 03:11:31PM +0300, Mikko Perttunen wrote:
+> Add CPU and PSCI nodes to device tree. The Tegra194 SoC contains
+> eight NVIDIA Carmel CPUs.
 >=20
 > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 20 ++++++++++++++++++++
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 22 ++++++++++++++++++++=
-++
->  2 files changed, 42 insertions(+)
+>=20
+> Notes:
+>     v2:
+>     - Moved PSCI node/properties to SoC device tree
+>=20
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 67 insertions(+)
 
 Applied, thanks.
 
 Thierry
 
---5VuzLDXibKSJvVYD
+--oiL9LJXJsdjS5rzq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6Ly4ACgkQ3SOs138+
-s6H//g//RF577iLlAUjlYYa+l05ikyT+Zm4OiBYYvSzNCFwLptVa/K8ddZNEtvh8
-WUiFeDZEY8Dld+VPC7E95C00vsc/ruvyM04pUrHttcZEzdLe+ErjxvG8e/pj1bei
-JbI5Xm/49i5Ujk41p/DHwRpLr7tbwepSk3wB/UKjwxjIF2rC8caXRu1//PxrKLOh
-7hcJx6LNjVD+AQzAeVuof/xlrkN9sJ17f3Ux/C43NdKD9SF532EI4V3KWJrPjdqR
-KYiwTBxTg9IOn4dYCZlVFxeO9LBZNQ/e2UmCHPhgYmxhr4eT8pKhtXrLrZxi2Ouh
-nxWt73WFDGgvgf6E8ymszFOEqqtCKBHQoSMhMWHuqr5be1bi//Vn1z3bodpBuugy
-sMO3EISoiuFKohIBNLdJevJ+Oq5+HFXL0eWyPeTNryWNcpC4kzsbaKuLZhWx5mh5
-e2XX8feUmKHFn9aCJB4yE4UgUpEOqIykD7g0bGJiWEzc+xnd1fBLvGWxfnqfgLW+
-U2a5s9niwqXqry2NFm0Yya3ks3z1TVgTLyiNrVMunathb17uflgb4EIiLa1fLeX5
-01eww8Azgxu1MjGddVKpi19Lc2gY4tO5eBd4Bw0vqtnot6J42OhPKAVhWJeELcyu
-3GMfv5P2NR5yrVlIEnph2b3uTMLoQgC1nWPS3N1M1BkUj0XolBc=
-=frP1
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6L2IACgkQ3SOs138+
+s6Hliw/+LfJGullf42ByB6mbKyZGcO3GbiJ7ob/zgR7GYmj5swQd2NanUjZjTZ1s
+1VOUjPd5PeEEgpBdIEZ4+bHZO1G9LcP2/0fes40eiTTNRSyp6+v+ntezZSc1pGgt
+AFEUtujq9DHMGTj6KPOCCL8GMqH2f7kAnhuzf0UGJf5IoSc41VTKQ3QKYHYuEzrV
+XVXL3AwPvBrnYgZlkm0S29RBMPBx1xgurM3JTL89YtFyApjKn8k8VrzDblimRLlO
+rSg4EpGoZOdv+HsFgZQDuQRmamvXVTpw2peZfaLibusOUn6HtWAODZ18GAlxf/E0
+olXqwNleNJnN8FChoTlcClfjT9M1FhiU17SPN9ZINDwdyAUMa0J27Cu90oejFavh
+Ig4oa0WtrMse3/Y6TzBvxzY2nqd7wuhz92MjK5XCk9K7pA3hNdODAgrOGx+nKQuI
+T6sH3eZoB5a8XpR5Q4sS7DnQu/nuZ5EIMlt/ocebEqjBbIu82AYHMir3rvjG5Llc
+EdmLNymiT0Aub0ZPkqy59oSXz6SJXhoPx9xs6oTwOn+AqMvmrYyQnoWubvo6yMri
+Ag37ze1FKQTGWhafjEXxNXfeX3IlX7jjeKQaR8d/e2YIqvornAu8JOejOFYxHSEE
+Xtx0XYxuprjZDyEr3NiuEVfptSdCjSJLMl3GP5XsZrcmGL+iwV8=
+=0WWG
 -----END PGP SIGNATURE-----
 
---5VuzLDXibKSJvVYD--
+--oiL9LJXJsdjS5rzq--
 
 
---===============9133669983205340955==
+--===============9134007389063895449==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -83,4 +86,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============9133669983205340955==--
+--===============9134007389063895449==--
