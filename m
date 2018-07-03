@@ -1,76 +1,104 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH v3 6/8] serial: Add Tegra Combined UART driver
-Date: Tue, 3 Jul 2018 09:40:16 +0300
-Message-ID: <02120216-e305-5968-3567-d7174c2a8b13@kapsi.fi>
-References: <20180702114033.15654-1-mperttunen@nvidia.com>
- <20180702114033.15654-7-mperttunen@nvidia.com> <20180702131851.GH13096@ulmo>
- <50c4702b-3d59-e443-5075-c888f83a2615@kapsi.fi> <20180702134731.GI13096@ulmo>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] mfd: as3722: disable auto power on when AC OK
+Date: Tue, 3 Jul 2018 08:35:30 +0100
+Message-ID: <20180703073530.GI20176@dell>
+References: <20180625080013.32157-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180702134731.GI13096@ulmo>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180625080013.32157-1-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, devicetree@vger.kernel.org, gregkh@linuxfoundation.org, jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02.07.2018 16:47, Thierry Reding wrote:
-> On Mon, Jul 02, 2018 at 04:30:07PM +0300, Mikko Perttunen wrote:
->> On 02.07.2018 16:18, Thierry Reding wrote:
->>> On Mon, Jul 02, 2018 at 02:40:31PM +0300, Mikko Perttunen wrote:
->>>> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
->>>> multiplexing multiple "virtual UARTs" into a single hardware serial
->>>> port. The TCU is the primary serial port on Tegra194 devices.
->>>>
->>>> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
->>>> are part of Tegra HSP blocks that are already controlled by the Tegra
->>>> HSP mailbox driver.
->>>>
->>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>>> ---
->>>>
->>>> Notes:
->>>>       v2:
->>>>       - Removed (void) casts for unused variables.
->>>>       - Changed the uart_set_options() call to be on one line, even if its
->>>>         over 80 characters.
->>>>       - Added defines for magic numbers.
->>>>       - Style fixes.
->>>>       - Changed Kconfig entry to depend on the Tegra HSP driver instead of
->>>>         just the mailbox framework.
->>>>       v3:
->>>>       - Removed FLUSH bit, as it's unnecessary and slows down printing
->>>>       - Removed call to uart_set_options
->>>>       - Added mbox_free_channel calls to remove()
->>>>
->>>>    drivers/tty/serial/Kconfig       |   9 ++
->>>>    drivers/tty/serial/Makefile      |   1 +
->>>>    drivers/tty/serial/tegra-tcu.c   | 291 +++++++++++++++++++++++++++++++++++++++
->>>>    include/uapi/linux/serial_core.h |   3 +
->>>>    4 files changed, 304 insertions(+)
->>>>    create mode 100644 drivers/tty/serial/tegra-tcu.c
->>>
->>> The driver looks good to me. But for my own understanding, is there some
->>> way we can make use of the multiplexing? That is, could we add a
->>> mechanism to have the driver filter out only a specific stream? Could we
->>> also specify which stream to send data back to? What happens by default?
->>> Which stream is data sent to?
->>
->> There is no multiplexing on the producer/device side (i.e. what this driver
->> does). The mailbox specified in device tree specifies the stream we send
->> stuff to. The mailboxes are per-CPU (we use the CCPLEX mailbox here), so it
->> cannot really be changed.
-> 
-> Oh, I see, so there is one stream per pair of mailboxes? That is, the
-> mailboxes we specify in the DT define which stream we receive from and
-> send to?
+On Mon, 25 Jun 2018, Marcel Ziswiler wrote:
 
-Correct.
-
-Mikko
-
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> Thierry
+> On ams AS3722, power on when AC OK is enabled by default.
+> Making this option as disable by default and enable only
+> when platform need this explicitly.
 > 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Reviewed-by: Bibek Basu <bbasu@nvidia.com>
+> Tested-by: Bibek Basu <bbasu@nvidia.com>
+> Downsteam commit 09cd706fecb9 ("mfd: as3722: disable auto power on when
+> AC OK").
+
+Please drop this line.
+
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> ---
+> 
+>  drivers/mfd/as3722.c       | 12 ++++++++++++
+>  include/linux/mfd/as3722.h |  3 +++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/drivers/mfd/as3722.c b/drivers/mfd/as3722.c
+> index f87342c211bc..215465c97759 100644
+> --- a/drivers/mfd/as3722.c
+> +++ b/drivers/mfd/as3722.c
+> @@ -349,6 +349,8 @@ static int as3722_i2c_of_probe(struct i2c_client *i2c,
+>  					"ams,enable-internal-int-pullup");
+>  	as3722->en_intern_i2c_pullup = of_property_read_bool(np,
+>  					"ams,enable-internal-i2c-pullup");
+> +	as3722->en_ac_ok_pwr_on = of_property_read_bool(np,
+> +					"ams,enable-ac-ok-power-on");
+>  	as3722->irq_flags = irqd_get_trigger_type(irq_data);
+>  	dev_dbg(&i2c->dev, "IRQ flags are 0x%08lx\n", as3722->irq_flags);
+>  	return 0;
+> @@ -360,6 +362,7 @@ static int as3722_i2c_probe(struct i2c_client *i2c,
+>  	struct as3722 *as3722;
+>  	unsigned long irq_flags;
+>  	int ret;
+> +	u8 val = 0;
+>  
+>  	as3722 = devm_kzalloc(&i2c->dev, sizeof(struct as3722), GFP_KERNEL);
+>  	if (!as3722)
+> @@ -398,6 +401,15 @@ static int as3722_i2c_probe(struct i2c_client *i2c,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	if (as3722->en_ac_ok_pwr_on)
+> +		val = AS3722_CTRL_SEQ1_AC_OK_PWR_ON;
+> +	ret = as3722_update_bits(as3722, AS3722_CTRL_SEQU1_REG,
+> +			AS3722_CTRL_SEQ1_AC_OK_PWR_ON, val);
+> +	if (ret < 0) {
+> +		dev_err(as3722->dev, "CTRL_SEQ1 update failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+>  	ret = devm_mfd_add_devices(&i2c->dev, -1, as3722_devs,
+>  				   ARRAY_SIZE(as3722_devs), NULL, 0,
+>  				   regmap_irq_get_domain(as3722->irq_data));
+> diff --git a/include/linux/mfd/as3722.h b/include/linux/mfd/as3722.h
+> index 51e6f9414575..8841b9896033 100644
+> --- a/include/linux/mfd/as3722.h
+> +++ b/include/linux/mfd/as3722.h
+> @@ -296,6 +296,8 @@
+>  #define AS3722_ADC1_CONV_NOTREADY			BIT(7)
+>  #define AS3722_ADC1_SOURCE_SELECT_MASK			0x1F
+>  
+> +#define AS3722_CTRL_SEQ1_AC_OK_PWR_ON			BIT(0)
+> +
+>  /* GPIO modes */
+>  #define AS3722_GPIO_MODE_MASK				0x07
+>  #define AS3722_GPIO_MODE_INPUT				0x00
+> @@ -391,6 +393,7 @@ struct as3722 {
+>  	unsigned long irq_flags;
+>  	bool en_intern_int_pullup;
+>  	bool en_intern_i2c_pullup;
+> +	bool en_ac_ok_pwr_on;
+>  	struct regmap_irq_chip_data *irq_data;
+>  };
+>  
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
