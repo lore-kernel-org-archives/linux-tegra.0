@@ -1,76 +1,76 @@
-From: Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
-Date: Mon, 2 Jul 2018 14:53:08 -0400
-Message-ID: <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
-References: <20180619110027.16935-1-digetx@gmail.com>
- <d99935be-797d-4676-c186-a045a590f01b@gmail.com> <11534185.70fb5jbPr6@dimapc>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH v3 6/8] serial: Add Tegra Combined UART driver
+Date: Tue, 3 Jul 2018 09:40:16 +0300
+Message-ID: <02120216-e305-5968-3567-d7174c2a8b13@kapsi.fi>
+References: <20180702114033.15654-1-mperttunen@nvidia.com>
+ <20180702114033.15654-7-mperttunen@nvidia.com> <20180702131851.GH13096@ulmo>
+ <50c4702b-3d59-e443-5075-c888f83a2615@kapsi.fi> <20180702134731.GI13096@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <11534185.70fb5jbPr6@dimapc>
+In-Reply-To: <20180702134731.GI13096@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, devicetree@vger.kernel.org, gregkh@linuxfoundation.org, jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 07/02/2018 10:48 AM, Dmitry Osipenko wrote:
-> On Friday, 29 June 2018 22:37:02 MSK Peter Geis wrote:
->> Good Afternoon,
+On 02.07.2018 16:47, Thierry Reding wrote:
+> On Mon, Jul 02, 2018 at 04:30:07PM +0300, Mikko Perttunen wrote:
+>> On 02.07.2018 16:18, Thierry Reding wrote:
+>>> On Mon, Jul 02, 2018 at 02:40:31PM +0300, Mikko Perttunen wrote:
+>>>> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+>>>> multiplexing multiple "virtual UARTs" into a single hardware serial
+>>>> port. The TCU is the primary serial port on Tegra194 devices.
+>>>>
+>>>> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+>>>> are part of Tegra HSP blocks that are already controlled by the Tegra
+>>>> HSP mailbox driver.
+>>>>
+>>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>>>> ---
+>>>>
+>>>> Notes:
+>>>>       v2:
+>>>>       - Removed (void) casts for unused variables.
+>>>>       - Changed the uart_set_options() call to be on one line, even if its
+>>>>         over 80 characters.
+>>>>       - Added defines for magic numbers.
+>>>>       - Style fixes.
+>>>>       - Changed Kconfig entry to depend on the Tegra HSP driver instead of
+>>>>         just the mailbox framework.
+>>>>       v3:
+>>>>       - Removed FLUSH bit, as it's unnecessary and slows down printing
+>>>>       - Removed call to uart_set_options
+>>>>       - Added mbox_free_channel calls to remove()
+>>>>
+>>>>    drivers/tty/serial/Kconfig       |   9 ++
+>>>>    drivers/tty/serial/Makefile      |   1 +
+>>>>    drivers/tty/serial/tegra-tcu.c   | 291 +++++++++++++++++++++++++++++++++++++++
+>>>>    include/uapi/linux/serial_core.h |   3 +
+>>>>    4 files changed, 304 insertions(+)
+>>>>    create mode 100644 drivers/tty/serial/tegra-tcu.c
+>>>
+>>> The driver looks good to me. But for my own understanding, is there some
+>>> way we can make use of the multiplexing? That is, could we add a
+>>> mechanism to have the driver filter out only a specific stream? Could we
+>>> also specify which stream to send data back to? What happens by default?
+>>> Which stream is data sent to?
 >>
->> I have tested these patches on the Ouya T3 device.
->> They work great to enable the L2 cache controller, however they do not
->> respect explicitly disabling the L2 cache controller via the kernel
->> config nor device tree.
->>
->> With CONFIG_CACHE_L2X0 disabled, but CONFIG_TRUSTED_FOUNDATIONS enabled,
->> the L2 cache controller is silently enabled and allows all four cores to
->> boot.
->>
+>> There is no multiplexing on the producer/device side (i.e. what this driver
+>> does). The mailbox specified in device tree specifies the stream we send
+>> stuff to. The mailboxes are per-CPU (we use the CCPLEX mailbox here), so it
+>> cannot really be changed.
 > 
-> I don't see how cache could be enabled with CONFIG_CACHE_L2X0 disabled, there
-> is no code to do that. Could you elaborate please?
-> 
-> Secondary cores do not depend on the cache state, disabled cache shouldn't
-> prevent them to boot.
+> Oh, I see, so there is one stream per pair of mailboxes? That is, the
+> mailboxes we specify in the DT define which stream we receive from and
+> send to?
 
-On the untouched mainline kernel running on a Trusted Foundations T3 
-device, I observed the following indications:
-With the L2 cache controller enabled, all four processor cores were 
-enabled, but it would immediately panic for writing to a secure register 
-from insecure mode.
-With the L2 cache controller disabled, only the boot core is detected, 
-but it successfully boots.
-This is the issue that I inquired originally to you about.
+Correct.
 
-With your patch running on the same device, the following is observed:
-With the L2 controller enabled, all four cores are active, and the cache 
-controller appears to function.
-With the L2 controller disabled, but trusted foundations enabled, the L2 
-controller enabled kernel message is missing, however all four cores 
-still enable.
+Mikko
 
-After looking through the code a little more deeply, I see you modified 
-the reset handler for handling offline cores.
-I am wondering if you fixed an additional issue inadvertently.
-
-The reason I discovered this is I am working with kexec as a bootloader.
-On a device without trusted foundations, kexec works without issue.
-On a device with trusted foundations and your patch, I found that 
-disabling the l2 cache controller and trusted foundations allow kexec to 
-occur.
-I haven't tried an either/or scenario, though now you have me thinking I 
-should.
 > 
->> One must also disable CONFIG_TRUSTED_FOUNDATIONS to stop the L2 cache
->> controller from spinning up.
->>
->> Tested-by: Peter Geis <pgwipeout@gmail.com>
->>
-> 
-> 
-> 
+> Thierry
 > 
