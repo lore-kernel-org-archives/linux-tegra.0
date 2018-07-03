@@ -1,104 +1,77 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] mfd: as3722: disable auto power on when AC OK
-Date: Tue, 3 Jul 2018 08:35:30 +0100
-Message-ID: <20180703073530.GI20176@dell>
-References: <20180625080013.32157-1-marcel@ziswiler.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] i2c: tegra: Fix NACK error handling
+Date: Tue, 3 Jul 2018 09:55:43 +0100
+Message-ID: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180625080013.32157-1-marcel@ziswiler.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Shardar Shariff Md <smohammed@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 25 Jun 2018, Marcel Ziswiler wrote:
+On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
+resume from suspend (which is caused by the reset signal for the I2C
+mux not being configured correctl). However, this NACK is causing the
+Tegra30 to hang on resuming from suspend which is not expected as we
+detect NACKs and handle them. The hang observed appears to occur when
+resetting the I2C controller to recover from the NACK.
 
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> On ams AS3722, power on when AC OK is enabled by default.
-> Making this option as disable by default and enable only
-> when platform need this explicitly.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Reviewed-by: Bibek Basu <bbasu@nvidia.com>
-> Tested-by: Bibek Basu <bbasu@nvidia.com>
-> Downsteam commit 09cd706fecb9 ("mfd: as3722: disable auto power on when
-> AC OK").
+Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
+additional error handling for some error cases including NACK, however,
+it appears that this change conflicts with an early fix by commit
+f70893d08338 ("i2c: tegra: Add delay before resetting the controller
+after NACK"). After commit 77821b4678f9 was made we now disable 'packet
+mode' before the delay from commit f70893d08338 happens. Testing shows
+that moving the delay to before disabling 'packet mode' fixes the hang
+observed on Tegra30. The delay was added to give the I2C controller
+chance to send a stop condition and so it makes sense to move this to
+before we disable packet mode. Please note that packet mode is always
+enabled for Tegra.
 
-Please drop this line.
+Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
->  drivers/mfd/as3722.c       | 12 ++++++++++++
->  include/linux/mfd/as3722.h |  3 +++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/drivers/mfd/as3722.c b/drivers/mfd/as3722.c
-> index f87342c211bc..215465c97759 100644
-> --- a/drivers/mfd/as3722.c
-> +++ b/drivers/mfd/as3722.c
-> @@ -349,6 +349,8 @@ static int as3722_i2c_of_probe(struct i2c_client *i2c,
->  					"ams,enable-internal-int-pullup");
->  	as3722->en_intern_i2c_pullup = of_property_read_bool(np,
->  					"ams,enable-internal-i2c-pullup");
-> +	as3722->en_ac_ok_pwr_on = of_property_read_bool(np,
-> +					"ams,enable-ac-ok-power-on");
->  	as3722->irq_flags = irqd_get_trigger_type(irq_data);
->  	dev_dbg(&i2c->dev, "IRQ flags are 0x%08lx\n", as3722->irq_flags);
->  	return 0;
-> @@ -360,6 +362,7 @@ static int as3722_i2c_probe(struct i2c_client *i2c,
->  	struct as3722 *as3722;
->  	unsigned long irq_flags;
->  	int ret;
-> +	u8 val = 0;
->  
->  	as3722 = devm_kzalloc(&i2c->dev, sizeof(struct as3722), GFP_KERNEL);
->  	if (!as3722)
-> @@ -398,6 +401,15 @@ static int as3722_i2c_probe(struct i2c_client *i2c,
->  	if (ret < 0)
->  		return ret;
->  
-> +	if (as3722->en_ac_ok_pwr_on)
-> +		val = AS3722_CTRL_SEQ1_AC_OK_PWR_ON;
-> +	ret = as3722_update_bits(as3722, AS3722_CTRL_SEQU1_REG,
-> +			AS3722_CTRL_SEQ1_AC_OK_PWR_ON, val);
-> +	if (ret < 0) {
-> +		dev_err(as3722->dev, "CTRL_SEQ1 update failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
->  	ret = devm_mfd_add_devices(&i2c->dev, -1, as3722_devs,
->  				   ARRAY_SIZE(as3722_devs), NULL, 0,
->  				   regmap_irq_get_domain(as3722->irq_data));
-> diff --git a/include/linux/mfd/as3722.h b/include/linux/mfd/as3722.h
-> index 51e6f9414575..8841b9896033 100644
-> --- a/include/linux/mfd/as3722.h
-> +++ b/include/linux/mfd/as3722.h
-> @@ -296,6 +296,8 @@
->  #define AS3722_ADC1_CONV_NOTREADY			BIT(7)
->  #define AS3722_ADC1_SOURCE_SELECT_MASK			0x1F
->  
-> +#define AS3722_CTRL_SEQ1_AC_OK_PWR_ON			BIT(0)
-> +
->  /* GPIO modes */
->  #define AS3722_GPIO_MODE_MASK				0x07
->  #define AS3722_GPIO_MODE_INPUT				0x00
-> @@ -391,6 +393,7 @@ struct as3722 {
->  	unsigned long irq_flags;
->  	bool en_intern_int_pullup;
->  	bool en_intern_i2c_pullup;
-> +	bool en_ac_ok_pwr_on;
->  	struct regmap_irq_chip_data *irq_data;
->  };
->  
+Cc: stable@vger.kernel.org
 
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 5fccd1f1bca8..797def5319f1 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -545,6 +545,14 @@ static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
+ {
+ 	u32 cnfg;
+ 
++	/*
++	 * NACK interrupt is generated before the I2C controller generates
++	 * the STOP condition on the bus. So wait for 2 clock periods
++	 * before disabling the controller so that the STOP condition has
++	 * been delivered properly.
++	 */
++	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
++
+ 	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
+ 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
+ 		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
+@@ -706,15 +714,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+ 		return 0;
+ 
+-	/*
+-	 * NACK interrupt is generated before the I2C controller generates
+-	 * the STOP condition on the bus. So wait for 2 clock periods
+-	 * before resetting the controller so that the STOP condition has
+-	 * been delivered properly.
+-	 */
+-	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
+-		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
+-
+ 	tegra_i2c_init(i2c_dev);
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
