@@ -1,64 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [bug report] mtd: rawnand: add NVIDIA Tegra NAND Flash controller
- driver
-Date: Tue, 3 Jul 2018 17:19:57 +0300
-Message-ID: <20180703141957.j27w6efnkhij5blz@kili.mountain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
-Content-Disposition: inline
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: stefan@agner.ch
-Cc: linux-tegra@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [RESEND PATCH] apalis_t30: fix can2
+Date: Tue,  3 Jul 2018 17:03:39 +0200
+Message-ID: <20180703150340.29580-1-marcel@ziswiler.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org, linux-can@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Marcel Ziswiler <marcel@ziswiler.com>, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Stefan Agner,
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-The patch d7d9f8ec77fe: "mtd: rawnand: add NVIDIA Tegra NAND Flash
-controller driver" from Jun 24, 2018, leads to the following static
-checker warning:
+CAN2 currently fails on probe as follows:
 
-	drivers/mtd/nand/raw/tegra_nand.c:476 tegra_nand_select_chip()
-	warn: array off by one? 'nand->cs[die_nr]'
+mcp251x spi1.1: Probe failed, err=19
 
-drivers/mtd/nand/raw/tegra_nand.c
-   465  static void tegra_nand_select_chip(struct mtd_info *mtd, int die_nr)
-   466  {
-   467          struct nand_chip *chip = mtd_to_nand(mtd);
-   468          struct tegra_nand_chip *nand = to_tegra_chip(chip);
-   469          struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-   470  
-   471          if (die_nr < 0 || die_nr > 1) {
-   472                  ctrl->cur_cs = -1;
-   473                  return;
-   474          }
-   475  
-   476          ctrl->cur_cs = nand->cs[die_nr];
-   477  }
+Fix this by enabling input on pin mux of resp. SPI4 pins.
 
-The story is that nand->cs[] is a one element array.  Some people use
-one element arrays like this as variable size arrays.  It's better to
-use a zero size array, but I think that might be a GCC feature and not
-everyone knows you can do that.  Smatch treats this one as unknown size
-because apparently it can't tie it back to the kmalloc().
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-But it really is a one element array and the condition is off by one.
+Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
+---
 
-But really one element arrays are super weird.  Why not just use a
-pointer?
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-regards,
-dan carpenter
-
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index d1d21ec2a844..9ff6aafd72b3 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -118,6 +118,7 @@
+ 				nvidia,function = "spi4";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			/* CAN_INT2 */
+ 			spi2_cs2_n_pw3 {
+-- 
+2.14.4
