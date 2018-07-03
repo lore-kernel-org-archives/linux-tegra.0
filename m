@@ -1,77 +1,50 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] i2c: tegra: Fix NACK error handling
-Date: Tue, 3 Jul 2018 09:55:43 +0100
-Message-ID: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH] ARM: tegra: Fix Tegra30 Cardhu PCA954x reset
+Date: Tue, 3 Jul 2018 09:59:47 +0100
+Message-ID: <1530608387-9591-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <stable-owner@vger.kernel.org>
 Sender: stable-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Shardar Shariff Md <smohammed@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, stable@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
-resume from suspend (which is caused by the reset signal for the I2C
-mux not being configured correctl). However, this NACK is causing the
-Tegra30 to hang on resuming from suspend which is not expected as we
-detect NACKs and handle them. The hang observed appears to occur when
-resetting the I2C controller to recover from the NACK.
+On all versions of Tegra30 Cardhu, the reset signal to the NXP PCA9546
+I2C mux is connected to the Tegra GPIO BB0. Currently, this pin on the
+Tegra is not configured as a GPIO but as a special-function IO (SFIO)
+that is multiplexing the pin to an I2S controller. On exiting system
+suspend, I2C commands sent to the PCA9546 are failing because there is
+no ACK. Although it is not possible to see exactly what is happening
+to the reset during suspend, by ensuring it is configured as a GPIO
+and driven high, to de-assert the reset, the failures are no longer
+seen.
 
-Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
-additional error handling for some error cases including NACK, however,
-it appears that this change conflicts with an early fix by commit
-f70893d08338 ("i2c: tegra: Add delay before resetting the controller
-after NACK"). After commit 77821b4678f9 was made we now disable 'packet
-mode' before the delay from commit f70893d08338 happens. Testing shows
-that moving the delay to before disabling 'packet mode' fixes the hang
-observed on Tegra30. The delay was added to give the I2C controller
-chance to send a stop condition and so it makes sense to move this to
-before we disable packet mode. Please note that packet mode is always
-enabled for Tegra.
+Please note that this GPIO is also used to drive the reset signal
+going to the camera connector on the board. However, given that there
+is no camera support currently for Cardhu, this should not have any
+impact.
 
-Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
+Fixes: 40431d16ff11 ("ARM: tegra: enable PCA9546 on Cardhu")
 
 Cc: stable@vger.kernel.org
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/tegra30-cardhu.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 5fccd1f1bca8..797def5319f1 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -545,6 +545,14 @@ static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
- {
- 	u32 cnfg;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 92a9740c533f..3b1db7b9ec50 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -206,6 +206,7 @@
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0x70>;
++			reset-gpio = <&gpio TEGRA_GPIO(BB, 0) GPIO_ACTIVE_LOW>;
+ 		};
+ 	};
  
-+	/*
-+	 * NACK interrupt is generated before the I2C controller generates
-+	 * the STOP condition on the bus. So wait for 2 clock periods
-+	 * before disabling the controller so that the STOP condition has
-+	 * been delivered properly.
-+	 */
-+	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
-+
- 	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
- 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
- 		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
-@@ -706,15 +714,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
- 		return 0;
- 
--	/*
--	 * NACK interrupt is generated before the I2C controller generates
--	 * the STOP condition on the bus. So wait for 2 clock periods
--	 * before resetting the controller so that the STOP condition has
--	 * been delivered properly.
--	 */
--	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
--		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
--
- 	tegra_i2c_init(i2c_dev);
- 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
- 		if (msg->flags & I2C_M_IGNORE_NAK)
 -- 
 1.9.1
