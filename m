@@ -1,107 +1,85 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PM / Domains: Don't power on at attach for the multi PM
- domain case
-Date: Wed, 04 Jul 2018 12:48:01 +0200
-Message-ID: <2009003.UOWOtGbzcY@aspire.rjw.lan>
-References: <20180629091537.26864-1-ulf.hansson@linaro.org>
- <20180629095146.gljbdw2zbhmj6gwl@vireshk-i7>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
+Date: Wed, 04 Jul 2018 14:25:11 +0300
+Message-ID: <1635370.HnqPZmo3Ue@dimapc>
+References: <20180619110027.16935-1-digetx@gmail.com> <11534185.70fb5jbPr6@dimapc> <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180629095146.gljbdw2zbhmj6gwl@vireshk-i7>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@kernel.org>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Todor Tomov <todor.tomov@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Geis <pgwipeout@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday, June 29, 2018 11:51:46 AM CEST Viresh Kumar wrote:
-> On 29-06-18, 11:15, Ulf Hansson wrote:
-> > There are no legacy behavior in drivers to consider while attaching a
-> > device to genpd - for the multiple PM domain case.
+On Monday, 2 July 2018 21:53:08 MSK Peter Geis wrote:
+> On 07/02/2018 10:48 AM, Dmitry Osipenko wrote:
+> > On Friday, 29 June 2018 22:37:02 MSK Peter Geis wrote:
+> >> Good Afternoon,
+> >> 
+> >> I have tested these patches on the Ouya T3 device.
+> >> They work great to enable the L2 cache controller, however they do not
+> >> respect explicitly disabling the L2 cache controller via the kernel
+> >> config nor device tree.
+> >> 
+> >> With CONFIG_CACHE_L2X0 disabled, but CONFIG_TRUSTED_FOUNDATIONS enabled,
+> >> the L2 cache controller is silently enabled and allows all four cores to
+> >> boot.
 > > 
-> > For that reason, let's instead require the driver to runtime resume the
-> > device, via calling pm_runtime_get_sync() for example, when it needs to
-> > power on the corresponding PM domain.
+> > I don't see how cache could be enabled with CONFIG_CACHE_L2X0 disabled,
+> > there is no code to do that. Could you elaborate please?
 > > 
-> > This allows us to improve the situation during attach. Instead of always
-> > power on the PM domain, which may be unnecessary, let's leave it in its
-> > current state. Additionally, to avoid the PM domain to stay powered on,
-> > let's schedule a power off work.
-> > 
-> > Fixes: 3c095f32a92b ("PM / Domains: Add support for multi PM domains...")
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
-> >  drivers/base/power/domain.c | 16 +++++++++-------
-> >  1 file changed, 9 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> > index c298de8a8308..9e8484189034 100644
-> > --- a/drivers/base/power/domain.c
-> > +++ b/drivers/base/power/domain.c
-> > @@ -2235,7 +2235,7 @@ static void genpd_dev_pm_sync(struct device *dev)
-> >  }
-> >  
-> >  static int __genpd_dev_pm_attach(struct device *dev, struct device_node *np,
-> > -				 unsigned int index)
-> > +				 unsigned int index, bool power_on)
-> >  {
-> >  	struct of_phandle_args pd_args;
-> >  	struct generic_pm_domain *pd;
-> > @@ -2271,9 +2271,11 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device_node *np,
-> >  	dev->pm_domain->detach = genpd_dev_pm_detach;
-> >  	dev->pm_domain->sync = genpd_dev_pm_sync;
-> >  
-> > -	genpd_lock(pd);
-> > -	ret = genpd_power_on(pd, 0);
-> > -	genpd_unlock(pd);
-> > +	if (power_on) {
-> > +		genpd_lock(pd);
-> > +		ret = genpd_power_on(pd, 0);
-> > +		genpd_unlock(pd);
-> > +	}
-> >  
-> >  	if (ret)
-> >  		genpd_remove_device(pd, dev);
-> > @@ -2307,7 +2309,7 @@ int genpd_dev_pm_attach(struct device *dev)
-> >  				       "#power-domain-cells") != 1)
-> >  		return 0;
-> >  
-> > -	return __genpd_dev_pm_attach(dev, dev->of_node, 0);
-> > +	return __genpd_dev_pm_attach(dev, dev->of_node, 0, true);
-> >  }
-> >  EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
-> >  
-> > @@ -2359,14 +2361,14 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
-> >  	}
-> >  
-> >  	/* Try to attach the device to the PM domain at the specified index. */
-> > -	ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index);
-> > +	ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index, false);
-> >  	if (ret < 1) {
-> >  		device_unregister(genpd_dev);
-> >  		return ret ? ERR_PTR(ret) : NULL;
-> >  	}
-> >  
-> > -	pm_runtime_set_active(genpd_dev);
-> >  	pm_runtime_enable(genpd_dev);
-> > +	genpd_queue_power_off_work(dev_to_genpd(genpd_dev));
-> >  
-> >  	return genpd_dev;
-> >  }
+> > Secondary cores do not depend on the cache state, disabled cache shouldn't
+> > prevent them to boot.
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> On the untouched mainline kernel running on a Trusted Foundations T3
+> device, I observed the following indications:
+> With the L2 cache controller enabled, all four processor cores were
+> enabled, but it would immediately panic for writing to a secure register
+> from insecure mode.
+> With the L2 cache controller disabled, only the boot core is detected,
+> but it successfully boots.
+> This is the issue that I inquired originally to you about.
 > 
+> With your patch running on the same device, the following is observed:
+> With the L2 controller enabled, all four cores are active, and the cache
+> controller appears to function.
+> With the L2 controller disabled, but trusted foundations enabled, the L2
+> controller enabled kernel message is missing, however all four cores
+> still enable.
 > 
 
-Patch applied and queued up for 4.18-rc4.
+This is the correct behaviour.
 
-Thanks!
+> After looking through the code a little more deeply, I see you modified
+> the reset handler for handling offline cores.
+> I am wondering if you fixed an additional issue inadvertently.
+> 
+
+CPU will fail to boot if it tries to apply erratas via accessing the secure 
+registers. I've changed the reset handler to skip erratas on T20/30 if trusted 
+foundations present, see "Don't apply CPU erratas in insecure mode" patch. 
+This is an intentional change.
+
+> The reason I discovered this is I am working with kexec as a bootloader.
+> On a device without trusted foundations, kexec works without issue.
+> On a device with trusted foundations and your patch, I found that
+> disabling the l2 cache controller and trusted foundations allow kexec to
+> occur.
+> I haven't tried an either/or scenario, though now you have me thinking I
+> should.
+> 
+
+Secondary cores are dying in the reset handler in a case of disabled L2 + 
+disabled TF. Looks like there is something wrong in regards to stopping 
+secondary CPU cores / flushing CPU caches, the suspend-resume isn't working 
+right now because of it and likely that kexec is suffering from the same 
+issue.
+
+> >> One must also disable CONFIG_TRUSTED_FOUNDATIONS to stop the L2 cache
+> >> controller from spinning up.
+> >> 
+> >> Tested-by: Peter Geis <pgwipeout@gmail.com>
+
+Thanks for testing!
