@@ -1,119 +1,107 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v2 3/3] clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
-Date: Wed, 4 Jul 2018 13:17:35 +0300
-Message-ID: <1530699455-27654-3-git-send-email-avienamo@nvidia.com>
-References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PM / Domains: Don't power on at attach for the multi PM
+ domain case
+Date: Wed, 04 Jul 2018 12:48:01 +0200
+Message-ID: <2009003.UOWOtGbzcY@aspire.rjw.lan>
+References: <20180629091537.26864-1-ulf.hansson@linaro.org>
+ <20180629095146.gljbdw2zbhmj6gwl@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180629095146.gljbdw2zbhmj6gwl@vireshk-i7>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@kernel.org>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Todor Tomov <todor.tomov@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Peter De-Schrijver <pdeschrijver@nvidia.com>
+On Friday, June 29, 2018 11:51:46 AM CEST Viresh Kumar wrote:
+> On 29-06-18, 11:15, Ulf Hansson wrote:
+> > There are no legacy behavior in drivers to consider while attaching a
+> > device to genpd - for the multiple PM domain case.
+> > 
+> > For that reason, let's instead require the driver to runtime resume the
+> > device, via calling pm_runtime_get_sync() for example, when it needs to
+> > power on the corresponding PM domain.
+> > 
+> > This allows us to improve the situation during attach. Instead of always
+> > power on the PM domain, which may be unnecessary, let's leave it in its
+> > current state. Additionally, to avoid the PM domain to stay powered on,
+> > let's schedule a power off work.
+> > 
+> > Fixes: 3c095f32a92b ("PM / Domains: Add support for multi PM domains...")
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >  drivers/base/power/domain.c | 16 +++++++++-------
+> >  1 file changed, 9 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > index c298de8a8308..9e8484189034 100644
+> > --- a/drivers/base/power/domain.c
+> > +++ b/drivers/base/power/domain.c
+> > @@ -2235,7 +2235,7 @@ static void genpd_dev_pm_sync(struct device *dev)
+> >  }
+> >  
+> >  static int __genpd_dev_pm_attach(struct device *dev, struct device_node *np,
+> > -				 unsigned int index)
+> > +				 unsigned int index, bool power_on)
+> >  {
+> >  	struct of_phandle_args pd_args;
+> >  	struct generic_pm_domain *pd;
+> > @@ -2271,9 +2271,11 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device_node *np,
+> >  	dev->pm_domain->detach = genpd_dev_pm_detach;
+> >  	dev->pm_domain->sync = genpd_dev_pm_sync;
+> >  
+> > -	genpd_lock(pd);
+> > -	ret = genpd_power_on(pd, 0);
+> > -	genpd_unlock(pd);
+> > +	if (power_on) {
+> > +		genpd_lock(pd);
+> > +		ret = genpd_power_on(pd, 0);
+> > +		genpd_unlock(pd);
+> > +	}
+> >  
+> >  	if (ret)
+> >  		genpd_remove_device(pd, dev);
+> > @@ -2307,7 +2309,7 @@ int genpd_dev_pm_attach(struct device *dev)
+> >  				       "#power-domain-cells") != 1)
+> >  		return 0;
+> >  
+> > -	return __genpd_dev_pm_attach(dev, dev->of_node, 0);
+> > +	return __genpd_dev_pm_attach(dev, dev->of_node, 0, true);
+> >  }
+> >  EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
+> >  
+> > @@ -2359,14 +2361,14 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+> >  	}
+> >  
+> >  	/* Try to attach the device to the PM domain at the specified index. */
+> > -	ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index);
+> > +	ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index, false);
+> >  	if (ret < 1) {
+> >  		device_unregister(genpd_dev);
+> >  		return ret ? ERR_PTR(ret) : NULL;
+> >  	}
+> >  
+> > -	pm_runtime_set_active(genpd_dev);
+> >  	pm_runtime_enable(genpd_dev);
+> > +	genpd_queue_power_off_work(dev_to_genpd(genpd_dev));
+> >  
+> >  	return genpd_dev;
+> >  }
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> 
 
-These clock have low jitter paths to certain parents. To model these
-correctly, use the sdmmc mux divider clock type.
+Patch applied and queued up for 4.18-rc4.
 
-Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- drivers/clk/tegra/clk-id.h           |  2 --
- drivers/clk/tegra/clk-tegra-periph.c | 11 -----------
- drivers/clk/tegra/clk-tegra210.c     | 14 ++++++++++++--
- 3 files changed, 12 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index b616e33..de466b4 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -227,13 +227,11 @@ enum clk_id {
- 	tegra_clk_sdmmc1_9,
- 	tegra_clk_sdmmc2,
- 	tegra_clk_sdmmc2_8,
--	tegra_clk_sdmmc2_9,
- 	tegra_clk_sdmmc3,
- 	tegra_clk_sdmmc3_8,
- 	tegra_clk_sdmmc3_9,
- 	tegra_clk_sdmmc4,
- 	tegra_clk_sdmmc4_8,
--	tegra_clk_sdmmc4_9,
- 	tegra_clk_se,
- 	tegra_clk_soc_therm,
- 	tegra_clk_soc_therm_8,
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 2acba29..38c4eb2 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -451,15 +451,6 @@ static u32 mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
- 	[0] = 0, [1] = 3, [2] = 4, [3] = 6, [4] = 7,
- };
- 
--static const char *mux_pllp_clkm_pllc4_out2_out1_out0_lj[] = {
--	"pll_p",
--	"pll_c4_out2", "pll_c4_out0",	/* LJ input */
--	"pll_c4_out2", "pll_c4_out1",
--	"pll_c4_out1",			/* LJ input */
--	"clk_m", "pll_c4_out0"
--};
--#define mux_pllp_clkm_pllc4_out2_out1_out0_lj_idx NULL
--
- static const char *mux_pllp_pllc2_c_c3_clkm[] = {
- 	"pll_p", "pll_c2", "pll_c", "pll_c3", "clk_m"
- };
-@@ -686,9 +677,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	MUX("sdmmc3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3),
- 	MUX("sdmmc4", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4),
- 	MUX8("sdmmc1", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC1, 14, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc1_9),
--	MUX8("sdmmc2", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC2, 9, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc2_9),
- 	MUX8("sdmmc3", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3_9),
--	MUX8("sdmmc4", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4_9),
- 	MUX("la", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_LA, 76, TEGRA_PERIPH_ON_APB, tegra_clk_la),
- 	MUX("trace", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_TRACE, 77, TEGRA_PERIPH_ON_APB, tegra_clk_trace),
- 	MUX("owr", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr),
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 5435d01..9eb1cb1 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -44,6 +44,8 @@
- #define CLK_SOURCE_EMC 0x19c
- #define CLK_SOURCE_SOR1 0x410
- #define CLK_SOURCE_LA 0x1f8
-+#define CLK_SOURCE_SDMMC2 0x154
-+#define CLK_SOURCE_SDMMC4 0x164
- 
- #define PLLC_BASE 0x80
- #define PLLC_OUT 0x84
-@@ -2286,11 +2288,9 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_rtc] = { .dt_id = TEGRA210_CLK_RTC, .present = true },
- 	[tegra_clk_timer] = { .dt_id = TEGRA210_CLK_TIMER, .present = true },
- 	[tegra_clk_uarta_8] = { .dt_id = TEGRA210_CLK_UARTA, .present = true },
--	[tegra_clk_sdmmc2_9] = { .dt_id = TEGRA210_CLK_SDMMC2, .present = true },
- 	[tegra_clk_i2s1] = { .dt_id = TEGRA210_CLK_I2S1, .present = true },
- 	[tegra_clk_i2c1] = { .dt_id = TEGRA210_CLK_I2C1, .present = true },
- 	[tegra_clk_sdmmc1_9] = { .dt_id = TEGRA210_CLK_SDMMC1, .present = true },
--	[tegra_clk_sdmmc4_9] = { .dt_id = TEGRA210_CLK_SDMMC4, .present = true },
- 	[tegra_clk_pwm] = { .dt_id = TEGRA210_CLK_PWM, .present = true },
- 	[tegra_clk_i2s2] = { .dt_id = TEGRA210_CLK_I2S2, .present = true },
- 	[tegra_clk_usbd] = { .dt_id = TEGRA210_CLK_USBD, .present = true },
-@@ -3030,6 +3030,16 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 				0, NULL);
- 	clks[TEGRA210_CLK_ACLK] = clk;
- 
-+	clk = tegra_clk_register_sdmmc_mux_div("sdmmc2", clk_base,
-+					    CLK_SOURCE_SDMMC2, 9,
-+					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
-+	clks[TEGRA210_CLK_SDMMC2] = clk;
-+
-+	clk = tegra_clk_register_sdmmc_mux_div("sdmmc4", clk_base,
-+					    CLK_SOURCE_SDMMC4, 15,
-+					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
-+	clks[TEGRA210_CLK_SDMMC4] = clk;
-+
- 	for (i = 0; i < ARRAY_SIZE(tegra210_periph); i++) {
- 		struct tegra_periph_init_data *init = &tegra210_periph[i];
- 		struct clk **clkp;
--- 
-2.7.4
+Thanks!
