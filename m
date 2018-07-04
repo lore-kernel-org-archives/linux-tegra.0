@@ -1,85 +1,112 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
-Date: Wed, 04 Jul 2018 14:25:11 +0300
-Message-ID: <1635370.HnqPZmo3Ue@dimapc>
-References: <20180619110027.16935-1-digetx@gmail.com> <11534185.70fb5jbPr6@dimapc> <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v2] mfd: as3722: disable auto power on when AC OK
+Date: Wed, 4 Jul 2018 12:03:29 +0000
+Message-ID: <1530705807.13209.44.camel@toradex.com>
+References: <20180703150411.29709-1-marcel@ziswiler.com>
+         <20180704075202.GQ20176@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
+In-Reply-To: <20180704075202.GQ20176@dell>
+Content-Language: en-US
+Content-ID: <75817DF6228CC840B9622624905C6388@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+To: "lee.jones@linaro.org" <lee.jones@linaro.org>
+Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "ldewangan@nvidia.com" <ldewangan@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, 2 July 2018 21:53:08 MSK Peter Geis wrote:
-> On 07/02/2018 10:48 AM, Dmitry Osipenko wrote:
-> > On Friday, 29 June 2018 22:37:02 MSK Peter Geis wrote:
-> >> Good Afternoon,
-> >> 
-> >> I have tested these patches on the Ouya T3 device.
-> >> They work great to enable the L2 cache controller, however they do not
-> >> respect explicitly disabling the L2 cache controller via the kernel
-> >> config nor device tree.
-> >> 
-> >> With CONFIG_CACHE_L2X0 disabled, but CONFIG_TRUSTED_FOUNDATIONS enabled,
-> >> the L2 cache controller is silently enabled and allows all four cores to
-> >> boot.
-> > 
-> > I don't see how cache could be enabled with CONFIG_CACHE_L2X0 disabled,
-> > there is no code to do that. Could you elaborate please?
-> > 
-> > Secondary cores do not depend on the cache state, disabled cache shouldn't
-> > prevent them to boot.
-> 
-> On the untouched mainline kernel running on a Trusted Foundations T3
-> device, I observed the following indications:
-> With the L2 cache controller enabled, all four processor cores were
-> enabled, but it would immediately panic for writing to a secure register
-> from insecure mode.
-> With the L2 cache controller disabled, only the boot core is detected,
-> but it successfully boots.
-> This is the issue that I inquired originally to you about.
-> 
-> With your patch running on the same device, the following is observed:
-> With the L2 controller enabled, all four cores are active, and the cache
-> controller appears to function.
-> With the L2 controller disabled, but trusted foundations enabled, the L2
-> controller enabled kernel message is missing, however all four cores
-> still enable.
-> 
-
-This is the correct behaviour.
-
-> After looking through the code a little more deeply, I see you modified
-> the reset handler for handling offline cores.
-> I am wondering if you fixed an additional issue inadvertently.
-> 
-
-CPU will fail to boot if it tries to apply erratas via accessing the secure 
-registers. I've changed the reset handler to skip erratas on T20/30 if trusted 
-foundations present, see "Don't apply CPU erratas in insecure mode" patch. 
-This is an intentional change.
-
-> The reason I discovered this is I am working with kexec as a bootloader.
-> On a device without trusted foundations, kexec works without issue.
-> On a device with trusted foundations and your patch, I found that
-> disabling the l2 cache controller and trusted foundations allow kexec to
-> occur.
-> I haven't tried an either/or scenario, though now you have me thinking I
-> should.
-> 
-
-Secondary cores are dying in the reset handler in a case of disabled L2 + 
-disabled TF. Looks like there is something wrong in regards to stopping 
-secondary CPU cores / flushing CPU caches, the suspend-resume isn't working 
-right now because of it and likely that kexec is suffering from the same 
-issue.
-
-> >> One must also disable CONFIG_TRUSTED_FOUNDATIONS to stop the L2 cache
-> >> controller from spinning up.
-> >> 
-> >> Tested-by: Peter Geis <pgwipeout@gmail.com>
-
-Thanks for testing!
+T24gV2VkLCAyMDE4LTA3LTA0IGF0IDA4OjUyICswMTAwLCBMZWUgSm9uZXMgd3JvdGU6DQo+IE9u
+IFR1ZSwgMDMgSnVsIDIwMTgsIE1hcmNlbCBaaXN3aWxlciB3cm90ZToNCj4gDQo+ID4gRnJvbTog
+TWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+ID4gDQo+ID4g
+T24gYW1zIEFTMzcyMiwgcG93ZXIgb24gd2hlbiBBQyBPSyBpcyBlbmFibGVkIGJ5IGRlZmF1bHQu
+DQo+ID4gTWFraW5nIHRoaXMgb3B0aW9uIGFzIGRpc2FibGUgYnkgZGVmYXVsdCBhbmQgZW5hYmxl
+IG9ubHkNCj4gPiB3aGVuIHBsYXRmb3JtIG5lZWQgdGhpcyBleHBsaWNpdGx5Lg0KPiA+IA0KPiA+
+IFNpZ25lZC1vZmYtYnk6IExheG1hbiBEZXdhbmdhbiA8bGRld2FuZ2FuQG52aWRpYS5jb20+DQo+
+ID4gUmV2aWV3ZWQtYnk6IEJpYmVrIEJhc3UgPGJiYXN1QG52aWRpYS5jb20+DQo+ID4gVGVzdGVk
+LWJ5OiBCaWJlayBCYXN1IDxiYmFzdUBudmlkaWEuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1h
+cmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+IA0KPiA+IC0t
+LQ0KPiA+IA0KPiA+IENoYW5nZXMgaW4gdjI6DQo+ID4gLSBEb2N1bWVudCBkZXZpY2UgdHJlZSBw
+cm9wZXJ0eSBhcyBzdWdnZXN0ZWQgYnkgU3RlZmFuLg0KPiA+IC0gUmVuYW1lIFNFUTEgdG8gU0VR
+VTEgYXMgcGVyIGRhdGFzaGVldCBhcyBzdWdnZXN0ZWQgYnkgU3RlZmFuLg0KPiA+IC0gRHJvcCBy
+ZWZlcmVuY2UgdG8gZG93bnN0cmVhbSBjb21taXQgYXMgc3VnZ2VzdGVkIGJ5IExlZS4NCj4gPiAN
+Cj4gPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9hczM3MjIudHh0IHwg
+IDIgKysNCj4gPiAgZHJpdmVycy9tZmQvYXMzNzIyLmMgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHwgMTIgKysrKysrKysrKysrDQo+ID4gIGluY2x1ZGUvbGludXgvbWZkL2FzMzcyMi5oICAg
+ICAgICAgICAgICAgICAgICAgICB8ICAzICsrKw0KPiA+ICAzIGZpbGVzIGNoYW5nZWQsIDE3IGlu
+c2VydGlvbnMoKykNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL21mZC9hczM3MjIudHh0DQo+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvbWZkL2FzMzcyMi50eHQNCj4gPiBpbmRleCA1Mjk3YjIyMTA3MDQuLjJhNjY1
+NzQxZDdmZSAxMDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvbWZkL2FzMzcyMi50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvbWZkL2FzMzcyMi50eHQNCj4gPiBAQCAtMjAsNiArMjAsOCBAQCBPcHRpb25hbCBwcm9w
+ZXJ0aWVzOg0KPiA+ICAtIGFtcyxlbmFibGUtaW50ZXJuYWwtaTJjLXB1bGx1cDogQm9vbGVhbiBw
+cm9wZXJ0eSwgdG8gZW5hYmxlDQo+ID4gaW50ZXJuYWwgcHVsbHVwIG9uDQo+ID4gIAlpMmMgc2Ns
+L3NkYSBwaW5zLiBNaXNzaW5nIHRoaXMgd2lsbCBkaXNhYmxlIGludGVybmFsDQo+ID4gcHVsbHVw
+IG9uIGkyYw0KPiA+ICAJc2NsL3NkYSBsaW5lcy4NCj4gPiArLSBhbXMsZW5hYmxlLWFjLW9rLXBv
+d2VyLW9uOiBCb29sZWFuIHByb3BlcnR5LCB0byBlbmFibGUgZXhpdCBvdXQNCj4gPiBvZiBwb3dl
+ciBvZmYNCj4gPiArCW1vZGUgd2l0aCBBQ19PSyBwaW4gKHBpbiBlbmFibGVkIGluIHBvd2VyIG9m
+ZiBtb2RlKS4NCj4gDQo+IFRoaXMgbmVlZHMgYSBEVCBBY2suDQoNClllcywgY2VydGFpbmx5LiBU
+aGF0J3Mgd2h5IEkgQ0MnZCB0aGUgZGV2aWNlIHRyZWUgbWFpbGluZyBsaXN0IGFzIHdlbGwNCmFz
+IE1yLiBIZXJyaW5nIGhpbXNlbGYuDQoNCj4gPiAgT3B0aW9uYWwgc3VibW9kdWxlIGFuZCB0aGVp
+ciBwcm9wZXJ0aWVzOg0KPiA+ICA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT0NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvYXMzNzIyLmMgYi9kcml2ZXJzL21mZC9h
+czM3MjIuYw0KPiA+IGluZGV4IGY4NzM0MmMyMTFiYy4uNGQwNjllZDIxZmY2IDEwMDY0NA0KPiA+
+IC0tLSBhL2RyaXZlcnMvbWZkL2FzMzcyMi5jDQo+ID4gKysrIGIvZHJpdmVycy9tZmQvYXMzNzIy
+LmMNCj4gPiBAQCAtMzQ5LDYgKzM0OSw4IEBAIHN0YXRpYyBpbnQgYXMzNzIyX2kyY19vZl9wcm9i
+ZShzdHJ1Y3QNCj4gPiBpMmNfY2xpZW50ICppMmMsDQo+ID4gIAkJCQkJImFtcyxlbmFibGUtaW50
+ZXJuYWwtaW50LQ0KPiA+IHB1bGx1cCIpOw0KPiA+ICAJYXMzNzIyLT5lbl9pbnRlcm5faTJjX3B1
+bGx1cCA9IG9mX3Byb3BlcnR5X3JlYWRfYm9vbChucCwNCj4gPiAgCQkJCQkiYW1zLGVuYWJsZS1p
+bnRlcm5hbC1pMmMtDQo+ID4gcHVsbHVwIik7DQo+ID4gKwlhczM3MjItPmVuX2FjX29rX3B3cl9v
+biA9IG9mX3Byb3BlcnR5X3JlYWRfYm9vbChucCwNCj4gPiArCQkJCQkiYW1zLGVuYWJsZS1hYy1v
+ay1wb3dlci0NCj4gPiBvbiIpOw0KPiA+ICAJYXMzNzIyLT5pcnFfZmxhZ3MgPSBpcnFkX2dldF90
+cmlnZ2VyX3R5cGUoaXJxX2RhdGEpOw0KPiA+ICAJZGV2X2RiZygmaTJjLT5kZXYsICJJUlEgZmxh
+Z3MgYXJlIDB4JTA4bHhcbiIsIGFzMzcyMi0NCj4gPiA+aXJxX2ZsYWdzKTsNCj4gPiAgCXJldHVy
+biAwOw0KPiA+IEBAIC0zNjAsNiArMzYyLDcgQEAgc3RhdGljIGludCBhczM3MjJfaTJjX3Byb2Jl
+KHN0cnVjdCBpMmNfY2xpZW50DQo+ID4gKmkyYywNCj4gPiAgCXN0cnVjdCBhczM3MjIgKmFzMzcy
+MjsNCj4gPiAgCXVuc2lnbmVkIGxvbmcgaXJxX2ZsYWdzOw0KPiA+ICAJaW50IHJldDsNCj4gPiAr
+CXU4IHZhbCA9IDA7DQo+ID4gIA0KPiA+ICAJYXMzNzIyID0gZGV2bV9remFsbG9jKCZpMmMtPmRl
+diwgc2l6ZW9mKHN0cnVjdCBhczM3MjIpLA0KPiA+IEdGUF9LRVJORUwpOw0KPiA+ICAJaWYgKCFh
+czM3MjIpDQo+ID4gQEAgLTM5OCw2ICs0MDEsMTUgQEAgc3RhdGljIGludCBhczM3MjJfaTJjX3By
+b2JlKHN0cnVjdCBpMmNfY2xpZW50DQo+ID4gKmkyYywNCj4gPiAgCWlmIChyZXQgPCAwKQ0KPiA+
+ICAJCXJldHVybiByZXQ7DQo+ID4gIA0KPiA+ICsJaWYgKGFzMzcyMi0+ZW5fYWNfb2tfcHdyX29u
+KQ0KPiA+ICsJCXZhbCA9IEFTMzcyMl9DVFJMX1NFUVUxX0FDX09LX1BXUl9PTjsNCj4gPiArCXJl
+dCA9IGFzMzcyMl91cGRhdGVfYml0cyhhczM3MjIsIEFTMzcyMl9DVFJMX1NFUVUxX1JFRywNCj4g
+PiArCQkJQVMzNzIyX0NUUkxfU0VRVTFfQUNfT0tfUFdSX09OLCB2YWwpOw0KPiANCj4gV2hhdCBp
+cyB0aGUgZGVmYXVsdCB2YWx1ZT8NCg0KWWVzLCBzb3JyeS4gSSBxdWVzcyBpdCBtYXkgbm90IGJl
+IGNvbXBsZXRlbHkgY2xlYXIgZnJvbSBMYXhtYW4ncw0Kb3JpZ2luYWwgY29tbWl0IG1lc3NhZ2Uu
+DQoNCj4gSWYgMCwgeW91IGNvdWxkIHBsYWNlIGFsbCBvZiB0aGlzIGNvZGUgaW5zaWRlIHRoZSAi
+aWYNCj4gKGFzMzcyMi0+ZW5fYWNfb2tfcHdyX29uKSIgYW5kIHNhdmUgb24gYSBmZXcgdW5uZWNl
+c3NhcnkgY3ljbGVzLg0KDQpVbmZvcnR1bmF0ZWx5LCBpdCBpcyBub3QgcXVpdGUgdGhhdCBzaW1w
+bGUuIFdoaWxlIHRoZSBoYXJkd2FyZSBkZWZhdWx0DQp3b3VsZCBhY3R1YWxseSBiZSBvbiBhdCBs
+ZWFzdCBKZXRzb24gVEsxIGFzIHdlbGwgYXMgVG9yYWRleCBBcGFsaXMgVEsxDQpkbyBub3Qgd29y
+ayB0aGF0IHdheS4gVGhlcmVmb3JlLCBteSAocmVzcC4gTGF4bWFuJ3MpIHByb3Bvc2VkIHdheSBv
+Zg0KaGFuZGxpbmcgdGhpcyB3YXMvaXMgZm9yIHRoZSBkZWZhdWx0IHRvIGJlIG9mZiBhbmQgYW55
+Ym9keSByZWFsbHkNCnJlcXVpcmluZyBpdCB0byBiZSBvbiBoYXZpbmcgdG8gZG8gc28gdmlhIGFk
+ZGluZyB0aGlzIGRldmljZSB0cmVlDQpwcm9wZXJ0eS4gSSBhZG1pdCB0aGF0IHRoaXMgbWF5IGJl
+IHBlcmNlaXZlZCBhcyBhIGJlaGF2aW91cmFsIGNoYW5nZQ0KaG93ZXZlciBhcyBtZW50aW9uZWQg
+YWJvdmUgYXQgbGVhc3Qgb24gSmV0c29uIFRLMSBhcyB3ZWxsIGFzIFRvcmFkZXgNCkFwYWxpcyBU
+SzEgdGhpcyByZWFsbHkgZml4ZXMgcG93ZXJvZmYgd2hpY2ggb3RoZXJ3aXNlIGltbWVkaWF0ZWx5
+DQpwb3dlcmVkIG9uIGFnYWluLiBTbyB0aGlzIGlzIHJlYWxseSBhIGJ1ZyBmaXguIEkgbWF5IGlu
+Y2x1ZGUgc29tZSBtb3JlDQppbmZvcm1hdGlvbiBpbiB0aGUgY29tbWl0IG1lc3NhZ2UgaWYgcmVx
+dWVzdGVkLg0KDQpNYXliZSBzb21lYm9keSBmcm9tIE5WSURJQSBjb3VsZCBhbHNvIGNvbW1lbnQg
+b24gd2hldGhlciBvciBub3QgdGhpcyBpcw0KcmVhbGx5IGEgZ29vZCBpZGVhIG9yIGhvdyB0aGV5
+IHdvdWxkIGV4cGVjdCB0aGluZ3MgdG8gd29yay4gQW55Ym9keT8NCg0KPiA+ICsJaWYgKHJldCA8
+IDApIHsNCj4gPiArCQlkZXZfZXJyKGFzMzcyMi0+ZGV2LCAiQ1RSTHNlcXUxIHVwZGF0ZSBmYWls
+ZWQ6DQo+ID4gJWRcbiIsIHJldCk7DQo+ID4gKwkJcmV0dXJuIHJldDsNCj4gPiArCX0NCj4gPiAr
+DQo+ID4gIAlyZXQgPSBkZXZtX21mZF9hZGRfZGV2aWNlcygmaTJjLT5kZXYsIC0xLCBhczM3MjJf
+ZGV2cywNCj4gPiAgCQkJCSAgIEFSUkFZX1NJWkUoYXMzNzIyX2RldnMpLCBOVUxMLA0KPiA+IDAs
+DQo+ID4gIAkJCQkgICByZWdtYXBfaXJxX2dldF9kb21haW4oYXMzNzIyLQ0KPiA+ID5pcnFfZGF0
+YSkpOw0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L21mZC9hczM3MjIuaA0KPiA+IGIv
+aW5jbHVkZS9saW51eC9tZmQvYXMzNzIyLmgNCj4gPiBpbmRleCA1MWU2Zjk0MTQ1NzUuLmI0MDRh
+NWFmOWJiYSAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21mZC9hczM3MjIuaA0KPiA+
+ICsrKyBiL2luY2x1ZGUvbGludXgvbWZkL2FzMzcyMi5oDQo+ID4gQEAgLTI5Niw2ICsyOTYsOCBA
+QA0KPiA+ICAjZGVmaW5lIEFTMzcyMl9BREMxX0NPTlZfTk9UUkVBRFkJCQlCSVQoNykNCj4gPiAg
+I2RlZmluZSBBUzM3MjJfQURDMV9TT1VSQ0VfU0VMRUNUX01BU0sJCQkweDFGDQo+ID4gIA0KPiA+
+ICsjZGVmaW5lIEFTMzcyMl9DVFJMX1NFUVUxX0FDX09LX1BXUl9PTgkJCUJJVCgNCj4gPiAwKQ0K
+PiA+ICsNCj4gPiAgLyogR1BJTyBtb2RlcyAqLw0KPiA+ICAjZGVmaW5lIEFTMzcyMl9HUElPX01P
+REVfTUFTSwkJCQkweDA3DQo+ID4gICNkZWZpbmUgQVMzNzIyX0dQSU9fTU9ERV9JTlBVVAkJCQkw
+eDAwDQo+ID4gQEAgLTM5MSw2ICszOTMsNyBAQCBzdHJ1Y3QgYXMzNzIyIHsNCj4gPiAgCXVuc2ln
+bmVkIGxvbmcgaXJxX2ZsYWdzOw0KPiA+ICAJYm9vbCBlbl9pbnRlcm5faW50X3B1bGx1cDsNCj4g
+PiAgCWJvb2wgZW5faW50ZXJuX2kyY19wdWxsdXA7DQo+ID4gKwlib29sIGVuX2FjX29rX3B3cl9v
+bjsNCj4gPiAgCXN0cnVjdCByZWdtYXBfaXJxX2NoaXBfZGF0YSAqaXJxX2RhdGE7DQo+ID4gIH07
