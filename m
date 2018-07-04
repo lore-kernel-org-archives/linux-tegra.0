@@ -1,112 +1,211 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH v2] mfd: as3722: disable auto power on when AC OK
-Date: Wed, 4 Jul 2018 12:03:29 +0000
-Message-ID: <1530705807.13209.44.camel@toradex.com>
-References: <20180703150411.29709-1-marcel@ziswiler.com>
-         <20180704075202.GQ20176@dell>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 1/2] device core: Rename flag AUTOREMOVE to AUTOREMOVE_CONSUMER
+Date: Wed, 4 Jul 2018 14:55:25 +0200
+Message-ID: <CAPDyKFru0zL4prQ9Vk1RAM-73PW8rTkseAGGwxqpZuTz+Fhczw@mail.gmail.com>
+References: <20180627125056.12851-1-vivek.gautam@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180704075202.GQ20176@dell>
-Content-Language: en-US
-Content-ID: <75817DF6228CC840B9622624905C6388@eurprd05.prod.outlook.com>
+In-Reply-To: <20180627125056.12851-1-vivek.gautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "lee.jones@linaro.org" <lee.jones@linaro.org>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "ldewangan@nvidia.com" <ldewangan@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>, Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Robin Murphy <robin.murphy@arm.com>, linux-doc@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux PM <linux-pm@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTA3LTA0IGF0IDA4OjUyICswMTAwLCBMZWUgSm9uZXMgd3JvdGU6DQo+IE9u
-IFR1ZSwgMDMgSnVsIDIwMTgsIE1hcmNlbCBaaXN3aWxlciB3cm90ZToNCj4gDQo+ID4gRnJvbTog
-TWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+ID4gDQo+ID4g
-T24gYW1zIEFTMzcyMiwgcG93ZXIgb24gd2hlbiBBQyBPSyBpcyBlbmFibGVkIGJ5IGRlZmF1bHQu
-DQo+ID4gTWFraW5nIHRoaXMgb3B0aW9uIGFzIGRpc2FibGUgYnkgZGVmYXVsdCBhbmQgZW5hYmxl
-IG9ubHkNCj4gPiB3aGVuIHBsYXRmb3JtIG5lZWQgdGhpcyBleHBsaWNpdGx5Lg0KPiA+IA0KPiA+
-IFNpZ25lZC1vZmYtYnk6IExheG1hbiBEZXdhbmdhbiA8bGRld2FuZ2FuQG52aWRpYS5jb20+DQo+
-ID4gUmV2aWV3ZWQtYnk6IEJpYmVrIEJhc3UgPGJiYXN1QG52aWRpYS5jb20+DQo+ID4gVGVzdGVk
-LWJ5OiBCaWJlayBCYXN1IDxiYmFzdUBudmlkaWEuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1h
-cmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+IA0KPiA+IC0t
-LQ0KPiA+IA0KPiA+IENoYW5nZXMgaW4gdjI6DQo+ID4gLSBEb2N1bWVudCBkZXZpY2UgdHJlZSBw
-cm9wZXJ0eSBhcyBzdWdnZXN0ZWQgYnkgU3RlZmFuLg0KPiA+IC0gUmVuYW1lIFNFUTEgdG8gU0VR
-VTEgYXMgcGVyIGRhdGFzaGVldCBhcyBzdWdnZXN0ZWQgYnkgU3RlZmFuLg0KPiA+IC0gRHJvcCBy
-ZWZlcmVuY2UgdG8gZG93bnN0cmVhbSBjb21taXQgYXMgc3VnZ2VzdGVkIGJ5IExlZS4NCj4gPiAN
-Cj4gPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9hczM3MjIudHh0IHwg
-IDIgKysNCj4gPiAgZHJpdmVycy9tZmQvYXMzNzIyLmMgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHwgMTIgKysrKysrKysrKysrDQo+ID4gIGluY2x1ZGUvbGludXgvbWZkL2FzMzcyMi5oICAg
-ICAgICAgICAgICAgICAgICAgICB8ICAzICsrKw0KPiA+ICAzIGZpbGVzIGNoYW5nZWQsIDE3IGlu
-c2VydGlvbnMoKykNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL21mZC9hczM3MjIudHh0DQo+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvbWZkL2FzMzcyMi50eHQNCj4gPiBpbmRleCA1Mjk3YjIyMTA3MDQuLjJhNjY1
-NzQxZDdmZSAxMDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvbWZkL2FzMzcyMi50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWZkL2FzMzcyMi50eHQNCj4gPiBAQCAtMjAsNiArMjAsOCBAQCBPcHRpb25hbCBwcm9w
-ZXJ0aWVzOg0KPiA+ICAtIGFtcyxlbmFibGUtaW50ZXJuYWwtaTJjLXB1bGx1cDogQm9vbGVhbiBw
-cm9wZXJ0eSwgdG8gZW5hYmxlDQo+ID4gaW50ZXJuYWwgcHVsbHVwIG9uDQo+ID4gIAlpMmMgc2Ns
-L3NkYSBwaW5zLiBNaXNzaW5nIHRoaXMgd2lsbCBkaXNhYmxlIGludGVybmFsDQo+ID4gcHVsbHVw
-IG9uIGkyYw0KPiA+ICAJc2NsL3NkYSBsaW5lcy4NCj4gPiArLSBhbXMsZW5hYmxlLWFjLW9rLXBv
-d2VyLW9uOiBCb29sZWFuIHByb3BlcnR5LCB0byBlbmFibGUgZXhpdCBvdXQNCj4gPiBvZiBwb3dl
-ciBvZmYNCj4gPiArCW1vZGUgd2l0aCBBQ19PSyBwaW4gKHBpbiBlbmFibGVkIGluIHBvd2VyIG9m
-ZiBtb2RlKS4NCj4gDQo+IFRoaXMgbmVlZHMgYSBEVCBBY2suDQoNClllcywgY2VydGFpbmx5LiBU
-aGF0J3Mgd2h5IEkgQ0MnZCB0aGUgZGV2aWNlIHRyZWUgbWFpbGluZyBsaXN0IGFzIHdlbGwNCmFz
-IE1yLiBIZXJyaW5nIGhpbXNlbGYuDQoNCj4gPiAgT3B0aW9uYWwgc3VibW9kdWxlIGFuZCB0aGVp
-ciBwcm9wZXJ0aWVzOg0KPiA+ICA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT0NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvYXMzNzIyLmMgYi9kcml2ZXJzL21mZC9h
-czM3MjIuYw0KPiA+IGluZGV4IGY4NzM0MmMyMTFiYy4uNGQwNjllZDIxZmY2IDEwMDY0NA0KPiA+
-IC0tLSBhL2RyaXZlcnMvbWZkL2FzMzcyMi5jDQo+ID4gKysrIGIvZHJpdmVycy9tZmQvYXMzNzIy
-LmMNCj4gPiBAQCAtMzQ5LDYgKzM0OSw4IEBAIHN0YXRpYyBpbnQgYXMzNzIyX2kyY19vZl9wcm9i
-ZShzdHJ1Y3QNCj4gPiBpMmNfY2xpZW50ICppMmMsDQo+ID4gIAkJCQkJImFtcyxlbmFibGUtaW50
-ZXJuYWwtaW50LQ0KPiA+IHB1bGx1cCIpOw0KPiA+ICAJYXMzNzIyLT5lbl9pbnRlcm5faTJjX3B1
-bGx1cCA9IG9mX3Byb3BlcnR5X3JlYWRfYm9vbChucCwNCj4gPiAgCQkJCQkiYW1zLGVuYWJsZS1p
-bnRlcm5hbC1pMmMtDQo+ID4gcHVsbHVwIik7DQo+ID4gKwlhczM3MjItPmVuX2FjX29rX3B3cl9v
-biA9IG9mX3Byb3BlcnR5X3JlYWRfYm9vbChucCwNCj4gPiArCQkJCQkiYW1zLGVuYWJsZS1hYy1v
-ay1wb3dlci0NCj4gPiBvbiIpOw0KPiA+ICAJYXMzNzIyLT5pcnFfZmxhZ3MgPSBpcnFkX2dldF90
-cmlnZ2VyX3R5cGUoaXJxX2RhdGEpOw0KPiA+ICAJZGV2X2RiZygmaTJjLT5kZXYsICJJUlEgZmxh
-Z3MgYXJlIDB4JTA4bHhcbiIsIGFzMzcyMi0NCj4gPiA+aXJxX2ZsYWdzKTsNCj4gPiAgCXJldHVy
-biAwOw0KPiA+IEBAIC0zNjAsNiArMzYyLDcgQEAgc3RhdGljIGludCBhczM3MjJfaTJjX3Byb2Jl
-KHN0cnVjdCBpMmNfY2xpZW50DQo+ID4gKmkyYywNCj4gPiAgCXN0cnVjdCBhczM3MjIgKmFzMzcy
-MjsNCj4gPiAgCXVuc2lnbmVkIGxvbmcgaXJxX2ZsYWdzOw0KPiA+ICAJaW50IHJldDsNCj4gPiAr
-CXU4IHZhbCA9IDA7DQo+ID4gIA0KPiA+ICAJYXMzNzIyID0gZGV2bV9remFsbG9jKCZpMmMtPmRl
-diwgc2l6ZW9mKHN0cnVjdCBhczM3MjIpLA0KPiA+IEdGUF9LRVJORUwpOw0KPiA+ICAJaWYgKCFh
-czM3MjIpDQo+ID4gQEAgLTM5OCw2ICs0MDEsMTUgQEAgc3RhdGljIGludCBhczM3MjJfaTJjX3By
-b2JlKHN0cnVjdCBpMmNfY2xpZW50DQo+ID4gKmkyYywNCj4gPiAgCWlmIChyZXQgPCAwKQ0KPiA+
-ICAJCXJldHVybiByZXQ7DQo+ID4gIA0KPiA+ICsJaWYgKGFzMzcyMi0+ZW5fYWNfb2tfcHdyX29u
-KQ0KPiA+ICsJCXZhbCA9IEFTMzcyMl9DVFJMX1NFUVUxX0FDX09LX1BXUl9PTjsNCj4gPiArCXJl
-dCA9IGFzMzcyMl91cGRhdGVfYml0cyhhczM3MjIsIEFTMzcyMl9DVFJMX1NFUVUxX1JFRywNCj4g
-PiArCQkJQVMzNzIyX0NUUkxfU0VRVTFfQUNfT0tfUFdSX09OLCB2YWwpOw0KPiANCj4gV2hhdCBp
-cyB0aGUgZGVmYXVsdCB2YWx1ZT8NCg0KWWVzLCBzb3JyeS4gSSBxdWVzcyBpdCBtYXkgbm90IGJl
-IGNvbXBsZXRlbHkgY2xlYXIgZnJvbSBMYXhtYW4ncw0Kb3JpZ2luYWwgY29tbWl0IG1lc3NhZ2Uu
-DQoNCj4gSWYgMCwgeW91IGNvdWxkIHBsYWNlIGFsbCBvZiB0aGlzIGNvZGUgaW5zaWRlIHRoZSAi
-aWYNCj4gKGFzMzcyMi0+ZW5fYWNfb2tfcHdyX29uKSIgYW5kIHNhdmUgb24gYSBmZXcgdW5uZWNl
-c3NhcnkgY3ljbGVzLg0KDQpVbmZvcnR1bmF0ZWx5LCBpdCBpcyBub3QgcXVpdGUgdGhhdCBzaW1w
-bGUuIFdoaWxlIHRoZSBoYXJkd2FyZSBkZWZhdWx0DQp3b3VsZCBhY3R1YWxseSBiZSBvbiBhdCBs
-ZWFzdCBKZXRzb24gVEsxIGFzIHdlbGwgYXMgVG9yYWRleCBBcGFsaXMgVEsxDQpkbyBub3Qgd29y
-ayB0aGF0IHdheS4gVGhlcmVmb3JlLCBteSAocmVzcC4gTGF4bWFuJ3MpIHByb3Bvc2VkIHdheSBv
-Zg0KaGFuZGxpbmcgdGhpcyB3YXMvaXMgZm9yIHRoZSBkZWZhdWx0IHRvIGJlIG9mZiBhbmQgYW55
-Ym9keSByZWFsbHkNCnJlcXVpcmluZyBpdCB0byBiZSBvbiBoYXZpbmcgdG8gZG8gc28gdmlhIGFk
-ZGluZyB0aGlzIGRldmljZSB0cmVlDQpwcm9wZXJ0eS4gSSBhZG1pdCB0aGF0IHRoaXMgbWF5IGJl
-IHBlcmNlaXZlZCBhcyBhIGJlaGF2aW91cmFsIGNoYW5nZQ0KaG93ZXZlciBhcyBtZW50aW9uZWQg
-YWJvdmUgYXQgbGVhc3Qgb24gSmV0c29uIFRLMSBhcyB3ZWxsIGFzIFRvcmFkZXgNCkFwYWxpcyBU
-SzEgdGhpcyByZWFsbHkgZml4ZXMgcG93ZXJvZmYgd2hpY2ggb3RoZXJ3aXNlIGltbWVkaWF0ZWx5
-DQpwb3dlcmVkIG9uIGFnYWluLiBTbyB0aGlzIGlzIHJlYWxseSBhIGJ1ZyBmaXguIEkgbWF5IGlu
-Y2x1ZGUgc29tZSBtb3JlDQppbmZvcm1hdGlvbiBpbiB0aGUgY29tbWl0IG1lc3NhZ2UgaWYgcmVx
-dWVzdGVkLg0KDQpNYXliZSBzb21lYm9keSBmcm9tIE5WSURJQSBjb3VsZCBhbHNvIGNvbW1lbnQg
-b24gd2hldGhlciBvciBub3QgdGhpcyBpcw0KcmVhbGx5IGEgZ29vZCBpZGVhIG9yIGhvdyB0aGV5
-IHdvdWxkIGV4cGVjdCB0aGluZ3MgdG8gd29yay4gQW55Ym9keT8NCg0KPiA+ICsJaWYgKHJldCA8
-IDApIHsNCj4gPiArCQlkZXZfZXJyKGFzMzcyMi0+ZGV2LCAiQ1RSTHNlcXUxIHVwZGF0ZSBmYWls
-ZWQ6DQo+ID4gJWRcbiIsIHJldCk7DQo+ID4gKwkJcmV0dXJuIHJldDsNCj4gPiArCX0NCj4gPiAr
-DQo+ID4gIAlyZXQgPSBkZXZtX21mZF9hZGRfZGV2aWNlcygmaTJjLT5kZXYsIC0xLCBhczM3MjJf
-ZGV2cywNCj4gPiAgCQkJCSAgIEFSUkFZX1NJWkUoYXMzNzIyX2RldnMpLCBOVUxMLA0KPiA+IDAs
-DQo+ID4gIAkJCQkgICByZWdtYXBfaXJxX2dldF9kb21haW4oYXMzNzIyLQ0KPiA+ID5pcnFfZGF0
-YSkpOw0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L21mZC9hczM3MjIuaA0KPiA+IGIv
-aW5jbHVkZS9saW51eC9tZmQvYXMzNzIyLmgNCj4gPiBpbmRleCA1MWU2Zjk0MTQ1NzUuLmI0MDRh
-NWFmOWJiYSAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21mZC9hczM3MjIuaA0KPiA+
-ICsrKyBiL2luY2x1ZGUvbGludXgvbWZkL2FzMzcyMi5oDQo+ID4gQEAgLTI5Niw2ICsyOTYsOCBA
-QA0KPiA+ICAjZGVmaW5lIEFTMzcyMl9BREMxX0NPTlZfTk9UUkVBRFkJCQlCSVQoNykNCj4gPiAg
-I2RlZmluZSBBUzM3MjJfQURDMV9TT1VSQ0VfU0VMRUNUX01BU0sJCQkweDFGDQo+ID4gIA0KPiA+
-ICsjZGVmaW5lIEFTMzcyMl9DVFJMX1NFUVUxX0FDX09LX1BXUl9PTgkJCUJJVCgNCj4gPiAwKQ0K
-PiA+ICsNCj4gPiAgLyogR1BJTyBtb2RlcyAqLw0KPiA+ICAjZGVmaW5lIEFTMzcyMl9HUElPX01P
-REVfTUFTSwkJCQkweDA3DQo+ID4gICNkZWZpbmUgQVMzNzIyX0dQSU9fTU9ERV9JTlBVVAkJCQkw
-eDAwDQo+ID4gQEAgLTM5MSw2ICszOTMsNyBAQCBzdHJ1Y3QgYXMzNzIyIHsNCj4gPiAgCXVuc2ln
-bmVkIGxvbmcgaXJxX2ZsYWdzOw0KPiA+ICAJYm9vbCBlbl9pbnRlcm5faW50X3B1bGx1cDsNCj4g
-PiAgCWJvb2wgZW5faW50ZXJuX2kyY19wdWxsdXA7DQo+ID4gKwlib29sIGVuX2FjX29rX3B3cl9v
-bjsNCj4gPiAgCXN0cnVjdCByZWdtYXBfaXJxX2NoaXBfZGF0YSAqaXJxX2RhdGE7DQo+ID4gIH07
+On 27 June 2018 at 14:50, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+> Now that we want to add another flag to autoremove the device link
+> on supplier unbind, it's fair to rename the existing flag from
+> DL_FLAG_AUTOREMOVE to DL_FLAG_AUTOREMOVE_CONSUMER so that we can
+> add similar flag for supplier later.
+> And, while we are touching device.h, fix a doc build warning.
+>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: linux-doc@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
+
+> ---
+>  Documentation/driver-api/device_link.rst |  8 ++++----
+>  drivers/base/core.c                      | 15 ++++++++-------
+>  drivers/gpu/drm/tegra/dc.c               |  2 +-
+>  drivers/gpu/ipu-v3/ipu-pre.c             |  3 ++-
+>  drivers/gpu/ipu-v3/ipu-prg.c             |  3 ++-
+>  drivers/soc/imx/gpc.c                    |  2 +-
+>  include/linux/device.h                   | 12 ++++++------
+>  7 files changed, 24 insertions(+), 21 deletions(-)
+>
+> diff --git a/Documentation/driver-api/device_link.rst b/Documentation/driver-api/device_link.rst
+> index 70e328e16aad..a005b904a264 100644
+> --- a/Documentation/driver-api/device_link.rst
+> +++ b/Documentation/driver-api/device_link.rst
+> @@ -81,10 +81,10 @@ integration is desired.
+>  Two other flags are specifically targeted at use cases where the device
+>  link is added from the consumer's ``->probe`` callback:  ``DL_FLAG_RPM_ACTIVE``
+>  can be specified to runtime resume the supplier upon addition of the
+> -device link.  ``DL_FLAG_AUTOREMOVE`` causes the device link to be automatically
+> -purged when the consumer fails to probe or later unbinds.  This obviates
+> -the need to explicitly delete the link in the ``->remove`` callback or in
+> -the error path of the ``->probe`` callback.
+> +device link.  ``DL_FLAG_AUTOREMOVE_CONSUMER`` causes the device link to be
+> +automatically purged when the consumer fails to probe or later unbinds.
+> +This obviates the need to explicitly delete the link in the ``->remove``
+> +callback or in the error path of the ``->probe`` callback.
+>
+>  Limitations
+>  ===========
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index df3e1a44707a..14c1e3151e08 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -178,10 +178,10 @@ void device_pm_move_to_tail(struct device *dev)
+>   * of the link.  If DL_FLAG_PM_RUNTIME is not set, DL_FLAG_RPM_ACTIVE will be
+>   * ignored.
+>   *
+> - * If the DL_FLAG_AUTOREMOVE is set, the link will be removed automatically
+> - * when the consumer device driver unbinds from it.  The combination of both
+> - * DL_FLAG_AUTOREMOVE and DL_FLAG_STATELESS set is invalid and will cause NULL
+> - * to be returned.
+> + * If the DL_FLAG_AUTOREMOVE_CONSUMER is set, the link will be removed
+> + * automatically when the consumer device driver unbinds from it.
+> + * The combination of both DL_FLAG_AUTOREMOVE_CONSUMER and DL_FLAG_STATELESS
+> + * set is invalid and will cause NULL to be returned.
+>   *
+>   * A side effect of the link creation is re-ordering of dpm_list and the
+>   * devices_kset list by moving the consumer device and all devices depending
+> @@ -198,7 +198,8 @@ struct device_link *device_link_add(struct device *consumer,
+>         struct device_link *link;
+>
+>         if (!consumer || !supplier ||
+> -           ((flags & DL_FLAG_STATELESS) && (flags & DL_FLAG_AUTOREMOVE)))
+> +           ((flags & DL_FLAG_STATELESS) &&
+> +            (flags & DL_FLAG_AUTOREMOVE_CONSUMER)))
+>                 return NULL;
+>
+>         device_links_write_lock();
+> @@ -479,7 +480,7 @@ static void __device_links_no_driver(struct device *dev)
+>                 if (link->flags & DL_FLAG_STATELESS)
+>                         continue;
+>
+> -               if (link->flags & DL_FLAG_AUTOREMOVE)
+> +               if (link->flags & DL_FLAG_AUTOREMOVE_CONSUMER)
+>                         kref_put(&link->kref, __device_link_del);
+>                 else if (link->status != DL_STATE_SUPPLIER_UNBIND)
+>                         WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
+> @@ -515,7 +516,7 @@ void device_links_driver_cleanup(struct device *dev)
+>                 if (link->flags & DL_FLAG_STATELESS)
+>                         continue;
+>
+> -               WARN_ON(link->flags & DL_FLAG_AUTOREMOVE);
+> +               WARN_ON(link->flags & DL_FLAG_AUTOREMOVE_CONSUMER);
+>                 WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
+>                 WRITE_ONCE(link->status, DL_STATE_DORMANT);
+>         }
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index c3afe7b2237e..965088afcfad 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -2312,7 +2312,7 @@ static int tegra_dc_couple(struct tegra_dc *dc)
+>          * POWER_CONTROL registers during CRTC enabling.
+>          */
+>         if (dc->soc->coupled_pm && dc->pipe == 1) {
+> -               u32 flags = DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE;
+> +               u32 flags = DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_CONSUMER;
+>                 struct device_link *link;
+>                 struct device *partner;
+>
+> diff --git a/drivers/gpu/ipu-v3/ipu-pre.c b/drivers/gpu/ipu-v3/ipu-pre.c
+> index 0f70e8847540..2f8db9d62551 100644
+> --- a/drivers/gpu/ipu-v3/ipu-pre.c
+> +++ b/drivers/gpu/ipu-v3/ipu-pre.c
+> @@ -128,7 +128,8 @@ ipu_pre_lookup_by_phandle(struct device *dev, const char *name, int index)
+>         list_for_each_entry(pre, &ipu_pre_list, list) {
+>                 if (pre_node == pre->dev->of_node) {
+>                         mutex_unlock(&ipu_pre_list_mutex);
+> -                       device_link_add(dev, pre->dev, DL_FLAG_AUTOREMOVE);
+> +                       device_link_add(dev, pre->dev,
+> +                                       DL_FLAG_AUTOREMOVE_CONSUMER);
+>                         of_node_put(pre_node);
+>                         return pre;
+>                 }
+> diff --git a/drivers/gpu/ipu-v3/ipu-prg.c b/drivers/gpu/ipu-v3/ipu-prg.c
+> index 83f9dd934a5d..38a3a9764e49 100644
+> --- a/drivers/gpu/ipu-v3/ipu-prg.c
+> +++ b/drivers/gpu/ipu-v3/ipu-prg.c
+> @@ -100,7 +100,8 @@ ipu_prg_lookup_by_phandle(struct device *dev, const char *name, int ipu_id)
+>         list_for_each_entry(prg, &ipu_prg_list, list) {
+>                 if (prg_node == prg->dev->of_node) {
+>                         mutex_unlock(&ipu_prg_list_mutex);
+> -                       device_link_add(dev, prg->dev, DL_FLAG_AUTOREMOVE);
+> +                       device_link_add(dev, prg->dev,
+> +                                       DL_FLAG_AUTOREMOVE_CONSUMER);
+>                         prg->id = ipu_id;
+>                         of_node_put(prg_node);
+>                         return prg;
+> diff --git a/drivers/soc/imx/gpc.c b/drivers/soc/imx/gpc.c
+> index 32f0748fd067..aa9e65bc965e 100644
+> --- a/drivers/soc/imx/gpc.c
+> +++ b/drivers/soc/imx/gpc.c
+> @@ -202,7 +202,7 @@ static int imx_pgc_power_domain_probe(struct platform_device *pdev)
+>                         goto genpd_err;
+>         }
+>
+> -       device_link_add(dev, dev->parent, DL_FLAG_AUTOREMOVE);
+> +       device_link_add(dev, dev->parent, DL_FLAG_AUTOREMOVE_CONSUMER);
+>
+>         return 0;
+>
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 055a69dbcd18..3929805cdd59 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -90,7 +90,7 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
+>   * @num_vf:    Called to find out how many virtual functions a device on this
+>   *             bus supports.
+>   * @dma_configure:     Called to setup DMA configuration on a device on
+> -                       this bus.
+> + *                     this bus.
+>   * @pm:                Power management operations of this bus, callback the specific
+>   *             device driver's pm-ops.
+>   * @iommu_ops:  IOMMU specific operations for this bus, used to attach IOMMU
+> @@ -784,14 +784,14 @@ enum device_link_state {
+>   * Device link flags.
+>   *
+>   * STATELESS: The core won't track the presence of supplier/consumer drivers.
+> - * AUTOREMOVE: Remove this link automatically on consumer driver unbind.
+> + * AUTOREMOVE_CONSUMER: Remove the link automatically on consumer driver unbind.
+>   * PM_RUNTIME: If set, the runtime PM framework will use this link.
+>   * RPM_ACTIVE: Run pm_runtime_get_sync() on the supplier during link creation.
+>   */
+> -#define DL_FLAG_STATELESS      BIT(0)
+> -#define DL_FLAG_AUTOREMOVE     BIT(1)
+> -#define DL_FLAG_PM_RUNTIME     BIT(2)
+> -#define DL_FLAG_RPM_ACTIVE     BIT(3)
+> +#define DL_FLAG_STATELESS              BIT(0)
+> +#define DL_FLAG_AUTOREMOVE_CONSUMER    BIT(1)
+> +#define DL_FLAG_PM_RUNTIME             BIT(2)
+> +#define DL_FLAG_RPM_ACTIVE             BIT(3)
+>
+>  /**
+>   * struct device_link - Device link representation.
+> --
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+>
