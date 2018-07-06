@@ -1,84 +1,136 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 1/3] clk: tegra: refactor 7.1 div calculation
-Date: Fri, 06 Jul 2018 11:21:18 -0700
-Message-ID: <153090127889.143105.9965550219605167700@swboyd.mtv.corp.google.com>
-References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [RFC PATCH v3 1/2] drm: Add generic colorkey properties for DRM planes
+Date: Fri, 06 Jul 2018 22:48:26 +0300
+Message-ID: <1862420.zvYl24lURK@dimapc>
+References: <20180603220059.17670-1-digetx@gmail.com> <2513788.CeRymH5ehq@dimapc> <20180706170136.GC17271@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <20180706170136.GC17271@n2100.armlinux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <thierry.reding@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, dri-devel@lists.freedesktop.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thomas Hellstrom <thellstrom@vmware.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Aapo Vienamo (2018-07-04 03:17:33)
-> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-> new file mode 100644
-> index 0000000..1a5e04c
-> --- /dev/null
-> +++ b/drivers/clk/tegra/div71.c
-> @@ -0,0 +1,54 @@
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
- for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/kernel.h>
+On Friday, 6 July 2018 20:01:36 MSK Russell King - ARM Linux wrote:
+> On Fri, Jul 06, 2018 at 07:33:14PM +0300, Dmitry Osipenko wrote:
+> > On Friday, 6 July 2018 18:40:27 MSK Russell King - ARM Linux wrote:
+> > > On Fri, Jul 06, 2018 at 05:58:50PM +0300, Dmitry Osipenko wrote:
+> > > > On Friday, 6 July 2018 17:10:10 MSK Ville Syrj=E4l=E4 wrote:
+> > > > > IIRC my earlier idea was to have different colorkey modes for the
+> > > > > min+max and value+mask modes. That way userspace might actually h=
+ave
+> > > > > some chance of figuring out which bits of state actually do
+> > > > > something.
+> > > > > Although for Intel hw I think the general rule is that min+max for
+> > > > > YUV,
+> > > > > value+mask for RGB, so it's still not 100% clear what to pick if =
+the
+> > > > > plane supports both.
+> > > > >=20
+> > > > > I guess one alternative would be to have min+max only, and the
+> > > > > driver
+> > > > > would reject 'min !=3D max' if it only uses a single value?
+> > > >=20
+> > > > You should pick both and reject unsupported property values based on
+> > > > the
+> > > > planes framebuffer format. So it will be possible to set unsupported
+> > > > values
+> > > > while plane is disabled because it doesn't have an associated
+> > > > framebuffer
+> > > > and then atomic check will fail to enable plane if property values =
+are
+> > > > invalid for the given format.
+> > >=20
+> > > The colorkey which is attached to a plane 'A' is not applied to plane
+> > > 'A', so the format of plane 'A' is not relevant.  The colorkey is
+> > > applied to some other plane which will be below this plane in terms
+> > > of the plane blending operation.
+> > >=20
+> > > What if you have several planes below plane 'A' with differing
+> > > framebuffer formats - maybe an ARGB8888 plane and a ARGB1555 plane -
+> > > do you decide to limit the colorkey to 8bits per channel, or to
+> > > ARGB1555 format?
+> > >=20
+> > > The answer is, of course, hardware dependent - generic code can't
+> > > know the details of the colorkey implementation, which could be one
+> > >=20
+> > > of:
+> > >   lower plane data -> expand to 8bpc -> match ARGB8888 colorkey
+> > >   lower plane data -> match ARGB8888 reduced to plane compatible
+> > >   colorkey
+> > >=20
+> > > which will give different results depending on the format of the
+> > > lower plane data.
+> >=20
+> > All unsupportable cases should be rejected in the atomic check. If your=
+ HW
+> > can't handle the case where multiple bottom planes have a different
+> > format,
+> > then in the planes atomic check you'll have to walk up all the bottom
+> > planes and verify their formats.
+>=20
+> That is *not* what I'm trying to point out.
+>=20
+> You are claiming that we should check the validity of the colorkey
+> format in relation to the lower planes, and it sounds like you're
+> suggesting it in generic code.  I'm trying to get you to think a
+> bit more about what you're suggesting by considering a theoretical
+> (or maybe not so theoretical) case.
+>=20
+> We do have hardware out there which can have multiple planes that
+> are merged together - I seem to remember that Tegra? hardware has
+> that ability, but it isn't implemented in the driver yet.
+>=20
 
-You can include <asm/div64.h> instead.
+I'm not sure what you're meaning by planes "merging", could you please=20
+elaborate?
 
-> +
-> +#include "clk.h"
-> +
-> +#define div_mask(w) ((1 << (w)) - 1)
-> +
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +             u8 frac_width, u8 flags)
-> +{
-> +       u64 divider_ux1 =3D parent_rate;
+> So, I'm asking how you forsee the validity check working in the
+> presence of different formats for multiple lower planes.
+>=20
+> I'm not talking about whether the hardware supports it or not - I'm
+> assuming that the hardware _does_ support multiple lower planes with
+> differing formats.
+>=20
+> From what I understand, to take the simple case of one lower plane,
+> you are proposing:
+>=20
+> - if the lower plane is ARGB1555, then specifying a colorkey with
+>   an alpha of anything except 0 or 0xffff would be invalid and should
+>   be rejected.
+>=20
+> - if a lower plane is ARGB8888, then specifying a colorkey which
+>   is anything except 0...0xffff in 0x101 (65535 / 255) steps would
+>   be invalid and should be rejected.
+>=20
+> Now consider the case I mentioned above.  What if there are two lower
+> planes, one with ARGB1555 and the other with ARGB8888.  Does this mean
+> that (eg) the alpha colorkey component should be rejected if:
+>=20
+> - the alpha in the colorkey is not 0 or 0xffff, or
+> - it's anything except 0...0xffff in 0x101 steps?
+>=20
+> My assertion is that this is only a decision that can be made by the
+> driver and not by generic code, because it is hardware dependent.
+>=20
 
-Hmm ok, now it's unsigned. That's works too.
+Definitely the conversion rule must be defined explicitly, otherwise colork=
+ey=20
+property values can't be considered generic. Thank you for pointing at it. =
+I=20
+think rounding to a closest value should be the generic conversion rule.
 
-> +       int mul;
-> +
-> +       if (!rate)
-> +               return 0;
-> +
-> +       mul =3D 1 << frac_width;
-> +
-> +       if (!(flags & TEGRA_DIVIDER_INT))
-> +               divider_ux1 *=3D mul;
-> +
-> +       if (flags & TEGRA_DIVIDER_ROUND_UP)
-> +               divider_ux1 +=3D rate - 1;
-> +
-> +       do_div(divider_ux1, rate);
-> +
-> +       if (flags & TEGRA_DIVIDER_INT)
-> +               divider_ux1 *=3D mul;
-> +
-> +       if (divider_ux1 < mul)
-> +               return 0;
-> +
-> +       divider_ux1 -=3D mul;
-> +
-> +       if (divider_ux1 > div_mask(width))
-> +               return div_mask(width);
-> +
-> +       return divider_ux1;
-> +}
+I'll document the conversion rule in the next revision. Please let me know =
+if=20
+you see any problems with the rounding to a closest value.
+
+The final decision will be made by the driver, but driver and userspace wil=
+l=20
+have to take into account the defined generic conversion rule.
+
+> I am _not_ disagreeing with the general principle of validating that
+> the requested state is possible with the hardware.
+
+Thank you for the clarification.
