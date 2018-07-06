@@ -1,94 +1,72 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Subject: Re: [RFC PATCH v3 1/2] drm: Add generic colorkey properties for DRM
- planes
-Date: Fri, 6 Jul 2018 19:32:35 +0300
-Message-ID: <20180706163235.GO5565@intel.com>
-References: <20180603220059.17670-1-digetx@gmail.com>
- <a2e6e02b-bc6c-a411-0797-99e1bdb6674a@gmail.com>
- <20180706141010.GJ5565@intel.com> <2295190.xHWjP7Ltc3@dimapc>
- <20180706154027.GB17271@n2100.armlinux.org.uk>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [RFC PATCH v3 1/2] drm: Add generic colorkey properties for DRM planes
+Date: Fri, 06 Jul 2018 19:33:14 +0300
+Message-ID: <2513788.CeRymH5ehq@dimapc>
+References: <20180603220059.17670-1-digetx@gmail.com> <2295190.xHWjP7Ltc3@dimapc> <20180706154027.GB17271@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180706154027.GB17271@n2100.armlinux.org.uk>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: linux-renesas-soc@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Neil Armstrong <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-media@vger.kernel.org
+Cc: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <thierry.reding@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, dri-devel@lists.freedesktop.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thomas Hellstrom <thellstrom@vmware.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBKdWwgMDYsIDIwMTggYXQgMDQ6NDA6MjdQTSArMDEwMCwgUnVzc2VsbCBLaW5nIC0g
-QVJNIExpbnV4IHdyb3RlOgo+IE9uIEZyaSwgSnVsIDA2LCAyMDE4IGF0IDA1OjU4OjUwUE0gKzAz
-MDAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiA+IE9uIEZyaWRheSwgNiBKdWx5IDIwMTggMTc6
-MTA6MTAgTVNLIFZpbGxlIFN5cmrDpGzDpCB3cm90ZToKPiA+ID4gSUlSQyBteSBlYXJsaWVyIGlk
-ZWEgd2FzIHRvIGhhdmUgZGlmZmVyZW50IGNvbG9ya2V5IG1vZGVzIGZvciB0aGUKPiA+ID4gbWlu
-K21heCBhbmQgdmFsdWUrbWFzayBtb2Rlcy4gVGhhdCB3YXkgdXNlcnNwYWNlIG1pZ2h0IGFjdHVh
-bGx5IGhhdmUKPiA+ID4gc29tZSBjaGFuY2Ugb2YgZmlndXJpbmcgb3V0IHdoaWNoIGJpdHMgb2Yg
-c3RhdGUgYWN0dWFsbHkgZG8gc29tZXRoaW5nLgo+ID4gPiBBbHRob3VnaCBmb3IgSW50ZWwgaHcg
-SSB0aGluayB0aGUgZ2VuZXJhbCBydWxlIGlzIHRoYXQgbWluK21heCBmb3IgWVVWLAo+ID4gPiB2
-YWx1ZSttYXNrIGZvciBSR0IsIHNvIGl0J3Mgc3RpbGwgbm90IDEwMCUgY2xlYXIgd2hhdCB0byBw
-aWNrIGlmIHRoZQo+ID4gPiBwbGFuZSBzdXBwb3J0cyBib3RoLgo+ID4gPiAKPiA+ID4gSSBndWVz
-cyBvbmUgYWx0ZXJuYXRpdmUgd291bGQgYmUgdG8gaGF2ZSBtaW4rbWF4IG9ubHksIGFuZCB0aGUg
-ZHJpdmVyCj4gPiA+IHdvdWxkIHJlamVjdCAnbWluICE9IG1heCcgaWYgaXQgb25seSB1c2VzIGEg
-c2luZ2xlIHZhbHVlPwo+ID4gPiAKPiA+IAo+ID4gWW91IHNob3VsZCBwaWNrIGJvdGggYW5kIHJl
-amVjdCB1bnN1cHBvcnRlZCBwcm9wZXJ0eSB2YWx1ZXMgYmFzZWQgb24gdGhlIAo+ID4gcGxhbmVz
-IGZyYW1lYnVmZmVyIGZvcm1hdC4gU28gaXQgd2lsbCBiZSBwb3NzaWJsZSB0byBzZXQgdW5zdXBw
-b3J0ZWQgdmFsdWVzIAo+ID4gd2hpbGUgcGxhbmUgaXMgZGlzYWJsZWQgYmVjYXVzZSBpdCBkb2Vz
-bid0IGhhdmUgYW4gYXNzb2NpYXRlZCBmcmFtZWJ1ZmZlciBhbmQgCj4gPiB0aGVuIGF0b21pYyBj
-aGVjayB3aWxsIGZhaWwgdG8gZW5hYmxlIHBsYW5lIGlmIHByb3BlcnR5IHZhbHVlcyBhcmUgaW52
-YWxpZCBmb3IgCj4gPiB0aGUgZ2l2ZW4gZm9ybWF0Lgo+IAo+IFRoZSBjb2xvcmtleSB3aGljaCBp
-cyBhdHRhY2hlZCB0byBhIHBsYW5lICdBJyBpcyBub3QgYXBwbGllZCB0byBwbGFuZQo+ICdBJywg
-c28gdGhlIGZvcm1hdCBvZiBwbGFuZSAnQScgaXMgbm90IHJlbGV2YW50LiAgVGhlIGNvbG9ya2V5
-IGlzCj4gYXBwbGllZCB0byBzb21lIG90aGVyIHBsYW5lIHdoaWNoIHdpbGwgYmUgYmVsb3cgdGhp
-cyBwbGFuZSBpbiB0ZXJtcwo+IG9mIHRoZSBwbGFuZSBibGVuZGluZyBvcGVyYXRpb24uCj4gCj4g
-V2hhdCBpZiB5b3UgaGF2ZSBzZXZlcmFsIHBsYW5lcyBiZWxvdyBwbGFuZSAnQScgd2l0aCBkaWZm
-ZXJpbmcKPiBmcmFtZWJ1ZmZlciBmb3JtYXRzIC0gbWF5YmUgYW4gQVJHQjg4ODggcGxhbmUgYW5k
-IGEgQVJHQjE1NTUgcGxhbmUgLQo+IGRvIHlvdSBkZWNpZGUgdG8gbGltaXQgdGhlIGNvbG9ya2V5
-IHRvIDhiaXRzIHBlciBjaGFubmVsLCBvciB0bwo+IEFSR0IxNTU1IGZvcm1hdD8KPiAKPiBUaGUg
-YW5zd2VyIGlzLCBvZiBjb3Vyc2UsIGhhcmR3YXJlIGRlcGVuZGVudCAtIGdlbmVyaWMgY29kZSBj
-YW4ndAo+IGtub3cgdGhlIGRldGFpbHMgb2YgdGhlIGNvbG9ya2V5IGltcGxlbWVudGF0aW9uLCB3
-aGljaCBjb3VsZCBiZSBvbmUKPiBvZjoKPiAKPiAgIGxvd2VyIHBsYW5lIGRhdGEgLT4gZXhwYW5k
-IHRvIDhicGMgLT4gbWF0Y2ggQVJHQjg4ODggY29sb3JrZXkKPiAgIGxvd2VyIHBsYW5lIGRhdGEg
-LT4gbWF0Y2ggQVJHQjg4ODggcmVkdWNlZCB0byBwbGFuZSBjb21wYXRpYmxlIGNvbG9ya2V5Cj4g
-Cj4gd2hpY2ggd2lsbCBnaXZlIGRpZmZlcmVudCByZXN1bHRzIGRlcGVuZGluZyBvbiB0aGUgZm9y
-bWF0IG9mIHRoZQo+IGxvd2VyIHBsYW5lIGRhdGEuCgpZZWFoLiBUaGlzIGlzIG9uZSBvZiB0aGUg
-b3RoZXIgaXNzdWVzIEkgaGlnaGxpZ2h0ZWQgcHJldmlvdXNseS4gT24gc29tZQpJbnRlbCBodyB5
-b3UgZW5hYmxlIHRoZSBkc3QgY29sb3JrZXkgb24gdGhlIGxvd2VyIHBsYW5lIHdoZXJlIHlvdSBw
-YWludAp0aGUgY29sb3JrZXksIG9uIG90aGVycyB5b3UgZW5hYmxlIGl0IG9uIHRoZSBwbGFuZSBh
-Ym92ZSB0aGF0IGdldHMKc2hvd24vaGlkZGVuIGJhc2VkIG9uIHRoZSBrZXkgbWF0Y2ggb24gdGhl
-IGxvd2VyIHBsYW5lLiBJIHRoaW5rIG9uIG1vc3QKb2Ygb3VyIGhhcmR3YXJlIGRzdCBrZXlpbmcg
-b25seSBldmVyIGhhcHBlbnMgYmV0d2VlbiB0d28gcGxhbmVzLCBldmVuCmlmIG1vcmUgcGxhbmVz
-IGFyZSBlbmFibGVkIG9uIHRoZSBjcnRjLiBCdXQgdGhlcmUgaXMgYXQgbGVhc3Qgb25lCmV4Y2Vw
-dGlvbiB3aGVyZSB5b3UgY2FuIGhhdmUgdHdvIG92ZXJsYXkgcGxhbmVzIHRoYXQgZ2V0IGtleWVk
-IGFnYWluc3QKdGhlIHNhbWUgcHJpbWFyeSBwbGFuZS4KCkkgd2FzIHF1ZXN0aW9uaW5nIHdoaWNo
-IG9uZSBpcyB0aGUgYmV0dGVyIG1vZGVsIGZvciB0aGUgdWFwaS4gRWl0aGVyCndheSB5b3Ugc3Rp
-bGwgaGF2ZSB0aGUgdW5jZXJ0YWludHkgb2Ygd2hpY2ggcGxhbmVzIGFjdHVhbGx5IHBhcnRpY2lw
-YXRlCmluIHRoZSBrZXlpbmcgcHJvY2Vzcy4gT25lIHdheSBhcm91bmQgdGhhdCB3b3VsZCBiZSB0
-byBleHBvc2Ugc29tZSBraW5kCm9mIHBsYW5lIG1hc2sgd2hpY2ggd291bGQgaW5kaWNhdGUgdGhl
-IHNldCBvZiBwbGFuZXMgdGFraW5nIHBhcnQgaW4gdGhlCmtleWluZyBwcm9jZXNzLiBJIHRoaW5r
-IGZvciB0aGF0IHRvIHdvcmsgd2Ugd291bGQgaGF2ZSB0byBtb3ZlIHRvIGEKbW9kZWwgd2hlcmUg
-eW91IGVuYWJsZSB0aGUgZHN0IGtleSBvbiB0aGUgbG93ZXIgcGxhbmUgd2hlcmUgeW91IHBhaW50
-CnRoZSBjb2xvciBrZXksIG90aGVyd2lzZSBoYXZpbmcgbXVsdGlwbGUgYml0cyBzZXQgaW4gdGhl
-IG1hc2sgd291bGRuJ3QKbWFrZSBzZW5zZS4gVGhhdCB3b3VsZCBwZXJoYXBzIGFsc28gbWFrZSBp
-dCBtb3JlIGNsZWFyIHdoYXQgdGhlCmZvcm1hdCBvZiB0aGUgY29sb3Iga2V5IHdpbGwgYmUuCgpT
-byBhcyBhbiBleGFtcGxlIHRoYXQgZXhjZXB0aW9uIEludGVsIGh3IGNhc2Ugd291bGQgaGF2ZToK
-IG92ZXJsYXkgMjoga2V5X21vZGU9e3NyYyxub25lfQogb3ZlcmxheSAxOiBrZXlfbW9kZT17c3Jj
-LG5vbmV9CiBwcmltYXJ5OiAgIGtleV9tb2RlPXtkc3Qsbm9uZX0sIGRzdF9rZXlfcGxhbmVfbWFz
-az0weDYKCnRvIGluZGljYXRlIHRoYXQgYm90aCBvdmVybGF5IHBsYW5lcyBwYXJ0aWNpcGF0ZSBp
-biB0aGUga2V5aW5nCnByb2Nlc3MuCgpXaGVyZWFzIG1vc3Qgb3RoZXIgSW50ZWwgaHcgd291bGQg
-aGF2ZToKIG92ZXJsYXkgMjoga2V5X21vZGU9e3NyYyxub25lfQogb3ZlcmxheSAxOiBrZXlfbW9k
-ZT17c3JjLG5vbmV9CiBwcmltYXJ5OiAgIGtleV9tb2RlPXtkc3Qsbm9uZX0sIGRzdF9rZXlfcGxh
-bmVfbWFzaz0weDIKCnRvIGluZGljYXRlIHRoYXQgb25seSB0aGUgb3ZlcmxheSBpbW1lZGlhdGVs
-eSBhYm92ZSB0aGUgcHJpbWFyeQp3aWxsIHBhcnRpY2lwYXRlLgoKLS0gClZpbGxlIFN5cmrDpGzD
-pApJbnRlbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Friday, 6 July 2018 18:40:27 MSK Russell King - ARM Linux wrote:
+> On Fri, Jul 06, 2018 at 05:58:50PM +0300, Dmitry Osipenko wrote:
+> > On Friday, 6 July 2018 17:10:10 MSK Ville Syrj=E4l=E4 wrote:
+> > > IIRC my earlier idea was to have different colorkey modes for the
+> > > min+max and value+mask modes. That way userspace might actually have
+> > > some chance of figuring out which bits of state actually do something.
+> > > Although for Intel hw I think the general rule is that min+max for YU=
+V,
+> > > value+mask for RGB, so it's still not 100% clear what to pick if the
+> > > plane supports both.
+> > >=20
+> > > I guess one alternative would be to have min+max only, and the driver
+> > > would reject 'min !=3D max' if it only uses a single value?
+> >=20
+> > You should pick both and reject unsupported property values based on the
+> > planes framebuffer format. So it will be possible to set unsupported
+> > values
+> > while plane is disabled because it doesn't have an associated framebuff=
+er
+> > and then atomic check will fail to enable plane if property values are
+> > invalid for the given format.
+>=20
+> The colorkey which is attached to a plane 'A' is not applied to plane
+> 'A', so the format of plane 'A' is not relevant.  The colorkey is
+> applied to some other plane which will be below this plane in terms
+> of the plane blending operation.
+>=20
+> What if you have several planes below plane 'A' with differing
+> framebuffer formats - maybe an ARGB8888 plane and a ARGB1555 plane -
+> do you decide to limit the colorkey to 8bits per channel, or to
+> ARGB1555 format?
+>=20
+> The answer is, of course, hardware dependent - generic code can't
+> know the details of the colorkey implementation, which could be one
+> of:
+>=20
+>   lower plane data -> expand to 8bpc -> match ARGB8888 colorkey
+>   lower plane data -> match ARGB8888 reduced to plane compatible colorkey
+>=20
+> which will give different results depending on the format of the
+> lower plane data.
+
+All unsupportable cases should be rejected in the atomic check. If your HW=
+=20
+can't handle the case where multiple bottom planes have a different format,=
+=20
+then in the planes atomic check you'll have to walk up all the bottom plane=
+s=20
+and verify their formats.
+
+I'm not sure whether it's worth to check the planes intersection and fail o=
+nly=20
+if top plane intersects with multiple bottom planes having different format=
+s.=20
+Perhaps that could be a driver-specific implementation detail, userspace=20
+should take into account that atomic commit may fail on changing planes=20
+position.
