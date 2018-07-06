@@ -1,281 +1,241 @@
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
 Subject: Re: [RFC PATCH v3 1/2] drm: Add generic colorkey properties for DRM
  planes
-Date: Fri, 6 Jul 2018 16:05:21 +0300
-Message-ID: <a2e6e02b-bc6c-a411-0797-99e1bdb6674a@gmail.com>
+Date: Fri, 6 Jul 2018 17:10:10 +0300
+Message-ID: <20180706141010.GJ5565@intel.com>
 References: <20180603220059.17670-1-digetx@gmail.com>
  <20180603220059.17670-2-digetx@gmail.com>
  <8b80e766-be05-b5be-5a0f-102a5135d230@linux.intel.com>
  <20180706122318.GI5565@intel.com>
+ <a2e6e02b-bc6c-a411-0797-99e1bdb6674a@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180706122318.GI5565@intel.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <thierry.reding@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, dri-devel@lists.freedesktop.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thomas Hellstrom <thellstrom@vmware.com>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <a2e6e02b-bc6c-a411-0797-99e1bdb6674a@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Neil Armstrong <narmstrong@baylibre.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06.07.2018 15:23, Ville Syrjälä wrote:
-> On Fri, Jul 06, 2018 at 02:11:44PM +0200, Maarten Lankhorst wrote:
->> Hey,
->>
->> Op 04-06-18 om 00:00 schreef Dmitry Osipenko:
->>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>>
->>> Color keying is the action of replacing pixels matching a given color
->>> (or range of colors) with transparent pixels in an overlay when
->>> performing blitting. Depending on the hardware capabilities, the
->>> matching pixel can either become fully transparent or gain adjustment
->>> of the pixels component values.
->>>
->>> Color keying is found in a large number of devices whose capabilities
->>> often differ, but they still have enough common features in range to
->>> standardize color key properties. This commit adds three generic DRM plane
->>> properties related to the color keying, providing initial color keying
->>> support.
->>>
->>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/gpu/drm/drm_atomic.c | 12 +++++
->>>  drivers/gpu/drm/drm_blend.c  | 99 ++++++++++++++++++++++++++++++++++++
->>>  include/drm/drm_blend.h      |  3 ++
->>>  include/drm/drm_plane.h      | 53 +++++++++++++++++++
->>>  4 files changed, 167 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
->>> index 895741e9cd7d..b322cbed319b 100644
->>> --- a/drivers/gpu/drm/drm_atomic.c
->>> +++ b/drivers/gpu/drm/drm_atomic.c
->>> @@ -799,6 +799,12 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
->>>  		state->rotation = val;
->>>  	} else if (property == plane->zpos_property) {
->>>  		state->zpos = val;
->>> +	} else if (property == plane->colorkey.mode_property) {
->>> +		state->colorkey.mode = val;
->>> +	} else if (property == plane->colorkey.min_property) {
->>> +		state->colorkey.min = val;
->>> +	} else if (property == plane->colorkey.max_property) {
->>> +		state->colorkey.max = val;
->>>  	} else if (property == plane->color_encoding_property) {
->>>  		state->color_encoding = val;
->>>  	} else if (property == plane->color_range_property) {
->>> @@ -864,6 +870,12 @@ drm_atomic_plane_get_property(struct drm_plane *plane,
->>>  		*val = state->rotation;
->>>  	} else if (property == plane->zpos_property) {
->>>  		*val = state->zpos;
->>> +	} else if (property == plane->colorkey.mode_property) {
->>> +		*val = state->colorkey.mode;
->>> +	} else if (property == plane->colorkey.min_property) {
->>> +		*val = state->colorkey.min;
->>> +	} else if (property == plane->colorkey.max_property) {
->>> +		*val = state->colorkey.max;
->>>  	} else if (property == plane->color_encoding_property) {
->>>  		*val = state->color_encoding;
->>>  	} else if (property == plane->color_range_property) {
->>> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
->>> index a16a74d7e15e..12fed2ff65c8 100644
->>> --- a/drivers/gpu/drm/drm_blend.c
->>> +++ b/drivers/gpu/drm/drm_blend.c
->>> @@ -107,6 +107,11 @@
->>>   *	planes. Without this property the primary plane is always below the cursor
->>>   *	plane, and ordering between all other planes is undefined.
->>>   *
->>> + * colorkey:
->>> + *	Color keying is set up with drm_plane_create_colorkey_properties().
->>> + *	It adds support for replacing a range of colors with a transparent
->>> + *	color in the plane.
->>> + *
->>>   * Note that all the property extensions described here apply either to the
->>>   * plane or the CRTC (e.g. for the background color, which currently is not
->>>   * exposed and assumed to be black).
->>> @@ -448,3 +453,97 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
->>>  	return 0;
->>>  }
->>>  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
->>> +
->>> +static const char * const plane_colorkey_mode_name[] = {
->>> +	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
->>> +	[DRM_PLANE_COLORKEY_MODE_FOREGROUND_CLIP] = "foreground-clip",
->>> +};
->>> +
->>> +/**
->>> + * drm_plane_create_colorkey_properties - create colorkey properties
->>> + * @plane: drm plane
->>> + * @supported_modes: bitmask of supported color keying modes
->>> + *
->>> + * This function creates the generic color keying properties and attach them to
->>> + * the plane to enable color keying control for blending operations.
->>> + *
->>> + * Color keying is controlled by these properties:
->>> + *
->>> + * colorkey.mode:
->>> + *	The mode is an enumerated property that controls how color keying
->>> + *	operates.
->>> + *
->>> + * colorkey.min, colorkey.max:
->>> + *	These two properties specify the colors that are treated as the color
->>> + *	key. Pixel whose value is in the [min, max] range is the color key
->>> + *	matching pixel. The minimum and maximum values are expressed as a
->>> + *	64-bit integer in ARGB16161616 format, where A is the alpha value and
->>> + *	R, G and B correspond to the color components. Drivers shall convert
->>> + *	ARGB16161616 value into appropriate format within planes atomic check.
->>> + *
->>> + *	When a single color key is desired instead of a range, userspace shall
->>> + *	set the min and max properties to the same value.
->>> + *
->>> + *	Drivers return an error from their plane atomic check if range can't be
->>> + *	handled.
->>> + *
->>> + * Returns:
->>> + * Zero on success, negative errno on failure.
->>> + */
->>> +int drm_plane_create_colorkey_properties(struct drm_plane *plane,
->>> +					 u32 supported_modes)
->>> +{
->>> +	struct drm_prop_enum_list modes_list[DRM_PLANE_COLORKEY_MODES_NUM];
->>> +	struct drm_property *mode_prop;
->>> +	struct drm_property *min_prop;
->>> +	struct drm_property *max_prop;
->>> +	unsigned int modes_num = 0;
->>> +	unsigned int i;
->>> +
->>> +	/* modes are driver-specific, build the list of supported modes */
->>> +	for (i = 0; i < DRM_PLANE_COLORKEY_MODES_NUM; i++) {
->>> +		if (!(supported_modes & BIT(i)))
->>> +			continue;
->>> +
->>> +		modes_list[modes_num].name = plane_colorkey_mode_name[i];
->>> +		modes_list[modes_num].type = i;
->>> +		modes_num++;
->>> +	}
->>> +
->>> +	/* at least one mode should be supported */
->>> +	if (!modes_num)
->>> +		return -EINVAL;
->>> +
->>> +	mode_prop = drm_property_create_enum(plane->dev, 0, "colorkey.mode",
->>> +					     modes_list, modes_num);
->>> +	if (!mode_prop)
->>> +		return -ENOMEM;
->>> +
->>> +	min_prop = drm_property_create_range(plane->dev, 0, "colorkey.min",
->>> +					     0, U64_MAX);
->>> +	if (!min_prop)
->>> +		goto err_destroy_mode_prop;
->>> +
->>> +	max_prop = drm_property_create_range(plane->dev, 0, "colorkey.max",
->>> +					     0, U64_MAX);
->>> +	if (!max_prop)
->>> +		goto err_destroy_min_prop;
->>> +
->>> +	drm_object_attach_property(&plane->base, mode_prop, 0);
->>> +	drm_object_attach_property(&plane->base, min_prop, 0);
->>> +	drm_object_attach_property(&plane->base, max_prop, 0);
->>> +
->>> +	plane->colorkey.mode_property = mode_prop;
->>> +	plane->colorkey.min_property = min_prop;
->>> +	plane->colorkey.max_property = max_prop;
->>> +
->>> +	return 0;
->>> +
->>> +err_destroy_min_prop:
->>> +	drm_property_destroy(plane->dev, min_prop);
->>> +err_destroy_mode_prop:
->>> +	drm_property_destroy(plane->dev, mode_prop);
->>> +
->>> +	return -ENOMEM;
->>> +}
->>> +EXPORT_SYMBOL(drm_plane_create_colorkey_properties);
->>> diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
->>> index 330c561c4c11..8e80d33b643e 100644
->>> --- a/include/drm/drm_blend.h
->>> +++ b/include/drm/drm_blend.h
->>> @@ -52,4 +52,7 @@ int drm_plane_create_zpos_immutable_property(struct drm_plane *plane,
->>>  					     unsigned int zpos);
->>>  int drm_atomic_normalize_zpos(struct drm_device *dev,
->>>  			      struct drm_atomic_state *state);
->>> +
->>> +int drm_plane_create_colorkey_properties(struct drm_plane *plane,
->>> +					 u32 supported_modes);
->>>  #endif
->>> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
->>> index 26fa50c2a50e..9a621e1ccc47 100644
->>> --- a/include/drm/drm_plane.h
->>> +++ b/include/drm/drm_plane.h
->>> @@ -32,6 +32,48 @@ struct drm_crtc;
->>>  struct drm_printer;
->>>  struct drm_modeset_acquire_ctx;
->>>  
->>> +/**
->>> + * enum drm_plane_colorkey_mode - uapi plane colorkey mode enumeration
->>> + */
->>> +enum drm_plane_colorkey_mode {
->>> +	/**
->>> +	 * @DRM_PLANE_COLORKEY_MODE_DISABLED:
->>> +	 *
->>> +	 * No color matching performed in this mode.
->>> +	 */
->>> +	DRM_PLANE_COLORKEY_MODE_DISABLED,
->>> +
->>> +	/**
->>> +	 * @DRM_PLANE_COLORKEY_MODE_FOREGROUND_CLIP:
->>> +	 *
->>> +	 * This mode is also known as a "green screen". Plane pixels are
->>> +	 * transparent in areas where pixels match a given color key range
->>> +	 * and there is a bottom (background) plane, in other cases plane
->>> +	 * pixels are unaffected.
->>> +	 *
->>> +	 */
->>> +	DRM_PLANE_COLORKEY_MODE_FOREGROUND_CLIP,
->> Could we add background clip as well?
-> 
-
-Sure, but I think adding a new mode should be a distinct change made on top of
-the initial series.
-
-> Also could we just name them "src" and "dst" (or some variation of
-> those). I'm betting no one has any kind of idea what these proposed
-> names mean without looking up the docs, whereas pretty much everyone
-> knows immediately what src/dst colorkeying means.
-> 
-
-Okay, I'll rename the mode to DRM_PLANE_COLORKEY_MODE_SRC in the next revision.
-
->>
->> Would be nice if we could map i915's legacy ioctl handler to the new color key mode.
->>> +	/**
->>> +	 * @DRM_PLANE_COLORKEY_MODES_NUM:
->>> +	 *
->>> +	 * Total number of color keying modes.
->>> +	 */
->>> +	DRM_PLANE_COLORKEY_MODES_NUM,
->>> +};
->>> +
->>> +/**
->>> + * struct drm_plane_colorkey_state - plane color keying state
->>> + * @colorkey.mode: color keying mode
->>> + * @colorkey.min: color key range minimum (in ARGB16161616 format)
->>> + * @colorkey.max: color key range maximum (in ARGB16161616 format)
->>> + */
->>> +struct drm_plane_colorkey_state {
->>> +	enum drm_plane_colorkey_mode mode;
->>> +	u64 min;
->>> +	u64 max;
->>> +};
->> Could we have some macros to extract the components for min/max?
->> A, R, G, B.
-> 
-
-I'll add the macros in the next revision.
-
-> And where did we lose the value+mask?
-> 
-
-There is no use for the mask on Tegra. I'd prefer to keep initial patches simple
-and minimal, other modes and additional properties could be added in the further
-patches on by as-needed basis. Mask could be added later with the default value
-of 0xffffffffffffffff. Does it sound good for you?
+T24gRnJpLCBKdWwgMDYsIDIwMTggYXQgMDQ6MDU6MjFQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtv
+IHdyb3RlOgo+IE9uIDA2LjA3LjIwMTggMTU6MjMsIFZpbGxlIFN5cmrDpGzDpCB3cm90ZToKPiA+
+IE9uIEZyaSwgSnVsIDA2LCAyMDE4IGF0IDAyOjExOjQ0UE0gKzAyMDAsIE1hYXJ0ZW4gTGFua2hv
+cnN0IHdyb3RlOgo+ID4+IEhleSwKPiA+Pgo+ID4+IE9wIDA0LTA2LTE4IG9tIDAwOjAwIHNjaHJl
+ZWYgRG1pdHJ5IE9zaXBlbmtvOgo+ID4+PiBGcm9tOiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50
+LnBpbmNoYXJ0K3JlbmVzYXNAaWRlYXNvbmJvYXJkLmNvbT4KPiA+Pj4KPiA+Pj4gQ29sb3Iga2V5
+aW5nIGlzIHRoZSBhY3Rpb24gb2YgcmVwbGFjaW5nIHBpeGVscyBtYXRjaGluZyBhIGdpdmVuIGNv
+bG9yCj4gPj4+IChvciByYW5nZSBvZiBjb2xvcnMpIHdpdGggdHJhbnNwYXJlbnQgcGl4ZWxzIGlu
+IGFuIG92ZXJsYXkgd2hlbgo+ID4+PiBwZXJmb3JtaW5nIGJsaXR0aW5nLiBEZXBlbmRpbmcgb24g
+dGhlIGhhcmR3YXJlIGNhcGFiaWxpdGllcywgdGhlCj4gPj4+IG1hdGNoaW5nIHBpeGVsIGNhbiBl
+aXRoZXIgYmVjb21lIGZ1bGx5IHRyYW5zcGFyZW50IG9yIGdhaW4gYWRqdXN0bWVudAo+ID4+PiBv
+ZiB0aGUgcGl4ZWxzIGNvbXBvbmVudCB2YWx1ZXMuCj4gPj4+Cj4gPj4+IENvbG9yIGtleWluZyBp
+cyBmb3VuZCBpbiBhIGxhcmdlIG51bWJlciBvZiBkZXZpY2VzIHdob3NlIGNhcGFiaWxpdGllcwo+
+ID4+PiBvZnRlbiBkaWZmZXIsIGJ1dCB0aGV5IHN0aWxsIGhhdmUgZW5vdWdoIGNvbW1vbiBmZWF0
+dXJlcyBpbiByYW5nZSB0bwo+ID4+PiBzdGFuZGFyZGl6ZSBjb2xvciBrZXkgcHJvcGVydGllcy4g
+VGhpcyBjb21taXQgYWRkcyB0aHJlZSBnZW5lcmljIERSTSBwbGFuZQo+ID4+PiBwcm9wZXJ0aWVz
+IHJlbGF0ZWQgdG8gdGhlIGNvbG9yIGtleWluZywgcHJvdmlkaW5nIGluaXRpYWwgY29sb3Iga2V5
+aW5nCj4gPj4+IHN1cHBvcnQuCj4gPj4+Cj4gPj4+IFNpZ25lZC1vZmYtYnk6IExhdXJlbnQgUGlu
+Y2hhcnQgPGxhdXJlbnQucGluY2hhcnQrcmVuZXNhc0BpZGVhc29uYm9hcmQuY29tPgo+ID4+PiBT
+aWduZWQtb2ZmLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5jb20+Cj4gPj4+IC0t
+LQo+ID4+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMuYyB8IDEyICsrKysrCj4gPj4+ICBk
+cml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMgIHwgOTkgKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrCj4gPj4+ICBpbmNsdWRlL2RybS9kcm1fYmxlbmQuaCAgICAgIHwgIDMgKysK
+PiA+Pj4gIGluY2x1ZGUvZHJtL2RybV9wbGFuZS5oICAgICAgfCA1MyArKysrKysrKysrKysrKysr
+KysrCj4gPj4+ICA0IGZpbGVzIGNoYW5nZWQsIDE2NyBpbnNlcnRpb25zKCspCj4gPj4+Cj4gPj4+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jIGIvZHJpdmVycy9ncHUv
+ZHJtL2RybV9hdG9taWMuYwo+ID4+PiBpbmRleCA4OTU3NDFlOWNkN2QuLmIzMjJjYmVkMzE5YiAx
+MDA2NDQKPiA+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMuYwo+ID4+PiArKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jCj4gPj4+IEBAIC03OTksNiArNzk5LDEyIEBA
+IHN0YXRpYyBpbnQgZHJtX2F0b21pY19wbGFuZV9zZXRfcHJvcGVydHkoc3RydWN0IGRybV9wbGFu
+ZSAqcGxhbmUsCj4gPj4+ICAJCXN0YXRlLT5yb3RhdGlvbiA9IHZhbDsKPiA+Pj4gIAl9IGVsc2Ug
+aWYgKHByb3BlcnR5ID09IHBsYW5lLT56cG9zX3Byb3BlcnR5KSB7Cj4gPj4+ICAJCXN0YXRlLT56
+cG9zID0gdmFsOwo+ID4+PiArCX0gZWxzZSBpZiAocHJvcGVydHkgPT0gcGxhbmUtPmNvbG9ya2V5
+Lm1vZGVfcHJvcGVydHkpIHsKPiA+Pj4gKwkJc3RhdGUtPmNvbG9ya2V5Lm1vZGUgPSB2YWw7Cj4g
+Pj4+ICsJfSBlbHNlIGlmIChwcm9wZXJ0eSA9PSBwbGFuZS0+Y29sb3JrZXkubWluX3Byb3BlcnR5
+KSB7Cj4gPj4+ICsJCXN0YXRlLT5jb2xvcmtleS5taW4gPSB2YWw7Cj4gPj4+ICsJfSBlbHNlIGlm
+IChwcm9wZXJ0eSA9PSBwbGFuZS0+Y29sb3JrZXkubWF4X3Byb3BlcnR5KSB7Cj4gPj4+ICsJCXN0
+YXRlLT5jb2xvcmtleS5tYXggPSB2YWw7Cj4gPj4+ICAJfSBlbHNlIGlmIChwcm9wZXJ0eSA9PSBw
+bGFuZS0+Y29sb3JfZW5jb2RpbmdfcHJvcGVydHkpIHsKPiA+Pj4gIAkJc3RhdGUtPmNvbG9yX2Vu
+Y29kaW5nID0gdmFsOwo+ID4+PiAgCX0gZWxzZSBpZiAocHJvcGVydHkgPT0gcGxhbmUtPmNvbG9y
+X3JhbmdlX3Byb3BlcnR5KSB7Cj4gPj4+IEBAIC04NjQsNiArODcwLDEyIEBAIGRybV9hdG9taWNf
+cGxhbmVfZ2V0X3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+ID4+PiAgCQkqdmFs
+ID0gc3RhdGUtPnJvdGF0aW9uOwo+ID4+PiAgCX0gZWxzZSBpZiAocHJvcGVydHkgPT0gcGxhbmUt
+Pnpwb3NfcHJvcGVydHkpIHsKPiA+Pj4gIAkJKnZhbCA9IHN0YXRlLT56cG9zOwo+ID4+PiArCX0g
+ZWxzZSBpZiAocHJvcGVydHkgPT0gcGxhbmUtPmNvbG9ya2V5Lm1vZGVfcHJvcGVydHkpIHsKPiA+
+Pj4gKwkJKnZhbCA9IHN0YXRlLT5jb2xvcmtleS5tb2RlOwo+ID4+PiArCX0gZWxzZSBpZiAocHJv
+cGVydHkgPT0gcGxhbmUtPmNvbG9ya2V5Lm1pbl9wcm9wZXJ0eSkgewo+ID4+PiArCQkqdmFsID0g
+c3RhdGUtPmNvbG9ya2V5Lm1pbjsKPiA+Pj4gKwl9IGVsc2UgaWYgKHByb3BlcnR5ID09IHBsYW5l
+LT5jb2xvcmtleS5tYXhfcHJvcGVydHkpIHsKPiA+Pj4gKwkJKnZhbCA9IHN0YXRlLT5jb2xvcmtl
+eS5tYXg7Cj4gPj4+ICAJfSBlbHNlIGlmIChwcm9wZXJ0eSA9PSBwbGFuZS0+Y29sb3JfZW5jb2Rp
+bmdfcHJvcGVydHkpIHsKPiA+Pj4gIAkJKnZhbCA9IHN0YXRlLT5jb2xvcl9lbmNvZGluZzsKPiA+
+Pj4gIAl9IGVsc2UgaWYgKHByb3BlcnR5ID09IHBsYW5lLT5jb2xvcl9yYW5nZV9wcm9wZXJ0eSkg
+ewo+ID4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9ibGVuZC5jIGIvZHJpdmVy
+cy9ncHUvZHJtL2RybV9ibGVuZC5jCj4gPj4+IGluZGV4IGExNmE3NGQ3ZTE1ZS4uMTJmZWQyZmY2
+NWM4IDEwMDY0NAo+ID4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMKPiA+Pj4g
+KysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9ibGVuZC5jCj4gPj4+IEBAIC0xMDcsNiArMTA3LDEx
+IEBACj4gPj4+ICAgKglwbGFuZXMuIFdpdGhvdXQgdGhpcyBwcm9wZXJ0eSB0aGUgcHJpbWFyeSBw
+bGFuZSBpcyBhbHdheXMgYmVsb3cgdGhlIGN1cnNvcgo+ID4+PiAgICoJcGxhbmUsIGFuZCBvcmRl
+cmluZyBiZXR3ZWVuIGFsbCBvdGhlciBwbGFuZXMgaXMgdW5kZWZpbmVkLgo+ID4+PiAgICoKPiA+
+Pj4gKyAqIGNvbG9ya2V5Ogo+ID4+PiArICoJQ29sb3Iga2V5aW5nIGlzIHNldCB1cCB3aXRoIGRy
+bV9wbGFuZV9jcmVhdGVfY29sb3JrZXlfcHJvcGVydGllcygpLgo+ID4+PiArICoJSXQgYWRkcyBz
+dXBwb3J0IGZvciByZXBsYWNpbmcgYSByYW5nZSBvZiBjb2xvcnMgd2l0aCBhIHRyYW5zcGFyZW50
+Cj4gPj4+ICsgKgljb2xvciBpbiB0aGUgcGxhbmUuCj4gPj4+ICsgKgo+ID4+PiAgICogTm90ZSB0
+aGF0IGFsbCB0aGUgcHJvcGVydHkgZXh0ZW5zaW9ucyBkZXNjcmliZWQgaGVyZSBhcHBseSBlaXRo
+ZXIgdG8gdGhlCj4gPj4+ICAgKiBwbGFuZSBvciB0aGUgQ1JUQyAoZS5nLiBmb3IgdGhlIGJhY2tn
+cm91bmQgY29sb3IsIHdoaWNoIGN1cnJlbnRseSBpcyBub3QKPiA+Pj4gICAqIGV4cG9zZWQgYW5k
+IGFzc3VtZWQgdG8gYmUgYmxhY2spLgo+ID4+PiBAQCAtNDQ4LDMgKzQ1Myw5NyBAQCBpbnQgZHJt
+X2F0b21pY19ub3JtYWxpemVfenBvcyhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAo+ID4+PiAgCXJl
+dHVybiAwOwo+ID4+PiAgfQo+ID4+PiAgRVhQT1JUX1NZTUJPTChkcm1fYXRvbWljX25vcm1hbGl6
+ZV96cG9zKTsKPiA+Pj4gKwo+ID4+PiArc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBwbGFuZV9j
+b2xvcmtleV9tb2RlX25hbWVbXSA9IHsKPiA+Pj4gKwlbRFJNX1BMQU5FX0NPTE9SS0VZX01PREVf
+RElTQUJMRURdID0gImRpc2FibGVkIiwKPiA+Pj4gKwlbRFJNX1BMQU5FX0NPTE9SS0VZX01PREVf
+Rk9SRUdST1VORF9DTElQXSA9ICJmb3JlZ3JvdW5kLWNsaXAiLAo+ID4+PiArfTsKPiA+Pj4gKwo+
+ID4+PiArLyoqCj4gPj4+ICsgKiBkcm1fcGxhbmVfY3JlYXRlX2NvbG9ya2V5X3Byb3BlcnRpZXMg
+LSBjcmVhdGUgY29sb3JrZXkgcHJvcGVydGllcwo+ID4+PiArICogQHBsYW5lOiBkcm0gcGxhbmUK
+PiA+Pj4gKyAqIEBzdXBwb3J0ZWRfbW9kZXM6IGJpdG1hc2sgb2Ygc3VwcG9ydGVkIGNvbG9yIGtl
+eWluZyBtb2Rlcwo+ID4+PiArICoKPiA+Pj4gKyAqIFRoaXMgZnVuY3Rpb24gY3JlYXRlcyB0aGUg
+Z2VuZXJpYyBjb2xvciBrZXlpbmcgcHJvcGVydGllcyBhbmQgYXR0YWNoIHRoZW0gdG8KPiA+Pj4g
+KyAqIHRoZSBwbGFuZSB0byBlbmFibGUgY29sb3Iga2V5aW5nIGNvbnRyb2wgZm9yIGJsZW5kaW5n
+IG9wZXJhdGlvbnMuCj4gPj4+ICsgKgo+ID4+PiArICogQ29sb3Iga2V5aW5nIGlzIGNvbnRyb2xs
+ZWQgYnkgdGhlc2UgcHJvcGVydGllczoKPiA+Pj4gKyAqCj4gPj4+ICsgKiBjb2xvcmtleS5tb2Rl
+Ogo+ID4+PiArICoJVGhlIG1vZGUgaXMgYW4gZW51bWVyYXRlZCBwcm9wZXJ0eSB0aGF0IGNvbnRy
+b2xzIGhvdyBjb2xvciBrZXlpbmcKPiA+Pj4gKyAqCW9wZXJhdGVzLgo+ID4+PiArICoKPiA+Pj4g
+KyAqIGNvbG9ya2V5Lm1pbiwgY29sb3JrZXkubWF4Ogo+ID4+PiArICoJVGhlc2UgdHdvIHByb3Bl
+cnRpZXMgc3BlY2lmeSB0aGUgY29sb3JzIHRoYXQgYXJlIHRyZWF0ZWQgYXMgdGhlIGNvbG9yCj4g
+Pj4+ICsgKglrZXkuIFBpeGVsIHdob3NlIHZhbHVlIGlzIGluIHRoZSBbbWluLCBtYXhdIHJhbmdl
+IGlzIHRoZSBjb2xvciBrZXkKPiA+Pj4gKyAqCW1hdGNoaW5nIHBpeGVsLiBUaGUgbWluaW11bSBh
+bmQgbWF4aW11bSB2YWx1ZXMgYXJlIGV4cHJlc3NlZCBhcyBhCj4gPj4+ICsgKgk2NC1iaXQgaW50
+ZWdlciBpbiBBUkdCMTYxNjE2MTYgZm9ybWF0LCB3aGVyZSBBIGlzIHRoZSBhbHBoYSB2YWx1ZSBh
+bmQKPiA+Pj4gKyAqCVIsIEcgYW5kIEIgY29ycmVzcG9uZCB0byB0aGUgY29sb3IgY29tcG9uZW50
+cy4gRHJpdmVycyBzaGFsbCBjb252ZXJ0Cj4gPj4+ICsgKglBUkdCMTYxNjE2MTYgdmFsdWUgaW50
+byBhcHByb3ByaWF0ZSBmb3JtYXQgd2l0aGluIHBsYW5lcyBhdG9taWMgY2hlY2suCj4gPj4+ICsg
+Kgo+ID4+PiArICoJV2hlbiBhIHNpbmdsZSBjb2xvciBrZXkgaXMgZGVzaXJlZCBpbnN0ZWFkIG9m
+IGEgcmFuZ2UsIHVzZXJzcGFjZSBzaGFsbAo+ID4+PiArICoJc2V0IHRoZSBtaW4gYW5kIG1heCBw
+cm9wZXJ0aWVzIHRvIHRoZSBzYW1lIHZhbHVlLgo+ID4+PiArICoKPiA+Pj4gKyAqCURyaXZlcnMg
+cmV0dXJuIGFuIGVycm9yIGZyb20gdGhlaXIgcGxhbmUgYXRvbWljIGNoZWNrIGlmIHJhbmdlIGNh
+bid0IGJlCj4gPj4+ICsgKgloYW5kbGVkLgo+ID4+PiArICoKPiA+Pj4gKyAqIFJldHVybnM6Cj4g
+Pj4+ICsgKiBaZXJvIG9uIHN1Y2Nlc3MsIG5lZ2F0aXZlIGVycm5vIG9uIGZhaWx1cmUuCj4gPj4+
+ICsgKi8KPiA+Pj4gK2ludCBkcm1fcGxhbmVfY3JlYXRlX2NvbG9ya2V5X3Byb3BlcnRpZXMoc3Ry
+dWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gPj4+ICsJCQkJCSB1MzIgc3VwcG9ydGVkX21vZGVzKQo+
+ID4+PiArewo+ID4+PiArCXN0cnVjdCBkcm1fcHJvcF9lbnVtX2xpc3QgbW9kZXNfbGlzdFtEUk1f
+UExBTkVfQ09MT1JLRVlfTU9ERVNfTlVNXTsKPiA+Pj4gKwlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpt
+b2RlX3Byb3A7Cj4gPj4+ICsJc3RydWN0IGRybV9wcm9wZXJ0eSAqbWluX3Byb3A7Cj4gPj4+ICsJ
+c3RydWN0IGRybV9wcm9wZXJ0eSAqbWF4X3Byb3A7Cj4gPj4+ICsJdW5zaWduZWQgaW50IG1vZGVz
+X251bSA9IDA7Cj4gPj4+ICsJdW5zaWduZWQgaW50IGk7Cj4gPj4+ICsKPiA+Pj4gKwkvKiBtb2Rl
+cyBhcmUgZHJpdmVyLXNwZWNpZmljLCBidWlsZCB0aGUgbGlzdCBvZiBzdXBwb3J0ZWQgbW9kZXMg
+Ki8KPiA+Pj4gKwlmb3IgKGkgPSAwOyBpIDwgRFJNX1BMQU5FX0NPTE9SS0VZX01PREVTX05VTTsg
+aSsrKSB7Cj4gPj4+ICsJCWlmICghKHN1cHBvcnRlZF9tb2RlcyAmIEJJVChpKSkpCj4gPj4+ICsJ
+CQljb250aW51ZTsKPiA+Pj4gKwo+ID4+PiArCQltb2Rlc19saXN0W21vZGVzX251bV0ubmFtZSA9
+IHBsYW5lX2NvbG9ya2V5X21vZGVfbmFtZVtpXTsKPiA+Pj4gKwkJbW9kZXNfbGlzdFttb2Rlc19u
+dW1dLnR5cGUgPSBpOwo+ID4+PiArCQltb2Rlc19udW0rKzsKPiA+Pj4gKwl9Cj4gPj4+ICsKPiA+
+Pj4gKwkvKiBhdCBsZWFzdCBvbmUgbW9kZSBzaG91bGQgYmUgc3VwcG9ydGVkICovCj4gPj4+ICsJ
+aWYgKCFtb2Rlc19udW0pCj4gPj4+ICsJCXJldHVybiAtRUlOVkFMOwo+ID4+PiArCj4gPj4+ICsJ
+bW9kZV9wcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9lbnVtKHBsYW5lLT5kZXYsIDAsICJjb2xv
+cmtleS5tb2RlIiwKPiA+Pj4gKwkJCQkJICAgICBtb2Rlc19saXN0LCBtb2Rlc19udW0pOwo+ID4+
+PiArCWlmICghbW9kZV9wcm9wKQo+ID4+PiArCQlyZXR1cm4gLUVOT01FTTsKPiA+Pj4gKwo+ID4+
+PiArCW1pbl9wcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShwbGFuZS0+ZGV2LCAwLCAi
+Y29sb3JrZXkubWluIiwKPiA+Pj4gKwkJCQkJICAgICAwLCBVNjRfTUFYKTsKPiA+Pj4gKwlpZiAo
+IW1pbl9wcm9wKQo+ID4+PiArCQlnb3RvIGVycl9kZXN0cm95X21vZGVfcHJvcDsKPiA+Pj4gKwo+
+ID4+PiArCW1heF9wcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShwbGFuZS0+ZGV2LCAw
+LCAiY29sb3JrZXkubWF4IiwKPiA+Pj4gKwkJCQkJICAgICAwLCBVNjRfTUFYKTsKPiA+Pj4gKwlp
+ZiAoIW1heF9wcm9wKQo+ID4+PiArCQlnb3RvIGVycl9kZXN0cm95X21pbl9wcm9wOwo+ID4+PiAr
+Cj4gPj4+ICsJZHJtX29iamVjdF9hdHRhY2hfcHJvcGVydHkoJnBsYW5lLT5iYXNlLCBtb2RlX3By
+b3AsIDApOwo+ID4+PiArCWRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZwbGFuZS0+YmFzZSwg
+bWluX3Byb3AsIDApOwo+ID4+PiArCWRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZwbGFuZS0+
+YmFzZSwgbWF4X3Byb3AsIDApOwo+ID4+PiArCj4gPj4+ICsJcGxhbmUtPmNvbG9ya2V5Lm1vZGVf
+cHJvcGVydHkgPSBtb2RlX3Byb3A7Cj4gPj4+ICsJcGxhbmUtPmNvbG9ya2V5Lm1pbl9wcm9wZXJ0
+eSA9IG1pbl9wcm9wOwo+ID4+PiArCXBsYW5lLT5jb2xvcmtleS5tYXhfcHJvcGVydHkgPSBtYXhf
+cHJvcDsKPiA+Pj4gKwo+ID4+PiArCXJldHVybiAwOwo+ID4+PiArCj4gPj4+ICtlcnJfZGVzdHJv
+eV9taW5fcHJvcDoKPiA+Pj4gKwlkcm1fcHJvcGVydHlfZGVzdHJveShwbGFuZS0+ZGV2LCBtaW5f
+cHJvcCk7Cj4gPj4+ICtlcnJfZGVzdHJveV9tb2RlX3Byb3A6Cj4gPj4+ICsJZHJtX3Byb3BlcnR5
+X2Rlc3Ryb3kocGxhbmUtPmRldiwgbW9kZV9wcm9wKTsKPiA+Pj4gKwo+ID4+PiArCXJldHVybiAt
+RU5PTUVNOwo+ID4+PiArfQo+ID4+PiArRVhQT1JUX1NZTUJPTChkcm1fcGxhbmVfY3JlYXRlX2Nv
+bG9ya2V5X3Byb3BlcnRpZXMpOwo+ID4+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJtX2Js
+ZW5kLmggYi9pbmNsdWRlL2RybS9kcm1fYmxlbmQuaAo+ID4+PiBpbmRleCAzMzBjNTYxYzRjMTEu
+LjhlODBkMzNiNjQzZSAxMDA2NDQKPiA+Pj4gLS0tIGEvaW5jbHVkZS9kcm0vZHJtX2JsZW5kLmgK
+PiA+Pj4gKysrIGIvaW5jbHVkZS9kcm0vZHJtX2JsZW5kLmgKPiA+Pj4gQEAgLTUyLDQgKzUyLDcg
+QEAgaW50IGRybV9wbGFuZV9jcmVhdGVfenBvc19pbW11dGFibGVfcHJvcGVydHkoc3RydWN0IGRy
+bV9wbGFuZSAqcGxhbmUsCj4gPj4+ICAJCQkJCSAgICAgdW5zaWduZWQgaW50IHpwb3MpOwo+ID4+
+PiAgaW50IGRybV9hdG9taWNfbm9ybWFsaXplX3pwb3Moc3RydWN0IGRybV9kZXZpY2UgKmRldiwK
+PiA+Pj4gIAkJCSAgICAgIHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSk7Cj4gPj4+ICsK
+PiA+Pj4gK2ludCBkcm1fcGxhbmVfY3JlYXRlX2NvbG9ya2V5X3Byb3BlcnRpZXMoc3RydWN0IGRy
+bV9wbGFuZSAqcGxhbmUsCj4gPj4+ICsJCQkJCSB1MzIgc3VwcG9ydGVkX21vZGVzKTsKPiA+Pj4g
+ICNlbmRpZgo+ID4+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJtX3BsYW5lLmggYi9pbmNs
+dWRlL2RybS9kcm1fcGxhbmUuaAo+ID4+PiBpbmRleCAyNmZhNTBjMmE1MGUuLjlhNjIxZTFjY2M0
+NyAxMDA2NDQKPiA+Pj4gLS0tIGEvaW5jbHVkZS9kcm0vZHJtX3BsYW5lLmgKPiA+Pj4gKysrIGIv
+aW5jbHVkZS9kcm0vZHJtX3BsYW5lLmgKPiA+Pj4gQEAgLTMyLDYgKzMyLDQ4IEBAIHN0cnVjdCBk
+cm1fY3J0YzsKPiA+Pj4gIHN0cnVjdCBkcm1fcHJpbnRlcjsKPiA+Pj4gIHN0cnVjdCBkcm1fbW9k
+ZXNldF9hY3F1aXJlX2N0eDsKPiA+Pj4gIAo+ID4+PiArLyoqCj4gPj4+ICsgKiBlbnVtIGRybV9w
+bGFuZV9jb2xvcmtleV9tb2RlIC0gdWFwaSBwbGFuZSBjb2xvcmtleSBtb2RlIGVudW1lcmF0aW9u
+Cj4gPj4+ICsgKi8KPiA+Pj4gK2VudW0gZHJtX3BsYW5lX2NvbG9ya2V5X21vZGUgewo+ID4+PiAr
+CS8qKgo+ID4+PiArCSAqIEBEUk1fUExBTkVfQ09MT1JLRVlfTU9ERV9ESVNBQkxFRDoKPiA+Pj4g
+KwkgKgo+ID4+PiArCSAqIE5vIGNvbG9yIG1hdGNoaW5nIHBlcmZvcm1lZCBpbiB0aGlzIG1vZGUu
+Cj4gPj4+ICsJICovCj4gPj4+ICsJRFJNX1BMQU5FX0NPTE9SS0VZX01PREVfRElTQUJMRUQsCj4g
+Pj4+ICsKPiA+Pj4gKwkvKioKPiA+Pj4gKwkgKiBARFJNX1BMQU5FX0NPTE9SS0VZX01PREVfRk9S
+RUdST1VORF9DTElQOgo+ID4+PiArCSAqCj4gPj4+ICsJICogVGhpcyBtb2RlIGlzIGFsc28ga25v
+d24gYXMgYSAiZ3JlZW4gc2NyZWVuIi4gUGxhbmUgcGl4ZWxzIGFyZQo+ID4+PiArCSAqIHRyYW5z
+cGFyZW50IGluIGFyZWFzIHdoZXJlIHBpeGVscyBtYXRjaCBhIGdpdmVuIGNvbG9yIGtleSByYW5n
+ZQo+ID4+PiArCSAqIGFuZCB0aGVyZSBpcyBhIGJvdHRvbSAoYmFja2dyb3VuZCkgcGxhbmUsIGlu
+IG90aGVyIGNhc2VzIHBsYW5lCj4gPj4+ICsJICogcGl4ZWxzIGFyZSB1bmFmZmVjdGVkLgo+ID4+
+PiArCSAqCj4gPj4+ICsJICovCj4gPj4+ICsJRFJNX1BMQU5FX0NPTE9SS0VZX01PREVfRk9SRUdS
+T1VORF9DTElQLAo+ID4+IENvdWxkIHdlIGFkZCBiYWNrZ3JvdW5kIGNsaXAgYXMgd2VsbD8KPiA+
+IAo+IAo+IFN1cmUsIGJ1dCBJIHRoaW5rIGFkZGluZyBhIG5ldyBtb2RlIHNob3VsZCBiZSBhIGRp
+c3RpbmN0IGNoYW5nZSBtYWRlIG9uIHRvcCBvZgo+IHRoZSBpbml0aWFsIHNlcmllcy4KPiAKPiA+
+IEFsc28gY291bGQgd2UganVzdCBuYW1lIHRoZW0gInNyYyIgYW5kICJkc3QiIChvciBzb21lIHZh
+cmlhdGlvbiBvZgo+ID4gdGhvc2UpLiBJJ20gYmV0dGluZyBubyBvbmUgaGFzIGFueSBraW5kIG9m
+IGlkZWEgd2hhdCB0aGVzZSBwcm9wb3NlZAo+ID4gbmFtZXMgbWVhbiB3aXRob3V0IGxvb2tpbmcg
+dXAgdGhlIGRvY3MsIHdoZXJlYXMgcHJldHR5IG11Y2ggZXZlcnlvbmUKPiA+IGtub3dzIGltbWVk
+aWF0ZWx5IHdoYXQgc3JjL2RzdCBjb2xvcmtleWluZyBtZWFucy4KPiA+IAo+IAo+IE9rYXksIEkn
+bGwgcmVuYW1lIHRoZSBtb2RlIHRvIERSTV9QTEFORV9DT0xPUktFWV9NT0RFX1NSQyBpbiB0aGUg
+bmV4dCByZXZpc2lvbi4KPiAKPiA+Pgo+ID4+IFdvdWxkIGJlIG5pY2UgaWYgd2UgY291bGQgbWFw
+IGk5MTUncyBsZWdhY3kgaW9jdGwgaGFuZGxlciB0byB0aGUgbmV3IGNvbG9yIGtleSBtb2RlLgo+
+ID4+PiArCS8qKgo+ID4+PiArCSAqIEBEUk1fUExBTkVfQ09MT1JLRVlfTU9ERVNfTlVNOgo+ID4+
+PiArCSAqCj4gPj4+ICsJICogVG90YWwgbnVtYmVyIG9mIGNvbG9yIGtleWluZyBtb2Rlcy4KPiA+
+Pj4gKwkgKi8KPiA+Pj4gKwlEUk1fUExBTkVfQ09MT1JLRVlfTU9ERVNfTlVNLAo+ID4+PiArfTsK
+PiA+Pj4gKwo+ID4+PiArLyoqCj4gPj4+ICsgKiBzdHJ1Y3QgZHJtX3BsYW5lX2NvbG9ya2V5X3N0
+YXRlIC0gcGxhbmUgY29sb3Iga2V5aW5nIHN0YXRlCj4gPj4+ICsgKiBAY29sb3JrZXkubW9kZTog
+Y29sb3Iga2V5aW5nIG1vZGUKPiA+Pj4gKyAqIEBjb2xvcmtleS5taW46IGNvbG9yIGtleSByYW5n
+ZSBtaW5pbXVtIChpbiBBUkdCMTYxNjE2MTYgZm9ybWF0KQo+ID4+PiArICogQGNvbG9ya2V5Lm1h
+eDogY29sb3Iga2V5IHJhbmdlIG1heGltdW0gKGluIEFSR0IxNjE2MTYxNiBmb3JtYXQpCj4gPj4+
+ICsgKi8KPiA+Pj4gK3N0cnVjdCBkcm1fcGxhbmVfY29sb3JrZXlfc3RhdGUgewo+ID4+PiArCWVu
+dW0gZHJtX3BsYW5lX2NvbG9ya2V5X21vZGUgbW9kZTsKPiA+Pj4gKwl1NjQgbWluOwo+ID4+PiAr
+CXU2NCBtYXg7Cj4gPj4+ICt9Owo+ID4+IENvdWxkIHdlIGhhdmUgc29tZSBtYWNyb3MgdG8gZXh0
+cmFjdCB0aGUgY29tcG9uZW50cyBmb3IgbWluL21heD8KPiA+PiBBLCBSLCBHLCBCLgo+ID4gCj4g
+Cj4gSSdsbCBhZGQgdGhlIG1hY3JvcyBpbiB0aGUgbmV4dCByZXZpc2lvbi4KPiAKPiA+IEFuZCB3
+aGVyZSBkaWQgd2UgbG9zZSB0aGUgdmFsdWUrbWFzaz8KPiA+IAo+IAo+IFRoZXJlIGlzIG5vIHVz
+ZSBmb3IgdGhlIG1hc2sgb24gVGVncmEuIEknZCBwcmVmZXIgdG8ga2VlcCBpbml0aWFsIHBhdGNo
+ZXMgc2ltcGxlCj4gYW5kIG1pbmltYWwsIG90aGVyIG1vZGVzIGFuZCBhZGRpdGlvbmFsIHByb3Bl
+cnRpZXMgY291bGQgYmUgYWRkZWQgaW4gdGhlIGZ1cnRoZXIKPiBwYXRjaGVzIG9uIGJ5IGFzLW5l
+ZWRlZCBiYXNpcy4gTWFzayBjb3VsZCBiZSBhZGRlZCBsYXRlciB3aXRoIHRoZSBkZWZhdWx0IHZh
+bHVlCj4gb2YgMHhmZmZmZmZmZmZmZmZmZmZmLiBEb2VzIGl0IHNvdW5kIGdvb2QgZm9yIHlvdT8K
+CklJUkMgbXkgZWFybGllciBpZGVhIHdhcyB0byBoYXZlIGRpZmZlcmVudCBjb2xvcmtleSBtb2Rl
+cyBmb3IgdGhlCm1pbittYXggYW5kIHZhbHVlK21hc2sgbW9kZXMuIFRoYXQgd2F5IHVzZXJzcGFj
+ZSBtaWdodCBhY3R1YWxseSBoYXZlCnNvbWUgY2hhbmNlIG9mIGZpZ3VyaW5nIG91dCB3aGljaCBi
+aXRzIG9mIHN0YXRlIGFjdHVhbGx5IGRvIHNvbWV0aGluZy4KQWx0aG91Z2ggZm9yIEludGVsIGh3
+IEkgdGhpbmsgdGhlIGdlbmVyYWwgcnVsZSBpcyB0aGF0IG1pbittYXggZm9yIFlVViwKdmFsdWUr
+bWFzayBmb3IgUkdCLCBzbyBpdCdzIHN0aWxsIG5vdCAxMDAlIGNsZWFyIHdoYXQgdG8gcGljayBp
+ZiB0aGUKcGxhbmUgc3VwcG9ydHMgYm90aC4KCkkgZ3Vlc3Mgb25lIGFsdGVybmF0aXZlIHdvdWxk
+IGJlIHRvIGhhdmUgbWluK21heCBvbmx5LCBhbmQgdGhlIGRyaXZlcgp3b3VsZCByZWplY3QgJ21p
+biAhPSBtYXgnIGlmIGl0IG9ubHkgdXNlcyBhIHNpbmdsZSB2YWx1ZT8KCkFuZCBtYXliZSB3ZSBz
+aG91bGQgaGF2ZSB0aGUgbWFzayBhbHdheXM/IElJUkMgSW50ZWwgaHcgZ2VuZXJhbGx5IGhhcyBh
+Cm9uZSBiaXQgZW5hYmxlL2Rpc2FibGUgIm1hc2siIHBlciBjaGFubmVsIGluIHRoZSBtaW4rbWF4
+IG1vZGUgKEkgdGhpbmsKdGhlcmUncyBvbmUgZXhjZXB0aW9uIHdoZXJlIGl0IGhhcyBvbmx5IGEg
+MSBiaXQgbWFzayBpbiB0aGUgdmFsdWUrbWFzawptb2RlIGFzIHdlbGwpLiBTbyB3ZSBjb3VsZCBh
+Y2NlcHQgMCBhbmQgMHhmZmZmIG1hc2sgdmFsdWVzIGluIHRoaXMgY2FzZQphbmQgcmVqZWN0IGV2
+ZXJ5dGhpbmcgZWxzZS4gVGhlIGFsdGVybmF0aXZlIG1pZ2h0IGJlIHRvIGVuYWJsZSB0aGUKa2V5
+aW5nIGZvciB0aGUgY2hhbm5lbCBpZiAnbWluIDw9IG1heCcgYW5kIGRpc2FibGUgaXQgaWYgJ21p
+biA+IG1heCcuCkJ1dCBub3Qgc3VyZSBpZiB0aGF0J3Mgc2xpZ2h0bHkgdG9vIG1hZ2ljeS4KCi0t
+IApWaWxsZSBTeXJqw6Rsw6QKSW50ZWwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
