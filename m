@@ -1,36 +1,28 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH] mtd: rawnand: tegra: check bounds of die_nr properly
-Date: Sun, 8 Jul 2018 23:51:31 +0200
-Message-ID: <20180708235131.348f95f9@xps13>
-References: <20180704091310.22003-1-stefan@agner.ch>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: tegra: bpmp: Don't crash when a clock fails to register
+Date: Sun, 08 Jul 2018 16:56:35 -0700
+Message-ID: <153109419548.143105.6202239165158958607@swboyd.mtv.corp.google.com>
+References: <20180629143814.17950-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180704091310.22003-1-stefan@agner.ch>
+In-Reply-To: <20180629143814.17950-1-mperttunen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, dan.carpenter@oracle.com, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se, mirza.krak@gmail.com, gaireg@gaireg.de, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jonathanh@nvidia.com, mturquette@baylibre.com, pdeschrijver@nvidia.com, thierry.reding@gmail.com
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@nvidia.com, vbhadram@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stefan,
+Quoting Mikko Perttunen (2018-06-29 07:38:14)
+> When registering clocks, we just skip any that fail to register
+> (leaving a NULL hole in the clock table). However, our of_xlate
+> function still tries to dereference each entry while looking for
+> the clock with the requested id, causing a crash if any clocks
+> failed to register. Add a check to of_xlate to skip any NULL
+> clocks.
+> =
 
-Stefan Agner <stefan@agner.ch> wrote on Wed,  4 Jul 2018 11:13:10 +0200:
-
-> The Tegra driver currently only support a single chip select, hence
-> check boundaries accordingly. This fixes a off by one issue catched
-> with Smatch:
->     drivers/mtd/nand/raw/tegra_nand.c:476 tegra_nand_select_chip()
->     warn: array off by one? 'nand->cs[die_nr]'
-> 
-> Also warn in case the stack asks for a chip select we currently do
-> not support.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
 
-Applied to nand/next.
-
-Thanks,
-Miquèl
+Applied to clk-next
