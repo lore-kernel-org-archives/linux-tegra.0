@@ -1,175 +1,81 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v2 2/3] clk: tegra: Add sdmmc mux divider clock
-Date: Mon, 9 Jul 2018 11:00:12 +0300
-Message-ID: <20180709080012.GE27696@tbergstrom-lnx.Nvidia.com>
-References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
- <1530699455-27654-2-git-send-email-avienamo@nvidia.com>
- <153090111049.143105.9486166124584607061@swboyd.mtv.corp.google.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] gpu: host1x: Check whether size of unpin isn't 0
+Date: Mon, 9 Jul 2018 10:31:52 +0200
+Message-ID: <20180709083152.GA13963@ulmo>
+References: <20180706180236.27896-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <153090111049.143105.9486166124584607061@swboyd.mtv.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Aapo Vienamo <avienamo@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1760441480=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180706180236.27896-1-digetx@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 11:18:30AM -0700, Stephen Boyd wrote:
-> Quoting Aapo Vienamo (2018-07-04 03:17:34)
-> > diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
-> > new file mode 100644
-> > index 0000000..8e19cb3
-> > --- /dev/null
-> > +++ b/drivers/clk/tegra/clk-sdmmc-mux.c
-> > @@ -0,0 +1,254 @@
-> > +/*
-> > + * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
-> > + *
-> > + * based on clk-mux.c
-> > +
-> > + * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
-> > + * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
-> > + * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify it
-> > + * under the terms and conditions of the GNU General Public License,
-> > + * version 2, as published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope it will be useful, but WITHOUT
-> > + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> > + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> > + * more details.
-> > + *
-> > + * You should have received a copy of the GNU General Public License
-> > + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> 
-> Any chance we can get SPDX tags here instead of all the boiler plate?
-> 
-> > + */
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/err.h>
-> > +#include <linux/types.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +#define DIV_MASK GENMASK(7, 0)
-> > +#define MUX_SHIFT 29
-> > +#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
-> > +
-> > +#define get_max_div(d) DIV_MASK
-> > +#define get_div_field(val) ((val) & DIV_MASK)
-> > +#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
-> > +
-> > +static const char * const mux_sdmmc_parents[] = { "pll_p", "pll_c4_out2",
-> > +                                                 "pll_c4_out0", "pll_c4_out1",
-> > +                                                  "clk_m" };
-> > +static u8 mux_lj_idx[] = { [0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6 };
-> > +static u8 mux_non_lj_idx[] = { [0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6 };
-> 
-> These can be const?
-> 
-> > +
-> > +static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
-> > +{
-> [...]
-> > +static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +                                 unsigned long parent_rate)
-> > +{
-> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> > +       int div;
-> > +       unsigned long flags = 0;
-> > +       u32 val;
-> > +       u8 src;
-> > +
-> > +       div = div71_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
-> > +       if (div < 0)
-> > +               return div;
-> > +
-> > +       if (sdmmc_mux->lock)
-> > +               spin_lock_irqsave(sdmmc_mux->lock, flags);
-> > +
-> > +       src = clk_sdmmc_mux_get_parent(hw);
-> > +       if (div)
-> > +               src = mux_non_lj_idx[src];
-> > +       else
-> > +               src = mux_lj_idx[src];
-> > +
-> > +       val = src << MUX_SHIFT;
-> > +       val |= div;
-> > +       writel(val, sdmmc_mux->reg);
-> > +       fence_udelay(2, sdmmc_mux->reg);
-> > +
-> > +       if (sdmmc_mux->lock)
-> > +               spin_unlock_irqrestore(sdmmc_mux->lock, flags);
-> 
-> This conditional locking will give sparse a headache. O well.
-> 
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
-> > +{
-> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> > +       const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-> > +       struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-> > +
-> > +       __clk_hw_set_clk(gate_hw, hw);
-> > +
-> > +       return gate_ops->is_enabled(gate_hw);
-> > +}
-> > +
-> > +static int clk_sdmmc_mux_enable(struct clk_hw *hw)
-> > +{
-> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> > +       const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-> > +       struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-> > +
-> > +       __clk_hw_set_clk(gate_hw, hw);
-> > +
-> > +       return  gate_ops->enable(gate_hw);
-> > +}
-> > +
-> > +static void clk_sdmmc_mux_disable(struct clk_hw *hw)
-> > +{
-> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> > +       const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-> > +       struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-> > +
-> > +       gate_ops->disable(gate_hw);
-> > +}
-> > +
-> > +const struct clk_ops tegra_clk_sdmmc_mux_ops = {
-> 
-> static?
-> 
-> > +       .get_parent = clk_sdmmc_mux_get_parent,
-> > +       .set_parent = clk_sdmmc_mux_set_parent,
-> > +       .determine_rate = clk_sdmmc_mux_determine_rate,
-> > +       .recalc_rate = clk_sdmmc_mux_recalc_rate,
-> > +       .set_rate = clk_sdmmc_mux_set_rate,
-> > +       .is_enabled = clk_sdmmc_mux_is_enabled,
-> > +       .enable = clk_sdmmc_mux_enable,
-> > +       .disable = clk_sdmmc_mux_disable,
-> > +};
-> > +
-> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> > index f14e136..4c3d0f5 100644
-> > --- a/drivers/clk/tegra/clk.h
-> > +++ b/drivers/clk/tegra/clk.h
-> > @@ -19,6 +19,7 @@
-> >  
-> >  #include <linux/clk-provider.h>
-> >  #include <linux/clkdev.h>
-> > +#include <linux/delay.h>
-> 
-> Why? Include this in the C file that cares please.
-> 
 
-The fence_udelay macro uses udelay and is used in clk-sdmmc-mux.c. However it
-seems more appropriate to include delay.h here rather than in every single
-user of the macro.
+--===============1760441480==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Content-Disposition: inline
 
-Peter.
+
+--sm4nu43k4a2Rpi4c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jul 06, 2018 at 09:02:36PM +0300, Dmitry Osipenko wrote:
+> Only gather pins are mapped by the Host1x driver, regular BO relocations
+> are not. Check whether size of unpin isn't 0, otherwise IOVA allocation at
+> 0x0 could be erroneously released.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/gpu/host1x/job.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+
+Applied to drm/tegra/fixes, thanks.
+
+Thierry
+
+--sm4nu43k4a2Rpi4c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDHXUACgkQ3SOs138+
+s6Fkeg//UWOj65He6hUyHtB7P5dlMypgb/rDk6WBs0tm3Lpgb3dAcmgfv3VHBAcv
+iGizXZI+IiMJGTi3gACglJ8f5jvSsn+ff16XK9wkpw36b+uuv2p6zMq3GgkEJNsH
+oYvVZfdWsZtejtOaU6OWJaPawIHPtZUgGWIZn/8FpO0fIpF5ckPd7bAvCqPOb/kr
+tWWd7WODZQXen6mYjIqqfBqDq57k/9J/arppcBxq6UQoOgBuR38XQdyLvVKznXqw
+kjOIoHkZJ7LMIWkYFr5iUiQR/qlHosTVzwjKrxU90NJfEOYcMXM5gIs7561wnfbI
+XCtl5Jfb37fdJ1EyFjYYUTdY3kXv0ZYPhIvwF5lGDCJFr+GugE9l5BfLFwt8FiUH
+aJ4pb3GsCOaxboiCF40M4QSi91B1eWj4AaMWtY4+hcNDwKGK0QRjS/PzyHkWOkbJ
+0CoWnWiip+DQgIy1P4RNrrk18sfBrN4bhZ5qZ+zSmlSEHQ95qr0BEwqZmyiuD4I3
+laevMjqeJqAMtK3IJ+FtC3yYJu/Qwf66VqXhvHLOwKnlxAXJdxjNteNOpVsak8iB
+NisGWDU0I4g8fx6NTQn4EqZyumtwJ6I7W4IelTjef/fSEUoPjVhGO1mZa15rouKO
+UdwR339JRl+g76on2XeRHtSXBO5Qp0hb96e8lIAo84buMZOV+5g=
+=GsXO
+-----END PGP SIGNATURE-----
+
+--sm4nu43k4a2Rpi4c--
+
+--===============1760441480==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1760441480==--
