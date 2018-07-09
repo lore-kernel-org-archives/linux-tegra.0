@@ -1,124 +1,57 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v8 4/4] ARM: dts: tegra: Work safely with 256 MB Colibri-T20 modules
-Date: Mon,  9 Jul 2018 18:05:19 +0200
-Message-ID: <20180709160519.23497-4-krzk@kernel.org>
-References: <20180709160519.23497-1-krzk@kernel.org>
+From: Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v4 0/4] Multiplex sdmmc low jitter clock path
+Date: Mon, 9 Jul 2018 19:38:54 +0300
+Message-ID: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180709160519.23497-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
-(with 1024 MB NAND) flavors.  Both of them will use the same DTSI
-expecting the bootloader to do the fixup of /memory node.  However in
-case it does not happen, let's stay on safe side by limiting the memory
-to 256 MB for both versions of Colibri-T20.
+The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
+divider to achieve better jitter performance with high speed signaling
+modes. The clock path with the divider is needed by some of the slower
+signaling modes. This series automatically multiplexes the LJ and
+non-LJ clock paths based on the requested frequency.
 
-Rename to remove the unnecessary memory size from the device tree file
-name.  While at it, also follow the typical Toradex SoC, module, carrier
-board hierarchy.
+Changelog:
+v4:
+	- Add a changelog
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-Tested-by: Stefan Agner <stefan@agner.ch>
+v3:
+	- Use <asm/div64.h> include instead of <linux/kernel.h> for
+	  do_div()
+	- Use SPDX tags for new files
+	- Make mux_lj_idx[] and mux_non_lj_idx[] const
+	- Make tegra_clk_sdmmc_mux_ops static
+	- Fix the includes for fence_udelay() in a separate patch
 
----
+v2:
+	- Fix the type compatibility error on do_div
 
-Changes since v7:
-1. Add tags.
+Aapo Vienamo (1):
+  clk: tegra: Fix includes required by fence_udelay()
 
-Changes since v6:
-1. Only adjust commit msg.
+Peter De Schrijver (1):
+  clk: tegra: refactor 7.1 div calculation
 
-Changes since v5:
-1. Add "colibri" suffix to iris DTS (suggested by Stefan).
+Peter De-Schrijver (2):
+  clk: tegra: Add sdmmc mux divider clock
+  clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
 
-Changes since v4:
-1. Drop the 512 suffix from file names (suggested by Stefan).
+ drivers/clk/tegra/Makefile           |   2 +
+ drivers/clk/tegra/clk-divider.c      |  30 +----
+ drivers/clk/tegra/clk-id.h           |   2 -
+ drivers/clk/tegra/clk-sdmmc-mux.c    | 250 +++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra-periph.c |  11 --
+ drivers/clk/tegra/clk-tegra210.c     |  14 +-
+ drivers/clk/tegra/clk.h              |  30 +++++
+ drivers/clk/tegra/div71.c            |  43 ++++++
+ 8 files changed, 342 insertions(+), 40 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
+ create mode 100644 drivers/clk/tegra/div71.c
 
-Changes since v3:
-1. Reduce the memory in existing DTSI instead of creating a new one
-   (suggested by Marcel).
-
-Changes since v2:
-1. Do not add new compatible but use everywhere existing
-   "toradex,colibri_t20-512" (suggested by Rob).
-
-Changes since v1:
-1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
-   my bootloader uses mem= argument).
----
- arch/arm/boot/dts/Makefile                                       | 2 +-
- .../boot/dts/{tegra20-iris-512.dts => tegra20-colibri-iris.dts}  | 4 ++--
- .../boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi}  | 9 +++++++--
- 3 files changed, 10 insertions(+), 5 deletions(-)
- rename arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-colibri-iris.dts} (95%)
- rename arch/arm/boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi} (98%)
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 89a84e5ca637..749caca383ed 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1048,7 +1048,7 @@ dtb-$(CONFIG_ARCH_TANGO) += \
- 	tango4-vantage-1172.dtb
- dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
- 	tegra20-harmony.dtb \
--	tegra20-iris-512.dtb \
-+	tegra20-colibri-iris.dtb \
- 	tegra20-medcom-wide.dtb \
- 	tegra20-paz00.dtb \
- 	tegra20-plutux.dtb \
-diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-similarity index 95%
-rename from arch/arm/boot/dts/tegra20-iris-512.dts
-rename to arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 40126388946d..57f16c0e9917 100644
---- a/arch/arm/boot/dts/tegra20-iris-512.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -1,10 +1,10 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
- 
--#include "tegra20-colibri-512.dtsi"
-+#include "tegra20-colibri.dtsi"
- 
- / {
--	model = "Toradex Colibri T20 512MB on Iris";
-+	model = "Toradex Colibri T20 256/512 MB on Iris";
- 	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
- 
- 	aliases {
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-similarity index 98%
-rename from arch/arm/boot/dts/tegra20-colibri-512.dtsi
-rename to arch/arm/boot/dts/tegra20-colibri.dtsi
-index 5623ff8d128c..dc06b23183e1 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -2,7 +2,7 @@
- #include "tegra20.dtsi"
- 
- / {
--	model = "Toradex Colibri T20 512MB";
-+	model = "Toradex Colibri T20 256/512 MB";
- 	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
- 
- 	aliases {
-@@ -11,7 +11,12 @@
- 	};
- 
- 	memory@0 {
--		reg = <0x00000000 0x20000000>;
-+		/*
-+		 * Set memory to 256 MB to be safe as this could be used on
-+		 * 256 or 512 MB module. It is expected from bootloader
-+		 * to fix this up for 512 MB version.
-+		 */
-+		reg = <0x00000000 0x10000000>;
- 	};
- 
- 	host1x@50000000 {
 -- 
-2.14.1
+2.7.4
