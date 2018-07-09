@@ -1,56 +1,67 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 0/3] PM / Domains: Enable name based lookup at attach
-Date: Mon, 9 Jul 2018 13:38:38 +0200
-Message-ID: <CAPDyKFq=EPkvu0MjOtkjCNzrgZj0kaJTxXDt21=YR==T+H8ePQ@mail.gmail.com>
-References: <20180629110432.5179-1-ulf.hansson@linaro.org>
- <20180702070806.tuzzh6mu65lrq4xq@vireshk-i7>
- <12075152.c01WRJ509Y@aspire.rjw.lan>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 6/8] clk: tegra20: Turn EMC clock gate into divider
+Date: Mon, 09 Jul 2018 14:52:41 +0300
+Message-ID: <1722318.xXycuB2Qx5@dimapc>
+References: <20180617145539.4758-1-digetx@gmail.com> <20180617145539.4758-7-digetx@gmail.com> <153109441777.143105.8459253820659446035@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <12075152.c01WRJ509Y@aspire.rjw.lan>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Rob Herring <robh@kernel.org>, Rajendra Nayak <rnayak@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux PM <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Kevin Hilman <khilman@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Todor Tomov <todor.tomov@linaro.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-tegra@vger.kernel.org, Lucas Stach <dev@lynxeye.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <153109441777.143105.8459253820659446035@swboyd.mtv.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 9 July 2018 at 12:06, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Monday, July 2, 2018 9:08:06 AM CEST Viresh Kumar wrote:
->> On 29-06-18, 13:04, Ulf Hansson wrote:
->> > Recently we added support to manage multiple PM domains per device. Consumer
->> > drivers were provided an API, dev_pm_domain_attach_by_id() to associate its
->> > device with one of its PM domain, by using an index.
->> >
->> > Let's extend this to allow the association to be done using a name based
->> > lookup, which follows the similar concept as for other resource types, such as
->> > clocks for example.
->> >
->> > Ulf Hansson (3):
->> >   PM / Domains: dt: Add a power-domain-names property
->> >   PM / Domains: Introduce option to attach a device by name to genpd
->> >   PM / Domains: Introduce dev_pm_domain_attach_by_name()
->>
->> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
->>
->>
->
-> Do we need Rob to ACK the binding change?
->
+On Monday, 9 July 2018 03:00:17 MSK Stephen Boyd wrote:
+> Quoting Dmitry Osipenko (2018-06-17 07:55:37)
+> 
+> > Kernel should never gate the EMC clock as it causes immediate lockup, so
+> > removing clk-gate functionality doesn't affect anything. Turning EMC clk
+> > gate into divider allows to implement glitch-less EMC scaling, avoiding
+> > reparenting to a backup clock.
+> > 
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> 
+> Who's supposed to apply this? Me? Thierry? The "To:" line is not
+> useful when every maintainer is there.
 
-Normally, yes, however, the change to binding is trivial and the
-concept of using a names property isn't something new. I would be
-highly surprised if he would object.
+That's up to you and Thierry to decide. Perhaps it would be less churning if 
+you'll give your ack on the 'clk:' patches and Thierry will handle the whole 
+series on his own.
 
-I say apply it.
+> > diff --git a/drivers/clk/tegra/clk-tegra20.c
+> > b/drivers/clk/tegra/clk-tegra20.c index cc857d4d4a86..2bd35418716a 100644
+> > --- a/drivers/clk/tegra/clk-tegra20.c
+> > +++ b/drivers/clk/tegra/clk-tegra20.c
+> > @@ -799,6 +798,31 @@ static struct tegra_periph_init_data
+> > tegra_periph_nodiv_clk_list[] = {> 
+> >         TEGRA_INIT_DATA_NODIV("disp2",  mux_pllpdc_clkm, CLK_SOURCE_DISP2,
+> >         30, 2, 26,  0, TEGRA20_CLK_DISP2),>  
+> >  };
+> > 
+> > +static void __init tegra20_emc_clk_init(void)
+> > +{
+> > +       struct clk *clk;
+> > +
+> > +       clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+> > +                              ARRAY_SIZE(mux_pllmcp_clkm),
+> > +                              CLK_SET_RATE_NO_REPARENT,
+> > +                              clk_base + CLK_SOURCE_EMC,
+> > +                              30, 2, 0, &emc_lock);
+> > +
+> > +       clk = tegra_clk_register_mc("mc", "emc_mux", clk_base +
+> > CLK_SOURCE_EMC, +                                   &emc_lock);
+> > +       clks[TEGRA20_CLK_MC] = clk;
+> > +
+> > +       /*
+> > +        * Note that 'emc_mux' source and 'emc' rate shouldn't be changed
+> > at +        * the same time due to a HW bug, this won't happen because
+> > we're +        * defining 'emc_mux' and 'emc' as a distinct clocks.
+> 
+> s/ a//
 
-Kind regards
-Uffe
+I can adjust the comment and re-spin the series if something more important 
+will pop up, otherwise that could addressed while applying the patch. 
