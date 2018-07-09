@@ -1,149 +1,72 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v3 2/4] clk: tegra: refactor 7.1 div calculation
-Date: Mon, 9 Jul 2018 15:17:38 +0300
-Message-ID: <1531138660-9071-2-git-send-email-avienamo@nvidia.com>
-References: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: Fix Tegra30 Cardhu PCA954x reset
+Date: Mon, 9 Jul 2018 16:01:10 +0200
+Message-ID: <20180709140110.GA18353@ulmo>
+References: <1530608387-9591-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1530608387-9591-1-git-send-email-jonathanh@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Move this to a separate file so it can be used to calculate the sdmmc
-clock dividers.
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/Makefile      |  1 +
- drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
- drivers/clk/tegra/clk.h         |  3 +++
- drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 52 insertions(+), 25 deletions(-)
- create mode 100644 drivers/clk/tegra/div71.c
+On Tue, Jul 03, 2018 at 09:59:47AM +0100, Jon Hunter wrote:
+> On all versions of Tegra30 Cardhu, the reset signal to the NXP PCA9546
+> I2C mux is connected to the Tegra GPIO BB0. Currently, this pin on the
+> Tegra is not configured as a GPIO but as a special-function IO (SFIO)
+> that is multiplexing the pin to an I2S controller. On exiting system
+> suspend, I2C commands sent to the PCA9546 are failing because there is
+> no ACK. Although it is not possible to see exactly what is happening
+> to the reset during suspend, by ensuring it is configured as a GPIO
+> and driven high, to de-assert the reset, the failures are no longer
+> seen.
+>=20
+> Please note that this GPIO is also used to drive the reset signal
+> going to the camera connector on the board. However, given that there
+> is no camera support currently for Cardhu, this should not have any
+> impact.
+>=20
+> Fixes: 40431d16ff11 ("ARM: tegra: enable PCA9546 on Cardhu")
+>=20
+> Cc: stable@vger.kernel.org
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  arch/arm/boot/dts/tegra30-cardhu.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index b716923..6d4f563 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
- obj-y					+= cvb.o
- obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
- obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-+obj-y					+= div71.o
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 16e0aee..ad87858 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -32,35 +32,15 @@
- static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
- 		   unsigned long parent_rate)
- {
--	u64 divider_ux1 = parent_rate;
--	u8 flags = divider->flags;
--	int mul;
--
--	if (!rate)
--		return 0;
--
--	mul = get_mul(divider);
--
--	if (!(flags & TEGRA_DIVIDER_INT))
--		divider_ux1 *= mul;
--
--	if (flags & TEGRA_DIVIDER_ROUND_UP)
--		divider_ux1 += rate - 1;
--
--	do_div(divider_ux1, rate);
--
--	if (flags & TEGRA_DIVIDER_INT)
--		divider_ux1 *= mul;
-+	int div;
- 
--	divider_ux1 -= mul;
-+	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-+			divider->flags);
- 
--	if ((s64)divider_ux1 < 0)
-+	if (div < 0)
- 		return 0;
- 
--	if (divider_ux1 > get_max_div(divider))
--		return get_max_div(divider);
--
--	return divider_ux1;
-+	return div;
- }
- 
- static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index e3b9c22..149cc70 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
- u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-+int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-+	      u8 frac_width, u8 flags);
-+
- 
- /* Combined read fence with delay */
- #define fence_udelay(delay, reg)	\
-diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-new file mode 100644
-index 0000000..1eecc84
---- /dev/null
-+++ b/drivers/clk/tegra/div71.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <asm/div64.h>
-+
-+#include "clk.h"
-+
-+#define div_mask(w) ((1 << (w)) - 1)
-+
-+int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-+	      u8 frac_width, u8 flags)
-+{
-+	u64 divider_ux1 = parent_rate;
-+	int mul;
-+
-+	if (!rate)
-+		return 0;
-+
-+	mul = 1 << frac_width;
-+
-+	if (!(flags & TEGRA_DIVIDER_INT))
-+		divider_ux1 *= mul;
-+
-+	if (flags & TEGRA_DIVIDER_ROUND_UP)
-+		divider_ux1 += rate - 1;
-+
-+	do_div(divider_ux1, rate);
-+
-+	if (flags & TEGRA_DIVIDER_INT)
-+		divider_ux1 *= mul;
-+
-+	if (divider_ux1 < mul)
-+		return 0;
-+
-+	divider_ux1 -= mul;
-+
-+	if (divider_ux1 > div_mask(width))
-+		return div_mask(width);
-+
-+	return divider_ux1;
-+}
--- 
-2.7.4
+Applied to for-4.19/arm/dt, thanks.
+
+Thierry
+
+--uAKRQypu60I7Lcqm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDaqMACgkQ3SOs138+
+s6EX6xAAocrOM1kiT0+nW38/scu1cJYnxCuLQ/nBmsgblrAtFL4u1Nl4arD8mJ7M
+JuyLS2QbSdk6sgX7kDWKYV4wl+fo9JXlBVVKWXZ6Oz6GxlnHyocaIjCnrLwQPmA0
+Ro3aXlKFWDiVoCo+ygVmS4YJ6XvBcF/1cKWOJwCz9X6brsN/4xzqMqiObogmBT/s
+YEVF+SejNlDblK2xnhyEfae2X29MtdSAzuV0+loPQOePA5XVHBQvnr7REsFJ4b9I
+0zDGELzKNs4XI7tkqD06HOAkB6h8+tqyPaW504u4eFh1ZEIaEu6CY91n5wxt9MCV
+Th37TPs608u6UZDKAvbTeNc6BA++7wlE/2SEUlDOFjfVLJupiBgJNIy5dVo+0lwl
+meIP8iU6OmphVP1akJvVWWnQOkAW6u/FRkJPaPaYvv5XWynEtLOZ4dHVID34Juwm
+kjo0kVPwD+P9F91ONqFoYS+aBGyAUdksVxLFEVxdwmJGs2zSYWxkvc4HFFK47O8G
+3+X8R2L5XzbalmFzUSB89HoZWA8SRAAQCWeHE0ncfWrr3bHwO2TEb0q2NE952C/8
+CdVHI773kQFuN75IwBMwcjcLgHMupbBW/FB2xZ9ChmxJCWBherfTf7WO03EkrIaF
+UbvS9A4rw71/XYHhrbrDMcwE2krCWTBrB+EDnvFeIuqlC/7bFZw=
+=qTb9
+-----END PGP SIGNATURE-----
+
+--uAKRQypu60I7Lcqm--
