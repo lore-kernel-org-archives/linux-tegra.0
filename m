@@ -1,149 +1,78 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
-Date: Mon, 9 Jul 2018 19:38:56 +0300
-Message-ID: <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
-References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v8 1/4] ARM: dts: tegra: Remove usage of deprecated
+ skeleton.dtsi
+Date: Mon, 9 Jul 2018 18:54:05 +0200
+Message-ID: <20180709165405.GA26651@ulmo>
+References: <20180709160519.23497-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <20180709160519.23497-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Move this to a separate file so it can be used to calculate the sdmmc
-clock dividers.
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/Makefile      |  1 +
- drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
- drivers/clk/tegra/clk.h         |  3 +++
- drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 52 insertions(+), 25 deletions(-)
- create mode 100644 drivers/clk/tegra/div71.c
+On Mon, Jul 09, 2018 at 06:05:16PM +0200, Krzysztof Kozlowski wrote:
+> Remove the usage of skeleton.dtsi because it was deprecated since commit
+> 9c0da3cc61f1 ("ARM: dts: explicitly mark skeleton.dtsi as deprecated").
+> It also allows later to fix DTC warnings for missing unit name in
+> /memory nodes.
+>=20
+> Compiled DTBs are the same as before this commit.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Stefan Agner <stefan@agner.ch>
+>=20
+> ---
+>=20
+> Changes since v7:
+> 1. Remove adding of chosen and aliases (suggested by Thierry).
+>=20
+> Changes since v6:
+> 1. Add Stefan's reviewed-by tag.
+>=20
+> Changes since v5:
+> 1. New patch, split with skeleton.dtsi removal (suggested by
+> Stefan).
+> ---
+>  arch/arm/boot/dts/tegra114.dtsi       | 8 ++++++--
+>  arch/arm/boot/dts/tegra124.dtsi       | 6 ++++--
+>  arch/arm/boot/dts/tegra20.dtsi        | 8 ++++++--
+>  arch/arm/boot/dts/tegra30-apalis.dtsi | 4 ++++
+>  arch/arm/boot/dts/tegra30.dtsi        | 8 ++++++--
+>  5 files changed, 26 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index b716923..6d4f563 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
- obj-y					+= cvb.o
- obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
- obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-+obj-y					+= div71.o
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 16e0aee..ad87858 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -32,35 +32,15 @@
- static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
- 		   unsigned long parent_rate)
- {
--	u64 divider_ux1 = parent_rate;
--	u8 flags = divider->flags;
--	int mul;
--
--	if (!rate)
--		return 0;
--
--	mul = get_mul(divider);
--
--	if (!(flags & TEGRA_DIVIDER_INT))
--		divider_ux1 *= mul;
--
--	if (flags & TEGRA_DIVIDER_ROUND_UP)
--		divider_ux1 += rate - 1;
--
--	do_div(divider_ux1, rate);
--
--	if (flags & TEGRA_DIVIDER_INT)
--		divider_ux1 *= mul;
-+	int div;
- 
--	divider_ux1 -= mul;
-+	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-+			divider->flags);
- 
--	if ((s64)divider_ux1 < 0)
-+	if (div < 0)
- 		return 0;
- 
--	if (divider_ux1 > get_max_div(divider))
--		return get_max_div(divider);
--
--	return divider_ux1;
-+	return div;
- }
- 
- static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index e3b9c22..149cc70 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
- u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-+int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-+	      u8 frac_width, u8 flags);
-+
- 
- /* Combined read fence with delay */
- #define fence_udelay(delay, reg)	\
-diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-new file mode 100644
-index 0000000..1eecc84
---- /dev/null
-+++ b/drivers/clk/tegra/div71.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <asm/div64.h>
-+
-+#include "clk.h"
-+
-+#define div_mask(w) ((1 << (w)) - 1)
-+
-+int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-+	      u8 frac_width, u8 flags)
-+{
-+	u64 divider_ux1 = parent_rate;
-+	int mul;
-+
-+	if (!rate)
-+		return 0;
-+
-+	mul = 1 << frac_width;
-+
-+	if (!(flags & TEGRA_DIVIDER_INT))
-+		divider_ux1 *= mul;
-+
-+	if (flags & TEGRA_DIVIDER_ROUND_UP)
-+		divider_ux1 += rate - 1;
-+
-+	do_div(divider_ux1, rate);
-+
-+	if (flags & TEGRA_DIVIDER_INT)
-+		divider_ux1 *= mul;
-+
-+	if (divider_ux1 < mul)
-+		return 0;
-+
-+	divider_ux1 -= mul;
-+
-+	if (divider_ux1 > div_mask(width))
-+		return div_mask(width);
-+
-+	return divider_ux1;
-+}
--- 
-2.7.4
+Series applied to for-4.19/arm/dt, thanks.
+
+Thierry
+
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDkysACgkQ3SOs138+
+s6HqOA//QmEj+qn0rD3Jw+uLZyLCsVsTFSI9mMUK5jBELy9LS1YNgKskKlYVavtD
+8XDhU46rWmGlsE7WcJVKbdTlvYHNGvsvtczZ0D8vdSOhmjgyP9nOr4uI8+sCCyXD
+xa4H2sHqn66AJQHNOCcqRiuXL2Bee6V4Qd84J0xnyabeF/cXqUDkBzkU9bryzFNk
+SVGhjJaUAaBvk/fazY5ZwkJX3iSyhqXaeMw9deIpMDfV+zdOiC4nBHygQJkwXw6G
+ziw2N67k07s6VI/9FX6i78GGX1dfA7iayVcTyv5AFPs5pzkttkndVciIU98Dy2cF
+PZu6uC52V7DeAReFCCmJOVjKiqptaSqrSOfcwBHRif7y2Rr4sZJ7g1pY0uvR4WLy
+iEleSu38QI2nZu0lUVTDeElki/3fhm6/9/I/DyGaz4am8eMhWIENodSsxbqYL8FE
+ZaSxHwjTkNY7LMimEWqN1E0cmRnpOj6tthdEiPLu1uvv3yKfs+BESJ8nF1pJ7zme
+o01oYlOe8OSSDkFMzAUFauN9L15pL5xOY9p2M8Qly8pUgdl79SuKDL2LnQ9gEgv7
+X9sa5a4WvVfQS1Aet0lmdSaOw2TORVVVmYD9/xAQrnaBHPPK1LdPJjAgmOaoMPxh
+EhryoTz7OCY/v2bJF8qicVjoREgNBE6GzVUDYaIQ0B/c3RmdRTA=
+=3PJ3
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
