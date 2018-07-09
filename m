@@ -1,78 +1,72 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v8 1/4] ARM: dts: tegra: Remove usage of deprecated
- skeleton.dtsi
-Date: Mon, 9 Jul 2018 18:54:05 +0200
-Message-ID: <20180709165405.GA26651@ulmo>
-References: <20180709160519.23497-1-krzk@kernel.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: tegra: Fix NACK error handling
+Date: Tue, 10 Jul 2018 00:20:43 +0200
+Message-ID: <20180709222043.5x627xxpf337uzeq@ninjato>
+References: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="2xo4b6y6k67pplbq"
+Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180709160519.23497-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>
+In-Reply-To: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Shardar Shariff Md <smohammed@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---cNdxnHkX5QqsyA0e
+--2xo4b6y6k67pplbq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 09, 2018 at 06:05:16PM +0200, Krzysztof Kozlowski wrote:
-> Remove the usage of skeleton.dtsi because it was deprecated since commit
-> 9c0da3cc61f1 ("ARM: dts: explicitly mark skeleton.dtsi as deprecated").
-> It also allows later to fix DTC warnings for missing unit name in
-> /memory nodes.
+On Tue, Jul 03, 2018 at 09:55:43AM +0100, Jon Hunter wrote:
+> On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
+> resume from suspend (which is caused by the reset signal for the I2C
+> mux not being configured correctl). However, this NACK is causing the
+> Tegra30 to hang on resuming from suspend which is not expected as we
+> detect NACKs and handle them. The hang observed appears to occur when
+> resetting the I2C controller to recover from the NACK.
 >=20
-> Compiled DTBs are the same as before this commit.
+> Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
+> additional error handling for some error cases including NACK, however,
+> it appears that this change conflicts with an early fix by commit
+> f70893d08338 ("i2c: tegra: Add delay before resetting the controller
+> after NACK"). After commit 77821b4678f9 was made we now disable 'packet
+> mode' before the delay from commit f70893d08338 happens. Testing shows
+> that moving the delay to before disabling 'packet mode' fixes the hang
+> observed on Tegra30. The delay was added to give the I2C controller
+> chance to send a stop condition and so it makes sense to move this to
+> before we disable packet mode. Please note that packet mode is always
+> enabled for Tegra.
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Stefan Agner <stefan@agner.ch>
+> Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
 >=20
-> ---
+> Cc: stable@vger.kernel.org
 >=20
-> Changes since v7:
-> 1. Remove adding of chosen and aliases (suggested by Thierry).
->=20
-> Changes since v6:
-> 1. Add Stefan's reviewed-by tag.
->=20
-> Changes since v5:
-> 1. New patch, split with skeleton.dtsi removal (suggested by
-> Stefan).
-> ---
->  arch/arm/boot/dts/tegra114.dtsi       | 8 ++++++--
->  arch/arm/boot/dts/tegra124.dtsi       | 6 ++++--
->  arch/arm/boot/dts/tegra20.dtsi        | 8 ++++++--
->  arch/arm/boot/dts/tegra30-apalis.dtsi | 4 ++++
->  arch/arm/boot/dts/tegra30.dtsi        | 8 ++++++--
->  5 files changed, 26 insertions(+), 8 deletions(-)
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Series applied to for-4.19/arm/dt, thanks.
+Applied to for-current, thanks!
 
-Thierry
 
---cNdxnHkX5QqsyA0e
+--2xo4b6y6k67pplbq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDkysACgkQ3SOs138+
-s6HqOA//QmEj+qn0rD3Jw+uLZyLCsVsTFSI9mMUK5jBELy9LS1YNgKskKlYVavtD
-8XDhU46rWmGlsE7WcJVKbdTlvYHNGvsvtczZ0D8vdSOhmjgyP9nOr4uI8+sCCyXD
-xa4H2sHqn66AJQHNOCcqRiuXL2Bee6V4Qd84J0xnyabeF/cXqUDkBzkU9bryzFNk
-SVGhjJaUAaBvk/fazY5ZwkJX3iSyhqXaeMw9deIpMDfV+zdOiC4nBHygQJkwXw6G
-ziw2N67k07s6VI/9FX6i78GGX1dfA7iayVcTyv5AFPs5pzkttkndVciIU98Dy2cF
-PZu6uC52V7DeAReFCCmJOVjKiqptaSqrSOfcwBHRif7y2Rr4sZJ7g1pY0uvR4WLy
-iEleSu38QI2nZu0lUVTDeElki/3fhm6/9/I/DyGaz4am8eMhWIENodSsxbqYL8FE
-ZaSxHwjTkNY7LMimEWqN1E0cmRnpOj6tthdEiPLu1uvv3yKfs+BESJ8nF1pJ7zme
-o01oYlOe8OSSDkFMzAUFauN9L15pL5xOY9p2M8Qly8pUgdl79SuKDL2LnQ9gEgv7
-X9sa5a4WvVfQS1Aet0lmdSaOw2TORVVVmYD9/xAQrnaBHPPK1LdPJjAgmOaoMPxh
-EhryoTz7OCY/v2bJF8qicVjoREgNBE6GzVUDYaIQ0B/c3RmdRTA=
-=3PJ3
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltD37gACgkQFA3kzBSg
+KbbcMhAArzo9LdUX56To43qMeyV6CEgGkqMHimspA76H325QhBdYLTTNU7JmD+u+
+zvEF17a/PqbVX7a1SxKUdwdpQ/v5TieLuXya1iWw8rbFF93bSpZPkUCm2ceFn59G
+RO3KHoUEx6mgG6FE2m9/2kkqsj+4prTZr2n979hvEFFxy6NsHE4zLzRIhoNlHo2d
+glrGjKPOtdIm9O4HwMSA48S8C2O1dnj+MNXgPyA4t/uqfA6LBTVvg92L++/2Rfof
+7Usm973Yd4B/XqHH9QzWlics+QnfRdOyWWkAeeo8ujnzBiOYJAamM/mFv0vBi07O
+BaZicPaEmW5JWES8gQj9wJkD0wrldEnlJBmR1PR3F7bkeZqU3fnZbj2S9v6TXM/1
+Wfm7jB6gHvTZZt62QDkwNNah1VmCdgXwe5cBQJNlDjmjNEpmURLoMtBC0tU22paY
+QLt65BRX/IPGNMriXp3uJbkgkTUcbi8tNG4PZUR1ZgYPzktcsgAVnb9kqPIi/chw
+wg5SzAevRz82c6x8fXdONoJsfxUURfD8/pFrQZiuNA2RKF2foSo7foj2x4VHpNT8
+wqU7/aWdYo6cTk3d/+2kHtUt3trNUNsLPHfigUnLJ79UrEwelBfZpiixgkv4GOYk
+H31Nr9G0zoqwGqllP8qnb38fpqv8K8jgL0nNmIYOZQe6ksiCCp8=
+=FktC
 -----END PGP SIGNATURE-----
 
---cNdxnHkX5QqsyA0e--
+--2xo4b6y6k67pplbq--
