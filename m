@@ -1,80 +1,44 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 1/2] ARM: dts: tegra20: Add Memory Client reset to VDE
-Date: Mon, 9 Jul 2018 10:59:02 +0200
-Message-ID: <20180709085902.GD13963@ulmo>
-References: <20180520134846.31046-1-digetx@gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 0/3] PM / Domains: Enable name based lookup at attach
+Date: Mon, 09 Jul 2018 12:06:57 +0200
+Message-ID: <12075152.c01WRJ509Y@aspire.rjw.lan>
+References: <20180629110432.5179-1-ulf.hansson@linaro.org>
+ <20180702070806.tuzzh6mu65lrq4xq@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4494560774732429228=="
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180520134846.31046-1-digetx@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180702070806.tuzzh6mu65lrq4xq@vireshk-i7>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Lucas Stach <dev@lynxeye.de>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Todor Tomov <todor.tomov@linaro.org>, linux-tegra@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Monday, July 2, 2018 9:08:06 AM CEST Viresh Kumar wrote:
+> On 29-06-18, 13:04, Ulf Hansson wrote:
+> > Recently we added support to manage multiple PM domains per device. Consumer
+> > drivers were provided an API, dev_pm_domain_attach_by_id() to associate its
+> > device with one of its PM domain, by using an index.
+> > 
+> > Let's extend this to allow the association to be done using a name based
+> > lookup, which follows the similar concept as for other resource types, such as
+> > clocks for example.
+> > 
+> > Ulf Hansson (3):
+> >   PM / Domains: dt: Add a power-domain-names property
+> >   PM / Domains: Introduce option to attach a device by name to genpd
+> >   PM / Domains: Introduce dev_pm_domain_attach_by_name()
+> 
+> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> 
 
---===============4494560774732429228==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZJcv+A0YCCLh2VIg"
-Content-Disposition: inline
-
-
---ZJcv+A0YCCLh2VIg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, May 20, 2018 at 04:48:44PM +0300, Dmitry Osipenko wrote:
-> Hook up Memory Client reset of the Video Decoder to the decoders DT node.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/boot/dts/tegra20.dtsi | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---ZJcv+A0YCCLh2VIg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDI9YACgkQ3SOs138+
-s6HNlg//WWXO7YBRWnaR2AaXE6q2QxdZKw7Fy69Flx4luA1rQYO7jlMkh6CQkxra
-gbzAsStpe3WZSKFjgC+ysUta7zRFmBG2uANyUPp9UJp28hVkJSwV5JzY8McNlLZ2
-n8CV7Kj2JHRi/cm7VeaYaWVkOdZF8sKkKuowqrTlFCbFxx1QqGxS5n/lyB46KB8S
-2MWXWoCCUAq+bbHPUGpMlWgjI+6eoofVAB65wQdsX1bTNMv7U5/LkokbU6xWG7uA
-qutgMouPOhqtTztX7Qspe30aVn+bvdjsQwd2/KwYJHXCVtrKWYyIey8fEcUzWeFU
-LnQP+rnYEB9WA9Vpx4h7Gehs2YlQ2d68BWZX0mijvFMlj2gK92ZMGg4qyscuAMjd
-1jh5nYzRU8JKlNPXo9HTC3rifQRJFlzm00Ch9zXRYH4KGREqg06ojqm22OHGNOvZ
-UU0wyg+BTFGmwnPIDKbebFm1XtUpfR0UfI8/Ok3m5DF2n5QOSz2B6+vboGAO6I/2
-kczw2NUgQdjnwaqJqro7rzD05wFeNbjAwErQTLijTG1ozqssZoEpIupkmKIv3t3z
-bWQZkQ+m/sqJGgI+dtujIO8QmFT09qCAiUSWdqxFKZUv2XgHrNNMhsQRNXm5GDfd
-0JSNOhZkMA4fijTrwHCmpEvhkJ5VXOXc4VJE7CbBziwEO1RZnPo=
-=s+P9
------END PGP SIGNATURE-----
-
---ZJcv+A0YCCLh2VIg--
-
---===============4494560774732429228==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============4494560774732429228==--
+Do we need Rob to ACK the binding change?
