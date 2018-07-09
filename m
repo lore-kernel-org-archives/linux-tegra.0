@@ -1,72 +1,76 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: Fix Tegra30 Cardhu PCA954x reset
-Date: Mon, 9 Jul 2018 16:01:10 +0200
-Message-ID: <20180709140110.GA18353@ulmo>
-References: <1530608387-9591-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH] i2c: tegra: Fix NACK error handling
+Date: Mon, 9 Jul 2018 16:01:56 +0200
+Message-ID: <20180709140156.GB18353@ulmo>
+References: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+        protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
 Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1530608387-9591-1-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
 Sender: stable-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Shardar Shariff Md <smohammed@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---uAKRQypu60I7Lcqm
+--DBIVS5p969aUjpLe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 03, 2018 at 09:59:47AM +0100, Jon Hunter wrote:
-> On all versions of Tegra30 Cardhu, the reset signal to the NXP PCA9546
-> I2C mux is connected to the Tegra GPIO BB0. Currently, this pin on the
-> Tegra is not configured as a GPIO but as a special-function IO (SFIO)
-> that is multiplexing the pin to an I2S controller. On exiting system
-> suspend, I2C commands sent to the PCA9546 are failing because there is
-> no ACK. Although it is not possible to see exactly what is happening
-> to the reset during suspend, by ensuring it is configured as a GPIO
-> and driven high, to de-assert the reset, the failures are no longer
-> seen.
+On Tue, Jul 03, 2018 at 09:55:43AM +0100, Jon Hunter wrote:
+> On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
+> resume from suspend (which is caused by the reset signal for the I2C
+> mux not being configured correctl). However, this NACK is causing the
+> Tegra30 to hang on resuming from suspend which is not expected as we
+> detect NACKs and handle them. The hang observed appears to occur when
+> resetting the I2C controller to recover from the NACK.
 >=20
-> Please note that this GPIO is also used to drive the reset signal
-> going to the camera connector on the board. However, given that there
-> is no camera support currently for Cardhu, this should not have any
-> impact.
+> Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
+> additional error handling for some error cases including NACK, however,
+> it appears that this change conflicts with an early fix by commit
+> f70893d08338 ("i2c: tegra: Add delay before resetting the controller
+> after NACK"). After commit 77821b4678f9 was made we now disable 'packet
+> mode' before the delay from commit f70893d08338 happens. Testing shows
+> that moving the delay to before disabling 'packet mode' fixes the hang
+> observed on Tegra30. The delay was added to give the I2C controller
+> chance to send a stop condition and so it makes sense to move this to
+> before we disable packet mode. Please note that packet mode is always
+> enabled for Tegra.
 >=20
-> Fixes: 40431d16ff11 ("ARM: tegra: enable PCA9546 on Cardhu")
+> Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
 >=20
 > Cc: stable@vger.kernel.org
 >=20
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  arch/arm/boot/dts/tegra30-cardhu.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
 
-Applied to for-4.19/arm/dt, thanks.
+Seems sensible:
 
-Thierry
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---uAKRQypu60I7Lcqm
+--DBIVS5p969aUjpLe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDaqMACgkQ3SOs138+
-s6EX6xAAocrOM1kiT0+nW38/scu1cJYnxCuLQ/nBmsgblrAtFL4u1Nl4arD8mJ7M
-JuyLS2QbSdk6sgX7kDWKYV4wl+fo9JXlBVVKWXZ6Oz6GxlnHyocaIjCnrLwQPmA0
-Ro3aXlKFWDiVoCo+ygVmS4YJ6XvBcF/1cKWOJwCz9X6brsN/4xzqMqiObogmBT/s
-YEVF+SejNlDblK2xnhyEfae2X29MtdSAzuV0+loPQOePA5XVHBQvnr7REsFJ4b9I
-0zDGELzKNs4XI7tkqD06HOAkB6h8+tqyPaW504u4eFh1ZEIaEu6CY91n5wxt9MCV
-Th37TPs608u6UZDKAvbTeNc6BA++7wlE/2SEUlDOFjfVLJupiBgJNIy5dVo+0lwl
-meIP8iU6OmphVP1akJvVWWnQOkAW6u/FRkJPaPaYvv5XWynEtLOZ4dHVID34Juwm
-kjo0kVPwD+P9F91ONqFoYS+aBGyAUdksVxLFEVxdwmJGs2zSYWxkvc4HFFK47O8G
-3+X8R2L5XzbalmFzUSB89HoZWA8SRAAQCWeHE0ncfWrr3bHwO2TEb0q2NE952C/8
-CdVHI773kQFuN75IwBMwcjcLgHMupbBW/FB2xZ9ChmxJCWBherfTf7WO03EkrIaF
-UbvS9A4rw71/XYHhrbrDMcwE2krCWTBrB+EDnvFeIuqlC/7bFZw=
-=qTb9
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDatQACgkQ3SOs138+
+s6Gr6RAAlVI3fpyoaEJqFnqAF1Hu9DAR/AgxeUqnBf8ZMsUTskUdRe+QxFnMot40
+Oo6Ck5DBDFeZ0W/NeRTu63e+I/w+WjTMMiANfxwGgc1e0m6ih0lorLsf/FUsOMvG
+NUyHy/RBIy1pKPs76vrJsxz/We29yiZqAGFeQsWLcN/XS+5CzvXSX0xwzYn43Bfr
+5g9lulphxCfRAc3oLv4+Ehy/a0AJPCQxIyjFggvp2iwI+gWGURsrVij4UKweSKsk
+fxWcrLWhKlqUToyM4i/XdOXa87wqGMYXefhtsLiYqSIdHOZbuCbmGhoRonlyI4Ls
+1E8pDyS4zfRTiGTLcbo1C+t7aKw2+S3PrprOi0xRvhGAOceeddcJpL8JxUY0pFf8
+9F88dZF1FKO6UZSU30h6MZuMAqgkT6Po6QFVQa24l9HJqrL1WUZkNEfXpOiX1aKD
+6Bd+SF39tFAxkChmJl3hT1XEOXAo0PuTdGZmR8KtlF1DunXpIySmN6cpb3+C8cO4
+pERVhCA0wv4MqFG19MdjbTh8MvEi60kqohfSie0U3IhBOwzTgyzMhV2/BpgzT2gw
+wDnIUakuOmygH13T1ymLlWUUC70AxmpMj0BWo7FYp98sY6zaCgXnBVJubpuSduya
+k5pzHmae69GhjrsaHWQJUIGn7vgMstCJ17NF2BWD661LFHicYxA=
+=VXDy
 -----END PGP SIGNATURE-----
 
---uAKRQypu60I7Lcqm--
+--DBIVS5p969aUjpLe--
