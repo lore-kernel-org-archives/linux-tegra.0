@@ -1,84 +1,81 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1] gpu: host1x: Skip IOMMU initialization if firewall is
- enabled
-Date: Mon, 9 Jul 2018 10:32:41 +0200
-Message-ID: <20180709083241.GB13963@ulmo>
-References: <20180519010710.11693-1-digetx@gmail.com>
+Subject: Re: [PATCH v1 2/2] ARM: dts: tegra30: Add Memory Client reset to VDE
+Date: Mon, 9 Jul 2018 10:58:01 +0200
+Message-ID: <20180709085801.GC13963@ulmo>
+References: <20180520134846.31046-1-digetx@gmail.com>
+ <20180520134846.31046-3-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0714316277=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180519010710.11693-1-digetx@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/mixed; boundary="===============8483778966301089058=="
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180520134846.31046-3-digetx@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0714316277==
+--===============8483778966301089058==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Bn2rw/3z4jIqBvZU"
+	protocol="application/pgp-signature"; boundary="5G06lTa6Jq83wMTw"
 Content-Disposition: inline
 
 
---Bn2rw/3z4jIqBvZU
+--5G06lTa6Jq83wMTw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 19, 2018 at 04:07:10AM +0300, Dmitry Osipenko wrote:
-> Host1x's CDMA can't access the command buffers if IOMMU and Host1x
-> firewall are enabled in the kernels config because firewall doesn't map
-> the copied buffer into IOVA space. Fix this by skipping IOMMU
-> initialization if firewall is enabled as firewall merges sparse cmdbufs
-> into a single contiguous buffer and hence IOMMU isn't needed in this case.
+On Sun, May 20, 2018 at 04:48:46PM +0300, Dmitry Osipenko wrote:
+> Hook up Memory Client reset of the Video Decoder to the decoders DT node.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/gpu/host1x/dev.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/arm/boot/dts/tegra30.dtsi | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied to drm/tegra/fixes, thanks.
+Applied, thanks.
 
 Thierry
 
---Bn2rw/3z4jIqBvZU
+--5G06lTa6Jq83wMTw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDHakACgkQ3SOs138+
-s6FwVhAAjre/WY/Ok/bDtwsnpcIu2To5xzRs8sTVaEYyecBce+YXqdiPDBoLSwd9
-OkIXKJCmGkk7gTNxndGi4yTlG1F6BpvLvc3YFAtKLnJTR/DsZyXvLvxl91TO17fN
-HSdfr0uU7eouwlj6btk3TNXDUeePFSByoCMdnrvjGM53w4LzVPovnt7/qha3Lxzq
-yNevta4oPpA6Jw86lICIgVrgEfvM1Z5V7ea/r2MB03TbUt9IuyZD2PRYYBaBOSFk
-H4ABykLhpkXEfmGCKCgFco21ckPxP5FvHzzp0VDAVIoNDpPN1eYYrMGtDN9zBQ1z
-TVPzT70PPbKGeh/Pa3Z2RnxY318RkVwD17AdmlVocEKJnLkC/wa/pA5q6COW202F
-P+G4nxqhFuAaolobxpgemTdVrQTvxspVmFGqBtSBBj05iFv17syuTYfsKsK0Cuzl
-J8fnhWyE6T++0nfFL2eZLvZKbb6SconzvdHDAnjrIjAbB+yN12YJzkrZ0aDU9bRN
-abxy1PmF8kJA9prwgSG3b31b5cvb0GkABNBmFzNUs75KNVyWQgkVgA2U/ADcitWA
-EcOz4XB6zgGPsbcI3Bw5gN8p/oah2/n+0hlu3diC7ZdcMfDF+wshMcQ9YBlwScgR
-KFULIFDBgKunGQgSCONDBPC/G8g2FAt4R0GYW5aAgygdkhKESPk=
-=bDX6
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDI5YACgkQ3SOs138+
+s6G2JhAApdcg7IFWFMgqlbOLmpx2EiHprBIO5z2l0xJrC5l+f/h9apDygmRdO9h4
+JK6REB7VXt62Ayjmm00n82XEwt9hwtnDxQngwDI9ILjdNYb/wU2IpvNEBEJVx2Zh
+72+axVijaTvmZlhpx6V6BvRpHjd0RzsQhC1GiKJSBkszdaK4n6Es/bCtpZjPRFpo
+Ptyay0KMjEf4yvuW1noxJHEZrIjdP4Zn5+TuLCEyVivpu/w8xAABAwqUMR3SMOts
+JtEY5of4+ETl/ob/HsadvN3vjpxiKUUzkDjlysXcKhsQCBPqBtiEc48WHzngW8VX
+TEOHotePbuEzmxmpEuy39btr+GzGNcX6eK2tJ23xm4hFaXU5pfP/ppUPM8ZY/gNj
+H7BjGD3O/k0odkhigmL3p59tSafDbe/Ff3dOpqjx1FKOjzjIvEXBnfU/Osy0cbfp
+SE0neBcWEv7RSoaptnz/Vd+VwM/e0JqKFTMlqFhTMW8yX4MPBo79Hi6A6EpgaCG1
+uTDuIOTiKMGiTaitWziKJw7zQo8As915yJPadrKqpnW3Hgbka06bKa1aVmdKGMXn
+VuTrhaEHhV4shLkbD4pV5PkWGlJwP65i9liubZ9RK27qv3q6NXxo3iFr7thxGiAs
+koh+O+O9L1/3fzN4ccJbmp9Dngc+EqD+A40DY7tAAAXbfpmAsF0=
+=h8rp
 -----END PGP SIGNATURE-----
 
---Bn2rw/3z4jIqBvZU--
+--5G06lTa6Jq83wMTw--
 
---===============0714316277==
-Content-Type: text/plain; charset="utf-8"
+--===============8483778966301089058==
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
 
---===============0714316277==--
+--===============8483778966301089058==--
