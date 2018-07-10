@@ -1,97 +1,166 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 3/8] mailbox: Add transmit done by blocking option
-Date: Tue, 10 Jul 2018 17:49:26 +0200
-Message-ID: <20180710154926.GB8492@ulmo>
-References: <20180702114033.15654-1-mperttunen@nvidia.com>
- <20180702114033.15654-4-mperttunen@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
+Date: Tue, 10 Jul 2018 17:17:05 +0100
+Message-ID: <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
+References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+ <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5631047396355467356=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180702114033.15654-4-mperttunen@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: devicetree@vger.kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============5631047396355467356==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+pHx0qQiF2pBVqBT"
-Content-Disposition: inline
+On 09/07/18 17:38, Aapo Vienamo wrote:
+> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+> Move this to a separate file so it can be used to calculate the sdmmc
+> clock dividers.
 
-
---+pHx0qQiF2pBVqBT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 02, 2018 at 02:40:28PM +0300, Mikko Perttunen wrote:
-> Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
-> send_data function of the mailbox driver is expected to block until
-> the message has been sent. The new option is used with the Tegra
-> Combined UART driver to minimize unnecessary overhead when transmitting
-> data.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Sorry for not commenting sooner, but what is the motivation for moving
+this to its own file? I don't see why we need to do this in order to use
+elsewhere. Furthermore, the original file is quite aptly named 'clk-divider.c'
+and now we have a div71.c which seems quite specific.
+> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  drivers/mailbox/mailbox.c | 30 +++++++++++++++++++++---------
->  drivers/mailbox/mailbox.h |  1 +
->  2 files changed, 22 insertions(+), 9 deletions(-)
+>  drivers/clk/tegra/Makefile      |  1 +
+>  drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
+>  drivers/clk/tegra/clk.h         |  3 +++
+>  drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 52 insertions(+), 25 deletions(-)
+>  create mode 100644 drivers/clk/tegra/div71.c
+> 
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> index b716923..6d4f563 100644
+> --- a/drivers/clk/tegra/Makefile
+> +++ b/drivers/clk/tegra/Makefile
+> @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+>  obj-y					+= cvb.o
+>  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+>  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
+> +obj-y					+= div71.o
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index 16e0aee..ad87858 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -32,35 +32,15 @@
+>  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+>  		   unsigned long parent_rate)
+>  {
+> -	u64 divider_ux1 = parent_rate;
+> -	u8 flags = divider->flags;
+> -	int mul;
+> -
+> -	if (!rate)
+> -		return 0;
+> -
+> -	mul = get_mul(divider);
+> -
+> -	if (!(flags & TEGRA_DIVIDER_INT))
+> -		divider_ux1 *= mul;
+> -
+> -	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> -		divider_ux1 += rate - 1;
+> -
+> -	do_div(divider_ux1, rate);
+> -
+> -	if (flags & TEGRA_DIVIDER_INT)
+> -		divider_ux1 *= mul;
+> +	int div;
+>  
+> -	divider_ux1 -= mul;
+> +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
+> +			divider->flags);
+>  
+> -	if ((s64)divider_ux1 < 0)
+> +	if (div < 0)
+>  		return 0;
+>  
+> -	if (divider_ux1 > get_max_div(divider))
+> -		return get_max_div(divider);
+> -
+> -	return divider_ux1;
+> +	return div;
+>  }
+>  
+>  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index e3b9c22..149cc70 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+>  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+>  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+>  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> +	      u8 frac_width, u8 flags);
+> +
+>  
+>  /* Combined read fence with delay */
+>  #define fence_udelay(delay, reg)	\
+> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
+> new file mode 100644
+> index 0000000..1eecc84
+> --- /dev/null
+> +++ b/drivers/clk/tegra/div71.c
+> @@ -0,0 +1,43 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> + */
+> +
+> +#include <asm/div64.h>
+> +
+> +#include "clk.h"
+> +
+> +#define div_mask(w) ((1 << (w)) - 1)
+> +
+> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> +	      u8 frac_width, u8 flags)
+> +{
+> +	u64 divider_ux1 = parent_rate;
+> +	int mul;
+> +
+> +	if (!rate)
+> +		return 0;
+> +
+> +	mul = 1 << frac_width;
+> +
+> +	if (!(flags & TEGRA_DIVIDER_INT))
+> +		divider_ux1 *= mul;
+> +
+> +	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> +		divider_ux1 += rate - 1;
+> +
+> +	do_div(divider_ux1, rate);
+> +
+> +	if (flags & TEGRA_DIVIDER_INT)
+> +		divider_ux1 *= mul;
+> +
+> +	if (divider_ux1 < mul)
+> +		return 0;
+> +
+> +	divider_ux1 -= mul;
+> +
+> +	if (divider_ux1 > div_mask(width))
+> +		return div_mask(width);
+> +
+> +	return divider_ux1;
+> +}
 
-Jassi,
+I don't see anything in the above that makes this 7.1? It seems that the
+fractional width is being passed meaning it could be m.n unless I am missing
+something.
 
-any comments on this patch and 4/8 and 5/8? Greg's already said that
-he'd be fine if I take the serial driver (patch 6/8) through the Tegra
-tree to resolve the dependencies. If you're okay with the three mailbox
-patches I can pick them up as well with your Acked-by.
+Cheers
+Jon
 
-Otherwise, if you'd prefer to take these through the mailbox tree, let
-me know and I'll wait until sometime after v4.19-rc1 before I send out
-pull requests for the DT changes.
-
-Thanks,
-Thierry
-
---+pHx0qQiF2pBVqBT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltE1YIACgkQ3SOs138+
-s6EsOQ/9HaN/N6V7yRKfJ3THVBcHNhpECScMRxyZdsrDA6gKQaXCkgWWE7dwV7a0
-upPIqevAo4GRX8Jx4ETP1M1Z0pLEozFqsOCcwo58JnFduXXfETXbb5RmeJRwj6Ep
-kVRkhyLtc50JfSgKo/4LTAWmktoFAZokiPGQahl82EyU/ZryltmALJgRUK5d3gP9
-RphFtyyUfMXW0JmHOVnQKNYwm5lnr+tHxSeP4WDow6EXtzq12//hELp8J6jpxVaW
-/F83+5UNROde84jNKVtiBXithQJGoUTI29SDFrzncw3VTH64A0kzAgXKsCOigSE7
-eFMNT0gkxPmdg+JjfJezldTeYxmi6vl6ikPSBSOwie2OZjCEjXc787rT0PkL8Djt
-5JYKl5p2W9f64eoNwMUe4hKdiUPCWZ4vjt0NTG84gw9FKPmclKhImqFs5RmiBhZt
-Syod6TZL5qWwwuHYMMr2TWuKH+JeHaAnb7KMqf2MB3E1mqA3W/3mLXYTNfp9Z6Sy
-rNy2shb2ZjTJKMrfYSuqajwEyvR/r0VFQcPUmGjVDJbDug9eLlH/j6cskjx+BqnS
-9NZQQpjrgAkXrpLVvZ7R7p8HIipTAwbQljkEVEpulG4ZMUiVCGvP/ObZ2HI4WzZp
-OhhvIifTVTmCH3wTyzkXqAsEVfuRdw5AGe4hU6QDWQN29tJHs1U=
-=NUWu
------END PGP SIGNATURE-----
-
---+pHx0qQiF2pBVqBT--
-
-
---===============5631047396355467356==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5631047396355467356==--
+-- 
+nvpublic
