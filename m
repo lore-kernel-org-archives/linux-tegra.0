@@ -1,70 +1,29 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v4 0/4] Multiplex sdmmc low jitter clock path
-Date: Tue, 10 Jul 2018 10:00:49 +0300
-Message-ID: <20180710070049.GH27696@tbergstrom-lnx.Nvidia.com>
-References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] memory: tegra: Correct driver probe order
+Date: Tue, 10 Jul 2018 15:41:04 +0300
+Message-ID: <6928630.1YQN54N9Yp@dimapc>
+References: <20180526142035.21741-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <20180526142035.21741-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Series Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+On Saturday, 26 May 2018 17:20:35 MSK Dmitry Osipenko wrote:
+> The Reset Controller should be registered in the end of probe, otherwise
+> Memory Controller device goes away if IRQ requesting fails and the Reset
+> Controller stays registered. To avoid having to unwind the MC probing in
+> a case of SMMU probe failure, let's simply print the error message without
+> failing the MC probe. This allows us to just move the Reset Controller
+> registering before the SMMU registration, reducing code churning. Also
+> let's not fail MC probe in a case of Reset Controller registration failure
+> as it doesn't prevent the MC driver to work.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-Peter.
-
-On Mon, Jul 09, 2018 at 07:38:54PM +0300, Aapo Vienamo wrote:
-> The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
-> divider to achieve better jitter performance with high speed signaling
-> modes. The clock path with the divider is needed by some of the slower
-> signaling modes. This series automatically multiplexes the LJ and
-> non-LJ clock paths based on the requested frequency.
-> 
-> Changelog:
-> v4:
-> 	- Add a changelog
-> 
-> v3:
-> 	- Use <asm/div64.h> include instead of <linux/kernel.h> for
-> 	  do_div()
-> 	- Use SPDX tags for new files
-> 	- Make mux_lj_idx[] and mux_non_lj_idx[] const
-> 	- Make tegra_clk_sdmmc_mux_ops static
-> 	- Fix the includes for fence_udelay() in a separate patch
-> 
-> v2:
-> 	- Fix the type compatibility error on do_div
-> 
-> Aapo Vienamo (1):
->   clk: tegra: Fix includes required by fence_udelay()
-> 
-> Peter De Schrijver (1):
->   clk: tegra: refactor 7.1 div calculation
-> 
-> Peter De-Schrijver (2):
->   clk: tegra: Add sdmmc mux divider clock
->   clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
-> 
->  drivers/clk/tegra/Makefile           |   2 +
->  drivers/clk/tegra/clk-divider.c      |  30 +----
->  drivers/clk/tegra/clk-id.h           |   2 -
->  drivers/clk/tegra/clk-sdmmc-mux.c    | 250 +++++++++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk-tegra-periph.c |  11 --
->  drivers/clk/tegra/clk-tegra210.c     |  14 +-
->  drivers/clk/tegra/clk.h              |  30 +++++
->  drivers/clk/tegra/div71.c            |  43 ++++++
->  8 files changed, 342 insertions(+), 40 deletions(-)
->  create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
->  create mode 100644 drivers/clk/tegra/div71.c
-> 
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thierry, this patch should be good to go.
