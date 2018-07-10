@@ -1,72 +1,70 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: tegra: Fix NACK error handling
-Date: Tue, 10 Jul 2018 00:20:43 +0200
-Message-ID: <20180709222043.5x627xxpf337uzeq@ninjato>
-References: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v4 0/4] Multiplex sdmmc low jitter clock path
+Date: Tue, 10 Jul 2018 10:00:49 +0300
+Message-ID: <20180710070049.GH27696@tbergstrom-lnx.Nvidia.com>
+References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2xo4b6y6k67pplbq"
-Return-path: <stable-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Shardar Shariff Md <smohammed@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Series Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
---2xo4b6y6k67pplbq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Peter.
 
-On Tue, Jul 03, 2018 at 09:55:43AM +0100, Jon Hunter wrote:
-> On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
-> resume from suspend (which is caused by the reset signal for the I2C
-> mux not being configured correctl). However, this NACK is causing the
-> Tegra30 to hang on resuming from suspend which is not expected as we
-> detect NACKs and handle them. The hang observed appears to occur when
-> resetting the I2C controller to recover from the NACK.
->=20
-> Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
-> additional error handling for some error cases including NACK, however,
-> it appears that this change conflicts with an early fix by commit
-> f70893d08338 ("i2c: tegra: Add delay before resetting the controller
-> after NACK"). After commit 77821b4678f9 was made we now disable 'packet
-> mode' before the delay from commit f70893d08338 happens. Testing shows
-> that moving the delay to before disabling 'packet mode' fixes the hang
-> observed on Tegra30. The delay was added to give the I2C controller
-> chance to send a stop condition and so it makes sense to move this to
-> before we disable packet mode. Please note that packet mode is always
-> enabled for Tegra.
->=20
-> Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
->=20
-> Cc: stable@vger.kernel.org
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-
-Applied to for-current, thanks!
-
-
---2xo4b6y6k67pplbq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltD37gACgkQFA3kzBSg
-KbbcMhAArzo9LdUX56To43qMeyV6CEgGkqMHimspA76H325QhBdYLTTNU7JmD+u+
-zvEF17a/PqbVX7a1SxKUdwdpQ/v5TieLuXya1iWw8rbFF93bSpZPkUCm2ceFn59G
-RO3KHoUEx6mgG6FE2m9/2kkqsj+4prTZr2n979hvEFFxy6NsHE4zLzRIhoNlHo2d
-glrGjKPOtdIm9O4HwMSA48S8C2O1dnj+MNXgPyA4t/uqfA6LBTVvg92L++/2Rfof
-7Usm973Yd4B/XqHH9QzWlics+QnfRdOyWWkAeeo8ujnzBiOYJAamM/mFv0vBi07O
-BaZicPaEmW5JWES8gQj9wJkD0wrldEnlJBmR1PR3F7bkeZqU3fnZbj2S9v6TXM/1
-Wfm7jB6gHvTZZt62QDkwNNah1VmCdgXwe5cBQJNlDjmjNEpmURLoMtBC0tU22paY
-QLt65BRX/IPGNMriXp3uJbkgkTUcbi8tNG4PZUR1ZgYPzktcsgAVnb9kqPIi/chw
-wg5SzAevRz82c6x8fXdONoJsfxUURfD8/pFrQZiuNA2RKF2foSo7foj2x4VHpNT8
-wqU7/aWdYo6cTk3d/+2kHtUt3trNUNsLPHfigUnLJ79UrEwelBfZpiixgkv4GOYk
-H31Nr9G0zoqwGqllP8qnb38fpqv8K8jgL0nNmIYOZQe6ksiCCp8=
-=FktC
------END PGP SIGNATURE-----
-
---2xo4b6y6k67pplbq--
+On Mon, Jul 09, 2018 at 07:38:54PM +0300, Aapo Vienamo wrote:
+> The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
+> divider to achieve better jitter performance with high speed signaling
+> modes. The clock path with the divider is needed by some of the slower
+> signaling modes. This series automatically multiplexes the LJ and
+> non-LJ clock paths based on the requested frequency.
+> 
+> Changelog:
+> v4:
+> 	- Add a changelog
+> 
+> v3:
+> 	- Use <asm/div64.h> include instead of <linux/kernel.h> for
+> 	  do_div()
+> 	- Use SPDX tags for new files
+> 	- Make mux_lj_idx[] and mux_non_lj_idx[] const
+> 	- Make tegra_clk_sdmmc_mux_ops static
+> 	- Fix the includes for fence_udelay() in a separate patch
+> 
+> v2:
+> 	- Fix the type compatibility error on do_div
+> 
+> Aapo Vienamo (1):
+>   clk: tegra: Fix includes required by fence_udelay()
+> 
+> Peter De Schrijver (1):
+>   clk: tegra: refactor 7.1 div calculation
+> 
+> Peter De-Schrijver (2):
+>   clk: tegra: Add sdmmc mux divider clock
+>   clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+> 
+>  drivers/clk/tegra/Makefile           |   2 +
+>  drivers/clk/tegra/clk-divider.c      |  30 +----
+>  drivers/clk/tegra/clk-id.h           |   2 -
+>  drivers/clk/tegra/clk-sdmmc-mux.c    | 250 +++++++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk-tegra-periph.c |  11 --
+>  drivers/clk/tegra/clk-tegra210.c     |  14 +-
+>  drivers/clk/tegra/clk.h              |  30 +++++
+>  drivers/clk/tegra/div71.c            |  43 ++++++
+>  8 files changed, 342 insertions(+), 40 deletions(-)
+>  create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
+>  create mode 100644 drivers/clk/tegra/div71.c
+> 
+> -- 
+> 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
