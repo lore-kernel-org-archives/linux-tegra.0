@@ -1,38 +1,41 @@
-From: Nicolas Chauvet <kwizart@gmail.com>
-Subject: [PATCH] arm: tegra: Restore host1x/dc dm-pre-reloc
-	properties
-Date: Wed, 11 Jul 2018 17:19:48 +0200
-Message-ID: <20180711151948.21779-1-kwizart@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] mfd: as3722: disable auto power on when AC OK
+Date: Wed, 11 Jul 2018 09:51:02 -0600
+Message-ID: <20180711155102.GA12132@rob-hp-laptop>
+References: <20180703150411.29709-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <u-boot-bounces@lists.denx.de>
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
-To: swarren@nvidia.com
-Cc: linux-tegra@vger.kernel.org, u-boot@lists.denx.de
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180703150411.29709-1-marcel@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Laxman Dewangan <ldewangan@nvidia.com>, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-U2luY2UgY29tbWl0IGYyZmFmZmVjYmQsIHRlZ3JhOiBDb252ZXJ0IHRvIHVzZSBiaW5tYW4KdGhl
-IGRtLXByZS1yZWxvYyBwcm9wZXJ0aWVzIGFyZSByZW1vdmVkLgoKVGhpcyBsZWFkIHVib290IG5v
-dCB0byBlbmFibGUgdGhlIGRpc3BsYXkgb24gcGF6MDAKClRoaXMgcGF0Y2ggcmVzdG9yZSB0aGUg
-ZG0tcHJlLXJlbG9jIHByb3BlcnRpZXMgYWxsb3dpbmcKdGhlIGJvb3Rsb2FkZXIgdG8gb3V0cHV0
-IHRvIHRoZSBkaXNwbGF5IHBhbmVsCgpTaWduZWQtb2ZmLWJ5OiBOaWNvbGFzIENoYXV2ZXQgPGt3
-aXphcnRAZ21haWwuY29tPgotLS0KIGFyY2gvYXJtL2R0cy90ZWdyYTIwLXUtYm9vdC5kdHNpIHwg
-MTAgKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKykKCmRpZmYgLS1n
-aXQgYS9hcmNoL2FybS9kdHMvdGVncmEyMC11LWJvb3QuZHRzaSBiL2FyY2gvYXJtL2R0cy90ZWdy
-YTIwLXUtYm9vdC5kdHNpCmluZGV4IDdjMTE5NzI1NTIuLmY2NDY2N2U1NDkgMTAwNjQ0Ci0tLSBh
-L2FyY2gvYXJtL2R0cy90ZWdyYTIwLXUtYm9vdC5kdHNpCisrKyBiL2FyY2gvYXJtL2R0cy90ZWdy
-YTIwLXUtYm9vdC5kdHNpCkBAIC0xLDMgKzEsMTMgQEAKICNpbmNsdWRlIDxjb25maWcuaD4KIAog
-I2luY2x1ZGUgInRlZ3JhLXUtYm9vdC5kdHNpIgorCisKKy8geworCWhvc3QxeEA1MDAwMDAwMCB7
-CisJCXUtYm9vdCxkbS1wcmUtcmVsb2M7CisJCWRjQDU0MjAwMDAwIHsKKwkJCXUtYm9vdCxkbS1w
-cmUtcmVsb2M7CisJCX07CisJfTsKK307Ci0tIAoyLjE3LjEKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fClUtQm9vdCBtYWlsaW5nIGxpc3QKVS1Cb290QGxp
-c3RzLmRlbnguZGUKaHR0cHM6Ly9saXN0cy5kZW54LmRlL2xpc3RpbmZvL3UtYm9vdAo=
+On Tue, Jul 03, 2018 at 05:04:11PM +0200, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> On ams AS3722, power on when AC OK is enabled by default.
+> Making this option as disable by default and enable only
+> when platform need this explicitly.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Reviewed-by: Bibek Basu <bbasu@nvidia.com>
+> Tested-by: Bibek Basu <bbasu@nvidia.com>
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> ---
+> 
+> Changes in v2:
+> - Document device tree property as suggested by Stefan.
+> - Rename SEQ1 to SEQU1 as per datasheet as suggested by Stefan.
+> - Drop reference to downstream commit as suggested by Lee.
+> 
+>  Documentation/devicetree/bindings/mfd/as3722.txt |  2 ++
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/mfd/as3722.c                             | 12 ++++++++++++
+>  include/linux/mfd/as3722.h                       |  3 +++
+>  3 files changed, 17 insertions(+)
