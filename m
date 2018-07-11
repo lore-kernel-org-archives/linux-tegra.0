@@ -1,339 +1,47 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v5 3/4] clk: tegra: Add sdmmc mux divider clock
-Date: Wed, 11 Jul 2018 17:39:24 +0300
-Message-ID: <1531319965-19689-4-git-send-email-avienamo@nvidia.com>
-References: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Boot WARN with patch "regulator: core: Link consumer with
+ regulator driver"
+Date: Wed, 11 Jul 2018 16:06:07 +0100
+Message-ID: <20180711150607.GC9651@sirena.org.uk>
+References: <83491a3e-cfed-6673-244e-e720f338db92@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="s9fJI615cBHmzTOP"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <83491a3e-cfed-6673-244e-e720f338db92@kapsi.fi>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: p.paillet@st.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Peter De-Schrijver <pdeschrijver@nvidia.com>
 
-Add a clock type to model the sdmmc switch divider clocks which have paths
-to source clocks bypassing the divider (Low Jitter paths). These
-are handled by selecting the lj path when the divider is 1 (ie the
-rate is the parent rate), otherwise the normal path with divider
-will be selected. Otherwise this clock behaves as a normal peripheral
-clock.
+--s9fJI615cBHmzTOP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/Makefile        |   1 +
- drivers/clk/tegra/clk-sdmmc-mux.c | 249 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk.h           |  26 ++++
- 3 files changed, 276 insertions(+)
- create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
+On Wed, Jul 11, 2018 at 01:08:14PM +0300, Mikko Perttunen wrote:
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index c79319d..8975f88 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -8,6 +8,7 @@ obj-y					+= clk-periph-fixed.o
- obj-y					+= clk-periph-gate.o
- obj-y					+= clk-pll.o
- obj-y					+= clk-pll-out.o
-+obj-y					+= clk-sdmmc-mux.o
- obj-y					+= clk-super.o
- obj-y					+= clk-tegra-audio.o
- obj-y					+= clk-tegra-periph.o
-diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
-new file mode 100644
-index 0000000..9566754
---- /dev/null
-+++ b/drivers/clk/tegra/clk-sdmmc-mux.c
-@@ -0,0 +1,249 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * based on clk-mux.c
-+ *
-+ * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
-+ * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
-+ * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
-+ *
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/types.h>
-+
-+#include "clk.h"
-+
-+#define DIV_MASK GENMASK(7, 0)
-+#define MUX_SHIFT 29
-+#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
-+
-+#define get_max_div(d) DIV_MASK
-+#define get_div_field(val) ((val) & DIV_MASK)
-+#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
-+
-+static const char * const mux_sdmmc_parents[] = {
-+	"pll_p", "pll_c4_out2", "pll_c4_out0", "pll_c4_out1", "clk_m"
-+};
-+
-+static const u8 mux_lj_idx[] = {
-+	[0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6
-+};
-+
-+static const u8 mux_non_lj_idx[] = {
-+	[0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6
-+};
-+
-+static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-+	int num_parents, i;
-+	u32 src, val;
-+	const u8 *mux_idx;
-+
-+	num_parents = clk_hw_get_num_parents(hw);
-+
-+	val = readl_relaxed(sdmmc_mux->reg);
-+	src = get_mux_field(val);
-+	if (get_div_field(val))
-+		mux_idx = mux_non_lj_idx;
-+	else
-+		mux_idx = mux_lj_idx;
-+
-+	for (i = 0; i < num_parents; i++) {
-+		if (mux_idx[i] == src)
-+			return i;
-+	}
-+
-+	WARN(1, "Unknown parent selector %d\n", src);
-+
-+	return 0;
-+}
-+
-+static int clk_sdmmc_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-+	u32 val;
-+
-+
-+	val = readl_relaxed(sdmmc_mux->reg);
-+	if (get_div_field(val))
-+		index = mux_non_lj_idx[index];
-+	else
-+		index = mux_lj_idx[index];
-+
-+	val &= ~MUX_MASK;
-+	val |= index << MUX_SHIFT;
-+
-+	writel(val, sdmmc_mux->reg);
-+
-+	return 0;
-+}
-+
-+static unsigned long clk_sdmmc_mux_recalc_rate(struct clk_hw *hw,
-+					       unsigned long parent_rate)
-+{
-+	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-+	u32 val;
-+	int div, mul;
-+	u64 rate = parent_rate;
-+
-+	val = readl_relaxed(sdmmc_mux->reg);
-+	div = get_div_field(val);
-+
-+	mul = 2;
-+	div += mul;
-+
-+	rate *= mul;
-+	rate += div - 1;
-+	do_div(rate, div);
-+
-+	return rate;
-+}
-+
-+static int clk_sdmmc_mux_determine_rate(struct clk_hw *hw,
-+					struct clk_rate_request *req)
-+{
-+	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-+	int div, mul;
-+	unsigned long output_rate = req->best_parent_rate;
-+
-+	req->rate = max(req->rate, req->min_rate);
-+	req->rate = min(req->rate, req->max_rate);
-+
-+	if (!req->rate)
-+		return output_rate;
-+
-+	div = div_frac_get(req->rate, output_rate, 8, 1, sdmmc_mux->div_flags);
-+	if (div < 0)
-+		div = 0;
-+
-+	mul = 2;
-+	if (sdmmc_mux->div_flags & TEGRA_DIVIDER_ROUND_UP)
-+		req->rate =  DIV_ROUND_UP(output_rate * mul, div + mul);
-+	else
-+		req->rate =  output_rate * mul / (div + mul);
-+
-+	return 0;
-+}
-+
-+static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long parent_rate)
-+{
-+	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-+	int div;
-+	unsigned long flags = 0;
-+	u32 val;
-+	u8 src;
-+
-+	div = div_frac_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
-+	if (div < 0)
-+		return div;
-+
-+	if (sdmmc_mux->lock)
-+		spin_lock_irqsave(sdmmc_mux->lock, flags);
-+
-+	src = clk_sdmmc_mux_get_parent(hw);
-+	if (div)
-+		src = mux_non_lj_idx[src];
-+	else
-+		src = mux_lj_idx[src];
-+
-+	val = src << MUX_SHIFT;
-+	val |= div;
-+	writel(val, sdmmc_mux->reg);
-+	fence_udelay(2, sdmmc_mux->reg);
-+
-+	if (sdmmc_mux->lock)
-+		spin_unlock_irqrestore(sdmmc_mux->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
-+{
-+	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-+	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-+	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-+
-+	__clk_hw_set_clk(gate_hw, hw);
-+
-+	return gate_ops->is_enabled(gate_hw);
-+}
-+
-+static int clk_sdmmc_mux_enable(struct clk_hw *hw)
-+{
-+	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-+	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-+	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-+
-+	__clk_hw_set_clk(gate_hw, hw);
-+
-+	return  gate_ops->enable(gate_hw);
-+}
-+
-+static void clk_sdmmc_mux_disable(struct clk_hw *hw)
-+{
-+	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-+	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-+	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-+
-+	gate_ops->disable(gate_hw);
-+}
-+
-+static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
-+	.get_parent = clk_sdmmc_mux_get_parent,
-+	.set_parent = clk_sdmmc_mux_set_parent,
-+	.determine_rate = clk_sdmmc_mux_determine_rate,
-+	.recalc_rate = clk_sdmmc_mux_recalc_rate,
-+	.set_rate = clk_sdmmc_mux_set_rate,
-+	.is_enabled = clk_sdmmc_mux_is_enabled,
-+	.enable = clk_sdmmc_mux_enable,
-+	.disable = clk_sdmmc_mux_disable,
-+};
-+
-+struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
-+	void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
-+	unsigned long flags, void *lock)
-+{
-+	struct clk *clk;
-+	struct clk_init_data init;
-+	const struct tegra_clk_periph_regs *bank;
-+	struct tegra_sdmmc_mux *sdmmc_mux;
-+
-+	init.ops = &tegra_clk_sdmmc_mux_ops;
-+	init.name = name;
-+	init.flags = flags;
-+	init.parent_names = mux_sdmmc_parents;
-+	init.num_parents = ARRAY_SIZE(mux_sdmmc_parents);
-+
-+	bank = get_reg_bank(clk_num);
-+	if (!bank)
-+		return ERR_PTR(-EINVAL);
-+
-+	sdmmc_mux = kzalloc(sizeof(*sdmmc_mux), GFP_KERNEL);
-+	if (!sdmmc_mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* Data in .init is copied by clk_register(), so stack variable OK */
-+	sdmmc_mux->hw.init = &init;
-+	sdmmc_mux->reg = clk_base + offset;
-+	sdmmc_mux->lock = lock;
-+	sdmmc_mux->gate.clk_base = clk_base;
-+	sdmmc_mux->gate.regs = bank;
-+	sdmmc_mux->gate.enable_refcnt = periph_clk_enb_refcnt;
-+	sdmmc_mux->gate.clk_num = clk_num;
-+	sdmmc_mux->gate.flags = TEGRA_PERIPH_ON_APB;
-+	sdmmc_mux->div_flags = div_flags;
-+	sdmmc_mux->gate_ops = &tegra_clk_periph_gate_ops;
-+
-+	clk = clk_register(NULL, &sdmmc_mux->hw);
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	sdmmc_mux->gate.hw.clk = clk;
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index c733841..d2c3a01 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -706,6 +706,32 @@ struct clk *tegra_clk_register_super_clk(const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		spinlock_t *lock);
-+
-+/**
-+ * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @reg:	register controlling mux and divider
-+ * @flags:	hardware-specific flags
-+ * @lock:	optional register lock
-+ * @gate:	gate clock
-+ * @gate_ops:	gate clock ops
-+ */
-+struct tegra_sdmmc_mux {
-+	struct clk_hw		hw;
-+	void __iomem		*reg;
-+	spinlock_t		*lock;
-+	const struct clk_ops	*gate_ops;
-+	struct tegra_clk_periph_gate	gate;
-+	u8			div_flags;
-+};
-+
-+#define to_clk_sdmmc_mux(_hw) container_of(_hw, struct tegra_sdmmc_mux, hw)
-+
-+struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
-+		void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
-+		unsigned long flags, void *lock);
-+
- /**
-  * struct clk_init_table - clock initialization table
-  * @clk_id:	clock id as mentioned in device tree bindings
--- 
-2.7.4
+> I'm seeing the following spew during boot with Tegra210 with the patch
+> "regulator: core: Link consumer with regulator driver", recently applied to
+> linux-next:
+
+Someone reported this already, it's a limitation of the device link API
+really but we've not seen much of a response from them.
+
+--s9fJI615cBHmzTOP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltGHN4ACgkQJNaLcl1U
+h9AOmgf/eJykFhEVTVL/i+nXz8/R7N+K5q/MotehXhbssNgNJppfhmIF+zrwMX+I
+jTASG1YCwsX7Y0fGLcgtRYS6QLr09AKgoT8kyA5I3f+f8o6oDhBgCQsPulzZsIkq
+PvjTQuA8FG7Q6ybnwgfABdBVWq8pYbS7h+tiWDBTzH34gaepY6vhIRkJpHEDzC2P
+OTsFvIL/997L+cBViFiyD/4Q4DIe/A4aQsTXsO5uUIB7eqfV+0b8is/WY9uZu9cu
+jiWkUrFtp48uV8tp2owALNlwWnz0LhgGObz+F1c20WbQNzjHa786HsOCfLDgwEg3
+MsQx3eogxJQLOU2+0tx6vNKRB6I0eA==
+=8TN9
+-----END PGP SIGNATURE-----
+
+--s9fJI615cBHmzTOP--
