@@ -1,176 +1,181 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
-Date: Wed, 11 Jul 2018 11:00:22 +0300
-Message-ID: <20180711080022.GB1636@tbergstrom-lnx.Nvidia.com>
-References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
- <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
- <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/6] soc/tegra: pmc: Fix pad voltage configuration for
+ Tegra186
+Date: Wed, 11 Jul 2018 09:08:04 +0100
+Message-ID: <085d3c6f-2239-d0e4-24b9-544c1b89c0e8@nvidia.com>
+References: <1531226879-11802-1-git-send-email-avienamo@nvidia.com>
+ <1531226879-11802-2-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
+In-Reply-To: <1531226879-11802-2-git-send-email-avienamo@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Aapo Vienamo <avienamo@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 05:17:05PM +0100, Jon Hunter wrote:
-> 
-> On 09/07/18 17:38, Aapo Vienamo wrote:
-> > From: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > 
-> > Move this to a separate file so it can be used to calculate the sdmmc
-> > clock dividers.
-> 
-> Sorry for not commenting sooner, but what is the motivation for moving
-> this to its own file? I don't see why we need to do this in order to use
-> elsewhere. Furthermore, the original file is quite aptly named 'clk-divider.c'
-> and now we have a div71.c which seems quite specific.
 
-How else would you do it?
+On 10/07/18 13:47, Aapo Vienamo wrote:
+> Implement support for the PMC_IMPL_E_33V_PWR register which replaces
+> PMC_PWR_DET register interface of the SoC generations preceding
+> Tegra186. Also add the voltage bit offsets to the tegra186_io_pads[]
+> table.
+> 
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 54 +++++++++++++++++++++++++++++++++----------------
+>  1 file changed, 37 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 2d6f3fc..5bea3b9 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -65,6 +65,8 @@
+>  
+>  #define PWRGATE_STATUS			0x38
+>  
+> +#define PMC_IMPL_E_33V_PWR		0x40
+> +
+>  #define PMC_PWR_DET			0x48
+>  
+>  #define PMC_SCRATCH0_MODE_RECOVERY	BIT(31)
+> @@ -154,6 +156,7 @@ struct tegra_pmc_soc {
+>  	bool has_tsense_reset;
+>  	bool has_gpu_clamps;
+>  	bool needs_mbist_war;
+> +	bool has_impl_33v_pwr;
+>  
+>  	const struct tegra_io_pad_soc *io_pads;
+>  	unsigned int num_io_pads;
+> @@ -1073,20 +1076,29 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
+>  
+>  	mutex_lock(&pmc->powergates_lock);
+>  
+> -	/* write-enable PMC_PWR_DET_VALUE[pad->voltage] */
+> -	value = tegra_pmc_readl(PMC_PWR_DET);
+> -	value |= BIT(pad->voltage);
+> -	tegra_pmc_writel(value, PMC_PWR_DET);
+> +	if (pmc->soc->has_impl_33v_pwr) {
+> +		value = tegra_pmc_readl(PMC_IMPL_E_33V_PWR);
+> +		if (voltage == TEGRA_IO_PAD_1800000UV)
+> +			value &= ~BIT(pad->voltage);
+> +		else
+> +			value |= BIT(pad->voltage);
+> +		tegra_pmc_writel(value, PMC_IMPL_E_33V_PWR);
+> +	} else {
+> +		/* write-enable PMC_PWR_DET_VALUE[pad->voltage] */
+> +		value = tegra_pmc_readl(PMC_PWR_DET);
+> +		value |= BIT(pad->voltage);
+> +		tegra_pmc_writel(value, PMC_PWR_DET);
+>  
+> -	/* update I/O voltage */
+> -	value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
+> +		/* update I/O voltage */
+> +		value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
+>  
+> -	if (voltage == TEGRA_IO_PAD_1800000UV)
+> -		value &= ~BIT(pad->voltage);
+> -	else
+> -		value |= BIT(pad->voltage);
+> +		if (voltage == TEGRA_IO_PAD_1800000UV)
+> +			value &= ~BIT(pad->voltage);
+> +		else
+> +			value |= BIT(pad->voltage);
+>  
+> -	tegra_pmc_writel(value, PMC_PWR_DET_VALUE);
+> +		tegra_pmc_writel(value, PMC_PWR_DET_VALUE);
+> +	}
+>  
+>  	mutex_unlock(&pmc->powergates_lock);
+>  
+> @@ -1108,7 +1120,10 @@ int tegra_io_pad_get_voltage(enum tegra_io_pad id)
+>  	if (pad->voltage == UINT_MAX)
+>  		return -ENOTSUPP;
+>  
+> -	value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
+> +	if (pmc->soc->has_impl_33v_pwr)
+> +		value = tegra_pmc_readl(PMC_IMPL_E_33V_PWR);
+> +	else
+> +		value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
+>  
+>  	if ((value & BIT(pad->voltage)) == 0)
+>  		return TEGRA_IO_PAD_1800000UV;
+> @@ -1567,6 +1582,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+>  	.cpu_powergates = tegra30_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = false,
+> +	.has_impl_33v_pwr = false,
+>  	.num_io_pads = 0,
+>  	.io_pads = NULL,
+>  	.regs = &tegra20_pmc_regs,
+> @@ -1609,6 +1625,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+>  	.cpu_powergates = tegra114_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = false,
+> +	.has_impl_33v_pwr = false,
+>  	.num_io_pads = 0,
+>  	.io_pads = NULL,
+>  	.regs = &tegra20_pmc_regs,
+> @@ -1689,6 +1706,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+>  	.cpu_powergates = tegra124_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = true,
+> +	.has_impl_33v_pwr = false,
+>  	.num_io_pads = ARRAY_SIZE(tegra124_io_pads),
+>  	.io_pads = tegra124_io_pads,
+>  	.regs = &tegra20_pmc_regs,
+> @@ -1778,6 +1796,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+>  	.cpu_powergates = tegra210_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = true,
+> +	.has_impl_33v_pwr = false,
+>  	.needs_mbist_war = true,
+>  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+>  	.io_pads = tegra210_io_pads,
+> @@ -1806,7 +1825,7 @@ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
+>  	{ .id = TEGRA_IO_PAD_HDMI_DP0, .dpd = 28, .voltage = UINT_MAX },
+>  	{ .id = TEGRA_IO_PAD_HDMI_DP1, .dpd = 29, .voltage = UINT_MAX },
+>  	{ .id = TEGRA_IO_PAD_PEX_CNTRL, .dpd = 32, .voltage = UINT_MAX },
+> -	{ .id = TEGRA_IO_PAD_SDMMC2_HV, .dpd = 34, .voltage = UINT_MAX },
+> +	{ .id = TEGRA_IO_PAD_SDMMC2_HV, .dpd = 34, .voltage = 5 },
+>  	{ .id = TEGRA_IO_PAD_SDMMC4, .dpd = 36, .voltage = UINT_MAX },
+>  	{ .id = TEGRA_IO_PAD_CAM, .dpd = 38, .voltage = UINT_MAX },
+>  	{ .id = TEGRA_IO_PAD_DSIB, .dpd = 40, .voltage = UINT_MAX },
+> @@ -1818,12 +1837,12 @@ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
+>  	{ .id = TEGRA_IO_PAD_CSIF, .dpd = 46, .voltage = UINT_MAX },
+>  	{ .id = TEGRA_IO_PAD_SPI, .dpd = 47, .voltage = UINT_MAX },
+>  	{ .id = TEGRA_IO_PAD_UFS, .dpd = 49, .voltage = UINT_MAX },
+> -	{ .id = TEGRA_IO_PAD_DMIC_HV, .dpd = 52, .voltage = UINT_MAX },
+> +	{ .id = TEGRA_IO_PAD_DMIC_HV, .dpd = 52, .voltage = 2 },
+>  	{ .id = TEGRA_IO_PAD_EDP, .dpd = 53, .voltage = UINT_MAX },
+> -	{ .id = TEGRA_IO_PAD_SDMMC1_HV, .dpd = 55, .voltage = UINT_MAX },
+> -	{ .id = TEGRA_IO_PAD_SDMMC3_HV, .dpd = 56, .voltage = UINT_MAX },
+> +	{ .id = TEGRA_IO_PAD_SDMMC1_HV, .dpd = 55, .voltage = 4 },
+> +	{ .id = TEGRA_IO_PAD_SDMMC3_HV, .dpd = 56, .voltage = 6 },
+>  	{ .id = TEGRA_IO_PAD_CONN, .dpd = 60, .voltage = UINT_MAX },
+> -	{ .id = TEGRA_IO_PAD_AUDIO_HV, .dpd = 61, .voltage = UINT_MAX },
+> +	{ .id = TEGRA_IO_PAD_AUDIO_HV, .dpd = 61, .voltage = 1 },
+>  };
 
-Peter.
+Should we add support for the AO_HV rail while we are at it?
+  
+>  static const struct tegra_pmc_regs tegra186_pmc_regs = {
+> @@ -1876,6 +1895,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+>  	.cpu_powergates = NULL,
+>  	.has_tsense_reset = false,
+>  	.has_gpu_clamps = false,
+> +	.has_impl_33v_pwr = true,
+>  	.num_io_pads = ARRAY_SIZE(tegra186_io_pads),
+>  	.io_pads = tegra186_io_pads,
+>  	.regs = &tegra186_pmc_regs,
+> 
 
-> > Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/clk/tegra/Makefile      |  1 +
-> >  drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
-> >  drivers/clk/tegra/clk.h         |  3 +++
-> >  drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 52 insertions(+), 25 deletions(-)
-> >  create mode 100644 drivers/clk/tegra/div71.c
-> > 
-> > diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> > index b716923..6d4f563 100644
-> > --- a/drivers/clk/tegra/Makefile
-> > +++ b/drivers/clk/tegra/Makefile
-> > @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
-> >  obj-y					+= cvb.o
-> >  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
-> >  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-> > +obj-y					+= div71.o
-> > diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> > index 16e0aee..ad87858 100644
-> > --- a/drivers/clk/tegra/clk-divider.c
-> > +++ b/drivers/clk/tegra/clk-divider.c
-> > @@ -32,35 +32,15 @@
-> >  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
-> >  		   unsigned long parent_rate)
-> >  {
-> > -	u64 divider_ux1 = parent_rate;
-> > -	u8 flags = divider->flags;
-> > -	int mul;
-> > -
-> > -	if (!rate)
-> > -		return 0;
-> > -
-> > -	mul = get_mul(divider);
-> > -
-> > -	if (!(flags & TEGRA_DIVIDER_INT))
-> > -		divider_ux1 *= mul;
-> > -
-> > -	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> > -		divider_ux1 += rate - 1;
-> > -
-> > -	do_div(divider_ux1, rate);
-> > -
-> > -	if (flags & TEGRA_DIVIDER_INT)
-> > -		divider_ux1 *= mul;
-> > +	int div;
-> >  
-> > -	divider_ux1 -= mul;
-> > +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-> > +			divider->flags);
-> >  
-> > -	if ((s64)divider_ux1 < 0)
-> > +	if (div < 0)
-> >  		return 0;
-> >  
-> > -	if (divider_ux1 > get_max_div(divider))
-> > -		return get_max_div(divider);
-> > -
-> > -	return divider_ux1;
-> > +	return div;
-> >  }
-> >  
-> >  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> > index e3b9c22..149cc70 100644
-> > --- a/drivers/clk/tegra/clk.h
-> > +++ b/drivers/clk/tegra/clk.h
-> > @@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
-> >  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
-> >  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
-> >  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-> > +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> > +	      u8 frac_width, u8 flags);
-> > +
-> >  
-> >  /* Combined read fence with delay */
-> >  #define fence_udelay(delay, reg)	\
-> > diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-> > new file mode 100644
-> > index 0000000..1eecc84
-> > --- /dev/null
-> > +++ b/drivers/clk/tegra/div71.c
-> > @@ -0,0 +1,43 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-> > + */
-> > +
-> > +#include <asm/div64.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +#define div_mask(w) ((1 << (w)) - 1)
-> > +
-> > +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> > +	      u8 frac_width, u8 flags)
-> > +{
-> > +	u64 divider_ux1 = parent_rate;
-> > +	int mul;
-> > +
-> > +	if (!rate)
-> > +		return 0;
-> > +
-> > +	mul = 1 << frac_width;
-> > +
-> > +	if (!(flags & TEGRA_DIVIDER_INT))
-> > +		divider_ux1 *= mul;
-> > +
-> > +	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> > +		divider_ux1 += rate - 1;
-> > +
-> > +	do_div(divider_ux1, rate);
-> > +
-> > +	if (flags & TEGRA_DIVIDER_INT)
-> > +		divider_ux1 *= mul;
-> > +
-> > +	if (divider_ux1 < mul)
-> > +		return 0;
-> > +
-> > +	divider_ux1 -= mul;
-> > +
-> > +	if (divider_ux1 > div_mask(width))
-> > +		return div_mask(width);
-> > +
-> > +	return divider_ux1;
-> > +}
-> 
-> I don't see anything in the above that makes this 7.1? It seems that the
-> fractional width is being passed meaning it could be m.n unless I am missing
-> something.
-> 
-> Cheers
-> Jon
-> 
-> -- 
-> nvpublic
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Otherwise, looks good to me.
+
+Cheers
+Jon
+
+-- 
+nvpublic
