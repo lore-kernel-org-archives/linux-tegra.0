@@ -1,343 +1,130 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 7/7] soc/tegra: pmc: Implement pad configuration via
- pinctrl
-Date: Thu, 12 Jul 2018 14:01:41 +0100
-Message-ID: <15f51c53-ca40-b59b-992e-d4ae89601ca5@nvidia.com>
-References: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
- <1531396813-6581-8-git-send-email-avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+Subject: Re: [PATCH v6 4/4] clk: tegra: make sdmmc2 and sdmmc4 as sdmmc
+ clocks
+Date: Thu, 12 Jul 2018 16:11:42 +0300
+Message-ID: <20180712161142.5166b6b8@dhcp-10-21-25-168>
+References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
+        <1531396382-5579-5-git-send-email-avienamo@nvidia.com>
+        <8e1852c4-1471-ae05-8e55-c30ba4e77554@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531396813-6581-8-git-send-email-avienamo@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <8e1852c4-1471-ae05-8e55-c30ba4e77554@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, 12 Jul 2018 13:59:58 +0100
+Jon Hunter <jonathanh@nvidia.com> wrote:
 
-On 12/07/18 13:00, Aapo Vienamo wrote:
-> Register a pinctrl device and implement get and set functions for
-> PIN_CONFIG_LOW_POWER_MODE and PIN_CONFIG_POWER_SOURCE parameters.
+> On 12/07/18 12:53, Aapo Vienamo wrote:
+> > From: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> > 
+> > These clocks have low jitter paths to certain parents. To model these
+> > correctly, use the sdmmc mux divider clock type.
+> > 
+> > Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk-id.h           |  2 --
+> >  drivers/clk/tegra/clk-tegra-periph.c | 11 -----------
+> >  drivers/clk/tegra/clk-tegra210.c     | 14 ++++++++++++--
+> >  3 files changed, 12 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+> > index b616e33..de466b4 100644
+> > --- a/drivers/clk/tegra/clk-id.h
+> > +++ b/drivers/clk/tegra/clk-id.h
+> > @@ -227,13 +227,11 @@ enum clk_id {
+> >  	tegra_clk_sdmmc1_9,
+> >  	tegra_clk_sdmmc2,
+> >  	tegra_clk_sdmmc2_8,
+> > -	tegra_clk_sdmmc2_9,
+> >  	tegra_clk_sdmmc3,
+> >  	tegra_clk_sdmmc3_8,
+> >  	tegra_clk_sdmmc3_9,
+> >  	tegra_clk_sdmmc4,
+> >  	tegra_clk_sdmmc4_8,
+> > -	tegra_clk_sdmmc4_9,
+> >  	tegra_clk_se,
+> >  	tegra_clk_soc_therm,
+> >  	tegra_clk_soc_therm_8,
+> > diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+> > index 2acba29..38c4eb2 100644
+> > --- a/drivers/clk/tegra/clk-tegra-periph.c
+> > +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> > @@ -451,15 +451,6 @@ static u32 mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
+> >  	[0] = 0, [1] = 3, [2] = 4, [3] = 6, [4] = 7,
+> >  };
+> >  
+> > -static const char *mux_pllp_clkm_pllc4_out2_out1_out0_lj[] = {
+> > -	"pll_p",
+> > -	"pll_c4_out2", "pll_c4_out0",	/* LJ input */
+> > -	"pll_c4_out2", "pll_c4_out1",
+> > -	"pll_c4_out1",			/* LJ input */
+> > -	"clk_m", "pll_c4_out0"
+> > -};
+> > -#define mux_pllp_clkm_pllc4_out2_out1_out0_lj_idx NULL
+> > -
+> >  static const char *mux_pllp_pllc2_c_c3_clkm[] = {
+> >  	"pll_p", "pll_c2", "pll_c", "pll_c3", "clk_m"
+> >  };
+> > @@ -686,9 +677,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+> >  	MUX("sdmmc3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3),
+> >  	MUX("sdmmc4", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4),
+> >  	MUX8("sdmmc1", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC1, 14, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc1_9),
+> > -	MUX8("sdmmc2", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC2, 9, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc2_9),
+> >  	MUX8("sdmmc3", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3_9),
+> > -	MUX8("sdmmc4", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4_9),
+> >  	MUX("la", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_LA, 76, TEGRA_PERIPH_ON_APB, tegra_clk_la),
+> >  	MUX("trace", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_TRACE, 77, TEGRA_PERIPH_ON_APB, tegra_clk_trace),
+> >  	MUX("owr", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr),
+> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> > index 5435d01..9eb1cb1 100644
+> > --- a/drivers/clk/tegra/clk-tegra210.c
+> > +++ b/drivers/clk/tegra/clk-tegra210.c
+> > @@ -44,6 +44,8 @@
+> >  #define CLK_SOURCE_EMC 0x19c
+> >  #define CLK_SOURCE_SOR1 0x410
+> >  #define CLK_SOURCE_LA 0x1f8
+> > +#define CLK_SOURCE_SDMMC2 0x154
+> > +#define CLK_SOURCE_SDMMC4 0x164
+> >  
+> >  #define PLLC_BASE 0x80
+> >  #define PLLC_OUT 0x84
+> > @@ -2286,11 +2288,9 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+> >  	[tegra_clk_rtc] = { .dt_id = TEGRA210_CLK_RTC, .present = true },
+> >  	[tegra_clk_timer] = { .dt_id = TEGRA210_CLK_TIMER, .present = true },
+> >  	[tegra_clk_uarta_8] = { .dt_id = TEGRA210_CLK_UARTA, .present = true },
+> > -	[tegra_clk_sdmmc2_9] = { .dt_id = TEGRA210_CLK_SDMMC2, .present = true },
+> >  	[tegra_clk_i2s1] = { .dt_id = TEGRA210_CLK_I2S1, .present = true },
+> >  	[tegra_clk_i2c1] = { .dt_id = TEGRA210_CLK_I2C1, .present = true },
+> >  	[tegra_clk_sdmmc1_9] = { .dt_id = TEGRA210_CLK_SDMMC1, .present = true },
+> > -	[tegra_clk_sdmmc4_9] = { .dt_id = TEGRA210_CLK_SDMMC4, .present = true },
+> >  	[tegra_clk_pwm] = { .dt_id = TEGRA210_CLK_PWM, .present = true },
+> >  	[tegra_clk_i2s2] = { .dt_id = TEGRA210_CLK_I2S2, .present = true },
+> >  	[tegra_clk_usbd] = { .dt_id = TEGRA210_CLK_USBD, .present = true },
+> > @@ -3030,6 +3030,16 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+> >  				0, NULL);
+> >  	clks[TEGRA210_CLK_ACLK] = clk;
+> >  
+> > +	clk = tegra_clk_register_sdmmc_mux_div("sdmmc2", clk_base,
+> > +					    CLK_SOURCE_SDMMC2, 9,
+> > +					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
+> > +	clks[TEGRA210_CLK_SDMMC2] = clk;
+> > +
+> > +	clk = tegra_clk_register_sdmmc_mux_div("sdmmc4", clk_base,
+> > +					    CLK_SOURCE_SDMMC4, 15,
+> > +					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
+> > +	clks[TEGRA210_CLK_SDMMC4] = clk;
+> > +  
 > 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c | 187 +++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 185 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 7d3c3de..6bfd00d 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -33,6 +33,9 @@
->  #include <linux/of_address.h>
->  #include <linux/of_clk.h>
->  #include <linux/of_platform.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/pinctrl/pinconf.h>
-> +#include <linux/pinctrl/pinconf-generic.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
->  #include <linux/reboot.h>
-> @@ -164,6 +167,9 @@ struct tegra_pmc_soc {
->  	const struct tegra_io_pad_soc *io_pads;
->  	unsigned int num_io_pads;
->  
-> +	const struct pinctrl_pin_desc *pin_descs;
-> +	unsigned int num_pin_descs;
-> +
->  	const struct tegra_pmc_regs *regs;
->  	void (*init)(struct tegra_pmc *pmc);
->  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
-> @@ -222,6 +228,8 @@ struct tegra_pmc {
->  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
->  
->  	struct mutex powergates_lock;
-> +
-> +	struct pinctrl_dev *pctl_dev;
->  };
->  
->  static struct tegra_pmc *pmc = &(struct tegra_pmc) {
-> @@ -1398,6 +1406,142 @@ static void tegra_pmc_init_tsense_reset(struct tegra_pmc *pmc)
->  	of_node_put(np);
->  }
->  
-> +static int tegra_io_pad_pinctrl_get_groups_count(struct pinctrl_dev *pctl_dev)
-> +{
-> +	return pmc->soc->num_io_pads;
-> +}
-> +
-> +static const char *tegra_io_pad_pinctrl_get_group_name(
-> +		struct pinctrl_dev *pctl, unsigned int group)
-> +{
-> +	return pmc->soc->io_pads[group].name;
-> +}
-> +
-> +static int tegra_io_pad_pinctrl_get_group_pins(struct pinctrl_dev *pctl_dev,
-> +					       unsigned int group,
-> +					       const unsigned int **pins,
-> +					       unsigned int *num_pins)
-> +{
-> +	*pins = &pmc->soc->io_pads[group].id;
-> +	*num_pins = 1;
-> +	return 0;
-> +}
-> +
-> +static const struct pinctrl_ops tegra_io_pad_pinctrl_ops = {
-> +	.get_groups_count = tegra_io_pad_pinctrl_get_groups_count,
-> +	.get_group_name = tegra_io_pad_pinctrl_get_group_name,
-> +	.get_group_pins = tegra_io_pad_pinctrl_get_group_pins,
-> +	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-> +	.dt_free_map = pinconf_generic_dt_free_map,
-> +};
-> +
-> +static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctl_dev,
-> +				    unsigned int pin, unsigned long *config)
-> +{
-> +	const struct tegra_io_pad_soc *pad = tegra_io_pad_find(pmc, pin);
-> +	enum pin_config_param param = pinconf_to_config_param(*config);
-> +	int ret;
-> +	u32 arg;
-> +
-> +	if (!pad)
-> +		return -EINVAL;
-> +
-> +	switch (param) {
-> +	case PIN_CONFIG_POWER_SOURCE:
-> +		ret = tegra_io_pad_get_voltage(pad->id);
-> +		if (ret < 0)
-> +			return ret;
-> +		arg = ret;
-> +		break;
-> +	case PIN_CONFIG_LOW_POWER_MODE:
-> +		ret = tegra_io_pad_is_powered(pad->id);
-> +		if (ret < 0)
-> +			return ret;
-> +		arg = !ret;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	*config = pinconf_to_config_packed(param, arg);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_io_pad_pinconf_set(struct pinctrl_dev *pctl_dev,
-> +				    unsigned int pin, unsigned long *configs,
-> +				    unsigned int num_configs)
-> +{
-> +	const struct tegra_io_pad_soc *pad = tegra_io_pad_find(pmc, pin);
-> +	enum pin_config_param param;
-> +	unsigned int i;
-> +	int err;
-> +	u32 arg;
-> +
-> +	if (!pad)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < num_configs; ++i) {
-> +		param = pinconf_to_config_param(configs[i]);
-> +		arg = pinconf_to_config_argument(configs[i]);
-> +
-> +		switch (param) {
-> +		case PIN_CONFIG_LOW_POWER_MODE:
-> +			if (arg)
-> +				err = tegra_io_pad_power_disable(pad->id);
-> +			else
-> +				err = tegra_io_pad_power_enable(pad->id);
-> +			if (err)
-> +				return err;
-> +			break;
-> +		case PIN_CONFIG_POWER_SOURCE:
-> +			if (arg != TEGRA_IO_PAD_VOLTAGE_1V8 &&
-> +			    arg != TEGRA_IO_PAD_VOLTAGE_3V3)
-> +				return -EINVAL;
-> +			err = tegra_io_pad_set_voltage(pad->id, arg);
-> +			if (err)
-> +				return err;
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct pinconf_ops tegra_io_pad_pinconf_ops = {
-> +	.pin_config_get = tegra_io_pad_pinconf_get,
-> +	.pin_config_set = tegra_io_pad_pinconf_set,
-> +	.is_generic = true,
-> +};
-> +
-> +static struct pinctrl_desc tegra_pmc_pctl_desc = {
-> +	.pctlops = &tegra_io_pad_pinctrl_ops,
-> +	.confops = &tegra_io_pad_pinconf_ops,
-> +};
-> +
-> +static int tegra_pmc_pinctrl_init(struct tegra_pmc *pmc)
-> +{
-> +	int err = 0;
-> +
-> +	if (!pmc->soc->num_pin_descs)
-> +		return 0;
-> +
-> +	tegra_pmc_pctl_desc.name = dev_name(pmc->dev);
-> +	tegra_pmc_pctl_desc.pins = pmc->soc->pin_descs;
-> +	tegra_pmc_pctl_desc.npins = pmc->soc->num_pin_descs;
-> +
-> +	pmc->pctl_dev = devm_pinctrl_register(pmc->dev, &tegra_pmc_pctl_desc,
-> +					      pmc);
-> +	if (IS_ERR(pmc->pctl_dev)) {
-> +		err = PTR_ERR(pmc->pctl_dev);
-> +		dev_err(pmc->dev, "unable to register pinctrl, %d\n", err);
-> +	}
-> +
-> +	return err;
-> +}
-> +
->  static int tegra_pmc_probe(struct platform_device *pdev)
->  {
->  	void __iomem *base;
-> @@ -1475,18 +1619,27 @@ static int tegra_pmc_probe(struct platform_device *pdev)
->  
->  	err = register_restart_handler(&tegra_pmc_restart_handler);
->  	if (err) {
-> -		debugfs_remove(pmc->debugfs);
->  		dev_err(&pdev->dev, "unable to register restart handler, %d\n",
->  			err);
-> -		return err;
-> +		goto cleanup_debugfs;
->  	}
->  
-> +	err = tegra_pmc_pinctrl_init(pmc);
-> +	if (err)
-> +		goto cleanup_restart_handler;
-> +
->  	mutex_lock(&pmc->powergates_lock);
->  	iounmap(pmc->base);
->  	pmc->base = base;
->  	mutex_unlock(&pmc->powergates_lock);
->  
->  	return 0;
-> +
-> +cleanup_restart_handler:
-> +	unregister_restart_handler(&tegra_pmc_restart_handler);
-> +cleanup_debugfs:
-> +	debugfs_remove(pmc->debugfs);
-> +	return err;
->  }
->  
->  #if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
-> @@ -1576,6 +1729,8 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
->  	.has_gpu_clamps = false,
->  	.num_io_pads = 0,
->  	.io_pads = NULL,
-> +	.num_pin_descs = 0,
-> +	.pin_descs = NULL,
->  	.regs = &tegra20_pmc_regs,
->  	.init = tegra20_pmc_init,
->  	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-> @@ -1615,6 +1770,8 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
->  	.has_impl_33v_pwr = false,
->  	.num_io_pads = 0,
->  	.io_pads = NULL,
-> +	.num_pin_descs = 0,
-> +	.pin_descs = NULL,
->  	.regs = &tegra20_pmc_regs,
->  	.init = tegra20_pmc_init,
->  	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-> @@ -1658,6 +1815,8 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
->  	.has_impl_33v_pwr = false,
->  	.num_io_pads = 0,
->  	.io_pads = NULL,
-> +	.num_pin_descs = 0,
-> +	.pin_descs = NULL,
->  	.regs = &tegra20_pmc_regs,
->  	.init = tegra20_pmc_init,
->  	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-> @@ -1704,6 +1863,12 @@ static const u8 tegra124_cpu_powergates[] = {
->  		.name	= (_name),			\
->  	})
->  
-> +#define TEGRA_IO_PIN_DESC(_id, _dpd, _voltage, _name)	\
-> +	((struct pinctrl_pin_desc) {			\
-> +		.number = (_id),			\
-> +		.name	= (_name)			\
-> +	})
-> +
->  #define TEGRA124_IO_PAD_TABLE(_pad)					\
->  	/* .id                          .dpd    .voltage  .name	*/	\
->  	_pad(TEGRA_IO_PAD_AUDIO,	17,	UINT_MAX, "audio"),	\
-> @@ -1741,6 +1906,10 @@ static const struct tegra_io_pad_soc tegra124_io_pads[] = {
->  	TEGRA124_IO_PAD_TABLE(TEGRA_IO_PAD)
->  };
->  
-> +static const struct pinctrl_pin_desc tegra124_pin_descs[] = {
-> +	TEGRA124_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
-> +};
-> +
->  static const struct tegra_pmc_soc tegra124_pmc_soc = {
->  	.num_powergates = ARRAY_SIZE(tegra124_powergates),
->  	.powergates = tegra124_powergates,
-> @@ -1751,6 +1920,8 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
->  	.has_impl_33v_pwr = false,
->  	.num_io_pads = ARRAY_SIZE(tegra124_io_pads),
->  	.io_pads = tegra124_io_pads,
-> +	.num_pin_descs = ARRAY_SIZE(tegra124_pin_descs),
-> +	.pin_descs = tegra124_pin_descs,
->  	.regs = &tegra20_pmc_regs,
->  	.init = tegra20_pmc_init,
->  	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-> @@ -1835,6 +2006,10 @@ static const struct tegra_io_pad_soc tegra210_io_pads[] = {
->  	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PAD)
->  };
->  
-> +static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
-> +	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
-> +};
-> +
->  static const struct tegra_pmc_soc tegra210_pmc_soc = {
->  	.num_powergates = ARRAY_SIZE(tegra210_powergates),
->  	.powergates = tegra210_powergates,
-> @@ -1846,6 +2021,8 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
->  	.needs_mbist_war = true,
->  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
->  	.io_pads = tegra210_io_pads,
-> +	.num_pin_descs = ARRAY_SIZE(tegra210_pin_descs),
-> +	.pin_descs = tegra210_pin_descs,
->  	.regs = &tegra20_pmc_regs,
->  	.init = tegra20_pmc_init,
->  	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-> @@ -1896,6 +2073,10 @@ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
->  	TEGRA186_IO_PAD_TABLE(TEGRA_IO_PAD)
->  };
->  
-> +static const struct pinctrl_pin_desc tegra186_pin_descs[] = {
-> +	TEGRA186_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
-> +};
-> +
->  static const struct tegra_pmc_regs tegra186_pmc_regs = {
->  	.scratch0 = 0x2000,
->  	.dpd_req = 0x74,
-> @@ -1949,6 +2130,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
->  	.has_impl_33v_pwr = true,
->  	.num_io_pads = ARRAY_SIZE(tegra186_io_pads),
->  	.io_pads = tegra186_io_pads,
-> +	.num_pin_descs = ARRAY_SIZE(tegra186_pin_descs),
-> +	.pin_descs = tegra186_pin_descs,
->  	.regs = &tegra186_pmc_regs,
->  	.init = NULL,
->  	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-> 
+> Peter, do we need to check for an error here before populating the pointer
+> returned?
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+The error checking is done by the code that uses the clks array, so no.
 
-Cheers
-Jon
-
--- 
-nvpublic
+ -Aapo
