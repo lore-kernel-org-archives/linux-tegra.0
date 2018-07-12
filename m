@@ -1,74 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] mtd: rawnand: tegra: check bounds of die_nr properly
-Date: Thu, 12 Jul 2018 16:44:21 +0300
-Message-ID: <20180712134421.unczwgmvfdhezq3v@mwanda>
-References: <20180704091310.22003-1-stefan@agner.ch>
- <1531402315.1390.6.camel@toradex.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: RFC: tegra2/tegra3 automotive part changes
+Date: Thu, 12 Jul 2018 16:50:25 +0300
+Message-ID: <62581f70-4f55-05b4-5210-221698d501c7@kapsi.fi>
+References: <3916c0ea-964e-42ab-8bfd-8e8edc5110ee@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1531402315.1390.6.camel@toradex.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: "stefan@agner.ch" <stefan@agner.ch>, "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>, "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "krzk@kernel.org" <krzk@kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "benjamin.lindqvist@endian.se" <benjamin.lindqvist@endian.se>, "digetx@gmail.com" <digetx@gmail.com>, "mirza.krak@gmail.com" <mirza.krak@gmail.com>, "gaireg@gaireg.de" <gaireg@gaireg.de>, "dwmw2@infradead.org" <dwmw2@infradead.org>, "computersforpeace@gmail.com" <computersforpeace@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, richard@nod.at
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <3916c0ea-964e-42ab-8bfd-8e8edc5110ee@codethink.co.uk>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra <linux-tegra@vger.kernel.org>, Device Tree list <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Preston <thomas.preston@codethink.co.uk>, Terry Hu <kejia.hu@codethink.co.uk>, jorgesanjuan <jorge.sanjuan@codethink.co.uk>, Beth White <beth.white@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 01:31:57PM +0000, Marcel Ziswiler wrote:
-> On Wed, 2018-07-04 at 11:13 +0200, Stefan Agner wrote:
-> > The Tegra driver currently only support a single chip select, hence
-> > check boundaries accordingly. This fixes a off by one issue catched
-> > with Smatch:
-> >     drivers/mtd/nand/raw/tegra_nand.c:476 tegra_nand_select_chip()
-> >     warn: array off by one? 'nand->cs[die_nr]'
-> > 
-> > Also warn in case the stack asks for a chip select we currently do
-> > not support.
-> > 
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > ---
-> >  drivers/mtd/nand/raw/tegra_nand.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/mtd/nand/raw/tegra_nand.c
-> > b/drivers/mtd/nand/raw/tegra_nand.c
-> > index 4daa88d814134..e65ef584df0b9 100644
-> > --- a/drivers/mtd/nand/raw/tegra_nand.c
-> > +++ b/drivers/mtd/nand/raw/tegra_nand.c
-> > @@ -468,7 +468,9 @@ static void tegra_nand_select_chip(struct
-> > mtd_info *mtd, int die_nr)
-> >  	struct tegra_nand_chip *nand = to_tegra_chip(chip);
-> >  	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip-
-> > >controller);
-> >  
-> > -	if (die_nr < 0 || die_nr > 1) {
-> > +	WARN_ON(die_nr >= ARRAY_SIZE(nand->cs));
-> 
-> Unfortunately, that has a tiny little issue as die_nr is a signed
-> integer and ARRAY_SIZE of course is unsigned. While I could have sworn
-> my shirt off that the compiler would have to promote this to signed
-> this is not quite what happens and upon deselecting with -1 this
-> warning gets triggered!
-
-Sorry, I didn't realize we were passing -1 as die_nr.  I should have
-reviewed the code more carefully.
-
-The type is promoted to the which ever side has more positive bits or
-a minimum of int.  So if you compare an int to a long long it gets
-promoted to long long.  If you compare an int to unsigned int, it is
-promoted to unsigned int.  If both sides are smaller than int then it
-is type promoted to int.
-
-For compares, I can't think how type promoting to int can be a problem
-but where it might matter is that that people sometimes want 0xfe and
-they do "~(char)0x1" but it becomes 0xfffffffe.
-
-The other trickiness is that x << shift is type x.  Sometime people
-think if they make shift a u64 and x an int, the result will be u64 but
-it's still int.
-
-I think that's basically everything with type promotion.
-
-regards,
-dan carpenter
+T24gMDcvMTIvMjAxOCAwNDozNiBQTSwgQmVuIERvb2tzIHdyb3RlOgo+IEhlbGxvLCB3ZSBhcmUg
+bG9va2luZyBhdCB1cC1zdHJlYW1pbmcgc29tZSBvZiB0aGUgd29yayB3ZSBoYXZlCj4gZG9uZSBv
+biB0aGUgdGVncmEyIGFuZCB0ZWdyYTMgYXV0b21vdGl2ZSBkZXZpY2VzLiBUaGUgYXV0b21vdGl2
+ZQo+IGdyYWRlIGRldmljZXMgYXJlIGNsb3NlIHRoZSBjb21tZXJjaWFsIHBhcnRzIHNvIHdlIHdv
+dWxkIGxpa2UgdG8KPiBkaXNjdXNzIHRoZSBjb3JlIGNoYW5nZXMgYmVmb3JlIHN1Ym1pdHRpbmcu
+Cj4gCj4gVGhlIGNoYW5nZXMgYXJlIG1vc3RseSB3aXRoIHRoaW5ncyBsaWtlIHRoZSBjbG9jayBz
+ZXR1cCBhbmQgYQo+IGZldyBwZXJpcGhlcmFsIHF1aXJrcyAoSUlSQyB0aGVzZSBhcmUgbW9zdGx5
+IE1NQykuCj4gCj4gV2UgYXJlIHByb3Bvc2luZyB0byBjaGFuZ2UgdGhlIGRldmljZS10cmVlIHBy
+b3BlcnRpZXMgZm9yIHRoZSByb290Cj4gbm9kZSBhbmQgYW55IG90aGVyIGFmZmVjdGVkIGRldmlj
+ZXMgZnJvbSAibnZpZGlhLHRlZ3JhWFgiIHRvIGEgbmV3Cj4gIm52aWRpYSx0ZWdyYVhYYSIuIFdl
+IHdvdWxkIHdlbGNvbWUgZGlzY3Vzc2lvbiBvbiB3aGV0aGVyIHRvIHVwZGF0ZQo+IGFsbCB0aGUg
+ZGV2aWNlcyBhdCB0aGUgc3RhcnQKPiAKPiBBbiBleGFtcGxlIG9mIHRlZ3JhMzBhLmR0c2k6Cj4g
+Cj4gI2luY2x1ZGUgInRlZ3JhMzAuZHRzaSIKPiAKPiAvIHsKPiAgwqDCoMKgwqDCoMKgwqAgY29t
+cGF0aWJsZSA9ICJudmlkaWEsdGVncmEzMGEiOwo+IAo+ICDCoMKgwqDCoMKgwqDCoCBjbG9ja0A2
+MDAwNjAwMCB7Cj4gIMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb21wYXRpYmxlID0g
+Im52aWRpYSx0ZWdyYTMwYS1jYXIiOwo+ICDCoMKgwqDCoMKgwqDCoCB9Owo+IH0KPiAKPiBXZSBk
+b24ndCB0aGluayB0aGUgY2hhbmdlcyBhcmUgYmlnIGVub3VnaCB0byB3YXJyYW50IHRoZWlyIG93
+bgo+IEtjb25maWcvZGVmY29uZmlnIHVwZGF0ZXMuCj4gCgpXaGF0IGtpbmQgb2YgY2hhbmdlcyBk
+byB5b3UgaGF2ZT8gVGVncmEzMGEgd291bGQgcG9pbnQgdG8gYSBzZXBhcmF0ZSBTb0MgCnJldmlz
+aW9uIG9mIFRlZ3JhMyB0aGUgZXhpc3RlbmNlIG9mIHdoaWNoIEknbSBub3QgYXdhcmUgb2YuIElm
+IHlvdSBjYW4gCnNob3cgc29tZSBvZiB0aGUgY2hhbmdlcyBpdCB3b3VsZCBiZSBlYXNpZXIgdG8g
+c2F5IGhvdyB0aGUgc3lzdGVtIHNob3VsZCAKYmUgc3BlY2lmaWVkLgoKVGhhbmtzLApNaWtrbwoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJt
+LWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
+Cmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtl
+cm5lbAo=
