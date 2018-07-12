@@ -1,15 +1,14 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5 1/4] clk: tegra: Fix includes required by
- fence_udelay()
-Date: Thu, 12 Jul 2018 11:11:14 +0100
-Message-ID: <5332f15c-65ae-5a70-577f-6125715233e6@nvidia.com>
+Subject: Re: [PATCH v5 2/4] clk: tegra: refactor 7.1 div calculation
+Date: Thu, 12 Jul 2018 11:14:39 +0100
+Message-ID: <1eac4e62-2243-a21e-d712-d7ac15a0c3cc@nvidia.com>
 References: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
- <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
+ <1531319965-19689-3-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1531319965-19689-3-git-send-email-avienamo@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Aapo Vienamo <avienamo@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
@@ -18,27 +17,146 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 11/07/18 15:39, Aapo Vienamo wrote:
-> Add the missing linux/delay.h include statement for udelay() used by
-> fence_udelay() macro.
+> From: Peter De Schrijver <pdeschrijver@nvidia.com>
 > 
+> Move this to a separate file so it can be used to calculate the sdmmc
+> clock dividers.
+> 
+> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
 > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  drivers/clk/tegra/clk.h | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/tegra/Makefile      |  1 +
+>  drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
+>  drivers/clk/tegra/clk.h         |  3 +++
+>  drivers/clk/tegra/div-frac.c    | 43 +++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 52 insertions(+), 25 deletions(-)
+>  create mode 100644 drivers/clk/tegra/div-frac.c
 > 
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> index b716923..c79319d 100644
+> --- a/drivers/clk/tegra/Makefile
+> +++ b/drivers/clk/tegra/Makefile
+> @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+>  obj-y					+= cvb.o
+>  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+>  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
+> +obj-y					+= div-frac.o
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index 16e0aee..9305df8 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -32,35 +32,15 @@
+>  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+>  		   unsigned long parent_rate)
+>  {
+> -	u64 divider_ux1 = parent_rate;
+> -	u8 flags = divider->flags;
+> -	int mul;
+> -
+> -	if (!rate)
+> -		return 0;
+> -
+> -	mul = get_mul(divider);
+> -
+> -	if (!(flags & TEGRA_DIVIDER_INT))
+> -		divider_ux1 *= mul;
+> -
+> -	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> -		divider_ux1 += rate - 1;
+> -
+> -	do_div(divider_ux1, rate);
+> -
+> -	if (flags & TEGRA_DIVIDER_INT)
+> -		divider_ux1 *= mul;
+> +	int div;
+>  
+> -	divider_ux1 -= mul;
+> +	div = div_frac_get(rate, parent_rate, divider->width, divider->frac_width,
+> +			   divider->flags);
+>  
+> -	if ((s64)divider_ux1 < 0)
+> +	if (div < 0)
+>  		return 0;
+>  
+> -	if (divider_ux1 > get_max_div(divider))
+> -		return get_max_div(divider);
+> -
+> -	return divider_ux1;
+> +	return div;
+>  }
+>  
+>  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
 > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index e1f8846..e3b9c22 100644
+> index e3b9c22..c733841 100644
 > --- a/drivers/clk/tegra/clk.h
 > +++ b/drivers/clk/tegra/clk.h
-> @@ -19,6 +19,7 @@
+> @@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+>  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+>  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+>  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+> +int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+> +		 u8 frac_width, u8 flags);
+> +
 >  
->  #include <linux/clk-provider.h>
->  #include <linux/clkdev.h>
-> +#include <linux/delay.h>
->  
->  /**
->   * struct tegra_clk_sync_source - external clock source from codec
+>  /* Combined read fence with delay */
+>  #define fence_udelay(delay, reg)	\
+> diff --git a/drivers/clk/tegra/div-frac.c b/drivers/clk/tegra/div-frac.c
+> new file mode 100644
+> index 0000000..b75e19a
+> --- /dev/null
+> +++ b/drivers/clk/tegra/div-frac.c
+> @@ -0,0 +1,43 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> + */
+> +
+> +#include <asm/div64.h>
+> +
+> +#include "clk.h"
+> +
+> +#define div_mask(w) ((1 << (w)) - 1)
+> +
+> +int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+> +	         u8 frac_width, u8 flags)
+> +{
+> +	u64 divider_ux1 = parent_rate;
+> +	int mul;
+> +
+> +	if (!rate)
+> +		return 0;
+> +
+> +	mul = 1 << frac_width;
+> +
+> +	if (!(flags & TEGRA_DIVIDER_INT))
+> +		divider_ux1 *= mul;
+> +
+> +	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> +		divider_ux1 += rate - 1;
+> +
+> +	do_div(divider_ux1, rate);
+> +
+> +	if (flags & TEGRA_DIVIDER_INT)
+> +		divider_ux1 *= mul;
+> +
+> +	if (divider_ux1 < mul)
+> +		return 0;
+> +
+> +	divider_ux1 -= mul;
+> +
+> +	if (divider_ux1 > div_mask(width))
+> +		return div_mask(width);
+> +
+> +	return divider_ux1;
+> +}
+
+I think that personally, I would have preferred a clk-utils.c for stuff
+like this but at the same time I am OK with this for now. It can always
+be change later if we have such other similar functions. I also would
+have updated the $subject now the name has been changed too.
+
+Otherwise ...
 
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
