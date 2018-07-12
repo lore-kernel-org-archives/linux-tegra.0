@@ -1,44 +1,46 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 3/7] soc/tegra: pmc: Implement
- tegra_io_pad_is_powered()
-Date: Thu, 12 Jul 2018 11:10:03 +0100
-Message-ID: <5e041bd6-d152-30a9-e2f8-48552e50ccee@nvidia.com>
-References: <1531317693-3520-1-git-send-email-avienamo@nvidia.com>
- <1531317693-3520-4-git-send-email-avienamo@nvidia.com>
- <3ced704b-2a8b-b78c-3b1e-6c2d7562edcc@nvidia.com>
- <2d669942-0b4d-f48b-a8ba-67794485bf5f@nvidia.com>
- <20180712105247.121a5d13@dhcp-10-21-25-168>
+Subject: Re: [PATCH v5 1/4] clk: tegra: Fix includes required by
+ fence_udelay()
+Date: Thu, 12 Jul 2018 11:11:14 +0100
+Message-ID: <5332f15c-65ae-5a70-577f-6125715233e6@nvidia.com>
+References: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
+ <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180712105247.121a5d13@dhcp-10-21-25-168>
+In-Reply-To: <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 12/07/18 08:52, Aapo Vienamo wrote:
-> On Wed, 11 Jul 2018 16:26:42 +0100
-> Jon Hunter <jonathanh@nvidia.com> wrote:
+On 11/07/18 15:39, Aapo Vienamo wrote:
+> Add the missing linux/delay.h include statement for udelay() used by
+> fence_udelay() macro.
 > 
->> On 11/07/18 16:23, Jon Hunter wrote:
->>>
->>> On 11/07/18 15:01, Aapo Vienamo wrote:  
->>>> Implement a function to query whether a pad is in deep power down mode.  
->>> Can you elaborate on why this public function is needed and who will be
->>> using this?  
->>
->> Or I should say does this need to be public?
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> It's only called from the pinconf callbacks and exposing it doesn't
-> indeed make much sense if we intend to replace direct calls to pmc.c
-> with pinctrl anyway. I'll make it private on the next iteration of the
-> series.
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index e1f8846..e3b9c22 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -19,6 +19,7 @@
+>  
+>  #include <linux/clk-provider.h>
+>  #include <linux/clkdev.h>
+> +#include <linux/delay.h>
+>  
+>  /**
+>   * struct tegra_clk_sync_source - external clock source from codec
 
-Yes let's make it private.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
 Cheers
 Jon
