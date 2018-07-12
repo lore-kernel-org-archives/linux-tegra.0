@@ -1,15 +1,11 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: RFC: tegra2/tegra3 automotive part changes
-Date: Thu, 12 Jul 2018 16:07:15 +0100
-Message-ID: <23296983-7620-617c-50a0-e3f0c971b14b@codethink.co.uk>
-References: <3916c0ea-964e-42ab-8bfd-8e8edc5110ee@codethink.co.uk>
- <62581f70-4f55-05b4-5210-221698d501c7@kapsi.fi>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: NVIDIA Tegra changes for v4.19-rc1
+Date: Thu, 12 Jul 2018 17:41:23 +0200
+Message-ID: <20180712154128.22705-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <62581f70-4f55-05b4-5210-221698d501c7@kapsi.fi>
-Content-Language: en-GB
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,40 +15,24 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mikko Perttunen <cyndis@kapsi.fi>, linux-tegra <linux-tegra@vger.kernel.org>, Device Tree list <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Preston <thomas.preston@codethink.co.uk>, Terry Hu <kejia.hu@codethink.co.uk>, jorgesanjuan <jorge.sanjuan@codethink.co.uk>, Beth White <beth.white@codethink.co.uk>
+To: arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTIvMDcvMTggMTQ6NTAsIE1pa2tvIFBlcnR0dW5lbiB3cm90ZToKPiBPbiAwNy8xMi8yMDE4
-IDA0OjM2IFBNLCBCZW4gRG9va3Mgd3JvdGU6Cj4+IEhlbGxvLCB3ZSBhcmUgbG9va2luZyBhdCB1
-cC1zdHJlYW1pbmcgc29tZSBvZiB0aGUgd29yayB3ZSBoYXZlCj4+IGRvbmUgb24gdGhlIHRlZ3Jh
-MiBhbmQgdGVncmEzIGF1dG9tb3RpdmUgZGV2aWNlcy4gVGhlIGF1dG9tb3RpdmUKPj4gZ3JhZGUg
-ZGV2aWNlcyBhcmUgY2xvc2UgdGhlIGNvbW1lcmNpYWwgcGFydHMgc28gd2Ugd291bGQgbGlrZSB0
-bwo+PiBkaXNjdXNzIHRoZSBjb3JlIGNoYW5nZXMgYmVmb3JlIHN1Ym1pdHRpbmcuCj4+Cj4+IFRo
-ZSBjaGFuZ2VzIGFyZSBtb3N0bHkgd2l0aCB0aGluZ3MgbGlrZSB0aGUgY2xvY2sgc2V0dXAgYW5k
-IGEKPj4gZmV3IHBlcmlwaGVyYWwgcXVpcmtzIChJSVJDIHRoZXNlIGFyZSBtb3N0bHkgTU1DKS4K
-Pj4KPj4gV2UgYXJlIHByb3Bvc2luZyB0byBjaGFuZ2UgdGhlIGRldmljZS10cmVlIHByb3BlcnRp
-ZXMgZm9yIHRoZSByb290Cj4+IG5vZGUgYW5kIGFueSBvdGhlciBhZmZlY3RlZCBkZXZpY2VzIGZy
-b20gIm52aWRpYSx0ZWdyYVhYIiB0byBhIG5ldwo+PiAibnZpZGlhLHRlZ3JhWFhhIi4gV2Ugd291
-bGQgd2VsY29tZSBkaXNjdXNzaW9uIG9uIHdoZXRoZXIgdG8gdXBkYXRlCj4+IGFsbCB0aGUgZGV2
-aWNlcyBhdCB0aGUgc3RhcnQKPj4KPj4gQW4gZXhhbXBsZSBvZiB0ZWdyYTMwYS5kdHNpOgo+Pgo+
-PiAjaW5jbHVkZSAidGVncmEzMC5kdHNpIgo+Pgo+PiAvIHsKPj4gwqDCoMKgwqDCoMKgwqDCoCBj
-b21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTMwYSI7Cj4+Cj4+IMKgwqDCoMKgwqDCoMKgwqAgY2xv
-Y2tANjAwMDYwMDAgewo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb21wYXRp
-YmxlID0gIm52aWRpYSx0ZWdyYTMwYS1jYXIiOwo+PiDCoMKgwqDCoMKgwqDCoMKgIH07Cj4+IH0K
-Pj4KPj4gV2UgZG9uJ3QgdGhpbmsgdGhlIGNoYW5nZXMgYXJlIGJpZyBlbm91Z2ggdG8gd2FycmFu
-dCB0aGVpciBvd24KPj4gS2NvbmZpZy9kZWZjb25maWcgdXBkYXRlcy4KPj4KPiAKPiBXaGF0IGtp
-bmQgb2YgY2hhbmdlcyBkbyB5b3UgaGF2ZT8gVGVncmEzMGEgd291bGQgcG9pbnQgdG8gYSBzZXBh
-cmF0ZSBTb0MgCj4gcmV2aXNpb24gb2YgVGVncmEzIHRoZSBleGlzdGVuY2Ugb2Ygd2hpY2ggSSdt
-IG5vdCBhd2FyZSBvZi4gSWYgeW91IGNhbiAKPiBzaG93IHNvbWUgb2YgdGhlIGNoYW5nZXMgaXQg
-d291bGQgYmUgZWFzaWVyIHRvIHNheSBob3cgdGhlIHN5c3RlbSBzaG91bGQgCj4gYmUgc3BlY2lm
-aWVkLgoKSSdtIGp1c3Qgd29ya2luZyBvbiB0aGUgY29yZSBjbG9jayBpbml0aWFsaXNhdGlvbiBw
-YXRjaGVzIGFzIG91cgpvcmlnaW5hbCB3b3JrIHdhcyBqdXN0IHBhdGNoaW5nIHRoZSB0ZWdyYTIw
-IGFuZCB0ZWdyYTMwIGNsb2NrIGluaXQKdGFibGVzLgoKQXMgZmFyIGFzIHdlIGNhbiBzZWUgdGhl
-IHRlZ3JhMzAgYXV0b21vdGl2ZSBncmFkZSBzaWxpY29uIGlzIG1vc3RseQpjb21wYXRpYmxlIHdp
-dGggdGhlIHRlZ3JhMzAgYnV0IGhhcyBzb21lIGNsb2NrIHJlc3RyaWN0aW9ucyBhbmQKaW5pdGlh
-bGlzYXRpb24gY2hhbmdlcy4KCgotLSAKQmVuIERvb2tzCQkJCWh0dHA6Ly93d3cuY29kZXRoaW5r
-LmNvLnVrLwpTZW5pb3IgRW5naW5lZXIJCQkJQ29kZXRoaW5rIC0gUHJvdmlkaW5nIEdlbml1cwoK
-aHR0cHM6Ly93d3cuY29kZXRoaW5rLmNvLnVrL3ByaXZhY3kuaHRtbAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5n
-IGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5p
-bmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+Hi ARM SoC maintainers,
+
+Here's the set of Tegra-related pull requests for v4.19-rc1. I'm sending
+these a week earlier than usual because I will be on vacation for the
+next two weeks. During my absence, Jon Hunter will be taking the helm.
+Unfortunately he doesn't have access to the kernel.org repository, so if
+anything comes up he may have to send patches to you directly. That said
+I don't expect any issues with these pull requests. They've all soaked
+in linux-next for a little while and I've done my regular sanity builds
+and didn't see any issues.
+
+In the unlikely case that everything falls apart, I'll be back shortly
+after v4.18-rc7, which should give us a little time to clean things up
+before the merge window.
+
+Thanks,
+Thierry
