@@ -1,141 +1,47 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v6 4/4] clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
-Date: Thu, 12 Jul 2018 14:31:52 +0100
-Message-ID: <02a2f5f4-51e5-5df7-931d-30e0f783ed97@nvidia.com>
-References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
- <1531396382-5579-5-git-send-email-avienamo@nvidia.com>
- <8e1852c4-1471-ae05-8e55-c30ba4e77554@nvidia.com>
- <20180712161142.5166b6b8@dhcp-10-21-25-168>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH] mtd: rawnand: tegra: check bounds of die_nr properly
+Date: Thu, 12 Jul 2018 13:31:57 +0000
+Message-ID: <1531402315.1390.6.camel@toradex.com>
+References: <20180704091310.22003-1-stefan@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180712161142.5166b6b8@dhcp-10-21-25-168>
+In-Reply-To: <20180704091310.22003-1-stefan@agner.ch>
 Content-Language: en-US
+Content-ID: <9B4C462F86C8A84DB5B35B481971228B@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+To: "stefan@agner.ch" <stefan@agner.ch>, "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>, "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "krzk@kernel.org" <krzk@kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "benjamin.lindqvist@endian.se" <benjamin.lindqvist@endian.se>, "digetx@gmail.com" <digetx@gmail.com>, "mirza.krak@gmail.com" <mirza.krak@gmail.com>, "gaireg@gaireg.de" <gaireg@gaireg.de>, "dwmw2@infradead.org" <dwmw2@infradead.org>, "computersforpeace@gmail.com" <computersforpeace@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, "richard@nod.at" <richard@nod.at>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 12/07/18 14:11, Aapo Vienamo wrote:
-> On Thu, 12 Jul 2018 13:59:58 +0100
-> Jon Hunter <jonathanh@nvidia.com> wrote:
-> 
->> On 12/07/18 12:53, Aapo Vienamo wrote:
->>> From: Peter De-Schrijver <pdeschrijver@nvidia.com>
->>>
->>> These clocks have low jitter paths to certain parents. To model these
->>> correctly, use the sdmmc mux divider clock type.
->>>
->>> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
->>> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
->>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> ---
->>>  drivers/clk/tegra/clk-id.h           |  2 --
->>>  drivers/clk/tegra/clk-tegra-periph.c | 11 -----------
->>>  drivers/clk/tegra/clk-tegra210.c     | 14 ++++++++++++--
->>>  3 files changed, 12 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
->>> index b616e33..de466b4 100644
->>> --- a/drivers/clk/tegra/clk-id.h
->>> +++ b/drivers/clk/tegra/clk-id.h
->>> @@ -227,13 +227,11 @@ enum clk_id {
->>>  	tegra_clk_sdmmc1_9,
->>>  	tegra_clk_sdmmc2,
->>>  	tegra_clk_sdmmc2_8,
->>> -	tegra_clk_sdmmc2_9,
->>>  	tegra_clk_sdmmc3,
->>>  	tegra_clk_sdmmc3_8,
->>>  	tegra_clk_sdmmc3_9,
->>>  	tegra_clk_sdmmc4,
->>>  	tegra_clk_sdmmc4_8,
->>> -	tegra_clk_sdmmc4_9,
->>>  	tegra_clk_se,
->>>  	tegra_clk_soc_therm,
->>>  	tegra_clk_soc_therm_8,
->>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
->>> index 2acba29..38c4eb2 100644
->>> --- a/drivers/clk/tegra/clk-tegra-periph.c
->>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
->>> @@ -451,15 +451,6 @@ static u32 mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
->>>  	[0] = 0, [1] = 3, [2] = 4, [3] = 6, [4] = 7,
->>>  };
->>>  
->>> -static const char *mux_pllp_clkm_pllc4_out2_out1_out0_lj[] = {
->>> -	"pll_p",
->>> -	"pll_c4_out2", "pll_c4_out0",	/* LJ input */
->>> -	"pll_c4_out2", "pll_c4_out1",
->>> -	"pll_c4_out1",			/* LJ input */
->>> -	"clk_m", "pll_c4_out0"
->>> -};
->>> -#define mux_pllp_clkm_pllc4_out2_out1_out0_lj_idx NULL
->>> -
->>>  static const char *mux_pllp_pllc2_c_c3_clkm[] = {
->>>  	"pll_p", "pll_c2", "pll_c", "pll_c3", "clk_m"
->>>  };
->>> @@ -686,9 +677,7 @@ static struct tegra_periph_init_data periph_clks[] = {
->>>  	MUX("sdmmc3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3),
->>>  	MUX("sdmmc4", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4),
->>>  	MUX8("sdmmc1", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC1, 14, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc1_9),
->>> -	MUX8("sdmmc2", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC2, 9, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc2_9),
->>>  	MUX8("sdmmc3", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3_9),
->>> -	MUX8("sdmmc4", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4_9),
->>>  	MUX("la", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_LA, 76, TEGRA_PERIPH_ON_APB, tegra_clk_la),
->>>  	MUX("trace", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_TRACE, 77, TEGRA_PERIPH_ON_APB, tegra_clk_trace),
->>>  	MUX("owr", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr),
->>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->>> index 5435d01..9eb1cb1 100644
->>> --- a/drivers/clk/tegra/clk-tegra210.c
->>> +++ b/drivers/clk/tegra/clk-tegra210.c
->>> @@ -44,6 +44,8 @@
->>>  #define CLK_SOURCE_EMC 0x19c
->>>  #define CLK_SOURCE_SOR1 0x410
->>>  #define CLK_SOURCE_LA 0x1f8
->>> +#define CLK_SOURCE_SDMMC2 0x154
->>> +#define CLK_SOURCE_SDMMC4 0x164
->>>  
->>>  #define PLLC_BASE 0x80
->>>  #define PLLC_OUT 0x84
->>> @@ -2286,11 +2288,9 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
->>>  	[tegra_clk_rtc] = { .dt_id = TEGRA210_CLK_RTC, .present = true },
->>>  	[tegra_clk_timer] = { .dt_id = TEGRA210_CLK_TIMER, .present = true },
->>>  	[tegra_clk_uarta_8] = { .dt_id = TEGRA210_CLK_UARTA, .present = true },
->>> -	[tegra_clk_sdmmc2_9] = { .dt_id = TEGRA210_CLK_SDMMC2, .present = true },
->>>  	[tegra_clk_i2s1] = { .dt_id = TEGRA210_CLK_I2S1, .present = true },
->>>  	[tegra_clk_i2c1] = { .dt_id = TEGRA210_CLK_I2C1, .present = true },
->>>  	[tegra_clk_sdmmc1_9] = { .dt_id = TEGRA210_CLK_SDMMC1, .present = true },
->>> -	[tegra_clk_sdmmc4_9] = { .dt_id = TEGRA210_CLK_SDMMC4, .present = true },
->>>  	[tegra_clk_pwm] = { .dt_id = TEGRA210_CLK_PWM, .present = true },
->>>  	[tegra_clk_i2s2] = { .dt_id = TEGRA210_CLK_I2S2, .present = true },
->>>  	[tegra_clk_usbd] = { .dt_id = TEGRA210_CLK_USBD, .present = true },
->>> @@ -3030,6 +3030,16 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
->>>  				0, NULL);
->>>  	clks[TEGRA210_CLK_ACLK] = clk;
->>>  
->>> +	clk = tegra_clk_register_sdmmc_mux_div("sdmmc2", clk_base,
->>> +					    CLK_SOURCE_SDMMC2, 9,
->>> +					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
->>> +	clks[TEGRA210_CLK_SDMMC2] = clk;
->>> +
->>> +	clk = tegra_clk_register_sdmmc_mux_div("sdmmc4", clk_base,
->>> +					    CLK_SOURCE_SDMMC4, 15,
->>> +					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
->>> +	clks[TEGRA210_CLK_SDMMC4] = clk;
->>> +  
->>
->> Peter, do we need to check for an error here before populating the pointer
->> returned?
-> 
-> The error checking is done by the code that uses the clks array, so no.
-
-Thanks! In that case ...
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+T24gV2VkLCAyMDE4LTA3LTA0IGF0IDExOjEzICswMjAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
+IFRoZSBUZWdyYSBkcml2ZXIgY3VycmVudGx5IG9ubHkgc3VwcG9ydCBhIHNpbmdsZSBjaGlwIHNl
+bGVjdCwgaGVuY2UNCj4gY2hlY2sgYm91bmRhcmllcyBhY2NvcmRpbmdseS4gVGhpcyBmaXhlcyBh
+IG9mZiBieSBvbmUgaXNzdWUgY2F0Y2hlZA0KPiB3aXRoIFNtYXRjaDoNCj4gICAgIGRyaXZlcnMv
+bXRkL25hbmQvcmF3L3RlZ3JhX25hbmQuYzo0NzYgdGVncmFfbmFuZF9zZWxlY3RfY2hpcCgpDQo+
+ICAgICB3YXJuOiBhcnJheSBvZmYgYnkgb25lPyAnbmFuZC0+Y3NbZGllX25yXScNCj4gDQo+IEFs
+c28gd2FybiBpbiBjYXNlIHRoZSBzdGFjayBhc2tzIGZvciBhIGNoaXAgc2VsZWN0IHdlIGN1cnJl
+bnRseSBkbw0KPiBub3Qgc3VwcG9ydC4NCj4gDQo+IFJlcG9ydGVkLWJ5OiBEYW4gQ2FycGVudGVy
+IDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFN0ZWZhbiBBZ25l
+ciA8c3RlZmFuQGFnbmVyLmNoPg0KPiAtLS0NCj4gIGRyaXZlcnMvbXRkL25hbmQvcmF3L3RlZ3Jh
+X25hbmQuYyB8IDQgKysrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBk
+ZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbXRkL25hbmQvcmF3L3RlZ3Jh
+X25hbmQuYw0KPiBiL2RyaXZlcnMvbXRkL25hbmQvcmF3L3RlZ3JhX25hbmQuYw0KPiBpbmRleCA0
+ZGFhODhkODE0MTM0Li5lNjVlZjU4NGRmMGI5IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL210ZC9u
+YW5kL3Jhdy90ZWdyYV9uYW5kLmMNCj4gKysrIGIvZHJpdmVycy9tdGQvbmFuZC9yYXcvdGVncmFf
+bmFuZC5jDQo+IEBAIC00NjgsNyArNDY4LDkgQEAgc3RhdGljIHZvaWQgdGVncmFfbmFuZF9zZWxl
+Y3RfY2hpcChzdHJ1Y3QNCj4gbXRkX2luZm8gKm10ZCwgaW50IGRpZV9ucikNCj4gIAlzdHJ1Y3Qg
+dGVncmFfbmFuZF9jaGlwICpuYW5kID0gdG9fdGVncmFfY2hpcChjaGlwKTsNCj4gIAlzdHJ1Y3Qg
+dGVncmFfbmFuZF9jb250cm9sbGVyICpjdHJsID0gdG9fdGVncmFfY3RybChjaGlwLQ0KPiA+Y29u
+dHJvbGxlcik7DQo+ICANCj4gLQlpZiAoZGllX25yIDwgMCB8fCBkaWVfbnIgPiAxKSB7DQo+ICsJ
+V0FSTl9PTihkaWVfbnIgPj0gQVJSQVlfU0laRShuYW5kLT5jcykpOw0KDQpVbmZvcnR1bmF0ZWx5
+LCB0aGF0IGhhcyBhIHRpbnkgbGl0dGxlIGlzc3VlIGFzIGRpZV9uciBpcyBhIHNpZ25lZA0KaW50
+ZWdlciBhbmQgQVJSQVlfU0laRSBvZiBjb3Vyc2UgaXMgdW5zaWduZWQuIFdoaWxlIEkgY291bGQg
+aGF2ZSBzd29ybg0KbXkgc2hpcnQgb2ZmIHRoYXQgdGhlIGNvbXBpbGVyIHdvdWxkIGhhdmUgdG8g
+cHJvbW90ZSB0aGlzIHRvIHNpZ25lZA0KdGhpcyBpcyBub3QgcXVpdGUgd2hhdCBoYXBwZW5zIGFu
+ZCB1cG9uIGRlc2VsZWN0aW5nIHdpdGggLTEgdGhpcw0Kd2FybmluZyBnZXRzIHRyaWdnZXJlZCEN
+Cg0KSSB3aWxsIHNlbmQgYW4gdXBkYXRlZCBwYXRjaCBleHBsaWNpdGx5IGNhc3RpbmcgdGhlIEFS
+UkFZX1NJWkUgc2lkZSB0bw0KaW50IGFzIHdlbGwgc2hvcnRseS4NCg0KPiArDQo+ICsJaWYgKGRp
+ZV9uciA8IDAgfHwgZGllX25yID4gMCkgew0KPiAgCQljdHJsLT5jdXJfY3MgPSAtMTsNCj4gIAkJ
+cmV0dXJuOw0KPiAgCX0=
