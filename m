@@ -1,54 +1,74 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: RFC: tegra2/tegra3 automotive part changes
-Date: Thu, 12 Jul 2018 14:36:08 +0100
-Message-ID: <3916c0ea-964e-42ab-8bfd-8e8edc5110ee@codethink.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] mtd: rawnand: tegra: check bounds of die_nr properly
+Date: Thu, 12 Jul 2018 16:44:21 +0300
+Message-ID: <20180712134421.unczwgmvfdhezq3v@mwanda>
+References: <20180704091310.22003-1-stefan@agner.ch>
+ <1531402315.1390.6.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra <linux-tegra@vger.kernel.org>, Device Tree list <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Preston <thomas.preston@codethink.co.uk>, Terry Hu <kejia.hu@codethink.co.uk>, jorgesanjuan <jorge.sanjuan@codethink.co.uk>, Beth White <beth.white@codethink.co.uk>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1531402315.1390.6.camel@toradex.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "stefan@agner.ch" <stefan@agner.ch>, "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>, "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "krzk@kernel.org" <krzk@kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "benjamin.lindqvist@endian.se" <benjamin.lindqvist@endian.se>, "digetx@gmail.com" <digetx@gmail.com>, "mirza.krak@gmail.com" <mirza.krak@gmail.com>, "gaireg@gaireg.de" <gaireg@gaireg.de>, "dwmw2@infradead.org" <dwmw2@infradead.org>, "computersforpeace@gmail.com" <computersforpeace@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, richard@nod.at
 List-Id: linux-tegra@vger.kernel.org
 
-Hello, we are looking at up-streaming some of the work we have
-done on the tegra2 and tegra3 automotive devices. The automotive
-grade devices are close the commercial parts so we would like to
-discuss the core changes before submitting.
+On Thu, Jul 12, 2018 at 01:31:57PM +0000, Marcel Ziswiler wrote:
+> On Wed, 2018-07-04 at 11:13 +0200, Stefan Agner wrote:
+> > The Tegra driver currently only support a single chip select, hence
+> > check boundaries accordingly. This fixes a off by one issue catched
+> > with Smatch:
+> >     drivers/mtd/nand/raw/tegra_nand.c:476 tegra_nand_select_chip()
+> >     warn: array off by one? 'nand->cs[die_nr]'
+> > 
+> > Also warn in case the stack asks for a chip select we currently do
+> > not support.
+> > 
+> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > ---
+> >  drivers/mtd/nand/raw/tegra_nand.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/mtd/nand/raw/tegra_nand.c
+> > b/drivers/mtd/nand/raw/tegra_nand.c
+> > index 4daa88d814134..e65ef584df0b9 100644
+> > --- a/drivers/mtd/nand/raw/tegra_nand.c
+> > +++ b/drivers/mtd/nand/raw/tegra_nand.c
+> > @@ -468,7 +468,9 @@ static void tegra_nand_select_chip(struct
+> > mtd_info *mtd, int die_nr)
+> >  	struct tegra_nand_chip *nand = to_tegra_chip(chip);
+> >  	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip-
+> > >controller);
+> >  
+> > -	if (die_nr < 0 || die_nr > 1) {
+> > +	WARN_ON(die_nr >= ARRAY_SIZE(nand->cs));
+> 
+> Unfortunately, that has a tiny little issue as die_nr is a signed
+> integer and ARRAY_SIZE of course is unsigned. While I could have sworn
+> my shirt off that the compiler would have to promote this to signed
+> this is not quite what happens and upon deselecting with -1 this
+> warning gets triggered!
 
-The changes are mostly with things like the clock setup and a
-few peripheral quirks (IIRC these are mostly MMC).
+Sorry, I didn't realize we were passing -1 as die_nr.  I should have
+reviewed the code more carefully.
 
-We are proposing to change the device-tree properties for the root
-node and any other affected devices from "nvidia,tegraXX" to a new
-"nvidia,tegraXXa". We would welcome discussion on whether to update
-all the devices at the start
+The type is promoted to the which ever side has more positive bits or
+a minimum of int.  So if you compare an int to a long long it gets
+promoted to long long.  If you compare an int to unsigned int, it is
+promoted to unsigned int.  If both sides are smaller than int then it
+is type promoted to int.
 
-An example of tegra30a.dtsi:
+For compares, I can't think how type promoting to int can be a problem
+but where it might matter is that that people sometimes want 0xfe and
+they do "~(char)0x1" but it becomes 0xfffffffe.
 
-#include "tegra30.dtsi"
+The other trickiness is that x << shift is type x.  Sometime people
+think if they make shift a u64 and x an int, the result will be u64 but
+it's still int.
 
-/ {
-         compatible = "nvidia,tegra30a";
+I think that's basically everything with type promotion.
 
-         clock@60006000 {
-                 compatible = "nvidia,tegra30a-car";
-         };
-}
-
-We don't think the changes are big enough to warrant their own
-Kconfig/defconfig updates.
-
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+regards,
+dan carpenter
