@@ -1,43 +1,46 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Fixes for v4.18-rc5
-Date: Thu, 12 Jul 2018 09:01:42 +0200
-Message-ID: <20180712070142.15571-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 1/3] mmc: tegra: prevent HS200 on Tegra 3
+Date: Thu, 12 Jul 2018 09:39:02 +0200
+Message-ID: <20180712073904.4705-1-stefan@agner.ch>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, marcel.ziswiler@toradex.com, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgY2UzOTdkMjE1Y2Nk
-MDdiOGFlM2Y3MWRiNjg5YWVkYjg1ZDU2YWI0MDoKCiAgTGludXggNC4xOC1yYzEgKDIwMTgtMDYt
-MTcgMDg6MDQ6NDkgKzA5MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBh
-dDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0v
-dGVncmEvZm9yLTQuMTgtcmM1Cgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gNTI2NWYw
-MzM4YmMwZmVlYzZjMGQ1NDRkZmUwMDVkZWMxYTkzY2I5MzoKCiAgZHJtL3RlZ3JhOiBGaXggY29t
-cGFyaXNvbiBvcGVyYXRvciBmb3IgYnVmZmVyIHNpemUgKDIwMTgtMDctMDkgMTA6MzM6NDUgKzAy
-MDApCgpUaGFua3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBGaXhlcyBmb3IgdjQuMTgt
-cmM1CgpUaGlzIGNvbnRhaW5zIGEgY291cGxlIG9mIG9uZS0gb3IgdHdvLWxpbmUgZml4ZXMgZm9y
-IHZhcmlvdXMgbWlub3IKaXNzdWVzIGluIHRoZSBUZWdyYSBkcml2ZXIuCgotLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkRtaXRy
-eSBPc2lwZW5rbyAoMik6CiAgICAgIGdwdTogaG9zdDF4OiBTa2lwIElPTU1VIGluaXRpYWxpemF0
-aW9uIGlmIGZpcmV3YWxsIGlzIGVuYWJsZWQKICAgICAgZ3B1OiBob3N0MXg6IENoZWNrIHdoZXRo
-ZXIgc2l6ZSBvZiB1bnBpbiBpc24ndCAwCgpNaWtrbyBQZXJ0dHVuZW4gKDEpOgogICAgICBkcm0v
-dGVncmE6IEZpeCBjb21wYXJpc29uIG9wZXJhdG9yIGZvciBidWZmZXIgc2l6ZQoKIGRyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9kcm0uYyB8IDIgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyAgICB8
-IDMgKysrCiBkcml2ZXJzL2dwdS9ob3N0MXgvam9iLmMgICAgfCAzICsrLQogMyBmaWxlcyBjaGFu
-Z2VkLCA2IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The stack assumes that SDHC controller which support SD3.0 (SDR104) do
+support HS200. This is not the case for Tegra 3, which does support SD
+3.0
+but only supports eMMC spec 4.41.
+
+Use SDHCI_QUIRK2_BROKEN_HS200 to indicate that the controller does not
+support HS200.
+
+Note that commit 156e14b126ff ("mmc: sdhci: fix caps2 for HS200") added
+the tie between SD3.0 (SDR104) and HS200. I don't think that this is
+necessarly true. It is fully legitimate to support SD3.0 and not support
+HS200. The quirk naming suggests something is broken in the controller,
+but this is not the case: The controller simply does not support HS200.
+
+Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/mmc/host/sdhci-tegra.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 970d38f68939..137df06b9b6e 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -334,7 +334,8 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+ 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+-	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
++	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
++		   SDHCI_QUIRK2_BROKEN_HS200,
+ 	.ops  = &tegra_sdhci_ops,
+ };
+ 
+-- 
+2.18.0
