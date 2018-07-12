@@ -1,69 +1,51 @@
 From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v6 0/4] Multiplex sdmmc low jitter clock path
-Date: Thu, 12 Jul 2018 14:52:58 +0300
-Message-ID: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
+Subject: [PATCH v3 0/7] Tegra PMC pinctrl pad configuration
+Date: Thu, 12 Jul 2018 15:00:06 +0300
+Message-ID: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Aapo Vienamo <avienamo@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
-divider to achieve better jitter performance with high speed signaling
-modes. The clock path with the divider is needed by some of the slower
-signaling modes. This series automatically multiplexes the LJ and
-non-LJ clock paths based on the requested frequency.
+Hi all,
 
-Changelog:
-v6:
-	- Rename div-frac.c to clk-utils.c
-	- Fix checkpatch errors and warnings introduced in v5
-	- Replace int mul = 2 with a macro in clk-sdmmc-mux.c
-	- Remove unnecessary space from clk_sdmmc_mux_enable() return
-	- Free sdmmc_mux if clk_register() fails in
-	  tegra_clk_register_sdmmc_mux_div()
+The Tegra Power Management Controller (PMC) can set pad power states
+and voltage configuration. This series implements pinctrl interfaces
+for configuring said pad properties.
 
-v5:
-	- Rename div71_get() to div_frac_get()
-	- Rename div71.c to div-frac.c
-
-v4:
-	- Add a changelog
-
+Changelog
 v3:
-	- Use <asm/div64.h> include instead of <linux/kernel.h> for
-	  do_div()
-	- Use SPDX tags for new files
-	- Make mux_lj_idx[] and mux_non_lj_idx[] const
-	- Make tegra_clk_sdmmc_mux_ops static
-	- Fix the includes for fence_udelay() in a separate patch
-
+	- Don't expose tegra_io_pad_is_powered()
+	- Remove tegra_io_pad_set_voltage() stub from pmc.h
+		- Fixes i386 build failure reported by kbuild test robot
 v2:
-	- Fix the type compatibility error on do_div
+	- Add Tegra186 AO_HV pad
+	- Make the IO pad tables narrower
+	- Add parens to TEGRA_IO_PAD() and TEGRA_IO_PIN_DESC()
+	- Fix a typo in the dt-bindings docs
+	- Remove old pmc pad voltage configuration APIs
+	- Check return value of tegra_io_pad_find() in
+	  tegra_io_pad_pinconf_get()/_set()
 
-Aapo Vienamo (1):
-  clk: tegra: Fix includes required by fence_udelay()
+Aapo Vienamo (7):
+  soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+  soc/tegra: pmc: Factor out DPD register bit calculation
+  soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+  soc/tegra: pmc: Use X macro to generate IO pad tables
+  dt-bindings: Add Tegra PMC pad configuration bindings
+  soc/tegra: pmc: Remove public pad voltage APIs
+  soc/tegra: pmc: Implement pad configuration via pinctrl
 
-Peter De Schrijver (1):
-  clk: tegra: Refactor fractional divider calculation
-
-Peter De-Schrijver (2):
-  clk: tegra: Add sdmmc mux divider clock
-  clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
-
- drivers/clk/tegra/Makefile           |   2 +
- drivers/clk/tegra/clk-divider.c      |  30 +----
- drivers/clk/tegra/clk-id.h           |   2 -
- drivers/clk/tegra/clk-sdmmc-mux.c    | 251 +++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-tegra-periph.c |  11 --
- drivers/clk/tegra/clk-tegra210.c     |  14 +-
- drivers/clk/tegra/clk-utils.c        |  43 ++++++
- drivers/clk/tegra/clk.h              |  30 +++++
- 8 files changed, 343 insertions(+), 40 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
- create mode 100644 drivers/clk/tegra/clk-utils.c
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  84 ++++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  95 ++++
+ drivers/soc/tegra/pmc.c                            | 512 +++++++++++++++------
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+ include/soc/tegra/pmc.h                            |  20 +-
+ 5 files changed, 581 insertions(+), 148 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
 
 -- 
 2.7.4
