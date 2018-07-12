@@ -1,330 +1,352 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v3 7/7] soc/tegra: pmc: Implement pad configuration via pinctrl
-Date: Thu, 12 Jul 2018 15:00:13 +0300
-Message-ID: <1531396813-6581-8-git-send-email-avienamo@nvidia.com>
-References: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v6 3/4] clk: tegra: Add sdmmc mux divider clock
+Date: Thu, 12 Jul 2018 13:56:52 +0100
+Message-ID: <e518a8f6-23b2-5cd9-545f-29407c3be636@nvidia.com>
+References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
+ <1531396382-5579-4-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1531396382-5579-4-git-send-email-avienamo@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Aapo Vienamo <avienamo@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Register a pinctrl device and implement get and set functions for
-PIN_CONFIG_LOW_POWER_MODE and PIN_CONFIG_POWER_SOURCE parameters.
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 187 +++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 185 insertions(+), 2 deletions(-)
+On 12/07/18 12:53, Aapo Vienamo wrote:
+> From: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> 
+> Add a clock type to model the sdmmc switch divider clocks which have paths
+> to source clocks bypassing the divider (Low Jitter paths). These
+> are handled by selecting the lj path when the divider is 1 (ie the
+> rate is the parent rate), otherwise the normal path with divider
+> will be selected. Otherwise this clock behaves as a normal peripheral
+> clock.
+> 
+> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/Makefile        |   1 +
+>  drivers/clk/tegra/clk-sdmmc-mux.c | 251 ++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk.h           |  26 ++++
+>  3 files changed, 278 insertions(+)
+>  create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
+> 
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> index c77d072..6507acc 100644
+> --- a/drivers/clk/tegra/Makefile
+> +++ b/drivers/clk/tegra/Makefile
+> @@ -8,6 +8,7 @@ obj-y					+= clk-periph-fixed.o
+>  obj-y					+= clk-periph-gate.o
+>  obj-y					+= clk-pll.o
+>  obj-y					+= clk-pll-out.o
+> +obj-y					+= clk-sdmmc-mux.o
+>  obj-y					+= clk-super.o
+>  obj-y					+= clk-tegra-audio.o
+>  obj-y					+= clk-tegra-periph.o
+> diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
+> new file mode 100644
+> index 0000000..473d418
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-sdmmc-mux.c
+> @@ -0,0 +1,251 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * based on clk-mux.c
+> + *
+> + * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
+> + * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
+> + * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
+> + *
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/types.h>
+> +
+> +#include "clk.h"
+> +
+> +#define DIV_MASK GENMASK(7, 0)
+> +#define MUX_SHIFT 29
+> +#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
+> +#define SDMMC_MUL 2
+> +
+> +#define get_max_div(d) DIV_MASK
+> +#define get_div_field(val) ((val) & DIV_MASK)
+> +#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
+> +
+> +static const char * const mux_sdmmc_parents[] = {
+> +	"pll_p", "pll_c4_out2", "pll_c4_out0", "pll_c4_out1", "clk_m"
+> +};
+> +
+> +static const u8 mux_lj_idx[] = {
+> +	[0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6
+> +};
+> +
+> +static const u8 mux_non_lj_idx[] = {
+> +	[0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6
+> +};
+> +
+> +static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
+> +{
+> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> +	int num_parents, i;
+> +	u32 src, val;
+> +	const u8 *mux_idx;
+> +
+> +	num_parents = clk_hw_get_num_parents(hw);
+> +
+> +	val = readl_relaxed(sdmmc_mux->reg);
+> +	src = get_mux_field(val);
+> +	if (get_div_field(val))
+> +		mux_idx = mux_non_lj_idx;
+> +	else
+> +		mux_idx = mux_lj_idx;
+> +
+> +	for (i = 0; i < num_parents; i++) {
+> +		if (mux_idx[i] == src)
+> +			return i;
+> +	}
+> +
+> +	WARN(1, "Unknown parent selector %d\n", src);
+> +
+> +	return 0;
+> +}
+> +
+> +static int clk_sdmmc_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> +	u32 val;
+> +
+> +
+> +	val = readl_relaxed(sdmmc_mux->reg);
+> +	if (get_div_field(val))
+> +		index = mux_non_lj_idx[index];
+> +	else
+> +		index = mux_lj_idx[index];
+> +
+> +	val &= ~MUX_MASK;
+> +	val |= index << MUX_SHIFT;
+> +
+> +	writel(val, sdmmc_mux->reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long clk_sdmmc_mux_recalc_rate(struct clk_hw *hw,
+> +					       unsigned long parent_rate)
+> +{
+> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> +	u32 val;
+> +	int div;
+> +	u64 rate = parent_rate;
+> +
+> +	val = readl_relaxed(sdmmc_mux->reg);
+> +	div = get_div_field(val);
+> +
+> +	div += SDMMC_MUL;
+> +
+> +	rate *= SDMMC_MUL;
+> +	rate += div - 1;
+> +	do_div(rate, div);
+> +
+> +	return rate;
+> +}
+> +
+> +static int clk_sdmmc_mux_determine_rate(struct clk_hw *hw,
+> +					struct clk_rate_request *req)
+> +{
+> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> +	int div;
+> +	unsigned long output_rate = req->best_parent_rate;
+> +
+> +	req->rate = max(req->rate, req->min_rate);
+> +	req->rate = min(req->rate, req->max_rate);
+> +
+> +	if (!req->rate)
+> +		return output_rate;
+> +
+> +	div = div_frac_get(req->rate, output_rate, 8, 1, sdmmc_mux->div_flags);
+> +	if (div < 0)
+> +		div = 0;
+> +
+> +	if (sdmmc_mux->div_flags & TEGRA_DIVIDER_ROUND_UP)
+> +		req->rate =  DIV_ROUND_UP(output_rate * SDMMC_MUL,
+> +					  div + SDMMC_MUL);
+> +	else
+> +		req->rate =  output_rate * SDMMC_MUL / (div + SDMMC_MUL);
+> +
+> +	return 0;
+> +}
+> +
+> +static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				  unsigned long parent_rate)
+> +{
+> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> +	int div;
+> +	unsigned long flags = 0;
+> +	u32 val;
+> +	u8 src;
+> +
+> +	div = div_frac_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
+> +	if (div < 0)
+> +		return div;
+> +
+> +	if (sdmmc_mux->lock)
+> +		spin_lock_irqsave(sdmmc_mux->lock, flags);
+> +
+> +	src = clk_sdmmc_mux_get_parent(hw);
+> +	if (div)
+> +		src = mux_non_lj_idx[src];
+> +	else
+> +		src = mux_lj_idx[src];
+> +
+> +	val = src << MUX_SHIFT;
+> +	val |= div;
+> +	writel(val, sdmmc_mux->reg);
+> +	fence_udelay(2, sdmmc_mux->reg);
+> +
+> +	if (sdmmc_mux->lock)
+> +		spin_unlock_irqrestore(sdmmc_mux->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> +	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
+> +	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
+> +
+> +	__clk_hw_set_clk(gate_hw, hw);
+> +
+> +	return gate_ops->is_enabled(gate_hw);
+> +}
+> +
+> +static int clk_sdmmc_mux_enable(struct clk_hw *hw)
+> +{
+> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> +	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
+> +	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
+> +
+> +	__clk_hw_set_clk(gate_hw, hw);
+> +
+> +	return gate_ops->enable(gate_hw);
+> +}
+> +
+> +static void clk_sdmmc_mux_disable(struct clk_hw *hw)
+> +{
+> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> +	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
+> +	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
+> +
+> +	gate_ops->disable(gate_hw);
+> +}
+> +
+> +static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
+> +	.get_parent = clk_sdmmc_mux_get_parent,
+> +	.set_parent = clk_sdmmc_mux_set_parent,
+> +	.determine_rate = clk_sdmmc_mux_determine_rate,
+> +	.recalc_rate = clk_sdmmc_mux_recalc_rate,
+> +	.set_rate = clk_sdmmc_mux_set_rate,
+> +	.is_enabled = clk_sdmmc_mux_is_enabled,
+> +	.enable = clk_sdmmc_mux_enable,
+> +	.disable = clk_sdmmc_mux_disable,
+> +};
+> +
+> +struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
+> +	void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
+> +	unsigned long flags, void *lock)
+> +{
+> +	struct clk *clk;
+> +	struct clk_init_data init;
+> +	const struct tegra_clk_periph_regs *bank;
+> +	struct tegra_sdmmc_mux *sdmmc_mux;
+> +
+> +	init.ops = &tegra_clk_sdmmc_mux_ops;
+> +	init.name = name;
+> +	init.flags = flags;
+> +	init.parent_names = mux_sdmmc_parents;
+> +	init.num_parents = ARRAY_SIZE(mux_sdmmc_parents);
+> +
+> +	bank = get_reg_bank(clk_num);
+> +	if (!bank)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	sdmmc_mux = kzalloc(sizeof(*sdmmc_mux), GFP_KERNEL);
+> +	if (!sdmmc_mux)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	/* Data in .init is copied by clk_register(), so stack variable OK */
+> +	sdmmc_mux->hw.init = &init;
+> +	sdmmc_mux->reg = clk_base + offset;
+> +	sdmmc_mux->lock = lock;
+> +	sdmmc_mux->gate.clk_base = clk_base;
+> +	sdmmc_mux->gate.regs = bank;
+> +	sdmmc_mux->gate.enable_refcnt = periph_clk_enb_refcnt;
+> +	sdmmc_mux->gate.clk_num = clk_num;
+> +	sdmmc_mux->gate.flags = TEGRA_PERIPH_ON_APB;
+> +	sdmmc_mux->div_flags = div_flags;
+> +	sdmmc_mux->gate_ops = &tegra_clk_periph_gate_ops;
+> +
+> +	clk = clk_register(NULL, &sdmmc_mux->hw);
+> +	if (IS_ERR(clk)) {
+> +		kfree(sdmmc_mux);
+> +		return clk;
+> +	}
+> +
+> +	sdmmc_mux->gate.hw.clk = clk;
+> +
+> +	return clk;
+> +}
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index c733841..d2c3a01 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -706,6 +706,32 @@ struct clk *tegra_clk_register_super_clk(const char *name,
+>  		const char * const *parent_names, u8 num_parents,
+>  		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+>  		spinlock_t *lock);
+> +
+> +/**
+> + * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
+> + *
+> + * @hw:		handle between common and hardware-specific interfaces
+> + * @reg:	register controlling mux and divider
+> + * @flags:	hardware-specific flags
+> + * @lock:	optional register lock
+> + * @gate:	gate clock
+> + * @gate_ops:	gate clock ops
+> + */
+> +struct tegra_sdmmc_mux {
+> +	struct clk_hw		hw;
+> +	void __iomem		*reg;
+> +	spinlock_t		*lock;
+> +	const struct clk_ops	*gate_ops;
+> +	struct tegra_clk_periph_gate	gate;
+> +	u8			div_flags;
+> +};
+> +
+> +#define to_clk_sdmmc_mux(_hw) container_of(_hw, struct tegra_sdmmc_mux, hw)
+> +
+> +struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
+> +		void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
+> +		unsigned long flags, void *lock);
+> +
+>  /**
+>   * struct clk_init_table - clock initialization table
+>   * @clk_id:	clock id as mentioned in device tree bindings
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 7d3c3de..6bfd00d 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -33,6 +33,9 @@
- #include <linux/of_address.h>
- #include <linux/of_clk.h>
- #include <linux/of_platform.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinconf-generic.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/reboot.h>
-@@ -164,6 +167,9 @@ struct tegra_pmc_soc {
- 	const struct tegra_io_pad_soc *io_pads;
- 	unsigned int num_io_pads;
- 
-+	const struct pinctrl_pin_desc *pin_descs;
-+	unsigned int num_pin_descs;
-+
- 	const struct tegra_pmc_regs *regs;
- 	void (*init)(struct tegra_pmc *pmc);
- 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
-@@ -222,6 +228,8 @@ struct tegra_pmc {
- 	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
- 
- 	struct mutex powergates_lock;
-+
-+	struct pinctrl_dev *pctl_dev;
- };
- 
- static struct tegra_pmc *pmc = &(struct tegra_pmc) {
-@@ -1398,6 +1406,142 @@ static void tegra_pmc_init_tsense_reset(struct tegra_pmc *pmc)
- 	of_node_put(np);
- }
- 
-+static int tegra_io_pad_pinctrl_get_groups_count(struct pinctrl_dev *pctl_dev)
-+{
-+	return pmc->soc->num_io_pads;
-+}
-+
-+static const char *tegra_io_pad_pinctrl_get_group_name(
-+		struct pinctrl_dev *pctl, unsigned int group)
-+{
-+	return pmc->soc->io_pads[group].name;
-+}
-+
-+static int tegra_io_pad_pinctrl_get_group_pins(struct pinctrl_dev *pctl_dev,
-+					       unsigned int group,
-+					       const unsigned int **pins,
-+					       unsigned int *num_pins)
-+{
-+	*pins = &pmc->soc->io_pads[group].id;
-+	*num_pins = 1;
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops tegra_io_pad_pinctrl_ops = {
-+	.get_groups_count = tegra_io_pad_pinctrl_get_groups_count,
-+	.get_group_name = tegra_io_pad_pinctrl_get_group_name,
-+	.get_group_pins = tegra_io_pad_pinctrl_get_group_pins,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-+	.dt_free_map = pinconf_generic_dt_free_map,
-+};
-+
-+static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctl_dev,
-+				    unsigned int pin, unsigned long *config)
-+{
-+	const struct tegra_io_pad_soc *pad = tegra_io_pad_find(pmc, pin);
-+	enum pin_config_param param = pinconf_to_config_param(*config);
-+	int ret;
-+	u32 arg;
-+
-+	if (!pad)
-+		return -EINVAL;
-+
-+	switch (param) {
-+	case PIN_CONFIG_POWER_SOURCE:
-+		ret = tegra_io_pad_get_voltage(pad->id);
-+		if (ret < 0)
-+			return ret;
-+		arg = ret;
-+		break;
-+	case PIN_CONFIG_LOW_POWER_MODE:
-+		ret = tegra_io_pad_is_powered(pad->id);
-+		if (ret < 0)
-+			return ret;
-+		arg = !ret;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	*config = pinconf_to_config_packed(param, arg);
-+
-+	return 0;
-+}
-+
-+static int tegra_io_pad_pinconf_set(struct pinctrl_dev *pctl_dev,
-+				    unsigned int pin, unsigned long *configs,
-+				    unsigned int num_configs)
-+{
-+	const struct tegra_io_pad_soc *pad = tegra_io_pad_find(pmc, pin);
-+	enum pin_config_param param;
-+	unsigned int i;
-+	int err;
-+	u32 arg;
-+
-+	if (!pad)
-+		return -EINVAL;
-+
-+	for (i = 0; i < num_configs; ++i) {
-+		param = pinconf_to_config_param(configs[i]);
-+		arg = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_LOW_POWER_MODE:
-+			if (arg)
-+				err = tegra_io_pad_power_disable(pad->id);
-+			else
-+				err = tegra_io_pad_power_enable(pad->id);
-+			if (err)
-+				return err;
-+			break;
-+		case PIN_CONFIG_POWER_SOURCE:
-+			if (arg != TEGRA_IO_PAD_VOLTAGE_1V8 &&
-+			    arg != TEGRA_IO_PAD_VOLTAGE_3V3)
-+				return -EINVAL;
-+			err = tegra_io_pad_set_voltage(pad->id, arg);
-+			if (err)
-+				return err;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pinconf_ops tegra_io_pad_pinconf_ops = {
-+	.pin_config_get = tegra_io_pad_pinconf_get,
-+	.pin_config_set = tegra_io_pad_pinconf_set,
-+	.is_generic = true,
-+};
-+
-+static struct pinctrl_desc tegra_pmc_pctl_desc = {
-+	.pctlops = &tegra_io_pad_pinctrl_ops,
-+	.confops = &tegra_io_pad_pinconf_ops,
-+};
-+
-+static int tegra_pmc_pinctrl_init(struct tegra_pmc *pmc)
-+{
-+	int err = 0;
-+
-+	if (!pmc->soc->num_pin_descs)
-+		return 0;
-+
-+	tegra_pmc_pctl_desc.name = dev_name(pmc->dev);
-+	tegra_pmc_pctl_desc.pins = pmc->soc->pin_descs;
-+	tegra_pmc_pctl_desc.npins = pmc->soc->num_pin_descs;
-+
-+	pmc->pctl_dev = devm_pinctrl_register(pmc->dev, &tegra_pmc_pctl_desc,
-+					      pmc);
-+	if (IS_ERR(pmc->pctl_dev)) {
-+		err = PTR_ERR(pmc->pctl_dev);
-+		dev_err(pmc->dev, "unable to register pinctrl, %d\n", err);
-+	}
-+
-+	return err;
-+}
-+
- static int tegra_pmc_probe(struct platform_device *pdev)
- {
- 	void __iomem *base;
-@@ -1475,18 +1619,27 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 
- 	err = register_restart_handler(&tegra_pmc_restart_handler);
- 	if (err) {
--		debugfs_remove(pmc->debugfs);
- 		dev_err(&pdev->dev, "unable to register restart handler, %d\n",
- 			err);
--		return err;
-+		goto cleanup_debugfs;
- 	}
- 
-+	err = tegra_pmc_pinctrl_init(pmc);
-+	if (err)
-+		goto cleanup_restart_handler;
-+
- 	mutex_lock(&pmc->powergates_lock);
- 	iounmap(pmc->base);
- 	pmc->base = base;
- 	mutex_unlock(&pmc->powergates_lock);
- 
- 	return 0;
-+
-+cleanup_restart_handler:
-+	unregister_restart_handler(&tegra_pmc_restart_handler);
-+cleanup_debugfs:
-+	debugfs_remove(pmc->debugfs);
-+	return err;
- }
- 
- #if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
-@@ -1576,6 +1729,8 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.has_gpu_clamps = false,
- 	.num_io_pads = 0,
- 	.io_pads = NULL,
-+	.num_pin_descs = 0,
-+	.pin_descs = NULL,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1615,6 +1770,8 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.has_impl_33v_pwr = false,
- 	.num_io_pads = 0,
- 	.io_pads = NULL,
-+	.num_pin_descs = 0,
-+	.pin_descs = NULL,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1658,6 +1815,8 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.has_impl_33v_pwr = false,
- 	.num_io_pads = 0,
- 	.io_pads = NULL,
-+	.num_pin_descs = 0,
-+	.pin_descs = NULL,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1704,6 +1863,12 @@ static const u8 tegra124_cpu_powergates[] = {
- 		.name	= (_name),			\
- 	})
- 
-+#define TEGRA_IO_PIN_DESC(_id, _dpd, _voltage, _name)	\
-+	((struct pinctrl_pin_desc) {			\
-+		.number = (_id),			\
-+		.name	= (_name)			\
-+	})
-+
- #define TEGRA124_IO_PAD_TABLE(_pad)					\
- 	/* .id                          .dpd    .voltage  .name	*/	\
- 	_pad(TEGRA_IO_PAD_AUDIO,	17,	UINT_MAX, "audio"),	\
-@@ -1741,6 +1906,10 @@ static const struct tegra_io_pad_soc tegra124_io_pads[] = {
- 	TEGRA124_IO_PAD_TABLE(TEGRA_IO_PAD)
- };
- 
-+static const struct pinctrl_pin_desc tegra124_pin_descs[] = {
-+	TEGRA124_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
-+};
-+
- static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.num_powergates = ARRAY_SIZE(tegra124_powergates),
- 	.powergates = tegra124_powergates,
-@@ -1751,6 +1920,8 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.has_impl_33v_pwr = false,
- 	.num_io_pads = ARRAY_SIZE(tegra124_io_pads),
- 	.io_pads = tegra124_io_pads,
-+	.num_pin_descs = ARRAY_SIZE(tegra124_pin_descs),
-+	.pin_descs = tegra124_pin_descs,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1835,6 +2006,10 @@ static const struct tegra_io_pad_soc tegra210_io_pads[] = {
- 	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PAD)
- };
- 
-+static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
-+	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
-+};
-+
- static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.num_powergates = ARRAY_SIZE(tegra210_powergates),
- 	.powergates = tegra210_powergates,
-@@ -1846,6 +2021,8 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.needs_mbist_war = true,
- 	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
- 	.io_pads = tegra210_io_pads,
-+	.num_pin_descs = ARRAY_SIZE(tegra210_pin_descs),
-+	.pin_descs = tegra210_pin_descs,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1896,6 +2073,10 @@ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
- 	TEGRA186_IO_PAD_TABLE(TEGRA_IO_PAD)
- };
- 
-+static const struct pinctrl_pin_desc tegra186_pin_descs[] = {
-+	TEGRA186_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
-+};
-+
- static const struct tegra_pmc_regs tegra186_pmc_regs = {
- 	.scratch0 = 0x2000,
- 	.dpd_req = 0x74,
-@@ -1949,6 +2130,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.has_impl_33v_pwr = true,
- 	.num_io_pads = ARRAY_SIZE(tegra186_io_pads),
- 	.io_pads = tegra186_io_pads,
-+	.num_pin_descs = ARRAY_SIZE(tegra186_pin_descs),
-+	.pin_descs = tegra186_pin_descs,
- 	.regs = &tegra186_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers!
+Jon
+
 -- 
-2.7.4
+nvpublic
