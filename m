@@ -1,33 +1,58 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: REGRESSION: [PATCH] mmc: tegra: Use sdhci_pltfm_clk_get_max_clock
-Date: Fri, 13 Jul 2018 15:04:13 +0100
-Message-ID: <cd24b840-3509-1c03-373b-85026c01b0f7@nvidia.com>
-References: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
- <CAPDyKFoip8gFssftJKzVHD9PAk+j=Z1CTo=0uY9cGASzW8VRJg@mail.gmail.com>
- <1531446183.5479.14.camel@toradex.com>
- <20180713155541.286425e9@dhcp-10-21-25-168>
+Subject: Re: NVIDIA Tegra changes for v4.19-rc1
+Date: Fri, 13 Jul 2018 15:09:32 +0100
+Message-ID: <97fada59-feb7-e102-6a7f-9d6b871aec86@nvidia.com>
+References: <20180712154128.22705-1-thierry.reding@gmail.com>
+ <CAOesGMiJ9Mt6nCfZ5SrkKQHPcb1tO4O+xNmKwgWdeF1AQn8FTQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180713155541.286425e9@dhcp-10-21-25-168>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAOesGMiJ9Mt6nCfZ5SrkKQHPcb1tO4O+xNmKwgWdeF1AQn8FTQ@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Stefan Agner <stefan.agner@toradex.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "adrian.hunter@intel.com" <adrian.hunter@intel.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, ARM-SoC Maintainers <arm@kernel.org>, Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 13/07/18 13:55, Aapo Vienamo wrote:
-> This happens because sdhci_pltfm_clk_get_max_clock() does not actually
-> return the maximum clock rate but the current one, leading to smaller
-> clock rates on some platforms. I'll send a patch that fixes this for
-> sdhci-tegra. Although this raises the question whether the current
-> behaviour of sdhci_pltfm_clk_get_max_clock() is desirable or not.
+On 12/07/18 17:01, Olof Johansson wrote:
+> Hi,
+> 
+> On Thu, Jul 12, 2018 at 8:41 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>> Hi ARM SoC maintainers,
+>>
+>> Here's the set of Tegra-related pull requests for v4.19-rc1. I'm sending
+>> these a week earlier than usual because I will be on vacation for the
+>> next two weeks. During my absence, Jon Hunter will be taking the helm.
+>> Unfortunately he doesn't have access to the kernel.org repository, so if
+>> anything comes up he may have to send patches to you directly. That said
+>> I don't expect any issues with these pull requests. They've all soaked
+>> in linux-next for a little while and I've done my regular sanity builds
+>> and didn't see any issues.
+> 
+> Sounds good. Jon, we're OK with merging from a github repo or similar
+> as well, if you have more than a few patches. Please re-send them to
+> arm@kernel.org with your sign-off when you have something (it's a lot
+> easier than if you just cc us on an acked-by, since gmail+imap doesn't
+> pop the whole thread over into my arm@ folder. :)
+> 
+> We can even host a rebasing/staging/temporary branch for you in case
+> you want something to be in -next but might not be 100% that it should
+> go in, if needed -- just let us know.
 
-Agree. There is something not right here. 
+Great. Thanks. Probably unlikely but you never know.
 
-Cheers,
+Cheers!
 Jon
 
 -- 
