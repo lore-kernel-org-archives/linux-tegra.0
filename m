@@ -1,81 +1,194 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: RFC: tegra2/tegra3 automotive part changes
-Date: Fri, 13 Jul 2018 13:51:31 +0100
-Message-ID: <9c0ee90e-6608-e57c-aba7-3feccde33b29@codethink.co.uk>
-References: <3916c0ea-964e-42ab-8bfd-8e8edc5110ee@codethink.co.uk>
- <fecd5597-1b04-6409-b87c-5cda54d43ce0@wwwdotorg.org>
- <4f215c76-6539-1130-6c1f-75f0a3df068a@codethink.co.uk>
- <8f050541-6b4c-34ed-2462-066313156180@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+Subject: Re: REGRESSION: [PATCH] mmc: tegra: Use
+ sdhci_pltfm_clk_get_max_clock
+Date: Fri, 13 Jul 2018 15:55:41 +0300
+Message-ID: <20180713155541.286425e9@dhcp-10-21-25-168>
+References: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
+        <CAPDyKFoip8gFssftJKzVHD9PAk+j=Z1CTo=0uY9cGASzW8VRJg@mail.gmail.com>
+        <1531446183.5479.14.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <8f050541-6b4c-34ed-2462-066313156180@nvidia.com>
-Content-Language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Terry Hu <kejia.hu@codethink.co.uk>, Device Tree list <devicetree@vger.kernel.org>, jorgesanjuan <jorge.sanjuan@codethink.co.uk>, Thomas Preston <thomas.preston@codethink.co.uk>, linux-tegra <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Beth White <beth.white@codethink.co.uk>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1531446183.5479.14.camel@toradex.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Stefan Agner <stefan.agner@toradex.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "adrian.hunter@intel.com" <adrian.hunter@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTMvMDcvMTggMTA6NTgsIEpvbiBIdW50ZXIgd3JvdGU6Cj4gCj4gT24gMTMvMDcvMTggMTA6
-NDEsIEJlbiBEb29rcyB3cm90ZToKPj4gT24gMTIvMDcvMTggMTY6NTYsIFN0ZXBoZW4gV2FycmVu
-IHdyb3RlOgo+Pj4gT24gMDcvMTIvMjAxOCAwNzozNiBBTSwgQmVuIERvb2tzIHdyb3RlOgo+Pj4+
-IEhlbGxvLCB3ZSBhcmUgbG9va2luZyBhdCB1cC1zdHJlYW1pbmcgc29tZSBvZiB0aGUgd29yayB3
-ZSBoYXZlCj4+Pj4gZG9uZSBvbiB0aGUgdGVncmEyIGFuZCB0ZWdyYTMgYXV0b21vdGl2ZSBkZXZp
-Y2VzLiBUaGUgYXV0b21vdGl2ZQo+Pj4+IGdyYWRlIGRldmljZXMgYXJlIGNsb3NlIHRoZSBjb21t
-ZXJjaWFsIHBhcnRzIHNvIHdlIHdvdWxkIGxpa2UgdG8KPj4+PiBkaXNjdXNzIHRoZSBjb3JlIGNo
-YW5nZXMgYmVmb3JlIHN1Ym1pdHRpbmcuCj4+Pj4KPj4+PiBUaGUgY2hhbmdlcyBhcmUgbW9zdGx5
-IHdpdGggdGhpbmdzIGxpa2UgdGhlIGNsb2NrIHNldHVwIGFuZCBhCj4+Pj4gZmV3IHBlcmlwaGVy
-YWwgcXVpcmtzIChJSVJDIHRoZXNlIGFyZSBtb3N0bHkgTU1DKS4KPj4+Pgo+Pj4+IFdlIGFyZSBw
-cm9wb3NpbmcgdG8gY2hhbmdlIHRoZSBkZXZpY2UtdHJlZSBwcm9wZXJ0aWVzIGZvciB0aGUgcm9v
-dAo+Pj4+IG5vZGUgYW5kIGFueSBvdGhlciBhZmZlY3RlZCBkZXZpY2VzIGZyb20gIm52aWRpYSx0
-ZWdyYVhYIiB0byBhIG5ldwo+Pj4+ICJudmlkaWEsdGVncmFYWGEiLiBXZSB3b3VsZCB3ZWxjb21l
-IGRpc2N1c3Npb24gb24gd2hldGhlciB0byB1cGRhdGUKPj4+PiBhbGwgdGhlIGRldmljZXMgYXQg
-dGhlIHN0YXJ0Cj4+Pj4KPj4+PiBBbiBleGFtcGxlIG9mIHRlZ3JhMzBhLmR0c2k6Cj4+Pj4KPj4+
-PiAjaW5jbHVkZSAidGVncmEzMC5kdHNpIgo+Pj4+Cj4+Pj4gLyB7Cj4+Pj4gIMKgwqDCoMKgwqDC
-oMKgwqAgY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmEzMGEiOwo+Pj4+Cj4+Pj4gIMKgwqDCoMKg
-wqDCoMKgwqAgY2xvY2tANjAwMDYwMDAgewo+Pj4+ICDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBjb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTMwYS1jYXIiOwo+Pj4+ICDCoMKgwqDC
-oMKgwqDCoMKgIH07Cj4+Pj4gfQo+Pj4KPj4+IFRoaXMgZG9lc24ndCBzb3VuZCByaWdodC4gQXV0
-byBhbmQgY29tbWVyY2lhbCBwYXJ0cyBhcmUgaWRlbnRpY2FsIEFGQUlLOyBpdCdzIGp1c3QgcXVh
-bGlmaWNhdGlvbiBkaWZmZXJlbmNlcy4gSGVuY2UgYXQgbW9zdCB5b3UnZCBhZGQgYW4gZXh0cmEg
-Y29tcGF0aWJsZSB2YWx1ZSBhbmQgbm90IHJlbW92ZSB0aGUgb2xkIG9uZS4gQmV0dGVyIG1pZ2h0
-IGJlIHRvIGRldGVjdCB0aGlzIGF0IHJ1bi10aW1lIGZyb20gdGhlIGZ1c2VzLiBJIHRoaW5rIHdl
-IGFscmVhZHkgZG8gc29tZSBvZiB0aGF0IGFscmVhZHk7IHNlYXJjaCBmb3Igc3BlZWRvIHJlbGF0
-ZWQgY29kZSBpbiBhcmNoL2FybS9tYWNoLXRlZ3JhLy4KPj4KPj4gVGhlIG52aWRpYSBwZGsgZm9y
-IHRoZSBhdXRvbW90aXZlIGRpZG4ndCBzZXQgdGhlIGNsb2NrcyB1cCBpbiB0aGUKPj4gc2FtZSB3
-YXkgYW5kIHdlIHdoZXJlIHRvbGQgdGhhdCB0aGVyZSBhcmUgY2VydGFpbiBjbG9jayByZXN0cmlj
-dGlvbnMKPj4gZm9yIHRoZSBhdXRvbW90aXZlIHBhcnRzIHRoYXQgdGhlIGNvbW1lcmNpYWwgb25l
-cyBkbyBub3QgaGF2ZS4gU29tZSBvZgo+PiB0aGlzIGNhbWUgZnJvbSBpbnRlcm5hbCBkaXNjdXNz
-aW9ucyB3aXRoIG52aWRpYSBhbmQgTkRBJ2QgZGF0YXNoZWV0cwo+PiBzbyBJIGRvbid0IGtub3cg
-aG93IG11Y2ggYWN0dWFsIGRhdGEgSSBjYW4gc2hhcmUuCj4+Cj4+IFRvIGdldCB0aGUgNC40IGtl
-cm5lbCB0byBiZSBzaW1pbGFyIGVub3VnaCB0byB3b3JrIHdpdGggdGhlIHRlZ3JhMzBhCj4+IHdl
-IGhhZCB0byBkbyBzb21lIGNoYW5nZXMgdG8gdGhlIGNsb2NrIGluaXRpYWxpc2F0aW9uLiBGb3Ig
-dGhpbmdzCj4+IGxpa2UgdGhlIGNsb2NrIEkgYW0gbm90IHN1cmUgaWYgbGVhdmluZyBhIHRlZ3Jh
-MzAtY2FyIGluIHRoZXJlIHdvdWxkCj4+IGJlIGEgZ29vZCBpZGVhLCBpdCBtYXkgYm9vdCBidXQg
-cHJvYmFibHkgd29uJ3QgYmUgc3RhYmxlLgo+Pgo+PiBGb3IgdGhlIGZ1c2VzLCBpcyB0aGUgZnVz
-ZSBkcml2ZXIgdXAgZWFybHkgZW5vdWdoIHRvIGFsbG93IHRoZSBjbG9jawo+PiBkcml2ZXIgY291
-bGQgdXNlIHRoaXM/IG90aGVyd2lzZSBJIHRoaW5rIHRoZSBkZXZpY2UtdHJlZSBjaGFuZ2Ugd291
-bGQKPj4gYmUgdGhlIG9ubHkgd2F5LiBJJ20gbm90IHN1cmUgaWYgSSBoYXZlIHRoZSBpbmZvcm1h
-dGlvbiB0byBoYW5kIG9uCj4+IGhvdyB0byBkaWZmZXJlbnRpYXRlIHRoZSB0ZWdyYTMwIGFuZCB0
-ZWdyYTIwLgo+IAo+IEl0IHNob3VsZCBiZSwgaWYgeW91IHNlZSBkcml2ZXJzL3NvYy90ZWdyYS9m
-dXNlL2Z1c2UtdGVncmEuYyB0aGVyZSBpcyBhbgo+ICdlYXJseV9pbml0Y2FsbCh0ZWdyYV9pbml0
-X2Z1c2UpJyBhbmQgdGhlcmUgaXMgYSAndGVncmFfZnVzZV9yZWFkX2Vhcmx5KCknCj4gZnVuY3Rp
-b24gdGhhdCBjYW4gYmUgdXNlZC4KCk9rLCBJJ3ZlIHRyaWVkIGxvb2tpbmcgdGhyb3VnaCBhbGwg
-dGhlIGRhdGEtc2hlZXRzIEkgaGF2ZSBhbmQgSSBjYW4ndApmaW5kIGFueSBkYXRhIG9uIHdoaWNo
-IGZ1c2UtYml0cyB3b3VsZCBiZSBuZWVkZWQgdG8gaWRlbnRpZnkgdGhlIHR3bwp2ZXJzaW9ucy4g
-RG9lcyBhbnlvbmUgZWxzZSBrbm93IHdoZXJlIHRvIGxvb2s/CgotLSAKQmVuIERvb2tzCQkJCWh0
-dHA6Ly93d3cuY29kZXRoaW5rLmNvLnVrLwpTZW5pb3IgRW5naW5lZXIJCQkJQ29kZXRoaW5rIC0g
-UHJvdmlkaW5nIEdlbml1cwoKaHR0cHM6Ly93d3cuY29kZXRoaW5rLmNvLnVrL3ByaXZhY3kuaHRt
-bAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
-YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
-LWtlcm5lbAo=
+On Fri, 13 Jul 2018 01:43:05 +0000
+Marcel Ziswiler <marcel.ziswiler@toradex.com> wrote:
+
+> On Mon, 2018-07-02 at 15:16 +0200, Ulf Hansson wrote:
+> > On 4 June 2018 at 17:35, Aapo Vienamo <avienamo@nvidia.com> wrote:  
+> > > The sdhci get_max_clock callback is set to
+> > > sdhci_pltfm_clk_get_max_clock
+> > > and tegra_sdhci_get_max_clock is removed. It appears that the
+> > > shdci-tegra specific callback was originally introduced due to the
+> > > requirement that the host clock has to be twice the bus clock on
+> > > DDR50
+> > > mode. As far as I can tell the only effect the removal has on DDR50
+> > > mode
+> > > is in cases where the parent clock is unable to supply the
+> > > requested
+> > > clock rate, causing the DDR50 mode to run at a lower frequency.
+> > > Currently the DDR50 mode isn't enabled on any of the SoCs and would
+> > > also
+> > > require configuring the SDHCI clock divider register to function
+> > > properly.
+> > > 
+> > > The problem with tegra_sdhci_get_max_clock is that it divides the
+> > > clock
+> > > rate by two and thus artificially limits the maximum frequency of
+> > > faster
+> > > signaling modes which don't have the host-bus frequency ratio
+> > > requirement
+> > > of DDR50 such as SDR104 and HS200. Furthermore, the call to
+> > > clk_round_rate() may return an error which isn't handled by
+> > > tegra_sdhci_get_max_clock.
+> > > 
+> > > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>  
+> > 
+> > Thanks, applied for next!
+> > 
+> > Kind regards
+> > Uffe
+> >   
+> > > ---
+> > >  drivers/mmc/host/sdhci-tegra.c | 15 ++-------------
+> > >  1 file changed, 2 insertions(+), 13 deletions(-)
+> > > 
+> > > diff --git a/drivers/mmc/host/sdhci-tegra.c
+> > > b/drivers/mmc/host/sdhci-tegra.c
+> > > index 970d38f6..c8745b5 100644
+> > > --- a/drivers/mmc/host/sdhci-tegra.c
+> > > +++ b/drivers/mmc/host/sdhci-tegra.c
+> > > @@ -234,17 +234,6 @@ static void
+> > > tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+> > >         sdhci_set_uhs_signaling(host, timing);
+> > >  }
+> > > 
+> > > -static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host
+> > > *host)
+> > > -{
+> > > -       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> > > -
+> > > -       /*
+> > > -        * DDR modes require the host to run at double the card
+> > > frequency, so
+> > > -        * the maximum rate we can support is half of the module
+> > > input clock.
+> > > -        */
+> > > -       return clk_round_rate(pltfm_host->clk, UINT_MAX) / 2;
+> > > -}
+> > > -
+> > >  static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned
+> > > int tap)
+> > >  {
+> > >         u32 reg;
+> > > @@ -309,7 +298,7 @@ static const struct sdhci_ops tegra_sdhci_ops =
+> > > {
+> > >         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+> > >         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+> > >         .voltage_switch = tegra_sdhci_voltage_switch,
+> > > -       .get_max_clock = tegra_sdhci_get_max_clock,
+> > > +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+> > >  };
+> > > 
+> > >  static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
+> > > @@ -357,7 +346,7 @@ static const struct sdhci_ops
+> > > tegra114_sdhci_ops = {
+> > >         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+> > >         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+> > >         .voltage_switch = tegra_sdhci_voltage_switch,
+> > > -       .get_max_clock = tegra_sdhci_get_max_clock,
+> > > +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+> > >  };
+> > > 
+> > >  static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+> > > --
+> > > 2.7.4  
+> 
+> Hm, for us this definitely breaks stuff. While using Stefan's patch set
+> [1] we may not only run eMMC at DDR52 even SD cards run stable at
+> SDR104. With this patch however the clock gets crippled to 45.33 resp.
+> 48 MHz always. This is observed both on Apalis/Colibri T30 as well as
+> Apalis TK1.
+> 
+> Current next-20180712 just with Stefan's 3 patches:
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc1/ios 
+> clock:          48000000 Hz
+> actual clock:   45333333 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      3 (8 bits)
+> timing spec:    8 (mmc DDR52)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk1
+> 
+> /dev/mmcblk1:
+>  Timing buffered disk reads: 218 MB in  3.03 seconds =  71.95 MB/sec
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc2/ios 
+> clock:          48000000 Hz
+> actual clock:   48000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      2 (4 bits)
+> timing spec:    6 (sd uhs SDR104)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk2
+> 
+> /dev/mmcblk2:
+>  Timing buffered disk reads:  66 MB in  3.06 seconds =  21.60 MB/sec
+> 
+> And with this patch reverted it works as expected again:
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc1/ios 
+> clock:          52000000 Hz
+> actual clock:   51000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      3 (8 bits)
+> timing spec:    8 (mmc DDR52)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk1
+> 
+> /dev/mmcblk1:
+>  Timing buffered disk reads: 240 MB in  3.02 seconds =  79.50 MB/sec
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc2/ios 
+> clock:          204000000 Hz
+> actual clock:   204000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      2 (4 bits)
+> timing spec:    6 (sd uhs SDR104)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk2
+> 
+> /dev/mmcblk2:
+>  Timing buffered disk reads: 258 MB in  3.01 seconds =  85.58 MB/sec
+> 
+> [1] https://lore.kernel.org/lkml/20180712073904.4705-1-stefan@agner.ch
+
+This happens because sdhci_pltfm_clk_get_max_clock() does not actually
+return the maximum clock rate but the current one, leading to smaller
+clock rates on some platforms. I'll send a patch that fixes this for
+sdhci-tegra. Although this raises the question whether the current
+behaviour of sdhci_pltfm_clk_get_max_clock() is desirable or not.
+
+ -Aapo
