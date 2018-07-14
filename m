@@ -1,15 +1,15 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 4/5] ARM: tegra: Device tree changes for v4.19-rc1
-Date: Sat, 14 Jul 2018 14:21:21 -0700
-Message-ID: <20180714212121.plis3ip3pp26jr6f@localhost>
+Subject: Re: [GIT PULL 2/5] memory: tegra: Changes for v4.19-rc1
+Date: Sat, 14 Jul 2018 14:40:29 -0700
+Message-ID: <20180714214029.hhiszluh7reeu45q@localhost>
 References: <20180712154128.22705-1-thierry.reding@gmail.com>
- <20180712154128.22705-5-thierry.reding@gmail.com>
+ <20180712154128.22705-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20180712154128.22705-5-thierry.reding@gmail.com>
+In-Reply-To: <20180712154128.22705-3-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,7 +23,7 @@ To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 05:41:27PM +0200, Thierry Reding wrote:
+On Thu, Jul 12, 2018 at 05:41:25PM +0200, Thierry Reding wrote:
 > Hi ARM SoC maintainers,
 > 
 > The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
@@ -32,23 +32,20 @@ On Thu, Jul 12, 2018 at 05:41:27PM +0200, Thierry Reding wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.19-arm-dt
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.19-memory
 > 
-> for you to fetch changes up to 5def854e370ff5c52172fb185932fdbffbf15692:
+> for you to fetch changes up to 1662dd641f596e5517c7b7a23e4f8ddf36741b5f:
 > 
->   ARM: dts: tegra: enable NAND flash on Colibri T20 (2018-07-09 18:51:01 +0200)
+>   memory: tegra: Correct driver probe order (2018-07-10 17:29:15 +0200)
 > 
 > Thanks,
 > Thierry
 > 
 > ----------------------------------------------------------------
-> ARM: tegra: Device tree changes for v4.19-rc1
+> memory: tegra: Changes for v4.19-rc1
 > 
-> This set of changes adds support for the memory client resets on Tegra20
-> and Tegra30, fixes a couple of issues on Cardhu and Tegra30 Apalis as
-> well as adds a unit-address to the memory node to avoid warnings from
-> DTC. To round things of, the NAND flash controller is enabled on the
-> Tegra20 Colibri.
+> This contains a single fix for the initialization order of the various
+> parts of the Tegra memory controller driver.
 
 Merged, thanks.
 
