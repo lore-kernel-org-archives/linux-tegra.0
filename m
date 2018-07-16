@@ -1,322 +1,532 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: REGRESSION: [PATCHv2 2/2] mm: Drop unneeded ->vm_ops checks
-Date: Mon, 16 Jul 2018 13:30:34 +0000
-Message-ID: <1531747832.6547.7.camel@toradex.com>
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: REGRESSION: [PATCHv2 2/2] mm: Drop unneeded ->vm_ops checks
+Date: Mon, 16 Jul 2018 17:20:49 +0300
+Message-ID: <20180716142049.ioa2irsd2d7sphn4@black.fi.intel.com>
 References: <20180712145626.41665-1-kirill.shutemov@linux.intel.com>
-         <20180712145626.41665-3-kirill.shutemov@linux.intel.com>
+ <20180712145626.41665-3-kirill.shutemov@linux.intel.com>
+ <1531747832.6547.7.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180712145626.41665-3-kirill.shutemov@linux.intel.com>
-Content-Language: en-US
-Content-ID: <55F4A5D41DF9C24491F352D46C9F7105@eurprd05.prod.outlook.com>
+Content-Disposition: inline
+In-Reply-To: <1531747832.6547.7.camel@toradex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "aarcange@redhat.com" <aarcange@redhat.com>, "dvyukov@google.com" <dvyukov@google.com>, "oleg@redhat.com" <oleg@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "aarcange@redhat.com" <aarcange@redhat.com>, "dvyukov@google.com" <dvyukov@google.com>, "oleg@redhat.com" <oleg@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTA3LTEyIGF0IDE3OjU2ICswMzAwLCBLaXJpbGwgQS4gU2h1dGVtb3Ygd3Jv
-dGU6DQo+IFdlIG5vdyBoYXZlIGFsbCBWTUFzIHdpdGggLT52bV9vcHMgc2V0IGFuZCBkb24ndCBu
-ZWVkIHRvIGNoZWNrIGl0IGZvcg0KPiBOVUxMIGV2ZXJ5d2hlcmUuDQo+IA0KPiBTaWduZWQtb2Zm
-LWJ5OiBLaXJpbGwgQS4gU2h1dGVtb3YgPGtpcmlsbC5zaHV0ZW1vdkBsaW51eC5pbnRlbC5jb20+
-DQo+IC0tLQ0KPiAgZnMvYmluZm10X2VsZi5jICAgICAgfCAgMiArLQ0KPiAgZnMva2VybmZzL2Zp
-bGUuYyAgICAgfCAyMCArLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgZnMvcHJvYy90YXNrX21tdS5j
-ICAgfCAgMiArLQ0KPiAga2VybmVsL2V2ZW50cy9jb3JlLmMgfCAgMiArLQ0KPiAga2VybmVsL2Zv
-cmsuYyAgICAgICAgfCAgMiArLQ0KPiAgbW0vZ3VwLmMgICAgICAgICAgICAgfCAgMiArLQ0KPiAg
-bW0vaHVnZXRsYi5jICAgICAgICAgfCAgMiArLQ0KPiAgbW0vbWVtb3J5LmMgICAgICAgICAgfCAx
-MiArKysrKystLS0tLS0NCj4gIG1tL21lbXBvbGljeS5jICAgICAgIHwgMTAgKysrKystLS0tLQ0K
-PiAgbW0vbW1hcC5jICAgICAgICAgICAgfCAxNCArKysrKysrLS0tLS0tLQ0KPiAgbW0vbXJlbWFw
-LmMgICAgICAgICAgfCAgMiArLQ0KPiAgbW0vbm9tbXUuYyAgICAgICAgICAgfCAgNCArKy0tDQo+
-ICAxMiBmaWxlcyBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCA0NiBkZWxldGlvbnMoLSkNCj4g
-DQo+IGRpZmYgLS1naXQgYS9mcy9iaW5mbXRfZWxmLmMgYi9mcy9iaW5mbXRfZWxmLmMNCj4gaW5k
-ZXggMGFjNDU2YjUyYmRkLi40ZjE3MWNmMjFiYzIgMTAwNjQ0DQo+IC0tLSBhL2ZzL2JpbmZtdF9l
-bGYuYw0KPiArKysgYi9mcy9iaW5mbXRfZWxmLmMNCj4gQEAgLTEzMDIsNyArMTMwMiw3IEBAIHN0
-YXRpYyBib29sIGFsd2F5c19kdW1wX3ZtYShzdHJ1Y3QNCj4gdm1fYXJlYV9zdHJ1Y3QgKnZtYSkN
-Cj4gIAkgKiBBc3N1bWUgdGhhdCBhbGwgdm1hcyB3aXRoIGEgLm5hbWUgb3Agc2hvdWxkIGFsd2F5
-cyBiZQ0KPiBkdW1wZWQuDQo+ICAJICogSWYgdGhpcyBjaGFuZ2VzLCBhIG5ldyB2bV9vcHMgZmll
-bGQgY2FuIGVhc2lseSBiZSBhZGRlZC4NCj4gIAkgKi8NCj4gLQlpZiAodm1hLT52bV9vcHMgJiYg
-dm1hLT52bV9vcHMtPm5hbWUgJiYgdm1hLT52bV9vcHMtDQo+ID5uYW1lKHZtYSkpDQo+ICsJaWYg
-KHZtYS0+dm1fb3BzLT5uYW1lICYmIHZtYS0+dm1fb3BzLT5uYW1lKHZtYSkpDQo+ICAJCXJldHVy
-biB0cnVlOw0KPiAgDQo+ICAJLyoNCj4gZGlmZiAtLWdpdCBhL2ZzL2tlcm5mcy9maWxlLmMgYi9m
-cy9rZXJuZnMvZmlsZS5jDQo+IGluZGV4IDIwMTVkOGM0NWU0YS4uOTQ1YzNkMzA2ZDhmIDEwMDY0
-NA0KPiAtLS0gYS9mcy9rZXJuZnMvZmlsZS5jDQo+ICsrKyBiL2ZzL2tlcm5mcy9maWxlLmMNCj4g
-QEAgLTMzNiw5ICszMzYsNiBAQCBzdGF0aWMgdm9pZCBrZXJuZnNfdm1hX29wZW4oc3RydWN0IHZt
-X2FyZWFfc3RydWN0DQo+ICp2bWEpDQo+ICAJc3RydWN0IGZpbGUgKmZpbGUgPSB2bWEtPnZtX2Zp
-bGU7DQo+ICAJc3RydWN0IGtlcm5mc19vcGVuX2ZpbGUgKm9mID0ga2VybmZzX29mKGZpbGUpOw0K
-PiAgDQo+IC0JaWYgKCFvZi0+dm1fb3BzKQ0KPiAtCQlyZXR1cm47DQo+IC0NCj4gIAlpZiAoIWtl
-cm5mc19nZXRfYWN0aXZlKG9mLT5rbikpDQo+ICAJCXJldHVybjsNCj4gIA0KPiBAQCAtMzU0LDkg
-KzM1MSw2IEBAIHN0YXRpYyB2bV9mYXVsdF90IGtlcm5mc192bWFfZmF1bHQoc3RydWN0DQo+IHZt
-X2ZhdWx0ICp2bWYpDQo+ICAJc3RydWN0IGtlcm5mc19vcGVuX2ZpbGUgKm9mID0ga2VybmZzX29m
-KGZpbGUpOw0KPiAgCXZtX2ZhdWx0X3QgcmV0Ow0KPiAgDQo+IC0JaWYgKCFvZi0+dm1fb3BzKQ0K
-PiAtCQlyZXR1cm4gVk1fRkFVTFRfU0lHQlVTOw0KPiAtDQo+ICAJaWYgKCFrZXJuZnNfZ2V0X2Fj
-dGl2ZShvZi0+a24pKQ0KPiAgCQlyZXR1cm4gVk1fRkFVTFRfU0lHQlVTOw0KPiAgDQo+IEBAIC0z
-NzQsOSArMzY4LDYgQEAgc3RhdGljIHZtX2ZhdWx0X3Qga2VybmZzX3ZtYV9wYWdlX21rd3JpdGUo
-c3RydWN0DQo+IHZtX2ZhdWx0ICp2bWYpDQo+ICAJc3RydWN0IGtlcm5mc19vcGVuX2ZpbGUgKm9m
-ID0ga2VybmZzX29mKGZpbGUpOw0KPiAgCXZtX2ZhdWx0X3QgcmV0Ow0KPiAgDQo+IC0JaWYgKCFv
-Zi0+dm1fb3BzKQ0KPiAtCQlyZXR1cm4gVk1fRkFVTFRfU0lHQlVTOw0KPiAtDQo+ICAJaWYgKCFr
-ZXJuZnNfZ2V0X2FjdGl2ZShvZi0+a24pKQ0KPiAgCQlyZXR1cm4gVk1fRkFVTFRfU0lHQlVTOw0K
-PiAgDQo+IEBAIC0zOTcsOSArMzg4LDYgQEAgc3RhdGljIGludCBrZXJuZnNfdm1hX2FjY2Vzcyhz
-dHJ1Y3QNCj4gdm1fYXJlYV9zdHJ1Y3QgKnZtYSwgdW5zaWduZWQgbG9uZyBhZGRyLA0KPiAgCXN0
-cnVjdCBrZXJuZnNfb3Blbl9maWxlICpvZiA9IGtlcm5mc19vZihmaWxlKTsNCj4gIAlpbnQgcmV0
-Ow0KPiAgDQo+IC0JaWYgKCFvZi0+dm1fb3BzKQ0KPiAtCQlyZXR1cm4gLUVJTlZBTDsNCj4gLQ0K
-PiAgCWlmICgha2VybmZzX2dldF9hY3RpdmUob2YtPmtuKSkNCj4gIAkJcmV0dXJuIC1FSU5WQUw7
-DQo+ICANCj4gQEAgLTQxOSw5ICs0MDcsNiBAQCBzdGF0aWMgaW50IGtlcm5mc192bWFfc2V0X3Bv
-bGljeShzdHJ1Y3QNCj4gdm1fYXJlYV9zdHJ1Y3QgKnZtYSwNCj4gIAlzdHJ1Y3Qga2VybmZzX29w
-ZW5fZmlsZSAqb2YgPSBrZXJuZnNfb2YoZmlsZSk7DQo+ICAJaW50IHJldDsNCj4gIA0KPiAtCWlm
-ICghb2YtPnZtX29wcykNCj4gLQkJcmV0dXJuIDA7DQo+IC0NCj4gIAlpZiAoIWtlcm5mc19nZXRf
-YWN0aXZlKG9mLT5rbikpDQo+ICAJCXJldHVybiAtRUlOVkFMOw0KPiAgDQo+IEBAIC00NDAsOSAr
-NDI1LDYgQEAgc3RhdGljIHN0cnVjdCBtZW1wb2xpY3kNCj4gKmtlcm5mc192bWFfZ2V0X3BvbGlj
-eShzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSwNCj4gIAlzdHJ1Y3Qga2VybmZzX29wZW5fZmls
-ZSAqb2YgPSBrZXJuZnNfb2YoZmlsZSk7DQo+ICAJc3RydWN0IG1lbXBvbGljeSAqcG9sOw0KPiAg
-DQo+IC0JaWYgKCFvZi0+dm1fb3BzKQ0KPiAtCQlyZXR1cm4gdm1hLT52bV9wb2xpY3k7DQo+IC0N
-Cj4gIAlpZiAoIWtlcm5mc19nZXRfYWN0aXZlKG9mLT5rbikpDQo+ICAJCXJldHVybiB2bWEtPnZt
-X3BvbGljeTsNCj4gIA0KPiBAQCAtNTExLDcgKzQ5Myw3IEBAIHN0YXRpYyBpbnQga2VybmZzX2Zv
-cF9tbWFwKHN0cnVjdCBmaWxlICpmaWxlLA0KPiBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkN
-Cj4gIAkgKiBTbyBlcnJvciBpZiBzb21lb25lIGlzIHRyeWluZyB0byB1c2UgY2xvc2UuDQo+ICAJ
-ICovDQo+ICAJcmMgPSAtRUlOVkFMOw0KPiAtCWlmICh2bWEtPnZtX29wcyAmJiB2bWEtPnZtX29w
-cy0+Y2xvc2UpDQo+ICsJaWYgKHZtYS0+dm1fb3BzLT5jbG9zZSkNCj4gIAkJZ290byBvdXRfcHV0
-Ow0KPiAgDQo+ICAJcmMgPSAwOw0KPiBkaWZmIC0tZ2l0IGEvZnMvcHJvYy90YXNrX21tdS5jIGIv
-ZnMvcHJvYy90YXNrX21tdS5jDQo+IGluZGV4IGU5Njc5MDE2MjcxZi4uZTk1OTYyMzEyM2U0IDEw
-MDY0NA0KPiAtLS0gYS9mcy9wcm9jL3Rhc2tfbW11LmMNCj4gKysrIGIvZnMvcHJvYy90YXNrX21t
-dS5jDQo+IEBAIC0zMjYsNyArMzI2LDcgQEAgc2hvd19tYXBfdm1hKHN0cnVjdCBzZXFfZmlsZSAq
-bSwgc3RydWN0DQo+IHZtX2FyZWFfc3RydWN0ICp2bWEsIGludCBpc19waWQpDQo+ICAJCWdvdG8g
-ZG9uZTsNCj4gIAl9DQo+ICANCj4gLQlpZiAodm1hLT52bV9vcHMgJiYgdm1hLT52bV9vcHMtPm5h
-bWUpIHsNCj4gKwlpZiAodm1hLT52bV9vcHMtPm5hbWUpIHsNCj4gIAkJbmFtZSA9IHZtYS0+dm1f
-b3BzLT5uYW1lKHZtYSk7DQo+ICAJCWlmIChuYW1lKQ0KPiAgCQkJZ290byBkb25lOw0KPiBkaWZm
-IC0tZ2l0IGEva2VybmVsL2V2ZW50cy9jb3JlLmMgYi9rZXJuZWwvZXZlbnRzL2NvcmUuYw0KPiBp
-bmRleCA4ZjA0MzRhOTk1MWEuLjJlMzU0MDFhNWM2OCAxMDA2NDQNCj4gLS0tIGEva2VybmVsL2V2
-ZW50cy9jb3JlLmMNCj4gKysrIGIva2VybmVsL2V2ZW50cy9jb3JlLmMNCj4gQEAgLTcyNjksNyAr
-NzI2OSw3IEBAIHN0YXRpYyB2b2lkIHBlcmZfZXZlbnRfbW1hcF9ldmVudChzdHJ1Y3QNCj4gcGVy
-Zl9tbWFwX2V2ZW50ICptbWFwX2V2ZW50KQ0KPiAgDQo+ICAJCWdvdG8gZ290X25hbWU7DQo+ICAJ
-fSBlbHNlIHsNCj4gLQkJaWYgKHZtYS0+dm1fb3BzICYmIHZtYS0+dm1fb3BzLT5uYW1lKSB7DQo+
-ICsJCWlmICh2bWEtPnZtX29wcy0+bmFtZSkgew0KPiAgCQkJbmFtZSA9IChjaGFyICopIHZtYS0+
-dm1fb3BzLT5uYW1lKHZtYSk7DQo+ICAJCQlpZiAobmFtZSkNCj4gIAkJCQlnb3RvIGNweV9uYW1l
-Ow0KPiBkaWZmIC0tZ2l0IGEva2VybmVsL2ZvcmsuYyBiL2tlcm5lbC9mb3JrLmMNCj4gaW5kZXgg
-OTQ0MGQ2MWI5MjVjLi5lNWU3YTIyMGExMjQgMTAwNjQ0DQo+IC0tLSBhL2tlcm5lbC9mb3JrLmMN
-Cj4gKysrIGIva2VybmVsL2ZvcmsuYw0KPiBAQCAtNTE5LDcgKzUxOSw3IEBAIHN0YXRpYyBfX2xh
-dGVudF9lbnRyb3B5IGludCBkdXBfbW1hcChzdHJ1Y3QNCj4gbW1fc3RydWN0ICptbSwNCj4gIAkJ
-aWYgKCEodG1wLT52bV9mbGFncyAmIFZNX1dJUEVPTkZPUkspKQ0KPiAgCQkJcmV0dmFsID0gY29w
-eV9wYWdlX3JhbmdlKG1tLCBvbGRtbSwgbXBudCk7DQo+ICANCj4gLQkJaWYgKHRtcC0+dm1fb3Bz
-ICYmIHRtcC0+dm1fb3BzLT5vcGVuKQ0KPiArCQlpZiAodG1wLT52bV9vcHMtPm9wZW4pDQo+ICAJ
-CQl0bXAtPnZtX29wcy0+b3Blbih0bXApOw0KPiAgDQo+ICAJCWlmIChyZXR2YWwpDQo+IGRpZmYg
-LS1naXQgYS9tbS9ndXAuYyBiL21tL2d1cC5jDQo+IGluZGV4IGI3MGQ3YmE3Y2MxMy4uYjczMjc2
-OGVkM2FjIDEwMDY0NA0KPiAtLS0gYS9tbS9ndXAuYw0KPiArKysgYi9tbS9ndXAuYw0KPiBAQCAt
-MzEsNyArMzEsNyBAQCBzdGF0aWMgc3RydWN0IHBhZ2UgKm5vX3BhZ2VfdGFibGUoc3RydWN0DQo+
-IHZtX2FyZWFfc3RydWN0ICp2bWEsDQo+ICAJICogQnV0IHdlIGNhbiBvbmx5IG1ha2UgdGhpcyBv
-cHRpbWl6YXRpb24gd2hlcmUgYSBob2xlIHdvdWxkDQo+IHN1cmVseQ0KPiAgCSAqIGJlIHplcm8t
-ZmlsbGVkIGlmIGhhbmRsZV9tbV9mYXVsdCgpIGFjdHVhbGx5IGRpZCBoYW5kbGUNCj4gaXQuDQo+
-ICAJICovDQo+IC0JaWYgKChmbGFncyAmIEZPTExfRFVNUCkgJiYgKCF2bWEtPnZtX29wcyB8fCAh
-dm1hLT52bV9vcHMtDQo+ID5mYXVsdCkpDQo+ICsJaWYgKChmbGFncyAmIEZPTExfRFVNUCkgJiYg
-IXZtYS0+dm1fb3BzLT5mYXVsdCkNCj4gIAkJcmV0dXJuIEVSUl9QVFIoLUVGQVVMVCk7DQo+ICAJ
-cmV0dXJuIE5VTEw7DQo+ICB9DQo+IGRpZmYgLS1naXQgYS9tbS9odWdldGxiLmMgYi9tbS9odWdl
-dGxiLmMNCj4gaW5kZXggMDM5ZGRiYzU3NGU5Li4yMDY1YWNjNWE2YWEgMTAwNjQ0DQo+IC0tLSBh
-L21tL2h1Z2V0bGIuYw0KPiArKysgYi9tbS9odWdldGxiLmMNCj4gQEAgLTYzNyw3ICs2MzcsNyBA
-QCBFWFBPUlRfU1lNQk9MX0dQTChsaW5lYXJfaHVnZXBhZ2VfaW5kZXgpOw0KPiAgICovDQo+ICB1
-bnNpZ25lZCBsb25nIHZtYV9rZXJuZWxfcGFnZXNpemUoc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2
-bWEpDQo+ICB7DQo+IC0JaWYgKHZtYS0+dm1fb3BzICYmIHZtYS0+dm1fb3BzLT5wYWdlc2l6ZSkN
-Cj4gKwlpZiAodm1hLT52bV9vcHMtPnBhZ2VzaXplKQ0KPiAgCQlyZXR1cm4gdm1hLT52bV9vcHMt
-PnBhZ2VzaXplKHZtYSk7DQo+ICAJcmV0dXJuIFBBR0VfU0laRTsNCj4gIH0NCj4gZGlmZiAtLWdp
-dCBhL21tL21lbW9yeS5jIGIvbW0vbWVtb3J5LmMNCj4gaW5kZXggNzIwNmE2MzQyNzBiLi4wMmZi
-ZWYyYmQwMjQgMTAwNjQ0DQo+IC0tLSBhL21tL21lbW9yeS5jDQo+ICsrKyBiL21tL21lbW9yeS5j
-DQo+IEBAIC03NjgsNyArNzY4LDcgQEAgc3RhdGljIHZvaWQgcHJpbnRfYmFkX3B0ZShzdHJ1Y3Qg
-dm1fYXJlYV9zdHJ1Y3QNCj4gKnZtYSwgdW5zaWduZWQgbG9uZyBhZGRyLA0KPiAgCQkgKHZvaWQg
-KilhZGRyLCB2bWEtPnZtX2ZsYWdzLCB2bWEtPmFub25fdm1hLA0KPiBtYXBwaW5nLCBpbmRleCk7
-DQo+ICAJcHJfYWxlcnQoImZpbGU6JXBEIGZhdWx0OiVwZiBtbWFwOiVwZiByZWFkcGFnZTolcGZc
-biIsDQo+ICAJCSB2bWEtPnZtX2ZpbGUsDQo+IC0JCSB2bWEtPnZtX29wcyA/IHZtYS0+dm1fb3Bz
-LT5mYXVsdCA6IE5VTEwsDQo+ICsJCSB2bWEtPnZtX29wcy0+ZmF1bHQsDQo+ICAJCSB2bWEtPnZt
-X2ZpbGUgPyB2bWEtPnZtX2ZpbGUtPmZfb3AtPm1tYXAgOiBOVUxMLA0KPiAgCQkgbWFwcGluZyA/
-IG1hcHBpbmctPmFfb3BzLT5yZWFkcGFnZSA6IE5VTEwpOw0KPiAgCWR1bXBfc3RhY2soKTsNCj4g
-QEAgLTgyNSw3ICs4MjUsNyBAQCBzdHJ1Y3QgcGFnZSAqX3ZtX25vcm1hbF9wYWdlKHN0cnVjdA0K
-PiB2bV9hcmVhX3N0cnVjdCAqdm1hLCB1bnNpZ25lZCBsb25nIGFkZHIsDQo+ICAJaWYgKElTX0VO
-QUJMRUQoQ09ORklHX0FSQ0hfSEFTX1BURV9TUEVDSUFMKSkgew0KPiAgCQlpZiAobGlrZWx5KCFw
-dGVfc3BlY2lhbChwdGUpKSkNCj4gIAkJCWdvdG8gY2hlY2tfcGZuOw0KPiAtCQlpZiAodm1hLT52
-bV9vcHMgJiYgdm1hLT52bV9vcHMtPmZpbmRfc3BlY2lhbF9wYWdlKQ0KPiArCQlpZiAodm1hLT52
-bV9vcHMtPmZpbmRfc3BlY2lhbF9wYWdlKQ0KPiAgCQkJcmV0dXJuIHZtYS0+dm1fb3BzLT5maW5k
-X3NwZWNpYWxfcGFnZSh2bWEsDQo+IGFkZHIpOw0KPiAgCQlpZiAodm1hLT52bV9mbGFncyAmIChW
-TV9QRk5NQVAgfCBWTV9NSVhFRE1BUCkpDQo+ICAJCQlyZXR1cm4gTlVMTDsNCj4gQEAgLTI0MDQs
-NyArMjQwNCw3IEBAIHN0YXRpYyB2b2lkIGZhdWx0X2RpcnR5X3NoYXJlZF9wYWdlKHN0cnVjdA0K
-PiB2bV9hcmVhX3N0cnVjdCAqdm1hLA0KPiAgew0KPiAgCXN0cnVjdCBhZGRyZXNzX3NwYWNlICpt
-YXBwaW5nOw0KPiAgCWJvb2wgZGlydGllZDsNCj4gLQlib29sIHBhZ2VfbWt3cml0ZSA9IHZtYS0+
-dm1fb3BzICYmIHZtYS0+dm1fb3BzLQ0KPiA+cGFnZV9ta3dyaXRlOw0KPiArCWJvb2wgcGFnZV9t
-a3dyaXRlID0gdm1hLT52bV9vcHMtPnBhZ2VfbWt3cml0ZTsNCj4gIA0KPiAgCWRpcnRpZWQgPSBz
-ZXRfcGFnZV9kaXJ0eShwYWdlKTsNCj4gIAlWTV9CVUdfT05fUEFHRShQYWdlQW5vbihwYWdlKSwg
-cGFnZSk7DQo+IEBAIC0yNjQ4LDcgKzI2NDgsNyBAQCBzdGF0aWMgaW50IHdwX3Bmbl9zaGFyZWQo
-c3RydWN0IHZtX2ZhdWx0ICp2bWYpDQo+ICB7DQo+ICAJc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2
-bWEgPSB2bWYtPnZtYTsNCj4gIA0KPiAtCWlmICh2bWEtPnZtX29wcyAmJiB2bWEtPnZtX29wcy0+
-cGZuX21rd3JpdGUpIHsNCj4gKwlpZiAodm1hLT52bV9vcHMtPnBmbl9ta3dyaXRlKSB7DQo+ICAJ
-CWludCByZXQ7DQo+ICANCj4gIAkJcHRlX3VubWFwX3VubG9jayh2bWYtPnB0ZSwgdm1mLT5wdGwp
-Ow0KPiBAQCAtMjY2OSw3ICsyNjY5LDcgQEAgc3RhdGljIGludCB3cF9wYWdlX3NoYXJlZChzdHJ1
-Y3Qgdm1fZmF1bHQgKnZtZikNCj4gIA0KPiAgCWdldF9wYWdlKHZtZi0+cGFnZSk7DQo+ICANCj4g
-LQlpZiAodm1hLT52bV9vcHMgJiYgdm1hLT52bV9vcHMtPnBhZ2VfbWt3cml0ZSkgew0KPiArCWlm
-ICh2bWEtPnZtX29wcy0+cGFnZV9ta3dyaXRlKSB7DQo+ICAJCWludCB0bXA7DQo+ICANCj4gIAkJ
-cHRlX3VubWFwX3VubG9jayh2bWYtPnB0ZSwgdm1mLT5wdGwpOw0KPiBAQCAtNDQzOSw3ICs0NDM5
-LDcgQEAgaW50IF9fYWNjZXNzX3JlbW90ZV92bShzdHJ1Y3QgdGFza19zdHJ1Y3QgKnRzaywNCj4g
-c3RydWN0IG1tX3N0cnVjdCAqbW0sDQo+ICAJCQl2bWEgPSBmaW5kX3ZtYShtbSwgYWRkcik7DQo+
-ICAJCQlpZiAoIXZtYSB8fCB2bWEtPnZtX3N0YXJ0ID4gYWRkcikNCj4gIAkJCQlicmVhazsNCj4g
-LQkJCWlmICh2bWEtPnZtX29wcyAmJiB2bWEtPnZtX29wcy0+YWNjZXNzKQ0KPiArCQkJaWYgKHZt
-YS0+dm1fb3BzLT5hY2Nlc3MpDQo+ICAJCQkJcmV0ID0gdm1hLT52bV9vcHMtPmFjY2Vzcyh2bWEs
-IGFkZHIsDQo+IGJ1ZiwNCj4gIAkJCQkJCQkgIGxlbiwNCj4gd3JpdGUpOw0KPiAgCQkJaWYgKHJl
-dCA8PSAwKQ0KPiBkaWZmIC0tZ2l0IGEvbW0vbWVtcG9saWN5LmMgYi9tbS9tZW1wb2xpY3kuYw0K
-PiBpbmRleCA5YWM0OWVmMTdiNGUuLmYwZmNmNzBiY2VjNyAxMDA2NDQNCj4gLS0tIGEvbW0vbWVt
-cG9saWN5LmMNCj4gKysrIGIvbW0vbWVtcG9saWN5LmMNCj4gQEAgLTY1MSwxMyArNjUxLDEzIEBA
-IHN0YXRpYyBpbnQgdm1hX3JlcGxhY2VfcG9saWN5KHN0cnVjdA0KPiB2bV9hcmVhX3N0cnVjdCAq
-dm1hLA0KPiAgCXByX2RlYnVnKCJ2bWEgJWx4LSVseC8lbHggdm1fb3BzICVwIHZtX2ZpbGUgJXAg
-c2V0X3BvbGljeQ0KPiAlcFxuIiwNCj4gIAkJIHZtYS0+dm1fc3RhcnQsIHZtYS0+dm1fZW5kLCB2
-bWEtPnZtX3Bnb2ZmLA0KPiAgCQkgdm1hLT52bV9vcHMsIHZtYS0+dm1fZmlsZSwNCj4gLQkJIHZt
-YS0+dm1fb3BzID8gdm1hLT52bV9vcHMtPnNldF9wb2xpY3kgOiBOVUxMKTsNCj4gKwkJIHZtYS0+
-dm1fb3BzLT5zZXRfcG9saWN5KTsNCj4gIA0KPiAgCW5ldyA9IG1wb2xfZHVwKHBvbCk7DQo+ICAJ
-aWYgKElTX0VSUihuZXcpKQ0KPiAgCQlyZXR1cm4gUFRSX0VSUihuZXcpOw0KPiAgDQo+IC0JaWYg
-KHZtYS0+dm1fb3BzICYmIHZtYS0+dm1fb3BzLT5zZXRfcG9saWN5KSB7DQo+ICsJaWYgKHZtYS0+
-dm1fb3BzLT5zZXRfcG9saWN5KSB7DQo+ICAJCWVyciA9IHZtYS0+dm1fb3BzLT5zZXRfcG9saWN5
-KHZtYSwgbmV3KTsNCj4gIAkJaWYgKGVycikNCj4gIAkJCWdvdG8gZXJyX291dDsNCj4gQEAgLTg0
-NSw3ICs4NDUsNyBAQCBzdGF0aWMgbG9uZyBkb19nZXRfbWVtcG9saWN5KGludCAqcG9saWN5LA0K
-PiBub2RlbWFza190ICpubWFzaywNCj4gIAkJCXVwX3JlYWQoJm1tLT5tbWFwX3NlbSk7DQo+ICAJ
-CQlyZXR1cm4gLUVGQVVMVDsNCj4gIAkJfQ0KPiAtCQlpZiAodm1hLT52bV9vcHMgJiYgdm1hLT52
-bV9vcHMtPmdldF9wb2xpY3kpDQo+ICsJCWlmICh2bWEtPnZtX29wcy0+Z2V0X3BvbGljeSkNCj4g
-IAkJCXBvbCA9IHZtYS0+dm1fb3BzLT5nZXRfcG9saWN5KHZtYSwgYWRkcik7DQo+ICAJCWVsc2UN
-Cj4gIAkJCXBvbCA9IHZtYS0+dm1fcG9saWN5Ow0KPiBAQCAtMTYxNyw3ICsxNjE3LDcgQEAgc3Ry
-dWN0IG1lbXBvbGljeSAqX19nZXRfdm1hX3BvbGljeShzdHJ1Y3QNCj4gdm1fYXJlYV9zdHJ1Y3Qg
-KnZtYSwNCj4gIAlzdHJ1Y3QgbWVtcG9saWN5ICpwb2wgPSBOVUxMOw0KPiAgDQo+ICAJaWYgKHZt
-YSkgew0KPiAtCQlpZiAodm1hLT52bV9vcHMgJiYgdm1hLT52bV9vcHMtPmdldF9wb2xpY3kpIHsN
-Cj4gKwkJaWYgKHZtYS0+dm1fb3BzLT5nZXRfcG9saWN5KSB7DQo+ICAJCQlwb2wgPSB2bWEtPnZt
-X29wcy0+Z2V0X3BvbGljeSh2bWEsIGFkZHIpOw0KPiAgCQl9IGVsc2UgaWYgKHZtYS0+dm1fcG9s
-aWN5KSB7DQo+ICAJCQlwb2wgPSB2bWEtPnZtX3BvbGljeTsNCj4gQEAgLTE2NjMsNyArMTY2Myw3
-IEBAIGJvb2wgdm1hX3BvbGljeV9tb2Yoc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEpDQo+ICB7
-DQo+ICAJc3RydWN0IG1lbXBvbGljeSAqcG9sOw0KPiAgDQo+IC0JaWYgKHZtYS0+dm1fb3BzICYm
-IHZtYS0+dm1fb3BzLT5nZXRfcG9saWN5KSB7DQo+ICsJaWYgKHZtYS0+dm1fb3BzLT5nZXRfcG9s
-aWN5KSB7DQo+ICAJCWJvb2wgcmV0ID0gZmFsc2U7DQo+ICANCj4gIAkJcG9sID0gdm1hLT52bV9v
-cHMtPmdldF9wb2xpY3kodm1hLCB2bWEtPnZtX3N0YXJ0KTsNCj4gZGlmZiAtLWdpdCBhL21tL21t
-YXAuYyBiL21tL21tYXAuYw0KPiBpbmRleCA1MjdjMTdmMzE2MzUuLjVhZGFmOWY5Yjk0MSAxMDA2
-NDQNCj4gLS0tIGEvbW0vbW1hcC5jDQo+ICsrKyBiL21tL21tYXAuYw0KPiBAQCAtMTc3LDcgKzE3
-Nyw3IEBAIHN0YXRpYyBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnJlbW92ZV92bWEoc3RydWN0DQo+
-IHZtX2FyZWFfc3RydWN0ICp2bWEpDQo+ICAJc3RydWN0IHZtX2FyZWFfc3RydWN0ICpuZXh0ID0g
-dm1hLT52bV9uZXh0Ow0KPiAgDQo+ICAJbWlnaHRfc2xlZXAoKTsNCj4gLQlpZiAodm1hLT52bV9v
-cHMgJiYgdm1hLT52bV9vcHMtPmNsb3NlKQ0KPiArCWlmICh2bWEtPnZtX29wcy0+Y2xvc2UpDQo+
-ICAJCXZtYS0+dm1fb3BzLT5jbG9zZSh2bWEpOw0KPiAgCWlmICh2bWEtPnZtX2ZpbGUpDQo+ICAJ
-CWZwdXQodm1hLT52bV9maWxlKTsNCj4gQEAgLTk5OCw3ICs5OTgsNyBAQCBzdGF0aWMgaW5saW5l
-IGludCBpc19tZXJnZWFibGVfdm1hKHN0cnVjdA0KPiB2bV9hcmVhX3N0cnVjdCAqdm1hLA0KPiAg
-CQlyZXR1cm4gMDsNCj4gIAlpZiAodm1hLT52bV9maWxlICE9IGZpbGUpDQo+ICAJCXJldHVybiAw
-Ow0KPiAtCWlmICh2bWEtPnZtX29wcyAmJiB2bWEtPnZtX29wcy0+Y2xvc2UpDQo+ICsJaWYgKHZt
-YS0+dm1fb3BzLT5jbG9zZSkNCj4gIAkJcmV0dXJuIDA7DQo+ICAJaWYgKCFpc19tZXJnZWFibGVf
-dm1fdXNlcmZhdWx0ZmRfY3R4KHZtYSwNCj4gdm1fdXNlcmZhdWx0ZmRfY3R4KSkNCj4gIAkJcmV0
-dXJuIDA7DQo+IEBAIC0xNjM4LDcgKzE2MzgsNyBAQCBpbnQgdm1hX3dhbnRzX3dyaXRlbm90aWZ5
-KHN0cnVjdCB2bV9hcmVhX3N0cnVjdA0KPiAqdm1hLCBwZ3Byb3RfdCB2bV9wYWdlX3Byb3QpDQo+
-ICAJCXJldHVybiAwOw0KPiAgDQo+ICAJLyogVGhlIGJhY2tlciB3aXNoZXMgdG8ga25vdyB3aGVu
-IHBhZ2VzIGFyZSBmaXJzdCB3cml0dGVuDQo+IHRvPyAqLw0KPiAtCWlmICh2bV9vcHMgJiYgKHZt
-X29wcy0+cGFnZV9ta3dyaXRlIHx8IHZtX29wcy0+cGZuX21rd3JpdGUpKQ0KPiArCWlmICh2bV9v
-cHMtPnBhZ2VfbWt3cml0ZSB8fCB2bV9vcHMtPnBmbl9ta3dyaXRlKQ0KPiAgCQlyZXR1cm4gMTsN
-Cj4gIA0KPiAgCS8qIFRoZSBvcGVuIHJvdXRpbmUgZGlkIHNvbWV0aGluZyB0byB0aGUgcHJvdGVj
-dGlvbnMgdGhhdA0KPiBwZ3Byb3RfbW9kaWZ5DQo+IEBAIC0yNjI0LDcgKzI2MjQsNyBAQCBpbnQg
-X19zcGxpdF92bWEoc3RydWN0IG1tX3N0cnVjdCAqbW0sIHN0cnVjdA0KPiB2bV9hcmVhX3N0cnVj
-dCAqdm1hLA0KPiAgCXN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqbmV3Ow0KPiAgCWludCBlcnI7DQo+
-ICANCj4gLQlpZiAodm1hLT52bV9vcHMgJiYgdm1hLT52bV9vcHMtPnNwbGl0KSB7DQo+ICsJaWYg
-KHZtYS0+dm1fb3BzLT5zcGxpdCkgew0KPiAgCQllcnIgPSB2bWEtPnZtX29wcy0+c3BsaXQodm1h
-LCBhZGRyKTsNCj4gIAkJaWYgKGVycikNCj4gIAkJCXJldHVybiBlcnI7DQo+IEBAIC0yNjU3LDcg
-KzI2NTcsNyBAQCBpbnQgX19zcGxpdF92bWEoc3RydWN0IG1tX3N0cnVjdCAqbW0sIHN0cnVjdA0K
-PiB2bV9hcmVhX3N0cnVjdCAqdm1hLA0KPiAgCWlmIChuZXctPnZtX2ZpbGUpDQo+ICAJCWdldF9m
-aWxlKG5ldy0+dm1fZmlsZSk7DQo+ICANCj4gLQlpZiAobmV3LT52bV9vcHMgJiYgbmV3LT52bV9v
-cHMtPm9wZW4pDQo+ICsJaWYgKG5ldy0+dm1fb3BzLT5vcGVuKQ0KPiAgCQluZXctPnZtX29wcy0+
-b3BlbihuZXcpOw0KPiAgDQo+ICAJaWYgKG5ld19iZWxvdykNCj4gQEAgLTI2NzEsNyArMjY3MSw3
-IEBAIGludCBfX3NwbGl0X3ZtYShzdHJ1Y3QgbW1fc3RydWN0ICptbSwgc3RydWN0DQo+IHZtX2Fy
-ZWFfc3RydWN0ICp2bWEsDQo+ICAJCXJldHVybiAwOw0KPiAgDQo+ICAJLyogQ2xlYW4gZXZlcnl0
-aGluZyB1cCBpZiB2bWFfYWRqdXN0IGZhaWxlZC4gKi8NCj4gLQlpZiAobmV3LT52bV9vcHMgJiYg
-bmV3LT52bV9vcHMtPmNsb3NlKQ0KPiArCWlmIChuZXctPnZtX29wcy0+Y2xvc2UpDQo+ICAJCW5l
-dy0+dm1fb3BzLT5jbG9zZShuZXcpOw0KPiAgCWlmIChuZXctPnZtX2ZpbGUpDQo+ICAJCWZwdXQo
-bmV3LT52bV9maWxlKTsNCj4gQEAgLTMyMzIsNyArMzIzMiw3IEBAIHN0cnVjdCB2bV9hcmVhX3N0
-cnVjdCAqY29weV92bWEoc3RydWN0DQo+IHZtX2FyZWFfc3RydWN0ICoqdm1hcCwNCj4gIAkJCWdv
-dG8gb3V0X2ZyZWVfbWVtcG9sOw0KPiAgCQlpZiAobmV3X3ZtYS0+dm1fZmlsZSkNCj4gIAkJCWdl
-dF9maWxlKG5ld192bWEtPnZtX2ZpbGUpOw0KPiAtCQlpZiAobmV3X3ZtYS0+dm1fb3BzICYmIG5l
-d192bWEtPnZtX29wcy0+b3BlbikNCj4gKwkJaWYgKG5ld192bWEtPnZtX29wcy0+b3BlbikNCj4g
-IAkJCW5ld192bWEtPnZtX29wcy0+b3BlbihuZXdfdm1hKTsNCj4gIAkJdm1hX2xpbmsobW0sIG5l
-d192bWEsIHByZXYsIHJiX2xpbmssIHJiX3BhcmVudCk7DQo+ICAJCSpuZWVkX3JtYXBfbG9ja3Mg
-PSBmYWxzZTsNCj4gZGlmZiAtLWdpdCBhL21tL21yZW1hcC5jIGIvbW0vbXJlbWFwLmMNCj4gaW5k
-ZXggNWMyZTE4NTA1Zjc1Li43YWIyMjJjMjgzZGUgMTAwNjQ0DQo+IC0tLSBhL21tL21yZW1hcC5j
-DQo+ICsrKyBiL21tL21yZW1hcC5jDQo+IEBAIC0zMDIsNyArMzAyLDcgQEAgc3RhdGljIHVuc2ln
-bmVkIGxvbmcgbW92ZV92bWEoc3RydWN0DQo+IHZtX2FyZWFfc3RydWN0ICp2bWEsDQo+ICAJCQkJ
-ICAgICBuZWVkX3JtYXBfbG9ja3MpOw0KPiAgCWlmIChtb3ZlZF9sZW4gPCBvbGRfbGVuKSB7DQo+
-ICAJCWVyciA9IC1FTk9NRU07DQo+IC0JfSBlbHNlIGlmICh2bWEtPnZtX29wcyAmJiB2bWEtPnZt
-X29wcy0+bXJlbWFwKSB7DQo+ICsJfSBlbHNlIGlmICh2bWEtPnZtX29wcy0+bXJlbWFwKSB7DQo+
-ICAJCWVyciA9IHZtYS0+dm1fb3BzLT5tcmVtYXAobmV3X3ZtYSk7DQo+ICAJfQ0KPiAgDQo+IGRp
-ZmYgLS1naXQgYS9tbS9ub21tdS5jIGIvbW0vbm9tbXUuYw0KPiBpbmRleCBmMDBmMjA5ODMzYWIu
-LjczZjY2ZTgxY2ZiMCAxMDA2NDQNCj4gLS0tIGEvbW0vbm9tbXUuYw0KPiArKysgYi9tbS9ub21t
-dS5jDQo+IEBAIC03NjQsNyArNzY0LDcgQEAgc3RhdGljIHZvaWQgZGVsZXRlX3ZtYV9mcm9tX21t
-KHN0cnVjdA0KPiB2bV9hcmVhX3N0cnVjdCAqdm1hKQ0KPiAgICovDQo+ICBzdGF0aWMgdm9pZCBk
-ZWxldGVfdm1hKHN0cnVjdCBtbV9zdHJ1Y3QgKm1tLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QNCj4g
-KnZtYSkNCj4gIHsNCj4gLQlpZiAodm1hLT52bV9vcHMgJiYgdm1hLT52bV9vcHMtPmNsb3NlKQ0K
-PiArCWlmICh2bWEtPnZtX29wcy0+Y2xvc2UpDQo+ICAJCXZtYS0+dm1fb3BzLT5jbG9zZSh2bWEp
-Ow0KPiAgCWlmICh2bWEtPnZtX2ZpbGUpDQo+ICAJCWZwdXQodm1hLT52bV9maWxlKTsNCj4gQEAg
-LTE0OTYsNyArMTQ5Niw3IEBAIGludCBzcGxpdF92bWEoc3RydWN0IG1tX3N0cnVjdCAqbW0sIHN0
-cnVjdA0KPiB2bV9hcmVhX3N0cnVjdCAqdm1hLA0KPiAgCQlyZWdpb24tPnZtX3Bnb2ZmID0gbmV3
-LT52bV9wZ29mZiArPSBucGFnZXM7DQo+ICAJfQ0KPiAgDQo+IC0JaWYgKG5ldy0+dm1fb3BzICYm
-IG5ldy0+dm1fb3BzLT5vcGVuKQ0KPiArCWlmIChuZXctPnZtX29wcy0+b3BlbikNCj4gIAkJbmV3
-LT52bV9vcHMtPm9wZW4obmV3KTsNCj4gIA0KPiAgCWRlbGV0ZV92bWFfZnJvbV9tbSh2bWEpOw0K
-DQpUb2RheSdzIC1uZXh0IG9uIEFwYWxpcyBUMzAgWzFdIGdpdmVzIHRoZSBmb2xsb3dpbmcgZXJy
-b3IgdXBvbiBib290Og0KDQpbICAgMTYuMTQ3NDk2XSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBO
-VUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQNCnZpcnR1YWwgYWRkcmVzcyAwMDAwMDAyYw0KWyAg
-IDE2LjE1NjE1Ml0gcGdkID0gODQzMDQ1YWYNClsgICAxNi4xNTg5ODZdIFswMDAwMDAyY10gKnBn
-ZD1mYWNkOTgzMQ0KWyAgIDE2LjE2MjU3OF0gSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDE3IFsjMV0g
-UFJFRU1QVCBTTVAgQVJNDQpbICAgMTYuMTY3OTcwXSBNb2R1bGVzIGxpbmtlZCBpbjoNClsgICAx
-Ni4xNzEwMzRdIENQVTogMiBQSUQ6IDQ0MiBDb21tOiBwb2xraXRkIE5vdCB0YWludGVkIDQuMTgu
-MC1yYzUtDQpuZXh0LTIwMTgwNzE2LWRpcnR5ICM3NQ0KWyAgIDE2LjE3OTExMV0gSGFyZHdhcmUg
-bmFtZTogTlZJRElBIFRlZ3JhIFNvQyAoRmxhdHRlbmVkIERldmljZSBUcmVlKQ0KWyAgIDE2LjE4
-NTM4Ml0gUEMgaXMgYXQgc2hvd19tYXBfdm1hLmNvbnN0cHJvcC4zKzB4YWMvMHgxNTgNClsgICAx
-Ni4xOTA2ODZdIExSIGlzIGF0IHNob3dfbWFwX3ZtYS5jb25zdHByb3AuMysweGE4LzB4MTU4DQpb
-ICAgMTYuMTk1OTg5XSBwYyA6IFs8YzAyYzQ5MDA+XSAgICBsciA6IFs8YzAyYzQ4ZmM+XSAgICBw
-c3I6IDgwMGUwMDEzDQpbICAgMTYuMjAyMjQzXSBzcCA6IGVjMDJkZTYwICBpcCA6IDAwMDAwM2Nl
-ICBmcCA6IGMwZjA5YTNjDQpbICAgMTYuMjA3NDU3XSByMTA6IGVjMDJkZjc4ICByOSA6IDAwMDAw
-MDAwICByOCA6IDAwMDAwMDAwDQpbICAgMTYuMjEyNjcyXSByNyA6IDAwMDAwMDAwICByNiA6IGVk
-YThlYzQ4ICByNSA6IDAwMDAwMDAwICByNCA6DQpjMGYwOWEzYw0KWyAgIDE2LjIxOTE4OF0gcjMg
-OiAwMDAwMDAwMCAgcjIgOiBlZDFkZjAwMCAgcjEgOiAwMDAwMDAyMCAgcjAgOg0KZWRhOGVjNDgN
-ClsgICAxNi4yMjU3MDVdIEZsYWdzOiBOemN2ICBJUlFzIG9uICBGSVFzIG9uICBNb2RlIFNWQ18z
-MiAgSVNBDQpBUk0gIFNlZ21lbnQgbm9uZQ0KWyAgIDE2LjIzMjgyOV0gQ29udHJvbDogMTBjNTM4
-N2QgIFRhYmxlOiBhYzAxODA0YSAgREFDOiAwMDAwMDA1MQ0KWyAgIDE2LjIzODU3M10gUHJvY2Vz
-cyBwb2xraXRkIChwaWQ6IDQ0Miwgc3RhY2sgbGltaXQgPSAweGMwZTgzY2U1KQ0KWyAgIDE2LjI0
-NDU3Ml0gU3RhY2s6ICgweGVjMDJkZTYwIHRvIDB4ZWMwMmUwMDApDQpbICAgMTYuMjQ4OTI4XSBk
-ZTYwOiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCBlZGE4ZWM0OA0KZWRhOGVj
-NDggYzBmMDlhM2MgMDAwMDAzYTYNClsgICAxNi4yNTcwOTddIGRlODA6IGVjZjQ2MzAwIDAwMDAw
-MDk2IDAwMDAwMDAwIGMwMmM0ZWZjIGVkYThlYzQ4DQowMDAwMDAwMCAwMDAwMDNhNiBjMDI4OTkw
-OA0KWyAgIDE2LjI2NTI4N10gZGVhMDogMDAwMDAwMGMgZWRhOGVjNzggZWNmNDYzMDAgMDAwMDAz
-ZjQgMDAwODExMTQNCmVkYThlYzYwIDAwMDAwMDAwIGMwZjA0YzQ4DQpbICAgMTYuMjczNDgyXSBk
-ZWMwOiBjMDI4OTU2YyAwMDAwMDQwMCBlYzAyZGY3OCAwMDAwMDAwMCAwMDA4MTEwOA0KMDAwMDA0
-MDAgMDAwMDAwMDAgYzAyNjNiMjANClsgICAxNi4yODE2NzFdIGRlZTA6IDViNGM5YTdjIDBlZTZi
-MjgwIDAwMDAzOWVhIDAwMDAwMDAwIGMwZjA0YzQ4DQo4YmIzZWM1NiBjMGYwNGM0OCBiZThjN2Ew
-MA0KWyAgIDE2LjI4OTg1M10gZGYwMDogZWNmNDYzMDggMDAwMDAwMDAgMDAwMDA3ZmYgYzBmMDRj
-NDggMDAwMDAwMDENCjAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwDQpbICAgMTYuMjk4MDM3XSBk
-ZjIwOiAwMDAwMDAwMCA4YmIzZWM1NiAwMDAwMzllYSA4YmIzZWM1NiBlY2Y0NjMwMA0KMDAwODEx
-MDggMDAwMDA0MDAgZWMwMmRmNzgNClsgICAxNi4zMDYyMTBdIGRmNDA6IDAwMDAwMDAwIDAwMDgx
-MTA4IDAwMDAwNDAwIGMwMjYzY2RjIGMwZjA0YzQ4DQpiNjg2YWM3OCAwMDAwMDVlOCBjMGYwNGM0
-OA0KWyAgIDE2LjMxNDM4MV0gZGY2MDogZWNmNDYzMDMgMDAwMDI0MDAgMDAwMDAwMDAgZWNmNDYz
-MDAgMDAwODExMDgNCmMwMjY0MWMwIDAwMDAyNDAwIDAwMDAwMDAwDQpbICAgMTYuMzIyNTQ5XSBk
-ZjgwOiAwMDAwMDAwMCA4YmIzZWM1NiAwMDAyMjY5OCBiNjg2YWM3OCAwMDAwMDVlOA0KMDAwMDAw
-MDMgYzAxMDEyMDQgZWMwMmMwMDANClsgICAxNi4zMzA3MThdIGRmYTA6IDAwMDAwMDAzIGMwMTAx
-MDAwIDAwMDIyNjk4IGI2ODZhYzc4IDAwMDAwMDA5DQowMDA4MTEwOCAwMDAwMDQwMCAwMDAwMDBj
-Mg0KWyAgIDE2LjMzODg4Nl0gZGZjMDogMDAwMjI2OTggYjY4NmFjNzggMDAwMDA1ZTggMDAwMDAw
-MDMgMDAwMDAwNGINCmJlOGM3YWY0IDAwMDAwMDAwIDAwMDAwMDAwDQpbICAgMTYuMzQ3MDUzXSBk
-ZmUwOiAwMDA0ZDFiMiBiZThjN2E4NCBiNjg2Yjk0YyBiNjg2YWM5OCAwMDBlMDAxMA0KMDAwMDAw
-MDkgMDAwMDAwMDAgMDAwMDAwMDANClsgICAxNi4zNTUyMzddIFs8YzAyYzQ5MDA+XSAoc2hvd19t
-YXBfdm1hLmNvbnN0cHJvcC4zKSBmcm9tDQpbPGMwMmM0ZWZjPl0gKHNob3dfcGlkX21hcCsweDEw
-LzB4MzQpICANClsgICAxNi4zNjM4NDZdIFs8YzAyYzRlZmM+XSAoc2hvd19waWRfbWFwKSBmcm9t
-IFs8YzAyODk5MDg+XQ0KKHNlcV9yZWFkKzB4MzljLzB4NGY0KQ0KWyAgIDE2LjM3MTI2NF0gWzxj
-MDI4OTkwOD5dIChzZXFfcmVhZCkgZnJvbSBbPGMwMjYzYjIwPl0NCihfX3Zmc19yZWFkKzB4MmMv
-MHgxNWMpDQpbICAgMTYuMzc4NDAxXSBbPGMwMjYzYjIwPl0gKF9fdmZzX3JlYWQpIGZyb20gWzxj
-MDI2M2NkYz5dDQoodmZzX3JlYWQrMHg4Yy8weDExMCkNClsgICAxNi4zODU1NDZdIFs8YzAyNjNj
-ZGM+XSAodmZzX3JlYWQpIGZyb20gWzxjMDI2NDFjMD5dDQooa3N5c19yZWFkKzB4NGMvMHhhYykN
-ClsgICAxNi4zOTI1MTldIFs8YzAyNjQxYzA+XSAoa3N5c19yZWFkKSBmcm9tIFs8YzAxMDEwMDA+
-XQ0KKHJldF9mYXN0X3N5c2NhbGwrMHgwLzB4NTQpDQpbICAgMTYuNDAwMDgzXSBFeGNlcHRpb24g
-c3RhY2soMHhlYzAyZGZhOCB0byAweGVjMDJkZmYwKQ0KWyAgIDE2LjQwNTEzNV0gZGZhMDogICAg
-ICAgICAgICAgICAgICAgMDAwMjI2OTggYjY4NmFjNzggMDAwMDAwMDkNCjAwMDgxMTA4IDAwMDAw
-NDAwIDAwMDAwMGMyDQpbICAgMTYuNDEzMzExXSBkZmMwOiAwMDAyMjY5OCBiNjg2YWM3OCAwMDAw
-MDVlOCAwMDAwMDAwMyAwMDAwMDA0Yg0KYmU4YzdhZjQgMDAwMDAwMDAgMDAwMDAwMDANClsgICAx
-Ni40MjE0ODVdIGRmZTA6IDAwMDRkMWIyIGJlOGM3YTg0IGI2ODZiOTRjIGI2ODZhYzk4DQpbICAg
-MTYuNDI2NTQyXSBDb2RlOiBlMWNkODBmMCBlNTk0NzAyMCBlYmZmZmI0ZiBlNTk0MzA0OCAoZTU5
-MzMwMmMpDQpbICAgMTYuNDMyNzM0XSAtLS1bIGVuZCB0cmFjZSA1ZGJmOTFjNjRkYTZiZDkxIF0t
-LS0NCg0KUmV2ZXJ0aW5nIHRoaXMgbWFrZXMgaXQgYmVoYXZlIGFzIGV4cGVjdGVkIGFnYWluLiBB
-bnlib2R5IGtub3dzIHdoYXQgaXMNCmdvaW5nIG9uPw0KDQpbMV0gaHR0cHM6Ly9naXQua2VybmVs
-Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvbmV4dC9saW51eC1uZXh0LmdpdA0KL3RyZWUv
-YXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1hcGFsaXMtZXZhbC5kdHM/aD1uZXh0LTIwMTgwNzE2
-DQotLSANCkJlc3QgcmVnYXJkcyAtIE1pdCBmcmV1bmRsaWNoZW4gR3LDvHNzZW4gLSBNZWlsbGV1
-cmVzIHNhbHV0YXRpb25zDQoNCk1hcmNlbCBaaXN3aWxlcg0KUGxhdGZvcm0gTWFuYWdlciBFbWJl
-ZGRlZCBMaW51eA0KDQpUb3JhZGV4IEFHDQpBbHRzYWdlbnN0cmFzc2UgNSB8IDYwNDggSG9ydy9M
-dXplcm4gfCBTd2l0emVybGFuZCB8IFQ6ICs0MSA0MSA1MDAgNDggMDANCihtYWluIGxpbmUpIHwg
-RGlyZWN0OiArNDEgNDEgNTAwIDQ4IDEw
+On Mon, Jul 16, 2018 at 01:30:34PM +0000, Marcel Ziswiler wrote:
+> On Thu, 2018-07-12 at 17:56 +0300, Kirill A. Shutemov wrote:
+> > We now have all VMAs with ->vm_ops set and don't need to check it for
+> > NULL everywhere.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > ---
+> >  fs/binfmt_elf.c      |  2 +-
+> >  fs/kernfs/file.c     | 20 +-------------------
+> >  fs/proc/task_mmu.c   |  2 +-
+> >  kernel/events/core.c |  2 +-
+> >  kernel/fork.c        |  2 +-
+> >  mm/gup.c             |  2 +-
+> >  mm/hugetlb.c         |  2 +-
+> >  mm/memory.c          | 12 ++++++------
+> >  mm/mempolicy.c       | 10 +++++-----
+> >  mm/mmap.c            | 14 +++++++-------
+> >  mm/mremap.c          |  2 +-
+> >  mm/nommu.c           |  4 ++--
+> >  12 files changed, 28 insertions(+), 46 deletions(-)
+> > 
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index 0ac456b52bdd..4f171cf21bc2 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -1302,7 +1302,7 @@ static bool always_dump_vma(struct
+> > vm_area_struct *vma)
+> >  	 * Assume that all vmas with a .name op should always be
+> > dumped.
+> >  	 * If this changes, a new vm_ops field can easily be added.
+> >  	 */
+> > -	if (vma->vm_ops && vma->vm_ops->name && vma->vm_ops-
+> > >name(vma))
+> > +	if (vma->vm_ops->name && vma->vm_ops->name(vma))
+> >  		return true;
+> >  
+> >  	/*
+> > diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+> > index 2015d8c45e4a..945c3d306d8f 100644
+> > --- a/fs/kernfs/file.c
+> > +++ b/fs/kernfs/file.c
+> > @@ -336,9 +336,6 @@ static void kernfs_vma_open(struct vm_area_struct
+> > *vma)
+> >  	struct file *file = vma->vm_file;
+> >  	struct kernfs_open_file *of = kernfs_of(file);
+> >  
+> > -	if (!of->vm_ops)
+> > -		return;
+> > -
+> >  	if (!kernfs_get_active(of->kn))
+> >  		return;
+> >  
+> > @@ -354,9 +351,6 @@ static vm_fault_t kernfs_vma_fault(struct
+> > vm_fault *vmf)
+> >  	struct kernfs_open_file *of = kernfs_of(file);
+> >  	vm_fault_t ret;
+> >  
+> > -	if (!of->vm_ops)
+> > -		return VM_FAULT_SIGBUS;
+> > -
+> >  	if (!kernfs_get_active(of->kn))
+> >  		return VM_FAULT_SIGBUS;
+> >  
+> > @@ -374,9 +368,6 @@ static vm_fault_t kernfs_vma_page_mkwrite(struct
+> > vm_fault *vmf)
+> >  	struct kernfs_open_file *of = kernfs_of(file);
+> >  	vm_fault_t ret;
+> >  
+> > -	if (!of->vm_ops)
+> > -		return VM_FAULT_SIGBUS;
+> > -
+> >  	if (!kernfs_get_active(of->kn))
+> >  		return VM_FAULT_SIGBUS;
+> >  
+> > @@ -397,9 +388,6 @@ static int kernfs_vma_access(struct
+> > vm_area_struct *vma, unsigned long addr,
+> >  	struct kernfs_open_file *of = kernfs_of(file);
+> >  	int ret;
+> >  
+> > -	if (!of->vm_ops)
+> > -		return -EINVAL;
+> > -
+> >  	if (!kernfs_get_active(of->kn))
+> >  		return -EINVAL;
+> >  
+> > @@ -419,9 +407,6 @@ static int kernfs_vma_set_policy(struct
+> > vm_area_struct *vma,
+> >  	struct kernfs_open_file *of = kernfs_of(file);
+> >  	int ret;
+> >  
+> > -	if (!of->vm_ops)
+> > -		return 0;
+> > -
+> >  	if (!kernfs_get_active(of->kn))
+> >  		return -EINVAL;
+> >  
+> > @@ -440,9 +425,6 @@ static struct mempolicy
+> > *kernfs_vma_get_policy(struct vm_area_struct *vma,
+> >  	struct kernfs_open_file *of = kernfs_of(file);
+> >  	struct mempolicy *pol;
+> >  
+> > -	if (!of->vm_ops)
+> > -		return vma->vm_policy;
+> > -
+> >  	if (!kernfs_get_active(of->kn))
+> >  		return vma->vm_policy;
+> >  
+> > @@ -511,7 +493,7 @@ static int kernfs_fop_mmap(struct file *file,
+> > struct vm_area_struct *vma)
+> >  	 * So error if someone is trying to use close.
+> >  	 */
+> >  	rc = -EINVAL;
+> > -	if (vma->vm_ops && vma->vm_ops->close)
+> > +	if (vma->vm_ops->close)
+> >  		goto out_put;
+> >  
+> >  	rc = 0;
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index e9679016271f..e959623123e4 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -326,7 +326,7 @@ show_map_vma(struct seq_file *m, struct
+> > vm_area_struct *vma, int is_pid)
+> >  		goto done;
+> >  	}
+> >  
+> > -	if (vma->vm_ops && vma->vm_ops->name) {
+> > +	if (vma->vm_ops->name) {
+> >  		name = vma->vm_ops->name(vma);
+> >  		if (name)
+> >  			goto done;
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index 8f0434a9951a..2e35401a5c68 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -7269,7 +7269,7 @@ static void perf_event_mmap_event(struct
+> > perf_mmap_event *mmap_event)
+> >  
+> >  		goto got_name;
+> >  	} else {
+> > -		if (vma->vm_ops && vma->vm_ops->name) {
+> > +		if (vma->vm_ops->name) {
+> >  			name = (char *) vma->vm_ops->name(vma);
+> >  			if (name)
+> >  				goto cpy_name;
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 9440d61b925c..e5e7a220a124 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -519,7 +519,7 @@ static __latent_entropy int dup_mmap(struct
+> > mm_struct *mm,
+> >  		if (!(tmp->vm_flags & VM_WIPEONFORK))
+> >  			retval = copy_page_range(mm, oldmm, mpnt);
+> >  
+> > -		if (tmp->vm_ops && tmp->vm_ops->open)
+> > +		if (tmp->vm_ops->open)
+> >  			tmp->vm_ops->open(tmp);
+> >  
+> >  		if (retval)
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index b70d7ba7cc13..b732768ed3ac 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -31,7 +31,7 @@ static struct page *no_page_table(struct
+> > vm_area_struct *vma,
+> >  	 * But we can only make this optimization where a hole would
+> > surely
+> >  	 * be zero-filled if handle_mm_fault() actually did handle
+> > it.
+> >  	 */
+> > -	if ((flags & FOLL_DUMP) && (!vma->vm_ops || !vma->vm_ops-
+> > >fault))
+> > +	if ((flags & FOLL_DUMP) && !vma->vm_ops->fault)
+> >  		return ERR_PTR(-EFAULT);
+> >  	return NULL;
+> >  }
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 039ddbc574e9..2065acc5a6aa 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -637,7 +637,7 @@ EXPORT_SYMBOL_GPL(linear_hugepage_index);
+> >   */
+> >  unsigned long vma_kernel_pagesize(struct vm_area_struct *vma)
+> >  {
+> > -	if (vma->vm_ops && vma->vm_ops->pagesize)
+> > +	if (vma->vm_ops->pagesize)
+> >  		return vma->vm_ops->pagesize(vma);
+> >  	return PAGE_SIZE;
+> >  }
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 7206a634270b..02fbef2bd024 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -768,7 +768,7 @@ static void print_bad_pte(struct vm_area_struct
+> > *vma, unsigned long addr,
+> >  		 (void *)addr, vma->vm_flags, vma->anon_vma,
+> > mapping, index);
+> >  	pr_alert("file:%pD fault:%pf mmap:%pf readpage:%pf\n",
+> >  		 vma->vm_file,
+> > -		 vma->vm_ops ? vma->vm_ops->fault : NULL,
+> > +		 vma->vm_ops->fault,
+> >  		 vma->vm_file ? vma->vm_file->f_op->mmap : NULL,
+> >  		 mapping ? mapping->a_ops->readpage : NULL);
+> >  	dump_stack();
+> > @@ -825,7 +825,7 @@ struct page *_vm_normal_page(struct
+> > vm_area_struct *vma, unsigned long addr,
+> >  	if (IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL)) {
+> >  		if (likely(!pte_special(pte)))
+> >  			goto check_pfn;
+> > -		if (vma->vm_ops && vma->vm_ops->find_special_page)
+> > +		if (vma->vm_ops->find_special_page)
+> >  			return vma->vm_ops->find_special_page(vma,
+> > addr);
+> >  		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
+> >  			return NULL;
+> > @@ -2404,7 +2404,7 @@ static void fault_dirty_shared_page(struct
+> > vm_area_struct *vma,
+> >  {
+> >  	struct address_space *mapping;
+> >  	bool dirtied;
+> > -	bool page_mkwrite = vma->vm_ops && vma->vm_ops-
+> > >page_mkwrite;
+> > +	bool page_mkwrite = vma->vm_ops->page_mkwrite;
+> >  
+> >  	dirtied = set_page_dirty(page);
+> >  	VM_BUG_ON_PAGE(PageAnon(page), page);
+> > @@ -2648,7 +2648,7 @@ static int wp_pfn_shared(struct vm_fault *vmf)
+> >  {
+> >  	struct vm_area_struct *vma = vmf->vma;
+> >  
+> > -	if (vma->vm_ops && vma->vm_ops->pfn_mkwrite) {
+> > +	if (vma->vm_ops->pfn_mkwrite) {
+> >  		int ret;
+> >  
+> >  		pte_unmap_unlock(vmf->pte, vmf->ptl);
+> > @@ -2669,7 +2669,7 @@ static int wp_page_shared(struct vm_fault *vmf)
+> >  
+> >  	get_page(vmf->page);
+> >  
+> > -	if (vma->vm_ops && vma->vm_ops->page_mkwrite) {
+> > +	if (vma->vm_ops->page_mkwrite) {
+> >  		int tmp;
+> >  
+> >  		pte_unmap_unlock(vmf->pte, vmf->ptl);
+> > @@ -4439,7 +4439,7 @@ int __access_remote_vm(struct task_struct *tsk,
+> > struct mm_struct *mm,
+> >  			vma = find_vma(mm, addr);
+> >  			if (!vma || vma->vm_start > addr)
+> >  				break;
+> > -			if (vma->vm_ops && vma->vm_ops->access)
+> > +			if (vma->vm_ops->access)
+> >  				ret = vma->vm_ops->access(vma, addr,
+> > buf,
+> >  							  len,
+> > write);
+> >  			if (ret <= 0)
+> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > index 9ac49ef17b4e..f0fcf70bcec7 100644
+> > --- a/mm/mempolicy.c
+> > +++ b/mm/mempolicy.c
+> > @@ -651,13 +651,13 @@ static int vma_replace_policy(struct
+> > vm_area_struct *vma,
+> >  	pr_debug("vma %lx-%lx/%lx vm_ops %p vm_file %p set_policy
+> > %p\n",
+> >  		 vma->vm_start, vma->vm_end, vma->vm_pgoff,
+> >  		 vma->vm_ops, vma->vm_file,
+> > -		 vma->vm_ops ? vma->vm_ops->set_policy : NULL);
+> > +		 vma->vm_ops->set_policy);
+> >  
+> >  	new = mpol_dup(pol);
+> >  	if (IS_ERR(new))
+> >  		return PTR_ERR(new);
+> >  
+> > -	if (vma->vm_ops && vma->vm_ops->set_policy) {
+> > +	if (vma->vm_ops->set_policy) {
+> >  		err = vma->vm_ops->set_policy(vma, new);
+> >  		if (err)
+> >  			goto err_out;
+> > @@ -845,7 +845,7 @@ static long do_get_mempolicy(int *policy,
+> > nodemask_t *nmask,
+> >  			up_read(&mm->mmap_sem);
+> >  			return -EFAULT;
+> >  		}
+> > -		if (vma->vm_ops && vma->vm_ops->get_policy)
+> > +		if (vma->vm_ops->get_policy)
+> >  			pol = vma->vm_ops->get_policy(vma, addr);
+> >  		else
+> >  			pol = vma->vm_policy;
+> > @@ -1617,7 +1617,7 @@ struct mempolicy *__get_vma_policy(struct
+> > vm_area_struct *vma,
+> >  	struct mempolicy *pol = NULL;
+> >  
+> >  	if (vma) {
+> > -		if (vma->vm_ops && vma->vm_ops->get_policy) {
+> > +		if (vma->vm_ops->get_policy) {
+> >  			pol = vma->vm_ops->get_policy(vma, addr);
+> >  		} else if (vma->vm_policy) {
+> >  			pol = vma->vm_policy;
+> > @@ -1663,7 +1663,7 @@ bool vma_policy_mof(struct vm_area_struct *vma)
+> >  {
+> >  	struct mempolicy *pol;
+> >  
+> > -	if (vma->vm_ops && vma->vm_ops->get_policy) {
+> > +	if (vma->vm_ops->get_policy) {
+> >  		bool ret = false;
+> >  
+> >  		pol = vma->vm_ops->get_policy(vma, vma->vm_start);
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > index 527c17f31635..5adaf9f9b941 100644
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -177,7 +177,7 @@ static struct vm_area_struct *remove_vma(struct
+> > vm_area_struct *vma)
+> >  	struct vm_area_struct *next = vma->vm_next;
+> >  
+> >  	might_sleep();
+> > -	if (vma->vm_ops && vma->vm_ops->close)
+> > +	if (vma->vm_ops->close)
+> >  		vma->vm_ops->close(vma);
+> >  	if (vma->vm_file)
+> >  		fput(vma->vm_file);
+> > @@ -998,7 +998,7 @@ static inline int is_mergeable_vma(struct
+> > vm_area_struct *vma,
+> >  		return 0;
+> >  	if (vma->vm_file != file)
+> >  		return 0;
+> > -	if (vma->vm_ops && vma->vm_ops->close)
+> > +	if (vma->vm_ops->close)
+> >  		return 0;
+> >  	if (!is_mergeable_vm_userfaultfd_ctx(vma,
+> > vm_userfaultfd_ctx))
+> >  		return 0;
+> > @@ -1638,7 +1638,7 @@ int vma_wants_writenotify(struct vm_area_struct
+> > *vma, pgprot_t vm_page_prot)
+> >  		return 0;
+> >  
+> >  	/* The backer wishes to know when pages are first written
+> > to? */
+> > -	if (vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite))
+> > +	if (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite)
+> >  		return 1;
+> >  
+> >  	/* The open routine did something to the protections that
+> > pgprot_modify
+> > @@ -2624,7 +2624,7 @@ int __split_vma(struct mm_struct *mm, struct
+> > vm_area_struct *vma,
+> >  	struct vm_area_struct *new;
+> >  	int err;
+> >  
+> > -	if (vma->vm_ops && vma->vm_ops->split) {
+> > +	if (vma->vm_ops->split) {
+> >  		err = vma->vm_ops->split(vma, addr);
+> >  		if (err)
+> >  			return err;
+> > @@ -2657,7 +2657,7 @@ int __split_vma(struct mm_struct *mm, struct
+> > vm_area_struct *vma,
+> >  	if (new->vm_file)
+> >  		get_file(new->vm_file);
+> >  
+> > -	if (new->vm_ops && new->vm_ops->open)
+> > +	if (new->vm_ops->open)
+> >  		new->vm_ops->open(new);
+> >  
+> >  	if (new_below)
+> > @@ -2671,7 +2671,7 @@ int __split_vma(struct mm_struct *mm, struct
+> > vm_area_struct *vma,
+> >  		return 0;
+> >  
+> >  	/* Clean everything up if vma_adjust failed. */
+> > -	if (new->vm_ops && new->vm_ops->close)
+> > +	if (new->vm_ops->close)
+> >  		new->vm_ops->close(new);
+> >  	if (new->vm_file)
+> >  		fput(new->vm_file);
+> > @@ -3232,7 +3232,7 @@ struct vm_area_struct *copy_vma(struct
+> > vm_area_struct **vmap,
+> >  			goto out_free_mempol;
+> >  		if (new_vma->vm_file)
+> >  			get_file(new_vma->vm_file);
+> > -		if (new_vma->vm_ops && new_vma->vm_ops->open)
+> > +		if (new_vma->vm_ops->open)
+> >  			new_vma->vm_ops->open(new_vma);
+> >  		vma_link(mm, new_vma, prev, rb_link, rb_parent);
+> >  		*need_rmap_locks = false;
+> > diff --git a/mm/mremap.c b/mm/mremap.c
+> > index 5c2e18505f75..7ab222c283de 100644
+> > --- a/mm/mremap.c
+> > +++ b/mm/mremap.c
+> > @@ -302,7 +302,7 @@ static unsigned long move_vma(struct
+> > vm_area_struct *vma,
+> >  				     need_rmap_locks);
+> >  	if (moved_len < old_len) {
+> >  		err = -ENOMEM;
+> > -	} else if (vma->vm_ops && vma->vm_ops->mremap) {
+> > +	} else if (vma->vm_ops->mremap) {
+> >  		err = vma->vm_ops->mremap(new_vma);
+> >  	}
+> >  
+> > diff --git a/mm/nommu.c b/mm/nommu.c
+> > index f00f209833ab..73f66e81cfb0 100644
+> > --- a/mm/nommu.c
+> > +++ b/mm/nommu.c
+> > @@ -764,7 +764,7 @@ static void delete_vma_from_mm(struct
+> > vm_area_struct *vma)
+> >   */
+> >  static void delete_vma(struct mm_struct *mm, struct vm_area_struct
+> > *vma)
+> >  {
+> > -	if (vma->vm_ops && vma->vm_ops->close)
+> > +	if (vma->vm_ops->close)
+> >  		vma->vm_ops->close(vma);
+> >  	if (vma->vm_file)
+> >  		fput(vma->vm_file);
+> > @@ -1496,7 +1496,7 @@ int split_vma(struct mm_struct *mm, struct
+> > vm_area_struct *vma,
+> >  		region->vm_pgoff = new->vm_pgoff += npages;
+> >  	}
+> >  
+> > -	if (new->vm_ops && new->vm_ops->open)
+> > +	if (new->vm_ops->open)
+> >  		new->vm_ops->open(new);
+> >  
+> >  	delete_vma_from_mm(vma);
+> 
+> Today's -next on Apalis T30 [1] gives the following error upon boot:
+> 
+> [   16.147496] Unable to handle kernel NULL pointer dereference at
+> virtual address 0000002c
+> [   16.156152] pgd = 843045af
+> [   16.158986] [0000002c] *pgd=facd9831
+> [   16.162578] Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+> [   16.167970] Modules linked in:
+> [   16.171034] CPU: 2 PID: 442 Comm: polkitd Not tainted 4.18.0-rc5-
+> next-20180716-dirty #75
+> [   16.179111] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [   16.185382] PC is at show_map_vma.constprop.3+0xac/0x158
+> [   16.190686] LR is at show_map_vma.constprop.3+0xa8/0x158
+> [   16.195989] pc : [<c02c4900>]    lr : [<c02c48fc>]    psr: 800e0013
+> [   16.202243] sp : ec02de60  ip : 000003ce  fp : c0f09a3c
+> [   16.207457] r10: ec02df78  r9 : 00000000  r8 : 00000000
+> [   16.212672] r7 : 00000000  r6 : eda8ec48  r5 : 00000000  r4 :
+> c0f09a3c
+> [   16.219188] r3 : 00000000  r2 : ed1df000  r1 : 00000020  r0 :
+> eda8ec48
+> [   16.225705] Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA
+> ARM  Segment none
+> [   16.232829] Control: 10c5387d  Table: ac01804a  DAC: 00000051
+> [   16.238573] Process polkitd (pid: 442, stack limit = 0xc0e83ce5)
+> [   16.244572] Stack: (0xec02de60 to 0xec02e000)
+> [   16.248928] de60: 00000000 00000000 00000000 00000000 eda8ec48
+> eda8ec48 c0f09a3c 000003a6
+> [   16.257097] de80: ecf46300 00000096 00000000 c02c4efc eda8ec48
+> 00000000 000003a6 c0289908
+> [   16.265287] dea0: 0000000c eda8ec78 ecf46300 000003f4 00081114
+> eda8ec60 00000000 c0f04c48
+> [   16.273482] dec0: c028956c 00000400 ec02df78 00000000 00081108
+> 00000400 00000000 c0263b20
+> [   16.281671] dee0: 5b4c9a7c 0ee6b280 000039ea 00000000 c0f04c48
+> 8bb3ec56 c0f04c48 be8c7a00
+> [   16.289853] df00: ecf46308 00000000 000007ff c0f04c48 00000001
+> 00000000 00000000 00000000
+> [   16.298037] df20: 00000000 8bb3ec56 000039ea 8bb3ec56 ecf46300
+> 00081108 00000400 ec02df78
+> [   16.306210] df40: 00000000 00081108 00000400 c0263cdc c0f04c48
+> b686ac78 000005e8 c0f04c48
+> [   16.314381] df60: ecf46303 00002400 00000000 ecf46300 00081108
+> c02641c0 00002400 00000000
+> [   16.322549] df80: 00000000 8bb3ec56 00022698 b686ac78 000005e8
+> 00000003 c0101204 ec02c000
+> [   16.330718] dfa0: 00000003 c0101000 00022698 b686ac78 00000009
+> 00081108 00000400 000000c2
+> [   16.338886] dfc0: 00022698 b686ac78 000005e8 00000003 0000004b
+> be8c7af4 00000000 00000000
+> [   16.347053] dfe0: 0004d1b2 be8c7a84 b686b94c b686ac98 000e0010
+> 00000009 00000000 00000000
+> [   16.355237] [<c02c4900>] (show_map_vma.constprop.3) from
+> [<c02c4efc>] (show_pid_map+0x10/0x34)  
+> [   16.363846] [<c02c4efc>] (show_pid_map) from [<c0289908>]
+> (seq_read+0x39c/0x4f4)
+> [   16.371264] [<c0289908>] (seq_read) from [<c0263b20>]
+> (__vfs_read+0x2c/0x15c)
+> [   16.378401] [<c0263b20>] (__vfs_read) from [<c0263cdc>]
+> (vfs_read+0x8c/0x110)
+> [   16.385546] [<c0263cdc>] (vfs_read) from [<c02641c0>]
+> (ksys_read+0x4c/0xac)
+> [   16.392519] [<c02641c0>] (ksys_read) from [<c0101000>]
+> (ret_fast_syscall+0x0/0x54)
+> [   16.400083] Exception stack(0xec02dfa8 to 0xec02dff0)
+> [   16.405135] dfa0:                   00022698 b686ac78 00000009
+> 00081108 00000400 000000c2
+> [   16.413311] dfc0: 00022698 b686ac78 000005e8 00000003 0000004b
+> be8c7af4 00000000 00000000
+> [   16.421485] dfe0: 0004d1b2 be8c7a84 b686b94c b686ac98
+> [   16.426542] Code: e1cd80f0 e5947020 ebfffb4f e5943048 (e593302c)
+> [   16.432734] ---[ end trace 5dbf91c64da6bd91 ]---
+> 
+> Reverting this makes it behave as expected again. Anybody knows what is
+> going on?
+
+Could you check if this fixup helps?
+
+diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+index 225d1c58d2de..553262999564 100644
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@ -334,6 +334,7 @@ static struct vm_area_struct gate_vma = {
+ 	.vm_start	= 0xffff0000,
+ 	.vm_end		= 0xffff0000 + PAGE_SIZE,
+ 	.vm_flags	= VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYEXEC,
++	.vm_ops		= &dummy_vm_ops,
+ };
+ 
+ static int __init gate_vma_init(void)
+-- 
+ Kirill A. Shutemov
