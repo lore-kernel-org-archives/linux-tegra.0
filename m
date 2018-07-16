@@ -1,60 +1,275 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH] mmc: tegra: Force correct divider calculation on DDR50/52
-Date: Mon, 16 Jul 2018 17:34:29 +0300
-Message-ID: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 5/7] dt-bindings: Add Tegra PMC pad configuration
+ bindings
+Date: Mon, 16 Jul 2018 09:43:09 -0600
+Message-ID: <20180716154309.GA16477@rob-hp-laptop>
+References: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
+ <1531396813-6581-6-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1531396813-6581-6-git-send-email-avienamo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+To: Aapo Vienamo <avienamo@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra SDHCI controllers require the SDHCI clock divider to be configured
-to divide the clock by two in DDR50/52 modes. Incorrectly configured
-clock divider results in corrupted data.
+On Thu, Jul 12, 2018 at 03:00:11PM +0300, Aapo Vienamo wrote:
+> Document the pinctrl bindings used by the PMC driver for performing pad
+> configuration. Both nvidia,tegra186-pmc.txt and nvidia,tegra20-pmc.txt
+> are modified as they both cover SoC generations for which these bindings
+> apply.
+> 
+> Add a header defining Tegra PMC pad voltage configurations.
+> 
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 84 +++++++++++++++++++
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 95 ++++++++++++++++++++++
+>  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h | 18 ++++
+>  3 files changed, 197 insertions(+)
+>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> index 5a3bf7c..9528f41 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> @@ -34,3 +34,87 @@ Board DTS:
+>  	pmc@c360000 {
+>  		nvidia,invert-interrupt;
+>  	};
+> +
+> +== Pad Control Nodes ==
+> +
+> +The PMC can be used to set pad power state and voltage configuration.
+> +The pad configuration is done via the pinctrl framework. The driver
+> +implements power-source, low-power-enable, and low-power-disable pinconf
+> +pin configuration node properties. Each pinctrl pin corresponds to a
+> +single Tegra PMC pad. Thus, in the following sections of this document
+> +pin refers to the pinctrl frameworks notion of a Tegra PMC pad.
 
-Prevent the possibility of incorrectly calculating the divider value due
-to clock rate rounding or low parent clock frequency by not assigning
-host->max_clk to clk_get_rate() on tegra_sdhci_set_clock().
+"pinctrl framework" is Linux specific and doesn't belong in the binding. 
+Neither does what a driver supports. Describe what the h/w supports.
 
-See the comments for further details.
+> +
+> +The pad configuration state nodes are placed under the pmc node and they
+> +are referred to by the pinctrl client device properties. For more
 
-Fixes: a8e326a ("mmc: tegra: implement module external clock change")
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Another driver detail not relevant.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index ddf00166..908b23e 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -210,9 +210,24 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
- 	if (!clock)
- 		return sdhci_set_clock(host, clock);
- 
-+	/*
-+	 * In DDR50/52 modes the Tegra SDHCI controllers require the SDHCI
-+	 * divider to be configured to divided the host clock by two. The SDHCI
-+	 * clock divider is calculated as part of sdhci_set_clock() by
-+	 * sdhci_calc_clk(). The divider is calculated from host->max_clk and
-+	 * the requested clock rate.
-+	 *
-+	 * By setting the host->max_clk to clock * 2 the divider calculation
-+	 * will always result in the correct value for DDR50/52 modes,
-+	 * regardless of clock rate rounding, which may happen if the value
-+	 * from clk_get_rate() is used.
-+	 */
- 	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
- 	clk_set_rate(pltfm_host->clk, host_clk);
--	host->max_clk = clk_get_rate(pltfm_host->clk);
-+	if (tegra_host->ddr_signaling)
-+		host->max_clk = host_clk;
-+	else
-+		host->max_clk = clk_get_rate(pltfm_host->clk);
- 
- 	sdhci_set_clock(host, clock);
- 
--- 
-2.7.4
+> +information see the examples presented later and
+
+examples don't document bindings. The documentation should be complete 
+without examples.
+
+> +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> +
+> +The values accepted by power-source property are
+> +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
+> +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
+
+You need to list out what properties the child nodes can have.
+
+power-source needs a vendor prefix.
+
+> +
+> +Following pinctrl pin name strings are present on Tegra186:
+> +csia		csib		dsi		mipi-bias
+> +pex-clk-bias	pex-clk3	pex-clk2	pex-clk1
+> +usb0		usb1		usb2		usb-bias
+> +uart		audio		hsic		dbg
+> +hdmi-dp0	hdmi-dp1	pex-cntrl	sdmmc2-hv
+> +sdmmc4		cam		dsib		dsic
+> +dsid		csic		csid		csie
+> +dsif		spi		ufs		dmic-hv
+> +edp		sdmmc1-hv	sdmmc3-hv	conn
+> +audio-hv	ao-hv
+> +
+> +All of the listed Tegra186 pins except ao-hv support the
+> +low-power-enable and low-power-disable properties. The power-source
+> +property is supported following Tegra210 pins: sdmmc2-hv, dmic-hv,
+> +sdmmc1-hv, sdmmc3-hv, audio-hv, ao-hv.
+> +
+> +Pad configuration state example:
+> +	pmc: pmc@7000e400 {
+> +		compatible = "nvidia,tegra186-pmc";
+> +		reg = <0 0x0c360000 0 0x10000>,
+> +		      <0 0x0c370000 0 0x10000>,
+> +		      <0 0x0c380000 0 0x10000>,
+> +		      <0 0x0c390000 0 0x10000>;
+> +		reg-names = "pmc", "wake", "aotag", "scratch";
+> +
+> +		...
+> +
+> +		sdmmc1_3v3: sdmmc1-3v3 {
+> +			pins = "sdmmc1-hv";
+> +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> +		};
+> +
+> +		sdmmc1_1v8: sdmmc1-1v8 {
+> +			pins = "sdmmc1-hv";
+> +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> +		};
+> +
+> +		hdmi_off: hdmi-off {
+> +			pins = "hdmi";
+> +			low-power-enable;
+> +		}
+> +
+> +		hdmi_on: hdmi-on {
+> +			pins = "hdmi";
+> +			low-power-disable;
+> +		}
+> +	};
+> +
+> +Pinctrl client example:
+> +	sdmmc1: sdhci@3400000 {
+> +		...
+> +		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> +		pinctrl-0 = <&sdmmc1_3v3>;
+> +		pinctrl-1 = <&sdmmc1_1v8>;
+> +	};
+> +
+> +	...
+> +
+> +	sor0: sor@15540000 {
+> +		...
+> +		pinctrl-0 = <&hdmi_off>;
+> +		pinctrl-1 = <&hdmi_on>;
+> +		pinctrl-names = "hdmi-on", "hdmi-off";
+> +	};
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> index a74b37b..d50a505 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> @@ -195,3 +195,98 @@ Example:
+>  		power-domains = <&pd_audio>;
+>  		...
+>  	};
+> +
+> +== Pad Control Nodes ==
+
+Similar comments in this file.
+
+> +
+> +The PMC can be used to set pad power state and voltage configuration.
+> +This functionality is present on SoCs from Tegra124 onwards. The pad
+> +configuration is done via the pinctrl framework. The driver implements
+> +power-source, low-power-enable, and low-power-disable pinconf pin
+> +configuration node properties. Each pinctrl pin corresponds to a single
+> +Tegra PMC pad. Thus, in the following sections of this document pin
+> +refers to the pinctrl frameworks notion of a Tegra PMC pad.
+> +
+> +The pad configuration state nodes are placed under the pmc node and they
+> +are referred to by the pinctrl client device properties. For more
+> +information see the examples presented later and
+> +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> +
+> +The values accepted by power-source property are
+> +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
+> +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
+> +
+> +Following pinctrl pin name strings are present on Tegra124 and Tegra132:
+> +audio		bb		cam		comp
+> +csia		csb		cse		dsi
+> +dsib		dsic		dsid		hdmi
+> +hsic		hv		lvds		mipi-bias
+> +nand		pex-bias	pex-clk1	pex-clk2
+> +pex-cntrl	sdmmc1		sdmmc3		sdmmc4
+> +sys_ddc		uart		usb0		usb1
+> +usb2		usb_bias
+> +
+> +All of the listed Tegra124 and Tegra132 pins support the
+> +low-power-enable and low-power-disable properties. None of the pins
+> +support the power-source property.
+> +
+> +Following pinctrl pin name strings are present on Tegra210:
+> +audio		audio-hv	cam		csia
+> +csib		csic		csid		csie
+> +csif		dbg		debug-nonao	dmic
+> +dp		dsi		dsib		dsic
+> +dsid		emmc		emmc2		gpio
+> +hdmi		hsic		lvds		mipi-bias
+> +pex-bias	pex-clk1	pex-clk2	pex-cntrl
+> +sdmmc1		sdmmc3		spi		spi-hv
+> +uart		usb0		usb1		usb2
+> +usb3		usb-bias
+> +
+> +All of the listed Tegra210 pins except pex-cntrl support the
+> +low-power-enable and low-power-disable properties. The power-source
+> +property is supported following Tegra210 pins: audio, audio-hv, cam,
+> +dbg, dmic, gpio, pex-cntrl, sdmmc1, sdmmc3, spi, spi-hv, and uart.
+> +
+> +Pad configuration state example:
+> +	pmc: pmc@7000e400 {
+> +		compatible = "nvidia,tegra210-pmc";
+> +		reg = <0x0 0x7000e400 0x0 0x400>;
+> +		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+> +		clock-names = "pclk", "clk32k_in";
+> +
+> +		...
+> +
+> +		sdmmc1_3v3: sdmmc1-3v3 {
+> +			pins = "sdmmc1";
+> +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> +		};
+> +
+> +		sdmmc1_1v8: sdmmc1-1v8 {
+> +			pins = "sdmmc1";
+> +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> +		};
+> +
+> +		hdmi_off: hdmi-off {
+> +			pins = "hdmi";
+> +			low-power-enable;
+> +		}
+> +
+> +		hdmi_on: hdmi-on {
+> +			pins = "hdmi";
+> +			low-power-disable;
+> +		}
+> +	};
+> +
+> +Pinctrl client example:
+> +	sdmmc1: sdhci@700b0000 {
+> +		...
+> +		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> +		pinctrl-0 = <&sdmmc1_3v3>;
+> +		pinctrl-1 = <&sdmmc1_1v8>;
+> +	};
+> +	...
+> +	sor@54540000 {
+> +		...
+> +		pinctrl-0 = <&hdmi_off>;
+> +		pinctrl-1 = <&hdmi_on>;
+> +		pinctrl-names = "hdmi-on", "hdmi-off";
+> +	};
+> diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> new file mode 100644
+> index 0000000..20f4340
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> @@ -0,0 +1,18 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * pinctrl-tegra-io-pad.h: Tegra I/O pad source voltage configuration constants
+> + * pinctrl bindings.
+> + *
+> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * Author: Aapo Vienamo <avienamo@nvidia.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
+> +#define _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
+> +
+> +/* Voltage levels of the I/O pad's source rail */
+> +#define TEGRA_IO_PAD_VOLTAGE_1V8	0
+> +#define TEGRA_IO_PAD_VOLTAGE_3V3	1
+> +
+> +#endif
+> -- 
+> 2.7.4
+> 
