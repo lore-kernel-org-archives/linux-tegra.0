@@ -1,77 +1,51 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] mmc: tegra: Force correct divider calculation on DDR50/52
-Date: Mon, 16 Jul 2018 21:03:08 +0100
-Message-ID: <16caa6d0-4368-8931-a77c-23fb76bee200@nvidia.com>
-References: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH v2] mtd: rawnand: tegra: check bounds of die_nr properly
+Date: Tue, 17 Jul 2018 10:46:18 +0200
+Message-ID: <20180717084618.25249-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>, boris.brezillon@bootlin.com, miquel.raynal@bootlin.com
+Cc: dev@lynxeye.de, mirza.krak@gmail.com, benjamin.lindqvist@endian.se, krzk@kernel.org, marek.vasut@gmail.com, richard@nod.at, digetx@gmail.com, computersforpeace@gmail.com, dwmw2@infradead.org, dan.carpenter@oracle.com, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Stefan Agner <stefan@agner.ch>
 
-On 16/07/18 15:34, Aapo Vienamo wrote:
-> Tegra SDHCI controllers require the SDHCI clock divider to be configured
-> to divide the clock by two in DDR50/52 modes. Incorrectly configured
-> clock divider results in corrupted data.
-> 
-> Prevent the possibility of incorrectly calculating the divider value due
-> to clock rate rounding or low parent clock frequency by not assigning
-> host->max_clk to clk_get_rate() on tegra_sdhci_set_clock().
-> 
-> See the comments for further details.
-> 
-> Fixes: a8e326a ("mmc: tegra: implement module external clock change")
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index ddf00166..908b23e 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -210,9 +210,24 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->  	if (!clock)
->  		return sdhci_set_clock(host, clock);
->  
-> +	/*
-> +	 * In DDR50/52 modes the Tegra SDHCI controllers require the SDHCI 
-> +	 * divider to be configured to divided the host clock by two. The SDHC
-> +	 * clock divider is calculated as part of sdhci_set_clock() by
-> +	 * sdhci_calc_clk(). The divider is calculated from host->max_clk and
-> +	 * the requested clock rate.
-> +	 *
-> +	 * By setting the host->max_clk to clock * 2 the divider calculation
-> +	 * will always result in the correct value for DDR50/52 modes,
-> +	 * regardless of clock rate rounding, which may happen if the value
-> +	 * from clk_get_rate() is used.
-> +	 */
->  	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
->  	clk_set_rate(pltfm_host->clk, host_clk);
-> -	host->max_clk = clk_get_rate(pltfm_host->clk);
-> +	if (tegra_host->ddr_signaling)
-> +		host->max_clk = host_clk;
-> +	else
-> +		host->max_clk = clk_get_rate(pltfm_host->clk);
->  
->  	sdhci_set_clock(host, clock);
->  
+The Tegra driver currently only support a single chip select, hence
+check boundaries accordingly. This fixes a off by one issue catched
+with Smatch:
+    drivers/mtd/nand/raw/tegra_nand.c:476 tegra_nand_select_chip()
+    warn: array off by one? 'nand->cs[die_nr]'
 
-I see what you are saying, but should we be concerned that we are not
-getting the rate we are requesting in the first place?
+Also warn in case the stack asks for a chip select we currently do
+not support.
 
-Maybe it would help if you could provide a specific example showing a
-case where we request rate X and get Y, and then this leads to a bad
-rate Z later.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+Changes in v2:
+- Fixed comparison between signed integer die_nr and unsigned ARRAY_SIZE.
+
+ drivers/mtd/nand/raw/tegra_nand.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
+index 9f7de36be893..56c0aa1bc81f 100644
+--- a/drivers/mtd/nand/raw/tegra_nand.c
++++ b/drivers/mtd/nand/raw/tegra_nand.c
+@@ -468,7 +468,9 @@ static void tegra_nand_select_chip(struct mtd_info *mtd, int die_nr)
+ 	struct tegra_nand_chip *nand = to_tegra_chip(chip);
+ 	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
  
-Cheers
-Jon
-
+-	if (die_nr < 0 || die_nr > 1) {
++	WARN_ON(die_nr >= (int)ARRAY_SIZE(nand->cs));
++
++	if (die_nr < 0 || die_nr > 0) {
+ 		ctrl->cur_cs = -1;
+ 		return;
+ 	}
 -- 
-nvpublic
+2.14.4
