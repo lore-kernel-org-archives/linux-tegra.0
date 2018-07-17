@@ -1,564 +1,283 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2] media: staging: tegra-vde: Replace debug messages with trace points
-Date: Tue, 17 Jul 2018 14:07:38 +0300
-Message-ID: <20180717110738.23769-1-digetx@gmail.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+Subject: Re: [PATCH v3 5/7] dt-bindings: Add Tegra PMC pad configuration
+ bindings
+Date: Tue, 17 Jul 2018 15:23:18 +0300
+Message-ID: <20180717152318.3608e3f9@dhcp-10-21-25-168>
+References: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
+        <1531396813-6581-6-git-send-email-avienamo@nvidia.com>
+        <20180716154309.GA16477@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180716154309.GA16477@rob-hp-laptop>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Trace points are much more efficient than debug messages for extensive
-tracing and could be conveniently enabled / disabled dynamically, hence
-let's replace debug messages with the trace points.
+On Mon, 16 Jul 2018 09:43:09 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+> On Thu, Jul 12, 2018 at 03:00:11PM +0300, Aapo Vienamo wrote:
+> > Document the pinctrl bindings used by the PMC driver for performing pad
+> > configuration. Both nvidia,tegra186-pmc.txt and nvidia,tegra20-pmc.txt
+> > are modified as they both cover SoC generations for which these bindings
+> > apply.
+> > 
+> > Add a header defining Tegra PMC pad voltage configurations.
+> > 
+> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> > ---
+> >  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 84 +++++++++++++++++++
+> >  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 95 ++++++++++++++++++++++
+> >  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h | 18 ++++
+> >  3 files changed, 197 insertions(+)
+> >  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > index 5a3bf7c..9528f41 100644
+> > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > @@ -34,3 +34,87 @@ Board DTS:
+> >  	pmc@c360000 {
+> >  		nvidia,invert-interrupt;
+> >  	};
+> > +
+> > +== Pad Control Nodes ==
+> > +
+> > +The PMC can be used to set pad power state and voltage configuration.
+> > +The pad configuration is done via the pinctrl framework. The driver
+> > +implements power-source, low-power-enable, and low-power-disable pinconf
+> > +pin configuration node properties. Each pinctrl pin corresponds to a
+> > +single Tegra PMC pad. Thus, in the following sections of this document
+> > +pin refers to the pinctrl frameworks notion of a Tegra PMC pad.  
+> 
+> "pinctrl framework" is Linux specific and doesn't belong in the binding. 
+> Neither does what a driver supports. Describe what the h/w supports.
+> 
+> > +
+> > +The pad configuration state nodes are placed under the pmc node and they
+> > +are referred to by the pinctrl client device properties. For more  
+> 
+> Another driver detail not relevant.
+> 
+> > +information see the examples presented later and  
+> 
+> examples don't document bindings. The documentation should be complete 
+> without examples.
+> 
+> > +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> > +
+> > +The values accepted by power-source property are
+> > +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
+> > +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.  
+> 
+> You need to list out what properties the child nodes can have.
+> 
+> power-source needs a vendor prefix.
 
-Changelog:
+Isn't it a generic pinctrl property?
 
-v2:
-	- Use __assign_str() for copying of HW sub-engine name during of
-	  tracing. There is no functional changes since V1, that's just a
-	  bit better variant of the patch that doesn't rely on stopping
-	  tracing before releasing of managed resources (struct tegra_vde).
+> > +
+> > +Following pinctrl pin name strings are present on Tegra186:
+> > +csia		csib		dsi		mipi-bias
+> > +pex-clk-bias	pex-clk3	pex-clk2	pex-clk1
+> > +usb0		usb1		usb2		usb-bias
+> > +uart		audio		hsic		dbg
+> > +hdmi-dp0	hdmi-dp1	pex-cntrl	sdmmc2-hv
+> > +sdmmc4		cam		dsib		dsic
+> > +dsid		csic		csid		csie
+> > +dsif		spi		ufs		dmic-hv
+> > +edp		sdmmc1-hv	sdmmc3-hv	conn
+> > +audio-hv	ao-hv
+> > +
+> > +All of the listed Tegra186 pins except ao-hv support the
+> > +low-power-enable and low-power-disable properties. The power-source
+> > +property is supported following Tegra210 pins: sdmmc2-hv, dmic-hv,
+> > +sdmmc1-hv, sdmmc3-hv, audio-hv, ao-hv.
+> > +
+> > +Pad configuration state example:
+> > +	pmc: pmc@7000e400 {
+> > +		compatible = "nvidia,tegra186-pmc";
+> > +		reg = <0 0x0c360000 0 0x10000>,
+> > +		      <0 0x0c370000 0 0x10000>,
+> > +		      <0 0x0c380000 0 0x10000>,
+> > +		      <0 0x0c390000 0 0x10000>;
+> > +		reg-names = "pmc", "wake", "aotag", "scratch";
+> > +
+> > +		...
+> > +
+> > +		sdmmc1_3v3: sdmmc1-3v3 {
+> > +			pins = "sdmmc1-hv";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> > +		};
+> > +
+> > +		sdmmc1_1v8: sdmmc1-1v8 {
+> > +			pins = "sdmmc1-hv";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> > +		};
+> > +
+> > +		hdmi_off: hdmi-off {
+> > +			pins = "hdmi";
+> > +			low-power-enable;
+> > +		}
+> > +
+> > +		hdmi_on: hdmi-on {
+> > +			pins = "hdmi";
+> > +			low-power-disable;
+> > +		}
+> > +	};
+> > +
+> > +Pinctrl client example:
+> > +	sdmmc1: sdhci@3400000 {
+> > +		...
+> > +		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> > +		pinctrl-0 = <&sdmmc1_3v3>;
+> > +		pinctrl-1 = <&sdmmc1_1v8>;
+> > +	};
+> > +
+> > +	...
+> > +
+> > +	sor0: sor@15540000 {
+> > +		...
+> > +		pinctrl-0 = <&hdmi_off>;
+> > +		pinctrl-1 = <&hdmi_on>;
+> > +		pinctrl-names = "hdmi-on", "hdmi-off";
+> > +	};
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> > index a74b37b..d50a505 100644
+> > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> > @@ -195,3 +195,98 @@ Example:
+> >  		power-domains = <&pd_audio>;
+> >  		...
+> >  	};
+> > +
+> > +== Pad Control Nodes ==  
+> 
+> Similar comments in this file.
+> 
+> > +
+> > +The PMC can be used to set pad power state and voltage configuration.
+> > +This functionality is present on SoCs from Tegra124 onwards. The pad
+> > +configuration is done via the pinctrl framework. The driver implements
+> > +power-source, low-power-enable, and low-power-disable pinconf pin
+> > +configuration node properties. Each pinctrl pin corresponds to a single
+> > +Tegra PMC pad. Thus, in the following sections of this document pin
+> > +refers to the pinctrl frameworks notion of a Tegra PMC pad.
+> > +
+> > +The pad configuration state nodes are placed under the pmc node and they
+> > +are referred to by the pinctrl client device properties. For more
+> > +information see the examples presented later and
+> > +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> > +
+> > +The values accepted by power-source property are
+> > +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
+> > +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
+> > +
+> > +Following pinctrl pin name strings are present on Tegra124 and Tegra132:
+> > +audio		bb		cam		comp
+> > +csia		csb		cse		dsi
+> > +dsib		dsic		dsid		hdmi
+> > +hsic		hv		lvds		mipi-bias
+> > +nand		pex-bias	pex-clk1	pex-clk2
+> > +pex-cntrl	sdmmc1		sdmmc3		sdmmc4
+> > +sys_ddc		uart		usb0		usb1
+> > +usb2		usb_bias
+> > +
+> > +All of the listed Tegra124 and Tegra132 pins support the
+> > +low-power-enable and low-power-disable properties. None of the pins
+> > +support the power-source property.
+> > +
+> > +Following pinctrl pin name strings are present on Tegra210:
+> > +audio		audio-hv	cam		csia
+> > +csib		csic		csid		csie
+> > +csif		dbg		debug-nonao	dmic
+> > +dp		dsi		dsib		dsic
+> > +dsid		emmc		emmc2		gpio
+> > +hdmi		hsic		lvds		mipi-bias
+> > +pex-bias	pex-clk1	pex-clk2	pex-cntrl
+> > +sdmmc1		sdmmc3		spi		spi-hv
+> > +uart		usb0		usb1		usb2
+> > +usb3		usb-bias
+> > +
+> > +All of the listed Tegra210 pins except pex-cntrl support the
+> > +low-power-enable and low-power-disable properties. The power-source
+> > +property is supported following Tegra210 pins: audio, audio-hv, cam,
+> > +dbg, dmic, gpio, pex-cntrl, sdmmc1, sdmmc3, spi, spi-hv, and uart.
+> > +
+> > +Pad configuration state example:
+> > +	pmc: pmc@7000e400 {
+> > +		compatible = "nvidia,tegra210-pmc";
+> > +		reg = <0x0 0x7000e400 0x0 0x400>;
+> > +		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+> > +		clock-names = "pclk", "clk32k_in";
+> > +
+> > +		...
+> > +
+> > +		sdmmc1_3v3: sdmmc1-3v3 {
+> > +			pins = "sdmmc1";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> > +		};
+> > +
+> > +		sdmmc1_1v8: sdmmc1-1v8 {
+> > +			pins = "sdmmc1";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> > +		};
+> > +
+> > +		hdmi_off: hdmi-off {
+> > +			pins = "hdmi";
+> > +			low-power-enable;
+> > +		}
+> > +
+> > +		hdmi_on: hdmi-on {
+> > +			pins = "hdmi";
+> > +			low-power-disable;
+> > +		}
+> > +	};
+> > +
+> > +Pinctrl client example:
+> > +	sdmmc1: sdhci@700b0000 {
+> > +		...
+> > +		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> > +		pinctrl-0 = <&sdmmc1_3v3>;
+> > +		pinctrl-1 = <&sdmmc1_1v8>;
+> > +	};
+> > +	...
+> > +	sor@54540000 {
+> > +		...
+> > +		pinctrl-0 = <&hdmi_off>;
+> > +		pinctrl-1 = <&hdmi_on>;
+> > +		pinctrl-names = "hdmi-on", "hdmi-off";
+> > +	};
+> > diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> > new file mode 100644
+> > index 0000000..20f4340
+> > --- /dev/null
+> > +++ b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> > @@ -0,0 +1,18 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * pinctrl-tegra-io-pad.h: Tegra I/O pad source voltage configuration constants
+> > + * pinctrl bindings.
+> > + *
+> > + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> > + *
+> > + * Author: Aapo Vienamo <avienamo@nvidia.com>
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
+> > +#define _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
+> > +
+> > +/* Voltage levels of the I/O pad's source rail */
+> > +#define TEGRA_IO_PAD_VOLTAGE_1V8	0
+> > +#define TEGRA_IO_PAD_VOLTAGE_3V3	1
+> > +
+> > +#endif
+> > -- 
+> > 2.7.4
+> >   
 
- drivers/staging/media/tegra-vde/tegra-vde.c | 221 +++++++++++---------
- drivers/staging/media/tegra-vde/trace.h     |  98 +++++++++
- 2 files changed, 224 insertions(+), 95 deletions(-)
- create mode 100644 drivers/staging/media/tegra-vde/trace.h
-
-diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
-index 6f06061a40d9..3f71b46d287b 100644
---- a/drivers/staging/media/tegra-vde/tegra-vde.c
-+++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-@@ -24,6 +24,8 @@
- 
- #include <soc/tegra/pmc.h>
- 
-+#define CREATE_TRACE_POINTS
-+#include "trace.h"
- #include "uapi.h"
- 
- #define ICMDQUE_WR		0x00
-@@ -35,14 +37,6 @@
- #define BSE_ICMDQUE_EMPTY	BIT(3)
- #define BSE_DMA_BUSY		BIT(23)
- 
--#define VDE_WR(__data, __addr)				\
--do {							\
--	dev_dbg(vde->miscdev.parent,			\
--		"%s: %d: 0x%08X => " #__addr ")\n",	\
--		__func__, __LINE__, (u32)(__data));	\
--	writel_relaxed(__data, __addr);			\
--} while (0)
--
- struct video_frame {
- 	struct dma_buf_attachment *y_dmabuf_attachment;
- 	struct dma_buf_attachment *cb_dmabuf_attachment;
-@@ -81,12 +75,63 @@ struct tegra_vde {
- 	u32 *iram;
- };
- 
-+static __maybe_unused
-+char const *tegra_vde_reg_base_name(struct tegra_vde *vde, void __iomem *base)
-+{
-+	if (vde->sxe == base)
-+		return "SXE";
-+
-+	if (vde->bsev == base)
-+		return "BSEV";
-+
-+	if (vde->mbe == base)
-+		return "MBE";
-+
-+	if (vde->ppe == base)
-+		return "PPE";
-+
-+	if (vde->mce == base)
-+		return "MCE";
-+
-+	if (vde->tfe == base)
-+		return "TFE";
-+
-+	if (vde->ppb == base)
-+		return "PPB";
-+
-+	if (vde->vdma == base)
-+		return "VDMA";
-+
-+	if (vde->frameid == base)
-+		return "FRAMEID";
-+
-+	return "???";
-+}
-+
-+static void tegra_vde_writel(struct tegra_vde *vde,
-+			     u32 value, void __iomem *base, u32 offset)
-+{
-+	trace_vde_writel(vde, base, offset, value);
-+
-+	writel_relaxed(value, base + offset);
-+}
-+
-+static u32 tegra_vde_readl(struct tegra_vde *vde,
-+			   void __iomem *base, u32 offset)
-+{
-+	u32 value = readl_relaxed(base + offset);
-+
-+	trace_vde_readl(vde, base, offset, value);
-+
-+	return value;
-+}
-+
- static void tegra_vde_set_bits(struct tegra_vde *vde,
--			       u32 mask, void __iomem *regs)
-+			       u32 mask, void __iomem *base, u32 offset)
- {
--	u32 value = readl_relaxed(regs);
-+	u32 value = tegra_vde_readl(vde, base, offset);
- 
--	VDE_WR(value | mask, regs);
-+	tegra_vde_writel(vde, value | mask, base, offset);
- }
- 
- static int tegra_vde_wait_mbe(struct tegra_vde *vde)
-@@ -107,8 +152,8 @@ static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
- 	unsigned int idx;
- 	int err;
- 
--	VDE_WR(0xD0000000 | (0 << 23), vde->mbe + 0x80);
--	VDE_WR(0xD0200000 | (0 << 23), vde->mbe + 0x80);
-+	tegra_vde_writel(vde, 0xD0000000 | (0 << 23), vde->mbe, 0x80);
-+	tegra_vde_writel(vde, 0xD0200000 | (0 << 23), vde->mbe, 0x80);
- 
- 	err = tegra_vde_wait_mbe(vde);
- 	if (err)
-@@ -118,8 +163,10 @@ static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
- 		return 0;
- 
- 	for (idx = 0, frame_idx = 1; idx < refs_nb; idx++, frame_idx++) {
--		VDE_WR(0xD0000000 | (frame_idx << 23), vde->mbe + 0x80);
--		VDE_WR(0xD0200000 | (frame_idx << 23), vde->mbe + 0x80);
-+		tegra_vde_writel(vde, 0xD0000000 | (frame_idx << 23),
-+				 vde->mbe, 0x80);
-+		tegra_vde_writel(vde, 0xD0200000 | (frame_idx << 23),
-+				 vde->mbe, 0x80);
- 
- 		frame_idx_enb_mask |= frame_idx << (6 * (idx % 4));
- 
-@@ -128,7 +175,7 @@ static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
- 			value |= (idx >> 2) << 24;
- 			value |= frame_idx_enb_mask;
- 
--			VDE_WR(value, vde->mbe + 0x80);
-+			tegra_vde_writel(vde, value, vde->mbe, 0x80);
- 
- 			err = tegra_vde_wait_mbe(vde);
- 			if (err)
-@@ -143,8 +190,10 @@ static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
- 
- static void tegra_vde_mbe_set_0xa_reg(struct tegra_vde *vde, int reg, u32 val)
- {
--	VDE_WR(0xA0000000 | (reg << 24) | (val & 0xFFFF), vde->mbe + 0x80);
--	VDE_WR(0xA0000000 | ((reg + 1) << 24) | (val >> 16), vde->mbe + 0x80);
-+	tegra_vde_writel(vde, 0xA0000000 | (reg << 24) | (val & 0xFFFF),
-+			 vde->mbe, 0x80);
-+	tegra_vde_writel(vde, 0xA0000000 | ((reg + 1) << 24) | (val >> 16),
-+			 vde->mbe, 0x80);
- }
- 
- static int tegra_vde_wait_bsev(struct tegra_vde *vde, bool wait_dma)
-@@ -183,7 +232,7 @@ static int tegra_vde_wait_bsev(struct tegra_vde *vde, bool wait_dma)
- static int tegra_vde_push_to_bsev_icmdqueue(struct tegra_vde *vde,
- 					    u32 value, bool wait_dma)
- {
--	VDE_WR(value, vde->bsev + ICMDQUE_WR);
-+	tegra_vde_writel(vde, value, vde->bsev, ICMDQUE_WR);
- 
- 	return tegra_vde_wait_bsev(vde, wait_dma);
- }
-@@ -199,11 +248,11 @@ static void tegra_vde_setup_frameid(struct tegra_vde *vde,
- 	u32 value1 = frame ? ((mbs_width << 16) | mbs_height) : 0;
- 	u32 value2 = frame ? ((((mbs_width + 1) >> 1) << 6) | 1) : 0;
- 
--	VDE_WR(y_addr  >> 8, vde->frameid + 0x000 + frameid * 4);
--	VDE_WR(cb_addr >> 8, vde->frameid + 0x100 + frameid * 4);
--	VDE_WR(cr_addr >> 8, vde->frameid + 0x180 + frameid * 4);
--	VDE_WR(value1,       vde->frameid + 0x080 + frameid * 4);
--	VDE_WR(value2,       vde->frameid + 0x280 + frameid * 4);
-+	tegra_vde_writel(vde, y_addr  >> 8, vde->frameid, 0x000 + frameid * 4);
-+	tegra_vde_writel(vde, cb_addr >> 8, vde->frameid, 0x100 + frameid * 4);
-+	tegra_vde_writel(vde, cr_addr >> 8, vde->frameid, 0x180 + frameid * 4);
-+	tegra_vde_writel(vde, value1,       vde->frameid, 0x080 + frameid * 4);
-+	tegra_vde_writel(vde, value2,       vde->frameid, 0x280 + frameid * 4);
- }
- 
- static void tegra_setup_frameidx(struct tegra_vde *vde,
-@@ -228,8 +277,7 @@ static void tegra_vde_setup_iram_entry(struct tegra_vde *vde,
- {
- 	u32 *iram_tables = vde->iram;
- 
--	dev_dbg(vde->miscdev.parent, "IRAM table %u: row %u: 0x%08X 0x%08X\n",
--		table, row, value1, value2);
-+	trace_vde_setup_iram_entry(table, row, value1, value2);
- 
- 	iram_tables[0x20 * table + row * 2] = value1;
- 	iram_tables[0x20 * table + row * 2 + 1] = value2;
-@@ -245,10 +293,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
- 	int with_later_poc_nb;
- 	unsigned int i, k;
- 
--	dev_dbg(vde->miscdev.parent, "DPB: Frame 0: frame_num = %d\n",
--		dpb_frames[0].frame_num);
--
--	dev_dbg(vde->miscdev.parent, "REF L0:\n");
-+	trace_vde_ref_l0(dpb_frames[0].frame_num);
- 
- 	for (i = 0; i < 16; i++) {
- 		if (i < ref_frames_nb) {
-@@ -260,11 +305,6 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
- 			value |= !(frame->flags & FLAG_B_FRAME) << 25;
- 			value |= 1 << 24;
- 			value |= frame->frame_num;
--
--			dev_dbg(vde->miscdev.parent,
--				"\tFrame %d: frame_num = %d B_frame = %d\n",
--				i + 1, frame->frame_num,
--				(frame->flags & FLAG_B_FRAME));
- 		} else {
- 			aux_addr = 0x6ADEAD00;
- 			value = 0;
-@@ -284,9 +324,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
- 
- 	with_later_poc_nb = ref_frames_nb - with_earlier_poc_nb;
- 
--	dev_dbg(vde->miscdev.parent,
--		"REF L1: with_later_poc_nb %d with_earlier_poc_nb %d\n",
--		 with_later_poc_nb, with_earlier_poc_nb);
-+	trace_vde_ref_l1(with_later_poc_nb, with_earlier_poc_nb);
- 
- 	for (i = 0, k = with_earlier_poc_nb; i < with_later_poc_nb; i++, k++) {
- 		frame = &dpb_frames[k + 1];
-@@ -298,10 +336,6 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
- 		value |= 1 << 24;
- 		value |= frame->frame_num;
- 
--		dev_dbg(vde->miscdev.parent,
--			"\tFrame %d: frame_num = %d\n",
--			k + 1, frame->frame_num);
--
- 		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
- 	}
- 
-@@ -315,10 +349,6 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
- 		value |= 1 << 24;
- 		value |= frame->frame_num;
- 
--		dev_dbg(vde->miscdev.parent,
--			"\tFrame %d: frame_num = %d\n",
--			k + 1, frame->frame_num);
--
- 		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
- 	}
- }
-@@ -334,32 +364,32 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 	u32 value;
- 	int err;
- 
--	tegra_vde_set_bits(vde, 0x000A, vde->sxe + 0xF0);
--	tegra_vde_set_bits(vde, 0x000B, vde->bsev + CMDQUE_CONTROL);
--	tegra_vde_set_bits(vde, 0x8002, vde->mbe + 0x50);
--	tegra_vde_set_bits(vde, 0x000A, vde->mbe + 0xA0);
--	tegra_vde_set_bits(vde, 0x000A, vde->ppe + 0x14);
--	tegra_vde_set_bits(vde, 0x000A, vde->ppe + 0x28);
--	tegra_vde_set_bits(vde, 0x0A00, vde->mce + 0x08);
--	tegra_vde_set_bits(vde, 0x000A, vde->tfe + 0x00);
--	tegra_vde_set_bits(vde, 0x0005, vde->vdma + 0x04);
--
--	VDE_WR(0x00000000, vde->vdma + 0x1C);
--	VDE_WR(0x00000000, vde->vdma + 0x00);
--	VDE_WR(0x00000007, vde->vdma + 0x04);
--	VDE_WR(0x00000007, vde->frameid + 0x200);
--	VDE_WR(0x00000005, vde->tfe + 0x04);
--	VDE_WR(0x00000000, vde->mbe + 0x84);
--	VDE_WR(0x00000010, vde->sxe + 0x08);
--	VDE_WR(0x00000150, vde->sxe + 0x54);
--	VDE_WR(0x0000054C, vde->sxe + 0x58);
--	VDE_WR(0x00000E34, vde->sxe + 0x5C);
--	VDE_WR(0x063C063C, vde->mce + 0x10);
--	VDE_WR(0x0003FC00, vde->bsev + INTR_STATUS);
--	VDE_WR(0x0000150D, vde->bsev + BSE_CONFIG);
--	VDE_WR(0x00000100, vde->bsev + BSE_INT_ENB);
--	VDE_WR(0x00000000, vde->bsev + 0x98);
--	VDE_WR(0x00000060, vde->bsev + 0x9C);
-+	tegra_vde_set_bits(vde, 0x000A, vde->sxe, 0xF0);
-+	tegra_vde_set_bits(vde, 0x000B, vde->bsev, CMDQUE_CONTROL);
-+	tegra_vde_set_bits(vde, 0x8002, vde->mbe, 0x50);
-+	tegra_vde_set_bits(vde, 0x000A, vde->mbe, 0xA0);
-+	tegra_vde_set_bits(vde, 0x000A, vde->ppe, 0x14);
-+	tegra_vde_set_bits(vde, 0x000A, vde->ppe, 0x28);
-+	tegra_vde_set_bits(vde, 0x0A00, vde->mce, 0x08);
-+	tegra_vde_set_bits(vde, 0x000A, vde->tfe, 0x00);
-+	tegra_vde_set_bits(vde, 0x0005, vde->vdma, 0x04);
-+
-+	tegra_vde_writel(vde, 0x00000000, vde->vdma, 0x1C);
-+	tegra_vde_writel(vde, 0x00000000, vde->vdma, 0x00);
-+	tegra_vde_writel(vde, 0x00000007, vde->vdma, 0x04);
-+	tegra_vde_writel(vde, 0x00000007, vde->frameid, 0x200);
-+	tegra_vde_writel(vde, 0x00000005, vde->tfe, 0x04);
-+	tegra_vde_writel(vde, 0x00000000, vde->mbe, 0x84);
-+	tegra_vde_writel(vde, 0x00000010, vde->sxe, 0x08);
-+	tegra_vde_writel(vde, 0x00000150, vde->sxe, 0x54);
-+	tegra_vde_writel(vde, 0x0000054C, vde->sxe, 0x58);
-+	tegra_vde_writel(vde, 0x00000E34, vde->sxe, 0x5C);
-+	tegra_vde_writel(vde, 0x063C063C, vde->mce, 0x10);
-+	tegra_vde_writel(vde, 0x0003FC00, vde->bsev, INTR_STATUS);
-+	tegra_vde_writel(vde, 0x0000150D, vde->bsev, BSE_CONFIG);
-+	tegra_vde_writel(vde, 0x00000100, vde->bsev, BSE_INT_ENB);
-+	tegra_vde_writel(vde, 0x00000000, vde->bsev, 0x98);
-+	tegra_vde_writel(vde, 0x00000060, vde->bsev, 0x9C);
- 
- 	memset(vde->iram + 128, 0, macroblocks_nb / 2);
- 
-@@ -376,13 +406,13 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 	 */
- 	wmb();
- 
--	VDE_WR(0x00000000, vde->bsev + 0x8C);
--	VDE_WR(bitstream_data_addr + bitstream_data_size,
--	       vde->bsev + 0x54);
-+	tegra_vde_writel(vde, 0x00000000, vde->bsev, 0x8C);
-+	tegra_vde_writel(vde, bitstream_data_addr + bitstream_data_size,
-+			 vde->bsev, 0x54);
- 
- 	value = ctx->pic_width_in_mbs << 11 | ctx->pic_height_in_mbs << 3;
- 
--	VDE_WR(value, vde->bsev + 0x88);
-+	tegra_vde_writel(vde, value, vde->bsev, 0x88);
- 
- 	err = tegra_vde_wait_bsev(vde, false);
- 	if (err)
-@@ -417,7 +447,7 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 	value |= ctx->pic_width_in_mbs << 11;
- 	value |= ctx->pic_height_in_mbs << 3;
- 
--	VDE_WR(value, vde->sxe + 0x10);
-+	tegra_vde_writel(vde, value, vde->sxe, 0x10);
- 
- 	value = !ctx->baseline_profile << 17;
- 	value |= ctx->level_idc << 13;
-@@ -425,54 +455,54 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 	value |= ctx->pic_order_cnt_type << 5;
- 	value |= ctx->log2_max_frame_num;
- 
--	VDE_WR(value, vde->sxe + 0x40);
-+	tegra_vde_writel(vde, value, vde->sxe, 0x40);
- 
- 	value = ctx->pic_init_qp << 25;
- 	value |= !!(ctx->deblocking_filter_control_present_flag) << 2;
- 	value |= !!ctx->pic_order_present_flag;
- 
--	VDE_WR(value, vde->sxe + 0x44);
-+	tegra_vde_writel(vde, value, vde->sxe, 0x44);
- 
- 	value = ctx->chroma_qp_index_offset;
- 	value |= ctx->num_ref_idx_l0_active_minus1 << 5;
- 	value |= ctx->num_ref_idx_l1_active_minus1 << 10;
- 	value |= !!ctx->constrained_intra_pred_flag << 15;
- 
--	VDE_WR(value, vde->sxe + 0x48);
-+	tegra_vde_writel(vde, value, vde->sxe, 0x48);
- 
- 	value = 0x0C000000;
- 	value |= !!(dpb_frames[0].flags & FLAG_B_FRAME) << 24;
- 
--	VDE_WR(value, vde->sxe + 0x4C);
-+	tegra_vde_writel(vde, value, vde->sxe, 0x4C);
- 
- 	value = 0x03800000;
- 	value |= bitstream_data_size & GENMASK(19, 15);
- 
--	VDE_WR(value, vde->sxe + 0x68);
-+	tegra_vde_writel(vde, value, vde->sxe, 0x68);
- 
--	VDE_WR(bitstream_data_addr, vde->sxe + 0x6C);
-+	tegra_vde_writel(vde, bitstream_data_addr, vde->sxe, 0x6C);
- 
- 	value = 0x10000005;
- 	value |= ctx->pic_width_in_mbs << 11;
- 	value |= ctx->pic_height_in_mbs << 3;
- 
--	VDE_WR(value, vde->mbe + 0x80);
-+	tegra_vde_writel(vde, value, vde->mbe, 0x80);
- 
- 	value = 0x26800000;
- 	value |= ctx->level_idc << 4;
- 	value |= !ctx->baseline_profile << 1;
- 	value |= !!ctx->direct_8x8_inference_flag;
- 
--	VDE_WR(value, vde->mbe + 0x80);
-+	tegra_vde_writel(vde, value, vde->mbe, 0x80);
- 
--	VDE_WR(0xF4000001, vde->mbe + 0x80);
--	VDE_WR(0x20000000, vde->mbe + 0x80);
--	VDE_WR(0xF4000101, vde->mbe + 0x80);
-+	tegra_vde_writel(vde, 0xF4000001, vde->mbe, 0x80);
-+	tegra_vde_writel(vde, 0x20000000, vde->mbe, 0x80);
-+	tegra_vde_writel(vde, 0xF4000101, vde->mbe, 0x80);
- 
- 	value = 0x20000000;
- 	value |= ctx->chroma_qp_index_offset << 8;
- 
--	VDE_WR(value, vde->mbe + 0x80);
-+	tegra_vde_writel(vde, value, vde->mbe, 0x80);
- 
- 	err = tegra_vde_setup_mbe_frame_idx(vde,
- 					    ctx->dpb_frames_nb - 1,
-@@ -494,7 +524,7 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 	if (!ctx->baseline_profile)
- 		value |= !!(dpb_frames[0].flags & FLAG_REFERENCE) << 1;
- 
--	VDE_WR(value, vde->mbe + 0x80);
-+	tegra_vde_writel(vde, value, vde->mbe, 0x80);
- 
- 	err = tegra_vde_wait_mbe(vde);
- 	if (err) {
-@@ -510,8 +540,9 @@ static void tegra_vde_decode_frame(struct tegra_vde *vde,
- {
- 	reinit_completion(&vde->decode_completion);
- 
--	VDE_WR(0x00000001, vde->bsev + 0x8C);
--	VDE_WR(0x20000000 | (macroblocks_nb - 1), vde->sxe + 0x00);
-+	tegra_vde_writel(vde, 0x00000001, vde->bsev, 0x8C);
-+	tegra_vde_writel(vde, 0x20000000 | (macroblocks_nb - 1),
-+			 vde->sxe, 0x00);
- }
- 
- static void tegra_vde_detach_and_put_dmabuf(struct dma_buf_attachment *a,
-@@ -883,8 +914,8 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 	timeout = wait_for_completion_interruptible_timeout(
- 			&vde->decode_completion, msecs_to_jiffies(1000));
- 	if (timeout == 0) {
--		bsev_ptr = readl_relaxed(vde->bsev + 0x10);
--		macroblocks_nb = readl_relaxed(vde->sxe + 0xC8) & 0x1FFF;
-+		bsev_ptr = tegra_vde_readl(vde, vde->bsev, 0x10);
-+		macroblocks_nb = tegra_vde_readl(vde, vde->sxe, 0xC8) & 0x1FFF;
- 		read_bytes = bsev_ptr ? bsev_ptr - bitstream_data_addr : 0;
- 
- 		dev_err(dev, "Decoding failed: read 0x%X bytes, %u macroblocks parsed\n",
-@@ -962,7 +993,7 @@ static irqreturn_t tegra_vde_isr(int irq, void *data)
- 	if (completion_done(&vde->decode_completion))
- 		return IRQ_NONE;
- 
--	tegra_vde_set_bits(vde, 0, vde->frameid + 0x208);
-+	tegra_vde_set_bits(vde, 0, vde->frameid, 0x208);
- 	complete(&vde->decode_completion);
- 
- 	return IRQ_HANDLED;
-diff --git a/drivers/staging/media/tegra-vde/trace.h b/drivers/staging/media/tegra-vde/trace.h
-new file mode 100644
-index 000000000000..9b7ebd8fc2c0
---- /dev/null
-+++ b/drivers/staging/media/tegra-vde/trace.h
-@@ -0,0 +1,98 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM tegra_vde
-+
-+#if !defined(TEGRA_VDE_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define TEGRA_VDE_TRACE_H
-+
-+#include <linux/tracepoint.h>
-+
-+struct tegra_vde;
-+
-+static char const *tegra_vde_reg_base_name(struct tegra_vde *vde,
-+					   void __iomem *base);
-+
-+DECLARE_EVENT_CLASS(register_access,
-+	TP_PROTO(struct tegra_vde *vde, void __iomem *base,
-+		 u32 offset, u32 value),
-+	TP_ARGS(vde, base, offset, value),
-+	TP_STRUCT__entry(
-+		__string(hw_name, tegra_vde_reg_base_name(vde, base))
-+		__field(u32, offset)
-+		__field(u32, value)
-+	),
-+	TP_fast_assign(
-+		__assign_str(hw_name, tegra_vde_reg_base_name(vde, base));
-+		__entry->offset = offset;
-+		__entry->value = value;
-+	),
-+	TP_printk("%s:0x%03x 0x%08x", __get_str(hw_name), __entry->offset,
-+		  __entry->value)
-+);
-+
-+DEFINE_EVENT(register_access, vde_writel,
-+	TP_PROTO(struct tegra_vde *vde, void __iomem *base,
-+		 u32 offset, u32 value),
-+	TP_ARGS(vde, base, offset, value));
-+DEFINE_EVENT(register_access, vde_readl,
-+	TP_PROTO(struct tegra_vde *vde, void __iomem *base,
-+		 u32 offset, u32 value),
-+	TP_ARGS(vde, base, offset, value));
-+
-+TRACE_EVENT(vde_setup_iram_entry,
-+	TP_PROTO(unsigned int table, unsigned int row, u32 value, u32 aux_addr),
-+	TP_ARGS(table, row, value, aux_addr),
-+	TP_STRUCT__entry(
-+		__field(unsigned int, table)
-+		__field(unsigned int, row)
-+		__field(u32, value)
-+		__field(u32, aux_addr)
-+	),
-+	TP_fast_assign(
-+		__entry->table = table;
-+		__entry->row = row;
-+		__entry->value = value;
-+		__entry->aux_addr = aux_addr;
-+	),
-+	TP_printk("[%u][%u] = { 0x%08x (flags = \"%s\", frame_num = %u); 0x%08x }",
-+		  __entry->table, __entry->row, __entry->value,
-+		  __print_flags(__entry->value, " ", { (1 << 25), "B" }),
-+		  __entry->value & 0x7FFFFF, __entry->aux_addr)
-+);
-+
-+TRACE_EVENT(vde_ref_l0,
-+	TP_PROTO(unsigned int frame_num),
-+	TP_ARGS(frame_num),
-+	TP_STRUCT__entry(
-+		__field(unsigned int, frame_num)
-+	),
-+	TP_fast_assign(
-+		__entry->frame_num = frame_num;
-+	),
-+	TP_printk("REF L0: DPB: Frame 0: frame_num = %u", __entry->frame_num)
-+);
-+
-+TRACE_EVENT(vde_ref_l1,
-+	TP_PROTO(unsigned int with_later_poc_nb,
-+		 unsigned int with_earlier_poc_nb),
-+	TP_ARGS(with_later_poc_nb, with_earlier_poc_nb),
-+	TP_STRUCT__entry(
-+		__field(unsigned int, with_later_poc_nb)
-+		__field(unsigned int, with_earlier_poc_nb)
-+	),
-+	TP_fast_assign(
-+		__entry->with_later_poc_nb = with_later_poc_nb;
-+		__entry->with_earlier_poc_nb = with_earlier_poc_nb;
-+	),
-+	TP_printk("REF L1: with_later_poc_nb %u, with_earlier_poc_nb %u",
-+		  __entry->with_later_poc_nb, __entry->with_earlier_poc_nb)
-+);
-+
-+#endif /* TEGRA_VDE_TRACE_H */
-+
-+/* This part must be outside protection */
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH ../../drivers/staging/media/tegra-vde
-+#define TRACE_INCLUDE_FILE trace
-+#include <trace/define_trace.h>
--- 
-2.18.0
+ -Aapo
