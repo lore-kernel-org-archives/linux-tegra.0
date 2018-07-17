@@ -1,51 +1,42 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2] mtd: rawnand: tegra: check bounds of die_nr properly
-Date: Tue, 17 Jul 2018 10:46:18 +0200
-Message-ID: <20180717084618.25249-1-marcel@ziswiler.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>, boris.brezillon@bootlin.com, miquel.raynal@bootlin.com
-Cc: dev@lynxeye.de, mirza.krak@gmail.com, benjamin.lindqvist@endian.se, krzk@kernel.org, marek.vasut@gmail.com, richard@nod.at, digetx@gmail.com, computersforpeace@gmail.com, dwmw2@infradead.org, dan.carpenter@oracle.com, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH] drm/tegra: Replace drm_dev_unref with drm_dev_put
+Date: Tue, 17 Jul 2018 10:49:45 +0200
+Message-ID: <20180717084945.18228-1-tzimmermann@suse.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
-
-The Tegra driver currently only support a single chip select, hence
-check boundaries accordingly. This fixes a off by one issue catched
-with Smatch:
-    drivers/mtd/nand/raw/tegra_nand.c:476 tegra_nand_select_chip()
-    warn: array off by one? 'nand->cs[die_nr]'
-
-Also warn in case the stack asks for a chip select we currently do
-not support.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
-Changes in v2:
-- Fixed comparison between signed integer die_nr and unsigned ARRAY_SIZE.
-
- drivers/mtd/nand/raw/tegra_nand.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
-index 9f7de36be893..56c0aa1bc81f 100644
---- a/drivers/mtd/nand/raw/tegra_nand.c
-+++ b/drivers/mtd/nand/raw/tegra_nand.c
-@@ -468,7 +468,9 @@ static void tegra_nand_select_chip(struct mtd_info *mtd, int die_nr)
- 	struct tegra_nand_chip *nand = to_tegra_chip(chip);
- 	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
- 
--	if (die_nr < 0 || die_nr > 1) {
-+	WARN_ON(die_nr >= (int)ARRAY_SIZE(nand->cs));
-+
-+	if (die_nr < 0 || die_nr > 0) {
- 		ctrl->cur_cs = -1;
- 		return;
- 	}
--- 
-2.14.4
+VGhpcyBwYXRjaCB1bmlmaWVzIHRoZSBuYW1pbmcgb2YgRFJNIGZ1bmN0aW9ucyBmb3IgcmVmZXJl
+bmNlIGNvdW50aW5nCm9mIHN0cnVjdCBkcm1fZGV2aWNlLiBUaGUgcmVzdWx0aW5nIGNvZGUgaXMg
+bW9yZSBhbGlnbmVkIHdpdGggdGhlIHJlc3QKb2YgdGhlIExpbnV4IGtlcm5lbCBpbnRlcmZhY2Vz
+LgoKU2lnbmVkLW9mZi1ieTogVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2UuZGU+
+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgOCArKysrLS0tLQogMSBmaWxlIGNo
+YW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKaW5k
+ZXggYTJiZDU4NzZjNjMzLi5lM2JjZDY0MjIwYTkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS90ZWdyYS9kcm0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKQEAgLTExODks
+MTIgKzExODksMTIgQEAgc3RhdGljIGludCBob3N0MXhfZHJtX3Byb2JlKHN0cnVjdCBob3N0MXhf
+ZGV2aWNlICpkZXYpCiAKIAllcnIgPSBkcm1fZGV2X3JlZ2lzdGVyKGRybSwgMCk7CiAJaWYgKGVy
+ciA8IDApCi0JCWdvdG8gdW5yZWY7CisJCWdvdG8gcHV0OwogCiAJcmV0dXJuIDA7CiAKLXVucmVm
+OgotCWRybV9kZXZfdW5yZWYoZHJtKTsKK3B1dDoKKwlkcm1fZGV2X3B1dChkcm0pOwogCXJldHVy
+biBlcnI7CiB9CiAKQEAgLTEyMDMsNyArMTIwMyw3IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9y
+ZW1vdmUoc3RydWN0IGhvc3QxeF9kZXZpY2UgKmRldikKIAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJt
+ID0gZGV2X2dldF9kcnZkYXRhKCZkZXYtPmRldik7CiAKIAlkcm1fZGV2X3VucmVnaXN0ZXIoZHJt
+KTsKLQlkcm1fZGV2X3VucmVmKGRybSk7CisJZHJtX2Rldl9wdXQoZHJtKTsKIAogCXJldHVybiAw
+OwogfQotLSAKMi4xOC4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
