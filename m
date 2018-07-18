@@ -1,64 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/3] ARM: tegra: tegra20: Fix mixed tabs-spaces indentation
-Date: Wed, 18 Jul 2018 21:48:24 +0200
-Message-ID: <20180718194824.3704-3-krzk@kernel.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 1/3] ARM: tegra: apalis-tk1: Fix SPDX license identifier
+ format
+Date: Wed, 18 Jul 2018 20:37:27 +0000
+Message-ID: <1531946245.26473.2.camel@toradex.com>
 References: <20180718194824.3704-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180718194824.3704-1-krzk@kernel.org>
+Content-Language: en-US
+Content-ID: <E8BE378C082095478660DD1C9143EA8B@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Philippe Ombredanne <pombredanne@nexb.com>, Krzysztof Kozlowski <krzk@kernel.org>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "stefan@agner.ch" <stefan@agner.ch>, "krzk@kernel.org" <krzk@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "pombredanne@nexb.com" <pombredanne@nexb.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix indentation and alignment when spaces were used instead of tabs.
-This fixes checkpatch errors like:
-
-    ERROR: code indent should use tabs where possible
-    #306: FILE: arch/arm/boot/dts/tegra20-paz00.dts:306:
-    +^I^I         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;$
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/tegra20-colibri.dtsi | 2 +-
- arch/arm/boot/dts/tegra20-paz00.dts    | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index e7b9ab09908a..fa1af2dc276c 100644
---- a/arch/arm/boot/dts/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -541,7 +541,7 @@
- 
- 	sound {
- 		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
--			         "nvidia,tegra-audio-wm9712";
-+			     "nvidia,tegra-audio-wm9712";
- 		nvidia,model = "Colibri T20 AC97 Audio";
- 
- 		nvidia,audio-routing =
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index ef245291924f..7d8aef6ebd3a 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -303,7 +303,7 @@
- 		request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
- 		slave-addr = <138>;
- 		clocks = <&tegra_car TEGRA20_CLK_I2C3>,
--		         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
-+			 <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
- 		clock-names = "div-clk", "fast-clk";
- 		resets = <&tegra_car 67>;
- 		reset-names = "i2c";
-@@ -599,8 +599,8 @@
- 			GPIO_ACTIVE_HIGH>;
- 
- 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
--		         <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
--		         <&tegra_car TEGRA20_CLK_CDEV1>;
-+			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
-+			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
- };
--- 
-2.14.1
+T24gV2VkLCAyMDE4LTA3LTE4IGF0IDIxOjQ4ICswMjAwLCBLcnp5c3p0b2YgS296bG93c2tpIHdy
+b3RlOg0KPiBGaXggaW5jb3JyZWN0IGZvcm1hdCB1c2VkIGZvciBPUiBjbGF1c2UgaW4gU1BEWCBs
+aWNlbnNlIGlkZW50aWZpZXIuDQoNCkNhbiB5b3UgcGxlYXNlIGVsYWJvcmF0ZSBob3cgeW91IGdv
+dCB0byB0aGF0IGNvbmNsdXNpb24gYXMgdGhlcmUgYXJlDQp2YXJpb3VzIG90aGVyIGRldmljZSB0
+cmVlcyBoYXZpbmcgaXQgc3BlY2lmaWVkIHRoZSBleGFjdCBzYW1lIHdheS4gUGx1cw0KSSB3YXMg
+YWN0dWFsbHkgZXZlbiBpbiBkaXNjdXNzaW9uIHdpdGggUGhpbGlwcGUgb24gdGhhdCBwYXRjaCBz
+ZXQgYmFjaw0Kd2hlbiBJIGludHJvZHVjZWQgdGhvc2UuDQoNCj4gU2lnbmVkLW9mZi1ieTogS3J6
+eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPg0KPiAtLS0NCj4gIGFyY2gvYXJtL2Jv
+b3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy12MS4yLWV2YWwuZHRzIHwgMiArLQ0KPiAgYXJjaC9hcm0v
+Ym9vdC9kdHMvdGVncmExMjQtYXBhbGlzLXYxLjIuZHRzaSAgICAgfCAyICstDQo+ICAyIGZpbGVz
+IGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1n
+aXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtdjEuMi1ldmFsLmR0cw0KPiBi
+L2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy12MS4yLWV2YWwuZHRzDQo+IGluZGV4
+IDhhOGQ1ZmEwZWNkMS4uZTJjMGQ4ZWZiMzU4IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290
+L2R0cy90ZWdyYTEyNC1hcGFsaXMtdjEuMi1ldmFsLmR0cw0KPiArKysgYi9hcmNoL2FybS9ib290
+L2R0cy90ZWdyYTEyNC1hcGFsaXMtdjEuMi1ldmFsLmR0cw0KPiBAQCAtMSw0ICsxLDQgQEANCj4g
+LS8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMCBPUiBNSVQpDQo+ICsvLyBTUERY
+LUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCBPUiBNSVQNCj4gIC8qDQo+ICAgKiBDb3B5cmln
+aHQgMjAxNi0yMDE4IFRvcmFkZXggQUcNCj4gICAqLw0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0v
+Ym9vdC9kdHMvdGVncmExMjQtYXBhbGlzLXYxLjIuZHRzaQ0KPiBiL2FyY2gvYXJtL2Jvb3QvZHRz
+L3RlZ3JhMTI0LWFwYWxpcy12MS4yLmR0c2kNCj4gaW5kZXggNTczYWFhNTBmZmYxLi41ZWY4NGI2
+YjMzNTYgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy12
+MS4yLmR0c2kNCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLXYxLjIu
+ZHRzaQ0KPiBAQCAtMSw0ICsxLDQgQEANCj4gLS8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAo
+R1BMLTIuMCBPUiBNSVQpDQo+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCBP
+UiBNSVQNCj4gIC8qDQo+ICAgKiBDb3B5cmlnaHQgMjAxNi0yMDE4IFRvcmFkZXggQUcNCj4gICAq
+Lw0KDQpbMV0gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC9DNjUxQzY3Ny1EMTU3LTQxQTMt
+QjIwNi1DQjAyQjk4NkFEMTlAeg0KaXN3aWxlci5jb20v
