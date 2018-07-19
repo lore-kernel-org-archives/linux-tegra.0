@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 3/8] dt: bindings: Move tegra20-emc binding to memory-controllers directory
-Date: Thu, 19 Jul 2018 16:21:27 +0300
-Message-ID: <20180719132132.16153-4-digetx@gmail.com>
+Subject: [PATCH v4 2/8] dt: bindings: tegra20-emc: Document clock property
+Date: Thu, 19 Jul 2018 16:21:26 +0300
+Message-ID: <20180719132132.16153-3-digetx@gmail.com>
 References: <20180719132132.16153-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180719132132.16153-1-digetx@gmail.com>
@@ -10,19 +10,34 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Move tegra20-emc binding to the memory-controllers directory for
-consistency with the other Tegra memory bindings.
+Embedded memory controller has a corresponding clock, document the clock
+property.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt      | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (100%)
+ .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-rename to Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+index a6fe401d0d48..add95367640b 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+@@ -11,6 +11,7 @@ Properties:
+   set of tables can be present and said tables will be used
+   irrespective of ram-code configuration.
+ - interrupts : Should contain EMC General interrupt.
++- clocks : Should contain EMC clock.
+ 
+ Child device nodes describe the memory settings for different configurations and clock rates.
+ 
+@@ -22,6 +23,7 @@ Example:
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f4000 0x200>;
+ 		interrupts = <0 78 0x04>;
++		clocks = <&tegra_car TEGRA20_CLK_EMC>;
+ 	}
+ 
+ 
 -- 
 2.18.0
