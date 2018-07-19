@@ -1,35 +1,101 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] memory: tegra: Don't invoke Tegra30+ specific memory timing setup on Tegra20
-Date: Thu, 19 Jul 2018 18:38:46 +0300
-Message-ID: <31916977.CHrX6e343J@dimapc>
-References: <20180719132453.16860-1-digetx@gmail.com> <39607791-3e71-7784-37db-4e05a316d7a8@nvidia.com>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Subject: Re: [PATCH 2/3] ARM: tegra: apalis-tk1: Add SPDX license (GPL-2.0 OR
+ X11) identifiers
+Date: Thu, 19 Jul 2018 18:44:11 +0200
+Message-ID: <CAOFm3uFPGDKBjr2TKmsqZKdCLSU8YY+mprNe0ozGzkORXbHYSg@mail.gmail.com>
+References: <20180718194824.3704-1-krzk@kernel.org> <20180718194824.3704-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <39607791-3e71-7784-37db-4e05a316d7a8@nvidia.com>
+In-Reply-To: <20180718194824.3704-2-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, 19 July 2018 18:30:48 MSK Jon Hunter wrote:
-> On 19/07/18 14:24, Dmitry Osipenko wrote:
-> > This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
-> > timings for RAM code 0 registered" warning message during of kernels
-> > boot-up on Tegra20.
-> 
-> Looking at the tegra20-emc.txt bindings doc [0], the 'nvidia,ram-code'
-> property is also valid for Tegra20. In fact, I see this warning on the
-> Tegra30 Cardhu because this property is not populated. So I think that
-> this warning is valid and harmless.
-> 
-> Cheers
-> Jon
-> 
-> [0] Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+Hi Krzysztof,
 
-That is the irrelevant binding, the relevant one for this driver is [0]. The 
-warning is valid for T30+, but not for T20.
+On Wed, Jul 18, 2018 at 9:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Three files dual-licensed were missing the SPDX license identifiers.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/tegra124-apalis-emc.dtsi | 38 +-----------------------------
+>  arch/arm/boot/dts/tegra124-apalis-eval.dts | 38 +-----------------------------
+>  arch/arm/boot/dts/tegra124-apalis.dtsi     | 38 +-----------------------------
+>  3 files changed, 3 insertions(+), 111 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/tegra124-apalis-emc.dtsi b/arch/arm/boot/dts/tegra124-apalis-emc.dtsi
+> index ca2c3a557895..cdbbb3562fb9 100644
+> --- a/arch/arm/boot/dts/tegra124-apalis-emc.dtsi
+> +++ b/arch/arm/boot/dts/tegra124-apalis-emc.dtsi
+> @@ -1,42 +1,6 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR X11
+>  /*
+>   * Copyright 2016 Toradex AG
+> - *
+> - * This file is dual-licensed: you can use it either under the terms
+> - * of the GPL or the X11 license, at your option. Note that this dual
+> - * licensing only applies to this file, and not this project as a
+> - * whole.
 
-[0] Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+This is weirdly enough not what is called an X11 license [1] even
+though it is named this way here... but this is an  MIT license [2]
+with a small variation. (See below)
+
+> - *
+> - *  a) This file is free software; you can redistribute it and/or
+> - *     modify it under the terms of the GNU General Public License
+> - *     version 2 as published by the Free Software Foundation.
+> - *
+> - *     This file is distributed in the hope that it will be useful
+> - *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - *     GNU General Public License for more details.
+> - *
+> - * Or, alternatively
+> - *
+> - *  b) Permission is hereby granted, free of charge, to any person
+> - *     obtaining a copy of this software and associated documentation
+> - *     files (the "Software"), to deal in the Software without
+> - *     restriction, including without limitation the rights to use
+> - *     copy, modify, merge, publish, distribute, sublicense, and/or
+> - *     sell copies of the Software, and to permit persons to whom the
+> - *     Software is furnished to do so, subject to the following
+> - *     conditions:
+> - *
+> - *     The above copyright notice and this permission notice shall be
+> - *     included in all copies or substantial portions of the Software.
+> - *
+> - *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
+
+The MIT standard text [2] has a few extra commas and states instead:
+
+THE SOFTWARE IS PROVIDED "AS IS",
+
+Here "AS IS" is omitted. I am not sure this is material but IMHO it
+would be good to get Toradex signoff on this.
+
+> - *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> - *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> - *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> - *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+> - *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> - *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> - *     OTHER DEALINGS IN THE SOFTWARE.
+>   */
+
+<snip>
+
+
+With all this said, I think that your expression should be this
+instead (and this applies to other places too):
+
+SPDX-License-Identifier: GPL-2.0 OR MIT
+
+[1]  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/LICENSES/other/X11?h=v4.18-rc5
+[2]  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/LICENSES/preferred/MIT?h=v4.18-rc5
+
+-- 
+Cordially
+Philippe Ombredanne
