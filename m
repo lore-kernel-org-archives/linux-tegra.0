@@ -1,267 +1,80 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v4 5/7] dt-bindings: Add Tegra PMC pad configuration bindings
-Date: Thu, 19 Jul 2018 15:30:32 +0300
-Message-ID: <1532003434-8844-6-git-send-email-avienamo@nvidia.com>
-References: <1532003434-8844-1-git-send-email-avienamo@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v4 0/8] Tegra20 External Memory Controller driver
+Date: Thu, 19 Jul 2018 16:21:24 +0300
+Message-ID: <20180719132132.16153-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532003434-8844-1-git-send-email-avienamo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Aapo Vienamo <avienamo@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Document the pinctrl bindings used by the PMC driver for performing pad
-configuration. Both nvidia,tegra186-pmc.txt and nvidia,tegra20-pmc.txt
-are modified as they both cover SoC generations for which these bindings
-apply.
+Hello,
 
-Add a header defining Tegra PMC pad voltage configurations.
+Couple years ago the Tegra20 EMC driver was removed from the kernel
+due to incompatible changes in the Tegra's clock driver. This patchset
+introduces a modernized EMC driver. Currently the sole purpose of the
+driver is to initialize DRAM frequency to maximum rate during of the
+kernels boot-up. Later we may consider implementing dynamic memory
+frequency scaling, utilizing functionality provided by this driver.
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
----
- .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 ++++++++++++++++++
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++++++++++++++++++
- include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 ++++
- 3 files changed, 213 insertions(+)
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+Changelog:
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-index 5a3bf7c..c5ecc3b 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-@@ -34,3 +34,95 @@ Board DTS:
- 	pmc@c360000 {
- 		nvidia,invert-interrupt;
- 	};
-+
-+== Pad Control ==
-+
-+On Tegra SoCs a pad is a set set of pins which are configured as a
-+group. The pin grouping is a fixed attribute of the hardware. The PMC
-+can be used to set pad power state and signaling voltage. The pad can
-+be either in active or power down mode. The power down mode may not
-+supported by all of the pads. 3.3 V and 1.8 V signaling voltages are
-+supported on pins where software controllable signaling voltage
-+switching is available.
-+
-+Pad configurations are described is with pin configuration nodes which
-+are placed under the pmc node and they are referred to by the pinctrl
-+client properties. For more information see
-+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
-+
-+Following pads are present on Tegra186:
-+csia		csib		dsi		mipi-bias
-+pex-clk-bias	pex-clk3	pex-clk2	pex-clk1
-+usb0		usb1		usb2		usb-bias
-+uart		audio		hsic		dbg
-+hdmi-dp0	hdmi-dp1	pex-cntrl	sdmmc2-hv
-+sdmmc4		cam		dsib		dsic
-+dsid		csic		csid		csie
-+dsif		spi		ufs		dmic-hv
-+edp		sdmmc1-hv	sdmmc3-hv	conn
-+audio-hv	ao-hv
-+
-+Required pin configuration properties:
-+  - pins: Must contain name of the pad(s) to be configured.
-+
-+Optional pin configuration properties:
-+  - low-power-enable: Configure the pad into power down mode
-+  - low-power-disable: Configure the pad into active mode
-+  - power-source: Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-+    TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
-+    The values are defined in
-+    include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
-+
-+Note: The power state can be configured on all of the above pads except
-+      for ao-hv. Following pads have software configurable signaling
-+      voltages: sdmmc2-hv, dmic-hv, sdmmc1-hv, sdmmc3-hv, audio-hv,
-+      ao-hv.
-+
-+Pad configuration state example:
-+	pmc: pmc@7000e400 {
-+		compatible = "nvidia,tegra186-pmc";
-+		reg = <0 0x0c360000 0 0x10000>,
-+		      <0 0x0c370000 0 0x10000>,
-+		      <0 0x0c380000 0 0x10000>,
-+		      <0 0x0c390000 0 0x10000>;
-+		reg-names = "pmc", "wake", "aotag", "scratch";
-+
-+		...
-+
-+		sdmmc1_3v3: sdmmc1-3v3 {
-+			pins = "sdmmc1-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-+		};
-+
-+		sdmmc1_1v8: sdmmc1-1v8 {
-+			pins = "sdmmc1-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-+		};
-+
-+		hdmi_off: hdmi-off {
-+			pins = "hdmi";
-+			low-power-enable;
-+		}
-+
-+		hdmi_on: hdmi-on {
-+			pins = "hdmi";
-+			low-power-disable;
-+		}
-+	};
-+
-+Pinctrl client example:
-+	sdmmc1: sdhci@3400000 {
-+		...
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-0 = <&sdmmc1_3v3>;
-+		pinctrl-1 = <&sdmmc1_1v8>;
-+	};
-+
-+	...
-+
-+	sor0: sor@15540000 {
-+		...
-+		pinctrl-0 = <&hdmi_off>;
-+		pinctrl-1 = <&hdmi_on>;
-+		pinctrl-names = "hdmi-on", "hdmi-off";
-+	};
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-index a74b37b..ac8cc6e 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-@@ -195,3 +195,106 @@ Example:
- 		power-domains = <&pd_audio>;
- 		...
- 	};
-+
-+== Pad Control ==
-+
-+On Tegra SoCs a pad is a set set of pins which are configured as a
-+group. The pin grouping is a fixed attribute of the hardware. The PMC
-+can be used to set pad power state and signaling voltage. The pad can
-+be either in active or power down mode. The power down mode may not
-+supported by all of the pads. 3.3 V and 1.8 V signaling voltages are
-+supported on pins where software controllable signaling voltage
-+switching is available.
-+
-+The pad configuration state nodes are placed under the pmc node and they
-+are referred to by the pinctrl client properties. For more information
-+see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
-+The pad name should be used as the value of the pins property in pin
-+configuration nodes.
-+
-+Following pads are present on Tegra124 and Tegra132:
-+audio		bb		cam		comp
-+csia		csb		cse		dsi
-+dsib		dsic		dsid		hdmi
-+hsic		hv		lvds		mipi-bias
-+nand		pex-bias	pex-clk1	pex-clk2
-+pex-cntrl	sdmmc1		sdmmc3		sdmmc4
-+sys_ddc		uart		usb0		usb1
-+usb2		usb_bias
-+
-+Following pads are present on Tegra210:
-+audio		audio-hv	cam		csia
-+csib		csic		csid		csie
-+csif		dbg		debug-nonao	dmic
-+dp		dsi		dsib		dsic
-+dsid		emmc		emmc2		gpio
-+hdmi		hsic		lvds		mipi-bias
-+pex-bias	pex-clk1	pex-clk2	pex-cntrl
-+sdmmc1		sdmmc3		spi		spi-hv
-+uart		usb0		usb1		usb2
-+usb3		usb-bias
-+
-+Required pin configuration properties:
-+  - pins: Must contain name of the pad(s) to be configured.
-+
-+Optional pin configuration properties:
-+  - low-power-enable: Configure the pad into power down mode
-+  - low-power-disable: Configure the pad into active mode
-+  - power-source: Must contain either TEGRA_IO_PAD_VOLTAGE_1V8
-+    or TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
-+    The values are defined in
-+    include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
-+
-+Note: The power state can be configured on all of the Tegra124 and
-+      Tegra132 pads. None of the Tegra124 or Tegra132 pads support
-+      signaling voltage switching.
-+
-+Note: All of the listed Tegra210 pads except pex-cntrl support power
-+      state configuration. Signaling voltage switching is supported on
-+      following Tegra210 pads: audio, audio-hv, cam, dbg, dmic, gpio,
-+      pex-cntrl, sdmmc1, sdmmc3, spi, spi-hv, and uart.
-+
-+Pad configuration state example:
-+	pmc: pmc@7000e400 {
-+		compatible = "nvidia,tegra210-pmc";
-+		reg = <0x0 0x7000e400 0x0 0x400>;
-+		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
-+		clock-names = "pclk", "clk32k_in";
-+
-+		...
-+
-+		sdmmc1_3v3: sdmmc1-3v3 {
-+			pins = "sdmmc1";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-+		};
-+
-+		sdmmc1_1v8: sdmmc1-1v8 {
-+			pins = "sdmmc1";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-+		};
-+
-+		hdmi_off: hdmi-off {
-+			pins = "hdmi";
-+			low-power-enable;
-+		}
-+
-+		hdmi_on: hdmi-on {
-+			pins = "hdmi";
-+			low-power-disable;
-+		}
-+	};
-+
-+Pinctrl client example:
-+	sdmmc1: sdhci@700b0000 {
-+		...
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-0 = <&sdmmc1_3v3>;
-+		pinctrl-1 = <&sdmmc1_1v8>;
-+	};
-+	...
-+	sor@54540000 {
-+		...
-+		pinctrl-0 = <&hdmi_off>;
-+		pinctrl-1 = <&hdmi_on>;
-+		pinctrl-names = "hdmi-on", "hdmi-off";
-+	};
-diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-new file mode 100644
-index 0000000..20f4340
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * pinctrl-tegra-io-pad.h: Tegra I/O pad source voltage configuration constants
-+ * pinctrl bindings.
-+ *
-+ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * Author: Aapo Vienamo <avienamo@nvidia.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
-+#define _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
-+
-+/* Voltage levels of the I/O pad's source rail */
-+#define TEGRA_IO_PAD_VOLTAGE_1V8	0
-+#define TEGRA_IO_PAD_VOLTAGE_3V3	1
-+
-+#endif
+v4:
+	- Fixed "bad of_node_put()" error which was revealed by enabling
+	  some extra kernel debug config options.
+
+	- The "emc-table" DT nodes are now parsed starting from the "emc"
+	  node instead of the DT root.
+
+	- Adjusted code comment in the "Turn EMC clock gate into divider"
+	  patch as was suggested by Stephen Boyd to the v3.
+
+v3:
+	- Handle "nvidia,use-ram-code" DT property, its handling was missed
+	  in the previous versions.
+
+	- Honor "emc-tables" DT node naming which is explicitly specified
+	  in the DT binding, also was missed in the previous versions.
+
+	- Two new DT binding patches: one adds the EMC clock property,
+	  other relocates the binding doc file to the appropriate directory.
+	  One new patch that adds EMC clock property to the DTS file.
+
+	- Addressed v2 review comments from Thierry Reding. Driver does not
+	  preserve backwards compatibility with older device tree binding.
+
+	- The PLL_M and PLL_P clocks are kept internal to the driver because
+	  after some more considering I couldn't find a really good reason why
+	  these clocks should be in the device tree.
+
+	- Some minor cleanups and fixes in the drivers code.
+
+v2:
+	- Minor code cleanups like consistent use of writel_relaxed instead
+	  of non-relaxed version, reworded error messages, etc.
+
+	- Factored out use_pllm_ud bit checking into a standalone patch for
+	  consistency.
+
+Dmitry Osipenko (8):
+  dt: bindings: tegra20-emc: Document interrupt property
+  dt: bindings: tegra20-emc: Document clock property
+  dt: bindings: Move tegra20-emc binding to memory-controllers directory
+  ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+  ARM: dts: tegra20: Add clock entry to External Memory Controller
+  clk: tegra20: Turn EMC clock gate into divider
+  clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+  memory: tegra: Introduce Tegra20 EMC driver
+
+ .../nvidia,tegra20-emc.txt                    |   4 +
+ arch/arm/boot/dts/tegra20.dtsi                |   2 +
+ drivers/clk/tegra/clk-tegra20.c               |  46 +-
+ drivers/memory/tegra/Kconfig                  |  10 +
+ drivers/memory/tegra/Makefile                 |   1 +
+ drivers/memory/tegra/tegra20-emc.c            | 575 ++++++++++++++++++
+ 6 files changed, 628 insertions(+), 10 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (95%)
+ create mode 100644 drivers/memory/tegra/tegra20-emc.c
+
 -- 
-2.7.4
+2.18.0
