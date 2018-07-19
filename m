@@ -1,35 +1,53 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/3] ARM: tegra: apalis-tk1: Fix SPDX license identifier format
-Date: Thu, 19 Jul 2018 08:53:55 +0200
-Message-ID: <CAJKOXPfKunyOqYA8vNjN71K92=FW4vcTjdcz9TQ8mHdFJL7VKQ@mail.gmail.com>
-References: <20180718194824.3704-1-krzk@kernel.org> <1531946245.26473.2.camel@toradex.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v4 0/7] Tegra PMC pinctrl pad configuration
+Date: Thu, 19 Jul 2018 15:30:27 +0300
+Message-ID: <1532003434-8844-1-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531946245.26473.2.camel@toradex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "stefan@agner.ch" <stefan@agner.ch>, "tglx@linutronix.de" <tglx@linutronix.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "pombredanne@nexb.com" <pombredanne@nexb.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Aapo Vienamo <avienamo@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 18 July 2018 at 22:37, Marcel Ziswiler <marcel.ziswiler@toradex.com> wrote:
-> On Wed, 2018-07-18 at 21:48 +0200, Krzysztof Kozlowski wrote:
->> Fix incorrect format used for OR clause in SPDX license identifier.
->
-> Can you please elaborate how you got to that conclusion as there are
-> various other device trees having it specified the exact same way. Plus
-> I was actually even in discussion with Philippe on that patch set back
-> when I introduced those.
+Hi all,
 
-Hi,
+The Tegra Power Management Controller (PMC) can set pad power states
+and voltage configuration. This series implements pinctrl interfaces
+for configuring said pad properties.
 
-I thought these were pointed by checkpatch but it was my mistake -
-checkpatch complained about missing SPDX in tegra124-apalis.dtsi, not
-about these files. Maybe I was mislead by the in-kernel example [1]...
-although SPDX specification uses them so I think this patch can be
-abandoned.
+Changelog
+v4:
+	- Revise the dt-bindings docs
+v3:
+	- Don't expose tegra_io_pad_is_powered()
+	- Remove tegra_io_pad_set_voltage() stub from pmc.h
+		- Fixes i386 build failure reported by kbuild test robot
+v2:
+	- Add Tegra186 AO_HV pad
+	- Make the IO pad tables narrower
+	- Add parens to TEGRA_IO_PAD() and TEGRA_IO_PIN_DESC()
+	- Fix a typo in the dt-bindings docs
+	- Remove old pmc pad voltage configuration APIs
+	- Check return value of tegra_io_pad_find() in
+	  tegra_io_pad_pinconf_get()/_set()
 
-[1] https://elixir.bootlin.com/linux/v4.18-rc5/source/Documentation/process/license-rules.rst#L130
+Aapo Vienamo (7):
+  soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+  soc/tegra: pmc: Factor out DPD register bit calculation
+  soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+  soc/tegra: pmc: Use X macro to generate IO pad tables
+  dt-bindings: Add Tegra PMC pad configuration bindings
+  soc/tegra: pmc: Remove public pad voltage APIs
+  soc/tegra: pmc: Implement pad configuration via pinctrl
 
-Best regards,
-Krzysztof
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 ++++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++
+ drivers/soc/tegra/pmc.c                            | 512 +++++++++++++++------
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+ include/soc/tegra/pmc.h                            |  20 +-
+ 5 files changed, 597 insertions(+), 148 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+
+-- 
+2.7.4
