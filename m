@@ -1,43 +1,44 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 2/8] dt: bindings: tegra20-emc: Document clock property
-Date: Thu, 19 Jul 2018 16:21:26 +0300
-Message-ID: <20180719132132.16153-3-digetx@gmail.com>
-References: <20180719132132.16153-1-digetx@gmail.com>
+Subject: [PATCH v1] memory: tegra: Don't invoke Tegra30+ specific memory timing setup on Tegra20
+Date: Thu, 19 Jul 2018 16:24:53 +0300
+Message-ID: <20180719132453.16860-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180719132132.16153-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Embedded memory controller has a corresponding clock, document the clock
-property.
+This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
+timings for RAM code 0 registered" warning message during of kernels
+boot-up on Tegra20.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/memory/tegra/mc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index a6fe401d0d48..add95367640b 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -11,6 +11,7 @@ Properties:
-   set of tables can be present and said tables will be used
-   irrespective of ram-code configuration.
- - interrupts : Should contain EMC General interrupt.
-+- clocks : Should contain EMC clock.
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index bd25faf6d13d..e56862495f36 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -664,12 +664,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 		}
  
- Child device nodes describe the memory settings for different configurations and clock rates.
+ 		isr = tegra_mc_irq;
+-	}
  
-@@ -22,6 +23,7 @@ Example:
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f4000 0x200>;
- 		interrupts = <0 78 0x04>;
-+		clocks = <&tegra_car TEGRA20_CLK_EMC>;
+-	err = tegra_mc_setup_timings(mc);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to setup timings: %d\n", err);
+-		return err;
++		err = tegra_mc_setup_timings(mc);
++		if (err < 0) {
++			dev_err(&pdev->dev, "failed to setup timings: %d\n",
++				err);
++			return err;
++		}
  	}
  
- 
+ 	mc->irq = platform_get_irq(pdev, 0);
 -- 
 2.18.0
