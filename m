@@ -1,49 +1,51 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 1/2] ASoC: tegra: improve goto error label
-Date: Fri, 20 Jul 2018 10:04:23 +0200
-Message-ID: <20180720080424.31505-1-marcel@ziswiler.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] pinctrl: tegra: fix spelling in devicetree binding
+ document
+Date: Fri, 20 Jul 2018 09:12:26 +0100
+Message-ID: <5e51036b-a0b0-9cb4-4698-cf830309ef8a@nvidia.com>
+References: <20180720075235.18617-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180720075235.18617-1-marcel@ziswiler.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-While the two error labels "err" and "err_clk_put" goto the same place
-it is rather confusing that the earlier one is certainly used later
-again.
+On 20/07/18 08:52, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> This fixes a spelling mistake.
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> ---
+> 
+>  Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
+> index ecb5c0d25218..f4d06bb0b55a 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
+> @@ -17,7 +17,7 @@ Tegra124 adds the following optional properties for pin configuration subnodes.
+>  The macros for options are defined in the
+>  	include/dt-binding/pinctrl/pinctrl-tegra.h.
+>  - nvidia,enable-input: Integer. Enable the pin's input path.
+> -		enable :TEGRA_PIN_ENABLE0 and
+> +		enable :TEGRA_PIN_ENABLE and
+>  		disable or output only: TEGRA_PIN_DISABLE.
+>  - nvidia,open-drain: Integer.
+>  		enable: TEGRA_PIN_ENABLE.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Thanks for fixing! Can you also fix up the one in nvidia,tegra210-pinmux.txt as well?
 
----
+Cheers!
+Jon
 
- sound/soc/tegra/tegra20_ac97.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-index affad46bf188..682ef33afb5f 100644
---- a/sound/soc/tegra/tegra20_ac97.c
-+++ b/sound/soc/tegra/tegra20_ac97.c
-@@ -377,7 +377,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 	ret = clk_prepare_enable(ac97->clk_ac97);
- 	if (ret) {
- 		dev_err(&pdev->dev, "clk_enable failed: %d\n", ret);
--		goto err;
-+		goto err_clk_put;
- 	}
- 
- 	ret = snd_soc_set_ac97_ops(&tegra20_ac97_ops);
 -- 
-2.14.4
+nvpublic
