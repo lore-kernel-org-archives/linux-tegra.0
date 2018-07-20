@@ -1,100 +1,57 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: RFC: tegra2/tegra3 automotive part changes
-Date: Fri, 20 Jul 2018 11:25:57 +0100
-Message-ID: <2e51c020-bca4-1e50-f0ad-cd2ece224cf8@codethink.co.uk>
-References: <3916c0ea-964e-42ab-8bfd-8e8edc5110ee@codethink.co.uk>
- <fecd5597-1b04-6409-b87c-5cda54d43ce0@wwwdotorg.org>
- <4f215c76-6539-1130-6c1f-75f0a3df068a@codethink.co.uk>
- <c8d947bb-a790-56f4-8ab4-2259f736d445@wwwdotorg.org>
+From: Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v5 0/7] Tegra PMC pinctrl pad configuration
+Date: Fri, 20 Jul 2018 13:59:08 +0300
+Message-ID: <1532084355-31482-1-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <c8d947bb-a790-56f4-8ab4-2259f736d445@wwwdotorg.org>
-Content-Language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Terry Hu <kejia.hu@codethink.co.uk>, Device Tree list <devicetree@vger.kernel.org>, jorgesanjuan <jorge.sanjuan@codethink.co.uk>, Thomas Preston <thomas.preston@codethink.co.uk>, linux-tegra <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Beth White <beth.white@codethink.co.uk>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Aapo Vienamo <avienamo@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTMvMDcvMTggMTc6NTMsIFN0ZXBoZW4gV2FycmVuIHdyb3RlOgo+IE9uIDA3LzEzLzIwMTgg
-MDM6NDEgQU0sIEJlbiBEb29rcyB3cm90ZToKPj4gT24gMTIvMDcvMTggMTY6NTYsIFN0ZXBoZW4g
-V2FycmVuIHdyb3RlOgo+Pj4gT24gMDcvMTIvMjAxOCAwNzozNiBBTSwgQmVuIERvb2tzIHdyb3Rl
-Ogo+Pj4+IEhlbGxvLCB3ZSBhcmUgbG9va2luZyBhdCB1cC1zdHJlYW1pbmcgc29tZSBvZiB0aGUg
-d29yayB3ZSBoYXZlCj4+Pj4gZG9uZSBvbiB0aGUgdGVncmEyIGFuZCB0ZWdyYTMgYXV0b21vdGl2
-ZSBkZXZpY2VzLiBUaGUgYXV0b21vdGl2ZQo+Pj4+IGdyYWRlIGRldmljZXMgYXJlIGNsb3NlIHRo
-ZSBjb21tZXJjaWFsIHBhcnRzIHNvIHdlIHdvdWxkIGxpa2UgdG8KPj4+PiBkaXNjdXNzIHRoZSBj
-b3JlIGNoYW5nZXMgYmVmb3JlIHN1Ym1pdHRpbmcuCj4+Pj4KPj4+PiBUaGUgY2hhbmdlcyBhcmUg
-bW9zdGx5IHdpdGggdGhpbmdzIGxpa2UgdGhlIGNsb2NrIHNldHVwIGFuZCBhCj4+Pj4gZmV3IHBl
-cmlwaGVyYWwgcXVpcmtzIChJSVJDIHRoZXNlIGFyZSBtb3N0bHkgTU1DKS4KPj4+Pgo+Pj4+IFdl
-IGFyZSBwcm9wb3NpbmcgdG8gY2hhbmdlIHRoZSBkZXZpY2UtdHJlZSBwcm9wZXJ0aWVzIGZvciB0
-aGUgcm9vdAo+Pj4+IG5vZGUgYW5kIGFueSBvdGhlciBhZmZlY3RlZCBkZXZpY2VzIGZyb20gIm52
-aWRpYSx0ZWdyYVhYIiB0byBhIG5ldwo+Pj4+ICJudmlkaWEsdGVncmFYWGEiLiBXZSB3b3VsZCB3
-ZWxjb21lIGRpc2N1c3Npb24gb24gd2hldGhlciB0byB1cGRhdGUKPj4+PiBhbGwgdGhlIGRldmlj
-ZXMgYXQgdGhlIHN0YXJ0Cj4+Pj4KPj4+PiBBbiBleGFtcGxlIG9mIHRlZ3JhMzBhLmR0c2k6Cj4+
-Pj4KPj4+PiAjaW5jbHVkZSAidGVncmEzMC5kdHNpIgo+Pj4+Cj4+Pj4gLyB7Cj4+Pj4gwqDCoMKg
-wqDCoMKgwqDCoCBjb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTMwYSI7Cj4+Pj4KPj4+PiDCoMKg
-wqDCoMKgwqDCoMKgIGNsb2NrQDYwMDA2MDAwIHsKPj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBjb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTMwYS1jYXIiOwo+Pj4+IMKgwqDC
-oMKgwqDCoMKgwqAgfTsKPj4+PiB9Cj4+Pgo+Pj4gVGhpcyBkb2Vzbid0IHNvdW5kIHJpZ2h0LiBB
-dXRvIGFuZCBjb21tZXJjaWFsIHBhcnRzIGFyZSBpZGVudGljYWwgCj4+PiBBRkFJSzsgaXQncyBq
-dXN0IHF1YWxpZmljYXRpb24gZGlmZmVyZW5jZXMuIEhlbmNlIGF0IG1vc3QgeW91J2QgYWRkIAo+
-Pj4gYW4gZXh0cmEgY29tcGF0aWJsZSB2YWx1ZSBhbmQgbm90IHJlbW92ZSB0aGUgb2xkIG9uZS4g
-QmV0dGVyIG1pZ2h0IGJlIAo+Pj4gdG8gZGV0ZWN0IHRoaXMgYXQgcnVuLXRpbWUgZnJvbSB0aGUg
-ZnVzZXMuIEkgdGhpbmsgd2UgYWxyZWFkeSBkbyBzb21lIAo+Pj4gb2YgdGhhdCBhbHJlYWR5OyBz
-ZWFyY2ggZm9yIHNwZWVkbyByZWxhdGVkIGNvZGUgaW4gYXJjaC9hcm0vbWFjaC10ZWdyYS8uCj4+
-Cj4+IFRoZSBudmlkaWEgcGRrIGZvciB0aGUgYXV0b21vdGl2ZSBkaWRuJ3Qgc2V0IHRoZSBjbG9j
-a3MgdXAgaW4gdGhlCj4+IHNhbWUgd2F5IGFuZCB3ZSB3aGVyZSB0b2xkIHRoYXQgdGhlcmUgYXJl
-IGNlcnRhaW4gY2xvY2sgcmVzdHJpY3Rpb25zCj4+IGZvciB0aGUgYXV0b21vdGl2ZSBwYXJ0cyB0
-aGF0IHRoZSBjb21tZXJjaWFsIG9uZXMgZG8gbm90IGhhdmUuIFNvbWUgb2YKPj4gdGhpcyBjYW1l
-IGZyb20gaW50ZXJuYWwgZGlzY3Vzc2lvbnMgd2l0aCBudmlkaWEgYW5kIE5EQSdkIGRhdGFzaGVl
-dHMKPj4gc28gSSBkb24ndCBrbm93IGhvdyBtdWNoIGFjdHVhbCBkYXRhIEkgY2FuIHNoYXJlLgo+
-IAo+IEkgYmVsaWV2ZSB0aGlzIGp1c3QgY2hhbmdlcyB0aGUgKnNlbGVjdGlvbiogb2YgdmFsdWVz
-IHRvIHVzZSAoY2xvY2sgCj4gcmF0ZXMsIGNsb2NrIHNvdXJjZXMpLCBub3QgKmhvdyogdG8gcHJv
-Z3JhbSB0aGVtIChzZXQgb2YgcmVnaXN0ZXJzIGFuZCAKPiBmaWVsZHMsIHByb2dyYW1taW5nIGFs
-Z29yaXRobSksIHdoaWNoIGlzIHdoYXQgdGhlIERUIGNvbXBhdGlibGUgaXMgCj4gbWFpbmx5IGFi
-b3V0LiBJbiBvdGhlciB3b3JkcywgaXQncyBtYWlubHkgYSBwZXJmb3JtYW5jZS9jb25maWd1cmF0
-aW9uIAo+IGRlY2lzaW9uIG5vdCBkaWZmZXJlbnQgSFcuCj4gCj4+IFRvIGdldCB0aGUgNC40IGtl
-cm5lbCB0byBiZSBzaW1pbGFyIGVub3VnaCB0byB3b3JrIHdpdGggdGhlIHRlZ3JhMzBhCj4+IHdl
-IGhhZCB0byBkbyBzb21lIGNoYW5nZXMgdG8gdGhlIGNsb2NrIGluaXRpYWxpc2F0aW9uLiBGb3Ig
-dGhpbmdzCj4+IGxpa2UgdGhlIGNsb2NrIEkgYW0gbm90IHN1cmUgaWYgbGVhdmluZyBhIHRlZ3Jh
-MzAtY2FyIGluIHRoZXJlIHdvdWxkCj4+IGJlIGEgZ29vZCBpZGVhLCBpdCBtYXkgYm9vdCBidXQg
-cHJvYmFibHkgd29uJ3QgYmUgc3RhYmxlLgo+Pgo+PiBGb3IgdGhlIGZ1c2VzLCBpcyB0aGUgZnVz
-ZSBkcml2ZXIgdXAgZWFybHkgZW5vdWdoIHRvIGFsbG93IHRoZSBjbG9jawo+PiBkcml2ZXIgY291
-bGQgdXNlIHRoaXM/IG90aGVyd2lzZSBJIHRoaW5rIHRoZSBkZXZpY2UtdHJlZSBjaGFuZ2Ugd291
-bGQKPj4gYmUgdGhlIG9ubHkgd2F5LiBJJ20gbm90IHN1cmUgaWYgSSBoYXZlIHRoZSBpbmZvcm1h
-dGlvbiB0byBoYW5kIG9uCj4+IGhvdyB0byBkaWZmZXJlbnRpYXRlIHRoZSB0ZWdyYTMwIGFuZCB0
-ZWdyYTIwLgo+Pgo+PiBQUywgd2UnbGwgd2FudCB0byBkbyB0aGUgc2FtZSBmb3IgdGhlIHRlZ3Jh
-MjAuCj4gCj4gQXMgSm9iIG1lbnRpb25lZCwgdGhlIGZ1c2UgZHJpdmVyIHNob3VsZC9jb3VsZCBi
-ZSBhdmFpbGFibGUgZWFybHkgZW5vdWdoIAo+IHdpdGhvdXQgaXNzdWUuIEl0IG1heSBoYXZlIHRv
-IChhbmQgcHJvYmFibHkgYWxyZWFkeSBkb2VzKSBoYXJkLWNvZGUgdGhlIAo+IHBoeXNpY2FsIGFk
-ZHJlc3Mgb2YgdGhlIGZ1c2VzIHJhdGhlciB0aGFuIGJlaW5nIGNvbmZpZ3VyZWQgZnJvbSBEVCBm
-b3IgCj4gdGhpcy4gSSB0aGluayBpZiB5b3UgcmVhZCB0aGUgY2hpcCAiU0tVIiB2YWx1ZSBmcm9t
-IGZ1c2VzLCB0aGF0IHNob3VsZCAKPiBpbmRpY2F0ZSB3aGljaCBzZXRzIG9mIHJlc3RyaWN0aW9u
-cyBvbiBjbG9ja3MvLi4uIGFyZSByZXF1aXJlZCwgYW5kIAo+IHRoZXJlIGFyZSBtYW55IG1vcmUg
-U0tVcyB0aGFuIGp1c3QgInJlZ3VsYXIiIGFuZCAiYXV0b21vdGl2ZSIsIGFsdGhvdWdoIAo+IGFs
-bCB0aGUgZGlmZmVyZW50IFNLVXMgbWF5IGJlIGJ1Y2tldGVkIGludG8gZmV3ZXIgc2V0cyBvZiAK
-PiByZXN0cmljdGlvbi9jb25maWd1cmF0aW9uIGRhdGEuCj4gCj4gQnJpZWZseSBsb29raW5nIGF0
-IGRyaXZlcnMvc29jL3RlZ3JhL2Z1c2Uvc3BlZWRvLXRlZ3JhMjAuYywgc29tZSAoYSB2ZXJ5IAo+
-IGxpdHRsZSkgb2YgdGhpcyBtYXkgYWxyZWFkeSBiZSB0aGVyZQoKT2ssIHRoZSBsb2dzIEkgaGF2
-ZSBmcm9tIG9uZSBvZiB0aGUgYXV0b21vdGl2ZSBzeXN0ZW1zIGhhczoKCltdIFRlZ3JhIFJldmlz
-aW9uOiBBMDMgU0tVOiAxNzYgQ1BVIFByb2Nlc3M6IDMgU29DIFByb2Nlc3M6IDAKClNvIHdvdWxk
-IGEgdGVzdCBmb3I6Cglza3VfaW5mby0+cmV2aXNpb24gPT0gVEVHUkFfUkVWSVNJT05fQTAzICYm
-Cglza3VfaW5mby0+c2t1X2lkID09IDE3NgoKYmUgb2ssIG9yIGRvZXMgdGhhdCBuZWVkIHNvbWUg
-c29ydCBvZiBtYXNrPwoKCkkndmUgbm90IHRyaWVkIHVwZGF0aW5nIHNwZWVkby10ZWdyYTMwLmMg
-YXMgSSBkaWRuJ3QgcmVhbGx5IHVuZGVyc3RhbmQKd2hhdCBhbGwgdGhlIHZhbHVlcyB3aGVyZSAo
-YW5kIHdlIGRpZG4ndCB1c2UgY3B1ZnJlcS1zY2FsaW5nKQoKLS0gCkJlbiBEb29rcwkJCQlodHRw
-Oi8vd3d3LmNvZGV0aGluay5jby51ay8KU2VuaW9yIEVuZ2luZWVyCQkJCUNvZGV0aGluayAtIFBy
-b3ZpZGluZyBHZW5pdXMKCmh0dHBzOi8vd3d3LmNvZGV0aGluay5jby51ay9wcml2YWN5Lmh0bWwK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFy
-bS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-ZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1r
-ZXJuZWwK
+Hi all,
+
+The Tegra Power Management Controller (PMC) can set pad power states
+and voltage configuration. This series implements pinctrl interfaces
+for configuring said pad properties.
+
+Changelog
+v5:
+	- Fix a typo in "soc/tegra: pmc: Remove public pad voltage APIs"
+		- 1.8 V / 3.3 V selection logic worked the wrong way
+		  around on SoCs without pmc->soc->has_impl_33v_pwr.
+v4:
+	- Revise the dt-bindings docs
+v3:
+	- Don't expose tegra_io_pad_is_powered()
+	- Remove tegra_io_pad_set_voltage() stub from pmc.h
+		- Fixes i386 build failure reported by kbuild test robot
+v2:
+	- Add Tegra186 AO_HV pad
+	- Make the IO pad tables narrower
+	- Add parens to TEGRA_IO_PAD() and TEGRA_IO_PIN_DESC()
+	- Fix a typo in the dt-bindings docs
+	- Remove old pmc pad voltage configuration APIs
+	- Check return value of tegra_io_pad_find() in
+	  tegra_io_pad_pinconf_get()/_set()
+
+Aapo Vienamo (7):
+  soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+  soc/tegra: pmc: Factor out DPD register bit calculation
+  soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+  soc/tegra: pmc: Use X macro to generate IO pad tables
+  dt-bindings: Add Tegra PMC pad configuration bindings
+  soc/tegra: pmc: Remove public pad voltage APIs
+  soc/tegra: pmc: Implement pad configuration via pinctrl
+
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 ++++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++
+ drivers/soc/tegra/pmc.c                            | 512 +++++++++++++++------
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+ include/soc/tegra/pmc.h                            |  20 +-
+ 5 files changed, 597 insertions(+), 148 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+
+-- 
+2.7.4
