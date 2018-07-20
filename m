@@ -1,57 +1,48 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 2/6] ARM: multi_v7_defconfig: update order
-Date: Fri, 20 Jul 2018 16:30:08 +0200
-Message-ID: <20180720143012.7740-2-marcel@ziswiler.com>
+Subject: [PATCH 3/6] ARM: multi_v7_defconfig: enable dynamic debug
+Date: Fri, 20 Jul 2018 16:30:09 +0200
+Message-ID: <20180720143012.7740-3-marcel@ziswiler.com>
 References: <20180720143012.7740-1-marcel@ziswiler.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20180720143012.7740-1-marcel@ziswiler.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>, Tony Lindgren <tony@atomide.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Eric Anholt <eric@anholt.net>, Russell King <linux@armlinux.org.uk>, Simon Horman <horms+renesas@verge.net.au>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>, Eric Anholt <eric@anholt.net>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>, Russell King <linux@armlinux.org.uk>, Tony Lindgren <tony@atomide.com>, Olof Johansson <olof@lixom.net>, Simon Horman <horms+renesas@verge.net.au>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-The order of some kernel configurations changed.
+Dynamic debug is really helpful.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/configs/multi_v7_defconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index c9dcb85cb1dd..4a47a9de6a5e 100644
+index 4a47a9de6a5e..beacb02c734b 100644
 --- a/arch/arm/configs/multi_v7_defconfig
 +++ b/arch/arm/configs/multi_v7_defconfig
-@@ -48,8 +48,8 @@ CONFIG_SOC_IMX6Q=y
- CONFIG_SOC_IMX6SL=y
- CONFIG_SOC_IMX6SX=y
- CONFIG_SOC_IMX6UL=y
--CONFIG_SOC_IMX7D=y
- CONFIG_SOC_LS1021A=y
-+CONFIG_SOC_IMX7D=y
- CONFIG_SOC_VF610=y
- CONFIG_ARCH_KEYSTONE=y
- CONFIG_ARCH_MEDIATEK=y
-@@ -493,8 +493,6 @@ CONFIG_MFD_AC100=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
- CONFIG_MFD_CROS_EC=m
--CONFIG_CROS_EC_I2C=m
--CONFIG_CROS_EC_SPI=m
- CONFIG_MFD_DA9063=m
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
-@@ -864,6 +862,8 @@ CONFIG_SERIO_NVEC_PS2=y
- CONFIG_NVEC_POWER=y
- CONFIG_NVEC_PAZ00=y
- CONFIG_STAGING_BOARD=y
-+CONFIG_CROS_EC_I2C=m
-+CONFIG_CROS_EC_SPI=m
- CONFIG_COMMON_CLK_MAX77686=y
- CONFIG_COMMON_CLK_RK808=m
- CONFIG_COMMON_CLK_S2MPS11=m
+@@ -974,6 +974,7 @@ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ CONFIG_NLS_UTF8=y
+ CONFIG_PRINTK_TIME=y
++CONFIG_DYNAMIC_DEBUG=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_CRYPTO_USER=m
+ CONFIG_CRYPTO_USER_API_HASH=m
 -- 
 2.14.4
