@@ -1,58 +1,81 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 5/7] dt-bindings: Add Tegra PMC pad configuration
- bindings
-Date: Fri, 20 Jul 2018 12:16:04 +0100
-Message-ID: <cb67ced4-eef8-abb5-5706-3282a55edbb2@nvidia.com>
-References: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
- <1531396813-6581-6-git-send-email-avienamo@nvidia.com>
- <20180716154309.GA16477@rob-hp-laptop>
- <20180717152318.3608e3f9@dhcp-10-21-25-168>
- <CAL_JsqL1F0RF_6=ho0pa7Uh4AUsyvFRDGM50gN4=6_+MwBfGYQ@mail.gmail.com>
- <20180717183020.5ab9bfa6@dhcp-10-21-25-168>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/2] ASoC: tegra: probe deferral error
+	reporting
+Date: Fri, 20 Jul 2018 13:16:12 +0100
+Message-ID: <20180720121612.GC10784@sirena.org.uk>
+References: <20180720080424.31505-1-marcel@ziswiler.com>
+ <20180720080424.31505-2-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717183020.5ab9bfa6@dhcp-10-21-25-168>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>, Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============3105660243370161700=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20180720080424.31505-2-marcel@ziswiler.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Adding Linus ...
 
-On 17/07/18 16:30, Aapo Vienamo wrote:
+--===============3105660243370161700==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Clx92ZfkiYIKRjnr"
+Content-Disposition: inline
 
-...
 
->>>>> +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
->>>>> +
->>>>> +The values accepted by power-source property are
->>>>> +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
->>>>> +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.  
->>>>
->>>> You need to list out what properties the child nodes can have.
->>>>
->>>> power-source needs a vendor prefix.  
->>>
->>> Isn't it a generic pinctrl property?  
->>
->> I don't know offhand. Doesn't look like it if you have custom values.
-> 
-> It's listed under "Supported generic properties" in
-> pinctrl-bindings.txt. The convention seems to be not to add a vendor
-> prefix even though such custom macro values are used. The property is
-> currently used by qcom,pmic-gpio, qcom,pmic-mpp, and renesas,pfc-pinctrl.
-> I could not find a bindings document describing it with a vendor prefix.
-Looking at other users of the 'power-source' property it is not clear to
-me if the values should/can be vendor specific or not. I see cases where
-some people use definitions and others use actual voltages. 
+--Clx92ZfkiYIKRjnr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Linus, any recommendations here?
+On Fri, Jul 20, 2018 at 10:04:24AM +0200, Marcel Ziswiler wrote:
 
-Cheers
-Jon	
+> -			dev_err(&pdev->dev, "could not get codec-reset GPIO\n");
+> +			dev_err(&pdev->dev, "could not get codec-reset GPIO: "
+> +					    "%d\n", ret);
 
--- 
-nvpublic
+Don't split strings over lines like this, it causes problems when people
+grep for errors.  It's better to go over 80 columns.
+
+>  	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
+>  					    "nvidia,codec-sync-gpio", 0);
+>  	if (!gpio_is_valid(ac97->sync_gpio)) {
+> -		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
+> +		ret = ac97->sync_gpio;
+> +		dev_err(&pdev->dev, "no codec-sync GPIO supplied: %d\n", ret);
+>  		goto err_clk_put;
+>  	}
+
+This isn't reporting an error code associated with the attempt to find a
+codec-sync GPIO, it's the result of some other operation.
+
+--Clx92ZfkiYIKRjnr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltR0osACgkQJNaLcl1U
+h9AVmwf/e4WjlzV4DYAbjzGF9Ht1ig2O1wJA0BPK4/21DHuYhCAkLkLXbGoE3HKD
+j+0NjjLNSqdSeuQChz+tY0Tw12CIupCNSInA6+AS6cQ/OaAPlaTnNuPjDpF3aXWs
+aoxbZ+OclgsvtoHU3q7Oq1EHDJTuYBRMIQsw3fZmSG2L9ZX3u86S6spEE2pdVifW
+ZMHRfbqeIFJpnuVnhHEecYH3y4ZaK1oxOCqpzPWSpcnbSTotMzXSGQLZtc9Voyn7
+tS4/aTY3iMsLa/RUpC9PMCBvPdn4Hj9zzWkOeDz1AviKsW0eJaMdAlg2m8f9it8E
+c0gfHvC1bc0xNsqpQQLp2doD2OwWYA==
+=qJDp
+-----END PGP SIGNATURE-----
+
+--Clx92ZfkiYIKRjnr--
+
+--===============3105660243370161700==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============3105660243370161700==--
