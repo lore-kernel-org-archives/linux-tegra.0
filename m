@@ -1,13 +1,11 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 2/2] ASoC: tegra: probe deferral error reporting
-Date: Fri, 20 Jul 2018 10:04:24 +0200
-Message-ID: <20180720080424.31505-2-marcel@ziswiler.com>
-References: <20180720080424.31505-1-marcel@ziswiler.com>
+Subject: [PATCH 1/2] ASoC: tegra: improve goto error label
+Date: Fri, 20 Jul 2018 10:04:23 +0200
+Message-ID: <20180720080424.31505-1-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180720080424.31505-1-marcel@ziswiler.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -23,45 +21,29 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Actually report the error codes from of_get_named_gpio() resp.
-devm_gpio_request_one() upon trying to get the codec reset resp. sync
-GPIOs which may as well just be a probe deferrals.
+While the two error labels "err" and "err_clk_put" goto the same place
+it is rather confusing that the earlier one is certainly used later
+again.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- sound/soc/tegra/tegra20_ac97.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ sound/soc/tegra/tegra20_ac97.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-index 682ef33afb5f..4875512f0732 100644
+index affad46bf188..682ef33afb5f 100644
 --- a/sound/soc/tegra/tegra20_ac97.c
 +++ b/sound/soc/tegra/tegra20_ac97.c
-@@ -351,18 +351,21 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 		ret = devm_gpio_request_one(&pdev->dev, ac97->reset_gpio,
- 					    GPIOF_OUT_INIT_HIGH, "codec-reset");
- 		if (ret) {
--			dev_err(&pdev->dev, "could not get codec-reset GPIO\n");
-+			dev_err(&pdev->dev, "could not get codec-reset GPIO: "
-+					    "%d\n", ret);
- 			goto err_clk_put;
- 		}
- 	} else {
--		dev_err(&pdev->dev, "no codec-reset GPIO supplied\n");
-+		ret = ac97->reset_gpio;
-+		dev_err(&pdev->dev, "no codec-reset GPIO supplied: %d\n", ret);
- 		goto err_clk_put;
+@@ -377,7 +377,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 	ret = clk_prepare_enable(ac97->clk_ac97);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "clk_enable failed: %d\n", ret);
+-		goto err;
++		goto err_clk_put;
  	}
  
- 	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
- 					    "nvidia,codec-sync-gpio", 0);
- 	if (!gpio_is_valid(ac97->sync_gpio)) {
--		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
-+		ret = ac97->sync_gpio;
-+		dev_err(&pdev->dev, "no codec-sync GPIO supplied: %d\n", ret);
- 		goto err_clk_put;
- 	}
- 
+ 	ret = snd_soc_set_ac97_ops(&tegra20_ac97_ops);
 -- 
 2.14.4
