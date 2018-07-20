@@ -1,11 +1,11 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH] drm/tegra: hdmi: probe deferral error reporting
-Date: Fri, 20 Jul 2018 09:55:15 +0200
-Message-ID: <20180720075515.26852-1-marcel@ziswiler.com>
+Subject: [PATCH] clk: tegra: probe deferral error reporting
+Date: Fri, 20 Jul 2018 09:54:22 +0200
+Message-ID: <20180720075422.26563-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
+To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
@@ -17,33 +17,24 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- drivers/gpu/drm/tegra/hdmi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-dfll.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index 0082468f703c..94c182dbb6d0 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -1693,14 +1693,16 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 48ee43734e05..b2123084e175 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1609,8 +1609,9 @@ int tegra_dfll_register(struct platform_device *pdev,
  
- 	hdmi->hdmi = devm_regulator_get(&pdev->dev, "hdmi");
- 	if (IS_ERR(hdmi->hdmi)) {
--		dev_err(&pdev->dev, "failed to get HDMI regulator\n");
--		return PTR_ERR(hdmi->hdmi);
-+		err = PTR_ERR(hdmi->hdmi);
-+		dev_err(&pdev->dev, "failed to get HDMI regulator: %d\n", err);
-+		return err;
+ 	td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
+ 	if (IS_ERR(td->vdd_reg)) {
+-		dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
+-		return PTR_ERR(td->vdd_reg);
++		ret = PTR_ERR(td->vdd_reg);
++		dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n", ret);
++		return ret;
  	}
  
- 	hdmi->pll = devm_regulator_get(&pdev->dev, "pll");
- 	if (IS_ERR(hdmi->pll)) {
--		dev_err(&pdev->dev, "failed to get PLL regulator\n");
--		return PTR_ERR(hdmi->pll);
-+		err = PTR_ERR(hdmi->pll);
-+		dev_err(&pdev->dev, "failed to get PLL regulator: %d\n", err);
-+		return err;
- 	}
- 
- 	hdmi->vdd = devm_regulator_get(&pdev->dev, "vdd");
+ 	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
 -- 
 2.14.4
