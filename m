@@ -1,54 +1,48 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 1/7] dt-bindings: Document Tegra SDHCI pinctrl bindings
-Date: Fri, 20 Jul 2018 15:45:40 +0300
-Message-ID: <1532090746-15863-2-git-send-email-avienamo@nvidia.com>
-References: <1532090746-15863-1-git-send-email-avienamo@nvidia.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: wm9712: fix replace codec to component
+Date: Fri, 20 Jul 2018 14:22:58 +0100
+Message-ID: <20180720132258.GD18740@imbe.wolfsonmicro.main>
+References: <20180720075148.14648-1-marcel@ziswiler.com>
+ <87effy48lz.wl-kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532090746-15863-1-git-send-email-avienamo@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <87effy48lz.wl-kuninori.morimoto.gx@renesas.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, linux-mips@linux-mips.org, alsa-devel@alsa-project.org, Neil Armstrong <narmstrong@baylibre.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, James Hogan <jhogan@kernel.org>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Gregory CLEMENT <gregory.clement@bootlin.com>, Russell King <linux@armlinux.org.uk>, Donglin Peng <dolinux.peng@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org, Han Xu <han.xu@nxp.com>, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org, Bhumika Goyal <bhumirks@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Liam
 List-Id: linux-tegra@vger.kernel.org
 
-Document the pinctrl bindings used by the SDHCI driver to reconfigure
-pad voltages on controllers supporting multiple voltage levels.
+On Fri, Jul 20, 2018 at 08:30:41AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Marcel
+> 
+> > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > 
+> > Since commit 143b44845d87 ("ASoC: wm9712: replace codec to component")
+> > "wm9712-codec" got renamed to "wm9712-component", however, this change
+> > never got propagated down to the actual board/platform drivers. E.g. on
+> > Colibri T20 this lead to the following spew upon boot with sound/touch
+> > being broken:
+> 
+> Oops, my bad...
+> The platform_driver name is not important,
+> how about simply rename back it to "wm9712-codec" ?
+> 
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Yeah I would agree here wm9712-component isn't great as a name
+for board files etc. Lets rename back to wm9712-codec for these
+specific bits.
 
-diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-index 9bce578..90c214d 100644
---- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-+++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-@@ -38,3 +38,25 @@ sdhci@c8000200 {
- 	power-gpios = <&gpio 155 0>; /* gpio PT3 */
- 	bus-width = <8>;
- };
-+
-+Optional properties for Tegra210 and Tegra186:
-+- pinctrl-names, pinctrl-0, pinctrl-1 : Specify pad voltage
-+  configurations. Valid pinctrl-names are "sdmmc-3v3" and "sdmmc-1v8"
-+  for controllers supporting multiple voltage levels. The order of names
-+  should correspond to the pin configuration states in pinctrl-0 and
-+  pinctrl-1.
-+
-+Example:
-+sdhci@700b0000 {
-+	compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
-+	reg = <0x0 0x700b0000 0x0 0x200>;
-+	interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&tegra_car TEGRA210_CLK_SDMMC1>;
-+	clock-names = "sdhci";
-+	resets = <&tegra_car 14>;
-+	reset-names = "sdhci";
-+	pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+	pinctrl-0 = <&sdmmc1_3v3>;
-+	pinctrl-1 = <&sdmmc1_1v8>;
-+	status = "disabled";
-+};
--- 
-2.7.4
+Thanks,
+Charles
