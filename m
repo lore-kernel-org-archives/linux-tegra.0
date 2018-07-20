@@ -1,81 +1,69 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/2] ASoC: tegra: probe deferral error
-	reporting
-Date: Fri, 20 Jul 2018 13:16:12 +0100
-Message-ID: <20180720121612.GC10784@sirena.org.uk>
+Subject: Applied "ASoC: tegra: improve goto error label" to the asoc tree
+Date: Fri, 20 Jul 2018 13:19:16 +0100
+Message-ID: <E1fgUNQ-0006A3-Lc@debutante>
 References: <20180720080424.31505-1-marcel@ziswiler.com>
- <20180720080424.31505-2-marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3105660243370161700=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180720080424.31505-2-marcel@ziswiler.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180720080424.31505-1-marcel@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
+The patch
 
---===============3105660243370161700==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Clx92ZfkiYIKRjnr"
-Content-Disposition: inline
+   ASoC: tegra: improve goto error label
 
+has been applied to the asoc tree at
 
---Clx92ZfkiYIKRjnr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-On Fri, Jul 20, 2018 at 10:04:24AM +0200, Marcel Ziswiler wrote:
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> -			dev_err(&pdev->dev, "could not get codec-reset GPIO\n");
-> +			dev_err(&pdev->dev, "could not get codec-reset GPIO: "
-> +					    "%d\n", ret);
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Don't split strings over lines like this, it causes problems when people
-grep for errors.  It's better to go over 80 columns.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
->  	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
->  					    "nvidia,codec-sync-gpio", 0);
->  	if (!gpio_is_valid(ac97->sync_gpio)) {
-> -		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
-> +		ret = ac97->sync_gpio;
-> +		dev_err(&pdev->dev, "no codec-sync GPIO supplied: %d\n", ret);
->  		goto err_clk_put;
->  	}
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-This isn't reporting an error code associated with the attempt to find a
-codec-sync GPIO, it's the result of some other operation.
+Thanks,
+Mark
 
---Clx92ZfkiYIKRjnr
-Content-Type: application/pgp-signature; name="signature.asc"
+From 2ec42486358f63c4a426514c395d13f4b9de5da8 Mon Sep 17 00:00:00 2001
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Date: Fri, 20 Jul 2018 10:04:23 +0200
+Subject: [PATCH] ASoC: tegra: improve goto error label
 
------BEGIN PGP SIGNATURE-----
+While the two error labels "err" and "err_clk_put" goto the same place
+it is rather confusing that the earlier one is certainly used later
+again.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltR0osACgkQJNaLcl1U
-h9AVmwf/e4WjlzV4DYAbjzGF9Ht1ig2O1wJA0BPK4/21DHuYhCAkLkLXbGoE3HKD
-j+0NjjLNSqdSeuQChz+tY0Tw12CIupCNSInA6+AS6cQ/OaAPlaTnNuPjDpF3aXWs
-aoxbZ+OclgsvtoHU3q7Oq1EHDJTuYBRMIQsw3fZmSG2L9ZX3u86S6spEE2pdVifW
-ZMHRfbqeIFJpnuVnhHEecYH3y4ZaK1oxOCqpzPWSpcnbSTotMzXSGQLZtc9Voyn7
-tS4/aTY3iMsLa/RUpC9PMCBvPdn4Hj9zzWkOeDz1AviKsW0eJaMdAlg2m8f9it8E
-c0gfHvC1bc0xNsqpQQLp2doD2OwWYA==
-=qJDp
------END PGP SIGNATURE-----
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/tegra/tegra20_ac97.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---Clx92ZfkiYIKRjnr--
-
---===============3105660243370161700==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============3105660243370161700==--
+diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
+index affad46bf188..682ef33afb5f 100644
+--- a/sound/soc/tegra/tegra20_ac97.c
++++ b/sound/soc/tegra/tegra20_ac97.c
+@@ -377,7 +377,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 	ret = clk_prepare_enable(ac97->clk_ac97);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "clk_enable failed: %d\n", ret);
+-		goto err;
++		goto err_clk_put;
+ 	}
+ 
+ 	ret = snd_soc_set_ac97_ops(&tegra20_ac97_ops);
+-- 
+2.18.0
