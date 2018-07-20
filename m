@@ -1,44 +1,55 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH] gpiolib: probe deferral error reporting
-Date: Fri, 20 Jul 2018 09:54:49 +0200
-Message-ID: <20180720075449.26711-1-marcel@ziswiler.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1] memory: tegra: Don't invoke Tegra30+ specific memory
+ timing setup on Tegra20
+Date: Fri, 20 Jul 2018 09:02:04 +0100
+Message-ID: <b0403eb2-2494-1924-dbe6-7a6019b6364d@nvidia.com>
+References: <20180719132453.16860-1-digetx@gmail.com>
+ <39607791-3e71-7784-37db-4e05a316d7a8@nvidia.com>
+ <31916977.CHrX6e343J@dimapc>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <31916977.CHrX6e343J@dimapc>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Actually report the error code from devm_regulator_get() which may as
-well just be a probe deferral.
+On 19/07/18 16:38, Dmitry Osipenko wrote:
+> On Thursday, 19 July 2018 18:30:48 MSK Jon Hunter wrote:
+>> On 19/07/18 14:24, Dmitry Osipenko wrote:
+>>> This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
+>>> timings for RAM code 0 registered" warning message during of kernels
+>>> boot-up on Tegra20.
+>>
+>> Looking at the tegra20-emc.txt bindings doc [0], the 'nvidia,ram-code'
+>> property is also valid for Tegra20. In fact, I see this warning on the
+>> Tegra30 Cardhu because this property is not populated. So I think that
+>> this warning is valid and harmless.
+>>
+>> Cheers
+>> Jon
+>>
+>> [0] Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+> 
+> That is the irrelevant binding, the relevant one for this driver is [0]. The 
+> warning is valid for T30+, but not for T20.
+> 
+> [0] Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
 
-This is e.g. what one gets upon booting a Colibri T20:
+Yes indeed, looks like we never supported this for Tegra20. OK, fine with me
+I guess this was introduced during the consolidation of the MC drivers. Can
+you add the appropriate fixes tag?
 
-gpiochip_add_data_with_key: GPIOs 0..223 (tegra-gpio) failed to register
+Otherwise ...
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
----
+Cheers
+Jon
 
- drivers/gpio/gpiolib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 2e2a6f8db405..40c65eb1d97b 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1408,9 +1408,9 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- err_free_gdev:
- 	ida_simple_remove(&gpio_ida, gdev->id);
- 	/* failures here can mean systems won't boot... */
--	pr_err("%s: GPIOs %d..%d (%s) failed to register\n", __func__,
-+	pr_err("%s: GPIOs %d..%d (%s) failed to register, %d\n", __func__,
- 	       gdev->base, gdev->base + gdev->ngpio - 1,
--	       chip->label ? : "generic");
-+	       chip->label ? : "generic", status);
- 	kfree(gdev);
- 	return status;
- }
 -- 
-2.14.4
+nvpublic
