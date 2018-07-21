@@ -1,64 +1,76 @@
-From: Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH 1/2] Add sw2_sw4 voltage table to cpcap regulator.
-Date: Sat, 21 Jul 2018 07:23:31 -0400
-Message-ID: <17c10727-cab3-4736-281a-d4ace1cdbb82@gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 2/2] ASoC: tegra: probe deferral error
+	reporting
+Date: Sat, 21 Jul 2018 11:55:21 +0000
+Message-ID: <1532174119.19673.24.camel@toradex.com>
+References: <20180720080424.31505-1-marcel@ziswiler.com>
+ <1532089865.19673.13.camel@toradex.com>
+ <20180721095615.GG16228@sirena.org.uk> <8512069.csTsg4TRIJ@dimapc>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <8512069.csTsg4TRIJ@dimapc>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: lgirdwood@gmail.com, broonie@kernel.org
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-ID: <060046D172331743B5FFEB9B19DD20B9@eurprd05.prod.outlook.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: "digetx@gmail.com" <digetx@gmail.com>, "broonie@kernel.org" <broonie@kernel.org>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tiwai@suse.com" <tiwai@suse.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Re-sending due to email address typo.
+On Sat, 2018-07-21 at 14:17 +0300, Dmitry Osipenko wrote:
+> On Saturday, 21 July 2018 12:56:15 MSK Mark Brown wrote:
+> > On Fri, Jul 20, 2018 at 12:31:07PM +0000, Marcel Ziswiler wrote:
+> > > On Fri, 2018-07-20 at 13:16 +0100, Mark Brown wrote:
+> > > > >  	ac97->sync_gpio = of_get_named_gpio(pdev-
+> > > > > >dev.of_node,
+> > > > >  	
+> > > > >  					    "nvidia,codec-
+> > > > > sync-
+> > > > > 
+> > > > > gpio", 0);
+> > > > > 
+> > > > >  	if (!gpio_is_valid(ac97->sync_gpio)) {
+> > > > > 
+> > > > > -		dev_err(&pdev->dev, "no codec-sync GPIO
+> > > > > supplied\n");
+> > > > > +		ret = ac97->sync_gpio;
+> > > > > +		dev_err(&pdev->dev, "no codec-sync GPIO
+> > > > > supplied:
+> > > > > %d\n", ret);
+> > > > > 
+> > > > >  		goto err_clk_put;
+> > > > >  	
+> > > > >  	}
+> > > > 
+> > > > This isn't reporting an error code associated with the attempt
+> > > > to
+> > > > find a
+> > > > codec-sync GPIO, it's the result of some other operation.
+> > > 
+> > > What exactly is then the of_get_named_gpio() above please doing
+> > > if
+> > > not getting the codec sync GPIO? I am not following you, sorry.
+> > 
+> > It's not in any way involved in setting the value of ret, whatever
+> > value
+> > that has it's nothing to do with that operation.
+> 
+> The comment to gpio_is_valid() says that it "Returns GPIO number to
+> use with 
+> Linux generic GPIO API, or one of the errno value on the error
+> condition". 
+> Comment doesn't explicitly states that the returned GPIO number is
+> always 
+> valid, but it is kinda implied.
 
-SW2 and SW4 use a shared table to provide voltage to the cpu core and
-devices on Tegra hardware.
-Added this table to the cpcap regulator driver as the first step to
-supporting this device on Tegra.
-
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
----
-  drivers/regulator/cpcap-regulator.c | 23 +++++++++++++++++++++++
-  1 file changed, 23 insertions(+)
-
-diff --git a/drivers/regulator/cpcap-regulator.c 
-b/drivers/regulator/cpcap-regulator.c
-index bd910fe123d9..c0b1e04bd90f 100644
---- a/drivers/regulator/cpcap-regulator.c
-+++ b/drivers/regulator/cpcap-regulator.c
-@@ -271,6 +271,29 @@ static struct regulator_ops cpcap_regulator_ops = {
-  };
-
-  static const unsigned int unknown_val_tbl[] = { 0, };
-+static const unsigned int sw2_sw4_val_tbl[] = { 612500, 625000, 637500,
-+                                               650000, 662500, 675000,
-+                                               687500, 700000, 712500,
-+                                               725000, 737500, 750000,
-+                                               762500, 775000, 787500,
-+                                               800000, 812500, 825000,
-+                                               837500, 850000, 862500,
-+                                               875000, 887500, 900000,
-+                                               912500, 925000, 937500,
-+                                               950000, 962500, 975000,
-+                                               987500, 1000000, 1012500,
-+                                               1025000, 1037500, 1050000,
-+                                               1062500, 1075000, 1087500,
-+                                               1100000, 1112500, 1125000,
-+                                               1137500, 1150000, 1162500,
-+                                               1175000, 1187500, 1200000,
-+                                               1212500, 1225000, 1237500,
-+                                               1250000, 1262500, 1275000,
-+                                               1287500, 1300000, 1312500,
-+                                               1325000, 1337500, 1350000,
-+                                               1362500, 1375000, 1387500,
-+                                               1400000, 1412500, 1425000,
-+                                               1437500, 1450000, 
-1462500, };
-  static const unsigned int sw5_val_tbl[] = { 0, 5050000, };
-  static const unsigned int vcam_val_tbl[] = { 2600000, 2700000, 2800000,
-                                              2900000, };
--- 
-2.17.1
+Do you mean I should be assigning the return value of gpio_is_valid()
+to ret and use that instead?
