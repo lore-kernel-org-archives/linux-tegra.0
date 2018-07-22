@@ -1,68 +1,153 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 6/8] clk: tegra20: Turn EMC clock gate into divider
-Date: Sun, 22 Jul 2018 14:39:37 +0300
-Message-ID: <1555597.AMQUAZZLsZ@dimapc>
-References: <20180719132132.16153-1-digetx@gmail.com> <20180719132132.16153-7-digetx@gmail.com>
+Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
+Date: Sun, 22 Jul 2018 14:55:31 +0300
+Message-ID: <1721645.6LMGIEI4vR@dimapc>
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk> <20180720134532.13148-7-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180719132132.16153-7-digetx@gmail.com>
+In-Reply-To: <20180720134532.13148-7-ben.dooks@codethink.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>, pdeschrijver@nvidia.com, jonathanh@nvidia.co, thierry.reding@gmail.com
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pgaikwad@nvidia.com, linux-kernel@lists.codethink.co.uk
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, 19 July 2018 16:21:30 MSK Dmitry Osipenko wrote:
-> Kernel should never gate the EMC clock as it causes immediate lockup, so
-> removing clk-gate functionality doesn't affect anything. Turning EMC clk
-> gate into divider allows to implement glitch-less EMC scaling, avoiding
-> reparenting to a backup clock.
+On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
+> The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
+> clocks by making a 2D and 3D mux, and split the divider into the
+> standard 2D/3D ones and 2D/3D idle clocks.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 > ---
->  drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
->  1 file changed, 26 insertions(+), 10 deletions(-)
+>  drivers/clk/tegra/clk-id.h              |  4 ++++
+>  drivers/clk/tegra/clk-tegra-periph.c    | 23 +++++++++++++++++++++--
+>  drivers/clk/tegra/clk-tegra30.c         |  8 ++++++++
+>  include/dt-bindings/clock/tegra30-car.h |  7 ++++++-
+>  4 files changed, 39 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra20.c
-> b/drivers/clk/tegra/clk-tegra20.c index cc857d4d4a86..ebea97016d58 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max]
-> __initdata = { [tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present =
-> true }, [tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
-> [tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
-> -	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true }, };
+> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+> index b616e33c5255..0d202a70ce66 100644
+> --- a/drivers/clk/tegra/clk-id.h
+> +++ b/drivers/clk/tegra/clk-id.h
+> @@ -91,8 +91,12 @@ enum clk_id {
+>  	tegra_clk_fuse_burn,
+>  	tegra_clk_gpu,
+>  	tegra_clk_gr2d,
+> +	tegra_clk_gr2d_mux,
+> +	tegra_clk_gr2d_idle,
+>  	tegra_clk_gr2d_8,
+>  	tegra_clk_gr3d,
+> +	tegra_clk_gr3d_mux,
+> +	tegra_clk_gr3d_idle,
+>  	tegra_clk_gr3d_8,
+>  	tegra_clk_hclk,
+>  	tegra_clk_hda,
+> diff --git a/drivers/clk/tegra/clk-tegra-periph.c
+> b/drivers/clk/tegra/clk-tegra-periph.c index 47e5b1ac1a69..83967dac93f2
+> 100644
+> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> @@ -263,6 +263,21 @@
+>  		.flags = _flags,					\
+>  	}
 > 
->  static unsigned long tegra20_clk_measure_input_freq(void)
-> @@ -799,6 +798,31 @@ static struct tegra_periph_init_data
-> tegra_periph_nodiv_clk_list[] = {
-> TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2,
-> 26,  0, TEGRA20_CLK_DISP2), };
-> 
-> +static void __init tegra20_emc_clk_init(void)
-> +{
-> +	struct clk *clk;
+> +#define GATE_DIV(_name, _parent_name, _offset,				\
+> +		 _div_shift, _div_width, _div_frac_width, _div_flags,	\
+> +			     _clk_num, _gate_flags,  _clk_id, _flags)	\
+> +	{								\
+> +		.name = _name,						\
+> +		.clk_id = _clk_id,					\
+> +		.offset = _offset,					\
+> +		.p.parent_name =  _parent_name,				\
+> +		.periph = TEGRA_CLK_PERIPH(0, 0, 0,			\
+> +					   _div_shift, _div_width,	\
+> +					   _div_frac_width, _div_flags, \
+> +				_clk_num, _gate_flags, NULL, NULL),	\
+> +		.flags = _flags						\
+> +	}
 > +
-> +	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-> +			       ARRAY_SIZE(mux_pllmcp_clkm),
-> +			       CLK_SET_RATE_NO_REPARENT,
-> +			       clk_base + CLK_SOURCE_EMC,
-> +			       30, 2, 0, &emc_lock);
-> +
-> +	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-> +				    &emc_lock);
-> +	clks[TEGRA20_CLK_MC] = clk;
-> +
-> +	/*
-> +	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
-> +	 * the same time due to a HW bug, this won't happen because we're
-> +	 * defining 'emc_mux' and 'emc' as distinct clocks.
-> +	 */
-> +	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
-> +				   clk_base + CLK_SOURCE_EMC, 0, 7,
-> +				   0, &emc_lock);
+>  #define PLLP_BASE 0xa0
+>  #define PLLP_MISC 0xac
+>  #define PLLP_MISC1 0x680
+> @@ -646,8 +661,12 @@ static struct tegra_periph_init_data periph_clks[] = {
+>  	MUX("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, 
+tegra_clk_epp),
+> MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0,
+> tegra_clk_host1x), MUX("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60,
+> 0, tegra_clk_mpe), -	MUX("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 
+21,
+> 0, tegra_clk_gr2d), -	MUX("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 
+24,
+> 0, tegra_clk_gr3d), +	MUX("2d_mux", mux_pllm_pllc_pllp_plla, 
+CLK_SOURCE_2D,
+> 0, TEGRA_PERIPH_NO_DIV | TEGRA_PERIPH_NO_RESET | TEGRA_PERIPH_NO_GATE,
+> tegra_clk_gr2d_mux), +	GATE_DIV("2d", "2d_mux", CLK_SOURCE_2D, 0, 8, 1,
+> TEGRA_DIVIDER_ROUND_UP,21, 0, tegra_clk_gr2d, 0), +	GATE_DIV("2d_idle",
+> "2d_mux", CLK_SOURCE_2D, 8, 8, 1, TEGRA_DIVIDER_ROUND_UP, 0,
+> TEGRA_PERIPH_NO_GATE | TEGRA_PERIPH_NO_RESET, tegra_clk_gr2d_idle, 0),
+> +	MUX("3d_mux", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 0,
+> TEGRA_PERIPH_NO_DIV | TEGRA_PERIPH_NO_RESET | TEGRA_PERIPH_NO_GATE,
+> tegra_clk_gr3d_mux), +	GATE_DIV("3d", "3d_mux", CLK_SOURCE_3D, 0, 8, 1,
+> TEGRA_DIVIDER_ROUND_UP, 24, 0, tegra_clk_gr3d, 0), +	GATE_DIV("3d_idle",
+> "3d_mux", CLK_SOURCE_3D, 8, 8, 1, TEGRA_DIVIDER_ROUND_UP, 0,
+> TEGRA_PERIPH_NO_GATE | TEGRA_PERIPH_NO_RESET, tegra_clk_gr3d_idle, 0),
+> INT8("vde", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_VDE, 61, 0,
+> tegra_clk_vde_8), INT8("vi", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI,
+> 20, 0, tegra_clk_vi_8), INT8("vi", mux_pllm_pllc2_c_c3_pllp_plla_pllc4,
+> CLK_SOURCE_VI, 20, 0, tegra_clk_vi_9), diff --git
+> a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c index
+> acfe661b2ae7..227d3643ecca 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -658,8 +658,12 @@ static struct tegra_devclk devclks[] __initdata = {
+>  	{ .dev_id = "mpe", .dt_id = TEGRA30_CLK_MPE },
+>  	{ .dev_id = "host1x", .dt_id = TEGRA30_CLK_HOST1X },
+>  	{ .dev_id = "3d", .dt_id = TEGRA30_CLK_GR3D },
+> +	{ .dev_id = "3d", .con_id = "mux", .dt_id = TEGRA30_CLK_GR3D_MUX },
+> +	{ .dev_id = "3d", .con_id = "idle", .dt_id = TEGRA30_CLK_GR3D_IDLE },
+>  	{ .dev_id = "3d2", .dt_id = TEGRA30_CLK_GR3D2 },
+>  	{ .dev_id = "2d", .dt_id = TEGRA30_CLK_GR2D },
+> +	{ .dev_id = "2d", .con_id = "mux", .dt_id = TEGRA30_CLK_GR2D_MUX },
+> +	{ .dev_id = "2d", .con_id = "idle", .dt_id = TEGRA30_CLK_GR2D_IDLE },
+>  	{ .dev_id = "se", .dt_id = TEGRA30_CLK_SE },
+>  	{ .dev_id = "mselect", .dt_id = TEGRA30_CLK_MSELECT },
+>  	{ .dev_id = "tegra-nor", .dt_id = TEGRA30_CLK_NOR },
+> @@ -762,6 +766,10 @@ static struct tegra_clk tegra30_clks[tegra_clk_max]
+> __initdata = { [tegra_clk_host1x] = { .dt_id = TEGRA30_CLK_HOST1X, .present
+> = true }, [tegra_clk_gr2d] = { .dt_id = TEGRA30_CLK_GR2D, .present = true
+> }, [tegra_clk_gr3d] = { .dt_id = TEGRA30_CLK_GR3D, .present = true },
+> +	[tegra_clk_gr2d_mux] = { .dt_id = TEGRA30_CLK_GR2D_MUX, .present = true
+> }, +	[tegra_clk_gr3d_mux] = { .dt_id = TEGRA30_CLK_GR3D_MUX, .present =
+> true }, +	[tegra_clk_gr2d_idle] = { .dt_id = TEGRA30_CLK_GR2D_IDLE,
+> .present = true }, +	[tegra_clk_gr3d_idle] = { .dt_id =
+> TEGRA30_CLK_GR3D_IDLE, .present = true }, [tegra_clk_mselect] = { .dt_id =
+> TEGRA30_CLK_MSELECT, .present = true }, [tegra_clk_nor] = { .dt_id =
+> TEGRA30_CLK_NOR, .present = true }, [tegra_clk_sdmmc1] = { .dt_id =
+> TEGRA30_CLK_SDMMC1, .present = true }, diff --git
 
-Actually this is wrong. The divisor is 8 bits-wide and "lsb denote 0.5x", so 
-this is a 7.1 divider. I'll prepare v5.
+According to TRM, Tegra20 and Tegra114 have these "idle-mode" clock dividers 
+as well. Why only T30 should have them?
+
+> a/include/dt-bindings/clock/tegra30-car.h
+> b/include/dt-bindings/clock/tegra30-car.h index 3c90f1535551..eda4ca60351e
+> 100644
+> --- a/include/dt-bindings/clock/tegra30-car.h
+> +++ b/include/dt-bindings/clock/tegra30-car.h
+> @@ -269,6 +269,11 @@
+>  #define TEGRA30_CLK_AUDIO3_MUX 306
+>  #define TEGRA30_CLK_AUDIO4_MUX 307
+>  #define TEGRA30_CLK_SPDIF_MUX 308
+> -#define TEGRA30_CLK_CLK_MAX 309
+> +
+> +#define TEGRA30_CLK_GR2D_MUX	309
+> +#define TEGRA30_CLK_GR3D_MUX	310
+> +#define TEGRA30_CLK_GR2D_IDLE	311
+> +#define TEGRA30_CLK_GR3D_IDLE	312
+> +#define TEGRA30_CLK_CLK_MAX 313
+> 
+>  #endif	/* _DT_BINDINGS_CLOCK_TEGRA30_CAR_H */
+
+IIUC, that "idle-mode" divisor is just some kind of power-safe feature, is 
+there any real use-case for these clocks? Why not to just pre-configure the 
+"idle-mode" bits during the clocks initialization?
