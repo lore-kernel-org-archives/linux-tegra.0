@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 23/28] ARM: tegra: apalis_t30: add proper emmc vmmc and vqmmc supplies
-Date: Sun, 22 Jul 2018 18:49:31 +0200
-Message-ID: <20180722164936.20581-24-marcel@ziswiler.com>
+Subject: [PATCH 13/28] ARM: tegra: apalis_t30: drop unused mmc1/sd1 labels
+Date: Sun, 22 Jul 2018 18:49:21 +0200
+Message-ID: <20180722164936.20581-14-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
@@ -12,27 +12,36 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add proper eMMC vmmc and vqmmc supplies e.g. fixing signalling voltage.
+Drop unused mmc1/sd1 labels.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index f8caf3f07fff..d50fcb69dd38 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -1078,6 +1078,8 @@
- 		#size-cells = <0>;
- 		bus-width = <8>;
- 		non-removable;
-+		vmmc-supply = <&reg_module_3v3>; /* VCC */
-+		vqmmc-supply = <&reg_1v8_vio>; /* VCCQ */
+diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+index 74d588561d9f..078b1061fb26 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+@@ -142,7 +142,7 @@
+ 		status = "okay";
+ 	};
  
- 		emmc: emmc@0 {
- 			reg = <0>;
+-	sd1: sdhci@78000000 {
++	sdhci@78000000 {
+ 		status = "okay";
+ 		bus-width = <4>;
+ 		/* SD1_CD# */
+@@ -150,7 +150,7 @@
+ 		no-1-8-v;
+ 	};
+ 
+-	mmc1: sdhci@78000400 {
++	sdhci@78000400 {
+ 		status = "okay";
+ 		bus-width = <8>;
+ 		/* MMC1_CD# */
 -- 
 2.14.4
