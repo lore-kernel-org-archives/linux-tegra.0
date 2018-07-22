@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 26/28] ARM: tegra: apalis_t30: line break long compatible property line
-Date: Sun, 22 Jul 2018 18:49:34 +0200
-Message-ID: <20180722164936.20581-27-marcel@ziswiler.com>
+Subject: [PATCH 27/28] ARM: tegra: apalis_t30: fix pcie switch vendor compatible
+Date: Sun, 22 Jul 2018 18:49:35 +0200
+Message-ID: <20180722164936.20581-28-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
@@ -12,28 +12,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Line break long compatible property line.
+PLX got bought by Broadcom therefore fix device tree compatible string
+vendor which silences the following checkpatch.pl warning:
+
+WARNING: DT compatible string vendor "plx" appears un-documented
+ -- check ./Documentation/devicetree/bindings/vendor-prefixes.txt
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 6978e3626fae..83949ac3cc07 100644
+index 83949ac3cc07..2c4fee53425e 100644
 --- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -6,7 +6,8 @@
+@@ -88,7 +88,7 @@
+ 		clock-frequency = <400000>;
  
- / {
- 	model = "Toradex Apalis T30 on Apalis Evaluation Board";
--	compatible = "toradex,apalis_t30-eval", "toradex,apalis_t30", "nvidia,tegra30";
-+	compatible = "toradex,apalis_t30-eval", "toradex,apalis_t30",
-+		     "nvidia,tegra30";
+ 		pcie-switch@58 {
+-			compatible = "plx,pex8605";
++			compatible = "brcm,pex8605";
+ 			reg = <0x58>;
+ 		};
  
- 	aliases {
- 		rtc0 = "/i2c@7000c000/rtc@68";
 -- 
 2.14.4
