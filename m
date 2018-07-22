@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 24/28] ARM: tegra: apalis_t30: enable emmc ddr52 mode
-Date: Sun, 22 Jul 2018 18:49:32 +0200
-Message-ID: <20180722164936.20581-25-marcel@ziswiler.com>
+Subject: [PATCH 23/28] ARM: tegra: apalis_t30: add proper emmc vmmc and vqmmc supplies
+Date: Sun, 22 Jul 2018 18:49:31 +0200
+Message-ID: <20180722164936.20581-24-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
@@ -12,40 +12,25 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add mmc-ddr-1_8v property enabling eMMC DDR52 mode.
-
-root@apalis-t30:~# cat /sys/kernel/debug/mmc1/ios
-clock:          52000000 Hz
-actual clock:   52000000 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      3 (8 bits)
-timing spec:    8 (mmc DDR52)
-signal voltage: 1 (1.80 V)
-driver type:    0 (driver type B)
-root@apalis-t30:~# hdparm -t /dev/mmcblk1
-
-/dev/mmcblk1:
- Timing buffered disk reads: 232 MB in  3.01 seconds =  77.10 MB/sec
+Add proper eMMC vmmc and vqmmc supplies e.g. fixing signalling voltage.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index d50fcb69dd38..5f5a287eb535 100644
+index f8caf3f07fff..d50fcb69dd38 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -1080,6 +1080,7 @@
+@@ -1078,6 +1078,8 @@
+ 		#size-cells = <0>;
+ 		bus-width = <8>;
  		non-removable;
- 		vmmc-supply = <&reg_module_3v3>; /* VCC */
- 		vqmmc-supply = <&reg_1v8_vio>; /* VCCQ */
-+		mmc-ddr-1_8v;
++		vmmc-supply = <&reg_module_3v3>; /* VCC */
++		vqmmc-supply = <&reg_1v8_vio>; /* VCCQ */
  
  		emmc: emmc@0 {
  			reg = <0>;
