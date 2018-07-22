@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 05/28] ARM: tegra: apalis_t30: reorder pcie properties
-Date: Sun, 22 Jul 2018 18:49:13 +0200
-Message-ID: <20180722164936.20581-6-marcel@ziswiler.com>
+Subject: [PATCH 02/28] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
+Date: Sun, 22 Jul 2018 18:49:10 +0200
+Message-ID: <20180722164936.20581-3-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
@@ -12,7 +12,8 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reorder PCIe properties.
+Fix MMC1 cmd pin pull-up causing issues on carrier boards without
+external pull-up.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -22,25 +23,26 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 98d702bc3718..0574eda8b3f9 100644
+index 23ffe6a3bc2d..e7f3dd52a209 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -16,13 +16,13 @@
+@@ -171,14 +171,14 @@
  
- 	pcie@3000 {
- 		avdd-pexa-supply = <&vdd2_reg>;
--		vdd-pexa-supply = <&vdd2_reg>;
- 		avdd-pexb-supply = <&vdd2_reg>;
--		vdd-pexb-supply = <&vdd2_reg>;
- 		avdd-pex-pll-supply = <&vdd2_reg>;
- 		avdd-plle-supply = <&ldo6_reg>;
--		vddio-pex-ctl-supply = <&sys_3v3_reg>;
- 		hvdd-pex-supply = <&sys_3v3_reg>;
-+		vddio-pex-ctl-supply = <&sys_3v3_reg>;
-+		vdd-pexa-supply = <&vdd2_reg>;
-+		vdd-pexb-supply = <&vdd2_reg>;
- 
- 		pci@1,0 {
- 			nvidia,num-lanes = <4>;
+ 			/* Apalis MMC1 */
+ 			sdmmc3_clk_pa6 {
+-				nvidia,pins = "sdmmc3_clk_pa6",
+-					      "sdmmc3_cmd_pa7";
++				nvidia,pins = "sdmmc3_clk_pa6";
+ 				nvidia,function = "sdmmc3";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_dat0_pb7 {
+-				nvidia,pins = "sdmmc3_dat0_pb7",
++				nvidia,pins = "sdmmc3_cmd_pa7",
++					      "sdmmc3_dat0_pb7",
+ 					      "sdmmc3_dat1_pb6",
+ 					      "sdmmc3_dat2_pb5",
+ 					      "sdmmc3_dat3_pb4",
 -- 
 2.14.4
