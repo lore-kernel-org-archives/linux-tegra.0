@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 03/28] ARM: tegra: apalis_t30: pull-up sd card detect pins
-Date: Sun, 22 Jul 2018 18:49:11 +0200
-Message-ID: <20180722164936.20581-4-marcel@ziswiler.com>
+Subject: [PATCH 01/28] ARM: tegra: apalis_t30: enable broken-hpi on emmc
+Date: Sun, 22 Jul 2018 18:49:09 +0200
+Message-ID: <20180722164936.20581-2-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
@@ -12,37 +12,35 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-In order to avoid any floating SD card detect pins as may e.g. happen on
-Ixora V1.1A pull them all up.
+Avoid eMMC issues by specifying broken-hpi.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index e7f3dd52a209..f4dc7e77114f 100644
+index 2f807d40c1b7..23ffe6a3bc2d 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -194,7 +194,7 @@
- 			pv3 {
- 				nvidia,pins = "pv3";
- 				nvidia,function = "rsvd2";
--				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
-@@ -260,7 +260,7 @@
- 			clk2_req_pcc5 {
- 				nvidia,pins = "clk2_req_pcc5";
- 				nvidia,function = "rsvd2";
--				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
+@@ -699,8 +699,16 @@
+ 	/* eMMC */
+ 	sdhci@78000600 {
+ 		status = "okay";
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 		bus-width = <8>;
+ 		non-removable;
++
++		emmc: emmc@0 {
++			reg = <0>;
++			compatible = "mmc-card";
++			broken-hpi;
++		};
+ 	};
+ 
+ 	clocks {
 -- 
 2.14.4
