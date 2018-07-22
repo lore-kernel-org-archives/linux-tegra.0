@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 14/28] ARM: tegra: apalis_t30: annotate mmc1/sd1
-Date: Sun, 22 Jul 2018 18:49:22 +0200
-Message-ID: <20180722164936.20581-15-marcel@ziswiler.com>
+Subject: [PATCH 16/28] ARM: tegra: apalis_t30: reorder backlight properties
+Date: Sun, 22 Jul 2018 18:49:24 +0200
+Message-ID: <20180722164936.20581-17-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
@@ -12,34 +12,33 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Annotate MMC1/SD1.
+Reorder backlight properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 078b1061fb26..a1ae4c3ee39c 100644
+index 4bb571bffc7f..c4153e8e8b8c 100644
 --- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -142,6 +142,7 @@
- 		status = "okay";
+@@ -193,13 +193,12 @@
+ 
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+-		/* PWM_BKL1 */
+-		pwms = <&pwm 0 5000000>;
+ 		brightness-levels = <255 231 223 207 191 159 127 0>;
+ 		default-brightness-level = <6>;
+ 		/* BKL1_ON */
+ 		enable-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+ 		power-supply = <&reg_3v3>;
++		pwms = <&pwm 0 5000000>; /* BKL1_PWM */
  	};
  
-+	/* Apalis SD1 */
- 	sdhci@78000000 {
- 		status = "okay";
- 		bus-width = <4>;
-@@ -150,6 +151,7 @@
- 		no-1-8-v;
- 	};
- 
-+	/* Apalis MMC1 */
- 	sdhci@78000400 {
- 		status = "okay";
- 		bus-width = <8>;
+ 	gpio-keys {
 -- 
 2.14.4
