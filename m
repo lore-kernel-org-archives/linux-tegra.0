@@ -1,97 +1,68 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 2/2] ASoC: tegra: probe deferral error reporting
-Date: Sat, 21 Jul 2018 15:15:37 +0300
-Message-ID: <102145026.ENfUlVqMES@dimapc>
-References: <20180720080424.31505-1-marcel@ziswiler.com> <1532174119.19673.24.camel@toradex.com> <2195096.d8yV6ZqeS2@dimapc>
+Subject: Re: [PATCH v4 6/8] clk: tegra20: Turn EMC clock gate into divider
+Date: Sun, 22 Jul 2018 14:39:37 +0300
+Message-ID: <1555597.AMQUAZZLsZ@dimapc>
+References: <20180719132132.16153-1-digetx@gmail.com> <20180719132132.16153-7-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2195096.d8yV6ZqeS2@dimapc>
+In-Reply-To: <20180719132132.16153-7-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "broonie@kernel.org" <broonie@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "tiwai@suse.com" <tiwai@suse.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "perex@perex.cz" <perex@perex.cz>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Saturday, 21 July 2018 15:03:57 MSK Dmitry Osipenko wrote:
-> On Saturday, 21 July 2018 14:55:21 MSK Marcel Ziswiler wrote:
-> > On Sat, 2018-07-21 at 14:17 +0300, Dmitry Osipenko wrote:
-> > > On Saturday, 21 July 2018 12:56:15 MSK Mark Brown wrote:
-> > > > On Fri, Jul 20, 2018 at 12:31:07PM +0000, Marcel Ziswiler wrote:
-> > > > > On Fri, 2018-07-20 at 13:16 +0100, Mark Brown wrote:
-> > > > > > >  	ac97->sync_gpio = of_get_named_gpio(pdev-
-> > > > > > > >
-> > > > > > > >dev.of_node,
-> > > > > > > >
-> > > > > > >  					    "nvidia,codec-
-> > > > > > > 
-> > > > > > > sync-
-> > > > > > > 
-> > > > > > > gpio", 0);
-> > > > > > > 
-> > > > > > >  	if (!gpio_is_valid(ac97->sync_gpio)) {
-> > > > > > > 
-> > > > > > > -		dev_err(&pdev->dev, "no codec-sync GPIO
-> > > > > > > supplied\n");
-> > > > > > > +		ret = ac97->sync_gpio;
-> > > > > > > +		dev_err(&pdev->dev, "no codec-sync GPIO
-> > > > > > > supplied:
-> > > > > > > %d\n", ret);
-> > > > > > > 
-> > > > > > >  		goto err_clk_put;
-> > > > > > >  	
-> > > > > > >  	}
-> > > > > > 
-> > > > > > This isn't reporting an error code associated with the attempt
-> > > > > > to
-> > > > > > find a
-> > > > > > codec-sync GPIO, it's the result of some other operation.
-> > > > > 
-> > > > > What exactly is then the of_get_named_gpio() above please doing
-> > > > > if
-> > > > > not getting the codec sync GPIO? I am not following you, sorry.
-> > > > 
-> > > > It's not in any way involved in setting the value of ret, whatever
-> > > > value
-> > > > that has it's nothing to do with that operation.
-> > > 
-> > > The comment to gpio_is_valid() says that it "Returns GPIO number to
-> > > use with
-> > > Linux generic GPIO API, or one of the errno value on the error
-> > > condition".
-> > > Comment doesn't explicitly states that the returned GPIO number is
-> > > always
-> > > valid, but it is kinda implied.
-> > 
-> > Do you mean I should be assigning the return value of gpio_is_valid()
-> > to ret and use that instead?
+On Thursday, 19 July 2018 16:21:30 MSK Dmitry Osipenko wrote:
+> Kernel should never gate the EMC clock as it causes immediate lockup, so
+> removing clk-gate functionality doesn't affect anything. Turning EMC clk
+> gate into divider allows to implement glitch-less EMC scaling, avoiding
+> reparenting to a backup clock.
 > 
-> No, gpio_is_valid() returns a boolean. I think your patch is fine as it is
-> is.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
+>  1 file changed, 26 insertions(+), 10 deletions(-)
 > 
-> Probably Mark meant something like this:
+> diff --git a/drivers/clk/tegra/clk-tegra20.c
+> b/drivers/clk/tegra/clk-tegra20.c index cc857d4d4a86..ebea97016d58 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max]
+> __initdata = { [tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present =
+> true }, [tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
+> [tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
+> -	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true }, };
 > 
->         ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
->                                             "nvidia,codec-sync-gpio", 0);
->         if (ac97->sync_gpio < 0) {
->                 ret = ac97->sync_gpio;
->                 dev_err(&pdev->dev, "no codec-sync GPIO supplied: %d\n",
-> ret); goto err_clk_put;
->         }
+>  static unsigned long tegra20_clk_measure_input_freq(void)
+> @@ -799,6 +798,31 @@ static struct tegra_periph_init_data
+> tegra_periph_nodiv_clk_list[] = {
+> TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2,
+> 26,  0, TEGRA20_CLK_DISP2), };
 > 
->         if (!gpio_is_valid(ac97->sync_gpio)) {
->                 ret = -EINVAL;
->                 goto err_clk_put;
->        }
-> 
-> But that is not needed because of_get_named_gpio() returns either a valid
-> GPIO number or a error code.
+> +static void __init tegra20_emc_clk_init(void)
+> +{
+> +	struct clk *clk;
+> +
+> +	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+> +			       ARRAY_SIZE(mux_pllmcp_clkm),
+> +			       CLK_SET_RATE_NO_REPARENT,
+> +			       clk_base + CLK_SOURCE_EMC,
+> +			       30, 2, 0, &emc_lock);
+> +
+> +	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+> +				    &emc_lock);
+> +	clks[TEGRA20_CLK_MC] = clk;
+> +
+> +	/*
+> +	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
+> +	 * the same time due to a HW bug, this won't happen because we're
+> +	 * defining 'emc_mux' and 'emc' as distinct clocks.
+> +	 */
+> +	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
+> +				   clk_base + CLK_SOURCE_EMC, 0, 7,
+> +				   0, &emc_lock);
 
-Also note that tegra20_ac97 code doesn't check the returned value of:
-
-	gpio_request(workdata->sync_gpio, "codec-sync");
-
-That is a bit fragile. Probably would be better to move the GPIO requesting to 
-the drivers probe function using the devm_gpio_request_one() and fail the 
-driver probing if requesting fails. That should be a distinct patch if you'll 
-want to implement that.
+Actually this is wrong. The divisor is 8 bits-wide and "lsb denote 0.5x", so 
+this is a 7.1 divider. I'll prepare v5.
