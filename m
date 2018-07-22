@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 17/28] ARM: tegra: apalis_t30: drop pwmleds
-Date: Sun, 22 Jul 2018 18:49:25 +0200
-Message-ID: <20180722164936.20581-18-marcel@ziswiler.com>
+Subject: [PATCH 15/28] ARM: tegra: apalis_t30: move dr_mode property from phy to controller
+Date: Sun, 22 Jul 2018 18:49:23 +0200
+Message-ID: <20180722164936.20581-16-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
@@ -12,47 +12,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Drop pwmleds in favour of using regular PWMs.
+Move dr_mode property from USB PHY node to controller.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts | 22 ----------------------
- 1 file changed, 22 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index c4153e8e8b8c..6978e3626fae 100644
+index a1ae4c3ee39c..4bb571bffc7f 100644
 --- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -223,28 +223,6 @@
- 		power-supply = <&reg_3v3>;
+@@ -163,11 +163,11 @@
+ 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
+ 	usb@7d000000 {
+ 		status = "okay";
++		dr_mode = "otg";
  	};
  
--	pwmleds {
--		compatible = "pwm-leds";
--
--		pwm1 {
--			label = "PWM1";
--			pwms = <&pwm 3 19600>;
--			max-brightness = <255>;
--		};
--
--		pwm2 {
--			label = "PWM2";
--			pwms = <&pwm 2 19600>;
--			max-brightness = <255>;
--		};
--
--		pwm3 {
--			label = "PWM3";
--			pwms = <&pwm 1 19600>;
--			max-brightness = <255>;
--		};
--	};
--
- 	reg_3v3: regulator-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "3.3V_SW";
+ 	usb-phy@7d000000 {
+ 		status = "okay";
+-		dr_mode = "otg";
+ 		vbus-supply = <&reg_usbo1_vbus>;
+ 	};
+ 
 -- 
 2.14.4
