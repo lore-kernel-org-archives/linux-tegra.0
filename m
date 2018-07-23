@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 20/26] ARM: tegra: colibri_t30: move input include to carrier board
-Date: Mon, 23 Jul 2018 14:36:51 +0200
-Message-ID: <20180723123658.980-21-marcel@ziswiler.com>
+Subject: [PATCH 21/26] ARM: tegra: colibri_t30: remove unused nvidia,is-wired property
+Date: Mon, 23 Jul 2018 14:36:52 +0200
+Message-ID: <20180723123658.980-22-marcel@ziswiler.com>
 References: <20180723123658.980-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180723123658.980-1-marcel@ziswiler.com>
@@ -12,37 +12,26 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Move input include to carrier board.
+Remove unused nvidia,is-wired property.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 1 +
- arch/arm/boot/dts/tegra30-colibri.dtsi        | 1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index d888180e0507..08ca7cc7e0db 100644
---- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
- 
-+#include <dt-bindings/input/input.h>
- #include "tegra30-colibri.dtsi"
- 
- / {
 diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 27e81ffb35c3..211457ea0b72 100644
+index 211457ea0b72..e32109475bc8 100644
 --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--#include <dt-bindings/input/input.h>
- #include "tegra30.dtsi"
+@@ -949,7 +949,6 @@
  
- /*
+ 	usb-phy@7d004000 {
+ 		status = "okay";
+-		nvidia,is-wired = <1>;
+ 		vbus-supply = <&reg_lan_v_bus>;
+ 	};
+ 
 -- 
 2.14.4
