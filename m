@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 01/26] ARM: tegra: colibri_t30: enable broken-hpi on emmc
-Date: Mon, 23 Jul 2018 14:36:32 +0200
-Message-ID: <20180723123658.980-2-marcel@ziswiler.com>
+Subject: [PATCH 02/26] ARM: tegra: colibri_t30: add local-mac-address property
+Date: Mon, 23 Jul 2018 14:36:33 +0200
+Message-ID: <20180723123658.980-3-marcel@ziswiler.com>
 References: <20180723123658.980-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180723123658.980-1-marcel@ziswiler.com>
@@ -12,35 +12,33 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Avoid eMMC issues by specifying broken-hpi.
+Add empty local-mac-address property to be filled in by boot loader
+(e.g. U-Boot).
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-colibri.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 526ed71cf7a3..6293422c977a 100644
+index 6293422c977a..5cceb69743bc 100644
 --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -430,8 +430,16 @@
- 	/* eMMC */
- 	sdhci@78000600 {
+@@ -445,6 +445,13 @@
+ 	/* EHCI instance 1: USB2_DP/N -> AX88772B */
+ 	usb@7d004000 {
  		status = "okay";
 +		#address-cells = <1>;
 +		#size-cells = <0>;
- 		bus-width = <8>;
- 		non-removable;
 +
-+		emmc: emmc@0 {
-+			reg = <0>;
-+			compatible = "mmc-card";
-+			broken-hpi;
++		asix@1 {
++			reg = <1>;
++			local-mac-address = [00 00 00 00 00 00];
 +		};
  	};
  
- 	/* EHCI instance 1: USB2_DP/N -> AX88772B */
+ 	usb-phy@7d004000 {
 -- 
 2.14.4
