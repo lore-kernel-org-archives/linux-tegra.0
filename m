@@ -1,67 +1,52 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
-Date: Mon, 23 Jul 2018 09:28:25 +0100
-Message-ID: <ca29f065814a22f46b9b1683165548cb@codethink.co.uk>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 2/8] clk: tegra: host1x has fractional divider
+Date: Mon, 23 Jul 2018 11:50:10 +0300
+Message-ID: <20180723085010.GK1636@tbergstrom-lnx.Nvidia.com>
 References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <20180720134532.13148-7-ben.dooks@codethink.co.uk>
- <1721645.6LMGIEI4vR@dimapc>
+ <20180720134532.13148-3-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1721645.6LMGIEI4vR@dimapc>
+Content-Disposition: inline
+In-Reply-To: <20180720134532.13148-3-ben.dooks@codethink.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: pdeschrijver@nvidia.com, jonathanh@nvidia.co, thierry.reding@gmail.com, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pgaikwad@nvidia.com, linux-kernel@lists.codethink.co.uk
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pgaikwad@nvidia.com, jonathanh@nvidia.co, thierry.reding@gmail.com, linux-kernel@lists.codethink.co.uk
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 2018-07-22 12:55, Dmitry Osipenko wrote:
-> On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
->> The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
->> clocks by making a 2D and 3D mux, and split the divider into the
->> standard 2D/3D ones and 2D/3D idle clocks.
->> 
->> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-
-[snip]
-
+On Fri, Jul 20, 2018 at 02:45:26PM +0100, Ben Dooks wrote:
+> The host1x clock according to both tegra2 and tegra3 manuals is
+> an 8bit divider with lsb being fractional. This is running into
+> an issue where the host1x is being set on a tegra20a system to
+> 266.4MHz but ends up at 222MHz instead.
 > 
-> According to TRM, Tegra20 and Tegra114 have these "idle-mode" clock 
-> dividers
-> as well. Why only T30 should have them?
 
-I've got a separate series to sort t20 bits out, i've not used the 
-tegra114
+The fact the hw has a fractional divider, does not mean we're allowed to use
+it. Due to the non 50% duty cycle of fractional divided clocks, they are not
+allowed for certain peripherals. Do you have information indicating this is
+ok for the host1x clock?
 
->> a/include/dt-bindings/clock/tegra30-car.h
->> b/include/dt-bindings/clock/tegra30-car.h index 
->> 3c90f1535551..eda4ca60351e
->> 100644
->> --- a/include/dt-bindings/clock/tegra30-car.h
->> +++ b/include/dt-bindings/clock/tegra30-car.h
->> @@ -269,6 +269,11 @@
->>  #define TEGRA30_CLK_AUDIO3_MUX 306
->>  #define TEGRA30_CLK_AUDIO4_MUX 307
->>  #define TEGRA30_CLK_SPDIF_MUX 308
->> -#define TEGRA30_CLK_CLK_MAX 309
->> +
->> +#define TEGRA30_CLK_GR2D_MUX	309
->> +#define TEGRA30_CLK_GR3D_MUX	310
->> +#define TEGRA30_CLK_GR2D_IDLE	311
->> +#define TEGRA30_CLK_GR3D_IDLE	312
->> +#define TEGRA30_CLK_CLK_MAX 313
->> 
->>  #endif	/* _DT_BINDINGS_CLOCK_TEGRA30_CAR_H */
+Peter.
+
+
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
+>  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> IIUC, that "idle-mode" divisor is just some kind of power-safe feature, 
-> is
-> there any real use-case for these clocks? Why not to just pre-configure 
-> the
-> "idle-mode" bits during the clocks initialization?
-
-It is is nice to have it available after to check, other than that we're 
-not
-using any drivers that currently dynamically change the values of this.
+> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+> index 2acba2986bc6..8fa1cecf18a0 100644
+> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> @@ -644,7 +644,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+>  	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
+>  	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
+>  	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
+> -	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+> +	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+>  	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
+>  	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
+>  	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
+> -- 
+> 2.18.0
+> 
