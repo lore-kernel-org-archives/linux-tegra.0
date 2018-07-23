@@ -1,48 +1,44 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2] Add sw2_sw4 voltage table to cpcap regulator.
-Date: Mon, 23 Jul 2018 11:25:55 +0100
-Message-ID: <20180723102555.GB13981@sirena.org.uk>
-References: <17c10727-cab3-4736-281a-d4ace1cdbb82@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 2/8] clk: tegra: host1x has fractional divider
+Date: Mon, 23 Jul 2018 14:12:16 +0300
+Message-ID: <20180723111216.GM1636@tbergstrom-lnx.Nvidia.com>
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+ <20180720134532.13148-3-ben.dooks@codethink.co.uk>
+ <20180723085010.GK1636@tbergstrom-lnx.Nvidia.com>
+ <7df28a76490315402d28ad7de43dc0db@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <17c10727-cab3-4736-281a-d4ace1cdbb82@gmail.com>
+In-Reply-To: <7df28a76490315402d28ad7de43dc0db@codethink.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pgaikwad@nvidia.com, jonathanh@nvidia.co, thierry.reding@gmail.com, linux-kernel@lists.codethink.co.uk
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Jul 23, 2018 at 10:32:58AM +0100, Ben Dooks wrote:
+> 
+> 
+> On 2018-07-23 09:50, Peter De Schrijver wrote:
+> >On Fri, Jul 20, 2018 at 02:45:26PM +0100, Ben Dooks wrote:
+> >>The host1x clock according to both tegra2 and tegra3 manuals is
+> >>an 8bit divider with lsb being fractional. This is running into
+> >>an issue where the host1x is being set on a tegra20a system to
+> >>266.4MHz but ends up at 222MHz instead.
+> >>
+> >
+> >The fact the hw has a fractional divider, does not mean we're
+> >allowed to use
+> >it. Due to the non 50% duty cycle of fractional divided clocks,
+> >they are not
+> >allowed for certain peripherals. Do you have information
+> >indicating this is
+> >ok for the host1x clock?
+> 
+> Only that's what was setup for the systems we're using.
+> We couldn't match the 2.6 working system without these changes.
+> 
 
---NDin8bjvE/0mNLFQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tegra20 or Tegra30?
 
-On Sat, Jul 21, 2018 at 07:23:31AM -0400, Peter Geis wrote:
-> Re-sending due to email address typo.
->=20
-> SW2 and SW4 use a shared table to provide voltage to the cpu core and
-> devices on Tegra hardware.
-> Added this table to the cpcap regulator driver as the first step to
-> supporting this device on Tegra.
-
-I'm missing patch 2 here, what's going on?
-
---NDin8bjvE/0mNLFQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltVrTIACgkQJNaLcl1U
-h9DhkQf/alsJh+YMHB+9qoz+MsbIQ+p8iq2xCD8FGkvxPA9Mu3B9QjaWJxflqDq5
-EJPP+WN1nwIpnso6A1hWe4q2wuj3tPwiE7WOQEHowwYX3xAXQ17/P+kKUTA/9iy/
-FLhalC0SqOtAw7qjt8syt9kOMqZeZ9LggAI2VX5T8VQVDzUcBTpn82W0eqlcDO6T
-MpH0U4PKqsdjV6tOmrv9XZjDC4oRueJMQqdjueaDfrqjdqbIzfkP93p58kMqWCz/
-FF/ZostvRGDZ5bpUUOhP4akmn6HDPbA0VJM2M9bw9sZRVSGGkCNlV5bdwsKEaGAJ
-JEH+20nCypHzvvuQMma7mTwOMr89Ig==
-=47xC
------END PGP SIGNATURE-----
-
---NDin8bjvE/0mNLFQ--
+Peter.
