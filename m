@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 19/26] ARM: tegra: colibri_t30: line break long compatible property line
-Date: Mon, 23 Jul 2018 14:36:50 +0200
-Message-ID: <20180723123658.980-20-marcel@ziswiler.com>
+Subject: [PATCH 15/26] ARM: tegra: colibri_t30: add i2c-thermtrip
+Date: Mon, 23 Jul 2018 14:36:46 +0200
+Message-ID: <20180723123658.980-16-marcel@ziswiler.com>
 References: <20180723123658.980-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180723123658.980-1-marcel@ziswiler.com>
@@ -12,28 +12,34 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Line break long compatible property line.
+Add i2c-thermtrip which would set the DEV_OFF bit in the DCDC control
+register of the TPS65911 PMIC.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index 75373bf17b20..d888180e0507 100644
---- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -5,7 +5,8 @@
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 8266e42e1630..6608243e1d55 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -902,6 +902,14 @@
+ 		nvidia,core-pwr-off-time = <0>;
+ 		nvidia,core-power-req-active-high;
+ 		nvidia,sys-clock-req-active-high;
++
++		/* Set DEV_OFF bit in DCDC control register of TPS65911 PMIC */
++		i2c-thermtrip {
++			nvidia,i2c-controller-id = <4>;
++			nvidia,bus-addr = <0x2d>;
++			nvidia,reg-addr = <0x3e>;
++			nvidia,reg-data = <0x1>;
++		};
+ 	};
  
- / {
- 	model = "Toradex Colibri T30 on Colibri Evaluation Board";
--	compatible = "toradex,colibri_t30-eval-v3", "toradex,colibri_t30", "nvidia,tegra30";
-+	compatible = "toradex,colibri_t30-eval-v3", "toradex,colibri_t30",
-+		     "nvidia,tegra30";
- 
- 	aliases {
- 		rtc0 = "/i2c@7000c000/rtc@68";
+ 	ahub@70080000 {
 -- 
 2.14.4
