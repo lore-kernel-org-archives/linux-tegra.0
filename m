@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 18/26] ARM: tegra: colibri_t30: rename clk to clock
-Date: Mon, 23 Jul 2018 14:36:49 +0200
-Message-ID: <20180723123658.980-19-marcel@ziswiler.com>
+Subject: [PATCH 20/26] ARM: tegra: colibri_t30: move input include to carrier board
+Date: Mon, 23 Jul 2018 14:36:51 +0200
+Message-ID: <20180723123658.980-21-marcel@ziswiler.com>
 References: <20180723123658.980-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180723123658.980-1-marcel@ziswiler.com>
@@ -12,41 +12,37 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Rename clk to clock.
+Move input include to carrier board.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 2 +-
- arch/arm/boot/dts/tegra30-colibri.dtsi        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 1 +
+ arch/arm/boot/dts/tegra30-colibri.dtsi        | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index 621cd15cdfd1..75373bf17b20 100644
+index d888180e0507..08ca7cc7e0db 100644
 --- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
 +++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -136,7 +136,7 @@
- 	};
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /dts-v1/;
  
- 	clocks {
--		clk16m: clk@1 {
-+		clk16m: clock@1 {
- 			compatible = "fixed-clock";
- 			reg = <1>;
- 			#clock-cells = <0>;
++#include <dt-bindings/input/input.h>
+ #include "tegra30-colibri.dtsi"
+ 
+ / {
 diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 14ce77ebf4a5..27e81ffb35c3 100644
+index 27e81ffb35c3..211457ea0b72 100644
 --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -959,7 +959,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#include <dt-bindings/input/input.h>
+ #include "tegra30.dtsi"
  
--		clk32k_in: clk@0 {
-+		clk32k_in: clock@0 {
- 			compatible = "fixed-clock";
- 			reg = <0>;
- 			#clock-cells = <0>;
+ /*
 -- 
 2.14.4
