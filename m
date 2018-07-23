@@ -1,89 +1,82 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: Re: [PATCH] apalis_t30: fix can2
-Date: Mon, 23 Jul 2018 12:18:57 +0200
-Message-ID: <2fc4b2fb-fa2c-f9e7-82fd-58d0efc28499@pengutronix.de>
-References: <20180625075948.32040-1-marcel@ziswiler.com>
- <c511af9e-e0d5-f7d8-e6cc-92ea0df7a290@pengutronix.de>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/2] ASoC: tegra: probe deferral error
+	reporting
+Date: Mon, 23 Jul 2018 11:25:28 +0100
+Message-ID: <20180723102528.GA13981@sirena.org.uk>
+References: <20180720080424.31505-1-marcel@ziswiler.com>
+ <20180720080424.31505-2-marcel@ziswiler.com>
+ <20180720121612.GC10784@sirena.org.uk>
+ <1532089865.19673.13.camel@toradex.com>
+ <20180721095615.GG16228@sirena.org.uk>
+ <1532167581.19673.21.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="aA81cAebEog7KC9NSeaqhEMrrBU8BGxNw"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c511af9e-e0d5-f7d8-e6cc-92ea0df7a290@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, linux-can@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: multipart/mixed; boundary="===============6362421475197353317=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1532167581.19673.21.camel@toradex.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tiwai@suse.com" <tiwai@suse.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---aA81cAebEog7KC9NSeaqhEMrrBU8BGxNw
-Content-Type: multipart/mixed; boundary="W4PfbXg0chkN7Mv6MyAmJy6dmpOBXNC63";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org,
- linux-can@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
- devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Message-ID: <2fc4b2fb-fa2c-f9e7-82fd-58d0efc28499@pengutronix.de>
-Subject: Re: [PATCH] apalis_t30: fix can2
-References: <20180625075948.32040-1-marcel@ziswiler.com>
- <c511af9e-e0d5-f7d8-e6cc-92ea0df7a290@pengutronix.de>
-In-Reply-To: <c511af9e-e0d5-f7d8-e6cc-92ea0df7a290@pengutronix.de>
 
---W4PfbXg0chkN7Mv6MyAmJy6dmpOBXNC63
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
-
-On 07/23/2018 10:16 AM, Marc Kleine-Budde wrote:
-> On 06/25/2018 09:59 AM, Marcel Ziswiler wrote:
->> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->>
->> CAN2 currently fails on probe as follows:
->>
->> mcp251x spi1.1: Probe failed, err=3D19
->>
->> Fix this by enabling input on pin mux of resp. SPI4 pins.
->>
->> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->=20
-> I can take this via the linux-can tree. Any acks from the DT people?
-
-Never mind - it has been applied by Thierry menawhile:
-
-> Applied to for-4.19/arm/dt, thanks.
->=20
-> Thierry
-
-sorry for the noise.
-Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+--===============6362421475197353317==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Disposition: inline
 
 
---W4PfbXg0chkN7Mv6MyAmJy6dmpOBXNC63--
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---aA81cAebEog7KC9NSeaqhEMrrBU8BGxNw
+On Sat, Jul 21, 2018 at 10:06:23AM +0000, Marcel Ziswiler wrote:
+> On Sat, 2018-07-21 at 10:56 +0100, Mark Brown wrote:
+
+> > > > > -		dev_err(&pdev->dev, "no codec-sync GPIO
+> > > > > supplied\n");
+> > > > > +		ret = ac97->sync_gpio;
+
+> And here I assign ret with that return value from of_get_named_gpio(),
+> right?
+
+> > It's not in any way involved in setting the value of ret, whatever
+> > value
+> > that has it's nothing to do with that operation.
+
+> I really do not understand what you are trying to get at, sorry.
+
+Didn't see the above assignment you'd added, sorry.
+
+--4Ckj6UjgE2iN1+kY
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAltVq5EACgkQk9IU1zQo
-ZfFnUgf+LkYz8vgtoay/6c8fV1lY0u3HkJEvMvwuQMq6x0eADsusdknS42R25sUX
-L7eYHh5BsdpFTJJ1m5WmWrQwEIQUy2Vrb+zjrU0J2tvm2/qWkDFy97hZcU6BggBp
-SAsirF7jneiOozt8ZEhsj1YkUJh/BstXkWxw5aet69w7Fi16fS7c7JD8yaXkZpLV
-Kaaj6tZAXd3C3FMbrZVOfm4m8PDPCAqDZo8PozT/YYmcaEyV48TJxswVdGJKN4Ug
-WhAyzbd8c81QavtTZw4RIbpL6CRAOrlfZsHmmYPI/P5zs1CdKLy8IW/MJz7Hzjlu
-uxreo8o31DY3189a/O1GTNjFz2T4cg==
-=ajBJ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltVrRcACgkQJNaLcl1U
+h9BPnAf/X7WpWwT+ycthPvj/M4GzQ9pY0c+5oUCBO66OIRz5TjmLDck3P0oSGlwM
+tquV26H2D8YwAjE2QUE9QWH4rMmvObuf+yKEUuBhknCe4Uyk3Jcm3+A+BMtVZQ9d
+9GPCyvwG/MeT2YukiJOlsh7TmVgU5qiPNJc2Gb40zeMJf0TxpEHLMut1vU0rqD5i
+lwrqnD/iep0GhLrZAPIQ8b+kVBT7kQmrzkHf+YuVCmWqcsvPy7lEIfAYuI+OaNuw
+SoF1Yu5t+gMwVgYhxpR/Ta1PHZqapX5yjpWmDtm31052akyXiDXQ0+9p/OOTSO8K
+pxH071GVUcHGZPQ5Id9IFfaP4CnAew==
+=DxoV
 -----END PGP SIGNATURE-----
 
---aA81cAebEog7KC9NSeaqhEMrrBU8BGxNw--
+--4Ckj6UjgE2iN1+kY--
+
+--===============6362421475197353317==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============6362421475197353317==--
