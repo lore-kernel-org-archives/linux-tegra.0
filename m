@@ -1,47 +1,39 @@
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
-Date: Tue, 24 Jul 2018 14:16:33 +0000
-Message-ID: <1532441791.6124.20.camel@toradex.com>
-References: <20180724104309.21741-1-marcel@ziswiler.com>
-         <1532435072.6124.1.camel@toradex.com> <2532956.xKQ6NZiSWF@dimapc>
+Subject: Re: [PATCH 01/28] ARM: tegra: apalis_t30: enable broken-hpi on emmc
+Date: Tue, 24 Jul 2018 14:26:58 +0000
+Message-ID: <1532442416.6124.28.camel@toradex.com>
+References: <20180722164936.20581-1-marcel@ziswiler.com>
+         <20180722164936.20581-2-marcel@ziswiler.com> <1992775.WBgY65Ajyy@dimapc>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2532956.xKQ6NZiSWF@dimapc>
+In-Reply-To: <1992775.WBgY65Ajyy@dimapc>
 Content-Language: en-US
-Content-ID: <4CBBE2B1DED11D4D972A2617A39218F4@eurprd05.prod.outlook.com>
+Content-ID: <4BBD8A1BD91E8D439C0DA234949EB48E@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: "digetx@gmail.com" <digetx@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTA3LTI0IGF0IDE1OjQ0ICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-DQo+IE9uIFR1ZXNkYXksIDI0IEp1bHkgMjAxOCAxNToyNDozNCBNU0sgTWFyY2VsIFppc3dpbGVy
-IHdyb3RlOg0KPiA+IFNvcnJ5LCBJIG1lYW50IHRvIHdyaXRlICJtaW5vciByZXZhbXAiIGluIHRo
-ZSBzdWJqZWN0IGxpbmUgaGVyZSBhcw0KPiA+IEFwYWxpcyBUSzEgd2FzIGFscmVhZHkgaW4gcXVp
-dGUgZ29vZCBhIHNoYXBlIGJ1dCB0aGlzIGFyZSBzdGlsbA0KPiA+IHNvbWUNCj4gPiB3b3J0aHkg
-aW1wcm92ZW1lbnRzICg7LXApLg0KPiA+IA0KPiA+IE9uIFR1ZSwgMjAxOC0wNy0yNCBhdCAxMjo0
-MiArMDIwMCwgTWFyY2VsIFppc3dpbGVyIHdyb3RlOg0KPiA+IA0KPiANCj4gTWFyY2VsLA0KPiAN
-Cj4gQWxsIHlvdXIgZW1haWxzIHRoYXQgYXJlIHNlbnQgZnJvbSAidG9yYWRleC5jb20iIGFyZSB0
-cmVhdGVkIGFzIHNwYW0NCj4gYnkgR21haWwgDQo+IGJlY2F1c2UgIlRoaXMgbWVzc2FnZSBoYXMg
-YSBmcm9tIGFkZHJlc3MgaW4gdG9yYWRleC5jb20gYnV0IGhhcw0KPiBmYWlsZWQgDQo+IHRvcmFk
-ZXguY29tJ3MgcmVxdWlyZWQgdGVzdHMgZm9yIGF1dGhlbnRpY2F0aW9uLiIsIGlzIHRoZXJlIGFu
-eXRoaW5nDQo+IHlvdSBjb3VsZCANCj4gZG8gdG8gZml4IHRoYXQ/DQoNCkhpIERtaXRyeQ0KDQpI
-bSwgdW5mb3J0dW5hdGVseSwgVG9yYWRleCB3YXMgYW4gTSQgb25seSBzaG9wIHdoZW4gSSBqb2lu
-ZWQgbW9yZSB0aGVuDQo3IHllYXJzIGFnbyBhbmQgc28gZmFyIEkgd2FzIHVuYWJsZSB0byBjb252
-aW5jZSBvdXIgSVQgdG8gc3dpdGNoIHRvDQpzb21lIGdyb3duIHVwIGVtYWlsIHN5c3RlbS4gVGhl
-cmVmb3JlLCBJIGFtIHN0dWNrIHdpdGggRXhjaGFuZ2UsIE9mZmljZQ0KMzY1IG9yIHdoYXRldmVy
-IE0kIG5vd2FkYXlzIHNlZW0gdG8gY2FsbCBpdC4gQW55d2F5LCBJIHJlYWxseSB0aG91Z2h0DQpz
-ZW5kaW5nIGZyb20gQW5kcm9pZCBvciBFdm9sdXRpb24gdmlhIHRoZWlyIHJlc3AuIEV4Y2hhbmdl
-IGNvbm5lY3RvcnMNCndvdWxkIHByb3Blcmx5IGRvIFNQRiwgREtJTSBhbmQgZXZlbiBETUFSQy4g
-SSBqdXN0IGNvbmZpcm1lZCB0aGlzIHdoZW4NCnNlbmRpbmcgc29tZXRoaW5nIHRvIG15IGdtYWls
-IGFkZHJlc3MgYW5kIGRvaW5nICJTaG93IG9yaWdpbmFsIi4NCg0KU2luY2UgTGludXMgaGltc2Vs
-ZiBwb2ludGVkIG91dCBhbnkgb2YgbXkgcGF0Y2hlcyBlbmRpbmcgdXAgaW4gaGlzIHNwYW0NCmZv
-bGRlciBJIGRvIHNlbmQgdGhlbSB2aWEgbXkgcHJpdmF0ZSBlbWFpbCB3aGljaCB3aGlsZSBub3Qg
-aGF2aW5nIGFueQ0KYWR2YW5jZWQgc2VjdXJpdHkgY29uZmlndXJlZCBzaG91bGQgc3RpbGwgYmUg
-dmFsaWQuIE1vdmluZyBpdCB0byBhDQpmdWxseSBzZWN1cmUgY29uZmlndXJhdGlvbiBpbmNsdWRp
-bmcgRE5TU0VDIGFuZCBzdHVmZiBpcyBzdGlsbCBwZW5kaW5nDQpvbiBteSBzaWRlLg0KDQpDYW4g
-eW91IHBsZWFzZSB0ZWxsIG1lIHdoaWNoIGV4YWN0IGVtYWlsIGl0IGlzIHRoYXQgeW91IGdvdCB0
-aGlzDQpyZXBvcnRlZCBvbiBzbyBJIG1heSBmdXJ0aGVyIGludmVzdGlnYXRlIHdoYXQgaXMgZ29p
-bmcgb24/DQoNCkNoZWVycw0KDQpNYXJjZWw=
+T24gVHVlLCAyMDE4LTA3LTI0IGF0IDE3OjAzICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
+DQo+IE9uIFN1bmRheSwgMjIgSnVseSAyMDE4IDE5OjQ5OjA5IE1TSyBNYXJjZWwgWmlzd2lsZXIg
+d3JvdGU6DQo+ID4gRnJvbTogTWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRl
+eC5jb20+DQo+ID4gDQo+ID4gQXZvaWQgZU1NQyBpc3N1ZXMgYnkgc3BlY2lmeWluZyBicm9rZW4t
+aHBpLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnpp
+c3dpbGVyQHRvcmFkZXguY29tPg0KPiA+IA0KPiA+IC0tLQ0KPiANCj4gSXMgaXQgYSBzcGVjaWZp
+YyBlTU1DIGNhcmQgbW9kZWwgdGhhdCBoYXMgYnJva2VuIEhQSSBvciBpdCBpcyBhIGhvc3QgDQo+
+IGNvbnRyb2xsZXIgYnVnPw0KDQpUaGF0IGlzIGEgdmVyeSBnb29kIHF1ZXN0aW9uLiBTbyBmYXIg
+d2Ugb25seSBoYXZlIGNvbmZpcm1hdGlvbiB0aGF0IGF0DQpsZWFzdCBzb21lIGVNTUNzIGZyb20g
+SHluaXggcmVzcC4gU0tIeW5peCBkZWZpbml0ZWx5IGRvIGhhdmUgYmFkDQpmaXJtd2FyZS4gSSBh
+bHNvIGZvdW5kIG91dCB0aGF0IEFTVVMgcmVzcC4gR29vZ2xlIGRpZCBkaXNhYmxlIEhQSSBvbg0K
+dGhlaXIgTmV4dXMgNyB0YWJsZXQuIFRoZXJlZm9yZSwgd2UgYWxzbyBkaXNhYmxlZCBIUEkgcXVp
+dGUgYSB3aGlsZSBhZ28NCmluIG91ciBkb3duc3RyZWFtIEJTUHMgd2hpY2ggd2Ugc3VjY2Vzc2Z1
+bGx5IHZhbGlkYXRlZCAmIHZlcmlmaWVkIGRvaW5nDQpwb3dlciBjdXRzIGFuZCBydW5uaW5nIHN0
+cmVzcyB0ZXN0cyBpbiBvdXIgdGVtcGVyYXR1cmUgY2hhbWJlcnMuIEkNCmd1ZXNzIHdlIHdvdWxk
+IGhhdmUgdG8gcnVuIG1vcmUgZXh0ZW5zaXZlIHRlc3RzIHdpdGggbWFpbmxpbmUgd2l0aCBhbmQN
+CndpdGhvdXQgdGhpcyBzZXR0aW5nIHRvIGJlIGFibGUgdG8gcmVhbGx5IGFuc3dlciB5b3VyIHF1
+ZXN0aW9uLiBGb3Igbm93DQpJIGp1c3Qgc3VjY2Vzc2Z1bGx5IHJ1biBhIGZldyBBcGFsaXMgVDMw
+IGFuZCBDb2xpYnJpIFQzMCBtb2R1bGVzIHdpdGgNCnRoaXMgc2V0dGluZyBvdmVyIHRoZSB3ZWVr
+ZW5kIGRvaW5nIGJvdGggaGRwYXJtIC10IGFzIHdlbGwgYXMgZGRpbmcNCnNvbWUgdXJhbmRvbSBm
+aWxlcyB0byB0aGUgZU1NQyBpbiBhIGxvb3Agd2l0aG91dCBzZWVpbmcgYW55IGlzc3Vlcy4=
