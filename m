@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 03/15] ARM: tegra: apalis-tk1: reorder host1x/hdmi properties
-Date: Tue, 24 Jul 2018 12:42:57 +0200
-Message-ID: <20180724104309.21741-4-marcel@ziswiler.com>
+Subject: [PATCH 02/15] ARM: tegra: apalis-tk1: reorder pcie properties
+Date: Tue, 24 Jul 2018 12:42:56 +0200
+Message-ID: <20180724104309.21741-3-marcel@ziswiler.com>
 References: <20180724104309.21741-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
@@ -12,51 +12,45 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reorder Host1x/HDMI properties.
+Reorder PCIe properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 4 ++--
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index cb7e53c86408..9ea65723c40c 100644
+index 09e3641258ae..cb7e53c86408 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -52,11 +52,11 @@
+@@ -39,9 +39,9 @@
  
- 	host1x@50000000 {
- 		hdmi@54280000 {
--			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
--			vdd-supply = <&reg_3v3_avdd_hdmi>;
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
- 			nvidia,hpd-gpio =
- 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
-+			vdd-supply = <&reg_3v3_avdd_hdmi>;
- 		};
- 	};
+ 		/* I210 Gigabit Ethernet Controller (On-module) */
+ 		pci@2,0 {
++			status = "okay";
+ 			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-2}>;
+ 			phy-names = "pcie-0";
+-			status = "okay";
  
+ 			pcie@0 {
+ 				reg = <0 0 0 0 0>;
 diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index d73ee974648a..69ca362c1ef3 100644
+index 5e7ae5e92fb8..d73ee974648a 100644
 --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -87,11 +87,11 @@
+@@ -74,9 +74,9 @@
  
- 	host1x@50000000 {
- 		hdmi@54280000 {
--			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
--			vdd-supply = <&reg_3v3_avdd_hdmi>;
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
- 			nvidia,hpd-gpio =
- 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
-+			vdd-supply = <&reg_3v3_avdd_hdmi>;
- 		};
- 	};
+ 		/* I210 Gigabit Ethernet Controller (On-module) */
+ 		pci@2,0 {
++			status = "okay";
+ 			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-2}>;
+ 			phy-names = "pcie-0";
+-			status = "okay";
  
+ 			pcie@0 {
+ 				reg = <0 0 0 0 0>;
 -- 
 2.14.4
