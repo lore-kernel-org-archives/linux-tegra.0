@@ -1,59 +1,89 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
-Date: Tue, 24 Jul 2018 14:45:01 +0000
-Message-ID: <1532443499.6124.31.camel@toradex.com>
-References: <20180724104309.21741-1-marcel@ziswiler.com>
-         <2532956.xKQ6NZiSWF@dimapc> <1532441791.6124.20.camel@toradex.com>
-         <2076484.gx54F3eiOq@dimapc>
+Date: Tue, 24 Jul 2018 17:48:18 +0300
+Message-ID: <4715215.NZcU7pUVUy@dimapc>
+References: <20180724104309.21741-1-marcel@ziswiler.com> <2076484.gx54F3eiOq@dimapc> <1532443499.6124.31.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2076484.gx54F3eiOq@dimapc>
-Content-Language: en-US
-Content-ID: <DA222C87A9DB254DBE90FAC48CA42C3C@eurprd05.prod.outlook.com>
+In-Reply-To: <1532443499.6124.31.camel@toradex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "digetx@gmail.com" <digetx@gmail.com>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTA3LTI0IGF0IDE3OjMxICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-DQo+IE9uIFR1ZXNkYXksIDI0IEp1bHkgMjAxOCAxNzoxNjozMyBNU0sgTWFyY2VsIFppc3dpbGVy
-IHdyb3RlOg0KPiA+IE9uIFR1ZSwgMjAxOC0wNy0yNCBhdCAxNTo0NCArMDMwMCwgRG1pdHJ5IE9z
-aXBlbmtvIHdyb3RlOg0KPiA+IA0KPiA+ID4gT24gVHVlc2RheSwgMjQgSnVseSAyMDE4IDE1OjI0
-OjM0IE1TSyBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6DQo+ID4gPiANCj4gPiA+ID4gU29ycnksIEkg
-bWVhbnQgdG8gd3JpdGUgIm1pbm9yIHJldmFtcCIgaW4gdGhlIHN1YmplY3QgbGluZSBoZXJlDQo+
-ID4gPiA+IGFzDQo+ID4gPiA+IEFwYWxpcyBUSzEgd2FzIGFscmVhZHkgaW4gcXVpdGUgZ29vZCBh
-IHNoYXBlIGJ1dCB0aGlzIGFyZSBzdGlsbA0KPiA+ID4gPiBzb21lDQo+ID4gPiA+IHdvcnRoeSBp
-bXByb3ZlbWVudHMgKDstcCkuDQo+ID4gPiA+IA0KPiA+ID4gPiBPbiBUdWUsIDIwMTgtMDctMjQg
-YXQgMTI6NDIgKzAyMDAsIE1hcmNlbCBaaXN3aWxlciB3cm90ZToNCj4gPiA+ID4gDQo+ID4gPiAN
-Cj4gPiA+IA0KPiA+ID4gTWFyY2VsLA0KPiA+ID4gDQo+ID4gPiBBbGwgeW91ciBlbWFpbHMgdGhh
-dCBhcmUgc2VudCBmcm9tICJ0b3JhZGV4LmNvbSIgYXJlIHRyZWF0ZWQgYXMNCj4gPiA+IHNwYW0N
-Cj4gPiA+IGJ5IEdtYWlsIA0KPiA+ID4gYmVjYXVzZSAiVGhpcyBtZXNzYWdlIGhhcyBhIGZyb20g
-YWRkcmVzcyBpbiB0b3JhZGV4LmNvbSBidXQgaGFzDQo+ID4gPiBmYWlsZWQgDQo+ID4gPiB0b3Jh
-ZGV4LmNvbSdzIHJlcXVpcmVkIHRlc3RzIGZvciBhdXRoZW50aWNhdGlvbi4iLCBpcyB0aGVyZQ0K
-PiA+ID4gYW55dGhpbmcNCj4gPiA+IHlvdSBjb3VsZCANCj4gPiA+IGRvIHRvIGZpeCB0aGF0Pw0K
-PiA+IA0KPiA+IA0KPiA+IEhpIERtaXRyeQ0KPiA+IA0KPiA+IEhtLCB1bmZvcnR1bmF0ZWx5LCBU
-b3JhZGV4IHdhcyBhbiBNJCBvbmx5IHNob3Agd2hlbiBJIGpvaW5lZCBtb3JlDQo+ID4gdGhlbg0K
-PiA+IDcgeWVhcnMgYWdvIGFuZCBzbyBmYXIgSSB3YXMgdW5hYmxlIHRvIGNvbnZpbmNlIG91ciBJ
-VCB0byBzd2l0Y2ggdG8NCj4gPiBzb21lIGdyb3duIHVwIGVtYWlsIHN5c3RlbS4gVGhlcmVmb3Jl
-LCBJIGFtIHN0dWNrIHdpdGggRXhjaGFuZ2UsDQo+ID4gT2ZmaWNlDQo+ID4gMzY1IG9yIHdoYXRl
-dmVyIE0kIG5vd2FkYXlzIHNlZW0gdG8gY2FsbCBpdC4gQW55d2F5LCBJIHJlYWxseQ0KPiA+IHRo
-b3VnaHQNCj4gPiBzZW5kaW5nIGZyb20gQW5kcm9pZCBvciBFdm9sdXRpb24gdmlhIHRoZWlyIHJl
-c3AuIEV4Y2hhbmdlDQo+ID4gY29ubmVjdG9ycw0KPiA+IHdvdWxkIHByb3Blcmx5IGRvIFNQRiwg
-REtJTSBhbmQgZXZlbiBETUFSQy4gSSBqdXN0IGNvbmZpcm1lZCB0aGlzDQo+ID4gd2hlbg0KPiA+
-IHNlbmRpbmcgc29tZXRoaW5nIHRvIG15IGdtYWlsIGFkZHJlc3MgYW5kIGRvaW5nICJTaG93IG9y
-aWdpbmFsIi4NCj4gPiANCj4gPiBTaW5jZSBMaW51cyBoaW1zZWxmIHBvaW50ZWQgb3V0IGFueSBv
-ZiBteSBwYXRjaGVzIGVuZGluZyB1cCBpbiBoaXMNCj4gPiBzcGFtDQo+ID4gZm9sZGVyIEkgZG8g
-c2VuZCB0aGVtIHZpYSBteSBwcml2YXRlIGVtYWlsIHdoaWNoIHdoaWxlIG5vdCBoYXZpbmcNCj4g
-PiBhbnkNCj4gPiBhZHZhbmNlZCBzZWN1cml0eSBjb25maWd1cmVkIHNob3VsZCBzdGlsbCBiZSB2
-YWxpZC4gTW92aW5nIGl0IHRvIGENCj4gPiBmdWxseSBzZWN1cmUgY29uZmlndXJhdGlvbiBpbmNs
-dWRpbmcgRE5TU0VDIGFuZCBzdHVmZiBpcyBzdGlsbA0KPiA+IHBlbmRpbmcNCj4gPiBvbiBteSBz
-aWRlLg0KPiA+IA0KPiA+IENhbiB5b3UgcGxlYXNlIHRlbGwgbWUgd2hpY2ggZXhhY3QgZW1haWwg
-aXQgaXMgdGhhdCB5b3UgZ290IHRoaXMNCj4gPiByZXBvcnRlZCBvbiBzbyBJIG1heSBmdXJ0aGVy
-IGludmVzdGlnYXRlIHdoYXQgaXMgZ29pbmcgb24/DQo+IA0KPiBUaGlzIGVtYWlsIGZyb20geW91
-IGxvb2tzIG9rYXkuIFVuZm9ydHVuYXRlbHkgYWxsIG9mIHlvdXIgcHJldmlvdXMNCj4gZW1haWxz
-IGZyb20gDQo+ICJ0b3JhZGV4LmNvbSIgd2VyZSBnZXR0aW5nIGludG8gdGhlIHNwYW0gZm9sZGVy
-Lg0KDQpZb3Ugc3VyZSB0aGV5IHdlcmUgZnJvbSAidG9yYWRleC5jb20iPyBUaGUgcGF0Y2hlcyBz
-aG91bGQgaGF2ZSBiZWVuDQpjb21pbmcgZnJvbSAiemlzd2lsZXIuY29tIiByZXNwLiAicGVyZm9y
-YS5uZXQiLg==
+On Tuesday, 24 July 2018 17:45:01 MSK Marcel Ziswiler wrote:
+> On Tue, 2018-07-24 at 17:31 +0300, Dmitry Osipenko wrote:
+> 
+> > On Tuesday, 24 July 2018 17:16:33 MSK Marcel Ziswiler wrote:
+> > 
+> > > On Tue, 2018-07-24 at 15:44 +0300, Dmitry Osipenko wrote:
+> > > 
+> > > 
+> > > > On Tuesday, 24 July 2018 15:24:34 MSK Marcel Ziswiler wrote:
+> > > > 
+> > > > 
+> > > > > Sorry, I meant to write "minor revamp" in the subject line here
+> > > > > as
+> > > > > Apalis TK1 was already in quite good a shape but this are still
+> > > > > some
+> > > > > worthy improvements (;-p).
+> > > > > 
+> > > > > On Tue, 2018-07-24 at 12:42 +0200, Marcel Ziswiler wrote:
+> > > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > Marcel,
+> > > > 
+> > > > All your emails that are sent from "toradex.com" are treated as
+> > > > spam
+> > > > by Gmail 
+> > > > because "This message has a from address in toradex.com but has
+> > > > failed 
+> > > > toradex.com's required tests for authentication.", is there
+> > > > anything
+> > > > you could 
+> > > > do to fix that?
+> > > 
+> > > 
+> > > 
+> > > Hi Dmitry
+> > > 
+> > > Hm, unfortunately, Toradex was an M$ only shop when I joined more
+> > > then
+> > > 7 years ago and so far I was unable to convince our IT to switch to
+> > > some grown up email system. Therefore, I am stuck with Exchange,
+> > > Office
+> > > 365 or whatever M$ nowadays seem to call it. Anyway, I really
+> > > thought
+> > > sending from Android or Evolution via their resp. Exchange
+> > > connectors
+> > > would properly do SPF, DKIM and even DMARC. I just confirmed this
+> > > when
+> > > sending something to my gmail address and doing "Show original".
+> > > 
+> > > Since Linus himself pointed out any of my patches ending up in his
+> > > spam
+> > > folder I do send them via my private email which while not having
+> > > any
+> > > advanced security configured should still be valid. Moving it to a
+> > > fully secure configuration including DNSSEC and stuff is still
+> > > pending
+> > > on my side.
+> > > 
+> > > Can you please tell me which exact email it is that you got this
+> > > reported on so I may further investigate what is going on?
+> > 
+> > 
+> > This email from you looks okay. Unfortunately all of your previous
+> > emails from 
+> > "toradex.com" were getting into the spam folder.
+> 
+> 
+> You sure they were from "toradex.com"? The patches should have been
+> coming from "ziswiler.com" resp. "perfora.net".
+
+The patches from "ziswiler.com" are fine, only your emails specifically from 
+"toradex.com" had an issue. Looks like you've resolved it now.
