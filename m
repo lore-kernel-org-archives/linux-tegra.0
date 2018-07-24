@@ -1,68 +1,61 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 01/10] mmc: tegra: Poll for calibration completion
-Date: Tue, 24 Jul 2018 17:29:42 +0300
-Message-ID: <1532442591-5640-2-git-send-email-avienamo@nvidia.com>
-References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
+Date: Tue, 24 Jul 2018 17:31:32 +0300
+Message-ID: <2076484.gx54F3eiOq@dimapc>
+References: <20180724104309.21741-1-marcel@ziswiler.com> <2532956.xKQ6NZiSWF@dimapc> <1532441791.6124.20.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1532441791.6124.20.camel@toradex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Implement polling with 10 ms timeout for automatic pad drive strength
-calibration.
+On Tuesday, 24 July 2018 17:16:33 MSK Marcel Ziswiler wrote:
+> On Tue, 2018-07-24 at 15:44 +0300, Dmitry Osipenko wrote:
+> 
+> > On Tuesday, 24 July 2018 15:24:34 MSK Marcel Ziswiler wrote:
+> > 
+> > > Sorry, I meant to write "minor revamp" in the subject line here as
+> > > Apalis TK1 was already in quite good a shape but this are still
+> > > some
+> > > worthy improvements (;-p).
+> > > 
+> > > On Tue, 2018-07-24 at 12:42 +0200, Marcel Ziswiler wrote:
+> > > 
+> > 
+> > 
+> > Marcel,
+> > 
+> > All your emails that are sent from "toradex.com" are treated as spam
+> > by Gmail 
+> > because "This message has a from address in toradex.com but has
+> > failed 
+> > toradex.com's required tests for authentication.", is there anything
+> > you could 
+> > do to fix that?
+> 
+> 
+> Hi Dmitry
+> 
+> Hm, unfortunately, Toradex was an M$ only shop when I joined more then
+> 7 years ago and so far I was unable to convince our IT to switch to
+> some grown up email system. Therefore, I am stuck with Exchange, Office
+> 365 or whatever M$ nowadays seem to call it. Anyway, I really thought
+> sending from Android or Evolution via their resp. Exchange connectors
+> would properly do SPF, DKIM and even DMARC. I just confirmed this when
+> sending something to my gmail address and doing "Show original".
+> 
+> Since Linus himself pointed out any of my patches ending up in his spam
+> folder I do send them via my private email which while not having any
+> advanced security configured should still be valid. Moving it to a
+> fully secure configuration including DNSSEC and stuff is still pending
+> on my side.
+> 
+> Can you please tell me which exact email it is that you got this
+> reported on so I may further investigate what is going on?
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index f108c48..e40ca43 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -49,6 +49,9 @@
- #define SDHCI_AUTO_CAL_START			BIT(31)
- #define SDHCI_AUTO_CAL_ENABLE			BIT(29)
- 
-+#define SDHCI_TEGRA_AUTO_CAL_STATUS     0x1ec
-+#define SDHCI_TEGRA_AUTO_CAL_ACTIVE     BIT(31)
-+
- #define NVQUIRK_FORCE_SDHCI_SPEC_200	BIT(0)
- #define NVQUIRK_ENABLE_BLOCK_GAP_DET	BIT(1)
- #define NVQUIRK_ENABLE_SDHCI_SPEC_300	BIT(2)
-@@ -198,13 +201,24 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
- 
- static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
- {
--	u32 val;
-+	unsigned timeout = 10;
-+	u32 reg;
- 
--	mdelay(1);
-+	reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
-+	reg |= SDHCI_AUTO_CAL_ENABLE | SDHCI_AUTO_CAL_START;
-+	sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
-+	udelay(1);
-+
-+	do {
-+		reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_STATUS);
-+		if (!(reg & SDHCI_TEGRA_AUTO_CAL_ACTIVE))
-+			break;
-+		mdelay(1);
-+		timeout--;
-+	} while (timeout);
- 
--	val = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
--	val |= SDHCI_AUTO_CAL_ENABLE | SDHCI_AUTO_CAL_START;
--	sdhci_writel(host,val, SDHCI_TEGRA_AUTO_CAL_CONFIG);
-+	if (timeout == 0)
-+		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
- }
- 
- static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
--- 
-2.7.4
+This email from you looks okay. Unfortunately all of your previous emails from 
+"toradex.com" were getting into the spam folder.
