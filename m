@@ -1,52 +1,76 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2] memory: tegra: Don't invoke Tegra30+ specific memory timing setup on Tegra20
-Date: Tue, 24 Jul 2018 19:22:08 +0300
-Message-ID: <20180724162208.683-1-digetx@gmail.com>
+Subject: [PATCH v5 0/8] Tegra20 External Memory Controller driver
+Date: Tue, 24 Jul 2018 19:42:13 +0300
+Message-ID: <20180724164221.3307-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
-
-This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
-timings for RAM code 0 registered" warning message during of kernels
-boot-up on Tegra20.
-
-Fixes: a8d502fd3348 ("memory: tegra: Squash tegra20-mc into common tegra-mc driver")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
----
 
 Changelog:
 
+v5:
+        - Fixed wrong EMC clock divider type in the "Turn EMC clock gate into
+          divider" patch. It is a Tegra's fractional 7.1 divider and not a
+          simple integer divider. Peter, please take a look at the change.
+
+v4:
+        - Fixed "bad of_node_put()" error which was revealed by enabling
+          some extra kernel debug config options.
+
+        - The "emc-table" DT nodes are now parsed starting from the "emc"
+          node instead of the DT root.
+
+        - Adjusted code comment in the "Turn EMC clock gate into divider"
+          patch as was suggested by Stephen Boyd to the v3.
+
+v3:
+        - Handle "nvidia,use-ram-code" DT property, its handling was missed
+          in the previous versions.
+
+        - Honor "emc-tables" DT node naming which is explicitly specified
+          in the DT binding, also was missed in the previous versions.
+
+        - Two new DT binding patches: one adds the EMC clock property,
+          other relocates the binding doc file to the appropriate directory.
+          One new patch that adds EMC clock property to the DTS file.
+
+        - Addressed v2 review comments from Thierry Reding. Driver does not
+          preserve backwards compatibility with older device tree binding.
+
+        - The PLL_M and PLL_P clocks are kept internal to the driver because
+          after some more considering I couldn't find a really good reason why
+          these clocks should be in the device tree.
+
+        - Some minor cleanups and fixes in the drivers code.
+
 v2:
-	- Added "fixes:" tag as was suggested by Jon Hunter.
+        - Minor code cleanups like consistent use of writel_relaxed instead
+          of non-relaxed version, reworded error messages, etc.
 
- drivers/memory/tegra/mc.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+        - Factored out use_pllm_ud bit checking into a standalone patch for
+          consistency.
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index bd25faf6d13d..e56862495f36 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -664,12 +664,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 		}
- 
- 		isr = tegra_mc_irq;
--	}
- 
--	err = tegra_mc_setup_timings(mc);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to setup timings: %d\n", err);
--		return err;
-+		err = tegra_mc_setup_timings(mc);
-+		if (err < 0) {
-+			dev_err(&pdev->dev, "failed to setup timings: %d\n",
-+				err);
-+			return err;
-+		}
- 	}
- 
- 	mc->irq = platform_get_irq(pdev, 0);
+Dmitry Osipenko (8):
+  dt: bindings: tegra20-emc: Document interrupt property
+  dt: bindings: tegra20-emc: Document clock property
+  dt: bindings: Move tegra20-emc binding to memory-controllers directory
+  ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+  ARM: dts: tegra20: Add clock entry to External Memory Controller
+  clk: tegra20: Turn EMC clock gate into divider
+  clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+  memory: tegra: Introduce Tegra20 EMC driver
+
+ .../nvidia,tegra20-emc.txt                    |   4 +
+ arch/arm/boot/dts/tegra20.dtsi                |   2 +
+ drivers/clk/tegra/clk-tegra20.c               |  46 +-
+ drivers/memory/tegra/Kconfig                  |  10 +
+ drivers/memory/tegra/Makefile                 |   1 +
+ drivers/memory/tegra/tegra20-emc.c            | 575 ++++++++++++++++++
+ 6 files changed, 628 insertions(+), 10 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (95%)
+ create mode 100644 drivers/memory/tegra/tegra20-emc.c
+
 -- 
 2.18.0
