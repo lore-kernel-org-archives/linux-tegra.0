@@ -1,48 +1,50 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 09/10] mmc: tegra: Perform pad calibration after voltage switch
-Date: Tue, 24 Jul 2018 17:34:25 +0300
-Message-ID: <1532442865-6391-8-git-send-email-avienamo@nvidia.com>
-References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
- <1532442865-6391-1-git-send-email-avienamo@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 1/2] Add sw2_sw4 voltage table to cpcap regulator.
+Date: Tue, 24 Jul 2018 15:36:34 +0100
+Message-ID: <20180724143634.GD13268@sirena.org.uk>
+References: <20180724132541.17039-1-pgwipeout@gmail.com>
+ <20180724132541.17039-2-pgwipeout@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1sNVjLsmu1MXqwQ/"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532442865-6391-1-git-send-email-avienamo@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <20180724132541.17039-2-pgwipeout@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+To: Peter Geis <pgwipeout@gmail.com>
+Cc: lgirdwood@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Run the automatic pad calibration after voltage switching if
-tegra_host->pad_calib_required is set.
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 5 +++++
- 1 file changed, 5 insertions(+)
+--1sNVjLsmu1MXqwQ/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 78781bd..529aa4e7 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -537,6 +537,8 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
- 						   struct mmc_ios *ios)
- {
- 	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
- 	int ret = 0;
- 
- 	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
-@@ -551,6 +553,9 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
- 		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
- 	}
- 
-+	if (tegra_host->pad_calib_required)
-+		tegra_sdhci_pad_autocalib(host);
-+
- 	return ret;
- }
- 
--- 
-2.7.4
+On Tue, Jul 24, 2018 at 09:25:40AM -0400, Peter Geis wrote:
+> SW2 and SW4 use a shared table to provide voltage to the cpu core and
+> devices on Tegra hardware.
+> Added this table to the cpcap regulator driver as the first step to
+> supporting this device on Tegra.
+
+Please submit patches using subject lines reflecting the style for the
+subsystem.  This makes it easier for people to identify relevant
+patches.  Look at what existing commits in the area you're changing are
+doing and make sure your subject lines visually resemble what they're
+doing.
+
+--1sNVjLsmu1MXqwQ/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltXOXIACgkQJNaLcl1U
+h9Bs1Af9Esx5B/jH0/vkzcSK7TdzwrkTjnQ5hyQFW37fVeoYdLIjmf0g1iiWn6iV
++HnLCJXjUPesyDfbTCp70bkMJitAbezK1EgkbhEYZhumyfuDB4p+aRKPmPjxheq3
+NbqZKovM6nx38587zTj1T/IrKySPgRqztA/jvW4CL/8TTWPMw9iPsbF5TyPeLQ/s
+PHzDIFED3RF8RukQ47aUCQ38/+7w9LrwQsoT1s88SpYyhiqNzq1T0XBY04KCclwZ
+HW1y3ne5r2mzX9/rgANsqQYDoEh2iRUl4lO/I6qdcG2I/8FgRcMFfzaK+S4bwJr3
+6znQ6DhbI1noJNaPuicPhOY90rbsCw==
+=BvPL
+-----END PGP SIGNATURE-----
+
+--1sNVjLsmu1MXqwQ/--
