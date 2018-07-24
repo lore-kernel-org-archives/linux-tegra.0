@@ -1,177 +1,129 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 2/2 v2] Add support for CPCAP regulators on Tegra devices.
-Date: Tue, 24 Jul 2018 14:14:43 +0300
-Message-ID: <2471666.ni9k6lzQ9Y@dimapc>
-References: <20180723193848.32491-1-pgwipeout@gmail.com> <4588004.Gnq6nbUl2V@dimapc> <e59e552c-fabb-0251-05b5-2361bf273232@gmail.com>
+Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
+Date: Tue, 24 Jul 2018 14:31:57 +0300
+Message-ID: <16130866.kpFhQUNOMP@dimapc>
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk> <20180720134532.13148-7-ben.dooks@codethink.co.uk> <6750449.onR3KBHYkZ@dimapc>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e59e552c-fabb-0251-05b5-2361bf273232@gmail.com>
+In-Reply-To: <6750449.onR3KBHYkZ@dimapc>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, jonathanh@nvidia.co, thierry.reding@gmail.com, linux-kernel@lists.codethink.co.uk
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday, 24 July 2018 04:57:24 MSK Peter Geis wrote:
-> On 07/23/2018 08:27 PM, Dmitry Osipenko wrote:
-> > On Monday, 23 July 2018 22:38:48 MSK Peter Geis wrote:
-> >> Added support for the CPCAP power management regulator functions on
-> >> Tegra devices.
-> >> Added sw2_sw4 value tables, which provide power to the Tegra core and
-> >> aux devices.
-> >> Added the Tegra init tables and device tree compatibility match.
-> >> 
-> >> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-> >> ---
-> >> 
-> >>   .../bindings/regulator/cpcap-regulator.txt    |  1 +
-> >>   drivers/regulator/cpcap-regulator.c           | 80 +++++++++++++++++++
-> >>   2 files changed, 81 insertions(+)
-> >> 
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
-> >> b/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt index
-> >> 675f4437ce92..3e2d33ab1731 100644
-> >> --- a/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
-> >> +++ b/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
-> >> @@ -4,6 +4,7 @@ Motorola CPCAP PMIC voltage regulators
-> >> 
-> >>   Requires node properties:
-> >>   
-> >>   - "compatible" value one of:
-> >>       "motorola,cpcap-regulator"
-> >> 
-> >> +    "motorola,tegra-cpcap-regulator"
-> >> 
-> >>       "motorola,mapphone-cpcap-regulator"
-> >>   
-> >>   Required regulator properties:
-> >> diff --git a/drivers/regulator/cpcap-regulator.c
-> >> b/drivers/regulator/cpcap-regulator.c index c0b1e04bd90f..cb3774be445d
-> >> 100644
-> >> --- a/drivers/regulator/cpcap-regulator.c
-> >> +++ b/drivers/regulator/cpcap-regulator.c
-> >> @@ -412,6 +412,82 @@ static struct cpcap_regulator omap4_regulators[] = {
-> >> 
-> >>   	{ /* sentinel */ },
-> >>   
-> >>   };
-> >> 
-> >> +static struct cpcap_regulator tegra_regulators[] = {
-> >> +	CPCAP_REG(SW1, CPCAP_REG_S1C1, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW1_SEL, unknown_val_tbl,
-> >> +		  0, 0, 0, 0, 0, 0),
-> >> +	CPCAP_REG(SW2, CPCAP_REG_S2C1, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW2_SEL, sw2_sw4_val_tbl,
-> >> +		  0xf00, 0x7f, 0, 0x800, 0, 120),
-> >> +	CPCAP_REG(SW3, CPCAP_REG_S3C, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW3_SEL, unknown_val_tbl,
-> >> +		  0, 0, 0, 0, 0, 0),
-> >> +	CPCAP_REG(SW4, CPCAP_REG_S4C1, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW4_SEL, sw2_sw4_val_tbl,
-> >> +		  0xf00, 0x7f, 0, 0x900, 0, 100),
-> >> +	CPCAP_REG(SW5, CPCAP_REG_S5C, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW5_SEL, sw5_val_tbl,
-> >> +		  0x2a, 0, 0, 0x22, 0, 0),
-> >> +	CPCAP_REG(SW6, CPCAP_REG_S6C, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW6_SEL, unknown_val_tbl,
-> >> +		  0, 0, 0, 0, 0, 0),
-> >> +	CPCAP_REG(VCAM, CPCAP_REG_VCAMC, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_VCAM_SEL, vcam_val_tbl,
-> >> +		  0x87, 0x30, 4, 0x7, 0, 420),
-> >> +	CPCAP_REG(VCSI, CPCAP_REG_VCSIC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VCSI_SEL, vcsi_val_tbl,
-> >> +		  0x47, 0x10, 4, 0x7, 0, 350),
-> >> +	CPCAP_REG(VDAC, CPCAP_REG_VDACC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VDAC_SEL, vdac_val_tbl,
-> >> +		  0x87, 0x30, 4, 0x3, 0, 420),
-> >> +	CPCAP_REG(VDIG, CPCAP_REG_VDIGC, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_VDIG_SEL, vdig_val_tbl,
-> >> +		  0x87, 0x30, 4, 0x5, 0, 420),
-> >> +	CPCAP_REG(VFUSE, CPCAP_REG_VFUSEC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VFUSE_SEL, vfuse_val_tbl,
-> >> +		  0x80, 0xf, 0, 0x80, 0, 420),
-> >> +	CPCAP_REG(VHVIO, CPCAP_REG_VHVIOC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VHVIO_SEL, vhvio_val_tbl,
-> >> +		  0x17, 0, 0, 0x2, 0, 0),
-> >> +	CPCAP_REG(VSDIO, CPCAP_REG_VSDIOC, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_VSDIO_SEL, vsdio_val_tbl,
-> >> +		  0x87, 0x38, 3, 0x2, 0, 420),
-> >> +	CPCAP_REG(VPLL, CPCAP_REG_VPLLC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VPLL_SEL, vpll_val_tbl,
-> >> +		  0x43, 0x18, 3, 0x1, 0, 420),
-> >> +	CPCAP_REG(VRF1, CPCAP_REG_VRF1C, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VRF1_SEL, vrf1_val_tbl,
-> >> +		  0xac, 0x2, 1, 0xc, 0, 10),
-> >> +	CPCAP_REG(VRF2, CPCAP_REG_VRF2C, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VRF2_SEL, vrf2_val_tbl,
-> >> +		  0x23, 0x8, 3, 0x3, 0, 10),
-> >> +	CPCAP_REG(VRFREF, CPCAP_REG_VRFREFC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VRFREF_SEL, vrfref_val_tbl,
-> >> +		  0x23, 0x8, 3, 0x3, 0, 420),
-> >> +	CPCAP_REG(VWLAN1, CPCAP_REG_VWLAN1C, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VWLAN1_SEL, vwlan1_val_tbl,
-> >> +		  0x47, 0x10, 4, 0x5, 0, 420),
-> >> +	CPCAP_REG(VWLAN2, CPCAP_REG_VWLAN2C, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VWLAN2_SEL, vwlan2_val_tbl,
-> >> +		  0x20c, 0xc0, 6, 0x8, 0, 420),
-> >> +	CPCAP_REG(VSIM, CPCAP_REG_VSIMC, CPCAP_REG_ASSIGN3,
-> >> +		  0xffff, vsim_val_tbl,
-> >> +		  0x23, 0x8, 3, 0x3, 0, 420),
-> >> +	CPCAP_REG(VSIMCARD, CPCAP_REG_VSIMC, CPCAP_REG_ASSIGN3,
-> >> +		  0xffff, vsimcard_val_tbl,
-> >> +		  0x1e80, 0x8, 3, 0x1e00, 0, 420),
-> >> +	CPCAP_REG(VVIB, CPCAP_REG_VVIBC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VVIB_SEL, vvib_val_tbl,
-> >> +		  0x1, 0xc, 2, 0, 0x1, 500),
-> >> +	CPCAP_REG(VUSB, CPCAP_REG_VUSBC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VUSB_SEL, vusb_val_tbl,
-> >> +		  0x11c, 0x40, 6, 0xc, 0, 0),
-> >> +	CPCAP_REG(VAUDIO, CPCAP_REG_VAUDIOC, CPCAP_REG_ASSIGN4,
-> >> +		  CPCAP_BIT_VAUDIO_SEL, vaudio_val_tbl,
-> >> +		  0x16, 0x1, 0, 0x4, 0, 0),
-> >> +	{ /* sentinel */ },
-> >> +};
-> >> +
-> >> 
-> >>   static const struct of_device_id cpcap_regulator_id_table[] = {
-> >>   
-> >>   	{
-> >>   	
-> >>   		.compatible = "motorola,cpcap-regulator",
-> >> 
-> >> @@ -420,6 +496,10 @@ static const struct of_device_id
-> >> cpcap_regulator_id_table[] = { .compatible =
-> >> "motorola,mapphone-cpcap-regulator",
-> >> 
-> >>   		.data = omap4_regulators,
-> >>   	
-> >>   	},
-> >> 
-> >> +	{
-> >> +		.compatible = "motorola,tegra-cpcap-regulator",
-> >> +		.data = tegra_regulators,
-> >> +	},
-> >> 
-> >>   	{},
-> >>   
-> >>   };
-> >>   MODULE_DEVICE_TABLE(of, cpcap_regulator_id_table);
+On Monday, 23 July 2018 16:05:21 MSK Dmitry Osipenko wrote:
+> On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
+> > The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
+> > clocks by making a 2D and 3D mux, and split the divider into the
+> > standard 2D/3D ones and 2D/3D idle clocks.
 > > 
-> > Are those cpcap_regulator values really common for all Tegra's? Probably
-> > better to name the DT compatible like "motorola,xoom-cpcap-regulator" or
-> > "motorola,mz602-cpcap-regulator".
+> > Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> > ---
+> >  drivers/clk/tegra/clk-id.h              |  4 ++++
+> >  drivers/clk/tegra/clk-tegra-periph.c    | 23 +++++++++++++++++++++--
+> >  drivers/clk/tegra/clk-tegra30.c         |  8 ++++++++
+> >  include/dt-bindings/clock/tegra30-car.h |  7 ++++++-
+> >  4 files changed, 39 insertions(+), 3 deletions(-)
 > > 
-> > The DT binding documentation should be updated with the new compatible
-> > value in the
-> > Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
-> I see your point, from my research the only other device that ever
-> paired a Tegra with a cpcap was the Atrix 4g, and it has completely
-> different values.
-> For now I will change the value to "motorola,xoom-cpcap-regulator",
-> since these values are common across the entire Xoom line.
-> The DT binding documentation was updated as part of this patch, it will
-> be adjusted to the new value.
+> > diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+> > index b616e33c5255..0d202a70ce66 100644
+> > --- a/drivers/clk/tegra/clk-id.h
+> > +++ b/drivers/clk/tegra/clk-id.h
+> > @@ -91,8 +91,12 @@ enum clk_id {
+> >  	tegra_clk_fuse_burn,
+> >  	tegra_clk_gpu,
+> >  	tegra_clk_gr2d,
+> > +	tegra_clk_gr2d_mux,
+> > +	tegra_clk_gr2d_idle,
+> >  	tegra_clk_gr2d_8,
+> >  	tegra_clk_gr3d,
+> > +	tegra_clk_gr3d_mux,
+> > +	tegra_clk_gr3d_idle,
+> >  	tegra_clk_gr3d_8,
+> >  	tegra_clk_hclk,
+> >  	tegra_clk_hda,
+> > diff --git a/drivers/clk/tegra/clk-tegra-periph.c
+> > b/drivers/clk/tegra/clk-tegra-periph.c index 47e5b1ac1a69..83967dac93f2
+> > 100644
+> > --- a/drivers/clk/tegra/clk-tegra-periph.c
+> > +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> > @@ -263,6 +263,21 @@
+> >  		.flags = _flags,					\
+> >  	}
+> > 
+> > +#define GATE_DIV(_name, _parent_name, _offset,				\
+> > +		 _div_shift, _div_width, _div_frac_width, _div_flags,	\
+> > +			     _clk_num, _gate_flags,  _clk_id, _flags)	\
+> > +	{								\
+> > +		.name = _name,						\
+> > +		.clk_id = _clk_id,					\
+> > +		.offset = _offset,					\
+> > +		.p.parent_name =  _parent_name,				\
+> > +		.periph = TEGRA_CLK_PERIPH(0, 0, 0,			\
+> > +					   _div_shift, _div_width,	\
+> > +					   _div_frac_width, _div_flags, \
+> > +				_clk_num, _gate_flags, NULL, NULL),	\
+> > +		.flags = _flags						\
+> > +	}
+> > +
+> >  #define PLLP_BASE 0xa0
+> >  #define PLLP_MISC 0xac
+> >  #define PLLP_MISC1 0x680
+> > @@ -646,8 +661,12 @@ static struct tegra_periph_init_data periph_clks[] = {
+> >  	MUX("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, 
+> tegra_clk_epp),
+> > MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0,
+> > tegra_clk_host1x), MUX("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60,
+> > 0, tegra_clk_mpe), -	MUX("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 
+> 21,
+> > 0, tegra_clk_gr2d), -	MUX("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 
+> 24,
+> > 0, tegra_clk_gr3d), +	MUX("2d_mux", mux_pllm_pllc_pllp_plla, 
+> CLK_SOURCE_2D,
+> > 0, TEGRA_PERIPH_NO_DIV | TEGRA_PERIPH_NO_RESET | TEGRA_PERIPH_NO_GATE,
+> > tegra_clk_gr2d_mux), +	GATE_DIV("2d", "2d_mux", CLK_SOURCE_2D, 0, 8, 1,
+> > TEGRA_DIVIDER_ROUND_UP,21, 0, tegra_clk_gr2d, 0), +	GATE_DIV("2d_idle",
+> > "2d_mux", CLK_SOURCE_2D, 8, 8, 1, TEGRA_DIVIDER_ROUND_UP, 0,
+> > TEGRA_PERIPH_NO_GATE | TEGRA_PERIPH_NO_RESET, tegra_clk_gr2d_idle, 0),
+> > +	MUX("3d_mux", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 0,
+> 
+> Now that the actual parent clock is specified by the "mux" clock, you have to 
+> adjust the tegra_clk_init_table accordingly.
+> 
+> 
+> 
+> 
 
-Now I see that you've updated the doc in this patch, thank you.
+The 3d/2d clocks do not have a parent on T20 with these patches being applied.
+
+# cat /sys/kernel/debug/clk/clk_summary 
+                                 enable  prepare  protect                                duty
+   clock                          count    count    count        rate   accuracy phase  cycle
+---------------------------------------------------------------------------------------------
+ clock                                0        0        0       32768          0     0  50000
+ 3d                                   1        1        0           0          0     0  50000
+ 2d                                   1        1        0           0          0     0  50000
+ clk_32k                              2        2        0       32768          0     0  50000
+    blink_override                    1        1        0       32768          0     0  50000
+       blink                          2        2        0       32768          0     0  50000
+    kbc                               0        0        0       32768          0     0  50000
+    rtc                               2        2        0       32768          0     0  50000
+...
+
+
+Same on T30.
+
+# cat /sys/kernel/debug/clk/clk_summary 
+                                 enable  prepare  protect                                duty
+   clock                          count    count    count        rate   accuracy phase  cycle
+---------------------------------------------------------------------------------------------
+...
+ 3d_idle                              0        0        0           0          0     0  50000
+ 3d                                   1        1        0           0          0     0  50000
+ 2d_idle                              0        0        0           0          0     0  50000
+ 2d                                   1        1        0           0          0     0  50000
+ clk_32k                              2        2        0       32768          0     0  50000
+    blink_override                    1        1        0       32768          0     0  50000
+...
