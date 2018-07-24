@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 13/15] ARM: tegra: apalis-tk1: fix pcie switch vendor compatible
-Date: Tue, 24 Jul 2018 12:43:07 +0200
-Message-ID: <20180724104309.21741-14-marcel@ziswiler.com>
+Subject: [PATCH 15/15] ARM: tegra: apalis-tk1: reorder SD card properties
+Date: Tue, 24 Jul 2018 12:43:09 +0200
+Message-ID: <20180724104309.21741-16-marcel@ziswiler.com>
 References: <20180724104309.21741-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
@@ -12,45 +12,65 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-PLX got bought by Broadcom therefore fix device tree compatible string
-vendor which silences the following checkpatch.pl warning:
-
-WARNING: DT compatible string vendor "plx" appears un-documented
- -- check ./Documentation/devicetree/bindings/vendor-prefixes.txt
+Reorder SD card properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts      | 2 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      | 4 ++--
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index d9805fc97f5e..84ab7dc9febb 100644
+index 84ab7dc9febb..7d32e402a0f1 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -109,7 +109,7 @@
- 		clock-frequency = <400000>;
+@@ -180,18 +180,18 @@
+ 	/* Apalis MMC1 */
+ 	sdhci@700b0000 {
+ 		status = "okay";
++		bus-width = <4>;
+ 		/* MMC1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
+-		bus-width = <4>;
+ 		vqmmc-supply = <&vddio_sdmmc1>;
+ 	};
  
- 		pcie-switch@58 {
--			compatible = "plx,pex8605";
-+			compatible = "brcm,pex8605";
- 			reg = <0x58>;
- 		};
+ 	/* Apalis SD1 */
+ 	sdhci@700b0400 {
+ 		status = "okay";
++		bus-width = <4>;
+ 		/* SD1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
+-		bus-width = <4>;
+ 		vqmmc-supply = <&vddio_sdmmc3>;
+ 	};
  
 diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-index 89783fe76f65..5319f88d3cab 100644
+index 5319f88d3cab..91d54d14f527 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
 +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-@@ -74,7 +74,7 @@
- 		clock-frequency = <400000>;
+@@ -146,18 +146,18 @@
+ 	/* Apalis MMC1 */
+ 	sdhci@700b0000 {
+ 		status = "okay";
++		bus-width = <4>;
+ 		/* MMC1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
+-		bus-width = <4>;
+ 		vqmmc-supply = <&vddio_sdmmc1>;
+ 	};
  
- 		pcie-switch@58 {
--			compatible = "plx,pex8605";
-+			compatible = "brcm,pex8605";
- 			reg = <0x58>;
- 		};
+ 	/* Apalis SD1 */
+ 	sdhci@700b0400 {
+ 		status = "okay";
++		bus-width = <4>;
+ 		/* SD1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
+-		bus-width = <4>;
+ 		vqmmc-supply = <&vddio_sdmmc3>;
+ 	};
  
 -- 
 2.14.4
