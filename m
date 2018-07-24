@@ -1,129 +1,46 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
-Date: Tue, 24 Jul 2018 14:31:57 +0300
-Message-ID: <16130866.kpFhQUNOMP@dimapc>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk> <20180720134532.13148-7-ben.dooks@codethink.co.uk> <6750449.onR3KBHYkZ@dimapc>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
+Date: Tue, 24 Jul 2018 12:24:34 +0000
+Message-ID: <1532435072.6124.1.camel@toradex.com>
+References: <20180724104309.21741-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6750449.onR3KBHYkZ@dimapc>
+In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
+Content-Language: en-US
+Content-ID: <BA8A2111B93A6C45BBE0D4D2A9CF0B36@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, jonathanh@nvidia.co, thierry.reding@gmail.com, linux-kernel@lists.codethink.co.uk
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, 23 July 2018 16:05:21 MSK Dmitry Osipenko wrote:
-> On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
-> > The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
-> > clocks by making a 2D and 3D mux, and split the divider into the
-> > standard 2D/3D ones and 2D/3D idle clocks.
-> > 
-> > Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> > ---
-> >  drivers/clk/tegra/clk-id.h              |  4 ++++
-> >  drivers/clk/tegra/clk-tegra-periph.c    | 23 +++++++++++++++++++++--
-> >  drivers/clk/tegra/clk-tegra30.c         |  8 ++++++++
-> >  include/dt-bindings/clock/tegra30-car.h |  7 ++++++-
-> >  4 files changed, 39 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-> > index b616e33c5255..0d202a70ce66 100644
-> > --- a/drivers/clk/tegra/clk-id.h
-> > +++ b/drivers/clk/tegra/clk-id.h
-> > @@ -91,8 +91,12 @@ enum clk_id {
-> >  	tegra_clk_fuse_burn,
-> >  	tegra_clk_gpu,
-> >  	tegra_clk_gr2d,
-> > +	tegra_clk_gr2d_mux,
-> > +	tegra_clk_gr2d_idle,
-> >  	tegra_clk_gr2d_8,
-> >  	tegra_clk_gr3d,
-> > +	tegra_clk_gr3d_mux,
-> > +	tegra_clk_gr3d_idle,
-> >  	tegra_clk_gr3d_8,
-> >  	tegra_clk_hclk,
-> >  	tegra_clk_hda,
-> > diff --git a/drivers/clk/tegra/clk-tegra-periph.c
-> > b/drivers/clk/tegra/clk-tegra-periph.c index 47e5b1ac1a69..83967dac93f2
-> > 100644
-> > --- a/drivers/clk/tegra/clk-tegra-periph.c
-> > +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> > @@ -263,6 +263,21 @@
-> >  		.flags = _flags,					\
-> >  	}
-> > 
-> > +#define GATE_DIV(_name, _parent_name, _offset,				\
-> > +		 _div_shift, _div_width, _div_frac_width, _div_flags,	\
-> > +			     _clk_num, _gate_flags,  _clk_id, _flags)	\
-> > +	{								\
-> > +		.name = _name,						\
-> > +		.clk_id = _clk_id,					\
-> > +		.offset = _offset,					\
-> > +		.p.parent_name =  _parent_name,				\
-> > +		.periph = TEGRA_CLK_PERIPH(0, 0, 0,			\
-> > +					   _div_shift, _div_width,	\
-> > +					   _div_frac_width, _div_flags, \
-> > +				_clk_num, _gate_flags, NULL, NULL),	\
-> > +		.flags = _flags						\
-> > +	}
-> > +
-> >  #define PLLP_BASE 0xa0
-> >  #define PLLP_MISC 0xac
-> >  #define PLLP_MISC1 0x680
-> > @@ -646,8 +661,12 @@ static struct tegra_periph_init_data periph_clks[] = {
-> >  	MUX("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, 
-> tegra_clk_epp),
-> > MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0,
-> > tegra_clk_host1x), MUX("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60,
-> > 0, tegra_clk_mpe), -	MUX("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 
-> 21,
-> > 0, tegra_clk_gr2d), -	MUX("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 
-> 24,
-> > 0, tegra_clk_gr3d), +	MUX("2d_mux", mux_pllm_pllc_pllp_plla, 
-> CLK_SOURCE_2D,
-> > 0, TEGRA_PERIPH_NO_DIV | TEGRA_PERIPH_NO_RESET | TEGRA_PERIPH_NO_GATE,
-> > tegra_clk_gr2d_mux), +	GATE_DIV("2d", "2d_mux", CLK_SOURCE_2D, 0, 8, 1,
-> > TEGRA_DIVIDER_ROUND_UP,21, 0, tegra_clk_gr2d, 0), +	GATE_DIV("2d_idle",
-> > "2d_mux", CLK_SOURCE_2D, 8, 8, 1, TEGRA_DIVIDER_ROUND_UP, 0,
-> > TEGRA_PERIPH_NO_GATE | TEGRA_PERIPH_NO_RESET, tegra_clk_gr2d_idle, 0),
-> > +	MUX("3d_mux", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 0,
-> 
-> Now that the actual parent clock is specified by the "mux" clock, you have to 
-> adjust the tegra_clk_init_table accordingly.
-> 
-> 
-> 
-> 
-
-The 3d/2d clocks do not have a parent on T20 with these patches being applied.
-
-# cat /sys/kernel/debug/clk/clk_summary 
-                                 enable  prepare  protect                                duty
-   clock                          count    count    count        rate   accuracy phase  cycle
----------------------------------------------------------------------------------------------
- clock                                0        0        0       32768          0     0  50000
- 3d                                   1        1        0           0          0     0  50000
- 2d                                   1        1        0           0          0     0  50000
- clk_32k                              2        2        0       32768          0     0  50000
-    blink_override                    1        1        0       32768          0     0  50000
-       blink                          2        2        0       32768          0     0  50000
-    kbc                               0        0        0       32768          0     0  50000
-    rtc                               2        2        0       32768          0     0  50000
-...
-
-
-Same on T30.
-
-# cat /sys/kernel/debug/clk/clk_summary 
-                                 enable  prepare  protect                                duty
-   clock                          count    count    count        rate   accuracy phase  cycle
----------------------------------------------------------------------------------------------
-...
- 3d_idle                              0        0        0           0          0     0  50000
- 3d                                   1        1        0           0          0     0  50000
- 2d_idle                              0        0        0           0          0     0  50000
- 2d                                   1        1        0           0          0     0  50000
- clk_32k                              2        2        0       32768          0     0  50000
-    blink_override                    1        1        0       32768          0     0  50000
-...
+U29ycnksIEkgbWVhbnQgdG8gd3JpdGUgIm1pbm9yIHJldmFtcCIgaW4gdGhlIHN1YmplY3QgbGlu
+ZSBoZXJlIGFzDQpBcGFsaXMgVEsxIHdhcyBhbHJlYWR5IGluIHF1aXRlIGdvb2QgYSBzaGFwZSBi
+dXQgdGhpcyBhcmUgc3RpbGwgc29tZQ0Kd29ydGh5IGltcHJvdmVtZW50cyAoOy1wKS4NCg0KT24g
+VHVlLCAyMDE4LTA3LTI0IGF0IDEyOjQyICswMjAwLCBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6DQo+
+IFRoaXMgc2VyaWVzIGlzIGEgbWlub3Igb3ZlcmhhdWwgZm9yIHRoZSBUb3JhZGV4IEFwYWxpcyBU
+SzEgc3lzdGVtIG9uDQo+IG1vZHVsZS4NCj4gDQo+IE1hcmNlbCBaaXN3aWxlciAoMTUpOg0KPiAg
+IEFSTTogdGVncmE6IGFwYWxpcy10azE6IGFkZCBsb2NhbC1tYWMtYWRkcmVzcyBwcm9wZXJ0eQ0K
+PiAgIEFSTTogdGVncmE6IGFwYWxpcy10azE6IHJlb3JkZXIgcGNpZSBwcm9wZXJ0aWVzDQo+ICAg
+QVJNOiB0ZWdyYTogYXBhbGlzLXRrMTogcmVvcmRlciBob3N0MXgvaGRtaSBwcm9wZXJ0aWVzDQo+
+ICAgQVJNOiB0ZWdyYTogYXBhbGlzLXRrMTogcmVvcmRlciBwYWRjdGwgcHJvcGVydGllcw0KPiAg
+IEFSTTogdGVncmE6IGFwYWxpcy10azE6IHJlZ3VsYXRvciBjbGVhbi11cA0KPiAgIEFSTTogdGVn
+cmE6IGFwYWxpcy10azE6IGFkZCBtaXNzaW5nIHJlZ3VsYXRvcnMNCj4gICBBUk06IHRlZ3JhOiBh
+cGFsaXMtdGsxOiBkcm9wIHVudXNlZCBwaW5tdXggbGFiZWwNCj4gICBBUk06IHRlZ3JhOiBhcGFs
+aXMtdGsxOiB3aGl0ZS1zcGFjZSBjbGVhbi11cA0KPiAgIEFSTTogdGVncmE6IGFwYWxpcy10azE6
+IHJlb3JkZXIgYmFja2xpZ2h0IHByb3BlcnRpZXMNCj4gICBBUk06IHRlZ3JhOiBhcGFsaXMtdGsx
+OiBhZGQgcHJvcGVyIGVtbWMgdm1tYyBhbmQgdnFtbWMgc3VwcGxpZXMNCj4gICBBUk06IHRlZ3Jh
+OiBhcGFsaXMtdGsxOiBlbmFibGUgZW1tYyBkZHI1MiBtb2RlDQo+ICAgQVJNOiB0ZWdyYTogYXBh
+bGlzLXRrMTogYWRkIHRvcmFkZXgsYXBhbGlzLXRrMS12MS4yIGNvbXBhdGlibGUNCj4gICBBUk06
+IHRlZ3JhOiBhcGFsaXMtdGsxOiBmaXggcGNpZSBzd2l0Y2ggdmVuZG9yIGNvbXBhdGlibGUNCj4g
+ICBBUk06IHRlZ3JhOiBhcGFsaXMtdGsxOiByZW9yZGVyIGNwdSBkZmxsIGNsb2NrIHByb3BlcnRp
+ZXMNCj4gICBBUk06IHRlZ3JhOiBhcGFsaXMtdGsxOiByZW9yZGVyIFNEIGNhcmQgcHJvcGVydGll
+cw0KPiANCj4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vdGVncmEudHh0
+IHwgICAyICsNCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy1ldmFsLmR0cyAg
+ICAgIHwgIDI2ICsrKystDQo+ICBhcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtdjEu
+Mi1ldmFsLmR0cyB8ICAyOSArKysrLQ0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBh
+bGlzLXYxLjIuZHRzaSAgICAgfCAxNDMgKysrKysrKysrKysrKy0NCj4gLS0tLS0tLS0tLQ0KPiAg
+YXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLmR0c2kgICAgICAgICAgfCAxNDMgKysr
+KysrKysrKysrKy0NCj4gLS0tLS0tLS0tLQ0KPiAgNSBmaWxlcyBjaGFuZ2VkLCAyMDggaW5zZXJ0
+aW9ucygrKSwgMTM1IGRlbGV0aW9ucygtKQ==
