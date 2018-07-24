@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 3/8] dt: bindings: Move tegra20-emc binding to memory-controllers directory
-Date: Tue, 24 Jul 2018 19:42:16 +0300
-Message-ID: <20180724164221.3307-4-digetx@gmail.com>
+Subject: [PATCH v5 4/8] ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+Date: Tue, 24 Jul 2018 19:42:17 +0300
+Message-ID: <20180724164221.3307-5-digetx@gmail.com>
 References: <20180724164221.3307-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
@@ -10,19 +10,25 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Move tegra20-emc binding to the memory-controllers directory for
-consistency with the other Tegra memory bindings.
+Add interrupt entry into the EMC DT node.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- .../{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt      | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (100%)
+ arch/arm/boot/dts/tegra20.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-rename to Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 15b73bd377f0..9eb4163a4390 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -632,6 +632,7 @@
+ 	memory-controller@7000f400 {
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f400 0x200>;
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
 -- 
 2.18.0
