@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 07/15] ARM: tegra: apalis-tk1: drop unused pinmux label
-Date: Tue, 24 Jul 2018 12:43:01 +0200
-Message-ID: <20180724104309.21741-8-marcel@ziswiler.com>
+Subject: [PATCH 09/15] ARM: tegra: apalis-tk1: reorder backlight properties
+Date: Tue, 24 Jul 2018 12:43:03 +0200
+Message-ID: <20180724104309.21741-10-marcel@ziswiler.com>
 References: <20180724104309.21741-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
@@ -12,41 +12,51 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Drop unused pinmux label.
+Reorder backlight properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      | 2 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index a8dcf960e44f..866946d683d4 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -68,7 +68,7 @@
- 		vdd-supply = <&reg_vdd_gpu>;
+diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+index c2e918d345de..d9805fc97f5e 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+@@ -228,12 +228,12 @@
+ 
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+-		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
+ 		brightness-levels = <255 231 223 207 191 159 127 0>;
+ 		default-brightness-level = <6>;
+ 		/* BKL1_ON */
+ 		enable-gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_HIGH>;
+ 		power-supply = <&reg_3v3>;
++		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
  	};
  
--	pinmux: pinmux@70000868 {
-+	pinmux@70000868 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
+ 	gpio-keys {
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+index eebcc013771e..aafaf2c3e195 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+@@ -193,12 +193,12 @@
  
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index b2aca71f96e7..2cf5d02afbbc 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -103,7 +103,7 @@
- 		vdd-supply = <&reg_vdd_gpu>;
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+-		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
+ 		brightness-levels = <255 231 223 207 191 159 127 0>;
+ 		default-brightness-level = <6>;
+ 		/* BKL1_ON */
+ 		enable-gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_HIGH>;
+ 		power-supply = <&reg_3v3>;
++		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
  	};
  
--	pinmux: pinmux@70000868 {
-+	pinmux@70000868 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
- 
+ 	gpio-keys {
 -- 
 2.14.4
