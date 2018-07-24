@@ -1,89 +1,50 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
-Date: Tue, 24 Jul 2018 17:48:18 +0300
-Message-ID: <4715215.NZcU7pUVUy@dimapc>
-References: <20180724104309.21741-1-marcel@ziswiler.com> <2076484.gx54F3eiOq@dimapc> <1532443499.6124.31.camel@toradex.com>
+Subject: Re: [PATCH 01/28] ARM: tegra: apalis_t30: enable broken-hpi on emmc
+Date: Tue, 24 Jul 2018 17:55:14 +0300
+Message-ID: <3879609.rmqHIZXFHx@dimapc>
+References: <20180722164936.20581-1-marcel@ziswiler.com> <1992775.WBgY65Ajyy@dimapc> <1532442416.6124.28.camel@toradex.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532443499.6124.31.camel@toradex.com>
+In-Reply-To: <1532442416.6124.28.camel@toradex.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday, 24 July 2018 17:45:01 MSK Marcel Ziswiler wrote:
-> On Tue, 2018-07-24 at 17:31 +0300, Dmitry Osipenko wrote:
+On Tuesday, 24 July 2018 17:26:58 MSK Marcel Ziswiler wrote:
+> On Tue, 2018-07-24 at 17:03 +0300, Dmitry Osipenko wrote:
 > 
-> > On Tuesday, 24 July 2018 17:16:33 MSK Marcel Ziswiler wrote:
+> > On Sunday, 22 July 2018 19:49:09 MSK Marcel Ziswiler wrote:
 > > 
-> > > On Tue, 2018-07-24 at 15:44 +0300, Dmitry Osipenko wrote:
+> > > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > > > 
+> > > Avoid eMMC issues by specifying broken-hpi.
 > > > 
-> > > > On Tuesday, 24 July 2018 15:24:34 MSK Marcel Ziswiler wrote:
-> > > > 
-> > > > 
-> > > > > Sorry, I meant to write "minor revamp" in the subject line here
-> > > > > as
-> > > > > Apalis TK1 was already in quite good a shape but this are still
-> > > > > some
-> > > > > worthy improvements (;-p).
-> > > > > 
-> > > > > On Tue, 2018-07-24 at 12:42 +0200, Marcel Ziswiler wrote:
-> > > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > Marcel,
-> > > > 
-> > > > All your emails that are sent from "toradex.com" are treated as
-> > > > spam
-> > > > by Gmail 
-> > > > because "This message has a from address in toradex.com but has
-> > > > failed 
-> > > > toradex.com's required tests for authentication.", is there
-> > > > anything
-> > > > you could 
-> > > > do to fix that?
+> > > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > > > 
-> > > 
-> > > 
-> > > Hi Dmitry
-> > > 
-> > > Hm, unfortunately, Toradex was an M$ only shop when I joined more
-> > > then
-> > > 7 years ago and so far I was unable to convince our IT to switch to
-> > > some grown up email system. Therefore, I am stuck with Exchange,
-> > > Office
-> > > 365 or whatever M$ nowadays seem to call it. Anyway, I really
-> > > thought
-> > > sending from Android or Evolution via their resp. Exchange
-> > > connectors
-> > > would properly do SPF, DKIM and even DMARC. I just confirmed this
-> > > when
-> > > sending something to my gmail address and doing "Show original".
-> > > 
-> > > Since Linus himself pointed out any of my patches ending up in his
-> > > spam
-> > > folder I do send them via my private email which while not having
-> > > any
-> > > advanced security configured should still be valid. Moving it to a
-> > > fully secure configuration including DNSSEC and stuff is still
-> > > pending
-> > > on my side.
-> > > 
-> > > Can you please tell me which exact email it is that you got this
-> > > reported on so I may further investigate what is going on?
+> > > ---
 > > 
 > > 
-> > This email from you looks okay. Unfortunately all of your previous
-> > emails from 
-> > "toradex.com" were getting into the spam folder.
+> > Is it a specific eMMC card model that has broken HPI or it is a host 
+> > controller bug?
 > 
 > 
-> You sure they were from "toradex.com"? The patches should have been
-> coming from "ziswiler.com" resp. "perfora.net".
+> That is a very good question. So far we only have confirmation that at
+> least some eMMCs from Hynix resp. SKHynix definitely do have bad
+> firmware. I also found out that ASUS resp. Google did disable HPI on
+> their Nexus 7 tablet. Therefore, we also disabled HPI quite a while ago
+> in our downstream BSPs which we successfully validated & verified doing
+> power cuts and running stress tests in our temperature chambers. I
+> guess we would have to run more extensive tests with mainline with and
+> without this setting to be able to really answer your question. For now
+> I just successfully run a few Apalis T30 and Colibri T30 modules with
+> this setting over the weekend doing both hdparm -t as well as dding
+> some urandom files to the eMMC in a loop without seeing any issues.
 
-The patches from "ziswiler.com" are fine, only your emails specifically from 
-"toradex.com" had an issue. Looks like you've resolved it now.
+The broken-hpi quirk was added for the Hynix cards specifically in [0]. Maybe 
+you should just extend the mmc_ext_csd_fixups list in [1] with another OEM ID?
+
+[0] https://patchwork.kernel.org/patch/9168455/
+[1] drivers/mmc/core/quirks.h
