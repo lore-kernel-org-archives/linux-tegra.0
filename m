@@ -1,50 +1,59 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 1/2] Add sw2_sw4 voltage table to cpcap regulator.
-Date: Tue, 24 Jul 2018 15:36:34 +0100
-Message-ID: <20180724143634.GD13268@sirena.org.uk>
-References: <20180724132541.17039-1-pgwipeout@gmail.com>
- <20180724132541.17039-2-pgwipeout@gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
+Date: Tue, 24 Jul 2018 14:45:01 +0000
+Message-ID: <1532443499.6124.31.camel@toradex.com>
+References: <20180724104309.21741-1-marcel@ziswiler.com>
+         <2532956.xKQ6NZiSWF@dimapc> <1532441791.6124.20.camel@toradex.com>
+         <2076484.gx54F3eiOq@dimapc>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1sNVjLsmu1MXqwQ/"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180724132541.17039-2-pgwipeout@gmail.com>
+In-Reply-To: <2076484.gx54F3eiOq@dimapc>
+Content-Language: en-US
+Content-ID: <DA222C87A9DB254DBE90FAC48CA42C3C@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: lgirdwood@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+To: "digetx@gmail.com" <digetx@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---1sNVjLsmu1MXqwQ/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Jul 24, 2018 at 09:25:40AM -0400, Peter Geis wrote:
-> SW2 and SW4 use a shared table to provide voltage to the cpu core and
-> devices on Tegra hardware.
-> Added this table to the cpcap regulator driver as the first step to
-> supporting this device on Tegra.
-
-Please submit patches using subject lines reflecting the style for the
-subsystem.  This makes it easier for people to identify relevant
-patches.  Look at what existing commits in the area you're changing are
-doing and make sure your subject lines visually resemble what they're
-doing.
-
---1sNVjLsmu1MXqwQ/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltXOXIACgkQJNaLcl1U
-h9Bs1Af9Esx5B/jH0/vkzcSK7TdzwrkTjnQ5hyQFW37fVeoYdLIjmf0g1iiWn6iV
-+HnLCJXjUPesyDfbTCp70bkMJitAbezK1EgkbhEYZhumyfuDB4p+aRKPmPjxheq3
-NbqZKovM6nx38587zTj1T/IrKySPgRqztA/jvW4CL/8TTWPMw9iPsbF5TyPeLQ/s
-PHzDIFED3RF8RukQ47aUCQ38/+7w9LrwQsoT1s88SpYyhiqNzq1T0XBY04KCclwZ
-HW1y3ne5r2mzX9/rgANsqQYDoEh2iRUl4lO/I6qdcG2I/8FgRcMFfzaK+S4bwJr3
-6znQ6DhbI1noJNaPuicPhOY90rbsCw==
-=BvPL
------END PGP SIGNATURE-----
-
---1sNVjLsmu1MXqwQ/--
+T24gVHVlLCAyMDE4LTA3LTI0IGF0IDE3OjMxICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
+DQo+IE9uIFR1ZXNkYXksIDI0IEp1bHkgMjAxOCAxNzoxNjozMyBNU0sgTWFyY2VsIFppc3dpbGVy
+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgMjAxOC0wNy0yNCBhdCAxNTo0NCArMDMwMCwgRG1pdHJ5IE9z
+aXBlbmtvIHdyb3RlOg0KPiA+IA0KPiA+ID4gT24gVHVlc2RheSwgMjQgSnVseSAyMDE4IDE1OjI0
+OjM0IE1TSyBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6DQo+ID4gPiANCj4gPiA+ID4gU29ycnksIEkg
+bWVhbnQgdG8gd3JpdGUgIm1pbm9yIHJldmFtcCIgaW4gdGhlIHN1YmplY3QgbGluZSBoZXJlDQo+
+ID4gPiA+IGFzDQo+ID4gPiA+IEFwYWxpcyBUSzEgd2FzIGFscmVhZHkgaW4gcXVpdGUgZ29vZCBh
+IHNoYXBlIGJ1dCB0aGlzIGFyZSBzdGlsbA0KPiA+ID4gPiBzb21lDQo+ID4gPiA+IHdvcnRoeSBp
+bXByb3ZlbWVudHMgKDstcCkuDQo+ID4gPiA+IA0KPiA+ID4gPiBPbiBUdWUsIDIwMTgtMDctMjQg
+YXQgMTI6NDIgKzAyMDAsIE1hcmNlbCBaaXN3aWxlciB3cm90ZToNCj4gPiA+ID4gDQo+ID4gPiAN
+Cj4gPiA+IA0KPiA+ID4gTWFyY2VsLA0KPiA+ID4gDQo+ID4gPiBBbGwgeW91ciBlbWFpbHMgdGhh
+dCBhcmUgc2VudCBmcm9tICJ0b3JhZGV4LmNvbSIgYXJlIHRyZWF0ZWQgYXMNCj4gPiA+IHNwYW0N
+Cj4gPiA+IGJ5IEdtYWlsIA0KPiA+ID4gYmVjYXVzZSAiVGhpcyBtZXNzYWdlIGhhcyBhIGZyb20g
+YWRkcmVzcyBpbiB0b3JhZGV4LmNvbSBidXQgaGFzDQo+ID4gPiBmYWlsZWQgDQo+ID4gPiB0b3Jh
+ZGV4LmNvbSdzIHJlcXVpcmVkIHRlc3RzIGZvciBhdXRoZW50aWNhdGlvbi4iLCBpcyB0aGVyZQ0K
+PiA+ID4gYW55dGhpbmcNCj4gPiA+IHlvdSBjb3VsZCANCj4gPiA+IGRvIHRvIGZpeCB0aGF0Pw0K
+PiA+IA0KPiA+IA0KPiA+IEhpIERtaXRyeQ0KPiA+IA0KPiA+IEhtLCB1bmZvcnR1bmF0ZWx5LCBU
+b3JhZGV4IHdhcyBhbiBNJCBvbmx5IHNob3Agd2hlbiBJIGpvaW5lZCBtb3JlDQo+ID4gdGhlbg0K
+PiA+IDcgeWVhcnMgYWdvIGFuZCBzbyBmYXIgSSB3YXMgdW5hYmxlIHRvIGNvbnZpbmNlIG91ciBJ
+VCB0byBzd2l0Y2ggdG8NCj4gPiBzb21lIGdyb3duIHVwIGVtYWlsIHN5c3RlbS4gVGhlcmVmb3Jl
+LCBJIGFtIHN0dWNrIHdpdGggRXhjaGFuZ2UsDQo+ID4gT2ZmaWNlDQo+ID4gMzY1IG9yIHdoYXRl
+dmVyIE0kIG5vd2FkYXlzIHNlZW0gdG8gY2FsbCBpdC4gQW55d2F5LCBJIHJlYWxseQ0KPiA+IHRo
+b3VnaHQNCj4gPiBzZW5kaW5nIGZyb20gQW5kcm9pZCBvciBFdm9sdXRpb24gdmlhIHRoZWlyIHJl
+c3AuIEV4Y2hhbmdlDQo+ID4gY29ubmVjdG9ycw0KPiA+IHdvdWxkIHByb3Blcmx5IGRvIFNQRiwg
+REtJTSBhbmQgZXZlbiBETUFSQy4gSSBqdXN0IGNvbmZpcm1lZCB0aGlzDQo+ID4gd2hlbg0KPiA+
+IHNlbmRpbmcgc29tZXRoaW5nIHRvIG15IGdtYWlsIGFkZHJlc3MgYW5kIGRvaW5nICJTaG93IG9y
+aWdpbmFsIi4NCj4gPiANCj4gPiBTaW5jZSBMaW51cyBoaW1zZWxmIHBvaW50ZWQgb3V0IGFueSBv
+ZiBteSBwYXRjaGVzIGVuZGluZyB1cCBpbiBoaXMNCj4gPiBzcGFtDQo+ID4gZm9sZGVyIEkgZG8g
+c2VuZCB0aGVtIHZpYSBteSBwcml2YXRlIGVtYWlsIHdoaWNoIHdoaWxlIG5vdCBoYXZpbmcNCj4g
+PiBhbnkNCj4gPiBhZHZhbmNlZCBzZWN1cml0eSBjb25maWd1cmVkIHNob3VsZCBzdGlsbCBiZSB2
+YWxpZC4gTW92aW5nIGl0IHRvIGENCj4gPiBmdWxseSBzZWN1cmUgY29uZmlndXJhdGlvbiBpbmNs
+dWRpbmcgRE5TU0VDIGFuZCBzdHVmZiBpcyBzdGlsbA0KPiA+IHBlbmRpbmcNCj4gPiBvbiBteSBz
+aWRlLg0KPiA+IA0KPiA+IENhbiB5b3UgcGxlYXNlIHRlbGwgbWUgd2hpY2ggZXhhY3QgZW1haWwg
+aXQgaXMgdGhhdCB5b3UgZ290IHRoaXMNCj4gPiByZXBvcnRlZCBvbiBzbyBJIG1heSBmdXJ0aGVy
+IGludmVzdGlnYXRlIHdoYXQgaXMgZ29pbmcgb24/DQo+IA0KPiBUaGlzIGVtYWlsIGZyb20geW91
+IGxvb2tzIG9rYXkuIFVuZm9ydHVuYXRlbHkgYWxsIG9mIHlvdXIgcHJldmlvdXMNCj4gZW1haWxz
+IGZyb20gDQo+ICJ0b3JhZGV4LmNvbSIgd2VyZSBnZXR0aW5nIGludG8gdGhlIHNwYW0gZm9sZGVy
+Lg0KDQpZb3Ugc3VyZSB0aGV5IHdlcmUgZnJvbSAidG9yYWRleC5jb20iPyBUaGUgcGF0Y2hlcyBz
+aG91bGQgaGF2ZSBiZWVuDQpjb21pbmcgZnJvbSAiemlzd2lsZXIuY29tIiByZXNwLiAicGVyZm9y
+YS5uZXQiLg==
