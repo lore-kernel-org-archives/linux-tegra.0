@@ -1,73 +1,39 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: Re: [PATCH] drm/tegra: hdmi: probe deferral error reporting
-Date: Tue, 24 Jul 2018 07:55:58 +0200
-Message-ID: <537EF05F-3718-45F6-B536-11CAC5BE82C5@ziswiler.com>
-References: <20180720075515.26852-1-marcel@ziswiler.com> <228cdf6fe37298223d77b52fd4cdb821b0da7d11.camel@lynxeye.de>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Subject: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
+Date: Tue, 24 Jul 2018 12:42:54 +0200
+Message-ID: <20180724104309.21741-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <228cdf6fe37298223d77b52fd4cdb821b0da7d11.camel@lynxeye.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lucas Stach <dev@lynxeye.de>, linux-tegra@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>
+To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel@ziswiler.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
+This series is a minor overhaul for the Toradex Apalis TK1 system on
+module.
 
+Marcel Ziswiler (15):
+  ARM: tegra: apalis-tk1: add local-mac-address property
+  ARM: tegra: apalis-tk1: reorder pcie properties
+  ARM: tegra: apalis-tk1: reorder host1x/hdmi properties
+  ARM: tegra: apalis-tk1: reorder padctl properties
+  ARM: tegra: apalis-tk1: regulator clean-up
+  ARM: tegra: apalis-tk1: add missing regulators
+  ARM: tegra: apalis-tk1: drop unused pinmux label
+  ARM: tegra: apalis-tk1: white-space clean-up
+  ARM: tegra: apalis-tk1: reorder backlight properties
+  ARM: tegra: apalis-tk1: add proper emmc vmmc and vqmmc supplies
+  ARM: tegra: apalis-tk1: enable emmc ddr52 mode
+  ARM: tegra: apalis-tk1: add toradex,apalis-tk1-v1.2 compatible
+  ARM: tegra: apalis-tk1: fix pcie switch vendor compatible
+  ARM: tegra: apalis-tk1: reorder cpu dfll clock properties
+  ARM: tegra: apalis-tk1: reorder SD card properties
 
-On July 23, 2018 10:49:15 PM GMT+02:00, Lucas Stach <dev@lynxeye.de> wrote:
->Am Freitag, den 20.07.2018, 09:55 +0200 schrieb Marcel Ziswiler:
->> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->> 
->> Actually report the error code from devm_regulator_get() which may as
->> well just be a probe deferral.
->
->This is still noisy, so while you are changing this I would prefer if
->this wouldn't print the error message if it's a simple probe deferral.
+ Documentation/devicetree/bindings/arm/tegra.txt |   2 +
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      |  26 ++++-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  29 ++++-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 143 +++++++++++++-----------
+ arch/arm/boot/dts/tegra124-apalis.dtsi          | 143 +++++++++++++-----------
+ 5 files changed, 208 insertions(+), 135 deletions(-)
 
-Yeah, trust me, I'm not the inventor of this probe deferral disaster!
-
->Suppressing the log message in that case gets us much cleaner kernel
->logs, where real errors stand out.
-
-Ok, agreed. Will send a v2.
-
->Regards,
->Lucas
->
->> 
->> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->> 
->> ---
->> 
->>  drivers/gpu/drm/tegra/hdmi.c | 10 ++++++----
->>  1 file changed, 6 insertions(+), 4 deletions(-)
->> 
->> diff --git a/drivers/gpu/drm/tegra/hdmi.c
->b/drivers/gpu/drm/tegra/hdmi.c
->> index 0082468f703c..94c182dbb6d0 100644
->> --- a/drivers/gpu/drm/tegra/hdmi.c
->> +++ b/drivers/gpu/drm/tegra/hdmi.c
->> @@ -1693,14 +1693,16 @@ static int tegra_hdmi_probe(struct
->platform_device *pdev)
->>  
->>  	hdmi->hdmi = devm_regulator_get(&pdev->dev, "hdmi");
->>  	if (IS_ERR(hdmi->hdmi)) {
->> -		dev_err(&pdev->dev, "failed to get HDMI regulator\n");
->> -		return PTR_ERR(hdmi->hdmi);
->> +		err = PTR_ERR(hdmi->hdmi);
->> +		dev_err(&pdev->dev, "failed to get HDMI regulator: %d\n", err);
->> +		return err;
->>  	}
->>  
->>  	hdmi->pll = devm_regulator_get(&pdev->dev, "pll");
->>  	if (IS_ERR(hdmi->pll)) {
->> -		dev_err(&pdev->dev, "failed to get PLL regulator\n");
->> -		return PTR_ERR(hdmi->pll);
->> +		err = PTR_ERR(hdmi->pll);
->> +		dev_err(&pdev->dev, "failed to get PLL regulator: %d\n", err);
->> +		return err;
->>  	}
->>  
->>  	hdmi->vdd = devm_regulator_get(&pdev->dev, "vdd");
+-- 
+2.14.4
