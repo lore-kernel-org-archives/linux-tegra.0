@@ -1,53 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 1/2] Add sw2_sw4 voltage table to cpcap regulator.
-Date: Tue, 24 Jul 2018 17:02:19 +0100
-Message-ID: <20180724160219.GL13268@sirena.org.uk>
-References: <20180724132541.17039-1-pgwipeout@gmail.com>
- <20180724132541.17039-2-pgwipeout@gmail.com>
- <20180724143634.GD13268@sirena.org.uk>
- <2ae14535-c14f-c50f-c76a-4406f67fc682@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rfwNdt5cNUUjB/69"
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2] memory: tegra: Don't invoke Tegra30+ specific memory timing setup on Tegra20
+Date: Tue, 24 Jul 2018 19:22:08 +0300
+Message-ID: <20180724162208.683-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2ae14535-c14f-c50f-c76a-4406f67fc682@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: lgirdwood@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
+timings for RAM code 0 registered" warning message during of kernels
+boot-up on Tegra20.
 
---rfwNdt5cNUUjB/69
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: a8d502fd3348 ("memory: tegra: Squash tegra20-mc into common tegra-mc driver")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+---
 
-On Tue, Jul 24, 2018 at 11:52:48AM -0400, Peter Geis wrote:
-> On 07/24/2018 10:36 AM, Mark Brown wrote:
+Changelog:
 
-> > Please submit patches using subject lines reflecting the style for the
-> > subsystem.  This makes it easier for people to identify relevant
-> > patches.  Look at what existing commits in the area you're changing are
-> > doing and make sure your subject lines visually resemble what they're
-> > doing.
+v2:
+	- Added "fixes:" tag as was suggested by Jon Hunter.
 
-> Copy, should I resubmit?
+ drivers/memory/tegra/mc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-No, it's OK - I already applied.
-
---rfwNdt5cNUUjB/69
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltXTYsACgkQJNaLcl1U
-h9Ai8Qf/RJGQcOwXjcpvABiVn1wmCoRrkiXmueWqczSJ/GSU4F6q38txXbk9uL3E
-GnDO5cQ39uCtFTVxRMOY2//m7tkcKMFOvolXH1+irYBuu8WGw+fBySOXw8siE+yT
-9DmVQvM89Crl2QW2gUqbCRoCH0rq6YJOyK4scLlY7+7edvQP66NWzr46qYezSbCg
-GBHP8AoxptMzPexi8ZnrKQB6DGsIeNAHJNibvAv+yiY5ixGBVPgQlGuQDmUQ83Tt
-Dr5Zl/k9tk3tURLC5wNCHwoOFH4Etbdfearaq3+GnBz3htisWWDoDjRDqES0LAaN
-arm6fX3YdnsP3jzAkAlPE1ThcOIXmQ==
-=XWM1
------END PGP SIGNATURE-----
-
---rfwNdt5cNUUjB/69--
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index bd25faf6d13d..e56862495f36 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -664,12 +664,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		isr = tegra_mc_irq;
+-	}
+ 
+-	err = tegra_mc_setup_timings(mc);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to setup timings: %d\n", err);
+-		return err;
++		err = tegra_mc_setup_timings(mc);
++		if (err < 0) {
++			dev_err(&pdev->dev, "failed to setup timings: %d\n",
++				err);
++			return err;
++		}
+ 	}
+ 
+ 	mc->irq = platform_get_irq(pdev, 0);
+-- 
+2.18.0
