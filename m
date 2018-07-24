@@ -1,85 +1,108 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
-Date: Tue, 24 Jul 2018 20:03:18 +0300
-Message-ID: <2665137.5yJaStjver@dimapc>
-References: <20180724104309.21741-1-marcel@ziswiler.com> <4715215.NZcU7pUVUy@dimapc> <79afd852-af93-dfa1-0d65-11be7507f81f@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: RFC: tegra2/tegra3 automotive part changes
+Date: Tue, 24 Jul 2018 13:25:26 -0600
+Message-ID: <676bc8b6-e3de-8e4b-668a-713edcf663b7@wwwdotorg.org>
+References: <3916c0ea-964e-42ab-8bfd-8e8edc5110ee@codethink.co.uk>
+ <fecd5597-1b04-6409-b87c-5cda54d43ce0@wwwdotorg.org>
+ <4f215c76-6539-1130-6c1f-75f0a3df068a@codethink.co.uk>
+ <c8d947bb-a790-56f4-8ab4-2259f736d445@wwwdotorg.org>
+ <2e51c020-bca4-1e50-f0ad-cd2ece224cf8@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <79afd852-af93-dfa1-0d65-11be7507f81f@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <2e51c020-bca4-1e50-f0ad-cd2ece224cf8@codethink.co.uk>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Terry Hu <kejia.hu@codethink.co.uk>, Device Tree list <devicetree@vger.kernel.org>, jorgesanjuan <jorge.sanjuan@codethink.co.uk>, Thomas Preston <thomas.preston@codethink.co.uk>, linux-tegra <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Beth White <beth.white@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday, 24 July 2018 18:47:41 MSK Peter Geis wrote:
-> On 07/24/2018 10:48 AM, Dmitry Osipenko wrote:
-> > On Tuesday, 24 July 2018 17:45:01 MSK Marcel Ziswiler wrote:
-> >> On Tue, 2018-07-24 at 17:31 +0300, Dmitry Osipenko wrote:
-> >>> On Tuesday, 24 July 2018 17:16:33 MSK Marcel Ziswiler wrote:
-> >>>> On Tue, 2018-07-24 at 15:44 +0300, Dmitry Osipenko wrote:
-> >>>>> On Tuesday, 24 July 2018 15:24:34 MSK Marcel Ziswiler wrote:
-> >>>>>> Sorry, I meant to write "minor revamp" in the subject line here
-> >>>>>> as
-> >>>>>> Apalis TK1 was already in quite good a shape but this are still
-> >>>>>> some
-> >>>>>> worthy improvements (;-p).
-> >>>>> 
-> >>>>>> On Tue, 2018-07-24 at 12:42 +0200, Marcel Ziswiler wrote:
-> >>>>> Marcel,
-> >>>>> 
-> >>>>> All your emails that are sent from "toradex.com" are treated as
-> >>>>> spam
-> >>>>> by Gmail
-> >>>>> because "This message has a from address in toradex.com but has
-> >>>>> failed
-> >>>>> toradex.com's required tests for authentication.", is there
-> >>>>> anything
-> >>>>> you could
-> >>>>> do to fix that?
-> >>>> 
-> >>>> Hi Dmitry
-> >>>> 
-> >>>> Hm, unfortunately, Toradex was an M$ only shop when I joined more
-> >>>> then
-> >>>> 7 years ago and so far I was unable to convince our IT to switch to
-> >>>> some grown up email system. Therefore, I am stuck with Exchange,
-> >>>> Office
-> >>>> 365 or whatever M$ nowadays seem to call it. Anyway, I really
-> >>>> thought
-> >>>> sending from Android or Evolution via their resp. Exchange
-> >>>> connectors
-> >>>> would properly do SPF, DKIM and even DMARC. I just confirmed this
-> >>>> when
-> >>>> sending something to my gmail address and doing "Show original".
-> >>>> 
-> >>>> Since Linus himself pointed out any of my patches ending up in his
-> >>>> spam
-> >>>> folder I do send them via my private email which while not having
-> >>>> any
-> >>>> advanced security configured should still be valid. Moving it to a
-> >>>> fully secure configuration including DNSSEC and stuff is still
-> >>>> pending
-> >>>> on my side.
-> >>>> 
-> >>>> Can you please tell me which exact email it is that you got this
-> >>>> reported on so I may further investigate what is going on?
-> >>> 
-> >>> This email from you looks okay. Unfortunately all of your previous
-> >>> emails from
-> >>> "toradex.com" were getting into the spam folder.
-> >> 
-> >> You sure they were from "toradex.com"? The patches should have been
-> >> coming from "ziswiler.com" resp. "perfora.net".
-> > 
-> > The patches from "ziswiler.com" are fine, only your emails specifically
-> > from "toradex.com" had an issue. Looks like you've resolved it now.
-> 
-> Dmitry,
-> Gmail normally suspends flagging emails as spam from addresses you
-> respond to.
-> It may pick up again though, so I would add toradex.com to your allow list.
-
-Yes, probably I could add a custom filter for the domain name. But It is not 
-really a problem for me, I just wanted to point Marcel at it.
+T24gMDcvMjAvMjAxOCAwNDoyNSBBTSwgQmVuIERvb2tzIHdyb3RlOgo+IE9uIDEzLzA3LzE4IDE3
+OjUzLCBTdGVwaGVuIFdhcnJlbiB3cm90ZToKPj4gT24gMDcvMTMvMjAxOCAwMzo0MSBBTSwgQmVu
+IERvb2tzIHdyb3RlOgo+Pj4gT24gMTIvMDcvMTggMTY6NTYsIFN0ZXBoZW4gV2FycmVuIHdyb3Rl
+Ogo+Pj4+IE9uIDA3LzEyLzIwMTggMDc6MzYgQU0sIEJlbiBEb29rcyB3cm90ZToKPj4+Pj4gSGVs
+bG8sIHdlIGFyZSBsb29raW5nIGF0IHVwLXN0cmVhbWluZyBzb21lIG9mIHRoZSB3b3JrIHdlIGhh
+dmUKPj4+Pj4gZG9uZSBvbiB0aGUgdGVncmEyIGFuZCB0ZWdyYTMgYXV0b21vdGl2ZSBkZXZpY2Vz
+LiBUaGUgYXV0b21vdGl2ZQo+Pj4+PiBncmFkZSBkZXZpY2VzIGFyZSBjbG9zZSB0aGUgY29tbWVy
+Y2lhbCBwYXJ0cyBzbyB3ZSB3b3VsZCBsaWtlIHRvCj4+Pj4+IGRpc2N1c3MgdGhlIGNvcmUgY2hh
+bmdlcyBiZWZvcmUgc3VibWl0dGluZy4KPj4+Pj4KPj4+Pj4gVGhlIGNoYW5nZXMgYXJlIG1vc3Rs
+eSB3aXRoIHRoaW5ncyBsaWtlIHRoZSBjbG9jayBzZXR1cCBhbmQgYQo+Pj4+PiBmZXcgcGVyaXBo
+ZXJhbCBxdWlya3MgKElJUkMgdGhlc2UgYXJlIG1vc3RseSBNTUMpLgo+Pj4+Pgo+Pj4+PiBXZSBh
+cmUgcHJvcG9zaW5nIHRvIGNoYW5nZSB0aGUgZGV2aWNlLXRyZWUgcHJvcGVydGllcyBmb3IgdGhl
+IHJvb3QKPj4+Pj4gbm9kZSBhbmQgYW55IG90aGVyIGFmZmVjdGVkIGRldmljZXMgZnJvbSAibnZp
+ZGlhLHRlZ3JhWFgiIHRvIGEgbmV3Cj4+Pj4+ICJudmlkaWEsdGVncmFYWGEiLiBXZSB3b3VsZCB3
+ZWxjb21lIGRpc2N1c3Npb24gb24gd2hldGhlciB0byB1cGRhdGUKPj4+Pj4gYWxsIHRoZSBkZXZp
+Y2VzIGF0IHRoZSBzdGFydAo+Pj4+Pgo+Pj4+PiBBbiBleGFtcGxlIG9mIHRlZ3JhMzBhLmR0c2k6
+Cj4+Pj4+Cj4+Pj4+ICNpbmNsdWRlICJ0ZWdyYTMwLmR0c2kiCj4+Pj4+Cj4+Pj4+IC8gewo+Pj4+
+PiDCoMKgwqDCoMKgwqDCoMKgIGNvbXBhdGlibGUgPSAibnZpZGlhLHRlZ3JhMzBhIjsKPj4+Pj4K
+Pj4+Pj4gwqDCoMKgwqDCoMKgwqDCoCBjbG9ja0A2MDAwNjAwMCB7Cj4+Pj4+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNvbXBhdGlibGUgPSAibnZpZGlhLHRlZ3JhMzBhLWNhciI7
+Cj4+Pj4+IMKgwqDCoMKgwqDCoMKgwqAgfTsKPj4+Pj4gfQo+Pj4+Cj4+Pj4gVGhpcyBkb2Vzbid0
+IHNvdW5kIHJpZ2h0LiBBdXRvIGFuZCBjb21tZXJjaWFsIHBhcnRzIGFyZSBpZGVudGljYWwgCj4+
+Pj4gQUZBSUs7IGl0J3MganVzdCBxdWFsaWZpY2F0aW9uIGRpZmZlcmVuY2VzLiBIZW5jZSBhdCBt
+b3N0IHlvdSdkIGFkZCAKPj4+PiBhbiBleHRyYSBjb21wYXRpYmxlIHZhbHVlIGFuZCBub3QgcmVt
+b3ZlIHRoZSBvbGQgb25lLiBCZXR0ZXIgbWlnaHQgCj4+Pj4gYmUgdG8gZGV0ZWN0IHRoaXMgYXQg
+cnVuLXRpbWUgZnJvbSB0aGUgZnVzZXMuIEkgdGhpbmsgd2UgYWxyZWFkeSBkbyAKPj4+PiBzb21l
+IG9mIHRoYXQgYWxyZWFkeTsgc2VhcmNoIGZvciBzcGVlZG8gcmVsYXRlZCBjb2RlIGluIAo+Pj4+
+IGFyY2gvYXJtL21hY2gtdGVncmEvLgo+Pj4KPj4+IFRoZSBudmlkaWEgcGRrIGZvciB0aGUgYXV0
+b21vdGl2ZSBkaWRuJ3Qgc2V0IHRoZSBjbG9ja3MgdXAgaW4gdGhlCj4+PiBzYW1lIHdheSBhbmQg
+d2Ugd2hlcmUgdG9sZCB0aGF0IHRoZXJlIGFyZSBjZXJ0YWluIGNsb2NrIHJlc3RyaWN0aW9ucwo+
+Pj4gZm9yIHRoZSBhdXRvbW90aXZlIHBhcnRzIHRoYXQgdGhlIGNvbW1lcmNpYWwgb25lcyBkbyBu
+b3QgaGF2ZS4gU29tZSBvZgo+Pj4gdGhpcyBjYW1lIGZyb20gaW50ZXJuYWwgZGlzY3Vzc2lvbnMg
+d2l0aCBudmlkaWEgYW5kIE5EQSdkIGRhdGFzaGVldHMKPj4+IHNvIEkgZG9uJ3Qga25vdyBob3cg
+bXVjaCBhY3R1YWwgZGF0YSBJIGNhbiBzaGFyZS4KPj4KPj4gSSBiZWxpZXZlIHRoaXMganVzdCBj
+aGFuZ2VzIHRoZSAqc2VsZWN0aW9uKiBvZiB2YWx1ZXMgdG8gdXNlIChjbG9jayAKPj4gcmF0ZXMs
+IGNsb2NrIHNvdXJjZXMpLCBub3QgKmhvdyogdG8gcHJvZ3JhbSB0aGVtIChzZXQgb2YgcmVnaXN0
+ZXJzIGFuZCAKPj4gZmllbGRzLCBwcm9ncmFtbWluZyBhbGdvcml0aG0pLCB3aGljaCBpcyB3aGF0
+IHRoZSBEVCBjb21wYXRpYmxlIGlzIAo+PiBtYWlubHkgYWJvdXQuIEluIG90aGVyIHdvcmRzLCBp
+dCdzIG1haW5seSBhIHBlcmZvcm1hbmNlL2NvbmZpZ3VyYXRpb24gCj4+IGRlY2lzaW9uIG5vdCBk
+aWZmZXJlbnQgSFcuCj4+Cj4+PiBUbyBnZXQgdGhlIDQuNCBrZXJuZWwgdG8gYmUgc2ltaWxhciBl
+bm91Z2ggdG8gd29yayB3aXRoIHRoZSB0ZWdyYTMwYQo+Pj4gd2UgaGFkIHRvIGRvIHNvbWUgY2hh
+bmdlcyB0byB0aGUgY2xvY2sgaW5pdGlhbGlzYXRpb24uIEZvciB0aGluZ3MKPj4+IGxpa2UgdGhl
+IGNsb2NrIEkgYW0gbm90IHN1cmUgaWYgbGVhdmluZyBhIHRlZ3JhMzAtY2FyIGluIHRoZXJlIHdv
+dWxkCj4+PiBiZSBhIGdvb2QgaWRlYSwgaXQgbWF5IGJvb3QgYnV0IHByb2JhYmx5IHdvbid0IGJl
+IHN0YWJsZS4KPj4+Cj4+PiBGb3IgdGhlIGZ1c2VzLCBpcyB0aGUgZnVzZSBkcml2ZXIgdXAgZWFy
+bHkgZW5vdWdoIHRvIGFsbG93IHRoZSBjbG9jawo+Pj4gZHJpdmVyIGNvdWxkIHVzZSB0aGlzPyBv
+dGhlcndpc2UgSSB0aGluayB0aGUgZGV2aWNlLXRyZWUgY2hhbmdlIHdvdWxkCj4+PiBiZSB0aGUg
+b25seSB3YXkuIEknbSBub3Qgc3VyZSBpZiBJIGhhdmUgdGhlIGluZm9ybWF0aW9uIHRvIGhhbmQg
+b24KPj4+IGhvdyB0byBkaWZmZXJlbnRpYXRlIHRoZSB0ZWdyYTMwIGFuZCB0ZWdyYTIwLgo+Pj4K
+Pj4+IFBTLCB3ZSdsbCB3YW50IHRvIGRvIHRoZSBzYW1lIGZvciB0aGUgdGVncmEyMC4KPj4KPj4g
+QXMgSm9iIG1lbnRpb25lZCwgdGhlIGZ1c2UgZHJpdmVyIHNob3VsZC9jb3VsZCBiZSBhdmFpbGFi
+bGUgZWFybHkgCj4+IGVub3VnaCB3aXRob3V0IGlzc3VlLiBJdCBtYXkgaGF2ZSB0byAoYW5kIHBy
+b2JhYmx5IGFscmVhZHkgZG9lcykgCj4+IGhhcmQtY29kZSB0aGUgcGh5c2ljYWwgYWRkcmVzcyBv
+ZiB0aGUgZnVzZXMgcmF0aGVyIHRoYW4gYmVpbmcgCj4+IGNvbmZpZ3VyZWQgZnJvbSBEVCBmb3Ig
+dGhpcy4gSSB0aGluayBpZiB5b3UgcmVhZCB0aGUgY2hpcCAiU0tVIiB2YWx1ZSAKPj4gZnJvbSBm
+dXNlcywgdGhhdCBzaG91bGQgaW5kaWNhdGUgd2hpY2ggc2V0cyBvZiByZXN0cmljdGlvbnMgb24g
+Cj4+IGNsb2Nrcy8uLi4gYXJlIHJlcXVpcmVkLCBhbmQgdGhlcmUgYXJlIG1hbnkgbW9yZSBTS1Vz
+IHRoYW4ganVzdCAKPj4gInJlZ3VsYXIiIGFuZCAiYXV0b21vdGl2ZSIsIGFsdGhvdWdoIGFsbCB0
+aGUgZGlmZmVyZW50IFNLVXMgbWF5IGJlIAo+PiBidWNrZXRlZCBpbnRvIGZld2VyIHNldHMgb2Yg
+cmVzdHJpY3Rpb24vY29uZmlndXJhdGlvbiBkYXRhLgo+Pgo+PiBCcmllZmx5IGxvb2tpbmcgYXQg
+ZHJpdmVycy9zb2MvdGVncmEvZnVzZS9zcGVlZG8tdGVncmEyMC5jLCBzb21lIChhIAo+PiB2ZXJ5
+IGxpdHRsZSkgb2YgdGhpcyBtYXkgYWxyZWFkeSBiZSB0aGVyZQo+IAo+IE9rLCB0aGUgbG9ncyBJ
+IGhhdmUgZnJvbSBvbmUgb2YgdGhlIGF1dG9tb3RpdmUgc3lzdGVtcyBoYXM6Cj4gCj4gW10gVGVn
+cmEgUmV2aXNpb246IEEwMyBTS1U6IDE3NiBDUFUgUHJvY2VzczogMyBTb0MgUHJvY2VzczogMAo+
+IAo+IFNvIHdvdWxkIGEgdGVzdCBmb3I6Cj4gIMKgwqDCoMKgc2t1X2luZm8tPnJldmlzaW9uID09
+IFRFR1JBX1JFVklTSU9OX0EwMyAmJgo+ICDCoMKgwqDCoHNrdV9pbmZvLT5za3VfaWQgPT0gMTc2
+Cj4gCj4gYmUgb2ssIG9yIGRvZXMgdGhhdCBuZWVkIHNvbWUgc29ydCBvZiBtYXNrPwoKSSBkb24n
+dCBrbm93IGFsbCB0aGUgYXV0b21vdGl2ZSBTS1UgbnVtYmVycywgYnV0IHRoYXQgc2VlbXMgbGlr
+ZSBpdCAKbWlnaHQgYmUgYSBnb29kIHN0YXJ0LiBJJ20gbm90IHN1cmUgaWYgU0tVIG51bWJlcnMg
+YXJlIHN1Ym9yZGluYXRlIHRvIApjaGlwIHJldmlzaW9ucyAocHJvYmFibHkgbm90KSBvciBnbG9i
+YWwgYW5kIGFwcGx5IHRvIGFsbCBjaGlwIHJldmlzaW9ucyAKKEkgZ3Vlc3Mgc28pLgoKTGV0J3Mg
+Y3JlYXRlIGEgaGVscGVyIGZ1bmN0aW9uLCBzb21ldGhpbmcgbGlrZSAKdGVncmFfaXNfYXV0b21v
+dGl2ZV9jaGlwKCksIHRvIGNlbnRyYWxpemUgdGhlIGNoZWNrIHNvIGl0J3MgZWFzeSB0byBhZGQg
+Cm1vcmUgU0tVcy9yZXZpc2lvbnMgaW4gdGhlIGZ1dHVyZS4KCj4gSSd2ZSBub3QgdHJpZWQgdXBk
+YXRpbmcgc3BlZWRvLXRlZ3JhMzAuYyBhcyBJIGRpZG4ndCByZWFsbHkgdW5kZXJzdGFuZAo+IHdo
+YXQgYWxsIHRoZSB2YWx1ZXMgd2hlcmUgKGFuZCB3ZSBkaWRuJ3QgdXNlIGNwdWZyZXEtc2NhbGlu
+ZykKPiAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwps
+aW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
+ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51
+eC1hcm0ta2VybmVsCg==
