@@ -1,26 +1,47 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 01/28] ARM: tegra: apalis_t30: enable broken-hpi on emmc
-Date: Tue, 24 Jul 2018 17:03:36 +0300
-Message-ID: <1992775.WBgY65Ajyy@dimapc>
-References: <20180722164936.20581-1-marcel@ziswiler.com> <20180722164936.20581-2-marcel@ziswiler.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
+Date: Tue, 24 Jul 2018 14:16:33 +0000
+Message-ID: <1532441791.6124.20.camel@toradex.com>
+References: <20180724104309.21741-1-marcel@ziswiler.com>
+         <1532435072.6124.1.camel@toradex.com> <2532956.xKQ6NZiSWF@dimapc>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180722164936.20581-2-marcel@ziswiler.com>
+In-Reply-To: <2532956.xKQ6NZiSWF@dimapc>
+Content-Language: en-US
+Content-ID: <4CBBE2B1DED11D4D972A2617A39218F4@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: "digetx@gmail.com" <digetx@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sunday, 22 July 2018 19:49:09 MSK Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Avoid eMMC issues by specifying broken-hpi.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-
-Is it a specific eMMC card model that has broken HPI or it is a host 
-controller bug?
+T24gVHVlLCAyMDE4LTA3LTI0IGF0IDE1OjQ0ICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
+DQo+IE9uIFR1ZXNkYXksIDI0IEp1bHkgMjAxOCAxNToyNDozNCBNU0sgTWFyY2VsIFppc3dpbGVy
+IHdyb3RlOg0KPiA+IFNvcnJ5LCBJIG1lYW50IHRvIHdyaXRlICJtaW5vciByZXZhbXAiIGluIHRo
+ZSBzdWJqZWN0IGxpbmUgaGVyZSBhcw0KPiA+IEFwYWxpcyBUSzEgd2FzIGFscmVhZHkgaW4gcXVp
+dGUgZ29vZCBhIHNoYXBlIGJ1dCB0aGlzIGFyZSBzdGlsbA0KPiA+IHNvbWUNCj4gPiB3b3J0aHkg
+aW1wcm92ZW1lbnRzICg7LXApLg0KPiA+IA0KPiA+IE9uIFR1ZSwgMjAxOC0wNy0yNCBhdCAxMjo0
+MiArMDIwMCwgTWFyY2VsIFppc3dpbGVyIHdyb3RlOg0KPiA+IA0KPiANCj4gTWFyY2VsLA0KPiAN
+Cj4gQWxsIHlvdXIgZW1haWxzIHRoYXQgYXJlIHNlbnQgZnJvbSAidG9yYWRleC5jb20iIGFyZSB0
+cmVhdGVkIGFzIHNwYW0NCj4gYnkgR21haWwgDQo+IGJlY2F1c2UgIlRoaXMgbWVzc2FnZSBoYXMg
+YSBmcm9tIGFkZHJlc3MgaW4gdG9yYWRleC5jb20gYnV0IGhhcw0KPiBmYWlsZWQgDQo+IHRvcmFk
+ZXguY29tJ3MgcmVxdWlyZWQgdGVzdHMgZm9yIGF1dGhlbnRpY2F0aW9uLiIsIGlzIHRoZXJlIGFu
+eXRoaW5nDQo+IHlvdSBjb3VsZCANCj4gZG8gdG8gZml4IHRoYXQ/DQoNCkhpIERtaXRyeQ0KDQpI
+bSwgdW5mb3J0dW5hdGVseSwgVG9yYWRleCB3YXMgYW4gTSQgb25seSBzaG9wIHdoZW4gSSBqb2lu
+ZWQgbW9yZSB0aGVuDQo3IHllYXJzIGFnbyBhbmQgc28gZmFyIEkgd2FzIHVuYWJsZSB0byBjb252
+aW5jZSBvdXIgSVQgdG8gc3dpdGNoIHRvDQpzb21lIGdyb3duIHVwIGVtYWlsIHN5c3RlbS4gVGhl
+cmVmb3JlLCBJIGFtIHN0dWNrIHdpdGggRXhjaGFuZ2UsIE9mZmljZQ0KMzY1IG9yIHdoYXRldmVy
+IE0kIG5vd2FkYXlzIHNlZW0gdG8gY2FsbCBpdC4gQW55d2F5LCBJIHJlYWxseSB0aG91Z2h0DQpz
+ZW5kaW5nIGZyb20gQW5kcm9pZCBvciBFdm9sdXRpb24gdmlhIHRoZWlyIHJlc3AuIEV4Y2hhbmdl
+IGNvbm5lY3RvcnMNCndvdWxkIHByb3Blcmx5IGRvIFNQRiwgREtJTSBhbmQgZXZlbiBETUFSQy4g
+SSBqdXN0IGNvbmZpcm1lZCB0aGlzIHdoZW4NCnNlbmRpbmcgc29tZXRoaW5nIHRvIG15IGdtYWls
+IGFkZHJlc3MgYW5kIGRvaW5nICJTaG93IG9yaWdpbmFsIi4NCg0KU2luY2UgTGludXMgaGltc2Vs
+ZiBwb2ludGVkIG91dCBhbnkgb2YgbXkgcGF0Y2hlcyBlbmRpbmcgdXAgaW4gaGlzIHNwYW0NCmZv
+bGRlciBJIGRvIHNlbmQgdGhlbSB2aWEgbXkgcHJpdmF0ZSBlbWFpbCB3aGljaCB3aGlsZSBub3Qg
+aGF2aW5nIGFueQ0KYWR2YW5jZWQgc2VjdXJpdHkgY29uZmlndXJlZCBzaG91bGQgc3RpbGwgYmUg
+dmFsaWQuIE1vdmluZyBpdCB0byBhDQpmdWxseSBzZWN1cmUgY29uZmlndXJhdGlvbiBpbmNsdWRp
+bmcgRE5TU0VDIGFuZCBzdHVmZiBpcyBzdGlsbCBwZW5kaW5nDQpvbiBteSBzaWRlLg0KDQpDYW4g
+eW91IHBsZWFzZSB0ZWxsIG1lIHdoaWNoIGV4YWN0IGVtYWlsIGl0IGlzIHRoYXQgeW91IGdvdCB0
+aGlzDQpyZXBvcnRlZCBvbiBzbyBJIG1heSBmdXJ0aGVyIGludmVzdGlnYXRlIHdoYXQgaXMgZ29p
+bmcgb24/DQoNCkNoZWVycw0KDQpNYXJjZWw=
