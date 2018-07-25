@@ -1,34 +1,35 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: Re: [PATCH 00/10] Update the pad autocal procedure
-Date: Wed, 25 Jul 2018 17:28:26 +0300
-Message-ID: <20180725172826.2658feb5@dhcp-10-21-25-168>
-References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
-        <f41a905c-5364-14a5-122b-09cbd1efa2f9@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 5/7] dt-bindings: Add Tegra PMC pad configuration
+ bindings
+Date: Wed, 25 Jul 2018 08:50:49 -0600
+Message-ID: <20180725145049.GA2407@rob-hp-laptop>
+References: <1532084355-31482-1-git-send-email-avienamo@nvidia.com>
+ <1532084355-31482-6-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f41a905c-5364-14a5-122b-09cbd1efa2f9@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <1532084355-31482-6-git-send-email-avienamo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 25 Jul 2018 08:06:18 -0400
-Peter Geis <pgwipeout@gmail.com> wrote:
-
-> On 07/24/2018 10:29 AM, Aapo Vienamo wrote:
-> > Aapo Vienamo (10):
-> > 
-> >    mmc: tegra: Enable pad calibration on Tegra210 and Tegra186  
+On Fri, Jul 20, 2018 at 01:59:13PM +0300, Aapo Vienamo wrote:
+> Document the pinctrl bindings used by the PMC driver for performing pad
+> configuration. Both nvidia,tegra186-pmc.txt and nvidia,tegra20-pmc.txt
+> are modified as they both cover SoC generations for which these bindings
+> apply.
 > 
-> Good Morning,
+> Add a header defining Tegra PMC pad voltage configurations.
 > 
-> You seem to be missing patch 10/10.
-> Checked 
-> https://lore.kernel.org/patchwork/project/lkml/list/?series=360525 to be 
-> sure.
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 ++++++++++++++++++
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++++++++++++++++++
+>  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 ++++
+>  3 files changed, 213 insertions(+)
+>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
 
-Missing patch sent. Thanks for pointing that out.
-
- -Aapo
+Reviewed-by: Rob Herring <robh@kernel.org>
