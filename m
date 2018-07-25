@@ -1,76 +1,69 @@
 From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: Re: [PATCH 02/10] mmc: tegra: Set calibration pad voltage reference
-Date: Wed, 25 Jul 2018 13:00:13 +0300
-Message-ID: <20180725130013.7c86bfea@dhcp-10-21-25-168>
+Subject: Re: [PATCH 09/10] mmc: tegra: Perform pad calibration after voltage
+ switch
+Date: Wed, 25 Jul 2018 13:43:00 +0300
+Message-ID: <20180725134300.7e537ceb@dhcp-10-21-25-168>
 References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
         <1532442865-6391-1-git-send-email-avienamo@nvidia.com>
-        <d5018027-f333-8432-f8ed-81a2cdfedea8@kapsi.fi>
+        <1532442865-6391-8-git-send-email-avienamo@nvidia.com>
+        <b44d6ae5-7965-16db-7ad3-39ff682755ca@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d5018027-f333-8432-f8ed-81a2cdfedea8@kapsi.fi>
+In-Reply-To: <b44d6ae5-7965-16db-7ad3-39ff682755ca@kapsi.fi>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mikko Perttunen <cyndis@kapsi.fi>
 Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 25 Jul 2018 10:08:46 +0300
+On Wed, 25 Jul 2018 10:25:16 +0300
 Mikko Perttunen <cyndis@kapsi.fi> wrote:
 
 > On 24.07.2018 17:34, Aapo Vienamo wrote:
-> > Configure the voltage reference used by the automatic pad drive strength
-> > calibration procedure. The value is a magic number from the TRM.
+> > Run the automatic pad calibration after voltage switching if
+> > tegra_host->pad_calib_required is set.
 > > 
 > > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 > > ---
-> >   drivers/mmc/host/sdhci-tegra.c | 14 ++++++++++++--
-> >   1 file changed, 12 insertions(+), 2 deletions(-)
+> >   drivers/mmc/host/sdhci-tegra.c | 5 +++++
+> >   1 file changed, 5 insertions(+)
 > > 
 > > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> > index e40ca43..6008e2f 100644
+> > index 78781bd..529aa4e7 100644
 > > --- a/drivers/mmc/host/sdhci-tegra.c
 > > +++ b/drivers/mmc/host/sdhci-tegra.c
-> > @@ -49,6 +49,10 @@
-> >   #define SDHCI_AUTO_CAL_START			BIT(31)
-> >   #define SDHCI_AUTO_CAL_ENABLE			BIT(29)
+> > @@ -537,6 +537,8 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+> >   						   struct mmc_ios *ios)
+> >   {
+> >   	struct sdhci_host *host = mmc_priv(mmc);
+> > +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> > +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+> >   	int ret = 0;
 > >   
-> > +#define SDHCI_TEGRA_SDMEM_COMP_PADCTRL			0x1e0
-> > +#define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK	0x0000000f
-> > +#define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_VAL	0x7
-> > +
-> >   #define SDHCI_TEGRA_AUTO_CAL_STATUS     0x1ec
-> >   #define SDHCI_TEGRA_AUTO_CAL_ACTIVE     BIT(31)
+> >   	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+> > @@ -551,6 +553,9 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+> >   		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
+> >   	}
 > >   
-> > @@ -152,7 +156,7 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
-> >   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> >   	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> >   	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-> > -	u32 misc_ctrl, clk_ctrl;
-> > +	u32 misc_ctrl, clk_ctrl, pad_ctrl;
-> >   
-> >   	sdhci_reset(host, mask);
-> >   
-> > @@ -193,8 +197,14 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
-> >   	sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
-> >   	sdhci_writel(host, clk_ctrl, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-> >   
-> > -	if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
-> > +	if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB) {
-> > +		pad_ctrl = sdhci_readl(host, SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-> > +		pad_ctrl &= ~SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK;
-> > +		pad_ctrl |= SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_VAL;
-> > +		sdhci_writel(host, pad_ctrl, SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-> > +  
+> > +	if (tegra_host->pad_calib_required)
+> > +		tegra_sdhci_pad_autocalib(host);  
 > 
-> Will this happen to only eMMC controllers or for all controllers? My 
-> docs are saying this should be set to 0x7 for SDMMC2/4 and 0x1 or 0x2 
-> for SDMMC1/3 depending on voltage. Not sure how downstream is 
-> programming it, though.
+> What if the autocalibration fails? Should we return an error?
 
-The Tegra210 TRM specifies that VREF_SEL should be set 0x7 for all of
-the controllers, there's no mention of this depending on the mode. The
-same value is also programmed by the downstream kernels for Tegra210
-and Tegra186.
+I would assume that aborting the signal voltage switch due to a
+calibration timeout would not be necessary as the TRM specifies drive
+strength values which are to be programmed in case a timeout occurs.
+
+However, I don't know what are the exact implications of running the bus
+with the timeout values instead of the calibrated ones. The TRM does not
+comment on that. I guess tuning would fail and catch the error that way
+in case the timeout default values aren't sufficient.
 
  -Aapo
+
+> > +
+> >   	return ret;
+> >   }
+> >   
+> >   
