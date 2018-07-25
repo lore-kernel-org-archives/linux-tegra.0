@@ -1,69 +1,39 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: Re: [PATCH 09/10] mmc: tegra: Perform pad calibration after voltage
- switch
-Date: Wed, 25 Jul 2018 13:43:00 +0300
-Message-ID: <20180725134300.7e537ceb@dhcp-10-21-25-168>
-References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
-        <1532442865-6391-1-git-send-email-avienamo@nvidia.com>
-        <1532442865-6391-8-git-send-email-avienamo@nvidia.com>
-        <b44d6ae5-7965-16db-7ad3-39ff682755ca@kapsi.fi>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 22/28] ARM: tegra: apalis_t30: add i2c-thermtrip
+Date: Wed, 25 Jul 2018 11:11:52 +0000
+Message-ID: <1532517111.6124.38.camel@toradex.com>
+References: <20180722164936.20581-1-marcel@ziswiler.com>
+         <20180722164936.20581-23-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b44d6ae5-7965-16db-7ad3-39ff682755ca@kapsi.fi>
+In-Reply-To: <20180722164936.20581-23-marcel@ziswiler.com>
+Content-Language: en-US
+Content-ID: <EDB412CC915171439E04D55B39F14A77@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 25 Jul 2018 10:25:16 +0300
-Mikko Perttunen <cyndis@kapsi.fi> wrote:
-
-> On 24.07.2018 17:34, Aapo Vienamo wrote:
-> > Run the automatic pad calibration after voltage switching if
-> > tegra_host->pad_calib_required is set.
-> > 
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > ---
-> >   drivers/mmc/host/sdhci-tegra.c | 5 +++++
-> >   1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> > index 78781bd..529aa4e7 100644
-> > --- a/drivers/mmc/host/sdhci-tegra.c
-> > +++ b/drivers/mmc/host/sdhci-tegra.c
-> > @@ -537,6 +537,8 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
-> >   						   struct mmc_ios *ios)
-> >   {
-> >   	struct sdhci_host *host = mmc_priv(mmc);
-> > +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> > +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> >   	int ret = 0;
-> >   
-> >   	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
-> > @@ -551,6 +553,9 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
-> >   		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
-> >   	}
-> >   
-> > +	if (tegra_host->pad_calib_required)
-> > +		tegra_sdhci_pad_autocalib(host);  
-> 
-> What if the autocalibration fails? Should we return an error?
-
-I would assume that aborting the signal voltage switch due to a
-calibration timeout would not be necessary as the TRM specifies drive
-strength values which are to be programmed in case a timeout occurs.
-
-However, I don't know what are the exact implications of running the bus
-with the timeout values instead of the calibrated ones. The TRM does not
-comment on that. I guess tuning would fail and catch the error that way
-in case the timeout default values aren't sufficient.
-
- -Aapo
-
-> > +
-> >   	return ret;
-> >   }
-> >   
-> >   
+T24gU3VuLCAyMDE4LTA3LTIyIGF0IDE4OjQ5ICswMjAwLCBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6
+DQo+IEZyb206IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0K
+PiANCj4gQWRkIGkyYy10aGVybXRyaXAgd2hpY2ggd291bGQgc2V0IHRoZSBERVZfT0ZGIGJpdCBp
+biB0aGUgRENEQyBjb250cm9sDQo+IHJlZ2lzdGVyIG9mIHRoZSBUUFM2NTkxMSBQTUlDLg0KPiAN
+Cj4gU2lnbmVkLW9mZi1ieTogTWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRl
+eC5jb20+DQo+IA0KPiAtLS0NCj4gDQo+ICBhcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWFwYWxp
+cy5kdHNpIHwgOCArKysrKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKQ0K
+PiANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtYXBhbGlzLmR0c2kN
+Cj4gYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWFwYWxpcy5kdHNpDQo+IGluZGV4IDRlOGVh
+MWE4ZDllYy4uZjhjYWYzZjA3ZmZmIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy90
+ZWdyYTMwLWFwYWxpcy5kdHNpDQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtYXBh
+bGlzLmR0c2kNCj4gQEAgLTEwNTUsNiArMTA1NSwxNCBAQA0KPiAgCQludmlkaWEsY29yZS1wd3It
+b2ZmLXRpbWUgPSA8MD47DQo+ICAJCW52aWRpYSxjb3JlLXBvd2VyLXJlcS1hY3RpdmUtaGlnaDsN
+Cj4gIAkJbnZpZGlhLHN5cy1jbG9jay1yZXEtYWN0aXZlLWhpZ2g7DQo+ICsNCj4gKwkJLyogU2V0
+IERFVl9PRkYgYml0IGluIERDREMgY29udHJvbCByZWdpc3RlciBvZg0KPiBUUFM2NTkxMSBQTUlD
+ICovDQo+ICsJCWkyYy10aGVybXRyaXAgew0KPiArCQkJbnZpZGlhLGkyYy1jb250cm9sbGVyLWlk
+ID0gPDQ+Ow0KPiArCQkJbnZpZGlhLGJ1cy1hZGRyID0gPDB4MmQ+Ow0KPiArCQkJbnZpZGlhLHJl
+Zy1hZGRyID0gPDB4M2U+Ow0KDQpXaGVuIHJ1bm5pbmcgc29tZSBtb3JlIHRlc3RzIEkganVzdCBy
+ZWFsaXplZCB0aGF0IHRoZSByZWctYWRkciBzaG91bGQNCnJlYWxseSBiZSAweDNmIGluc3RlYWQu
+IFdpbGwgY2hhbmdlIHRoaXMgaW4gYSB2Mi4NCg0KPiArCQkJbnZpZGlhLHJlZy1kYXRhID0gPDB4
+MT47DQo+ICsJCX07DQo+ICAJfTsNCj4gIA0KPiAgCWFodWJANzAwODAwMDAgew==
