@@ -1,35 +1,32 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 5/7] dt-bindings: Add Tegra PMC pad configuration
- bindings
-Date: Wed, 25 Jul 2018 08:50:49 -0600
-Message-ID: <20180725145049.GA2407@rob-hp-laptop>
-References: <1532084355-31482-1-git-send-email-avienamo@nvidia.com>
- <1532084355-31482-6-git-send-email-avienamo@nvidia.com>
+Subject: Re: [PATCH v3 2/2] Add support for CPCAP regulators on Motorola Xoom
+ devices.
+Date: Wed, 25 Jul 2018 09:35:14 -0600
+Message-ID: <20180725153514.GA21550@rob-hp-laptop>
+References: <20180724132541.17039-1-pgwipeout@gmail.com>
+ <20180724132541.17039-3-pgwipeout@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1532084355-31482-6-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <20180724132541.17039-3-pgwipeout@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Geis <pgwipeout@gmail.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 01:59:13PM +0300, Aapo Vienamo wrote:
-> Document the pinctrl bindings used by the PMC driver for performing pad
-> configuration. Both nvidia,tegra186-pmc.txt and nvidia,tegra20-pmc.txt
-> are modified as they both cover SoC generations for which these bindings
-> apply.
+On Tue, Jul 24, 2018 at 09:25:41AM -0400, Peter Geis wrote:
+> Added support for the CPCAP power management regulator functions on
+> Tegra based Motorola Xoom devices.
+> Added sw2_sw4 value tables, which provide power to the Tegra core and
+> aux devices.
+> Added the Xoom init tables and device tree compatibility match.
 > 
-> Add a header defining Tegra PMC pad voltage configurations.
-> 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
 > ---
->  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 ++++++++++++++++++
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++++++++++++++++++
->  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 ++++
->  3 files changed, 213 insertions(+)
->  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+>  .../bindings/regulator/cpcap-regulator.txt    |  1 +
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/regulator/cpcap-regulator.c           | 80 +++++++++++++++++++
+>  2 files changed, 81 insertions(+)
