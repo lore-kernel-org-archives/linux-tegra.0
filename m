@@ -1,57 +1,33 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH 09/10] mmc: tegra: Perform pad calibration after voltage
- switch
-Date: Wed, 25 Jul 2018 10:25:16 +0300
-Message-ID: <b44d6ae5-7965-16db-7ad3-39ff682755ca@kapsi.fi>
-References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
- <1532442865-6391-1-git-send-email-avienamo@nvidia.com>
- <1532442865-6391-8-git-send-email-avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+Subject: Re: [PATCH 7/7] arm64: dts: tegra210-p2597: Remove no-1-8-v from
+ sdmmc1
+Date: Wed, 25 Jul 2018 11:12:59 +0300
+Message-ID: <20180725111259.223970b5@dhcp-10-21-25-168>
+References: <1532090746-15863-1-git-send-email-avienamo@nvidia.com>
+        <1532090746-15863-8-git-send-email-avienamo@nvidia.com>
+        <8946636e-5da7-baf1-5390-669f7442e6ff@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532442865-6391-8-git-send-email-avienamo@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <8946636e-5da7-baf1-5390-669f7442e6ff@kapsi.fi>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, 25 Jul 2018 09:58:37 +0300
+Mikko Perttunen <cyndis@kapsi.fi> wrote:
 
+> Looks like patch 6 will probably cause tegra-sdhci to start advertising 
+> faster modes (see " if (!IS_ERR(host->mmc->supply.vqmmc))" in 
+> sdhci-tegra.c). With that patch and this, will the SDHCI core start to 
+> try putting us into these higher modes? Clearly that won't work yet 
+> before the upcoming patches.
 
-On 24.07.2018 17:34, Aapo Vienamo wrote:
-> Run the automatic pad calibration after voltage switching if
-> tegra_host->pad_calib_required is set.
-> 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->   drivers/mmc/host/sdhci-tegra.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 78781bd..529aa4e7 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -537,6 +537,8 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
->   						   struct mmc_ios *ios)
->   {
->   	struct sdhci_host *host = mmc_priv(mmc);
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
->   	int ret = 0;
->   
->   	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
-> @@ -551,6 +553,9 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
->   		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
->   	}
->   
-> +	if (tegra_host->pad_calib_required)
-> +		tegra_sdhci_pad_autocalib(host);
+The SDHCI core won't do that yet at this point. The host capability bits
+for the higher speed modes are currently masked by tegra_sdhci_reset()
+in sdhci-tegra. The modes are unmasked in another patch after everything
+that's required to support the modes has been implemented.
 
-What if the autocalibration fails? Should we return an error?
-
-> +
->   	return ret;
->   }
->   
-> 
+ -Aapo
