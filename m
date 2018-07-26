@@ -1,131 +1,90 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 1/2] pinctrl: tegra: define GPIO compatible node per SoC
-Date: Thu, 26 Jul 2018 17:40:24 +0200
-Message-ID: <20180726154025.13173-1-stefan@agner.ch>
+Subject: [PATCH 2/2] ARM: tegra: readd gpio-ranges properties
+Date: Thu, 26 Jul 2018 17:40:25 +0200
+Message-ID: <20180726154025.13173-2-stefan@agner.ch>
+References: <20180726154025.13173-1-stefan@agner.ch>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180726154025.13173-1-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 To: thierry.reding@gmail.com, jonathanh@nvidia.com, linus.walleij@linaro.org
 Cc: pdeschrijver@nvidia.co, digetx@gmail.com, keescook@chromium.org, marcel.ziswiler@toradex.com, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra 2 uses a different GPIO controller which uses "tegra20-gpio" as
-compatible string.
+The properties have been commented out to prevent a regression a
+while ago. The first regression should be resolved by
+commit 44af7927316e ("spi: Map SPI OF client IRQ at probe time").
 
-Make the compatible string the GPIO node is using a SoC specific
-property. This prevents the kernel from registering the GPIO range
-twice in case the GPIO range is specified in the device tree.
+The second regression is probably addressed by
+commit 494fd7b7ad10 ("PM / core: fix deferred probe breaking suspend resume order")
+and/or maybe others. Readd the gpio-ranges properties to see whether
+regressions still get reported.
 
-Fixes: 9462510ce31e ("pinctrl: tegra: Only set the gpio range if needed")
+This reverts commit 4f1d841475e1f6e9e32496dda11215db56f4ea73
+("ARM: tegra: Comment out gpio-ranges properties").
+
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c    | 6 +++---
- drivers/pinctrl/tegra/pinctrl-tegra.h    | 1 +
- drivers/pinctrl/tegra/pinctrl-tegra114.c | 1 +
- drivers/pinctrl/tegra/pinctrl-tegra124.c | 1 +
- drivers/pinctrl/tegra/pinctrl-tegra20.c  | 1 +
- drivers/pinctrl/tegra/pinctrl-tegra210.c | 1 +
- drivers/pinctrl/tegra/pinctrl-tegra30.c  | 1 +
- 7 files changed, 9 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/tegra114.dtsi | 2 --
+ arch/arm/boot/dts/tegra124.dtsi | 2 --
+ arch/arm/boot/dts/tegra20.dtsi  | 2 --
+ arch/arm/boot/dts/tegra30.dtsi  | 2 --
+ 4 files changed, 8 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index f974eee29a19..1aba75897d14 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -629,12 +629,12 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
- 	}
- }
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 84c4358dacac..39253450a974 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -240,9 +240,7 @@
+ 		gpio-controller;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		/*
+ 		gpio-ranges = <&pinmux 0 0 246>;
+-		*/
+ 	};
  
--static bool gpio_node_has_range(void)
-+static bool gpio_node_has_range(const char *compatible)
- {
- 	struct device_node *np;
- 	bool has_prop = false;
+ 	apbmisc@70000800 {
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 174092bfac90..47b51376ed36 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -263,9 +263,7 @@
+ 		gpio-controller;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		/*
+ 		gpio-ranges = <&pinmux 0 0 251>;
+-		*/
+ 	};
  
--	np = of_find_compatible_node(NULL, NULL, "nvidia,tegra30-gpio");
-+	np = of_find_compatible_node(NULL, NULL, compatible);
- 	if (!np)
- 		return has_prop;
+ 	apbdma: dma@60020000 {
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 983dd5c14794..cdf018a7568c 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -258,9 +258,7 @@
+ 		gpio-controller;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		/*
+ 		gpio-ranges = <&pinmux 0 0 224>;
+-		*/
+ 	};
  
-@@ -728,7 +728,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	vde@6001a000 {
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 09087b9c5e26..b80f35411d72 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -380,9 +380,7 @@
+ 		gpio-controller;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		/*
+ 		gpio-ranges = <&pinmux 0 0 248>;
+-		*/
+ 	};
  
- 	tegra_pinctrl_clear_parked_bits(pmx);
- 
--	if (!gpio_node_has_range())
-+	if (!gpio_node_has_range(pmx->soc->gpio_compatible))
- 		pinctrl_add_gpio_range(pmx->pctl, &tegra_pinctrl_gpio_range);
- 
- 	platform_set_drvdata(pdev, pmx);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index aa33c20766c4..44c71941b5f8 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -189,6 +189,7 @@ struct tegra_pingroup {
-  */
- struct tegra_pinctrl_soc_data {
- 	unsigned ngpios;
-+	const char *gpio_compatible;
- 	const struct pinctrl_pin_desc *pins;
- 	unsigned npins;
- 	struct tegra_function *functions;
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/tegra/pinctrl-tegra114.c
-index 56b33fca1bfc..511a8774fd8d 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
-@@ -1839,6 +1839,7 @@ static const struct tegra_pingroup tegra114_groups[] = {
- 
- static const struct tegra_pinctrl_soc_data tegra114_pinctrl = {
- 	.ngpios = NUM_GPIOS,
-+	.gpio_compatible = "nvidia,tegra30-gpio",
- 	.pins = tegra114_pins,
- 	.npins = ARRAY_SIZE(tegra114_pins),
- 	.functions = tegra114_functions,
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/tegra/pinctrl-tegra124.c
-index 7bc998ace0d5..57e3cdcf4503 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
-@@ -2051,6 +2051,7 @@ static const struct tegra_pingroup tegra124_groups[] = {
- 
- static const struct tegra_pinctrl_soc_data tegra124_pinctrl = {
- 	.ngpios = NUM_GPIOS,
-+	.gpio_compatible = "nvidia,tegra30-gpio",
- 	.pins = tegra124_pins,
- 	.npins = ARRAY_SIZE(tegra124_pins),
- 	.functions = tegra124_functions,
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-index b6dd939d32cc..624889ed3a9d 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-@@ -2221,6 +2221,7 @@ static const struct tegra_pingroup tegra20_groups[] = {
- 
- static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
- 	.ngpios = NUM_GPIOS,
-+	.gpio_compatible = "nvidia,tegra20-gpio",
- 	.pins = tegra20_pins,
- 	.npins = ARRAY_SIZE(tegra20_pins),
- 	.functions = tegra20_functions,
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-index c244e5b17bd6..0956a1c73391 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-@@ -1553,6 +1553,7 @@ static const struct tegra_pingroup tegra210_groups[] = {
- 
- static const struct tegra_pinctrl_soc_data tegra210_pinctrl = {
- 	.ngpios = NUM_GPIOS,
-+	.gpio_compatible = "nvidia,tegra30-gpio",
- 	.pins = tegra210_pins,
- 	.npins = ARRAY_SIZE(tegra210_pins),
- 	.functions = tegra210_functions,
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/tegra/pinctrl-tegra30.c
-index 1f180a20f2ab..c923ad58af84 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
-@@ -2474,6 +2474,7 @@ static const struct tegra_pingroup tegra30_groups[] = {
- 
- static const struct tegra_pinctrl_soc_data tegra30_pinctrl = {
- 	.ngpios = NUM_GPIOS,
-+	.gpio_compatible = "nvidia,tegra30-gpio",
- 	.pins = tegra30_pins,
- 	.npins = ARRAY_SIZE(tegra30_pins),
- 	.functions = tegra30_functions,
+ 	vde@6001a000 {
 -- 
 2.18.0
