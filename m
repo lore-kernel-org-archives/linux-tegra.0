@@ -1,61 +1,93 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH 2/2] ARM: dts: tegra20/tegra30: add pmu interrupt-affinity
-Date: Thu, 26 Jul 2018 10:42:10 +0200
-Message-ID: <e5e24974662564d2501b28ac6faf0b09@agner.ch>
-References: <20180720163426.4410-1-marcel@ziswiler.com>
- <20180720163426.4410-2-marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 1/7] clocksource/drivers: Set clockevent device cpumask to cpu_possible_mask
+Date: Thu, 26 Jul 2018 12:15:24 +0200
+Message-ID: <1532600131-28168-1-git-send-email-daniel.lezcano@linaro.org>
+References: <014f94f9-54d4-1ee0-aa89-67ca5d221989@free.fr>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180720163426.4410-2-marcel@ziswiler.com>
+In-Reply-To: <014f94f9-54d4-1ee0-aa89-67ca5d221989@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-tegra-owner@vger.kernel.org
+To: tglx@linutronix.de, mingo@kernel.org
+Cc: linux-kernel@vger.kernel.org, stanley.chu@mediatek.com, baolin.wang@linaro.org, Sudeep.Holla@arm.com, Sudeep Holla <sudeep.holla@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar <ssantosh@kernel.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, "moderated list:ARM/TEXAS
+        INSTRUMENT KEYSTONE ClOCKSOURCE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.07.2018 18:34, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> This is similar to tegra124 and avoids the following being reported
-> upon boot:
-> 
-> hw perfevents: no interrupt-affinity property for /pmu, guessing.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+Currently, quite a few clockevent devices have cpumask set to
+cpu_all_mask which should be fine. However, cpu_possible_mask is more
+accurate and if there are any other clockevent devices in the system
+which have cpumask set to cpu_possible_mask, then having cpu_all_mask
+may result in issues (mostly boot hang with forever loops in
+clockevents_notify_released).
 
-> 
-> ---
-> 
->  arch/arm/boot/dts/tegra20.dtsi | 2 ++
->  arch/arm/boot/dts/tegra30.dtsi | 4 ++++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-> index a22c6a8f8f83..dcad6d6128cf 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -867,5 +867,7 @@
->  		compatible = "arm,cortex-a9-pmu";
->  		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-affinity = <&{/cpus/cpu@0}>,
-> +				     <&{/cpus/cpu@1}>;
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-> index a6781f653310..1de10f0d1da7 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
-> @@ -1013,5 +1013,9 @@
->  			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-affinity = <&{/cpus/cpu@0}>,
-> +				     <&{/cpus/cpu@1}>,
-> +				     <&{/cpus/cpu@2}>,
-> +				     <&{/cpus/cpu@3}>;
->  	};
->  };
+So, lets replace all the clockevent device cpu_all_mask to
+cpu_possible_mask in order to prevent above mentioned possible issue.
+
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/tegra20_timer.c   | 2 +-
+ drivers/clocksource/timer-atcpit100.c | 2 +-
+ drivers/clocksource/timer-keystone.c  | 2 +-
+ drivers/clocksource/zevio-timer.c     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index c337a81..dabf0a1 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -230,7 +230,7 @@ static int __init tegra20_init_timer(struct device_node *np)
+ 		return ret;
+ 	}
+ 
+-	tegra_clockevent.cpumask = cpu_all_mask;
++	tegra_clockevent.cpumask = cpu_possible_mask;
+ 	tegra_clockevent.irq = tegra_timer_irq.irq;
+ 	clockevents_config_and_register(&tegra_clockevent, 1000000,
+ 					0x1, 0x1fffffff);
+diff --git a/drivers/clocksource/timer-atcpit100.c b/drivers/clocksource/timer-atcpit100.c
+index 5e23d7b..b4bd2f5 100644
+--- a/drivers/clocksource/timer-atcpit100.c
++++ b/drivers/clocksource/timer-atcpit100.c
+@@ -185,7 +185,7 @@ static struct timer_of to = {
+ 		.set_state_oneshot = atcpit100_clkevt_set_oneshot,
+ 		.tick_resume = atcpit100_clkevt_shutdown,
+ 		.set_next_event = atcpit100_clkevt_next_event,
+-		.cpumask = cpu_all_mask,
++		.cpumask = cpu_possible_mask,
+ 	},
+ 
+ 	.of_irq = {
+diff --git a/drivers/clocksource/timer-keystone.c b/drivers/clocksource/timer-keystone.c
+index 0eee032..f5b2eda 100644
+--- a/drivers/clocksource/timer-keystone.c
++++ b/drivers/clocksource/timer-keystone.c
+@@ -211,7 +211,7 @@ static int __init keystone_timer_init(struct device_node *np)
+ 	event_dev->set_state_shutdown = keystone_shutdown;
+ 	event_dev->set_state_periodic = keystone_set_periodic;
+ 	event_dev->set_state_oneshot = keystone_shutdown;
+-	event_dev->cpumask = cpu_all_mask;
++	event_dev->cpumask = cpu_possible_mask;
+ 	event_dev->owner = THIS_MODULE;
+ 	event_dev->name = TIMER_NAME;
+ 	event_dev->irq = irq;
+diff --git a/drivers/clocksource/zevio-timer.c b/drivers/clocksource/zevio-timer.c
+index a6a0338..f746893 100644
+--- a/drivers/clocksource/zevio-timer.c
++++ b/drivers/clocksource/zevio-timer.c
+@@ -162,7 +162,7 @@ static int __init zevio_timer_add(struct device_node *node)
+ 		timer->clkevt.set_state_oneshot = zevio_timer_set_oneshot;
+ 		timer->clkevt.tick_resume	= zevio_timer_set_oneshot;
+ 		timer->clkevt.rating		= 200;
+-		timer->clkevt.cpumask		= cpu_all_mask;
++		timer->clkevt.cpumask		= cpu_possible_mask;
+ 		timer->clkevt.features		= CLOCK_EVT_FEAT_ONESHOT;
+ 		timer->clkevt.irq		= irqnr;
+ 
+-- 
+2.7.4
