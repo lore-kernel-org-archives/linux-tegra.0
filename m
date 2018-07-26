@@ -1,93 +1,52 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 1/7] clocksource/drivers: Set clockevent device cpumask to cpu_possible_mask
-Date: Thu, 26 Jul 2018 12:15:24 +0200
-Message-ID: <1532600131-28168-1-git-send-email-daniel.lezcano@linaro.org>
-References: <014f94f9-54d4-1ee0-aa89-67ca5d221989@free.fr>
+From: Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v2 00/10] Tegra SDHCI enable 1.8 V signaling on Tegar210 and Tegra186
+Date: Thu, 26 Jul 2018 15:19:10 +0300
+Message-ID: <1532607560-11253-1-git-send-email-avienamo@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <014f94f9-54d4-1ee0-aa89-67ca5d221989@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: tglx@linutronix.de, mingo@kernel.org
-Cc: linux-kernel@vger.kernel.org, stanley.chu@mediatek.com, baolin.wang@linaro.org, Sudeep.Holla@arm.com, Sudeep Holla <sudeep.holla@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar <ssantosh@kernel.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, "moderated list:ARM/TEXAS
-        INSTRUMENT KEYSTONE ClOCKSOURCE" <linux-arm-kernel@lists.infradead.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+Hi all,
 
-Currently, quite a few clockevent devices have cpumask set to
-cpu_all_mask which should be fine. However, cpu_possible_mask is more
-accurate and if there are any other clockevent devices in the system
-which have cpumask set to cpu_possible_mask, then having cpu_all_mask
-may result in issues (mostly boot hang with forever loops in
-clockevents_notify_released).
+Reconfigure pad voltages as part of mmc voltage switching on
+controllers with adjustable voltages. Allow for reconfiguration of the
+signaling voltage of SDMMC1 on Tegra210 P2597 and fix SDMMC4 signaling
+voltage regulator configuration on Tegra210 P2180.
 
-So, lets replace all the clockevent device cpu_all_mask to
-cpu_possible_mask in order to prevent above mentioned possible issue.
+This series depends on the "Tegra PMC pinctrl pad configuration" series posted
+earlier.
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/tegra20_timer.c   | 2 +-
- drivers/clocksource/timer-atcpit100.c | 2 +-
- drivers/clocksource/timer-keystone.c  | 2 +-
- drivers/clocksource/zevio-timer.c     | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Changelog:
+v2:
+	- Change the pinctrl bindings commit title
+	- Use IS_ERR in tegra_sdhci_init_pinctrl_info()
+	- Add nvidia,only-1-8-v property
+	- Disable UHS modes in case the pad and regulator configuration
+	  is invalid
 
-diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-index c337a81..dabf0a1 100644
---- a/drivers/clocksource/tegra20_timer.c
-+++ b/drivers/clocksource/tegra20_timer.c
-@@ -230,7 +230,7 @@ static int __init tegra20_init_timer(struct device_node *np)
- 		return ret;
- 	}
- 
--	tegra_clockevent.cpumask = cpu_all_mask;
-+	tegra_clockevent.cpumask = cpu_possible_mask;
- 	tegra_clockevent.irq = tegra_timer_irq.irq;
- 	clockevents_config_and_register(&tegra_clockevent, 1000000,
- 					0x1, 0x1fffffff);
-diff --git a/drivers/clocksource/timer-atcpit100.c b/drivers/clocksource/timer-atcpit100.c
-index 5e23d7b..b4bd2f5 100644
---- a/drivers/clocksource/timer-atcpit100.c
-+++ b/drivers/clocksource/timer-atcpit100.c
-@@ -185,7 +185,7 @@ static struct timer_of to = {
- 		.set_state_oneshot = atcpit100_clkevt_set_oneshot,
- 		.tick_resume = atcpit100_clkevt_shutdown,
- 		.set_next_event = atcpit100_clkevt_next_event,
--		.cpumask = cpu_all_mask,
-+		.cpumask = cpu_possible_mask,
- 	},
- 
- 	.of_irq = {
-diff --git a/drivers/clocksource/timer-keystone.c b/drivers/clocksource/timer-keystone.c
-index 0eee032..f5b2eda 100644
---- a/drivers/clocksource/timer-keystone.c
-+++ b/drivers/clocksource/timer-keystone.c
-@@ -211,7 +211,7 @@ static int __init keystone_timer_init(struct device_node *np)
- 	event_dev->set_state_shutdown = keystone_shutdown;
- 	event_dev->set_state_periodic = keystone_set_periodic;
- 	event_dev->set_state_oneshot = keystone_shutdown;
--	event_dev->cpumask = cpu_all_mask;
-+	event_dev->cpumask = cpu_possible_mask;
- 	event_dev->owner = THIS_MODULE;
- 	event_dev->name = TIMER_NAME;
- 	event_dev->irq = irq;
-diff --git a/drivers/clocksource/zevio-timer.c b/drivers/clocksource/zevio-timer.c
-index a6a0338..f746893 100644
---- a/drivers/clocksource/zevio-timer.c
-+++ b/drivers/clocksource/zevio-timer.c
-@@ -162,7 +162,7 @@ static int __init zevio_timer_add(struct device_node *node)
- 		timer->clkevt.set_state_oneshot = zevio_timer_set_oneshot;
- 		timer->clkevt.tick_resume	= zevio_timer_set_oneshot;
- 		timer->clkevt.rating		= 200;
--		timer->clkevt.cpumask		= cpu_all_mask;
-+		timer->clkevt.cpumask		= cpu_possible_mask;
- 		timer->clkevt.features		= CLOCK_EVT_FEAT_ONESHOT;
- 		timer->clkevt.irq		= irqnr;
- 
+Aapo Vienamo (10):
+  dt-bindings: mmc: tegra: Add pad voltage control properties
+  dt-bindings: mmc: tegra: Add nvidia,only-1-8-v property
+  mmc: tegra: Reconfigure pad voltages during voltage switching
+  arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
+  arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
+  arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
+  arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
+  arm64: dts: tegra210-p2597: Remove no-1-8-v from sdmmc1
+  arm64: dts: tegra210: Add nvidia,only-1-8-v to sdmmc4
+  arm64: dts: tegra186: Add nvidia,only-1-8-v to sdmmc4
+
+ .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  24 ++++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  41 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |  12 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   1 -
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  28 +++++
+ drivers/mmc/host/sdhci-tegra.c                     | 140 +++++++++++++++++++--
+ 6 files changed, 222 insertions(+), 24 deletions(-)
+
 -- 
 2.7.4
