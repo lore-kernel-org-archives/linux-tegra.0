@@ -1,104 +1,159 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: tegra: probe deferral error reporting
-Date: Thu, 26 Jul 2018 09:42:07 -0700
-Message-ID: <153262332731.48062.8709620189648679243@swboyd.mtv.corp.google.com>
-References: <20180720075422.26563-1-marcel@ziswiler.com>
- <153256109511.48062.12389268791907553857@swboyd.mtv.corp.google.com>
- <b202fe11-108f-c62c-bb6d-9e3a7de5a964@gmail.com>
- <153259028259.48062.10565668407094066922@swboyd.mtv.corp.google.com>
- <13595e6b8bfb364023648297cad7da1b@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH 3/3] mmc: tegra: prevent ACMD23 on Tegra 3
+Date: Thu, 26 Jul 2018 19:36:22 +0200
+Message-ID: <24fffc2c52b58301c37d95fe5d1ad355@agner.ch>
+References: <20180712073904.4705-1-stefan@agner.ch>
+ <20180712073904.4705-3-stefan@agner.ch>
+ <430c718d-9ede-d47a-44c0-b8e47e297720@gmail.com>
+ <1553c44e99b96a813af129d1c4169222@agner.ch>
+ <553f9ed6-8f7c-775b-d731-fd9732f74b07@gmail.com>
+ <7edc8c666dbbc0743221c86286ff583a@agner.ch>
+ <12ae1da9-cd09-b15d-9a81-461ca9cc06d7@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <13595e6b8bfb364023648297cad7da1b@agner.ch>
+In-Reply-To: <12ae1da9-cd09-b15d-9a81-461ca9cc06d7@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Marcel Ziswiler <marcel@ziswiler.com>, Peter Geis <pgwipeout@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-tegra-owner@vger.kernel.org
+To: Peter Geis <pgwipeout@gmail.com>
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, marcel.ziswiler@toradex.com, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra-owner@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stefan Agner (2018-07-26 00:55:16)
-> On 26.07.2018 09:31, Stephen Boyd wrote:
-> > Quoting Peter Geis (2018-07-25 16:42:34)
-> >> On 7/25/2018 7:24 PM, Stephen Boyd wrote:
-> >> > Quoting Marcel Ziswiler (2018-07-20 00:54:22)
-> >> >> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> >> >>
-> >> >> Actually report the error code from devm_regulator_get() which may =
-as
-> >> >> well just be a probe deferral.
-> >> >>
-> >> >> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> >> >>
-> >> >> ---
-> >> >>
-> >> >>   drivers/clk/tegra/clk-dfll.c | 5 +++--
-> >> >>   1 file changed, 3 insertions(+), 2 deletions(-)
-> >> >>
-> >> >> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-d=
-fll.c
-> >> >> index 48ee43734e05..b2123084e175 100644
-> >> >> --- a/drivers/clk/tegra/clk-dfll.c
-> >> >> +++ b/drivers/clk/tegra/clk-dfll.c
-> >> >> @@ -1609,8 +1609,9 @@ int tegra_dfll_register(struct platform_devic=
-e *pdev,
-> >> >>
-> >> >>          td->vdd_reg =3D devm_regulator_get(td->dev, "vdd-cpu");
-> >> >>          if (IS_ERR(td->vdd_reg)) {
-> >> >> -               dev_err(td->dev, "couldn't get vdd_cpu regulator\n"=
-);
-> >> >> -               return PTR_ERR(td->vdd_reg);
-> >> >> +               ret =3D PTR_ERR(td->vdd_reg);
-> >> >> +               dev_err(td->dev, "couldn't get vdd_cpu regulator: %=
-d\n", ret);
-> >> >
-> >> > Do you want to know that a probe defer is happening? Usually patches=
- are
-> >> > sent to make that error path silent.
-> >> >
-> >>
-> >> Just asking as the newbie here, but shouldn't probe deferral be
-> >> regulated to dev_debug?
-> >> Then pass any other error code as dev_err.
-> > =
+On 26.07.2018 18:39, Peter Geis wrote:
+>>>>> I finally got around to testing this on the Ouya (Tegra 3).
+>>>>
+>>>> Thanks for testing!
+>>>>
+>>>>>
+>>>>> I found that the "Got command interrupt 0x00010000 even though no
+>>>>> command operation was in progress." error occurred when the interface
+>>>>> is unstable.
+>>>>> I've had a lot of problems with sdmmc4 stability on the Ouya above 34
+>>>>> Mhz, probably due to the fact that they are using the internal cmd and
+>>>>> clock pull-up resistors, against the TRM's instruction.
+>>>>> At 39Mhz, I saw the error this patch corrects.
+>>>>> With the patch, the error went away, but the interface is still
+>>>>> unstable under load.
+>>>>
+>>>> How does this instability manifest exactly?
+>>>>
+>>>
+>>> At the very edge of stability, you see write errors under heavy load.
+>>> As clock rate increases, the write errors occur more frequently.
+>>> At a certain point, you start getting read errors.
+>>> Following that you get constant io errors during card probing.
+>>> Eventually the emmc will fail to initialize, with errors 87 or 110.
+>>
+>> What mode are you running at actually? E.g. what is the ios file saying?
+>> cat /sys/kernel/debug/mmcX/ios
+> 
+> This is the best functionality I've been able to get prior to the patches:
+> root@ouya:~# cat /sys/kernel/debug/mmc0/ios
+> clock:          30000000 Hz
+> actual clock:   29142858 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      3 (8 bits)
+> timing spec:    9 (mmc HS200)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> 
 
-> > Yes probe defer should be relegated to debug level prints. Or really, we
-> > should introduce a more complicated system to make debugging probe defer
-> > errors simpler by informing us which driver is probe defering on what
-> > resource by putting debug prints in each framework that returns probe
-> > defer errors instead of updating each driver that uses these frameworks
-> > and thinks it needs to print errors in these cases. And hide all that
-> > behind some kernel commandline parameter and/or Kconfig option that lets
-> > us turn the prints off all the time if we're not developing drivers or
-> > testing things.
-> =
+Yeah HS200 is definilty not supported by the controller and really
+should not be used.
 
-> Afaict, that is already there in:
-> drivers/base/dd.c:really_probe()
+> Now I am trying DDR, but even with the patches I'm not able to remain
+> stable above 17Mhz (34Mhz clock).
+> 
+> I've also tried just straight mmc-hs mode, but even that makes no difference.
+> 
 
-All of it isn't really there when you consider devices may have many
-different resources they're trying to get and then tracking down the one
-driver that isn't probed and providing the resource fails. Then you get
-to resort to hacking prints into the driver to see what particular
-resource is probe defering.
+So you tried timing spec 1 (mmc HS)?
 
-> =
+How did you exactly enable mmc-hs mode?
 
-> So I suggest to just silence the EPROBE_DEFER case, e.g.\
-> =
+I suggest to *not set* vqmmc and apply patch 1. It will report that
+signaling voltage is 3.3V, but that did not really matter in our case.
+This was our baseline and always worked stable on mainline. I also would
+use that mode when tweaking pinmux etc...
 
-> =
+>>
+>>>
+>>> I've been tweaking the pull up/down values to try and improve the
+>>> stability, but without access to anything but the TRM it's a lot of
+>>> trial and error.
+>>>
+>>
+>> Hm, maybe Marcel's recent fixes in our device tree are helpful?
+>> https://lkml.org/lkml/2018/7/22/165
+>>
+>> Also make sure to have a complete pinmux such that alternative pins for
+>> sdmmc4 are *not* muxed as sdmmc4.
+> 
+> That was my first issue, which was preventing sdmmc4 from working at all.
+> Just double checked all of the spare function pins, they are all
+> assigned elsewhere.
+> 
 
->         if (IS_ERR(td->vdd_reg)) {
->                 ret =3D PTR_ERR(td->vdd_reg);
->                 if (ret !=3D -EPROBE_DEFER)
->                         dev_err(td->dev, "couldn't get vdd_cpu regulator:=
- %d\n", ret);
-> =
+Ok.
 
->                 return ret;
->         }
-> =
+>>
+>>>>>
+>>>>> Lowering down to 32Mhz, without the patch there are no errors.
+>>>>
+>>>> So the patch does not make it less stable right?
+>>>>
+>>>
+>>> No, it did not affect stability.
+>>> Although I'd conduct some performance testing to check for degradation.
+>>> Of course I'm nowhere near the limits of the controller, so it is
+>>> doubtful I'd see a hit.
+>>
+>> Ok, and this is with the complete patchset applied correct?
+>>
+>> Btw, what device tree are you using? Ouya is not upstream as far as I
+>> can tell?
+> 
+> Indeed, I have the full patchset.
+> 
+> Ouya is an old android game console that I've been working on getting
+> mainline working on.
 
+I know, I have one sitting here too. I only tried to tinker a bit at the
+very beginning...
 
-Sure this is fine.
+> I've written most of the device tree, with contributions from Matt Merhar.
+> It's almost bit for bit a cardhu dev board, but with everything not
+> necessary to function removed.
+> They cut a lot of corners with the board design.
+> Last stable kernel was 3.2, but it ran fine at 52mhz, mind you it
+> reported it was running mode 5.
+
+That is what we saw too. With Apalis/Colibri T30 L4T downstream kernel
+(which is 3.1 with quite some patches) 52MHz DDR worked fine,
+surprisingly even with ACMD23. However, speed is slightly slower than
+mainline 52MHz without ACMD23...
+
+--
+Stefan
+
+> 
+> To get this speed, I have the pins all driven down at 4, and up at 24.
+> Default is 2 down and 18 up from driver init.
+> The pin pull ups are exactly as the original kernel, all pins pulled
+> up except reset, which is pulled down.
+> 
+>>
+>> --
+>> Stefan
+>>
+>>>
+>>>> --
+>>>> Stefan
+>>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
