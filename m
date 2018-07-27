@@ -1,86 +1,94 @@
-From: Robin Murphy <robin.murphy@arm.com>
+From: Jordan Crouse <jcrouse-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
-Date: Fri, 27 Jul 2018 17:02:37 +0100
-Message-ID: <daadd395-dcb7-9505-f171-0fcc28570301@arm.com>
+Date: Fri, 27 Jul 2018 11:03:26 -0600
+Message-ID: <20180727170326.GA21283@jcrouse-lnx.qualcomm.com>
 References: <20180726231624.21084-1-digetx@gmail.com>
- <20180727082512.lpvmeuvxnw3mpeym@8bytes.org> <20180727090328.GH28088@arm.com>
- <4164951.xGHfcFJ9uZ@dimapc>
+	<20180727082512.lpvmeuvxnw3mpeym@8bytes.org>
+	<20180727090328.GH28088@arm.com> <4164951.xGHfcFJ9uZ@dimapc>
+	<daadd395-dcb7-9505-f171-0fcc28570301@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <4164951.xGHfcFJ9uZ@dimapc>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>
-Cc: devicetree@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, nouveau@lists.freedesktop.org, "Rafael J. Wysocki" <rafael@kernel.org>, Nicolas Chauvet <kwizart@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-tegra@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <daadd395-dcb7-9505-f171-0fcc28570301-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjcvMDcvMTggMTU6MTAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiBPbiBGcmlkYXksIDI3
-IEp1bHkgMjAxOCAxMjowMzoyOCBNU0sgV2lsbCBEZWFjb24gd3JvdGU6Cj4+IE9uIEZyaSwgSnVs
-IDI3LCAyMDE4IGF0IDEwOjI1OjEzQU0gKzAyMDAsIEpvZXJnIFJvZWRlbCB3cm90ZToKPj4+IE9u
-IEZyaSwgSnVsIDI3LCAyMDE4IGF0IDAyOjE2OjE4QU0gKzAzMDAsIERtaXRyeSBPc2lwZW5rbyB3
-cm90ZToKPj4+PiBUaGUgcHJvcG9zZWQgc29sdXRpb24gYWRkcyBhIG5ldyBvcHRpb24gdG8gdGhl
-IGJhc2UgZGV2aWNlIGRyaXZlcgo+Pj4+IHN0cnVjdHVyZSB0aGF0IGFsbG93cyBkZXZpY2UgZHJp
-dmVycyB0byBleHBsaWNpdGx5IGNvbnZleSB0byB0aGUgZHJpdmVycwo+Pj4+IGNvcmUgdGhhdCB0
-aGUgaW1wbGljaXQgSU9NTVUgYmFja2luZyBmb3IgZGV2aWNlcyBtdXN0IG5vdCBoYXBwZW4uCj4+
-Pgo+Pj4gV2h5IGlzIElPTU1VIG1hcHBpbmcgYSBwcm9ibGVtIGZvciB0aGUgVGVncmEgR1BVIGRy
-aXZlcj8KPj4+Cj4+PiBJZiB3ZSBhZGQgc29tZXRoaW5nIGxpa2UgdGhpcyB0aGVuIGl0IHNob3Vs
-ZCBub3QgYmUgdGhlIGNob2ljZSBvZiB0aGUKPj4+IGRldmljZSBkcml2ZXIsIGJ1dCBvZiB0aGUg
-dXNlciBhbmQvb3IgdGhlIGZpcm13YXJlLgo+Pgo+PiBBZ3JlZWQsIGFuZCBpdCB3b3VsZCBzdGls
-bCBuZWVkIHNvbWVib2R5IHRvIGNvbmZpZ3VyZSBhbiBpZGVudGl0eSBkb21haW4gc28KPj4gdGhh
-dCB0cmFuc2FjdGlvbnMgYXJlbid0IGFib3J0ZWQgaW1tZWRpYXRlbHkuIFdlIGN1cnJlbnRseSBh
-bGxvdyB0aGUKPj4gaWRlbnRpdHkgZG9tYWluIHRvIGJlIHVzZWQgYnkgZGVmYXVsdCB2aWEgYSBj
-b21tYW5kLWxpbmUgb3B0aW9uLCBzbyBJIGd1ZXNzCj4+IHdlJ2QgbmVlZCBhIHdheSBmb3IgZmly
-bXdhcmUgdG8gcmVxdWVzdCB0aGF0IG9uIGEgcGVyLWRldmljZSBiYXNpcy4KPiAKPiBUaGUgSU9N
-TVUgbWFwcGluZyBpdHNlbGYgaXMgbm90IGEgcHJvYmxlbSwgdGhlIHByb2JsZW0gaXMgdGhlIG1h
-bmFnZW1lbnQgb2YKPiB0aGUgSU9NTVUuIEZvciBUZWdyYSB3ZSBkb24ndCB3YW50IGFueXRoaW5n
-IHRvIGludHJ1ZGUgaW50byB0aGUgSU9NTVUKPiBhY3Rpdml0aWVzIGJlY2F1c2U6Cj4gCj4gMSkg
-R1BVIEhXIHJlcXVpcmUgYWRkaXRpb25hbCBjb25maWd1cmF0aW9uIGZvciB0aGUgSU9NTVUgdXNh
-Z2UgYW5kIGR1bWIKPiBtYXBwaW5nIG9mIHRoZSBhbGxvY2F0aW9ucyBzaW1wbHkgZG9lc24ndCB3
-b3JrLgoKR2VuZXJhbGx5LCB0aGF0J3MgYWxyZWFkeSBoYW5kbGVkIGJ5IHRoZSBEUk0gZHJpdmVy
-cyBhbGxvY2F0aW5nIHRoZWlyIApvd24gdW5tYW5hZ2VkIGRvbWFpbnMuIFRoZSBvbmx5IHByb2Js
-ZW0gd2UgcmVhbGx5IG5lZWQgdG8gc29sdmUgaW4gdGhhdCAKcmVnYXJkIGlzIHRoYXQgY3VycmVu
-dGx5IHRoZSBkZXZpY2UgRE1BIG9wcyBkb24ndCBnZXQgdXBkYXRlZCB3aGVuIAptb3ZpbmcgYXdh
-eSBmcm9tIHRoZSBtYW5hZ2VkIGRvbWFpbi4gVGhhdCdzIGJlZW4gT0sgZm9yIHRoZSBWRklPIGNh
-c2UgCndoZXJlIHRoZSBkZXZpY2UgaXMgYm91bmQgdG8gYSBkaWZmZXJlbnQgZHJpdmVyIHdoaWNo
-IHdlIGtub3cgd29uJ3QgbWFrZSAKYW55IGV4cGxpY2l0IERNQSBBUEkgY2FsbHMsIGJ1dCBmb3Ig
-dGhlIG1vcmUgZ2VuZXJhbCBjYXNlIG9mIElPTU1VLWF3YXJlIApkcml2ZXJzIHdlIGNvdWxkIGNl
-cnRhaW5seSBkbyB3aXRoIGEgYml0IG9mIGNvb3BlcmF0aW9uIGJldHdlZW4gdGhlIApJT01NVSBB
-UEksIERNQSBBUEksIGFuZCBhcmNoIGNvZGUgdG8gdXBkYXRlIHRoZSBETUEgb3BzIGR5bmFtaWNh
-bGx5IHRvIApjb3BlIHdpdGggaW50ZXJtZWRpYXRlIHN1YnN5c3RlbXMgbWFraW5nIERNQSBBUEkg
-Y2FsbHMgb24gYmVoYWxmIG9mIApkZXZpY2VzIHRoZXkgZG9uJ3Qga25vdyB0aGUgaW50aW1hdGUg
-ZGV0YWlscyBvZi4KCj4gMikgT2xkZXIgVGVncmEgZ2VuZXJhdGlvbnMgaGF2ZSBhIGxpbWl0ZWQg
-cmVzb3VyY2UgYW5kIGNhcGFiaWxpdGllcyBpbiByZWdhcmRzCj4gdG8gSU9NTVUgdXNhZ2UsIGFs
-bG9jYXRpbmcgSU9NTVUgZG9tYWluIHBlci1kZXZpY2UgaXMganVzdCBpbXBvc3NpYmxlIGZvcgo+
-IGV4YW1wbGUuCj4gCj4gMykgSFcgcGVyZm9ybXMgY29udGV4dCBzd2l0Y2hlcyBhbmQgc28gcGFy
-dGljdWxhciBhbGxvY2F0aW9ucyBoYXZlIHRvIGJlCj4gYXNzaWduZWQgdG8gYSBwYXJ0aWN1bGFy
-IGNvbnRleHRzIElPTU1VIGRvbWFpbi4KCkkgdW5kZXJzdGFuZCBRdWFsY29tbSBTb0NzIGhhdmUg
-YSBzaW1pbGFyIHRoaW5nIHRvbywgYW5kIEFGQUlDUyB0aGF0IApjYXNlIGp1c3QgZG9lc24ndCBm
-aXQgaW50byB0aGUgY3VycmVudCBBUEkgbW9kZWwgYXQgYWxsLiBXZSBuZWVkIHRoZSAKSU9NTVUg
-ZHJpdmVyIHRvIHNvbWVob3cga25vdyBhYm91dCB0aGUgc3BlY2lmaWMgZGV0YWlscyBvZiB3aGlj
-aCBkZXZpY2VzIApoYXZlIG1hZ2ljIGFzc29jaWF0aW9ucyB3aXRoIHNwZWNpZmljIGNvbnRleHRz
-LCBhbmQgd2UgYWxtb3N0IGNlcnRhaW5seSAKbmVlZCBhIG1vcmUgZXhwcmVzc2l2ZSBpbnRlcmZh
-Y2UgdGhhbiBpb21tdV9kb21haW5fYWxsb2MoKSB0byBoYXZlIGFueSAKaG9wZSBvZiByZWxpYWJs
-ZSByZXN1bHRzLgoKUm9iaW4uCgo+IFNvbWUgb2YgdGhlIGFib3ZlIGlzIGR1ZSB0byBhIFNXIGRy
-aXZlciBtb2RlbCAoYW5kIGl0cyB3b3JrLWluLXByb2dyZXNzCj4gc3RhdHVzKSwgb3RoZXIgaXMg
-ZHVlIHRvIGEgSFcgbW9kZWwuIFNvIGVzc2VudGlhbGx5IHdlIG5lZWQgYSB3YXkgZm9yIGEgZHJp
-dmVyCj4gdG8gdGVsbCB0aGUgY29yZSBub3QgdG8gbWVzcyB3aXRoIElPTU1VIHN0dWZmIG9mIGRy
-aXZlcnMgZGV2aWNlIGJlaGluZCB0aGUKPiBkcml2ZXJzIGJhY2suCj4gCj4gSSdtIG5vdCBzdXJl
-IHdoYXQgeW91IGd1eXMgYXJlIG1lYW5pbmcgYnkgdGhlICJmaXJtd2FyZSIsIGNvdWxkIHlvdSBl
-bGFib3JhdGUKPiBwbGVhc2U/IERvIHlvdSBtZWFuIHRoZSBPcGVuIEZpcm13YXJlIGFuZCBoZW5j
-ZSB0aGUgZGV2aWNldHJlZSBvciB3aGF0Pwo+IAo+IAo+IAo+IF9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gaW9tbXUgbWFpbGluZyBsaXN0Cj4gaW9tbXVA
-bGlzdHMubGludXgtZm91bmRhdGlvbi5vcmcKPiBodHRwczovL2xpc3RzLmxpbnV4Zm91bmRhdGlv
-bi5vcmcvbWFpbG1hbi9saXN0aW5mby9pb21tdQo+IApfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+On Fri, Jul 27, 2018 at 05:02:37PM +0100, Robin Murphy wrote:
+> On 27/07/18 15:10, Dmitry Osipenko wrote:
+> >On Friday, 27 July 2018 12:03:28 MSK Will Deacon wrote:
+> >>On Fri, Jul 27, 2018 at 10:25:13AM +0200, Joerg Roedel wrote:
+> >>>On Fri, Jul 27, 2018 at 02:16:18AM +0300, Dmitry Osipenko wrote:
+> >>>>The proposed solution adds a new option to the base device driver
+> >>>>structure that allows device drivers to explicitly convey to the drivers
+> >>>>core that the implicit IOMMU backing for devices must not happen.
+> >>>
+> >>>Why is IOMMU mapping a problem for the Tegra GPU driver?
+> >>>
+> >>>If we add something like this then it should not be the choice of the
+> >>>device driver, but of the user and/or the firmware.
+> >>
+> >>Agreed, and it would still need somebody to configure an identity domain so
+> >>that transactions aren't aborted immediately. We currently allow the
+> >>identity domain to be used by default via a command-line option, so I guess
+> >>we'd need a way for firmware to request that on a per-device basis.
+> >
+> >The IOMMU mapping itself is not a problem, the problem is the management of
+> >the IOMMU. For Tegra we don't want anything to intrude into the IOMMU
+> >activities because:
+> >
+> >1) GPU HW require additional configuration for the IOMMU usage and dumb
+> >mapping of the allocations simply doesn't work.
+> 
+> Generally, that's already handled by the DRM drivers allocating
+> their own unmanaged domains. The only problem we really need to
+> solve in that regard is that currently the device DMA ops don't get
+> updated when moving away from the managed domain. That's been OK for
+> the VFIO case where the device is bound to a different driver which
+> we know won't make any explicit DMA API calls, but for the more
+> general case of IOMMU-aware drivers we could certainly do with a bit
+> of cooperation between the IOMMU API, DMA API, and arch code to
+> update the DMA ops dynamically to cope with intermediate subsystems
+> making DMA API calls on behalf of devices they don't know the
+> intimate details of.
+> 
+> >2) Older Tegra generations have a limited resource and capabilities in regards
+> >to IOMMU usage, allocating IOMMU domain per-device is just impossible for
+> >example.
+> >
+> >3) HW performs context switches and so particular allocations have to be
+> >assigned to a particular contexts IOMMU domain.
+> 
+> I understand Qualcomm SoCs have a similar thing too, and AFAICS that
+> case just doesn't fit into the current API model at all. We need the
+> IOMMU driver to somehow know about the specific details of which
+> devices have magic associations with specific contexts, and we
+> almost certainly need a more expressive interface than
+> iommu_domain_alloc() to have any hope of reliable results.
+
+This is correct for Qualcomm GPUs - The GPU hardware context switching 
+requires a specific context and there are some restrictions around
+secure contexts as well.
+
+We don't really care if the DMA attaches to a context just as long as it
+doesn't attach to the one(s) we care about. Perhaps a "valid context" mask would
+work in from the DT or the device struct to give the subsystems a clue as to
+which domains they were allowed to use. I recognize that there isn't a
+one-size-fits-all solution to this problem so I'm open to different ideas.
+
+Jordan
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
