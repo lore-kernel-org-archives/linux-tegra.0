@@ -1,7 +1,8 @@
 From: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-Subject: [PATCH 1/4] ASoC: tegra: i2s: Fix typo/broken macro
-Date: Fri, 27 Jul 2018 13:59:28 +0100
-Message-ID: <20180727125931.9794-2-jorge.sanjuan@codethink.co.uk>
+Subject: [PATCH 3/4] ASoC: tegra: Allow 32-bit and 24-bit
+	samples
+Date: Fri, 27 Jul 2018 13:59:30 +0100
+Message-ID: <20180727125931.9794-4-jorge.sanjuan@codethink.co.uk>
 References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,26 +24,58 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Edward Cragg <edward.cragg@codethink.co.uk>
 
-Fix typo in macro TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK.
+The tegra3 audio can support 32 and 24 bit sample sizes so add
+the option to the tegra30_i2s_hw_params to configure the S32_LE/S24_LE
+format when requested.
 
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
+[jorge.sanjuan@codethink.co.uk: Squashed multiple patches]
 Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
 ---
- sound/soc/tegra/tegra30_i2s.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/tegra/tegra30_i2s.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra30_i2s.h b/sound/soc/tegra/tegra30_i2s.h
-index 774fc6ad2026..2e561e946de2 100644
---- a/sound/soc/tegra/tegra30_i2s.h
-+++ b/sound/soc/tegra/tegra30_i2s.h
-@@ -173,7 +173,7 @@
- /* Number of slots in frame, minus 1 */
- #define TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT		16
- #define TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK_US	7
--#define TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK		(TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOT_MASK_US << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOT_SHIFT)
-+#define TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK		(TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK_US << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT)
- 
- /* TDM mode slot enable bitmask */
- #define TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT	8
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index ff1996f215ed..e26c19ef7439 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -150,6 +150,15 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
+ 		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
+ 		sample_size = 16;
+ 		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
++		val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
++		audio_bits = TEGRA30_AUDIOCIF_BITS_24;
++		sample_size = 24;
++		break;
++	case SNDRV_PCM_FORMAT_S32_LE:
++		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
++		sample_size = 32;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -322,14 +331,18 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+-		.formats = SNDRV_PCM_FMTBIT_S16_LE,
++		.formats = SNDRV_PCM_FMTBIT_S32_LE |
++			   SNDRV_PCM_FMTBIT_S24_LE |
++			   SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+ 	.capture = {
+ 		.stream_name = "Capture",
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+-		.formats = SNDRV_PCM_FMTBIT_S16_LE,
++		.formats = SNDRV_PCM_FMTBIT_S32_LE |
++			   SNDRV_PCM_FMTBIT_S24_LE |
++			   SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+ 	.ops = &tegra30_i2s_dai_ops,
+ 	.symmetric_rates = 1,
 -- 
 2.11.0
