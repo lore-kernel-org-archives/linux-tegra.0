@@ -1,81 +1,61 @@
-From: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-Subject: [PATCH 3/4] ASoC: tegra: Allow 32-bit and 24-bit
-	samples
-Date: Fri, 27 Jul 2018 13:59:30 +0100
-Message-ID: <20180727125931.9794-4-jorge.sanjuan@codethink.co.uk>
-References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with
+ IOMMU
+Date: Fri, 27 Jul 2018 17:10:22 +0300
+Message-ID: <4164951.xGHfcFJ9uZ@dimapc>
+References: <20180726231624.21084-1-digetx@gmail.com>
+ <20180727082512.lpvmeuvxnw3mpeym@8bytes.org> <20180727090328.GH28088@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: lgirdwood@gmail.com, broonie@kernel.org
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, thierry.reding@gmail.com, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20180727090328.GH28088-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Edward Cragg <edward.cragg@codethink.co.uk>
-
-The tegra3 audio can support 32 and 24 bit sample sizes so add
-the option to the tegra30_i2s_hw_params to configure the S32_LE/S24_LE
-format when requested.
-
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
-[jorge.sanjuan@codethink.co.uk: Squashed multiple patches]
-Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
----
- sound/soc/tegra/tegra30_i2s.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index ff1996f215ed..e26c19ef7439 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -150,6 +150,15 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
- 		sample_size = 16;
- 		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+		val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
-+		audio_bits = TEGRA30_AUDIOCIF_BITS_24;
-+		sample_size = 24;
-+		break;
-+	case SNDRV_PCM_FORMAT_S32_LE:
-+		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
-+		sample_size = 32;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -322,14 +331,18 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-+			   SNDRV_PCM_FMTBIT_S24_LE |
-+			   SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.capture = {
- 		.stream_name = "Capture",
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SNDRV_PCM_FMTBIT_S32_LE |
-+			   SNDRV_PCM_FMTBIT_S24_LE |
-+			   SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.ops = &tegra30_i2s_dai_ops,
- 	.symmetric_rates = 1,
--- 
-2.11.0
+T24gRnJpZGF5LCAyNyBKdWx5IDIwMTggMTI6MDM6MjggTVNLIFdpbGwgRGVhY29uIHdyb3RlOgo+
+IE9uIEZyaSwgSnVsIDI3LCAyMDE4IGF0IDEwOjI1OjEzQU0gKzAyMDAsIEpvZXJnIFJvZWRlbCB3
+cm90ZToKPiA+IE9uIEZyaSwgSnVsIDI3LCAyMDE4IGF0IDAyOjE2OjE4QU0gKzAzMDAsIERtaXRy
+eSBPc2lwZW5rbyB3cm90ZToKPiA+ID4gVGhlIHByb3Bvc2VkIHNvbHV0aW9uIGFkZHMgYSBuZXcg
+b3B0aW9uIHRvIHRoZSBiYXNlIGRldmljZSBkcml2ZXIKPiA+ID4gc3RydWN0dXJlIHRoYXQgYWxs
+b3dzIGRldmljZSBkcml2ZXJzIHRvIGV4cGxpY2l0bHkgY29udmV5IHRvIHRoZSBkcml2ZXJzCj4g
+PiA+IGNvcmUgdGhhdCB0aGUgaW1wbGljaXQgSU9NTVUgYmFja2luZyBmb3IgZGV2aWNlcyBtdXN0
+IG5vdCBoYXBwZW4uCj4gPiAKPiA+IFdoeSBpcyBJT01NVSBtYXBwaW5nIGEgcHJvYmxlbSBmb3Ig
+dGhlIFRlZ3JhIEdQVSBkcml2ZXI/Cj4gPiAKPiA+IElmIHdlIGFkZCBzb21ldGhpbmcgbGlrZSB0
+aGlzIHRoZW4gaXQgc2hvdWxkIG5vdCBiZSB0aGUgY2hvaWNlIG9mIHRoZQo+ID4gZGV2aWNlIGRy
+aXZlciwgYnV0IG9mIHRoZSB1c2VyIGFuZC9vciB0aGUgZmlybXdhcmUuCj4gCj4gQWdyZWVkLCBh
+bmQgaXQgd291bGQgc3RpbGwgbmVlZCBzb21lYm9keSB0byBjb25maWd1cmUgYW4gaWRlbnRpdHkg
+ZG9tYWluIHNvCj4gdGhhdCB0cmFuc2FjdGlvbnMgYXJlbid0IGFib3J0ZWQgaW1tZWRpYXRlbHku
+IFdlIGN1cnJlbnRseSBhbGxvdyB0aGUKPiBpZGVudGl0eSBkb21haW4gdG8gYmUgdXNlZCBieSBk
+ZWZhdWx0IHZpYSBhIGNvbW1hbmQtbGluZSBvcHRpb24sIHNvIEkgZ3Vlc3MKPiB3ZSdkIG5lZWQg
+YSB3YXkgZm9yIGZpcm13YXJlIHRvIHJlcXVlc3QgdGhhdCBvbiBhIHBlci1kZXZpY2UgYmFzaXMu
+CgpUaGUgSU9NTVUgbWFwcGluZyBpdHNlbGYgaXMgbm90IGEgcHJvYmxlbSwgdGhlIHByb2JsZW0g
+aXMgdGhlIG1hbmFnZW1lbnQgb2YgCnRoZSBJT01NVS4gRm9yIFRlZ3JhIHdlIGRvbid0IHdhbnQg
+YW55dGhpbmcgdG8gaW50cnVkZSBpbnRvIHRoZSBJT01NVSAKYWN0aXZpdGllcyBiZWNhdXNlOgoK
+MSkgR1BVIEhXIHJlcXVpcmUgYWRkaXRpb25hbCBjb25maWd1cmF0aW9uIGZvciB0aGUgSU9NTVUg
+dXNhZ2UgYW5kIGR1bWIgCm1hcHBpbmcgb2YgdGhlIGFsbG9jYXRpb25zIHNpbXBseSBkb2Vzbid0
+IHdvcmsuCgoyKSBPbGRlciBUZWdyYSBnZW5lcmF0aW9ucyBoYXZlIGEgbGltaXRlZCByZXNvdXJj
+ZSBhbmQgY2FwYWJpbGl0aWVzIGluIHJlZ2FyZHMgCnRvIElPTU1VIHVzYWdlLCBhbGxvY2F0aW5n
+IElPTU1VIGRvbWFpbiBwZXItZGV2aWNlIGlzIGp1c3QgaW1wb3NzaWJsZSBmb3IgIApleGFtcGxl
+LgoKMykgSFcgcGVyZm9ybXMgY29udGV4dCBzd2l0Y2hlcyBhbmQgc28gcGFydGljdWxhciBhbGxv
+Y2F0aW9ucyBoYXZlIHRvIGJlIAphc3NpZ25lZCB0byBhIHBhcnRpY3VsYXIgY29udGV4dHMgSU9N
+TVUgZG9tYWluLgoKU29tZSBvZiB0aGUgYWJvdmUgaXMgZHVlIHRvIGEgU1cgZHJpdmVyIG1vZGVs
+IChhbmQgaXRzIHdvcmstaW4tcHJvZ3Jlc3MgCnN0YXR1cyksIG90aGVyIGlzIGR1ZSB0byBhIEhX
+IG1vZGVsLiBTbyBlc3NlbnRpYWxseSB3ZSBuZWVkIGEgd2F5IGZvciBhIGRyaXZlciAKdG8gdGVs
+bCB0aGUgY29yZSBub3QgdG8gbWVzcyB3aXRoIElPTU1VIHN0dWZmIG9mIGRyaXZlcnMgZGV2aWNl
+IGJlaGluZCB0aGUgCmRyaXZlcnMgYmFjay4KCkknbSBub3Qgc3VyZSB3aGF0IHlvdSBndXlzIGFy
+ZSBtZWFuaW5nIGJ5IHRoZSAiZmlybXdhcmUiLCBjb3VsZCB5b3UgZWxhYm9yYXRlIApwbGVhc2U/
+IERvIHlvdSBtZWFuIHRoZSBPcGVuIEZpcm13YXJlIGFuZCBoZW5jZSB0aGUgZGV2aWNldHJlZSBv
+ciB3aGF0PwoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
