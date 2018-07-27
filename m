@@ -1,140 +1,47 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 3/3] mmc: tegra: prevent ACMD23 on Tegra 3
-Date: Fri, 27 Jul 2018 22:52:11 +0300
-Message-ID: <4098188.Bd2NGYzoJE@dimapc>
-References: <20180712073904.4705-1-stefan@agner.ch> <24fffc2c52b58301c37d95fe5d1ad355@agner.ch> <3a970d5d-4f18-0167-ab22-2032e8bf743d@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with
+ IOMMU
+Date: Fri, 27 Jul 2018 23:02:01 +0300
+Message-ID: <4850389.K9ByBxYttl@dimapc>
+References: <20180726231624.21084-1-digetx@gmail.com>
+ <CAL_JsqJCE+8hZ-xCajUaW4ScY8VmaZ3nN4U-_AKJL+063sLBpw@mail.gmail.com>
+ <20180727183134.GD6738@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3a970d5d-4f18-0167-ab22-2032e8bf743d@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>, adrian.hunter@intel.com, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, marcel.ziswiler@toradex.com, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20180727183134.GD6738-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, 26 July 2018 20:48:55 MSK Peter Geis wrote:
-> On 07/26/2018 01:36 PM, Stefan Agner wrote:
-> > On 26.07.2018 18:39, Peter Geis wrote:
-> >>>>>> I finally got around to testing this on the Ouya (Tegra 3).
-> >>>>> 
-> >>>>> Thanks for testing!
-> >>>>> 
-> >>>>>> I found that the "Got command interrupt 0x00010000 even though no
-> >>>>>> command operation was in progress." error occurred when the interface
-> >>>>>> is unstable.
-> >>>>>> I've had a lot of problems with sdmmc4 stability on the Ouya above 34
-> >>>>>> Mhz, probably due to the fact that they are using the internal cmd
-> >>>>>> and
-> >>>>>> clock pull-up resistors, against the TRM's instruction.
-> >>>>>> At 39Mhz, I saw the error this patch corrects.
-> >>>>>> With the patch, the error went away, but the interface is still
-> >>>>>> unstable under load.
-> >>>>> 
-> >>>>> How does this instability manifest exactly?
-> >>>> 
-> >>>> At the very edge of stability, you see write errors under heavy load.
-> >>>> As clock rate increases, the write errors occur more frequently.
-> >>>> At a certain point, you start getting read errors.
-> >>>> Following that you get constant io errors during card probing.
-> >>>> Eventually the emmc will fail to initialize, with errors 87 or 110.
-> >>> 
-> >>> What mode are you running at actually? E.g. what is the ios file saying?
-> >>> cat /sys/kernel/debug/mmcX/ios
-> >> 
-> >> This is the best functionality I've been able to get prior to the
-> >> patches:
-> >> root@ouya:~# cat /sys/kernel/debug/mmc0/ios
-> >> clock:          30000000 Hz
-> >> actual clock:   29142858 Hz
-> >> vdd:            21 (3.3 ~ 3.4 V)
-> >> bus mode:       2 (push-pull)
-> >> chip select:    0 (don't care)
-> >> power mode:     2 (on)
-> >> bus width:      3 (8 bits)
-> >> timing spec:    9 (mmc HS200)
-> >> signal voltage: 1 (1.80 V)
-> >> driver type:    0 (driver type B)
-> > 
-> > Yeah HS200 is definilty not supported by the controller and really
-> > should not be used.
-> > 
-> >> Now I am trying DDR, but even with the patches I'm not able to remain
-> >> stable above 17Mhz (34Mhz clock).
-> >> 
-> >> I've also tried just straight mmc-hs mode, but even that makes no
-> >> difference.> 
-> > So you tried timing spec 1 (mmc HS)?
-> > 
-> > How did you exactly enable mmc-hs mode?
-> 
-> cap-mmc-highspeed;
-> 
-> > I suggest to *not set* vqmmc and apply patch 1. It will report that
-> > signaling voltage is 3.3V, but that did not really matter in our case.
-> > This was our baseline and always worked stable on mainline. I also would
-> > use that mode when tweaking pinmux etc...
-> 
-> Will do, thanks.
-> 
-> >>>> I've been tweaking the pull up/down values to try and improve the
-> >>>> stability, but without access to anything but the TRM it's a lot of
-> >>>> trial and error.
-> >>> 
-> >>> Hm, maybe Marcel's recent fixes in our device tree are helpful?
-> >>> https://lkml.org/lkml/2018/7/22/165
-> >>> 
-> >>> Also make sure to have a complete pinmux such that alternative pins for
-> >>> sdmmc4 are *not* muxed as sdmmc4.
-> >> 
-> >> That was my first issue, which was preventing sdmmc4 from working at all.
-> >> Just double checked all of the spare function pins, they are all
-> >> assigned elsewhere.
-> > 
-> > Ok.
-> > 
-> >>>>>> Lowering down to 32Mhz, without the patch there are no errors.
-> >>>>> 
-> >>>>> So the patch does not make it less stable right?
-> >>>> 
-> >>>> No, it did not affect stability.
-> >>>> Although I'd conduct some performance testing to check for degradation.
-> >>>> Of course I'm nowhere near the limits of the controller, so it is
-> >>>> doubtful I'd see a hit.
-> >>> 
-> >>> Ok, and this is with the complete patchset applied correct?
-> >>> 
-> >>> Btw, what device tree are you using? Ouya is not upstream as far as I
-> >>> can tell?
-> >> 
-> >> Indeed, I have the full patchset.
-> >> 
-> >> Ouya is an old android game console that I've been working on getting
-> >> mainline working on.
-> > 
-> > I know, I have one sitting here too. I only tried to tinker a bit at the
-> > very beginning...
-> 
-> It runs Xubuntu very well now with mainline.
-> I've got most everything roughly supported with the exception of audio.
-> 
-> >> I've written most of the device tree, with contributions from Matt
-> >> Merhar.
-> >> It's almost bit for bit a cardhu dev board, but with everything not
-> >> necessary to function removed.
-> >> They cut a lot of corners with the board design.
-> >> Last stable kernel was 3.2, but it ran fine at 52mhz, mind you it
-> >> reported it was running mode 5.
-> > 
-> > That is what we saw too. With Apalis/Colibri T30 L4T downstream kernel
-> > (which is 3.1 with quite some patches) 52MHz DDR worked fine,
-> > surprisingly even with ACMD23. However, speed is slightly slower than
-> > mainline 52MHz without ACMD23...
-> 
-> I noticed the same thing, speed with the original kernel on the MMC was
-> worse at 52Mhz than it was at 34Mhz in HS-200 mode on mainline.
-> I'd be happy with it where it is, but the fact that it worked at 52Mhz
-> before makes me believe something isn't quite there yet.
-> I selected HS-200 mode just to force 1.8v mode.
-
-What's the card model your Ouya's eMMC has?
+T24gRnJpZGF5LCAyNyBKdWx5IDIwMTggMjE6MzE6MzQgTVNLIEpvZXJnIFJvZWRlbCB3cm90ZToK
+PiBPbiBGcmksIEp1bCAyNywgMjAxOCBhdCAxMToxMzozMUFNIC0wNjAwLCBSb2IgSGVycmluZyB3
+cm90ZToKPiA+IEkgZG9uJ3QgZm9sbG93IHdoeSB3ZSBuZWVkIGEgcHJvcGVydHkgcmF0aGVyIHRo
+YW4gYmVpbmcgaW1wbGllZCBieSB0aGUKPiA+IGRldmljZSdzICh0aGUgR1BVKSBjb21wYXRpYmxl
+IHN0cmluZy4KPiAKPiBUaGVyZSBtaWdodCBiZSBkZXZpY2VzIHdoZXJlIGVpdGhlciBzZXR1cCB3
+b3Jrcywgd2l0aCBvciB3aXRob3V0IElPTU1VCj4gdHJhbnNsYXRpb24sIGFuZCB0aGUgZmlybXdh
+cmUgY2FuIHNldCB0aGUgcHJvcGVydHkgZGVwZW5kaW5nIG9uIHdoZXRoZXIKPiB0aGUgdXNlciB3
+YW50cyBtb3JlIHBlcmZvcm1hbmNlIG9yIG1vcmUgc2VjdXJpdHkuCj4gCj4gSWYgd2UgaGF2ZSBh
+IHdoaXRlbGlzdCBpbiB0aGUga2VybmVsIHRoaXMgZ2V0cyBtb3JlIGNvbXBsaWNhdGVkLCB3ZQo+
+IHByb2JhYmx5IG5lZWQgYWRkaXRpb25hbCBrZXJuZWwtcGFyYW1ldGVycyB0byBvdmVyd3JpdGUg
+dGhvc2Ugd2hpdGVsaXN0Cj4gZW50cmllcy4gSGF2aW5nIGEgcHJvcGVydHkgaW4gdGhlIGRldmlj
+ZS10cmVlIHNlZW1zIHRvIGJlIGEgYmV0dGVyIHdheQo+IGhlcmUsIGltaG8uCgpJSVVDLCBkZXZp
+Y2UtdHJlZSBzaG91bGQgYmUgY29uc2lkZXJlZCB0byBiZSAid3JpdHRlbiBpbiBzdG9uZSIgZm9y
+IGEgY29uc3VtZXIgCmRldmljZSBhbmQgaGVuY2UgZmlybXdhcmUgcHJvcGVydHkgaXNuJ3Qgc29t
+ZXRoaW5nIHRoYXQgY291bGQgYmUgZWFzaWx5IApjaGFuZ2VkLiBUaGUga2VybmVsLXBhcmFtZXRl
+ciB3aWxsIGJlIG11Y2ggbW9yZSB1bml2ZXJzYWwuIEFueXdheSB0aGUgZ2xvYmFsIAp3aGl0ZWxp
+c3Rpbmcgc2hvdWxkIGJlIGEgZGlmZmVyZW50IHRvcGljIGZvciBkaXNjdXNzaW9uLCByaWdodCBu
+b3cgd2UgbmVlZCBhIApraW5kIG9mIHByaXZhdGUgd2hpdGVsaXN0aW5nIHRoYXQgaXMgaW50ZXJu
+YWwgdG8ga2VybmVsLgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
