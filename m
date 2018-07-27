@@ -1,42 +1,27 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: tegra clock updates and fixes
-Date: Fri, 27 Jul 2018 09:22:31 +0100
-Message-ID: <22193ef215e669f4273f8a66bf5482db@codethink.co.uk>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
- <153261857589.48062.4721112255504541100@swboyd.mtv.corp.google.com>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
+Date: Fri, 27 Jul 2018 10:25:13 +0200
+Message-ID: <20180727082512.lpvmeuvxnw3mpeym@8bytes.org>
+References: <20180726231624.21084-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <153261857589.48062.4721112255504541100@swboyd.mtv.corp.google.com>
+Content-Disposition: inline
+In-Reply-To: <20180726231624.21084-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@lists.codethink.co.uk, jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, thierry.reding@gmail.com
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <cyndis@kapsi.fi>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Nicolas Chauvet <kwizart@gmail.com>, devicetree@vger.kernel.org, nouveau@lists.freedesktop.org, iommu@lists.linux-foundation.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Jul 27, 2018 at 02:16:18AM +0300, Dmitry Osipenko wrote:
+> The proposed solution adds a new option to the base device driver
+> structure that allows device drivers to explicitly convey to the drivers
+> core that the implicit IOMMU backing for devices must not happen.
+
+Why is IOMMU mapping a problem for the Tegra GPU driver?
+
+If we add something like this then it should not be the choice of the
+device driver, but of the user and/or the firmware.
 
 
-On 2018-07-26 16:22, Stephen Boyd wrote:
-> Quoting Ben Dooks (2018-07-26 06:32:29)
->> On 2018-07-20 14:45, Ben Dooks wrote:
->> > Hi, this is a set of clock updates and fixes we did when developing
->> > the tegra20/tegra30 auto support. The audio change is due to using
->> > the tegra in clock-slave mode (this hasn't been done before)
->> >
->> > We have also implemented the clock reset status callback as it is
->> > used by some of the driver work we did.
->> 
->> Is it possible to look at applying the bits of the series that are
->> not currently under discussion? If so should I post a smaller series?
->> 
-> 
-> Just send it again please. I'd prefer to see some reviewed-by tags from
-> Nvidia folks on bits that are good to merge.
-
-I've seen feedback on some of the tegra3 clock bits, however no one
-has made any comments on other bits like the reset controller.
-
--- 
-Ben
+	Joerg
