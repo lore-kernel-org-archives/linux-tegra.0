@@ -1,32 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: tegra: Fix tegra_gpio_irq_set_type()
-Date: Sun, 29 Jul 2018 22:39:30 +0200
-Message-ID: <CACRpkdbx1Zj8G0H9pKsF-+JfXBruE4_Rx3ZD5j8q3ycsNS+YOQ@mail.gmail.com>
-References: <20180717161038.21500-1-digetx@gmail.com>
+Subject: Re: [PATCH] gpiolib: probe deferral error reporting
+Date: Sun, 29 Jul 2018 22:49:12 +0200
+Message-ID: <CACRpkdZSb--nGAR2DVfBgqmQTv=S_sBjLTfJiKHzG2GyfJ6jEw@mail.gmail.com>
+References: <20180720075449.26711-1-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717161038.21500-1-digetx@gmail.com>
+In-Reply-To: <20180720075449.26711-1-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 6:12 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+On Fri, Jul 20, 2018 at 9:54 AM Marcel Ziswiler <marcel@ziswiler.com> wrote:
 
-> Commit 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
-> broke tegra_gpio_irq_set_type() because requesting of GPIO direction must
-> be done after enabling GPIO function for a pin.
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 >
-> This patch fixes drivers probe failure like this:
+> Actually report the error code from devm_regulator_get() which may as
+> well just be a probe deferral.
 >
->  gpio gpiochip0: (tegra-gpio): gpiochip_lock_as_irq: cannot get GPIO direction
->  tegra-gpio 6000d000.gpio: unable to lock Tegra GPIO 144 as IRQ
+> This is e.g. what one gets upon booting a Colibri T20:
 >
-> Fixes: 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> gpiochip_add_data_with_key: GPIOs 0..223 (tegra-gpio) failed to register
+>
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Patch applied with Jon's tags.
+Makes perfect sense.
+Patch applied.
 
 Yours,
 Linus Walleij
