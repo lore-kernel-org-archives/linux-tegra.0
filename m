@@ -1,52 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 5/7] dt-bindings: Add Tegra PMC pad configuration bindings
-Date: Sun, 29 Jul 2018 22:54:41 +0200
-Message-ID: <CACRpkdbDjbi5+WAjU2kYLZZONVc9zrTuCAX9BiA86OrWN6vjPw@mail.gmail.com>
-References: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
- <1531396813-6581-6-git-send-email-avienamo@nvidia.com> <20180716154309.GA16477@rob-hp-laptop>
- <20180717152318.3608e3f9@dhcp-10-21-25-168> <CAL_JsqL1F0RF_6=ho0pa7Uh4AUsyvFRDGM50gN4=6_+MwBfGYQ@mail.gmail.com>
- <20180717183020.5ab9bfa6@dhcp-10-21-25-168> <cb67ced4-eef8-abb5-5706-3282a55edbb2@nvidia.com>
+Subject: Re: [PATCH 1/2] pinctrl: tegra: define GPIO compatible node per SoC
+Date: Sun, 29 Jul 2018 23:37:40 +0200
+Message-ID: <CACRpkda2SouLeKO8UrRxwQOwKtwsiUctE0cu3YKKj8C2SViSbw@mail.gmail.com>
+References: <20180726154025.13173-1-stefan@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cb67ced4-eef8-abb5-5706-3282a55edbb2@nvidia.com>
+In-Reply-To: <20180726154025.13173-1-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: avienamo@nvidia.com, Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.co>, Dmitry Osipenko <digetx@gmail.com>, Kees Cook <keescook@chromium.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 1:16 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+On Thu, Jul 26, 2018 at 5:40 PM Stefan Agner <stefan@agner.ch> wrote:
 
-> Adding Linus ...
-
-OMG this sounds bad.
-
-> >> I don't know offhand. Doesn't look like it if you have custom values.
-> >
-> > It's listed under "Supported generic properties" in
-> > pinctrl-bindings.txt. The convention seems to be not to add a vendor
-> > prefix even though such custom macro values are used. The property is
-> > currently used by qcom,pmic-gpio, qcom,pmic-mpp, and renesas,pfc-pinctrl.
-> > I could not find a bindings document describing it with a vendor prefix.
+> Tegra 2 uses a different GPIO controller which uses "tegra20-gpio" as
+> compatible string.
 >
-> Looking at other users of the 'power-source' property it is not clear to
-> me if the values should/can be vendor specific or not. I see cases where
-> some people use definitions and others use actual voltages.
+> Make the compatible string the GPIO node is using a SoC specific
+> property. This prevents the kernel from registering the GPIO range
+> twice in case the GPIO range is specified in the device tree.
 >
-> Linus, any recommendations here?
+> Fixes: 9462510ce31e ("pinctrl: tegra: Only set the gpio range if needed")
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-It's a bit of imperfect world here.
-
-I always imagines it was some kind of enumerator
-like source A, B or C... so 0, 1 defined in sime include/dt-bindings/*
-would make most sense to me.
-
-In general, use SI-units if you can, else use something that makes
-sense for the people writing the device tree. These enumerators
-seems to make sense.
-
-If nothing makes any sense, maybe a custom property makes it
-make sense.
+Patch applied.
 
 Yours,
 Linus Walleij
