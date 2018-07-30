@@ -1,66 +1,46 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: Re: [PATCH v2 00/10] Tegra SDHCI update the pad autocal procedure
-Date: Mon, 30 Jul 2018 18:43:51 +0300
-Message-ID: <20180730184351.5044cb6e@dhcp-10-21-25-168>
-References: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
-        <CAPDyKFo+nv+9qYV=J5k-63cDhQO=L==87RLMj_7BnjEjUf5iEQ@mail.gmail.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 0/4] ASoC: Tegra30 TDM support
+Date: Mon, 30 Jul 2018 18:22:08 +0100
+Message-ID: <e7961b55c10610a7e137edee2995add9@codethink.co.uk>
+References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFo+nv+9qYV=J5k-63cDhQO=L==87RLMj_7BnjEjUf5iEQ@mail.gmail.com>
+In-Reply-To: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, thierry.reding@gmail.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 30 Jul 2018 17:07:59 +0200
-Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-> On 26 July 2018 at 14:26, Aapo Vienamo <avienamo@nvidia.com> wrote:
-> > Hi all,
-> >
-> > Update the tegra_sdhci_pad_autocalib() pad drive strength calibration
-> > procedure to match the ones specified in the TRMs of the more recent
-> > SoCs. This was tested on Tegra186, Tegra210, and Tegra124, although it
-> > should not break things older generations either.
-> >
-> > This series depends on the "Tegra SDHCI enable 1.8 V signaling on
-> > Tegar210 and Tegra186" series posted earlier.  
+
+On 2018-07-27 13:59, Jorge Sanjuan wrote:
+> This patchset adds support for TDM audio on Tegra30 hardware.
+> It adds the DAI's `set_tdm_slot` callback and enables a tegra
+> pcm to have up to 8 channels.
 > 
-> According to the cover letter of the above series, it states that it
-> depends on $subject series. A circular dependency. :-)
+> It also includes support for other audio formats supported by
+> the Tegra30 HW and fixes a broken macro needed for setting the
+> TDM on the registers.
+> 
+> Based on Linux 4.18-rc3 tag.
+> 
+> Edward Cragg (4):
+>   ASoC: tegra: i2s: Fix typo/broken macro
+>   ASoC: tegra: Add a TDM configuration callback
+>   ASoC: tegra: Allow 32-bit and 24-bit samples
+>   ASoC: tegra: i2s: Add support for more than 2 channels
+> 
+>  sound/soc/tegra/tegra30_i2s.c | 72 
+> ++++++++++++++++++++++++++++++++++++-------
+>  sound/soc/tegra/tegra30_i2s.h |  2 +-
+>  2 files changed, 62 insertions(+), 12 deletions(-)
 
-The dependency chain goes like this: "Tegra SDHCI update the pad
-autocal procedure" -> "Tegra SDHCI enable 1.8 V signaling on Tegar210
-and Tegra186" -> "Tegra PMC pinctrl pad configuration".
+Just as a note, Ed Cragg has moved on from Codethink and I've not
+got a new address for him. We've been cleaning some of the work Ed,
+Jorge, Terry and myself have been doing.
 
-> In fact, there should be no dependency at all or else there seems to
-> be a DT compatibility problem here...
-
-From a functionality perspective there's no strict dependency, however,
-I don't think "[PATCH v2 09/10] mmc: tegra: Perform pad calibration
-after voltage switch" can be applied cleanly without
-"[PATCH v2 03/10] mmc: tegra: Reconfigure pad voltages during voltage
-switching" from the "Tegra SDHCI enable 1.8 V signaling on Tegar210 and
-Tegra186" series.
-
-> Anyway, I think it actually makes sense to fold in all changes into
-> one series. Make sure the dt-doc changes comes first, then the driver
-> changes and finally arm64/dts changes. This should make it easy to
-> follow the review and I can pick the mmc parts and the soc maintainer
-> can pick the arm64/dts changes.
-
-I've sent the changes in multiple part because I've been working on
-further changes to the driver while the previous parts have been
-getting reviewed. This is still the case and there's still going to be
-at least one more series which adds support for HS200 tuning and some
-smaller changes after it. However, the HS200 work is probably going to
-be ready for review in a day or two. I can send these as a one series
-from now on, although at this point it would be 27 patches in total
-and even more with the HS200 patches.
-
-I can do that if you prefer to do it that way. Makes my life somewhat
-easier too.
-
- -Aapo
+-- 
+Ben
