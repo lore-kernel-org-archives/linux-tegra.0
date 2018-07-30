@@ -1,84 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/4] ASoC: tegra: Add a TDM configuration
-	callback
-Date: Mon, 30 Jul 2018 16:07:49 +0100
-Message-ID: <20180730150749.GK5789@sirena.org.uk>
-References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
- <20180727125931.9794-3-jorge.sanjuan@codethink.co.uk>
- <2392df6f-12bc-74fe-ec0f-50dbb7b9a33a@nvidia.com>
- <20180730101800.GF5789@sirena.org.uk>
- <2a91268d-351b-d342-42bd-8ffbf33a316e@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 00/10] Tegra SDHCI update the pad autocal procedure
+Date: Mon, 30 Jul 2018 17:07:59 +0200
+Message-ID: <CAPDyKFo+nv+9qYV=J5k-63cDhQO=L==87RLMj_7BnjEjUf5iEQ@mail.gmail.com>
+References: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0007691884723473734=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <2a91268d-351b-d342-42bd-8ffbf33a316e@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, thierry.reding@gmail.com, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 26 July 2018 at 14:26, Aapo Vienamo <avienamo@nvidia.com> wrote:
+> Hi all,
+>
+> Update the tegra_sdhci_pad_autocalib() pad drive strength calibration
+> procedure to match the ones specified in the TRMs of the more recent
+> SoCs. This was tested on Tegra186, Tegra210, and Tegra124, although it
+> should not break things older generations either.
+>
+> This series depends on the "Tegra SDHCI enable 1.8 V signaling on
+> Tegar210 and Tegra186" series posted earlier.
 
---===============0007691884723473734==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="T4Djgzn3z2HSNnx0"
-Content-Disposition: inline
+According to the cover letter of the above series, it states that it
+depends on $subject series. A circular dependency. :-)
 
+In fact, there should be no dependency at all or else there seems to
+be a DT compatibility problem here...
 
---T4Djgzn3z2HSNnx0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Anyway, I think it actually makes sense to fold in all changes into
+one series. Make sure the dt-doc changes comes first, then the driver
+changes and finally arm64/dts changes. This should make it easy to
+follow the review and I can pick the mmc parts and the soc maintainer
+can pick the arm64/dts changes.
 
-On Mon, Jul 30, 2018 at 03:04:46PM +0100, Jon Hunter wrote:
-> On 30/07/18 11:18, Mark Brown wrote:
+[...]
 
-> > DSP modes only care about the rising edge of the LRCLK, the pulse can be
-> > any width without causing interoperability problems.
-
-> OK, thanks I was not able to find a spec that defines this, but I saw a
-> lot of codecs use a single bit clock width. So then equally making the
-> default '1' should also be fine.
-
-There's not really a spec for this, it's just what tends to be
-implemented.
-
-> I still do not like configuring the fsync width in this function. The
-> fsync width needs to be configured for both DSP modes and normal I2S
-> modes and so it seems it would be more appropriate to do this in the
-> hw_params function for this driver.
-
-You *could* just always use the I2S width, it's going to look odd when
-people use a scope but it will work most of the time.
-
---T4Djgzn3z2HSNnx0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltfKcQACgkQJNaLcl1U
-h9BB0Af+IyXKfsxp1Wb1UfKoIPDIVgYtmwl+1Y8/bfWN3+FAgD2w+KKS2NA5mRBg
-WpXyuoJ1JxIj4016p+YX1JBtzQKAULHGaEK/GjWGHbh0e6hlG6uKgnAXTD2bGBjT
-vz0SanSzblF0DTUHzH4gZHc+/K8TK/LUWjLdDmrOFePZ+Uk83fCDbtPuJWPQ4t/B
-b57efuww3wXP0tAKIKFAtW+trIWXhByODi/tjqsR2VFE9gcUIsgpPtiq+dkbhPDb
-3GJMrdExpTTIh5oG3oBu+8MyhJxw/Km6djZrC5cXPUXCV4B/dg0Y7TXcIRn5/lDI
-8gaHajCblyhEYmfxnF+8ybq0yjffag==
-=Bfke
------END PGP SIGNATURE-----
-
---T4Djgzn3z2HSNnx0--
-
---===============0007691884723473734==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============0007691884723473734==--
+Kind regards
+Uffe
