@@ -1,89 +1,82 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] ASoC: tegra_alc5632: fix device_node refcounting
-Date: Mon, 30 Jul 2018 09:23:13 +0100
-Message-ID: <8a58db40-13c8-eaf1-85a0-bf6da8224997@nvidia.com>
-References: <1532725619-8775-1-git-send-email-khoroshilov@ispras.ru>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/4] ASoC: tegra: Add a TDM configuration
+	callback
+Date: Mon, 30 Jul 2018 09:49:08 +0100
+Message-ID: <20180730084908.GB5789@sirena.org.uk>
+References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
+ <20180727125931.9794-3-jorge.sanjuan@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532725619-8775-1-git-send-email-khoroshilov@ispras.ru>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexey Khoroshilov <khoroshilov@ispras.ru>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Content-Type: multipart/mixed; boundary="===============3702962846655915520=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20180727125931.9794-3-jorge.sanjuan@codethink.co.uk>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, jonathanh@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 27/07/18 22:06, Alexey Khoroshilov wrote:
-> tegra_alc5632_probe() increments reference count of device nodes
-> with of_parse_phandle(), but there is no code decrementing them
-> in the driver.
-> 
-> The patch adds of_node_put() to tegra_alc5632_remove() and
-> to error handling paths in the probe.
-> 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> ---
->  sound/soc/tegra/tegra_alc5632.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
-> index 5197d6b18cb6..98d87801d57a 100644
-> --- a/sound/soc/tegra/tegra_alc5632.c
-> +++ b/sound/soc/tegra/tegra_alc5632.c
-> @@ -190,14 +190,14 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
->  		dev_err(&pdev->dev,
->  			"Property 'nvidia,i2s-controller' missing or invalid\n");
->  		ret = -EINVAL;
-> -		goto err;
-> +		goto err_put_codec_of_node;
->  	}
->  
->  	tegra_alc5632_dai.platform_of_node = tegra_alc5632_dai.cpu_of_node;
->  
->  	ret = tegra_asoc_utils_init(&alc5632->util_data, &pdev->dev);
->  	if (ret)
-> -		goto err;
-> +		goto err_put_cpu_of_node;
->  
->  	ret = snd_soc_register_card(card);
->  	if (ret) {
-> @@ -210,6 +210,13 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
->  
->  err_fini_utils:
->  	tegra_asoc_utils_fini(&alc5632->util_data);
-> +err_put_cpu_of_node:
-> +	of_node_put(tegra_alc5632_dai.cpu_of_node);
-> +	tegra_alc5632_dai.cpu_of_node = NULL;
-> +	tegra_alc5632_dai.platform_of_node = NULL;
-> +err_put_codec_of_node:
-> +	of_node_put(tegra_alc5632_dai.codec_of_node);
-> +	tegra_alc5632_dai.codec_of_node = NULL;
->  err:
->  	return ret;
->  }
-> @@ -223,6 +230,12 @@ static int tegra_alc5632_remove(struct platform_device *pdev)
->  
->  	tegra_asoc_utils_fini(&machine->util_data);
->  
-> +	of_node_put(tegra_alc5632_dai.cpu_of_node);
-> +	tegra_alc5632_dai.cpu_of_node = NULL;
-> +	tegra_alc5632_dai.platform_of_node = NULL;
-> +	of_node_put(tegra_alc5632_dai.codec_of_node);
-> +	tegra_alc5632_dai.codec_of_node = NULL;
-> +
->  	return 0;
->  }
+--===============3702962846655915520==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SkvwRMAIpAhPCcCJ"
+Content-Disposition: inline
 
-Thanks!
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+--SkvwRMAIpAhPCcCJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers
-Jon
+On Fri, Jul 27, 2018 at 01:59:29PM +0100, Jorge Sanjuan wrote:
+> From: Edward Cragg <edward.cragg@codethink.co.uk>
+>=20
+> Add a callback to configure TDM settings for the Tegra30
+> I2S ASoC 'platform' driver.
+>=20
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
 
--- 
-nvpublic
+This says it was britten by Edward but there's a signoff from Ben before
+his?
+
+> +	dev_dbg(dai->dev, "%s: setting TDM: tx_mask: 0x%08x rx_mask: 0x%08x"
+> +		"slots: 0x%08x width: %d\n",
+> +		__func__, tx_mask, rx_mask, slots, slot_width);
+
+Please don't split log messages over lines, it makes it harder to grep
+for them.  Just use a long line.
+
+I'm also not seeing any validation of the parameters?
+
+--SkvwRMAIpAhPCcCJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlte0QQACgkQJNaLcl1U
+h9BuNAf/cfHPyby2vIiYiBtKNjYyarPLvjsq0p2Q2DrR4uZY3N47QsCyaOYBw7BU
+715N9S7k42wEkRpVzHXzYj2MzCj9Zvc2fJCRfnbWWCSUT75cRfzRZi2z8g7yBCsB
+cFe/IpO48eFpMBNOlGQbTqa40dtu6SXRMAEa8q63aS34tq35lzB2hEt/WDwdO+J0
+XiMXF7Cq9VxDKjOnTW7SOxu5PB2iCTvRSWxr/ts1Ij1cQl1emawM6bsfZeLJxBf/
+DFEfvWY0I/U/MUftupOUqA1HSpYrUQ0ADhu8QzY4Kxvj3tPR4DGGj5vA50C8GBjS
+VE6qk2lVUgz4pLECIh6wdo8+uIvEtA==
+=aGL7
+-----END PGP SIGNATURE-----
+
+--SkvwRMAIpAhPCcCJ--
+
+--===============3702962846655915520==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============3702962846655915520==--
