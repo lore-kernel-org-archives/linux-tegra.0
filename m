@@ -1,35 +1,70 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 2/4] ASoC: tegra: Add a TDM configuration callback
-Date: Mon, 30 Jul 2018 15:15:27 +0100
-Message-ID: <6b9fb98e-eb55-8b19-5c73-403064cb7b3a@nvidia.com>
-References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
- <20180727125931.9794-3-jorge.sanjuan@codethink.co.uk>
- <2392df6f-12bc-74fe-ec0f-50dbb7b9a33a@nvidia.com>
- <20180730101800.GF5789@sirena.org.uk>
- <2a91268d-351b-d342-42bd-8ffbf33a316e@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: tegra: Force correct divider calculation on DDR50/52
+Date: Mon, 30 Jul 2018 17:05:59 +0200
+Message-ID: <CAPDyKFoRtSH6Run5WE-iyPgFOjxanNtHq6QtR007_KcW5Ld3=A@mail.gmail.com>
+References: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2a91268d-351b-d342-42bd-8ffbf33a316e@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, lgirdwood@gmail.com, thierry.reding@gmail.com, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@lists.codethink.co.uk
+To: Aapo Vienamo <avienamo@nvidia.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 16 July 2018 at 16:34, Aapo Vienamo <avienamo@nvidia.com> wrote:
+> Tegra SDHCI controllers require the SDHCI clock divider to be configured
+> to divide the clock by two in DDR50/52 modes. Incorrectly configured
+> clock divider results in corrupted data.
+>
+> Prevent the possibility of incorrectly calculating the divider value due
+> to clock rate rounding or low parent clock frequency by not assigning
+> host->max_clk to clk_get_rate() on tegra_sdhci_set_clock().
+>
+> See the comments for further details.
+>
+> Fixes: a8e326a ("mmc: tegra: implement module external clock change")
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 
-On 30/07/18 15:04, Jon Hunter wrote:
-> I still do not like configuring the fsync width in this function. The
-> fsync width needs to be configured for both DSP modes and normal I2S
-> modes and so it seems it would be more appropriate to do this in the
-> hw_params function for this driver.
+Thanks, applied for next!
 
-That said, it does not look like this current driver ever programs the
-fsync width for normal I2S mode (which I thought was necessary as we do
-in other Tegra I2S drivers). So I will check on this and confirm.
+Kind regards
+Uffe
 
-Jon
-
--- 
-nvpublic
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index ddf00166..908b23e 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -210,9 +210,24 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>         if (!clock)
+>                 return sdhci_set_clock(host, clock);
+>
+> +       /*
+> +        * In DDR50/52 modes the Tegra SDHCI controllers require the SDHCI
+> +        * divider to be configured to divided the host clock by two. The SDHCI
+> +        * clock divider is calculated as part of sdhci_set_clock() by
+> +        * sdhci_calc_clk(). The divider is calculated from host->max_clk and
+> +        * the requested clock rate.
+> +        *
+> +        * By setting the host->max_clk to clock * 2 the divider calculation
+> +        * will always result in the correct value for DDR50/52 modes,
+> +        * regardless of clock rate rounding, which may happen if the value
+> +        * from clk_get_rate() is used.
+> +        */
+>         host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
+>         clk_set_rate(pltfm_host->clk, host_clk);
+> -       host->max_clk = clk_get_rate(pltfm_host->clk);
+> +       if (tegra_host->ddr_signaling)
+> +               host->max_clk = host_clk;
+> +       else
+> +               host->max_clk = clk_get_rate(pltfm_host->clk);
+>
+>         sdhci_set_clock(host, clock);
+>
+> --
+> 2.7.4
+>
