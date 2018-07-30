@@ -1,16 +1,15 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4/4] ASoC: tegra: i2s: Add support for more
- than 2 channels
-Date: Mon, 30 Jul 2018 10:46:14 +0100
-Message-ID: <d81d5c3c-2b2f-308f-d98e-d39c5d5d147f@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/4] ASoC: tegra: Add a TDM configuration
+	callback
+Date: Mon, 30 Jul 2018 11:18:00 +0100
+Message-ID: <20180730101800.GF5789@sirena.org.uk>
 References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
- <20180727125931.9794-5-jorge.sanjuan@codethink.co.uk>
+ <20180727125931.9794-3-jorge.sanjuan@codethink.co.uk>
+ <2392df6f-12bc-74fe-ec0f-50dbb7b9a33a@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============0794127775264543792=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180727125931.9794-5-jorge.sanjuan@codethink.co.uk>
-Content-Language: en-US
+In-Reply-To: <2392df6f-12bc-74fe-ec0f-50dbb7b9a33a@nvidia.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -20,113 +19,55 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
-To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, lgirdwood@gmail.com, broonie@kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, thierry.reding@gmail.com, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, thierry.reding@gmail.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 27/07/18 13:59, Jorge Sanjuan wrote:
-> From: Edward Cragg <edward.cragg@codethink.co.uk>
-> 
-> The CIF configuration and clock setting is currently hard coded for 2
-> channels. Since the hardware is capable of supporting 1-8 channels add
-> support for reading the channel count from the supplied parameters to
-> allow for better TDM support. It seems the original implementation of this
-> driver was fixed at 2 channels for simplicity, and not implementing TDM.
-> 
-> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
-> Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-> ---
->  sound/soc/tegra/tegra30_i2s.c | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-> index e26c19ef7439..0f240d7989d0 100644
-> --- a/sound/soc/tegra/tegra30_i2s.c
-> +++ b/sound/soc/tegra/tegra30_i2s.c
-> @@ -138,16 +138,17 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
->  	struct device *dev = dai->dev;
->  	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
->  	unsigned int mask, val, reg;
-> -	int ret, sample_size, srate, i2sclock, bitcnt;
-> +	int ret, sample_size, srate, i2sclock, bitcnt, audio_bits, channels;
->  	struct tegra30_ahub_cif_conf cif_conf;
->  
-> -	if (params_channels(params) != 2)
-> +	if (params_channels(params) > 8)
->  		return -EINVAL;
+--===============0794127775264543792==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cpvLTH7QU4gwfq3S"
+Content-Disposition: inline
 
-For normal I2S mode, channels should always be 2 and so it could be worth checking
-if we are using TDM mode here or not.
 
->  
->  	mask = TEGRA30_I2S_CTRL_BIT_SIZE_MASK;
->  	switch (params_format(params)) {
->  	case SNDRV_PCM_FORMAT_S16_LE:
->  		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
-> +		audio_bits = TEGRA30_AUDIOCIF_BITS_16;
->  		sample_size = 16;
->  		break;
->  	case SNDRV_PCM_FORMAT_S24_LE:
-> @@ -157,6 +158,7 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
->  		break;
->  	case SNDRV_PCM_FORMAT_S32_LE:
->  		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
-> +		audio_bits = TEGRA30_AUDIOCIF_BITS_32;
->  		sample_size = 32;
->  		break;
->  	default:
-> @@ -166,9 +168,10 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
->  	regmap_update_bits(i2s->regmap, TEGRA30_I2S_CTRL, mask, val);
->  
->  	srate = params_rate(params);
-> +	channels = params_channels(params);
->  
->  	/* Final "* 2" required by Tegra hardware */
-> -	i2sclock = srate * params_channels(params) * sample_size * 2;
-> +	i2sclock = srate * channels * sample_size * 2;
->  
->  	bitcnt = (i2sclock / (2 * srate)) - 1;
->  	if (bitcnt < 0 || bitcnt > TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US)
-> @@ -188,10 +191,10 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
->  	regmap_write(i2s->regmap, TEGRA30_I2S_TIMING, val);
->  
->  	cif_conf.threshold = 0;
-> -	cif_conf.audio_channels = 2;
-> -	cif_conf.client_channels = 2;
-> -	cif_conf.audio_bits = TEGRA30_AUDIOCIF_BITS_16;
-> -	cif_conf.client_bits = TEGRA30_AUDIOCIF_BITS_16;
-> +	cif_conf.audio_channels = channels;
-> +	cif_conf.client_channels = channels;
-> +	cif_conf.audio_bits = audio_bits;
-> +	cif_conf.client_bits = audio_bits;
->  	cif_conf.expand = 0;
->  	cif_conf.stereo_conv = 0;
->  	cif_conf.replicate = 0;
-> @@ -329,7 +332,7 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
->  	.playback = {
->  		.stream_name = "Playback",
->  		.channels_min = 2,
-> -		.channels_max = 2,
-> +		.channels_max = 8,
->  		.rates = SNDRV_PCM_RATE_8000_96000,
->  		.formats = SNDRV_PCM_FMTBIT_S32_LE |
->  			   SNDRV_PCM_FMTBIT_S24_LE |
-> @@ -338,7 +341,7 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
->  	.capture = {
->  		.stream_name = "Capture",
->  		.channels_min = 2,
-> -		.channels_max = 2,
-> +		.channels_max = 8,
->  		.rates = SNDRV_PCM_RATE_8000_96000,
->  		.formats = SNDRV_PCM_FMTBIT_S32_LE |
->  			   SNDRV_PCM_FMTBIT_S24_LE |
-> 
+--cpvLTH7QU4gwfq3S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Otherwise, assuming that you fix patch 3/4 and rebase this one, looks good to me.
+On Mon, Jul 30, 2018 at 10:31:16AM +0100, Jon Hunter wrote:
 
-Cheers
-Jon
+> It can be quite common for the fsync-width for DSP modes to be a single c=
+lock and so=20
+> I am not sure that is makes sense to set this here always to the slot wid=
+th. It maybe
+> worth considering add a DT property for specifying the fsync width.
 
--- 
-nvpublic
+DSP modes only care about the rising edge of the LRCLK, the pulse can be
+any width without causing interoperability problems.
+
+--cpvLTH7QU4gwfq3S
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlte5dcACgkQJNaLcl1U
+h9Cmmgf6A3ZVShnwGY8+CbCEKpg10pLzq0i/Hmy7ddaziG8FCQ6DzQDGV80EtWbI
+OBpIRBNe9vIek89Z/ZTi3CFMrtF8wWVdREgHSqmGkAwfcvFd4zr6pqKcgVAs5ePt
+wWpqWmOmIT+lA4zLbL9Rfg9W4tX9PiK5f+YESyz7fUPjrSPYNYJP1+VBWli4Srdb
+/528dsJcuTi9YbOOpQ1JiJZD5DLc5BqjdJMjS9gbr+aqD/0XZaWNmnSVGAcI65JR
+Og3Ipd8863WMsRIRO9lm+kVNp+InF9sZKUIgvP9xIbnzPQQeIeWs6xCYuWqVpGiY
+HnjLSXrJBDuwU2gXh0ATRxC8GvU6xg==
+=5Rul
+-----END PGP SIGNATURE-----
+
+--cpvLTH7QU4gwfq3S--
+
+--===============0794127775264543792==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============0794127775264543792==--
