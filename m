@@ -1,73 +1,59 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/4] ASoC: tegra: Add a TDM configuration
-	callback
-Date: Mon, 30 Jul 2018 11:18:00 +0100
-Message-ID: <20180730101800.GF5789@sirena.org.uk>
+Subject: Re: [PATCH 4/4] ASoC: tegra: i2s: Add support for more than 2
+ channels
+Date: Mon, 30 Jul 2018 11:21:45 +0100
+Message-ID: <20180730102145.GG5789@sirena.org.uk>
 References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
- <20180727125931.9794-3-jorge.sanjuan@codethink.co.uk>
- <2392df6f-12bc-74fe-ec0f-50dbb7b9a33a@nvidia.com>
+ <20180727125931.9794-5-jorge.sanjuan@codethink.co.uk>
+ <d81d5c3c-2b2f-308f-d98e-d39c5d5d147f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0794127775264543792=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <2392df6f-12bc-74fe-ec0f-50dbb7b9a33a@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cyV/sMl4KAhiehtf"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <d81d5c3c-2b2f-308f-d98e-d39c5d5d147f@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, thierry.reding@gmail.com, linux-tegra@vger.kernel.org
+Cc: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, lgirdwood@gmail.com, thierry.reding@gmail.com, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@lists.codethink.co.uk
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0794127775264543792==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cpvLTH7QU4gwfq3S"
-Content-Disposition: inline
-
-
---cpvLTH7QU4gwfq3S
+--cyV/sMl4KAhiehtf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 30, 2018 at 10:31:16AM +0100, Jon Hunter wrote:
+On Mon, Jul 30, 2018 at 10:46:14AM +0100, Jon Hunter wrote:
+> On 27/07/18 13:59, Jorge Sanjuan wrote:
 
-> It can be quite common for the fsync-width for DSP modes to be a single c=
-lock and so=20
-> I am not sure that is makes sense to set this here always to the slot wid=
-th. It maybe
-> worth considering add a DT property for specifying the fsync width.
+> > -	if (params_channels(params) != 2)
+> > +	if (params_channels(params) > 8)
+> >  		return -EINVAL;
 
-DSP modes only care about the rising edge of the LRCLK, the pulse can be
-any width without causing interoperability problems.
+> For normal I2S mode, channels should always be 2 and so it could be worth checking
+> if we are using TDM mode here or not.
 
---cpvLTH7QU4gwfq3S
+Yes, there's some question if a multi-channel I2S setup is going to be
+all the left channels then all the right channels, have multiple data
+lines in parallel (this especially common for high end applications) or
+something else.  Usually it's safer to use a DSP mode for those.
+
+Please fix your mail client to word wrap within paragraphs at something
+substantially less than 80 columns.  Doing this makes your messages much
+easier to read and reply to.
+
+--cyV/sMl4KAhiehtf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlte5dcACgkQJNaLcl1U
-h9Cmmgf6A3ZVShnwGY8+CbCEKpg10pLzq0i/Hmy7ddaziG8FCQ6DzQDGV80EtWbI
-OBpIRBNe9vIek89Z/ZTi3CFMrtF8wWVdREgHSqmGkAwfcvFd4zr6pqKcgVAs5ePt
-wWpqWmOmIT+lA4zLbL9Rfg9W4tX9PiK5f+YESyz7fUPjrSPYNYJP1+VBWli4Srdb
-/528dsJcuTi9YbOOpQ1JiJZD5DLc5BqjdJMjS9gbr+aqD/0XZaWNmnSVGAcI65JR
-Og3Ipd8863WMsRIRO9lm+kVNp+InF9sZKUIgvP9xIbnzPQQeIeWs6xCYuWqVpGiY
-HnjLSXrJBDuwU2gXh0ATRxC8GvU6xg==
-=5Rul
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlte5rgACgkQJNaLcl1U
+h9Az4wf9ENuJw9xHWLzCcUCojvR2r6t/dd8C4zfCSklN8D/pL24kyXy+HXtDXgqw
+dzYaYCL27iECyw16JmuMzM3U/vnnOTIxamjlcCF3/6BjBxYaJJ94gZP3RBLImrDF
+bCga+cNlb3FK0D7FEpyFSlSvREN3ZBpG5H+Da0vhdHZxglKYFsvqkjzJABamiGDK
+u3ryKn9BWMWVFITB5X9o24f902wdc2DY/ErIfCB5nQbmSLPXU7dAJ/3I7YmNSOLD
+8HiHKm74QIAtiDzZT3Sv+kZ8EgAbp8XmkWs/PGxoN7eveBbAJpEQHewQ99ystzKy
+tJNxVjlj1mGVRCxIsi+vNT1JAm9+RA==
+=moNh
 -----END PGP SIGNATURE-----
 
---cpvLTH7QU4gwfq3S--
-
---===============0794127775264543792==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============0794127775264543792==--
+--cyV/sMl4KAhiehtf--
