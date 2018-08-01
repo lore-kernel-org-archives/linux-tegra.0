@@ -1,31 +1,70 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 12/15] ARM: tegra: apalis-tk1: add
- toradex,apalis-tk1-v1.2 compatible
-Date: Tue, 31 Jul 2018 15:45:45 -0600
-Message-ID: <20180731214545.GA19887@rob-hp-laptop>
-References: <20180724104309.21741-1-marcel@ziswiler.com>
- <20180724104309.21741-13-marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1] gpu: host1x: Ignore clients initialization failure
+Date: Wed,  1 Aug 2018 18:08:07 +0300
+Message-ID: <20180801150807.15926-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180724104309.21741-13-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Mikko Perttunen <mperttunen@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>, Kyle Evans <kvans32@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 12:43:06PM +0200, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Add toradex,apalis-tk1-v1.2 compatible.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
->  Documentation/devicetree/bindings/arm/tegra.txt | 2 ++
->  arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 3 ++-
->  2 files changed, 4 insertions(+), 1 deletion(-)
+From time to time new bugs are popping up, causing some host1x client to
+fail its initialization. Currently a single clients initialization failure
+causes whole host1x device registration to fail, as a result a single DRM
+sub-device initialization failure makes whole DRM initialization to fail.
+Let's ignore clients initialization failure, as a result display panel
+lights up even if some DRM clients (say GR2D or VIC) fail to initialize.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/host1x/bus.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 815bdb42e3f0..145019e105e4 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -199,34 +199,30 @@ static void host1x_subdev_unregister(struct host1x_device *device,
+  */
+ int host1x_device_init(struct host1x_device *device)
+ {
+-	struct host1x_client *client;
++	struct host1x_client *client, *cl;
+ 	int err;
+ 
++	mutex_lock(&clients_lock);
+ 	mutex_lock(&device->clients_lock);
+ 
+-	list_for_each_entry(client, &device->clients, list) {
++	list_for_each_entry_safe(client, cl, &device->clients, list) {
+ 		if (client->ops && client->ops->init) {
+ 			err = client->ops->init(client);
+ 			if (err < 0) {
+ 				dev_err(&device->dev,
+ 					"failed to initialize %s: %d\n",
+ 					dev_name(client->dev), err);
+-				goto teardown;
++
++				/* add the client to the list of idle clients */
++				list_add_tail(&client->list, &clients);
+ 			}
+ 		}
+ 	}
+ 
+ 	mutex_unlock(&device->clients_lock);
++	mutex_unlock(&clients_lock);
+ 
+ 	return 0;
+-
+-teardown:
+-	list_for_each_entry_continue_reverse(client, &device->clients, list)
+-		if (client->ops->exit)
+-			client->ops->exit(client);
+-
+-	mutex_unlock(&device->clients_lock);
+-	return err;
+ }
+ EXPORT_SYMBOL(host1x_device_init);
+ 
+-- 
+2.18.0
