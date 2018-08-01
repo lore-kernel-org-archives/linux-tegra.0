@@ -1,52 +1,33 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 04/40] dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
-Date: Wed, 1 Aug 2018 19:31:54 +0300
-Message-ID: <1533141150-10511-5-git-send-email-avienamo@nvidia.com>
-References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: tegra: readd gpio-ranges properties
+Date: Wed, 01 Aug 2018 23:51:29 +0300
+Message-ID: <2326493.bQHeyqsldt@dimapc>
+References: <20180726154025.13173-1-stefan@agner.ch> <20180726154025.13173-2-stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <20180726154025.13173-2-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, Stefan Agner <stefan@agner.ch>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+To: Stefan Agner <stefan@agner.ch>, thierry.reding@gmail.com, jonathanh@nvidia.com, linus.walleij@linaro.org, pdeschrijver@nvidia.co, marcel.ziswiler@toradex.com
+Cc: keescook@chromium.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Document the Tegra SDHCI inbound and outbound sampling trimmer values.
+On Thursday, 26 July 2018 18:40:25 MSK Stefan Agner wrote:
+> The properties have been commented out to prevent a regression a
+> while ago. The first regression should be resolved by
+> commit 44af7927316e ("spi: Map SPI OF client IRQ at probe time").
+> 
+> The second regression is probably addressed by
+> commit 494fd7b7ad10 ("PM / core: fix deferred probe breaking suspend resume
+> order") and/or maybe others. Readd the gpio-ranges properties to see
+> whether regressions still get reported.
+> 
+> This reverts commit 4f1d841475e1f6e9e32496dda11215db56f4ea73
+> ("ARM: tegra: Comment out gpio-ranges properties").
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- .../devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt          | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-index 2e973b5..3c7960a 100644
---- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-+++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-@@ -68,6 +68,10 @@ Optional properties for Tegra210 and Tegra186:
- - nvidia,pad-autocal-pull-up-offset-hs400,
-   nvidia,pad-autocal-pull-down-offset-hs400 : Specify drive strength
-   calibration offsets for HS400 mode.
-+- nvidia,default-tap : Specify the default inbound sampling clock
-+  trimmer value for non-tunable modes.
-+- nvidia,default-trim : Specify the default outbound clock trimmer
-+  value.
- 
-   Notes on the pad calibration pull up and pulldown offset values:
-     - The property values are drive codes which are programmed into the
-@@ -78,6 +82,13 @@ Optional properties for Tegra210 and Tegra186:
-     - The SDR104 and HS400 timing specific values are used in
-       corresponding modes if specified.
- 
-+  Notes on tap and trim values:
-+    - The values are used for compensating trace length differences
-+      by adjusting the sampling point.
-+    - The values are programmed to the Vendor Clock Control Register.
-+      Please refer to the reference manual of the SoC for correct
-+      values.
-+
- Example:
- sdhci@700b0000 {
- 	compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
--- 
-2.7.4
+Unfortunately the second regression hasn't been addressed yet, this patch 
+still breaks wake-up using GPIO key. BTW, better to spell "readd" as "re-add".
