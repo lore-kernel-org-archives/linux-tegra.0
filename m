@@ -1,8 +1,10 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to arch_init level
-Date: Thu,  2 Aug 2018 14:11:43 +0300
-Message-ID: <20180802111144.12512-1-digetx@gmail.com>
+Subject: [PATCH v1 2/2] gpio: tegra: Move driver registration to subsys_init level
+Date: Thu,  2 Aug 2018 14:11:44 +0300
+Message-ID: <20180802111144.12512-2-digetx@gmail.com>
+References: <20180802111144.12512-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180802111144.12512-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>, Marcel Ziswiler <marcel@ziswiler.com>
 Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -21,87 +23,18 @@ subsys_init.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra114.c | 7 ++++++-
- drivers/pinctrl/tegra/pinctrl-tegra124.c | 7 ++++++-
- drivers/pinctrl/tegra/pinctrl-tegra20.c  | 7 ++++++-
- drivers/pinctrl/tegra/pinctrl-tegra210.c | 7 ++++++-
- drivers/pinctrl/tegra/pinctrl-tegra30.c  | 7 ++++++-
- 5 files changed, 30 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/tegra/pinctrl-tegra114.c
-index 511a8774fd8d..d43c209e9c30 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
-@@ -1868,4 +1868,9 @@ static struct platform_driver tegra114_pinctrl_driver = {
- 	},
- 	.probe = tegra114_pinctrl_probe,
- };
--builtin_platform_driver(tegra114_pinctrl_driver);
-+
-+static int __init tegra114_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra114_pinctrl_driver);
-+}
-+arch_initcall(tegra114_pinctrl_init);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/tegra/pinctrl-tegra124.c
-index 57e3cdcf4503..5b07a5834d15 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
-@@ -2080,4 +2080,9 @@ static struct platform_driver tegra124_pinctrl_driver = {
- 	},
- 	.probe = tegra124_pinctrl_probe,
- };
--builtin_platform_driver(tegra124_pinctrl_driver);
-+
-+static int __init tegra124_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra124_pinctrl_driver);
-+}
-+arch_initcall(tegra124_pinctrl_init);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-index 624889ed3a9d..1fc82a9576e0 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-@@ -2277,4 +2277,9 @@ static struct platform_driver tegra20_pinctrl_driver = {
- 	},
- 	.probe = tegra20_pinctrl_probe,
- };
--builtin_platform_driver(tegra20_pinctrl_driver);
-+
-+static int __init tegra20_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra20_pinctrl_driver);
-+}
-+arch_initcall(tegra20_pinctrl_init);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-index 0956a1c73391..3e77f5474dd8 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-@@ -1582,4 +1582,9 @@ static struct platform_driver tegra210_pinctrl_driver = {
- 	},
- 	.probe = tegra210_pinctrl_probe,
- };
--builtin_platform_driver(tegra210_pinctrl_driver);
-+
-+static int __init tegra210_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra210_pinctrl_driver);
-+}
-+arch_initcall(tegra210_pinctrl_init);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/tegra/pinctrl-tegra30.c
-index c923ad58af84..10e617003e9c 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
-@@ -2503,4 +2503,9 @@ static struct platform_driver tegra30_pinctrl_driver = {
- 	},
- 	.probe = tegra30_pinctrl_probe,
- };
--builtin_platform_driver(tegra30_pinctrl_driver);
-+
-+static int __init tegra30_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra30_pinctrl_driver);
-+}
-+arch_initcall(tegra30_pinctrl_init);
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 2d940785bad0..a53c77db9744 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -712,4 +712,4 @@ static int __init tegra_gpio_init(void)
+ {
+ 	return platform_driver_register(&tegra_gpio_driver);
+ }
+-postcore_initcall(tegra_gpio_init);
++subsys_initcall(tegra_gpio_init);
 -- 
 2.18.0
