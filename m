@@ -1,155 +1,100 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
-Date: Fri, 3 Aug 2018 16:43:41 +0100
-Message-ID: <2e7fab6e-0640-8f48-07b8-2d475538b8ae@arm.com>
-References: <20180726231624.21084-1-digetx@gmail.com>
- <20180727170326.GA21283@jcrouse-lnx.qualcomm.com> <2402373.RyBdR7VSnO@dimapc>
- <2887450.sPhIOOMKZK@dimapc>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC PATCH] ASoC: core: Optimise suspend/resume of
+	DAPM widgets
+Date: Fri, 3 Aug 2018 17:36:05 +0100
+Message-ID: <20180803163605.GD6591@sirena.org.uk>
+References: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2887450.sPhIOOMKZK@dimapc>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Jordan Crouse <jcrouse@codeaurora.org>, Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>, Mikko Perttunen <cyndis@kapsi.fi>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, nouveau@lists.freedesktop.org, "Rafael J. Wysocki" <rafael@kernel.org>, Nicolas Chauvet <kwizart@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>, Ben Skeggs <bskeggs@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-tegra@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1538342717008731015=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/08/18 19:24, Dmitry Osipenko wrote:
-> On Friday, 27 July 2018 20:16:53 MSK Dmitry Osipenko wrote:
->> On Friday, 27 July 2018 20:03:26 MSK Jordan Crouse wrote:
->>> On Fri, Jul 27, 2018 at 05:02:37PM +0100, Robin Murphy wrote:
->>>> On 27/07/18 15:10, Dmitry Osipenko wrote:
->>>>> On Friday, 27 July 2018 12:03:28 MSK Will Deacon wrote:
->>>>>> On Fri, Jul 27, 2018 at 10:25:13AM +0200, Joerg Roedel wrote:
->>>>>>> On Fri, Jul 27, 2018 at 02:16:18AM +0300, Dmitry Osipenko wrote:
->>>>>>>> The proposed solution adds a new option to the base device driver
->>>>>>>> structure that allows device drivers to explicitly convey to the
->>>>>>>> drivers
->>>>>>>> core that the implicit IOMMU backing for devices must not happen.
->>>>>>>
->>>>>>> Why is IOMMU mapping a problem for the Tegra GPU driver?
->>>>>>>
->>>>>>> If we add something like this then it should not be the choice of the
->>>>>>> device driver, but of the user and/or the firmware.
->>>>>>
->>>>>> Agreed, and it would still need somebody to configure an identity
->>>>>> domain
->>>>>> so
->>>>>> that transactions aren't aborted immediately. We currently allow the
->>>>>> identity domain to be used by default via a command-line option, so I
->>>>>> guess
->>>>>> we'd need a way for firmware to request that on a per-device basis.
->>>>>
->>>>> The IOMMU mapping itself is not a problem, the problem is the
->>>>> management
->>>>> of
->>>>> the IOMMU. For Tegra we don't want anything to intrude into the IOMMU
->>>>> activities because:
->>>>>
->>>>> 1) GPU HW require additional configuration for the IOMMU usage and dumb
->>>>> mapping of the allocations simply doesn't work.
->>>>
->>>> Generally, that's already handled by the DRM drivers allocating
->>>> their own unmanaged domains. The only problem we really need to
->>>> solve in that regard is that currently the device DMA ops don't get
->>>> updated when moving away from the managed domain. That's been OK for
->>>> the VFIO case where the device is bound to a different driver which
->>>> we know won't make any explicit DMA API calls, but for the more
->>>> general case of IOMMU-aware drivers we could certainly do with a bit
->>>> of cooperation between the IOMMU API, DMA API, and arch code to
->>>> update the DMA ops dynamically to cope with intermediate subsystems
->>>> making DMA API calls on behalf of devices they don't know the
->>>> intimate details of.
->>>>
->>>>> 2) Older Tegra generations have a limited resource and capabilities in
->>>>> regards to IOMMU usage, allocating IOMMU domain per-device is just
->>>>> impossible for example.
->>>>>
->>>>> 3) HW performs context switches and so particular allocations have to
->>>>> be
->>>>> assigned to a particular contexts IOMMU domain.
->>>>
->>>> I understand Qualcomm SoCs have a similar thing too, and AFAICS that
->>>> case just doesn't fit into the current API model at all. We need the
->>>> IOMMU driver to somehow know about the specific details of which
->>>> devices have magic associations with specific contexts, and we
->>>> almost certainly need a more expressive interface than
->>>> iommu_domain_alloc() to have any hope of reliable results.
->>>
->>> This is correct for Qualcomm GPUs - The GPU hardware context switching
->>> requires a specific context and there are some restrictions around
->>> secure contexts as well.
->>>
->>> We don't really care if the DMA attaches to a context just as long as it
->>> doesn't attach to the one(s) we care about. Perhaps a "valid context" mask
->>> would work in from the DT or the device struct to give the subsystems a
->>> clue as to which domains they were allowed to use. I recognize that there
->>> isn't a one-size-fits-all solution to this problem so I'm open to
->>> different
->>> ideas.
->>
->> Designating whether implicit IOMMU backing is appropriate for a device via
->> device-tree property sounds a bit awkward because that will be a kinda
->> software description (of a custom Linux driver model), while device-tree is
->> supposed to describe HW.
->>
->> What about to grant IOMMU drivers with ability to decide whether the
->> implicit backing for a device is appropriate? Like this:
->>
->> bool implicit_iommu_for_dma_is_allowed(struct device *dev)
->> {
->> 	const struct iommu_ops *ops = dev->bus->iommu_ops;
->> 	struct iommu_group *group;
->>
->> 	group = iommu_group_get(dev);
->> 	if (!group)
->> 		return NULL;
->>
->> 	iommu_group_put(group);
->>
->> 	if (!ops->implicit_iommu_for_dma_is_allowed)
->> 		return true;
->>
->> 	return ops->implicit_iommu_for_dma_is_allowed(dev);
->> }
->>
->> Then arch_setup_dma_ops() could have a clue whether implicit IOMMU backing
->> for a device is appropriate.
-> 
-> Guys, does it sound good to you or maybe you have something else on your mind?
-> Even if it's not an ideal solution, it fixes the immediate problem and should
-> be good enough for the starter.
 
-To me that looks like a step ion the wrong direction that won't help at 
-all in actually addressing the underlying issues.
+--===============1538342717008731015==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NtwzykIc2mflq5ck"
+Content-Disposition: inline
 
-If the GPU driver wants to explicitly control IOMMU mappings instead of 
-relying on the IOMMU_DOMAIN_DMA abstraction, then it should use its own 
-unmanaged domain. At that point it shouldn't matter if a DMA ops domain 
-was allocated, since the GPU device will no longer be attached to it. 
-Yes, there may be some improvements to make like having unused domains 
-not consume hardware contexts, but that's internal to the relevant IOMMU 
-drivers. If moving in and out of DMA ops domains leaves the actual 
-dma_ops broken, that's already a problem between the IOMMU API and the 
-arch DMA code as I've mentioned before.
 
-Furthermore, given what the example above is trying to do, 
-arch_setup_dma_ops() is way too late to do it - the default domain was 
-already set up in iommu_group_get_for_dev() when the IOMMU driver first 
-saw that device. An "opt-out" mechanism that doesn't actually opt out 
-and just bodges around being opted-in after the fact doesn't strike me 
-as something which can grow to be robust and maintainable.
+--NtwzykIc2mflq5ck
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-For the case where  a device has some special hardware relationship with 
-a particular IOMMU context, the IOMMU driver *has* to be completely 
-aware of that, i.e. it needs to be described in DT/ACPI, either via some 
-explicit binding or at least inferred from some SoC/instance-specific 
-IOMMU compatible. Then the IOMMU driver needs to know when the driver 
-for that device is requesting its special domain so that it provide the 
-correct context (and *not* allocate that context for other uses). 
-Anything which just relies on the order in which things currently happen 
-to be allocated is far too fragile long-term.
+On Fri, Aug 03, 2018 at 01:57:05PM +0100, Jon Hunter wrote:
 
-Robin.
+> For soundcards that have several DAI links and many DAPM widgets the
+> time taken for snd_soc_suspend to execute has been observed to be
+> several milliseconds. The time is largely spent executing
+> dapm_power_widgets() for each for the DAI links that need to be
+> suspended. Given that dapm_power_widgets() is called again after
+> suspending/resuming the DAI links, one way to optimise the
+> suspend/resume time is to avoid calling dapm_power_widgets() for
+> each DAI link and reduces the suspend time significantly.
+
+It's a bit alarming that dapm_power_widgets() is taking substantial
+enough time to be worth worring about - it's *supposed* to be relatively
+well optimized so it's effectively free.  It'll never be quite free, but
+close enough.  The goal is that if nothing changes we end up testing a
+few nodes at most before we figure out that nothing changed state and
+stop.  Do you have any idea what it's spending its time on, we do call
+it a lot so if there's any optimization opportunties there we can
+probably get a lot of benefit out of them.
+
+One thing that it occurs to me might help is to start the suspend
+process by powering down all the input and output widgets that aren't
+ignoring suspend in one operation, that should hopefully have the effect
+of ensuring that most of the system that's going to get powered down
+does so on the first pass through.
+
+> Please note that this has been observed on the Tegra210 Jetson TX1
+> platform which is not currently supported in the mainline for audio
+> but has been tested with out-of-tree patches to enable I2S audio.
+
+If someone could get the platform booting reliably in -next that'd be
+good but that's a separate issue...
+
+> In the resume path, it is not clear if there could be any issues from
+> not sync'ing the DAPM power state until after unmuting and resuming
+> the CPU DAI drivers, because this will happen later with this change.
+
+This is a definite problem, we want to have the audio path powered up
+before we start playing audio otherwise we loose the start of the audio
+which may be important.
+
+--NtwzykIc2mflq5ck
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltkhHQACgkQJNaLcl1U
+h9Abfwf9GL/ApQBu4ehC5vT48/dXm5e3eSnbqPF2RPN4ANgZE/sd4zN9ViCH+aZB
+a+rO8heoonUwWDAzER847bozpaTlc+FlpozSvHHtGHIKy5IasJaaZGCwcSXchADq
+j7dz5WYe6PClb/jRRWIlCYeUXIkVZjq8A/xpZodE8qkCQl2QWYew8Zxy37XVGcZr
+kQoiDhdo+lkfWrDjjxq2YAxWESfLzbt0yovMkMhzoEU+gFJM1TwBkF+4pCLUjb6I
+SngihcQxjjxfdgsO+5jzt3eHEqHa0j6XNihW7U+h/j9N35rY0SMc99Z+xXL1mbrz
+esbscJh0DWpoaCT0MPRo5L1XAO5Jmg==
+=0Q2R
+-----END PGP SIGNATURE-----
+
+--NtwzykIc2mflq5ck--
+
+--===============1538342717008731015==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1538342717008731015==--
