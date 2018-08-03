@@ -1,58 +1,30 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] gpu: host1x: Ignore clients initialization failure
-Date: Fri, 03 Aug 2018 14:30:47 +0300
-Message-ID: <4457259.6qKMIOUXSS@dimapc>
-References: <20180801150807.15926-1-digetx@gmail.com> <20180803105055.GC28546@ulmo>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH v3 3/8] mailbox: Add transmit done by blocking option
+Date: Fri, 3 Aug 2018 18:24:41 +0530
+Message-ID: <CABb+yY0_dKC_cYFwwb-aeRgrx=sjv=8VLP=C6DJEecFf=v+mkQ@mail.gmail.com>
+References: <20180702114033.15654-1-mperttunen@nvidia.com> <20180702114033.15654-4-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180803105055.GC28546@ulmo>
+In-Reply-To: <20180702114033.15654-4-mperttunen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <cyndis@kapsi.fi>, Kyle Evans <kvans32@gmail.com>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Devicetree List <devicetree@vger.kernel.org>, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, ", linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday, 3 August 2018 13:50:55 MSK Thierry Reding wrote:
-> On Wed, Aug 01, 2018 at 06:08:07PM +0300, Dmitry Osipenko wrote:
-> > From time to time new bugs are popping up, causing some host1x client to
-> > fail its initialization. Currently a single clients initialization failure
-> > causes whole host1x device registration to fail, as a result a single DRM
-> > sub-device initialization failure makes whole DRM initialization to fail.
-> > Let's ignore clients initialization failure, as a result display panel
-> > lights up even if some DRM clients (say GR2D or VIC) fail to initialize.
-> > 
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> > 
-> >  drivers/gpu/host1x/bus.c | 18 +++++++-----------
-> >  1 file changed, 7 insertions(+), 11 deletions(-)
-> 
-> This is actually done on purpose. I can't think of a case where we would
-> actively like to keep a half-broken DRM device operational. The errors
-> that you're talking about should only happen during development,
+On Mon, Jul 2, 2018 at 5:10 PM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
+> Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
+> send_data function of the mailbox driver is expected to block until
+> the message has been sent. The new option is used with the Tegra
+> Combined UART driver to minimize unnecessary overhead when transmitting
+> data.
+>
+1) TXDONE_BY_BLOCK flag :-
+        Have you tried setting the flag mbox_chan->mbox_client->tx_block ?
 
-[only in a perfect world]
-
-> and the
-> device not showing up is a pretty good indicator that something is wrong
-> as opposed to everything booting normally and then getting some cryptic
-> error at runtime because one of the clients didn't initialize.
-
-If machine doesn't have a serial port and it doesn't have ssh server running 
-or network doesn't come up, you'll end up with a completely dysfunctional 
-piece of hardware. Hence there is no chance for you to even check what is 
-wrong. The argument about a cryptic error doesn't make much sense, you have to 
-improve your runtime as well (and you'll get a error message in the kernels 
-log).
-
-> From my perspective, all clients should always be operational in
-> whatever baseline version you use. If it isn't that's a bug that should
-> be fixed. Ideally those bugs should get fixed before making it into a
-> baseline version (mainline, linux-next, ...), so that this never impacts
-> even developers, unless they break it themselves, in which case refusing
-> to register the DRM device is a pretty good incentive to fix it.
-
-Sounds like you're assuming that only kernel developers are supposed to use 
-Tegra, though at least (for now) for upstream it is kinda true. Of course that 
-could be changed ;-)
+2) Implementing TEGRA_HSP_MBOX_TYPE_SM :-
+       In mailbox framework, a controller is a collection of identical
+channels. That is, instances of the same class.
+       So ideally, in probe you should populate a controller for each
+type of channel, i.e, DB, SM, SS and AS.
