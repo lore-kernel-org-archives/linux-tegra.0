@@ -1,100 +1,161 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH] ASoC: core: Optimise suspend/resume of
-	DAPM widgets
-Date: Fri, 3 Aug 2018 17:36:05 +0100
-Message-ID: <20180803163605.GD6591@sirena.org.uk>
-References: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
+From: Jordan Crouse <jcrouse@codeaurora.org>
+Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
+Date: Fri, 3 Aug 2018 11:00:26 -0600
+Message-ID: <20180803170026.GD21283@jcrouse-lnx.qualcomm.com>
+References: <20180726231624.21084-1-digetx@gmail.com>
+ <20180727170326.GA21283@jcrouse-lnx.qualcomm.com>
+ <2402373.RyBdR7VSnO@dimapc> <2887450.sPhIOOMKZK@dimapc>
+ <2e7fab6e-0640-8f48-07b8-2d475538b8ae@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1538342717008731015=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <2e7fab6e-0640-8f48-07b8-2d475538b8ae@arm.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: devicetree@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, Frank Rowand <frowand.list@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Nicolas Chauvet <kwizart@gmail.com>, nouveau@lists.freedesktop.org, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, iommu@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============1538342717008731015==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NtwzykIc2mflq5ck"
-Content-Disposition: inline
-
-
---NtwzykIc2mflq5ck
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Aug 03, 2018 at 01:57:05PM +0100, Jon Hunter wrote:
-
-> For soundcards that have several DAI links and many DAPM widgets the
-> time taken for snd_soc_suspend to execute has been observed to be
-> several milliseconds. The time is largely spent executing
-> dapm_power_widgets() for each for the DAI links that need to be
-> suspended. Given that dapm_power_widgets() is called again after
-> suspending/resuming the DAI links, one way to optimise the
-> suspend/resume time is to avoid calling dapm_power_widgets() for
-> each DAI link and reduces the suspend time significantly.
-
-It's a bit alarming that dapm_power_widgets() is taking substantial
-enough time to be worth worring about - it's *supposed* to be relatively
-well optimized so it's effectively free.  It'll never be quite free, but
-close enough.  The goal is that if nothing changes we end up testing a
-few nodes at most before we figure out that nothing changed state and
-stop.  Do you have any idea what it's spending its time on, we do call
-it a lot so if there's any optimization opportunties there we can
-probably get a lot of benefit out of them.
-
-One thing that it occurs to me might help is to start the suspend
-process by powering down all the input and output widgets that aren't
-ignoring suspend in one operation, that should hopefully have the effect
-of ensuring that most of the system that's going to get powered down
-does so on the first pass through.
-
-> Please note that this has been observed on the Tegra210 Jetson TX1
-> platform which is not currently supported in the mainline for audio
-> but has been tested with out-of-tree patches to enable I2S audio.
-
-If someone could get the platform booting reliably in -next that'd be
-good but that's a separate issue...
-
-> In the resume path, it is not clear if there could be any issues from
-> not sync'ing the DAPM power state until after unmuting and resuming
-> the CPU DAI drivers, because this will happen later with this change.
-
-This is a definite problem, we want to have the audio path powered up
-before we start playing audio otherwise we loose the start of the audio
-which may be important.
-
---NtwzykIc2mflq5ck
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltkhHQACgkQJNaLcl1U
-h9Abfwf9GL/ApQBu4ehC5vT48/dXm5e3eSnbqPF2RPN4ANgZE/sd4zN9ViCH+aZB
-a+rO8heoonUwWDAzER847bozpaTlc+FlpozSvHHtGHIKy5IasJaaZGCwcSXchADq
-j7dz5WYe6PClb/jRRWIlCYeUXIkVZjq8A/xpZodE8qkCQl2QWYew8Zxy37XVGcZr
-kQoiDhdo+lkfWrDjjxq2YAxWESfLzbt0yovMkMhzoEU+gFJM1TwBkF+4pCLUjb6I
-SngihcQxjjxfdgsO+5jzt3eHEqHa0j6XNihW7U+h/j9N35rY0SMc99Z+xXL1mbrz
-esbscJh0DWpoaCT0MPRo5L1XAO5Jmg==
-=0Q2R
------END PGP SIGNATURE-----
-
---NtwzykIc2mflq5ck--
-
---===============1538342717008731015==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============1538342717008731015==--
+T24gRnJpLCBBdWcgMDMsIDIwMTggYXQgMDQ6NDM6NDFQTSArMDEwMCwgUm9iaW4gTXVycGh5IHdy
+b3RlOgo+IE9uIDAyLzA4LzE4IDE5OjI0LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4gPk9uIEZy
+aWRheSwgMjcgSnVseSAyMDE4IDIwOjE2OjUzIE1TSyBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4g
+Pj5PbiBGcmlkYXksIDI3IEp1bHkgMjAxOCAyMDowMzoyNiBNU0sgSm9yZGFuIENyb3VzZSB3cm90
+ZToKPiA+Pj5PbiBGcmksIEp1bCAyNywgMjAxOCBhdCAwNTowMjozN1BNICswMTAwLCBSb2JpbiBN
+dXJwaHkgd3JvdGU6Cj4gPj4+Pk9uIDI3LzA3LzE4IDE1OjEwLCBEbWl0cnkgT3NpcGVua28gd3Jv
+dGU6Cj4gPj4+Pj5PbiBGcmlkYXksIDI3IEp1bHkgMjAxOCAxMjowMzoyOCBNU0sgV2lsbCBEZWFj
+b24gd3JvdGU6Cj4gPj4+Pj4+T24gRnJpLCBKdWwgMjcsIDIwMTggYXQgMTA6MjU6MTNBTSArMDIw
+MCwgSm9lcmcgUm9lZGVsIHdyb3RlOgo+ID4+Pj4+Pj5PbiBGcmksIEp1bCAyNywgMjAxOCBhdCAw
+MjoxNjoxOEFNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4gPj4+Pj4+Pj5UaGUgcHJv
+cG9zZWQgc29sdXRpb24gYWRkcyBhIG5ldyBvcHRpb24gdG8gdGhlIGJhc2UgZGV2aWNlIGRyaXZl
+cgo+ID4+Pj4+Pj4+c3RydWN0dXJlIHRoYXQgYWxsb3dzIGRldmljZSBkcml2ZXJzIHRvIGV4cGxp
+Y2l0bHkgY29udmV5IHRvIHRoZQo+ID4+Pj4+Pj4+ZHJpdmVycwo+ID4+Pj4+Pj4+Y29yZSB0aGF0
+IHRoZSBpbXBsaWNpdCBJT01NVSBiYWNraW5nIGZvciBkZXZpY2VzIG11c3Qgbm90IGhhcHBlbi4K
+PiA+Pj4+Pj4+Cj4gPj4+Pj4+PldoeSBpcyBJT01NVSBtYXBwaW5nIGEgcHJvYmxlbSBmb3IgdGhl
+IFRlZ3JhIEdQVSBkcml2ZXI/Cj4gPj4+Pj4+Pgo+ID4+Pj4+Pj5JZiB3ZSBhZGQgc29tZXRoaW5n
+IGxpa2UgdGhpcyB0aGVuIGl0IHNob3VsZCBub3QgYmUgdGhlIGNob2ljZSBvZiB0aGUKPiA+Pj4+
+Pj4+ZGV2aWNlIGRyaXZlciwgYnV0IG9mIHRoZSB1c2VyIGFuZC9vciB0aGUgZmlybXdhcmUuCj4g
+Pj4+Pj4+Cj4gPj4+Pj4+QWdyZWVkLCBhbmQgaXQgd291bGQgc3RpbGwgbmVlZCBzb21lYm9keSB0
+byBjb25maWd1cmUgYW4gaWRlbnRpdHkKPiA+Pj4+Pj5kb21haW4KPiA+Pj4+Pj5zbwo+ID4+Pj4+
+PnRoYXQgdHJhbnNhY3Rpb25zIGFyZW4ndCBhYm9ydGVkIGltbWVkaWF0ZWx5LiBXZSBjdXJyZW50
+bHkgYWxsb3cgdGhlCj4gPj4+Pj4+aWRlbnRpdHkgZG9tYWluIHRvIGJlIHVzZWQgYnkgZGVmYXVs
+dCB2aWEgYSBjb21tYW5kLWxpbmUgb3B0aW9uLCBzbyBJCj4gPj4+Pj4+Z3Vlc3MKPiA+Pj4+Pj53
+ZSdkIG5lZWQgYSB3YXkgZm9yIGZpcm13YXJlIHRvIHJlcXVlc3QgdGhhdCBvbiBhIHBlci1kZXZp
+Y2UgYmFzaXMuCj4gPj4+Pj4KPiA+Pj4+PlRoZSBJT01NVSBtYXBwaW5nIGl0c2VsZiBpcyBub3Qg
+YSBwcm9ibGVtLCB0aGUgcHJvYmxlbSBpcyB0aGUKPiA+Pj4+Pm1hbmFnZW1lbnQKPiA+Pj4+Pm9m
+Cj4gPj4+Pj50aGUgSU9NTVUuIEZvciBUZWdyYSB3ZSBkb24ndCB3YW50IGFueXRoaW5nIHRvIGlu
+dHJ1ZGUgaW50byB0aGUgSU9NTVUKPiA+Pj4+PmFjdGl2aXRpZXMgYmVjYXVzZToKPiA+Pj4+Pgo+
+ID4+Pj4+MSkgR1BVIEhXIHJlcXVpcmUgYWRkaXRpb25hbCBjb25maWd1cmF0aW9uIGZvciB0aGUg
+SU9NTVUgdXNhZ2UgYW5kIGR1bWIKPiA+Pj4+Pm1hcHBpbmcgb2YgdGhlIGFsbG9jYXRpb25zIHNp
+bXBseSBkb2Vzbid0IHdvcmsuCj4gPj4+Pgo+ID4+Pj5HZW5lcmFsbHksIHRoYXQncyBhbHJlYWR5
+IGhhbmRsZWQgYnkgdGhlIERSTSBkcml2ZXJzIGFsbG9jYXRpbmcKPiA+Pj4+dGhlaXIgb3duIHVu
+bWFuYWdlZCBkb21haW5zLiBUaGUgb25seSBwcm9ibGVtIHdlIHJlYWxseSBuZWVkIHRvCj4gPj4+
+PnNvbHZlIGluIHRoYXQgcmVnYXJkIGlzIHRoYXQgY3VycmVudGx5IHRoZSBkZXZpY2UgRE1BIG9w
+cyBkb24ndCBnZXQKPiA+Pj4+dXBkYXRlZCB3aGVuIG1vdmluZyBhd2F5IGZyb20gdGhlIG1hbmFn
+ZWQgZG9tYWluLiBUaGF0J3MgYmVlbiBPSyBmb3IKPiA+Pj4+dGhlIFZGSU8gY2FzZSB3aGVyZSB0
+aGUgZGV2aWNlIGlzIGJvdW5kIHRvIGEgZGlmZmVyZW50IGRyaXZlciB3aGljaAo+ID4+Pj53ZSBr
+bm93IHdvbid0IG1ha2UgYW55IGV4cGxpY2l0IERNQSBBUEkgY2FsbHMsIGJ1dCBmb3IgdGhlIG1v
+cmUKPiA+Pj4+Z2VuZXJhbCBjYXNlIG9mIElPTU1VLWF3YXJlIGRyaXZlcnMgd2UgY291bGQgY2Vy
+dGFpbmx5IGRvIHdpdGggYSBiaXQKPiA+Pj4+b2YgY29vcGVyYXRpb24gYmV0d2VlbiB0aGUgSU9N
+TVUgQVBJLCBETUEgQVBJLCBhbmQgYXJjaCBjb2RlIHRvCj4gPj4+PnVwZGF0ZSB0aGUgRE1BIG9w
+cyBkeW5hbWljYWxseSB0byBjb3BlIHdpdGggaW50ZXJtZWRpYXRlIHN1YnN5c3RlbXMKPiA+Pj4+
+bWFraW5nIERNQSBBUEkgY2FsbHMgb24gYmVoYWxmIG9mIGRldmljZXMgdGhleSBkb24ndCBrbm93
+IHRoZQo+ID4+Pj5pbnRpbWF0ZSBkZXRhaWxzIG9mLgo+ID4+Pj4KPiA+Pj4+PjIpIE9sZGVyIFRl
+Z3JhIGdlbmVyYXRpb25zIGhhdmUgYSBsaW1pdGVkIHJlc291cmNlIGFuZCBjYXBhYmlsaXRpZXMg
+aW4KPiA+Pj4+PnJlZ2FyZHMgdG8gSU9NTVUgdXNhZ2UsIGFsbG9jYXRpbmcgSU9NTVUgZG9tYWlu
+IHBlci1kZXZpY2UgaXMganVzdAo+ID4+Pj4+aW1wb3NzaWJsZSBmb3IgZXhhbXBsZS4KPiA+Pj4+
+Pgo+ID4+Pj4+MykgSFcgcGVyZm9ybXMgY29udGV4dCBzd2l0Y2hlcyBhbmQgc28gcGFydGljdWxh
+ciBhbGxvY2F0aW9ucyBoYXZlIHRvCj4gPj4+Pj5iZQo+ID4+Pj4+YXNzaWduZWQgdG8gYSBwYXJ0
+aWN1bGFyIGNvbnRleHRzIElPTU1VIGRvbWFpbi4KPiA+Pj4+Cj4gPj4+PkkgdW5kZXJzdGFuZCBR
+dWFsY29tbSBTb0NzIGhhdmUgYSBzaW1pbGFyIHRoaW5nIHRvbywgYW5kIEFGQUlDUyB0aGF0Cj4g
+Pj4+PmNhc2UganVzdCBkb2Vzbid0IGZpdCBpbnRvIHRoZSBjdXJyZW50IEFQSSBtb2RlbCBhdCBh
+bGwuIFdlIG5lZWQgdGhlCj4gPj4+PklPTU1VIGRyaXZlciB0byBzb21laG93IGtub3cgYWJvdXQg
+dGhlIHNwZWNpZmljIGRldGFpbHMgb2Ygd2hpY2gKPiA+Pj4+ZGV2aWNlcyBoYXZlIG1hZ2ljIGFz
+c29jaWF0aW9ucyB3aXRoIHNwZWNpZmljIGNvbnRleHRzLCBhbmQgd2UKPiA+Pj4+YWxtb3N0IGNl
+cnRhaW5seSBuZWVkIGEgbW9yZSBleHByZXNzaXZlIGludGVyZmFjZSB0aGFuCj4gPj4+PmlvbW11
+X2RvbWFpbl9hbGxvYygpIHRvIGhhdmUgYW55IGhvcGUgb2YgcmVsaWFibGUgcmVzdWx0cy4KPiA+
+Pj4KPiA+Pj5UaGlzIGlzIGNvcnJlY3QgZm9yIFF1YWxjb21tIEdQVXMgLSBUaGUgR1BVIGhhcmR3
+YXJlIGNvbnRleHQgc3dpdGNoaW5nCj4gPj4+cmVxdWlyZXMgYSBzcGVjaWZpYyBjb250ZXh0IGFu
+ZCB0aGVyZSBhcmUgc29tZSByZXN0cmljdGlvbnMgYXJvdW5kCj4gPj4+c2VjdXJlIGNvbnRleHRz
+IGFzIHdlbGwuCj4gPj4+Cj4gPj4+V2UgZG9uJ3QgcmVhbGx5IGNhcmUgaWYgdGhlIERNQSBhdHRh
+Y2hlcyB0byBhIGNvbnRleHQganVzdCBhcyBsb25nIGFzIGl0Cj4gPj4+ZG9lc24ndCBhdHRhY2gg
+dG8gdGhlIG9uZShzKSB3ZSBjYXJlIGFib3V0LiBQZXJoYXBzIGEgInZhbGlkIGNvbnRleHQiIG1h
+c2sKPiA+Pj53b3VsZCB3b3JrIGluIGZyb20gdGhlIERUIG9yIHRoZSBkZXZpY2Ugc3RydWN0IHRv
+IGdpdmUgdGhlIHN1YnN5c3RlbXMgYQo+ID4+PmNsdWUgYXMgdG8gd2hpY2ggZG9tYWlucyB0aGV5
+IHdlcmUgYWxsb3dlZCB0byB1c2UuIEkgcmVjb2duaXplIHRoYXQgdGhlcmUKPiA+Pj5pc24ndCBh
+IG9uZS1zaXplLWZpdHMtYWxsIHNvbHV0aW9uIHRvIHRoaXMgcHJvYmxlbSBzbyBJJ20gb3BlbiB0
+bwo+ID4+PmRpZmZlcmVudAo+ID4+PmlkZWFzLgo+ID4+Cj4gPj5EZXNpZ25hdGluZyB3aGV0aGVy
+IGltcGxpY2l0IElPTU1VIGJhY2tpbmcgaXMgYXBwcm9wcmlhdGUgZm9yIGEgZGV2aWNlIHZpYQo+
+ID4+ZGV2aWNlLXRyZWUgcHJvcGVydHkgc291bmRzIGEgYml0IGF3a3dhcmQgYmVjYXVzZSB0aGF0
+IHdpbGwgYmUgYSBraW5kYQo+ID4+c29mdHdhcmUgZGVzY3JpcHRpb24gKG9mIGEgY3VzdG9tIExp
+bnV4IGRyaXZlciBtb2RlbCksIHdoaWxlIGRldmljZS10cmVlIGlzCj4gPj5zdXBwb3NlZCB0byBk
+ZXNjcmliZSBIVy4KPiA+Pgo+ID4+V2hhdCBhYm91dCB0byBncmFudCBJT01NVSBkcml2ZXJzIHdp
+dGggYWJpbGl0eSB0byBkZWNpZGUgd2hldGhlciB0aGUKPiA+PmltcGxpY2l0IGJhY2tpbmcgZm9y
+IGEgZGV2aWNlIGlzIGFwcHJvcHJpYXRlPyBMaWtlIHRoaXM6Cj4gPj4KPiA+PmJvb2wgaW1wbGlj
+aXRfaW9tbXVfZm9yX2RtYV9pc19hbGxvd2VkKHN0cnVjdCBkZXZpY2UgKmRldikKPiA+PnsKPiA+
+Pgljb25zdCBzdHJ1Y3QgaW9tbXVfb3BzICpvcHMgPSBkZXYtPmJ1cy0+aW9tbXVfb3BzOwo+ID4+
+CXN0cnVjdCBpb21tdV9ncm91cCAqZ3JvdXA7Cj4gPj4KPiA+Pglncm91cCA9IGlvbW11X2dyb3Vw
+X2dldChkZXYpOwo+ID4+CWlmICghZ3JvdXApCj4gPj4JCXJldHVybiBOVUxMOwo+ID4+Cj4gPj4J
+aW9tbXVfZ3JvdXBfcHV0KGdyb3VwKTsKPiA+Pgo+ID4+CWlmICghb3BzLT5pbXBsaWNpdF9pb21t
+dV9mb3JfZG1hX2lzX2FsbG93ZWQpCj4gPj4JCXJldHVybiB0cnVlOwo+ID4+Cj4gPj4JcmV0dXJu
+IG9wcy0+aW1wbGljaXRfaW9tbXVfZm9yX2RtYV9pc19hbGxvd2VkKGRldik7Cj4gPj59Cj4gPj4K
+PiA+PlRoZW4gYXJjaF9zZXR1cF9kbWFfb3BzKCkgY291bGQgaGF2ZSBhIGNsdWUgd2hldGhlciBp
+bXBsaWNpdCBJT01NVSBiYWNraW5nCj4gPj5mb3IgYSBkZXZpY2UgaXMgYXBwcm9wcmlhdGUuCj4g
+Pgo+ID5HdXlzLCBkb2VzIGl0IHNvdW5kIGdvb2QgdG8geW91IG9yIG1heWJlIHlvdSBoYXZlIHNv
+bWV0aGluZyBlbHNlIG9uIHlvdXIgbWluZD8KPiA+RXZlbiBpZiBpdCdzIG5vdCBhbiBpZGVhbCBz
+b2x1dGlvbiwgaXQgZml4ZXMgdGhlIGltbWVkaWF0ZSBwcm9ibGVtIGFuZCBzaG91bGQKPiA+YmUg
+Z29vZCBlbm91Z2ggZm9yIHRoZSBzdGFydGVyLgo+IAo+IFRvIG1lIHRoYXQgbG9va3MgbGlrZSBh
+IHN0ZXAgaW9uIHRoZSB3cm9uZyBkaXJlY3Rpb24gdGhhdCB3b24ndCBoZWxwCj4gYXQgYWxsIGlu
+IGFjdHVhbGx5IGFkZHJlc3NpbmcgdGhlIHVuZGVybHlpbmcgaXNzdWVzLgo+IAo+IElmIHRoZSBH
+UFUgZHJpdmVyIHdhbnRzIHRvIGV4cGxpY2l0bHkgY29udHJvbCBJT01NVSBtYXBwaW5ncyBpbnN0
+ZWFkCj4gb2YgcmVseWluZyBvbiB0aGUgSU9NTVVfRE9NQUlOX0RNQSBhYnN0cmFjdGlvbiwgdGhl
+biBpdCBzaG91bGQgdXNlCj4gaXRzIG93biB1bm1hbmFnZWQgZG9tYWluLiBBdCB0aGF0IHBvaW50
+IGl0IHNob3VsZG4ndCBtYXR0ZXIgaWYgYSBETUEKPiBvcHMgZG9tYWluIHdhcyBhbGxvY2F0ZWQs
+IHNpbmNlIHRoZSBHUFUgZGV2aWNlIHdpbGwgbm8gbG9uZ2VyIGJlCj4gYXR0YWNoZWQgdG8gaXQu
+IFllcywgdGhlcmUgbWF5IGJlIHNvbWUgaW1wcm92ZW1lbnRzIHRvIG1ha2UgbGlrZQo+IGhhdmlu
+ZyB1bnVzZWQgZG9tYWlucyBub3QgY29uc3VtZSBoYXJkd2FyZSBjb250ZXh0cywgYnV0IHRoYXQn
+cwo+IGludGVybmFsIHRvIHRoZSByZWxldmFudCBJT01NVSBkcml2ZXJzLiBJZiBtb3ZpbmcgaW4g
+YW5kIG91dCBvZiBETUEKPiBvcHMgZG9tYWlucyBsZWF2ZXMgdGhlIGFjdHVhbCBkbWFfb3BzIGJy
+b2tlbiwgdGhhdCdzIGFscmVhZHkgYQo+IHByb2JsZW0gYmV0d2VlbiB0aGUgSU9NTVUgQVBJIGFu
+ZCB0aGUgYXJjaCBETUEgY29kZSBhcyBJJ3ZlCj4gbWVudGlvbmVkIGJlZm9yZS4KPiAKPiBGdXJ0
+aGVybW9yZSwgZ2l2ZW4gd2hhdCB0aGUgZXhhbXBsZSBhYm92ZSBpcyB0cnlpbmcgdG8gZG8sCj4g
+YXJjaF9zZXR1cF9kbWFfb3BzKCkgaXMgd2F5IHRvbyBsYXRlIHRvIGRvIGl0IC0gdGhlIGRlZmF1
+bHQgZG9tYWluCj4gd2FzIGFscmVhZHkgc2V0IHVwIGluIGlvbW11X2dyb3VwX2dldF9mb3JfZGV2
+KCkgd2hlbiB0aGUgSU9NTVUKPiBkcml2ZXIgZmlyc3Qgc2F3IHRoYXQgZGV2aWNlLiBBbiAib3B0
+LW91dCIgbWVjaGFuaXNtIHRoYXQgZG9lc24ndAo+IGFjdHVhbGx5IG9wdCBvdXQgYW5kIGp1c3Qg
+Ym9kZ2VzIGFyb3VuZCBiZWluZyBvcHRlZC1pbiBhZnRlciB0aGUKPiBmYWN0IGRvZXNuJ3Qgc3Ry
+aWtlIG1lIGFzIHNvbWV0aGluZyB3aGljaCBjYW4gZ3JvdyB0byBiZSByb2J1c3QgYW5kCj4gbWFp
+bnRhaW5hYmxlLgo+IAo+IEZvciB0aGUgY2FzZSB3aGVyZSAgYSBkZXZpY2UgaGFzIHNvbWUgc3Bl
+Y2lhbCBoYXJkd2FyZSByZWxhdGlvbnNoaXAKPiB3aXRoIGEgcGFydGljdWxhciBJT01NVSBjb250
+ZXh0LCB0aGUgSU9NTVUgZHJpdmVyICpoYXMqIHRvIGJlCj4gY29tcGxldGVseSBhd2FyZSBvZiB0
+aGF0LCBpLmUuIGl0IG5lZWRzIHRvIGJlIGRlc2NyaWJlZCBpbiBEVC9BQ1BJLAo+IGVpdGhlciB2
+aWEgc29tZSBleHBsaWNpdCBiaW5kaW5nIG9yIGF0IGxlYXN0IGluZmVycmVkIGZyb20gc29tZQo+
+IFNvQy9pbnN0YW5jZS1zcGVjaWZpYyBJT01NVSBjb21wYXRpYmxlLiBUaGVuIHRoZSBJT01NVSBk
+cml2ZXIgbmVlZHMKPiB0byBrbm93IHdoZW4gdGhlIGRyaXZlciBmb3IgdGhhdCBkZXZpY2UgaXMg
+cmVxdWVzdGluZyBpdHMgc3BlY2lhbAo+IGRvbWFpbiBzbyB0aGF0IGl0IHByb3ZpZGUgdGhlIGNv
+cnJlY3QgY29udGV4dCAoYW5kICpub3QqIGFsbG9jYXRlCj4gdGhhdCBjb250ZXh0IGZvciBvdGhl
+ciB1c2VzKS4gQW55dGhpbmcgd2hpY2gganVzdCByZWxpZXMgb24gdGhlCj4gb3JkZXIgaW4gd2hp
+Y2ggdGhpbmdzIGN1cnJlbnRseSBoYXBwZW4gdG8gYmUgYWxsb2NhdGVkIGlzIGZhciB0b28KPiBm
+cmFnaWxlIGxvbmctdGVybS4KClNwZWN1bGF0aW5nIHdoYXQgdGhpcyB3b3VsZCBsb29rIGxpa2Ug
+Zm9yIGFybS1zbW11LXYyLiBUaGlua2luZyB3ZQp3b3VsZCBhZGQgZWl0aGVyIGEgbWFzayBvciBh
+IGJpdCB0byB0aGUgcGVyLWRldmljZSBzbW11IGRhdGEgdG8gaWRlbnRpZnkKdGhlICJhdmFpbGFi
+bGUiIGNvbnRleHRzIGZvciBkbWEgKG9yIGFsdGVybmF0aXZlbHksIHRoZSAicmVzZXJ2ZWQiIGRv
+bWFpbnMKZm9yICB0aGUgZGV2aWNlKSBhbmQgdGhlbiBjaGFuZ2UgdXAgX2FybV9zbW11X2FsbG9j
+X2JpdG1hcCgpIHRvIGhhbmQgb3V0CnRoZSByaWdodCBudW1iZXJzIGFjY29yZGluZ2x5LgoKVGhl
+biB0aGF0IGxlYXZlcyB0aGUgaW50ZXJmYWNlIGZvciB0aGUgZGV2aWNlIHRvIHJlcXVlc3QgYSBz
+cGVjaWZpYyBjb250ZXh0Ci0gSSBndWVzcyBhIERPTUFJTl9BVFRSIHdvdWxkIHdvcmsgZm9yIHRo
+YXQgaW4gbGlldSBvZiBjaGFuZ2luZwppb21tdV9hbGxvY19kb21haW4oKSBhbmQgZnJpZW5kcy4K
+CldvdWxkIHRoaXMgbWF0Y2ggdXAgd2l0aCB5b3VyIHRoaW5raW5nPwoKSm9yZGFuCgotLSAKVGhl
+IFF1YWxjb21tIElubm92YXRpb24gQ2VudGVyLCBJbmMuIGlzIGEgbWVtYmVyIG9mIENvZGUgQXVy
+b3JhIEZvcnVtLAphIExpbnV4IEZvdW5kYXRpb24gQ29sbGFib3JhdGl2ZSBQcm9qZWN0Cl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
