@@ -1,91 +1,71 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 2/8] iommu/tegra: gart: Provide access to Memory Controller driver
-Date: Sat,  4 Aug 2018 17:29:57 +0300
-Message-ID: <20180804143003.15817-3-digetx@gmail.com>
-References: <20180804143003.15817-1-digetx@gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 00/12] i2c: quirks: add zero length checks and update
+ drivers
+Date: Sat, 4 Aug 2018 23:23:14 +0200
+Message-ID: <20180804212314.oelyhfqxclhatjev@ninjato>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7aewi4gtlzfrpl7f"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180804143003.15817-1-digetx@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-GART contain registers needed by the Memory Controller driver, provide
-access to the MC driver by utilizing its GART-integration facility.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/iommu/tegra-gart.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+--7aewi4gtlzfrpl7f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index a004f6da35f2..f8b653e25914 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -31,6 +31,8 @@
- #include <linux/iommu.h>
- #include <linux/of.h>
- 
-+#include <soc/tegra/mc.h>
-+
- #include <asm/cacheflush.h>
- 
- /* bitmap of the page sizes currently supported */
-@@ -41,6 +43,8 @@
- #define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
- #define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
- #define GART_ENTRY_PHYS_ADDR_VALID	(1 << 31)
-+#define GART_ERROR_REQ		(0x30 - GART_REG_BASE)
-+#define GART_ERROR_ADDR		(0x34 - GART_REG_BASE)
- 
- #define GART_PAGE_SHIFT		12
- #define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
-@@ -63,6 +67,8 @@ struct gart_device {
- 	struct device		*dev;
- 
- 	struct iommu_device	iommu;		/* IOMMU Core handle */
-+
-+	struct tegra_mc_gart_handle mc_gart_handle;
- };
- 
- struct gart_domain {
-@@ -408,6 +414,20 @@ static int tegra_gart_resume(struct device *dev)
- 	return 0;
- }
- 
-+static u32 tegra_gart_error_addr(struct tegra_mc_gart_handle *handle)
-+{
-+	struct gart_device *gart = container_of(handle, struct gart_device,
-+						mc_gart_handle);
-+	return readl_relaxed(gart->regs + GART_ERROR_ADDR);
-+}
-+
-+static u32 tegra_gart_error_req(struct tegra_mc_gart_handle *handle)
-+{
-+	struct gart_device *gart = container_of(handle, struct gart_device,
-+						mc_gart_handle);
-+	return readl_relaxed(gart->regs + GART_ERROR_REQ);
-+}
-+
- static int tegra_gart_probe(struct platform_device *pdev)
- {
- 	struct gart_device *gart;
-@@ -464,6 +484,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	gart->regs = gart_regs;
- 	gart->iovmm_base = (dma_addr_t)res_remap->start;
- 	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
-+	gart->mc_gart_handle.error_addr = tegra_gart_error_addr;
-+	gart->mc_gart_handle.error_req = tegra_gart_error_req;
- 
- 	gart->savedata = vmalloc(array_size(sizeof(u32), gart->page_count));
- 	if (!gart->savedata) {
-@@ -475,6 +497,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	do_gart_setup(gart, NULL);
- 
- 	gart_handle = gart;
-+	tegra_mc_register_gart(&gart->mc_gart_handle);
- 
- 	return 0;
- }
--- 
-2.18.0
+On Mon, Jul 23, 2018 at 10:26:04PM +0200, Wolfram Sang wrote:
+> I had this idea for quite some time on my todo list but a soon to be
+> implemented refactoring in the i2c-rcar driver now finally made me do it.=
+ Add a
+> 'can't do 0 length messages' quirk to the quirk infrastructure for and re=
+move
+> the manual handling from the drivers. This makes the quirk much more visi=
+ble.
+> (Quite some prominent vendors in that list) We also have a centralized pl=
+ace to
+> handle updates to the quirk detection if that is ever needed.
+>=20
+> I have tested this with the i2c-rcar and i2c-sh_mobile driver on a Renesas
+> SalvatorXS board equipped with M3-N (r8a77965).
+>=20
+> A git branch can be found here:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/quirk-no-=
+zero-len
+>=20
+> Looking forward to comments, reviews, tests...
+
+I applied all the patches which either got acks from the maintainers or
+have no maintainers. I'll reply individually to which I applied. I will
+wait some more for other acks before I'll resend next cycle.
+
+
+--7aewi4gtlzfrpl7f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGUIACgkQFA3kzBSg
+KbarZw/+MqkSaLU5cZh0Ej4pjwuIe4JAPI/uPWDVkXNyeIEo6+WbzoIPFzkDd4ud
+K07Rpa875ilzbCF4/arvTbuad4WCjckKF637IAiwL7iZFN8viwwqSTP14jskIp9r
+Ikn4s/dKyNNBUyE46Kxl2myhL2KSLES6mHyOq03dEjcykqgAauC+y86iyGU8203N
+66KiZQx9Bj5cY8PCOWFNn0xFCfA7EkBRi2bC1dp9w2KHbY1JTt3Iyj5sXzGCQbgw
+bqwDq7ME1jtODtiPH/BlGyM6VEe1F06Jn0+meccy6831dJfFtTJgWxYQ91jB9jSg
+HcurYXJGeRf89M71jvL7udcNu7SrUNydD3M3sADqDMq7qejhpk1BQ4N2JyIvFWoN
+f4l3ZuXiAdwDVkEtJZ0fMV3ZnXYtESI41YqzxAPPXza3QAS3qGR8J0rJN+gOmfxC
+wOuvgM7RQLqIh1Wye/6ac3PxJzlMoYiZXUcMsJ3ljHxRrqVagJb20UBij8ip5mJ/
+mp+OrI/noPN15A4Cha5QJvcxTKeIyJD9HsVx4kndTQuoGTxqc3SfctDzyN/9BJ0V
+FquyU4BUnHetzVdIpK5nLzKIYRyR8lCa7LTYcDJzOQ5Nh/D3O4DUvA/akYTrxeik
+/hvcc90N4bvC6EUdceb1baqX0LFOcKZaKo5PGTdZs01kzGPXg5c=
+=vEPg
+-----END PGP SIGNATURE-----
+
+--7aewi4gtlzfrpl7f--
