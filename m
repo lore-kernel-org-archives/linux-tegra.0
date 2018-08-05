@@ -1,54 +1,41 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 00/12] i2c: quirks: add zero length checks and update
- drivers
-Date: Sat, 4 Aug 2018 23:26:16 +0200
-Message-ID: <20180804212616.7pk7aqbg2vadkewg@ninjato>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <CAHp75VcAzAtV0+Eu8TGPnrxSpAnPOXU9mvpeO1SaoBO3Rx=wRw@mail.gmail.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [RFC PATCH v1] memory: tegra: Block DMA for clients HW on a
+ faulty memory access
+Date: Sun, 5 Aug 2018 03:11:57 +0300
+Message-ID: <89f0794e-affa-dba0-9684-582ce5570cad@kapsi.fi>
+References: <20180508165841.13758-1-digetx@gmail.com>
+ <2607799.I2xByD6lqT@dimapc>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y3tkl3dnffqg37zd"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcAzAtV0+Eu8TGPnrxSpAnPOXU9mvpeO1SaoBO3Rx=wRw@mail.gmail.com>
+In-Reply-To: <2607799.I2xByD6lqT@dimapc>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c <linux-i2c@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, linux-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+One potential issue is with host1x clients where userspace processes can 
+submit jobs with invalid memory accesses (addresses not mapped to 
+IOMMU). If when such a failure happens, we disable the DMA for the whole 
+host1x client, unrelated userspace processes may see failures even 
+though there is no problem with their jobs.
 
---y3tkl3dnffqg37zd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Mikko
 
-
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->=20
-> for patches 1 and 2.
-
-Thanks, Andy. If you could reply with that to the individual patches,
-then patchwork picks up the tags for me making my life a little easier.
-
-
---y3tkl3dnffqg37zd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGfgACgkQFA3kzBSg
-KbYVRg/+OwlL7SdGI6MZQ2jRp7gw3gDHkg0ZF8760xcD+mpJoaTy04WJdd0SVBx8
-8QS5GKVQz1tMrl5ZXddhBEPvzb+bKqNMlLXT78LrxIkQfDNR86HYu6kyBol4kTWX
-wo7M1LHvBPc1HqUU8Uclr+l3nzFdc56IqyTwmZ/7zP94ygGy2EhEw0x+NWzQ+o+d
-p5iTyMpDRAPPDpMIctQTAjMHo8QHQW5eLQ18C0+SFa316Dp3H6tIRdbw/Lg1syc8
-VMV3Gg5h8rtOxCP13glLimeX2y+7m9KEVD/nmuAv/HjF0DWmRNAGIUPnxa+5+tgU
-ya4SfhoeyB3em9FYjAzpZ5Jlwhv72D31/pIpSkQcmuvoQASsqsWFs1Y2Dp9MnEzJ
-IE0pnAtkuIz8WtXyypdmNsqVop0luvwujut4jLFGiugpURZBn2v4W/+k+7EF7l/j
-pvLENgVQpmkNlcSgzeZa/XPy+JLIC/gQa+jDGea+x9bXvZllaDrx3hLJ23truc7p
-xSccpG+0wBn/EY1J3diYVPsBJ7YpPjR/H+3HP0biC6pIcsEh1BDJYhYn+XWcA1f7
-8Nyn3SMBDxQ5MIhtMrghlQuX200A6+NA6zIzZaSm2fN/MycrKd3O8Rek+LYjqxtX
-V3uypDH8e4JQfnqgGKlsFCnJOpOVEgiQ+5Ut9jZWVoitUl3lZ3I=
-=2ORJ
------END PGP SIGNATURE-----
-
---y3tkl3dnffqg37zd--
+On 08/04/2018 02:53 PM, Dmitry Osipenko wrote:
+> On Tuesday, 8 May 2018 19:58:41 MSK Dmitry Osipenko wrote:
+>> Currently Memory Controller informs about erroneous memory accesses done
+>> by memory clients and that's it. Let's make it to block whole HW unit
+>> that corresponds to the misbehaving memory client in order to try to avoid
+>> memory corruptions and to stop deliberate attempts of manipulation by a
+>> misbehaving client.
+> 
+> Guys, any comments? That is a kinda useful feature, in worst case only some of
+> memory could get corrupted instead of trashing the whole memory. In my
+> experience with T20/30, the interrupt handling latency is low and blocking
+> happens immediately after the first page fault.
+> 
+> 
+> 
