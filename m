@@ -1,140 +1,115 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: Re: [PATCH] drm/tegra: Convert drm_atomic_helper_suspend/resume()
-Date: Mon, 6 Aug 2018 11:42:35 +0530
-Message-ID: <CAFqt6zZM_MzAo8vEZ3+C3W6E-xE_78acnNvmMYoPVgYuxaMvGA@mail.gmail.com>
-References: <20180731200705.GA21510@jordon-HP-15-Notebook-PC>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2 1/2] pinctrl: tegra: Move drivers registration to arch_init level
+Date: Mon,  6 Aug 2018 12:12:06 +0300
+Message-ID: <20180806091207.12586-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180731200705.GA21510@jordon-HP-15-Notebook-PC>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, airlied@linux.ie, jonathanh@nvidia.com, Ajit Linux <ajitn.linux@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>, Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 1:37 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> convert drm_atomic_helper_suspend/resume() to use
-> drm_mode_config_helper_suspend/resume().
->
-> With this conversion, tegra_drm_fb_suspend() and
-> tegra_drm_fb_resume() wil not be used anymore.
-> Both of these functions can be removed.
->
-> Also, in tegra_drm struct's member state will not be
-> used anymore. So this can be removed forever.
->
-> Fixed one sparse warning.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-> ---
+There is a bug in regards to deferred probing within the drivers core
+that causes GPIO-driver to suspend before its users. The bug appears if
+GPIO-driver probe is getting deferred, which happens after introducing
+dependency on PINCTRL-driver for the GPIO-driver by defining "gpio-ranges"
+property in device-tree. The bug in the drivers core is old (more than 4
+years now) and is well known, unfortunately there is no easy fix for it.
+The good news is that we can workaround the deferred probe issue by
+changing GPIO / PINCTRL drivers registration order and hence by moving
+PINCTRL driver registration to the arch_init level and GPIO to the
+subsys_init.
 
-Any comment on this patch ?
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Stefan Agner <stefan@agner.ch>
+---
 
->  drivers/gpu/drm/tegra/drm.c | 20 ++------------------
->  drivers/gpu/drm/tegra/drm.h |  4 ----
->  drivers/gpu/drm/tegra/fb.c  | 24 +-----------------------
->  3 files changed, 3 insertions(+), 45 deletions(-)
->
-> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index a2bd587..9a0efce 100644
-> --- a/drivers/gpu/drm/tegra/drm.c
-> +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -1212,31 +1212,15 @@ static int host1x_drm_remove(struct host1x_device *dev)
->  static int host1x_drm_suspend(struct device *dev)
->  {
->         struct drm_device *drm = dev_get_drvdata(dev);
-> -       struct tegra_drm *tegra = drm->dev_private;
-> -
-> -       drm_kms_helper_poll_disable(drm);
-> -       tegra_drm_fb_suspend(drm);
-> -
-> -       tegra->state = drm_atomic_helper_suspend(drm);
-> -       if (IS_ERR(tegra->state)) {
-> -               tegra_drm_fb_resume(drm);
-> -               drm_kms_helper_poll_enable(drm);
-> -               return PTR_ERR(tegra->state);
-> -       }
->
-> -       return 0;
-> +       return drm_mode_config_helper_suspend(drm);
->  }
->
->  static int host1x_drm_resume(struct device *dev)
->  {
->         struct drm_device *drm = dev_get_drvdata(dev);
-> -       struct tegra_drm *tegra = drm->dev_private;
->
-> -       drm_atomic_helper_resume(drm, tegra->state);
-> -       tegra_drm_fb_resume(drm);
-> -       drm_kms_helper_poll_enable(drm);
-> -
-> -       return 0;
-> +       return drm_mode_config_helper_resume(drm);
->  }
->  #endif
->
-> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-> index 92d2487..1012335 100644
-> --- a/drivers/gpu/drm/tegra/drm.h
-> +++ b/drivers/gpu/drm/tegra/drm.h
-> @@ -60,8 +60,6 @@ struct tegra_drm {
->         unsigned int pitch_align;
->
->         struct tegra_display_hub *hub;
-> -
-> -       struct drm_atomic_state *state;
->  };
->
->  struct tegra_drm_client;
-> @@ -186,8 +184,6 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
->  void tegra_drm_fb_free(struct drm_device *drm);
->  int tegra_drm_fb_init(struct drm_device *drm);
->  void tegra_drm_fb_exit(struct drm_device *drm);
-> -void tegra_drm_fb_suspend(struct drm_device *drm);
-> -void tegra_drm_fb_resume(struct drm_device *drm);
->
->  extern struct platform_driver tegra_display_hub_driver;
->  extern struct platform_driver tegra_dc_driver;
-> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-> index 4c22cdd..b947e82 100644
-> --- a/drivers/gpu/drm/tegra/fb.c
-> +++ b/drivers/gpu/drm/tegra/fb.c
-> @@ -356,7 +356,7 @@ static void tegra_fbdev_exit(struct tegra_fbdev *fbdev)
->                 /* Undo the special mapping we made in fbdev probe. */
->                 if (bo && bo->pages) {
->                         vunmap(bo->vaddr);
-> -                       bo->vaddr = 0;
-> +                       bo->vaddr = NULL;
->                 }
->
->                 drm_framebuffer_remove(fbdev->fb);
-> @@ -412,25 +412,3 @@ void tegra_drm_fb_exit(struct drm_device *drm)
->         tegra_fbdev_exit(tegra->fbdev);
->  #endif
->  }
-> -
-> -void tegra_drm_fb_suspend(struct drm_device *drm)
-> -{
-> -#ifdef CONFIG_DRM_FBDEV_EMULATION
-> -       struct tegra_drm *tegra = drm->dev_private;
-> -
-> -       console_lock();
-> -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 1);
-> -       console_unlock();
-> -#endif
-> -}
-> -
-> -void tegra_drm_fb_resume(struct drm_device *drm)
-> -{
-> -#ifdef CONFIG_DRM_FBDEV_EMULATION
-> -       struct tegra_drm *tegra = drm->dev_private;
-> -
-> -       console_lock();
-> -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 0);
-> -       console_unlock();
-> -#endif
-> -}
-> --
-> 1.9.1
->
+Changelog:
+
+v2: Corrected commit message with s/to suspend after/to suspend before/.
+
+
+
+ drivers/pinctrl/tegra/pinctrl-tegra114.c | 7 ++++++-
+ drivers/pinctrl/tegra/pinctrl-tegra124.c | 7 ++++++-
+ drivers/pinctrl/tegra/pinctrl-tegra20.c  | 7 ++++++-
+ drivers/pinctrl/tegra/pinctrl-tegra210.c | 7 ++++++-
+ drivers/pinctrl/tegra/pinctrl-tegra30.c  | 7 ++++++-
+ 5 files changed, 30 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+index 511a8774fd8d..d43c209e9c30 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+@@ -1868,4 +1868,9 @@ static struct platform_driver tegra114_pinctrl_driver = {
+ 	},
+ 	.probe = tegra114_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra114_pinctrl_driver);
++
++static int __init tegra114_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra114_pinctrl_driver);
++}
++arch_initcall(tegra114_pinctrl_init);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+index 57e3cdcf4503..5b07a5834d15 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+@@ -2080,4 +2080,9 @@ static struct platform_driver tegra124_pinctrl_driver = {
+ 	},
+ 	.probe = tegra124_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra124_pinctrl_driver);
++
++static int __init tegra124_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra124_pinctrl_driver);
++}
++arch_initcall(tegra124_pinctrl_init);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+index 624889ed3a9d..1fc82a9576e0 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+@@ -2277,4 +2277,9 @@ static struct platform_driver tegra20_pinctrl_driver = {
+ 	},
+ 	.probe = tegra20_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra20_pinctrl_driver);
++
++static int __init tegra20_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra20_pinctrl_driver);
++}
++arch_initcall(tegra20_pinctrl_init);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 0956a1c73391..3e77f5474dd8 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -1582,4 +1582,9 @@ static struct platform_driver tegra210_pinctrl_driver = {
+ 	},
+ 	.probe = tegra210_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra210_pinctrl_driver);
++
++static int __init tegra210_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra210_pinctrl_driver);
++}
++arch_initcall(tegra210_pinctrl_init);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+index c923ad58af84..10e617003e9c 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+@@ -2503,4 +2503,9 @@ static struct platform_driver tegra30_pinctrl_driver = {
+ 	},
+ 	.probe = tegra30_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra30_pinctrl_driver);
++
++static int __init tegra30_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra30_pinctrl_driver);
++}
++arch_initcall(tegra30_pinctrl_init);
+-- 
+2.18.0
