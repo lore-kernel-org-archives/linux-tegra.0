@@ -1,82 +1,140 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] gpu: host1x: Cancel only job that actually got stuck
-Date: Sun,  5 Aug 2018 20:01:31 +0300
-Message-ID: <20180805170131.29263-1-digetx@gmail.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Subject: Re: [PATCH] drm/tegra: Convert drm_atomic_helper_suspend/resume()
+Date: Mon, 6 Aug 2018 11:42:35 +0530
+Message-ID: <CAFqt6zZM_MzAo8vEZ3+C3W6E-xE_78acnNvmMYoPVgYuxaMvGA@mail.gmail.com>
+References: <20180731200705.GA21510@jordon-HP-15-Notebook-PC>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180731200705.GA21510@jordon-HP-15-Notebook-PC>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, airlied@linux.ie, jonathanh@nvidia.com, Ajit Linux <ajitn.linux@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Host1x doesn't have information about jobs inter-dependency, that is
-something that will become available once host1x will get a proper
-jobs scheduler implementation. Currently a hang job causes other unrelated
-jobs to be canceled, that is a relic from downstream driver which is
-irrelevant to upstream. Let's cancel only the hanging job and not to touch
-other jobs in queue.
+On Wed, Aug 1, 2018 at 1:37 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> convert drm_atomic_helper_suspend/resume() to use
+> drm_mode_config_helper_suspend/resume().
+>
+> With this conversion, tegra_drm_fb_suspend() and
+> tegra_drm_fb_resume() wil not be used anymore.
+> Both of these functions can be removed.
+>
+> Also, in tegra_drm struct's member state will not be
+> used anymore. So this can be removed forever.
+>
+> Fixed one sparse warning.
+>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> ---
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/host1x/cdma.c | 30 ++++++------------------------
- 1 file changed, 6 insertions(+), 24 deletions(-)
+Any comment on this patch ?
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 91df51e631b2..4d94af4a315f 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -348,13 +348,11 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 	}
- 
- 	/*
--	 * Walk the sync_queue, first incrementing with the CPU syncpts that
--	 * are partially executed (the first buffer) or fully skipped while
--	 * still in the current context (slots are also NOP-ed).
-+	 * Increment with CPU the remaining syncpts of a partially executed job.
- 	 *
--	 * At the point contexts are interleaved, syncpt increments must be
--	 * done inline with the pushbuffer from a GATHER buffer to maintain
--	 * the order (slots are modified to be a GATHER of syncpt incrs).
-+	 * Syncpt increments must be done inline with the pushbuffer from a
-+	 * GATHER buffer to maintain the order (slots are modified to be a
-+	 * GATHER of syncpt incrs).
- 	 *
- 	 * Note: save in restart_addr the location where the timed out buffer
- 	 * started in the PB, so we can start the refetch from there (with the
-@@ -370,12 +368,8 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 	else
- 		restart_addr = cdma->last_pos;
- 
--	/* do CPU increments as long as this context continues */
--	list_for_each_entry_from(job, &cdma->sync_queue, list) {
--		/* different context, gets us out of this loop */
--		if (job->client != cdma->timeout.client)
--			break;
--
-+	/* do CPU increments for the remaining syncpts */
-+	if (job) {
- 		/* won't need a timeout when replayed */
- 		job->timeout = 0;
- 
-@@ -388,20 +382,8 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 		host1x_hw_cdma_timeout_cpu_incr(host1x, cdma, job->first_get,
- 						syncpt_incrs, job->syncpt_end,
- 						job->num_slots);
--
--		syncpt_val += syncpt_incrs;
- 	}
- 
--	/*
--	 * The following sumbits from the same client may be dependent on the
--	 * failed submit and therefore they may fail. Force a small timeout
--	 * to make the queue cleanup faster.
--	 */
--
--	list_for_each_entry_from(job, &cdma->sync_queue, list)
--		if (job->client == cdma->timeout.client)
--			job->timeout = min_t(unsigned int, job->timeout, 500);
--
- 	dev_dbg(dev, "%s: finished sync_queue modification\n", __func__);
- 
- 	/* roll back DMAGET and start up channel again */
--- 
-2.18.0
+>  drivers/gpu/drm/tegra/drm.c | 20 ++------------------
+>  drivers/gpu/drm/tegra/drm.h |  4 ----
+>  drivers/gpu/drm/tegra/fb.c  | 24 +-----------------------
+>  3 files changed, 3 insertions(+), 45 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index a2bd587..9a0efce 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -1212,31 +1212,15 @@ static int host1x_drm_remove(struct host1x_device *dev)
+>  static int host1x_drm_suspend(struct device *dev)
+>  {
+>         struct drm_device *drm = dev_get_drvdata(dev);
+> -       struct tegra_drm *tegra = drm->dev_private;
+> -
+> -       drm_kms_helper_poll_disable(drm);
+> -       tegra_drm_fb_suspend(drm);
+> -
+> -       tegra->state = drm_atomic_helper_suspend(drm);
+> -       if (IS_ERR(tegra->state)) {
+> -               tegra_drm_fb_resume(drm);
+> -               drm_kms_helper_poll_enable(drm);
+> -               return PTR_ERR(tegra->state);
+> -       }
+>
+> -       return 0;
+> +       return drm_mode_config_helper_suspend(drm);
+>  }
+>
+>  static int host1x_drm_resume(struct device *dev)
+>  {
+>         struct drm_device *drm = dev_get_drvdata(dev);
+> -       struct tegra_drm *tegra = drm->dev_private;
+>
+> -       drm_atomic_helper_resume(drm, tegra->state);
+> -       tegra_drm_fb_resume(drm);
+> -       drm_kms_helper_poll_enable(drm);
+> -
+> -       return 0;
+> +       return drm_mode_config_helper_resume(drm);
+>  }
+>  #endif
+>
+> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+> index 92d2487..1012335 100644
+> --- a/drivers/gpu/drm/tegra/drm.h
+> +++ b/drivers/gpu/drm/tegra/drm.h
+> @@ -60,8 +60,6 @@ struct tegra_drm {
+>         unsigned int pitch_align;
+>
+>         struct tegra_display_hub *hub;
+> -
+> -       struct drm_atomic_state *state;
+>  };
+>
+>  struct tegra_drm_client;
+> @@ -186,8 +184,6 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
+>  void tegra_drm_fb_free(struct drm_device *drm);
+>  int tegra_drm_fb_init(struct drm_device *drm);
+>  void tegra_drm_fb_exit(struct drm_device *drm);
+> -void tegra_drm_fb_suspend(struct drm_device *drm);
+> -void tegra_drm_fb_resume(struct drm_device *drm);
+>
+>  extern struct platform_driver tegra_display_hub_driver;
+>  extern struct platform_driver tegra_dc_driver;
+> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+> index 4c22cdd..b947e82 100644
+> --- a/drivers/gpu/drm/tegra/fb.c
+> +++ b/drivers/gpu/drm/tegra/fb.c
+> @@ -356,7 +356,7 @@ static void tegra_fbdev_exit(struct tegra_fbdev *fbdev)
+>                 /* Undo the special mapping we made in fbdev probe. */
+>                 if (bo && bo->pages) {
+>                         vunmap(bo->vaddr);
+> -                       bo->vaddr = 0;
+> +                       bo->vaddr = NULL;
+>                 }
+>
+>                 drm_framebuffer_remove(fbdev->fb);
+> @@ -412,25 +412,3 @@ void tegra_drm_fb_exit(struct drm_device *drm)
+>         tegra_fbdev_exit(tegra->fbdev);
+>  #endif
+>  }
+> -
+> -void tegra_drm_fb_suspend(struct drm_device *drm)
+> -{
+> -#ifdef CONFIG_DRM_FBDEV_EMULATION
+> -       struct tegra_drm *tegra = drm->dev_private;
+> -
+> -       console_lock();
+> -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 1);
+> -       console_unlock();
+> -#endif
+> -}
+> -
+> -void tegra_drm_fb_resume(struct drm_device *drm)
+> -{
+> -#ifdef CONFIG_DRM_FBDEV_EMULATION
+> -       struct tegra_drm *tegra = drm->dev_private;
+> -
+> -       console_lock();
+> -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 0);
+> -       console_unlock();
+> -#endif
+> -}
+> --
+> 1.9.1
+>
