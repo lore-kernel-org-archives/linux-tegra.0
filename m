@@ -1,143 +1,92 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH v3 3/8] mailbox: Add transmit done by blocking option
-Date: Thu, 9 Aug 2018 14:56:56 +0530
-Message-ID: <CABb+yY3fVGX_aegHhJCNN2ftyz1NA9ejHqZrB=qbDRm+bLaY9A@mail.gmail.com>
-References: <20180702114033.15654-1-mperttunen@nvidia.com> <20180702114033.15654-4-mperttunen@nvidia.com>
- <CABb+yY0_dKC_cYFwwb-aeRgrx=sjv=8VLP=C6DJEecFf=v+mkQ@mail.gmail.com>
- <907bac36-0c54-8f38-0f5e-f59196d414c6@kapsi.fi> <afc8a305-79ea-2194-0af0-919bbb8f675e@kapsi.fi>
- <CABb+yY2mpNV186=M2anmZANgMOra4JM7ybyUT4yCxhqAG6-AZg@mail.gmail.com>
- <b5a91f9e-c3ff-371c-d355-4a5e8a147796@kapsi.fi> <CABb+yY3Ng+rbKRYXTncfHKv6HXBW5hHjMKDpepz31MxpE9bwRQ@mail.gmail.com>
- <a57fccaa-fcfe-6611-45a5-8c224f4ee2b6@kapsi.fi> <b3045f85-eacb-a5ec-1690-b9c63d0f3373@kapsi.fi>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [GIT PULL 5/5] arm64: tegra: Device tree changes for v4.19-rc1
+Date: Thu, 9 Aug 2018 12:21:04 +0200
+Message-ID: <20180809102104.GB21639@ulmo>
+References: <20180712154128.22705-1-thierry.reding@gmail.com>
+ <20180712154128.22705-6-thierry.reding@gmail.com>
+ <20180714212210.at4b2gcpopsznyxx@localhost>
+ <20180803104318.GA28546@ulmo>
+ <CAHMsQjU=nmpTnPK6Ryhui67YVANHExd=yRB4hp+upd7O-Tjn+Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b3045f85-eacb-a5ec-1690-b9c63d0f3373@kapsi.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, Greg KH <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Devicetree List <devicetree@vger.kernel.org>, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, ", linux-arm-kernel"@lists.infradead.org, srv_heupstream <linux-mediatek@lists.infradead.org>, srv_heupstream <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============1208241788314556288=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAHMsQjU=nmpTnPK6Ryhui67YVANHExd=yRB4hp+upd7O-Tjn+Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Anthony Eden <aeden@csail.mit.edu>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, arm@kernel.org, Olof Johansson <olof@lixom.net>, Mikko Perttunen <mperttunen@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-[dropping everyone else while we discuss the code]
 
-Thanks. I assume that branch as all the code that there is. Let me
-look and get back to you.
+--===============1208241788314556288==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
+Content-Disposition: inline
 
-On Thu, Aug 9, 2018 at 2:19 PM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
-> Here's my current code:
->
-> https://github.com/cyndis/linux/commits/wip/t194-tcu-4
->
-> "fixup! mailbox: tegra-hsp: Add support for shared mailboxes" splits up the
-> controller into two. "tegra-hsp: use polling" changes it to use polling.
->
-> There are two lines in the top patch with comments:
->
-> - at the end of tegra_hsp_mailbox_send_data, I left a "while
-> (!tegra_hsp_mailbox_last_tx_done(chan));". Without it I wasn't able to see
-> even a few garbled characters in the output.
->
-> - as mentioned, if I enable tx_block on the client side, I get a BUG:
-> scheduling while atomic. I assume this gets printed through the earlycon as
-> it's printing out correctly.
->
-> Thanks,
-> Mikko
->
->
-> On 08.08.2018 17:46, Mikko Perttunen wrote:
->>
->> On 08/08/2018 05:39 PM, Jassi Brar wrote:
->>>
->>> On Wed, Aug 8, 2018 at 8:04 PM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
->>>>
->>>>
->>>>
->>>> On 08/08/2018 05:10 PM, Jassi Brar wrote:
->>>>>
->>>>>
->>>>> On Wed, Aug 8, 2018 at 5:08 PM, Mikko Perttunen <cyndis@kapsi.fi>
->>>>> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 04.08.2018 13:45, Mikko Perttunen wrote:
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> On 08/03/2018 03:54 PM, Jassi Brar wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On Mon, Jul 2, 2018 at 5:10 PM, Mikko Perttunen
->>>>>>>> <mperttunen@nvidia.com>
->>>>>>>> wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
->>>>>>>>> send_data function of the mailbox driver is expected to block until
->>>>>>>>> the message has been sent. The new option is used with the Tegra
->>>>>>>>> Combined UART driver to minimize unnecessary overhead when
->>>>>>>>> transmitting
->>>>>>>>> data.
->>>>>>>>>
->>>>>>>> 1) TXDONE_BY_BLOCK flag :-
->>>>>>>>            Have you tried setting the flag
->>>>>>>> mbox_chan->mbox_client->tx_block
->>>>>>>> ?
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> No - I suppose I should have done that. I'm a bit concerned about
->>>>>>> overhead
->>>>>>> as send_data may be called thousands of times per second, so I tried
->>>>>>> to
->>>>>>> make
->>>>>>> it as close as possible to the downstream driver that just pokes the
->>>>>>> mailbox
->>>>>>> register directly.
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>> I tried using polling in the mailbox framework. Some printing is done
->>>>>> from
->>>>>> atomic context so it seems tx_block cannot be used -
->>>>>> wait_for_completion_timeout understandably does not work in atomic
->>>>>> context.
->>>>>> I also tried without tx_block, in which case I got some horribly
->>>>>> garbled
->>>>>> output, but "Try increasing MBOX_TX_QUEUE_LEN" was readable there.
->>>>>>
->>>>>> Any opinions?
->>>>>>
->>>>> The problems arise because your hardware (SM) supports TXDONE_BY_POLL,
->>>>> but your client drives it by TXDONE_BY_ACK because the older DB
->>>>> channels are so.
->>>>>
->>>>> Please populate SM channels as a separate controller than DB.
->>>>> The DB controller, as is, run by ACK method.
->>>>> The SM controller should be run by polling, i.e, set txdone_poll =
->>>>> true and the poll period small enough. The virtual tty client driver
->>>>> should be able to safely set tx_block from appropriate context.
->>>>>
->>>>
->>>> Sorry, I should have clarified that I already split up the controllers.
->>>> The
->>>> SM controller has txdone_poll = true. I didn't adjust txpoll_period so I
->>>> guess it's zero.
->>>>
->>> Can you please share your code (controller and client) ? Maybe offline
->>> if you wish.
->>>
->>
->> I'll upload a git branch tomorrow -- I'm not at the machine with the code
->> now.
->>
->> Mikko
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+--6sX45UoQRIJXqkqR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Aug 03, 2018 at 07:26:04AM -0400, Anthony Eden wrote:
+> Mesa support aside- if I start a computationally intensive job on the
+> Jetson TX2 like building the Linux kernel on all cores, it will lock
+> up. My only work around has been to disable the Denver CPU's. I don't
+> think the tegra186 has upstream support to control the fan on the
+> Jetson TX2, could this be a thermal problem?
+
+Yes, I suppose this could be a thermal problem. Or it could be something
+else entirely. We do support CPU frequency scaling on Tegra X2, so what
+you could do is keep the Denver CPUs enabled, but set the powersave CPU
+frequency governor. That way it should use all the CPUs but at a lower
+clock rate, which should also be able to avoid any thermal issues. This
+could help determine whether or not the problem is thermal or something
+else.
+
+Also adding Mikko on Cc who wrote the Tegra186 driver, maybe he's aware
+of any issues.
+
+Thierry
+
+--6sX45UoQRIJXqkqR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsFY0ACgkQ3SOs138+
+s6Hu+w/+LIjDv7ziEb6UqYVi2TTMn/x+yFp1UcIrWa2XOz+nmRZ8oXUL6zrqVSEN
+Q1PsQCwHPBDDGWghus+XMWDf60f2Ew4qY6vMEtdfIW8yH/xFChzAaxWE3c5iAGBp
+q2bitc1qIhjUMmXx+3I5e6bYaRmnZTNej2VPeRJunGfOaiXwFzyW9JFDBWy05tcc
+q9Ul6GIzDJvx3Nj9V2IJFxHX2O6Z7183ls05DJFkXdtWatjhqASi8f6VnLELZ3Si
+psytrWEfifBFosQm0whKQd0lxAclgGlV3bU3A9YUhsdbS60U32HsgZKTdex7QDvM
+WXjspS8lkVQ0TsJIMTLabEgfaVm6EZM09Gdp7IYHt30ZpGvDI/HT7GZTLzEIP7TC
+AfaCNQ5r4u6DPZKn85ljLzi7NVU92CJ25teXmoFOfYHclbLn99njimkA/6OACn8H
+NlwvGVOAW1ENrty0QLyrfP3nzSTNH6tTs+nb9/PKC14eT0KGEee6BBE50skMTCao
+Md0SNyEkGjGM/ogJO3CxdQkGet23Wb88g2JDYX0wb1+y1y7xNw7kQZsegDt6YRLh
+Rt/2u2B4U27v0uTiVxq2FXhrqZGKIcxZRV3ZIKfcsrHqTYBePspM10byhd8VMoum
+XSuBwny0/eWLYgIEUQeQZI1NCdEVYyFcs5S1ggGeAjfM2JEq5aM=
+=VT9r
+-----END PGP SIGNATURE-----
+
+--6sX45UoQRIJXqkqR--
+
+
+--===============1208241788314556288==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============1208241788314556288==--
