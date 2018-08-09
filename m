@@ -1,196 +1,74 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 2/8] iommu/tegra: gart: Provide access to Memory
- Controller driver
-Date: Thu, 9 Aug 2018 15:59:24 +0200
-Message-ID: <20180809135924.GG21639@ulmo>
-References: <20180804143003.15817-1-digetx@gmail.com>
- <20180804143003.15817-3-digetx@gmail.com>
- <20180809111746.GG21639@ulmo>
- <16855111.9YhuyP46zb@dimapc>
+From: Aapo Vienamo <avienamo@nvidia.com>
+Subject: Re: [PATCH 1/8] dt-bindings: mmc: Add DQS trim value to Tegra SDHCI
+Date: Thu, 9 Aug 2018 17:06:04 +0300
+Message-ID: <20180809170604.4353fe1b@dhcp-10-21-25-168>
+References: <1533650404-18125-1-git-send-email-avienamo@nvidia.com>
+        <1533650404-18125-2-git-send-email-avienamo@nvidia.com>
+        <20180809113609.GI21639@ulmo>
+        <20180809144515.06089abe@dhcp-10-21-25-168>
+        <20180809134648.GD21639@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FBBJgEOSAOerUJIT"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <16855111.9YhuyP46zb@dimapc>
+In-Reply-To: <20180809134648.GD21639@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, 9 Aug 2018 15:46:48 +0200
+Thierry Reding <thierry.reding@gmail.com> wrote:
 
---FBBJgEOSAOerUJIT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Thu, Aug 09, 2018 at 02:45:15PM +0300, Aapo Vienamo wrote:
+> > On Thu, 9 Aug 2018 13:36:09 +0200
+> > Thierry Reding <thierry.reding@gmail.com> wrote:
+> >   
+> > > On Tue, Aug 07, 2018 at 04:59:57PM +0300, Aapo Vienamo wrote:  
+> > > > Document HS400 DQS trim value device tree property.
+> > > > 
+> > > > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> > > > index 3c7960a..7d294f3 100644
+> > > > --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> > > > +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> > > > @@ -72,6 +72,7 @@ Optional properties for Tegra210 and Tegra186:
+> > > >    trimmer value for non-tunable modes.
+> > > >  - nvidia,default-trim : Specify the default outbound clock trimmer
+> > > >    value.
+> > > > +- nvidia,dqs-trim : Specify DQS trim value for HS400 timing
+> > > >  
+> > > >    Notes on the pad calibration pull up and pulldown offset values:
+> > > >      - The property values are drive codes which are programmed into the
+> > > > @@ -88,6 +89,8 @@ Optional properties for Tegra210 and Tegra186:
+> > > >      - The values are programmed to the Vendor Clock Control Register.
+> > > >        Please refer to the reference manual of the SoC for correct
+> > > >        values.
+> > > > +    - The DQS trim values are only used on controllers which support
+> > > > +      HS400 timing.    
+> > > 
+> > > One of these additions says "DQS trim values", the other says "DQS trim
+> > > value". It is unclear from the above how many values there are. I think
+> > > this should be more explicit. Also, I don't see why the note about which
+> > > controllers the DQS trim value(s) applies to is in a separate paragraph.
+> > > Couldn't it be moved to the property description?  
+> > 
+> > It's a single value. The plural form is a mistake.
+> >   
+> > > Also, I think the bindings should specify which generations of Tegra do
+> > > support HS400. Where else are people supposed to find that information?  
+> > 
+> > This property is under the "Optional properties for Tegra210 and
+> > Tegra186" section and it only applies for the said generations.  
+> 
+> What's the point of specifying that they are only used on controllers
+> which support HS400? Are you saying that only a subset of the SDHCI
+> controllers on Tegra210 and Tegra186 support HS400?
 
-On Thu, Aug 09, 2018 at 02:39:03PM +0300, Dmitry Osipenko wrote:
-> On Thursday, 9 August 2018 14:17:46 MSK Thierry Reding wrote:
-> > On Sat, Aug 04, 2018 at 05:29:57PM +0300, Dmitry Osipenko wrote:
-> > > GART contain registers needed by the Memory Controller driver, provide
-> > > access to the MC driver by utilizing its GART-integration facility.
-> > >=20
-> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > > ---
-> > >=20
-> > >  drivers/iommu/tegra-gart.c | 23 +++++++++++++++++++++++
-> > >  1 file changed, 23 insertions(+)
-> > >=20
-> > > diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-> > > index a004f6da35f2..f8b653e25914 100644
-> > > --- a/drivers/iommu/tegra-gart.c
-> > > +++ b/drivers/iommu/tegra-gart.c
-> > > @@ -31,6 +31,8 @@
-> > >=20
-> > >  #include <linux/iommu.h>
-> > >  #include <linux/of.h>
-> > >=20
-> > > +#include <soc/tegra/mc.h>
-> > > +
-> > >=20
-> > >  #include <asm/cacheflush.h>
-> > > =20
-> > >  /* bitmap of the page sizes currently supported */
-> > >=20
-> > > @@ -41,6 +43,8 @@
-> > >=20
-> > >  #define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
-> > >  #define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
-> > >  #define GART_ENTRY_PHYS_ADDR_VALID	(1 << 31)
-> > >=20
-> > > +#define GART_ERROR_REQ		(0x30 - GART_REG_BASE)
-> > > +#define GART_ERROR_ADDR		(0x34 - GART_REG_BASE)
-> > >=20
-> > >  #define GART_PAGE_SHIFT		12
-> > >  #define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
-> > >=20
-> > > @@ -63,6 +67,8 @@ struct gart_device {
-> > >=20
-> > >  	struct device		*dev;
-> > >  =09
-> > >  	struct iommu_device	iommu;		/* IOMMU Core handle */
-> > >=20
-> > > +
-> > > +	struct tegra_mc_gart_handle mc_gart_handle;
-> > >=20
-> > >  };
-> > > =20
-> > >  struct gart_domain {
-> > >=20
-> > > @@ -408,6 +414,20 @@ static int tegra_gart_resume(struct device *dev)
-> > >=20
-> > >  	return 0;
-> > > =20
-> > >  }
-> > >=20
-> > > +static u32 tegra_gart_error_addr(struct tegra_mc_gart_handle *handle)
-> > > +{
-> > > +	struct gart_device *gart =3D container_of(handle, struct gart_devic=
-e,
-> > > +						mc_gart_handle);
-> > > +	return readl_relaxed(gart->regs + GART_ERROR_ADDR);
-> > > +}
-> > > +
-> > > +static u32 tegra_gart_error_req(struct tegra_mc_gart_handle *handle)
-> > > +{
-> > > +	struct gart_device *gart =3D container_of(handle, struct gart_devic=
-e,
-> > > +						mc_gart_handle);
-> > > +	return readl_relaxed(gart->regs + GART_ERROR_REQ);
-> > > +}
-> > > +
-> > >=20
-> > >  static int tegra_gart_probe(struct platform_device *pdev)
-> > >  {
-> > > =20
-> > >  	struct gart_device *gart;
-> > >=20
-> > > @@ -464,6 +484,8 @@ static int tegra_gart_probe(struct platform_device
-> > > *pdev)>=20
-> > >  	gart->regs =3D gart_regs;
-> > >  	gart->iovmm_base =3D (dma_addr_t)res_remap->start;
-> > >  	gart->page_count =3D (resource_size(res_remap) >> GART_PAGE_SHIFT);
-> > >=20
-> > > +	gart->mc_gart_handle.error_addr =3D tegra_gart_error_addr;
-> > > +	gart->mc_gart_handle.error_req =3D tegra_gart_error_req;
-> > >=20
-> > >  	gart->savedata =3D vmalloc(array_size(sizeof(u32), gart->page_count=
-));
-> > >  	if (!gart->savedata) {
-> > >=20
-> > > @@ -475,6 +497,7 @@ static int tegra_gart_probe(struct platform_device
-> > > *pdev)>=20
-> > >  	do_gart_setup(gart, NULL);
-> > >  =09
-> > >  	gart_handle =3D gart;
-> > >=20
-> > > +	tegra_mc_register_gart(&gart->mc_gart_handle);
-> > >=20
-> > >  	return 0;
-> > > =20
-> > >  }
-> >=20
-> > I see now why you've did it this way. We have separate devices unlike
-> > with SMMU where it is properly modeled as part of the memory controller.
-> > I think we should consider breaking ABI at this point and properly merge
-> > both the memory controller and GART nodes. There's really no reason why
-> > they should be separate and we're jumping through multiple hoops to do
-> > what we need to do just because a few years back we made a mistake.
-> >=20
-> > I know we're technically not supposed to break the DT ABI, but I think
-> > in this particular case we can make a good case for it. The current DT
-> > bindings are plainly broken, and obviously so. Also, we don't currently
-> > use the GART upstream for anything, so we can't break any existing
-> > systems either.
->=20
-> IIUC, that will require to break the stable DT ABI of the tegra20-mc, whi=
-ch is=20
-> working fine and does its job. I'm personally not seeing the slight lamen=
-ess=20
-> of the current DT as a good excuse to break the ABI. Let's then break DT =
-ABI=20
-> on all Tegra's and convert them all to genpd and other goodies like assig=
-ned=20
-> clock parents and clock rate.
+Yes, on Tegra210 and Tegra186 only SDMMC4 supports HS400.
 
-genpd and assigned clocks are complementary, they can be switched to
-without breaking ABI.
-
-And that's also different from the memory controller on Tegra20 where we
-just made the mistake of describing what is effectively one device as
-two separate devices. From what I can tell, the only reason this was
-done was because it mapped better to the Linux driver model where there
-is a framework to represent an IOMMU and a misunderstanding of how to
-work with the driver model and device tree.
-
-As such, I would describe it as more of a bug in the DT that should be
-fixed rather than breaking the ABI.
-
-And, like I said, we are in the somewhat fortunate situation that we
-don't actively use the GART, at least in upstream, yet. So even if we
-break ABI, nobody will notice anyway. Those are about as good pre-
-conditions as you're going to get for fixing ABI.
-
-Thierry
-
---FBBJgEOSAOerUJIT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsSLwACgkQ3SOs138+
-s6EBkg/+ItgkU95kpNhbkVG8JkfdRyQbLS8pyeTJe5HPuqcYg5Kx0uzCi7/VOV9K
-MFC7ziLMZUKGcnVdELJFiQOiOcH6WXfWTtULf9MDOeQNw2Qu1co/3GE2eyOt0Zh+
-DsgLZWsHkRoVGE3BA5u9Vd9M2Zv/5Z9uNuFzv/4ELYcnlJOktK5zpRAbwwvzFK3q
-3vCboh4o+zos1mzBAFcPsm4cuKoQvEaOvf5U28UgrToVSsYq5niau/7AQlYh+HGC
-WgVW7RXO0SNT+h0OfXCJhh8My41EmeTd3FUMyNvRa5Ur3e6P6Wtfy1LtWxLKYc7g
-8w3uPHaGzu//y6Yam/oMO+d/hRdrMpvUJQCi/s+2EkJ3qwQApQl6zmynzyM/Tkes
-eu0bBIhjoGLUGt/4J75hKWtLhVw6r2PSDikxir6wvzUOIhHPfrkPLNdFE5wcD3Og
-Xjb+pGGE439LVcVkWe79f64YSV403VR+4xHjEToegOuXYyjL7TYCBYwsLN/TVece
-MbuigLG8SQMEafCuTtvyvs3gf1Rp5AezvNgGbatQ0bgflhcAqX+ug0SJ9h3n7J4h
-zpri3YMd2RwIkDi40ihiGz4JWT6SnoY8NfsaLTCoie3FzVDBfsBtDoZZ3GY81zl1
-ip5R1lND1+lCGXxQcF+7R6otT9difNAkGD0AbZ/KbEWSCvrdHsE=
-=odYV
------END PGP SIGNATURE-----
-
---FBBJgEOSAOerUJIT--
+ -Aapo
