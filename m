@@ -1,136 +1,115 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1] gpu: host1x: Ignore clients initialization failure
-Date: Thu, 9 Aug 2018 12:45:41 +0200
-Message-ID: <20180809104541.GC21639@ulmo>
-References: <20180801150807.15926-1-digetx@gmail.com>
- <20180803105055.GC28546@ulmo>
- <4457259.6qKMIOUXSS@dimapc>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/8] memory: tegra: Provide facility for integration
+	with the GART driver
+Date: Thu, 9 Aug 2018 13:10:08 +0200
+Message-ID: <20180809111008.GF21639@ulmo>
+References: <20180804143003.15817-1-digetx@gmail.com>
+	<20180804143003.15817-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yLVHuoLXiP9kZBkt"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4457259.6qKMIOUXSS@dimapc>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Mikko Perttunen <cyndis@kapsi.fi>, Kyle Evans <kvans32@gmail.com>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1831655672355625438=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20180804143003.15817-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---yLVHuoLXiP9kZBkt
+--===============1831655672355625438==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ExXT7PjY8AI4Hyfa"
+Content-Disposition: inline
+
+
+--ExXT7PjY8AI4Hyfa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 03, 2018 at 02:30:47PM +0300, Dmitry Osipenko wrote:
-> On Friday, 3 August 2018 13:50:55 MSK Thierry Reding wrote:
-> > On Wed, Aug 01, 2018 at 06:08:07PM +0300, Dmitry Osipenko wrote:
-> > > From time to time new bugs are popping up, causing some host1x client=
- to
-> > > fail its initialization. Currently a single clients initialization fa=
-ilure
-> > > causes whole host1x device registration to fail, as a result a single=
- DRM
-> > > sub-device initialization failure makes whole DRM initialization to f=
-ail.
-> > > Let's ignore clients initialization failure, as a result display panel
-> > > lights up even if some DRM clients (say GR2D or VIC) fail to initiali=
-ze.
-> > >=20
-> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > > ---
-> > >=20
-> > >  drivers/gpu/host1x/bus.c | 18 +++++++-----------
-> > >  1 file changed, 7 insertions(+), 11 deletions(-)
-> >=20
-> > This is actually done on purpose. I can't think of a case where we would
-> > actively like to keep a half-broken DRM device operational. The errors
-> > that you're talking about should only happen during development,
+On Sat, Aug 04, 2018 at 05:29:56PM +0300, Dmitry Osipenko wrote:
+> In order to report clients name and access direction on GART's page fault,
+> MC driver need to access GART registers. Add facility that provides access
+> to the GART.
 >=20
-> [only in a perfect world]
-
-gr2d and VIC are fairly deterministic. What are the errors you are
-seeing that cause initialization failure? Note that it is possible for
-these devices to malfunction even if initialization succeeds. A failure
-to initialize can only happen if there's something wrong in the device
-tree, firmware is missing (in case of VIC) or a regression was
-introduced in some subsystem that causes a failure (maybe deferred probe
-or something similar).
-
-> > and the
-> > device not showing up is a pretty good indicator that something is wrong
-> > as opposed to everything booting normally and then getting some cryptic
-> > error at runtime because one of the clients didn't initialize.
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/memory/tegra/mc.c | 26 +++++++++++++++++++++++---
+>  include/soc/tegra/mc.h    | 13 +++++++++++++
+>  2 files changed, 36 insertions(+), 3 deletions(-)
 >=20
-> If machine doesn't have a serial port and it doesn't have ssh server runn=
-ing=20
-> or network doesn't come up, you'll end up with a completely dysfunctional=
-=20
-> piece of hardware. Hence there is no chance for you to even check what is=
-=20
-> wrong. The argument about a cryptic error doesn't make much sense, you ha=
-ve to=20
-> improve your runtime as well (and you'll get a error message in the kerne=
-ls=20
-> log).
+> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> index e56862495f36..4940d72b5263 100644
+> --- a/drivers/memory/tegra/mc.c
+> +++ b/drivers/memory/tegra/mc.c
+> @@ -72,6 +72,8 @@ static const struct of_device_id tegra_mc_of_match[] =
+=3D {
+>  };
+>  MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
+> =20
+> +static struct tegra_mc_gart_handle *gart_handle;
+> +
 
-You make a good point here. I'm not aware of any devices we support in
-the kernel that don't have a serial console, but that doesn't mean the
-kernel could be used on an "unsupported" device  that doesn't have one.
+Why the global variable? Can't this be part of struct tegra_mc? We
+already do a very similar thing with the Tegra SMMU integration, why
+invent something completely different? Can't we stick to a similar
+mechanism?
 
-> > From my perspective, all clients should always be operational in
-> > whatever baseline version you use. If it isn't that's a bug that should
-> > be fixed. Ideally those bugs should get fixed before making it into a
-> > baseline version (mainline, linux-next, ...), so that this never impacts
-> > even developers, unless they break it themselves, in which case refusing
-> > to register the DRM device is a pretty good incentive to fix it.
->=20
-> Sounds like you're assuming that only kernel developers are supposed to u=
-se=20
-> Tegra, though at least (for now) for upstream it is kinda true. Of course=
- that=20
-> could be changed ;-)
+Given that struct tegra_smmu is opaque at the memory controller level,
+we could even go and store the GART related data in the same pointer.
 
-That's not at all what I'm saying. What I am saying is that we should
-make it difficult for developers to break the kernel in a way that would
-put users into a position that is difficult to get themselves out of. If
-we refuse to register the complete DRM device in case some subdevice
-fails to initialize we increase the chances of developers noticing and
-fixing it.
+How about the registration code goes into a struct tegra_gart_probe()
+function that is called from tegra_mc_probe() right after the SMMU
+block:
 
-If all we do on failure is output an error message, it's very likely to
-go unnoticed. Developers are likely to check specifically the
-functionality that they're working on and ignore failures that they may
-have caused in other parts of the code as a side-effect of their current
-work.
+	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_SMMU)) {
+		mc->smmu =3D tegra_smmu_probe(...);
+		...
+	}
 
-Perhaps a good middle ground would be to turn initialization failures
-into WARN_ON() to increase the chances of them getting notified and then
-continue on a best effort basis in the hopes of having enough
-initialized to get a message to users. Another alternative would be to
-mark essential subdevices (such as the display controller) so that only
-they will cause failure to register the whole DRM device.
+	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_GART)) {
+		mc->smmu =3D tegra_gart_probe(...);
+		...
+	}
+
+?
 
 Thierry
 
---yLVHuoLXiP9kZBkt
+--ExXT7PjY8AI4Hyfa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsG1MACgkQ3SOs138+
-s6H/fRAAoJTQvB6jRwe0QK5JL38mYcoD2oYR9XUGug1CDJQelmWkn6+BaTx/nPrc
-9DU0aRsrjU+pywIvhOAw3M3Q2npIiWxMRoNqNQUX29HmeOG+o/9R6en15J0kv4N2
-1aqLlekQYBrHK0kWPs53SVXmRLXIBqRprzRN+aHMvR9SI+EyEf5cnCrn61MgLAHw
-QTqh85FletD1taWiTe3R6ykfIjRJTX8ga1TLRO9acftc/8JnvcYO4F6wN2ct267q
-aD9ZLJPshy2cTddV3Oo0xULOFiYspOEwcAp6x5lpLuBapkdcP6XjYhIJbmSE9aau
-ceOvYSteNluRfXqxhOpnwCcYNBdldBckELpnS6UfX8WBfH+Hm4uxjcbhWkW+Vjc/
-se60w5HMeZ9C/riBXmzEIyKCdS3WcCQTJFphnYaUgT91BefQJ+ZOXbQj1X3MzqQQ
-Nq68PmLWS4tXjPqjw4sQdRQ/ikqzUepo2rQFkAv3Fq9w6Nwh92YcUMfKtFKljzl6
-1wmGS9t19WFMzDUqm5LNucv24RmDgkGCe6hq9lOJtPJ+cW2tG/JaIQE83D0EX4tA
-0DYhPlFMuXeA2F+DYbirF0pQGW+zYXH4CSFnaQRziGszo8L8G2By7Z181WM/gahO
-JDfKwFGtke8TzxFoYcWVOoLRSbfkusSR57XqChwr3gnZlojEaPQ=
-=giF+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsIRAACgkQ3SOs138+
+s6EOag/+KWyfIYwlunu77wU6xbe78ZNj4WUCSKcxoA4GExTvqLDNvtjmcxGHxeuh
+1LSf4obEVQZLqCECC0Ie0u24NTosHH+Dm3bjoiXbDPN07JFSBj8PDVdtHoI1+cA/
+H7AqwOhOezhKWdisxNf3mP+aRPLrjqAZQ1IDdK/b0xHlSJA6d97L39nA/h8wKhM8
+4vqm+HD/kJlLAT7gbMQ4J4NVw0amivAeHqI/xSk+MJoghrliR4t9xnOCkJKGsbjH
+BxyaXE1A4HxURPKB1t+LOgOWSgfGY5eeO+CC2Ll2sVG8mfHAKQj3bAr5XXd9Ggl6
+vINQ6xeK0JFJfzw1YKP7bC12DzTU0LWE8KUtdmdND3To0vUj53AjSKX5u0og0jui
+eZIRPva3Om4tGefl2vqraG7DmkJZB02y2l4CqGfJvjZfs8JCeUyxzXAXN47U+gXv
+V8lgCnbUZi/NguOnErGuF3RGjsWbm5t9e2sS2ncSNSpD256iKmHJwdP/myrUX3AL
+GmeG8aeDkk8mqE2zXWBr2agNs/0n95WVdZTTAdW+goVJkkQ62vqUzxyor1Tmw6GP
+664aTF3YssY6/pvJcQeOcdyyZNuRSUg8R1qy0MPBh0v99iagVVRVqJP4cyzuHjcQ
+NCfu9WcqGhTYF84r632VjAr8KVPOY83zQOE5gSiqmD0iRmV3n8A=
+=IZWX
 -----END PGP SIGNATURE-----
 
---yLVHuoLXiP9kZBkt--
+--ExXT7PjY8AI4Hyfa--
+
+--===============1831655672355625438==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1831655672355625438==--
