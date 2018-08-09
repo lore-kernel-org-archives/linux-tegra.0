@@ -1,118 +1,123 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [GIT PULL 5/5] arm64: tegra: Device tree changes for v4.19-rc1
-Date: Thu, 9 Aug 2018 16:07:53 +0200
-Message-ID: <20180809140753.GH21639@ulmo>
-References: <20180712154128.22705-1-thierry.reding@gmail.com>
- <20180712154128.22705-6-thierry.reding@gmail.com>
- <20180714212210.at4b2gcpopsznyxx@localhost>
- <20180803104318.GA28546@ulmo>
- <CAHMsQjU=nmpTnPK6Ryhui67YVANHExd=yRB4hp+upd7O-Tjn+Q@mail.gmail.com>
- <20180809102104.GB21639@ulmo>
- <51a19ec3-8b34-56f5-d9c7-69397d3d11ff@kapsi.fi>
+Subject: Re: [PATCH 1/8] dt-bindings: mmc: Add DQS trim value to Tegra SDHCI
+Date: Thu, 9 Aug 2018 16:09:48 +0200
+Message-ID: <20180809140948.GI21639@ulmo>
+References: <1533650404-18125-1-git-send-email-avienamo@nvidia.com>
+ <1533650404-18125-2-git-send-email-avienamo@nvidia.com>
+ <20180809113609.GI21639@ulmo>
+ <20180809144515.06089abe@dhcp-10-21-25-168>
+ <20180809134648.GD21639@ulmo>
+ <20180809170604.4353fe1b@dhcp-10-21-25-168>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5130846813602692072=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <51a19ec3-8b34-56f5-d9c7-69397d3d11ff@kapsi.fi>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Anthony Eden <aeden@csail.mit.edu>, arm@kernel.org, Olof Johansson <olof@lixom.net>, Mikko Perttunen <mperttunen@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Fh0SynPkUvrWGMR0"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180809170604.4353fe1b@dhcp-10-21-25-168>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============5130846813602692072==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="saTAHnV464s+57Yq"
-Content-Disposition: inline
-
-
---saTAHnV464s+57Yq
+--Fh0SynPkUvrWGMR0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 09, 2018 at 01:34:37PM +0300, Mikko Perttunen wrote:
-> On 09.08.2018 13:21, Thierry Reding wrote:
-> > On Fri, Aug 03, 2018 at 07:26:04AM -0400, Anthony Eden wrote:
-> > > Mesa support aside- if I start a computationally intensive job on the
-> > > Jetson TX2 like building the Linux kernel on all cores, it will lock
-> > > up. My only work around has been to disable the Denver CPU's. I don't
-> > > think the tegra186 has upstream support to control the fan on the
-> > > Jetson TX2, could this be a thermal problem?
-> >=20
-> > Yes, I suppose this could be a thermal problem. Or it could be something
-> > else entirely. We do support CPU frequency scaling on Tegra X2, so what
-> > you could do is keep the Denver CPUs enabled, but set the powersave CPU
-> > frequency governor. That way it should use all the CPUs but at a lower
-> > clock rate, which should also be able to avoid any thermal issues. This
-> > could help determine whether or not the problem is thermal or something
-> > else.
-> >=20
-> > Also adding Mikko on Cc who wrote the Tegra186 driver, maybe he's aware
-> > of any issues.
+On Thu, Aug 09, 2018 at 05:06:04PM +0300, Aapo Vienamo wrote:
+> On Thu, 9 Aug 2018 15:46:48 +0200
+> Thierry Reding <thierry.reding@gmail.com> wrote:
 >=20
-> I haven't seen any issues myself, though I haven't stressed the CPU too
-> heavily. We also have a thermal driver for Tegra186, so we could set up
-> thermal throttling with a device tree change.
+> > On Thu, Aug 09, 2018 at 02:45:15PM +0300, Aapo Vienamo wrote:
+> > > On Thu, 9 Aug 2018 13:36:09 +0200
+> > > Thierry Reding <thierry.reding@gmail.com> wrote:
+> > >  =20
+> > > > On Tue, Aug 07, 2018 at 04:59:57PM +0300, Aapo Vienamo wrote: =20
+> > > > > Document HS400 DQS trim value device tree property.
+> > > > >=20
+> > > > > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > > > > ---
+> > > > >  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt |=
+ 3 +++
+> > > > >  1 file changed, 3 insertions(+)
+> > > > >=20
+> > > > > diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20=
+-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> > > > > index 3c7960a..7d294f3 100644
+> > > > > --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.=
+txt
+> > > > > +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.=
+txt
+> > > > > @@ -72,6 +72,7 @@ Optional properties for Tegra210 and Tegra186:
+> > > > >    trimmer value for non-tunable modes.
+> > > > >  - nvidia,default-trim : Specify the default outbound clock trimm=
+er
+> > > > >    value.
+> > > > > +- nvidia,dqs-trim : Specify DQS trim value for HS400 timing
+> > > > > =20
+> > > > >    Notes on the pad calibration pull up and pulldown offset value=
+s:
+> > > > >      - The property values are drive codes which are programmed i=
+nto the
+> > > > > @@ -88,6 +89,8 @@ Optional properties for Tegra210 and Tegra186:
+> > > > >      - The values are programmed to the Vendor Clock Control Regi=
+ster.
+> > > > >        Please refer to the reference manual of the SoC for correct
+> > > > >        values.
+> > > > > +    - The DQS trim values are only used on controllers which sup=
+port
+> > > > > +      HS400 timing.   =20
+> > > >=20
+> > > > One of these additions says "DQS trim values", the other says "DQS =
+trim
+> > > > value". It is unclear from the above how many values there are. I t=
+hink
+> > > > this should be more explicit. Also, I don't see why the note about =
+which
+> > > > controllers the DQS trim value(s) applies to is in a separate parag=
+raph.
+> > > > Couldn't it be moved to the property description? =20
+> > >=20
+> > > It's a single value. The plural form is a mistake.
+> > >  =20
+> > > > Also, I think the bindings should specify which generations of Tegr=
+a do
+> > > > support HS400. Where else are people supposed to find that informat=
+ion? =20
+> > >=20
+> > > This property is under the "Optional properties for Tegra210 and
+> > > Tegra186" section and it only applies for the said generations. =20
+> >=20
+> > What's the point of specifying that they are only used on controllers
+> > which support HS400? Are you saying that only a subset of the SDHCI
+> > controllers on Tegra210 and Tegra186 support HS400?
+>=20
+> Yes, on Tegra210 and Tegra186 only SDMMC4 supports HS400.
 
-Do you have an example of how that would work? The DT bindings are a
-little sparse on the specifics. It seems like something similar to what
-we did on Tegra124 could be done on Tegra186.
-
-Anthony: do you think you could come up with something suitable based on
-what arch/arm/boot/dts/tegra124{.dtsi,-jetson-tk1.dts} and the device
-tree bindings for Tegra186 contain in
-
-	Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
-
-as well as
-
-	include/dt-bindings/thermal/tegra186-bpmp-thermal.h
-
-? That's provided that reducing the CPU frequency does indeed prevent
-the lock up that you were seeing.
+Good. I think that'd be good to have as part of the DT bindings
+documentation.
 
 Thierry
 
---saTAHnV464s+57Yq
+--Fh0SynPkUvrWGMR0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsSrkACgkQ3SOs138+
-s6HM0Q/+I7UHDOqhyL/j9SggVwJB5lKC3skz7mP+uHUhGeaYK0UYhL6I0tvv7mrI
-Su5q/WKJ/iq0oYckPKuJ9/AKYAfzf4OXUArEbDReRjhgdmAL9lDIq3YqWh9DhXqN
-ZgpBstNUQo9UPVuNQxIo14m6O6ZzrxV1zD0FBfwvH6jcqmnDr/6dYihDifTn2zbL
-Ems1fgQVzohiTfXlJZ7dsBPi7IdmJILuMdEvglZWbCNVCxJxeSxkyxLkkBtUop5l
-8iOfdtagx8ZgCxMM4UghrpZdVAF9BkjNhoFJgdjEm5UQJJWxXhVBka0JBwTee5aW
-FJ7vMGnxJZ/MVcDL4EYfQb3eibH8SwOhLJfvYtzgVYM631wzRUE34cg80j9b3l3Q
-hCjRZbWWrZrYWCFT8H7YhSUMX0Y4urtGOLJe+/oqTpxzTdKZ5zt/He/B2yoddkdA
-4SP6WLISQyglAjhbrNX1z44n0+rzMBamq4lEabscYeO1/PnhWQaja2YDeOIMF0KH
-oy5xO6i5iGXdNwyy+3Ml0xFmig1t1/bf/PoMUmsP+a2qAvPv+5It9mMHCi5cLc/O
-Vf+EVnaUVYyj1eMK+Ef+QY6MJJZIbKDWpKRmpYXJVB5PJeCOv0rdlckVzDVALLKh
-AoNhp5wL/Hwqi9gO73QuHSmkWl6bE5XmwT0MmgCwh7QZkp9I0bI=
-=ZtTm
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltsSysACgkQ3SOs138+
+s6EWbQ/+NU+mxZMPHIiKWhWZqLzgavH9rVHffJwEXQuzkR1NY+/O6nz6PGTuLeqo
+t8WgvETzPaJm6LWVFzwjg0lYi2FWOVB4pfesVC3oNKT4KtD4IxCMEERcDEUAaga0
+V2QEefuiLbxVzGHTxQ/e+N2Wf1ODUzkuz+zstsEIdG7EH7CyK10hfDE1tJ6fDH1u
+G4SV2UB9ifP704PhZZyIHDfYMUX+tA8LBpcwj6SIRJw66oSzXTodGUy/QvySymak
+bkRnA9RV/76Zcb+BbgSS6P/GTpGkLtwXm1reKBolBUPG3q0BBOjj4pw8Y9Ut4l//
+tbNCoeOJMa6MqXoKA8FhfHhAVAQp+J5VVqgAaSWhMM/z7DBK8sYk/akL5FViolJe
+TI3byWJ2liN47uyGbAaYMQnnJWJoF9nq3IkH153LS8/aVUI0Db9JOGhkjQjCs59r
+mk7FF+bXiTWVxGFFmTGM38sIsFnzuxGGfO7CIJv+Mn3xnUvBz5qPcmpWqOri5x5F
+J7KKJUem1ccxpRKYXeSR8pFtfkFIGVwZ+GemBZUgv61ncZ0HmEaSSfxR8urWq/Oo
+8WJGVYpAIZ702VnY+eT3pc1W9qCIpz0pq/HxLFZvggjxru6ttcIx551jnNHLsBno
+8y9I3T44M87Sd29+d98e24EA63oKNHQAIWYOd6rB0J3Ra8QQ2Nc=
+=txHf
 -----END PGP SIGNATURE-----
 
---saTAHnV464s+57Yq--
-
-
---===============5130846813602692072==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5130846813602692072==--
+--Fh0SynPkUvrWGMR0--
