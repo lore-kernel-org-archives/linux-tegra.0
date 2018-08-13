@@ -1,43 +1,70 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 01/14] staging: media: tegra-vde: Support BSEV clock and
- reset
-Date: Mon, 13 Aug 2018 18:09:46 +0300
-Message-ID: <2754354.GStWHyBo4g@dimapc>
-References: <20180813145027.16346-1-thierry.reding@gmail.com>
- <20180813145027.16346-2-thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] gpu: host1x: Ignore clients initialization failure
+Date: Mon, 13 Aug 2018 20:48:25 +0300
+Message-ID: <2093022.0kn10W7Lqi@dimapc>
+References: <20180809231211.26182-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180813145027.16346-2-thierry.reding@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180809231211.26182-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: Mikko Perttunen <cyndis@kapsi.fi>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, 13 August 2018 17:50:14 MSK Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Friday, 10 August 2018 02:12:11 MSK Dmitry Osipenko wrote:
+> From time to time new bugs are popping up, causing some host1x client to
+> fail its initialization. Currently a single clients initialization failure
+> causes whole host1x device registration to fail, as a result a single DRM
+> sub-device initialization failure makes whole DRM initialization to fail.
+> Let's ignore clients initialization failure, as a result display panel
+> lights up even if some DRM clients (say GR2D or VIC) fail to initialize.
+> Actually VIC fails if initramfs misses the firmware file, so with this
+> change a serial console isn't needed anymore to figure out why display
+> isn't working.
 > 
-> The BSEV clock has a separate gate bit and can not be assumed to be
-> always enabled. Add explicit handling for the BSEV clock and reset.
-> 
-> This fixes an issue on Tegra124 where the BSEV clock is not enabled
-> by default and therefore accessing the BSEV registers will hang the
-> CPU if the BSEV clock is not enabled and the reset not deasserted.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
+> 
+> Changelog:
+> 
+> v2: Added WARN_ON() that should get more attention than just a error
+> message. Made clients_lock to lock around the lists modification, that is
+> in line with the rest of the code.
+> 
+>  drivers/gpu/host1x/bus.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+> index 815bdb42e3f0..07bb6b6c1260 100644
+> --- a/drivers/gpu/host1x/bus.c
+> +++ b/drivers/gpu/host1x/bus.c
+> @@ -199,19 +199,23 @@ static void host1x_subdev_unregister(struct
+> host1x_device *device, */
+>  int host1x_device_init(struct host1x_device *device)
+>  {
+> -	struct host1x_client *client;
+> +	struct host1x_client *client, *cl;
+>  	int err;
+> 
+>  	mutex_lock(&device->clients_lock);
+> 
+> -	list_for_each_entry(client, &device->clients, list) {
+> +	list_for_each_entry_safe(client, cl, &device->clients, list) {
+>  		if (client->ops && client->ops->init) {
+>  			err = client->ops->init(client);
+> -			if (err < 0) {
+> +			if (WARN_ON(err < 0)) {
+>  				dev_err(&device->dev,
+>  					"failed to initialize %s: %d\n",
+>  					dev_name(client->dev), err);
+> -				goto teardown;
+> +
+> +				/* add the client to the list of idle clients */
+> +				mutex_lock(&clients_lock);
+> +				list_add_tail(&client->list, &clients);
 
-Are you sure that BSEV clock is really needed for T20/30? I've tried already 
-to disable the clock explicitly and everything kept working, though I'll try 
-again.
+This shall be list_move_tail(), v3 is coming.
 
-The device-tree changes should be reflected in the binding documentation.
+> +				mutex_unlock(&clients_lock);
