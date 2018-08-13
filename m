@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 11/14] ARM: tegra: Enable VDE on Tegra124
-Date: Mon, 13 Aug 2018 16:50:24 +0200
-Message-ID: <20180813145027.16346-12-thierry.reding@gmail.com>
+Subject: [PATCH 06/14] staging: media: tegra-vde: Print out invalid FD
+Date: Mon, 13 Aug 2018 16:50:19 +0200
+Message-ID: <20180813145027.16346-7-thierry.reding@gmail.com>
 References: <20180813145027.16346-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,68 +23,26 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
+Include the invalid file descriptor when reporting an error message to
+help diagnosing why importing the buffer failed.
+
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 40 +++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/staging/media/tegra-vde/tegra-vde.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index b113e47b2b2a..8fdca4723205 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -83,6 +83,19 @@
- 		};
- 	};
+diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+index 0ce30c7ccb75..0adc603fa437 100644
+--- a/drivers/staging/media/tegra-vde/tegra-vde.c
++++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+@@ -643,7 +643,7 @@ static int tegra_vde_attach_dmabuf(struct device *dev,
  
-+	iram@40000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x0 0x40000000 0x0 0x40000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x0 0x40000000 0x40000>;
-+
-+		vde_pool: pool@400 {
-+			reg = <0x400 0x3fc00>;
-+			pool;
-+		};
-+	};
-+
- 	host1x@50000000 {
- 		compatible = "nvidia,tegra124-host1x", "simple-bus";
- 		reg = <0x0 0x50000000 0x0 0x00034000>;
-@@ -283,6 +296,33 @@
- 		*/
- 	};
+ 	dmabuf = dma_buf_get(fd);
+ 	if (IS_ERR(dmabuf)) {
+-		dev_err(dev, "Invalid dmabuf FD\n");
++		dev_err(dev, "Invalid dmabuf FD: %d\n", fd);
+ 		return PTR_ERR(dmabuf);
+ 	}
  
-+	vde@60030000 {
-+		compatible = "nvidia,tegra124-vde", "nvidia,tegra30-vde",
-+			     "nvidia,tegra20-vde";
-+		reg = <0x0 0x60030000 0x0 0x1000   /* Syntax Engine */
-+		       0x0 0x60031000 0x0 0x1000   /* Video Bitstream Engine */
-+		       0x0 0x60032000 0x0 0x0100   /* Macroblock Engine */
-+		       0x0 0x60032200 0x0 0x0100   /* Post-processing Engine */
-+		       0x0 0x60032400 0x0 0x0100   /* Motion Compensation Engine */
-+		       0x0 0x60032600 0x0 0x0100   /* Transform Engine */
-+		       0x0 0x60032800 0x0 0x0100   /* Pixel prediction block */
-+		       0x0 0x60032a00 0x0 0x0100   /* Video DMA */
-+		       0x0 0x60033800 0x0 0x0400>; /* Video frame controls */
-+		reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
-+			    "tfe", "ppb", "vdma", "frameid";
-+		iram = <&vde_pool>; /* IRAM region */
-+		interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
-+			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
-+			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
-+		interrupt-names = "sync-token", "bsev", "sxe";
-+		clocks = <&tegra_car TEGRA124_CLK_VDE>,
-+			 <&tegra_car TEGRA124_CLK_BSEV>;
-+		clock-names = "vde", "bsev";
-+		resets = <&tegra_car 61>,
-+			 <&tegra_car 63>;
-+		reset-names = "vde", "bsev";
-+	};
-+
- 	apbdma: dma@60020000 {
- 		compatible = "nvidia,tegra124-apbdma", "nvidia,tegra148-apbdma";
- 		reg = <0x0 0x60020000 0x0 0x1400>;
 -- 
 2.17.0
