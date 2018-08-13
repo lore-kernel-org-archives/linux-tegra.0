@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 07/14] staging: media: tegra-vde: Add some clarifying comments
-Date: Mon, 13 Aug 2018 16:50:20 +0200
-Message-ID: <20180813145027.16346-8-thierry.reding@gmail.com>
+Subject: [PATCH 12/14] ARM: tegra: Add BSEV clock and reset for VDE on Tegra20
+Date: Mon, 13 Aug 2018 16:50:25 +0200
+Message-ID: <20180813145027.16346-13-thierry.reding@gmail.com>
 References: <20180813145027.16346-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,78 +23,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add some comments specifying what tables are being set up in VRAM.
-
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/staging/media/tegra-vde/tegra-vde.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/boot/dts/tegra20.dtsi | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
-index 0adc603fa437..41cf86dc5dbd 100644
---- a/drivers/staging/media/tegra-vde/tegra-vde.c
-+++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-@@ -271,6 +271,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
- 	unsigned int i, k;
- 	size_t size;
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 15b73bd377f0..abb5738a0705 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -287,9 +287,13 @@
+ 			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
+ 			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
+ 		interrupt-names = "sync-token", "bsev", "sxe";
+-		clocks = <&tegra_car TEGRA20_CLK_VDE>;
+-		reset-names = "vde", "mc";
+-		resets = <&tegra_car 61>, <&mc TEGRA20_MC_RESET_VDE>;
++		clocks = <&tegra_car TEGRA20_CLK_VDE>,
++			 <&tegra_car TEGRA20_CLK_BSEV>;
++		clock-names = "vde", "bsev";
++		resets = <&tegra_car 61>,
++			 <&tegra_car 63>,
++			 <&mc TEGRA20_MC_RESET_VDE>;
++		reset-names = "vde", "bsev", "mc";
+ 	};
  
-+	/* clear H256RefPicList */
- 	size = num_ref_pics * 4 * 8;
- 	memset(vde->iram, 0, size);
- 
-@@ -453,6 +454,7 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 	VDE_WR(0x00000000, vde->bsev + 0x98);
- 	VDE_WR(0x00000060, vde->bsev + 0x9C);
- 
-+	/* clear H264MB2SliceGroupMap, assuming no FMO */
- 	memset(vde->iram + 1024, 0, macroblocks_nb / 2);
- 
- 	tegra_setup_frameidx(vde, dpb_frames, ctx->dpb_frames_nb,
-@@ -480,6 +482,8 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 	if (err)
- 		return err;
- 
-+	/* upload H264MB2SliceGroupMap */
-+	/* XXX don't hardcode map size? */
- 	value = (0x20 << 26) | (0 << 25) | ((4096 >> 2) & 0x1fff);
- 	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, false);
- 	if (err)
-@@ -492,6 +496,7 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 	if (err)
- 		return err;
- 
-+	/* clear H264MBInfo XXX don't hardcode size */
- 	value = (0x21 << 26) | ((240 & 0x1fff) << 12) | (0x54c & 0xfff);
- 	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x840F054C, false);
- 	if (err)
-@@ -499,6 +504,16 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 
- 	size = num_ref_pics * 4 * 8;
- 
-+	/* clear H264RefPicList */
-+	/*
-+	value = (0x21 << 26) | (((size >> 2) & 0x1fff) << 12) | 0xE34;
-+
-+	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, false);
-+	if (err)
-+		return err;
-+	*/
-+
-+	/* upload H264RefPicList */
- 	value = (0x20 << 26) | (0x0 << 25) | ((size >> 2) & 0x1fff);
- 	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, false);
- 	if (err)
-@@ -584,7 +599,11 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
- 
- 	tegra_vde_mbe_set_0xa_reg(vde, 0, 0x000009FC);
- 	tegra_vde_mbe_set_0xa_reg(vde, 2, 0x61DEAD00);
-+#if 0
-+	tegra_vde_mbe_set_0xa_reg(vde, 4, dpb_frames[0].aux_addr); /* 0x62DEAD00 */
-+#else
- 	tegra_vde_mbe_set_0xa_reg(vde, 4, 0x62DEAD00);
-+#endif
- 	tegra_vde_mbe_set_0xa_reg(vde, 6, 0x63DEAD00);
- 	tegra_vde_mbe_set_0xa_reg(vde, 8, dpb_frames[0].aux_addr);
- 
+ 	apbmisc@70000800 {
 -- 
 2.17.0
