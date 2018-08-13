@@ -1,56 +1,27 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] drivers/thermal/tegra: fix a doule free devce node
-Date: Mon, 13 Aug 2018 19:35:53 +0100
-Message-ID: <88fb9427-9f3d-3ddb-c4cc-00b6e4de76ce@nvidia.com>
-References: <1533822056-33930-1-git-send-email-zhongjiang@huawei.com>
- <312fcf2a-ab47-9aa4-3b1f-bca5f6a4d58c@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 03/40] dt-bindings: Add Tegra SDHCI pad pdpu offset
+ bindings
+Date: Mon, 13 Aug 2018 13:24:48 -0600
+Message-ID: <20180813192448.GA15903@rob-hp-laptop>
+References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
+ <1533924522-1037-4-git-send-email-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <312fcf2a-ab47-9aa4-3b1f-bca5f6a4d58c@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1533924522-1037-4-git-send-email-avienamo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: zhong jiang <zhongjiang@huawei.com>, ezequiel@collabora.com, daniel.lezcano@linaro.org
-Cc: rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Aapo Vienamo <avienamo@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Adding linux-tegra ...
-
-On 13/08/18 19:30, Jon Hunter wrote:
+On Fri, Aug 10, 2018 at 09:08:05PM +0300, Aapo Vienamo wrote:
+> Add bindings documentation for pad pull up and pull down offset values to be
+> programmed before executing automatic pad drive strength calibration.
 > 
-> On 09/08/18 14:40, zhong jiang wrote:
->> Device node iterators will get the return node. Meawhile, It is
->> also put the previous device node. An explicit put will cause
->> a double put.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  drivers/thermal/tegra/soctherm.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
->> index ed28110..3aa55c9 100644
->> --- a/drivers/thermal/tegra/soctherm.c
->> +++ b/drivers/thermal/tegra/soctherm.c
->> @@ -980,7 +980,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
->>  		tcd = thermal_of_cooling_device_register(np_stcc,
->>  							 (char *)name, ts,
->>  							 &throt_cooling_ops);
->> -		of_node_put(np_stcc);
->>  		if (IS_ERR_OR_NULL(tcd)) {
->>  			dev_err(dev,
->>  				"throttle-cfg: %s: failed to register cooling device\n",
->>
-> 
-> Thanks!
-> 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> ---
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 
-Just need to fix the typos in the subject and commit log.
-
-Cheers
-Jon
-
--- 
-nvpublic
+Reviewed-by: Rob Herring <robh@kernel.org>
