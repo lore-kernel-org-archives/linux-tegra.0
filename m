@@ -1,11 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 00/14] staging: media: tegra-vdea: Add Tegra124 support
-Date: Mon, 13 Aug 2018 16:50:13 +0200
-Message-ID: <20180813145027.16346-1-thierry.reding@gmail.com>
+Subject: [PATCH 05/14] staging: media: tegra-vde: Properly mark invalid entries
+Date: Mon, 13 Aug 2018 16:50:18 +0200
+Message-ID: <20180813145027.16346-6-thierry.reding@gmail.com>
+References: <20180813145027.16346-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180813145027.16346-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
 List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
@@ -21,56 +23,26 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Hi,
+Entries in the reference picture list are marked as invalid by setting
+the frame ID to 0x3f.
 
-this set of patches perform a bit of cleanup and extend support to the
-VDE implementation found on Tegra114 and Tegra124. This requires adding
-handling for a clock and a reset for the BSEV block that is separate
-from the main VDE block. The new VDE revision also supports reference
-picture marking, which requires that the BSEV writes out some related
-data to a memory location. Since the supported tiling layouts have been
-changed in Tegra124, which supports only block-linear and no pitch-
-linear layouts, a new way is added to request a specific layout for the
-decoded frames. Both of the above changes require breaking the ABI to
-accomodate for the new data in the custom IOCTL.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/staging/media/tegra-vde/tegra-vde.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Finally this set also adds support for dealing with an IOMMU, which
-makes it more convenient to deal with imported buffers since they no
-longer need to be physically contiguous.
-
-Userspace changes for the updated ABI are available here:
-
-	https://cgit.freedesktop.org/~tagr/libvdpau-tegra/commit/
-
-Mauro, I'm sending the device tree changes as part of the series for
-completeness, but I expect to pick those up into the Tegra tree once
-this has been reviewed and you've applied the driver changes.
-
-Thanks,
-Thierry
-
-Thierry Reding (14):
-  staging: media: tegra-vde: Support BSEV clock and reset
-  staging: media: tegra-vde: Support reference picture marking
-  staging: media: tegra-vde: Prepare for interlacing support
-  staging: media: tegra-vde: Use DRM/KMS framebuffer modifiers
-  staging: media: tegra-vde: Properly mark invalid entries
-  staging: media: tegra-vde: Print out invalid FD
-  staging: media: tegra-vde: Add some clarifying comments
-  staging: media: tegra-vde: Track struct device *
-  staging: media: tegra-vde: Add IOMMU support
-  staging: media: tegra-vde: Keep VDE in reset when unused
-  ARM: tegra: Enable VDE on Tegra124
-  ARM: tegra: Add BSEV clock and reset for VDE on Tegra20
-  ARM: tegra: Add BSEV clock and reset for VDE on Tegra30
-  ARM: tegra: Enable SMMU for VDE on Tegra124
-
- arch/arm/boot/dts/tegra124.dtsi             |  42 ++
- arch/arm/boot/dts/tegra20.dtsi              |  10 +-
- arch/arm/boot/dts/tegra30.dtsi              |  10 +-
- drivers/staging/media/tegra-vde/tegra-vde.c | 528 +++++++++++++++++---
- drivers/staging/media/tegra-vde/uapi.h      |   6 +-
- 5 files changed, 511 insertions(+), 85 deletions(-)
-
+diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+index 275884e745df..0ce30c7ccb75 100644
+--- a/drivers/staging/media/tegra-vde/tegra-vde.c
++++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+@@ -296,7 +296,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+ 				(frame->flags & FLAG_B_FRAME));
+ 		} else {
+ 			aux_addr = 0x6ADEAD00;
+-			value = 0;
++			value = 0x3f;
+ 		}
+ 
+ 		tegra_vde_setup_iram_entry(vde, num_ref_pics, 0, i, value,
 -- 
 2.17.0
