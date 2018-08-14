@@ -1,83 +1,105 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] soc/tegra: pmc: fix child-node lookup
-Date: Tue, 14 Aug 2018 16:24:54 +0200
-Message-ID: <20180814142454.GB21075@ulmo>
-References: <20171115094458.31666-1-johan@kernel.org>
- <20180322142432.GA5853@ulmo>
- <20180813143317.GI24218@localhost>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: wm9712: fix replace codec to component"
+	to the asoc tree
+Date: Tue, 14 Aug 2018 15:25:19 +0100 (BST)
+Message-ID: <20180814142519.BB8D41124449@debutante.sirena.org.uk>
+References: <20180813223556.16262-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="O5XBE6gyVG5Rl6Rj"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180813143317.GI24218@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20180813223556.16262-1-marcel@ziswiler.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: alsa-devel@alsa-project.org, Charles Keepax <ckeepax@opensource.cirrus.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, patches@opensource.cirrus.com, Liam Girdwood <lgirdwood@gmail.com>, stable@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Fabio Estevam <fabio.estevam@nxp.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+The patch
 
---O5XBE6gyVG5Rl6Rj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   ASoC: wm9712: fix replace codec to component
 
-On Mon, Aug 13, 2018 at 04:33:17PM +0200, Johan Hovold wrote:
-> Hi Thierry,
->=20
-> On Thu, Mar 22, 2018 at 03:24:32PM +0100, Thierry Reding wrote:
-> > On Wed, Nov 15, 2017 at 10:44:58AM +0100, Johan Hovold wrote:
-> > > Fix child-node lookup during probe, which ended up searching the whole
-> > > device tree depth-first starting at the parent rather than just match=
-ing
-> > > on its children.
-> > >=20
-> > > To make things worse, the parent pmc node could end up being prematur=
-ely
-> > > freed as of_find_node_by_name() drops a reference to its first argume=
-nt.
-> > >=20
-> > > Fixes: 3568df3d31d6 ("soc: tegra: Add thermal reset (thermtrip) suppo=
-rt to PMC")
-> > > Cc: stable <stable@vger.kernel.org>     # 4.0
-> > > Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> > > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > > ---
-> > >  drivers/soc/tegra/pmc.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > Applied, thanks.
->=20
-> I noticed this one still hasn't made it into linux-next. Looks like it
-> wasn't included in you 4.17 pull request and is still sitting in the
-> tegra for-4.17/soc branch.
+has been applied to the asoc tree at
 
-Indeed. Looking at my tree it seems like I applied this to for-4.17/soc
-a couple of days after the signed tag for the pull request. It probably
-should've gone into a for-4.18/soc, or perhaps into fixes pull request.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-I've cherry-picked it into for-4.20/soc now. Thanks for the reminder.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Thierry
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---O5XBE6gyVG5Rl6Rj
-Content-Type: application/pgp-signature; name="signature.asc"
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
------BEGIN PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlty5jYACgkQ3SOs138+
-s6Et9hAAnZ04tRIizkcPqVJmHyaTRnw4dedbCFiKwJCInlc/o6l8lj9+g52bazTb
-1tbqzzrMqVT1zWtILFZsoPKDXE5OMOv98twCGZEwIJ6Got6w5TsJbI0ctPhdL2Be
-B+nUNM0wAOyaQluqhHSWikJJEvkHZ6rftXUwzQMVhwxVEh01QzIwRW/jGHDB6Twe
-a06gnfKHGCqhZm4Qb5aeA4mUopTbad5VCrXclWAXGMcfUQA/KV2BKz7Stj0dTWlA
-Q09/CPgMFnBTqCR1n3Pd2HZp0H8TAx3YopQr1r6SGsiZdh/udjvmIoo2Ih4GFXy7
-pN5y/kjiuOKrsjx3FkmAxwN8SkJfi4BwzsL7ACpsqr5cXJJLmuQguotjm5q20fSQ
-4Be+SrOPt91eeLEDIrXO5Zgs0O3HmGjpzBBsZZQuzbMa009lQPGyOqVjN85trx2o
-73lrfZKdecVEOVQivaiHdLX8QTeSVbgm79HSdnQjSrTh1SfmuGpJIwAJczIj+l6l
-l9PCnznTGQiQoLpBpXnEgjZEKE1KQa/rJxZBhbTk/D7fqFMJkklexXW5o6pkS7sN
-fOsZXeldMXvhdkxH53fZOUBj6nX/8if+jqLa9wGSIW4Z03Ic/tgTM7reC72EjqYT
-SmB46t/mz4qG1bph2pVeax6+bogJS6SfW9eiLAGztrCgczEwXAg=
-=Usxc
------END PGP SIGNATURE-----
+Thanks,
+Mark
 
---O5XBE6gyVG5Rl6Rj--
+From 5e4cfadaf5b73a0801b2fa7fb007f98400ebfe6e Mon Sep 17 00:00:00 2001
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Date: Tue, 14 Aug 2018 00:35:56 +0200
+Subject: [PATCH] ASoC: wm9712: fix replace codec to component
+
+Since commit 143b44845d87 ("ASoC: wm9712: replace codec to component")
+"wm9712-codec" got renamed to "wm9712-component", however, this change
+never got propagated down to the actual board/platform drivers. E.g. on
+Colibri T20 this lead to the following spew upon boot with sound/touch
+being broken:
+
+[    2.214121] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    2.222137] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[    2.344384] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    2.351885] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[    2.668339] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    2.675811] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[    3.208408] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    3.216312] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[    3.235397] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
+[    3.248938] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
+...
+[   14.970443] ALSA device list:
+[   14.996628]   No soundcards found.
+
+This commit finally fixes this again.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+---
+ sound/soc/codecs/wm9712.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/wm9712.c b/sound/soc/codecs/wm9712.c
+index 953d94d50586..ade34c26ad2f 100644
+--- a/sound/soc/codecs/wm9712.c
++++ b/sound/soc/codecs/wm9712.c
+@@ -719,7 +719,7 @@ static int wm9712_probe(struct platform_device *pdev)
+ 
+ static struct platform_driver wm9712_component_driver = {
+ 	.driver = {
+-		.name = "wm9712-component",
++		.name = "wm9712-codec",
+ 	},
+ 
+ 	.probe = wm9712_probe,
+-- 
+2.18.0
