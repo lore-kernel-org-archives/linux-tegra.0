@@ -1,14 +1,15 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: wm9712: fix replace codec to component"
-	to the asoc tree
-Date: Tue, 14 Aug 2018 15:25:19 +0100 (BST)
-Message-ID: <20180814142519.BB8D41124449@debutante.sirena.org.uk>
-References: <20180813223556.16262-1-marcel@ziswiler.com>
+Subject: Re: [RFC PATCH] ASoC: core: Optimise suspend/resume of
+	DAPM widgets
+Date: Tue, 14 Aug 2018 15:40:04 +0100
+Message-ID: <20180814144004.GD5810@sirena.org.uk>
+References: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
+ <20180803163605.GD6591@sirena.org.uk>
+ <7ba86328-5bb6-5280-df6f-9937173fb2ab@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============5358409178770170642=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20180813223556.16262-1-marcel@ziswiler.com>
+In-Reply-To: <7ba86328-5bb6-5280-df6f-9937173fb2ab@nvidia.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -18,88 +19,73 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: alsa-devel@alsa-project.org, Charles Keepax <ckeepax@opensource.cirrus.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, patches@opensource.cirrus.com, Liam Girdwood <lgirdwood@gmail.com>, stable@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Fabio Estevam <fabio.estevam@nxp.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
 
-   ASoC: wm9712: fix replace codec to component
+--===============5358409178770170642==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="osDK9TLjxFScVI/L"
+Content-Disposition: inline
 
-has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+--osDK9TLjxFScVI/L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+On Mon, Aug 13, 2018 at 07:19:16PM +0100, Jon Hunter wrote:
+>=20
+> I had taken some ftrace graphs but there was not one thing that really
+> stood out. Looking again it seems that each call to
+> async_schedule_domain() can take tens of uS and so it there are a lot of
+> DAPM widgets (100+) this can take some time. I will dig into it a bit
+> further.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+We don't call that per widget, we call that per context.  We might have
+a lot of contexts but it's definitely not number of widgets level.
+Perhaps what we need there is something which remembers if we actually
+changed anything in each context and/or there's relevant operations and
+then doesn't do this if not, we're working on the basis that these
+operations are fairly cheap.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> > One thing that it occurs to me might help is to start the suspend
+> > process by powering down all the input and output widgets that aren't
+> > ignoring suspend in one operation, that should hopefully have the effect
+> > of ensuring that most of the system that's going to get powered down
+> > does so on the first pass through.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> If the async_schedule_domain() calls are the problem, then it may not
+> help as we call that for all dapms apart from the card->dapm.
 
-Thanks,
-Mark
+No, we actually need to run the operations on all contexts - they can
+all do things if they want to.  We just want them all to run in parallel
+so if we are doing things like waiting for capacitors to charge we don't
+do it in series.
 
-From 5e4cfadaf5b73a0801b2fa7fb007f98400ebfe6e Mon Sep 17 00:00:00 2001
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Date: Tue, 14 Aug 2018 00:35:56 +0200
-Subject: [PATCH] ASoC: wm9712: fix replace codec to component
+--osDK9TLjxFScVI/L
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Since commit 143b44845d87 ("ASoC: wm9712: replace codec to component")
-"wm9712-codec" got renamed to "wm9712-component", however, this change
-never got propagated down to the actual board/platform drivers. E.g. on
-Colibri T20 this lead to the following spew upon boot with sound/touch
-being broken:
+-----BEGIN PGP SIGNATURE-----
 
-[    2.214121] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-[    2.222137] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-...
-[    2.344384] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-[    2.351885] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-...
-[    2.668339] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-[    2.675811] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-...
-[    3.208408] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-[    3.216312] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-...
-[    3.235397] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-[    3.248938] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-...
-[   14.970443] ALSA device list:
-[   14.996628]   No soundcards found.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlty6cQACgkQJNaLcl1U
+h9Cu4ggAhNYHM3NFIKtqdn0xYhoxvkssFh3GROehNT3p06HwwvCytbNXsyT7VelC
+4Tmf1pktMnBs+Lg+jOIFTY/rGqPr/+xk4DYbNwUDd3B3+jSnrTWixh+GTdXmPiuB
+SRzgOZznTocV3E6Fmz+DIVJ9QKfaIWZQjZfCS8eqG1Qmru4BPXxjrvRqprXG3SDJ
+6NxbQGQCW9Nc3szoVXPuXbUV1FlQPFfApa4cABsl/1qAPFq3NEJLky+GUbM0N6X7
+ajW7CmOBAs4MfuDjN7/sB2qmj5blfC/Bp1rEb77CzjaptLNJLzY0XQj1o4+T5O7u
+Cnk0bQZUQlukZCuQmrNnVwd1+pT0mA==
+=ANgL
+-----END PGP SIGNATURE-----
 
-This commit finally fixes this again.
+--osDK9TLjxFScVI/L--
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
----
- sound/soc/codecs/wm9712.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--===============5358409178770170642==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-diff --git a/sound/soc/codecs/wm9712.c b/sound/soc/codecs/wm9712.c
-index 953d94d50586..ade34c26ad2f 100644
---- a/sound/soc/codecs/wm9712.c
-+++ b/sound/soc/codecs/wm9712.c
-@@ -719,7 +719,7 @@ static int wm9712_probe(struct platform_device *pdev)
- 
- static struct platform_driver wm9712_component_driver = {
- 	.driver = {
--		.name = "wm9712-component",
-+		.name = "wm9712-codec",
- 	},
- 
- 	.probe = wm9712_probe,
--- 
-2.18.0
+
+--===============5358409178770170642==--
