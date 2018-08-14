@@ -1,62 +1,47 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v2] ASoC: wm9712: fix replace codec to
-	component
-Date: Tue, 14 Aug 2018 09:12:43 +0100
-Message-ID: <20180814081243.GM32322@imbe.wolfsonmicro.main>
-References: <20180813223556.16262-1-marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <20180813223556.16262-1-marcel@ziswiler.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, patches@opensource.cirrus.com, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH v2] clk: tegra: probe deferral error reporting
+Date: Tue, 14 Aug 2018 11:18:05 +0200
+Message-ID: <20180814091805.1363-1-marcel@ziswiler.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, Stefan Agner <stefan@agner.ch>, Peter Geis <pgwipeout@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 12:35:56AM +0200, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Since commit 143b44845d87 ("ASoC: wm9712: replace codec to component")
-> "wm9712-codec" got renamed to "wm9712-component", however, this change
-> never got propagated down to the actual board/platform drivers. E.g. on
-> Colibri T20 this lead to the following spew upon boot with sound/touch
-> being broken:
-> 
-> [    2.214121] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-> [    2.222137] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-> ...
-> [    2.344384] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-> [    2.351885] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-> ...
-> [    2.668339] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-> [    2.675811] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-> ...
-> [    3.208408] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-> [    3.216312] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-> ...
-> [    3.235397] tegra-snd-wm9712 sound: ASoC: CODEC DAI wm9712-hifi not registered
-> [    3.248938] tegra-snd-wm9712 sound: snd_soc_register_card failed (-517)
-> ...
-> [   14.970443] ALSA device list:
-> [   14.996628]   No soundcards found.
-> 
-> This commit finally fixes this again.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Actually report the error code from devm_regulator_get() which may as
+well just be a probe deferral.
 
-Thanks,
-Charles
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+Changes in v2:
+- Silence probe deferral as discussed between Peter, Stefan and Stephen.
+- Fix line over 80 characters as reported by checkpatch.
+
+ drivers/clk/tegra/clk-dfll.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 48ee43734e05..ebb0e1b6bf01 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1609,8 +1609,12 @@ int tegra_dfll_register(struct platform_device *pdev,
+ 
+ 	td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
+ 	if (IS_ERR(td->vdd_reg)) {
+-		dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
+-		return PTR_ERR(td->vdd_reg);
++		ret = PTR_ERR(td->vdd_reg);
++		if (ret != -EPROBE_DEFER)
++			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n",
++				ret);
++
++		return ret;
+ 	}
+ 
+ 	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
+-- 
+2.14.4
