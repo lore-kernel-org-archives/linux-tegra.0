@@ -1,79 +1,57 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2] ASoC: tegra: probe deferral error reporting
-Date: Tue, 14 Aug 2018 16:01:44 +0200
-Message-ID: <20180814140145.12212-1-marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Subject: [RESEND PATCH 2/6] ARM: multi_v7_defconfig: update order
+Date: Tue, 14 Aug 2018 16:06:08 +0200
+Message-ID: <20180814140612.12554-2-marcel@ziswiler.com>
+References: <20180814140612.12554-1-marcel@ziswiler.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180814140612.12554-1-marcel@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>, Stefan Agner <stefan@agner.ch>, Tony Lindgren <tony@atomide.com>, Eric Anholt <eric@anholt.net>, Russell King <linux@armlinux.org.uk>, Simon Horman <horms+renesas@verge.net.au>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Actually report the error codes from of_get_named_gpio() resp.
-devm_gpio_request_one() upon trying to get the codec reset resp. sync
-GPIOs unless it is just a probe deferral.
+The order of some kernel configurations changed.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2:
-- Silence probe deferral as suggested by Stefan.
-- Fix line over 80 characters as reported by checkpatch.
+ arch/arm/configs/multi_v7_defconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- sound/soc/tegra/tegra20_ac97.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-index 682ef33afb5f..2ac6b2d73980 100644
---- a/sound/soc/tegra/tegra20_ac97.c
-+++ b/sound/soc/tegra/tegra20_ac97.c
-@@ -351,18 +351,31 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 		ret = devm_gpio_request_one(&pdev->dev, ac97->reset_gpio,
- 					    GPIOF_OUT_INIT_HIGH, "codec-reset");
- 		if (ret) {
--			dev_err(&pdev->dev, "could not get codec-reset GPIO\n");
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(&pdev->dev,
-+					"could not get codec-reset GPIO: %d\n",
-+					ret);
-+
- 			goto err_clk_put;
- 		}
- 	} else {
--		dev_err(&pdev->dev, "no codec-reset GPIO supplied\n");
-+		ret = ac97->reset_gpio;
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"no codec-reset GPIO supplied: %d\n",
-+				ret);
-+
- 		goto err_clk_put;
- 	}
- 
- 	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
- 					    "nvidia,codec-sync-gpio", 0);
- 	if (!gpio_is_valid(ac97->sync_gpio)) {
--		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
-+		ret = ac97->sync_gpio;
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "no codec-sync GPIO supplied: %d\n",
-+				ret);
-+
- 		goto err_clk_put;
- 	}
- 
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index fc33444e94f0..1299c0cf2f3a 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -48,8 +48,8 @@ CONFIG_SOC_IMX6Q=y
+ CONFIG_SOC_IMX6SL=y
+ CONFIG_SOC_IMX6SX=y
+ CONFIG_SOC_IMX6UL=y
+-CONFIG_SOC_IMX7D=y
+ CONFIG_SOC_LS1021A=y
++CONFIG_SOC_IMX7D=y
+ CONFIG_SOC_VF610=y
+ CONFIG_ARCH_KEYSTONE=y
+ CONFIG_ARCH_MEDIATEK=y
+@@ -495,8 +495,6 @@ CONFIG_MFD_AC100=y
+ CONFIG_MFD_AXP20X_I2C=y
+ CONFIG_MFD_AXP20X_RSB=y
+ CONFIG_MFD_CROS_EC=m
+-CONFIG_CROS_EC_I2C=m
+-CONFIG_CROS_EC_SPI=m
+ CONFIG_MFD_DA9063=m
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+@@ -866,6 +864,8 @@ CONFIG_SERIO_NVEC_PS2=y
+ CONFIG_NVEC_POWER=y
+ CONFIG_NVEC_PAZ00=y
+ CONFIG_STAGING_BOARD=y
++CONFIG_CROS_EC_I2C=m
++CONFIG_CROS_EC_SPI=m
+ CONFIG_COMMON_CLK_MAX77686=y
+ CONFIG_COMMON_CLK_RK808=m
+ CONFIG_COMMON_CLK_S2MPS11=m
 -- 
 2.14.4
