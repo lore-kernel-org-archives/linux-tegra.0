@@ -1,91 +1,68 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH] ASoC: core: Optimise suspend/resume of
-	DAPM widgets
-Date: Tue, 14 Aug 2018 15:40:04 +0100
-Message-ID: <20180814144004.GD5810@sirena.org.uk>
-References: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
- <20180803163605.GD6591@sirena.org.uk>
- <7ba86328-5bb6-5280-df6f-9937173fb2ab@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 01/14] staging: media: tegra-vde: Support BSEV clock and
+ reset
+Date: Tue, 14 Aug 2018 18:05:51 +0300
+Message-ID: <1939648.kLoYIjBhCz@dimapc>
+References: <20180813145027.16346-1-thierry.reding@gmail.com>
+ <2754354.GStWHyBo4g@dimapc> <20180814142124.GA21075@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5358409178770170642=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <7ba86328-5bb6-5280-df6f-9937173fb2ab@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180814142124.GA21075@ulmo>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Tuesday, 14 August 2018 17:21:24 MSK Thierry Reding wrote:
+> On Mon, Aug 13, 2018 at 06:09:46PM +0300, Dmitry Osipenko wrote:
+> > On Monday, 13 August 2018 17:50:14 MSK Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > The BSEV clock has a separate gate bit and can not be assumed to be
+> > > always enabled. Add explicit handling for the BSEV clock and reset.
+> > > 
+> > > This fixes an issue on Tegra124 where the BSEV clock is not enabled
+> > > by default and therefore accessing the BSEV registers will hang the
+> > > CPU if the BSEV clock is not enabled and the reset not deasserted.
+> > > 
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > ---
+> > 
+> > Are you sure that BSEV clock is really needed for T20/30? I've tried
+> > already to disable the clock explicitly and everything kept working,
+> > though I'll try again.
+> 
+> I think you're right that these aren't strictly required for VDE to work
+> on Tegra20 and Tegra30. However, the BSEV clock and reset do exist on
+> those platforms, so I didn't see a reason why they shouldn't be handled
+> uniformly across all generations.
 
---===============5358409178770170642==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="osDK9TLjxFScVI/L"
-Content-Disposition: inline
+It's a bit messy to have unsed clock being enabled.
 
+I guess BSEV clock on T20/30 only enables the AES engine. If the decryption 
+engine is integrated with the video decoder, then the clock and reset should 
+be requested by the driver, but BSEV should be kept disabled if it's not used.
 
---osDK9TLjxFScVI/L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If BSEV clock isn't powering anything related to VDE on T20/30, then let's 
+make BSEV clock and reset control optional. For the clock we could check 
+whether err = -ENOENT and continue, later we may switch to 
+devm_clk_get_optional() of the upcoming [0]. For the reset there is 
+devm_reset_control_get_optional(). 
 
-On Mon, Aug 13, 2018 at 07:19:16PM +0100, Jon Hunter wrote:
->=20
-> I had taken some ftrace graphs but there was not one thing that really
-> stood out. Looking again it seems that each call to
-> async_schedule_domain() can take tens of uS and so it there are a lot of
-> DAPM widgets (100+) this can take some time. I will dig into it a bit
-> further.
+Please try to verify by all means that we can omit BSEV on T20/30. If you are 
+not sure, then let's make them optional as we can always make them required 
+later.
 
-We don't call that per widget, we call that per context.  We might have
-a lot of contexts but it's definitely not number of widgets level.
-Perhaps what we need there is something which remembers if we actually
-changed anything in each context and/or there's relevant operations and
-then doesn't do this if not, we're working on the basis that these
-operations are fairly cheap.
+P.S. I'll test and review all the patches during the next days. 
 
-> > One thing that it occurs to me might help is to start the suspend
-> > process by powering down all the input and output widgets that aren't
-> > ignoring suspend in one operation, that should hopefully have the effect
-> > of ensuring that most of the system that's going to get powered down
-> > does so on the first pass through.
-
-> If the async_schedule_domain() calls are the problem, then it may not
-> help as we call that for all dapms apart from the card->dapm.
-
-No, we actually need to run the operations on all contexts - they can
-all do things if they want to.  We just want them all to run in parallel
-so if we are doing things like waiting for capacitors to charge we don't
-do it in series.
-
---osDK9TLjxFScVI/L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlty6cQACgkQJNaLcl1U
-h9Cu4ggAhNYHM3NFIKtqdn0xYhoxvkssFh3GROehNT3p06HwwvCytbNXsyT7VelC
-4Tmf1pktMnBs+Lg+jOIFTY/rGqPr/+xk4DYbNwUDd3B3+jSnrTWixh+GTdXmPiuB
-SRzgOZznTocV3E6Fmz+DIVJ9QKfaIWZQjZfCS8eqG1Qmru4BPXxjrvRqprXG3SDJ
-6NxbQGQCW9Nc3szoVXPuXbUV1FlQPFfApa4cABsl/1qAPFq3NEJLky+GUbM0N6X7
-ajW7CmOBAs4MfuDjN7/sB2qmj5blfC/Bp1rEb77CzjaptLNJLzY0XQj1o4+T5O7u
-Cnk0bQZUQlukZCuQmrNnVwd1+pT0mA==
-=ANgL
------END PGP SIGNATURE-----
-
---osDK9TLjxFScVI/L--
-
---===============5358409178770170642==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============5358409178770170642==--
+[0] https://lkml.org/lkml/2018/7/18/460
