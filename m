@@ -1,115 +1,181 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH] ASoC: core: Optimise suspend/resume of DAPM widgets
-Date: Wed, 15 Aug 2018 19:48:47 +0100
-Message-ID: <e1bc40ec-de7e-2b77-d7f6-ec6b3066aeec@nvidia.com>
-References: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
- <20180803163605.GD6591@sirena.org.uk>
- <7ba86328-5bb6-5280-df6f-9937173fb2ab@nvidia.com>
- <20180814144004.GD5810@sirena.org.uk>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
+Date: Wed, 15 Aug 2018 22:56:19 +0300
+Message-ID: <12474499.22jeAM5LNA@dimapc>
+References: <20180726231624.21084-1-digetx@gmail.com> <2887450.sPhIOOMKZK@dimapc> <2e7fab6e-0640-8f48-07b8-2d475538b8ae@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180814144004.GD5810@sirena.org.uk>
-Content-Language: en-US
+In-Reply-To: <2e7fab6e-0640-8f48-07b8-2d475538b8ae@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>
+Cc: Jordan Crouse <jcrouse@codeaurora.org>, Will Deacon <will.deacon@arm.com>, Mikko Perttunen <cyndis@kapsi.fi>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, nouveau@lists.freedesktop.org, "Rafael J. Wysocki" <rafael@kernel.org>, Nicolas Chauvet <kwizart@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>, Ben Skeggs <bskeggs@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-tegra@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 14/08/18 15:40, Mark Brown wrote:
-> On Mon, Aug 13, 2018 at 07:19:16PM +0100, Jon Hunter wrote:
->>
->> I had taken some ftrace graphs but there was not one thing that really
->> stood out. Looking again it seems that each call to
->> async_schedule_domain() can take tens of uS and so it there are a lot of
->> DAPM widgets (100+) this can take some time. I will dig into it a bit
->> further.
+On Friday, 3 August 2018 18:43:41 MSK Robin Murphy wrote:
+> On 02/08/18 19:24, Dmitry Osipenko wrote:
+> > On Friday, 27 July 2018 20:16:53 MSK Dmitry Osipenko wrote:
+> >> On Friday, 27 July 2018 20:03:26 MSK Jordan Crouse wrote:
+> >>> On Fri, Jul 27, 2018 at 05:02:37PM +0100, Robin Murphy wrote:
+> >>>> On 27/07/18 15:10, Dmitry Osipenko wrote:
+> >>>>> On Friday, 27 July 2018 12:03:28 MSK Will Deacon wrote:
+> >>>>>> On Fri, Jul 27, 2018 at 10:25:13AM +0200, Joerg Roedel wrote:
+> >>>>>>> On Fri, Jul 27, 2018 at 02:16:18AM +0300, Dmitry Osipenko wrote:
+> >>>>>>>> The proposed solution adds a new option to the base device driver
+> >>>>>>>> structure that allows device drivers to explicitly convey to the
+> >>>>>>>> drivers
+> >>>>>>>> core that the implicit IOMMU backing for devices must not happen.
+> >>>>>>> 
+> >>>>>>> Why is IOMMU mapping a problem for the Tegra GPU driver?
+> >>>>>>> 
+> >>>>>>> If we add something like this then it should not be the choice of
+> >>>>>>> the
+> >>>>>>> device driver, but of the user and/or the firmware.
+> >>>>>> 
+> >>>>>> Agreed, and it would still need somebody to configure an identity
+> >>>>>> domain
+> >>>>>> so
+> >>>>>> that transactions aren't aborted immediately. We currently allow the
+> >>>>>> identity domain to be used by default via a command-line option, so I
+> >>>>>> guess
+> >>>>>> we'd need a way for firmware to request that on a per-device basis.
+> >>>>> 
+> >>>>> The IOMMU mapping itself is not a problem, the problem is the
+> >>>>> management
+> >>>>> of
+> >>>>> the IOMMU. For Tegra we don't want anything to intrude into the IOMMU
+> >>>>> activities because:
+> >>>>> 
+> >>>>> 1) GPU HW require additional configuration for the IOMMU usage and
+> >>>>> dumb
+> >>>>> mapping of the allocations simply doesn't work.
+> >>>> 
+> >>>> Generally, that's already handled by the DRM drivers allocating
+> >>>> their own unmanaged domains. The only problem we really need to
+> >>>> solve in that regard is that currently the device DMA ops don't get
+> >>>> updated when moving away from the managed domain. That's been OK for
+> >>>> the VFIO case where the device is bound to a different driver which
+> >>>> we know won't make any explicit DMA API calls, but for the more
+> >>>> general case of IOMMU-aware drivers we could certainly do with a bit
+> >>>> of cooperation between the IOMMU API, DMA API, and arch code to
+> >>>> update the DMA ops dynamically to cope with intermediate subsystems
+> >>>> making DMA API calls on behalf of devices they don't know the
+> >>>> intimate details of.
+> >>>> 
+> >>>>> 2) Older Tegra generations have a limited resource and capabilities in
+> >>>>> regards to IOMMU usage, allocating IOMMU domain per-device is just
+> >>>>> impossible for example.
+> >>>>> 
+> >>>>> 3) HW performs context switches and so particular allocations have to
+> >>>>> be
+> >>>>> assigned to a particular contexts IOMMU domain.
+> >>>> 
+> >>>> I understand Qualcomm SoCs have a similar thing too, and AFAICS that
+> >>>> case just doesn't fit into the current API model at all. We need the
+> >>>> IOMMU driver to somehow know about the specific details of which
+> >>>> devices have magic associations with specific contexts, and we
+> >>>> almost certainly need a more expressive interface than
+> >>>> iommu_domain_alloc() to have any hope of reliable results.
+> >>> 
+> >>> This is correct for Qualcomm GPUs - The GPU hardware context switching
+> >>> requires a specific context and there are some restrictions around
+> >>> secure contexts as well.
+> >>> 
+> >>> We don't really care if the DMA attaches to a context just as long as it
+> >>> doesn't attach to the one(s) we care about. Perhaps a "valid context"
+> >>> mask
+> >>> would work in from the DT or the device struct to give the subsystems a
+> >>> clue as to which domains they were allowed to use. I recognize that
+> >>> there
+> >>> isn't a one-size-fits-all solution to this problem so I'm open to
+> >>> different
+> >>> ideas.
+> >> 
+> >> Designating whether implicit IOMMU backing is appropriate for a device
+> >> via
+> >> device-tree property sounds a bit awkward because that will be a kinda
+> >> software description (of a custom Linux driver model), while device-tree
+> >> is
+> >> supposed to describe HW.
+> >> 
+> >> What about to grant IOMMU drivers with ability to decide whether the
+> >> implicit backing for a device is appropriate? Like this:
+> >> 
+> >> bool implicit_iommu_for_dma_is_allowed(struct device *dev)
+> >> {
+> >> 
+> >> 	const struct iommu_ops *ops = dev->bus->iommu_ops;
+> >> 	struct iommu_group *group;
+> >> 	
+> >> 	group = iommu_group_get(dev);
+> >> 	if (!group)
+> >> 	
+> >> 		return NULL;
+> >> 	
+> >> 	iommu_group_put(group);
+> >> 	
+> >> 	if (!ops->implicit_iommu_for_dma_is_allowed)
+> >> 	
+> >> 		return true;
+> >> 	
+> >> 	return ops->implicit_iommu_for_dma_is_allowed(dev);
+> >> 
+> >> }
+> >> 
+> >> Then arch_setup_dma_ops() could have a clue whether implicit IOMMU
+> >> backing
+> >> for a device is appropriate.
+> > 
+> > Guys, does it sound good to you or maybe you have something else on your
+> > mind? Even if it's not an ideal solution, it fixes the immediate problem
+> > and should be good enough for the starter.
 > 
-> We don't call that per widget, we call that per context.  We might have
-> a lot of contexts but it's definitely not number of widgets level.
-> Perhaps what we need there is something which remembers if we actually
-> changed anything in each context and/or there's relevant operations and
-> then doesn't do this if not, we're working on the basis that these
-> operations are fairly cheap.
-
-Yes I see that now. 
- 
->>> One thing that it occurs to me might help is to start the suspend
->>> process by powering down all the input and output widgets that aren't
->>> ignoring suspend in one operation, that should hopefully have the effect
->>> of ensuring that most of the system that's going to get powered down
->>> does so on the first pass through.
+> To me that looks like a step ion the wrong direction that won't help at
+> all in actually addressing the underlying issues.
 > 
->> If the async_schedule_domain() calls are the problem, then it may not
->> help as we call that for all dapms apart from the card->dapm.
+> If the GPU driver wants to explicitly control IOMMU mappings instead of
+> relying on the IOMMU_DOMAIN_DMA abstraction, then it should use its own
+> unmanaged domain. At that point it shouldn't matter if a DMA ops domain
+> was allocated, since the GPU device will no longer be attached to it.
+
+It is not obvious to me what solution you are proposing.. 
+
+Are you saying that the detaching from the DMA IOMMU domain that is provided 
+by dma_ops() implementer (ARM32 arch for example) should be generalized and 
+hence there should be something like:
+
+	dma_detach_device_from_iommu_dma_domain(dev);
+
+that drivers will have to invoke.
+
+And hence there will be dma_map_ops.iommu_detach_device() that dma_ops() 
+provider will have to implement. Thereby provider will detach device from DMA 
+domain, destroy the domain and update the DMA ops of the device.
+
+> Yes, there may be some improvements to make like having unused domains
+> not consume hardware contexts, but that's internal to the relevant IOMMU
+> drivers. If moving in and out of DMA ops domains leaves the actual
+> dma_ops broken, that's already a problem between the IOMMU API and the
+> arch DMA code as I've mentioned before.
 > 
-> No, we actually need to run the operations on all contexts - they can
-> all do things if they want to.  We just want them all to run in parallel
-> so if we are doing things like waiting for capacitors to charge we don't
-> do it in series.
+> Furthermore, given what the example above is trying to do,
+> arch_setup_dma_ops() is way too late to do it - the default domain was
+> already set up in iommu_group_get_for_dev() when the IOMMU driver first
+> saw that device. An "opt-out" mechanism that doesn't actually opt out
+> and just bodges around being opted-in after the fact doesn't strike me
+> as something which can grow to be robust and maintainable.
+> 
+> For the case where  a device has some special hardware relationship with
+> a particular IOMMU context, the IOMMU driver *has* to be completely
+> aware of that, i.e. it needs to be described in DT/ACPI, either via some
+> explicit binding or at least inferred from some SoC/instance-specific
+> IOMMU compatible. Then the IOMMU driver needs to know when the driver
+> for that device is requesting its special domain so that it provide the
+> correct context (and *not* allocate that context for other uses).
+> Anything which just relies on the order in which things currently happen
+> to be allocated is far too fragile long-term.
 
-So I did a bit more digging and this time on Tegra124 Jetson-TK1 (which
-is supported in the mainline). On Jetson-TK1 I see that
-dapm_power_widgets is called 4 times on entering suspend and each call
-then calls the dapm_pre/post_sequence_async() functions 3 times.
-Interestingly, at least for Jetson-TK1, it appears that the calls to
-dapm_pre/post_sequence_async() do not actually change the bias state
-because the dapm contexts are already in the desired state. Please
-note that at this time audio is not active and so that is probably why.
-
-Anyway, I was interested in the overhead added of calling
-async_schedule_domain() to schedule the dapm_pre/post_sequence_async()
-function calls if there is nothing to be done. This is what I see ...
-
-Times for function dapm_power_widgets() are (us):
-	Min 23, Ave 190, Max 434, Count 39
-
-Where 'Count' is the number of times that dapm_power_widgets() has
-been called (both during boot and through a few suspend iterations).
-
-So then I made the following change to avoid scheduling the function
-calls unnecessarily (which I think should be fine) ...
-
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 5ed90ea69a24..ff66a6834531 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -1955,7 +1955,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
-        dapm_pre_sequence_async(&card->dapm, 0);
-        /* Run other bias changes in parallel */
-        list_for_each_entry(d, &card->dapm_list, list) {
--               if (d != &card->dapm)
-+               if (d != &card->dapm && d->bias_level != d->target_bias_level)
-                        async_schedule_domain(dapm_pre_sequence_async, d,
-                                                &async_domain);
-        }
-@@ -1979,7 +1979,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
- 
-        /* Run all the bias changes in parallel */
-        list_for_each_entry(d, &card->dapm_list, list) {
--               if (d != &card->dapm)
-+               if (d != &card->dapm && d->bias_level != d->target_bias_level)
-                        async_schedule_domain(dapm_post_sequence_async, d,
-                                                &async_domain);
-        }
-
-And with the above change I now see ...
-
-Times for function dapm_power_widgets() are (us):
-	Min 4, Ave 16, Max 82, Count 39
-
-Please note that I am just using ktime_get() to log the time on entry
-and exit from dapm_power_widgets() and so yes the time may not be
-purely the time take to execute this function if we are preempted,
-but I am measuring in the same way in both cases and so it does seem
-to show some improvement.
-
-Let me know your thoughts.
-
-Cheers
-Jon
-
--- 
-nvpublic
+If hardware has some restrictions, then that should be reflected in the 
+hardware description. But that's not what we are trying to solve, at least 
+there is no such problem right now for NVIDIA Tegra.
