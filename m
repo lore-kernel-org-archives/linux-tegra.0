@@ -1,76 +1,116 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH] ASoC: core: Optimise suspend/resume of
-	DAPM widgets
-Date: Thu, 16 Aug 2018 11:51:35 +0100
-Message-ID: <20180816105135.GZ2414@sirena.org.uk>
-References: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
- <20180803163605.GD6591@sirena.org.uk>
- <7ba86328-5bb6-5280-df6f-9937173fb2ab@nvidia.com>
- <20180814144004.GD5810@sirena.org.uk>
- <e1bc40ec-de7e-2b77-d7f6-ec6b3066aeec@nvidia.com>
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: Re: [RFC PATCH v4 1/2] drm: Add generic colorkey properties for
+ display planes
+Date: Thu, 16 Aug 2018 13:42:10 +0200
+Message-ID: <cbf46404-051b-312e-0201-7956229abd20@linux.intel.com>
+References: <20180807172202.1961-1-digetx@gmail.com>
+ <20180807172202.1961-2-digetx@gmail.com>
+ <20180808081608.GK30658@n2100.armlinux.org.uk> <2089566.PDTrKWWE8Q@dimapc>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4204369498219723469=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <e1bc40ec-de7e-2b77-d7f6-ec6b3066aeec@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <2089566.PDTrKWWE8Q@dimapc>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: Thomas Hellstrom <thellstrom@vmware.com>, Neil Armstrong <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============4204369498219723469==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0786ZyFfTSxuegBe"
-Content-Disposition: inline
-
-
---0786ZyFfTSxuegBe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Aug 15, 2018 at 07:48:47PM +0100, Jon Hunter wrote:
-
-> So then I made the following change to avoid scheduling the function
-> calls unnecessarily (which I think should be fine) ...
-
-> Please note that I am just using ktime_get() to log the time on entry
-> and exit from dapm_power_widgets() and so yes the time may not be
-> purely the time take to execute this function if we are preempted,
-> but I am measuring in the same way in both cases and so it does seem
-> to show some improvement.
-
-That seems like a simple and useful optimization, will you send a patch?
-
---0786ZyFfTSxuegBe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlt1VzQACgkQJNaLcl1U
-h9C++wf/QB19v9pWanJUtK3uJI3vVk9Y6HQxYhrr0b9X6aZ9IPlhxWlBssaSEY0O
-1zygbrumfW9K8OLLANmo8Xb0oMb8YcXwG5UO2aIieuIwxvQo+hwUUI9QwH020JB7
-+3bRvRumioLOfR+NeZTg7M5oGuuGK34o0j/pyCT0Ej3v2YKZUlai0ynwxGkfbuav
-RiPia8eACF76DkDRBcWMQYy45+kZIXdkBOJvZcnzWGUfhlNEugWo92oYQxSshySV
-TsUG1H3HGN1/JvAogds/wVAOXSA8dt8fc1KddCdPEtaCPAoGa8NooKZDlrJFHn1L
-FQhmW9eQB1nzC8venmJohqs7SiPvNA==
-=OMjY
------END PGP SIGNATURE-----
-
---0786ZyFfTSxuegBe--
-
---===============4204369498219723469==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============4204369498219723469==--
+T3AgMDgtMDgtMTggb20gMTY6MzAgc2NocmVlZiBEbWl0cnkgT3NpcGVua286Cj4gT24gV2VkbmVz
+ZGF5LCA4IEF1Z3VzdCAyMDE4IDExOjE2OjA5IE1TSyBSdXNzZWxsIEtpbmcgLSBBUk0gTGludXgg
+d3JvdGU6Cj4+IE9uIFR1ZSwgQXVnIDA3LCAyMDE4IGF0IDA4OjIyOjAxUE0gKzAzMDAsIERtaXRy
+eSBPc2lwZW5rbyB3cm90ZToKPj4+ICsgKiBHbG9zc2FyeToKPj4+ICsgKgo+Pj4gKyAqIERlc3Rp
+bmF0aW9uIHBsYW5lOgo+Pj4gKyAqCVBsYW5lIHRvIHdoaWNoIGNvbG9yIGtleWluZyBwcm9wZXJ0
+aWVzIGFyZSBhcHBsaWVkLCB0aGlzIHBsYW5lcyB0YWtlcwo+Pj4gKyAqCXRoZSBlZmZlY3Qgb2Yg
+Y29sb3Iga2V5aW5nIG9wZXJhdGlvbi4gVGhlIGVmZmVjdCBpcyBkZXRlcm1pbmVkIGJ5IGEKPj4+
+ICsgKglnaXZlbiBjb2xvciBrZXlpbmcgbW9kZS4KPj4+ICsgKgo+Pj4gKyAqIFNvdXJjZSBwbGFu
+ZToKPj4+ICsgKglQaXhlbHMgb2YgdGhpcyBwbGFuZSBhcmUgdGhlIHNvdXJjZSBmb3IgY29sb3Ig
+a2V5IG1hdGNoaW5nIG9wZXJhdGlvbi4KPj4gLi4uCj4+Cj4+PiArCS8qKgo+Pj4gKwkgKiBARFJN
+X1BMQU5FX0NPTE9SS0VZX01PREVfVFJBTlNQQVJFTlQ6Cj4+PiArCSAqCj4+PiArCSAqIERlc3Rp
+bmF0aW9uIHBsYW5lIHBpeGVscyBhcmUgY29tcGxldGVseSB0cmFuc3BhcmVudCBpbiBhcmVhcwo+
+Pj4gKwkgKiB3aGVyZSBwaXhlbHMgb2YgYSBzb3VyY2UgcGxhbmUgYXJlIG1hdGNoaW5nIGEgZ2l2
+ZW4gY29sb3Iga2V5Cj4+PiArCSAqIHJhbmdlLCBpbiBvdGhlciBjYXNlcyBwaXhlbHMgb2YgYSBk
+ZXN0aW5hdGlvbiBwbGFuZSBhcmUgCj4gdW5hZmZlY3RlZC4KPj4+ICsJICogSW4gYXJlYXMgd2hl
+cmUgdHdvIG9yIG1vcmUgc291cmNlIHBsYW5lcyBvdmVybGFwLCB0aGUgdG9wbW9zdAo+Pj4gKwkg
+KiBwbGFuZSB0YWtlcyBwcmVjZWRlbmNlLgo+Pj4gKwkgKi8KPj4gVGhpcyBzZWVtcyBjb25mdXNp
+bmcgdG8gbWUuCj4+Cj4+IFdoYXQgeW91IHNlZW0gdG8gYmUgc2F5aW5nIGlzIHRoYXQgdGhlICJk
+ZXN0aW5hdGlvbiIgcGxhbmUgd291bGQgYmUgdGhlCj4+IG9uZSB3aGljaCBpcyAoZWcwIHRoZSBn
+cmFwaGljIHBsYW5lLCBhbmQgdGhlICJzb3VyY2UiIHBsYW5lIHdvdWxkIGJlIHRoZQo+PiB0aGUg
+cGxhbmUgY29udGFpbmluZyAoZWcpIHRoZSB2aWRlby4gIFlvdSBzZWVtIHRvIGJlIHNheWluZyB0
+aGF0IHRoZQo+PiBjb2xvcmtleSBtYXRjaGVzIHRoZSB2aWRlbyBhbmQgZGV0ZXJtaW5lcyB3aGV0
+aGVyIHRoZSBwaXhlbHMgaW4gdGhlCj4+IGdyYXBoaWMgcGxhbmUgYXJlIG9wYXF1ZSBvciB0cmFu
+c3BhcmVudC4KPiBZb3VyIGV4YW1wbGUgaXMgY29ycmVjdC4KPgo+IFdpdGggdGhlICJwbGFuZV9t
+YXNrIiBwcm9wZXJ0eSB3ZSBjYW4gc3BlY2lmeSBhbnkgcGxhbmUgYXMgdGhlICJzb3VyY2UiIGZv
+ciAKPiBjb2xvciBrZXksIHNvIGl0IGNhbiBiZWVuIGVpdGhlciBhIHZpZGVvIHBsYW5lIG9yIGdy
+YXBoaWMgcGxhbmUgYW5kIGV2ZW4gYm90aCAKPiBhdCB0aGUgc2FtZSB0aW1lLgpJJ20gbm90IHN1
+cmUgd2Ugc2hvdWxkIHNwZWNpZnkgcGxhbmUgbWFzayBmcm9tIHVzZXJzcGFjZS4KCkNhbid0IHdl
+IG1ha2UgbWFqb3IgbG9vcHM/IEhvdyBkbyB5b3Ugd2FudCB0byBoYW5kbGUgdGhvc2U/Cj4+IFN1
+cmVseSB0aGF0IGlzIHRoZSB3cm9uZyB3YXkgcm91bmQgLSBpbiB2aWRlbyBvdmVybGF5LCB5b3Ug
+d2FudCB0bwo+PiBjb2xvcmtleSBtYXRjaCB0aGUgY29udGVudHMgb2YgdGhlIGdyYXBoaWMgcGxh
+bmUgdG8gZGV0ZXJtaW5lIHdoaWNoCj4+IHBpeGVscyBmcm9tIHRoZSB2aWRlbyBwbGFuZSB0byBv
+dmVybGF5Lgo+IFRoZSAidHJhbnNwYXJlbnQiIG1vZGUgbWFrZXMgdGhlIGNvbG9yLW1hdGNoZWQg
+cGl4ZWxzIHRvIGJlY29tZSB0cmFuc3BhcmVudCwgCj4geW91IHdhbnQgdGhlIGludmVyc2lvbiBl
+ZmZlY3QgYW5kIGhlbmNlIHRoYXQgc2hvdWxkIGJlIGNhbGxlZCBzb21ldGhpbmcgbGlrZSBhIAo+
+ICJ0cmFuc3BhcmVudC1pbnZlcnRlZCIgbW9kZS4gTWFhcnRlbiBMYW5raG9yc3Qgd2FzIGFza2lu
+ZyBmb3IgdGhhdCBtb2RlIGluIGhpcyAKPiBjb21tZW50IHRvIHYzLCBJJ20gbGVhdmluZyBmb3Ig
+c29tZWJvZHkgZWxzZSB0byBhZGQgdGhhdCBtb2RlIGxhdGVyIHNpbmNlIAo+IHRoZXJlIGlzIG5v
+IHJlYWwgdXNlIGZvciBpdCBvbiBUZWdyYSByaWdodCBub3cuCkkgd291bGQgbGlrZSBpdCB0byBi
+ZSBkZXNjcmliZWQgYW5kIGluY2x1ZGVkLCBzbyBJIGNhbiBjb252ZXJ0IHRoZSBleGlzdGluZyBp
+bnRlbF9zcHJpdGVfc2V0X2NvbG9ya2V5X2lvY3RsIHRvIGF0b21pYy4KClRoZW4gYWdhaW4sIGNv
+dWxkIHRyYW5zcGFyZW50LWludmVydGVkIGFsc28gYmUgaGFuZGxlZCBieSBzZXR0aW5nIHRyYW5z
+cGFyZW50IG9uIHRoZSBwcmltYXJ5PwoKCj4gU28gaW4geW91ciBjYXNlIHRoZSBncmFwaGljIHBs
+YW5lIHdpbGwgYmUgdGhlICJzb3VyY2UiIHBsYW5lIChzcGVjaWZpZWQgdmlhIAo+IHRoZSBjb2xv
+cmtleS5wbGFuZV9tYXNrIHByb3BlcnR5KSwgdmlkZW8gcGxhbmUgd2lsbCBiZSB0aGUgImRlc3Rp
+bmF0aW9uIiBwbGFuZSAKPiAocGxhbmUgdG8gd2hpY2ggdGhlIGNvbG9ya2V5IHByb3BlcnRpZXMg
+YXJlIGFwcGxpZWQpIGFuZCB0aGUgY29sb3JrZXkubW9kZSAKPiB3aWxsIGJlICJ0cmFuc3BhcmVu
+dC1pbnZlcnRlZCIuIFBpeGVscyBvZiB0aGUgInNvdXJjZSIgcGxhbmUgYXJlIGJlaW5nIG1hdGNo
+ZWQgCj4gYW5kICJkZXN0aW5hdGlvbiIgcGxhbmUgdGFrZXMgdGhlIGVmZmVjdCBvZiBjb2xvciBr
+ZXlpbmcgb3BlcmF0aW9uLCBpLmUuIHRoZSAKPiBjb2xvci1tYXRjaGVkIHBpeGVscyBvZiBncmFw
+aGljIHBsYW5lIGxlYXZlIHRoZSB2aWRlbyBwbGFuZSBwaXhlbHMgdW5hZmZlY3RlZCAKPiBhbmQg
+dGhlIHVubWF0Y2hlZCBwaXhlbHMgbWFrZSB0aGUgdmlkZW8gcGxhbmUgcGl4ZWxzIHRyYW5zcGFy
+ZW50Lgo+Cj4+IElmIGl0J3MgdGhlIG90aGVyIHdheSBhcm91bmQgKHNvdXJjZSBpcyB0aGUgZ3Jh
+cGhpYywgZGVzdGluYXRpb24gaXMgdGhlCj4+IHZpZGVvKSBpdCBtYWtlcyBsZXNzIHNlbnNlIHRv
+IHVzZSB0aGUgInNvdXJjZSIgYW5kICJkZXN0aW5hdGlvbiIgdGVybXMsCj4+IEkgY2FuJ3Qgc2Vl
+IGhvdyB5b3UgY291bGQgZGVzY3JpYmUgYSBwbGFuZSB0aGF0IGlzIGJlaW5nIG92ZXJsYWlkIG9u
+Cj4+IHRvcCBvZiBhbm90aGVyIHBsYW5lIGFzIGEgImRlc3RpbmF0aW9uIi4KPiBUZWdyYSBoYXMg
+YSBiaXQgYW5ub3lpbmcgbGltaXRhdGlvbnMgaW4gcmVnYXJkIHRvIGEgcmVkdWNlZCBwbGFuZSBi
+bGVuZGluZyAKPiBmdW5jdGlvbmFsaXR5IHdoZW4gY29sb3Iga2V5aW5nIGlzIGVuYWJsZWQuIEkg
+Zm91bmQgdGhhdCB0aGUgYmVzdCB2YXJpYW50IHRvIAo+IHdvcmsgYXJvdW5kIHRoZSBsaW1pdGF0
+aW9ucyBpcyB0byBtb3ZlIHRoZSBncmFwaGljIHBsYW5lIG9uIHRvcCBvZiB0aGUgdmlkZW8gCj4g
+cGxhbmUgYW5kIHRvIG1ha2UgdGhlIGdyYXBoaWMgcGxhbmUgdG8gbWF0Y2ggaXRzZWxmLiBJLmUu
+IHRoZSBtYXRjaGVkIHBpeGVscyAKPiBvZiBncmFwaGljIHBsYW5lIGJlY29tZSB0cmFuc3BhcmVu
+dCBhbmQgaGVuY2UgcG9rZWQgYnkgdmlkZW8gcGxhbmUuCj4KPj4gSSBndWVzcyB0aGUgdGVybWlu
+b2xvZ3kgaGFzIGNvbWUgZnJvbSBhIHRob3VnaHQgYWJvdXQgdXNpbmcgYSBHUFUgdG8KPj4gcGh5
+c2ljYWxseSBkbyB0aGUgY29sb3JrZXlpbmcgd2hlbiBjb21iaW5pbmcgdHdvIHBsYW5lcyAtIGlm
+IHRoZSBHUFUKPj4gd2VyZSB0byB3cml0ZSB0byB0aGUgImRlc3RpbmF0aW9uIiBwbGFuZSwgdGhl
+biB0aGlzIHdvdWxkIGJlIHRoZSB3cm9uZwo+PiB3YXkgYXJvdW5kLiAgRm9yIHN0YXJ0ZXJzLCB0
+YWtpbmcgdGhlIGFib3ZlIGV4YW1wbGUsIHRoZSB2aWRlbyBwbGFuZQo+PiBtYXkgd2VsbCBiZSBz
+bWFsbGVyIHRoYW4gdGhlIGdyYXBoaWMgcGxhbmUuICBJZiBpdCdzIHRoZSBvdGhlciB3YXkKPj4g
+YXJvdW5kLCB0aGF0IGhhcyBvdGhlciBwcm9ibGVtcywgbGlrZSBkZXN0cm95aW5nIHRoZSBjb2xv
+cmtleSBpbiB0aGUKPj4gZ3JhcGhpYyBwbGFuZSB3aGVuIHdyaXRpbmcgdGhlIHZpZGVvIHBsYW5l
+J3MgY29udGVudHMgdG8gaXQuCj4gSXQgYWxsIGRlcGVuZHMgb24gYSB1c2UtY2FzZSBzY2VuYXJp
+by4gSXQgd29uJ3QgYmUgZWFzeSBmb3IgdXNlcnNwYWNlIHRvIAo+IGdlbmVyYWxpemUgdGhlIHVz
+YWdlIG9mIGNvbG9yIGtleWluZywgYXQgYmVzdCB0aGUgY29sb3Iga2V5aW5nIGludGVyZmFjZSBj
+b3VsZCAKPiBiZSBnZW5lcmFsaXplZCBhbmQgdGhlbiB1c2Vyc3BhY2UgbWF5IGNob29zZSB0aGUg
+YmVzdCBmaXR0aW5nIHZhcmlhbnQgYmFzZWQgb24gCj4gYXZhaWxhYmxlIEhXIGNhcGFiaWxpdGll
+cy4KVGhlcmUncyBURVNUX09OTFkgZm9yIGEgcmVhc29uLCB0aG91Z2ggSSBndWVzcyBpdCBtYWtl
+cyBnZW5lcmljIGNvbG9yIGtleWluZyBzbGlnaHRseSBtb3JlIGludm92bGVkIGZvciB1c2Vyc3Bh
+Y2UuIDopCj4+IFNvLCBpbiBzdW1tYXJ5LCBJIGRvbid0IHRoaW5rICJkZXN0aW5hdGlvbiIgYW5k
+ICJzb3VyY2UiIGFyZQo+PiBwYXJ0aWN1bGFybHkgZ29vZCB0ZXJtcyB0byBkZXNjcmliZSB0aGUg
+b3BlcmF0aW9uLCBhbmQgSSB0aGluayB5b3UgaGF2ZQo+PiB0aGVtIHN3YXBwZWQgaW4geW91ciBk
+ZXNjcmlwdGlvbiBvZgo+PiAiRFJNX1BMQU5FX0NPTE9SS0VZX01PREVfVFJBTlNQQVJFTlQiLgo+
+IE1heWJlIHRoZSBEUk1fUExBTkVfQ09MT1JLRVlfTU9ERV9UUkFOU1BBUkVOVCBzaG91bGQgYmVj
+b21lIAo+IERSTV9QTEFORV9DT0xPUktFWV9NT0RFX1RSQU5TUEFSRU5UX0lOVkVSVEVEPyAKPgo+
+IEFueSBtb3JlIG9waW5pb25zPwo+Cj4KPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
