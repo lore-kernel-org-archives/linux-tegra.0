@@ -1,43 +1,85 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH] ASoC: core: Optimise suspend/resume of DAPM widgets
-Date: Thu, 16 Aug 2018 16:25:19 +0100
-Message-ID: <b263b31d-6fcb-2ea6-f548-3db2b00846ab@nvidia.com>
-References: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
- <20180803163605.GD6591@sirena.org.uk>
- <7ba86328-5bb6-5280-df6f-9937173fb2ab@nvidia.com>
- <20180814144004.GD5810@sirena.org.uk>
- <e1bc40ec-de7e-2b77-d7f6-ec6b3066aeec@nvidia.com>
- <20180816105135.GZ2414@sirena.org.uk>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2] gpu: host1x: Ignore clients initialization failure
+Date: Thu, 16 Aug 2018 20:20:26 +0300
+Message-ID: <3610451.84tSEqHynW@dimapc>
+References: <20180809231211.26182-1-digetx@gmail.com> <2093022.0kn10W7Lqi@dimapc>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180816105135.GZ2414@sirena.org.uk>
-Content-Language: en-US
+In-Reply-To: <2093022.0kn10W7Lqi@dimapc>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <cyndis@kapsi.fi>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 16/08/18 11:51, Mark Brown wrote:
-> On Wed, Aug 15, 2018 at 07:48:47PM +0100, Jon Hunter wrote:
+On Monday, 13 August 2018 20:48:25 MSK Dmitry Osipenko wrote:
+> On Friday, 10 August 2018 02:12:11 MSK Dmitry Osipenko wrote:
+> > From time to time new bugs are popping up, causing some host1x client to
+> > fail its initialization. Currently a single clients initialization failure
+> > causes whole host1x device registration to fail, as a result a single DRM
+> > sub-device initialization failure makes whole DRM initialization to fail.
+> > Let's ignore clients initialization failure, as a result display panel
+> > lights up even if some DRM clients (say GR2D or VIC) fail to initialize.
+> > Actually VIC fails if initramfs misses the firmware file, so with this
+> > change a serial console isn't needed anymore to figure out why display
+> > isn't working.
+> > 
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+> > 
+> > Changelog:
+> > 
+> > v2: Added WARN_ON() that should get more attention than just a error
+> > message. Made clients_lock to lock around the lists modification, that is
+> > in line with the rest of the code.
+> > 
+> >  drivers/gpu/host1x/bus.c | 20 ++++++++------------
+> >  1 file changed, 8 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+> > index 815bdb42e3f0..07bb6b6c1260 100644
+> > --- a/drivers/gpu/host1x/bus.c
+> > +++ b/drivers/gpu/host1x/bus.c
+> > @@ -199,19 +199,23 @@ static void host1x_subdev_unregister(struct
+> > host1x_device *device, */
+> > 
+> >  int host1x_device_init(struct host1x_device *device)
+> >  {
+> > 
+> > -	struct host1x_client *client;
+> > +	struct host1x_client *client, *cl;
+> > 
+> >  	int err;
+> >  	
+> >  	mutex_lock(&device->clients_lock);
+> > 
+> > -	list_for_each_entry(client, &device->clients, list) {
+> > +	list_for_each_entry_safe(client, cl, &device->clients, list) {
+> > 
+> >  		if (client->ops && client->ops->init) {
+> >  		
+> >  			err = client->ops->init(client);
+> > 
+> > -			if (err < 0) {
+> > +			if (WARN_ON(err < 0)) {
+> > 
+> >  				dev_err(&device->dev,
+> >  				
+> >  					"failed to initialize %s: %d\n",
+> >  					dev_name(client->dev), err);
+> > 
+> > -				goto teardown;
+> > +
+> > +				/* add the client to the list of idle clients */
+> > +				mutex_lock(&clients_lock);
+> > +				list_add_tail(&client->list, &clients);
 > 
->> So then I made the following change to avoid scheduling the function
->> calls unnecessarily (which I think should be fine) ...
+> This shall be list_move_tail(), v3 is coming.
 > 
->> Please note that I am just using ktime_get() to log the time on entry
->> and exit from dapm_power_widgets() and so yes the time may not be
->> purely the time take to execute this function if we are preempted,
->> but I am measuring in the same way in both cases and so it does seem
->> to show some improvement.
-> 
-> That seems like a simple and useful optimization, will you send a patch?
+> > +				mutex_unlock(&clients_lock);
 
-Yes I will send a patch for this.
-
-Cheers
-Jon
-
--- 
-nvpublic
+I just realized that DRM won't load if any of host1x drivers fail to probe. I 
+think the behaviour should be consistent in a case of driver-probe and client-
+init failures. It looks like changing drivers probe error handling will be a 
+much bigger change, hence let's keep the old behaviour at least for now.
