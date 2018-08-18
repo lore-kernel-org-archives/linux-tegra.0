@@ -1,302 +1,106 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 04/14] staging: media: tegra-vde: Use DRM/KMS framebuffer
- modifiers
-Date: Sat, 18 Aug 2018 15:53:32 +0300
-Message-ID: <2019210.IRMxcN5Dac@dimapc>
-References: <20180813145027.16346-1-thierry.reding@gmail.com>
- <20180813145027.16346-5-thierry.reding@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v2] ASoC: tegra: probe deferral error
+	reporting
+Date: Sat, 18 Aug 2018 15:02:31 +0200
+Message-ID: <1edf4e289d6ede7d6bac43a6a9fdb613@agner.ch>
+References: <20180814140145.12212-1-marcel@ziswiler.com>
+ <930b05df-c502-192e-3cb9-9e1874701cce@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180813145027.16346-5-thierry.reding@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <930b05df-c502-192e-3cb9-9e1874701cce@nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, 13 August 2018 17:50:17 MSK Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 15.08.2018 18:02, Jon Hunter wrote:
+> On 14/08/18 15:01, Marcel Ziswiler wrote:
+>> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>>
+>> Actually report the error codes from of_get_named_gpio() resp.
+>> devm_gpio_request_one() upon trying to get the codec reset resp. sync
+>> GPIOs unless it is just a probe deferral.
+>>
+>> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>>
+>> ---
+>>
+>> Changes in v2:
+>> - Silence probe deferral as suggested by Stefan.
+>> - Fix line over 80 characters as reported by checkpatch.
+>>
+>>  sound/soc/tegra/tegra20_ac97.c | 19 ++++++++++++++++---
+>>  1 file changed, 16 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
+>> index 682ef33afb5f..2ac6b2d73980 100644
+>> --- a/sound/soc/tegra/tegra20_ac97.c
+>> +++ b/sound/soc/tegra/tegra20_ac97.c
+>> @@ -351,18 +351,31 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+>>  		ret = devm_gpio_request_one(&pdev->dev, ac97->reset_gpio,
+>>  					    GPIOF_OUT_INIT_HIGH, "codec-reset");
+>>  		if (ret) {
+>> -			dev_err(&pdev->dev, "could not get codec-reset GPIO\n");
+>> +			if (ret != -EPROBE_DEFER)
+>> +				dev_err(&pdev->dev,
+>> +					"could not get codec-reset GPIO: %d\n",
+>> +					ret);
+>> +
+>>  			goto err_clk_put;
+>>  		}
+>>  	} else {
+>> -		dev_err(&pdev->dev, "no codec-reset GPIO supplied\n");
+>> +		ret = ac97->reset_gpio;
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(&pdev->dev,
+>> +				"no codec-reset GPIO supplied: %d\n",
+>> +				ret);
+>> +
+>>  		goto err_clk_put;
+>>  	}
+>>
+>>  	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
+>>  					    "nvidia,codec-sync-gpio", 0);
+>>  	if (!gpio_is_valid(ac97->sync_gpio)) {
+>> -		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
+>> +		ret = ac97->sync_gpio;
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(&pdev->dev, "no codec-sync GPIO supplied: %d\n",
+>> +				ret);
+>> +
+>>  		goto err_clk_put;
+>>  	}
 > 
-> VDE on Tegra20 through Tegra114 supports reading and writing frames in
-> 16x16 tiled layout. Similarily, the various block-linear layouts that
-> are supported by the GPU on Tegra124 can also be read from and written
-> to by the Tegra124 VDE.
-> 
-> Enable userspace to specify the desired layout using the existing DRM
-> framebuffer modifiers.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/staging/media/tegra-vde/tegra-vde.c | 112 +++++++++++++++++---
->  drivers/staging/media/tegra-vde/uapi.h      |   3 +-
->  2 files changed, 100 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c
-> b/drivers/staging/media/tegra-vde/tegra-vde.c index
-> 1a40f6dff7c8..275884e745df 100644
-> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
-> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-> @@ -24,6 +24,8 @@
-> 
->  #include <soc/tegra/pmc.h>
-> 
-> +#include <drm/drm_fourcc.h>
-> +
->  #include "uapi.h"
-> 
->  #define ICMDQUE_WR		0x00
-> @@ -58,12 +60,14 @@ struct video_frame {
->  	dma_addr_t aux_addr;
->  	u32 frame_num;
->  	u32 flags;
-> +	u64 modifier;
->  };
-> 
->  struct tegra_vde_soc {
->  	unsigned int num_ref_pics;
->  	bool supports_ref_pic_marking;
->  	bool supports_interlacing;
-> +	bool supports_block_linear;
->  };
-> 
->  struct tegra_vde {
-> @@ -202,6 +206,7 @@ static void tegra_vde_setup_frameid(struct tegra_vde
-> *vde, unsigned int frameid,
->  				    u32 mbs_width, u32 mbs_height)
->  {
-> +	u64 modifier = frame ? frame->modifier : DRM_FORMAT_MOD_LINEAR;
->  	u32 y_addr  = frame ? frame->y_addr  : 0x6CDEAD00;
->  	u32 cb_addr = frame ? frame->cb_addr : 0x6CDEAD00;
->  	u32 cr_addr = frame ? frame->cr_addr : 0x6CDEAD00;
-> @@ -209,8 +214,12 @@ static void tegra_vde_setup_frameid(struct tegra_vde
-> *vde, u32 value2 = frame ? ((((mbs_width + 1) >> 1) << 6) | 1) : 0;
->  	u32 value = y_addr >> 8;
-> 
-> -	if (vde->soc->supports_interlacing)
-> +	if (!vde->soc->supports_interlacing) {
-> +		if (modifier == DRM_FORMAT_MOD_NVIDIA_TEGRA_TILED)
-> +			value |= BIT(31);
-> +	} else {
->  		value |= BIT(31);
-> +	}
-> 
->  	VDE_WR(value,        vde->frameid + 0x000 + frameid * 4);
->  	VDE_WR(cb_addr >> 8, vde->frameid + 0x100 + frameid * 4);
-> @@ -349,6 +358,37 @@ static void tegra_vde_setup_iram_tables(struct
-> tegra_vde *vde, }
->  }
-> 
-> +static int tegra_vde_get_block_height(u64 modifier, unsigned int
-> *block_height) +{
-> +	switch (modifier) {
-> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_ONE_GOB:
-> +		*block_height = 0;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_TWO_GOB:
-> +		*block_height = 1;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_FOUR_GOB:
-> +		*block_height = 2;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_EIGHT_GOB:
-> +		*block_height = 3;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_SIXTEEN_GOB:
-> +		*block_height = 4;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_THIRTYTWO_GOB:
-> +		*block_height = 5;
-> +		return 0;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
->  static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
->  				      struct tegra_vde_h264_decoder_ctx *ctx,
->  				      struct video_frame *dpb_frames,
-> @@ -383,7 +423,21 @@ static int tegra_vde_setup_hw_context(struct tegra_vde
-> *vde, tegra_vde_set_bits(vde, 0x0005, vde->vdma + 0x04);
-> 
->  	VDE_WR(0x00000000, vde->vdma + 0x1C);
-> -	VDE_WR(0x00000000, vde->vdma + 0x00);
-> +
-> +	value = 0x00000000;
-> +
-> +	if (vde->soc->supports_block_linear) {
-> +		unsigned int block_height;
-> +
-> +		err = tegra_vde_get_block_height(dpb_frames[0].modifier,
-> +						 &block_height);
-> +		if (err < 0)
-> +			return err;
-> +
-> +		value |= block_height << 10;
-> +	}
-> +
-> +	VDE_WR(value, vde->vdma + 0x00);
->  	VDE_WR(0x00000007, vde->vdma + 0x04);
->  	VDE_WR(0x00000007, vde->frameid + 0x200);
->  	VDE_WR(0x00000005, vde->tfe + 0x04);
-> @@ -730,11 +784,37 @@ static void tegra_vde_release_frame_dmabufs(struct
-> video_frame *frame, static int tegra_vde_validate_frame(struct device *dev,
->  				    struct tegra_vde_h264_frame *frame)
->  {
-> +	struct tegra_vde *vde = dev_get_drvdata(dev);
-> +
->  	if (frame->frame_num > 0x7FFFFF) {
->  		dev_err(dev, "Bad frame_num %u\n", frame->frame_num);
->  		return -EINVAL;
->  	}
-> 
-> +	if (vde->soc->supports_block_linear) {
-> +		switch (frame->modifier) {
-> +		case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_ONE_GOB:
-> +		case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_TWO_GOB:
-> +		case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_FOUR_GOB:
-> +		case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_EIGHT_GOB:
-> +		case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_SIXTEEN_GOB:
-> +		case DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_THIRTYTWO_GOB:
-> +			break;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	} else {
-> +		switch (frame->modifier) {
-> +		case DRM_FORMAT_MOD_NVIDIA_TEGRA_TILED:
-> +		case DRM_FORMAT_MOD_LINEAR:
-> +			break;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
->  	return 0;
->  }
-> 
-> @@ -812,7 +892,6 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde
-> *vde, {
->  	struct device *dev = vde->miscdev.parent;
->  	struct tegra_vde_h264_decoder_ctx ctx;
-> -	struct tegra_vde_h264_frame frames[17];
->  	struct tegra_vde_h264_frame __user *frames_user;
->  	struct video_frame *dpb_frames;
->  	struct dma_buf_attachment *bitstream_data_dmabuf_attachment;
-> @@ -872,28 +951,30 @@ static int tegra_vde_ioctl_decode_h264(struct
-> tegra_vde *vde, macroblocks_nb = ctx.pic_width_in_mbs *
-> ctx.pic_height_in_mbs;
->  	frames_user = u64_to_user_ptr(ctx.dpb_frames_ptr);
-> 
-> -	if (copy_from_user(frames, frames_user,
-> -			   ctx.dpb_frames_nb * sizeof(*frames))) {
-> -		ret = -EFAULT;
-> -		goto free_dpb_frames;
-> -	}
-> -
->  	cstride = ALIGN(ctx.pic_width_in_mbs * 8, 16);
->  	csize = cstride * ctx.pic_height_in_mbs * 8;
->  	lsize = macroblocks_nb * 256;
-> 
->  	for (i = 0; i < ctx.dpb_frames_nb; i++) {
-> -		ret = tegra_vde_validate_frame(dev, &frames[i]);
-> +		struct tegra_vde_h264_frame frame;
-> +
-> +		if (copy_from_user(&frame, &frames_user[i], sizeof(frame))) {
-> +			ret = -EFAULT;
-> +			goto release_dpb_frames;
-> +		}
+> Thanks, looks good to me. However, I wonder why we don't request the
+> 'sync_gpio' in the probe like we do for the reset? Otherwise ...
 
-This change is unrelated to the modifiers, it should be a standalone patch.
+The comment in tegra20_ac97_codec_warm_reset() is probably the reason:
 
-Why do we need to change this at all? Do you think it is more optimal to make 
-kernel go back and forth copying the frames rather than to copy them all at 
-once?
+/*
+ * although sync line is driven by the DAC pad group warm reset using
+ * the controller cmd is not working, have to toggle sync line
+ * manually.
+ */
 
-> +
-> +		ret = tegra_vde_validate_frame(dev, &frame);
->  		if (ret)
->  			goto release_dpb_frames;
+I guess the GPIO need to be freed so that the DAC pad group can use the
+sync line?
+
 > 
-> -		dpb_frames[i].flags = frames[i].flags;
-> -		dpb_frames[i].frame_num = frames[i].frame_num;
-> +		dpb_frames[i].flags = frame.flags;
-> +		dpb_frames[i].frame_num = frame.frame_num;
-> +		dpb_frames[i].modifier = frame.modifier;
-> 
->  		dma_dir = (i == 0) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
-> 
->  		ret = tegra_vde_attach_dmabufs_to_frame(dev, &dpb_frames[i],
-> -							&frames[i], dma_dir,
-> +							&frame, dma_dir,
->  							ctx.baseline_profile,
->  							lsize, csize);
->  		if (ret)
-> @@ -985,7 +1066,6 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde
-> *vde, ctx.baseline_profile);
->  	}
-> 
-> -free_dpb_frames:
->  	kfree(dpb_frames);
-> 
->  release_bitstream_dmabuf:
-> @@ -1328,24 +1408,28 @@ static const struct tegra_vde_soc tegra20_vde_soc =
-> { .num_ref_pics = 16,
->  	.supports_ref_pic_marking = false,
->  	.supports_interlacing = false,
-> +	.supports_block_linear = false,
->  };
-> 
->  static const struct tegra_vde_soc tegra30_vde_soc = {
->  	.num_ref_pics = 32,
->  	.supports_ref_pic_marking = false,
->  	.supports_interlacing = false,
-> +	.supports_block_linear = false,
->  };
-> 
->  static const struct tegra_vde_soc tegra114_vde_soc = {
->  	.num_ref_pics = 32,
->  	.supports_ref_pic_marking = true,
->  	.supports_interlacing = false,
-> +	.supports_block_linear = false,
->  };
-> 
->  static const struct tegra_vde_soc tegra124_vde_soc = {
->  	.num_ref_pics = 32,
->  	.supports_ref_pic_marking = true,
->  	.supports_interlacing = true,
-> +	.supports_block_linear = true,
->  };
-> 
->  static const struct of_device_id tegra_vde_of_match[] = {
-> diff --git a/drivers/staging/media/tegra-vde/uapi.h
-> b/drivers/staging/media/tegra-vde/uapi.h index 58bfd56de55e..6cd730dda61c
-> 100644
-> --- a/drivers/staging/media/tegra-vde/uapi.h
-> +++ b/drivers/staging/media/tegra-vde/uapi.h
-> @@ -27,8 +27,9 @@ struct tegra_vde_h264_frame {
->  	__u32 aux_offset;
->  	__u32 frame_num;
->  	__u32 flags;
-> +	__u64 modifier;
-> 
-> -	__u32 reserved;
-> +	__u32 reserved[4];
->  } __attribute__((packed));
-> 
->  struct tegra_vde_h264_decoder_ctx {
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Also looks good to me:
+
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+
+--
+Stefan
