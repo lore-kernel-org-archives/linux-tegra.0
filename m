@@ -1,54 +1,276 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v2] clk: tegra: probe deferral error reporting
-Date: Sat, 18 Aug 2018 14:45:47 +0200
-Message-ID: <bd9a8bb8c140fab18f88d383a0b7d5f1@agner.ch>
-References: <20180814091805.1363-1-marcel@ziswiler.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 03/14] staging: media: tegra-vde: Prepare for interlacing
+ support
+Date: Sat, 18 Aug 2018 15:48:03 +0300
+Message-ID: <3904829.12OiKbgMWx@dimapc>
+References: <20180813145027.16346-1-thierry.reding@gmail.com>
+ <20180813145027.16346-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180814091805.1363-1-marcel@ziswiler.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180813145027.16346-4-thierry.reding@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 14.08.2018 11:18, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Monday, 13 August 2018 17:50:16 MSK Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Actually report the error code from devm_regulator_get() which may as
-> well just be a probe deferral.
+> The number of frames doubles when decoding interlaced content and the
+> structures describing the frames double in size. Take that into account
+> to prepare for interlacing support.
 > 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-
-> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
+>  drivers/staging/media/tegra-vde/tegra-vde.c | 73 ++++++++++++++++-----
+>  1 file changed, 58 insertions(+), 15 deletions(-)
 > 
-> Changes in v2:
-> - Silence probe deferral as discussed between Peter, Stefan and Stephen.
-> - Fix line over 80 characters as reported by checkpatch.
+> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c
+> b/drivers/staging/media/tegra-vde/tegra-vde.c index
+> 3027b11b11ae..1a40f6dff7c8 100644
+> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
+> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+> @@ -61,7 +61,9 @@ struct video_frame {
+>  };
 > 
->  drivers/clk/tegra/clk-dfll.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  struct tegra_vde_soc {
+> +	unsigned int num_ref_pics;
+>  	bool supports_ref_pic_marking;
+> +	bool supports_interlacing;
+>  };
 > 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 48ee43734e05..ebb0e1b6bf01 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1609,8 +1609,12 @@ int tegra_dfll_register(struct platform_device *pdev,
->  
->  	td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
->  	if (IS_ERR(td->vdd_reg)) {
-> -		dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
-> -		return PTR_ERR(td->vdd_reg);
-> +		ret = PTR_ERR(td->vdd_reg);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n",
-> +				ret);
+>  struct tegra_vde {
+> @@ -205,8 +207,12 @@ static void tegra_vde_setup_frameid(struct tegra_vde
+> *vde, u32 cr_addr = frame ? frame->cr_addr : 0x6CDEAD00;
+>  	u32 value1 = frame ? ((mbs_width << 16) | mbs_height) : 0;
+>  	u32 value2 = frame ? ((((mbs_width + 1) >> 1) << 6) | 1) : 0;
+> +	u32 value = y_addr >> 8;
+
+Let's name it value0 for consistency.
+
+> 
+> -	VDE_WR(y_addr  >> 8, vde->frameid + 0x000 + frameid * 4);
+> +	if (vde->soc->supports_interlacing)
+> +		value |= BIT(31);
 > +
-> +		return ret;
+> +	VDE_WR(value,        vde->frameid + 0x000 + frameid * 4);
+>  	VDE_WR(cb_addr >> 8, vde->frameid + 0x100 + frameid * 4);
+>  	VDE_WR(cr_addr >> 8, vde->frameid + 0x180 + frameid * 4);
+>  	VDE_WR(value1,       vde->frameid + 0x080 + frameid * 4);
+> @@ -229,20 +235,23 @@ static void tegra_setup_frameidx(struct tegra_vde
+> *vde, }
+> 
+>  static void tegra_vde_setup_iram_entry(struct tegra_vde *vde,
+> +				       unsigned int num_ref_pics,
+>  				       unsigned int table,
+>  				       unsigned int row,
+>  				       u32 value1, u32 value2)
+>  {
+> +	unsigned int entries = num_ref_pics * 2;
+>  	u32 *iram_tables = vde->iram;
+> 
+>  	dev_dbg(vde->miscdev.parent, "IRAM table %u: row %u: 0x%08X 0x%08X\n",
+>  		table, row, value1, value2);
+> 
+> -	iram_tables[0x20 * table + row * 2] = value1;
+> -	iram_tables[0x20 * table + row * 2 + 1] = value2;
+> +	iram_tables[entries * table + row * 2] = value1;
+> +	iram_tables[entries * table + row * 2 + 1] = value2;
+>  }
+> 
+>  static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+> +					unsigned int num_ref_pics,
+>  					struct video_frame *dpb_frames,
+>  					unsigned int ref_frames_nb,
+>  					unsigned int with_earlier_poc_nb)
+> @@ -251,13 +260,17 @@ static void tegra_vde_setup_iram_tables(struct
+> tegra_vde *vde, u32 value, aux_addr;
+>  	int with_later_poc_nb;
+>  	unsigned int i, k;
+> +	size_t size;
+> +
+> +	size = num_ref_pics * 4 * 8;
+> +	memset(vde->iram, 0, size);
+
+Is this memset() really needed or it is just because you're feeling 
+uncomfortable that something is kept uninitialized?
+
+> 
+>  	dev_dbg(vde->miscdev.parent, "DPB: Frame 0: frame_num = %d\n",
+>  		dpb_frames[0].frame_num);
+> 
+>  	dev_dbg(vde->miscdev.parent, "REF L0:\n");
+> 
+> -	for (i = 0; i < 16; i++) {
+> +	for (i = 0; i < num_ref_pics; i++) {
+>  		if (i < ref_frames_nb) {
+>  			frame = &dpb_frames[i + 1];
+> 
+> @@ -277,10 +290,14 @@ static void tegra_vde_setup_iram_tables(struct
+> tegra_vde *vde, value = 0;
+>  		}
+> 
+> -		tegra_vde_setup_iram_entry(vde, 0, i, value, aux_addr);
+> -		tegra_vde_setup_iram_entry(vde, 1, i, value, aux_addr);
+> -		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
+> -		tegra_vde_setup_iram_entry(vde, 3, i, value, aux_addr);
+> +		tegra_vde_setup_iram_entry(vde, num_ref_pics, 0, i, value,
+> +					   aux_addr);
+> +		tegra_vde_setup_iram_entry(vde, num_ref_pics, 1, i, value,
+> +					   aux_addr);
+> +		tegra_vde_setup_iram_entry(vde, num_ref_pics, 2, i, value,
+> +					   aux_addr);
+> +		tegra_vde_setup_iram_entry(vde, num_ref_pics, 3, i, value,
+> +					   aux_addr);
 >  	}
->  
->  	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
+> 
+>  	if (!(dpb_frames[0].flags & FLAG_B_FRAME))
+> @@ -309,7 +326,8 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde
+> *vde, "\tFrame %d: frame_num = %d\n",
+>  			k + 1, frame->frame_num);
+> 
+> -		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
+> +		tegra_vde_setup_iram_entry(vde, num_ref_pics, 2, i, value,
+> +					   aux_addr);
+>  	}
+> 
+>  	for (k = 0; i < ref_frames_nb; i++, k++) {
+> @@ -326,7 +344,8 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde
+> *vde, "\tFrame %d: frame_num = %d\n",
+>  			k + 1, frame->frame_num);
+> 
+> -		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
+> +		tegra_vde_setup_iram_entry(vde, num_ref_pics, 2, i, value,
+> +					   aux_addr);
+>  	}
+>  }
+> 
+> @@ -339,9 +358,20 @@ static int tegra_vde_setup_hw_context(struct tegra_vde
+> *vde, unsigned int macroblocks_nb)
+>  {
+>  	struct device *dev = vde->miscdev.parent;
+> +	unsigned int num_ref_pics = 16;
+> +	/* XXX extend ABI to provide this */
+> +	bool interlaced = false;
+> +	size_t size;
+>  	u32 value;
+>  	int err;
+> 
+> +	if (vde->soc->supports_interlacing) {
+> +		if (interlaced)
+> +			num_ref_pics = vde->soc->num_ref_pics;
+> +		else
+> +			num_ref_pics = 16;
+> +	}
+> +
+>  	tegra_vde_set_bits(vde, 0x000A, vde->sxe + 0xF0);
+>  	tegra_vde_set_bits(vde, 0x000B, vde->bsev + CMDQUE_CONTROL);
+>  	tegra_vde_set_bits(vde, 0x8002, vde->mbe + 0x50);
+> @@ -369,12 +399,12 @@ static int tegra_vde_setup_hw_context(struct tegra_vde
+> *vde, VDE_WR(0x00000000, vde->bsev + 0x98);
+>  	VDE_WR(0x00000060, vde->bsev + 0x9C);
+> 
+> -	memset(vde->iram + 128, 0, macroblocks_nb / 2);
+> +	memset(vde->iram + 1024, 0, macroblocks_nb / 2);
+
+This is wrong and breaks everything because type of vde->iram is (*u32), hence 
++1024 is equal to offset 4096 and below in the code that offset is set to 
+vde>iram_lists_addr + 1024. So that should be:
+
+	memset(vde->iram + 256, 0, macroblocks_nb / 2);
+
+Probably we should put that hardcoded offset into a slice_group_map_offset 
+variable for clarity, like this:
+
+	unsigned int slice_group_map_offset = 1024;
+..
+	memset(vde->iram + slice_group_map_offset / sizeof(u32), 0,
+		     macroblocks_nb / 2);
+..
+	/* 
+	 * Reference pictures list lays at the beginning of IRAM allocation,
+	 * slice group mapping is put afterwards of the list.
+	 */
+	value |= ((vde->iram_lists_addr + slice_group_map_offset) >> 2) & 0xffff;
+
+> 
+>  	tegra_setup_frameidx(vde, dpb_frames, ctx->dpb_frames_nb,
+>  			     ctx->pic_width_in_mbs, ctx->pic_height_in_mbs);
+> 
+> -	tegra_vde_setup_iram_tables(vde, dpb_frames,
+> +	tegra_vde_setup_iram_tables(vde, num_ref_pics, dpb_frames,
+>  				    ctx->dpb_frames_nb - 1,
+>  				    ctx->dpb_ref_frames_with_earlier_poc_nb);
+> 
+> @@ -396,22 +426,27 @@ static int tegra_vde_setup_hw_context(struct tegra_vde
+> *vde, if (err)
+>  		return err;
+> 
+> -	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x800003FC, false);
+> +	value = (0x20 << 26) | (0 << 25) | ((4096 >> 2) & 0x1fff);
+> +	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, false);
+>  	if (err)
+>  		return err;
+> 
+>  	value = 0x01500000;
+> -	value |= ((vde->iram_lists_addr + 512) >> 2) & 0xFFFF;
+> +	value |= ((vde->iram_lists_addr + 1024) >> 2) & 0xffff;
+> 
+>  	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, true);
+>  	if (err)
+>  		return err;
+> 
+> +	value = (0x21 << 26) | ((240 & 0x1fff) << 12) | (0x54c & 0xfff);
+>  	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x840F054C, false);
+
+	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, false);
+
+>  	if (err)
+>  		return err;
+> 
+> -	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x80000080, false);
+> +	size = num_ref_pics * 4 * 8;
+> +
+> +	value = (0x20 << 26) | (0x0 << 25) | ((size >> 2) & 0x1fff);
+> +	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, false);
+>  	if (err)
+>  		return err;
+> 
+> @@ -1290,19 +1325,27 @@ static const struct dev_pm_ops tegra_vde_pm_ops = {
+>  };
+> 
+>  static const struct tegra_vde_soc tegra20_vde_soc = {
+> +	.num_ref_pics = 16,
+>  	.supports_ref_pic_marking = false,
+> +	.supports_interlacing = false,
+>  };
+> 
+>  static const struct tegra_vde_soc tegra30_vde_soc = {
+> +	.num_ref_pics = 32,
+>  	.supports_ref_pic_marking = false,
+> +	.supports_interlacing = false,
+>  };
+> 
+>  static const struct tegra_vde_soc tegra114_vde_soc = {
+> +	.num_ref_pics = 32,
+>  	.supports_ref_pic_marking = true,
+> +	.supports_interlacing = false,
+>  };
+> 
+>  static const struct tegra_vde_soc tegra124_vde_soc = {
+> +	.num_ref_pics = 32,
+>  	.supports_ref_pic_marking = true,
+> +	.supports_interlacing = true,
+>  };
+> 
+>  static const struct of_device_id tegra_vde_of_match[] = {
