@@ -1,78 +1,46 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 2/2] mmc: tegra: Implement periodic pad calibration
-Date: Mon, 20 Aug 2018 12:23:33 +0300
-Message-ID: <1534757013-4524-3-git-send-email-avienamo@nvidia.com>
-References: <1534757013-4524-1-git-send-email-avienamo@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1] drm/tegra: plane: Permit tiling modifiers
+Date: Sat, 18 Aug 2018 19:03:57 +0300
+Message-ID: <20180818160357.7476-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1534757013-4524-1-git-send-email-avienamo@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Rerun the pad calibration procedure before sdhci_request() if
-the 100 ms recalibration interval has been exceeded.
-
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 94624ec..ef18a0c 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -30,6 +30,7 @@
- #include <linux/mmc/mmc.h>
- #include <linux/mmc/slot-gpio.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/ktime.h>
- 
- #include "sdhci-pltfm.h"
- 
-@@ -122,6 +123,7 @@ struct sdhci_tegra {
- 	struct pinctrl_state *pinctrl_state_1v8;
- 
- 	struct sdhci_tegra_autocal_offsets autocal_offsets;
-+	ktime_t last_calib;
- 
- 	u32 default_tap;
- 	u32 default_trim;
-@@ -533,6 +535,22 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
- 		autocal->pull_down_hs400 = autocal->pull_down_1v8;
- }
- 
-+static void tegra_sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	ktime_t since_calib = ktime_sub(ktime_get(), tegra_host->last_calib);
-+
-+	/* 100 ms calibration interval is specified in the TRM */
-+	if (ktime_to_ms(since_calib) > 100) {
-+		tegra_sdhci_pad_autocalib(host);
-+		tegra_host->last_calib = ktime_get();
-+	}
-+
-+	sdhci_request(mmc, mrq);
-+}
-+
- static void tegra_sdhci_parse_tap_and_trim(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -1014,6 +1032,10 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 				sdhci_tegra_start_signal_voltage_switch;
- 	}
- 
-+	/* Hook to periodically rerun pad calibration */
-+	if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
-+		host->mmc_host_ops.request = tegra_sdhci_request;
-+
- 	host->mmc_host_ops.hs400_enhanced_strobe =
- 			tegra_sdhci_hs400_enhanced_strobe;
- 
--- 
-2.7.4
+VGlsaW5nIG1vZGlmaWVyIGNhbid0IGJlIGFwcGxpZWQgdG8gb3ZlcmxheSBwbGFuZXMgYmVjYXVz
+ZSBhbGwgdGlsZQptb2RpZmllcnMgYXJlIGZpbHRlcmVkIG91dC4KCkZpeGVzOiBlOTAxMjRjYjQ2
+YmRiICgiZHJtL3RlZ3JhOiBwbGFuZTogU3VwcG9ydCBmb3JtYXQgbW9kaWZpZXJzIikKU2lnbmVk
+LW9mZi1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPgotLS0KIGRyaXZlcnMv
+Z3B1L2RybS90ZWdyYS9wbGFuZS5jIHwgMTYgKysrKysrKysrKy0tLS0tLQogMSBmaWxlIGNoYW5n
+ZWQsIDEwIGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvcGxhbmUuYwpp
+bmRleCBkMDY4ZThhYTM1NTMuLmNkNmY3MTE2ZDhmNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL3RlZ3JhL3BsYW5lLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3BsYW5lLmMKQEAg
+LTc2LDEzICs3NiwxNyBAQCBzdGF0aWMgYm9vbCB0ZWdyYV9wbGFuZV9mb3JtYXRfbW9kX3N1cHBv
+cnRlZChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKIAkJCQkJICAgICB1aW50MzJfdCBmb3JtYXQs
+CiAJCQkJCSAgICAgdWludDY0X3QgbW9kaWZpZXIpCiB7Ci0JY29uc3Qgc3RydWN0IGRybV9mb3Jt
+YXRfaW5mbyAqaW5mbyA9IGRybV9mb3JtYXRfaW5mbyhmb3JtYXQpOwotCi0JaWYgKG1vZGlmaWVy
+ID09IERSTV9GT1JNQVRfTU9EX0xJTkVBUikKLQkJcmV0dXJuIHRydWU7Ci0KLQlpZiAoaW5mby0+
+bnVtX3BsYW5lcyA9PSAxKQorCXN3aXRjaCAobW9kaWZpZXIpIHsKKwljYXNlIERSTV9GT1JNQVRf
+TU9EX0xJTkVBUjoKKwljYXNlIERSTV9GT1JNQVRfTU9EX05WSURJQV9URUdSQV9USUxFRDoKKwlj
+YXNlIERSTV9GT1JNQVRfTU9EX05WSURJQV8xNkJYMl9CTE9DSygwKToKKwljYXNlIERSTV9GT1JN
+QVRfTU9EX05WSURJQV8xNkJYMl9CTE9DSygxKToKKwljYXNlIERSTV9GT1JNQVRfTU9EX05WSURJ
+QV8xNkJYMl9CTE9DSygyKToKKwljYXNlIERSTV9GT1JNQVRfTU9EX05WSURJQV8xNkJYMl9CTE9D
+SygzKToKKwljYXNlIERSTV9GT1JNQVRfTU9EX05WSURJQV8xNkJYMl9CTE9DSyg0KToKKwljYXNl
+IERSTV9GT1JNQVRfTU9EX05WSURJQV8xNkJYMl9CTE9DSyg1KToKIAkJcmV0dXJuIHRydWU7CisJ
+fQogCiAJcmV0dXJuIGZhbHNlOwogfQotLSAKMi4xOC4wCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
