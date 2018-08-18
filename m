@@ -1,69 +1,93 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] ASoC: core: Don't schedule DAPM work if already in target state
-Date: Fri, 17 Aug 2018 16:35:43 +0100
-Message-ID: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 11/14] ARM: tegra: Enable VDE on Tegra124
+Date: Sat, 18 Aug 2018 15:45:09 +0300
+Message-ID: <1684522.qRMD88czIW@dimapc>
+References: <20180813145027.16346-1-thierry.reding@gmail.com>
+ <20180813145027.16346-12-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180813145027.16346-12-thierry.reding@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-When dapm_power_widgets() is called, the dapm_pre_sequence_async() and
-dapm_post_sequence_async() functions are scheduled for all DAPM contexts
-(apart from the card DAPM context) regardless of whether the DAPM
-context is already in the desired state. The overhead of this is not
-insignificant and the more DAPM contexts there are the more overhead
-there is.
+On Monday, 13 August 2018 17:50:24 MSK Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  arch/arm/boot/dts/tegra124.dtsi | 40 +++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/tegra124.dtsi
+> b/arch/arm/boot/dts/tegra124.dtsi index b113e47b2b2a..8fdca4723205 100644
+> --- a/arch/arm/boot/dts/tegra124.dtsi
+> +++ b/arch/arm/boot/dts/tegra124.dtsi
+> @@ -83,6 +83,19 @@
+>  		};
+>  	};
+> 
+> +	iram@40000000 {
+> +		compatible = "mmio-sram";
+> +		reg = <0x0 0x40000000 0x0 0x40000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0x0 0x40000000 0x40000>;
+> +
+> +		vde_pool: pool@400 {
+> +			reg = <0x400 0x3fc00>;
+> +			pool;
+> +		};
+> +	};
+> +
+>  	host1x@50000000 {
+>  		compatible = "nvidia,tegra124-host1x", "simple-bus";
+>  		reg = <0x0 0x50000000 0x0 0x00034000>;
+> @@ -283,6 +296,33 @@
+>  		*/
+>  	};
+> 
+> +	vde@60030000 {
+> +		compatible = "nvidia,tegra124-vde", "nvidia,tegra30-vde",
+> +			     "nvidia,tegra20-vde";
+> +		reg = <0x0 0x60030000 0x0 0x1000   /* Syntax Engine */
+> +		       0x0 0x60031000 0x0 0x1000   /* Video Bitstream Engine */
+> +		       0x0 0x60032000 0x0 0x0100   /* Macroblock Engine */
+> +		       0x0 0x60032200 0x0 0x0100   /* Post-processing Engine */
+> +		       0x0 0x60032400 0x0 0x0100   /* Motion Compensation Engine */
+> +		       0x0 0x60032600 0x0 0x0100   /* Transform Engine */
+> +		       0x0 0x60032800 0x0 0x0100   /* Pixel prediction block */
+> +		       0x0 0x60032a00 0x0 0x0100   /* Video DMA */
+> +		       0x0 0x60033800 0x0 0x0400>; /* Video frame controls */
+> +		reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
+> +			    "tfe", "ppb", "vdma", "frameid";
+> +		iram = <&vde_pool>; /* IRAM region */
+> +		interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token 
+> +			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
+> +			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
+> +		interrupt-names = "sync-token", "bsev", "sxe";
+> +		clocks = <&tegra_car TEGRA124_CLK_VDE>,
+> +			 <&tegra_car TEGRA124_CLK_BSEV>;
+> +		clock-names = "vde", "bsev";
+> +		resets = <&tegra_car 61>,
+> +			 <&tegra_car 63>;
+> +		reset-names = "vde", "bsev";
 
-For example, on the Tegra124 Jetson TK1, when profiling the time taken
-to execute the dapm_power_widgets() the following times were observed.
+Memory client reset missed?
 
-  Times for function dapm_power_widgets() are (us):
-     Min 23, Ave 190, Max 434, Count 39
-
-Here 'Count' is the number of times that dapm_power_widgets() has been
-called. Please note that the above time were measured using ktime_get()
-to log the time on entry and exit from dapm_power_widgets(). So it
-should be noted that these times may not be purely the time take to
-execute this function if it is preempted. However, after applying this
-patch and measuring the time taken to execute dapm_power_widgets() again
-a significant improvement is seen as shown below.
-
-  Times for function dapm_power_widgets() are (us):
-     Min 4, Ave 16, Max 82, Count 39
-
-Therefore, optimise the dapm_power_widgets() function by only scheduling
-the dapm_pre/post_sequence_async() work if the DAPM context is not in
-the desired state.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- sound/soc/soc-dapm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 461d951917c0..2e9231aeabb9 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -1953,7 +1953,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
- 	dapm_pre_sequence_async(&card->dapm, 0);
- 	/* Run other bias changes in parallel */
- 	list_for_each_entry(d, &card->dapm_list, list) {
--		if (d != &card->dapm)
-+		if (d != &card->dapm && d->bias_level != d->target_bias_level)
- 			async_schedule_domain(dapm_pre_sequence_async, d,
- 						&async_domain);
- 	}
-@@ -1977,7 +1977,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
- 
- 	/* Run all the bias changes in parallel */
- 	list_for_each_entry(d, &card->dapm_list, list) {
--		if (d != &card->dapm)
-+		if (d != &card->dapm && d->bias_level != d->target_bias_level)
- 			async_schedule_domain(dapm_post_sequence_async, d,
- 						&async_domain);
- 	}
--- 
-2.7.4
+> +	};
+> +
+>  	apbdma: dma@60020000 {
+>  		compatible = "nvidia,tegra124-apbdma", "nvidia,tegra148-apbdma";
+>  		reg = <0x0 0x60020000 0x0 0x1400>;
