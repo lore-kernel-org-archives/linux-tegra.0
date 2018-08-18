@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH 09/14] staging: media: tegra-vde: Add IOMMU support
-Date: Sat, 18 Aug 2018 16:07:20 +0300
-Message-ID: <6d2861cc-0193-b29c-da65-531221250d08@gmail.com>
+Date: Sat, 18 Aug 2018 16:29:44 +0300
+Message-ID: <3fc222b1-04b5-eab2-79b7-d322f94b0bae@gmail.com>
 References: <20180813145027.16346-1-thierry.reding@gmail.com>
  <20180813145027.16346-10-thierry.reding@gmail.com>
 Mime-Version: 1.0
@@ -334,6 +334,10 @@ On 13.08.2018 17:50, Thierry Reding wrote:
 > +		} else {
 > +			err = iova_cache_get();
 > +			if (err < 0)
+
+iova_cache_get() returns only 0 on success, let's check for the 0 like in the
+rest of the code for consistency,
+
 > +				goto free_domain;
 > +
 > +			order = __ffs(vde->domain->pgsize_bitmap);
@@ -350,9 +354,9 @@ On 13.08.2018 17:50, Thierry Reding wrote:
 > +
 > +			err = iommu_attach_group(vde->domain, vde->group);
 > +			if (err < 0)
+
+Same as above.
+
 > +				goto put_cache;
 > +		}
 > +	}
-> +
-
-Let's factor out IOMMU setup into tegra_vde_init/realease_iommu().
