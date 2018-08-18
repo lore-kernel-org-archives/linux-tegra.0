@@ -1,54 +1,54 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 14/14] ARM: tegra: Enable SMMU for VDE on Tegra124
-Date: Sat, 18 Aug 2018 15:45:41 +0300
-Message-ID: <13580502.EC82852oeo@dimapc>
-References: <20180813145027.16346-1-thierry.reding@gmail.com>
- <20180813145027.16346-15-thierry.reding@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v2] clk: tegra: probe deferral error reporting
+Date: Sat, 18 Aug 2018 14:45:47 +0200
+Message-ID: <bd9a8bb8c140fab18f88d383a0b7d5f1@agner.ch>
+References: <20180814091805.1363-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180813145027.16346-15-thierry.reding@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180814091805.1363-1-marcel@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, 13 August 2018 17:50:27 MSK Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 14.08.2018 11:18, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> The video decode engine can use the SMMU to use buffers that are not
-> physically contiguous in memory. This allows better memory usage for
-> video decoding, since fragmentation may cause contiguous allocations
-> to fail.
+> Actually report the error code from devm_regulator_get() which may as
+> well just be a probe deferral.
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+
+> 
 > ---
->  arch/arm/boot/dts/tegra124.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi
-> b/arch/arm/boot/dts/tegra124.dtsi index 8fdca4723205..0713e0ed5fef 100644
-> --- a/arch/arm/boot/dts/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/tegra124.dtsi
-> @@ -321,6 +321,8 @@
->  		resets = <&tegra_car 61>,
->  			 <&tegra_car 63>;
->  		reset-names = "vde", "bsev";
+> Changes in v2:
+> - Silence probe deferral as discussed between Peter, Stefan and Stephen.
+> - Fix line over 80 characters as reported by checkpatch.
+> 
+>  drivers/clk/tegra/clk-dfll.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index 48ee43734e05..ebb0e1b6bf01 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -1609,8 +1609,12 @@ int tegra_dfll_register(struct platform_device *pdev,
+>  
+>  	td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
+>  	if (IS_ERR(td->vdd_reg)) {
+> -		dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
+> -		return PTR_ERR(td->vdd_reg);
+> +		ret = PTR_ERR(td->vdd_reg);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n",
+> +				ret);
 > +
-> +		iommus = <&mc TEGRA_SWGROUP_VDE>;
->  	};
-> 
->  	apbdma: dma@60020000 {
-
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-
-The same should be applied to Tegra30.
+> +		return ret;
+>  	}
+>  
+>  	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
