@@ -1,73 +1,40 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH v2 0/8] Tegra SDHCI support HS400 on Tegra210 and Tegra186
-Date: Mon, 27 Aug 2018 14:47:49 +0300
-Message-ID: <aed782d2-9bf1-f750-88eb-3501fab5ecd3@intel.com>
-References: <1533924845-1466-1-git-send-email-avienamo@nvidia.com>
- <20180827100826.GA18542@ulmo>
- <095142c4-2697-d9e1-4930-a39e27b7ef40@intel.com>
+From: zhong jiang <zhongjiang@huawei.com>
+Subject: [PATCH v2] drivers/thermal/tegra: Fix a double free on the device node
+Date: Mon, 27 Aug 2018 21:32:18 +0800
+Message-ID: <1535376738-14035-1-git-send-email-zhongjiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <095142c4-2697-d9e1-4930-a39e27b7ef40@intel.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Aapo Vienamo <avienamo@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: daniel.lezcano@linaro.org
+Cc: rui.zhang@intel.com, edubezval@gmail.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ezequiel@collabora.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 27/08/18 13:26, Adrian Hunter wrote:
-> On 27/08/18 13:08, Thierry Reding wrote:
->> On Fri, Aug 10, 2018 at 09:13:57PM +0300, Aapo Vienamo wrote:
->>> Hi all,
->>> This series implements support for HS400 signaling on Tegra210 and
->>> Tegra186. This includes programming the DQS trimmer values, implementing
->>> enhanced strobe and HS400 delay line calibration.
->>>
->>> This series depends on the "Tegra SDHCI add support for HS200 and UHS
->>> signaling" series.
->>>
->>> Changelog:
->>> v2:
->>> 	- Document in dt-bindings which controllers support HS400
->>> 	- Use val instead of reg in tegra_sdhci_set_dqs_trim()
->>> 	- Change "dt" to "DT" in "mmc: tegra: Parse and program DQS trim
->>> 	  value" commit message
->>> 	- Add spaces around << in tegra_sdhci_set_dqs_trim()
->>> 	- Make the "mmc: tegra: Implement HS400 enhanced strobe" commit
->>> 	  message more detailed
->>> 	- Remove a debug print from tegra_sdhci_hs400_enhanced_strobe()
->>> 	- Add blank lines around if-else-block in
->>> 	  tegra_sdhci_hs400_enhanced_strobe()
->>> 	- Use val instead of reg in tegra_sdhci_hs400_enhanced_strobe()
->>> 	- Make commit message of "mmc: tegra: Implement HS400 delay line
->>> 	  calibration" more detailed
->>>
->>> Aapo Vienamo (8):
->>>   dt-bindings: mmc: Add DQS trim value to Tegra SDHCI
->>>   mmc: tegra: Parse and program DQS trim value
->>>   mmc: tegra: Implement HS400 enhanced strobe
->>>   mmc: tegra: Implement HS400 delay line calibration
->>>   arm64: dts: tegra186: Add SDMMC4 DQS trim value
->>>   arm64: dts: tegra210: Add SDMMC4 DQS trim value
->>>   arm64: dts: tegra186: Enable HS400
->>>   arm64: dts: tegra210: Enable HS400
->>>
->>>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  4 ++
->>>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  2 +
->>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  2 +
->>>  drivers/mmc/host/sdhci-tegra.c                     | 84 +++++++++++++++++++++-
->>>  4 files changed, 89 insertions(+), 3 deletions(-)
->>
->> Adrian,
->>
->> any chance you could take a brief look at these? They are a prerequisite
->> for the 2-patch series ("[PATCH 0/2] Tegra SDHCI rerun pad calibration
->> periodically") that you already acked.
-> 
-> Sure, I'll try and have a look today.
-> 
+The function 'for_each_child_of_node' iterates over the node list by
+dropping the of_node reference of the previous node.
 
-These are fine. For the sdhci-tegra patches (patches 2 - 4):
+Calling of_node_put() on the iterator is pointless and leads to an
+inconsistent refcounting in addition to a double free. Remove it.
 
-	Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+v1->v2: According to Daniel's suggestion. I modify the subject and commit log.
+
+ drivers/thermal/tegra/soctherm.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index ed28110..3aa55c9 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -980,7 +980,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+ 		tcd = thermal_of_cooling_device_register(np_stcc,
+ 							 (char *)name, ts,
+ 							 &throt_cooling_ops);
+-		of_node_put(np_stcc);
+ 		if (IS_ERR_OR_NULL(tcd)) {
+ 			dev_err(dev,
+ 				"throttle-cfg: %s: failed to register cooling device\n",
+-- 
+1.7.12.4
