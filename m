@@ -1,66 +1,69 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH] ASoC: core: Don't schedule DAPM work if
- already in target state
-Date: Tue, 28 Aug 2018 11:39:11 +0100
-Message-ID: <20180828103911.GX32322@imbe.wolfsonmicro.main>
-References: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] memory: Convert to using %pOFn instead of
+ device_node.name
+Date: Tue, 28 Aug 2018 12:42:11 +0200
+Message-ID: <20180828104211.GA9386@ulmo>
+References: <20180828015252.28511-1-robh@kernel.org>
+ <20180828015252.28511-29-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org
+In-Reply-To: <20180828015252.28511-29-robh@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 04:35:43PM +0100, Jon Hunter wrote:
-> When dapm_power_widgets() is called, the dapm_pre_sequence_async() and
-> dapm_post_sequence_async() functions are scheduled for all DAPM contexts
-> (apart from the card DAPM context) regardless of whether the DAPM
-> context is already in the desired state. The overhead of this is not
-> insignificant and the more DAPM contexts there are the more overhead
-> there is.
-> 
-> For example, on the Tegra124 Jetson TK1, when profiling the time taken
-> to execute the dapm_power_widgets() the following times were observed.
-> 
->   Times for function dapm_power_widgets() are (us):
->      Min 23, Ave 190, Max 434, Count 39
-> 
-> Here 'Count' is the number of times that dapm_power_widgets() has been
-> called. Please note that the above time were measured using ktime_get()
-> to log the time on entry and exit from dapm_power_widgets(). So it
-> should be noted that these times may not be purely the time take to
-> execute this function if it is preempted. However, after applying this
-> patch and measuring the time taken to execute dapm_power_widgets() again
-> a significant improvement is seen as shown below.
-> 
->   Times for function dapm_power_widgets() are (us):
->      Min 4, Ave 16, Max 82, Count 39
-> 
-> Therefore, optimise the dapm_power_widgets() function by only scheduling
-> the dapm_pre/post_sequence_async() work if the DAPM context is not in
-> the desired state.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Aug 27, 2018 at 08:52:30PM -0500, Rob Herring wrote:
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+>=20
+> Cc: Roger Quadros <rogerq@ti.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
+>  drivers/memory/omap-gpmc.c           | 18 +++++++-----------
+>  drivers/memory/samsung/exynos-srom.c |  4 ++--
+>  drivers/memory/tegra/mc.c            |  6 +++---
+>  drivers/memory/tegra/tegra124-emc.c  | 12 ++++++------
+>  4 files changed, 18 insertions(+), 22 deletions(-)
 
-Looks ok to me:
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Although that said the performance increase is pretty hard to
-measure on my systems.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Charles
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluFJwEACgkQ3SOs138+
+s6EBJA/+LbK0Pndw2X6MqTI5f05rIP/mKjhRkiqnK05yE7yN2wp0Cnw9ojCsz3Rs
+sRlxaNQp5l8FtnZm9UYmzLIidjOS9AACtrkR8uYaOQK0JyGUIhH9EssjN9tzZr7o
+1akD1NR8NeGsJQxpc/vnw7rx6rVjWwmYrPNE8O5osXqrin3/RQeBm93Wk9Pi/OLK
+UP7A/CUXNFMGM43jqThk4C6k3scA6f8OPVPeYosqlMyyMkuiKjGN2sgF19wjKlV7
+5kXzqDPAoEMKYVuXnzYapQYBRaFzvrouvFDGbg/EOzwFyKjz0ZJM5XIs/4gj9mNO
+RmysJ6nR1057ff0zL1wERQUlaV+/FXq7iU9G0Gr9o4wWDKkA36AKN0kFMCFgF+RR
+NQdNhjtyayt5vmp9IQsa8KulbEYLdRGamO+fS2Q3ZB4qtmVQuxQwtBSirpE3dPUR
+cgyoonqPmV/D8wjCvX0LQqlCcAsTwnzrPuPg+48UCYWgxFRXbtxugPzCfKierbUP
+IXbc9uiUxAB09K8Xgqa9zRIQaoe+Q1KQWpl2GvCrz8sneyUpC/eujui0BbEDBXtV
+8w9uYypfKMy0Ij2JQN5/brd/HdsNP3ssfjG6S7d2oDWxCroyYyHiygAdPFU9u7c5
+bdquQEHSIOZffLL/ymOZ+87WjfKxT6NizWI57CMC0MXOR3JsQ44=
+=vAak
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
