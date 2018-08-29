@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 18/31] ARM: tegra: colibri_t20: iris: add uart-c
-Date: Wed, 29 Aug 2018 10:13:54 +0200
-Message-ID: <20180829081407.11304-19-marcel@ziswiler.com>
+Subject: [PATCH 21/31] ARM: tegra: colibri_t20: iris: add dr_mode property
+Date: Wed, 29 Aug 2018 10:13:57 +0200
+Message-ID: <20180829081407.11304-22-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,30 +12,26 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add UART-C.
+Add dr_mode property to the USB controller.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 96d633622f94..a2364e39c131 100644
+index f615e3b9490f..91b3404e1b3d 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -103,6 +103,11 @@
+@@ -145,6 +145,7 @@
+ 	/* EHCI instance 0: USB1_DP/N -> USBC_P/N */
+ 	usb@c5000000 {
  		status = "okay";
++		dr_mode = "otg";
  	};
  
-+	/* Colibri UART-C */
-+	serial@70006040 {
-+		status = "okay";
-+	};
-+
- 	/* Colibri UART-B */
- 	serial@70006300 {
- 		status = "okay";
+ 	usb-phy@c5000000 {
 -- 
 2.14.4
