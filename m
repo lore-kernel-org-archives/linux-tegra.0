@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 10/31] ARM: tegra: colibri_t20: annotate usb ehci instances
-Date: Wed, 29 Aug 2018 10:13:46 +0200
-Message-ID: <20180829081407.11304-11-marcel@ziswiler.com>
+Subject: [PATCH 06/31] ARM: tegra: colibri_t20: reorder host1x/hdmi properties
+Date: Wed, 29 Aug 2018 10:13:42 +0200
+Message-ID: <20180829081407.11304-7-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,47 +12,35 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Annotate USB EHCI instances.
+Reorder Host1x/HDMI properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 2 ++
- arch/arm/boot/dts/tegra20-colibri.dtsi     | 1 +
- 2 files changed, 3 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 9f0a819c68f2..194f40646a83 100644
---- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -83,6 +83,7 @@
- 		status = "okay";
- 	};
- 
-+	/* EHCI instance 0: USB1_DP/N -> USBC_P/N */
- 	usb@c5000000 {
- 		status = "okay";
- 	};
-@@ -92,6 +93,7 @@
- 		vbus-supply = <&reg_usbc_vbus>;
- 	};
- 
-+	/* EHCI instance 2: USB3_DP/N -> USBH_P/N */
- 	usb@c5008000 {
- 		status = "okay";
- 	};
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 5e98f225322b..77e99caf5606 100644
+index ad816fa827f7..c060b58cb490 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -454,6 +454,7 @@
+@@ -16,12 +16,11 @@
+ 
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+-			vdd-supply = <&hdmi_vdd_reg>;
+-			pll-supply = <&hdmi_pll_reg>;
+-
+ 			nvidia,ddc-i2c-bus = <&i2c_ddc>;
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
++			nvidia,hpd-gpio =
++				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
++			pll-supply = <&hdmi_pll_reg>;
++			vdd-supply = <&hdmi_vdd_reg>;
  		};
  	};
  
-+	/* EHCI instance 1: ULPI PHY -> AX88772B (On-module) */
- 	usb@c5004000 {
- 		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
 -- 
 2.14.4
