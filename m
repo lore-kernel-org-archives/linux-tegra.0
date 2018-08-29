@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 27/31] ARM: tegra: colibri_t20: add compatibility comment
-Date: Wed, 29 Aug 2018 10:14:03 +0200
-Message-ID: <20180829081407.11304-28-marcel@ziswiler.com>
+Subject: [PATCH 30/31] ARM: tegra: colibri_t20: iris: add colibri ssp support
+Date: Wed, 29 Aug 2018 10:14:06 +0200
+Message-ID: <20180829081407.11304-31-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,31 +12,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add compatibility comment.
+Add Colibri SSP aka SPI support using the SPI4 instance.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 6 ++++++
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 057147565b1e..1204aa9e1d57 100644
---- a/arch/arm/boot/dts/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -1,6 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0
- #include "tegra20.dtsi"
+diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+index 3bcbb74edf2a..ee4b956b0325 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+@@ -164,6 +164,12 @@
+ 		vbus-supply = <&reg_usbh_vbus>;
+ 	};
  
-+/*
-+ * Toradex Colibri T20 Module Device Tree
-+ * Compatible for Revisions Colibri T20 256MB V1.1B, V1.2A;
-+ * Colibri T20 256MB IT V1.2A; Colibri T20 512MB V1.1C, V1.2A;
-+ * Colibri T20 512MB IT V1.2A
-+ */
- / {
- 	model = "Toradex Colibri T20 256/512 MB";
- 	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
++	/* SPI4: Colibri SSP */
++	spi@7000da00 {
++		status = "okay";
++		spi-max-frequency = <25000000>;
++	};
++
+ 	/* SD/MMC */
+ 	sdhci@c8000600 {
+ 		status = "okay";
 -- 
 2.14.4
