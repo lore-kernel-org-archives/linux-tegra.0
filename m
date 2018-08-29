@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 20/31] ARM: tegra: colibri_t20: iris: add gpio wakeup key
-Date: Wed, 29 Aug 2018 10:13:56 +0200
-Message-ID: <20180829081407.11304-21-marcel@ziswiler.com>
+Subject: [PATCH 13/31] ARM: tegra: colibri_t20: update sound nvidia,model
+Date: Wed, 29 Aug 2018 10:13:49 +0200
+Message-ID: <20180829081407.11304-14-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,45 +12,28 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add SODIMM pin 45 as GPIO wakeup key.
+Update sound nvidia,model to be more in-line with our other device
+trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index a2364e39c131..f615e3b9490f 100644
---- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
- 
-+#include <dt-bindings/input/input.h>
- #include "tegra20-colibri.dtsi"
- 
- / {
-@@ -177,6 +178,18 @@
- 		pwms = <&pwm 0 5000000>; /* PWM<A> */
- 	};
- 
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		wakeup {
-+			label = "SODIMM pin 45 wakeup";
-+			gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
-+			linux,code = <KEY_WAKEUP>;
-+			debounce-interval = <10>;
-+			wakeup-source;
-+		};
-+	};
-+
- 	panel: panel {
- 		/*
- 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index 5559008efc5f..ba84184e09b8 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -507,7 +507,7 @@
+ 	sound {
+ 		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
+ 			     "nvidia,tegra-audio-wm9712";
+-		nvidia,model = "Colibri T20 AC97 Audio";
++		nvidia,model = "Toradex Colibri T20";
+ 		nvidia,audio-routing =
+ 			"Headphone", "HPOUTL",
+ 			"Headphone", "HPOUTR",
 -- 
 2.14.4
