@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 09/31] ARM: tegra: colibri_t20: add missing regulators
-Date: Wed, 29 Aug 2018 10:13:45 +0200
-Message-ID: <20180829081407.11304-10-marcel@ziswiler.com>
+Subject: [PATCH 11/31] ARM: tegra: colibri_t20: remove phy-reset-gpio from controller node
+Date: Wed, 29 Aug 2018 10:13:47 +0200
+Message-ID: <20180829081407.11304-12-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,97 +12,28 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add missing regulators:
-- reg_lan_v_bus being USB Ethernet chip vbus supply
-- carrier board reg_3v3 to be used as backlight and panel power supply
-- carrier board HDMI supply being reg_5v0
-- reg_usbc_vbus being the USB vbus supply of the EHCI instance 0
+Remove the phy-reset-gpio from the USB controller node as it is already
+specified in the PHY node.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 28 ++++++++++++++++++++++++++--
- arch/arm/boot/dts/tegra20-colibri.dtsi     |  1 +
- 2 files changed, 27 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 6f89a417b0f2..9f0a819c68f2 100644
---- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -23,6 +23,7 @@
- 	host1x@50000000 {
- 		hdmi@54280000 {
- 			status = "okay";
-+			hdmi-supply = <&reg_5v0>;
- 		};
- 	};
- 
-@@ -88,6 +89,7 @@
- 
- 	usb-phy@c5000000 {
- 		status = "okay";
-+		vbus-supply = <&reg_usbc_vbus>;
- 	};
- 
- 	usb@c5008000 {
-@@ -96,6 +98,7 @@
- 
- 	usb-phy@c5008000 {
- 		status = "okay";
-+		vbus-supply = <&reg_usbh_vbus>;
- 	};
- 
- 	sdhci@c8000600 {
-@@ -104,14 +107,35 @@
- 		no-1-8-v;
- 	};
- 
-+	reg_3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	reg_5v0: regulator-5v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+
-+	reg_usbc_vbus: regulator-usbc-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_USB2";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&reg_5v0>;
-+	};
-+
- 	/* USBH_PEN resp. USB_P_EN */
- 	reg_usbh_vbus: regulator-usbh-vbus {
- 		compatible = "regulator-fixed";
- 		regulator-name = "VCC_USB1";
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
--		regulator-boot-on;
--		regulator-always-on;
- 		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
-+		vin-supply = <&reg_5v0>;
- 	};
- };
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 1cf64f197c08..5e98f225322b 100644
+index 77e99caf5606..06d0be29c0b4 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -471,6 +471,7 @@
+@@ -457,8 +457,6 @@
+ 	/* EHCI instance 1: ULPI PHY -> AX88772B (On-module) */
+ 	usb@c5004000 {
  		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
- 			GPIO_ACTIVE_LOW>;
-+		vbus-supply = <&reg_lan_v_bus>;
- 	};
+-		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+-			GPIO_ACTIVE_LOW>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- 	sdhci@c8000600 {
 -- 
 2.14.4
