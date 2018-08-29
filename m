@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 04/31] ARM: tegra: colibri_t20: iris: add missing aliases
-Date: Wed, 29 Aug 2018 10:13:40 +0200
-Message-ID: <20180829081407.11304-5-marcel@ziswiler.com>
+Subject: [PATCH 07/31] ARM: tegra: colibri_t20: iris: use no-1-8-v
+Date: Wed, 29 Aug 2018 10:13:43 +0200
+Message-ID: <20180829081407.11304-8-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,31 +12,45 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add rtc0 being the ultra low-power I2C one as found on the carrier board
-and the 3rd UART being NVIDIA's UARTB.
+Use no-1-8-v property rather than vmmc/vqmmc supplies and drop now
+obsolete and anyway non-existent vcc_sd.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index cbf1f4d76813..cc9e372a3b58 100644
+index cc9e372a3b58..3d430fa93e8c 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -73,6 +73,11 @@
- 		};
+@@ -101,8 +101,7 @@
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <4>;
+-		vmmc-supply = <&vcc_sd_reg>;
+-		vqmmc-supply = <&vcc_sd_reg>;
++		no-1-8-v;
  	};
  
-+	/* GEN2_I2C: unused */
-+
-+	/* CAM_I2C (I2C3): unused */
-+
-+	/* DDC_CLOCK/DATA on X3 pin 15/16 (e.g. display EDID) */
- 	i2c_ddc: i2c@7000c400 {
- 		status = "okay";
+ 	regulators {
+@@ -116,15 +115,5 @@
+ 			regulator-always-on;
+ 			gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
+ 		};
+-
+-		vcc_sd_reg: regulator@1 {
+-			compatible = "regulator-fixed";
+-			reg = <1>;
+-			regulator-name = "vcc_sd";
+-			regulator-min-microvolt = <3300000>;
+-			regulator-max-microvolt = <3300000>;
+-			regulator-boot-on;
+-			regulator-always-on;
+-		};
  	};
+ };
 -- 
 2.14.4
