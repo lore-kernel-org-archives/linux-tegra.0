@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 05/31] ARM: tegra: colibri_t20: add local-mac-address property
-Date: Wed, 29 Aug 2018 10:13:41 +0200
-Message-ID: <20180829081407.11304-6-marcel@ziswiler.com>
+Subject: [PATCH 03/31] ARM: tegra: colibri_t20: iris: annotate i2c busses
+Date: Wed, 29 Aug 2018 10:13:39 +0200
+Message-ID: <20180829081407.11304-4-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,33 +12,34 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add empty local-mac-address property to be filled in by boot loader
-(e.g. U-Boot).
+Annotate I2C busses: GEN2_I2C and CAM_I2C (I2C3) being unused and
+DDC_CLOCK/DATA on X3 pin 15/16 e.g. used for display EDID.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index e34ab4a76158..ad816fa827f7 100644
---- a/arch/arm/boot/dts/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -482,6 +482,13 @@
- 		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
- 			GPIO_ACTIVE_LOW>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		asix@1 {
-+			reg = <1>;
-+			local-mac-address = [00 00 00 00 00 00];
-+		};
+diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+index b6d05da8c93c..cbf1f4d76813 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+@@ -8,10 +8,12 @@
+ 	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
+ 
+ 	aliases {
+-		rtc0 = "/i2c@7000d000/tps6586x@34";
+-		rtc1 = "/rtc@7000e000";
++		rtc0 = "/i2c@7000c000/rtc@68";
++		rtc1 = "/i2c@7000d000/tps6586x@34";
++		rtc2 = "/rtc@7000e000";
+ 		serial0 = &uarta;
+ 		serial1 = &uartd;
++		serial2 = &uartb;
  	};
  
- 	usb-phy@c5004000 {
+ 	chosen {
 -- 
 2.14.4
