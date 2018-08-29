@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 30/31] ARM: tegra: colibri_t20: iris: add colibri ssp support
-Date: Wed, 29 Aug 2018 10:14:06 +0200
-Message-ID: <20180829081407.11304-31-marcel@ziswiler.com>
+Subject: [PATCH 29/31] ARM: tegra: colibri_t20: iris: simplify model and compatible properties
+Date: Wed, 29 Aug 2018 10:14:05 +0200
+Message-ID: <20180829081407.11304-30-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,31 +12,33 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add Colibri SSP aka SPI support using the SPI4 instance.
+Simplify model and compatible by dropping the 256/512 MB from the model,
+-512 from the compatible and rename that property from toradex,iris to
+toradex,colibri_t20-iris to be more in-line with all our other device
+trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 3bcbb74edf2a..ee4b956b0325 100644
+index 955d1e1ad8e0..3bcbb74edf2a 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -164,6 +164,12 @@
- 		vbus-supply = <&reg_usbh_vbus>;
- 	};
+@@ -5,8 +5,9 @@
+ #include "tegra20-colibri.dtsi"
  
-+	/* SPI4: Colibri SSP */
-+	spi@7000da00 {
-+		status = "okay";
-+		spi-max-frequency = <25000000>;
-+	};
-+
- 	/* SD/MMC */
- 	sdhci@c8000600 {
- 		status = "okay";
+ / {
+-	model = "Toradex Colibri T20 256/512 MB on Iris";
+-	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
++	model = "Toradex Colibri T20 on Iris";
++	compatible = "toradex,colibri_t20-iris", "toradex,colibri_t20",
++		     "nvidia,tegra20";
+ 
+ 	aliases {
+ 		rtc0 = "/i2c@7000c000/rtc@68";
 -- 
 2.14.4
