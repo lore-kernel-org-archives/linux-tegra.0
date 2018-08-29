@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 24/31] ARM: tegra: colibri_t20: add gpio hog to unreset usb ethernet chip
-Date: Wed, 29 Aug 2018 10:14:00 +0200
-Message-ID: <20180829081407.11304-25-marcel@ziswiler.com>
+Subject: [PATCH 25/31] ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
+Date: Wed, 29 Aug 2018 10:14:01 +0200
+Message-ID: <20180829081407.11304-26-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,31 +12,41 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add GPIO hog to unreset ASIX AX88772B USB Ethernet chip.
+Add GPIO hogs for GMI_WR_N buffers:
+- tri-stating GMI_WR_N on SODIMM pin 99 nPWE
+- not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 470ef1f09167..339316dd57e9 100644
+index 339316dd57e9..35eec7ade70d 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -749,3 +749,12 @@
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
+@@ -757,4 +757,20 @@
+ 		output-high;
+ 		line-name = "LAN_RESET#";
  	};
- };
 +
-+&gpio {
-+	lan_reset_n {
++	/* Tri-stating GMI_WR_N on SODIMM pin 99 nPWE */
++	npwe {
 +		gpio-hog;
-+		gpios = <TEGRA_GPIO(V, 4) GPIO_ACTIVE_HIGH>;
++		gpios = <TEGRA_GPIO(T, 5) GPIO_ACTIVE_HIGH>;
 +		output-high;
-+		line-name = "LAN_RESET#";
++		line-name = "Tri-state nPWE";
 +	};
-+};
++
++	/* Not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR */
++	rdnwr {
++		gpio-hog;
++		gpios = <TEGRA_GPIO(T, 6) GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "Not tri-state RDnWR";
++	};
+ };
 -- 
 2.14.4
