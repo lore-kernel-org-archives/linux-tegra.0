@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 06/31] ARM: tegra: colibri_t20: reorder host1x/hdmi properties
-Date: Wed, 29 Aug 2018 10:13:42 +0200
-Message-ID: <20180829081407.11304-7-marcel@ziswiler.com>
+Subject: [PATCH 05/31] ARM: tegra: colibri_t20: add local-mac-address property
+Date: Wed, 29 Aug 2018 10:13:41 +0200
+Message-ID: <20180829081407.11304-6-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,35 +12,33 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reorder Host1x/HDMI properties.
+Add empty local-mac-address property to be filled in by boot loader
+(e.g. U-Boot).
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index ad816fa827f7..c060b58cb490 100644
+index e34ab4a76158..ad816fa827f7 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -16,12 +16,11 @@
- 
- 	host1x@50000000 {
- 		hdmi@54280000 {
--			vdd-supply = <&hdmi_vdd_reg>;
--			pll-supply = <&hdmi_pll_reg>;
--
- 			nvidia,ddc-i2c-bus = <&i2c_ddc>;
--			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
--				GPIO_ACTIVE_HIGH>;
-+			nvidia,hpd-gpio =
-+				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+			pll-supply = <&hdmi_pll_reg>;
-+			vdd-supply = <&hdmi_vdd_reg>;
- 		};
+@@ -482,6 +482,13 @@
+ 		status = "okay";
+ 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+ 			GPIO_ACTIVE_LOW>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		asix@1 {
++			reg = <1>;
++			local-mac-address = [00 00 00 00 00 00];
++		};
  	};
  
+ 	usb-phy@c5004000 {
 -- 
 2.14.4
