@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 25/31] ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
-Date: Wed, 29 Aug 2018 10:14:01 +0200
-Message-ID: <20180829081407.11304-26-marcel@ziswiler.com>
+Subject: [PATCH 26/31] ARM: tegra: colibri_t20: annotate/move sd card detect
+Date: Wed, 29 Aug 2018 10:14:02 +0200
+Message-ID: <20180829081407.11304-27-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,41 +12,48 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add GPIO hogs for GMI_WR_N buffers:
-- tri-stating GMI_WR_N on SODIMM pin 99 nPWE
-- not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR
+Annotate the SD card, its detect pin and move the SD card detect GPIO
+definition from the module to the carrier board more in-line with our
+other device trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 2 ++
+ arch/arm/boot/dts/tegra20-colibri.dtsi     | 4 ----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+index 91b3404e1b3d..955d1e1ad8e0 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+@@ -163,9 +163,11 @@
+ 		vbus-supply = <&reg_usbh_vbus>;
+ 	};
+ 
++	/* SD/MMC */
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <4>;
++		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>; /* MMCD */
+ 		no-1-8-v;
+ 	};
+ 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 339316dd57e9..35eec7ade70d 100644
+index 35eec7ade70d..057147565b1e 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -757,4 +757,20 @@
- 		output-high;
- 		line-name = "LAN_RESET#";
+@@ -698,10 +698,6 @@
+ 		vbus-supply = <&reg_lan_v_bus>;
  	};
-+
-+	/* Tri-stating GMI_WR_N on SODIMM pin 99 nPWE */
-+	npwe {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(T, 5) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "Tri-state nPWE";
-+	};
-+
-+	/* Not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR */
-+	rdnwr {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(T, 6) GPIO_ACTIVE_HIGH>;
-+		output-low;
-+		line-name = "Not tri-state RDnWR";
-+	};
- };
+ 
+-	sdhci@c8000600 {
+-		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>;
+-	};
+-
+ 	clocks {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
 2.14.4
