@@ -1,39 +1,58 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] memory: Convert to using %pOFn instead of device_node.name
-Date: Wed, 29 Aug 2018 09:44:59 +0200
-Message-ID: <CAJKOXPdtVA14+DFmL_LYy-UZ1Enq06TxazDLW8c8ihn_+vw8Gw@mail.gmail.com>
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-29-robh@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH 00/31] ARM: dts: tegra: colibri_t20: major revamp incl. eval board support
+Date: Wed, 29 Aug 2018 10:13:36 +0200
+Message-ID: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180828015252.28511-29-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, rogerq@ti.com, tony@atomide.com, kgene@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel@ziswiler.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 28 Aug 2018 at 03:54, Rob Herring <robh@kernel.org> wrote:
->
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
->
-> Cc: Roger Quadros <rogerq@ti.com>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/memory/omap-gpmc.c           | 18 +++++++-----------
->  drivers/memory/samsung/exynos-srom.c |  4 ++--
 
-For Samsung:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+This series is a major overhaul and adds support for the Colibri
+Evaluation Board device tree.
 
-Best regards,
-Krzysztof
+
+Marcel Ziswiler (31):
+  ARM: tegra: colibri_t20: move aliases from module to carrier board
+  ARM: tegra: colibri_t20: iris: integrate i2c real time clock support
+  ARM: tegra: colibri_t20: iris: annotate i2c busses
+  ARM: tegra: colibri_t20: iris: add missing aliases
+  ARM: tegra: colibri_t20: add local-mac-address property
+  ARM: tegra: colibri_t20: reorder host1x/hdmi properties
+  ARM: tegra: colibri_t20: iris: use no-1-8-v
+  ARM: tegra: colibri_t20: regulator clean-up
+  ARM: tegra: colibri_t20: add missing regulators
+  ARM: tegra: colibri_t20: annotate usb ehci instances
+  ARM: tegra: colibri_t20: remove phy-reset-gpio from controller node
+  ARM: tegra: colibri_t20: indentation/line-feed/white-space clean-up
+  ARM: tegra: colibri_t20: update sound nvidia,model
+  ARM: tegra: colibri_t20: pinmux clean-up
+  ARM: tegra: colibri_t20: add missing pinmux
+  ARM: tegra: colibri_t20: iris: display controller rgb panel support
+  ARM: tegra: colibri_t20: iris: annotate uarts
+  ARM: tegra: colibri_t20: iris: add uart-c
+  ARM: tegra: colibri_t20: use high speed uart driver
+  ARM: tegra: colibri_t20: iris: add gpio wakeup key
+  ARM: tegra: colibri_t20: iris: add dr_mode property
+  ARM: tegra: colibri_t20: annotate/rename lm95245 temperature sensor
+  ARM: tegra: colibri_t20: add i2c-thermtrip
+  ARM: tegra: colibri_t20: add gpio hog to unreset usb ethernet chip
+  ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
+  ARM: tegra: colibri_t20: annotate/move sd card detect
+  ARM: tegra: colibri_t20: add compatibility comment
+  ARM: tegra: colibri_t20: simplify model and compatible properties
+  ARM: tegra: colibri_t20: iris: simplify model and compatible
+    properties
+  ARM: tegra: colibri_t20: iris: add colibri ssp support
+  ARM: tegra: colibri_t20: add evaluation board device tree
+
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/tegra20-colibri-eval-v3.dts | 266 +++++++++++
+ arch/arm/boot/dts/tegra20-colibri-iris.dts    | 198 ++++++--
+ arch/arm/boot/dts/tegra20-colibri.dtsi        | 629 +++++++++++++++++---------
+ 4 files changed, 858 insertions(+), 236 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
+
+-- 
+2.14.4
