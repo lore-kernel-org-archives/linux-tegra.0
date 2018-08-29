@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 19/31] ARM: tegra: colibri_t20: use high speed uart driver
-Date: Wed, 29 Aug 2018 10:13:55 +0200
-Message-ID: <20180829081407.11304-20-marcel@ziswiler.com>
+Subject: [PATCH 18/31] ARM: tegra: colibri_t20: iris: add uart-c
+Date: Wed, 29 Aug 2018 10:13:54 +0200
+Message-ID: <20180829081407.11304-19-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,33 +12,30 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Use high speed UART driver compatible nvidia,tegra20-hsuart.
+Add UART-C.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index a7403ce9ee99..3d61175e2a9c 100644
---- a/arch/arm/boot/dts/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -423,6 +423,14 @@
- 			<&gpio TEGRA_GPIO(P, 0) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+index 96d633622f94..a2364e39c131 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+@@ -103,6 +103,11 @@
+ 		status = "okay";
  	};
  
++	/* Colibri UART-C */
 +	serial@70006040 {
-+		compatible = "nvidia,tegra20-hsuart";
++		status = "okay";
 +	};
 +
-+	serial@70006300 {
-+		compatible = "nvidia,tegra20-hsuart";
-+	};
-+
- 	nand-controller@70008000 {
+ 	/* Colibri UART-B */
+ 	serial@70006300 {
  		status = "okay";
- 
 -- 
 2.14.4
