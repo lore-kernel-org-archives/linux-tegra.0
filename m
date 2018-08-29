@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 22/31] ARM: tegra: colibri_t20: annotate/rename lm95245 temperature sensor
-Date: Wed, 29 Aug 2018 10:13:58 +0200
-Message-ID: <20180829081407.11304-23-marcel@ziswiler.com>
+Subject: [PATCH 23/31] ARM: tegra: colibri_t20: add i2c-thermtrip
+Date: Wed, 29 Aug 2018 10:13:59 +0200
+Message-ID: <20180829081407.11304-24-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,29 +12,34 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Rename and annotate LM95245 temperature sensor more in-line with our
-other device trees.
+Add i2c-thermtrip which would set the SLEEP MODE bit in the SUPPLYENE
+register of the TPS658643 PMIC.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 3d61175e2a9c..d03b2a290303 100644
+index d03b2a290303..470ef1f09167 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -584,7 +584,8 @@
- 			};
- 		};
+@@ -598,6 +598,14 @@
+ 		nvidia,core-pwr-good-time = <3845 3845>;
+ 		nvidia,core-pwr-off-time = <3875>;
+ 		nvidia,sys-clock-req-active-high;
++
++		/* Set SLEEP MODE bit in SUPPLYENE register of TPS658643 PMIC */
++		i2c-thermtrip {
++			nvidia,i2c-controller-id = <3>;
++			nvidia,bus-addr = <0x34>;
++			nvidia,reg-addr = <0x14>;
++			nvidia,reg-data = <0x8>;
++		};
+ 	};
  
--		temperature-sensor@4c {
-+		/* LM95245 temperature sensor */
-+		temp-sensor@4c {
- 			compatible = "national,lm95245";
- 			reg = <0x4c>;
- 		};
+ 	memory-controller@7000f400 {
 -- 
 2.14.4
