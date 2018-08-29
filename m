@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 01/31] ARM: tegra: colibri_t20: move aliases from module to carrier board
-Date: Wed, 29 Aug 2018 10:13:37 +0200
-Message-ID: <20180829081407.11304-2-marcel@ziswiler.com>
+Subject: [PATCH 02/31] ARM: tegra: colibri_t20: iris: integrate i2c real time clock support
+Date: Wed, 29 Aug 2018 10:13:38 +0200
+Message-ID: <20180829081407.11304-3-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,45 +12,41 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Move RTC aliases from module to carrier board to be more in-line with
-all our other device trees.
+Integrate support for GEN1_I2C aka I2C_SDA/SCL on SODIMM pin 194/196 and
+the M41T0M6 real time clock on the carrier board.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 2 ++
- arch/arm/boot/dts/tegra20-colibri.dtsi     | 5 -----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 57f16c0e9917..496b96e229d2 100644
+index 496b96e229d2..b6d05da8c93c 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -8,6 +8,8 @@
- 	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
- 
- 	aliases {
-+		rtc0 = "/i2c@7000d000/tps6586x@34";
-+		rtc1 = "/rtc@7000e000";
- 		serial0 = &uarta;
- 		serial1 = &uartd;
+@@ -56,6 +56,21 @@
+ 		status = "okay";
  	};
-diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index fa1af2dc276c..e34ab4a76158 100644
---- a/arch/arm/boot/dts/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -5,11 +5,6 @@
- 	model = "Toradex Colibri T20 256/512 MB";
- 	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
  
--	aliases {
--		rtc0 = "/i2c@7000d000/tps6586x@34";
--		rtc1 = "/rtc@7000e000";
--	};
--
- 	memory@0 {
- 		/*
- 		 * Set memory to 256 MB to be safe as this could be used on
++	/*
++	 * GEN1_I2C: I2C_SDA/SCL on SODIMM pin 194/196 (e.g. RTC on carrier
++	 * board)
++	 */
++	i2c@7000c000 {
++		status = "okay";
++		clock-frequency = <400000>;
++
++		/* M41T0M6 real time clock on carrier board */
++		rtc@68 {
++			compatible = "st,m41t0";
++			reg = <0x68>;
++		};
++	};
++
+ 	i2c_ddc: i2c@7000c400 {
+ 		status = "okay";
+ 	};
 -- 
 2.14.4
