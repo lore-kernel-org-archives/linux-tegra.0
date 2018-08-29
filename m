@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 02/31] ARM: tegra: colibri_t20: iris: integrate i2c real time clock support
-Date: Wed, 29 Aug 2018 10:13:38 +0200
-Message-ID: <20180829081407.11304-3-marcel@ziswiler.com>
+Subject: [PATCH 04/31] ARM: tegra: colibri_t20: iris: add missing aliases
+Date: Wed, 29 Aug 2018 10:13:40 +0200
+Message-ID: <20180829081407.11304-5-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,39 +12,29 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Integrate support for GEN1_I2C aka I2C_SDA/SCL on SODIMM pin 194/196 and
-the M41T0M6 real time clock on the carrier board.
+Add rtc0 being the ultra low-power I2C one as found on the carrier board
+and the 3rd UART being NVIDIA's UARTB.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 496b96e229d2..b6d05da8c93c 100644
+index cbf1f4d76813..cc9e372a3b58 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -56,6 +56,21 @@
- 		status = "okay";
+@@ -73,6 +73,11 @@
+ 		};
  	};
  
-+	/*
-+	 * GEN1_I2C: I2C_SDA/SCL on SODIMM pin 194/196 (e.g. RTC on carrier
-+	 * board)
-+	 */
-+	i2c@7000c000 {
-+		status = "okay";
-+		clock-frequency = <400000>;
++	/* GEN2_I2C: unused */
 +
-+		/* M41T0M6 real time clock on carrier board */
-+		rtc@68 {
-+			compatible = "st,m41t0";
-+			reg = <0x68>;
-+		};
-+	};
++	/* CAM_I2C (I2C3): unused */
 +
++	/* DDC_CLOCK/DATA on X3 pin 15/16 (e.g. display EDID) */
  	i2c_ddc: i2c@7000c400 {
  		status = "okay";
  	};
