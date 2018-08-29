@@ -1,89 +1,39 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH] spi: tegra20-slink: explicitly enable/disable clock
-Date: Wed, 29 Aug 2018 08:47:57 +0200
-Message-ID: <20180829064757.16349-1-marcel@ziswiler.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] memory: Convert to using %pOFn instead of device_node.name
+Date: Wed, 29 Aug 2018 09:44:59 +0200
+Message-ID: <CAJKOXPdtVA14+DFmL_LYy-UZ1Enq06TxazDLW8c8ihn_+vw8Gw@mail.gmail.com>
+References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-29-robh@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180828015252.28511-29-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, rogerq@ti.com, tony@atomide.com, kgene@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Tue, 28 Aug 2018 at 03:54, Rob Herring <robh@kernel.org> wrote:
+>
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+>
+> Cc: Roger Quadros <rogerq@ti.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/memory/omap-gpmc.c           | 18 +++++++-----------
+>  drivers/memory/samsung/exynos-srom.c |  4 ++--
 
-Depending on the SPI instance one may get an interrupt storm upon
-requesting resp. interrupt unless the clock is explicitly enabled
-beforehand. This has been observed trying to bring up instance 4 on
-T20.
+For Samsung:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
- drivers/spi/spi-tegra20-slink.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 6f7b946b5ced..1427f343b39a 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1063,6 +1063,24 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 		goto exit_free_master;
- 	}
- 
-+	/* disabled clock may cause interrupt storm upon request */
-+	tspi->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(tspi->clk)) {
-+		ret = PTR_ERR(tspi->clk);
-+		dev_err(&pdev->dev, "Can not get clock %d\n", ret);
-+		goto exit_free_master;
-+	}
-+	ret = clk_prepare(tspi->clk);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Clock prepare failed %d\n", ret);
-+		goto exit_free_master;
-+	}
-+	ret = clk_enable(tspi->clk);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
-+		goto exit_free_master;
-+	}
-+
- 	spi_irq = platform_get_irq(pdev, 0);
- 	tspi->irq = spi_irq;
- 	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
-@@ -1071,14 +1089,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
- 					tspi->irq);
--		goto exit_free_master;
--	}
--
--	tspi->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(tspi->clk)) {
--		dev_err(&pdev->dev, "can not get clock\n");
--		ret = PTR_ERR(tspi->clk);
--		goto exit_free_irq;
-+		goto exit_clk_disable;
- 	}
- 
- 	tspi->rst = devm_reset_control_get_exclusive(&pdev->dev, "spi");
-@@ -1138,6 +1149,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	tegra_slink_deinit_dma_param(tspi, true);
- exit_free_irq:
- 	free_irq(spi_irq, tspi);
-+exit_clk_disable:
-+	clk_disable(tspi->clk);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
-@@ -1150,6 +1163,8 @@ static int tegra_slink_remove(struct platform_device *pdev)
- 
- 	free_irq(tspi->irq, tspi);
- 
-+	clk_disable(tspi->clk);
-+
- 	if (tspi->tx_dma_chan)
- 		tegra_slink_deinit_dma_param(tspi, false);
- 
--- 
-2.14.4
+Best regards,
+Krzysztof
