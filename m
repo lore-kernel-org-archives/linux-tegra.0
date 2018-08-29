@@ -1,66 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [BUG] gpio: gpiolib: possible sleep-in-atomic-context bugs in gpiochip_lock_as_irq()
-Date: Wed, 29 Aug 2018 10:52:55 +0200
-Message-ID: <CACRpkdYhSdO1etL=PwE09zYYdRN+W_vzUqRiiCpUjfv8-jKQJg@mail.gmail.com>
-References: <c4904283-37d1-08d7-feb3-4dc7ef0bea0a@gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 13/26] ARM: tegra: colibri_t30: use proper irq-gpio for
+ stmpe811
+Date: Wed, 29 Aug 2018 14:56:59 +0000
+Message-ID: <1535554617.14664.30.camel@toradex.com>
+References: <20180723123658.980-1-marcel@ziswiler.com>
+         <20180723123658.980-14-marcel@ziswiler.com>
+         <844bac7c4e00a014f5e5b857e38a47bf@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c4904283-37d1-08d7-feb3-4dc7ef0bea0a@gmail.com>
+In-Reply-To: <844bac7c4e00a014f5e5b857e38a47bf@agner.ch>
+Content-Language: en-US
+Content-ID: <D45AECD8DCABB548B2590B692D3CAE5E@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: baijiaju1990@gmail.com, Hans Verkuil <hans.verkuil@cisco.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "stefan@agner.ch" <stefan@agner.ch>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-tegra-owner@vger.kernel.org" <linux-tegra-owner@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jia-Ju,
-
-Hans Verkuil is working on revamping the IRQ locking API for GPIO,
-and I think these semantic problems will simply disappear when that
-is done.
-
-Yours,
-Linus Walleij
-
-On Sat, Aug 11, 2018 at 4:22 AM Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
->
-> The driver may sleep with holding a spinlock.
->
-> The function call paths (from bottom to top) in Linux-4.16 are:
->
-> [FUNC] mutex_lock_nested
-> drivers/gpio/gpio-exar.c, 69: mutex_lock_nested in exar_get
-> drivers/gpio/gpio-exar.c, 83: exar_get in exar_get_direction
-> drivers/gpio/gpiolib.c, 3103: [FUNC_PTR]exar_get_direction in gpiochip_lock_as_irq
-> drivers/gpio/gpio-tegra.c, 326: gpiochip_lock_as_irq in tegra_gpio_irq_set_type
-> kernel/irq/chip.c, 1335: [FUNC_PTR]tegra_gpio_irq_set_type in irq_chip_set_type_parent
-> kernel/irq/manage.c, 686: [FUNC_PTR]irq_chip_set_type_parent in __irq_set_trigger
-> kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-> kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
->
-> [FUNC] mutex_lock_nested
-> drivers/gpio/gpio-pca953x.c, 372: mutex_lock_nested in pca953x_gpio_get_direction
-> drivers/gpio/gpiolib.c, 3103: [FUNC_PTR]pca953x_gpio_get_direction in gpiochip_lock_as_irq
-> drivers/gpio/gpio-tegra.c, 326: gpiochip_lock_as_irq in tegra_gpio_irq_set_type
-> kernel/irq/chip.c, 1335: [FUNC_PTR]tegra_gpio_irq_set_type in irq_chip_set_type_parent
-> kernel/irq/manage.c, 686: [FUNC_PTR]irq_chip_set_type_parent in __irq_set_trigger
-> kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-> kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
->
-> [FUNC] mutex_lock_nested
-> drivers/mfd/stmpe.c, 170: mutex_lock_nested in stmpe_reg_read
-> drivers/gpio/gpio-stmpe.c, 83: stmpe_reg_read in stmpe_gpio_get_direction
-> drivers/gpio/gpiolib.c, 3103: [FUNC_PTR]stmpe_gpio_get_direction in gpiochip_lock_as_irq
-> drivers/gpio/gpio-tegra.c, 326: gpiochip_lock_as_irq in tegra_gpio_irq_set_type
-> kernel/irq/chip.c, 1335: [FUNC_PTR]tegra_gpio_irq_set_type in irq_chip_set_type_parent
-> kernel/irq/manage.c, 686: [FUNC_PTR]irq_chip_set_type_parent in __irq_set_trigger
-> kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-> kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
->
-> Note that [FUNC_PTR] means a function pointer call is used.
->
-> I do not find a good way to fix, so I only report.
-> This is found by my static analysis tool (DSAC).
->
->
-> Best wishes,
-> Jia-Ju Bai
+T24gVGh1LCAyMDE4LTA3LTI2IGF0IDEwOjA3ICswMjAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
+IE9uIDIzLjA3LjIwMTggMTQ6MzYsIE1hcmNlbCBaaXN3aWxlciB3cm90ZToNCj4gPiBGcm9tOiBN
+YXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4NCj4gPiANCj4gPiBV
+c2UgcHJvcGVyIGlycS1ncGlvIGZvciBzdG1wZTgxMSB0b3VjaCBjb250cm9sbGVyLg0KPiANCj4g
+SSBkb24ndCB0aGluayB0aGlzIGNoYW5nZSBpcyBuZWNlc3NhcnksIGludGVycnVwdHMvaW50ZXJy
+dXB0LXBhcmVudA0KPiBzcGVjaWZpY2F0aW9uIHNlZW1zIHRvIGJlIHN1cHBvcnRlZCBieSB0aGUg
+ZHJpdmVyIGFzIHdlbGwuDQoNClllcywgaG93ZXZlciwgc2hvdWxkIHlvdSBsb29rIGF0IHRoZSBk
+cml2ZXIgbW9yZSBjbG9zZWx5IHlvdSBtYXkgbm90aWNlDQp0aGF0IG9ubHkgaWYgdXNpbmcgaXJx
+LWdwaW8gdGhlIEdQSU8gaW4gcXVlc3Rpb24gYWxzbyBkb2VzIGdldCBwcm9wZXJseQ0KcmVxdWVz
+dGVkIGJ5IGRldm1fZ3Bpb19yZXF1ZXN0X29uZSgpIHdpdGggYW4gInN0bXBlIiBsYWJlbC4gU28g
+SSByZWFsbHkNCmRvIHRoaW5rIGRvaW5nIGl0IHRoaXMgd2F5IGlzIGFkdmFudGFnZW91cy4gSSBk
+aWQgbm90aWNlIHRoaXMNCmRpZmZlcmVuY2UgYnkgY2hhbmNlIHdoZW4gZmlnaHRpbmcgc29tZSBw
+cm9iZSBkZWZlciBpc3N1ZXMgZWFybGllci4NCg0KPiAtLQ0KPiBTdGVmYW4NCj4gDQo+ID4gDQo+
+ID4gU2lnbmVkLW9mZi1ieTogTWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRl
+eC5jb20+DQo+ID4gDQo+ID4gLS0tDQo+ID4gDQo+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3Jh
+MzAtY29saWJyaS5kdHNpIHwgMyArLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
+KCspLCAyIGRlbGV0aW9ucygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290
+L2R0cy90ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiA+IGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEz
+MC1jb2xpYnJpLmR0c2kNCj4gPiBpbmRleCBjODBiOWJmNDQ3NTIuLmFjZTcyYTUzMTg2YSAxMDA2
+NDQNCj4gPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiA+
+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtY29saWJyaS5kdHNpDQo+ID4gQEAgLTgz
+Niw4ICs4MzYsNyBAQA0KPiA+ICAJCXN0bXBlODExQDQxIHsNCj4gPiAgCQkJY29tcGF0aWJsZSA9
+ICJzdCxzdG1wZTgxMSI7DQo+ID4gIAkJCXJlZyA9IDwweDQxPjsNCj4gPiAtCQkJaW50ZXJydXB0
+cyA9IDxURUdSQV9HUElPKFYsIDApDQo+ID4gSVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPiAtCQkJ
+aW50ZXJydXB0LXBhcmVudCA9IDwmZ3Bpbz47DQo+ID4gKwkJCWlycS1ncGlvID0gPCZncGlvIFRF
+R1JBX0dQSU8oViwgMCkNCj4gPiBJUlFfVFlQRV9MRVZFTF9MT1c+Ow0KPiA+ICAJCQlpbnRlcnJ1
+cHQtY29udHJvbGxlcjsNCj4gPiAgCQkJaWQgPSA8MD47DQo+ID4gIAkJCWJsb2NrcyA9IDwweDU+
+Ow==
