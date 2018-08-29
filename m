@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 21/31] ARM: tegra: colibri_t20: iris: add dr_mode property
-Date: Wed, 29 Aug 2018 10:13:57 +0200
-Message-ID: <20180829081407.11304-22-marcel@ziswiler.com>
+Subject: [PATCH 22/31] ARM: tegra: colibri_t20: annotate/rename lm95245 temperature sensor
+Date: Wed, 29 Aug 2018 10:13:58 +0200
+Message-ID: <20180829081407.11304-23-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,26 +12,29 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add dr_mode property to the USB controller.
+Rename and annotate LM95245 temperature sensor more in-line with our
+other device trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index f615e3b9490f..91b3404e1b3d 100644
---- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -145,6 +145,7 @@
- 	/* EHCI instance 0: USB1_DP/N -> USBC_P/N */
- 	usb@c5000000 {
- 		status = "okay";
-+		dr_mode = "otg";
- 	};
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index 3d61175e2a9c..d03b2a290303 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -584,7 +584,8 @@
+ 			};
+ 		};
  
- 	usb-phy@c5000000 {
+-		temperature-sensor@4c {
++		/* LM95245 temperature sensor */
++		temp-sensor@4c {
+ 			compatible = "national,lm95245";
+ 			reg = <0x4c>;
+ 		};
 -- 
 2.14.4
