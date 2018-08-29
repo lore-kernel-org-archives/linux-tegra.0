@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 23/31] ARM: tegra: colibri_t20: add i2c-thermtrip
-Date: Wed, 29 Aug 2018 10:13:59 +0200
-Message-ID: <20180829081407.11304-24-marcel@ziswiler.com>
+Subject: [PATCH 24/31] ARM: tegra: colibri_t20: add gpio hog to unreset usb ethernet chip
+Date: Wed, 29 Aug 2018 10:14:00 +0200
+Message-ID: <20180829081407.11304-25-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
@@ -12,34 +12,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add i2c-thermtrip which would set the SLEEP MODE bit in the SUPPLYENE
-register of the TPS658643 PMIC.
+Add GPIO hog to unreset ASIX AX88772B USB Ethernet chip.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index d03b2a290303..470ef1f09167 100644
+index 470ef1f09167..339316dd57e9 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -598,6 +598,14 @@
- 		nvidia,core-pwr-good-time = <3845 3845>;
- 		nvidia,core-pwr-off-time = <3875>;
- 		nvidia,sys-clock-req-active-high;
-+
-+		/* Set SLEEP MODE bit in SUPPLYENE register of TPS658643 PMIC */
-+		i2c-thermtrip {
-+			nvidia,i2c-controller-id = <3>;
-+			nvidia,bus-addr = <0x34>;
-+			nvidia,reg-addr = <0x14>;
-+			nvidia,reg-data = <0x8>;
-+		};
+@@ -749,3 +749,12 @@
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
  	};
- 
- 	memory-controller@7000f400 {
+ };
++
++&gpio {
++	lan_reset_n {
++		gpio-hog;
++		gpios = <TEGRA_GPIO(V, 4) GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "LAN_RESET#";
++	};
++};
 -- 
 2.14.4
