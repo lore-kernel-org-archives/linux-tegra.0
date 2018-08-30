@@ -1,142 +1,104 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 1/2] clk: tegra: Don't enable already enabled PLLs
-Date: Thu, 30 Aug 2018 21:42:09 +0300
-Message-ID: <20180830184210.5369-1-digetx@gmail.com>
+Subject: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Date: Thu, 30 Aug 2018 21:42:10 +0300
+Message-ID: <20180830184210.5369-2-digetx@gmail.com>
+References: <20180830184210.5369-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180830184210.5369-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Initially Common Clock Framework isn't aware of the clock-enable status,
-this results in enabling of clocks that were enabled by bootloader. This
-is not a big deal for a regular clock-gates, but for PLL's it may have
-some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
-clock) may result in extra long period of PLL re-locking.
+Currently all PLL's on Tegra20 use a hardcoded delay despite of having
+a lock-status bit. The lock-status polling was disabled ~7 years ago
+because PLLE was failing to lock and was a suspicion that other PLLs
+might be faulty too. Other PLLs are okay, hence enable the lock-status
+polling for them. This reduces delay of any operation that require PLL
+to lock.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
 
 Changelog:
 
-v2:	No change.
+v2:	Don't enable polling for PLLE as it known to not being able to lock.
 
- drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 13 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 830d1c87fa7c..ddb431247f08 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
- 	unsigned long flags = 0;
- 	int ret;
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cc857d4d4a86..cfde3745a0db 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -298,7 +298,8 @@ static struct tegra_clk_pll_params pll_c_params = {
+ 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.freq_table = pll_c_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+ static struct tegra_clk_pll_params pll_m_params = {
+@@ -314,7 +315,8 @@ static struct tegra_clk_pll_params pll_m_params = {
+ 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.freq_table = pll_m_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-@@ -939,11 +942,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
- static int clk_plle_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 	struct tegra_clk_pll_freq_table sel;
-+	unsigned long input_rate;
- 	u32 val;
- 	int err;
+ static struct tegra_clk_pll_params pll_p_params = {
+@@ -331,7 +333,7 @@ static struct tegra_clk_pll_params pll_p_params = {
+ 	.lock_delay = 300,
+ 	.freq_table = pll_p_freq_table,
+ 	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON |
+-		 TEGRA_PLL_HAS_LOCK_ENABLE,
++		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK,
+ 	.fixed_rate =  216000000,
+ };
  
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
+@@ -348,7 +350,8 @@ static struct tegra_clk_pll_params pll_a_params = {
+ 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.freq_table = pll_a_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-@@ -1354,6 +1362,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
- 	int ret;
- 	unsigned long flags = 0;
+ static struct tegra_clk_pll_params pll_d_params = {
+@@ -364,7 +367,8 @@ static struct tegra_clk_pll_params pll_d_params = {
+ 	.lock_enable_bit_idx = PLLDU_MISC_LOCK_ENABLE,
+ 	.lock_delay = 1000,
+ 	.freq_table = pll_d_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+ static const struct pdiv_map pllu_p[] = {
+@@ -387,7 +391,8 @@ static struct tegra_clk_pll_params pll_u_params = {
+ 	.lock_delay = 1000,
+ 	.pdiv_tohw = pllu_p,
+ 	.freq_table = pll_u_freq_table,
+-	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-@@ -1566,7 +1577,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ static struct tegra_clk_pll_params pll_x_params = {
+@@ -403,7 +408,8 @@ static struct tegra_clk_pll_params pll_x_params = {
+ 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.freq_table = pll_x_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -1703,6 +1719,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
- 
- 	if (pll->lock)
-@@ -2378,6 +2397,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
- 	return clk;
- }
- 
-+static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl_base(pll);
-+
-+	return val & PLLE_BASE_ENABLE ? 1 : 0;
-+}
-+
- static int clk_plle_tegra210_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-@@ -2385,7 +2414,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret = 0;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_plle_tegra210_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -2496,16 +2530,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
- 
--static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
--{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	u32 val;
--
--	val = pll_readl_base(pll);
--
--	return val & PLLE_BASE_ENABLE ? 1 : 0;
--}
--
- static const struct clk_ops tegra_clk_plle_tegra210_ops = {
- 	.is_enabled =  clk_plle_tegra210_is_enabled,
- 	.enable = clk_plle_tegra210_enable,
+ static struct tegra_clk_pll_params pll_e_params = {
 -- 
 2.18.0
