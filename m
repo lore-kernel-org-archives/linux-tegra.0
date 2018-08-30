@@ -1,48 +1,49 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH 13/26] ARM: tegra: colibri_t30: use proper irq-gpio for
- stmpe811
-Date: Wed, 29 Aug 2018 14:56:59 +0000
-Message-ID: <1535554617.14664.30.camel@toradex.com>
-References: <20180723123658.980-1-marcel@ziswiler.com>
-         <20180723123658.980-14-marcel@ziswiler.com>
-         <844bac7c4e00a014f5e5b857e38a47bf@agner.ch>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3] gpu: host1x: Detach Host1x from IOMMU DMA domain on arm32
+Date: Thu, 30 Aug 2018 03:12:47 +0300
+Message-ID: <20180830001247.29257-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <844bac7c4e00a014f5e5b857e38a47bf@agner.ch>
-Content-Language: en-US
-Content-ID: <D45AECD8DCABB548B2590B692D3CAE5E@eurprd05.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "stefan@agner.ch" <stefan@agner.ch>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-tegra-owner@vger.kernel.org" <linux-tegra-owner@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTA3LTI2IGF0IDEwOjA3ICswMjAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
-IE9uIDIzLjA3LjIwMTggMTQ6MzYsIE1hcmNlbCBaaXN3aWxlciB3cm90ZToNCj4gPiBGcm9tOiBN
-YXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4NCj4gPiANCj4gPiBV
-c2UgcHJvcGVyIGlycS1ncGlvIGZvciBzdG1wZTgxMSB0b3VjaCBjb250cm9sbGVyLg0KPiANCj4g
-SSBkb24ndCB0aGluayB0aGlzIGNoYW5nZSBpcyBuZWNlc3NhcnksIGludGVycnVwdHMvaW50ZXJy
-dXB0LXBhcmVudA0KPiBzcGVjaWZpY2F0aW9uIHNlZW1zIHRvIGJlIHN1cHBvcnRlZCBieSB0aGUg
-ZHJpdmVyIGFzIHdlbGwuDQoNClllcywgaG93ZXZlciwgc2hvdWxkIHlvdSBsb29rIGF0IHRoZSBk
-cml2ZXIgbW9yZSBjbG9zZWx5IHlvdSBtYXkgbm90aWNlDQp0aGF0IG9ubHkgaWYgdXNpbmcgaXJx
-LWdwaW8gdGhlIEdQSU8gaW4gcXVlc3Rpb24gYWxzbyBkb2VzIGdldCBwcm9wZXJseQ0KcmVxdWVz
-dGVkIGJ5IGRldm1fZ3Bpb19yZXF1ZXN0X29uZSgpIHdpdGggYW4gInN0bXBlIiBsYWJlbC4gU28g
-SSByZWFsbHkNCmRvIHRoaW5rIGRvaW5nIGl0IHRoaXMgd2F5IGlzIGFkdmFudGFnZW91cy4gSSBk
-aWQgbm90aWNlIHRoaXMNCmRpZmZlcmVuY2UgYnkgY2hhbmNlIHdoZW4gZmlnaHRpbmcgc29tZSBw
-cm9iZSBkZWZlciBpc3N1ZXMgZWFybGllci4NCg0KPiAtLQ0KPiBTdGVmYW4NCj4gDQo+ID4gDQo+
-ID4gU2lnbmVkLW9mZi1ieTogTWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRl
-eC5jb20+DQo+ID4gDQo+ID4gLS0tDQo+ID4gDQo+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3Jh
-MzAtY29saWJyaS5kdHNpIHwgMyArLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
-KCspLCAyIGRlbGV0aW9ucygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290
-L2R0cy90ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiA+IGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEz
-MC1jb2xpYnJpLmR0c2kNCj4gPiBpbmRleCBjODBiOWJmNDQ3NTIuLmFjZTcyYTUzMTg2YSAxMDA2
-NDQNCj4gPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWNvbGlicmkuZHRzaQ0KPiA+
-ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMzAtY29saWJyaS5kdHNpDQo+ID4gQEAgLTgz
-Niw4ICs4MzYsNyBAQA0KPiA+ICAJCXN0bXBlODExQDQxIHsNCj4gPiAgCQkJY29tcGF0aWJsZSA9
-ICJzdCxzdG1wZTgxMSI7DQo+ID4gIAkJCXJlZyA9IDwweDQxPjsNCj4gPiAtCQkJaW50ZXJydXB0
-cyA9IDxURUdSQV9HUElPKFYsIDApDQo+ID4gSVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPiAtCQkJ
-aW50ZXJydXB0LXBhcmVudCA9IDwmZ3Bpbz47DQo+ID4gKwkJCWlycS1ncGlvID0gPCZncGlvIFRF
-R1JBX0dQSU8oViwgMCkNCj4gPiBJUlFfVFlQRV9MRVZFTF9MT1c+Ow0KPiA+ICAJCQlpbnRlcnJ1
-cHQtY29udHJvbGxlcjsNCj4gPiAgCQkJaWQgPSA8MD47DQo+ID4gIAkJCWJsb2NrcyA9IDwweDU+
-Ow==
+SG9zdDF4IGlzIGdldHRpbmcgYXR0YWNoZWQgdG8gYW4gaW1wbGljaXQgSU9NTVUgRE1BIGRvbWFp
+biBpZgpDT05GSUdfQVJNX0RNQV9VU0VfSU9NTVU9eS4gU2luY2UgSG9zdDF4IGRyaXZlciBtYW5h
+Z2VzIElPTU1VIGJ5Cml0c2VsZiwgSG9zdDF4IGRldmljZSBtdXN0IGJlIGRldGFjaGVkIGZyb20g
+dGhlIGltcGxpY2l0IGRvbWFpbiB1c2luZwphcmNoLXNwZWNpZmljIElPTU1VLUFQSS4KClNpZ25l
+ZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KLS0tCgpDaGFuZ2Vs
+b2c6Cgp2MjogQ29ycmVjdGx5IHBsYWNlZCB0aGUgZGV0YWNobWVudCBjb2RlLCBub3cgSG9zdDF4
+IGlzIGRldGFjaGVkIHJlZ2FyZGxlc3MKICAgIG9mIHRoZSBmaXJld2FsbCBzdGF0ZS4KCnYzOiBD
+b21waWxlcyBub3cuCgogZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jIHwgMTMgKysrKysrKysrKysr
+LQogMSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2
+LmMKaW5kZXggZDg4MDczZTdkMjJkLi5kZTZiYzRlN2ZhMjMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
+Z3B1L2hvc3QxeC9kZXYuYworKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMKQEAgLTI5LDYg
+KzI5LDEwIEBACiAjaW5jbHVkZSA8dHJhY2UvZXZlbnRzL2hvc3QxeC5oPgogI3VuZGVmIENSRUFU
+RV9UUkFDRV9QT0lOVFMKIAorI2lmIElTX0VOQUJMRUQoQ09ORklHX0FSTV9ETUFfVVNFX0lPTU1V
+KQorI2luY2x1ZGUgPGFzbS9kbWEtaW9tbXUuaD4KKyNlbmRpZgorCiAjaW5jbHVkZSAiYnVzLmgi
+CiAjaW5jbHVkZSAiY2hhbm5lbC5oIgogI2luY2x1ZGUgImRlYnVnLmgiCkBAIC0yMTcsNyArMjIx
+LDE0IEBAIHN0YXRpYyBpbnQgaG9zdDF4X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpCiAJCWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgcmVzZXQ6ICVkXG4iLCBl
+cnIpOwogCQlyZXR1cm4gZXJyOwogCX0KLQorI2lmIElTX0VOQUJMRUQoQ09ORklHX0FSTV9ETUFf
+VVNFX0lPTU1VKQorCWlmIChob3N0LT5kZXYtPmFyY2hkYXRhLm1hcHBpbmcpIHsKKwkJc3RydWN0
+IGRtYV9pb21tdV9tYXBwaW5nICptYXBwaW5nID0KKwkJCQl0b19kbWFfaW9tbXVfbWFwcGluZyho
+b3N0LT5kZXYpOworCQlhcm1faW9tbXVfZGV0YWNoX2RldmljZShob3N0LT5kZXYpOworCQlhcm1f
+aW9tbXVfcmVsZWFzZV9tYXBwaW5nKG1hcHBpbmcpOworCX0KKyNlbmRpZgogCWlmIChJU19FTkFC
+TEVEKENPTkZJR19URUdSQV9IT1NUMVhfRklSRVdBTEwpKQogCQlnb3RvIHNraXBfaW9tbXU7CiAK
+LS0gCjIuMTguMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
