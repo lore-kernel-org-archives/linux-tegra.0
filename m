@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 8/8] ARM: tegra: Add firmware calls required for suspend-resume
-Date: Thu, 30 Aug 2018 21:04:21 +0300
-Message-ID: <20180830180421.6415-9-digetx@gmail.com>
+Subject: [PATCH v3 5/8] ARM: tegra: Don't apply CPU erratas in insecure mode
+Date: Thu, 30 Aug 2018 21:04:18 +0300
+Message-ID: <20180830180421.6415-6-digetx@gmail.com>
 References: <20180830180421.6415-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180830180421.6415-1-digetx@gmail.com>
@@ -10,104 +10,153 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-In order to resume CPU from suspend via trusted Foundations firmware,
-the LP1/LP2 boot vectors shall be specified using the firmware calls.
+CPU isn't allowed to touch secure registers while running under secure
+monitor. Hence skip applying of CPU erratas in the reset handler if
+Trusted Foundations firmware presents.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/pm.c            |  7 ++++++
- arch/arm/mach-tegra/reset-handler.S | 33 +++++++++++++++++++++++++++--
- 2 files changed, 38 insertions(+), 2 deletions(-)
+ arch/arm/mach-tegra/reset-handler.S | 24 ++++++++++++------------
+ arch/arm/mach-tegra/reset.c         |  3 +++
+ arch/arm/mach-tegra/reset.h         |  9 +++++++--
+ arch/arm/mach-tegra/sleep-tegra20.S |  4 ++++
+ 4 files changed, 26 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 66c8cd63dd86..12341ffabb99 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -33,6 +33,7 @@
- #include <soc/tegra/pmc.h>
- 
- #include <asm/cacheflush.h>
-+#include <asm/firmware.h>
- #include <asm/idmap.h>
- #include <asm/proc-fns.h>
- #include <asm/smp_plat.h>
-@@ -150,6 +151,10 @@ bool tegra_set_cpu_in_lp2(void)
- 		tegra20_cpu_set_resettable_soon();
- 
- 	spin_unlock(&tegra_lp2_lock);
-+
-+	if (last_cpu)
-+		call_firmware_op(prepare_idle, TF_PM_MODE_LP2);
-+
- 	return last_cpu;
- }
- 
-@@ -316,6 +321,8 @@ static void tegra_suspend_enter_lp1(void)
- 		tegra_lp1_iram.start_addr, iram_save_size);
- 
- 	*((u32 *)tegra_cpu_lp1_mask) = 1;
-+
-+	call_firmware_op(prepare_idle, TF_PM_MODE_LP1);
- }
- 
- static void tegra_suspend_exit_lp1(void)
 diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index 4973ea053bd7..0e208b2e246e 100644
+index 805f306fa6f7..a9f13230da2f 100644
 --- a/arch/arm/mach-tegra/reset-handler.S
 +++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -69,7 +69,7 @@ ENTRY(tegra_resume)
+@@ -29,8 +29,6 @@
  
- 	mov32	r9, 0xc09
- 	cmp	r8, r9
--	bne	end_ca9_scu_resume
-+	bne	end_ca9_scu_l2_resume
- #ifdef CONFIG_HAVE_ARM_SCU
- 	/* enable SCU */
- 	mov32	r0, TEGRA_ARM_PERIF_BASE
-@@ -77,14 +77,43 @@ ENTRY(tegra_resume)
- 	orr	r1, r1, #1
- 	str	r1, [r0]
- #endif
-+	bl	tegra_resume_trusted_foundations
+ #define PMC_SCRATCH41	0x140
  
--end_ca9_scu_resume:
-+#ifdef CONFIG_CACHE_L2X0
-+	/* L2 cache resume & re-enable */
-+	bleq	l2c310_early_resume		@ No, resume cache early
-+#endif
-+end_ca9_scu_l2_resume:
- 	mov32	r9, 0xc0f
- 	cmp	r8, r9
- 	bleq	tegra_init_l2_for_a15
+-#define RESET_DATA(x)	((TEGRA_RESET_##x)*4)
+-
+ #ifdef CONFIG_PM_SLEEP
+ /*
+  *	tegra_resume
+@@ -121,6 +119,12 @@ ENTRY(__tegra_cpu_reset_handler)
+ 	cpsid	aif, 0x13			@ SVC mode, interrupts disabled
  
- 	b	cpu_resume
- ENDPROC(tegra_resume)
+ 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r6
 +
-+/*
-+ *	tegra_resume_trusted_foundations
-+ *
-+ *	  Trusted Foundations firmware initialization.
-+ *
-+ *	Doesn't return if firmware presents.
-+ *	Corrupted registers: r1, r2
-+ */
-+ENTRY(tegra_resume_trusted_foundations)
-+	/* Check whether Trusted Foundations firmware presents. */
-+	mov32	r2, TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET
-+	ldr	r1, =__tegra_cpu_reset_handler_data_offset + \
-+							RESET_DATA(TF_PRESENT)
-+	ldr	r1, [r2, r1]
-+	cmp	r1, #0
-+	reteq	lr
++	adr	r12, __tegra_cpu_reset_handler_data
++	ldr	r5, [r12, #RESET_DATA(TF_PRESENT)]
++	cmp	r5, #0
++	bne	after_errata
 +
-+ .arch_extension sec
-+	/* First call after suspend wakes firmware. No arguments required. */
-+	smc	#0
-+
-+	b	cpu_resume
-+ENDPROC(tegra_resume_trusted_foundations)
+ #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+ t20_check:
+ 	cmp	r6, #TEGRA20
+@@ -155,7 +159,6 @@ after_errata:
+ 	and	r10, r10, #0x3			@ R10 = CPU number
+ 	mov	r11, #1
+ 	mov	r11, r11, lsl r10  		@ R11 = CPU mask
+-	adr	r12, __tegra_cpu_reset_handler_data
+ 
+ #ifdef CONFIG_SMP
+ 	/* Does the OS know about this CPU? */
+@@ -169,10 +172,9 @@ after_errata:
+ 	cmp	r6, #TEGRA20
+ 	bne	1f
+ 	/* If not CPU0, don't let CPU0 reset CPU1 now that CPU1 is coming up. */
+-	mov32	r5, TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET
+ 	mov	r0, #CPU_NOT_RESETTABLE
+ 	cmp	r10, #0
+-	strneb	r0, [r5, #__tegra20_cpu1_resettable_status_offset]
++	strneb	r0, [r12, #RESET_DATA(RESETTABLE_STATUS)]
+ 1:
  #endif
  
+@@ -277,14 +279,12 @@ ENDPROC(__tegra_cpu_reset_handler)
  	.align L1_CACHE_SHIFT
+ 	.type	__tegra_cpu_reset_handler_data, %object
+ 	.globl	__tegra_cpu_reset_handler_data
++	.globl	__tegra_cpu_reset_handler_data_offset
++	.equ	__tegra_cpu_reset_handler_data_offset, \
++					. - __tegra_cpu_reset_handler_start
+ __tegra_cpu_reset_handler_data:
+-	.rept	TEGRA_RESET_DATA_SIZE
+-	.long	0
++	.rept   TEGRA_RESET_DATA_SIZE
++	.long   0
+ 	.endr
+-	.globl	__tegra20_cpu1_resettable_status_offset
+-	.equ	__tegra20_cpu1_resettable_status_offset, \
+-					. - __tegra_cpu_reset_handler_start
+-	.byte	0
+ 	.align L1_CACHE_SHIFT
+-
+ ENTRY(__tegra_cpu_reset_handler_end)
+diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+index dc558892753c..b02ae7699842 100644
+--- a/arch/arm/mach-tegra/reset.c
++++ b/arch/arm/mach-tegra/reset.c
+@@ -24,6 +24,7 @@
+ #include <asm/cacheflush.h>
+ #include <asm/firmware.h>
+ #include <asm/hardware/cache-l2x0.h>
++#include <asm/trusted_foundations.h>
+ 
+ #include "iomap.h"
+ #include "irammap.h"
+@@ -89,6 +90,8 @@ static void __init tegra_cpu_reset_handler_enable(void)
+ 
+ void __init tegra_cpu_reset_handler_init(void)
+ {
++	__tegra_cpu_reset_handler_data[TEGRA_RESET_TF_PRESENT] =
++		trusted_foundations_registered();
+ 
+ #ifdef CONFIG_SMP
+ 	__tegra_cpu_reset_handler_data[TEGRA_RESET_MASK_PRESENT] =
+diff --git a/arch/arm/mach-tegra/reset.h b/arch/arm/mach-tegra/reset.h
+index 9c479c7925b8..db0e6b3097ab 100644
+--- a/arch/arm/mach-tegra/reset.h
++++ b/arch/arm/mach-tegra/reset.h
+@@ -25,7 +25,11 @@
+ #define TEGRA_RESET_STARTUP_SECONDARY	3
+ #define TEGRA_RESET_STARTUP_LP2		4
+ #define TEGRA_RESET_STARTUP_LP1		5
+-#define TEGRA_RESET_DATA_SIZE		6
++#define TEGRA_RESET_RESETTABLE_STATUS	6
++#define TEGRA_RESET_TF_PRESENT		7
++#define TEGRA_RESET_DATA_SIZE		8
++
++#define RESET_DATA(x)	((TEGRA_RESET_##x)*4)
+ 
+ #ifndef __ASSEMBLY__
+ 
+@@ -49,7 +53,8 @@ void __tegra_cpu_reset_handler_end(void);
+ 	 (u32)__tegra_cpu_reset_handler_start)))
+ #define tegra20_cpu1_resettable_status \
+ 	(IO_ADDRESS(TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET + \
+-	 (u32)__tegra20_cpu1_resettable_status_offset))
++	((u32)&__tegra_cpu_reset_handler_data[TEGRA_RESET_RESETTABLE_STATUS] - \
++	 (u32)__tegra_cpu_reset_handler_start)))
+ #endif
+ 
+ #define tegra_cpu_reset_handler_offset \
+diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
+index 5c8e638ee51a..11f423e4a263 100644
+--- a/arch/arm/mach-tegra/sleep-tegra20.S
++++ b/arch/arm/mach-tegra/sleep-tegra20.S
+@@ -28,6 +28,7 @@
+ #include <asm/cache.h>
+ 
+ #include "irammap.h"
++#include "reset.h"
+ #include "sleep.h"
+ 
+ #define EMC_CFG				0xc
+@@ -54,6 +55,9 @@
+ #define APB_MISC_XM2CFGCPADCTRL2	0x8e4
+ #define APB_MISC_XM2CFGDPADCTRL2	0x8e8
+ 
++#define __tegra20_cpu1_resettable_status_offset \
++	(__tegra_cpu_reset_handler_data_offset + RESET_DATA(RESETTABLE_STATUS))
++
+ .macro pll_enable, rd, r_car_base, pll_base
+ 	ldr	\rd, [\r_car_base, #\pll_base]
+ 	tst	\rd, #(1 << 30)
 -- 
 2.18.0
