@@ -1,67 +1,60 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
-Date: Thu, 30 Aug 2018 22:43:52 +0300
-Message-ID: <20180830194356.14059-2-digetx@gmail.com>
-References: <20180830194356.14059-1-digetx@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830194356.14059-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v2 00/12] remove_conflicting_framebuffers() cleanup
+Date: Thu, 30 Aug 2018 23:00:01 +0200
+Message-ID: <cover.1535656077.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-fbdev@vger.kernel.org, linux-tegra@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, Maxime Ripard <maxime.ripard@bootlin.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add device-tree binding that describes CPU frequency-scaling hardware
-found on NVIDIA Tegra20/30 SoC's.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-
-diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-new file mode 100644
-index 000000000000..2c51f676e958
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-@@ -0,0 +1,38 @@
-+Binding for NVIDIA Tegra20 CPUFreq
-+==================================
-+
-+Required properties:
-+- clocks: Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Must include the following entries:
-+  - pll_x: main-parent for CPU clock, must be the first entry
-+  - backup: intermediate-parent for CPU clock
-+  - cpu: the CPU clock
-+- operating-points-v2: See ../bindings/opp/opp.txt for details.
-+- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
-+
-+Example:
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+
-+		opp@216000000 {
-+			clock-latency-ns = <300000>;
-+			opp-hz = /bits/ 64 <216000000>;
-+			opp-microvolt = <7500000>;
-+			opp-suspend;
-+		};
-+
-+		...
-+	};
-+
-+	cpus {
-+		cpu@0 {
-+			compatible = "arm,cortex-a9";
-+			clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
-+				 <&tegra_car TEGRA20_CLK_PLL_P>,
-+				 <&tegra_car TEGRA20_CLK_CCLK>;
-+			clock-names = "pll_x", "backup", "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
-+		};
-+	};
--- 
-2.18.0
+VGhpcyBzZXJpZXMgY2xlYW5zIHVwIGR1cGxpY2F0ZWQgY29kZSBmb3IgcmVwbGFjaW5nIGZpcm13
+YXJlIEZCCmRyaXZlciB3aXRoIHByb3BlciBEUkkgZHJpdmVyIGFuZCBhZGRzIGhhbmRvdmVyIHN1
+cHBvcnQgdG8KVGVncmEgZHJpdmVyLgoKVGhpcyBpcyBhIHNsaWd0bHkgdXBkYXRlZCB2ZXJzaW9u
+IG9mIGEgc2VyaWVzIHNlbnQgb24gMjQgTm92IDIwMTcuCgp2MjoKIC0gcmViYXNlZCBvbiBjdXJy
+ZW50IGRybS1uZXh0CiAtIGRyb3BwZWQgc3RhZ2luZy9zbTc1MGZiIGNoYW5nZXMKIC0gYWRkZWQg
+a2VybmVsIGRvY3MgZm9yIERSTSBoZWxwZXJzCgpNaWNoYcWCIE1pcm9zxYJhdyAoMTIpOgogIGZi
+ZGV2OiBzaG93IGZiZGV2IG51bWJlciBmb3IgZGVidWdnaW5nCiAgZmJkZXY6IGFsbG93IGFwZXJ0
+dXJlcyA9PSBOVUxMIGluIHJlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoKQogIGZiZGV2
+OiBhZGQgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQogIGRybS9hbWRncHU6
+IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJzKCkKICBkcm0v
+Ym9jaHM6IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJzKCkK
+ICBkcm0vY2lycnVzOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVm
+ZmVycygpCiAgZHJtL21nYWcyMDA6IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19wY2lf
+ZnJhbWVidWZmZXJzKCkKICBkcm0vcmFkZW9uOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3Rp
+bmdfcGNpX2ZyYW1lYnVmZmVycygpCiAgZHJtL3ZpcnRpbzogdXNlIHNpbXBsZXIgcmVtb3ZlX2Nv
+bmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQogIGRybS92YzQ6IHVzZSBzaW1wbGVyIHJlbW92
+ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoTlVMTCkKICBkcm0vc3VuNGk6IHVzZSBzaW1wbGVy
+IHJlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoTlVMTCkKICBkcm0vdGVncmE6IGtpY2sg
+b3V0IHNpbXBsZWZiCgogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Rydi5jICB8
+IDI0ICstLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vYm9jaHMvYm9jaHNfZHJ2LmMgICAg
+ICAgIHwgMTggKy0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9jaXJydXMvY2lycnVzX2Rydi5j
+ICAgICAgfCAyMyArLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL21nYWcyMDAvbWdhZzIw
+MF9kcnYuYyAgICB8IDIxICstLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9tZ2FnMjAwL21n
+YWcyMDBfbWFpbi5jICAgfCAgOSAtLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9u
+X2Rydi5jICAgICAgfCAyMyArLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1
+bjRpX2Rydi5jICAgICAgICB8IDE4ICstLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
+ZHJtLmMgICAgICAgICAgICAgIHwgIDQgKysrCiBkcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9kcnYu
+YyAgICAgICAgICAgIHwgMjAgKy0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vdmlydGlvL3Zp
+cnRncHVfZHJtX2J1cy5jIHwgMjQgKystLS0tLS0tLS0tLS0KIGRyaXZlcnMvdmlkZW8vZmJkZXYv
+Y29yZS9mYm1lbS5jICAgICAgICAgfCA0MCArKysrKysrKysrKysrKysrKysrKysrLS0KIGluY2x1
+ZGUvZHJtL2RybV9mYl9oZWxwZXIuaCAgICAgICAgICAgICAgfCAzNCArKysrKysrKysrKysrKysr
+KysrKwogaW5jbHVkZS9saW51eC9mYi5oICAgICAgICAgICAgICAgICAgICAgICB8ICAyICsrCiAx
+MyBmaWxlcyBjaGFuZ2VkLCA4OCBpbnNlcnRpb25zKCspLCAxNzIgZGVsZXRpb25zKC0pCgotLSAK
+Mi4xOC4wCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+bGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
+YWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGlu
+dXgtYXJtLWtlcm5lbAo=
