@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 6/8] ARM: tegra: Always boot CPU in ARM-mode
-Date: Thu, 30 Aug 2018 21:04:19 +0300
-Message-ID: <20180830180421.6415-7-digetx@gmail.com>
+Subject: [PATCH v3 3/8] ARM: trusted_foundations: Provide information about whether firmware is registered
+Date: Thu, 30 Aug 2018 21:04:16 +0300
+Message-ID: <20180830180421.6415-4-digetx@gmail.com>
 References: <20180830180421.6415-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180830180421.6415-1-digetx@gmail.com>
@@ -10,59 +10,59 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-CPU always jumps into reset handler in ARM-mode from the Trusted
-Foundations firmware, hence let's make CPU to always jump into kernel
-in ARM-mode regardless of the firmware presence to support. This is
-required to make  Thumb-2 kernel working with the Trusted Foundations
-firmware on Tegra30.
+Add a helper that provides information about whether Trusted Foundations
+firmware operations have been registered.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/reset-handler.S | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/arm/firmware/trusted_foundations.c    | 5 +++++
+ arch/arm/include/asm/trusted_foundations.h | 7 +++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index a9f13230da2f..555c652f5a07 100644
---- a/arch/arm/mach-tegra/reset-handler.S
-+++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -20,6 +20,7 @@
- #include <soc/tegra/flowctrl.h>
- #include <soc/tegra/fuse.h>
- 
-+#include <asm/assembler.h>
- #include <asm/asm-offsets.h>
- #include <asm/cache.h>
- 
-@@ -112,10 +113,20 @@ ENTRY(__tegra_cpu_reset_handler_start)
-  * NOTE: This code is copied to IRAM. All code and data accesses
-  *       must be position-independent.
-  */
--
-+	.arm
- 	.align L1_CACHE_SHIFT
- ENTRY(__tegra_cpu_reset_handler)
- 
-+	/*
-+	 * Tegra30 ignores first bit of the reset vector and always jumps
-+	 * into kernel in .ARM mode from the firmware, hence force the mode
-+	 * switch if kernel is compiled in Thumb-2.
-+	 */
-+ THUMB(	badr	r0, 1f		)
-+ THUMB(	bx	r0		)
-+ THUMB(	.thumb 			)
-+ THUMB(	1: 			)
+diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+index c496f4cc49cb..d795ed83a3cd 100644
+--- a/arch/arm/firmware/trusted_foundations.c
++++ b/arch/arm/firmware/trusted_foundations.c
+@@ -172,3 +172,8 @@ void of_register_trusted_foundations(void)
+ 		panic("Trusted Foundation: missing version-minor property\n");
+ 	register_trusted_foundations(&pdata);
+ }
 +
- 	cpsid	aif, 0x13			@ SVC mode, interrupts disabled
++bool trusted_foundations_registered(void)
++{
++	return firmware_ops == &trusted_foundations_ops;
++}
+diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+index cdd48ab7d191..3f23fa493db6 100644
+--- a/arch/arm/include/asm/trusted_foundations.h
++++ b/arch/arm/include/asm/trusted_foundations.h
+@@ -31,6 +31,7 @@
+ #include <linux/of.h>
+ #include <linux/cpu.h>
+ #include <linux/smp.h>
++#include <linux/types.h>
  
- 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r6
-@@ -215,7 +226,7 @@ __no_cpu0_chk:
- 	ldr	lr, [r12, #RESET_DATA(STARTUP_SECONDARY)]
- 	cmp	lr, #0
- 	bleq	__die				@ no secondary startup handler
--	bx	lr
-+	ret	lr
+ #define TF_PM_MODE_LP0			0
+ #define TF_PM_MODE_LP1			1
+@@ -47,6 +48,7 @@ struct trusted_foundations_platform_data {
+ 
+ void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
+ void of_register_trusted_foundations(void);
++bool trusted_foundations_registered(void);
+ 
+ #else /* CONFIG_TRUSTED_FOUNDATIONS */
+ 
+@@ -74,6 +76,11 @@ static inline void of_register_trusted_foundations(void)
+ 	if (of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations"))
+ 		register_trusted_foundations(NULL);
+ }
++
++static inline bool trusted_foundations_registered(void)
++{
++	return false;
++}
+ #endif /* CONFIG_TRUSTED_FOUNDATIONS */
+ 
  #endif
- 
- /*
 -- 
 2.18.0
