@@ -1,49 +1,45 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3] gpu: host1x: Detach Host1x from IOMMU DMA domain on arm32
-Date: Thu, 30 Aug 2018 03:12:47 +0300
-Message-ID: <20180830001247.29257-1-digetx@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH 03/14] staging: media: tegra-vde: Prepare for interlacing
+ support
+Date: Thu, 30 Aug 2018 11:56:05 +0300
+Message-ID: <20180830085605.dpfsd6korroisfrq@mwanda>
+References: <20180813145027.16346-1-thierry.reding@gmail.com>
+ <20180813145027.16346-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Disposition: inline
+In-Reply-To: <20180813145027.16346-4-thierry.reding@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SG9zdDF4IGlzIGdldHRpbmcgYXR0YWNoZWQgdG8gYW4gaW1wbGljaXQgSU9NTVUgRE1BIGRvbWFp
-biBpZgpDT05GSUdfQVJNX0RNQV9VU0VfSU9NTVU9eS4gU2luY2UgSG9zdDF4IGRyaXZlciBtYW5h
-Z2VzIElPTU1VIGJ5Cml0c2VsZiwgSG9zdDF4IGRldmljZSBtdXN0IGJlIGRldGFjaGVkIGZyb20g
-dGhlIGltcGxpY2l0IGRvbWFpbiB1c2luZwphcmNoLXNwZWNpZmljIElPTU1VLUFQSS4KClNpZ25l
-ZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KLS0tCgpDaGFuZ2Vs
-b2c6Cgp2MjogQ29ycmVjdGx5IHBsYWNlZCB0aGUgZGV0YWNobWVudCBjb2RlLCBub3cgSG9zdDF4
-IGlzIGRldGFjaGVkIHJlZ2FyZGxlc3MKICAgIG9mIHRoZSBmaXJld2FsbCBzdGF0ZS4KCnYzOiBD
-b21waWxlcyBub3cuCgogZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jIHwgMTMgKysrKysrKysrKysr
-LQogMSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2
-LmMKaW5kZXggZDg4MDczZTdkMjJkLi5kZTZiYzRlN2ZhMjMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
-Z3B1L2hvc3QxeC9kZXYuYworKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMKQEAgLTI5LDYg
-KzI5LDEwIEBACiAjaW5jbHVkZSA8dHJhY2UvZXZlbnRzL2hvc3QxeC5oPgogI3VuZGVmIENSRUFU
-RV9UUkFDRV9QT0lOVFMKIAorI2lmIElTX0VOQUJMRUQoQ09ORklHX0FSTV9ETUFfVVNFX0lPTU1V
-KQorI2luY2x1ZGUgPGFzbS9kbWEtaW9tbXUuaD4KKyNlbmRpZgorCiAjaW5jbHVkZSAiYnVzLmgi
-CiAjaW5jbHVkZSAiY2hhbm5lbC5oIgogI2luY2x1ZGUgImRlYnVnLmgiCkBAIC0yMTcsNyArMjIx
-LDE0IEBAIHN0YXRpYyBpbnQgaG9zdDF4X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
-ZXYpCiAJCWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgcmVzZXQ6ICVkXG4iLCBl
-cnIpOwogCQlyZXR1cm4gZXJyOwogCX0KLQorI2lmIElTX0VOQUJMRUQoQ09ORklHX0FSTV9ETUFf
-VVNFX0lPTU1VKQorCWlmIChob3N0LT5kZXYtPmFyY2hkYXRhLm1hcHBpbmcpIHsKKwkJc3RydWN0
-IGRtYV9pb21tdV9tYXBwaW5nICptYXBwaW5nID0KKwkJCQl0b19kbWFfaW9tbXVfbWFwcGluZyho
-b3N0LT5kZXYpOworCQlhcm1faW9tbXVfZGV0YWNoX2RldmljZShob3N0LT5kZXYpOworCQlhcm1f
-aW9tbXVfcmVsZWFzZV9tYXBwaW5nKG1hcHBpbmcpOworCX0KKyNlbmRpZgogCWlmIChJU19FTkFC
-TEVEKENPTkZJR19URUdSQV9IT1NUMVhfRklSRVdBTEwpKQogCQlnb3RvIHNraXBfaW9tbXU7CiAK
-LS0gCjIuMTguMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+On Mon, Aug 13, 2018 at 04:50:16PM +0200, Thierry Reding wrote:
+>  static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+> +					unsigned int num_ref_pics,
+>  					struct video_frame *dpb_frames,
+>  					unsigned int ref_frames_nb,
+>  					unsigned int with_earlier_poc_nb)
+> @@ -251,13 +260,17 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+>  	u32 value, aux_addr;
+>  	int with_later_poc_nb;
+>  	unsigned int i, k;
+> +	size_t size;
+> +
+> +	size = num_ref_pics * 4 * 8;
+> +	memset(vde->iram, 0, size);
+
+I can't get behind the magical size calculation...  :(
+
+regards,
+dan carpenter
