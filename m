@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/4] ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+
-Date: Thu, 30 Aug 2018 21:54:03 +0300
-Message-ID: <20180830185404.7224-4-digetx@gmail.com>
+Subject: [PATCH v1 4/4] ARM: tegra: Clear EMC interrupts on resume from LP1 on Tegra30+
+Date: Thu, 30 Aug 2018 21:54:04 +0300
+Message-ID: <20180830185404.7224-5-digetx@gmail.com>
 References: <20180830185404.7224-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180830185404.7224-1-digetx@gmail.com>
@@ -10,106 +10,50 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The external memory arbitration configuration is getting reset after
-memory entering into self-refresh mode, it shall be restored on the
-exit. Note that MC_EMEM_ARB_CFG register is shadowed and latching
-happens on the EMC timing update. This fixes 2x GPU performance
-degradation after resuming from LP1 on Tegra30.
+Two interrupts are raised on resume from LP1 on Tegra30+: first is the
+clock change completed interrupt which is set after updating timing
+configuration, second is DLL alarm interrupt which is set when DLL
+starts re-calibration after being reset. Clear these two interrupts
+in the end of exiting from the self-refresh mode for consistency, that
+will also allow to not receive spurious interrupts in the EMC driver
+after resume from suspend.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/iomap.h         |  9 +++++++++
- arch/arm/mach-tegra/sleep-tegra30.S | 21 +++++++++++++++++++++
- 2 files changed, 30 insertions(+)
+ arch/arm/mach-tegra/sleep-tegra30.S | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
-index 9e5b2f869fc8..9bc291e76887 100644
---- a/arch/arm/mach-tegra/iomap.h
-+++ b/arch/arm/mach-tegra/iomap.h
-@@ -79,15 +79,24 @@
- #define TEGRA_PMC_BASE			0x7000E400
- #define TEGRA_PMC_SIZE			SZ_256
- 
-+#define TEGRA_MC_BASE			0x7000F000
-+#define TEGRA_MC_SIZE			SZ_1K
-+
- #define TEGRA_EMC_BASE			0x7000F400
- #define TEGRA_EMC_SIZE			SZ_1K
- 
-+#define TEGRA114_MC_BASE		0x70019000
-+#define TEGRA114_MC_SIZE		SZ_4K
-+
- #define TEGRA_EMC0_BASE			0x7001A000
- #define TEGRA_EMC0_SIZE			SZ_2K
- 
- #define TEGRA_EMC1_BASE			0x7001A800
- #define TEGRA_EMC1_SIZE			SZ_2K
- 
-+#define TEGRA124_MC_BASE		0x70019000
-+#define TEGRA124_MC_SIZE		SZ_4K
-+
- #define TEGRA124_EMC_BASE		0x7001B000
- #define TEGRA124_EMC_SIZE		SZ_2K
- 
 diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 99ac9c6dcf7c..828f6c37afde 100644
+index 828f6c37afde..78c6e9fb56e7 100644
 --- a/arch/arm/mach-tegra/sleep-tegra30.S
 +++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -44,6 +44,8 @@
+@@ -26,6 +26,7 @@
+ #include "irammap.h"
+ #include "sleep.h"
+ 
++#define EMC_INTSTATUS			0x0
+ #define EMC_CFG				0xc
+ #define EMC_ADR_CFG			0x10
+ #define EMC_TIMING_CONTROL		0x28
+@@ -44,6 +45,9 @@
  #define EMC_XM2VTTGENPADCTRL		0x310
  #define EMC_XM2VTTGENPADCTRL2		0x314
  
-+#define MC_EMEM_ARB_CFG			0x90
++#define EMC_CLKCHANGE_COMPLETE_INT	(1 << 4)
++#define EMC_DLL_ALARM_INT		(1 << 7)
 +
+ #define MC_EMEM_ARB_CFG			0x90
+ 
  #define PMC_CTRL			0x0
- #define PMC_CTRL_SIDE_EFFECT_LP0 (1 << 14) /* enter LP0 when CPU pwr gated */
+@@ -539,6 +543,9 @@ zcal_done:
  
-@@ -418,6 +420,22 @@ _pll_m_c_x_done:
- 	movweq	r0, #:lower16:TEGRA124_EMC_BASE
- 	movteq	r0, #:upper16:TEGRA124_EMC_BASE
+ 	emc_timing_update r1, r0
  
-+	cmp	r10, #TEGRA30
-+	moveq	r2, #0x20
-+	movweq	r4, #:lower16:TEGRA_MC_BASE
-+	movteq	r4, #:upper16:TEGRA_MC_BASE
-+	cmp	r10, #TEGRA114
-+	moveq	r2, #0x34
-+	movweq	r4, #:lower16:TEGRA114_MC_BASE
-+	movteq	r4, #:upper16:TEGRA114_MC_BASE
-+	cmp	r10, #TEGRA124
-+	moveq	r2, #0x20
-+	movweq	r4, #:lower16:TEGRA124_MC_BASE
-+	movteq	r4, #:upper16:TEGRA124_MC_BASE
++	mov	r1, #(EMC_CLKCHANGE_COMPLETE_INT | EMC_DLL_ALARM_INT)
++	str	r1, [r0, #EMC_INTSTATUS]	@ clear interrupts
 +
-+	ldr	r1, [r5, r2]		@ restore MC_EMEM_ARB_CFG
-+	str	r1, [r4, #MC_EMEM_ARB_CFG]
-+
- exit_self_refresh:
- 	ldr	r1, [r5, #0xC]		@ restore EMC_XM2VTTGENPADCTRL
- 	str	r1, [r0, #EMC_XM2VTTGENPADCTRL]
-@@ -546,6 +564,7 @@ tegra30_sdram_pad_address:
- 	.word	TEGRA_PMC_BASE + PMC_IO_DPD_STATUS			@0x14
- 	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_CLK_SOURCE_MSELECT	@0x18
- 	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_SCLK_BURST		@0x1c
-+	.word	TEGRA_MC_BASE + MC_EMEM_ARB_CFG				@0x20
- tegra30_sdram_pad_address_end:
- 
- tegra114_sdram_pad_address:
-@@ -562,6 +581,7 @@ tegra114_sdram_pad_address:
- 	.word	TEGRA_EMC1_BASE + EMC_AUTO_CAL_INTERVAL			@0x28
- 	.word	TEGRA_EMC1_BASE + EMC_XM2VTTGENPADCTRL			@0x2c
- 	.word	TEGRA_EMC1_BASE + EMC_XM2VTTGENPADCTRL2			@0x30
-+	.word	TEGRA114_MC_BASE + MC_EMEM_ARB_CFG			@0x34
- tegra114_sdram_pad_adress_end:
- 
- tegra124_sdram_pad_address:
-@@ -573,6 +593,7 @@ tegra124_sdram_pad_address:
- 	.word	TEGRA_PMC_BASE + PMC_IO_DPD_STATUS			@0x14
- 	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_CLK_SOURCE_MSELECT	@0x18
- 	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_SCLK_BURST		@0x1c
-+	.word	TEGRA124_MC_BASE + MC_EMEM_ARB_CFG			@0x20
- tegra124_sdram_pad_address_end:
- 
- tegra30_sdram_pad_size:
+ 	/* Tegra114 had dual EMC channel, now config the other one */
+ 	cmp	r10, #TEGRA114
+ 	bne	__no_dual_emc_chanl
 -- 
 2.18.0
