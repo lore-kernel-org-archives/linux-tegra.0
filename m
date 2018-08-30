@@ -1,38 +1,30 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 1/2] ARM: tegra: Switch CPU to PLLP before powergating on Tegra30
-Date: Thu, 30 Aug 2018 22:04:53 +0300
-Message-ID: <20180830190454.8729-2-digetx@gmail.com>
-References: <20180830190454.8729-1-digetx@gmail.com>
+Subject: [PATCH v1 0/3] CPU clock changes for Tegra20/30
+Date: Thu, 30 Aug 2018 22:20:42 +0300
+Message-ID: <20180830192045.11017-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830190454.8729-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-PLLX is getting turned by the HW logic when CPU enters powergated state
-and there is no enough time for PLLX to re-lock on exiting the low-power
-state, this causes memory errors coming from misbehaving CPU and eventual
-hanging of the system.
+Hello,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/mach-tegra/sleep-tegra30.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series is a prerequisite for the CPUFREQ driver patches, it can be
+applied separately. CPUFREQ will be supported on Tegra30 once this and
+the CPUFREQ patch-series will be applied.
 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index dd4a67dabd91..d572d4b860be 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -298,8 +298,8 @@ ENDPROC(tegra30_sleep_cpu_secondary_finish)
-  * Switches the CPU to enter sleep.
-  */
- ENTRY(tegra30_tear_down_cpu)
-+	bl	tegra_switch_cpu_to_pllp
- 	mov32	r6, TEGRA_FLOW_CTRL_BASE
--
- 	b	tegra30_enter_sleep
- ENDPROC(tegra30_tear_down_cpu)
- 
+Dmitry Osipenko (3):
+  clk: tegra: Convert CCLKG mux to mux + clock divider on Tegra30
+  clk: tegra: Add more rates to Tegra30 PLLX frequency table
+  clk: tegra: Poll PLLX lock-status on resume from suspend on Tegra20/30
+
+ drivers/clk/tegra/clk-super.c    |  16 +++-
+ drivers/clk/tegra/clk-tegra20.c  |  51 ++++++++++--
+ drivers/clk/tegra/clk-tegra210.c |   2 +-
+ drivers/clk/tegra/clk-tegra30.c  | 131 +++++++++++++++++++++----------
+ drivers/clk/tegra/clk.h          |   9 ++-
+ 5 files changed, 156 insertions(+), 53 deletions(-)
+
 -- 
 2.18.0
