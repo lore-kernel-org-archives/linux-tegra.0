@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 7/8] ARM: tegra: Support L2 cache maintenance done via firmware
-Date: Thu, 30 Aug 2018 21:04:20 +0300
-Message-ID: <20180830180421.6415-8-digetx@gmail.com>
+Subject: [PATCH v3 8/8] ARM: tegra: Add firmware calls required for suspend-resume
+Date: Thu, 30 Aug 2018 21:04:21 +0300
+Message-ID: <20180830180421.6415-9-digetx@gmail.com>
 References: <20180830180421.6415-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180830180421.6415-1-digetx@gmail.com>
@@ -10,124 +10,104 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Trusted Foundations firmware require MMU to be enabled for L2 cache
-maintenance on Tegra30, hence perform the maintenance early-late on
-suspend-resume respectively.
+In order to resume CPU from suspend via trusted Foundations firmware,
+the LP1/LP2 boot vectors shall be specified using the firmware calls.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/pm.c            | 36 +++++++++++++++++++++++++++++
- arch/arm/mach-tegra/reset-handler.S |  8 ++-----
- arch/arm/mach-tegra/sleep.S         |  4 ++++
- 3 files changed, 42 insertions(+), 6 deletions(-)
+ arch/arm/mach-tegra/pm.c            |  7 ++++++
+ arch/arm/mach-tegra/reset-handler.S | 33 +++++++++++++++++++++++++++--
+ 2 files changed, 38 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 1ad5719779b0..66c8cd63dd86 100644
+index 66c8cd63dd86..12341ffabb99 100644
 --- a/arch/arm/mach-tegra/pm.c
 +++ b/arch/arm/mach-tegra/pm.c
-@@ -38,6 +38,7 @@
+@@ -33,6 +33,7 @@
+ #include <soc/tegra/pmc.h>
+ 
+ #include <asm/cacheflush.h>
++#include <asm/firmware.h>
+ #include <asm/idmap.h>
+ #include <asm/proc-fns.h>
  #include <asm/smp_plat.h>
- #include <asm/suspend.h>
- #include <asm/tlbflush.h>
-+#include <asm/trusted_foundations.h>
+@@ -150,6 +151,10 @@ bool tegra_set_cpu_in_lp2(void)
+ 		tegra20_cpu_set_resettable_soon();
  
- #include "iomap.h"
- #include "pm.h"
-@@ -195,8 +196,27 @@ void tegra_idle_lp2_last(void)
- 	cpu_cluster_pm_enter();
- 	suspend_cpu_complex();
- 
-+	/*
-+	 * L2 cache disabling using kernel API only allowed when all
-+	 * secondary CPU's are offline. Cache have to be disabled early
-+	 * if cache maintenance is done via Trusted Foundations firmware.
-+	 * Note that CPUIDLE won't ever enter powergate on Tegra30 if any
-+	 * of secondary CPU's is online and this is the LP2 codepath only
-+	 * for Tegra20/30.
-+	 */
-+	if (trusted_foundations_registered())
-+		outer_disable();
+ 	spin_unlock(&tegra_lp2_lock);
 +
- 	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
- 
-+	/*
-+	 * Resume L2 cache if it wasn't re-enabled early during resume,
-+	 * which is the case for Tegra30 that has to re-enable the cache
-+	 * via firmware call. In other cases cache is already enabled and
-+	 * hence re-enabling is a no-op.
-+	 */
-+	outer_resume();
++	if (last_cpu)
++		call_firmware_op(prepare_idle, TF_PM_MODE_LP2);
 +
- 	restore_cpu_complex();
- 	cpu_cluster_pm_exit();
+ 	return last_cpu;
  }
-@@ -340,8 +360,24 @@ static int tegra_suspend_enter(suspend_state_t state)
- 		break;
- 	}
  
-+	/*
-+	 * Cache have to be disabled early if cache maintenance is done
-+	 * via Trusted Foundations firmware. Otherwise this is a no-op,
-+	 * like on Tegra114+.
-+	 */
-+	if (trusted_foundations_registered())
-+		outer_disable();
-+
- 	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, tegra_sleep_func);
+@@ -316,6 +321,8 @@ static void tegra_suspend_enter_lp1(void)
+ 		tegra_lp1_iram.start_addr, iram_save_size);
  
-+	/*
-+	 * Resume L2 cache if it wasn't re-enabled early during resume,
-+	 * which is the case for Tegra30 that has to re-enable the cache
-+	 * via firmware call. In other cases cache is already enabled and
-+	 * hence re-enabling is a no-op.
-+	 */
-+	outer_resume();
+ 	*((u32 *)tegra_cpu_lp1_mask) = 1;
 +
- 	switch (mode) {
- 	case TEGRA_SUSPEND_LP1:
- 		tegra_suspend_exit_lp1();
++	call_firmware_op(prepare_idle, TF_PM_MODE_LP1);
+ }
+ 
+ static void tegra_suspend_exit_lp1(void)
 diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index 555c652f5a07..4973ea053bd7 100644
+index 4973ea053bd7..0e208b2e246e 100644
 --- a/arch/arm/mach-tegra/reset-handler.S
 +++ b/arch/arm/mach-tegra/reset-handler.S
 @@ -69,7 +69,7 @@ ENTRY(tegra_resume)
  
  	mov32	r9, 0xc09
  	cmp	r8, r9
--	bne	end_ca9_scu_l2_resume
-+	bne	end_ca9_scu_resume
+-	bne	end_ca9_scu_resume
++	bne	end_ca9_scu_l2_resume
  #ifdef CONFIG_HAVE_ARM_SCU
  	/* enable SCU */
  	mov32	r0, TEGRA_ARM_PERIF_BASE
-@@ -78,11 +78,7 @@ ENTRY(tegra_resume)
+@@ -77,14 +77,43 @@ ENTRY(tegra_resume)
+ 	orr	r1, r1, #1
  	str	r1, [r0]
  #endif
++	bl	tegra_resume_trusted_foundations
  
--#ifdef CONFIG_CACHE_L2X0
--	/* L2 cache resume & re-enable */
--	bl	l2c310_early_resume
--#endif
--end_ca9_scu_l2_resume:
-+end_ca9_scu_resume:
+-end_ca9_scu_resume:
++#ifdef CONFIG_CACHE_L2X0
++	/* L2 cache resume & re-enable */
++	bleq	l2c310_early_resume		@ No, resume cache early
++#endif
++end_ca9_scu_l2_resume:
  	mov32	r9, 0xc0f
  	cmp	r8, r9
  	bleq	tegra_init_l2_for_a15
-diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-index 5e3496753df1..b96126fe5dc5 100644
---- a/arch/arm/mach-tegra/sleep.S
-+++ b/arch/arm/mach-tegra/sleep.S
-@@ -132,8 +132,12 @@ ENTRY(tegra_shut_off_mmu)
- #ifdef CONFIG_CACHE_L2X0
- 	/* Disable L2 cache */
- 	check_cpu_part_num 0xc09, r9, r10
-+	retne	r0
+ 
+ 	b	cpu_resume
+ ENDPROC(tegra_resume)
 +
- 	movweq	r2, #:lower16:(TEGRA_ARM_PERIF_BASE + 0x3000)
- 	movteq	r2, #:upper16:(TEGRA_ARM_PERIF_BASE + 0x3000)
-+	ldr	r3, [r2, #L2X0_CTRL]
-+	cmp	r3, #1
- 	moveq	r3, #0
- 	streq	r3, [r2, #L2X0_CTRL]
++/*
++ *	tegra_resume_trusted_foundations
++ *
++ *	  Trusted Foundations firmware initialization.
++ *
++ *	Doesn't return if firmware presents.
++ *	Corrupted registers: r1, r2
++ */
++ENTRY(tegra_resume_trusted_foundations)
++	/* Check whether Trusted Foundations firmware presents. */
++	mov32	r2, TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET
++	ldr	r1, =__tegra_cpu_reset_handler_data_offset + \
++							RESET_DATA(TF_PRESENT)
++	ldr	r1, [r2, r1]
++	cmp	r1, #0
++	reteq	lr
++
++ .arch_extension sec
++	/* First call after suspend wakes firmware. No arguments required. */
++	smc	#0
++
++	b	cpu_resume
++ENDPROC(tegra_resume_trusted_foundations)
  #endif
+ 
+ 	.align L1_CACHE_SHIFT
 -- 
 2.18.0
