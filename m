@@ -1,52 +1,68 @@
-From: Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v3 38/38] arm64: dts: tegra210: Assign clocks for sdmmc1 and sdmmc4
-Date: Thu, 30 Aug 2018 18:06:39 +0300
-Message-ID: <20180830150639.21048-39-avienamo@nvidia.com>
-References: <20180830150639.21048-1-avienamo@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2] ARM: tegra: tegra20: Fix mixed tabs-spaces indentation
+Date: Thu, 30 Aug 2018 19:21:53 +0200
+Message-ID: <20180830172153.20653-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830150639.21048-1-avienamo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, Stefan Agner <stefan@agner.ch>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use assigned-clock properties to configure pllc4 as the parent clock
-for sdmmc4 on Tegra210. pllc4 offers better jitter perfomance than
-the default pllp and is required by HS200 and HS400 modes.
+Fix indentation and alignment when spaces were used instead of tabs.
+This fixes checkpatch errors like:
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
+    ERROR: code indent should use tabs where possible
+    #306: FILE: arch/arm/boot/dts/tegra20-paz00.dts:306:
+    +^I^I         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;$
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 0951acc69cc8..14da98ac65e8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1057,6 +1057,11 @@
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x7b>;
- 		nvidia,default-tap = <0x2>;
- 		nvidia,default-trim = <0x4>;
-+		assigned-clocks = <&tegra_car TEGRA210_CLK_SDMMC4>,
-+				  <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>,
-+				  <&tegra_car TEGRA210_CLK_PLL_C4>;
-+		assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
-+		assigned-clock-rates = <200000000>, <1000000000>, <1000000000>;
- 		status = "disabled";
- 	};
+Changes since v1:
+1. Add Marcel's ack.
+---
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts    | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index e7b9ab09908a..fa1af2dc276c 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -541,7 +541,7 @@
  
-@@ -1107,6 +1112,9 @@
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		nvidia,default-tap = <0x8>;
- 		nvidia,default-trim = <0x0>;
-+		assigned-clocks = <&tegra_car TEGRA210_CLK_SDMMC4>,
-+				  <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
-+		assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
- 		status = "disabled";
- 	};
+ 	sound {
+ 		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
+-			         "nvidia,tegra-audio-wm9712";
++			     "nvidia,tegra-audio-wm9712";
+ 		nvidia,model = "Colibri T20 AC97 Audio";
  
+ 		nvidia,audio-routing =
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index ef245291924f..7d8aef6ebd3a 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -303,7 +303,7 @@
+ 		request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+ 		slave-addr = <138>;
+ 		clocks = <&tegra_car TEGRA20_CLK_I2C3>,
+-		         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
++			 <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
+ 		clock-names = "div-clk", "fast-clk";
+ 		resets = <&tegra_car 67>;
+ 		reset-names = "i2c";
+@@ -599,8 +599,8 @@
+ 			GPIO_ACTIVE_HIGH>;
+ 
+ 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
+-		         <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
+-		         <&tegra_car TEGRA20_CLK_CDEV1>;
++			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
++			 <&tegra_car TEGRA20_CLK_CDEV1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
 -- 
-2.18.0
+2.14.1
