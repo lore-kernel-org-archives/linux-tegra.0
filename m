@@ -1,68 +1,61 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2] ARM: tegra: tegra20: Fix mixed tabs-spaces indentation
-Date: Thu, 30 Aug 2018 19:21:53 +0200
-Message-ID: <20180830172153.20653-1-krzk@kernel.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3 0/8] Support Trusted Foundations firmware on Tegra30
+Date: Thu, 30 Aug 2018 21:04:13 +0300
+Message-ID: <20180830180421.6415-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix indentation and alignment when spaces were used instead of tabs.
-This fixes checkpatch errors like:
+Hello,
 
-    ERROR: code indent should use tabs where possible
-    #306: FILE: arch/arm/boot/dts/tegra20-paz00.dts:306:
-    +^I^I         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;$
+All consumer-grade Tegra30 devices, like Nexus 7 tablet; Ouya console and
+others, use Trusted Foundations firmware that doesn't allow CPU to access
+secure registers directly from the Linux kernel, these accesses shall be
+done via the firmware calls. This patch-series adds a full-featured support
+of the Trusted Foundations firmware that opens the door for supporting of
+various Tegra30-based devices in the upstream Linux kernel.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Changelog:
 
----
+v3:	- Implemented suspend-resume support.
 
-Changes since v1:
-1. Add Marcel's ack.
----
- arch/arm/boot/dts/tegra20-colibri.dtsi | 2 +-
- arch/arm/boot/dts/tegra20-paz00.dts    | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+	- Reworked arm/firmware/trusted_foundations.c a tad. Now cache
+	  is getting properly initialized, cache enabling / disabling is
+	  supported.
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index e7b9ab09908a..fa1af2dc276c 100644
---- a/arch/arm/boot/dts/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -541,7 +541,7 @@
- 
- 	sound {
- 		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
--			         "nvidia,tegra-audio-wm9712";
-+			     "nvidia,tegra-audio-wm9712";
- 		nvidia,model = "Colibri T20 AC97 Audio";
- 
- 		nvidia,audio-routing =
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index ef245291924f..7d8aef6ebd3a 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -303,7 +303,7 @@
- 		request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
- 		slave-addr = <138>;
- 		clocks = <&tegra_car TEGRA20_CLK_I2C3>,
--		         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
-+			 <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
- 		clock-names = "div-clk", "fast-clk";
- 		resets = <&tegra_car 67>;
- 		reset-names = "i2c";
-@@ -599,8 +599,8 @@
- 			GPIO_ACTIVE_HIGH>;
- 
- 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
--		         <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
--		         <&tegra_car TEGRA20_CLK_CDEV1>;
-+			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
-+			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
- };
+v2:
+	- The "Don't apply CPU erratas in insecure mode" patch got some
+	  cleanup, in particular resolved the messiness in
+	  __tegra_cpu_reset_handler_data.
+
+	- Added a comment to tf_cache_write_sec(), justifying the warning
+	  message.
+
+Dmitry Osipenko (8):
+  ARM: trusted_foundations: Implement L2 cache initialization callback
+  ARM: trusted_foundations: Make prepare_idle call to take mode argument
+  ARM: trusted_foundations: Provide information about whether firmware
+    is registered
+  ARM: tegra: Setup L2 cache using Trusted Foundations firmware
+  ARM: tegra: Don't apply CPU erratas in insecure mode
+  ARM: tegra: Always boot CPU in ARM-mode
+  ARM: tegra: Support L2 cache maintenance done via firmware
+  ARM: tegra: Add firmware calls required for suspend-resume
+
+ arch/arm/firmware/trusted_foundations.c    | 80 +++++++++++++++++++++-
+ arch/arm/include/asm/firmware.h            |  2 +-
+ arch/arm/include/asm/trusted_foundations.h | 13 ++++
+ arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 +-
+ arch/arm/mach-tegra/pm.c                   | 43 ++++++++++++
+ arch/arm/mach-tegra/reset-handler.S        | 66 ++++++++++++++----
+ arch/arm/mach-tegra/reset.c                |  3 +
+ arch/arm/mach-tegra/reset.h                |  9 ++-
+ arch/arm/mach-tegra/sleep-tegra20.S        |  4 ++
+ arch/arm/mach-tegra/sleep.S                |  4 ++
+ arch/arm/mach-tegra/tegra.c                | 10 +++
+ 11 files changed, 216 insertions(+), 21 deletions(-)
+
 -- 
-2.14.1
+2.18.0
