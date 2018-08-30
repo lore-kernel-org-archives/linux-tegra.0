@@ -1,76 +1,42 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 2/3] clk: tegra: Add more rates to Tegra30 PLLX frequency table
-Date: Thu, 30 Aug 2018 22:20:44 +0300
-Message-ID: <20180830192045.11017-3-digetx@gmail.com>
-References: <20180830192045.11017-1-digetx@gmail.com>
+Subject: [PATCH v1 0/5] CPUFREQ OPP's and Tegra30 support by tegra20-cpufreq driver
+Date: Thu, 30 Aug 2018 22:43:51 +0300
+Message-ID: <20180830194356.14059-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830192045.11017-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add more predefined rates to the PLLX table, allowing to lower the rate
-down to 312MHz. This gives more variations of frequency selection to the
-CPUFREQ driver.
+Hello,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra30.c | 42 +++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+This series adds support for CPU frequency scaling on Tegra30 and device
+tree support that allows to implement thermal throttling and customize
+available CPU frequencies per-board. The tegra20-cpufreq driver has been
+re-worked to support that all.
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index c4b78316ba8a..0f8797ca39e2 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -342,6 +342,48 @@ static struct tegra_clk_pll_freq_table pll_x_freq_table[] = {
- 	{ 16800000, 1000000000,  833, 14, 1, 8 }, /* actual: 999.6 MHz */
- 	{ 19200000, 1000000000,  625, 12, 1, 8 },
- 	{ 26000000, 1000000000, 1000, 26, 1, 8 },
-+	/* 912 MHz */
-+	{ 12000000,  912000000,  912, 12, 1, 8 },
-+	{ 13000000,  912000000,  912, 13, 1, 8 },
-+	{ 16800000,  912000000,  760, 14, 1, 8 },
-+	{ 19200000,  912000000,  760, 16, 1, 8 },
-+	{ 26000000,  912000000,  912, 26, 1, 8 },
-+	/* 816 MHz */
-+	{ 12000000,  816000000,  816, 12, 1, 8 },
-+	{ 13000000,  816000000,  816, 13, 1, 8 },
-+	{ 16800000,  816000000,  680, 14, 1, 8 },
-+	{ 19200000,  816000000,  680, 16, 1, 8 },
-+	{ 26000000,  816000000,  816, 26, 1, 8 },
-+	/* 760 MHz */
-+	{ 12000000,  760000000,  760, 12, 1, 8 },
-+	{ 13000000,  760000000,  760, 13, 1, 8 },
-+	{ 16800000,  760000000,  950, 21, 1, 8 },
-+	{ 19200000,  760000000,  950, 24, 1, 8 },
-+	{ 26000000,  760000000,  760, 26, 1, 8 },
-+	/* 750 MHz */
-+	{ 12000000,  750000000,  750, 12, 1, 8 },
-+	{ 13000000,  750000000,  750, 13, 1, 8 },
-+	{ 16800000,  750000000,  625, 14, 1, 8 },
-+	{ 19200000,  750000000,  625, 16, 1, 8 },
-+	{ 26000000,  750000000,  750, 26, 1, 8 },
-+	/* 608 MHz */
-+	{ 12000000,  608000000,  608, 12, 1, 8 },
-+	{ 13000000,  608000000,  608, 13, 1, 8 },
-+	{ 16800000,  608000000,  760, 21, 1, 8 },
-+	{ 19200000,  608000000,  380, 12, 1, 8 },
-+	{ 26000000,  608000000,  608, 26, 1, 8 },
-+	/* 456 MHz */
-+	{ 12000000,  456000000,  456, 12, 1, 8 },
-+	{ 13000000,  456000000,  456, 13, 1, 8 },
-+	{ 16800000,  456000000,  380, 15, 1, 8 },
-+	{ 19200000,  456000000,  380, 14, 1, 8 },
-+	{ 26000000,  456000000,  456, 26, 1, 8 },
-+	/* 312 MHz */
-+	{ 12000000,  312000000,  312, 12, 1, 8 },
-+	{ 13000000,  312000000,  312, 13, 1, 8 },
-+	{ 16800000,  312000000,  260, 14, 1, 8 },
-+	{ 19200000,  312000000,  260, 16, 1, 8 },
-+	{ 26000000,  312000000,  312, 26, 1, 8 },
- 	{        0,          0,    0,  0, 0, 0 },
- };
- 
+Note that Tegra30 support not strictly depends on the clock patches that
+are under review now, CPUFREQ driver will fail to probe until CCLKG clock
+will get exposed by the clock driver. Hence this series can be applied
+independently of the clock patches, CPUFREQ will start to work on Tegra30
+once both patchsets will be applied.
+
+Dmitry Osipenko (5):
+  dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
+  cpufreq: tegra20: Support OPP, thermal cooling and Tegra30
+  ARM: tegra: Create tegra20-cpufreq device on Tegra30
+  ARM: dts: tegra20: Add CPU Operating Performance Points
+  ARM: dts: tegra30: Add CPU Operating Performance Points
+
+ .../cpufreq/nvidia,tegra20-cpufreq.txt        |  38 ++
+ arch/arm/boot/dts/tegra20.dtsi                |  58 +++
+ arch/arm/boot/dts/tegra30.dtsi                |  65 ++++
+ arch/arm/mach-tegra/tegra.c                   |   4 +
+ drivers/cpufreq/Kconfig.arm                   |   2 +
+ drivers/cpufreq/cpufreq-dt-platdev.c          |   2 +
+ drivers/cpufreq/tegra20-cpufreq.c             | 334 +++++++++++++-----
+ 7 files changed, 422 insertions(+), 81 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+
 -- 
 2.18.0
