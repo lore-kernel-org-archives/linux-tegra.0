@@ -1,191 +1,142 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
-Date: Thu, 30 Aug 2018 21:36:34 +0300
-Message-ID: <20180830183635.4474-1-digetx@gmail.com>
+Subject: [PATCH v2 1/2] clk: tegra: Don't enable already enabled PLLs
+Date: Thu, 30 Aug 2018 21:42:09 +0300
+Message-ID: <20180830184210.5369-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
-and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
-offline.
-
- BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
- in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
- CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
- Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
- [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
- [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
- [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
- [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
- [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
- [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
- [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
- [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
- [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
- [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
- [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
- [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
- [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
- [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
- [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
+Initially Common Clock Framework isn't aware of the clock-enable status,
+this results in enabling of clocks that were enabled by bootloader. This
+is not a big deal for a regular clock-gates, but for PLL's it may have
+some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
+clock) may result in extra long period of PLL re-locking.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 2d6f3fcf3211..d6bc9f66f1cd 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -186,7 +186,7 @@ struct tegra_pmc_soc {
-  * @lp0_vec_phys: physical base address of the LP0 warm boot code
-  * @lp0_vec_size: size of the LP0 warm boot code
-  * @powergates_available: Bitmap of available power gates
-- * @powergates_lock: mutex for power gate register access
-+ * @powergates_lock: lock for power gate register access
-  */
- struct tegra_pmc {
- 	struct device *dev;
-@@ -215,7 +215,7 @@ struct tegra_pmc {
- 	u32 lp0_vec_size;
- 	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
+Changelog:
+
+v2:	No change.
+
+ drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 830d1c87fa7c..ddb431247f08 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
+ 	unsigned long flags = 0;
+ 	int ret;
  
--	struct mutex powergates_lock;
-+	spinlock_t powergates_lock;
- };
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
  
- static struct tegra_pmc *pmc = &(struct tegra_pmc) {
-@@ -288,10 +288,10 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
- 	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
- 		return -EINVAL;
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 
- 	if (tegra_powergate_state(id) == new_state) {
--		mutex_unlock(&pmc->powergates_lock);
-+		spin_unlock(&pmc->powergates_lock);
- 		return 0;
- 	}
- 
-@@ -300,7 +300,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
- 	err = readx_poll_timeout(tegra_powergate_state, id, status,
- 				 status == new_state, 10, 100000);
- 
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 
- 	return err;
- }
-@@ -309,7 +309,7 @@ static int __tegra_powergate_remove_clamping(unsigned int id)
+@@ -939,11 +942,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
+ static int clk_plle_enable(struct clk_hw *hw)
  {
- 	u32 mask;
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 	struct tegra_clk_pll_freq_table sel;
++	unsigned long input_rate;
+ 	u32 val;
+ 	int err;
  
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 
- 	/*
- 	 * On Tegra124 and later, the clamps for the GPU are controlled by a
-@@ -336,7 +336,7 @@ static int __tegra_powergate_remove_clamping(unsigned int id)
- 	tegra_pmc_writel(mask, REMOVE_CLAMPING);
- 
- out:
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 
- 	return 0;
- }
-@@ -529,9 +529,9 @@ int tegra_powergate_is_powered(unsigned int id)
- 	if (!tegra_powergate_is_valid(id))
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
  		return -EINVAL;
  
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 	status = tegra_powergate_state(id);
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
+@@ -1354,6 +1362,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
+ 	int ret;
+ 	unsigned long flags = 0;
  
- 	return status;
- }
-@@ -998,7 +998,7 @@ int tegra_io_pad_power_enable(enum tegra_io_pad id)
- 	u32 mask;
- 	int err;
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
  
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
+@@ -1566,7 +1577,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++	unsigned long input_rate;
++
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
  
- 	err = tegra_io_pad_prepare(id, &request, &status, &mask);
- 	if (err < 0) {
-@@ -1017,7 +1017,7 @@ int tegra_io_pad_power_enable(enum tegra_io_pad id)
- 	tegra_io_pad_unprepare();
- 
- unlock:
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 	return err;
- }
- EXPORT_SYMBOL(tegra_io_pad_power_enable);
-@@ -1034,7 +1034,7 @@ int tegra_io_pad_power_disable(enum tegra_io_pad id)
- 	u32 mask;
- 	int err;
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 
- 	err = tegra_io_pad_prepare(id, &request, &status, &mask);
- 	if (err < 0) {
-@@ -1053,7 +1053,7 @@ int tegra_io_pad_power_disable(enum tegra_io_pad id)
- 	tegra_io_pad_unprepare();
- 
- unlock:
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 	return err;
- }
- EXPORT_SYMBOL(tegra_io_pad_power_disable);
-@@ -1071,7 +1071,7 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
- 	if (pad->voltage == UINT_MAX)
- 		return -ENOTSUPP;
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 
- 	/* write-enable PMC_PWR_DET_VALUE[pad->voltage] */
- 	value = tegra_pmc_readl(PMC_PWR_DET);
-@@ -1088,7 +1088,7 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
- 
- 	tegra_pmc_writel(value, PMC_PWR_DET_VALUE);
- 
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 
- 	usleep_range(100, 250);
- 
-@@ -1436,10 +1436,10 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 		return err;
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -1703,6 +1719,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
+ 		return -EINVAL;
  	}
  
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 	iounmap(pmc->base);
- 	pmc->base = base;
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
  
- 	return 0;
+ 	if (pll->lock)
+@@ -2378,6 +2397,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+ 	return clk;
  }
-@@ -1919,7 +1919,7 @@ static int __init tegra_pmc_early_init(void)
- 	struct resource regs;
- 	bool invert;
  
--	mutex_init(&pmc->powergates_lock);
-+	spin_lock_init(&pmc->powergates_lock);
++static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	u32 val;
++
++	val = pll_readl_base(pll);
++
++	return val & PLLE_BASE_ENABLE ? 1 : 0;
++}
++
+ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+@@ -2385,7 +2414,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret = 0;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++	unsigned long input_rate;
++
++	if (clk_plle_tegra210_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
  
- 	np = of_find_matching_node_and_match(NULL, tegra_pmc_match, &match);
- 	if (!np) {
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -2496,16 +2530,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
+ 
+-static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	u32 val;
+-
+-	val = pll_readl_base(pll);
+-
+-	return val & PLLE_BASE_ENABLE ? 1 : 0;
+-}
+-
+ static const struct clk_ops tegra_clk_plle_tegra210_ops = {
+ 	.is_enabled =  clk_plle_tegra210_is_enabled,
+ 	.enable = clk_plle_tegra210_enable,
 -- 
 2.18.0
