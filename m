@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 2/8] ARM: trusted_foundations: Make prepare_idle call to take mode argument
-Date: Thu, 30 Aug 2018 21:04:15 +0300
-Message-ID: <20180830180421.6415-3-digetx@gmail.com>
+Subject: [PATCH v3 4/8] ARM: tegra: Setup L2 cache using Trusted Foundations firmware
+Date: Thu, 30 Aug 2018 21:04:17 +0300
+Message-ID: <20180830180421.6415-5-digetx@gmail.com>
 References: <20180830180421.6415-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180830180421.6415-1-digetx@gmail.com>
@@ -10,109 +10,45 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Trusted Foundations firmware call varies depending on the required
-suspend-mode. Make the firmware API to take the mode argument in order
-to expose all of the modes to firmware user.
+On Tegra30 L2 cache should be initialized using firmware call if CPU is
+running in insecure mode. Initialize L2 cache and setup the outer-cache
+callbacks in early boot using the firmware API.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/firmware/trusted_foundations.c    | 29 ++++++++++++++++++++--
- arch/arm/include/asm/firmware.h            |  2 +-
- arch/arm/include/asm/trusted_foundations.h |  6 +++++
- arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 ++-
- 4 files changed, 36 insertions(+), 4 deletions(-)
+ arch/arm/mach-tegra/tegra.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
-index 3bf61a5933b9..c496f4cc49cb 100644
---- a/arch/arm/firmware/trusted_foundations.c
-+++ b/arch/arm/firmware/trusted_foundations.c
-@@ -67,9 +67,34 @@ static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
- 	return 0;
- }
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index f9587be48235..67d8ae60ac67 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -38,6 +38,7 @@
+ #include <soc/tegra/fuse.h>
+ #include <soc/tegra/pmc.h>
  
--static int tf_prepare_idle(void)
-+static int tf_prepare_idle(unsigned long mode)
++#include <asm/firmware.h>
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
+@@ -70,9 +71,18 @@ u32 tegra_uart_config[3] = {
+ 	0,
+ };
+ 
++static void __init tegra_trusted_foundations_l2x0_cache_init(void)
++{
++	if (IS_ENABLED(CONFIG_CACHE_L2X0) &&
++	    IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) &&
++	    of_machine_is_compatible("nvidia,tegra30"))
++		call_firmware_op(l2x0_init);
++}
++
+ static void __init tegra_init_early(void)
  {
--	tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1_NOFLUSH_L2, cpu_boot_addr);
-+	switch (mode) {
-+	case TF_PM_MODE_LP0:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S3, cpu_boot_addr);
-+		break;
-+
-+	case TF_PM_MODE_LP1:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S2, cpu_boot_addr);
-+		break;
-+
-+	case TF_PM_MODE_LP1_NO_MC_CLK:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S2_NO_MC_CLK,
-+			       cpu_boot_addr);
-+		break;
-+
-+	case TF_PM_MODE_LP2:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1, cpu_boot_addr);
-+		break;
-+
-+	case TF_PM_MODE_LP2_NOFLUSH_L2:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1_NOFLUSH_L2,
-+			       cpu_boot_addr);
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
- 
- 	return 0;
+ 	of_register_trusted_foundations();
++	tegra_trusted_foundations_l2x0_cache_init();
+ 	tegra_cpu_reset_handler_init();
  }
-diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
-index 34c1d96ef46d..6698272bbcbf 100644
---- a/arch/arm/include/asm/firmware.h
-+++ b/arch/arm/include/asm/firmware.h
-@@ -24,7 +24,7 @@ struct firmware_ops {
- 	/*
- 	 * Inform the firmware we intend to enter CPU idle mode
- 	 */
--	int (*prepare_idle)(void);
-+	int (*prepare_idle)(unsigned long mode);
- 	/*
- 	 * Enters CPU idle mode
- 	 */
-diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
-index 00748350cf72..cdd48ab7d191 100644
---- a/arch/arm/include/asm/trusted_foundations.h
-+++ b/arch/arm/include/asm/trusted_foundations.h
-@@ -32,6 +32,12 @@
- #include <linux/cpu.h>
- #include <linux/smp.h>
  
-+#define TF_PM_MODE_LP0			0
-+#define TF_PM_MODE_LP1			1
-+#define TF_PM_MODE_LP1_NO_MC_CLK	2
-+#define TF_PM_MODE_LP2			3
-+#define TF_PM_MODE_LP2_NOFLUSH_L2	4
-+
- struct trusted_foundations_platform_data {
- 	unsigned int version_major;
- 	unsigned int version_minor;
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-index e3fbcfedf845..3b9af4766cdf 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra114.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-@@ -24,6 +24,7 @@
- #include <asm/cpuidle.h>
- #include <asm/smp_plat.h>
- #include <asm/suspend.h>
-+#include <asm/trusted_foundations.h>
- #include <asm/psci.h>
- 
- #include "cpuidle.h"
-@@ -46,7 +47,7 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
- 	tegra_set_cpu_in_lp2();
- 	cpu_pm_enter();
- 
--	call_firmware_op(prepare_idle);
-+	call_firmware_op(prepare_idle, TF_PM_MODE_LP2_NOFLUSH_L2);
- 
- 	/* Do suspend by ourselves if the firmware does not implement it */
- 	if (call_firmware_op(do_idle, 0) == -ENOSYS)
 -- 
 2.18.0
