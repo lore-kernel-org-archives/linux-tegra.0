@@ -1,135 +1,76 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH v3 00/38] Tegra SDHCI add support for HS200 and UHS
- signaling
-Date: Fri, 31 Aug 2018 10:20:34 +0300
-Message-ID: <c0b484dc-bfb1-244b-f40e-e6511b8888ba@intel.com>
-References: <20180830150639.21048-1-avienamo@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 02/12] fbdev: allow apertures == NULL in
+	remove_conflicting_framebuffers()
+Date: Fri, 31 Aug 2018 10:56:56 +0200
+Message-ID: <20180831085656.GR21634@phenom.ffwll.local>
+References: <cover.1535656077.git.mirq-linux@rere.qmqm.pl>
+	<7e3a48e397298b38d7ddc7f45d48226d1f5db3e4.1535656077.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830150639.21048-1-avienamo@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mikko Perttunen <mperttunen@nvidia.com>, Stefan Agner <stefan@agner.ch>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+Content-Disposition: inline
+In-Reply-To: <7e3a48e397298b38d7ddc7f45d48226d1f5db3e4.1535656077.git.mirq-linux@rere.qmqm.pl>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-fbdev@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Alex Deucher <alexander.deucher@amd.com>, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 30/08/18 18:06, Aapo Vienamo wrote:
-> Hi all,
-> 
-> This series implements support for faster signaling modes on Tegra
-> SDHCI controllers. This series consist of several parts: changes
-> required for 1.8 V signaling and pad control, pad calibration, and
-> tuning. Following earlies patch sets have been merged into this
-> larger set: "Tegra PMC pinctrl pad configuration", "Tegra SDHCI enable
-> 1.8 V signaling on Tegar210 and Tegra186", "Tegra SDHCI update the
-> padautocal procedure". Also the patches for enabling SDHCI tuning
-> are added.
-
-For sdhci-related patches 11 thru' 27
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-
-> 
-> Changelog:
-> v3:
-> 	- Remove tegra_sdhci_writew() from tegra210_sdhci_ops to prevent
-> 	  incorrect access to SDHCI_TRANSFER_MODE on Tegra210.
-> 	- Drop "mmc: sdhci: Add a quirk to skip clearing the transfer
-> 	  mode register on tuning". This is no longer needed since it
-> 	  was effectively a workaround to the behavior caused by
-> 	  tegra_sdhci_writew() on Tegra210.
-> 	- Implement disabling of the card clock during issuing of the
-> 	  tuning command in tegra210_sdhci_writew().
-> 	- Drop "mmc: sdhci: Add a quirk to disable card clock during
-> 	  tuning". This is now implemented in the sdhci-tegra driver.
-> 	
-> v2:
-> 	- Fix grammar in PMC device tree bindings docs
-> 	- Remove a stray line from tegra sdhci bindings
-> 	- Cosmetic changes to PMC pinctrl driver
-> 	- Fix a typo in "soc/tegra: pmc: Implement
-> 	  tegra_io_pad_is_powered()" commit message
-> 	- Declare mask and value on the same line in
-> 	  tegra_io_pad_is_powered()
-> 	- Move the call to tegra_sdhci_is_pad_and_regulator_valid() to
-> 	  inside the if condition in tegra_sdhci_reset()
-> 	- Use usleep_range() in tegra_sdhci_configure_cal_pad()
-> 	- Move sdhci_writel() out of the enable if-else body in
-> 	  tegra_sdhci_configure_cal_pad()
-> 	- Add a delay before starting polling in
-> 	  tegra_sdhci_pad_autocalib()
-> 	- Use usleep_range() in tegra_sdhci_set_tap()
-> 	- Rename orig_enabled to status in
-> 	  tegra_sdhci_configure_card_clk()
-> 	- Fix if condition wrapping alignment in tegra_sdhci_set_tap()
-> 
-> v1:
-> 	- Probe the regulator voltage capabilities to determine whether pinctrl
-> 	  is needed in tegra_sdhci_r eset
-> 	- Don't remove tegra_sdhci_voltage_switch()
-> 	- Use dev_warn() in tegra_sdhci_init_pinctrl_info()
-> 	- Don't change start_signal_voltage_switch callback if pinctrl info
-> 	  invalid
-> 	- Only call udelay(1) on enable in tegra_sdhci_configure_cal_pad()
-> 	- Add nvidia, prefix to pad autocal offset dt props in the example
-> 
-> See the original patch sets for earlier changelogs.
-> 
-> 
-> Aapo Vienamo (38):
->   dt-bindings: Add Tegra PMC pad configuration bindings
->   dt-bindings: mmc: tegra: Add pad voltage control properties
->   dt-bindings: Add Tegra SDHCI pad pdpu offset bindings
->   dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
->   soc/tegra: pmc: Fix pad voltage configuration for Tegra186
->   soc/tegra: pmc: Factor out DPD register bit calculation
->   soc/tegra: pmc: Implement tegra_io_pad_is_powered()
->   soc/tegra: pmc: Use X macro to generate IO pad tables
->   soc/tegra: pmc: Remove public pad voltage APIs
->   soc/tegra: pmc: Implement pad configuration via pinctrl
->   mmc: tegra: Reconfigure pad voltages during voltage switching
->   mmc: tegra: Poll for calibration completion
->   mmc: tegra: Set calibration pad voltage reference
->   mmc: tegra: Power on the calibration pad
->   mmc: tegra: Disable card clock during pad calibration
->   mmc: tegra: Program pad autocal offsets from dt
->   mmc: tegra: Perform pad calibration after voltage switch
->   mmc: tegra: Enable pad calibration on Tegra210 and Tegra186
->   mmc: tegra: Add a workaround for tap value change glitch
->   mmc: tegra: Parse default trim and tap from dt
->   mmc: tegra: Configure default tap values
->   mmc: tegra: Configure default trim value on reset
->   mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
->   mmc: tegra: Remove tegra_sdhci_writew() from tegra210_sdhci_ops
->   mmc: tegra: Disable card clock during tuning cmd on Tegra210
->   mmc: tegra: Enable UHS and HS200 modes for Tegra210
->   mmc: tegra: Enable UHS and HS200 modes for Tegra186
->   arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
->   arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
->   arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
->   arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
->   arm64: dts: tegra210-p2597: Remove no-1-8-v from sdmmc1
->   arm64: dts: tegra186: Add sdmmc pad auto calibration offsets
->   arm64: dts: tegra210: Add sdmmc pad auto calibration offsets
->   arm64: dts: tegra210: Add SDHCI tap and trim values
->   arm64: dts: tegra186: Add SDHCI tap and trim values
->   arm64: dts: tegra186: Assign clocks for sdmmc1 and sdmmc4
->   arm64: dts: tegra210: Assign clocks for sdmmc1 and sdmmc4
-> 
->  .../arm/tegra/nvidia,tegra186-pmc.txt         |  93 +++
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt | 103 ++++
->  .../bindings/mmc/nvidia,tegra20-sdhci.txt     |  68 ++
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  74 +++
->  .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  12 +-
->  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   1 -
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  55 ++
->  drivers/mmc/host/sdhci-tegra.c                | 583 ++++++++++++++++--
->  drivers/soc/tegra/pmc.c                       | 511 +++++++++++----
->  .../pinctrl/pinctrl-tegra-io-pad.h            |  18 +
->  include/soc/tegra/pmc.h                       |  20 +-
->  11 files changed, 1328 insertions(+), 210 deletions(-)
->  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-> 
+T24gVGh1LCBBdWcgMzAsIDIwMTggYXQgMTE6MDA6MDVQTSArMDIwMCwgTWljaGHFgiBNaXJvc8WC
+YXcgd3JvdGU6Cj4gSW50ZXJwcmV0IChvdGhlcndpc2UtaW52YWxpZCkgTlVMTCBhcGVydHVyZXMg
+YXJndW1lbnQgdG8gbWVhbiBhbGwtbWVtb3J5Cj4gcmFuZ2UuIFRoaXMgd2lsbCBhbGxvdyB0byBy
+ZW1vdmUgc2V2ZXJhbCBkdXBsaWNhdGVzIG9mIHRoaXMgY29kZSBmcm9tCj4gZHJpdmVycyBpbiBm
+b2xsb3dpbmcgcGF0Y2hlcy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBNaWNoYcWCIE1pcm9zxYJhdyA8
+bWlycS1saW51eEByZXJlLnFtcW0ucGw+Cj4gW2ZvciB2MV0KPiBBY2tlZC1ieTogQmFydGxvbWll
+aiBab2xuaWVya2lld2ljeiA8Yi56b2xuaWVya2llQHNhbXN1bmcuY29tPgo+IAo+IC0tLQo+IHYy
+OiBhZGRlZCBrZXJuZWxkb2MgdG8gY29ycmVzcG9uZGluZyBEUk0gaGVscGVyCj4gLS0tCj4gIGRy
+aXZlcnMvdmlkZW8vZmJkZXYvY29yZS9mYm1lbS5jIHwgMTQgKysrKysrKysrKysrKysKPiAgaW5j
+bHVkZS9kcm0vZHJtX2ZiX2hlbHBlci5oICAgICAgfCAxMCArKysrKysrKysrCj4gIDIgZmlsZXMg
+Y2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVv
+L2ZiZGV2L2NvcmUvZmJtZW0uYyBiL2RyaXZlcnMvdmlkZW8vZmJkZXYvY29yZS9mYm1lbS5jCj4g
+aW5kZXggMzBhMThkNGM5ZGU0Li4wZGYxNDhlYjQ2OTkgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy92
+aWRlby9mYmRldi9jb3JlL2ZibWVtLmMKPiArKysgYi9kcml2ZXJzL3ZpZGVvL2ZiZGV2L2NvcmUv
+ZmJtZW0uYwo+IEBAIC0xNzc5LDExICsxNzc5LDI1IEBAIGludCByZW1vdmVfY29uZmxpY3Rpbmdf
+ZnJhbWVidWZmZXJzKHN0cnVjdCBhcGVydHVyZXNfc3RydWN0ICphLAo+ICAJCQkJICAgIGNvbnN0
+IGNoYXIgKm5hbWUsIGJvb2wgcHJpbWFyeSkKPiAgewo+ICAJaW50IHJldDsKPiArCWJvb2wgZG9f
+ZnJlZSA9IGZhbHNlOwo+ICsKPiArCWlmICghYSkgewo+ICsJCWEgPSBhbGxvY19hcGVydHVyZXMo
+MSk7Cj4gKwkJaWYgKCFhKQo+ICsJCQlyZXR1cm4gLUVOT01FTTsKPiArCj4gKwkJYS0+cmFuZ2Vz
+WzBdLmJhc2UgPSAwOwo+ICsJCWEtPnJhbmdlc1swXS5zaXplID0gfjA7Cj4gKwkJZG9fZnJlZSA9
+IHRydWU7Cj4gKwl9Cj4gIAo+ICAJbXV0ZXhfbG9jaygmcmVnaXN0cmF0aW9uX2xvY2spOwo+ICAJ
+cmV0ID0gZG9fcmVtb3ZlX2NvbmZsaWN0aW5nX2ZyYW1lYnVmZmVycyhhLCBuYW1lLCBwcmltYXJ5
+KTsKPiAgCW11dGV4X3VubG9jaygmcmVnaXN0cmF0aW9uX2xvY2spOwo+ICAKPiArCWlmIChkb19m
+cmVlKQo+ICsJCWtmcmVlKGEpOwo+ICsKPiAgCXJldHVybiByZXQ7Cj4gIH0KPiAgRVhQT1JUX1NZ
+TUJPTChyZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKTsKPiBkaWZmIC0tZ2l0IGEvaW5j
+bHVkZS9kcm0vZHJtX2ZiX2hlbHBlci5oIGIvaW5jbHVkZS9kcm0vZHJtX2ZiX2hlbHBlci5oCj4g
+aW5kZXggYjA2OTQzM2U3ZmMxLi4xYzFlNTNhYmIyNWQgMTAwNjQ0Cj4gLS0tIGEvaW5jbHVkZS9k
+cm0vZHJtX2ZiX2hlbHBlci5oCj4gKysrIGIvaW5jbHVkZS9kcm0vZHJtX2ZiX2hlbHBlci5oCj4g
+QEAgLTU2Niw2ICs1NjYsMTYgQEAgc3RhdGljIGlubGluZSB2b2lkIGRybV9mYl9oZWxwZXJfb3V0
+cHV0X3BvbGxfY2hhbmdlZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQo+ICAKPiAgI2VuZGlmCj4g
+IAo+ICsvKioKPiArICogZHJtX2ZiX2hlbHBlcl9yZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZm
+ZXJzIC0gcmVtb3ZlIGZpcm13YXJlIGZyYW1lYnVmZmVycwo+ICsgKiBAYTogbWVtb3J5IHJhbmdl
+LCB1c2VycyBvZiB3aGljaCBhcmUgdG8gYmUgcmVtb3ZlZAo+ICsgKiBAbmFtZTogcmVxdWVzdGlu
+ZyBkcml2ZXIgbmFtZQo+ICsgKiBAcHJpbWFyeTogYWxzbyBraWNrIHZnYTE2ZmIgaWYgcHJlc2Vu
+dAo+ICsgKgo+ICsgKiBUaGlzIGZ1bmN0aW9uIHJlbW92ZXMgZnJhbWVidWZmZXIgZGV2aWNlcyAo
+ZWcuIGluaXRpYWxpemVkIGJ5IGZpcm13YXJlKQo+ICsgKiB3aGljaCB1c2UgbWVtb3J5IHJhbmdl
+IGRlc2NyaWJlZCBieSBAYS4gSWYgQGEgaXMgTlVMTCBhbGwgc3VjaCBkZXZpY2VzIGFyZQo+ICsg
+KiByZW1vdmVkLgo+ICsgKi8KClRoaXMgbG9va3MgbGlrZSBtaXNwbGFjZWQgY29weXBhc3RhLiBZ
+b3Ugb25seSBuZWVkIHRoaXMgb25jZSBJIHRoaW5rLgotRGFuaWVsCgo+ICBzdGF0aWMgaW5saW5l
+IGludAo+ICBkcm1fZmJfaGVscGVyX3JlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoc3Ry
+dWN0IGFwZXJ0dXJlc19zdHJ1Y3QgKmEsCj4gIAkJCQkJICAgICAgY29uc3QgY2hhciAqbmFtZSwg
+Ym9vbCBwcmltYXJ5KQo+IC0tIAo+IDIuMTguMAo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUg
+RW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fClZpcnR1YWxpemF0aW9uIG1h
+aWxpbmcgbGlzdApWaXJ0dWFsaXphdGlvbkBsaXN0cy5saW51eC1mb3VuZGF0aW9uLm9yZwpodHRw
+czovL2xpc3RzLmxpbnV4Zm91bmRhdGlvbi5vcmcvbWFpbG1hbi9saXN0aW5mby92aXJ0dWFsaXph
+dGlvbg==
