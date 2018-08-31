@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 29/34] ARM: tegra: apalis_t30: hog group for pcie switch reset gpio
-Date: Fri, 31 Aug 2018 18:38:11 +0200
-Message-ID: <20180831163817.23970-30-marcel@ziswiler.com>
+Subject: [PATCH v2 30/34] ARM: tegra: apalis_t30: rename hdmiddc to hdmi_ddc
+Date: Fri, 31 Aug 2018 18:38:12 +0200
+Message-ID: <20180831163817.23970-31-marcel@ziswiler.com>
 References: <20180831163817.23970-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
@@ -12,8 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-The Apalis Evaluation Board uses Apalis GPIO7 on MXM3 pin 15 as reset
-signal for its PLX PEX 8605 PCIe Switch.
+Rename hdmiddc to hdmi_ddc to be more in-line with other device trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -22,26 +21,44 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Changes in v2:
 - New patch.
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 2 +-
+ arch/arm/boot/dts/tegra30-apalis.dtsi     | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index bbde98fd9712..9d9dda6c0246 100644
+index 9d9dda6c0246..9381f65a9bf5 100644
 --- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -240,3 +240,13 @@
- 		vin-supply = <&reg_5v0>;
+@@ -103,7 +103,7 @@
  	};
- };
-+
-+&gpio {
-+	/* Apalis GPIO7 MXM3 pin 15 PLX PEX 8605 PCIe Switch Reset */
-+	pex-perst-n {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(S, 7) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "PEX_PERST_N";
-+	};
-+};
+ 
+ 	/* DDC: I2C2_SDA/SCL on MXM3 pin 205/207 (e.g. display EDID) */
+-	hdmiddc: i2c@7000c700 {
++	i2c@7000c700 {
+ 		status = "okay";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index e7793f3b19d2..f15954995231 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -46,7 +46,7 @@
+ 
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+-			nvidia,ddc-i2c-bus = <&hdmiddc>;
++			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpio =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+ 			pll-supply = <&reg_1v8_avdd_hdmi_pll>;
+@@ -831,7 +831,7 @@
+ 		compatible = "nvidia,tegra30-hsuart";
+ 	};
+ 
+-	hdmiddc: i2c@7000c700 {
++	hdmi_ddc: i2c@7000c700 {
+ 		clock-frequency = <10000>;
+ 	};
+ 
 -- 
 2.14.4
