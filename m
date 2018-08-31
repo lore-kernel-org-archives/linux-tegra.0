@@ -1,114 +1,114 @@
-From: Chris Wilson <chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org>
-Subject: Re: [PATCH v2 00/12] remove_conflicting_framebuffers() cleanup
-Date: Fri, 31 Aug 2018 10:07:42 +0100
-Message-ID: <153570646209.15613.3061584574975657074@skylake-alporthouse-com>
-References: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
- <cover.1535656077.git.mirq-linux@rere.qmqm.pl>
- <20180831090439.GT21634@phenom.ffwll.local>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Date: Fri, 31 Aug 2018 12:29:48 +0300
+Message-ID: <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+References: <20180830184210.5369-1-digetx@gmail.com>
+ <20180830184210.5369-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20180831090439.GT21634-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: =?utf-8?b?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180830184210.5369-2-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-UXVvdGluZyBEYW5pZWwgVmV0dGVyICgyMDE4LTA4LTMxIDEwOjA0OjM5KQo+IE9uIFRodSwgQXVn
-IDMwLCAyMDE4IGF0IDExOjAwOjAxUE0gKzAyMDAsIE1pY2hhxYIgTWlyb3PFgmF3IHdyb3RlOgo+
-ID4gVGhpcyBzZXJpZXMgY2xlYW5zIHVwIGR1cGxpY2F0ZWQgY29kZSBmb3IgcmVwbGFjaW5nIGZp
-cm13YXJlIEZCCj4gPiBkcml2ZXIgd2l0aCBwcm9wZXIgRFJJIGRyaXZlciBhbmQgYWRkcyBoYW5k
-b3ZlciBzdXBwb3J0IHRvCj4gPiBUZWdyYSBkcml2ZXIuCj4gPiAKPiA+IFRoaXMgaXMgYSBzbGln
-dGx5IHVwZGF0ZWQgdmVyc2lvbiBvZiBhIHNlcmllcyBzZW50IG9uIDI0IE5vdiAyMDE3Lgo+ID4g
-Cj4gPiB2MjoKPiA+ICAtIHJlYmFzZWQgb24gY3VycmVudCBkcm0tbmV4dAo+ID4gIC0gZHJvcHBl
-ZCBzdGFnaW5nL3NtNzUwZmIgY2hhbmdlcwo+ID4gIC0gYWRkZWQga2VybmVsIGRvY3MgZm9yIERS
-TSBoZWxwZXJzCj4gPiAKPiA+IE1pY2hhxYIgTWlyb3PFgmF3ICgxMik6Cj4gPiAgIGZiZGV2OiBz
-aG93IGZiZGV2IG51bWJlciBmb3IgZGVidWdnaW5nCj4gPiAgIGZiZGV2OiBhbGxvdyBhcGVydHVy
-ZXMgPT0gTlVMTCBpbiByZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKCkKPiA+ICAgZmJk
-ZXY6IGFkZCByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gPiAgIGRybS9h
-bWRncHU6IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJzKCkK
-PiA+ICAgZHJtL2JvY2hzOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1l
-YnVmZmVycygpCj4gPiAgIGRybS9jaXJydXM6IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGlu
-Z19wY2lfZnJhbWVidWZmZXJzKCkKPiA+ICAgZHJtL21nYWcyMDA6IHVzZSBzaW1wbGVyIHJlbW92
-ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJzKCkKPiA+ICAgZHJtL3JhZGVvbjogdXNlIHNp
-bXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQo+ID4gICBkcm0vdmly
-dGlvOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4g
-PiAgIGRybS92YzQ6IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMo
-TlVMTCkKPiA+ICAgZHJtL3N1bjRpOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfZnJh
-bWVidWZmZXJzKE5VTEwpCj4gPiAgIGRybS90ZWdyYToga2ljayBvdXQgc2ltcGxlZmIKPiAKPiBM
-b29rcyB2ZXJ5IG5lYXQuIEEgYml0IGNvbmZ1c2VkIGFib3V0IHRoZSBkcm0gY2hhbmdlcyBpbiB0
-aGUgZmJkZXYtdGl0bGVkCj4gcGF0Y2hlcyAxJjMsIGJ1dCBJIGd1ZXNzIHdlIGNhbiBtZXJnZSBh
-cy1pcy4gVXAgdG8geW91IHdoZXRoZXIgeW91IHdhbnQgdG8KPiBzcGxpdCBvciBub3QgSSdkIHNh
-eS4KCkFoYWgsIHNvbWVvbmUgaXMgbG9va2luZyBhdCByZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVi
-dWZmZXJzKCkuIE1heSBJCmludGVyZXN0IHlvdSBpbiBhIHVzZS1hZnRlci1mcmVlPwoKWyAgMzc4
-LjQyMzUxM10gc3RhY2sgc2VnbWVudDogMDAwMCBbIzFdIFBSRUVNUFQgU01QIFBUSQpbICAzNzgu
-NDIzNTMwXSBDUFU6IDEgUElEOiA0MzM4IENvbW06IHBtX3JwbSBUYWludGVkOiBHICAgICBVICAg
-ICAgICAgICAgNC4xOS4wLXJjMS1DSS1DSV9EUk1fNDc0NisgIzEKWyAgMzc4LjQyMzU0OF0gSGFy
-ZHdhcmUgbmFtZTogVG8gQmUgRmlsbGVkIEJ5IE8uRS5NLiBUbyBCZSBGaWxsZWQgQnkgTy5FLk0u
-L0o0MjA1LUlUWCwgQklPUyBQMS4xMCAwOS8yOS8yMDE2ClsgIDM3OC40MjM1NzBdIFJJUDogMDAx
-MDpkb19yZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKzB4NTYvMHgxNzAKWyAgMzc4LjQy
-MzU4N10gQ29kZTogNDkgOGIgNDUgMDAgNDggODUgYzAgNzQgNTAgZjYgNDAgMGEgMDggNzQgNGEg
-NGQgODUgZTQgNDggOGIgYTggNzggMDQgMDAgMDAgNzQgMWYgNDggODUgZWQgNzQgMWEgNDEgOGIg
-MGMgMjQgMzEgZGIgODUgYzkgNzQgMTAgPDhiPiA1NSAwMCA4NSBkMiA3NSA0MiA4MyBjMyAwMSA0
-MSAzOSAxYyAyNCA3NyBmMCA0OCA4NSBlZCA3NCAxYSA0NQpbICAzNzguNDIzNjIwXSBSU1A6IDAw
-MTg6ZmZmZmM5MDAwMDFkZmE4OCBFRkxBR1M6IDAwMDEwMjAyClsgIDM3OC40MjM2MzJdIFJBWDog
-ZmZmZjg4MDI3NDQ3MDAwOCBSQlg6IDAwMDAwMDAwMDAwMDAwMDAgUkNYOiAwMDAwMDAwMDAwMDAw
-MDAxClsgIDM3OC40MjM2NDZdIFJEWDogMDAwMDAwMDAwMDAwMDAwMSBSU0k6IGZmZmZmZmZmYTAy
-NWM2MzQgUkRJOiBmZmZmODgwMjVjYzNiNDI4ClsgIDM3OC40MjM2NjBdIFJCUDogNmI2YjZiNmI2
-YjZiNmI2YiBSMDg6IDAwMDAwMDAwMWVkYWRkZmEgUjA5OiBmZmZmZmZmZmEwMjVjNjM0ClsgIDM3
-OC40MjM2NzNdIFIxMDogZmZmZmM5MDAwMDFkZmFlOCBSMTE6IGZmZmZmZmZmODIwZGU5MzggUjEy
-OiBmZmZmODgwMjVjYzNiNDI4ClsgIDM3OC40MjM2ODddIFIxMzogZmZmZmZmZmY4MjM0Y2EyMCBS
-MTQ6IGZmZmZmZmZmODIzNGNiMjAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxClsgIDM3OC40MjM3MDFd
-IEZTOiAgMDAwMDdmY2YwM2QwYTk4MCgwMDAwKSBHUzpmZmZmODgwMjc3ZTgwMDAwKDAwMDApIGtu
-bEdTOjAwMDAwMDAwMDAwMDAwMDAKWyAgMzc4LjQyMzcxN10gQ1M6ICAwMDEwIERTOiAwMDAwIEVT
-OiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMwpbICAzNzguNDIzNzI5XSBDUjI6IDAwMDA3ZmZm
-ZWNlMWZkYjggQ1IzOiAwMDAwMDAwMWZlMzJlMDAwIENSNDogMDAwMDAwMDAwMDM0MDZlMApbICAz
-NzguNDIzNzQyXSBDYWxsIFRyYWNlOgpbICAzNzguNDIzNzU2XSAgcmVtb3ZlX2NvbmZsaWN0aW5n
-X2ZyYW1lYnVmZmVycysweDI4LzB4NDAKWyAgMzc4LjQyMzg1Nl0gIGk5MTVfZHJpdmVyX2xvYWQr
-MHg3ZjUvMHgxMGMwIFtpOTE1XQpbICAzNzguNDIzODczXSAgPyBfcmF3X3NwaW5fdW5sb2NrX2ly
-cXJlc3RvcmUrMHg0Yy8weDYwClsgIDM3OC40MjM4ODddICA/IGxvY2tkZXBfaGFyZGlycXNfb24r
-MHhlMC8weDFiMApbICAzNzguNDIzOTYyXSAgaTkxNV9wY2lfcHJvYmUrMHgyOS8weGEwIFtpOTE1
-XQpbICAzNzguNDIzOTc3XSAgcGNpX2RldmljZV9wcm9iZSsweGExLzB4MTMwClsgIDM3OC40MjM5
-OTBdICByZWFsbHlfcHJvYmUrMHgyNWQvMHgzYzAKWyAgMzc4LjQyNDAwMl0gIGRyaXZlcl9wcm9i
-ZV9kZXZpY2UrMHgxMGEvMHgxMjAKWyAgMzc4LjQyNDAxM10gIF9fZHJpdmVyX2F0dGFjaCsweGRi
-LzB4MTAwClsgIDM3OC40MjQwMjVdICA/IGRyaXZlcl9wcm9iZV9kZXZpY2UrMHgxMjAvMHgxMjAK
-WyAgMzc4LjQyNDAzN10gIGJ1c19mb3JfZWFjaF9kZXYrMHg3NC8weGMwClsgIDM3OC40MjQwNDhd
-ICBidXNfYWRkX2RyaXZlcisweDE1Zi8weDI1MApbICAzNzguNDI0MDYwXSAgPyAweGZmZmZmZmZm
-YTA2OWQwMDAKWyAgMzc4LjQyNDA3MF0gIGRyaXZlcl9yZWdpc3RlcisweDU2LzB4ZTAKWyAgMzc4
-LjQyNDA4MF0gID8gMHhmZmZmZmZmZmEwNjlkMDAwClsgIDM3OC40MjQwOTBdICBkb19vbmVfaW5p
-dGNhbGwrMHg1OC8weDJlMApbICAzNzguNDI0MTAxXSAgPyByY3VfbG9ja2RlcF9jdXJyZW50X2Nw
-dV9vbmxpbmUrMHg4Zi8weGQwClsgIDM3OC40MjQxMTZdICA/IGRvX2luaXRfbW9kdWxlKzB4MWQv
-MHgxZWEKWyAgMzc4LjQyNDEyN10gID8gcmN1X3JlYWRfbG9ja19zY2hlZF9oZWxkKzB4NmYvMHg4
-MApbICAzNzguNDI0MTQxXSAgPyBrbWVtX2NhY2hlX2FsbG9jX3RyYWNlKzB4MjY0LzB4MjkwClsg
-IDM3OC40MjQxNTRdICBkb19pbml0X21vZHVsZSsweDU2LzB4MWVhClsgIDM3OC40MjQxNjddICBs
-b2FkX21vZHVsZSsweDI2YmEvMHgyOWEwClsgIDM3OC40MjQxODJdICA/IHZmc19yZWFkKzB4MTIy
-LzB4MTQwClsgIDM3OC40MjQxOTldICA/IF9fc2Vfc3lzX2Zpbml0X21vZHVsZSsweGQzLzB4ZjAK
-WyAgMzc4LjQyNDIxMF0gIF9fc2Vfc3lzX2Zpbml0X21vZHVsZSsweGQzLzB4ZjAKWyAgMzc4LjQy
-NDIyNl0gIGRvX3N5c2NhbGxfNjQrMHg1NS8weDE5MApbICAzNzguNDI0MjM3XSAgZW50cnlfU1lT
-Q0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NDkvMHhiZQpbICAzNzguNDI0MjQ5XSBSSVA6IDAwMzM6
-MHg3ZmNmMDJmOWI4MzkKWyAgMzc4LjQyNDI1OF0gQ29kZTogMDAgZjMgYzMgNjYgMmUgMGYgMWYg
-ODQgMDAgMDAgMDAgMDAgMDAgMGYgMWYgNDAgMDAgNDggODkgZjggNDggODkgZjcgNDggODkgZDYg
-NDggODkgY2EgNGQgODkgYzIgNGQgODkgYzggNGMgOGIgNGMgMjQgMDggMGYgMDUgPDQ4PiAzZCAw
-MSBmMCBmZiBmZiA3MyAwMSBjMyA0OCA4YiAwZCAxZiBmNiAyYyAwMCBmNyBkOCA2NCA4OSAwMSA0
-OApbICAzNzguNDI0MjkwXSBSU1A6IDAwMmI6MDAwMDdmZmZlY2UyMWY1OCBFRkxBR1M6IDAwMDAw
-MjQ2IE9SSUdfUkFYOiAwMDAwMDAwMDAwMDAwMTM5ClsgIDM3OC40MjQzMDddIFJBWDogZmZmZmZm
-ZmZmZmZmZmZkYSBSQlg6IDAwMDA1NjM0NGUxYTRkODAgUkNYOiAwMDAwN2ZjZjAyZjliODM5Clsg
-IDM3OC40MjQzMjFdIFJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IDAwMDA3ZmNmMDI2NDcwZTUg
-UkRJOiAwMDAwMDAwMDAwMDAwMDAzClsgIDM3OC40MjQzMzZdIFJCUDogMDAwMDdmY2YwMjY0NzBl
-NSBSMDg6IDAwMDAwMDAwMDAwMDAwMDAgUjA5OiAwMDAwMDAwMDAwMDAwMDAwClsgIDM3OC40MjQz
-NDldIFIxMDogMDAwMDAwMDAwMDAwMDAwMyBSMTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOiAwMDAw
-MDAwMDAwMDAwMDAwClsgIDM3OC40MjQzNjNdIFIxMzogMDAwMDU2MzQ0ZTFhMDAwMCBSMTQ6IDAw
-MDAwMDAwMDAwMDAwMDAgUjE1OiAwMDAwNTYzNDRlMWE0ZDgwCgpodHRwczovL2ludGVsLWdmeC1j
-aS4wMS5vcmcvdHJlZS9kcm0tdGlwL0lHVF80NjEzL2ZpLWJ4dC1qNDIwNS9kbWVzZzAubG9nCi1D
-aHJpcwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwphbWQt
-Z2Z4IG1haWxpbmcgbGlzdAphbWQtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2FtZC1nZngK
+On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
+> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
+> a lock-status bit. The lock-status polling was disabled ~7 years ago
+> because PLLE was failing to lock and was a suspicion that other PLLs
+> might be faulty too. Other PLLs are okay, hence enable the lock-status
+> polling for them. This reduces delay of any operation that require PLL
+> to lock.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+> 
+> Changelog:
+> 
+> v2:	Don't enable polling for PLLE as it known to not being able to lock.
+> 
+
+This isn't correct. The lock bit of PLLE can declare lock too early, but the
+PLL itself does lock.
+
+>  drivers/clk/tegra/clk-tegra20.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index cc857d4d4a86..cfde3745a0db 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -298,7 +298,8 @@ static struct tegra_clk_pll_params pll_c_params = {
+>  	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+>  	.lock_delay = 300,
+>  	.freq_table = pll_c_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_m_params = {
+> @@ -314,7 +315,8 @@ static struct tegra_clk_pll_params pll_m_params = {
+>  	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+>  	.lock_delay = 300,
+>  	.freq_table = pll_m_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_p_params = {
+> @@ -331,7 +333,7 @@ static struct tegra_clk_pll_params pll_p_params = {
+>  	.lock_delay = 300,
+>  	.freq_table = pll_p_freq_table,
+>  	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON |
+> -		 TEGRA_PLL_HAS_LOCK_ENABLE,
+> +		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK,
+>  	.fixed_rate =  216000000,
+>  };
+>  
+> @@ -348,7 +350,8 @@ static struct tegra_clk_pll_params pll_a_params = {
+>  	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+>  	.lock_delay = 300,
+>  	.freq_table = pll_a_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_d_params = {
+> @@ -364,7 +367,8 @@ static struct tegra_clk_pll_params pll_d_params = {
+>  	.lock_enable_bit_idx = PLLDU_MISC_LOCK_ENABLE,
+>  	.lock_delay = 1000,
+>  	.freq_table = pll_d_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static const struct pdiv_map pllu_p[] = {
+> @@ -387,7 +391,8 @@ static struct tegra_clk_pll_params pll_u_params = {
+>  	.lock_delay = 1000,
+>  	.pdiv_tohw = pllu_p,
+>  	.freq_table = pll_u_freq_table,
+> -	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_x_params = {
+> @@ -403,7 +408,8 @@ static struct tegra_clk_pll_params pll_x_params = {
+>  	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+>  	.lock_delay = 300,
+>  	.freq_table = pll_x_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_e_params = {
+> -- 
+> 2.18.0
+> 
