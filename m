@@ -1,54 +1,65 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH] ARM: dts: tegra30: fix xcvr-setup-use-fuses
-Date: Fri, 31 Aug 2018 14:42:33 +0200
-Message-ID: <20180831124233.27156-1-marcel@ziswiler.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 02/38] dt-bindings: mmc: tegra: Add pad voltage control properties
+Date: Fri, 31 Aug 2018 15:15:35 +0200
+Message-ID: <CAPDyKFouUgYrx_oEJF8WHrtDbtEifSJnk-a0LeJEKw9eQFXX3A@mail.gmail.com>
+References: <20180830150639.21048-1-avienamo@nvidia.com> <20180830150639.21048-3-avienamo@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180830150639.21048-3-avienamo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: Aapo Vienamo <avienamo@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mikko Perttunen <mperttunen@nvidia.com>, Stefan Agner <stefan@agner.ch>, DTML <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 30 August 2018 at 17:06, Aapo Vienamo <avienamo@nvidia.com> wrote:
+> Document the pinctrl bindings used by the SDHCI driver to reconfigure
+> pad voltages on controllers supporting multiple voltage levels.
+>
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-There was a dot instead of a comma. Fix this.
+Applied for next, thanks!
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Kind regards
+Uffe
 
----
-
- arch/arm/boot/dts/tegra30.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 1de10f0d1da7..d2b553f76719 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -896,7 +896,7 @@
- 		nvidia,elastic-limit = <16>;
- 		nvidia,term-range-adj = <6>;
- 		nvidia,xcvr-setup = <51>;
--		nvidia.xcvr-setup-use-fuses;
-+		nvidia,xcvr-setup-use-fuses;
- 		nvidia,xcvr-lsfslew = <1>;
- 		nvidia,xcvr-lsrslew = <1>;
- 		nvidia,xcvr-hsslew = <32>;
-@@ -933,7 +933,7 @@
- 		nvidia,elastic-limit = <16>;
- 		nvidia,term-range-adj = <6>;
- 		nvidia,xcvr-setup = <51>;
--		nvidia.xcvr-setup-use-fuses;
-+		nvidia,xcvr-setup-use-fuses;
- 		nvidia,xcvr-lsfslew = <2>;
- 		nvidia,xcvr-lsrslew = <2>;
- 		nvidia,xcvr-hsslew = <32>;
-@@ -969,7 +969,7 @@
- 		nvidia,elastic-limit = <16>;
- 		nvidia,term-range-adj = <6>;
- 		nvidia,xcvr-setup = <51>;
--		nvidia.xcvr-setup-use-fuses;
-+		nvidia,xcvr-setup-use-fuses;
- 		nvidia,xcvr-lsfslew = <2>;
- 		nvidia,xcvr-lsrslew = <2>;
- 		nvidia,xcvr-hsslew = <32>;
--- 
-2.14.4
+> ---
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt     | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> index 9bce57862ed6..90c214dbfb16 100644
+> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> @@ -38,3 +38,25 @@ sdhci@c8000200 {
+>         power-gpios = <&gpio 155 0>; /* gpio PT3 */
+>         bus-width = <8>;
+>  };
+> +
+> +Optional properties for Tegra210 and Tegra186:
+> +- pinctrl-names, pinctrl-0, pinctrl-1 : Specify pad voltage
+> +  configurations. Valid pinctrl-names are "sdmmc-3v3" and "sdmmc-1v8"
+> +  for controllers supporting multiple voltage levels. The order of names
+> +  should correspond to the pin configuration states in pinctrl-0 and
+> +  pinctrl-1.
+> +
+> +Example:
+> +sdhci@700b0000 {
+> +       compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
+> +       reg = <0x0 0x700b0000 0x0 0x200>;
+> +       interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+> +       clocks = <&tegra_car TEGRA210_CLK_SDMMC1>;
+> +       clock-names = "sdhci";
+> +       resets = <&tegra_car 14>;
+> +       reset-names = "sdhci";
+> +       pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> +       pinctrl-0 = <&sdmmc1_3v3>;
+> +       pinctrl-1 = <&sdmmc1_1v8>;
+> +       status = "disabled";
+> +};
+> --
+> 2.18.0
+>
