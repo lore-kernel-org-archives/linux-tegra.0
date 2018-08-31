@@ -1,43 +1,44 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 03/34] ARM: tegra: apalis_t30: add local-mac-address property
-Date: Fri, 31 Aug 2018 18:37:45 +0200
-Message-ID: <20180831163817.23970-4-marcel@ziswiler.com>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v2 26/34] dt-bindings: add broadcom (formerly plx
+ technology) vendor prefix
+Date: Fri, 31 Aug 2018 20:01:01 +0200
+Message-ID: <ed2ffc72-68d6-476a-d589-6738fcbf1d7c@suse.de>
 References: <20180831163817.23970-1-marcel@ziswiler.com>
+ <20180831163817.23970-27-marcel@ziswiler.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
+In-Reply-To: <20180831163817.23970-27-marcel@ziswiler.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: Marcel Ziswiler <marcel@ziswiler.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <treding@nvidia.com>, David Lechner <david@lechnology.com>, Rob Herring <robh+dt@kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Am 31.08.2018 um 18:38 schrieb Marcel Ziswiler:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> PLX Technology meanwhile got bought by Broadcom Corporation but the
+> vendor prefix plx is still used in 8 current device trees. This silences
+> the following checkpatch.pl warning:
+> 
+> WARNING: DT compatible string vendor "plx" appears un-documented
+>  -- check ./Documentation/devicetree/bindings/vendor-prefixes.txt
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add empty local-mac-address property to be filled in by boot loader
-(e.g. U-Boot).
+Sounds sensible,
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Reviewed-by: Andreas Färber <afaerber@suse.de>
 
----
+You may want to tweak the subject though, it is slightly confusing as
+Broadcom already has a vendor prefix.
 
-Changes in v2: None
+Cheers,
+Andreas
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 69bb11c31d77..f13df31b5e25 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -34,6 +34,10 @@
- 
- 		pci@3,0 {
- 			nvidia,num-lanes = <1>;
-+			pcie@0 {
-+				reg = <0 0 0 0 0>;
-+				local-mac-address = [00 00 00 00 00 00];
-+			};
- 		};
- 	};
- 
 -- 
-2.14.4
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
