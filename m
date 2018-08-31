@@ -1,59 +1,47 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 28/34] ARM: tegra: apalis_t30: drop obsolete spidev nodes
-Date: Fri, 31 Aug 2018 18:38:10 +0200
-Message-ID: <20180831163817.23970-29-marcel@ziswiler.com>
+Subject: [PATCH v2 26/34] dt-bindings: add broadcom (formerly plx technology) vendor prefix
+Date: Fri, 31 Aug 2018 18:38:08 +0200
+Message-ID: <20180831163817.23970-27-marcel@ziswiler.com>
 References: <20180831163817.23970-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <treding@nvidia.com>, David Lechner <david@lechnology.com>, Rob Herring <robh+dt@kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Drop obsolete spidev device tree nodes as nowadays one should do this
-by binding the spidev driver to specific instances/chip selects at
-runtime.
+PLX Technology meanwhile got bought by Broadcom Corporation but the
+vendor prefix plx is still used in 8 current device trees. This silences
+the following checkpatch.pl warning:
+
+WARNING: DT compatible string vendor "plx" appears un-documented
+ -- check ./Documentation/devicetree/bindings/vendor-prefixes.txt
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
 Changes in v2:
-- New patch.
+- Replace "[PATCH 27/28] ARM: tegra: apalis_t30: fix pcie switch vendor
+  compatible" with "[PATCH v2 26/34] dt-bindings: add broadcom (formerly
+  plx technology) vendor prefix" as suggested by Stefan.
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts | 12 ------------
- 1 file changed, 12 deletions(-)
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 97e2f1822a94..bbde98fd9712 100644
---- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -111,24 +111,12 @@
- 	spi@7000d400 {
- 		status = "okay";
- 		spi-max-frequency = <25000000>;
--
--		spidev0: spidev@1 {
--			compatible = "spidev";
--			reg = <1>;
--			spi-max-frequency = <25000000>;
--		};
- 	};
- 
- 	/* SPI5: Apalis SPI2 */
- 	spi@7000dc00 {
- 		status = "okay";
- 		spi-max-frequency = <25000000>;
--
--		spidev1: spidev@2 {
--			compatible = "spidev";
--			reg = <2>;
--			spi-max-frequency = <25000000>;
--		};
- 	};
- 
- 	hda@70030000 {
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 2c3fc512e746..e40312dcba7d 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -297,6 +297,7 @@ pine64	Pine64
+ pixcir  PIXCIR MICROELECTRONICS Co., Ltd
+ plathome	Plat'Home Co., Ltd.
+ plda	PLDA
++plx	Broadcom Corporation (formerly PLX Technology)
+ portwell	Portwell Inc.
+ poslab	Poslab Technology Co., Ltd.
+ powervr	PowerVR (deprecated, use img)
 -- 
 2.14.4
