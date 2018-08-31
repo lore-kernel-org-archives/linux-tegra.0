@@ -1,69 +1,135 @@
-From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 07/12] drm/mgag200: use simpler
- remove_conflicting_pci_framebuffers()
-Date: Thu, 30 Aug 2018 23:00:08 +0200
-Message-ID: <66888ed290bb80f8c529af2583611a383e2430f3.1535656077.git.mirq-linux@rere.qmqm.pl>
-References: <cover.1535656077.git.mirq-linux@rere.qmqm.pl>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v3 00/38] Tegra SDHCI add support for HS200 and UHS
+ signaling
+Date: Fri, 31 Aug 2018 10:20:34 +0300
+Message-ID: <c0b484dc-bfb1-244b-f40e-e6511b8888ba@intel.com>
+References: <20180830150639.21048-1-avienamo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1535656077.git.mirq-linux@rere.qmqm.pl>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-fbdev@vger.kernel.org, linux-tegra@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, Maxime Ripard <maxime.ripard@bootlin.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180830150639.21048-1-avienamo@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Aapo Vienamo <avienamo@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mikko Perttunen <mperttunen@nvidia.com>, Stefan Agner <stefan@agner.ch>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-UmVtb3ZlIGR1cGxpY2F0ZWQgY2FsbCwgd2hpbGUgYXQgaXQuCgpTaWduZWQtb2ZmLWJ5OiBNaWNo
-YcWCIE1pcm9zxYJhdyA8bWlycS1saW51eEByZXJlLnFtcW0ucGw+CkFja2VkLWJ5OiBEYW5pZWwg
-VmV0dGVyIDxkYW5pZWwudmV0dGVyQGZmd2xsLmNoPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9tZ2Fn
-MjAwL21nYWcyMDBfZHJ2LmMgIHwgMjEgKy0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dw
-dS9kcm0vbWdhZzIwMC9tZ2FnMjAwX21haW4uYyB8ICA5IC0tLS0tLS0tLQogMiBmaWxlcyBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKSwgMjkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL21nYWcyMDAvbWdhZzIwMF9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZ2FnMjAw
-L21nYWcyMDBfZHJ2LmMKaW5kZXggNzRjZGRlMmVlNDc0Li5hYzZhZjRiZDlkZjYgMTAwNjQ0Ci0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9tZ2FnMjAwL21nYWcyMDBfZHJ2LmMKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL21nYWcyMDAvbWdhZzIwMF9kcnYuYwpAQCAtNDIsMjkgKzQyLDEwIEBAIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgcGNpX2RldmljZV9pZCBwY2lpZGxpc3RbXSA9IHsKIAogTU9EVUxFX0RFVklD
-RV9UQUJMRShwY2ksIHBjaWlkbGlzdCk7CiAKLXN0YXRpYyB2b2lkIG1nYWcyMDBfa2lja19vdXRf
-ZmlybXdhcmVfZmIoc3RydWN0IHBjaV9kZXYgKnBkZXYpCi17Ci0Jc3RydWN0IGFwZXJ0dXJlc19z
-dHJ1Y3QgKmFwOwotCWJvb2wgcHJpbWFyeSA9IGZhbHNlOwotCi0JYXAgPSBhbGxvY19hcGVydHVy
-ZXMoMSk7Ci0JaWYgKCFhcCkKLQkJcmV0dXJuOwotCi0JYXAtPnJhbmdlc1swXS5iYXNlID0gcGNp
-X3Jlc291cmNlX3N0YXJ0KHBkZXYsIDApOwotCWFwLT5yYW5nZXNbMF0uc2l6ZSA9IHBjaV9yZXNv
-dXJjZV9sZW4ocGRldiwgMCk7Ci0KLSNpZmRlZiBDT05GSUdfWDg2Ci0JcHJpbWFyeSA9IHBkZXYt
-PnJlc291cmNlW1BDSV9ST01fUkVTT1VSQ0VdLmZsYWdzICYgSU9SRVNPVVJDRV9ST01fU0hBRE9X
-OwotI2VuZGlmCi0JZHJtX2ZiX2hlbHBlcl9yZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJz
-KGFwLCAibWdhZzIwMGRybWZiIiwgcHJpbWFyeSk7Ci0Ja2ZyZWUoYXApOwotfQotCiAKIHN0YXRp
-YyBpbnQgbWdhX3BjaV9wcm9iZShzdHJ1Y3QgcGNpX2RldiAqcGRldiwgY29uc3Qgc3RydWN0IHBj
-aV9kZXZpY2VfaWQgKmVudCkKIHsKLQltZ2FnMjAwX2tpY2tfb3V0X2Zpcm13YXJlX2ZiKHBkZXYp
-OworCWRybV9mYl9oZWxwZXJfcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMocGRl
-diwgMCwgIm1nYWcyMDBkcm1mYiIpOwogCiAJcmV0dXJuIGRybV9nZXRfcGNpX2RldihwZGV2LCBl
-bnQsICZkcml2ZXIpOwogfQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21nYWcyMDAvbWdh
-ZzIwMF9tYWluLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWdhZzIwMC9tZ2FnMjAwX21haW4uYwppbmRl
-eCA3ODBmOTgzYjAyOTQuLjc5ZDU0MTAzZDQ3MCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L21nYWcyMDAvbWdhZzIwMF9tYWluLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL21nYWcyMDAvbWdh
-ZzIwMF9tYWluLmMKQEAgLTEyNCwyMCArMTI0LDExIEBAIHN0YXRpYyBpbnQgbWdhX3Byb2JlX3Zy
-YW0oc3RydWN0IG1nYV9kZXZpY2UgKm1kZXYsIHZvaWQgX19pb21lbSAqbWVtKQogc3RhdGljIGlu
-dCBtZ2FfdnJhbV9pbml0KHN0cnVjdCBtZ2FfZGV2aWNlICptZGV2KQogewogCXZvaWQgX19pb21l
-bSAqbWVtOwotCXN0cnVjdCBhcGVydHVyZXNfc3RydWN0ICphcGVyID0gYWxsb2NfYXBlcnR1cmVz
-KDEpOwotCWlmICghYXBlcikKLQkJcmV0dXJuIC1FTk9NRU07CiAKIAkvKiBCQVIgMCBpcyBWUkFN
-ICovCiAJbWRldi0+bWMudnJhbV9iYXNlID0gcGNpX3Jlc291cmNlX3N0YXJ0KG1kZXYtPmRldi0+
-cGRldiwgMCk7CiAJbWRldi0+bWMudnJhbV93aW5kb3cgPSBwY2lfcmVzb3VyY2VfbGVuKG1kZXYt
-PmRldi0+cGRldiwgMCk7CiAKLQlhcGVyLT5yYW5nZXNbMF0uYmFzZSA9IG1kZXYtPm1jLnZyYW1f
-YmFzZTsKLQlhcGVyLT5yYW5nZXNbMF0uc2l6ZSA9IG1kZXYtPm1jLnZyYW1fd2luZG93OwotCi0J
-ZHJtX2ZiX2hlbHBlcl9yZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKGFwZXIsICJtZ2Fm
-YiIsIHRydWUpOwotCWtmcmVlKGFwZXIpOwotCiAJaWYgKCFkZXZtX3JlcXVlc3RfbWVtX3JlZ2lv
-bihtZGV2LT5kZXYtPmRldiwgbWRldi0+bWMudnJhbV9iYXNlLCBtZGV2LT5tYy52cmFtX3dpbmRv
-dywKIAkJCQkibWdhZHJtZmJfdnJhbSIpKSB7CiAJCURSTV9FUlJPUigiY2FuJ3QgcmVzZXJ2ZSBW
-UkFNXG4iKTsKLS0gCjIuMTguMAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
-ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On 30/08/18 18:06, Aapo Vienamo wrote:
+> Hi all,
+> 
+> This series implements support for faster signaling modes on Tegra
+> SDHCI controllers. This series consist of several parts: changes
+> required for 1.8 V signaling and pad control, pad calibration, and
+> tuning. Following earlies patch sets have been merged into this
+> larger set: "Tegra PMC pinctrl pad configuration", "Tegra SDHCI enable
+> 1.8 V signaling on Tegar210 and Tegra186", "Tegra SDHCI update the
+> padautocal procedure". Also the patches for enabling SDHCI tuning
+> are added.
+
+For sdhci-related patches 11 thru' 27
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+
+> 
+> Changelog:
+> v3:
+> 	- Remove tegra_sdhci_writew() from tegra210_sdhci_ops to prevent
+> 	  incorrect access to SDHCI_TRANSFER_MODE on Tegra210.
+> 	- Drop "mmc: sdhci: Add a quirk to skip clearing the transfer
+> 	  mode register on tuning". This is no longer needed since it
+> 	  was effectively a workaround to the behavior caused by
+> 	  tegra_sdhci_writew() on Tegra210.
+> 	- Implement disabling of the card clock during issuing of the
+> 	  tuning command in tegra210_sdhci_writew().
+> 	- Drop "mmc: sdhci: Add a quirk to disable card clock during
+> 	  tuning". This is now implemented in the sdhci-tegra driver.
+> 	
+> v2:
+> 	- Fix grammar in PMC device tree bindings docs
+> 	- Remove a stray line from tegra sdhci bindings
+> 	- Cosmetic changes to PMC pinctrl driver
+> 	- Fix a typo in "soc/tegra: pmc: Implement
+> 	  tegra_io_pad_is_powered()" commit message
+> 	- Declare mask and value on the same line in
+> 	  tegra_io_pad_is_powered()
+> 	- Move the call to tegra_sdhci_is_pad_and_regulator_valid() to
+> 	  inside the if condition in tegra_sdhci_reset()
+> 	- Use usleep_range() in tegra_sdhci_configure_cal_pad()
+> 	- Move sdhci_writel() out of the enable if-else body in
+> 	  tegra_sdhci_configure_cal_pad()
+> 	- Add a delay before starting polling in
+> 	  tegra_sdhci_pad_autocalib()
+> 	- Use usleep_range() in tegra_sdhci_set_tap()
+> 	- Rename orig_enabled to status in
+> 	  tegra_sdhci_configure_card_clk()
+> 	- Fix if condition wrapping alignment in tegra_sdhci_set_tap()
+> 
+> v1:
+> 	- Probe the regulator voltage capabilities to determine whether pinctrl
+> 	  is needed in tegra_sdhci_r eset
+> 	- Don't remove tegra_sdhci_voltage_switch()
+> 	- Use dev_warn() in tegra_sdhci_init_pinctrl_info()
+> 	- Don't change start_signal_voltage_switch callback if pinctrl info
+> 	  invalid
+> 	- Only call udelay(1) on enable in tegra_sdhci_configure_cal_pad()
+> 	- Add nvidia, prefix to pad autocal offset dt props in the example
+> 
+> See the original patch sets for earlier changelogs.
+> 
+> 
+> Aapo Vienamo (38):
+>   dt-bindings: Add Tegra PMC pad configuration bindings
+>   dt-bindings: mmc: tegra: Add pad voltage control properties
+>   dt-bindings: Add Tegra SDHCI pad pdpu offset bindings
+>   dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
+>   soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+>   soc/tegra: pmc: Factor out DPD register bit calculation
+>   soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+>   soc/tegra: pmc: Use X macro to generate IO pad tables
+>   soc/tegra: pmc: Remove public pad voltage APIs
+>   soc/tegra: pmc: Implement pad configuration via pinctrl
+>   mmc: tegra: Reconfigure pad voltages during voltage switching
+>   mmc: tegra: Poll for calibration completion
+>   mmc: tegra: Set calibration pad voltage reference
+>   mmc: tegra: Power on the calibration pad
+>   mmc: tegra: Disable card clock during pad calibration
+>   mmc: tegra: Program pad autocal offsets from dt
+>   mmc: tegra: Perform pad calibration after voltage switch
+>   mmc: tegra: Enable pad calibration on Tegra210 and Tegra186
+>   mmc: tegra: Add a workaround for tap value change glitch
+>   mmc: tegra: Parse default trim and tap from dt
+>   mmc: tegra: Configure default tap values
+>   mmc: tegra: Configure default trim value on reset
+>   mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
+>   mmc: tegra: Remove tegra_sdhci_writew() from tegra210_sdhci_ops
+>   mmc: tegra: Disable card clock during tuning cmd on Tegra210
+>   mmc: tegra: Enable UHS and HS200 modes for Tegra210
+>   mmc: tegra: Enable UHS and HS200 modes for Tegra186
+>   arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
+>   arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
+>   arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
+>   arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
+>   arm64: dts: tegra210-p2597: Remove no-1-8-v from sdmmc1
+>   arm64: dts: tegra186: Add sdmmc pad auto calibration offsets
+>   arm64: dts: tegra210: Add sdmmc pad auto calibration offsets
+>   arm64: dts: tegra210: Add SDHCI tap and trim values
+>   arm64: dts: tegra186: Add SDHCI tap and trim values
+>   arm64: dts: tegra186: Assign clocks for sdmmc1 and sdmmc4
+>   arm64: dts: tegra210: Assign clocks for sdmmc1 and sdmmc4
+> 
+>  .../arm/tegra/nvidia,tegra186-pmc.txt         |  93 +++
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt | 103 ++++
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt     |  68 ++
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  74 +++
+>  .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  12 +-
+>  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   1 -
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  55 ++
+>  drivers/mmc/host/sdhci-tegra.c                | 583 ++++++++++++++++--
+>  drivers/soc/tegra/pmc.c                       | 511 +++++++++++----
+>  .../pinctrl/pinctrl-tegra-io-pad.h            |  18 +
+>  include/soc/tegra/pmc.h                       |  20 +-
+>  11 files changed, 1328 insertions(+), 210 deletions(-)
+>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> 
