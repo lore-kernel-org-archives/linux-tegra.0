@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 27/34] ARM: tegra: apalis_t30: drop module level model and compatible
-Date: Fri, 31 Aug 2018 18:38:09 +0200
-Message-ID: <20180831163817.23970-28-marcel@ziswiler.com>
+Subject: [PATCH v2 29/34] ARM: tegra: apalis_t30: hog group for pcie switch reset gpio
+Date: Fri, 31 Aug 2018 18:38:11 +0200
+Message-ID: <20180831163817.23970-30-marcel@ziswiler.com>
 References: <20180831163817.23970-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
@@ -12,32 +12,36 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Drop model and compatible nodes from the module level device tree as
-they get overridden by the carrier board device tree anyway.
+The Apalis Evaluation Board uses Apalis GPIO7 on MXM3 pin 15 as reset
+signal for its PLX PEX 8605 PCIe Switch.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
 Changes in v2:
-- New patch as suggested by Rob.
+- New patch.
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index d80101df2228..e7793f3b19d2 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -7,9 +7,6 @@
-  * 2GB: V1.0B, V1.0C, V1.0E, V1.1A
-  */
- / {
--	model = "Toradex Apalis T30";
--	compatible = "toradex,apalis_t30", "nvidia,tegra30";
--
- 	memory@80000000 {
- 		reg = <0x80000000 0x40000000>;
+diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+index bbde98fd9712..9d9dda6c0246 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+@@ -240,3 +240,13 @@
+ 		vin-supply = <&reg_5v0>;
  	};
+ };
++
++&gpio {
++	/* Apalis GPIO7 MXM3 pin 15 PLX PEX 8605 PCIe Switch Reset */
++	pex-perst-n {
++		gpio-hog;
++		gpios = <TEGRA_GPIO(S, 7) GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "PEX_PERST_N";
++	};
++};
 -- 
 2.14.4
