@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 21/34] ARM: tegra: apalis_t30: add i2c-thermtrip
-Date: Fri, 31 Aug 2018 18:38:03 +0200
-Message-ID: <20180831163817.23970-22-marcel@ziswiler.com>
+Subject: [PATCH v2 20/34] ARM: tegra: apalis_t30: further lm95245 temperature sensor annotation
+Date: Fri, 31 Aug 2018 18:38:02 +0200
+Message-ID: <20180831163817.23970-21-marcel@ziswiler.com>
 References: <20180831163817.23970-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
@@ -12,38 +12,29 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add i2c-thermtrip which would set the DEV_OFF bit in the DCDC control
-register of the TPS65911 PMIC.
+Further LM95245 temperature sensor annotation.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2:
-- When running some more tests I realized that the reg-addr should
-  really be 0x3f. Fix this.
+Changes in v2: None
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index c3e37d944c62..02d0117e9398 100644
+index 43d914f754e8..c3e37d944c62 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -1071,6 +1071,14 @@
- 		nvidia,core-pwr-off-time = <0>;
- 		nvidia,core-power-req-active-high;
- 		nvidia,sys-clock-req-active-high;
-+
-+		/* Set DEV_OFF bit in DCDC control register of TPS65911 PMIC */
-+		i2c-thermtrip {
-+			nvidia,i2c-controller-id = <4>;
-+			nvidia,bus-addr = <0x2d>;
-+			nvidia,reg-addr = <0x3f>;
-+			nvidia,reg-data = <0x1>;
-+		};
- 	};
+@@ -1009,7 +1009,7 @@
  
- 	ahub@70080000 {
+ 		/*
+ 		 * LM95245 temperature sensor
+-		 * Note: OVERT_N directly connected to PMIC PWRDN
++		 * Note: OVERT1# directly connected to TPS65911 PMIC PWRDN
+ 		 */
+ 		temp-sensor@4c {
+ 			compatible = "national,lm95245";
 -- 
 2.14.4
