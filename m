@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 19/34] ARM: tegra: colibri_t30: move input include to carrier board
-Date: Sat,  1 Sep 2018 10:12:33 +0200
-Message-ID: <20180901081248.22639-20-marcel@ziswiler.com>
+Subject: [PATCH v2 14/34] ARM: tegra: colibri_t30: add i2c-thermtrip
+Date: Sat,  1 Sep 2018 10:12:28 +0200
+Message-ID: <20180901081248.22639-15-marcel@ziswiler.com>
 References: <20180901081248.22639-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901081248.22639-1-marcel@ziswiler.com>
@@ -12,39 +12,38 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Move input include to carrier board.
+Add i2c-thermtrip which would set the DEV_OFF bit in the DCDC control
+register of the TPS65911 PMIC.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2: None
+Changes in v2:
+- When running some more tests I realized that the reg-addr should
+  really be 0x3f. Fix this.
 
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 1 +
- arch/arm/boot/dts/tegra30-colibri.dtsi        | 1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index d8ee7edb24cf..16f5e6af68b9 100644
---- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
- 
-+#include <dt-bindings/input/input.h>
- #include "tegra30-colibri.dtsi"
- 
- / {
 diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 4fcdc93ae687..0d8b0f319c6f 100644
+index 73ff098612a2..670edd5e4754 100644
 --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--#include <dt-bindings/input/input.h>
- #include "tegra30.dtsi"
+@@ -910,6 +910,14 @@
+ 		nvidia,core-pwr-off-time = <0>;
+ 		nvidia,core-power-req-active-high;
+ 		nvidia,sys-clock-req-active-high;
++
++		/* Set DEV_OFF bit in DCDC control register of TPS65911 PMIC */
++		i2c-thermtrip {
++			nvidia,i2c-controller-id = <4>;
++			nvidia,bus-addr = <0x2d>;
++			nvidia,reg-addr = <0x3f>;
++			nvidia,reg-data = <0x1>;
++		};
+ 	};
  
- /*
+ 	ahub@70080000 {
 -- 
 2.14.4
