@@ -1,56 +1,200 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 00/19] ARM: dts: tegra: apalis-tk1: minor revamp
-Date: Sat,  1 Sep 2018 15:04:45 +0200
-Message-ID: <20180901130504.14318-1-marcel@ziswiler.com>
+Subject: [PATCH v2 03/19] ARM: tegra: apalis-tk1: reorder padctl properties
+Date: Sat,  1 Sep 2018 15:04:48 +0200
+Message-ID: <20180901130504.14318-4-marcel@ziswiler.com>
+References: <20180901130504.14318-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel@ziswiler.com>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Mark Rutland <mark.rutland@arm.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This series is a minor overhaul for the Toradex Apalis TK1 system on
-module.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Changes in v2:
-- Add Rob's reviewed-by.
-- New patch as suggested by Rob.
-- New patch.
-- Get rid of fake clocks simple bus as suggested by Rob.
-- Change cover-letter subject to indicate minor revamp.
-- Drop "[PATCH 02/15] ARM: tegra: apalis-tk1: reorder pcie properties"
-  as requested by Stefan.
-- Drop "[PATCH 13/15] ARM: tegra: apalis-tk1: fix pcie switch vendor
-  compatible" in favour of the new "[PATCH v2 26/34] dt-bindings: add
-  broadcom (formerly plx technology) vendor prefix" posted earlier as
-  part of the apalis_t30 revamp v2 as suggested by Stefan.
+Reorder padctl properties.
 
-Marcel Ziswiler (19):
-  ARM: tegra: apalis-tk1: add local-mac-address property
-  ARM: tegra: apalis-tk1: reorder host1x/hdmi properties
-  ARM: tegra: apalis-tk1: reorder padctl properties
-  ARM: tegra: apalis-tk1: regulator clean-up
-  ARM: tegra: apalis-tk1: add missing regulators
-  ARM: tegra: apalis-tk1: drop unused pinmux label
-  ARM: tegra: apalis-tk1: white-space clean-up
-  ARM: tegra: apalis-tk1: reorder backlight properties
-  ARM: tegra: apalis-tk1: add proper emmc vmmc and vqmmc supplies
-  ARM: tegra: apalis-tk1: enable emmc ddr52 mode
-  ARM: tegra: apalis-tk1: add toradex,apalis-tk1-v1.2 compatible
-  ARM: tegra: apalis-tk1: reorder cpu dfll clock properties
-  ARM: tegra: apalis-tk1: reorder SD card properties
-  ARM: tegra: apalis-tk1: drop module level model and compatible
-  ARM: tegra: apalis-tk1: drop obsolete spidev nodes
-  ARM: tegra: apalis-tk1: replace underscores in node names with dashes
-  ARM: tegra: apalis-tk1: get rid of fake clocks simple bus
-  ARM: tegra: apalis-tk1: shorten temperature-sensor node
-  ARM: tegra: apalis-tk1: drop unused hdmi_ddc label
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
- Documentation/devicetree/bindings/arm/tegra.txt |   2 +
- arch/arm/boot/dts/tegra124-apalis-eval.dts      |  40 ++-
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  43 ++-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 452 ++++++++++++------------
- arch/arm/boot/dts/tegra124-apalis.dtsi          | 451 +++++++++++------------
- 5 files changed, 508 insertions(+), 480 deletions(-)
+---
 
+Changes in v2: None
+
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 22 +++++++++++-----------
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 22 +++++++++++-----------
+ 2 files changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+index 86768ba28d67..f6459588d845 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+@@ -1815,18 +1815,18 @@
+ 
+ 				lanes {
+ 					usb2-0 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 
+ 					usb2-1 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 
+ 					usb2-2 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 				};
+ 			};
+@@ -1836,28 +1836,28 @@
+ 
+ 				lanes {
+ 					pcie-0 {
+-						nvidia,function = "usb3-ss";
+ 						status = "okay";
++						nvidia,function = "usb3-ss";
+ 					};
+ 
+ 					pcie-1 {
+-						nvidia,function = "usb3-ss";
+ 						status = "okay";
++						nvidia,function = "usb3-ss";
+ 					};
+ 
+ 					pcie-2 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 
+ 					pcie-3 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 
+ 					pcie-4 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 				};
+ 			};
+@@ -1867,8 +1867,8 @@
+ 
+ 				lanes {
+ 					sata-0 {
+-						nvidia,function = "sata";
+ 						status = "okay";
++						nvidia,function = "sata";
+ 					};
+ 				};
+ 			};
+@@ -1900,13 +1900,13 @@
+ 			};
+ 
+ 			usb3-0 {
+-				nvidia,usb2-companion = <2>;
+ 				status = "okay";
++				nvidia,usb2-companion = <2>;
+ 			};
+ 
+ 			usb3-1 {
+-				nvidia,usb2-companion = <0>;
+ 				status = "okay";
++				nvidia,usb2-companion = <0>;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 2c291d210677..8919213d8312 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -1844,18 +1844,18 @@
+ 
+ 				lanes {
+ 					usb2-0 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 
+ 					usb2-1 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 
+ 					usb2-2 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 				};
+ 			};
+@@ -1865,28 +1865,28 @@
+ 
+ 				lanes {
+ 					pcie-0 {
+-						nvidia,function = "usb3-ss";
+ 						status = "okay";
++						nvidia,function = "usb3-ss";
+ 					};
+ 
+ 					pcie-1 {
+-						nvidia,function = "usb3-ss";
+ 						status = "okay";
++						nvidia,function = "usb3-ss";
+ 					};
+ 
+ 					pcie-2 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 
+ 					pcie-3 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 
+ 					pcie-4 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 				};
+ 			};
+@@ -1896,8 +1896,8 @@
+ 
+ 				lanes {
+ 					sata-0 {
+-						nvidia,function = "sata";
+ 						status = "okay";
++						nvidia,function = "sata";
+ 					};
+ 				};
+ 			};
+@@ -1929,13 +1929,13 @@
+ 			};
+ 
+ 			usb3-0 {
+-				nvidia,usb2-companion = <2>;
+ 				status = "okay";
++				nvidia,usb2-companion = <2>;
+ 			};
+ 
+ 			usb3-1 {
+-				nvidia,usb2-companion = <0>;
+ 				status = "okay";
++				nvidia,usb2-companion = <0>;
+ 			};
+ 		};
+ 	};
 -- 
 2.14.4
