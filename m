@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 31/34] ARM: tegra: colibri_t30: remove unused mcp2515 can0 label
-Date: Sat,  1 Sep 2018 10:12:45 +0200
-Message-ID: <20180901081248.22639-32-marcel@ziswiler.com>
+Subject: [PATCH v2 33/34] ARM: tegra: colibri_t30: annotate unused i2c busses
+Date: Sat,  1 Sep 2018 10:12:47 +0200
+Message-ID: <20180901081248.22639-34-marcel@ziswiler.com>
 References: <20180901081248.22639-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901081248.22639-1-marcel@ziswiler.com>
@@ -12,30 +12,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Get rid of the unused MCP2515 SPI CAN controller can0 label.
+Both GEN2_I2C as well as CAM_I2C (I2C3) are unused in our design.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2:
-- New patch.
+Changes in v2: None
 
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index ee0a3e5df5b8..618a4b3b6bc8 100644
+index 9985d0a91f69..5965150ecdd2 100644
 --- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
 +++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -80,7 +80,7 @@
- 		status = "okay";
- 		spi-max-frequency = <25000000>;
+@@ -70,6 +70,10 @@
+ 		};
+ 	};
  
--		can0: can@0 {
-+		can@0 {
- 			compatible = "microchip,mcp2515";
- 			reg = <0>;
- 			clocks = <&clk16m>;
++	/* GEN2_I2C: unused */
++
++	/* CAM_I2C (I2C3): unused */
++
+ 	/* DDC_CLOCK/DATA on X3 pin 15/16 (e.g. display EDID) */
+ 	i2c@7000c700 {
+ 		status = "okay";
 -- 
 2.14.4
