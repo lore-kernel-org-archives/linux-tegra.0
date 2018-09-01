@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 03/19] ARM: tegra: apalis-tk1: reorder padctl properties
-Date: Sat,  1 Sep 2018 15:04:48 +0200
-Message-ID: <20180901130504.14318-4-marcel@ziswiler.com>
+Subject: [PATCH v2 02/19] ARM: tegra: apalis-tk1: reorder host1x/hdmi properties
+Date: Sat,  1 Sep 2018 15:04:47 +0200
+Message-ID: <20180901130504.14318-3-marcel@ziswiler.com>
 References: <20180901130504.14318-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reorder padctl properties.
+Reorder Host1x/HDMI properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -20,181 +20,45 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 22 +++++++++++-----------
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 22 +++++++++++-----------
- 2 files changed, 22 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 4 ++--
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 86768ba28d67..f6459588d845 100644
+index 09e3641258ae..86768ba28d67 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1815,18 +1815,18 @@
+@@ -52,11 +52,11 @@
  
- 				lanes {
- 					usb2-0 {
--						nvidia,function = "xusb";
- 						status = "okay";
-+						nvidia,function = "xusb";
- 					};
- 
- 					usb2-1 {
--						nvidia,function = "xusb";
- 						status = "okay";
-+						nvidia,function = "xusb";
- 					};
- 
- 					usb2-2 {
--						nvidia,function = "xusb";
- 						status = "okay";
-+						nvidia,function = "xusb";
- 					};
- 				};
- 			};
-@@ -1836,28 +1836,28 @@
- 
- 				lanes {
- 					pcie-0 {
--						nvidia,function = "usb3-ss";
- 						status = "okay";
-+						nvidia,function = "usb3-ss";
- 					};
- 
- 					pcie-1 {
--						nvidia,function = "usb3-ss";
- 						status = "okay";
-+						nvidia,function = "usb3-ss";
- 					};
- 
- 					pcie-2 {
--						nvidia,function = "pcie";
- 						status = "okay";
-+						nvidia,function = "pcie";
- 					};
- 
- 					pcie-3 {
--						nvidia,function = "pcie";
- 						status = "okay";
-+						nvidia,function = "pcie";
- 					};
- 
- 					pcie-4 {
--						nvidia,function = "pcie";
- 						status = "okay";
-+						nvidia,function = "pcie";
- 					};
- 				};
- 			};
-@@ -1867,8 +1867,8 @@
- 
- 				lanes {
- 					sata-0 {
--						nvidia,function = "sata";
- 						status = "okay";
-+						nvidia,function = "sata";
- 					};
- 				};
- 			};
-@@ -1900,13 +1900,13 @@
- 			};
- 
- 			usb3-0 {
--				nvidia,usb2-companion = <2>;
- 				status = "okay";
-+				nvidia,usb2-companion = <2>;
- 			};
- 
- 			usb3-1 {
--				nvidia,usb2-companion = <0>;
- 				status = "okay";
-+				nvidia,usb2-companion = <0>;
- 			};
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+-			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
+-			vdd-supply = <&reg_3v3_avdd_hdmi>;
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpio =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
++			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
++			vdd-supply = <&reg_3v3_avdd_hdmi>;
  		};
  	};
+ 
 diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 2c291d210677..8919213d8312 100644
+index 5e7ae5e92fb8..2c291d210677 100644
 --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1844,18 +1844,18 @@
+@@ -87,11 +87,11 @@
  
- 				lanes {
- 					usb2-0 {
--						nvidia,function = "xusb";
- 						status = "okay";
-+						nvidia,function = "xusb";
- 					};
- 
- 					usb2-1 {
--						nvidia,function = "xusb";
- 						status = "okay";
-+						nvidia,function = "xusb";
- 					};
- 
- 					usb2-2 {
--						nvidia,function = "xusb";
- 						status = "okay";
-+						nvidia,function = "xusb";
- 					};
- 				};
- 			};
-@@ -1865,28 +1865,28 @@
- 
- 				lanes {
- 					pcie-0 {
--						nvidia,function = "usb3-ss";
- 						status = "okay";
-+						nvidia,function = "usb3-ss";
- 					};
- 
- 					pcie-1 {
--						nvidia,function = "usb3-ss";
- 						status = "okay";
-+						nvidia,function = "usb3-ss";
- 					};
- 
- 					pcie-2 {
--						nvidia,function = "pcie";
- 						status = "okay";
-+						nvidia,function = "pcie";
- 					};
- 
- 					pcie-3 {
--						nvidia,function = "pcie";
- 						status = "okay";
-+						nvidia,function = "pcie";
- 					};
- 
- 					pcie-4 {
--						nvidia,function = "pcie";
- 						status = "okay";
-+						nvidia,function = "pcie";
- 					};
- 				};
- 			};
-@@ -1896,8 +1896,8 @@
- 
- 				lanes {
- 					sata-0 {
--						nvidia,function = "sata";
- 						status = "okay";
-+						nvidia,function = "sata";
- 					};
- 				};
- 			};
-@@ -1929,13 +1929,13 @@
- 			};
- 
- 			usb3-0 {
--				nvidia,usb2-companion = <2>;
- 				status = "okay";
-+				nvidia,usb2-companion = <2>;
- 			};
- 
- 			usb3-1 {
--				nvidia,usb2-companion = <0>;
- 				status = "okay";
-+				nvidia,usb2-companion = <0>;
- 			};
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+-			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
+-			vdd-supply = <&reg_3v3_avdd_hdmi>;
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpio =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
++			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
++			vdd-supply = <&reg_3v3_avdd_hdmi>;
  		};
  	};
+ 
 -- 
 2.14.4
