@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 21/34] ARM: tegra: colibri_t30: add gpio hog to unreset usb ethernet chip
-Date: Sat,  1 Sep 2018 10:12:35 +0200
-Message-ID: <20180901081248.22639-22-marcel@ziswiler.com>
+Subject: [PATCH v2 22/34] ARM: tegra: colibri_t30: enable hda over hdmi
+Date: Sat,  1 Sep 2018 10:12:36 +0200
+Message-ID: <20180901081248.22639-23-marcel@ziswiler.com>
 References: <20180901081248.22639-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901081248.22639-1-marcel@ziswiler.com>
@@ -12,34 +12,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add GPIO hog to unreset ASIX AX88772B USB Ethernet chip.
+Enable HDA over HDMI.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2:
-- Replace underscores in node names with dashes.
+Changes in v2: None
 
- arch/arm/boot/dts/tegra30-colibri.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index eb36ae3038a7..aff94707b3fa 100644
+index aff94707b3fa..1337674c530c 100644
 --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -1027,3 +1027,12 @@
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
+@@ -919,6 +919,10 @@
+ 		};
  	};
- };
-+
-+&gpio {
-+	lan-reset-n {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(DD, 0) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "LAN_RESET#";
+ 
++	hda@70030000 {
++		status = "okay";
 +	};
-+};
++
+ 	ahub@70080000 {
+ 		i2s@70080500 {
+ 			status = "okay";
 -- 
 2.14.4
