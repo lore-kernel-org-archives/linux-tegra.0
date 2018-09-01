@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 08/19] ARM: tegra: apalis-tk1: reorder backlight properties
-Date: Sat,  1 Sep 2018 15:04:53 +0200
-Message-ID: <20180901130504.14318-9-marcel@ziswiler.com>
+Subject: [PATCH v2 09/19] ARM: tegra: apalis-tk1: add proper emmc vmmc and vqmmc supplies
+Date: Sat,  1 Sep 2018 15:04:54 +0200
+Message-ID: <20180901130504.14318-10-marcel@ziswiler.com>
 References: <20180901130504.14318-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reorder backlight properties.
+Add proper eMMC vmmc and vqmmc supplies e.g. fixing signalling voltage.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -20,45 +20,35 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts      | 2 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 ++
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index c2e918d345de..d9805fc97f5e 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -228,12 +228,12 @@
- 
- 	backlight: backlight {
- 		compatible = "pwm-backlight";
--		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
- 		brightness-levels = <255 231 223 207 191 159 127 0>;
- 		default-brightness-level = <6>;
- 		/* BKL1_ON */
- 		enable-gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_HIGH>;
- 		power-supply = <&reg_3v3>;
-+		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+index 14114bc43e38..3408317c0f00 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+@@ -1917,6 +1917,8 @@
+ 		status = "okay";
+ 		bus-width = <8>;
+ 		non-removable;
++		vmmc-supply = <&reg_module_3v3>; /* VCC */
++		vqmmc-supply = <&reg_1v8_vddio>; /* VCCQ */
  	};
  
- 	gpio-keys {
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-index eebcc013771e..aafaf2c3e195 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-@@ -193,12 +193,12 @@
- 
- 	backlight: backlight {
- 		compatible = "pwm-backlight";
--		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
- 		brightness-levels = <255 231 223 207 191 159 127 0>;
- 		default-brightness-level = <6>;
- 		/* BKL1_ON */
- 		enable-gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_HIGH>;
- 		power-supply = <&reg_3v3>;
-+		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
+ 	/* CPU DFLL clock */
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 955adebc9e90..ba6fc2e51b2d 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -1946,6 +1946,8 @@
+ 		status = "okay";
+ 		bus-width = <8>;
+ 		non-removable;
++		vmmc-supply = <&reg_module_3v3>; /* VCC */
++		vqmmc-supply = <&reg_1v8_vddio>; /* VCCQ */
  	};
  
- 	gpio-keys {
+ 	/* CPU DFLL clock */
 -- 
 2.14.4
