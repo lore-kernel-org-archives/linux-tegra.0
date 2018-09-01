@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 33/34] ARM: tegra: colibri_t30: annotate unused i2c busses
-Date: Sat,  1 Sep 2018 10:12:47 +0200
-Message-ID: <20180901081248.22639-34-marcel@ziswiler.com>
+Subject: [PATCH v2 34/34] ARM: tegra: colibri_t30: annotate power I2C being on-module
+Date: Sat,  1 Sep 2018 10:12:48 +0200
+Message-ID: <20180901081248.22639-35-marcel@ziswiler.com>
 References: <20180901081248.22639-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901081248.22639-1-marcel@ziswiler.com>
@@ -12,7 +12,8 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Both GEN2_I2C as well as CAM_I2C (I2C3) are unused in our design.
+The power I2C bus aka PWR_I2C which connects to the audio codec, PMIC,
+temperature sensor and touch screen controller is really on-module only.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -20,23 +21,21 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index 9985d0a91f69..5965150ecdd2 100644
---- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -70,6 +70,10 @@
- 		};
- 	};
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index e32702a4ab10..35af03ca9e90 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -713,7 +713,7 @@
  
-+	/* GEN2_I2C: unused */
-+
-+	/* CAM_I2C (I2C3): unused */
-+
- 	/* DDC_CLOCK/DATA on X3 pin 15/16 (e.g. display EDID) */
- 	i2c@7000c700 {
+ 	/*
+ 	 * PWR_I2C: power I2C to audio codec, PMIC, temperature sensor and
+-	 * touch screen controller
++	 * touch screen controller (On-module)
+ 	 */
+ 	i2c@7000d000 {
  		status = "okay";
 -- 
 2.14.4
