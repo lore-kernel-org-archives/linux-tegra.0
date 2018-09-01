@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 18/19] ARM: tegra: apalis-tk1: shorten temperature-sensor node
-Date: Sat,  1 Sep 2018 15:05:03 +0200
-Message-ID: <20180901130504.14318-19-marcel@ziswiler.com>
+Subject: [PATCH v2 19/19] ARM: tegra: apalis-tk1: drop unused hdmi_ddc label
+Date: Sat,  1 Sep 2018 15:05:04 +0200
+Message-ID: <20180901130504.14318-20-marcel@ziswiler.com>
 References: <20180901130504.14318-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
@@ -12,8 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Shorten temperature-sensor node to just temp-sensor as suggested
-in the binding documentation.
+Drop unused hdmi_ddc label.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -22,35 +21,35 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Changes in v2:
 - New patch.
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      | 2 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 7fe61f1baadd..367eb8c86098 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1745,7 +1745,7 @@
- 		 * TMP451 temperature sensor
- 		 * Note: THERM_N directly connected to AS3722 PMIC THERM
- 		 */
--		temperature-sensor@4c {
-+		temp-sensor@4c {
- 			compatible = "ti,tmp451";
- 			reg = <0x4c>;
- 			interrupt-parent = <&gpio>;
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 62af3dc97ede..13c93cd507d8 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1775,7 +1775,7 @@
- 		 * TMP451 temperature sensor
- 		 * Note: THERM_N directly connected to AS3722 PMIC THERM
- 		 */
--		temperature-sensor@4c {
-+		temp-sensor@4c {
- 			compatible = "ti,tmp451";
- 			reg = <0x4c>;
- 			interrupt-parent = <&gpio>;
+diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+index 0b4ac640e54f..eaee10ef6512 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+@@ -123,7 +123,7 @@
+ 	/*
+ 	 * GEN2_I2C: I2C2_SDA/SCL (DDC) on MXM3 pin 205/207 (e.g. display EDID)
+ 	 */
+-	hdmi_ddc: i2c@7000c400 {
++	i2c@7000c400 {
+ 		status = "okay";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+index 799382d04bba..7961eb4bd803 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+@@ -100,7 +100,7 @@
+ 	 * I2C4 (DDC): I2C4_SDA/SCL (DDC) on MXM3 pin 205/207
+ 	 * (e.g. display EDID)
+ 	 */
+-	hdmi_ddc: i2c@7000c700 {
++	i2c@7000c700 {
+ 		status = "okay";
+ 	};
+ 
 -- 
 2.14.4
