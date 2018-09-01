@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 09/19] ARM: tegra: apalis-tk1: add proper emmc vmmc and vqmmc supplies
-Date: Sat,  1 Sep 2018 15:04:54 +0200
-Message-ID: <20180901130504.14318-10-marcel@ziswiler.com>
+Subject: [PATCH v2 07/19] ARM: tegra: apalis-tk1: white-space clean-up
+Date: Sat,  1 Sep 2018 15:04:52 +0200
+Message-ID: <20180901130504.14318-8-marcel@ziswiler.com>
 References: <20180901130504.14318-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add proper eMMC vmmc and vqmmc supplies e.g. fixing signalling voltage.
+White-space clean-up.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -20,35 +20,65 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 ++
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 ++
- 2 files changed, 4 insertions(+)
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 3 ---
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 3 ---
+ 2 files changed, 6 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 14114bc43e38..3408317c0f00 100644
+index aaedc83a11bc..14114bc43e38 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1917,6 +1917,8 @@
- 		status = "okay";
- 		bus-width = <8>;
- 		non-removable;
-+		vmmc-supply = <&reg_module_3v3>; /* VCC */
-+		vqmmc-supply = <&reg_1v8_vddio>; /* VCCQ */
- 	};
+@@ -1881,7 +1881,6 @@
+ 			usb2-0 {
+ 				status = "okay";
+ 				mode = "otg";
+-
+ 				vbus-supply = <&reg_usbo1_vbus>;
+ 			};
  
- 	/* CPU DFLL clock */
+@@ -1889,7 +1888,6 @@
+ 			usb2-1 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
+@@ -1897,7 +1895,6 @@
+ 			usb2-2 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
 diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 955adebc9e90..ba6fc2e51b2d 100644
+index 208411692bdc..955adebc9e90 100644
 --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1946,6 +1946,8 @@
- 		status = "okay";
- 		bus-width = <8>;
- 		non-removable;
-+		vmmc-supply = <&reg_module_3v3>; /* VCC */
-+		vqmmc-supply = <&reg_1v8_vddio>; /* VCCQ */
- 	};
+@@ -1910,7 +1910,6 @@
+ 			usb2-0 {
+ 				status = "okay";
+ 				mode = "otg";
+-
+ 				vbus-supply = <&reg_usbo1_vbus>;
+ 			};
  
- 	/* CPU DFLL clock */
+@@ -1918,7 +1917,6 @@
+ 			usb2-1 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
+@@ -1926,7 +1924,6 @@
+ 			usb2-2 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
 -- 
 2.14.4
