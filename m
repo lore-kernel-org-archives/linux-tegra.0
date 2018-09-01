@@ -1,46 +1,49 @@
 From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v3 03/13] fbdev: add kerneldoc do
- remove_conflicting_framebuffers()
-Date: Sat, 01 Sep 2018 16:08:45 +0200
-Message-ID: <283fef19815b991700b56119d8d5874a2a8da44e.1535810304.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v3 02/13] fbdev: allow apertures == NULL in
+	remove_conflicting_framebuffers()
+Date: Sat, 01 Sep 2018 16:08:44 +0200
+Message-ID: <b5fed539fe569035139c8594c23effd8c39f12ca.1535810304.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1535810304.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
 In-Reply-To: <cover.1535810304.git.mirq-linux@rere.qmqm.pl>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
 To: dri-devel@lists.freedesktop.org
-Cc: linux-fbdev@vger.kernel.org, linux-tegra@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>, Maxime Ripard <maxime.ripard@bootlin.com>, virtualization@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-fbdev@vger.kernel.org, linux-tegra@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>, Maxime Ripard <maxime.ripard@bootlin.com>, virtualization@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-RG9jdW1lbnQgcmVtb3ZlX2NvbmZsaWN0aW5nX2ZyYW1lYnVmZmVycygpIGJlaGF2aW91ci4KClNp
-Z25lZC1vZmYtYnk6IE1pY2hhxYIgTWlyb3PFgmF3IDxtaXJxLWxpbnV4QHJlcmUucW1xbS5wbD4K
-LS0tCiBkcml2ZXJzL3ZpZGVvL2ZiZGV2L2NvcmUvZmJtZW0uYyB8IDEwICsrKysrKysrKysKIDEg
-ZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRl
-by9mYmRldi9jb3JlL2ZibWVtLmMgYi9kcml2ZXJzL3ZpZGVvL2ZiZGV2L2NvcmUvZmJtZW0uYwpp
-bmRleCAwZGYxNDhlYjQ2OTkuLjJkZTkzYjUwMTRlMyAxMDA2NDQKLS0tIGEvZHJpdmVycy92aWRl
-by9mYmRldi9jb3JlL2ZibWVtLmMKKysrIGIvZHJpdmVycy92aWRlby9mYmRldi9jb3JlL2ZibWVt
-LmMKQEAgLTE3NzUsNiArMTc3NSwxNiBAQCBpbnQgdW5saW5rX2ZyYW1lYnVmZmVyKHN0cnVjdCBm
-Yl9pbmZvICpmYl9pbmZvKQogfQogRVhQT1JUX1NZTUJPTCh1bmxpbmtfZnJhbWVidWZmZXIpOwog
-CisvKioKKyAqIHJlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMgLSByZW1vdmUgZmlybXdh
-cmUtY29uZmlndXJlZCBmcmFtZWJ1ZmZlcnMKKyAqIEBhOiBtZW1vcnkgcmFuZ2UsIHVzZXJzIG9m
-IHdoaWNoIGFyZSB0byBiZSByZW1vdmVkCisgKiBAbmFtZTogcmVxdWVzdGluZyBkcml2ZXIgbmFt
-ZQorICogQHByaW1hcnk6IGFsc28ga2ljayB2Z2ExNmZiIGlmIHByZXNlbnQKKyAqCisgKiBUaGlz
-IGZ1bmN0aW9uIHJlbW92ZXMgZnJhbWVidWZmZXIgZGV2aWNlcyAoaW5pdGlhbGl6ZWQgYnkgZmly
-bXdhcmUvYm9vdGxvYWRlcikKKyAqIHdoaWNoIHVzZSBtZW1vcnkgcmFuZ2UgZGVzY3JpYmVkIGJ5
-IEBhLiBJZiBAYSBpcyBOVUxMIGFsbCBzdWNoIGRldmljZXMgYXJlCisgKiByZW1vdmVkLgorICov
-CiBpbnQgcmVtb3ZlX2NvbmZsaWN0aW5nX2ZyYW1lYnVmZmVycyhzdHJ1Y3QgYXBlcnR1cmVzX3N0
-cnVjdCAqYSwKIAkJCQkgICAgY29uc3QgY2hhciAqbmFtZSwgYm9vbCBwcmltYXJ5KQogewotLSAK
-Mi4xOC4wCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-bGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGlu
-dXgtYXJtLWtlcm5lbAo=
+SW50ZXJwcmV0IChvdGhlcndpc2UtaW52YWxpZCkgTlVMTCBhcGVydHVyZXMgYXJndW1lbnQgdG8g
+bWVhbiBhbGwtbWVtb3J5CnJhbmdlLiBUaGlzIHdpbGwgYWxsb3cgdG8gcmVtb3ZlIHNldmVyYWwg
+ZHVwbGljYXRlcyBvZiB0aGlzIGNvZGUKZnJvbSBkcml2ZXJzIGluIGZvbGxvd2luZyBwYXRjaGVz
+LgoKU2lnbmVkLW9mZi1ieTogTWljaGHFgiBNaXJvc8WCYXcgPG1pcnEtbGludXhAcmVyZS5xbXFt
+LnBsPgpBY2tlZC1ieTogQmFydGxvbWllaiBab2xuaWVya2lld2ljeiA8Yi56b2xuaWVya2llQHNh
+bXN1bmcuY29tPgoKLS0tCnYyOiBhZGRlZCBrZXJuZWxkb2MgdG8gY29ycmVzcG9uZGluZyBEUk0g
+aGVscGVyCnYzOiBzcGxpdCBrZXJuZWxkb2MgdG8gYW5vdGhlciBwYXRjaAotLS0KIGRyaXZlcnMv
+dmlkZW8vZmJkZXYvY29yZS9mYm1lbS5jIHwgMTQgKysrKysrKysrKysrKysKIDEgZmlsZSBjaGFu
+Z2VkLCAxNCBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby9mYmRldi9j
+b3JlL2ZibWVtLmMgYi9kcml2ZXJzL3ZpZGVvL2ZiZGV2L2NvcmUvZmJtZW0uYwppbmRleCAzMGEx
+OGQ0YzlkZTQuLjBkZjE0OGViNDY5OSAxMDA2NDQKLS0tIGEvZHJpdmVycy92aWRlby9mYmRldi9j
+b3JlL2ZibWVtLmMKKysrIGIvZHJpdmVycy92aWRlby9mYmRldi9jb3JlL2ZibWVtLmMKQEAgLTE3
+NzksMTEgKzE3NzksMjUgQEAgaW50IHJlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoc3Ry
+dWN0IGFwZXJ0dXJlc19zdHJ1Y3QgKmEsCiAJCQkJICAgIGNvbnN0IGNoYXIgKm5hbWUsIGJvb2wg
+cHJpbWFyeSkKIHsKIAlpbnQgcmV0OworCWJvb2wgZG9fZnJlZSA9IGZhbHNlOworCisJaWYgKCFh
+KSB7CisJCWEgPSBhbGxvY19hcGVydHVyZXMoMSk7CisJCWlmICghYSkKKwkJCXJldHVybiAtRU5P
+TUVNOworCisJCWEtPnJhbmdlc1swXS5iYXNlID0gMDsKKwkJYS0+cmFuZ2VzWzBdLnNpemUgPSB+
+MDsKKwkJZG9fZnJlZSA9IHRydWU7CisJfQogCiAJbXV0ZXhfbG9jaygmcmVnaXN0cmF0aW9uX2xv
+Y2spOwogCXJldCA9IGRvX3JlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoYSwgbmFtZSwg
+cHJpbWFyeSk7CiAJbXV0ZXhfdW5sb2NrKCZyZWdpc3RyYXRpb25fbG9jayk7CiAKKwlpZiAoZG9f
+ZnJlZSkKKwkJa2ZyZWUoYSk7CisKIAlyZXR1cm4gcmV0OwogfQogRVhQT1JUX1NZTUJPTChyZW1v
+dmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKTsKLS0gCjIuMTguMAoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KVmlydHVhbGl6YXRpb24gbWFpbGluZyBs
+aXN0ClZpcnR1YWxpemF0aW9uQGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8vbGlz
+dHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL3ZpcnR1YWxpemF0aW9u
