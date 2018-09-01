@@ -1,456 +1,68 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 04/19] ARM: tegra: apalis-tk1: regulator clean-up
-Date: Sat,  1 Sep 2018 15:04:49 +0200
-Message-ID: <20180901130504.14318-5-marcel@ziswiler.com>
-References: <20180901130504.14318-1-marcel@ziswiler.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH v2 00/12] remove_conflicting_framebuffers() cleanup
+Date: Sat, 1 Sep 2018 15:45:31 +0200
+Message-ID: <20180901134531.GA23402@qmqm.qmqm.pl>
+References: <cover.1511544782.git.mirq-linux@rere.qmqm.pl>
+	<cover.1535656077.git.mirq-linux@rere.qmqm.pl>
+	<20180831090439.GT21634@phenom.ffwll.local>
+	<153570646209.15613.3061584574975657074@skylake-alporthouse-com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+Content-Disposition: inline
+In-Reply-To: <153570646209.15613.3061584574975657074@skylake-alporthouse-com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: linux-fbdev@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Maxime Ripard <maxime.ripard@bootlin.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Fri, Aug 31, 2018 at 10:07:42AM +0100, Chris Wilson wrote:
+[...]
+> Ahah, someone is looking at remove_conflicting_framebuffers(). May I
+> interest you in a use-after-free?
 
-Just cosmetic regulator clean-up.
+> [  378.423513] stack segment: 0000 [#1] PREEMPT SMP PTI
+> [  378.423530] CPU: 1 PID: 4338 Comm: pm_rpm Tainted: G     U            =
+4.19.0-rc1-CI-CI_DRM_4746+ #1
+> [  378.423548] Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.=
+M./J4205-ITX, BIOS P1.10 09/29/2016
+> [  378.423570] RIP: 0010:do_remove_conflicting_framebuffers+0x56/0x170
+> [  378.423587] Code: 49 8b 45 00 48 85 c0 74 50 f6 40 0a 08 74 4a 4d 85 e=
+4 48 8b a8 78 04 00 00 74 1f 48 85 ed 74 1a 41 8b 0c 24 31 db 85 c9 74 10 <=
+8b> 55 00 85 d2 75 42 83 c3 01 41 39 1c 24 77 f0 48 85 ed 74 1a 45
+> [  378.423620] RSP: 0018:ffffc900001dfa88 EFLAGS: 00010202
+> [  378.423632] RAX: ffff880274470008 RBX: 0000000000000000 RCX: 000000000=
+0000001
+> [  378.423646] RDX: 0000000000000001 RSI: ffffffffa025c634 RDI: ffff88025=
+cc3b428
+> [  378.423660] RBP: 6b6b6b6b6b6b6b6b R08: 000000001edaddfa R09: ffffffffa=
+025c634
+> [  378.423673] R10: ffffc900001dfae8 R11: ffffffff820de938 R12: ffff88025=
+cc3b428
+> [  378.423687] R13: ffffffff8234ca20 R14: ffffffff8234cb20 R15: 000000000=
+0000001
+> [  378.423701] FS:  00007fcf03d0a980(0000) GS:ffff880277e80000(0000) knlG=
+S:0000000000000000
+> [  378.423717] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  378.423729] CR2: 00007fffece1fdb8 CR3: 00000001fe32e000 CR4: 000000000=
+03406e0
+> [  378.423742] Call Trace:
+> [  378.423756]  remove_conflicting_framebuffers+0x28/0x40
+> [  378.423856]  i915_driver_load+0x7f5/0x10c0 [i915]
+[...]
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Looks like registered_fb[] entry is pointing to (partially?) freed or
+corrupted fb_info, but I can't see how this could be an effect of
+remove_conflicting_framebuffers().
 
----
-
-Changes in v2: None
-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 100 ++++++++++++++--------------
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 100 ++++++++++++++--------------
- 2 files changed, 100 insertions(+), 100 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index f6459588d845..13aa8c797d42 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -21,13 +21,13 @@
- 
- 	pcie@1003000 {
- 		status = "okay";
--		avddio-pex-supply = <&vdd_1v05>;
--		avdd-pex-pll-supply = <&vdd_1v05>;
--		avdd-pll-erefe-supply = <&avdd_1v05>;
--		dvddio-pex-supply = <&vdd_1v05>;
--		hvdd-pex-pll-e-supply = <&reg_3v3>;
--		hvdd-pex-supply = <&reg_3v3>;
--		vddio-pex-ctl-supply = <&reg_3v3>;
-+		avddio-pex-supply = <&reg_1v05_vdd>;
-+		avdd-pex-pll-supply = <&reg_1v05_vdd>;
-+		avdd-pll-erefe-supply = <&reg_1v05_avdd>;
-+		dvddio-pex-supply = <&reg_1v05_vdd>;
-+		hvdd-pex-pll-e-supply = <&reg_module_3v3>;
-+		hvdd-pex-supply = <&reg_module_3v3>;
-+		vddio-pex-ctl-supply = <&reg_module_3v3>;
- 
- 		/* Apalis PCIe (additional lane Apalis type specific) */
- 		pci@1,0 {
-@@ -65,7 +65,7 @@
- 		 * Node left disabled on purpose - the bootloader will enable
- 		 * it after having set the VPR up
- 		 */
--		vdd-supply = <&vdd_gpu>;
-+		vdd-supply = <&reg_vdd_gpu>;
- 	};
- 
- 	pinmux: pinmux@70000868 {
-@@ -1565,8 +1565,8 @@
- 		sgtl5000: codec@a {
- 			compatible = "fsl,sgtl5000";
- 			reg = <0x0a>;
--			VDDA-supply = <&reg_3v3>;
--			VDDIO-supply = <&vddio_1v8>;
-+			VDDA-supply = <&reg_module_3v3>;
-+			VDDIO-supply = <&reg_1v8_vddio>;
- 			clocks = <&tegra_car TEGRA124_CLK_EXTERN1>;
- 		};
- 
-@@ -1598,18 +1598,18 @@
- 			};
- 
- 			regulators {
--				vsup-sd2-supply = <&reg_3v3>;
--				vsup-sd3-supply = <&reg_3v3>;
--				vsup-sd4-supply = <&reg_3v3>;
--				vsup-sd5-supply = <&reg_3v3>;
--				vin-ldo0-supply = <&vddio_ddr_1v35>;
--				vin-ldo1-6-supply = <&reg_3v3>;
--				vin-ldo2-5-7-supply = <&vddio_1v8>;
--				vin-ldo3-4-supply = <&reg_3v3>;
--				vin-ldo9-10-supply = <&reg_3v3>;
--				vin-ldo11-supply = <&reg_3v3>;
--
--				vdd_cpu: sd0 {
-+				vsup-sd2-supply = <&reg_module_3v3>;
-+				vsup-sd3-supply = <&reg_module_3v3>;
-+				vsup-sd4-supply = <&reg_module_3v3>;
-+				vsup-sd5-supply = <&reg_module_3v3>;
-+				vin-ldo0-supply = <&reg_1v35_vddio_ddr>;
-+				vin-ldo1-6-supply = <&reg_module_3v3>;
-+				vin-ldo2-5-7-supply = <&reg_1v8_vddio>;
-+				vin-ldo3-4-supply = <&reg_module_3v3>;
-+				vin-ldo9-10-supply = <&reg_module_3v3>;
-+				vin-ldo11-supply = <&reg_module_3v3>;
-+
-+				reg_vdd_cpu: sd0 {
- 					regulator-name = "+VDD_CPU_AP";
- 					regulator-min-microvolt = <700000>;
- 					regulator-max-microvolt = <1400000>;
-@@ -1631,7 +1631,7 @@
- 					ams,ext-control = <1>;
- 				};
- 
--				vddio_ddr_1v35: sd2 {
-+				reg_1v35_vddio_ddr: sd2 {
- 					regulator-name =
- 						"+V1.35_VDDIO_DDR(sd2)";
- 					regulator-min-microvolt = <1350000>;
-@@ -1649,13 +1649,13 @@
- 					regulator-boot-on;
- 				};
- 
--				vdd_1v05: sd4 {
-+				reg_1v05_vdd: sd4 {
- 					regulator-name = "+V1.05";
- 					regulator-min-microvolt = <1050000>;
- 					regulator-max-microvolt = <1050000>;
- 				};
- 
--				vddio_1v8: sd5 {
-+				reg_1v8_vddio: sd5 {
- 					regulator-name = "+V1.8";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
-@@ -1663,7 +1663,7 @@
- 					regulator-always-on;
- 				};
- 
--				vdd_gpu: sd6 {
-+				reg_vdd_gpu: sd6 {
- 					regulator-name = "+VDD_GPU_AP";
- 					regulator-min-microvolt = <650000>;
- 					regulator-max-microvolt = <1200000>;
-@@ -1673,7 +1673,7 @@
- 					regulator-always-on;
- 				};
- 
--				avdd_1v05: ldo0 {
-+				reg_1v05_avdd: ldo0 {
- 					regulator-name = "+V1.05_AVDD";
- 					regulator-min-microvolt = <1050000>;
- 					regulator-max-microvolt = <1050000>;
-@@ -1785,9 +1785,9 @@
- 	sata@70020000 {
- 		phys = <&{/padctl@7009f000/pads/sata/lanes/sata-0}>;
- 		phy-names = "sata-0";
--		avdd-supply = <&vdd_1v05>;
--		hvdd-supply = <&reg_3v3>;
--		vddio-supply = <&vdd_1v05>;
-+		avdd-supply = <&reg_1v05_vdd>;
-+		hvdd-supply = <&reg_module_3v3>;
-+		vddio-supply = <&reg_1v05_vdd>;
- 	};
- 
- 	usb@70090000 {
-@@ -1798,14 +1798,14 @@
- 		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-2}>,
- 		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-0}>;
- 		phy-names = "usb2-0", "usb3-1", "usb2-1", "usb2-2", "usb3-0";
--		avddio-pex-supply = <&vdd_1v05>;
--		avdd-pll-erefe-supply = <&avdd_1v05>;
--		avdd-pll-utmip-supply = <&vddio_1v8>;
--		avdd-usb-ss-pll-supply = <&vdd_1v05>;
--		avdd-usb-supply = <&reg_3v3>;
--		dvddio-pex-supply = <&vdd_1v05>;
--		hvdd-usb-ss-pll-e-supply = <&reg_3v3>;
--		hvdd-usb-ss-supply = <&reg_3v3>;
-+		avddio-pex-supply = <&reg_1v05_vdd>;
-+		avdd-pll-erefe-supply = <&reg_1v05_avdd>;
-+		avdd-pll-utmip-supply = <&reg_1v8_vddio>;
-+		avdd-usb-ss-pll-supply = <&reg_1v05_vdd>;
-+		avdd-usb-supply = <&reg_module_3v3>;
-+		dvddio-pex-supply = <&reg_1v05_vdd>;
-+		hvdd-usb-ss-pll-e-supply = <&reg_module_3v3>;
-+		hvdd-usb-ss-supply = <&reg_module_3v3>;
- 	};
- 
- 	padctl@7009f000 {
-@@ -1921,7 +1921,7 @@
- 	/* CPU DFLL clock */
- 	clock@70110000 {
- 		status = "okay";
--		vdd-cpu-supply = <&vdd_cpu>;
-+		vdd-cpu-supply = <&reg_vdd_cpu>;
- 		nvidia,i2c-fs-rate = <400000>;
- 	};
- 
-@@ -1946,7 +1946,7 @@
- 
- 	cpus {
- 		cpu@0 {
--			vdd-cpu-supply = <&vdd_cpu>;
-+			vdd-cpu-supply = <&reg_vdd_cpu>;
- 		};
- 	};
- 
-@@ -1956,7 +1956,7 @@
- 		regulator-min-microvolt = <1050000>;
- 		regulator-max-microvolt = <1050000>;
- 		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
--		vin-supply = <&vdd_1v05>;
-+		vin-supply = <&reg_1v05_vdd>;
- 	};
- 
- 	reg_3v3_mxm: regulator-3v3-mxm {
-@@ -1968,7 +1968,15 @@
- 		regulator-boot-on;
- 	};
- 
--	reg_3v3: regulator-3v3 {
-+	reg_3v3_avdd_hdmi: regulator-3v3-avdd-hdmi {
-+		compatible = "regulator-fixed";
-+		regulator-name = "+V3.3_AVDD_HDMI";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&reg_1v05_vdd>;
-+	};
-+
-+	reg_module_3v3: regulator-module-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "+V3.3";
- 		regulator-min-microvolt = <3300000>;
-@@ -1981,14 +1989,6 @@
- 		vin-supply = <&reg_3v3_mxm>;
- 	};
- 
--	reg_3v3_avdd_hdmi: regulator-3v3-avdd-hdmi {
--		compatible = "regulator-fixed";
--		regulator-name = "+V3.3_AVDD_HDMI";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		vin-supply = <&vdd_1v05>;
--	};
--
- 	sound {
- 		compatible = "toradex,tegra-audio-sgtl5000-apalis_tk1",
- 			     "nvidia,tegra-audio-sgtl5000";
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 8919213d8312..40c6ca2d1385 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -56,13 +56,13 @@
- 
- 	pcie@1003000 {
- 		status = "okay";
--		avddio-pex-supply = <&vdd_1v05>;
--		avdd-pex-pll-supply = <&vdd_1v05>;
--		avdd-pll-erefe-supply = <&avdd_1v05>;
--		dvddio-pex-supply = <&vdd_1v05>;
--		hvdd-pex-pll-e-supply = <&reg_3v3>;
--		hvdd-pex-supply = <&reg_3v3>;
--		vddio-pex-ctl-supply = <&reg_3v3>;
-+		avddio-pex-supply = <&reg_1v05_vdd>;
-+		avdd-pex-pll-supply = <&reg_1v05_vdd>;
-+		avdd-pll-erefe-supply = <&reg_1v05_avdd>;
-+		dvddio-pex-supply = <&reg_1v05_vdd>;
-+		hvdd-pex-pll-e-supply = <&reg_module_3v3>;
-+		hvdd-pex-supply = <&reg_module_3v3>;
-+		vddio-pex-ctl-supply = <&reg_module_3v3>;
- 
- 		/* Apalis PCIe (additional lane Apalis type specific) */
- 		pci@1,0 {
-@@ -100,7 +100,7 @@
- 		 * Node left disabled on purpose - the bootloader will enable
- 		 * it after having set the VPR up
- 		 */
--		vdd-supply = <&vdd_gpu>;
-+		vdd-supply = <&reg_vdd_gpu>;
- 	};
- 
- 	pinmux: pinmux@70000868 {
-@@ -1594,8 +1594,8 @@
- 		sgtl5000: codec@a {
- 			compatible = "fsl,sgtl5000";
- 			reg = <0x0a>;
--			VDDA-supply = <&reg_3v3>;
--			VDDIO-supply = <&vddio_1v8>;
-+			VDDA-supply = <&reg_module_3v3>;
-+			VDDIO-supply = <&reg_1v8_vddio>;
- 			clocks = <&tegra_car TEGRA124_CLK_EXTERN1>;
- 		};
- 
-@@ -1627,18 +1627,18 @@
- 			};
- 
- 			regulators {
--				vsup-sd2-supply = <&reg_3v3>;
--				vsup-sd3-supply = <&reg_3v3>;
--				vsup-sd4-supply = <&reg_3v3>;
--				vsup-sd5-supply = <&reg_3v3>;
--				vin-ldo0-supply = <&vddio_ddr_1v35>;
--				vin-ldo1-6-supply = <&reg_3v3>;
--				vin-ldo2-5-7-supply = <&vddio_1v8>;
--				vin-ldo3-4-supply = <&reg_3v3>;
--				vin-ldo9-10-supply = <&reg_3v3>;
--				vin-ldo11-supply = <&reg_3v3>;
--
--				vdd_cpu: sd0 {
-+				vsup-sd2-supply = <&reg_module_3v3>;
-+				vsup-sd3-supply = <&reg_module_3v3>;
-+				vsup-sd4-supply = <&reg_module_3v3>;
-+				vsup-sd5-supply = <&reg_module_3v3>;
-+				vin-ldo0-supply = <&reg_1v35_vddio_ddr>;
-+				vin-ldo1-6-supply = <&reg_module_3v3>;
-+				vin-ldo2-5-7-supply = <&reg_1v8_vddio>;
-+				vin-ldo3-4-supply = <&reg_module_3v3>;
-+				vin-ldo9-10-supply = <&reg_module_3v3>;
-+				vin-ldo11-supply = <&reg_module_3v3>;
-+
-+				reg_vdd_cpu: sd0 {
- 					regulator-name = "+VDD_CPU_AP";
- 					regulator-min-microvolt = <700000>;
- 					regulator-max-microvolt = <1400000>;
-@@ -1660,7 +1660,7 @@
- 					ams,ext-control = <1>;
- 				};
- 
--				vddio_ddr_1v35: sd2 {
-+				reg_1v35_vddio_ddr: sd2 {
- 					regulator-name =
- 						"+V1.35_VDDIO_DDR(sd2)";
- 					regulator-min-microvolt = <1350000>;
-@@ -1678,13 +1678,13 @@
- 					regulator-boot-on;
- 				};
- 
--				vdd_1v05: sd4 {
-+				reg_1v05_vdd: sd4 {
- 					regulator-name = "+V1.05";
- 					regulator-min-microvolt = <1050000>;
- 					regulator-max-microvolt = <1050000>;
- 				};
- 
--				vddio_1v8: sd5 {
-+				reg_1v8_vddio: sd5 {
- 					regulator-name = "+V1.8";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
-@@ -1692,7 +1692,7 @@
- 					regulator-always-on;
- 				};
- 
--				vdd_gpu: sd6 {
-+				reg_vdd_gpu: sd6 {
- 					regulator-name = "+VDD_GPU_AP";
- 					regulator-min-microvolt = <650000>;
- 					regulator-max-microvolt = <1200000>;
-@@ -1702,7 +1702,7 @@
- 					regulator-always-on;
- 				};
- 
--				avdd_1v05: ldo0 {
-+				reg_1v05_avdd: ldo0 {
- 					regulator-name = "+V1.05_AVDD";
- 					regulator-min-microvolt = <1050000>;
- 					regulator-max-microvolt = <1050000>;
-@@ -1814,9 +1814,9 @@
- 	sata@70020000 {
- 		phys = <&{/padctl@7009f000/pads/sata/lanes/sata-0}>;
- 		phy-names = "sata-0";
--		avdd-supply = <&vdd_1v05>;
--		hvdd-supply = <&reg_3v3>;
--		vddio-supply = <&vdd_1v05>;
-+		avdd-supply = <&reg_1v05_vdd>;
-+		hvdd-supply = <&reg_module_3v3>;
-+		vddio-supply = <&reg_1v05_vdd>;
- 	};
- 
- 	usb@70090000 {
-@@ -1827,14 +1827,14 @@
- 		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-2}>,
- 		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-0}>;
- 		phy-names = "usb2-0", "usb3-1", "usb2-1", "usb2-2", "usb3-0";
--		avddio-pex-supply = <&vdd_1v05>;
--		avdd-pll-erefe-supply = <&avdd_1v05>;
--		avdd-pll-utmip-supply = <&vddio_1v8>;
--		avdd-usb-ss-pll-supply = <&vdd_1v05>;
--		avdd-usb-supply = <&reg_3v3>;
--		dvddio-pex-supply = <&vdd_1v05>;
--		hvdd-usb-ss-pll-e-supply = <&reg_3v3>;
--		hvdd-usb-ss-supply = <&reg_3v3>;
-+		avddio-pex-supply = <&reg_1v05_vdd>;
-+		avdd-pll-erefe-supply = <&reg_1v05_avdd>;
-+		avdd-pll-utmip-supply = <&reg_1v8_vddio>;
-+		avdd-usb-ss-pll-supply = <&reg_1v05_vdd>;
-+		avdd-usb-supply = <&reg_module_3v3>;
-+		dvddio-pex-supply = <&reg_1v05_vdd>;
-+		hvdd-usb-ss-pll-e-supply = <&reg_module_3v3>;
-+		hvdd-usb-ss-supply = <&reg_module_3v3>;
- 	};
- 
- 	padctl@7009f000 {
-@@ -1950,7 +1950,7 @@
- 	/* CPU DFLL clock */
- 	clock@70110000 {
- 		status = "okay";
--		vdd-cpu-supply = <&vdd_cpu>;
-+		vdd-cpu-supply = <&reg_vdd_cpu>;
- 		nvidia,i2c-fs-rate = <400000>;
- 	};
- 
-@@ -1975,7 +1975,7 @@
- 
- 	cpus {
- 		cpu@0 {
--			vdd-cpu-supply = <&vdd_cpu>;
-+			vdd-cpu-supply = <&reg_vdd_cpu>;
- 		};
- 	};
- 
-@@ -1985,7 +1985,7 @@
- 		regulator-min-microvolt = <1050000>;
- 		regulator-max-microvolt = <1050000>;
- 		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
--		vin-supply = <&vdd_1v05>;
-+		vin-supply = <&reg_1v05_vdd>;
- 	};
- 
- 	reg_3v3_mxm: regulator-3v3-mxm {
-@@ -1997,7 +1997,15 @@
- 		regulator-boot-on;
- 	};
- 
--	reg_3v3: regulator-3v3 {
-+	reg_3v3_avdd_hdmi: regulator-3v3-avdd-hdmi {
-+		compatible = "regulator-fixed";
-+		regulator-name = "+V3.3_AVDD_HDMI";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&reg_1v05_vdd>;
-+	};
-+
-+	reg_module_3v3: regulator-module-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "+V3.3";
- 		regulator-min-microvolt = <3300000>;
-@@ -2010,14 +2018,6 @@
- 		vin-supply = <&reg_3v3_mxm>;
- 	};
- 
--	reg_3v3_avdd_hdmi: regulator-3v3-avdd-hdmi {
--		compatible = "regulator-fixed";
--		regulator-name = "+V3.3_AVDD_HDMI";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		vin-supply = <&vdd_1v05>;
--	};
--
- 	sound {
- 		compatible = "toradex,tegra-audio-sgtl5000-apalis_tk1",
- 			     "nvidia,tegra-audio-sgtl5000";
--- 
-2.14.4
+Best Regards,
+Micha=B3 Miros=B3aw
