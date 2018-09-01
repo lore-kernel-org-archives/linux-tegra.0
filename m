@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 20/34] ARM: tegra: colibri_t30: remove unused nvidia,is-wired property
-Date: Sat,  1 Sep 2018 10:12:34 +0200
-Message-ID: <20180901081248.22639-21-marcel@ziswiler.com>
+Subject: [PATCH v2 21/34] ARM: tegra: colibri_t30: add gpio hog to unreset usb ethernet chip
+Date: Sat,  1 Sep 2018 10:12:35 +0200
+Message-ID: <20180901081248.22639-22-marcel@ziswiler.com>
 References: <20180901081248.22639-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901081248.22639-1-marcel@ziswiler.com>
@@ -12,28 +12,34 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Remove unused nvidia,is-wired property.
+Add GPIO hog to unreset ASIX AX88772B USB Ethernet chip.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2: None
+Changes in v2:
+- Replace underscores in node names with dashes.
 
- arch/arm/boot/dts/tegra30-colibri.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 0d8b0f319c6f..eb36ae3038a7 100644
+index eb36ae3038a7..aff94707b3fa 100644
 --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -949,7 +949,6 @@
- 
- 	usb-phy@7d004000 {
- 		status = "okay";
--		nvidia,is-wired = <1>;
- 		vbus-supply = <&reg_lan_v_bus>;
+@@ -1027,3 +1027,12 @@
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
  	};
- 
+ };
++
++&gpio {
++	lan-reset-n {
++		gpio-hog;
++		gpios = <TEGRA_GPIO(DD, 0) GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "LAN_RESET#";
++	};
++};
 -- 
 2.14.4
