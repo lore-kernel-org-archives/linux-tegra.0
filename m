@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 07/34] ARM: tegra: colibri_t30: move dr_mode property from phy to controller
-Date: Sat,  1 Sep 2018 10:12:21 +0200
-Message-ID: <20180901081248.22639-8-marcel@ziswiler.com>
+Subject: [PATCH v2 08/34] ARM: tegra: colibri_t30: reorder backlight properties
+Date: Sat,  1 Sep 2018 10:12:22 +0200
+Message-ID: <20180901081248.22639-9-marcel@ziswiler.com>
 References: <20180901081248.22639-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901081248.22639-1-marcel@ziswiler.com>
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Move dr_mode property from USB PHY node to controller.
+Reorder backlight properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -20,25 +20,27 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index ff321964d225..709ff95a1614 100644
+index 709ff95a1614..8c492daac165 100644
 --- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
 +++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -105,11 +105,11 @@
- 	/* EHCI instance 0: USB1_DP/N -> USBC_P/N */
- 	usb@7d000000 {
- 		status = "okay";
-+		dr_mode = "otg";
+@@ -125,13 +125,12 @@
+ 
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+-		/* PWM<A> */
+-		pwms = <&pwm 0 5000000>;
+ 		brightness-levels = <255 128 64 32 16 8 4 0>;
+ 		default-brightness-level = <6>;
+ 		/* BL_ON */
+ 		enable-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+ 		power-supply = <&reg_3v3>;
++		pwms = <&pwm 0 5000000>; /* PWM<A> */
  	};
  
- 	usb-phy@7d000000 {
- 		status = "okay";
--		dr_mode = "otg";
- 		vbus-supply = <&reg_usbc_vbus>;
- 	};
- 
+ 	clocks {
 -- 
 2.14.4
