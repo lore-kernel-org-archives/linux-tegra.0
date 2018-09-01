@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 13/34] ARM: tegra: colibri_t30: further lm95245 temperature sensor annotation
-Date: Sat,  1 Sep 2018 10:12:27 +0200
-Message-ID: <20180901081248.22639-14-marcel@ziswiler.com>
+Subject: [PATCH v2 12/34] ARM: tegra: colibri_t30: use proper irq-gpio for stmpe811
+Date: Sat,  1 Sep 2018 10:12:26 +0200
+Message-ID: <20180901081248.22639-13-marcel@ziswiler.com>
 References: <20180901081248.22639-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180901081248.22639-1-marcel@ziswiler.com>
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Further LM95245 temperature sensor annotation.
+Use proper irq-gpio for stmpe811 touch controller.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -20,21 +20,22 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra30-colibri.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 3a5151dc8483..73ff098612a2 100644
+index 197605d99425..3a5151dc8483 100644
 --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -878,7 +878,7 @@
- 
- 		/*
- 		 * LM95245 temperature sensor
--		 * Note: OVERT_N directly connected to PMIC PWRDN
-+		 * Note: OVERT1# directly connected to TPS65911 PMIC PWRDN
- 		 */
- 		temp-sensor@4c {
- 			compatible = "national,lm95245";
+@@ -844,8 +844,7 @@
+ 		stmpe811@41 {
+ 			compatible = "st,stmpe811";
+ 			reg = <0x41>;
+-			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
+-			interrupt-parent = <&gpio>;
++			irq-gpio = <&gpio TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-controller;
+ 			id = <0>;
+ 			blocks = <0x5>;
 -- 
 2.14.4
