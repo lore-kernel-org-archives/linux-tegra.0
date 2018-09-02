@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 35/37] ARM: tegra: colibri_t20: get rid of fake clocks simple bus
-Date: Sun,  2 Sep 2018 12:09:04 +0200
-Message-ID: <20180902100906.25792-36-marcel@ziswiler.com>
+Subject: [PATCH v2 24/37] ARM: tegra: colibri_t20: add gpio hog to unreset usb ethernet chip
+Date: Sun,  2 Sep 2018 12:08:53 +0200
+Message-ID: <20180902100906.25792-25-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
@@ -12,44 +12,34 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Get rid of the fake clocks simple bus and use node names as per the
-actual schematics.
+Add GPIO hog to unreset ASIX AX88772B USB Ethernet chip.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
 Changes in v2:
-- Get rid of fake clocks simple bus as suggested by Rob.
+- Also replace underscores in node name with dashes.
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 473f32f20d8d..243615f6c349 100644
+index 9ec56f49c30c..281e0dd11565 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -701,17 +701,10 @@
- 		vbus-supply = <&reg_lan_v_bus>;
+@@ -749,3 +749,12 @@
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
  	};
- 
--	clocks {
--		compatible = "simple-bus";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		clk32k_in: clock@0 {
--			compatible = "fixed-clock";
--			reg = <0>;
--			#clock-cells = <0>;
--			clock-frequency = <32768>;
--		};
-+	clk32k_in: xtal3 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
- 	};
- 
- 	reg_lan_v_bus: regulator-lan-v-bus {
+ };
++
++&gpio {
++	lan-reset-n {
++		gpio-hog;
++		gpios = <TEGRA_GPIO(V, 4) GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "LAN_RESET#";
++	};
++};
 -- 
 2.14.4
