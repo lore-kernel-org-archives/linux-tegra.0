@@ -1,52 +1,46 @@
-From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v3 12/13] drm/sun4i: use simpler
- remove_conflicting_framebuffers(NULL)
-Date: Sat, 01 Sep 2018 16:08:51 +0200
-Message-ID: <7d6d5bc4deac322b1351533c989cb3583e91be49.1535810304.git.mirq-linux@rere.qmqm.pl>
-References: <cover.1535810304.git.mirq-linux@rere.qmqm.pl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1535810304.git.mirq-linux@rere.qmqm.pl>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-fbdev@vger.kernel.org, linux-tegra@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Eric Anholt <eric@anholt.net>, amd-gfx@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>, virtualization@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH v2 05/37] ARM: tegra: colibri_t20: add local-mac-address property
+Date: Sun,  2 Sep 2018 12:08:34 +0200
+Message-ID: <20180902100906.25792-6-marcel@ziswiler.com>
+References: <20180902100906.25792-1-marcel@ziswiler.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-VXNlIHJlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoTlVMTCkgaW5zdGVhZCBvZiBkdXBs
-aWNhdGluZyBpdC4KClNpZ25lZC1vZmYtYnk6IE1pY2hhxYIgTWlyb3PFgmF3IDxtaXJxLWxpbnV4
-QHJlcmUucW1xbS5wbD4KQWNrZWQtYnk6IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJl
-ZS1lbGVjdHJvbnMuY29tPgpBY2tlZC1ieTogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBm
-ZndsbC5jaD4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMgfCAxOCArLS0t
-LS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMTcgZGVsZXRp
-b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2Rydi5jIGIv
-ZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2Rydi5jCmluZGV4IDUwZDE5NjA1YzM4Zi4uNTU1
-YjVkYjgwMzZmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMK
-KysrIGIvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2Rydi5jCkBAIC02MCwyMiArNjAsNiBA
-QCBzdGF0aWMgc3RydWN0IGRybV9kcml2ZXIgc3VuNGlfZHJ2X2RyaXZlciA9IHsKIAkvKiBGcmFt
-ZSBCdWZmZXIgT3BlcmF0aW9ucyAqLwogfTsKIAotc3RhdGljIHZvaWQgc3VuNGlfcmVtb3ZlX2Zy
-YW1lYnVmZmVycyh2b2lkKQotewotCXN0cnVjdCBhcGVydHVyZXNfc3RydWN0ICphcDsKLQotCWFw
-ID0gYWxsb2NfYXBlcnR1cmVzKDEpOwotCWlmICghYXApCi0JCXJldHVybjsKLQotCS8qIFRoZSBm
-cmFtZWJ1ZmZlciBjYW4gYmUgbG9jYXRlZCBhbnl3aGVyZSBpbiBSQU0gKi8KLQlhcC0+cmFuZ2Vz
-WzBdLmJhc2UgPSAwOwotCWFwLT5yYW5nZXNbMF0uc2l6ZSA9IH4wOwotCi0JZHJtX2ZiX2hlbHBl
-cl9yZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKGFwLCAic3VuNGktZHJtLWZiIiwgZmFs
-c2UpOwotCWtmcmVlKGFwKTsKLX0KLQogc3RhdGljIGludCBzdW40aV9kcnZfYmluZChzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpCiB7CiAJc3RydWN0IGRybV9kZXZpY2UgKmRybTsKQEAgLTExOCw3ICsxMDIs
-NyBAQCBzdGF0aWMgaW50IHN1bjRpX2Rydl9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldikKIAlkcm0t
-PmlycV9lbmFibGVkID0gdHJ1ZTsKIAogCS8qIFJlbW92ZSBlYXJseSBmcmFtZWJ1ZmZlcnMgKGll
-LiBzaW1wbGVmYikgKi8KLQlzdW40aV9yZW1vdmVfZnJhbWVidWZmZXJzKCk7CisJZHJtX2ZiX2hl
-bHBlcl9yZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKE5VTEwsICJzdW40aS1kcm0tZmIi
-LCBmYWxzZSk7CiAKIAkvKiBDcmVhdGUgb3VyIGZyYW1lYnVmZmVyICovCiAJcmV0ID0gc3VuNGlf
-ZnJhbWVidWZmZXJfaW5pdChkcm0pOwotLSAKMi4xOC4wCgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QK
-bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
-YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+Add empty local-mac-address property to be filled in by boot loader
+(e.g. U-Boot).
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+Changes in v2: None
+
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index e34ab4a76158..ad816fa827f7 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -482,6 +482,13 @@
+ 		status = "okay";
+ 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+ 			GPIO_ACTIVE_LOW>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		asix@1 {
++			reg = <1>;
++			local-mac-address = [00 00 00 00 00 00];
++		};
+ 	};
+ 
+ 	usb-phy@c5004000 {
+-- 
+2.14.4
