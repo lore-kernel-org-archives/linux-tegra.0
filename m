@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 02/37] ARM: tegra: colibri_t20: iris: integrate i2c real time clock support
-Date: Sun,  2 Sep 2018 12:08:31 +0200
-Message-ID: <20180902100906.25792-3-marcel@ziswiler.com>
+Subject: [PATCH v2 04/37] ARM: tegra: colibri_t20: iris: annotate i2c busses
+Date: Sun,  2 Sep 2018 12:08:33 +0200
+Message-ID: <20180902100906.25792-5-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
@@ -12,41 +12,34 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Integrate support for GEN1_I2C aka I2C_SDA/SCL on SODIMM pin 194/196 and
-the M41T0M6 real time clock on the carrier board.
+Annotate I2C busses: GEN2_I2C and CAM_I2C (I2C3) being unused and
+DDC_CLOCK/DATA on X3 pin 15/16 e.g. used for display EDID.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2: None
+Changes in v2:
+- Fix commit message which was mixed up between "[PATCH 03/31] ARM:
+  tegra: colibri_t20: iris: annotate i2c busses" and "[PATCH 04/31] ARM:
+  tegra: colibri_t20: iris: add missing aliases".
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 496b96e229d2..b6d05da8c93c 100644
+index cbf1f4d76813..cc9e372a3b58 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -56,6 +56,21 @@
- 		status = "okay";
+@@ -73,6 +73,11 @@
+ 		};
  	};
  
-+	/*
-+	 * GEN1_I2C: I2C_SDA/SCL on SODIMM pin 194/196 (e.g. RTC on carrier
-+	 * board)
-+	 */
-+	i2c@7000c000 {
-+		status = "okay";
-+		clock-frequency = <400000>;
++	/* GEN2_I2C: unused */
 +
-+		/* M41T0M6 real time clock on carrier board */
-+		rtc@68 {
-+			compatible = "st,m41t0";
-+			reg = <0x68>;
-+		};
-+	};
++	/* CAM_I2C (I2C3): unused */
 +
++	/* DDC_CLOCK/DATA on X3 pin 15/16 (e.g. display EDID) */
  	i2c_ddc: i2c@7000c400 {
  		status = "okay";
  	};
