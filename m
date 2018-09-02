@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 30/37] ARM: tegra: colibri_t20: iris: add colibri ssp support
-Date: Sun,  2 Sep 2018 12:08:59 +0200
-Message-ID: <20180902100906.25792-31-marcel@ziswiler.com>
+Subject: [PATCH v2 32/37] ARM: tegra: colibri_t20: rename i2c_ddc to hdmi_ddc
+Date: Sun,  2 Sep 2018 12:09:01 +0200
+Message-ID: <20180902100906.25792-33-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
@@ -12,33 +12,39 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add Colibri SSP aka SPI support using the SPI4 instance.
+Rename i2c_ddc to hdmi_ddc to be more in-line with other device trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2: None
+Changes in v2:
+- New patch.
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index dbdf596dd151..b16e04dfa31f 100644
---- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -164,6 +164,12 @@
- 		vbus-supply = <&reg_usbh_vbus>;
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index b4d429f672da..36463fb3c0b3 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -19,7 +19,7 @@
+ 
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+-			nvidia,ddc-i2c-bus = <&i2c_ddc>;
++			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpio =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+ 			pll-supply = <&reg_1v8_avdd_hdmi_pll>;
+@@ -459,7 +459,7 @@
  	};
  
-+	/* SPI4: Colibri SSP */
-+	spi@7000da00 {
-+		status = "okay";
-+		spi-max-frequency = <25000000>;
-+	};
-+
- 	/* SD/MMC */
- 	sdhci@c8000600 {
- 		status = "okay";
+ 	/* DDC_SCL/SDA on X3 pin 15/16 (e.g. display EDID) */
+-	i2c_ddc: i2c@7000c400 {
++	hdmi_ddc: i2c@7000c400 {
+ 		clock-frequency = <10000>;
+ 	};
+ 
 -- 
 2.14.4
