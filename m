@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 24/37] ARM: tegra: colibri_t20: add gpio hog to unreset usb ethernet chip
-Date: Sun,  2 Sep 2018 12:08:53 +0200
-Message-ID: <20180902100906.25792-25-marcel@ziswiler.com>
+Subject: [PATCH v2 27/37] ARM: tegra: colibri_t20: add compatibility comment
+Date: Sun,  2 Sep 2018 12:08:56 +0200
+Message-ID: <20180902100906.25792-28-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
@@ -12,34 +12,33 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add GPIO hog to unreset ASIX AX88772B USB Ethernet chip.
+Add compatibility comment.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2:
-- Also replace underscores in node name with dashes.
+Changes in v2: None
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 9ec56f49c30c..281e0dd11565 100644
+index 6b82485ff58e..ea785f65c89f 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -749,3 +749,12 @@
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
- };
-+
-+&gpio {
-+	lan-reset-n {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(V, 4) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "LAN_RESET#";
-+	};
-+};
+@@ -1,6 +1,12 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "tegra20.dtsi"
+ 
++/*
++ * Toradex Colibri T20 Module Device Tree
++ * Compatible for Revisions Colibri T20 256MB V1.1B, V1.2A;
++ * Colibri T20 256MB IT V1.2A; Colibri T20 512MB V1.1C, V1.2A;
++ * Colibri T20 512MB IT V1.2A
++ */
+ / {
+ 	model = "Toradex Colibri T20 256/512 MB";
+ 	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
 -- 
 2.14.4
