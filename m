@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 27/37] ARM: tegra: colibri_t20: add compatibility comment
-Date: Sun,  2 Sep 2018 12:08:56 +0200
-Message-ID: <20180902100906.25792-28-marcel@ziswiler.com>
+Subject: [PATCH v2 26/37] ARM: tegra: colibri_t20: annotate/move sd card detect
+Date: Sun,  2 Sep 2018 12:08:55 +0200
+Message-ID: <20180902100906.25792-27-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
@@ -12,7 +12,9 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add compatibility comment.
+Annotate the SD card, its detect pin and move the SD card detect GPIO
+definition from the module to the carrier board more in-line with our
+other device trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -20,25 +22,40 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 2 ++
+ arch/arm/boot/dts/tegra20-colibri.dtsi     | 4 ----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+index 7a7530820188..1583d5118302 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+@@ -163,9 +163,11 @@
+ 		vbus-supply = <&reg_usbh_vbus>;
+ 	};
+ 
++	/* SD/MMC */
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <4>;
++		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>; /* MMCD */
+ 		no-1-8-v;
+ 	};
+ 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 6b82485ff58e..ea785f65c89f 100644
+index aba56b447bcd..6b82485ff58e 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -1,6 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0
- #include "tegra20.dtsi"
+@@ -698,10 +698,6 @@
+ 		vbus-supply = <&reg_lan_v_bus>;
+ 	};
  
-+/*
-+ * Toradex Colibri T20 Module Device Tree
-+ * Compatible for Revisions Colibri T20 256MB V1.1B, V1.2A;
-+ * Colibri T20 256MB IT V1.2A; Colibri T20 512MB V1.1C, V1.2A;
-+ * Colibri T20 512MB IT V1.2A
-+ */
- / {
- 	model = "Toradex Colibri T20 256/512 MB";
- 	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
+-	sdhci@c8000600 {
+-		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>;
+-	};
+-
+ 	clocks {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
 2.14.4
