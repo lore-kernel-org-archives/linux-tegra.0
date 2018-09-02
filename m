@@ -1,61 +1,44 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 29/37] ARM: tegra: colibri_t20: iris: simplify model and compatible properties
-Date: Sun,  2 Sep 2018 12:08:58 +0200
-Message-ID: <20180902100906.25792-30-marcel@ziswiler.com>
+Subject: [PATCH v2 30/37] ARM: tegra: colibri_t20: iris: add colibri ssp support
+Date: Sun,  2 Sep 2018 12:08:59 +0200
+Message-ID: <20180902100906.25792-31-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Mikko Perttunen <mperttunen@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Simplify model and compatible by dropping the 256/512 MB from the model,
--512 from the compatible and rename that property from toradex,iris to
-toradex,colibri_t20-iris to be more in-line with all our other device
-trees.
+Add Colibri SSP aka SPI support using the SPI4 instance.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2:
-- Also reflect this change in the device tree bindings documentation.
+Changes in v2: None
 
- Documentation/devicetree/bindings/arm/tegra.txt | 2 +-
- arch/arm/boot/dts/tegra20-colibri-iris.dts      | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
-index 5e1b0b30ece2..0909122a2bee 100644
---- a/Documentation/devicetree/bindings/arm/tegra.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra.txt
-@@ -54,9 +54,9 @@ board-specific compatible values:
-   toradex,apalis-tk1-v1.2
-   toradex,apalis-tk1-v1.2-eval
-   toradex,colibri_t20
-+  toradex,colibri_t20-iris
-   toradex,colibri_t30
-   toradex,colibri_t30-eval-v3
--  toradex,iris
- 
- Trusted Foundations
- -------------------------------------------
 diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index cd47ac5b528f..dbdf596dd151 100644
+index dbdf596dd151..b16e04dfa31f 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -6,7 +6,8 @@
+@@ -164,6 +164,12 @@
+ 		vbus-supply = <&reg_usbh_vbus>;
+ 	};
  
- / {
- 	model = "Toradex Colibri T20 on Iris";
--	compatible = "toradex,iris", "toradex,colibri_t20", "nvidia,tegra20";
-+	compatible = "toradex,colibri_t20-iris", "toradex,colibri_t20",
-+		     "nvidia,tegra20";
- 
- 	aliases {
- 		rtc0 = "/i2c@7000c000/rtc@68";
++	/* SPI4: Colibri SSP */
++	spi@7000da00 {
++		status = "okay";
++		spi-max-frequency = <25000000>;
++	};
++
+ 	/* SD/MMC */
+ 	sdhci@c8000600 {
+ 		status = "okay";
 -- 
 2.14.4
