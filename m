@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 05/37] ARM: tegra: colibri_t20: add local-mac-address property
-Date: Sun,  2 Sep 2018 12:08:34 +0200
-Message-ID: <20180902100906.25792-6-marcel@ziswiler.com>
+Subject: [PATCH v2 06/37] ARM: tegra: colibri_t20: reorder host1x/hdmi properties
+Date: Sun,  2 Sep 2018 12:08:35 +0200
+Message-ID: <20180902100906.25792-7-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
@@ -12,8 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add empty local-mac-address property to be filled in by boot loader
-(e.g. U-Boot).
+Reorder Host1x/HDMI properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -21,26 +20,29 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index e34ab4a76158..ad816fa827f7 100644
+index ad816fa827f7..c060b58cb490 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -482,6 +482,13 @@
- 		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
- 			GPIO_ACTIVE_LOW>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		asix@1 {
-+			reg = <1>;
-+			local-mac-address = [00 00 00 00 00 00];
-+		};
+@@ -16,12 +16,11 @@
+ 
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+-			vdd-supply = <&hdmi_vdd_reg>;
+-			pll-supply = <&hdmi_pll_reg>;
+-
+ 			nvidia,ddc-i2c-bus = <&i2c_ddc>;
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
++			nvidia,hpd-gpio =
++				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
++			pll-supply = <&hdmi_pll_reg>;
++			vdd-supply = <&hdmi_vdd_reg>;
+ 		};
  	};
  
- 	usb-phy@c5004000 {
 -- 
 2.14.4
