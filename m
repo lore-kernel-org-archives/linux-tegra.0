@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 22/37] ARM: tegra: colibri_t20: annotate/rename lm95245 temperature sensor
-Date: Sun,  2 Sep 2018 12:08:51 +0200
-Message-ID: <20180902100906.25792-23-marcel@ziswiler.com>
+Subject: [PATCH v2 25/37] ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
+Date: Sun,  2 Sep 2018 12:08:54 +0200
+Message-ID: <20180902100906.25792-26-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
@@ -12,8 +12,9 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Rename and annotate LM95245 temperature sensor more in-line with our
-other device trees.
+Add GPIO hogs for GMI_WR_N buffers:
+- tri-stating GMI_WR_N on SODIMM pin 99 nPWE
+- not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -21,22 +22,33 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 86bfe77d9230..477d67ff74c6 100644
+index 281e0dd11565..aba56b447bcd 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -584,7 +584,8 @@
- 			};
- 		};
- 
--		temperature-sensor@4c {
-+		/* LM95245 temperature sensor */
-+		temp-sensor@4c {
- 			compatible = "national,lm95245";
- 			reg = <0x4c>;
- 		};
+@@ -757,4 +757,20 @@
+ 		output-high;
+ 		line-name = "LAN_RESET#";
+ 	};
++
++	/* Tri-stating GMI_WR_N on SODIMM pin 99 nPWE */
++	npwe {
++		gpio-hog;
++		gpios = <TEGRA_GPIO(T, 5) GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "Tri-state nPWE";
++	};
++
++	/* Not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR */
++	rdnwr {
++		gpio-hog;
++		gpios = <TEGRA_GPIO(T, 6) GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "Not tri-state RDnWR";
++	};
+ };
 -- 
 2.14.4
