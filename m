@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 10/37] ARM: tegra: colibri_t20: annotate usb ehci instances
-Date: Sun,  2 Sep 2018 12:08:39 +0200
-Message-ID: <20180902100906.25792-11-marcel@ziswiler.com>
+Subject: [PATCH v2 13/37] ARM: tegra: colibri_t20: update sound nvidia,model
+Date: Sun,  2 Sep 2018 12:08:42 +0200
+Message-ID: <20180902100906.25792-14-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
@@ -12,7 +12,8 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Annotate USB EHCI instances.
+Update sound nvidia,model to be more in-line with our other device
+trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -20,41 +21,21 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 2 ++
- arch/arm/boot/dts/tegra20-colibri.dtsi     | 1 +
- 2 files changed, 3 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 9f0a819c68f2..194f40646a83 100644
---- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -83,6 +83,7 @@
- 		status = "okay";
- 	};
- 
-+	/* EHCI instance 0: USB1_DP/N -> USBC_P/N */
- 	usb@c5000000 {
- 		status = "okay";
- 	};
-@@ -92,6 +93,7 @@
- 		vbus-supply = <&reg_usbc_vbus>;
- 	};
- 
-+	/* EHCI instance 2: USB3_DP/N -> USBH_P/N */
- 	usb@c5008000 {
- 		status = "okay";
- 	};
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 5e98f225322b..77e99caf5606 100644
+index 5559008efc5f..ba84184e09b8 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -454,6 +454,7 @@
- 		};
- 	};
- 
-+	/* EHCI instance 1: ULPI PHY -> AX88772B (On-module) */
- 	usb@c5004000 {
- 		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+@@ -507,7 +507,7 @@
+ 	sound {
+ 		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
+ 			     "nvidia,tegra-audio-wm9712";
+-		nvidia,model = "Colibri T20 AC97 Audio";
++		nvidia,model = "Toradex Colibri T20";
+ 		nvidia,audio-routing =
+ 			"Headphone", "HPOUTL",
+ 			"Headphone", "HPOUTR",
 -- 
 2.14.4
