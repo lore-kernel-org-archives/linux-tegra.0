@@ -1,70 +1,100 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: core: Don't schedule DAPM work if
- already in target state
-Date: Mon, 3 Sep 2018 15:45:36 +0100
-Message-ID: <7cb856ee-c9e6-b54b-6d12-37bf4005e5c3@nvidia.com>
-References: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
- <20180828103911.GX32322@imbe.wolfsonmicro.main>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v3 04/13] fbdev: add remove_conflicting_pci_framebuffers()
+Date: Mon, 3 Sep 2018 18:16:23 +0200
+Message-ID: <20180903161623.GH21634@phenom.ffwll.local>
+References: <cover.1535810304.git.mirq-linux@rere.qmqm.pl>
+	<7db1c278276de420eb45a1b71d06b5eb6bbd49ef.1535810304.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180828103911.GX32322@imbe.wolfsonmicro.main>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+Content-Disposition: inline
+In-Reply-To: <7db1c278276de420eb45a1b71d06b5eb6bbd49ef.1535810304.git.mirq-linux@rere.qmqm.pl>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-fbdev@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, Alex Deucher <alexander.deucher@amd.com>, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Dave Airlie <airlied@redhat.com>, Maxime Ripard <maxime.ripard@bootlin.com>, virtualization@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 28/08/18 11:39, Charles Keepax wrote:
-> On Fri, Aug 17, 2018 at 04:35:43PM +0100, Jon Hunter wrote:
->> When dapm_power_widgets() is called, the dapm_pre_sequence_async() and
->> dapm_post_sequence_async() functions are scheduled for all DAPM contexts
->> (apart from the card DAPM context) regardless of whether the DAPM
->> context is already in the desired state. The overhead of this is not
->> insignificant and the more DAPM contexts there are the more overhead
->> there is.
->>
->> For example, on the Tegra124 Jetson TK1, when profiling the time taken
->> to execute the dapm_power_widgets() the following times were observed.
->>
->>   Times for function dapm_power_widgets() are (us):
->>      Min 23, Ave 190, Max 434, Count 39
->>
->> Here 'Count' is the number of times that dapm_power_widgets() has been
->> called. Please note that the above time were measured using ktime_get()
->> to log the time on entry and exit from dapm_power_widgets(). So it
->> should be noted that these times may not be purely the time take to
->> execute this function if it is preempted. However, after applying this
->> patch and measuring the time taken to execute dapm_power_widgets() again
->> a significant improvement is seen as shown below.
->>
->>   Times for function dapm_power_widgets() are (us):
->>      Min 4, Ave 16, Max 82, Count 39
->>
->> Therefore, optimise the dapm_power_widgets() function by only scheduling
->> the dapm_pre/post_sequence_async() work if the DAPM context is not in
->> the desired state.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
-> 
-> Looks ok to me:
-> 
-> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> 
-> Although that said the performance increase is pretty hard to
-> measure on my systems.
-
-If you can enable the function graph tracer, then you should be again to
-profile the dapm_power_widgets() function with it as it will give you a
-time for how long the function took [0].
-
-Cheers
-Jon
-
-[0] https://lwn.net/Articles/370423/
-
--- 
-nvpublic
+T24gU2F0LCBTZXAgMDEsIDIwMTggYXQgMDQ6MDg6NDVQTSArMDIwMCwgTWljaGHFgiBNaXJvc8WC
+YXcgd3JvdGU6Cj4gQWxtb3N0IGFsbCBQQ0kgZHJpdmVycyB1c2luZyByZW1vdmVfY29uZmxpY3Rp
+bmdfZnJhbWVidWZmZXJzKCkgd3JhcCBpdAo+IHdpdGggdGhlIHNhbWUgY29kZS4KPiAKPiAtLS0K
+ClRoaXMgY3V0cyBhd2F5IHRoZSBzb2IuIEp1c3QgZnlpLgotRGFuaWVsCgo+IHYyOiBhZGQga2Vy
+bmVsZG9jIGZvciBEUk0gaGVscGVyCj4gdjM6IHByb3BhZ2F0ZSByZW1vdmVfY29uZmxpY3Rpbmdf
+ZnJhbWVidWZmZXJzKCkgcmV0dXJuIHZhbHVlCj4gICArIG1vdmUga2VybmVsZG9jIHRvIHdoZXJl
+IGZ1bmN0aW9uIGlzIGltcGxlbWVudGVkCj4gCj4gU2lnbmVkLW9mZi1ieTogTWljaGHFgiBNaXJv
+c8WCYXcgPG1pcnEtbGludXhAcmVyZS5xbXFtLnBsPgo+IC0tLQo+ICBkcml2ZXJzL3ZpZGVvL2Zi
+ZGV2L2NvcmUvZmJtZW0uYyB8IDM1ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4g
+IGluY2x1ZGUvZHJtL2RybV9mYl9oZWxwZXIuaCAgICAgIHwgMTIgKysrKysrKysrKysKPiAgaW5j
+bHVkZS9saW51eC9mYi5oICAgICAgICAgICAgICAgfCAgMiArKwo+ICAzIGZpbGVzIGNoYW5nZWQs
+IDQ5IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby9mYmRldi9j
+b3JlL2ZibWVtLmMgYi9kcml2ZXJzL3ZpZGVvL2ZiZGV2L2NvcmUvZmJtZW0uYwo+IGluZGV4IDJk
+ZTkzYjUwMTRlMy4uY2Q5NmIxYzYyYmJlIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvdmlkZW8vZmJk
+ZXYvY29yZS9mYm1lbS5jCj4gKysrIGIvZHJpdmVycy92aWRlby9mYmRldi9jb3JlL2ZibWVtLmMK
+PiBAQCAtMzQsNiArMzQsNyBAQAo+ICAjaW5jbHVkZSA8bGludXgvZmIuaD4KPiAgI2luY2x1ZGUg
+PGxpbnV4L2ZiY29uLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9tZW1fZW5jcnlwdC5oPgo+ICsjaW5j
+bHVkZSA8bGludXgvcGNpLmg+Cj4gIAo+ICAjaW5jbHVkZSA8YXNtL2ZiLmg+Cj4gIAo+IEBAIC0x
+ODEyLDYgKzE4MTMsNDAgQEAgaW50IHJlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoc3Ry
+dWN0IGFwZXJ0dXJlc19zdHJ1Y3QgKmEsCj4gIH0KPiAgRVhQT1JUX1NZTUJPTChyZW1vdmVfY29u
+ZmxpY3RpbmdfZnJhbWVidWZmZXJzKTsKPiAgCj4gKy8qKgo+ICsgKiByZW1vdmVfY29uZmxpY3Rp
+bmdfcGNpX2ZyYW1lYnVmZmVycyAtIHJlbW92ZSBmaXJtd2FyZS1jb25maWd1cmVkIGZyYW1lYnVm
+ZmVycyBmb3IgUENJIGRldmljZXMKPiArICogQHBkZXY6IFBDSSBkZXZpY2UKPiArICogQHJlc291
+cmNlX2lkOiBpbmRleCBvZiBQQ0kgQkFSIGNvbmZpZ3VyaW5nIGZyYW1lYnVmZmVyIG1lbW9yeQo+
+ICsgKiBAbmFtZTogcmVxdWVzdGluZyBkcml2ZXIgbmFtZQo+ICsgKgo+ICsgKiBUaGlzIGZ1bmN0
+aW9uIHJlbW92ZXMgZnJhbWVidWZmZXIgZGV2aWNlcyAoZWcuIGluaXRpYWxpemVkIGJ5IGZpcm13
+YXJlKQo+ICsgKiB1c2luZyBtZW1vcnkgcmFuZ2UgY29uZmlndXJlZCBmb3IgQHBkZXYncyBCQVIg
+QHJlc291cmNlX2lkLgo+ICsgKgo+ICsgKiBUaGUgZnVuY3Rpb24gYXNzdW1lcyB0aGF0IFBDSSBk
+ZXZpY2Ugd2l0aCBzaGFkb3dlZCBST00gZHJpdmVzIGEgcHJpbWFyeQo+ICsgKiBkaXNwbGF5IGFu
+ZCBzbyBraWNrcyBvdXQgdmdhMTZmYi4KPiArICovCj4gK2ludCByZW1vdmVfY29uZmxpY3Rpbmdf
+cGNpX2ZyYW1lYnVmZmVycyhzdHJ1Y3QgcGNpX2RldiAqcGRldiwgaW50IHJlc19pZCwgY29uc3Qg
+Y2hhciAqbmFtZSkKPiArewo+ICsJc3RydWN0IGFwZXJ0dXJlc19zdHJ1Y3QgKmFwOwo+ICsJYm9v
+bCBwcmltYXJ5ID0gZmFsc2U7Cj4gKwlpbnQgZXJyOwo+ICsKPiArCWFwID0gYWxsb2NfYXBlcnR1
+cmVzKDEpOwo+ICsJaWYgKCFhcCkKPiArCQlyZXR1cm4gLUVOT01FTTsKPiArCj4gKwlhcC0+cmFu
+Z2VzWzBdLmJhc2UgPSBwY2lfcmVzb3VyY2Vfc3RhcnQocGRldiwgcmVzX2lkKTsKPiArCWFwLT5y
+YW5nZXNbMF0uc2l6ZSA9IHBjaV9yZXNvdXJjZV9sZW4ocGRldiwgcmVzX2lkKTsKPiArI2lmZGVm
+IENPTkZJR19YODYKPiArCXByaW1hcnkgPSBwZGV2LT5yZXNvdXJjZVtQQ0lfUk9NX1JFU09VUkNF
+XS5mbGFncyAmCj4gKwkJCQkJSU9SRVNPVVJDRV9ST01fU0hBRE9XOwo+ICsjZW5kaWYKPiArCWVy
+ciA9IHJlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoYXAsIG5hbWUsIHByaW1hcnkpOwo+
+ICsJa2ZyZWUoYXApOwo+ICsJcmV0dXJuIGVycjsKPiArfQo+ICtFWFBPUlRfU1lNQk9MKHJlbW92
+ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJzKTsKPiArCj4gIC8qKgo+ICAgKglyZWdpc3Rl
+cl9mcmFtZWJ1ZmZlciAtIHJlZ2lzdGVycyBhIGZyYW1lIGJ1ZmZlciBkZXZpY2UKPiAgICoJQGZi
+X2luZm86IGZyYW1lIGJ1ZmZlciBpbmZvIHN0cnVjdHVyZQo+IGRpZmYgLS1naXQgYS9pbmNsdWRl
+L2RybS9kcm1fZmJfaGVscGVyLmggYi9pbmNsdWRlL2RybS9kcm1fZmJfaGVscGVyLmgKPiBpbmRl
+eCBiMDY5NDMzZTdmYzEuLjIwZWE4NTZkYjkwMCAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2RybS9k
+cm1fZmJfaGVscGVyLmgKPiArKysgYi9pbmNsdWRlL2RybS9kcm1fZmJfaGVscGVyLmgKPiBAQCAt
+NTc3LDQgKzU3NywxNiBAQCBkcm1fZmJfaGVscGVyX3JlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1
+ZmZlcnMoc3RydWN0IGFwZXJ0dXJlc19zdHJ1Y3QgKmEsCj4gICNlbmRpZgo+ICB9Cj4gIAo+ICtz
+dGF0aWMgaW5saW5lIGludAo+ICtkcm1fZmJfaGVscGVyX3JlbW92ZV9jb25mbGljdGluZ19wY2lf
+ZnJhbWVidWZmZXJzKHN0cnVjdCBwY2lfZGV2ICpwZGV2LAo+ICsJCQkJCQkgIGludCByZXNvdXJj
+ZV9pZCwKPiArCQkJCQkJICBjb25zdCBjaGFyICpuYW1lKQo+ICt7Cj4gKyNpZiBJU19SRUFDSEFC
+TEUoQ09ORklHX0ZCKQo+ICsJcmV0dXJuIHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZm
+ZXJzKHBkZXYsIHJlc291cmNlX2lkLCBuYW1lKTsKPiArI2Vsc2UKPiArCXJldHVybiAwOwo+ICsj
+ZW5kaWYKPiArfQo+ICsKPiAgI2VuZGlmCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZmIu
+aCBiL2luY2x1ZGUvbGludXgvZmIuaAo+IGluZGV4IGFhNzRhMjI4YmI5Mi4uYWJlZmZkNTViNjZh
+IDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvbGludXgvZmIuaAo+ICsrKyBiL2luY2x1ZGUvbGludXgv
+ZmIuaAo+IEBAIC02MzIsNiArNjMyLDggQEAgZXh0ZXJuIHNzaXplX3QgZmJfc3lzX3dyaXRlKHN0
+cnVjdCBmYl9pbmZvICppbmZvLCBjb25zdCBjaGFyIF9fdXNlciAqYnVmLAo+ICBleHRlcm4gaW50
+IHJlZ2lzdGVyX2ZyYW1lYnVmZmVyKHN0cnVjdCBmYl9pbmZvICpmYl9pbmZvKTsKPiAgZXh0ZXJu
+IGludCB1bnJlZ2lzdGVyX2ZyYW1lYnVmZmVyKHN0cnVjdCBmYl9pbmZvICpmYl9pbmZvKTsKPiAg
+ZXh0ZXJuIGludCB1bmxpbmtfZnJhbWVidWZmZXIoc3RydWN0IGZiX2luZm8gKmZiX2luZm8pOwo+
+ICtleHRlcm4gaW50IHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJzKHN0cnVjdCBw
+Y2lfZGV2ICpwZGV2LCBpbnQgcmVzX2lkLAo+ICsJCQkJCSAgICAgICBjb25zdCBjaGFyICpuYW1l
+KTsKPiAgZXh0ZXJuIGludCByZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKHN0cnVjdCBh
+cGVydHVyZXNfc3RydWN0ICphLAo+ICAJCQkJCSAgIGNvbnN0IGNoYXIgKm5hbWUsIGJvb2wgcHJp
+bWFyeSk7Cj4gIGV4dGVybiBpbnQgZmJfcHJlcGFyZV9sb2dvKHN0cnVjdCBmYl9pbmZvICpmYl9p
+bmZvLCBpbnQgcm90YXRlKTsKPiAtLSAKPiAyLjE4LjAKPiAKPiBfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3
+YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpWaXJ0dWFsaXphdGlv
+biBtYWlsaW5nIGxpc3QKVmlydHVhbGl6YXRpb25AbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmcK
+aHR0cHM6Ly9saXN0cy5saW51eGZvdW5kYXRpb24ub3JnL21haWxtYW4vbGlzdGluZm8vdmlydHVh
+bGl6YXRpb24=
