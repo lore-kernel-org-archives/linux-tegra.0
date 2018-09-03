@@ -1,82 +1,52 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH v3 00/13] remove_conflicting_framebuffers() cleanup
-Date: Mon, 3 Sep 2018 09:43:15 +0200
-Message-ID: <20180903074315.GB21634@phenom.ffwll.local>
-References: <cover.1535656077.git.mirq-linux@rere.qmqm.pl>
- <cover.1535810304.git.mirq-linux@rere.qmqm.pl>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Date: Mon, 3 Sep 2018 11:01:11 +0300
+Message-ID: <20180903080111.GR1636@tbergstrom-lnx.Nvidia.com>
+References: <20180830184210.5369-1-digetx@gmail.com>
+ <20180830184210.5369-2-digetx@gmail.com>
+ <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+ <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <cover.1535810304.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gU2F0LCBTZXAgMDEsIDIwMTggYXQgMDQ6MDg6NDFQTSArMDIwMCwgTWljaGHFgiBNaXJvc8WC
-YXcgd3JvdGU6Cj4gVGhpcyBzZXJpZXMgY2xlYW5zIHVwIGR1cGxpY2F0ZWQgY29kZSBmb3IgcmVw
-bGFjaW5nIGZpcm13YXJlIEZCCj4gZHJpdmVyIHdpdGggcHJvcGVyIERSSSBkcml2ZXIgYW5kIGFk
-ZHMgaGFuZG92ZXIgc3VwcG9ydCB0bwo+IFRlZ3JhIGRyaXZlci4KPiAKPiBUaGlzIGlzIGEgc2xp
-Z3RseSB1cGRhdGVkIHZlcnNpb24gb2YgYSBzZXJpZXMgc2VudCBvbiAyNCBOb3YgMjAxNy4KPiAK
-PiAtLS0KPiB2MjoKPiAgLSByZWJhc2VkIG9uIGN1cnJlbnQgZHJtLW5leHQKPiAgLSBkcm9wcGVk
-IHN0YWdpbmcvc203NTBmYiBjaGFuZ2VzCj4gIC0gYWRkZWQga2VybmVsIGRvY3MgZm9yIERSTSBo
-ZWxwZXJzCj4gdjM6Cj4gIC0gbW92ZSBrZXJuZWxkb2MgdG8gZmJkZXYsIHdoZXJlIGZ1bmN0aW9u
-cyBhcmUgaW1wbGVtZW50ZWQKPiAgLSBzcGxpdCBrZXJuZWxkb2MgZm9yIHJlbW92ZV9jb25mbGlj
-dGluZ19mcmFtZWJ1ZmZlcnMoKQoKQWgsIHRoYXQncyBub3QgcXVpdGUgd2hhdCBJIGhhZCBpbiBt
-aW5kLiBJIHRoaW5rIGhhdmluZyB0aGUgZG9jcyAoYWxzbykgaW4KdGhlIGRybSBoZWxwZXJzIHdv
-dWxkIGJlIGdvb2QsIHNpbmNlIHRoYXQncyB3aGVyZSBkcm0gcGVvcGxlIHdpbGwgbG9vaywKYW5k
-IHRoYXQncyB0aGUgZnVuY3Rpb24gdGhleSdsbCBjYWxsLiBJIGp1c3Qgd2FudGVkIHlvdSB0byBz
-cGxpdCB0aGUgZmJkZXYKYW5kIGRybSBwYXJ0cyBpbnRvIDIgcGF0Y2hlcyAoc2luY2UgdGhvc2Ug
-YXJlIHR3byBkaWZmZXJlbnQgbWFpbnRhaW5lcnMpLgoKQW55d2F5LCB0aGlzIGlzIG9rIHRvbywg
-c28gaW1vIHJlYWR5IGZvciBtZXJnaW5nLiBJZiB5b3UgY2FuIHJlc3VycmVjdCB0aGUKZHJtIGRv
-Y3MgKHdpdGggYSBwYXRjaCB0aXRsZSBvZiAiZHJtL2ZiLWhlbHBlcjogZG9jdW1lbnQgZmJkZXYg
-cmVtb3ZlCmZ1bmN0aW9ucyIgb3Igc2ltaWxhcikgdGhhdCB3b3VsZCBiZSBncmVhdC4KCk9ubHkg
-dGhpbmcgd2UgbmVlZCBmb3IgbWVyZ2luZyBub3cgaXMgdGhlIGFjayBmcm9tIEJhcnRsb21pZWou
-Ci1EYW5pZWwKCj4gIC0gcHJvcGFnYXRlIHJldHVybiB2YWx1ZSBpbiByZW1vdmVfY29uZmxpY3Rp
-bmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gCj4gLS0tCj4gTWljaGHFgiBNaXJvc8WCYXcgKDEzKToK
-PiAgIGZiZGV2OiBzaG93IGZiZGV2IG51bWJlciBmb3IgZGVidWdnaW5nCj4gICBmYmRldjogYWxs
-b3cgYXBlcnR1cmVzID09IE5VTEwgaW4gcmVtb3ZlX2NvbmZsaWN0aW5nX2ZyYW1lYnVmZmVycygp
-Cj4gICBmYmRldjogYWRkIGtlcm5lbGRvYyBkbyByZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZm
-ZXJzKCkKPiAgIGZiZGV2OiBhZGQgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMo
-KQo+ICAgZHJtL2FtZGdwdTogdXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFt
-ZWJ1ZmZlcnMoKQo+ICAgZHJtL2JvY2hzOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3Rpbmdf
-cGNpX2ZyYW1lYnVmZmVycygpCj4gICBkcm0vY2lycnVzOiB1c2Ugc2ltcGxlciByZW1vdmVfY29u
-ZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gICBkcm0vbWdhZzIwMDogdXNlIHNpbXBsZXIg
-cmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQo+ICAgZHJtL3JhZGVvbjogdXNl
-IHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQo+ICAgZHJtL3Zp
-cnRpbzogdXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQo+
-ICAgZHJtL3ZjNDogdXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX2ZyYW1lYnVmZmVycyhO
-VUxMKQo+ICAgZHJtL3N1bjRpOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVi
-dWZmZXJzKE5VTEwpCj4gICBkcm0vdGVncmE6IGtpY2sgb3V0IHNpbXBsZWZiCj4gCj4gIGRyaXZl
-cnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9kcnYuYyAgfCAyNCArLS0tLS0tLS0KPiAgZHJp
-dmVycy9ncHUvZHJtL2JvY2hzL2JvY2hzX2Rydi5jICAgICAgICB8IDE4ICstLS0tLS0KPiAgZHJp
-dmVycy9ncHUvZHJtL2NpcnJ1cy9jaXJydXNfZHJ2LmMgICAgICB8IDIzICstLS0tLS0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vbWdhZzIwMC9tZ2FnMjAwX2Rydi5jICAgIHwgMjEgKy0tLS0tLS0KPiAg
-ZHJpdmVycy9ncHUvZHJtL21nYWcyMDAvbWdhZzIwMF9tYWluLmMgICB8ICA5IC0tLS0KPiAgZHJp
-dmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fZHJ2LmMgICAgICB8IDIzICstLS0tLS0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMgICAgICAgIHwgMTggKy0tLS0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAgICAgICAgIHwgIDQgKysKPiAgZHJpdmVy
-cy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICB8IDIwICstLS0tLS0tCj4gIGRyaXZl
-cnMvZ3B1L2RybS92aXJ0aW8vdmlydGdwdV9kcm1fYnVzLmMgfCAyNCArKy0tLS0tLS0KPiAgZHJp
-dmVycy92aWRlby9mYmRldi9jb3JlL2ZibWVtLmMgICAgICAgICB8IDYzICsrKysrKysrKysrKysr
-KysrKysrKysrLQo+ICBpbmNsdWRlL2RybS9kcm1fZmJfaGVscGVyLmggICAgICAgICAgICAgIHwg
-MTIgKysrKysKPiAgaW5jbHVkZS9saW51eC9mYi5oICAgICAgICAgICAgICAgICAgICAgICB8ICAy
-ICsKPiAgMTMgZmlsZXMgY2hhbmdlZCwgODkgaW5zZXJ0aW9ucygrKSwgMTcyIGRlbGV0aW9ucygt
-KQo+IAo+IC0tIAo+IDIuMTguMAo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIs
-IEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmFtZC1nZnggbWFpbGluZyBsaXN0CmFtZC1n
-ZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vYW1kLWdmeAo=
+On Fri, Aug 31, 2018 at 12:45:17PM +0300, Dmitry Osipenko wrote:
+> On 8/31/18 12:29 PM, Peter De Schrijver wrote:
+> > On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
+> >> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
+> >> a lock-status bit. The lock-status polling was disabled ~7 years ago
+> >> because PLLE was failing to lock and was a suspicion that other PLLs
+> >> might be faulty too. Other PLLs are okay, hence enable the lock-status
+> >> polling for them. This reduces delay of any operation that require PLL
+> >> to lock.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>
+> >> Changelog:
+> >>
+> >> v2:	Don't enable polling for PLLE as it known to not being able to lock.
+> >>
+> > 
+> > This isn't correct. The lock bit of PLLE can declare lock too early, but the
+> > PLL itself does lock.
+> 
+> Indeed, it locks but can't be polled for the lock-status as it doesn't have the
+> lock-status bit.
+> 
+> Do you want me to adjust the commit description or it is fine as is?
+> 
+
+I think it's better to adjust it.
+
+> It is also a bit odd that PLLE has "lock_delay = 0", is it correct?
+
+That seems odd yes..
+
+Peter.
