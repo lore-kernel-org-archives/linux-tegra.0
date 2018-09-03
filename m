@@ -1,86 +1,82 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 2/2] mmc: tegra: Implement periodic pad calibration
-Date: Mon, 3 Sep 2018 08:14:21 +0200
-Message-ID: <CAPDyKFpVaxttnTZPPZFPn4yvQET_=WcA5TyW2rSbyVEeZOuFVw@mail.gmail.com>
-References: <1534757013-4524-1-git-send-email-avienamo@nvidia.com> <1534757013-4524-3-git-send-email-avienamo@nvidia.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH v3 00/13] remove_conflicting_framebuffers() cleanup
+Date: Mon, 3 Sep 2018 09:43:15 +0200
+Message-ID: <20180903074315.GB21634@phenom.ffwll.local>
+References: <cover.1535656077.git.mirq-linux@rere.qmqm.pl>
+ <cover.1535810304.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1534757013-4524-3-git-send-email-avienamo@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Aapo Vienamo <avienamo@nvidia.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1535810304.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 20 August 2018 at 11:23, Aapo Vienamo <avienamo@nvidia.com> wrote:
-> Rerun the pad calibration procedure before sdhci_request() if
-> the 100 ms recalibration interval has been exceeded.
->
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 94624ec..ef18a0c 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -30,6 +30,7 @@
->  #include <linux/mmc/mmc.h>
->  #include <linux/mmc/slot-gpio.h>
->  #include <linux/gpio/consumer.h>
-> +#include <linux/ktime.h>
->
->  #include "sdhci-pltfm.h"
->
-> @@ -122,6 +123,7 @@ struct sdhci_tegra {
->         struct pinctrl_state *pinctrl_state_1v8;
->
->         struct sdhci_tegra_autocal_offsets autocal_offsets;
-> +       ktime_t last_calib;
->
->         u32 default_tap;
->         u32 default_trim;
-> @@ -533,6 +535,22 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
->                 autocal->pull_down_hs400 = autocal->pull_down_1v8;
->  }
->
-> +static void tegra_sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
-> +{
-> +       struct sdhci_host *host = mmc_priv(mmc);
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> +       ktime_t since_calib = ktime_sub(ktime_get(), tegra_host->last_calib);
-> +
-> +       /* 100 ms calibration interval is specified in the TRM */
-> +       if (ktime_to_ms(since_calib) > 100) {
-> +               tegra_sdhci_pad_autocalib(host);
-> +               tegra_host->last_calib = ktime_get();
-> +       }
-> +
-> +       sdhci_request(mmc, mrq);
-> +}
-> +
->  static void tegra_sdhci_parse_tap_and_trim(struct sdhci_host *host)
->  {
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -1014,6 +1032,10 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->                                 sdhci_tegra_start_signal_voltage_switch;
->         }
->
-> +       /* Hook to periodically rerun pad calibration */
-> +       if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
-> +               host->mmc_host_ops.request = tegra_sdhci_request;
-> +
->         host->mmc_host_ops.hs400_enhanced_strobe =
->                         tegra_sdhci_hs400_enhanced_strobe;
->
-> --
-> 2.7.4
->
+T24gU2F0LCBTZXAgMDEsIDIwMTggYXQgMDQ6MDg6NDFQTSArMDIwMCwgTWljaGHFgiBNaXJvc8WC
+YXcgd3JvdGU6Cj4gVGhpcyBzZXJpZXMgY2xlYW5zIHVwIGR1cGxpY2F0ZWQgY29kZSBmb3IgcmVw
+bGFjaW5nIGZpcm13YXJlIEZCCj4gZHJpdmVyIHdpdGggcHJvcGVyIERSSSBkcml2ZXIgYW5kIGFk
+ZHMgaGFuZG92ZXIgc3VwcG9ydCB0bwo+IFRlZ3JhIGRyaXZlci4KPiAKPiBUaGlzIGlzIGEgc2xp
+Z3RseSB1cGRhdGVkIHZlcnNpb24gb2YgYSBzZXJpZXMgc2VudCBvbiAyNCBOb3YgMjAxNy4KPiAK
+PiAtLS0KPiB2MjoKPiAgLSByZWJhc2VkIG9uIGN1cnJlbnQgZHJtLW5leHQKPiAgLSBkcm9wcGVk
+IHN0YWdpbmcvc203NTBmYiBjaGFuZ2VzCj4gIC0gYWRkZWQga2VybmVsIGRvY3MgZm9yIERSTSBo
+ZWxwZXJzCj4gdjM6Cj4gIC0gbW92ZSBrZXJuZWxkb2MgdG8gZmJkZXYsIHdoZXJlIGZ1bmN0aW9u
+cyBhcmUgaW1wbGVtZW50ZWQKPiAgLSBzcGxpdCBrZXJuZWxkb2MgZm9yIHJlbW92ZV9jb25mbGlj
+dGluZ19mcmFtZWJ1ZmZlcnMoKQoKQWgsIHRoYXQncyBub3QgcXVpdGUgd2hhdCBJIGhhZCBpbiBt
+aW5kLiBJIHRoaW5rIGhhdmluZyB0aGUgZG9jcyAoYWxzbykgaW4KdGhlIGRybSBoZWxwZXJzIHdv
+dWxkIGJlIGdvb2QsIHNpbmNlIHRoYXQncyB3aGVyZSBkcm0gcGVvcGxlIHdpbGwgbG9vaywKYW5k
+IHRoYXQncyB0aGUgZnVuY3Rpb24gdGhleSdsbCBjYWxsLiBJIGp1c3Qgd2FudGVkIHlvdSB0byBz
+cGxpdCB0aGUgZmJkZXYKYW5kIGRybSBwYXJ0cyBpbnRvIDIgcGF0Y2hlcyAoc2luY2UgdGhvc2Ug
+YXJlIHR3byBkaWZmZXJlbnQgbWFpbnRhaW5lcnMpLgoKQW55d2F5LCB0aGlzIGlzIG9rIHRvbywg
+c28gaW1vIHJlYWR5IGZvciBtZXJnaW5nLiBJZiB5b3UgY2FuIHJlc3VycmVjdCB0aGUKZHJtIGRv
+Y3MgKHdpdGggYSBwYXRjaCB0aXRsZSBvZiAiZHJtL2ZiLWhlbHBlcjogZG9jdW1lbnQgZmJkZXYg
+cmVtb3ZlCmZ1bmN0aW9ucyIgb3Igc2ltaWxhcikgdGhhdCB3b3VsZCBiZSBncmVhdC4KCk9ubHkg
+dGhpbmcgd2UgbmVlZCBmb3IgbWVyZ2luZyBub3cgaXMgdGhlIGFjayBmcm9tIEJhcnRsb21pZWou
+Ci1EYW5pZWwKCj4gIC0gcHJvcGFnYXRlIHJldHVybiB2YWx1ZSBpbiByZW1vdmVfY29uZmxpY3Rp
+bmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gCj4gLS0tCj4gTWljaGHFgiBNaXJvc8WCYXcgKDEzKToK
+PiAgIGZiZGV2OiBzaG93IGZiZGV2IG51bWJlciBmb3IgZGVidWdnaW5nCj4gICBmYmRldjogYWxs
+b3cgYXBlcnR1cmVzID09IE5VTEwgaW4gcmVtb3ZlX2NvbmZsaWN0aW5nX2ZyYW1lYnVmZmVycygp
+Cj4gICBmYmRldjogYWRkIGtlcm5lbGRvYyBkbyByZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZm
+ZXJzKCkKPiAgIGZiZGV2OiBhZGQgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMo
+KQo+ICAgZHJtL2FtZGdwdTogdXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFt
+ZWJ1ZmZlcnMoKQo+ICAgZHJtL2JvY2hzOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3Rpbmdf
+cGNpX2ZyYW1lYnVmZmVycygpCj4gICBkcm0vY2lycnVzOiB1c2Ugc2ltcGxlciByZW1vdmVfY29u
+ZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gICBkcm0vbWdhZzIwMDogdXNlIHNpbXBsZXIg
+cmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQo+ICAgZHJtL3JhZGVvbjogdXNl
+IHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQo+ICAgZHJtL3Zp
+cnRpbzogdXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQo+
+ICAgZHJtL3ZjNDogdXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX2ZyYW1lYnVmZmVycyhO
+VUxMKQo+ICAgZHJtL3N1bjRpOiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVi
+dWZmZXJzKE5VTEwpCj4gICBkcm0vdGVncmE6IGtpY2sgb3V0IHNpbXBsZWZiCj4gCj4gIGRyaXZl
+cnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9kcnYuYyAgfCAyNCArLS0tLS0tLS0KPiAgZHJp
+dmVycy9ncHUvZHJtL2JvY2hzL2JvY2hzX2Rydi5jICAgICAgICB8IDE4ICstLS0tLS0KPiAgZHJp
+dmVycy9ncHUvZHJtL2NpcnJ1cy9jaXJydXNfZHJ2LmMgICAgICB8IDIzICstLS0tLS0tLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vbWdhZzIwMC9tZ2FnMjAwX2Rydi5jICAgIHwgMjEgKy0tLS0tLS0KPiAg
+ZHJpdmVycy9ncHUvZHJtL21nYWcyMDAvbWdhZzIwMF9tYWluLmMgICB8ICA5IC0tLS0KPiAgZHJp
+dmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fZHJ2LmMgICAgICB8IDIzICstLS0tLS0tLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMgICAgICAgIHwgMTggKy0tLS0tLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAgICAgICAgIHwgIDQgKysKPiAgZHJpdmVy
+cy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICB8IDIwICstLS0tLS0tCj4gIGRyaXZl
+cnMvZ3B1L2RybS92aXJ0aW8vdmlydGdwdV9kcm1fYnVzLmMgfCAyNCArKy0tLS0tLS0KPiAgZHJp
+dmVycy92aWRlby9mYmRldi9jb3JlL2ZibWVtLmMgICAgICAgICB8IDYzICsrKysrKysrKysrKysr
+KysrKysrKysrLQo+ICBpbmNsdWRlL2RybS9kcm1fZmJfaGVscGVyLmggICAgICAgICAgICAgIHwg
+MTIgKysrKysKPiAgaW5jbHVkZS9saW51eC9mYi5oICAgICAgICAgICAgICAgICAgICAgICB8ICAy
+ICsKPiAgMTMgZmlsZXMgY2hhbmdlZCwgODkgaW5zZXJ0aW9ucygrKSwgMTcyIGRlbGV0aW9ucygt
+KQo+IAo+IC0tIAo+IDIuMTguMAo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIs
+IEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmFtZC1nZnggbWFpbGluZyBsaXN0CmFtZC1n
+ZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vYW1kLWdmeAo=
