@@ -1,22 +1,34 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: tegra20-slink: explicitly enable/disable clock" to the spi tree
-Date: Mon,  3 Sep 2018 14:47:24 +0100 (BST)
-Message-ID: <20180903134724.C235111227AE@debutante.sirena.org.uk>
-References: <20180829064757.16349-1-marcel@ziswiler.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180829064757.16349-1-marcel@ziswiler.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: Mark Brown <broonie@kernel.org>, stable@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>linux-spi@vger.kernel.org
+Subject: Applied "ASoC: core: Don't schedule DAPM work if
+	already in target state" to the asoc tree
+Date: Mon,  3 Sep 2018 15:19:03 +0100 (BST)
+Message-ID: <20180903141903.5AA7811227AE@debutante.sirena.org.uk>
+References: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   spi: tegra20-slink: explicitly enable/disable clock
+   ASoC: core: Don't schedule DAPM work if already in target state
 
-has been applied to the spi tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -37,85 +49,68 @@ to this mail.
 Thanks,
 Mark
 
-From 7001cab1dabc0b72b2b672ef58a90ab64f5e2343 Mon Sep 17 00:00:00 2001
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Date: Wed, 29 Aug 2018 08:47:57 +0200
-Subject: [PATCH] spi: tegra20-slink: explicitly enable/disable clock
+From e03546ddd3db5352a74dec247dbdaa29889e93f7 Mon Sep 17 00:00:00 2001
+From: Jon Hunter <jonathanh@nvidia.com>
+Date: Fri, 17 Aug 2018 16:35:43 +0100
+Subject: [PATCH] ASoC: core: Don't schedule DAPM work if already in target
+ state
 
-Depending on the SPI instance one may get an interrupt storm upon
-requesting resp. interrupt unless the clock is explicitly enabled
-beforehand. This has been observed trying to bring up instance 4 on
-T20.
+When dapm_power_widgets() is called, the dapm_pre_sequence_async() and
+dapm_post_sequence_async() functions are scheduled for all DAPM contexts
+(apart from the card DAPM context) regardless of whether the DAPM
+context is already in the desired state. The overhead of this is not
+insignificant and the more DAPM contexts there are the more overhead
+there is.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+For example, on the Tegra124 Jetson TK1, when profiling the time taken
+to execute the dapm_power_widgets() the following times were observed.
+
+  Times for function dapm_power_widgets() are (us):
+     Min 23, Ave 190, Max 434, Count 39
+
+Here 'Count' is the number of times that dapm_power_widgets() has been
+called. Please note that the above time were measured using ktime_get()
+to log the time on entry and exit from dapm_power_widgets(). So it
+should be noted that these times may not be purely the time take to
+execute this function if it is preempted. However, after applying this
+patch and measuring the time taken to execute dapm_power_widgets() again
+a significant improvement is seen as shown below.
+
+  Times for function dapm_power_widgets() are (us):
+     Min 4, Ave 16, Max 82, Count 39
+
+Therefore, optimise the dapm_power_widgets() function by only scheduling
+the dapm_pre/post_sequence_async() work if the DAPM context is not in
+the desired state.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
 ---
- drivers/spi/spi-tegra20-slink.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ sound/soc/soc-dapm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 6f7b946b5ced..1427f343b39a 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1063,6 +1063,24 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 		goto exit_free_master;
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index d7be3981f026..9feccd2e7c11 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -1952,7 +1952,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
+ 	dapm_pre_sequence_async(&card->dapm, 0);
+ 	/* Run other bias changes in parallel */
+ 	list_for_each_entry(d, &card->dapm_list, list) {
+-		if (d != &card->dapm)
++		if (d != &card->dapm && d->bias_level != d->target_bias_level)
+ 			async_schedule_domain(dapm_pre_sequence_async, d,
+ 						&async_domain);
  	}
+@@ -1976,7 +1976,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
  
-+	/* disabled clock may cause interrupt storm upon request */
-+	tspi->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(tspi->clk)) {
-+		ret = PTR_ERR(tspi->clk);
-+		dev_err(&pdev->dev, "Can not get clock %d\n", ret);
-+		goto exit_free_master;
-+	}
-+	ret = clk_prepare(tspi->clk);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Clock prepare failed %d\n", ret);
-+		goto exit_free_master;
-+	}
-+	ret = clk_enable(tspi->clk);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
-+		goto exit_free_master;
-+	}
-+
- 	spi_irq = platform_get_irq(pdev, 0);
- 	tspi->irq = spi_irq;
- 	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
-@@ -1071,14 +1089,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
- 					tspi->irq);
--		goto exit_free_master;
--	}
--
--	tspi->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(tspi->clk)) {
--		dev_err(&pdev->dev, "can not get clock\n");
--		ret = PTR_ERR(tspi->clk);
--		goto exit_free_irq;
-+		goto exit_clk_disable;
+ 	/* Run all the bias changes in parallel */
+ 	list_for_each_entry(d, &card->dapm_list, list) {
+-		if (d != &card->dapm)
++		if (d != &card->dapm && d->bias_level != d->target_bias_level)
+ 			async_schedule_domain(dapm_post_sequence_async, d,
+ 						&async_domain);
  	}
- 
- 	tspi->rst = devm_reset_control_get_exclusive(&pdev->dev, "spi");
-@@ -1138,6 +1149,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	tegra_slink_deinit_dma_param(tspi, true);
- exit_free_irq:
- 	free_irq(spi_irq, tspi);
-+exit_clk_disable:
-+	clk_disable(tspi->clk);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
-@@ -1150,6 +1163,8 @@ static int tegra_slink_remove(struct platform_device *pdev)
- 
- 	free_irq(tspi->irq, tspi);
- 
-+	clk_disable(tspi->clk);
-+
- 	if (tspi->tx_dma_chan)
- 		tegra_slink_deinit_dma_param(tspi, false);
- 
 -- 
 2.19.0.rc1
