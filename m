@@ -1,90 +1,84 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] usb: xhci: tegra: Firmware header is little endian
-Date: Mon,  3 Sep 2018 12:18:08 +0200
-Message-ID: <20180903101808.31559-1-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 00/13] remove_conflicting_framebuffers() cleanup
+Date: Mon, 03 Sep 2018 13:31:34 +0200
+Message-ID: <1705932.lAR3QV8q47@amdc3058>
+References: <cover.1535656077.git.mirq-linux@rere.qmqm.pl>
+ <CGME20180903074322epcas4p1ce56cf44f5b169b5e1c1e3831bd5c038@epcas4p1.samsung.com>
+ <20180903074315.GB21634@phenom.ffwll.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-reply-to: <20180903074315.GB21634-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
-
-The XUSB firmware header is in little endian byte order, so make the
-fields __le32 and __le16 instead of u32 and u16 to avoid warnings from
-sparse when the fields are used with the endian-aware __le32_to_cpu()
-and __le16_to_cpu() accessors, respectively.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/usb/host/xhci-tegra.c | 52 +++++++++++++++++------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 4b463e5202a4..4ee510a51d64 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -107,35 +107,35 @@
- #define IMEM_BLOCK_SIZE				256
- 
- struct tegra_xusb_fw_header {
--	u32 boot_loadaddr_in_imem;
--	u32 boot_codedfi_offset;
--	u32 boot_codetag;
--	u32 boot_codesize;
--	u32 phys_memaddr;
--	u16 reqphys_memsize;
--	u16 alloc_phys_memsize;
--	u32 rodata_img_offset;
--	u32 rodata_section_start;
--	u32 rodata_section_end;
--	u32 main_fnaddr;
--	u32 fwimg_cksum;
--	u32 fwimg_created_time;
--	u32 imem_resident_start;
--	u32 imem_resident_end;
--	u32 idirect_start;
--	u32 idirect_end;
--	u32 l2_imem_start;
--	u32 l2_imem_end;
--	u32 version_id;
-+	__le32 boot_loadaddr_in_imem;
-+	__le32 boot_codedfi_offset;
-+	__le32 boot_codetag;
-+	__le32 boot_codesize;
-+	__le32 phys_memaddr;
-+	__le16 reqphys_memsize;
-+	__le16 alloc_phys_memsize;
-+	__le32 rodata_img_offset;
-+	__le32 rodata_section_start;
-+	__le32 rodata_section_end;
-+	__le32 main_fnaddr;
-+	__le32 fwimg_cksum;
-+	__le32 fwimg_created_time;
-+	__le32 imem_resident_start;
-+	__le32 imem_resident_end;
-+	__le32 idirect_start;
-+	__le32 idirect_end;
-+	__le32 l2_imem_start;
-+	__le32 l2_imem_end;
-+	__le32 version_id;
- 	u8 init_ddirect;
- 	u8 reserved[3];
--	u32 phys_addr_log_buffer;
--	u32 total_log_entries;
--	u32 dequeue_ptr;
--	u32 dummy_var[2];
--	u32 fwimg_len;
-+	__le32 phys_addr_log_buffer;
-+	__le32 total_log_entries;
-+	__le32 dequeue_ptr;
-+	__le32 dummy_var[2];
-+	__le32 fwimg_len;
- 	u8 magic[8];
--	u32 ss_low_power_entry_timeout;
-+	__le32 ss_low_power_entry_timeout;
- 	u8 num_hsic_port;
- 	u8 padding[139]; /* Pad to 256 bytes */
- };
--- 
-2.18.0
+T24gTW9uZGF5LCBTZXB0ZW1iZXIgMDMsIDIwMTggMDk6NDM6MTUgQU0gRGFuaWVsIFZldHRlciB3
+cm90ZToKPiBPbiBTYXQsIFNlcCAwMSwgMjAxOCBhdCAwNDowODo0MVBNICswMjAwLCBNaWNoYcWC
+IE1pcm9zxYJhdyB3cm90ZToKPiA+IFRoaXMgc2VyaWVzIGNsZWFucyB1cCBkdXBsaWNhdGVkIGNv
+ZGUgZm9yIHJlcGxhY2luZyBmaXJtd2FyZSBGQgo+ID4gZHJpdmVyIHdpdGggcHJvcGVyIERSSSBk
+cml2ZXIgYW5kIGFkZHMgaGFuZG92ZXIgc3VwcG9ydCB0bwo+ID4gVGVncmEgZHJpdmVyLgo+ID4g
+Cj4gPiBUaGlzIGlzIGEgc2xpZ3RseSB1cGRhdGVkIHZlcnNpb24gb2YgYSBzZXJpZXMgc2VudCBv
+biAyNCBOb3YgMjAxNy4KPiA+IAo+ID4gLS0tCj4gPiB2MjoKPiA+ICAtIHJlYmFzZWQgb24gY3Vy
+cmVudCBkcm0tbmV4dAo+ID4gIC0gZHJvcHBlZCBzdGFnaW5nL3NtNzUwZmIgY2hhbmdlcwo+ID4g
+IC0gYWRkZWQga2VybmVsIGRvY3MgZm9yIERSTSBoZWxwZXJzCj4gPiB2MzoKPiA+ICAtIG1vdmUg
+a2VybmVsZG9jIHRvIGZiZGV2LCB3aGVyZSBmdW5jdGlvbnMgYXJlIGltcGxlbWVudGVkCj4gPiAg
+LSBzcGxpdCBrZXJuZWxkb2MgZm9yIHJlbW92ZV9jb25mbGljdGluZ19mcmFtZWJ1ZmZlcnMoKQo+
+IAo+IEFoLCB0aGF0J3Mgbm90IHF1aXRlIHdoYXQgSSBoYWQgaW4gbWluZC4gSSB0aGluayBoYXZp
+bmcgdGhlIGRvY3MgKGFsc28pIGluCj4gdGhlIGRybSBoZWxwZXJzIHdvdWxkIGJlIGdvb2QsIHNp
+bmNlIHRoYXQncyB3aGVyZSBkcm0gcGVvcGxlIHdpbGwgbG9vaywKPiBhbmQgdGhhdCdzIHRoZSBm
+dW5jdGlvbiB0aGV5J2xsIGNhbGwuIEkganVzdCB3YW50ZWQgeW91IHRvIHNwbGl0IHRoZSBmYmRl
+dgo+IGFuZCBkcm0gcGFydHMgaW50byAyIHBhdGNoZXMgKHNpbmNlIHRob3NlIGFyZSB0d28gZGlm
+ZmVyZW50IG1haW50YWluZXJzKS4KPiAKPiBBbnl3YXksIHRoaXMgaXMgb2sgdG9vLCBzbyBpbW8g
+cmVhZHkgZm9yIG1lcmdpbmcuIElmIHlvdSBjYW4gcmVzdXJyZWN0IHRoZQo+IGRybSBkb2NzICh3
+aXRoIGEgcGF0Y2ggdGl0bGUgb2YgImRybS9mYi1oZWxwZXI6IGRvY3VtZW50IGZiZGV2IHJlbW92
+ZQo+IGZ1bmN0aW9ucyIgb3Igc2ltaWxhcikgdGhhdCB3b3VsZCBiZSBncmVhdC4KPiAKPiBPbmx5
+IHRoaW5nIHdlIG5lZWQgZm9yIG1lcmdpbmcgbm93IGlzIHRoZSBhY2sgZnJvbSBCYXJ0bG9taWVq
+LgoKRm9yIHRoZSB3aG9sZSBwYXRjaHNldDoKCkFja2VkLWJ5OiBCYXJ0bG9taWVqIFpvbG5pZXJr
+aWV3aWN6IDxiLnpvbG5pZXJraWVAc2Ftc3VuZy5jb20+Cgo+IC1EYW5pZWwKPiAKPiA+ICAtIHBy
+b3BhZ2F0ZSByZXR1cm4gdmFsdWUgaW4gcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZl
+cnMoKQo+ID4gCj4gPiAtLS0KPiA+IE1pY2hhxYIgTWlyb3PFgmF3ICgxMyk6Cj4gPiAgIGZiZGV2
+OiBzaG93IGZiZGV2IG51bWJlciBmb3IgZGVidWdnaW5nCj4gPiAgIGZiZGV2OiBhbGxvdyBhcGVy
+dHVyZXMgPT0gTlVMTCBpbiByZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZmZXJzKCkKPiA+ICAg
+ZmJkZXY6IGFkZCBrZXJuZWxkb2MgZG8gcmVtb3ZlX2NvbmZsaWN0aW5nX2ZyYW1lYnVmZmVycygp
+Cj4gPiAgIGZiZGV2OiBhZGQgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1ZmZlcnMoKQo+
+ID4gICBkcm0vYW1kZ3B1OiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1l
+YnVmZmVycygpCj4gPiAgIGRybS9ib2NoczogdXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5n
+X3BjaV9mcmFtZWJ1ZmZlcnMoKQo+ID4gICBkcm0vY2lycnVzOiB1c2Ugc2ltcGxlciByZW1vdmVf
+Y29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gPiAgIGRybS9tZ2FnMjAwOiB1c2Ugc2lt
+cGxlciByZW1vdmVfY29uZmxpY3RpbmdfcGNpX2ZyYW1lYnVmZmVycygpCj4gPiAgIGRybS9yYWRl
+b246IHVzZSBzaW1wbGVyIHJlbW92ZV9jb25mbGljdGluZ19wY2lfZnJhbWVidWZmZXJzKCkKPiA+
+ICAgZHJtL3ZpcnRpbzogdXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZsaWN0aW5nX3BjaV9mcmFtZWJ1
+ZmZlcnMoKQo+ID4gICBkcm0vdmM0OiB1c2Ugc2ltcGxlciByZW1vdmVfY29uZmxpY3RpbmdfZnJh
+bWVidWZmZXJzKE5VTEwpCj4gPiAgIGRybS9zdW40aTogdXNlIHNpbXBsZXIgcmVtb3ZlX2NvbmZs
+aWN0aW5nX2ZyYW1lYnVmZmVycyhOVUxMKQo+ID4gICBkcm0vdGVncmE6IGtpY2sgb3V0IHNpbXBs
+ZWZiCj4gPiAKPiA+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZHJ2LmMgIHwg
+MjQgKy0tLS0tLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL2JvY2hzL2JvY2hzX2Rydi5jICAgICAg
+ICB8IDE4ICstLS0tLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vY2lycnVzL2NpcnJ1c19kcnYuYyAg
+ICAgIHwgMjMgKy0tLS0tLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL21nYWcyMDAvbWdhZzIwMF9k
+cnYuYyAgICB8IDIxICstLS0tLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL21nYWcyMDAvbWdhZzIw
+MF9tYWluLmMgICB8ICA5IC0tLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9k
+cnYuYyAgICAgIHwgMjMgKy0tLS0tLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRp
+X2Rydi5jICAgICAgICB8IDE4ICstLS0tLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJt
+LmMgICAgICAgICAgICAgIHwgIDQgKysKPiA+ICBkcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9kcnYu
+YyAgICAgICAgICAgIHwgMjAgKy0tLS0tLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vdmlydGlvL3Zp
+cnRncHVfZHJtX2J1cy5jIHwgMjQgKystLS0tLS0tCj4gPiAgZHJpdmVycy92aWRlby9mYmRldi9j
+b3JlL2ZibWVtLmMgICAgICAgICB8IDYzICsrKysrKysrKysrKysrKysrKysrKysrLQo+ID4gIGlu
+Y2x1ZGUvZHJtL2RybV9mYl9oZWxwZXIuaCAgICAgICAgICAgICAgfCAxMiArKysrKwo+ID4gIGlu
+Y2x1ZGUvbGludXgvZmIuaCAgICAgICAgICAgICAgICAgICAgICAgfCAgMiArCj4gPiAgMTMgZmls
+ZXMgY2hhbmdlZCwgODkgaW5zZXJ0aW9ucygrKSwgMTcyIGRlbGV0aW9ucygtKQoKQmVzdCByZWdh
+cmRzLAotLQpCYXJ0bG9taWVqIFpvbG5pZXJraWV3aWN6ClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQ
+b2xhbmQKU2Ftc3VuZyBFbGVjdHJvbmljcwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KYW1kLWdmeCBtYWlsaW5nIGxpc3QKYW1kLWdmeEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9hbWQtZ2Z4Cg==
