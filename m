@@ -1,70 +1,35 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH v3 09/19] memory: tegra: Adapt to Tegra20 device-tree
- binding changes
-Date: Mon, 3 Sep 2018 21:06:01 +0000
-Message-ID: <1536008759.25080.2.camel@toradex.com>
-References: <20180818155430.5586-1-digetx@gmail.com>
-         <20180818155430.5586-10-digetx@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] mmc: tegra: fix inconsistent IS_ERR and PTR_ERR
+Date: Tue, 4 Sep 2018 10:59:09 +0800
+Message-ID: <20180904025909.13700-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180818155430.5586-10-digetx@gmail.com>
-Content-Language: en-US
-Content-ID: <3E996DE64F62884590CB2AD3355722AE@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>, "digetx@gmail.com" <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gU2F0LCAyMDE4LTA4LTE4IGF0IDE4OjU0ICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-DQo+IFRoZSB0ZWdyYTIwLW1jIERUIGJpbmRpbmcgaGFzIGJlZW4gY2hhbmdlZCwgR0FSVCBoYXMg
-YmVlbiBzcXVhc2hlZA0KPiBpbnRvIE1lbW9yeSBDb250cm9sbGVyIGFuZCBub3cgdGhlIGNsb2Nr
-IHByb3BlcnR5IGlzIG1hbmRhdG9yeSBmb3INCj4gVGVncmEyMC4gQWRhcHQgZHJpdmVyIHRoZSB0
-byBEVCBjaGFuZ2VzLg0KDQpNaW5vciBuaXRwaWNrIGNvbmNlcm5pbmcgdGhlIGNvbW1pdCBtZXNz
-YWdlOg0KDQpBZGFwdCBkcml2ZXIgdG8gdGhlIERUIGNoYW5nZXMuDQoNCj4gU2lnbmVkLW9mZi1i
-eTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhAZ21haWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMv
-bWVtb3J5L3RlZ3JhL21jLmMgfCAxOSArKysrKysrLS0tLS0tLS0tLS0tDQo+ICBkcml2ZXJzL21l
-bW9yeS90ZWdyYS9tYy5oIHwgIDYgLS0tLS0tDQo+ICBpbmNsdWRlL3NvYy90ZWdyYS9tYy5oICAg
-IHwgIDIgKy0NCj4gIDMgZmlsZXMgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlv
-bnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lbW9yeS90ZWdyYS9tYy5jIGIvZHJp
-dmVycy9tZW1vcnkvdGVncmEvbWMuYw0KPiBpbmRleCBlNTY4NjI0OTVmMzYuLjNiZjMxMzg3Njlm
-NCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tZW1vcnkvdGVncmEvbWMuYw0KPiArKysgYi9kcml2
-ZXJzL21lbW9yeS90ZWdyYS9tYy5jDQo+IEBAIC02MzgsMjQgKzYzOCwxOSBAQCBzdGF0aWMgaW50
-IHRlZ3JhX21jX3Byb2JlKHN0cnVjdA0KPiBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJaWYg
-KElTX0VSUihtYy0+cmVncykpDQo+ICAJCXJldHVybiBQVFJfRVJSKG1jLT5yZWdzKTsNCj4gIA0K
-PiArCW1jLT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgIm1jIik7DQo+ICsJaWYgKElT
-X0VSUihtYy0+Y2xrKSkgew0KPiArCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gZ2V0
-IE1DIGNsb2NrOiAlbGRcbiIsDQo+ICsJCQlQVFJfRVJSKG1jLT5jbGspKTsNCj4gKwkJcmV0dXJu
-IFBUUl9FUlIobWMtPmNsayk7DQo+ICsJfQ0KPiArDQo+ICAjaWZkZWYgQ09ORklHX0FSQ0hfVEVH
-UkFfMnhfU09DDQo+ICAJaWYgKG1jLT5zb2MgPT0gJnRlZ3JhMjBfbWNfc29jKSB7DQo+IC0JCXJl
-cyA9IHBsYXRmb3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwNCj4gMSk7DQo+
-IC0JCW1jLT5yZWdzMiA9IGRldm1faW9yZW1hcF9yZXNvdXJjZSgmcGRldi0+ZGV2LCByZXMpOw0K
-PiAtCQlpZiAoSVNfRVJSKG1jLT5yZWdzMikpDQo+IC0JCQlyZXR1cm4gUFRSX0VSUihtYy0+cmVn
-czIpOw0KPiAtDQo+ICAJCWlzciA9IHRlZ3JhMjBfbWNfaXJxOw0KPiAgCX0gZWxzZQ0KPiAgI2Vu
-ZGlmDQo+ICAJew0KPiAtCQltYy0+Y2xrID0gZGV2bV9jbGtfZ2V0KCZwZGV2LT5kZXYsICJtYyIp
-Ow0KPiAtCQlpZiAoSVNfRVJSKG1jLT5jbGspKSB7DQo+IC0JCQlkZXZfZXJyKCZwZGV2LT5kZXYs
-ICJmYWlsZWQgdG8gZ2V0IE1DIGNsb2NrOg0KPiAlbGRcbiIsDQo+IC0JCQkJUFRSX0VSUihtYy0+
-Y2xrKSk7DQo+IC0JCQlyZXR1cm4gUFRSX0VSUihtYy0+Y2xrKTsNCj4gLQkJfQ0KPiAtDQo+ICAJ
-CWVyciA9IHRlZ3JhX21jX3NldHVwX2xhdGVuY3lfYWxsb3dhbmNlKG1jKTsNCj4gIAkJaWYgKGVy
-ciA8IDApIHsNCj4gIAkJCWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBzZXR1cCBsYXRl
-bmN5DQo+IGFsbG93YW5jZTogJWRcbiIsDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lbW9yeS90
-ZWdyYS9tYy5oIGIvZHJpdmVycy9tZW1vcnkvdGVncmEvbWMuaA0KPiBpbmRleCAwMTA2NWYxMmVi
-ZWIuLjk4NTZmMDg1ZTQ4NyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tZW1vcnkvdGVncmEvbWMu
-aA0KPiArKysgYi9kcml2ZXJzL21lbW9yeS90ZWdyYS9tYy5oDQo+IEBAIC0yNiwxOCArMjYsMTIg
-QEANCj4gIA0KPiAgc3RhdGljIGlubGluZSB1MzIgbWNfcmVhZGwoc3RydWN0IHRlZ3JhX21jICpt
-YywgdW5zaWduZWQgbG9uZw0KPiBvZmZzZXQpDQo+ICB7DQo+IC0JaWYgKG1jLT5yZWdzMiAmJiBv
-ZmZzZXQgPj0gMHgyNCkNCj4gLQkJcmV0dXJuIHJlYWRsKG1jLT5yZWdzMiArIG9mZnNldCAtIDB4
-M2MpOw0KPiAtDQo+ICAJcmV0dXJuIHJlYWRsKG1jLT5yZWdzICsgb2Zmc2V0KTsNCj4gIH0NCj4g
-IA0KPiAgc3RhdGljIGlubGluZSB2b2lkIG1jX3dyaXRlbChzdHJ1Y3QgdGVncmFfbWMgKm1jLCB1
-MzIgdmFsdWUsDQo+ICAJCQkgICAgIHVuc2lnbmVkIGxvbmcgb2Zmc2V0KQ0KPiAgew0KPiAtCWlm
-IChtYy0+cmVnczIgJiYgb2Zmc2V0ID49IDB4MjQpDQo+IC0JCXJldHVybiB3cml0ZWwodmFsdWUs
-IG1jLT5yZWdzMiArIG9mZnNldCAtIDB4M2MpOw0KPiAtDQo+ICAJd3JpdGVsKHZhbHVlLCBtYy0+
-cmVncyArIG9mZnNldCk7DQo+ICB9DQo+ICANCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvc29jL3Rl
-Z3JhL21jLmggYi9pbmNsdWRlL3NvYy90ZWdyYS9tYy5oDQo+IGluZGV4IGI0M2YzN2ZlYTA5Ni4u
-ZGI1YmZkZjU4OWI0IDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL3NvYy90ZWdyYS9tYy5oDQo+ICsr
-KyBiL2luY2x1ZGUvc29jL3RlZ3JhL21jLmgNCj4gQEAgLTE0NCw3ICsxNDQsNyBAQCBzdHJ1Y3Qg
-dGVncmFfbWNfc29jIHsNCj4gIHN0cnVjdCB0ZWdyYV9tYyB7DQo+ICAJc3RydWN0IGRldmljZSAq
-ZGV2Ow0KPiAgCXN0cnVjdCB0ZWdyYV9zbW11ICpzbW11Ow0KPiAtCXZvaWQgX19pb21lbSAqcmVn
-cywgKnJlZ3MyOw0KPiArCXZvaWQgX19pb21lbSAqcmVnczsNCj4gIAlzdHJ1Y3QgY2xrICpjbGs7
-DQo+ICAJaW50IGlycTs=
+Fix inconsistent IS_ERR and PTR_ERR in tegra_sdhci_init_pinctrl_info,
+the proper pointer to be passed as argument is 'pinctrl_state_1v8'
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index e80716c..c789158 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -724,7 +724,7 @@ static int tegra_sdhci_init_pinctrl_info(struct device *dev,
+ 		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-1v8");
+ 	if (IS_ERR(tegra_host->pinctrl_state_1v8)) {
+ 		dev_warn(dev, "Missing 1.8V pad state, err: %ld\n",
+-			 PTR_ERR(tegra_host->pinctrl_state_3v3));
++			 PTR_ERR(tegra_host->pinctrl_state_1v8));
+ 		return -1;
+ 	}
+ 
+-- 
+2.7.0
