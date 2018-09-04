@@ -1,35 +1,28 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] mmc: tegra: fix inconsistent IS_ERR and PTR_ERR
-Date: Tue, 4 Sep 2018 10:59:09 +0800
-Message-ID: <20180904025909.13700-1-yuehaibing@huawei.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 09/19] memory: tegra: Adapt to Tegra20 device-tree binding changes
+Date: Tue, 4 Sep 2018 11:56:22 +0300
+Message-ID: <201809041156.22715.digetx@gmail.com>
+References: <20180818155430.5586-1-digetx@gmail.com> <20180818155430.5586-10-digetx@gmail.com> <1536008759.25080.2.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1536008759.25080.2.camel@toradex.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix inconsistent IS_ERR and PTR_ERR in tegra_sdhci_init_pinctrl_info,
-the proper pointer to be passed as argument is 'pinctrl_state_1v8'
+On Tuesday 04 September 2018 00:06:01 Marcel Ziswiler wrote:
+> On Sat, 2018-08-18 at 18:54 +0300, Dmitry Osipenko wrote:
+> > The tegra20-mc DT binding has been changed, GART has been squashed
+> > into Memory Controller and now the clock property is mandatory for
+> > Tegra20. Adapt driver the to DT changes.
+>
+> Minor nitpick concerning the commit message:
+>
+> Adapt driver to the DT changes.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/mmc/host/sdhci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index e80716c..c789158 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -724,7 +724,7 @@ static int tegra_sdhci_init_pinctrl_info(struct device *dev,
- 		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-1v8");
- 	if (IS_ERR(tegra_host->pinctrl_state_1v8)) {
- 		dev_warn(dev, "Missing 1.8V pad state, err: %ld\n",
--			 PTR_ERR(tegra_host->pinctrl_state_3v3));
-+			 PTR_ERR(tegra_host->pinctrl_state_1v8));
- 		return -1;
- 	}
- 
--- 
-2.7.0
+Yes, thank you.
