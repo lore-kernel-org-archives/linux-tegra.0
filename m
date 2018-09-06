@@ -1,69 +1,47 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH v1 0/5] CPUFREQ OPP's and Tegra30 support by
- tegra20-cpufreq driver
-Date: Thu, 6 Sep 2018 12:35:03 +0000
-Message-ID: <1536237301.25080.22.camel@toradex.com>
-References: <20180830194356.14059-1-digetx@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH] drm/tegra: return with probe defer if GPIO subsystem is
+ not ready
+Date: Thu, 06 Sep 2018 16:31:42 -0700
+Message-ID: <de84d04c902d1f7f22b6f024b853a1c7@agner.ch>
+References: <20180726133606.14587-1-stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830194356.14059-1-digetx@gmail.com>
-Content-Language: en-US
-Content-ID: <B8B9D52C0E091E41A8E1A5A837F1F08F@eurprd05.prod.outlook.com>
+In-Reply-To: <20180726133606.14587-1-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "digetx@gmail.com" <digetx@gmail.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: thierry.reding@gmail.com, airlied@linux.ie
+Cc: jonathanh@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTA4LTMwIGF0IDIyOjQzICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-DQo+IEhlbGxvLA0KPiANCj4gVGhpcyBzZXJpZXMgYWRkcyBzdXBwb3J0IGZvciBDUFUgZnJlcXVl
-bmN5IHNjYWxpbmcgb24gVGVncmEzMCBhbmQNCj4gZGV2aWNlDQo+IHRyZWUgc3VwcG9ydCB0aGF0
-IGFsbG93cyB0byBpbXBsZW1lbnQgdGhlcm1hbCB0aHJvdHRsaW5nIGFuZA0KPiBjdXN0b21pemUN
-Cj4gYXZhaWxhYmxlIENQVSBmcmVxdWVuY2llcyBwZXItYm9hcmQuIFRoZSB0ZWdyYTIwLWNwdWZy
-ZXEgZHJpdmVyIGhhcw0KPiBiZWVuDQo+IHJlLXdvcmtlZCB0byBzdXBwb3J0IHRoYXQgYWxsLg0K
-PiANCj4gTm90ZSB0aGF0IFRlZ3JhMzAgc3VwcG9ydCBub3Qgc3RyaWN0bHkgZGVwZW5kcyBvbiB0
-aGUgY2xvY2sgcGF0Y2hlcw0KPiB0aGF0DQo+IGFyZSB1bmRlciByZXZpZXcgbm93LCBDUFVGUkVR
-IGRyaXZlciB3aWxsIGZhaWwgdG8gcHJvYmUgdW50aWwgQ0NMS0cNCj4gY2xvY2sNCj4gd2lsbCBn
-ZXQgZXhwb3NlZCBieSB0aGUgY2xvY2sgZHJpdmVyLiBIZW5jZSB0aGlzIHNlcmllcyBjYW4gYmUN
-Cj4gYXBwbGllZA0KPiBpbmRlcGVuZGVudGx5IG9mIHRoZSBjbG9jayBwYXRjaGVzLCBDUFVGUkVR
-IHdpbGwgc3RhcnQgdG8gd29yayBvbg0KPiBUZWdyYTMwDQo+IG9uY2UgYm90aCBwYXRjaHNldHMg
-d2lsbCBiZSBhcHBsaWVkLg0KDQpJbiBnZW5lcmFsIHRoaXMgc2VlbXMgdG8gd29yayBmaW5lIGJv
-dGggb24gQ29saWJyaSBUMjAgYXMgd2VsbCBhcw0KQXBhbGlzL0NvbGlicmkgVDMwLiBIb3dldmVy
-IEkgZGlkIG5vdGljZSBhIGZldyB0aGluZ3MgcGx1cyBoYXZlIHNvbWUNCmFkZGl0aW9uYWwgcXVl
-c3Rpb25zOg0KDQotIEJvdGggVDIwIGFzIHdlbGwgYXMgVDMwIGN1cnJlbnRseSBsaW1pdCB0aGUg
-bWF4IGZyZXF1ZW5jeSB0byAxIEdIeg0Kd2hpbGUgdGhlcmUgYXJlIGNsZWFybHkgVDMwIFNLVXMg
-d2hpY2ggbWF5IGFsbG93IGhpZ2hlciBmcmVxdWVuY2llcw0KKGUuZy4gb3VyIHJlZ3VsYXIgVDMw
-IGFrYSBFbWJlZGRlZCBTS1UgMS4zIEdIeiBtYXggcmVzcC4gMS40IEdIeiBzaW5nbGUNCmNvcmUg
-b25seSwgY29tbWVyY2lhbCBUMzAgYWthIEFQMzMgb3IgVDMzIG9yIHdoYXRldmVyIGl0IGlzIGNh
-bGxlZCB1cA0KdG8gMS42IEdIeiBtYXggcmVzcC4gMS43IEdIeiBzaW5nbGUgY29yZSBvbmx5KS4g
-V291bGQgSSBoYXZlIHRvIGFsbG93DQp0aGlzIHZpYSBjdXN0b20gT1BQcyBpbiBteSBkZXZpY2Ug
-dHJlZT8NCg0KLSBIb3dldmVyLCBjZXJ0YWluIE9QUHMgbWF5IGFsc28gcmVxdWlyZSBhZGp1c3Rp
-bmcgY29yZS9jcHUgdm9sdGFnZXMNCndoaWNoIGlzIG5vdCB5ZXQgdGFrZW4gY2FyZSBvZiBhcyBm
-YXIgYXMgSSBjYW4gdGVsbCwgY29ycmVjdD8NCg0KLSBJIGJlbGlldmUgaW4gZG93bnN0cmVhbSBj
-ZXJ0YWluIE9QUHMgYWxzbyB0YWtlIHNpbGljb24gcGFyYW1ldGVycyBha2ENCnNwZWVkbyB3aGF0
-ZXZlciBpbnRvIGFjY291bnQuIEFueSBjb21tZW50cy9wbGFucyBjb25jZXJuaW5nIHRoaXM/DQoN
-Ci0gV2l0aCAiY3B1ZnJlcS1pbmZvIC1mIiBJIGNvdWxkIG9ubHkgb2JzZXJ2ZSBsaWtlIHRoZSB0
-b3AgMy00IE9QUHMNCndoaWxlIGl0IGRvZXMgbm90IHRvIGdvIGZ1cnRoZXIgZG93biBldmVuIHdo
-ZW4gaWRsaW5nLiBXaHkgY291bGQgdGhhdA0KYmUgcmVzcC4gd2hhdCBjb3VsZCBjYXVzZSB0aGlz
-Pw0KDQotIFVuZm9ydHVuYXRlbHkgImNwdWZyZXEtaW5mbyAtLXN0YXRzIiBjdXJyZW50bHkgZG9l
-cyBub3Qgc2VlbSB0bw0Kb3V0cHV0IGFueXRoaW5nLiBXb3VsZCB0aGF0IHJlcXVpcmUgc29tZXRo
-aW5nIHNwZWNpYWwgdG8gYmUNCmltcGxlbWVudGVkPw0KDQpPdGhlciB0aGFuIHRoYXQgeW91IG1h
-eSBhZGQgdGhlIGZvbGxvd2luZyB0byB0aGUgd2hvbGUgc2VyaWVzOg0KDQpUZXN0ZWQtYnk6IE1h
-cmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0KDQo+IERtaXRyeSBP
-c2lwZW5rbyAoNSk6DQo+ICAgZHQtYmluZGluZ3M6IGNwdWZyZXE6IEFkZCBiaW5kaW5nIGZvciBO
-VklESUEgVGVncmEyMC8zMA0KPiAgIGNwdWZyZXE6IHRlZ3JhMjA6IFN1cHBvcnQgT1BQLCB0aGVy
-bWFsIGNvb2xpbmcgYW5kIFRlZ3JhMzANCj4gICBBUk06IHRlZ3JhOiBDcmVhdGUgdGVncmEyMC1j
-cHVmcmVxIGRldmljZSBvbiBUZWdyYTMwDQo+ICAgQVJNOiBkdHM6IHRlZ3JhMjA6IEFkZCBDUFUg
-T3BlcmF0aW5nIFBlcmZvcm1hbmNlIFBvaW50cw0KPiAgIEFSTTogZHRzOiB0ZWdyYTMwOiBBZGQg
-Q1BVIE9wZXJhdGluZyBQZXJmb3JtYW5jZSBQb2ludHMNCj4gDQo+ICAuLi4vY3B1ZnJlcS9udmlk
-aWEsdGVncmEyMC1jcHVmcmVxLnR4dCAgICAgICAgfCAgMzggKysNCj4gIGFyY2gvYXJtL2Jvb3Qv
-ZHRzL3RlZ3JhMjAuZHRzaSAgICAgICAgICAgICAgICB8ICA1OCArKysNCj4gIGFyY2gvYXJtL2Jv
-b3QvZHRzL3RlZ3JhMzAuZHRzaSAgICAgICAgICAgICAgICB8ICA2NSArKysrDQo+ICBhcmNoL2Fy
-bS9tYWNoLXRlZ3JhL3RlZ3JhLmMgICAgICAgICAgICAgICAgICAgfCAgIDQgKw0KPiAgZHJpdmVy
-cy9jcHVmcmVxL0tjb25maWcuYXJtICAgICAgICAgICAgICAgICAgIHwgICAyICsNCj4gIGRyaXZl
-cnMvY3B1ZnJlcS9jcHVmcmVxLWR0LXBsYXRkZXYuYyAgICAgICAgICB8ICAgMiArDQo+ICBkcml2
-ZXJzL2NwdWZyZXEvdGVncmEyMC1jcHVmcmVxLmMgICAgICAgICAgICAgfCAzMzQgKysrKysrKysr
-KysrKy0tLQ0KPiAtLQ0KPiAgNyBmaWxlcyBjaGFuZ2VkLCA0MjIgaW5zZXJ0aW9ucygrKSwgODEg
-ZGVsZXRpb25zKC0pDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2NwdWZyZXEvbnZpZGlhLHRlZ3JhMjAtY3B1ZnJlcS50eHQ=
+On 26.07.2018 06:36, Stefan Agner wrote:
+> If the GPIO subsystem is not ready make sure to return -EPROBE_DEFER
+> instead of silently continuing without HPD.
+> 
+> Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+
+I think this did not get merged yet, any chance to get it in?
+
+--
+Stefan
+
+> ---
+>  drivers/gpu/drm/tegra/output.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+> index ffe34bd0bb9d..4bcefe455afd 100644
+> --- a/drivers/gpu/drm/tegra/output.c
+> +++ b/drivers/gpu/drm/tegra/output.c
+> @@ -133,7 +133,9 @@ int tegra_output_probe(struct tegra_output *output)
+>  	output->hpd_gpio = of_get_named_gpio_flags(output->of_node,
+>  						   "nvidia,hpd-gpio", 0,
+>  						   &output->hpd_gpio_flags);
+> -	if (gpio_is_valid(output->hpd_gpio)) {
+> +	if (output->hpd_gpio == -EPROBE_DEFER) {
+> +		return -EPROBE_DEFER;
+> +	} else if (gpio_is_valid(output->hpd_gpio)) {
+>  		unsigned long flags;
+>  
+>  		err = gpio_request_one(output->hpd_gpio, GPIOF_DIR_IN,
