@@ -1,144 +1,103 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: Re: [PATCH] drm/tegra: Convert drm_atomic_helper_suspend/resume()
-Date: Mon, 10 Sep 2018 12:16:03 +0530
-Message-ID: <CAFqt6zYTzErgrE_vM0dUJn8FGcBxHHeM9thJbRtHdEXKQQMdtA@mail.gmail.com>
-References: <20180731200705.GA21510@jordon-HP-15-Notebook-PC> <CAFqt6zZM_MzAo8vEZ3+C3W6E-xE_78acnNvmMYoPVgYuxaMvGA@mail.gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v1 0/5] CPUFREQ OPP's and Tegra30 support by
+ tegra20-cpufreq driver
+Date: Tue, 11 Sep 2018 08:27:52 +0000
+Message-ID: <1536654470.32292.31.camel@toradex.com>
+References: <20180830194356.14059-1-digetx@gmail.com>
+         <1536237301.25080.22.camel@toradex.com>
+         <6c5b6eb4-f809-1a31-acbc-ea27e5cb891b@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFqt6zZM_MzAo8vEZ3+C3W6E-xE_78acnNvmMYoPVgYuxaMvGA@mail.gmail.com>
+In-Reply-To: <6c5b6eb4-f809-1a31-acbc-ea27e5cb891b@gmail.com>
+Content-Language: en-US
+Content-ID: <8AB1C01505CF3F47BFCC056EF1230F0C@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, airlied@linux.ie, jonathanh@nvidia.com, Ajit Linux <ajitn.linux@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "digetx@gmail.com" <digetx@gmail.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 6, 2018 at 11:42 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> On Wed, Aug 1, 2018 at 1:37 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> > convert drm_atomic_helper_suspend/resume() to use
-> > drm_mode_config_helper_suspend/resume().
-> >
-> > With this conversion, tegra_drm_fb_suspend() and
-> > tegra_drm_fb_resume() wil not be used anymore.
-> > Both of these functions can be removed.
-> >
-> > Also, in tegra_drm struct's member state will not be
-> > used anymore. So this can be removed forever.
-> >
-> > Fixed one sparse warning.
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-> > ---
->
-> Any comment on this patch ?
-
-If no comment, can we get this patch in queue for 4.20 ?
->
-> >  drivers/gpu/drm/tegra/drm.c | 20 ++------------------
-> >  drivers/gpu/drm/tegra/drm.h |  4 ----
-> >  drivers/gpu/drm/tegra/fb.c  | 24 +-----------------------
-> >  3 files changed, 3 insertions(+), 45 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> > index a2bd587..9a0efce 100644
-> > --- a/drivers/gpu/drm/tegra/drm.c
-> > +++ b/drivers/gpu/drm/tegra/drm.c
-> > @@ -1212,31 +1212,15 @@ static int host1x_drm_remove(struct host1x_device *dev)
-> >  static int host1x_drm_suspend(struct device *dev)
-> >  {
-> >         struct drm_device *drm = dev_get_drvdata(dev);
-> > -       struct tegra_drm *tegra = drm->dev_private;
-> > -
-> > -       drm_kms_helper_poll_disable(drm);
-> > -       tegra_drm_fb_suspend(drm);
-> > -
-> > -       tegra->state = drm_atomic_helper_suspend(drm);
-> > -       if (IS_ERR(tegra->state)) {
-> > -               tegra_drm_fb_resume(drm);
-> > -               drm_kms_helper_poll_enable(drm);
-> > -               return PTR_ERR(tegra->state);
-> > -       }
-> >
-> > -       return 0;
-> > +       return drm_mode_config_helper_suspend(drm);
-> >  }
-> >
-> >  static int host1x_drm_resume(struct device *dev)
-> >  {
-> >         struct drm_device *drm = dev_get_drvdata(dev);
-> > -       struct tegra_drm *tegra = drm->dev_private;
-> >
-> > -       drm_atomic_helper_resume(drm, tegra->state);
-> > -       tegra_drm_fb_resume(drm);
-> > -       drm_kms_helper_poll_enable(drm);
-> > -
-> > -       return 0;
-> > +       return drm_mode_config_helper_resume(drm);
-> >  }
-> >  #endif
-> >
-> > diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-> > index 92d2487..1012335 100644
-> > --- a/drivers/gpu/drm/tegra/drm.h
-> > +++ b/drivers/gpu/drm/tegra/drm.h
-> > @@ -60,8 +60,6 @@ struct tegra_drm {
-> >         unsigned int pitch_align;
-> >
-> >         struct tegra_display_hub *hub;
-> > -
-> > -       struct drm_atomic_state *state;
-> >  };
-> >
-> >  struct tegra_drm_client;
-> > @@ -186,8 +184,6 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
-> >  void tegra_drm_fb_free(struct drm_device *drm);
-> >  int tegra_drm_fb_init(struct drm_device *drm);
-> >  void tegra_drm_fb_exit(struct drm_device *drm);
-> > -void tegra_drm_fb_suspend(struct drm_device *drm);
-> > -void tegra_drm_fb_resume(struct drm_device *drm);
-> >
-> >  extern struct platform_driver tegra_display_hub_driver;
-> >  extern struct platform_driver tegra_dc_driver;
-> > diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-> > index 4c22cdd..b947e82 100644
-> > --- a/drivers/gpu/drm/tegra/fb.c
-> > +++ b/drivers/gpu/drm/tegra/fb.c
-> > @@ -356,7 +356,7 @@ static void tegra_fbdev_exit(struct tegra_fbdev *fbdev)
-> >                 /* Undo the special mapping we made in fbdev probe. */
-> >                 if (bo && bo->pages) {
-> >                         vunmap(bo->vaddr);
-> > -                       bo->vaddr = 0;
-> > +                       bo->vaddr = NULL;
-> >                 }
-> >
-> >                 drm_framebuffer_remove(fbdev->fb);
-> > @@ -412,25 +412,3 @@ void tegra_drm_fb_exit(struct drm_device *drm)
-> >         tegra_fbdev_exit(tegra->fbdev);
-> >  #endif
-> >  }
-> > -
-> > -void tegra_drm_fb_suspend(struct drm_device *drm)
-> > -{
-> > -#ifdef CONFIG_DRM_FBDEV_EMULATION
-> > -       struct tegra_drm *tegra = drm->dev_private;
-> > -
-> > -       console_lock();
-> > -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 1);
-> > -       console_unlock();
-> > -#endif
-> > -}
-> > -
-> > -void tegra_drm_fb_resume(struct drm_device *drm)
-> > -{
-> > -#ifdef CONFIG_DRM_FBDEV_EMULATION
-> > -       struct tegra_drm *tegra = drm->dev_private;
-> > -
-> > -       console_lock();
-> > -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 0);
-> > -       console_unlock();
-> > -#endif
-> > -}
-> > --
-> > 1.9.1
-> >
+T24gRnJpLCAyMDE4LTA5LTA3IGF0IDE5OjU5ICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
+DQoNCi0gc25pcCAtDQoNCj4gPiAtIFdpdGggImNwdWZyZXEtaW5mbyAtZiIgSSBjb3VsZCBvbmx5
+IG9ic2VydmUgbGlrZSB0aGUgdG9wIDMtNCBPUFBzDQo+ID4gd2hpbGUgaXQgZG9lcyBub3QgdG8g
+Z28gZnVydGhlciBkb3duIGV2ZW4gd2hlbiBpZGxpbmcuIFdoeSBjb3VsZA0KPiA+IHRoYXQNCj4g
+PiBiZSByZXNwLiB3aGF0IGNvdWxkIGNhdXNlIHRoaXM/DQo+IA0KPiBXaGF0IGNwdWZyZXEgZ292
+ZXJub3IgYXJlIHlvdSB1c2luZz8NCg0Kb25kZW1hbmQNCg0KPiBIZXJlIGlzIG15ICdjcHVmcmVx
+LWluZm8gLS1zdGF0cycgb3V0cHV0IGZyb20gVGVncmEzMCBhZnRlciBhIHNldmVyYWwNCj4gbWlu
+dXRlcyBvZiBpZGxpbmcgYWZ0ZXIgYm9vdDoNCj4gDQo+IDQwODAwMDoyNDU4ODQsIDQ1NjAwMDo0
+NDUsIDYwODAwMDoyNTEsIDc2MDAwMDoxNTEsIDgxNjAwMDo4MiwNCj4gOTEyMDAwOjc1LCAxMDAw
+MDAwOjE2MyAgKDU2MSkNCj4gDQo+IEFuZCBmdWxsIGNwdWZyZXEtaW5mbzoNCj4gDQo+IGNwdWZy
+ZXF1dGlscyAwMDg6IGNwdWZyZXEtaW5mbyAoQykgRG9taW5payBCcm9kb3dza2kgMjAwNC0yMDA5
+DQo+IFJlcG9ydCBlcnJvcnMgYW5kIGJ1Z3MgdG8gY3B1ZnJlcUB2Z2VyLmtlcm5lbC5vcmcsIHBs
+ZWFzZS4NCj4gYW5hbHl6aW5nIENQVSAwOg0KPiAgICBkcml2ZXI6IHRlZ3JhDQo+ICAgIENQVXMg
+d2hpY2ggcnVuIGF0IHRoZSBzYW1lIGhhcmR3YXJlIGZyZXF1ZW5jeTogMCAxIDIgMw0KPiAgICBD
+UFVzIHdoaWNoIG5lZWQgdG8gaGF2ZSB0aGVpciBmcmVxdWVuY3kgY29vcmRpbmF0ZWQgYnkgc29m
+dHdhcmU6IDANCj4gMSAyIDMNCj4gICAgbWF4aW11bSB0cmFuc2l0aW9uIGxhdGVuY3k6IDUwLjAg
+dXMuDQo+ICAgIGhhcmR3YXJlIGxpbWl0czogNDA4IE1IeiAtIDEwMDAgTUh6DQo+ICAgIGF2YWls
+YWJsZSBmcmVxdWVuY3kgc3RlcHM6IDQwOCBNSHosIDQ1NiBNSHosIDYwOCBNSHosIDc2MCBNSHos
+IDgxNg0KPiBNSHosIDkxMiBNSHosIDEwMDAgTUh6DQo+ICAgIGF2YWlsYWJsZSBjcHVmcmVxIGdv
+dmVybm9yczogY29uc2VydmF0aXZlLCB1c2Vyc3BhY2UsIHBvd2Vyc2F2ZSwNCj4gb25kZW1hbmQs
+IHBlcmZvcm1hbmNlLCBzY2hlZHV0aWwNCj4gICAgY3VycmVudCBwb2xpY3k6IGZyZXF1ZW5jeSBz
+aG91bGQgYmUgd2l0aGluIDQwOCBNSHogYW5kIDEwMDAgTUh6Lg0KPiAgICAgICAgICAgICAgICAg
+ICAgVGhlIGdvdmVybm9yICJvbmRlbWFuZCIgbWF5IGRlY2lkZSB3aGljaCBzcGVlZCB0bw0KPiB1
+c2UNCj4gICAgICAgICAgICAgICAgICAgIHdpdGhpbiB0aGlzIHJhbmdlLg0KPiAgICBjdXJyZW50
+IENQVSBmcmVxdWVuY3kgaXMgNjA4IE1IeiAoYXNzZXJ0ZWQgYnkgY2FsbCB0byBoYXJkd2FyZSku
+DQo+ICAgIGNwdWZyZXEgc3RhdHM6IDQwOCBNSHo6OTkuNTMlLCA0NTYgTUh6OjAuMTglLCA2MDgg
+TUh6OjAuMTAlLCA3NjANCj4gTUh6OjAuMDYlLCA4MTYgTUh6OjAuMDMlLCA5MTIgTUh6OjAuMDMl
+LCAxMDAwIE1IejowLjA3JSAgKDU2MykNCj4gYW5hbHl6aW5nIENQVSAxOg0KPiAgICBkcml2ZXI6
+IHRlZ3JhDQo+ICAgIENQVXMgd2hpY2ggcnVuIGF0IHRoZSBzYW1lIGhhcmR3YXJlIGZyZXF1ZW5j
+eTogMCAxIDIgMw0KPiAgICBDUFVzIHdoaWNoIG5lZWQgdG8gaGF2ZSB0aGVpciBmcmVxdWVuY3kg
+Y29vcmRpbmF0ZWQgYnkgc29mdHdhcmU6IDANCj4gMSAyIDMNCj4gICAgbWF4aW11bSB0cmFuc2l0
+aW9uIGxhdGVuY3k6IDUwLjAgdXMuDQo+ICAgIGhhcmR3YXJlIGxpbWl0czogNDA4IE1IeiAtIDEw
+MDAgTUh6DQo+ICAgIGF2YWlsYWJsZSBmcmVxdWVuY3kgc3RlcHM6IDQwOCBNSHosIDQ1NiBNSHos
+IDYwOCBNSHosIDc2MCBNSHosIDgxNg0KPiBNSHosIDkxMiBNSHosIDEwMDAgTUh6DQo+ICAgIGF2
+YWlsYWJsZSBjcHVmcmVxIGdvdmVybm9yczogY29uc2VydmF0aXZlLCB1c2Vyc3BhY2UsIHBvd2Vy
+c2F2ZSwNCj4gb25kZW1hbmQsIHBlcmZvcm1hbmNlLCBzY2hlZHV0aWwNCj4gICAgY3VycmVudCBw
+b2xpY3k6IGZyZXF1ZW5jeSBzaG91bGQgYmUgd2l0aGluIDQwOCBNSHogYW5kIDEwMDAgTUh6Lg0K
+PiAgICAgICAgICAgICAgICAgICAgVGhlIGdvdmVybm9yICJvbmRlbWFuZCIgbWF5IGRlY2lkZSB3
+aGljaCBzcGVlZCB0bw0KPiB1c2UNCj4gICAgICAgICAgICAgICAgICAgIHdpdGhpbiB0aGlzIHJh
+bmdlLg0KPiAgICBjdXJyZW50IENQVSBmcmVxdWVuY3kgaXMgNjA4IE1IeiAoYXNzZXJ0ZWQgYnkg
+Y2FsbCB0byBoYXJkd2FyZSkuDQo+ICAgIGNwdWZyZXEgc3RhdHM6IDQwOCBNSHo6OTkuNTMlLCA0
+NTYgTUh6OjAuMTglLCA2MDggTUh6OjAuMTAlLCA3NjANCj4gTUh6OjAuMDYlLCA4MTYgTUh6OjAu
+MDMlLCA5MTIgTUh6OjAuMDMlLCAxMDAwIE1IejowLjA3JSAgKDU2MykNCj4gYW5hbHl6aW5nIENQ
+VSAyOg0KPiAgICBkcml2ZXI6IHRlZ3JhDQo+ICAgIENQVXMgd2hpY2ggcnVuIGF0IHRoZSBzYW1l
+IGhhcmR3YXJlIGZyZXF1ZW5jeTogMCAxIDIgMw0KPiAgICBDUFVzIHdoaWNoIG5lZWQgdG8gaGF2
+ZSB0aGVpciBmcmVxdWVuY3kgY29vcmRpbmF0ZWQgYnkgc29mdHdhcmU6IDANCj4gMSAyIDMNCj4g
+ICAgbWF4aW11bSB0cmFuc2l0aW9uIGxhdGVuY3k6IDUwLjAgdXMuDQo+ICAgIGhhcmR3YXJlIGxp
+bWl0czogNDA4IE1IeiAtIDEwMDAgTUh6DQo+ICAgIGF2YWlsYWJsZSBmcmVxdWVuY3kgc3RlcHM6
+IDQwOCBNSHosIDQ1NiBNSHosIDYwOCBNSHosIDc2MCBNSHosIDgxNg0KPiBNSHosIDkxMiBNSHos
+IDEwMDAgTUh6DQo+ICAgIGF2YWlsYWJsZSBjcHVmcmVxIGdvdmVybm9yczogY29uc2VydmF0aXZl
+LCB1c2Vyc3BhY2UsIHBvd2Vyc2F2ZSwNCj4gb25kZW1hbmQsIHBlcmZvcm1hbmNlLCBzY2hlZHV0
+aWwNCj4gICAgY3VycmVudCBwb2xpY3k6IGZyZXF1ZW5jeSBzaG91bGQgYmUgd2l0aGluIDQwOCBN
+SHogYW5kIDEwMDAgTUh6Lg0KPiAgICAgICAgICAgICAgICAgICAgVGhlIGdvdmVybm9yICJvbmRl
+bWFuZCIgbWF5IGRlY2lkZSB3aGljaCBzcGVlZCB0bw0KPiB1c2UNCj4gICAgICAgICAgICAgICAg
+ICAgIHdpdGhpbiB0aGlzIHJhbmdlLg0KPiAgICBjdXJyZW50IENQVSBmcmVxdWVuY3kgaXMgNjA4
+IE1IeiAoYXNzZXJ0ZWQgYnkgY2FsbCB0byBoYXJkd2FyZSkuDQo+ICAgIGNwdWZyZXEgc3RhdHM6
+IDQwOCBNSHo6OTkuNTMlLCA0NTYgTUh6OjAuMTglLCA2MDggTUh6OjAuMTAlLCA3NjANCj4gTUh6
+OjAuMDYlLCA4MTYgTUh6OjAuMDMlLCA5MTIgTUh6OjAuMDMlLCAxMDAwIE1IejowLjA3JSAgKDU2
+MykNCj4gYW5hbHl6aW5nIENQVSAzOg0KPiAgICBkcml2ZXI6IHRlZ3JhDQo+ICAgIENQVXMgd2hp
+Y2ggcnVuIGF0IHRoZSBzYW1lIGhhcmR3YXJlIGZyZXF1ZW5jeTogMCAxIDIgMw0KPiAgICBDUFVz
+IHdoaWNoIG5lZWQgdG8gaGF2ZSB0aGVpciBmcmVxdWVuY3kgY29vcmRpbmF0ZWQgYnkgc29mdHdh
+cmU6IDANCj4gMSAyIDMNCj4gICAgbWF4aW11bSB0cmFuc2l0aW9uIGxhdGVuY3k6IDUwLjAgdXMu
+DQo+ICAgIGhhcmR3YXJlIGxpbWl0czogNDA4IE1IeiAtIDEwMDAgTUh6DQo+ICAgIGF2YWlsYWJs
+ZSBmcmVxdWVuY3kgc3RlcHM6IDQwOCBNSHosIDQ1NiBNSHosIDYwOCBNSHosIDc2MCBNSHosIDgx
+Ng0KPiBNSHosIDkxMiBNSHosIDEwMDAgTUh6DQo+ICAgIGF2YWlsYWJsZSBjcHVmcmVxIGdvdmVy
+bm9yczogY29uc2VydmF0aXZlLCB1c2Vyc3BhY2UsIHBvd2Vyc2F2ZSwNCj4gb25kZW1hbmQsIHBl
+cmZvcm1hbmNlLCBzY2hlZHV0aWwNCj4gICAgY3VycmVudCBwb2xpY3k6IGZyZXF1ZW5jeSBzaG91
+bGQgYmUgd2l0aGluIDQwOCBNSHogYW5kIDEwMDAgTUh6Lg0KPiAgICAgICAgICAgICAgICAgICAg
+VGhlIGdvdmVybm9yICJvbmRlbWFuZCIgbWF5IGRlY2lkZSB3aGljaCBzcGVlZCB0bw0KPiB1c2UN
+Cj4gICAgICAgICAgICAgICAgICAgIHdpdGhpbiB0aGlzIHJhbmdlLg0KPiAgICBjdXJyZW50IENQ
+VSBmcmVxdWVuY3kgaXMgNjA4IE1IeiAoYXNzZXJ0ZWQgYnkgY2FsbCB0byBoYXJkd2FyZSkuDQo+
+ICAgIGNwdWZyZXEgc3RhdHM6IDQwOCBNSHo6OTkuNTMlLCA0NTYgTUh6OjAuMTglLCA2MDggTUh6
+OjAuMTAlLCA3NjANCj4gTUh6OjAuMDYlLCA4MTYgTUh6OjAuMDMlLCA5MTIgTUh6OjAuMDMlLCAx
+MDAwIE1IejowLjA3JSAgKDU2MykNCj4gDQo+IA0KPiA+IC0gVW5mb3J0dW5hdGVseSAiY3B1ZnJl
+cS1pbmZvIC0tc3RhdHMiIGN1cnJlbnRseSBkb2VzIG5vdCBzZWVtIHRvDQo+ID4gb3V0cHV0IGFu
+eXRoaW5nLiBXb3VsZCB0aGF0IHJlcXVpcmUgc29tZXRoaW5nIHNwZWNpYWwgdG8gYmUNCj4gPiBp
+bXBsZW1lbnRlZD8NCj4gDQo+IE1ha2Ugc3VyZSB0aGF0IENPTkZJR19DUFVfRlJFUV9TVEFUIGlz
+IGVuYWJsZWQgaW4gdGhlIGtlcm5lbHMgY29uZmlnLg0KDQpZZXMsIHNvcnJ5LiBUaGF0IHdhcyBp
+dCwgb2YgY291cnNlLiBKdXN0IHdvbmRlcmluZyB3aHkgdGhhdCBvbmUgaXNuJ3QNCmVuYWJsZWQg
+aW4gdGVncmFfZGVmY29uZmlnLi4uDQoNCj4gPiBPdGhlciB0aGFuIHRoYXQgeW91IG1heSBhZGQg
+dGhlIGZvbGxvd2luZyB0byB0aGUgd2hvbGUgc2VyaWVzOg0KPiA+IA0KPiA+IFRlc3RlZC1ieTog
+TWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+IA0KPiBUaGFu
+ayB5b3UgdmVyeSBtdWNoIQ0KDQpZb3UgYXJlIHZlcnkgd2VsY29tZS4gVGhhbmsgeW91IQ==
