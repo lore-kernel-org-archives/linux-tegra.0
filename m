@@ -1,45 +1,41 @@
-From: jun qian <hangdianqj@163.com>
-Subject: [PATCH] i2c: i2c-tegra: replace spin_lock_irqsave with spin_lock in ISR
-Date: Tue, 11 Sep 2018 07:54:46 -0700
-Message-ID: <20180911145446.53621-1-hangdianqj@163.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, jun qian <hangdianqj@163.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH] gpu: host1x: Remove redundant of_dma_configure() call
+Date: Wed, 12 Sep 2018 17:47:54 +0100
+Message-ID: <ce9767cab33346772f76735933dd7896e346b477.1536770777.git.robin.murphy@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com
+Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-As you are already in ISR, it is unnecessary to call spin_lock_irqsave.
-
-Signed-off-by: jun qian <hangdianqj@163.com>
----
- drivers/i2c/busses/i2c-tegra.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 60c8561fbe65..59f31d3a508f 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -608,11 +608,10 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	u32 status;
- 	const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
- 	struct tegra_i2c_dev *i2c_dev = dev_id;
--	unsigned long flags;
- 
- 	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
- 
--	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
-+	spin_lock(&i2c_dev->xfer_lock);
- 	if (status == 0) {
- 		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
- 			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
-@@ -670,7 +669,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 
- 	complete(&i2c_dev->msg_complete);
- done:
--	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
-+	spin_unlock(&i2c_dev->xfer_lock);
- 	return IRQ_HANDLED;
- }
- 
--- 
-2.17.1
+Tm93IHRoYXQgdGhlIEhvc3QxeCBidXNfdHlwZSBpbXBsZW1lbnRzIGEgLmRtYV9jb25maWd1cmUg
+Y2FsbGJhY2ssCnN1YmRldmljZXMgc2hvdWxkIGF1dG9tYXRpY2FsbHkgZ2V0IGNvbmZpZ3VyZWQg
+Zm9yIERNQSBhcyB0aGVpciBkcml2ZXJzCmJpbmQsIHNvIHRoZXJlJ3Mgbm8gbmVlZCB0byBhbHNv
+IGZvcmNlIGl0IGF0IGRldmljZSBjcmVhdGlvbiB0aW1lLgoKQ0M6IFRoaWVycnkgUmVkaW5nIDx0
+aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+CkNDOiBNaWtrbyBQZXJ0dHVuZW4gPGN5bmRpc0BrYXBz
+aS5maT4KU2lnbmVkLW9mZi1ieTogUm9iaW4gTXVycGh5IDxyb2Jpbi5tdXJwaHlAYXJtLmNvbT4K
+LS0tCgpJICpiZWxpZXZlKiBteSByZWFzb25pbmcgaXMgY29ycmVjdCBoZXJlLCBidXQgcGxlYXNl
+IHNob3V0IGlmIGl0J3Mgbm90LgoKIGRyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyB8IDIgLS0KIDEg
+ZmlsZSBjaGFuZ2VkLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hv
+c3QxeC9idXMuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYwppbmRleCA4MTViZGI0MmUzZjAu
+LjI0ZjYwZTM0Y2RmMSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jCisrKyBi
+L2RyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYwpAQCAtNDIxLDggKzQyMSw2IEBAIHN0YXRpYyBpbnQg
+aG9zdDF4X2RldmljZV9hZGQoc3RydWN0IGhvc3QxeCAqaG9zdDF4LAogCWRldmljZS0+ZGV2LmJ1
+cyA9ICZob3N0MXhfYnVzX3R5cGU7CiAJZGV2aWNlLT5kZXYucGFyZW50ID0gaG9zdDF4LT5kZXY7
+CiAKLQlvZl9kbWFfY29uZmlndXJlKCZkZXZpY2UtPmRldiwgaG9zdDF4LT5kZXYtPm9mX25vZGUs
+IHRydWUpOwotCiAJZXJyID0gaG9zdDF4X2RldmljZV9wYXJzZV9kdChkZXZpY2UsIGRyaXZlcik7
+CiAJaWYgKGVyciA8IDApIHsKIAkJa2ZyZWUoZGV2aWNlKTsKLS0gCjIuMTkuMC5kaXJ0eQoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
