@@ -1,104 +1,139 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: Multi-parent IRQ domains
-Date: Fri, 14 Sep 2018 10:10:23 +0200
-Message-ID: <20180914081023.GA22750@ulmo>
-References: <20180913155945.GA19903@ulmo>
- <ea9261a9-2c4d-7ca4-6dca-73f385aa46d5@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 0/5] CPUFREQ OPP's and Tegra30 support by
+ tegra20-cpufreq driver
+Date: Fri, 14 Sep 2018 13:30:13 +0300
+Message-ID: <09451207-ee77-7b4e-54cf-7a7a7ab67400@gmail.com>
+References: <20180830194356.14059-1-digetx@gmail.com>
+ <1536237301.25080.22.camel@toradex.com>
+ <6c5b6eb4-f809-1a31-acbc-ea27e5cb891b@gmail.com>
+ <1536654470.32292.31.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <ea9261a9-2c4d-7ca4-6dca-73f385aa46d5@gmail.com>
+In-Reply-To: <1536654470.32292.31.camel@toradex.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 9/11/18 11:27 AM, Marcel Ziswiler wrote:
+> On Fri, 2018-09-07 at 19:59 +0300, Dmitry Osipenko wrote:
+> 
+> - snip -
+> 
+>>> - With "cpufreq-info -f" I could only observe like the top 3-4 OPPs
+>>> while it does not to go further down even when idling. Why could
+>>> that
+>>> be resp. what could cause this?
+>>
+>> What cpufreq governor are you using?
+> 
+> ondemand
+> 
+>> Here is my 'cpufreq-info --stats' output from Tegra30 after a several
+>> minutes of idling after boot:
+>>
+>> 408000:245884, 456000:445, 608000:251, 760000:151, 816000:82,
+>> 912000:75, 1000000:163  (561)
+>>
+>> And full cpufreq-info:
+>>
+>> cpufrequtils 008: cpufreq-info (C) Dominik Brodowski 2004-2009
+>> Report errors and bugs to cpufreq@vger.kernel.org, please.
+>> analyzing CPU 0:
+>>     driver: tegra
+>>     CPUs which run at the same hardware frequency: 0 1 2 3
+>>     CPUs which need to have their frequency coordinated by software: 0
+>> 1 2 3
+>>     maximum transition latency: 50.0 us.
+>>     hardware limits: 408 MHz - 1000 MHz
+>>     available frequency steps: 408 MHz, 456 MHz, 608 MHz, 760 MHz, 816
+>> MHz, 912 MHz, 1000 MHz
+>>     available cpufreq governors: conservative, userspace, powersave,
+>> ondemand, performance, schedutil
+>>     current policy: frequency should be within 408 MHz and 1000 MHz.
+>>                     The governor "ondemand" may decide which speed to
+>> use
+>>                     within this range.
+>>     current CPU frequency is 608 MHz (asserted by call to hardware).
+>>     cpufreq stats: 408 MHz:99.53%, 456 MHz:0.18%, 608 MHz:0.10%, 760
+>> MHz:0.06%, 816 MHz:0.03%, 912 MHz:0.03%, 1000 MHz:0.07%  (563)
+>> analyzing CPU 1:
+>>     driver: tegra
+>>     CPUs which run at the same hardware frequency: 0 1 2 3
+>>     CPUs which need to have their frequency coordinated by software: 0
+>> 1 2 3
+>>     maximum transition latency: 50.0 us.
+>>     hardware limits: 408 MHz - 1000 MHz
+>>     available frequency steps: 408 MHz, 456 MHz, 608 MHz, 760 MHz, 816
+>> MHz, 912 MHz, 1000 MHz
+>>     available cpufreq governors: conservative, userspace, powersave,
+>> ondemand, performance, schedutil
+>>     current policy: frequency should be within 408 MHz and 1000 MHz.
+>>                     The governor "ondemand" may decide which speed to
+>> use
+>>                     within this range.
+>>     current CPU frequency is 608 MHz (asserted by call to hardware).
+>>     cpufreq stats: 408 MHz:99.53%, 456 MHz:0.18%, 608 MHz:0.10%, 760
+>> MHz:0.06%, 816 MHz:0.03%, 912 MHz:0.03%, 1000 MHz:0.07%  (563)
+>> analyzing CPU 2:
+>>     driver: tegra
+>>     CPUs which run at the same hardware frequency: 0 1 2 3
+>>     CPUs which need to have their frequency coordinated by software: 0
+>> 1 2 3
+>>     maximum transition latency: 50.0 us.
+>>     hardware limits: 408 MHz - 1000 MHz
+>>     available frequency steps: 408 MHz, 456 MHz, 608 MHz, 760 MHz, 816
+>> MHz, 912 MHz, 1000 MHz
+>>     available cpufreq governors: conservative, userspace, powersave,
+>> ondemand, performance, schedutil
+>>     current policy: frequency should be within 408 MHz and 1000 MHz.
+>>                     The governor "ondemand" may decide which speed to
+>> use
+>>                     within this range.
+>>     current CPU frequency is 608 MHz (asserted by call to hardware).
+>>     cpufreq stats: 408 MHz:99.53%, 456 MHz:0.18%, 608 MHz:0.10%, 760
+>> MHz:0.06%, 816 MHz:0.03%, 912 MHz:0.03%, 1000 MHz:0.07%  (563)
+>> analyzing CPU 3:
+>>     driver: tegra
+>>     CPUs which run at the same hardware frequency: 0 1 2 3
+>>     CPUs which need to have their frequency coordinated by software: 0
+>> 1 2 3
+>>     maximum transition latency: 50.0 us.
+>>     hardware limits: 408 MHz - 1000 MHz
+>>     available frequency steps: 408 MHz, 456 MHz, 608 MHz, 760 MHz, 816
+>> MHz, 912 MHz, 1000 MHz
+>>     available cpufreq governors: conservative, userspace, powersave,
+>> ondemand, performance, schedutil
+>>     current policy: frequency should be within 408 MHz and 1000 MHz.
+>>                     The governor "ondemand" may decide which speed to
+>> use
+>>                     within this range.
+>>     current CPU frequency is 608 MHz (asserted by call to hardware).
+>>     cpufreq stats: 408 MHz:99.53%, 456 MHz:0.18%, 608 MHz:0.10%, 760
+>> MHz:0.06%, 816 MHz:0.03%, 912 MHz:0.03%, 1000 MHz:0.07%  (563)
+>>
+>>
+>>> - Unfortunately "cpufreq-info --stats" currently does not seem to
+>>> output anything. Would that require something special to be
+>>> implemented?
+>>
+>> Make sure that CONFIG_CPU_FREQ_STAT is enabled in the kernels config.
+> 
+> Yes, sorry. That was it, of course. Just wondering why that one isn't
+> enabled in tegra_defconfig...
 
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That option isn't essential for the kernel, though usually such useful and 
+low-overhead features are welcome. IIRC, tegra_defconfig misses more important 
+options (like namespaces) that are required by Linux distro's to work properly.
 
-On Thu, Sep 13, 2018 at 02:50:21PM -0700, Florian Fainelli wrote:
->=20
->=20
-> On 09/13/18 08:59, Thierry Reding wrote:
-> > Hi everyone,
-> >=20
-> > I've been trying to implement a feature on recent Tegra chips that's
-> > called "wake events". These wake events are implemented as part of the
-> > power management controller (PMC) and they control which events can be
-> > used to wake the system from suspend. Events include things like an
-> > alarm interrupt from an RTC, or the GPIO interrupt hooked up to a
-> > power button for example.
-> >=20
-> > We already have a driver for a couple of other things that the PMC does,
-> > so I thought it'd be natural to implement this functionality as an IRQ
-> > chip in the PMC driver. The way that this would work is that for all the
-> > devices that are wakeup sources, we'd end up specifying the PMC as the
-> > interrupt parent and the PMC would then itself have the main GIC as its
-> > parent. That way, the hierarchical IRQ domain infrastructure would take
-> > care of pretty much everything.
-> >=20
-> > Unfortunately I've run into some issues here. One problem that I'm
-> > facing is that PMC could have more than one parent. For example, the RTC
-> > alarm interrupt goes straight to the GIC, but the power button GPIO goes
-> > through the GPIO controller first and then to the GIC. This doesn't seem
-> > to be something that's currently possible.
-> >=20
-> > The way I imagine this to work from a DT perspective is as follows:
->=20
-> There is an interrupts-extended property which as a first cell takes a
-> phandle to the parent interrupt controller, e.g:
->=20
-> interrupts-extended =3D <&gic 73 GIPC_SPI IRQ_TYPE_LEVEL_HIGH>,
-> 			<&pmc 10>;
->=20
-> (provided that I understood your problem and example correctly). We have
-> a similar use case on our STB chips where we have "main" interrupts
-> wired to the ARM GIC and wake-up interrupts wired to a specific wake-up
-> interrupt controller in an always-on domain. The two controllers have a
-> different #interrupt-cells specifier.
->=20
-> The interrupt infrastructure in Linux already knows how to deal with
-> that and whether you use of_get_irq() or platform_get_irq() you should
-> obtain the correct virtual interrupt numbers that you expected, parented
-> to the appropriate interrupt controller.
-
-Yeah, I had looked at the interrupts-extended property as well, but
-while I think it might work, one issue with that is that we'd be
-modelling the regular IRQ and wakeup IRQ as two different IRQs. On
-Tegra, however, the wakeup interrupt is the same as the regular
-interrupt, except that the bits to enable the wake logic is in a
-different hardware block. So the PMC acts more like an additional
-mux for a subset of the interrupts in the system.
-
-In addition to that, if I were to model the interrupts separately, I'd
-also have to modify existing drivers for all the wakeup-able devices to
-deal with two separate interrupts, which is rather undesirable.
-
-Thierry
-
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlubbO0ACgkQ3SOs138+
-s6Eo4w/8CFdu6waD5JsOQH7TrFv98Q/Fsq9TLrsUvPHL/wEacrne8/PLtbidu4pv
-RohmWSf4br1GhN8+3D/U3gFw/uI5I8oD3lqHXHHRxCc297gK5t+tXXhNOZeuaZ0l
-NyuRqZ8o47EPxAkOrDsu+ZfBc1u2m9l4zYMA1OB0X3NIjT2w3Rt7msPZQapZrxlV
-mp9Iw/d6ArOegaukW0l98YtmZnSmpg4tbqB6pGzoCMfAtRsf3jf+DUuhdn36t0VD
-eBUqhRo6MVqECi3NiELGpZ+ya3rrgKn94PzU65aVDX/6K9AquOz5GdNaYR++/UsK
-zHfppn31Ecr6Y9LW9mrP8yj2k7hMAbMnlKcYcS0G23xUf++N9dc7d8aR/RWP74Q5
-CxmiIGhLttnFyTcEhU2p07+dKZOTzkNpd3ZVpNNp0OV3e43IpjUL4QpCK+IaWlWp
-zFDFtbhrCL3A2FVAW+bQcozzC2vtMalBMuiwVRIOBExSd/yLg5vZdHlJVXWU5jgT
-Xc7KBPDbGCG42im7nzF6Bt7bW/af8pLG0d+U88OKShX3drQFxRJWY5hmfTrjoq4v
-7JBJD25vDgACnHoWVwUuiiOuui5RD1WdMQQqqoe3HyHaINMjn4iroKpDWFeQ64EK
-cW2Wu5eOCizrvPxOM3C87outtt3n0OTJmlZQWFmhEp6D5Xj04yU=
-=Y+K7
------END PGP SIGNATURE-----
-
---qDbXVdCdHGoSgWSk--
+>>> Other than that you may add the following to the whole series:
+>>>
+>>> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>>
+>> Thank you very much!
+> 
+> You are very welcome. Thank you!
+> 
