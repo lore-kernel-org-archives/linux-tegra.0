@@ -1,139 +1,71 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 0/5] CPUFREQ OPP's and Tegra30 support by
- tegra20-cpufreq driver
-Date: Fri, 14 Sep 2018 13:30:13 +0300
-Message-ID: <09451207-ee77-7b4e-54cf-7a7a7ab67400@gmail.com>
-References: <20180830194356.14059-1-digetx@gmail.com>
- <1536237301.25080.22.camel@toradex.com>
- <6c5b6eb4-f809-1a31-acbc-ea27e5cb891b@gmail.com>
- <1536654470.32292.31.camel@toradex.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: Multi-parent IRQ domains
+Date: Fri, 14 Sep 2018 12:31:18 +0200 (CEST)
+Message-ID: <alpine.DEB.2.21.1809141211200.1473@nanos.tec.linutronix.de>
+References: <20180913155945.GA19903@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1536654470.32292.31.camel@toradex.com>
-Content-Language: en-US
+In-Reply-To: <20180913155945.GA19903@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 9/11/18 11:27 AM, Marcel Ziswiler wrote:
-> On Fri, 2018-09-07 at 19:59 +0300, Dmitry Osipenko wrote:
+On Thu, 13 Sep 2018, Thierry Reding wrote:
+> I've been trying to implement a feature on recent Tegra chips that's
+> called "wake events". These wake events are implemented as part of the
+> power management controller (PMC) and they control which events can be
+> used to wake the system from suspend. Events include things like an
+> alarm interrupt from an RTC, or the GPIO interrupt hooked up to a
+> power button for example.
 > 
-> - snip -
+> We already have a driver for a couple of other things that the PMC does,
+> so I thought it'd be natural to implement this functionality as an IRQ
+> chip in the PMC driver. The way that this would work is that for all the
+> devices that are wakeup sources, we'd end up specifying the PMC as the
+> interrupt parent and the PMC would then itself have the main GIC as its
+> parent. That way, the hierarchical IRQ domain infrastructure would take
+> care of pretty much everything.
 > 
->>> - With "cpufreq-info -f" I could only observe like the top 3-4 OPPs
->>> while it does not to go further down even when idling. Why could
->>> that
->>> be resp. what could cause this?
->>
->> What cpufreq governor are you using?
-> 
-> ondemand
-> 
->> Here is my 'cpufreq-info --stats' output from Tegra30 after a several
->> minutes of idling after boot:
->>
->> 408000:245884, 456000:445, 608000:251, 760000:151, 816000:82,
->> 912000:75, 1000000:163  (561)
->>
->> And full cpufreq-info:
->>
->> cpufrequtils 008: cpufreq-info (C) Dominik Brodowski 2004-2009
->> Report errors and bugs to cpufreq@vger.kernel.org, please.
->> analyzing CPU 0:
->>     driver: tegra
->>     CPUs which run at the same hardware frequency: 0 1 2 3
->>     CPUs which need to have their frequency coordinated by software: 0
->> 1 2 3
->>     maximum transition latency: 50.0 us.
->>     hardware limits: 408 MHz - 1000 MHz
->>     available frequency steps: 408 MHz, 456 MHz, 608 MHz, 760 MHz, 816
->> MHz, 912 MHz, 1000 MHz
->>     available cpufreq governors: conservative, userspace, powersave,
->> ondemand, performance, schedutil
->>     current policy: frequency should be within 408 MHz and 1000 MHz.
->>                     The governor "ondemand" may decide which speed to
->> use
->>                     within this range.
->>     current CPU frequency is 608 MHz (asserted by call to hardware).
->>     cpufreq stats: 408 MHz:99.53%, 456 MHz:0.18%, 608 MHz:0.10%, 760
->> MHz:0.06%, 816 MHz:0.03%, 912 MHz:0.03%, 1000 MHz:0.07%  (563)
->> analyzing CPU 1:
->>     driver: tegra
->>     CPUs which run at the same hardware frequency: 0 1 2 3
->>     CPUs which need to have their frequency coordinated by software: 0
->> 1 2 3
->>     maximum transition latency: 50.0 us.
->>     hardware limits: 408 MHz - 1000 MHz
->>     available frequency steps: 408 MHz, 456 MHz, 608 MHz, 760 MHz, 816
->> MHz, 912 MHz, 1000 MHz
->>     available cpufreq governors: conservative, userspace, powersave,
->> ondemand, performance, schedutil
->>     current policy: frequency should be within 408 MHz and 1000 MHz.
->>                     The governor "ondemand" may decide which speed to
->> use
->>                     within this range.
->>     current CPU frequency is 608 MHz (asserted by call to hardware).
->>     cpufreq stats: 408 MHz:99.53%, 456 MHz:0.18%, 608 MHz:0.10%, 760
->> MHz:0.06%, 816 MHz:0.03%, 912 MHz:0.03%, 1000 MHz:0.07%  (563)
->> analyzing CPU 2:
->>     driver: tegra
->>     CPUs which run at the same hardware frequency: 0 1 2 3
->>     CPUs which need to have their frequency coordinated by software: 0
->> 1 2 3
->>     maximum transition latency: 50.0 us.
->>     hardware limits: 408 MHz - 1000 MHz
->>     available frequency steps: 408 MHz, 456 MHz, 608 MHz, 760 MHz, 816
->> MHz, 912 MHz, 1000 MHz
->>     available cpufreq governors: conservative, userspace, powersave,
->> ondemand, performance, schedutil
->>     current policy: frequency should be within 408 MHz and 1000 MHz.
->>                     The governor "ondemand" may decide which speed to
->> use
->>                     within this range.
->>     current CPU frequency is 608 MHz (asserted by call to hardware).
->>     cpufreq stats: 408 MHz:99.53%, 456 MHz:0.18%, 608 MHz:0.10%, 760
->> MHz:0.06%, 816 MHz:0.03%, 912 MHz:0.03%, 1000 MHz:0.07%  (563)
->> analyzing CPU 3:
->>     driver: tegra
->>     CPUs which run at the same hardware frequency: 0 1 2 3
->>     CPUs which need to have their frequency coordinated by software: 0
->> 1 2 3
->>     maximum transition latency: 50.0 us.
->>     hardware limits: 408 MHz - 1000 MHz
->>     available frequency steps: 408 MHz, 456 MHz, 608 MHz, 760 MHz, 816
->> MHz, 912 MHz, 1000 MHz
->>     available cpufreq governors: conservative, userspace, powersave,
->> ondemand, performance, schedutil
->>     current policy: frequency should be within 408 MHz and 1000 MHz.
->>                     The governor "ondemand" may decide which speed to
->> use
->>                     within this range.
->>     current CPU frequency is 608 MHz (asserted by call to hardware).
->>     cpufreq stats: 408 MHz:99.53%, 456 MHz:0.18%, 608 MHz:0.10%, 760
->> MHz:0.06%, 816 MHz:0.03%, 912 MHz:0.03%, 1000 MHz:0.07%  (563)
->>
->>
->>> - Unfortunately "cpufreq-info --stats" currently does not seem to
->>> output anything. Would that require something special to be
->>> implemented?
->>
->> Make sure that CONFIG_CPU_FREQ_STAT is enabled in the kernels config.
-> 
-> Yes, sorry. That was it, of course. Just wondering why that one isn't
-> enabled in tegra_defconfig...
+> Unfortunately I've run into some issues here. One problem that I'm
+> facing is that PMC could have more than one parent. For example, the RTC
+> alarm interrupt goes straight to the GIC, but the power button GPIO goes
+> through the GPIO controller first and then to the GIC. This doesn't seem
+> to be something that's currently possible.
 
-That option isn't essential for the kernel, though usually such useful and 
-low-overhead features are welcome. IIRC, tegra_defconfig misses more important 
-options (like namespaces) that are required by Linux distro's to work properly.
+So what you are saying is that the RTC is directly wired up to the GIC and
+the GPIO interrupts are demultiplxed by a single GIC interrupt first, but
+at the same time have the requirement to talk to the PMC.
 
->>> Other than that you may add the following to the whole series:
->>>
->>> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->>
->> Thank you very much!
-> 
-> You are very welcome. Thank you!
-> 
+Lets look at the current implementation without taking PMC into account.
+
+- RTC gets its interrupt directly from the GIC domain
+
+- GPIO gets its interrupt from the GPIO domain. The GPIO domain does not
+  have a parent domain. It is stand alone because it sets up a demultiplex
+  interrupt from the GIC domain.
+
+  So there is absolutely no irqdomain relationship between a single GPIO
+  and the GIC. The indirection through the demultiplex interrupt does not
+  create one, really.
+
+Now, you need the PMC for both, the GPIOs and the RTC. What you can do here
+is to provide two irq domains in PMC. One which has GIC as its parent and
+one which has no parent. Surely they need to share some resources, but
+that should be a solvable problem.
+
+Now you connect RTC to the GIC parented one and let the PMC irq chip just
+hand through, except for the set_wake() functionality.
+
+The GPIO domain is connected to the parentless PMC domain and the irq chip
+merily provides the set_wake() stuff and everything else is a noop.
+
+So GPIO ends up as a hierarchy which is still not connected to the GIC
+directly.
+
+Hmm?
+
+Thanks,
+
+	tglx
