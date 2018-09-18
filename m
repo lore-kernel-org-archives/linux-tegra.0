@@ -1,69 +1,153 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: Multi-parent IRQ domains
-Date: Mon, 17 Sep 2018 15:27:19 +0200 (CEST)
-Message-ID: <alpine.DEB.2.21.1809171510020.16580@nanos.tec.linutronix.de>
-References: <20180913155945.GA19903@ulmo> <alpine.DEB.2.21.1809141211200.1473@nanos.tec.linutronix.de> <20180917095222.GA27927@ulmo> <alpine.DEB.2.21.1809171358070.16580@nanos.tec.linutronix.de> <20180917130712.GC27927@ulmo>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Subject: Re: [PATCH] drm/tegra: Convert drm_atomic_helper_suspend/resume()
+Date: Tue, 18 Sep 2018 17:16:29 +0530
+Message-ID: <CAFqt6zZ++D4uDcKnqS=sty82DJCdqMXNMrOOZcxFYdqWNJBLCw@mail.gmail.com>
+References: <20180731200705.GA21510@jordon-HP-15-Notebook-PC>
+ <CAFqt6zZM_MzAo8vEZ3+C3W6E-xE_78acnNvmMYoPVgYuxaMvGA@mail.gmail.com> <CAFqt6zYTzErgrE_vM0dUJn8FGcBxHHeM9thJbRtHdEXKQQMdtA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180917130712.GC27927@ulmo>
+In-Reply-To: <CAFqt6zYTzErgrE_vM0dUJn8FGcBxHHeM9thJbRtHdEXKQQMdtA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, airlied@linux.ie, jonathanh@nvidia.com, Ajit Linux <ajitn.linux@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 17 Sep 2018, Thierry Reding wrote:
-> On Mon, Sep 17, 2018 at 02:28:01PM +0200, Thomas Gleixner wrote:
-> > I'm not a DT wizerd, but the GPIO cannot be linked there I think.
-> > 
-> >     RTC ---------------------------> [ PMC domain 1] -----> GIC
-> > 
-> >     Button --> [GPIO domain] ------> [ PMC domain 2]
-> > 
-> > The RTC is connected to PMC domain 1 and that allocates the GIC irq.
-> > 
-> > The button is conntected to the GPIO which connect to the PMC domain
-> > 2. That PMC domain has no connection to anything. It ends there.
-> 
-> Interesting, I was assuming the following:
-> 
->     Button --> [PMC domain 2] --> [GPIO domain]
-> 
-> based on the hardware documentation that maps the wake events to
-> specific signals on the chip.
+On Mon, Sep 10, 2018 at 12:16 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> On Mon, Aug 6, 2018 at 11:42 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >
+> > On Wed, Aug 1, 2018 at 1:37 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> > > convert drm_atomic_helper_suspend/resume() to use
+> > > drm_mode_config_helper_suspend/resume().
+> > >
+> > > With this conversion, tegra_drm_fb_suspend() and
+> > > tegra_drm_fb_resume() wil not be used anymore.
+> > > Both of these functions can be removed.
+> > >
+> > > Also, in tegra_drm struct's member state will not be
+> > > used anymore. So this can be removed forever.
+> > >
+> > > Fixed one sparse warning.
+> > >
+> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> > > ---
+> >
+> > Any comment on this patch ?
+>
+> If no comment, can we get this patch in queue for 4.20 ?
 
-That might be, but there is no reason why we can't interpret that
-creatively :)
+David/ Daniel,
+is this patch [1] good to go in 4.20 ?
 
-> > So, I don't know how GPIOs are mapped into the PMC when they are a wakeup
-> > source. It might be all of them have the ability so there is some 1:1
-> > relation ship or if the whole GPIO -> PMC connection can be built at run
-> > time, but that's just an implementation detail.
-> 
-> There's a fixed mapping for which signals go to which wake event. Some
-> of those events are mapped to GPIOs, others to different signals, such
-> as the RTC alarm. I think I should be able to build a GPIO -> PMC map
-> at runtime using a static table.
+[1] https://lkml.org/lkml/2018/7/31/839
 
-Ok, so for the RTC and the like (which are directly GIC backed) it's easy
-as you just say: RTC interrupt = PMC irq #N.
-
-And for GPIO you can just have the GPIO domains all parented by the PMC
-domain 2 and then have the allocation function of the PMC domain do the
-lookup of the GPIOs which actually have a PMC connection.
-
-If it's there then you set the hwirq in the domains irq_data to the real
-PMC hwirq number and for those which are not connected you set it to some
-invalid value. In the set_type() callback you can then error out when it's
-called for a GPIO which is not connected to the PMC by checking the hwirq
-value.
-
-That way the GPIO code does not have any requirement to know about the PMC
-connections and only the PMC domain 2 needs to know. So if in the next chip
-the GPIO/PMC association changes, you don't have to worry about it at the
-GPIO (driver) level, you just hand a different GPIO/PMC map to the PMC
-driver via DT.
-
-Thanks,
-
-	tglx
+> >
+> > >  drivers/gpu/drm/tegra/drm.c | 20 ++------------------
+> > >  drivers/gpu/drm/tegra/drm.h |  4 ----
+> > >  drivers/gpu/drm/tegra/fb.c  | 24 +-----------------------
+> > >  3 files changed, 3 insertions(+), 45 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> > > index a2bd587..9a0efce 100644
+> > > --- a/drivers/gpu/drm/tegra/drm.c
+> > > +++ b/drivers/gpu/drm/tegra/drm.c
+> > > @@ -1212,31 +1212,15 @@ static int host1x_drm_remove(struct host1x_device *dev)
+> > >  static int host1x_drm_suspend(struct device *dev)
+> > >  {
+> > >         struct drm_device *drm = dev_get_drvdata(dev);
+> > > -       struct tegra_drm *tegra = drm->dev_private;
+> > > -
+> > > -       drm_kms_helper_poll_disable(drm);
+> > > -       tegra_drm_fb_suspend(drm);
+> > > -
+> > > -       tegra->state = drm_atomic_helper_suspend(drm);
+> > > -       if (IS_ERR(tegra->state)) {
+> > > -               tegra_drm_fb_resume(drm);
+> > > -               drm_kms_helper_poll_enable(drm);
+> > > -               return PTR_ERR(tegra->state);
+> > > -       }
+> > >
+> > > -       return 0;
+> > > +       return drm_mode_config_helper_suspend(drm);
+> > >  }
+> > >
+> > >  static int host1x_drm_resume(struct device *dev)
+> > >  {
+> > >         struct drm_device *drm = dev_get_drvdata(dev);
+> > > -       struct tegra_drm *tegra = drm->dev_private;
+> > >
+> > > -       drm_atomic_helper_resume(drm, tegra->state);
+> > > -       tegra_drm_fb_resume(drm);
+> > > -       drm_kms_helper_poll_enable(drm);
+> > > -
+> > > -       return 0;
+> > > +       return drm_mode_config_helper_resume(drm);
+> > >  }
+> > >  #endif
+> > >
+> > > diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+> > > index 92d2487..1012335 100644
+> > > --- a/drivers/gpu/drm/tegra/drm.h
+> > > +++ b/drivers/gpu/drm/tegra/drm.h
+> > > @@ -60,8 +60,6 @@ struct tegra_drm {
+> > >         unsigned int pitch_align;
+> > >
+> > >         struct tegra_display_hub *hub;
+> > > -
+> > > -       struct drm_atomic_state *state;
+> > >  };
+> > >
+> > >  struct tegra_drm_client;
+> > > @@ -186,8 +184,6 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
+> > >  void tegra_drm_fb_free(struct drm_device *drm);
+> > >  int tegra_drm_fb_init(struct drm_device *drm);
+> > >  void tegra_drm_fb_exit(struct drm_device *drm);
+> > > -void tegra_drm_fb_suspend(struct drm_device *drm);
+> > > -void tegra_drm_fb_resume(struct drm_device *drm);
+> > >
+> > >  extern struct platform_driver tegra_display_hub_driver;
+> > >  extern struct platform_driver tegra_dc_driver;
+> > > diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+> > > index 4c22cdd..b947e82 100644
+> > > --- a/drivers/gpu/drm/tegra/fb.c
+> > > +++ b/drivers/gpu/drm/tegra/fb.c
+> > > @@ -356,7 +356,7 @@ static void tegra_fbdev_exit(struct tegra_fbdev *fbdev)
+> > >                 /* Undo the special mapping we made in fbdev probe. */
+> > >                 if (bo && bo->pages) {
+> > >                         vunmap(bo->vaddr);
+> > > -                       bo->vaddr = 0;
+> > > +                       bo->vaddr = NULL;
+> > >                 }
+> > >
+> > >                 drm_framebuffer_remove(fbdev->fb);
+> > > @@ -412,25 +412,3 @@ void tegra_drm_fb_exit(struct drm_device *drm)
+> > >         tegra_fbdev_exit(tegra->fbdev);
+> > >  #endif
+> > >  }
+> > > -
+> > > -void tegra_drm_fb_suspend(struct drm_device *drm)
+> > > -{
+> > > -#ifdef CONFIG_DRM_FBDEV_EMULATION
+> > > -       struct tegra_drm *tegra = drm->dev_private;
+> > > -
+> > > -       console_lock();
+> > > -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 1);
+> > > -       console_unlock();
+> > > -#endif
+> > > -}
+> > > -
+> > > -void tegra_drm_fb_resume(struct drm_device *drm)
+> > > -{
+> > > -#ifdef CONFIG_DRM_FBDEV_EMULATION
+> > > -       struct tegra_drm *tegra = drm->dev_private;
+> > > -
+> > > -       console_lock();
+> > > -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 0);
+> > > -       console_unlock();
+> > > -#endif
+> > > -}
+> > > --
+> > > 1.9.1
+> > >
