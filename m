@@ -1,38 +1,46 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: move probe to __init section
-Date: Thu, 20 Sep 2018 11:15:01 -0700
-Message-ID: <55d8d7831bc2504676873722958c2e4a@agner.ch>
-References: <20180919012427.12439-1-stefan@agner.ch>
- <20180919012427.12439-2-stefan@agner.ch>
- <CACRpkdYZFt-FEnF86GCKqiLjFa-n3wHYLjFbvwFDWEp+AsGCZw@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] rtc: tegra: Propagate errors from platform_get_irq()
+Date: Fri, 21 Sep 2018 12:12:09 +0200
+Message-ID: <20180921101209.11895-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYZFt-FEnF86GCKqiLjFa-n3wHYLjFbvwFDWEp+AsGCZw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: thierry.reding@gmail.com, Jon Hunter <jonathanh@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20.09.2018 08:16, Linus Walleij wrote:
-> On Tue, Sep 18, 2018 at 6:24 PM Stefan Agner <stefan@agner.ch> wrote:
-> 
->> The Tegra pinctrl drivers are always built-in. This allows to use
->> platform_driver_probe() and mark several functions as __init.
->> This allows the kernel to free about 1KiB of memory if Tegra
->> pinctrl drivers are not used.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> 
-> It appears the test robot complains about this patch, so I'll
-> wait for a v2!
+From: Thierry Reding <treding@nvidia.com>
 
-Yes I saw it, will send v2 of this patch only.
+Instead of confusingly returning -EBUSY on failure to obtain an
+interrupt, propagate the real error code. While at it, let the user know
+why the interrupt could not be acquired.
 
---
-Stefan
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/rtc/rtc-tegra.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-> 
-> Yours,
-> Linus Walleij
+diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+index 8dc48fe7fc35..c9e77a83cd1b 100644
+--- a/drivers/rtc/rtc-tegra.c
++++ b/drivers/rtc/rtc-tegra.c
+@@ -322,9 +322,13 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(info->rtc_base))
+ 		return PTR_ERR(info->rtc_base);
+ 
+-	info->tegra_rtc_irq = platform_get_irq(pdev, 0);
+-	if (info->tegra_rtc_irq <= 0)
+-		return -EBUSY;
++	ret = platform_get_irq(pdev, 0);
++	if (ret <= 0) {
++		dev_err(&pdev->dev, "failed to get platform IRQ: %d\n", ret);
++		return ret;
++	}
++
++	info->tegra_rtc_irq = ret;
+ 
+ 	info->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(info->clk))
+-- 
+2.19.0
