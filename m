@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
-Date: Fri, 21 Sep 2018 12:25:43 +0200
-Message-ID: <20180921102546.12745-7-thierry.reding@gmail.com>
+Subject: [PATCH 7/9] dt-bindings: tegra186-gpio: Add wakeup parent support
+Date: Fri, 21 Sep 2018 12:25:44 +0200
+Message-ID: <20180921102546.12745-8-thierry.reding@gmail.com>
 References: <20180921102546.12745-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,68 +14,46 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Hierarchical IRQ domains can be used to stack different IRQ controllers
-on top of each other. One specific use-case where this can be useful is
-if a power management controller has top-level controls for wakeup
-interrupts. In such cases, the power management controller can be a
-parent to other interrupt controllers and program additional registers
-when an IRQ has its wake capability enabled or disabled.
+Tegra186 and later have some top-level controls for wake events in the
+power management controller (PMC). In order to enable the system to wake
+up from low power states, additional registers in the PMC need to be
+programmed. Add a wakeup-parent property to establish this relationship
+between the GPIO controller and the PMC.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpiolib.c      | 15 +++++++++++----
- include/linux/gpio/driver.h |  6 ++++++
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/gpio/nvidia,tegra186-gpio.txt      | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a53d17745d21..94146093ee95 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1918,7 +1918,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
- 		type = IRQ_TYPE_NONE;
- 	}
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+index adff16c71d21..cbb51a8990c3 100644
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+@@ -127,6 +127,11 @@ Required properties:
+             - 8: Active low level-sensitive.
+             Valid combinations are 1, 2, 3, 4, 8.
  
--	gpiochip->to_irq = gpiochip_to_irq;
-+	if (!gpiochip->to_irq)
-+		gpiochip->to_irq = gpiochip_to_irq;
++Optional properties:
++- wake-parent
++    A phandle to the Power Management Controller (PMC) that contains top-
++    level controls to enable the wake-up capabilities of some GPIOs.
 +
- 	gpiochip->irq.default_type = type;
- 	gpiochip->irq.lock_key = lock_key;
- 	gpiochip->irq.request_key = request_key;
-@@ -1928,9 +1930,14 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
- 	else
- 		ops = &gpiochip_domain_ops;
+ Example:
  
--	gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
--						     gpiochip->irq.first,
--						     ops, gpiochip);
-+	if (gpiochip->irq.parent_domain)
-+		gpiochip->irq.domain = irq_domain_add_hierarchy(gpiochip->irq.parent_domain,
-+								0, gpiochip->ngpio,
-+								np, ops, gpiochip);
-+	else
-+		gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
-+							     gpiochip->irq.first,
-+							     ops, gpiochip);
- 	if (!gpiochip->irq.domain)
- 		return -EINVAL;
+ #include <dt-bindings/interrupt-controller/irq.h>
+@@ -148,6 +153,7 @@ gpio@2200000 {
+ 	#gpio-cells = <2>;
+ 	interrupt-controller;
+ 	#interrupt-cells = <2>;
++	wakeup-parent = <&pmc>;
+ };
  
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index d8dcd0e44cab..fcd09a396d76 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -47,6 +47,12 @@ struct gpio_irq_chip {
- 	 */
- 	const struct irq_domain_ops *domain_ops;
- 
-+	/**
-+	 * @parent_domain:
-+	 *
-+	 */
-+	struct irq_domain *parent_domain;
-+
- 	/**
- 	 * @handler:
- 	 *
+ gpio@c2f0000 {
+@@ -162,4 +168,5 @@ gpio@c2f0000 {
+ 	#gpio-cells = <2>;
+ 	interrupt-controller;
+ 	#interrupt-cells = <2>;
++	wakeup-parent = <&pmc>;
+ };
 -- 
 2.19.0
