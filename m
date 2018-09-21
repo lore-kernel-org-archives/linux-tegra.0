@@ -1,39 +1,45 @@
-From: ryang <decatf@gmail.com>
-Subject: [PATCH] clk: tegra: Return the exact clock rate from clk_round_rate
-Date: Fri, 21 Sep 2018 18:01:49 -0400
-Message-ID: <20180921220149.17136-1-decatf@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ryang <decatf@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1] drm/tegra: dpaux: Fix always-failing probing of the driver
+Date: Fri, 21 Sep 2018 14:42:41 +0300
+Message-ID: <20180921114241.17002-1-digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-The current behavior is that clk_round_rate would return the same clock
-rate passed to it for valid PLL configurations. This change will return
-the exact rate the PLL will provide in accordance with clk API.
-
-Signed-off-by: ryang <decatf@gmail.com>
----
- drivers/clk/tegra/clk-pll.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 17a058c3bbc1..36014a6ec42e 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -595,7 +595,12 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 		return -EINVAL;
- 	}
- 
--	cfg->output_rate >>= p_div;
-+	if (cfg->m == 0) {
-+		cfg->output_rate = 0;
-+	} else {
-+		cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
-+		cfg->output_rate >>= p_div;
-+	}
- 
- 	if (pll->params->pdiv_tohw) {
- 		ret = _p_div_to_hw(hw, 1 << p_div);
--- 
-2.17.1
+U29tZSBvZiBkZWZpbml0aW9ucyBpbiB0aGUgY29kZSBjaGFuZ2VkIHRoZSBtZWFuaW5nLCB1bmZv
+cnR1bmF0ZWx5IG9uZQpwbGFjZSBtaXNzZWQgdGhlIGNoYW5nZS4KCkZpeGVzOiAwNzUxYmI1YzQ0
+ZmUgKCJkcm0vdGVncmE6IGRwYXV4OiBBZGQgcGluY3RybCBzdXBwb3J0IikKQ2M6IDxzdGFibGVA
+dmdlci5rZXJuZWwub3JnPiAjIHY0LjgrClNpZ25lZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8
+ZGlnZXR4QGdtYWlsLmNvbT4KLS0tCgpJIGRvbid0IGhhdmUgSFcgdG8gdGVzdCBEUEFVWCBkcml2
+ZXIsIGFwcGFyZW50bHkgaXQgaGFzIGJlZW4gYnJva2VuIGZvcgoyKyB5ZWFycyBub3cuIFRoZXJl
+IGlzIGFsc28gYSBrbm93biBpc3N1ZSBvbiB3aXRoIHRoZSBEUEFVWCBkcml2ZXIgdGhhdApwcmV2
+ZW50cyBpdCBmcm9tIHByb2JpbmcsIHRoYXQgd2FzIGRpc2N1c3NlZCBvbiB0aGUgI3RlZ3JhIElS
+Qy4gVGhpZXJyeSwKcGxlYXNlIHRha2UgYSBjbG9zZXIgbG9vayBhdCB0aGlzIGRyaXZlciBhbmQg
+dGVzdCBpdCB0aG9yb3VnaGx5LCBpdCBoYXMKc29tZSBvYnZpb3VzIHByb2JsZW1zLgoKIGRyaXZl
+cnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2RwYXV4LmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYwppbmRleCBkODRlODFmZjM2
+YWQuLmJhNTY4MWZhYjczYiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4
+LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMKQEAgLTUyMSw3ICs1MjEsNyBA
+QCBzdGF0aWMgaW50IHRlZ3JhX2RwYXV4X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpCiAJICogaXMgbm8gcG9zc2liaWxpdHkgdG8gcGVyZm9ybSB0aGUgSTJDIG1vZGUgY29uZmln
+dXJhdGlvbiBpbiB0aGUKIAkgKiBIRE1JIHBhdGguCiAJICovCi0JZXJyID0gdGVncmFfZHBhdXhf
+cGFkX2NvbmZpZyhkcGF1eCwgRFBBVVhfSFlCUklEX1BBRENUTF9NT0RFX0kyQyk7CisJZXJyID0g
+dGVncmFfZHBhdXhfcGFkX2NvbmZpZyhkcGF1eCwgRFBBVVhfUEFEQ1RMX0ZVTkNfSTJDKTsKIAlp
+ZiAoZXJyIDwgMCkKIAkJcmV0dXJuIGVycjsKIAotLSAKMi4xOS4wCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
