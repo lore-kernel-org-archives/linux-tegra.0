@@ -1,68 +1,78 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH 7/9] dt-bindings: tegra186-gpio: Add wakeup parent support
-Date: Fri, 21 Sep 2018 19:37:06 +0900
-Message-ID: <e6477bcb-4a1e-be60-d92e-a9d64accf687@kapsi.fi>
-References: <20180921102546.12745-1-thierry.reding@gmail.com>
- <20180921102546.12745-8-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] firmware: tegra: bpmp: Implement suspend/resume support
+Date: Fri, 21 Sep 2018 12:08:56 +0200
+Message-ID: <20180921100856.11396-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180921102546.12745-8-thierry.reding@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Timo Alho <talho@nvidia.com>, linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 21/09/2018 19.25, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Tegra186 and later have some top-level controls for wake events in the
-> power management controller (PMC). In order to enable the system to wake
-> up from low power states, additional registers in the PMC need to be
-> programmed. Add a wakeup-parent property to establish this relationship
-> between the GPIO controller and the PMC.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->   .../devicetree/bindings/gpio/nvidia,tegra186-gpio.txt      | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> index adff16c71d21..cbb51a8990c3 100644
-> --- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> @@ -127,6 +127,11 @@ Required properties:
->               - 8: Active low level-sensitive.
->               Valid combinations are 1, 2, 3, 4, 8.
->   
-> +Optional properties:
-> +- wake-parent
+From: Thierry Reding <treding@nvidia.com>
 
-wakeup-parent
+When returning from a system sleep state, the BPMP driver needs to
+reinitialize the IVC channels used to communicate with the BPMP to
+restore proper functionality.
 
-Cheers,
-Mikko
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/firmware/tegra/bpmp.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-> +    A phandle to the Power Management Controller (PMC) that contains top-
-> +    level controls to enable the wake-up capabilities of some GPIOs.
-> +
->   Example:
->   
->   #include <dt-bindings/interrupt-controller/irq.h>
-> @@ -148,6 +153,7 @@ gpio@2200000 {
->   	#gpio-cells = <2>;
->   	interrupt-controller;
->   	#interrupt-cells = <2>;
-> +	wakeup-parent = <&pmc>;
->   };
->   
->   gpio@c2f0000 {
-> @@ -162,4 +168,5 @@ gpio@c2f0000 {
->   	#gpio-cells = <2>;
->   	interrupt-controller;
->   	#interrupt-cells = <2>;
-> +	wakeup-parent = <&pmc>;
->   };
-> 
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 14a456afa379..41448ba78be9 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -18,6 +18,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm.h>
+ #include <linux/semaphore.h>
+ #include <linux/sched/clock.h>
+ 
+@@ -843,6 +844,23 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
++static int tegra_bpmp_resume(struct device *dev)
++{
++	struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
++	unsigned int i;
++
++	/* reset message channels */
++	tegra_bpmp_channel_reset(bpmp->tx_channel);
++	tegra_bpmp_channel_reset(bpmp->rx_channel);
++
++	for (i = 0; i < bpmp->threaded.count; i++)
++		tegra_bpmp_channel_reset(&bpmp->threaded_channels[i]);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(tegra_bpmp_pm_ops, NULL, tegra_bpmp_resume);
++
+ static const struct tegra_bpmp_soc tegra186_soc = {
+ 	.channels = {
+ 		.cpu_tx = {
+@@ -871,6 +889,7 @@ static struct platform_driver tegra_bpmp_driver = {
+ 	.driver = {
+ 		.name = "tegra-bpmp",
+ 		.of_match_table = tegra_bpmp_match,
++		.pm = &tegra_bpmp_pm_ops,
+ 	},
+ 	.probe = tegra_bpmp_probe,
+ };
+-- 
+2.19.0
