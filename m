@@ -1,13 +1,16 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 Subject: Re: [PATCH v1] drm/tegra: dpaux: Fix always-failing probing of the
  driver
-Date: Mon, 24 Sep 2018 13:59:07 +0200
-Message-ID: <20180924115907.GW21032@ulmo>
+Date: Mon, 24 Sep 2018 13:32:41 +0100
+Message-ID: <3ccda930-8ec1-00b0-54e0-c689e7ee4b62@nvidia.com>
 References: <20180921114241.17002-1-digetx@gmail.com>
+ <20180924115907.GW21032@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1462049465=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180921114241.17002-1-digetx@gmail.com>
+In-Reply-To: <20180924115907.GW21032@ulmo>
+Content-Language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -17,105 +20,55 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============1462049465==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="I33OQG5IFrqF2BWt"
-Content-Disposition: inline
-
-
---I33OQG5IFrqF2BWt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Sep 21, 2018 at 02:42:41PM +0300, Dmitry Osipenko wrote:
-> Some of definitions in the code changed the meaning, unfortunately one
-> place missed the change.
->=20
-> Fixes: 0751bb5c44fe ("drm/tegra: dpaux: Add pinctrl support")
-> Cc: <stable@vger.kernel.org> # v4.8+
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->=20
-> I don't have HW to test DPAUX driver, apparently it has been broken for
-> 2+ years now. There is also a known issue on with the DPAUX driver that
-> prevents it from probing, that was discussed on the #tegra IRC. Thierry,
-> please take a closer look at this driver and test it thoroughly, it has
-> some obvious problems.
->=20
->  drivers/gpu/drm/tegra/dpaux.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-It's odd that you claim that the driver is always failing probe and at
-the same time you say that you don't have hardware to test the driver.
-=3D)
-
-I know for a fact that this driver does not usually fail because it is
-required on all recent chips (Tegra210 and later) to drive HDMI, which
-we support on all boards, so it is indeed thoroughly tested.
-
->=20
-> diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-> index d84e81ff36ad..ba5681fab73b 100644
-> --- a/drivers/gpu/drm/tegra/dpaux.c
-> +++ b/drivers/gpu/drm/tegra/dpaux.c
-> @@ -521,7 +521,7 @@ static int tegra_dpaux_probe(struct platform_device *=
-pdev)
->  	 * is no possibility to perform the I2C mode configuration in the
->  	 * HDMI path.
->  	 */
-> -	err =3D tegra_dpaux_pad_config(dpaux, DPAUX_HYBRID_PADCTL_MODE_I2C);
-> +	err =3D tegra_dpaux_pad_config(dpaux, DPAUX_PADCTL_FUNC_I2C);
->  	if (err < 0)
->  		return err;
-> =20
-
-If you look at the definitions of both DPAUX_HYBRID_PADCTL_MODE_I2C and
-DPAUX_PADCTL_FUNC_I2C, you'll see that both are actually the same, which
-is a good explanation for why the driver performs flawlessly.
-
-That said, your change is obviously correct. I've applied it, but since
-it doesn't actually fix anything, and doesn't change anything from a
-binary point of view, I've removed the Fixes: and Cc: stable tags.
-
-Thanks,
-Thierry
-
---I33OQG5IFrqF2BWt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluo0YsACgkQ3SOs138+
-s6FidA/9EGiBttIDqR76dGI1VuOdu08L7cEkrFCVrkUHXY0psvODrfZcP7yYKiW7
-cvQTMlXW3Sb9KEVyb+M6GS7Nfd2iL1sILGR1cE+PNar9jieFx5Pm8325Ckp80umg
-qGT29t359qdbtP9FNKB6Q6yamye8iSb0rrJZErItNmMnpNOuIooEDhl/U4SKd53+
-JAqXkRDX237ixvvNE6NkkOMh3ZWR6vb7xS1MkZOr/W21UPjRSKLppOsyorJ6cITA
-JKfaD/puYU+wVeuaHUYZh7Qody+trv1P839Pz4IglH7UFWvwFTaFLEku5Gy+JMMY
-PkfkZ6u3+p6bk5CGpT8gwWNTG7Lyi2Ba18GWlnAQIm0ba50rW4+mTmYkTn2QuydX
-NY/tNLG+9+9lUzHdxt4D1IYCEDrbpro02spFrt4OHexUkWIBdQlHs4gcfbcUyNvp
-7RvOo98qFLoL3FDHI0TGYer/zj69nMM40WMxJ4wqfZgzBfMSxhp4bUwAh0e4KCJE
-uyEWaxeFZmWTT3zAlHItEDEGwFHq/nkVMlNV+Ruis5POkWIVJZKUjjEJUo9TT3D4
-TEEb7EHZEH2DlbaNhEziVpYqItM9RqEQMHjHzmtGMsddrsSA8w2uW60qXdEyp+Pv
-rboDUTOQwmzx5WkOMdKBYeIsq+ZH5tsSEAYDX7bTlJHiKb1mAcY=
-=NC6u
------END PGP SIGNATURE-----
-
---I33OQG5IFrqF2BWt--
-
---===============1462049465==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1462049465==--
+Ck9uIDI0LzA5LzE4IDEyOjU5LCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiBPbiBGcmksIFNlcCAy
+MSwgMjAxOCBhdCAwMjo0Mjo0MVBNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+IFNv
+bWUgb2YgZGVmaW5pdGlvbnMgaW4gdGhlIGNvZGUgY2hhbmdlZCB0aGUgbWVhbmluZywgdW5mb3J0
+dW5hdGVseSBvbmUKPj4gcGxhY2UgbWlzc2VkIHRoZSBjaGFuZ2UuCj4+Cj4+IEZpeGVzOiAwNzUx
+YmI1YzQ0ZmUgKCJkcm0vdGVncmE6IGRwYXV4OiBBZGQgcGluY3RybCBzdXBwb3J0IikKPj4gQ2M6
+IDxzdGFibGVAdmdlci5rZXJuZWwub3JnPiAjIHY0LjgrCj4+IFNpZ25lZC1vZmYtYnk6IERtaXRy
+eSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KPj4gLS0tCj4+Cj4+IEkgZG9uJ3QgaGF2ZSBI
+VyB0byB0ZXN0IERQQVVYIGRyaXZlciwgYXBwYXJlbnRseSBpdCBoYXMgYmVlbiBicm9rZW4gZm9y
+Cj4+IDIrIHllYXJzIG5vdy4gVGhlcmUgaXMgYWxzbyBhIGtub3duIGlzc3VlIG9uIHdpdGggdGhl
+IERQQVVYIGRyaXZlciB0aGF0Cj4+IHByZXZlbnRzIGl0IGZyb20gcHJvYmluZywgdGhhdCB3YXMg
+ZGlzY3Vzc2VkIG9uIHRoZSAjdGVncmEgSVJDLiBUaGllcnJ5LAo+PiBwbGVhc2UgdGFrZSBhIGNs
+b3NlciBsb29rIGF0IHRoaXMgZHJpdmVyIGFuZCB0ZXN0IGl0IHRob3JvdWdobHksIGl0IGhhcwo+
+PiBzb21lIG9idmlvdXMgcHJvYmxlbXMuCj4+Cj4+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBh
+dXguYyB8IDIgKy0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlv
+bigtKQo+IAo+IEl0J3Mgb2RkIHRoYXQgeW91IGNsYWltIHRoYXQgdGhlIGRyaXZlciBpcyBhbHdh
+eXMgZmFpbGluZyBwcm9iZSBhbmQgYXQKPiB0aGUgc2FtZSB0aW1lIHlvdSBzYXkgdGhhdCB5b3Ug
+ZG9uJ3QgaGF2ZSBoYXJkd2FyZSB0byB0ZXN0IHRoZSBkcml2ZXIuCj4gPSkKPiAKPiBJIGtub3cg
+Zm9yIGEgZmFjdCB0aGF0IHRoaXMgZHJpdmVyIGRvZXMgbm90IHVzdWFsbHkgZmFpbCBiZWNhdXNl
+IGl0IGlzCj4gcmVxdWlyZWQgb24gYWxsIHJlY2VudCBjaGlwcyAoVGVncmEyMTAgYW5kIGxhdGVy
+KSB0byBkcml2ZSBIRE1JLCB3aGljaAo+IHdlIHN1cHBvcnQgb24gYWxsIGJvYXJkcywgc28gaXQg
+aXMgaW5kZWVkIHRob3JvdWdobHkgdGVzdGVkLgo+IAo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYwo+
+PiBpbmRleCBkODRlODFmZjM2YWQuLmJhNTY4MWZhYjczYiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rw
+YXV4LmMKPj4gQEAgLTUyMSw3ICs1MjEsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2RwYXV4X3Byb2Jl
+KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4+ICAJICogaXMgbm8gcG9zc2liaWxpdHkg
+dG8gcGVyZm9ybSB0aGUgSTJDIG1vZGUgY29uZmlndXJhdGlvbiBpbiB0aGUKPj4gIAkgKiBIRE1J
+IHBhdGguCj4+ICAJICovCj4+IC0JZXJyID0gdGVncmFfZHBhdXhfcGFkX2NvbmZpZyhkcGF1eCwg
+RFBBVVhfSFlCUklEX1BBRENUTF9NT0RFX0kyQyk7Cj4+ICsJZXJyID0gdGVncmFfZHBhdXhfcGFk
+X2NvbmZpZyhkcGF1eCwgRFBBVVhfUEFEQ1RMX0ZVTkNfSTJDKTsKPj4gIAlpZiAoZXJyIDwgMCkK
+Pj4gIAkJcmV0dXJuIGVycjsKPj4gIAo+IAo+IElmIHlvdSBsb29rIGF0IHRoZSBkZWZpbml0aW9u
+cyBvZiBib3RoIERQQVVYX0hZQlJJRF9QQURDVExfTU9ERV9JMkMgYW5kCj4gRFBBVVhfUEFEQ1RM
+X0ZVTkNfSTJDLCB5b3UnbGwgc2VlIHRoYXQgYm90aCBhcmUgYWN0dWFsbHkgdGhlIHNhbWUsIHdo
+aWNoCj4gaXMgYSBnb29kIGV4cGxhbmF0aW9uIGZvciB3aHkgdGhlIGRyaXZlciBwZXJmb3JtcyBm
+bGF3bGVzc2x5Lgo+IAo+IFRoYXQgc2FpZCwgeW91ciBjaGFuZ2UgaXMgb2J2aW91c2x5IGNvcnJl
+Y3QuIEkndmUgYXBwbGllZCBpdCwgYnV0IHNpbmNlCj4gaXQgZG9lc24ndCBhY3R1YWxseSBmaXgg
+YW55dGhpbmcsIGFuZCBkb2Vzbid0IGNoYW5nZSBhbnl0aGluZyBmcm9tIGEKPiBiaW5hcnkgcG9p
+bnQgb2YgdmlldywgSSd2ZSByZW1vdmVkIHRoZSBGaXhlczogYW5kIENjOiBzdGFibGUgdGFncy4K
+CkRpZCB5b3UgY2hhbmdlIHRoZSBzdWJqZWN0IGZvciB0aGUgcGF0Y2ggYmVjYXVzZSBhcyB5b3Ug
+bWVudGlvbmVkIGl0CmRvZXMgbm90IHNlZW0gcmVsYXRlZCB0byB0aGUgY2hhbmdlPwoKT3RoZXJ3
+aXNlIGZvciB0aGUgZml4IHlvdSBjYW4gaGF2ZSBteSAuLi4KCkFja2VkLWJ5OiBKb24gSHVudGVy
+IDxqb25hdGhhbmhAbnZpZGlhLmNvbT4KClRoZSBkcGF1eCBkcml2ZXIgaGFzIGJlZW4gd29ya2lu
+ZyBmaW5lIGZvciBtZSBvbiBUZWdyYTIxMCBTbWF1ZyB3aGVuCnVzaW5nIHRoZSBwaW5zIGZvciBJ
+MkMgYW5kIEkgaGF2ZSBub3Qgc2VlbiBhbnkgcHJvYmluZyBwcm9ibGVtcy4KCkNoZWVycwpKb24K
+Ci0tIApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
