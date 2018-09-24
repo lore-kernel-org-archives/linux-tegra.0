@@ -1,74 +1,81 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1] drm/tegra: dpaux: Fix always-failing probing of the
- driver
-Date: Mon, 24 Sep 2018 13:32:41 +0100
-Message-ID: <3ccda930-8ec1-00b0-54e0-c689e7ee4b62@nvidia.com>
-References: <20180921114241.17002-1-digetx@gmail.com>
- <20180924115907.GW21032@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 09/20] memory: tegra: Adapt to Tegra20 device-tree
+ binding changes
+Date: Mon, 24 Sep 2018 16:22:42 +0300
+Message-ID: <bca7c87a-5f86-4a98-bb6b-411c641a0e80@gmail.com>
+References: <20180924004153.8232-1-digetx@gmail.com>
+ <20180924004153.8232-10-digetx@gmail.com> <20180924100205.GB21032@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180924115907.GW21032@ulmo>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180924100205.GB21032@ulmo>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>, Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux-foundation.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDI0LzA5LzE4IDEyOjU5LCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiBPbiBGcmksIFNlcCAy
-MSwgMjAxOCBhdCAwMjo0Mjo0MVBNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+IFNv
-bWUgb2YgZGVmaW5pdGlvbnMgaW4gdGhlIGNvZGUgY2hhbmdlZCB0aGUgbWVhbmluZywgdW5mb3J0
-dW5hdGVseSBvbmUKPj4gcGxhY2UgbWlzc2VkIHRoZSBjaGFuZ2UuCj4+Cj4+IEZpeGVzOiAwNzUx
-YmI1YzQ0ZmUgKCJkcm0vdGVncmE6IGRwYXV4OiBBZGQgcGluY3RybCBzdXBwb3J0IikKPj4gQ2M6
-IDxzdGFibGVAdmdlci5rZXJuZWwub3JnPiAjIHY0LjgrCj4+IFNpZ25lZC1vZmYtYnk6IERtaXRy
-eSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KPj4gLS0tCj4+Cj4+IEkgZG9uJ3QgaGF2ZSBI
-VyB0byB0ZXN0IERQQVVYIGRyaXZlciwgYXBwYXJlbnRseSBpdCBoYXMgYmVlbiBicm9rZW4gZm9y
-Cj4+IDIrIHllYXJzIG5vdy4gVGhlcmUgaXMgYWxzbyBhIGtub3duIGlzc3VlIG9uIHdpdGggdGhl
-IERQQVVYIGRyaXZlciB0aGF0Cj4+IHByZXZlbnRzIGl0IGZyb20gcHJvYmluZywgdGhhdCB3YXMg
-ZGlzY3Vzc2VkIG9uIHRoZSAjdGVncmEgSVJDLiBUaGllcnJ5LAo+PiBwbGVhc2UgdGFrZSBhIGNs
-b3NlciBsb29rIGF0IHRoaXMgZHJpdmVyIGFuZCB0ZXN0IGl0IHRob3JvdWdobHksIGl0IGhhcwo+
-PiBzb21lIG9idmlvdXMgcHJvYmxlbXMuCj4+Cj4+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBh
-dXguYyB8IDIgKy0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlv
-bigtKQo+IAo+IEl0J3Mgb2RkIHRoYXQgeW91IGNsYWltIHRoYXQgdGhlIGRyaXZlciBpcyBhbHdh
-eXMgZmFpbGluZyBwcm9iZSBhbmQgYXQKPiB0aGUgc2FtZSB0aW1lIHlvdSBzYXkgdGhhdCB5b3Ug
-ZG9uJ3QgaGF2ZSBoYXJkd2FyZSB0byB0ZXN0IHRoZSBkcml2ZXIuCj4gPSkKPiAKPiBJIGtub3cg
-Zm9yIGEgZmFjdCB0aGF0IHRoaXMgZHJpdmVyIGRvZXMgbm90IHVzdWFsbHkgZmFpbCBiZWNhdXNl
-IGl0IGlzCj4gcmVxdWlyZWQgb24gYWxsIHJlY2VudCBjaGlwcyAoVGVncmEyMTAgYW5kIGxhdGVy
-KSB0byBkcml2ZSBIRE1JLCB3aGljaAo+IHdlIHN1cHBvcnQgb24gYWxsIGJvYXJkcywgc28gaXQg
-aXMgaW5kZWVkIHRob3JvdWdobHkgdGVzdGVkLgo+IAo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYwo+
-PiBpbmRleCBkODRlODFmZjM2YWQuLmJhNTY4MWZhYjczYiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rw
-YXV4LmMKPj4gQEAgLTUyMSw3ICs1MjEsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2RwYXV4X3Byb2Jl
-KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4+ICAJICogaXMgbm8gcG9zc2liaWxpdHkg
-dG8gcGVyZm9ybSB0aGUgSTJDIG1vZGUgY29uZmlndXJhdGlvbiBpbiB0aGUKPj4gIAkgKiBIRE1J
-IHBhdGguCj4+ICAJICovCj4+IC0JZXJyID0gdGVncmFfZHBhdXhfcGFkX2NvbmZpZyhkcGF1eCwg
-RFBBVVhfSFlCUklEX1BBRENUTF9NT0RFX0kyQyk7Cj4+ICsJZXJyID0gdGVncmFfZHBhdXhfcGFk
-X2NvbmZpZyhkcGF1eCwgRFBBVVhfUEFEQ1RMX0ZVTkNfSTJDKTsKPj4gIAlpZiAoZXJyIDwgMCkK
-Pj4gIAkJcmV0dXJuIGVycjsKPj4gIAo+IAo+IElmIHlvdSBsb29rIGF0IHRoZSBkZWZpbml0aW9u
-cyBvZiBib3RoIERQQVVYX0hZQlJJRF9QQURDVExfTU9ERV9JMkMgYW5kCj4gRFBBVVhfUEFEQ1RM
-X0ZVTkNfSTJDLCB5b3UnbGwgc2VlIHRoYXQgYm90aCBhcmUgYWN0dWFsbHkgdGhlIHNhbWUsIHdo
-aWNoCj4gaXMgYSBnb29kIGV4cGxhbmF0aW9uIGZvciB3aHkgdGhlIGRyaXZlciBwZXJmb3JtcyBm
-bGF3bGVzc2x5Lgo+IAo+IFRoYXQgc2FpZCwgeW91ciBjaGFuZ2UgaXMgb2J2aW91c2x5IGNvcnJl
-Y3QuIEkndmUgYXBwbGllZCBpdCwgYnV0IHNpbmNlCj4gaXQgZG9lc24ndCBhY3R1YWxseSBmaXgg
-YW55dGhpbmcsIGFuZCBkb2Vzbid0IGNoYW5nZSBhbnl0aGluZyBmcm9tIGEKPiBiaW5hcnkgcG9p
-bnQgb2YgdmlldywgSSd2ZSByZW1vdmVkIHRoZSBGaXhlczogYW5kIENjOiBzdGFibGUgdGFncy4K
-CkRpZCB5b3UgY2hhbmdlIHRoZSBzdWJqZWN0IGZvciB0aGUgcGF0Y2ggYmVjYXVzZSBhcyB5b3Ug
-bWVudGlvbmVkIGl0CmRvZXMgbm90IHNlZW0gcmVsYXRlZCB0byB0aGUgY2hhbmdlPwoKT3RoZXJ3
-aXNlIGZvciB0aGUgZml4IHlvdSBjYW4gaGF2ZSBteSAuLi4KCkFja2VkLWJ5OiBKb24gSHVudGVy
-IDxqb25hdGhhbmhAbnZpZGlhLmNvbT4KClRoZSBkcGF1eCBkcml2ZXIgaGFzIGJlZW4gd29ya2lu
-ZyBmaW5lIGZvciBtZSBvbiBUZWdyYTIxMCBTbWF1ZyB3aGVuCnVzaW5nIHRoZSBwaW5zIGZvciBJ
-MkMgYW5kIEkgaGF2ZSBub3Qgc2VlbiBhbnkgcHJvYmluZyBwcm9ibGVtcy4KCkNoZWVycwpKb24K
-Ci0tIApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+On 9/24/18 1:02 PM, Thierry Reding wrote:
+> On Mon, Sep 24, 2018 at 03:41:42AM +0300, Dmitry Osipenko wrote:
+>> The tegra20-mc device-tree binding has been changed, GART has been
+>> squashed into Memory Controller and now the clock property is mandatory
+>> for Tegra20, the DT compatible has been changed as well. Adapt driver to
+>> the DT changes.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>   drivers/memory/tegra/mc.c | 21 ++++++++-------------
+>>   drivers/memory/tegra/mc.h |  6 ------
+>>   include/soc/tegra/mc.h    |  2 +-
+>>   3 files changed, 9 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>> index e56862495f36..1b4ceefd82f9 100644
+>> --- a/drivers/memory/tegra/mc.c
+>> +++ b/drivers/memory/tegra/mc.c
+>> @@ -51,7 +51,7 @@
+>>   
+>>   static const struct of_device_id tegra_mc_of_match[] = {
+>>   #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+>> -	{ .compatible = "nvidia,tegra20-mc", .data = &tegra20_mc_soc },
+>> +	{ .compatible = "nvidia,tegra20-mc-gart", .data = &tegra20_mc_soc },
+> 
+> Technically we now regress because we no longer support the older device
+> tree bindings. I know that it doesn't really matter because this driver
+> doesn't really do much interesting yet other than reporting memory
+> access violations, but if that's enough to warrant a change of the
+> compatible string, then I think we also need to preserve compatibility
+> in the code.
+> 
+> That said, I think compatibility would be easier to preserve if we stuck
+> with the old compatible string and used a "reg-names" property to
+> specify which version of the binding we're referring to.
+> 
+> For example, we could have:
+> 
+> 	memory-controller@7000f000 {
+> 		compatible = "nvidia,tegra20-mc";
+> 		reg = <0x7000f000 0x024
+> 		       0x7000f03c 0x3c4>;
+> 		...
+> 	};
+> 
+> for the old binding and:
+> 
+> 	memory-controller@7000f000 {
+> 		compatible = "nvidia,tegra20-mc";
+> 		reg = <0x7000f000 0x00000400>,
+> 		      <0x58000000 0x02000000>;
+> 		reg-names = "mc", "gart";
+> 		...
+> 	};
+> 
+> for the new binding. The driver can then easily check for the existence
+> of the reg-names property and take the legacy or new code paths.
+
+There is no problem with keeping compatibility for newer kernels with the older binding, 
+it just not worth the effort. The real problem is keeping compatibility of older kernels 
+with the new binding, the older kernels won't care about the reg-names and will treat GART 
+registers as the second registers bank of the Memory Controller. Unfortunately I don't see 
+how your suggestion is supposed to help with the problem.
