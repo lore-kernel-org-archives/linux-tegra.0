@@ -1,59 +1,81 @@
-From: r yang <decatf@gmail.com>
-Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
- clk_round_rate
-Date: Mon, 24 Sep 2018 15:18:04 -0400
-Message-ID: <20180924191804.GA20060@r>
-References: <20180921220149.17136-1-decatf@gmail.com>
- <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] drm/tegra: dpaux: Fix always-failing probing of the
+ driver
+Date: Mon, 24 Sep 2018 15:40:35 +0300
+Message-ID: <3148e42b-70cf-a7b4-a644-b969f61724d6@gmail.com>
+References: <20180921114241.17002-1-digetx@gmail.com>
+ <20180924115907.GW21032@ulmo>
+ <3ccda930-8ec1-00b0-54e0-c689e7ee4b62@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <3ccda930-8ec1-00b0-54e0-c689e7ee4b62@nvidia.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 11:08:03AM +0300, Peter De Schrijver wrote:
-> On Fri, Sep 21, 2018 at 06:01:49PM -0400, ryang wrote:
-> > The current behavior is that clk_round_rate would return the same clock
-> > rate passed to it for valid PLL configurations. This change will return
-> > the exact rate the PLL will provide in accordance with clk API.
-> > 
-> > Signed-off-by: ryang <decatf@gmail.com>
-> > ---
-> >  drivers/clk/tegra/clk-pll.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> > index 17a058c3bbc1..36014a6ec42e 100644
-> > --- a/drivers/clk/tegra/clk-pll.c
-> > +++ b/drivers/clk/tegra/clk-pll.c
-> > @@ -595,7 +595,12 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > -	cfg->output_rate >>= p_div;
-> > +	if (cfg->m == 0) {
-> > +		cfg->output_rate = 0;
-> 
-> I think a WARN_ON() is appropriate here. the input divider should never be 0.
-> 
-> Peter.
-> 
-
-Should it return -EINVAL (or some error) too? _calc_rate is also in the
-clk_set_rate code path. I think we want to avoid programming the
-register to 0 input divider all together?
-
-> > +	} else {
-> > +		cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
-> > +		cfg->output_rate >>= p_div;
-> > +	}
-> >  
-> >  	if (pll->params->pdiv_tohw) {
-> >  		ret = _p_div_to_hw(hw, 1 << p_div);
-> > -- 
-> > 2.17.1
-> > 
+T24gOS8yNC8xOCAzOjMyIFBNLCBKb24gSHVudGVyIHdyb3RlOgo+IAo+IE9uIDI0LzA5LzE4IDEy
+OjU5LCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4gT24gRnJpLCBTZXAgMjEsIDIwMTggYXQgMDI6
+NDI6NDFQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+Pj4gU29tZSBvZiBkZWZpbml0
+aW9ucyBpbiB0aGUgY29kZSBjaGFuZ2VkIHRoZSBtZWFuaW5nLCB1bmZvcnR1bmF0ZWx5IG9uZQo+
+Pj4gcGxhY2UgbWlzc2VkIHRoZSBjaGFuZ2UuCj4+Pgo+Pj4gRml4ZXM6IDA3NTFiYjVjNDRmZSAo
+ImRybS90ZWdyYTogZHBhdXg6IEFkZCBwaW5jdHJsIHN1cHBvcnQiKQo+Pj4gQ2M6IDxzdGFibGVA
+dmdlci5rZXJuZWwub3JnPiAjIHY0LjgrCj4+PiBTaWduZWQtb2ZmLWJ5OiBEbWl0cnkgT3NpcGVu
+a28gPGRpZ2V0eEBnbWFpbC5jb20+Cj4+PiAtLS0KPj4+Cj4+PiBJIGRvbid0IGhhdmUgSFcgdG8g
+dGVzdCBEUEFVWCBkcml2ZXIsIGFwcGFyZW50bHkgaXQgaGFzIGJlZW4gYnJva2VuIGZvcgo+Pj4g
+MisgeWVhcnMgbm93LiBUaGVyZSBpcyBhbHNvIGEga25vd24gaXNzdWUgb24gd2l0aCB0aGUgRFBB
+VVggZHJpdmVyIHRoYXQKPj4+IHByZXZlbnRzIGl0IGZyb20gcHJvYmluZywgdGhhdCB3YXMgZGlz
+Y3Vzc2VkIG9uIHRoZSAjdGVncmEgSVJDLiBUaGllcnJ5LAo+Pj4gcGxlYXNlIHRha2UgYSBjbG9z
+ZXIgbG9vayBhdCB0aGlzIGRyaXZlciBhbmQgdGVzdCBpdCB0aG9yb3VnaGx5LCBpdCBoYXMKPj4+
+IHNvbWUgb2J2aW91cyBwcm9ibGVtcy4KPj4+Cj4+PiAgIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
+cGF1eC5jIHwgMiArLQo+Pj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVs
+ZXRpb24oLSkKPj4KPj4gSXQncyBvZGQgdGhhdCB5b3UgY2xhaW0gdGhhdCB0aGUgZHJpdmVyIGlz
+IGFsd2F5cyBmYWlsaW5nIHByb2JlIGFuZCBhdAo+PiB0aGUgc2FtZSB0aW1lIHlvdSBzYXkgdGhh
+dCB5b3UgZG9uJ3QgaGF2ZSBoYXJkd2FyZSB0byB0ZXN0IHRoZSBkcml2ZXIuCj4+ID0pCj4+Cj4+
+IEkga25vdyBmb3IgYSBmYWN0IHRoYXQgdGhpcyBkcml2ZXIgZG9lcyBub3QgdXN1YWxseSBmYWls
+IGJlY2F1c2UgaXQgaXMKPj4gcmVxdWlyZWQgb24gYWxsIHJlY2VudCBjaGlwcyAoVGVncmEyMTAg
+YW5kIGxhdGVyKSB0byBkcml2ZSBIRE1JLCB3aGljaAo+PiB3ZSBzdXBwb3J0IG9uIGFsbCBib2Fy
+ZHMsIHNvIGl0IGlzIGluZGVlZCB0aG9yb3VnaGx5IHRlc3RlZC4KPj4KPj4+Cj4+PiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
+cmEvZHBhdXguYwo+Pj4gaW5kZXggZDg0ZTgxZmYzNmFkLi5iYTU2ODFmYWI3M2IgMTAwNjQ0Cj4+
+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYwo+Pj4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL3RlZ3JhL2RwYXV4LmMKPj4+IEBAIC01MjEsNyArNTIxLDcgQEAgc3RhdGljIGludCB0
+ZWdyYV9kcGF1eF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+Pj4gICAJICog
+aXMgbm8gcG9zc2liaWxpdHkgdG8gcGVyZm9ybSB0aGUgSTJDIG1vZGUgY29uZmlndXJhdGlvbiBp
+biB0aGUKPj4+ICAgCSAqIEhETUkgcGF0aC4KPj4+ICAgCSAqLwo+Pj4gLQllcnIgPSB0ZWdyYV9k
+cGF1eF9wYWRfY29uZmlnKGRwYXV4LCBEUEFVWF9IWUJSSURfUEFEQ1RMX01PREVfSTJDKTsKPj4+
+ICsJZXJyID0gdGVncmFfZHBhdXhfcGFkX2NvbmZpZyhkcGF1eCwgRFBBVVhfUEFEQ1RMX0ZVTkNf
+STJDKTsKPj4+ICAgCWlmIChlcnIgPCAwKQo+Pj4gICAJCXJldHVybiBlcnI7Cj4+PiAgIAo+Pgo+
+PiBJZiB5b3UgbG9vayBhdCB0aGUgZGVmaW5pdGlvbnMgb2YgYm90aCBEUEFVWF9IWUJSSURfUEFE
+Q1RMX01PREVfSTJDIGFuZAo+PiBEUEFVWF9QQURDVExfRlVOQ19JMkMsIHlvdSdsbCBzZWUgdGhh
+dCBib3RoIGFyZSBhY3R1YWxseSB0aGUgc2FtZSwgd2hpY2gKPj4gaXMgYSBnb29kIGV4cGxhbmF0
+aW9uIGZvciB3aHkgdGhlIGRyaXZlciBwZXJmb3JtcyBmbGF3bGVzc2x5Lgo+Pgo+PiBUaGF0IHNh
+aWQsIHlvdXIgY2hhbmdlIGlzIG9idmlvdXNseSBjb3JyZWN0LiBJJ3ZlIGFwcGxpZWQgaXQsIGJ1
+dCBzaW5jZQo+PiBpdCBkb2Vzbid0IGFjdHVhbGx5IGZpeCBhbnl0aGluZywgYW5kIGRvZXNuJ3Qg
+Y2hhbmdlIGFueXRoaW5nIGZyb20gYQo+PiBiaW5hcnkgcG9pbnQgb2YgdmlldywgSSd2ZSByZW1v
+dmVkIHRoZSBGaXhlczogYW5kIENjOiBzdGFibGUgdGFncy4KPiAKPiBEaWQgeW91IGNoYW5nZSB0
+aGUgc3ViamVjdCBmb3IgdGhlIHBhdGNoIGJlY2F1c2UgYXMgeW91IG1lbnRpb25lZCBpdAo+IGRv
+ZXMgbm90IHNlZW0gcmVsYXRlZCB0byB0aGUgY2hhbmdlPwo+IAo+IE90aGVyd2lzZSBmb3IgdGhl
+IGZpeCB5b3UgY2FuIGhhdmUgbXkgLi4uCj4gCj4gQWNrZWQtYnk6IEpvbiBIdW50ZXIgPGpvbmF0
+aGFuaEBudmlkaWEuY29tPgo+IAo+IFRoZSBkcGF1eCBkcml2ZXIgaGFzIGJlZW4gd29ya2luZyBm
+aW5lIGZvciBtZSBvbiBUZWdyYTIxMCBTbWF1ZyB3aGVuCj4gdXNpbmcgdGhlIHBpbnMgZm9yIEky
+QyBhbmQgSSBoYXZlIG5vdCBzZWVuIGFueSBwcm9iaW5nIHByb2JsZW1zLgoKR3V5IHdpdGggbmlj
+a25hbWUgInZsYWRvIiBzYWlkIG9uIHRoZSBJUkMgdGhhdCB0aGUgcGFuZWwgc3RvcHBlZCB0byB3
+b3JrIG9uIFQxMjQgCmNocm9tZWJvb2sgc2luY2UgNC4xNiBrZXJuZWwsIHJldmVydGluZyBjb21t
+aXQgWzBdIGhlbHBzLgoKWzBdIApodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
+a2VybmVsL2dpdC9uZXh0L2xpbnV4LW5leHQuZ2l0L2NvbW1pdC9kcml2ZXJzL2dwdS9kcm0vZHJt
+X2RwX2hlbHBlci5jP2lkPTE3YWI3ODA2ZGUwYzEwZDI3Y2RiZGE4ZWY1N2NhNjgwYmRkMjQzMTUK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
