@@ -1,75 +1,52 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 156/173] gpiolib: Respect error code of
- ->get_direction()
-Date: Tue, 25 Sep 2018 16:42:52 +0200
-Message-ID: <20180925144252.GA28362@kroah.com>
-References: <20180924113114.334025954@linuxfoundation.org>
- <20180924113126.730832814@linuxfoundation.org>
- <dfdf04ac-2413-ccf3-a8ea-407674cc6b08@nvidia.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v4 0/4] devres: provide and use devm_kstrdup_const()
+Date: Tue, 25 Sep 2018 08:48:52 -0700
+Message-ID: <a729cfd1102ef280650074dd8bec32c6b12636db.camel@perches.com>
+References: <20180925124629.20710-1-brgl@bgdev.pl>
+         <c25df148-718a-d29d-9c1d-20701a0e4534@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <dfdf04ac-2413-ccf3-a8ea-407674cc6b08@nvidia.com>
+In-Reply-To: <c25df148-718a-d29d-9c1d-20701a0e4534@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <alexander.levin@microsoft.com>, linux-tegra <linux-tegra@vger.kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Arend van Spriel <aspriel@gmail.com>, Vivek Gautam <vivek.gautam@codeaurora.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>, Huang Ying <ying.huang@intel.com>, Andy
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 03:12:13PM +0100, Jon Hunter wrote:
-> Hi Greg,
+On Tue, 2018-09-25 at 13:51 +0100, Robin Murphy wrote:
+> On 25/09/18 13:46, Bartosz Golaszewski wrote:
+> > This series implements devm_kstrdup_const() together with some
+> > prerequisite changes and uses it in pmc-atom driver.
 > 
-> On 24/09/18 12:53, Greg Kroah-Hartman wrote:
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > [ Upstream commit 36b312792b97933dc07abe074f50941199bd357c ]
-> > 
-> > In case we try to lock GPIO pin as IRQ when something going wrong
-> > we print a misleading message.
-> > 
-> > Correct this by checking an error code from ->get_direction() in
-> > gpiochip_lock_as_irq() and printing a corresponding message.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  drivers/gpio/gpiolib.c |    6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -2811,6 +2811,12 @@ int gpiochip_lock_as_irq(struct gpio_chi
-> >  	if (!chip->can_sleep && chip->get_direction) {
-> >  		int dir = chip->get_direction(chip, offset);
-> >  
-> > +		if (dir < 0) {
-> > +			chip_err(chip, "%s: cannot get GPIO direction\n",
-> > +				 __func__);
-> > +			return dir;
-> > +		}
-> > +
-> >  		if (dir)
-> >  			clear_bit(FLAG_IS_OUT, &desc->flags);
-> >  		else
-> 
-> This change is causing a boot regression on Tegra20 and Tegra30. After
-> this change was merged in mainline there was a fix for Tegra [0] that
-> was also needed.
-> 
-> On Tegra the above change causes the allocation of GPIOs to fail and
-> looks like this then exposes another bug somewhere else that finally
-> leads to a system crash.
-> 
-> If this is needed for stable, then we will need the fix for Tegra as well.
+> Is anyone expecting me to review this series,
 
-Thanks, I've just dropped this from all of the queues, no need to cause
-more problems.
+Probably not.
 
-greg k-h
+> or am I just here because 
+> I once made a couple of entirely unrelated changes to device.h?
+
+Most likely yes.
+
+It is likely that Bartosz should update his use of the
+get_maintainer.pl script to add "--nogit --nogit-fallback"
+so drive-by patch submitters are not also cc'd on these
+sorts of series.
+
+$ ./scripts/get_maintainer.pl -f \
+	drivers/base/devres.c \
+	drivers/mailbox/tegra-hsp.c \
+	include/asm-generic/sections.h \
+	include/linux/device.h \
+	mm/util.c | \
+  wc -l
+26
+
+$ ./scripts/get_maintainer.pl -f --nogit --nogit-fallback \
+	drivers/base/devres.c \
+	drivers/mailbox/tegra-hsp.c \
+	include/asm-generic/sections.h \
+	include/linux/device.h \
+	mm/util.c | \
+  wc -l
+10
