@@ -1,60 +1,74 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v4 0/4] devres: provide and use devm_kstrdup_const()
-Date: Tue, 25 Sep 2018 18:02:25 +0200
-Message-ID: <CAMRc=MeSte7oQ+oLm0f-Re0LgO1c203xPZRQF9mky9oLCTkeKg@mail.gmail.com>
-References: <20180925124629.20710-1-brgl@bgdev.pl> <c25df148-718a-d29d-9c1d-20701a0e4534@arm.com>
- <a729cfd1102ef280650074dd8bec32c6b12636db.camel@perches.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] i2c: of: Try to find an I2C adapter matching the parent
+Date: Tue, 25 Sep 2018 18:06:11 +0200
+Message-ID: <20180925160611.17736-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a729cfd1102ef280650074dd8bec32c6b12636db.camel@perches.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Arend van Spriel <aspriel@gmail.com>, Vivek Gautam <vivek.gautam@codeaurora.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>, Huang Ying <ying.huang@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: rechner@vlado-do.de, dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-wt., 25 wrz 2018 o 17:48 Joe Perches <joe@perches.com> napisa=C5=82(a):
->
-> On Tue, 2018-09-25 at 13:51 +0100, Robin Murphy wrote:
-> > On 25/09/18 13:46, Bartosz Golaszewski wrote:
-> > > This series implements devm_kstrdup_const() together with some
-> > > prerequisite changes and uses it in pmc-atom driver.
-> >
-> > Is anyone expecting me to review this series,
->
-> Probably not.
->
-> > or am I just here because
-> > I once made a couple of entirely unrelated changes to device.h?
->
-> Most likely yes.
->
-> It is likely that Bartosz should update his use of the
-> get_maintainer.pl script to add "--nogit --nogit-fallback"
-> so drive-by patch submitters are not also cc'd on these
-> sorts of series.
->
-> $ ./scripts/get_maintainer.pl -f \
->         drivers/base/devres.c \
->         drivers/mailbox/tegra-hsp.c \
->         include/asm-generic/sections.h \
->         include/linux/device.h \
->         mm/util.c | \
->   wc -l
-> 26
->
-> $ ./scripts/get_maintainer.pl -f --nogit --nogit-fallback \
->         drivers/base/devres.c \
->         drivers/mailbox/tegra-hsp.c \
->         include/asm-generic/sections.h \
->         include/linux/device.h \
->         mm/util.c | \
->   wc -l
-> 10
->
->
-
-Hi, sorry for that. Got it and will use next time.
-
-Bartosz
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCklmIGFuIEkyQyBhZGFw
+dGVyIGRvZXNuJ3QgbWF0Y2ggdGhlIHByb3ZpZGVkIGRldmljZSB0cmVlIG5vZGUsIGFsc28gdHJ5
+Cm1hdGNoaW5nIHRoZSBwYXJlbnQncyBkZXZpY2UgdHJlZSBub2RlLiBUaGlzIGFsbG93cyBmaW5k
+aW5nIGFuIGFkYXB0ZXIKYmFzZWQgb24gdGhlIGRldmljZSBub2RlIG9mIHRoZSBwYXJlbnQgZGV2
+aWNlIHRoYXQgd2FzIHVzZWQgdG8gcmVnaXN0ZXIKaXQuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5
+IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KSGkgV29sZnJhbSwKClRoaXMgaXMgYSBm
+aXggZm9yIHRoZSBpc3N1ZSBkaXNjdXNzZWQgaW4gYSBsb25nIGVtYWlsIHRocmVhZCBhIGNvdXBs
+ZSBvZgptb250aHMgYWdvLiBJbiBhIG51dHNoZWxsIHRoZSBpc3N1ZSBpcyB0aGF0IHdlIHdhbnQg
+dG8gYmUgYWJsZSB0byBmaW5kIGEKSTJDLW92ZXItQVVYIGFkYXB0ZXIgYmFzZWQgb24gdGhlIGRl
+dmljZSB0cmVlIG5vZGUgKHRoaXMgaXMgdG8gaG9vayB1cCBhCkkyQyBhZGFwdGVyIGZvciB1c2Ug
+YXMgRERDIHRvIHF1ZXJ5IEVESUQgZnJvbSBhIGRpc3BsYXkgcGFuZWwsIGZvcgpleGFtcGxlKS4K
+CkhlcmUncyBhIGxpbmsgdG8gdGhlIHByaW9yIGRpc2N1c3Npb24sIHdoaWNoIGVuZGVkIHVwIGdl
+dHRpbmcgc3BsaXQgaW50bwp0d28gZm9yIHNvbWUgcmVhc29uLCBwb3NzaWJseSBiZWNhdXNlIHRo
+ZSBpbml0aWFsIHN1Ym1pc3Npb24gYW5kCnN1YnNlcXVlbnQgZGlzY3Vzc2lvbiB0b29rIHBsYWNl
+IG92ZXIgYW4gZXh0ZW5kZWQgcGVyaW9kIG9mIHRpbWU6CgoJaHR0cHM6Ly9wYXRjaHdvcmsua2Vy
+bmVsLm9yZy9wYXRjaC85NTE2MTA1LwoJaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRj
+aC8xMDIwMDg3OS8KCkkgbmV2ZXIgZ290IGFyb3VuZCB0byBzdWJtaXR0aW5nIHRoZSBwYXRjaCBw
+cm9wZXJseSwgYnV0IGhlcmUgaXQgaXMuIEFzCm1lbnRpb25lZCBpbiB0aGUgZGlzY3Vzc2lvbiBs
+aW5rZWQgdG8gYWJvdmUsIEkgdGhpbmsgdGhlIHByb2JsZW0gaGVyZSBpcwp0aGF0IHRoZSBuZXcg
+bG9va3VwIHZpYSB0aGUgcGFyZW50IGRldmljZSBvbmx5IGhhcHBlbnMgd2hlbiBsb29raW5nIGZv
+cgp0aGUgYWRhcHRlciBmcm9tIGl0cyBkZXZpY2UgdHJlZSBub2RlLiBIb3dldmVyLCB0aGlzIGFs
+c28gbWVhbnMgdGhhdCB0aGUKY2hpbGRyZW4gZm9yIHRoZSBjb250cm9sbGVyIHdvbid0IGJlIGFk
+ZGVkIGZvciB0aGVzZSBkZXZpY2VzLCBiZWNhdXNlIGl0Cm9ubHkgaGFwcGVucyBmb3IgYWRhcHRl
+cnMgdGhhdCBoYXZlIHRoZSBkZXYtPm9mX25vZGUgc2V0LCBub3QgZm9yIHRoZQpub2RlIHJlZmVy
+ZW5jZSBieSBkZXYtPnBhcmVudC0+b2Zfbm9kZS4gSG93ZXZlciwgSSdtIG5vdCBzdXJlIGlmIHRo
+YXQncwpyZWFsbHkgYSBwcm9ibGVtLiBBIGRldmljZSB0aGF0IGRvZXNuJ3QgaGF2ZSBkZXYtPm9m
+X25vZGUgc2V0IHdvdWxkIGJlIGEKInZpcnR1YWwiIEkyQyBidXMsIGFzIGluIHRoZSBjYXNlIG9m
+IEkyQy1vdmVyLUFVWC4gUHJvcGVyIEkyQyBidXNzZXMgYXJlCnN0aWxsIGdvaW5nIHRvIGhhdmUg
+dG8gaGF2ZSB0aGVpciBkZXYtPm9mX25vZGUgc2V0LCBvdGhlcndpc2UgYW55IGNoaWxkCmRldmlj
+ZXMgbGlzdGVkIGluIGRldmljZSB0cmVlIHdvbid0IGJlIGFkZGVkLgoKQW55d2F5LCBsZXQgbWUg
+a25vdyB3aGF0IHlvdSB0aGluayBvZiB0aGlzLiBBbHNvIGFkZGluZyBMdWNhcywgUm9iIGFuZApB
+bmRyemVqIHRvIHRoZSBkaXNjdXNzaW9uIHNpbmNlIHRoZXkgd2VyZSBpbnZvbHZlZCBiYWNrIGF0
+IHRoZSB0aW1lLgoKVGhhbmtzLApUaGllcnJ5CgogZHJpdmVycy9pMmMvaTJjLWNvcmUtb2YuYyB8
+IDExICsrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKQoKZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvaTJjL2kyYy1jb3JlLW9mLmMgYi9kcml2ZXJzL2kyYy9pMmMtY29yZS1v
+Zi5jCmluZGV4IDZjYjdhZDYwOGJjZC4uMzdkMzQ4ODVlYTJkIDEwMDY0NAotLS0gYS9kcml2ZXJz
+L2kyYy9pMmMtY29yZS1vZi5jCisrKyBiL2RyaXZlcnMvaTJjL2kyYy1jb3JlLW9mLmMKQEAgLTEy
+MSw2ICsxMjEsMTQgQEAgc3RhdGljIGludCBvZl9kZXZfbm9kZV9tYXRjaChzdHJ1Y3QgZGV2aWNl
+ICpkZXYsIHZvaWQgKmRhdGEpCiAJcmV0dXJuIGRldi0+b2Zfbm9kZSA9PSBkYXRhOwogfQogCitz
+dGF0aWMgaW50IG9mX3BhcmVudF9ub2RlX21hdGNoKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAq
+ZGF0YSkKK3sKKwlpZiAoZGV2LT5wYXJlbnQpCisJCXJldHVybiBkZXYtPnBhcmVudC0+b2Zfbm9k
+ZSA9PSBkYXRhOworCisJcmV0dXJuIDA7Cit9CisKIC8qIG11c3QgY2FsbCBwdXRfZGV2aWNlKCkg
+d2hlbiBkb25lIHdpdGggcmV0dXJuZWQgaTJjX2NsaWVudCBkZXZpY2UgKi8KIHN0cnVjdCBpMmNf
+Y2xpZW50ICpvZl9maW5kX2kyY19kZXZpY2VfYnlfbm9kZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5v
+ZGUpCiB7CkBAIC0xNDYsNiArMTU0LDkgQEAgc3RydWN0IGkyY19hZGFwdGVyICpvZl9maW5kX2ky
+Y19hZGFwdGVyX2J5X25vZGUoc3RydWN0IGRldmljZV9ub2RlICpub2RlKQogCXN0cnVjdCBpMmNf
+YWRhcHRlciAqYWRhcHRlcjsKIAogCWRldiA9IGJ1c19maW5kX2RldmljZSgmaTJjX2J1c190eXBl
+LCBOVUxMLCBub2RlLCBvZl9kZXZfbm9kZV9tYXRjaCk7CisJaWYgKCFkZXYpCisJCWRldiA9IGJ1
+c19maW5kX2RldmljZSgmaTJjX2J1c190eXBlLCBOVUxMLCBub2RlLCBvZl9wYXJlbnRfbm9kZV9t
+YXRjaCk7CisKIAlpZiAoIWRldikKIAkJcmV0dXJuIE5VTEw7CiAKLS0gCjIuMTkuMAoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
