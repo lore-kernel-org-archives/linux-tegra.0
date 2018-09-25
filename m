@@ -1,74 +1,52 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] i2c: of: Try to find an I2C adapter matching the parent
-Date: Tue, 25 Sep 2018 18:06:11 +0200
-Message-ID: <20180925160611.17736-1-thierry.reding@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
+ Tegra20/30
+Date: Tue, 25 Sep 2018 11:58:10 -0500
+Message-ID: <20180925165810.GA32430@bogus>
+References: <20180830194356.14059-1-digetx@gmail.com>
+ <20180830194356.14059-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: rechner@vlado-do.de, dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180830194356.14059-2-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCklmIGFuIEkyQyBhZGFw
-dGVyIGRvZXNuJ3QgbWF0Y2ggdGhlIHByb3ZpZGVkIGRldmljZSB0cmVlIG5vZGUsIGFsc28gdHJ5
-Cm1hdGNoaW5nIHRoZSBwYXJlbnQncyBkZXZpY2UgdHJlZSBub2RlLiBUaGlzIGFsbG93cyBmaW5k
-aW5nIGFuIGFkYXB0ZXIKYmFzZWQgb24gdGhlIGRldmljZSBub2RlIG9mIHRoZSBwYXJlbnQgZGV2
-aWNlIHRoYXQgd2FzIHVzZWQgdG8gcmVnaXN0ZXIKaXQuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5
-IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KSGkgV29sZnJhbSwKClRoaXMgaXMgYSBm
-aXggZm9yIHRoZSBpc3N1ZSBkaXNjdXNzZWQgaW4gYSBsb25nIGVtYWlsIHRocmVhZCBhIGNvdXBs
-ZSBvZgptb250aHMgYWdvLiBJbiBhIG51dHNoZWxsIHRoZSBpc3N1ZSBpcyB0aGF0IHdlIHdhbnQg
-dG8gYmUgYWJsZSB0byBmaW5kIGEKSTJDLW92ZXItQVVYIGFkYXB0ZXIgYmFzZWQgb24gdGhlIGRl
-dmljZSB0cmVlIG5vZGUgKHRoaXMgaXMgdG8gaG9vayB1cCBhCkkyQyBhZGFwdGVyIGZvciB1c2Ug
-YXMgRERDIHRvIHF1ZXJ5IEVESUQgZnJvbSBhIGRpc3BsYXkgcGFuZWwsIGZvcgpleGFtcGxlKS4K
-CkhlcmUncyBhIGxpbmsgdG8gdGhlIHByaW9yIGRpc2N1c3Npb24sIHdoaWNoIGVuZGVkIHVwIGdl
-dHRpbmcgc3BsaXQgaW50bwp0d28gZm9yIHNvbWUgcmVhc29uLCBwb3NzaWJseSBiZWNhdXNlIHRo
-ZSBpbml0aWFsIHN1Ym1pc3Npb24gYW5kCnN1YnNlcXVlbnQgZGlzY3Vzc2lvbiB0b29rIHBsYWNl
-IG92ZXIgYW4gZXh0ZW5kZWQgcGVyaW9kIG9mIHRpbWU6CgoJaHR0cHM6Ly9wYXRjaHdvcmsua2Vy
-bmVsLm9yZy9wYXRjaC85NTE2MTA1LwoJaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRj
-aC8xMDIwMDg3OS8KCkkgbmV2ZXIgZ290IGFyb3VuZCB0byBzdWJtaXR0aW5nIHRoZSBwYXRjaCBw
-cm9wZXJseSwgYnV0IGhlcmUgaXQgaXMuIEFzCm1lbnRpb25lZCBpbiB0aGUgZGlzY3Vzc2lvbiBs
-aW5rZWQgdG8gYWJvdmUsIEkgdGhpbmsgdGhlIHByb2JsZW0gaGVyZSBpcwp0aGF0IHRoZSBuZXcg
-bG9va3VwIHZpYSB0aGUgcGFyZW50IGRldmljZSBvbmx5IGhhcHBlbnMgd2hlbiBsb29raW5nIGZv
-cgp0aGUgYWRhcHRlciBmcm9tIGl0cyBkZXZpY2UgdHJlZSBub2RlLiBIb3dldmVyLCB0aGlzIGFs
-c28gbWVhbnMgdGhhdCB0aGUKY2hpbGRyZW4gZm9yIHRoZSBjb250cm9sbGVyIHdvbid0IGJlIGFk
-ZGVkIGZvciB0aGVzZSBkZXZpY2VzLCBiZWNhdXNlIGl0Cm9ubHkgaGFwcGVucyBmb3IgYWRhcHRl
-cnMgdGhhdCBoYXZlIHRoZSBkZXYtPm9mX25vZGUgc2V0LCBub3QgZm9yIHRoZQpub2RlIHJlZmVy
-ZW5jZSBieSBkZXYtPnBhcmVudC0+b2Zfbm9kZS4gSG93ZXZlciwgSSdtIG5vdCBzdXJlIGlmIHRo
-YXQncwpyZWFsbHkgYSBwcm9ibGVtLiBBIGRldmljZSB0aGF0IGRvZXNuJ3QgaGF2ZSBkZXYtPm9m
-X25vZGUgc2V0IHdvdWxkIGJlIGEKInZpcnR1YWwiIEkyQyBidXMsIGFzIGluIHRoZSBjYXNlIG9m
-IEkyQy1vdmVyLUFVWC4gUHJvcGVyIEkyQyBidXNzZXMgYXJlCnN0aWxsIGdvaW5nIHRvIGhhdmUg
-dG8gaGF2ZSB0aGVpciBkZXYtPm9mX25vZGUgc2V0LCBvdGhlcndpc2UgYW55IGNoaWxkCmRldmlj
-ZXMgbGlzdGVkIGluIGRldmljZSB0cmVlIHdvbid0IGJlIGFkZGVkLgoKQW55d2F5LCBsZXQgbWUg
-a25vdyB3aGF0IHlvdSB0aGluayBvZiB0aGlzLiBBbHNvIGFkZGluZyBMdWNhcywgUm9iIGFuZApB
-bmRyemVqIHRvIHRoZSBkaXNjdXNzaW9uIHNpbmNlIHRoZXkgd2VyZSBpbnZvbHZlZCBiYWNrIGF0
-IHRoZSB0aW1lLgoKVGhhbmtzLApUaGllcnJ5CgogZHJpdmVycy9pMmMvaTJjLWNvcmUtb2YuYyB8
-IDExICsrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKQoKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvaTJjL2kyYy1jb3JlLW9mLmMgYi9kcml2ZXJzL2kyYy9pMmMtY29yZS1v
-Zi5jCmluZGV4IDZjYjdhZDYwOGJjZC4uMzdkMzQ4ODVlYTJkIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2kyYy9pMmMtY29yZS1vZi5jCisrKyBiL2RyaXZlcnMvaTJjL2kyYy1jb3JlLW9mLmMKQEAgLTEy
-MSw2ICsxMjEsMTQgQEAgc3RhdGljIGludCBvZl9kZXZfbm9kZV9tYXRjaChzdHJ1Y3QgZGV2aWNl
-ICpkZXYsIHZvaWQgKmRhdGEpCiAJcmV0dXJuIGRldi0+b2Zfbm9kZSA9PSBkYXRhOwogfQogCitz
-dGF0aWMgaW50IG9mX3BhcmVudF9ub2RlX21hdGNoKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAq
-ZGF0YSkKK3sKKwlpZiAoZGV2LT5wYXJlbnQpCisJCXJldHVybiBkZXYtPnBhcmVudC0+b2Zfbm9k
-ZSA9PSBkYXRhOworCisJcmV0dXJuIDA7Cit9CisKIC8qIG11c3QgY2FsbCBwdXRfZGV2aWNlKCkg
-d2hlbiBkb25lIHdpdGggcmV0dXJuZWQgaTJjX2NsaWVudCBkZXZpY2UgKi8KIHN0cnVjdCBpMmNf
-Y2xpZW50ICpvZl9maW5kX2kyY19kZXZpY2VfYnlfbm9kZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5v
-ZGUpCiB7CkBAIC0xNDYsNiArMTU0LDkgQEAgc3RydWN0IGkyY19hZGFwdGVyICpvZl9maW5kX2ky
-Y19hZGFwdGVyX2J5X25vZGUoc3RydWN0IGRldmljZV9ub2RlICpub2RlKQogCXN0cnVjdCBpMmNf
-YWRhcHRlciAqYWRhcHRlcjsKIAogCWRldiA9IGJ1c19maW5kX2RldmljZSgmaTJjX2J1c190eXBl
-LCBOVUxMLCBub2RlLCBvZl9kZXZfbm9kZV9tYXRjaCk7CisJaWYgKCFkZXYpCisJCWRldiA9IGJ1
-c19maW5kX2RldmljZSgmaTJjX2J1c190eXBlLCBOVUxMLCBub2RlLCBvZl9wYXJlbnRfbm9kZV9t
-YXRjaCk7CisKIAlpZiAoIWRldikKIAkJcmV0dXJuIE5VTEw7CiAKLS0gCjIuMTkuMAoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Thu, Aug 30, 2018 at 10:43:52PM +0300, Dmitry Osipenko wrote:
+> Add device-tree binding that describes CPU frequency-scaling hardware
+> found on NVIDIA Tegra20/30 SoC's.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> new file mode 100644
+> index 000000000000..2c51f676e958
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> @@ -0,0 +1,38 @@
+> +Binding for NVIDIA Tegra20 CPUFreq
+> +==================================
+> +
+> +Required properties:
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +  - pll_x: main-parent for CPU clock, must be the first entry
+> +  - backup: intermediate-parent for CPU clock
+> +  - cpu: the CPU clock
+
+The Cortex A9 has CLK, PERIPHCLK, and PERIPHCLKEN clocks and only CLK 
+is used for the cpu core. You can't just define your own clocks that 
+you happen to want access to.
+
+Otherwise, you're not defining anything new here, so a binding document 
+isn't required.
+
+Rob
