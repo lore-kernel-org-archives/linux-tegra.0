@@ -1,67 +1,79 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH -next] drm/tegra: Use PTR_ERR_OR_ZERO in tegra_gem_create()
-Date: Tue, 25 Sep 2018 16:57:30 +0900
-Message-ID: <ad47881b-59fb-7608-379c-c98cc9cc40a4@kapsi.fi>
-References: <1537839351-104885-1-git-send-email-yuehaibing@huawei.com>
- <ad3ed7e3-17dd-a418-f951-3cae69b0ac32@kapsi.fi>
- <alpine.DEB.2.21.1809250936290.2702@hadrien>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
+Date: Tue, 25 Sep 2018 10:11:06 +0200
+Message-ID: <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
+References: <20180921102546.12745-1-thierry.reding@gmail.com> <20180921102546.12745-7-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <alpine.DEB.2.21.1809250936290.2702@hadrien>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: David Airlie <airlied@linux.ie>, YueHaibing <yuehaibing@huawei.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180921102546.12745-7-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjUvMDkvMjAxOCAxNi4zNywgSnVsaWEgTGF3YWxsIHdyb3RlOgo+IAo+IAo+IE9uIFR1ZSwg
-MjUgU2VwIDIwMTgsIE1pa2tvIFBlcnR0dW5lbiB3cm90ZToKPiAKPj4gSSdtIG5vdCB0aGUgbWFp
-bnRhaW5lciwgYnV0IGluIGxpbmUgd2l0aCBwcmV2aW91cyBzaW1pbGFyIHBhdGNoZXMuLgo+Pgo+
-PiBOQUs6IHRoaXMgbWFrZXMgdGhlIGNvZGUgaGFyZGVyIHRvIHJlYWQuCj4gCj4gSWYgcGVvcGxl
-IGRvbid0IGxpa2UgaXQsIEkgd29uZGVyIGlmIGl0IGlzIGEgZ29vZCB0aGluZyBmb3IgdGhlIGZ1
-bmN0aW9uCj4gdG8gZXZlbiBleGlzdD8gIE9yIGF0IGxlYXN0IHRoZSBzZW1hbnRpYyBwYXRjaCB0
-aGF0IHN1Z2dlc3RzIHRoaXMgY291bGQgYmUKPiByZW1vdmVkLgoKR29vZCBxdWVzdGlvbi4gSSB0
-aGluayBpdCBtYXkgc3RpbGwgaGF2ZSBpdHMgcGxhY2UgaW4gc29tZSBzaXR1YXRpb25zIC0gCmUu
-Zy4gaWYgdGhlcmUncyBvbmx5IG9uZSBjYWxsLCBzb21ldGhpbmcgbGlrZQoKICAgcmV0dXJuIFBU
-Ul9FUlJfT1JfWkVSTyhkb19zb21ldGhpbmcoKSk7Cgp3aGVyZSB0aGlzIGlzIHRoZSBvbmx5IHBv
-dGVudGlhbGx5IGVycm9yaW5nIHRoaW5nIGluIHRoZSBmdW5jdGlvbi4KCkluIHRoaXMgY2FzZSAo
-YW5kIHRoZSBwcmV2aW91cyBvbmVzIEkgcmVmZXJyZWQgdG8pLCBpdCdzIGJlZW4gYSBmdW5jdGlv
-biAKd2l0aCBhIGxvbmdlciBzZXJpZXMgb2YgY29kZSBsaWtlCgogICB2YXJpYWJsZSA9IGZ1bmN0
-aW9uKC4uLik7CiAgIGlmIChJU19FUlIodmFyaWFibGUpKQogICAgIHJldHVybiBQVFJfRVJSKHZh
-cmlhYmxlKTsKCmFuZCBpZiB3ZSBqdXN0IGNoYW5nZSB0aGUgbGFzdCBvbmUgaXQgbG9va3Mgb3V0
-IG9mIHBsYWNlLiBBbHRob3VnaCAKaG9uZXN0bHksIEkgd291bGQganVzdCB3cml0ZSB0aGUgZmly
-c3QgZXhhbXBsZSBpbiBsb25nLWZvcm0gYXMgd2VsbC4KCkluIHRoZSBlbmQgaXQncyBhIHF1ZXN0
-aW9uIG9mIHRhc3RlLiBXaXRoIFRlZ3JhIGNvZGUgd2UgaGF2ZSBnb25lIGZvciAKbm90IHVzaW5n
-IFBUUl9FUlJfT1JfWkVSTy4KCkNoZWVycywKTWlra28KCj4gCj4ganVsaWEKPiAKPj4KPj4gVGhh
-bmtzLAo+PiBNaWtrbwo+Pgo+PiBPbiAyNS8wOS8yMDE4IDEwLjM1LCBZdWVIYWliaW5nIHdyb3Rl
-Ogo+Pj4gVXNlIFBUUl9FUlJfT1JfWkVSTyByYXRoZXIgdGhhbiBpZihJU19FUlIoLi4uKSkgKyBQ
-VFJfRVJSCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogWXVlSGFpYmluZyA8eXVlaGFpYmluZ0BodWF3
-ZWkuY29tPgo+Pj4gLS0tCj4+PiAgICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgfCA1ICst
-LS0tCj4+PiAgICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDQgZGVsZXRpb25zKC0p
-Cj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZl
-cnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+Pj4gaW5kZXggZTIyMzUyYy4uMDU2Zjc0OSAxMDA2NDQK
-Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+Pj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL2RybS5jCj4+PiBAQCAtNDk3LDEwICs0OTcsNyBAQCBzdGF0aWMgaW50IHRl
-Z3JhX2dlbV9jcmVhdGUoc3RydWN0IGRybV9kZXZpY2UgKmRybSwKPj4+IHZvaWQgKmRhdGEsCj4+
-PiAgICAgIAlibyA9IHRlZ3JhX2JvX2NyZWF0ZV93aXRoX2hhbmRsZShmaWxlLCBkcm0sIGFyZ3Mt
-PnNpemUsIGFyZ3MtPmZsYWdzLAo+Pj4gICAgCQkJCQkgJmFyZ3MtPmhhbmRsZSk7Cj4+PiAtCWlm
-IChJU19FUlIoYm8pKQo+Pj4gLQkJcmV0dXJuIFBUUl9FUlIoYm8pOwo+Pj4gLQo+Pj4gLQlyZXR1
-cm4gMDsKPj4+ICsJcmV0dXJuIFBUUl9FUlJfT1JfWkVSTyhibyk7Cj4+PiAgICB9Cj4+PiAgICAg
-IHN0YXRpYyBpbnQgdGVncmFfZ2VtX21tYXAoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdm9pZCAq
-ZGF0YSwKPj4+Cj4+Pgo+Pj4KPj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCj4+PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+PiBkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCj4+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+Pj4KPj4KX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Thierry!
+
+Thanks for the patch!
+
+I am a bit ignorant about irqdomains so I will probably need an ACK
+from some irq maintainer before I can apply this.
+
+On Fri, Sep 21, 2018 at 12:25 PM Thierry Reding
+<thierry.reding@gmail.com> wrote:
+
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Hierarchical IRQ domains can be used to stack different IRQ controllers
+> on top of each other. One specific use-case where this can be useful is
+> if a power management controller has top-level controls for wakeup
+> interrupts. In such cases, the power management controller can be a
+> parent to other interrupt controllers and program additional registers
+> when an IRQ has its wake capability enabled or disabled.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+While I think it is really important that we start supporting hierarchical
+irqdomains in the gpiolib core, I want a more complete approach,
+so that drivers that need hierarchical handling of irqdomains
+can get the same support from gpiolib as they get for simple
+domains.
+
+> @@ -1918,7 +1918,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
+>                 type = IRQ_TYPE_NONE;
+>         }
+>
+> -       gpiochip->to_irq = gpiochip_to_irq;
+> +       if (!gpiochip->to_irq)
+> +               gpiochip->to_irq = gpiochip_to_irq;
+
+So here you let the drivers override the .to_irq() function and that
+I think gets confusing as we are asking gpiolib to handle our
+irqchip.
+
+
+> -       gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
+> -                                                    gpiochip->irq.first,
+> -                                                    ops, gpiochip);
+> +       if (gpiochip->irq.parent_domain)
+> +               gpiochip->irq.domain = irq_domain_add_hierarchy(gpiochip->irq.parent_domain,
+> +                                                               0, gpiochip->ngpio,
+> +                                                               np, ops, gpiochip);
+> +       else
+> +               gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
+> +                                                            gpiochip->irq.first,
+> +                                                            ops, gpiochip);
+
+So this part is great: if we pass in a parent domain the core helps us
+create the hierarchy.
+
+But the stuff in .to_irq() should also be handled in the gpiolib core:
+the irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec) for
+example. That way you should not need any external .to_irq() function.
+
+I can't see if you need to pull more stuff into the core to accomplish
+that, but I think in essence the core gpiolib needs to be more helpful
+with hierarchies.
+
+Yours,
+Linus Walleij
