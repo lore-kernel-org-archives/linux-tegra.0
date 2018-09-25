@@ -1,129 +1,159 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH -next] drm/tegra: Use PTR_ERR_OR_ZERO in tegra_gem_create()
-Date: Tue, 25 Sep 2018 10:58:17 +0200
-Message-ID: <20180925085817.GA7097@ulmo>
-References: <1537839351-104885-1-git-send-email-yuehaibing@huawei.com>
- <ad3ed7e3-17dd-a418-f951-3cae69b0ac32@kapsi.fi>
- <alpine.DEB.2.21.1809250936290.2702@hadrien>
- <ad47881b-59fb-7608-379c-c98cc9cc40a4@kapsi.fi>
+Subject: Re: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
+Date: Tue, 25 Sep 2018 11:33:15 +0200
+Message-ID: <20180925093315.GB7097@ulmo>
+References: <20180921102546.12745-1-thierry.reding@gmail.com>
+ <20180921102546.12745-7-thierry.reding@gmail.com>
+ <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1272135458=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <ad47881b-59fb-7608-379c-c98cc9cc40a4@kapsi.fi>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: David Airlie <airlied@linux.ie>, YueHaibing <yuehaibing@huawei.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>, Julia Lawall <julia.lawall@lip6.fr>, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qlTNgmc+xy1dBmNv"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1272135458==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
-Content-Disposition: inline
-
-
---0F1p//8PRICkK4MW
+--qlTNgmc+xy1dBmNv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 25, 2018 at 04:57:30PM +0900, Mikko Perttunen wrote:
-> On 25/09/2018 16.37, Julia Lawall wrote:
-> >=20
-> >=20
-> > On Tue, 25 Sep 2018, Mikko Perttunen wrote:
-> >=20
-> > > I'm not the maintainer, but in line with previous similar patches..
-> > >=20
-> > > NAK: this makes the code harder to read.
-> >=20
-> > If people don't like it, I wonder if it is a good thing for the function
-> > to even exist?  Or at least the semantic patch that suggests this could=
- be
-> > removed.
+On Tue, Sep 25, 2018 at 10:11:06AM +0200, Linus Walleij wrote:
+> Hi Thierry!
 >=20
-> Good question. I think it may still have its place in some situations - e=
-=2Eg.
-> if there's only one call, something like
+> Thanks for the patch!
 >=20
->   return PTR_ERR_OR_ZERO(do_something());
+> I am a bit ignorant about irqdomains so I will probably need an ACK
+> from some irq maintainer before I can apply this.
 >=20
-> where this is the only potentially erroring thing in the function.
+> On Fri, Sep 21, 2018 at 12:25 PM Thierry Reding
+> <thierry.reding@gmail.com> wrote:
 >=20
-> In this case (and the previous ones I referred to), it's been a function
-> with a longer series of code like
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Hierarchical IRQ domains can be used to stack different IRQ controllers
+> > on top of each other. One specific use-case where this can be useful is
+> > if a power management controller has top-level controls for wakeup
+> > interrupts. In such cases, the power management controller can be a
+> > parent to other interrupt controllers and program additional registers
+> > when an IRQ has its wake capability enabled or disabled.
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
 >=20
->   variable =3D function(...);
->   if (IS_ERR(variable))
->     return PTR_ERR(variable);
+> While I think it is really important that we start supporting hierarchical
+> irqdomains in the gpiolib core, I want a more complete approach,
+> so that drivers that need hierarchical handling of irqdomains
+> can get the same support from gpiolib as they get for simple
+> domains.
 >=20
-> and if we just change the last one it looks out of place. Although honest=
-ly,
-> I would just write the first example in long-form as well.
+> > @@ -1918,7 +1918,9 @@ static int gpiochip_add_irqchip(struct gpio_chip =
+*gpiochip,
+> >                 type =3D IRQ_TYPE_NONE;
+> >         }
+> >
+> > -       gpiochip->to_irq =3D gpiochip_to_irq;
+> > +       if (!gpiochip->to_irq)
+> > +               gpiochip->to_irq =3D gpiochip_to_irq;
 >=20
-> In the end it's a question of taste. With Tegra code we have gone for not
-> using PTR_ERR_OR_ZERO.
+> So here you let the drivers override the .to_irq() function and that
+> I think gets confusing as we are asking gpiolib to handle our
+> irqchip.
+>=20
+>=20
+> > -       gpiochip->irq.domain =3D irq_domain_add_simple(np, gpiochip->ng=
+pio,
+> > -                                                    gpiochip->irq.firs=
+t,
+> > -                                                    ops, gpiochip);
+> > +       if (gpiochip->irq.parent_domain)
+> > +               gpiochip->irq.domain =3D irq_domain_add_hierarchy(gpioc=
+hip->irq.parent_domain,
+> > +                                                               0, gpio=
+chip->ngpio,
+> > +                                                               np, ops=
+, gpiochip);
+> > +       else
+> > +               gpiochip->irq.domain =3D irq_domain_add_simple(np, gpio=
+chip->ngpio,
+> > +                                                            gpiochip->=
+irq.first,
+> > +                                                            ops, gpioc=
+hip);
+>=20
+> So this part is great: if we pass in a parent domain the core helps us
+> create the hierarchy.
+>=20
+> But the stuff in .to_irq() should also be handled in the gpiolib core:
+> the irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec) for
+> example. That way you should not need any external .to_irq() function.
+>=20
+> I can't see if you need to pull more stuff into the core to accomplish
+> that, but I think in essence the core gpiolib needs to be more helpful
+> with hierarchies.
 
-This has come up recently for the Tegra PCI driver as well, and we were
-wondering the same thing. I know that Bjorn (PCI maintainer) and I have
-in the past agreed that PTR_ERR_OR_ZERO() is not something we like. For
-mostly the same reasons that Mikko already cited. In addition I think
-that PTR_ERR_OR_ZERO() makes it needlessly complicated to append code
-to a function. Instead of just adding a:
+This is not as trivial as it sounds. I think we could probably provide a
+simple helper in the core that may work for the majority of GPIO
+controllers, and would be similar to irq_domain_xlate_twocell(). The
+problem is that ->gpio_to_irq() effectively needs to convert the offset
+of the pin in the GPIO controller to an IRQ specifier. If the IRQ domain
+can use irq_domain_xlate_twocell(), that should be easy, but if it does
+not, then we likely need a custom implementation as well.
 
-	ptr =3D function(...);
-	if (IS_ERR(ptr))
-		return PTR_ERR(ptr);
+For example, as you may remember, the Tegra186 GPIO controller is
+somewhat quirky in that it has a number of banks, each of which can have
+any number of pins up to 8. However, in order to prevent users from
+attempting to use one of the non-existent GPIOs, we resorted to
+compacting the GPIO number space so that the GPIO specifier uses
+basically a (bank, pin) pair that is converted into a GPIO offset. The
+same is done for interrupt specifiers.
 
-You need to split up the PTR_ERR_OR_ZERO() first and then be careful
-that you return the correct result, etc.
+Since there is no 1:1 relationship between the value in the specifier
+and the GPIO offset, we can't use irq_domain_xlate_twocell(). Similarly
+we won't be able to use the standard gpiochip_to_irq() counterpart for
+two cell specifiers to construct the IRQ specifier, but instead we'll
+have to convert it based on the offset and the number of pins per bank
+(that is, the inverse of what we do in tegra186_gpio_of_xlate()).
 
-I'm sure there are people that prefer PTR_ERR_OR_ZERO() over the open-
-coded alternative, so this is probably just something we're going to
-have to live with. Perhaps a good compromise would be to keep the macro
-around, but get rid of the semantic patch that suggests the change. At
-least that way we would have to go over this over and over again.
+I think we can probably just implement the simple two-cell version in
+gpiochip_to_irq() directly and leave it up to drivers that require
+something more to override ->to_irq().
+
+Another alternative that I had pondered about was to add another level
+of indirection and have a generic implementation in gpiochip_to_irq()
+that calls back into a new ->to_irq_fwspec() function that drivers can
+implement to fill in the struct irq_fwspec as required by the
+irq_domain_alloc_irqs() function. We could still provide a default
+implementation for the common two-cell case, so most drivers wouldn't
+have to know about it.
+
+I don't think any of the above has massive advantages over the other.
+The latter will be slightly more compact, I would assume, but the former
+gives us more flexibility if we need it.
 
 Thierry
 
---0F1p//8PRICkK4MW
+--qlTNgmc+xy1dBmNv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlup+KcACgkQ3SOs138+
-s6GkyQ/8CkPM20hzLpybk7kJEyHtpVoCE24RzOcfxF6PjI6RlSLHOLXr9jBvpqYm
-zDKD/geZgXUJQxnz8LS5tP1W9KUMkyFnpa5Db2WWMG0Zu0M3Op50iCLdLEnROo0a
-7/iGEJ0q+Ne+jmtqy9G1T9Ik8QXMCAPkU8Sk0cSfz56c8CLWmsLI0QSw+sOVdrUG
-dPJbDdEqCen8s1B5pkIm5Ico8maFcZZoeoBrnsuDnwgL+DWljx4oQRHw9hGyBV4k
-g5G4b+ZJD0lNa5VaLIoEV+iBpC5ThXHX3HueLK+kzaBCm8dyQm0IVaF2ZjAXhsTf
-0ygSAL3fqfCOIuLyovBymQBw/HJVZUgV9OojvTu5aEvBQiSn7YujXwTVG2gW26xE
-d5d5hgrn1bPklGqyAdmfz8O0TRR18xV1KoLgBR8Ejoq2TznSFBUko5DUMmghs+g6
-OAMNB5S2toooDTPJKTuGZDYezoUESqCtC8gQWyw/lRGGl+CUaRZWGy0fRsLPZcTi
-9vu7N02VE0sU0BjH8Km4XRs7G+Vf/q95CS0BCwlSjt8epzcGCersLpeyuP9Sc6xY
-S0D5EqZNsWpN+WieH2QsUbuSam1ytCuHY+Nf982rhE4cdRAINdph6w+vRqf+MmW2
-ovC9xQPLop0KnkpUWdtk3+xVKHT25wplRBhOqkDhhWAsBnwLsp4=
-=nlv0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqANcACgkQ3SOs138+
+s6FOohAAnjOywHub21XI16qhVfLaOGOM3VRJ9YjtLXEdYKmfIciVQMeVN9M72j/K
+hZ+0WRz1OFtvvTIayJlGebviYwBBh2fPqSExJl018eVoOCr11usgl1EHkPITswxd
+zmEuC3E0hx19wR0iBjm8O5cD02M5tJwGZrihUaWCtR2BIly98zI2YA1cDTM5aveZ
+heZoW4r4NebMj+FHJZmHGx6II+JIkTkIaVd/QhGbBOmldxuMwllfTXumVE0dDtSd
+bPhnqZSdWNKznn5yxxhE9jXtpN2Rnc1gCejdUDfu8iDpKhYHTvJp8tLFkm4q4cGx
+rdfW1BUY45zfPTKZl7B6FSg0L/DoAw+i3TlSVj3cniqGDgp1av5P5lpjoBe2BfLK
+xhRS49jjIk0FVuBClLp/dGucdHQDOYHY5iNqdizdQ+pn57B/xYtq8KGdpSZBntLX
+uXUDPJfb6HGI7K+SoSyn9pZEwTZZE0R9gu5IkrR5vQ7cIaZL8lzD0l8nTeRyoUMo
+hU8CINGMY5TJwWDjai20AawNQv818rFoXKmZuChowkAQOdXf9vnEWSVI8co52M5T
+3qUi7I6EtjJjmxs8wlm59PCxgkGsj3hcnlHCtqi/wKmQ2OJp0pHUNLRdz+4/kWq5
+8DX+oCTXpSjDOKLiCg3JJdf7vgAbx41XTfLmWNWB0b1DndOFtzE=
+=eTIG
 -----END PGP SIGNATURE-----
 
---0F1p//8PRICkK4MW--
-
---===============1272135458==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1272135458==--
+--qlTNgmc+xy1dBmNv--
