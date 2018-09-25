@@ -1,65 +1,44 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
- Tegra20/30
-Date: Tue, 25 Sep 2018 20:29:24 +0300
-Message-ID: <074a169d-294b-ad4b-ddbd-6db742278f2a@gmail.com>
-References: <20180830194356.14059-1-digetx@gmail.com>
- <20180830194356.14059-2-digetx@gmail.com> <20180925165810.GA32430@bogus>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 26/34] dt-bindings: add broadcom (formerly plx
+ technology) vendor prefix
+Date: Tue, 25 Sep 2018 13:24:59 -0500
+Message-ID: <20180925182459.GA21710@bogus>
+References: <20180831163817.23970-1-marcel@ziswiler.com>
+ <20180831163817.23970-27-marcel@ziswiler.com>
+ <ed2ffc72-68d6-476a-d589-6738fcbf1d7c@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180925165810.GA32430@bogus>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <ed2ffc72-68d6-476a-d589-6738fcbf1d7c@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: Marcel Ziswiler <marcel@ziswiler.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <treding@nvidia.com>, David Lechner <david@lechnology.com>, Johan Hovold <johan@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 9/25/18 7:58 PM, Rob Herring wrote:
-> On Thu, Aug 30, 2018 at 10:43:52PM +0300, Dmitry Osipenko wrote:
->> Add device-tree binding that describes CPU frequency-scaling hardware
->> found on NVIDIA Tegra20/30 SoC's.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
->>  1 file changed, 38 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>
->> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->> new file mode 100644
->> index 000000000000..2c51f676e958
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->> @@ -0,0 +1,38 @@
->> +Binding for NVIDIA Tegra20 CPUFreq
->> +==================================
->> +
->> +Required properties:
->> +- clocks: Must contain an entry for each entry in clock-names.
->> +  See ../clocks/clock-bindings.txt for details.
->> +- clock-names: Must include the following entries:
->> +  - pll_x: main-parent for CPU clock, must be the first entry
->> +  - backup: intermediate-parent for CPU clock
->> +  - cpu: the CPU clock
+On Fri, Aug 31, 2018 at 08:01:01PM +0200, Andreas Färber wrote:
+> Am 31.08.2018 um 18:38 schrieb Marcel Ziswiler:
+> > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > 
+> > PLX Technology meanwhile got bought by Broadcom Corporation but the
+> > vendor prefix plx is still used in 8 current device trees. This silences
+> > the following checkpatch.pl warning:
+> > 
+> > WARNING: DT compatible string vendor "plx" appears un-documented
+> >  -- check ./Documentation/devicetree/bindings/vendor-prefixes.txt
+> > 
+> > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> The Cortex A9 has CLK, PERIPHCLK, and PERIPHCLKEN clocks and only CLK 
-> is used for the cpu core. You can't just define your own clocks that 
-> you happen to want access to.
+> Sounds sensible,
 > 
-> Otherwise, you're not defining anything new here, so a binding document 
-> isn't required.
+> Reviewed-by: Andreas Färber <afaerber@suse.de>
+> 
+> You may want to tweak the subject though, it is slightly confusing as
+> Broadcom already has a vendor prefix.
 
-PERIPHCLK is a different thing. Here we are defining the CPU clock and
-its *parent* sources, the PLLX (main) and backup (intermediate clock
-that is used while PLLX changes its rate). These are not some random
-clocks "that you happen to want access to", they are essential for the
-Tegra CPUFreq driver, CPU is running off them.
+Yes, please.
 
-I assume that PERIPHCLK and other clocks are derived from the "CPU"
-clock and their configuration is hardwired. Probably Peter knows how
-it's implemented in HW.
+With that,
 
-I'm now working on v2 that will include more Tegra-specific stuff in the
-binding, like custom "opp-supported-hw" property and probably some more.
+Acked-by: Rob Herring <robh@kernel.org>
