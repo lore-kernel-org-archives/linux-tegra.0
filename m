@@ -1,79 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
-Date: Tue, 25 Sep 2018 10:11:06 +0200
-Message-ID: <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
-References: <20180921102546.12745-1-thierry.reding@gmail.com> <20180921102546.12745-7-thierry.reding@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
+ clk_round_rate
+Date: Tue, 25 Sep 2018 11:44:19 +0300
+Message-ID: <20180925084419.GI7636@tbergstrom-lnx.Nvidia.com>
+References: <20180921220149.17136-1-decatf@gmail.com>
+ <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
+ <20180924191804.GA20060@r>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180921102546.12745-7-thierry.reding@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20180924191804.GA20060@r>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: r yang <decatf@gmail.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry!
+On Mon, Sep 24, 2018 at 03:18:04PM -0400, r yang wrote:
+> On Mon, Sep 24, 2018 at 11:08:03AM +0300, Peter De Schrijver wrote:
+> > On Fri, Sep 21, 2018 at 06:01:49PM -0400, ryang wrote:
+> > > The current behavior is that clk_round_rate would return the same clock
+> > > rate passed to it for valid PLL configurations. This change will return
+> > > the exact rate the PLL will provide in accordance with clk API.
+> > > 
+> > > Signed-off-by: ryang <decatf@gmail.com>
+> > > ---
+> > >  drivers/clk/tegra/clk-pll.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> > > index 17a058c3bbc1..36014a6ec42e 100644
+> > > --- a/drivers/clk/tegra/clk-pll.c
+> > > +++ b/drivers/clk/tegra/clk-pll.c
+> > > @@ -595,7 +595,12 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+> > >  		return -EINVAL;
+> > >  	}
+> > >  
+> > > -	cfg->output_rate >>= p_div;
+> > > +	if (cfg->m == 0) {
+> > > +		cfg->output_rate = 0;
+> > 
+> > I think a WARN_ON() is appropriate here. the input divider should never be 0.
+> > 
+> > Peter.
+> > 
+> 
+> Should it return -EINVAL (or some error) too? _calc_rate is also in the
+> clk_set_rate code path. I think we want to avoid programming the
+> register to 0 input divider all together?
+> 
 
-Thanks for the patch!
+Yes. writing 0 to the input divider is usually not allowed. In some cases it's
+equivalent to writing 1, but better not count on that.
 
-I am a bit ignorant about irqdomains so I will probably need an ACK
-from some irq maintainer before I can apply this.
+Peter.
 
-On Fri, Sep 21, 2018 at 12:25 PM Thierry Reding
-<thierry.reding@gmail.com> wrote:
-
-> From: Thierry Reding <treding@nvidia.com>
->
-> Hierarchical IRQ domains can be used to stack different IRQ controllers
-> on top of each other. One specific use-case where this can be useful is
-> if a power management controller has top-level controls for wakeup
-> interrupts. In such cases, the power management controller can be a
-> parent to other interrupt controllers and program additional registers
-> when an IRQ has its wake capability enabled or disabled.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-While I think it is really important that we start supporting hierarchical
-irqdomains in the gpiolib core, I want a more complete approach,
-so that drivers that need hierarchical handling of irqdomains
-can get the same support from gpiolib as they get for simple
-domains.
-
-> @@ -1918,7 +1918,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
->                 type = IRQ_TYPE_NONE;
->         }
->
-> -       gpiochip->to_irq = gpiochip_to_irq;
-> +       if (!gpiochip->to_irq)
-> +               gpiochip->to_irq = gpiochip_to_irq;
-
-So here you let the drivers override the .to_irq() function and that
-I think gets confusing as we are asking gpiolib to handle our
-irqchip.
-
-
-> -       gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
-> -                                                    gpiochip->irq.first,
-> -                                                    ops, gpiochip);
-> +       if (gpiochip->irq.parent_domain)
-> +               gpiochip->irq.domain = irq_domain_add_hierarchy(gpiochip->irq.parent_domain,
-> +                                                               0, gpiochip->ngpio,
-> +                                                               np, ops, gpiochip);
-> +       else
-> +               gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
-> +                                                            gpiochip->irq.first,
-> +                                                            ops, gpiochip);
-
-So this part is great: if we pass in a parent domain the core helps us
-create the hierarchy.
-
-But the stuff in .to_irq() should also be handled in the gpiolib core:
-the irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec) for
-example. That way you should not need any external .to_irq() function.
-
-I can't see if you need to pull more stuff into the core to accomplish
-that, but I think in essence the core gpiolib needs to be more helpful
-with hierarchies.
-
-Yours,
-Linus Walleij
+> > > +	} else {
+> > > +		cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
+> > > +		cfg->output_rate >>= p_div;
+> > > +	}
+> > >  
+> > >  	if (pll->params->pdiv_tohw) {
+> > >  		ret = _p_div_to_hw(hw, 1 << p_div);
+> > > -- 
+> > > 2.17.1
+> > > 
