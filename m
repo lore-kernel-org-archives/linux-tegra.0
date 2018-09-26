@@ -1,84 +1,67 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] drm/tegra: Replace drm_dev_unref with drm_dev_put
-Date: Wed, 26 Sep 2018 17:04:18 +0200
-Message-ID: <20180926150418.GH12980@ulmo>
-References: <20180926115640.24755-1-tzimmermann@suse.de>
+Subject: Re: [PATCH v2] ARM: tegra: tegra20: Fix mixed tabs-spaces indentation
+Date: Wed, 26 Sep 2018 17:08:28 +0200
+Message-ID: <20180926150828.GI12980@ulmo>
+References: <20180830172153.20653-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0710549661=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180926115640.24755-1-tzimmermann@suse.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fmvA4kSBHQVZhkR6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180830172153.20653-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0710549661==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0OWHXb1mYLuhj1Ox"
-Content-Disposition: inline
-
-
---0OWHXb1mYLuhj1Ox
+--fmvA4kSBHQVZhkR6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 26, 2018 at 01:56:40PM +0200, Thomas Zimmermann wrote:
-> This patch unifies the naming of DRM functions for reference counting
-> of struct drm_device. The resulting code is more aligned with the rest
-> of the Linux kernel interfaces.
+On Thu, Aug 30, 2018 at 07:21:53PM +0200, Krzysztof Kozlowski wrote:
+> Fix indentation and alignment when spaces were used instead of tabs.
+> This fixes checkpatch errors like:
 >=20
-> v2:
-> 	* rebased onto 'drm/tegra: kick out simplefb'
+>     ERROR: code indent should use tabs where possible
+>     #306: FILE: arch/arm/boot/dts/tegra20-paz00.dts:306:
+>     +^I^I         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;$
 >=20
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>=20
 > ---
->  drivers/gpu/drm/tegra/drm.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>=20
+> Changes since v1:
+> 1. Add Marcel's ack.
+> ---
+>  arch/arm/boot/dts/tegra20-colibri.dtsi | 2 +-
+>  arch/arm/boot/dts/tegra20-paz00.dts    | 6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---0OWHXb1mYLuhj1Ox
+--fmvA4kSBHQVZhkR6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurn/IACgkQ3SOs138+
-s6FcXQ/8DdssyDvlp7PzTaWnZwK1PiF7+xfeiPJpD6xY5KdZyq0GoDM1D2eaV77y
-v9tYBimDp3ckKdCpxl44AeUH+KTpxi9EcApiADSnK2DDnXWvZcMo1WdTcZa3m6oS
-EgixMusFLyfjkBK/BOMizQZr9DaFq7Z7Wn7x0MHEd2N36Sp0/Sive1kUZs+PnbTQ
-gbMSTolU9krOViPIKBMwhDH3B1aA6X7Vw2yCeF9n1DcVFr7BiyatRUEh41HZwQ+F
-+6tRDVieXYTbjZ5NoxSSKsF7TIQzKaaq3vCdcVCo5uo6FAvoN61cptlLic75SXAz
-CtCnb/Y3GsUo3dQKidEcSQu5X5jdINXUaKyb9svnZITDxSevsgog5NX8F/NWjnTj
-j7BUznILij3FufIOVNiibG7Hl5WbYUfm9RmCKJ6+Gk4rRGCHvc7g0AtafDx2sY37
-BVOiVafJOr8TNLXRStscS6X4RLwrPK4DielnZffpr9foCe3TIK1CsVoZS3XgL1XH
-aEGOf+TPBg/E0Ecsh2Nq7u5ahOcCUI+QTLgfz5v4tMqPMjp/h3YogjKCV+v0twCv
-JB2MTa42QUqK06Oc8wsGJSSGVBXVvMQmFL/2WMRaeKIYAP6Bgi1v06YhbQBEZBAC
-La/+4yiOkON7jslgd+L6zASeVtIq2xv7Eo1RAEybi8HMYdhz9RA=
-=/nCQ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluroOwACgkQ3SOs138+
+s6H7ZRAAs/BNgDpG8YDi1HtViiLhc7rFDXqg0c8zCwStL+3kmp1jLlcaL6w+6ce0
+g/+CnvXt+VeNBxgoMGMip4GIDH7usOqKkpzbdl8H2xPzDKIQTX2cwbu+LhP0N6zK
+I1D9rdDANwWVwdoGbT0Be7mlSqQQ+wNggCOH0Yq1zr0CrJAu98R97uMHAE2gbtGd
+20OkTLhgNHXWjfBoPrO/PYOqu+AiAcDDsqf5LSnPPET+4/pvSWSdXbjvKSvePdh7
+jBxDma9trLzUG0Mm9d4AFe9bv0ycYrYMKekyqViHj3uEpoFcFCnH4CR/e0jfBPBR
+r5Voo5lZI7knwwLhpRCWGojJAqC8+iqwNutzNYBZaboM+oI75v7iGZYuMls1v2FG
+5DpNGnW8kg4qGx8Ri4d5jM75kguZWnYa/Bkl/Y9s8zobxQuUhGfi1pWMYS+P+JDp
+19F0QhOZPQEqxP9IhSP7G+Tp4B6cBs4zOzHpN/5o4ebmGwI8GeiSskib/Wd6BaA3
+iNQ62JcmIFU+Rz2kltWc8fP54N8J1cp1wkqgPDo6bJQBLQLgW9Hb3AGLsQQvsaGW
+ISBgIsMgJFJ7hp9vdl9R4SuqnXYYbsiitnj2TwUH2Ia8hJuH+YBme/49koaU/Msh
+Bx5RXTX66Hzd1ZlEfTrEAHWgHgT1W4ysuAS49b61HHJRtKG3SzU=
+=gOMv
 -----END PGP SIGNATURE-----
 
---0OWHXb1mYLuhj1Ox--
-
---===============0710549661==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0710549661==--
+--fmvA4kSBHQVZhkR6--
