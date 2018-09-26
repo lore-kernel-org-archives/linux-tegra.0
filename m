@@ -1,54 +1,84 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 1/5] PM / Domains: Export symbol for
- genpd_dev_pm_attach_by_name
-Date: Wed, 26 Sep 2018 16:02:07 +0100
-Message-ID: <afd04dd4-4199-9bb8-1b21-11444bb1773a@nvidia.com>
-References: <1537964858-30332-1-git-send-email-jonathanh@nvidia.com>
- <1537964858-30332-2-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFrtw1aYg5QbgRi_jp-xd0VLNeRYhb4HvX4P3AfGjgO0VA@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] drm/tegra: Replace drm_dev_unref with drm_dev_put
+Date: Wed, 26 Sep 2018 17:04:18 +0200
+Message-ID: <20180926150418.GH12980@ulmo>
+References: <20180926115640.24755-1-tzimmermann@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFrtw1aYg5QbgRi_jp-xd0VLNeRYhb4HvX4P3AfGjgO0VA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Thierry Reding <thierry.reding@gmail.com>, DTML <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0710549661=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180926115640.24755-1-tzimmermann@suse.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 26/09/18 15:09, Ulf Hansson wrote:
-> On 26 September 2018 at 14:27, Jon Hunter <jonathanh@nvidia.com> wrote:
->> Export the symbol for genpd_dev_pm_attach_by_name() so that drivers
->> built as modules can call this function.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/base/power/domain.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->> index 4b5714199490..b2bbe0d848d2 100644
->> --- a/drivers/base/power/domain.c
->> +++ b/drivers/base/power/domain.c
->> @@ -2397,6 +2397,7 @@ struct device *genpd_dev_pm_attach_by_name(struct device *dev, char *name)
->>
->>         return genpd_dev_pm_attach_by_id(dev, index);
->>  }
->> +EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_name);
-> 
-> Driver's shouldn't be calling this function, but instead use
-> dev_pm_domain_attach_by_name().
-> 
-> Is there any problem with that?
+--===============0710549661==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0OWHXb1mYLuhj1Ox"
+Content-Disposition: inline
 
-No not at all. Yes that works, sorry it had been a while since I looked
-at this and managed to balls it up. OK, I will drop this and correct the
-API used by the driver.
 
-Cheers!
-Jon
+--0OWHXb1mYLuhj1Ox
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-nvpublic
+On Wed, Sep 26, 2018 at 01:56:40PM +0200, Thomas Zimmermann wrote:
+> This patch unifies the naming of DRM functions for reference counting
+> of struct drm_device. The resulting code is more aligned with the rest
+> of the Linux kernel interfaces.
+>=20
+> v2:
+> 	* rebased onto 'drm/tegra: kick out simplefb'
+>=20
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+
+Applied, thanks.
+
+Thierry
+
+--0OWHXb1mYLuhj1Ox
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurn/IACgkQ3SOs138+
+s6FcXQ/8DdssyDvlp7PzTaWnZwK1PiF7+xfeiPJpD6xY5KdZyq0GoDM1D2eaV77y
+v9tYBimDp3ckKdCpxl44AeUH+KTpxi9EcApiADSnK2DDnXWvZcMo1WdTcZa3m6oS
+EgixMusFLyfjkBK/BOMizQZr9DaFq7Z7Wn7x0MHEd2N36Sp0/Sive1kUZs+PnbTQ
+gbMSTolU9krOViPIKBMwhDH3B1aA6X7Vw2yCeF9n1DcVFr7BiyatRUEh41HZwQ+F
++6tRDVieXYTbjZ5NoxSSKsF7TIQzKaaq3vCdcVCo5uo6FAvoN61cptlLic75SXAz
+CtCnb/Y3GsUo3dQKidEcSQu5X5jdINXUaKyb9svnZITDxSevsgog5NX8F/NWjnTj
+j7BUznILij3FufIOVNiibG7Hl5WbYUfm9RmCKJ6+Gk4rRGCHvc7g0AtafDx2sY37
+BVOiVafJOr8TNLXRStscS6X4RLwrPK4DielnZffpr9foCe3TIK1CsVoZS3XgL1XH
+aEGOf+TPBg/E0Ecsh2Nq7u5ahOcCUI+QTLgfz5v4tMqPMjp/h3YogjKCV+v0twCv
+JB2MTa42QUqK06Oc8wsGJSSGVBXVvMQmFL/2WMRaeKIYAP6Bgi1v06YhbQBEZBAC
+La/+4yiOkON7jslgd+L6zASeVtIq2xv7Eo1RAEybi8HMYdhz9RA=
+=/nCQ
+-----END PGP SIGNATURE-----
+
+--0OWHXb1mYLuhj1Ox--
+
+--===============0710549661==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0710549661==--
