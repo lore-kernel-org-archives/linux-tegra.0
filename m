@@ -1,85 +1,62 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1] drm/tegra: Detach devices from IOMMU DMA domain on
- arm32
-Date: Wed, 26 Sep 2018 17:24:25 +0200
-Message-ID: <20180926152425.GK12980@ulmo>
-References: <20180819142421.22567-1-digetx@gmail.com>
+Subject: Re: [PATCH v2] drivers/thermal/tegra: Fix a double free on the
+ device node
+Date: Wed, 26 Sep 2018 17:24:59 +0200
+Message-ID: <20180926152459.GL12980@ulmo>
+References: <1535376738-14035-1-git-send-email-zhongjiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1626964683=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180819142421.22567-1-digetx@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1X+6QtwRodzgDPAC"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1535376738-14035-1-git-send-email-zhongjiang@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: zhong jiang <zhongjiang@huawei.com>
+Cc: daniel.lezcano@linaro.org, rui.zhang@intel.com, edubezval@gmail.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ezequiel@collabora.com
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1626964683==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pWJxWxNlJUNgDlXi"
-Content-Disposition: inline
-
-
---pWJxWxNlJUNgDlXi
+--1X+6QtwRodzgDPAC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 19, 2018 at 05:24:20PM +0300, Dmitry Osipenko wrote:
-> All Tegra DRM devices are getting attached to an implicit IOMMU DMA
-> domain if CONFIG_ARM_DMA_USE_IOMMU=3Dy. Since Tegra DRM driver manages IO=
-MMU
-> by itself, the devices must be detached from the implicit domain using
-> arch-specific IOMMU-API. Note that this works only for arm32 and not for
-> arm64, which will remain broken if CONFIG_IOMMU_DMA is enabled.
+On Mon, Aug 27, 2018 at 09:32:18PM +0800, zhong jiang wrote:
+> The function 'for_each_child_of_node' iterates over the node list by
+> dropping the of_node reference of the previous node.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Calling of_node_put() on the iterator is pointless and leads to an
+> inconsistent refcounting in addition to a double free. Remove it.
+>=20
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 > ---
->  drivers/gpu/drm/tegra/drm.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> v1->v2: According to Daniel's suggestion. I modify the subject and commit=
+ log.
+>=20
+>  drivers/thermal/tegra/soctherm.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-Applied, thanks.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---pWJxWxNlJUNgDlXi
+--1X+6QtwRodzgDPAC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurpKcACgkQ3SOs138+
-s6EBQhAAwlyLVEmclgv6zDTns8fWC0dpQL+cSCtgJ69xwuf1i1JPxYr/1Wzat2on
-5bkEn1sp+nhszs2Ra/Q9e4wKE27otPVruXY6QX8hhM7aU6oerJF0BnbGCW84pKfg
-2DYxISrQ3QhdN06YkguqPbIlzTLIPL+SmE71n+n/+eKGGuVjbH0cZHaH9ulGZG18
-/ed0ZPZTa5ihllD+LNiCt7Ej8Hb5Yd+A8NgcqXLFnaByWOjxp+dsUrKcrKFStaqX
-bpO/sdyuEYeWTvaRLhBT/kw4sQRcdaGyJpRXQD+MuStBxO8lPYEWHyRrjd5CZwta
-oclaMfvbKJ1TzFd4hy3WwZFtIrWGSFK/6MU94JX4si7xeZ0uR0slRRrs/TV+okcb
-RMWkFQk2bWr6J2Wq/1vCmM2Z7WbfafvSvqyOkAMepsdb+SVjPkM8+9muxFa8wm5G
-huwdKEd+oRvE1wAutTGzYCvzzyGPEsaPGTikl02PQtfvzOscMM8bVPdXsl4cLekT
-WtdzKCJGIerXsvFQSBXqnzP/K18EXyDJXP1oqWJUOoCgDmoluCew81Hgmga50lQ/
-+DXTXfi0xDNi7aedcAhqLTPIBWLRJm/C5i0nr/zxil3FhM8ggPnh0wueTBib1YnQ
-0dq3UmrjHHTOSXOoV5VjSra059hmD1KPjzY1OQ53L45JOS8aXVU=
-=wjr7
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurpMsACgkQ3SOs138+
+s6EP/A//QHaNYw7hhfwyhf5lt/U1Hy/GyDBw1Si537ox+QLGv14Dk2AiXSIR4tsp
+z+pQ+mQHeJQoN5VYdQQ4DDLUUV9S+HC4Aavhh688ImwtD/EXw30oDta0GuxUAqJg
+sPr+t8cdgqTXOt4ufTh3JsYtSGu3XpP8g0hoVHKSSiAnJTh3j1p9AHRyuAsBQrMX
+LJXlveFToO49N+F3c7f88sfRyzZg0PjNDMXef2dQeVKbVatylu71WdH3P66M+2eD
+K5RXj7oNqZQv2oPSGHJ00svPFZ18kaIu8Y3EErm6R1gDt877mUvxLKgFT36wv2JX
+awP3a5FEw7ELkDKwADd80fZbejApU3Jja9H/fzwftiiYP9Edd4YBajn/hB7VPOSm
+RxIIHgRL99IdjtTubQ2E5RKZ5xSdspfqvq6VXz7c+3K//pJ946bsBTKoj5LurSO2
+dGNwaw0sLjI+9bl03i5Yt+V3oqeO2bAtH5ffN6JekPxjNsEB29gtUVMVsC4f2pXr
+Kk8+wJ8pz92/3Wj3y6eaysDbve3NPZdwH/4fom/Hu8G8WDBWGV/gu2NvGldjB9z7
+/XWI6Jhe7aXiTN6iwQS5Zrs2eRm73kG75Qk6yd9/cXqfU3q/ARbdLB42RW9NGr6K
+jN+uXqGKfuvy2arGjamoM8YqK8EV+z2Ptk7GiS7Rz09oZgSLm6Y=
+=dyqt
 -----END PGP SIGNATURE-----
 
---pWJxWxNlJUNgDlXi--
-
---===============1626964683==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1626964683==--
+--1X+6QtwRodzgDPAC--
