@@ -1,105 +1,58 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: Re: [PATCH v2 00/37] ARM: dts: tegra: colibri_t20: major revamp incl. eval board support
-Date: Wed, 26 Sep 2018 18:52:27 +0200
-Message-ID: <8DE81AAE-BF2A-45F5-B638-CAAA9AA5AFCF@ziswiler.com>
-References: <20180902100906.25792-1-marcel@ziswiler.com> <20180926145646.GG12980@ulmo>
+From: Vlado Plaga <rechner@vlado-do.de>
+Subject: Re: [PATCH] i2c: of: Try to find an I2C adapter matching the parent
+Date: Wed, 26 Sep 2018 20:20:42 +0200
+Message-ID: <e84a1565-5d88-ebfa-54ae-e4b3254f4287@vlado-do.de>
+References: <20180925160611.17736-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180926145646.GG12980@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180925160611.17736-1-thierry.reding@gmail.com>
+Content-Language: en-US-large
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: rechner@vlado-do.de, dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry
-
-
-On September 26, 2018 4:56:46 PM GMT+02:00, Thierry Reding <thierry.reding@gmail.com> wrote:
->On Sun, Sep 02, 2018 at 12:08:29PM +0200, Marcel Ziswiler wrote:
->> This series is a major overhaul and adds support for the Colibri
->> Evaluation Board device tree.
->> 
->> Changes in v2:
->> - Fix commit message which was mixed up between "[PATCH 03/31] ARM:
->>   tegra: colibri_t20: iris: annotate i2c busses" and "[PATCH 04/31]
->ARM:
->>   tegra: colibri_t20: iris: add missing aliases".
->> - Also replace underscores in node names with dashes.
->> - Also reflect this change in the Iris device tree.
->> - Also reflect this change in the device tree bindings documentation.
->> - New patch as suggested by Rob.
->> - New patch.
->> - Get rid of fake clocks simple bus as suggested by Rob.
->> - Updated evaluation board device tree with all applicable previous
->>   fixes.
->> - Also reflect this addition in the device tree bindings
->documentation.
->> 
->> Marcel Ziswiler (37):
->>   ARM: tegra: colibri_t20: move aliases from module to carrier board
->>   ARM: tegra: colibri_t20: iris: integrate i2c real time clock
->support
->>   ARM: tegra: colibri_t20: iris: add missing aliases
->>   ARM: tegra: colibri_t20: iris: annotate i2c busses
->>   ARM: tegra: colibri_t20: add local-mac-address property
->>   ARM: tegra: colibri_t20: reorder host1x/hdmi properties
->>   ARM: tegra: colibri_t20: iris: use no-1-8-v
->>   ARM: tegra: colibri_t20: regulator clean-up
->>   ARM: tegra: colibri_t20: add missing regulators
->>   ARM: tegra: colibri_t20: annotate usb ehci instances
->>   ARM: tegra: colibri_t20: remove phy-reset-gpio from controller node
->>   ARM: tegra: colibri_t20: indentation/line-feed/white-space clean-up
->>   ARM: tegra: colibri_t20: update sound nvidia,model
->>   ARM: tegra: colibri_t20: pinmux clean-up
->>   ARM: tegra: colibri_t20: add missing pinmux
->>   ARM: tegra: colibri_t20: iris: display controller rgb panel support
->>   ARM: tegra: colibri_t20: iris: annotate uarts
->>   ARM: tegra: colibri_t20: iris: add uart-c
->>   ARM: tegra: colibri_t20: use high speed uart driver
->>   ARM: tegra: colibri_t20: iris: add gpio wakeup key
->>   ARM: tegra: colibri_t20: iris: add dr_mode property
->>   ARM: tegra: colibri_t20: annotate/rename lm95245 temperature sensor
->>   ARM: tegra: colibri_t20: add i2c-thermtrip
->>   ARM: tegra: colibri_t20: add gpio hog to unreset usb ethernet chip
->>   ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
->>   ARM: tegra: colibri_t20: annotate/move sd card detect
->>   ARM: tegra: colibri_t20: add compatibility comment
->>   ARM: tegra: colibri_t20: simplify model and compatible properties
->>   ARM: tegra: colibri_t20: iris: simplify model and compatible
->>     properties
->>   ARM: tegra: colibri_t20: iris: add colibri ssp support
->>   ARM: tegra: colibri_t20: drop module level model and compatible
->>   ARM: tegra: colibri_t20: rename i2c_ddc to hdmi_ddc
->>   ARM: tegra: colibri_t20: iris: drop unused i2c_ddc label
->>   ARM: tegra: colibri_t20: rename tps6586x@34 and drop unused pmic
->label
->>   ARM: tegra: colibri_t20: get rid of fake clocks simple bus
->>   ARM: tegra: colibri_t20: rename ac97 label to tegra_ac97
->>   ARM: tegra: colibri_t20: add eval board device tree
->> 
->>  Documentation/devicetree/bindings/arm/tegra.txt |   5 +-
->>  arch/arm/boot/dts/Makefile                      |   1 +
->>  arch/arm/boot/dts/tegra20-colibri-eval-v3.dts   | 262 ++++++++++
->>  arch/arm/boot/dts/tegra20-colibri-iris.dts      | 200 ++++++--
->>  arch/arm/boot/dts/tegra20-colibri.dtsi          | 655
->++++++++++++++++--------
->>  5 files changed, 866 insertions(+), 257 deletions(-)
->>  create mode 100644 arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
->
->Applied, thanks. All of these series together have got to be some kind
->of a record.
-
-Thank you very much!
-
-Yeah, sorry about that. With the downstream L4T R16.5 based stuff with its 3.1.10 kernel definitely becoming obsolete, more and more of our customers switch to using mainline based stuff. After all we are still selling hundred thousands of those modules every year and hope to continue to do so many more years.
-
-BTW: Rob's latest feedback will make it into another few patches I guess. Keep tuned...
-
->Thierry
-
-Cheers
-
-Marcel
+VGVzdGVkLWJ5OiBWbGFkbyBQbGFnYSA8cmVjaG5lckB2bGFkby1kby5kZT4KClRoaXMgcGF0Y2gg
+d29ya3MgZm9yIG1lIC0gd2l0aG91dCBpdCBteSBzY3JlZW4gc3RheXMgYmxhY2sgKEFjZXIgQ0I1
+LTMxMSkuCgpPbiAyNS8wOS8yMDE4IDE4OjA2LCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiBGcm9t
+OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+Cj4gSWYgYW4gSTJDIGFkYXB0
+ZXIgZG9lc24ndCBtYXRjaCB0aGUgcHJvdmlkZWQgZGV2aWNlIHRyZWUgbm9kZSwgYWxzbyB0cnkK
+PiBtYXRjaGluZyB0aGUgcGFyZW50J3MgZGV2aWNlIHRyZWUgbm9kZS4gVGhpcyBhbGxvd3MgZmlu
+ZGluZyBhbiBhZGFwdGVyCj4gYmFzZWQgb24gdGhlIGRldmljZSBub2RlIG9mIHRoZSBwYXJlbnQg
+ZGV2aWNlIHRoYXQgd2FzIHVzZWQgdG8gcmVnaXN0ZXIKPiBpdC4KPgo+IFNpZ25lZC1vZmYtYnk6
+IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+ClsuLi5dCj4gIGRyaXZlcnMvaTJj
+L2kyYy1jb3JlLW9mLmMgfCAxMSArKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5z
+ZXJ0aW9ucygrKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTJjL2kyYy1jb3JlLW9mLmMgYi9k
+cml2ZXJzL2kyYy9pMmMtY29yZS1vZi5jCj4gaW5kZXggNmNiN2FkNjA4YmNkLi4zN2QzNDg4NWVh
+MmQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9pMmMvaTJjLWNvcmUtb2YuYwo+ICsrKyBiL2RyaXZl
+cnMvaTJjL2kyYy1jb3JlLW9mLmMKPiBAQCAtMTIxLDYgKzEyMSwxNCBAQCBzdGF0aWMgaW50IG9m
+X2Rldl9ub2RlX21hdGNoKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSkKPiAgCXJldHVy
+biBkZXYtPm9mX25vZGUgPT0gZGF0YTsKPiAgfQo+ICAKPiArc3RhdGljIGludCBvZl9wYXJlbnRf
+bm9kZV9tYXRjaChzdHJ1Y3QgZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEpCj4gK3sKPiArCWlmIChk
+ZXYtPnBhcmVudCkKPiArCQlyZXR1cm4gZGV2LT5wYXJlbnQtPm9mX25vZGUgPT0gZGF0YTsKPiAr
+Cj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiAgLyogbXVzdCBjYWxsIHB1dF9kZXZpY2UoKSB3aGVu
+IGRvbmUgd2l0aCByZXR1cm5lZCBpMmNfY2xpZW50IGRldmljZSAqLwo+ICBzdHJ1Y3QgaTJjX2Ns
+aWVudCAqb2ZfZmluZF9pMmNfZGV2aWNlX2J5X25vZGUoc3RydWN0IGRldmljZV9ub2RlICpub2Rl
+KQo+ICB7Cj4gQEAgLTE0Niw2ICsxNTQsOSBAQCBzdHJ1Y3QgaTJjX2FkYXB0ZXIgKm9mX2ZpbmRf
+aTJjX2FkYXB0ZXJfYnlfbm9kZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUpCj4gIAlzdHJ1Y3Qg
+aTJjX2FkYXB0ZXIgKmFkYXB0ZXI7Cj4gIAo+ICAJZGV2ID0gYnVzX2ZpbmRfZGV2aWNlKCZpMmNf
+YnVzX3R5cGUsIE5VTEwsIG5vZGUsIG9mX2Rldl9ub2RlX21hdGNoKTsKPiArCWlmICghZGV2KQo+
+ICsJCWRldiA9IGJ1c19maW5kX2RldmljZSgmaTJjX2J1c190eXBlLCBOVUxMLCBub2RlLCBvZl9w
+YXJlbnRfbm9kZV9tYXRjaCk7Cj4gKwo+ICAJaWYgKCFkZXYpCj4gIAkJcmV0dXJuIE5VTEw7Cj4g
+IAoKLS0gCgpWbGFkbyBQbGFnYQpodHRwOi8vdmxhZG8tZG8uZGUvCmFrdWFsaXNpZXJ0OiAyMDE4
+LTA1LTA4CgoiV2VyIGRhcyBHZWxkIGhhdCwgaGF0IGRpZSBNYWNodCB1bmQgd2VyIGRpZSBNYWNo
+dCBoYXQsIGhhdCBkYXMgUmVjaHQiCmF1cyAnRGVyIEthbXBmIGdlaHQgd2VpdGVyJywgUmlvIFJl
+aXNlciB1bmQgUi5QLlMuIExhbnJ1ZSwgMTk3MQoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
