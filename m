@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 4/5] soc/tegra: pmc: Don't power-up XUSB power-domains
-Date: Wed, 26 Sep 2018 13:27:37 +0100
-Message-ID: <1537964858-30332-5-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 5/5] arm64: dts: tegra210: Add power-domains for xHCI
+Date: Wed, 26 Sep 2018 13:27:38 +0100
+Message-ID: <1537964858-30332-6-git-send-email-jonathanh@nvidia.com>
 References: <1537964858-30332-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,41 +12,25 @@ To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Rafa
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Now that the Tegra xHCI driver manages the XUSB power-domains itself,
-remove the code to power-up the power-domains used by the xHCI device
-from the PMC driver on boot.
+Populate the power-domain properties for the xHCI device for Tegra210.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 16 ----------------
- 1 file changed, 16 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index ab719fa90150..a68b4476b4ee 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -847,22 +847,6 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 		goto remove_resets;
- 	}
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 8fe47d6445a5..2205d66b0443 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -879,6 +879,8 @@
+ 		resets = <&tegra_car 89>, <&tegra_car 156>,
+ 			 <&tegra_car 143>;
+ 		reset-names = "xusb_host", "xusb_ss", "xusb_src";
++		power-domains = <&pd_xusbhost>, <&pd_xusbss>;
++		power-domain-names = "xusb_host", "xusb_ss";
  
--	/*
--	 * FIXME: If XHCI is enabled for Tegra, then power-up the XUSB
--	 * host and super-speed partitions. Once the XHCI driver
--	 * manages the partitions itself this code can be removed. Note
--	 * that we don't register these partitions with the genpd core
--	 * to avoid it from powering down the partitions as they appear
--	 * to be unused.
--	 */
--	if (IS_ENABLED(CONFIG_USB_XHCI_TEGRA) &&
--	    (id == TEGRA_POWERGATE_XUSBA || id == TEGRA_POWERGATE_XUSBC)) {
--		if (off)
--			WARN_ON(tegra_powergate_power_up(pg, true));
--
--		goto remove_resets;
--	}
--
- 	err = pm_genpd_init(&pg->genpd, NULL, off);
- 	if (err < 0) {
- 		pr_err("failed to initialise PM domain %s: %d\n", np->name,
+ 		nvidia,xusb-padctl = <&padctl>;
+ 
 -- 
 2.7.4
