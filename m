@@ -1,45 +1,40 @@
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2] drm/tegra: Replace drm_dev_unref with drm_dev_put
-Date: Wed, 26 Sep 2018 13:56:40 +0200
-Message-ID: <20180926115640.24755-1-tzimmermann@suse.de>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 0/5] Tegra xHCI genpd support
+Date: Wed, 26 Sep 2018 13:27:33 +0100
+Message-ID: <1537964858-30332-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhpcyBwYXRjaCB1bmlmaWVzIHRoZSBuYW1pbmcgb2YgRFJNIGZ1bmN0aW9ucyBmb3IgcmVmZXJl
-bmNlIGNvdW50aW5nCm9mIHN0cnVjdCBkcm1fZGV2aWNlLiBUaGUgcmVzdWx0aW5nIGNvZGUgaXMg
-bW9yZSBhbGlnbmVkIHdpdGggdGhlIHJlc3QKb2YgdGhlIExpbnV4IGtlcm5lbCBpbnRlcmZhY2Vz
-LgoKdjI6CgkqIHJlYmFzZWQgb250byAnZHJtL3RlZ3JhOiBraWNrIG91dCBzaW1wbGVmYicKClNp
-Z25lZC1vZmYtYnk6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPgotLS0K
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyB8IDEwICsrKysrLS0tLS0KIDEgZmlsZSBjaGFu
-Z2VkLCA1IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCmluZGV4
-IGI0MjRiYzkxMWI5NS4uOGNkYjYxMDU2MWJhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHJtLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCkBAIC0xMTg5LDE2
-ICsxMTg5LDE2IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1Y3QgaG9zdDF4X2Rl
-dmljZSAqZGV2KQogCiAJZXJyID0gZHJtX2ZiX2hlbHBlcl9yZW1vdmVfY29uZmxpY3RpbmdfZnJh
-bWVidWZmZXJzKE5VTEwsICJ0ZWdyYWRybWZiIiwgZmFsc2UpOwogCWlmIChlcnIgPCAwKQotCQln
-b3RvIHVucmVmOworCQlnb3RvIHB1dDsKIAogCWVyciA9IGRybV9kZXZfcmVnaXN0ZXIoZHJtLCAw
-KTsKIAlpZiAoZXJyIDwgMCkKLQkJZ290byB1bnJlZjsKKwkJZ290byBwdXQ7CiAKIAlyZXR1cm4g
-MDsKIAotdW5yZWY6Ci0JZHJtX2Rldl91bnJlZihkcm0pOworcHV0OgorCWRybV9kZXZfcHV0KGRy
-bSk7CiAJcmV0dXJuIGVycjsKIH0KIApAQCAtMTIwNyw3ICsxMjA3LDcgQEAgc3RhdGljIGludCBo
-b3N0MXhfZHJtX3JlbW92ZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2KQogCXN0cnVjdCBkcm1f
-ZGV2aWNlICpkcm0gPSBkZXZfZ2V0X2RydmRhdGEoJmRldi0+ZGV2KTsKIAogCWRybV9kZXZfdW5y
-ZWdpc3Rlcihkcm0pOwotCWRybV9kZXZfdW5yZWYoZHJtKTsKKwlkcm1fZGV2X3B1dChkcm0pOwog
-CiAJcmV0dXJuIDA7CiB9Ci0tIAoyLjE5LjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+This series add genpd support for the Tegra xHCI device that requires
+more than one power-domain to operate.
+
+This series is making changes to more than one subsystem and at first
+glance may look like a maintainers nightmare. However, my proposal is
+this, once reviewed and people are happy ...
+1. Patches 1-3 should be merged first. Note there is a dependency
+   between patches 1 and 3 such that 3 can only be merged once 1 has
+   been accepted.
+2. Once patches 1-3 are accepted, then 4 and 5 can be merged via the
+   Tegra tree.
+
+Jon Hunter (5):
+  PM / Domains: Export symbol for genpd_dev_pm_attach_by_name
+  dt-bindings: usb: xhci-tegra: Add power-domain details
+  usb: xhci: tegra: Add genpd support
+  soc/tegra: pmc: Don't power-up XUSB power-domains
+  arm64: dts: tegra210: Add power-domains for xHCI
+
+ .../bindings/usb/nvidia,tegra124-xusb.txt          |  8 ++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  2 +
+ drivers/base/power/domain.c                        |  1 +
+ drivers/soc/tegra/pmc.c                            | 16 ----
+ drivers/usb/host/xhci-tegra.c                      | 88 +++++++++++++++++++---
+ 5 files changed, 88 insertions(+), 27 deletions(-)
+
+-- 
+2.7.4
