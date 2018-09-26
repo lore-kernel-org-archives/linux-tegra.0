@@ -1,13 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3] gpu: host1x: Detach Host1x from IOMMU DMA domain on
+Subject: Re: [PATCH v1] drm/tegra: Detach devices from IOMMU DMA domain on
  arm32
-Date: Wed, 26 Sep 2018 17:12:16 +0200
-Message-ID: <20180926151216.GJ12980@ulmo>
-References: <20180830001247.29257-1-digetx@gmail.com>
+Date: Wed, 26 Sep 2018 17:24:25 +0200
+Message-ID: <20180926152425.GK12980@ulmo>
+References: <20180819142421.22567-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1321426755=="
+Content-Type: multipart/mixed; boundary="===============1626964683=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180830001247.29257-1-digetx@gmail.com>
+In-Reply-To: <20180819142421.22567-1-digetx@gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -22,64 +22,57 @@ Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, dri-devel@li
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1321426755==
+--===============1626964683==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5cSRzy0VGBWAML+b"
+	protocol="application/pgp-signature"; boundary="pWJxWxNlJUNgDlXi"
 Content-Disposition: inline
 
 
---5cSRzy0VGBWAML+b
+--pWJxWxNlJUNgDlXi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 30, 2018 at 03:12:47AM +0300, Dmitry Osipenko wrote:
-> Host1x is getting attached to an implicit IOMMU DMA domain if
-> CONFIG_ARM_DMA_USE_IOMMU=3Dy. Since Host1x driver manages IOMMU by
-> itself, Host1x device must be detached from the implicit domain using
-> arch-specific IOMMU-API.
+On Sun, Aug 19, 2018 at 05:24:20PM +0300, Dmitry Osipenko wrote:
+> All Tegra DRM devices are getting attached to an implicit IOMMU DMA
+> domain if CONFIG_ARM_DMA_USE_IOMMU=3Dy. Since Tegra DRM driver manages IO=
+MMU
+> by itself, the devices must be detached from the implicit domain using
+> arch-specific IOMMU-API. Note that this works only for arm32 and not for
+> arm64, which will remain broken if CONFIG_IOMMU_DMA is enabled.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->=20
-> Changelog:
->=20
-> v2: Correctly placed the detachment code, now Host1x is detached regardle=
-ss
->     of the firewall state.
->=20
-> v3: Compiles now.
->=20
->  drivers/gpu/host1x/dev.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/tegra/drm.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 
 Applied, thanks.
 
 Thierry
 
---5cSRzy0VGBWAML+b
+--pWJxWxNlJUNgDlXi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurodAACgkQ3SOs138+
-s6ErxA//YIMmHuMOIY2rKugJUzxpmzPHSGP9Jhoplsk1uhzsy+keyGYfRUtWFDUy
-uKd+jfSmqkGVncASggoWFRyfcpZZHJRQJxb0hMUqVboYW5HzQdf/HUpDGkKrJc4X
-AAHjgZ9uMERzPpX6wFyIkdNRqYYsoLME74NK4VZ1bhOirNcFnni64cbYJjgbd9Vt
-mT8JyqRtNdZPzB25YtL2UW1c2f1sk2JhDfnhZFs/EcCIr3unHp8XzYLrqovPdOpz
-WrdBfYix9WFdzseqC3faZeBPnoo+1HdRaWw24rUaOUFdm7XadeWJNvULRBqZeglw
-vJaUpFYOnbPmlmYvXY2ehwamoy8H5pyTeUUep4LwH29xDLr/yS4i6r1vqtBWsXtT
-KeQM/aU1C6mtbwP3U+3SiAuTwSvMVzYarKR15ah5SBpVUSQrXxY5sN//2hVcnFY4
-TTwqwQ1xBsycIUN4Wt3AdHWaBmhbgPaYV00MMX/cm7cpBqqCivbtCDNKUtW7nmIp
-RW9wiLfbX3pBO0jkL1Ii33bXbT+E7z89Jo4SXD7MX2VUg1fYoKQI8u8UhiTTtD3e
-UZiUX/xoHsxioZadPLGTU9cokRj/6qaPNpj5Z+Bid2qipExpF1IojebG2rcmrzur
-cq9ZHNeOrcMJnfuIG8d4tcIDxyRY0QJ9ZOp6kclIvhVvzF7bK9E=
-=ex+m
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurpKcACgkQ3SOs138+
+s6EBQhAAwlyLVEmclgv6zDTns8fWC0dpQL+cSCtgJ69xwuf1i1JPxYr/1Wzat2on
+5bkEn1sp+nhszs2Ra/Q9e4wKE27otPVruXY6QX8hhM7aU6oerJF0BnbGCW84pKfg
+2DYxISrQ3QhdN06YkguqPbIlzTLIPL+SmE71n+n/+eKGGuVjbH0cZHaH9ulGZG18
+/ed0ZPZTa5ihllD+LNiCt7Ej8Hb5Yd+A8NgcqXLFnaByWOjxp+dsUrKcrKFStaqX
+bpO/sdyuEYeWTvaRLhBT/kw4sQRcdaGyJpRXQD+MuStBxO8lPYEWHyRrjd5CZwta
+oclaMfvbKJ1TzFd4hy3WwZFtIrWGSFK/6MU94JX4si7xeZ0uR0slRRrs/TV+okcb
+RMWkFQk2bWr6J2Wq/1vCmM2Z7WbfafvSvqyOkAMepsdb+SVjPkM8+9muxFa8wm5G
+huwdKEd+oRvE1wAutTGzYCvzzyGPEsaPGTikl02PQtfvzOscMM8bVPdXsl4cLekT
+WtdzKCJGIerXsvFQSBXqnzP/K18EXyDJXP1oqWJUOoCgDmoluCew81Hgmga50lQ/
++DXTXfi0xDNi7aedcAhqLTPIBWLRJm/C5i0nr/zxil3FhM8ggPnh0wueTBib1YnQ
+0dq3UmrjHHTOSXOoV5VjSra059hmD1KPjzY1OQ53L45JOS8aXVU=
+=wjr7
 -----END PGP SIGNATURE-----
 
---5cSRzy0VGBWAML+b--
+--pWJxWxNlJUNgDlXi--
 
---===============1321426755==
+--===============1626964683==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -89,4 +82,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============1321426755==--
+--===============1626964683==--
