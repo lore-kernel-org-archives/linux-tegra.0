@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 1/5] PM / Domains: Export symbol for genpd_dev_pm_attach_by_name
-Date: Wed, 26 Sep 2018 13:27:34 +0100
-Message-ID: <1537964858-30332-2-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 2/5] dt-bindings: usb: xhci-tegra: Add power-domain details
+Date: Wed, 26 Sep 2018 13:27:35 +0100
+Message-ID: <1537964858-30332-3-git-send-email-jonathanh@nvidia.com>
 References: <1537964858-30332-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,25 +12,33 @@ To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Rafa
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Export the symbol for genpd_dev_pm_attach_by_name() so that drivers
-built as modules can call this function.
+Add details for power-domains to the Tegra xHCI bindings so that
+generic power-domains can be used for inconjunction with the xHCI
+driver.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/base/power/domain.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 4b5714199490..b2bbe0d848d2 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2397,6 +2397,7 @@ struct device *genpd_dev_pm_attach_by_name(struct device *dev, char *name)
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+index 3eee9e505400..4156c3e181c5 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+@@ -59,6 +59,14 @@ For Tegra210:
+ - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
+ - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+ - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
++- power-domains: A list of PM domain specifiers that reference each power-domain
++  used by the xHCI controller. This list must comprise of a specifier for the
++  XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
++  ../arm/tegra/nvidia,tegra20-pmc.txt for details.
++- power-domain-names: A list of names that represent each of the specifiers in
++  the 'power-domains' property. Must include 'xusb_ss' and 'xusb_host' which
++  represent the power-domains XUSBA and XUSBC, respectively. See
++  ../power/power_domain.txt for details.
  
- 	return genpd_dev_pm_attach_by_id(dev, index);
- }
-+EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_name);
- 
- static const struct of_device_id idle_state_match[] = {
- 	{ .compatible = "domain-idle-state", },
+ Optional properties:
+ --------------------
 -- 
 2.7.4
