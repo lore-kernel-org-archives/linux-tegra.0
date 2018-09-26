@@ -1,84 +1,45 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
- Tegra20/30
-Date: Wed, 26 Sep 2018 00:57:57 +0300
-Message-ID: <2f060ecc-44a2-9a8f-459e-5ae21990b65e@gmail.com>
-References: <20180830194356.14059-1-digetx@gmail.com>
- <20180830194356.14059-2-digetx@gmail.com> <20180925165810.GA32430@bogus>
- <074a169d-294b-ad4b-ddbd-6db742278f2a@gmail.com>
- <CAL_JsqLf+_Q8ZQAo=k8yQ4XKMccUHpm8WsQ3z_Q-PMY6gbQbbA@mail.gmail.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v2] drm/tegra: Replace drm_dev_unref with drm_dev_put
+Date: Wed, 26 Sep 2018 13:56:40 +0200
+Message-ID: <20180926115640.24755-1-tzimmermann@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqLf+_Q8ZQAo=k8yQ4XKMccUHpm8WsQ3z_Q-PMY6gbQbbA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com
+Cc: linux-tegra@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 9/25/18 10:36 PM, Rob Herring wrote:
-> On Tue, Sep 25, 2018 at 12:29 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> On 9/25/18 7:58 PM, Rob Herring wrote:
->>> On Thu, Aug 30, 2018 at 10:43:52PM +0300, Dmitry Osipenko wrote:
->>>> Add device-tree binding that describes CPU frequency-scaling hardware
->>>> found on NVIDIA Tegra20/30 SoC's.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
->>>>  1 file changed, 38 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>> new file mode 100644
->>>> index 000000000000..2c51f676e958
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>> @@ -0,0 +1,38 @@
->>>> +Binding for NVIDIA Tegra20 CPUFreq
->>>> +==================================
->>>> +
->>>> +Required properties:
->>>> +- clocks: Must contain an entry for each entry in clock-names.
->>>> +  See ../clocks/clock-bindings.txt for details.
->>>> +- clock-names: Must include the following entries:
->>>> +  - pll_x: main-parent for CPU clock, must be the first entry
->>>> +  - backup: intermediate-parent for CPU clock
->>>> +  - cpu: the CPU clock
->>>
->>> The Cortex A9 has CLK, PERIPHCLK, and PERIPHCLKEN clocks and only CLK
->>> is used for the cpu core. You can't just define your own clocks that
->>> you happen to want access to.
->>>
->>> Otherwise, you're not defining anything new here, so a binding document
->>> isn't required.
->>
->> PERIPHCLK is a different thing.
-> 
-> Right, that's what I meant. Only CLK is used.
-> 
->> Here we are defining the CPU clock and
->> its *parent* sources, the PLLX (main) and backup (intermediate clock
->> that is used while PLLX changes its rate). These are not some random
->> clocks "that you happen to want access to", they are essential for the
->> Tegra CPUFreq driver, CPU is running off them.
-> 
-> assigned-clocks is generally how we get parent clocks in this
-> situation. "clocks" is for what physical clocks are attached to a
-> given block. ARM very clearly documents the clocks for their IP
-> blocks.
-
-Okay, seems I see now what you're meaning. The PLLX is specifically
-dedicated to CPU HW on Tegra, so it shouldn't be questioning to put it
-within the CPU node, unlike the backup.
-
-The assigned-clocks are about static clocks configuration, that is
-exactly opposite to what is needed. I'm not sure what you are trying to
-convey.. we don't need to get the parent clock, but set it.
-
-How the backup/intermediate clock should be represented then? It is a
-part of HW description which potentially may vary depending on the board
-configuration.
+VGhpcyBwYXRjaCB1bmlmaWVzIHRoZSBuYW1pbmcgb2YgRFJNIGZ1bmN0aW9ucyBmb3IgcmVmZXJl
+bmNlIGNvdW50aW5nCm9mIHN0cnVjdCBkcm1fZGV2aWNlLiBUaGUgcmVzdWx0aW5nIGNvZGUgaXMg
+bW9yZSBhbGlnbmVkIHdpdGggdGhlIHJlc3QKb2YgdGhlIExpbnV4IGtlcm5lbCBpbnRlcmZhY2Vz
+LgoKdjI6CgkqIHJlYmFzZWQgb250byAnZHJtL3RlZ3JhOiBraWNrIG91dCBzaW1wbGVmYicKClNp
+Z25lZC1vZmYtYnk6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPgotLS0K
+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyB8IDEwICsrKysrLS0tLS0KIDEgZmlsZSBjaGFu
+Z2VkLCA1IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCmluZGV4
+IGI0MjRiYzkxMWI5NS4uOGNkYjYxMDU2MWJhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZHJtLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCkBAIC0xMTg5LDE2
+ICsxMTg5LDE2IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1Y3QgaG9zdDF4X2Rl
+dmljZSAqZGV2KQogCiAJZXJyID0gZHJtX2ZiX2hlbHBlcl9yZW1vdmVfY29uZmxpY3RpbmdfZnJh
+bWVidWZmZXJzKE5VTEwsICJ0ZWdyYWRybWZiIiwgZmFsc2UpOwogCWlmIChlcnIgPCAwKQotCQln
+b3RvIHVucmVmOworCQlnb3RvIHB1dDsKIAogCWVyciA9IGRybV9kZXZfcmVnaXN0ZXIoZHJtLCAw
+KTsKIAlpZiAoZXJyIDwgMCkKLQkJZ290byB1bnJlZjsKKwkJZ290byBwdXQ7CiAKIAlyZXR1cm4g
+MDsKIAotdW5yZWY6Ci0JZHJtX2Rldl91bnJlZihkcm0pOworcHV0OgorCWRybV9kZXZfcHV0KGRy
+bSk7CiAJcmV0dXJuIGVycjsKIH0KIApAQCAtMTIwNyw3ICsxMjA3LDcgQEAgc3RhdGljIGludCBo
+b3N0MXhfZHJtX3JlbW92ZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2KQogCXN0cnVjdCBkcm1f
+ZGV2aWNlICpkcm0gPSBkZXZfZ2V0X2RydmRhdGEoJmRldi0+ZGV2KTsKIAogCWRybV9kZXZfdW5y
+ZWdpc3Rlcihkcm0pOwotCWRybV9kZXZfdW5yZWYoZHJtKTsKKwlkcm1fZGV2X3B1dChkcm0pOwog
+CiAJcmV0dXJuIDA7CiB9Ci0tIAoyLjE5LjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
