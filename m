@@ -1,58 +1,54 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH] gpu: host1x: Remove redundant of_dma_configure() call
-Date: Wed, 26 Sep 2018 15:29:04 +0100
-Message-ID: <e84840fd-afe3-315b-2b81-81e3b905457d@arm.com>
-References: <ce9767cab33346772f76735933dd7896e346b477.1536770777.git.robin.murphy@arm.com>
- <20180926141054.GA12980@ulmo> <20180926141340.GB12980@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: dts: tegra30: fix xcvr-setup-use-fuses
+Date: Wed, 26 Sep 2018 16:40:24 +0200
+Message-ID: <20180926144024.GC12980@ulmo>
+References: <20180831124233.27156-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180926141340.GB12980@ulmo>
-Content-Language: en-GB
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ghzN8eJ9Qlbqn3iT"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180831124233.27156-1-marcel@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjYvMDkvMTggMTU6MTMsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+IE9uIFdlZCwgU2VwIDI2
-LCAyMDE4IGF0IDA0OjEwOjU0UE0gKzAyMDAsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+PiBPbiBX
-ZWQsIFNlcCAxMiwgMjAxOCBhdCAwNTo0Nzo1NFBNICswMTAwLCBSb2JpbiBNdXJwaHkgd3JvdGU6
-Cj4+PiBOb3cgdGhhdCB0aGUgSG9zdDF4IGJ1c190eXBlIGltcGxlbWVudHMgYSAuZG1hX2NvbmZp
-Z3VyZSBjYWxsYmFjaywKPj4+IHN1YmRldmljZXMgc2hvdWxkIGF1dG9tYXRpY2FsbHkgZ2V0IGNv
-bmZpZ3VyZWQgZm9yIERNQSBhcyB0aGVpciBkcml2ZXJzCj4+PiBiaW5kLCBzbyB0aGVyZSdzIG5v
-IG5lZWQgdG8gYWxzbyBmb3JjZSBpdCBhdCBkZXZpY2UgY3JlYXRpb24gdGltZS4KPj4+Cj4+PiBD
-QzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4KPj4+IENDOiBNaWtr
-byBQZXJ0dHVuZW4gPGN5bmRpc0BrYXBzaS5maT4KPj4+IFNpZ25lZC1vZmYtYnk6IFJvYmluIE11
-cnBoeSA8cm9iaW4ubXVycGh5QGFybS5jb20+Cj4+PiAtLS0KPj4+Cj4+PiBJICpiZWxpZXZlKiBt
-eSByZWFzb25pbmcgaXMgY29ycmVjdCBoZXJlLCBidXQgcGxlYXNlIHNob3V0IGlmIGl0J3Mgbm90
-Lgo+Pj4KPj4+ICAgZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jIHwgMiAtLQo+Pj4gICAxIGZpbGUg
-Y2hhbmdlZCwgMiBkZWxldGlvbnMoLSkKPj4KPj4gQXBwbGllZCwgdGhhbmtzLgo+IAo+IEFjdHVh
-bGx5IEkgd2FzIGEgbGl0dGxlIHRvbyBxdWljayBvbiB0aGUgdHJpZ2dlciB0aGVyZS4gSSBkb24n
-dCB0aGluayB3ZQo+IGNhbiByZW1vdmUgdGhpcyBoZXJlIGJlY2F1c2UgdGhlIG9mX2RtYV9jb25m
-aWd1cmUoKSBpbiB0aGlzIGNhbGwKPiBjb25maWd1cmVzIHRoZSBsb2dpY2FsICJjb21wb3VuZCIg
-Y2hpbGQgZGV2aWNlLCB3aGVyZWFzIHRoZQo+IC5kbWFfY29uZmlndXJlIGNhbGxiYWNrIGNvbmZp
-Z3VyZXMgdGhlIHBoeXNpY2FsIGRldmljZS4KClJpZ2h0LCB0aGF0J3Mgd2hhdCBJIGNvdWxkbid0
-IHF1aXRlIGdldCBteSBoZWFkIGFyb3VuZCAtIEkgaGF2ZSB0aGUgCmltcHJlc3Npb24gdGhhdCB0
-aGUgbG9naWNhbCBkZXZpY2VzIGJlbG9uZyB0byBob3N0MXhfYnVzX3R5cGUgYW5kIHRoZSAKcGh5
-c2ljYWwgb25lcyB0byBwbGF0Zm9ybV9idXNfdHlwZSwgYW5kIHRodXMgZWFjaCBzaG91bGQgYmUg
-Y292ZXJlZCBieSAKdGhlIHJlc3BlY3RpdmUgLmRtYV9jb25maWd1cmUgaW1wbGVtZW50YXRpb25z
-LCBidXQgSSBhbHdheXMgZW5kIHVwIApnZXR0aW5nIGxvc3QgYW5kIGNvbmZ1c2VkIGluIEhvc3Qx
-eCwgYW5kIGhhdmluZyBubyBoYXJkd2FyZSB0byBoYW5kIHRvIApydW4gZWFzeSB0ZXN0cyBvbiBk
-b2Vzbid0IGhlbHAgbXVjaCBlaXRoZXIuCgpXaGF0IEknbSByZWFsbHkgdHJ5aW5nIHRvIGRvIGhl
-cmUgaXMgbWluaW1pc2UgdGhlIHBvdGVudGlhbCBpbXBhY3Qgb2YgYSAKcG9zc2libGUgZnV0dXJl
-IHBhdGNoIG11Y2tpbmcgd2l0aCBvZl9kbWFfY29uZmlndXJlKCkncyBpbnRlcmZhY2UsIHNvIApp
-dCdzIG5vdCB0aGUgZW5kIG9mIHRoZSB3b3JsZCBpZiB0aGlzIGNhbGwgZW5kcyB1cCBzdGF5aW5n
-LCBpdCBqdXN0IAptZWFucyBJIG1pZ2h0IGJlIGFmdGVyIG9uZSBtb3JlIGFjayBhdCBzb21lIHBv
-aW50IDspCgpUaGFua3MsClJvYmluLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+
+--ghzN8eJ9Qlbqn3iT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Aug 31, 2018 at 02:42:33PM +0200, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>=20
+> There was a dot instead of a comma. Fix this.
+>=20
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+Applied, thanks.
+
+Thierry
+
+--ghzN8eJ9Qlbqn3iT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurmlYACgkQ3SOs138+
+s6FPMw/7BwZGUQLlyKAZYjOdAHiR00ci8BsZ4d1yyRvEJzXbiIHjp5cZqWB7iYy+
+uetPBW58fG+ph8s8CMTg4i9Wa4FCOgabxsrpCuUd++wCSkW7Cs7Z/4THOydjQyFK
+t9BzGmYb3gu/6SJmat/uO38Ig3JkdHpvSu5ZYRylGuC65e+z7bOs0ODrcPPNzdit
+v0f7URkY2voeTgnF0HGUlmS/LEaaCpwQ/uOUnLqJYNSFbp9sWijgyXN6Kv3RNJph
+SWnO35+Fs9lUNNZLKkR9ksOV+uM+mVOmQn08BeW9VtrReMzfz9ivAPmohCH+XaDn
+KQtQr4bfllUCSNBmky5pUGmkUjQyZkHBAL5swBJAymePbagnbk3Hn7bau8u2rI8J
+WEYYBoYa/PaSU6a0BXNy2v95JE2yvf+pM6g98ajeLNoGWEBuSX3e5jPbWsAKKJ/P
+RlmeJwwIUDg0/080cIw78ompVRjHORCgloIESInZz6nnwxw3KPShBgjJsfvFMrOJ
+lhYPVA1+AtpU595vQckclqyqLoiS6pvz051SSMdDXeuZmsca+hISjqfty7R07r6/
+GoL172eIJ5VtTJOy2zNQD0pKCx72WBU8CiYV/B2m04Izd2ICA9eb6ZR1273ggVJJ
+RWCvMHriGA4sf4P152hHjJqbs0DipYYRehdcdlqzHR6KLXooXwM=
+=lfH6
+-----END PGP SIGNATURE-----
+
+--ghzN8eJ9Qlbqn3iT--
