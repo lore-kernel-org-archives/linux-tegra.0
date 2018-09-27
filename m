@@ -1,154 +1,57 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 49/64] drm/atomic: Use drm_drv_uses_atomic_modeset()
- for debugfs creation
-Date: Thu, 27 Sep 2018 21:01:53 +0200
-Message-ID: <20180927190153.GC1895@kroah.com>
-References: <20180927090249.801943776@linuxfoundation.org>
- <20180927090256.844688689@linuxfoundation.org>
- <222254a2-b33c-f6d3-8bc0-0069c5c0a55c@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Changes for v4.20-rc1
+Date: Thu, 27 Sep 2018 22:50:51 +0200
+Message-ID: <20180927205051.30017-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <222254a2-b33c-f6d3-8bc0-0069c5c0a55c@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@chromium.org>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 07:00:00PM +0100, Jon Hunter wrote:
-> Hi Greg, Lyude,
-> 
-> On 27/09/18 10:04, Greg Kroah-Hartman wrote:
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Lyude Paul <lyude@redhat.com>
-> > 
-> > commit 3c499ea0c662e2f38aafbd4f516b08aab8cfa0e5 upstream.
-> > 
-> > As pointed out by Daniel Vetter, we should be usinng
-> > drm_drv_uses_atomic_modeset() for determining whether or not we want to
-> > make the debugfs nodes for atomic instead of checking DRIVER_ATOMIC, as
-> > the former isn't an accurate representation of whether or not the driver
-> > is actually using atomic modesetting internally (even though it might
-> > not be exposing atomic capabilities).
-> > 
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: stable@vger.kernel.org
-> > Reviewed-by: Sean Paul <seanpaul@chromium.org>
-> > Link: https://patchwork.freedesktop.org/patch/msgid/20180917173733.21293-1-lyude@redhat.com
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > ---
-> >  drivers/gpu/drm/drm_atomic.c  |    2 +-
-> >  drivers/gpu/drm/drm_debugfs.c |    2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > --- a/drivers/gpu/drm/drm_atomic.c
-> > +++ b/drivers/gpu/drm/drm_atomic.c
-> > @@ -1748,7 +1748,7 @@ static void __drm_state_dump(struct drm_
-> >  	struct drm_connector *connector;
-> >  	struct drm_connector_list_iter conn_iter;
-> >  
-> > -	if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
-> > +	if (!drm_drv_uses_atomic_modeset(dev))
-> >  		return;
-> >  
-> >  	list_for_each_entry(plane, &config->plane_list, head) {
-> > --- a/drivers/gpu/drm/drm_debugfs.c
-> > +++ b/drivers/gpu/drm/drm_debugfs.c
-> > @@ -150,7 +150,7 @@ int drm_debugfs_init(struct drm_minor *m
-> >  		return ret;
-> >  	}
-> >  
-> > -	if (drm_core_check_feature(dev, DRIVER_ATOMIC)) {
-> > +	if (drm_drv_uses_atomic_modeset(dev)) {
-> >  		ret = drm_atomic_debugfs_init(minor);
-> >  		if (ret) {
-> >  			DRM_ERROR("Failed to create atomic debugfs files\n");
-> > 
-> > 
-> 
-> This is causing a boot regression on some Tegra devices. For
-> completeness I have included the stack trace below.
-> 
-> Jon
-> 
-> [    4.115829] Unable to handle kernel NULL pointer dereference at virtual address 00000010
-> [    4.123912] pgd = c0204000
-> [    4.126661] [00000010] *pgd=00000000
-> [    4.130245] Internal error: Oops: 5 [#1] SMP ARM
-> [    4.134857] Modules linked in:
-> [    4.137917] CPU: 0 PID: 28 Comm: kworker/0:1 Not tainted 4.14.73-rc1-g1e2fd38 #1
-> [    4.145301] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [    4.151569] Workqueue: events deferred_probe_work_func
-> [    4.156704] task: ee0fae00 task.stack: ee1de000
-> [    4.161235] PC is at drm_debugfs_init+0x88/0x178
-> [    4.165850] LR is at drm_debugfs_create_files+0xf0/0x148
-> [    4.171152] pc : [<c0831ccc>]    lr : [<c0831984>]    psr: 60000113
-> [    4.177410] sp : ee1dfcd0  ip : 00000000  fp : ee1de000
-> [    4.182625] r10: 00000017  r9 : 00000000  r8 : c163a884
-> [    4.187841] r7 : 00000080  r6 : 00000000  r5 : ed12b000  r4 : ed15fe00
-> [    4.194357] r3 : 00000000  r2 : 00000000  r1 : c0831984  r0 : 00000000
-> [    4.200884] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> [    4.208013] Control: 10c5387d  Table: 8020406a  DAC: 00000051
-> [    4.213753] Process kworker/0:1 (pid: 28, stack limit = 0xee1de220)
-> [    4.220011] Stack: (0xee1dfcd0 to 0xee1e0000)
-> [    4.224365] fcc0:                                     00383231 ffffffff 014080c0 c0815a14
-> [    4.232534] fce0: ffffffff 00000000 ffffffff ee452858 00000004 c04591c4 ee452848 00000000
-> [    4.240702] fd00: 00000004 ed15ffc0 c117438c ee655810 c163a778 ed15fe00 c16d7ef4 00000000
-> [    4.248869] fd20: c163a778 c0813ca4 ee0fae00 ed12b000 00000000 00000000 c163a778 c0814268
-> [    4.257036] fd40: c1685a8c ee655810 c163a778 ed12b000 00000000 ed12b000 ee655800 c16d8088
-> [    4.265205] fd60: 00000000 c163a884 00000000 c08643b8 c0864388 ee655810 c16d8084 c07ef578
-> [    4.273372] fd80: c07ef558 c08a2cc4 00000000 ee1dfdc0 c08a2e7c 00000001 c16d8060 00000000
-> [    4.281539] fda0: 00000000 c08a11f8 ee64616c ee64b338 ee655810 ee655810 ee655844 c08a29c4
-> [    4.289707] fdc0: ee655810 00000001 00000000 ee655818 ee655810 c1638c80 ee228010 c08a1fa8
-> [    4.297875] fde0: ee655818 ee655810 00000000 c08a04c8 c0877720 ee407010 00000000 ee213600
-> [    4.306044] fe00: ee655800 ee407010 ee6484c0 ee655810 ee6559b0 ee663810 00000017 c07efb30
-> [    4.314211] fe20: c1638c64 c1638cfc ee655804 ee663c28 ee407010 c07f0058 c0f6044c ee407010
-> [    4.322378] fe40: ee228610 00000000 ee228600 00000000 00000000 c088177c 00000000 ee211ac0
-> [    4.330545] fe60: ee407010 ee228610 ee228610 fffffdfb c163a9e8 00000000 c163a9e8 c08a4914
-> [    4.338713] fe80: c08a48c8 ee228610 c16d8084 c16d8088 00000000 c08a2cc4 00000000 ee1dfed0
-> [    4.346881] fea0: c08a2e7c 00000001 c163b320 c1691be0 c16d8084 c08a11f8 ee0ab66c ee64b438
-> [    4.355049] fec0: ee228610 ee228610 ee228644 c08a29c4 ee228610 00000001 ee0fae00 c163b328
-> [    4.363217] fee0: ee228610 c163b518 c163b304 c08a1fa8 c163b328 ee1cef80 ee228610 c08a2404
-> [    4.371384] ff00: c08a23c0 c163b328 ee1cef80 eef8ac40 ee1de018 eef8dc00 00000000 00000000
-> [    4.379551] ff20: c1684e34 c035ba70 eef8ac40 eef8ac58 ee1de018 ee1cef80 eef8ac40 eef8ac58
-> [    4.387719] ff40: ee1de018 c1684975 ee1cef98 c1502d00 00000008 c035bf90 ee1d501c ee1de000
-> [    4.395887] ff60: 00000000 c1502d00 ee1d501c ee1d5000 00000000 ee1c6d00 ee1d501c ee1cef80
-> [    4.404056] ff80: c035bd68 ee0cbed0 00000000 c03611fc ee1c6d00 c03610d0 00000000 00000000
-> [    4.412235] ffa0: 00000000 00000000 00000000 c03080c8 00000000 00000000 00000000 00000000
-> [    4.420404] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> [    4.428572] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-> [    4.436759] [<c0831ccc>] (drm_debugfs_init) from [<c0813ca4>] (drm_minor_register+0x68/0x110)
-> [    4.445277] [<c0813ca4>] (drm_minor_register) from [<c0814268>] (drm_dev_register+0x8c/0x1cc)
-> [    4.453798] [<c0814268>] (drm_dev_register) from [<c08643b8>] (host1x_drm_probe+0x30/0x54)
-> [    4.462061] [<c08643b8>] (host1x_drm_probe) from [<c07ef578>] (host1x_device_probe+0x20/0x2c)
-> [    4.470583] [<c07ef578>] (host1x_device_probe) from [<c08a2cc4>] (driver_probe_device+0x224/0x2f8)
-> [    4.479536] [<c08a2cc4>] (driver_probe_device) from [<c08a11f8>] (bus_for_each_drv+0x58/0x8c)
-> [    4.488055] [<c08a11f8>] (bus_for_each_drv) from [<c08a29c4>] (__device_attach+0xb0/0x110)
-> [    4.496313] [<c08a29c4>] (__device_attach) from [<c08a1fa8>] (bus_probe_device+0x84/0x8c)
-> [    4.504484] [<c08a1fa8>] (bus_probe_device) from [<c08a04c8>] (device_add+0x3f0/0x570)
-> [    4.512397] [<c08a04c8>] (device_add) from [<c07efb30>] (host1x_subdev_register+0xac/0xd0)
-> [    4.520655] [<c07efb30>] (host1x_subdev_register) from [<c07f0058>] (host1x_client_register+0x10c/0x12c)
-> [    4.530129] [<c07f0058>] (host1x_client_register) from [<c088177c>] (tegra_hdmi_probe+0x1e4/0x2f0)
-> [    4.539080] [<c088177c>] (tegra_hdmi_probe) from [<c08a4914>] (platform_drv_probe+0x4c/0xac)
-> [    4.547511] [<c08a4914>] (platform_drv_probe) from [<c08a2cc4>] (driver_probe_device+0x224/0x2f8)
-> [    4.556375] [<c08a2cc4>] (driver_probe_device) from [<c08a11f8>] (bus_for_each_drv+0x58/0x8c)
-> [    4.564892] [<c08a11f8>] (bus_for_each_drv) from [<c08a29c4>] (__device_attach+0xb0/0x110)
-> [    4.573149] [<c08a29c4>] (__device_attach) from [<c08a1fa8>] (bus_probe_device+0x84/0x8c)
-> [    4.581319] [<c08a1fa8>] (bus_probe_device) from [<c08a2404>] (deferred_probe_work_func+0x44/0x13c)
-> [    4.590361] [<c08a2404>] (deferred_probe_work_func) from [<c035ba70>] (process_one_work+0x14c/0x444)
-> [    4.599486] [<c035ba70>] (process_one_work) from [<c035bf90>] (worker_thread+0x228/0x538)
-> [    4.607658] [<c035bf90>] (worker_thread) from [<c03611fc>] (kthread+0x12c/0x15c)
-> [    4.615049] [<c03611fc>] (kthread) from [<c03080c8>] (ret_from_fork+0x14/0x2c)
-> [    4.622266] Code: ebfffef4 e2506000 1a00001c e5953200 (e5933010) 
-> [    4.628417] ---[ end trace d346994bfc0c1628 ]---
-> 
-
-Now dropped, thanks.
-
-greg k-h
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNWIzOTRiMmRkZjAz
+NDdiZWY1NmU1MGM2OWE1ODc3M2M5NDM0M2ZmMzoKCiAgTGludXggNC4xOS1yYzEgKDIwMTgtMDgt
+MjYgMTQ6MTE6NTkgLTA3MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBh
+dDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0v
+dGVncmEvZm9yLTQuMjAtcmMxCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gNWFjOTNm
+ODEwOTZhMjA2NWFkYjk5ZGVmZGI4ZjA0YWUyYzE5Y2MxMToKCiAgZHJtL3RlZ3JhOiBEZXRhY2gg
+ZGV2aWNlcyBmcm9tIElPTU1VIERNQSBkb21haW4gb24gYXJtMzIgKDIwMTgtMDktMjYgMTc6MjQ6
+MDIgKzAyMDApCgpUaGFua3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBDaGFuZ2VzIGZv
+ciB2NC4yMC1yYzEKClRoaXMgY29udGFpbnMgaW5pdGlhbCBUZWdyYTE5NCBzdXBwb3J0IGFzIHdl
+bGwgYXMgYSBjb3VwbGUgb2YgZml4ZXMgZm9yCkRNQS9JT01NVSBpbnRlZ3JhdGlvbi4KCi0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0KRG1pdHJ5IE9zaXBlbmtvICgzKToKICAgICAgZHJtL3RlZ3JhOiBkcGF1eDogVXNlIHRoZSBj
+b3JyZWN0IGRlZmluaXRpb24gZm9yIHBhZCBtb2RlcwogICAgICBncHU6IGhvc3QxeDogRGV0YWNo
+IEhvc3QxeCBmcm9tIElPTU1VIERNQSBkb21haW4gb24gYXJtMzIKICAgICAgZHJtL3RlZ3JhOiBE
+ZXRhY2ggZGV2aWNlcyBmcm9tIElPTU1VIERNQSBkb21haW4gb24gYXJtMzIKClNvdXB0aWNrIEpv
+YXJkZXIgKDEpOgogICAgICBkcm0vdGVncmE6IENvbnZlcnQgZHJtX2F0b21pY19oZWxwZXJfc3Vz
+cGVuZC9yZXN1bWUoKQoKVGhpZXJyeSBSZWRpbmcgKDYpOgogICAgICBkcm0vdGVncmE6IGRjOiBE
+byBub3QgcmVnaXN0ZXIgREMgd2l0aG91dCBwcmltYXJ5IHBsYW5lCiAgICAgIGRybS90ZWdyYTog
+aHViOiBBZGQgVGVncmExOTQgc3VwcG9ydAogICAgICBkcm0vdGVncmE6IGRjOiBBZGQgVGVncmEx
+OTQgc3VwcG9ydAogICAgICBkcm0vdGVncmE6IGRwYXV4OiBBZGQgVGVncmExOTQgc3VwcG9ydAog
+ICAgICBkcm0vdGVncmE6IHNvcjogQWRkIFRlZ3JhMTk0IHN1cHBvcnQKICAgICAgZ3B1OiBob3N0
+MXg6IFJlbW92ZSBzcHVyaW91cyB0YWIKCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyAgICB8
+ICA3MyArKysrKysrKysrKysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
+ZGMuaCAgICB8ICAgMiArLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgfCAgIDMgKy0K
+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyAgIHwgIDM1ICsrKysrKystLS0tLS0tCiBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggICB8ICAgNCAtLQogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2ZiLmMgICAgfCAgMjQgKy0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMgICB8
+ICAxOSArKysrKystLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5oICAgfCAgIDEgKwogZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jICAgfCAxMTAgKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMgICAgICB8ICAgMiAr
+LQogZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jICAgICAgfCAgMTMgKysrKy0KIDExIGZpbGVzIGNo
+YW5nZWQsIDIzMyBpbnNlcnRpb25zKCspLCA1MyBkZWxldGlvbnMoLSkKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
