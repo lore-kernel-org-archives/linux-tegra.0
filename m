@@ -1,57 +1,69 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Changes for v4.20-rc1
-Date: Thu, 27 Sep 2018 22:50:51 +0200
-Message-ID: <20180927205051.30017-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/5] soc/tegra: Changes for v4.20-rc1
+Date: Thu, 27 Sep 2018 22:59:39 +0200
+Message-ID: <20180927205942.30878-2-thierry.reding@gmail.com>
+References: <20180927205942.30878-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180927205942.30878-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNWIzOTRiMmRkZjAz
-NDdiZWY1NmU1MGM2OWE1ODc3M2M5NDM0M2ZmMzoKCiAgTGludXggNC4xOS1yYzEgKDIwMTgtMDgt
-MjYgMTQ6MTE6NTkgLTA3MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBh
-dDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0v
-dGVncmEvZm9yLTQuMjAtcmMxCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gNWFjOTNm
-ODEwOTZhMjA2NWFkYjk5ZGVmZGI4ZjA0YWUyYzE5Y2MxMToKCiAgZHJtL3RlZ3JhOiBEZXRhY2gg
-ZGV2aWNlcyBmcm9tIElPTU1VIERNQSBkb21haW4gb24gYXJtMzIgKDIwMTgtMDktMjYgMTc6MjQ6
-MDIgKzAyMDApCgpUaGFua3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBDaGFuZ2VzIGZv
-ciB2NC4yMC1yYzEKClRoaXMgY29udGFpbnMgaW5pdGlhbCBUZWdyYTE5NCBzdXBwb3J0IGFzIHdl
-bGwgYXMgYSBjb3VwbGUgb2YgZml4ZXMgZm9yCkRNQS9JT01NVSBpbnRlZ3JhdGlvbi4KCi0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0KRG1pdHJ5IE9zaXBlbmtvICgzKToKICAgICAgZHJtL3RlZ3JhOiBkcGF1eDogVXNlIHRoZSBj
-b3JyZWN0IGRlZmluaXRpb24gZm9yIHBhZCBtb2RlcwogICAgICBncHU6IGhvc3QxeDogRGV0YWNo
-IEhvc3QxeCBmcm9tIElPTU1VIERNQSBkb21haW4gb24gYXJtMzIKICAgICAgZHJtL3RlZ3JhOiBE
-ZXRhY2ggZGV2aWNlcyBmcm9tIElPTU1VIERNQSBkb21haW4gb24gYXJtMzIKClNvdXB0aWNrIEpv
-YXJkZXIgKDEpOgogICAgICBkcm0vdGVncmE6IENvbnZlcnQgZHJtX2F0b21pY19oZWxwZXJfc3Vz
-cGVuZC9yZXN1bWUoKQoKVGhpZXJyeSBSZWRpbmcgKDYpOgogICAgICBkcm0vdGVncmE6IGRjOiBE
-byBub3QgcmVnaXN0ZXIgREMgd2l0aG91dCBwcmltYXJ5IHBsYW5lCiAgICAgIGRybS90ZWdyYTog
-aHViOiBBZGQgVGVncmExOTQgc3VwcG9ydAogICAgICBkcm0vdGVncmE6IGRjOiBBZGQgVGVncmEx
-OTQgc3VwcG9ydAogICAgICBkcm0vdGVncmE6IGRwYXV4OiBBZGQgVGVncmExOTQgc3VwcG9ydAog
-ICAgICBkcm0vdGVncmE6IHNvcjogQWRkIFRlZ3JhMTk0IHN1cHBvcnQKICAgICAgZ3B1OiBob3N0
-MXg6IFJlbW92ZSBzcHVyaW91cyB0YWIKCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyAgICB8
-ICA3MyArKysrKysrKysrKysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEv
-ZGMuaCAgICB8ICAgMiArLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgfCAgIDMgKy0K
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyAgIHwgIDM1ICsrKysrKystLS0tLS0tCiBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggICB8ICAgNCAtLQogZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L2ZiLmMgICAgfCAgMjQgKy0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMgICB8
-ICAxOSArKysrKystLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5oICAgfCAgIDEgKwogZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jICAgfCAxMTAgKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMgICAgICB8ICAgMiAr
-LQogZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jICAgICAgfCAgMTMgKysrKy0KIDExIGZpbGVzIGNo
-YW5nZWQsIDIzMyBpbnNlcnRpb25zKCspLCA1MyBkZWxldGlvbnMoLSkKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi ARM SoC maintainers,
+
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.20-soc
+
+for you to fetch changes up to 4a37f11c8f57ffd6f7397eaf372109d67edd3769:
+
+  soc/tegra: pmc: Implement pad configuration via pinctrl (2018-08-27 12:25:18 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+soc/tegra: Changes for v4.20-rc1
+
+This contains a pinctrl implementation for the pad configuration that
+can be controlled from the PMC.
+
+----------------------------------------------------------------
+Aapo Vienamo (7):
+      dt-bindings: Add Tegra PMC pad configuration bindings
+      soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+      soc/tegra: pmc: Factor out DPD register bit calculation
+      soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+      soc/tegra: pmc: Use X macro to generate IO pad tables
+      soc/tegra: pmc: Remove public pad voltage APIs
+      soc/tegra: pmc: Implement pad configuration via pinctrl
+
+Johan Hovold (1):
+      soc/tegra: pmc: Fix child-node lookup
+
+Thierry Reding (1):
+      Merge branch 'for-4.20/dt-bindings' into for-4.20/soc
+
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  93 ++++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++
+ drivers/soc/tegra/pmc.c                            | 513 +++++++++++++++------
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+ include/soc/tegra/pmc.h                            |  20 +-
+ 5 files changed, 599 insertions(+), 148 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
