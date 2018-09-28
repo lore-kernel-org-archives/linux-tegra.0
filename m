@@ -1,14 +1,14 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 5/5] arm64: tegra: Device tree changes for v4.20-rc1
-Date: Fri, 28 Sep 2018 17:41:12 +0200
-Message-ID: <CAK8P3a2cMARFMnWAkaUy+jfTssPjED6y_d3f_NeZLe-13tzRwg@mail.gmail.com>
+Subject: Re: [GIT PULL 2/5] soc/tegra: Changes for v4.20-rc1
+Date: Fri, 28 Sep 2018 21:57:20 +0200
+Message-ID: <CAK8P3a1FgAtVdLixD7nGgg3r52qrT0_TOyFzKc99egmhrExFqA@mail.gmail.com>
 References: <20180927205942.30878-1-thierry.reding@gmail.com>
- <20180927205942.30878-5-thierry.reding@gmail.com>
+ <20180927205942.30878-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180927205942.30878-5-thierry.reding@gmail.com>
+In-Reply-To: <20180927205942.30878-2-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -33,21 +33,21 @@ On Thu, Sep 27, 2018 at 10:59 PM Thierry Reding
 >
 > are available in the Git repository at:
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.20-arm64-dt
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.20-soc
 >
-> for you to fetch changes up to d9fd22447ba59a9b53a202fade977e82bfba8d8d:
+> for you to fetch changes up to 4a37f11c8f57ffd6f7397eaf372109d67edd3769:
 >
->   arm64: tegra: I2C on Tegra194 is not compatible with Tegra114 (2018-09-26 15:50:59 +0200)
+>   soc/tegra: pmc: Implement pad configuration via pinctrl (2018-08-27 12:25:18 +0200)
 >
 > Thanks,
 > Thierry
 >
 > ----------------------------------------------------------------
-> arm64: tegra: Device tree changes for v4.20-rc1
+> soc/tegra: Changes for v4.20-rc1
 >
-> This contains mostly device tree changes to support faster SDHCI modes
-> on Tegra210 and Tegra186.
+> This contains a pinctrl implementation for the pad configuration that
+> can be controlled from the PMC.
 
-Pulled into next/dt, thanks!
+Pulled into next/drivers, thanks!
 
-      Arnd
+       Arnd
