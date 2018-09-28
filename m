@@ -1,38 +1,43 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v5 3/4] devres: provide devm_kstrdup_const()
-Date: Fri, 28 Sep 2018 09:30:45 +0200
-Message-ID: <CAMuHMdVF9zD+KZ8E1-BCrn4W2QngABHqnCajOhk3Y=xpq4R=Cg@mail.gmail.com>
-References: <20180928071414.30703-1-brgl@bgdev.pl> <20180928071414.30703-4-brgl@bgdev.pl>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2 0/5] Tegra xHCI genpd support
+Date: Fri, 28 Sep 2018 15:11:45 +0100
+Message-ID: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180928071414.30703-4-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Greg KH <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, Linux MM <linux-mm@kvack.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 9:14 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> Provide a resource managed version of kstrdup_const(). This variant
-> internally calls devm_kstrdup() on pointers that are outside of
-> .rodata section and returns the string as is otherwise.
->
-> Make devm_kfree() check if the passed pointer doesn't point to .rodata
-> and if so - don't actually destroy the resource.
->
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+This series add genpd support for the Tegra xHCI device that requires
+more than one power-domain to operate.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This series is making changes to more than one subsystem and at first
+glance may look like a maintainers nightmare. However, my proposal is
+this, once reviewed and people are happy ...
+1. Patches 1-3 should be merged first. Patches 1 can go via the Tegra
+   tree and 2-3 via the USB tree.
+2. Once patches 1-3 are accepted, then 4 and 5 can be merged via the
+   Tegra tree.
 
-Gr{oetje,eeting}s,
+Changes since V1:
+- Dropped unneeded patch to export symbol for genpd API
+- Added patch to power-off XUSB domains
+- Slight re-work to Tegra xHCI driver changes to simplify clean-up path.
 
-                        Geert
+Jon Hunter (5):
+  dt-bindings: usb: xhci-tegra: Add power-domain details
+  usb: xhci: tegra: Power-off power-domains on removal
+  usb: xhci: tegra: Add genpd support
+  soc/tegra: pmc: Don't power-up XUSB power-domains
+  arm64: dts: tegra210: Add power-domains for xHCI
+
+ .../bindings/usb/nvidia,tegra124-xusb.txt          |  8 ++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  2 +
+ drivers/soc/tegra/pmc.c                            | 16 ----
+ drivers/usb/host/xhci-tegra.c                      | 92 +++++++++++++++++++---
+ 4 files changed, 91 insertions(+), 27 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
