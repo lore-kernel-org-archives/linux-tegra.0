@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2 4/5] soc/tegra: pmc: Don't power-up XUSB power-domains
-Date: Fri, 28 Sep 2018 15:11:49 +0100
-Message-ID: <1538143910-24400-5-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V2 2/5] usb: xhci: tegra: Power-off power-domains on removal
+Date: Fri, 28 Sep 2018 15:11:47 +0100
+Message-ID: <1538143910-24400-3-git-send-email-jonathanh@nvidia.com>
 References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,41 +12,31 @@ To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathi
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Now that the Tegra xHCI driver manages the XUSB power-domains itself,
-remove the code to power-up the power-domains used by the xHCI device
-from the PMC driver on boot.
+Currently the XUSB power domains used by the Tegra xHCI controller are
+never powered off on the removal of the driver, however, they will be
+powered off on probe failure. Update the removal code to be consistent
+with the probe failure path to power off the XUSB power domains.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 16 ----------------
- 1 file changed, 16 deletions(-)
+ drivers/usb/host/xhci-tegra.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index ab719fa90150..a68b4476b4ee 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -847,22 +847,6 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 		goto remove_resets;
- 	}
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 4b463e5202a4..a586a7930a3d 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1249,6 +1249,11 @@ static int tegra_xusb_remove(struct platform_device *pdev)
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
  
--	/*
--	 * FIXME: If XHCI is enabled for Tegra, then power-up the XUSB
--	 * host and super-speed partitions. Once the XHCI driver
--	 * manages the partitions itself this code can be removed. Note
--	 * that we don't register these partitions with the genpd core
--	 * to avoid it from powering down the partitions as they appear
--	 * to be unused.
--	 */
--	if (IS_ENABLED(CONFIG_USB_XHCI_TEGRA) &&
--	    (id == TEGRA_POWERGATE_XUSBA || id == TEGRA_POWERGATE_XUSBC)) {
--		if (off)
--			WARN_ON(tegra_powergate_power_up(pg, true));
--
--		goto remove_resets;
--	}
--
- 	err = pm_genpd_init(&pg->genpd, NULL, off);
- 	if (err < 0) {
- 		pr_err("failed to initialise PM domain %s: %d\n", np->name,
++	if (!pdev->dev.pm_domain) {
++		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
++		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
++	}
++
+ 	tegra_xusb_padctl_put(tegra->padctl);
+ 
+ 	return 0;
 -- 
 2.7.4
