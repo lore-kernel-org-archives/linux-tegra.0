@@ -1,65 +1,47 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Subject: Re: [PATCH v3] gpu: host1x: Detach Host1x from IOMMU DMA domain on
- arm32
-Date: Fri, 28 Sep 2018 12:00:52 +0900
-Message-ID: <6e61e73a-2c57-d16e-b396-62683d509e43@kapsi.fi>
-References: <20180830001247.29257-1-digetx@gmail.com>
- <93cb77f5-1973-1cc6-c9be-fa9364751cb1@kapsi.fi>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <93cb77f5-1973-1cc6-c9be-fa9364751cb1@kapsi.fi>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v5 0/4] devres: provide and use devm_kstrdup_const()
+Date: Fri, 28 Sep 2018 09:14:10 +0200
+Message-ID: <20180928071414.30703-1-brgl@bgdev.pl>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-tegra@vger.kernel.org
 
-SG1tLCBJIGd1ZXNzIHRoYXQgd2FzIGEgYml0IGxhdGUuIERhbW4gaW5ib3ggZmlsdGVycyAuLgoK
-TWlra28KCk9uIDI4LzA5LzIwMTggMTEuNTgsIE1pa2tvIFBlcnR0dW5lbiB3cm90ZToKPiBSZXZp
-ZXdlZC1ieTogTWlra28gUGVydHR1bmVuIDxtcGVydHR1bmVuQG52aWRpYS5jb20+Cj4gCj4gT24g
-MzAvMDgvMjAxOCA5LjEyLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+IEhvc3QxeCBpcyBnZXR0
-aW5nIGF0dGFjaGVkIHRvIGFuIGltcGxpY2l0IElPTU1VIERNQSBkb21haW4gaWYKPj4gQ09ORklH
-X0FSTV9ETUFfVVNFX0lPTU1VPXkuIFNpbmNlIEhvc3QxeCBkcml2ZXIgbWFuYWdlcyBJT01NVSBi
-eQo+PiBpdHNlbGYsIEhvc3QxeCBkZXZpY2UgbXVzdCBiZSBkZXRhY2hlZCBmcm9tIHRoZSBpbXBs
-aWNpdCBkb21haW4gdXNpbmcKPj4gYXJjaC1zcGVjaWZpYyBJT01NVS1BUEkuCj4+Cj4+IFNpZ25l
-ZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4KPj4gLS0tCj4+Cj4+
-IENoYW5nZWxvZzoKPj4KPj4gdjI6IENvcnJlY3RseSBwbGFjZWQgdGhlIGRldGFjaG1lbnQgY29k
-ZSwgbm93IEhvc3QxeCBpcyBkZXRhY2hlZCAKPj4gcmVnYXJkbGVzcwo+PiDCoMKgwqDCoCBvZiB0
-aGUgZmlyZXdhbGwgc3RhdGUuCj4+Cj4+IHYzOiBDb21waWxlcyBub3cuCj4+Cj4+IMKgIGRyaXZl
-cnMvZ3B1L2hvc3QxeC9kZXYuYyB8IDEzICsrKysrKysrKysrKy0KPj4gwqAgMSBmaWxlIGNoYW5n
-ZWQsIDEyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwo+PiBpbmRl
-eCBkODgwNzNlN2QyMmQuLmRlNmJjNGU3ZmEyMyAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUv
-aG9zdDF4L2Rldi5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYwo+PiBAQCAtMjks
-NiArMjksMTAgQEAKPj4gwqAgI2luY2x1ZGUgPHRyYWNlL2V2ZW50cy9ob3N0MXguaD4KPj4gwqAg
-I3VuZGVmIENSRUFURV9UUkFDRV9QT0lOVFMKPj4gKyNpZiBJU19FTkFCTEVEKENPTkZJR19BUk1f
-RE1BX1VTRV9JT01NVSkKPj4gKyNpbmNsdWRlIDxhc20vZG1hLWlvbW11Lmg+Cj4+ICsjZW5kaWYK
-Pj4gKwo+PiDCoCAjaW5jbHVkZSAiYnVzLmgiCj4+IMKgICNpbmNsdWRlICJjaGFubmVsLmgiCj4+
-IMKgICNpbmNsdWRlICJkZWJ1Zy5oIgo+PiBAQCAtMjE3LDcgKzIyMSwxNCBAQCBzdGF0aWMgaW50
-IGhvc3QxeF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlIAo+PiAqcGRldikKPj4gwqDCoMKg
-wqDCoMKgwqDCoMKgIGRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgcmVzZXQ6ICVk
-XG4iLCBlcnIpOwo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIGVycjsKPj4gwqDCoMKgwqDC
-oCB9Cj4+IC0KPj4gKyNpZiBJU19FTkFCTEVEKENPTkZJR19BUk1fRE1BX1VTRV9JT01NVSkKPj4g
-K8KgwqDCoCBpZiAoaG9zdC0+ZGV2LT5hcmNoZGF0YS5tYXBwaW5nKSB7Cj4+ICvCoMKgwqDCoMKg
-wqDCoCBzdHJ1Y3QgZG1hX2lvbW11X21hcHBpbmcgKm1hcHBpbmcgPQo+PiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIHRvX2RtYV9pb21tdV9tYXBwaW5nKGhvc3QtPmRldik7Cj4+ICvC
-oMKgwqDCoMKgwqDCoCBhcm1faW9tbXVfZGV0YWNoX2RldmljZShob3N0LT5kZXYpOwo+PiArwqDC
-oMKgwqDCoMKgwqAgYXJtX2lvbW11X3JlbGVhc2VfbWFwcGluZyhtYXBwaW5nKTsKPj4gK8KgwqDC
-oCB9Cj4+ICsjZW5kaWYKPj4gwqDCoMKgwqDCoCBpZiAoSVNfRU5BQkxFRChDT05GSUdfVEVHUkFf
-SE9TVDFYX0ZJUkVXQUxMKSkKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIGdvdG8gc2tpcF9pb21tdTsK
-Pj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRy
-aS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4g
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+This series implements devm_kstrdup_const() together with some
+prerequisite changes and uses it in pmc-atom driver.
+
+v1 -> v2:
+- fixed the changelog in the patch implementing devm_kstrdup_const()
+- fixed the kernel doc
+- moved is_kernel_rodata() to asm-generic/sections.h
+- fixed constness
+
+v2 -> v3:
+- rebased on top of 4.19-rc5 as there were some conflicts in the
+  pmc-atom driver
+- collected Reviewed-by tags
+
+v3 -> v4:
+- Andy NAK'ed patch 4/4 so I added a different example
+- collected more tags
+
+v4 -> v5:
+- instead of providing devm_kfree_const(), make devm_kfree() check if
+  given pointer is not in .rodata and act accordingly
+
+Bartosz Golaszewski (4):
+  devres: constify p in devm_kfree()
+  mm: move is_kernel_rodata() to asm-generic/sections.h
+  devres: provide devm_kstrdup_const()
+  mailbox: tegra-hsp: use devm_kstrdup_const()
+
+ drivers/base/devres.c          | 36 +++++++++++++++++++++++++++--
+ drivers/mailbox/tegra-hsp.c    | 41 ++++++++--------------------------
+ include/asm-generic/sections.h | 14 ++++++++++++
+ include/linux/device.h         |  4 +++-
+ mm/util.c                      |  7 ------
+ 5 files changed, 60 insertions(+), 42 deletions(-)
+
+-- 
+2.18.0
