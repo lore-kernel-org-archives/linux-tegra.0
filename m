@@ -1,49 +1,51 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 3/5] firmware: tegra: Changes for v4.20-rc1
-Date: Fri, 28 Sep 2018 22:00:11 +0200
-Message-ID: <CAK8P3a0jFjOUQ33hop0cn0HqRra8iRGbKPq_i+RAyZ89BWzSRw@mail.gmail.com>
-References: <20180927205942.30878-1-thierry.reding@gmail.com>
- <20180927205942.30878-3-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180927205942.30878-3-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jonathan Hunter <jonathanh@nvidia.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v6 0/4] devres: provide and use devm_kstrdup_const()
+Date: Sun, 30 Sep 2018 22:26:11 +0200
+Message-ID: <20180930202615.12951-1-brgl@bgdev.pl>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 10:59 PM Thierry Reding
-<thierry.reding@gmail.com> wrote:
+This series implements devm_kstrdup_const() together with some
+prerequisite changes and uses it in tegra-hsp driver.
 
-> firmware: tegra: Changes for v4.20-rc1
->
-> This contains a fix for suspend/resume support for the BPMP found on
-> Tegra186 and Tegra194.
->
-> ----------------------------------------------------------------
-> Thierry Reding (1):
->       firmware: tegra: bpmp: Implement suspend/resume support
->
->  drivers/firmware/tegra/bpmp.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+v1 -> v2:
+- fixed the changelog in the patch implementing devm_kstrdup_const()
+- fixed the kernel doc
+- moved is_kernel_rodata() to asm-generic/sections.h
+- fixed constness
 
-This causes a build warning in randconfig builds:
+v2 -> v3:
+- rebased on top of 4.19-rc5 as there were some conflicts in the
+  pmc-atom driver
+- collected Reviewed-by tags
 
-drivers/firmware/tegra/bpmp.c:847:12: error: 'tegra_bpmp_resume'
-defined but not used [-Werror=unused-function]
- static int tegra_bpmp_resume(struct device *dev)
-            ^~~~~~~~~~~~~~~~~
+v3 -> v4:
+- Andy NAK'ed patch 4/4 so I added a different example
+- collected more tags
 
-Please fix and resubmit. Thanks,
+v4 -> v5:
+- instead of providing devm_kfree_const(), make devm_kfree() check if
+  given pointer is not in .rodata and act accordingly
 
-     ARnd
+v5 -> v6:
+- fixed the commit message in patch 2/4 (s/devm_kfree_const/devm_kfree/)
+- collected even more tags
+
+Bartosz Golaszewski (4):
+  devres: constify p in devm_kfree()
+  mm: move is_kernel_rodata() to asm-generic/sections.h
+  devres: provide devm_kstrdup_const()
+  mailbox: tegra-hsp: use devm_kstrdup_const()
+
+ drivers/base/devres.c          | 36 +++++++++++++++++++++++++++--
+ drivers/mailbox/tegra-hsp.c    | 41 ++++++++--------------------------
+ include/asm-generic/sections.h | 14 ++++++++++++
+ include/linux/device.h         |  4 +++-
+ mm/util.c                      |  7 ------
+ 5 files changed, 60 insertions(+), 42 deletions(-)
+
+-- 
+2.18.0
