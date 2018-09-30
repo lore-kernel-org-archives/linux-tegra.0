@@ -1,134 +1,102 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v6 4/4] mailbox: tegra-hsp: use devm_kstrdup_const()
-Date: Sun, 30 Sep 2018 22:26:15 +0200
-Message-ID: <20180930202615.12951-5-brgl@bgdev.pl>
-References: <20180930202615.12951-1-brgl@bgdev.pl>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v5 00/21] IOMMU: Tegra GART driver clean up and optimization
+Date: Mon,  1 Oct 2018 01:48:12 +0300
+Message-ID: <20180930224833.28809-1-digetx@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180930202615.12951-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux-foundation.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_kstrdup_const() in the tegra-hsp driver. This mostly serves as
-an example of how to use this new routine to shrink driver code.
+Hello,
 
-Also use devm_kzalloc() instead of regular kzalloc() to get shrink the
-driver even more.
+This patch-series integrates the GART (IOMMU) driver with the Memory
+Controller driver, that allows to report the name of a faulty memory
+client on GART page fault. A major code clean up and performance
+optimization is performed in this series as well.
 
-Doorbell objects are only removed in the driver's remove callback so
-it's safe to convert all memory allocations to devres.
+Changelog:
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/mailbox/tegra-hsp.c | 41 ++++++++-----------------------------
- 1 file changed, 9 insertions(+), 32 deletions(-)
+v5: Addressed review comments from Thierry Reding to v4. Added WARN_ON() to
+    make sure that active domain isn't getting released, kept include headers
+    where necessary, etc.. All changes are quite minor.
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 0cde356c11ab..106c94dedbf1 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -183,14 +183,15 @@ static irqreturn_t tegra_hsp_doorbell_irq(int irq, void *data)
- }
- 
- static struct tegra_hsp_channel *
--tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
--			  unsigned int master, unsigned int index)
-+tegra_hsp_doorbell_create(struct device *dev, struct tegra_hsp *hsp,
-+			  const char *name, unsigned int master,
-+			  unsigned int index)
- {
- 	struct tegra_hsp_doorbell *db;
- 	unsigned int offset;
- 	unsigned long flags;
- 
--	db = kzalloc(sizeof(*db), GFP_KERNEL);
-+	db = devm_kzalloc(dev, sizeof(*db), GFP_KERNEL);
- 	if (!db)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -200,7 +201,7 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
- 	db->channel.regs = hsp->regs + offset;
- 	db->channel.hsp = hsp;
- 
--	db->name = kstrdup_const(name, GFP_KERNEL);
-+	db->name = devm_kstrdup_const(dev, name, GFP_KERNEL);
- 	db->master = master;
- 	db->index = index;
- 
-@@ -211,13 +212,6 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
- 	return &db->channel;
- }
- 
--static void __tegra_hsp_doorbell_destroy(struct tegra_hsp_doorbell *db)
--{
--	list_del(&db->list);
--	kfree_const(db->name);
--	kfree(db);
--}
--
- static int tegra_hsp_doorbell_send_data(struct mbox_chan *chan, void *data)
- {
- 	struct tegra_hsp_doorbell *db = chan->con_priv;
-@@ -332,31 +326,16 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
- 	return chan ?: ERR_PTR(-EBUSY);
- }
- 
--static void tegra_hsp_remove_doorbells(struct tegra_hsp *hsp)
--{
--	struct tegra_hsp_doorbell *db, *tmp;
--	unsigned long flags;
--
--	spin_lock_irqsave(&hsp->lock, flags);
--
--	list_for_each_entry_safe(db, tmp, &hsp->doorbells, list)
--		__tegra_hsp_doorbell_destroy(db);
--
--	spin_unlock_irqrestore(&hsp->lock, flags);
--}
--
--static int tegra_hsp_add_doorbells(struct tegra_hsp *hsp)
-+static int tegra_hsp_add_doorbells(struct device *dev, struct tegra_hsp *hsp)
- {
- 	const struct tegra_hsp_db_map *map = hsp->soc->map;
- 	struct tegra_hsp_channel *channel;
- 
- 	while (map->name) {
--		channel = tegra_hsp_doorbell_create(hsp, map->name,
-+		channel = tegra_hsp_doorbell_create(dev, hsp, map->name,
- 						    map->master, map->index);
--		if (IS_ERR(channel)) {
--			tegra_hsp_remove_doorbells(hsp);
-+		if (IS_ERR(channel))
- 			return PTR_ERR(channel);
--		}
- 
- 		map++;
- 	}
-@@ -412,7 +391,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	if (!hsp->mbox.chans)
- 		return -ENOMEM;
- 
--	err = tegra_hsp_add_doorbells(hsp);
-+	err = tegra_hsp_add_doorbells(&pdev->dev, hsp);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to add doorbells: %d\n", err);
- 		return err;
-@@ -423,7 +402,6 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	err = mbox_controller_register(&hsp->mbox);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to register mailbox: %d\n", err);
--		tegra_hsp_remove_doorbells(hsp);
- 		return err;
- 	}
- 
-@@ -443,7 +421,6 @@ static int tegra_hsp_remove(struct platform_device *pdev)
- 	struct tegra_hsp *hsp = platform_get_drvdata(pdev);
- 
- 	mbox_controller_unregister(&hsp->mbox);
--	tegra_hsp_remove_doorbells(hsp);
- 
- 	return 0;
- }
+    Added new patch "memory: tegra: Use relaxed versions of readl/writel".
+
+v4: In the v3 Rob Herring requested to make device-tree binding changes
+    backwards-compatible with the older kernels, that is achieved by
+    changing the 'compatible' value of the DT node.
+
+    The code-refactoring patches got some more (minor) polish.
+
+    Added new patch "memory: tegra: Use of_device_get_match_data()".
+
+v3: Memory Controller integration part has been reworked and now GART's
+    device-tree binding is changed. Adding Rob Herring for the device-tree
+    changes reviewing.
+
+    GART now disallows more than one active domain at a time.
+
+    Fixed "spinlock recursion", "NULL pointer dereference" and "detaching
+    of all devices from inactive domains".
+
+    New code-refactoring patches.
+
+    The previously standalone patch "memory: tegra: Don't invoke Tegra30+
+    specific memory timing setup on Tegra20" is now included into this
+    series because there is a dependency on that patch and it wasn't applied
+    yet.
+
+v2: Addressed review comments from Robin Murphy to v1 by moving devices
+    iommu_fwspec check to gart_iommu_add_device().
+
+    Dropped the "Provide single domain and group for all devices" patch from
+    the series for now because after some more considering it became not
+    exactly apparent whether that is what we need, that was also suggested
+    by Robin Murphy in the review comment. Maybe something like a runtime
+    IOMMU usage for devices would be a better solution, allowing to implement
+    transparent context switching of virtual IOMMU domains.
+
+    Some very minor code cleanups, reworded commit messages.
+
+Dmitry Osipenko (21):
+  iommu/tegra: gart: Remove pr_fmt and clean up includes
+  iommu/tegra: gart: Clean up driver probe errors handling
+  iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
+  iommu: Introduce iotlb_sync_map callback
+  iommu/tegra: gart: Optimize mapping / unmapping performance
+  dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
+  ARM: dts: tegra20: Update Memory Controller node to the new binding
+  memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
+    Tegra20
+  memory: tegra: Adapt to Tegra20 device-tree binding changes
+  memory: tegra: Read client ID on GART page fault
+  memory: tegra: Use of_device_get_match_data()
+  memory: tegra: Use relaxed versions of readl/writel
+  iommu/tegra: gart: Integrate with Memory Controller driver
+  iommu/tegra: gart: Fix spinlock recursion
+  iommu/tegra: gart: Fix NULL pointer dereference
+  iommu/tegra: gart: Allow only one active domain at a time
+  iommu/tegra: gart: Don't use managed resources
+  iommu/tegra: gart: Prepend error/debug messages with "gart:"
+  iommu/tegra: gart: Don't detach devices from inactive domains
+  iommu/tegra: gart: Simplify clients-tracking code
+  iommu/tegra: gart: Perform code refactoring
+
+ .../bindings/iommu/nvidia,tegra20-gart.txt    |  14 -
+ .../memory-controllers/nvidia,tegra20-mc.txt  |  27 +-
+ arch/arm/boot/dts/tegra20.dtsi                |  15 +-
+ drivers/iommu/Kconfig                         |   1 +
+ drivers/iommu/iommu.c                         |   8 +-
+ drivers/iommu/tegra-gart.c                    | 489 +++++++-----------
+ drivers/memory/tegra/mc.c                     |  93 +++-
+ drivers/memory/tegra/mc.h                     |  10 +-
+ include/linux/iommu.h                         |   1 +
+ include/soc/tegra/mc.h                        |  29 +-
+ 10 files changed, 306 insertions(+), 381 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
+
 -- 
-2.18.0
+2.19.0
