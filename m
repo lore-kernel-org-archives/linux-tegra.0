@@ -1,67 +1,25 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v6 0/4] devres: provide and use devm_kstrdup_const()
-Date: Mon, 1 Oct 2018 19:09:01 +0300
-Message-ID: <20181001160901.GY15943@smile.fi.intel.com>
-References: <20180930202615.12951-1-brgl@bgdev.pl>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
+Date: Mon, 01 Oct 2018 15:08:46 -0700
+Message-ID: <153843172633.119890.17243129066234373128@swboyd.mtv.corp.google.com>
+References: <20180921220037.16862-1-decatf@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180930202615.12951-1-brgl@bgdev.pl>
+In-Reply-To: <20180921220037.16862-1-decatf@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ryang <decatf@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 10:26:11PM +0200, Bartosz Golaszewski wrote:
-> This series implements devm_kstrdup_const() together with some
-> prerequisite changes and uses it in tegra-hsp driver.
+Quoting ryang (2018-09-21 15:00:37)
+> Calling clk_set_rate or clk_round_rate will lock up the kernel when the
+> rate is zero. This avoids the infinite loop and uses a slightly more
+> optimized p divider calculation.
+> =
 
-Thanks!
-For the first three,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: ryang <decatf@gmail.com>
 
-> 
-> v1 -> v2:
-> - fixed the changelog in the patch implementing devm_kstrdup_const()
-> - fixed the kernel doc
-> - moved is_kernel_rodata() to asm-generic/sections.h
-> - fixed constness
-> 
-> v2 -> v3:
-> - rebased on top of 4.19-rc5 as there were some conflicts in the
->   pmc-atom driver
-> - collected Reviewed-by tags
-> 
-> v3 -> v4:
-> - Andy NAK'ed patch 4/4 so I added a different example
-> - collected more tags
-> 
-> v4 -> v5:
-> - instead of providing devm_kfree_const(), make devm_kfree() check if
->   given pointer is not in .rodata and act accordingly
-> 
-> v5 -> v6:
-> - fixed the commit message in patch 2/4 (s/devm_kfree_const/devm_kfree/)
-> - collected even more tags
-> 
-> Bartosz Golaszewski (4):
->   devres: constify p in devm_kfree()
->   mm: move is_kernel_rodata() to asm-generic/sections.h
->   devres: provide devm_kstrdup_const()
->   mailbox: tegra-hsp: use devm_kstrdup_const()
-> 
->  drivers/base/devres.c          | 36 +++++++++++++++++++++++++++--
->  drivers/mailbox/tegra-hsp.c    | 41 ++++++++--------------------------
->  include/asm-generic/sections.h | 14 ++++++++++++
->  include/linux/device.h         |  4 +++-
->  mm/util.c                      |  7 ------
->  5 files changed, 60 insertions(+), 42 deletions(-)
-> 
-> -- 
-> 2.18.0
-> 
-
--- 
-With Best Regards,
-Andy Shevchenko
+Do you have a more proper name? Or you want the author name to show up as
+"ryang"?
