@@ -1,92 +1,40 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] i2c: of: Try to find an I2C adapter matching the parent
-Date: Tue, 2 Oct 2018 14:12:12 +0200
-Message-ID: <20181002121214eucas1p2f5c38f9c5b7cee9cf41b2c4c1167ab0a~ZyYg-gQgr1404914049eucas1p2D@eucas1p2.samsung.com>
-References: <CGME20180925160618epcas1p1f2a4263fcce9c70aa3808999ebe72315@epcas1p1.samsung.com>
- <20180925160611.17736-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180925160611.17736-1-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-tegra@vger.kernel.org, rechner@vlado-do.de, linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] firmware: tegra-bpmp: mark PM function as __maybe_unused
+Date: Tue,  2 Oct 2018 23:21:27 +0200
+Message-ID: <20181002212208.2971433-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mikko Perttunen <mperttunen@nvidia.com>, Timo Alho <talho@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjUuMDkuMjAxOCAxODowNiwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPgo+IElmIGFuIEkyQyBhZGFwdGVyIGRvZXNu
-J3QgbWF0Y2ggdGhlIHByb3ZpZGVkIGRldmljZSB0cmVlIG5vZGUsIGFsc28gdHJ5Cj4gbWF0Y2hp
-bmcgdGhlIHBhcmVudCdzIGRldmljZSB0cmVlIG5vZGUuIFRoaXMgYWxsb3dzIGZpbmRpbmcgYW4g
-YWRhcHRlcgo+IGJhc2VkIG9uIHRoZSBkZXZpY2Ugbm9kZSBvZiB0aGUgcGFyZW50IGRldmljZSB0
-aGF0IHdhcyB1c2VkIHRvIHJlZ2lzdGVyCj4gaXQuCj4KPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5
-IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+IEhpIFdvbGZyYW0sCj4KPiBUaGlz
-IGlzIGEgZml4IGZvciB0aGUgaXNzdWUgZGlzY3Vzc2VkIGluIGEgbG9uZyBlbWFpbCB0aHJlYWQg
-YSBjb3VwbGUgb2YKPiBtb250aHMgYWdvLiBJbiBhIG51dHNoZWxsIHRoZSBpc3N1ZSBpcyB0aGF0
-IHdlIHdhbnQgdG8gYmUgYWJsZSB0byBmaW5kIGEKPiBJMkMtb3Zlci1BVVggYWRhcHRlciBiYXNl
-ZCBvbiB0aGUgZGV2aWNlIHRyZWUgbm9kZSAodGhpcyBpcyB0byBob29rIHVwIGEKPiBJMkMgYWRh
-cHRlciBmb3IgdXNlIGFzIEREQyB0byBxdWVyeSBFRElEIGZyb20gYSBkaXNwbGF5IHBhbmVsLCBm
-b3IKPiBleGFtcGxlKS4KPgo+IEhlcmUncyBhIGxpbmsgdG8gdGhlIHByaW9yIGRpc2N1c3Npb24s
-IHdoaWNoIGVuZGVkIHVwIGdldHRpbmcgc3BsaXQgaW50bwo+IHR3byBmb3Igc29tZSByZWFzb24s
-IHBvc3NpYmx5IGJlY2F1c2UgdGhlIGluaXRpYWwgc3VibWlzc2lvbiBhbmQKPiBzdWJzZXF1ZW50
-IGRpc2N1c3Npb24gdG9vayBwbGFjZSBvdmVyIGFuIGV4dGVuZGVkIHBlcmlvZCBvZiB0aW1lOgo+
-Cj4gCWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTUxNjEwNS8KPiAJaHR0cHM6
-Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDIwMDg3OS8KPgo+IEkgbmV2ZXIgZ290IGFy
-b3VuZCB0byBzdWJtaXR0aW5nIHRoZSBwYXRjaCBwcm9wZXJseSwgYnV0IGhlcmUgaXQgaXMuIEFz
-Cj4gbWVudGlvbmVkIGluIHRoZSBkaXNjdXNzaW9uIGxpbmtlZCB0byBhYm92ZSwgSSB0aGluayB0
-aGUgcHJvYmxlbSBoZXJlIGlzCj4gdGhhdCB0aGUgbmV3IGxvb2t1cCB2aWEgdGhlIHBhcmVudCBk
-ZXZpY2Ugb25seSBoYXBwZW5zIHdoZW4gbG9va2luZyBmb3IKPiB0aGUgYWRhcHRlciBmcm9tIGl0
-cyBkZXZpY2UgdHJlZSBub2RlLiBIb3dldmVyLCB0aGlzIGFsc28gbWVhbnMgdGhhdCB0aGUKPiBj
-aGlsZHJlbiBmb3IgdGhlIGNvbnRyb2xsZXIgd29uJ3QgYmUgYWRkZWQgZm9yIHRoZXNlIGRldmlj
-ZXMsIGJlY2F1c2UgaXQKPiBvbmx5IGhhcHBlbnMgZm9yIGFkYXB0ZXJzIHRoYXQgaGF2ZSB0aGUg
-ZGV2LT5vZl9ub2RlIHNldCwgbm90IGZvciB0aGUKPiBub2RlIHJlZmVyZW5jZSBieSBkZXYtPnBh
-cmVudC0+b2Zfbm9kZS4gSG93ZXZlciwgSSdtIG5vdCBzdXJlIGlmIHRoYXQncwo+IHJlYWxseSBh
-IHByb2JsZW0uIEEgZGV2aWNlIHRoYXQgZG9lc24ndCBoYXZlIGRldi0+b2Zfbm9kZSBzZXQgd291
-bGQgYmUgYQo+ICJ2aXJ0dWFsIiBJMkMgYnVzLCBhcyBpbiB0aGUgY2FzZSBvZiBJMkMtb3Zlci1B
-VVguIFByb3BlciBJMkMgYnVzc2VzIGFyZQo+IHN0aWxsIGdvaW5nIHRvIGhhdmUgdG8gaGF2ZSB0
-aGVpciBkZXYtPm9mX25vZGUgc2V0LCBvdGhlcndpc2UgYW55IGNoaWxkCj4gZGV2aWNlcyBsaXN0
-ZWQgaW4gZGV2aWNlIHRyZWUgd29uJ3QgYmUgYWRkZWQuCj4KPiBBbnl3YXksIGxldCBtZSBrbm93
-IHdoYXQgeW91IHRoaW5rIG9mIHRoaXMuIEFsc28gYWRkaW5nIEx1Y2FzLCBSb2IgYW5kCj4gQW5k
-cnplaiB0byB0aGUgZGlzY3Vzc2lvbiBzaW5jZSB0aGV5IHdlcmUgaW52b2x2ZWQgYmFjayBhdCB0
-aGUgdGltZS4KPgo+IFRoYW5rcywKPiBUaGllcnJ5Cj4KPiAgZHJpdmVycy9pMmMvaTJjLWNvcmUt
-b2YuYyB8IDExICsrKysrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCsp
-Cj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvaTJjLWNvcmUtb2YuYyBiL2RyaXZlcnMvaTJj
-L2kyYy1jb3JlLW9mLmMKPiBpbmRleCA2Y2I3YWQ2MDhiY2QuLjM3ZDM0ODg1ZWEyZCAxMDA2NDQK
-PiAtLS0gYS9kcml2ZXJzL2kyYy9pMmMtY29yZS1vZi5jCj4gKysrIGIvZHJpdmVycy9pMmMvaTJj
-LWNvcmUtb2YuYwo+IEBAIC0xMjEsNiArMTIxLDE0IEBAIHN0YXRpYyBpbnQgb2ZfZGV2X25vZGVf
-bWF0Y2goc3RydWN0IGRldmljZSAqZGV2LCB2b2lkICpkYXRhKQo+ICAJcmV0dXJuIGRldi0+b2Zf
-bm9kZSA9PSBkYXRhOwo+ICB9Cj4gIAo+ICtzdGF0aWMgaW50IG9mX3BhcmVudF9ub2RlX21hdGNo
-KHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSkKPiArewo+ICsJaWYgKGRldi0+cGFyZW50
-KQo+ICsJCXJldHVybiBkZXYtPnBhcmVudC0+b2Zfbm9kZSA9PSBkYXRhOwo+ICsKPiArCXJldHVy
-biAwOwo+ICt9Cj4gKwo+ICAvKiBtdXN0IGNhbGwgcHV0X2RldmljZSgpIHdoZW4gZG9uZSB3aXRo
-IHJldHVybmVkIGkyY19jbGllbnQgZGV2aWNlICovCj4gIHN0cnVjdCBpMmNfY2xpZW50ICpvZl9m
-aW5kX2kyY19kZXZpY2VfYnlfbm9kZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUpCj4gIHsKPiBA
-QCAtMTQ2LDYgKzE1NCw5IEBAIHN0cnVjdCBpMmNfYWRhcHRlciAqb2ZfZmluZF9pMmNfYWRhcHRl
-cl9ieV9ub2RlKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSkKPiAgCXN0cnVjdCBpMmNfYWRhcHRl
-ciAqYWRhcHRlcjsKPiAgCj4gIAlkZXYgPSBidXNfZmluZF9kZXZpY2UoJmkyY19idXNfdHlwZSwg
-TlVMTCwgbm9kZSwgb2ZfZGV2X25vZGVfbWF0Y2gpOwo+ICsJaWYgKCFkZXYpCj4gKwkJZGV2ID0g
-YnVzX2ZpbmRfZGV2aWNlKCZpMmNfYnVzX3R5cGUsIE5VTEwsIG5vZGUsIG9mX3BhcmVudF9ub2Rl
-X21hdGNoKTsKPiArCgpXb3VsZG4ndCBiZSBiZXR0ZXIgdG8gbWVyZ2Ugb2ZfZGV2X25vZGVfbWF0
-Y2ggYW5kIG9mX3BhcmVudF9ub2RlX21hdGNowqAKZnVuY3Rpb25zIGFuZCBjYWxsIGJ1c19maW5k
-X2RldmljZSBvbmNlPwpUaGVuIGV4cHJlc3Npb246CgpkZXYtPm9mX25vZGUgPzogZGV2LT5wYXJl
-bnQtPm9mX25vZGUKCndvdWxkIGlkZW50aWZ5IGFkYXB0ZXIgY3JlYXRlZCBmcm9tIERUICh3aXRo
-IGFzc3VtcHRpb24gZGV2wqAgaGFzIGFsd2F5cwpwYXJlbnQpLgpUaGVyZSBhcmUgZmV3IHF1ZXN0
-aW9ucyB0aGVuOgoxLiBJcyB0aGVyZSBhIGNhc2Ugd2hlbiBkZXYtPnBhcmVudCBjYW4gYmUgTlVM
-TD8gSWYgbm90LCBOVUxMIGNoZWNrIGNhbgpiZSBhZGRlZCB0byBhZGFwdGVyIHJlZ2lzdHJhdGlv
-biBhbmQgaXQgY2FuIGJlIHJlbW92ZWQgZnJvbSBoZXJlLgoyLiBJcyB0aGVyZSBhIGNhc2Ugd2hl
-biBkZXYtPm9mX25vZGUgIT0gTlVMTCBhbmQgZGV2LT5vZl9ub2RlICE9CmRldi0+cGFyZW50LT5v
-Zl9ub2RlPyBJZiBub3QsIGp1c3QgZGV2LT5wYXJlbnQtPm9mX25vZGUgY2FuIGJlIHRlc3RlZCBp
-bgptYXRjaCBmdW5jdGlvbi4KClJlZ2FyZHMKQW5kcnplagoKPiAgCWlmICghZGV2KQo+ICAJCXJl
-dHVybiBOVUxMOwo+ICAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+The newly added tegra_bpmp_resume function is unused when CONFIG_PM
+is disabled:
+
+drivers/firmware/tegra/bpmp.c:847:12: error: 'tegra_bpmp_resume' defined but not used [-Werror=unused-function]
+ static int tegra_bpmp_resume(struct device *dev)
+
+Mark it as __maybe_unused to avoid the warning and let the compiler
+drop it silently.
+
+Fixes: cd40f6ff124c ("firmware: tegra: bpmp: Implement suspend/resume support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/firmware/tegra/bpmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 41448ba78be9..a3d5b518c10e 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -844,7 +844,7 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static int tegra_bpmp_resume(struct device *dev)
++static int __maybe_unused tegra_bpmp_resume(struct device *dev)
+ {
+ 	struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
+ 	unsigned int i;
+-- 
+2.18.0
