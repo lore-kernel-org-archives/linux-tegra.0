@@ -1,58 +1,83 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] firmware: tegra-bpmp: mark PM function as __maybe_unused
-Date: Wed, 3 Oct 2018 09:26:16 +0100
-Message-ID: <64a99db8-85e4-52ab-d0fa-0faa5bb7187a@nvidia.com>
-References: <20181002212208.2971433-1-arnd@arndb.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v6 0/4] devres: provide and use devm_kstrdup_const()
+Date: Wed, 3 Oct 2018 10:33:52 +0200
+Message-ID: <CAMRc=MdMda1fhRZsB96MZd=XXd5otaik9zAnAE3qXWggqhweMA@mail.gmail.com>
+References: <20180930202615.12951-1-brgl@bgdev.pl> <20181001160901.GY15943@smile.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181002212208.2971433-1-arnd@arndb.de>
-Content-Language: en-US
+In-Reply-To: <20181001160901.GY15943@smile.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, Timo Alho <talho@nvidia.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>, linux-mm@kvack.org
 List-Id: linux-tegra@vger.kernel.org
 
+pon., 1 pa=C5=BA 2018 o 18:14 Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> napisa=C5=82(a):
+>
+> On Sun, Sep 30, 2018 at 10:26:11PM +0200, Bartosz Golaszewski wrote:
+> > This series implements devm_kstrdup_const() together with some
+> > prerequisite changes and uses it in tegra-hsp driver.
+>
+> Thanks!
+> For the first three,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> >
+> > v1 -> v2:
+> > - fixed the changelog in the patch implementing devm_kstrdup_const()
+> > - fixed the kernel doc
+> > - moved is_kernel_rodata() to asm-generic/sections.h
+> > - fixed constness
+> >
+> > v2 -> v3:
+> > - rebased on top of 4.19-rc5 as there were some conflicts in the
+> >   pmc-atom driver
+> > - collected Reviewed-by tags
+> >
+> > v3 -> v4:
+> > - Andy NAK'ed patch 4/4 so I added a different example
+> > - collected more tags
+> >
+> > v4 -> v5:
+> > - instead of providing devm_kfree_const(), make devm_kfree() check if
+> >   given pointer is not in .rodata and act accordingly
+> >
+> > v5 -> v6:
+> > - fixed the commit message in patch 2/4 (s/devm_kfree_const/devm_kfree/=
+)
+> > - collected even more tags
+> >
+> > Bartosz Golaszewski (4):
+> >   devres: constify p in devm_kfree()
+> >   mm: move is_kernel_rodata() to asm-generic/sections.h
+> >   devres: provide devm_kstrdup_const()
+> >   mailbox: tegra-hsp: use devm_kstrdup_const()
+> >
+> >  drivers/base/devres.c          | 36 +++++++++++++++++++++++++++--
+> >  drivers/mailbox/tegra-hsp.c    | 41 ++++++++--------------------------
+> >  include/asm-generic/sections.h | 14 ++++++++++++
+> >  include/linux/device.h         |  4 +++-
+> >  mm/util.c                      |  7 ------
+> >  5 files changed, 60 insertions(+), 42 deletions(-)
+> >
+> > --
+> > 2.18.0
+> >
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
-On 02/10/18 22:21, Arnd Bergmann wrote:
-> The newly added tegra_bpmp_resume function is unused when CONFIG_PM
-> is disabled:
-> 
-> drivers/firmware/tegra/bpmp.c:847:12: error: 'tegra_bpmp_resume' defined but not used [-Werror=unused-function]
->  static int tegra_bpmp_resume(struct device *dev)
-> 
-> Mark it as __maybe_unused to avoid the warning and let the compiler
-> drop it silently.
-> 
-> Fixes: cd40f6ff124c ("firmware: tegra: bpmp: Implement suspend/resume support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/firmware/tegra/bpmp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index 41448ba78be9..a3d5b518c10e 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -844,7 +844,7 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
->  	return err;
->  }
->  
-> -static int tegra_bpmp_resume(struct device *dev)
-> +static int __maybe_unused tegra_bpmp_resume(struct device *dev)
->  {
->  	struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
->  	unsigned int i;
+Greg,
 
-Arnd, is this seen with 32-bit ARM configs?
+I think that the three first patches of this series are ready to be
+picked up. The last one can wait until the next release cycle. Out of
+those three two are devres patches and one is mm. Do you think this
+should go through your tree?
 
-Timo, does it make sense to make BPMP dependent on ARCH_TEGRA_186_SOC
-and ARCH_TEGRA_194_SOC instead of just ARCH_TEGRA? For 64-bit Tegra we
-have a dependency on PM so this should not be seen for 64-bit Tegra.
-
-Cheers
-Jon
-
--- 
-nvpublic
+Best regards,
+Bartosz Golaszewski
