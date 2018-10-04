@@ -1,51 +1,39 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2 3/5] usb: xhci: tegra: Add genpd support
-Date: Wed, 3 Oct 2018 14:44:10 +0100
-Message-ID: <4f532f84-4991-6916-b53d-036e7e98be97@nvidia.com>
-References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
- <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFrfcQX0-QrMKy=E=rif9-SjSfxc+LTMBUn5oqOquRdqRg@mail.gmail.com>
+Subject: Re: [PATCH 4.14 000/137] 4.14.74-stable review
+Date: Thu, 4 Oct 2018 13:42:48 +0100
+Message-ID: <424795e5-7ef6-63ff-7908-babf1b34ff58@nvidia.com>
+References: <20181002132458.446916963@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFrfcQX0-QrMKy=E=rif9-SjSfxc+LTMBUn5oqOquRdqRg@mail.gmail.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, DTML <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 03/10/18 10:52, Ulf Hansson wrote:
-> [...]
+On 02/10/18 14:23, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.74 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
->>  static int tegra_xusb_probe(struct platform_device *pdev)
->>  {
->>         struct tegra_xusb_mbox_msg msg;
->> @@ -1038,7 +1095,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->>                 goto put_padctl;
->>         }
->>
->> -       if (!pdev->dev.pm_domain) {
->> +       if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
-> 
-> I am assuming the original check was because allowing the two
-> power-domains to be (wrongly) modeled as one (or as a
-> master+subdomain)?
+> Responses should be made by Thu Oct  4 13:24:18 UTC 2018.
+> Anything received after that time might be too late.
 
-Actually, the original check was added to prepare for supporting
-multiple power-domains and that once we had proper support in place the
-'pdev->dev.domain' would then be populated. However, given that this is
-not used in the case of multiple power-domains, I simply changed the test.
+All tests are passing for Tegra ...
 
-> I was thinking that, perhaps we should add a new OF helper function,
-> where one can get the number of specifiers being listed in the
-> power-domains property. Would that help to easier distinguish what to
-> do when dealing with backwards compatibility?
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    8 boots:	8 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-We could do, but it is not necessary here, because we never had any form
-of genpd support for the Tegra xHCI driver.
+Linux version: 4.14.74-rc1-g3fa7781
+Boards tested: tegra124-jetson-tk1, tegra20-ventana,
+               tegra210-p2371-2180, tegra30-cardhu-a04
 
 Cheers
 Jon
