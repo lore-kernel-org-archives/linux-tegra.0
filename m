@@ -1,53 +1,189 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length'
- quirk
-Date: Fri, 5 Oct 2018 18:08:18 +0200
-Message-ID: <20181005160818.ta2ngy4av7mwpakv@ninjato>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="j75xnhkbcuolmljp"
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH 33/36] dt-bindings: arm: Convert Tegra board/soc bindings to json-schema
+Date: Fri,  5 Oct 2018 11:58:45 -0500
+Message-ID: <20181005165848.3474-34-robh@kernel.org>
+References: <20181005165848.3474-1-robh@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181005165848.3474-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+Cc: Grant Likely <glikely@secretlab.ca>, Kumar Gala <kumar.gala@linaro.org>, Frank Rowand <frowand.list@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Jonathan Cameron <jic23@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Convert Tegra SoC bindings to DT schema format using json-schema.
 
---j75xnhkbcuolmljp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/arm/tegra.txt         | 60 -------------
+ .../devicetree/bindings/arm/tegra.yaml        | 88 +++++++++++++++++++
+ 2 files changed, 88 insertions(+), 60 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/tegra.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra.yaml
 
-On Mon, Jul 23, 2018 at 10:26:12PM +0200, Wolfram Sang wrote:
-> And don't reimplement in the driver.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Applied to for-next, thanks!
-
-
---j75xnhkbcuolmljp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3jHIACgkQFA3kzBSg
-KbZCShAAnKs4K41P5qCG0kGY1iFAOtC3xA1ZPUDjfkva0GCFDLdc96AxOo0oRiLQ
-wUsBnK+uQ5kzbfXyY+htm3/jlEU0rj+eRGJBuvdSVaEgKHDFoef4yjK0VYnv3BMP
-qAEN8UqKIV8tTKEN0EIPqpSw5TX/n2TVkLORsNVkGg7PaWJtANYTLQWFx6IySZsW
-KAMq868YBtjXn9ZayCKwrT0YFrVmG4L2TpgGtyYyyEjOT2MxVL57MXKtzh24ZQ0B
-rwVKCOgUXEAww87fvaXc9H9ex9fvtxRNwAzpxWPnoZbxoqZhuCccrvxvuOGEWAFW
-MekUtwytiSkvxNLyc09o5RtKzZmFxTKOzpa1Tmg9zgSMWEWmiZHUBkP8h2uQsi7V
-XANzc4hrBu5Qp/qdZJCaUlP/O1HVR8pWwL7R6YYoWrn2fOZIbAEq3qtJB+/iBigS
-5n4naNC2Op5KT6/1v7N7CwkRJHmn1i64ZVEAp6MrBNS39dDTEVmyq4pyiRlbR7/v
-yBlU2gFg1ZHvclBn5xgP1vWU+UDmgvyQbUwMF3vBmKuRCeYxbqIo6V698SGFsnTN
-2B8dU30RfHdMLp2x/HoMRJipZxeubAHpz+RpLAB7akzbhSpso8yiQulYroQzacG5
-UDf1nxO1CjuX57BBv3ujUsCWkOZoZCrLzPuFgaekZciPfhfmr0g=
-=mJp1
------END PGP SIGNATURE-----
-
---j75xnhkbcuolmljp--
+diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+deleted file mode 100644
+index 32f62bb7006d..000000000000
+--- a/Documentation/devicetree/bindings/arm/tegra.txt
++++ /dev/null
+@@ -1,60 +0,0 @@
+-NVIDIA Tegra device tree bindings
+--------------------------------------------
+-
+-SoCs
+--------------------------------------------
+-
+-Each device tree must specify which Tegra SoC it uses, using one of the
+-following compatible values:
+-
+-  nvidia,tegra20
+-  nvidia,tegra30
+-  nvidia,tegra114
+-  nvidia,tegra124
+-  nvidia,tegra132
+-  nvidia,tegra210
+-  nvidia,tegra186
+-  nvidia,tegra194
+-
+-Boards
+--------------------------------------------
+-
+-Each device tree must specify which one or more of the following
+-board-specific compatible values:
+-
+-  ad,medcom-wide
+-  ad,plutux
+-  ad,tamonten
+-  ad,tec
+-  compal,paz00
+-  compulab,trimslice
+-  nvidia,beaver
+-  nvidia,cardhu
+-  nvidia,cardhu-a02
+-  nvidia,cardhu-a04
+-  nvidia,dalmore
+-  nvidia,harmony
+-  nvidia,jetson-tk1
+-  nvidia,norrin
+-  nvidia,p2371-0000
+-  nvidia,p2371-2180
+-  nvidia,p2571
+-  nvidia,p2771-0000
+-  nvidia,p2972-0000
+-  nvidia,roth
+-  nvidia,seaboard
+-  nvidia,tn7
+-  nvidia,ventana
+-  toradex,apalis_t30
+-  toradex,apalis_t30-eval
+-  toradex,apalis-tk1
+-  toradex,apalis-tk1-eval
+-  toradex,colibri_t20-512
+-  toradex,colibri_t30
+-  toradex,colibri_t30-eval-v3
+-  toradex,iris
+-
+-Trusted Foundations
+--------------------------------------------
+-Tegra supports the Trusted Foundation secure monitor. See the
+-"tlm,trusted-foundations" binding's documentation for more details.
+diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+new file mode 100644
+index 000000000000..9cebcfaaad1e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+@@ -0,0 +1,88 @@
++# SPDX-License-Identifier: None
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/arm/tegra.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra device tree bindings
++
++maintainers:
++  - Marcel Ziswiler <marcel.ziswiler@toradex.com>
++  - Peter De Schrijver <pdeschrijver@nvidia.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - compal,paz00
++              - compulab,trimslice
++              - nvidia,harmony
++              - nvidia,seaboard
++              - nvidia,ventana
++          - const: nvidia,tegra20
++      - items:
++          - enum:
++              - ad,medcom-wide
++              - ad,plutux
++              - ad,tec
++          - const: ad,tamonten
++          - const: nvidia,tegra20
++      - items:
++          - const: toradex,iris
++          - const: toradex,colibri_t20-512
++          - const: nvidia,tegra20
++      - items:
++          - enum:
++              - nvidia,beaver
++          - const: nvidia,tegra30
++      - items:
++          - enum:
++              - nvidia,cardhu-a02
++              - nvidia,cardhu-a04
++          - const: nvidia,cardhu
++          - const: nvidia,tegra30
++      - items:
++          - enum:
++              - toradex,apalis_t30-eval
++          - const: toradex,apalis_t30
++          - const: nvidia,tegra30
++      - items:
++          - enum:
++              - toradex,colibri_t30-eval-v3
++          - const: toradex,colibri_t30
++          - const: nvidia,tegra30
++      - items:
++          - enum:
++              - nvidia,dalmore
++              - nvidia,roth
++              - nvidia,tn7
++          - const: nvidia,tegra114
++      - items:
++          - enum:
++              - nvidia,jetson-tk1
++              - nvidia,venice2
++          - const: nvidia,tegra124
++      - items:
++          - const: toradex,apalis-tk1-eval
++          - const: toradex,apalis-tk1
++          - const: nvidia,tegra124
++      - items:
++          - enum:
++              - nvidia,norrin
++          - const: nvidia,tegra132
++          - const: nvidia,tegra124
++      - items:
++          - enum:
++              - nvidia,p2371-0000
++              - nvidia,p2371-2180
++              - nvidia,p2571
++          - const: nvidia,tegra210
++      - items:
++          - enum:
++              - nvidia,p2771-0000
++          - const: nvidia,tegra186
++      - items:
++          - enum:
++              - nvidia,p2972-0000
++          - const: nvidia,tegra194
+-- 
+2.17.1
