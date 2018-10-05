@@ -1,189 +1,124 @@
-From: Rob Herring <robh@kernel.org>
-Subject: [PATCH 33/36] dt-bindings: arm: Convert Tegra board/soc bindings to json-schema
-Date: Fri,  5 Oct 2018 11:58:45 -0500
-Message-ID: <20181005165848.3474-34-robh@kernel.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 33/36] dt-bindings: arm: Convert Tegra board/soc bindings
+ to json-schema
+Date: Fri, 5 Oct 2018 22:19:53 +0000
+Message-ID: <1538777991.28477.6.camel@toradex.com>
 References: <20181005165848.3474-1-robh@kernel.org>
+         <20181005165848.3474-34-robh@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181005165848.3474-1-robh@kernel.org>
+In-Reply-To: <20181005165848.3474-34-robh@kernel.org>
+Content-Language: en-US
+Content-ID: <3B5D91AD9DD9BA42BA22AC3EA27144B7@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Cc: Grant Likely <glikely@secretlab.ca>, Kumar Gala <kumar.gala@linaro.org>, Frank Rowand <frowand.list@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Jonathan Cameron <jic23@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+To: "robh@kernel.org" <robh@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "glikely@secretlab.ca" <glikely@secretlab.ca>, "pantelis.antoniou@konsulko.com" <pantelis.antoniou@konsulko.com>, "jic23@kernel.org" <jic23@kernel.org>, "frowand.list@gmail.com" <frowand.list@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "trini@konsulko.com" <trini@konsulko.com>, "broonie@kernel.org" <broonie@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "olof@lixom.net" <olof@lixom.net>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "kumar.gala@linaro.org" <kumar.gala@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>, "geert@linux-m68k.org" <geert@linux-m68k.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Convert Tegra SoC bindings to DT schema format using json-schema.
-
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/arm/tegra.txt         | 60 -------------
- .../devicetree/bindings/arm/tegra.yaml        | 88 +++++++++++++++++++
- 2 files changed, 88 insertions(+), 60 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/tegra.txt
- create mode 100644 Documentation/devicetree/bindings/arm/tegra.yaml
-
-diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
-deleted file mode 100644
-index 32f62bb7006d..000000000000
---- a/Documentation/devicetree/bindings/arm/tegra.txt
-+++ /dev/null
-@@ -1,60 +0,0 @@
--NVIDIA Tegra device tree bindings
---------------------------------------------
--
--SoCs
---------------------------------------------
--
--Each device tree must specify which Tegra SoC it uses, using one of the
--following compatible values:
--
--  nvidia,tegra20
--  nvidia,tegra30
--  nvidia,tegra114
--  nvidia,tegra124
--  nvidia,tegra132
--  nvidia,tegra210
--  nvidia,tegra186
--  nvidia,tegra194
--
--Boards
---------------------------------------------
--
--Each device tree must specify which one or more of the following
--board-specific compatible values:
--
--  ad,medcom-wide
--  ad,plutux
--  ad,tamonten
--  ad,tec
--  compal,paz00
--  compulab,trimslice
--  nvidia,beaver
--  nvidia,cardhu
--  nvidia,cardhu-a02
--  nvidia,cardhu-a04
--  nvidia,dalmore
--  nvidia,harmony
--  nvidia,jetson-tk1
--  nvidia,norrin
--  nvidia,p2371-0000
--  nvidia,p2371-2180
--  nvidia,p2571
--  nvidia,p2771-0000
--  nvidia,p2972-0000
--  nvidia,roth
--  nvidia,seaboard
--  nvidia,tn7
--  nvidia,ventana
--  toradex,apalis_t30
--  toradex,apalis_t30-eval
--  toradex,apalis-tk1
--  toradex,apalis-tk1-eval
--  toradex,colibri_t20-512
--  toradex,colibri_t30
--  toradex,colibri_t30-eval-v3
--  toradex,iris
--
--Trusted Foundations
---------------------------------------------
--Tegra supports the Trusted Foundation secure monitor. See the
--"tlm,trusted-foundations" binding's documentation for more details.
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-new file mode 100644
-index 000000000000..9cebcfaaad1e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -0,0 +1,88 @@
-+# SPDX-License-Identifier: None
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bindings/arm/tegra.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra device tree bindings
-+
-+maintainers:
-+  - Marcel Ziswiler <marcel.ziswiler@toradex.com>
-+  - Peter De Schrijver <pdeschrijver@nvidia.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - compal,paz00
-+              - compulab,trimslice
-+              - nvidia,harmony
-+              - nvidia,seaboard
-+              - nvidia,ventana
-+          - const: nvidia,tegra20
-+      - items:
-+          - enum:
-+              - ad,medcom-wide
-+              - ad,plutux
-+              - ad,tec
-+          - const: ad,tamonten
-+          - const: nvidia,tegra20
-+      - items:
-+          - const: toradex,iris
-+          - const: toradex,colibri_t20-512
-+          - const: nvidia,tegra20
-+      - items:
-+          - enum:
-+              - nvidia,beaver
-+          - const: nvidia,tegra30
-+      - items:
-+          - enum:
-+              - nvidia,cardhu-a02
-+              - nvidia,cardhu-a04
-+          - const: nvidia,cardhu
-+          - const: nvidia,tegra30
-+      - items:
-+          - enum:
-+              - toradex,apalis_t30-eval
-+          - const: toradex,apalis_t30
-+          - const: nvidia,tegra30
-+      - items:
-+          - enum:
-+              - toradex,colibri_t30-eval-v3
-+          - const: toradex,colibri_t30
-+          - const: nvidia,tegra30
-+      - items:
-+          - enum:
-+              - nvidia,dalmore
-+              - nvidia,roth
-+              - nvidia,tn7
-+          - const: nvidia,tegra114
-+      - items:
-+          - enum:
-+              - nvidia,jetson-tk1
-+              - nvidia,venice2
-+          - const: nvidia,tegra124
-+      - items:
-+          - const: toradex,apalis-tk1-eval
-+          - const: toradex,apalis-tk1
-+          - const: nvidia,tegra124
-+      - items:
-+          - enum:
-+              - nvidia,norrin
-+          - const: nvidia,tegra132
-+          - const: nvidia,tegra124
-+      - items:
-+          - enum:
-+              - nvidia,p2371-0000
-+              - nvidia,p2371-2180
-+              - nvidia,p2571
-+          - const: nvidia,tegra210
-+      - items:
-+          - enum:
-+              - nvidia,p2771-0000
-+          - const: nvidia,tegra186
-+      - items:
-+          - enum:
-+              - nvidia,p2972-0000
-+          - const: nvidia,tegra194
--- 
-2.17.1
+SGkgUm9iDQoNCk9uIEZyaSwgMjAxOC0xMC0wNSBhdCAxMTo1OCAtMDUwMCwgUm9iIEhlcnJpbmcg
+d3JvdGU6DQo+IENvbnZlcnQgVGVncmEgU29DIGJpbmRpbmdzIHRvIERUIHNjaGVtYSBmb3JtYXQg
+dXNpbmcganNvbi1zY2hlbWEuDQo+IA0KPiBDYzogTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRA
+YXJtLmNvbT4NCj4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+
+DQo+IENjOiBKb25hdGhhbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPg0KPiBDYzogZGV2
+aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9y
+Zw0KPiBTaWduZWQtb2ZmLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KPiAtLS0N
+Cj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS90ZWdyYS50eHQgICAgICAgICB8IDYwIC0t
+LS0tLS0tLS0tLS0NCj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS90ZWdyYS55YW1sICAg
+ICAgICB8IDg4DQo+ICsrKysrKysrKysrKysrKysrKysNCj4gIDIgZmlsZXMgY2hhbmdlZCwgODgg
+aW5zZXJ0aW9ucygrKSwgNjAgZGVsZXRpb25zKC0pDQo+ICBkZWxldGUgbW9kZSAxMDA2NDQgRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS90ZWdyYS50eHQNCj4gIGNyZWF0ZSBt
+b2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL3RlZ3JhLnlh
+bWwNCj4gDQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+YXJtL3RlZ3JhLnR4dA0KPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0v
+dGVncmEudHh0DQo+IGRlbGV0ZWQgZmlsZSBtb2RlIDEwMDY0NA0KPiBpbmRleCAzMmY2MmJiNzAw
+NmQuLjAwMDAwMDAwMDAwMA0KPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvYXJtL3RlZ3JhLnR4dA0KPiArKysgL2Rldi9udWxsDQo+IEBAIC0xLDYwICswLDAgQEANCj4g
+LU5WSURJQSBUZWdyYSBkZXZpY2UgdHJlZSBiaW5kaW5ncw0KPiAtLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAtDQo+IC1Tb0NzDQo+IC0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IC0NCj4gLUVhY2ggZGV2aWNlIHRyZWUg
+bXVzdCBzcGVjaWZ5IHdoaWNoIFRlZ3JhIFNvQyBpdCB1c2VzLCB1c2luZyBvbmUgb2YNCj4gdGhl
+DQo+IC1mb2xsb3dpbmcgY29tcGF0aWJsZSB2YWx1ZXM6DQo+IC0NCj4gLSAgbnZpZGlhLHRlZ3Jh
+MjANCj4gLSAgbnZpZGlhLHRlZ3JhMzANCj4gLSAgbnZpZGlhLHRlZ3JhMTE0DQo+IC0gIG52aWRp
+YSx0ZWdyYTEyNA0KPiAtICBudmlkaWEsdGVncmExMzINCj4gLSAgbnZpZGlhLHRlZ3JhMjEwDQo+
+IC0gIG52aWRpYSx0ZWdyYTE4Ng0KPiAtICBudmlkaWEsdGVncmExOTQNCj4gLQ0KPiAtQm9hcmRz
+DQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IC0NCj4g
+LUVhY2ggZGV2aWNlIHRyZWUgbXVzdCBzcGVjaWZ5IHdoaWNoIG9uZSBvciBtb3JlIG9mIHRoZSBm
+b2xsb3dpbmcNCj4gLWJvYXJkLXNwZWNpZmljIGNvbXBhdGlibGUgdmFsdWVzOg0KPiAtDQo+IC0g
+IGFkLG1lZGNvbS13aWRlDQo+IC0gIGFkLHBsdXR1eA0KPiAtICBhZCx0YW1vbnRlbg0KPiAtICBh
+ZCx0ZWMNCj4gLSAgY29tcGFsLHBhejAwDQo+IC0gIGNvbXB1bGFiLHRyaW1zbGljZQ0KPiAtICBu
+dmlkaWEsYmVhdmVyDQo+IC0gIG52aWRpYSxjYXJkaHUNCj4gLSAgbnZpZGlhLGNhcmRodS1hMDIN
+Cj4gLSAgbnZpZGlhLGNhcmRodS1hMDQNCj4gLSAgbnZpZGlhLGRhbG1vcmUNCj4gLSAgbnZpZGlh
+LGhhcm1vbnkNCj4gLSAgbnZpZGlhLGpldHNvbi10azENCj4gLSAgbnZpZGlhLG5vcnJpbg0KPiAt
+ICBudmlkaWEscDIzNzEtMDAwMA0KPiAtICBudmlkaWEscDIzNzEtMjE4MA0KPiAtICBudmlkaWEs
+cDI1NzENCj4gLSAgbnZpZGlhLHAyNzcxLTAwMDANCj4gLSAgbnZpZGlhLHAyOTcyLTAwMDANCj4g
+LSAgbnZpZGlhLHJvdGgNCj4gLSAgbnZpZGlhLHNlYWJvYXJkDQo+IC0gIG52aWRpYSx0bjcNCj4g
+LSAgbnZpZGlhLHZlbnRhbmENCj4gLSAgdG9yYWRleCxhcGFsaXNfdDMwDQo+IC0gIHRvcmFkZXgs
+YXBhbGlzX3QzMC1ldmFsDQo+IC0gIHRvcmFkZXgsYXBhbGlzLXRrMQ0KPiAtICB0b3JhZGV4LGFw
+YWxpcy10azEtZXZhbA0KPiAtICB0b3JhZGV4LGNvbGlicmlfdDIwLTUxMg0KPiAtICB0b3JhZGV4
+LGNvbGlicmlfdDMwDQo+IC0gIHRvcmFkZXgsY29saWJyaV90MzAtZXZhbC12Mw0KPiAtICB0b3Jh
+ZGV4LGlyaXMNCg0KQXJlIHlvdSBhd2FyZSB0aGF0IC1uZXh0IGFscmVhZHkgZmVhdHVyZXMgYSBm
+ZXcgdXBkYXRpbmcgY29tbWl0cw0KdGhlcmVvZiBmcm9tIGFyb3VuZCB0aGUgYmVnaW5uaW5nIG9m
+IFNlcHRlbWJlciBvbmUgb2Ygd2hpY2ggZXZlbiBiZWFycw0KeW91ciByZXZpZXdlZC1ieS4NCg0K
+PiAtDQo+IC1UcnVzdGVkIEZvdW5kYXRpb25zDQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tDQo+IC1UZWdyYSBzdXBwb3J0cyB0aGUgVHJ1c3RlZCBGb3VuZGF0
+aW9uIHNlY3VyZSBtb25pdG9yLiBTZWUgdGhlDQo+IC0idGxtLHRydXN0ZWQtZm91bmRhdGlvbnMi
+IGJpbmRpbmcncyBkb2N1bWVudGF0aW9uIGZvciBtb3JlIGRldGFpbHMuDQo+IGRpZmYgLS1naXQg
+YS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL3RlZ3JhLnlhbWwNCj4gYi9E
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL3RlZ3JhLnlhbWwNCj4gbmV3IGZp
+bGUgbW9kZSAxMDA2NDQNCj4gaW5kZXggMDAwMDAwMDAwMDAwLi45Y2ViY2ZhYWFkMWUNCj4gLS0t
+IC9kZXYvbnVsbA0KPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJt
+L3RlZ3JhLnlhbWwNCj4gQEAgLTAsMCArMSw4OCBAQA0KPiArIyBTUERYLUxpY2Vuc2UtSWRlbnRp
+ZmllcjogTm9uZQ0KPiArJVlBTUwgMS4yDQo+ICstLS0NCj4gKyRpZDogaHR0cDovL2RldmljZXRy
+ZWUub3JnL3NjaGVtYXMvYmluZGluZ3MvYXJtL3RlZ3JhLnlhbWwjDQo+ICskc2NoZW1hOiBodHRw
+Oi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMNCj4gKw0KPiArdGl0bGU6
+IE5WSURJQSBUZWdyYSBkZXZpY2UgdHJlZSBiaW5kaW5ncw0KPiArDQo+ICttYWludGFpbmVyczoN
+Cj4gKyAgLSBNYXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4NCg0K
+V293LCBzZWVtcyBJIGdvdCBwcm9tb3RlZCB0byBtYWludGFpbmVyIG5vdy4gSSBndWVzcyB0aGF0
+IG1heSBtYWtlDQpzZW5zZSBhdCBsZWFzdCBmb3IgdGhlIFRvcmFkZXggYmFzZWQgYm9hcmRzLg0K
+DQo+ICsgIC0gUGV0ZXIgRGUgU2NocmlqdmVyIDxwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbT4NCj4g
+Kw0KPiArcHJvcGVydGllczoNCj4gKyAgY29tcGF0aWJsZToNCj4gKyAgICBvbmVPZjoNCj4gKyAg
+ICAgIC0gaXRlbXM6DQo+ICsgICAgICAgICAgLSBlbnVtOg0KPiArICAgICAgICAgICAgICAtIGNv
+bXBhbCxwYXowMA0KPiArICAgICAgICAgICAgICAtIGNvbXB1bGFiLHRyaW1zbGljZQ0KPiArICAg
+ICAgICAgICAgICAtIG52aWRpYSxoYXJtb255DQo+ICsgICAgICAgICAgICAgIC0gbnZpZGlhLHNl
+YWJvYXJkDQo+ICsgICAgICAgICAgICAgIC0gbnZpZGlhLHZlbnRhbmENCj4gKyAgICAgICAgICAt
+IGNvbnN0OiBudmlkaWEsdGVncmEyMA0KPiArICAgICAgLSBpdGVtczoNCj4gKyAgICAgICAgICAt
+IGVudW06DQo+ICsgICAgICAgICAgICAgIC0gYWQsbWVkY29tLXdpZGUNCj4gKyAgICAgICAgICAg
+ICAgLSBhZCxwbHV0dXgNCj4gKyAgICAgICAgICAgICAgLSBhZCx0ZWMNCj4gKyAgICAgICAgICAt
+IGNvbnN0OiBhZCx0YW1vbnRlbg0KPiArICAgICAgICAgIC0gY29uc3Q6IG52aWRpYSx0ZWdyYTIw
+DQo+ICsgICAgICAtIGl0ZW1zOg0KPiArICAgICAgICAgIC0gY29uc3Q6IHRvcmFkZXgsaXJpcw0K
+PiArICAgICAgICAgIC0gY29uc3Q6IHRvcmFkZXgsY29saWJyaV90MjAtNTEyDQo+ICsgICAgICAg
+ICAgLSBjb25zdDogbnZpZGlhLHRlZ3JhMjANCj4gKyAgICAgIC0gaXRlbXM6DQo+ICsgICAgICAg
+ICAgLSBlbnVtOg0KPiArICAgICAgICAgICAgICAtIG52aWRpYSxiZWF2ZXINCj4gKyAgICAgICAg
+ICAtIGNvbnN0OiBudmlkaWEsdGVncmEzMA0KPiArICAgICAgLSBpdGVtczoNCj4gKyAgICAgICAg
+ICAtIGVudW06DQo+ICsgICAgICAgICAgICAgIC0gbnZpZGlhLGNhcmRodS1hMDINCj4gKyAgICAg
+ICAgICAgICAgLSBudmlkaWEsY2FyZGh1LWEwNA0KPiArICAgICAgICAgIC0gY29uc3Q6IG52aWRp
+YSxjYXJkaHUNCj4gKyAgICAgICAgICAtIGNvbnN0OiBudmlkaWEsdGVncmEzMA0KPiArICAgICAg
+LSBpdGVtczoNCj4gKyAgICAgICAgICAtIGVudW06DQo+ICsgICAgICAgICAgICAgIC0gdG9yYWRl
+eCxhcGFsaXNfdDMwLWV2YWwNCj4gKyAgICAgICAgICAtIGNvbnN0OiB0b3JhZGV4LGFwYWxpc190
+MzANCj4gKyAgICAgICAgICAtIGNvbnN0OiBudmlkaWEsdGVncmEzMA0KPiArICAgICAgLSBpdGVt
+czoNCj4gKyAgICAgICAgICAtIGVudW06DQo+ICsgICAgICAgICAgICAgIC0gdG9yYWRleCxjb2xp
+YnJpX3QzMC1ldmFsLXYzDQo+ICsgICAgICAgICAgLSBjb25zdDogdG9yYWRleCxjb2xpYnJpX3Qz
+MA0KPiArICAgICAgICAgIC0gY29uc3Q6IG52aWRpYSx0ZWdyYTMwDQo+ICsgICAgICAtIGl0ZW1z
+Og0KPiArICAgICAgICAgIC0gZW51bToNCj4gKyAgICAgICAgICAgICAgLSBudmlkaWEsZGFsbW9y
+ZQ0KPiArICAgICAgICAgICAgICAtIG52aWRpYSxyb3RoDQo+ICsgICAgICAgICAgICAgIC0gbnZp
+ZGlhLHRuNw0KPiArICAgICAgICAgIC0gY29uc3Q6IG52aWRpYSx0ZWdyYTExNA0KPiArICAgICAg
+LSBpdGVtczoNCj4gKyAgICAgICAgICAtIGVudW06DQo+ICsgICAgICAgICAgICAgIC0gbnZpZGlh
+LGpldHNvbi10azENCj4gKyAgICAgICAgICAgICAgLSBudmlkaWEsdmVuaWNlMg0KPiArICAgICAg
+ICAgIC0gY29uc3Q6IG52aWRpYSx0ZWdyYTEyNA0KPiArICAgICAgLSBpdGVtczoNCj4gKyAgICAg
+ICAgICAtIGNvbnN0OiB0b3JhZGV4LGFwYWxpcy10azEtZXZhbA0KPiArICAgICAgICAgIC0gY29u
+c3Q6IHRvcmFkZXgsYXBhbGlzLXRrMQ0KPiArICAgICAgICAgIC0gY29uc3Q6IG52aWRpYSx0ZWdy
+YTEyNA0KPiArICAgICAgLSBpdGVtczoNCj4gKyAgICAgICAgICAtIGVudW06DQo+ICsgICAgICAg
+ICAgICAgIC0gbnZpZGlhLG5vcnJpbg0KPiArICAgICAgICAgIC0gY29uc3Q6IG52aWRpYSx0ZWdy
+YTEzMg0KPiArICAgICAgICAgIC0gY29uc3Q6IG52aWRpYSx0ZWdyYTEyNA0KPiArICAgICAgLSBp
+dGVtczoNCj4gKyAgICAgICAgICAtIGVudW06DQo+ICsgICAgICAgICAgICAgIC0gbnZpZGlhLHAy
+MzcxLTAwMDANCj4gKyAgICAgICAgICAgICAgLSBudmlkaWEscDIzNzEtMjE4MA0KPiArICAgICAg
+ICAgICAgICAtIG52aWRpYSxwMjU3MQ0KPiArICAgICAgICAgIC0gY29uc3Q6IG52aWRpYSx0ZWdy
+YTIxMA0KPiArICAgICAgLSBpdGVtczoNCj4gKyAgICAgICAgICAtIGVudW06DQo+ICsgICAgICAg
+ICAgICAgIC0gbnZpZGlhLHAyNzcxLTAwMDANCj4gKyAgICAgICAgICAtIGNvbnN0OiBudmlkaWEs
+dGVncmExODYNCj4gKyAgICAgIC0gaXRlbXM6DQo+ICsgICAgICAgICAgLSBlbnVtOg0KPiArICAg
+ICAgICAgICAgICAtIG52aWRpYSxwMjk3Mi0wMDAwDQo+ICsgICAgICAgICAgLSBjb25zdDogbnZp
+ZGlhLHRlZ3JhMTk0DQoNCk90aGVyIHRoYW4gdGhhdCBJJ20gYWxsIGluIHRvIG1vdmUgdG93YXJk
+cyBtb3JlIHN0cnVjdHVyZWQgYmluZGluZ3MgZG9jdW1lbnRhdGlvbi4NCg0KQ2hlZXJzDQoNCk1h
+cmNlbA==
