@@ -1,62 +1,76 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length'
- quirk
-Date: Fri, 5 Oct 2018 14:52:05 +0100
-Message-ID: <8eb3d00b-0275-30ec-ef44-5e859dd9242f@nvidia.com>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 00/11] Continuing the work on coupled regulators
+Date: Fri,  5 Oct 2018 18:36:27 +0300
+Message-ID: <20181005153638.1886-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Maciej Purski <m.purski@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Lucas Stach <l.stach@pengutronix.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
-On 23/07/18 21:26, Wolfram Sang wrote:
-> And don't reimplement in the driver.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Only build tested.
-> 
->  drivers/i2c/busses/i2c-tegra.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 60c8561fbe65..437294ea2f0a 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -684,9 +684,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  
->  	tegra_i2c_flush_fifos(i2c_dev);
->  
-> -	if (msg->len == 0)
-> -		return -EINVAL;
-> -
->  	i2c_dev->msg_buf = msg->buf;
->  	i2c_dev->msg_buf_remaining = msg->len;
->  	i2c_dev->msg_err = I2C_ERR_NONE;
-> @@ -831,6 +828,7 @@ static const struct i2c_algorithm tegra_i2c_algo = {
->  
->  /* payload size is only 12 bit */
->  static const struct i2c_adapter_quirks tegra_i2c_quirks = {
-> +	.flags = I2C_AQ_NO_ZERO_LEN,
->  	.max_read_len = 4096,
->  	.max_write_len = 4096,
->  };
+Maciej moved on to work on something else and kindly allowed me to
+take over the coupled regulators patches [0] which I'll try to finalize.
 
-Sorry for missing this, but looks fine to me, so ...
+I recently started to work on adding DVFS support to the CPUFreq driver
+of NVIDIA Tegra20/30 which require the coupled regulators functionality.
+Both Tegra20 and Tegra30 have the voltage "max-spread" constraint.
+Tegra30 has an additional constraint, the "max-step" voltage.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+What is done in this series:
 
-Cheers
-Jon
+1. Re-worked the original "Add voltage balancing mechanism" patch from
+   Maciej by:
+        1) Fixing infinite loop within regulator_balance_voltage().
+        2) Handling suspend_state_t properly.
+        3) Fixing broken compilation of the patch.
+
+2. Added pair of patches to clean up regulator-couple resolving.
+
+3. Changed device tree binding of the regulator-coupled-max-spread property
+   to make it more flexible.
+
+4. Added new device tree property, the regulator-max-step-microvolt.
+
+5. Implemented wait/wound mutex which was suggested by Lucas Stach in the
+   review comment to [0]. I've tested w/w locking extensively (including
+   CONFIG_DEBUG_WW_MUTEX_SLOWPATH) and quite confident that everything is
+   okay.
+
+6. Patches were tested with KASAN on Tegra20 / Tegra30, I tried to cover
+   various cases and verified that voltage constraints not violated under
+   different circumstances.
+
+Please review, thanks.
+
+[0] https://lkml.org/lkml/2018/4/23/619
+
+Dmitry Osipenko (9):
+  regulator: core: Mutually resolve regulators coupling
+  regulator: core: Don't allow to get regulator until all couples
+    resolved
+  dt-bindings: regulator: Change regulator-coupled-max-spread property
+  regulator: core: Limit regulators coupling to a single couple
+  dt-bindings: regulator: Document new regulator-max-step-microvolt
+    property
+  regulator: core: Add new max_uV_step constraint
+  regulator: core: Decouple regulators on regulator_unregister()
+  regulator: core: Use ww_mutex for regulators locking
+  regulator: core: Properly handle case where supply is the couple
+
+Maciej Purski (2):
+  regulator: core: Add voltage balancing mechanism
+  regulator: core: Change voltage setting path
+
+ .../bindings/regulator/regulator.txt          |   7 +-
+ drivers/regulator/core.c                      | 821 +++++++++++++++---
+ drivers/regulator/of_regulator.c              |   4 +
+ include/linux/regulator/driver.h              |   5 +-
+ include/linux/regulator/machine.h             |   3 +
+ 5 files changed, 713 insertions(+), 127 deletions(-)
 
 -- 
-nvpublic
+2.19.0
