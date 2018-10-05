@@ -1,83 +1,53 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] firmware: tegra-bpmp: mark PM function as __maybe_unused
-Date: Thu, 4 Oct 2018 17:19:56 +0100
-Message-ID: <14e652c3-53d9-40f3-61fe-74f9983a0bd4@nvidia.com>
-References: <20181002212208.2971433-1-arnd@arndb.de>
- <64a99db8-85e4-52ab-d0fa-0faa5bb7187a@nvidia.com>
- <31707122-ae73-c608-e9f6-c114d6db2b25@nvidia.com>
- <CAK8P3a1j_Gowa-aK=-3cdgvnhReVyJLigQtceDwXYNZH_tMdbQ@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length'
+ quirk
+Date: Fri, 5 Oct 2018 14:24:31 +0200
+Message-ID: <20181005122431.GJ5433@kunai>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GvznHscUikHnwW2p"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a1j_Gowa-aK=-3cdgvnhReVyJLigQtceDwXYNZH_tMdbQ@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, talho@nvidia.com
-Cc: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 04/10/18 16:31, Arnd Bergmann wrote:
-> On Thu, Oct 4, 2018 at 5:11 PM Timo Alho <talho@nvidia.com> wrote:
->> On 03.10.2018 11:26, Jonathan Hunter wrote:
->>> On 02/10/18 22:21, Arnd Bergmann wrote:
->>>> The newly added tegra_bpmp_resume function is unused when CONFIG_PM
->>>> is disabled:
->>>>
->>>> drivers/firmware/tegra/bpmp.c:847:12: error: 'tegra_bpmp_resume' defined but not used [-Werror=unused-function]
->>>>   static int tegra_bpmp_resume(struct device *dev)
->>>>
->>>> Mark it as __maybe_unused to avoid the warning and let the compiler
->>>> drop it silently.
->>>>
->>>> Fixes: cd40f6ff124c ("firmware: tegra: bpmp: Implement suspend/resume support")
->>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>>> ---
->>>>   drivers/firmware/tegra/bpmp.c | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
->>>> index 41448ba78be9..a3d5b518c10e 100644
->>>> --- a/drivers/firmware/tegra/bpmp.c
->>>> +++ b/drivers/firmware/tegra/bpmp.c
->>>> @@ -844,7 +844,7 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
->>>>      return err;
->>>>   }
->>>>
->>>> -static int tegra_bpmp_resume(struct device *dev)
->>>> +static int __maybe_unused tegra_bpmp_resume(struct device *dev)
->>>>   {
->>>>      struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
->>>>      unsigned int i;
->>>
->>> Arnd, is this seen with 32-bit ARM configs?
-> 
-> This was with a randconfig build on 64-bit ARM. I don't know exactly
-> what combination of options caused it.
-> 
->>> Timo, does it make sense to make BPMP dependent on ARCH_TEGRA_186_SOC
->>> and ARCH_TEGRA_194_SOC instead of just ARCH_TEGRA? For 64-bit Tegra we
->>> have a dependency on PM so this should not be seen for 64-bit Tegra.
-> 
-> CONFIG_PM does not imply CONFIG_PM_SLEEP, so probably it
-> was just broken for PM=y, PM_SLEEP=n.
+--GvznHscUikHnwW2p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes that would make sense.
+On Mon, Jul 23, 2018 at 10:26:12PM +0200, Wolfram Sang wrote:
+> And don't reimplement in the driver.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
->> Jon, there will be eventually a BPMP driver for ARCH_TEGRA_210_SOC as
->> well. So it is probably more appropriate to make BPMP dependent on ARM64
->> & ARCH_TEGRA.
-> 
-> Generally speaking, we are trying to allow building all drivers at least
-> with CONFIG_COMPILE_TEST, in order to get the best build coverage.
+Ping.
 
-True. Thinking some more it is fine with me, so ...
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+--GvznHscUikHnwW2p
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers
-Jon
+-----BEGIN PGP SIGNATURE-----
 
--- 
-nvpublic
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3V/8ACgkQFA3kzBSg
+KbaIMg//VoDVkIgkD3T/QM1hU3m4q/+ParcG3kgHrJNciUf/GlzoZcKhvHIvXdli
+PF6F6K8RFXnfNs11r2ihDdICbRGZkd/AX7Vv+f2NUzyEVaXZKQGtEd+cw03k25Cq
+BS0nu4b6clpCEHAKEZgnfrSnifwiVYdNIht2K+n4swAktfoPEX8HAeNnMmSmuWf1
+whdta6zIIzGt/Kstcx6x59nZ3DQx1NfeDJ3AV4Y4V2Rv8BiY1jEIS6ScnPVeHI/A
+zV4QWmIKhHxvCL36rxBhsPjb14kfjPxLdJBLnLFbUTP7S2yZVuvHA4LPIYn7S5PW
+LukXgbEPWPJe3ox28HeRDpzhBFiSza7qjjT3wJFg0f/6F0KtMmDf4DRz1SJ3vPmc
+LlDv6YaIs6KdGxHMxAjRBiIY1MAqgPpvI7tuxOzaiC/FwW9hZPdtZrRu8Lrazr3w
+OVv+uW6pc+FPV4fxn7PMVdlZPV2H/sYbkvPUVSxwerR2OTWBbQM+FELGEOl3ag95
+zrqddnG7DpUS8Ogw0x2wuMM8oxQLK7m8K41b3k4NqjwGfm9ntBj6Af+FmHz3Dr27
+MeHhQnSJhpsfF8v1PuXaWx8J4mRIin/SMO9/RLzdp9nfV+Bxy/NJaJKVY3gUW9XG
+gv3jN3fPYFvSguWlBFKRfVNHEaBcf5qcHz0Wt4N/81bdw0vuJUc=
+=Om5z
+-----END PGP SIGNATURE-----
+
+--GvznHscUikHnwW2p--
