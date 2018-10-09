@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v1 5/8] ARM: tegra: apalis-tk1: further regulator clean-up
-Date: Tue,  9 Oct 2018 17:25:20 +0200
-Message-ID: <20181009152523.3771-6-marcel@ziswiler.com>
+Subject: [PATCH v1 7/8] ARM: tegra: colibri_t30: further regulator clean-up
+Date: Tue,  9 Oct 2018 17:25:22 +0200
+Message-ID: <20181009152523.3771-8-marcel@ziswiler.com>
 References: <20181009152523.3771-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181009152523.3771-1-marcel@ziswiler.com>
@@ -12,8 +12,12 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add reg_ prefix to vddio_sdmmc1 and vddio_sdmmc3.
-Reorder PMIC properties.
+Drop unused labels.
+Rename regulator tps62362-vout to +V1.2_VDD_CORE.
+Reorder TPS65911 properties.
+Rename +V1.05 to +V1.05_AVDD_PLLE.
+Add ti,en-ck32k-xtal.
+Specify TPS62362 vin-supply.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -21,131 +25,141 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v1: None
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts      |  4 ++--
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  4 ++--
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 10 +++++-----
- arch/arm/boot/dts/tegra124-apalis.dtsi          | 10 +++++-----
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 45 ++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index eaee10ef6512..e553eff50499 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -171,7 +171,7 @@
- 		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc1>;
-+		vqmmc-supply = <&reg_vddio_sdmmc1>;
- 	};
- 
- 	/* Apalis SD1 */
-@@ -180,7 +180,7 @@
- 		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc3>;
-+		vqmmc-supply = <&reg_vddio_sdmmc3>;
- 	};
- 
- 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-index 7961eb4bd803..e2f94dc7ff91 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-@@ -137,7 +137,7 @@
- 		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc1>;
-+		vqmmc-supply = <&reg_vddio_sdmmc1>;
- 	};
- 
- 	/* Apalis SD1 */
-@@ -146,7 +146,7 @@
- 		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc3>;
-+		vqmmc-supply = <&reg_vddio_sdmmc3>;
- 	};
- 
- 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 73a8e117a9b9..e532b564e4c9 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1570,12 +1570,12 @@
- 		pmic: pmic@40 {
- 			compatible = "ams,as3722";
- 			reg = <0x40>;
--			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			ams,system-power-controller;
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 963f26071415..d71038ea544f 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -732,16 +732,13 @@
+ 		pmic: pmic@2d {
+ 			compatible = "ti,tps65911";
+ 			reg = <0x2d>;
+-
 +			#gpio-cells = <2>;
 +			gpio-controller;
-+			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
  			#interrupt-cells = <2>;
  			interrupt-controller;
--			gpio-controller;
+-
++			ti,en-ck32k-xtal;
+ 			ti,system-power-controller;
+-
 -			#gpio-cells = <2>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&as3722_default>;
+-			gpio-controller;
+-
+ 			vcc1-supply = <&reg_module_3v3>;
+ 			vcc2-supply = <&reg_module_3v3>;
+ 			vcc3-supply = <&reg_1v8_vio>;
+@@ -752,29 +749,29 @@
+ 			vccio-supply = <&reg_module_3v3>;
  
-@@ -1679,7 +1679,7 @@
- 					ams,ext-control = <1>;
+ 			regulators {
+-				vdd1_reg: vdd1 {
++				reg_1v8_vio: vio {
++					regulator-name = "+V1.8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				vdd1 {
+ 					regulator-name = "+V1.35_VDDIO_DDR";
+ 					regulator-min-microvolt = <1350000>;
+ 					regulator-max-microvolt = <1350000>;
+ 					regulator-always-on;
  				};
  
--				vddio_sdmmc1: ldo1 {
-+				reg_vddio_sdmmc1: ldo1 {
- 					regulator-name = "VDDIO_SDMMC1";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
-@@ -1711,7 +1711,7 @@
+-				/* SW2: unused */
++				/* SW2 aka vdd2: unused */
  
- 				/* LDO5 not used */
- 
--				vddio_sdmmc3: ldo6 {
-+				reg_vddio_sdmmc3: ldo6 {
- 					regulator-name = "VDDIO_SDMMC3";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 3e3b347afe56..3cab9bda918f 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1600,12 +1600,12 @@
- 		pmic: pmic@40 {
- 			compatible = "ams,as3722";
- 			reg = <0x40>;
--			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			ams,system-power-controller;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--			gpio-controller;
--			#gpio-cells = <2>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&as3722_default>;
- 
-@@ -1709,7 +1709,7 @@
- 					ams,ext-control = <1>;
+-				vddctrl_reg: vddctrl {
++				vddctrl {
+ 					regulator-name = "+V1.0_VDD_CPU";
+ 					regulator-min-microvolt = <1150000>;
+ 					regulator-max-microvolt = <1150000>;
+ 					regulator-always-on;
  				};
  
--				vddio_sdmmc1: ldo1 {
-+				reg_vddio_sdmmc1: ldo1 {
- 					regulator-name = "VDDIO_SDMMC1";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
-@@ -1741,7 +1741,7 @@
+-				reg_1v8_vio: vio {
+-					regulator-name = "+V1.8";
+-					regulator-min-microvolt = <1800000>;
+-					regulator-max-microvolt = <1800000>;
+-					regulator-always-on;
+-				};
+-
+ 				/* LDO1: unused */
  
- 				/* LDO5 not used */
- 
--				vddio_sdmmc3: ldo6 {
-+				reg_vddio_sdmmc3: ldo6 {
- 					regulator-name = "VDDIO_SDMMC3";
- 					regulator-min-microvolt = <1800000>;
+ 				/*
+@@ -782,7 +779,7 @@
+ 				 * +V3.3_AUDIO_AVDD_S, +V3.3 and +V1.8_VDD_LAN
+ 				 * see also +V3.3 fixed supply
+ 				 */
+-				ldo2_reg: ldo2 {
++				ldo2 {
+ 					regulator-name = "EN_+V3.3";
+ 					regulator-min-microvolt = <3300000>;
  					regulator-max-microvolt = <3300000>;
+@@ -791,7 +788,7 @@
+ 
+ 				/* LDO3: unused */
+ 
+-				ldo4_reg: ldo4 {
++				ldo4 {
+ 					regulator-name = "+V1.2_VDD_RTC";
+ 					regulator-min-microvolt = <1200000>;
+ 					regulator-max-microvolt = <1200000>;
+@@ -802,7 +799,7 @@
+ 				 * +V2.8_AVDD_VDAC:
+ 				 * only required for (unsupported) analog RGB
+ 				 */
+-				ldo5_reg: ldo5 {
++				ldo5 {
+ 					regulator-name = "+V2.8_AVDD_VDAC";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
+@@ -814,20 +811,20 @@
+ 				 * but LDO6 can't set voltage in 50mV
+ 				 * granularity
+ 				 */
+-				ldo6_reg: ldo6 {
++				ldo6 {
+ 					regulator-name = "+V1.05_AVDD_PLLE";
+ 					regulator-min-microvolt = <1100000>;
+ 					regulator-max-microvolt = <1100000>;
+ 				};
+ 
+-				ldo7_reg: ldo7 {
++				ldo7 {
+ 					regulator-name = "+V1.2_AVDD_PLL";
+ 					regulator-min-microvolt = <1200000>;
+ 					regulator-max-microvolt = <1200000>;
+ 					regulator-always-on;
+ 				};
+ 
+-				ldo8_reg: ldo8 {
++				ldo8 {
+ 					regulator-name = "+V1.0_VDD_DDR_HS";
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1000000>;
+@@ -885,8 +882,7 @@
+ 		regulator@60 {
+ 			compatible = "ti,tps62362";
+ 			reg = <0x60>;
+-
+-			regulator-name = "tps62362-vout";
++			regulator-name = "+V1.2_VDD_CORE";
+ 			regulator-min-microvolt = <900000>;
+ 			regulator-max-microvolt = <1400000>;
+ 			regulator-boot-on;
+@@ -894,6 +890,7 @@
+ 			ti,vsel0-state-low;
+ 			/* VSEL1: EN_CORE_DVFS_N low for DVFS */
+ 			ti,vsel1-state-low;
++			vin-supply =<&reg_module_3v3>;
+ 		};
+ 	};
+ 
 -- 
 2.14.4
