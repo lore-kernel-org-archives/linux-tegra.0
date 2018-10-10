@@ -1,104 +1,41 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v1 2/8] ARM: tegra: apalis-tk1/colibri_t20/t30: eval/iris: fix regulator gpio enable
-Date: Tue,  9 Oct 2018 17:25:17 +0200
-Message-ID: <20181009152523.3771-3-marcel@ziswiler.com>
-References: <20181009152523.3771-1-marcel@ziswiler.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.14 00/94] 4.14.75-stable review
+Date: Wed, 10 Oct 2018 07:54:57 +0100
+Message-ID: <12c74a4f-6fff-de79-6bc4-6d1b64dab946@nvidia.com>
+References: <20181008175605.067676667@linuxfoundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181009152523.3771-1-marcel@ziswiler.com>
+In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Anything other than the default active-low would require the separate
-property enable-active-high to be set. This gets rid of the following
-warning during boot:
+On 08/10/18 19:30, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.75 release.
+> There are 94 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Oct 10 17:55:37 UTC 2018.
+> Anything received after that time might be too late.
+All tests are passing for Tegra ...
 
- regulator-usbh-vbus GPIO handle specifies active low - ignored
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-resp.:
+Linux version:	4.14.75-rc2-g2040d5a
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
- regulator-1v05-avdd-hdmi-pll GPIO handle specifies active low - ignored
+Cheers
+Jon
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
-Changes in v1: None
-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi   | 2 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi        | 2 +-
- arch/arm/boot/dts/tegra20-colibri-eval-v3.dts | 2 +-
- arch/arm/boot/dts/tegra20-colibri-iris.dts    | 2 +-
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 367eb8c86098..73a8e117a9b9 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1948,7 +1948,7 @@
- 		regulator-name = "+V1.05_AVDD_HDMI_PLL";
- 		regulator-min-microvolt = <1050000>;
- 		regulator-max-microvolt = <1050000>;
--		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_1v05_vdd>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 13c93cd507d8..3e3b347afe56 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1978,7 +1978,7 @@
- 		regulator-name = "+V1.05_AVDD_HDMI_PLL";
- 		regulator-min-microvolt = <1050000>;
- 		regulator-max-microvolt = <1050000>;
--		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_1v05_vdd>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
-index 37ad508b61d9..f1a85d930e61 100644
---- a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
-@@ -256,7 +256,7 @@
- 		regulator-name = "VCC_USB[1-4]";
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
--		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_5v0>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index af4740847769..e1e5ec5253fd 100644
---- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -238,7 +238,7 @@
- 		regulator-name = "VCC_USB1";
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
--		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_5v0>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index 8e106e784dce..7e6bf4cdf322 100644
---- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -192,7 +192,7 @@
- 		regulator-name = "VCC_USB[1-4]";
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
--		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_5v0>;
- 	};
- };
 -- 
-2.14.4
+nvpublic
