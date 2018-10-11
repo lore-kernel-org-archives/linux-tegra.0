@@ -1,76 +1,69 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
-Date: Thu, 11 Oct 2018 15:34:35 +0000
-Message-ID: <1539272073.18645.12.camel@toradex.com>
-References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
-         <20180906122436.25610-1-linus.walleij@linaro.org>
-         <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
-         <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
-         <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 3/5] usb: xhci: tegra: Add genpd support
+Date: Thu, 11 Oct 2018 18:47:53 +0200
+Message-ID: <20181011164753.GA7393@ulmo>
+References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
+ <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
-Content-Language: en-US
-Content-ID: <2C051AF20545F74E9221CADE5728524A@eurprd05.prod.outlook.com>
+Content-Disposition: inline
+In-Reply-To: <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>, "jacopo@jmondi.org" <jacopo@jmondi.org>, "broonie@kernel.org" <broonie@kernel.org>, "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>, "shc_work@mail.ru" <shc_work@mail.ru>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>, "zonque@gmail.com" <zonque@gmail.com>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "jmkrzyszt@gmail.com" <jmkrzyszt@gmail.com>, "geert+renesas@glider.be" <geert+re>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgTGludXMNCg0KT24gVGh1LCAyMDE4LTEwLTExIGF0IDE2OjAwICswMTAwLCBKb24gSHVudGVy
-IHdyb3RlOg0KPiBIaSBMaW51cywNCj4gDQo+IE9uIDExLzEwLzE4IDEwOjI5LCBMaW51cyBXYWxs
-ZWlqIHdyb3RlOg0KPiA+IE9uIFRodSwgT2N0IDExLCAyMDE4IGF0IDExOjAxIEFNIE1hcmVrIFN6
-eXByb3dza2kNCj4gPiA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPiB3cm90ZToNCj4gPiANCj4g
-PiA+IEkndmUganVzdCBub3RpY2VkIHRoYXQgdGhpcyBwYXRjaCBjYXVzZXMgcmVncmVzc2lvbiBv
-biBTYW1zdW5nDQo+ID4gPiBFeHlub3M0NDEyLWJhc2VkIFRyYXRzMiBib2FyZC4gQ29udmVyc2lv
-biB0byBHUElPIGRlc2NyaXB0b3INCj4gPiA+IGJyZWFrcw0KPiA+ID4gb3BlcmF0aW9uIHdoZW4g
-cmVndWxhdG9ycyB1c2VkIHNoYXJlZCBHUElPOiAgc2lpOTIzNCBpMmMgZHJpdmVyDQo+ID4gPiBp
-cyBub3QgYWJsZSB0byBnZXQgdmNjMzNtaGwgcmVndWxhdG9yIChpdCB1c2VzIHNoYXJlZCBHUElP
-IGVuYWJsZQ0KPiA+ID4gbGluZSB3aXRoIHZzaWwxMiByZWd1bGF0b3IpLg0KPiA+IA0KPiA+IFNv
-IEkgZ3Vlc3MgdGhpcyBtZWFucyB0aGF0IHRoaXMgcGh5c2ljYWwgR1BJTyBsaW5lIHdpbGwgZW5h
-YmxlIHRoZQ0KPiA+IHZjYzMzbWhsIGFuZCB0aGUgdnNpbDEyIHJlZ3VsYXRvcnMgYXQgdGhlIHNh
-bWUgdGltZT8NCj4gPiANCj4gPiA+IFRoaXMgaXNzdWUgaGFzIGJlZW4gYWxyZWFkeSBwb2ludGVk
-IGluIGNhc2Ugb2YgY29tbWl0czoNCj4gPiA+IDM3ZmEyM2RiY2NiZDk3NjYzYWNjMDg1YmQ3OTI0
-NmY0MjdlNjAzYTENCj4gPiA+IGQxZGFlNzJmYWIyYzM3N2ZmNDYzNzQyZWVmZDhhYzBmOWU5OWI3
-YjkNCj4gPiA+IGFiNGQxMWUyYzIzMjljZjdjYjdiZTMxZmYyMjQ4OWFhZTRkZWU1ZGMNCj4gPiAN
-Cj4gPiBBIGJpZyBzb3JyeSBmb3IgbXkgaWdub3JhbmNlLCBJIGd1ZXNzIHRoZSBpbmZvcm1hdGlv
-biBvdmVybG9hZA0KPiA+IG9uIHRoZSBtYWlsaW5nIGxpc3QganVzdCBtYWtlcyBtZSBtaXNzIHRo
-ZSBpbXBvcnRhbnQgcG9pbnRzLg0KPiA+IEknbGwgdHJ5IHRvIGJlIGJldHRlciwgc2FkbHkgSSBj
-b25zdGFudGx5IGZhaWwgdG8ga2VlcCBldmVyeXRoaW5nDQo+ID4gaW4gbWluZCBhbmQgY29uc3Rh
-bnRseSBicmVhayB0aGluZ3MgbGlrZSB0aGlzLg0KPiA+IA0KPiA+ID4gTWF5YmUgaXQgd291bGQg
-YmUgYmV0dGVyIHRvIGZpcnN0IHNvbHZlIHRoZSBoYW5kbGluZyBvZiBzaGFyZWQNCj4gPiA+IGVu
-YWJsZQ0KPiA+ID4gR1BJTyBpbiB0aGUgZGVzY3JpcHRvci1iYXNlZCBpbnRlcmZhY2UgYmVmb3Jl
-IGNvbnZlcnRpbmcgbW9yZQ0KPiA+ID4gcmVndWxhdG9ycw0KPiA+ID4gYW5kIHN0ZXBwaW5nIGlu
-dG8gdGhpcyBpc3N1ZSBhZ2Fpbj8NCj4gPiANCj4gPiBJIGFtIHRyeWluZyB0byBzb2x2ZSBpdCwg
-YnV0IEkganVzdCBkb24ndCBoYXZlIHN5c3RlbXMgdG8gcmVwcm9kdWNlDQo+ID4gYWxsDQo+ID4g
-a2luZHMgb2YgdGhpbmdzLiBJdCdzIGEgYml0IHN0cmVzc2Z1bCBzaW5jZSB0aGlzIGlzIG9uZSBv
-ZiB0aG9zZQ0KPiA+IHJ1bnRpbWUNCj4gPiB0aGluZ3MgdGhhdCBpcyBoYXJkIHRvIHRlc3Qgd2hl
-biBkZXZpc2luZyBhIHBhdGNoIGZvciBzeXN0ZW1zIEkNCj4gPiBkb24ndA0KPiA+IGhhdmUuDQo+
-IA0KPiBUaGlzIGFsc28gYXBwZWFycyB0byBiZSBjYXVzaW5nIGEgcmVncmVzc2lvbiBvbiB0aGUg
-VGVncmExMjQgSmV0c29uDQo+IFRLMQ0KPiB0aGF0IGFsc28gdXNlcyBhIHNoYXJlZCBHUElPIGZv
-ciB0d28gcmVndWxhdG9ycy4gVGhlIDJuZCByZWd1bGF0b3INCj4gdGhhdA0KPiB1c2VzIHRoZSBH
-UElPIG5vdyBmYWlscyB0byBwcm9iZSBbMF0gLi4uDQo+IA0KPiBbICAgIDAuNjgwMDIxXSArNVZf
-U0FUQTogc3VwcGxpZWQgYnkgKzVWX1NZUw0KPiBbICAgIDAuNjgzOTY0XSByZWctZml4ZWQtdm9s
-dGFnZTogcHJvYmUgb2YgcmVndWxhdG9yczpyZWd1bGF0b3JAMTQNCj4gZmFpbGVkIHdpdGggZXJy
-b3IgLTE2DQo+IA0KPiBOb3Qgc3VyZSBpZiB5b3UgaGF2ZSBvbmUgb2YgdGhlc2UsIGJ1dCBvdGhl
-cndpc2UgSSBjYW4gaGVscCB0ZXN0Lg0KDQpJIGd1ZXNzIHRoYXQgaXMgYWxzbyB3aGF0IGJyb2tl
-IEhETUkgb24gQXBhbGlzL0NvbGlicmkgVDMwIGNhdXNpbmcgbWUNCnRvIHN1Ym1pdCBhIGZpeCBb
-MV0uIEkgbWF5IGFsc28gaGVscCB0ZXN0aW5nLg0KDQpCVFc6IElzIGl0IG9ubHkgbWUgb3IgaXMg
-dG9kYXkncyAtbmV4dCBjb21wbGV0ZWx5IGJyb2tlbiBub3c/DQoNClsgICAgMC42OTEyNThdIFVu
-YWJsZSB0byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdA0KdmlydHVh
-bCBhZGRyZXNzIDAwMDAwMWY4DQpbICAgIDAuNjk5NzA0XSBwZ2QgPSAocHRydmFsKQ0KWyAgICAw
-LjcwMjUxNV0gWzAwMDAwMWY4XSAqcGdkPTAwMDAwMDAwDQpbICAgIDAuNzA2MjM2XSBJbnRlcm5h
-bCBlcnJvcjogT29wczogNSBbIzFdIFBSRUVNUFQgU01QIEFSTQ0KWyAgICAwLjcxMTc0OV0gTW9k
-dWxlcyBsaW5rZWQgaW46DQpbICAgIDAuNzE0OTMwXSBDUFU6IDAgUElEOiAxIENvbW06IHN3YXBw
-ZXIvMCBOb3QgdGFpbnRlZCA0LjE5LjAtcmM3LQ0KbmV4dC0yMDE4MTAxMS1kaXJ0eSAjMw0KWyAg
-ICAwLjcyMzI0NV0gSGFyZHdhcmUgbmFtZTogTlZJRElBIFRlZ3JhIFNvQyAoRmxhdHRlbmVkIERl
-dmljZSBUcmVlKQ0KWyAgICAwLjcyOTc2NV0gUEMgaXMgYXQgZ3Bpb2RfaG9nKzB4MmMvMHgxNTAN
-ClsgICAgMC43MzM5MzNdIExSIGlzIGF0IG9mX2dwaW9jaGlwX2FkZCsweDM0Yy8weDUxMA0KDQpU
-aGlzIGhhcyBiZWVuIG9ic2VydmVkIG9uIEFwYWxpcyBUSzEuDQoNCj4gQ2hlZXJzDQo+IEpvbg0K
-PiANCj4gWzBdIGh0dHBzOi8vc3RvcmFnZS5rZXJuZWxjaS5vcmcvbmV4dC9tYXN0ZXIvbmV4dC0y
-MDE4MTAxMS9hcm0vdGVncmFfDQo+IGRlZmNvbmZpZy9sYWItYmF5bGlicmUtc2VhdHRsZS9ib290
-LXRlZ3JhMTI0LWpldHNvbi10azEuaHRtbCANCg0KQ2hlZXJzDQoNCk1hcmNlbA0KDQpbMV0gaHR0
-cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC8yMDE4MTAwOTE1MjUyMy4zNzcxLTQtbWFyY2VsQHpp
-c3dpbGVyLmNvbQ==
+
+--ew6BAiZeqk4r7MaW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Sep 28, 2018 at 03:11:48PM +0100, Jon Hunter wrote:
+> The generic power-domain framework has been updated to allow devices
+> that require more than one power-domain to create a new device for
+> each power-domain required and then link these new power-domain
+> devices to the consumer device.
+>=20
+> Update the Tegra xHCI driver to use the new APIs provided by the
+> generic power-domain framework so we can use the generic power-domain
+> framework for managing the xHCI controllers power-domains. Please
+> note that to maintain backward compatibility with older device-tree
+> blobs these new generic power-domain APIs are only used if the
+> 'power-domains' property is present and otherwise we fall back to
+> using the legacy Tegra APIs for managing the power-domains.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/usb/host/xhci-tegra.c | 89 +++++++++++++++++++++++++++++++++++++=
+------
+>  1 file changed, 77 insertions(+), 12 deletions(-)
+
+It'd be nice if we could eventually get rid of the legacy Tegra APIs,
+but that's a separate issue, and this patch looks fine as-is:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--ew6BAiZeqk4r7MaW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlu/frYACgkQ3SOs138+
+s6FKUw//UiZXqBWAdR5Ot6XX321n53Ig86IZzDMLB7iDWbzi+BtsKGGDqs+AwnY3
+ETXJdwG7YI0WfdiPhh3gjE6uOx6/l0fvwLz82oFIxetwbsxb7QqbQWZJoVxm3Hcp
+RhaB+mgN8PmFdd8TgaL6K0wmLyE1qA+XcBJPYqRHhQoFVp4K6bn2Rl0Gl5XshnS+
+tUfyLMiJy15Zr25NIkhWBu+BfqmDHjqf6jdyp94p1vbXUlw4ApGcYlED82eLVn91
+1yTKuOCG4xGKDpL7fQs2HF9KdPCgbKu8LvawLSkRVbNXBavLmWblOuPBWPa4Sm0a
+g6eAJOssYStmznwNWT88+DvC2xfmi4eKlNhJt7fxykOsPKsQ2cOOw6yfco1R2GPf
+B1Sfulqbx3/w3jBpzrwUn8dLmTP6Dxb8fhQqL/EkaB+bPL5qQWFjADAgRsDDLFZY
+sbb7tvjx9OBSQ93LyzkbsYDavdUiAFjDjtRj6XPk3KEY2FSfbsXF8zmOk3OrTwJ9
+eCfQw0en8RKpBdQgd81Utq0y24guei8lYbVho5pO+ehNXEyA2x1WrLVhkM4TH+ZP
+kXdmamgVhc+MmKGpOaYkAQakA6f2UWd9VErCWoRNnLDzMlks/BFvYcZeyutuKJOe
+NLf9Vb+t5qwQgl3Qj0LFYoTdG7LsQ3G9Eygl/QeIFL0p1Jzp71g=
+=pzTh
+-----END PGP SIGNATURE-----
+
+--ew6BAiZeqk4r7MaW--
