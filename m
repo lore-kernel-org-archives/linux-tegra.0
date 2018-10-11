@@ -1,63 +1,60 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 4/5] soc/tegra: pmc: Don't power-up XUSB power-domains
-Date: Thu, 11 Oct 2018 18:50:47 +0200
-Message-ID: <20181011165047.GD7393@ulmo>
+Subject: Re: [PATCH V2 5/5] arm64: dts: tegra210: Add power-domains for xHCI
+Date: Thu, 11 Oct 2018 18:51:37 +0200
+Message-ID: <20181011165137.GE7393@ulmo>
 References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
- <1538143910-24400-5-git-send-email-jonathanh@nvidia.com>
+ <1538143910-24400-6-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LTeJQqWS0MN7I/qa"
+        protocol="application/pgp-signature"; boundary="6e7ZaeXHKrTJCxdu"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1538143910-24400-5-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <1538143910-24400-6-git-send-email-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---LTeJQqWS0MN7I/qa
+--6e7ZaeXHKrTJCxdu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 28, 2018 at 03:11:49PM +0100, Jon Hunter wrote:
-> Now that the Tegra xHCI driver manages the XUSB power-domains itself,
-> remove the code to power-up the power-domains used by the xHCI device
-> from the PMC driver on boot.
+On Fri, Sep 28, 2018 at 03:11:50PM +0100, Jon Hunter wrote:
+> Populate the power-domain properties for the xHCI device for Tegra210.
 >=20
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  drivers/soc/tegra/pmc.c | 16 ----------------
->  1 file changed, 16 deletions(-)
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 
-In case somebody wants to pick this up along with the earlier patches:
+Again, if somebody wants to pick up the series as a whole:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
-If not, I'll pick this up into the Tegra tree after patches 1-3 have
-been merged.
+Otherwise I'll pick this up when the rest have gone in.
 
 Thierry
 
---LTeJQqWS0MN7I/qa
+--6e7ZaeXHKrTJCxdu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlu/f2cACgkQ3SOs138+
-s6Eh0BAAqM6Pa4vYLJq0XAt3XNAIbuE2qQ/S7MI8bkzjlmHeql5oGCVJo2TiDpdG
-O8vOwggmJ3K0XxYP6LtQq9rLtigC8e1QEQiYLRYygTVElYl+VyE6c4qyu2ZwStdJ
-dcgO5kCh3ouG8oJOdUNMWowSNUenw/cLdAGxAMqHEjnRRE2GbVh1Wnxc/ZrkfXDt
-ZkEDjoHTMWpD+/Px0gd14F/viPjYbyQnBneAzm70fYCHAhwM/Q+UCQLU0wd0EPj4
-aYs1Mp00Gx10yoI/x97BJQkuTPg+Q3xaUtWz/MlO/E3XYiA54fEiacPiM/IhL21a
-w7UXSdkgucoifEXB8gfLh1IXdKmMDiHqESWpBxhYi9GuEZRs4QY15JynonaQDlG9
-Lb1hqJnxJBQ+1wocWsSs0SuhMoxlCH3MkeTIYeqC08a9ayb8DPap6QyAM/9W8wZg
-TT7m6PvDACz0O+ef52xnd29CLyKPtBF8YDSUR0c4Ymzfi9Uow/wpAkveprWoq/OB
-HX8rnGw1ncXcp9WIwlkEZMUB/4TNksDu8tE4W0yx8y09tZVRFI4Qkfz7NtkaqS1w
-Bgl3DLfoEoDcjB9qdnfNYQJ3JaHirqCMNhfnB7BT0KnMbLzNIqeVpSgM9LrW+thn
-0Y9GiKC7wYLhTGPiCZ7sD1dFSguoYQzeqd97kMo66jPvjRw4N6g=
-=woEy
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlu/f5kACgkQ3SOs138+
+s6FGrQ/8DB6xrcailVBQ2ScrstfYyLF/r+GdjnB0TzC/eYoyErsFJrUFmZgy1Pa9
+QKn6yndbgroYW+DkK3Jd65iedVM3fY8F40qyWVTyR3NCLvIlwnnR7oevJgr4CzCD
+NUqbCrPmgNMCnQgiH+Q443go6eapWq5Uf5xUCYq1QOfWsxJ6hWTXp3g3VZkQWN5L
+vhBG1USfkVUghja2WeIJ9j4F/LdTj0RYlIEbDEy+gIOlRrD87oRUS2K1AvD+o6py
+EvuTqROGf0wPXYuQYW07Q/8LybC/OHRQS5LGYk1LRim0Q+yGun2QcSI3mxWDG74H
+2UTFyl2IiXKzTfpy1vYeIPcVAVMKFbP27iUUjUlUYZcDeIXx6tcTRPpKdy+liOH7
+/drEasfxvxnnPeq0MwBs1VrPYwDBIPf0rR93zElx2Pjh++mR+9kj69uneo6uO4NX
+pJJS58Zq9KTKLLTERV/9r0KBwESe6DCWpzRxge2v11y6iciOlhoT1rjaSm9lKQpT
+PqT9HNtsfDuiWh1zmDXDm3AlRGtzODp0kymdQjf+yuxFcumHZCay0cL6vfhs2+d1
+VHpMxLtk+mYvydUEKvh8D1w98Q33fY9D2DE6yIWPsBvHrdNcmVxhByiW82Q7av/H
+cmkr0ozLe4PppovASA8QTd9OMEUjWJKDqL7tj3igcrGePhJJ5Hs=
+=5cGk
 -----END PGP SIGNATURE-----
 
---LTeJQqWS0MN7I/qa--
+--6e7ZaeXHKrTJCxdu--
