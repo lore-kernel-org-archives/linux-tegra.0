@@ -1,69 +1,76 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
-Date: Thu, 11 Oct 2018 16:00:20 +0100
-Message-ID: <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
+Date: Thu, 11 Oct 2018 15:34:35 +0000
+Message-ID: <1539272073.18645.12.camel@toradex.com>
 References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
- <20180906122436.25610-1-linus.walleij@linaro.org>
- <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
- <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+         <20180906122436.25610-1-linus.walleij@linaro.org>
+         <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
+         <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+         <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+In-Reply-To: <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
 Content-Language: en-US
+Content-ID: <2C051AF20545F74E9221CADE5728524A@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Haojian Zhuang <haojian.zhuang@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Philipp Zabel <philipp.zabel@gmail.com>, Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, jacopo <jacopo@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Russell King <rmk+kernel@armlinux.org.uk>, linux-tegra <linux-tegra@vger.kernel.org>
+To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>, "jacopo@jmondi.org" <jacopo@jmondi.org>, "broonie@kernel.org" <broonie@kernel.org>, "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>, "shc_work@mail.ru" <shc_work@mail.ru>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>, "zonque@gmail.com" <zonque@gmail.com>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "jmkrzyszt@gmail.com" <jmkrzyszt@gmail.com>, "geert+renesas@glider.be" <geert+re>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Linus,
-
-On 11/10/18 10:29, Linus Walleij wrote:
-> On Thu, Oct 11, 2018 at 11:01 AM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> 
->> I've just noticed that this patch causes regression on Samsung
->> Exynos4412-based Trats2 board. Conversion to GPIO descriptor breaks
->> operation when regulators used shared GPIO:  sii9234 i2c driver
->> is not able to get vcc33mhl regulator (it uses shared GPIO enable
->> line with vsil12 regulator).
-> 
-> So I guess this means that this physical GPIO line will enable the
-> vcc33mhl and the vsil12 regulators at the same time?
-> 
->> This issue has been already pointed in case of commits:
->> 37fa23dbccbd97663acc085bd79246f427e603a1
->> d1dae72fab2c377ff463742eefd8ac0f9e99b7b9
->> ab4d11e2c2329cf7cb7be31ff22489aae4dee5dc
-> 
-> A big sorry for my ignorance, I guess the information overload
-> on the mailing list just makes me miss the important points.
-> I'll try to be better, sadly I constantly fail to keep everything
-> in mind and constantly break things like this.
-> 
->> Maybe it would be better to first solve the handling of shared enable
->> GPIO in the descriptor-based interface before converting more regulators
->> and stepping into this issue again?
-> 
-> I am trying to solve it, but I just don't have systems to reproduce all
-> kinds of things. It's a bit stressful since this is one of those runtime
-> things that is hard to test when devising a patch for systems I don't
-> have.
-
-This also appears to be causing a regression on the Tegra124 Jetson TK1
-that also uses a shared GPIO for two regulators. The 2nd regulator that
-uses the GPIO now fails to probe [0] ...
-
-[    0.680021] +5V_SATA: supplied by +5V_SYS
-[    0.683964] reg-fixed-voltage: probe of regulators:regulator@14 failed with error -16
-
-Not sure if you have one of these, but otherwise I can help test.
-
-Cheers
-Jon
-
-[0] https://storage.kernelci.org/next/master/next-20181011/arm/tegra_defconfig/lab-baylibre-seattle/boot-tegra124-jetson-tk1.html 
-
--- 
-nvpublic
+SGkgTGludXMNCg0KT24gVGh1LCAyMDE4LTEwLTExIGF0IDE2OjAwICswMTAwLCBKb24gSHVudGVy
+IHdyb3RlOg0KPiBIaSBMaW51cywNCj4gDQo+IE9uIDExLzEwLzE4IDEwOjI5LCBMaW51cyBXYWxs
+ZWlqIHdyb3RlOg0KPiA+IE9uIFRodSwgT2N0IDExLCAyMDE4IGF0IDExOjAxIEFNIE1hcmVrIFN6
+eXByb3dza2kNCj4gPiA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPiB3cm90ZToNCj4gPiANCj4g
+PiA+IEkndmUganVzdCBub3RpY2VkIHRoYXQgdGhpcyBwYXRjaCBjYXVzZXMgcmVncmVzc2lvbiBv
+biBTYW1zdW5nDQo+ID4gPiBFeHlub3M0NDEyLWJhc2VkIFRyYXRzMiBib2FyZC4gQ29udmVyc2lv
+biB0byBHUElPIGRlc2NyaXB0b3INCj4gPiA+IGJyZWFrcw0KPiA+ID4gb3BlcmF0aW9uIHdoZW4g
+cmVndWxhdG9ycyB1c2VkIHNoYXJlZCBHUElPOiAgc2lpOTIzNCBpMmMgZHJpdmVyDQo+ID4gPiBp
+cyBub3QgYWJsZSB0byBnZXQgdmNjMzNtaGwgcmVndWxhdG9yIChpdCB1c2VzIHNoYXJlZCBHUElP
+IGVuYWJsZQ0KPiA+ID4gbGluZSB3aXRoIHZzaWwxMiByZWd1bGF0b3IpLg0KPiA+IA0KPiA+IFNv
+IEkgZ3Vlc3MgdGhpcyBtZWFucyB0aGF0IHRoaXMgcGh5c2ljYWwgR1BJTyBsaW5lIHdpbGwgZW5h
+YmxlIHRoZQ0KPiA+IHZjYzMzbWhsIGFuZCB0aGUgdnNpbDEyIHJlZ3VsYXRvcnMgYXQgdGhlIHNh
+bWUgdGltZT8NCj4gPiANCj4gPiA+IFRoaXMgaXNzdWUgaGFzIGJlZW4gYWxyZWFkeSBwb2ludGVk
+IGluIGNhc2Ugb2YgY29tbWl0czoNCj4gPiA+IDM3ZmEyM2RiY2NiZDk3NjYzYWNjMDg1YmQ3OTI0
+NmY0MjdlNjAzYTENCj4gPiA+IGQxZGFlNzJmYWIyYzM3N2ZmNDYzNzQyZWVmZDhhYzBmOWU5OWI3
+YjkNCj4gPiA+IGFiNGQxMWUyYzIzMjljZjdjYjdiZTMxZmYyMjQ4OWFhZTRkZWU1ZGMNCj4gPiAN
+Cj4gPiBBIGJpZyBzb3JyeSBmb3IgbXkgaWdub3JhbmNlLCBJIGd1ZXNzIHRoZSBpbmZvcm1hdGlv
+biBvdmVybG9hZA0KPiA+IG9uIHRoZSBtYWlsaW5nIGxpc3QganVzdCBtYWtlcyBtZSBtaXNzIHRo
+ZSBpbXBvcnRhbnQgcG9pbnRzLg0KPiA+IEknbGwgdHJ5IHRvIGJlIGJldHRlciwgc2FkbHkgSSBj
+b25zdGFudGx5IGZhaWwgdG8ga2VlcCBldmVyeXRoaW5nDQo+ID4gaW4gbWluZCBhbmQgY29uc3Rh
+bnRseSBicmVhayB0aGluZ3MgbGlrZSB0aGlzLg0KPiA+IA0KPiA+ID4gTWF5YmUgaXQgd291bGQg
+YmUgYmV0dGVyIHRvIGZpcnN0IHNvbHZlIHRoZSBoYW5kbGluZyBvZiBzaGFyZWQNCj4gPiA+IGVu
+YWJsZQ0KPiA+ID4gR1BJTyBpbiB0aGUgZGVzY3JpcHRvci1iYXNlZCBpbnRlcmZhY2UgYmVmb3Jl
+IGNvbnZlcnRpbmcgbW9yZQ0KPiA+ID4gcmVndWxhdG9ycw0KPiA+ID4gYW5kIHN0ZXBwaW5nIGlu
+dG8gdGhpcyBpc3N1ZSBhZ2Fpbj8NCj4gPiANCj4gPiBJIGFtIHRyeWluZyB0byBzb2x2ZSBpdCwg
+YnV0IEkganVzdCBkb24ndCBoYXZlIHN5c3RlbXMgdG8gcmVwcm9kdWNlDQo+ID4gYWxsDQo+ID4g
+a2luZHMgb2YgdGhpbmdzLiBJdCdzIGEgYml0IHN0cmVzc2Z1bCBzaW5jZSB0aGlzIGlzIG9uZSBv
+ZiB0aG9zZQ0KPiA+IHJ1bnRpbWUNCj4gPiB0aGluZ3MgdGhhdCBpcyBoYXJkIHRvIHRlc3Qgd2hl
+biBkZXZpc2luZyBhIHBhdGNoIGZvciBzeXN0ZW1zIEkNCj4gPiBkb24ndA0KPiA+IGhhdmUuDQo+
+IA0KPiBUaGlzIGFsc28gYXBwZWFycyB0byBiZSBjYXVzaW5nIGEgcmVncmVzc2lvbiBvbiB0aGUg
+VGVncmExMjQgSmV0c29uDQo+IFRLMQ0KPiB0aGF0IGFsc28gdXNlcyBhIHNoYXJlZCBHUElPIGZv
+ciB0d28gcmVndWxhdG9ycy4gVGhlIDJuZCByZWd1bGF0b3INCj4gdGhhdA0KPiB1c2VzIHRoZSBH
+UElPIG5vdyBmYWlscyB0byBwcm9iZSBbMF0gLi4uDQo+IA0KPiBbICAgIDAuNjgwMDIxXSArNVZf
+U0FUQTogc3VwcGxpZWQgYnkgKzVWX1NZUw0KPiBbICAgIDAuNjgzOTY0XSByZWctZml4ZWQtdm9s
+dGFnZTogcHJvYmUgb2YgcmVndWxhdG9yczpyZWd1bGF0b3JAMTQNCj4gZmFpbGVkIHdpdGggZXJy
+b3IgLTE2DQo+IA0KPiBOb3Qgc3VyZSBpZiB5b3UgaGF2ZSBvbmUgb2YgdGhlc2UsIGJ1dCBvdGhl
+cndpc2UgSSBjYW4gaGVscCB0ZXN0Lg0KDQpJIGd1ZXNzIHRoYXQgaXMgYWxzbyB3aGF0IGJyb2tl
+IEhETUkgb24gQXBhbGlzL0NvbGlicmkgVDMwIGNhdXNpbmcgbWUNCnRvIHN1Ym1pdCBhIGZpeCBb
+MV0uIEkgbWF5IGFsc28gaGVscCB0ZXN0aW5nLg0KDQpCVFc6IElzIGl0IG9ubHkgbWUgb3IgaXMg
+dG9kYXkncyAtbmV4dCBjb21wbGV0ZWx5IGJyb2tlbiBub3c/DQoNClsgICAgMC42OTEyNThdIFVu
+YWJsZSB0byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdA0KdmlydHVh
+bCBhZGRyZXNzIDAwMDAwMWY4DQpbICAgIDAuNjk5NzA0XSBwZ2QgPSAocHRydmFsKQ0KWyAgICAw
+LjcwMjUxNV0gWzAwMDAwMWY4XSAqcGdkPTAwMDAwMDAwDQpbICAgIDAuNzA2MjM2XSBJbnRlcm5h
+bCBlcnJvcjogT29wczogNSBbIzFdIFBSRUVNUFQgU01QIEFSTQ0KWyAgICAwLjcxMTc0OV0gTW9k
+dWxlcyBsaW5rZWQgaW46DQpbICAgIDAuNzE0OTMwXSBDUFU6IDAgUElEOiAxIENvbW06IHN3YXBw
+ZXIvMCBOb3QgdGFpbnRlZCA0LjE5LjAtcmM3LQ0KbmV4dC0yMDE4MTAxMS1kaXJ0eSAjMw0KWyAg
+ICAwLjcyMzI0NV0gSGFyZHdhcmUgbmFtZTogTlZJRElBIFRlZ3JhIFNvQyAoRmxhdHRlbmVkIERl
+dmljZSBUcmVlKQ0KWyAgICAwLjcyOTc2NV0gUEMgaXMgYXQgZ3Bpb2RfaG9nKzB4MmMvMHgxNTAN
+ClsgICAgMC43MzM5MzNdIExSIGlzIGF0IG9mX2dwaW9jaGlwX2FkZCsweDM0Yy8weDUxMA0KDQpU
+aGlzIGhhcyBiZWVuIG9ic2VydmVkIG9uIEFwYWxpcyBUSzEuDQoNCj4gQ2hlZXJzDQo+IEpvbg0K
+PiANCj4gWzBdIGh0dHBzOi8vc3RvcmFnZS5rZXJuZWxjaS5vcmcvbmV4dC9tYXN0ZXIvbmV4dC0y
+MDE4MTAxMS9hcm0vdGVncmFfDQo+IGRlZmNvbmZpZy9sYWItYmF5bGlicmUtc2VhdHRsZS9ib290
+LXRlZ3JhMTI0LWpldHNvbi10azEuaHRtbCANCg0KQ2hlZXJzDQoNCk1hcmNlbA0KDQpbMV0gaHR0
+cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC8yMDE4MTAwOTE1MjUyMy4zNzcxLTQtbWFyY2VsQHpp
+c3dpbGVyLmNvbQ==
