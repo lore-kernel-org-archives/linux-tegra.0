@@ -1,41 +1,56 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/94] 4.14.75-stable review
-Date: Wed, 10 Oct 2018 09:42:46 +0200
-Message-ID: <20181010074246.GA6664@kroah.com>
-References: <20181008175605.067676667@linuxfoundation.org>
- <12c74a4f-6fff-de79-6bc4-6d1b64dab946@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL 3/5 v2] firmware: tegra: Changes for v4.20-rc1
+Date: Thu, 11 Oct 2018 12:24:24 +0200
+Message-ID: <20181011102424.22720-1-thierry.reding@gmail.com>
+References: <20180927205942.30878-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <12c74a4f-6fff-de79-6bc4-6d1b64dab946@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180927205942.30878-3-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 07:54:57AM +0100, Jon Hunter wrote:
-> 
-> On 08/10/18 19:30, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.75 release.
-> > There are 94 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Oct 10 17:55:37 UTC 2018.
-> > Anything received after that time might be too late.
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.14:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     14 tests:	14 pass, 0 fail
-> 
-> Linux version:	4.14.75-rc2-g2040d5a
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+Hi ARM SoC maintainers,
 
-Great, thanks for testing these and letting me know.
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-greg k-h
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.20-firmware-2
+
+for you to fetch changes up to 00cba11fab58407a0017fc55476ea764161c5f07:
+
+  firmware: tegra: bpmp: Implement suspend/resume support (2018-10-10 16:47:22 +0200)
+
+This took longer than I anticipated because I managed to somehow break
+my git tree along the way. This is equivalent to the first pull request
+except that it also fixes the warning that Arnd reported.
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+firmware: tegra: Changes for v4.20-rc1
+
+This contains a fix for suspend/resume support for the BPMP found on
+Tegra186 and Tegra194.
+
+----------------------------------------------------------------
+Thierry Reding (1):
+      firmware: tegra: bpmp: Implement suspend/resume support
+
+ drivers/firmware/tegra/bpmp.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
