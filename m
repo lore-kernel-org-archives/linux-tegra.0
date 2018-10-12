@@ -1,42 +1,48 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/45] 4.14.76-stable review
-Date: Fri, 12 Oct 2018 12:24:50 +0200
-Message-ID: <20181012102450.GC29897@kroah.com>
-References: <20181011152508.885515042@linuxfoundation.org>
- <0e968049-bcb6-cd62-b0cb-77a9745ae785@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
+Date: Fri, 12 Oct 2018 11:25:28 +0100
+Message-ID: <71e2a853-2f44-e2db-8e43-dcde9f6864db@nvidia.com>
+References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
+ <20180906122436.25610-1-linus.walleij@linaro.org>
+ <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
+ <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+ <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
+ <CACRpkda+J6R99SQP9yFVH2HANJSi3M4GjT0duaHdv8wZcs7ahQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0e968049-bcb6-cd62-b0cb-77a9745ae785@nvidia.com>
+In-Reply-To: <CACRpkda+J6R99SQP9yFVH2HANJSi3M4GjT0duaHdv8wZcs7ahQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Haojian Zhuang <haojian.zhuang@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Philipp Zabel <philipp.zabel@gmail.com>, Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, jacopo <jacopo@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Russell King <rmk+kernel@armlinux.org.uk>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 08:50:56AM +0100, Jon Hunter wrote:
-> 
-> On 11/10/18 16:39, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.76 release.
-> > There are 45 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat Oct 13 15:24:53 UTC 2018.
-> > Anything received after that time might be too late.
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.14:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     14 tests:	14 pass, 0 fail
-> 
-> Linux version:	4.14.76-rc1-gc0c2a43
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+Hi Linus,
 
-Thanks for testing 2 of these and letting me know.
+On 11/10/18 18:45, Linus Walleij wrote:
+> Hi Jon,
+> 
+> On Thu, Oct 11, 2018 at 5:00 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> 
+>> This also appears to be causing a regression on the Tegra124 Jetson TK1
+>> that also uses a shared GPIO for two regulators. The 2nd regulator that
+>> uses the GPIO now fails to probe [0] ...
+>>
+>> [    0.680021] +5V_SATA: supplied by +5V_SYS
+>> [    0.683964] reg-fixed-voltage: probe of regulators:regulator@14 failed with error -16
+>>
+>> Not sure if you have one of these, but otherwise I can help test.
+> 
+> Would be great if you could test the patch I came up with for Marek:
+> https://marc.info/?l=linux-kernel&m=153926854327176&w=2
 
-greg k-h
+Yes works for me! I will respond to your actual patch as well with
+tested-by.
+
+Cheers
+Jon
+
+-- 
+nvpublic
