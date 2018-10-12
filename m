@@ -1,48 +1,82 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
-Date: Fri, 12 Oct 2018 11:25:28 +0100
-Message-ID: <71e2a853-2f44-e2db-8e43-dcde9f6864db@nvidia.com>
-References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
- <20180906122436.25610-1-linus.walleij@linaro.org>
- <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
- <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
- <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
- <CACRpkda+J6R99SQP9yFVH2HANJSi3M4GjT0duaHdv8wZcs7ahQ@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 3/5] usb: xhci: tegra: Add genpd support
+Date: Fri, 12 Oct 2018 12:27:32 +0200
+Message-ID: <20181012102732.GD9162@ulmo>
+References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
+ <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
+ <20181011164753.GA7393@ulmo>
+ <248afd79-1a7d-7342-5939-6fa998d04d5b@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VV4b6MQE+OnNyhkM"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda+J6R99SQP9yFVH2HANJSi3M4GjT0duaHdv8wZcs7ahQ@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <248afd79-1a7d-7342-5939-6fa998d04d5b@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Haojian Zhuang <haojian.zhuang@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Philipp Zabel <philipp.zabel@gmail.com>, Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, jacopo <jacopo@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Russell King <rmk+kernel@armlinux.org.uk>, linux-tegra@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Linus,
 
-On 11/10/18 18:45, Linus Walleij wrote:
-> Hi Jon,
-> 
-> On Thu, Oct 11, 2018 at 5:00 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> 
->> This also appears to be causing a regression on the Tegra124 Jetson TK1
->> that also uses a shared GPIO for two regulators. The 2nd regulator that
->> uses the GPIO now fails to probe [0] ...
->>
->> [    0.680021] +5V_SATA: supplied by +5V_SYS
->> [    0.683964] reg-fixed-voltage: probe of regulators:regulator@14 failed with error -16
->>
->> Not sure if you have one of these, but otherwise I can help test.
-> 
-> Would be great if you could test the patch I came up with for Marek:
-> https://marc.info/?l=linux-kernel&m=153926854327176&w=2
+--VV4b6MQE+OnNyhkM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes works for me! I will respond to your actual patch as well with
-tested-by.
+On Fri, Oct 12, 2018 at 09:41:35AM +0100, Jon Hunter wrote:
+>=20
+> On 11/10/18 17:47, Thierry Reding wrote:
+> > On Fri, Sep 28, 2018 at 03:11:48PM +0100, Jon Hunter wrote:
+> >> The generic power-domain framework has been updated to allow devices
+> >> that require more than one power-domain to create a new device for
+> >> each power-domain required and then link these new power-domain
+> >> devices to the consumer device.
+> >>
+> >> Update the Tegra xHCI driver to use the new APIs provided by the
+> >> generic power-domain framework so we can use the generic power-domain
+> >> framework for managing the xHCI controllers power-domains. Please
+> >> note that to maintain backward compatibility with older device-tree
+> >> blobs these new generic power-domain APIs are only used if the
+> >> 'power-domains' property is present and otherwise we fall back to
+> >> using the legacy Tegra APIs for managing the power-domains.
+> >>
+> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >> ---
+> >>  drivers/usb/host/xhci-tegra.c | 89 ++++++++++++++++++++++++++++++++++=
++++------
+> >>  1 file changed, 77 insertions(+), 12 deletions(-)
+> >=20
+> > It'd be nice if we could eventually get rid of the legacy Tegra APIs,
+> > but that's a separate issue, and this patch looks fine as-is:
+>=20
+> Unfortunately, I don't think it is possible as it will break DT backward
+> compatibility. However, one way to do it would be to force on all power
+> domains on boot if PM is not supported.
 
-Cheers
-Jon
+Yeah, that sounds like a good option. If we don't support PM the I
+imagine there's little use in keeping some of the partitions disabled.
+But let's investigate that at a later time.
 
--- 
-nvpublic
+Thierry
+
+--VV4b6MQE+OnNyhkM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAdxEACgkQ3SOs138+
+s6HEeQ/8DVIf2eg1G5hJC72lJiV/i9fJdcLKgaiS8Q9mFu44m1Ut0QETHgeNfyV9
+yg1sfy5+FB+4PTNoaHZb3X2sWVvXXxjsgi+56tu4P1Hji4S1yeuJ9KAc3Bgn9bth
+4RDwwBGdKiI6gZmkJnI4AM+m7Scb3rmb64TH6uwaET/hl/V1cKT7hnzYSk86Ku+X
+syjjSFMAlTNkZrcLFVgobrIV67HGre8CKaP4AtAITM+OzcWSggBpragg09gRVfSm
+D/sLVkoCVtlFTgpE0LUYKltYAn+hEig8Rk82i/IUiEuG3L5tpM7+nsYOmtIKhAR8
+ApSFvk2PIIsGpOwCom4s/lIK/ONR/j8lauaMLQrWF96jQ4WCzRpZwxV+U80L/8YN
+JMG3y3800jpORx/IAp0lfDIznT1KcClfGMQu1zA//DoBnxo4ek8m0He3H0E4Jr6l
+WwjJXYpvbswHEosxWUp3NYJEedVoqzU+IXLyOA7O9OVFXFgcIX/RQbItZ+RcEr/S
+WW56sNVzbWuO54M3F35hAVP0Ue56hFxEfvPT/MBvT0x/YrdJOt7tTmD9ndYksg79
+5I3Cy7SwDeoX+incSMXifhJqUmalsxF/gB5Rb91bXfcB7igZzjS8imvKyeH3tT44
+XTS+Erd2PeU8QDWL9h9iLVv+RDXwXXQeSActlHKzbKiAGubeSWw=
+=hVM5
+-----END PGP SIGNATURE-----
+
+--VV4b6MQE+OnNyhkM--
