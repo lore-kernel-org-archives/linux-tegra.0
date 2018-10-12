@@ -1,53 +1,45 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2 3/5] usb: xhci: tegra: Add genpd support
-Date: Fri, 12 Oct 2018 09:41:35 +0100
-Message-ID: <248afd79-1a7d-7342-5939-6fa998d04d5b@nvidia.com>
-References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
- <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
- <20181011164753.GA7393@ulmo>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
+Date: Fri, 12 Oct 2018 09:43:37 +0000
+Message-ID: <1539337415.30485.21.camel@toradex.com>
+References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
+         <20180906122436.25610-1-linus.walleij@linaro.org>
+         <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
+         <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+         <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
+         <1539272073.18645.12.camel@toradex.com>
+         <CACRpkdYDoFhBJy484Hvf0e+zv51w23hqtBYLFxXsiLmWs63CWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181011164753.GA7393@ulmo>
+In-Reply-To: <CACRpkdYDoFhBJy484Hvf0e+zv51w23hqtBYLFxXsiLmWs63CWw@mail.gmail.com>
 Content-Language: en-US
+Content-ID: <3140E6B455FBA04390E32157F31E1659@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>, "jacopo@jmondi.org" <jacopo@jmondi.org>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>, "broonie@kernel.org" <broonie@kernel.org>, "shc_work@mail.ru" <shc_work@mail.ru>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>, "zonque@gmail.com" <zonque@gmail.com>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "linux-tegra@vger.kernel.org" <linux-te>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 11/10/18 17:47, Thierry Reding wrote:
-> On Fri, Sep 28, 2018 at 03:11:48PM +0100, Jon Hunter wrote:
->> The generic power-domain framework has been updated to allow devices
->> that require more than one power-domain to create a new device for
->> each power-domain required and then link these new power-domain
->> devices to the consumer device.
->>
->> Update the Tegra xHCI driver to use the new APIs provided by the
->> generic power-domain framework so we can use the generic power-domain
->> framework for managing the xHCI controllers power-domains. Please
->> note that to maintain backward compatibility with older device-tree
->> blobs these new generic power-domain APIs are only used if the
->> 'power-domains' property is present and otherwise we fall back to
->> using the legacy Tegra APIs for managing the power-domains.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/usb/host/xhci-tegra.c | 89 +++++++++++++++++++++++++++++++++++++------
->>  1 file changed, 77 insertions(+), 12 deletions(-)
-> 
-> It'd be nice if we could eventually get rid of the legacy Tegra APIs,
-> but that's a separate issue, and this patch looks fine as-is:
-
-Unfortunately, I don't think it is possible as it will break DT backward
-compatibility. However, one way to do it would be to force on all power
-domains on boot if PM is not supported.
-
-> Acked-by: Thierry Reding <treding@nvidia.com>
-
-Thanks!
-Jon
-
--- 
-nvpublic
+T24gVGh1LCAyMDE4LTEwLTExIGF0IDE5OjQ3ICswMjAwLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
+PiBPbiBUaHUsIE9jdCAxMSwgMjAxOCBhdCA1OjM0IFBNIE1hcmNlbCBaaXN3aWxlcg0KPiA8bWFy
+Y2VsLnppc3dpbGVyQHRvcmFkZXguY29tPiB3cm90ZToNCj4gDQo+ID4gSSBndWVzcyB0aGF0IGlz
+IGFsc28gd2hhdCBicm9rZSBIRE1JIG9uIEFwYWxpcy9Db2xpYnJpIFQzMCBjYXVzaW5nDQo+ID4g
+bWUNCj4gPiB0byBzdWJtaXQgYSBmaXggWzFdLiBJIG1heSBhbHNvIGhlbHAgdGVzdGluZy4NCj4g
+DQo+IEkgc2VlIHRoZXJlIGFyZSBtYW55IHdheXMgdG8gc2tpbiB0aGlzIGNhdC4NCg0KWWVzLCBh
+cyBhIG1hdHRlciBvZiBmYWN0IEkgc2NyZWVuZWQgdGhlIGtlcm5lbCBjb25jZXJuaW5nIHRoaXMg
+bXVsdGkNCmdwaW8gc3R1ZmYgYnV0IGNvdWxkIG5vdCBxdWl0ZSBmaW5kIG1hbnkgZXhhbXBsZXMg
+YW5kIG5vIG1lbnRpb25pbmcNCmFueXdoZXJlIHdoZXRoZXIgb3Igbm90IHRoaXMgaXMgYWN0dWFs
+bHkgYWxsb3dlZC4gU28gSSBraW5kIG9mIGFzc3VtZWQNCnRoYXQgdGhpcyBtYXkganVzdCBub3Qg
+cmVhbGx5IGJlIGFsbG93ZWQgYW5kIGNvb2tlZCB1cCBteSBwYXRjaCB3aGljaA0KaXMgYW55d2F5
+IGtpbmQgb2YgYSBjbGVhbmVyIHNvbHV0aW9uLiBJIG1lYW4gZXhwbGljaXRseSBtb2RlbGxpbmcg
+dGhlDQpHUElPIGludG8gc29tZSBpbnRlcm1lZGlhdGUgcmVndWxhdG9yIHN1cHBseWluZyB0aGUg
+b3RoZXJzLg0KDQo+IERvZXMgdGhpcyBwYXRjaCBmaXggdGhpbmdzIGZvciB5b3UgYXMgd2VsbD8N
+Cj4gaHR0cHM6Ly9tYXJjLmluZm8vP2w9bGludXgta2VybmVsJm09MTUzOTI2ODU0MzI3MTc2Jnc9
+Mg0KDQpZZXMsIGRhLWRhIGFuZCBIRE1JIHdvcmtzIGFnYWluLiBUaGFua3MhDQoNCkkgd2lsbCBz
+dGlsbCB0cnkgdG8gZ2V0IG15IG90aGVyIHBhdGNoIGluIGFzIGxpa2UgbWVudGlvbmVkIGFib3Zl
+IEkNCmZlZWwgaXQgaXMgYSBjbGVhbmVyIHNvbHV0aW9uIHRvIG91ciByZWd1bGF0b3Igc2V0dXAu
+DQoNCkJUVzogSGF2ZSB5b3UgaGVhcmQgb2YgbG9yZSBhcyB3ZWxsPyBJIGJlbGlldmUgaXQgaXMg
+dGhlIGJldHRlciBtYWlsaW5nDQpsaXN0IGFyY2hpdmUgYXMgb2YgdG9kYXk6DQoNCmh0dHBzOi8v
+bG9yZS5rZXJuZWwub3JnL2xrbWwvMjAxODEwMTExNDM1MzEuNzE5NS0xLWxpbnVzLndhbGxlaWpA
+bGluYXJvDQoub3JnLw0KDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlq
