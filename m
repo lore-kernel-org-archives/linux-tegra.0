@@ -1,44 +1,49 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
-Date: Mon, 15 Oct 2018 15:35:31 +0300
-Message-ID: <b888a206-0970-01a8-e039-920c03c00c06@gmail.com>
-References: <20180830183635.4474-1-digetx@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V2 0/5] Tegra xHCI genpd support
+Date: Mon, 15 Oct 2018 13:40:03 +0100
+Message-ID: <6a7cda6b-2f2f-43ee-7a53-8b226fdcc88d@nvidia.com>
+References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830183635.4474-1-digetx@gmail.com>
+In-Reply-To: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@intel.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 8/30/18 9:36 PM, Dmitry Osipenko wrote:
-> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
-> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
-> offline.
-> 
->  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
->  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
->  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
->  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->  [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
->  [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
->  [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
->  [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
->  [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
->  [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
->  [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
->  [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
->  [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
->  [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
->  [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
->  [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
->  [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
->  [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
->  [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Hi Mathias,
 
-ping
+On 28/09/18 15:11, Jon Hunter wrote:
+> This series add genpd support for the Tegra xHCI device that requires
+> more than one power-domain to operate.
+> 
+> This series is making changes to more than one subsystem and at first
+> glance may look like a maintainers nightmare. However, my proposal is
+> this, once reviewed and people are happy ...
+> 1. Patches 1-3 should be merged first. Patches 1 can go via the Tegra
+>    tree and 2-3 via the USB tree.
+> 2. Once patches 1-3 are accepted, then 4 and 5 can be merged via the
+>    Tegra tree.
+> 
+> Changes since V1:
+> - Dropped unneeded patch to export symbol for genpd API
+> - Added patch to power-off XUSB domains
+> - Slight re-work to Tegra xHCI driver changes to simplify clean-up path.
+> 
+> Jon Hunter (5):
+>   dt-bindings: usb: xhci-tegra: Add power-domain details
+>   usb: xhci: tegra: Power-off power-domains on removal
+>   usb: xhci: tegra: Add genpd support
+>   soc/tegra: pmc: Don't power-up XUSB power-domains
+>   arm64: dts: tegra210: Add power-domains for xHCI
+
+Let me know you are ok to pick up patches 2 and 3 for v4.20.
+
+Cheers
+Jon
+
+-- 
+nvpublic
