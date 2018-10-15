@@ -1,102 +1,227 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
-Date: Mon, 15 Oct 2018 13:52:26 +0100
-Message-ID: <7369869e-e58f-3760-d428-b00fb9cd28d9@nvidia.com>
-References: <20180830183635.4474-1-digetx@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH V2 3/5] usb: xhci: tegra: Add genpd support
+Date: Mon, 15 Oct 2018 15:29:02 +0200
+Message-ID: <CAPDyKFqSp_B6JjScXdZWmdWTi+h4TEt+GjUiqNSu=P4otENopA@mail.gmail.com>
+References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com> <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830183635.4474-1-digetx@gmail.com>
-Content-Language: en-US
+In-Reply-To: <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, DTML <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 28 September 2018 at 16:11, Jon Hunter <jonathanh@nvidia.com> wrote:
+> The generic power-domain framework has been updated to allow devices
+> that require more than one power-domain to create a new device for
+> each power-domain required and then link these new power-domain
+> devices to the consumer device.
+>
+> Update the Tegra xHCI driver to use the new APIs provided by the
+> generic power-domain framework so we can use the generic power-domain
+> framework for managing the xHCI controllers power-domains. Please
+> note that to maintain backward compatibility with older device-tree
+> blobs these new generic power-domain APIs are only used if the
+> 'power-domains' property is present and otherwise we fall back to
+> using the legacy Tegra APIs for managing the power-domains.
+>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-On 30/08/18 19:36, Dmitry Osipenko wrote:
-> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
-> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
-> offline.
-> 
->  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
->  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
->  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
->  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->  [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
->  [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
->  [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
->  [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
->  [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
->  [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
->  [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
->  [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
->  [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
->  [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
->  [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
->  [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
->  [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
->  [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
->  [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
+If not too late, feel free to add:
 
-Given the above, rather than converting to a spinlock I wonder if we are
-just better off dropping the mutex completely from
-tegra_powergate_is_powered()? Otherwise ...
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Kind regards
+Uffe
+
 > ---
->  drivers/soc/tegra/pmc.c | 36 ++++++++++++++++++------------------
->  1 file changed, 18 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 2d6f3fcf3211..d6bc9f66f1cd 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -186,7 +186,7 @@ struct tegra_pmc_soc {
->   * @lp0_vec_phys: physical base address of the LP0 warm boot code
->   * @lp0_vec_size: size of the LP0 warm boot code
->   * @powergates_available: Bitmap of available power gates
-> - * @powergates_lock: mutex for power gate register access
-> + * @powergates_lock: lock for power gate register access
->   */
->  struct tegra_pmc {
->  	struct device *dev;
-> @@ -215,7 +215,7 @@ struct tegra_pmc {
->  	u32 lp0_vec_size;
->  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
->  
-> -	struct mutex powergates_lock;
-> +	spinlock_t powergates_lock;
->  };
->  
->  static struct tegra_pmc *pmc = &(struct tegra_pmc) {
-> @@ -288,10 +288,10 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
->  	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
->  		return -EINVAL;
->  
-> -	mutex_lock(&pmc->powergates_lock);
-> +	spin_lock(&pmc->powergates_lock);
->  
->  	if (tegra_powergate_state(id) == new_state) {
-> -		mutex_unlock(&pmc->powergates_lock);
-> +		spin_unlock(&pmc->powergates_lock);
->  		return 0;
->  	}
->  
-> @@ -300,7 +300,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
->  	err = readx_poll_timeout(tegra_powergate_state, id, status,
->  				 status == new_state, 10, 100000);
->  
-> -	mutex_unlock(&pmc->powergates_lock);
-> +	spin_unlock(&pmc->powergates_lock);
-
-... the above readx_poll_timeout needs to be converted to the atomic
-version. Furthermore, the above 100ms timeout is probably not suited to
-spinlock.
-
-Cheers
-Jon
-
--- 
-nvpublic
+>  drivers/usb/host/xhci-tegra.c | 89 +++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 77 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+> index a586a7930a3d..696008ecc26e 100644
+> --- a/drivers/usb/host/xhci-tegra.c
+> +++ b/drivers/usb/host/xhci-tegra.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/phy/tegra/xusb.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm.h>
+> +#include <linux/pm_domain.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/reset.h>
+> @@ -194,6 +195,11 @@ struct tegra_xusb {
+>         struct reset_control *host_rst;
+>         struct reset_control *ss_rst;
+>
+> +       struct device *genpd_dev_host;
+> +       struct device *genpd_dev_ss;
+> +       struct device_link *genpd_dl_host;
+> +       struct device_link *genpd_dl_ss;
+> +
+>         struct phy **phys;
+>         unsigned int num_phys;
+>
+> @@ -928,6 +934,57 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
+>         return 0;
+>  }
+>
+> +static void tegra_xusb_powerdomain_remove(struct device *dev,
+> +                                         struct tegra_xusb *tegra)
+> +{
+> +       if (tegra->genpd_dl_ss)
+> +               device_link_del(tegra->genpd_dl_ss);
+> +       if (tegra->genpd_dl_host)
+> +               device_link_del(tegra->genpd_dl_host);
+> +       if (tegra->genpd_dev_ss)
+> +               dev_pm_domain_detach(tegra->genpd_dev_ss, true);
+> +       if (tegra->genpd_dev_host)
+> +               dev_pm_domain_detach(tegra->genpd_dev_host, true);
+> +}
+> +
+> +static int tegra_xusb_powerdomain_init(struct device *dev,
+> +                                      struct tegra_xusb *tegra)
+> +{
+> +       int err;
+> +
+> +       tegra->genpd_dev_host = dev_pm_domain_attach_by_name(dev, "xusb_host");
+> +       if (IS_ERR(tegra->genpd_dev_host)) {
+> +               err = PTR_ERR(tegra->genpd_dev_host);
+> +               dev_err(dev, "failed to get host pm-domain: %d\n", err);
+> +               return err;
+> +       }
+> +
+> +       tegra->genpd_dev_ss = dev_pm_domain_attach_by_name(dev, "xusb_ss");
+> +       if (IS_ERR(tegra->genpd_dev_ss)) {
+> +               err = PTR_ERR(tegra->genpd_dev_ss);
+> +               dev_err(dev, "failed to get superspeed pm-domain: %d\n", err);
+> +               return err;
+> +       }
+> +
+> +       tegra->genpd_dl_host = device_link_add(dev, tegra->genpd_dev_host,
+> +                                              DL_FLAG_PM_RUNTIME |
+> +                                              DL_FLAG_STATELESS);
+> +       if (!tegra->genpd_dl_host) {
+> +               dev_err(dev, "adding host device link failed!\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       tegra->genpd_dl_ss = device_link_add(dev, tegra->genpd_dev_ss,
+> +                                            DL_FLAG_PM_RUNTIME |
+> +                                            DL_FLAG_STATELESS);
+> +       if (!tegra->genpd_dl_ss) {
+> +               dev_err(dev, "adding superspeed device link failed!\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int tegra_xusb_probe(struct platform_device *pdev)
+>  {
+>         struct tegra_xusb_mbox_msg msg;
+> @@ -1038,7 +1095,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                 goto put_padctl;
+>         }
+>
+> -       if (!pdev->dev.pm_domain) {
+> +       if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+>                 tegra->host_rst = devm_reset_control_get(&pdev->dev,
+>                                                          "xusb_host");
+>                 if (IS_ERR(tegra->host_rst)) {
+> @@ -1069,17 +1126,22 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                                         tegra->host_clk,
+>                                                         tegra->host_rst);
+>                 if (err) {
+> +                       tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+>                         dev_err(&pdev->dev,
+>                                 "failed to enable XUSBC domain: %d\n", err);
+> -                       goto disable_xusba;
+> +                       goto put_padctl;
+>                 }
+> +       } else {
+> +               err = tegra_xusb_powerdomain_init(&pdev->dev, tegra);
+> +               if (err)
+> +                       goto put_powerdomains;
+>         }
+>
+>         tegra->supplies = devm_kcalloc(&pdev->dev, tegra->soc->num_supplies,
+>                                        sizeof(*tegra->supplies), GFP_KERNEL);
+>         if (!tegra->supplies) {
+>                 err = -ENOMEM;
+> -               goto disable_xusbc;
+> +               goto put_powerdomains;
+>         }
+>
+>         for (i = 0; i < tegra->soc->num_supplies; i++)
+> @@ -1089,7 +1151,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                       tegra->supplies);
+>         if (err) {
+>                 dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
+> -               goto disable_xusbc;
+> +               goto put_powerdomains;
+>         }
+>
+>         for (i = 0; i < tegra->soc->num_types; i++)
+> @@ -1099,7 +1161,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                    sizeof(*tegra->phys), GFP_KERNEL);
+>         if (!tegra->phys) {
+>                 err = -ENOMEM;
+> -               goto disable_xusbc;
+> +               goto put_powerdomains;
+>         }
+>
+>         for (i = 0, k = 0; i < tegra->soc->num_types; i++) {
+> @@ -1115,7 +1177,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                         "failed to get PHY %s: %ld\n", prop,
+>                                         PTR_ERR(phy));
+>                                 err = PTR_ERR(phy);
+> -                               goto disable_xusbc;
+> +                               goto put_powerdomains;
+>                         }
+>
+>                         tegra->phys[k++] = phy;
+> @@ -1126,7 +1188,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                     dev_name(&pdev->dev));
+>         if (!tegra->hcd) {
+>                 err = -ENOMEM;
+> -               goto disable_xusbc;
+> +               goto put_powerdomains;
+>         }
+>
+>         /*
+> @@ -1222,12 +1284,13 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>  disable_rpm:
+>         pm_runtime_disable(&pdev->dev);
+>         usb_put_hcd(tegra->hcd);
+> -disable_xusbc:
+> -       if (!pdev->dev.pm_domain)
+> +put_powerdomains:
+> +       if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+>                 tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+> -disable_xusba:
+> -       if (!pdev->dev.pm_domain)
+>                 tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+> +       } else {
+> +               tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+> +       }
+>  put_padctl:
+>         tegra_xusb_padctl_put(tegra->padctl);
+>         return err;
+> @@ -1249,9 +1312,11 @@ static int tegra_xusb_remove(struct platform_device *pdev)
+>         pm_runtime_put_sync(&pdev->dev);
+>         pm_runtime_disable(&pdev->dev);
+>
+> -       if (!pdev->dev.pm_domain) {
+> +       if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+>                 tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+>                 tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+> +       } else {
+> +               tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+>         }
+>
+>         tegra_xusb_padctl_put(tegra->padctl);
+> --
+> 2.7.4
+>
