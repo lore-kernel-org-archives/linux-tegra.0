@@ -1,32 +1,68 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 0/2] LP1/LP2 suspend-resume CPU clock fixes for Tegra30
-Date: Mon, 15 Oct 2018 15:34:29 +0300
-Message-ID: <d9e5dfc2-f4f3-9d79-d798-ecbbb50f1e45@gmail.com>
-References: <20180830190454.8729-1-digetx@gmail.com>
+Subject: Re: [PATCH v3 0/8] Support Trusted Foundations firmware on Tegra30
+Date: Mon, 15 Oct 2018 15:34:57 +0300
+Message-ID: <91e4af24-7be7-2dbc-577b-56a852cc21ff@gmail.com>
+References: <20180830180421.6415-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830190454.8729-1-digetx@gmail.com>
+In-Reply-To: <20180830180421.6415-1-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 8/30/18 10:04 PM, Dmitry Osipenko wrote:
+On 8/30/18 9:04 PM, Dmitry Osipenko wrote:
 > Hello,
 > 
-> This patch-series fixes CPU hanging after suspend-resume / LP2 cpuidle
-> on Tegra30. The bug really appears during stress-testing, like frequent
-> suspending under variable load + the upcoming Tegra30 CPUFREQ driver.
+> All consumer-grade Tegra30 devices, like Nexus 7 tablet; Ouya console and
+> others, use Trusted Foundations firmware that doesn't allow CPU to access
+> secure registers directly from the Linux kernel, these accesses shall be
+> done via the firmware calls. This patch-series adds a full-featured support
+> of the Trusted Foundations firmware that opens the door for supporting of
+> various Tegra30-based devices in the upstream Linux kernel.
 > 
-> Dmitry Osipenko (2):
->   ARM: tegra: Switch CPU to PLLP before powergating on Tegra30
->   ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30
+> Changelog:
 > 
->  arch/arm/mach-tegra/sleep-tegra30.S | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> v3:	- Implemented suspend-resume support.
+> 
+> 	- Reworked arm/firmware/trusted_foundations.c a tad. Now cache
+> 	  is getting properly initialized, cache enabling / disabling is
+> 	  supported.
+> 
+> v2:
+> 	- The "Don't apply CPU erratas in insecure mode" patch got some
+> 	  cleanup, in particular resolved the messiness in
+> 	  __tegra_cpu_reset_handler_data.
+> 
+> 	- Added a comment to tf_cache_write_sec(), justifying the warning
+> 	  message.
+> 
+> Dmitry Osipenko (8):
+>   ARM: trusted_foundations: Implement L2 cache initialization callback
+>   ARM: trusted_foundations: Make prepare_idle call to take mode argument
+>   ARM: trusted_foundations: Provide information about whether firmware
+>     is registered
+>   ARM: tegra: Setup L2 cache using Trusted Foundations firmware
+>   ARM: tegra: Don't apply CPU erratas in insecure mode
+>   ARM: tegra: Always boot CPU in ARM-mode
+>   ARM: tegra: Support L2 cache maintenance done via firmware
+>   ARM: tegra: Add firmware calls required for suspend-resume
+> 
+>  arch/arm/firmware/trusted_foundations.c    | 80 +++++++++++++++++++++-
+>  arch/arm/include/asm/firmware.h            |  2 +-
+>  arch/arm/include/asm/trusted_foundations.h | 13 ++++
+>  arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 +-
+>  arch/arm/mach-tegra/pm.c                   | 43 ++++++++++++
+>  arch/arm/mach-tegra/reset-handler.S        | 66 ++++++++++++++----
+>  arch/arm/mach-tegra/reset.c                |  3 +
+>  arch/arm/mach-tegra/reset.h                |  9 ++-
+>  arch/arm/mach-tegra/sleep-tegra20.S        |  4 ++
+>  arch/arm/mach-tegra/sleep.S                |  4 ++
+>  arch/arm/mach-tegra/tegra.c                | 10 +++
+>  11 files changed, 216 insertions(+), 21 deletions(-)
 > 
 
 ping
