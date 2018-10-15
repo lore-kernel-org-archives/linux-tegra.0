@@ -1,83 +1,102 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 0/8] Tegra20 External Memory Controller driver
-Date: Mon, 15 Oct 2018 15:40:25 +0300
-Message-ID: <775736e9-0f13-94b0-1d90-871de16ed330@gmail.com>
-References: <20180724164221.3307-1-digetx@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
+Date: Mon, 15 Oct 2018 13:52:26 +0100
+Message-ID: <7369869e-e58f-3760-d428-b00fb9cd28d9@nvidia.com>
+References: <20180830183635.4474-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
+In-Reply-To: <20180830183635.4474-1-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 7/24/18 7:42 PM, Dmitry Osipenko wrote:
-> Changelog:
-> 
-> v5:
->         - Fixed wrong EMC clock divider type in the "Turn EMC clock gate into
->           divider" patch. It is a Tegra's fractional 7.1 divider and not a
->           simple integer divider. Peter, please take a look at the change.
-> 
-> v4:
->         - Fixed "bad of_node_put()" error which was revealed by enabling
->           some extra kernel debug config options.
-> 
->         - The "emc-table" DT nodes are now parsed starting from the "emc"
->           node instead of the DT root.
-> 
->         - Adjusted code comment in the "Turn EMC clock gate into divider"
->           patch as was suggested by Stephen Boyd to the v3.
-> 
-> v3:
->         - Handle "nvidia,use-ram-code" DT property, its handling was missed
->           in the previous versions.
-> 
->         - Honor "emc-tables" DT node naming which is explicitly specified
->           in the DT binding, also was missed in the previous versions.
-> 
->         - Two new DT binding patches: one adds the EMC clock property,
->           other relocates the binding doc file to the appropriate directory.
->           One new patch that adds EMC clock property to the DTS file.
-> 
->         - Addressed v2 review comments from Thierry Reding. Driver does not
->           preserve backwards compatibility with older device tree binding.
-> 
->         - The PLL_M and PLL_P clocks are kept internal to the driver because
->           after some more considering I couldn't find a really good reason why
->           these clocks should be in the device tree.
-> 
->         - Some minor cleanups and fixes in the drivers code.
-> 
-> v2:
->         - Minor code cleanups like consistent use of writel_relaxed instead
->           of non-relaxed version, reworded error messages, etc.
-> 
->         - Factored out use_pllm_ud bit checking into a standalone patch for
->           consistency.
-> 
-> Dmitry Osipenko (8):
->   dt: bindings: tegra20-emc: Document interrupt property
->   dt: bindings: tegra20-emc: Document clock property
->   dt: bindings: Move tegra20-emc binding to memory-controllers directory
->   ARM: dts: tegra20: Add interrupt entry to External Memory Controller
->   ARM: dts: tegra20: Add clock entry to External Memory Controller
->   clk: tegra20: Turn EMC clock gate into divider
->   clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
->   memory: tegra: Introduce Tegra20 EMC driver
-> 
->  .../nvidia,tegra20-emc.txt                    |   4 +
->  arch/arm/boot/dts/tegra20.dtsi                |   2 +
->  drivers/clk/tegra/clk-tegra20.c               |  46 +-
->  drivers/memory/tegra/Kconfig                  |  10 +
->  drivers/memory/tegra/Makefile                 |   1 +
->  drivers/memory/tegra/tegra20-emc.c            | 575 ++++++++++++++++++
->  6 files changed, 628 insertions(+), 10 deletions(-)
->  rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (95%)
->  create mode 100644 drivers/memory/tegra/tegra20-emc.c
-> 
 
-Thierry, I now have v6 with some extra minor changes. Do you see any problems that need to be addressed in v5?
+On 30/08/18 19:36, Dmitry Osipenko wrote:
+> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
+> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
+> offline.
+> 
+>  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
+>  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
+>  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
+>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>  [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
+>  [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
+>  [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
+>  [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
+>  [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
+>  [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
+>  [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
+>  [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
+>  [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
+>  [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
+>  [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
+>  [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
+>  [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
+>  [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
+>  [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
+
+Given the above, rather than converting to a spinlock I wonder if we are
+just better off dropping the mutex completely from
+tegra_powergate_is_powered()? Otherwise ...
+
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 36 ++++++++++++++++++------------------
+>  1 file changed, 18 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 2d6f3fcf3211..d6bc9f66f1cd 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -186,7 +186,7 @@ struct tegra_pmc_soc {
+>   * @lp0_vec_phys: physical base address of the LP0 warm boot code
+>   * @lp0_vec_size: size of the LP0 warm boot code
+>   * @powergates_available: Bitmap of available power gates
+> - * @powergates_lock: mutex for power gate register access
+> + * @powergates_lock: lock for power gate register access
+>   */
+>  struct tegra_pmc {
+>  	struct device *dev;
+> @@ -215,7 +215,7 @@ struct tegra_pmc {
+>  	u32 lp0_vec_size;
+>  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
+>  
+> -	struct mutex powergates_lock;
+> +	spinlock_t powergates_lock;
+>  };
+>  
+>  static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+> @@ -288,10 +288,10 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
+>  	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
+>  		return -EINVAL;
+>  
+> -	mutex_lock(&pmc->powergates_lock);
+> +	spin_lock(&pmc->powergates_lock);
+>  
+>  	if (tegra_powergate_state(id) == new_state) {
+> -		mutex_unlock(&pmc->powergates_lock);
+> +		spin_unlock(&pmc->powergates_lock);
+>  		return 0;
+>  	}
+>  
+> @@ -300,7 +300,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
+>  	err = readx_poll_timeout(tegra_powergate_state, id, status,
+>  				 status == new_state, 10, 100000);
+>  
+> -	mutex_unlock(&pmc->powergates_lock);
+> +	spin_unlock(&pmc->powergates_lock);
+
+... the above readx_poll_timeout needs to be converted to the atomic
+version. Furthermore, the above 100ms timeout is probably not suited to
+spinlock.
+
+Cheers
+Jon
+
+-- 
+nvpublic
