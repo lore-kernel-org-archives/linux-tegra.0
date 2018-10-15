@@ -1,68 +1,44 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 0/8] Support Trusted Foundations firmware on Tegra30
-Date: Mon, 15 Oct 2018 15:34:57 +0300
-Message-ID: <91e4af24-7be7-2dbc-577b-56a852cc21ff@gmail.com>
-References: <20180830180421.6415-1-digetx@gmail.com>
+Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
+Date: Mon, 15 Oct 2018 15:35:31 +0300
+Message-ID: <b888a206-0970-01a8-e039-920c03c00c06@gmail.com>
+References: <20180830183635.4474-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830180421.6415-1-digetx@gmail.com>
+In-Reply-To: <20180830183635.4474-1-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 8/30/18 9:04 PM, Dmitry Osipenko wrote:
-> Hello,
+On 8/30/18 9:36 PM, Dmitry Osipenko wrote:
+> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
+> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
+> offline.
 > 
-> All consumer-grade Tegra30 devices, like Nexus 7 tablet; Ouya console and
-> others, use Trusted Foundations firmware that doesn't allow CPU to access
-> secure registers directly from the Linux kernel, these accesses shall be
-> done via the firmware calls. This patch-series adds a full-featured support
-> of the Trusted Foundations firmware that opens the door for supporting of
-> various Tegra30-based devices in the upstream Linux kernel.
+>  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
+>  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
+>  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
+>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>  [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
+>  [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
+>  [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
+>  [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
+>  [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
+>  [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
+>  [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
+>  [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
+>  [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
+>  [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
+>  [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
+>  [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
+>  [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
+>  [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
+>  [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
 > 
-> Changelog:
-> 
-> v3:	- Implemented suspend-resume support.
-> 
-> 	- Reworked arm/firmware/trusted_foundations.c a tad. Now cache
-> 	  is getting properly initialized, cache enabling / disabling is
-> 	  supported.
-> 
-> v2:
-> 	- The "Don't apply CPU erratas in insecure mode" patch got some
-> 	  cleanup, in particular resolved the messiness in
-> 	  __tegra_cpu_reset_handler_data.
-> 
-> 	- Added a comment to tf_cache_write_sec(), justifying the warning
-> 	  message.
-> 
-> Dmitry Osipenko (8):
->   ARM: trusted_foundations: Implement L2 cache initialization callback
->   ARM: trusted_foundations: Make prepare_idle call to take mode argument
->   ARM: trusted_foundations: Provide information about whether firmware
->     is registered
->   ARM: tegra: Setup L2 cache using Trusted Foundations firmware
->   ARM: tegra: Don't apply CPU erratas in insecure mode
->   ARM: tegra: Always boot CPU in ARM-mode
->   ARM: tegra: Support L2 cache maintenance done via firmware
->   ARM: tegra: Add firmware calls required for suspend-resume
-> 
->  arch/arm/firmware/trusted_foundations.c    | 80 +++++++++++++++++++++-
->  arch/arm/include/asm/firmware.h            |  2 +-
->  arch/arm/include/asm/trusted_foundations.h | 13 ++++
->  arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 +-
->  arch/arm/mach-tegra/pm.c                   | 43 ++++++++++++
->  arch/arm/mach-tegra/reset-handler.S        | 66 ++++++++++++++----
->  arch/arm/mach-tegra/reset.c                |  3 +
->  arch/arm/mach-tegra/reset.h                |  9 ++-
->  arch/arm/mach-tegra/sleep-tegra20.S        |  4 ++
->  arch/arm/mach-tegra/sleep.S                |  4 ++
->  arch/arm/mach-tegra/tegra.c                | 10 +++
->  11 files changed, 216 insertions(+), 21 deletions(-)
-> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
 ping
