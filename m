@@ -1,51 +1,33 @@
-From: Mathias Nyman <mathias.nyman@intel.com>
-Subject: Re: [PATCH V2 0/5] Tegra xHCI genpd support
-Date: Tue, 16 Oct 2018 14:00:39 +0300
-Message-ID: <b41a6528-f36f-1d12-3785-95474b00cf97@intel.com>
-References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
- <6a7cda6b-2f2f-43ee-7a53-8b226fdcc88d@nvidia.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH] rtc: tegra: Propagate errors from platform_get_irq()
+Date: Tue, 16 Oct 2018 12:58:54 +0200
+Message-ID: <20181016105854.GK17341@piout.net>
+References: <20180921101209.11895-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6a7cda6b-2f2f-43ee-7a53-8b226fdcc88d@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180921101209.11895-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 15.10.2018 15:40, Jon Hunter wrote:
-> Hi Mathias,
+On 21/09/2018 12:12:09+0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> On 28/09/18 15:11, Jon Hunter wrote:
->> This series add genpd support for the Tegra xHCI device that requires
->> more than one power-domain to operate.
->>
->> This series is making changes to more than one subsystem and at first
->> glance may look like a maintainers nightmare. However, my proposal is
->> this, once reviewed and people are happy ...
->> 1. Patches 1-3 should be merged first. Patches 1 can go via the Tegra
->>     tree and 2-3 via the USB tree.
->> 2. Once patches 1-3 are accepted, then 4 and 5 can be merged via the
->>     Tegra tree.
->>
->> Changes since V1:
->> - Dropped unneeded patch to export symbol for genpd API
->> - Added patch to power-off XUSB domains
->> - Slight re-work to Tegra xHCI driver changes to simplify clean-up path.
->>
->> Jon Hunter (5):
->>    dt-bindings: usb: xhci-tegra: Add power-domain details
->>    usb: xhci: tegra: Power-off power-domains on removal
->>    usb: xhci: tegra: Add genpd support
->>    soc/tegra: pmc: Don't power-up XUSB power-domains
->>    arm64: dts: tegra210: Add power-domains for xHCI
+> Instead of confusingly returning -EBUSY on failure to obtain an
+> interrupt, propagate the real error code. While at it, let the user know
+> why the interrupt could not be acquired.
 > 
-> Let me know you are ok to pick up patches 2 and 3 for v4.20.
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/rtc/rtc-tegra.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
+Applied, thanks.
 
-Patches 2 and 3 look good to me.
-I'll resend them to Greg
-
--Mathias
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
