@@ -1,62 +1,51 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name
-	vs. of_node assignement
-Date: Tue, 16 Oct 2018 12:47:30 +0200
-Message-ID: <20181016104730.4598-10-marcel@ziswiler.com>
-References: <20181016104730.4598-1-marcel@ziswiler.com>
+From: Mathias Nyman <mathias.nyman@intel.com>
+Subject: Re: [PATCH V2 0/5] Tegra xHCI genpd support
+Date: Tue, 16 Oct 2018 14:00:39 +0300
+Message-ID: <b41a6528-f36f-1d12-3785-95474b00cf97@intel.com>
+References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
+ <6a7cda6b-2f2f-43ee-7a53-8b226fdcc88d@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20181016104730.4598-1-marcel@ziswiler.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <6a7cda6b-2f2f-43ee-7a53-8b226fdcc88d@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 15.10.2018 15:40, Jon Hunter wrote:
+> Hi Mathias,
+> 
+> On 28/09/18 15:11, Jon Hunter wrote:
+>> This series add genpd support for the Tegra xHCI device that requires
+>> more than one power-domain to operate.
+>>
+>> This series is making changes to more than one subsystem and at first
+>> glance may look like a maintainers nightmare. However, my proposal is
+>> this, once reviewed and people are happy ...
+>> 1. Patches 1-3 should be merged first. Patches 1 can go via the Tegra
+>>     tree and 2-3 via the USB tree.
+>> 2. Once patches 1-3 are accepted, then 4 and 5 can be merged via the
+>>     Tegra tree.
+>>
+>> Changes since V1:
+>> - Dropped unneeded patch to export symbol for genpd API
+>> - Added patch to power-off XUSB domains
+>> - Slight re-work to Tegra xHCI driver changes to simplify clean-up path.
+>>
+>> Jon Hunter (5):
+>>    dt-bindings: usb: xhci-tegra: Add power-domain details
+>>    usb: xhci: tegra: Power-off power-domains on removal
+>>    usb: xhci: tegra: Add genpd support
+>>    soc/tegra: pmc: Don't power-up XUSB power-domains
+>>    arm64: dts: tegra210: Add power-domains for xHCI
+> 
+> Let me know you are ok to pick up patches 2 and 3 for v4.20.
+> 
 
-This fixes the following error as seen post commit daecf46ee0e5
-("ASoC: soc-core: use snd_soc_dai_link_component for platform"):
+Patches 2 and 3 look good to me.
+I'll resend them to Greg
 
-tegra-snd-sgtl5000 sound: ASoC: Both platform name/of_node are set for
- sgtl5000
-tegra-snd-sgtl5000 sound: ASoC: failed to init link sgtl5000
-tegra-snd-sgtl5000 sound: snd_soc_register_card failed (-22)
-tegra-snd-sgtl5000: probe of sound failed with error -22
-
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
-Changes in v2: New patch
-
- sound/soc/tegra/tegra_sgtl5000.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-index 901457da25ec..eb702925cac3 100644
---- a/sound/soc/tegra/tegra_sgtl5000.c
-+++ b/sound/soc/tegra/tegra_sgtl5000.c
-@@ -168,6 +168,11 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_fini_utils:
-+	if (tegra_sgtl5000_dai.platform) {
-+		devm_kfree(&pdev->dev, tegra_sgtl5000_dai.platform);
-+		tegra_sgtl5000_dai.platform = NULL;
-+	}
-+
- 	tegra_asoc_utils_fini(&machine->util_data);
- err_put_cpu_of_node:
- 	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
--- 
-2.14.4
+-Mathias
