@@ -1,29 +1,26 @@
 From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2] clk: tegra: probe deferral error reporting
-Date: Tue, 16 Oct 2018 15:30:08 -0700
-Message-ID: <153972900814.5275.3822404544995929863@swboyd.mtv.corp.google.com>
-References: <20180814091805.1363-1-marcel@ziswiler.com>
+Subject: Re: [PATCH V2] clk: tegra: Return the exact clock rate from clk_round_rate
+Date: Tue, 16 Oct 2018 15:47:11 -0700
+Message-ID: <153973003125.5275.211113451006447179@swboyd.mtv.corp.google.com>
+References: <20180925214940.15188-1-decatf@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180814091805.1363-1-marcel@ziswiler.com>
+In-Reply-To: <20180925214940.15188-1-decatf@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Stefan Agner <stefan@agner.ch>, Peter Geis <pgwipeout@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Yang <decatf@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Marcel Ziswiler (2018-08-14 02:18:05)
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Quoting Robert Yang (2018-09-25 14:49:40)
+> The current behavior is that clk_round_rate would return the same clock
+> rate passed to it for valid PLL configurations. This change will return
+> the exact rate the PLL will provide in accordance with clk API.
 > =
 
-> Actually report the error code from devm_regulator_get() which may as
-> well just be a probe deferral.
-> =
-
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> =
-
+> Signed-off-by: Robert Yang <decatf@gmail.com>
 > ---
 
-Applied to clk-next
+I'm waiting for someone from Nvidia/Tegra background to review this
+change.
