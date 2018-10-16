@@ -1,60 +1,27 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: Re: [PATCH 6/8] drm: sti: don't pass GFP_DMA32 to dma_alloc_wc
-Date: Tue, 16 Oct 2018 14:41:23 +0200
-Message-ID: <CA+M3ks6a-D4j425JGBof+ma3NX5Fo52k5fadRNRauexOBXuaaw@mail.gmail.com>
-References: <20181013151707.32210-1-hch@lst.de>
- <20181013151707.32210-7-hch@lst.de>
- <CA+M3ks66FL-F8dk+UcG-gR8Gz4N6gz7eYuT_Ht_scw7foPaP0A@mail.gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v1 0/3] CPU clock changes for Tegra20/30
+Date: Tue, 16 Oct 2018 15:29:09 -0700
+Message-ID: <153972894990.5275.3681567642363374941@swboyd.mtv.corp.google.com>
+References: <20180830192045.11017-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CA+M3ks66FL-F8dk+UcG-gR8Gz4N6gz7eYuT_Ht_scw7foPaP0A@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Linux Fbdev development list <linux-fbdev@vger.kernel.org>, linux-pm@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org, ML dri-devel <dri-devel@lists.freedesktop.org>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180830192045.11017-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-TGUgbHVuLiAxNSBvY3QuIDIwMTggw6AgMTE6MTIsIEJlbmphbWluIEdhaWduYXJkCjxiZW5qYW1p
-bi5nYWlnbmFyZEBsaW5hcm8ub3JnPiBhIMOpY3JpdCA6Cj4KPiBMZSBzYW0uIDEzIG9jdC4gMjAx
-OCDDoCAxNzoxNywgQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+IGEgw6ljcml0IDoKPiA+
-Cj4gPiBUaGUgRE1BIEFQSSBkb2VzIGl0cyBvd24gem9uZSBkZWNpc2lvbnMgYmFzZWQgb24gdGhl
-IGNvaGVyZW50X2RtYV9tYXNrLgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waCBIZWxs
-d2lnIDxoY2hAbHN0LmRlPgo+Cj4gUmV2aWV3ZWQtYnk6IEJlbmphbWluIEdhaWduYXJkIDxiZW5q
-YW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnPgoKQ2hyaXN0b3BoIGRvIHlvdSBwbGFuIHRvIG1lcmdl
-IHRoaXMgcGF0Y2ggb24geW91ciBvd24gdHJlZSA/IG9yIHdvdWxkCmxpa2UgSSBwdXQgaXQgZGly
-ZWN0bHkgaW4gZHJtLW1pc2MtbmV4dCBicmFuY2ggPwoKUmVnYXJkcywKQmVuamFtaW4KPgo+ID4g
-LS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfZ2RwLmMgfCAyICstCj4gPiAgMSBmaWxl
-IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4gPgo+ID4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2dkcC5jIGIvZHJpdmVycy9ncHUvZHJtL3N0aS9z
-dGlfZ2RwLmMKPiA+IGluZGV4IGMzMmRlNmNiZjA2MS4uY2RmMGExMzk2ZTAwIDEwMDY0NAo+ID4g
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfZ2RwLmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9zdGkvc3RpX2dkcC5jCj4gPiBAQCAtNTE3LDcgKzUxNyw3IEBAIHN0YXRpYyB2b2lkIHN0
-aV9nZHBfaW5pdChzdHJ1Y3Qgc3RpX2dkcCAqZ2RwKQo+ID4gICAgICAgICAvKiBBbGxvY2F0ZSBh
-bGwgdGhlIG5vZGVzIHdpdGhpbiBhIHNpbmdsZSBtZW1vcnkgcGFnZSAqLwo+ID4gICAgICAgICBz
-aXplID0gc2l6ZW9mKHN0cnVjdCBzdGlfZ2RwX25vZGUpICoKPiA+ICAgICAgICAgICAgIEdEUF9O
-T0RFX1BFUl9GSUVMRCAqIEdEUF9OT0RFX05CX0JBTks7Cj4gPiAtICAgICAgIGJhc2UgPSBkbWFf
-YWxsb2Nfd2MoZ2RwLT5kZXYsIHNpemUsICZkbWFfYWRkciwgR0ZQX0tFUk5FTCB8IEdGUF9ETUEp
-Owo+ID4gKyAgICAgICBiYXNlID0gZG1hX2FsbG9jX3djKGdkcC0+ZGV2LCBzaXplLCAmZG1hX2Fk
-ZHIsIEdGUF9LRVJORUwpOwo+ID4KPiA+ICAgICAgICAgaWYgKCFiYXNlKSB7Cj4gPiAgICAgICAg
-ICAgICAgICAgRFJNX0VSUk9SKCJGYWlsZWQgdG8gYWxsb2NhdGUgbWVtb3J5IGZvciBHRFAgbm9k
-ZVxuIik7Cj4gPiAtLQo+ID4gMi4xOS4xCj4gPgo+ID4gX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KPiA+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiA+IGRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiA+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCj4KPgo+Cj4gLS0KPiBCZW5qYW1pbiBH
-YWlnbmFyZAo+Cj4gR3JhcGhpYyBTdHVkeSBHcm91cAo+Cj4gTGluYXJvLm9yZyDilIIgT3BlbiBz
-b3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCj4KPiBGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8
-IFR3aXR0ZXIgfCBCbG9nCgoKCi0tIApCZW5qYW1pbiBHYWlnbmFyZAoKR3JhcGhpYyBTdHVkeSBH
-cm91cAoKTGluYXJvLm9yZyDilIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCgpG
-b2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9nCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Quoting Dmitry Osipenko (2018-08-30 12:20:42)
+> Hello,
+> =
+
+> This series is a prerequisite for the CPUFREQ driver patches, it can be
+> applied separately. CPUFREQ will be supported on Tegra30 once this and
+> the CPUFREQ patch-series will be applied.
+> =
+
+
+Will anyone from Nvidia or Tegra review these patches? I'd rather not
+apply something that has had zero review.
