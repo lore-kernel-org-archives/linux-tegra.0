@@ -1,70 +1,57 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs.
- of_node assignement
-Date: Wed, 17 Oct 2018 13:32:37 +0100
-Message-ID: <35848cb7-36ee-6698-ff17-7f0e73567914@nvidia.com>
-References: <20181016104730.4598-1-marcel@ziswiler.com>
- <20181016104730.4598-10-marcel@ziswiler.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
+ Tegra20/30
+Date: Wed, 17 Oct 2018 15:37:25 +0300
+Message-ID: <1448e619-35c9-0195-c68a-604d10f4dc8b@gmail.com>
+References: <20180830194356.14059-1-digetx@gmail.com>
+ <20180830194356.14059-2-digetx@gmail.com>
+ <f38b38f1-0a60-d6fa-9047-23c619494b23@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181016104730.4598-10-marcel@ziswiler.com>
+In-Reply-To: <f38b38f1-0a60-d6fa-9047-23c619494b23@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Thierry Reding <thierry.reding@gmail.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/17/18 11:40 AM, Jon Hunter wrote:
+> 
+> On 30/08/2018 20:43, Dmitry Osipenko wrote:
+>> Add device-tree binding that describes CPU frequency-scaling hardware
+>> found on NVIDIA Tegra20/30 SoC's.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
+>>  1 file changed, 38 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>> new file mode 100644
+>> index 000000000000..2c51f676e958
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>> @@ -0,0 +1,38 @@
+>> +Binding for NVIDIA Tegra20 CPUFreq
+>> +==================================
+>> +
+>> +Required properties:
+>> +- clocks: Must contain an entry for each entry in clock-names.
+>> +  See ../clocks/clock-bindings.txt for details.
+>> +- clock-names: Must include the following entries:
+>> +  - pll_x: main-parent for CPU clock, must be the first entry
+>> +  - backup: intermediate-parent for CPU clock
+>> +  - cpu: the CPU clock
+> 
+> Is it likely that 'backup' will be anything other that pll_p? If not why
+> not just call it pll_p? Personally, I don't 'backup' to descriptive even
+> though I can see what you mean.
+> 
+> I can see that you want to make this flexible, but if the likelihood is
+> that we will just use pll_p then I am not sure it is warranted at this
+> point.
 
-On 16/10/2018 11:47, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> This fixes the following error as seen post commit daecf46ee0e5
-> ("ASoC: soc-core: use snd_soc_dai_link_component for platform"):
-> 
-> tegra-snd-sgtl5000 sound: ASoC: Both platform name/of_node are set for
->  sgtl5000
-> tegra-snd-sgtl5000 sound: ASoC: failed to init link sgtl5000
-> tegra-snd-sgtl5000 sound: snd_soc_register_card failed (-22)
-> tegra-snd-sgtl5000: probe of sound failed with error -22
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
-> Changes in v2: New patch
-> 
->  sound/soc/tegra/tegra_sgtl5000.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-> index 901457da25ec..eb702925cac3 100644
-> --- a/sound/soc/tegra/tegra_sgtl5000.c
-> +++ b/sound/soc/tegra/tegra_sgtl5000.c
-> @@ -168,6 +168,11 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
->  	return 0;
->  
->  err_fini_utils:
-> +	if (tegra_sgtl5000_dai.platform) {
-> +		devm_kfree(&pdev->dev, tegra_sgtl5000_dai.platform);
-> +		tegra_sgtl5000_dai.platform = NULL;
-> +	}
-> +
->  	tegra_asoc_utils_fini(&machine->util_data);
->  err_put_cpu_of_node:
->  	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
->
-
-Where is the above allocated? I don't see it allocated in this driver
-AFAICT. If it is not then it does not seem right to free something that
-we have not allocated in this driver. I would have assumed it was
-allocated by snd_soc_init_platform() in which case it should not be
-necessary to free because that function uses devm_kzalloc(). What am I
-missing here?
-
-Cheers
-Jon
-
--- 
-nvpublic
+That won't describe HW, but software. And device tree should describe HW.
