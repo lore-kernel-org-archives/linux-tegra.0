@@ -1,29 +1,91 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 1/8] cpufreq: tegra186: don't pass GFP_DMA32 to dma_alloc_coherent
-Date: Wed, 17 Oct 2018 09:22:37 +0200
-Message-ID: <CAJZ5v0h=niQOtdMGYWtE4P4NX=-xmgDvga7t2mTAtpbOYWQY0A@mail.gmail.com>
-References: <20181013151707.32210-1-hch@lst.de> <20181013151707.32210-2-hch@lst.de>
- <CAJZ5v0ju2Y=yQn9uz6HpYGw5BZovxYh2YbYD7Ujq8kajJfvLSQ@mail.gmail.com> <20181017071942.GB23407@lst.de>
+From: Prateek Patel <prpatel@nvidia.com>
+Subject: [PATCH] kmemleak: Add config to select auto scan
+Date: Wed, 17 Oct 2018 13:33:28 +0530
+Message-ID: <1539763408-22085-1-git-send-email-prpatel@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181017071942.GB23407@lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, linux-tegra@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, linux-spi <linux-spi@vger.kernel.org>, "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: catalin.marinas@arm.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-tegra@vger.kernel.org, snikam@nvidia.com, vdumpa@nvidia.com, talho@nvidia.com, swarren@nvidia.com, prpatel@nvidia.com, Sri Krishna chowdary <schowdary@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 9:19 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Mon, Oct 15, 2018 at 09:43:04AM +0200, Rafael J. Wysocki wrote:
-> > On Sat, Oct 13, 2018 at 5:17 PM Christoph Hellwig <hch@lst.de> wrote:
-> > >
-> > > The DMA API does its own zone decisions based on the coherent_dma_mask.
-> > >
-> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> >
-> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Can you pick it up through the cpufreq tree?
+From: Sri Krishna chowdary <schowdary@nvidia.com>
 
-Sure, I'll do that, thanks!
+Kmemleak scan is cpu intensive and can stall user tasks at times.
+To prevent this, add config DEBUG_KMEMLEAK_SCAN_ON to enable/disable
+auto scan on boot up.
+Also protect first_run with CONFIG_DEBUG_KMEMLEAK_SCAN_ON as this is
+meant for only first automatic scan.
+
+Signed-off-by: Sri Krishna chowdary <schowdary@nvidia.com>
+Signed-off-by: Sachin Nikam <snikam@nvidia.com>
+Signed-off-by: Prateek <prpatel@nvidia.com>
+---
+ lib/Kconfig.debug | 11 +++++++++++
+ mm/kmemleak.c     |  6 ++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index e5e7c03..9542852 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -593,6 +593,17 @@ config DEBUG_KMEMLEAK_DEFAULT_OFF
+ 	  Say Y here to disable kmemleak by default. It can then be enabled
+ 	  on the command line via kmemleak=on.
+ 
++config DEBUG_KMEMLEAK_SCAN_ON
++	bool "Enable kmemleak auto scan thread on boot up"
++	default y
++	depends on DEBUG_KMEMLEAK
++	help
++	  Kmemleak scan is cpu intensive and can stall user tasks at times.
++	  This option enables/disables automatic kmemleak scan at boot up.
++
++	  Say N here to disable kmemleak auto scan thread to stop automatic
++	  scanning.
++
+ config DEBUG_STACK_USAGE
+ 	bool "Stack utilization instrumentation"
+ 	depends on DEBUG_KERNEL && !IA64
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 877de4f..ac53678 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1647,11 +1647,14 @@ static void kmemleak_scan(void)
+  */
+ static int kmemleak_scan_thread(void *arg)
+ {
++#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
+ 	static int first_run = 1;
++#endif
+ 
+ 	pr_info("Automatic memory scanning thread started\n");
+ 	set_user_nice(current, 10);
+ 
++#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
+ 	/*
+ 	 * Wait before the first scan to allow the system to fully initialize.
+ 	 */
+@@ -1661,6 +1664,7 @@ static int kmemleak_scan_thread(void *arg)
+ 		while (timeout && !kthread_should_stop())
+ 			timeout = schedule_timeout_interruptible(timeout);
+ 	}
++#endif
+ 
+ 	while (!kthread_should_stop()) {
+ 		signed long timeout = jiffies_scan_wait;
+@@ -2141,9 +2145,11 @@ static int __init kmemleak_late_init(void)
+ 		return -ENOMEM;
+ 	}
+ 
++#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
+ 	mutex_lock(&scan_mutex);
+ 	start_scan_thread();
+ 	mutex_unlock(&scan_mutex);
++#endif
+ 
+ 	pr_info("Kernel memory leak detector initialized\n");
+ 
+-- 
+2.1.4
