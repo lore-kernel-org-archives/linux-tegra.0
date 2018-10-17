@@ -1,100 +1,79 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH] kmemleak: Add config to select auto scan
-Date: Wed, 17 Oct 2018 14:41:09 +0100
-Message-ID: <20181017134109.GA223677@arrakis.emea.arm.com>
-References: <1539763408-22085-1-git-send-email-prpatel@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
+ Tegra20/30
+Date: Wed, 17 Oct 2018 16:46:44 +0300
+Message-ID: <c6249de9-bcaa-ab3e-8546-40f8c2c17599@gmail.com>
+References: <20180830194356.14059-1-digetx@gmail.com>
+ <20180830194356.14059-2-digetx@gmail.com>
+ <f38b38f1-0a60-d6fa-9047-23c619494b23@nvidia.com>
+ <1448e619-35c9-0195-c68a-604d10f4dc8b@gmail.com>
+ <a9b6e683-3802-896c-27ad-9c49853c231f@nvidia.com>
+ <a0dd5d75-6683-f938-c5e5-a95a5c2b86e4@gmail.com>
+ <3c72f573-d109-b607-b7b7-d70aea3e03df@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1539763408-22085-1-git-send-email-prpatel@nvidia.com>
+In-Reply-To: <3c72f573-d109-b607-b7b7-d70aea3e03df@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Prateek Patel <prpatel@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-tegra@vger.kernel.org, snikam@nvidia.com, vdumpa@nvidia.com, talho@nvidia.com, swarren@nvidia.com, Sri Krishna chowdary <schowdary@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 01:33:28PM +0530, Prateek Patel wrote:
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index e5e7c03..9542852 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -593,6 +593,17 @@ config DEBUG_KMEMLEAK_DEFAULT_OFF
->  	  Say Y here to disable kmemleak by default. It can then be enabled
->  	  on the command line via kmemleak=on.
->  
-> +config DEBUG_KMEMLEAK_SCAN_ON
+On 10/17/18 4:34 PM, Jon Hunter wrote:
+> 
+> On 17/10/2018 14:07, Dmitry Osipenko wrote:
+>> On 10/17/18 3:59 PM, Jon Hunter wrote:
+>>>
+>>> On 17/10/2018 13:37, Dmitry Osipenko wrote:
+>>>> On 10/17/18 11:40 AM, Jon Hunter wrote:
+>>>>>
+>>>>> On 30/08/2018 20:43, Dmitry Osipenko wrote:
+>>>>>> Add device-tree binding that describes CPU frequency-scaling hardware
+>>>>>> found on NVIDIA Tegra20/30 SoC's.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> ---
+>>>>>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
+>>>>>>  1 file changed, 38 insertions(+)
+>>>>>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..2c51f676e958
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>>>>> @@ -0,0 +1,38 @@
+>>>>>> +Binding for NVIDIA Tegra20 CPUFreq
+>>>>>> +==================================
+>>>>>> +
+>>>>>> +Required properties:
+>>>>>> +- clocks: Must contain an entry for each entry in clock-names.
+>>>>>> +  See ../clocks/clock-bindings.txt for details.
+>>>>>> +- clock-names: Must include the following entries:
+>>>>>> +  - pll_x: main-parent for CPU clock, must be the first entry
+>>>>>> +  - backup: intermediate-parent for CPU clock
+>>>>>> +  - cpu: the CPU clock
+>>>>>
+>>>>> Is it likely that 'backup' will be anything other that pll_p? If not why
+>>>>> not just call it pll_p? Personally, I don't 'backup' to descriptive even
+>>>>> though I can see what you mean.
+>>>>>
+>>>>> I can see that you want to make this flexible, but if the likelihood is
+>>>>> that we will just use pll_p then I am not sure it is warranted at this
+>>>>> point.
+>>>>
+>>>> That won't describe HW, but software. And device tree should describe HW.
+>>>
+>>> Hmm ... well that's my point exactly. So why call it 'backup'? Sounds
+>>> like a software description to me.
+>>
+>> Because HW is designed the way that CPU parent need to be switched to the backup clock source while main clock changes its rate. HW also allow to select among different parents, pll_p is one of those parents.
+> 
+> Yes that part is understood. I am just splitting hairs over the actual
+> name. We do the same for tegra124 but we just call it 'pll_p'. See ...
+> 
+> Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
 
-Nitpick: DEBUG_KMEMLEAK_AUTO_SCAN may be a better name since you don't
-aim to disable scanning altogether.
-
-> +	bool "Enable kmemleak auto scan thread on boot up"
-> +	default y
-> +	depends on DEBUG_KMEMLEAK
-> +	help
-> +	  Kmemleak scan is cpu intensive and can stall user tasks at times.
-
-I guess that depends on the CPU.
-
-> +	  This option enables/disables automatic kmemleak scan at boot up.
-> +
-> +	  Say N here to disable kmemleak auto scan thread to stop automatic
-> +	  scanning.
-
-You should also mention that disabling this option also disables
-automatic reporting of memory leaks. And I'd add a "if unsure, say Y".
-
-> +
->  config DEBUG_STACK_USAGE
->  	bool "Stack utilization instrumentation"
->  	depends on DEBUG_KERNEL && !IA64
-> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> index 877de4f..ac53678 100644
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -1647,11 +1647,14 @@ static void kmemleak_scan(void)
->   */
->  static int kmemleak_scan_thread(void *arg)
->  {
-> +#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
->  	static int first_run = 1;
-> +#endif
-
-	static int first_run = IS_ENABLED(CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN);
-
->  
->  	pr_info("Automatic memory scanning thread started\n");
->  	set_user_nice(current, 10);
->  
-> +#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
->  	/*
->  	 * Wait before the first scan to allow the system to fully initialize.
->  	 */
-> @@ -1661,6 +1664,7 @@ static int kmemleak_scan_thread(void *arg)
->  		while (timeout && !kthread_should_stop())
->  			timeout = schedule_timeout_interruptible(timeout);
->  	}
-> +#endif
-
-With the first_run change above, this #ifdef is no longer needed.
-
->  
->  	while (!kthread_should_stop()) {
->  		signed long timeout = jiffies_scan_wait;
-> @@ -2141,9 +2145,11 @@ static int __init kmemleak_late_init(void)
->  		return -ENOMEM;
->  	}
->  
-> +#ifdef CONFIG_DEBUG_KMEMLEAK_SCAN_ON
->  	mutex_lock(&scan_mutex);
->  	start_scan_thread();
->  	mutex_unlock(&scan_mutex);
-> +#endif
-
-Please use:
-
-	if (IS_ENABLED(CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN)) {
-		...
-	}
-
--- 
-Catalin
+tegra124-cpufreq choose to hardwire to the pll_p, but it could be other clocks. Technically abstracting backup clock should be more correct, but result is the same in the end.
