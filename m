@@ -1,46 +1,37 @@
-From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH 1/2] arm64: dts: tegra186: Add dma-ranges to avoid using bounce buffers
-Date: Tue, 16 Oct 2018 19:06:47 -0700
-Message-ID: <1539742008-16595-1-git-send-email-vdumpa@nvidia.com>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 1/8] cpufreq: tegra186: don't pass
+ GFP_DMA32 to dma_alloc_coherent
+Date: Wed, 17 Oct 2018 09:19:42 +0200
+Message-ID: <20181017071942.GB23407@lst.de>
+References: <20181013151707.32210-1-hch@lst.de>
+ <20181013151707.32210-2-hch@lst.de>
+ <CAJZ5v0ju2Y=yQn9uz6HpYGw5BZovxYh2YbYD7Ujq8kajJfvLSQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, avienamo@nvidia.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Krishna Reddy <vdumpa@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0ju2Y=yQn9uz6HpYGw5BZovxYh2YbYD7Ujq8kajJfvLSQ@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-spi <linux-spi@vger.kernel.org>, linux-tegra@vger.kernel.org, Christoph Hellwig <hch@lst.de>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add dma-ranges to avoid using DMA bounce buffers unnecessarily for
-the devices that can address the physcial memory and don't
-have SMMU enabled.
+On Mon, Oct 15, 2018 at 09:43:04AM +0200, Rafael J. Wysocki wrote:
+> On Sat, Oct 13, 2018 at 5:17 PM Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > The DMA API does its own zone decisions based on the coherent_dma_mask.
+> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> 
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This also resolves the failures in attaching devices to IOMMU.
-The following error is caused by the check in io-pgtable-arm.c, where
-the dma address is expected to match the physical address for the IOMMU
-devices that don't support coherent page table walking. Bounce buffer
-usage is causing the mismatch and device add failure.
-
-[    7.000461] arm-smmu 12000000.iommu: Cannot accommodate DMA
-translation for IOMMU page tables
-[    7.010513] iommu: Failed to add device 15200000.display to group 0:
--12
-
-Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 2f3c8e2..230c0c8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -14,6 +14,7 @@
- 	interrupt-parent = <&gic>;
- 	#address-cells = <2>;
- 	#size-cells = <2>;
-+	dma-ranges = <0x0 0x0 0x0 0x0 0x4 0x0>;
- 
- 	misc@100000 {
- 		compatible = "nvidia,tegra186-misc";
--- 
-2.1.4
+Can you pick it up through the cpufreq tree?
