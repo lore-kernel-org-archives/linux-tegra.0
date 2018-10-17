@@ -1,26 +1,59 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH V2] clk: tegra: Return the exact clock rate from clk_round_rate
-Date: Tue, 16 Oct 2018 15:47:11 -0700
-Message-ID: <153973003125.5275.211113451006447179@swboyd.mtv.corp.google.com>
-References: <20180925214940.15188-1-decatf@gmail.com>
+From: Krishna Reddy <vdumpa@nvidia.com>
+Subject: [PATCH 2/2] arm64: dts: tegra186: Enable IOMMU for SDHCI
+Date: Tue, 16 Oct 2018 19:06:48 -0700
+Message-ID: <1539742008-16595-2-git-send-email-vdumpa@nvidia.com>
+References: <1539742008-16595-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180925214940.15188-1-decatf@gmail.com>
+In-Reply-To: <1539742008-16595-1-git-send-email-vdumpa@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Yang <decatf@gmail.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, avienamo@nvidia.com
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Krishna Reddy <vdumpa@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Robert Yang (2018-09-25 14:49:40)
-> The current behavior is that clk_round_rate would return the same clock
-> rate passed to it for valid PLL configurations. This change will return
-> the exact rate the PLL will provide in accordance with clk API.
-> =
+Enable IOMMU for all SDHCI controllers in Tegra186.
 
-> Signed-off-by: Robert Yang <decatf@gmail.com>
-> ---
+Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I'm waiting for someone from Nvidia/Tegra background to review this
-change.
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 230c0c8..996997e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -234,6 +234,7 @@
+ 		compatible = "nvidia,tegra186-sdhci";
+ 		reg = <0x0 0x03400000 0x0 0x10000>;
+ 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++		iommus = <&smmu TEGRA186_SID_SDMMC1>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC1>;
+ 		clock-names = "sdhci";
+ 		resets = <&bpmp TEGRA186_RESET_SDMMC1>;
+@@ -259,6 +260,7 @@
+ 		compatible = "nvidia,tegra186-sdhci";
+ 		reg = <0x0 0x03420000 0x0 0x10000>;
+ 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++		iommus = <&smmu TEGRA186_SID_SDMMC2>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC2>;
+ 		clock-names = "sdhci";
+ 		resets = <&bpmp TEGRA186_RESET_SDMMC2>;
+@@ -279,6 +281,7 @@
+ 		compatible = "nvidia,tegra186-sdhci";
+ 		reg = <0x0 0x03440000 0x0 0x10000>;
+ 		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
++		iommus = <&smmu TEGRA186_SID_SDMMC3>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC3>;
+ 		clock-names = "sdhci";
+ 		resets = <&bpmp TEGRA186_RESET_SDMMC3>;
+@@ -301,6 +304,7 @@
+ 		compatible = "nvidia,tegra186-sdhci";
+ 		reg = <0x0 0x03460000 0x0 0x10000>;
+ 		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
++		iommus = <&smmu TEGRA186_SID_SDMMC4>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC4>;
+ 		clock-names = "sdhci";
+ 		assigned-clocks = <&bpmp TEGRA186_CLK_SDMMC4>,
+-- 
+2.1.4
