@@ -1,93 +1,133 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 8/9] ASoC: tegra_sgtl5000: fix device_node refcounting
-Date: Wed, 17 Oct 2018 11:57:53 +0100
-Message-ID: <af707410-9954-b1a1-6d9b-5ad085604446@nvidia.com>
-References: <20181016104730.4598-1-marcel@ziswiler.com>
- <20181016104730.4598-9-marcel@ziswiler.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Date: Wed, 17 Oct 2018 10:59:11 +0000
+Message-ID: <1539773948.6233.23.camel@toradex.com>
+References: <20180830184210.5369-1-digetx@gmail.com>
+         <20180830184210.5369-2-digetx@gmail.com>
+         <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181016104730.4598-9-marcel@ziswiler.com>
+In-Reply-To: <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
 Content-Language: en-US
+Content-ID: <23DD281DB9DC544D86A549630A5C44EC@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Thierry Reding <thierry.reding@gmail.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>
+To: "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "digetx@gmail.com" <digetx@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 16/10/2018 11:47, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Similar to the following:
-> 
-> commit 4321723648b0 ("ASoC: tegra_alc5632: fix device_node refcounting")
-> 
-> commit 7c5dfd549617 ("ASoC: tegra: fix device_node refcounting")
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
-> Changes in v2: New patch
-> 
->  sound/soc/tegra/tegra_sgtl5000.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-> index 45a4aa9d2a47..901457da25ec 100644
-> --- a/sound/soc/tegra/tegra_sgtl5000.c
-> +++ b/sound/soc/tegra/tegra_sgtl5000.c
-> @@ -149,14 +149,14 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
->  		dev_err(&pdev->dev,
->  			"Property 'nvidia,i2s-controller' missing/invalid\n");
->  		ret = -EINVAL;
-> -		goto err;
-> +		goto err_put_codec_of_node;
->  	}
->  
->  	tegra_sgtl5000_dai.platform_of_node = tegra_sgtl5000_dai.cpu_of_node;
->  
->  	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
->  	if (ret)
-> -		goto err;
-> +		goto err_put_cpu_of_node;
->  
->  	ret = snd_soc_register_card(card);
->  	if (ret) {
-> @@ -169,6 +169,13 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
->  
->  err_fini_utils:
->  	tegra_asoc_utils_fini(&machine->util_data);
-> +err_put_cpu_of_node:
-> +	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
-> +	tegra_sgtl5000_dai.cpu_of_node = NULL;
-> +	tegra_sgtl5000_dai.platform_of_node = NULL;
-> +err_put_codec_of_node:
-> +	of_node_put(tegra_sgtl5000_dai.codec_of_node);
-> +	tegra_sgtl5000_dai.codec_of_node = NULL;
->  err:
->  	return ret;
->  }
-> @@ -183,6 +190,12 @@ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
->  
->  	tegra_asoc_utils_fini(&machine->util_data);
->  
-> +	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
-> +	tegra_sgtl5000_dai.cpu_of_node = NULL;
-> +	tegra_sgtl5000_dai.platform_of_node = NULL;
-> +	of_node_put(tegra_sgtl5000_dai.codec_of_node);
-> +	tegra_sgtl5000_dai.codec_of_node = NULL;
-> +
->  	return ret;
->  }
->  
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+T24gRnJpLCAyMDE4LTA4LTMxIGF0IDEyOjI5ICswMzAwLCBQZXRlciBEZSBTY2hyaWp2ZXIgd3Jv
+dGU6DQo+IE9uIFRodSwgQXVnIDMwLCAyMDE4IGF0IDA5OjQyOjEwUE0gKzAzMDAsIERtaXRyeSBP
+c2lwZW5rbyB3cm90ZToNCj4gPiBDdXJyZW50bHkgYWxsIFBMTCdzIG9uIFRlZ3JhMjAgdXNlIGEg
+aGFyZGNvZGVkIGRlbGF5IGRlc3BpdGUgb2YNCj4gPiBoYXZpbmcNCj4gPiBhIGxvY2stc3RhdHVz
+IGJpdC4gVGhlIGxvY2stc3RhdHVzIHBvbGxpbmcgd2FzIGRpc2FibGVkIH43IHllYXJzDQo+ID4g
+YWdvDQo+ID4gYmVjYXVzZSBQTExFIHdhcyBmYWlsaW5nIHRvIGxvY2sgYW5kIHdhcyBhIHN1c3Bp
+Y2lvbiB0aGF0IG90aGVyDQo+ID4gUExMcw0KPiA+IG1pZ2h0IGJlIGZhdWx0eSB0b28uIE90aGVy
+IFBMTHMgYXJlIG9rYXksIGhlbmNlIGVuYWJsZSB0aGUgbG9jay0NCj4gPiBzdGF0dXMNCj4gPiBw
+b2xsaW5nIGZvciB0aGVtLiBUaGlzIHJlZHVjZXMgZGVsYXkgb2YgYW55IG9wZXJhdGlvbiB0aGF0
+IHJlcXVpcmUNCj4gPiBQTEwNCj4gPiB0byBsb2NrLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6
+IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4NCj4gPiAtLS0NCj4gPiANCj4gPiBD
+aGFuZ2Vsb2c6DQo+ID4gDQo+ID4gdjI6CURvbid0IGVuYWJsZSBwb2xsaW5nIGZvciBQTExFIGFz
+IGl0IGtub3duIHRvIG5vdCBiZWluZw0KPiA+IGFibGUgdG8gbG9jay4NCj4gPiANCj4gDQo+IFRo
+aXMgaXNuJ3QgY29ycmVjdC4gVGhlIGxvY2sgYml0IG9mIFBMTEUgY2FuIGRlY2xhcmUgbG9jayB0
+b28gZWFybHksDQo+IGJ1dCB0aGUNCj4gUExMIGl0c2VsZiBkb2VzIGxvY2suDQoNCklzIHRoZXJl
+IGFuIGVycmF0YSBkb2N1bWVudGluZyB0aGlzPyBBcyBJIGNvdWxkIG5vdCByZWFsbHkgZmluZCBh
+bnkNCm1lbnRpb25pbmcgb2YgdGhpcyBhbnl3aGVyZSBhdCBsZWFzdCB1cCB0byB0aGUgdjExIGZy
+b20gRGVjIDIxLCAyMDEwIEkNCnN0aWxsIGhhdmUgYWNjZXNzIHRvLg0KDQpCVFc6IEl0IGxvb2tz
+IGxpa2UgYWxzbyBQTExBIG1heSBub3QgYWx3YXlzIGxvY2sgcHJvcGVybHkgd2l0aCB0aG9zZQ0K
+Y2hhbmdlcy4gSXMgdGhlcmUgYW55dGhpbmcga25vd24gYWJvdXQgdGhhdCBhcyB3ZWxsPyBIZXJl
+IGlzIHdoYXQgSSBnZXQNCm9uIHZhcmlvdXMgQ29saWJyaSBUMjAgbW9kdWxlcyAod2hpbGUgcmFu
+ZG9tIG90aGVyIG9uZXMgc2VlbSB0byB3b3JrDQpmaW5lKToNCg0KWyAgICAwLjIzMjU5MV0gY2xr
+X3BsbF93YWl0X2Zvcl9sb2NrOiBUaW1lZCBvdXQgd2FpdGluZyBmb3IgcGxsIHBsbF9hDQpsb2Nr
+DQpbICAgIDAuMjMyNjE0XSB0ZWdyYV9pbml0X2Zyb21fdGFibGU6IEZhaWxlZCB0byBlbmFibGUg
+cGxsX2ENClsgICAgMC4yMzI2MjddIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0t
+LQ0KWyAgICAwLjIzMjY1NV0gV0FSTklORzogQ1BVOiAwIFBJRDogMSBhdA0KL3J1bi9tZWRpYS96
+aW0vQnVpbGQvU291cmNlcy9saW51eC0NCm5leHQuZ2l0L2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay5j
+OjI4NSANCnRlZ3JhX2luaXRfZnJvbV90YWJsZSsweDE2OC8weDE3NA0KWyAgICAwLjIzMjY3Nl0g
+TW9kdWxlcyBsaW5rZWQgaW46DQpbICAgIDAuMjMyNjk2XSBDUFU6IDAgUElEOiAxIENvbW06IHN3
+YXBwZXIvMCBOb3QgdGFpbnRlZCA0LjE5LjAtcmMyLQ0KbmV4dC0yMDE4MDkwMy0wMDIxNC1nNTYx
+OGEwNTE0Y2YxLWRpcnR5ICMxODMNClsgICAgMC4yMzI3MTRdIEhhcmR3YXJlIG5hbWU6IE5WSURJ
+QSBUZWdyYSBTb0MgKEZsYXR0ZW5lZCBEZXZpY2UgVHJlZSkNClsgICAgMC4yMzI3NTNdIFs8YzAx
+MTM2NDQ+XSAodW53aW5kX2JhY2t0cmFjZSkgZnJvbSBbPGMwMTBkYzBjPl0NCihzaG93X3N0YWNr
+KzB4MTAvMHgxNCkNClsgICAgMC4yMzI3ODNdIFs8YzAxMGRjMGM+XSAoc2hvd19zdGFjaykgZnJv
+bSBbPGMwYWE2NmY0Pl0NCihkdW1wX3N0YWNrKzB4OGMvMHhhMCkNClsgICAgMC4yMzI4MDhdIFs8
+YzBhYTY2ZjQ+XSAoZHVtcF9zdGFjaykgZnJvbSBbPGMwMTI1NDI4Pl0NCihfX3dhcm4rMHhlMC8w
+eGY4KQ0KWyAgICAwLjIzMjgyOF0gWzxjMDEyNTQyOD5dIChfX3dhcm4pIGZyb20gWzxjMDEyNTU1
+OD5dDQood2Fybl9zbG93cGF0aF9udWxsKzB4NDAvMHg0OCkNClsgICAgMC4yMzI4NDldIFs8YzAx
+MjU1NTg+XSAod2Fybl9zbG93cGF0aF9udWxsKSBmcm9tIFs8YzBmMmYyODQ+XQ0KKHRlZ3JhX2lu
+aXRfZnJvbV90YWJsZSsweDE2OC8weDE3NCkNClsgICAgMC4yMzI4NzRdIFs8YzBmMmYyODQ+XSAo
+dGVncmFfaW5pdF9mcm9tX3RhYmxlKSBmcm9tIFs8YzBmMmYwM2M+XQ0KKHRlZ3JhX2Nsb2Nrc19h
+cHBseV9pbml0X3RhYmxlKzB4MWMvMHgyYykNClsgICAgMC4yMzI5MDFdIFs8YzBmMmYwM2M+XSAo
+dGVncmFfY2xvY2tzX2FwcGx5X2luaXRfdGFibGUpIGZyb20NCls8YzAxMDJmYTA+XSAoZG9fb25l
+X2luaXRjYWxsKzB4NTQvMHgyNzgpDQpbICAgIDAuMjMyOTI2XSBbPGMwMTAyZmEwPl0gKGRvX29u
+ZV9pbml0Y2FsbCkgZnJvbSBbPGMwZjAxMTI4Pl0NCihrZXJuZWxfaW5pdF9mcmVlYWJsZSsweDJj
+MC8weDM1NCkNClsgICAgMC4yMzI5NDldIFs8YzBmMDExMjg+XSAoa2VybmVsX2luaXRfZnJlZWFi
+bGUpIGZyb20gWzxjMGFiYjFmMD5dDQooa2VybmVsX2luaXQrMHg4LzB4MTBjKQ0KWyAgICAwLjIz
+Mjk3MF0gWzxjMGFiYjFmMD5dIChrZXJuZWxfaW5pdCkgZnJvbSBbPGMwMTAxMGU4Pl0NCihyZXRf
+ZnJvbV9mb3JrKzB4MTQvMHgyYykNClsgICAgMC4yMzI5ODddIEV4Y2VwdGlvbiBzdGFjaygweGM0
+YzhmZmIwIHRvIDB4YzRjOGZmZjgpDQpbICAgIDAuMjMzMDAxXSBmZmEwOiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAwMDAwMDAwMA0KMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAw
+MDANClsgICAgMC4yMzMwMjFdIGZmYzA6IDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAw
+MDAwIDAwMDAwMDAwDQowMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMA0KWyAgICAwLjIzMzA0MF0g
+ZmZlMDogMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMTMNCjAwMDAw
+MDAwDQpbICAgIDAuMjMzMDU5XSAtLS1bIGVuZCB0cmFjZSAzZjQwZmE0OTUzMDYxMGI5IF0tLS0N
+Cg0KPiA+ICBkcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEyMC5jIHwgMjAgKysrKysrKysrKysr
+Ky0tLS0tLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKyksIDcgZGVsZXRp
+b25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdy
+YTIwLmMNCj4gPiBiL2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTIwLmMNCj4gPiBpbmRleCBj
+Yzg1N2Q0ZDRhODYuLmNmZGUzNzQ1YTBkYiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Nsay90
+ZWdyYS9jbGstdGVncmEyMC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvdGVncmEvY2xrLXRlZ3Jh
+MjAuYw0KPiA+IEBAIC0yOTgsNyArMjk4LDggQEAgc3RhdGljIHN0cnVjdCB0ZWdyYV9jbGtfcGxs
+X3BhcmFtcyBwbGxfY19wYXJhbXMNCj4gPiA9IHsNCj4gPiAgCS5sb2NrX2VuYWJsZV9iaXRfaWR4
+ID0gUExMX01JU0NfTE9DS19FTkFCTEUsDQo+ID4gIAkubG9ja19kZWxheSA9IDMwMCwNCj4gPiAg
+CS5mcmVxX3RhYmxlID0gcGxsX2NfZnJlcV90YWJsZSwNCj4gPiAtCS5mbGFncyA9IFRFR1JBX1BM
+TF9IQVNfQ1BDT04gfCBURUdSQV9QTExfSEFTX0xPQ0tfRU5BQkxFLA0KPiA+ICsJLmZsYWdzID0g
+VEVHUkFfUExMX0hBU19DUENPTiB8IFRFR1JBX1BMTF9IQVNfTE9DS19FTkFCTEUgfA0KPiA+ICsJ
+CSBURUdSQV9QTExfVVNFX0xPQ0ssDQo+ID4gIH07DQo+ID4gIA0KPiA+ICBzdGF0aWMgc3RydWN0
+IHRlZ3JhX2Nsa19wbGxfcGFyYW1zIHBsbF9tX3BhcmFtcyA9IHsNCj4gPiBAQCAtMzE0LDcgKzMx
+NSw4IEBAIHN0YXRpYyBzdHJ1Y3QgdGVncmFfY2xrX3BsbF9wYXJhbXMgcGxsX21fcGFyYW1zDQo+
+ID4gPSB7DQo+ID4gIAkubG9ja19lbmFibGVfYml0X2lkeCA9IFBMTF9NSVNDX0xPQ0tfRU5BQkxF
+LA0KPiA+ICAJLmxvY2tfZGVsYXkgPSAzMDAsDQo+ID4gIAkuZnJlcV90YWJsZSA9IHBsbF9tX2Zy
+ZXFfdGFibGUsDQo+ID4gLQkuZmxhZ3MgPSBURUdSQV9QTExfSEFTX0NQQ09OIHwgVEVHUkFfUExM
+X0hBU19MT0NLX0VOQUJMRSwNCj4gPiArCS5mbGFncyA9IFRFR1JBX1BMTF9IQVNfQ1BDT04gfCBU
+RUdSQV9QTExfSEFTX0xPQ0tfRU5BQkxFIHwNCj4gPiArCQkgVEVHUkFfUExMX1VTRV9MT0NLLA0K
+PiA+ICB9Ow0KPiA+ICANCj4gPiAgc3RhdGljIHN0cnVjdCB0ZWdyYV9jbGtfcGxsX3BhcmFtcyBw
+bGxfcF9wYXJhbXMgPSB7DQo+ID4gQEAgLTMzMSw3ICszMzMsNyBAQCBzdGF0aWMgc3RydWN0IHRl
+Z3JhX2Nsa19wbGxfcGFyYW1zIHBsbF9wX3BhcmFtcw0KPiA+ID0gew0KPiA+ICAJLmxvY2tfZGVs
+YXkgPSAzMDAsDQo+ID4gIAkuZnJlcV90YWJsZSA9IHBsbF9wX2ZyZXFfdGFibGUsDQo+ID4gIAku
+ZmxhZ3MgPSBURUdSQV9QTExfRklYRUQgfCBURUdSQV9QTExfSEFTX0NQQ09OIHwNCj4gPiAtCQkg
+VEVHUkFfUExMX0hBU19MT0NLX0VOQUJMRSwNCj4gPiArCQkgVEVHUkFfUExMX0hBU19MT0NLX0VO
+QUJMRSB8IFRFR1JBX1BMTF9VU0VfTE9DSywNCj4gPiAgCS5maXhlZF9yYXRlID0gIDIxNjAwMDAw
+MCwNCj4gPiAgfTsNCj4gPiAgDQo+ID4gQEAgLTM0OCw3ICszNTAsOCBAQCBzdGF0aWMgc3RydWN0
+IHRlZ3JhX2Nsa19wbGxfcGFyYW1zIHBsbF9hX3BhcmFtcw0KPiA+ID0gew0KPiA+ICAJLmxvY2tf
+ZW5hYmxlX2JpdF9pZHggPSBQTExfTUlTQ19MT0NLX0VOQUJMRSwNCj4gPiAgCS5sb2NrX2RlbGF5
+ID0gMzAwLA0KPiA+ICAJLmZyZXFfdGFibGUgPSBwbGxfYV9mcmVxX3RhYmxlLA0KPiA+IC0JLmZs
+YWdzID0gVEVHUkFfUExMX0hBU19DUENPTiB8IFRFR1JBX1BMTF9IQVNfTE9DS19FTkFCTEUsDQo+
+ID4gKwkuZmxhZ3MgPSBURUdSQV9QTExfSEFTX0NQQ09OIHwgVEVHUkFfUExMX0hBU19MT0NLX0VO
+QUJMRSB8DQo+ID4gKwkJIFRFR1JBX1BMTF9VU0VfTE9DSywNCj4gPiAgfTsNCj4gPiAgDQo+ID4g
+IHN0YXRpYyBzdHJ1Y3QgdGVncmFfY2xrX3BsbF9wYXJhbXMgcGxsX2RfcGFyYW1zID0gew0KPiA+
+IEBAIC0zNjQsNyArMzY3LDggQEAgc3RhdGljIHN0cnVjdCB0ZWdyYV9jbGtfcGxsX3BhcmFtcyBw
+bGxfZF9wYXJhbXMNCj4gPiA9IHsNCj4gPiAgCS5sb2NrX2VuYWJsZV9iaXRfaWR4ID0gUExMRFVf
+TUlTQ19MT0NLX0VOQUJMRSwNCj4gPiAgCS5sb2NrX2RlbGF5ID0gMTAwMCwNCj4gPiAgCS5mcmVx
+X3RhYmxlID0gcGxsX2RfZnJlcV90YWJsZSwNCj4gPiAtCS5mbGFncyA9IFRFR1JBX1BMTF9IQVNf
+Q1BDT04gfCBURUdSQV9QTExfSEFTX0xPQ0tfRU5BQkxFLA0KPiA+ICsJLmZsYWdzID0gVEVHUkFf
+UExMX0hBU19DUENPTiB8IFRFR1JBX1BMTF9IQVNfTE9DS19FTkFCTEUgfA0KPiA+ICsJCSBURUdS
+QV9QTExfVVNFX0xPQ0ssDQo+ID4gIH07DQo+ID4gIA0KPiA+ICBzdGF0aWMgY29uc3Qgc3RydWN0
+IHBkaXZfbWFwIHBsbHVfcFtdID0gew0KPiA+IEBAIC0zODcsNyArMzkxLDggQEAgc3RhdGljIHN0
+cnVjdCB0ZWdyYV9jbGtfcGxsX3BhcmFtcyBwbGxfdV9wYXJhbXMNCj4gPiA9IHsNCj4gPiAgCS5s
+b2NrX2RlbGF5ID0gMTAwMCwNCj4gPiAgCS5wZGl2X3RvaHcgPSBwbGx1X3AsDQo+ID4gIAkuZnJl
+cV90YWJsZSA9IHBsbF91X2ZyZXFfdGFibGUsDQo+ID4gLQkuZmxhZ3MgPSBURUdSQV9QTExVIHwg
+VEVHUkFfUExMX0hBU19DUENPTiB8DQo+ID4gVEVHUkFfUExMX0hBU19MT0NLX0VOQUJMRSwNCj4g
+PiArCS5mbGFncyA9IFRFR1JBX1BMTFUgfCBURUdSQV9QTExfSEFTX0NQQ09OIHwNCj4gPiBURUdS
+QV9QTExfSEFTX0xPQ0tfRU5BQkxFIHwNCj4gPiArCQkgVEVHUkFfUExMX1VTRV9MT0NLLA0KPiA+
+ICB9Ow0KPiA+ICANCj4gPiAgc3RhdGljIHN0cnVjdCB0ZWdyYV9jbGtfcGxsX3BhcmFtcyBwbGxf
+eF9wYXJhbXMgPSB7DQo+ID4gQEAgLTQwMyw3ICs0MDgsOCBAQCBzdGF0aWMgc3RydWN0IHRlZ3Jh
+X2Nsa19wbGxfcGFyYW1zIHBsbF94X3BhcmFtcw0KPiA+ID0gew0KPiA+ICAJLmxvY2tfZW5hYmxl
+X2JpdF9pZHggPSBQTExfTUlTQ19MT0NLX0VOQUJMRSwNCj4gPiAgCS5sb2NrX2RlbGF5ID0gMzAw
+LA0KPiA+ICAJLmZyZXFfdGFibGUgPSBwbGxfeF9mcmVxX3RhYmxlLA0KPiA+IC0JLmZsYWdzID0g
+VEVHUkFfUExMX0hBU19DUENPTiB8IFRFR1JBX1BMTF9IQVNfTE9DS19FTkFCTEUsDQo+ID4gKwku
+ZmxhZ3MgPSBURUdSQV9QTExfSEFTX0NQQ09OIHwgVEVHUkFfUExMX0hBU19MT0NLX0VOQUJMRSB8
+DQo+ID4gKwkJIFRFR1JBX1BMTF9VU0VfTE9DSywNCj4gPiAgfTsNCj4gPiAgDQo+ID4gIHN0YXRp
+YyBzdHJ1Y3QgdGVncmFfY2xrX3BsbF9wYXJhbXMgcGxsX2VfcGFyYW1zID0gew0KPiA+IC0tIA0K
+PiA+IDIuMTguMA==
