@@ -1,94 +1,87 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
- Tegra20/30
-Date: Wed, 17 Oct 2018 17:43:38 +0300
-Message-ID: <e4f63df9-d92a-4e57-05ba-c999bdda9cc0@gmail.com>
-References: <20180830194356.14059-1-digetx@gmail.com>
- <20180830194356.14059-2-digetx@gmail.com>
- <f38b38f1-0a60-d6fa-9047-23c619494b23@nvidia.com>
- <1448e619-35c9-0195-c68a-604d10f4dc8b@gmail.com>
- <a9b6e683-3802-896c-27ad-9c49853c231f@nvidia.com>
- <a0dd5d75-6683-f938-c5e5-a95a5c2b86e4@gmail.com>
- <3c72f573-d109-b607-b7b7-d70aea3e03df@nvidia.com>
- <c6249de9-bcaa-ab3e-8546-40f8c2c17599@gmail.com>
- <4db9c51c-0c1d-c9a2-b781-250c053e6e24@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform
+ name vs. of_node assignement
+Date: Wed, 17 Oct 2018 20:16:33 +0100
+Message-ID: <20181017191633.GL24097@sirena.org.uk>
+References: <20181016104730.4598-1-marcel@ziswiler.com>
+ <20181016104730.4598-10-marcel@ziswiler.com>
+ <35848cb7-36ee-6698-ff17-7f0e73567914@nvidia.com>
+ <1539786500.6233.58.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4db9c51c-0c1d-c9a2-b781-250c053e6e24@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1670522209369127453=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1539786500.6233.58.camel@toradex.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "tiwai@suse.com" <tiwai@suse.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/17/18 5:14 PM, Jon Hunter wrote:
-> 
-> On 17/10/2018 14:46, Dmitry Osipenko wrote:
->> On 10/17/18 4:34 PM, Jon Hunter wrote:
->>>
->>> On 17/10/2018 14:07, Dmitry Osipenko wrote:
->>>> On 10/17/18 3:59 PM, Jon Hunter wrote:
->>>>>
->>>>> On 17/10/2018 13:37, Dmitry Osipenko wrote:
->>>>>> On 10/17/18 11:40 AM, Jon Hunter wrote:
->>>>>>>
->>>>>>> On 30/08/2018 20:43, Dmitry Osipenko wrote:
->>>>>>>> Add device-tree binding that describes CPU frequency-scaling hardware
->>>>>>>> found on NVIDIA Tegra20/30 SoC's.
->>>>>>>>
->>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>> ---
->>>>>>>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
->>>>>>>>  1 file changed, 38 insertions(+)
->>>>>>>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>>>>>
->>>>>>>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>>>>> new file mode 100644
->>>>>>>> index 000000000000..2c51f676e958
->>>>>>>> --- /dev/null
->>>>>>>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>>>>> @@ -0,0 +1,38 @@
->>>>>>>> +Binding for NVIDIA Tegra20 CPUFreq
->>>>>>>> +==================================
->>>>>>>> +
->>>>>>>> +Required properties:
->>>>>>>> +- clocks: Must contain an entry for each entry in clock-names.
->>>>>>>> +  See ../clocks/clock-bindings.txt for details.
->>>>>>>> +- clock-names: Must include the following entries:
->>>>>>>> +  - pll_x: main-parent for CPU clock, must be the first entry
->>>>>>>> +  - backup: intermediate-parent for CPU clock
->>>>>>>> +  - cpu: the CPU clock
->>>>>>>
->>>>>>> Is it likely that 'backup' will be anything other that pll_p? If not why
->>>>>>> not just call it pll_p? Personally, I don't 'backup' to descriptive even
->>>>>>> though I can see what you mean.
->>>>>>>
->>>>>>> I can see that you want to make this flexible, but if the likelihood is
->>>>>>> that we will just use pll_p then I am not sure it is warranted at this
->>>>>>> point.
->>>>>>
->>>>>> That won't describe HW, but software. And device tree should describe HW.
->>>>>
->>>>> Hmm ... well that's my point exactly. So why call it 'backup'? Sounds
->>>>> like a software description to me.
->>>>
->>>> Because HW is designed the way that CPU parent need to be switched to the backup clock source while main clock changes its rate. HW also allow to select among different parents, pll_p is one of those parents.
->>>
->>> Yes that part is understood. I am just splitting hairs over the actual
->>> name. We do the same for tegra124 but we just call it 'pll_p'. See ...
->>>
->>> Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
->>
->> tegra124-cpufreq choose to hardwire to the pll_p, but it could be other clocks. Technically abstracting backup clock should be more correct, but result is the same in the end.
-> 
-> Yes and that is probably intentional as that is the configuration that
-> has been validated. So unless we are planning to test and verify every
-> possibility, my preference is to keep it simple. But yes the result is
-> the same.
-> 
-> I was simply curious of your intention here because of the other series
-> you posted with regard to the cpu clocks.
 
-Actually I tried other parents on T30 and they worked with no problems. The intention of having 'backup' is to describe HW properly in the device tree, that's it. We'll have backup set to pll_p by default. ACK?
+--===============1670522209369127453==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t5C3/nrmPumNj5sH"
+Content-Disposition: inline
+
+
+--t5C3/nrmPumNj5sH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Oct 17, 2018 at 02:28:22PM +0000, Marcel Ziswiler wrote:
+
+> Some questions:
+
+> - How exactly are devm allocations supposed to work concerning probe
+> deferrals?
+
+Probe deferrals are just normal probe errors, any devm_ allocated stuff
+gets unwound.
+
+> - Does or should the platform get cleared during a probe deferral
+> cycle?
+
+> - If so, why does that not work?
+
+Is something writing to static data when it should be writing to
+dynamically allocated data?  That's what this sounds like, we shouldn't
+be modifying any static data and any data dynamically allocated during
+probe ought to be being discarded.
+
+> - Or is some special implicit probe deferral handling missing in soc-
+> core?
+
+Like I say a probe deferral is just a normal error.
+
+--t5C3/nrmPumNj5sH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvHipAACgkQJNaLcl1U
+h9BkSAf/SouRZpX4VQqudTnmOiqKqZkMRbwM6NBQpPpPsCCRtMqnI+WEN+LE8snt
+yn/nMdP7g3m6uAV15M486uYS+qkFI3eQ1hYt7bWfi01kclqsZS7JUqaMgKvziM05
+Uphkd15nbTHBTyHuhznZPy3+tkRbdfb7cGzBJR9xagor/WfDCnjQdkwV9TIn3l/K
+7LhBs+XluSRL0A0Jq5MYuEIuKV1X4iPrNCdpTYO01Y4APrSend4SYL3vqY4MxzCX
+MQiaUvEO/XYxFQHhKmvwwku4cgq0cFZLm+qARMuxY9CA+XzlE/IXnQDe8pF1XtsN
+qx4q0cnhCClRQ/uXiDX0GHgpLtWGaA==
+=V209
+-----END PGP SIGNATURE-----
+
+--t5C3/nrmPumNj5sH--
+
+--===============1670522209369127453==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1670522209369127453==--
