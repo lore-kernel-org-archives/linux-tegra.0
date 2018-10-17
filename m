@@ -1,96 +1,92 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
- Tegra20/30
-Date: Wed, 17 Oct 2018 15:14:43 +0100
-Message-ID: <4db9c51c-0c1d-c9a2-b781-250c053e6e24@nvidia.com>
-References: <20180830194356.14059-1-digetx@gmail.com>
- <20180830194356.14059-2-digetx@gmail.com>
- <f38b38f1-0a60-d6fa-9047-23c619494b23@nvidia.com>
- <1448e619-35c9-0195-c68a-604d10f4dc8b@gmail.com>
- <a9b6e683-3802-896c-27ad-9c49853c231f@nvidia.com>
- <a0dd5d75-6683-f938-c5e5-a95a5c2b86e4@gmail.com>
- <3c72f573-d109-b607-b7b7-d70aea3e03df@nvidia.com>
- <c6249de9-bcaa-ab3e-8546-40f8c2c17599@gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v2 9/9] ASoC: tegra_sgtl5000: fix platform name vs.
+ of_node assignement
+Date: Wed, 17 Oct 2018 14:28:22 +0000
+Message-ID: <1539786500.6233.58.camel@toradex.com>
+References: <20181016104730.4598-1-marcel@ziswiler.com>
+         <20181016104730.4598-10-marcel@ziswiler.com>
+         <35848cb7-36ee-6698-ff17-7f0e73567914@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c6249de9-bcaa-ab3e-8546-40f8c2c17599@gmail.com>
+In-Reply-To: <35848cb7-36ee-6698-ff17-7f0e73567914@nvidia.com>
 Content-Language: en-US
+Content-ID: <17F2C5DC477B0146A97046FCDD769914@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "broonie@kernel.org" <broonie@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>, "tiwai@suse.com" <tiwai@suse.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "perex@perex.cz" <perex@perex.cz>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 17/10/2018 14:46, Dmitry Osipenko wrote:
-> On 10/17/18 4:34 PM, Jon Hunter wrote:
->>
->> On 17/10/2018 14:07, Dmitry Osipenko wrote:
->>> On 10/17/18 3:59 PM, Jon Hunter wrote:
->>>>
->>>> On 17/10/2018 13:37, Dmitry Osipenko wrote:
->>>>> On 10/17/18 11:40 AM, Jon Hunter wrote:
->>>>>>
->>>>>> On 30/08/2018 20:43, Dmitry Osipenko wrote:
->>>>>>> Add device-tree binding that describes CPU frequency-scaling hardware
->>>>>>> found on NVIDIA Tegra20/30 SoC's.
->>>>>>>
->>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>> ---
->>>>>>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
->>>>>>>  1 file changed, 38 insertions(+)
->>>>>>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>>>> new file mode 100644
->>>>>>> index 000000000000..2c51f676e958
->>>>>>> --- /dev/null
->>>>>>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>>>>>> @@ -0,0 +1,38 @@
->>>>>>> +Binding for NVIDIA Tegra20 CPUFreq
->>>>>>> +==================================
->>>>>>> +
->>>>>>> +Required properties:
->>>>>>> +- clocks: Must contain an entry for each entry in clock-names.
->>>>>>> +  See ../clocks/clock-bindings.txt for details.
->>>>>>> +- clock-names: Must include the following entries:
->>>>>>> +  - pll_x: main-parent for CPU clock, must be the first entry
->>>>>>> +  - backup: intermediate-parent for CPU clock
->>>>>>> +  - cpu: the CPU clock
->>>>>>
->>>>>> Is it likely that 'backup' will be anything other that pll_p? If not why
->>>>>> not just call it pll_p? Personally, I don't 'backup' to descriptive even
->>>>>> though I can see what you mean.
->>>>>>
->>>>>> I can see that you want to make this flexible, but if the likelihood is
->>>>>> that we will just use pll_p then I am not sure it is warranted at this
->>>>>> point.
->>>>>
->>>>> That won't describe HW, but software. And device tree should describe HW.
->>>>
->>>> Hmm ... well that's my point exactly. So why call it 'backup'? Sounds
->>>> like a software description to me.
->>>
->>> Because HW is designed the way that CPU parent need to be switched to the backup clock source while main clock changes its rate. HW also allow to select among different parents, pll_p is one of those parents.
->>
->> Yes that part is understood. I am just splitting hairs over the actual
->> name. We do the same for tegra124 but we just call it 'pll_p'. See ...
->>
->> Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> 
-> tegra124-cpufreq choose to hardwire to the pll_p, but it could be other clocks. Technically abstracting backup clock should be more correct, but result is the same in the end.
-
-Yes and that is probably intentional as that is the configuration that
-has been validated. So unless we are planning to test and verify every
-possibility, my preference is to keep it simple. But yes the result is
-the same.
-
-I was simply curious of your intention here because of the other series
-you posted with regard to the cpu clocks.
-
-Cheers
-Jon
-
--- 
-nvpublic
+T24gV2VkLCAyMDE4LTEwLTE3IGF0IDEzOjMyICswMTAwLCBKb24gSHVudGVyIHdyb3RlOg0KPiBP
+biAxNi8xMC8yMDE4IDExOjQ3LCBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6DQo+ID4gRnJvbTogTWFy
+Y2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+ID4gDQo+ID4gVGhp
+cyBmaXhlcyB0aGUgZm9sbG93aW5nIGVycm9yIGFzIHNlZW4gcG9zdCBjb21taXQgZGFlY2Y0NmVl
+MGU1DQo+ID4gKCJBU29DOiBzb2MtY29yZTogdXNlIHNuZF9zb2NfZGFpX2xpbmtfY29tcG9uZW50
+IGZvciBwbGF0Zm9ybSIpOg0KPiA+IA0KPiA+IHRlZ3JhLXNuZC1zZ3RsNTAwMCBzb3VuZDogQVNv
+QzogQm90aCBwbGF0Zm9ybSBuYW1lL29mX25vZGUgYXJlIHNldA0KPiA+IGZvcg0KPiA+ICBzZ3Rs
+NTAwMA0KPiA+IHRlZ3JhLXNuZC1zZ3RsNTAwMCBzb3VuZDogQVNvQzogZmFpbGVkIHRvIGluaXQg
+bGluayBzZ3RsNTAwMA0KPiA+IHRlZ3JhLXNuZC1zZ3RsNTAwMCBzb3VuZDogc25kX3NvY19yZWdp
+c3Rlcl9jYXJkIGZhaWxlZCAoLTIyKQ0KPiA+IHRlZ3JhLXNuZC1zZ3RsNTAwMDogcHJvYmUgb2Yg
+c291bmQgZmFpbGVkIHdpdGggZXJyb3IgLTIyDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogTWFy
+Y2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+ID4gDQo+ID4gLS0t
+DQo+ID4gDQo+ID4gQ2hhbmdlcyBpbiB2MjogTmV3IHBhdGNoDQo+ID4gDQo+ID4gIHNvdW5kL3Nv
+Yy90ZWdyYS90ZWdyYV9zZ3RsNTAwMC5jIHwgNSArKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwg
+NSBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy90ZWdyYS90
+ZWdyYV9zZ3RsNTAwMC5jDQo+ID4gYi9zb3VuZC9zb2MvdGVncmEvdGVncmFfc2d0bDUwMDAuYw0K
+PiA+IGluZGV4IDkwMTQ1N2RhMjVlYy4uZWI3MDI5MjVjYWMzIDEwMDY0NA0KPiA+IC0tLSBhL3Nv
+dW5kL3NvYy90ZWdyYS90ZWdyYV9zZ3RsNTAwMC5jDQo+ID4gKysrIGIvc291bmQvc29jL3RlZ3Jh
+L3RlZ3JhX3NndGw1MDAwLmMNCj4gPiBAQCAtMTY4LDYgKzE2OCwxMSBAQCBzdGF0aWMgaW50IHRl
+Z3JhX3NndGw1MDAwX2RyaXZlcl9wcm9iZShzdHJ1Y3QNCj4gPiBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpDQo+ID4gIAlyZXR1cm4gMDsNCj4gPiAgDQo+ID4gIGVycl9maW5pX3V0aWxzOg0KPiA+ICsJ
+aWYgKHRlZ3JhX3NndGw1MDAwX2RhaS5wbGF0Zm9ybSkgew0KPiA+ICsJCWRldm1fa2ZyZWUoJnBk
+ZXYtPmRldiwNCj4gPiB0ZWdyYV9zZ3RsNTAwMF9kYWkucGxhdGZvcm0pOw0KPiA+ICsJCXRlZ3Jh
+X3NndGw1MDAwX2RhaS5wbGF0Zm9ybSA9IE5VTEw7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICAJdGVn
+cmFfYXNvY191dGlsc19maW5pKCZtYWNoaW5lLT51dGlsX2RhdGEpOw0KPiA+ICBlcnJfcHV0X2Nw
+dV9vZl9ub2RlOg0KPiA+ICAJb2Zfbm9kZV9wdXQodGVncmFfc2d0bDUwMDBfZGFpLmNwdV9vZl9u
+b2RlKTsNCj4gPiANCj4gDQo+IFdoZXJlIGlzIHRoZSBhYm92ZSBhbGxvY2F0ZWQ/DQoNCnNuZF9z
+b2NfaW5pdF9wbGF0Zm9ybSgpIGluIHNvdW5kL3NvYy9zb2MtY29yZS5jDQoNCj4gSSBkb24ndCBz
+ZWUgaXQgYWxsb2NhdGVkIGluIHRoaXMgZHJpdmVyDQo+IEFGQUlDVC4gSWYgaXQgaXMgbm90IHRo
+ZW4gaXQgZG9lcyBub3Qgc2VlbSByaWdodCB0byBmcmVlIHNvbWV0aGluZw0KPiB0aGF0DQo+IHdl
+IGhhdmUgbm90IGFsbG9jYXRlZCBpbiB0aGlzIGRyaXZlci4gSSB3b3VsZCBoYXZlIGFzc3VtZWQg
+aXQgd2FzDQo+IGFsbG9jYXRlZCBieSBzbmRfc29jX2luaXRfcGxhdGZvcm0oKSBpbiB3aGljaCBj
+YXNlIGl0IHNob3VsZCBub3QgYmUNCj4gbmVjZXNzYXJ5IHRvIGZyZWUgYmVjYXVzZSB0aGF0IGZ1
+bmN0aW9uIHVzZXMgZGV2bV9remFsbG9jKCkuDQoNClRoYXQgaXMga2luZCBvZiB3aGF0IEkgYXNz
+dW1lZCBhcyB3ZWxsLg0KDQo+IFdoYXQgYW0gSSBtaXNzaW5nIGhlcmU/DQoNClRoYXQgaXMgYWN0
+dWFsbHkgYSB2ZXJ5IHZlcnkgZ29vZCBxdWVzdGlvbi4gVW5mb3J0dW5hdGVseSwgc2luY2UgYWJv
+dmUNCm1lbnRpb25lZCBjb21taXQgd2hpY2ggaXMgcGFydCBvZiB0aGUgYmlnZ2VyIG11bHRpLXBs
+YXRmb3JtIChvcg0Kd2hhdGV2ZXIgb25lIG1heSBjYWxsIGl0KSByZXdvcmsgZG9uZSBieSBmb2xr
+cyBvbiBDQyB0aGluZ3Mgc3RhcnQNCmZhbGxpbmcgYXBhcnQuDQoNCkkgc2hvdWxkIG1heWJlIHJh
+dGhlciBoYXZlIHBocmFzZWQgdGhpcyBvbmUgYXMgYW4gUkZDLg0KDQpTb21lIGZhY3RzIGZyb20g
+bXkgaHVtYmxlIGludmVzdGlnYXRpb24gc28gZmFyOg0KDQotIFRoZSBpc3N1ZSBkb2VzIG5vdCBl
+eGhpYml0IGl0c2VsZiBvbiBBcGFsaXMvQ29saWJyaSBUMzAgd2hlcmUNCnByb2JhYmx5IHRoZSBv
+cmRlciBvZiB0aGluZ3MgYmVpbmcgaW5pdGlhbGlzZWQgaXMgc2xpZ2h0bHkgZGlmZmVyZW50Lg0K
+DQotIEJpc2VjdGluZyBwb2ludHMgdG8gdGhlIGFib3ZlIG1lbnRpb25lZCBjb21taXQgYmVpbmcg
+dG8gYmxhbWUuDQpIb3dldmVyIHRoZXJlIGlzIG5vIHdheSB0byBqdXN0IHJldmVydCB0aGF0IGNv
+bW1pdCBhcyBpdCBpcyBwYXJ0IG9mIHRoZQ0KYmlnZ2VyIG11bHRpLXBsYXRmb3JtIHJld29yay4N
+Cg0KLSBTb21laG93IGl0IGhhcyB0byBkbyB3aXRoIHByb2JlIGRlZmVycmFsLiBCYXNpY2FsbHks
+IHBsYXRmb3JtIGdldHMNCmFsbG9jYXRlZCBpbiBzbmRfc29jX2luaXRfcGxhdGZvcm0oKSBidXQg
+ZHVlIHRvIEdQSU8vSTJDIHdoYXRldmVyIG5vdA0KYmVpbmcgcmVhZHkgdGhlIFNHVEw1MDAwIGNv
+ZGVjIGFrYSBkYWlfbGluayBjYW4gbm90IHlldCBiZSBmb3VuZCBhbmQNCnRoZXJlZm9yZSBpdCBw
+cm9iZSBkZWZlcnMgYXMgZm9sbG93czoNCg0KWyAgICAyLjE2NjUxN10gdGVncmEzMC1pMnMgNzAz
+MDEyMDAuaTJzOiBETUEgY2hhbm5lbHMgc291cmNlZCBmcm9tDQpkZXZpY2UgNzAzMDAwMDAuYWh1
+Yg0KWyAgICAyLjE3NjA0M10gdGVncmEtc25kLXNndGw1MDAwIHNvdW5kOiBBU29DOiBDT0RFQyBE
+QUkgc2d0bDUwMDAgbm90DQpyZWdpc3RlcmVkDQpbICAgIDIuMTgzMjQxXSB0ZWdyYS1zbmQtc2d0
+bDUwMDAgc291bmQ6IHNuZF9zb2NfcmVnaXN0ZXJfY2FyZCBmYWlsZWQNCigtNTE3KQ0KDQotIFNv
+bWV3aGVyZSB0aGVyZWFmdGVyIHBsYXRmb3JtIHNlZW1zIHRvIGdldCBzdHVtcGVkIG9udG8gKGUu
+Zy4gaXRzDQpuYW1lIHJhdGhlciB0aGFuIGJlaW5nIG51bGwgbm93IGlzIGJvZ3VzLiBVbmZvcnR1
+bmF0ZWx5LCBpdCBpcyBub3QganVzdA0KdGhlIG5hbWUgYXMgY2xlYXJpbmcganVzdCB0aGF0IGRp
+ZCBub3QgcmVhbGx5IGhlbHAgKHNndGw1MDAwIGNvZGVjIGdldHMNCmluc3RhbnRpYXRlZCBidXQg
+dHJ5aW5nIHRvIHBsYXkgYXVkaW8gYWx3YXlzIHJldHVybmVkIC1FSU5WQUwpLg0KDQotIFRoZSBz
+ZWNvbmQgdGltZSBhcm91bmQgc25kX3NvY19pbml0X3BsYXRmb3JtKCkgcmUtdXNlcyBwcmV2aW91
+c2x5DQphbGxvY2F0ZWQgcGxhdGZvcm0gbm93IGNvcnJ1cHQgdHJpZ2dlcmluZyBhIGNoZWNrIGlu
+IHNvYy1jb3JlDQpjb25jZXJuaW5nIHBsYXRmb3JtIG5hbWUgYW5kIG9mX25vZGUgYm90aCBiZWlu
+ZyBzZXQgKGFzIG5vdGVkIGluIGFib3ZlDQpjb21taXQgbWVzc2FnZSkuDQoNClNvbWUgcXVlc3Rp
+b25zOg0KDQotIEhvdyBleGFjdGx5IGFyZSBkZXZtIGFsbG9jYXRpb25zIHN1cHBvc2VkIHRvIHdv
+cmsgY29uY2VybmluZyBwcm9iZQ0KZGVmZXJyYWxzPw0KDQotIERvZXMgb3Igc2hvdWxkIHRoZSBw
+bGF0Zm9ybSBnZXQgY2xlYXJlZCBkdXJpbmcgYSBwcm9iZSBkZWZlcnJhbA0KY3ljbGU/DQoNCi0g
+SWYgc28sIHdoeSBkb2VzIHRoYXQgbm90IHdvcms/DQoNCi0gT3IgaXMgc29tZSBzcGVjaWFsIGlt
+cGxpY2l0IHByb2JlIGRlZmVycmFsIGhhbmRsaW5nIG1pc3NpbmcgaW4gc29jLQ0KY29yZT8NCg0K
+SSdtIGhhcHB5IHRvIHRyeSBtb3JlIHRoaW5ncyBhbmQvb3IgcHJvdmlkZSBtb3JlIGRlYnVnZ2lu
+ZyBvdXRwdXQgaWYNCm5lZWRlZC4gSnVzdCBsZXQgbWUga25vdy4NCg0KVGhhbmtzIEpvbiENCg0K
+PiBDaGVlcnMNCj4gSm9uDQoNCkNoZWVycw0KDQpNYXJjZWw=
