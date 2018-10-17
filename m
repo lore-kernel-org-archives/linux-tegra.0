@@ -1,76 +1,94 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
-Date: Wed, 17 Oct 2018 17:30:15 +0300
-Message-ID: <47eaced9-761d-b8d0-2f43-41bf3dd050cc@gmail.com>
-References: <20180513211347.7187-1-digetx@gmail.com>
- <c1b73435-48f0-b445-568f-3c8942878123@nvidia.com>
+Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
+ Tegra20/30
+Date: Wed, 17 Oct 2018 17:43:38 +0300
+Message-ID: <e4f63df9-d92a-4e57-05ba-c999bdda9cc0@gmail.com>
+References: <20180830194356.14059-1-digetx@gmail.com>
+ <20180830194356.14059-2-digetx@gmail.com>
+ <f38b38f1-0a60-d6fa-9047-23c619494b23@nvidia.com>
+ <1448e619-35c9-0195-c68a-604d10f4dc8b@gmail.com>
+ <a9b6e683-3802-896c-27ad-9c49853c231f@nvidia.com>
+ <a0dd5d75-6683-f938-c5e5-a95a5c2b86e4@gmail.com>
+ <3c72f573-d109-b607-b7b7-d70aea3e03df@nvidia.com>
+ <c6249de9-bcaa-ab3e-8546-40f8c2c17599@gmail.com>
+ <4db9c51c-0c1d-c9a2-b781-250c053e6e24@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c1b73435-48f0-b445-568f-3c8942878123@nvidia.com>
+In-Reply-To: <4db9c51c-0c1d-c9a2-b781-250c053e6e24@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/17/18 4:59 PM, Jon Hunter wrote:
+On 10/17/18 5:14 PM, Jon Hunter wrote:
 > 
-> On 13/05/2018 22:13, Dmitry Osipenko wrote:
->> Nothing prevents I2C clients to access I2C while Tegra's driver is being
->> suspended, this results in -EBUSY error returned to the clients and that
->> may have unfortunate consequences. In particular this causes problems
->> for the TPS6586x MFD driver which emits hundreds of "failed to read
->> interrupt status" error messages on resume from suspend. This happens if
->> TPS6586X is used to wake system from suspend by the expired RTC alarm
->> timer because TPS6586X is an I2C device driver and its IRQ handler reads
->> the status register while Tegra's I2C driver is suspended, i.e. just after
->> kernel enabled IRQ's during of resume-from-suspend process.
+> On 17/10/2018 14:46, Dmitry Osipenko wrote:
+>> On 10/17/18 4:34 PM, Jon Hunter wrote:
+>>>
+>>> On 17/10/2018 14:07, Dmitry Osipenko wrote:
+>>>> On 10/17/18 3:59 PM, Jon Hunter wrote:
+>>>>>
+>>>>> On 17/10/2018 13:37, Dmitry Osipenko wrote:
+>>>>>> On 10/17/18 11:40 AM, Jon Hunter wrote:
+>>>>>>>
+>>>>>>> On 30/08/2018 20:43, Dmitry Osipenko wrote:
+>>>>>>>> Add device-tree binding that describes CPU frequency-scaling hardware
+>>>>>>>> found on NVIDIA Tegra20/30 SoC's.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>>> ---
+>>>>>>>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
+>>>>>>>>  1 file changed, 38 insertions(+)
+>>>>>>>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>>>>>>> new file mode 100644
+>>>>>>>> index 000000000000..2c51f676e958
+>>>>>>>> --- /dev/null
+>>>>>>>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>>>>>>> @@ -0,0 +1,38 @@
+>>>>>>>> +Binding for NVIDIA Tegra20 CPUFreq
+>>>>>>>> +==================================
+>>>>>>>> +
+>>>>>>>> +Required properties:
+>>>>>>>> +- clocks: Must contain an entry for each entry in clock-names.
+>>>>>>>> +  See ../clocks/clock-bindings.txt for details.
+>>>>>>>> +- clock-names: Must include the following entries:
+>>>>>>>> +  - pll_x: main-parent for CPU clock, must be the first entry
+>>>>>>>> +  - backup: intermediate-parent for CPU clock
+>>>>>>>> +  - cpu: the CPU clock
+>>>>>>>
+>>>>>>> Is it likely that 'backup' will be anything other that pll_p? If not why
+>>>>>>> not just call it pll_p? Personally, I don't 'backup' to descriptive even
+>>>>>>> though I can see what you mean.
+>>>>>>>
+>>>>>>> I can see that you want to make this flexible, but if the likelihood is
+>>>>>>> that we will just use pll_p then I am not sure it is warranted at this
+>>>>>>> point.
+>>>>>>
+>>>>>> That won't describe HW, but software. And device tree should describe HW.
+>>>>>
+>>>>> Hmm ... well that's my point exactly. So why call it 'backup'? Sounds
+>>>>> like a software description to me.
+>>>>
+>>>> Because HW is designed the way that CPU parent need to be switched to the backup clock source while main clock changes its rate. HW also allow to select among different parents, pll_p is one of those parents.
+>>>
+>>> Yes that part is understood. I am just splitting hairs over the actual
+>>> name. We do the same for tegra124 but we just call it 'pll_p'. See ...
+>>>
+>>> Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+>>
+>> tegra124-cpufreq choose to hardwire to the pll_p, but it could be other clocks. Technically abstracting backup clock should be more correct, but result is the same in the end.
 > 
-> I have been looking at the above issue with the tps6586x because I am
-> seeing delays on resume caused by this driver on the stable branches. I
-> understand that this patch was dropped for stable, but looking at the
-> specific issue with the tps6586x I am curious why the tps6586x driver
-> was not fixed because it appears to me that the issue largely resides
-> with that driver and any other device that uses the tps6586x is
-> susceptible to it. I was able to fix the tps6586x driver by doing the
-> following and I am interested in your thoughts ...
+> Yes and that is probably intentional as that is the configuration that
+> has been validated. So unless we are planning to test and verify every
+> possibility, my preference is to keep it simple. But yes the result is
+> the same.
 > 
-> Subject: [PATCH] mfd: tps6586x: Handle interrupts on suspend
-> 
-> The tps6586x device is registered as an irqchip and the tps6586x-rtc
-> interrupt is one of it's interrupt sources. When using the tps6586x-rtc
-> as a wake-up device from suspend, the following is seen:
-> 
->  PM: Syncing filesystems ... done.
->  Freezing user space processes ... (elapsed 0.001 seconds) done.
->  OOM killer disabled.
->  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->  Disabling non-boot CPUs ...
->  Entering suspend state LP1
->  Enabling non-boot CPUs ...
->  CPU1 is up
->  tps6586x 3-0034: failed to read interrupt status
->  tps6586x 3-0034: failed to read interrupt status
-> 
-> The reason why the tps6586x interrupt status cannot be read is because
-> the tps6586x interrupt is not masked during suspend and when the
-> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
-> seen before the i2c controller has been resumed in order to read the
-> tps6586x interrupt status.
-> 
-> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
-> suspend, which gets propagated to the parent tps6586x interrupt.
-> However, the tps6586x-rtc driver cannot disable it's interrupt during
-> suspend otherwise we would never be woken up and so the tps6586x must
-> disable it's interrupt instead.
-> 
-> Fix this by disabling the tps6586x interrupt on entering suspend and
-> re-enabling it on resuming from suspend.
+> I was simply curious of your intention here because of the other series
+> you posted with regard to the cpu clocks.
 
-Looks like it should work, but I vaguely recalling that something didn't work after disabling of IRQ on suspend. Maybe wakeup was getting disabled, but seems it is working fine now. Patch is good to me if you're going to propose it for backporting, but you should test that it works properly with all of stable kernels.
-
-I just found this [0], seems your patch need to address the same review comment.
-
-[0] https://lkml.org/lkml/2011/3/29/18
+Actually I tried other parents on T30 and they worked with no problems. The intention of having 'backup' is to describe HW properly in the device tree, that's it. We'll have backup set to pll_p by default. ACK?
