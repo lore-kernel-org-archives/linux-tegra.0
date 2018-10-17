@@ -1,60 +1,36 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 3/5] ARM: tegra: Create tegra20-cpufreq device on
- Tegra30
-Date: Wed, 17 Oct 2018 10:54:30 +0100
-Message-ID: <65532de7-2768-0d99-33a9-5b43cfbf510c@nvidia.com>
-References: <20180830194356.14059-1-digetx@gmail.com>
- <20180830194356.14059-4-digetx@gmail.com>
- <9ec51c2d-02f6-0988-0940-0ec31d22f697@nvidia.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v2 0/9] ARM: dts: tegra: last minute fixes
+Date: Wed, 17 Oct 2018 10:51:30 +0000
+Message-ID: <1539773488.6233.22.camel@toradex.com>
+References: <20181016104730.4598-1-marcel@ziswiler.com>
+         <20181016115852.GE7449@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9ec51c2d-02f6-0988-0940-0ec31d22f697@nvidia.com>
+In-Reply-To: <20181016115852.GE7449@sirena.org.uk>
 Content-Language: en-US
+Content-ID: <3EF134A37DAD084B910FC81E187F1986@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "broonie@kernel.org" <broonie@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>, "tiwai@suse.com" <tiwai@suse.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 17/10/2018 09:49, Jon Hunter wrote:
-> 
-> On 30/08/2018 20:43, Dmitry Osipenko wrote:
->> Tegra20-cpufreq driver require a platform device in order to be loaded,
->> instantiate a simple platform device for the driver during of the machines
->> late initialization. Driver now supports Tegra30 SoC's, hence create the
->> device on Tegra30 machines.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  arch/arm/mach-tegra/tegra.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
->> index 67d8ae60ac67..b559e22eab76 100644
->> --- a/arch/arm/mach-tegra/tegra.c
->> +++ b/arch/arm/mach-tegra/tegra.c
->> @@ -111,6 +111,10 @@ static void __init tegra_dt_init_late(void)
->>  	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
->>  	    of_machine_is_compatible("nvidia,tegra20"))
->>  		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
->> +
->> +	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) &&
->> +	    of_machine_is_compatible("nvidia,tegra30"))
->> +		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
->>  }
->>  
->>  static const char * const tegra_dt_board_compat[] = {
-> 
-> Not sure why you would do this if now the driver only works with DT. Am
-> I missing something?
-
-Actually, not sure why we just don't move this into the actual driver
-itself like we have for tegra124.
-
-Cheers
-Jon
-
--- 
-nvpublic
+T24gVHVlLCAyMDE4LTEwLTE2IGF0IDEyOjU4ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiBP
+biBUdWUsIE9jdCAxNiwgMjAxOCBhdCAxMjo0NzoyMVBNICswMjAwLCBNYXJjZWwgWmlzd2lsZXIg
+d3JvdGU6DQo+IA0KPiA+IE1hcmNlbCBaaXN3aWxlciAoOSk6DQo+ID4gICBBUk06IHRlZ3JhOiBm
+aXggc2ltcGxlLXBhbmVsIGNvbXBhdGlibGVzDQo+ID4gICBBUk06IHRlZ3JhOiBhcGFsaXMtdGsx
+L2NvbGlicmlfdDIwL3QzMDogZXZhbC9pcmlzOiBmaXggcmVndWxhdG9yDQo+ID4gZ3Bpbw0KPiA+
+ICAgICBlbmFibGUNCj4gPiAgIEFSTTogdGVncmE6IGNvbGlicmlfdDIwOiByZW9yZGVyIHBtaWMg
+cHJvcGVydGllcw0KPiA+ICAgQVJNOiB0ZWdyYTogYXBhbGlzLXRrMTogZnVydGhlciByZWd1bGF0
+b3IgY2xlYW4tdXANCj4gPiAgIEFSTTogdGVncmE6IGFwYWxpc190MzAvdGsxOiBhbm5vdGF0ZSBw
+b3dlciBJMkMgYmVpbmcgb24tbW9kdWxlDQo+ID4gICBBUk06IHRlZ3JhOiBjb2xpYnJpX3QzMDog
+ZnVydGhlciByZWd1bGF0b3IgY2xlYW4tdXANCj4gPiAgIEFSTTogdGVncmE6IGFwYWxpc190MzA6
+IGZ1cnRoZXIgcmVndWxhdG9yIGNsZWFuLXVwDQo+ID4gICBBU29DOiB0ZWdyYV9zZ3RsNTAwMDog
+Zml4IGRldmljZV9ub2RlIHJlZmNvdW50aW5nDQo+ID4gICBBU29DOiB0ZWdyYV9zZ3RsNTAwMDog
+Zml4IHBsYXRmb3JtIG5hbWUgdnMuIG9mX25vZGUgYXNzaWduZW1lbnQNCj4gDQo+IFRoZXNlIEFT
+b0MgcGF0Y2hlcyBhcHBlYXIgdG8gaGF2ZSBhYnNvbHV0ZWx5IG5vIHJlbGF0aW9uc2hpcCB3aXRo
+IHRoZQ0KPiByZXN0IG9mIHRoZSBzZXJpZXMuICBJcyB0aGF0IHRoZSBjYXNlIG9yIGlzIHRoZXJl
+IHNvbWUgZGVwZW5kZW5jeSBJJ20NCj4gbWlzc2luZz8NCg0KTm90IG91dHNpZGUgb2YgYWxsIGJl
+aW5nIFRlZ3JhIHNwZWNpZmljIHN0dWZmLCBuby4gSWYgeW91IHByZWZlciBJIG1heQ0Kc2VuZCB0
+aGVtIGFzIGEgc2VwYXJhdGUgc2VyaWVzLg==
