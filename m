@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v3 2/7] ARM: tegra: apalis-tk1/colibri_t20/t30: eval/iris: fix regulator gpio enable
-Date: Thu, 18 Oct 2018 13:14:06 +0200
-Message-ID: <20181018111411.26623-3-marcel@ziswiler.com>
+Subject: [PATCH v3 1/7] ARM: tegra: fix simple-panel compatibles
+Date: Thu, 18 Oct 2018 13:14:05 +0200
+Message-ID: <20181018111411.26623-2-marcel@ziswiler.com>
 References: <20181018111411.26623-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181018111411.26623-1-marcel@ziswiler.com>
@@ -12,15 +12,8 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Anything other than the default active-low would require the separate
-property enable-active-high to be set. This gets rid of the following
-warning during boot:
-
- regulator-usbh-vbus GPIO handle specifies active low - ignored
-
-resp.:
-
- regulator-1v05-avdd-hdmi-pll GPIO handle specifies active low - ignored
+As there is no such thing as a generic simple-panel compatible remove
+them.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -28,79 +21,193 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v3: None
 Changes in v2: None
-Changes in v1: None
+Changes in v1:
+- Remove simple-panel compatible as suggested by Rob.
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi   | 2 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi        | 2 +-
- arch/arm/boot/dts/tegra20-colibri-eval-v3.dts | 2 +-
- arch/arm/boot/dts/tegra20-colibri-iris.dts    | 2 +-
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts         | 3 +--
+ arch/arm/boot/dts/tegra124-venice2.dts         | 2 +-
+ arch/arm/boot/dts/tegra20-colibri-eval-v3.dts  | 2 +-
+ arch/arm/boot/dts/tegra20-colibri-iris.dts     | 2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts          | 2 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts      | 2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts            | 2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts         | 2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts          | 2 +-
+ arch/arm/boot/dts/tegra30-apalis-eval.dts      | 2 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts | 2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi          | 2 +-
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts  | 2 +-
+ 13 files changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 367eb8c86098..73a8e117a9b9 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1948,7 +1948,7 @@
- 		regulator-name = "+V1.05_AVDD_HDMI_PLL";
- 		regulator-min-microvolt = <1050000>;
- 		regulator-max-microvolt = <1050000>;
--		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_1v05_vdd>;
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 1788556b4977..2ea7236d9da6 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -46,8 +46,7 @@
+ 			avdd-dsi-csi-supply = <&avdd_1v2_reg>;
+ 
+ 			panel@0 {
+-				compatible = "panasonic,vvx10f004b00",
+-					     "simple-panel";
++				compatible = "panasonic,vvx10f004b00";
+ 				reg = <0>;
+ 
+ 				power-supply = <&avdd_lcd_reg>;
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 82d139648ef1..f54f77902774 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -1079,7 +1079,7 @@
  	};
  
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 13c93cd507d8..3e3b347afe56 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1978,7 +1978,7 @@
- 		regulator-name = "+V1.05_AVDD_HDMI_PLL";
- 		regulator-min-microvolt = <1050000>;
- 		regulator-max-microvolt = <1050000>;
--		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_1v05_vdd>;
- 	};
+ 	panel: panel {
+-		compatible = "lg,lp129qe", "simple-panel";
++		compatible = "lg,lp129qe";
  
+ 		backlight = <&backlight>;
+ 		ddc-i2c-bus = <&dpaux>;
 diff --git a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
-index 37ad508b61d9..f1a85d930e61 100644
+index 3c0f2681fcde..37ad508b61d9 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
-@@ -256,7 +256,7 @@
- 		regulator-name = "VCC_USB[1-4]";
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
--		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_5v0>;
+@@ -223,7 +223,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
  	};
- };
 diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index af4740847769..e1e5ec5253fd 100644
+index d8004d68efa0..af4740847769 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -238,7 +238,7 @@
- 		regulator-name = "VCC_USB1";
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
--		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_5v0>;
+@@ -205,7 +205,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
  	};
- };
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index 1d96d92b72a7..02cd67ea2503 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -665,7 +665,7 @@
+ 	};
+ 
+ 	panel: panel {
+-		compatible = "auo,b101aw03", "simple-panel";
++		compatible = "auo,b101aw03";
+ 
+ 		power-supply = <&vdd_pnl_reg>;
+ 		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+index cda5448c2ace..c73510cd501c 100644
+--- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
++++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+@@ -57,7 +57,7 @@
+ 	};
+ 
+ 	panel: panel {
+-		compatible = "innolux,n156bge-l21", "simple-panel";
++		compatible = "innolux,n156bge-l21";
+ 
+ 		power-supply =  <&vdd_1v8_reg>, <&vdd_3v3_reg>;
+ 		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 8861e0976e37..e75f86901dfd 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -543,7 +543,7 @@
+ 	};
+ 
+ 	panel: panel {
+-		compatible = "samsung,ltn101nt05", "simple-panel";
++		compatible = "samsung,ltn101nt05";
+ 
+ 		ddc-i2c-bus = <&lvds_ddc>;
+ 		power-supply = <&vdd_pnl_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index f91441683aad..376ecb6435f4 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -826,7 +826,7 @@
+ 	};
+ 
+ 	panel: panel {
+-		compatible = "chunghwa,claa101wa01a", "simple-panel";
++		compatible = "chunghwa,claa101wa01a";
+ 
+ 		power-supply = <&vdd_pnl_reg>;
+ 		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index f44551e2d9d0..022649119821 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -611,7 +611,7 @@
+ 	};
+ 
+ 	panel: panel {
+-		compatible = "chunghwa,claa101wa01a", "simple-panel";
++		compatible = "chunghwa,claa101wa01a";
+ 
+ 		power-supply = <&vdd_pnl_reg>;
+ 		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+index 749fc6d1ff70..b39c26806bf2 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+@@ -195,7 +195,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts b/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
+index 0be50e881684..e29dca92ba0a 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
++++ b/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
+@@ -196,7 +196,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index fb9222b479d2..3894bf47ea8f 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -432,7 +432,7 @@
+ 	};
+ 
+ 	panel: panel {
+-		compatible = "chunghwa,claa101wb01", "simple-panel";
++		compatible = "chunghwa,claa101wb01";
+ 		ddc-i2c-bus = <&panelddc>;
+ 
+ 		power-supply = <&vdd_pnl1_reg>;
 diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index 8e106e784dce..7e6bf4cdf322 100644
+index 5965150ecdd2..8e106e784dce 100644
 --- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
 +++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -192,7 +192,7 @@
- 		regulator-name = "VCC_USB[1-4]";
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
--		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
- 		vin-supply = <&reg_5v0>;
+@@ -159,7 +159,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
  	};
- };
 -- 
 2.14.4
