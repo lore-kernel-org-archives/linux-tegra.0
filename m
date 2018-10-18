@@ -1,8 +1,8 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v1 1/3] ASoC: tegra_sgtl5000: fix device_node
-	refcounting
-Date: Thu, 18 Oct 2018 13:18:27 +0200
-Message-ID: <20181018111829.27056-2-marcel@ziswiler.com>
+Subject: [PATCH v1 3/3] ASoC: soc-core: fix platform name vs.
+	of_node assignement
+Date: Thu, 18 Oct 2018 13:18:29 +0200
+Message-ID: <20181018111829.27056-4-marcel@ziswiler.com>
 References: <20181018111829.27056-1-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -19,74 +19,72 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
 To: alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Similar to the following:
+This fixes the following error as seen post commit daecf46ee0e5
+("ASoC: soc-core: use snd_soc_dai_link_component for platform") on
+Apalis TK1 after initial probe deferral:
 
-commit 4321723648b0 ("ASoC: tegra_alc5632: fix device_node refcounting")
-
-commit 7c5dfd549617 ("ASoC: tegra: fix device_node refcounting")
+tegra-snd-sgtl5000 sound: ASoC: Both platform name/of_node are set for
+ sgtl5000
+tegra-snd-sgtl5000 sound: ASoC: failed to init link sgtl5000
+tegra-snd-sgtl5000 sound: snd_soc_register_card failed (-22)
+tegra-snd-sgtl5000: probe of sound failed with error -22
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
 ---
 
-Changes in v1: None
+Changes in v1:
+- Split from the Tegra series as suggested by Mark.
+- Fix issue in soc-core rather than working around it in tegra_sgtl5000.
 
- sound/soc/tegra/tegra_sgtl5000.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ sound/soc/soc-core.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-index 45a4aa9d2a47..901457da25ec 100644
---- a/sound/soc/tegra/tegra_sgtl5000.c
-+++ b/sound/soc/tegra/tegra_sgtl5000.c
-@@ -149,14 +149,14 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,i2s-controller' missing/invalid\n");
- 		ret = -EINVAL;
--		goto err;
-+		goto err_put_codec_of_node;
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 6ddcf12bc030..b97624005976 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -2733,7 +2733,7 @@ static int snd_soc_bind_card(struct snd_soc_card *card)
+ int snd_soc_register_card(struct snd_soc_card *card)
+ {
+ 	int i, ret;
+-	struct snd_soc_dai_link *link;
++	struct snd_soc_dai_link *link = NULL;
+ 
+ 	if (!card->name || !card->dev)
+ 		return -EINVAL;
+@@ -2744,7 +2744,7 @@ int snd_soc_register_card(struct snd_soc_card *card)
+ 		if (ret) {
+ 			dev_err(card->dev, "ASoC: failed to init link %s\n",
+ 				link->name);
+-			return ret;
++			goto err;
+ 		}
  	}
  
- 	tegra_sgtl5000_dai.platform_of_node = tegra_sgtl5000_dai.cpu_of_node;
+@@ -2763,7 +2763,17 @@ int snd_soc_register_card(struct snd_soc_card *card)
+ 	mutex_init(&card->mutex);
+ 	mutex_init(&card->dapm_mutex);
  
- 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
- 	if (ret)
--		goto err;
-+		goto err_put_cpu_of_node;
- 
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
-@@ -169,6 +169,13 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
- 
- err_fini_utils:
- 	tegra_asoc_utils_fini(&machine->util_data);
-+err_put_cpu_of_node:
-+	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
-+	tegra_sgtl5000_dai.cpu_of_node = NULL;
-+	tegra_sgtl5000_dai.platform_of_node = NULL;
-+err_put_codec_of_node:
-+	of_node_put(tegra_sgtl5000_dai.codec_of_node);
-+	tegra_sgtl5000_dai.codec_of_node = NULL;
- err:
- 	return ret;
- }
-@@ -183,6 +190,12 @@ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
- 
- 	tegra_asoc_utils_fini(&machine->util_data);
- 
-+	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
-+	tegra_sgtl5000_dai.cpu_of_node = NULL;
-+	tegra_sgtl5000_dai.platform_of_node = NULL;
-+	of_node_put(tegra_sgtl5000_dai.codec_of_node);
-+	tegra_sgtl5000_dai.codec_of_node = NULL;
+-	return snd_soc_bind_card(card);
++	ret = snd_soc_bind_card(card);
++	if (ret)
++		goto err;
 +
- 	return ret;
++	return 0;
++
++err:
++	if (link && link->platform)
++		link->platform = NULL;
++
++	return ret;
  }
+ EXPORT_SYMBOL_GPL(snd_soc_register_card);
  
 -- 
 2.14.4
