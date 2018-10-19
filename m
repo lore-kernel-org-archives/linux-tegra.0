@@ -1,90 +1,108 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 3/3] ASoC: soc-core: fix platform name vs. of_node
- assignement
-Date: Fri, 19 Oct 2018 11:22:46 +0100
-Message-ID: <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
-References: <20181018111829.27056-1-marcel@ziswiler.com>
- <20181018111829.27056-4-marcel@ziswiler.com>
+Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
+Date: Fri, 19 Oct 2018 13:17:39 +0100
+Message-ID: <cf5b7db9-5109-a9c6-3352-068d205c1b98@nvidia.com>
+References: <20180830183635.4474-1-digetx@gmail.com>
+ <7369869e-e58f-3760-d428-b00fb9cd28d9@nvidia.com>
+ <57c3b1a6-0a60-613e-a4e7-5d66c199b860@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181018111829.27056-4-marcel@ziswiler.com>
+In-Reply-To: <57c3b1a6-0a60-613e-a4e7-5d66c199b860@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 18/10/2018 12:18, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 15/10/2018 14:52, Dmitry Osipenko wrote:
+> On 10/15/18 3:52 PM, Jon Hunter wrote:
+>>
+>> On 30/08/18 19:36, Dmitry Osipenko wrote:
+>>> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
+>>> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
+>>> offline.
+>>>
+>>>  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
+>>>  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
+>>>  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
+>>>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>>>  [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
+>>>  [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
+>>>  [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
+>>>  [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
+>>>  [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
+>>>  [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
+>>>  [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
+>>>  [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
+>>>  [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
+>>>  [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
+>>>  [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
+>>>  [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
+>>>  [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
+>>>  [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
+>>>  [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
+>>
+>> Given the above, rather than converting to a spinlock I wonder if we are
+>> just better off dropping the mutex completely from
+>> tegra_powergate_is_powered()? Otherwise ...
+>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/soc/tegra/pmc.c | 36 ++++++++++++++++++------------------
+>>>  1 file changed, 18 insertions(+), 18 deletions(-)
+>>>
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>> index 2d6f3fcf3211..d6bc9f66f1cd 100644
+>>> --- a/drivers/soc/tegra/pmc.c
+>>> +++ b/drivers/soc/tegra/pmc.c
+>>> @@ -186,7 +186,7 @@ struct tegra_pmc_soc {
+>>>   * @lp0_vec_phys: physical base address of the LP0 warm boot code
+>>>   * @lp0_vec_size: size of the LP0 warm boot code
+>>>   * @powergates_available: Bitmap of available power gates
+>>> - * @powergates_lock: mutex for power gate register access
+>>> + * @powergates_lock: lock for power gate register access
+>>>   */
+>>>  struct tegra_pmc {
+>>>  	struct device *dev;
+>>> @@ -215,7 +215,7 @@ struct tegra_pmc {
+>>>  	u32 lp0_vec_size;
+>>>  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
+>>>  
+>>> -	struct mutex powergates_lock;
+>>> +	spinlock_t powergates_lock;
+>>>  };
+>>>  
+>>>  static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+>>> @@ -288,10 +288,10 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
+>>>  	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
+>>>  		return -EINVAL;
+>>>  
+>>> -	mutex_lock(&pmc->powergates_lock);
+>>> +	spin_lock(&pmc->powergates_lock);
+>>>  
+>>>  	if (tegra_powergate_state(id) == new_state) {
+>>> -		mutex_unlock(&pmc->powergates_lock);
+>>> +		spin_unlock(&pmc->powergates_lock);
+>>>  		return 0;
+>>>  	}
+>>>  
+>>> @@ -300,7 +300,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
+>>>  	err = readx_poll_timeout(tegra_powergate_state, id, status,
+>>>  				 status == new_state, 10, 100000);
+>>>  
+>>> -	mutex_unlock(&pmc->powergates_lock);
+>>> +	spin_unlock(&pmc->powergates_lock);
+>>
+>> ... the above readx_poll_timeout needs to be converted to the atomic
+>> version. Furthermore, the above 100ms timeout is probably not suited to
+>> spinlock.
 > 
-> This fixes the following error as seen post commit daecf46ee0e5
-> ("ASoC: soc-core: use snd_soc_dai_link_component for platform") on
-> Apalis TK1 after initial probe deferral:
-> 
-> tegra-snd-sgtl5000 sound: ASoC: Both platform name/of_node are set for
->  sgtl5000
-> tegra-snd-sgtl5000 sound: ASoC: failed to init link sgtl5000
-> tegra-snd-sgtl5000 sound: snd_soc_register_card failed (-22)
-> tegra-snd-sgtl5000: probe of sound failed with error -22
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
-> Changes in v1:
-> - Split from the Tegra series as suggested by Mark.
-> - Fix issue in soc-core rather than working around it in tegra_sgtl5000.
-> 
->  sound/soc/soc-core.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-> index 6ddcf12bc030..b97624005976 100644
-> --- a/sound/soc/soc-core.c
-> +++ b/sound/soc/soc-core.c
-> @@ -2733,7 +2733,7 @@ static int snd_soc_bind_card(struct snd_soc_card *card)
->  int snd_soc_register_card(struct snd_soc_card *card)
->  {
->  	int i, ret;
-> -	struct snd_soc_dai_link *link;
-> +	struct snd_soc_dai_link *link = NULL;
->  
->  	if (!card->name || !card->dev)
->  		return -EINVAL;
-> @@ -2744,7 +2744,7 @@ int snd_soc_register_card(struct snd_soc_card *card)
->  		if (ret) {
->  			dev_err(card->dev, "ASoC: failed to init link %s\n",
->  				link->name);
-> -			return ret;
-> +			goto err;
->  		}
->  	}
->  
-> @@ -2763,7 +2763,17 @@ int snd_soc_register_card(struct snd_soc_card *card)
->  	mutex_init(&card->mutex);
->  	mutex_init(&card->dapm_mutex);
->  
-> -	return snd_soc_bind_card(card);
-> +	ret = snd_soc_bind_card(card);
-> +	if (ret)
-> +		goto err;
-> +
-> +	return 0;
-> +
-> +err:
-> +	if (link && link->platform)
-> +		link->platform = NULL;
+> It's converted in the second patch. Seems mutex indeed could be dropped from tegra_powergate_is_powered, at least for now I can't recall why decided to keep the locking. Thank you for the review, I'll try to drop the mutex and come back with v2 if it will be fine.
 
-Looking at snd_soc_init_platform(), it seems that the platform pointer
-can be allocated by the machine driver and so if it is not allocated by
-the core, then I don't think we should clear it here. Seems we need a
-way to determine if this was allocated by the core.
-
-Furthermore, it seems that it is possible that there is more than one
-link that might be to be cleared.
+Sorry if you were waiting for my response, but yes sounds good to me.
 
 Cheers
 Jon
