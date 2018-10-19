@@ -1,111 +1,557 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
-Date: Fri, 19 Oct 2018 13:17:39 +0100
-Message-ID: <cf5b7db9-5109-a9c6-3352-068d205c1b98@nvidia.com>
-References: <20180830183635.4474-1-digetx@gmail.com>
- <7369869e-e58f-3760-d428-b00fb9cd28d9@nvidia.com>
- <57c3b1a6-0a60-613e-a4e7-5d66c199b860@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: soc-core: fix trivial checkpatch
+	issues" to the asoc tree
+Date: Fri, 19 Oct 2018 13:26:36 +0100 (BST)
+Message-ID: <20181019122636.B10F41122548@debutante.sirena.org.uk>
+References: <20181018111829.27056-3-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57c3b1a6-0a60-613e-a4e7-5d66c199b860@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20181018111829.27056-3-marcel@ziswiler.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: alsa-devel@alsa-project.org, Jiri Kosina <trivial@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+The patch
 
-On 15/10/2018 14:52, Dmitry Osipenko wrote:
-> On 10/15/18 3:52 PM, Jon Hunter wrote:
->>
->> On 30/08/18 19:36, Dmitry Osipenko wrote:
->>> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
->>> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
->>> offline.
->>>
->>>  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
->>>  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
->>>  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
->>>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->>>  [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
->>>  [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
->>>  [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
->>>  [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
->>>  [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
->>>  [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
->>>  [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
->>>  [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
->>>  [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
->>>  [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
->>>  [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
->>>  [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
->>>  [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
->>>  [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
->>>  [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
->>
->> Given the above, rather than converting to a spinlock I wonder if we are
->> just better off dropping the mutex completely from
->> tegra_powergate_is_powered()? Otherwise ...
->>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/soc/tegra/pmc.c | 36 ++++++++++++++++++------------------
->>>  1 file changed, 18 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>> index 2d6f3fcf3211..d6bc9f66f1cd 100644
->>> --- a/drivers/soc/tegra/pmc.c
->>> +++ b/drivers/soc/tegra/pmc.c
->>> @@ -186,7 +186,7 @@ struct tegra_pmc_soc {
->>>   * @lp0_vec_phys: physical base address of the LP0 warm boot code
->>>   * @lp0_vec_size: size of the LP0 warm boot code
->>>   * @powergates_available: Bitmap of available power gates
->>> - * @powergates_lock: mutex for power gate register access
->>> + * @powergates_lock: lock for power gate register access
->>>   */
->>>  struct tegra_pmc {
->>>  	struct device *dev;
->>> @@ -215,7 +215,7 @@ struct tegra_pmc {
->>>  	u32 lp0_vec_size;
->>>  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
->>>  
->>> -	struct mutex powergates_lock;
->>> +	spinlock_t powergates_lock;
->>>  };
->>>  
->>>  static struct tegra_pmc *pmc = &(struct tegra_pmc) {
->>> @@ -288,10 +288,10 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
->>>  	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
->>>  		return -EINVAL;
->>>  
->>> -	mutex_lock(&pmc->powergates_lock);
->>> +	spin_lock(&pmc->powergates_lock);
->>>  
->>>  	if (tegra_powergate_state(id) == new_state) {
->>> -		mutex_unlock(&pmc->powergates_lock);
->>> +		spin_unlock(&pmc->powergates_lock);
->>>  		return 0;
->>>  	}
->>>  
->>> @@ -300,7 +300,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
->>>  	err = readx_poll_timeout(tegra_powergate_state, id, status,
->>>  				 status == new_state, 10, 100000);
->>>  
->>> -	mutex_unlock(&pmc->powergates_lock);
->>> +	spin_unlock(&pmc->powergates_lock);
->>
->> ... the above readx_poll_timeout needs to be converted to the atomic
->> version. Furthermore, the above 100ms timeout is probably not suited to
->> spinlock.
-> 
-> It's converted in the second patch. Seems mutex indeed could be dropped from tegra_powergate_is_powered, at least for now I can't recall why decided to keep the locking. Thank you for the review, I'll try to drop the mutex and come back with v2 if it will be fine.
+   ASoC: soc-core: fix trivial checkpatch issues
 
-Sorry if you were waiting for my response, but yes sounds good to me.
+has been applied to the asoc tree at
 
-Cheers
-Jon
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 2c7b696a7589ab14854c132dc732973fbd498d5a Mon Sep 17 00:00:00 2001
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Date: Thu, 18 Oct 2018 13:18:28 +0200
+Subject: [PATCH] ASoC: soc-core: fix trivial checkpatch issues
+
+Fix a few trivial aka cosmetic only checkpatch issues like long lines,
+wrong indentations, spurious blanks and newlines, missing newlines,
+multi-line comments etc.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/soc-core.c | 146 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 88 insertions(+), 58 deletions(-)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 62e8e36062df..6ddcf12bc030 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -66,8 +66,9 @@ static int pmdown_time = 5000;
+ module_param(pmdown_time, int, 0);
+ MODULE_PARM_DESC(pmdown_time, "DAPM stream powerdown time (msecs)");
+ 
+-/* If a DMI filed contain strings in this blacklist (e.g.
+- * "Type2 - Board Manufacturer" or  "Type1 - TBD by OEM"), it will be taken
++/*
++ * If a DMI filed contain strings in this blacklist (e.g.
++ * "Type2 - Board Manufacturer" or "Type1 - TBD by OEM"), it will be taken
+  * as invalid and dropped when setting the card long name from DMI info.
+  */
+ static const char * const dmi_blacklist[] = {
+@@ -222,7 +223,7 @@ static void soc_init_card_debugfs(struct snd_soc_card *card)
+ 						    &card->pop_time);
+ 	if (!card->debugfs_pop_time)
+ 		dev_warn(card->dev,
+-		       "ASoC: Failed to create pop time debugfs file\n");
++			 "ASoC: Failed to create pop time debugfs file\n");
+ }
+ 
+ static void soc_cleanup_card_debugfs(struct snd_soc_card *card)
+@@ -426,7 +427,8 @@ EXPORT_SYMBOL_GPL(snd_soc_get_pcm_runtime);
+ 
+ static void codec2codec_close_delayed_work(struct work_struct *work)
+ {
+-	/* Currently nothing to do for c2c links
++	/*
++	 * Currently nothing to do for c2c links
+ 	 * Since c2c links are internal nodes in the DAPM graph and
+ 	 * don't interface with the outside world or application layer
+ 	 * we don't have to do any special handling on close.
+@@ -446,8 +448,9 @@ int snd_soc_suspend(struct device *dev)
+ 	if (!card->instantiated)
+ 		return 0;
+ 
+-	/* Due to the resume being scheduled into a workqueue we could
+-	* suspend before that's finished - wait for it to complete.
++	/*
++	 * Due to the resume being scheduled into a workqueue we could
++	 * suspend before that's finished - wait for it to complete.
+ 	 */
+ 	snd_power_wait(card->snd_card, SNDRV_CTL_POWER_D0);
+ 
+@@ -514,10 +517,13 @@ int snd_soc_suspend(struct device *dev)
+ 
+ 	/* suspend all COMPONENTs */
+ 	for_each_card_components(card, component) {
+-		struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
++		struct snd_soc_dapm_context *dapm =
++				snd_soc_component_get_dapm(component);
+ 
+-		/* If there are paths active then the COMPONENT will be held with
+-		 * bias _ON and should not be suspended. */
++		/*
++		 * If there are paths active then the COMPONENT will be held
++		 * with bias _ON and should not be suspended.
++		 */
+ 		if (!component->suspended) {
+ 			switch (snd_soc_dapm_get_bias_level(dapm)) {
+ 			case SND_SOC_BIAS_STANDBY:
+@@ -571,18 +577,21 @@ int snd_soc_suspend(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_suspend);
+ 
+-/* deferred resume work, so resume can complete before we finished
++/*
++ * deferred resume work, so resume can complete before we finished
+  * setting our codec back up, which can be very slow on I2C
+  */
+ static void soc_resume_deferred(struct work_struct *work)
+ {
+ 	struct snd_soc_card *card =
+-			container_of(work, struct snd_soc_card, deferred_resume_work);
++			container_of(work, struct snd_soc_card,
++				     deferred_resume_work);
+ 	struct snd_soc_pcm_runtime *rtd;
+ 	struct snd_soc_component *component;
+ 	int i;
+ 
+-	/* our power state is still SNDRV_CTL_POWER_D3hot from suspend time,
++	/*
++	 * our power state is still SNDRV_CTL_POWER_D3hot from suspend time,
+ 	 * so userspace apps are blocked from touching us
+ 	 */
+ 
+@@ -699,6 +708,7 @@ int snd_soc_resume(struct device *dev)
+ 	 */
+ 	for_each_card_rtds(card, rtd) {
+ 		struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++
+ 		bus_control |= cpu_dai->driver->bus_control;
+ 	}
+ 	if (bus_control) {
+@@ -777,7 +787,7 @@ struct snd_soc_dai *snd_soc_find_dai(
+ 
+ 	lockdep_assert_held(&client_mutex);
+ 
+-	/* Find CPU DAI from registered DAIs*/
++	/* Find CPU DAI from registered DAIs */
+ 	for_each_component(component) {
+ 		if (!snd_soc_is_matching_component(dlc, component))
+ 			continue;
+@@ -795,7 +805,6 @@ struct snd_soc_dai *snd_soc_find_dai(
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_find_dai);
+ 
+-
+ /**
+  * snd_soc_find_dai_link - Find a DAI link
+  *
+@@ -918,7 +927,7 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
+ 
+ _err_defer:
+ 	soc_free_pcm_runtime(rtd);
+-	return  -EPROBE_DEFER;
++	return -EPROBE_DEFER;
+ }
+ 
+ static void soc_remove_component(struct snd_soc_component *component)
+@@ -1074,7 +1083,7 @@ static int snd_soc_init_multicodec(struct snd_soc_card *card,
+ }
+ 
+ static int soc_init_dai_link(struct snd_soc_card *card,
+-				   struct snd_soc_dai_link *link)
++			     struct snd_soc_dai_link *link)
+ {
+ 	int i, ret;
+ 	struct snd_soc_dai_link_component *codec;
+@@ -1148,7 +1157,8 @@ static int soc_init_dai_link(struct snd_soc_card *card,
+ 
+ void snd_soc_disconnect_sync(struct device *dev)
+ {
+-	struct snd_soc_component *component = snd_soc_lookup_component(dev, NULL);
++	struct snd_soc_component *component =
++			snd_soc_lookup_component(dev, NULL);
+ 
+ 	if (!component || !component->card)
+ 		return;
+@@ -1179,7 +1189,8 @@ int snd_soc_add_dai_link(struct snd_soc_card *card,
+ 	}
+ 
+ 	lockdep_assert_held(&client_mutex);
+-	/* Notify the machine driver for extra initialization
++	/*
++	 * Notify the machine driver for extra initialization
+ 	 * on the link created by topology.
+ 	 */
+ 	if (dai_link->dobj.type && card->add_dai_link)
+@@ -1214,7 +1225,8 @@ void snd_soc_remove_dai_link(struct snd_soc_card *card,
+ 	}
+ 
+ 	lockdep_assert_held(&client_mutex);
+-	/* Notify the machine driver for extra destruction
++	/*
++	 * Notify the machine driver for extra destruction
+ 	 * on the link created by topology.
+ 	 */
+ 	if (dai_link->dobj.type && card->remove_dai_link)
+@@ -1274,7 +1286,8 @@ static void soc_set_name_prefix(struct snd_soc_card *card,
+ static int soc_probe_component(struct snd_soc_card *card,
+ 	struct snd_soc_component *component)
+ {
+-	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
++	struct snd_soc_dapm_context *dapm =
++			snd_soc_component_get_dapm(component);
+ 	struct snd_soc_dai *dai;
+ 	int ret;
+ 
+@@ -1406,8 +1419,7 @@ static int soc_post_component_init(struct snd_soc_pcm_runtime *rtd,
+ }
+ 
+ static int soc_probe_link_components(struct snd_soc_card *card,
+-			struct snd_soc_pcm_runtime *rtd,
+-				     int order)
++				     struct snd_soc_pcm_runtime *rtd, int order)
+ {
+ 	struct snd_soc_component *component;
+ 	struct snd_soc_rtdcom_list *rtdcom;
+@@ -1434,6 +1446,7 @@ static int soc_probe_dai(struct snd_soc_dai *dai, int order)
+ 
+ 	if (dai->driver->probe) {
+ 		int ret = dai->driver->probe(dai);
++
+ 		if (ret < 0) {
+ 			dev_err(dai->dev, "ASoC: failed to probe DAI %s: %d\n",
+ 				dai->name, ret);
+@@ -1541,7 +1554,7 @@ static int soc_probe_link_dais(struct snd_soc_card *card,
+ 	}
+ 
+ 	if (cpu_dai->driver->compress_new) {
+-		/*create compress_device"*/
++		/* create compress_device" */
+ 		ret = cpu_dai->driver->compress_new(rtd, num);
+ 		if (ret < 0) {
+ 			dev_err(card->dev, "ASoC: can't create compress %s\n",
+@@ -1555,7 +1568,7 @@ static int soc_probe_link_dais(struct snd_soc_card *card,
+ 			ret = soc_new_pcm(rtd, num);
+ 			if (ret < 0) {
+ 				dev_err(card->dev, "ASoC: can't create pcm %s :%d\n",
+-				       dai_link->stream_name, ret);
++					dai_link->stream_name, ret);
+ 				return ret;
+ 			}
+ 			ret = soc_link_dai_pcm_new(&cpu_dai, 1, rtd);
+@@ -1683,8 +1696,10 @@ int snd_soc_runtime_set_dai_fmt(struct snd_soc_pcm_runtime *rtd,
+ 		}
+ 	}
+ 
+-	/* Flip the polarity for the "CPU" end of a CODEC<->CODEC link */
+-	/* the component which has non_legacy_dai_naming is Codec */
++	/*
++	 * Flip the polarity for the "CPU" end of a CODEC<->CODEC link
++	 * the component which has non_legacy_dai_naming is Codec
++	 */
+ 	if (cpu_dai->component->driver->non_legacy_dai_naming) {
+ 		unsigned int inv_dai_fmt;
+ 
+@@ -1718,9 +1733,9 @@ int snd_soc_runtime_set_dai_fmt(struct snd_soc_pcm_runtime *rtd,
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_runtime_set_dai_fmt);
+ 
+-
+ #ifdef CONFIG_DMI
+-/* Trim special characters, and replace '-' with '_' since '-' is used to
++/*
++ * Trim special characters, and replace '-' with '_' since '-' is used to
+  * separate different DMI fields in the card long name. Only number and
+  * alphabet characters and a few separator characters are kept.
+  */
+@@ -1739,7 +1754,8 @@ static void cleanup_dmi_name(char *name)
+ 	name[j] = '\0';
+ }
+ 
+-/* Check if a DMI field is valid, i.e. not containing any string
++/*
++ * Check if a DMI field is valid, i.e. not containing any string
+  * in the black list.
+  */
+ static int is_dmi_valid(const char *field)
+@@ -1802,7 +1818,6 @@ int snd_soc_set_dmi_name(struct snd_soc_card *card, const char *flavour)
+ 		return 0;
+ 	}
+ 
+-
+ 	snprintf(card->dmi_longname, sizeof(card->snd_card->longname),
+ 			 "%s", vendor);
+ 	cleanup_dmi_name(card->dmi_longname);
+@@ -1818,7 +1833,8 @@ int snd_soc_set_dmi_name(struct snd_soc_card *card, const char *flavour)
+ 		if (len < longname_buf_size)
+ 			cleanup_dmi_name(card->dmi_longname + len);
+ 
+-		/* some vendors like Lenovo may only put a self-explanatory
++		/*
++		 * some vendors like Lenovo may only put a self-explanatory
+ 		 * name in the product version field
+ 		 */
+ 		product_version = dmi_get_system_info(DMI_PRODUCT_VERSION);
+@@ -1914,7 +1930,8 @@ static void soc_check_tplg_fes(struct snd_soc_card *card)
+ 			dai_link->be_hw_params_fixup =
+ 				component->driver->be_hw_params_fixup;
+ 
+-			/* most BE links don't set stream name, so set it to
++			/*
++			 * most BE links don't set stream name, so set it to
+ 			 * dai link name if it's NULL to help bind widgets.
+ 			 */
+ 			if (!dai_link->stream_name)
+@@ -1924,7 +1941,7 @@ static void soc_check_tplg_fes(struct snd_soc_card *card)
+ 		/* Inform userspace we are using alternate topology */
+ 		if (component->driver->topology_name_prefix) {
+ 
+-			/* topology shortname created ? */
++			/* topology shortname created? */
+ 			if (!card->topology_shortname_created) {
+ 				comp_drv = component->driver;
+ 
+@@ -2029,7 +2046,8 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
+ 	if (ret < 0)
+ 		goto probe_dai_err;
+ 
+-	/* Find new DAI links added during probing components and bind them.
++	/*
++	 * Find new DAI links added during probing components and bind them.
+ 	 * Components with topology may bring new DAIs and DAI links.
+ 	 */
+ 	for_each_card_links(card, dai_link) {
+@@ -2061,7 +2079,8 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
+ 	snd_soc_dapm_connect_dai_link_widgets(card);
+ 
+ 	if (card->controls)
+-		snd_soc_add_card_controls(card, card->controls, card->num_controls);
++		snd_soc_add_card_controls(card, card->controls,
++					  card->num_controls);
+ 
+ 	if (card->dapm_routes)
+ 		snd_soc_dapm_add_routes(&card->dapm, card->dapm_routes,
+@@ -2207,8 +2226,10 @@ int snd_soc_poweroff(struct device *dev)
+ 	if (!card->instantiated)
+ 		return 0;
+ 
+-	/* Flush out pmdown_time work - we actually do want to run it
+-	 * now, we're shutting down so no imminent restart. */
++	/*
++	 * Flush out pmdown_time work - we actually do want to run it
++	 * now, we're shutting down so no imminent restart.
++	 */
+ 	for_each_card_rtds(card, rtd)
+ 		flush_delayed_work(&rtd->delayed_work);
+ 
+@@ -2301,6 +2322,7 @@ static int snd_soc_add_controls(struct snd_card *card, struct device *dev,
+ 
+ 	for (i = 0; i < num_controls; i++) {
+ 		const struct snd_kcontrol_new *control = &controls[i];
++
+ 		err = snd_ctl_add(card, snd_soc_cnew(control, data,
+ 						     control->name, prefix));
+ 		if (err < 0) {
+@@ -2418,8 +2440,9 @@ EXPORT_SYMBOL_GPL(snd_soc_dai_set_sysclk);
+  *
+  * Configures the CODEC master (MCLK) or system (SYSCLK) clocking.
+  */
+-int snd_soc_component_set_sysclk(struct snd_soc_component *component, int clk_id,
+-			     int source, unsigned int freq, int dir)
++int snd_soc_component_set_sysclk(struct snd_soc_component *component,
++				 int clk_id, int source, unsigned int freq,
++				 int dir)
+ {
+ 	if (component->driver->set_sysclk)
+ 		return component->driver->set_sysclk(component, clk_id, source,
+@@ -2487,7 +2510,7 @@ int snd_soc_component_set_pll(struct snd_soc_component *component, int pll_id,
+ {
+ 	if (component->driver->set_pll)
+ 		return component->driver->set_pll(component, pll_id, source,
+-					      freq_in, freq_out);
++						  freq_in, freq_out);
+ 
+ 	return -EINVAL;
+ }
+@@ -2533,8 +2556,8 @@ EXPORT_SYMBOL_GPL(snd_soc_dai_set_fmt);
+  * Generates the TDM tx and rx slot default masks for DAI.
+  */
+ static int snd_soc_xlate_tdm_slot_mask(unsigned int slots,
+-					  unsigned int *tx_mask,
+-					  unsigned int *rx_mask)
++				       unsigned int *tx_mask,
++				       unsigned int *rx_mask)
+ {
+ 	if (*tx_mask || *rx_mask)
+ 		return 0;
+@@ -2684,7 +2707,7 @@ static int snd_soc_bind_card(struct snd_soc_card *card)
+ 		return ret;
+ 
+ 	/* deactivate pins to sleep state */
+-	for_each_card_rtds(card, rtd)  {
++	for_each_card_rtds(card, rtd) {
+ 		struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+ 		struct snd_soc_dai *codec_dai;
+ 		int j;
+@@ -2799,7 +2822,7 @@ static char *fmt_single_name(struct device *dev, int *id)
+ 		}
+ 
+ 	} else {
+-		/* I2C component devices are named "bus-addr"  */
++		/* I2C component devices are named "bus-addr" */
+ 		if (sscanf(name, "%x-%x", &id1, &id2) == 2) {
+ 			char tmp[NAME_SIZE];
+ 
+@@ -2807,7 +2830,8 @@ static char *fmt_single_name(struct device *dev, int *id)
+ 			*id = ((id1 & 0xffff) << 16) + id2;
+ 
+ 			/* sanitize component name for DAI link creation */
+-			snprintf(tmp, NAME_SIZE, "%s.%s", dev->driver->name, name);
++			snprintf(tmp, NAME_SIZE, "%s.%s", dev->driver->name,
++				 name);
+ 			strlcpy(name, tmp, NAME_SIZE);
+ 		} else
+ 			*id = 0;
+@@ -2874,7 +2898,7 @@ static struct snd_soc_dai *soc_add_dai(struct snd_soc_component *component,
+ 	 * component-less anymore.
+ 	 */
+ 	if (legacy_dai_naming &&
+-	   (dai_drv->id == 0 || dai_drv->name == NULL)) {
++	    (dai_drv->id == 0 || dai_drv->name == NULL)) {
+ 		dai->name = fmt_single_name(dev, &dai->id);
+ 	} else {
+ 		dai->name = fmt_multiple_name(dev, dai_drv);
+@@ -2910,7 +2934,8 @@ static struct snd_soc_dai *soc_add_dai(struct snd_soc_component *component,
+  * @count: Number of DAIs
+  */
+ static int snd_soc_register_dais(struct snd_soc_component *component,
+-				 struct snd_soc_dai_driver *dai_drv, size_t count)
++				 struct snd_soc_dai_driver *dai_drv,
++				 size_t count)
+ {
+ 	struct device *dev = component->dev;
+ 	struct snd_soc_dai *dai;
+@@ -2921,8 +2946,8 @@ static int snd_soc_register_dais(struct snd_soc_component *component,
+ 
+ 	for (i = 0; i < count; i++) {
+ 
+-		dai = soc_add_dai(component, dai_drv + i,
+-				  count == 1 && !component->driver->non_legacy_dai_naming);
++		dai = soc_add_dai(component, dai_drv + i, count == 1 &&
++				  !component->driver->non_legacy_dai_naming);
+ 		if (dai == NULL) {
+ 			ret = -ENOMEM;
+ 			goto err;
+@@ -2966,7 +2991,8 @@ int snd_soc_register_dai(struct snd_soc_component *component,
+ 	if (!dai)
+ 		return -ENOMEM;
+ 
+-	/* Create the DAI widgets here. After adding DAIs, topology may
++	/*
++	 * Create the DAI widgets here. After adding DAIs, topology may
+ 	 * also add routes that need these widgets as source or sink.
+ 	 */
+ 	ret = snd_soc_dapm_new_dai_widgets(dapm, dai);
+@@ -3048,7 +3074,8 @@ static void snd_soc_component_setup_regmap(struct snd_soc_component *component)
+ #ifdef CONFIG_REGMAP
+ 
+ /**
+- * snd_soc_component_init_regmap() - Initialize regmap instance for the component
++ * snd_soc_component_init_regmap() - Initialize regmap instance for the
++ *                                   component
+  * @component: The component for which to initialize the regmap instance
+  * @regmap: The regmap instance that should be used by the component
+  *
+@@ -3066,7 +3093,8 @@ void snd_soc_component_init_regmap(struct snd_soc_component *component,
+ EXPORT_SYMBOL_GPL(snd_soc_component_init_regmap);
+ 
+ /**
+- * snd_soc_component_exit_regmap() - De-initialize regmap instance for the component
++ * snd_soc_component_exit_regmap() - De-initialize regmap instance for the
++ *                                   component
+  * @component: The component for which to de-initialize the regmap instance
+  *
+  * Calls regmap_exit() on the regmap instance associated to the component and
+@@ -3090,7 +3118,8 @@ static void snd_soc_component_add(struct snd_soc_component *component)
+ 
+ 	if (!component->driver->write && !component->driver->read) {
+ 		if (!component->regmap)
+-			component->regmap = dev_get_regmap(component->dev, NULL);
++			component->regmap = dev_get_regmap(component->dev,
++							   NULL);
+ 		if (component->regmap)
+ 			snd_soc_component_setup_regmap(component);
+ 	}
+@@ -3235,23 +3264,24 @@ static int __snd_soc_unregister_component(struct device *dev)
+ 		if (dev != component->dev)
+ 			continue;
+ 
+-		snd_soc_tplg_component_remove(component, SND_SOC_TPLG_INDEX_ALL);
++		snd_soc_tplg_component_remove(component,
++					      SND_SOC_TPLG_INDEX_ALL);
+ 		snd_soc_component_del_unlocked(component);
+ 		found = 1;
+ 		break;
+ 	}
+ 	mutex_unlock(&client_mutex);
+ 
+-	if (found) {
++	if (found)
+ 		snd_soc_component_cleanup(component);
+-	}
+ 
+ 	return found;
+ }
+ 
+ void snd_soc_unregister_component(struct device *dev)
+ {
+-	while (__snd_soc_unregister_component(dev));
++	while (__snd_soc_unregister_component(dev))
++		;
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_unregister_component);
+ 
+@@ -3832,7 +3862,7 @@ int snd_soc_of_get_dai_link_codecs(struct device *dev,
+ 	for_each_link_codecs(dai_link, index, component) {
+ 		ret = of_parse_phandle_with_args(of_node, name,
+ 						 "#sound-dai-cells",
+-						  index, &args);
++						 index, &args);
+ 		if (ret)
+ 			goto err;
+ 		component->of_node = args.np;
 -- 
-nvpublic
+2.19.0.rc2
