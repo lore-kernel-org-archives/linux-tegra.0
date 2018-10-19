@@ -1,25 +1,13 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: soc-core: fix trivial checkpatch
-	issues" to the asoc tree
-Date: Fri, 19 Oct 2018 13:26:36 +0100 (BST)
-Message-ID: <20181019122636.B10F41122548@debutante.sirena.org.uk>
+Subject: Applied "ASoC: soc-core: fix trivial checkpatch issues" to the asoc tree
+Date: Fri, 19 Oct 2018 13:34:15 +0100 (BST)
+Message-ID: <20181019123415.2FB401122548@debutante.sirena.org.uk>
 References: <20181018111829.27056-3-marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181018111829.27056-3-marcel@ziswiler.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: alsa-devel@alsa-project.org, Jiri Kosina <trivial@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <trivial@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
 The patch
