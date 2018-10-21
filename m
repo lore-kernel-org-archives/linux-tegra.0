@@ -1,78 +1,85 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v1 3/3] ASoC: soc-core: fix platform name
- vs. of_node assignement
-Date: Sun, 21 Oct 2018 12:23:01 +0100
-Message-ID: <20181021112301.GC8554@sirena.org.uk>
-References: <20181018111829.27056-1-marcel@ziswiler.com>
- <20181018111829.27056-4-marcel@ziswiler.com>
- <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v6 0/8] Tegra20 External Memory Controller driver
+Date: Sun, 21 Oct 2018 21:30:44 +0300
+Message-ID: <20181021183052.32023-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4203210680648665745=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Changelog:
 
---===============4203210680648665745==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CblX+4bnyfN0pR09"
-Content-Disposition: inline
+v6:
+        - Driver now handles "refresh request overflow" interrupt by
+          reporting error message.
 
+        - EMC rate is set during driver initialization to ensure that clock
+          divider is in a proper state.
 
---CblX+4bnyfN0pR09
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+v5:
+        - Fixed wrong EMC clock divider type in the "Turn EMC clock gate into
+          divider" patch. It is a Tegra's fractional 7.1 divider and not a
+          simple integer divider. Peter, please take a look at the change.
 
-On Fri, Oct 19, 2018 at 11:22:46AM +0100, Jon Hunter wrote:
+v4:
+        - Fixed "bad of_node_put()" error which was revealed by enabling
+          some extra kernel debug config options.
 
-> Looking at snd_soc_init_platform(), it seems that the platform pointer
-> can be allocated by the machine driver and so if it is not allocated by
-> the core, then I don't think we should clear it here. Seems we need a
-> way to determine if this was allocated by the core.
+        - The "emc-table" DT nodes are now parsed starting from the "emc"
+          node instead of the DT root.
 
-Indeed, this is a bit of a mess.  We probably shouldn't be modifying the
-data that the drivers passed in, otherwise we get into trouble like
-this.   That suggests that we should copy the data, probably all of it.
-I will try to have a proper look at this next week.
+        - Adjusted code comment in the "Turn EMC clock gate into divider"
+          patch as was suggested by Stephen Boyd to the v3.
 
-> Furthermore, it seems that it is possible that there is more than one
-> link that might be to be cleared.
+v3:
+        - Handle "nvidia,use-ram-code" DT property, its handling was missed
+          in the previous versions.
 
-Yes, that's an issue as well.
+        - Honor "emc-tables" DT node naming which is explicitly specified
+          in the DT binding, also was missed in the previous versions.
 
---CblX+4bnyfN0pR09
-Content-Type: application/pgp-signature; name="signature.asc"
+        - Two new DT binding patches: one adds the EMC clock property,
+          other relocates the binding doc file to the appropriate directory.
+          One new patch that adds EMC clock property to the DTS file.
 
------BEGIN PGP SIGNATURE-----
+        - Addressed v2 review comments from Thierry Reding. Driver does not
+          preserve backwards compatibility with older device tree binding.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvMYZQACgkQJNaLcl1U
-h9Btfwf/dFxAtQI/Mhc7ISVGXuzVPNSrMX9GIpvPLgmAYOMav0sAv/Hwuc5l8yQn
-lezhE0TDqs7mjjnBcjSkNlMX+8DRzlr/ROGKmnew4bQUwww+rEex1damDp6JS3b2
-fdYqhq42yAVjh09z3ofdX8oa3Y3glbNAp3zR527TajqzSZHOpUOMAFJBxCByDQGH
-+8JNd5A7LsccEA29oKULq6OnlsthVbLNEhirU8SE1qaUSadHAZLB8o5IQRmIGnIH
-2SmmerTwmMCQE5AHwo0H5HY5M/h6wGYlDNJK2n2mSKohDvN4hKiFBb8lhFb+K15Y
-V1l48FNy1pCQpsD7aeTSHFBmh3XhRg==
-=q3BQ
------END PGP SIGNATURE-----
+        - The PLL_M and PLL_P clocks are kept internal to the driver because
+          after some more considering I couldn't find a really good reason why
+          these clocks should be in the device tree.
 
---CblX+4bnyfN0pR09--
+        - Some minor cleanups and fixes in the drivers code.
 
---===============4203210680648665745==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+v2:
+        - Minor code cleanups like consistent use of writel_relaxed instead
+          of non-relaxed version, reworded error messages, etc.
 
+        - Factored out use_pllm_ud bit checking into a standalone patch for
+          consistency.
 
---===============4203210680648665745==--
+Dmitry Osipenko (8):
+  dt: bindings: tegra20-emc: Document interrupt property
+  dt: bindings: tegra20-emc: Document clock property
+  dt: bindings: Move tegra20-emc binding to memory-controllers directory
+  ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+  ARM: dts: tegra20: Add clock entry to External Memory Controller
+  clk: tegra20: Turn EMC clock gate into divider
+  clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+  memory: tegra: Introduce Tegra20 EMC driver
+
+ .../nvidia,tegra20-emc.txt                    |   4 +
+ arch/arm/boot/dts/tegra20.dtsi                |   2 +
+ drivers/clk/tegra/clk-tegra20.c               |  46 +-
+ drivers/memory/tegra/Kconfig                  |  10 +
+ drivers/memory/tegra/Makefile                 |   1 +
+ drivers/memory/tegra/tegra20-emc.c            | 591 ++++++++++++++++++
+ 6 files changed, 644 insertions(+), 10 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (95%)
+ create mode 100644 drivers/memory/tegra/tegra20-emc.c
+
+-- 
+2.19.0
