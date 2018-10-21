@@ -1,59 +1,82 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] soc/tegra: pmc: Drop locking from tegra_powergate_is_powered()
-Date: Sun, 21 Oct 2018 21:36:14 +0300
-Message-ID: <20181021183614.454-1-digetx@gmail.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/6] gpio: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 21:59:55 +0200
+Message-ID: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
-and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
-offline. Locking isn't needed because it protects atomic operation.
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-# echo 0 | tee /sys/devices/system/cpu/cpu[1-3]/online
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
-in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
-CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
-Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-[<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
-[<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
-[<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
-[<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
-[<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
-[<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
-[<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
-[<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
-[<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
-[<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
-[<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
-[<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
-[<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
-[<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
-[<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
+A branch, tested by buildbot, can be found here:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/soc/tegra/pmc.c | 2 --
- 1 file changed, 2 deletions(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 1fa840e3d930..1714cd818d69 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -543,9 +543,7 @@ int tegra_powergate_is_powered(unsigned int id)
- 	if (!tegra_powergate_is_valid(id))
- 		return -EINVAL;
- 
--	mutex_lock(&pmc->powergates_lock);
- 	status = tegra_powergate_state(id);
--	mutex_unlock(&pmc->powergates_lock);
- 
- 	return status;
- }
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
+
+I am open for other comments, suggestions, too, of course.
+
+Here is the cocci-script I created:
+
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
+
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (6):
+  gpio: gpio-dwapb: simplify getting .driver_data
+  gpio: gpio-lynxpoint: simplify getting .driver_data
+  gpio: gpio-mxc: simplify getting .driver_data
+  gpio: gpio-omap: simplify getting .driver_data
+  gpio: gpio-tegra: simplify getting .driver_data
+  gpio: gpio-zynq: simplify getting .driver_data
+
+ drivers/gpio/gpio-dwapb.c     |  6 ++----
+ drivers/gpio/gpio-lynxpoint.c |  3 +--
+ drivers/gpio/gpio-mxc.c       |  6 ++----
+ drivers/gpio/gpio-omap.c      | 12 ++++--------
+ drivers/gpio/gpio-tegra.c     |  6 ++----
+ drivers/gpio/gpio-zynq.c      |  6 ++----
+ 6 files changed, 13 insertions(+), 26 deletions(-)
+
 -- 
 2.19.0
