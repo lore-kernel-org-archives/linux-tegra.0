@@ -1,43 +1,89 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC PATCH v2 09/17] ARM: dts: tegra20: harmony: Setup voltage
- regulators for DVFS
-Date: Mon, 22 Oct 2018 09:33:23 -0600
-Message-ID: <a1b4cd27-858c-de53-8ae2-b1aee689475f@wwwdotorg.org>
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-10-digetx@gmail.com>
+From: Prateek Patel <prpatel@nvidia.com>
+Subject: [PATCH V2] kmemleak: Add config to select auto scan
+Date: Mon, 22 Oct 2018 23:38:43 +0530
+Message-ID: <1540231723-7087-1-git-send-email-prpatel@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181021205501.23943-10-digetx@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: catalin.marinas@arm.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-tegra@vger.kernel.org, snikam@nvidia.com, vdumpa@nvidia.com, talho@nvidia.com, swarren@nvidia.com, prpatel@nvidia.com, Sri Krishna chowdary <schowdary@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/21/18 2:54 PM, Dmitry Osipenko wrote:
-> Set min/max regulators voltage and add CPU node that hooks up CPU with
-> voltage regulators.
+From: Sri Krishna chowdary <schowdary@nvidia.com>
 
-> diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+Kmemleak scan can be cpu intensive and can stall user tasks at times.
+To prevent this, add config DEBUG_KMEMLEAK_AUTO_SCAN to enable/disable
+auto scan on boot up.
+Also protect first_run with DEBUG_KMEMLEAK_AUTO_SCAN as this is meant
+for only first automatic scan.
 
-> -				sm0 {
-> +				core_vdd_reg: sm0 {
->   					regulator-name = "vdd_sm0,vdd_core";
-> -					regulator-min-microvolt = <1200000>;
-> -					regulator-max-microvolt = <1200000>;
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1300000>;
-> +					regulator-coupled-with = <&rtc_vdd_reg>;
-> +					regulator-coupled-max-spread = <150000>;
->   					regulator-always-on;
->   				};
+Signed-off-by: Sri Krishna chowdary <schowdary@nvidia.com>
+Signed-off-by: Sachin Nikam <snikam@nvidia.com>
+Signed-off-by: Prateek <prpatel@nvidia.com>
+---
+v2:
+* change config name to DEBUG_KMEMLEAK_AUTO_SCAN from DEBUG_KMEMLEAK_SCAN_ON
+* use IS_ENABLED(...) instead of #ifdef ...
+* update commit message according to config name
+---
+ lib/Kconfig.debug | 15 +++++++++++++++
+ mm/kmemleak.c     | 10 ++++++----
+ 2 files changed, 21 insertions(+), 4 deletions(-)
 
-How do you know for sure that these increased ranges are safe (high end) 
-and stable (low end) for this particular board? IIRC the safe/legal 
-range depends on the chip SKU, and to be honest I have no idea which SKU 
-is present on Harmony... For public boards like Colibri I imagine 
-there's enough information out there to tell what will work, but maybe 
-not our internal boards like Harmony, unless you checked our ancient 
-downstream kernels?
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index c958013..a14166d 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -593,6 +593,21 @@ config DEBUG_KMEMLEAK_DEFAULT_OFF
+ 	  Say Y here to disable kmemleak by default. It can then be enabled
+ 	  on the command line via kmemleak=on.
+ 
++config DEBUG_KMEMLEAK_AUTO_SCAN
++	bool "Enable kmemleak auto scan thread on boot up"
++	default y
++	depends on DEBUG_KMEMLEAK
++	help
++	  Depending on the cpu, kmemleak scan may be cpu intensive and can
++	  stall user tasks at times. This option enables/disables automatic
++	  kmemleak scan at boot up.
++
++	  Say N here to disable kmemleak auto scan thread to stop automatic
++	  scanning. Disabling this option disables automatic reporting of
++	  memory leaks.
++
++	  If unsure, say Y.
++
+ config DEBUG_STACK_USAGE
+ 	bool "Stack utilization instrumentation"
+ 	depends on DEBUG_KERNEL && !IA64
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 877de4f..a614930 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1647,7 +1647,7 @@ static void kmemleak_scan(void)
+  */
+ static int kmemleak_scan_thread(void *arg)
+ {
+-	static int first_run = 1;
++	static int first_run = IS_ENABLED(CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN);
+ 
+ 	pr_info("Automatic memory scanning thread started\n");
+ 	set_user_nice(current, 10);
+@@ -2141,9 +2141,11 @@ static int __init kmemleak_late_init(void)
+ 		return -ENOMEM;
+ 	}
+ 
+-	mutex_lock(&scan_mutex);
+-	start_scan_thread();
+-	mutex_unlock(&scan_mutex);
++	if (IS_ENABLED(CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN)) {
++		mutex_lock(&scan_mutex);
++		start_scan_thread();
++		mutex_unlock(&scan_mutex);
++	}
+ 
+ 	pr_info("Kernel memory leak detector initialized\n");
+ 
+-- 
+2.1.4
