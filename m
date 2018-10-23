@@ -1,45 +1,46 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [RFC PATCH v2 09/17] ARM: dts: tegra20: harmony: Setup voltage
- regulators for DVFS
-Date: Tue, 23 Oct 2018 01:59:26 +0300
-Message-ID: <5f3b5213-0901-be42-4f8d-2e68551f100c@gmail.com>
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-10-digetx@gmail.com>
- <a1b4cd27-858c-de53-8ae2-b1aee689475f@wwwdotorg.org>
+From: Krishna Reddy <vdumpa@nvidia.com>
+Subject: [PATCH 0/3] Add Tegra194 Dual ARM SMMU driver
+Date: Tue, 23 Oct 2018 15:39:04 -0700
+Message-ID: <1540334347-7178-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a1b4cd27-858c-de53-8ae2-b1aee689475f@wwwdotorg.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, avanbrunt@nvidia.com, Krishna Reddy <vdumpa@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/22/18 6:33 PM, Stephen Warren wrote:
-> On 10/21/18 2:54 PM, Dmitry Osipenko wrote:
->> Set min/max regulators voltage and add CPU node that hooks up CPU with
->> voltage regulators.
-> 
->> diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-> 
->> -                sm0 {
->> +                core_vdd_reg: sm0 {
->>                       regulator-name = "vdd_sm0,vdd_core";
->> -                    regulator-min-microvolt = <1200000>;
->> -                    regulator-max-microvolt = <1200000>;
->> +                    regulator-min-microvolt = <1000000>;
->> +                    regulator-max-microvolt = <1300000>;
->> +                    regulator-coupled-with = <&rtc_vdd_reg>;
->> +                    regulator-coupled-max-spread = <150000>;
->>                       regulator-always-on;
->>                   };
-> 
-> How do you know for sure that these increased ranges are safe (high end) and stable (low end) for this particular board? IIRC the safe/legal range depends on the chip SKU, and to be honest I have no idea which SKU is present on Harmony... For public boards like Colibri I imagine there's enough information out there to tell what will work, but maybe not our internal boards like Harmony, unless you checked our ancient downstream kernels?
+NVIDIA's Xavier (Tegra194) SOC has three ARM SMMU(MMU-500) instances.
+Two of the SMMU instances are used to interleave IOVA accesses across them.
+The IOVA accesses from HW devices are interleaved across these two SMMU instances
+and they need to be programmed identical.
 
-Yes, the ranges could be inaccurate in these DT patches. But it shouldn't matter much because only OPP's that match actual HW SKU will be used for DVFS. Though certainly it will be nice if we could specify exactly correct ranges.
+The existing ARM SMMU driver can't be used in its current form for programming the
+two SMMU instances identically. But, most of the code can be shared between ARM SMMU
+driver and Tegra194 SMMU driver.
+Page fault handling and TLB sync operations need to know about specific instance
+of SMMU for correct fault handling and optimal TLB sync wait. Rest of the code doesn't
+need to know about number of SMMU instances. Based on this fact, The patch series here
+rearranges the arm-smmu.c code to allow sharing most of the ARM SMMU programming/iommu_ops
+code between ARM SMMU driver and Tegra194 SMMU driver and transparently
+handles programming of two SMMU instances.
 
-Looks like downstream doesn't specify safe ranges for any of the boards and it is relying on the SKU-VOLTAGE DVFS table values only. 
+The third SMMU instance would use the existing ARM SMMU driver.
 
-For now there are quite few obstacles that need to be resolved in order to get a properly working system-wide DVFS, but things are getting a bit closer. Thank you very much for your input!
+Krishna Reddy (3):
+  iommu/arm-smmu: rearrange arm-smmu.c code
+  iommu/arm-smmu: Prepare fault, probe, sync functions for sharing code
+  iommu/tegra194_smmu: Add Tegra194 SMMU driver
+
+ drivers/iommu/Makefile          |    1 +
+ drivers/iommu/arm-smmu-common.c | 1971 +++++++++++++++++++++++++++++++++++
+ drivers/iommu/arm-smmu-common.h |  256 +++++
+ drivers/iommu/arm-smmu.c        | 2167 +--------------------------------------
+ drivers/iommu/tegra194-smmu.c   |  201 ++++
+ 5 files changed, 2436 insertions(+), 2160 deletions(-)
+ create mode 100644 drivers/iommu/arm-smmu-common.c
+ create mode 100644 drivers/iommu/arm-smmu-common.h
+ create mode 100644 drivers/iommu/tegra194-smmu.c
+
+-- 
+2.1.4
