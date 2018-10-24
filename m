@@ -1,84 +1,83 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] mfd: tps6586x: Handle interrupts on suspend
-Date: Wed, 24 Oct 2018 11:49:46 +0100
-Message-ID: <72b80285-d6ff-9cb9-3bcd-bb3d92006323@nvidia.com>
-References: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
- <20181022095257.GD4014@ulmo> <366ad7c3-85e2-3526-1c0b-6d2fbde4c552@gmail.com>
+Subject: Re: [PATCH v1] soc/tegra: pmc: Drop locking from
+ tegra_powergate_is_powered()
+Date: Wed, 24 Oct 2018 11:52:17 +0100
+Message-ID: <d7b8a4c9-11cc-471c-53d9-6cc29d076573@nvidia.com>
+References: <20181021183614.454-1-digetx@gmail.com>
+ <4c318e6b-4841-dd52-d61d-1106c5f8afbc@nvidia.com>
+ <11fc94af-efe2-e571-3163-efdaa91f34fc@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <366ad7c3-85e2-3526-1c0b-6d2fbde4c552@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <11fc94af-efe2-e571-3163-efdaa91f34fc@gmail.com>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 22/10/2018 12:19, Dmitry Osipenko wrote:
-> On 10/22/18 12:52 PM, Thierry Reding wrote:
->> On Fri, Oct 19, 2018 at 02:22:53PM +0100, Jon Hunter wrote:
->>> From: Jonathan Hunter <jonathanh@nvidia.com>
->>>
->>> The tps6586x driver creates an irqchip that is used by its various child
->>> devices for managing interrupts. The tps6586x-rtc device is one of its
->>> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
->>> a wake-up device from suspend, the following is seen:
->>>
->>>  PM: Syncing filesystems ... done.
->>>  Freezing user space processes ... (elapsed 0.001 seconds) done.
->>>  OOM killer disabled.
->>>  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->>>  Disabling non-boot CPUs ...
->>>  Entering suspend state LP1
->>>  Enabling non-boot CPUs ...
->>>  CPU1 is up
->>>  tps6586x 3-0034: failed to read interrupt status
->>>  tps6586x 3-0034: failed to read interrupt status
->>>
->>> The reason why the tps6586x interrupt status cannot be read is because
->>> the tps6586x interrupt is not masked during suspend and when the
->>> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
->>> seen before the i2c controller has been resumed in order to read the
->>> tps6586x interrupt status.
->>>
->>> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
->>> suspend, which gets propagated to the parent tps6586x interrupt.
->>> However, the tps6586x-rtc driver cannot disable it's interrupt during
->>> suspend otherwise we would never be woken up and so the tps6586x must
->>> disable it's interrupt instead.
->>>
->>> Prevent the tps6586x interrupt handler from executing on exiting suspend
->>> before the i2c controller has been resumed by disabling the tps6586x
->>> interrupt on entering suspend and re-enabling it on resuming from
->>> suspend.
->>>
->>> Cc: stable@vger.kernel.org
->>>
->>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>> ---
->>>  drivers/mfd/tps6586x.c | 24 ++++++++++++++++++++++++
->>>  1 file changed, 24 insertions(+)
+On 24/10/2018 11:44, Dmitry Osipenko wrote:
+> On 10/24/18 1:20 PM, Jon Hunter wrote:
 >>
->> So does this mean that the SPI interrupt for the PMIC can still be a
->> wakeup source even if it is masked? This is slightly odd because now
->> you're saying that this does work while it doesn't work for the RTC
->> interrupt. So is this an implementation quirk of the LIC/GIC on Tegra
->> which doesn't extend to the TPS6586x? Or am I missing something?
+>> On 21/10/2018 19:36, Dmitry Osipenko wrote:
+>>> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
+>>> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
+>>> offline. Locking isn't needed because it protects atomic operation.
+>>>
+>>> # echo 0 | tee /sys/devices/system/cpu/cpu[1-3]/online
+>>>
+>>> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
+>>> in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
+>>> CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
+>>> Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>>> [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
+>>> [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
+>>> [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
+>>> [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
+>>> [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
+>>> [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
+>>> [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
+>>> [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
+>>> [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
+>>> [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
+>>> [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
+>>> [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
+>>> [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
+>>> [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
+>>> [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/soc/tegra/pmc.c | 2 --
+>>>  1 file changed, 2 deletions(-)
+>>>
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>> index 1fa840e3d930..1714cd818d69 100644
+>>> --- a/drivers/soc/tegra/pmc.c
+>>> +++ b/drivers/soc/tegra/pmc.c
+>>> @@ -543,9 +543,7 @@ int tegra_powergate_is_powered(unsigned int id)
+>>>  	if (!tegra_powergate_is_valid(id))
+>>>  		return -EINVAL;
+>>>  
+>>> -	mutex_lock(&pmc->powergates_lock);
+>>>  	status = tegra_powergate_state(id);
+>>> -	mutex_unlock(&pmc->powergates_lock);
+>>>  
+>>>  	return status;
+>>
+>> Can we just ...
+>>
+>> 	return tegra_powergate_state(id);
 > 
-> What is the expected behaviour of IRQ disabling? Should it disable wakeup ability or only mask IRQ handling?
+> We can, but it is not necessary. Feel free to adjust the code as you wish while applying ;) I deliberately left the 'status' variable because I think that makes code a bit more expressive.
 
-I believe only mask the interrupt. However, the caveat here could be if
-the parent interrupt controller actually supports wake-up. For Tegra it
-is the LIC that handles the wake-up.
+Thierry, please feel free to add my ...
 
-> Couple months ago disabling of IRQ was disabling the wakeup, now something has been changed in kernel and wakeup isn't getting disabled. So either there was a bug before that was fixed or there is a bug now.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Are you sure you were disabling the PMIC host interrupt? If you disable
-the RTC interrupt in the PMIC's RTC driver, then this will prevent the
-wake-up from occurring because you are masking the interrupt within the
-PMIC and so it will never generate an interrupt to the host.
+Personally I would drop the 'status' variable but up to you.
 
 Cheers
 Jon
