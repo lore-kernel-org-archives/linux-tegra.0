@@ -1,67 +1,83 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v6 8/8] memory: tegra: Introduce Tegra20 EMC driver
-Date: Thu, 25 Oct 2018 16:38:53 +0200
-Message-ID: <20181025143853.GL21521@ulmo>
-References: <20181021183052.32023-1-digetx@gmail.com>
- <20181021183052.32023-9-digetx@gmail.com>
+Subject: Re: [PATCH 1/2] arm64: tegra: Add PWM controllers on Tegra194
+Date: Thu, 25 Oct 2018 16:40:54 +0200
+Message-ID: <20181025144054.GM21521@ulmo>
+References: <20181024153353.15745-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GeDkoc8jIzHasOdk"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181021183052.32023-9-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============6699525163409488535=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181024153353.15745-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Timo Alho <talho@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---GeDkoc8jIzHasOdk
+--===============6699525163409488535==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1rguoi8KZGYj2k4L"
+Content-Disposition: inline
+
+
+--1rguoi8KZGYj2k4L
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 21, 2018 at 09:30:52PM +0300, Dmitry Osipenko wrote:
-> Introduce driver for the External Memory Controller (EMC) found on Tegra20
-> chips, which controls the external DRAM on the board. The purpose of this
-> driver is to program memory timing for external memory on the EMC clock
-> rate change.
+On Wed, Oct 24, 2018 at 05:33:52PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Tegra194 has eight single-channel PWM controllers, one of them in the
+> AON partition.
+>=20
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/memory/tegra/Kconfig       |  10 +
->  drivers/memory/tegra/Makefile      |   1 +
->  drivers/memory/tegra/tegra20-emc.c | 591 +++++++++++++++++++++++++++++
->  3 files changed, 602 insertions(+)
->  create mode 100644 drivers/memory/tegra/tegra20-emc.c
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 96 ++++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
 
-Applied to for-4.21/memory, thanks.
-
-Though I did notice that there's quite a bit of code that's very similar
-between this and the existing Tegra124 driver, so I wonder if we can do
-a pass over them and refactor some of it as a follow-up.
+Both patches applied to for-4.21/arm64/dt.
 
 Thierry
 
---GeDkoc8jIzHasOdk
+--1rguoi8KZGYj2k4L
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvR1X0ACgkQ3SOs138+
-s6HOfxAAma4aYV31RRx2/qD14Jn6MGfN3bEIReLqe6IlcvnonSeDMPjw20xowj/K
-03+GR3gN4dVlJ+LzsAaS1Mjv1OGd62is5DPKDtkbHt4r7y913RntQq8bS2aAqRlT
-TbI9vPggHv+Cvc+jim2Gsy0W4fK5RQcFuoqyq/4rjmRNvVIjKU4TzuRh6xryGJms
-zjsUrZASxqVAvf1mfsfNAVh7hr7TNT8DvquAoki9Qy4I6oCFLTMCGJRsRzpKx3Vz
-YeM73On6rRNpJEPERi5xUid+jDR8nFfJIc8Cp3N/3G2J04Kg37L64J13Fbg4n8pf
-8nPLbBRDhcZ7Za0Os4c7nRdb7RrgdrvLFrr/t01dTryy1gG5Xr6UWgM0oHLbYzPx
-gaBV+mXiZz8kzdA1+7sAzgU6NhGoxkpY7JEG3CRzvWYabCjAg4CaMYpF8QQ24KoU
-fct464VbB4jl/Kiq+X+MgmD4G7fuj2a7u++EWEMxaBg5otNuQEnJGflxYmLLzudY
-Ogsd3II2gDXt8x3FspWm3pODNXKGJdOZZhM6lOLx+nueXyYxreQBAhEAJr6k4HLy
-I9I5Mq7pttlp9VcIkhYMB8w+D/ueT7qrQY/SBp+O9yT/GFLOZ5z2HUQ5PObW4Yt3
-4WECZkBJr8XLcOmftZHmTTcCzmbF5MWj8ZYzfLCJAFvUotIc1lU=
-=t1vV
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvR1fYACgkQ3SOs138+
+s6FDeA/9GIEt1DfVC9NgnzRM3u3h6wu46jAbhTXB0PyxtuWk2kznvhIBCRhKquIs
++dmbZVddHBP6JlMXiqnWVgosavOesQsKYmiWSAhC+wncl4UELg2kWslmBmm7z+LY
+YL7S/lhHFyf583E+rxV38NhSvX8Z6r1qBOxfMwDxq1cLhr9+0xHnPUwZ54HtHw7n
+q0+iQWDC46QTeh6gJT86HZz1iwfXd7vtQPz9fSSRZ1YYRO10TNbssA3Kvr2dva0I
+iQ0DMIRtAipk1flPEpqFONMxsilnI7Gv0fD/I6dL72YoBAUEqP9DcdgdICZyd44T
+spyzgLPOdABfRResK22Kgf6D+xJ1VJ/RjT9+mV6BPW0lQvsh4RHm52nS/tjoDckm
+OytWEGduRHEV+qtZhpGj1dnhGAeUTieARfXZUwB7P4rnIo/BClwjRBQegB4zxPEX
+dAl8kC63Y50KHolYVXXvDJgHp2ZOOv+9JtBdWnJZ3qnzbSoGdlYcleSmXFwje+Td
+89wAnAy3w4vfPWuPitRXf8YSfmKswtt7BuayhKq0hcK/gIvUnbzDyEuQ4YcFgtED
+LnbGGb6b6R1qVRV1ortSN7qTFLHYKo1WrmareDESPkI6uxjujHXpcAAD/QGuljWT
+6IYCwFRk2CAeSIeF8iVtYxekP66GuMcPJLIExDnfqS0CzISFoC0=
+=Qvsb
 -----END PGP SIGNATURE-----
 
---GeDkoc8jIzHasOdk--
+--1rguoi8KZGYj2k4L--
+
+
+--===============6699525163409488535==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============6699525163409488535==--
