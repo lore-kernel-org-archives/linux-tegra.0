@@ -1,32 +1,31 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v6 4/8] ARM: dts: tegra20: Add interrupt entry to
- External Memory Controller
-Date: Thu, 25 Oct 2018 16:28:36 +0200
-Message-ID: <20181025142836.GH21521@ulmo>
+Subject: Re: [PATCH v6 5/8] ARM: dts: tegra20: Add clock entry to External
+ Memory Controller
+Date: Thu, 25 Oct 2018 16:29:40 +0200
+Message-ID: <20181025142940.GI21521@ulmo>
 References: <20181021183052.32023-1-digetx@gmail.com>
- <20181021183052.32023-5-digetx@gmail.com>
+ <20181021183052.32023-6-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FUaywKC54iCcLzqT"
+        protocol="application/pgp-signature"; boundary="PMULwz+zIGJzpDN9"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181021183052.32023-5-digetx@gmail.com>
+In-Reply-To: <20181021183052.32023-6-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---FUaywKC54iCcLzqT
+--PMULwz+zIGJzpDN9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 21, 2018 at 09:30:48PM +0300, Dmitry Osipenko wrote:
-> Add interrupt entry into the EMC DT node.
+On Sun, Oct 21, 2018 at 09:30:49PM +0300, Dmitry Osipenko wrote:
+> Add clock entry into the EMC DT node.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
 >  arch/arm/boot/dts/tegra20.dtsi | 1 +
 >  1 file changed, 1 insertion(+)
@@ -35,24 +34,24 @@ Applied to for-4.21/arm/dt, thanks.
 
 Thierry
 
---FUaywKC54iCcLzqT
+--PMULwz+zIGJzpDN9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvR0xQACgkQ3SOs138+
-s6G5Dg//WJUGcgr+aeof7gWRdVQbHQw+IgKIvo5H+HZO49NfF+OyWV6XmSa2eRHr
-zmtZO69EUpCOL4tpmeFRzNqx/EDdwxCjMEdxj0iWmUkIwDU+8gSQqgioUyQNNfI2
-z7SskBFTu4/DHUcHj3stqu9J/ewRhV96wQauwE+5DW16OD007GEc5LC+3JBN8Tmk
-2pcXSRru6lmWudAyXoD/NHlHKjnUCJ7MssrVnt1cHkmoXjIg0t5ng+O7vr0EZ1lT
-R75CWQQz5kQ4k90uiDmdmSyKywLSfhIXLM7lUhZuZC+qK0Wve1UtAJ0V8REb9/ML
-iMUkpGHnsEQ3MLuEzEtPZMrnUrblQnxVFR//1NO3gNJlZuALM59Xr5taAQZI8n+3
-GPXIBMS/Pw4g+Lyfydpa9AGfCk9cdwNUWEiqOJ4x7MRVyOOoUUfmwW63xWS9jVbJ
-rxwQvxdaS/8b98GUeF0iOOuhLA5aQYjjFycCi0+G2IQPyTkgtLJ2Ym7SodtIKvL+
-/4LIyBb/colwxALgpfY/jywjETF+P2/FoaDt1v4D1O6oJIX2QwhJ+CsypJok1kAM
-qdbrSOrBGBRjGa7Dbki5zZnNPJqdmGxX3Js0TsYZ8G4cWVclxCaLLIF67VCjkwot
-Q+UgREFTS94ONyIDfNY/NHEJYb3OJXPMss6zXjuvLVE5OoLshUg=
-=kIfE
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvR01QACgkQ3SOs138+
+s6FUiRAAvpc81LLj0px2mgpDGg2rV4oVXDTtBUJ7t0K6JPKsd38NIuQVVlHpRSPe
+HbckwG/anIthCOV3rF/mzspz6d/w9Kf8tbewszz42rENn3jQ2GOoZXU1i8lX/Avf
+0IJvd3YBPLZMXMa8WG87n/uzQIVKorHXxWNf4eMBNwkjEpRKz5tBZR5eQbcakDqh
+46fgZc74WuphT9A0lcPZULNYrCAaoRBCAB3LYcspTFeVWovjATGg4i9dJeX8Wx2i
+Wh0R5Mq+/6DVG+qAt5dqNvGf0BTAcSXzHSsAA5OoI8HIaJiek/V7fBozsWmvqkGS
+s+h0m4Y4Zw1NpjDFeJx5EokXxhXZ0vHppN8mxRH+n89V8qMfbBXozmN0fLWs48UH
+Zi9UHN7B2EVdezbQSGMyOa54HUz9s+5KTYRiAa0ys1GGHRaZ3O0T+JKS0JeDmpFB
++W3/HbNGLoOVCSixNglz1tNxokkdJN7sgbBEjsMFV0HK3tnjZdie3njrEQ7B2EG5
+kekn7T1O5bXSZranf7OZBQxadQG4gYBU/MiikZp2cYF/tLSIvGoKHC5TmMZgRjR7
+pvxe4qyS7caUj0Sj7TwKo68cYhIWEQdXSzalw0DuauB5LZNcqlQpovSTlgfvIZp5
+2dDrru99qT29XFDNX590/LeYAN9cGj26uQEM98YRehbDQFtT0qE=
+=i15n
 -----END PGP SIGNATURE-----
 
---FUaywKC54iCcLzqT--
+--PMULwz+zIGJzpDN9--
