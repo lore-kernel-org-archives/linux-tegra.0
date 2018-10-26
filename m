@@ -1,41 +1,75 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v6 8/8] memory: tegra: Introduce Tegra20 EMC driver
-Date: Thu, 25 Oct 2018 21:36:33 +0300
-Message-ID: <221ac544-b57a-e85f-79ac-0b914615c9a9@gmail.com>
-References: <20181021183052.32023-1-digetx@gmail.com>
- <20181021183052.32023-9-digetx@gmail.com> <20181025143853.GL21521@ulmo>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] arm64: Don't flush tlb while clearing the accessed bit
+Date: Fri, 26 Oct 2018 09:42:58 +0100
+Message-ID: <20181026084258.sjp2vmarmsfj2wbz@blommer>
+References: <1540483944-22718-1-git-send-email-amhetre@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181025143853.GL21521@ulmo>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1540483944-22718-1-git-send-email-amhetre@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ashish Mhetre <amhetre@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, avanbrunt@nvidia.com, linux-kernel@vger.kernel.org, vdumpa@nvidia.com, catalin.marinas@arm.com, will.deacon@arm.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/25/18 5:38 PM, Thierry Reding wrote:
-> On Sun, Oct 21, 2018 at 09:30:52PM +0300, Dmitry Osipenko wrote:
->> Introduce driver for the External Memory Controller (EMC) found on Tegra20
->> chips, which controls the external DRAM on the board. The purpose of this
->> driver is to program memory timing for external memory on the EMC clock
->> rate change.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->> ---
->>  drivers/memory/tegra/Kconfig       |  10 +
->>  drivers/memory/tegra/Makefile      |   1 +
->>  drivers/memory/tegra/tegra20-emc.c | 591 +++++++++++++++++++++++++++++
->>  3 files changed, 602 insertions(+)
->>  create mode 100644 drivers/memory/tegra/tegra20-emc.c
+On Thu, Oct 25, 2018 at 09:42:24PM +0530, Ashish Mhetre wrote:
+> From: Alex Van Brunt <avanbrunt@nvidia.com>
 > 
-> Applied to for-4.21/memory, thanks.
+> Accessed bit is used to age a page and in generic implementation there is
+> flush_tlb while clearing the accessed bit.
+> Flushing a TLB is overhead on ARM64 as access flag faults don't get
+> translation table entries cached into TLB's. Flushing TLB is not necessary
+> for this. Clearing the accessed bit without flushing TLB doesn't cause data
+> corruption on ARM64.
+> In our case with this patch, speed of reading from fast NVMe/SSD through
+> PCIe got improved by 10% ~ 15% and writing got improved by 20% ~ 40%.
+> So for performance optimisation don't flush TLB when clearing the accessed
+> bit on ARM64.
+> x86 made the same optimization even though their TLB invalidate is much
+> faster as it doesn't broadcast to other CPUs.
 
-Thank you! 
+To save others the time, the relevant x86 commit is:
 
-> Though I did notice that there's quite a bit of code that's very similar
-> between this and the existing Tegra124 driver, so I wonder if we can do
-> a pass over them and refactor some of it as a follow-up.
-I don't think this will really worth the effort.
+  b13b1d2d8692b437 ("x86/mm: In the PTE swapout page reclaim case clear the accessed bit instead of flushing the TLB")
+
+That does call out the fact that this means page aging will be imprecise, and
+hot pages might be reclaimed, with the claim being that the chance of this is
+relatively low.
+
+Do we have any numbers for other workloads?
+
+> 
+> Signed-off-by: Alex Van Brunt <avanbrunt@nvidia.com>
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>  arch/arm64/include/asm/pgtable.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 2ab2031..42931f6 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -652,6 +652,13 @@ static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
+>  	return __ptep_test_and_clear_young(ptep);
+>  }
+>  
+> +#define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
+> +static inline int ptep_clear_flush_young(struct vm_area_struct *vma,
+> +					 unsigned long address, pte_t *ptep)
+> +{
+> +	return ptep_test_and_clear_young(vma, address, ptep);
+> +}
+
+As with the x86 commit, we should comment why we're not flushing the TLB here.
+
+Thanks,
+Mark.
+
+> +
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  #define __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
+>  static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+> -- 
+> 2.7.4
+> 
