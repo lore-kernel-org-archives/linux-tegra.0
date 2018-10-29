@@ -1,83 +1,95 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH V2] arm64: Don't flush tlb while clearing the accessed bit
-Date: Mon, 29 Oct 2018 08:57:50 +0000
-Message-ID: <20181029085738.kcjiwf5p6rdqeb6j@salmiak>
-References: <1540794599-30922-1-git-send-email-amhetre@nvidia.com>
+From: Pekka Pessi <ppessi@nvidia.com>
+Subject: Re: [PATCH 0/9] serial: Add Tegra Combined UART driver
+Date: Mon, 29 Oct 2018 11:04:06 +0200
+Message-ID: <85092b49-2b62-bd76-05a3-521415835b6e@nvidia.com>
+References: <20181026111638.10759-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1540794599-30922-1-git-send-email-amhetre@nvidia.com>
+In-Reply-To: <20181026111638.10759-1-thierry.reding@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ashish Mhetre <amhetre@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, avanbrunt@nvidia.com, linux-kernel@vger.kernel.org, vdumpa@nvidia.com
+To: Thierry Reding <thierry.reding@gmail.com>, Jassi Brar <jassisinghbrar@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, Mika Liljeberg <mliljeberg@nvidia.com>, linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 11:59:59AM +0530, Ashish Mhetre wrote:
-> From: Alex Van Brunt <avanbrunt@nvidia.com>
-> 
-> Accessed bit is used to age a page and in generic implementation there is
-> flush_tlb while clearing the accessed bit.
-> Flushing a TLB is overhead on ARM64 as access flag faults don't get
-> translation table entries cached into TLB's. Flushing TLB is not necessary
-> for this. Clearing the accessed bit without flushing TLB doesn't cause data
-> corruption on ARM64. [It may cause incorrect page aging but chances of that
-> should be relatively low.]
-> In our case with this patch, speed of reading from fast NVMe/SSD through
-> PCIe got improved by 10% ~ 15% and writing got improved by 20% ~ 40%.
-> So for performance optimisation don't flush TLB when clearing the accessed
-> bit on ARM64.
-> x86 made the same optimization even though their TLB invalidate is much
-> faster as it doesn't broadcast to other CPUs.
+Hi Thierry,
 
-Please specifically refer to commit:
+What is the use case for the mailbox driver? What kind of entity will be 
+there consuming sent messages and sending messages to kernel?
 
-  b13b1d2d8692b437 ("x86/mm: In the PTE swapout page reclaim case clear the accessed bit instead of flushing the TLB")
+--Pekka
 
-... so that it's easy for people to track down the relevant x86 change.
-
-> 
-> Signed-off-by: Alex Van Brunt <avanbrunt@nvidia.com>
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
-> v2: Added comments about why flushing is not needed while clearing accessed bit
-> 
->  arch/arm64/include/asm/pgtable.h | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 2ab2031..33e1940 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -652,6 +652,22 @@ static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
->  	return __ptep_test_and_clear_young(ptep);
->  }
->  
-> +#define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
-> +static inline int ptep_clear_flush_young(struct vm_area_struct *vma,
-> +					 unsigned long address, pte_t *ptep)
-> +{
-> +	/*
-> +	 * Flushing a TLB is overhead on ARM64 as access flag faults don't get
-> +	 * translation table entries cached into TLB's. Flushing TLB is not
-> +	 * necessary for this. Clearing the accessed bit without flushing TLB
-> +	 * doesn't cause data corruption on ARM64.[ It may cause imcorrect page
-> +	 * aging but chances of this should be comparatively low. ]
-> +	 * So as a performance optimization don't flush the TLB when clearing
-> +	 * the accessed bit.
-> +	 */
-
-Can we just copy the x86 comment from commit b13b1d2d8692b437?
-
-Thanks,
-Mark.
-
-> +	return ptep_test_and_clear_young(vma, address, ptep);
-> +}
-> +
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  #define __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
->  static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
-> -- 
-> 2.7.4
-> 
+On 10/26/2018 02:16 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Hi everyone,
+>
+> this is a reworked version of Mikko's earlier proposal[0]. I've reworked
+> the TCU driver itself so that it relies less on global variables as well
+> as added a Kconfig option to allow the console support to be selected. I
+> also fixed a couple of issues that manifested themselves as I was moving
+> towards the IRQ driven mode (TCU was passing a pointer to a local
+> variable which was getting stored in the mailbox's ring buffer and the
+> data pointed at was becoming stale by the time the mailbox got around to
+> dequeue it).
+>
+> The biggest bulk of the changes is in the mailbox driver. This series
+> addresses all of Jassi's comments from back at the time. One notable
+> additional change is that shared mailboxes are now interrupt driven,
+> which removes the need for polling mode.
+>
+> Unfortunately there is still an issue because the TCU uses the mailbox
+> in atomic context for both TTY and console modes, so we get a sleeping-
+> while-atomic BUG when using mbox_client->tx_block = true in order to
+> rate-limit mbox_send_message(). In order to work around this, I added a
+> mechanism to mbox_send_message() that will allow blocking from atomic
+> context if the mailbox controller implements the new ->flush() callback.
+> For Tegra HSP shared mailboxes this is done by spinning on the shared
+> mailbox register until the receiver has marked the mailbox as empty. I
+> have been running this locally for a couple of days now and it works
+> perfectly.
+>
+> Furthermore this series incorporates Mikko's work in progress on
+> splitting up the mailbox controllers and allowing multiple controllers
+> to match on the same device tree node during mbox_request_channel().
+>
+> Last but not least there are no build-time dependencies between the
+> mailbox and serial drivers, so I think the easiest way to merge this is
+> if Jassi picks up patches 1-5, Greg takes patches 6 & 7 and I pick up
+> patches 8-9 into the Tegra tree.
+>
+> Thanks,
+> Thierry
+>
+> [0]: https://lore.kernel.org/patchwork/project/lkml/list/?series=357641
+>
+> Mikko Perttunen (5):
+>    mailbox: Allow multiple controllers per device
+>    dt-bindings: tegra186-hsp: Add shared interrupts
+>    dt-bindings: serial: Add bindings for nvidia,tegra194-tcu
+>    arm64: tegra: Add nodes for TCU on Tegra194
+>    arm64: tegra: Mark TCU as primary serial port on Tegra194 P2888
+>
+> Thierry Reding (4):
+>    mailbox: Support blocking transfers in atomic context
+>    mailbox: tegra-hsp: Add support for shared mailboxes
+>    mailbox: tegra-hsp: Add suspend/resume support
+>    serial: Add Tegra Combined UART driver
+>
+>   .../bindings/mailbox/nvidia,tegra186-hsp.txt  |   3 +
+>   .../bindings/serial/nvidia,tegra194-tcu.txt   |  35 ++
+>   .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |   2 +-
+>   arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  38 +-
+>   drivers/mailbox/mailbox.c                     |  11 +-
+>   drivers/mailbox/tegra-hsp.c                   | 495 +++++++++++++++---
+>   drivers/tty/serial/Kconfig                    |  22 +
+>   drivers/tty/serial/Makefile                   |   1 +
+>   drivers/tty/serial/tegra-tcu.c                | 299 +++++++++++
+>   include/linux/mailbox_controller.h            |   4 +
+>   include/uapi/linux/serial_core.h              |   3 +
+>   11 files changed, 847 insertions(+), 66 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
+>   create mode 100644 drivers/tty/serial/tegra-tcu.c
+>
