@@ -1,31 +1,77 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH V2] kmemleak: Add config to select auto scan
-Date: Mon, 29 Oct 2018 10:43:20 +0000
-Message-ID: <20181029104320.GC168424@arrakis.emea.arm.com>
-References: <1540231723-7087-1-git-send-email-prpatel@nvidia.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH V3] arm64: Don't flush tlb while clearing the accessed bit
+Date: Mon, 29 Oct 2018 10:55:16 +0000
+Message-ID: <20181029105515.GD14127@arm.com>
+References: <1540805158-618-1-git-send-email-amhetre@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1540231723-7087-1-git-send-email-prpatel@nvidia.com>
+In-Reply-To: <1540805158-618-1-git-send-email-amhetre@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Prateek Patel <prpatel@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-tegra@vger.kernel.org, snikam@nvidia.com, vdumpa@nvidia.com, talho@nvidia.com, swarren@nvidia.com, Sri Krishna chowdary <schowdary@nvidia.com>
+To: Ashish Mhetre <amhetre@nvidia.com>
+Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, avanbrunt@nvidia.com, Snikam@nvidia.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 11:38:43PM +0530, Prateek Patel wrote:
-> From: Sri Krishna chowdary <schowdary@nvidia.com>
+On Mon, Oct 29, 2018 at 02:55:58PM +0530, Ashish Mhetre wrote:
+> From: Alex Van Brunt <avanbrunt@nvidia.com>
 > 
-> Kmemleak scan can be cpu intensive and can stall user tasks at times.
-> To prevent this, add config DEBUG_KMEMLEAK_AUTO_SCAN to enable/disable
-> auto scan on boot up.
-> Also protect first_run with DEBUG_KMEMLEAK_AUTO_SCAN as this is meant
-> for only first automatic scan.
+> Accessed bit is used to age a page and in generic implementation there is
+> flush_tlb while clearing the accessed bit.
+> Flushing a TLB is overhead on ARM64 as access flag faults don't get
+> translation table entries cached into TLB's. Flushing TLB is not necessary
+> for this. Clearing the accessed bit without flushing TLB doesn't cause data
+> corruption on ARM64.
+> In our case with this patch, speed of reading from fast NVMe/SSD through
+> PCIe got improved by 10% ~ 15% and writing got improved by 20% ~ 40%.
+> So for performance optimisation don't flush TLB when clearing the accessed
+> bit on ARM64.
+> x86 made the same optimization even though their TLB invalidate is much
+> faster as it doesn't broadcast to other CPUs.
+
+Ok, but they may end up using IPIs so lets avoid these vague performance
+claims in the log unless they're backed up with numbers.
+
+> Please refer to:
+> 'commit b13b1d2d8692 ("x86/mm: In the PTE swapout page reclaim case clear
+> the accessed bit instead of flushing the TLB")'
 > 
-> Signed-off-by: Sri Krishna chowdary <schowdary@nvidia.com>
-> Signed-off-by: Sachin Nikam <snikam@nvidia.com>
-> Signed-off-by: Prateek <prpatel@nvidia.com>
+> Signed-off-by: Alex Van Brunt <avanbrunt@nvidia.com>
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>  arch/arm64/include/asm/pgtable.h | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 2ab2031..080d842 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -652,6 +652,26 @@ static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
+>  	return __ptep_test_and_clear_young(ptep);
+>  }
+>  
+> +#define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
+> +static inline int ptep_clear_flush_young(struct vm_area_struct *vma,
+> +					 unsigned long address, pte_t *ptep)
+> +{
+> +	/*
+> +	 * On ARM64 CPUs, clearing the accessed bit without a TLB flush
+> +	 * doesn't cause data corruption. [ It could cause incorrect
+> +	 * page aging and the (mistaken) reclaim of hot pages, but the
+> +	 * chance of that should be relatively low. ]
+> +	 *
+> +	 * So as a performance optimization don't flush the TLB when
+> +	 * clearing the accessed bit, it will eventually be flushed by
+> +	 * a context switch or a VM operation anyway. [ In the rare
+> +	 * event of it not getting flushed for a long time the delay
+> +	 * shouldn't really matter because there's no real memory
+> +	 * pressure for swapout to react to. ]
 
-Looks fine to me.
+This is blindly copied from x86 and isn't true for us: we don't invalidate
+the TLB on context switch. That means our window for keeping the stale
+entries around is potentially much bigger and might not be a great idea.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+If we roll a TLB invalidation routine without the trailing DSB, what sort of
+performance does that get you?
+
+Will
