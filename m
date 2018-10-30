@@ -1,93 +1,288 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [RFC PATCH v2 01/17] OPP: Allow to request stub voltage
- regulators
-Date: Tue, 30 Oct 2018 18:48:19 +0300
-Message-ID: <08a1978a-32b2-0234-a461-a11e1abcff6a@gmail.com>
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-2-digetx@gmail.com>
- <20181022053636.ag62j3rj3vovbz53@vireshk-i7>
- <e4027793-9436-413d-2a7b-34cf519218c3@gmail.com>
- <20181022113224.b5fiebgy2aap66nd@vireshk-i7>
- <29f893be-feed-c4c5-8468-51f7228dd468@gmail.com>
- <20181024064123.lbpbeervghp35fe7@vireshk-i7>
- <ba782346-6ac0-7bf3-e187-00d2634b145b@gmail.com>
- <20181029065328.6vkbwjnq2zzwxric@vireshk-i7>
+From: Pekka Pessi <ppessi@nvidia.com>
+Subject: Re: [PATCH 4/9] mailbox: tegra-hsp: Add support for shared mailboxes
+Date: Tue, 30 Oct 2018 18:15:59 +0200
+Message-ID: <c2ebc2aa-bf71-59fa-44a1-eaf5d479b2d5@nvidia.com>
+References: <20181026111638.10759-1-thierry.reding@gmail.com>
+ <20181026111638.10759-5-thierry.reding@gmail.com>
+ <bfc78c91-73f1-4f64-9196-5268a73b5c42@nvidia.com>
+ <20181029103937.GB26393@ulmo>
+ <9dfa7669-9401-a55c-8959-8d31cf193ca7@nvidia.com>
+ <20181029131614.GA14616@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181029065328.6vkbwjnq2zzwxric@vireshk-i7>
+In-Reply-To: <20181029131614.GA14616@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, Mika Liljeberg <mliljeberg@nvidia.com>, linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/29/18 9:53 AM, Viresh Kumar wrote:
-> On 26-10-18, 15:03, Dmitry Osipenko wrote:
->> On 10/24/18 9:41 AM, Viresh Kumar wrote:
->>> On 22-10-18, 15:12, Dmitry Osipenko wrote:
->>>> Because there is one Tegra20 board (tegra20-trimslice) that doesn't declare
->>>> necessary regulators, but we want to have CPU frequency scaling. I couldn't
->>>> find board schematics and so don't know if CPU / CORE voltages are fixed on
->>>> Trim-Slice or it is just preferable not to have DVFS for that board, it is an
->>>> outlet-powered device [0]. Hence tegra20-cpufreq driver will request a dummy
->>>> regulators when appropriate. 
->>>
->>> We have been using the regulator_get_optional() variant until now in the OPP
->>> core to make sure that we don't do DVFS for the CPU without the mandatory
->>> regulators being present, as that may make things unstable and cause harm to the
->>> SoC if we try to take CPU to frequency range over the currently programmed
->>> regulator can support.
->>>
->>> Now coming back to tegra-20 SoC, which actually requires a regulator normally by
->>> design. On one of the boards (which is outlet powered), you aren't sure if there
->>> is a programmable regulator or not, or if DVFS should really be done or not.
->>> Isn't it worth checking the same from Tegra maintainers, or whomsoever has
->>> information on that board ?
->>
->> I'll try to find out more detailed information for the next revision of the patchset.
-> 
-> Thanks Dmitry.
-> 
->>  What would happen if there actually was a regulator
-> 
-> Please preserve the '>' from previous replies at the beginning of the
-> lines. Otherwise it looks as if you have written the above line. :)
-> 
->>> and its default settings aren't good enough for high end frequencies ?
->>
->> Usually this causes kernel/applications crashes and/or machine hang.
-> 
-> Sure. I also do remember from some guys (maybe TI), where they
-> mentioned that such scenarios can harm the hardware as well sometimes.
-> Don't remember the details though.
-> 
->>  And because you are moving to regulator_get() API for
->>> the entire SoC (i.e. its cpufreq driver), people will never find the missing
->>> regulator.
->>
->> Regulators core prints info message when dummy regulator is being used.
-> 
-> Sure, but they are easy to miss and they are only seen by developers
-> not regular users of a machine.
-> 
->>> If we can do it safely for all tegra20 boards, why not migrate to using
->>> regulator_get() instead of regulator_get_optional() in the OPP core API itself
->>> for everyone ?
->>>
->>
->> This should be a platform-specific decision. For Tegra we know that regulators should be in a good state at kernel boot time, I don't think that this applies to other platforms.
-> 
-> Based on the other discussion with Lucas on this thread, I don't think
-> this is correct any more ?
-> 
-> Don't get me wrong, I am all good for changes and another API change
-> doesn't matter much to me. I am just wondering if it would be the
-> right approach to fix the issue. Why not rather call
-> dev_pm_opp_set_regulators() conditionally and avoid calling it for the
-> specific tegra20 board.
+> I guess it being an example doesn't make it strictly a recommendation, bu=
+t
+> I wonder if we should avoid giving examples that use mappings which we
+> discourage.
 
-The right approach should be to specify device tree correctly. Probably we won't need this change at all with the correct DT, will see.
+Well, yes, that is example for top0 =E2=80=93 but I agree, giving examples =
+that=20
+do not make much sense is not very productive.
 
-Calling dev_pm_opp_set_regulators() conditionally should work, but that is extra churning in the driver that I tried to avoid.
+> So currently
+> we list all available interrupts in DT and then we could pick just the
+> first. But what if somebody else already picked the first and "owns" it
+
+We have rather static hardware allocation in device trees, if an another=20
+VM instance or another aux cpu owns interrupt, we just remove it from=20
+the DTS or DTSI.=C2=A0 So the native Linux would see all the possible=20
+interrupts (that are not used by SPE or RCE, for instance), but a=20
+virtualized one would see only one.
+
+> For mailboxes that the CCPLEX writes to, we can reconfigure them as
+> producers by disabling the FULL interrupt and enabling the EMPTY
+> interrupt instead. We can do that the first time somebody calls the
+> mbox_send_message() on the mailbox.
+
+The problem here is "disabling the FULL interrupt". The main problem are=20
+the mailbox-specific IE registers, they are not really shared, but the=20
+consumer owns the full_ie and producer empty_ie. We can not enable or=20
+disable interrupts without interfering with the interrupt settings of=20
+the remote end, when the interrupt is enabled, we either modify=20
+full_ie/empty_ie register or run with a risk that it has incorrect value.
+
+Can we just leave the mbox channel without interrupts? How the consumer=20
+indicates that it is interested in receiving messages? mbox_peek_data()?
+
+--Pekka
+
+
+
+On 10/29/2018 03:16 PM, Thierry Reding wrote:
+> On Mon, Oct 29, 2018 at 02:25:42PM +0200, Pekka Pessi wrote:
+>> Hi Thierry,
+>>
+>>  From the 0/9:
+>>> Are you aware of any others that we need to take into account?
+>> We would like to use upstream driver for RCE (and probably AON and SCE)
+>> mailbox handling, too. Eventually.
+>>> This is a bit
+>>> of a problem because the mailbox driver doesn't really know anything
+>>> about the direction when it starts up, so how would it make the decisio=
+n
+>>> about how to program the registers?
+>> I'm afraid that information must be stored in the device tree.
+>>> What's somewhat surprising is that you're saying that both FULL and
+>>> EMPTY interrupts should be handled by the same shared interrupt. That's
+>>> the opposite of what the recommended programming sequence is that the
+>>> TRM specifies.
+>> Which TRM you mean? Something here?
+>>
+>> https://p4viewer.nvidia.com/get///hw/ar/doc/Tech_Pubs/Xavier/TRM/
+>>
+>> I browsed through he Xavier_TRM_DP09253001v1.pdf HSP section and I could=
+ not
+>> find any recommendations? But see below.
+> I'm referring to Xavier_TRM_Public.pdf in that location. If you look at
+> page 4422, "Shared Interrupts Configuration", the example has aggregated
+> EMPTY and FULL interrupts on shared interrupts 0 and 1, respectively. I
+> guess it being an example doesn't make it strictly a recommendation, but
+> I wonder if we should avoid giving examples that use mappings which we
+> discourage.
+>
+>>> Why is it better to handle both FULL and EMPTY interrupts
+>>> with the same shared interrupt?
+>> Only top0 has 8 interrupts, rest of the HSP blocks have only 4 (or 5 in =
+case
+>> of top1) interrupts per HSP available through LIC. Hogging two of them m=
+eans
+>> that only two VMs can access a HSP.
+> Virtualization isn't something that we're very concerned about upstream,
+> but I'll take that under consideration.
+>
+>>> Would it be safe to clear all of the IE registers to 0 on driver probe?
+>> Nope, the driver should clear only the IE register for the shared interr=
+upt
+>> that the driver uses. Other IEs are used by other entities.
+> Right, that makes sense. But within that IE register it can consider all
+> bits fair game, right? One thing I wonder, though, is whether there
+> should be some external mechanism to set the shared interrupt to use. If
+> we go purely by convention we'll eventually get this wrong. So currently
+> we list all available interrupts in DT and then we could pick just the
+> first. But what if somebody else already picked the first and "owns" it?
+>
+> I'm not sure we have any practical mechanism to rewrite the DTB, but
+> perhaps something to keep in mind if ever we need to support other
+> entities down the road.
+>
+>>> If they are indeed separate
+>>> for each processor, it should be fairly easy to keep track of the
+>>> mailboxes used by the kernel and process only those.
+>> Yes, that is what we should do. Again the directionality should be speci=
+fied
+>> in DT.
+> Currently we encode the shared mailboxes in DT like this:
+>
+> 	mboxes =3D <&hsp_top0 TEGRA_HSP_MBOX_TYPE_SM 0>,
+> 		 <&hsp_aon TEGRA_HSP_MBOX_TYPE_SM 1>;
+> 	mbox-names =3D "rx", "tx";
+>
+> I suppose we could change that to something like:
+>
+> 	mboxes =3D <&hsp_top0 TEGRA_HSP_MBOX_TYPE_SM (0 << 31 | 0)>,
+> 		 <&hsp_aon TEGRA_HSP_MBOX_TYPE_SM (1 << 31 | 0)>;
+>
+> Where the MSB of the mailbox index would indicate the direction. We
+> could maybe add some eye-candy to make it easier to read:
+>
+> 	mboxes =3D <&hsp_top0 TEGRA_HSP_MBOX_TYPE_SM TEGRA_HSP_MBOX_SM_RX(0)>,
+> 		 <&hsp_aon TEGRA_HSP_MBOX_TYPE_SM TEGRA_HSP_MBOX_SM_TX(1)>;
+>
+> That said, I wonder if perhaps it is safe to treat all mailboxes as
+> consumers by default and omit and direction in DT. If a mailbox is used
+> as consumer, then the CCPLEX is only interested in FULL interrupts, so
+> we enable those. The entity that shares the mailbox will write data to
+> it and is only interested in the EMPTY interrupt, which we don't touch
+> from the CCPLEX.
+>
+> For mailboxes that the CCPLEX writes to, we can reconfigure them as
+> producers by disabling the FULL interrupt and enabling the EMPTY
+> interrupt instead. We can do that the first time somebody calls the
+> mbox_send_message() on the mailbox.
+>
+> Do you see any problems with that approach?
+>
+>>> I'm not entirely clear on what the advantages are of using the per-
+>>> mailbox registers, or how they are supposed to be used. The existing
+>>> documentation doesn't really explain how these are supposed to be used
+>>> either, so I was mostly just going by trial and error.
+>> On virtualized configs, multiple VMs can use same HSP block but each VM =
+must
+>> use its own interrupt. Because all the IE registers are on the same 64 K=
+B
+>> page, the writes to the page are trapped by hypervisor, which means that
+>> enabling or disabling an interrupt via the shared IE register is pretty
+>> heavy operation. The per-mailbox IE registers are on a page accessed fre=
+ely
+>> by the IE, no need to trap.
+> Do the per-mailbox IE registers act as a second level enable, then? The
+> HSP driver would still have to set the IE register to aggregate FULL and
+> EMPTY interrupts as needed, but could then use the per-mailbox IE
+> registers to actually enable and disable (that is, unmask and mask) the
+> interrupts?
+>
+>> If a VM uses only one empty mailbox interrupt, using a dedicated "shared=
+"
+>> interrupt and disabling that in GIC could be a lighter operation, we use=
+d to
+>> do that in Parker.
+> Okay, that seems like it would somewhat complicate things and we don't
+> really support VM uses yet, so I think it best to leave that out for
+> now.
+>
+> Thierry
+>
+>> On 10/29/2018 12:39 PM, Thierry Reding wrote:
+>>> On Mon, Oct 29, 2018 at 12:04:22PM +0200, Pekka Pessi wrote:
+>>>> Hi Thierry,
+>>>>
+>>>> There is typically one entity (aux cpu or a VM running on CCPLEX) owni=
+ng the
+>>>> "empty" or producer side of mailbox (iow, waking up on empty) and anot=
+her
+>>>> entity owning the "full" or consumer side of mailbox (waking up on ful=
+l). An
+>>>> entity should not muck with the interrupts used by the opposite side.
+>>> Okay, that explains some of my observations. I was initially trying to
+>>> program interrupt enables for both FULL and EMPTY interrupts for all
+>>> mailboxes, but then I'd usually get timeouts because the consumer wasn'=
+t
+>>> responding (i.e. the SPE wasn't getting FULL interrupts for the CCPLEX'=
+s
+>>> TX mailbox).
+>>>
+>>> If I understand correctly, you're saying that the CPU should only be
+>>> using the EMPTY interrupts for it's TX mailbox (while leaving the FULL
+>>> interrupts completely untouched) and only the FULL interrupt for it's
+>>> RX mailbox (while leaving the EMPTY interrupts untouched). This is a bi=
+t
+>>> of a problem because the mailbox driver doesn't really know anything
+>>> about the direction when it starts up, so how would it make the decisio=
+n
+>>> about how to program the registers?
+>>>
+>>>> One entity typically owns one shared interrupt only.=C2=A0 For the
+>>>> BPMP/SCE/RCE/SPE HSP blocks the shared interrupt 0 is owned by the aux=
+iliary
+>>>> processor itself, the shared interrupts 1..4 are connected to LIC and =
+are
+>>>> available to other entities. The convention is to go through the inter=
+rupts
+>>>> 0..4 and then using the first available shared interrupt for both full=
+ and
+>>>> empty.
+>>> That partially matches another of my observations. It seems like we
+>>> can't use the shared interrupt 0 at all on at least the AON HSP. That's
+>>> fine because that HSP instance contains the TX mailbox for TCU and by
+>>> the current convention in the HSP driver, shared interrupt 0 would be
+>>> aggregating the FULL interrupts, which according to the above we don't
+>>> need for TX mailboxes.
+>>>
+>>> What's somewhat surprising is that you're saying that both FULL and
+>>> EMPTY interrupts should be handled by the same shared interrupt. That's
+>>> the opposite of what the recommended programming sequence is that the
+>>> TRM specifies. Why is it better to handle both FULL and EMPTY interrupt=
+s
+>>> with the same shared interrupt?
+>>>
+>>>> The interrupt functions should use a mask for mailboxes owned by kerne=
+l (in
+>>>> essence what the IE register should be for the HSP shared interrupt ow=
+ned by
+>>>> the kernel) and serve only those mailboxes owned by kernel. Note that =
+there
+>>>> is no reset for HSP in Xavier, and the IE register contents may be sta=
+le.
+>>> Would it be safe to clear all of the IE registers to 0 on driver probe?
+>>> I seem to remember trying to do that and getting similar behaviour to
+>>> what I describe above, namely that interrupts on the SPE weren't workin=
+g
+>>> anymore. I concluded that the IE register must be shared between the
+>>> various processors, even though that's somewhat suprising given that
+>>> there is no way to synchronize accesses to those registers, so their
+>>> programming would be somewhat up to chance.
+>>>
+>>> Do you know any more about these registers? If they are indeed separate
+>>> for each processor, it should be fairly easy to keep track of the
+>>> mailboxes used by the kernel and process only those. Again I don't know
+>>> how exactly to distinguish between TX and RX mailboxes because they all
+>>> start out the same and only their use defines which direction they go.
+>>> Currently this works because we program them as consumers by default.
+>>> That means we enable the FULL interrupts but keep EMPTY interrupts
+>>> disabled until a message in transmitted on the mailbox, at which point
+>>> we enable the EMPTY interrupt. I suppose at that point we should also
+>>> disable the FULL interrupt, given the above discussion.
+>>>
+>>>> And lastly, if we want to support only Xavier and later, perhaps we sh=
+ould
+>>>> be more clear in the bindings? There are no mailbox-specific interrupt
+>>>> enable registers available on Parker and your design relies on them.
+>>> That was certainly not the intention. I thought I had seen the per-
+>>> mailbox interrupt enable registers also in Tegra186 documentation, but
+>>> after double-checking they're indeed not there. I don't think the drive=
+r
+>>> currently "relies" on them because it uses them in addition to the
+>>> HSP_IE registers. I suppose that accessing them might cause aborts on
+>>> Tegra186 if they don't exist, though.
+>>>
+>>> I'm not entirely clear on what the advantages are of using the per-
+>>> mailbox registers, or how they are supposed to be used. The existing
+>>> documentation doesn't really explain how these are supposed to be used
+>>> either, so I was mostly just going by trial and error.
+>>>
+>>> Do you know anything more on how to use these registers? I can easily
+>>> make them Tegra194 specific in the code, but if they're aren't any clea=
+r
+>>> advantages, it might just be easier to stick with HSP_IE programming
+>>> only.
+>>>
+>>> Thierry
