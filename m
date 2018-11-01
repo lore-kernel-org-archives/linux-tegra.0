@@ -1,49 +1,25 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: [PATCH] drm/tegra: falcon: Validate firmware.vaddr with IS_ERR_OR_NULL
-Date: Wed, 31 Oct 2018 18:44:20 -0700
-Message-ID: <20181101014420.13366-1-nicoleotsuka@gmail.com>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH v1 0/3] clk/serial tegra: uart related fixes
+Date: Thu,  1 Nov 2018 02:52:27 +0100
+Message-ID: <20181101015230.27310-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, airlied@linux.ie, jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel@ziswiler.com>, Thierry Reding <thierry.reding@gmail.com>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Stephen Boyd <sboyd@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The firmware.vaddr might be assigned with an error code instead of
-NULL, so this patch uses an IS_ERR_OR_NULL check to fix below bug.
 
-Unable to handle kernel paging request at virtual address fffffffffffffff0
-[...]
-pc : falcon_load_firmware+0x80/0x358 [tegra_drm]
-lr : falcon_load_firmware+0x2b4/0x358 [tegra_drm]
-sp : ffff000010feb4a0
-[...]
-Call trace:
- falcon_load_firmware+0x80/0x358 [tegra_drm]
- vic_init+0x74/0x158 [tegra_drm]
- host1x_device_init+0x58/0x108 [host1x]
- tegra_drm_load+0xdc/0x2b8 [tegra_drm]
+This series features some UART related clock issue fix and clean-up.
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/gpu/drm/tegra/falcon.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/falcon.c b/drivers/gpu/drm/tegra/falcon.c
-index f685e72949d1..9126d4fc5933 100644
---- a/drivers/gpu/drm/tegra/falcon.c
-+++ b/drivers/gpu/drm/tegra/falcon.c
-@@ -141,9 +141,10 @@ int falcon_load_firmware(struct falcon *falcon)
- 	/* allocate iova space for the firmware */
- 	falcon->firmware.vaddr = falcon->ops->alloc(falcon, firmware->size,
- 						    &falcon->firmware.paddr);
--	if (!falcon->firmware.vaddr) {
-+	if (IS_ERR_OR_NULL(falcon->firmware.vaddr)) {
- 		dev_err(falcon->dev, "dma memory mapping failed\n");
--		return -ENOMEM;
-+		err = PTR_ERR(falcon->firmware.vaddr);
-+		return err ? err : -ENOMEM;
- 	}
- 
- 	/* copy firmware image into local area. this also ensures endianness */
+Marcel Ziswiler (3):
+  clk: tegra: get rid of duplicate defines
+  clk: tegra: ignore unused vfir clock shared with uartb
+  serial: tegra: fix some spelling mistakes
+
+ drivers/clk/tegra/clk-tegra-periph.c |  5 +----
+ drivers/tty/serial/serial-tegra.c    | 10 +++++-----
+ 2 files changed, 6 insertions(+), 9 deletions(-)
+
 -- 
-2.17.1
+2.14.5
