@@ -1,75 +1,67 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.14 000/143] 4.14.79-stable review
-Date: Mon, 5 Nov 2018 11:21:42 +0000
-Message-ID: <978c5bb4-d049-ba9f-bda1-43c618523046@nvidia.com>
-References: <20181102182857.064326086@linuxfoundation.org>
- <34e8a999-20e1-5e7d-863b-b0585a24e83b@roeck-us.net>
- <20181103150434.GA24235@kroah.com>
+Subject: Re: [PATCH] mfd: tps6586x: Handle interrupts on suspend
+Date: Mon, 5 Nov 2018 11:24:29 +0000
+Message-ID: <4f636dde-674a-1793-7798-c475065615a1@nvidia.com>
+References: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181103150434.GA24235@kroah.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Lee,
 
-On 03/11/2018 15:04, Greg Kroah-Hartman wrote:
-> On Sat, Nov 03, 2018 at 07:31:42AM -0700, Guenter Roeck wrote:
->> On 11/2/18 11:33 AM, Greg Kroah-Hartman wrote:
->>> This is the start of the stable review cycle for the 4.14.79 release.
->>> There are 143 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>>
->>> Responses should be made by Sun Nov  4 18:27:59 UTC 2018.
->>> Anything received after that time might be too late.
->>>
->>
->> Build results:
->> 	total: 150 pass: 149 fail: 1
->> Failed builds:
->> 	xtensa:allmodconfig
->> Qemu test results:
->> 	total: 318 pass: 318 fail: 0\
->>
->> Build failure:
->>
->> In file included from include/linux/mlx5/port.h:36:0,
->>                  from include/linux/mlx5/driver.h: In function =E2=80=98=
-mlx5_get_vector_affinity_hint=E2=80=99:
->> include/linux/mlx5/driver.h:1208:13: error:
->> 	=E2=80=98struct irq_desc=E2=80=99 has no member named =E2=80=98affinity=
-_hint=E2=80=99
->>
->> Caused by commit 19b743c448db ("net/mlx5: Fix mlx5_get_vector_affinity f=
-unction").
->=20
-> Odd, this should be fixed by a later patch in the same queue, as 0 day
-> also reported this.
->=20
-> Yes, e3ca34880652 ("net/mlx5: Fix build break when CONFIG_SMP=3Dn") in th=
-e
-> 4.14 tree should resolve this.  Ah, Sasha added it at the "last minute"
-> after I did the -rc1 release.  So this should be resolved now, I'll push
-> out a -rc2 so that it can be verified...
+On 19/10/2018 14:22, Jon Hunter wrote:
+> From: Jonathan Hunter <jonathanh@nvidia.com>
+> 
+> The tps6586x driver creates an irqchip that is used by its various child
+> devices for managing interrupts. The tps6586x-rtc device is one of its
+> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
+> a wake-up device from suspend, the following is seen:
+> 
+>  PM: Syncing filesystems ... done.
+>  Freezing user space processes ... (elapsed 0.001 seconds) done.
+>  OOM killer disabled.
+>  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
+>  Disabling non-boot CPUs ...Hi 
+>  Entering suspend state LP1
+>  Enabling non-boot CPUs ...
+>  CPU1 is up
+>  tps6586x 3-0034: failed to read interrupt status
+>  tps6586x 3-0034: failed to read interrupt status
+> 
+> The reason why the tps6586x interrupt status cannot be read is because
+> the tps6586x interrupt is not masked during suspend and when the
+> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
+> seen before the i2c controller has been resumed in order to read the
+> tps6586x interrupt status.
+> 
+> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
+> suspend, which gets propagated to the parent tps6586x interrupt.
+> However, the tps6586x-rtc driver cannot disable it's interrupt during
+> suspend otherwise we would never be woken up and so the tps6586x must
+> disable it's interrupt instead.
+> 
+> Prevent the tps6586x interrupt handler from executing on exiting suspend
+> before the i2c controller has been resumed by disabling the tps6586x
+> interrupt on entering suspend and re-enabling it on resuming from
+> suspend.
+> 
+> Cc: stable@vger.kernel.org
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
 
-All tests are passing for Tegra ...
-
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
-
-Linux version:	4.14.79-rc2-gb825fd9
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+Thierry and Dmitry have acked/reviewed this, let me know if you have any
+comments.
 
 Cheers
 Jon
 
---=20
+-- 
 nvpublic
