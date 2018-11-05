@@ -1,67 +1,135 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] mfd: tps6586x: Handle interrupts on suspend
-Date: Mon, 5 Nov 2018 11:24:29 +0000
-Message-ID: <4f636dde-674a-1793-7798-c475065615a1@nvidia.com>
-References: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH v2 03/17] dt-bindings: cpufreq: Add binding for
+ NVIDIA Tegra20/30
+Date: Mon, 5 Nov 2018 15:30:00 -0600
+Message-ID: <20181105213000.GA13425@bogus>
+References: <20181021205501.23943-1-digetx@gmail.com>
+ <20181021205501.23943-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181021205501.23943-4-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lee,
-
-On 19/10/2018 14:22, Jon Hunter wrote:
-> From: Jonathan Hunter <jonathanh@nvidia.com>
+On Sun, Oct 21, 2018 at 11:54:47PM +0300, Dmitry Osipenko wrote:
+> Add device-tree binding that describes CPU frequency-scaling hardware
+> found on NVIDIA Tegra20/30 SoC's.
 > 
-> The tps6586x driver creates an irqchip that is used by its various child
-> devices for managing interrupts. The tps6586x-rtc device is one of its
-> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
-> a wake-up device from suspend, the following is seen:
-> 
->  PM: Syncing filesystems ... done.
->  Freezing user space processes ... (elapsed 0.001 seconds) done.
->  OOM killer disabled.
->  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->  Disabling non-boot CPUs ...Hi 
->  Entering suspend state LP1
->  Enabling non-boot CPUs ...
->  CPU1 is up
->  tps6586x 3-0034: failed to read interrupt status
->  tps6586x 3-0034: failed to read interrupt status
-> 
-> The reason why the tps6586x interrupt status cannot be read is because
-> the tps6586x interrupt is not masked during suspend and when the
-> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
-> seen before the i2c controller has been resumed in order to read the
-> tps6586x interrupt status.
-> 
-> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
-> suspend, which gets propagated to the parent tps6586x interrupt.
-> However, the tps6586x-rtc driver cannot disable it's interrupt during
-> suspend otherwise we would never be woken up and so the tps6586x must
-> disable it's interrupt instead.
-> 
-> Prevent the tps6586x interrupt handler from executing on exiting suspend
-> before the i2c controller has been resumed by disabling the tps6586x
-> interrupt on entering suspend and re-enabling it on resuming from
-> suspend.
-> 
-> Cc: stable@vger.kernel.org
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
+>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 96 +++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> new file mode 100644
+> index 000000000000..a8023ea7a99f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> @@ -0,0 +1,96 @@
+> +Binding for NVIDIA Tegra20 CPUFreq
+> +==================================
+> +
+> +Required properties:
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +  - pll_x: main-parent for CPU clock, must be the first entry
+> +  - intermediate: intermediate-parent for CPU clock
+> +  - cclk: the CPU clock
+> +- operating-points-v2: See ../bindings/opp/opp.txt for details.
+> +- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
+> +
+> +For each opp entry in 'operating-points-v2' table:
+> +- opp-supported-hw: Two bitfields indicating:
+> +	On Tegra20:
+> +	1. CPU process ID mask
+> +	2. SoC speedo ID mask
+> +
+> +	On Tegra30:
+> +	1. CPU process ID mask
+> +	2. CPU speedo ID mask
+> +
+> +	A bitwise AND is performed against these values and if any bit
+> +	matches, the OPP gets enabled.
+> +
+> +- opp-microvolt: CPU voltage triplet.
+> +
+> +Optional properties:
+> +- cpu-supply: Phandle to the CPU power supply.
+> +- core-supply: Phandle to the CORE power supply.
+> +- rtc-supply: Phandle to the RTC power supply, required only for Tegra20.
+> +
+> +Voltage supply requirements:
+> +- Tegra20:
+> +	CORE and RTC regulators must be coupled using the regulator-coupled-with
+> +	property and regulator-coupled-max-spread property must be set to no
+> +	more than 170mV.
+> +
+> +	See ../regulator/regulator.txt for more detail about the properties.
+> +
+> +- Tegra30:
+> +	CORE and CPU regulators must be coupled using the regulator-coupled-with
+> +	property and regulator-coupled-max-spread property must be set to no
+> +	more than 300mV. Each of CORE and CPU regulators must set
+> +	regulator-max-step-microvolt property to no more than 100mV.
+> +
+> +	See ../regulator/regulator.txt for more detail about the properties.
+> +
+> +
+> +Example:
+> +	regulators {
+> +		cpu_reg: regulator0 {
+> +			regulator-name = "vdd_cpu";
+> +		};
+> +
+> +		core_reg: regulator1 {
+> +			regulator-name = "vdd_core";
+> +			regulator-coupled-with = <&rtc_reg>;
+> +			regulator-coupled-max-spread = <170000>;
+> +		};
+> +
+> +		rtc_reg: regulator2 {
+> +			regulator-name = "vdd_rtc";
+> +			regulator-coupled-with = <&core_reg>;
+> +			regulator-coupled-max-spread = <170000>;
+> +		};
+> +	};
+> +
+> +	cpu0_opp_table: opp_table0 {
+> +		compatible = "operating-points-v2";
+> +
+> +		opp@456000000 {
+> +			clock-latency-ns = <125000>;
+> +			opp-microvolt = <825000 825000 1125000>;
+> +			opp-supported-hw = <0x03 0x0001>;
+> +			opp-hz = /bits/ 64 <456000000>;
+> +		};
+> +
+> +		...
+> +	};
+> +
+> +	cpus {
+> +		cpu@0 {
+> +			compatible = "arm,cortex-a9";
+> +			clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
+> +				 <&tegra_car TEGRA20_CLK_PLL_P>,
+> +				 <&tegra_car TEGRA20_CLK_CCLK>;
+> +			clock-names = "pll_x", "intermediate", "cclk";
 
-Thierry and Dmitry have acked/reviewed this, let me know if you have any
-comments.
+I still object to having clocks (and supplies) which don't reflect the 
+h/w and are documented in the CA9 TRM.
 
-Cheers
-Jon
+> +			operating-points-v2 = <&cpu0_opp_table>;
+> +			cpu-supply = <&cpu_reg>;
+> +			core-supply = <&core_reg>;
+> +			rtc-supply = <&rtc_reg>;
 
--- 
-nvpublic
+Supplies are suspect too, but perhaps supplies and power domains are 
+beyond the scope of the TRM and part of the physical design.
+
+Rob
