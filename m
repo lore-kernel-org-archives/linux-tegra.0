@@ -1,135 +1,155 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC PATCH v2 03/17] dt-bindings: cpufreq: Add binding for
- NVIDIA Tegra20/30
-Date: Mon, 5 Nov 2018 15:30:00 -0600
-Message-ID: <20181105213000.GA13425@bogus>
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-4-digetx@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] drm/nouveau: tegra: Initialize mode configuration
+Date: Tue,  6 Nov 2018 17:24:15 +0100
+Message-ID: <20181106162415.3578-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181021205501.23943-4-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ben Skeggs <bskeggs@redhat.com>
+Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Oct 21, 2018 at 11:54:47PM +0300, Dmitry Osipenko wrote:
-> Add device-tree binding that describes CPU frequency-scaling hardware
-> found on NVIDIA Tegra20/30 SoC's.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 96 +++++++++++++++++++
->  1 file changed, 96 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-> new file mode 100644
-> index 000000000000..a8023ea7a99f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-> @@ -0,0 +1,96 @@
-> +Binding for NVIDIA Tegra20 CPUFreq
-> +==================================
-> +
-> +Required properties:
-> +- clocks: Must contain an entry for each entry in clock-names.
-> +  See ../clocks/clock-bindings.txt for details.
-> +- clock-names: Must include the following entries:
-> +  - pll_x: main-parent for CPU clock, must be the first entry
-> +  - intermediate: intermediate-parent for CPU clock
-> +  - cclk: the CPU clock
-> +- operating-points-v2: See ../bindings/opp/opp.txt for details.
-> +- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
-> +
-> +For each opp entry in 'operating-points-v2' table:
-> +- opp-supported-hw: Two bitfields indicating:
-> +	On Tegra20:
-> +	1. CPU process ID mask
-> +	2. SoC speedo ID mask
-> +
-> +	On Tegra30:
-> +	1. CPU process ID mask
-> +	2. CPU speedo ID mask
-> +
-> +	A bitwise AND is performed against these values and if any bit
-> +	matches, the OPP gets enabled.
-> +
-> +- opp-microvolt: CPU voltage triplet.
-> +
-> +Optional properties:
-> +- cpu-supply: Phandle to the CPU power supply.
-> +- core-supply: Phandle to the CORE power supply.
-> +- rtc-supply: Phandle to the RTC power supply, required only for Tegra20.
-> +
-> +Voltage supply requirements:
-> +- Tegra20:
-> +	CORE and RTC regulators must be coupled using the regulator-coupled-with
-> +	property and regulator-coupled-max-spread property must be set to no
-> +	more than 170mV.
-> +
-> +	See ../regulator/regulator.txt for more detail about the properties.
-> +
-> +- Tegra30:
-> +	CORE and CPU regulators must be coupled using the regulator-coupled-with
-> +	property and regulator-coupled-max-spread property must be set to no
-> +	more than 300mV. Each of CORE and CPU regulators must set
-> +	regulator-max-step-microvolt property to no more than 100mV.
-> +
-> +	See ../regulator/regulator.txt for more detail about the properties.
-> +
-> +
-> +Example:
-> +	regulators {
-> +		cpu_reg: regulator0 {
-> +			regulator-name = "vdd_cpu";
-> +		};
-> +
-> +		core_reg: regulator1 {
-> +			regulator-name = "vdd_core";
-> +			regulator-coupled-with = <&rtc_reg>;
-> +			regulator-coupled-max-spread = <170000>;
-> +		};
-> +
-> +		rtc_reg: regulator2 {
-> +			regulator-name = "vdd_rtc";
-> +			regulator-coupled-with = <&core_reg>;
-> +			regulator-coupled-max-spread = <170000>;
-> +		};
-> +	};
-> +
-> +	cpu0_opp_table: opp_table0 {
-> +		compatible = "operating-points-v2";
-> +
-> +		opp@456000000 {
-> +			clock-latency-ns = <125000>;
-> +			opp-microvolt = <825000 825000 1125000>;
-> +			opp-supported-hw = <0x03 0x0001>;
-> +			opp-hz = /bits/ 64 <456000000>;
-> +		};
-> +
-> +		...
-> +	};
-> +
-> +	cpus {
-> +		cpu@0 {
-> +			compatible = "arm,cortex-a9";
-> +			clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
-> +				 <&tegra_car TEGRA20_CLK_PLL_P>,
-> +				 <&tegra_car TEGRA20_CLK_CCLK>;
-> +			clock-names = "pll_x", "intermediate", "cclk";
-
-I still object to having clocks (and supplies) which don't reflect the 
-h/w and are documented in the CA9 TRM.
-
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +			cpu-supply = <&cpu_reg>;
-> +			core-supply = <&core_reg>;
-> +			rtc-supply = <&rtc_reg>;
-
-Supplies are suspect too, but perhaps supplies and power domains are 
-beyond the scope of the TRM and part of the physical design.
-
-Rob
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCklycmVzcGVjdGl2ZSBv
+ZiB3aGV0aGVyIG9yIG5vdCB0aGUgZGV2aWNlIGhhcyBhbnkgdXNhYmxlIG91dHB1dHMsIHRoZQpt
+b2Rlc2V0dGluZyBoZWxwZXJzIHdpbGwgdHJ5IHRvIHJlZ2lzdGVyIGFsbCB0aGUgcmVzb3VyY2Vz
+IHN1Y2ggYXMgQ1JUQ3MKYW5kIHBsYW5lcy4gVW5mb3J0dW5hdGVseSwgdGhlIGhlbHBlcnMgcmVs
+eSBvbiBkcm1fbW9kZV9jb25maWdfaW5pdCgpIHRvCnByb3Blcmx5IHNldCB1cCBpbnRlcm5hbCBk
+YXRhIHN0cnVjdHVyZXMuIFNpbmNlIHRoZSBUZWdyYSBHUFUgZG9lcyBub3QKaGF2ZSBhIGRpc3Bs
+YXkgZW5naW5lLCB0aGUgTm91dmVhdSBkcml2ZXIgZG9lc24ndCBzZXQgdGhpcyB1cCBmb3IgVGVn
+cmEsCndoaWNoIHJlc3VsdHMgaW4gdGhlIGZvbGxvd2luZyBvb3BzIG9uIGRyaXZlciBwcm9iZToK
+CglbICAgMTguNzc2MjIxXSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVy
+ZWZlcmVuY2UgYXQgdmlydHVhbCBhZGRyZXNzIDAwMDAwMDZjCglbICAgMTguNzg1NDAxXSBwZ2Qg
+PSAxNmJiOTNiNwoJWyAgIDE4Ljc4OTMzMV0gWzAwMDAwMDZjXSAqcGdkPWFkNThjMDAzLCAqcG1k
+PTAwMDAwMDAwCglbICAgMTguODAwNzU3XSBJbnRlcm5hbCBlcnJvcjogT29wczogMjA2IFsjMV0g
+UFJFRU1QVCBTTVAgQVJNCglbICAgMTguODA2MjMzXSBNb2R1bGVzIGxpbmtlZCBpbjogbm91dmVh
+dSgrKSB0dG0gdGVncmFfZHJtCglbICAgMTguODExNDU3XSBDUFU6IDEgUElEOiAyNDUgQ29tbTog
+c3lzdGVtZC11ZGV2ZCBOb3QgdGFpbnRlZCA0LjIwLjAtcmMxICMzNgoJWyAgIDE4LjgxODMyNF0g
+SGFyZHdhcmUgbmFtZTogTlZJRElBIFRlZ3JhIFNvQyAoRmxhdHRlbmVkIERldmljZSBUcmVlKQoJ
+WyAgIDE4LjgyNDU5Nl0gUEMgaXMgYXQgZHJtX3BsYW5lX3JlZ2lzdGVyX2FsbCsweDE4LzB4NTAK
+CVsgICAxOC44MjQ2MDFdIExSIGlzIGF0IGRybV9tb2Rlc2V0X3JlZ2lzdGVyX2FsbCsweGMvMHg3
+MAoJWyAgIDE4LjgyNDYwNF0gcGMgOiBbPGMwNjhiOTM4Pl0gICAgbHIgOiBbPGMwNjhlNDVjPl0g
+ICAgcHNyOiBhMDAwMDExMwoJWyAgIDE4LjgyNDYwN10gc3AgOiBlZDVkZmM3MCAgaXAgOiBlZDc0
+MmQ0MCAgZnAgOiAwMDAwMDAwMAoJWyAgIDE4LjgyNDYxMF0gcjEwOiAwMDAwMDAxOCAgcjkgOiBl
+ZDc0MmQwMCAgcjggOiAwMDAwMDAwMAoJWyAgIDE4LjgyNDYxM10gcjcgOiBiZjI2YWM4MCAgcjYg
+OiAwMDAwMDAwMCAgcjUgOiBlZDE1NTY1MCAgcjQgOiBmZmZmZmZmYwoJWyAgIDE4LjgyNDYxNl0g
+cjMgOiAwMDAyZjAwMCAgcjIgOiBmZmZmZmZmZiAgcjEgOiAyZGYzMDAwMCAgcjAgOiBlZDE1NTQw
+MAoJWyAgIDE4LjgyNDYyMV0gRmxhZ3M6IE56Q3YgIElSUXMgb24gIEZJUXMgb24gIE1vZGUgU1ZD
+XzMyICBJU0EgQVJNICBTZWdtZW50IHVzZXIKCVsgICAxOC44MjQ2MjRdIENvbnRyb2w6IDMwYzUz
+ODdkICBUYWJsZTogYWViMTg4NDAgIERBQzogNTU1NTU1NTUKCVsgICAxOC44MjQ2MjhdIFByb2Nl
+c3Mgc3lzdGVtZC11ZGV2ZCAocGlkOiAyNDUsIHN0YWNrIGxpbWl0ID0gMHhjNjY5NTRjMykKCVsg
+ICAxOC44MjQ2MzNdIFN0YWNrOiAoMHhlZDVkZmM3MCB0byAweGVkNWUwMDAwKQoJWyAgIDE4Ljgy
+NDYzNl0gZmM2MDogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZWQxNTU0MDAg
+ZWQxNTU0MDAgMDAwMDAwMDAgYzA2OGU0NWMKCVsgICAxOC44MjQ2NDFdIGZjODA6IGVkMTU1NDAw
+IDAwMDAwMDAwIDAwMDAwMDAwIGMwNjc1MWE0IDAwMDAwMDAxIDAwMDAwMDAxIGZmZmZmZmZmIGZm
+ZmZmZmZmCglbICAgMTguOTA1OTM2XSBmY2EwOiBlZDVkZmNjMCBjMTIwNGM4OCBlZDE1NTQwMCAw
+MDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCBiZjI2OGM1YyBiZjFjNWNkNAoJWyAgIDE4LjkxNDEw
+OF0gZmNjMDogZWQ3MTBjMDggOTU0Mzg0N2IgMDAwMDAwMDAgZWVhMzQ4MTAgMDAwMDAwMDAgYmYy
+NjhjNWMgMDAwMDAwMDAgYzA2YTNmNjQKCVsgICAxOC45MjM2NTFdIGZjZTA6IGMxMzFkZDcwIGVl
+YTM0ODEwIGMxMzFkZDc0IDAwMDAwMDAwIDAwMDAwMDAwIGMwNmEyMDg0IGVlYTM0ODEwIGJmMjY4
+YzVjCglbICAgMTguOTMyOTM0XSBmZDAwOiBlZWEzNDg0NCBjMDZhMjNlMCAwMDAwMDAwMCBjMTIw
+NGM4OCBiZjI2YTk4MCBjMDZhMjJkNCBlZWZkMDkzYyBjMDZhMjNlMAoJWyAgIDE4Ljk0MTA5Nl0g
+ZmQyMDogMDAwMDAwMDAgZWVhMzQ4MTAgYmYyNjhjNWMgZWVhMzQ4NDQgYzA2YTIzZTAgMDAwMDAw
+MDAgYzEyMDRjODggYmYyNmE5ODAKCVsgICAxOC45NDkyNTldIGZkNDA6IDAwMDAwMDAwIGMwNmEy
+NGJjIGVlYTM4N2I0IGMxMjA0Yzg4IGJmMjY4YzVjIGMwNmEwMzhjIDAwMDAwMDAwIGVlODgzMzVj
+CglbICAgMTguOTU3NDE3XSBmZDYwOiBlZWEzODdiNCA5NTQzODQ3YiBjMTI3NWE4OCBiZjI2OGM1
+YyBlZDEyYjgwMCBjMTI3NWE4OCAwMDAwMDAwMCBjMDZhMTUyOAoJWyAgIDE4Ljk2NTU4MF0gZmQ4
+MDogYmYyNDViZTggYmYyNjhhYzggZmZmZmUwMDAgYmYyNjhjNWMgYmYyNjhhYzggZmZmZmUwMDAg
+YmYyOTIwMDAgYzA2YTMwZDgKCVsgICAxOC45NzM3NDZdIGZkYTA6IGJmMjZhYjgwIGJmMjY4YWM4
+IGZmZmZlMDAwIGJmMjkyMTcwIGMxMmNmMTYwIGMxMjA0Yzg4IGZmZmZlMDAwIGMwMjAyZGJjCglb
+ICAgMTguOTgxOTEzXSBmZGMwOiBlZDY2NzcwMCAwMDYwMDBjMCBjMDJiMjg0NCAwMDAwMDAwYyA2
+MDBkMDAxMyBiZjI2YTk4MCAwMDAwMDA0MCBjMDM2NTBmOAoJWyAgIDE4Ljk5MDA3OV0gZmRlMDog
+YTAwZDAwMTMgMmRlZmQwMDAgZWU4MDAwMDAgMDA2MDAwYzAgMDA2MDAwYzAgYzAyYjI4NDQgMDAw
+MDAwMGMgYzAzNjY2ZjQKCVsgICAxOC45OTgyNDRdIGZlMDA6IGMwMzU4MjU0IGEwMGQwMDEzIGJm
+MjZhOTgwIDk1NDM4NDdiIGJmMjZhOTgwIDAwMDAwMDAxIGVkNjY3NzAwIDAwMDAwMDAxCglbICAg
+MTkuMDA2NDA0XSBmZTIwOiBlZDFkOWVlNCBjMDJiMjg4MCBjMTIwNGM4OCBiZjI2YTk4MCAwMDAw
+MDAwMCBlZDVkZmY0MCAwMDAwMDAwMSBlZDFkOWVjMAoJWyAgIDE5LjAxNDU2OV0gZmU0MDogMDAw
+MDAwMDEgYzAyYjQ4YzggYmYyNmE5OGMgMDAwMDdmZmYgYmYyNmE5ODAgYzAyYjFhMDAgMDAwMDAw
+MDAgYzAyYjEyMTQKCVsgICAxOS4wMjI3MzVdIGZlNjA6IGJmMjZhOWM4IGJmMjZhYTgwIGJmMjZh
+YjVjIGJmMjZhYWIwIGMwYzAzODdjIGMwZTYyMzc0IGMwZGI4MGZjIGMwZGI4MTA4CglbICAgMTku
+MDMwOTAxXSBmZTgwOiBjMGRiODE2MCBjMTIwNGM4OCBiZjAwMDAwMCBlZDEyOTZjMCAwNmMxOGEy
+MCAwMDAwMDAwMCBlZDEyOTZjMCBjMTIwNGM4OAoJWyAgIDE5LjAzOTA2OF0gZmVhMDogMDAwMDAw
+MDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgNmU3MjY1NmIg
+MDAwMDZjNjUKCVsgICAxOS4wNDcyMjhdIGZlYzA6IDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAw
+IDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwCglbICAgMTkuMDU1
+MzkzXSBmZWUwOiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCA5
+NTQzODQ3YiA3ZmZmZmZmZiBjMTIwNGM4OAoJWyAgIDE5LjA2MzU1OF0gZmYwMDogMDAwMDAwMDAg
+MDAwMDAwMGYgYjZjNTFjNTggYzAyMDEyMDQgZWQ1ZGUwMDAgMDAwMDAxN2IgYmVhNzNiMGMgYzAy
+YjUxODgKCVsgICAxOS4wNzE3MjNdIGZmMjA6IDdmZmZmZmZmIDAwMDAwMDAwIDAwMDAwMDAzIGMw
+MzM0YjRjIDAwMDAwMDAyIGYxYmMxMDAwIDA2YzE4YTIwIDAwMDAwMDAwCglbICAgMTkuMDc5ODkw
+XSBmZjQwOiBmMWQwYzNhYSBmMWQyNGU4MCBmMWJjMTAwMCAwNmMxOGEyMCBmODdkOTBjMCBmODdk
+OGU2MCBmNzBkNzc5OCAwMDE2YTAwMAoJWyAgIDE5LjA4ODA1Nl0gZmY2MDogMDAxN2U3MzAgMDAw
+MDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwNTBiYTggMDAwMDAwMzkgMDAwMDAwM2EgMDAwMDAw
+MjIKCVsgICAxOS4wOTYyMTVdIGZmODA6IDAwMDAwMDAwIDAwMDAwMDEzIDAwMDAwMDAwIDk1NDM4
+NDdiIDAwMDAwMGMwIDAwMDAwMDAwIGI2YzUxYzU4IDAwMDAwMDBmCglbICAgMTkuMTA0Mzc4XSBm
+ZmEwOiAwMDAwMDE3YiBjMDIwMTFkNCAwMDAwMDAwMCBiNmM1MWM1OCAwMDAwMDAwZiBiNmM1MWM1
+OCAwMDAwMDAwMCAwMDU1OTIyMAoJWyAgIDE5LjExMjU0M10gZmZjMDogMDAwMDAwMDAgYjZjNTFj
+NTggMDAwMDAwMGYgMDAwMDAxN2IgMDAwMDAwMDAgMDAwMDAwMDAgMDA1NDY5NTggYmVhNzNiMGMK
+CVsgICAxOS4xMjA3MDhdIGZmZTA6IGJlYTczYWY4IGJlYTczYWU4IGI2YzQ0YzE0IGI2YjRiNzEw
+IDYwMGQwMDEwIDAwMDAwMDBmIDAwMDAwMDAwIDAwMDAwMDAwCglbICAgMTkuMTI4ODg0XSBbPGMw
+NjhiOTM4Pl0gKGRybV9wbGFuZV9yZWdpc3Rlcl9hbGwpIGZyb20gWzxjMDY4ZTQ1Yz5dIChkcm1f
+bW9kZXNldF9yZWdpc3Rlcl9hbGwrMHhjLzB4NzApCglbICAgMTkuMTM4MjczXSBbPGMwNjhlNDVj
+Pl0gKGRybV9tb2Rlc2V0X3JlZ2lzdGVyX2FsbCkgZnJvbSBbPGMwNjc1MWE0Pl0gKGRybV9kZXZf
+cmVnaXN0ZXIrMHgxNjgvMHgxYzQpCglbICAgMTkuMTQ3NTgxXSBbPGMwNjc1MWE0Pl0gKGRybV9k
+ZXZfcmVnaXN0ZXIpIGZyb20gWzxiZjFjNWNkND5dIChub3V2ZWF1X3BsYXRmb3JtX3Byb2JlKzB4
+NmMvMHg4OCBbbm91dmVhdV0pCglbICAgMTkuMTU3NDM0XSBbPGJmMWM1Y2Q0Pl0gKG5vdXZlYXVf
+cGxhdGZvcm1fcHJvYmUgW25vdXZlYXVdKSBmcm9tIFs8YzA2YTNmNjQ+XSAocGxhdGZvcm1fZHJ2
+X3Byb2JlKzB4NDgvMHg5OCkKCVsgICAxOS4xNjcyNTZdIFs8YzA2YTNmNjQ+XSAocGxhdGZvcm1f
+ZHJ2X3Byb2JlKSBmcm9tIFs8YzA2YTIwODQ+XSAocmVhbGx5X3Byb2JlKzB4MWUwLzB4MmNjKQoJ
+WyAgIDE5LjE3NTUxNl0gWzxjMDZhMjA4ND5dIChyZWFsbHlfcHJvYmUpIGZyb20gWzxjMDZhMjJk
+ND5dIChkcml2ZXJfcHJvYmVfZGV2aWNlKzB4NjAvMHgxNmMpCglbICAgMTkuMTgzNzc3XSBbPGMw
+NmEyMmQ0Pl0gKGRyaXZlcl9wcm9iZV9kZXZpY2UpIGZyb20gWzxjMDZhMjRiYz5dIChfX2RyaXZl
+cl9hdHRhY2grMHhkYy8weGUwKQoJWyAgIDE5LjE5MjIxMF0gWzxjMDZhMjRiYz5dIChfX2RyaXZl
+cl9hdHRhY2gpIGZyb20gWzxjMDZhMDM4Yz5dIChidXNfZm9yX2VhY2hfZGV2KzB4NzQvMHhiNCkK
+CVsgICAxOS4yMDAzODNdIFs8YzA2YTAzOGM+XSAoYnVzX2Zvcl9lYWNoX2RldikgZnJvbSBbPGMw
+NmExNTI4Pl0gKGJ1c19hZGRfZHJpdmVyKzB4MWMwLzB4MjA0KQoJWyAgIDE5LjIwODY0NF0gWzxj
+MDZhMTUyOD5dIChidXNfYWRkX2RyaXZlcikgZnJvbSBbPGMwNmEzMGQ4Pl0gKGRyaXZlcl9yZWdp
+c3RlcisweDc0LzB4MTA4KQoJWyAgIDE5LjIxNjkyOF0gWzxjMDZhMzBkOD5dIChkcml2ZXJfcmVn
+aXN0ZXIpIGZyb20gWzxiZjI5MjE3MD5dIChub3V2ZWF1X2RybV9pbml0KzB4MTcwLzB4MTAwMCBb
+bm91dmVhdV0pCglbICAgMTkuMjI2NDI5XSBbPGJmMjkyMTcwPl0gKG5vdXZlYXVfZHJtX2luaXQg
+W25vdXZlYXVdKSBmcm9tIFs8YzAyMDJkYmM+XSAoZG9fb25lX2luaXRjYWxsKzB4NTQvMHgyODQp
+CglbICAgMTkuMjM1NTU3XSBbPGMwMjAyZGJjPl0gKGRvX29uZV9pbml0Y2FsbCkgZnJvbSBbPGMw
+MmIyODgwPl0gKGRvX2luaXRfbW9kdWxlKzB4NjQvMHgyMTQpCglbICAgMTkuMjQzNjQzXSBbPGMw
+MmIyODgwPl0gKGRvX2luaXRfbW9kdWxlKSBmcm9tIFs8YzAyYjQ4Yzg+XSAobG9hZF9tb2R1bGUr
+MHgxZTMwLzB4MjRhOCkKCVsgICAxOS4yNTE2NDNdIFs8YzAyYjQ4Yzg+XSAobG9hZF9tb2R1bGUp
+IGZyb20gWzxjMDJiNTE4OD5dIChzeXNfZmluaXRfbW9kdWxlKzB4YzQvMHhkYykKCVsgICAxOS4y
+NTk0NzBdIFs8YzAyYjUxODg+XSAoc3lzX2Zpbml0X21vZHVsZSkgZnJvbSBbPGMwMjAxMWQ0Pl0g
+KF9fc3lzX3RyYWNlX3JldHVybisweDAvMHgyYykKCVsgICAxOS4yNjc4MDddIEV4Y2VwdGlvbiBz
+dGFjaygweGVkNWRmZmE4IHRvIDB4ZWQ1ZGZmZjApCglbICAgMTkuMjcyODUzXSBmZmEwOiAgICAg
+ICAgICAgICAgICAgICAwMDAwMDAwMCBiNmM1MWM1OCAwMDAwMDAwZiBiNmM1MWM1OCAwMDAwMDAw
+MCAwMDU1OTIyMAoJWyAgIDE5LjI4MTAxOF0gZmZjMDogMDAwMDAwMDAgYjZjNTFjNTggMDAwMDAw
+MGYgMDAwMDAxN2IgMDAwMDAwMDAgMDAwMDAwMDAgMDA1NDY5NTggYmVhNzNiMGMKCVsgICAxOS4y
+ODkxODJdIGZmZTA6IGJlYTczYWY4IGJlYTczYWU4IGI2YzQ0YzE0IGI2YjRiNzEwCglbICAgMTku
+Mjk0MjI0XSBDb2RlOiBlNWI1NDI1MCBlMTU1MDAwNCAwYTAwMDAwYyBlMjQ0NDAwNCAoZTU5NDMw
+NzApCglbICAgMTkuMzAwODYzXSAtLS1bIGVuZCB0cmFjZSA3Y2IyNWQzMTNiOWEzYjlkIF0tLS0K
+CkZpeCB0aGlzIGJ5IGluaXRpYWxpemluZyB0aGUgbW9kZSBjb25maWd1cmF0aW9uIHN0cnVjdHVy
+ZSBpbiB0aGUgVGVncmEKY2FzZSBhcyB3ZWxsLiBObyBvdGhlciBtb2Rlc2V0IGhlbHBlciBzZXR1
+cCBpcyByZXF1aXJlZC4KClNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52
+aWRpYS5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9wbGF0Zm9ybS5j
+IHwgNSArKysrKwogMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfcGxhdGZvcm0uYyBiL2RyaXZlcnMvZ3B1
+L2RybS9ub3V2ZWF1L25vdXZlYXVfcGxhdGZvcm0uYwppbmRleCAwMzllMjM1NDhlMDguLjFkNGM4
+OTViMzc5ZCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9wbGF0
+Zm9ybS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfcGxhdGZvcm0uYwpA
+QCAtMzQsNiArMzQsOCBAQCBzdGF0aWMgaW50IG5vdXZlYXVfcGxhdGZvcm1fcHJvYmUoc3RydWN0
+IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlpZiAoSVNfRVJSKGRybSkpCiAJCXJldHVybiBQVFJf
+RVJSKGRybSk7CiAKKwlkcm1fbW9kZV9jb25maWdfaW5pdChkcm0pOworCiAJcmV0ID0gZHJtX2Rl
+dl9yZWdpc3Rlcihkcm0sIDApOwogCWlmIChyZXQgPCAwKSB7CiAJCWRybV9kZXZfcHV0KGRybSk7
+CkBAIC00Niw3ICs0OCwxMCBAQCBzdGF0aWMgaW50IG5vdXZlYXVfcGxhdGZvcm1fcHJvYmUoc3Ry
+dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIHN0YXRpYyBpbnQgbm91dmVhdV9wbGF0Zm9ybV9y
+ZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIHsKIAlzdHJ1Y3QgZHJtX2Rldmlj
+ZSAqZGV2ID0gcGxhdGZvcm1fZ2V0X2RydmRhdGEocGRldik7CisKKwlkcm1fbW9kZV9jb25maWdf
+Y2xlYW51cChkZXYpOwogCW5vdXZlYXVfZHJtX2RldmljZV9yZW1vdmUoZGV2KTsKKwogCXJldHVy
+biAwOwogfQogCi0tIAoyLjE5LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
