@@ -1,67 +1,36 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] media: staging: tegra-vde: Change from __attribute to
- __packed.
-Date: Wed, 7 Nov 2018 15:01:08 +0300
-Message-ID: <bc0d606c-c2e7-c23d-e1a5-cb9e0a30a937@gmail.com>
-References: <20181107022324.11994-1-rafaelgoncalves@riseup.net>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL 0/3] arm64: tegra: Updates for v4.20-rc2
+Date: Wed,  7 Nov 2018 15:53:47 +0100
+Message-ID: <20181107145350.29127-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181107022324.11994-1-rafaelgoncalves@riseup.net>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: rafaelgoncalves@riseup.net, mchehab@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07.11.2018 5:23, rafaelgoncalves@riseup.net wrote:
-> From: Rafael Goncalves <rafaelgoncalves@riseup.net>
-> 
-> Correct the following warnings from checkpatch.pl:
-> 
-> WARNING: __packed is preferred over __attribute__((packed))
-> +} __attribute__((packed));
-> 
-> WARNING: __packed is preferred over __attribute__((packed))
-> +} __attribute__((packed));
-> 
-> Signed-off-by: Rafael Goncalves <rafaelgoncalves@riseup.net>
-> 
-> ---
-> 
-> Hi.
-> It's my first patch submission, please let me know if there is something
-> that I can improve.
-> ---
->  drivers/staging/media/tegra-vde/uapi.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
-> index a50c7bcae057..5ffa4afa4047 100644
-> --- a/drivers/staging/media/tegra-vde/uapi.h
-> +++ b/drivers/staging/media/tegra-vde/uapi.h
-> @@ -29,7 +29,7 @@ struct tegra_vde_h264_frame {
->  	__u32 flags;
->  
->  	__u32 reserved;
-> -} __attribute__((packed));
-> +} __packed;
->  
->  struct tegra_vde_h264_decoder_ctx {
->  	__s32 bitstream_data_fd;
-> @@ -61,7 +61,7 @@ struct tegra_vde_h264_decoder_ctx {
->  	__u8  num_ref_idx_l1_active_minus1;
->  
->  	__u32 reserved;
-> -} __attribute__((packed));
-> +} __packed;
->  
->  #define VDE_IOCTL_BASE			('v' + 0x20)
->  
-> 
+Hi ARM SoC maintainers,
 
-Hello Rafael,
+These pull requests are some follow-up changes to finally enable the
+generic power domains for the Tegra XUSB block. This builds on top of
+changes that were merged into v4.20-rc1, but because of some non-
+trivial runtime dependencies I decided to hold back on these until
+after the dust had settled.
 
-Thank you very much for the patch, but looks like it is not correct. The Userspace API header is supposed to be used by kernel and userspace, the __packed macro is available in kernel only.
+Do you think it would be possible to merge these in for v4.20-rc2? I
+realize that they are not actually fixes, but they merely add a couple
+of lines to enable the power domains for XUSB as well as the
+corresponding DT bindings.
 
-Interestingly there few places in include/uapi/ that use __packed macro, I'm wondering if they are correct. Note that GCC just won't complain about undefined qualifier, at least by default.
+Thanks,
+Thierry
