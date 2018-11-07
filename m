@@ -1,57 +1,67 @@
-From: rafaelgoncalves@riseup.net
-Subject: [PATCH] media: staging: tegra-vde: Change from __attribute to __packed.
-Date: Wed,  7 Nov 2018 00:23:24 -0200
-Message-ID: <20181107022324.11994-1-rafaelgoncalves@riseup.net>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH] media: staging: tegra-vde: Change from __attribute to
+ __packed.
+Date: Wed, 7 Nov 2018 15:01:08 +0300
+Message-ID: <bc0d606c-c2e7-c23d-e1a5-cb9e0a30a937@gmail.com>
+References: <20181107022324.11994-1-rafaelgoncalves@riseup.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181107022324.11994-1-rafaelgoncalves@riseup.net>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: digetx@gmail.com, mchehab@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
-Cc: Rafael Goncalves <rafaelgoncalves@riseup.net>
+To: rafaelgoncalves@riseup.net, mchehab@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Rafael Goncalves <rafaelgoncalves@riseup.net>
+On 07.11.2018 5:23, rafaelgoncalves@riseup.net wrote:
+> From: Rafael Goncalves <rafaelgoncalves@riseup.net>
+> 
+> Correct the following warnings from checkpatch.pl:
+> 
+> WARNING: __packed is preferred over __attribute__((packed))
+> +} __attribute__((packed));
+> 
+> WARNING: __packed is preferred over __attribute__((packed))
+> +} __attribute__((packed));
+> 
+> Signed-off-by: Rafael Goncalves <rafaelgoncalves@riseup.net>
+> 
+> ---
+> 
+> Hi.
+> It's my first patch submission, please let me know if there is something
+> that I can improve.
+> ---
+>  drivers/staging/media/tegra-vde/uapi.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
+> index a50c7bcae057..5ffa4afa4047 100644
+> --- a/drivers/staging/media/tegra-vde/uapi.h
+> +++ b/drivers/staging/media/tegra-vde/uapi.h
+> @@ -29,7 +29,7 @@ struct tegra_vde_h264_frame {
+>  	__u32 flags;
+>  
+>  	__u32 reserved;
+> -} __attribute__((packed));
+> +} __packed;
+>  
+>  struct tegra_vde_h264_decoder_ctx {
+>  	__s32 bitstream_data_fd;
+> @@ -61,7 +61,7 @@ struct tegra_vde_h264_decoder_ctx {
+>  	__u8  num_ref_idx_l1_active_minus1;
+>  
+>  	__u32 reserved;
+> -} __attribute__((packed));
+> +} __packed;
+>  
+>  #define VDE_IOCTL_BASE			('v' + 0x20)
+>  
+> 
 
-Correct the following warnings from checkpatch.pl:
+Hello Rafael,
 
-WARNING: __packed is preferred over __attribute__((packed))
-+} __attribute__((packed));
+Thank you very much for the patch, but looks like it is not correct. The Userspace API header is supposed to be used by kernel and userspace, the __packed macro is available in kernel only.
 
-WARNING: __packed is preferred over __attribute__((packed))
-+} __attribute__((packed));
-
-Signed-off-by: Rafael Goncalves <rafaelgoncalves@riseup.net>
-
----
-
-Hi.
-It's my first patch submission, please let me know if there is something
-that I can improve.
----
- drivers/staging/media/tegra-vde/uapi.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
-index a50c7bcae057..5ffa4afa4047 100644
---- a/drivers/staging/media/tegra-vde/uapi.h
-+++ b/drivers/staging/media/tegra-vde/uapi.h
-@@ -29,7 +29,7 @@ struct tegra_vde_h264_frame {
- 	__u32 flags;
- 
- 	__u32 reserved;
--} __attribute__((packed));
-+} __packed;
- 
- struct tegra_vde_h264_decoder_ctx {
- 	__s32 bitstream_data_fd;
-@@ -61,7 +61,7 @@ struct tegra_vde_h264_decoder_ctx {
- 	__u8  num_ref_idx_l1_active_minus1;
- 
- 	__u32 reserved;
--} __attribute__((packed));
-+} __packed;
- 
- #define VDE_IOCTL_BASE			('v' + 0x20)
- 
--- 
-2.19.1
+Interestingly there few places in include/uapi/ that use __packed macro, I'm wondering if they are correct. Note that GCC just won't complain about undefined qualifier, at least by default.
