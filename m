@@ -1,53 +1,134 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v1 10/11] regulator: core: Use ww_mutex for regulators
- locking
-Date: Thu, 8 Nov 2018 13:07:14 +0000
-Message-ID: <20181108130714.GE6675@sirena.org.uk>
-References: <20181005153638.1886-1-digetx@gmail.com>
- <20181005153638.1886-11-digetx@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] mailbox: tegra-hsp: use devm_kstrdup_const()
+Date: Thu,  8 Nov 2018 17:46:10 +0100
+Message-ID: <20181108164610.28361-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2qXFWqzzG3v1+95a"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181005153638.1886-11-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Maciej Purski <m.purski@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Lucas Stach <l.stach@pengutronix.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-tegra@vger.kernel.org
 
+Use devm_kstrdup_const() in the tegra-hsp driver. This mostly serves as
+an example of how to use this new routine to shrink driver code.
 
---2qXFWqzzG3v1+95a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Also use devm_kzalloc() instead of regular kzalloc() to shrink the
+driver even more.
 
-On Fri, Oct 05, 2018 at 06:36:37PM +0300, Dmitry Osipenko wrote:
+Doorbell objects are only removed in the driver's remove callback so
+it's safe to convert all memory allocations to devres.
 
-> Wait/wound mutex shall be used in order to avoid lockups on locking of
-> coupled regulators.
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ drivers/mailbox/tegra-hsp.c | 41 ++++++++-----------------------------
+ 1 file changed, 9 insertions(+), 32 deletions(-)
 
-This breaks the build due to a few of the drivers (wm8350 and da9210 at
-least) taking rdev locks in their interrupt handlers.  I'd suggest
-adding a function for those drivers to use - exposing the ww context
-seems like the wrong thing to do there.
-
-Otherwise the series looks good, I've applied everything up to here.
-Thanks for taking the time to pick this up, and especially for figuring
-out the ww_mutex conversion.
-
---2qXFWqzzG3v1+95a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvkNQIACgkQJNaLcl1U
-h9CBHgf+NUaKw5RG4K/VmM+a/RA5SHTaEUvbBkj0rbZxteC/KbFdAKRHaHyEMfdO
-INQon26sjFFX8o8qiiYJHfFkWnJN1tKxODp474RfIL/Sy5U8pNMUfjUPS52qgd56
-1onsQCk0cqWlswJAvntF5Ui7XW3MwZXL0xm4/QQsU8yiET9lR2nG8p5Y/Fnn+Enx
-9phPizZN1F8+DolLlTjMvuGQXOGXxg8K/UZMHFE3Wtni3aaCGnQsv+eZvge/ga8h
-wrxfR9cB7usKdNOFHr0lRwHTrKP0nBus0hgeaGBGGcv5Le3IGLJ4jeVBpolui+jd
-1m7N+z7cn27BHlChofvH/ST5ypkq4w==
-=oaPc
------END PGP SIGNATURE-----
-
---2qXFWqzzG3v1+95a--
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 0cde356c11ab..106c94dedbf1 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -183,14 +183,15 @@ static irqreturn_t tegra_hsp_doorbell_irq(int irq, void *data)
+ }
+ 
+ static struct tegra_hsp_channel *
+-tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+-			  unsigned int master, unsigned int index)
++tegra_hsp_doorbell_create(struct device *dev, struct tegra_hsp *hsp,
++			  const char *name, unsigned int master,
++			  unsigned int index)
+ {
+ 	struct tegra_hsp_doorbell *db;
+ 	unsigned int offset;
+ 	unsigned long flags;
+ 
+-	db = kzalloc(sizeof(*db), GFP_KERNEL);
++	db = devm_kzalloc(dev, sizeof(*db), GFP_KERNEL);
+ 	if (!db)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -200,7 +201,7 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+ 	db->channel.regs = hsp->regs + offset;
+ 	db->channel.hsp = hsp;
+ 
+-	db->name = kstrdup_const(name, GFP_KERNEL);
++	db->name = devm_kstrdup_const(dev, name, GFP_KERNEL);
+ 	db->master = master;
+ 	db->index = index;
+ 
+@@ -211,13 +212,6 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+ 	return &db->channel;
+ }
+ 
+-static void __tegra_hsp_doorbell_destroy(struct tegra_hsp_doorbell *db)
+-{
+-	list_del(&db->list);
+-	kfree_const(db->name);
+-	kfree(db);
+-}
+-
+ static int tegra_hsp_doorbell_send_data(struct mbox_chan *chan, void *data)
+ {
+ 	struct tegra_hsp_doorbell *db = chan->con_priv;
+@@ -332,31 +326,16 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
+ 	return chan ?: ERR_PTR(-EBUSY);
+ }
+ 
+-static void tegra_hsp_remove_doorbells(struct tegra_hsp *hsp)
+-{
+-	struct tegra_hsp_doorbell *db, *tmp;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hsp->lock, flags);
+-
+-	list_for_each_entry_safe(db, tmp, &hsp->doorbells, list)
+-		__tegra_hsp_doorbell_destroy(db);
+-
+-	spin_unlock_irqrestore(&hsp->lock, flags);
+-}
+-
+-static int tegra_hsp_add_doorbells(struct tegra_hsp *hsp)
++static int tegra_hsp_add_doorbells(struct device *dev, struct tegra_hsp *hsp)
+ {
+ 	const struct tegra_hsp_db_map *map = hsp->soc->map;
+ 	struct tegra_hsp_channel *channel;
+ 
+ 	while (map->name) {
+-		channel = tegra_hsp_doorbell_create(hsp, map->name,
++		channel = tegra_hsp_doorbell_create(dev, hsp, map->name,
+ 						    map->master, map->index);
+-		if (IS_ERR(channel)) {
+-			tegra_hsp_remove_doorbells(hsp);
++		if (IS_ERR(channel))
+ 			return PTR_ERR(channel);
+-		}
+ 
+ 		map++;
+ 	}
+@@ -412,7 +391,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	if (!hsp->mbox.chans)
+ 		return -ENOMEM;
+ 
+-	err = tegra_hsp_add_doorbells(hsp);
++	err = tegra_hsp_add_doorbells(&pdev->dev, hsp);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to add doorbells: %d\n", err);
+ 		return err;
+@@ -423,7 +402,6 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	err = mbox_controller_register(&hsp->mbox);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to register mailbox: %d\n", err);
+-		tegra_hsp_remove_doorbells(hsp);
+ 		return err;
+ 	}
+ 
+@@ -443,7 +421,6 @@ static int tegra_hsp_remove(struct platform_device *pdev)
+ 	struct tegra_hsp *hsp = platform_get_drvdata(pdev);
+ 
+ 	mbox_controller_unregister(&hsp->mbox);
+-	tegra_hsp_remove_doorbells(hsp);
+ 
+ 	return 0;
+ }
+-- 
+2.19.1
