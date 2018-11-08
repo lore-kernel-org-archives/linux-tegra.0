@@ -1,49 +1,43 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 0/3] arm64: tegra: Updates for v4.20-rc2
-Date: Wed, 7 Nov 2018 08:31:55 -0800
-Message-ID: <CAOesGMjcOQif8H6b5afKBwYstkbzGC7wuUcN2Srz=vJz11qSnA@mail.gmail.com>
-References: <20181107145350.29127-1-thierry.reding@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] media: staging: tegra-vde: print long unsigned using %lu format specifier
+Date: Thu,  8 Nov 2018 11:02:24 +0000
+Message-ID: <20181108110224.1916-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181107145350.29127-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, ARM-SoC Maintainers <arm@kernel.org>, Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wed, Nov 7, 2018 at 6:53 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> Hi ARM SoC maintainers,
->
-> These pull requests are some follow-up changes to finally enable the
-> generic power domains for the Tegra XUSB block. This builds on top of
-> changes that were merged into v4.20-rc1, but because of some non-
-> trivial runtime dependencies I decided to hold back on these until
-> after the dust had settled.
->
-> Do you think it would be possible to merge these in for v4.20-rc2? I
-> realize that they are not actually fixes, but they merely add a couple
-> of lines to enable the power domains for XUSB as well as the
-> corresponding DT bindings.
+The frame.flags & FLAG_B_FRAME is promoted to a long unsigned because
+of the use of the BIT() macro when defining FLAG_B_FRAME and causing a
+build warning. Fix this by using the %lu format specifer.
 
-Is anything broken without these changes, or is it more that the
-dependency have landed and you're itching to get things enabled?
+Cleans up warning:
+drivers/staging/media/tegra-vde/tegra-vde.c:267:5: warning: format
+specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
 
-If it's the former we should chat (since it's an unfortunate
-situation). If it's the latter I'm happy to queue them up for the next
-merge window.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/tegra-vde/tegra-vde.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
--Olof
+diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+index 6f06061a40d9..66cf14212c14 100644
+--- a/drivers/staging/media/tegra-vde/tegra-vde.c
++++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+@@ -262,7 +262,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+ 			value |= frame->frame_num;
+ 
+ 			dev_dbg(vde->miscdev.parent,
+-				"\tFrame %d: frame_num = %d B_frame = %d\n",
++				"\tFrame %d: frame_num = %d B_frame = %lu\n",
+ 				i + 1, frame->frame_num,
+ 				(frame->flags & FLAG_B_FRAME));
+ 		} else {
+-- 
+2.19.1
