@@ -1,134 +1,157 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH] mailbox: tegra-hsp: use devm_kstrdup_const()
-Date: Thu,  8 Nov 2018 17:46:10 +0100
-Message-ID: <20181108164610.28361-1-brgl@bgdev.pl>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [RFC PATCH v2 03/17] dt-bindings: cpufreq: Add binding for NVIDIA
+ Tegra20/30
+Date: Thu, 8 Nov 2018 19:48:16 +0300
+Message-ID: <0fc53853-862c-4cc3-6548-d347bc68bdd6@gmail.com>
+References: <20181021205501.23943-1-digetx@gmail.com>
+ <20181021205501.23943-4-digetx@gmail.com> <20181105213000.GA13425@bogus>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181105213000.GA13425@bogus>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+To: Rob Herring <robh@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_kstrdup_const() in the tegra-hsp driver. This mostly serves as
-an example of how to use this new routine to shrink driver code.
+On 06.11.2018 0:30, Rob Herring wrote:
+> On Sun, Oct 21, 2018 at 11:54:47PM +0300, Dmitry Osipenko wrote:
+>> Add device-tree binding that describes CPU frequency-scaling hardware
+>> found on NVIDIA Tegra20/30 SoC's.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 96 +++++++++++++++++++
+>>  1 file changed, 96 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>> new file mode 100644
+>> index 000000000000..a8023ea7a99f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>> @@ -0,0 +1,96 @@
+>> +Binding for NVIDIA Tegra20 CPUFreq
+>> +==================================
+>> +
+>> +Required properties:
+>> +- clocks: Must contain an entry for each entry in clock-names.
+>> +  See ../clocks/clock-bindings.txt for details.
+>> +- clock-names: Must include the following entries:
+>> +  - pll_x: main-parent for CPU clock, must be the first entry
+>> +  - intermediate: intermediate-parent for CPU clock
+>> +  - cclk: the CPU clock
+>> +- operating-points-v2: See ../bindings/opp/opp.txt for details.
+>> +- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
+>> +
+>> +For each opp entry in 'operating-points-v2' table:
+>> +- opp-supported-hw: Two bitfields indicating:
+>> +	On Tegra20:
+>> +	1. CPU process ID mask
+>> +	2. SoC speedo ID mask
+>> +
+>> +	On Tegra30:
+>> +	1. CPU process ID mask
+>> +	2. CPU speedo ID mask
+>> +
+>> +	A bitwise AND is performed against these values and if any bit
+>> +	matches, the OPP gets enabled.
+>> +
+>> +- opp-microvolt: CPU voltage triplet.
+>> +
+>> +Optional properties:
+>> +- cpu-supply: Phandle to the CPU power supply.
+>> +- core-supply: Phandle to the CORE power supply.
+>> +- rtc-supply: Phandle to the RTC power supply, required only for Tegra20.
+>> +
+>> +Voltage supply requirements:
+>> +- Tegra20:
+>> +	CORE and RTC regulators must be coupled using the regulator-coupled-with
+>> +	property and regulator-coupled-max-spread property must be set to no
+>> +	more than 170mV.
+>> +
+>> +	See ../regulator/regulator.txt for more detail about the properties.
+>> +
+>> +- Tegra30:
+>> +	CORE and CPU regulators must be coupled using the regulator-coupled-with
+>> +	property and regulator-coupled-max-spread property must be set to no
+>> +	more than 300mV. Each of CORE and CPU regulators must set
+>> +	regulator-max-step-microvolt property to no more than 100mV.
+>> +
+>> +	See ../regulator/regulator.txt for more detail about the properties.
+>> +
+>> +
+>> +Example:
+>> +	regulators {
+>> +		cpu_reg: regulator0 {
+>> +			regulator-name = "vdd_cpu";
+>> +		};
+>> +
+>> +		core_reg: regulator1 {
+>> +			regulator-name = "vdd_core";
+>> +			regulator-coupled-with = <&rtc_reg>;
+>> +			regulator-coupled-max-spread = <170000>;
+>> +		};
+>> +
+>> +		rtc_reg: regulator2 {
+>> +			regulator-name = "vdd_rtc";
+>> +			regulator-coupled-with = <&core_reg>;
+>> +			regulator-coupled-max-spread = <170000>;
+>> +		};
+>> +	};
+>> +
+>> +	cpu0_opp_table: opp_table0 {
+>> +		compatible = "operating-points-v2";
+>> +
+>> +		opp@456000000 {
+>> +			clock-latency-ns = <125000>;
+>> +			opp-microvolt = <825000 825000 1125000>;
+>> +			opp-supported-hw = <0x03 0x0001>;
+>> +			opp-hz = /bits/ 64 <456000000>;
+>> +		};
+>> +
+>> +		...
+>> +	};
+>> +
+>> +	cpus {
+>> +		cpu@0 {
+>> +			compatible = "arm,cortex-a9";
+>> +			clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
+>> +				 <&tegra_car TEGRA20_CLK_PLL_P>,
+>> +				 <&tegra_car TEGRA20_CLK_CCLK>;
+>> +			clock-names = "pll_x", "intermediate", "cclk";
+> 
+> I still object to having clocks (and supplies) which don't reflect the 
+> h/w and are documented in the CA9 TRM.
+> 
+>> +			operating-points-v2 = <&cpu0_opp_table>;
+>> +			cpu-supply = <&cpu_reg>;
+>> +			core-supply = <&core_reg>;
+>> +			rtc-supply = <&rtc_reg>;
+> 
+> Supplies are suspect too, but perhaps supplies and power domains are 
+> beyond the scope of the TRM and part of the physical design.
 
-Also use devm_kzalloc() instead of regular kzalloc() to shrink the
-driver even more.
+Is it possible to have a "firmware" device-tree node specifically for cpufreq driver? Something like this:
 
-Doorbell objects are only removed in the driver's remove callback so
-it's safe to convert all memory allocations to devres.
+cpufreq {
+	compatible = "nvidia,tegra20-cpufreq";
+	clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
+		 <&tegra_car TEGRA20_CLK_PLL_P>;
+	clock-names = "pll_x", "intermediate";
+};
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/mailbox/tegra-hsp.c | 41 ++++++++-----------------------------
- 1 file changed, 9 insertions(+), 32 deletions(-)
+We may also need a Tegra-specific DVFS helper-driver that will help to manage CPU-CORE voltage dependency. Yet I'll have to examine this all in more details, but maybe it will be nicer if DVFS could be instantiated via device-tree as well. It will provide a Tegra-specific DVFS API and manage CORE / RTC dependencies for the CPUFreq and peripheral drivers, also helping to maintain proper voltages during kernel boot-up until all drivers are brought into action.
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 0cde356c11ab..106c94dedbf1 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -183,14 +183,15 @@ static irqreturn_t tegra_hsp_doorbell_irq(int irq, void *data)
- }
- 
- static struct tegra_hsp_channel *
--tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
--			  unsigned int master, unsigned int index)
-+tegra_hsp_doorbell_create(struct device *dev, struct tegra_hsp *hsp,
-+			  const char *name, unsigned int master,
-+			  unsigned int index)
- {
- 	struct tegra_hsp_doorbell *db;
- 	unsigned int offset;
- 	unsigned long flags;
- 
--	db = kzalloc(sizeof(*db), GFP_KERNEL);
-+	db = devm_kzalloc(dev, sizeof(*db), GFP_KERNEL);
- 	if (!db)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -200,7 +201,7 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
- 	db->channel.regs = hsp->regs + offset;
- 	db->channel.hsp = hsp;
- 
--	db->name = kstrdup_const(name, GFP_KERNEL);
-+	db->name = devm_kstrdup_const(dev, name, GFP_KERNEL);
- 	db->master = master;
- 	db->index = index;
- 
-@@ -211,13 +212,6 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
- 	return &db->channel;
- }
- 
--static void __tegra_hsp_doorbell_destroy(struct tegra_hsp_doorbell *db)
--{
--	list_del(&db->list);
--	kfree_const(db->name);
--	kfree(db);
--}
--
- static int tegra_hsp_doorbell_send_data(struct mbox_chan *chan, void *data)
- {
- 	struct tegra_hsp_doorbell *db = chan->con_priv;
-@@ -332,31 +326,16 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
- 	return chan ?: ERR_PTR(-EBUSY);
- }
- 
--static void tegra_hsp_remove_doorbells(struct tegra_hsp *hsp)
--{
--	struct tegra_hsp_doorbell *db, *tmp;
--	unsigned long flags;
--
--	spin_lock_irqsave(&hsp->lock, flags);
--
--	list_for_each_entry_safe(db, tmp, &hsp->doorbells, list)
--		__tegra_hsp_doorbell_destroy(db);
--
--	spin_unlock_irqrestore(&hsp->lock, flags);
--}
--
--static int tegra_hsp_add_doorbells(struct tegra_hsp *hsp)
-+static int tegra_hsp_add_doorbells(struct device *dev, struct tegra_hsp *hsp)
- {
- 	const struct tegra_hsp_db_map *map = hsp->soc->map;
- 	struct tegra_hsp_channel *channel;
- 
- 	while (map->name) {
--		channel = tegra_hsp_doorbell_create(hsp, map->name,
-+		channel = tegra_hsp_doorbell_create(dev, hsp, map->name,
- 						    map->master, map->index);
--		if (IS_ERR(channel)) {
--			tegra_hsp_remove_doorbells(hsp);
-+		if (IS_ERR(channel))
- 			return PTR_ERR(channel);
--		}
- 
- 		map++;
- 	}
-@@ -412,7 +391,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	if (!hsp->mbox.chans)
- 		return -ENOMEM;
- 
--	err = tegra_hsp_add_doorbells(hsp);
-+	err = tegra_hsp_add_doorbells(&pdev->dev, hsp);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to add doorbells: %d\n", err);
- 		return err;
-@@ -423,7 +402,6 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	err = mbox_controller_register(&hsp->mbox);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to register mailbox: %d\n", err);
--		tegra_hsp_remove_doorbells(hsp);
- 		return err;
- 	}
- 
-@@ -443,7 +421,6 @@ static int tegra_hsp_remove(struct platform_device *pdev)
- 	struct tegra_hsp *hsp = platform_get_drvdata(pdev);
- 
- 	mbox_controller_unregister(&hsp->mbox);
--	tegra_hsp_remove_doorbells(hsp);
- 
- 	return 0;
- }
--- 
-2.19.1
+cpufreq {
+	compatible = "nvidia,tegra20-dvfs";
+	cpu-supply = <&cpu_vdd_reg>;
+	core-supply = <&core_vdd_reg>;
+	rtc-supply = <&rtc_vdd_reg>;
+};
+
+So my question is:
+
+Is it possible to have device-tree nodes that solely describe firmware? Kernel drivers in this case.
