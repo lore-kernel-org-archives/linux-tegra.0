@@ -1,55 +1,61 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 3/4] thermal: tegra: fix memory allocation
-Date: Thu, 8 Nov 2018 13:37:59 +0100
-Message-ID: <20181108123759.GD1340@ulmo>
+Subject: Re: [PATCH v1 2/4] thermal: tegra: remove unnecessary warnings
+Date: Thu, 8 Nov 2018 13:47:16 +0100
+Message-ID: <20181108124716.GE1340@ulmo>
 References: <1541410354-19090-1-git-send-email-wni@nvidia.com>
- <1541410354-19090-4-git-send-email-wni@nvidia.com>
+ <1541410354-19090-3-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Q0rSlbzrZN6k9QnT"
+        protocol="application/pgp-signature"; boundary="//IivP0gvsAy3Can"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1541410354-19090-4-git-send-email-wni@nvidia.com>
+In-Reply-To: <1541410354-19090-3-git-send-email-wni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Wei Ni <wni@nvidia.com>
 Cc: daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Q0rSlbzrZN6k9QnT
+--//IivP0gvsAy3Can
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 05, 2018 at 05:32:33PM +0800, Wei Ni wrote:
-> Fix memory allocation to store the pointers to
-> thermal_zone_device.
+On Mon, Nov 05, 2018 at 05:32:32PM +0800, Wei Ni wrote:
+> Convert warnings to info as not all platforms may
+> have all the thresholds and sensors enabled.
 >=20
 > Signed-off-by: Wei Ni <wni@nvidia.com>
 > ---
->  drivers/thermal/tegra/soctherm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/thermal/tegra/soctherm.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+This seems overly generalized to me. Shouldn't we be checking in a more
+fine-grained way for the absence of thresholds and/or sensors?
 
---Q0rSlbzrZN6k9QnT
+Otherwise, how are going to make the difference between the sensor not
+being enabled or the device tree just missing the information?
+
+Thierry
+
+--//IivP0gvsAy3Can
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvkLicACgkQ3SOs138+
-s6Elsw/5Aas+YpgirvdZ9IdbdolpHjvFwEAU5+cQ2nOUQvXW0loVcY76EtIB/OJr
-rktUB0oZQxBk8M6Lhnkv01QozK48scohs25UrWX3SjUqRe/rDXIA1a+Q6O38PllB
-oeLReEiMMlL7qxkrRaLuvgHWsJm9cbnFiKvVPxxv46fmADRHEgORAleHqMwV0HuN
-XiopKVT4VQpCvLVGwYhaT7RmvPQMQih99a62QDYRdqxZ7LkDA7SVu6YaAjfjfd8/
-Q3MurcL1sJHimXNaApcUJYXkuo8Gc8LR5CQxDt7KFyBqcCBbBB4wnY8T+BP5J8Mj
-DG9ktJkuFj6/tHae2C6XiHrLQRLhCqiCpa2R2TSdfEayiuayQeppRwCzjZA0YpXr
-y0L8FJV9+kqP6lsmA+reaNyFIJpLro9sCUCHl2Tgq1XR4N8AsPo9t8QNMGYhBT51
-Qv6XQ5uUoiRE1hYDprgYX8QGn310jbmfHMNftyCs00m5imq/HAa5YG0jRQfZZYuM
-GTxn6/OQl3VMdJiUsnP8rUaWmPsTtk+aHe57DCPKIuo/fA1RtSIJrmXW5NWbGpl2
-FMfJCGp2I8LRwXD6VWKqVCseho91c7vF9o4Aa3dVLyFz6yjCerk8G94PqClfd0y+
-/ZvctjOnfpUm0TLA87YmUhR7ps7i50HnaZGm5m4zgVU09A1vEaY=
-=rsVD
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvkMFQACgkQ3SOs138+
+s6F4jg//eykG4e686ZgdA9mjgaTVyiWazRPnNRZltx4cwNrs88mrv6otJIpB0Zja
+r0OfWP0r4Qrd5VU65jTCBar82zcwd0KCfji/tUuHUjuTJY8qDSTLYZgVOQlC6g4b
+bKbyllgzM9SHm4QbPtntAst5FFXaTncS8Kcf9yypj7GNKV6N/BSYdjl1w8uDUlLf
+ZIYCQSEhpBTgKNZLz6RFsYRpwO2VDMVZyanU4YiqyEx+Lb/QTyKsgiT1RQguYmZb
+mgZM8TmDjtsr9gPQ756ukKScsHBZIef6ZwI4DnTjDHok3CSZ6Gwmf7SuspZMd95e
+FK1ZIH4bjvxLuSy2i3sXVS6flkk/+wJfTcqN0Bn6fR7oIO2LojdNaqFS2ZGEBzQP
+B/G58yGG1x7+oRXT9WD0pm/bmGO1kHIuyyGdXsiQYonbN+qBS0neUVEDuqpFC4MW
+PUzOCTeBk+mdtjXlpFwWhszBOdpksEKO6gRPqtCg9ntL78PwV60of9GP2ke3/L/N
+B/IM+42p17PajGduP2j5md8zUtdOxunZaOSUeTzv+tIz/dKuhMglSv2VIpdQJ+w8
+bAkSICsj6wMGn2+VEuoFqv0VD8jZh+7JWdJ1uSIPnleBM/t677BWEcvB+4idVY9J
+E2gLQzXto0uNx6k0w+V6NhTBmpHzw152KouCrLHjMjiA74jFG78=
+=R2u5
 -----END PGP SIGNATURE-----
 
---Q0rSlbzrZN6k9QnT--
+--//IivP0gvsAy3Can--
