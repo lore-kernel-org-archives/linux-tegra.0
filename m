@@ -1,32 +1,112 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 7/9] serial: Add Tegra Combined UART driver
-Date: Fri, 9 Nov 2018 09:05:26 -0800
-Message-ID: <20181109170526.GB14151@kroah.com>
-References: <20181026111638.10759-1-thierry.reding@gmail.com>
- <20181026111638.10759-8-thierry.reding@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH] of: reserved_mem: disable kmemleak scan on removed memory blocks
+Date: Fri, 9 Nov 2018 15:28:59 -0600
+Message-ID: <CAL_JsqKOH0SQRXuRW5Y5dmWeUTSxhf2Nmn_0uNLeKXFPRc549Q@mail.gmail.com>
+References: <1541747389-28544-1-git-send-email-prpatel@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181026111638.10759-8-thierry.reding@gmail.com>
+In-Reply-To: <1541747389-28544-1-git-send-email-prpatel@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Jiri Slaby <jslaby@suse.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, Pekka Pessi <ppessi@nvidia.com>, Mika Liljeberg <mliljeberg@nvidia.com>, linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: prpatel@nvidia.com
+Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, talho@nvidia.com, Stephen Warren <swarren@nvidia.com>, vdumpa@nvidia.com, snikam@nvidia.com, schowdary@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 01:16:36PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
-> multiplexing multiple "virtual UARTs" into a single hardware serial
-> port. The TCU is the primary serial port on Tegra194 devices.
-> 
-> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
-> are part of Tegra HSP blocks that are already controlled by the Tegra
-> HSP mailbox driver.
-> 
-> Based on work by  Mikko Perttunen <mperttunen@nvidia.com>.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+On Fri, Nov 9, 2018 at 1:09 AM Prateek Patel <prpatel@nvidia.com> wrote:
+>
+> From: Sri Krishna chowdary <schowdary@nvidia.com>
+>
+> Memory reserved with "nomap" DT property in of_reserved_mem.c
+> removes the memory block. The removed memory blocks don't have
+> VA to PA mapping created in kernel page table. Kmemleak scan on
+> removed memory blocks is causing page faults and leading to
+> kernel panic. So, Disable kmemleak scan on the removed memory
+> blocks.
+>
+> Following is the observed crash log:
+> [  154.846370] Unable to handle kernel paging request at virtual address =
+ffffffc070a00000
+> <1>[  154.846576] Mem abort info:
+> <1>[  154.846635]   Exception class =3D DABT (current EL), IL =3D 32 bits
+> <1>[  154.846737]   SET =3D 0, FnV =3D 0
+> <1>[  154.846796]   EA =3D 0, S1PTW =3D 0
+> <1>[  154.846859] Data abort info:
+> <1>[  154.846913]   ISV =3D 0, ISS =3D 0x00000006
+> <1>[  154.846983]   CM =3D 0, WnR =3D 0
+> <1>[  154.847053] swapper pgtable: 4k pages, 39-bit VAs, pgd =3D ffffff80=
+09df7000
+> <1>[  154.847228] [ffffffc070a00000] *pgd=3D000000087fff5803, *pud=3D0000=
+00087fff5803, *pmd=3D0000000000000000
+> <0>[  154.847408] Internal error: Oops: 96000006 [#1] PREEMPT SMP
+> <4>[  154.847511] Modules linked in: nvs_led_test nvs_bmi160 nvs_cm3218 n=
+vs_bh1730fvc nvi_bmpX80 nvi_ak89xx nvi_mpu cdc_acm uas lr388k7_ts imx268 im=
+x318 imx204 imx274 imx185 lc898212 ov23850 ov10823 ov9281 ov5693 tc358840 p=
+ca9570 nvs snd_soc_tegra_machine_driver_mobile lp855x_bl spidev input_cfboo=
+st pwm_tegra tegra_cryptodev tegra_se_nvhost tegra_se_elp tegra_se ghash_ce=
+ sha2_ce sha1_ce aes_ce_ccm cryptd nvgpu cpufreq_userspace snd_soc_tegra186=
+_alt_dspk snd_soc_tegra186_alt_asrc snd_soc_tegra186_alt_arad snd_soc_tegra=
+210_alt_ope snd_soc_tegra210_alt_mvc snd_soc_tegra210_alt_dmic snd_soc_tegr=
+a210_alt_amx snd_soc_tegra210_alt_adx snd_soc_tegra210_alt_afc snd_soc_tegr=
+a210_alt_mixer snd_soc_tegra210_alt_i2s snd_soc_tegra210_alt_sfc snd_soc_te=
+gra210_alt_adsp snd_soc_tegra210_alt_admaif snd_soc_tegra210_alt_xbar
+> <4>[  154.882606]  snd_soc_tegra_alt_utils snd_hda_tegra
+> <4>[  154.888133] CPU: 2 PID: 8079 Comm: sh Not tainted 4.14.53-tegra-051=
+32-g9c33465 #2
+> <4>[  154.895983] Hardware name: e3360_1099 (DT)
+> <4>[  154.900447] task: ffffffc7d62dda00 task.stack: ffffff800e2b0000
+> <4>[  154.906502] PC is at scan_block+0x7c/0x148
+> <4>[  154.911234] LR is at scan_block+0x78/0x148
+> <4>[  154.915689] pc : [<ffffff8008271724>] lr : [<ffffff8008271720>] pst=
+ate: 804000c9
+> <4>[  154.923290] sp : ffffff800e2b3b80
+> <4>[  154.927228] x29: ffffff800e2b3b80 x28: ffffffc7d62dda00
+> <4>[  154.932999] x27: ffffff8009aaa000 x26: ffffffc070c00000
+> <4>[  154.938769] x25: 00000000000000c0 x24: ffffff8009d90608
+> <4>[  154.944287] x23: ffffffc7dc6c6000 x22: ffffff8009d90000
+> <4>[  154.950320] x21: ffffff8009aeb320 x20: ffffffc070a00ff9
+> <4>[  154.955919] x19: ffffffc070a00000 x18: 00000000bec4c3f2
+> <4>[  154.961438] x17: 0000002224777924 x16: ffffff80080bb0e0
+> <4>[  154.967124] x15: 0000000000000000 x14: 0000000000000f75
+> <4>[  154.973069] x13: 000fffffffffffff x12: ffffffbf1e9f4240
+> <4>[  154.978670] x11: 0000000000000040 x10: 0000000000000ad0
+> <4>[  154.984107] x9 : ffffff800e2b3ab0 x8 : ffffffc7d62de530
+> <4>[  154.989958] x7 : 0000000780000000 x6 : 0000000000000018
+> <4>[  154.995645] x5 : 0000000000000000 x4 : 0000000000000000
+> <4>[  155.001245] x3 : ffffff8009aaa000 x2 : 00000047f6712000
+> <4>[  155.006846] x1 : ffffffc7d1ae6900 x0 : 0000000000000000
+>
+> Signed-off-by: Sri Krishna chowdary <schowdary@nvidia.com>
+> Signed-off-by: Prateek <prpatel@nvidia.com>
+> ---
+>  drivers/of/of_reserved_mem.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> index 1977ee0..ac8f377 100644
+> --- a/drivers/of/of_reserved_mem.c
+> +++ b/drivers/of/of_reserved_mem.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/sort.h>
+>  #include <linux/slab.h>
+>  #include <linux/memblock.h>
+> +#include <linux/kmemleak.h>
+>
+>  #define MAX_RESERVED_REGIONS   32
+>  static struct reserved_mem reserved_mem[MAX_RESERVED_REGIONS];
+> @@ -50,8 +51,10 @@ int __init __weak early_init_dt_alloc_reserved_memory_=
+arch(phys_addr_t size,
+>         }
+>
+>         *res_base =3D base;
+> -       if (nomap)
+> +       if (nomap) {
+> +               kmemleak_no_scan(__va(base));
+>                 return memblock_remove(base, size);
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I'm curious how I can't find any other similar example in the kernel.
+Please Cc some kmemleak folks.
+
+Perhaps we should be using memblock_mark_nomap() for nomap areas?
+
+Rob
