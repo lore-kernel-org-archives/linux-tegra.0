@@ -1,46 +1,81 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v1 2/4] thermal: tegra: remove unnecessary warnings
-Date: Fri, 9 Nov 2018 15:21:23 +0800
-Message-ID: <ec9e034a-2789-2433-aad7-8d493d2d67c8@nvidia.com>
-References: <1541410354-19090-1-git-send-email-wni@nvidia.com>
- <1541410354-19090-3-git-send-email-wni@nvidia.com>
- <20181108124716.GE1340@ulmo>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH] media: staging: tegra-vde: print long unsigned using %lu
+ format specifier
+Date: Fri, 9 Nov 2018 15:32:37 +0100
+Message-ID: <0b3bf728-7b7e-7250-40eb-0827f8fe955b@xs4all.nl>
+References: <20181108110224.1916-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181108124716.GE1340@ulmo>
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20181108110224.1916-1-colin.king@canonical.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Colin King <colin.king@canonical.com>, Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 11/08/18 12:02, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The frame.flags & FLAG_B_FRAME is promoted to a long unsigned because
+> of the use of the BIT() macro when defining FLAG_B_FRAME and causing a
+> build warning. Fix this by using the %lu format specifer.
+> 
+> Cleans up warning:
+> drivers/staging/media/tegra-vde/tegra-vde.c:267:5: warning: format
+> specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/media/tegra-vde/tegra-vde.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+> index 6f06061a40d9..66cf14212c14 100644
+> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
+> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+> @@ -262,7 +262,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+>  			value |= frame->frame_num;
+>  
+>  			dev_dbg(vde->miscdev.parent,
+> -				"\tFrame %d: frame_num = %d B_frame = %d\n",
+> +				"\tFrame %d: frame_num = %d B_frame = %lu\n",
+>  				i + 1, frame->frame_num,
+>  				(frame->flags & FLAG_B_FRAME));
+>  		} else {
+> 
 
+Compiling for i686 gives:
 
-On 8/11/2018 8:47 PM, Thierry Reding wrote:
-> On Mon, Nov 05, 2018 at 05:32:32PM +0800, Wei Ni wrote:
->> Convert warnings to info as not all platforms may
->> have all the thresholds and sensors enabled.
->>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  drivers/thermal/tegra/soctherm.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> This seems overly generalized to me. Shouldn't we be checking in a more
-> fine-grained way for the absence of thresholds and/or sensors?
-> 
-> Otherwise, how are going to make the difference between the sensor not
-> being enabled or the device tree just missing the information?
-> 
-The sensor being enabled or not is controlled by device tree, if the dts
-have the corresponding nodes, then the sensors should be enabled. And
-the thresholds for sensor are not necessary, so I think we just need to
-print out them.
-BTW, in my patch 1/4, I should print out the sensor name if the sensor
-not enabled and register failed.
-Will update it.
+In file included from /home/hans/work/build/media-git/include/linux/printk.h:336,
+                 from /home/hans/work/build/media-git/include/linux/kernel.h:14,
+                 from /home/hans/work/build/media-git/include/linux/clk.h:16,
+                 from /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:12:
+/home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c: In function 'tegra_vde_setup_iram_tables':
+/home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:265:5: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'u32' {aka 'unsigned int'} [-Wformat=]
+     "\tFrame %d: frame_num = %d B_frame = %lu\n",
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hans/work/build/media-git/include/linux/dynamic_debug.h:135:39: note: in definition of macro 'dynamic_dev_dbg'
+   __dynamic_dev_dbg(&descriptor, dev, fmt, \
+                                       ^~~
+/home/hans/work/build/media-git/include/linux/device.h:1463:23: note: in expansion of macro 'dev_fmt'
+  dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+                       ^~~~~~~
+/home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:264:4: note: in expansion of macro 'dev_dbg'
+    dev_dbg(vde->miscdev.parent,
+    ^~~~~~~
 
-> Thierry
-> 
+Should it be %zu?
+
+Regards,
+
+	Hans
