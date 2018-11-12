@@ -1,121 +1,69 @@
-From: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH 2/2] drm/atomic: Create and use
- __drm_atomic_helper_crtc_reset() everywhere
-Date: Mon, 12 Nov 2018 18:33:43 +0100
-Message-ID: <3426aea9-6b03-db82-dd40-2658c9c38d79@linux.intel.com>
-References: <20181112150114.18395-1-maarten.lankhorst@linux.intel.com>
- <20181112150114.18395-2-maarten.lankhorst@linux.intel.com>
- <20181112161126.GG154160@art_vandelay>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 7/9] serial: Add Tegra Combined UART driver
+Date: Mon, 12 Nov 2018 10:03:01 -0800
+Message-ID: <20181112180301.GB28739@kroah.com>
+References: <20181026111638.10759-1-thierry.reding@gmail.com>
+ <20181026111638.10759-8-thierry.reding@gmail.com>
+ <20181109170526.GB14151@kroah.com>
+ <20181112153014.GA29481@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20181112161126.GG154160@art_vandelay>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>
-Cc: Haneen Mohammed <hamohammed.sa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Heiko_St=c3=83=c2=bcbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Sandy Huang <hjc-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Shirish S <shirish.s-5C7GfCeVMHo@public.gmane.org>, Anthony Koo <Anthony.Koo-5C7GfCeVMHo@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Thomas Hellstrom <thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sinclair Yeh <syeh-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>, Bhawanpreet Lakha <Bhawanpreet.Lakha-5C7GfCeVMHo@public.gmane.org>, David Francis <David.Francis-5C7GfCeVMHo@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcphl2p70BpVqQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181112153014.GA29481@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Jiri Slaby <jslaby@suse.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, Pekka Pessi <ppessi@nvidia.com>, Mika Liljeberg <mliljeberg@nvidia.com>, linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T3AgMTItMTEtMTggb20gMTc6MTEgc2NocmVlZiBTZWFuIFBhdWw6Cj4gT24gTW9uLCBOb3YgMTIs
-IDIwMTggYXQgMDQ6MDE6MTRQTSArMDEwMCwgTWFhcnRlbiBMYW5raG9yc3Qgd3JvdGU6Cj4+IFdl
-IGFscmVhZHkgaGF2ZSBfX2RybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9yZXNldCgpIGFuZAo+
-PiBfX2RybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0KCksIGV4dGVuZCB0aGlzIHRvIGNydGMg
-YXMgd2VsbC4KPj4KPj4gTW9zdCBkcml2ZXJzIGFscmVhZHkgaGF2ZSBhIGdwdSByZXNldCBob29r
-LCBjb3JyZWN0IGl0Lgo+PiBOb3V2ZWF1IGFscmVhZHkgaW1wbGVtZW50ZWQgaXRzIG93biBfX2Ry
-bV9hdG9taWNfaGVscGVyX2NydGNfcmVzZXQoKSwKPj4gY29udmVydCBpdCB0byB0aGUgY29tbW9u
-IG9uZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogTWFhcnRlbiBMYW5raG9yc3QgPG1hYXJ0ZW4ubGFu
-a2hvcnN0QGxpbnV4LmludGVsLmNvbT4KPj4gQ2M6IEhhcnJ5IFdlbnRsYW5kIDxoYXJyeS53ZW50
-bGFuZEBhbWQuY29tPgo+PiBDYzogTGVvIExpIDxzdW5wZW5nLmxpQGFtZC5jb20+Cj4+IENjOiBB
-bGV4IERldWNoZXIgPGFsZXhhbmRlci5kZXVjaGVyQGFtZC5jb20+Cj4+IENjOiAiQ2hyaXN0aWFu
-IEvDg8K2bmlnIiA8Y2hyaXN0aWFuLmtvZW5pZ0BhbWQuY29tPgo+PiBDYzogIkRhdmlkIChDaHVu
-TWluZykgWmhvdSIgPERhdmlkMS5aaG91QGFtZC5jb20+Cj4+IENjOiBEYXZpZCBBaXJsaWUgPGFp
-cmxpZWRAbGludXguaWU+Cj4+IENjOiBMaXZpdSBEdWRhdSA8bGl2aXUuZHVkYXVAYXJtLmNvbT4K
-Pj4gQ2M6IEJyaWFuIFN0YXJrZXkgPGJyaWFuLnN0YXJrZXlAYXJtLmNvbT4KPj4gQ2M6IE1hbGkg
-RFAgTWFpbnRhaW5lcnMgPG1hbGlkcEBmb3NzLmFybS5jb20+Cj4+IENjOiBCb3JpcyBCcmV6aWxs
-b24gPGJvcmlzLmJyZXppbGxvbkBib290bGluLmNvbT4KPj4gQ2M6IE5pY29sYXMgRmVycmUgPG5p
-Y29sYXMuZmVycmVAbWljcm9jaGlwLmNvbT4KPj4gQ2M6IEFsZXhhbmRyZSBCZWxsb25pIDxhbGV4
-YW5kcmUuYmVsbG9uaUBib290bGluLmNvbT4KPj4gQ2M6IEx1ZG92aWMgRGVzcm9jaGVzIDxsdWRv
-dmljLmRlc3JvY2hlc0BtaWNyb2NoaXAuY29tPgo+PiBDYzogTWFhcnRlbiBMYW5raG9yc3QgPG1h
-YXJ0ZW4ubGFua2hvcnN0QGxpbnV4LmludGVsLmNvbT4KPj4gQ2M6IE1heGltZSBSaXBhcmQgPG1h
-eGltZS5yaXBhcmRAYm9vdGxpbi5jb20+Cj4+IENjOiBTZWFuIFBhdWwgPHNlYW5AcG9vcmx5LnJ1
-bj4KPj4gQ2M6IEphbmkgTmlrdWxhIDxqYW5pLm5pa3VsYUBsaW51eC5pbnRlbC5jb20+Cj4+IENj
-OiBKb29uYXMgTGFodGluZW4gPGpvb25hcy5sYWh0aW5lbkBsaW51eC5pbnRlbC5jb20+Cj4+IENj
-OiBSb2RyaWdvIFZpdmkgPHJvZHJpZ28udml2aUBpbnRlbC5jb20+Cj4+IENjOiBQaGlsaXBwIFph
-YmVsIDxwLnphYmVsQHBlbmd1dHJvbml4LmRlPgo+PiBDYzogQ0sgSHUgPGNrLmh1QG1lZGlhdGVr
-LmNvbT4KPj4gQ2M6IE1hdHRoaWFzIEJydWdnZXIgPG1hdHRoaWFzLmJnZ0BnbWFpbC5jb20+Cj4+
-IENjOiBSb2IgQ2xhcmsgPHJvYmRjbGFya0BnbWFpbC5jb20+Cj4+IENjOiBCZW4gU2tlZ2dzIDxi
-c2tlZ2dzQHJlZGhhdC5jb20+Cj4+IENjOiBUb21pIFZhbGtlaW5lbiA8dG9taS52YWxrZWluZW5A
-dGkuY29tPgo+PiBDYzogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29u
-Ym9hcmQuY29tPgo+PiBDYzogS2llcmFuIEJpbmdoYW0gPGtpZXJhbi5iaW5naGFtK3JlbmVzYXNA
-aWRlYXNvbmJvYXJkLmNvbT4KPj4gQ2M6IFNhbmR5IEh1YW5nIDxoamNAcm9jay1jaGlwcy5jb20+
-Cj4+IENjOiAiSGVpa28gU3TDg8K8Ym5lciIgPGhlaWtvQHNudGVjaC5kZT4KPj4gQ2M6IFRoaWVy
-cnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+Cj4+IENjOiBKb25hdGhhbiBIdW50
-ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPgo+PiBDYzogRXJpYyBBbmhvbHQgPGVyaWNAYW5ob2x0
-Lm5ldD4KPj4gQ2M6IFZNd2FyZSBHcmFwaGljcyA8bGludXgtZ3JhcGhpY3MtbWFpbnRhaW5lckB2
-bXdhcmUuY29tPgo+PiBDYzogU2luY2xhaXIgWWVoIDxzeWVoQHZtd2FyZS5jb20+Cj4+IENjOiBU
-aG9tYXMgSGVsbHN0cm9tIDx0aGVsbHN0cm9tQHZtd2FyZS5jb20+Cj4+IENjOiBUb255IENoZW5n
-IDxUb255LkNoZW5nQGFtZC5jb20+Cj4+IENjOiBTaGlyaXNoIFMgPHNoaXJpc2guc0BhbWQuY29t
-Pgo+PiBDYzogTWlraXRhIExpcHNraSA8bWlraXRhLmxpcHNraUBhbWQuY29tPgo+PiBDYzogQmhh
-d2FucHJlZXQgTGFraGEgPEJoYXdhbnByZWV0Lkxha2hhQGFtZC5jb20+Cj4+IENjOiBEYXZpZCBG
-cmFuY2lzIDxEYXZpZC5GcmFuY2lzQGFtZC5jb20+Cj4+IENjOiBBbnRob255IEtvbyA8QW50aG9u
-eS5Lb29AYW1kLmNvbT4KPj4gQ2M6IEpleWt1bWFyIFNhbmthcmFuIDxqc2Fua2FAY29kZWF1cm9y
-YS5vcmc+Cj4+IENjOiBKb3JkYW4gQ3JvdXNlIDxqY3JvdXNlQGNvZGVhdXJvcmEub3JnPgo+PiBD
-YzogQnJ1Y2UgV2FuZyA8Ynp3YW5nQGNocm9taXVtLm9yZz4KPj4gQ2M6IFNyYXZhbnRoaSBLb2xs
-dWt1ZHVydSA8c2tvbGx1a3VAY29kZWF1cm9yYS5vcmc+Cj4+IENjOiBBcmNoaXQgVGFuZWphIDxh
-cmNoaXR0QGNvZGVhdXJvcmEub3JnPgo+PiBDYzogU3RldmUgS293YWxpayA8c3RldmVuQHdlZG9u
-dHNsZWVwLm9yZz4KPj4gQ2M6IENhcnN0ZW4gQmVobGluZyA8Y2Fyc3Rlbi5iZWhsaW5nQGdvb2ds
-ZW1haWwuY29tPgo+PiBDYzogSGFuZWVuIE1vaGFtbWVkIDxoYW1vaGFtbWVkLnNhQGdtYWlsLmNv
-bT4KPj4gQ2M6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+Cj4+IENjOiBS
-b2RyaWdvIFNpcXVlaXJhIDxyb2RyaWdvc2lxdWVpcmFtZWxvQGdtYWlsLmNvbT4KPj4gQ2M6IE1h
-aGVzaCBLdW1hciA8bWFoZXNoMS5rdW1hckBpbnRlbC5jb20+Cj4+IENjOiBhbWQtZ2Z4QGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwo+PiBDYzogZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+
-PiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZwo+PiBDYzogbGludXgtYXJtLWtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnCj4+IENjOiBpbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCj4+IENjOiBsaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnCj4+IENjOiBsaW51
-eC1hcm0tbXNtQHZnZXIua2VybmVsLm9yZwo+PiBDYzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwo+PiBDYzogbm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4gQ2M6IGxpbnV4
-LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZwo+PiBDYzogbGludXgtcm9ja2NoaXBAbGlzdHMu
-aW5mcmFkZWFkLm9yZwo+PiBDYzogbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnCj4+IC0tLQo+
-PiAgLi4uL2dwdS9kcm0vYW1kL2Rpc3BsYXkvYW1kZ3B1X2RtL2FtZGdwdV9kbS5jIHwgIDQgKy0t
-Cj4+ICBkcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9jcnRjLmMgICAgICAgICAgICAgfCAgNSAr
-LS0KPj4gIC4uLi9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2NydGMuYyAgICB8ICA1
-ICstLQo+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfc3RhdGVfaGVscGVyLmMgICAgIHwg
-MzEgKysrKysrKysrKysrKysrKy0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlz
-cGxheS5jICAgICAgICAgIHwgIDIgKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9pbXgvaXB1djMtY3J0
-Yy5jICAgICAgICAgICAgICB8ICA1ICstLQo+PiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
-a19kcm1fY3J0Yy5jICAgICAgIHwgIDUgKy0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vbXNtL2Rpc3Av
-ZHB1MS9kcHVfY3J0Yy5jICAgICAgfCAxMiArKy0tLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vbXNt
-L2Rpc3AvbWRwNS9tZHA1X2NydGMuYyAgICAgfCAgNiArLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0v
-bm91dmVhdS9kaXNwbnY1MC9oZWFkLmMgICAgICAgfCAxMyArKy0tLS0tLQo+PiAgZHJpdmVycy9n
-cHUvZHJtL29tYXBkcm0vb21hcF9jcnRjLmMgICAgICAgICAgIHwgIDcgKystLS0KPj4gIGRyaXZl
-cnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfY3J0Yy5jICAgICAgICB8ICA0ICstLQo+PiAgZHJp
-dmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AuYyAgIHwgIDcgKysrLS0KPj4g
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jICAgICAgICAgICAgICAgICAgICB8ICA1ICstLQo+
-PiAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfY3J0Yy5jICAgICAgICAgICAgICAgIHwgIDggKyst
-LS0KPj4gIGRyaXZlcnMvZ3B1L2RybS92a21zL3ZrbXNfY3J0Yy5jICAgICAgICAgICAgICB8ICA3
-ICstLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9rbXMuYyAgICAgICAgICAg
-fCAgOSArLS0tLS0KPj4gIGluY2x1ZGUvZHJtL2RybV9hdG9taWNfc3RhdGVfaGVscGVyLmggICAg
-ICAgICB8ICAyICsrCj4+ICAxOCBmaWxlcyBjaGFuZ2VkLCA1NiBpbnNlcnRpb25zKCspLCA4MSBk
-ZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxh
-eS9hbWRncHVfZG0vYW1kZ3B1X2RtLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvYW1k
-Z3B1X2RtL2FtZGdwdV9kbS5jCj4+IGluZGV4IDUwNjQ3Njg2NDJmMy4uNzcwYTcxNzI2Y2QxIDEw
-MDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvYW1kZ3B1X2RtL2FtZGdw
-dV9kbS5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9hbWRncHVfZG0vYW1k
-Z3B1X2RtLmMKPj4gQEAgLTI4MDIsOSArMjgwMiw3IEBAIHN0YXRpYyB2b2lkIGRtX2NydGNfcmVz
-ZXRfc3RhdGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQo+PiAgCWlmIChXQVJOX09OKCFzdGF0ZSkp
-Cj4gQ2FuIHlvdSBnaXZlIHRoaXMgdGhlIHNhbWUgdHJlYXRtZW50IGFzIHRoZSBvdGhlciBhbGxv
-Y2F0aW9uIGNoZWNrcz8KClllYWggc3VyZSwgdGhlIHJlYXNvbiBJIGRpZG4ndCB3YXMgYmVjYXVz
-ZSBhbGwgb2YgdGhlIGFtZGdwdcKgIHJlc2V0IGZ1bmN0aW9ucyB3b3JrZWQgbGlrZSB0aGF0LiBJ
-J2xsIHNlbmQgYSBwcmVwYXJhdGlvbiBwYXRjaCB0byBmaXggdGhhdCB1cC4KCn5NYWFydGVuCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVlZHJlbm8g
-bWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8K
+On Mon, Nov 12, 2018 at 04:30:14PM +0100, Thierry Reding wrote:
+> On Fri, Nov 09, 2018 at 09:05:26AM -0800, Greg Kroah-Hartman wrote:
+> > On Fri, Oct 26, 2018 at 01:16:36PM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+> > > multiplexing multiple "virtual UARTs" into a single hardware serial
+> > > port. The TCU is the primary serial port on Tegra194 devices.
+> > > 
+> > > Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+> > > are part of Tegra HSP blocks that are already controlled by the Tegra
+> > > HSP mailbox driver.
+> > > 
+> > > Based on work by  Mikko Perttunen <mperttunen@nvidia.com>.
+> > > 
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > 
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Thanks. I just sent out v2 addressing Pekka's comments on the series.
+> But I'm slightly confused now. Are you expecting anyone else to pick
+> this up? There are technically no build time dependencies between any
+> of these patches, so it should be fine to pick them all into the
+> corresponding subsystem trees.
+
+Ah, I thought there was a built-time dependancy, that's why I gave my
+ack.
+
+> Perhaps the only thing to note is that there is a runtime dependency
+> from this patch on patches 1 and 2 in the series. Patch 1 is required to
+> make blocking a mailbox possible in interrupt context, which we need in
+> the TCU driver because the TTY and console paths do end up calling the
+> mbox_send_message() from interrupt context. Patch 2 is only required at
+> runtime if the two mailboxes are provided by different instances of the
+> HSP block (which they are for TCU on Tegra194).
+> 
+> Would you prefer for Jassi to pick up the TCU patch along with the
+> mailbox core and driver changes so that we deal with the runtime
+> dependencies that way?
+> 
+> Alternatively, if Jassi is okay with the mailbox changes, I can pick up
+> all of the v2 series of the patches into stable branches for v4.21, deal
+> with the dependencies there and send out pull requests for everyone to
+> merge into their subsystem trees.
+
+I don't really care either way, whatever is easiest for you all is fine
+with me.
+
+thanks,
+
+greg k-h
