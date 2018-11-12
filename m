@@ -1,91 +1,102 @@
-From: Boris Brezillon <boris.brezillon-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] drm/atomic: Create and use
- __drm_atomic_helper_crtc_reset() everywhere
-Date: Mon, 12 Nov 2018 16:11:50 +0100
-Message-ID: <20181112161150.614a0fe6@bbrezillon>
-References: <20181112150114.18395-1-maarten.lankhorst@linux.intel.com>
- <20181112150114.18395-2-maarten.lankhorst@linux.intel.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 00/10] serial: Add Tegra Combined UART driver
+Date: Mon, 12 Nov 2018 16:18:43 +0100
+Message-ID: <20181112151853.29289-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20181112150114.18395-2-maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Haneen Mohammed <hamohammed.sa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Heiko =?UTF-8?B?U3TDg8K8Ym5lcg==?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Sandy Huang <hjc-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Bhawanpreet Lakha <Bhawanpreet.Lakha-5C7GfCeVMHo@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Shirish S <shirish.s-5C7GfCeVMHo@public.gmane.org>, Anthony Koo <Anthony.Koo-5C7GfCeVMHo@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Thomas Hellstrom <thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sinclair Yeh <syeh-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>, Tony Cheng <Tony.Cheng-5C7GfCeVMHo@public.gmane.org>, David Francis <David.Francis-5C7GfCeVMHo@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jona
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jassi Brar <jassisinghbrar@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devicetree@vger.kernel.org, Mika Liljeberg <mliljeberg@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Timo Alho <talho@nvidia.com>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-tegra@vger.kernel.org, Pekka Pessi <ppessi@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCAxMiBOb3YgMjAxOCAxNjowMToxNCArMDEwMApNYWFydGVuIExhbmtob3JzdCA8bWFh
-cnRlbi5sYW5raG9yc3RAbGludXguaW50ZWwuY29tPiB3cm90ZToKCj4gV2UgYWxyZWFkeSBoYXZl
-IF9fZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX3Jlc2V0KCkgYW5kCj4gX19kcm1fYXRvbWlj
-X2hlbHBlcl9wbGFuZV9yZXNldCgpLCBleHRlbmQgdGhpcyB0byBjcnRjIGFzIHdlbGwuCj4gCj4g
-TW9zdCBkcml2ZXJzIGFscmVhZHkgaGF2ZSBhIGdwdSByZXNldCBob29rLCBjb3JyZWN0IGl0Lgo+
-IE5vdXZlYXUgYWxyZWFkeSBpbXBsZW1lbnRlZCBpdHMgb3duIF9fZHJtX2F0b21pY19oZWxwZXJf
-Y3J0Y19yZXNldCgpLAo+IGNvbnZlcnQgaXQgdG8gdGhlIGNvbW1vbiBvbmUuCj4gCj4gU2lnbmVk
-LW9mZi1ieTogTWFhcnRlbiBMYW5raG9yc3QgPG1hYXJ0ZW4ubGFua2hvcnN0QGxpbnV4LmludGVs
-LmNvbT4KPiBDYzogSGFycnkgV2VudGxhbmQgPGhhcnJ5LndlbnRsYW5kQGFtZC5jb20+Cj4gQ2M6
-IExlbyBMaSA8c3VucGVuZy5saUBhbWQuY29tPgo+IENjOiBBbGV4IERldWNoZXIgPGFsZXhhbmRl
-ci5kZXVjaGVyQGFtZC5jb20+Cj4gQ2M6ICJDaHJpc3RpYW4gS8ODwrZuaWciIDxjaHJpc3RpYW4u
-a29lbmlnQGFtZC5jb20+Cj4gQ2M6ICJEYXZpZCAoQ2h1bk1pbmcpIFpob3UiIDxEYXZpZDEuWmhv
-dUBhbWQuY29tPgo+IENjOiBEYXZpZCBBaXJsaWUgPGFpcmxpZWRAbGludXguaWU+Cj4gQ2M6IExp
-dml1IER1ZGF1IDxsaXZpdS5kdWRhdUBhcm0uY29tPgo+IENjOiBCcmlhbiBTdGFya2V5IDxicmlh
-bi5zdGFya2V5QGFybS5jb20+Cj4gQ2M6IE1hbGkgRFAgTWFpbnRhaW5lcnMgPG1hbGlkcEBmb3Nz
-LmFybS5jb20+Cj4gQ2M6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGJvb3RsaW4u
-Y29tPgo+IENjOiBOaWNvbGFzIEZlcnJlIDxuaWNvbGFzLmZlcnJlQG1pY3JvY2hpcC5jb20+Cj4g
-Q2M6IEFsZXhhbmRyZSBCZWxsb25pIDxhbGV4YW5kcmUuYmVsbG9uaUBib290bGluLmNvbT4KPiBD
-YzogTHVkb3ZpYyBEZXNyb2NoZXMgPGx1ZG92aWMuZGVzcm9jaGVzQG1pY3JvY2hpcC5jb20+Cj4g
-Q2M6IE1hYXJ0ZW4gTGFua2hvcnN0IDxtYWFydGVuLmxhbmtob3JzdEBsaW51eC5pbnRlbC5jb20+
-Cj4gQ2M6IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAYm9vdGxpbi5jb20+Cj4gQ2M6IFNl
-YW4gUGF1bCA8c2VhbkBwb29ybHkucnVuPgo+IENjOiBKYW5pIE5pa3VsYSA8amFuaS5uaWt1bGFA
-bGludXguaW50ZWwuY29tPgo+IENjOiBKb29uYXMgTGFodGluZW4gPGpvb25hcy5sYWh0aW5lbkBs
-aW51eC5pbnRlbC5jb20+Cj4gQ2M6IFJvZHJpZ28gVml2aSA8cm9kcmlnby52aXZpQGludGVsLmNv
-bT4KPiBDYzogUGhpbGlwcCBaYWJlbCA8cC56YWJlbEBwZW5ndXRyb25peC5kZT4KPiBDYzogQ0sg
-SHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4KPiBDYzogTWF0dGhpYXMgQnJ1Z2dlciA8bWF0dGhpYXMu
-YmdnQGdtYWlsLmNvbT4KPiBDYzogUm9iIENsYXJrIDxyb2JkY2xhcmtAZ21haWwuY29tPgo+IENj
-OiBCZW4gU2tlZ2dzIDxic2tlZ2dzQHJlZGhhdC5jb20+Cj4gQ2M6IFRvbWkgVmFsa2VpbmVuIDx0
-b21pLnZhbGtlaW5lbkB0aS5jb20+Cj4gQ2M6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGlu
-Y2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KPiBDYzogS2llcmFuIEJpbmdoYW0gPGtpZXJhbi5iaW5n
-aGFtK3JlbmVzYXNAaWRlYXNvbmJvYXJkLmNvbT4KPiBDYzogU2FuZHkgSHVhbmcgPGhqY0Byb2Nr
-LWNoaXBzLmNvbT4KPiBDYzogIkhlaWtvIFN0w4PCvGJuZXIiIDxoZWlrb0BzbnRlY2guZGU+Cj4g
-Q2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+Cj4gQ2M6IEpvbmF0
-aGFuIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+Cj4gQ2M6IEVyaWMgQW5ob2x0IDxlcmlj
-QGFuaG9sdC5uZXQ+Cj4gQ2M6IFZNd2FyZSBHcmFwaGljcyA8bGludXgtZ3JhcGhpY3MtbWFpbnRh
-aW5lckB2bXdhcmUuY29tPgo+IENjOiBTaW5jbGFpciBZZWggPHN5ZWhAdm13YXJlLmNvbT4KPiBD
-YzogVGhvbWFzIEhlbGxzdHJvbSA8dGhlbGxzdHJvbUB2bXdhcmUuY29tPgo+IENjOiBUb255IENo
-ZW5nIDxUb255LkNoZW5nQGFtZC5jb20+Cj4gQ2M6IFNoaXJpc2ggUyA8c2hpcmlzaC5zQGFtZC5j
-b20+Cj4gQ2M6IE1pa2l0YSBMaXBza2kgPG1pa2l0YS5saXBza2lAYW1kLmNvbT4KPiBDYzogQmhh
-d2FucHJlZXQgTGFraGEgPEJoYXdhbnByZWV0Lkxha2hhQGFtZC5jb20+Cj4gQ2M6IERhdmlkIEZy
-YW5jaXMgPERhdmlkLkZyYW5jaXNAYW1kLmNvbT4KPiBDYzogQW50aG9ueSBLb28gPEFudGhvbnku
-S29vQGFtZC5jb20+Cj4gQ2M6IEpleWt1bWFyIFNhbmthcmFuIDxqc2Fua2FAY29kZWF1cm9yYS5v
-cmc+Cj4gQ2M6IEpvcmRhbiBDcm91c2UgPGpjcm91c2VAY29kZWF1cm9yYS5vcmc+Cj4gQ2M6IEJy
-dWNlIFdhbmcgPGJ6d2FuZ0BjaHJvbWl1bS5vcmc+Cj4gQ2M6IFNyYXZhbnRoaSBLb2xsdWt1ZHVy
-dSA8c2tvbGx1a3VAY29kZWF1cm9yYS5vcmc+Cj4gQ2M6IEFyY2hpdCBUYW5lamEgPGFyY2hpdHRA
-Y29kZWF1cm9yYS5vcmc+Cj4gQ2M6IFN0ZXZlIEtvd2FsaWsgPHN0ZXZlbkB3ZWRvbnRzbGVlcC5v
-cmc+Cj4gQ2M6IENhcnN0ZW4gQmVobGluZyA8Y2Fyc3Rlbi5iZWhsaW5nQGdvb2dsZW1haWwuY29t
-Pgo+IENjOiBIYW5lZW4gTW9oYW1tZWQgPGhhbW9oYW1tZWQuc2FAZ21haWwuY29tPgo+IENjOiBE
-YW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGZmd2xsLmNoPgo+IENjOiBSb2RyaWdvIFNpcXVl
-aXJhIDxyb2RyaWdvc2lxdWVpcmFtZWxvQGdtYWlsLmNvbT4KPiBDYzogTWFoZXNoIEt1bWFyIDxt
-YWhlc2gxLmt1bWFyQGludGVsLmNvbT4KPiBDYzogYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKPiBDYzogZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBsaW51eC1rZXJu
-ZWxAdmdlci5rZXJuZWwub3JnCj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFk
-Lm9yZwo+IENjOiBpbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gQ2M6IGxpbnV4LW1l
-ZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogbGludXgtYXJtLW1zbUB2Z2VyLmtlcm5l
-bC5vcmcKPiBDYzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBub3V2ZWF1
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5l
-bC5vcmcKPiBDYzogbGludXgtcm9ja2NoaXBAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IENjOiBsaW51
-eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmcKPiAtLS0KPiAgLi4uL2dwdS9kcm0vYW1kL2Rpc3BsYXkv
-YW1kZ3B1X2RtL2FtZGdwdV9kbS5jIHwgIDQgKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hcm0vbWFs
-aWRwX2NydGMuYyAgICAgICAgICAgICB8ICA1ICstLQo+ICAuLi4vZ3B1L2RybS9hdG1lbC1obGNk
-Yy9hdG1lbF9obGNkY19jcnRjLmMgICAgfCAgNSArLS0KCkZvciB0aGUgYXRtZWwtaGxjZGMgZHJp
-dmVyCgpBY2tlZC1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxsb25AYm9vdGxpbi5j
-b20+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkZyZWVk
-cmVubyBtYWlsaW5nIGxpc3QKRnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ZyZWVkcmVubwo=
+From: Thierry Reding <treding@nvidia.com>
+
+Hi everyone,
+
+this is a reworked version of Mikko's earlier proposal[0]. I've reworked
+the TCU driver itself so that it relies less on global variables as well
+as added a Kconfig option to allow the console support to be selected. I
+also fixed a couple of issues that manifested themselves as I was moving
+towards the IRQ driven mode (TCU was passing a pointer to a local
+variable which was getting stored in the mailbox's ring buffer and the
+data pointed at was becoming stale by the time the mailbox got around to
+dequeue it).
+
+The biggest bulk of the changes is in the mailbox driver. This series
+addresses all of Jassi's comments from back at the time. One notable
+additional change is that shared mailboxes are now interrupt driven,
+which removes the need for polling mode.
+
+Unfortunately there is still an issue because the TCU uses the mailbox
+in atomic context for both TTY and console modes, so we get a sleeping-
+while-atomic BUG when using mbox_client->tx_block = true in order to
+rate-limit mbox_send_message(). In order to work around this, I added a
+mechanism to mbox_send_message() that will allow blocking from atomic
+context if the mailbox controller implements the new ->flush() callback.
+For Tegra HSP shared mailboxes this is done by spinning on the shared
+mailbox register until the receiver has marked the mailbox as empty. I
+have been running this locally for a couple of days now and it works
+perfectly.
+
+Furthermore this series incorporates Mikko's work in progress on
+splitting up the mailbox controllers and allowing multiple controllers
+to match on the same device tree node during mbox_request_channel().
+
+Last but not least there are no build-time dependencies between the
+mailbox and serial drivers, so I think the easiest way to merge this is
+if Jassi picks up patches 1-5, Greg takes patches 6 & 7 and I pick up
+patches 8-10 into the Tegra tree.
+
+Changes in v2:
+- address all of Pekka's comments regarding shared interrupts, registers
+  that don't exist on Tegra186 and shared mailbox directionality
+- add a patch to enable the TCU in the 64-bit ARM default configuration
+
+Thanks,
+Thierry
+
+[0]: https://lore.kernel.org/patchwork/project/lkml/list/?series=357641
+
+Mikko Perttunen (5):
+  mailbox: Allow multiple controllers per device
+  dt-bindings: tegra186-hsp: Add shared mailboxes
+  dt-bindings: serial: Add bindings for nvidia,tegra194-tcu
+  arm64: tegra: Add nodes for TCU on Tegra194
+  arm64: tegra: Mark TCU as primary serial port on Tegra194 P2888
+
+Thierry Reding (5):
+  mailbox: Support blocking transfers in atomic context
+  mailbox: tegra-hsp: Add support for shared mailboxes
+  mailbox: tegra-hsp: Add suspend/resume support
+  serial: Add Tegra Combined UART driver
+  arm64: defconfig: Enable Tegra TCU
+
+ .../bindings/mailbox/nvidia,tegra186-hsp.txt  |  30 +-
+ .../bindings/serial/nvidia,tegra194-tcu.txt   |  35 ++
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |   2 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  38 +-
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/mailbox/mailbox.c                     |  11 +-
+ drivers/mailbox/tegra-hsp.c                   | 517 +++++++++++++++---
+ drivers/tty/serial/Kconfig                    |  22 +
+ drivers/tty/serial/Makefile                   |   1 +
+ drivers/tty/serial/tegra-tcu.c                | 299 ++++++++++
+ include/dt-bindings/mailbox/tegra186-hsp.h    |  11 +
+ include/linux/mailbox_controller.h            |   4 +
+ include/uapi/linux/serial_core.h              |   3 +
+ 13 files changed, 903 insertions(+), 71 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
+ create mode 100644 drivers/tty/serial/tegra-tcu.c
+
+-- 
+2.19.1
