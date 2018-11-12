@@ -1,51 +1,117 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 0/3] ARM: enable cache via Trusted Foundations firmware
-Date: Sun, 11 Nov 2018 15:42:58 +0300
-Message-ID: <a84ef2fc-fe95-f4ff-f499-a8faf8d86a75@gmail.com>
-References: <cover.1541882833.git.mirq-linux@rere.qmqm.pl>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [REGRESSION] brcmfmac: NULL pointer deference starting next-20181107
+Date: Mon, 12 Nov 2018 13:24:18 +0000
+Message-ID: <dbc5e8f9-6f14-77d2-be2a-f0738e13b773@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1541882833.git.mirq-linux@rere.qmqm.pl>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, linux-arm-kernel@lists.infradead.org
-Cc: linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, Kalle Valo <kvalo@codeaurora.org>, linux-tegra <linux-tegra@vger.kernel.org>, linux-wireless@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTEuMTEuMjAxOCAwOjAyLCBNaWNoYcWCIE1pcm9zxYJhdyB3cm90ZToKPiBUaGlzIHNldCBl
-bmFibGVzIHBsYXRmb3JtcyB1c2luZyBUcnVzdGVkIEZvdW5kYXRpb25zIGZpcm13YXJlIHRvIHVz
-ZQo+IHRoZWlyIEwyIGNhY2hlLiBMMiBjYWNoZSBjYW4gYmUgZW5hYmxlZCBvbmx5IGJ5IGNhbGxp
-bmcgdGhlIGZpcm13YXJlLgo+IAo+IE1pY2hhxYIgTWlyb3PFgmF3ICgzKToKPiAgIEFSTTogY2Fj
-aGUtbDJ4MDogc2hhcmUgbDJ4MF9iYXNlIHdpdGggUE1VIGNvZGUKPiAgIEFSTTogdHJ1c3RlZF9m
-b3VuZGF0aW9uczogZW5hYmxlIEwyeDAgY2FjaGUgdmlhIGZpcm13YXJlX29wcwo+ICAgQVJNOiB0
-cnVzdGVkX2ZvdW5kYXRpb25zOiBhbm5vdW5jZSBmaXJtd2FyZSB2ZXJzaW9uCj4gCj4gIGFyY2gv
-YXJtL2Zpcm13YXJlL3RydXN0ZWRfZm91bmRhdGlvbnMuYyAgICB8IDY3ICsrKysrKysrKysrKysr
-KysrKysrKy0KPiAgYXJjaC9hcm0vaW5jbHVkZS9hc20vaGFyZHdhcmUvY2FjaGUtbDJ4MC5oIHwg
-IDYgKy0KPiAgYXJjaC9hcm0vbW0vY2FjaGUtbDJ4MC1wbXUuYyAgICAgICAgICAgICAgIHwgIDkg
-Ky0tCj4gIGFyY2gvYXJtL21tL2NhY2hlLWwyeDAuYyAgICAgICAgICAgICAgICAgICB8IDE0ICsr
-KystCj4gIDQgZmlsZXMgY2hhbmdlZCwgODIgaW5zZXJ0aW9ucygrKSwgMTQgZGVsZXRpb25zKC0p
-Cj4gCgpIZWxsbyBNaWNoYcWCLAoKVmVyeSBuaWNlIHRvIHNlZSB0aGF0IHlvdSBhcmUga2VlcGlu
-ZyB0byB3b3JrIG9uIGl0ISBDb3VwbGUgbW9udGhzIGFnbyBJIHBvc3RlZCBwYXRjaGVzIHRoYXQg
-YWRkIGEgZnVsbC1mZWF0dXJlZCBUcnVzdGVkIEZvdW5kYXRpb25zIHN1cHBvcnQgb24gVGVncmEz
-MCBbMF0gKGluY2x1ZGluZyBzdXNwZW5kLXJlc3VtZSwgdGh1bWIyIGtlcm5lbCwgaGFuZGxpbmcg
-Q09ORklHX0NBQ0hFX0wyWDA9biksIHVuZm9ydHVuYXRlbHkgdGhleSBkaWRuJ3QgZ2V0IGFueSBh
-dHRlbnRpb24geWV0LiBDb3VsZCB5b3UgcGxlYXNlIHRha2UgYSBsb29rIGFuZCB0cnkgb3V0IFsw
-XT8gSSd2ZSBnb3QgZXZlcnl0aGluZyB3b3JraW5nIHdpdGhvdXQgdG91Y2hpbmcgYXJjaC9hcm0v
-bW0vY2FjaGUtbDJ4MCogYXQgYWxsLiBXb3VsZCBiZSBhd2Vzb21lIGlmIHdlIGNvdWxkIGNvb3Bl
-cmF0ZSB0aGUgZWZmb3J0cyBzb21laG93LCBtYXliZSB0aGF0IHdpbGwgYWxzbyBoZWxwIHRvIGdl
-dCBtb3JlIGF0dGVudGlvbiBmcm9tIHRoZSBtYWludGFpbmVycy4KClswXSBodHRwczovL3BhdGNo
-d29yay5vemxhYnMub3JnL3Byb2plY3QvbGludXgtdGVncmEvbGlzdC8/c2VyaWVzPTYzMzM5Cgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
-a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
-aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
-bmVsCg==
+Hi Hans, Kalle,
+
+Starting with next-20181107 I am seeing the following NULL pointer
+deference on Tegra (note the firmware is missing on this board) ...
+
+[   14.072883] brcmfmac: brcmf_fw_alloc_request: using brcm/brcmfmac4329-sdio for chip BCM4329/3
+
+[   14.130287] brcmfmac mmc1:0001:1: Direct firmware load for brcm/brcmfmac4329-sdio.nvidia,cardhu-a04.txt failed with error -2
+
+[   14.156283] brcmfmac mmc1:0001:1: Direct firmware load for brcm/brcmfmac4329-sdio.txt failed with error -2
+
+[   14.177769] Unable to handle kernel NULL pointer dereference at virtual address 00000008
+
+[   14.197303] pgd = 60bfa5f1
+
+[   14.211842] [00000008] *pgd=00000000
+
+[   14.227373] Internal error: Oops: 5 [#1] SMP ARM
+
+[   14.244244] Modules linked in: brcmfmac sha256_generic sha256_arm snd cfg80211 brcmutil soundcore snd_soc_tegra30_ahub tegra_wdt
+
+[   14.269109] CPU: 1 PID: 114 Comm: kworker/1:2 Not tainted 4.20.0-rc1-next-20181107-gd881de3 #1
+
+[   14.269114] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+
+[   14.269154] Workqueue: events request_firmware_work_func
+
+[   14.269177] PC is at efivar_entry_size+0x28/0x90
+
+[   14.269362] LR is at brcmf_fw_complete_request+0x3f8/0x8d4 [brcmfmac]
+
+[   14.269369] pc : [<c0c40718>]    lr : [<bf2a3ef4>]    psr: a00d0113
+
+[   14.269374] sp : ede7fe28  ip : ee983410  fp : c1787f30
+
+[   14.269378] r10: 00000000  r9 : 00000000  r8 : bf2b2258
+
+[   14.269384] r7 : ee983000  r6 : c1604c48  r5 : ede7fe88  r4 : edf337c0
+
+[   14.269389] r3 : 00000000  r2 : 00000000  r1 : ede7fe88  r0 : c17712c8
+
+[   14.269398] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+
+[   14.269404] Control: 10c5387d  Table: ad16804a  DAC: 00000051
+
+[   14.269417] Process kworker/1:2 (pid: 114, stack limit = 0x984bfbff)
+
+[   14.269423] Stack: (0xede7fe28 to 0xede80000)
+
+[   14.269434] fe20:                   00000000 c1604c48 edf336e0 edf337c0 ee983000 c1604c48
+
+[   14.269447] fe40: edf336e0 bf2a3ef4 edf339db c0466bcc edf339c0 edd1417c edd14008 00000000
+
+[   14.269460] fe60: 006000c0 edf33b40 edf339c0 edf33250 c0f9110c edf33b40 c17db2d0 edf339c0
+
+[   14.269471] fe80: 00000000 edd14008 00000000 0076006e 00610072 0000006d edf33940 00000003
+
+[   14.269482] fea0: edf33980 c0923f84 edf33840 edf33940 edf33980 ede7ff1c c0f9110c c0924410
+
+[   14.269492] fec0: 7fffffff d9025ae9 00000001 edf337c0 00000000 ef7b9e00 edf33804 ef7bd000
+
+[   14.269512] fee0: 00000000 00000000 c1787f30 bf2a4438 ee952280 00000000 edf33800 ee952280
+
+[   14.678917] ff00: ef7b9e00 edf33804 ef7bd000 c0924738 00000000 00000003 00000001 edf33940
+
+[   14.678931] ff20: edf33800 c035ee0c ef7b9e00 ef7b9e18 ede7e018 ee952280 ef7b9e00 ef7b9e18
+
+[   14.720757] ff40: ede7e018 c17878b8 ee952294 c1603d00 00000008 c035f130 eea99d9c ede7e000
+
+[   14.720769] ff60: ee970740 c1603d00 eea99d9c eea99d80 ee970740 00000000 eea99d9c ee952280
+
+[   14.720785] ff80: c035f0f0 ee911ebc 00000000 c0364418 ee970740 c03642f0 00000000 00000000
+
+[   14.783682] ffa0: 00000000 00000000 00000000 c03010e8 00000000 00000000 00000000 00000000
+
+[   14.783693] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+
+[   14.783707] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+
+[   14.846132] [<c0c40718>] (efivar_entry_size) from [<bf2a3ef4>] (brcmf_fw_complete_request+0x3f8/0x8d4 [brcmfmac])
+
+[   14.846253] [<bf2a3ef4>] (brcmf_fw_complete_request [brcmfmac]) from [<bf2a4438>] (brcmf_fw_request_done+0x68/0x11c [brcmfmac])
+
+[   14.893363] [<bf2a4438>] (brcmf_fw_request_done [brcmfmac]) from [<c0924738>] (request_firmware_work_func+0x40/0x68)
+
+[   14.893396] [<c0924738>] (request_firmware_work_func) from [<c035ee0c>] (process_one_work+0x164/0x448)
+
+[   14.939206] [<c035ee0c>] (process_one_work) from [<c035f130>] (worker_thread+0x40/0x524)
+
+[   14.939228] [<c035f130>] (worker_thread) from [<c0364418>] (kthread+0x128/0x158)
+
+[   14.981096] [<c0364418>] (kthread) from [<c03010e8>] (ret_from_fork+0x14/0x2c)
+
+[   14.981102] Exception stack(0xede7ffb0 to 0xede7fff8)
+
+[   14.981112] ffa0:                                     00000000 00000000 00000000 00000000
+
+[   15.041390] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+
+[   15.041399] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
+
+[   15.041415] Code: e1a07000 e30102c8 e34c0177 e1a05001 (e5926008) 
+
+[   15.041491] ---[ end trace 06697c36d390de92 ]---
