@@ -1,88 +1,52 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 7/9] serial: Add Tegra Combined UART driver
-Date: Mon, 12 Nov 2018 16:30:14 +0100
-Message-ID: <20181112153014.GA29481@ulmo>
-References: <20181026111638.10759-1-thierry.reding@gmail.com>
- <20181026111638.10759-8-thierry.reding@gmail.com>
- <20181109170526.GB14151@kroah.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 2/2] drm/atomic: Create and use
+ __drm_atomic_helper_crtc_reset() everywhere
+Date: Mon, 12 Nov 2018 16:36:41 +0100
+Message-ID: <2475529.N6HtQ5V54z@phil>
+References: <20181112150114.18395-1-maarten.lankhorst@linux.intel.com>
+ <20181112150114.18395-2-maarten.lankhorst@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181109170526.GB14151@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Jiri Slaby <jslaby@suse.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, Pekka Pessi <ppessi@nvidia.com>, Mika Liljeberg <mliljeberg@nvidia.com>, linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20181112150114.18395-2-maarten.lankhorst@linux.intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Mali DP Maintainers <malidp@foss.arm.com>, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---fUYQa+Pmc3FrFX/N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Nov 09, 2018 at 09:05:26AM -0800, Greg Kroah-Hartman wrote:
-> On Fri, Oct 26, 2018 at 01:16:36PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
-> > multiplexing multiple "virtual UARTs" into a single hardware serial
-> > port. The TCU is the primary serial port on Tegra194 devices.
-> >=20
-> > Add a TCU driver utilizing the mailbox framework, as the used mailboxes
-> > are part of Tegra HSP blocks that are already controlled by the Tegra
-> > HSP mailbox driver.
-> >=20
-> > Based on work by  Mikko Perttunen <mperttunen@nvidia.com>.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Thanks. I just sent out v2 addressing Pekka's comments on the series.
-But I'm slightly confused now. Are you expecting anyone else to pick
-this up? There are technically no build time dependencies between any
-of these patches, so it should be fine to pick them all into the
-corresponding subsystem trees.
-
-Perhaps the only thing to note is that there is a runtime dependency
-=66rom this patch on patches 1 and 2 in the series. Patch 1 is required to
-make blocking a mailbox possible in interrupt context, which we need in
-the TCU driver because the TTY and console paths do end up calling the
-mbox_send_message() from interrupt context. Patch 2 is only required at
-runtime if the two mailboxes are provided by different instances of the
-HSP block (which they are for TCU on Tegra194).
-
-Would you prefer for Jassi to pick up the TCU patch along with the
-mailbox core and driver changes so that we deal with the runtime
-dependencies that way?
-
-Alternatively, if Jassi is okay with the mailbox changes, I can pick up
-all of the v2 series of the patches into stable branches for v4.21, deal
-with the dependencies there and send out pull requests for everyone to
-merge into their subsystem trees.
-
-Thierry
-
---fUYQa+Pmc3FrFX/N
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvpnIIACgkQ3SOs138+
-s6G9thAAmhwMCREJAWW3pWq4rGnjyHIlRwal0f3ryO2kKoJUU6pMMjIpyhyL7HDg
-UE9ytBcLqT8UtijC79Ur9pT8Zg8iocoLhK2CUlkt+swYWiKgCTYY04U7th/rsiEP
-Eqqxw8W6Ev8mmWnbtZxEnANPGye1O+QyWKNr/enMynt4oFKmXhoPopJE9X+jdDrm
-BPkTsfB+iDpurl6az6dpbkiJoTfnDH/KslT0O2B8b3glX84NPouZd9d/uX2GSD6C
-9u9AXoAtm2I13zVTHrwYXdAbJW+R3fgN52QX5ugaygrM+15dkOgomREfeRTZLQyu
-1Sgc6GEMr0Jj+cB7MnJuVrduVZBemGP6w4NGo0A6vAIG4J2rqM1XGfWXAaeN3iv2
-8aQfedqyWlmByrPw+CSwxdBQYfKPkxgEt5aCRXPv3qfock+ycHy/jUp+po3Y+0Nu
-A5Abh1x1WzUJBIL8tMd6wAh7sm5ndxRBFJjdIWXXuGKHYv1H7URD0RNooE1B+vEK
-itDzAx5ZS+JCbqkhsrTxtNqxhgalaprdEtHj2JbB1VY9w/RdoORyz9jQ49b7BENB
-flX3750cp1p364hSncwBIsAw6Z3Hk87iLZh5PcHGOHCgowU7izEEMS3gbVSfDgPc
-kWRr0GaixLog3OXxriCFU/HurHGBcQNb7YiQbuxNUMum3dRR6oQ=
-=SwJi
------END PGP SIGNATURE-----
-
---fUYQa+Pmc3FrFX/N--
+QW0gTW9udGFnLCAxMi4gTm92ZW1iZXIgMjAxOCwgMTY6MDE6MTQgQ0VUIHNjaHJpZWIgTWFhcnRl
+biBMYW5raG9yc3Q6Cj4gV2UgYWxyZWFkeSBoYXZlIF9fZHJtX2F0b21pY19oZWxwZXJfY29ubmVj
+dG9yX3Jlc2V0KCkgYW5kCj4gX19kcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldCgpLCBleHRl
+bmQgdGhpcyB0byBjcnRjIGFzIHdlbGwuCj4gCj4gTW9zdCBkcml2ZXJzIGFscmVhZHkgaGF2ZSBh
+IGdwdSByZXNldCBob29rLCBjb3JyZWN0IGl0Lgo+IE5vdXZlYXUgYWxyZWFkeSBpbXBsZW1lbnRl
+ZCBpdHMgb3duIF9fZHJtX2F0b21pY19oZWxwZXJfY3J0Y19yZXNldCgpLAo+IGNvbnZlcnQgaXQg
+dG8gdGhlIGNvbW1vbiBvbmUuCj4gCj4gU2lnbmVkLW9mZi1ieTogTWFhcnRlbiBMYW5raG9yc3Qg
+PG1hYXJ0ZW4ubGFua2hvcnN0QGxpbnV4LmludGVsLmNvbT4KCgo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcC5jIGIvZHJpdmVycy9ncHUvZHJt
+L3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AuYwo+IGluZGV4IGZiNzBmYjQ4NmZiZi4uZDJkNWFh
+Njc2MDg0IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9k
+cm1fdm9wLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3Zv
+cC5jCj4gQEAgLTEwNzEsMTMgKzEwNzEsMTQgQEAgc3RhdGljIHZvaWQgdm9wX2NydGNfZGVzdHJv
+eShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gIAo+ICBzdGF0aWMgdm9pZCB2b3BfY3J0Y19yZXNl
+dChzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gIHsKPiArCXN0cnVjdCByb2NrY2hpcF9jcnRjX3N0
+YXRlICpjcnRjX3N0YXRlID0KPiArCQlremFsbG9jKHNpemVvZigqY3J0Y19zdGF0ZSksIEdGUF9L
+RVJORUwpOwo+ICsKPiAgCWlmIChjcnRjLT5zdGF0ZSkKPiAgCQlfX2RybV9hdG9taWNfaGVscGVy
+X2NydGNfZGVzdHJveV9zdGF0ZShjcnRjLT5zdGF0ZSk7Cj4gIAlrZnJlZShjcnRjLT5zdGF0ZSk7
+Cj4gIAo+IC0JY3J0Yy0+c3RhdGUgPSBremFsbG9jKHNpemVvZihzdHJ1Y3Qgcm9ja2NoaXBfY3J0
+Y19zdGF0ZSksIEdGUF9LRVJORUwpOwo+IC0JaWYgKGNydGMtPnN0YXRlKQo+IC0JCWNydGMtPnN0
+YXRlLT5jcnRjID0gY3J0YzsKPiArCV9fZHJtX2F0b21pY19oZWxwZXJfY3J0Y19yZXNldChjcnRj
+LCAmY3J0Y19zdGF0ZS0+YmFzZSk7Cj4gIH0KPiAgCj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX2NydGNf
+c3RhdGUgKnZvcF9jcnRjX2R1cGxpY2F0ZV9zdGF0ZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCgpm
+b3IgdGhlIFJvY2tjaGlwLXBhcnQKQWNrZWQtYnk6IEhlaWtvIFN0dWVibmVyIDxoZWlrb0BzbnRl
+Y2guZGU+CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
