@@ -1,46 +1,41 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] soc/tegra: remove duplicated function declaration
-Date: Tue, 13 Nov 2018 19:02:53 +0000
-Message-ID: <c57a2c48-d247-04f4-2e68-0fecca5b6260@nvidia.com>
-References: <1542131465-22773-1-git-send-email-byan@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 000/222] 4.14.81-stable review
+Date: Tue, 13 Nov 2018 11:11:28 -0800
+Message-ID: <20181113191128.GB27890@kroah.com>
+References: <20181111221647.665769131@linuxfoundation.org>
+ <306f3631-7b82-6827-021f-e345c2191332@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1542131465-22773-1-git-send-email-byan@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bo Yan <byan@nvidia.com>, thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <306f3631-7b82-6827-021f-e345c2191332@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 13/11/2018 17:51, Bo Yan wrote:
-> The function tegra_read_chipid is declared twice in fuse.h. Remove
-> the redundant declaration.
+On Tue, Nov 13, 2018 at 08:40:02AM +0000, Jon Hunter wrote:
 > 
-> Signed-off-by: Bo Yan <byan@nvidia.com>
-> ---
->  include/soc/tegra/fuse.h | 1 -
->  1 file changed, 1 deletion(-)
+> On 11/11/2018 22:21, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.81 release.
+> > There are 222 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Tue Nov 13 22:15:32 UTC 2018.
+> > Anything received after that time might be too late.
+> All tests are passing for Tegra ...
 > 
-> diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-> index 9b6ea0c..8fb2f8a 100644
-> --- a/include/soc/tegra/fuse.h
-> +++ b/include/soc/tegra/fuse.h
-> @@ -60,7 +60,6 @@ struct tegra_sku_info {
->  
->  u32 tegra_read_straps(void);
->  u32 tegra_read_ram_code(void);
-> -u32 tegra_read_chipid(void);
->  int tegra_fuse_readl(unsigned long offset, u32 *value);
->  
->  extern struct tegra_sku_info tegra_sku_info;
+> Test results for stable-v4.14:
+>     8 builds:	8 pass, 0 fail
+>     16 boots:	16 pass, 0 fail
+>     14 tests:	14 pass, 0 fail
+> 
+> Linux version:	4.14.81-rc1-g8ea9437
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Thanks for testing and letting me know.
 
-Cheers
-Jon
-
--- 
-nvpublic
+greg k-h
