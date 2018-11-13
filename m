@@ -1,66 +1,69 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 0/3] arm64: tegra: Updates for v4.20-rc2
-Date: Tue, 13 Nov 2018 11:29:01 -0800
-Message-ID: <20181113192901.wbug3ylflhz4z2kv@localhost>
-References: <20181107145350.29127-1-thierry.reding@gmail.com>
- <CAOesGMjcOQif8H6b5afKBwYstkbzGC7wuUcN2Srz=vJz11qSnA@mail.gmail.com>
- <20181108121627.GA1340@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] mailbox: tegra-hsp: use devm_kstrdup_const()
+Date: Tue, 13 Nov 2018 22:11:44 +0100
+Message-ID: <20181113211144.GC2724@ulmo>
+References: <20181108164610.28361-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UPT3ojh+0CqEDtpF"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181108121627.GA1340@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, ARM-SoC Maintainers <arm@kernel.org>, Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20181108164610.28361-1-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 01:16:27PM +0100, Thierry Reding wrote:
-> On Wed, Nov 07, 2018 at 08:31:55AM -0800, Olof Johansson wrote:
-> > Hi Thierry,
-> > 
-> > On Wed, Nov 7, 2018 at 6:53 AM Thierry Reding <thierry.reding@gmail.com> wrote:
-> > >
-> > > Hi ARM SoC maintainers,
-> > >
-> > > These pull requests are some follow-up changes to finally enable the
-> > > generic power domains for the Tegra XUSB block. This builds on top of
-> > > changes that were merged into v4.20-rc1, but because of some non-
-> > > trivial runtime dependencies I decided to hold back on these until
-> > > after the dust had settled.
-> > >
-> > > Do you think it would be possible to merge these in for v4.20-rc2? I
-> > > realize that they are not actually fixes, but they merely add a couple
-> > > of lines to enable the power domains for XUSB as well as the
-> > > corresponding DT bindings.
-> > 
-> > Is anything broken without these changes, or is it more that the
-> > dependency have landed and you're itching to get things enabled?
-> > 
-> > If it's the former we should chat (since it's an unfortunate
-> > situation). If it's the latter I'm happy to queue them up for the next
-> > merge window.
-> 
-> Nothing's broken without these changes, but I figured that these two
-> dozen lines could still make it into v4.20. I know that this has
-> occasionally been done in the past for very small enablement patches
-> if they were small enough. I could've communicated this a little
-> earlier, so that this wouldn't have come as a bit of a surprise.
-> 
-> If you prefer to defer this to v4.21 that's totally fine. I can queue
-> them up in my tree for the next merge window, no need for you to pick
-> this up in pieces.
 
-Ok, let's queue them for 4.21 at this point. Thanks!
+--UPT3ojh+0CqEDtpF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Nov 08, 2018 at 05:46:10PM +0100, Bartosz Golaszewski wrote:
+> Use devm_kstrdup_const() in the tegra-hsp driver. This mostly serves as
+> an example of how to use this new routine to shrink driver code.
+>=20
+> Also use devm_kzalloc() instead of regular kzalloc() to shrink the
+> driver even more.
+>=20
+> Doorbell objects are only removed in the driver's remove callback so
+> it's safe to convert all memory allocations to devres.
+>=20
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
+>  drivers/mailbox/tegra-hsp.c | 41 ++++++++-----------------------------
+>  1 file changed, 9 insertions(+), 32 deletions(-)
 
--Olof
+This looks really nice. I'm currently working on a series of patches to
+add shared mailboxes to the HSP driver. Part of that series adds struct
+device *dev to struct tegra_hsp, which in turn would simplify this
+patch a little.
+
+Looking at some of the changes here it also seems like they would
+conflict with my patches in some places. Would you mind if I pick this
+patch up into my series and resolve the conflicts there?
+
+Thierry
+
+--UPT3ojh+0CqEDtpF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvrPg0ACgkQ3SOs138+
+s6HYSw/7B272unBtp25D5P+5OMk3akMT270t0lp7jgGUplWyhWbE1PzcbGAJc08Z
+Ak66Vdv0Pd2Mp/3lm9fZ/SCnaYNszX9D9Yl+mOBEigjBq0gCU4hW2fTWUDXbGZrb
+35uJLKaEuKogrL3RxLLmwiXDo28VDH4B/DwSd5UDQ6NCPBuKdksBT9KWsPgFAVCu
+kQ0Ssp/28CokYkHJ6ExZdABXYcAD03xgl+db4Rqw/w0xKYXBYvqP0eXtFdEnZK4T
+U8A5A88NPw56+iXttRRpYUR5qEzLmAthuvn0wfkMdiWOQC2+3N233Gcb8v2wr+Vh
+/say5alqEZ1mttvdwh3dgVTOcDSotSyeY3DStDmfbpMlF4O/2ysnO/klQiCxskhJ
+h2E6VP9t1JaZxcN5Xo9KjwDqsMn4YW4hKPdpDERorN6hyeZQftYhZnjiw0JZuidG
+EftrmcvioUXZCgt6Qe31Xm7SvUJCO4DNoh5L7ZzYzu1XhRS30tnUZlpGomBTXR9M
+GxspWw+K/4tWomDiByfpY9eGDiQFMHHChy9wVxU849Nm1guSeKmKqWUfwB2Ydnp8
+sIyMyyIaOrRa5dKS77BRFXcxYBETrm2p6pG3ORJwW6m1a/nDymJck6hmjhTxbEvd
+NNooITJlHhHjARGyIAPuvrv/8UaM/NqvRFXo8QRAGkvvHKhUIds=
+=Ct1j
+-----END PGP SIGNATURE-----
+
+--UPT3ojh+0CqEDtpF--
