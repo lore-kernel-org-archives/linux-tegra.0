@@ -1,56 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] soc/tegra: remove duplicated function declaration
-Date: Tue, 13 Nov 2018 20:25:16 +0100
-Message-ID: <20181113192516.GB2724@ulmo>
-References: <1542131465-22773-1-git-send-email-byan@nvidia.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 0/3] arm64: tegra: Updates for v4.20-rc2
+Date: Tue, 13 Nov 2018 11:29:01 -0800
+Message-ID: <20181113192901.wbug3ylflhz4z2kv@localhost>
+References: <20181107145350.29127-1-thierry.reding@gmail.com>
+ <CAOesGMjcOQif8H6b5afKBwYstkbzGC7wuUcN2Srz=vJz11qSnA@mail.gmail.com>
+ <20181108121627.GA1340@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1542131465-22773-1-git-send-email-byan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bo Yan <byan@nvidia.com>
-Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20181108121627.GA1340@ulmo>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, ARM-SoC Maintainers <arm@kernel.org>, Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Nov 08, 2018 at 01:16:27PM +0100, Thierry Reding wrote:
+> On Wed, Nov 07, 2018 at 08:31:55AM -0800, Olof Johansson wrote:
+> > Hi Thierry,
+> > 
+> > On Wed, Nov 7, 2018 at 6:53 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+> > >
+> > > Hi ARM SoC maintainers,
+> > >
+> > > These pull requests are some follow-up changes to finally enable the
+> > > generic power domains for the Tegra XUSB block. This builds on top of
+> > > changes that were merged into v4.20-rc1, but because of some non-
+> > > trivial runtime dependencies I decided to hold back on these until
+> > > after the dust had settled.
+> > >
+> > > Do you think it would be possible to merge these in for v4.20-rc2? I
+> > > realize that they are not actually fixes, but they merely add a couple
+> > > of lines to enable the power domains for XUSB as well as the
+> > > corresponding DT bindings.
+> > 
+> > Is anything broken without these changes, or is it more that the
+> > dependency have landed and you're itching to get things enabled?
+> > 
+> > If it's the former we should chat (since it's an unfortunate
+> > situation). If it's the latter I'm happy to queue them up for the next
+> > merge window.
+> 
+> Nothing's broken without these changes, but I figured that these two
+> dozen lines could still make it into v4.20. I know that this has
+> occasionally been done in the past for very small enablement patches
+> if they were small enough. I could've communicated this a little
+> earlier, so that this wouldn't have come as a bit of a surprise.
+> 
+> If you prefer to defer this to v4.21 that's totally fine. I can queue
+> them up in my tree for the next merge window, no need for you to pick
+> this up in pieces.
 
---8P1HSweYDcXXzwPJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, let's queue them for 4.21 at this point. Thanks!
 
-On Tue, Nov 13, 2018 at 09:51:05AM -0800, Bo Yan wrote:
-> The function tegra_read_chipid is declared twice in fuse.h. Remove
-> the redundant declaration.
->=20
-> Signed-off-by: Bo Yan <byan@nvidia.com>
-> ---
->  include/soc/tegra/fuse.h | 1 -
->  1 file changed, 1 deletion(-)
 
-Applied, thanks.
-
-Thierry
-
---8P1HSweYDcXXzwPJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvrJRcACgkQ3SOs138+
-s6GujBAAqlo9AHnhBhOdjSAXFFurCj4amejWmCL6OZFU8fel8rCrX6xS3ZxTKGTG
-eleeAi/WUTujQJ7w7L531AStwvfCtyqu9e8xZzsl2Kgf5ml732Dvd3nbQRan637m
-nVTHvdu5PxZZkWMG+GWiCqG3BJw21SMRNdIMCqkOoY9+pzETj3CO6tfZD2MIrU/5
-wlXsicEJzzpKFce7Ccz/M1u7meChKj/3KosAOYbWrk/es7abnZvrOWjShVM/Qwtb
-XN9YnNBrUPiVOJ3zB9OyEztIP2qxP4wab54zYNm0DME/bbD8W6NGcpdO9IaC3pIq
-Xjw82W+y/F2g3b9rlyu4qFw9O1fiAeLYXcfgykpB9HgHCVy0jaa2N9TZPXWan2r4
-teJz5Ozs+GDlY8epBZw4TwxCp3HFG5cMHec6O2tFR0GObnKhcuReha66vGoL3gCa
-6qGEx3pQAUEOQvnYATbULf1JTju9cRKUgRQe9iWX0bwBeF7NsX3HWFlJHISpWFwI
-Zz6Lwohtv0g9PQTNQdLxEGjS9aLaEMT0GuSzj6s35tlikwu4oyKZjkb8cCHNKDM+
-J82r7X/WV8ywa5/vbW4tfBRCXI/oVZvx1NQvkiF8I0wV0hHjgqOWcsGiyZgve19K
-3IbitNsyRm74hdjJsHWBVnPAIHOyr/mG4I1xMf7X1SDd1kMGvaA=
-=Cd+V
------END PGP SIGNATURE-----
-
---8P1HSweYDcXXzwPJ--
+-Olof
