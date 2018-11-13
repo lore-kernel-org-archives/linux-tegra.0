@@ -1,119 +1,73 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [REGRESSION] brcmfmac: NULL pointer deference starting
- next-20181107
-Date: Tue, 13 Nov 2018 14:32:54 +0100
-Message-ID: <b33e91b9-e375-5169-dda6-dc664700eefc@redhat.com>
-References: <dbc5e8f9-6f14-77d2-be2a-f0738e13b773@nvidia.com>
- <9f72ac4f-a83a-7af7-3c26-b1ced6d98653@broadcom.com>
- <9e0a7997-4c14-a3a1-c935-d674270533aa@redhat.com>
- <000bfd39-10cf-661c-9512-0410782168dc@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH] media: staging: tegra-vde: print long unsigned using %lu
+ format specifier
+Date: Tue, 13 Nov 2018 19:52:59 +0300
+Message-ID: <67306f07-f270-3395-48c4-f6d4954e0d04@gmail.com>
+References: <20181108110224.1916-1-colin.king@canonical.com>
+ <0b3bf728-7b7e-7250-40eb-0827f8fe955b@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000bfd39-10cf-661c-9512-0410782168dc@nvidia.com>
+In-Reply-To: <0b3bf728-7b7e-7250-40eb-0827f8fe955b@xs4all.nl>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Arend van Spriel <arend.vanspriel@broadcom.com>, Kalle Valo <kvalo@codeaurora.org>, linux-tegra <linux-tegra@vger.kernel.org>, linux-wireless@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>, Colin King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-HI,
-
-On 13-11-18 14:21, Jon Hunter wrote:
+On 09.11.2018 17:32, Hans Verkuil wrote:
+> On 11/08/18 12:02, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The frame.flags & FLAG_B_FRAME is promoted to a long unsigned because
+>> of the use of the BIT() macro when defining FLAG_B_FRAME and causing a
+>> build warning. Fix this by using the %lu format specifer.
+>>
+>> Cleans up warning:
+>> drivers/staging/media/tegra-vde/tegra-vde.c:267:5: warning: format
+>> specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/staging/media/tegra-vde/tegra-vde.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+>> index 6f06061a40d9..66cf14212c14 100644
+>> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
+>> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+>> @@ -262,7 +262,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+>>  			value |= frame->frame_num;
+>>  
+>>  			dev_dbg(vde->miscdev.parent,
+>> -				"\tFrame %d: frame_num = %d B_frame = %d\n",
+>> +				"\tFrame %d: frame_num = %d B_frame = %lu\n",
+>>  				i + 1, frame->frame_num,
+>>  				(frame->flags & FLAG_B_FRAME));
+>>  		} else {
+>>
 > 
-> On 13/11/2018 10:40, Hans de Goede wrote:
->> Hi,
->>
->> On 13-11-18 11:24, Arend van Spriel wrote:
->>> + Ard as this involves EFI.
->>>
->>> On 11/12/2018 2:24 PM, Jon Hunter wrote:
->>>> Hi Hans, Kalle,
->>>>
->>>> Starting with next-20181107 I am seeing the following NULL pointer
->>>> deference on Tegra (note the firmware is missing on this board) ...
->>>>
->>>> [   14.072883] brcmfmac: brcmf_fw_alloc_request: using
->>>> brcm/brcmfmac4329-sdio for chip BCM4329/3
->>>>
->>>> [   14.130287] brcmfmac mmc1:0001:1: Direct firmware load for
->>>> brcm/brcmfmac4329-sdio.nvidia,cardhu-a04.txt failed with error -2
->>>>
->>>> [   14.156283] brcmfmac mmc1:0001:1: Direct firmware load for
->>>> brcm/brcmfmac4329-sdio.txt failed with error -2
->>>>
->>>> [   14.177769] Unable to handle kernel NULL pointer dereference at
->>>> virtual address 00000008
->>>>
->>>> [   14.197303] pgd = 60bfa5f1
->>>>
->>>> [   14.211842] [00000008] *pgd=00000000
->>>>
->>>> [   14.227373] Internal error: Oops: 5 [#1] SMP ARM
->>>>
->>>> [   14.244244] Modules linked in: brcmfmac sha256_generic sha256_arm
->>>> snd cfg80211 brcmutil soundcore snd_soc_tegra30_ahub tegra_wdt
->>>>
->>>> [   14.269109] CPU: 1 PID: 114 Comm: kworker/1:2 Not tainted
->>>> 4.20.0-rc1-next-20181107-gd881de3 #1
->>>>
->>>> [   14.269114] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->>>>
->>>> [   14.269154] Workqueue: events request_firmware_work_func
->>>>
->>>> [   14.269177] PC is at efivar_entry_size+0x28/0x90
->>>>
->>>> [   14.269362] LR is at brcmf_fw_complete_request+0x3f8/0x8d4 [brcmfmac]
->>>>
->>>> [   14.269369] pc : [<c0c40718>]    lr : [<bf2a3ef4>]    psr: a00d0113
->>>>
->>>> [   14.269374] sp : ede7fe28  ip : ee983410  fp : c1787f30
->>>>
->>>> [   14.269378] r10: 00000000  r9 : 00000000  r8 : bf2b2258
->>>>
->>>> [   14.269384] r7 : ee983000  r6 : c1604c48  r5 : ede7fe88  r4 :
->>>> edf337c0
->>>>
->>>> [   14.269389] r3 : 00000000  r2 : 00000000  r1 : ede7fe88  r0 :
->>>> c17712c8
->>>>
->>>
->>> Hi Jon,
->>>
->>> I tried building drivers/firmware/efi/vars.c using tegra_defconfig.
->>> Had to enable CONFIG_EFI. So the null pointer access is a 0x00000008
->>> so I looked at the disassembly below:
->>>
->>> int efivar_entry_size(struct efivar_entry *entry, unsigned long *size)
->>> {
->>>        310:       e1a05001        mov     r5, r1
->>>           const struct efivar_operations *ops = __efivars->ops;
->>> ==>  314:       e5936008        ldr     r6, [r3, #8]
->>>
->>> So I think __efivars is NULL on your platform. It is private to the
->>> source file. Not sure how the driver should deal with this. Maybe use
->>> efi_enabled() but not sure what feature to use. My best bet would be
->>> EFI_RUNTIME_SERVICES.
->>
->> Ah right, thank you for catching this I had looking into this
->> on my TODO list, but you beat me to it.
->>
->> IMHO the best fix here would be to modify efivar_entry_size(),
->> adding:
->>
->>      if (!ops)
->>          return -ENOENT;
->>
->> Which makes it return the same error as when we do have efivar
->> support but the requested variable is not found.
+> Compiling for i686 gives:
 > 
-> So the above did not work. I see a patch from Arend and I will give this
-> a try.
+> In file included from /home/hans/work/build/media-git/include/linux/printk.h:336,
+>                  from /home/hans/work/build/media-git/include/linux/kernel.h:14,
+>                  from /home/hans/work/build/media-git/include/linux/clk.h:16,
+>                  from /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:12:
+> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c: In function 'tegra_vde_setup_iram_tables':
+> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:265:5: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'u32' {aka 'unsigned int'} [-Wformat=]
+>      "\tFrame %d: frame_num = %d B_frame = %lu\n",
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> /home/hans/work/build/media-git/include/linux/dynamic_debug.h:135:39: note: in definition of macro 'dynamic_dev_dbg'
+>    __dynamic_dev_dbg(&descriptor, dev, fmt, \
+>                                        ^~~
+> /home/hans/work/build/media-git/include/linux/device.h:1463:23: note: in expansion of macro 'dev_fmt'
+>   dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+>                        ^~~~~~~
+> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:264:4: note: in expansion of macro 'dev_dbg'
+>     dev_dbg(vde->miscdev.parent,
+>     ^~~~~~~
+> 
+> Should it be %zu?
 
-Ah right, looking at Arend's patch my little snippet got the test wrong.
-
-Hopefully Arend's patch will fix things.
-
-Regards,
-
-Hans
+Same on ARM32. Yes, it should be either %zu or "!!(frame->flags & FLAG_B_FRAME)".
