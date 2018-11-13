@@ -1,70 +1,81 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND PATCH] mfd: tps6586x: Handle interrupts on suspend
-Date: Tue, 13 Nov 2018 11:40:22 +0000
-Message-ID: <20181113114022.GD3513@dell>
-References: <1542099391-7338-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 05/10] mailbox: tegra-hsp: Add suspend/resume support
+Date: Tue, 13 Nov 2018 11:17:58 +0000
+Message-ID: <9a7a55fa-9989-21cd-f981-f43d3b0f2d6c@nvidia.com>
+References: <20181112151853.29289-1-thierry.reding@gmail.com>
+ <20181112151853.29289-6-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1542099391-7338-1-git-send-email-jonathanh@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181112151853.29289-6-thierry.reding@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jassi Brar <jassisinghbrar@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devicetree@vger.kernel.org, Mika Liljeberg <mliljeberg@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Timo Alho <talho@nvidia.com>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-tegra@vger.kernel.org, Pekka Pessi <ppessi@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 13 Nov 2018, Jon Hunter wrote:
 
-> From: Jonathan Hunter <jonathanh@nvidia.com>
+On 12/11/2018 15:18, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> The tps6586x driver creates an irqchip that is used by its various child
-> devices for managing interrupts. The tps6586x-rtc device is one of its
-> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
-> a wake-up device from suspend, the following is seen:
+> Upon resuming from a system sleep state, the interrupts for all active
+> shared mailboxes need to be reenabled, otherwise they will not work.
 > 
->  PM: Syncing filesystems ... done.
->  Freezing user space processes ... (elapsed 0.001 seconds) done.
->  OOM killer disabled.
->  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->  Disabling non-boot CPUs ...
->  Entering suspend state LP1
->  Enabling non-boot CPUs ...
->  CPU1 is up
->  tps6586x 3-0034: failed to read interrupt status
->  tps6586x 3-0034: failed to read interrupt status
-> 
-> The reason why the tps6586x interrupt status cannot be read is because
-> the tps6586x interrupt is not masked during suspend and when the
-> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
-> seen before the i2c controller has been resumed in order to read the
-> tps6586x interrupt status.
-> 
-> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
-> suspend, which gets propagated to the parent tps6586x interrupt.
-> However, the tps6586x-rtc driver cannot disable it's interrupt during
-> suspend otherwise we would never be woken up and so the tps6586x must
-> disable it's interrupt instead.
-> 
-> Prevent the tps6586x interrupt handler from executing on exiting suspend
-> before the i2c controller has been resumed by disabling the tps6586x
-> interrupt on entering suspend and re-enabling it on resuming from
-> suspend.
-> 
-> Cc: stable@vger.kernel.org
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/mfd/tps6586x.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+>  drivers/mailbox/tegra-hsp.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+> index 0100a974149b..1259abf3542f 100644
+> --- a/drivers/mailbox/tegra-hsp.c
+> +++ b/drivers/mailbox/tegra-hsp.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm.h>
+>  #include <linux/slab.h>
+>  
+>  #include <dt-bindings/mailbox/tegra186-hsp.h>
+> @@ -817,6 +818,23 @@ static int tegra_hsp_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static int tegra_hsp_resume(struct device *dev)
+> +{
+> +	struct tegra_hsp *hsp = dev_get_drvdata(dev);
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < hsp->num_sm; i++) {
+> +		struct tegra_hsp_mailbox *mb = &hsp->mailboxes[i];
+> +
+> +		if (mb->channel.chan->cl)
+> +			tegra_hsp_mailbox_startup(mb->channel.chan);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static SIMPLE_DEV_PM_OPS(tegra_hsp_pm_ops, NULL, tegra_hsp_resume);
 
-Applied, thanks.
+Is it worth disabling interrupts on suspend to avoid any in-flight
+interrupt triggering a bad access on entering suspend? I assume that the
+context of the mailbox registers get cleared/lost at some point and so I
+was not sure if there is a time where they have a bad state or are
+inaccessible?
+
+Cheers
+Jon
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+nvpublic
