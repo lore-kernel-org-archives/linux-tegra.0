@@ -1,101 +1,76 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RESEND PATCH] mfd: tps6586x: Handle interrupts on suspend
-Date: Tue, 13 Nov 2018 08:56:31 +0000
-Message-ID: <1542099391-7338-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 06/10] dt-bindings: serial: Add bindings for
+ nvidia,tegra194-tcu
+Date: Tue, 13 Nov 2018 09:39:08 +0000
+Message-ID: <f7d19f6e-0dcd-753c-a407-fcec4fa1474b@nvidia.com>
+References: <20181112151853.29289-1-thierry.reding@gmail.com>
+ <20181112151853.29289-7-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181112151853.29289-7-thierry.reding@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jassi Brar <jassisinghbrar@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devicetree@vger.kernel.org, Mika Liljeberg <mliljeberg@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Timo Alho <talho@nvidia.com>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-tegra@vger.kernel.org, Pekka Pessi <ppessi@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jonathan Hunter <jonathanh@nvidia.com>
 
-The tps6586x driver creates an irqchip that is used by its various child
-devices for managing interrupts. The tps6586x-rtc device is one of its
-children that uses the tps6586x irqchip. When using the tps6586x-rtc as
-a wake-up device from suspend, the following is seen:
+On 12/11/2018 15:18, Thierry Reding wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+> 
+> Add bindings for the Tegra Combined UART device used to talk to the
+> UART console on Tegra194 systems.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../bindings/serial/nvidia,tegra194-tcu.txt   | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt b/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
+> new file mode 100644
+> index 000000000000..085a8591accd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
+> @@ -0,0 +1,35 @@
+> +NVIDIA Tegra Combined UART (TCU)
+> +
+> +The TCU is a system for sharing a hardware UART instance among multiple
+> +systems within the Tegra SoC. It is implemented through a mailbox-
+> +based protocol where each "virtual UART" has a pair of mailboxes, one
+> +for transmitting and one for receiving, that is used to communicate
+> +with the hardware implementing the TCU.
+> +
+> +Required properties:
+> +- name : Should be tcu
+> +- compatible
+> +    Array of strings
+> +    One of:
+> +    - "nvidia,tegra194-tcu"
+> +- mbox-names:
+> +    "rx" - Mailbox for receiving data from hardware UART
+> +    "tx" - Mailbox for transmitting data to hardware UART
+> +- mboxes: Mailboxes corresponding to the mbox-names.
 
- PM: Syncing filesystems ... done.
- Freezing user space processes ... (elapsed 0.001 seconds) done.
- OOM killer disabled.
- Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
- Disabling non-boot CPUs ...
- Entering suspend state LP1
- Enabling non-boot CPUs ...
- CPU1 is up
- tps6586x 3-0034: failed to read interrupt status
- tps6586x 3-0034: failed to read interrupt status
+Looks like there is some trailing white-space in the above line and git
+warns after applying this patch.
 
-The reason why the tps6586x interrupt status cannot be read is because
-the tps6586x interrupt is not masked during suspend and when the
-tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
-seen before the i2c controller has been resumed in order to read the
-tps6586x interrupt status.
+Cheers
+Jon
 
-The tps6586x-rtc driver sets it's interrupt as a wake-up source during
-suspend, which gets propagated to the parent tps6586x interrupt.
-However, the tps6586x-rtc driver cannot disable it's interrupt during
-suspend otherwise we would never be woken up and so the tps6586x must
-disable it's interrupt instead.
-
-Prevent the tps6586x interrupt handler from executing on exiting suspend
-before the i2c controller has been resumed by disabling the tps6586x
-interrupt on entering suspend and re-enabling it on resuming from
-suspend.
-
-Cc: stable@vger.kernel.org
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
- drivers/mfd/tps6586x.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index b89379782741..9c7925ca13cf 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -592,6 +592,29 @@ static int tps6586x_i2c_remove(struct i2c_client *client)
- 	return 0;
- }
- 
-+static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
-+
-+	if (tps6586x->client->irq)
-+		disable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tps6586x_i2c_resume(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
-+
-+	if (tps6586x->client->irq)
-+		enable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
-+			 tps6586x_i2c_resume);
-+
- static const struct i2c_device_id tps6586x_id_table[] = {
- 	{ "tps6586x", 0 },
- 	{ },
-@@ -602,6 +625,7 @@ static struct i2c_driver tps6586x_driver = {
- 	.driver	= {
- 		.name	= "tps6586x",
- 		.of_match_table = of_match_ptr(tps6586x_of_match),
-+		.pm	= &tps6586x_pm_ops,
- 	},
- 	.probe		= tps6586x_i2c_probe,
- 	.remove		= tps6586x_i2c_remove,
 -- 
-2.7.4
+nvpublic
