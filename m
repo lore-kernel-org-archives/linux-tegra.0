@@ -1,55 +1,118 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clockevents/drivers/tegra20: Remove obsolete inclusion
- of <asm/smp_twd.h>
-Date: Fri, 16 Nov 2018 11:15:26 +0100
-Message-ID: <20181116101526.GA14769@ulmo>
-References: <20181115100037.17706-1-geert+renesas@glider.be>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 00/21] IOMMU: Tegra GART driver clean up and
+	optimization
+Date: Fri, 16 Nov 2018 15:13:31 +0300
+Message-ID: <12b55bb4-1a52-1045-cc99-f8e4eaf2bdf5@gmail.com>
+References: <20180930224833.28809-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181115100037.17706-1-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20180930224833.28809-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 01.10.2018 1:48, Dmitry Osipenko wrote:
+> Hello,
+> 
+> This patch-series integrates the GART (IOMMU) driver with the Memory
+> Controller driver, that allows to report the name of a faulty memory
+> client on GART page fault. A major code clean up and performance
+> optimization is performed in this series as well.
+> 
+> Changelog:
+> 
+> v5: Addressed review comments from Thierry Reding to v4. Added WARN_ON() to
+>     make sure that active domain isn't getting released, kept include headers
+>     where necessary, etc.. All changes are quite minor.
+> 
+>     Added new patch "memory: tegra: Use relaxed versions of readl/writel".
+> 
+> v4: In the v3 Rob Herring requested to make device-tree binding changes
+>     backwards-compatible with the older kernels, that is achieved by
+>     changing the 'compatible' value of the DT node.
+> 
+>     The code-refactoring patches got some more (minor) polish.
+> 
+>     Added new patch "memory: tegra: Use of_device_get_match_data()".
+> 
+> v3: Memory Controller integration part has been reworked and now GART's
+>     device-tree binding is changed. Adding Rob Herring for the device-tree
+>     changes reviewing.
+> 
+>     GART now disallows more than one active domain at a time.
+> 
+>     Fixed "spinlock recursion", "NULL pointer dereference" and "detaching
+>     of all devices from inactive domains".
+> 
+>     New code-refactoring patches.
+> 
+>     The previously standalone patch "memory: tegra: Don't invoke Tegra30+
+>     specific memory timing setup on Tegra20" is now included into this
+>     series because there is a dependency on that patch and it wasn't applied
+>     yet.
+> 
+> v2: Addressed review comments from Robin Murphy to v1 by moving devices
+>     iommu_fwspec check to gart_iommu_add_device().
+> 
+>     Dropped the "Provide single domain and group for all devices" patch from
+>     the series for now because after some more considering it became not
+>     exactly apparent whether that is what we need, that was also suggested
+>     by Robin Murphy in the review comment. Maybe something like a runtime
+>     IOMMU usage for devices would be a better solution, allowing to implement
+>     transparent context switching of virtual IOMMU domains.
+> 
+>     Some very minor code cleanups, reworded commit messages.
+> 
+> Dmitry Osipenko (21):
+>   iommu/tegra: gart: Remove pr_fmt and clean up includes
+>   iommu/tegra: gart: Clean up driver probe errors handling
+>   iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
+>   iommu: Introduce iotlb_sync_map callback
+>   iommu/tegra: gart: Optimize mapping / unmapping performance
+>   dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
+>   ARM: dts: tegra20: Update Memory Controller node to the new binding
+>   memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
+>     Tegra20
+>   memory: tegra: Adapt to Tegra20 device-tree binding changes
+>   memory: tegra: Read client ID on GART page fault
+>   memory: tegra: Use of_device_get_match_data()
+>   memory: tegra: Use relaxed versions of readl/writel
+>   iommu/tegra: gart: Integrate with Memory Controller driver
+>   iommu/tegra: gart: Fix spinlock recursion
+>   iommu/tegra: gart: Fix NULL pointer dereference
+>   iommu/tegra: gart: Allow only one active domain at a time
+>   iommu/tegra: gart: Don't use managed resources
+>   iommu/tegra: gart: Prepend error/debug messages with "gart:"
+>   iommu/tegra: gart: Don't detach devices from inactive domains
+>   iommu/tegra: gart: Simplify clients-tracking code
+>   iommu/tegra: gart: Perform code refactoring
+> 
+>  .../bindings/iommu/nvidia,tegra20-gart.txt    |  14 -
+>  .../memory-controllers/nvidia,tegra20-mc.txt  |  27 +-
+>  arch/arm/boot/dts/tegra20.dtsi                |  15 +-
+>  drivers/iommu/Kconfig                         |   1 +
+>  drivers/iommu/iommu.c                         |   8 +-
+>  drivers/iommu/tegra-gart.c                    | 489 +++++++-----------
+>  drivers/memory/tegra/mc.c                     |  93 +++-
+>  drivers/memory/tegra/mc.h                     |  10 +-
+>  include/linux/iommu.h                         |   1 +
+>  include/soc/tegra/mc.h                        |  29 +-
+>  10 files changed, 306 insertions(+), 381 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
+> 
 
---X1bOJ3K7DJ5YkBrT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Thierry,
 
-On Thu, Nov 15, 2018 at 11:00:37AM +0100, Geert Uytterhoeven wrote:
-> As of commit da4a686a2cfb077a ("ARM: smp_twd: convert to use CLKSRC_OF
-> init"), this header file is no longer used.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/clocksource/tegra20_timer.c | 1 -
->  1 file changed, 1 deletion(-)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---X1bOJ3K7DJ5YkBrT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvumLsACgkQ3SOs138+
-s6GHAxAAsY3Bc+7/MuN5iilPwhrsewh4i5YkA9An79ObK7T/WVY+XTqotgwZ6l5r
-DnSspjbtg4RFXrhppGk8G5fduX33K6URBRpT6Vy8fZpz8oe7G+gorebb81fyX+mo
-nIZ636RFiab2LkhQ6E3kcYJtAIwWXsgO8UM3+wi+qRDk6kv6I1ptREwkT6SbdEPh
-cdmW2uv1iTTnlffZKMvF5Zb5jw+byD6TjioTm8Rq511Ql2YmMI8vD8ytWfi2gZGl
-CgeODVtLdhjzSJ0Ffj86g0vOETKI7YhvWFpInH5En6auN7Hbx976qfI60nmVgcLU
-9M1PW9uRhWkZ8acwhie1uQAnpmnjPcf9bW8KVmDY3os4AdnyrWug0Zf50GGix/vW
-NO9dyjP+G+/u6+I/2uBuBAxShHx130vDh0zCsxyR0l3YFlvpjkprYhDT1aMN+mKk
-kZSN2J3SsmbT0LTJv8sPuk1vwgMS6lRoy0IaJ8rH51KgtHMDkMpB//+FzwSnyD6v
-tAGxiANdtZ/D/rHeOw51B4E6va8lMZxvUMkRuDesSY9o3BxPHFgAMpJVFqPouPVP
-oT1cA+t6HoApyblPtrrZPRWE9zYL8C4jLbkX7Wn7yJx1hGfD3bAQJ2sdF8C9N5lY
-OgtBgVSmQUmDHDq4lRygVmHxw68ORg8bB2WKqr0UJoejwa/b9wI=
-=cJ92
------END PGP SIGNATURE-----
-
---X1bOJ3K7DJ5YkBrT--
+This patchset should be in a good shape, could you please take a look at the (minor) changes done in v5 and give r-b/ack to the remaining patches? Will be very nice if this series could finally land, especially in the light of upcoming DRM/HOST1x (re-)work.
