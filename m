@@ -1,118 +1,66 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 00/21] IOMMU: Tegra GART driver clean up and
-	optimization
-Date: Fri, 16 Nov 2018 15:13:31 +0300
-Message-ID: <12b55bb4-1a52-1045-cc99-f8e4eaf2bdf5@gmail.com>
-References: <20180930224833.28809-1-digetx@gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH v2 01/10] mailbox: Support blocking transfers in atomic
+ context
+Date: Sat, 17 Nov 2018 11:27:17 -0600
+Message-ID: <CABb+yY3HwvG6sSKnweiDpyg85Fk8Q9hOVaF-s7gv4RDzEoaGqA@mail.gmail.com>
+References: <20181112151853.29289-1-thierry.reding@gmail.com>
+ <20181112151853.29289-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20180930224833.28809-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181112151853.29289-2-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Devicetree List <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, mliljeberg@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, talho@nvidia.com, linux-serial@vger.kernel.org, jslaby@suse.com, linux-tegra@vger.kernel.org, ppessi@nvidia.com, Jon Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01.10.2018 1:48, Dmitry Osipenko wrote:
-> Hello,
-> 
-> This patch-series integrates the GART (IOMMU) driver with the Memory
-> Controller driver, that allows to report the name of a faulty memory
-> client on GART page fault. A major code clean up and performance
-> optimization is performed in this series as well.
-> 
-> Changelog:
-> 
-> v5: Addressed review comments from Thierry Reding to v4. Added WARN_ON() to
->     make sure that active domain isn't getting released, kept include headers
->     where necessary, etc.. All changes are quite minor.
-> 
->     Added new patch "memory: tegra: Use relaxed versions of readl/writel".
-> 
-> v4: In the v3 Rob Herring requested to make device-tree binding changes
->     backwards-compatible with the older kernels, that is achieved by
->     changing the 'compatible' value of the DT node.
-> 
->     The code-refactoring patches got some more (minor) polish.
-> 
->     Added new patch "memory: tegra: Use of_device_get_match_data()".
-> 
-> v3: Memory Controller integration part has been reworked and now GART's
->     device-tree binding is changed. Adding Rob Herring for the device-tree
->     changes reviewing.
-> 
->     GART now disallows more than one active domain at a time.
-> 
->     Fixed "spinlock recursion", "NULL pointer dereference" and "detaching
->     of all devices from inactive domains".
-> 
->     New code-refactoring patches.
-> 
->     The previously standalone patch "memory: tegra: Don't invoke Tegra30+
->     specific memory timing setup on Tegra20" is now included into this
->     series because there is a dependency on that patch and it wasn't applied
->     yet.
-> 
-> v2: Addressed review comments from Robin Murphy to v1 by moving devices
->     iommu_fwspec check to gart_iommu_add_device().
-> 
->     Dropped the "Provide single domain and group for all devices" patch from
->     the series for now because after some more considering it became not
->     exactly apparent whether that is what we need, that was also suggested
->     by Robin Murphy in the review comment. Maybe something like a runtime
->     IOMMU usage for devices would be a better solution, allowing to implement
->     transparent context switching of virtual IOMMU domains.
-> 
->     Some very minor code cleanups, reworded commit messages.
-> 
-> Dmitry Osipenko (21):
->   iommu/tegra: gart: Remove pr_fmt and clean up includes
->   iommu/tegra: gart: Clean up driver probe errors handling
->   iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
->   iommu: Introduce iotlb_sync_map callback
->   iommu/tegra: gart: Optimize mapping / unmapping performance
->   dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
->   ARM: dts: tegra20: Update Memory Controller node to the new binding
->   memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
->     Tegra20
->   memory: tegra: Adapt to Tegra20 device-tree binding changes
->   memory: tegra: Read client ID on GART page fault
->   memory: tegra: Use of_device_get_match_data()
->   memory: tegra: Use relaxed versions of readl/writel
->   iommu/tegra: gart: Integrate with Memory Controller driver
->   iommu/tegra: gart: Fix spinlock recursion
->   iommu/tegra: gart: Fix NULL pointer dereference
->   iommu/tegra: gart: Allow only one active domain at a time
->   iommu/tegra: gart: Don't use managed resources
->   iommu/tegra: gart: Prepend error/debug messages with "gart:"
->   iommu/tegra: gart: Don't detach devices from inactive domains
->   iommu/tegra: gart: Simplify clients-tracking code
->   iommu/tegra: gart: Perform code refactoring
-> 
->  .../bindings/iommu/nvidia,tegra20-gart.txt    |  14 -
->  .../memory-controllers/nvidia,tegra20-mc.txt  |  27 +-
->  arch/arm/boot/dts/tegra20.dtsi                |  15 +-
->  drivers/iommu/Kconfig                         |   1 +
->  drivers/iommu/iommu.c                         |   8 +-
->  drivers/iommu/tegra-gart.c                    | 489 +++++++-----------
->  drivers/memory/tegra/mc.c                     |  93 +++-
->  drivers/memory/tegra/mc.h                     |  10 +-
->  include/linux/iommu.h                         |   1 +
->  include/soc/tegra/mc.h                        |  29 +-
->  10 files changed, 306 insertions(+), 381 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
-> 
+On Mon, Nov 12, 2018 at 9:18 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> From: Thierry Reding <treding@nvidia.com>
+>
+> The mailbox framework supports blocking transfers via completions for
+> clients that can sleep. In order to support blocking transfers in cases
+> where the transmission is not permitted to sleep, add a new ->flush()
+> callback that controller drivers can implement to busy loop until the
+> transmission has been completed. This will automatically be called when
+> available and interrupts are disabled for clients that request blocking
+> transfers.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/mailbox/mailbox.c          | 8 ++++++++
+>  include/linux/mailbox_controller.h | 4 ++++
+>  2 files changed, 12 insertions(+)
+>
+> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> index 674b35f402f5..0eaf21259874 100644
+> --- a/drivers/mailbox/mailbox.c
+> +++ b/drivers/mailbox/mailbox.c
+> @@ -267,6 +267,14 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
+>                 unsigned long wait;
+>                 int ret;
+>
+> +               if (irqs_disabled() && chan->mbox->ops->flush) {
+> +                       ret = chan->mbox->ops->flush(chan, chan->cl->tx_tout);
+> +                       if (ret < 0)
+> +                               tx_tick(chan, ret);
+> +
+> +                       return ret;
+> +               }
+> +
+This is hacky. I think we can do without busy waiting in atomic
+context. You could queue locally while in atomic context and then
+transfer in blocking mode. I don't think we should worry about the
+'throughput' as there already is no h/w rate control even with
+busy-waiting.
 
-Hello Thierry,
-
-This patchset should be in a good shape, could you please take a look at the (minor) changes done in v5 and give r-b/ack to the remaining patches? Will be very nice if this series could finally land, especially in the light of upcoming DRM/HOST1x (re-)work.
+Thanks.
