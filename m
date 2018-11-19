@@ -1,16 +1,15 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 0/4] EMC fixes for Tegra30+
-Date: Mon, 19 Nov 2018 21:26:23 +0000
-Message-ID: <17936f29-a19f-da3b-c1b0-10128f03058f@nvidia.com>
+Subject: Re: [PATCH v1 1/4] ARM: tegra: Fix missed EMC registers latching on
+ resume from LP1 on Tegra30+
+Date: Mon, 19 Nov 2018 21:27:32 +0000
+Message-ID: <3c7e275e-c833-cfbf-813e-d71858bbef63@nvidia.com>
 References: <20180830185404.7224-1-digetx@gmail.com>
- <d1f577d8-a944-35b6-89b3-ce4eafdd4808@gmail.com>
- <f0045dbb-c19a-cd5e-2e78-4b68ccc2342d@nvidia.com>
- <6f4eb4a5-e257-4faa-c5fb-12ffe1f5b3aa@gmail.com>
+ <20180830185404.7224-2-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6f4eb4a5-e257-4faa-c5fb-12ffe1f5b3aa@gmail.com>
+In-Reply-To: <20180830185404.7224-2-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
@@ -18,40 +17,34 @@ Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 19/11/2018 17:05, Dmitry Osipenko wrote:
-> On 19.11.2018 18:42, Jon Hunter wrote:
->>
->> On 18/11/2018 22:06, Dmitry Osipenko wrote:
->>> On 30.08.2018 21:54, Dmitry Osipenko wrote:
->>>> Hello,
->>>>
->>>> This patch series fixes couple bugs in the memory self-refresh code.
->>>> The EMC / MC state is properly restored after patches being applied,
->>>> please review.
->>>>
->>>> Dmitry Osipenko (4):
->>>>   ARM: tegra: Fix missed EMC registers latching on resume from LP1 on
->>>>     Tegra30+
->>>>   ARM: tegra: Fix DRAM refresh-interval clobbering on resume from LP1 on
->>>>     Tegra30
->>>>   ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+
->>>>   ARM: tegra: Clear EMC interrupts on resume from LP1 on Tegra30+
->>>>
->>>>  arch/arm/mach-tegra/iomap.h         |  9 ++++++++
->>>>  arch/arm/mach-tegra/sleep-tegra30.S | 32 +++++++++++++++++++++++++++--
->>>>  2 files changed, 39 insertions(+), 2 deletions(-)
->>>>
->>>
->>> Hello Jon,
->>>
->>> Could you please test these patches using your testing setup? Will be awesome if you could give t-b/r-b to the series, then there should be a better chance that Thierry could apply it eventually ;)
->>
->> Yes I will give them a test and let you know.
+On 30/08/2018 19:54, Dmitry Osipenko wrote:
+> The memory interface configuration and re-calibration interval are left
+> unassigned on resume from LP1 because these registers are shadowed and
+> require latching after being adjusted.
 > 
-> Thank you!
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/mach-tegra/sleep-tegra30.S | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+> index 127fc78365fe..801fe58978ae 100644
+> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+> @@ -521,6 +521,8 @@ zcal_done:
+>  	ldr	r1, [r5, #0x0]		@ restore EMC_CFG
+>  	str	r1, [r0, #EMC_CFG]
+>  
+> +	emc_timing_update r1, r0
+> +
+>  	/* Tegra114 had dual EMC channel, now config the other one */
+>  	cmp	r10, #TEGRA114
+>  	bne	__no_dual_emc_chanl
+> 
 
-No problem. The tests all passed and so I don't see any issues. I have a
-couple comments.
+This is stated in the TRM as what needs to be done. So ...
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
 Cheers
 Jon
