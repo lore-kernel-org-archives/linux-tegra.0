@@ -1,18 +1,17 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 2/4] ARM: tegra: Fix DRAM refresh-interval clobbering
- on resume from LP1 on Tegra30
-Date: Tue, 20 Nov 2018 10:26:14 +0000
-Message-ID: <d0894c7c-be5a-5541-fab5-90bfd7d25dab@nvidia.com>
+Subject: Re: [PATCH v1 4/4] ARM: tegra: Clear EMC interrupts on resume from
+ LP1 on Tegra30+
+Date: Tue, 20 Nov 2018 10:27:21 +0000
+Message-ID: <d60c4888-c95a-4ec5-ba0d-992970089449@nvidia.com>
 References: <20180830185404.7224-1-digetx@gmail.com>
- <20180830185404.7224-3-digetx@gmail.com>
- <4f61bf5f-0aa8-df6e-109b-194b08f3374e@nvidia.com>
- <cee4398b-edb8-4c9d-7830-6f52fffd6e1c@gmail.com>
- <2096a744-d80b-42ad-a285-7bc1c1d3a5ed@gmail.com>
+ <20180830185404.7224-5-digetx@gmail.com>
+ <9c085248-41df-c8be-294d-6bf8b95c1085@nvidia.com>
+ <60898d23-63a1-caf5-8fd4-2bbd7bb6aaab@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2096a744-d80b-42ad-a285-7bc1c1d3a5ed@gmail.com>
+In-Reply-To: <60898d23-63a1-caf5-8fd4-2bbd7bb6aaab@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
@@ -20,50 +19,70 @@ Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 19/11/2018 22:32, Dmitry Osipenko wrote:
-> On 20.11.2018 1:09, Dmitry Osipenko wrote:
->> On 20.11.2018 0:34, Jon Hunter wrote:
->>>
->>> On 30/08/2018 19:54, Dmitry Osipenko wrote:
->>>> The DRAM refresh-interval is getting erroneously set to "1" on exiting
->>>> from memory self-refreshing mode. The clobbered interval causes the
->>>> "refresh request overflow timeout" error raised by the External Memory
->>>> Controller on exiting from LP1 on Tegra30.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  arch/arm/mach-tegra/sleep-tegra30.S | 2 --
->>>>  1 file changed, 2 deletions(-)
->>>>
->>>> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
->>>> index 801fe58978ae..99ac9c6dcf7c 100644
->>>> --- a/arch/arm/mach-tegra/sleep-tegra30.S
->>>> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
->>>> @@ -29,7 +29,6 @@
->>>>  #define EMC_CFG				0xc
->>>>  #define EMC_ADR_CFG			0x10
->>>>  #define EMC_TIMING_CONTROL		0x28
->>>> -#define EMC_REFRESH			0x70
->>>>  #define EMC_NOP				0xdc
->>>>  #define EMC_SELF_REF			0xe0
->>>>  #define EMC_MRW				0xe8
->>>> @@ -459,7 +458,6 @@ emc_wait_auto_cal_onetime:
->>>>  	cmp	r10, #TEGRA30
->>>>  	streq	r1, [r0, #EMC_NOP]
->>>>  	streq	r1, [r0, #EMC_NOP]
->>>> -	streq	r1, [r0, #EMC_REFRESH]
->>>>  
->>>>  	emc_device_mask r1, r0
->>>
->>> This does look incorrect and it appears Tegra20 has the same bug.
+On 19/11/2018 22:35, Dmitry Osipenko wrote:
+> On 20.11.2018 1:00, Jon Hunter wrote:
 >>
->> Indeed.. somehow this doesn't cause any problems on T20. Maybe this affects only specific timing configurations and it's just a luck that "refresh overflow" isn't getting raised.
+>> On 30/08/2018 19:54, Dmitry Osipenko wrote:
+>>> Two interrupts are raised on resume from LP1 on Tegra30+: first is the
+>>> clock change completed interrupt which is set after updating timing
+>>> configuration, second is DLL alarm interrupt which is set when DLL
+>>> starts re-calibration after being reset. Clear these two interrupts
+>>> in the end of exiting from the self-refresh mode for consistency, that
+>>> will also allow to not receive spurious interrupts in the EMC driver
+>>> after resume from suspend.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  arch/arm/mach-tegra/sleep-tegra30.S | 7 +++++++
+>>>  1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+>>> index 828f6c37afde..78c6e9fb56e7 100644
+>>> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+>>> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+>>> @@ -26,6 +26,7 @@
+>>>  #include "irammap.h"
+>>>  #include "sleep.h"
+>>>  
+>>> +#define EMC_INTSTATUS			0x0
+>>>  #define EMC_CFG				0xc
+>>>  #define EMC_ADR_CFG			0x10
+>>>  #define EMC_TIMING_CONTROL		0x28
+>>> @@ -44,6 +45,9 @@
+>>>  #define EMC_XM2VTTGENPADCTRL		0x310
+>>>  #define EMC_XM2VTTGENPADCTRL2		0x314
+>>>  
+>>> +#define EMC_CLKCHANGE_COMPLETE_INT	(1 << 4)
+>>> +#define EMC_DLL_ALARM_INT		(1 << 7)
+>>> +
+>>>  #define MC_EMEM_ARB_CFG			0x90
+>>>  
+>>>  #define PMC_CTRL			0x0
+>>> @@ -539,6 +543,9 @@ zcal_done:
+>>>  
+>>>  	emc_timing_update r1, r0
+>>>  
+>>> +	mov	r1, #(EMC_CLKCHANGE_COMPLETE_INT | EMC_DLL_ALARM_INT)
+>>> +	str	r1, [r0, #EMC_INTSTATUS]	@ clear interrupts
+>>> +
+>>>  	/* Tegra114 had dual EMC channel, now config the other one */
+>>>  	cmp	r10, #TEGRA114
+>>>  	bne	__no_dual_emc_chanl
+>>>
+>>
+>> Where are these interrupts enabled? I did not see where they are
+>> enabled. I see that the Tegra24 EMC driver does poll these, but it did
+>> not look like they were enabled. If they are enabled, I wondering if
+>> they should be masked on entering self-refresh?
 > 
-> Ah, T20 exit_selfrefresh_loop doesn't latch registers.. that's probably why it stayed unnoticed.
+> EMC interrupt is not enabled on Tegra124. IIRC, it doesn't use the interrupt at all in the driver. Indeed, T124 EMC driver polls the interrupt status, but it clears the status before starting to poll. Probably I was just thinking about to write T30 EMC driver at that time and to utilize the interrupt.. 
+> 
+> Seems it should be okay to drop this patch for now, but maybe then we will have to return to it sometime later. Up to you to decide.
 
-Good to know.
+I would be tempted to drop for now. If you have such a driver maybe the
+driver should mask any interrupts it uses on suspending.
 
-Cheers Jon
-
+Cheers
+Jon
 -- 
 nvpublic
