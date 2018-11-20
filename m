@@ -1,17 +1,18 @@
 From: Jon Hunter <jonathanh@nvidia.com>
 Subject: Re: [PATCH v1 2/4] ARM: tegra: Fix DRAM refresh-interval clobbering
  on resume from LP1 on Tegra30
-Date: Tue, 20 Nov 2018 10:25:50 +0000
-Message-ID: <2b3bf920-b8e1-c8c5-11cd-5a7443eda521@nvidia.com>
+Date: Tue, 20 Nov 2018 10:26:14 +0000
+Message-ID: <d0894c7c-be5a-5541-fab5-90bfd7d25dab@nvidia.com>
 References: <20180830185404.7224-1-digetx@gmail.com>
  <20180830185404.7224-3-digetx@gmail.com>
  <4f61bf5f-0aa8-df6e-109b-194b08f3374e@nvidia.com>
  <cee4398b-edb8-4c9d-7830-6f52fffd6e1c@gmail.com>
+ <2096a744-d80b-42ad-a285-7bc1c1d3a5ed@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cee4398b-edb8-4c9d-7830-6f52fffd6e1c@gmail.com>
+In-Reply-To: <2096a744-d80b-42ad-a285-7bc1c1d3a5ed@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
@@ -19,57 +20,50 @@ Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 19/11/2018 22:09, Dmitry Osipenko wrote:
-> On 20.11.2018 0:34, Jon Hunter wrote:
->>
->> On 30/08/2018 19:54, Dmitry Osipenko wrote:
->>> The DRAM refresh-interval is getting erroneously set to "1" on exiting
->>> from memory self-refreshing mode. The clobbered interval causes the
->>> "refresh request overflow timeout" error raised by the External Memory
->>> Controller on exiting from LP1 on Tegra30.
+On 19/11/2018 22:32, Dmitry Osipenko wrote:
+> On 20.11.2018 1:09, Dmitry Osipenko wrote:
+>> On 20.11.2018 0:34, Jon Hunter wrote:
 >>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  arch/arm/mach-tegra/sleep-tegra30.S | 2 --
->>>  1 file changed, 2 deletions(-)
+>>> On 30/08/2018 19:54, Dmitry Osipenko wrote:
+>>>> The DRAM refresh-interval is getting erroneously set to "1" on exiting
+>>>> from memory self-refreshing mode. The clobbered interval causes the
+>>>> "refresh request overflow timeout" error raised by the External Memory
+>>>> Controller on exiting from LP1 on Tegra30.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  arch/arm/mach-tegra/sleep-tegra30.S | 2 --
+>>>>  1 file changed, 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+>>>> index 801fe58978ae..99ac9c6dcf7c 100644
+>>>> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+>>>> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+>>>> @@ -29,7 +29,6 @@
+>>>>  #define EMC_CFG				0xc
+>>>>  #define EMC_ADR_CFG			0x10
+>>>>  #define EMC_TIMING_CONTROL		0x28
+>>>> -#define EMC_REFRESH			0x70
+>>>>  #define EMC_NOP				0xdc
+>>>>  #define EMC_SELF_REF			0xe0
+>>>>  #define EMC_MRW				0xe8
+>>>> @@ -459,7 +458,6 @@ emc_wait_auto_cal_onetime:
+>>>>  	cmp	r10, #TEGRA30
+>>>>  	streq	r1, [r0, #EMC_NOP]
+>>>>  	streq	r1, [r0, #EMC_NOP]
+>>>> -	streq	r1, [r0, #EMC_REFRESH]
+>>>>  
+>>>>  	emc_device_mask r1, r0
 >>>
->>> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
->>> index 801fe58978ae..99ac9c6dcf7c 100644
->>> --- a/arch/arm/mach-tegra/sleep-tegra30.S
->>> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
->>> @@ -29,7 +29,6 @@
->>>  #define EMC_CFG				0xc
->>>  #define EMC_ADR_CFG			0x10
->>>  #define EMC_TIMING_CONTROL		0x28
->>> -#define EMC_REFRESH			0x70
->>>  #define EMC_NOP				0xdc
->>>  #define EMC_SELF_REF			0xe0
->>>  #define EMC_MRW				0xe8
->>> @@ -459,7 +458,6 @@ emc_wait_auto_cal_onetime:
->>>  	cmp	r10, #TEGRA30
->>>  	streq	r1, [r0, #EMC_NOP]
->>>  	streq	r1, [r0, #EMC_NOP]
->>> -	streq	r1, [r0, #EMC_REFRESH]
->>>  
->>>  	emc_device_mask r1, r0
+>>> This does look incorrect and it appears Tegra20 has the same bug.
 >>
->> This does look incorrect and it appears Tegra20 has the same bug.
+>> Indeed.. somehow this doesn't cause any problems on T20. Maybe this affects only specific timing configurations and it's just a luck that "refresh overflow" isn't getting raised.
 > 
-> Indeed.. somehow this doesn't cause any problems on T20. Maybe this affects only specific timing configurations and it's just a luck that "refresh overflow" isn't getting raised.
-> 
->> However, looking at the EMC_REFRESH register it appears that bits 5:0
->> are the REFRESH_LO and bits 15:6 are the refresh interval. So this seems
->> to imply the interval is set to 0 and not 1. So maybe the commit message
->> needs to be fixed up.
-> 
-> Do you mean that EMC_REFRESH is a fractional value?
+> Ah, T20 exit_selfrefresh_loop doesn't latch registers.. that's probably why it stayed unnoticed.
 
-No the more I look at this, I just think it is a badly describe register
-in the TRM. I think that your description is correct afterall.
+Good to know.
 
-Cheers
-Jon
-
+Cheers Jon
 
 -- 
 nvpublic
