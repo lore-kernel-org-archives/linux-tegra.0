@@ -1,55 +1,48 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 2/4] ARM: tegra: Fix DRAM refresh-interval clobbering
- on resume from LP1 on Tegra30
-Date: Tue, 20 Nov 2018 10:27:51 +0000
-Message-ID: <0f032d8b-60d3-57fd-6f25-5b7b667e0636@nvidia.com>
-References: <20180830185404.7224-1-digetx@gmail.com>
- <20180830185404.7224-3-digetx@gmail.com>
+Subject: Re: [PATCH 4.4 000/160] 4.4.164-stable review
+Date: Tue, 20 Nov 2018 10:52:59 +0000
+Message-ID: <a8263b72-850e-2add-ea0c-4949cb458865@nvidia.com>
+References: <20181119162630.031306128@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830185404.7224-3-digetx@gmail.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 30/08/2018 19:54, Dmitry Osipenko wrote:
-> The DRAM refresh-interval is getting erroneously set to "1" on exiting
-> from memory self-refreshing mode. The clobbered interval causes the
-> "refresh request overflow timeout" error raised by the External Memory
-> Controller on exiting from LP1 on Tegra30.
+On 19/11/2018 16:27, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.164 release.
+> There are 160 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/mach-tegra/sleep-tegra30.S | 2 --
->  1 file changed, 2 deletions(-)
+> Responses should be made by Wed Nov 21 16:25:20 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-> index 801fe58978ae..99ac9c6dcf7c 100644
-> --- a/arch/arm/mach-tegra/sleep-tegra30.S
-> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
-> @@ -29,7 +29,6 @@
->  #define EMC_CFG				0xc
->  #define EMC_ADR_CFG			0x10
->  #define EMC_TIMING_CONTROL		0x28
-> -#define EMC_REFRESH			0x70
->  #define EMC_NOP				0xdc
->  #define EMC_SELF_REF			0xe0
->  #define EMC_MRW				0xe8
-> @@ -459,7 +458,6 @@ emc_wait_auto_cal_onetime:
->  	cmp	r10, #TEGRA30
->  	streq	r1, [r0, #EMC_NOP]
->  	streq	r1, [r0, #EMC_NOP]
-> -	streq	r1, [r0, #EMC_REFRESH]
->  
->  	emc_device_mask r1, r0
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.164-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    10 tests:	10 pass, 0 fail
+
+Linux version:	4.4.164-rc1-g6c17c03
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
 
 Cheers
 Jon
