@@ -1,140 +1,110 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI
- inforframe functions
-Date: Tue, 20 Nov 2018 17:27:04 +0100
-Message-ID: <20181120162704.GA10045@ulmo>
-References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH] thermal: tegra: add get_trend ops
+Date: Wed, 21 Nov 2018 14:36:10 +0800
+Message-ID: <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
+References: <1542705077-29697-1-git-send-email-wni@nvidia.com>
+ <20181120153833.GB28796@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1371029932=="
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20181120161345.15440-1-ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ville Syrjala <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung-Woo Kim <sw0312.kim@s>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181120153833.GB28796@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1371029932==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
-Content-Disposition: inline
 
+On 20/11/2018 11:38 PM, Thierry Reding wrote:
+> On Tue, Nov 20, 2018 at 05:11:17PM +0800, Wei Ni wrote:
+>> Add support for get_trend ops that allows soctherm
+>> sensors to be used with the step-wise governor.
+>>
+>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>> ---
+>>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
+>>  1 file changed, 34 insertions(+)
+>>
+>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>> index ed28110a3535..d2951fbe2b7c 100644
+>> --- a/drivers/thermal/tegra/soctherm.c
+>> +++ b/drivers/thermal/tegra/soctherm.c
+>> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+>>  	return 0;
+>>  }
+>>  
+>> +static int tegra_thermctl_get_trend(void *data, int trip,
+>> +				    enum thermal_trend *trend)
+>> +{
+>> +	struct tegra_thermctl_zone *zone = data;
+>> +	struct thermal_zone_device *tz = zone->tz;
+>> +	int trip_temp, temp, last_temp, ret;
+>> +
+>> +	if (!tz)
+>> +		return -EINVAL;
+>> +
+>> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	mutex_lock(&tz->lock);
+>> +	temp = tz->temperature;
+>> +	last_temp = tz->last_temperature;
+>> +	mutex_unlock(&tz->lock);
+>> +
+>> +	if (temp > trip_temp) {
+>> +		if (temp >= last_temp)
+>> +			*trend = THERMAL_TREND_RAISING;
+>> +		else
+>> +			*trend = THERMAL_TREND_STABLE;
+>> +	} else if (temp < trip_temp) {
+>> +		*trend = THERMAL_TREND_DROPPING;
+>> +	} else {
+>> +		*trend = THERMAL_TREND_STABLE;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+> 
+> This looks like a reimplementation of the get_tz_trend() helper. Is
+> seems like that helper already has everything we need. Perhaps this
+> isn't working because of-thermal installs of_thermal_get_trend(), a
+> function that returns -EINVAL if the driver doesn't implement the
+> ->get_trend() callback.
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+1. The get_tz_trend() helper can work, because it has:
+if (tz->emul_temperature || !tz->ops->get_trend ||
+            tz->ops->get_trend(tz, trip, &trend)) {
+...
+}
+the tz->ops->get_trend is of_thermal_get_trend(). If without special
+get_trend(), it will return -EINVAL, so it will implement the if block
+to get the "trend". If we have the special get_trend(), then the
+of_thermal_get_trend() will return 0, so this helper will not implement
+the if block, it will get the "trend" from the special get_trend().
 
-On Tue, Nov 20, 2018 at 06:13:42PM +0200, Ville Syrjala wrote:
-> From: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
->=20
-> Make life easier for drivers by simply passing the connector
-> to drm_hdmi_avi_infoframe_from_display_mode() and
-> drm_hdmi_avi_infoframe_quant_range(). That way drivers don't
-> need to worry about is_hdmi2_sink mess.
->=20
-> Cc: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>
-> Cc: "Christian K=C3=B6nig" <christian.koenig-5C7GfCeVMHo@public.gmane.org>
-> Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>
-> Cc: Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> Cc: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-> Cc: CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> Cc: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-> Cc: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
-> Cc: Sandy Huang <hjc-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-> Cc: "Heiko St=C3=BCbner" <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-> Cc: Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
-> Cc: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-> Cc: amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> ---
->  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c    |  2 +-
->  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c    |  2 +-
->  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c     |  3 ++-
->  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c     |  2 +-
->  drivers/gpu/drm/bridge/analogix-anx78xx.c |  5 ++--
->  drivers/gpu/drm/bridge/sii902x.c          |  3 ++-
->  drivers/gpu/drm/bridge/sil-sii8620.c      |  3 +--
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c |  3 ++-
->  drivers/gpu/drm/drm_edid.c                | 33 ++++++++++++++---------
->  drivers/gpu/drm/exynos/exynos_hdmi.c      |  3 ++-
->  drivers/gpu/drm/i2c/tda998x_drv.c         |  3 ++-
->  drivers/gpu/drm/i915/intel_hdmi.c         | 14 +++++-----
->  drivers/gpu/drm/i915/intel_lspcon.c       | 15 ++++++-----
->  drivers/gpu/drm/i915/intel_sdvo.c         | 10 ++++---
->  drivers/gpu/drm/mediatek/mtk_hdmi.c       |  3 ++-
->  drivers/gpu/drm/msm/hdmi/hdmi_bridge.c    |  3 ++-
->  drivers/gpu/drm/nouveau/dispnv50/disp.c   |  7 +++--
->  drivers/gpu/drm/omapdrm/omap_encoder.c    |  5 ++--
->  drivers/gpu/drm/radeon/radeon_audio.c     |  2 +-
->  drivers/gpu/drm/rockchip/inno_hdmi.c      |  4 ++-
->  drivers/gpu/drm/sti/sti_hdmi.c            |  3 ++-
->  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c    |  3 ++-
->  drivers/gpu/drm/tegra/hdmi.c              |  3 ++-
->  drivers/gpu/drm/tegra/sor.c               |  3 ++-
->  drivers/gpu/drm/vc4/vc4_hdmi.c            | 11 +++++---
->  drivers/gpu/drm/zte/zx_hdmi.c             |  4 ++-
->  include/drm/drm_edid.h                    |  8 +++---
->  27 files changed, 94 insertions(+), 66 deletions(-)
+2. There has a little difference between the helper and our special
+callback. The tegra_thermctl_get_trend() consider the trip_temp, but the
+get_tz_trend() helper didn't.
 
-That's actually a lot nicer:
+> 
+> Perhaps a better way would be to do something like this in
+> thermal_zone_of_add_sensor():
+> 
+> 	if (ops->get_trend)
+> 		tzd->ops->get_trend = of_thermal_get_trend;
+> 
+> That's similar to how ->set_trips() and ->set_emul_temp() are set up
+> and should make sure that get_tz_trend() will do the right thing for
+> all drivers that don't implement a special ->get_trend().
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+As above description, I think the of_thermal_get_trend() already can
+handle this case, doesn't need to change.
 
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature; name="signature.asc"
+Wei.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv0NdgACgkQ3SOs138+
-s6FSFw//Q8EETWYerXmcUSoY2ieXZ+iJ2jEazV/aXriZbwUxAempQOCyTBzyqrrg
-vTGsnWXUE+eVo3CMqxex90+PGC7Dhhea9NOP57fzcviMWpFimuZ8ir/wOcp3CNX9
-9XfM7VY20iW/EluICA9nxV8GlYxLo1h8cGAQkJbkO1q329JzRGFAHI5lVelQ10Hv
-ipu0qIKLAxuN7ApCeZJltQlJ5GRXiPbAKXlT7MErwyBl/0fek9FboZeUjjs3KMa7
-oyURNRaOMdfKoiYExd45zWt0usZc22M3XHZpyCb+/0ihjnXJ+iIIe5FHDHZaE5vR
-waEQT1srx8f04cKm62zp+Xt9yRhSUG//e5z7yOxlWUT0SdeYu7O17H/HwWH47S29
-LwnIcLsG+o7nUTcuKue1CQfXZRyNK3bYILrelIHwfCQjwa0AKFSviGafS8Gd0QYK
-oM8q2GoI7EyAXlniLMceP/yAkKGlKvuKpLPX3UlESAAu4j8vGKkJBVY3Sdbcbn5I
-SeOyavzekpMzC4JWIRtcGqFRrwt71a12LObQXZdSjfW7grTr57uQrOqwFM+x0edA
-SlTlJl8asA1rHbXKEedtd8NdT1HLXYQpQTyIGvDrhPKqO2dx5rMvJ9xP2aV2a1Mu
-GWJUyv+3BAHQXsOl13uiZEqKoL7N5ZQB6ZZ2dosTWt9x/c9vvpg=
-=l76x
------END PGP SIGNATURE-----
-
---ReaqsoxgOBHFXBhH--
-
---===============1371029932==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5v
-IG1haWxpbmcgbGlzdApGcmVlZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZnJlZWRyZW5vCg==
-
---===============1371029932==--
+> 
+> Thierry
+> 
