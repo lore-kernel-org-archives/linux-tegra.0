@@ -1,58 +1,93 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] soc/tegra: refactor soc_is_tegra()
-Date: Wed, 21 Nov 2018 16:28:47 +0100
-Message-ID: <20181121152847.GB7739@ulmo>
-References: <20181121141204.22819-1-tiny.windzz@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI inforframe functions
+Date: Wed, 21 Nov 2018 20:19:37 +0200
+Message-ID: <1697503.tFhaoOeOnK@avalon>
+References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181121141204.22819-1-tiny.windzz@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yangtao Li <tiny.windzz@gmail.com>
-Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ville Syrjala <ville.syrjala@linux.intel.com>
+Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, sts.freedesktop.org@freedesktop.org, Russell King <linux@armlinux.org.uk>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ben Skeggs <bskeggs@redhat.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org, Vincent Abriou <vincent.abriou@st.com>, freedreno@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, amd-gfx@li, Kyungmin Park <kyungmin.park@samsung.com>, Alex Deucher <alexander.deucher@amd.com>, Shawn Guo <shawnguo@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
---1UWUbFP1cBYEclgG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 21, 2018 at 09:12:04AM -0500, Yangtao Li wrote:
-> of_find_node_by_path() acquires a reference to the node returned by
-> it and that reference needs to be dropped by its caller.soc_is_tegra()
-> doesn't do that, so fix it.Call of_machine_is_compatible() to refactor
-> soc_is_tegra() whcih automatically manages the reference count.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/soc/tegra/common.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-
-Applied to for-4.21/soc, thanks.
-
-Thierry
-
---1UWUbFP1cBYEclgG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv1ea0ACgkQ3SOs138+
-s6GJJBAAqLw9PQzOAQwOvTTDIJFN6uCAZ6UBLfOFwDT0jnqGwjh1SWQyfDwHb+EA
-3CXMRu/GaPUxnmbpM6ZtQGtk4na5tbbc2Uvd1Hk2Mqb6esabqBj39nIP8F1ruxiN
-BeDBlWpOBMs1MWM5aWXH1OenPs+fob7qpiQdmH8xI/cFEXpP+ZpapmRV+iJs84in
-MlvGXDR1bB9XK1f6eocdKY9Lbzol6uP6X1TmeboI8PVJSzyanQmhXWJ7bEc+sGAx
-MIWBCjXnzUyzSFIh/7HsKKCq8/yjnVW+aaKOn5ZN9kwHWkttj1z/n0y1C/+KEt5L
-2SdwhxIEodVwmayv9EBxyy9cor6yE06IhaSTAWi0B9LM4qDDsTTp6FYqMJK5JjbM
-Lp+L2hv2S61VTCgOCzlIi0MIBUZde7xvG04pOzcdu/OadXOE9td+TRVSU6FdGzVH
-BxH184rEMTS6O53U7/uPi5E37nGNpfPBBcGWQW9hNAhNQfvK5fW/tS9puXhI0cH/
-4Q2jaReUxjdtU457zayjzL3Rtl7WI3aTCwelmHeo/TGz+3KPmdVigrLpmkubeZHF
-a/4YsUwSyYOBoGHX9MgO2ZiZ62gq1sg3jtog59DePJilx7kCv/YTScWnlsHGNvaQ
-xT/XQbyKUEIx5G8sHmWaYAPR/o6qEP9Dxz6P0Woys2dTzC/aVKs=
-=pOBX
------END PGP SIGNATURE-----
-
---1UWUbFP1cBYEclgG--
+SGkgVmlsbGUsCgpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KCk9uIFR1ZXNkYXksIDIwIE5vdmVt
+YmVyIDIwMTggMTg6MTM6NDIgRUVUIFZpbGxlIFN5cmphbGEgd3JvdGU6Cj4gRnJvbTogVmlsbGUg
+U3lyasOkbMOkIDx2aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4KPiAKPiBNYWtlIGxpZmUg
+ZWFzaWVyIGZvciBkcml2ZXJzIGJ5IHNpbXBseSBwYXNzaW5nIHRoZSBjb25uZWN0b3IKPiB0byBk
+cm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zyb21fZGlzcGxheV9tb2RlKCkgYW5kCj4gZHJtX2hkbWlf
+YXZpX2luZm9mcmFtZV9xdWFudF9yYW5nZSgpLiBUaGF0IHdheSBkcml2ZXJzIGRvbid0Cj4gbmVl
+ZCB0byB3b3JyeSBhYm91dCBpc19oZG1pMl9zaW5rIG1lc3MuCgpXaGlsZSB0aGlzIGlzIGdvb2Qg
+Zm9yIGRpc3BsYXkgY29udHJvbGxlciBkcml2ZXJzLCB0aGUgY2hhbmdlIGlzbid0IGdyZWF0IGZv
+ciAKYnJpZGdlIGRyaXZlcnMuIERvd24gdGhlIHJvYWQgd2UncmUgbG9va2luZyBhdCBtb3Zpbmcg
+Y29ubmVjdG9yIHN1cHBvcnQgb3V0IG9mIAp0aGUgYnJpZGdlIGRyaXZlcnMuIEFkZGluZyBhbiBh
+ZGRpdGlvbmFsIGRlcGVuZGVuY3kgdG8gY29ubmVjdG9ycyBpbiB0aGUgCmJyaWRnZXMgd2lsbCBt
+YWtlIHRoYXQgbW9yZSBkaWZmaWN1bHQuIElkZWFsbHkgYnJpZGdlcyBzaG91bGQgcmV0cmlldmUg
+dGhlIAppbmZvcm1hdGlvbiBmcm9tIHRoZWlyIHNpbmssIHJlZ2FyZGxlc3Mgb2Ygd2hldGhlciBp
+dCBpcyBhIGNvbm5lY3RvciBvciAKYW5vdGhlciBicmlkZ2UuCgpQbGVhc2Ugc2VlIGJlbG93IGZv
+ciBhbiBhZGRpdGlvbmFsIGNvbW1lbnQuCgo+IENjOiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5k
+ZXVjaGVyQGFtZC5jb20+Cj4gQ2M6ICJDaHJpc3RpYW4gS8O2bmlnIiA8Y2hyaXN0aWFuLmtvZW5p
+Z0BhbWQuY29tPgo+IENjOiAiRGF2aWQgKENodW5NaW5nKSBaaG91IiA8RGF2aWQxLlpob3VAYW1k
+LmNvbT4KPiBDYzogQXJjaGl0IFRhbmVqYSA8YXJjaGl0dEBjb2RlYXVyb3JhLm9yZz4KPiBDYzog
+QW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiBDYzogTGF1cmVudCBQaW5jaGFy
+dCA8TGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgo+IENjOiBJbmtpIERhZSA8aW5r
+aS5kYWVAc2Ftc3VuZy5jb20+Cj4gQ2M6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1z
+dW5nLmNvbT4KPiBDYzogU2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPiBD
+YzogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4KPiBDYzogUnVzc2Vs
+bCBLaW5nIDxsaW51eEBhcm1saW51eC5vcmcudWs+Cj4gQ2M6IENLIEh1IDxjay5odUBtZWRpYXRl
+ay5jb20+Cj4gQ2M6IFBoaWxpcHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+Cj4gQ2M6
+IFJvYiBDbGFyayA8cm9iZGNsYXJrQGdtYWlsLmNvbT4KPiBDYzogQmVuIFNrZWdncyA8YnNrZWdn
+c0ByZWRoYXQuY29tPgo+IENjOiBUb21pIFZhbGtlaW5lbiA8dG9taS52YWxrZWluZW5AdGkuY29t
+Pgo+IENjOiBTYW5keSBIdWFuZyA8aGpjQHJvY2stY2hpcHMuY29tPgo+IENjOiAiSGVpa28gU3TD
+vGJuZXIiIDxoZWlrb0BzbnRlY2guZGU+Cj4gQ2M6IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1p
+bi5nYWlnbmFyZEBsaW5hcm8ub3JnPgo+IENjOiBWaW5jZW50IEFicmlvdSA8dmluY2VudC5hYnJp
+b3VAc3QuY29tPgo+IENjOiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29t
+Pgo+IENjOiBFcmljIEFuaG9sdCA8ZXJpY0BhbmhvbHQubmV0Pgo+IENjOiBTaGF3biBHdW8gPHNo
+YXduZ3VvQGtlcm5lbC5vcmc+Cj4gQ2M6IElsaWEgTWlya2luIDxpbWlya2luQGFsdW0ubWl0LmVk
+dT4KPiBDYzogYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBDYzogbGludXgtYXJtLW1z
+bUB2Z2VyLmtlcm5lbC5vcmcKPiBDYzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+
+IENjOiBub3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBsaW51eC10ZWdyYUB2Z2Vy
+Lmtlcm5lbC5vcmcKPiBTaWduZWQtb2ZmLWJ5OiBWaWxsZSBTeXJqw6Rsw6QgPHZpbGxlLnN5cmph
+bGFAbGludXguaW50ZWwuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9k
+Y2VfdjEwXzAuYyAgICB8ICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92
+MTFfMC5jICAgIHwgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZGNlX3Y2XzAu
+YyAgICAgfCAgMyArKy0KPiAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZGNlX3Y4XzAuYyAg
+ICAgfCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4LWFueDc4eHguYyB8
+ICA1ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWk5MDJ4LmMgICAgICAgICAgfCAg
+MyArKy0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jICAgICAgfCAgMyAr
+LS0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMgfCAgMyArKy0K
+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMgICAgICAgICAgICAgICAgfCAzMyArKysrKysr
+KysrKysrKy0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMg
+ICAgICB8ICAzICsrLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTJjL3RkYTk5OHhfZHJ2LmMgICAgICAg
+ICB8ICAzICsrLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9oZG1pLmMgICAgICAgICB8
+IDE0ICsrKysrLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfbHNwY29uLmMgICAg
+ICAgfCAxNSArKysrKystLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9zZHZvLmMg
+ICAgICAgICB8IDEwICsrKystLS0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19oZG1p
+LmMgICAgICAgfCAgMyArKy0KPiAgZHJpdmVycy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfYnJpZGdl
+LmMgICAgfCAgMyArKy0KPiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvZGlzcG52NTAvZGlzcC5j
+ICAgfCAgNyArKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2VuY29kZXIuYyAg
+ICB8ICA1ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fYXVkaW8uYyAgICAg
+fCAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvaW5ub19oZG1pLmMgICAgICB8ICA0
+ICsrLQo+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMgICAgICAgICAgICB8ICAzICsr
+LQo+ICBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfaGRtaV9lbmMuYyAgICB8ICAzICsrLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICB8ICAzICsrLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgICAgICAgICAgICAgICB8ICAzICsrLQo+ICBkcml2
+ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMgICAgICAgICAgICB8IDExICsrKysrLS0tCj4gIGRy
+aXZlcnMvZ3B1L2RybS96dGUvenhfaGRtaS5jICAgICAgICAgICAgIHwgIDQgKystCj4gIGluY2x1
+ZGUvZHJtL2RybV9lZGlkLmggICAgICAgICAgICAgICAgICAgIHwgIDggKysrLS0tCj4gIDI3IGZp
+bGVzIGNoYW5nZWQsIDk0IGluc2VydGlvbnMoKyksIDY2IGRlbGV0aW9ucygtKQoKRm9yIGR3LWhk
+bWkgYW5kIG9tYXBkcm0sCgpSZXZpZXdlZC1ieTogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5w
+aW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgoKLS0gClJlZ2FyZHMsCgpMYXVyZW50IFBpbmNoYXJ0
+CgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
