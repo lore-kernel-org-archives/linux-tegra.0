@@ -1,53 +1,52 @@
-From: Frank Lee <tiny.windzz@gmail.com>
-Subject: Re: [PATCH] soc/tegra: Fix terminating condition
-Date: Thu, 22 Nov 2018 16:58:00 +0800
-Message-ID: <CAEExFWsLSm5oN+avMS1+HSWjrGNwLhGCm3u_TLDbv+YTRt8+ew@mail.gmail.com>
-References: <20181122075244.3909-1-natechancellor@gmail.com> <20181122085022.GB5741@ulmo>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] soc/tegra: refactor soc_is_tegra()
+Date: Thu, 22 Nov 2018 11:45:34 +0100
+Message-ID: <CAK8P3a0zwWTyLuihBMaggGkRHeYwo4UrxZrx1qBE=t=A4tKVEw@mail.gmail.com>
+References: <20181121141204.22819-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181122085022.GB5741@ulmo>
+In-Reply-To: <20181121141204.22819-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Nathan Chancellor <natechancellor@gmail.com>, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ndesaulniers@google.com
+To: tiny.windzz@gmail.com
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry:
-
-How about change it to this?
-            while (*match->compatible) {
-This is more beautiful.    :-)
-
-Thanks,
-Yangtao
-On Thu, Nov 22, 2018 at 4:50 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+On Wed, Nov 21, 2018 at 3:40 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
 >
-> On Thu, Nov 22, 2018 at 12:52:44AM -0700, Nathan Chancellor wrote:
-> > Clang warns:
-> >
-> > drivers/soc/tegra/common.c:27:16: error: address of array
-> > 'match->compatible' will always evaluate to 'true'
-> > [-Werror,-Wpointer-bool-conversion]
-> >         while (match->compatible) {
-> >         ~~~~~  ~~~~~~~^~~~~~~~~~
-> > 1 error generated.
-> >
-> > Whoops, we have an infinite loop and QEMU no longer boots...
-> >
-> > https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/160242918
-> >
-> > Check that the first character of the string isn't null so that the loop
-> > properly terminates.
-> >
-> > Fixes: c57eff9503a5 ("soc/tegra: refactor soc_is_tegra()")
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >  drivers/soc/tegra/common.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> of_find_node_by_path() acquires a reference to the node returned by
+> it and that reference needs to be dropped by its caller.soc_is_tegra()
+> doesn't do that, so fix it.Call of_machine_is_compatible() to refactor
+> soc_is_tegra() whcih automatically manages the reference count.
 >
-> Wow... that's what I get from not testing this properly. Apologies for
-> the inconvenience.
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/soc/tegra/common.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
 >
-> Applied, thanks.
+> diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+> index cd8f41351add..0b40700b672a 100644
+> --- a/drivers/soc/tegra/common.c
+> +++ b/drivers/soc/tegra/common.c
+> @@ -22,11 +22,13 @@ static const struct of_device_id tegra_machine_match[] = {
 >
-> Thierry
+>  bool soc_is_tegra(void)
+>  {
+> -       struct device_node *root;
+> +       struct of_device_id *match = tegra_machine_match;
+>
+> -       root = of_find_node_by_path("/");
+> -       if (!root)
+> -               return false;
+> +       while(match->compatible){
+> +               if(of_machine_is_compatible(match->compatible))
+> +                       return true;
+> +               match++;
+> +       }
+>
+> -       return of_match_node(tegra_machine_match, root) != NULL;
+> +       return false;
+>  }
+> --
+> 2.17.0
+>
