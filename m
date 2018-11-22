@@ -1,114 +1,104 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH v2 01/10] mailbox: Support blocking transfers in atomic
- context
-Date: Wed, 21 Nov 2018 20:18:22 -0600
-Message-ID: <CABb+yY0nH3Su6a11TZLJf=CCpD+gTpqUkLnRhpy4MUwNJk5prw@mail.gmail.com>
-References: <20181112151853.29289-1-thierry.reding@gmail.com>
- <20181112151853.29289-2-thierry.reding@gmail.com>
- <CABb+yY3HwvG6sSKnweiDpyg85Fk8Q9hOVaF-s7gv4RDzEoaGqA@mail.gmail.com>
- <20181120152907.GA28796@ulmo> <20181121142740.GA29704@ulmo>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v2 1/3] thermal: tegra: continue if sensor register fails
+Date: Thu, 22 Nov 2018 15:10:17 +0800
+Message-ID: <5e09bc13-7880-40f2-3f90-01d2cc3510ba@nvidia.com>
+References: <1542103567-5521-1-git-send-email-wni@nvidia.com>
+ <1542103567-5521-2-git-send-email-wni@nvidia.com>
+ <d212af68-fd18-74d4-d81c-ed8b3c0f136a@linaro.org>
+ <70f08208-d04c-c9a4-07e6-d377c33a9386@nvidia.com>
+ <d77fe117-3cde-108f-e1d7-2871f3d4c485@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181121142740.GA29704@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Devicetree List <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, mliljeberg@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, talho@nvidia.com, linux-serial@vger.kernel.org, jslaby@suse.com, linux-tegra@vger.kernel.org, ppessi@nvidia.com, Jon Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <d77fe117-3cde-108f-e1d7-2871f3d4c485@linaro.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, thierry.reding@gmail.com, linux-tegra@vger.kernel.org
+Cc: rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 8:27 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Tue, Nov 20, 2018 at 04:29:07PM +0100, Thierry Reding wrote:
-> > On Sat, Nov 17, 2018 at 11:27:17AM -0600, Jassi Brar wrote:
-> > > On Mon, Nov 12, 2018 at 9:18 AM Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > >
-> > > > From: Thierry Reding <treding@nvidia.com>
-> > > >
-> > > > The mailbox framework supports blocking transfers via completions for
-> > > > clients that can sleep. In order to support blocking transfers in cases
-> > > > where the transmission is not permitted to sleep, add a new ->flush()
-> > > > callback that controller drivers can implement to busy loop until the
-> > > > transmission has been completed. This will automatically be called when
-> > > > available and interrupts are disabled for clients that request blocking
-> > > > transfers.
-> > > >
-> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > > ---
-> > > >  drivers/mailbox/mailbox.c          | 8 ++++++++
-> > > >  include/linux/mailbox_controller.h | 4 ++++
-> > > >  2 files changed, 12 insertions(+)
-> > > >
-> > > > diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> > > > index 674b35f402f5..0eaf21259874 100644
-> > > > --- a/drivers/mailbox/mailbox.c
-> > > > +++ b/drivers/mailbox/mailbox.c
-> > > > @@ -267,6 +267,14 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
-> > > >                 unsigned long wait;
-> > > >                 int ret;
-> > > >
-> > > > +               if (irqs_disabled() && chan->mbox->ops->flush) {
-> > > > +                       ret = chan->mbox->ops->flush(chan, chan->cl->tx_tout);
-> > > > +                       if (ret < 0)
-> > > > +                               tx_tick(chan, ret);
-> > > > +
-> > > > +                       return ret;
-> > > > +               }
-> > > > +
-> > > This is hacky. I think we can do without busy waiting in atomic
-> > > context. You could queue locally while in atomic context and then
-> > > transfer in blocking mode. I don't think we should worry about the
-> > > 'throughput' as there already is no h/w rate control even with
-> > > busy-waiting.
-> >
-> > I actually tried to do that before I added this flushing mechanism. The
-> > problem is, like you said, one of rate control. As mentioned in the
-> > cover letter, the shared mailboxes implemented in tegra-hsp are used as
-> > RX and TX channels for the TCU, which is like a virtual UART. The TTY
-> > driver included as part of this series will use one of the mailboxes to
-> > transmit data that is written to the console. The problem is that if
-> > these transmissions are not rate-limited on the TTY driver side, the
-> > console will just keep writing data and eventually overflow the buffer
-> > that we have in the mailbox subsystem.
-> >
-> > The problem is that data comes in at a much higher rate than what we can
-> > output. This is especially true at boot when the TCU console takes over
-> > and the whole log buffer is dumped on it.
-> >
-> > So the only way to rate-limit is to either make mbox_send_message()
-> > block, but that can only be done in non-atomic context. The console,
-> > however, will always run in atomic context, so the only way to do rate-
-> > limiting is by busy looping.
->
-> What I also tried before was to implement busy looping within the
-> ->send_data() callback of the driver so that we didn't have to put this
-> into the core. Unfortunately, however, the ->send_data() callback is
-> called under chan->lock, which means that from mbox_send_message() we
-> don't have a way to mark the transfer as done. In order to do that we'd
-> have to call mbox_chan_txdone(), but that ends up calling tx_tick() and
-> that in turn also attempts to take the chan->lock, which would cause a
-> deadlock.
->
-> The explicit flushing is the best alternative that I could come up with.
-> I think it's not all that hacky, because it's very explicit about what's
-> going on and it has the nice side-effect that it will allow the mailbox
-> to work in interrupt driven mode if possible and only resorting to the
-> busy loop in atomic context.
->
-> At this point I think I have explored all other options and I frankly
-> can't find a more proper way to achieve what we need here. Perhaps you
-> can think of additional ways to accomplish this?
->
-Well, I would have a local ring buffer (array) of enough size to hold
-the characters and then have a task consuming data from that ring
-buffer by transmitting over mailbox.
 
--jassi
+
+On 21/11/2018 8:51 PM, Daniel Lezcano wrote:
+> On 21/11/2018 11:23, Wei Ni wrote:
+>>
+>>
+>> On 21/11/2018 4:55 PM, Daniel Lezcano wrote:
+>>> On 13/11/2018 11:06, Wei Ni wrote:
+>>>> Don't bail when a sensor fails to register with the
+>>>> thermal zone and allow other sensors to register.
+>>>> This allows other sensors to register with thermal
+>>>> framework even if one sensor fails registration.
+>>>
+>>> I'm not sure if ignoring the error is really safe. Can you describe the
+>>> real situation you want to overcome ? How do you differentiate critical
+>>> sensors ?
+>>
+>> The driver will always try to register 4 thermal zones, including cpu,
+>> gpu, mem and pll, but if the dts file doesn't set the corresponding
+>> sensors, then the register will be failed.
+>> Normally, the dts file will set all 4 sensors, but there may have some
+>> platform doesn't support them all. So we post this patch.
+> 
+> Ignoring errors is not the way to go to support different platforms. Fix
+> the DT.
+
+The issue isn't in DT file. The Tegra soc thermal include 4 sensors:
+cpu, gpu, mem, pll. But in some platforms, for example, we may only need
+to support 2 sensors, such as cpu and gpu, so we only configure these
+two senors in DT file. But the driver will always try to register 4
+sensors, cpu/gpu/mem/pll, so mem and pll will be registered failed. So
+in this case we need to ignoring the failure, and continue to enable the
+driver.
+
+> 
+> 
+>> BTW, what do you mean "critical sensors"? We will set critical trip temp
+>> for all sensors.
+> 
+> I meant sensor for thermal zone getting really high temperature.
+
+We doesn't have the critical sensors. We set the critical trip temp for
+all registered sensors. And these trip temp is set to the Tegra
+hardware. So it mean if the temperature reached the critical trip point,
+then the system will be shutdown directly.
+
+> 
+> 
+>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>> ---
+>>>>  drivers/thermal/tegra/soctherm.c | 8 +++++---
+>>>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>>>> index ed28110a3535..a824d2e63af3 100644
+>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>> @@ -1370,9 +1370,9 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+>>>>  							 &tegra_of_thermal_ops);
+>>>>  		if (IS_ERR(z)) {
+>>>>  			err = PTR_ERR(z);
+>>>> -			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+>>>> -				err);
+>>>> -			goto disable_clocks;
+>>>> +			dev_warn(&pdev->dev, "failed to register sensor %s: %d\n",
+>>>> +				 soc->ttgs[i]->name, err);
+>>>> +			continue;
+>>>>  		}
+>>>>  
+>>>>  		zone->tz = z;
+>>>> @@ -1434,6 +1434,8 @@ static int __maybe_unused soctherm_resume(struct device *dev)
+>>>>  		struct thermal_zone_device *tz;
+>>>>  
+>>>>  		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
+>>>> +		if (!tz)
+>>>> +			continue;
+>>>>  		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
+>>>>  		if (err) {
+>>>>  			dev_err(&pdev->dev,
+>>>>
+>>>
+>>>
+> 
+> 
