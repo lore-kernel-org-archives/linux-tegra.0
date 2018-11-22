@@ -1,55 +1,74 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] soc/tegra: pmc: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date: Thu, 22 Nov 2018 16:13:24 +0100
-Message-ID: <20181122151324.GB24661@ulmo>
-References: <20181122131207.24791-1-tiny.windzz@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] iommu/tegra: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date: Thu, 22 Nov 2018 16:15:22 +0100
+Message-ID: <20181122151522.GC24661@ulmo>
+References: <20181122133047.24902-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181122131207.24791-1-tiny.windzz@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yangtao Li <tiny.windzz@gmail.com>
-Cc: jonathanh@nvidia.com, avienamo@nvidia.com, mperttunen@nvidia.com, andy.gross@linaro.org, robh@kernel.org, vivek.gautam@codeaurora.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============4065445199992401793=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20181122133047.24902-1-tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---rS8CxjVDS/+yyDmU
+--===============4065445199992401793==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DSayHWYpDlRfCAAQ"
+Content-Disposition: inline
+
+
+--DSayHWYpDlRfCAAQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 22, 2018 at 08:12:07AM -0500, Yangtao Li wrote:
+On Thu, Nov 22, 2018 at 08:30:47AM -0500, Yangtao Li wrote:
 > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 >=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> Signed-off-by: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/soc/tegra/pmc.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
+>  drivers/iommu/tegra-smmu.c | 24 ++----------------------
+>  1 file changed, 2 insertions(+), 22 deletions(-)
 
-Applied, thanks.
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thierry
-
---rS8CxjVDS/+yyDmU
+--DSayHWYpDlRfCAAQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv2x5QACgkQ3SOs138+
-s6GkzQ//RaryhEBFGRe9jmHJiJ8je0gbceK1g5Xx5OEGU3X04hhnsTUalDoAhc1H
-7UeffL49eTwl+69nETWmt2bkQpngtAurDm1IA9kg6NlKCpzOPTXbe+Jk6BMAAqv/
-GlMvMFMpABcv7CB1JQpfI84ifucFOYrDKWBhDzJYToCxG1AKzwxvH7qgMXsT9DZE
-tvoEvoLRu6EFES0G6sz8vlz5JNJp1JPPs+iT29lkhxoMVKra4hVSCnbQ+xqf+L3+
-OkKV6vijIyZpcWntwwh03ZdB+C9xtgOdCccYL2KoiJDq/c1Pj1B+zOhpmwPQG2ey
-YFvFdwqPJV43uhbPxwcrp70ykKxMgyUT0idYndZKKjVpTNm/LnxQu1tAtgTRlPTK
-xdp610kB1KD8CO14q9iinP2vjK5G0jTrT9Errki0sDgsMaQZXNfIFdUWEms2LMuV
-fCyRDgxpwI9u4MEWJb+hUahfHYQxWSznBZTSORMOpu7joWhH1cOKoetV7xri26TM
-YZ0xL0bn/XUfsIuBFn9R04YSLknUc0yys+Ogh7/QGlm8PO8vfWXwzTlUHjVgrg6H
-h9xunlRJyf2WUaLuK/YoPs/WUh5U/ELF6gWtbJUSyCU3vI+xTF+6yKmoL60XW9pW
-5l/ZKVpb3MVUxHTVgZ803lBeeBZAJ0YPn+IH1aQDfDNTr1Z3+mo=
-=Gp6n
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv2yAkACgkQ3SOs138+
+s6GsyhAAwjLJp+PspBwW5BEnIVlJulbmkaefJnCMpAhYnBKkjTjL3CYzBJt//yT5
+tNXqCIwuRpbV6O8e+jig3aWZQRsIY3Md0iSk2OGXf0iF7h03l91rUyKjUDEeNi0G
++MOQk3LyULOZeBb/nL/bJppQyQKPbG7ejC3k/RUmGuF5yt9O+qsythYFLQgYtrON
+tRuy2ff6r6gdLa2LWzfkEdHri2Meu3SrTRDeYHf6XblUsN9nRhitm2Em+dlftLYM
+WUGOUUsC9qigG+9lZ2Fqwqwac1t52cV5QggTkmR/fnZ0vWNiRDQQctKZZ8gOWQeo
+zAaHMa9IJ7s0QBhyHi+DHH1U+8Fn3IuEJRw8ukBRiLjOsJluWljWOgbv9yBZ8xzE
+vXYnvRvMBp1vfAwMHUpKj0N/XBJJUpJ9EZipebHcu1nuI9gDpvk2iuTiY/qXOa+U
+MiMPwDwa7Su0D+VgrIrTdusVwsK4bJOkgSWSX6pwdFAiyhFA7FXemOcaY4GOSej5
+RH7VqfbF60+IjVVvevJaVinGiRiiI4kPMu/HJjwMfYpnk9MF3tdvkQ01Avg7AHpY
+Kxs+tVaaCXxszssvv7Xz+Mj6D/TN1qlyxCi6p1ikBFqlJpsPCVWke5xACq0zBZ0V
+oT9HE9XBno51EMWo5MxVbsx+Yqmu2qd4v8x3LAdUlZ98PtnHuJU=
+=QVqj
 -----END PGP SIGNATURE-----
 
---rS8CxjVDS/+yyDmU--
+--DSayHWYpDlRfCAAQ--
+
+--===============4065445199992401793==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============4065445199992401793==--
