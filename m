@@ -1,61 +1,55 @@
-From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] iommu/tegra: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date: Thu, 22 Nov 2018 08:30:47 -0500
-Message-ID: <20181122133047.24902-1-tiny.windzz@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date: Thu, 22 Nov 2018 16:13:24 +0100
+Message-ID: <20181122151324.GB24661@ulmo>
+References: <20181122131207.24791-1-tiny.windzz@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181122131207.24791-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, joro@8bytes.org, jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+To: Yangtao Li <tiny.windzz@gmail.com>
+Cc: jonathanh@nvidia.com, avienamo@nvidia.com, mperttunen@nvidia.com, andy.gross@linaro.org, robh@kernel.org, vivek.gautam@codeaurora.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/iommu/tegra-smmu.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+--rS8CxjVDS/+yyDmU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 0d03341317c4..97b3c0461831 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -926,17 +926,7 @@ static int tegra_smmu_swgroups_show(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--static int tegra_smmu_swgroups_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, tegra_smmu_swgroups_show, inode->i_private);
--}
--
--static const struct file_operations tegra_smmu_swgroups_fops = {
--	.open = tegra_smmu_swgroups_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(tegra_smmu_swgroups);
- 
- static int tegra_smmu_clients_show(struct seq_file *s, void *data)
- {
-@@ -964,17 +954,7 @@ static int tegra_smmu_clients_show(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--static int tegra_smmu_clients_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, tegra_smmu_clients_show, inode->i_private);
--}
--
--static const struct file_operations tegra_smmu_clients_fops = {
--	.open = tegra_smmu_clients_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(tegra_smmu_clients);
- 
- static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
- {
--- 
-2.17.0
+On Thu, Nov 22, 2018 at 08:12:07AM -0500, Yangtao Li wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
+
+Applied, thanks.
+
+Thierry
+
+--rS8CxjVDS/+yyDmU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv2x5QACgkQ3SOs138+
+s6GkzQ//RaryhEBFGRe9jmHJiJ8je0gbceK1g5Xx5OEGU3X04hhnsTUalDoAhc1H
+7UeffL49eTwl+69nETWmt2bkQpngtAurDm1IA9kg6NlKCpzOPTXbe+Jk6BMAAqv/
+GlMvMFMpABcv7CB1JQpfI84ifucFOYrDKWBhDzJYToCxG1AKzwxvH7qgMXsT9DZE
+tvoEvoLRu6EFES0G6sz8vlz5JNJp1JPPs+iT29lkhxoMVKra4hVSCnbQ+xqf+L3+
+OkKV6vijIyZpcWntwwh03ZdB+C9xtgOdCccYL2KoiJDq/c1Pj1B+zOhpmwPQG2ey
+YFvFdwqPJV43uhbPxwcrp70ykKxMgyUT0idYndZKKjVpTNm/LnxQu1tAtgTRlPTK
+xdp610kB1KD8CO14q9iinP2vjK5G0jTrT9Errki0sDgsMaQZXNfIFdUWEms2LMuV
+fCyRDgxpwI9u4MEWJb+hUahfHYQxWSznBZTSORMOpu7joWhH1cOKoetV7xri26TM
+YZ0xL0bn/XUfsIuBFn9R04YSLknUc0yys+Ogh7/QGlm8PO8vfWXwzTlUHjVgrg6H
+h9xunlRJyf2WUaLuK/YoPs/WUh5U/ELF6gWtbJUSyCU3vI+xTF+6yKmoL60XW9pW
+5l/ZKVpb3MVUxHTVgZ803lBeeBZAJ0YPn+IH1aQDfDNTr1Z3+mo=
+=Gp6n
+-----END PGP SIGNATURE-----
+
+--rS8CxjVDS/+yyDmU--
