@@ -1,45 +1,42 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 6/7] arm64: tegra: Add VIC support on Tegra194
-Date: Fri, 23 Nov 2018 13:31:37 +0100
-Message-ID: <20181123123138.20739-6-thierry.reding@gmail.com>
-References: <20181123123138.20739-1-thierry.reding@gmail.com>
+From: Jose Abreu <jose.abreu@synopsys.com>
+Subject: Re: [PATCH] net: stmmac: Move debugfs init/exit to
+ ->probe()/->remove()
+Date: Fri, 23 Nov 2018 12:44:02 +0000
+Message-ID: <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
+References: <20181123122122.18957-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20181123123138.20739-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181123122122.18957-1-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, "David S. Miller" <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <jose.abreu@synopsys.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRlZ3JhMTk0IGhhcyBh
-IHZlcnNpb24gb2YgVklDIHRoYXQgaXMgdmVyeSBzaW1pbGFyIHRvIHRoYXQgb24gVGVncmExODYu
-CkFkZCB0aGUgZGV2aWNlIHRyZWUgbm9kZSBmb3IgaXQgdGhhdCBpcyBlbmFibGVkIGJ5IGRlZmF1
-bHQuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgot
-LS0KIGFyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTk0LmR0c2kgfCAxMiArKysrKysr
-KysrKysKIDEgZmlsZSBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvYXJj
-aC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExOTQuZHRzaSBiL2FyY2gvYXJtNjQvYm9vdC9k
-dHMvbnZpZGlhL3RlZ3JhMTk0LmR0c2kKaW5kZXggY2U3NDgxY2I5ZTViLi4xOWNmZGRhZWE2OTcg
-MTAwNjQ0Ci0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTk0LmR0c2kKKysr
-IGIvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExOTQuZHRzaQpAQCAtMTM3LDYgKzEz
-NywxOCBAQAogCQkJCX07CiAJCQl9OwogCisJCQl2aWNAMTUzNDAwMDAgeworCQkJCWNvbXBhdGli
-bGUgPSAibnZpZGlhLHRlZ3JhMTk0LXZpYyI7CisJCQkJcmVnID0gPDB4MTUzNDAwMDAgMHgwMDA0
-MDAwMD47CisJCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDIwNiBJUlFfVFlQRV9MRVZFTF9ISUdI
-PjsKKwkJCQljbG9ja3MgPSA8JmJwbXAgVEVHUkExOTRfQ0xLX1ZJQz47CisJCQkJY2xvY2stbmFt
-ZXMgPSAidmljIjsKKwkJCQlyZXNldHMgPSA8JmJwbXAgVEVHUkExOTRfUkVTRVRfVklDPjsKKwkJ
-CQlyZXNldC1uYW1lcyA9ICJ2aWMiOworCisJCQkJcG93ZXItZG9tYWlucyA9IDwmYnBtcCBURUdS
-QTE5NF9QT1dFUl9ET01BSU5fVklDPjsKKwkJCX07CisKIAkJCWRwYXV4MDogZHBhdXhAMTU1YzAw
-MDAgewogCQkJCWNvbXBhdGlibGUgPSAibnZpZGlhLHRlZ3JhMTk0LWRwYXV4IjsKIAkJCQlyZWcg
-PSA8MHgxNTVjMDAwMCAweDEwMDAwPjsKLS0gCjIuMTkuMQoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 23-11-2018 12:21, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Setting up and tearing down debugfs is current unbalanced, as seen by
+> this error during resume from suspend:
+>
+>     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
+>     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
+>
+> The imbalance happens because the driver creates the debugfs hierarchy
+> when the device is opened and tears it down when the device is closed.
+> There's little gain in that, and it could be argued that it is even
+> surprising because it's not usually done for other devices. Fix the
+> imbalance by moving the debugfs creation and teardown to the driver's
+> ->probe() and ->remove() implementations instead.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>
+
+Did you test trying to dump "descriptors_status" file when
+interface is not open ? I think that's the main reason why this
+is not in probe ...
+
+Thanks and Best Regards,
+Jose Miguel Abreu
