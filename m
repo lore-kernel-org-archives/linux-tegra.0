@@ -1,57 +1,61 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] ARM: tegra: Add VIC on Tegra124
-Date: Fri, 23 Nov 2018 13:04:03 +0100
-Message-ID: <20181123120403.16244-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/3] drm/tegra: vic: Implement explicit reset support
+Date: Fri, 23 Nov 2018 13:06:37 +0100
+Message-ID: <20181123120639.16706-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
-
-The Video Image Compositor can be used to perform a variety of image
-operations. Add a device tree node for it, so that it can be exposed
-as a host1x channel to userspace.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm/boot/dts/tegra124.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 183c5acafb22..b113e47b2b2a 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -140,6 +140,18 @@
- 			status = "disabled";
- 		};
- 
-+		vic@54340000 {
-+			compatible = "nvidia,tegra124-vic";
-+			reg = <0x0 0x54340000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_VIC03>;
-+			clock-names = "vic";
-+			resets = <&tegra_car 178>;
-+			reset-names = "vic";
-+
-+			iommus = <&mc TEGRA_SWGROUP_VIC>;
-+		};
-+
- 		sor@54540000 {
- 			compatible = "nvidia,tegra124-sor";
- 			reg = <0x0 0x54540000 0x0 0x00040000>;
--- 
-2.19.1
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRlZ3JhIHN1cHBvcnRz
+IGdlbmVyaWMgUE0gZG9tYWlucyBvbiA2NC1iaXQgQVJNLCBhbmQgaWYgdGhhdCBpcyBlbmFibGVk
+LAp0aGUgcG93ZXIgZG9tYWluIGNvZGUgd2lsbCBtYWtlIHN1cmUgdGhhdCByZXNldHMgYXJlIGFz
+c2VydGVkIGFuZApkZWFzc2VydGVkIGF0IGFwcHJvcHJpYXRlIHBvaW50cyBpbiB0aW1lLgoKSWYg
+Z2VuZXJpYyBQTSBkb21haW5zIGFyZSBub3QgaW1wbGVtZW50ZWQsIHN1Y2ggYXMgb24gMzItYml0
+IFRlZ3JhLCB0aGUKcmVzZXRzIG5lZWQgdG8gYmUgYXNzZXJ0ZWQgYW5kIGRlYXNzZXJ0ZWQgZXhw
+bGljaXRseSBieSB0aGUgZHJpdmVyLgoKU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRy
+ZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMgfCAzNSAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDM0IGlu
+c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvdmljLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMKaW5kZXggOWZhNzc0MDVk
+YjAxLi4yM2Y1MzBkYjQ1YWQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMu
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMKQEAgLTM4LDYgKzM4LDcgQEAgc3Ry
+dWN0IHZpYyB7CiAJc3RydWN0IGlvbW11X2RvbWFpbiAqZG9tYWluOwogCXN0cnVjdCBkZXZpY2Ug
+KmRldjsKIAlzdHJ1Y3QgY2xrICpjbGs7CisJc3RydWN0IHJlc2V0X2NvbnRyb2wgKnJzdDsKIAog
+CS8qIFBsYXRmb3JtIGNvbmZpZ3VyYXRpb24gKi8KIAljb25zdCBzdHJ1Y3QgdmljX2NvbmZpZyAq
+Y29uZmlnOwpAQCAtNTYsMTMgKzU3LDM3IEBAIHN0YXRpYyB2b2lkIHZpY193cml0ZWwoc3RydWN0
+IHZpYyAqdmljLCB1MzIgdmFsdWUsIHVuc2lnbmVkIGludCBvZmZzZXQpCiBzdGF0aWMgaW50IHZp
+Y19ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJc3RydWN0IHZpYyAqdmlj
+ID0gZGV2X2dldF9kcnZkYXRhKGRldik7CisJaW50IGVycjsKKworCWVyciA9IGNsa19wcmVwYXJl
+X2VuYWJsZSh2aWMtPmNsayk7CisJaWYgKGVyciA8IDApCisJCXJldHVybiBlcnI7CisKKwl1c2xl
+ZXBfcmFuZ2UoMjAwMCwgNDAwMCk7CisKKwllcnIgPSByZXNldF9jb250cm9sX2RlYXNzZXJ0KHZp
+Yy0+cnN0KTsKKwlpZiAoZXJyIDwgMCkKKwkJZ290byBkaXNhYmxlOworCisJdXNsZWVwX3Jhbmdl
+KDIwMDAsIDQwMDApOworCisJcmV0dXJuIDA7CiAKLQlyZXR1cm4gY2xrX3ByZXBhcmVfZW5hYmxl
+KHZpYy0+Y2xrKTsKK2Rpc2FibGU6CisJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKHZpYy0+Y2xrKTsK
+KwlyZXR1cm4gZXJyOwogfQogCiBzdGF0aWMgaW50IHZpY19ydW50aW1lX3N1c3BlbmQoc3RydWN0
+IGRldmljZSAqZGV2KQogewogCXN0cnVjdCB2aWMgKnZpYyA9IGRldl9nZXRfZHJ2ZGF0YShkZXYp
+OworCWludCBlcnI7CisKKwllcnIgPSByZXNldF9jb250cm9sX2Fzc2VydCh2aWMtPnJzdCk7CisJ
+aWYgKGVyciA8IDApCisJCXJldHVybiBlcnI7CisKKwl1c2xlZXBfcmFuZ2UoMjAwMCwgNDAwMCk7
+CiAKIAljbGtfZGlzYWJsZV91bnByZXBhcmUodmljLT5jbGspOwogCkBAIC0zMjQsNiArMzQ5LDE0
+IEBAIHN0YXRpYyBpbnQgdmljX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJ
+CXJldHVybiBQVFJfRVJSKHZpYy0+Y2xrKTsKIAl9CiAKKwlpZiAoIWRldi0+cG1fZG9tYWluKSB7
+CisJCXZpYy0+cnN0ID0gZGV2bV9yZXNldF9jb250cm9sX2dldChkZXYsICJ2aWMiKTsKKwkJaWYg
+KElTX0VSUih2aWMtPnJzdCkpIHsKKwkJCWRldl9lcnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBn
+ZXQgcmVzZXRcbiIpOworCQkJcmV0dXJuIFBUUl9FUlIodmljLT5yc3QpOworCQl9CisJfQorCiAJ
+dmljLT5mYWxjb24uZGV2ID0gZGV2OwogCXZpYy0+ZmFsY29uLnJlZ3MgPSB2aWMtPnJlZ3M7CiAJ
+dmljLT5mYWxjb24ub3BzID0gJnZpY19mYWxjb25fb3BzOwotLSAKMi4xOS4xCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
