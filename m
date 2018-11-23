@@ -1,228 +1,42 @@
-From: Philippe Schenker <dev@pschenker.ch>
-Subject: [PATCH v3 4/4] ARM: dts: Add stmpe-adc driver to relevant devicetrees
-Date: Fri, 23 Nov 2018 15:24:11 +0100
-Message-ID: <20181123142411.8921-4-dev@pschenker.ch>
-References: <20181123142411.8921-1-dev@pschenker.ch>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] thermal: tegra: soctherm: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date: Fri, 23 Nov 2018 09:50:58 -0500
+Message-ID: <20181123145058.27115-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181123142411.8921-1-dev@pschenker.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc: Philippe Schenker <philippe.schenker@toradex.com>, Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, NXP Linux Team <linux-imx@nxp.com>
+To: rui.zhang@intel.com, edubezval@gmail.com, daniel.lezcano@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, keescook@chromium.org, nicoleotsuka@gmail.com, ezequiel@collabora.com, srplinux2008@gmail.com
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Philippe Schenker <philippe.schenker@toradex.com>
+Use macro to simplify the code.
 
-Activate the stmpe-adc driver as found on Apalis/Colibri iMX6/T30 modules
-
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
+ drivers/thermal/tegra/soctherm.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-Changes in v3:
- - None
-
-Changes in v2:
- - Put common ADC settings in mfd
-
- arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 22 ++++++++++++++--------
- arch/arm/boot/dts/imx6qdl-colibri.dtsi | 23 +++++++++++++++--------
- arch/arm/boot/dts/tegra30-apalis.dtsi  | 22 ++++++++++++++--------
- arch/arm/boot/dts/tegra30-colibri.dtsi | 22 ++++++++++++++--------
- 4 files changed, 57 insertions(+), 32 deletions(-)
-
-diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-index 3dc99dd8dde1..8db476d8978d 100644
---- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-@@ -331,11 +331,18 @@
- 		id = <0>;
- 		blocks = <0x5>;
- 		irq-trigger = <0x1>;
-+		/* 3.25 MHz ADC clock speed */
-+		st,adc-freq = <1>;
-+		/* 12-bit ADC */
-+		st,mod-12b = <1>;
-+		/* internal ADC reference */
-+		st,ref-sel = <0>;
-+		/* ADC converstion time: 80 clocks */
-+		st,sample-time = <4>;
-+		/* forbid to use ADC channels 3-0 (touch) */
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index ed28110a3535..45b41b885f49 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -803,17 +803,7 @@ static int regs_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
  
- 		stmpe_touchscreen {
- 			compatible = "st,stmpe-ts";
--			/* 3.25 MHz ADC clock speed */
--			st,adc-freq = <1>;
- 			/* 8 sample average control */
- 			st,ave-ctrl = <3>;
- 			/* 7 length fractional part in z */
-@@ -345,17 +352,16 @@
- 			 * current limit value
- 			 */
- 			st,i-drive = <1>;
--			/* 12-bit ADC */
--			st,mod-12b = <1>;
--			/* internal ADC reference */
--			st,ref-sel = <0>;
--			/* ADC converstion time: 80 clocks */
--			st,sample-time = <4>;
- 			/* 1 ms panel driver settling time */
- 			st,settling = <3>;
- 			/* 5 ms touch detect interrupt delay */
- 			st,touch-det-delay = <5>;
- 		};
-+
-+		stmpe_adc {
-+			compatible = "st,stmpe-adc";
-+			st,norequest-mask = <0x0F>;
-+		};
- 	};
- };
+-static int regs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, regs_show, inode->i_private);
+-}
+-
+-static const struct file_operations regs_fops = {
+-	.open		= regs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(regs);
  
-diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-index 87e15e7cb32b..2e303d79c7f8 100644
---- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-@@ -262,11 +262,18 @@
- 		id = <0>;
- 		blocks = <0x5>;
- 		irq-trigger = <0x1>;
-+		/* 3.25 MHz ADC clock speed */
-+		st,adc-freq = <1>;
-+		/* 12-bit ADC */
-+		st,mod-12b = <1>;
-+		/* internal ADC reference */
-+		st,ref-sel = <0>;
-+		/* ADC converstion time: 80 clocks */
-+		st,sample-time = <4>;
-+		/* forbid to use ADC channels 3-0 (touch) */
- 
- 		stmpe_touchscreen {
- 			compatible = "st,stmpe-ts";
--			/* 3.25 MHz ADC clock speed */
--			st,adc-freq = <1>;
- 			/* 8 sample average control */
- 			st,ave-ctrl = <3>;
- 			/* 7 length fractional part in z */
-@@ -276,17 +283,17 @@
- 			 * current limit value
- 			 */
- 			st,i-drive = <1>;
--			/* 12-bit ADC */
--			st,mod-12b = <1>;
--			/* internal ADC reference */
--			st,ref-sel = <0>;
--			/* ADC converstion time: 80 clocks */
--			st,sample-time = <4>;
- 			/* 1 ms panel driver settling time */
- 			st,settling = <3>;
- 			/* 5 ms touch detect interrupt delay */
- 			st,touch-det-delay = <5>;
- 		};
-+
-+		stmpe_adc {
-+			compatible = "st,stmpe-adc";
-+			/* 3.25 MHz ADC clock speed */
-+			st,norequest-mask = <0x0F>;
-+		};
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 7f112f192fe9..850b0d13549a 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -976,11 +976,18 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
-+			/* forbid to use ADC channels 3-0 (touch) */
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -990,17 +997,16 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 35af03ca9e90..1f9198bb24ff 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -845,11 +845,18 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
-+			/* forbid to use ADC channels 3-0 (touch) */
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -859,17 +866,16 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
+ static void soctherm_debug_init(struct platform_device *pdev)
+ {
 -- 
-2.19.1
+2.17.0
