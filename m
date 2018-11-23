@@ -1,77 +1,228 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] net: stmmac: Move debugfs init/exit to
- ->probe()/->remove()
-Date: Fri, 23 Nov 2018 14:12:31 +0100
-Message-ID: <20181123131231.GB21651@ulmo>
-References: <20181123122122.18957-1-thierry.reding@gmail.com>
- <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
+From: Philippe Schenker <dev@pschenker.ch>
+Subject: [PATCH v3 4/4] ARM: dts: Add stmpe-adc driver to relevant devicetrees
+Date: Fri, 23 Nov 2018 15:24:11 +0100
+Message-ID: <20181123142411.8921-4-dev@pschenker.ch>
+References: <20181123142411.8921-1-dev@pschenker.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
+In-Reply-To: <20181123142411.8921-1-dev@pschenker.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jose Abreu <jose.abreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
+Cc: Philippe Schenker <philippe.schenker@toradex.com>, Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, NXP Linux Team <linux-imx@nxp.com>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Philippe Schenker <philippe.schenker@toradex.com>
 
---61jdw2sOBCFtR2d/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Activate the stmpe-adc driver as found on Apalis/Colibri iMX6/T30 modules
 
-On Fri, Nov 23, 2018 at 12:44:02PM +0000, Jose Abreu wrote:
-> On 23-11-2018 12:21, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Setting up and tearing down debugfs is current unbalanced, as seen by
-> > this error during resume from suspend:
-> >
-> >     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to=
- create debugfs directory
-> >     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup=
-: failed debugFS registration
-> >
-> > The imbalance happens because the driver creates the debugfs hierarchy
-> > when the device is opened and tears it down when the device is closed.
-> > There's little gain in that, and it could be argued that it is even
-> > surprising because it's not usually done for other devices. Fix the
-> > imbalance by moving the debugfs creation and teardown to the driver's
-> > ->probe() and ->remove() implementations instead.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >
->=20
-> Did you test trying to dump "descriptors_status" file when
-> interface is not open ? I think that's the main reason why this
-> is not in probe ...
+Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+---
 
-I can't say that I did. I'll run a couple more tests and see if I can
-fix both of the issues.
+Changes in v3:
+ - None
 
-Thierry
+Changes in v2:
+ - Put common ADC settings in mfd
 
---61jdw2sOBCFtR2d/
-Content-Type: application/pgp-signature; name="signature.asc"
+ arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 22 ++++++++++++++--------
+ arch/arm/boot/dts/imx6qdl-colibri.dtsi | 23 +++++++++++++++--------
+ arch/arm/boot/dts/tegra30-apalis.dtsi  | 22 ++++++++++++++--------
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 22 ++++++++++++++--------
+ 4 files changed, 57 insertions(+), 32 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv3/LoACgkQ3SOs138+
-s6HYpQ/+NA43XmFdoOhzRJjZZqjcPO9spvtNYupeIUjcSJUeMQQErnJkCimsSzfO
-w7hfmHi2o81v1gwvnjPO6oU8dmIMQXbfSSkKsDaIuAz5bBKIZn3eL1+dAL+1aABk
-D+y/oiYYT3sFFKIOIcisxIIVw9oMXfyD/JNclwHjNrYt7HiUeYi0pdKTjDz02IZT
-WlF/yvnFIaiGOCQDVNJ4zCxsKPnlutyZbg4TlyrvApFXLX64uDyNIMCWvQBAtY7f
-92gAvs0/J+6E/0/bDulHLVIoPxRX8oo/Ar6FfRsYJCK6+T3J+TnVJaUNhJoVNA4r
-GprA5ncNTUsjVxfMNtXuLpABcebqqcxMEUXYiBKwphrjg7PwBTFiGwE74vZPIlmB
-oG8YkaopH06f17+7/6nx9z4eLSPZBNWFGhaIUPYQq42TmmQKSqb5OYA2blndGaCa
-xtlCG/YomKwY1J71bUI30zTRV4254aTwtJCOl3l5OHs583Bhi+iN2VtL3eC/5iAE
-XMn5HcP9qgI7951a+QXpNS9SEJqZsDuGrG48qkdnNAzhwQu4DWjKGoa/rY1L/8AD
-VJBC1ustpfGVp8hZwxxfYRsKLp6tbIOHUVA8OT1I0i/Iz4zzwY+Mbem4QCam3fuH
-hmfXx0U16mBV6XpyfFxLgacdm81KMbpwGqTtVsaLFTvqkImUaJ4=
-=RqG/
------END PGP SIGNATURE-----
-
---61jdw2sOBCFtR2d/--
+diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+index 3dc99dd8dde1..8db476d8978d 100644
+--- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+@@ -331,11 +331,18 @@
+ 		id = <0>;
+ 		blocks = <0x5>;
+ 		irq-trigger = <0x1>;
++		/* 3.25 MHz ADC clock speed */
++		st,adc-freq = <1>;
++		/* 12-bit ADC */
++		st,mod-12b = <1>;
++		/* internal ADC reference */
++		st,ref-sel = <0>;
++		/* ADC converstion time: 80 clocks */
++		st,sample-time = <4>;
++		/* forbid to use ADC channels 3-0 (touch) */
+ 
+ 		stmpe_touchscreen {
+ 			compatible = "st,stmpe-ts";
+-			/* 3.25 MHz ADC clock speed */
+-			st,adc-freq = <1>;
+ 			/* 8 sample average control */
+ 			st,ave-ctrl = <3>;
+ 			/* 7 length fractional part in z */
+@@ -345,17 +352,16 @@
+ 			 * current limit value
+ 			 */
+ 			st,i-drive = <1>;
+-			/* 12-bit ADC */
+-			st,mod-12b = <1>;
+-			/* internal ADC reference */
+-			st,ref-sel = <0>;
+-			/* ADC converstion time: 80 clocks */
+-			st,sample-time = <4>;
+ 			/* 1 ms panel driver settling time */
+ 			st,settling = <3>;
+ 			/* 5 ms touch detect interrupt delay */
+ 			st,touch-det-delay = <5>;
+ 		};
++
++		stmpe_adc {
++			compatible = "st,stmpe-adc";
++			st,norequest-mask = <0x0F>;
++		};
+ 	};
+ };
+ 
+diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+index 87e15e7cb32b..2e303d79c7f8 100644
+--- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+@@ -262,11 +262,18 @@
+ 		id = <0>;
+ 		blocks = <0x5>;
+ 		irq-trigger = <0x1>;
++		/* 3.25 MHz ADC clock speed */
++		st,adc-freq = <1>;
++		/* 12-bit ADC */
++		st,mod-12b = <1>;
++		/* internal ADC reference */
++		st,ref-sel = <0>;
++		/* ADC converstion time: 80 clocks */
++		st,sample-time = <4>;
++		/* forbid to use ADC channels 3-0 (touch) */
+ 
+ 		stmpe_touchscreen {
+ 			compatible = "st,stmpe-ts";
+-			/* 3.25 MHz ADC clock speed */
+-			st,adc-freq = <1>;
+ 			/* 8 sample average control */
+ 			st,ave-ctrl = <3>;
+ 			/* 7 length fractional part in z */
+@@ -276,17 +283,17 @@
+ 			 * current limit value
+ 			 */
+ 			st,i-drive = <1>;
+-			/* 12-bit ADC */
+-			st,mod-12b = <1>;
+-			/* internal ADC reference */
+-			st,ref-sel = <0>;
+-			/* ADC converstion time: 80 clocks */
+-			st,sample-time = <4>;
+ 			/* 1 ms panel driver settling time */
+ 			st,settling = <3>;
+ 			/* 5 ms touch detect interrupt delay */
+ 			st,touch-det-delay = <5>;
+ 		};
++
++		stmpe_adc {
++			compatible = "st,stmpe-adc";
++			/* 3.25 MHz ADC clock speed */
++			st,norequest-mask = <0x0F>;
++		};
+ 	};
+ };
+ 
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 7f112f192fe9..850b0d13549a 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -976,11 +976,18 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
++			/* forbid to use ADC channels 3-0 (touch) */
+ 
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -990,17 +997,16 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
++
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
+ 
+ 		/*
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 35af03ca9e90..1f9198bb24ff 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -845,11 +845,18 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
++			/* forbid to use ADC channels 3-0 (touch) */
+ 
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -859,17 +866,16 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
++
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
+ 
+ 		/*
+-- 
+2.19.1
