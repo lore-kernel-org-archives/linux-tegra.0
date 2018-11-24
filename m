@@ -1,28 +1,81 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 4/4] ARM: dts: Add stmpe-adc driver to relevant
- devicetrees
-Date: Sat, 24 Nov 2018 14:20:58 +0300
-Message-ID: <2c7d4caa-4a6e-cea1-d394-51790227d968@gmail.com>
-References: <20181123142411.8921-1-dev@pschenker.ch>
- <20181123142411.8921-4-dev@pschenker.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] memory: tegra: Convert to using %pOFn instead of device_node.name
+Date: Sat, 24 Nov 2018 09:07:25 -0500
+Message-ID: <20181124140725.28593-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181123142411.8921-4-dev@pschenker.ch>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Schenker <dev@pschenker.ch>, jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc: Philippe Schenker <philippe.schenker@toradex.com>, Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, NXP Linux Team <linux-imx@nxp.com>
+To: robh@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 23.11.2018 17:24, Philippe Schenker wrote:
-> From: Philippe Schenker <philippe.schenker@toradex.com>
-> 
-> Activate the stmpe-adc driver as found on Apalis/Colibri iMX6/T30 modules
-> 
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+In preparation to remove the node name pointer from struct device_node,
+convert printf users to use the %pOFn format specifier.
 
-Hello Philippe,
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/memory/tegra/mc.c           |  6 +++---
+ drivers/memory/tegra/tegra124-emc.c | 12 ++++++------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-Just a very minor comment.. device trees are not for drivers, but for HW description. It will be better to s/driver/DT node/ in both commit name and description.
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index bd25faf6d13d..24afc36833bf 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -345,7 +345,7 @@ static int load_one_timing(struct tegra_mc *mc,
+ 	err = of_property_read_u32(node, "clock-frequency", &tmp);
+ 	if (err) {
+ 		dev_err(mc->dev,
+-			"timing %s: failed to read rate\n", node->name);
++			"timing %pOFn: failed to read rate\n", node);
+ 		return err;
+ 	}
+ 
+@@ -360,8 +360,8 @@ static int load_one_timing(struct tegra_mc *mc,
+ 					 mc->soc->num_emem_regs);
+ 	if (err) {
+ 		dev_err(mc->dev,
+-			"timing %s: failed to read EMEM configuration\n",
+-			node->name);
++			"timing %pOFn: failed to read EMEM configuration\n",
++			node);
+ 		return err;
+ 	}
+ 
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index 392dc8dd481f..eedb7d48e2ea 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -888,8 +888,8 @@ static int load_one_timing_from_dt(struct tegra_emc *emc,
+ 
+ 	err = of_property_read_u32(node, "clock-frequency", &value);
+ 	if (err) {
+-		dev_err(emc->dev, "timing %s: failed to read rate: %d\n",
+-			node->name, err);
++		dev_err(emc->dev, "timing %pOFn: failed to read rate: %d\n",
++			node, err);
+ 		return err;
+ 	}
+ 
+@@ -900,16 +900,16 @@ static int load_one_timing_from_dt(struct tegra_emc *emc,
+ 					 ARRAY_SIZE(timing->emc_burst_data));
+ 	if (err) {
+ 		dev_err(emc->dev,
+-			"timing %s: failed to read emc burst data: %d\n",
+-			node->name, err);
++			"timing %pOFn: failed to read emc burst data: %d\n",
++			node, err);
+ 		return err;
+ 	}
+ 
+ #define EMC_READ_PROP(prop, dtprop) { \
+ 	err = of_property_read_u32(node, dtprop, &timing->prop); \
+ 	if (err) { \
+-		dev_err(emc->dev, "timing %s: failed to read " #prop ": %d\n", \
+-			node->name, err); \
++		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
++			node, err); \
+ 		return err; \
+ 	} \
+ }
+-- 
+2.17.0
