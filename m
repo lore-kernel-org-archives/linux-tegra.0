@@ -1,91 +1,78 @@
-From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: RE: [PATCH v2 0/5] Add Tegra194 Dual ARM SMMU driver
-Date: Tue, 27 Nov 2018 02:30:05 +0000
-Message-ID: <BYAPR12MB27598D08E89D93CD8C171993B3D00@BYAPR12MB2759.namprd12.prod.outlook.com>
-References: <1541029430-14150-1-git-send-email-vdumpa@nvidia.com>
- <20181126235856.vnseoe5lucfryc5p@localhost>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 1/7] gpu: host1x: Resize channel register region on
+ Tegra186 and later
+Date: Mon, 26 Nov 2018 19:02:46 +0300
+Message-ID: <58731059-f3a5-3bbb-02d9-6a1701a60a54@gmail.com>
+References: <20181123123138.20739-1-thierry.reding@gmail.com>
+ <CAKb7UvhRuSxYWxn8_avXEu+0WduaYrTJ+uVcXP85HbAzi6gDhg@mail.gmail.com>
+ <20181126153013.GC19710@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181126235856.vnseoe5lucfryc5p@localhost>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20181126153013.GC19710@ulmo>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: "will.deacon@arm.com" <will.deacon@arm.com>, "robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>, Sachin Nikam <Snikam@nvidia.com>, Pritesh Raithatha <praithatha@nvidia.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Timo Alho <talho@nvidia.com>, Yu-Huan Hsu <YHsu@nvidia.com>, Nicolin Chen <nicolinc@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, Alexander Van Brunt <avanbrunt@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Juha Tukkinen <jtukkinen@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Ilia Mirkin <imirkin@alum.mit.edu>
+Cc: linux-tegra@vger.kernel.org, jonathanh@nvidia.com, dri-devel <dri-devel@lists.freedesktop.org>, mperttunen@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Olof,
-Thanks for the comments!
-
->>Based on what I can see, it seems that you're trying to describe two
-pieces of hardware with only one device in the DT. That seems like an
-odd choice.=20
-
-T194 SOC HW is designed to use Two ARM SMMU's together like one SMMU.
-The IOVA accesses from the HW controllers clients is interleaved across the=
-se Two
-SMMU's by Memory controller HW.
-Even though,  there are two ARM SMMU's,  HW design requires SW programming
-these two ARM SMMU instances identically.
-
->>Also, it seems like all three SMMUs share the same interrupt
-line? That's somewhat suboptimal IMHO, but harder to change.
-
-This is by HW design.  SMMU interrupts are only expected if there is an ill=
-egal IOVA
-access, which shouldn't happen in practical. The SMMU interrupts are only u=
-sed
-to log the faults and for debug purpose on T194.
-
-
->>Why not instantiate both of them and create a reference between then
-such that the TLB and sync ops are done on both of them in the native
-driver? I.e. two arm_smmu structs and a pointer between then (i.e. add a
-"next shared smmu" pointer in the struct arm_smmu).
-
-DMA framework supports only one SMMU driver instance per device.
-SMMU driver setup iommu_ops pointer in the device struct during the boot wh=
-en
-the platform device is added to the bus.
-There is no support to allow a platform device register with two different =
-SMMU
-devices.
-Two different  SMMU instances is 2x page table memory and 2x map/unmap over=
-head.
-With SMMU driver knowing about two smmu instances, page table memory usage,=
- map/unmap
-Overhead would be efficient.
-
->>As long as devices only references one of them, locking only that one sho=
-uld
-provide suitable protection as well.
-
-Earlier proposal on creating one Master SMMU node and slave SMMU nodes with=
-in isn't liked.=20
-Will has proposed creating a library and reusing the code. I have made the =
-patches
-to share the code.
-https://www.spinics.net/lists/linux-tegra/msg35539.html
-https://www.spinics.net/lists/linux-tegra/msg35494.html
-
-
->>Seems like a simpler approach than adding a new layer to the driver, but =
-maybe
->>I am missing some complexity here?
-
-Programming both SMMU instances identically with existing ARM SMMU driver i=
-s not
-possible with multiple DT nodes.=20
-In the following patch, by writel* macro override, both ARM SMMU instances =
-are
-programmed identically in  Tegra194 SMMU driver transparently. Only tlb syn=
-c and
-interrupt handling need to know about specific instance.
-
-https://lkml.org/lkml/2018/11/1/573
-+#define writel_relaxed writel_relaxed_all
-+#define writeq_relaxed writeq_relaxed_all
-+#define writel writel_all
-
--KR
+T24gMjYuMTEuMjAxOCAxODozMCwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24gTW9uLCBOb3Yg
+MjYsIDIwMTggYXQgMTA6MTE6MzlBTSAtMDUwMCwgSWxpYSBNaXJraW4gd3JvdGU6Cj4+IE9uIEZy
+aSwgTm92IDIzLCAyMDE4IGF0IDc6MzEgQU0gVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5n
+QGdtYWlsLmNvbT4gd3JvdGU6Cj4+Pgo+Pj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdA
+bnZpZGlhLmNvbT4KPj4+Cj4+PiBUaGUgcmVnaXN0ZXIgcmVnaW9uIGFsbG9jYXRlZCBwZXIgY2hh
+bm5lbCB3YXMgZGVjcmVhc2VkIGZyb20gMTYzODQgYnl0ZXMKPj4+IHRvIDI1NiBieXRlcyBvbiBU
+ZWdyYTE4NiBhbmQgbGF0ZXIuIFJlc2l6ZSB0aGUgcmVnaW9uIHRvIG1ha2Ugc3VyZSBldmVyeQo+
+Pj4gY2hhbm5lbCAoaW5zdGVhZCBvZiBvbmx5IHRoZSBmaXJzdCkgaXMgcHJvcGVybHkgcHJvZ3Jh
+bW1lZC4KPj4+Cj4+PiBTdWdnZXN0ZWQtYnk6IE1pa2tvIFBlcnR0dW5lbiA8bXBlcnR0dW5lbkBu
+dmlkaWEuY29tPgo+Pj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZp
+ZGlhLmNvbT4KPj4+IC0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2hvc3QxeC9ody9jaGFubmVsX2h3LmMg
+fCA3ICsrKysrLS0KPj4+ICAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAyIGRlbGV0
+aW9ucygtKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2hhbm5l
+bF9ody5jIGIvZHJpdmVycy9ncHUvaG9zdDF4L2h3L2NoYW5uZWxfaHcuYwo+Pj4gaW5kZXggZDE4
+OGY5MDY4YjkxLi45NWVhODExNzJhODMgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9ob3N0
+MXgvaHcvY2hhbm5lbF9ody5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvY2hhbm5l
+bF9ody5jCj4+PiBAQCAtMjYsNyArMjYsNiBAQAo+Pj4gICNpbmNsdWRlICIuLi9pbnRyLmgiCj4+
+PiAgI2luY2x1ZGUgIi4uL2pvYi5oIgo+Pj4KPj4+IC0jZGVmaW5lIEhPU1QxWF9DSEFOTkVMX1NJ
+WkUgMTYzODQKPj4+ICAjZGVmaW5lIFRSQUNFX01BWF9MRU5HVEggMTI4VQo+Pj4KPj4+ICBzdGF0
+aWMgdm9pZCB0cmFjZV93cml0ZV9nYXRoZXIoc3RydWN0IGhvc3QxeF9jZG1hICpjZG1hLCBzdHJ1
+Y3QgaG9zdDF4X2JvICpibywKPj4+IEBAIC0yMDMsNyArMjAyLDExIEBAIHN0YXRpYyB2b2lkIGVu
+YWJsZV9nYXRoZXJfZmlsdGVyKHN0cnVjdCBob3N0MXggKmhvc3QsCj4+PiAgc3RhdGljIGludCBo
+b3N0MXhfY2hhbm5lbF9pbml0KHN0cnVjdCBob3N0MXhfY2hhbm5lbCAqY2gsIHN0cnVjdCBob3N0
+MXggKmRldiwKPj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQg
+aW5kZXgpCj4+PiAgewo+Pj4gLSAgICAgICBjaC0+cmVncyA9IGRldi0+cmVncyArIGluZGV4ICog
+SE9TVDFYX0NIQU5ORUxfU0laRTsKPj4+ICsjaWYgSE9TVDFYX0hXIDwgNgo+Pj4gKyAgICAgICBj
+aC0+cmVncyA9IGRldi0+cmVncyArIGluZGV4ICogMHg0MDAwOwo+Pj4gKyNlbHNlCj4+PiArICAg
+ICAgIGNoLT5yZWdzID0gZGV2LT5yZWdzICsgaW5kZXggKiAweDEwMDsKPj4+ICsjZW5kaWYKPj4K
+Pj4gSnVzdCBhbiBvYnNlcnZhdGlvbiAuLi4gdGhpcyBtYWtlcyBpdCBpbXBvc3NpYmxlIHRvIGJ1
+aWxkIHRoaXMgbW9kdWxlCj4+IGZvciBtdWx0aXBsZSBob3N0MXggaHcgcmV2aXNpb25zIGluIHRo
+ZSBzYW1lIGtlcm5lbC4gSSBiZWxpZXZlIHRoYXQKPj4gc3VwcG9ydGluZyBtdWx0aXBsZSBwbGF0
+Zm9ybXMgaXMgZnJlcXVlbnRseSBkZXNpcmFibGUsIGJ1dCBwZXJoYXBzCj4+IHRoZXJlJ3MgbW9y
+ZSBnb2luZyBvbiBoZXJlIChsaWtlIGFybTY0IHZzIGFybTMyLCBldGMpLgo+IAo+IEl0IGFjdHVh
+bGx5IGRvZXMgd29yay4gSWYgeW91IGxvb2sgY2xvc2UgZW5vdWdoIHRoaXMgZmlsZSBpcyBpbmNs
+dWRlZAo+IG11bHRpcGxlIHRpbWVzIGJ5IGdlbmVyYXRpb24gc3BlY2lmaWMgc291cmNlIGZpbGVz
+LiBJdCdzIHNvcnQgb2YgbGlrZQo+IGEgdGVtcGxhdGUgaWYgeW91IHdhbnQuCj4gCj4gSXQncyBu
+b3QgYSBkZXNpZ24gdGhhdCdzIGVudGlyZWx5IHRvIG15IGxpa2luZywgYnV0IGl0J3Mgbm90IGJl
+ZW4gYQo+IHN0cm9uZyBlbm91Z2ggaXRjaCB0byBzY3JhdGNoIGZvciBtZSB0byBoYXZlIGdvdHRl
+biBhcm91bmQgdG8gY2hhbmdpbmcKPiBob3cgaXQgd29ya3MuCgpJJ20gY3VycmVudGx5IGluIHBy
+b2Nlc3Mgb2YgcmV3cml0aW5nIGhvc3QxeCBkcml2ZXIgdG8gbWFrZSBpdCB1c2FibGUgZm9yIHRo
+ZSBuZXcgRFJNIGpvYi1zdWJtaXNzaW9uIFtVXUFQSS4gSW4gdGhlIHByb2Nlc3Mgb2YgcmV3cml0
+aW5nIEkgdHJpZWQgdG8gcmUtZGVzaWduIHRoaXMgcGFydCBvZiB0aGUgZHJpdmVyIHRvIGF2b2lk
+IGR1cGxpY2F0aW9uIG9mIHRoZSBjb2RlIGJ5IHVuaWZ5aW5nIGFsbCB0aGUgY29kZSB1c2luZyAi
+aWYgKGhvc3QtPnNvYy5od192ZXIuLiIsIGJ1dCB5ZXN0ZXJkYXkgcmV0dXJuZWQgdG8gdGhlIGlu
+aXRpYWwgdGVtcGxhdGUtdmFyaWFudCBiZWNhdXNlIG9mIHRoZSBhbW91bnQgb2YgY29kZS1jaHVy
+bmluZyB0aGF0IHRoZSBpZi1lbHNlIGFwcHJvYWNoIGludHJvZHVjZXMsIGl0IGlzIGVzcGVjaWFs
+bHkgbm90IG5pY2Ugd2l0aCB0aGUgbW9yZSBiaXRmaWVsZCBkaWZmZXJlbmNlcyB0aGF0IG5ld2Vy
+IEhXIGhhcy4gRG8geW91IGhhdmUgYW55IG90aGVyIHN1Z2dlc3Rpb25zPwpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
