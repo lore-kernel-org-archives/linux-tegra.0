@@ -1,81 +1,145 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] net: stmmac: Move debugfs init/exit to
- ->probe()/->remove()
-Date: Mon, 26 Nov 2018 16:34:19 +0100
-Message-ID: <20181126153419.GD19710@ulmo>
-References: <20181123122122.18957-1-thierry.reding@gmail.com>
- <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
+From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Subject: [PATCH 7/9] iommu: tegra-gart: make it explicitly non-modular
+Date: Mon, 26 Nov 2018 17:31:36 -0500
+Message-ID: <1543271498-28966-8-git-send-email-paul.gortmaker@windriver.com>
+References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SFyWQ0h3ruR435lw"
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
-Sender: netdev-owner@vger.kernel.org
-To: Jose Abreu <jose.abreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1543271498-28966-1-git-send-email-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The Kconfig currently controlling compilation of this code is:
 
---SFyWQ0h3ruR435lw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/iommu/Kconfig:config TEGRA_IOMMU_GART
+drivers/iommu/Kconfig:  bool "Tegra GART IOMMU Support"
 
-On Fri, Nov 23, 2018 at 12:44:02PM +0000, Jose Abreu wrote:
-> On 23-11-2018 12:21, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Setting up and tearing down debugfs is current unbalanced, as seen by
-> > this error during resume from suspend:
-> >
-> >     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to=
- create debugfs directory
-> >     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup=
-: failed debugFS registration
-> >
-> > The imbalance happens because the driver creates the debugfs hierarchy
-> > when the device is opened and tears it down when the device is closed.
-> > There's little gain in that, and it could be argued that it is even
-> > surprising because it's not usually done for other devices. Fix the
-> > imbalance by moving the debugfs creation and teardown to the driver's
-> > ->probe() and ->remove() implementations instead.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >
->=20
-> Did you test trying to dump "descriptors_status" file when
-> interface is not open ? I think that's the main reason why this
-> is not in probe ...
+...meaning that it currently is not being built as a module by anyone.
 
-Indeed, that seems to cause a hang. Still, it doesn't sound like the
-right things to repeatedly create and remove debugfs files just because
-we can't provide the contents when the device is down.
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
 
-How about we return an empty file or an error code instead when the
-interface is down?
+We explicitly disallow a driver unbind, since that doesn't have a
+sensible use case anyway, and it allows us to drop the ".remove"
+code for non-modular drivers.
 
-Thierry
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
 
---SFyWQ0h3ruR435lw
-Content-Type: application/pgp-signature; name="signature.asc"
+We replace module.h with moduleparam.h since the file does actually
+declare some module_param() and the easiest way to keep back
+compatibility with existing use cases is to leave it as-is for now.
 
------BEGIN PGP SIGNATURE-----
+The init function was missing an __init annotation, so it was added.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv8EnsACgkQ3SOs138+
-s6Fb6A//Z2w00B6tsi06+/dvF5NfOBe1/Qe584yHpemrWRQouopxgAxuzUsQ9DkT
-ctl5xyuWtoGlpgKJiuOsfFC6/NtbvB104tZ/1P1TSrOqoYKOBZu9TO9dD/kkrEZP
-f/Q8qHbqlkbaCz9stdxwzgLQGiUKYq2oOJ9BFmH3Nq73s6VxJtiDc46B5hgNNUwR
-sInUnW6eXZSyXidQoNwOjAukXO5OGvE6ALPlBmd3dcQjRRo0OiqB/8NLYhbflcBc
-/Pac0Lyr8xOm9ZdhFWB9k9TxYjDkHdaMREVkmGPkOjcr7I3GYqP8928fILd0Mell
-pirV6jstA+MiUmELZMyyCnbHPiQ/pj2CY12mmfs6FfYSEF/5vyEpE1rUGKSqhC4r
-GJ7E31zWMlP8aOdUfY042BRwAgBuPCSEZFt5GHzfDVt0GqR9AQZi01flfnRUMmrL
-TdrJOc1MlNOrGasihTd4NSw8SbuwB+R5UYHEmX7rmlDlXQuWGmB0baCGePOpbYjZ
-5uNc4WfA8k7v2gTlW6G+6RuPEAYZHdNtF0W2csZBPm5fJbKPZVOmDwqjwmFwiui6
-O+VRu/NhQq5mqRAtCRXaxYrAKkTejABTKTHhIq1EAr+QzVRNZlofV8k8FSGHpWzg
-uiTiy1+1GmYa1RiFIclPTruwaNEcEkrjUex3tuZVfy93bUrNP1s=
-=T5F5
------END PGP SIGNATURE-----
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
 
---SFyWQ0h3ruR435lw--
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+---
+ drivers/iommu/tegra-gart.c | 37 +++++++------------------------------
+ 1 file changed, 7 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index 7b1361d57a17..da6a4e357b2b 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -3,6 +3,8 @@
+  *
+  * Copyright (c) 2010-2012, NVIDIA CORPORATION.  All rights reserved.
+  *
++ * Author: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++ *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+  * version 2, as published by the Free Software Foundation.
+@@ -19,7 +21,8 @@
+ 
+ #define pr_fmt(fmt)	"%s(): " fmt, __func__
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/moduleparam.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+@@ -478,20 +481,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int tegra_gart_remove(struct platform_device *pdev)
+-{
+-	struct gart_device *gart = platform_get_drvdata(pdev);
+-
+-	iommu_device_unregister(&gart->iommu);
+-	iommu_device_sysfs_remove(&gart->iommu);
+-
+-	writel(0, gart->regs + GART_CONFIG);
+-	if (gart->savedata)
+-		vfree(gart->savedata);
+-	gart_handle = NULL;
+-	return 0;
+-}
+-
+ static const struct dev_pm_ops tegra_gart_pm_ops = {
+ 	.suspend	= tegra_gart_suspend,
+ 	.resume		= tegra_gart_resume,
+@@ -501,34 +490,22 @@ static const struct of_device_id tegra_gart_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-gart", },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra_gart_of_match);
+ 
+ static struct platform_driver tegra_gart_driver = {
+ 	.probe		= tegra_gart_probe,
+-	.remove		= tegra_gart_remove,
+ 	.driver = {
+ 		.name	= "tegra-gart",
+ 		.pm	= &tegra_gart_pm_ops,
+ 		.of_match_table = tegra_gart_of_match,
++		.suppress_bind_attrs = true,
+ 	},
+ };
+ 
+-static int tegra_gart_init(void)
++static int __init tegra_gart_init(void)
+ {
+ 	return platform_driver_register(&tegra_gart_driver);
+ }
+-
+-static void __exit tegra_gart_exit(void)
+-{
+-	platform_driver_unregister(&tegra_gart_driver);
+-}
+-
+ subsys_initcall(tegra_gart_init);
+-module_exit(tegra_gart_exit);
+-module_param(gart_debug, bool, 0644);
+ 
++module_param(gart_debug, bool, 0644);
+ MODULE_PARM_DESC(gart_debug, "Enable GART debugging");
+-MODULE_DESCRIPTION("IOMMU API for GART in Tegra20");
+-MODULE_AUTHOR("Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_ALIAS("platform:tegra-gart");
+-MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
