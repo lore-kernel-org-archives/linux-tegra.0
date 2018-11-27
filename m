@@ -1,85 +1,73 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 7/9] iommu: tegra-gart: make it explicitly non-modular
-Date: Tue, 27 Nov 2018 15:18:03 +0100
-Message-ID: <20181127141803.GA10560@ulmo>
-References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
- <1543271498-28966-8-git-send-email-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH v3 4/4] ARM: dts: Add stmpe-adc driver to relevant
+ devicetrees
+Date: Tue, 27 Nov 2018 15:21:03 +0100
+Message-ID: <20181127142103.GC10560@ulmo>
+References: <20181123142411.8921-1-dev@pschenker.ch>
+ <20181123142411.8921-4-dev@pschenker.ch>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+        protocol="application/pgp-signature"; boundary="w7PDEPdKQumQfZlR"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1543271498-28966-8-git-send-email-paul.gortmaker@windriver.com>
+In-Reply-To: <20181123142411.8921-4-dev@pschenker.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
+To: Philippe Schenker <dev@pschenker.ch>
+Cc: jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch, Philippe Schenker <philippe.schenker@toradex.com>, Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, NXP Linux Team <linux-imx@nxp.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---ibTvN161/egqYuK8
+--w7PDEPdKQumQfZlR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 26, 2018 at 05:31:36PM -0500, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
+On Fri, Nov 23, 2018 at 03:24:11PM +0100, Philippe Schenker wrote:
+> From: Philippe Schenker <philippe.schenker@toradex.com>
 >=20
-> drivers/iommu/Kconfig:config TEGRA_IOMMU_GART
-> drivers/iommu/Kconfig:  bool "Tegra GART IOMMU Support"
+> Activate the stmpe-adc driver as found on Apalis/Colibri iMX6/T30 modules
 >=20
-> ...meaning that it currently is not being built as a module by anyone.
->=20
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->=20
-> We explicitly disallow a driver unbind, since that doesn't have a
-> sensible use case anyway, and it allows us to drop the ".remove"
-> code for non-modular drivers.
->=20
-> Since module_init was not in use by this code, the init ordering
-> remains unchanged with this commit.
->=20
-> We replace module.h with moduleparam.h since the file does actually
-> declare some module_param() and the easiest way to keep back
-> compatibility with existing use cases is to leave it as-is for now.
->=20
-> The init function was missing an __init annotation, so it was added.
->=20
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> was (or is now) contained at the top of the file in the comments.
->=20
-> Cc: Hiroshi Doyu <hdoyu@nvidia.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: iommu@lists.linux-foundation.org
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 > ---
->  drivers/iommu/tegra-gart.c | 37 +++++++------------------------------
->  1 file changed, 7 insertions(+), 30 deletions(-)
+>=20
+> Changes in v3:
+>  - None
+>=20
+> Changes in v2:
+>  - Put common ADC settings in mfd
+>=20
+>  arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 22 ++++++++++++++--------
+>  arch/arm/boot/dts/imx6qdl-colibri.dtsi | 23 +++++++++++++++--------
+>  arch/arm/boot/dts/tegra30-apalis.dtsi  | 22 ++++++++++++++--------
+>  arch/arm/boot/dts/tegra30-colibri.dtsi | 22 ++++++++++++++--------
+>  4 files changed, 57 insertions(+), 32 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+You might want to split this up into two patches, one for i.MX and the
+other for Tegra so that the respective maintainers can apply them
+separately.
 
---ibTvN161/egqYuK8
+Also, where are patches 1-3?
+
+Thierry
+
+--w7PDEPdKQumQfZlR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv9UhcACgkQ3SOs138+
-s6GgbBAAi/Mxc51OVKQqQum9GKCX2Bb6gfyB7EOoy5OfWgk1dXPUKhy6EhLZIaxk
-2lpqJVfEikiOd5RdozVEspvrOqCKAGUuXNev7VEIy0daSNIM/VUJ6fSFCJRZEV+w
-cFbj7Z/q44r+Gx9/F7vBl2miQhn9dvFhhJZjsT62uePD79C1r9o4OJch2kQAGB6O
-aomSkBgzYz+iig3bD42H1JJERz1JrnKkbCXw3bKvRU4YG74hkM0NlWgUWxxCCsM/
-59awkEkdId0jWuF7Cn7Iwfvs34p42vVhK5unMAIhO9YEZ3IWgNIhrkKnkWAIdhlU
-VqbgJaKmdGqMjIZsGxWPwFnoNuHSV3LDxt0mCkhr6ZMIFuimJMy317vf0ETrhMSW
-C4HUVScW6t/H/FXegQ8XfuRm6qZGnwmgT8MH0Oi2RW51iOA3eADP7HqCdUQ11uN6
-K2LFAAbncjTJHdzUhECU9x1vWgzrXhUsufhj9Bc8DwwKN2+6zB+dsvJ7qA5SKUEU
-PaOGRAz2M0+C6D65xiBsy0GpG3iH3SgMAXJ/bKC37UUV8AHH7z7DmoJUNYVOszCD
-1Ai4TBSOmHgFUzszni4NOrcV/buCNOqLz2qspAHT64YK0ewgJDKuforGo7TV1q2G
-epfhNiFXDV5CYbNa+lZH/gwz2KO646KyrPKidGtOj0PPhk/FA7U=
-=9Dwj
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv9Us8ACgkQ3SOs138+
+s6ETBA//Sl4B61jfINf/TIIt678gt5+o7XKrFo7tvvTS9EcK8S8IwwGc7quphlNy
+D4abPfA03egiEbiqLIceasyZX+LG6ZgoMpWNvUlJdMQN3DqODplrNxUeqB8NoFP5
+TsQ7EToOdvIYRS3fA1j9UlKKU2Q7armFZZ3a23aFaF/p5dNYzsFh/ZQ9QNTh3kdP
+dOoonVZcx79Zx67d3M0Po9Xq8cqiUL8wZ60FJODNaqt0D2Gkk3n0sVO8cZiQMMcW
+obmf2KmFRWZAVFGd7rcGqRJCjirwHiRRECf+yAMn3JTLfBnf/MG53P9aKMnyJowI
+7mPAUvzLatqbcjpJKW1Q/VW7+rB8DAGJ94i0/mdWrg1xhnXmq3eiidjtZrruVS/k
+o92dcAw2UsewYerTMbSdSWFFbmp92iJAtXgcKxOlJIncfYbvZJCzm3+uA6IWC2I0
+jBiaIxferVHLPfdgGpCebBbor0HHTPq9Yt1RMkUXPkEw32musaw/PjBJEJP36AtE
+UH/97cOBZDvBLx+/yX0stCok0hi9rUzm8+/ERyV/kYl3dc4cMtjA3QHtNT4Hw35N
+rBnZXruqAngl3PQlRsGykVo2Fve76DWTDxOmkBw4NtDtbVptxWHnVOTE/O1Acn1n
+MlQSfriTGswAtcVbjO162MT1jyYNn4jketZncIQJImGivBs99Gc=
+=yx3m
 -----END PGP SIGNATURE-----
 
---ibTvN161/egqYuK8--
+--w7PDEPdKQumQfZlR--
