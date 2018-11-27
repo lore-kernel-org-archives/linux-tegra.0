@@ -1,60 +1,51 @@
-From: Jose Abreu <jose.abreu@synopsys.com>
-Subject: Re: [PATCH] net: stmmac: Move debugfs init/exit to
- ->probe()/->remove()
-Date: Tue, 27 Nov 2018 09:02:51 +0000
-Message-ID: <3f5ef823-4683-04f8-5f3a-0ccfdb472d6d@synopsys.com>
-References: <20181123122122.18957-1-thierry.reding@gmail.com>
- <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
- <20181126153419.GD19710@ulmo>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.9 00/46] 4.9.141-stable review
+Date: Tue, 27 Nov 2018 09:12:39 +0000
+Message-ID: <810d2edc-8ba4-1a1e-c7b7-102100a547f7@nvidia.com>
+References: <20181126105045.447291262@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181126153419.GD19710@ulmo>
+In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jose Abreu <jose.abreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 26-11-2018 15:34, Thierry Reding wrote:
-> On Fri, Nov 23, 2018 at 12:44:02PM +0000, Jose Abreu wrote:
->> On 23-11-2018 12:21, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> Setting up and tearing down debugfs is current unbalanced, as seen by
->>> this error during resume from suspend:
->>>
->>>     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
->>>     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
->>>
->>> The imbalance happens because the driver creates the debugfs hierarchy
->>> when the device is opened and tears it down when the device is closed.
->>> There's little gain in that, and it could be argued that it is even
->>> surprising because it's not usually done for other devices. Fix the
->>> imbalance by moving the debugfs creation and teardown to the driver's
->>> ->probe() and ->remove() implementations instead.
->>>
->>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>>
->> Did you test trying to dump "descriptors_status" file when
->> interface is not open ? I think that's the main reason why this
->> is not in probe ...
-> Indeed, that seems to cause a hang. Still, it doesn't sound like the
-> right things to repeatedly create and remove debugfs files just because
-> we can't provide the contents when the device is down.
 
-Agree.
+On 26/11/2018 10:50, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.141 release.
+> There are 46 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Nov 28 10:50:18 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.141-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
->
-> How about we return an empty file or an error code instead when the
-> interface is down?
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-I think an error code would be more suitable (ENODEV/EBUSY ?).
-Can you submit v2 ?
+Linux version:	4.9.141-rc1-g77e519e
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Thanks and Best Regards,
-Jose Miguel Abreu
+Cheers
+Jon
 
->
-> Thierry
+-- 
+nvpublic
