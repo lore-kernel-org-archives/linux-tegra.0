@@ -1,51 +1,55 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.14 00/62] 4.14.84-stable review
-Date: Tue, 27 Nov 2018 09:14:19 +0000
-Message-ID: <652adb77-bb9e-f4d4-7975-b61f9ac20947@nvidia.com>
-References: <20181126105050.592727680@linuxfoundation.org>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH 0/9] iommu: clean up/remove modular stuff from
+ non-modules.
+Date: Tue, 27 Nov 2018 11:11:56 +0100
+Message-ID: <20181127101156.GA12298@8bytes.org>
+References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Kurtz <djkurtz@chromium.org>, Heiko Stuebner <heiko@sntech.de>, Hiroshi Doyu <hdoyu@nvidia.com>, Honghui Zhang <honghui.zhang@mediatek.com>, Jeffy Chen <jeffy.chen@rock-chips.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Matthias Brugger <matthias.bgg@gmail.com>, Nate Watterson <nwatters@codeaurora.org>, Rob Clark <robdclark@gmail.com>, Robin Murphy <robin.murphy@arm.com>, Simon Xue <xxm@rock-chips.com>, Stepan Moskovchenko <stepanm@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Paul,
 
-On 26/11/2018 10:50, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.84 release.
-> There are 62 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Nov 28 10:50:20 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.84-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-All tests are passing for Tegra ...
+thanks for your cleanup!
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
+The iommu-tree uses another rule for the subject line of patches. Can
+you please resend with correct subject lines? See below for what is
+used.
 
-Linux version:	4.14.84-rc1-gc203efd
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+The general format is:
 
-Cheers
-Jon
+	iommu/<driver>: _C_apital letter starting subject
 
--- 
-nvpublic
+Please also collect the Acks you get and add them to the patches before
+the resend.
+
+On Mon, Nov 26, 2018 at 05:31:29PM -0500, Paul Gortmaker wrote:
+> Paul Gortmaker (9):
+>   iommu: audit and remove any unnecessary uses of module.h
+Fine.
+>   iommu: rockchip: make it explicitly non-modular
+	iommu/rockchip: Make it explicitly non-modular
+>   iommu: msm_iommu: make it explicitly non-modular
+	iommu/msm: Make it explicitly non-modular
+>   iommu: mtk_iommu: make it explicitly non-modular
+	iommu/mediatek: Make it explicitly non-modular
+>   iommu: ipmmu-vmsa: make it explicitly non-modular
+	iommu/ipmmu-vmsa: Make it explicitly non-modular
+>   iommu: qcom_iommu: make it explicitly non-modular
+	iommu/qcom: Make it explicitly non-modular
+>   iommu: tegra-gart: make it explicitly non-modular
+	iommu/tegra: Make it explicitly non-modular
+>   iommu: arm-smmu: make it explicitly non-modular
+	iommu/arm-smmu: Make arm-smmu explicitly non-modular
+>   iommu: arm-smmu-v3: make it explicitly non-modular
+	iommu/arm-smmu: Make arm-smmu-v3 explicitly non-modular
+
+Thanks a lot,
+
+       Joerg
