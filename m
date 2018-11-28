@@ -1,176 +1,122 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 3/3] thermal: tegra: parse sensor id before sensor
- register
-Date: Wed, 28 Nov 2018 11:25:20 +0100
-Message-ID: <20181128102520.GC20723@ulmo>
-References: <1543383877-20555-1-git-send-email-wni@nvidia.com>
- <1543383877-20555-4-git-send-email-wni@nvidia.com>
+Subject: Re: [PATCH 7/9] dt-bindings: tegra186-gpio: Add wakeup parent support
+Date: Wed, 28 Nov 2018 11:44:36 +0100
+Message-ID: <20181128104436.GA22559@ulmo>
+References: <20180921102546.12745-1-thierry.reding@gmail.com>
+ <20180921102546.12745-8-thierry.reding@gmail.com>
+ <20181015144612.GA23929@bogus>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kVXhAStRUZ/+rrGn"
+        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1543383877-20555-4-git-send-email-wni@nvidia.com>
+In-Reply-To: <20181015144612.GA23929@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, srikars@nvidia.com, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---kVXhAStRUZ/+rrGn
+--cNdxnHkX5QqsyA0e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 28, 2018 at 01:44:37PM +0800, Wei Ni wrote:
-> Since different platforms may not support all 4
-> sensors, so the sensor registration may be failed.
-> Add codes to parse dt to find sensor id which
-> need to be registered. So that the registration
-> can be successful on all platform.
+On Mon, Oct 15, 2018 at 09:46:12AM -0500, Rob Herring wrote:
+> On Fri, Sep 21, 2018 at 12:25:44PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Tegra186 and later have some top-level controls for wake events in the
+> > power management controller (PMC). In order to enable the system to wake
+> > up from low power states, additional registers in the PMC need to be
+> > programmed. Add a wakeup-parent property to establish this relationship
+> > between the GPIO controller and the PMC.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  .../devicetree/bindings/gpio/nvidia,tegra186-gpio.txt      | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpi=
+o.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+> > index adff16c71d21..cbb51a8990c3 100644
+> > --- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+> > +++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+> > @@ -127,6 +127,11 @@ Required properties:
+> >              - 8: Active low level-sensitive.
+> >              Valid combinations are 1, 2, 3, 4, 8.
+> > =20
+> > +Optional properties:
+> > +- wake-parent
+> > +    A phandle to the Power Management Controller (PMC) that contains t=
+op-
+> > +    level controls to enable the wake-up capabilities of some GPIOs.
+> > +
+> >  Example:
+> > =20
+> >  #include <dt-bindings/interrupt-controller/irq.h>
+> > @@ -148,6 +153,7 @@ gpio@2200000 {
+> >  	#gpio-cells =3D <2>;
+> >  	interrupt-controller;
+> >  	#interrupt-cells =3D <2>;
+> > +	wakeup-parent =3D <&pmc>;
+> >  };
+> > =20
+> >  gpio@c2f0000 {
+> > @@ -162,4 +168,5 @@ gpio@c2f0000 {
+> >  	#gpio-cells =3D <2>;
+> >  	interrupt-controller;
+> >  	#interrupt-cells =3D <2>;
+> > +	wakeup-parent =3D <&pmc>;
 >=20
-> Signed-off-by: Wei Ni <wni@nvidia.com>
-> ---
->  drivers/thermal/tegra/soctherm.c | 46 ++++++++++++++++++++++++++++++++++=
-++++--
->  1 file changed, 44 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soc=
-therm.c
-> index 375cadbc24cd..79e4628224d7 100644
-> --- a/drivers/thermal/tegra/soctherm.c
-> +++ b/drivers/thermal/tegra/soctherm.c
-> @@ -1224,6 +1224,44 @@ static void soctherm_init(struct platform_device *=
-pdev)
->  	tegra_soctherm_throttle(&pdev->dev);
->  }
-> =20
-> +static bool tegra_soctherm_find_sensor_id(int sensor_id)
-> +{
-> +	int id;
+> If all the GPIO instances point to the same PMC and have no per instance=
+=20
+> data, why do you need this in DT? You can just search for the compatible=
+=20
+> node.
 
-You might want to make this and the sensor_id parameter unsigned int to
-match the signedness of the ID in the specifier arguments and the sensor
-groups.
+That would be slightly annoying to do. I mean, we'd have to somehow
+construct the compatible string that we're looking for. I guess we could
+get around this mostly by just looking for a device matching one of the
+entries in a "pmc_gpio_of_match" table. That would potentially match a
+Tegra194 GPIO against a Tegra186 PMC, but that should never happen in
+practice because it'd be a bug in the DT.
 
-Thierry
+Although that somewhat depends on exactly what we mean by "compatible".
+Technically the Tegra194 PMC is compatible with the Tegra186 PMC in
+terms of register layout and so on. However, since both chips have
+undergone quite some changes with regards to the pins they expose, the
+set of wake events exposed on Tegra186 and Tegra194 varies wildly. So if
+that means that the compatible needs to be different (I think it should)
+then we could go with the OF match table approach.
 
-> +	bool ret =3D false;
-> +	struct of_phandle_args sensor_specs;
-> +	struct device_node *np, *sensor_np;
-> +
-> +	np =3D of_find_node_by_name(NULL, "thermal-zones");
-> +	if (!np)
-> +		return ret;
-> +
-> +	sensor_np =3D of_get_next_child(np, NULL);
-> +	for_each_available_child_of_node(np, sensor_np) {
+Actually, thinking about it some more, even if we had a Tegra186
+fallback compatible string in the Tegra194 PMC's device tree node, we'd
+still be matching on the correct instance, and therefore get the right
+IRQ domain for the hierarchy.
 
-Aren't we leaking np here? I think we need of_node_put() after
-of_get_next_child() to make sure the reference to the "thermal-zones"
-node is properly released.
-
-> +		if (of_parse_phandle_with_args(sensor_np, "thermal-sensors",
-> +						 "#thermal-sensor-cells",
-> +						 0, &sensor_specs))
-> +			continue;
-> +
-> +		if (sensor_specs.args_count !=3D 1) {
-> +			WARN(sensor_specs.args_count > 1,
-> +			     "%s: wrong cells in sensor specifier %d\n",
-> +			     sensor_specs.np->name, sensor_specs.args_count);
-> +			continue;
-
-This is odd. You check for args_count !=3D 1 but then WARN on args_count >
-1. Shouldn't both of these conditions be the same?
-
-> +		} else {
-
-Also, since the above has "continue;", we don't really need the else
-block.
-
-> +			id =3D sensor_specs.args[0];
-> +			if (sensor_id =3D=3D id) {
-
-It might not be worth to store the ID in a separate variable, we could
-just do:
-
-	if (sensor_specs.args[0] =3D=3D sensor_id)
-
-Thierry
-> +				ret =3D true;
-> +				break;
-> +			}
-> +		}
-> +	}
-> +
-> +	of_node_put(np);
-> +	of_node_put(sensor_np);
-> +
-> +	return ret;
-> +}
-> +
->  static const struct of_device_id tegra_soctherm_of_match[] =3D {
->  #ifdef CONFIG_ARCH_TEGRA_124_SOC
->  	{
-> @@ -1365,13 +1403,15 @@ static int tegra_soctherm_probe(struct platform_d=
-evice *pdev)
->  		zone->sg =3D soc->ttgs[i];
->  		zone->ts =3D tegra;
-> =20
-> +		if (!tegra_soctherm_find_sensor_id(soc->ttgs[i]->id))
-> +			continue;
->  		z =3D devm_thermal_zone_of_sensor_register(&pdev->dev,
-
-I'd would prefer a blank line after the if block for readability.
-
->  							 soc->ttgs[i]->id, zone,
->  							 &tegra_of_thermal_ops);
->  		if (IS_ERR(z)) {
->  			err =3D PTR_ERR(z);
-> -			dev_err(&pdev->dev, "failed to register sensor: %d\n",
-> -				err);
-> +			dev_err(&pdev->dev, "failed to register sensor %s: %d\n",
-> +				soc->ttgs[i]->name, err);
->  			goto disable_clocks;
->  		}
-> =20
-> @@ -1434,6 +1474,8 @@ static int __maybe_unused soctherm_resume(struct de=
-vice *dev)
->  		struct thermal_zone_device *tz;
-> =20
->  		tz =3D tegra->thermctl_tzs[soc->ttgs[i]->id];
-> +		if (!tz)
-> +			continue;
->  		err =3D tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
-
-Same here:
-
-		if (!tz)
-			continue;
-
-		err =3D ...
+I'll rework the patches accordingly.
 
 Thierry
 
---kVXhAStRUZ/+rrGn
+--cNdxnHkX5QqsyA0e
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+bQ0ACgkQ3SOs138+
-s6F/cQ//Vf8Nl9UGrETe7X0iojhxbFD3lElHpm9N8PLev8elRoyKjTDs5ixDFsry
-Qv4+/5MpR/rsOGyAQ2t1ACR9Sy7n3juoqIisAZTXYTbxA8n9/j/Zq5zesL5Z2I4p
-2HeRLtaFl186YNU9yQtcJsg6TwW+o3SwDRm+49XkQ0xopbcB+3p0dm8J55dOhnMz
-F4bYrs3qoG+49i1EhL8oYhk5APdPxIg8TtWePXdEkZgVZ+v/VTuBoXHn/9HnCcOk
-RAozYT8AB5wr3elLoXaQN/ijKZOEBPRmQoZ/BmbUVAwJd2G4tmEEy3WlSibU4C1d
-VQgUW0JUr6/+v6Q1ohs/H2m9bnq/x9VbjoAI40IlJoPhvv2TZMGIWc2uj1vdJD6k
-NuD87kmI+WgiiFOOE9ZpMy4RT7MTepBLpJICruz2ekY+RAbry/yK7/jfclTXWTtK
-Ck+CaTm/cja/CEW3OfJ3dJvbgGFN52N6wOy/DUntlOsIWqtmFamvRbK0SgmyVV0q
-3axq+c2dCZ3uHqWE8UKsobmDCXGue73j9vqCb+3o4hVfqKNQcw60J7EnzXN6FUhS
-Lcc5MuvHidcBbOlbgQMxx3QEYhTKY/HnzO4p+omifourqHOxbEjf1QV5EoyW40DU
-H+ozEkLZcB7igniaCR2QqBcgMdWjnDg2KAKxPP0b6IiSsUO/nwQ=
-=w2OA
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+cZIACgkQ3SOs138+
+s6EyIA/+LkKrq620emgEtZpd9U8q5GjkFRVNO7ncdVE1d3P1znsFtICWHyX0Iux5
+r3V0vB7/R4HoH0bPDZzJdbFH/BrsWRf9H2E+S7LbFNsBDuN07vjHQlDGexR82c5q
+h0D+QQ9JYzJkqciahQlqIvJ/AulAbXfozP/3jxlq0FtSSnc3apn8YDyRV1kWCDnc
+IOgW59NqqBBoXCz1cBXIk+U22NvbtxLVL/qR+TjQJIsHZKWh7Kqv6oAZM53xW7XJ
+sLt3Hvvot+6pwfOMQAhViix/MZgIM/Yq8gmy7ZmPW4JpIOtHvtqoIekrdpw2M+8q
+gjsv1yU/4zrgtlRq4FqEqJjFAPNo6lnFt3uas1be1PrzDVQU1BYe6DPtqJhileFa
+gi2kBD+MfPPGaz58IXnpCFHZ+ynoj/lzqlU85txkXC7C4iTHtn7NKhGA3g7+7Pok
+FQNlhm1VKjzyac7qFu3MLtXy7Yit+k9AFqmYh7PtH9OfX5C046lnawKiEahzAd5c
+AQrxCT7/Q+dRVWXTRhZ4YQyBeYRLM/cayFgUrRs3lB0zNf4Kdv+dW7WcW2P64+i1
+T9dfM5cq/Su66zqOWp1KT/wqOG5aUk4OovC6CsYv7wtMAGtiWBozzizYDBSji6dl
+XwEX54BBof0kWZAhShV0lSB469yw3m3ebkluFoVGy0fNVyN+muw=
+=U3yi
 -----END PGP SIGNATURE-----
 
---kVXhAStRUZ/+rrGn--
+--cNdxnHkX5QqsyA0e--
