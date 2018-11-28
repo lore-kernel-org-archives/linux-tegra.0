@@ -1,133 +1,23 @@
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v10 1/7] interconnect: Add generic on-chip interconnect
- API
-Date: Wed, 28 Nov 2018 20:18:04 +0200
-Message-ID: <82026d31-39e8-08f1-761b-c0b3ccf8ce20@linaro.org>
-References: <20181127180349.29997-1-georgi.djakov@linaro.org>
- <20181127180349.29997-2-georgi.djakov@linaro.org>
- <5d16a4a57ed5529299d7b73e13a249add00b1afe.camel@perches.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: tegra: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date: Wed, 28 Nov 2018 14:08:39 -0800
+Message-ID: <154344291962.88331.4622895798810822939@swboyd.mtv.corp.google.com>
+References: <20181123150104.27336-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5d16a4a57ed5529299d7b73e13a249add00b1afe.camel@perches.com>
-Content-Language: en-US
+In-Reply-To: <20181123150104.27336-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com, khilman@baylibre.com, vincent.guittot@linaro.org, skannan@codeaurora.org, bjorn.andersson@linaro.org, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, evgreen@chromium.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
+To: jonathanh@nvidia.com, mturquette@baylibre.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, thierry.reding@gmail.com
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Joe,
+Quoting Yangtao Li (2018-11-23 07:01:04)
+> Use macro to simplify the code.
+> =
 
-On 11/27/18 20:35, Joe Perches wrote:
-> On Tue, 2018-11-27 at 20:03 +0200, Georgi Djakov wrote:
->> This patch introduces a new API to get requirements and configure the
->> interconnect buses across the entire chipset to fit with the current
->> demand.
-> 
-> trivial notes:
-> 
->> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-> []
->> +static int apply_constraints(struct icc_path *path)
->> +{
->> +	struct icc_node *next, *prev = NULL;
->> +	int ret = -EINVAL;
->> +	int i;
->> +
->> +	for (i = 0; i < path->num_nodes; i++, prev = next) {
->> +		struct icc_provider *p;
->> +
->> +		next = path->reqs[i].node;
->> +		/*
->> +		 * Both endpoints should be valid master-slave pairs of the
->> +		 * same interconnect provider that will be configured.
->> +		 */
->> +		if (!prev || next->provider != prev->provider)
->> +			continue;
->> +
->> +		p = next->provider;
->> +
->> +		/* set the constraints */
->> +		ret = p->set(prev, next);
->> +		if (ret)
->> +			goto out;
->> +	}
->> +out:
->> +	return ret;
->> +}
-> 
-> The use of ", prev = next" appears somewhat tricky code.
-> Perhaps move the assignment of prev to the bottom of the loop.
-> Perhaps the temporary p assignment isn't useful either.
-> 
->> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw)
->> +{
-> []
->> +	ret = apply_constraints(path);
->> +	if (ret)
->> +		pr_debug("interconnect: error applying constraints (%d)", ret);
-> 
-> Ideally all pr_<foo> formats should end in '\n'
-> 
->> +static struct icc_node *icc_node_create_nolock(int id)
->> +{
->> +	struct icc_node *node;
->> +
->> +	/* check if node already exists */
->> +	node = node_find(id);
->> +	if (node)
->> +		goto out;
->> +
->> +	node = kzalloc(sizeof(*node), GFP_KERNEL);
->> +	if (!node) {
->> +		node = ERR_PTR(-ENOMEM);
->> +		goto out;
-> 
-> Generally, this code appears to overly rely on goto when
-> direct returns could be more readable.
-> 
->> +	}
->> +
->> +	id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
->> +	if (WARN(id < 0, "couldn't get idr")) {
-> 
-> This seems to unnecessarily hide the id < 0 test in a WARN
-> 
-> Why is this a WARN and not a simpler
-> 	if (id < 0) {
-> 		[ pr_err(...); or WARN(1, ...); ]
-> 
->> +		kfree(node);
->> +		node = ERR_PTR(id);
->> +		goto out;
->> +	}
->> +
->> +	node->id = id;
->> +
->> +out:
->> +	return node;
->> +}
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
 
-Thank you for helping to improve the code. The above suggestions make it 
-cleaner indeed.
-
-> []
->> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
-> []
->> +/* macros for converting to icc units */
->> +#define bps_to_icc(x)	(1)
->> +#define kBps_to_icc(x)	(x)
-> []
->> +#define MBps_to_icc(x)	(x * 1000)
->> +#define GBps_to_icc(x)	(x * 1000 * 1000)
->> +#define kbps_to_icc(x)	(x / 8 + ((x) % 8 ? 1 : 0))
->> +#define Mbps_to_icc(x)	(x * 1000 / 8 )
->> +#define Gbps_to_icc(x)	(x * 1000 * 1000 / 8)
-> 
-> The last 5 macros should parenthesize x
-
-Oops.. obviously i forgot to run checkpatch --strict. Will fix!
-
-BR,
-Georgi
+Applied to clk-next
