@@ -1,37 +1,235 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH V2] clk: tegra: Return the exact clock rate from
- clk_round_rate
-Date: Tue, 27 Nov 2018 22:40:08 +0300
-Message-ID: <00e78319-7d97-e57e-9450-7e3ab7707ed8@gmail.com>
-References: <20180925214940.15188-1-decatf@gmail.com>
- <153973003125.5275.211113451006447179@swboyd.mtv.corp.google.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 4/4] ARM: dts: Add stmpe-adc driver to relevant
+ devicetrees
+Date: Wed, 28 Nov 2018 11:00:12 +0800
+Message-ID: <20181128030011.GG20643@dragon>
+References: <20181119102528.2830-1-dev@pschenker.ch>
+ <20181119102528.2830-4-dev@pschenker.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <153973003125.5275.211113451006447179@swboyd.mtv.corp.google.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20181119102528.2830-4-dev@pschenker.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Robert Yang <decatf@gmail.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Philippe Schenker <dev@pschenker.ch>
+Cc: jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch, Philippe Schenker <philippe.schenker@toradex.com>, Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, NXP Linux Team <linux-imx@nxp.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 17.10.2018 1:47, Stephen Boyd wrote:
-> Quoting Robert Yang (2018-09-25 14:49:40)
->> The current behavior is that clk_round_rate would return the same clock
->> rate passed to it for valid PLL configurations. This change will return
->> the exact rate the PLL will provide in accordance with clk API.
->>
->> Signed-off-by: Robert Yang <decatf@gmail.com>
->> ---
+On Mon, Nov 19, 2018 at 11:25:28AM +0100, Philippe Schenker wrote:
+> From: Philippe Schenker <philippe.schenker@toradex.com>
 > 
-> I'm waiting for someone from Nvidia/Tegra background to review this
-> change.
+> Activate the stmpe-adc driver as found on Apalis/Colibri iMX6/T30 modules
+
+iMX6 and T30 changes need to be separate patches.
+
+Shawn
+
 > 
-
-Apparently Peter is taking a pause. I think Thierry's ACK to V1 should be still valid here.
-
-Also, if this helps:
-
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+> ---
+> 
+> Changes in v2:
+>  - Put common ADC settings in mfd
+> 
+>  arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 22 ++++++++++++++--------
+>  arch/arm/boot/dts/imx6qdl-colibri.dtsi | 23 +++++++++++++++--------
+>  arch/arm/boot/dts/tegra30-apalis.dtsi  | 22 ++++++++++++++--------
+>  arch/arm/boot/dts/tegra30-colibri.dtsi | 22 ++++++++++++++--------
+>  4 files changed, 57 insertions(+), 32 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> index 3dc99dd8dde1..8db476d8978d 100644
+> --- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> @@ -331,11 +331,18 @@
+>  		id = <0>;
+>  		blocks = <0x5>;
+>  		irq-trigger = <0x1>;
+> +		/* 3.25 MHz ADC clock speed */
+> +		st,adc-freq = <1>;
+> +		/* 12-bit ADC */
+> +		st,mod-12b = <1>;
+> +		/* internal ADC reference */
+> +		st,ref-sel = <0>;
+> +		/* ADC converstion time: 80 clocks */
+> +		st,sample-time = <4>;
+> +		/* forbid to use ADC channels 3-0 (touch) */
+>  
+>  		stmpe_touchscreen {
+>  			compatible = "st,stmpe-ts";
+> -			/* 3.25 MHz ADC clock speed */
+> -			st,adc-freq = <1>;
+>  			/* 8 sample average control */
+>  			st,ave-ctrl = <3>;
+>  			/* 7 length fractional part in z */
+> @@ -345,17 +352,16 @@
+>  			 * current limit value
+>  			 */
+>  			st,i-drive = <1>;
+> -			/* 12-bit ADC */
+> -			st,mod-12b = <1>;
+> -			/* internal ADC reference */
+> -			st,ref-sel = <0>;
+> -			/* ADC converstion time: 80 clocks */
+> -			st,sample-time = <4>;
+>  			/* 1 ms panel driver settling time */
+>  			st,settling = <3>;
+>  			/* 5 ms touch detect interrupt delay */
+>  			st,touch-det-delay = <5>;
+>  		};
+> +
+> +		stmpe_adc {
+> +			compatible = "st,stmpe-adc";
+> +			st,norequest-mask = <0x0F>;
+> +		};
+>  	};
+>  };
+>  
+> diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> index 87e15e7cb32b..2e303d79c7f8 100644
+> --- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> @@ -262,11 +262,18 @@
+>  		id = <0>;
+>  		blocks = <0x5>;
+>  		irq-trigger = <0x1>;
+> +		/* 3.25 MHz ADC clock speed */
+> +		st,adc-freq = <1>;
+> +		/* 12-bit ADC */
+> +		st,mod-12b = <1>;
+> +		/* internal ADC reference */
+> +		st,ref-sel = <0>;
+> +		/* ADC converstion time: 80 clocks */
+> +		st,sample-time = <4>;
+> +		/* forbid to use ADC channels 3-0 (touch) */
+>  
+>  		stmpe_touchscreen {
+>  			compatible = "st,stmpe-ts";
+> -			/* 3.25 MHz ADC clock speed */
+> -			st,adc-freq = <1>;
+>  			/* 8 sample average control */
+>  			st,ave-ctrl = <3>;
+>  			/* 7 length fractional part in z */
+> @@ -276,17 +283,17 @@
+>  			 * current limit value
+>  			 */
+>  			st,i-drive = <1>;
+> -			/* 12-bit ADC */
+> -			st,mod-12b = <1>;
+> -			/* internal ADC reference */
+> -			st,ref-sel = <0>;
+> -			/* ADC converstion time: 80 clocks */
+> -			st,sample-time = <4>;
+>  			/* 1 ms panel driver settling time */
+>  			st,settling = <3>;
+>  			/* 5 ms touch detect interrupt delay */
+>  			st,touch-det-delay = <5>;
+>  		};
+> +
+> +		stmpe_adc {
+> +			compatible = "st,stmpe-adc";
+> +			/* 3.25 MHz ADC clock speed */
+> +			st,norequest-mask = <0x0F>;
+> +		};
+>  	};
+>  };
+>  
+> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+> index 7f112f192fe9..850b0d13549a 100644
+> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+> @@ -976,11 +976,18 @@
+>  			id = <0>;
+>  			blocks = <0x5>;
+>  			irq-trigger = <0x1>;
+> +			/* 3.25 MHz ADC clock speed */
+> +			st,adc-freq = <1>;
+> +			/* 12-bit ADC */
+> +			st,mod-12b = <1>;
+> +			/* internal ADC reference */
+> +			st,ref-sel = <0>;
+> +			/* ADC converstion time: 80 clocks */
+> +			st,sample-time = <4>;
+> +			/* forbid to use ADC channels 3-0 (touch) */
+>  
+>  			stmpe_touchscreen {
+>  				compatible = "st,stmpe-ts";
+> -				/* 3.25 MHz ADC clock speed */
+> -				st,adc-freq = <1>;
+>  				/* 8 sample average control */
+>  				st,ave-ctrl = <3>;
+>  				/* 7 length fractional part in z */
+> @@ -990,17 +997,16 @@
+>  				 * current limit value
+>  				 */
+>  				st,i-drive = <1>;
+> -				/* 12-bit ADC */
+> -				st,mod-12b = <1>;
+> -				/* internal ADC reference */
+> -				st,ref-sel = <0>;
+> -				/* ADC converstion time: 80 clocks */
+> -				st,sample-time = <4>;
+>  				/* 1 ms panel driver settling time */
+>  				st,settling = <3>;
+>  				/* 5 ms touch detect interrupt delay */
+>  				st,touch-det-delay = <5>;
+>  			};
+> +
+> +			stmpe_adc {
+> +				compatible = "st,stmpe-adc";
+> +				st,norequest-mask = <0x0F>;
+> +			};
+>  		};
+>  
+>  		/*
+> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+> index 35af03ca9e90..1f9198bb24ff 100644
+> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+> @@ -845,11 +845,18 @@
+>  			id = <0>;
+>  			blocks = <0x5>;
+>  			irq-trigger = <0x1>;
+> +			/* 3.25 MHz ADC clock speed */
+> +			st,adc-freq = <1>;
+> +			/* 12-bit ADC */
+> +			st,mod-12b = <1>;
+> +			/* internal ADC reference */
+> +			st,ref-sel = <0>;
+> +			/* ADC converstion time: 80 clocks */
+> +			st,sample-time = <4>;
+> +			/* forbid to use ADC channels 3-0 (touch) */
+>  
+>  			stmpe_touchscreen {
+>  				compatible = "st,stmpe-ts";
+> -				/* 3.25 MHz ADC clock speed */
+> -				st,adc-freq = <1>;
+>  				/* 8 sample average control */
+>  				st,ave-ctrl = <3>;
+>  				/* 7 length fractional part in z */
+> @@ -859,17 +866,16 @@
+>  				 * current limit value
+>  				 */
+>  				st,i-drive = <1>;
+> -				/* 12-bit ADC */
+> -				st,mod-12b = <1>;
+> -				/* internal ADC reference */
+> -				st,ref-sel = <0>;
+> -				/* ADC converstion time: 80 clocks */
+> -				st,sample-time = <4>;
+>  				/* 1 ms panel driver settling time */
+>  				st,settling = <3>;
+>  				/* 5 ms touch detect interrupt delay */
+>  				st,touch-det-delay = <5>;
+>  			};
+> +
+> +			stmpe_adc {
+> +				compatible = "st,stmpe-adc";
+> +				st,norequest-mask = <0x0F>;
+> +			};
+>  		};
+>  
+>  		/*
+> -- 
+> 2.19.1
+> 
