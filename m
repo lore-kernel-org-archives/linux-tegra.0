@@ -1,126 +1,118 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] net: stmmac: Move debugfs init/exit to
- ->probe()/->remove()
-Date: Wed, 28 Nov 2018 10:41:19 +0100
-Message-ID: <20181128094119.GH17419@ulmo>
-References: <20181123122122.18957-1-thierry.reding@gmail.com>
- <20181127132143.10473-1-thierry.reding@gmail.com>
- <316d6a25-cb61-32d8-9792-8ffcc2122d8a@synopsys.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH] thermal: tegra: add get_trend ops
+Date: Wed, 28 Nov 2018 17:41:30 +0800
+Message-ID: <0ff2454d-fc08-ed16-1502-620a726dfca9@nvidia.com>
+References: <1542705077-29697-1-git-send-email-wni@nvidia.com>
+ <20181120153833.GB28796@ulmo>
+ <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/9ZOS6odDaRI+0hI"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <316d6a25-cb61-32d8-9792-8ffcc2122d8a@synopsys.com>
+In-Reply-To: <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jose Abreu <jose.abreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi all,
+Does there have any more comments for this patch?
 
---/9ZOS6odDaRI+0hI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks.
+Wei.
 
-On Wed, Nov 28, 2018 at 09:38:32AM +0000, Jose Abreu wrote:
-> On 27-11-2018 13:21, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Setting up and tearing down debugfs is current unbalanced, as seen by
-> > this error during resume from suspend:
-> >
-> >     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to=
- create debugfs directory
-> >     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup=
-: failed debugFS registration
-> >
-> > The imbalance happens because the driver creates the debugfs hierarchy
-> > when the device is opened and tears it down when the device is closed.
-> > There's little gain in that, and it could be argued that it is even
-> > surprising because it's not usually done for other devices. Fix the
-> > imbalance by moving the debugfs creation and teardown to the driver's
-> > ->probe() and ->remove() implementations instead.
-> >
-> > Note that the ring descriptors cannot be read while the interface is
-> > down, so make sure to return an empty file when the descriptors_status
-> > debugfs file is read.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > This applies on top of net-next.
-> >
-> > Changes in v2:
-> > - avoid access to ring descriptors when interface is down
-> >
-> >  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 23 +++++++++++--------
-> >  1 file changed, 13 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/driver=
-s/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > index 076a8be18d67..5551fead8f66 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > @@ -2550,12 +2550,6 @@ static int stmmac_hw_setup(struct net_device *de=
-v, bool init_ptp)
-> >  			netdev_warn(priv->dev, "PTP init failed\n");
-> >  	}
-> > =20
-> > -#ifdef CONFIG_DEBUG_FS
-> > -	ret =3D stmmac_init_fs(dev);
-> > -	if (ret < 0)
-> > -		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
-> > -			    __func__);
-> > -#endif
-> >  	priv->tx_lpi_timer =3D STMMAC_DEFAULT_TWT_LS;
-> > =20
-> >  	if (priv->use_riwt) {
-> > @@ -2756,10 +2750,6 @@ static int stmmac_release(struct net_device *dev)
-> > =20
-> >  	netif_carrier_off(dev);
-> > =20
-> > -#ifdef CONFIG_DEBUG_FS
-> > -	stmmac_exit_fs(dev);
-> > -#endif
-> > -
-> >  	stmmac_release_ptp(priv);
-> > =20
-> >  	return 0;
-> > @@ -3899,6 +3889,9 @@ static int stmmac_sysfs_ring_read(struct seq_file=
- *seq, void *v)
-> >  	u32 tx_count =3D priv->plat->tx_queues_to_use;
-> >  	u32 queue;
-> > =20
-> > +	if ((dev->flags & IFF_UP) =3D=3D 0)
->=20
-> I tried looking for an helper to check if interface is open but
-> couldn't find one so I guess this is the right thing to do.
-
-Yeah, I had done the same thing and came up empty-handed.
-
-> Acked-by: Jose Abreu <joabreu@synopsys.com>
-
-Thanks!
-Thierry
-
---/9ZOS6odDaRI+0hI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+Yr4ACgkQ3SOs138+
-s6GLpw/9Gm1I3bb+4A/cCUEPmPMW7CsfwJXDoVKUD44P7C+S4T0j+RjGRpGWQzgN
-gIHV5HEBgFWJWNSLUZnWXBTObeGU5qrhkT6hfSxrVw0+V+4aOKM7qUTgydD3V1Du
-7JVd9iAUj6lMPUdpKyDIEgw7GEE7Cb2ja54RX5Z7lPRFqiW26VGz1keNaE9EKctk
-qQgX6aXvmifRj9DxJQWSOaZr0T8uZwjm6HxwKrvZa7KoIrWE78pnI380IMAWinUs
-aaLd/pxSDIuhpbK+O+jPKA0ixbiLHYxNliyGABKk8QekcXuxvlxF5rgTN6BvvWAw
-zf4ePjCveawRNPhb80oxE5YIdNnwvZQ//ba6J77P16eGOM2YgxL65BwIaYPEe1Tf
-w/t7u6P4fAyRRaQL3k2ECPdfLvKPgoiUcd3/Xmo5PHZT3CFNtpvdl+CCFCawPt/A
-HTNGHP14NZtfoNtqXOVO1omZ15+3TxG8JWKXjitJ0wQbACxb2aBKfcXLBoY7XFhh
-yJB5TXY9e+aL3GoDoFTAxgj8avHqBmYZ4LYU2SbQtqjENC9Oh+DUyXU2AEjXqMoV
-D21ZdMIvooLxFcyRQCdK8rXq4fQ+GHfX3YUv6z3xk09GbEa4qZIOJNqXpA8O1Z1T
-d8dSyLkLWQQmdYe1LTIBRJgpPsvG0CJWaXnGLEgYCCeVZwKhlW8=
-=8+GH
------END PGP SIGNATURE-----
-
---/9ZOS6odDaRI+0hI--
+On 21/11/2018 2:36 PM, Wei Ni wrote:
+> 
+> 
+> On 20/11/2018 11:38 PM, Thierry Reding wrote:
+>> On Tue, Nov 20, 2018 at 05:11:17PM +0800, Wei Ni wrote:
+>>> Add support for get_trend ops that allows soctherm
+>>> sensors to be used with the step-wise governor.
+>>>
+>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>> ---
+>>>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 34 insertions(+)
+>>>
+>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>>> index ed28110a3535..d2951fbe2b7c 100644
+>>> --- a/drivers/thermal/tegra/soctherm.c
+>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +static int tegra_thermctl_get_trend(void *data, int trip,
+>>> +				    enum thermal_trend *trend)
+>>> +{
+>>> +	struct tegra_thermctl_zone *zone = data;
+>>> +	struct thermal_zone_device *tz = zone->tz;
+>>> +	int trip_temp, temp, last_temp, ret;
+>>> +
+>>> +	if (!tz)
+>>> +		return -EINVAL;
+>>> +
+>>> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	mutex_lock(&tz->lock);
+>>> +	temp = tz->temperature;
+>>> +	last_temp = tz->last_temperature;
+>>> +	mutex_unlock(&tz->lock);
+>>> +
+>>> +	if (temp > trip_temp) {
+>>> +		if (temp >= last_temp)
+>>> +			*trend = THERMAL_TREND_RAISING;
+>>> +		else
+>>> +			*trend = THERMAL_TREND_STABLE;
+>>> +	} else if (temp < trip_temp) {
+>>> +		*trend = THERMAL_TREND_DROPPING;
+>>> +	} else {
+>>> +		*trend = THERMAL_TREND_STABLE;
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +}
+>>
+>> This looks like a reimplementation of the get_tz_trend() helper. Is
+>> seems like that helper already has everything we need. Perhaps this
+>> isn't working because of-thermal installs of_thermal_get_trend(), a
+>> function that returns -EINVAL if the driver doesn't implement the
+>> ->get_trend() callback.
+> 
+> 1. The get_tz_trend() helper can work, because it has:
+> if (tz->emul_temperature || !tz->ops->get_trend ||
+>             tz->ops->get_trend(tz, trip, &trend)) {
+> ...
+> }
+> the tz->ops->get_trend is of_thermal_get_trend(). If without special
+> get_trend(), it will return -EINVAL, so it will implement the if block
+> to get the "trend". If we have the special get_trend(), then the
+> of_thermal_get_trend() will return 0, so this helper will not implement
+> the if block, it will get the "trend" from the special get_trend().
+> 
+> 2. There has a little difference between the helper and our special
+> callback. The tegra_thermctl_get_trend() consider the trip_temp, but the
+> get_tz_trend() helper didn't.
+> 
+>>
+>> Perhaps a better way would be to do something like this in
+>> thermal_zone_of_add_sensor():
+>>
+>> 	if (ops->get_trend)
+>> 		tzd->ops->get_trend = of_thermal_get_trend;
+>>
+>> That's similar to how ->set_trips() and ->set_emul_temp() are set up
+>> and should make sure that get_tz_trend() will do the right thing for
+>> all drivers that don't implement a special ->get_trend().
+> 
+> As above description, I think the of_thermal_get_trend() already can
+> handle this case, doesn't need to change.
+> 
+> Wei.
+> 
+>>
+>> Thierry
+>>
