@@ -1,76 +1,118 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 2/3] clk: tegra: ignore unused vfir clock shared with
- uartb
-Date: Wed, 28 Nov 2018 10:24:04 +0100
-Message-ID: <20181128092404.GF17419@ulmo>
-References: <20181101015230.27310-1-marcel@ziswiler.com>
- <20181101015230.27310-3-marcel@ziswiler.com>
- <20181101084152.GS7636@tbergstrom-lnx.Nvidia.com>
+From: Jose Abreu <jose.abreu@synopsys.com>
+Subject: Re: [PATCH v2] net: stmmac: Move debugfs init/exit to
+ ->probe()/->remove()
+Date: Wed, 28 Nov 2018 09:38:32 +0000
+Message-ID: <316d6a25-cb61-32d8-9792-8ffcc2122d8a@synopsys.com>
+References: <20181123122122.18957-1-thierry.reding@gmail.com>
+ <20181127132143.10473-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="924gEkU1VlJlwnwX"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181101084152.GS7636@tbergstrom-lnx.Nvidia.com>
+In-Reply-To: <20181127132143.10473-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stephen Boyd <sboyd@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, "David S. Miller" <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <jose.abreu@synopsys.com>, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 27-11-2018 13:21, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Setting up and tearing down debugfs is current unbalanced, as seen by
+> this error during resume from suspend:
+>
+>     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
+>     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
+>
+> The imbalance happens because the driver creates the debugfs hierarchy
+> when the device is opened and tears it down when the device is closed.
+> There's little gain in that, and it could be argued that it is even
+> surprising because it's not usually done for other devices. Fix the
+> imbalance by moving the debugfs creation and teardown to the driver's
+> ->probe() and ->remove() implementations instead.
+>
+> Note that the ring descriptors cannot be read while the interface is
+> down, so make sure to return an empty file when the descriptors_status
+> debugfs file is read.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> This applies on top of net-next.
+>
+> Changes in v2:
+> - avoid access to ring descriptors when interface is down
+>
+>  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 23 +++++++++++--------
+>  1 file changed, 13 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 076a8be18d67..5551fead8f66 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -2550,12 +2550,6 @@ static int stmmac_hw_setup(struct net_device *dev, bool init_ptp)
+>  			netdev_warn(priv->dev, "PTP init failed\n");
+>  	}
+>  
+> -#ifdef CONFIG_DEBUG_FS
+> -	ret = stmmac_init_fs(dev);
+> -	if (ret < 0)
+> -		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
+> -			    __func__);
+> -#endif
+>  	priv->tx_lpi_timer = STMMAC_DEFAULT_TWT_LS;
+>  
+>  	if (priv->use_riwt) {
+> @@ -2756,10 +2750,6 @@ static int stmmac_release(struct net_device *dev)
+>  
+>  	netif_carrier_off(dev);
+>  
+> -#ifdef CONFIG_DEBUG_FS
+> -	stmmac_exit_fs(dev);
+> -#endif
+> -
+>  	stmmac_release_ptp(priv);
+>  
+>  	return 0;
+> @@ -3899,6 +3889,9 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
+>  	u32 tx_count = priv->plat->tx_queues_to_use;
+>  	u32 queue;
+>  
+> +	if ((dev->flags & IFF_UP) == 0)
 
---924gEkU1VlJlwnwX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I tried looking for an helper to check if interface is open but
+couldn't find one so I guess this is the right thing to do.
 
-On Thu, Nov 01, 2018 at 10:41:52AM +0200, Peter De Schrijver wrote:
-> On Thu, Nov 01, 2018 at 02:52:29AM +0100, Marcel Ziswiler wrote:
-> > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> >=20
-> > As UARTB and VFIR share their clock enable bit it is rather unwise for
-> > the kernel to turn off the VFIR one should that be unused (and
-> > potentially vice versa but so far there anyway is no VFIR driver).
-> >=20
-> > Without this patch trying to use UARTB with the regular 8250 driver
-> > will freeze as soon as ttyS1 is accessed after boot. Luckily, using the
-> > high-speed Tegra serial driver won't exhibit the issue as clocks are
-> > dynamically enabled/disabled on every access.
-> >=20
-> > This has been reproduced both on Apalis T30 as well as Apalis TK1 but
-> > may be an issue on all Tegra UARTB's which share the clock enable with
-> > VFIR.
-> >=20
->=20
-> Ah.. the correct fix for this is to initialize the enable_refcnt based on=
- the
-> hw state. This is done in 9619dba8325fce098bbc9ee2911d1b0150fec0c9 for
-> periph gate clocks, but obviously also applies to normal periph clocks.
+Acked-by: Jose Abreu <joabreu@synopsys.com>
 
-Hi Marcel,
+Thanks and Best Regards,
+Jose Miguel Abreu
 
-were you going to send a new version with the alternative fix as
-suggested by Peter?
-
-Thierry
-
---924gEkU1VlJlwnwX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+XrMACgkQ3SOs138+
-s6GXtg/+IuuqToPbfBDICYwJJQ8uXHPGJXDS+Z7bthtYwuqo5M2r3s5Bvnxek+Sn
-hGHjVuPBc5vcM/JoD2UrSO086bREgody0yDunjDQdQDCkw1sJ/JM3YUz7amHabkg
-mWrEKDaf7k9Xs4KKBHyq67mpgn/WA2+Zyjtp7LX6sYGFaKTe2Qa8NHUtVdh0YKTL
-Mie6WfoFjpSkx/YghDIV8WorY8SLa9mN698H2f75HTAWRF2UaVj+VtbGrYWlUWzy
-NP14u8Gp4yYqQ/Xv3Lq0rtEDUA8u7QedSh8ICYAPyEUljbi1tVuyeHSjktLHFUrF
-bCeqyLgePdq5icyF2ipPmW4kx6Nsy6iMwlbQeDWwg8Dw4WNo6qZPhWwsG/LVCQiq
-L30BlkmKG75J4urufG8uRvIKzRNhd9t4ABWVOrbM+XyPB8gE/I3u3WrSvygIyGXl
-PL+QWQzUMJMW+PLnGa7ZVEZJn6CwB/fHpxq/HHiNZhPK+v1K1ww54cwRue2+RjXm
-A8A4bwXD5A+qU0EWUZZo0mk7TsUgAaeLY5sFI0fEKMNXtL6m2ceOGhipQjA8cVOr
-2V2bFCetZJGtPezJVUuhzGEZRd+R46FvhNDkGPA2xQ80Fbenja2DBZs+e78XTrXu
-bLnF79vVm+dzUoeV1D/XLaBBzkHJ1mKW/ZFBtQiCJm7G/AT3Zo0=
-=cuvx
------END PGP SIGNATURE-----
-
---924gEkU1VlJlwnwX--
+> +		return 0;
+> +
+>  	for (queue = 0; queue < rx_count; queue++) {
+>  		struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
+>  
+> @@ -4397,6 +4390,13 @@ int stmmac_dvr_probe(struct device *device,
+>  		goto error_netdev_register;
+>  	}
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +	ret = stmmac_init_fs(ndev);
+> +	if (ret < 0)
+> +		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
+> +			    __func__);
+> +#endif
+> +
+>  	return ret;
+>  
+>  error_netdev_register:
+> @@ -4432,6 +4432,9 @@ int stmmac_dvr_remove(struct device *dev)
+>  
+>  	netdev_info(priv->dev, "%s: removing driver", __func__);
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +	stmmac_exit_fs(ndev);
+> +#endif
+>  	stmmac_stop_all_dma(priv);
+>  
+>  	stmmac_mac_set(priv, priv->ioaddr, false);
