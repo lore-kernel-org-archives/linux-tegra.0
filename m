@@ -1,235 +1,34 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v2 4/4] ARM: dts: Add stmpe-adc driver to relevant
- devicetrees
-Date: Wed, 28 Nov 2018 11:00:12 +0800
-Message-ID: <20181128030011.GG20643@dragon>
-References: <20181119102528.2830-1-dev@pschenker.ch>
- <20181119102528.2830-4-dev@pschenker.ch>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH v3 0/3] Fixes for Tegra soctherm
+Date: Wed, 28 Nov 2018 13:44:34 +0800
+Message-ID: <1543383877-20555-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181119102528.2830-4-dev@pschenker.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Schenker <dev@pschenker.ch>
-Cc: jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch, Philippe Schenker <philippe.schenker@toradex.com>, Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, NXP Linux Team <linux-imx@nxp.com>
+To: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org
+Cc: rui.zhang@intel.com, edubezval@gmail.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 11:25:28AM +0100, Philippe Schenker wrote:
-> From: Philippe Schenker <philippe.schenker@toradex.com>
-> 
-> Activate the stmpe-adc driver as found on Apalis/Colibri iMX6/T30 modules
+This series fixed some issues for Tegra soctherm
 
-iMX6 and T30 changes need to be separate patches.
+Main changes from v2:
+1. add codes to parse sensor id to avoid registration
+failure.
 
-Shawn
+Main changes from v1:
+1. Acked by Thierry Reding <treding@nvidia.com> for the patch
+"thermal: tegra: fix memory allocation".
+2. Print out the sensor name when register failed.
+2. Remove patch "thermal: tegra: fix coverity defect"
 
-> 
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-> ---
-> 
-> Changes in v2:
->  - Put common ADC settings in mfd
-> 
->  arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 22 ++++++++++++++--------
->  arch/arm/boot/dts/imx6qdl-colibri.dtsi | 23 +++++++++++++++--------
->  arch/arm/boot/dts/tegra30-apalis.dtsi  | 22 ++++++++++++++--------
->  arch/arm/boot/dts/tegra30-colibri.dtsi | 22 ++++++++++++++--------
->  4 files changed, 57 insertions(+), 32 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-> index 3dc99dd8dde1..8db476d8978d 100644
-> --- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-> @@ -331,11 +331,18 @@
->  		id = <0>;
->  		blocks = <0x5>;
->  		irq-trigger = <0x1>;
-> +		/* 3.25 MHz ADC clock speed */
-> +		st,adc-freq = <1>;
-> +		/* 12-bit ADC */
-> +		st,mod-12b = <1>;
-> +		/* internal ADC reference */
-> +		st,ref-sel = <0>;
-> +		/* ADC converstion time: 80 clocks */
-> +		st,sample-time = <4>;
-> +		/* forbid to use ADC channels 3-0 (touch) */
->  
->  		stmpe_touchscreen {
->  			compatible = "st,stmpe-ts";
-> -			/* 3.25 MHz ADC clock speed */
-> -			st,adc-freq = <1>;
->  			/* 8 sample average control */
->  			st,ave-ctrl = <3>;
->  			/* 7 length fractional part in z */
-> @@ -345,17 +352,16 @@
->  			 * current limit value
->  			 */
->  			st,i-drive = <1>;
-> -			/* 12-bit ADC */
-> -			st,mod-12b = <1>;
-> -			/* internal ADC reference */
-> -			st,ref-sel = <0>;
-> -			/* ADC converstion time: 80 clocks */
-> -			st,sample-time = <4>;
->  			/* 1 ms panel driver settling time */
->  			st,settling = <3>;
->  			/* 5 ms touch detect interrupt delay */
->  			st,touch-det-delay = <5>;
->  		};
-> +
-> +		stmpe_adc {
-> +			compatible = "st,stmpe-adc";
-> +			st,norequest-mask = <0x0F>;
-> +		};
->  	};
->  };
->  
-> diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-> index 87e15e7cb32b..2e303d79c7f8 100644
-> --- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-> @@ -262,11 +262,18 @@
->  		id = <0>;
->  		blocks = <0x5>;
->  		irq-trigger = <0x1>;
-> +		/* 3.25 MHz ADC clock speed */
-> +		st,adc-freq = <1>;
-> +		/* 12-bit ADC */
-> +		st,mod-12b = <1>;
-> +		/* internal ADC reference */
-> +		st,ref-sel = <0>;
-> +		/* ADC converstion time: 80 clocks */
-> +		st,sample-time = <4>;
-> +		/* forbid to use ADC channels 3-0 (touch) */
->  
->  		stmpe_touchscreen {
->  			compatible = "st,stmpe-ts";
-> -			/* 3.25 MHz ADC clock speed */
-> -			st,adc-freq = <1>;
->  			/* 8 sample average control */
->  			st,ave-ctrl = <3>;
->  			/* 7 length fractional part in z */
-> @@ -276,17 +283,17 @@
->  			 * current limit value
->  			 */
->  			st,i-drive = <1>;
-> -			/* 12-bit ADC */
-> -			st,mod-12b = <1>;
-> -			/* internal ADC reference */
-> -			st,ref-sel = <0>;
-> -			/* ADC converstion time: 80 clocks */
-> -			st,sample-time = <4>;
->  			/* 1 ms panel driver settling time */
->  			st,settling = <3>;
->  			/* 5 ms touch detect interrupt delay */
->  			st,touch-det-delay = <5>;
->  		};
-> +
-> +		stmpe_adc {
-> +			compatible = "st,stmpe-adc";
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,norequest-mask = <0x0F>;
-> +		};
->  	};
->  };
->  
-> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> index 7f112f192fe9..850b0d13549a 100644
-> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> @@ -976,11 +976,18 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
-> +			/* forbid to use ADC channels 3-0 (touch) */
->  
->  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -990,17 +997,16 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
-> +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
->  
->  		/*
-> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> index 35af03ca9e90..1f9198bb24ff 100644
-> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> @@ -845,11 +845,18 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
-> +			/* forbid to use ADC channels 3-0 (touch) */
->  
->  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -859,17 +866,16 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
-> +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
->  
->  		/*
-> -- 
-> 2.19.1
-> 
+Wei Ni (3):
+  thermal: tegra: remove unnecessary warnings
+  thermal: tegra: fix memory allocation
+  thermal: tegra: parse sensor id before sensor register
+
+ drivers/thermal/tegra/soctherm.c | 54 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 48 insertions(+), 6 deletions(-)
+
+-- 
+2.7.4
