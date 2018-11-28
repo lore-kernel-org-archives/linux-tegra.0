@@ -1,64 +1,133 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/2] drm/tegra: dc: Don't clean up unused display controller
-Date: Wed, 28 Nov 2018 17:44:03 +0100
-Message-ID: <20181128164403.27648-2-thierry.reding@gmail.com>
-References: <20181128164403.27648-1-thierry.reding@gmail.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v10 1/7] interconnect: Add generic on-chip interconnect
+ API
+Date: Wed, 28 Nov 2018 20:18:04 +0200
+Message-ID: <82026d31-39e8-08f1-761b-c0b3ccf8ce20@linaro.org>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <20181127180349.29997-2-georgi.djakov@linaro.org>
+ <5d16a4a57ed5529299d7b73e13a249add00b1afe.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20181128164403.27648-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5d16a4a57ed5529299d7b73e13a249add00b1afe.camel@perches.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com, khilman@baylibre.com, vincent.guittot@linaro.org, skannan@codeaurora.org, bjorn.andersson@linaro.org, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, evgreen@chromium.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkRpc3BsYXkgY29udHJv
-bGxlcnMgdGhhdCBkb24ndCBvd24gYW55IHdpbmRvd3MgYW5kIHdoaWNoIHRoZXJlZm9yZQphcmVu
-J3QgY3VycmVudGx5IGJlaW5nIGFzc2lnbmVkIGEgcHJpbWFyeSBwbGFuZSBhcmUgbm90IHJlZ2lz
-dGVyZWQKYXMgYSBDUlRDIHdpdGggdGhlIERSTSBmcmFtZXdvcmsuIFRoZXkgcmVxdWVzdCBuZWl0
-aGVyIGEgc3luY3BvaW50Cm5vciBhbiBpbnRlcnJ1cHQgYmVjYXVzZSB0aGV5IGRvbid0IHVzZSB0
-aGVtLCBzbyBhdm9pZCBjbGVhbmluZyB1cAp0aG9zZSByZXNvdXJjZXMuCgpTaWduZWQtb2ZmLWJ5
-OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9kYy5jIHwgMzggKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0K
-IDEgZmlsZSBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCspLCAxNiBkZWxldGlvbnMoLSkKCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9kYy5jCmluZGV4IGY4MGU4MmUxNjQ3NS4uNjA3YTZlYTE3ZWNjIDEwMDY0NAotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZGMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYwpA
-QCAtMTk3OCw2ICsxOTc4LDIzIEBAIHN0YXRpYyBpcnFyZXR1cm5fdCB0ZWdyYV9kY19pcnEoaW50
-IGlycSwgdm9pZCAqZGF0YSkKIAlyZXR1cm4gSVJRX0hBTkRMRUQ7CiB9CiAKK3N0YXRpYyBib29s
-IHRlZ3JhX2RjX2hhc193aW5kb3dfZ3JvdXBzKHN0cnVjdCB0ZWdyYV9kYyAqZGMpCit7CisJdW5z
-aWduZWQgaW50IGk7CisKKwlpZiAoIWRjLT5zb2MtPndncnBzKQorCQlyZXR1cm4gdHJ1ZTsKKwor
-CWZvciAoaSA9IDA7IGkgPCBkYy0+c29jLT5udW1fd2dycHM7IGkrKykgeworCQljb25zdCBzdHJ1
-Y3QgdGVncmFfd2luZG93Z3JvdXBfc29jICp3Z3JwID0gJmRjLT5zb2MtPndncnBzW2ldOworCisJ
-CWlmICh3Z3JwLT5kYyA9PSBkYy0+cGlwZSAmJiB3Z3JwLT5udW1fd2luZG93cyA+IDApCisJCQly
-ZXR1cm4gdHJ1ZTsKKwl9CisKKwlyZXR1cm4gZmFsc2U7Cit9CisKIHN0YXRpYyBpbnQgdGVncmFf
-ZGNfaW5pdChzdHJ1Y3QgaG9zdDF4X2NsaWVudCAqY2xpZW50KQogewogCXN0cnVjdCBkcm1fZGV2
-aWNlICpkcm0gPSBkZXZfZ2V0X2RydmRhdGEoY2xpZW50LT5wYXJlbnQpOwpAQCAtMTk5MywyMiAr
-MjAxMCw4IEBAIHN0YXRpYyBpbnQgdGVncmFfZGNfaW5pdChzdHJ1Y3QgaG9zdDF4X2NsaWVudCAq
-Y2xpZW50KQogCSAqIGFzc2lnbiBhIHByaW1hcnkgcGxhbmUgdG8gdGhlbSwgd2hpY2ggaW4gdHVy
-biB3aWxsIGNhdXNlIEtNUyB0bwogCSAqIGNyYXNoLgogCSAqLwotCWlmIChkYy0+c29jLT53Z3Jw
-cykgewotCQlib29sIGhhc193Z3JwcyA9IGZhbHNlOwotCQl1bnNpZ25lZCBpbnQgaTsKLQotCQlm
-b3IgKGkgPSAwOyBpIDwgZGMtPnNvYy0+bnVtX3dncnBzOyBpKyspIHsKLQkJCWNvbnN0IHN0cnVj
-dCB0ZWdyYV93aW5kb3dncm91cF9zb2MgKndncnAgPSAmZGMtPnNvYy0+d2dycHNbaV07Ci0KLQkJ
-CWlmICh3Z3JwLT5kYyA9PSBkYy0+cGlwZSAmJiB3Z3JwLT5udW1fd2luZG93cyA+IDApIHsKLQkJ
-CQloYXNfd2dycHMgPSB0cnVlOwotCQkJCWJyZWFrOwotCQkJfQotCQl9Ci0KLQkJaWYgKCFoYXNf
-d2dycHMpCi0JCQlyZXR1cm4gMDsKLQl9CisJaWYgKCF0ZWdyYV9kY19oYXNfd2luZG93X2dyb3Vw
-cyhkYykpCisJCXJldHVybiAwOwogCiAJZGMtPnN5bmNwdCA9IGhvc3QxeF9zeW5jcHRfcmVxdWVz
-dChjbGllbnQsIGZsYWdzKTsKIAlpZiAoIWRjLT5zeW5jcHQpCkBAIC0yMDk0LDYgKzIwOTcsOSBA
-QCBzdGF0aWMgaW50IHRlZ3JhX2RjX2V4aXQoc3RydWN0IGhvc3QxeF9jbGllbnQgKmNsaWVudCkK
-IAlzdHJ1Y3QgdGVncmFfZGMgKmRjID0gaG9zdDF4X2NsaWVudF90b19kYyhjbGllbnQpOwogCWlu
-dCBlcnI7CiAKKwlpZiAoIXRlZ3JhX2RjX2hhc193aW5kb3dfZ3JvdXBzKGRjKSkKKwkJcmV0dXJu
-IDA7CisKIAlkZXZtX2ZyZWVfaXJxKGRjLT5kZXYsIGRjLT5pcnEsIGRjKTsKIAogCWVyciA9IHRl
-Z3JhX2RjX3JnYl9leGl0KGRjKTsKLS0gCjIuMTkuMQoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Joe,
+
+On 11/27/18 20:35, Joe Perches wrote:
+> On Tue, 2018-11-27 at 20:03 +0200, Georgi Djakov wrote:
+>> This patch introduces a new API to get requirements and configure the
+>> interconnect buses across the entire chipset to fit with the current
+>> demand.
+> 
+> trivial notes:
+> 
+>> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> []
+>> +static int apply_constraints(struct icc_path *path)
+>> +{
+>> +	struct icc_node *next, *prev = NULL;
+>> +	int ret = -EINVAL;
+>> +	int i;
+>> +
+>> +	for (i = 0; i < path->num_nodes; i++, prev = next) {
+>> +		struct icc_provider *p;
+>> +
+>> +		next = path->reqs[i].node;
+>> +		/*
+>> +		 * Both endpoints should be valid master-slave pairs of the
+>> +		 * same interconnect provider that will be configured.
+>> +		 */
+>> +		if (!prev || next->provider != prev->provider)
+>> +			continue;
+>> +
+>> +		p = next->provider;
+>> +
+>> +		/* set the constraints */
+>> +		ret = p->set(prev, next);
+>> +		if (ret)
+>> +			goto out;
+>> +	}
+>> +out:
+>> +	return ret;
+>> +}
+> 
+> The use of ", prev = next" appears somewhat tricky code.
+> Perhaps move the assignment of prev to the bottom of the loop.
+> Perhaps the temporary p assignment isn't useful either.
+> 
+>> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw)
+>> +{
+> []
+>> +	ret = apply_constraints(path);
+>> +	if (ret)
+>> +		pr_debug("interconnect: error applying constraints (%d)", ret);
+> 
+> Ideally all pr_<foo> formats should end in '\n'
+> 
+>> +static struct icc_node *icc_node_create_nolock(int id)
+>> +{
+>> +	struct icc_node *node;
+>> +
+>> +	/* check if node already exists */
+>> +	node = node_find(id);
+>> +	if (node)
+>> +		goto out;
+>> +
+>> +	node = kzalloc(sizeof(*node), GFP_KERNEL);
+>> +	if (!node) {
+>> +		node = ERR_PTR(-ENOMEM);
+>> +		goto out;
+> 
+> Generally, this code appears to overly rely on goto when
+> direct returns could be more readable.
+> 
+>> +	}
+>> +
+>> +	id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
+>> +	if (WARN(id < 0, "couldn't get idr")) {
+> 
+> This seems to unnecessarily hide the id < 0 test in a WARN
+> 
+> Why is this a WARN and not a simpler
+> 	if (id < 0) {
+> 		[ pr_err(...); or WARN(1, ...); ]
+> 
+>> +		kfree(node);
+>> +		node = ERR_PTR(id);
+>> +		goto out;
+>> +	}
+>> +
+>> +	node->id = id;
+>> +
+>> +out:
+>> +	return node;
+>> +}
+
+Thank you for helping to improve the code. The above suggestions make it 
+cleaner indeed.
+
+> []
+>> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
+> []
+>> +/* macros for converting to icc units */
+>> +#define bps_to_icc(x)	(1)
+>> +#define kBps_to_icc(x)	(x)
+> []
+>> +#define MBps_to_icc(x)	(x * 1000)
+>> +#define GBps_to_icc(x)	(x * 1000 * 1000)
+>> +#define kbps_to_icc(x)	(x / 8 + ((x) % 8 ? 1 : 0))
+>> +#define Mbps_to_icc(x)	(x * 1000 / 8 )
+>> +#define Gbps_to_icc(x)	(x * 1000 * 1000 / 8)
+> 
+> The last 5 macros should parenthesize x
+
+Oops.. obviously i forgot to run checkpatch --strict. Will fix!
+
+BR,
+Georgi
