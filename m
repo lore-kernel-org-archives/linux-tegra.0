@@ -1,61 +1,58 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2] clk: tegra: Return the exact clock rate from
- clk_round_rate
-Date: Wed, 28 Nov 2018 10:16:42 +0100
-Message-ID: <20181128091642.GC17419@ulmo>
-References: <20180925214940.15188-1-decatf@gmail.com>
+Subject: Re: [PATCH v1 1/3] clk: tegra: get rid of duplicate defines
+Date: Wed, 28 Nov 2018 10:17:55 +0100
+Message-ID: <20181128091755.GD17419@ulmo>
+References: <20181101015230.27310-1-marcel@ziswiler.com>
+ <20181101015230.27310-2-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rQ2U398070+RC21q"
+        protocol="application/pgp-signature"; boundary="LTeJQqWS0MN7I/qa"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180925214940.15188-1-decatf@gmail.com>
+In-Reply-To: <20181101015230.27310-2-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Robert Yang <decatf@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stephen Boyd <sboyd@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---rQ2U398070+RC21q
+--LTeJQqWS0MN7I/qa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 25, 2018 at 05:49:40PM -0400, Robert Yang wrote:
-> The current behavior is that clk_round_rate would return the same clock
-> rate passed to it for valid PLL configurations. This change will return
-> the exact rate the PLL will provide in accordance with clk API.
+On Thu, Nov 01, 2018 at 02:52:28AM +0100, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 >=20
-> Signed-off-by: Robert Yang <decatf@gmail.com>
+> Get rid of 3 duplicate defines.
+>=20
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>=20
 > ---
-> Changes in V2:
->  - Move input divider (m =3D=3D 0) check into the cfg constraints check
->    condition. Forgo adding WARN_ON and avoid using 0 input divider
->    all together.
 >=20
->  drivers/clk/tegra/clk-pll.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+>  drivers/clk/tegra/clk-tegra-periph.c | 3 ---
+>  1 file changed, 3 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---rQ2U398070+RC21q
+--LTeJQqWS0MN7I/qa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+XPoACgkQ3SOs138+
-s6HcChAAsJUmStXiyFMnv33/TdFkGug/68b2CmxssoFUhVF9wVVzofb9WwJJJ+Gk
-J34qPXy+v+GgCofh0KYrKkb0Jpz6c8fog+sjmvwyCpplml7rAqw2wM4EAfMACAyT
-Hnb3bxRKgmK62ccu9IpMNl/bvHhEyYuh0zsm41PPx9Tbp+VOK4FVBPt2BFnPFpDY
-rTf5riPCOzW7dhb63zSiNkx4SzRygBKDOiQOPQc28DJyKj4JLNVEoCB86mr7gqMU
-BOt/1N8+aGUoO5uhs9BaijEZqexnvIn2H80lVjNRbdfz6PnXK7LWQbFgErvYApHn
-2GLWiXPGK/HVC8YelBWvh+qL/CB/N0b6TCEq0WSd24zFJeY3EOXuGiqne0nNs/w3
-rBLg9XjNIe3xs/sJ2h1Hj+LpIlnS7og0J60mE6psQRuYYr5JX86QhMcUnNx+N8DD
-JywJpvLOaFLJONPwblmKwBqFRMc/EgBrOvQSjLqimyuH85JdgGNtgbYvLzq+pXMC
-QWHhk7iizPslaS8ElgUsgB2jok5OlSGY5CAmieuOK7/AJQjGB0EDYFTPQi0wqrBu
-qhdDUHwWPlVMbOx/0GreRS1RzNwp4mkfc6ZgZ5a2yEkFEtOI7vbOKLh1DIfq9LV9
-RGiuLRnS0ChtoWI+6OugOTBH1h2wzBBvfkljGsyN07JqkZ9fbI4=
-=vg/F
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+XUMACgkQ3SOs138+
+s6HLtBAAwLL2s5Q37THgafBMibsJL0fTIZxHyL4TAMQ6AinFQxL4sNVpf2I+S7oL
+G79WnmDGcrYXDsE0AdYXY5IJD9SoS4VE73KrCbnsxzsnmk2MouzWaELrSlFbKDvi
+cN1Fs7Gl98T7hhkLTyZAmwAlM2aI5T0xrGXTxJXGQG5uOYmC1y0fyNik+o7mMiei
+bEhQACtsOzuV01LfR44aXJ2ScQGrD8NM26TzeB+lCkiEr4PtHpbe7vM1Hya1t73p
++rCCtWi4fJze9d9oW8ZnWFFEoRosbLEi6om1PojMtWx5kL329sYwHcYUOBQB14jW
+GjTEX9hvUvFXi9/LsdNFHrP5EJECwkGrLZLXCfbYXG3uoD+TR0Gok7o4ct22dBUE
+1hFUW73o3tk4jH+Qc3hCXeDKzvKPWQW07ClFP58yELz8uH1TWIcdRgJwB9fIc7qw
+JlXJFHQfVuPlb2AnIXsasTzhZ0FCIBE/2plr9MOBWJU+KVo2fcYr9Sw8UAvM7tq9
+Y4k16hbIkTu5/WsFpYPyj5hMEXOz60EMFVzeQvTcsmYnkMlm5anUKLlFmnT+GyEw
+jrnlOEc/tJePcZOO5LgbBptVlisZcpB9l81nW59QdsZEiR+k8VUCHsYr1cXMVJFj
+VLX0cuRsxEcSFma1joGD8e0mfriSB9rWXJ82MvBAkavysSvm3yM=
+=plpM
 -----END PGP SIGNATURE-----
 
---rQ2U398070+RC21q--
+--LTeJQqWS0MN7I/qa--
