@@ -1,122 +1,91 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 7/9] dt-bindings: tegra186-gpio: Add wakeup parent support
-Date: Wed, 28 Nov 2018 11:44:36 +0100
-Message-ID: <20181128104436.GA22559@ulmo>
-References: <20180921102546.12745-1-thierry.reding@gmail.com>
- <20180921102546.12745-8-thierry.reding@gmail.com>
- <20181015144612.GA23929@bogus>
+Subject: [PATCH 1/2] drm/tegra: hub: Enable all required clocks
+Date: Wed, 28 Nov 2018 17:44:02 +0100
+Message-ID: <20181128164403.27648-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181015144612.GA23929@bogus>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Oct 15, 2018 at 09:46:12AM -0500, Rob Herring wrote:
-> On Fri, Sep 21, 2018 at 12:25:44PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Tegra186 and later have some top-level controls for wake events in the
-> > power management controller (PMC). In order to enable the system to wake
-> > up from low power states, additional registers in the PMC need to be
-> > programmed. Add a wakeup-parent property to establish this relationship
-> > between the GPIO controller and the PMC.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  .../devicetree/bindings/gpio/nvidia,tegra186-gpio.txt      | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpi=
-o.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> > index adff16c71d21..cbb51a8990c3 100644
-> > --- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> > +++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> > @@ -127,6 +127,11 @@ Required properties:
-> >              - 8: Active low level-sensitive.
-> >              Valid combinations are 1, 2, 3, 4, 8.
-> > =20
-> > +Optional properties:
-> > +- wake-parent
-> > +    A phandle to the Power Management Controller (PMC) that contains t=
-op-
-> > +    level controls to enable the wake-up capabilities of some GPIOs.
-> > +
-> >  Example:
-> > =20
-> >  #include <dt-bindings/interrupt-controller/irq.h>
-> > @@ -148,6 +153,7 @@ gpio@2200000 {
-> >  	#gpio-cells =3D <2>;
-> >  	interrupt-controller;
-> >  	#interrupt-cells =3D <2>;
-> > +	wakeup-parent =3D <&pmc>;
-> >  };
-> > =20
-> >  gpio@c2f0000 {
-> > @@ -162,4 +168,5 @@ gpio@c2f0000 {
-> >  	#gpio-cells =3D <2>;
-> >  	interrupt-controller;
-> >  	#interrupt-cells =3D <2>;
-> > +	wakeup-parent =3D <&pmc>;
->=20
-> If all the GPIO instances point to the same PMC and have no per instance=
-=20
-> data, why do you need this in DT? You can just search for the compatible=
-=20
-> node.
-
-That would be slightly annoying to do. I mean, we'd have to somehow
-construct the compatible string that we're looking for. I guess we could
-get around this mostly by just looking for a device matching one of the
-entries in a "pmc_gpio_of_match" table. That would potentially match a
-Tegra194 GPIO against a Tegra186 PMC, but that should never happen in
-practice because it'd be a bug in the DT.
-
-Although that somewhat depends on exactly what we mean by "compatible".
-Technically the Tegra194 PMC is compatible with the Tegra186 PMC in
-terms of register layout and so on. However, since both chips have
-undergone quite some changes with regards to the pins they expose, the
-set of wake events exposed on Tegra186 and Tegra194 varies wildly. So if
-that means that the compatible needs to be different (I think it should)
-then we could go with the OF match table approach.
-
-Actually, thinking about it some more, even if we had a Tegra186
-fallback compatible string in the Tegra194 PMC's device tree node, we'd
-still be matching on the correct instance, and therefore get the right
-IRQ domain for the hierarchy.
-
-I'll rework the patches accordingly.
-
-Thierry
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+cZIACgkQ3SOs138+
-s6EyIA/+LkKrq620emgEtZpd9U8q5GjkFRVNO7ncdVE1d3P1znsFtICWHyX0Iux5
-r3V0vB7/R4HoH0bPDZzJdbFH/BrsWRf9H2E+S7LbFNsBDuN07vjHQlDGexR82c5q
-h0D+QQ9JYzJkqciahQlqIvJ/AulAbXfozP/3jxlq0FtSSnc3apn8YDyRV1kWCDnc
-IOgW59NqqBBoXCz1cBXIk+U22NvbtxLVL/qR+TjQJIsHZKWh7Kqv6oAZM53xW7XJ
-sLt3Hvvot+6pwfOMQAhViix/MZgIM/Yq8gmy7ZmPW4JpIOtHvtqoIekrdpw2M+8q
-gjsv1yU/4zrgtlRq4FqEqJjFAPNo6lnFt3uas1be1PrzDVQU1BYe6DPtqJhileFa
-gi2kBD+MfPPGaz58IXnpCFHZ+ynoj/lzqlU85txkXC7C4iTHtn7NKhGA3g7+7Pok
-FQNlhm1VKjzyac7qFu3MLtXy7Yit+k9AFqmYh7PtH9OfX5C046lnawKiEahzAd5c
-AQrxCT7/Q+dRVWXTRhZ4YQyBeYRLM/cayFgUrRs3lB0zNf4Kdv+dW7WcW2P64+i1
-T9dfM5cq/Su66zqOWp1KT/wqOG5aUk4OovC6CsYv7wtMAGtiWBozzizYDBSji6dl
-XwEX54BBof0kWZAhShV0lSB469yw3m3ebkluFoVGy0fNVyN+muw=
-=U3yi
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBkaXNwbGF5IGFy
+Y2hpdGVjdHVyZSBvbiBUZWdyYTE4NiBhbmQgVGVncmExOTQgcmVxdWlyZXMgdGhhdCB0aGVyZSBi
+ZQpzb21lIHZhbGlkIGNsb2NrIG9uIGFsbCBkb21haW5zIGJlZm9yZSBhY2Nlc3NpbmcgYW55IGRp
+c3BsYXkgcmVnaXN0ZXIuIEEKZnVydGhlciByZXF1aXJlbWVudCBpcyB0aGF0IGluIGFkZGl0aW9u
+IHRvIHRoZSBob3N0MXgsIGh1YiwgZGlzcCBhbmQgZHNjCmNsb2NrcywgYWxsIHRoZSBoZWFkIGNs
+b2NrcyAocGNsazAtMiBvbiBUZWdyYTE4NiBvciBwY2xrMC0zIG9uIFRlZ3JhMTk0KQptdXN0IGFs
+c28gYmUgZW5hYmxlZC4KCkltcGxlbWVudCB0aGlzIGxvZ2ljIHdpdGhpbiB0aGUgZGlzcGxheSBo
+dWIgZHJpdmVyIHRvIGVuc3VyZSB0aGUgY2xvY2tzCmFyZSBhbHdheXMgZW5hYmxlZCBhdCB0aGUg
+cmlnaHQgdGltZS4KClNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRp
+YS5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jIHwgNDcgKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKystLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5oIHwg
+IDMgKysrCiAyIGZpbGVzIGNoYW5nZWQsIDQ4IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0p
+CgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jIGIvZHJpdmVycy9ncHUv
+ZHJtL3RlZ3JhL2h1Yi5jCmluZGV4IDYxMTJkOTA0Mjk3OS4uN2U3NzQyODc3YjkwIDEwMDY0NAot
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2h1Yi5jCkBAIC03NDIsNyArNzQyLDkgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBob3N0MXhf
+Y2xpZW50X29wcyB0ZWdyYV9kaXNwbGF5X2h1Yl9vcHMgPSB7CiAKIHN0YXRpYyBpbnQgdGVncmFf
+ZGlzcGxheV9odWJfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIHsKKwlzdHJ1
+Y3QgZGV2aWNlX25vZGUgKmNoaWxkID0gTlVMTDsKIAlzdHJ1Y3QgdGVncmFfZGlzcGxheV9odWIg
+Kmh1YjsKKwlzdHJ1Y3QgY2xrICpjbGs7CiAJdW5zaWduZWQgaW50IGk7CiAJaW50IGVycjsKIApA
+QCAtODAxLDYgKzgwMywzMyBAQCBzdGF0aWMgaW50IHRlZ3JhX2Rpc3BsYXlfaHViX3Byb2JlKHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJCQlyZXR1cm4gZXJyOwogCX0KIAorCWh1Yi0+
+bnVtX2hlYWRzID0gb2ZfZ2V0X2NoaWxkX2NvdW50KHBkZXYtPmRldi5vZl9ub2RlKTsKKworCWh1
+Yi0+Y2xrX2hlYWRzID0gZGV2bV9rY2FsbG9jKCZwZGV2LT5kZXYsIGh1Yi0+bnVtX2hlYWRzLCBz
+aXplb2YoY2xrKSwKKwkJCQkgICAgICBHRlBfS0VSTkVMKTsKKwlpZiAoIWh1Yi0+Y2xrX2hlYWRz
+KQorCQlyZXR1cm4gLUVOT01FTTsKKworCWZvciAoaSA9IDA7IGkgPCBodWItPm51bV9oZWFkczsg
+aSsrKSB7CisJCWNoaWxkID0gb2ZfZ2V0X25leHRfY2hpbGQocGRldi0+ZGV2Lm9mX25vZGUsIGNo
+aWxkKTsKKwkJaWYgKCFjaGlsZCkgeworCQkJZGV2X2VycigmcGRldi0+ZGV2LCAiZmFpbGVkIHRv
+IGZpbmQgbm9kZSBmb3IgaGVhZCAldVxuIiwKKwkJCQlpKTsKKwkJCXJldHVybiAtRU5PREVWOwor
+CQl9CisKKwkJY2xrID0gZGV2bV9nZXRfY2xrX2Zyb21fY2hpbGQoJnBkZXYtPmRldiwgY2hpbGQs
+ICJkYyIpOworCQlpZiAoSVNfRVJSKGNsaykpIHsKKwkJCWRldl9lcnIoJnBkZXYtPmRldiwgImZh
+aWxlZCB0byBnZXQgY2xvY2sgZm9yIGhlYWQgJXVcbiIsCisJCQkJaSk7CisJCQlyZXR1cm4gUFRS
+X0VSUihjbGspOworCQl9CisKKwkJaHViLT5jbGtfaGVhZHNbaV0gPSBjbGs7CisJfQorCisJb2Zf
+bm9kZV9wdXQoY2hpbGQpOworCiAJLyogWFhYOiBlbmFibGUgY2xvY2sgYWNyb3NzIHJlc2V0PyAq
+LwogCWVyciA9IHJlc2V0X2NvbnRyb2xfYXNzZXJ0KGh1Yi0+cnN0KTsKIAlpZiAoZXJyIDwgMCkK
+QEAgLTg0MCwxMiArODY5LDE2IEBAIHN0YXRpYyBpbnQgdGVncmFfZGlzcGxheV9odWJfcmVtb3Zl
+KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiBzdGF0aWMgaW50IF9fbWF5YmVfdW51c2Vk
+IHRlZ3JhX2Rpc3BsYXlfaHViX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQogewogCXN0cnVj
+dCB0ZWdyYV9kaXNwbGF5X2h1YiAqaHViID0gZGV2X2dldF9kcnZkYXRhKGRldik7CisJdW5zaWdu
+ZWQgaW50IGk7CiAJaW50IGVycjsKIAogCWVyciA9IHJlc2V0X2NvbnRyb2xfYXNzZXJ0KGh1Yi0+
+cnN0KTsKIAlpZiAoZXJyIDwgMCkKIAkJcmV0dXJuIGVycjsKIAorCWZvciAoaSA9IDA7IGkgPCBo
+dWItPm51bV9oZWFkczsgaSsrKQorCQljbGtfZGlzYWJsZV91bnByZXBhcmUoaHViLT5jbGtfaGVh
+ZHNbaV0pOworCiAJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGh1Yi0+Y2xrX2h1Yik7CiAJY2xrX2Rp
+c2FibGVfdW5wcmVwYXJlKGh1Yi0+Y2xrX2RzYyk7CiAJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGh1
+Yi0+Y2xrX2Rpc3ApOwpAQCAtODU2LDYgKzg4OSw3IEBAIHN0YXRpYyBpbnQgX19tYXliZV91bnVz
+ZWQgdGVncmFfZGlzcGxheV9odWJfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCiBzdGF0aWMg
+aW50IF9fbWF5YmVfdW51c2VkIHRlZ3JhX2Rpc3BsYXlfaHViX3Jlc3VtZShzdHJ1Y3QgZGV2aWNl
+ICpkZXYpCiB7CiAJc3RydWN0IHRlZ3JhX2Rpc3BsYXlfaHViICpodWIgPSBkZXZfZ2V0X2RydmRh
+dGEoZGV2KTsKKwl1bnNpZ25lZCBpbnQgaTsKIAlpbnQgZXJyOwogCiAJZXJyID0gY2xrX3ByZXBh
+cmVfZW5hYmxlKGh1Yi0+Y2xrX2Rpc3ApOwpAQCAtODcwLDEzICs5MDQsMjIgQEAgc3RhdGljIGlu
+dCBfX21heWJlX3VudXNlZCB0ZWdyYV9kaXNwbGF5X2h1Yl9yZXN1bWUoc3RydWN0IGRldmljZSAq
+ZGV2KQogCWlmIChlcnIgPCAwKQogCQlnb3RvIGRpc2FibGVfZHNjOwogCisJZm9yIChpID0gMDsg
+aSA8IGh1Yi0+bnVtX2hlYWRzOyBpKyspIHsKKwkJZXJyID0gY2xrX3ByZXBhcmVfZW5hYmxlKGh1
+Yi0+Y2xrX2hlYWRzW2ldKTsKKwkJaWYgKGVyciA8IDApCisJCQlnb3RvIGRpc2FibGVfaGVhZHM7
+CisJfQorCiAJZXJyID0gcmVzZXRfY29udHJvbF9kZWFzc2VydChodWItPnJzdCk7CiAJaWYgKGVy
+ciA8IDApCi0JCWdvdG8gZGlzYWJsZV9odWI7CisJCWdvdG8gZGlzYWJsZV9oZWFkczsKIAogCXJl
+dHVybiAwOwogCi1kaXNhYmxlX2h1YjoKK2Rpc2FibGVfaGVhZHM6CisJd2hpbGUgKGktLSkKKwkJ
+Y2xrX2Rpc2FibGVfdW5wcmVwYXJlKGh1Yi0+Y2xrX2hlYWRzW2ldKTsKKwogCWNsa19kaXNhYmxl
+X3VucHJlcGFyZShodWItPmNsa19odWIpOwogZGlzYWJsZV9kc2M6CiAJY2xrX2Rpc2FibGVfdW5w
+cmVwYXJlKGh1Yi0+Y2xrX2RzYyk7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
+aHViLmggYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmgKaW5kZXggNjY5NmE4NWZjMWYyLi40
+NzkwODdjMDcwNWEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuaAorKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmgKQEAgLTQ5LDYgKzQ5LDkgQEAgc3RydWN0IHRl
+Z3JhX2Rpc3BsYXlfaHViIHsKIAlzdHJ1Y3QgY2xrICpjbGtfaHViOwogCXN0cnVjdCByZXNldF9j
+b250cm9sICpyc3Q7CiAKKwl1bnNpZ25lZCBpbnQgbnVtX2hlYWRzOworCXN0cnVjdCBjbGsgKipj
+bGtfaGVhZHM7CisKIAljb25zdCBzdHJ1Y3QgdGVncmFfZGlzcGxheV9odWJfc29jICpzb2M7CiAJ
+c3RydWN0IHRlZ3JhX3dpbmRvd2dyb3VwICp3Z3JwczsKIH07Ci0tIAoyLjE5LjEKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
