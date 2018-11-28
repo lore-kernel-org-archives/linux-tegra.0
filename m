@@ -1,54 +1,53 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] i2c: i2c-tegra: replace spin_lock_irqsave with spin_lock
- in ISR
-Date: Wed, 28 Nov 2018 10:13:15 +0100
-Message-ID: <20181128091315.GA17419@ulmo>
-References: <20180911145446.53621-1-hangdianqj@163.com>
+Subject: Re: [PATCH] clk: tegra: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date: Wed, 28 Nov 2018 10:15:13 +0100
+Message-ID: <20181128091513.GB17419@ulmo>
+References: <20181123150104.27336-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+        protocol="application/pgp-signature"; boundary="zx4FCpZtqtKETZ7O"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180911145446.53621-1-hangdianqj@163.com>
+In-Reply-To: <20181123150104.27336-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jun qian <hangdianqj@163.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yangtao Li <tiny.windzz@gmail.com>
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@kernel.org, jonathanh@nvidia.com, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ew6BAiZeqk4r7MaW
+--zx4FCpZtqtKETZ7O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 11, 2018 at 07:54:46AM -0700, jun qian wrote:
-> As you are already in ISR, it is unnecessary to call spin_lock_irqsave.
+On Fri, Nov 23, 2018 at 10:01:04AM -0500, Yangtao Li wrote:
+> Use macro to simplify the code.
 >=20
-> Signed-off-by: jun qian <hangdianqj@163.com>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  drivers/clk/tegra/clk-dfll.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---ew6BAiZeqk4r7MaW
+--zx4FCpZtqtKETZ7O
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+XCgACgkQ3SOs138+
-s6FpjRAAnZUyw+m+jt+YEVco0UNR5KOjPcSqzdhHi4TLI+3AJ9UE2zr0o2BNvxWz
-pVvgaVX33+Qaok2yBQsHHZ5HjhIrk0xqjaoMe/glpv3rP0S0HPN91BB1dqehhGb/
-/0lBcv6nU52kzqjNx0RUtiIxgSi81YCAfcRjg+ORT3crxPGr+hUunPegVryvHoTQ
-vSaGwKZBKlBwt+iExxZQ/cXIwoio5YuIWyCWU/G5cNcLuVyTJ/lVDjU/RqX+f1PY
-1BxXNIMQiDPAAnw9uKk36sZUduBpXjyxfcONQlhh4aHldLgZJytX/BoO5UkF8/CS
-ebXAPQLpMyJylsVToqPWmVBybSTHlU9nuZVpMcufsBXjuQM34IY1uvZtJNHA7aZD
-67BvzwL1YA0G4px5ihOAGSMYjF7NFtYkQq337bgD9AeEEZSxAYIPBkMrxASed4/J
-W4D9flKbhIjUbI8d9ZhtGgCp6TOC0afnfijKNRQvPiCNBE3Q0NZW5RiTq4zHnzHZ
-gIBBNrpXaZcCqGb3/PV6bstFIKCNDEoQiYVqM8M7kdDlPrn1jjkWRzC76fTmmYhi
-8cmwZdyByXuXuXWs6QfR137P0nxjATq6/EervnL4v921fM+BWCtVtcKJCPLAnfDe
-t98CG57KK89l6S37ZI5Z6kGp5gTdH4igRA3bEOVVHcv88I3kC9k=
-=E9df
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+XKAACgkQ3SOs138+
+s6H78g//eWqXRVmqbexbcbiZ8amJmllm9PsvDFGa8CjpSJgRw8h6a0gC1PqGGZ4p
+kvRwnl77ymRCPgJNd2z5lRu2o5VDa7gPlmtOQKjwyrtcvWneoEkznRsWt3LQ7Lw3
+p2a2w9GA/k+EUuwEa+X0b+sjOeb4s2dmY97b3QK7+tjwFPgxR3RN3/+OqjhHJlOm
+7yosUtTdyjsdvjOj4IVYG8xs1RvpEd0IwDLQTly7o9d9qAyA8lr7+9PNEuqwwCq2
+x4KlSa5svB8w1UGlTiBaXWfMhYMZ/OVQE7gFxq7X1t93qOk+c4B8XvzvU1aIuSQz
+5O+s4jNgwm9B63Hat1Ya0Ez7PPciwOz1kM7mPkintRYGmI3ANweN0f+7dXXxOgO6
+YF94POXmZDbwgdifCjWJ0BFqfMQlxZPTEAKbHmAagBkWBLMV+nnyj9BOhGLBxWng
+k7BBUyM+2wFfGBTaOWYo9mgpgfrxWUDDU/7J+BQZJGVIxNJZc0mtbC20/Wuj1K2U
+CHMIwH7IqUdc6XI8VqXyn6Hc0mO0pGn235uWQpeCkuVoJtWR7EDDIPmWyyVwBtt8
+O861cu+kzURbURKcbn6Bez8YcYStLRnGODRS071sSDT28YYHSDKo6ky5lZ+2YoRx
+qj/Ha/DJCD3od1B616Daq7gQX2xPNickpWiL2mz9Nq0PIl28i50=
+=zZQo
 -----END PGP SIGNATURE-----
 
---ew6BAiZeqk4r7MaW--
+--zx4FCpZtqtKETZ7O--
