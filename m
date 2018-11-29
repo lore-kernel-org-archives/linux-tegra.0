@@ -1,106 +1,37 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI
- inforframe functions
-Date: Thu, 29 Nov 2018 10:08:07 +0100
-Message-ID: <6147ea2d-8044-45d5-7a64-9d632ff41b95@samsung.com>
-References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
- <CGME20181121182023epcas1p1c86d6be2849038018ae535b7718e7753@epcas1p1.samsung.com>
- <1697503.tFhaoOeOnK@avalon>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH v4 0/3] Fixes for Tegra soctherm
+Date: Thu, 29 Nov 2018 18:09:40 +0800
+Message-ID: <1543486183-2868-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <1697503.tFhaoOeOnK@avalon>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Archit Taneja <architt@codeaurora.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Russell King <linux@armlinux.org.uk>, amd-gfx@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ben Skeggs <bskeggs@redhat.com>, CK Hu <ck.hu@mediatek.com>, Ilia Mirkin <imirkin@alum.mit.edu>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-tegra@vger.kernel.org, Vincent Abriou <vincent.abriou@st.com>, freedreno@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Sandy Huang <hjc@rock-chips.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Alex Deucher <alexander.d>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org
+Cc: rui.zhang@intel.com, edubezval@gmail.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjEuMTEuMjAxOCAxOToxOSwgTGF1cmVudCBQaW5jaGFydCB3cm90ZToKPiBIaSBWaWxsZSwK
-Pgo+IFRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoLgo+Cj4gT24gVHVlc2RheSwgMjAgTm92ZW1iZXIg
-MjAxOCAxODoxMzo0MiBFRVQgVmlsbGUgU3lyamFsYSB3cm90ZToKPj4gRnJvbTogVmlsbGUgU3ly
-asOkbMOkIDx2aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4KPj4KPj4gTWFrZSBsaWZlIGVh
-c2llciBmb3IgZHJpdmVycyBieSBzaW1wbHkgcGFzc2luZyB0aGUgY29ubmVjdG9yCj4+IHRvIGRy
-bV9oZG1pX2F2aV9pbmZvZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoKSBhbmQKPj4gZHJtX2hkbWlf
-YXZpX2luZm9mcmFtZV9xdWFudF9yYW5nZSgpLiBUaGF0IHdheSBkcml2ZXJzIGRvbid0Cj4+IG5l
-ZWQgdG8gd29ycnkgYWJvdXQgaXNfaGRtaTJfc2luayBtZXNzLgo+IFdoaWxlIHRoaXMgaXMgZ29v
-ZCBmb3IgZGlzcGxheSBjb250cm9sbGVyIGRyaXZlcnMsIHRoZSBjaGFuZ2UgaXNuJ3QgZ3JlYXQg
-Zm9yIAo+IGJyaWRnZSBkcml2ZXJzLiBEb3duIHRoZSByb2FkIHdlJ3JlIGxvb2tpbmcgYXQgbW92
-aW5nIGNvbm5lY3RvciBzdXBwb3J0IG91dCBvZiAKPiB0aGUgYnJpZGdlIGRyaXZlcnMuIEFkZGlu
-ZyBhbiBhZGRpdGlvbmFsIGRlcGVuZGVuY3kgdG8gY29ubmVjdG9ycyBpbiB0aGUgCj4gYnJpZGdl
-cyB3aWxsIG1ha2UgdGhhdCBtb3JlIGRpZmZpY3VsdC4gSWRlYWxseSBicmlkZ2VzIHNob3VsZCBy
-ZXRyaWV2ZSB0aGUgCj4gaW5mb3JtYXRpb24gZnJvbSB0aGVpciBzaW5rLCByZWdhcmRsZXNzIG9m
-IHdoZXRoZXIgaXQgaXMgYSBjb25uZWN0b3Igb3IgCj4gYW5vdGhlciBicmlkZ2UuCgoKSSBhZ3Jl
-ZSB3aXRoIGl0LCBhbmQgY2FzZSBvZiBzaWk4NjIwIHNob3dzIHRoYXQgdGhlcmUgYXJlIGNhc2Vz
-IHdoZXJlCmJyaWRnZSBoYXMgbm8gZGlyZWN0IGFjY2VzcyB0byB0aGUgY29ubmVjdG9yLgoKT24g
-dGhlIG90aGVyIHNpZGUswqAgc2luY2UgeW91IGFyZSBwYXNzaW5nIGNvbm5lY3RvciB0bwpkcm1f
-aGRtaV9hdmlfaW5mb2ZyYW1lX2Zyb21fZGlzcGxheV9tb2RlKCksIHlvdSBjb3VsZCBkcm9wIG1v
-ZGUKcGFyYW1ldGVyIGFuZCByZW5hbWUgdGhlIGZ1bmN0aW9uIHRvCmRybV9oZG1pX2F2aV9pbmZv
-ZnJhbWVfZnJvbV9jb25uZWN0b3IoKSB0aGVuLCB1bmxlc3MgbW9kZSBwYXNzZWQgYW5kCm1vZGUg
-c2V0IG9uIHRoZSBjb25uZWN0b3IgZGlmZmVycz8KCgpSZWdhcmRzCgpBbmRyemVqCgoKPgo+IFBs
-ZWFzZSBzZWUgYmVsb3cgZm9yIGFuIGFkZGl0aW9uYWwgY29tbWVudC4KPgo+PiBDYzogQWxleCBE
-ZXVjaGVyIDxhbGV4YW5kZXIuZGV1Y2hlckBhbWQuY29tPgo+PiBDYzogIkNocmlzdGlhbiBLw7Zu
-aWciIDxjaHJpc3RpYW4ua29lbmlnQGFtZC5jb20+Cj4+IENjOiAiRGF2aWQgKENodW5NaW5nKSBa
-aG91IiA8RGF2aWQxLlpob3VAYW1kLmNvbT4KPj4gQ2M6IEFyY2hpdCBUYW5lamEgPGFyY2hpdHRA
-Y29kZWF1cm9yYS5vcmc+Cj4+IENjOiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29t
-Pgo+PiBDYzogTGF1cmVudCBQaW5jaGFydCA8TGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQu
-Y29tPgo+PiBDYzogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+PiBDYzogSm9vbnlv
-dW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+PiBDYzogU2V1bmctV29vIEtpbSA8
-c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPj4gQ2M6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBh
-cmtAc2Ftc3VuZy5jb20+Cj4+IENjOiBSdXNzZWxsIEtpbmcgPGxpbnV4QGFybWxpbnV4Lm9yZy51
-az4KPj4gQ2M6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+Cj4+IENjOiBQaGlsaXBwIFphYmVs
-IDxwLnphYmVsQHBlbmd1dHJvbml4LmRlPgo+PiBDYzogUm9iIENsYXJrIDxyb2JkY2xhcmtAZ21h
-aWwuY29tPgo+PiBDYzogQmVuIFNrZWdncyA8YnNrZWdnc0ByZWRoYXQuY29tPgo+PiBDYzogVG9t
-aSBWYWxrZWluZW4gPHRvbWkudmFsa2VpbmVuQHRpLmNvbT4KPj4gQ2M6IFNhbmR5IEh1YW5nIDxo
-amNAcm9jay1jaGlwcy5jb20+Cj4+IENjOiAiSGVpa28gU3TDvGJuZXIiIDxoZWlrb0BzbnRlY2gu
-ZGU+Cj4+IENjOiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9y
-Zz4KPj4gQ2M6IFZpbmNlbnQgQWJyaW91IDx2aW5jZW50LmFicmlvdUBzdC5jb20+Cj4+IENjOiBU
-aGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgo+PiBDYzogRXJpYyBBbmhv
-bHQgPGVyaWNAYW5ob2x0Lm5ldD4KPj4gQ2M6IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9y
-Zz4KPj4gQ2M6IElsaWEgTWlya2luIDxpbWlya2luQGFsdW0ubWl0LmVkdT4KPj4gQ2M6IGFtZC1n
-ZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4+IENjOiBsaW51eC1hcm0tbXNtQHZnZXIua2VybmVs
-Lm9yZwo+PiBDYzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBDYzogbm91dmVh
-dUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4gQ2M6IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9y
-Zwo+PiBTaWduZWQtb2ZmLWJ5OiBWaWxsZSBTeXJqw6Rsw6QgPHZpbGxlLnN5cmphbGFAbGludXgu
-aW50ZWwuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92MTBf
-MC5jICAgIHwgIDIgKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92MTFfMC5j
-ICAgIHwgIDIgKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92Nl8wLmMgICAg
-IHwgIDMgKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9kY2VfdjhfMC5jICAgICB8
-ICAyICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4LWFueDc4eHguYyB8ICA1
-ICsrLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lpOTAyeC5jICAgICAgICAgIHwgIDMg
-KystCj4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpbC1zaWk4NjIwLmMgICAgICB8ICAzICst
-LQo+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMgfCAgMyArKy0K
-Pj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jICAgICAgICAgICAgICAgIHwgMzMgKysrKysr
-KysrKysrKystLS0tLS0tLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWku
-YyAgICAgIHwgIDMgKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vaTJjL3RkYTk5OHhfZHJ2LmMgICAg
-ICAgICB8ICAzICsrLQo+PiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfaGRtaS5jICAgICAg
-ICAgfCAxNCArKysrKy0tLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9sc3Bjb24u
-YyAgICAgICB8IDE1ICsrKysrKy0tLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9z
-ZHZvLmMgICAgICAgICB8IDEwICsrKystLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfaGRtaS5jICAgICAgIHwgIDMgKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vbXNtL2hkbWkvaGRt
-aV9icmlkZ2UuYyAgICB8ICAzICsrLQo+PiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvZGlzcG52
-NTAvZGlzcC5jICAgfCAgNyArKystLQo+PiAgZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9l
-bmNvZGVyLmMgICAgfCAgNSArKy0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9h
-dWRpby5jICAgICB8ICAyICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvaW5ub19oZG1p
-LmMgICAgICB8ICA0ICsrLQo+PiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jICAgICAg
-ICAgICAgfCAgMyArKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9oZG1pX2VuYy5j
-ICAgIHwgIDMgKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAg
-ICB8ICAzICsrLQo+PiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jICAgICAgICAgICAgICAg
-fCAgMyArKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2hkbWkuYyAgICAgICAgICAgIHwg
-MTEgKysrKystLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS96dGUvenhfaGRtaS5jICAgICAgICAgICAg
-IHwgIDQgKystCj4+ICBpbmNsdWRlL2RybS9kcm1fZWRpZC5oICAgICAgICAgICAgICAgICAgICB8
-ICA4ICsrKy0tLQo+PiAgMjcgZmlsZXMgY2hhbmdlZCwgOTQgaW5zZXJ0aW9ucygrKSwgNjYgZGVs
-ZXRpb25zKC0pCj4gRm9yIGR3LWhkbWkgYW5kIG9tYXBkcm0sCj4KPiBSZXZpZXdlZC1ieTogTGF1
-cmVudCBQaW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgo+CgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFp
-bGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+This series fixed some issues for Tegra soctherm
+
+Main changes from v3:
+1. updated codes for parsing sensor id, per Thierry's comments
+
+Main changes from v2:
+1. add codes to parse sensor id to avoid registration
+failure.
+
+Main changes from v1:
+1. Acked by Thierry Reding <treding@nvidia.com> for the patch
+"thermal: tegra: fix memory allocation".
+2. Print out the sensor name when register failed.
+2. Remove patch "thermal: tegra: fix coverity defect"
+
+Wei Ni (3):
+  thermal: tegra: remove unnecessary warnings
+  thermal: tegra: fix memory allocation
+  thermal: tegra: parse sensor id before sensor register
+
+ drivers/thermal/tegra/soctherm.c | 54 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 48 insertions(+), 6 deletions(-)
+
+-- 
+2.7.4
