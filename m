@@ -1,119 +1,72 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH] thermal: tegra: add get_trend ops
-Date: Thu, 29 Nov 2018 09:01:46 -0800
-Message-ID: <20181129170145.GG2688@localhost.localdomain>
-References: <1542705077-29697-1-git-send-email-wni@nvidia.com>
- <20181120153833.GB28796@ulmo>
- <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 0/5] Implement wake event support on Tegra186 and later
+Date: Thu, 29 Nov 2018 18:03:07 +0100
+Message-ID: <20181129170312.23625-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 02:36:10PM +0800, Wei Ni wrote:
-> 
-> 
-> On 20/11/2018 11:38 PM, Thierry Reding wrote:
-> > On Tue, Nov 20, 2018 at 05:11:17PM +0800, Wei Ni wrote:
-> >> Add support for get_trend ops that allows soctherm
-> >> sensors to be used with the step-wise governor.
-> >>
-> >> Signed-off-by: Wei Ni <wni@nvidia.com>
-> >> ---
-> >>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 34 insertions(+)
-> >>
-> >> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-> >> index ed28110a3535..d2951fbe2b7c 100644
-> >> --- a/drivers/thermal/tegra/soctherm.c
-> >> +++ b/drivers/thermal/tegra/soctherm.c
-> >> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
-> >>  	return 0;
-> >>  }
-> >>  
-> >> +static int tegra_thermctl_get_trend(void *data, int trip,
-> >> +				    enum thermal_trend *trend)
-> >> +{
-> >> +	struct tegra_thermctl_zone *zone = data;
-> >> +	struct thermal_zone_device *tz = zone->tz;
-> >> +	int trip_temp, temp, last_temp, ret;
-> >> +
-> >> +	if (!tz)
-> >> +		return -EINVAL;
-> >> +
-> >> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	mutex_lock(&tz->lock);
-> >> +	temp = tz->temperature;
-> >> +	last_temp = tz->last_temperature;
-> >> +	mutex_unlock(&tz->lock);
-> >> +
-> >> +	if (temp > trip_temp) {
-> >> +		if (temp >= last_temp)
-> >> +			*trend = THERMAL_TREND_RAISING;
-> >> +		else
-> >> +			*trend = THERMAL_TREND_STABLE;
-> >> +	} else if (temp < trip_temp) {
-> >> +		*trend = THERMAL_TREND_DROPPING;
-> >> +	} else {
-> >> +		*trend = THERMAL_TREND_STABLE;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> > 
-> > This looks like a reimplementation of the get_tz_trend() helper. Is
-> > seems like that helper already has everything we need. Perhaps this
-> > isn't working because of-thermal installs of_thermal_get_trend(), a
-> > function that returns -EINVAL if the driver doesn't implement the
-> > ->get_trend() callback.
-> 
-> 1. The get_tz_trend() helper can work, because it has:
-> if (tz->emul_temperature || !tz->ops->get_trend ||
->             tz->ops->get_trend(tz, trip, &trend)) {
-> ...
-> }
-> the tz->ops->get_trend is of_thermal_get_trend(). If without special
-> get_trend(), it will return -EINVAL, so it will implement the if block
-> to get the "trend". If we have the special get_trend(), then the
-> of_thermal_get_trend() will return 0, so this helper will not implement
-> the if block, it will get the "trend" from the special get_trend().
+From: Thierry Reding <treding@nvidia.com>
 
-The idea of the helper is to provide a trend in case drivers dont have
-a specific way of doing so. 
+Hi,
 
-> 
-> 2. There has a little difference between the helper and our special
-> callback. The tegra_thermctl_get_trend() consider the trip_temp, but the
-> get_tz_trend() helper didn't.
-> 
+The following is a set of patches that allow certain interrupts to be
+used as wakeup sources on Tegra186 and later. To implement this, each
+of the GPIO controllers' IRQ domain needs to become hierarchical, and
+parented to the PMC domain. The PMC domain in turn implements a new
+IRQ domain that is a child to the GIC IRQ domain.
 
-Yeah, if you are computing trend towards a trip, then yes, that is
-different and this patch is needed.
+The above ensures that the interrupt chip implementation of the PMC is
+called at the correct time. The ->irq_set_type() and ->irq_set_wake()
+implementations program the PMC wake registers in a way to enable the
+given interrupts as wakeup sources.
 
-> > 
-> > Perhaps a better way would be to do something like this in
-> > thermal_zone_of_add_sensor():
-> > 
-> > 	if (ops->get_trend)
-> > 		tzd->ops->get_trend = of_thermal_get_trend;
-> > 
-> > That's similar to how ->set_trips() and ->set_emul_temp() are set up
-> > and should make sure that get_tz_trend() will do the right thing for
-> > all drivers that don't implement a special ->get_trend().
-> 
-> As above description, I think the of_thermal_get_trend() already can
-> handle this case, doesn't need to change.
-> 
-> Wei.
-> 
-> > 
-> > Thierry
-> > 
+This is based on a suggestion from Thomas Gleixner that resulted from
+the following thread:
+
+        https://lkml.org/lkml/2018/9/13/1042
+
+Changes in v2:
+- dropped the Tegra PMC specific patches to simplify the series
+- drop wakeup-parent usage, lookup up PMC by compatible
+- convert Tegra186 GPIO driver to use valid mask
+- move hierarchy support code into gpiolib core
+
+Linus, this contains the conversion patch to use a valid mask instead of
+the sparse number space that you requested. I've kept it in a separate
+commit because I'm still hoping that you may decide that it's okay to
+have the sparse number space. The delta is just 53 lines of code, which
+I think is small enough to warrant the extra code. But if you insist on
+having the core take care of everything and that the Tegra GPIO driver
+should be over-allocating GPIO and IRQ descriptors in order to make it
+look more like other drivers, then so be it. In either case, the series
+now has gpiolib core support for hierarchies and Tegra works with it in
+both the sparse number space and valid mask cases.
+
+Thomas, patch 2 is required in order to avoid build failures when the
+Tegra186 GPIO driver is built as a module. Since there's a build
+dependency on that from patch 4, I think it'd be easiest if this could
+go in via Linus' tree with your Acked-by. Would you mind providing one?
+
+Thierry
+
+Thierry Reding (5):
+  gpio: Add support for hierarchical IRQ domains
+  genirq: Export irq_chip_set_wake_parent()
+  gpio: tegra186: Rename flow variable to type
+  gpio: tegra186: Implement wake event support
+  gpio: tegra186: Use valid mask instead of sparse number space
+
+ drivers/gpio/Kconfig         |   2 +-
+ drivers/gpio/gpio-tegra186.c | 220 ++++++++++++++++++++---------------
+ drivers/gpio/gpiolib.c       |  33 +++++-
+ include/linux/gpio/driver.h  |   6 +
+ kernel/irq/chip.c            |   1 +
+ 5 files changed, 161 insertions(+), 101 deletions(-)
+
+-- 
+2.19.1
