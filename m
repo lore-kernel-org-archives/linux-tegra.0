@@ -1,45 +1,99 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v3 1/3] thermal: tegra: remove unnecessary warnings
-Date: Thu, 29 Nov 2018 14:43:56 +0800
-Message-ID: <65fd540d-f05c-ab53-1c14-b9f3679ec2a3@nvidia.com>
-References: <1543383877-20555-1-git-send-email-wni@nvidia.com>
- <1543383877-20555-2-git-send-email-wni@nvidia.com>
- <20181128101227.GB20723@ulmo>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI
+ inforframe functions
+Date: Thu, 29 Nov 2018 09:46:16 +0100
+Message-ID: <d0e34bab-de8b-1005-b9e8-72afe66576ac@samsung.com>
+References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+ <87muq2ek04.fsf@intel.com>
+ <CGME20181121115239epcas3p17343b2796d87af83b0eddbc40d646ed9@epcas3p1.samsung.com>
+ <20181121115139.GC9144@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181128101227.GB20723@ulmo>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20181121115139.GC9144@intel.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, srikars@nvidia.com, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Jani Nikula <jani.nikula@linux.intel.com>
+Cc: nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Vincent Abriou <vincent.abriou@st.com>, linux-tegra@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, Shawn Guo <shawnguo@kernel.org>, Ben Skeggs <bskeggs@redhat.com>, freedreno@lists.freedesktop.org, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 28/11/2018 6:12 PM, Thierry Reding wrote:
-> On Wed, Nov 28, 2018 at 01:44:35PM +0800, Wei Ni wrote:
->> Convert warnings to info as not all platforms may
->> have all the thresholds and sensors enabled.
->>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  drivers/thermal/tegra/soctherm.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> If these are all optional anyway, why even keep the informational
-> messages? While those may not show up as warnings in the log, they will
-> still be unconditional noise in the kernel log. Do we really want that,
-> or should we just trust that the DT is correct and shut up if optional
-> thresholds and sensors are not present?
-> 
-> Thierry
-
-I think we can trust the DT files, but these trip points are important,
-it's better to notify user about these information. And user also can
-change log level to control these messages.
-
-Thanks.
-Wei.
-> 
+UXVpdGUgbGF0ZSwgaG9wZWZ1bGx5IG5vdCB0b28gbGF0ZS4KCgpPbiAyMS4xMS4yMDE4IDEyOjUx
+LCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6Cj4gT24gV2VkLCBOb3YgMjEsIDIwMTggYXQgMDE6NDA6
+NDNQTSArMDIwMCwgSmFuaSBOaWt1bGEgd3JvdGU6Cj4+Cj4+PiAgCQlyZXR1cm47Cj4+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jIGIvZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jCj4+PiBpbmRleCBhNmU4ZjQ1OTFlNjMuLjBjYzI5
+M2E2YWMyNCAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lsLXNpaTg2
+MjAuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jCj4+PiBA
+QCAtMTEwNCw4ICsxMTA0LDcgQEAgc3RhdGljIHZvaWQgc2lpODYyMF9zZXRfaW5mb2ZyYW1lcyhz
+dHJ1Y3Qgc2lpODYyMCAqY3R4LAo+Pj4gIAlpbnQgcmV0Owo+Pj4gIAo+Pj4gIAlyZXQgPSBkcm1f
+aGRtaV9hdmlfaW5mb2ZyYW1lX2Zyb21fZGlzcGxheV9tb2RlKCZmcm0uYXZpLAo+Pj4gLQkJCQkJ
+CSAgICAgICBtb2RlLAo+Pj4gLQkJCQkJCSAgICAgICB0cnVlKTsKPj4+ICsJCQkJCQkgICAgICAg
+TlVMTCwgbW9kZSk7Cj4+PiAgCWlmIChjdHgtPnVzZV9wYWNrZWRfcGl4ZWwpCj4+PiAgCQlmcm0u
+YXZpLmNvbG9yc3BhY2UgPSBIRE1JX0NPTE9SU1BBQ0VfWVVWNDIyOwo+Pj4gIAo+Pj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctaGRtaS5jIGIvZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMKPj4+IGluZGV4IDY0YzNjZjAyNzUx
+OC4uODhiNzIwYjYzMTI2IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9z
+eW5vcHN5cy9kdy1oZG1pLmMKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3Bz
+eXMvZHctaGRtaS5jCj4+PiBAQCAtMTM0NCw3ICsxMzQ0LDggQEAgc3RhdGljIHZvaWQgaGRtaV9j
+b25maWdfQVZJKHN0cnVjdCBkd19oZG1pICpoZG1pLCBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAq
+bW9kZSkKPj4+ICAJdTggdmFsOwo+Pj4gIAo+Pj4gIAkvKiBJbml0aWFsaXNlIGluZm8gZnJhbWUg
+ZnJvbSBEUk0gbW9kZSAqLwo+Pj4gLQlkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zyb21fZGlzcGxh
+eV9tb2RlKCZmcmFtZSwgbW9kZSwgZmFsc2UpOwo+Pj4gKwlkcm1faGRtaV9hdmlfaW5mb2ZyYW1l
+X2Zyb21fZGlzcGxheV9tb2RlKCZmcmFtZSwKPj4+ICsJCQkJCQkgJmhkbWktPmNvbm5lY3Rvciwg
+bW9kZSk7Cj4+PiAgCj4+PiAgCWlmIChoZG1pX2J1c19mbXRfaXNfeXV2NDQ0KGhkbWktPmhkbWlf
+ZGF0YS5lbmNfb3V0X2J1c19mb3JtYXQpKQo+Pj4gIAkJZnJhbWUuY29sb3JzcGFjZSA9IEhETUlf
+Q09MT1JTUEFDRV9ZVVY0NDQ7Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9l
+ZGlkLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2VkaWQuYwo+Pj4gaW5kZXggYjUwNmUzNjIyYjA4
+Li41MDFhYzA1YmE3ZGEgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2VkaWQu
+Ywo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMKPj4+IEBAIC00ODMwLDE5ICs0
+ODMwLDMyIEBAIHZvaWQgZHJtX3NldF9wcmVmZXJyZWRfbW9kZShzdHJ1Y3QgZHJtX2Nvbm5lY3Rv
+ciAqY29ubmVjdG9yLAo+Pj4gIH0KPj4+ICBFWFBPUlRfU1lNQk9MKGRybV9zZXRfcHJlZmVycmVk
+X21vZGUpOwo+Pj4gIAo+Pj4gK3N0YXRpYyBib29sIGlzX2hkbWkyX3Npbmsoc3RydWN0IGRybV9j
+b25uZWN0b3IgKmNvbm5lY3RvcikKPj4gWW91J3JlIHVzdWFsbHkga25vd24gZm9yIGFkZGluZyBj
+b25zdCBhbGwgYXJvdW5kLCB3aHkgbm90IGNvbnN0IHBvaW50ZXIKPj4gaGVyZSBhbmQgaW4gYWxs
+IHRoZSBvdGhlciBkcm1fKiBmdW5jdGlvbnMgdGhhdCBjYWxsIHRoaXM/Cj4gTXkgY3VycmVudCBh
+cHByb2FjaCBpcyB0byBjb25zdGlmeSBzdGF0ZXMvZmJzL2V0Yy4gYnV0IG5vdCBzbyBtdWNoCj4g
+Y3J0Y3MvY29ubmVjdG9ycy9ldGMuIFRvbyBtdWNoIGNvbnN0IGNhbiBzb21ldGltZXMgZ2V0IGlu
+IHRoZSB3YXkKPiBvZiB0aGluZ3MgcmVxdWlyaW5nIHRoYXQgeW91IHJlbW92ZSB0aGUgY29uc3Qg
+bGF0ZXIuIEJ1dCBJIGd1ZXNzCj4gaW4gdGhpcyBjYXNlIHRoZSBjb25zdCBzaG91bGRuJ3QgcmVh
+bGx5IGdldCBpbiB0aGUgd2F5IG9mIGFueXRoaW5nCj4gYmVjYXVzZSB0aGVzZSBhcmUgcHJldHR5
+IG11Y2ggc3VwcG9zZWQgdG8gYmUgcHVyZSBmdW5jdGlvbnMuCj4KPj4+ICt7Cj4+PiArCS8qCj4+
+PiArCSAqIEZJWE1FOiBzaWwtc2lpODYyMCBkb2Vzbid0IGhhdmUgYSBjb25uZWN0b3IgYXJvdW5k
+IHdoZW4KPj4+ICsJICogd2UgbmVlZCBvbmUsIHNvIHdlIGhhdmUgdG8gYmUgcHJlcGFyZWQgZm9y
+IGEgTlVMTCBjb25uZWN0b3IuCj4+PiArCSAqLwo+Pj4gKwlpZiAoIWNvbm5lY3RvcikKPj4+ICsJ
+CXJldHVybiBmYWxzZTsKPj4gVGhpcyBhY3R1YWxseSBjaGFuZ2VzIHRoZSBpc19oZG1pMl9zaW5r
+IHZhbHVlIGZvciBzaWwtc2lpODYyMC4KPiBIbW0uIE5vIGlkZWEgd2h5IHRoZXkgd291bGQgaGF2
+ZSBzZXQgdGhhdCB0byB0cnVlIHdoZW4gZXZlcnlvbmUgZWxzZSBpcwo+IHBhc3NpbmcgZmFsc2Uu
+IAoKCkJlY2F1c2UgZmFsc2UgZG9lcyBub3Qgd29yayA6KSBNb3JlIHByZWNpc2VseSBNSEx2MyAo
+dXNlZCBpbiBTaWk4NjIwKQp1c2VzIENUQS04NjEtRiBzdGFuZGFyZCBmb3IgaW5mb2ZyYW1lcywg
+d2hpY2ggaXMgc3BlY2lmaWMgdG8gSERNSTIuMC4KClVuZm9ydHVuYXRlbHkgSSBoYXZlIG5vIGFj
+Y2VzcyB0byBNSEwgc3BlY3MsIGJ1dCBteSBleHBlcmltZW50cyBhbmQKdmVuZG9yIGRyaXZlcnMg
+c3Ryb25nbHkgc3VnZ2VzdHMgaXQgaXMgZG9uZSB0aGlzIHdheS4KClRoaXMgaXMgaW1wb3J0YW50
+IGluIGNhc2Ugb2YgNEsgbW9kZXMgd2hpY2ggYXJlIGhhbmRsZWQgZGlmZmVyZW50bHkgYnkKSERN
+SSAxLjQgYW5kIEhETUkyLjAuCgpUaGUgcGlwZWxpbmUgbG9va3MgbGlrZSAoaW4gcGFyZW50aGVz
+aXMgSERNSSB2ZXJzaW9uIG9uIHRoZSBzdHJlYW0pOgoKZXh5bm9zX2hkbWkgLS0oMS40KS0tPiBT
+SUk4NjIwIC0tKDIuMCktLT4gTUhMX2RvbmdsZSAtLSgxLjQpLS0+IFRWCgoKPiBJIGd1ZXNzIEkg
+Y2FuIGNoYW5nZSB0aGlzIHRvIHRydWUgdG8gbm90IGNoYW5nZSBpdC4gSUlSQwo+IHRoYXQgd2Fz
+IHRoZSBvbmx5IGRyaXZlciB0aGF0IGRpZG4ndCBoYXZlIGEgY29ubmVjdG9yIGFyb3VuZC4KPgo+
+IFRoYXQgc2FpZCwgSSB3YXMgYWN0dWFsbHkgdGhpbmtpbmcgb2YgcmVtb3ZpbmcgdGhpcyBoZG1p
+MiB2cy4gbm90Cj4gc3R1ZmYgZnJvbSBkcm1faGRtaV9hdmlfaW5mb2ZyYW1lX2Zyb21fZGlzcGxh
+eV9tb2RlKCkuIFdlIGFkZGVkIGl0Cj4gImp1c3QgaW4gY2FzZSIsIGJ1dCB3ZSBhbHJlYWR5IGhh
+dmUgYSBzaW1pbGFyIGlzc3VlIHdpdGggZWFybGllcgo+IGNlYS04NjEgcmV2aXNpb25zIGFuZCBo
+YXZlbid0IHNlZW4gYW55IGJ1Z3Mgd2hlcmUgYW4gb2xkZXIgbW9uaXRvcgo+IHdvdWxkIGdldCBj
+b25mdXNlZCBieSBhIFZJQyBub3QgeWV0IGRlZmluZWQgd2hlbiB0aGUgbW9uaXRvciB3YXMKPiBw
+cm9kdWNlZC4KPgpBcmUgeW91IHN1cmUgdGhpcyBpcyBhIGdvb2QgaWRlYT8gQXMgSSBzYWlkIGVh
+cmxpZXIgNEsgbW9kZXMgYXJlIHByZXNlbnQKaW4gSERNSSAxLjQgYW5kIDIuMCBidXQgdGhleSBh
+cmUgaGFuZGxlZCBkaWZmZXJlbnRseSwgc28gdGhpcyBpcyBub3QKb25seSBtYXR0ZXIgb2YgdW5r
+bm93biBWSUMgaW4gQVZJRi4KCgpSZWdhcmRzCgpBbmRyemVqCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVs
+LWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
