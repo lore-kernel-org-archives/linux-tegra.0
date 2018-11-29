@@ -1,64 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 2/2] drm/tegra: dc: Don't clean up unused display controller
-Date: Thu, 29 Nov 2018 17:24:35 +0100
-Message-ID: <20181129162435.20443-2-thierry.reding@gmail.com>
-References: <20181129162435.20443-1-thierry.reding@gmail.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v4 1/3] thermal: tegra: remove unnecessary warnings
+Date: Thu, 29 Nov 2018 08:39:39 -0800
+Message-ID: <20181129163938.GA2045@localhost.localdomain>
+References: <1543486183-2868-1-git-send-email-wni@nvidia.com>
+ <1543486183-2868-2-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20181129162435.20443-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1543486183-2868-2-git-send-email-wni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkRpc3BsYXkgY29udHJv
-bGxlcnMgdGhhdCBkb24ndCBvd24gYW55IHdpbmRvd3MgYW5kIHdoaWNoIHRoZXJlZm9yZQphcmVu
-J3QgY3VycmVudGx5IGJlaW5nIGFzc2lnbmVkIGEgcHJpbWFyeSBwbGFuZSBhcmUgbm90IHJlZ2lz
-dGVyZWQKYXMgYSBDUlRDIHdpdGggdGhlIERSTSBmcmFtZXdvcmsuIFRoZXkgcmVxdWVzdCBuZWl0
-aGVyIGEgc3luY3BvaW50Cm5vciBhbiBpbnRlcnJ1cHQgYmVjYXVzZSB0aGV5IGRvbid0IHVzZSB0
-aGVtLCBzbyBhdm9pZCBjbGVhbmluZyB1cAp0aG9zZSByZXNvdXJjZXMuCgpTaWduZWQtb2ZmLWJ5
-OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9kYy5jIHwgMzggKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0K
-IDEgZmlsZSBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCspLCAxNiBkZWxldGlvbnMoLSkKCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9kYy5jCmluZGV4IGY4MGU4MmUxNjQ3NS4uNjA3YTZlYTE3ZWNjIDEwMDY0NAotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZGMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYwpA
-QCAtMTk3OCw2ICsxOTc4LDIzIEBAIHN0YXRpYyBpcnFyZXR1cm5fdCB0ZWdyYV9kY19pcnEoaW50
-IGlycSwgdm9pZCAqZGF0YSkKIAlyZXR1cm4gSVJRX0hBTkRMRUQ7CiB9CiAKK3N0YXRpYyBib29s
-IHRlZ3JhX2RjX2hhc193aW5kb3dfZ3JvdXBzKHN0cnVjdCB0ZWdyYV9kYyAqZGMpCit7CisJdW5z
-aWduZWQgaW50IGk7CisKKwlpZiAoIWRjLT5zb2MtPndncnBzKQorCQlyZXR1cm4gdHJ1ZTsKKwor
-CWZvciAoaSA9IDA7IGkgPCBkYy0+c29jLT5udW1fd2dycHM7IGkrKykgeworCQljb25zdCBzdHJ1
-Y3QgdGVncmFfd2luZG93Z3JvdXBfc29jICp3Z3JwID0gJmRjLT5zb2MtPndncnBzW2ldOworCisJ
-CWlmICh3Z3JwLT5kYyA9PSBkYy0+cGlwZSAmJiB3Z3JwLT5udW1fd2luZG93cyA+IDApCisJCQly
-ZXR1cm4gdHJ1ZTsKKwl9CisKKwlyZXR1cm4gZmFsc2U7Cit9CisKIHN0YXRpYyBpbnQgdGVncmFf
-ZGNfaW5pdChzdHJ1Y3QgaG9zdDF4X2NsaWVudCAqY2xpZW50KQogewogCXN0cnVjdCBkcm1fZGV2
-aWNlICpkcm0gPSBkZXZfZ2V0X2RydmRhdGEoY2xpZW50LT5wYXJlbnQpOwpAQCAtMTk5MywyMiAr
-MjAxMCw4IEBAIHN0YXRpYyBpbnQgdGVncmFfZGNfaW5pdChzdHJ1Y3QgaG9zdDF4X2NsaWVudCAq
-Y2xpZW50KQogCSAqIGFzc2lnbiBhIHByaW1hcnkgcGxhbmUgdG8gdGhlbSwgd2hpY2ggaW4gdHVy
-biB3aWxsIGNhdXNlIEtNUyB0bwogCSAqIGNyYXNoLgogCSAqLwotCWlmIChkYy0+c29jLT53Z3Jw
-cykgewotCQlib29sIGhhc193Z3JwcyA9IGZhbHNlOwotCQl1bnNpZ25lZCBpbnQgaTsKLQotCQlm
-b3IgKGkgPSAwOyBpIDwgZGMtPnNvYy0+bnVtX3dncnBzOyBpKyspIHsKLQkJCWNvbnN0IHN0cnVj
-dCB0ZWdyYV93aW5kb3dncm91cF9zb2MgKndncnAgPSAmZGMtPnNvYy0+d2dycHNbaV07Ci0KLQkJ
-CWlmICh3Z3JwLT5kYyA9PSBkYy0+cGlwZSAmJiB3Z3JwLT5udW1fd2luZG93cyA+IDApIHsKLQkJ
-CQloYXNfd2dycHMgPSB0cnVlOwotCQkJCWJyZWFrOwotCQkJfQotCQl9Ci0KLQkJaWYgKCFoYXNf
-d2dycHMpCi0JCQlyZXR1cm4gMDsKLQl9CisJaWYgKCF0ZWdyYV9kY19oYXNfd2luZG93X2dyb3Vw
-cyhkYykpCisJCXJldHVybiAwOwogCiAJZGMtPnN5bmNwdCA9IGhvc3QxeF9zeW5jcHRfcmVxdWVz
-dChjbGllbnQsIGZsYWdzKTsKIAlpZiAoIWRjLT5zeW5jcHQpCkBAIC0yMDk0LDYgKzIwOTcsOSBA
-QCBzdGF0aWMgaW50IHRlZ3JhX2RjX2V4aXQoc3RydWN0IGhvc3QxeF9jbGllbnQgKmNsaWVudCkK
-IAlzdHJ1Y3QgdGVncmFfZGMgKmRjID0gaG9zdDF4X2NsaWVudF90b19kYyhjbGllbnQpOwogCWlu
-dCBlcnI7CiAKKwlpZiAoIXRlZ3JhX2RjX2hhc193aW5kb3dfZ3JvdXBzKGRjKSkKKwkJcmV0dXJu
-IDA7CisKIAlkZXZtX2ZyZWVfaXJxKGRjLT5kZXYsIGRjLT5pcnEsIGRjKTsKIAogCWVyciA9IHRl
-Z3JhX2RjX3JnYl9leGl0KGRjKTsKLS0gCjIuMTkuMQoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hey,
+
+On Thu, Nov 29, 2018 at 06:09:41PM +0800, Wei Ni wrote:
+> Convert warnings to info as not all platforms may
+> have all the thresholds and sensors enabled.
+> 
+> Signed-off-by: Wei Ni <wni@nvidia.com>
+> ---
+>  drivers/thermal/tegra/soctherm.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+> index ed28110a3535..55cc1f2f6a45 100644
+> --- a/drivers/thermal/tegra/soctherm.c
+> +++ b/drivers/thermal/tegra/soctherm.c
+> @@ -550,7 +550,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+>  
+>  	ret = tz->ops->get_crit_temp(tz, &temperature);
+>  	if (ret) {
+> -		dev_warn(dev, "thermtrip: %s: missing critical temperature\n",
+> +		dev_info(dev, "thermtrip: %s: missing critical temperature\n",
+
+I am mostly ok with your change in direction. But are you sure this is a
+good thing? What about in the case that you have a platform that have
+the crit temp and you really failed to .get_crit_temp()?
+
+>  			 sg->name);
+>  		goto set_throttle;
+>  	}
+> @@ -569,7 +569,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+>  set_throttle:
+>  	ret = get_hot_temp(tz, &trip, &temperature);
+>  	if (ret) {
+> -		dev_warn(dev, "throttrip: %s: missing hot temperature\n",
+> +		dev_info(dev, "throttrip: %s: missing hot temperature\n",
+>  			 sg->name);
+>  		return 0;
+>  	}
+> @@ -600,7 +600,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+>  	}
+>  
+>  	if (i == THROTTLE_SIZE)
+> -		dev_warn(dev, "throttrip: %s: missing throttle cdev\n",
+> +		dev_info(dev, "throttrip: %s: missing throttle cdev\n",
+>  			 sg->name);
+>  
+>  	return 0;
+> -- 
+> 2.7.4
+> 
