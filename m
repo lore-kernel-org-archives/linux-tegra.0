@@ -1,13 +1,16 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 Subject: Re: [PATCH 1/3] drm/tegra: vic: Implement explicit reset support
-Date: Thu, 29 Nov 2018 15:51:21 +0100
-Message-ID: <20181129145121.GA23750@ulmo>
+Date: Thu, 29 Nov 2018 15:11:56 +0000
+Message-ID: <6a3fe707-1ec0-301b-8656-99876dac87a2@nvidia.com>
 References: <20181123120639.16706-1-thierry.reding@gmail.com>
  <67b69475-7bfe-afaf-8e45-2a3aef01c05e@nvidia.com>
+ <20181129145121.GA23750@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0355935105=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <67b69475-7bfe-afaf-8e45-2a3aef01c05e@nvidia.com>
+In-Reply-To: <20181129145121.GA23750@ulmo>
+Content-Language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -17,106 +20,45 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jon Hunter <jonathanh@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============0355935105==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
-Content-Disposition: inline
-
-
---Qxx1br4bt0+wmkIi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 29, 2018 at 01:40:32PM +0000, Jon Hunter wrote:
->=20
-> On 23/11/2018 12:06, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Tegra supports generic PM domains on 64-bit ARM, and if that is enabled,
-> > the power domain code will make sure that resets are asserted and
-> > deasserted at appropriate points in time.
-> >=20
-> > If generic PM domains are not implemented, such as on 32-bit Tegra, the
-> > resets need to be asserted and deasserted explicitly by the driver.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/gpu/drm/tegra/vic.c | 35 ++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 34 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-> > index 9fa77405db01..23f530db45ad 100644
-> > --- a/drivers/gpu/drm/tegra/vic.c
-> > +++ b/drivers/gpu/drm/tegra/vic.c
-> > @@ -38,6 +38,7 @@ struct vic {
-> >  	struct iommu_domain *domain;
-> >  	struct device *dev;
-> >  	struct clk *clk;
-> > +	struct reset_control *rst;
-> > =20
-> >  	/* Platform configuration */
-> >  	const struct vic_config *config;
-> > @@ -56,13 +57,37 @@ static void vic_writel(struct vic *vic, u32 value, =
-unsigned int offset)
-> >  static int vic_runtime_resume(struct device *dev)
-> >  {
-> >  	struct vic *vic =3D dev_get_drvdata(dev);
-> > +	int err;
-> > +
-> > +	err =3D clk_prepare_enable(vic->clk);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	usleep_range(2000, 4000);
->=20
-> The Tegra genpd code has a usleep_range(10, 20), is that not sufficient
-> here? If it is, it would be good to be consistent.
-
-Yeah, I think that's enough. The Tegra DRM driver uses these ranges in
-many places, so that's where I copied them from. None of these are part
-of a hot path or anything, so whether this sleeps for 10 ns or 4 ms is
-not going to matter much.
-
-With that changed, can I consider this R-b you?
-
-Thierry
-
---Qxx1br4bt0+wmkIi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv//OYACgkQ3SOs138+
-s6FRZg//XJLmAgIc6tCCB4e/UR7KOasBXmhhij5W0+i9heRAI/AJlmbP2Mth6Bfc
-MCetuPWvsNVe7ejb+rEo+lCRa0FnBi4bF47GNCcXC/JvO9UtVPaLsd3N6Jdi5WjI
-ZRbF1HOHmjGVamPkyIcMvo4v/ZRK6T5/GZZYIJSXdsFwlN/KofAnA0Xi2embpI8R
-LGKznbwrW4BLthHnAUoRkkOsq39bYQ/lJvKLKgsgRmaacjfkSgrHGz2MahwpsH3E
-/eh5PRaPaSn91RTHoUqmWGqEYZM8XcC9Deezjl9PTOeSKBqcgmNvUEIjapsWhkIi
-rgGL9RNGADtr7Z3dxd12qvQjXs9rPN45Xq4hTc3kgMMHnqDFVbWZIp4mDehXPLUv
-+3WQQQ1loM5FNPba4d8YE8/7a2PMM4f3tr5npV28ydaLBN3MDj1abnJZNtiMf01H
-LoaoIQOScQ32EuLBRbN3kjKE+H1jBv15jbVLwRGh7McwUnJZpaXG+J7xXZPCdbSc
-GsqdJsxep7K2Lp/fkDt+A2UbZRV+KFfVD8evxsQnMgDaAOHiDm3KOhqGzXTmnBBR
-eL1xYEjhP2j3BVOelwFFLv4XpJy/Bjce30jJebbXzPc92zUSt+8VhyZ2ahChOz7Z
-Bp8k36j3JbmtfaPYElTU9vblal+vH4M5m395yXt8RB+kNjwEh+A=
-=+Bmf
------END PGP SIGNATURE-----
-
---Qxx1br4bt0+wmkIi--
-
---===============0355935105==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0355935105==--
+Ck9uIDI5LzExLzIwMTggMTQ6NTEsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+IE9uIFRodSwgTm92
+IDI5LCAyMDE4IGF0IDAxOjQwOjMyUE0gKzAwMDAsIEpvbiBIdW50ZXIgd3JvdGU6Cj4+Cj4+IE9u
+IDIzLzExLzIwMTggMTI6MDYsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4gRnJvbTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4+Cj4+PiBUZWdyYSBzdXBwb3J0cyBnZW5l
+cmljIFBNIGRvbWFpbnMgb24gNjQtYml0IEFSTSwgYW5kIGlmIHRoYXQgaXMgZW5hYmxlZCwKPj4+
+IHRoZSBwb3dlciBkb21haW4gY29kZSB3aWxsIG1ha2Ugc3VyZSB0aGF0IHJlc2V0cyBhcmUgYXNz
+ZXJ0ZWQgYW5kCj4+PiBkZWFzc2VydGVkIGF0IGFwcHJvcHJpYXRlIHBvaW50cyBpbiB0aW1lLgo+
+Pj4KPj4+IElmIGdlbmVyaWMgUE0gZG9tYWlucyBhcmUgbm90IGltcGxlbWVudGVkLCBzdWNoIGFz
+IG9uIDMyLWJpdCBUZWdyYSwgdGhlCj4+PiByZXNldHMgbmVlZCB0byBiZSBhc3NlcnRlZCBhbmQg
+ZGVhc3NlcnRlZCBleHBsaWNpdGx5IGJ5IHRoZSBkcml2ZXIuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1i
+eTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPj4+IC0tLQo+Pj4gIGRyaXZl
+cnMvZ3B1L2RybS90ZWdyYS92aWMuYyB8IDM1ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKystCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDM0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24o
+LSkKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jIGIvZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jCj4+PiBpbmRleCA5ZmE3NzQwNWRiMDEuLjIzZjUzMGRi
+NDVhZCAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuYwo+Pj4gKysr
+IGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jCj4+PiBAQCAtMzgsNiArMzgsNyBAQCBzdHJ1
+Y3QgdmljIHsKPj4+ICAJc3RydWN0IGlvbW11X2RvbWFpbiAqZG9tYWluOwo+Pj4gIAlzdHJ1Y3Qg
+ZGV2aWNlICpkZXY7Cj4+PiAgCXN0cnVjdCBjbGsgKmNsazsKPj4+ICsJc3RydWN0IHJlc2V0X2Nv
+bnRyb2wgKnJzdDsKPj4+ICAKPj4+ICAJLyogUGxhdGZvcm0gY29uZmlndXJhdGlvbiAqLwo+Pj4g
+IAljb25zdCBzdHJ1Y3QgdmljX2NvbmZpZyAqY29uZmlnOwo+Pj4gQEAgLTU2LDEzICs1NywzNyBA
+QCBzdGF0aWMgdm9pZCB2aWNfd3JpdGVsKHN0cnVjdCB2aWMgKnZpYywgdTMyIHZhbHVlLCB1bnNp
+Z25lZCBpbnQgb2Zmc2V0KQo+Pj4gIHN0YXRpYyBpbnQgdmljX3J1bnRpbWVfcmVzdW1lKHN0cnVj
+dCBkZXZpY2UgKmRldikKPj4+ICB7Cj4+PiAgCXN0cnVjdCB2aWMgKnZpYyA9IGRldl9nZXRfZHJ2
+ZGF0YShkZXYpOwo+Pj4gKwlpbnQgZXJyOwo+Pj4gKwo+Pj4gKwllcnIgPSBjbGtfcHJlcGFyZV9l
+bmFibGUodmljLT5jbGspOwo+Pj4gKwlpZiAoZXJyIDwgMCkKPj4+ICsJCXJldHVybiBlcnI7Cj4+
+PiArCj4+PiArCXVzbGVlcF9yYW5nZSgyMDAwLCA0MDAwKTsKPj4KPj4gVGhlIFRlZ3JhIGdlbnBk
+IGNvZGUgaGFzIGEgdXNsZWVwX3JhbmdlKDEwLCAyMCksIGlzIHRoYXQgbm90IHN1ZmZpY2llbnQK
+Pj4gaGVyZT8gSWYgaXQgaXMsIGl0IHdvdWxkIGJlIGdvb2QgdG8gYmUgY29uc2lzdGVudC4KPiAK
+PiBZZWFoLCBJIHRoaW5rIHRoYXQncyBlbm91Z2guIFRoZSBUZWdyYSBEUk0gZHJpdmVyIHVzZXMg
+dGhlc2UgcmFuZ2VzIGluCj4gbWFueSBwbGFjZXMsIHNvIHRoYXQncyB3aGVyZSBJIGNvcGllZCB0
+aGVtIGZyb20uIE5vbmUgb2YgdGhlc2UgYXJlIHBhcnQKPiBvZiBhIGhvdCBwYXRoIG9yIGFueXRo
+aW5nLCBzbyB3aGV0aGVyIHRoaXMgc2xlZXBzIGZvciAxMCBucyBvciA0IG1zIGlzCj4gbm90IGdv
+aW5nIHRvIG1hdHRlciBtdWNoLgo+IAo+IFdpdGggdGhhdCBjaGFuZ2VkLCBjYW4gSSBjb25zaWRl
+ciB0aGlzIFItYiB5b3U/CgpZZXMgcGxlYXNlIGFkZCBteSByLWIuCgpUaGFua3MKSm9uCgotLSAK
+bnZwdWJsaWMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
