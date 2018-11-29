@@ -1,77 +1,104 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v3 3/3] thermal: tegra: parse sensor id before sensor
- register
-Date: Fri, 30 Nov 2018 11:10:08 +0800
-Message-ID: <9beaf6ea-14bb-1944-2372-eb615f04f9e3@nvidia.com>
-References: <1543383877-20555-1-git-send-email-wni@nvidia.com>
- <1543383877-20555-4-git-send-email-wni@nvidia.com>
- <20181128102520.GC20723@ulmo>
- <9c373693-1d3c-cd02-4972-dde338651c0e@nvidia.com>
- <20181129171304.GB18128@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/tegra: hub: Enable all required clocks
+Date: Fri, 30 Nov 2018 00:52:03 +0300
+Message-ID: <280954a0-25d9-c882-1d1b-a19e9090b718@gmail.com>
+References: <20181129162435.20443-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181129171304.GB18128@ulmo>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20181129162435.20443-1-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com, srikars@nvidia.com, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 30/11/2018 1:13 AM, Thierry Reding wrote:
-> On Thu, Nov 29, 2018 at 01:55:02PM +0800, Wei Ni wrote:
->> On 28/11/2018 6:25 PM, Thierry Reding wrote:
->>> On Wed, Nov 28, 2018 at 01:44:37PM +0800, Wei Ni wrote:
-> [...]
->>>> +	bool ret = false;
->>>> +	struct of_phandle_args sensor_specs;
->>>> +	struct device_node *np, *sensor_np;
->>>> +
->>>> +	np = of_find_node_by_name(NULL, "thermal-zones");
->>>> +	if (!np)
->>>> +		return ret;
->>>> +
->>>> +	sensor_np = of_get_next_child(np, NULL);
->>>> +	for_each_available_child_of_node(np, sensor_np) {
->>>
->>> Aren't we leaking np here? I think we need of_node_put() after
->>> of_get_next_child() to make sure the reference to the "thermal-zones"
->>> node is properly released.
->>
->> No, we will not leak np here. Because the
->> for_each_available_child_of_node will call
->> of_get_next_available_child(), which will call of_node_put(prev) to
->> decrease refcount of the prev node. So we just need to of_node_put the
->> last node after break from this for block.
-> 
-> Okay, looks like I misinterpreted what you were doing there. I thought
-> that for_each_available_child_of_node() took the child as first argument
-> and the parent as second and therefore np would be overwritten by the
-> first assignment in the macro.
-> 
-> But looking at this more closely I think there's something else wrong
-> here. for_each_available_child_of_node() is defined as:
-> 
-> 	for_each_available_child_of_node(parent, child)
-> 
-> so in the above, np will be the parent and sensor_np the child. Why do
-> you have to do
-> 
-> 	sensor_np = of_get_next_child(np, NULL);
-> 
-> ? That's already done as part of the loop in the macro, right? So does
-> that not mean we get two references and we leak the first one? Can the
-> above not simply been dropped?
-
-It's so sorry, it's my mistake, we should remove this line, it was my
-develop code, forgot to remove it.
-Will fix it in next version.
-
-Thanks.
-
-> 
-> Thierry
-> 
+T24gMjkuMTEuMjAxOCAxOToyNCwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBUaGUgZGlzcGxheSBhcmNoaXRlY3R1
+cmUgb24gVGVncmExODYgYW5kIFRlZ3JhMTk0IHJlcXVpcmVzIHRoYXQgdGhlcmUgYmUKPiBzb21l
+IHZhbGlkIGNsb2NrIG9uIGFsbCBkb21haW5zIGJlZm9yZSBhY2Nlc3NpbmcgYW55IGRpc3BsYXkg
+cmVnaXN0ZXIuIEEKPiBmdXJ0aGVyIHJlcXVpcmVtZW50IGlzIHRoYXQgaW4gYWRkaXRpb24gdG8g
+dGhlIGhvc3QxeCwgaHViLCBkaXNwIGFuZCBkc2MKPiBjbG9ja3MsIGFsbCB0aGUgaGVhZCBjbG9j
+a3MgKHBjbGswLTIgb24gVGVncmExODYgb3IgcGNsazAtMyBvbiBUZWdyYTE5NCkKPiBtdXN0IGFs
+c28gYmUgZW5hYmxlZC4KPiAKPiBJbXBsZW1lbnQgdGhpcyBsb2dpYyB3aXRoaW4gdGhlIGRpc3Bs
+YXkgaHViIGRyaXZlciB0byBlbnN1cmUgdGhlIGNsb2Nrcwo+IGFyZSBhbHdheXMgZW5hYmxlZCBh
+dCB0aGUgcmlnaHQgdGltZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJl
+ZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+IENoYW5nZXMgaW4gdjI6Cj4gLSByZXZlcnNlIG9yZGVy
+IGluIHdoaWNoIGNsb2NrcyBhcmUgZGlzYWJsZWQgZm9yIHN5bW1ldHJ5Cj4gLSBkb24ndCBsZWFr
+IGNoaWxkIGRldmljZSB0cmVlIG5vZGUKPiAKPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5j
+IHwgNDggKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vdGVncmEvaHViLmggfCAgMyArKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCA0OSBpbnNlcnRp
+b25zKCspLCAyIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvaHViLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMKPiBpbmRleCA2MTEyZDkw
+NDI5NzkuLjkyMmE0OGQ1YTQ4MyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
+aHViLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMKPiBAQCAtNzQyLDcgKzc0
+Miw5IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaG9zdDF4X2NsaWVudF9vcHMgdGVncmFfZGlzcGxh
+eV9odWJfb3BzID0gewo+ICAKPiAgc3RhdGljIGludCB0ZWdyYV9kaXNwbGF5X2h1Yl9wcm9iZShz
+dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICB7Cj4gKwlzdHJ1Y3QgZGV2aWNlX25vZGUg
+KmNoaWxkID0gTlVMTDsKPiAgCXN0cnVjdCB0ZWdyYV9kaXNwbGF5X2h1YiAqaHViOwo+ICsJc3Ry
+dWN0IGNsayAqY2xrOwo+ICAJdW5zaWduZWQgaW50IGk7Cj4gIAlpbnQgZXJyOwo+ICAKPiBAQCAt
+ODAxLDYgKzgwMywzNCBAQCBzdGF0aWMgaW50IHRlZ3JhX2Rpc3BsYXlfaHViX3Byb2JlKHN0cnVj
+dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAkJCXJldHVybiBlcnI7Cj4gIAl9Cj4gIAo+ICsJ
+aHViLT5udW1faGVhZHMgPSBvZl9nZXRfY2hpbGRfY291bnQocGRldi0+ZGV2Lm9mX25vZGUpOwo+
+ICsKPiArCWh1Yi0+Y2xrX2hlYWRzID0gZGV2bV9rY2FsbG9jKCZwZGV2LT5kZXYsIGh1Yi0+bnVt
+X2hlYWRzLCBzaXplb2YoY2xrKSwKPiArCQkJCSAgICAgIEdGUF9LRVJORUwpOwo+ICsJaWYgKCFo
+dWItPmNsa19oZWFkcykKPiArCQlyZXR1cm4gLUVOT01FTTsKPiArCj4gKwlmb3IgKGkgPSAwOyBp
+IDwgaHViLT5udW1faGVhZHM7IGkrKykgewo+ICsJCWNoaWxkID0gb2ZfZ2V0X25leHRfY2hpbGQo
+cGRldi0+ZGV2Lm9mX25vZGUsIGNoaWxkKTsKPiArCQlpZiAoIWNoaWxkKSB7Cj4gKwkJCWRldl9l
+cnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byBmaW5kIG5vZGUgZm9yIGhlYWQgJXVcbiIsCj4gKwkJ
+CQlpKTsKPiArCQkJcmV0dXJuIC1FTk9ERVY7Cj4gKwkJfQoKSSdtIG5vdCBzdXJlIHRoYXQgaXQn
+cyByZWFsbHkgd29ydGggdG8gY2hlY2sgdGhhdCBjaGlsZCBpcyBOVUxMIGhlcmUsIHdlIGFscmVh
+ZHkga25vdyB0aGUgZXhhY3QgbnVtYmVyIG9mIGNoaWxkcmVuIG5vZGVzLiBJdCBjb3VsZCBiZSBv
+bWl0dGVkIHNhZmVseS4KCj4gKwo+ICsJCWNsayA9IGRldm1fZ2V0X2Nsa19mcm9tX2NoaWxkKCZw
+ZGV2LT5kZXYsIGNoaWxkLCAiZGMiKTsKPiArCQlpZiAoSVNfRVJSKGNsaykpIHsKPiArCQkJZGV2
+X2VycigmcGRldi0+ZGV2LCAiZmFpbGVkIHRvIGdldCBjbG9jayBmb3IgaGVhZCAldVxuIiwKPiAr
+CQkJCWkpOwo+ICsJCQlvZl9ub2RlX3B1dChjaGlsZCk7Cj4gKwkJCXJldHVybiBQVFJfRVJSKGNs
+ayk7Cj4gKwkJfQo+ICsKPiArCQlodWItPmNsa19oZWFkc1tpXSA9IGNsazsKPiArCX0KPiArCj4g
+KwlvZl9ub2RlX3B1dChjaGlsZCk7Cj4gKwo+ICAJLyogWFhYOiBlbmFibGUgY2xvY2sgYWNyb3Nz
+IHJlc2V0PyAqLwo+ICAJZXJyID0gcmVzZXRfY29udHJvbF9hc3NlcnQoaHViLT5yc3QpOwo+ICAJ
+aWYgKGVyciA8IDApCj4gQEAgLTg0MCwxMiArODcwLDE2IEBAIHN0YXRpYyBpbnQgdGVncmFfZGlz
+cGxheV9odWJfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIHN0YXRpYyBp
+bnQgX19tYXliZV91bnVzZWQgdGVncmFfZGlzcGxheV9odWJfc3VzcGVuZChzdHJ1Y3QgZGV2aWNl
+ICpkZXYpCj4gIHsKPiAgCXN0cnVjdCB0ZWdyYV9kaXNwbGF5X2h1YiAqaHViID0gZGV2X2dldF9k
+cnZkYXRhKGRldik7Cj4gKwl1bnNpZ25lZCBpbnQgaSA9IGh1Yi0+bnVtX2hlYWRzOwo+ICAJaW50
+IGVycjsKPiAgCj4gIAllcnIgPSByZXNldF9jb250cm9sX2Fzc2VydChodWItPnJzdCk7Cj4gIAlp
+ZiAoZXJyIDwgMCkKPiAgCQlyZXR1cm4gZXJyOwo+ICAKPiArCXdoaWxlIChpLS0pCj4gKwkJY2xr
+X2Rpc2FibGVfdW5wcmVwYXJlKGh1Yi0+Y2xrX2hlYWRzW2ldKTsKPiArCj4gIAljbGtfZGlzYWJs
+ZV91bnByZXBhcmUoaHViLT5jbGtfaHViKTsKPiAgCWNsa19kaXNhYmxlX3VucHJlcGFyZShodWIt
+PmNsa19kc2MpOwo+ICAJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGh1Yi0+Y2xrX2Rpc3ApOwo+IEBA
+IC04NTYsNiArODkwLDcgQEAgc3RhdGljIGludCBfX21heWJlX3VudXNlZCB0ZWdyYV9kaXNwbGF5
+X2h1Yl9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKPiAgc3RhdGljIGludCBfX21heWJlX3Vu
+dXNlZCB0ZWdyYV9kaXNwbGF5X2h1Yl9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQo+ICB7Cj4g
+IAlzdHJ1Y3QgdGVncmFfZGlzcGxheV9odWIgKmh1YiA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+
+ICsJdW5zaWduZWQgaW50IGk7Cj4gIAlpbnQgZXJyOwo+ICAKPiAgCWVyciA9IGNsa19wcmVwYXJl
+X2VuYWJsZShodWItPmNsa19kaXNwKTsKPiBAQCAtODcwLDEzICs5MDUsMjIgQEAgc3RhdGljIGlu
+dCBfX21heWJlX3VudXNlZCB0ZWdyYV9kaXNwbGF5X2h1Yl9yZXN1bWUoc3RydWN0IGRldmljZSAq
+ZGV2KQo+ICAJaWYgKGVyciA8IDApCj4gIAkJZ290byBkaXNhYmxlX2RzYzsKPiAgCj4gKwlmb3Ig
+KGkgPSAwOyBpIDwgaHViLT5udW1faGVhZHM7IGkrKykgewo+ICsJCWVyciA9IGNsa19wcmVwYXJl
+X2VuYWJsZShodWItPmNsa19oZWFkc1tpXSk7Cj4gKwkJaWYgKGVyciA8IDApCj4gKwkJCWdvdG8g
+ZGlzYWJsZV9oZWFkczsKPiArCX0KPiArCj4gIAllcnIgPSByZXNldF9jb250cm9sX2RlYXNzZXJ0
+KGh1Yi0+cnN0KTsKPiAgCWlmIChlcnIgPCAwKQo+IC0JCWdvdG8gZGlzYWJsZV9odWI7Cj4gKwkJ
+Z290byBkaXNhYmxlX2hlYWRzOwo+ICAKPiAgCXJldHVybiAwOwo+ICAKPiAtZGlzYWJsZV9odWI6
+Cj4gK2Rpc2FibGVfaGVhZHM6Cj4gKwl3aGlsZSAoaS0tKQo+ICsJCWNsa19kaXNhYmxlX3VucHJl
+cGFyZShodWItPmNsa19oZWFkc1tpXSk7Cj4gKwo+ICAJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGh1
+Yi0+Y2xrX2h1Yik7Cj4gIGRpc2FibGVfZHNjOgo+ICAJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGh1
+Yi0+Y2xrX2RzYyk7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuaCBi
+L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuaAo+IGluZGV4IDY2OTZhODVmYzFmMi4uNDc5MDg3
+YzA3MDVhIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuaAo+ICsrKyBi
+L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9odWIuaAo+IEBAIC00OSw2ICs0OSw5IEBAIHN0cnVjdCB0
+ZWdyYV9kaXNwbGF5X2h1YiB7Cj4gIAlzdHJ1Y3QgY2xrICpjbGtfaHViOwo+ICAJc3RydWN0IHJl
+c2V0X2NvbnRyb2wgKnJzdDsKPiAgCj4gKwl1bnNpZ25lZCBpbnQgbnVtX2hlYWRzOwo+ICsJc3Ry
+dWN0IGNsayAqKmNsa19oZWFkczsKPiArCj4gIAljb25zdCBzdHJ1Y3QgdGVncmFfZGlzcGxheV9o
+dWJfc29jICpzb2M7Cj4gIAlzdHJ1Y3QgdGVncmFfd2luZG93Z3JvdXAgKndncnBzOwo+ICB9Owo+
+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
