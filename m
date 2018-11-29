@@ -1,103 +1,81 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v4 3/3] thermal: tegra: parse sensor id before sensor register
-Date: Thu, 29 Nov 2018 18:09:43 +0800
-Message-ID: <1543486183-2868-4-git-send-email-wni@nvidia.com>
-References: <1543486183-2868-1-git-send-email-wni@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next/master boot: 142 boots: 2 failed, 130 passed with 7
+ offline, 3 conflicts (next-20181129)
+Date: Thu, 29 Nov 2018 11:44:13 +0000
+Message-ID: <20181129114413.GC10570@sirena.org.uk>
+References: <5bffcc4f.1c69fb81.ee2e8.b541@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1543486183-2868-1-git-send-email-wni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org
-Cc: rui.zhang@intel.com, edubezval@gmail.com, srikars@nvidia.com, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
+Content-Type: multipart/mixed; boundary="===============1491054572=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5bffcc4f.1c69fb81.ee2e8.b541@mx.google.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Ben Skeggs <bskeggs@redhat.com>
+Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-Since different platforms may not support all 4
-sensors, so the sensor registration may be failed.
-Add codes to parse dt to find sensor id which
-need to be registered. So that the registration
-can be successful on all platform.
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
----
- drivers/thermal/tegra/soctherm.c | 46 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+--===============1491054572==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MnLPg7ZWsaic7Fhd"
+Content-Disposition: inline
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 375cadbc24cd..bdc660f2794a 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -1224,6 +1224,42 @@ static void soctherm_init(struct platform_device *pdev)
- 	tegra_soctherm_throttle(&pdev->dev);
- }
- 
-+static bool tegra_soctherm_find_sensor_id(unsigned int sensor_id)
-+{
-+	bool ret = false;
-+	struct of_phandle_args sensor_specs;
-+	struct device_node *np, *sensor_np;
-+
-+	np = of_find_node_by_name(NULL, "thermal-zones");
-+	if (!np)
-+		return ret;
-+
-+	sensor_np = of_get_next_child(np, NULL);
-+	for_each_available_child_of_node(np, sensor_np) {
-+		if (of_parse_phandle_with_args(sensor_np, "thermal-sensors",
-+						 "#thermal-sensor-cells",
-+						 0, &sensor_specs))
-+			continue;
-+
-+		if (sensor_specs.args_count != 1) {
-+			WARN(sensor_specs.args_count != 1,
-+			     "%s: wrong cells in sensor specifier %d\n",
-+			     sensor_specs.np->name, sensor_specs.args_count);
-+			continue;
-+		}
-+
-+		if (sensor_specs.args[0] == sensor_id) {
-+			ret = true;
-+			break;
-+		}
-+	}
-+
-+	of_node_put(np);
-+	of_node_put(sensor_np);
-+
-+	return ret;
-+}
-+
- static const struct of_device_id tegra_soctherm_of_match[] = {
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- 	{
-@@ -1365,13 +1401,16 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 		zone->sg = soc->ttgs[i];
- 		zone->ts = tegra;
- 
-+		if (!tegra_soctherm_find_sensor_id(soc->ttgs[i]->id))
-+			continue;
-+
- 		z = devm_thermal_zone_of_sensor_register(&pdev->dev,
- 							 soc->ttgs[i]->id, zone,
- 							 &tegra_of_thermal_ops);
- 		if (IS_ERR(z)) {
- 			err = PTR_ERR(z);
--			dev_err(&pdev->dev, "failed to register sensor: %d\n",
--				err);
-+			dev_err(&pdev->dev, "failed to register sensor %s: %d\n",
-+				soc->ttgs[i]->name, err);
- 			goto disable_clocks;
- 		}
- 
-@@ -1434,6 +1473,9 @@ static int __maybe_unused soctherm_resume(struct device *dev)
- 		struct thermal_zone_device *tz;
- 
- 		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
-+		if (!tz)
-+			continue;
-+
- 		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
- 		if (err) {
- 			dev_err(&pdev->dev,
--- 
-2.7.4
+
+--MnLPg7ZWsaic7Fhd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Nov 29, 2018 at 03:23:59AM -0800, kernelci.org bot wrote:
+
+Today's -next crashes on Jetson TK1 when the Nouveau module is loaded if
+it can't find firmware:
+
+[    7.617291] nouveau 57000000.gpu: Linked as a consumer to regulator.33
+[    7.624037] nouveau 57000000.gpu: NVIDIA GK20A (0ea000a1)
+[    7.629880] nouveau 57000000.gpu: imem: using IOMMU
+[    7.635013] nouveau 57000000.gpu: Direct firmware load for nvidia/gk20a/fecs_inst.bin failed with error -2
+[    7.644726] nouveau 57000000.gpu: Direct firmware load for nouveau/nvea_fuc409c failed with error -2
+[    7.653960] nouveau 57000000.gpu: Direct firmware load for nouveau/fuc409c failed with error -2
+[    7.662916] nouveau 57000000.gpu: gr: failed to load fuc409c
+[    7.669694] Unable to handle kernel NULL pointer dereference at virtual address 0000006c
+
+This has been there for ~30 days but obscured by other issues.  Full
+log and other info can be found at:
+
+    https://kernelci.org/boot/id/5bffa74b59b5148342fddd64/
+
+--MnLPg7ZWsaic7Fhd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv/0QwACgkQJNaLcl1U
+h9DpFwf/XpGYSRyxJo51nt01usoNzd9Qck8cJZUoG2pgAm/i3EBhnoc/TN23xMFx
+aKhpHHgokR99c23+AfAg+yAzzzX5ZTwtYsvMLbnpz/NfSESr9eiyIqyU1VQpM6w8
+osNIFuIdF/Yx4tnRjCl0NY54eyt85zLdU4l7Akxq0qYaeCqisbCpvwtyPiLsf1sf
+5vx4C8Ahmc1urhkjEFJ7I/pBcG3QM6vHGuLwgC1LjTWDDTCxXuY+smCPAnppZCBi
+wRIcdoEJsPmjhwK+R6dQrJni72EXNiwlcpdH7ZY4gdlvfpK8VMWg+lEJUEz8yG+m
+y82xf0yXjuFInNXvBNwpZdo/9M5lig==
+=E0Ch
+-----END PGP SIGNATURE-----
+
+--MnLPg7ZWsaic7Fhd--
+
+--===============1491054572==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1491054572==--
