@@ -1,132 +1,127 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v4 3/3] thermal: tegra: parse sensor id before sensor
- register
-Date: Fri, 30 Nov 2018 11:00:21 +0800
-Message-ID: <19b6f139-c54c-6bf7-45ab-6e8bcbf8e6d8@nvidia.com>
-References: <1543486183-2868-1-git-send-email-wni@nvidia.com>
- <1543486183-2868-4-git-send-email-wni@nvidia.com>
- <20181129164656.GA2688@localhost.localdomain>
+Subject: Re: [PATCH] thermal: tegra: add get_trend ops
+Date: Fri, 30 Nov 2018 11:07:42 +0800
+Message-ID: <f2d10339-4086-7102-9949-719483f545bf@nvidia.com>
+References: <1542705077-29697-1-git-send-email-wni@nvidia.com>
+ <20181120153833.GB28796@ulmo>
+ <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
+ <20181129170145.GG2688@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181129164656.GA2688@localhost.localdomain>
+In-Reply-To: <20181129170145.GG2688@localhost.localdomain>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Eduardo Valentin <edubezval@gmail.com>
-Cc: thierry.reding@gmail.com, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, srikars@nvidia.com, linux-kernel@vger.kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>, daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org, rui.zhang@intel.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 30/11/2018 12:46 AM, Eduardo Valentin wrote:
-> On Thu, Nov 29, 2018 at 06:09:43PM +0800, Wei Ni wrote:
->> Since different platforms may not support all 4
->> sensors, so the sensor registration may be failed.
->> Add codes to parse dt to find sensor id which
->> need to be registered. So that the registration
->> can be successful on all platform.
+On 30/11/2018 1:01 AM, Eduardo Valentin wrote:
+> On Wed, Nov 21, 2018 at 02:36:10PM +0800, Wei Ni wrote:
 >>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  drivers/thermal/tegra/soctherm.c | 46 ++++++++++++++++++++++++++++++++++++++--
->>  1 file changed, 44 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
->> index 375cadbc24cd..bdc660f2794a 100644
->> --- a/drivers/thermal/tegra/soctherm.c
->> +++ b/drivers/thermal/tegra/soctherm.c
->> @@ -1224,6 +1224,42 @@ static void soctherm_init(struct platform_device *pdev)
->>  	tegra_soctherm_throttle(&pdev->dev);
->>  }
->>  
->> +static bool tegra_soctherm_find_sensor_id(unsigned int sensor_id)
->> +{
->> +	bool ret = false;
->> +	struct of_phandle_args sensor_specs;
->> +	struct device_node *np, *sensor_np;
->> +
->> +	np = of_find_node_by_name(NULL, "thermal-zones");
->> +	if (!np)
->> +		return ret;
->> +
->> +	sensor_np = of_get_next_child(np, NULL);
->> +	for_each_available_child_of_node(np, sensor_np) {
->> +		if (of_parse_phandle_with_args(sensor_np, "thermal-sensors",
->> +						 "#thermal-sensor-cells",
->> +						 0, &sensor_specs))
->> +			continue;
->> +
->> +		if (sensor_specs.args_count != 1) {
->> +			WARN(sensor_specs.args_count != 1,
->> +			     "%s: wrong cells in sensor specifier %d\n",
->> +			     sensor_specs.np->name, sensor_specs.args_count);
->> +			continue;
->> +		}
->> +
->> +		if (sensor_specs.args[0] == sensor_id) {
->> +			ret = true;
->> +			break;
->> +		}
->> +	}
->> +
->> +	of_node_put(np);
->> +	of_node_put(sensor_np);
->> +
->> +	return ret;
->> +}
->> +
->>  static const struct of_device_id tegra_soctherm_of_match[] = {
->>  #ifdef CONFIG_ARCH_TEGRA_124_SOC
->>  	{
->> @@ -1365,13 +1401,16 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
->>  		zone->sg = soc->ttgs[i];
->>  		zone->ts = tegra;
->>  
->> +		if (!tegra_soctherm_find_sensor_id(soc->ttgs[i]->id))
->> +			continue;
->> +
+>> On 20/11/2018 11:38 PM, Thierry Reding wrote:
+>>> On Tue, Nov 20, 2018 at 05:11:17PM +0800, Wei Ni wrote:
+>>>> Add support for get_trend ops that allows soctherm
+>>>> sensors to be used with the step-wise governor.
+>>>>
+>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>> ---
+>>>>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
+>>>>  1 file changed, 34 insertions(+)
+>>>>
+>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>>>> index ed28110a3535..d2951fbe2b7c 100644
+>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+>>>>  	return 0;
+>>>>  }
+>>>>  
+>>>> +static int tegra_thermctl_get_trend(void *data, int trip,
+>>>> +				    enum thermal_trend *trend)
+>>>> +{
+>>>> +	struct tegra_thermctl_zone *zone = data;
+>>>> +	struct thermal_zone_device *tz = zone->tz;
+>>>> +	int trip_temp, temp, last_temp, ret;
+>>>> +
+>>>> +	if (!tz)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	mutex_lock(&tz->lock);
+>>>> +	temp = tz->temperature;
+>>>> +	last_temp = tz->last_temperature;
+>>>> +	mutex_unlock(&tz->lock);
+>>>> +
+>>>> +	if (temp > trip_temp) {
+>>>> +		if (temp >= last_temp)
+>>>> +			*trend = THERMAL_TREND_RAISING;
+>>>> +		else
+>>>> +			*trend = THERMAL_TREND_STABLE;
+>>>> +	} else if (temp < trip_temp) {
+>>>> +		*trend = THERMAL_TREND_DROPPING;
+>>>> +	} else {
+>>>> +		*trend = THERMAL_TREND_STABLE;
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>
+>>> This looks like a reimplementation of the get_tz_trend() helper. Is
+>>> seems like that helper already has everything we need. Perhaps this
+>>> isn't working because of-thermal installs of_thermal_get_trend(), a
+>>> function that returns -EINVAL if the driver doesn't implement the
+>>> ->get_trend() callback.
+>>
+>> 1. The get_tz_trend() helper can work, because it has:
+>> if (tz->emul_temperature || !tz->ops->get_trend ||
+>>             tz->ops->get_trend(tz, trip, &trend)) {
+>> ...
+>> }
+>> the tz->ops->get_trend is of_thermal_get_trend(). If without special
+>> get_trend(), it will return -EINVAL, so it will implement the if block
+>> to get the "trend". If we have the special get_trend(), then the
+>> of_thermal_get_trend() will return 0, so this helper will not implement
+>> the if block, it will get the "trend" from the special get_trend().
 > 
-> 
-> Instead of matching driver id with DT id presence, wouldnt make sense to
-> simply have DT with the sensors that makes sense for that platform?
-> 
-> I am failing to understand why you need to go over and find ids.
+> The idea of the helper is to provide a trend in case drivers dont have
+> a specific way of doing so. 
 
-As discussed with Daniel several days ago, this driver will always try
-to register 4 thermal zones, including cpu, gpu, mem and pll, but some
-platform doesn't need to support all of them, so the thermal zone
-registration will be failed. In previous patches, we just ignore the
-failure and continue to register next sensors, but Daniel think it's not
-good. And per his suggestion, we refer to the qoriq thermal driver to
-parse dt to get sensor_id, so that we can make the registration to be
-successful.
-
-Wei.
+Yes, thanks for your explanation.
 
 > 
->>  		z = devm_thermal_zone_of_sensor_register(&pdev->dev,
->>  							 soc->ttgs[i]->id, zone,
->>  							 &tegra_of_thermal_ops);
->>  		if (IS_ERR(z)) {
->>  			err = PTR_ERR(z);
->> -			dev_err(&pdev->dev, "failed to register sensor: %d\n",
->> -				err);
->> +			dev_err(&pdev->dev, "failed to register sensor %s: %d\n",
->> +				soc->ttgs[i]->name, err);
->>  			goto disable_clocks;
->>  		}
->>  
->> @@ -1434,6 +1473,9 @@ static int __maybe_unused soctherm_resume(struct device *dev)
->>  		struct thermal_zone_device *tz;
->>  
->>  		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
->> +		if (!tz)
->> +			continue;
->> +
->>  		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
->>  		if (err) {
->>  			dev_err(&pdev->dev,
->> -- 
->> 2.7.4
 >>
+>> 2. There has a little difference between the helper and our special
+>> callback. The tegra_thermctl_get_trend() consider the trip_temp, but the
+>> get_tz_trend() helper didn't.
+>>
+> 
+> Yeah, if you are computing trend towards a trip, then yes, that is
+> different and this patch is needed.
+> 
+>>>
+>>> Perhaps a better way would be to do something like this in
+>>> thermal_zone_of_add_sensor():
+>>>
+>>> 	if (ops->get_trend)
+>>> 		tzd->ops->get_trend = of_thermal_get_trend;
+>>>
+>>> That's similar to how ->set_trips() and ->set_emul_temp() are set up
+>>> and should make sure that get_tz_trend() will do the right thing for
+>>> all drivers that don't implement a special ->get_trend().
+>>
+>> As above description, I think the of_thermal_get_trend() already can
+>> handle this case, doesn't need to change.
+>>
+>> Wei.
+>>
+>>>
+>>> Thierry
+>>>
