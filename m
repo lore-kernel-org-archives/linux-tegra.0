@@ -1,50 +1,47 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/92] 4.9.142-stable review
-Date: Fri, 30 Nov 2018 11:36:39 +0100
-Message-ID: <20181130103639.GA11558@kroah.com>
-References: <20181129140106.520639693@linuxfoundation.org>
- <cef73be8-b2d1-dda1-ff57-d39fd15baa03@nvidia.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH v2] net: stmmac: Move debugfs init/exit to
+ ->probe()/->remove()
+Date: Fri, 30 Nov 2018 13:16:48 -0800 (PST)
+Message-ID: <20181130.131648.1001002082761494151.davem@davemloft.net>
+References: <20181123122122.18957-1-thierry.reding@gmail.com>
+        <20181127132143.10473-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <cef73be8-b2d1-dda1-ff57-d39fd15baa03@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181127132143.10473-1-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com
+Cc: peppe.cavallaro@st.com, alexandre.torgue@st.com, joabreu@synopsys.com, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 09:10:27AM +0000, Jon Hunter wrote:
-> 
-> On 29/11/2018 14:11, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.9.142 release.
-> > There are 92 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat Dec  1 14:00:37 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.142-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.9:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     14 tests:	14 pass, 0 fail
-> 
-> Linux version:	4.9.142-rc1-gf46aebe
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Tue, 27 Nov 2018 14:21:43 +0100
 
-Great, thanks for testing and letting me know.
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Setting up and tearing down debugfs is current unbalanced, as seen by
+> this error during resume from suspend:
+> 
+>     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
+>     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
+> 
+> The imbalance happens because the driver creates the debugfs hierarchy
+> when the device is opened and tears it down when the device is closed.
+> There's little gain in that, and it could be argued that it is even
+> surprising because it's not usually done for other devices. Fix the
+> imbalance by moving the debugfs creation and teardown to the driver's
+> ->probe() and ->remove() implementations instead.
+> 
+> Note that the ring descriptors cannot be read while the interface is
+> down, so make sure to return an empty file when the descriptors_status
+> debugfs file is read.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> This applies on top of net-next.
+> 
+> Changes in v2:
+> - avoid access to ring descriptors when interface is down
 
-greg k-h
+Applied, thanks.
