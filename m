@@ -1,47 +1,94 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH v2] net: stmmac: Move debugfs init/exit to
- ->probe()/->remove()
-Date: Fri, 30 Nov 2018 13:16:48 -0800 (PST)
-Message-ID: <20181130.131648.1001002082761494151.davem@davemloft.net>
-References: <20181123122122.18957-1-thierry.reding@gmail.com>
-        <20181127132143.10473-1-thierry.reding@gmail.com>
+From: Evan Green <evgreen@chromium.org>
+Subject: Re: [PATCH v10 2/7] dt-bindings: Introduce interconnect binding
+Date: Fri, 30 Nov 2018 16:38:31 -0800
+Message-ID: <CAE=gft5z0=Rp_+jj2JTKF4Kn-RB6AK0Ke1ByUuRwrZHwvNDcCg@mail.gmail.com>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org> <20181127180349.29997-3-georgi.djakov@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181127132143.10473-1-thierry.reding@gmail.com>
+In-Reply-To: <20181127180349.29997-3-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com
-Cc: peppe.cavallaro@st.com, alexandre.torgue@st.com, joabreu@synopsys.com, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: georgi.djakov@linaro.org
+Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, rjw@rjwysocki.net, robh+dt@kernel.org, Michael Turquette <mturquette@baylibre.com>, khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>, maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 27 Nov 2018 14:21:43 +0100
-
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Setting up and tearing down debugfs is current unbalanced, as seen by
-> this error during resume from suspend:
-> 
->     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
->     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
-> 
-> The imbalance happens because the driver creates the debugfs hierarchy
-> when the device is opened and tears it down when the device is closed.
-> There's little gain in that, and it could be argued that it is even
-> surprising because it's not usually done for other devices. Fix the
-> imbalance by moving the debugfs creation and teardown to the driver's
-> ->probe() and ->remove() implementations instead.
-> 
-> Note that the ring descriptors cannot be read while the interface is
-> down, so make sure to return an empty file when the descriptors_status
-> debugfs file is read.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> This binding is intended to represent the relations between the interconnect
+> controllers (providers) and consumer device nodes. It will allow creating links
+> between consumers and interconnect paths (exposed by interconnect providers).
+>
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 > ---
-> This applies on top of net-next.
-> 
-> Changes in v2:
-> - avoid access to ring descriptors when interface is down
+>  .../bindings/interconnect/interconnect.txt    | 60 +++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
+>
+> diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+> new file mode 100644
+> index 000000000000..6775c07e1574
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+> @@ -0,0 +1,60 @@
+> +Interconnect Provider Device Tree Bindings
+> +=========================================
+> +
+> +The purpose of this document is to define a common set of generic interconnect
+> +providers/consumers properties.
+> +
+> +
+> += interconnect providers =
+> +
+> +The interconnect provider binding is intended to represent the interconnect
+> +controllers in the system. Each provider registers a set of interconnect
+> +nodes, which expose the interconnect related capabilities of the interconnect
+> +to consumer drivers. These capabilities can be throughput, latency, priority
+> +etc. The consumer drivers set constraints on interconnect path (or endpoints)
+> +depending on the use case. Interconnect providers can also be interconnect
+> +consumers, such as in the case where two network-on-chip fabrics interface
+> +directly.
+> +
+> +Required properties:
+> +- compatible : contains the interconnect provider compatible string
+> +- #interconnect-cells : number of cells in a interconnect specifier needed to
+> +                       encode the interconnect node id
+> +
+> +Example:
+> +
+> +               snoc: interconnect@580000 {
+> +                       compatible = "qcom,msm8916-snoc";
+> +                       #interconnect-cells = <1>;
+> +                       reg = <0x580000 0x14000>;
+> +                       clock-names = "bus_clk", "bus_a_clk";
+> +                       clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
+> +                                <&rpmcc RPM_SMD_SNOC_A_CLK>;
+> +               };
+> +
+> +
+> += interconnect consumers =
+> +
+> +The interconnect consumers are device nodes which dynamically express their
+> +bandwidth requirements along interconnect paths they are connected to. There
+> +can be multiple interconnect providers on a SoC and the consumer may consume
+> +multiple paths from different providers depending on use case and the
+> +components it has to interact with.
+> +
+> +Required properties:
+> +interconnects : Pairs of phandles and interconnect provider specifier to denote
+> +               the edge source and destination ports of the interconnect path.
+> +
+> +Optional properties:
+> +interconnect-names : List of interconnect path name strings sorted in the same
+> +                    order as the interconnects property. Consumers drivers will use
+> +                    interconnect-names to match interconnect paths with interconnect
+> +                    specifier pairs.
+> +
+> +Example:
+> +
+> +       sdhci@7864000 {
+> +               ...
+> +               interconnects = <&pnoc MASTER_SDCC_1 &bimc SLAVE_EBI_CH0>;
+> +               interconnect-names = "sdhc-ddr";
+> +       };
 
-Applied, thanks.
+Reviewed-by: Evan Green <evgreen@chromium.org>
