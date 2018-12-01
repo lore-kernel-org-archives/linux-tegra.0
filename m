@@ -1,119 +1,137 @@
-From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Subject: [PATCH v2 0/9] iommu: clean up/remove modular stuff from non-modules.
-Date: Sat, 1 Dec 2018 14:19:08 -0500
-Message-ID: <1543691957-17608-1-git-send-email-paul.gortmaker@windriver.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 7/9] iommu/tegra: Make it explicitly non-modular
+Date: Sat, 1 Dec 2018 14:19:15 -0500
+Message-ID: <1543691957-17608-8-git-send-email-paul.gortmaker@windriver.com>
+References: <1543691957-17608-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stepan Moskovchenko <stepanm-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1543691957-17608-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The work here represents a scan over the iommu dir, looking for files/drivers
-that have nothing to do with a modular use case, but are using modular
-infrastructure regardless.
+The Kconfig currently controlling compilation of this code is:
 
-We are trying to make driver code consistent with the Makefiles/Kconfigs that
-control them.  This means not using modular functions/macros for drivers that
-can never be built as a module.  I've done this in other subsystem dirs
-already, and some of this has already happened in drivers/iommu by others;
-such as 98b72b94def9 ("iommu/rockchip: Prohibit unbind and remove").
+drivers/iommu/Kconfig:config TEGRA_IOMMU_GART
+drivers/iommu/Kconfig:  bool "Tegra GART IOMMU Support"
 
-Using modular infrastructure in non-modules might seem harmless, but some
-of the downfalls this leads to are:
+...meaning that it currently is not being built as a module by anyone.
 
- (1) it is easy to accidentally write unused module_exit and remove code
- (2) it can be misleading when reading the source, thinking it can be
-     modular when the Makefile and/or Kconfig prohibit it
- (3) it requires the include of the module.h header file which in turn
-     includes nearly everything else, thus adding to CPP overhead.
- (4) it gets copied/replicated into other drivers and spreads quickly.
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
 
-The last two commits (arm-smmu related ones) deserve an extra mention,
-and I put them at the end in case they want to be deferred for later or
-altered.  Normally a "module-ectomy" allows us to delete the ".remove"
-function, as per the rockchip commit above, but ...
+We explicitly disallow a driver unbind, since that doesn't have a
+sensible use case anyway, and it allows us to drop the ".remove"
+code for non-modular drivers.
 
-A kexec commit (7aa8619a66ae) tried to improve reliability by trying to
-shutdown the iommu in the compromised/crashing kernel, but of course the
-better solution is to have the recovery kernel be able to handle all of
-the possible initial conditions.  It appears this was done later in the
-commit b63b3439b856 - but I don't know if that means relying on an
-orderly shutdown is no longer required - I don't have the platform and
-am only going on what is in git history.
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
 
-So, as the kexec commit recycled the ".remove" handle to also be the
-".shutdown" handle, in this series the remove function was renamed to
-shutdown, and the ".remove" handle was deleted.  This was IMHO the most
-back compatible way to make this update.  If the reliance on the
-compromised kernel to run ".shutdown" is no longer necessary, then it
-can be removed in a future change.
+We replace module.h with moduleparam.h since the file does actually
+declare some module_param() and the easiest way to keep back
+compatibility with existing use cases is to leave it as-is for now.
 
-Patches were build tested on top of next-20181128 for ARM, ARM64, x86-64
-on an allyesconfig.
+The init function was missing an __init annotation, so it was added.
 
-Paul.
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
 
+Cc: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: iommu@lists.linux-foundation.org
+Cc: linux-tegra@vger.kernel.org
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
+ drivers/iommu/tegra-gart.c | 37 +++++++------------------------------
+ 1 file changed, 7 insertions(+), 30 deletions(-)
 
-[ v2: use recommended iommu subject format, add Acks, trivial tweaks. ]
-
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Honghui Zhang <honghui.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Nate Watterson <nwatters-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Cc: Simon Xue <xxm-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: Stepan Moskovchenko <stepanm-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-
-Paul Gortmaker (9):
-  iommu: audit and remove any unnecessary uses of module.h
-  iommu/rockchip: Make it explicitly non-modular
-  iommu/msm: Make it explicitly non-modular
-  iommu/mediatek: Make it explicitly non-modular
-  iommu/ipmmu-vmsa: Make it explicitly non-modular
-  iommu/qcom: Make it explicitly non-modular
-  iommu/tegra: Make it explicitly non-modular
-  iommu/arm-smmu: Make arm-smmu explicitly non-modular
-  iommu/arm-smmu: Make arm-smmu-v3 explicitly non-modular
-
- drivers/iommu/arm-smmu-v3.c    | 25 +++++++++----------------
- drivers/iommu/arm-smmu.c       | 32 +++++++++++++-------------------
- drivers/iommu/iommu-sysfs.c    |  2 +-
- drivers/iommu/iommu.c          |  3 ++-
- drivers/iommu/ipmmu-vmsa.c     | 18 +++---------------
- drivers/iommu/msm_iommu.c      | 13 +++----------
- drivers/iommu/mtk_iommu_v1.c   | 15 +++------------
- drivers/iommu/qcom_iommu.c     | 16 ++--------------
- drivers/iommu/rockchip-iommu.c | 13 ++++++-------
- drivers/iommu/tegra-gart.c     | 37 +++++++------------------------------
- 10 files changed, 49 insertions(+), 125 deletions(-)
-
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index 7b1361d57a17..da6a4e357b2b 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -3,6 +3,8 @@
+  *
+  * Copyright (c) 2010-2012, NVIDIA CORPORATION.  All rights reserved.
+  *
++ * Author: Hiroshi DOYU <hdoyu@nvidia.com>
++ *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+  * version 2, as published by the Free Software Foundation.
+@@ -19,7 +21,8 @@
+ 
+ #define pr_fmt(fmt)	"%s(): " fmt, __func__
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/moduleparam.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+@@ -478,20 +481,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int tegra_gart_remove(struct platform_device *pdev)
+-{
+-	struct gart_device *gart = platform_get_drvdata(pdev);
+-
+-	iommu_device_unregister(&gart->iommu);
+-	iommu_device_sysfs_remove(&gart->iommu);
+-
+-	writel(0, gart->regs + GART_CONFIG);
+-	if (gart->savedata)
+-		vfree(gart->savedata);
+-	gart_handle = NULL;
+-	return 0;
+-}
+-
+ static const struct dev_pm_ops tegra_gart_pm_ops = {
+ 	.suspend	= tegra_gart_suspend,
+ 	.resume		= tegra_gart_resume,
+@@ -501,34 +490,22 @@ static const struct of_device_id tegra_gart_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-gart", },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra_gart_of_match);
+ 
+ static struct platform_driver tegra_gart_driver = {
+ 	.probe		= tegra_gart_probe,
+-	.remove		= tegra_gart_remove,
+ 	.driver = {
+ 		.name	= "tegra-gart",
+ 		.pm	= &tegra_gart_pm_ops,
+ 		.of_match_table = tegra_gart_of_match,
++		.suppress_bind_attrs = true,
+ 	},
+ };
+ 
+-static int tegra_gart_init(void)
++static int __init tegra_gart_init(void)
+ {
+ 	return platform_driver_register(&tegra_gart_driver);
+ }
+-
+-static void __exit tegra_gart_exit(void)
+-{
+-	platform_driver_unregister(&tegra_gart_driver);
+-}
+-
+ subsys_initcall(tegra_gart_init);
+-module_exit(tegra_gart_exit);
+-module_param(gart_debug, bool, 0644);
+ 
++module_param(gart_debug, bool, 0644);
+ MODULE_PARM_DESC(gart_debug, "Enable GART debugging");
+-MODULE_DESCRIPTION("IOMMU API for GART in Tegra20");
+-MODULE_AUTHOR("Hiroshi DOYU <hdoyu@nvidia.com>");
+-MODULE_ALIAS("platform:tegra-gart");
+-MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
