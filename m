@@ -1,47 +1,62 @@
-From: Evan Green <evgreen@chromium.org>
-Subject: Re: [PATCH v10 6/7] arm64: dts: sdm845: Add interconnect provider DT nodes
-Date: Fri, 30 Nov 2018 16:39:11 -0800
-Message-ID: <CAE=gft4XEqkL4oON=Q1oji=AoYeEdL5DFjy3h6hN6uFR9oRA4A@mail.gmail.com>
-References: <20181127180349.29997-1-georgi.djakov@linaro.org> <20181127180349.29997-7-georgi.djakov@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] memory: tegra: convert to DEFINE_SHOW_ATTRIBUTE
+Date: Sat,  1 Dec 2018 05:30:52 -0500
+Message-ID: <20181201103052.6653-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181127180349.29997-7-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: georgi.djakov@linaro.org
-Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, rjw@rjwysocki.net, robh+dt@kernel.org, Michael Turquette <mturquette@baylibre.com>, khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, amit.kucheria@linaro.org, seansw@qti.qualcomm.com, daidavid1@codeaurora.org, mark.rutland@arm.com, lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>, maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>, thierry.reding@gmail.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 10:04 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->
-> From: David Dai <daidavid1@codeaurora.org>
->
-> Add RSC (Resource State Coordinator) provider
-> dictating network-on-chip interconnect bus performance
-> found on SDM845-based platforms.
->
-> Signed-off-by: David Dai <daidavid1@codeaurora.org>
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index b72bdb0a31a5..856d33604e9c 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1324,6 +1324,11 @@
->                                 compatible = "qcom,sdm845-rpmh-clk";
->                                 #clock-cells = <1>;
->                         };
-> +
-> +                       qnoc: qnoc {
-> +                               compatible = "qcom,sdm845-rsc-hlos";
-> +                               #interconnect-cells = <1>;
-> +                       };
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Should we alphabetize this node above rpmhcc?
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/memory/tegra/tegra124-emc.c | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
->                 };
->
->                 intc: interrupt-controller@17a00000 {
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index eedb7d48e2ea..10e36ae2d573 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -1027,7 +1027,7 @@ static int emc_debug_rate_set(void *data, u64 rate)
+ DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
+ 			emc_debug_rate_set, "%lld\n");
+ 
+-static int emc_debug_supported_rates_show(struct seq_file *s, void *data)
++static int emc_supported_rates_show(struct seq_file *s, void *data)
+ {
+ 	struct tegra_emc *emc = s->private;
+ 	const char *prefix = "";
+@@ -1046,19 +1046,7 @@ static int emc_debug_supported_rates_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int emc_debug_supported_rates_open(struct inode *inode,
+-					  struct file *file)
+-{
+-	return single_open(file, emc_debug_supported_rates_show,
+-			   inode->i_private);
+-}
+-
+-static const struct file_operations emc_debug_supported_rates_fops = {
+-	.open = emc_debug_supported_rates_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(emc_supported_rates);
+ 
+ static void emc_debugfs_init(struct device *dev, struct tegra_emc *emc)
+ {
+@@ -1083,7 +1071,7 @@ static void emc_debugfs_init(struct device *dev, struct tegra_emc *emc)
+ 		dev_err(dev, "failed to create debugfs entry\n");
+ 
+ 	file = debugfs_create_file("supported_rates", S_IRUGO, root, emc,
+-				   &emc_debug_supported_rates_fops);
++				   &emc_supported_rates_fops);
+ 	if (!file)
+ 		dev_err(dev, "failed to create debugfs entry\n");
+ }
+-- 
+2.17.0
