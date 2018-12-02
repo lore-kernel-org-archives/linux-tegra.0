@@ -1,137 +1,372 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 7/9] iommu/tegra: Make it explicitly non-modular
-Date: Sat, 1 Dec 2018 14:19:15 -0500
-Message-ID: <1543691957-17608-8-git-send-email-paul.gortmaker@windriver.com>
-References: <1543691957-17608-1-git-send-email-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] gpu/drm: remove DEFINE_DPU_DEBUGFS_SEQ_FOPS()
+Date: Sat,  1 Dec 2018 22:19:11 -0500
+Message-ID: <20181202031912.9736-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1543691957-17608-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
+To: arnd@arndb.de, abhinavk@codeaurora.org, bzwang@chromium.org, colin.king@canonical.com, airlied@linux.ie, jsanka@codeaurora.org, jcrouse@codeaurora.org, ryadav@codeaurora.org, robdclark@gmail.com, linux@armlinux.org.uk, swboyd@chromium.org, skolluku@codeaurora.org, seanpaul@chromium.org, thierry.reding@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+We already have the DEFINE_SHOW_ATTRIBUTE.There is no need to define
+such a macro separately,so remove DEFINE_DPU_DEBUGFS_SEQ_FOPS.
+Also use DEFINE_SHOW_ATTRIBUTE to simplify some code.
 
-drivers/iommu/Kconfig:config TEGRA_IOMMU_GART
-drivers/iommu/Kconfig:  bool "Tegra GART IOMMU Support"
-
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
-
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-We replace module.h with moduleparam.h since the file does actually
-declare some module_param() and the easiest way to keep back
-compatibility with existing use cases is to leave it as-is for now.
-
-The init function was missing an __init annotation, so it was added.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
-
-Cc: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: iommu@lists.linux-foundation.org
-Cc: linux-tegra@vger.kernel.org
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/iommu/tegra-gart.c | 37 +++++++------------------------------
- 1 file changed, 7 insertions(+), 30 deletions(-)
+ drivers/gpu/drm/armada/armada_debugfs.c      | 21 ++++--------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c | 14 +-------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c     | 33 +++---------------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c  | 17 ++-------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c      | 36 ++++----------------
+ drivers/gpu/host1x/debug.c                   | 34 ++++--------------
+ 6 files changed, 29 insertions(+), 126 deletions(-)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 7b1361d57a17..da6a4e357b2b 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -3,6 +3,8 @@
-  *
-  * Copyright (c) 2010-2012, NVIDIA CORPORATION.  All rights reserved.
-  *
-+ * Author: Hiroshi DOYU <hdoyu@nvidia.com>
-+ *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-  * version 2, as published by the Free Software Foundation.
-@@ -19,7 +21,8 @@
- 
- #define pr_fmt(fmt)	"%s(): " fmt, __func__
- 
--#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/moduleparam.h>
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
- #include <linux/slab.h>
-@@ -478,20 +481,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/armada/armada_debugfs.c b/drivers/gpu/drm/armada/armada_debugfs.c
+index 6758c3a83de2..64dccb7c8be2 100644
+--- a/drivers/gpu/drm/armada/armada_debugfs.c
++++ b/drivers/gpu/drm/armada/armada_debugfs.c
+@@ -28,7 +28,7 @@ static int armada_debugfs_gem_linear_show(struct seq_file *m, void *data)
  	return 0;
  }
  
--static int tegra_gart_remove(struct platform_device *pdev)
--{
--	struct gart_device *gart = platform_get_drvdata(pdev);
--
--	iommu_device_unregister(&gart->iommu);
--	iommu_device_sysfs_remove(&gart->iommu);
--
--	writel(0, gart->regs + GART_CONFIG);
--	if (gart->savedata)
--		vfree(gart->savedata);
--	gart_handle = NULL;
--	return 0;
--}
--
- static const struct dev_pm_ops tegra_gart_pm_ops = {
- 	.suspend	= tegra_gart_suspend,
- 	.resume		= tegra_gart_resume,
-@@ -501,34 +490,22 @@ static const struct of_device_id tegra_gart_of_match[] = {
- 	{ .compatible = "nvidia,tegra20-gart", },
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, tegra_gart_of_match);
- 
- static struct platform_driver tegra_gart_driver = {
- 	.probe		= tegra_gart_probe,
--	.remove		= tegra_gart_remove,
- 	.driver = {
- 		.name	= "tegra-gart",
- 		.pm	= &tegra_gart_pm_ops,
- 		.of_match_table = tegra_gart_of_match,
-+		.suppress_bind_attrs = true,
- 	},
- };
- 
--static int tegra_gart_init(void)
-+static int __init tegra_gart_init(void)
+-static int armada_debugfs_reg_show(struct seq_file *m, void *data)
++static int reg_show(struct seq_file *m, void *data)
  {
- 	return platform_driver_register(&tegra_gart_driver);
+ 	struct drm_device *dev = m->private;
+ 	struct armada_private *priv = dev->dev_private;
+@@ -50,18 +50,7 @@ static int armada_debugfs_reg_show(struct seq_file *m, void *data)
+ 	return 0;
  }
--
--static void __exit tegra_gart_exit(void)
+ 
+-static int armada_debugfs_reg_r_open(struct inode *inode, struct file *file)
 -{
--	platform_driver_unregister(&tegra_gart_driver);
+-	return single_open(file, armada_debugfs_reg_show, inode->i_private);
 -}
 -
- subsys_initcall(tegra_gart_init);
--module_exit(tegra_gart_exit);
--module_param(gart_debug, bool, 0644);
+-static const struct file_operations fops_reg_r = {
+-	.owner = THIS_MODULE,
+-	.open = armada_debugfs_reg_r_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(reg);
  
-+module_param(gart_debug, bool, 0644);
- MODULE_PARM_DESC(gart_debug, "Enable GART debugging");
--MODULE_DESCRIPTION("IOMMU API for GART in Tegra20");
--MODULE_AUTHOR("Hiroshi DOYU <hdoyu@nvidia.com>");
--MODULE_ALIAS("platform:tegra-gart");
--MODULE_LICENSE("GPL v2");
+ static int armada_debugfs_write(struct file *file, const char __user *ptr,
+ 	size_t len, loff_t *off)
+@@ -119,12 +108,14 @@ int armada_drm_debugfs_init(struct drm_minor *minor)
+ 		return ret;
+ 
+ 	de = debugfs_create_file("reg", S_IFREG | S_IRUSR,
+-				 minor->debugfs_root, minor->dev, &fops_reg_r);
++				 minor->debugfs_root, minor->dev,
++				 &reg_fops);
+ 	if (!de)
+ 		return -ENOMEM;
+ 
+ 	de = debugfs_create_file("reg_wr", S_IFREG | S_IWUSR,
+-				 minor->debugfs_root, minor->dev, &fops_reg_w);
++				 minor->debugfs_root, minor->dev,
++				 &fops_reg_w);
+ 	if (!de)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c
+index 879c13fe74e0..7607aac9449c 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c
+@@ -299,18 +299,6 @@ static void dpu_disable_all_irqs(struct dpu_kms *dpu_kms)
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-#define DEFINE_DPU_DEBUGFS_SEQ_FOPS(__prefix)				\
+-static int __prefix ## _open(struct inode *inode, struct file *file)	\
+-{									\
+-	return single_open(file, __prefix ## _show, inode->i_private);	\
+-}									\
+-static const struct file_operations __prefix ## _fops = {		\
+-	.owner = THIS_MODULE,						\
+-	.open = __prefix ## _open,					\
+-	.release = single_release,					\
+-	.read = seq_read,						\
+-	.llseek = seq_lseek,						\
+-}
+ 
+ static int dpu_debugfs_core_irq_show(struct seq_file *s, void *v)
+ {
+@@ -341,7 +329,7 @@ static int dpu_debugfs_core_irq_show(struct seq_file *s, void *v)
+ 	return 0;
+ }
+ 
+-DEFINE_DPU_DEBUGFS_SEQ_FOPS(dpu_debugfs_core_irq);
++DEFINE_SHOW_ATTRIBUTE(dpu_debugfs_core_irq);
+ 
+ int dpu_debugfs_core_irq_init(struct dpu_kms *dpu_kms,
+ 		struct dentry *parent)
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index d4530d60767b..e705bad980ee 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -1309,7 +1309,7 @@ int dpu_crtc_vblank(struct drm_crtc *crtc, bool en)
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
++static int status_show(struct seq_file *s, void *data)
+ {
+ 	struct dpu_crtc *dpu_crtc;
+ 	struct dpu_plane_state *pstate = NULL;
+@@ -1428,24 +1428,6 @@ static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int _dpu_debugfs_status_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, _dpu_debugfs_status_show, inode->i_private);
+-}
+-
+-#define DEFINE_DPU_DEBUGFS_SEQ_FOPS(__prefix)                          \
+-static int __prefix ## _open(struct inode *inode, struct file *file)	\
+-{									\
+-	return single_open(file, __prefix ## _show, inode->i_private);	\
+-}									\
+-static const struct file_operations __prefix ## _fops = {		\
+-	.owner = THIS_MODULE,						\
+-	.open = __prefix ## _open,					\
+-	.release = single_release,					\
+-	.read = seq_read,						\
+-	.llseek = seq_lseek,						\
+-}
+-
+ static int dpu_crtc_debugfs_state_show(struct seq_file *s, void *v)
+ {
+ 	struct drm_crtc *crtc = (struct drm_crtc *) s->private;
+@@ -1468,20 +1450,15 @@ static int dpu_crtc_debugfs_state_show(struct seq_file *s, void *v)
+ 
+ 	return 0;
+ }
+-DEFINE_DPU_DEBUGFS_SEQ_FOPS(dpu_crtc_debugfs_state);
++
++DEFINE_SHOW_ATTRIBUTE(dpu_crtc_debugfs_state);
++DEFINE_SHOW_ATTRIBUTE(status);
+ 
+ static int _dpu_crtc_init_debugfs(struct drm_crtc *crtc)
+ {
+ 	struct dpu_crtc *dpu_crtc;
+ 	struct dpu_kms *dpu_kms;
+ 
+-	static const struct file_operations debugfs_status_fops = {
+-		.open =		_dpu_debugfs_status_open,
+-		.read =		seq_read,
+-		.llseek =	seq_lseek,
+-		.release =	single_release,
+-	};
+-
+ 	if (!crtc)
+ 		return -EINVAL;
+ 	dpu_crtc = to_dpu_crtc(crtc);
+@@ -1496,7 +1473,7 @@ static int _dpu_crtc_init_debugfs(struct drm_crtc *crtc)
+ 	/* don't error check these */
+ 	debugfs_create_file("status", 0400,
+ 			dpu_crtc->debugfs_root,
+-			dpu_crtc, &debugfs_status_fops);
++			dpu_crtc, &status_fops);
+ 	debugfs_create_file("state", 0600,
+ 			dpu_crtc->debugfs_root,
+ 			&dpu_crtc->base,
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 96cdf06e7da2..a36f9f72da87 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -1873,7 +1873,7 @@ void dpu_encoder_prepare_commit(struct drm_encoder *drm_enc)
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-static int _dpu_encoder_status_show(struct seq_file *s, void *data)
++static int status_show(struct seq_file *s, void *data)
+ {
+ 	struct dpu_encoder_virt *dpu_enc;
+ 	int i;
+@@ -1912,11 +1912,7 @@ static int _dpu_encoder_status_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int _dpu_encoder_debugfs_status_open(struct inode *inode,
+-		struct file *file)
+-{
+-	return single_open(file, _dpu_encoder_status_show, inode->i_private);
+-}
++DEFINE_SHOW_ATTRIBUTE(status);
+ 
+ static int _dpu_encoder_init_debugfs(struct drm_encoder *drm_enc)
+ {
+@@ -1925,13 +1921,6 @@ static int _dpu_encoder_init_debugfs(struct drm_encoder *drm_enc)
+ 	struct dpu_kms *dpu_kms;
+ 	int i;
+ 
+-	static const struct file_operations debugfs_status_fops = {
+-		.open =		_dpu_encoder_debugfs_status_open,
+-		.read =		seq_read,
+-		.llseek =	seq_lseek,
+-		.release =	single_release,
+-	};
+-
+ 	char name[DPU_NAME_SIZE];
+ 
+ 	if (!drm_enc || !drm_enc->dev || !drm_enc->dev->dev_private) {
+@@ -1953,7 +1942,7 @@ static int _dpu_encoder_init_debugfs(struct drm_encoder *drm_enc)
+ 
+ 	/* don't error check these */
+ 	debugfs_create_file("status", 0600,
+-		dpu_enc->debugfs_root, dpu_enc, &debugfs_status_fops);
++		dpu_enc->debugfs_root, dpu_enc, &status_fops);
+ 
+ 	for (i = 0; i < dpu_enc->num_phys_encs; i++)
+ 		if (dpu_enc->phys_encs[i] &&
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+index 0a683e65a9f3..c3f036095c53 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+@@ -113,30 +113,19 @@ static int _dpu_danger_signal_status(struct seq_file *s,
+ 	return 0;
+ }
+ 
+-#define DEFINE_DPU_DEBUGFS_SEQ_FOPS(__prefix)				\
+-static int __prefix ## _open(struct inode *inode, struct file *file)	\
+-{									\
+-	return single_open(file, __prefix ## _show, inode->i_private);	\
+-}									\
+-static const struct file_operations __prefix ## _fops = {		\
+-	.owner = THIS_MODULE,						\
+-	.open = __prefix ## _open,					\
+-	.release = single_release,					\
+-	.read = seq_read,						\
+-	.llseek = seq_lseek,						\
+-}
+-
+ static int dpu_debugfs_danger_stats_show(struct seq_file *s, void *v)
+ {
+ 	return _dpu_danger_signal_status(s, true);
+ }
+-DEFINE_DPU_DEBUGFS_SEQ_FOPS(dpu_debugfs_danger_stats);
++
++DEFINE_SHOW_ATTRIBUTE(dpu_debugfs_danger_stats);
+ 
+ static int dpu_debugfs_safe_stats_show(struct seq_file *s, void *v)
+ {
+ 	return _dpu_danger_signal_status(s, false);
+ }
+-DEFINE_DPU_DEBUGFS_SEQ_FOPS(dpu_debugfs_safe_stats);
++
++DEFINE_SHOW_ATTRIBUTE(dpu_debugfs_safe_stats);
+ 
+ static void dpu_debugfs_danger_destroy(struct dpu_kms *dpu_kms)
+ {
+@@ -162,7 +151,7 @@ static int dpu_debugfs_danger_init(struct dpu_kms *dpu_kms,
+ 	return 0;
+ }
+ 
+-static int _dpu_debugfs_show_regset32(struct seq_file *s, void *data)
++static int dpu_regset32_show(struct seq_file *s, void *data)
+ {
+ 	struct dpu_debugfs_regset32 *regset;
+ 	struct dpu_kms *dpu_kms;
+@@ -212,18 +201,7 @@ static int _dpu_debugfs_show_regset32(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int dpu_debugfs_open_regset32(struct inode *inode,
+-		struct file *file)
+-{
+-	return single_open(file, _dpu_debugfs_show_regset32, inode->i_private);
+-}
+-
+-static const struct file_operations dpu_fops_regset32 = {
+-	.open =		dpu_debugfs_open_regset32,
+-	.read =		seq_read,
+-	.llseek =	seq_lseek,
+-	.release =	single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(dpu_regset32);
+ 
+ void dpu_debugfs_setup_regset32(struct dpu_debugfs_regset32 *regset,
+ 		uint32_t offset, uint32_t length, struct dpu_kms *dpu_kms)
+@@ -245,7 +223,7 @@ void *dpu_debugfs_create_regset32(const char *name, umode_t mode,
+ 	regset->offset = round_down(regset->offset, 4);
+ 
+ 	return debugfs_create_file(name, mode, parent,
+-			regset, &dpu_fops_regset32);
++			regset, &dpu_regset32_fops);
+ }
+ 
+ static int _dpu_debugfs_init(struct dpu_kms *dpu_kms)
+diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
+index 329e4a3d8ae7..de7f020e2932 100644
+--- a/drivers/gpu/host1x/debug.c
++++ b/drivers/gpu/host1x/debug.c
+@@ -119,7 +119,7 @@ static void show_all(struct host1x *m, struct output *o, bool show_fifo)
+ 	}
+ }
+ 
+-static int host1x_debug_show_all(struct seq_file *s, void *unused)
++static int host1x_all_show(struct seq_file *s, void *unused)
+ {
+ 	struct output o = {
+ 		.fn = write_to_seqfile,
+@@ -131,7 +131,7 @@ static int host1x_debug_show_all(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int host1x_debug_show(struct seq_file *s, void *unused)
++static int host1x_show(struct seq_file *s, void *unused)
+ {
+ 	struct output o = {
+ 		.fn = write_to_seqfile,
+@@ -143,29 +143,8 @@ static int host1x_debug_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int host1x_debug_open_all(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, host1x_debug_show_all, inode->i_private);
+-}
+-
+-static const struct file_operations host1x_debug_all_fops = {
+-	.open = host1x_debug_open_all,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
+-
+-static int host1x_debug_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, host1x_debug_show, inode->i_private);
+-}
+-
+-static const struct file_operations host1x_debug_fops = {
+-	.open = host1x_debug_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(host1x_all);
++DEFINE_SHOW_ATTRIBUTE(host1x);
+ 
+ static void host1x_debugfs_init(struct host1x *host1x)
+ {
+@@ -177,9 +156,10 @@ static void host1x_debugfs_init(struct host1x *host1x)
+ 	/* Store the created entry */
+ 	host1x->debugfs = de;
+ 
+-	debugfs_create_file("status", S_IRUGO, de, host1x, &host1x_debug_fops);
++	debugfs_create_file("status", S_IRUGO, de, host1x,
++			   &host1x_fops);
+ 	debugfs_create_file("status_all", S_IRUGO, de, host1x,
+-			    &host1x_debug_all_fops);
++			    &host1x_all_fops);
+ 
+ 	debugfs_create_u32("trace_cmdbuf", S_IRUGO|S_IWUSR, de,
+ 			   &host1x_debug_trace_cmdbuf);
 -- 
-2.7.4
+2.17.0
