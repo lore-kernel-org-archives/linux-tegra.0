@@ -1,51 +1,29 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.14 000/100] 4.14.85-stable review
-Date: Mon, 3 Dec 2018 11:38:11 +0000
-Message-ID: <b5b29547-b091-b29f-55c2-7729d7ada10f@nvidia.com>
-References: <20181129140058.768942700@linuxfoundation.org>
- <20181130152948.GB31416@kroah.com>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v2 0/9] iommu: clean up/remove modular stuff from
+ non-modules.
+Date: Mon, 3 Dec 2018 14:32:45 +0100
+Message-ID: <20181203133245.cqwrdjbobop7x36y@8bytes.org>
+References: <1543691957-17608-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20181130152948.GB31416@kroah.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1543691957-17608-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Kurtz <djkurtz@chromium.org>, Heiko Stuebner <heiko@sntech.de>, Hiroshi Doyu <hdoyu@nvidia.com>, Honghui Zhang <honghui.zhang@mediatek.com>, Jeffy Chen <jeffy.chen@rock-chips.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Matthias Brugger <matthias.bgg@gmail.com>, Nate Watterson <nwatters@codeaurora.org>, Rob Clark <robdclark@gmail.com>, Robin Murphy <robin.murphy@arm.com>, Simon Xue <xxm@rock-chips.com>, Stepan Moskovchenko <stepanm@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.
 List-Id: linux-tegra@vger.kernel.org
 
+On Sat, Dec 01, 2018 at 02:19:08PM -0500, Paul Gortmaker wrote:
+> Paul Gortmaker (9):
+>   iommu: audit and remove any unnecessary uses of module.h
+>   iommu/rockchip: Make it explicitly non-modular
+>   iommu/msm: Make it explicitly non-modular
+>   iommu/mediatek: Make it explicitly non-modular
+>   iommu/ipmmu-vmsa: Make it explicitly non-modular
+>   iommu/qcom: Make it explicitly non-modular
+>   iommu/tegra: Make it explicitly non-modular
+>   iommu/arm-smmu: Make arm-smmu explicitly non-modular
+>   iommu/arm-smmu: Make arm-smmu-v3 explicitly non-modular
 
-On 30/11/2018 15:29, Greg Kroah-Hartman wrote:
-> On Thu, Nov 29, 2018 at 03:11:30PM +0100, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 4.14.85 release.
->> There are 100 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Sat Dec  1 14:00:29 UTC 2018.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.85-rc1.gz
-> 
-> I have released a -rc2:
-> 	ttps://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.85-rc2.gz
-> to resolve some reported issues.
-
-Sorry this is late, but all tests passing for Tegra ...
-
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
-
-Linux version:	4.14.85-rc2-gce3bc71
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+Applied all, thanks Paul.
