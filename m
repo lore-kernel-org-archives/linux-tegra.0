@@ -1,52 +1,51 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RESEND PATCH 2/2] clk: tegra30: Use Tegra CPU powergate helper function
-Date: Mon, 3 Dec 2018 10:28:41 +0000
-Message-ID: <1543832921-11661-2-git-send-email-jonathanh@nvidia.com>
-References: <1543832921-11661-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.14 000/100] 4.14.85-stable review
+Date: Mon, 3 Dec 2018 11:38:11 +0000
+Message-ID: <b5b29547-b091-b29f-55c2-7729d7ada10f@nvidia.com>
+References: <20181129140058.768942700@linuxfoundation.org>
+ <20181130152948.GB31416@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1543832921-11661-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20181130152948.GB31416@kroah.com>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Rather than using the tegra_powergate_is_powered() function for
-determining if a CPU is powered, use the tegra_pmc_cpu_is_powered()
-instead which was created to get the CPU power status. Internally
-tegra_pmc_cpu_is_powered() calls tegra_powergate_is_powered() and so
-is equivalent.
 
-The Tegra30 clock driver is the only public user of
-tegra_powergate_is_powered() and so by updating the Tegra30 clock
-driver to use tegra_pmc_cpu_is_powered(), we can then make
-tegra_powergate_is_powered() a non-public function.
+On 30/11/2018 15:29, Greg Kroah-Hartman wrote:
+> On Thu, Nov 29, 2018 at 03:11:30PM +0100, Greg Kroah-Hartman wrote:
+>> This is the start of the stable review cycle for the 4.14.85 release.
+>> There are 100 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
+>>
+>> Responses should be made by Sat Dec  1 14:00:29 UTC 2018.
+>> Anything received after that time might be too late.
+>>
+>> The whole patch series can be found in one patch at:
+>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.85-rc1.gz
+> 
+> I have released a -rc2:
+> 	ttps://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.85-rc2.gz
+> to resolve some reported issues.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
-Resending with Thierry's ACK and CC'ing clock maintainers.
+Sorry this is late, but all tests passing for Tegra ...
 
-drivers/clk/tegra/clk-tegra30.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index e0aaecd98fbf..fa8d573ac626 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1148,9 +1148,9 @@ static bool tegra30_cpu_rail_off_ready(void)
- 
- 	cpu_rst_status = readl(clk_base +
- 				TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
--	cpu_pwr_status = tegra_powergate_is_powered(TEGRA_POWERGATE_CPU1) ||
--			 tegra_powergate_is_powered(TEGRA_POWERGATE_CPU2) ||
--			 tegra_powergate_is_powered(TEGRA_POWERGATE_CPU3);
-+	cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
-+			 tegra_pmc_cpu_is_powered(2) ||
-+			 tegra_pmc_cpu_is_powered(3);
- 
- 	if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
- 		return false;
+Linux version:	4.14.85-rc2-gce3bc71
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.7.4
+nvpublic
