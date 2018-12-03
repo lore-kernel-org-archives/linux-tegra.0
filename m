@@ -1,209 +1,113 @@
-From: Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 30/34] dt-bindings: arm: Convert Tegra board/soc bindings to json-schema
-Date: Mon,  3 Dec 2018 15:32:19 -0600
-Message-ID: <20181203213223.16986-31-robh@kernel.org>
-References: <20181203213223.16986-1-robh@kernel.org>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH 1/4] drm/edid: Pass connector to AVI inforframe functions
+Date: Mon, 3 Dec 2018 23:38:45 +0200
+Message-ID: <20181203213845.GJ9144@intel.com>
+References: <20181120161345.15440-1-ville.syrjala@linux.intel.com>
+ <CGME20181121182023epcas1p1c86d6be2849038018ae535b7718e7753@epcas1p1.samsung.com>
+ <1697503.tFhaoOeOnK@avalon>
+ <6147ea2d-8044-45d5-7a64-9d632ff41b95@samsung.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181203213223.16986-1-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sean Hudson <darknighte@darknighte.com>, Frank Rowand <frowand.list@gmail.com>, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>, Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <6147ea2d-8044-45d5-7a64-9d632ff41b95-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung-Woo Kim <sw03>
 List-Id: linux-tegra@vger.kernel.org
 
-Convert Tegra SoC bindings to DT schema format using json-schema.
-
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/arm/tegra.txt         |  65 -----------
- .../devicetree/bindings/arm/tegra.yaml        | 101 ++++++++++++++++++
- 2 files changed, 101 insertions(+), 65 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/tegra.txt
- create mode 100644 Documentation/devicetree/bindings/arm/tegra.yaml
-
-diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
-deleted file mode 100644
-index c59b15f64346..000000000000
---- a/Documentation/devicetree/bindings/arm/tegra.txt
-+++ /dev/null
-@@ -1,65 +0,0 @@
--NVIDIA Tegra device tree bindings
---------------------------------------------
--
--SoCs
---------------------------------------------
--
--Each device tree must specify which Tegra SoC it uses, using one of the
--following compatible values:
--
--  nvidia,tegra20
--  nvidia,tegra30
--  nvidia,tegra114
--  nvidia,tegra124
--  nvidia,tegra132
--  nvidia,tegra210
--  nvidia,tegra186
--  nvidia,tegra194
--
--Boards
---------------------------------------------
--
--Each device tree must specify which one or more of the following
--board-specific compatible values:
--
--  ad,medcom-wide
--  ad,plutux
--  ad,tamonten
--  ad,tec
--  compal,paz00
--  compulab,trimslice
--  nvidia,beaver
--  nvidia,cardhu
--  nvidia,cardhu-a02
--  nvidia,cardhu-a04
--  nvidia,dalmore
--  nvidia,harmony
--  nvidia,jetson-tk1
--  nvidia,norrin
--  nvidia,p2371-0000
--  nvidia,p2371-2180
--  nvidia,p2571
--  nvidia,p2771-0000
--  nvidia,p2972-0000
--  nvidia,roth
--  nvidia,seaboard
--  nvidia,tn7
--  nvidia,ventana
--  toradex,apalis_t30
--  toradex,apalis_t30-eval
--  toradex,apalis_t30-v1.1
--  toradex,apalis_t30-v1.1-eval
--  toradex,apalis-tk1
--  toradex,apalis-tk1-eval
--  toradex,apalis-tk1-v1.2
--  toradex,apalis-tk1-v1.2-eval
--  toradex,colibri_t20
--  toradex,colibri_t20-eval-v3
--  toradex,colibri_t20-iris
--  toradex,colibri_t30
--  toradex,colibri_t30-eval-v3
--
--Trusted Foundations
---------------------------------------------
--Tegra supports the Trusted Foundation secure monitor. See the
--"tlm,trusted-foundations" binding's documentation for more details.
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-new file mode 100644
-index 000000000000..66493892ffc1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -0,0 +1,101 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/tegra.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra device tree bindings
-+
-+maintainers:
-+  - Marcel Ziswiler <marcel.ziswiler@toradex.com>
-+  - Peter De Schrijver <pdeschrijver@nvidia.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - compal,paz00
-+              - compulab,trimslice
-+              - nvidia,harmony
-+              - nvidia,seaboard
-+              - nvidia,ventana
-+          - const: nvidia,tegra20
-+      - items:
-+          - enum:
-+              - ad,medcom-wide
-+              - ad,plutux
-+              - ad,tec
-+          - const: ad,tamonten
-+          - const: nvidia,tegra20
-+      - items:
-+          - enum:
-+              - toradex,colibri_t20-eval-v3
-+              - toradex,colibri_t20-iris
-+          - const: toradex,colibri_t20
-+          - const: nvidia,tegra20
-+      - items:
-+          - enum:
-+              - nvidia,beaver
-+          - const: nvidia,tegra30
-+      - items:
-+          - enum:
-+              - nvidia,cardhu-a02
-+              - nvidia,cardhu-a04
-+          - const: nvidia,cardhu
-+          - const: nvidia,tegra30
-+      - items:
-+          - const: toradex,apalis_t30-eval
-+          - const: toradex,apalis_t30
-+          - const: nvidia,tegra30
-+      - items:
-+          - const: toradex,apalis_t30-eval-v1.1
-+          - const: toradex,apalis_t30-eval
-+          - const: toradex,apalis_t30-v1.1
-+          - const: toradex,apalis_t30
-+          - const: nvidia,tegra30
-+      - items:
-+          - enum:
-+              - toradex,colibri_t30-eval-v3
-+          - const: toradex,colibri_t30
-+          - const: nvidia,tegra30
-+      - items:
-+          - enum:
-+              - nvidia,dalmore
-+              - nvidia,roth
-+              - nvidia,tn7
-+          - const: nvidia,tegra114
-+      - items:
-+          - enum:
-+              - nvidia,jetson-tk1
-+              - nvidia,venice2
-+          - const: nvidia,tegra124
-+      - items:
-+          - const: toradex,apalis-tk1-eval
-+          - const: toradex,apalis-tk1
-+          - const: nvidia,tegra124
-+      - items:
-+          - const: toradex,apalis-tk1-v1.2-eval
-+          - const: toradex,apalis-tk1-eval
-+          - const: toradex,apalis-tk1-v1.2
-+          - const: toradex,apalis-tk1
-+          - const: nvidia,tegra124
-+      - items:
-+          - enum:
-+              - nvidia,norrin
-+          - const: nvidia,tegra132
-+          - const: nvidia,tegra124
-+      - items:
-+          - enum:
-+              - nvidia,p2371-0000
-+              - nvidia,p2371-2180
-+              - nvidia,p2571
-+          - const: nvidia,tegra210
-+      - items:
-+          - enum:
-+              - nvidia,p2771-0000
-+          - const: nvidia,tegra186
-+      - items:
-+          - enum:
-+              - nvidia,p2972-0000
-+          - const: nvidia,tegra194
--- 
-2.19.1
+T24gVGh1LCBOb3YgMjksIDIwMTggYXQgMTA6MDg6MDdBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPiBPbiAyMS4xMS4yMDE4IDE5OjE5LCBMYXVyZW50IFBpbmNoYXJ0IHdyb3RlOgo+ID4g
+SGkgVmlsbGUsCj4gPgo+ID4gVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCj4gPgo+ID4gT24gVHVl
+c2RheSwgMjAgTm92ZW1iZXIgMjAxOCAxODoxMzo0MiBFRVQgVmlsbGUgU3lyamFsYSB3cm90ZToK
+PiA+PiBGcm9tOiBWaWxsZSBTeXJqw6Rsw6QgPHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwuY29t
+Pgo+ID4+Cj4gPj4gTWFrZSBsaWZlIGVhc2llciBmb3IgZHJpdmVycyBieSBzaW1wbHkgcGFzc2lu
+ZyB0aGUgY29ubmVjdG9yCj4gPj4gdG8gZHJtX2hkbWlfYXZpX2luZm9mcmFtZV9mcm9tX2Rpc3Bs
+YXlfbW9kZSgpIGFuZAo+ID4+IGRybV9oZG1pX2F2aV9pbmZvZnJhbWVfcXVhbnRfcmFuZ2UoKS4g
+VGhhdCB3YXkgZHJpdmVycyBkb24ndAo+ID4+IG5lZWQgdG8gd29ycnkgYWJvdXQgaXNfaGRtaTJf
+c2luayBtZXNzLgo+ID4gV2hpbGUgdGhpcyBpcyBnb29kIGZvciBkaXNwbGF5IGNvbnRyb2xsZXIg
+ZHJpdmVycywgdGhlIGNoYW5nZSBpc24ndCBncmVhdCBmb3IgCj4gPiBicmlkZ2UgZHJpdmVycy4g
+RG93biB0aGUgcm9hZCB3ZSdyZSBsb29raW5nIGF0IG1vdmluZyBjb25uZWN0b3Igc3VwcG9ydCBv
+dXQgb2YgCj4gPiB0aGUgYnJpZGdlIGRyaXZlcnMuIEFkZGluZyBhbiBhZGRpdGlvbmFsIGRlcGVu
+ZGVuY3kgdG8gY29ubmVjdG9ycyBpbiB0aGUgCj4gPiBicmlkZ2VzIHdpbGwgbWFrZSB0aGF0IG1v
+cmUgZGlmZmljdWx0LiBJZGVhbGx5IGJyaWRnZXMgc2hvdWxkIHJldHJpZXZlIHRoZSAKPiA+IGlu
+Zm9ybWF0aW9uIGZyb20gdGhlaXIgc2luaywgcmVnYXJkbGVzcyBvZiB3aGV0aGVyIGl0IGlzIGEg
+Y29ubmVjdG9yIG9yIAo+ID4gYW5vdGhlciBicmlkZ2UuCj4gCj4gCj4gSSBhZ3JlZSB3aXRoIGl0
+LCBhbmQgY2FzZSBvZiBzaWk4NjIwIHNob3dzIHRoYXQgdGhlcmUgYXJlIGNhc2VzIHdoZXJlCj4g
+YnJpZGdlIGhhcyBubyBkaXJlY3QgYWNjZXNzIHRvIHRoZSBjb25uZWN0b3IuCgpJdCdzIGp1c3Qg
+YSBtYXR0ZXIgb2YgcGx1bWJpbmcgaXQgdGhyb3VnaC4KCj4gCj4gT24gdGhlIG90aGVyIHNpZGUs
+wqAgc2luY2UgeW91IGFyZSBwYXNzaW5nIGNvbm5lY3RvciB0bwo+IGRybV9oZG1pX2F2aV9pbmZv
+ZnJhbWVfZnJvbV9kaXNwbGF5X21vZGUoKSwgeW91IGNvdWxkIGRyb3AgbW9kZQo+IHBhcmFtZXRl
+ciBhbmQgcmVuYW1lIHRoZSBmdW5jdGlvbiB0bwo+IGRybV9oZG1pX2F2aV9pbmZvZnJhbWVfZnJv
+bV9jb25uZWN0b3IoKSB0aGVuLCB1bmxlc3MgbW9kZSBwYXNzZWQgYW5kCj4gbW9kZSBzZXQgb24g
+dGhlIGNvbm5lY3RvciBkaWZmZXJzPwoKQ29ubmVjdG9ycyBkb24ndCBoYXZlIGEgbW9kZS4KCj4g
+Cj4gCj4gUmVnYXJkcwo+IAo+IEFuZHJ6ZWoKPiAKPiAKPiA+Cj4gPiBQbGVhc2Ugc2VlIGJlbG93
+IGZvciBhbiBhZGRpdGlvbmFsIGNvbW1lbnQuCj4gPgo+ID4+IENjOiBBbGV4IERldWNoZXIgPGFs
+ZXhhbmRlci5kZXVjaGVyQGFtZC5jb20+Cj4gPj4gQ2M6ICJDaHJpc3RpYW4gS8O2bmlnIiA8Y2hy
+aXN0aWFuLmtvZW5pZ0BhbWQuY29tPgo+ID4+IENjOiAiRGF2aWQgKENodW5NaW5nKSBaaG91IiA8
+RGF2aWQxLlpob3VAYW1kLmNvbT4KPiA+PiBDYzogQXJjaGl0IFRhbmVqYSA8YXJjaGl0dEBjb2Rl
+YXVyb3JhLm9yZz4KPiA+PiBDYzogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4K
+PiA+PiBDYzogTGF1cmVudCBQaW5jaGFydCA8TGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQu
+Y29tPgo+ID4+IENjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4gPj4gQ2M6IEpv
+b255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiA+PiBDYzogU2V1bmctV29v
+IEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPiA+PiBDYzogS3l1bmdtaW4gUGFyayA8a3l1
+bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4KPiA+PiBDYzogUnVzc2VsbCBLaW5nIDxsaW51eEBhcm1s
+aW51eC5vcmcudWs+Cj4gPj4gQ2M6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+Cj4gPj4gQ2M6
+IFBoaWxpcHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+Cj4gPj4gQ2M6IFJvYiBDbGFy
+ayA8cm9iZGNsYXJrQGdtYWlsLmNvbT4KPiA+PiBDYzogQmVuIFNrZWdncyA8YnNrZWdnc0ByZWRo
+YXQuY29tPgo+ID4+IENjOiBUb21pIFZhbGtlaW5lbiA8dG9taS52YWxrZWluZW5AdGkuY29tPgo+
+ID4+IENjOiBTYW5keSBIdWFuZyA8aGpjQHJvY2stY2hpcHMuY29tPgo+ID4+IENjOiAiSGVpa28g
+U3TDvGJuZXIiIDxoZWlrb0BzbnRlY2guZGU+Cj4gPj4gQ2M6IEJlbmphbWluIEdhaWduYXJkIDxi
+ZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnPgo+ID4+IENjOiBWaW5jZW50IEFicmlvdSA8dmlu
+Y2VudC5hYnJpb3VAc3QuY29tPgo+ID4+IENjOiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRp
+bmdAZ21haWwuY29tPgo+ID4+IENjOiBFcmljIEFuaG9sdCA8ZXJpY0BhbmhvbHQubmV0Pgo+ID4+
+IENjOiBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5lbC5vcmc+Cj4gPj4gQ2M6IElsaWEgTWlya2lu
+IDxpbWlya2luQGFsdW0ubWl0LmVkdT4KPiA+PiBDYzogYW1kLWdmeEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKPiA+PiBDYzogbGludXgtYXJtLW1zbUB2Z2VyLmtlcm5lbC5vcmcKPiA+PiBDYzogZnJl
+ZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+ID4+IENjOiBub3V2ZWF1QGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwo+ID4+IENjOiBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmcKPiA+PiBTaWdu
+ZWQtb2ZmLWJ5OiBWaWxsZSBTeXJqw6Rsw6QgPHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwuY29t
+Pgo+ID4+IC0tLQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9kY2VfdjEwXzAuYyAg
+ICB8ICAyICstCj4gPj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92MTFfMC5jICAg
+IHwgIDIgKy0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZGNlX3Y2XzAuYyAgICAg
+fCAgMyArKy0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZGNlX3Y4XzAuYyAgICAg
+fCAgMiArLQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4LWFueDc4eHguYyB8
+ICA1ICsrLS0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWk5MDJ4LmMgICAgICAgICAg
+fCAgMyArKy0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaWwtc2lpODYyMC5jICAgICAg
+fCAgMyArLS0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMg
+fCAgMyArKy0KPiA+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMgICAgICAgICAgICAgICAg
+fCAzMyArKysrKysrKysrKysrKy0tLS0tLS0tLQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19oZG1pLmMgICAgICB8ICAzICsrLQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vaTJjL3Rk
+YTk5OHhfZHJ2LmMgICAgICAgICB8ICAzICsrLQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9p
+bnRlbF9oZG1pLmMgICAgICAgICB8IDE0ICsrKysrLS0tLS0KPiA+PiAgZHJpdmVycy9ncHUvZHJt
+L2k5MTUvaW50ZWxfbHNwY29uLmMgICAgICAgfCAxNSArKysrKystLS0tLQo+ID4+ICBkcml2ZXJz
+L2dwdS9kcm0vaTkxNS9pbnRlbF9zZHZvLmMgICAgICAgICB8IDEwICsrKystLS0KPiA+PiAgZHJp
+dmVycy9ncHUvZHJtL21lZGlhdGVrL210a19oZG1pLmMgICAgICAgfCAgMyArKy0KPiA+PiAgZHJp
+dmVycy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfYnJpZGdlLmMgICAgfCAgMyArKy0KPiA+PiAgZHJp
+dmVycy9ncHUvZHJtL25vdXZlYXUvZGlzcG52NTAvZGlzcC5jICAgfCAgNyArKystLQo+ID4+ICBk
+cml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2VuY29kZXIuYyAgICB8ICA1ICsrLS0KPiA+PiAg
+ZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fYXVkaW8uYyAgICAgfCAgMiArLQo+ID4+ICBk
+cml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvaW5ub19oZG1pLmMgICAgICB8ICA0ICsrLQo+ID4+ICBk
+cml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMgICAgICAgICAgICB8ICAzICsrLQo+ID4+ICBk
+cml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfaGRtaV9lbmMuYyAgICB8ICAzICsrLQo+ID4+ICBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICB8ICAzICsrLQo+ID4+ICBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgICAgICAgICAgICAgICB8ICAzICsrLQo+ID4+ICBk
+cml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMgICAgICAgICAgICB8IDExICsrKysrLS0tCj4g
+Pj4gIGRyaXZlcnMvZ3B1L2RybS96dGUvenhfaGRtaS5jICAgICAgICAgICAgIHwgIDQgKystCj4g
+Pj4gIGluY2x1ZGUvZHJtL2RybV9lZGlkLmggICAgICAgICAgICAgICAgICAgIHwgIDggKysrLS0t
+Cj4gPj4gIDI3IGZpbGVzIGNoYW5nZWQsIDk0IGluc2VydGlvbnMoKyksIDY2IGRlbGV0aW9ucygt
+KQo+ID4gRm9yIGR3LWhkbWkgYW5kIG9tYXBkcm0sCj4gPgo+ID4gUmV2aWV3ZWQtYnk6IExhdXJl
+bnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KPiA+CgotLSAK
+VmlsbGUgU3lyasOkbMOkCkludGVsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmFtZC1nZnggbWFpbGluZyBsaXN0CmFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vYW1k
+LWdmeAo=
