@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 18/19] arm64: dts: tegra210-smaug: enable DFLL clock
-Date: Tue, 4 Dec 2018 17:25:47 +0800
-Message-ID: <20181204092548.3038-19-josephl@nvidia.com>
+Subject: [PATCH 13/19] arm64: dts: tegra210: add DFLL clock
+Date: Tue, 4 Dec 2018 17:25:42 +0800
+Message-ID: <20181204092548.3038-14-josephl@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,35 +21,49 @@ To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@
 Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable DFLL clock for Smaug board.
+Add essential DFLL clock properties for Tegra210.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index b3930a9dd139..beac7b0bf436 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1698,6 +1698,18 @@
- 		status = "okay";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 2205d66b0443..a6db62157442 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -4,6 +4,7 @@
+ #include <dt-bindings/memory/tegra210-mc.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
++#include <dt-bindings/reset/tegra210-car.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
+ 
+@@ -1131,6 +1132,24 @@
+ 		#nvidia,mipi-calibrate-cells = <1>;
  	};
  
-+	clock@70110000 {
-+		status = "okay";
-+		nvidia,sample-rate = <12500>;
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,cf = <6>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		nvidia,i2c-fs-rate = <400000>;
-+		vdd-cpu-supply = <&max77621_cpu>;
++	dfll: clock@70110000 {
++		compatible = "nvidia,tegra210-dfll";
++		reg = <0 0x70110000 0 0x100>, /* DFLL control */
++		      <0 0x70110000 0 0x100>, /* I2C output control */
++		      <0 0x70110100 0 0x100>, /* Integrated I2C controller */
++		      <0 0x70110200 0 0x100>; /* Look-up table RAM */
++		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
++			 <&tegra_car TEGRA210_CLK_DFLL_REF>,
++			 <&tegra_car TEGRA210_CLK_I2C5>;
++		clock-names = "soc", "ref", "i2c";
++		resets = <&tegra_car TEGRA210_RST_DFLL_DVCO>;
++		reset-names = "dvco";
++		#clock-cells = <0>;
++		clock-output-names = "dfllCPU_out";
++		status = "disabled";
 +	};
 +
  	aconnect@702c0000 {
- 		status = "okay";
- 
+ 		compatible = "nvidia,tegra210-aconnect";
+ 		clocks = <&tegra_car TEGRA210_CLK_APE>,
 -- 
 2.19.2
