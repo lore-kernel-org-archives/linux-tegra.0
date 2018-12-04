@@ -1,16 +1,16 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 04/19] dt-bindings: cpufreq: tegra124: remove cpu_lp
- clock from required properties
-Date: Tue, 4 Dec 2018 17:37:07 +0200
-Message-ID: <20181204153707.GB26056@pdeschrijver-desktop.Nvidia.com>
+Subject: Re: [PATCH 08/19] clk: tegra: dfll: round down voltages based on
+ alignment
+Date: Tue, 4 Dec 2018 17:46:18 +0200
+Message-ID: <20181204154618.GC26056@pdeschrijver-desktop.Nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-5-josephl@nvidia.com>
+ <20181204092548.3038-9-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20181204092548.3038-5-josephl@nvidia.com>
+In-Reply-To: <20181204092548.3038-9-josephl@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,50 +21,94 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Joseph Lo <josephl@nvidia.com>
-Cc: devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 05:25:33PM +0800, Joseph Lo wrote:
-> The cpu_lp clock property is only needed when the CPUfreq driver
-> supports CPU cluster switching. But it was not a design for this driver
-> and it didn't handle that as well. So removing this property.
+On Tue, Dec 04, 2018 at 05:25:37PM +0800, Joseph Lo wrote:
+> When generating the OPP table, the voltages are round down with the
+> alignment from the regulator. The alignment should be applied for
+> voltages look up as well.
 > 
-
-I would mark it optional. This means current DTs will still be
-technically compatible with this binding doc.
-
-Peter.
-
-> Cc: devicetree@vger.kernel.org
+> Based on the work of Penny Chiu <pchiu@nvidia.com>.
+> 
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt   | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/clk/tegra/clk-dfll.c | 26 +++++++++++++++-----------
+>  1 file changed, 15 insertions(+), 11 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> index 031545a29caf..03196d5ea515 100644
-> --- a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-> @@ -9,7 +9,6 @@ Required properties:
->    See ../clocks/clock-bindings.txt for details.
->  - clock-names: Must include the following entries:
->    - cpu_g: Clock mux for the fast CPU cluster.
-> -  - cpu_lp: Clock mux for the low-power CPU cluster.
->    - pll_x: Fast PLL clocksource.
->    - pll_p: Auxiliary PLL used during fast PLL rate changes.
->    - dfll: Fast DFLL clocksource that also automatically scales CPU voltage.
-> @@ -30,11 +29,10 @@ cpus {
->  		reg = <0>;
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index c294a2989f31..4a943c136d4d 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -804,17 +804,17 @@ static void dfll_init_out_if(struct tegra_dfll *td)
+>  static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
+>  {
+>  	struct dev_pm_opp *opp;
+> -	int i, uv;
+> +	int i, align_volt;
 >  
->  		clocks = <&tegra_car TEGRA124_CLK_CCLK_G>,
-> -			 <&tegra_car TEGRA124_CLK_CCLK_LP>,
->  			 <&tegra_car TEGRA124_CLK_PLL_X>,
->  			 <&tegra_car TEGRA124_CLK_PLL_P>,
->  			 <&dfll>;
-> -		clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
-> +		clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
->  		clock-latency = <300000>;
->  	};
+>  	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+>  	if (IS_ERR(opp))
+>  		return PTR_ERR(opp);
+>  
+> -	uv = dev_pm_opp_get_voltage(opp);
+> +	align_volt = dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
+>  	dev_pm_opp_put(opp);
+>  
+>  	for (i = td->lut_bottom; i < td->lut_size; i++) {
+> -		if (regulator_list_voltage(td->vdd_reg, td->lut[i]) == uv)
+> +		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >= align_volt)
+>  			return i;
+>  	}
+>  
+> @@ -1532,15 +1532,17 @@ static int dfll_init(struct tegra_dfll *td)
+>   */
+
+These 2 functions are only valid for I2C mode. We should probably add a
+WARN_ON() in case they are called when PWM mode is used and return
+-EINVAL.
+
+>  static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
+>  {
+> -	int i, n_voltages, reg_uV;
+> +	int i, n_voltages, reg_volt, align_volt;
+>  
+> +	align_volt = uV / td->soc->alignment.step_uv;
+>  	n_voltages = regulator_count_voltages(td->vdd_reg);
+>  	for (i = 0; i < n_voltages; i++) {
+> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
+> -		if (reg_uV < 0)
+> +		reg_volt = regulator_list_voltage(td->vdd_reg, i) /
+> +				td->soc->alignment.step_uv;
+> +		if (reg_volt < 0)
+>  			break;
+>  
+> -		if (uV == reg_uV)
+> +		if (align_volt == reg_volt)
+>  			return i;
+>  	}
+>  
+> @@ -1554,15 +1556,17 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
+>   * */
+>  static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
+>  {
+> -	int i, n_voltages, reg_uV;
+> +	int i, n_voltages, reg_volt, align_volt;
+>  
+> +	align_volt = uV / td->soc->alignment.step_uv;
+>  	n_voltages = regulator_count_voltages(td->vdd_reg);
+>  	for (i = 0; i < n_voltages; i++) {
+> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
+> -		if (reg_uV < 0)
+> +		reg_volt = regulator_list_voltage(td->vdd_reg, i) /
+> +				td->soc->alignment.step_uv;
+> +		if (reg_volt < 0)
+>  			break;
+>  
+> -		if (uV <= reg_uV)
+> +		if (align_volt <= reg_volt)
+>  			return i;
+>  	}
 >  
 > -- 
 > 2.19.2
